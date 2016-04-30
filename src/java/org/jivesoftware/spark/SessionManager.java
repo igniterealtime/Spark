@@ -25,7 +25,6 @@ import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.provider.ProviderManager;
-import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.iqprivate.PrivateDataManager;
 import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.disco.packet.DiscoverItems;
@@ -78,7 +77,7 @@ public final class SessionManager implements ConnectionListener {
         this.userBareAddress = XmppStringUtils.parseBareJid(connection.getUser());
 
         // create workgroup session
-        personalDataManager = new PrivateDataManager(getConnection());
+        personalDataManager = PrivateDataManager.getInstanceFor( getConnection() );
 
         // Discover items
         discoverItems();
@@ -157,6 +156,18 @@ public final class SessionManager implements ConnectionListener {
         });
     }
 
+    @Override
+    public void connected( XMPPConnection xmppConnection )
+    {
+
+    }
+
+    @Override
+    public void authenticated( XMPPConnection xmppConnection, boolean b )
+    {
+
+    }
+
     /**
      * Notify agent that the connection has been closed.
      */
@@ -195,7 +206,14 @@ public final class SessionManager implements ConnectionListener {
         // Do NOT  send presence if disconnected.
         if (SparkManager.getConnection().isConnected()) {
             // Send Presence Packet
-            SparkManager.getConnection().sendStanza(presence);
+            try
+            {
+                SparkManager.getConnection().sendStanza(presence);
+            }
+            catch ( SmackException.NotConnectedException e )
+            {
+                Log.error( "Unable to send presence to " + presence.getTo(), e );
+            }
         }
     }
 

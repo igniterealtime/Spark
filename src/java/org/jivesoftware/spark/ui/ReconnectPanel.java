@@ -34,6 +34,7 @@ import javax.swing.text.html.HTMLEditorKit;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.ConnectionListener;
+import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.util.ModelUtil;
@@ -158,6 +159,20 @@ public class ReconnectPanel extends JPanel implements ConnectionListener {
         closedOnError = onError;
     }
 
+
+    @Override
+    public void connected( XMPPConnection xmppConnection )
+    {
+        retryButton.setVisible(false);
+        retryButton.setEnabled(true);
+    }
+
+    @Override
+    public void authenticated( XMPPConnection xmppConnection, boolean b )
+    {
+        retryButton.setVisible(false);
+        retryButton.setEnabled(true);
+    }
 
     public void connectionClosed() {
         retryButton.setVisible(true);

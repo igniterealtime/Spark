@@ -21,6 +21,7 @@ package org.jivesoftware.spark.uri;
 
 import java.net.URI;
 
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.roster.RosterEntry;
 import org.jivesoftware.smack.roster.RosterGroup;
@@ -135,7 +136,8 @@ public class UriManager {
      * @param uri
      *            the decoded uri
      */
-    public void handleUnsubscribe(URI uri) {
+    public void handleUnsubscribe(URI uri) throws SmackException.NotConnectedException
+	{
 	String jid = retrieveJID(uri);
 
 	Presence response = new Presence(Presence.Type.unsubscribe);

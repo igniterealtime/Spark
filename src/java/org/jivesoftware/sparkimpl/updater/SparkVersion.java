@@ -24,7 +24,9 @@ import org.jivesoftware.Spark;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.provider.IQProvider;
 import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
 
+import java.io.IOException;
 import java.util.Date;
 
 public class SparkVersion extends IQ {
@@ -87,11 +89,13 @@ public class SparkVersion extends IQ {
     public static final String NAMESPACE = "jabber:iq:spark";
 
     public SparkVersion() {
-
+        super( ELEMENT_NAME, NAMESPACE);
     }
 
-    public String getChildElementXML() {
-        StringBuffer buf = new StringBuffer();
+    @Override
+    protected IQChildElementXmlStringBuilder getIQChildElementBuilder( IQChildElementXmlStringBuilder buf)
+    {
+        buf.rightAngleBracket();
         buf.append("<query xmlns=\"jabber:iq:spark\">");
 
         // Add os specific information
@@ -107,7 +111,7 @@ public class SparkVersion extends IQ {
         }
 
         buf.append("</query>");
-        return buf.toString();
+        return buf;
     }
 
     /**
@@ -115,13 +119,13 @@ public class SparkVersion extends IQ {
      *
      * @author Derek DeMoro
      */
-    public static class Provider implements IQProvider {
+    public static class Provider extends IQProvider<SparkVersion> {
 
         public Provider() {
             super();
         }
 
-        public IQ parseIQ(XmlPullParser parser) throws Exception {
+        public SparkVersion parse(XmlPullParser parser, int i) throws XmlPullParserException, IOException{
             SparkVersion version = new SparkVersion();
 
             boolean done = false;

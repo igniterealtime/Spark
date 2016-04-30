@@ -106,8 +106,8 @@ public class CheckUpdates {
                     return serverVersion;
                 }
             }
-            catch (SmackException e) {
-                // Nothing to do
+            catch (SmackException | XMPPException.XMPPErrorException e) {
+                Log.warning( "Unable the check fo new build.", e );
             }
 
         }
@@ -559,7 +559,8 @@ public class CheckUpdates {
      * @return the information for about the latest Spark Client.
      * @throws XMPPException If unable to retrieve latest version.
      */
-    public static SparkVersion getLatestVersion(XMPPConnection connection) throws SmackException {
+    public static SparkVersion getLatestVersion(XMPPConnection connection) throws SmackException, XMPPException.XMPPErrorException
+    {
         SparkVersion request = new SparkVersion();
         request.setType(IQ.Type.get);
         request.setTo("updater." + connection.getServiceName());
@@ -573,11 +574,10 @@ public class CheckUpdates {
         // Cancel the collector.
         collector.cancel();
         if (response == null) {
-            throw new SmackException("No response from server.");
+            throw SmackException.NoResponseException.newWith( connection, collector );
         }
-        if (response.getError() != null) {
-            throw new SmackException(response.getError());
-        }
+        XMPPException.XMPPErrorException.ifHasErrorThenThrow( response );
+
         return response;
     }
 

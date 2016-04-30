@@ -23,6 +23,8 @@ import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.util.StringUtils;
+import org.jivesoftware.smackx.muc.MUCAffiliation;
+import org.jivesoftware.smackx.muc.MUCRole;
 import org.jivesoftware.smackx.muc.Occupant;
 import org.jivesoftware.smackx.vcardtemp.packet.VCard;
 import org.jivesoftware.spark.component.JContactItemField;
@@ -144,15 +146,9 @@ public class UserManager {
      * @param nickname      the user's nickname.
      * @return true if the user is an owner.
      */
-    public boolean isOwner(GroupChatRoom groupChatRoom, String nickname) {
-        Occupant occupant = getOccupant(groupChatRoom, nickname);
-        if (occupant != null) {
-            String affiliation = occupant.getAffiliation();
-            if ("owner".equals(affiliation)) {
-                return true;
-            }
-        }
-        return false;
+    public boolean isOwner(GroupChatRoom groupChatRoom, String nickname)
+    {
+        return isOwner( getOccupant( groupChatRoom, nickname ) );
     }
 
     /**
@@ -161,30 +157,20 @@ public class UserManager {
      * @param occupant the occupant of a room.
      * @return true if the user is an owner.
      */
-    public boolean isOwner(Occupant occupant) {
-        if (occupant != null) {
-            String affiliation = occupant.getAffiliation();
-            if ("owner".equals(affiliation)) {
-                return true;
-            }
-        }
-        return false;
+    public boolean isOwner(Occupant occupant)
+    {
+        return occupant != null && occupant.getAffiliation() == MUCAffiliation.owner;
     }
+
     /**
      * Checks if the Occupant is a Member in this Room<br>
      * <b>admins and owners are also members!!!</b>
      * @param occupant
      * @return true if member, else false
      */
-    public boolean isMember(Occupant occupant) {
-	if (occupant != null) {
-	    String affiliation = occupant.getAffiliation();
-	    if ("member".equals(affiliation) || affiliation.equals("owner")
-		    || affiliation.equals("admin")) {
-		return true;
-	    }
-	}
-	return false;
+    public boolean isMember(Occupant occupant)
+    {
+        return occupant != null && ( occupant.getAffiliation() == MUCAffiliation.owner || occupant.getAffiliation() == MUCAffiliation.member || occupant.getAffiliation() == MUCAffiliation.admin );
     }
 
     /**
@@ -194,15 +180,9 @@ public class UserManager {
      * @param nickname      the nickname of the user.
      * @return true if the user is a moderator.
      */
-    public boolean isModerator(GroupChatRoom groupChatRoom, String nickname) {
-        Occupant occupant = getOccupant(groupChatRoom, nickname);
-        if (occupant != null) {
-            String role = occupant.getRole();
-            if ("moderator".equals(role)) {
-                return true;
-            }
-        }
-        return false;
+    public boolean isModerator(GroupChatRoom groupChatRoom, String nickname)
+    {
+        return isModerator( getOccupant( groupChatRoom, nickname ) );
     }
 
     /**
@@ -212,13 +192,7 @@ public class UserManager {
      * @return true if the user is a moderator.
      */
     public boolean isModerator(Occupant occupant) {
-        if (occupant != null) {
-            String role = occupant.getRole();
-            if ("moderator".equals(role)) {
-                return true;
-            }
-        }
-        return false;
+        return occupant != null && occupant.getRole() == MUCRole.moderator;
     }
 
     /**
@@ -229,14 +203,7 @@ public class UserManager {
      * @return true if the user is either an owner or admin of the room.
      */
     public boolean isOwnerOrAdmin(GroupChatRoom groupChatRoom, String nickname) {
-        Occupant occupant = getOccupant(groupChatRoom, nickname);
-        if (occupant != null) {
-            String affiliation = occupant.getAffiliation();
-            if ("owner".equals(affiliation) || "admin".equals(affiliation)) {
-                return true;
-            }
-        }
-        return false;
+        return isOwnerOrAdmin( getOccupant(groupChatRoom, nickname) );
     }
 
     /**
@@ -246,13 +213,7 @@ public class UserManager {
      * @return true if the user is either an owner or admin of the room.
      */
     public boolean isOwnerOrAdmin(Occupant occupant) {
-        if (occupant != null) {
-            String affiliation = occupant.getAffiliation();
-            if ("owner".equals(affiliation) || "admin".equals(affiliation)) {
-                return true;
-            }
-        }
-        return false;
+        return isOwner( occupant ) || isAdmin( occupant );
     }
 
     /**
@@ -285,21 +246,24 @@ public class UserManager {
      * @return true if the user is an admin.
      */
     public boolean isAdmin(GroupChatRoom groupChatRoom, String nickname) {
-        Occupant occupant = getOccupant(groupChatRoom, nickname);
-        if (occupant != null) {
-            String affiliation = occupant.getAffiliation();
-            if ("admin".equals(affiliation)) {
-                return true;
-            }
-        }
-        return false;
+        return isAdmin( getOccupant(groupChatRoom, nickname) );
+    }
+
+    /**
+     * Checks to see if the Occupant is an admin.
+     *
+     * @param occupant the occupant of a room.
+     * @return true if the user is an admin.
+     */
+    public boolean isAdmin(Occupant occupant)
+    {
+        return occupant != null && occupant.getAffiliation() == MUCAffiliation.admin;
     }
 
     public boolean hasVoice(GroupChatRoom groupChatRoom, String nickname) {
         Occupant occupant = getOccupant(groupChatRoom, nickname);
         if (occupant != null) {
-            String role = occupant.getRole();
-            if ("visitor".equals(role)) {
+            if ( MUCRole.visitor == occupant.getRole()) {
                 return false;
             }
         }
@@ -528,31 +492,6 @@ public class UserManager {
             }
         });
     }
-
-    /**
-     * Returns the correct JID based on the number of resources signed in.
-     *
-     * @param jid the users jid.
-     * @return the valid jid to use.
-     */
-    public static String getValidJID(String jid) {
-        Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
-        Iterator<Presence> presences = roster.getPresences(jid);
-        int count = 0;
-        Presence p = null;
-        if (presences.hasNext()) {
-            p = presences.next();
-            count++;
-        }
-
-        if (count == 1 && p != null) {
-            return p.getFrom();
-        }
-        else {
-            return jid;
-        }
-    }
-
 
     /**
      * Sorts ContactItems.

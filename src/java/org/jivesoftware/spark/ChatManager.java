@@ -32,6 +32,7 @@ import org.jivesoftware.smackx.chatstates.ChatStateListener;
 import org.jivesoftware.smackx.muc.MultiUserChatManager;
 import org.jivesoftware.smackx.xdata.Form;
 import org.jivesoftware.smackx.muc.MultiUserChat;
+import org.jivesoftware.smackx.xdata.packet.DataForm;
 import org.jivesoftware.spark.component.tabbedPane.SparkTab;
 import org.jivesoftware.spark.decorator.DefaultTabHandler;
 import org.jivesoftware.spark.ui.ChatContainer;
@@ -278,7 +279,7 @@ public class ChatManager implements ChatManagerListener {
      * @return the new ChatRoom created. If an error occured, null will be returned.
      */
     public ChatRoom createConferenceRoom(String roomName, String serviceName) {
-        final MultiUserChat chatRoom = new MultiUserChat(SparkManager.getConnection(), roomName + "@" + serviceName);
+        final MultiUserChat chatRoom = MultiUserChatManager.getInstanceFor( SparkManager.getConnection()).getMultiUserChat( roomName + "@" + serviceName );
 
         final GroupChatRoom room = UIComponentRegistry.createGroupChatRoom(chatRoom);
 
@@ -288,7 +289,7 @@ public class ChatManager implements ChatManagerListener {
 
             // Send an empty room configuration form which indicates that we want
             // an instant room
-            chatRoom.sendConfigurationForm(new Form(Form.TYPE_SUBMIT));
+            chatRoom.sendConfigurationForm(new Form( DataForm.Type.submit ));
         }
         catch (XMPPException | SmackException e1) {
             Log.error("Unable to send conference room chat configuration form.", e1);

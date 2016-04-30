@@ -39,7 +39,9 @@ import org.jivesoftware.MainWindow;
 import org.jivesoftware.MainWindowListener;
 import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Default;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.StanzaListener;
+import org.jivesoftware.smack.packet.ExtensionElement;
 import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.filter.StanzaFilter;
 import org.jivesoftware.smack.filter.StanzaTypeFilter;
@@ -237,14 +239,22 @@ public class Workspace extends JPanel implements StanzaListener {
         StanzaListener workspacePresenceListener = new StanzaListener() {
             public void processPacket(Stanza stanza) {
                 Presence presence = (Presence)stanza;
-                if (presence.getProperty("anonymous") != null) {
+                JivePropertiesExtension extension = (JivePropertiesExtension) presence.getExtension( JivePropertiesExtension.NAMESPACE );
+                if (extension != null && extension.getProperty("anonymous") != null) {
                     boolean isAvailable = statusBox.getPresence().getMode() == Presence.Mode.available;
                     Presence reply = new Presence(Presence.Type.available);
                     if (!isAvailable) {
                         reply.setType(Presence.Type.unavailable);
                     }
                     reply.setTo(presence.getFrom());
-                    SparkManager.getSessionManager().getConnection().sendStanza(reply);
+                    try
+                    {
+                        SparkManager.getSessionManager().getConnection().sendStanza(reply);
+                    }
+                    catch ( SmackException.NotConnectedException e )
+                    {
+                        Log.warning( "Unable to send presence reply to " + reply.getTo(), e );
+                    }
                 }
             }
         };
@@ -304,13 +314,22 @@ public class Workspace extends JPanel implements StanzaListener {
     public void processPacket(final Stanza stanza) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                handleIncomingPacket(stanza);
+                try
+                {
+                    handleIncomingPacket(stanza);
+                }
+                catch ( SmackException.NotConnectedException e )
+                {
+                    // This would be odd: not being connected while receiving a stanza...
+                    Log.warning( "Unable to handle incoming stanza: " + stanza , e );
+                }
             }
         });
     }
 
 
-    private void handleIncomingPacket(Stanza stanza) {
+    private void handleIncomingPacket(Stanza stanza) throws SmackException.NotConnectedException
+    {
         // We only handle message packets here.
         if (stanza instanceof Message) {
             final Message message = (Message)stanza;
@@ -372,7 +391,8 @@ public class Workspace extends JPanel implements StanzaListener {
      *
      * @param message The Offline message.
      */
-    private void handleOfflineMessage(Message message) {
+    private void handleOfflineMessage(Message message) throws SmackException.NotConnectedException
+    {
         if(!ModelUtil.hasLength(message.getBody())){
             return;
         }

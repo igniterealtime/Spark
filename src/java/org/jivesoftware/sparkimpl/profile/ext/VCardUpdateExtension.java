@@ -29,6 +29,10 @@ public class VCardUpdateExtension implements ExtensionElement {
         photoHash = hash;
     }
 
+    public String getPhotoHash() {
+        return photoHash;
+    }
+
     public String getElementName() {
         return "x";
     }

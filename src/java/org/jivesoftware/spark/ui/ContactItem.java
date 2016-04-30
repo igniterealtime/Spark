@@ -39,11 +39,8 @@ import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.roster.RosterEntry;
-import org.jivesoftware.smack.packet.DefaultPacketExtension;
-import org.jivesoftware.smack.packet.ExtensionElement;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.roster.packet.RosterPacket;
-import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.PresenceManager;
 import org.jivesoftware.spark.SparkManager;
@@ -52,6 +49,7 @@ import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.layout.LayoutSettings;
 import org.jivesoftware.sparkimpl.plugin.layout.LayoutSettingsManager;
+import org.jivesoftware.sparkimpl.profile.ext.VCardUpdateExtension;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jxmpp.util.XmppStringUtils;
@@ -350,12 +348,11 @@ public class ContactItem extends JPanel {
 
         this.presence = presence;
 
-        final ExtensionElement packetExtension = presence.getExtension("x", "vcard-temp:x:update");
+        final VCardUpdateExtension extension = presence.getExtension("x", "vcard-temp:x:update");
 
         // Handle vCard update packet.
-        if (packetExtension != null && packetExtension instanceof DefaultPacketExtension) {
-            DefaultPacketExtension o = (DefaultPacketExtension)packetExtension;
-            String hash = o.getValue("photo");
+        if (extension != null) {
+            String hash = extension.getPhotoHash();
             if (hash != null) {
                 this.hash = hash;
 
