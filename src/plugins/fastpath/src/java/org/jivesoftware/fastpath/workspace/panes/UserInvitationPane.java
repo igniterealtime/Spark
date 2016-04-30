@@ -48,6 +48,7 @@ import org.jivesoftware.fastpath.workspace.assistants.RoomInformation;
 import org.jivesoftware.fastpath.workspace.util.RequestUtils;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smackx.muc.MultiUserChatManager;
 import org.jivesoftware.smackx.xdata.Form;
 import org.jivesoftware.smackx.muc.Affiliate;
 import org.jivesoftware.smackx.muc.MultiUserChat;
@@ -97,7 +98,9 @@ public class UserInvitationPane {
                 return;
             }
         }
-        catch (ChatNotFoundException e) {
+        catch ( SmackException.NotConnectedException | ChatNotFoundException e)
+        {
+            Log.warning( "Unable to reject offer " + offer, e );
         }
 
 
@@ -192,7 +195,14 @@ public class UserInvitationPane {
 
                 final TimerTask loadRoomTask = new SwingTimerTask() {
                     public void doRun() {
-                        offer.accept();
+                        try
+                        {
+                            offer.accept();
+                        }
+                        catch ( SmackException.NotConnectedException e1 )
+                        {
+                            Log.warning( "Unable to accept offer " + offer, e1 );
+                        }
                         closeToaster();
                         startFastpathChat(fullRoomJID, request.getUsername());
                     }
@@ -273,7 +283,14 @@ public class UserInvitationPane {
      * Reject the current offer.
      */
     public void rejectOffer() {
-        offer.reject();
+        try
+        {
+            offer.reject();
+        }
+        catch ( SmackException.NotConnectedException e )
+        {
+            Log.warning( "Unable to reject offer " + offer, e );
+        }
 
         if (listener != null) {
             listener.noOption();
@@ -377,19 +394,25 @@ public class UserInvitationPane {
             if (!chatRoom.isActive()) {
                 // Remove old room, add new room.
                 chatManager.removeChat(chatRoom);
-
-                MultiUserChat chat = new MultiUserChat(SparkManager.getConnection(), fullRoomJID);
+                MultiUserChat chat = MultiUserChatManager.getInstanceFor( SparkManager.getConnection() ).getMultiUserChat( fullRoomJID );
                 chatRoom = new GroupChatRoom(chat);
             }
             else {
                 // Already in the room, do not process invitation
-                offer.reject();
+                try
+                {
+                    offer.reject();
+                }
+                catch ( SmackException.NotConnectedException e )
+                {
+                    Log.warning( "Unable to reject offer " + offer, e );
+                }
                 return;
             }
 
         }
         catch (ChatNotFoundException e) {
-            MultiUserChat chat = new MultiUserChat(SparkManager.getConnection(), fullRoomJID);
+            MultiUserChat chat = MultiUserChatManager.getInstanceFor( SparkManager.getConnection() ).getMultiUserChat( fullRoomJID );
             chatRoom = new GroupChatRoom(chat);
         }
 

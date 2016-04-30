@@ -159,7 +159,14 @@ public final class AgentConversations extends JPanel implements ChangeListener {
                 Collection agentSet;
 
                 public Object construct() {
-                    agentRoster = FastpathPlugin.getAgentSession().getAgentRoster();
+                    try
+                    {
+                        agentRoster = FastpathPlugin.getAgentSession().getAgentRoster();
+                    }
+                    catch ( SmackException.NotConnectedException e1 )
+                    {
+                        Log.warning( "Unable to get agent roster.", e1 );
+                    }
                     agentSet = agentRoster.getAgents();
                     return agentSet;
                 }

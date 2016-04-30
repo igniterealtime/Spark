@@ -94,9 +94,7 @@ public class ChatSearch implements Searchable {
             ReportedData reportedData = null;
             try {
                 reportedData = agentSession.searchTranscripts(filledForm);
-                final Iterator<ReportedData.Row> rows = reportedData.getRows();
-                while (rows.hasNext()) {
-                    ReportedData.Row row = rows.next();
+                for ( final ReportedData.Row row : reportedData.getRows() ) {
                     ChatSearchResult result = new ChatSearchResult(row, query);
                     results.add(result);
                 }

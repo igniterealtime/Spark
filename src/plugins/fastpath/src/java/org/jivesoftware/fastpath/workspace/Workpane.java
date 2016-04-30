@@ -593,7 +593,14 @@ public class Workpane {
                     chatQueue.setVisible(false);
 
                     offerMap.put(offer.getSessionID(), offer);
-                    offer.accept();
+                    try
+                    {
+                        offer.accept();
+                    }
+                    catch ( SmackException.NotConnectedException e1 )
+                    {
+                        Log.warning( "Unable to accept offer from " + offer.getUserJID(), e1 );
+                    }
                 }
             });
 
@@ -601,7 +608,14 @@ public class Workpane {
                 public void actionPerformed(ActionEvent e) {
                     toasterManager.close();
                     chatQueue.setVisible(false);
-                    offer.reject();
+                    try
+                    {
+                        offer.reject();
+                    }
+                    catch ( SmackException.NotConnectedException e1 )
+                    {
+                        Log.warning( "Unable to reject offer from " + offer.getUserJID(), e1 );
+                    }
                     SparkManager.getWorkspace().remove(chatQueue);
                     offerMap.remove(offer.getSessionID());
                 }
@@ -648,15 +662,13 @@ public class Workpane {
     private class InviteListener implements RoomInvitationListener {
         // Add own invitation listener
     	@Override
-        public boolean handleInvitation(final Connection conn, final String room, final String inviter, final String reason, final String password, final Message message) {
+        public boolean handleInvitation(final XMPPConnection conn, final MultiUserChat chat, final String inviter, final String reason, final String password, final Message message) {
             if (offerMap.containsKey(reason)) {
                 RequestUtils utils = new RequestUtils(getMetadata(reason));
                 String roomName = utils.getUsername();
 
                 // Create the Group Chat Room
-                final MultiUserChat chat = new MultiUserChat(SparkManager.getConnection(), room);
-
-                GroupChatRoom groupChatRoom = ConferenceUtils.enterRoomOnSameThread(roomName, room, password);
+                GroupChatRoom groupChatRoom = ConferenceUtils.enterRoomOnSameThread(roomName, chat.getRoom(), password);
                 groupChatRoom.getSplitPane().setDividerSize(5);
                 groupChatRoom.getVerticalSlipPane().setDividerLocation(0.6);
                 groupChatRoom.getSplitPane().setDividerLocation(0.6);
@@ -688,11 +700,11 @@ public class Workpane {
                 MetaData metaDataExt = (MetaData)message.getExtension(MetaData.ELEMENT_NAME, MetaData.NAMESPACE);
                 if (metaDataExt != null) {
                     Map metadata = metaDataExt.getMetaData();
-                    metadata.put("sessionID", XmppStringUtils.parseLocalpart(room));
+                    metadata.put("sessionID", XmppStringUtils.parseLocalpart(chat.getRoom()));
 
                     RequestUtils utils = new RequestUtils(metadata);
                     inviteMap.put(utils.getSessionID(), metadata);
-                    InvitationPane pane = new InvitationPane(utils, room, inviter, reason, password, message);
+                    InvitationPane pane = new InvitationPane(utils, chat.getRoom(), inviter, reason, password, message);
                     return true;
                 }
             }

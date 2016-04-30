@@ -144,7 +144,14 @@ public final class CurrentActivity extends JPanel {
             Collection agentSet;
 
             public Object construct() {
-                agentRoster = FastpathPlugin.getAgentSession().getAgentRoster();
+                try
+                {
+                    agentRoster = FastpathPlugin.getAgentSession().getAgentRoster();
+                }
+                catch ( SmackException.NotConnectedException e )
+                {
+                    Log.error( "Unable to get agent roster.", e );
+                }
                 agentSet = agentRoster.getAgents();
                 return agentSet;
             }
@@ -294,8 +301,8 @@ public final class CurrentActivity extends JPanel {
                             // Make user an owner.
                             try {
                                 FastpathPlugin.getAgentSession().makeRoomOwner(SparkManager.getConnection(), sessionID);
-
-                                Collection<String> col = MultiUserChat.getServiceNames(SparkManager.getConnection());
+                                MultiUserChatManager manager = MultiUserChatManager.getInstanceFor( SparkManager.getConnection() );
+                                Collection<String> col = manager.getServiceNames();
                                 if (col.size() == 0) {
                                     return;
                                 }
@@ -305,7 +312,7 @@ public final class CurrentActivity extends JPanel {
 
                                 LocalPreferences pref = SettingsManager.getLocalPreferences();
                                 final String nickname = pref.getNickname();
-                                MultiUserChat muc = new MultiUserChat(SparkManager.getConnection(), roomName);
+                                MultiUserChat muc = manager.getMultiUserChat( roomName );
 
                                 ConferenceUtils.enterRoom(muc, roomName, nickname, null);
 

@@ -252,6 +252,18 @@ public class FastpathPlugin implements Plugin, ConnectionListener {
     }
 
 
+    @Override
+    public void connected( XMPPConnection xmppConnection )
+    {
+
+    }
+
+    @Override
+    public void authenticated( XMPPConnection xmppConnection, boolean b )
+    {
+
+    }
+
     public void connectionClosed() {
         lostConnection();
     }
@@ -343,9 +355,9 @@ public class FastpathPlugin implements Plugin, ConnectionListener {
                 final Presence actualPresence = SparkManager.getWorkspace().getStatusBar().getPresence();
                 Presence toWorkgroupPresence = new Presence(actualPresence.getType(), actualPresence.getStatus(), actualPresence.getPriority(), actualPresence.getMode());
                 toWorkgroupPresence.setTo(workgroup);
-                con.sendStanza(toWorkgroupPresence);
 
                 try {
+                    con.sendStanza(toWorkgroupPresence);
                     wgroup = new Workgroup(workgroup, con);
                 }
                 catch (Exception e) {

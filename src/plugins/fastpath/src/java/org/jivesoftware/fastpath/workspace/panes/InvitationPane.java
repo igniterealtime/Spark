@@ -48,6 +48,7 @@ import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.util.StringUtils;
+import org.jivesoftware.smackx.muc.MultiUserChatManager;
 import org.jivesoftware.smackx.xdata.Form;
 import org.jivesoftware.smackx.muc.Affiliate;
 import org.jivesoftware.smackx.muc.MultiUserChat;
@@ -210,7 +211,7 @@ public class InvitationPane {
             chatRoom = chatManager.getGroupChat(room);
         }
         catch (ChatNotFoundException e) {
-            MultiUserChat chat = new MultiUserChat(SparkManager.getConnection(), room);
+            MultiUserChat chat = MultiUserChatManager.getInstanceFor( SparkManager.getConnection() ).getMultiUserChat( room );
             chatRoom = new GroupChatRoom(chat);
         }
 
@@ -233,7 +234,14 @@ public class InvitationPane {
                 ChatManager chatManager = SparkManager.getChatManager();
                 chatManager.removeChat(chatRoom);
 
-                MultiUserChat.decline(SparkManager.getConnection(), room, inviter, "No thank you");
+                try
+                {
+                    MultiUserChatManager.getInstanceFor( SparkManager.getConnection() ).decline( room, inviter, "No thank you" );
+                }
+                catch ( SmackException.NotConnectedException e )
+                {
+                    Log.warning( "Unable to deline invatation from " + inviter + " to join room " + room, e );
+                }
             }
         });
 

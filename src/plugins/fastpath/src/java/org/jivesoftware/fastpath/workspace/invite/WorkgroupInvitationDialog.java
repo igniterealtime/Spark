@@ -111,7 +111,15 @@ public class WorkgroupInvitationDialog implements PropertyChangeListener {
         final String jid = SparkManager.getSessionManager().getJID();
 
         String room = chatRoom.getRoomname();
-        Collection agents = getAvailableAgents(FastpathPlugin.getAgentSession().getAgentRoster(), room);
+        Collection agents = null;
+        try
+        {
+            agents = getAvailableAgents( FastpathPlugin.getAgentSession().getAgentRoster(), room);
+        }
+        catch ( SmackException.NotConnectedException e )
+        {
+            Log.warning( "Unable to get agent roster.", e );
+        }
 
         // Clear jid field
         jidField.setText("");
