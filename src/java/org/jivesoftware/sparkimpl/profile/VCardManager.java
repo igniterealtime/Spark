@@ -517,7 +517,7 @@ public class VCardManager {
         }
         catch (XMPPException | SmackException e) {
         	////System.out.println(jid+" Fehler in reloadVCard ----> null");
-        	vcard.setError(new XMPPError(XMPPError.Condition.request_timeout));
+        	vcard.setError(new XMPPError(XMPPError.Condition.resource_constraint));
         	vcard.setJabberId(jid);
         	delayedContacts.add(jid);
         	return vcard;
