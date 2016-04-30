@@ -45,6 +45,7 @@ import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smack.packet.XMPPError;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.bookmarks.BookmarkManager;
@@ -420,9 +421,9 @@ public class ConferenceServices implements InvitationListener {
                                         Res.getString("message.please.join.in.conference"), jids);
                             }
                         }
-                        catch (XMPPException | SmackException e1) {
+                        catch (SmackException ex) {
                         	UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
-                            JOptionPane.showMessageDialog(chatRoom, ConferenceUtils.getReason(e1), Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
+                            JOptionPane.showMessageDialog(chatRoom, "An error occurred.", Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
                         }
                     }
                 };

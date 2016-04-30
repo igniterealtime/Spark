@@ -35,6 +35,7 @@ import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smack.packet.XMPPError;
 import org.jivesoftware.smackx.muc.MultiUserChatManager;
 import org.jivesoftware.smackx.xdata.Form;
 import org.jivesoftware.smackx.xdata.FormField;
@@ -202,27 +203,16 @@ public class ConferenceUtils {
                                 break;
                             }
                             catch (XMPPException | SmackException ex) {
-                                int code = 0;
-                                if (ex.getXMPPError() != null) {
-                                    code = ex.getXMPPError().getCode();
+                                XMPPError error = null;
+                                if ( ex instanceof XMPPException.XMPPErrorException) {
+                                    error = (( XMPPException.XMPPErrorException ) ex).getXMPPError();
                                 }
 
-                                if (code == 0) {
-                                    errors.add("No response from server.");
-                                }
-                                else if (code == 401) {
-                                    errors.add("The password did not match the rooms password.");
-                                }
-                                else if (code == 403) {
-                                    errors.add("You have been banned from this room.");
-                                }
-                                else if (code == 404) {
-                                    errors.add("The room you are trying to enter does not exist.");
-                                }
-                                else if (code == 407) {
-                                    errors.add("You are not a member of this room.\nThis room requires you to be a member to join.");
-                                }
-                                else if (code != 409) {
+                                final String errorText = ConferenceUtils.getReason( error );
+
+                                errors.add( errorText );
+                                if ( error.getCondition() != XMPPError.Condition.conflict )
+                                {
                                     break;
                                 }
                             }
@@ -318,27 +308,16 @@ public class ConferenceUtils {
                         break;
                     }
                     catch (XMPPException | SmackException ex) {
-                        int code = 0;
-                        if (ex.getXMPPError() != null) {
-                            code = ex.getXMPPError().getCode();
+                        XMPPError error = null;
+                        if ( ex instanceof XMPPException.XMPPErrorException) {
+                            error = (( XMPPException.XMPPErrorException ) ex).getXMPPError();
                         }
 
-                        if (code == 0) {
-                            errors.add("No response from server.");
-                        }
-                        else if (code == 401) {
-                            errors.add("A Password is required to enter this room.");
-                        }
-                        else if (code == 403) {
-                            errors.add("You have been banned from this room.");
-                        }
-                        else if (code == 404) {
-                            errors.add("The room you are trying to enter does not exist.");
-                        }
-                        else if (code == 407) {
-                            errors.add("You are not a member of this room.\nThis room requires you to be a member to join.");
-                        }
-                        else if (code != 409) {
+                        final String errorText = ConferenceUtils.getReason( error );
+
+                        errors.add( errorText );
+                        if ( error.getCondition() != XMPPError.Condition.conflict )
+                        {
                             break;
                         }
                     }
@@ -464,36 +443,35 @@ public class ConferenceUtils {
     /**
      * Returns an explanation for the exception.
      *
-     * @param ex the <code>XMPPException</code>
+     * @param error The XMPP error
      * @return the reason for the exception.
+     * @see <a href="http://xmpp.org/extensions/xep-0045.html#enter-errorcodes">XEP-0045 Error Conditions</a>
      */
-    public static String getReason(XMPPException ex) {
-        String reason = "";
-        int code = 0;
-        if (ex.getXMPPError() != null) {
-            code = ex.getXMPPError().getCode();
+    public static String getReason(XMPPError error) {
+        if (error == null) {
+            return "No response from server.";
         }
 
-        if (code == 0) {
-            reason = "No response from server.";
-        }
-        else if (code == 401) {
-            reason = "The password did not match the room's password.";
-        }
-        else if (code == 403) {
-            reason = "You have been banned from this room.";
-        }
-        else if (code == 404) {
-            reason = "The room you are trying to enter does not exist.";
-        }
-        else if (code == 405) {
-            reason = "You do not have permission to create a room.";
-        }
-        else if (code == 407) {
-            reason = "You are not a member of this room.\nThis room requires you to be a member to join.";
+        switch ( error.getCondition() )
+        {
+            case conflict:
+                return "Your desired nickname is in use or reserved by someone else.";
+            case forbidden:
+                return "You have been banned from this room.";
+            case item_not_found:
+                return "The room you are trying to enter does not exist.";
+            case not_acceptable:
+                return "You must use your reserved room nick.";
+            case not_allowed:
+                return "You do not have permission to create a room.";
+            case not_authorized:
+                return "The password did not match the room's password.";
+            case registration_required:
+                return "You are not a member of this room.\nThis room requires you to be a member to join.";
+            default:
+                return "An error has occurred: " + error.getConditionText();
         }
 
-        return reason;
     }
 
     /**
@@ -567,27 +545,16 @@ public class ConferenceUtils {
                         break;
                     }
                     catch (XMPPException | SmackException ex) {
-                        int code = 0;
-                        if (ex.getXMPPError() != null) {
-                            code = ex.getXMPPError().getCode();
+                        XMPPError error = null;
+                        if ( ex instanceof XMPPException.XMPPErrorException) {
+                            error = (( XMPPException.XMPPErrorException ) ex).getXMPPError();
                         }
 
-                        if (code == 0) {
-                            errors.add("No response from server.");
-                        }
-                        else if (code == 401) {
-                            errors.add("The password did not match the room's password.");
-                        }
-                        else if (code == 403) {
-                            errors.add("You have been banned from this room.");
-                        }
-                        else if (code == 404) {
-                            errors.add("The room you are trying to enter does not exist.");
-                        }
-                        else if (code == 407) {
-                            errors.add("You are not a member of this room.\nThis room requires you to be a member to join.");
-                        }
-                        else if (code != 409) {
+                        final String errorText = ConferenceUtils.getReason( error );
+
+                        errors.add( errorText );
+                        if ( error.getCondition() != XMPPError.Condition.conflict )
+                        {
                             break;
                         }
                     }
@@ -647,27 +614,16 @@ public class ConferenceUtils {
                         break;
                     }
                     catch (XMPPException | SmackException ex) {
-                        int code = 0;
-                        if (ex.getXMPPError() != null) {
-                            code = ex.getXMPPError().getCode();
+                        XMPPError error = null;
+                        if ( ex instanceof XMPPException.XMPPErrorException) {
+                            error = (( XMPPException.XMPPErrorException ) ex).getXMPPError();
                         }
 
-                        if (code == 0) {
-                            errors.add("No response from server.");
-                        }
-                        else if (code == 401) {
-                            errors.add("A Password is required to enter this room.");
-                        }
-                        else if (code == 403) {
-                            errors.add("You have been banned from this room.");
-                        }
-                        else if (code == 404) {
-                            errors.add("The room you are trying to enter does not exist.");
-                        }
-                        else if (code == 407) {
-                            errors.add("You are not a member of this room.\nThis room requires you to be a member to join.");
-                        }
-                        else if (code != 409) {
+                        final String errorText = ConferenceUtils.getReason( error );
+
+                        errors.add( errorText );
+                        if ( error.getCondition() != XMPPError.Condition.conflict )
+                        {
                             break;
                         }
                     }

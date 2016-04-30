@@ -771,10 +771,9 @@ public class GroupChatParticipantList extends JPanel {
 				    chat.changeNickname(newNickname);
 				    break;
 				} catch (XMPPException | SmackException e1) {
-				    if (e1.getXMPPError().getCode() == 406) { // handle
-									      // deny
-									      // changing
-									      // nick
+					if ( e1 instanceof XMPPException.XMPPErrorException && (( XMPPException.XMPPErrorException ) e1).getXMPPError().getCondition() == XMPPError.Condition.not_acceptable )
+					{
+						// handle deny changing nick.
 				    UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
 					JOptionPane
 						.showMessageDialog(

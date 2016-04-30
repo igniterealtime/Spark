@@ -23,6 +23,7 @@ import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.packet.XMPPError;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.bookmarks.BookmarkedConference;
 import org.jivesoftware.spark.ChatManager;
@@ -394,9 +395,9 @@ final class InvitationDialog extends JPanel {
                                                 selectedBookmarkedConf.getPassword(), messageText, jidList);
                                     }
                                 }
-                                catch (XMPPException | SmackException e2) {
+                                catch (SmackException ex) {
                                 	UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
-                                    JOptionPane.showMessageDialog(pane, ConferenceUtils.getReason(e2), Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
+                                    JOptionPane.showMessageDialog(pane, "An error occurred.", Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
                                 }
                             }
                         };
