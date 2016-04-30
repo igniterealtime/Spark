@@ -27,12 +27,14 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.StanzaListener;
 import org.jivesoftware.smack.filter.PacketExtensionFilter;
+import org.jivesoftware.smack.packet.DefaultExtensionElement;
 import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.packet.Message;
-import org.jivesoftware.smack.packet.DefaultPacketExtension;
+import org.jivesoftware.spark.util.log.Log;
 
 /**
  * The game UI, which is created after both players have accepted a new game.
@@ -147,8 +149,9 @@ public class ReversiPanel extends JPanel {
     /**
      * Sends a forfeit message to the other player.
      */
-    public void sendForfeit() {
-        DefaultPacketExtension forfeit = new DefaultPacketExtension(GameForfeit.ELEMENT_NAME, GameForfeit.NAMESPACE);
+    public void sendForfeit() throws SmackException.NotConnectedException
+    {
+        DefaultExtensionElement forfeit = new DefaultExtensionElement(GameForfeit.ELEMENT_NAME, GameForfeit.NAMESPACE);
         forfeit.setValue("gameID", Integer.toString(gameID));
         Message message = new Message();
         message.setTo(opponentJID);
@@ -339,7 +342,14 @@ public class ReversiPanel extends JPanel {
                 move.setGameID(gameID);
                 move.setPosition(block.getIndex());
                 message.addExtension(move);
-                connection.sendStanza(message);
+                try
+                {
+                    connection.sendStanza(message);
+                }
+                catch ( SmackException.NotConnectedException e1 )
+                {
+                    Log.warning( "Unable to send move to " + message.getTo(), e1 );
+                }
 
                 // Repaint board.
                 ReversiPanel.this.repaint();
