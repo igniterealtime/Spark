@@ -27,11 +27,7 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Pattern;
 
 import javax.swing.AbstractAction;
@@ -49,6 +45,7 @@ import javax.swing.UIManager;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.SmackException;
+import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.filter.AndFilter;
 import org.jivesoftware.smack.filter.FromMatchesFilter;
@@ -58,6 +55,7 @@ import org.jivesoftware.smack.filter.StanzaTypeFilter;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smack.packet.XMPPError;
 import org.jivesoftware.smackx.muc.packet.Destroy;
 import org.jivesoftware.smackx.xdata.Form;
 import org.jivesoftware.smackx.xevent.MessageEventManager;
@@ -742,12 +740,12 @@ public class GroupChatRoom extends ChatRoom {
 	} else if (message.getError() != null) {
 	    String errorMessage = "";
 
-	    if (message.getError().getCode() == 403
+	    if (message.getError().getCondition() == XMPPError.Condition.forbidden
 		    && message.getSubject() != null) {
 		errorMessage = Res.getString("message.subject.change.error");
 	    }
 
-	    else if (message.getError().getCode() == 403) {
+	    else if (message.getError().getCondition() == XMPPError.Condition.forbidden) {
 		errorMessage = Res.getString("message.forbidden.error");
 	    }
 
@@ -777,11 +775,9 @@ public class GroupChatRoom extends ChatRoom {
 
 	MUCUser mucUser = (MUCUser) stanza.getExtension("x",
 		"http://jabber.org/protocol/muc#user");
-	String code = "";
+	Set<MUCUser.Status> status = new HashSet<>();
 	if (mucUser != null) {
-	    code = mucUser.getStatus() != null ? mucUser.getStatus().getCode()
-		    : "";
-
+		status.addAll( mucUser.getStatus() );
 	    Destroy destroy = mucUser.getDestroy();
 	    if (destroy != null) {
 		String reason = destroy.getReason();
@@ -796,7 +792,7 @@ public class GroupChatRoom extends ChatRoom {
 	}
 
 	if (presence.getType() == Presence.Type.unavailable
-		&& !"303".equals(code)) {
+		&& !status.contains( MUCUser.Status.NEW_NICKNAME_303 )) {
 	    if (currentUserList.contains(from)) {
 		if (showPresenceMessages) {
 		    getTranscriptWindow().insertNotificationMessage(
@@ -1238,7 +1234,19 @@ public class GroupChatRoom extends ChatRoom {
 	return lastActivity;
     }
 
-    public void connectionClosed() {
+	@Override
+	public void connected( XMPPConnection xmppConnection )
+	{
+
+	}
+
+	@Override
+	public void authenticated( XMPPConnection xmppConnection, boolean b )
+	{
+
+	}
+
+	public void connectionClosed() {
 	handleDisconnect();
     }
 

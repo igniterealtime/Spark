@@ -44,6 +44,7 @@ import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.chat.Chat;
 import org.jivesoftware.smack.XMPPConnection;
+import org.jivesoftware.smack.packet.*;
 import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.roster.RosterEntry;
 import org.jivesoftware.smack.XMPPException;
@@ -52,10 +53,6 @@ import org.jivesoftware.smack.filter.FromMatchesFilter;
 import org.jivesoftware.smack.filter.OrFilter;
 import org.jivesoftware.smack.filter.StanzaFilter;
 import org.jivesoftware.smack.filter.StanzaTypeFilter;
-import org.jivesoftware.smack.packet.Message;
-import org.jivesoftware.smack.packet.Stanza;
-import org.jivesoftware.smack.packet.Presence;
-import org.jivesoftware.smack.packet.StreamError;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.chatstates.ChatState;
 import org.jivesoftware.smackx.chatstates.ChatStateManager;
@@ -498,7 +495,7 @@ public class ChatRoomImpl extends ChatRoom {
                     final Message message = (Message)stanza;
                     fireReceivingIncomingMessage(message);
                     if (message.getError() != null) {
-                        if (message.getError().getCode() == 404) {
+                        if (message.getError().getCondition() == XMPPError.Condition.item_not_found) {
                             // Check to see if the user is online to recieve this message.
                             RosterEntry entry = roster.getEntry(participantJID);
                             if (!presence.isAvailable() && !offlineSent && entry != null) {
@@ -698,6 +695,18 @@ public class ChatRoomImpl extends ChatRoom {
     }
 
 
+    @Override
+    public void connected( XMPPConnection xmppConnection )
+    {
+
+    }
+
+    @Override
+    public void authenticated( XMPPConnection xmppConnection, boolean b )
+    {
+
+    }
+
     public void connectionClosed() {
         handleDisconnect();
 
@@ -710,13 +719,9 @@ public class ChatRoomImpl extends ChatRoom {
 
         String message = Res.getString("message.disconnected.error");
 
-        if (ex instanceof XMPPException) {
-            XMPPException xmppEx = (XMPPException)ex;
-            StreamError error = xmppEx.getStreamError();
-            String reason = error.getCode();
-            if ("conflict".equals(reason)) {
-                message = Res.getString("message.disconnected.conflict.error");
-            }
+        if (ex instanceof XMPPException.StreamErrorException && ((XMPPException.StreamErrorException) ex).getStreamError().getCondition() == StreamError.Condition.conflict )
+        {
+            message = Res.getString("message.disconnected.conflict.error");
         }
 
         getTranscriptWindow().insertNotificationMessage(message, ChatManager.ERROR_COLOR);

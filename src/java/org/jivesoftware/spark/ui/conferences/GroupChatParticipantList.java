@@ -1335,7 +1335,7 @@ public class GroupChatParticipantList extends JPanel {
 
     }
 
-    protected StanzaListener getListener() {
+    protected PresenceListener getListener() {
         return listener;
     }
 
