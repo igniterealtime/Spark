@@ -78,9 +78,7 @@ public class UserSearchResults extends JPanel {
      */
     public void showUsersFound(ReportedData data) {
         List<String> columnList = new ArrayList<String>();
-        Iterator<Column> columns = data.getColumns();
-        while (columns.hasNext()) {
-            Column column = columns.next();
+        for ( final Column column : data.getColumns() ) {
             String label = column.getLabel();
             columnList.add(label);
         }
@@ -114,16 +112,12 @@ public class UserSearchResults extends JPanel {
             resultsTable.clearTable();
         }
         // Populate with answers
-        Iterator<Row> rows = data.getRows();
         List<String> modelList;
-        while (rows.hasNext()) {
+        for ( final Row row : data.getRows() ) {
             modelList = new ArrayList<String>();
-            Row row = rows.next();
             for (int i = 0; i < resultsTable.getColumnCount(); i++) {
                 String tableValue = (String)resultsTable.getTableHeader().getColumnModel().getColumn(i).getHeaderValue();
-                Iterator<Column> columnIterator = data.getColumns();
-                while (columnIterator.hasNext()) {
-                    Column column = columnIterator.next();
+                for ( final Column column : data.getColumns() ) {
                     if (column.getLabel().equals(tableValue)) {
                         tableValue = column.getVariable();
                         break;
@@ -240,16 +234,8 @@ public class UserSearchResults extends JPanel {
      * @return the first value found in the ReportedData.Row
      */
     public String getFirstValue(ReportedData.Row row, String key) {
-        try {
-            final Iterator<String> rows = row.getValues(key);
-            while (rows.hasNext()) {
-                return rows.next();
-            }
-        }
-        catch (Exception e) {
-            Log.error("Error retrieving the first value.", e);
-        }
-        return null;
+        List<String> values = row.getValues( key );
+        return values == null && values.isEmpty() ? null : values.get( 0 );
     }
 
     private void openChatRoom(int row) {
