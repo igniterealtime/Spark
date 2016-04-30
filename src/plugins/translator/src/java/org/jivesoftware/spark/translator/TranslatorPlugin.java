@@ -32,7 +32,9 @@ import org.jivesoftware.spark.plugin.Plugin;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ChatRoomListenerAdapter;
 import org.jivesoftware.spark.ui.MessageEventListener;
+import org.jivesoftware.spark.ui.TranscriptWindow;
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
+import org.jxmpp.util.XmppStringUtils;
 
 /**
  * A plugin that uses google's translation service to translate instant messages between two users.
@@ -56,7 +58,7 @@ public class TranslatorPlugin implements Plugin {
                     final ChatRoomImpl roomImpl = (ChatRoomImpl)room;
 
                     // Create a new ChatRoomButton.
-                    final JComboBox translatorBox = new JComboBox(TranslatorUtil.TranslationType.getTypes());
+                    final JComboBox<TranslatorUtil.TranslationType> translatorBox = new JComboBox<>(TranslatorUtil.TranslationType.getTypes());
 
                     translatorBox.addActionListener(new ActionListener() {
                         public void actionPerformed(ActionEvent e) {
@@ -77,11 +79,14 @@ public class TranslatorPlugin implements Plugin {
                             if (type != null && type != TranslatorUtil.TranslationType.None) {
                             	message.setBody(null);
                             	currentBody = TranslatorUtil.translate(currentBody, type);
+                                TranscriptWindow transcriptWindow = chatManager.getChatRoom( XmppStringUtils.parseBareJid( message.getTo() ) ).getTranscriptWindow();
                                 if(oldBody.equals(currentBody.substring(0,currentBody.length()-1)))
                                 {
-                                	chatManager.getChatRoom(org.jivesoftware.smack.util.XmppStringUtils.parseBareJid(message.getTo())).getTranscriptWindow().insertNotificationMessage("Could not translate: "+currentBody, ChatManager.ERROR_COLOR);
-                                } else  {
-                                    chatManager.getChatRoom(org.jivesoftware.smack.util.XmppStringUtils.parseBareJid(message.getTo())).getTranscriptWindow().insertNotificationMessage("-> "+currentBody, Color.gray);
+                                	transcriptWindow.insertNotificationMessage("Could not translate: "+currentBody, ChatManager.ERROR_COLOR);
+                                }
+                                else
+                                {
+                                    transcriptWindow.insertNotificationMessage("-> "+currentBody, Color.gray);
                                 	message.setBody(currentBody); 
                                 }
                             }
