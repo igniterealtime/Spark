@@ -40,6 +40,7 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.alerts.SparkToaster;
 import org.jivesoftware.sparkimpl.plugin.idle.UserIdlePlugin;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+import org.jxmpp.util.XmppStringUtils;
 
 import javax.swing.*;
 import java.awt.event.*;
@@ -144,7 +145,7 @@ public class PhonePlugin implements Plugin {
                     final ChatRoomImpl chatRoom = (ChatRoomImpl)room;
                     boolean phoneEnabled = false;
                     try {
-                        phoneEnabled = phoneClient.isPhoneEnabled(XmppStringUtils.parseBareJid(chatRoom.getParticipantJID()));
+                        phoneEnabled = phoneClient.isPhoneEnabled( XmppStringUtils.parseBareJid(chatRoom.getParticipantJID()));
                     }
                     catch (Exception e) {
                         Log.error(e);
