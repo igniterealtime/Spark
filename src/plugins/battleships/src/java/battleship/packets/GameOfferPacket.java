@@ -38,7 +38,7 @@ public class GameOfferPacket extends IQ {
     private boolean imTheStartingPlayer;
 
     public GameOfferPacket() {
-	super();
+	super(ELEMENT_NAME, NAMESPACE);
 	imTheStartingPlayer = new Random().nextBoolean();
 	gameID = Math.abs(new Random().nextInt());
     }
@@ -83,17 +83,18 @@ public class GameOfferPacket extends IQ {
 	this.imTheStartingPlayer = startingPlayer;
     }
 
-    public String getChildElementXML() {
-	StringBuffer buf = new StringBuffer();
-	buf.append("<" + ELEMENT_NAME + " xmlns=\"" + NAMESPACE + "\">");
-	if (getType() == IQ.Type.get) {
-	    buf.append("<gameID>").append(gameID).append("</gameID>");
-	    buf.append("<startingPlayer>").append(imTheStartingPlayer)
-		    .append("</startingPlayer>");
-	    buf.append(getExtensionsXML());
-	}
-	buf.append("</" + ELEMENT_NAME + ">");
-	return buf.toString();
+    @Override
+    protected IQChildElementXmlStringBuilder getIQChildElementBuilder( IQChildElementXmlStringBuilder buf )
+    {
+        buf.rightAngleBracket();
+        buf.append("<" + ELEMENT_NAME + " xmlns=\"" + NAMESPACE + "\">");
+        if (getType() == IQ.Type.get) {
+            buf.append("<gameID>").append(Integer.toString( gameID )).append("</gameID>");
+            buf.append("<startingPlayer>").append(Boolean.toString( imTheStartingPlayer )).append("</startingPlayer>");
+            buf.append(getExtensionsXML());
+        }
+        buf.append("</" + ELEMENT_NAME + ">");
+        return buf;
     }
 
 }

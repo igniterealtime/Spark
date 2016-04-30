@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JFrame;
 
 
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.StanzaListener;
 import org.jivesoftware.smack.filter.PacketIDFilter;
 import org.jivesoftware.smack.packet.IQ;
@@ -22,6 +23,7 @@ import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 import battleship.BsRes;
 import battleship.gui.GUI;
 import battleship.packets.GameOfferPacket;
+import org.jivesoftware.spark.util.log.Log;
 import org.jxmpp.util.XmppStringUtils;
 
 public class ChatRoomOpeningListener extends ChatRoomListenerAdapter {
@@ -50,9 +52,16 @@ public class ChatRoomOpeningListener extends ChatRoomListenerAdapter {
 		room.getTranscriptWindow().insertCustomText(
 			BsRes.getString("request"), false, false,
 			Color.BLUE);
-		SparkManager.getConnection().sendStanza(offer);
+			try
+			{
+				SparkManager.getConnection().sendStanza(offer);
+			}
+			catch ( SmackException.NotConnectedException e1 )
+			{
+				Log.warning( "Unable to send offer to " + opponentJID, e1 );
+			}
 
-		SparkManager.getConnection().addAsyncStanzaListener(
+			SparkManager.getConnection().addAsyncStanzaListener(
 			new StanzaListener() {
 			    @Override
 			    public void processPacket(Stanza stanza) {

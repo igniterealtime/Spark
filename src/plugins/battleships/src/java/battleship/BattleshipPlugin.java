@@ -10,6 +10,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import org.jivesoftware.resource.Res;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.StanzaListener;
 import org.jivesoftware.smack.filter.StanzaTypeFilter;
 import org.jivesoftware.smack.packet.IQ;
@@ -24,6 +25,7 @@ import battleship.listener.ChatRoomOpeningListener;
 import battleship.packets.GameOfferPacket;
 import battleship.packets.MoveAnswerPacket;
 import battleship.packets.MovePacket;
+import org.jivesoftware.spark.util.log.Log;
 import org.jxmpp.util.XmppStringUtils;
 
 
@@ -87,7 +89,14 @@ public class BattleshipPlugin implements Plugin{
 	accept.addActionListener(new ActionListener() {
 	    @Override
 	    public void actionPerformed(ActionEvent e) {
-		SparkManager.getConnection().sendStanza(invitation);
+		try
+		{
+			SparkManager.getConnection().sendStanza(invitation);
+		}
+		catch ( SmackException.NotConnectedException e1 )
+		{
+			Log.warning( "Unable to send invitation accept to " + invitation.getTo(), e1 );
+		}
 		invitation.setStartingPlayer(!invitation.isStartingPlayer());
 		ChatRoomOpeningListener.createWindow(invitation, invitation.getFrom());
 		panel.remove(3);
@@ -101,7 +110,14 @@ public class BattleshipPlugin implements Plugin{
 	    @Override
 	    public void actionPerformed(ActionEvent e) {
 		invitation.setType(IQ.Type.error);
-		SparkManager.getConnection().sendStanza(invitation);
+		try
+		{
+			SparkManager.getConnection().sendStanza(invitation);
+		}
+		catch ( SmackException.NotConnectedException e1 )
+		{
+			Log.warning( "Unable to send invitation decline to " + invitation.getTo(), e1 );
+		}
 		panel.remove(3);
 		panel.remove(2);
 		panel.repaint();
