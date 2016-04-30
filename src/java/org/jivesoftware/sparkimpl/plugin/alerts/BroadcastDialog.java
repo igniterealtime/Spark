@@ -48,6 +48,7 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
 import org.jivesoftware.resource.Res;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.spark.SparkManager;
@@ -59,6 +60,7 @@ import org.jivesoftware.spark.ui.ContactGroup;
 import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.ui.ContactList;
 import org.jivesoftware.spark.util.ModelUtil;
+import org.jivesoftware.spark.util.log.Log;
 
 /**
  * Allows for better selective broadcasting.
@@ -234,11 +236,18 @@ public class BroadcastDialog extends JPanel {
 
 	    @Override
 	    public void actionPerformed(ActionEvent e) {
-		if (sendBroadcasts(dlg)) {
-		    dlg.setVisible(false);
-		}
+            try
+            {
+                if (sendBroadcasts(dlg)) {
+                    dlg.setVisible(false);
+                }
+            }
+            catch ( SmackException.NotConnectedException e1 )
+            {
+                Log.warning( "Unable to broadcast.", e1 );
+            }
 
-	    }
+        }
 	});
 
         closeButton.addActionListener(new ActionListener() {
@@ -324,7 +333,8 @@ public class BroadcastDialog extends JPanel {
      * Sends a broadcast message to all users selected.
      * @param dlg 
      */
-    private boolean sendBroadcasts(JDialog dlg) {
+    private boolean sendBroadcasts(JDialog dlg) throws SmackException.NotConnectedException
+    {
         final Set<String> jids = new HashSet<String>();
         
         UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
