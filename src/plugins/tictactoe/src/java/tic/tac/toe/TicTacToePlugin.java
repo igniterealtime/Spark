@@ -32,6 +32,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import org.jivesoftware.resource.Res;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.StanzaListener;
 import org.jivesoftware.smack.filter.PacketIDFilter;
 import org.jivesoftware.smack.filter.StanzaTypeFilter;
@@ -46,6 +47,7 @@ import org.jivesoftware.spark.ui.ChatRoomButton;
 import org.jivesoftware.spark.ui.ChatRoomListener;
 import org.jivesoftware.spark.ui.ChatRoomListenerAdapter;
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
+import org.jivesoftware.spark.util.log.Log;
 import org.jxmpp.util.XmppStringUtils;
 import tic.tac.toe.packet.GameOfferPacket;
 import tic.tac.toe.packet.InvalidMove;
@@ -137,9 +139,16 @@ public class TicTacToePlugin implements Plugin {
 			_currentInvitations.add(XmppStringUtils.parseBareJid(opponentJID));
 			room.getTranscriptWindow().insertCustomText
 			    (TTTRes.getString("ttt.request.sent"), false, false, Color.BLUE);
-			SparkManager.getConnection().sendStanza(offer);
-			
-			SparkManager.getConnection().addAsyncStanzaListener(
+				try
+				{
+					SparkManager.getConnection().sendStanza(offer);
+				}
+				catch ( SmackException.NotConnectedException e1 )
+				{
+					Log.warning( "Unable to send offer to " + opponentJID, e1 );
+				}
+
+				SparkManager.getConnection().addAsyncStanzaListener(
 				new StanzaListener() {
 				    @Override
 				    public void processPacket(Stanza stanza) {
@@ -237,7 +246,14 @@ public class TicTacToePlugin implements Plugin {
 	    
 	    @Override
 	    public void actionPerformed(ActionEvent e) {
-		SparkManager.getConnection().sendStanza(invitation);
+		try
+		{
+			SparkManager.getConnection().sendStanza(invitation);
+		}
+		catch ( SmackException.NotConnectedException e1 )
+		{
+			Log.warning( "Unable to send invitation accept to " + invitation.getTo(), e1 );
+		}
 		invitation.setStartingPlayer(!invitation.isStartingPlayer());
 		createTTTWindow(invitation, invitation.getFrom());
 		panel.remove(3);
@@ -252,7 +268,14 @@ public class TicTacToePlugin implements Plugin {
 	    @Override
 	    public void actionPerformed(ActionEvent e) {
 		invitation.setType(IQ.Type.error);
-		SparkManager.getConnection().sendStanza(invitation);
+		try
+		{
+			SparkManager.getConnection().sendStanza(invitation);
+		}
+		catch ( SmackException.NotConnectedException e1 )
+		{
+			Log.warning( "Unable to send invitation decline to " + invitation.getTo(), e1 );
+		}
 		panel.remove(3);
 		panel.remove(2);
 		panel.repaint();

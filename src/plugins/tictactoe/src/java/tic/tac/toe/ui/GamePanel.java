@@ -23,6 +23,8 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.StanzaListener;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.filter.PacketExtensionFilter;
@@ -32,6 +34,7 @@ import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ShakeWindow;
+import org.jivesoftware.spark.util.log.Log;
 import org.jxmpp.util.XmppStringUtils;
 import tic.tac.toe.GameBoard;
 import tic.tac.toe.Mark;
@@ -91,7 +94,8 @@ public class GamePanel extends JPanel {
 	_connection.addAsyncStanzaListener(new StanzaListener() {
 
 	    @Override
-	    public void processPacket(Stanza stanza) {
+	    public void processPacket(Stanza stanza) throws SmackException.NotConnectedException
+		{
 
 		MovePacket move = (MovePacket) stanza.getExtension(
 			MovePacket.ELEMENT_NAME, MovePacket.NAMESPACE);
@@ -173,7 +177,14 @@ public class GamePanel extends JPanel {
 	    Message message = new Message(_opponent);
 	    message.addExtension(move);
 
-	    _connection.sendStanza(message);
+		try
+		{
+			_connection.sendStanza(message);
+		}
+		catch ( SmackException.NotConnectedException e )
+		{
+			Log.warning( "Unable to send move to " + message.getTo(), e );
+		}
 
 	}
 
