@@ -103,7 +103,7 @@ public class BookmarkPlugin implements Plugin {
             /**
              * Rescaning our bookmarks and remaking menu items
              *
-             * @param Bookmark menu Jmenu
+             * @param bookmarkMenu menu Jmenu
              */
             public void rescan(JMenu bookmarkMenu) {
                 bookmarkMenu.removeAll(); // removing old menus
@@ -126,7 +126,7 @@ public class BookmarkPlugin implements Plugin {
                     SparkManager.getMainWindow().getMenu().invalidate();
                     SparkManager.getMainWindow().getMenu().validate();
                     SparkManager.getMainWindow().getMenu().repaint();
-                } catch (XMPPException ex) {
+                } catch (XMPPException | SmackException ex) {
                     Log.error(ex);
                 }
             }
@@ -134,23 +134,23 @@ public class BookmarkPlugin implements Plugin {
             /**
              * Updating statusbar and generating menu items
              *
-             * @param Bookmark menu Jmenu
+             * @param bookmarkMenu menu Jmenu
              */
             public void createMenu(JMenu bookmarkMenu) {
                 try {
                     setBookmarks(bookmarkMenu);
-                } catch (XMPPException ex) {
+                } catch (XMPPException | SmackException ex) {
                     Log.error(ex);
                 }
-
             }
 
             /**
              * loading menu items and setting bookmarks listeners
              *
-             * @param Bookmark menu Jmenu
+             * @param bookmarkMenu menu Jmenu
              */
-            public void setBookmarks(JMenu bookmarkMenu) throws XMPPException {
+            public void setBookmarks(JMenu bookmarkMenu) throws XMPPException, SmackException
+            {
                 BookmarkManager manager = BookmarkManager.getBookmarkManager(SparkManager.getConnection());
 
                 if (manager != null) {
