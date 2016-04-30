@@ -58,7 +58,9 @@ import org.jivesoftware.launcher.Startup;
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.smack.AbstractXMPPConnection;
 import org.jivesoftware.smack.SmackConfiguration;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.spark.SparkManager;
@@ -284,7 +286,7 @@ public final class MainWindow extends ChatFrame implements ActionListener {
 
         if (con.isConnected()) {
             // Send disconnect.
-            con.disconnect();
+            ((AbstractXMPPConnection)con).disconnect();
         }
 
         // Notify all MainWindowListeners
@@ -343,10 +345,18 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         if (con.isConnected()) {
             if (reason != null) {
                 Presence byePresence = new Presence(Presence.Type.unavailable, reason, -1, null);
-                con.disconnect(byePresence);
+                try
+                {
+                    ((AbstractXMPPConnection)con).disconnect(byePresence);
+                }
+                catch ( SmackException.NotConnectedException e )
+                {
+                    Log.error( "Unable to sign out with presence.", e);
+                    ((AbstractXMPPConnection)con).disconnect();
+                }
             }
             else {
-                con.disconnect();
+                ((AbstractXMPPConnection)con).disconnect();
             }
         }
         if (!restartApplicationWithScript()) {
