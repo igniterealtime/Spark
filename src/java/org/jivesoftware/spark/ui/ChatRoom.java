@@ -562,7 +562,9 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         newMessage.setTo(message.getTo());
         newMessage.setFrom(message.getFrom());
         newMessage.setBody(message.getBody());
-        newMessage.addExtension( new JivePropertiesExtension( Collections.singletonMap( "date", new Date() )) );
+        final Map<String, Object> properties = new HashMap<>();
+        properties.put( "date", new Date() );
+        newMessage.addExtension( new JivePropertiesExtension( properties ) );
 
         transcript.add(newMessage);
 
@@ -589,7 +591,9 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         newMessage.setTo(to);
         newMessage.setFrom(from);
         newMessage.setBody(body);
-        newMessage.addExtension( new JivePropertiesExtension( Collections.singletonMap( "date", new Date() )) );
+        final Map<String, Object> properties = new HashMap<>();
+        properties.put( "date", new Date() );
+        newMessage.addExtension( new JivePropertiesExtension( properties ) );
         transcript.add(newMessage);
     }
 

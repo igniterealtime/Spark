@@ -1778,7 +1778,9 @@ public class ContactList extends JPanel implements ActionListener,
             for (ContactItem item : items) {
                 final Message message = new Message();
                 message.setTo(item.getJID());
-                message.addExtension( new JivePropertiesExtension( Collections.singletonMap( "broadcast", true )) );
+                final Map<String, Object> properties = new HashMap<>();
+                properties.put( "broadcast", true );
+                message.addExtension( new JivePropertiesExtension( properties ) );
                 message.setBody(messageText);
                 if (!broadcastMessages.containsKey(item.getJID())) {
                     buf.append(item.getDisplayName()).append("\n");
@@ -1866,7 +1868,14 @@ public class ContactList extends JPanel implements ActionListener,
                 if (presence.getType() == Presence.Type.subscribe) {
                     SwingUtilities.invokeLater(new Runnable() {
                         public void run() {
-                            subscriptionRequest(presence.getFrom());
+                            try
+                            {
+                                subscriptionRequest(presence.getFrom());
+                            }
+                            catch ( SmackException.NotConnectedException e )
+                            {
+                                Log.warning( "Unable to subscribe to " + presence.getFrom(), e );
+                            }
                         }
                     });
                 }
@@ -2156,7 +2165,8 @@ public class ContactList extends JPanel implements ActionListener,
         return gList;
     }
 
-    private void subscriptionRequest(final String jid) {
+    private void subscriptionRequest(final String jid) throws SmackException.NotConnectedException
+    {
         final SubscriptionDialog subscriptionDialog = new SubscriptionDialog();
         subscriptionDialog.invoke(jid);
     }

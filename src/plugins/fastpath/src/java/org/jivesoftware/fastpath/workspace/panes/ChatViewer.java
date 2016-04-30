@@ -43,7 +43,6 @@ import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.packet.Presence;
-import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.delay.packet.DelayInformation;
 import org.jivesoftware.smackx.jiveproperties.packet.JivePropertiesExtension;
 import org.jivesoftware.smackx.workgroup.agent.AgentSession;
@@ -82,14 +81,16 @@ public class ChatViewer extends JPanel {
             if (stanza instanceof Message) {
                 Message message = (Message)stanza;
                 String from = XmppStringUtils.parseResource(message.getFrom());
-                DelayInformation delayInformation = (DelayInformation)message.getExtension("delay", "urn:xmpp:delay");
+                DelayInformation delayInformation = message.getExtension("delay", "urn:xmpp:delay");
                 Date stamp = null;
                 if (delayInformation != null) {
                     stamp = delayInformation.getStamp();
                 }
                 message.removeExtension(delayInformation);
                 chatWindow.insertMessage(from, message, ChatManager.TO_COLOR);
-                message.addExtension( new JivePropertiesExtension( Collections.singletonMap( "date", stamp) ) );
+                final Map<String, Object> properties = new HashMap<>();
+                properties.put( "date", stamp );
+                message.addExtension( new JivePropertiesExtension( properties ) );
                 message.setFrom(from);
                 chatTranscript.add(message);
             }

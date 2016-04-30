@@ -29,7 +29,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.swing.Icon;
@@ -47,7 +47,6 @@ import org.jivesoftware.fastpath.resources.FastpathRes;
 import org.jivesoftware.fastpath.workspace.panes.BackgroundPane;
 import org.jivesoftware.fastpath.workspace.util.RequestUtils;
 import org.jivesoftware.smack.SmackException;
-import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smackx.jiveproperties.packet.JivePropertiesExtension;
 import org.jivesoftware.smackx.xevent.MessageEventManager;
@@ -233,7 +232,9 @@ public class CoBrowser extends JPanel implements ActionListener, BrowserListener
         // If the disable box is not selected, update customer with
         // page push.
         final Message mes = new Message();
-        mes.addExtension( new JivePropertiesExtension( Collections.singletonMap( "PUSH_URL", link ) ) );
+        final Map<String, Object> properties = new HashMap<>();
+        properties.put( "PUSH_URL", link );
+        mes.addExtension( new JivePropertiesExtension( properties ) );
         mes.setBody(FpRes.getString("message.start.cobrowsing", link));
 
         chatRoom.getTranscriptWindow().insertNotificationMessage(FpRes.getString("message.send.cobrowsing.message", link), ChatManager.NOTIFICATION_COLOR);
@@ -263,7 +264,9 @@ public class CoBrowser extends JPanel implements ActionListener, BrowserListener
     private void navigateUser(String href) {
         if (followMeButton.isSelected() && hasLoaded) {
             final Message mes = new Message();
-            mes.addExtension( new JivePropertiesExtension( Collections.singletonMap( "PUSH_URL", href ) ) );
+            final Map<String, Object> properties = new HashMap<>();
+            properties.put( "PUSH_URL", href );
+            mes.addExtension( new JivePropertiesExtension( properties ) );
             mes.setBody("");
             send(mes);
             updateLinkLabel(href);
