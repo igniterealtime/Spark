@@ -19,29 +19,13 @@
  */
 package org.jivesoftware.sparkplugin;
 
-import java.awt.event.ActionEvent;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.SwingUtilities;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Style;
-import javax.swing.text.StyleConstants;
-import javax.swing.text.StyledDocument;
-
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.*;
 import org.jivesoftware.smack.filter.StanzaTypeFilter;
-import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.packet.Presence;
-import org.jivesoftware.smack.util.StringUtils;
+import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
+import org.jivesoftware.smackx.disco.packet.DiscoverInfo;
 import org.jivesoftware.smackx.jingleold.JingleManager;
 import org.jivesoftware.smackx.jingleold.JingleSession;
 import org.jivesoftware.smackx.jingleold.JingleSessionRequest;
@@ -53,7 +37,6 @@ import org.jivesoftware.smackx.jingleold.nat.BridgedTransportManager;
 import org.jivesoftware.smackx.jingleold.nat.ICETransportManager;
 import org.jivesoftware.smackx.jingleold.nat.JingleTransportManager;
 import org.jivesoftware.smackx.jingleold.nat.STUN;
-import org.jivesoftware.smackx.disco.packet.DiscoverInfo;
 import org.jivesoftware.spark.PresenceManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.phone.Phone;
@@ -68,6 +51,14 @@ import org.jivesoftware.sparkimpl.plugin.gateways.transports.TransportUtils;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jxmpp.util.XmppStringUtils;
+
+import javax.swing.*;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Style;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
+import java.awt.event.ActionEvent;
+import java.util.*;
 
 
 /**
@@ -109,54 +100,71 @@ public class JinglePlugin implements Plugin, Phone, ConnectionListener {
 	SparkManager.getChatManager()
 		.addSparkTabHandler(new JingleTabHandler());
 
-	final SwingWorker jingleLoadingThread = new SwingWorker() {
-	    public Object construct() {
-		if (fallbackStunEnabled) {
-		    stunServer = localPref.getStunFallbackHost();
-		    readyToConnect = true;
-		}
-
-		if (STUN.serviceAvailable(SparkManager.getConnection())) {
-		    STUN stun = STUN
-			    .getSTUNServer(SparkManager.getConnection());
-		    if (stun != null) {
-			List<STUN.StunServerAddress> servers = stun
-				.getServers();
-			if (servers.size() > 0) {
-			    stunServer = servers.get(0).getServer();
-			    stunPort = Integer.parseInt(servers.get(0)
-				    .getPort());
-			    readyToConnect = true;
-			}
-		    }
-		}
-                
-                
-               if (readyToConnect)
+        final SwingWorker jingleLoadingThread = new SwingWorker()
+        {
+            public Object construct()
+            {
+                if ( fallbackStunEnabled )
                 {
-                JingleTransportManager transportManager = new ICETransportManager(SparkManager.getConnection(), stunServer, stunPort);
-                List<JingleMediaManager> mediaManagers = new ArrayList<JingleMediaManager>();
-
-                // Get the Locator from the Settings
-                String locator =  SettingsManager.getLocalPreferences().getAudioDevice();
-
-                mediaManagers.add(new JmfMediaManager(locator, transportManager));
-                mediaManagers.add(new SpeexMediaManager(transportManager));
-                //mediaManagers.add(new ScreenShareMediaManager(transportManager));
-
-                jingleManager = new JingleManager(SparkManager.getConnection(), mediaManagers);
-
-                if (transportManager instanceof BridgedTransportManager) {
-                    jingleManager.addCreationListener((BridgedTransportManager)transportManager);
+                    stunServer = localPref.getStunFallbackHost();
+                    readyToConnect = true;
                 }
-                else if (transportManager instanceof ICETransportManager) {
-                    jingleManager.addCreationListener((ICETransportManager)transportManager);
+
+                try
+                {
+
+                    if ( STUN.serviceAvailable( SparkManager.getConnection() ) )
+                    {
+                        STUN stun = STUN
+                                .getSTUNServer( SparkManager.getConnection() );
+                        if ( stun != null )
+                        {
+                            List<STUN.StunServerAddress> servers = stun
+                                    .getServers();
+                            if ( servers.size() > 0 )
+                            {
+                                stunServer = servers.get( 0 ).getServer();
+                                stunPort = Integer.parseInt( servers.get( 0 )
+                                        .getPort() );
+                                readyToConnect = true;
+                            }
+                        }
+                    }
+
+
+                    if ( readyToConnect )
+                    {
+                        JingleTransportManager transportManager = new ICETransportManager( SparkManager.getConnection(), stunServer, stunPort );
+                        List<JingleMediaManager> mediaManagers = new ArrayList<JingleMediaManager>();
+
+                        // Get the Locator from the Settings
+                        String locator = SettingsManager.getLocalPreferences().getAudioDevice();
+
+                        mediaManagers.add( new JmfMediaManager( locator, transportManager ) );
+                        mediaManagers.add( new SpeexMediaManager( transportManager ) );
+                        //mediaManagers.add(new ScreenShareMediaManager(transportManager));
+
+                        jingleManager = new JingleManager( SparkManager.getConnection(), mediaManagers );
+
+                        if ( transportManager instanceof BridgedTransportManager )
+                        {
+                            jingleManager.addCreationListener( (BridgedTransportManager) transportManager );
+                        }
+                        else if ( transportManager instanceof ICETransportManager )
+                        {
+                            jingleManager.addCreationListener( (ICETransportManager) transportManager );
+                        }
+                    }
                 }
+                catch ( XMPPException | SmackException e )
+                {
+                    Log.error( "Unable to initialize", e );
                 }
                 return true;
             }
 
-            public void finished() {
+            public void finished()
+            {
                 addListeners();
             }
         };
@@ -166,7 +174,7 @@ public class JinglePlugin implements Plugin, Phone, ConnectionListener {
         // Add Presence listener for better service discovery.
         addPresenceListener();
 
-        SparkManager.getConnection().addConnectionListener(this);
+        SparkManager.getConnection().addConnectionListener( this );
     }
 
 
@@ -241,7 +249,14 @@ public class JinglePlugin implements Plugin, Phone, ConnectionListener {
 			private static final long serialVersionUID = 1467355627829748086L;
 
 			public void actionPerformed(ActionEvent e) {
-                placeCall(jid);
+                try
+                {
+                    placeCall(jid);
+                }
+                catch ( SmackException e1 )
+                {
+                    Log.warning( "Unable to place call to " + jid, e1 );
+                }
             }
         };
 
@@ -252,7 +267,8 @@ public class JinglePlugin implements Plugin, Phone, ConnectionListener {
     }
 
 
-    public void placeCall(String jid) {
+    public void placeCall(String jid) throws SmackException
+    {
 
         // cancel call request if no Media Locator available
         if (PhoneManager.isUseStaticLocator() && PhoneManager.isUsingMediaLocator()) {

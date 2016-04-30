@@ -123,7 +123,8 @@ public class OutgoingCall extends JPanel implements JingleSessionListener, ChatR
      * @param chatRoom the room the session is associated with.
      * @param jid      the users jid.
      */
-    public void handleOutgoingCall(final JingleSession session, ChatRoom chatRoom, final String jid) {
+    public void handleOutgoingCall(final JingleSession session, ChatRoom chatRoom, final String jid) throws SmackException
+    {
         this.chatRoom = chatRoom;
 
         JingleStateManager.getInstance().addJingleSession(chatRoom, JingleStateManager.JingleRoomState.ringing);

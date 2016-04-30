@@ -36,6 +36,7 @@ import org.jivesoftware.spark.util.SwingTimerTask;
 import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.alerts.SparkToaster;
+import org.jxmpp.util.XmppStringUtils;
 
 import javax.swing.*;
 import java.applet.Applet;
@@ -276,7 +277,7 @@ public class IncomingCall implements JingleSessionListener, ChatRoomClosingListe
         session.startIncoming();
 
         if (chatRoom == null) {
-            chatRoom = SparkManager.getChatManager().getChatRoom(XmppStringUtils.parseBareJid(request.getFrom()));
+            chatRoom = SparkManager.getChatManager().getChatRoom( XmppStringUtils.parseBareJid(request.getFrom()) );
             SparkManager.getChatManager().getChatContainer().activateChatRoom(chatRoom);
             SparkManager.getChatManager().getChatContainer().getChatFrame().toFront();
             notifyRoom();
