@@ -19,6 +19,7 @@
  */
 package org.jivesoftware.sparkimpl.plugin.jabber;
 
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.StanzaListener;
 import org.jivesoftware.smack.filter.StanzaFilter;
 import org.jivesoftware.smack.filter.StanzaTypeFilter;
@@ -33,6 +34,7 @@ import org.jivesoftware.spark.plugin.Plugin;
 import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.ui.ContactList;
 import org.jivesoftware.spark.util.SwingWorker;
+import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.JiveInfo;
 import org.jivesoftware.resource.Res;
 
@@ -57,29 +59,36 @@ public class JabberVersion implements Plugin {
             public void processPacket(Stanza stanza) {
                 IQ iq = (IQ)stanza;
 
-                // Handle Version Request
-                if (iq instanceof Version && iq.getType() == IQ.Type.get) {
-                    // Send Version
-                    Version version = new Version( JiveInfo.getName(), JiveInfo.getVersion(), JiveInfo.getOS() );
+                try
+                {
+                    // Handle Version Request
+                    if (iq instanceof Version && iq.getType() == IQ.Type.get) {
+                        // Send Version
+                        Version version = new Version( JiveInfo.getName(), JiveInfo.getVersion(), JiveInfo.getOS() );
 
-                    // Send back as a reply
-                    version.setStanzaId(iq.getPacketID());
-                    version.setType(IQ.Type.result);
-                    version.setTo(iq.getFrom());
-                    version.setFrom(iq.getTo());
-                    SparkManager.getConnection().sendStanza(version);
+                        // Send back as a reply
+                        version.setStanzaId(iq.getStanzaId());
+                        version.setType(IQ.Type.result);
+                        version.setTo(iq.getFrom());
+                        version.setFrom(iq.getTo());
+                        SparkManager.getConnection().sendStanza(version);
+                    }
+                    // Send time
+                    else if (iq instanceof Time && iq.getType() == IQ.Type.get) {
+                        Time time = new Time();
+                        time.setStanzaId(iq.getStanzaId());
+                        time.setFrom(iq.getTo());
+                        time.setTo(iq.getFrom());
+                        time.setTime(new Date());
+                        time.setType(IQ.Type.result);
+
+                        // Send Time
+                        SparkManager.getConnection().sendStanza(time);
+                    }
                 }
-                // Send time
-                else if (iq instanceof Time && iq.getType() == IQ.Type.get) {
-                    Time time = new Time();
-                    time.setStanzaId(iq.getPacketID());
-                    time.setFrom(iq.getTo());
-                    time.setTo(iq.getFrom());
-                    time.setTime(new Date());
-                    time.setType(IQ.Type.result);
-
-                    // Send Time
-                    SparkManager.getConnection().sendStanza(time);
+                catch ( SmackException.NotConnectedException e )
+                {
+                    Log.warning( "Unable to answer request: " + stanza, e);
                 }
             }
         }, packetFilter);

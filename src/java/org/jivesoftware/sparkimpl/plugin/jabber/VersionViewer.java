@@ -21,16 +21,19 @@ package org.jivesoftware.sparkimpl.plugin.jabber;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.smack.PacketCollector;
-import org.jivesoftware.smack.filter.PacketIDFilter;
+import org.jivesoftware.smack.SmackException;
+import org.jivesoftware.smack.StanzaListener;
+import org.jivesoftware.smack.XMPPConnection;
+import org.jivesoftware.smack.filter.IQReplyFilter;
 import org.jivesoftware.smack.packet.IQ;
+import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smackx.time.packet.Time;
 import org.jivesoftware.smackx.iqversion.packet.Version;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.UserManager;
 import org.jivesoftware.spark.component.MessageDialog;
 import org.jivesoftware.spark.util.ResourceUtils;
-import org.jivesoftware.spark.util.SwingWorker;
+import org.jivesoftware.spark.util.log.Log;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -39,6 +42,7 @@ import javax.swing.JTextField;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.text.SimpleDateFormat;
 
 public class VersionViewer {
 
@@ -81,65 +85,44 @@ public class VersionViewer {
         panel.add(osLabel, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         panel.add(osField, new GridBagConstraints(1, 3, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 
-        // Load Version
-        final Version versionRequest = new Version();
-        versionRequest.setType(IQ.Type.get);
-        versionRequest.setTo(jid);
-        final PacketCollector collector = SparkManager.getConnection().createPacketCollector(new PacketIDFilter(versionRequest.getPacketID()));
+        final XMPPConnection connection = SparkManager.getConnection();
+        try
+        {
+            // Load Version
+            final Version versionRequest = new Version();
+            versionRequest.setType(IQ.Type.get);
+            versionRequest.setTo(jid);
 
-        SwingWorker versionThread = new SwingWorker() {
-            IQ result;
-
-            public Object construct() {
-                SparkManager.getConnection().sendStanza(versionRequest);
-                result = (IQ)collector.nextResult(5000);
-                return result;
-            }
-
-            public void finished() {
-                // Wait up to 5 seconds for a result.
-                if (result != null && result.getType() == IQ.Type.result) {
-                    Version versionResult = (Version)result;
+            connection.sendStanzaWithResponseCallback( versionRequest, new IQReplyFilter( versionRequest, connection ), new StanzaListener()
+            {
+                @Override
+                public void processPacket( Stanza stanza ) throws SmackException.NotConnectedException
+                {
+                    final Version versionResult = (Version) stanza;
                     softwareField.setText(versionResult.getName());
                     versionField.setText(versionResult.getVersion());
                     osField.setText(versionResult.getOs());
                 }
-            }
-        };
+            } );
 
-        versionThread.start();
+            // Time
+            final Time time = new Time();
+            time.setType(IQ.Type.get);
+            time.setTo(jid);
 
-
-        final Time time = new Time();
-        time.setType(IQ.Type.get);
-        time.setTo(jid);
-        final PacketCollector collector2 = SparkManager.getConnection().createPacketCollector(new PacketIDFilter(time.getPacketID()));
-
-        SwingWorker timeThread = new SwingWorker() {
-            IQ timeResult = null;
-
-            public Object construct() {
-                SparkManager.getConnection().sendStanza(time);
-                timeResult = (IQ)collector2.nextResult(5000);
-                return timeResult;
-            }
-
-            public void finished() {
-                // Wait up to 5 seconds for a result.
-
-                if (timeResult != null && timeResult.getType() == IQ.Type.result) {
-                    Time t = (Time)timeResult;
-                    if (t.getDisplay() != null) {
-                        timeField.setText(t.getDisplay());
-                    }
-                    else {
-                        timeField.setText(t.getTime().toString());
-                    }
+            connection.sendStanzaWithResponseCallback( time, new IQReplyFilter( time, connection ), new StanzaListener()
+            {
+                @Override
+                public void processPacket( Stanza stanza ) throws SmackException.NotConnectedException
+                {;
+                    timeField.setText( new SimpleDateFormat( ).format( ((Time)stanza).getTime()));
                 }
-            }
-        };
-
-        timeThread.start();
+            } );
+        }
+        catch ( SmackException.NotConnectedException e )
+        {
+            Log.warning( "Unable to query for version.", e );
+        }
 
         osField.setEditable(false);
         versionField.setEditable(false);
