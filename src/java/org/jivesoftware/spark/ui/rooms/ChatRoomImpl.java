@@ -154,7 +154,7 @@ public class ChatRoomImpl extends ChatRoom {
         loadHistory();
 
         // Register StanzaListeners
-        StanzaFilter fromFilter = new FromMatchesFilter(participantJID);
+        StanzaFilter fromFilter = new FromMatchesFilter(participantJID, false);
         StanzaFilter orFilter = new OrFilter(new StanzaTypeFilter(Presence.class), new StanzaTypeFilter(Message.class));
         StanzaFilter andFilter = new AndFilter(orFilter, fromFilter);
 
@@ -620,7 +620,14 @@ public class ChatRoomImpl extends ChatRoom {
             event.setStanzaId(packetID);
             msg.addExtension(event);
             // Send the packet
-            SparkManager.getConnection().sendStanza(msg);
+            try
+            {
+                SparkManager.getConnection().sendStanza(msg);
+            }
+            catch ( SmackException.NotConnectedException e )
+            {
+                Log.warning( "Unable to send message to " + msg.getTo(), e );
+            }
         }
     }
 

@@ -126,7 +126,14 @@ public class ConferenceServices implements InvitationListener {
                                     String jid = groupChatRoom.getMultiUserChat().getRoom();
 
                                     p.setTo(jid);
-                                    SparkManager.getConnection().sendStanza(p);
+                                    try
+                                    {
+                                        SparkManager.getConnection().sendStanza(p);
+                                    }
+                                    catch ( SmackException.NotConnectedException e )
+                                    {
+                                        Log.warning( "Unable to send stanza to " + p.getTo(), e );
+                                    }
                                 }
                             }
                         }

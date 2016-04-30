@@ -58,7 +58,7 @@ import org.jivesoftware.smack.filter.StanzaTypeFilter;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.packet.Presence;
-import org.jivesoftware.smack.util.StringUtils;
+import org.jivesoftware.smackx.muc.packet.Destroy;
 import org.jivesoftware.smackx.xdata.Form;
 import org.jivesoftware.smackx.xevent.MessageEventManager;
 import org.jivesoftware.smackx.xevent.MessageEventNotificationListener;
@@ -68,7 +68,6 @@ import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.muc.SubjectUpdatedListener;
 import org.jivesoftware.smackx.delay.packet.DelayInformation;
 import org.jivesoftware.smackx.muc.packet.MUCUser;
-import org.jivesoftware.smackx.muc.packet.MUCUser.Destroy;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.RolloverButton;
@@ -1125,11 +1124,17 @@ public class GroupChatRoom extends ChatRoom {
 	message = message != null ? message : Res
 		.getString("message.please.join.in.conference");
 
-	// Invite User
-	getMultiUserChat().invite(jid, message);
-
-	// Add Invite
-	roomInfo.addInvitee(jid, message);
+		// Invite User
+		try
+		{
+			getMultiUserChat().invite(jid, message);
+			// Add Invite
+			roomInfo.addInvitee(jid, message);
+		}
+		catch ( SmackException.NotConnectedException e )
+		{
+			Log.warning( "Unable to invite " + jid + " to room " + roomInfo.getName(), e );
+		}
     }
 
     /**
@@ -1203,9 +1208,7 @@ public class GroupChatRoom extends ChatRoom {
 	if (typedChars >= 10) {
 	    try {
 		if (typingTimer != null) {
-		    final Iterator<String> iter = chat.getOccupants();
-		    while (iter.hasNext()) {
-			String from = iter.next();
+			for ( String from : chat.getOccupants() ) {
 			String tFrom = XmppStringUtils.parseResource(from);
 			String nickname = chat.getNickname();
 			if (tFrom != null && !tFrom.equals(nickname)) {

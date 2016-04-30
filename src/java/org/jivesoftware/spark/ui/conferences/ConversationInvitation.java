@@ -21,6 +21,7 @@ package org.jivesoftware.spark.ui.conferences;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.util.StringUtils;
@@ -31,6 +32,7 @@ import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.WrappedLabel;
 import org.jivesoftware.spark.ui.ContainerComponent;
 import org.jivesoftware.spark.util.ResourceUtils;
+import org.jivesoftware.spark.util.log.Log;
 import org.jxmpp.util.XmppStringUtils;
 
 import java.awt.Color;
@@ -162,7 +164,14 @@ public class ConversationInvitation extends JPanel implements ContainerComponent
             ConferenceUtils.enterRoomOnSameThread(name, roomName, password);
         }
         else {
-            MultiUserChatManager.getInstanceFor( SparkManager.getConnection() ).decline( roomName, inviter, "No thank you");
+            try
+            {
+                MultiUserChatManager.getInstanceFor( SparkManager.getConnection() ).decline( roomName, inviter, "No thank you");
+            }
+            catch ( SmackException.NotConnectedException e )
+            {
+                Log.warning( "unable to decline invatation from " + inviter + " to join room " + roomName, e );
+            }
         }
 
         // Close Container

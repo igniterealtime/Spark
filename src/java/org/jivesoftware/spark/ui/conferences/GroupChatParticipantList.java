@@ -381,7 +381,7 @@ public class GroupChatParticipantList extends JPanel {
 	String role = "";
 
 	for (ExtensionElement pack : p.getExtensions()) {
-	    String[] args = pack.toXML().split(" ");
+	    String[] args = pack.toXML().toString().split(" ");
 
 	    for (String ss : args) {
 	    	int first = ss.indexOf("\"");
@@ -714,10 +714,16 @@ public class GroupChatParticipantList extends JPanel {
 
 		    public void actionPerformed(ActionEvent actionEvent) {
 			String message = invitees.get(selectedUser);
-			String jid = userManager
-				.getJIDFromDisplayName(selectedUser);
-			chat.invite(jid, message);
-		    }
+			String jid = userManager.getJIDFromDisplayName(selectedUser);
+			try
+			{
+				chat.invite(jid, message);
+			}
+			catch ( SmackException.NotConnectedException e )
+			{
+				Log.warning( "Unable to send stanza to " + jid, e );
+			}
+			}
 		};
 
 		inviteAgainAction.putValue(Action.NAME,

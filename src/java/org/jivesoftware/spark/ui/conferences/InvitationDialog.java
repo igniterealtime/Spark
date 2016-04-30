@@ -413,7 +413,14 @@ final class InvitationDialog extends JPanel {
                     final int no = values != null ? values.length : 0;
                     for (int i = 0; i < no; i++) {
                         String jid = (String)values[i];
-                        chatRoom.getMultiUserChat().invite(jid, message != null ? message : Res.getString("message.please.join.in.conference"));
+                        try
+                        {
+                            chatRoom.getMultiUserChat().invite(jid, message != null ? message : Res.getString("message.please.join.in.conference"));
+                        }
+                        catch ( SmackException.NotConnectedException e1 )
+                        {
+                            Log.warning( "Unable to send stanza to " + jid, e1 );
+                        }
                         String nickname = SparkManager.getUserManager().getUserNicknameFromJID(jid);
                         chatRoom.getTranscriptWindow().insertNotificationMessage("Invited " + nickname, ChatManager.NOTIFICATION_COLOR);
                     }

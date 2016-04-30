@@ -257,12 +257,20 @@ public class ConferenceUtils {
         startChat.start();
     }
 
-    private static void invite(MultiUserChat groupChat, GroupChatRoom room, Collection<String> jids, String message) {
+    private static void invite(MultiUserChat groupChat, GroupChatRoom room, Collection<String> jids, String message)
+    {
         if (jids != null && message != null) {
             for (String jid : jids) {
-                groupChat.invite(jid, message);
-                room.getTranscriptWindow().insertNotificationMessage(
-                        Res.getString("message.waiting.for.user.to.join", jid), ChatManager.NOTIFICATION_COLOR);
+                try
+                {
+                    groupChat.invite(jid, message);
+                    room.getTranscriptWindow().insertNotificationMessage(
+                            Res.getString("message.waiting.for.user.to.join", jid), ChatManager.NOTIFICATION_COLOR);
+                }
+                catch ( SmackException.NotConnectedException e )
+                {
+                    Log.warning( "Unable to invite " + jid + " to " + room, e );
+                }
             }
         }
     }
@@ -518,7 +526,7 @@ public class ConferenceUtils {
             // Nothing to do
         }
 
-        final MultiUserChat groupChat = new MultiUserChat(SparkManager.getConnection(), roomJID);
+        final MultiUserChat groupChat = MultiUserChatManager.getInstanceFor( SparkManager.getConnection() ).getMultiUserChat( roomJID );
 
 
         final GroupChatRoom room = UIComponentRegistry.createGroupChatRoom(groupChat);

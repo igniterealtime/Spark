@@ -21,6 +21,7 @@ package org.jivesoftware.spark.ui.conferences;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.muc.MultiUserChatManager;
@@ -161,7 +162,8 @@ public class GroupChatInvitationUI extends JPanel implements ActionListener {
     /**
      * Action taking when a user clicks on the reject button.
      */
-    private void rejectInvitation() {
+    private void rejectInvitation()
+    {
         removeUI();
 
         try {
@@ -177,7 +179,14 @@ public class GroupChatInvitationUI extends JPanel implements ActionListener {
             // Ignore
         }
 
-        MultiUserChatManager.getInstanceFor( SparkManager.getConnection() ).decline( room, inviter, "No thank you");
+        try
+        {
+            MultiUserChatManager.getInstanceFor( SparkManager.getConnection() ).decline( room, inviter, "No thank you");
+        }
+        catch ( SmackException.NotConnectedException e )
+        {
+            Log.warning( "Unable to decline inviation from " + inviter + " to join room " + room, e );
+        }
     }
 
     /**
