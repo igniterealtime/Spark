@@ -205,8 +205,15 @@ public class ReceiveFileTransfer extends JPanel {
             		acceptRequest(request);
             	}catch (Exception ex){
                     // this means there is a problem with the download directory
-            	    request.reject();
-                    
+                    try
+                    {
+                        request.reject();
+                    }
+                    catch ( SmackException.NotConnectedException e1 )
+                    {
+                        Log.warning( "Unable to reject the request.", ex);
+                    }
+
                     setBackground(new Color(239, 245, 250));
                     acceptButton.setVisible(false);
                     declineButton.setVisible(false);
@@ -248,8 +255,14 @@ public class ReceiveFileTransfer extends JPanel {
     }
 
     private void rejectRequest(FileTransferRequest request) {
-        request.reject();
-
+        try
+        {
+            request.reject();
+        }
+        catch ( SmackException.NotConnectedException ex )
+        {
+            Log.warning( "Unable to reject the request.", ex);
+        }
         setBackground(new Color(239, 245, 250));
         acceptButton.setVisible(false);
         declineButton.setVisible(false);
