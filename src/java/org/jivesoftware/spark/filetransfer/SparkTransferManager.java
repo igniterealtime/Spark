@@ -66,10 +66,7 @@ import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.smack.ConnectionListener;
-import org.jivesoftware.smack.SmackException;
-import org.jivesoftware.smack.StanzaListener;
-import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.*;
 import org.jivesoftware.smack.filter.AndFilter;
 import org.jivesoftware.smack.filter.FromMatchesFilter;
 import org.jivesoftware.smack.filter.StanzaTypeFilter;
@@ -154,6 +151,52 @@ public class SparkTransferManager {
         }
 
         SparkManager.getConnection().addConnectionListener(new ConnectionListener() {
+            @Override
+            public void connected( XMPPConnection xmppConnection )
+            {
+
+            }
+
+            @Override
+            public void authenticated( XMPPConnection xmppConnection, boolean b )
+            {
+                transferManager = FileTransferManager.getInstanceFor( SparkManager.getConnection() );
+
+                final ContactList contactList = SparkManager.getWorkspace().getContactList();
+
+                // Create the listener
+                transferManager.addFileTransferListener(new org.jivesoftware.smackx.filetransfer.FileTransferListener() {
+                    public void fileTransferRequest(final FileTransferRequest request) {
+                        SwingUtilities.invokeLater(new Runnable() {
+                            public void run() {
+                                handleTransferRequest(request, contactList);
+                            }
+                        });
+                    }
+                });
+
+                // Add Send File to Chat Room
+                addSendFileButton();
+
+                contactList.addFileDropListener(new FileDropListener() {
+                    public void filesDropped(Collection<File> files, Component component) {
+                        if (component instanceof ContactItem) {
+                            ContactItem item = (ContactItem)component;
+
+                            ChatRoom chatRoom = null;
+                            for (File file : files) {
+                                chatRoom = sendFile(file, item.getJID());
+                            }
+
+                            if (chatRoom != null) {
+                                SparkManager.getChatManager().getChatContainer().activateChatRoom(chatRoom);
+                            }
+                        }
+                    }
+                });
+
+            }
+
             public void connectionClosed() {
             }
 
@@ -165,7 +208,7 @@ public class SparkTransferManager {
 
             public void reconnectionSuccessful() {
                 // Re-create transfer manager.
-                transferManager = new FileTransferManager(SparkManager.getConnection());
+                transferManager = FileTransferManager.getInstanceFor( SparkManager.getConnection() );
             }
 
             public void reconnectionFailed(Exception e) {
@@ -193,42 +236,6 @@ public class SparkTransferManager {
             public void actionPerformed(ActionEvent e) {        
    		launchFile(Downloads.getDownloadDirectory());
             }			
-        });
-
-        // Create the file transfer manager
-        transferManager = new FileTransferManager(SparkManager.getConnection());
-        final ContactList contactList = SparkManager.getWorkspace().getContactList();
-
-        // Create the listener
-        transferManager.addFileTransferListener(new org.jivesoftware.smackx.filetransfer.FileTransferListener() {
-            public void fileTransferRequest(final FileTransferRequest request) {
-                SwingUtilities.invokeLater(new Runnable() {
-                    public void run() {
-                        handleTransferRequest(request, contactList);
-                    }
-                });
-            }
-        });
-
-        // Add Send File to Chat Room
-        addSendFileButton();
-
-
-        contactList.addFileDropListener(new FileDropListener() {
-            public void filesDropped(Collection<File> files, Component component) {
-                if (component instanceof ContactItem) {
-                    ContactItem item = (ContactItem)component;
-
-                    ChatRoom chatRoom = null;
-                    for (File file : files) {
-                        chatRoom = sendFile(file, item.getJID());
-                    }
-
-                    if (chatRoom != null) {
-                        SparkManager.getChatManager().getChatContainer().activateChatRoom(chatRoom);
-                    }
-                }
-            }
         });
 
         if (defaultDirectory == null) {

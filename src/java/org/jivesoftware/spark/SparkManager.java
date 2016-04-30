@@ -239,7 +239,7 @@ public final class SparkManager {
      */
     public static MessageEventManager getMessageEventManager() {
         if (messageEventManager == null) {
-            messageEventManager = new MessageEventManager(getConnection());
+            messageEventManager = MessageEventManager.getInstanceFor( getConnection() );
         }
         return messageEventManager;
     }

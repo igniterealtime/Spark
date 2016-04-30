@@ -246,7 +246,7 @@ public class ContactInfoWindow extends JPanel {
 					} else client = "/";
 				}
 	
-	            LastActivity activity = LastActivityManager.getLastActivity(SparkManager.getConnection(), contactItem.getJID()+client);
+	            LastActivity activity = LastActivityManager.getInstanceFor( SparkManager.getConnection() ).getLastActivity( contactItem.getJID()+client);
 	
 	            long idleTime = (activity.getIdleTime() * 1000);
 	

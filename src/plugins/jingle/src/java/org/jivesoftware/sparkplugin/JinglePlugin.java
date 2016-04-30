@@ -36,10 +36,7 @@ import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 
 import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.smack.ConnectionListener;
-import org.jivesoftware.smack.SmackException;
-import org.jivesoftware.smack.StanzaListener;
-import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.*;
 import org.jivesoftware.smack.filter.StanzaTypeFilter;
 import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.packet.Presence;
@@ -348,21 +345,34 @@ public class JinglePlugin implements Plugin, Phone, ConnectionListener {
         }, new StanzaTypeFilter(Presence.class));
     }
 
+    @Override
+    public void connected( XMPPConnection xmppConnection ) {
+        SparkManager.addFeature(JINGLE_NAMESPACE);
+    }
 
+    @Override
+    public void authenticated( XMPPConnection xmppConnection, boolean b ) {
+    }
+
+    @Override
     public void connectionClosed() {
     }
 
+    @Override
     public void connectionClosedOnError(Exception e) {
     }
 
+    @Override
     public void reconnectingIn(int seconds) {
     }
 
+    @Override
     public void reconnectionSuccessful() {
         // Add Jingle to discovered items list.
         SparkManager.addFeature(JINGLE_NAMESPACE);
     }
 
+    @Override
     public void reconnectionFailed(Exception e) {
 
     }

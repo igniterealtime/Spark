@@ -29,6 +29,7 @@ import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.XMPPError;
 import org.jivesoftware.smack.util.StringUtils;
+import org.jivesoftware.smackx.iqregister.AccountManager;
 import org.jivesoftware.spark.component.TitlePanel;
 import org.jivesoftware.spark.util.DummySSLSocketFactory;
 import org.jivesoftware.spark.util.ModelUtil;
@@ -242,7 +243,7 @@ public class AccountCreationWizard extends JPanel {
                     return e;
                 }
                 try {
-                    final AccountManager accountManager = new AccountManager(connection);
+                    final AccountManager accountManager = AccountManager.getInstance(connection);
                     accountManager.createAccount(getUsername(), getPassword());
                 }
                 catch (XMPPException | SmackException e) {

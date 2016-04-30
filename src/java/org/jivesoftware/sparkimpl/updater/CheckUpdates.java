@@ -568,7 +568,7 @@ public class CheckUpdates {
         connection.sendStanza(request);
 
 
-        SparkVersion response = (SparkVersion)collector.nextResult(SmackConfiguration.getPacketReplyTimeout());
+        SparkVersion response = (SparkVersion)collector.nextResult(SmackConfiguration.getDefaultPacketReplyTimeout());
 
         // Cancel the collector.
         collector.cancel();

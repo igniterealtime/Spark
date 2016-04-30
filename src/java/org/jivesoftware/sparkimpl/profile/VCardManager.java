@@ -469,7 +469,7 @@ public class VCardManager {
 	 * 
 	 * @param jid
 	 *            the users jid.
-	 * @param useCache
+	 * @param useCachedVCards
 	 *            true to check in cache and hdd, otherwise false will do a new
 	 *            network vcard operation.
 	 * @return the VCard.
@@ -802,7 +802,7 @@ public class VCardManager {
             BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(vcardFile), "UTF-8"));
             VCardProvider provider = new VCardProvider();
             parser.setInput(in);
-            VCard vcard = (VCard)provider.parseIQ(parser);
+            VCard vcard = (VCard)provider.parse(parser);
 
             // Check to see if the file is older 10 minutes. If so, reload.
             String timestamp = vcard.getField("timestamp");

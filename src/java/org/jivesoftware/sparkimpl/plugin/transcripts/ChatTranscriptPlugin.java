@@ -44,6 +44,7 @@ import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.ConnectionListener;
+import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smackx.jiveproperties.packet.JivePropertiesExtension;
 import org.jivesoftware.spark.SparkManager;
@@ -145,19 +146,32 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
 
 
         SparkManager.getConnection().addConnectionListener(new ConnectionListener() {
+            @Override
+            public void connected( XMPPConnection xmppConnection ) {
+            }
+
+            @Override
+            public void authenticated( XMPPConnection xmppConnection, boolean b ) {
+            }
+
+            @Override
             public void connectionClosed() {
             }
 
+            @Override
             public void connectionClosedOnError(Exception e) {
                 persistConversations();
             }
 
+            @Override
             public void reconnectingIn(int i) {
             }
 
+            @Override
             public void reconnectionSuccessful() {
             }
 
+            @Override
             public void reconnectionFailed(Exception exception) {
             }
         });

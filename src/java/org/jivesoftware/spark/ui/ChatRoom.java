@@ -38,10 +38,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.AbstractAction;
@@ -72,6 +69,7 @@ import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.roster.RosterEntry;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Stanza;
+import org.jivesoftware.smackx.jiveproperties.packet.JivePropertiesExtension;
 import org.jivesoftware.spark.ChatAreaSendField;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.BackgroundPanel;
@@ -564,10 +562,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         newMessage.setTo(message.getTo());
         newMessage.setFrom(message.getFrom());
         newMessage.setBody(message.getBody());
-
-
-
-        newMessage.setProperty("date", new Date());
+        newMessage.addExtension( new JivePropertiesExtension( Collections.singletonMap( "date", new Date() )) );
 
         transcript.add(newMessage);
 
@@ -594,7 +589,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         newMessage.setTo(to);
         newMessage.setFrom(from);
         newMessage.setBody(body);
-        newMessage.setProperty("date", date);
+        newMessage.addExtension( new JivePropertiesExtension( Collections.singletonMap( "date", new Date() )) );
         transcript.add(newMessage);
     }
 

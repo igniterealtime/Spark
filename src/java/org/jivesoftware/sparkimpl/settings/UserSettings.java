@@ -48,7 +48,7 @@ public class UserSettings {
     }
 
     private UserSettings() {
-        privateDataManager = new PrivateDataManager(SparkManager.getConnection());
+        privateDataManager = PrivateDataManager.getInstanceFor(SparkManager.getConnection());
         PrivateDataManager.addPrivateDataProvider("personal_settings", "jive:user:settings", new SettingsDataProvider());
 
         try {
