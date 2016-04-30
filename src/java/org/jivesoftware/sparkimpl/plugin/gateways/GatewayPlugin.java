@@ -21,6 +21,7 @@ package org.jivesoftware.sparkimpl.plugin.gateways;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.StanzaListener;
 import org.jivesoftware.smack.filter.OrFilter;
 import org.jivesoftware.smack.filter.StanzaFilter;
@@ -286,7 +287,14 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
                         // Create new presence
                         Presence p = new Presence(presence.getType(), presence.getStatus(), presence.getPriority(), presence.getMode());
                         p.setTo(transport.getServiceName());
-                        SparkManager.getConnection().sendStanza(p);
+                        try
+                        {
+                            SparkManager.getConnection().sendStanza(p);
+                        }
+                        catch ( SmackException.NotConnectedException e )
+                        {
+                            Log.warning( "Unable to forward presence change to transport.", e );
+                        }
                     }
                 }
             }

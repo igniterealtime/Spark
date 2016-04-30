@@ -121,8 +121,15 @@ public class GatewayTabItem extends CollapsiblePane implements GatewayItem {
 				oldPresence.getPriority(),
 				oldPresence.getMode());
 			presence.setTo(transport.getServiceName());
-			SparkManager.getConnection().sendStanza(presence);
-		    }
+				try
+				{
+					SparkManager.getConnection().sendStanza(presence);
+				}
+				catch ( SmackException.NotConnectedException e )
+				{
+					Log.error( "Unable to send presence.", e );
+				}
+			}
 		}
 	    }
 	};
@@ -142,17 +149,31 @@ public class GatewayTabItem extends CollapsiblePane implements GatewayItem {
 		    final Presence offlinePresence = new Presence(
 			    Presence.Type.unavailable);
 		    offlinePresence.setTo(_transport.getServiceName());
-		    SparkManager.getConnection().sendStanza(offlinePresence);
-		    _statusIcon.setIcon(SparkRes
-			    .getImageIcon(SparkRes.YELLOW_BALL));
+			try
+			{
+				SparkManager.getConnection().sendStanza(offlinePresence);
+				_statusIcon.setIcon(SparkRes
+						.getImageIcon(SparkRes.YELLOW_BALL));
+			}
+			catch ( SmackException.NotConnectedException e1 )
+			{
+				Log.error( "Unable to send presence.", e1 );
+			}
 
 		} else {
 		    final Presence onlinePresence = new Presence(
 			    Presence.Type.available);
 		    onlinePresence.setTo(_transport.getServiceName());
-		    SparkManager.getConnection().sendStanza(onlinePresence);
-		    _statusIcon.setIcon(SparkRes
-			    .getImageIcon(SparkRes.YELLOW_BALL));
+			try
+			{
+				SparkManager.getConnection().sendStanza(onlinePresence);
+				_statusIcon.setIcon(SparkRes
+						.getImageIcon(SparkRes.YELLOW_BALL));
+			}
+			catch ( SmackException.NotConnectedException e1 )
+			{
+				Log.error( "Unable to send presence.", e1 );
+			}
 		}
 
 	    }
@@ -205,7 +226,7 @@ public class GatewayTabItem extends CollapsiblePane implements GatewayItem {
 				    SparkManager.getConnection(),
 				    _transport.getServiceName());
 			    setNotRegistered();
-			} catch (XMPPException e1) {
+			} catch (SmackException e1) {
 			    Log.error(e1);
 			}
 		    }

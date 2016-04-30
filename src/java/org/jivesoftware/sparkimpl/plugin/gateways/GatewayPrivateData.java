@@ -22,7 +22,9 @@ package org.jivesoftware.sparkimpl.plugin.gateways;
 import org.jivesoftware.smackx.iqprivate.packet.PrivateData;
 import org.jivesoftware.smackx.iqprivate.provider.PrivateDataProvider;
 import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -83,7 +85,8 @@ public class GatewayPrivateData implements PrivateData {
         public ConferencePrivateDataProvider() {
         }
 
-        public PrivateData parsePrivateData(XmlPullParser parser) throws Exception {
+        public PrivateData parsePrivateData(XmlPullParser parser) throws IOException, XmlPullParserException
+        {
             GatewayPrivateData data = new GatewayPrivateData();
 
             boolean done = false;
