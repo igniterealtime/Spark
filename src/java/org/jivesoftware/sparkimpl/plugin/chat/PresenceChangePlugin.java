@@ -140,8 +140,8 @@ public class PresenceChangePlugin implements Plugin {
 			    ArrayList<String> removelater = new ArrayList<String>();
 			    
 			    for (final String jid : sparkContacts) {
-				if (jid.equals(StringUtils
-					.parseBareAddress(from))) {
+				if (jid.equals(XmppStringUtils
+					.parseBareJid(from))) {
 				    removelater.add(jid);
 				    // sparkContacts.remove(jid);
 
