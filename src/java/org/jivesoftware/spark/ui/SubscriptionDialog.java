@@ -165,7 +165,8 @@ public class SubscriptionDialog {
         }
     }
 
-    public void invoke(final String jid) {
+    public void invoke(final String jid) throws SmackException.NotConnectedException
+    {
         this.jid = jid;
 
         final Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
@@ -204,7 +205,14 @@ public class SubscriptionDialog {
                 if (!rosterBox.isSelected()) {
                     Presence response = new Presence(Presence.Type.subscribed);
                     response.setTo(jid);
-                    SparkManager.getConnection().sendStanza(response);
+                    try
+                    {
+                        SparkManager.getConnection().sendStanza(response);
+                    }
+                    catch ( SmackException.NotConnectedException e1 )
+                    {
+                        Log.warning( "Unable to send stanza accepting subscription from " + jid, e1 );
+                    }
                     dialog.dispose();
                     return;
                 }
@@ -213,7 +221,14 @@ public class SubscriptionDialog {
                 if (addEntry) {
                     Presence response = new Presence(Presence.Type.subscribed);
                     response.setTo(jid);
-                    SparkManager.getConnection().sendStanza(response);
+                    try
+                    {
+                        SparkManager.getConnection().sendStanza(response);
+                    }
+                    catch ( SmackException.NotConnectedException e1 )
+                    {
+                        Log.warning( "Unable to send stanza accepting subscription from " + jid, e1 );
+                    }
                 }
                 else {
                     dialog.dispose();
@@ -287,7 +302,14 @@ public class SubscriptionDialog {
     {
         Presence response = new Presence(Presence.Type.unsubscribe);
         response.setTo(jid);
-        SparkManager.getConnection().sendStanza(response);
+        try
+        {
+            SparkManager.getConnection().sendStanza(response);
+        }
+        catch ( SmackException.NotConnectedException e )
+        {
+            Log.warning( "Unable to send stanza unsubscribing from " + jid, e );
+        }
 
         dialog.dispose();
     }

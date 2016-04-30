@@ -19,10 +19,7 @@
  */
 package org.jivesoftware.spark;
 
-import org.jivesoftware.smack.ConnectionListener;
-import org.jivesoftware.smack.SmackException;
-import org.jivesoftware.smack.XMPPConnection;
-import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.*;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.provider.ProviderManager;
 import org.jivesoftware.smackx.iqprivate.PrivateDataManager;
@@ -46,7 +43,7 @@ import java.util.List;
  * @author Derek DeMoro
  */
 public final class SessionManager implements ConnectionListener {
-    private XMPPConnection connection;
+    private AbstractXMPPConnection connection;
     private PrivateDataManager personalDataManager;
 
     private String serverAddress;
@@ -70,7 +67,7 @@ public final class SessionManager implements ConnectionListener {
      * @param username   the agents username.
      * @param password   the agents password.
      */
-    public void initializeSession(XMPPConnection connection, String username, String password) {
+    public void initializeSession( AbstractXMPPConnection connection, String username, String password) {
         this.connection = connection;
         this.username = username;
         this.password = password;
@@ -274,7 +271,7 @@ public final class SessionManager implements ConnectionListener {
         return discoverItems;
     }
 
-    public void setConnection(XMPPConnection con) {
+    public void setConnection(AbstractXMPPConnection con) {
         this.connection = con;
     }
 

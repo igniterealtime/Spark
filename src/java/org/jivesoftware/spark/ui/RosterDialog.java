@@ -135,7 +135,7 @@ public class RosterDialog implements ActionListener {
 	    public void mouseClicked(MouseEvent e) {
 		try {
 		    searchForContact(jidField.getText(), e);
-		} catch (XMPPException e1) {
+		} catch (XMPPException | SmackException e1) {
 		    Log.error("search contact", e1);
 		}
 	    }
@@ -405,7 +405,7 @@ public class RosterDialog implements ActionListener {
             try {
                 jid = Gateway.getJID(transport.getServiceName(), jid);
             }
-            catch (XMPPException e) {
+            catch (SmackException e) {
                 Log.error(e);
             }
 
@@ -453,7 +453,8 @@ public class RosterDialog implements ActionListener {
      * @throws XMPPException
      */
     public void searchForContact(String byname, MouseEvent event)
-	    throws XMPPException {
+            throws XMPPException, SmackException.NotConnectedException, SmackException.NoResponseException
+    {
 
     	UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
     	
@@ -493,28 +494,23 @@ public class RosterDialog implements ActionListener {
 		data = usersearchManager.getSearchResults(answer, search);
 
 		ArrayList<String> columnnames = new ArrayList<String>();
-		Iterator<Column> columns = data.getColumns();
-		while (columns.hasNext()) {
-		    ReportedData.Column column = (ReportedData.Column) columns
-			    .next();
+		for ( ReportedData.Column column : data.getColumns() ) {
 		    String label = column.getLabel();
 		    columnnames.add(label);
 		}
 
-		Iterator<Row> rows = data.getRows();
-		while (rows.hasNext()) {
-		    ReportedData.Row row = (ReportedData.Row) rows.next();
-		    if (row.getValues(columnnames.get(0)).hasNext()) {
+		for (ReportedData.Row row : data.getRows() ) {
+		    if (!row.getValues(columnnames.get(0)).isEmpty()) {
 			String s = (String) row.getValues(columnnames.get(0))
-				.next();
+				.get(0);
 			final JMenuItem item = new JMenuItem(s);
 			popup.add(item);
 			item.addActionListener(new ActionListener() {
 			    @Override
 			    public void actionPerformed(ActionEvent e) {
 				jidField.setText(item.getText());
-				nicknameField.setText(StringUtils
-					.parseName(item.getText()));
+				nicknameField.setText(XmppStringUtils
+					.parseLocalpart(item.getText()));
 			    }
 			});
 		    }

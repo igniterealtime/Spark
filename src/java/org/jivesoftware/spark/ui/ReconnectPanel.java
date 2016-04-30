@@ -33,6 +33,7 @@ import javax.swing.text.html.HTMLEditorKit;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.smack.AbstractXMPPConnection;
 import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.spark.SparkManager;
@@ -99,7 +100,7 @@ public class ReconnectPanel extends JPanel implements ConnectionListener {
     private void reconnect() {
         try {
             if (closedOnError) {
-            	SparkManager.getConnection().connect();
+                ((AbstractXMPPConnection)SparkManager.getConnection()).connect();
             }
             else {
                 SparkManager.getMainWindow().logout(false);
