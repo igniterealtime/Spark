@@ -31,6 +31,9 @@ import org.jivesoftware.smack.provider.ProviderManager;
 import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.disco.packet.DiscoverItems;
 import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
+
+import java.io.IOException;
 
 public class SipAccountPacket extends IQ {
 
@@ -41,9 +44,11 @@ public class SipAccountPacket extends IQ {
     private Type type = Type.registration;
 
     public SipAccountPacket() {
+        super( ELEMENT_NAME, NAMESPACE );
     }
 
     public SipAccountPacket(Type type) {
+        super( ELEMENT_NAME, NAMESPACE );
         this.type = type;
     }
 
@@ -66,29 +71,30 @@ public class SipAccountPacket extends IQ {
      */
     public static final String NAMESPACE = "http://www.jivesoftware.com/protocol/sipark";
 
-    public String getChildElementXML() {
-        StringBuilder buf = new StringBuilder();
+    @Override
+    protected IQChildElementXmlStringBuilder getIQChildElementBuilder( IQChildElementXmlStringBuilder buf )
+    {
+        buf.rightAngleBracket();
         buf.append("<").append(ELEMENT_NAME).append(" xmlns='").append(
                 NAMESPACE).append("'>");
         buf.append("<").append(this.type.name()).append(">");
         buf.append(content);
         buf.append("</").append(this.type.name()).append(">");
         buf.append("</").append(ELEMENT_NAME).append(">");
-        return buf.toString();
-    }
+        return buf;    }
 
     /**
      * An IQProvider for SparkVersion packets.
      *
      * @author Derek DeMoro
      */
-    public static class Provider implements IQProvider {
+    public static class Provider extends IQProvider<SipAccountPacket> {
 
         public Provider() {
             super();
         }
 
-        public IQ parseIQ(XmlPullParser parser) throws Exception {
+        public SipAccountPacket parse(XmlPullParser parser, int i) throws XmlPullParserException, IOException {
             SipAccountPacket packet = new SipAccountPacket();
             SipAccount sip = new SipAccount();
 
@@ -158,7 +164,8 @@ public class SipAccountPacket extends IQ {
      * @return the information for about the latest Spark Client.
      * @throws XMPPException thrown if an exception occurs while retrieving Sip Settings.
      */
-    public static SipAccountPacket getSipSettings(XMPPConnection connection) throws XMPPException {
+    public static SipAccountPacket getSipSettings(XMPPConnection connection) throws XMPPException, SmackException
+    {
         SipAccountPacket sp = new SipAccountPacket();
 
         sp.setTo("sipark." + connection.getServiceName());
@@ -167,16 +174,14 @@ public class SipAccountPacket extends IQ {
         PacketCollector collector = connection.createPacketCollector(new PacketIDFilter(sp.getPacketID()));
         connection.sendStanza(sp);
 
-        SipAccountPacket response = (SipAccountPacket)collector.nextResult(SmackConfiguration.getPacketReplyTimeout());
+        SipAccountPacket response = (SipAccountPacket)collector.nextResult(SmackConfiguration.getDefaultPacketReplyTimeout());
 
         // Cancel the collector.
         collector.cancel();
         if (response == null) {
-            throw new XMPPException("No response from server.");
+            throw SmackException.NoResponseException.newWith( connection, collector );
         }
-        if (response.getError() != null) {
-            throw new XMPPException(response.getError());
-        }
+        XMPPException.XMPPErrorException.ifHasErrorThenThrow( response );
         return response;
     }
 
@@ -187,7 +192,7 @@ public class SipAccountPacket extends IQ {
      * @param register   the current registration status.
      * @throws XMPPException thrown if an exception occurs.
      */
-    public static void setSipRegisterStatus(XMPPConnection connection, SipRegisterStatus register) throws XMPPException {
+    public static void setSipRegisterStatus(XMPPConnection connection, SipRegisterStatus register) throws XMPPException, SmackException {
         if(!connection.isConnected()){
             return;
         }
@@ -202,16 +207,14 @@ public class SipAccountPacket extends IQ {
         connection.sendStanza(sp);
 
         SipAccountPacket response = (SipAccountPacket)collector
-                .nextResult(SmackConfiguration.getPacketReplyTimeout());
+                .nextResult(SmackConfiguration.getDefaultPacketReplyTimeout());
 
         // Cancel the collector.
         collector.cancel();
         if (response == null) {
-            throw new XMPPException("No response from server.");
+            throw SmackException.NoResponseException.newWith( connection, collector );
         }
-        if (response.getError() != null) {
-            throw new XMPPException(response.getError());
-        }
+        XMPPException.XMPPErrorException.ifHasErrorThenThrow( response );
     }
 
     /**
@@ -261,20 +264,5 @@ public class SipAccountPacket extends IQ {
         if (this.type == Type.status) {
             this.content = content;
         }
-    }
-
-    public static void main(String args[]) throws Exception {
-        ProviderManager.addIQProvider(SipAccountPacket.ELEMENT_NAME, SipAccountPacket.NAMESPACE, new SipAccountPacket.Provider());
-        ProviderManager.addIQProvider(LogPacket.ELEMENT_NAME, LogPacket.NAMESPACE, new LogPacket.Provider());
-
-        XMPPConnection.DEBUG_ENABLED = true;
-
-        final XMPPConnection con = new XMPPConnection("anteros");
-        con.connect();
-        con.login("demo", "demo");
-
-        SipAccountPacket.getSipSettings(con);
-
-        System.out.println("HELLO");
     }
 }

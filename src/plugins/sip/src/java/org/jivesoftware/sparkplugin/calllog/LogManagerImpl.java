@@ -146,7 +146,7 @@ public class LogManagerImpl implements SoftPhoneListener, LogManager {
                 LogPacket.logEvent(SparkManager.getConnection(), e);
 
             }
-            catch (XMPPException | SmackException e) {
+            catch (XMPPException e) {
                 Log.error("RemoteLogging", e);
             }
         }
