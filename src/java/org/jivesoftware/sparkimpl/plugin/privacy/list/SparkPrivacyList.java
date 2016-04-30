@@ -53,7 +53,7 @@ public class SparkPrivacyList {
      */
 
 
-    public SparkPrivacyList(PrivacyList list)
+    public SparkPrivacyList(PrivacyList list) throws SmackException.NotConnectedException
     {
         _listName = list.toString();
         _myPrivacyList = list;
@@ -63,7 +63,8 @@ public class SparkPrivacyList {
     }
 
     
-    private void loadItems() {
+    private void loadItems() throws SmackException.NotConnectedException
+    {
        List<PrivacyItem> itemList = _myPrivacyList.getItems();
        
        for (PrivacyItem item: itemList)
@@ -177,20 +178,20 @@ public class SparkPrivacyList {
     }
 
     
-    public void addItem (PrivacyItem item)
+    public void addItem (PrivacyItem item) throws SmackException.NotConnectedException
     {
         _privacyItems.add(item);
         fireItemAdded(item);
     }
 
     
-    public void removeItem(PrivacyItem item)
+    public void removeItem(PrivacyItem item) throws SmackException.NotConnectedException
     {
         _privacyItems.remove(item);
         fireItemRemoved(item);
     }
     
-    public void removeItem(String name)
+    public void removeItem(String name) throws SmackException.NotConnectedException
     {
         List<PrivacyItem> tempList = new ArrayList<PrivacyItem>(_privacyItems);
         for (PrivacyItem item: tempList)
@@ -291,7 +292,8 @@ public class SparkPrivacyList {
      *
      * @param item user was added into blockList
      */
-    private void fireItemAdded(PrivacyItem item) {
+    private void fireItemAdded(PrivacyItem item) throws SmackException.NotConnectedException
+    {
         for (SparkPrivacyItemListener listener :_listeners) {
             listener.itemAdded(item, _listName);
         }
@@ -301,7 +303,8 @@ public class SparkPrivacyList {
      *
      * @param item user removed from blackList
      */
-    private void fireItemRemoved(PrivacyItem item) {
+    private void fireItemRemoved(PrivacyItem item) throws SmackException.NotConnectedException
+    {
         for (SparkPrivacyItemListener listener : _listeners) {
             listener.itemRemoved(item, _listName);
         }

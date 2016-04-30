@@ -256,10 +256,10 @@ public class PrivacyListTree extends JPanel implements SparkPrivacyListListener 
                 PrivacyAddDialogUI browser = new PrivacyAddDialogUI();
                 Collection<PrivacyItem> col = browser.showRoster(_comp, node.isContactGroup() ? false : true);
                 for (PrivacyItem pI : col) {
-                    pI.setOrder(list.getNewItemOrder());
-                  
-                        list.addItem(pI);
-                        PrivacyTreeNode newChild = new PrivacyTreeNode(pI);
+                    final PrivacyItem clone = new PrivacyItem( pI.getType(), pI.getValue(), pI.isAllow(), list.getNewItemOrder() );
+
+                        list.addItem(clone);
+                        PrivacyTreeNode newChild = new PrivacyTreeNode(clone);
                         _model.insertNodeInto(newChild, parent, 0);
                     
                 }

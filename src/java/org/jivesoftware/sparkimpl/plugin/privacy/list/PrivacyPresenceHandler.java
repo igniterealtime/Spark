@@ -5,6 +5,7 @@ package org.jivesoftware.sparkimpl.plugin.privacy.list;
 import java.util.Collection;
 
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smackx.privacy.packet.PrivacyItem;
 import org.jivesoftware.spark.SparkManager;
@@ -28,7 +29,8 @@ public class PrivacyPresenceHandler implements SparkPrivacyItemListener {
      * @param jid
      *            JID to send offline status
      */
-    public void sendUnavailableTo(String jid) {
+    public void sendUnavailableTo(String jid) throws SmackException.NotConnectedException
+    {
         Presence pack = new Presence(Presence.Type.unavailable);                                                  
         pack.setTo(jid);
         SparkManager.getConnection().sendStanza(pack);
@@ -40,14 +42,16 @@ public class PrivacyPresenceHandler implements SparkPrivacyItemListener {
      * @param jid
      *            JID to send presence
      */
-    public void sendRealPresenceTo(String jid) {
+    public void sendRealPresenceTo(String jid) throws SmackException.NotConnectedException
+    {
         Presence presence = SparkManager.getWorkspace().getStatusBar().getPresence(); 
         Presence pack = new Presence(presence.getType(), presence.getStatus(), 1, presence.getMode()); 
         pack.setTo(jid);
         SparkManager.getConnection().sendStanza(pack);
     }
 
-    public void setIconsForList(SparkPrivacyList list) {
+    public void setIconsForList(SparkPrivacyList list) throws SmackException.NotConnectedException
+    {
         for (PrivacyItem pItem : list.getPrivacyItems()) {
             if (pItem.getType().equals(PrivacyItem.Type.jid)) {
                 setBlockedIconToContact(pItem.getValue());
@@ -80,7 +84,8 @@ public class PrivacyPresenceHandler implements SparkPrivacyItemListener {
         }
     }
 
-    public void removeIconsForList(SparkPrivacyList list) {
+    public void removeIconsForList(SparkPrivacyList list) throws SmackException.NotConnectedException
+    {
         for (PrivacyItem pItem : list.getPrivacyItems()) {
             if (pItem.getType().equals(PrivacyItem.Type.jid)) {
                 removeBlockedIconFromContact(pItem.getValue());
@@ -114,7 +119,8 @@ public class PrivacyPresenceHandler implements SparkPrivacyItemListener {
     }
 
     @Override
-    public void itemAdded(PrivacyItem item, String listname) {
+    public void itemAdded(PrivacyItem item, String listname) throws SmackException.NotConnectedException
+    {
         PrivacyManager pmanager = PrivacyManager.getInstance();
         if (pmanager.getPrivacyList(listname).isActive()) {
             if (item.getType().equals(PrivacyItem.Type.jid)) {
@@ -139,7 +145,8 @@ public class PrivacyPresenceHandler implements SparkPrivacyItemListener {
     }
 
     @Override
-    public void itemRemoved(PrivacyItem item, String listname) {
+    public void itemRemoved(PrivacyItem item, String listname) throws SmackException.NotConnectedException
+    {
         PrivacyManager pmanager = PrivacyManager.getInstance();
         if (pmanager.getPrivacyList(listname).isActive()) {
             if (item.getType().equals(PrivacyItem.Type.jid)) {
