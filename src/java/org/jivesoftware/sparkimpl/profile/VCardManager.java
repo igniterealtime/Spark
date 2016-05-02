@@ -62,6 +62,7 @@ import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.packet.ExtensionElement;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.packet.XMPPError;
+import org.jivesoftware.smack.provider.ProviderManager;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.vcardtemp.packet.VCard;
 import org.jivesoftware.smackx.vcardtemp.provider.VCardProvider;
@@ -117,6 +118,11 @@ public class VCardManager {
      * Initialize VCardManager.
      */
     public VCardManager() {
+
+        // Register providers
+        ProviderManager.addExtensionProvider( JabberAvatarExtension.ELEMENT_NAME, JabberAvatarExtension.NAMESPACE, new JabberAvatarExtension.Provider() );
+        ProviderManager.addExtensionProvider( VCardUpdateExtension.ELEMENT_NAME, VCardUpdateExtension.NAMESPACE, new VCardUpdateExtension.Provider() );
+
         // Initialize parser
         parser = new MXParser();
 
@@ -802,7 +808,8 @@ public class VCardManager {
             BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(vcardFile), "UTF-8"));
             VCardProvider provider = new VCardProvider();
             parser.setInput(in);
-            VCard vcard = (VCard)provider.parse(parser);
+            parser.next(); // progress past the first start tag.
+            VCard vcard = provider.parse(parser);
 
             // Check to see if the file is older 10 minutes. If so, reload.
             String timestamp = vcard.getField("timestamp");
