@@ -51,6 +51,7 @@ import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.ExtensionElement;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.util.StringUtils;
+import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.xdata.Form;
 import org.jivesoftware.smackx.xdata.FormField;
 import org.jivesoftware.smackx.vcardtemp.packet.VCard;
@@ -405,12 +406,12 @@ public class WorkgroupManager {
     private class InviteListener implements RoomInvitationListener {
         // Add own invitation listener
     	@Override
-        public boolean handleInvitation(final XMPPConnection conn, final String room, final String inviter, final String reason, final String password, final Message message) {
+        public boolean handleInvitation(final XMPPConnection conn, final MultiUserChat room, final String inviter, final String reason, final String password, final Message message) {
             invites.add(inviter);
 
             if (message.getExtension("workgroup", "http://jabber.org/protocol/workgroup") != null) {
                 String workgroupName = XmppStringUtils.parseLocalpart(inviter);
-                GroupChatRoom groupChatRoom = ConferenceUtils.enterRoomOnSameThread(workgroupName, room, password);
+                GroupChatRoom groupChatRoom = ConferenceUtils.enterRoomOnSameThread(workgroupName, room.getRoom(), password);
 
                 int tabLocation = SparkManager.getChatManager().getChatContainer().indexOfComponent(groupChatRoom);
                 groupChatRoom.setTabIcon(FastpathRes.getImageIcon(FastpathRes.FASTPATH_IMAGE_16x16));

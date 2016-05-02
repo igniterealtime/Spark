@@ -20,6 +20,7 @@
 package org.jivesoftware.fastpath.internal;
 
 import org.jivesoftware.smack.packet.Message;
+import org.jxmpp.util.XmppStringUtils;
 
 import java.util.Date;
 
@@ -159,7 +160,7 @@ final public class FormUtils {
      * @return the nickname of the user who sent the message.
      */
     public static String getNickname(Message message) {
-        String from = org.jivesoftware.smack.util.XmppStringUtils.parseResource(message.getFrom());
+        String from = XmppStringUtils.parseResource(message.getFrom());
         return from;
     }
 

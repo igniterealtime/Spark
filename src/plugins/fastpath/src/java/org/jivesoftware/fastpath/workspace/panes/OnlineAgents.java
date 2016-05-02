@@ -38,6 +38,7 @@ import javax.swing.JScrollPane;
 import org.jivesoftware.fastpath.FastpathPlugin;
 import org.jivesoftware.fastpath.FpRes;
 import org.jivesoftware.fastpath.resources.FastpathRes;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.workgroup.agent.AgentRoster;
@@ -150,9 +151,17 @@ public final class OnlineAgents extends JPanel {
 
             public Object construct() {
                 // Initialize Agent Roster
-                agentRoster = FastpathPlugin.getAgentSession().getAgentRoster();
-                agentSet = agentRoster.getAgents();
-                return agentSet;
+                try
+                {
+                    agentRoster = FastpathPlugin.getAgentSession().getAgentRoster();
+                    agentSet = agentRoster.getAgents();
+                    return agentSet;
+                }
+                catch ( SmackException.NotConnectedException e )
+                {
+                    Log.error( "Unable to load agent roster.", e);
+                    return null;
+                }
             }
 
             public void finished() {

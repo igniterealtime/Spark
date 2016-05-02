@@ -60,9 +60,9 @@ public class ChatSearchResult {
         sessionID = getFirstValue(row, "sessionID");
 
         StringBuffer authors = new StringBuffer();
-        Iterator athrs = row.getValues("agentJIDs");
-        while (athrs.hasNext()) {
-            authors.append((String)athrs.next());
+        for ( final String agentJID : row.getValues("agentJIDs") )
+        {
+            authors.append(agentJID);
             authors.append(" ");
         }
 
@@ -85,15 +85,12 @@ public class ChatSearchResult {
 
 
     public String getFirstValue(ReportedData.Row row, String key) {
-        try {
-            final Iterator iter = row.getValues(key);
-            while (iter.hasNext()) {
-                return (String)iter.next();
-            }
+        final List<String> values = row.getValues( key );
+        if ( values.isEmpty() ) {
+            return null;
         }
-        catch (Exception e) {
-        }
-        return null;
+
+        return values.get(0);
     }
 
     public String getSummary() {
