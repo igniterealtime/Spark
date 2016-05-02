@@ -49,6 +49,7 @@ import org.jivesoftware.sparkplugin.preferences.SipPreferences;
 import org.jivesoftware.sparkplugin.sipaccount.SipAccount;
 import org.jivesoftware.sparkplugin.sipaccount.SipAccountPacket;
 import org.jivesoftware.sparkplugin.ui.call.MissedCalls;
+import org.jxmpp.util.XmppStringUtils;
 
 import javax.sdp.MediaDescription;
 import javax.sdp.SessionDescription;
