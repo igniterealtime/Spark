@@ -68,12 +68,10 @@ import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.packet.XMPPError;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
-import org.jivesoftware.smackx.muc.Affiliate;
-import org.jivesoftware.smackx.muc.InvitationRejectionListener;
-import org.jivesoftware.smackx.muc.MultiUserChat;
-import org.jivesoftware.smackx.muc.Occupant;
-import org.jivesoftware.smackx.muc.UserStatusListener;
+import org.jivesoftware.smackx.muc.*;
 import org.jivesoftware.smackx.disco.packet.DiscoverInfo;
+import org.jivesoftware.smackx.muc.packet.MUCItem;
+import org.jivesoftware.smackx.muc.packet.MUCUser;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.PresenceManager;
 import org.jivesoftware.spark.SparkManager;
@@ -89,6 +87,8 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jxmpp.util.XmppStringUtils;
+
+import static org.jivesoftware.smackx.privacy.packet.PrivacyItem.Type.jid;
 
 /**
  * The <code>RoomInfo</code> class is used to display all room information, such
@@ -211,16 +211,25 @@ public class GroupChatParticipantList extends JPanel {
 			userMap.put(displayName, userid);			
 
 			if (p.getType() == Presence.Type.available) {
-				String jid = PresenceManager.getJidFromMUCPresence(p);
-				//if current user is participant and not owner, then do not display the settings button
-				//we have to do it here otherwise ownership information retrieval won't be available
-				if (jid != null && jid.equals(SparkManager.getSessionManager().getBareAddress())) {
-					groupChatRoom.notifySettingsAccessRight();
-				}
 			    addParticipant(userid, p);
 			    agentInfoPanel.setVisible(true);
 			} else {
 			    removeUser(displayName);
+			}
+
+			// When joining a room, check if the current user is an owner/admin. If so, the UI should allow the current
+			// user to change settings of this MUC.
+			final MUCUser mucUserEx = p.getExtension( MUCUser.ELEMENT, MUCUser.NAMESPACE );
+			if (mucUserEx != null && mucUserEx.getStatus().contains( MUCUser.Status.create( 110 ) ) ) // 110 = Inform user that presence refers to itself
+			{
+				final MUCItem item = mucUserEx.getItem();
+				if ( item != null )
+				{
+					if ( item.getAffiliation() == MUCAffiliation.admin || item.getAffiliation() == MUCAffiliation.owner )
+					{
+						groupChatRoom.notifySettingsAccessRight();
+					}
+				}
 			}
 		    }
 		});

@@ -142,7 +142,10 @@ public class PresenceManager {
 			if (extension instanceof MUCUser) {
 				final MUCUser mucUser = (MUCUser) extension;
 				String fullJid = mucUser.getItem().getJid();
-				String userJid = XmppStringUtils.parseBareJid(fullJid);
+                if ( fullJid == null) {
+                    return null;
+                }
+ 				String userJid = XmppStringUtils.parseBareJid(fullJid);
 				return userJid;
 			}
 		}
