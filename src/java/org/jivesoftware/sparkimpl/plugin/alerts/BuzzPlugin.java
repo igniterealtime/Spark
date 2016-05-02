@@ -57,10 +57,10 @@ public class BuzzPlugin implements Plugin {
 
     public void initialize() {
 	ProviderManager.addExtensionProvider(ELEMENTNAME,
-		NAMESPACE, BuzzPacket.class);
+		NAMESPACE, new BuzzPacket.Provider());
 
 	ProviderManager.addExtensionProvider(ELEMENTNAME_OLD,
-		NAMESPACE_OLD, BuzzPacket.class);
+		NAMESPACE_OLD, new BuzzPacket.Provider() );
 
 	SparkManager.getConnection().addAsyncStanzaListener(new StanzaListener() {
 	    public void processPacket(Stanza stanza) {
