@@ -191,10 +191,17 @@ public class RoarProperties {
      */
     public List<String> getKeywords() {
         if (keywords == null) {
-            String[] pkeys = props.getProperty("keywords").split(",");
-            if (pkeys.length > 0) {
-                keywords = Arrays.asList(pkeys);
-            } else {
+            final String propertyValue = props.getProperty("keywords");
+            if ( propertyValue != null )
+            {
+                String[] pkeys = propertyValue.split( "," );
+                if ( pkeys.length > 0 )
+                {
+                    keywords = Arrays.asList( pkeys );
+                }
+            }
+
+            if ( keywords == null ) {
                 keywords = Collections.emptyList();
             }
         }
