@@ -40,11 +40,12 @@ import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.smack.Chat;
+import org.jivesoftware.smack.XMPPConnection;
+import org.jivesoftware.smack.chat.Chat;
 import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Presence;
-import org.jivesoftware.smackx.ChatState;
+import org.jivesoftware.smackx.chatstates.ChatState;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.NativeHandler;
 import org.jivesoftware.spark.SparkManager;
@@ -56,8 +57,8 @@ import org.jivesoftware.spark.ui.status.StatusItem;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
-import org.jivesoftware.smack.ChatManagerListener;
-import org.jivesoftware.smackx.ChatStateListener;
+import org.jivesoftware.smack.chat.ChatManagerListener;
+import org.jivesoftware.smackx.chatstates.ChatStateListener;
 
 public class SysTrayPlugin implements Plugin, NativeHandler, ChatManagerListener, ChatStateListener {
 	private static String MESSAGE_COUNTER_REG_EXP = "\\[\\d+\\] ";
@@ -102,7 +103,7 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatManagerListener
 	    SparkManager.getNativeManager().addNativeHandler(this);
 	    ChatManager.getInstance().addChatMessageHandler(chatMessageHandler);
 	    //XEP-0085 suport (replaces the obsolete XEP-0022)
-	    SparkManager.getConnection().getChatManager().addChatListener(this);
+		org.jivesoftware.smack.chat.ChatManager.getInstanceFor( SparkManager.getConnection() ).addChatListener(this);
 
 	    if (Spark.isLinux()) {
 		newMessageIcon = SparkRes
@@ -201,6 +202,16 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatManagerListener
 	     */
 	    SparkManager.getConnection().addConnectionListener(
 		    new ConnectionListener() {
+
+			@Override
+			public void connected( XMPPConnection xmppConnection ) {
+				trayIcon.setImage( availableIcon.getImage() );
+			}
+
+			@Override
+			public void authenticated( XMPPConnection xmppConnection, boolean b ) {
+				trayIcon.setImage( availableIcon.getImage() );
+			}
 
 			@Override
 			public void connectionClosed() {

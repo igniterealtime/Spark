@@ -22,11 +22,11 @@ package org.jivesoftware.sparkplugin.ui.transfer;
 import org.jivesoftware.spark.plugin.phone.resource.PhoneRes;
 import org.jivesoftware.sparkplugin.callhistory.TelephoneUtils;
 import org.jivesoftware.resource.Res;
-import org.jivesoftware.smack.Roster;
-import org.jivesoftware.smack.RosterEntry;
-import org.jivesoftware.smack.RosterGroup;
+import org.jivesoftware.smack.roster.Roster;
+import org.jivesoftware.smack.roster.RosterEntry;
+import org.jivesoftware.smack.roster.RosterGroup;
 import org.jivesoftware.smack.packet.Presence;
-import org.jivesoftware.smackx.packet.VCard;
+import org.jivesoftware.smackx.vcardtemp.packet.VCard;
 import org.jivesoftware.spark.PresenceManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.RolloverButton;
@@ -73,7 +73,7 @@ public class TransferGroupUI extends JPanel {
         setLayout(new VerticalFlowLayout(VerticalFlowLayout.TOP, 0, 0, true, false));
         setBackground(Color.white);
 
-        final Roster roster = SparkManager.getConnection().getRoster();
+        final Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
         final RosterGroup rosterGroup = roster.getGroup(groupName);
 
         final List<RosterEntry> entries = new ArrayList<RosterEntry>(rosterGroup.getEntries());
@@ -103,7 +103,7 @@ public class TransferGroupUI extends JPanel {
 
         public UserEntry(RosterEntry entry) {
             setLayout(new GridBagLayout());
-            final Roster roster = SparkManager.getConnection().getRoster();
+            final Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
             Presence presence = roster.getPresence(entry.getUser());
 
             Icon icon = PresenceManager.getIconFromPresence(presence);

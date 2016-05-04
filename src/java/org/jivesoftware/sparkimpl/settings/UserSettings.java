@@ -19,8 +19,9 @@
  */
 package org.jivesoftware.sparkimpl.settings;
 
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smackx.PrivateDataManager;
+import org.jivesoftware.smackx.iqprivate.PrivateDataManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
@@ -47,13 +48,13 @@ public class UserSettings {
     }
 
     private UserSettings() {
-        privateDataManager = new PrivateDataManager(SparkManager.getConnection());
+        privateDataManager = PrivateDataManager.getInstanceFor(SparkManager.getConnection());
         PrivateDataManager.addPrivateDataProvider("personal_settings", "jive:user:settings", new SettingsDataProvider());
 
         try {
             settingsData = (SettingsData)privateDataManager.getPrivateData("personal_settings", "jive:user:settings");
         }
-        catch (XMPPException e) {
+        catch (XMPPException | SmackException e) {
             Log.error("Error in User Settings", e);
         }
     }
@@ -92,7 +93,7 @@ public class UserSettings {
         try {
             privateDataManager.setPrivateData(settingsData);
         }
-        catch (XMPPException e) {
+        catch (XMPPException | SmackException e) {
             Log.error("Error in User Settings.", e);
         }
     }

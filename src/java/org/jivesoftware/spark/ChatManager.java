@@ -20,16 +20,19 @@
 package org.jivesoftware.spark;
 
 import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.smack.Chat;
-import org.jivesoftware.smack.ChatManagerListener;
+import org.jivesoftware.smack.SmackException;
+import org.jivesoftware.smack.chat.Chat;
+import org.jivesoftware.smack.chat.ChatManagerListener;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.util.StringUtils;
-import org.jivesoftware.smackx.ChatState;
-import org.jivesoftware.smackx.ChatStateListener;
-import org.jivesoftware.smackx.Form;
+import org.jivesoftware.smackx.chatstates.ChatState;
+import org.jivesoftware.smackx.chatstates.ChatStateListener;
+import org.jivesoftware.smackx.muc.MultiUserChatManager;
+import org.jivesoftware.smackx.xdata.Form;
 import org.jivesoftware.smackx.muc.MultiUserChat;
+import org.jivesoftware.smackx.xdata.packet.DataForm;
 import org.jivesoftware.spark.component.tabbedPane.SparkTab;
 import org.jivesoftware.spark.decorator.DefaultTabHandler;
 import org.jivesoftware.spark.ui.ChatContainer;
@@ -53,6 +56,7 @@ import org.jivesoftware.spark.util.UIComponentRegistry;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+import org.jxmpp.util.XmppStringUtils;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -150,8 +154,8 @@ public class ChatManager implements ChatManagerListener {
 
         // Add Default Chat Room Decorator
         addSparkTabHandler(new DefaultTabHandler());
-        // Add a Message Handler        
-        SparkManager.getConnection().getChatManager().addChatListener(this);
+        // Add a Message Handler
+        org.jivesoftware.smack.chat.ChatManager.getInstanceFor( SparkManager.getConnection() ).addChatListener(this);
     }
 
 
@@ -275,7 +279,7 @@ public class ChatManager implements ChatManagerListener {
      * @return the new ChatRoom created. If an error occured, null will be returned.
      */
     public ChatRoom createConferenceRoom(String roomName, String serviceName) {
-        final MultiUserChat chatRoom = new MultiUserChat(SparkManager.getConnection(), roomName + "@" + serviceName);
+        final MultiUserChat chatRoom = MultiUserChatManager.getInstanceFor( SparkManager.getConnection()).getMultiUserChat( roomName + "@" + serviceName );
 
         final GroupChatRoom room = UIComponentRegistry.createGroupChatRoom(chatRoom);
 
@@ -285,9 +289,9 @@ public class ChatManager implements ChatManagerListener {
 
             // Send an empty room configuration form which indicates that we want
             // an instant room
-            chatRoom.sendConfigurationForm(new Form(Form.TYPE_SUBMIT));
+            chatRoom.sendConfigurationForm(new Form( DataForm.Type.submit ));
         }
-        catch (XMPPException e1) {
+        catch (XMPPException | SmackException e1) {
             Log.error("Unable to send conference room chat configuration form.", e1);
             return null;
         }
@@ -500,12 +504,13 @@ public class ChatManager implements ChatManagerListener {
     public String getDefaultConferenceService() {
         if (conferenceService == null) {
             try {
-                Collection<String> col = MultiUserChat.getServiceNames(SparkManager.getConnection());
+                final MultiUserChatManager multiUserChatManager = MultiUserChatManager.getInstanceFor( SparkManager.getConnection() );
+                Collection<String> col = multiUserChatManager.getServiceNames();
                 if (col.size() > 0) {
                     conferenceService = col.iterator().next();
                 }
             }
-            catch (XMPPException e) {
+            catch (XMPPException | SmackException e) {
                 Log.error(e);
             }
         }
@@ -619,7 +624,7 @@ public class ChatManager implements ChatManagerListener {
 
                 ChatRoom chatRoom;
                 try {
-                    chatRoom = getChatContainer().getChatRoom(StringUtils.parseBareAddress(from));
+                    chatRoom = getChatContainer().getChatRoom( XmppStringUtils.parseBareJid(from));
                     if (chatRoom != null && chatRoom instanceof ChatRoomImpl) {                    	
                         typingNotificationList.add(chatRoom);
                         // Notify Decorators
@@ -642,7 +647,7 @@ public class ChatManager implements ChatManagerListener {
 
                 ChatRoom chatRoom;
                 try {
-                    chatRoom = getChatContainer().getChatRoom(StringUtils.parseBareAddress(from));
+                    chatRoom = getChatContainer().getChatRoom(XmppStringUtils.parseBareJid(from));
                     if (chatRoom != null && chatRoom instanceof ChatRoomImpl) {
                         typingNotificationList.remove(chatRoom);
                         // Notify Decorators

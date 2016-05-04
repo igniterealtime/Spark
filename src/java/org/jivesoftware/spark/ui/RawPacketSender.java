@@ -33,7 +33,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.spark.SparkManager;
 
 /**
@@ -101,7 +101,7 @@ public class RawPacketSender implements ActionListener {
     public void actionPerformed(ActionEvent e) {
 
 	if (e.getSource().equals(_sendButton)) {
-	    Packet p = new Packet() {
+	    Stanza stanza = new Stanza() {
 
 		@Override
 		public String toXML() {
@@ -110,7 +110,7 @@ public class RawPacketSender implements ActionListener {
 	    };
 
 	    try {
-		SparkManager.getConnection().sendPacket(p);
+		SparkManager.getConnection().sendStanza(stanza);
 		_textarea.append("\n" + _inputarea.getText());
 	    } catch (Exception exc) {
 

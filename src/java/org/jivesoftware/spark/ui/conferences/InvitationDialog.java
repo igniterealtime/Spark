@@ -21,9 +21,11 @@ package org.jivesoftware.spark.ui.conferences;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.packet.XMPPError;
 import org.jivesoftware.smack.util.StringUtils;
-import org.jivesoftware.smackx.bookmark.BookmarkedConference;
+import org.jivesoftware.smackx.bookmarks.BookmarkedConference;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.ChatNotFoundException;
 import org.jivesoftware.spark.SparkManager;
@@ -36,6 +38,7 @@ import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+import org.jxmpp.util.XmppStringUtils;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -135,7 +138,7 @@ final class InvitationDialog extends JPanel {
         addJIDButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent actionEvent) {
                 String jid = jidField.getText();
-                String server = StringUtils.parseBareAddress(jid);
+                String server = XmppStringUtils.parseBareJid(jid);
                 if (server == null || server.indexOf("@") == -1) {
                 	UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
                     JOptionPane.showMessageDialog(dlg, Res.getString("message.enter.valid.jid"), Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
@@ -392,9 +395,9 @@ final class InvitationDialog extends JPanel {
                                                 selectedBookmarkedConf.getPassword(), messageText, jidList);
                                     }
                                 }
-                                catch (XMPPException e2) {
+                                catch (SmackException ex) {
                                 	UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
-                                    JOptionPane.showMessageDialog(pane, ConferenceUtils.getReason(e2), Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
+                                    JOptionPane.showMessageDialog(pane, "An error occurred.", Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
                                 }
                             }
                         };
@@ -411,7 +414,14 @@ final class InvitationDialog extends JPanel {
                     final int no = values != null ? values.length : 0;
                     for (int i = 0; i < no; i++) {
                         String jid = (String)values[i];
-                        chatRoom.getMultiUserChat().invite(jid, message != null ? message : Res.getString("message.please.join.in.conference"));
+                        try
+                        {
+                            chatRoom.getMultiUserChat().invite(jid, message != null ? message : Res.getString("message.please.join.in.conference"));
+                        }
+                        catch ( SmackException.NotConnectedException e1 )
+                        {
+                            Log.warning( "Unable to send stanza to " + jid, e1 );
+                        }
                         String nickname = SparkManager.getUserManager().getUserNicknameFromJID(jid);
                         chatRoom.getTranscriptWindow().insertNotificationMessage("Invited " + nickname, ChatManager.NOTIFICATION_COLOR);
                     }

@@ -52,19 +52,20 @@ import javax.swing.UIManager;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.smack.PacketInterceptor;
-import org.jivesoftware.smack.PacketListener;
+import org.jivesoftware.smack.SmackException;
+import org.jivesoftware.smack.StanzaListener;
 import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smack.filter.PacketFilter;
-import org.jivesoftware.smack.filter.PacketTypeFilter;
+import org.jivesoftware.smack.filter.StanzaFilter;
+import org.jivesoftware.smack.filter.StanzaTypeFilter;
 import org.jivesoftware.smack.packet.IQ;
-import org.jivesoftware.smack.packet.Packet;
-import org.jivesoftware.smack.packet.PacketExtension;
+import org.jivesoftware.smack.packet.Stanza;
+import org.jivesoftware.smack.packet.ExtensionElement;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.packet.XMPPError;
+import org.jivesoftware.smack.provider.ProviderManager;
 import org.jivesoftware.smack.util.StringUtils;
-import org.jivesoftware.smackx.packet.VCard;
-import org.jivesoftware.smackx.provider.VCardProvider;
+import org.jivesoftware.smackx.vcardtemp.packet.VCard;
+import org.jivesoftware.smackx.vcardtemp.provider.VCardProvider;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.util.Base64;
@@ -77,6 +78,7 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 import org.jivesoftware.sparkimpl.profile.ext.JabberAvatarExtension;
 import org.jivesoftware.sparkimpl.profile.ext.VCardUpdateExtension;
+import org.jxmpp.util.XmppStringUtils;
 import org.xmlpull.mxp1.MXParser;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -116,6 +118,11 @@ public class VCardManager {
      * Initialize VCardManager.
      */
     public VCardManager() {
+
+        // Register providers
+        ProviderManager.addExtensionProvider( JabberAvatarExtension.ELEMENT_NAME, JabberAvatarExtension.NAMESPACE, new JabberAvatarExtension.Provider() );
+        ProviderManager.addExtensionProvider( VCardUpdateExtension.ELEMENT_NAME, VCardUpdateExtension.NAMESPACE, new VCardUpdateExtension.Provider() );
+
         // Initialize parser
         parser = new MXParser();
 
@@ -142,15 +149,15 @@ public class VCardManager {
         initializeUI();
 
         // Intercept all presence packets being sent and append vcard information.
-        PacketFilter presenceFilter = new PacketTypeFilter(Presence.class);
-        SparkManager.getConnection().addPacketInterceptor(new PacketInterceptor() {
-            public void interceptPacket(Packet packet) {
-                Presence newPresence = (Presence)packet;
+        StanzaFilter presenceFilter = new StanzaTypeFilter(Presence.class);
+        SparkManager.getConnection().addPacketInterceptor(new StanzaListener() {
+            public void processPacket(Stanza stanza) {
+                Presence newPresence = (Presence)stanza;
                 VCardUpdateExtension update = new VCardUpdateExtension();
                 JabberAvatarExtension jax = new JabberAvatarExtension();
 
-                PacketExtension updateExt = newPresence.getExtension(update.getElementName(), update.getNamespace());
-                PacketExtension jabberExt = newPresence.getExtension(jax.getElementName(), jax.getNamespace());
+                ExtensionElement updateExt = newPresence.getExtension(update.getElementName(), update.getNamespace());
+                ExtensionElement jabberExt = newPresence.getExtension(jax.getElementName(), jax.getNamespace());
 
                 if (updateExt != null) {
                     newPresence.removeExtension(updateExt);
@@ -200,15 +207,15 @@ public class VCardManager {
 
         TaskEngine.getInstance().submit(queueListener);
         
-        PacketFilter filter = new PacketTypeFilter(VCard.class);
-        PacketListener myListener = new PacketListener() {
+        StanzaFilter filter = new StanzaTypeFilter(VCard.class);
+        StanzaListener myListener = new StanzaListener() {
 			@Override
-			public void processPacket(Packet packet) {
-				if (packet instanceof VCard)
+			public void processPacket(Stanza stanza) {
+				if (stanza instanceof VCard)
 				{
-					VCard VCardpacket = (VCard)packet;
+					VCard VCardpacket = (VCard)stanza;
 					String jid = VCardpacket.getFrom();
-					if (VCardpacket.getType().equals(IQ.Type.RESULT) && jid != null && delayedContacts.contains(jid))
+					if (VCardpacket.getType().equals(IQ.Type.result) && jid != null && delayedContacts.contains(jid))
 					{
 						delayedContacts.remove(jid);
 						addVCard(jid, VCardpacket);
@@ -219,7 +226,7 @@ public class VCardManager {
 			}
 		};
         	
-		SparkManager.getConnection().addPacketListener(myListener, filter);
+		SparkManager.getConnection().addAsyncStanzaListener(myListener, filter);
 
     }
 
@@ -261,7 +268,7 @@ public class VCardManager {
                         try {
                             personalVCard.load(SparkManager.getConnection());
                         }
-                        catch (XMPPException e) {
+                        catch (XMPPException | SmackException e) {
                             Log.error("Error loading vcard information.", e);
                         }
                         return true;
@@ -281,7 +288,7 @@ public class VCardManager {
         viewProfileMenu.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 String jidToView = JOptionPane.showInputDialog(SparkManager.getMainWindow(), Res.getString("message.enter.jabber.id") + ":", Res.getString("title.lookup.profile"), JOptionPane.QUESTION_MESSAGE);
-                if (ModelUtil.hasLength(jidToView) && jidToView.indexOf("@") != -1 && ModelUtil.hasLength(StringUtils.parseServer(jidToView))) {
+                if (ModelUtil.hasLength(jidToView) && jidToView.indexOf("@") != -1 && ModelUtil.hasLength( XmppStringUtils.parseDomain(jidToView))) {
                     viewProfile(jidToView, SparkManager.getWorkspace());
                 }
                 else if (ModelUtil.hasLength(jidToView)) {
@@ -468,13 +475,13 @@ public class VCardManager {
 	 * 
 	 * @param jid
 	 *            the users jid.
-	 * @param useCache
+	 * @param useCachedVCards
 	 *            true to check in cache and hdd, otherwise false will do a new
 	 *            network vcard operation.
 	 * @return the VCard.
 	 */
     public VCard getVCard(String jid, boolean useCachedVCards) {
-        jid = StringUtils.parseBareAddress(jid);
+        jid = XmppStringUtils.parseBareJid(jid);
         if (useCachedVCards)
         {
         	return getVCardFromMemory(jid);
@@ -499,7 +506,7 @@ public class VCardManager {
 	 * @return the new network vCard or a vCard with an error 
 	 */
     public VCard reloadVCard(String jid) {
-        jid = StringUtils.parseBareAddress(jid);
+        jid = XmppStringUtils.parseBareJid(jid);
         VCard vcard = new VCard();
         try {
         	vcard.setJabberId(jid);
@@ -514,9 +521,9 @@ public class VCardManager {
             addVCard(jid, vcard);
             persistVCard(jid, vcard);
         }
-        catch (XMPPException e) {
+        catch (XMPPException | SmackException e) {
         	////System.out.println(jid+" Fehler in reloadVCard ----> null");
-        	vcard.setError(new XMPPError(XMPPError.Condition.request_timeout));
+        	vcard.setError(new XMPPError(XMPPError.Condition.resource_constraint));
         	vcard.setJabberId(jid);
         	delayedContacts.add(jid);
         	return vcard;
@@ -573,7 +580,7 @@ public class VCardManager {
      */
     public URL getAvatar(String jid) {
         // Handle own avatar file.
-        if (jid != null && StringUtils.parseBareAddress(SparkManager.getSessionManager().getJID()).equals(StringUtils.parseBareAddress(jid))) {
+        if (jid != null && XmppStringUtils.parseBareJid(SparkManager.getSessionManager().getJID()).equals(XmppStringUtils.parseBareJid(jid))) {
             if (imageFile.exists()) {
                 try {
                     return imageFile.toURI().toURL();
@@ -801,7 +808,8 @@ public class VCardManager {
             BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(vcardFile), "UTF-8"));
             VCardProvider provider = new VCardProvider();
             parser.setInput(in);
-            VCard vcard = (VCard)provider.parseIQ(parser);
+            parser.next(); // progress past the first start tag.
+            VCard vcard = provider.parse(parser);
 
             // Check to see if the file is older 10 minutes. If so, reload.
             String timestamp = vcard.getField("timestamp");

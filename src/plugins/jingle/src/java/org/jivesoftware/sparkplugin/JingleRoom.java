@@ -41,9 +41,10 @@ import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smackx.jingle.JingleSession;
-import org.jivesoftware.smackx.jingle.media.JingleMediaManager;
+import org.jivesoftware.smackx.jingleold.JingleSession;
+import org.jivesoftware.smackx.jingleold.media.JingleMediaManager;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.RolloverButton;
@@ -211,7 +212,7 @@ public class JingleRoom extends JPanel {
                 try {
                     session.terminate();
                 }
-                catch (XMPPException e) {
+                catch (XMPPException | SmackException e) {
                     e.printStackTrace();
                 }
             }

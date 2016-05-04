@@ -57,6 +57,7 @@ import javax.swing.JProgressBar;
 import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.filetransfer.FileTransfer;
@@ -74,6 +75,7 @@ import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.URLFileSystem;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.filetransfer.transfer.Downloads;
+import org.jxmpp.util.XmppStringUtils;
 
 public class ReceiveFileTransfer extends JPanel {
 
@@ -163,7 +165,7 @@ public class ReceiveFileTransfer extends JPanel {
         String fileName = request.getFileName();
         long fileSize = request.getFileSize();
         String requestor = request.getRequestor();
-        String bareJID = StringUtils.parseBareAddress(requestor);
+        String bareJID = XmppStringUtils.parseBareJid(requestor);
 
         ByteFormat format = new ByteFormat();
         String text = format.format(fileSize);
@@ -203,8 +205,15 @@ public class ReceiveFileTransfer extends JPanel {
             		acceptRequest(request);
             	}catch (Exception ex){
                     // this means there is a problem with the download directory
-            	    request.reject();
-                    
+                    try
+                    {
+                        request.reject();
+                    }
+                    catch ( SmackException.NotConnectedException e1 )
+                    {
+                        Log.warning( "Unable to reject the request.", ex);
+                    }
+
                     setBackground(new Color(239, 245, 250));
                     acceptButton.setVisible(false);
                     declineButton.setVisible(false);
@@ -246,8 +255,14 @@ public class ReceiveFileTransfer extends JPanel {
     }
 
     private void rejectRequest(FileTransferRequest request) {
-        request.reject();
-
+        try
+        {
+            request.reject();
+        }
+        catch ( SmackException.NotConnectedException ex )
+        {
+            Log.warning( "Unable to reject the request.", ex);
+        }
         setBackground(new Color(239, 245, 250));
         acceptButton.setVisible(false);
         declineButton.setVisible(false);
@@ -262,7 +277,7 @@ public class ReceiveFileTransfer extends JPanel {
 
     private void acceptRequest(final FileTransferRequest request) {
 	String requestor = request.getRequestor();
-	String bareJID = StringUtils.parseBareAddress(requestor);
+	String bareJID = XmppStringUtils.parseBareJid(requestor);
 
 	ContactList contactList = SparkManager.getWorkspace().getContactList();
 	final ContactItem contactItem = contactList
@@ -285,10 +300,10 @@ public class ReceiveFileTransfer extends JPanel {
 	    _starttime = System.currentTimeMillis();
             transfer.recieveFile(downloadedFile);
         }
-        catch (XMPPException e) {
+        catch (SmackException | IOException e) {
             Log.error(e);
         }
-	
+
         progressBar.setMaximum(100); // setting it to percent
         progressBar.setStringPainted(true);
 
@@ -470,7 +485,7 @@ public class ReceiveFileTransfer extends JPanel {
 
         showAlert(true);
 
-        String bareJID = StringUtils.parseBareAddress(request.getRequestor());
+        String bareJID = XmppStringUtils.parseBareJid(request.getRequestor());
 
         ContactList contactList = SparkManager.getWorkspace().getContactList();
         ContactItem contactItem = contactList.getContactItemByJID(bareJID);

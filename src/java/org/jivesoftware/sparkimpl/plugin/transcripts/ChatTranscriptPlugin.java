@@ -44,7 +44,9 @@ import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.ConnectionListener;
+import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.packet.Message;
+import org.jivesoftware.smackx.jiveproperties.packet.JivePropertiesExtension;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.ContextMenuListener;
 import org.jivesoftware.spark.ui.ChatRoom;
@@ -144,19 +146,32 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
 
 
         SparkManager.getConnection().addConnectionListener(new ConnectionListener() {
+            @Override
+            public void connected( XMPPConnection xmppConnection ) {
+            }
+
+            @Override
+            public void authenticated( XMPPConnection xmppConnection, boolean b ) {
+            }
+
+            @Override
             public void connectionClosed() {
             }
 
+            @Override
             public void connectionClosedOnError(Exception e) {
                 persistConversations();
             }
 
+            @Override
             public void reconnectingIn(int i) {
             }
 
+            @Override
             public void reconnectionSuccessful() {
             }
 
+            @Override
             public void reconnectionFailed(Exception exception) {
             }
         });
@@ -233,13 +248,12 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
             history.setTo(message.getTo());
             history.setFrom(message.getFrom());
             history.setBody(message.getBody());
-            Date date = (Date)message.getProperty("date");
-            if (date != null) {
-                history.setDate(date);
+            final JivePropertiesExtension extension = ((JivePropertiesExtension) message.getExtension( JivePropertiesExtension.NAMESPACE ));
+            Date date = null;
+            if ( extension != null ) {
+                date = (Date) extension.getProperty( "date" );
             }
-            else {
-                history.setDate(new Date());
-            }
+            history.setDate( date == null ? new Date() : date );
             transcript.addHistoryMessage(history);
         }
 

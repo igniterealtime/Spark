@@ -30,6 +30,7 @@ import org.jivesoftware.spark.ui.ChatFrame;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.GlobalMessageListener;
 import org.jivesoftware.spark.util.log.Log;
+import org.jxmpp.util.XmppStringUtils;
 
 /**
  * {@link GrowlMessageListener} implements the {@link GlobalMessageListener} and
@@ -79,7 +80,7 @@ public class GrowlMessageListener implements GlobalMessageListener {
 	    String jid = message.getFrom();
 
 	    if (name == null) {
-		name = StringUtils.parseName(message.getFrom());
+		name = XmppStringUtils.parseLocalpart(message.getFrom());
 	    }
 
 	    _growltalker.sendNotificationWithCallback(name, message.getBody(), jid);

@@ -20,9 +20,10 @@
 package org.jivesoftware.sparkimpl.plugin.chat;
 
 import org.jivesoftware.resource.Res;
-import org.jivesoftware.smack.Roster;
-import org.jivesoftware.smack.RosterEntry;
-import org.jivesoftware.smack.RosterGroup;
+import org.jivesoftware.smack.SmackException;
+import org.jivesoftware.smack.roster.Roster;
+import org.jivesoftware.smack.roster.RosterEntry;
+import org.jivesoftware.smack.roster.RosterGroup;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.spark.PresenceManager;
 import org.jivesoftware.spark.SparkManager;
@@ -284,7 +285,7 @@ public class ContactListAssistantPlugin implements Plugin {
         SwingWorker worker = new SwingWorker() {
             @Override
             public Object construct() {
-                Roster roster = SparkManager.getConnection().getRoster();
+                Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
                 RosterEntry entry = roster.getEntry(item.getJID());
 
                 RosterGroup groupFound = null;
@@ -299,7 +300,7 @@ public class ContactListAssistantPlugin implements Plugin {
                             }
                             group.addEntry(entry);
                         }
-                        catch (XMPPException e1) {
+                        catch (XMPPException | SmackException e1) {
                             Log.error(e1);
                             return false;
                         }
@@ -316,7 +317,7 @@ public class ContactListAssistantPlugin implements Plugin {
                     	SparkManager.getContactList().toggleGroupVisibility(groupFound.getName(), true);
                         }  
                     }
-                    catch (XMPPException e) {
+                    catch (XMPPException | SmackException e) {
                         Log.error(e);
                     }
                 }
@@ -355,7 +356,7 @@ public class ContactListAssistantPlugin implements Plugin {
         }
 
         // Remove entry from Roster Group
-        Roster roster = SparkManager.getConnection().getRoster();
+        Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
         RosterEntry entry = roster.getEntry(item.getJID());
 
         RosterGroup rosterGroup = null;
@@ -366,7 +367,7 @@ public class ContactListAssistantPlugin implements Plugin {
                     rosterGroup = group;
                     group.removeEntry(entry);
                 }
-                catch (XMPPException e1) {
+                catch (XMPPException | SmackException e1) {
                     return false;
                 }
             }

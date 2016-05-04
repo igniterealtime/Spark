@@ -27,7 +27,9 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.smack.AbstractXMPPConnection;
 import org.jivesoftware.smack.ConnectionListener;
+import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.util.SwingTimerTask;
@@ -50,8 +52,6 @@ public class ReconnectPanelIcon implements ConnectionListener {
 
     /**
      * creates a new Panel
-     * 
-     * @param groupName
      */
     public ReconnectPanelIcon() {
 
@@ -101,7 +101,7 @@ public class ReconnectPanelIcon implements ConnectionListener {
     private void reconnect() {
 	try {
 	    if (_closedOnError) {
-		SparkManager.getConnection().connect();
+		((AbstractXMPPConnection) SparkManager.getConnection()).connect();
 	    } else {
 		SparkManager.getMainWindow().logout(false);
 	    }
@@ -130,7 +130,15 @@ public class ReconnectPanelIcon implements ConnectionListener {
 
     }
 
-    @Override
+	@Override
+	public void connected( XMPPConnection xmppConnection ) {
+	}
+
+	@Override
+	public void authenticated( XMPPConnection xmppConnection, boolean b ) {
+	}
+
+	@Override
     public void connectionClosed() {
     }
 

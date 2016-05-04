@@ -19,22 +19,22 @@
  */
 package org.jivesoftware.sparkimpl.plugin.gateways.transports;
 
-import org.jivesoftware.smack.PacketCollector;
-import org.jivesoftware.smack.SmackConfiguration;
-import org.jivesoftware.smack.XMPPConnection;
-import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.*;
+import org.jivesoftware.smack.filter.IQReplyFilter;
 import org.jivesoftware.smack.filter.PacketIDFilter;
+import org.jivesoftware.smack.filter.StanzaIdFilter;
 import org.jivesoftware.smack.packet.IQ;
-import org.jivesoftware.smack.packet.PacketExtension;
-import org.jivesoftware.smack.packet.Registration;
-import org.jivesoftware.smack.util.StringUtils;
-import org.jivesoftware.smackx.PrivateDataManager;
-import org.jivesoftware.smackx.ServiceDiscoveryManager;
-import org.jivesoftware.smackx.packet.DiscoverInfo;
+import org.jivesoftware.smack.packet.ExtensionElement;
+import org.jivesoftware.smack.packet.Stanza;
+import org.jivesoftware.smackx.iqregister.packet.Registration;
+import org.jivesoftware.smackx.iqprivate.PrivateDataManager;
+import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
+import org.jivesoftware.smackx.disco.packet.DiscoverInfo;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.gateways.GatewayPrivateData;
+import org.jxmpp.util.XmppStringUtils;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -64,7 +64,7 @@ public class TransportUtils {
                 	try {
                         gatewayPreferences = (GatewayPrivateData)pdm.getPrivateData(GatewayPrivateData.ELEMENT, GatewayPrivateData.NAMESPACE);
                     }
-                    catch (XMPPException e) {
+                    catch (XMPPException | SmackException e) {
                         Log.error("Unable to load private data for Gateways", e);
                     }
                 //}
@@ -89,7 +89,7 @@ public class TransportUtils {
     		try {
     			pdm.setPrivateData(gatewayPreferences);
     		}
-    		catch (XMPPException e) {
+    		catch (XMPPException | SmackException e) {
     			Log.error(e);
     		}
     	} else {
@@ -112,8 +112,7 @@ public class TransportUtils {
      * @return true if the jid is from a gateway.
      */
     public static boolean isFromGateway(String jid) {
-        jid = StringUtils.parseBareAddress(jid);
-        String serviceName = StringUtils.parseServer(jid);
+        String serviceName = XmppStringUtils.parseDomain(jid);
         return transports.containsKey(serviceName);
     }
 
@@ -142,7 +141,7 @@ public class TransportUtils {
             DiscoverInfo info = discoveryManager.discoverInfo(transport.getServiceName());
             return info.containsFeature("jabber:iq:registered");
         }
-        catch (XMPPException e) {
+        catch (XMPPException | SmackException e) {
             Log.error(e);
         }
         return false;
@@ -158,12 +157,8 @@ public class TransportUtils {
      * @param nickname      the nickname.
      * @throws XMPPException thrown if there was an issue registering with the gateway.
      */
-    public static void registerUser(XMPPConnection con, String gatewayDomain, String username, String password, String nickname) throws XMPPException {
-        Registration registration = new Registration();
-        registration.setType(IQ.Type.SET);
-        registration.setTo(gatewayDomain);
-        registration.addExtension(new GatewayRegisterExtension());
-
+    public static void registerUser(XMPPConnection con, String gatewayDomain, String username, String password, String nickname, StanzaListener callback) throws SmackException.NotConnectedException
+    {
         Map<String, String> attributes = new HashMap<String, String>();
         if (username != null) {
             attributes.put("username", username);
@@ -174,20 +169,12 @@ public class TransportUtils {
         if (nickname != null) {
             attributes.put("nick", nickname);
         }
-        registration.setAttributes(attributes);
+        Registration registration = new Registration( attributes );
+        registration.setType(IQ.Type.set);
+        registration.setTo(gatewayDomain);
+        registration.addExtension(new GatewayRegisterExtension());
 
-        PacketCollector collector = con.createPacketCollector(new PacketIDFilter(registration.getPacketID()));
-        con.sendPacket(registration);
-
-        IQ response = (IQ)collector.nextResult(SmackConfiguration.getPacketReplyTimeout());
-        collector.cancel();
-        if (response == null) {
-            throw new XMPPException("Server timed out");
-        }
-        if (response.getType() == IQ.Type.ERROR) {
-            throw new XMPPException("Error registering user", response.getError());
-        }
-
+        con.sendStanzaWithResponseCallback( registration, new IQReplyFilter( registration, con ), callback);
     }
 
     /**
@@ -195,30 +182,29 @@ public class TransportUtils {
      * @param gatewayDomain the domain of the gateway (service name)
      * @throws XMPPException thrown if there was an issue unregistering with the gateway.
      */
-    public static void unregister(XMPPConnection con, String gatewayDomain) throws XMPPException {
-        Registration registration = new Registration();
-        registration.setType(IQ.Type.SET);
-        registration.setTo(gatewayDomain);
+    public static void unregister(XMPPConnection con, String gatewayDomain) throws SmackException.NotConnectedException
+    {
         Map<String,String> map = new HashMap<String,String>();
         map.put("remove", "");
-        registration.setAttributes(map);
+        Registration registration = new Registration( map );
+        registration.setType(IQ.Type.set);
+        registration.setTo(gatewayDomain);
 
-
-        PacketCollector collector = con.createPacketCollector(new PacketIDFilter(registration.getPacketID()));
-        con.sendPacket(registration);
-
-        IQ response = (IQ)collector.nextResult(SmackConfiguration.getPacketReplyTimeout());
-        collector.cancel();
-        if (response == null) {
-            throw new XMPPException("Server timed out");
-        }
-        if (response.getType() == IQ.Type.ERROR) {
-            throw new XMPPException("Error registering user", response.getError());
-        }
+        con.sendStanzaWithResponseCallback( registration, new IQReplyFilter( registration, con ), new StanzaListener()
+        {
+            @Override
+            public void processPacket( Stanza stanza ) throws SmackException.NotConnectedException
+            {
+                IQ response = (IQ) stanza;
+                if (response.getType() == IQ.Type.error ) {
+                    Log.warning( "Unable to unregister from gateway: " + stanza );
+                }
+            }
+        });
     }
 
 
-    static class GatewayRegisterExtension implements PacketExtension {
+    static class GatewayRegisterExtension implements ExtensionElement {
 
         public String getElementName() {
             return "x";

@@ -60,11 +60,11 @@ public class Encryptor {
 
         // Encrypt
         byte[] enc = ecipher.doFinal(utf8);
-        return org.jivesoftware.smack.util.StringUtils.encodeBase64(enc);
+        return Base64.encodeBytes(enc);
     }
 
     public static String decrypt(String string) {
-        byte[] dec = StringUtils.decodeBase64(string);
+        byte[] dec = Base64.decode( string );
 
         try {
             // Decrypt
@@ -86,7 +86,7 @@ public class Encryptor {
     }
 
     private static SecretKey decodeKey() throws Exception {
-        byte[] bytes = StringUtils.decodeBase64(secretKey);
+        byte[] bytes = Base64.decode(secretKey);
         return new SecretKeySpec(bytes, "DESede");
     }
 

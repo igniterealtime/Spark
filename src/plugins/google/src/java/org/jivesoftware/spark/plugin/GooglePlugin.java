@@ -21,7 +21,7 @@ package org.jivesoftware.spark.plugin;
 
 
 import org.jivesoftware.smack.packet.Message;
-import org.jivesoftware.smackx.packet.VCard;
+import org.jivesoftware.smackx.vcardtemp.packet.VCard;
 import org.jivesoftware.spark.ui.ContactList;
 import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.ui.ChatRoomListenerAdapter;

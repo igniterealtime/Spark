@@ -19,7 +19,8 @@ import javax.swing.event.TableModelListener;
 
 import net.java.otr4j.session.SessionID;
 
-import org.jivesoftware.smack.RosterEntry;
+import org.jivesoftware.smack.roster.Roster;
+import org.jivesoftware.smack.roster.RosterEntry;
 import org.jivesoftware.spark.SparkManager;
 
 import org.jivesoftware.spark.otrplug.OTRManager;
@@ -122,7 +123,7 @@ public class OTRPrefPanel extends JPanel {
 
     private void loadRemoteKeys() {
 
-        for (RosterEntry entry : SparkManager.getConnection().getRoster().getEntries()) {
+        for (RosterEntry entry : Roster.getInstanceFor( SparkManager.getConnection() ).getEntries()) {
             SessionID curSession = new SessionID(SparkManager.getConnection().getUser(), entry.getUser(), "Scytale");
             String remoteKey = _keyManager.getRemoteFingerprint(curSession);
             if (remoteKey != null) {

@@ -21,11 +21,11 @@ package org.jivesoftware.spark.ui.conferences;
 
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.resource.Res;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smackx.ServiceDiscoveryManager;
-import org.jivesoftware.smackx.packet.DiscoverInfo;
-import org.jivesoftware.smackx.packet.DiscoverItems;
-import org.jivesoftware.smackx.packet.DiscoverItems.Item;
+import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
+import org.jivesoftware.smackx.disco.packet.DiscoverInfo;
+import org.jivesoftware.smackx.disco.packet.DiscoverItems;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.component.TitlePanel;
@@ -54,7 +54,6 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 public class ConferenceServiceBrowser {
@@ -152,8 +151,7 @@ public class ConferenceServiceBrowser {
         List<String> answer = new ArrayList<String>();
         ServiceDiscoveryManager discoManager = ServiceDiscoveryManager.getInstanceFor(SparkManager.getConnection());
         DiscoverItems items = discoManager.discoverItems(server);
-        for (Iterator<Item> it = items.getItems(); it.hasNext();) {
-            Item item = it.next();
+        for (DiscoverItems.Item item : items.getItems() ) {
             if (item.getEntityID().startsWith("conference") || item.getEntityID().startsWith("private")) {
                 answer.add(item.getEntityID());
             }
@@ -164,7 +162,7 @@ public class ConferenceServiceBrowser {
                         answer.add(item.getEntityID());
                     }
                 }
-                catch (XMPPException e) {
+                catch (XMPPException | SmackException e) {
                     // Nothing to do
                 }
             }

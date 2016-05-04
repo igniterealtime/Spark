@@ -19,12 +19,12 @@
  */
 package org.jivesoftware.game.reversi;
 
-import org.jivesoftware.smack.packet.PacketExtension;
+import org.jivesoftware.smack.packet.ExtensionElement;
 
 /**
  * A packet extension sent to indicate that the player forfeits the game.
  */
-public class GameForfeit implements PacketExtension {
+public class GameForfeit implements ExtensionElement {
 
     public static final String ELEMENT_NAME = "reversi-forfeit";
     public static final String NAMESPACE = "http://jivesoftware.org/protocol/game/reversi";

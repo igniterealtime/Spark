@@ -19,20 +19,32 @@
  */
 package org.jivesoftware.sparkimpl.plugin.alerts;
 
-import org.jivesoftware.smack.packet.PacketExtension;
+import org.jivesoftware.smack.SmackException;
+import org.jivesoftware.smack.packet.ExtensionElement;
+import org.jivesoftware.smack.provider.ExtensionElementProvider;
+import org.jivesoftware.smack.provider.IQProvider;
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
+
+import java.io.IOException;
 
 /**
  * XEP-0224 Compliance<br>
  * see <a
  * href="http://xmpp.org/extensions/xep-0224.html">http://xmpp.org/extensions/xep-0224.html</a>
  */
-public class BuzzPacket implements PacketExtension {
+public class BuzzPacket implements ExtensionElement
+{
+    public static final String ELEMENT_NAME = "attention";
+
+    public static final String NAMESPACE = "urn:xmpp:attention:0";
+
     public String getElementName() {
-	return "attention";
+	return ELEMENT_NAME;
     }
 
     public String getNamespace() {
-	return "urn:xmpp:attention:0";
+	return NAMESPACE;
     }
 
     // TODO 2.7.0 remove buzz only attention gets to stay
@@ -41,4 +53,15 @@ public class BuzzPacket implements PacketExtension {
 		+ "\"/><buzz xmlns=\"http://www.jivesoftware.com/spark\"/>";
     }
 
+    public static class Provider extends ExtensionElementProvider<BuzzPacket> {
+
+        public Provider() {
+        }
+
+        @Override
+        public BuzzPacket parse( XmlPullParser parser, int i ) throws XmlPullParserException, IOException, SmackException
+        {
+            return new BuzzPacket();
+        }
+    }
 }

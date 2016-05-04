@@ -21,12 +21,13 @@ package org.jivesoftware.spark.ui;
 
 import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Res;
-import org.jivesoftware.smack.Roster;
-import org.jivesoftware.smack.RosterEntry;
-import org.jivesoftware.smack.RosterGroup;
+import org.jivesoftware.smack.SmackException;
+import org.jivesoftware.smack.roster.Roster;
+import org.jivesoftware.smack.roster.RosterEntry;
+import org.jivesoftware.smack.roster.RosterGroup;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Presence;
-import org.jivesoftware.smack.packet.RosterPacket;
+import org.jivesoftware.smack.roster.packet.RosterPacket;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.UserManager;
@@ -38,6 +39,7 @@ import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.Transport;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.TransportUtils;
+import org.jxmpp.util.XmppStringUtils;
 
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
@@ -163,10 +165,11 @@ public class SubscriptionDialog {
         }
     }
 
-    public void invoke(final String jid) {
+    public void invoke(final String jid) throws SmackException.NotConnectedException
+    {
         this.jid = jid;
 
-        final Roster roster = SparkManager.getConnection().getRoster();
+        final Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
 
         // If User is already in roster, do not show.
         RosterEntry entry = roster.getEntry(jid);
@@ -174,12 +177,12 @@ public class SubscriptionDialog {
             Presence response = new Presence(Presence.Type.subscribed);
             response.setTo(jid);
 
-            SparkManager.getConnection().sendPacket(response);
+            SparkManager.getConnection().sendStanza(response);
             return;
         }
 
         String message = Res.getString("message.approve.subscription", UserManager.unescapeJID(jid));
-        Transport transport = TransportUtils.getTransport(StringUtils.parseServer(jid));
+        Transport transport = TransportUtils.getTransport( XmppStringUtils.parseDomain(jid));
         Icon icon = null;
         if (transport != null) {
             icon = transport.getIcon();
@@ -193,7 +196,7 @@ public class SubscriptionDialog {
         UserManager userManager = SparkManager.getUserManager();
         
         String username = userManager.getNickname(userManager.getFullJID(jid));
-        username = username == null ? StringUtils.parseName(UserManager.unescapeJID(jid)) : username;
+        username = username == null ? XmppStringUtils.parseLocalpart(UserManager.unescapeJID(jid)) : username;
         usernameLabelValue.setText(UserManager.unescapeJID(jid));
         nicknameField.setText(username);
 
@@ -202,7 +205,14 @@ public class SubscriptionDialog {
                 if (!rosterBox.isSelected()) {
                     Presence response = new Presence(Presence.Type.subscribed);
                     response.setTo(jid);
-                    SparkManager.getConnection().sendPacket(response);
+                    try
+                    {
+                        SparkManager.getConnection().sendStanza(response);
+                    }
+                    catch ( SmackException.NotConnectedException e1 )
+                    {
+                        Log.warning( "Unable to send stanza accepting subscription from " + jid, e1 );
+                    }
                     dialog.dispose();
                     return;
                 }
@@ -211,7 +221,14 @@ public class SubscriptionDialog {
                 if (addEntry) {
                     Presence response = new Presence(Presence.Type.subscribed);
                     response.setTo(jid);
-                    SparkManager.getConnection().sendPacket(response);
+                    try
+                    {
+                        SparkManager.getConnection().sendStanza(response);
+                    }
+                    catch ( SmackException.NotConnectedException e1 )
+                    {
+                        Log.warning( "Unable to send stanza accepting subscription from " + jid, e1 );
+                    }
                 }
                 else {
                     dialog.dispose();
@@ -285,7 +302,14 @@ public class SubscriptionDialog {
     {
         Presence response = new Presence(Presence.Type.unsubscribe);
         response.setTo(jid);
-        SparkManager.getConnection().sendPacket(response);
+        try
+        {
+            SparkManager.getConnection().sendStanza(response);
+        }
+        catch ( SmackException.NotConnectedException e )
+        {
+            Log.warning( "Unable to send stanza unsubscribing from " + jid, e );
+        }
 
         dialog.dispose();
     }
@@ -329,7 +353,7 @@ public class SubscriptionDialog {
     public RosterEntry addEntry(String jid, String nickname, String group) {
         String[] groups = {group};
 
-        Roster roster = SparkManager.getConnection().getRoster();
+        Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
         RosterEntry userEntry = roster.getEntry(jid);
 
         boolean isSubscribed = true;
@@ -341,7 +365,7 @@ public class SubscriptionDialog {
             try {
                 roster.createEntry(jid, nickname, new String[]{group});
             }
-            catch (XMPPException e) {
+            catch (XMPPException | SmackException e) {
                 Log.error("Unable to add new entry " + jid, e);
             }
             return roster.getEntry(jid);
@@ -365,7 +389,7 @@ public class SubscriptionDialog {
 
             userEntry = roster.getEntry(jid);
         }
-        catch (XMPPException ex) {
+        catch (XMPPException | SmackException ex) {
             Log.error(ex);
         }
         return userEntry;

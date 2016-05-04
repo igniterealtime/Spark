@@ -34,7 +34,7 @@ import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.provider.ProviderManager;
 import org.jivesoftware.smack.util.StringUtils;
-import org.jivesoftware.smackx.packet.VCard;
+import org.jivesoftware.smackx.vcardtemp.packet.VCard;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.phone.PhoneManager;
 import org.jivesoftware.spark.plugin.phone.resource.PhoneRes;
@@ -49,6 +49,7 @@ import org.jivesoftware.sparkplugin.preferences.SipPreferences;
 import org.jivesoftware.sparkplugin.sipaccount.SipAccount;
 import org.jivesoftware.sparkplugin.sipaccount.SipAccountPacket;
 import org.jivesoftware.sparkplugin.ui.call.MissedCalls;
+import org.jxmpp.util.XmppStringUtils;
 
 import javax.sdp.MediaDescription;
 import javax.sdp.SessionDescription;
@@ -1011,9 +1012,9 @@ public class SoftPhoneManager implements CommunicationsListener, CallListener, U
     private void setupRemotePreferences(XMPPConnection con) {
 
         try {
-            ProviderManager.getInstance().addIQProvider(SipAccountPacket.ELEMENT_NAME, SipAccountPacket.NAMESPACE, new SipAccountPacket.Provider());
+            ProviderManager.addIQProvider(SipAccountPacket.ELEMENT_NAME, SipAccountPacket.NAMESPACE, new SipAccountPacket.Provider());
 
-            ProviderManager.getInstance().addIQProvider(LogPacket.ELEMENT_NAME, LogPacket.NAMESPACE, new LogPacket.Provider());
+            ProviderManager.addIQProvider(LogPacket.ELEMENT_NAME, LogPacket.NAMESPACE, new LogPacket.Provider());
 
             SipAccountPacket sp = SipAccountPacket.getSipSettings(con);
 
@@ -1098,7 +1099,7 @@ public class SoftPhoneManager implements CommunicationsListener, CallListener, U
      */
     public void callByJID(String jid) {
         if (getStatus() == SipRegisterStatus.Registered) {
-            final VCard vcard = SparkManager.getVCardManager().getVCard(StringUtils.parseBareAddress(jid));
+            final VCard vcard = SparkManager.getVCardManager().getVCard(XmppStringUtils.parseBareJid(jid));
 
             if (vcard != null) {
                 String number = vcard.getPhoneWork("VOICE");

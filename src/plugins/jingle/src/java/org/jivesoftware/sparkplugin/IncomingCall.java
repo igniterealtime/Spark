@@ -20,13 +20,14 @@
 package org.jivesoftware.sparkplugin;
 
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.util.StringUtils;
-import org.jivesoftware.smackx.jingle.JingleSession;
-import org.jivesoftware.smackx.jingle.JingleSessionRequest;
-import org.jivesoftware.smackx.jingle.listeners.JingleSessionListener;
-import org.jivesoftware.smackx.jingle.media.PayloadType;
-import org.jivesoftware.smackx.jingle.nat.TransportCandidate;
+import org.jivesoftware.smackx.jingleold.JingleSession;
+import org.jivesoftware.smackx.jingleold.JingleSessionRequest;
+import org.jivesoftware.smackx.jingleold.listeners.JingleSessionListener;
+import org.jivesoftware.smackx.jingleold.media.PayloadType;
+import org.jivesoftware.smackx.jingleold.nat.TransportCandidate;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.phone.PhoneManager;
 import org.jivesoftware.spark.ui.ChatRoom;
@@ -35,6 +36,7 @@ import org.jivesoftware.spark.util.SwingTimerTask;
 import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.alerts.SparkToaster;
+import org.jxmpp.util.XmppStringUtils;
 
 import javax.swing.*;
 import java.applet.Applet;
@@ -93,7 +95,7 @@ public class IncomingCall implements JingleSessionListener, ChatRoomClosingListe
         try {
             session = request.accept();
         }
-        catch (XMPPException e) {
+        catch (XMPPException | SmackException e) {
             Log.error(e);
         }
 
@@ -184,7 +186,7 @@ public class IncomingCall implements JingleSessionListener, ChatRoomClosingListe
                 session.terminate();
                 session = null;
             }
-            catch (XMPPException e) {
+            catch (XMPPException | SmackException e) {
                 Log.error(e);
             }
         }
@@ -275,7 +277,7 @@ public class IncomingCall implements JingleSessionListener, ChatRoomClosingListe
         session.startIncoming();
 
         if (chatRoom == null) {
-            chatRoom = SparkManager.getChatManager().getChatRoom(StringUtils.parseBareAddress(request.getFrom()));
+            chatRoom = SparkManager.getChatManager().getChatRoom( XmppStringUtils.parseBareJid(request.getFrom()) );
             SparkManager.getChatManager().getChatContainer().activateChatRoom(chatRoom);
             SparkManager.getChatManager().getChatContainer().getChatFrame().toFront();
             notifyRoom();
@@ -298,7 +300,7 @@ public class IncomingCall implements JingleSessionListener, ChatRoomClosingListe
                         try {
                             session.terminate("No Media Received. This may be caused by firewall configuration problems.");
                         }
-                        catch (XMPPException e) {
+                        catch (XMPPException | SmackException e) {
                             Log.error(e);
                         }
                     }
@@ -339,7 +341,7 @@ public class IncomingCall implements JingleSessionListener, ChatRoomClosingListe
             try {
                 session.terminate();
             }
-            catch (XMPPException e) {
+            catch (XMPPException | SmackException e) {
                 Log.error(e);
             }
         }

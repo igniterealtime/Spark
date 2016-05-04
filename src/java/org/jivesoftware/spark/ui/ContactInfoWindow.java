@@ -43,9 +43,9 @@ import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.util.StringUtils;
-import org.jivesoftware.smackx.packet.VCard;
-import org.jivesoftware.smackx.packet.LastActivity;
-import org.jivesoftware.smackx.LastActivityManager;
+import org.jivesoftware.smackx.vcardtemp.packet.VCard;
+import org.jivesoftware.smackx.iqlast.packet.LastActivity;
+import org.jivesoftware.smackx.iqlast.LastActivityManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.util.GraphicUtils;
@@ -53,6 +53,7 @@ import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.Transport;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.TransportUtils;
+import org.jxmpp.util.XmppStringUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -245,7 +246,7 @@ public class ContactInfoWindow extends JPanel {
 					} else client = "/";
 				}
 	
-	            LastActivity activity = LastActivityManager.getLastActivity(SparkManager.getConnection(), contactItem.getJID()+client);
+	            LastActivity activity = LastActivityManager.getInstanceFor( SparkManager.getConnection() ).getLastActivity( contactItem.getJID()+client);
 	
 	            long idleTime = (activity.getIdleTime() * 1000);
 	
@@ -273,15 +274,15 @@ public class ContactInfoWindow extends JPanel {
         }
         statusLabel.setText(status);
 
-        Transport transport = TransportUtils.getTransport(StringUtils.parseServer(contactItem.getJID()));
+        Transport transport = TransportUtils.getTransport( XmppStringUtils.parseDomain(contactItem.getJID()));
         if (transport != null) {
             fullJIDLabel.setIcon(transport.getIcon());
-            String name = StringUtils.parseName(contactItem.getJID());
-            name = StringUtils.unescapeNode(name);
+            String name = XmppStringUtils.parseLocalpart(contactItem.getJID());
+            name = XmppStringUtils.unescapeLocalpart(name);
             fullJIDLabel.setText(transport.getName() + " - " + name);
         }
         else {
-            String name = StringUtils.unescapeNode(contactItem.getJID());
+            String name = XmppStringUtils.unescapeLocalpart(contactItem.getJID());
             fullJIDLabel.setText(name);
             fullJIDLabel.setIcon(null);
         }
@@ -312,7 +313,7 @@ public class ContactInfoWindow extends JPanel {
         // Get VCard from memory (if available)
         String title = "";
         String phone = "";
-        VCard vcard = SparkManager.getVCardManager().getVCardFromMemory(StringUtils.parseBareAddress(contactItem.getJID()));
+        VCard vcard = SparkManager.getVCardManager().getVCardFromMemory(XmppStringUtils.parseBareJid(contactItem.getJID()));
         if (vcard != null) {
             title = vcard.getField("TITLE");
             phone = vcard.getPhoneWork("VOICE");

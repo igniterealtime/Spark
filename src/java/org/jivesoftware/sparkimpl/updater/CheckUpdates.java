@@ -27,14 +27,11 @@ import org.apache.commons.httpclient.protocol.Protocol;
 import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.smack.PacketCollector;
-import org.jivesoftware.smack.SmackConfiguration;
-import org.jivesoftware.smack.XMPPConnection;
-import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.*;
 import org.jivesoftware.smack.filter.PacketIDFilter;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.provider.ProviderManager;
-import org.jivesoftware.smackx.packet.DiscoverItems;
+import org.jivesoftware.smackx.disco.packet.DiscoverItems;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.ConfirmDialog;
 import org.jivesoftware.spark.component.ConfirmDialog.ConfirmListener;
@@ -70,7 +67,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.TimerTask;
 
 public class CheckUpdates {
@@ -87,7 +83,7 @@ public class CheckUpdates {
 
     public CheckUpdates() {
         // Set the Jabber IQ Provider for Jabber:iq:spark
-        ProviderManager.getInstance().addIQProvider("query", "jabber:iq:spark", new SparkVersion.Provider());
+        ProviderManager.addIQProvider("query", "jabber:iq:spark", new SparkVersion.Provider());
 
         // For simplicity, use an alias for the root xml tag
         xstream.alias("Version", SparkVersion.class);
@@ -110,8 +106,8 @@ public class CheckUpdates {
                     return serverVersion;
                 }
             }
-            catch (XMPPException e) {
-                // Nothing to do
+            catch (SmackException | XMPPException.XMPPErrorException e) {
+                Log.warning( "Unable the check fo new build.", e );
             }
 
         }
@@ -563,25 +559,25 @@ public class CheckUpdates {
      * @return the information for about the latest Spark Client.
      * @throws XMPPException If unable to retrieve latest version.
      */
-    public static SparkVersion getLatestVersion(XMPPConnection connection) throws XMPPException {
+    public static SparkVersion getLatestVersion(XMPPConnection connection) throws SmackException, XMPPException.XMPPErrorException
+    {
         SparkVersion request = new SparkVersion();
-        request.setType(IQ.Type.GET);
+        request.setType(IQ.Type.get);
         request.setTo("updater." + connection.getServiceName());
 
         PacketCollector collector = connection.createPacketCollector(new PacketIDFilter(request.getPacketID()));
-        connection.sendPacket(request);
+        connection.sendStanza(request);
 
 
-        SparkVersion response = (SparkVersion)collector.nextResult(SmackConfiguration.getPacketReplyTimeout());
+        SparkVersion response = (SparkVersion)collector.nextResult(SmackConfiguration.getDefaultPacketReplyTimeout());
 
         // Cancel the collector.
         collector.cancel();
         if (response == null) {
-            throw new XMPPException("No response from server.");
+            throw SmackException.NoResponseException.newWith( connection, collector );
         }
-        if (response.getError() != null) {
-            throw new XMPPException(response.getError());
-        }
+        XMPPException.XMPPErrorException.ifHasErrorThenThrow( response );
+
         return response;
     }
 
@@ -600,9 +596,7 @@ public class CheckUpdates {
 
         try {
             DiscoverItems items = SparkManager.getSessionManager().getDiscoveredItems();
-            Iterator<DiscoverItems.Item> iter = items.getItems();
-            while (iter.hasNext()) {
-                DiscoverItems.Item item = (DiscoverItems.Item)iter.next();
+            for (DiscoverItems.Item item : items.getItems() ) {
                 if ("Spark Updater".equals(item.getName())) {
                     return true;
                 }

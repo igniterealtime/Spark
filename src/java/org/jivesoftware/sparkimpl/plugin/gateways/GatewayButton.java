@@ -34,6 +34,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.UIManager;
 
 import org.jivesoftware.resource.Res;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.spark.PresenceManager;
@@ -90,7 +91,14 @@ public class GatewayButton extends JPanel implements GatewayItem {
                         Presence oldPresence = statusBar.getPresence();
                         Presence presence = new Presence(oldPresence.getType(), oldPresence.getStatus(), oldPresence.getPriority(), oldPresence.getMode());
                         presence.setTo(transport.getServiceName());
-                        SparkManager.getConnection().sendPacket(presence);
+                        try
+                        {
+                            SparkManager.getConnection().sendStanza(presence);
+                        }
+                        catch ( SmackException.NotConnectedException e )
+                        {
+                            Log.error( "Unable to register.", e );
+                        }
                     }
                 }
             }
@@ -114,7 +122,14 @@ public class GatewayButton extends JPanel implements GatewayItem {
                 final Presence offlinePresence = new Presence(Presence.Type.unavailable);
                 offlinePresence.setTo(transport.getServiceName());
 
-                SparkManager.getConnection().sendPacket(offlinePresence);
+                try
+                {
+                    SparkManager.getConnection().sendStanza(offlinePresence);
+                }
+                catch ( SmackException.NotConnectedException e )
+                {
+                    Log.warning( "Unable to send sign-off.", e );
+                }
             }
         });
 
@@ -124,7 +139,14 @@ public class GatewayButton extends JPanel implements GatewayItem {
             public void actionPerformed(ActionEvent actionEvent) {
                 final Presence onlinePresence = new Presence(Presence.Type.available);
                 onlinePresence.setTo(transport.getServiceName());
-                SparkManager.getConnection().sendPacket(onlinePresence);
+                try
+                {
+                    SparkManager.getConnection().sendStanza(onlinePresence);
+                }
+                catch ( SmackException.NotConnectedException e )
+                {
+                    Log.error( "Unable sign-in.", e );
+                }
             }
         });
 
@@ -157,7 +179,7 @@ public class GatewayButton extends JPanel implements GatewayItem {
                     try {
                         TransportUtils.unregister(SparkManager.getConnection(), transport.getServiceName());
                     }
-                    catch (XMPPException e1) {
+                    catch (SmackException e1) {
                         Log.error(e1);
                     }
                 }

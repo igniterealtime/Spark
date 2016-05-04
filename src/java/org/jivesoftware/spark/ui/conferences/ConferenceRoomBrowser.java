@@ -63,10 +63,12 @@ import javax.swing.UIManager;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.util.StringUtils;
-import org.jivesoftware.smackx.Form;
-import org.jivesoftware.smackx.bookmark.BookmarkedConference;
+import org.jivesoftware.smackx.muc.MultiUserChatManager;
+import org.jivesoftware.smackx.xdata.Form;
+import org.jivesoftware.smackx.bookmarks.BookmarkedConference;
 import org.jivesoftware.smackx.muc.HostedRoom;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.muc.RoomInfo;
@@ -87,6 +89,7 @@ import org.jivesoftware.spark.util.UIComponentRegistry;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+import org.jxmpp.util.XmppStringUtils;
 
 /**
  * A UI that handles all Group Rooms contained in an XMPP Messenger server. This
@@ -392,8 +395,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
                 if (stillSearchForOccupants) {
                 RoomInfo roomInfo = null;
                 try {
-                    roomInfo = MultiUserChat.getRoomInfo(
-                        SparkManager.getConnection(), roomJID);
+                    roomInfo = MultiUserChatManager.getInstanceFor( SparkManager.getConnection() ).getRoomInfo( roomJID );
                 } catch (Exception e) {
                     // Nothing to do
                 }
@@ -437,7 +439,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
         // Check to see what type of room this is.
         boolean persistent = false;
         try {
-            final RoomInfo roomInfo = MultiUserChat.getRoomInfo(SparkManager.getConnection(), roomJID);
+            final RoomInfo roomInfo = MultiUserChatManager.getInstanceFor( SparkManager.getConnection() ).getRoomInfo( roomJID );
             persistent = roomInfo.isPersistent();
         } catch (Exception e) {
             // Do not return
@@ -567,8 +569,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
                             if (!partialDiscovery) {
                                 RoomInfo roomInfo = null;
                                 try {
-                                roomInfo = MultiUserChat.getRoomInfo(
-                                    SparkManager.getConnection(), roomJID);
+                                roomInfo = MultiUserChatManager.getInstanceFor( SparkManager.getConnection() ).getRoomInfo( roomJID );
                                 } catch (Exception e) {
                                 // Nothing to do
                                 }
@@ -818,8 +819,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
      */
     private static Collection<HostedRoom> getRoomList(String serviceName)
 	    throws Exception {
-	return MultiUserChat.getHostedRooms(SparkManager.getConnection(),
-		serviceName);
+        return MultiUserChatManager.getInstanceFor( SparkManager.getConnection() ).getHostedRooms( serviceName );
     }
 
     /**
@@ -864,8 +864,8 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
 
 		// new DataFormDialog(groupChat, form);
 		groupChat.sendConfigurationForm(form);
-        addRoomToTable(groupChat.getRoom(), StringUtils.parseName(groupChat.getRoom()), 1);
-	    } catch (XMPPException e1) {
+        addRoomToTable(groupChat.getRoom(), XmppStringUtils.parseLocalpart(groupChat.getRoom()), 1);
+	    } catch (XMPPException | SmackException e1) {
 		Log.error("Error creating new room.", e1);
 		UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
 		JOptionPane
@@ -931,7 +931,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
                 }
 
                 final Object[] insertRoom = new Object[] { iconLabel, roomName,
-                    StringUtils.parseName(jid), occupants };
+                    XmppStringUtils.parseLocalpart(jid), occupants };
                 return insertRoom;
             }
             
@@ -974,18 +974,15 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
 	boolean result = false;
 	try {
 
-	    RoomInfo rif = MultiUserChat.getRoomInfo(
-		    SparkManager.getConnection(), roomjid);
+	    RoomInfo rif = MultiUserChatManager.getInstanceFor( SparkManager.getConnection() ).getRoomInfo( roomjid );
 
 	    result = rif.isMembersOnly() || rif.isPasswordProtected();
 
-	} catch (XMPPException e) {
-
-	} catch (NumberFormatException nfe) {
+	} catch (XMPPException | SmackException | NumberFormatException e) {
 
 	}
 
-	return result;
+        return result;
     }
 
     /**

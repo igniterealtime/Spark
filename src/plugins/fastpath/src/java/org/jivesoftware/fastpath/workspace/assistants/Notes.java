@@ -43,6 +43,7 @@ import org.jivesoftware.fastpath.FastpathPlugin;
 import org.jivesoftware.fastpath.FpRes;
 import org.jivesoftware.fastpath.resources.FastpathRes;
 import org.jivesoftware.fastpath.workspace.panes.BackgroundPane;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.workgroup.agent.AgentSession;
 import org.jivesoftware.spark.SparkManager;
@@ -201,7 +202,7 @@ public class Notes extends JPanel {
             };
             worker.start();
         }
-        catch (XMPPException e1) {
+        catch (XMPPException | SmackException e1) {
             showError(FpRes.getString("message.unable.to.update.notes"));
             Log.error("Could not commit note.", e1);
         }

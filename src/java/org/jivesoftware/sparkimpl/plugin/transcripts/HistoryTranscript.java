@@ -47,6 +47,7 @@ import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+import org.jxmpp.util.XmppStringUtils;
 
 /**
  * This class represents the history transcript
@@ -198,7 +199,7 @@ public class HistoryTranscript extends SwingWorker {
 			String body = org.jivesoftware.spark.util.StringUtils
 					.escapeHTMLTags(message.getBody());
 			if (nickname.equals(message.getFrom())) {
-				String otherJID = StringUtils.parseBareAddress(message
+				String otherJID = XmppStringUtils.parseBareJid(message
 						.getFrom());
 				String myJID = SparkManager.getSessionManager()
 						.getBareAddress();
@@ -206,12 +207,12 @@ public class HistoryTranscript extends SwingWorker {
 				if (otherJID.equals(myJID)) {
 					nickname = personalNickname;
 				} else {
-					nickname = StringUtils.parseName(nickname);
+					nickname = XmppStringUtils.parseLocalpart(nickname);
 					broadcastnick = message.getFrom();
 				}
 			}
 
-			if (!StringUtils.parseBareAddress(from).equals(
+			if (!XmppStringUtils.parseBareJid(from).equals(
 					SparkManager.getSessionManager().getBareAddress())) {
 				color = "red";
 			}
@@ -636,7 +637,7 @@ public class HistoryTranscript extends SwingWorker {
 
 	@Override
 	public Object construct() {
-		String bareJID = StringUtils.parseBareAddress(jid);
+		String bareJID = XmppStringUtils.parseBareJid(jid);
 		return ChatTranscripts.getChatTranscript(bareJID);
 	}
 

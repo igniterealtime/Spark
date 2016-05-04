@@ -19,7 +19,7 @@
  */
 package org.jivesoftware.sparkimpl.profile;
 
-import org.jivesoftware.smackx.packet.VCard;
+import org.jivesoftware.smackx.vcardtemp.packet.VCard;
 
 /**
  * Users will want to implement this interface to listen for changes with their VCard.

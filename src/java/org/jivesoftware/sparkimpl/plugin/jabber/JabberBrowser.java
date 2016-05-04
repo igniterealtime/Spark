@@ -21,10 +21,11 @@ package org.jivesoftware.sparkimpl.plugin.jabber;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smackx.ServiceDiscoveryManager;
-import org.jivesoftware.smackx.packet.DiscoverItems;
+import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
+import org.jivesoftware.smackx.disco.packet.DiscoverItems;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.plugin.Plugin;
@@ -44,7 +45,6 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.AbstractAction;
@@ -130,7 +130,7 @@ public class JabberBrowser implements Plugin {
         try {
             result = discoManager.discoverItems(serviceName);
         }
-        catch (XMPPException e) {
+        catch (XMPPException | SmackException e) {
             Log.error(e);
             return;
         }
@@ -138,9 +138,7 @@ public class JabberBrowser implements Plugin {
         addAddress(serviceName);
 
 
-        Iterator<DiscoverItems.Item> discoverItems = result.getItems();
-        while (discoverItems.hasNext()) {
-            DiscoverItems.Item item = discoverItems.next();
+        for (DiscoverItems.Item item : result.getItems() ) {
             Entity entity = new Entity(item);
             browsePanel.add(entity);
         }
@@ -158,18 +156,15 @@ public class JabberBrowser implements Plugin {
         try {
             result = discoManager.discoverItems(discoveredItem.getEntityID());
         }
-        catch (XMPPException e) {
+        catch (XMPPException | SmackException e) {
             browsePanel.invalidate();
             browsePanel.validate();
             browsePanel.repaint();
             return;
         }
 
-        Iterator<DiscoverItems.Item> discoverItems = result.getItems();
         List<Entity> list = new ArrayList<Entity>();
-
-        while (discoverItems.hasNext()) {
-            DiscoverItems.Item item = discoverItems.next();
+        for (DiscoverItems.Item item : result.getItems() ) {
             Entity entity = new Entity(item);
             browsePanel.add(entity);
             list.add(entity);

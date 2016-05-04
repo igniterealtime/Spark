@@ -19,20 +19,22 @@
  */
 package org.jivesoftware.sparkimpl.plugin.jabber;
 
-import org.jivesoftware.smack.PacketListener;
-import org.jivesoftware.smack.filter.PacketFilter;
-import org.jivesoftware.smack.filter.PacketTypeFilter;
+import org.jivesoftware.smack.SmackException;
+import org.jivesoftware.smack.StanzaListener;
+import org.jivesoftware.smack.filter.StanzaFilter;
+import org.jivesoftware.smack.filter.StanzaTypeFilter;
 import org.jivesoftware.smack.packet.IQ;
-import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.packet.Presence;
-import org.jivesoftware.smackx.packet.Time;
-import org.jivesoftware.smackx.packet.Version;
+import org.jivesoftware.smackx.time.packet.Time;
+import org.jivesoftware.smackx.iqversion.packet.Version;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.ContextMenuListener;
 import org.jivesoftware.spark.plugin.Plugin;
 import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.ui.ContactList;
 import org.jivesoftware.spark.util.SwingWorker;
+import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.JiveInfo;
 import org.jivesoftware.resource.Res;
 
@@ -52,38 +54,41 @@ public class JabberVersion implements Plugin {
 
     public void initialize() {
         // Create IQ Filter
-        PacketFilter packetFilter = new PacketTypeFilter(IQ.class);
-        SparkManager.getConnection().addPacketListener(new PacketListener() {
-            public void processPacket(Packet packet) {
-                IQ iq = (IQ)packet;
+        StanzaFilter packetFilter = new StanzaTypeFilter(IQ.class);
+        SparkManager.getConnection().addAsyncStanzaListener(new StanzaListener() {
+            public void processPacket(Stanza stanza) {
+                IQ iq = (IQ)stanza;
 
-                // Handle Version Request
-                if (iq instanceof Version && iq.getType() == IQ.Type.GET) {
-                    // Send Version
-                    Version version = new Version();
-                    version.setName(JiveInfo.getName());
+                try
+                {
+                    // Handle Version Request
+                    if (iq instanceof Version && iq.getType() == IQ.Type.get) {
+                        // Send Version
+                        Version version = new Version( JiveInfo.getName(), JiveInfo.getVersion(), JiveInfo.getOS() );
 
-                    version.setOs(JiveInfo.getOS());
-                    version.setVersion(JiveInfo.getVersion());
+                        // Send back as a reply
+                        version.setStanzaId(iq.getStanzaId());
+                        version.setType(IQ.Type.result);
+                        version.setTo(iq.getFrom());
+                        version.setFrom(iq.getTo());
+                        SparkManager.getConnection().sendStanza(version);
+                    }
+                    // Send time
+                    else if (iq instanceof Time && iq.getType() == IQ.Type.get) {
+                        Time time = new Time();
+                        time.setStanzaId(iq.getStanzaId());
+                        time.setFrom(iq.getTo());
+                        time.setTo(iq.getFrom());
+                        time.setTime(new Date());
+                        time.setType(IQ.Type.result);
 
-                    // Send back as a reply
-                    version.setPacketID(iq.getPacketID());
-                    version.setType(IQ.Type.RESULT);
-                    version.setTo(iq.getFrom());
-                    version.setFrom(iq.getTo());
-                    SparkManager.getConnection().sendPacket(version);
+                        // Send Time
+                        SparkManager.getConnection().sendStanza(time);
+                    }
                 }
-                // Send time
-                else if (iq instanceof Time && iq.getType() == IQ.Type.GET) {
-                    Time time = new Time();
-                    time.setPacketID(iq.getPacketID());
-                    time.setFrom(iq.getTo());
-                    time.setTo(iq.getFrom());
-                    time.setTime(new Date());
-                    time.setType(IQ.Type.RESULT);
-
-                    // Send Time
-                    SparkManager.getConnection().sendPacket(time);
+                catch ( SmackException.NotConnectedException e )
+                {
+                    Log.warning( "Unable to answer request: " + stanza, e);
                 }
             }
         }, packetFilter);

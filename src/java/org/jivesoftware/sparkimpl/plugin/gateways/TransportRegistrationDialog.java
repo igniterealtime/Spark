@@ -20,8 +20,12 @@
 package org.jivesoftware.sparkimpl.plugin.gateways;
 
 import org.jivesoftware.resource.Res;
+import org.jivesoftware.smack.SmackException;
+import org.jivesoftware.smack.StanzaListener;
 import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.component.TitlePanel;
@@ -185,17 +189,26 @@ public class TransportRegistrationDialog extends JPanel implements ActionListene
         }
 
         try {
-            TransportUtils.registerUser(SparkManager.getConnection(), serviceName, username, password, nickname);
-
-            // Send Directed Presence
-            final StatusBar statusBar = SparkManager.getWorkspace().getStatusBar();
-            Presence presence = statusBar.getPresence();
-            presence.setTo(transport.getServiceName());
-            SparkManager.getConnection().sendPacket(presence);
+            TransportUtils.registerUser(SparkManager.getConnection(), serviceName, username, password, nickname, new StanzaListener()
+            {
+                @Override
+                public void processPacket( Stanza stanza ) throws SmackException.NotConnectedException
+                {
+                    IQ result = (IQ) stanza;
+                    if ( result.getType() == IQ.Type.error ) {
+                        JOptionPane.showMessageDialog(TransportRegistrationDialog.this, Res.getString("message.registration.transport.failed"), Res.getString("title.registration.error"), JOptionPane.ERROR_MESSAGE);
+                    } else {
+                        // Send Directed Presence
+                        final StatusBar statusBar = SparkManager.getWorkspace().getStatusBar();
+                        Presence presence = statusBar.getPresence();
+                        presence.setTo(transport.getServiceName());
+                        SparkManager.getConnection().sendStanza(presence);
+                    }
+                }
+            } );
         }
-        catch (XMPPException e1) {
-            e1.printStackTrace();
-            JOptionPane.showMessageDialog(this, Res.getString("message.registration.transport.failed"), Res.getString("title.registration.error"), JOptionPane.ERROR_MESSAGE);
+        catch (SmackException e1) {
+            JOptionPane.showMessageDialog(TransportRegistrationDialog.this, Res.getString("message.registration.transport.failed"), Res.getString("title.registration.error"), JOptionPane.ERROR_MESSAGE);
         }
 
         dialog.dispose();

@@ -46,10 +46,12 @@ import javax.swing.event.ChangeListener;
 
 import org.jivesoftware.fastpath.FastpathPlugin;
 import org.jivesoftware.fastpath.FpRes;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.util.StringUtils;
-import org.jivesoftware.smackx.Form;
+import org.jivesoftware.smackx.muc.MultiUserChatManager;
+import org.jivesoftware.smackx.xdata.Form;
 import org.jivesoftware.smackx.muc.Affiliate;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.workgroup.agent.AgentRoster;
@@ -64,6 +66,7 @@ import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+import org.jxmpp.util.XmppStringUtils;
 
 /**
  * UI to show all chats occuring.
@@ -156,7 +159,14 @@ public final class AgentConversations extends JPanel implements ChangeListener {
                 Collection agentSet;
 
                 public Object construct() {
-                    agentRoster = FastpathPlugin.getAgentSession().getAgentRoster();
+                    try
+                    {
+                        agentRoster = FastpathPlugin.getAgentSession().getAgentRoster();
+                    }
+                    catch ( SmackException.NotConnectedException e1 )
+                    {
+                        Log.warning( "Unable to get agent roster.", e1 );
+                    }
                     agentSet = agentRoster.getAgents();
                     return agentSet;
                 }
@@ -171,7 +181,7 @@ public final class AgentConversations extends JPanel implements ChangeListener {
                         }
 
                         public void presenceChanged(Presence presence) {
-                            String agentJID = StringUtils.parseBareAddress(presence.getFrom());
+                            String agentJID = XmppStringUtils.parseBareJid(presence.getFrom());
                             AgentStatus agentStatus = (AgentStatus)presence.getExtension("agent-status", "http://jabber.org/protocol/workgroup");
 
                             String status = presence.getStatus();
@@ -282,7 +292,8 @@ public final class AgentConversations extends JPanel implements ChangeListener {
 						public void actionPerformed(ActionEvent actionEvent) {
                             // Get Conference
                             try {
-                                Collection col = MultiUserChat.getServiceNames(SparkManager.getConnection());
+                                final MultiUserChatManager multiUserChatManager = MultiUserChatManager.getInstanceFor( SparkManager.getConnection() );
+                                Collection col = multiUserChatManager.getServiceNames();
                                 if (col.size() == 0) {
                                     return;
                                 }
@@ -293,7 +304,7 @@ public final class AgentConversations extends JPanel implements ChangeListener {
                                 LocalPreferences pref = SettingsManager.getLocalPreferences();
 
                                 final String nickname = pref.getNickname();
-                                MultiUserChat muc = new MultiUserChat(SparkManager.getConnection(), roomName);
+                                MultiUserChat muc = multiUserChatManager.getMultiUserChat( roomName );
 
                                 ConferenceUtils.enterRoom(muc, roomName, nickname, null);
 
@@ -303,7 +314,7 @@ public final class AgentConversations extends JPanel implements ChangeListener {
                                     try {
                                         owners = muc.getOwners();
                                     }
-                                    catch (XMPPException e1) {
+                                    catch (XMPPException | SmackException e1) {
                                         return;
                                     }
                                     Iterator iter = owners.iterator();
@@ -343,7 +354,8 @@ public final class AgentConversations extends JPanel implements ChangeListener {
                             try {
                                 FastpathPlugin.getAgentSession().makeRoomOwner(SparkManager.getConnection(), sessionID);
 
-                                Collection<String> col = MultiUserChat.getServiceNames(SparkManager.getConnection());
+                                final MultiUserChatManager multiUserChatManager = MultiUserChatManager.getInstanceFor( SparkManager.getConnection() );
+                                Collection<String> col = multiUserChatManager.getServiceNames();
                                 if (col.size() == 0) {
                                     return;
                                 }
@@ -353,12 +365,12 @@ public final class AgentConversations extends JPanel implements ChangeListener {
 
                                 LocalPreferences pref = SettingsManager.getLocalPreferences();
                                 final String nickname = pref.getNickname();
-                                MultiUserChat muc = new MultiUserChat(SparkManager.getConnection(), roomName);
+                                MultiUserChat muc = multiUserChatManager.getMultiUserChat( roomName);
 
                                 ConferenceUtils.enterRoom(muc, roomName, nickname, null);
 
                             }
-                            catch (XMPPException e1) {
+                            catch (XMPPException | SmackException e1) {
                                 Log.error(e1);
                             }
                         }
@@ -369,7 +381,7 @@ public final class AgentConversations extends JPanel implements ChangeListener {
                     menu.show(list, e.getX(), e.getY());
                 }
             }
-            catch (XMPPException e1) {
+            catch (XMPPException | SmackException e1) {
                 Log.error(e1);
                 return;
             }

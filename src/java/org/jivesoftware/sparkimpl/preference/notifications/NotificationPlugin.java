@@ -20,9 +20,9 @@
 
 package org.jivesoftware.sparkimpl.preference.notifications;
 
-import org.jivesoftware.smack.PacketListener;
-import org.jivesoftware.smack.filter.PacketTypeFilter;
-import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smack.StanzaListener;
+import org.jivesoftware.smack.filter.StanzaTypeFilter;
+import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.spark.SparkManager;
@@ -36,6 +36,7 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.alerts.SparkToaster;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+import org.jxmpp.util.XmppStringUtils;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
@@ -52,7 +53,7 @@ import java.util.TimerTask;
  *
  * @author Derek DeMoro
  */
-public class NotificationPlugin implements Plugin, PacketListener {
+public class NotificationPlugin implements Plugin, StanzaListener {
 
     private Set<String> onlineUsers = new HashSet<String>();
     private LocalPreferences preferences;
@@ -81,19 +82,19 @@ public class NotificationPlugin implements Plugin, PacketListener {
         for (ContactGroup contactGroup : contactList.getContactGroups()) {
             for (ContactItem item : contactGroup.getContactItems()) {
                 if (item != null && item.getJID() != null && item.getPresence().isAvailable()) {
-                    String bareJID = StringUtils.parseBareAddress(item.getJID());
+                    String bareJID = XmppStringUtils.parseBareJid(item.getJID());
                     onlineUsers.add(bareJID);
                 }
             }
         }
 
         // Add Presence Listener
-        SparkManager.getConnection().addPacketListener(this, new PacketTypeFilter(Presence.class));
+        SparkManager.getConnection().addAsyncStanzaListener(this, new StanzaTypeFilter(Presence.class));
     }
 
 
-    public void processPacket(Packet packet) {
-        final Presence presence = (Presence)packet;
+    public void processPacket(Stanza stanza) {
+        final Presence presence = (Presence)stanza;
         String jid = presence.getFrom();
         if (jid == null) {
             return;
@@ -105,7 +106,7 @@ public class NotificationPlugin implements Plugin, PacketListener {
             return;
         }
 
-        jid = StringUtils.parseBareAddress(jid);
+        jid = XmppStringUtils.parseBareJid(jid);
         boolean isOnline = onlineUsers.contains(jid);
 
         if (presence.isAvailable()) {
@@ -134,7 +135,7 @@ public class NotificationPlugin implements Plugin, PacketListener {
     }
 
     public void uninstall() {
-        SparkManager.getConnection().removePacketListener(this);
+        SparkManager.getConnection().removeAsyncStanzaListener(this);
     }
 
     /**

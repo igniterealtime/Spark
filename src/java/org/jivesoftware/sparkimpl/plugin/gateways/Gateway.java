@@ -19,15 +19,18 @@
  */
 package org.jivesoftware.sparkimpl.plugin.gateways;
 
-import org.jivesoftware.smack.PacketCollector;
-import org.jivesoftware.smack.SmackConfiguration;
-import org.jivesoftware.smack.XMPPConnection;
-import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.*;
+import org.jivesoftware.smack.filter.IQReplyFilter;
 import org.jivesoftware.smack.filter.PacketIDFilter;
+import org.jivesoftware.smack.filter.StanzaIdFilter;
 import org.jivesoftware.smack.packet.IQ;
+import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.provider.IQProvider;
 import org.jivesoftware.spark.SparkManager;
 import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
+
+import java.io.IOException;
 
 /**
  *
@@ -36,6 +39,11 @@ public class Gateway extends IQ {
 
     private String jid;
     private String username;
+
+    protected Gateway()
+    {
+        super( ELEMENT_NAME, NAMESPACE );
+    }
 
 
     public String getJid() {
@@ -64,13 +72,14 @@ public class Gateway extends IQ {
      */
     public static final String NAMESPACE = "jabber:iq:gateway";
 
-
-    public String getChildElementXML() {
-        StringBuffer buf = new StringBuffer();
+    @Override
+    protected IQChildElementXmlStringBuilder getIQChildElementBuilder( IQChildElementXmlStringBuilder buf )
+    {
+        buf.rightAngleBracket();
         buf.append("<query xmlns=\"").append(NAMESPACE).append("\">");
         buf.append("<prompt>").append(username).append("</prompt>");
         buf.append("</query>");
-        return buf.toString();
+        return buf;
     }
 
     /**
@@ -78,13 +87,14 @@ public class Gateway extends IQ {
      *
      * @author Derek DeMoro
      */
-    public static class Provider implements IQProvider {
+    public static class Provider extends IQProvider<Gateway> {
 
         public Provider() {
             super();
         }
 
-        public IQ parseIQ(XmlPullParser parser) throws Exception {
+        public Gateway parse(XmlPullParser parser, int i) throws IOException, XmlPullParserException
+        {
             Gateway version = new Gateway();
 
             boolean done = false;
@@ -116,28 +126,27 @@ public class Gateway extends IQ {
      * @param serviceName the service the user belongs to.
      * @param username    the name of the user.
      * @return the JID.
-     * @throws XMPPException thrown if an exception occurs.
      */
-    public static String getJID(String serviceName, String username) throws XMPPException {
+    public static String getJID(String serviceName, String username) throws SmackException.NotConnectedException
+    {
         Gateway registration = new Gateway();
-        registration.setType(IQ.Type.SET);
+        registration.setType(IQ.Type.set);
         registration.setTo(serviceName);
         registration.setUsername(username);
 
         XMPPConnection con = SparkManager.getConnection();
-        PacketCollector collector = con.createPacketCollector(new PacketIDFilter(registration.getPacketID()));
-        con.sendPacket(registration);
+        PacketCollector collector = con.createPacketCollector(new StanzaIdFilter(registration.getStanzaId()));
+        try
+        {
+            con.sendStanza( registration );
 
-        Gateway response = (Gateway)collector.nextResult(SmackConfiguration.getPacketReplyTimeout());
-        collector.cancel();
-        if (response == null) {
-            throw new XMPPException("Server timed out");
+            Gateway response = collector.nextResult( SmackConfiguration.getDefaultPacketReplyTimeout() );
+            return response.getJid();
         }
-        if (response.getType() == IQ.Type.ERROR) {
-            throw new XMPPException("Error registering user", response.getError());
+        finally
+        {
+            collector.cancel();
         }
-
-        return response.getJid();
     }
 
 

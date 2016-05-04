@@ -69,25 +69,19 @@ import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.smack.ConnectionListener;
-import org.jivesoftware.smack.PacketListener;
-import org.jivesoftware.smack.Roster;
-import org.jivesoftware.smack.RosterEntry;
-import org.jivesoftware.smack.RosterGroup;
-import org.jivesoftware.smack.RosterListener;
-import org.jivesoftware.smack.XMPPConnection;
-import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smack.filter.PacketFilter;
-import org.jivesoftware.smack.filter.PacketTypeFilter;
-import org.jivesoftware.smack.packet.Message;
-import org.jivesoftware.smack.packet.Packet;
-import org.jivesoftware.smack.packet.Presence;
-import org.jivesoftware.smack.packet.RosterPacket;
-import org.jivesoftware.smack.packet.StreamError;
-import org.jivesoftware.smack.util.StringUtils;
-import org.jivesoftware.smackx.LastActivityManager;
-import org.jivesoftware.smackx.SharedGroupManager;
-import org.jivesoftware.smackx.packet.LastActivity;
+import org.jivesoftware.smack.*;
+import org.jivesoftware.smack.packet.*;
+import org.jivesoftware.smack.roster.Roster;
+import org.jivesoftware.smack.roster.RosterEntry;
+import org.jivesoftware.smack.roster.RosterGroup;
+import org.jivesoftware.smack.roster.RosterListener;
+import org.jivesoftware.smack.filter.StanzaFilter;
+import org.jivesoftware.smack.filter.StanzaTypeFilter;
+import org.jivesoftware.smack.roster.packet.RosterPacket;
+import org.jivesoftware.smackx.iqlast.LastActivityManager;
+import org.jivesoftware.smackx.jiveproperties.packet.JivePropertiesExtension;
+import org.jivesoftware.smackx.sharedgroups.SharedGroupManager;
+import org.jivesoftware.smackx.iqlast.packet.LastActivity;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.PresenceManager;
 import org.jivesoftware.spark.SparkManager;
@@ -95,7 +89,6 @@ import org.jivesoftware.spark.Workspace;
 import org.jivesoftware.spark.component.InputDialog;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.component.VerticalFlowLayout;
-import org.jivesoftware.spark.filetransfer.SparkTransferManager;
 import org.jivesoftware.spark.plugin.ContextMenuListener;
 import org.jivesoftware.spark.plugin.Plugin;
 import org.jivesoftware.spark.util.ModelUtil;
@@ -109,6 +102,7 @@ import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 import org.jivesoftware.sparkimpl.profile.VCardManager;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+import org.jxmpp.util.XmppStringUtils;
 
 
 public class ContactList extends JPanel implements ActionListener,
@@ -306,7 +300,7 @@ public class ContactList extends JPanel implements ActionListener,
 	    public Object construct() { 
 		mainPanel.add(_reconnectpanelsmall,0);	
 		_reconnectpanelsmall.setClosedOnError(onError);
-		final Collection<RosterEntry> roster = SparkManager.getConnection().getRoster().getEntries();
+		final Collection<RosterEntry> roster = Roster.getInstanceFor( SparkManager.getConnection() ).getEntries();
 		
 		for(RosterEntry r : roster)
 		{
@@ -329,9 +323,7 @@ public class ContactList extends JPanel implements ActionListener,
 		_reconnectpanelicon.getPanel().add(_reconnectpanelicon.getButton(), 0);
 		_reconnectpanelicon.getPanel().revalidate();
 		_reconnectpanelicon.setClosedOnError(onError);
-		final Collection<RosterEntry> roster = SparkManager
-			.getConnection().getRoster().getEntries();
-
+		final Collection<RosterEntry> roster = Roster.getInstanceFor( SparkManager.getConnection()).getEntries();
 		for (RosterEntry r : roster) {
 		    Presence p = new Presence(Presence.Type.unavailable);
 		    moveToOfflineGroup(p, r.getUser());
@@ -354,9 +346,9 @@ public class ContactList extends JPanel implements ActionListener,
             return;
         }
 
-        final Roster roster = SparkManager.getConnection().getRoster();
+        final Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
 
-        final String bareJID = StringUtils.parseBareAddress(presence.getFrom());
+        final String bareJID = XmppStringUtils.parseBareJid(presence.getFrom());
 
         RosterEntry entry = roster.getEntry(bareJID);
         boolean isPending = entry != null && (entry.getType() == RosterPacket.ItemType.none || entry.getType() == RosterPacket.ItemType.from)
@@ -599,9 +591,7 @@ public class ContactList extends JPanel implements ActionListener,
      * Called to build the initial ContactList.
      */
     private void buildContactList() {
-        XMPPConnection con = SparkManager.getConnection();
-        final Roster roster = con.getRoster();
-
+        final Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
 
         roster.addRosterListener(this);
 
@@ -701,7 +691,7 @@ public class ContactList extends JPanel implements ActionListener,
     public void entriesAdded(final Collection<String> addresses) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                Roster roster = SparkManager.getConnection().getRoster();
+                Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
 
                 for (String jid : addresses) {
                     RosterEntry entry = roster.getEntry(jid);
@@ -742,7 +732,7 @@ public class ContactList extends JPanel implements ActionListener,
         }
 
         // Update users icon
-        Presence presence = SparkManager.getConnection().getRoster().getPresence(entry.getUser());
+        Presence presence = Roster.getInstanceFor( SparkManager.getConnection() ).getPresence(entry.getUser());
         try {
             updateUserPresence(presence);
         }
@@ -784,7 +774,7 @@ public class ContactList extends JPanel implements ActionListener,
     private synchronized void handleEntriesUpdated(final Collection<String> addresses) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                Roster roster = SparkManager.getConnection().getRoster();
+                Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
 
                 Iterator<String> jids = addresses.iterator();
                 while (jids.hasNext()) {
@@ -923,7 +913,7 @@ public class ContactList extends JPanel implements ActionListener,
      */
     public ContactItem getContactItemByJID(String jid) {
         for (ContactGroup group : getContactGroups()) {
-            ContactItem item = group.getContactItemByJID(StringUtils.parseBareAddress(jid));
+            ContactItem item = group.getContactItemByJID(XmppStringUtils.parseBareJid(jid));
             if (item != null) {
                 return item;
             }
@@ -940,7 +930,7 @@ public class ContactList extends JPanel implements ActionListener,
     public Collection<ContactItem> getContactItemsByJID(String jid) {
         final List<ContactItem> list = new ArrayList<ContactItem>();
         for (ContactGroup group : getContactGroups()) {
-            ContactItem item = group.getContactItemByJID(StringUtils.parseBareAddress(jid));
+            ContactItem item = group.getContactItemByJID(XmppStringUtils.parseBareJid(jid));
             if (item != null) {
                 list.add(item);
             }
@@ -951,7 +941,7 @@ public class ContactList extends JPanel implements ActionListener,
          */
         for( ContactGroup group : getContactGroups() ) {
             for (ContactItem offlineItem : group.getOfflineContacts() ) {
-                if ( offlineItem != null && offlineItem.getJID().equalsIgnoreCase(StringUtils.parseBareAddress(jid)) ) {
+                if ( offlineItem != null && offlineItem.getJID().equalsIgnoreCase(XmppStringUtils.parseBareJid(jid)) ) {
                     if ( !list.contains(offlineItem) ) {
                         list.add(offlineItem);
                     }
@@ -970,7 +960,7 @@ public class ContactList extends JPanel implements ActionListener,
      */
     public void setIconFor(String jid, Icon icon) {
         for (ContactGroup group : getContactGroups()) {
-            ContactItem item = group.getContactItemByJID(StringUtils.parseBareAddress(jid));
+            ContactItem item = group.getContactItemByJID(XmppStringUtils.parseBareJid(jid));
             if (item != null) {
                 item.setIcon(icon);
                 group.fireContactGroupUpdated();
@@ -985,7 +975,7 @@ public class ContactList extends JPanel implements ActionListener,
      */
     public void useDefaults(String jid) {
         for (ContactGroup group : getContactGroups()) {
-            ContactItem item = group.getContactItemByJID(StringUtils.parseBareAddress(jid));
+            ContactItem item = group.getContactItemByJID(XmppStringUtils.parseBareJid(jid));
             if (item != null) {
                 item.updatePresenceIcon(item.getPresence());
                 group.fireContactGroupUpdated();
@@ -1324,20 +1314,24 @@ public class ContactList extends JPanel implements ActionListener,
 	            ContactItem contactItem = contactGroup.getContactItemByDisplayName(activeItem.getDisplayName());
 	            contactItem.setAlias(newAlias);
 	
-	            final Roster roster = SparkManager.getConnection().getRoster();
+	            final Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
 	            RosterEntry entry = roster.getEntry(address);
-	            entry.setName(newAlias);
-	
-	
-	            final Iterator<ContactGroup> contactGroups = groupList.iterator();
-	            String user = StringUtils.parseBareAddress(address);
-	            while (contactGroups.hasNext()) {
-	                ContactGroup cg = contactGroups.next();
-	                ContactItem ci = cg.getContactItemByJID(user);
-	                if (ci != null) {
-	                    ci.setAlias(newAlias);
-	                }
-	            }
+                try
+                {
+                    entry.setName(newAlias);
+
+                    final String user = XmppStringUtils.parseBareJid(address);
+                    for ( ContactGroup cg : groupList ) {
+                        ContactItem ci = cg.getContactItemByJID(user);
+                        if (ci != null) {
+                            ci.setAlias(newAlias);
+                        }
+                    }
+                }
+                catch ( XMPPException.XMPPErrorException| SmackException.NotConnectedException | SmackException.NoResponseException e1 )
+                {
+                    Log.warning( "Unable to set new alias '" + newAlias + "' for roster entry " + address, e1 );
+                }
             }
         }
     }
@@ -1351,7 +1345,7 @@ public class ContactList extends JPanel implements ActionListener,
     private void removeContactFromGroup(ContactItem item) {
         String groupName = item.getGroupName();
         ContactGroup contactGroup = getContactGroup(groupName);
-        Roster roster = SparkManager.getConnection().getRoster();
+        Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
         RosterEntry entry = roster.getEntry(item.getJID());
         if (entry != null && contactGroup != offlineGroup) {
             try {
@@ -1372,13 +1366,13 @@ public class ContactList extends JPanel implements ActionListener,
     }
 
     private void removeContactFromRoster(ContactItem item) {
-        Roster roster = SparkManager.getConnection().getRoster();
+        Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
         RosterEntry entry = roster.getEntry(item.getJID());
         if (entry != null) {
             try {
                 roster.removeEntry(entry);
             }
-            catch (XMPPException e) {
+            catch (XMPPException | SmackException e) {
                 Log.warning("Unable to remove roster entry.", e);
             }
         }
@@ -1464,7 +1458,7 @@ public class ContactList extends JPanel implements ActionListener,
                 int ok = JOptionPane.showConfirmDialog(group, Res.getString("message.delete.confirmation", group.getGroupName()), Res.getString("title.confirmation"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
                 if (ok == JOptionPane.YES_OPTION) {
                     String groupName = group.getGroupName();
-                    Roster roster = SparkManager.getConnection().getRoster();
+                    Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
 
                     RosterGroup rosterGroup = roster.getGroup(groupName);
                     if (rosterGroup != null) {
@@ -1472,7 +1466,7 @@ public class ContactList extends JPanel implements ActionListener,
                             try {
                                 rosterGroup.removeEntry(entry);
                             }
-                            catch (XMPPException e1) {
+                            catch (XMPPException | SmackException e1) {
                                 Log.error("Error removing entry", e1);
                             }
                         }
@@ -1495,16 +1489,23 @@ public class ContactList extends JPanel implements ActionListener,
                     return;
                 }
                 String groupName = group.getGroupName();
-                Roster roster = SparkManager.getConnection().getRoster();
+                Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
 
                 RosterGroup rosterGroup = roster.getGroup(groupName);
                 //Do not remove ContactGroup if the name entered was the same 
                 if (rosterGroup != null && !groupName.equals(newName)) {
-                   removeContactGroup(group);
-                    rosterGroup.setName(newName);
-                    addContactGroup(newName);
-                    toggleGroupVisibility(newName, true);        
-                    getContactGroup(newName).setCollapsed( group.isCollapsed());
+                    try
+                    {
+                        rosterGroup.setName(newName);
+                        removeContactGroup(group);
+                        addContactGroup(newName);
+                        toggleGroupVisibility(newName, true);
+                        getContactGroup(newName).setCollapsed( group.isCollapsed());
+                    }
+                    catch ( XMPPException.XMPPErrorException| SmackException.NotConnectedException | SmackException.NoResponseException e1 )
+                    {
+                        Log.warning( "Unable to set new name '" + newName + "' for roster group" + groupName, e1 );
+                    }
                 }
 
             }
@@ -1581,7 +1582,7 @@ public class ContactList extends JPanel implements ActionListener,
 
         // Only show "Remove Contact From Group" if the user belongs to more than one group.
         if (!contactGroup.isSharedGroup() && !contactGroup.isOfflineGroup() && contactGroup != getUnfiledGroup()) {
-            Roster roster = SparkManager.getConnection().getRoster();
+            Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
             RosterEntry entry = roster.getEntry(item.getJID());
             if (entry != null) {
                 int groupCount = entry.getGroups().size();
@@ -1656,7 +1657,7 @@ public class ContactList extends JPanel implements ActionListener,
 						} else client = "/";
 					}
 	
-	                LastActivity activity = LastActivityManager.getLastActivity(SparkManager.getConnection(), item.getJID()+client);
+	                LastActivity activity = LastActivityManager.getInstanceFor( SparkManager.getConnection() ).getLastActivity(item.getJID()+client);
                     long idleTime = (activity.getIdleTime() * 1000);
                     String time = ModelUtil.getTimeFromLong(idleTime);
                     UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
@@ -1685,14 +1686,21 @@ public class ContactList extends JPanel implements ActionListener,
                 Presence response = new Presence(Presence.Type.subscribe);
                 response.setTo(jid);
 
-                SparkManager.getConnection().sendPacket(response);
+                try
+                {
+                    SparkManager.getConnection().sendStanza(response);
+                }
+                catch ( SmackException.NotConnectedException e1 )
+                {
+                    Log.warning( "Unable to send subscribe to " + jid, e1 );
+                }
             }
         };
 
         subscribeAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.SMALL_USER1_INFORMATION));
         subscribeAction.putValue(Action.NAME, Res.getString("menuitem.subscribe.to"));
 
-        Roster roster = SparkManager.getConnection().getRoster();
+        Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
         RosterEntry entry = roster.getEntry(item.getJID());
         if (entry != null && entry.getType() == RosterPacket.ItemType.from) {
             popup.add(subscribeAction);
@@ -1770,7 +1778,9 @@ public class ContactList extends JPanel implements ActionListener,
             for (ContactItem item : items) {
                 final Message message = new Message();
                 message.setTo(item.getJID());
-                message.setProperty("broadcast", true);
+                final Map<String, Object> properties = new HashMap<>();
+                properties.put( "broadcast", true );
+                message.addExtension( new JivePropertiesExtension( properties ) );
                 message.setBody(messageText);
                 if (!broadcastMessages.containsKey(item.getJID())) {
                     buf.append(item.getDisplayName()).append("\n");
@@ -1779,7 +1789,14 @@ public class ContactList extends JPanel implements ActionListener,
             }
 
             for (Message message : broadcastMessages.values()) {
-                SparkManager.getConnection().sendPacket(message);
+                try
+                {
+                    SparkManager.getConnection().sendStanza(message);
+                }
+                catch ( SmackException.NotConnectedException e )
+                {
+                    Log.warning( "Unable to send broadcast to " + message.getTo(), e );
+                }
             }
             UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
             JOptionPane.showMessageDialog(SparkManager.getMainWindow(), Res.getString("message.broadcasted.to", buf.toString()), Res.getString("title.notification"), JOptionPane.INFORMATION_MESSAGE);
@@ -1805,7 +1822,7 @@ public class ContactList extends JPanel implements ActionListener,
                 try {
                     sharedGroups = SharedGroupManager.getSharedGroups(SparkManager.getConnection());
                 }
-                catch (XMPPException e) {
+                catch (XMPPException | SmackException e) {
                     Log.error("Unable to contact shared group info.", e);
                 }
 
@@ -1844,31 +1861,45 @@ public class ContactList extends JPanel implements ActionListener,
 
     public void addSubscriptionListener() {
         // Add subscription listener
-        PacketFilter packetFilter = new PacketTypeFilter(Presence.class);
-        PacketListener subscribeListener = new PacketListener() {
-            public void processPacket(Packet packet) {
-                final Presence presence = (Presence)packet;
+        StanzaFilter stanzaFilter = new StanzaTypeFilter(Presence.class);
+        StanzaListener subscribeListener = new StanzaListener() {
+            public void processPacket(Stanza stanza) {
+                final Presence presence = (Presence)stanza;
                 if (presence.getType() == Presence.Type.subscribe) {
                     SwingUtilities.invokeLater(new Runnable() {
                         public void run() {
-                            subscriptionRequest(presence.getFrom());
+                            try
+                            {
+                                subscriptionRequest(presence.getFrom());
+                            }
+                            catch ( SmackException.NotConnectedException e )
+                            {
+                                Log.warning( "Unable to subscribe to " + presence.getFrom(), e );
+                            }
                         }
                     });
                 }
                 else if (presence.getType() == Presence.Type.unsubscribe) {
                     SwingUtilities.invokeLater(new Runnable() {
                         public void run() {
-                            Roster roster = SparkManager.getConnection().getRoster();
+                            Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
                             RosterEntry entry = roster.getEntry(presence.getFrom());
                             if (entry != null) {
                                 try {
                                     removeContactItem(presence.getFrom());
                                     roster.removeEntry(entry);
                                 }
-                                catch (XMPPException e) {
+                                catch (XMPPException | SmackException e) {
                                     Presence unsub = new Presence(Presence.Type.unsubscribed);
                                     unsub.setTo(presence.getFrom());
-                                    SparkManager.getConnection().sendPacket(unsub);
+                                    try
+                                    {
+                                        SparkManager.getConnection().sendStanza(unsub);
+                                    }
+                                    catch ( SmackException.NotConnectedException e1 )
+                                    {
+                                        Log.warning( "Unable to unsubscribe from " + unsub.getTo(), e1 );
+                                    }
                                     Log.error(e);
                                 }
                             }
@@ -1879,12 +1910,12 @@ public class ContactList extends JPanel implements ActionListener,
                 }
                 else if (presence.getType() == Presence.Type.subscribe) {
                     // Find Contact in Contact List
-                    String jid = StringUtils.parseBareAddress(presence.getFrom());
+                    String jid = XmppStringUtils.parseBareJid(presence.getFrom());
                     ContactItem item = getContactItemByJID(jid);
 
                     // If item is not in the Contact List, add them.
                     if (item == null) {
-                        final Roster roster = SparkManager.getConnection().getRoster();
+                        final Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
                         RosterEntry entry = roster.getEntry(jid);
                         if (entry != null) {
                             item = UIComponentRegistry.createContactItem(entry.getName(), null, jid);
@@ -1896,18 +1927,18 @@ public class ContactList extends JPanel implements ActionListener,
                 else if (presence.getType() == Presence.Type.unsubscribed) {
                     SwingUtilities.invokeLater(new Runnable() {
                         public void run() {
-                            Roster roster = SparkManager.getConnection().getRoster();
+                            Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
                             RosterEntry entry = roster.getEntry(presence.getFrom());
                             if (entry != null) {
                                 try {
                                     removeContactItem(presence.getFrom());
                                     roster.removeEntry(entry);
                                 }
-                                catch (XMPPException e) {
+                                catch (XMPPException | SmackException e) {
                                     Log.error(e);
                                 }
                             }
-                            String jid = StringUtils.parseBareAddress(presence.getFrom());
+                            String jid = XmppStringUtils.parseBareJid(presence.getFrom());
                             removeContactItem(jid);
                         }
                     });
@@ -1945,7 +1976,7 @@ public class ContactList extends JPanel implements ActionListener,
             }
         };
 
-        SparkManager.getConnection().addPacketListener(subscribeListener, packetFilter);
+        SparkManager.getConnection().addAsyncStanzaListener(subscribeListener, stanzaFilter);
     }
 
 
@@ -2134,7 +2165,8 @@ public class ContactList extends JPanel implements ActionListener,
         return gList;
     }
 
-    private void subscriptionRequest(final String jid) {
+    private void subscriptionRequest(final String jid) throws SmackException.NotConnectedException
+    {
         final SubscriptionDialog subscriptionDialog = new SubscriptionDialog();
         subscriptionDialog.invoke(jid);
     }
@@ -2295,6 +2327,18 @@ public class ContactList extends JPanel implements ActionListener,
     }
 
 
+    @Override
+    public void connected( XMPPConnection xmppConnection )
+    {
+
+    }
+
+    @Override
+    public void authenticated( XMPPConnection xmppConnection, boolean b )
+    {
+
+    }
+
     public void connectionClosed() {
 	// No reason to reconnect.
 
@@ -2397,19 +2441,22 @@ public class ContactList extends JPanel implements ActionListener,
     public void connectionClosedOnError(final Exception ex) {
 	String errorMessage = Res.getString("message.disconnected.error");
 
-	if (ex != null && ex instanceof XMPPException) {
-	    XMPPException xmppEx = (XMPPException) ex;
-	    StreamError error = xmppEx.getStreamError();
-	    String reason = error.getCode();
+	if (ex != null && ex instanceof XMPPException.StreamErrorException) {
+        XMPPException.StreamErrorException xmppEx = (XMPPException.StreamErrorException) ex;
+        switch (xmppEx.getStreamError().getCondition())
+        {
+            case conflict:
+                errorMessage = Res.getString("message.disconnected.conflict.error");
+                break;
 
-	    if ("conflict".equals(reason)) {
-		errorMessage = Res
-			.getString("message.disconnected.conflict.error");
-	    } else if ("system-shutdown".equals(reason)) {
-		errorMessage = Res.getString("message.disconnected.shutdown");
-	    } else {
-		errorMessage = Res.getString("message.general.error", reason);
-	    }
+            case system_shutdown:
+                errorMessage = Res.getString("message.disconnected.shutdown");
+                break;
+
+            default:
+                errorMessage = Res.getString("message.general.error", xmppEx.getStreamError().getConditionText());
+                break;
+        }
 	}
 
 	switch (localPreferences.getReconnectPanelType()) {
@@ -2514,7 +2561,7 @@ public class ContactList extends JPanel implements ActionListener,
         String jid = contactItem.getJID();
         Boolean isFiled = false;
 
-        final Roster roster = SparkManager.getConnection().getRoster();
+        final Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
         for (RosterGroup group : roster.getEntry(jid).getGroups()) {
             ContactGroup contactGroup = getContactGroup(group.getName());
             if(contactGroup == null && group.getName() != ""){

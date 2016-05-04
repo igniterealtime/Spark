@@ -32,7 +32,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.TimerTask;
@@ -54,15 +53,16 @@ import javax.swing.tree.TreePath;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.util.StringUtils;
-import org.jivesoftware.smackx.ServiceDiscoveryManager;
-import org.jivesoftware.smackx.bookmark.BookmarkManager;
-import org.jivesoftware.smackx.bookmark.BookmarkedConference;
+import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
+import org.jivesoftware.smackx.bookmarks.BookmarkManager;
+import org.jivesoftware.smackx.bookmarks.BookmarkedConference;
 import org.jivesoftware.smackx.muc.MultiUserChat;
-import org.jivesoftware.smackx.packet.DiscoverInfo;
-import org.jivesoftware.smackx.packet.DiscoverItems;
-import org.jivesoftware.smackx.packet.DiscoverInfo.Identity;
+import org.jivesoftware.smackx.disco.packet.DiscoverInfo;
+import org.jivesoftware.smackx.disco.packet.DiscoverItems;
+import org.jivesoftware.smackx.muc.MultiUserChatManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.JiveTreeCellRenderer;
 import org.jivesoftware.spark.component.JiveTreeNode;
@@ -74,6 +74,7 @@ import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.util.log.Log;
+import org.jxmpp.util.XmppStringUtils;
 
 /**
  * BookmarkedConferences is used to display the UI for all bookmarked conference rooms.
@@ -187,7 +188,7 @@ public class BookmarksUI extends JPanel {
         try {
             manager = BookmarkManager.getBookmarkManager(SparkManager.getConnection());
         }
-        catch (XMPPException e) {
+        catch (XMPPException | SmackException e) {
             Log.error(e);
         }
         
@@ -198,7 +199,7 @@ public class BookmarksUI extends JPanel {
         		while(bc == null){
         			try {
         				bc = manager.getBookmarkedConferences();
-        			}catch (XMPPException error) {
+        			}catch (XMPPException | SmackException error) {
                         Log.error(error);
                     }
         		}
@@ -353,10 +354,10 @@ public class BookmarksUI extends JPanel {
             public Object construct() {
                 try {
                     if (SparkManager.getConnection().isConnected()) {
-                        mucServices = MultiUserChat.getServiceNames(SparkManager.getConnection());
+                        mucServices = MultiUserChatManager.getInstanceFor( SparkManager.getConnection() ).getServiceNames();
                     }
                 }
-                catch (XMPPException e) {
+                catch (XMPPException | SmackException e) {
                     Log.error("Unable to load MUC Service Names.", e);
                 }
                 return mucServices;
@@ -424,7 +425,7 @@ public class BookmarksUI extends JPanel {
             manager.addBookmarkedConference(roomName, roomJID, autoJoin, null, null);
             fireBookmarksAdded(roomJID);  //fire bookmark event
         }
-        catch (XMPPException e) {
+        catch (XMPPException | SmackException e) {
             Log.error(e);
         }
     }
@@ -438,7 +439,7 @@ public class BookmarksUI extends JPanel {
             manager.removeBookmarkedConference(roomJID);
             fireBookmarksRemoved(roomJID); // fire bookmark remove event
         }
-        catch (XMPPException e) {
+        catch (XMPPException | SmackException e) {
             Log.error(e);
         }
     }
@@ -486,9 +487,7 @@ public class BookmarksUI extends JPanel {
 
                             try {
                                 discoInfo = discoManager.discoverInfo(conferenceService);
-                                Iterator<Identity> iter = discoInfo.getIdentities();
-                                while (iter.hasNext()) {
-                                    DiscoverInfo.Identity identity = (DiscoverInfo.Identity)iter.next();
+                                for (DiscoverInfo.Identity identity : discoInfo.getIdentities() ) {
                                     if ("conference".equals(identity.getCategory())) {
                                         serviceList.add(conferenceService);
                                         break;
@@ -507,7 +506,7 @@ public class BookmarksUI extends JPanel {
                                     }
                                 }
                             }
-                            catch (XMPPException e1) {
+                            catch (XMPPException | SmackException e1) {
                                 Log.error("Error in disco discovery.", e1);
                             }
                             return true;
@@ -558,8 +557,7 @@ public class BookmarksUI extends JPanel {
         List<String> answer = new ArrayList<String>();
         ServiceDiscoveryManager discoManager = ServiceDiscoveryManager.getInstanceFor(SparkManager.getConnection());
         DiscoverItems items = discoManager.discoverItems(server);
-        for (Iterator<DiscoverItems.Item> it = items.getItems(); it.hasNext();) {
-            DiscoverItems.Item item = (DiscoverItems.Item)it.next();
+        for (DiscoverItems.Item item : items.getItems()) {
             if (item.getEntityID().startsWith("conference") || item.getEntityID().startsWith("private")) {
                 answer.add(item.getEntityID());
             }
@@ -570,7 +568,7 @@ public class BookmarksUI extends JPanel {
                         answer.add(item.getEntityID());
                     }
                 }
-                catch (XMPPException e) {
+                catch (XMPPException | SmackException e) {
                     Log.error("Problem when loading conference service.", e);
                 }
             }
@@ -600,9 +598,9 @@ public class BookmarksUI extends JPanel {
     public void setBookmarks(Collection<BookmarkedConference> bookmarks) {
 
         for (BookmarkedConference bookmark : bookmarks) {
-            String serviceName = StringUtils.parseServer(bookmark.getJid());
+            String serviceName = XmppStringUtils.parseDomain(bookmark.getJid());
             String roomJID = bookmark.getJid();
-            String roomName = StringUtils.parseName(bookmark.getJid());
+            String roomName = XmppStringUtils.parseLocalpart(bookmark.getJid());
 
             if (bookmark.isAutoJoin()) {
                 ConferenceUtils.joinConferenceOnSeperateThread(roomName, bookmark.getJid(), bookmark.getPassword());
@@ -698,7 +696,7 @@ public class BookmarksUI extends JPanel {
         try {
             return manager.getBookmarkedConferences();
         }
-        catch (XMPPException e) {
+        catch (XMPPException | SmackException e) {
             Log.error(e);
         }
         return Collections.emptyList();

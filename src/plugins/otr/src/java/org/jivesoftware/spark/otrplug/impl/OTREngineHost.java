@@ -3,6 +3,7 @@ package org.jivesoftware.spark.otrplug.impl;
 import java.awt.Color;
 import java.security.KeyPair;
 
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.spark.SparkManager;
@@ -12,6 +13,7 @@ import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 import net.java.otr4j.OtrEngineHost;
 import net.java.otr4j.OtrPolicy;
 import net.java.otr4j.session.SessionID;
+import org.jivesoftware.spark.util.log.Log;
 
 /**
  * 
@@ -49,7 +51,14 @@ public class OTREngineHost implements OtrEngineHost {
         String threadID = StringUtils.randomString(6);
         injection.setThread(threadID);
         injection.setBody(arg1);
-        SparkManager.getConnection().sendPacket(injection);
+        try
+        {
+            SparkManager.getConnection().sendStanza(injection);
+        }
+        catch ( SmackException.NotConnectedException e )
+        {
+            Log.warning( "Unable to send injection to " + injection.getTo(), e );
+        }
     }
 
     @Override

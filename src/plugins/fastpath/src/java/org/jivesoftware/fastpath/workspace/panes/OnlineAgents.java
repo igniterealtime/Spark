@@ -38,6 +38,7 @@ import javax.swing.JScrollPane;
 import org.jivesoftware.fastpath.FastpathPlugin;
 import org.jivesoftware.fastpath.FpRes;
 import org.jivesoftware.fastpath.resources.FastpathRes;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.workgroup.agent.AgentRoster;
@@ -59,6 +60,7 @@ import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
+import org.jxmpp.util.XmppStringUtils;
 
 
 /**
@@ -79,7 +81,7 @@ public final class OnlineAgents extends JPanel {
         topToolbar.setBackground(Color.white);
         setBackground(Color.white);
 
-        final String name = StringUtils.parseName(FastpathPlugin.getWorkgroup().getWorkgroupJID());
+        final String name = XmppStringUtils.parseLocalpart(FastpathPlugin.getWorkgroup().getWorkgroupJID());
         final String title = org.jivesoftware.spark.util.StringUtils.makeFirstWordCaptial(name);
 
         contactGroup = new ContactGroup(FpRes.getString("title.workgroup", title));
@@ -149,9 +151,17 @@ public final class OnlineAgents extends JPanel {
 
             public Object construct() {
                 // Initialize Agent Roster
-                agentRoster = FastpathPlugin.getAgentSession().getAgentRoster();
-                agentSet = agentRoster.getAgents();
-                return agentSet;
+                try
+                {
+                    agentRoster = FastpathPlugin.getAgentSession().getAgentRoster();
+                    agentSet = agentRoster.getAgents();
+                    return agentSet;
+                }
+                catch ( SmackException.NotConnectedException e )
+                {
+                    Log.error( "Unable to load agent roster.", e);
+                    return null;
+                }
             }
 
             public void finished() {
@@ -324,7 +334,7 @@ public final class OnlineAgents extends JPanel {
         }
 
         public void presenceChanged(Presence presence) {
-            String jid = StringUtils.parseBareAddress(presence.getFrom());
+            String jid = XmppStringUtils.parseBareJid(presence.getFrom());
             ContactItem item = contactGroup.getContactItemByJID(jid);
 
             if (item != null) {
@@ -342,12 +352,12 @@ public final class OnlineAgents extends JPanel {
             }
             else {
                 if (presence.getType() == Presence.Type.available) {
-                    String agent = StringUtils.parseBareAddress(presence.getFrom());
+                    String agent = XmppStringUtils.parseBareJid(presence.getFrom());
                     String nickname = SparkManager.getUserManager().getUserNicknameFromJID(agent);
                     if (nickname == null) {
                         nickname = agent;
                     }
-                    ContactItem contactItem = new ContactItem(nickname,nickname, StringUtils.parseBareAddress(presence.getFrom()));
+                    ContactItem contactItem = new ContactItem(nickname,nickname, XmppStringUtils.parseBareJid(presence.getFrom()));
                     contactItem.setPresence(presence);
                     contactGroup.addContactItem(contactItem);
                 }

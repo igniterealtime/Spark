@@ -19,18 +19,16 @@
  */
 package org.jivesoftware.spark;
 
-import org.jivesoftware.smack.ConnectionListener;
-import org.jivesoftware.smack.XMPPConnection;
-import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.*;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.provider.ProviderManager;
-import org.jivesoftware.smack.util.StringUtils;
-import org.jivesoftware.smackx.PrivateDataManager;
-import org.jivesoftware.smackx.ServiceDiscoveryManager;
-import org.jivesoftware.smackx.packet.DiscoverItems;
+import org.jivesoftware.smackx.iqprivate.PrivateDataManager;
+import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
+import org.jivesoftware.smackx.disco.packet.DiscoverItems;
 import org.jivesoftware.spark.ui.PresenceListener;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.manager.Features;
+import org.jxmpp.util.XmppStringUtils;
 
 import javax.swing.SwingUtilities;
 
@@ -45,7 +43,7 @@ import java.util.List;
  * @author Derek DeMoro
  */
 public final class SessionManager implements ConnectionListener {
-    private XMPPConnection connection;
+    private AbstractXMPPConnection connection;
     private PrivateDataManager personalDataManager;
 
     private String serverAddress;
@@ -69,20 +67,20 @@ public final class SessionManager implements ConnectionListener {
      * @param username   the agents username.
      * @param password   the agents password.
      */
-    public void initializeSession(XMPPConnection connection, String username, String password) {
+    public void initializeSession( AbstractXMPPConnection connection, String username, String password) {
         this.connection = connection;
         this.username = username;
         this.password = password;
-        this.userBareAddress = StringUtils.parseBareAddress(connection.getUser());
+        this.userBareAddress = XmppStringUtils.parseBareJid(connection.getUser());
 
         // create workgroup session
-        personalDataManager = new PrivateDataManager(getConnection());
+        personalDataManager = PrivateDataManager.getInstanceFor( getConnection() );
 
         // Discover items
         discoverItems();
 
 
-        ProviderManager.getInstance().addExtensionProvider("event", "http://jabber.org/protocol/disco#info", new Features.Provider());
+        ProviderManager.addExtensionProvider("event", "http://jabber.org/protocol/disco#info", new Features.Provider());
     }
 
     /**
@@ -93,7 +91,7 @@ public final class SessionManager implements ConnectionListener {
         try {
             discoverItems = disco.discoverItems(SparkManager.getConnection().getServiceName());
         }
-        catch (XMPPException e) {
+        catch (XMPPException | SmackException e) {
             Log.error(e);
             discoverItems = new DiscoverItems();
         }
@@ -155,6 +153,18 @@ public final class SessionManager implements ConnectionListener {
         });
     }
 
+    @Override
+    public void connected( XMPPConnection xmppConnection )
+    {
+
+    }
+
+    @Override
+    public void authenticated( XMPPConnection xmppConnection, boolean b )
+    {
+
+    }
+
     /**
      * Notify agent that the connection has been closed.
      */
@@ -167,7 +177,7 @@ public final class SessionManager implements ConnectionListener {
      * @return the username associated with this session.
      */
     public String getUsername() {
-        return StringUtils.unescapeNode(username);
+        return XmppStringUtils.unescapeLocalpart(username);
     }
 
     /**
@@ -193,7 +203,14 @@ public final class SessionManager implements ConnectionListener {
         // Do NOT  send presence if disconnected.
         if (SparkManager.getConnection().isConnected()) {
             // Send Presence Packet
-            SparkManager.getConnection().sendPacket(presence);
+            try
+            {
+                SparkManager.getConnection().sendStanza(presence);
+            }
+            catch ( SmackException.NotConnectedException e )
+            {
+                Log.error( "Unable to send presence to " + presence.getTo(), e );
+            }
         }
     }
 
@@ -254,7 +271,7 @@ public final class SessionManager implements ConnectionListener {
         return discoverItems;
     }
 
-    public void setConnection(XMPPConnection con) {
+    public void setConnection(AbstractXMPPConnection con) {
         this.connection = con;
     }
 

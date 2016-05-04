@@ -21,11 +21,13 @@ package org.jivesoftware.spark.ui.conferences;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smackx.ServiceDiscoveryManager;
+import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.muc.MultiUserChat;
+import org.jivesoftware.smackx.muc.MultiUserChatManager;
 import org.jivesoftware.smackx.muc.RoomInfo;
-import org.jivesoftware.smackx.packet.DiscoverItems;
+import org.jivesoftware.smackx.disco.packet.DiscoverItems;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.JiveTreeCellRenderer;
 import org.jivesoftware.spark.component.JiveTreeNode;
@@ -46,7 +48,6 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.Iterator;
 
 public class RoomBrowser extends JPanel {
     private static final long serialVersionUID = 8820670697089268423L;
@@ -101,13 +102,13 @@ public class RoomBrowser extends JPanel {
 
             public Object construct() {
                 try {
-                    roomInfo = MultiUserChat.getRoomInfo(SparkManager.getConnection(), roomJID);
+                    roomInfo = MultiUserChatManager.getInstanceFor( SparkManager.getConnection() ).getRoomInfo( roomJID );
 
 
                     ServiceDiscoveryManager manager = ServiceDiscoveryManager.getInstanceFor(SparkManager.getConnection());
                     items = manager.discoverItems(roomJID);
                 }
-                catch (XMPPException e) {
+                catch (XMPPException | SmackException e) {
                     Log.error(e);
                 }
                 return "ok";
@@ -138,9 +139,7 @@ public class RoomBrowser extends JPanel {
             }
             roomNameValue.setText(roomInfo.getRoom());
 
-            Iterator<DiscoverItems.Item> iter = items.getItems();
-            while (iter.hasNext()) {
-                DiscoverItems.Item item = iter.next();
+            for (DiscoverItems.Item item : items.getItems() ) {
                 String jid = item.getEntityID();
                 rootNode.add(new JiveTreeNode(jid, false, SparkRes.getImageIcon(SparkRes.SMALL_USER1_INFORMATION)));
             }

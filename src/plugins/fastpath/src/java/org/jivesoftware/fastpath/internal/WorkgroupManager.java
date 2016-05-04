@@ -44,16 +44,17 @@ import javax.swing.UIManager;
 
 import org.jivesoftware.fastpath.resources.FastpathRes;
 import org.jivesoftware.resource.Res;
-import org.jivesoftware.smack.Connection;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Message;
-import org.jivesoftware.smack.packet.PacketExtension;
+import org.jivesoftware.smack.packet.ExtensionElement;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.util.StringUtils;
-import org.jivesoftware.smackx.Form;
-import org.jivesoftware.smackx.FormField;
-import org.jivesoftware.smackx.packet.VCard;
+import org.jivesoftware.smackx.muc.MultiUserChat;
+import org.jivesoftware.smackx.xdata.Form;
+import org.jivesoftware.smackx.xdata.FormField;
+import org.jivesoftware.smackx.vcardtemp.packet.VCard;
 import org.jivesoftware.smackx.workgroup.settings.ChatSetting;
 import org.jivesoftware.smackx.workgroup.settings.ChatSettings;
 import org.jivesoftware.smackx.workgroup.user.Workgroup;
@@ -70,6 +71,7 @@ import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
+import org.jxmpp.util.XmppStringUtils;
 
 
 /**
@@ -159,7 +161,7 @@ public class WorkgroupManager {
                 settings = workgroup.getChatSettings();
                 chatSettings.put(workgroupName, settings);
             }
-            catch (XMPPException e) {
+            catch (XMPPException | SmackException e) {
                 Log.error("Error retrieving chat setting using key=" + key + " and workgroup=" + workgroupName, e);
             }
         }
@@ -200,7 +202,7 @@ public class WorkgroupManager {
 
 
         String workgroupJID = contactItem.getJID();
-        String nameOfWorkgroup = StringUtils.parseName(workgroupJID);
+        String nameOfWorkgroup = XmppStringUtils.parseLocalpart(workgroupJID);
         final JDialog workgroupDialog = new JDialog(SparkManager.getMainWindow(), "Contact " + nameOfWorkgroup + " Workgroup");
         Workgroup workgroup = new Workgroup(workgroupJID, SparkManager.getConnection());
 
@@ -257,10 +259,8 @@ public class WorkgroupManager {
     }
 
     private static boolean validateForm(JDialog parent, Form workgroupForm, Form form) {
-        Iterator iter = form.getFields();
-        while (iter.hasNext()) {
-            FormField field = (FormField)iter.next();
-            if (field.isRequired() && !field.getValues().hasNext()) {
+        for ( final FormField field : form.getFields()) {
+            if (field.isRequired() && field.getValues().isEmpty()) {
                 String variable = field.getVariable();
                 String elementName = workgroupForm.getField(variable).getLabel();
                 UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
@@ -275,8 +275,8 @@ public class WorkgroupManager {
     public void handleContactItem(final ContactItem contactItem) {
         Presence presence = contactItem.getPresence();
 
-        PacketExtension workgroup = presence.getExtension("workgroup", "http://jivesoftware.com/protocol/workgroup");
-        PacketExtension notifyQueue = presence.getExtension("notify-queue", "http://jabber.org/protocol/workgroup");
+        ExtensionElement workgroup = presence.getExtension("workgroup", "http://jivesoftware.com/protocol/workgroup");
+        ExtensionElement notifyQueue = presence.getExtension("notify-queue", "http://jabber.org/protocol/workgroup");
 
         if (workgroup == null && notifyQueue == null) {
             return;
@@ -292,7 +292,7 @@ public class WorkgroupManager {
     }
 
     private void enterQueue(String workgroupJID, Form form) {
-        String workgroupName = StringUtils.parseName(workgroupJID).toUpperCase();
+        String workgroupName = XmppStringUtils.parseLocalpart(workgroupJID).toUpperCase();
 
         final JDialog workgroupDialog = new JDialog(SparkManager.getMainWindow(), workgroupName + " Workgroup");
 
@@ -301,7 +301,7 @@ public class WorkgroupManager {
         try {
             workgroup.joinQueue(form);
         }
-        catch (XMPPException e) {
+        catch (XMPPException | SmackException e) {
             Log.error(e);
         }
 
@@ -337,7 +337,7 @@ public class WorkgroupManager {
                         invites.add(workgroup.getWorkgroupJID());
                         workgroup.departQueue();
                     }
-                    catch (XMPPException e1) {
+                    catch (XMPPException | SmackException e1) {
                         Log.error(e1);
                     }
                 }
@@ -359,7 +359,7 @@ public class WorkgroupManager {
                     try {
                         workgroup.departQueue();
                     }
-                    catch (XMPPException e1) {
+                    catch (XMPPException | SmackException e1) {
                         Log.error(e1);
                     }
                 }
@@ -406,12 +406,12 @@ public class WorkgroupManager {
     private class InviteListener implements RoomInvitationListener {
         // Add own invitation listener
     	@Override
-        public boolean handleInvitation(final Connection conn, final String room, final String inviter, final String reason, final String password, final Message message) {
+        public boolean handleInvitation(final XMPPConnection conn, final MultiUserChat room, final String inviter, final String reason, final String password, final Message message) {
             invites.add(inviter);
 
             if (message.getExtension("workgroup", "http://jabber.org/protocol/workgroup") != null) {
-                String workgroupName = StringUtils.parseName(inviter);
-                GroupChatRoom groupChatRoom = ConferenceUtils.enterRoomOnSameThread(workgroupName, room, password);
+                String workgroupName = XmppStringUtils.parseLocalpart(inviter);
+                GroupChatRoom groupChatRoom = ConferenceUtils.enterRoomOnSameThread(workgroupName, room.getRoom(), password);
 
                 int tabLocation = SparkManager.getChatManager().getChatContainer().indexOfComponent(groupChatRoom);
                 groupChatRoom.setTabIcon(FastpathRes.getImageIcon(FastpathRes.FASTPATH_IMAGE_16x16));

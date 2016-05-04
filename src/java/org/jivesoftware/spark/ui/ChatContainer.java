@@ -58,12 +58,12 @@ import org.jivesoftware.MainWindow;
 import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.smack.PacketListener;
+import org.jivesoftware.smack.StanzaListener;
 import org.jivesoftware.smack.filter.AndFilter;
-import org.jivesoftware.smack.filter.FromContainsFilter;
-import org.jivesoftware.smack.filter.PacketTypeFilter;
+import org.jivesoftware.smack.filter.FromMatchesFilter;
+import org.jivesoftware.smack.filter.StanzaTypeFilter;
 import org.jivesoftware.smack.packet.Message;
-import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.spark.ChatManager;
@@ -81,6 +81,7 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.alerts.SparkToaster;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+import org.jxmpp.util.XmppStringUtils;
 
 /**
  * Contains all <code>ChatRoom</code> objects within Spark.
@@ -95,7 +96,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
      */
     private final List<ChatRoomListener> chatRoomListeners = new ArrayList<ChatRoomListener>();
     private final List<ChatRoom> chatRoomList = new ArrayList<ChatRoom>();
-    private final Map<String, PacketListener> presenceMap = new HashMap<String, PacketListener>();
+    private final Map<String, StanzaListener> presenceMap = new HashMap<String, StanzaListener>();
     private static final String WELCOME_TITLE = SparkRes.getString(SparkRes.WELCOME);
     private ChatFrame chatFrame;
     private LocalPreferences localPref;
@@ -282,14 +283,14 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         createFrameIfNeeded();
        
         room.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.LIGHT_GRAY));
-        AndFilter presenceFilter = new AndFilter(new PacketTypeFilter(Presence.class), new FromContainsFilter(room.getRoomname()));
+        AndFilter presenceFilter = new AndFilter(new StanzaTypeFilter(Presence.class), FromMatchesFilter.createBare( room.getRoomname()));
 
         // Next, create a packet listener. We use an anonymous inner class for brevity.
-        PacketListener myListener = new PacketListener() {
-            public void processPacket(final Packet packet) {
+        StanzaListener myListener = new StanzaListener() {
+            public void processPacket(final Stanza stanza) {
                 SwingUtilities.invokeLater(new Runnable() {
                     public void run() {
-                        handleRoomPresence((Presence)packet);
+                        handleRoomPresence((Presence)stanza);
                     }
                 });
             }
@@ -297,7 +298,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
 
         room.registeredToFrame(chatFrame);
         
-        SparkManager.getConnection().addPacketListener(myListener, presenceFilter);
+        SparkManager.getConnection().addAsyncStanzaListener(myListener, presenceFilter);
 
         // Add to PresenceMap
         presenceMap.put(room.getRoomname(), myListener);
@@ -376,7 +377,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
      * @param p the presence to handle.
      */
     private void handleRoomPresence(final Presence p) {
-        final String roomname = StringUtils.parseBareAddress(p.getFrom());
+        final String roomname = XmppStringUtils.parseBareJid(p.getFrom());
         ChatRoom chatRoom;
         try {
             chatRoom = getChatRoom(roomname);
@@ -386,7 +387,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             return;
         }
 
-        final String userid = StringUtils.parseResource(p.getFrom());
+        final String userid = XmppStringUtils.parseResource(p.getFrom());
         if (p.getType() == Presence.Type.unavailable) {
             fireUserHasLeft(chatRoom, userid);
         }
@@ -552,9 +553,9 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             room.closeChatRoom();
         }
 
-        final PacketListener listener = presenceMap.get(room.getRoomname());
+        final StanzaListener listener = presenceMap.get(room.getRoomname());
         if (listener != null) {
-            SparkManager.getConnection().removePacketListener(listener);
+            SparkManager.getConnection().removeAsyncStanzaListener(listener);
         }
 
         fireChatRoomClosed(room);
@@ -606,9 +607,9 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         fireChatRoomLeft(room);
         room.leaveChatRoom();
 
-        final PacketListener listener = presenceMap.get(room.getRoomname());
+        final StanzaListener listener = presenceMap.get(room.getRoomname());
         if (listener != null && SparkManager.getConnection().isConnected()) {
-            SparkManager.getConnection().removePacketListener(listener);
+            SparkManager.getConnection().removeAsyncStanzaListener(listener);
         }
     }
 

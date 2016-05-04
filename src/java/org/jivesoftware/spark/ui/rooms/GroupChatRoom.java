@@ -27,11 +27,7 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Pattern;
 
 import javax.swing.AbstractAction;
@@ -48,26 +44,28 @@ import javax.swing.UIManager;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.smack.SmackException;
+import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.filter.AndFilter;
-import org.jivesoftware.smack.filter.FromContainsFilter;
+import org.jivesoftware.smack.filter.FromMatchesFilter;
 import org.jivesoftware.smack.filter.OrFilter;
-import org.jivesoftware.smack.filter.PacketFilter;
-import org.jivesoftware.smack.filter.PacketTypeFilter;
+import org.jivesoftware.smack.filter.StanzaFilter;
+import org.jivesoftware.smack.filter.StanzaTypeFilter;
 import org.jivesoftware.smack.packet.Message;
-import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.packet.Presence;
-import org.jivesoftware.smack.util.StringUtils;
-import org.jivesoftware.smackx.Form;
-import org.jivesoftware.smackx.MessageEventManager;
-import org.jivesoftware.smackx.MessageEventNotificationListener;
+import org.jivesoftware.smack.packet.XMPPError;
+import org.jivesoftware.smackx.muc.packet.Destroy;
+import org.jivesoftware.smackx.xdata.Form;
+import org.jivesoftware.smackx.xevent.MessageEventManager;
+import org.jivesoftware.smackx.xevent.MessageEventNotificationListener;
 import org.jivesoftware.smackx.muc.DefaultParticipantStatusListener;
 import org.jivesoftware.smackx.muc.DefaultUserStatusListener;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.muc.SubjectUpdatedListener;
-import org.jivesoftware.smackx.packet.DelayInformation;
-import org.jivesoftware.smackx.packet.MUCUser;
-import org.jivesoftware.smackx.packet.MUCUser.Destroy;
+import org.jivesoftware.smackx.delay.packet.DelayInformation;
+import org.jivesoftware.smackx.muc.packet.MUCUser;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.RolloverButton;
@@ -86,6 +84,7 @@ import org.jivesoftware.spark.util.UIComponentRegistry;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+import org.jxmpp.util.XmppStringUtils;
 
 /**
  * GroupChatRoom is the conference chat room UI used to have Multi-User Chats.
@@ -135,19 +134,19 @@ public class GroupChatRoom extends ChatRoom {
 
 	// Create the filter and register with the current connection
 	// making sure to filter by room
-	PacketFilter fromFilter = new FromContainsFilter(chat.getRoom());
-	PacketFilter orFilter = new OrFilter(new PacketTypeFilter(
-		Presence.class), new PacketTypeFilter(Message.class));
-	PacketFilter andFilter = new AndFilter(orFilter, fromFilter);
+	StanzaFilter fromFilter = FromMatchesFilter.createBare(chat.getRoom());
+		StanzaFilter orFilter = new OrFilter(new StanzaTypeFilter(
+		Presence.class), new StanzaTypeFilter(Message.class));
+		StanzaFilter andFilter = new AndFilter(orFilter, fromFilter);
 
 	// Add packet Listener.
-	SparkManager.getConnection().addPacketListener(this, andFilter);
+	SparkManager.getConnection().addAsyncStanzaListener(this, andFilter);
 
 	// The Room Name is the same as the ChatRoom name
 	roomname = chat.getRoom();
 
 	// We are just using a generic Group Chat.
-	tabTitle = StringUtils.parseName(StringUtils.unescapeNode(roomname));
+	tabTitle = XmppStringUtils.parseLocalpart(XmppStringUtils.unescapeLocalpart(roomname));
 
 	// Room Information
 	roomInfo = UIComponentRegistry.createGroupChatParticipantList();
@@ -158,7 +157,7 @@ public class GroupChatRoom extends ChatRoom {
 
 	setupListeners();
 
-	conferenceService = StringUtils.parseServer(chat.getRoom());
+	conferenceService = XmppStringUtils.parseDomain(chat.getRoom());
 
 	subjectPanel = new SubjectPanel();
 
@@ -202,7 +201,7 @@ public class GroupChatRoom extends ChatRoom {
 			    Form form = chat.getConfigurationForm()
 				    .createAnswerForm();
 			    new DataFormDialog(chatFrame, chat, form);
-			} catch (XMPPException e) {
+			} catch (XMPPException | SmackException e) {
 			    Log.error("Error configuring room.", e);
 			}
 		    }
@@ -230,7 +229,7 @@ public class GroupChatRoom extends ChatRoom {
 			if (ModelUtil.hasLength(newSubject)) {
 			    try {
 				chat.changeSubject(newSubject);
-			    } catch (XMPPException e) {
+			    } catch (XMPPException | SmackException e) {
 				Log.error(e);
 			    }
 			}
@@ -267,7 +266,7 @@ public class GroupChatRoom extends ChatRoom {
 			    try {
 				chat.destroy(reason, null);
 				getChatRoom().leaveChatRoom();
-			    } catch (XMPPException e1) {
+			    } catch (XMPPException | SmackException e1) {
 				Log.warning("Unable to destroy room", e1);
 			    }
 			}
@@ -335,7 +334,7 @@ public class GroupChatRoom extends ChatRoom {
 	super.closeChatRoom();
 
 	// Remove Listener
-	SparkManager.getConnection().removePacketListener(this);
+	SparkManager.getConnection().removeAsyncStanzaListener(this);
 
 	ChatContainer container = SparkManager.getChatManager()
 		.getChatContainer();
@@ -397,7 +396,7 @@ public class GroupChatRoom extends ChatRoom {
 		    message);
 
 	    chat.sendMessage(message);
-	} catch (XMPPException ex) {
+	} catch (SmackException ex) {
 	    Log.error("Unable to send message in conference chat.", ex);
 	}
 
@@ -442,7 +441,7 @@ public class GroupChatRoom extends ChatRoom {
 	    addPacketID(message.getPacketID());
 
 	    chat.sendMessage(message);
-	} catch (XMPPException ex) {
+	} catch (SmackException ex) {
 	    Log.error("Unable to send message in conference chat.", ex);
 	}
 
@@ -541,7 +540,7 @@ public class GroupChatRoom extends ChatRoom {
 	}
 
 	// Remove Packet Listener
-	SparkManager.getConnection().removePacketListener(this);
+	SparkManager.getConnection().removeAsyncStanzaListener(this);
 
 	// Disable Send Field
 	getChatInputEditor().showAsDisabled();
@@ -616,23 +615,23 @@ public class GroupChatRoom extends ChatRoom {
     /**
      * Implementation of processPacket to handle muc related packets.
      *
-     * @param packet
+     * @param stanza
      *            the packet.
      */
-    public void processPacket(final Packet packet) {
-	super.processPacket(packet);
-	if (packet instanceof Presence) {
+    public void processPacket(final Stanza stanza) {
+	super.processPacket(stanza);
+	if (stanza instanceof Presence) {
 	    SwingUtilities.invokeLater(new Runnable() {
 		public void run() {
-		    handlePresencePacket(packet);
+		    handlePresencePacket(stanza);
 		}
 	    });
 
 	}
-	if (packet instanceof Message) {
+	if (stanza instanceof Message) {
 	    SwingUtilities.invokeLater(new Runnable() {
 		public void run() {
-		    handleMessagePacket(packet);
+		    handleMessagePacket(stanza);
 
 		    // Set last activity
 		    lastActivity = System.currentTimeMillis();
@@ -645,12 +644,12 @@ public class GroupChatRoom extends ChatRoom {
     /**
      * Handle all MUC related packets.
      *
-     * @param packet
+     * @param stanza
      *            the packet.
      */
-    private void handleMessagePacket(Packet packet) {
+    private void handleMessagePacket(Stanza stanza) {
 	// Do something with the incoming packet here.
-	final Message message = (Message) packet;
+	final Message message = (Message) stanza;
 	lastMessage = message;
 	if (message.getType() == Message.Type.groupchat) {
 	    DelayInformation inf = (DelayInformation) message.getExtension("delay",
@@ -668,7 +667,7 @@ public class GroupChatRoom extends ChatRoom {
 		return;
 	    }
 
-	    String messageNickname = StringUtils.parseResource(message
+	    String messageNickname = XmppStringUtils.parseResource(message
 		    .getFrom());
 
 	    boolean isFromMe = messageNickname.equals(getNickname())
@@ -679,7 +678,7 @@ public class GroupChatRoom extends ChatRoom {
 		// Update transcript
 		super.insertMessage(message);
 
-		String from = StringUtils.parseResource(message.getFrom());
+		String from = XmppStringUtils.parseResource(message.getFrom());
 
 		if (inf != null) {
 		    getTranscriptWindow().insertHistoryMessage(from,
@@ -692,7 +691,7 @@ public class GroupChatRoom extends ChatRoom {
 		    boolean isFromRoom = message.getFrom().indexOf("/") == -1;
 
 		    if (!SparkManager.getUserManager().hasVoice(this,
-			    StringUtils.parseResource(message.getFrom()))
+			    XmppStringUtils.parseResource(message.getFrom()))
 			    && !isFromRoom) {
 			return;
 		    }
@@ -719,10 +718,10 @@ public class GroupChatRoom extends ChatRoom {
 		// chatRoom.insertMessage(message);
 		// }
 	    } catch (ChatRoomNotFoundException e) {
-		String userNickname = StringUtils.parseResource(message
+		String userNickname = XmppStringUtils.parseResource(message
 			.getFrom());
 		String roomTitle = userNickname + " - "
-			+ StringUtils.parseName(getRoomname());
+			+ XmppStringUtils.parseLocalpart(getRoomname());
 		
 		// Check to see if this is a message notification.
 		if (message.getBody() != null) {
@@ -741,12 +740,12 @@ public class GroupChatRoom extends ChatRoom {
 	} else if (message.getError() != null) {
 	    String errorMessage = "";
 
-	    if (message.getError().getCode() == 403
+	    if (message.getError().getCondition() == XMPPError.Condition.forbidden
 		    && message.getSubject() != null) {
 		errorMessage = Res.getString("message.subject.change.error");
 	    }
 
-	    else if (message.getError().getCode() == 403) {
+	    else if (message.getError().getCondition() == XMPPError.Condition.forbidden) {
 		errorMessage = Res.getString("message.forbidden.error");
 	    }
 
@@ -762,25 +761,23 @@ public class GroupChatRoom extends ChatRoom {
     /**
      * Handle all presence packets being sent to this Group Chat Room.
      *
-     * @param packet
+     * @param stanza
      *            the presence packet.
      */
-    private void handlePresencePacket(Packet packet) {
-	Presence presence = (Presence) packet;
+    private void handlePresencePacket(Stanza stanza) {
+	Presence presence = (Presence) stanza;
 	if (presence.getError() != null) {
 	    return;
 	}
 
 	final String from = presence.getFrom();
-	final String nickname = StringUtils.parseResource(from);
+	final String nickname = XmppStringUtils.parseResource(from);
 
-	MUCUser mucUser = (MUCUser) packet.getExtension("x",
+	MUCUser mucUser = (MUCUser) stanza.getExtension("x",
 		"http://jabber.org/protocol/muc#user");
-	String code = "";
+	Set<MUCUser.Status> status = new HashSet<>();
 	if (mucUser != null) {
-	    code = mucUser.getStatus() != null ? mucUser.getStatus().getCode()
-		    : "";
-
+		status.addAll( mucUser.getStatus() );
 	    Destroy destroy = mucUser.getDestroy();
 	    if (destroy != null) {
 		String reason = destroy.getReason();
@@ -795,7 +792,7 @@ public class GroupChatRoom extends ChatRoom {
 	}
 
 	if (presence.getType() == Presence.Type.unavailable
-		&& !"303".equals(code)) {
+		&& !status.contains( MUCUser.Status.NEW_NICKNAME_303 )) {
 	    if (currentUserList.contains(from)) {
 		if (showPresenceMessages) {
 		    getTranscriptWindow().insertNotificationMessage(
@@ -828,78 +825,78 @@ public class GroupChatRoom extends ChatRoom {
 	chat.addParticipantStatusListener(new DefaultParticipantStatusListener() {
 
 	    public void kicked(String participant, String actor, String reason) {
-		String nickname = StringUtils.parseResource(participant);
+		String nickname = XmppStringUtils.parseResource(participant);
 		insertText(Res.getString("message.user.kicked.from.room",
 			nickname,actor,reason));
 	    }
 
 	    public void voiceGranted(String participant) {
-		String nickname = StringUtils.parseResource(participant);
+		String nickname = XmppStringUtils.parseResource(participant);
 		insertText(Res.getString("message.user.given.voice", nickname));
 	    }
 
 	    public void voiceRevoked(String participant) {
-		String nickname = StringUtils.parseResource(participant);
+		String nickname = XmppStringUtils.parseResource(participant);
 		insertText(Res
 			.getString("message.user.voice.revoked", nickname));
 	    }
 
 	    public void banned(String participant, String actor, String reason) {
-		String nickname = StringUtils.parseResource(participant);
+		String nickname = XmppStringUtils.parseResource(participant);
 		insertText(Res.getString("message.user.banned", nickname, reason));
 	    }
 
 	    public void membershipGranted(String participant) {
-		String nickname = StringUtils.parseResource(participant);
+		String nickname = XmppStringUtils.parseResource(participant);
 		insertText(Res.getString("message.user.granted.membership",
 			nickname));
 	    }
 
 	    public void membershipRevoked(String participant) {
-		String nickname = StringUtils.parseResource(participant);
+		String nickname = XmppStringUtils.parseResource(participant);
 		insertText(Res.getString("message.user.revoked.membership",
 			nickname));
 	    }
 
 	    public void moderatorGranted(String participant) {
-		String nickname = StringUtils.parseResource(participant);
+		String nickname = XmppStringUtils.parseResource(participant);
 		insertText(Res.getString("message.user.granted.moderator",
 			nickname));
 	    }
 
 	    public void moderatorRevoked(String participant) {
-		String nickname = StringUtils.parseResource(participant);
+		String nickname = XmppStringUtils.parseResource(participant);
 		insertText(Res.getString("message.user.revoked.moderator",
 			nickname));
 	    }
 
 	    public void ownershipGranted(String participant) {
-		String nickname = StringUtils.parseResource(participant);
+		String nickname = XmppStringUtils.parseResource(participant);
 		insertText(Res
 			.getString("message.user.granted.owner", nickname));
 	    }
 
 	    public void ownershipRevoked(String participant) {
-		String nickname = StringUtils.parseResource(participant);
+		String nickname = XmppStringUtils.parseResource(participant);
 		insertText(Res
 			.getString("message.user.revoked.owner", nickname));
 	    }
 
 	    public void adminGranted(String participant) {
-		String nickname = StringUtils.parseResource(participant);
+		String nickname = XmppStringUtils.parseResource(participant);
 		insertText(Res
 			.getString("message.user.granted.admin", nickname));
 	    }
 
 	    public void adminRevoked(String participant) {
-		String nickname = StringUtils.parseResource(participant);
+		String nickname = XmppStringUtils.parseResource(participant);
 		insertText(Res
 			.getString("message.user.revoked.admin", nickname));
 	    }
 
 	    public void nicknameChanged(String participant, String nickname) {
 		insertText(Res.getString("message.user.nickname.changed",
-			StringUtils.parseResource(participant), nickname));
+			XmppStringUtils.parseResource(participant), nickname));
 	    }
 	});
 
@@ -985,7 +982,7 @@ public class GroupChatRoom extends ChatRoom {
 	public void subjectUpdated(String subject, String by) {
 	    subjectPanel.setSubject(subject);
 	    subjectPanel.setToolTipText(subject);
-	    String nickname = StringUtils.parseResource(by);
+	    String nickname = XmppStringUtils.parseResource(by);
 
 	    String insertMessage = Res.getString(
 		    "message.subject.has.been.changed.to", subject, nickname);
@@ -1123,11 +1120,17 @@ public class GroupChatRoom extends ChatRoom {
 	message = message != null ? message : Res
 		.getString("message.please.join.in.conference");
 
-	// Invite User
-	getMultiUserChat().invite(jid, message);
-
-	// Add Invite
-	roomInfo.addInvitee(jid, message);
+		// Invite User
+		try
+		{
+			getMultiUserChat().invite(jid, message);
+			// Add Invite
+			roomInfo.addInvitee(jid, message);
+		}
+		catch ( SmackException.NotConnectedException e )
+		{
+			Log.warning( "Unable to invite " + jid + " to room " + roomInfo.getName(), e );
+		}
     }
 
     /**
@@ -1149,7 +1152,7 @@ public class GroupChatRoom extends ChatRoom {
 	public void composingNotification(final String from, String packetID) {
 	    SwingUtilities.invokeLater(new Runnable() {
 		public void run() {
-		    String bareAddress = StringUtils.parseBareAddress(from);
+		    String bareAddress = XmppStringUtils.parseBareJid(from);
 
 		    if (bareAddress.equals(getRoomname())) {
 			showUserIsTyping();
@@ -1201,10 +1204,8 @@ public class GroupChatRoom extends ChatRoom {
 	if (typedChars >= 10) {
 	    try {
 		if (typingTimer != null) {
-		    final Iterator<String> iter = chat.getOccupants();
-		    while (iter.hasNext()) {
-			String from = iter.next();
-			String tFrom = StringUtils.parseResource(from);
+			for ( String from : chat.getOccupants() ) {
+			String tFrom = XmppStringUtils.parseResource(from);
 			String nickname = chat.getNickname();
 			if (tFrom != null && !tFrom.equals(nickname)) {
 			    SparkManager.getMessageEventManager()
@@ -1233,7 +1234,19 @@ public class GroupChatRoom extends ChatRoom {
 	return lastActivity;
     }
 
-    public void connectionClosed() {
+	@Override
+	public void connected( XMPPConnection xmppConnection )
+	{
+
+	}
+
+	@Override
+	public void authenticated( XMPPConnection xmppConnection, boolean b )
+	{
+
+	}
+
+	public void connectionClosed() {
 	handleDisconnect();
     }
 
@@ -1390,7 +1403,7 @@ public class GroupChatRoom extends ChatRoom {
 			    .getChatContainer().getChatFrame();
 		    Form form = chat.getConfigurationForm().createAnswerForm();
 		    new DataFormDialog(chatFrame, chat, form);
-		} catch (XMPPException xmpe) {
+		} catch (XMPPException | SmackException xmpe) {
 		    getTranscriptWindow().insertNotificationMessage(
 			    xmpe.getMessage(), ChatManager.ERROR_COLOR);
 		    scrollToBottom();
@@ -1410,7 +1423,7 @@ public class GroupChatRoom extends ChatRoom {
 		if (ModelUtil.hasLength(newSubject)) {
 		    try {
 			chat.changeSubject(newSubject);
-		    } catch (XMPPException xmpee) {
+		    } catch (XMPPException | SmackException xmpee) {
 			getTranscriptWindow().insertNotificationMessage(
 				xmpee.getMessage(),
 				ChatManager.ERROR_COLOR);
@@ -1430,7 +1443,7 @@ public class GroupChatRoom extends ChatRoom {
 
 		    new AnswerFormDialog(chatFrame, chat, form);
 
-		}  catch (XMPPException xmpe) {
+		}  catch (XMPPException | SmackException xmpe) {
 		    getTranscriptWindow().insertNotificationMessage(
 			    xmpe.getMessage(), ChatManager.ERROR_COLOR);
 		    scrollToBottom();

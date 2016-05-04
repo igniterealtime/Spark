@@ -46,6 +46,7 @@ import javax.swing.SwingUtilities;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.filetransfer.FileTransfer;
 import org.jivesoftware.smackx.filetransfer.FileTransfer.Status;
@@ -108,7 +109,7 @@ public class SendFileTransfer extends JPanel {
                     transfer = transferManager.createOutgoingFileTransfer(fullJID);
                     transfer.sendFile(file, "Sending");
                 }
-                catch (XMPPException e1) {
+                catch (SmackException e1) {
                     Log.error(e1);
                 }
                 sendFile(transfer, transferManager, fullJID, nickname);

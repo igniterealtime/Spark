@@ -22,12 +22,11 @@
 package org.jivesoftware;
 
 import org.jivesoftware.resource.Res;
-import org.jivesoftware.smack.AccountManager;
-import org.jivesoftware.smack.ConnectionConfiguration;
-import org.jivesoftware.smack.XMPPConnection;
-import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.*;
 import org.jivesoftware.smack.packet.XMPPError;
-import org.jivesoftware.smack.util.StringUtils;
+import org.jivesoftware.smack.tcp.XMPPTCPConnection;
+import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
+import org.jivesoftware.smackx.iqregister.AccountManager;
 import org.jivesoftware.spark.component.TitlePanel;
 import org.jivesoftware.spark.util.DummySSLSocketFactory;
 import org.jivesoftware.spark.util.ModelUtil;
@@ -35,6 +34,7 @@ import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+import org.jxmpp.util.XmppStringUtils;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -43,6 +43,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -138,7 +139,7 @@ public class AccountCreationWizard extends JPanel {
      * @return the username.
      */
     public String getUsername() {
-        return StringUtils.escapeNode(usernameField.getText().toLowerCase());
+        return XmppStringUtils.escapeLocalpart(usernameField.getText().toLowerCase());
     }
 
     /**
@@ -228,7 +229,7 @@ public class AccountCreationWizard extends JPanel {
         progressBar.setVisible(true);
 
         final SwingWorker worker = new SwingWorker() {
-            int errorCode;
+            XMPPError.Condition condition = null;
 
 
             public Object construct() {
@@ -236,22 +237,22 @@ public class AccountCreationWizard extends JPanel {
                     createAccountButton.setEnabled(false);
                     connection = getConnection();
                 }
-                catch (XMPPException e) {
+                catch (SmackException | IOException | XMPPException e) {
                     return e;
                 }
                 try {
-                    final AccountManager accountManager = new AccountManager(connection);
+                    final AccountManager accountManager = AccountManager.getInstance(connection);
                     accountManager.createAccount(getUsername(), getPassword());
                 }
-                catch (XMPPException e) {
-                    XMPPError error = e.getXMPPError();
-                    if (error != null) {
-                        errorCode = error.getCode();
-                    }
-                    else {
-                        errorCode = 500;
+                catch (XMPPException | SmackException e) {
+
+                    if ( e instanceof XMPPException.XMPPErrorException ) {
+                        condition = ( (XMPPException.XMPPErrorException) e ).getXMPPError().getCondition();
                     }
 
+                    if ( condition == null ) {
+                        condition = XMPPError.Condition.internal_server_error;
+                    }
                 }
                 return "ok";
             }
@@ -268,11 +269,11 @@ public class AccountCreationWizard extends JPanel {
                     return;
                 }
 
-                if (errorCode == 0) {
+                if (condition == null) {
                     accountCreationSuccessful();
                 }
                 else {
-                    accountCreationFailed(errorCode);
+                    accountCreationFailed(condition);
                 }
             }
         };
@@ -283,11 +284,11 @@ public class AccountCreationWizard extends JPanel {
     /**
      * Called if the account creation failed.
      *
-     * @param errorCode the error code.
+     * @param condition the error code.
      */
-    private void accountCreationFailed(int errorCode) {
+    private void accountCreationFailed( XMPPError.Condition condition ) {
         String message = Res.getString("message.create.account");
-        if (errorCode == 409) {
+        if (condition == XMPPError.Condition.conflict) {
             message = Res.getString("message.already.exists");
             usernameField.setText("");
             usernameField.requestFocus();
@@ -329,13 +330,10 @@ public class AccountCreationWizard extends JPanel {
      * Creates an XMPPConnection based on the users settings.
      *
      * @return the XMPPConnection created.
-     * @throws XMPPException thrown if an exception occured creating the connection.
      */
-    private XMPPConnection getConnection() throws XMPPException {
+    private XMPPConnection getConnection() throws SmackException, IOException, XMPPException
+    {
         final LocalPreferences localPreferences = SettingsManager.getLocalPreferences();
-        XMPPConnection connection = null;
-
-        // Get connection
 
         int port = localPreferences.getXmppPort();
 
@@ -353,41 +351,28 @@ public class AccountCreationWizard extends JPanel {
         boolean useSSL = localPreferences.isSSL();
         boolean hostPortConfigured = localPreferences.isHostAndPortConfigured();
 
-        ConnectionConfiguration config;
+        final XMPPTCPConnectionConfiguration.Builder builder = XMPPTCPConnectionConfiguration.builder()
+                .setUsernameAndPassword( "username", "password" )
+                .setServiceName( serverName )
+                .setPort( port )
+                .setCompressionEnabled( localPreferences.isCompressionEnabled() );
 
+        if ( hostPortConfigured ) {
+            builder.setHost( localPreferences.getXmppHost() );
+        }
         if (useSSL) {
             if (!hostPortConfigured) {
-                config = new ConnectionConfiguration(serverName, 5223);
-                config.setSocketFactory(new DummySSLSocketFactory());
+                builder.setPort( 5223 );
             }
-            else {
-                config = new ConnectionConfiguration(localPreferences.getXmppHost(), port, serverName);
-                config.setSocketFactory(new DummySSLSocketFactory());
-            }
-        }
-        else {
-            if (!hostPortConfigured) {
-                config = new ConnectionConfiguration(serverName);
-            }
-            else {
-                config = new ConnectionConfiguration(localPreferences.getXmppHost(), port, serverName);
-            }
-
-
+            builder.setSocketFactory( new DummySSLSocketFactory() );
         }
 
-        if (config != null) {
-            config.setReconnectionAllowed(true);
-            boolean compressionEnabled = localPreferences.isCompressionEnabled();
-            config.setCompressionEnabled(compressionEnabled);
-            connection = new XMPPConnection(config);
-        }
+        final XMPPTCPConnectionConfiguration configuration = builder.build();
 
-        if (connection != null) {
-            connection.connect();
-        }
+        final AbstractXMPPConnection connection = new XMPPTCPConnection( configuration );
+        connection.connect();
+
         return connection;
-
     }
 
     /**

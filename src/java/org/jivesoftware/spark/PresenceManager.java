@@ -21,12 +21,13 @@ package org.jivesoftware.spark;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.smack.Roster;
-import org.jivesoftware.smack.packet.PacketExtension;
+import org.jivesoftware.smack.packet.ExtensionElement;
+import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.util.StringUtils;
-import org.jivesoftware.smackx.packet.MUCUser;
+import org.jivesoftware.smackx.muc.packet.MUCUser;
 import org.jivesoftware.spark.util.log.Log;
+import org.jxmpp.util.XmppStringUtils;
 
 import javax.swing.Icon;
 
@@ -77,7 +78,7 @@ public class PresenceManager {
      * @return true if online.
      */
     public static boolean isOnline(String jid) {
-        final Roster roster = SparkManager.getConnection().getRoster();
+        final Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
         Presence presence = roster.getPresence(jid);
         return presence.isAvailable();
     }
@@ -89,7 +90,7 @@ public class PresenceManager {
      * @return true if the user is online and available.
      */
     public static boolean isAvailable(String jid) {
-        final Roster roster = SparkManager.getConnection().getRoster();
+        final Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
         Presence presence = roster.getPresence(jid);
         return presence.isAvailable() && !presence.isAway();
     }
@@ -118,7 +119,7 @@ public class PresenceManager {
 		if (jid.equals(SparkManager.getSessionManager().getBareAddress())) {
 			return SparkManager.getWorkspace().getStatusBar().getPresence();
 		} else {
-			final Roster roster = SparkManager.getConnection().getRoster();
+			final Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
 			return roster.getPresence(jid);
 		}
     }
@@ -130,18 +131,21 @@ public class PresenceManager {
      * @return the fully qualified jid of a user (ex. derek@jivesoftware.com --> derek@jivesoftware.com/spark)
      */
     public static String getFullyQualifiedJID(String jid) {
-        final Roster roster = SparkManager.getConnection().getRoster();
+        final Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
         Presence presence = roster.getPresence(jid);
         return presence.getFrom();
     }
     
 	public static String getJidFromMUCPresence(Presence presence) {		
-		Collection<PacketExtension> extensions = presence.getExtensions();
-		for (PacketExtension pe : extensions) {
-			if (pe instanceof MUCUser) {
-				final MUCUser mucUser = (MUCUser) pe;
+		Collection<ExtensionElement> extensions = presence.getExtensions();
+		for (ExtensionElement extension : extensions) {
+			if (extension instanceof MUCUser) {
+				final MUCUser mucUser = (MUCUser) extension;
 				String fullJid = mucUser.getItem().getJid();
-				String userJid = StringUtils.parseBareAddress(fullJid);
+                if ( fullJid == null) {
+                    return null;
+                }
+ 				String userJid = XmppStringUtils.parseBareJid(fullJid);
 				return userJid;
 			}
 		}

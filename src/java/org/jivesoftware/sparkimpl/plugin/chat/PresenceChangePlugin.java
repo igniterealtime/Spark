@@ -34,9 +34,9 @@ import javax.swing.JPopupMenu;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.smack.PacketListener;
-import org.jivesoftware.smack.filter.PacketTypeFilter;
-import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smack.StanzaListener;
+import org.jivesoftware.smack.filter.StanzaTypeFilter;
+import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.spark.ChatManager;
@@ -49,6 +49,7 @@ import org.jivesoftware.spark.ui.ContactList;
 import org.jivesoftware.sparkimpl.plugin.alerts.SparkToaster;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+import org.jxmpp.util.XmppStringUtils;
 
 /**
  * Allows users to place activity listeners on individual users. This class notifies users when other users
@@ -71,7 +72,7 @@ public class PresenceChangePlugin implements Plugin {
 	    public void actionPerformed(ActionEvent e) {
 		
 		for (ContactItem item : contactList.getSelectedUsers()) {
-		    String bareAddress = StringUtils.parseBareAddress(item
+		    String bareAddress = XmppStringUtils.parseBareJid(item
 			    .getJID());
 		    sparkContacts.add(bareAddress);
 		}
@@ -87,7 +88,7 @@ public class PresenceChangePlugin implements Plugin {
 	    public void actionPerformed(ActionEvent e) {
 
 		for (ContactItem item : contactList.getSelectedUsers()) {
-		    String bareAddress = StringUtils.parseBareAddress(item
+		    String bareAddress = XmppStringUtils.parseBareJid(item
 			    .getJID());
 		    sparkContacts.remove(bareAddress);
 		}
@@ -103,7 +104,7 @@ public class PresenceChangePlugin implements Plugin {
             public void poppingUp(Object object, JPopupMenu popup) {
                 if (object instanceof ContactItem) {
                     ContactItem item = (ContactItem)object;
-                    String bareAddress = StringUtils.parseBareAddress(item.getJID());
+                    String bareAddress = XmppStringUtils.parseBareJid(item.getJID());
                     if (!item.getPresence().isAvailable() || item.getPresence().isAway()) {
                         if (sparkContacts.contains(bareAddress)) {
                             popup.add(removeAction);
@@ -125,12 +126,12 @@ public class PresenceChangePlugin implements Plugin {
         });
 
         // Check presence changes
-        SparkManager.getConnection().addPacketListener(new PacketListener() {
-	    public void processPacket(final Packet packet) {
+        SparkManager.getConnection().addAsyncStanzaListener(new StanzaListener() {
+	    public void processPacket(final Stanza stanza) {
 		try {
 		    EventQueue.invokeAndWait(new Runnable() {
 			public void run() {
-			    Presence presence = (Presence) packet;
+			    Presence presence = (Presence) stanza;
 			    if (!presence.isAvailable() || presence.isAway()) {
 				return;
 			    }
@@ -139,8 +140,8 @@ public class PresenceChangePlugin implements Plugin {
 			    ArrayList<String> removelater = new ArrayList<String>();
 			    
 			    for (final String jid : sparkContacts) {
-				if (jid.equals(StringUtils
-					.parseBareAddress(from))) {
+				if (jid.equals(XmppStringUtils
+					.parseBareJid(from))) {
 				    removelater.add(jid);
 				    // sparkContacts.remove(jid);
 
@@ -198,7 +199,7 @@ public class PresenceChangePlugin implements Plugin {
 		    ex.printStackTrace();
 		}
             }
-        }, new PacketTypeFilter(Presence.class));
+        }, new StanzaTypeFilter(Presence.class));
     }
 
     public void shutdown() {
@@ -214,18 +215,18 @@ public class PresenceChangePlugin implements Plugin {
     }
 
     public void addWatch(String user){
-	String bareAddress = StringUtils.parseBareAddress(user);
+	String bareAddress = XmppStringUtils.parseBareJid(user);
 	sparkContacts.add(bareAddress);
     }
 
     public void removeWatch(String user){
-	String bareAddress = StringUtils.parseBareAddress(user);
+	String bareAddress = XmppStringUtils.parseBareJid(user);
 	sparkContacts.remove(bareAddress);
     }
 
     public boolean getWatched(String user)
     {
-	String bareAddress = StringUtils.parseBareAddress(user);
+	String bareAddress = XmppStringUtils.parseBareJid(user);
 	return sparkContacts.contains(bareAddress)
 ;    }
 

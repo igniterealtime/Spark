@@ -88,15 +88,14 @@ import org.dom4j.io.SAXReader;
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.smack.ConnectionConfiguration;
+import org.jivesoftware.smack.*;
 import org.jivesoftware.smack.proxy.ProxyInfo;
-import org.jivesoftware.smack.SASLAuthentication;
-import org.jivesoftware.smack.SmackConfiguration;
-import org.jivesoftware.smack.XMPPConnection;
-import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.XMPPError;
+import org.jivesoftware.smack.sasl.javax.SASLExternalMechanism;
+import org.jivesoftware.smack.tcp.XMPPTCPConnection;
+import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
 import org.jivesoftware.smack.util.StringUtils;
-import org.jivesoftware.smackx.ChatStateManager;
+import org.jivesoftware.smackx.chatstates.ChatStateManager;
 import org.jivesoftware.spark.SessionManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.Workspace;
@@ -113,6 +112,7 @@ import org.jivesoftware.sparkimpl.plugin.layout.LayoutSettings;
 import org.jivesoftware.sparkimpl.plugin.layout.LayoutSettingsManager;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+import org.jxmpp.util.XmppStringUtils;
 
 /**
  * Dialog to log in a user into the Spark Server. The LoginDialog is used only
@@ -233,7 +233,7 @@ public class LoginDialog {
         // settings
     }    
 
-    protected ConnectionConfiguration retrieveConnectionConfiguration() {
+    protected XMPPTCPConnectionConfiguration retrieveConnectionConfiguration() {
         int port = localPref.getXmppPort();
 
         int checkForPort = loginServer.indexOf(":");
@@ -247,8 +247,6 @@ public class LoginDialog {
 
         boolean useSSL = localPref.isSSL();
         boolean hostPortConfigured = localPref.isHostAndPortConfigured();
-
-        ConnectionConfiguration config = null;
 
         ProxyInfo proxyInfo = null;
         if (localPref.isProxyEnabled()) {
@@ -277,83 +275,59 @@ public class LoginDialog {
         		Log.error("No proxy info found but proxy type is enabled!");
         	}
         }
-        
+
+        final XMPPTCPConnectionConfiguration.Builder builder = XMPPTCPConnectionConfiguration.builder()
+                .setUsernameAndPassword( "username", "password" )
+                .setServiceName( loginServer )
+                .setPort( port )
+                .setSendPresence( false )
+                .setCompressionEnabled( localPref.isCompressionEnabled() );
+
+        if ( hostPortConfigured ) {
+            builder.setHost( localPref.getXmppHost() );
+        }
+
+        if ( localPref.isProxyEnabled() )
+        {
+            builder.setProxyInfo( proxyInfo );
+        }
+
         if (useSSL) {
             if (!hostPortConfigured) {
-                config = new ConnectionConfiguration(loginServer, 5223);
-                config.setSocketFactory(new DummySSLSocketFactory());
+                builder.setPort( 5223 );
             }
-            else {
-                config = new ConnectionConfiguration(localPref.getXmppHost(), port, loginServer);
-                config.setSocketFactory(new DummySSLSocketFactory());
-            }
-            if(localPref.isProxyEnabled() &&  !hostPortConfigured)
-            {
-                
-                config = new ConnectionConfiguration(loginServer,5223,proxyInfo);
-            }
-            else if(localPref.isProxyEnabled() &&  !hostPortConfigured)
-            {
-                
-                config = new ConnectionConfiguration(localPref.getXmppHost(), port, loginServer,proxyInfo);
-            
-            }
+            builder.setSocketFactory( new DummySSLSocketFactory() );
         }
-        else {
-            if(!localPref.isProxyEnabled())
-            {
-            if (!hostPortConfigured) {
-                config = new ConnectionConfiguration(loginServer);
-            }
-            else {
-                
-                config = new ConnectionConfiguration(localPref.getXmppHost(), port, loginServer);
-            }
-            }
-            else
-            {
-                 if (!hostPortConfigured) {
-                     
-                config = new ConnectionConfiguration(loginServer,proxyInfo);
-            }
-            else {
-                
-                config = new ConnectionConfiguration(localPref.getXmppHost(), port, loginServer,proxyInfo);
-            }
-            
-            }
 
-        }
-        config.setReconnectionAllowed(true);
-        config.setRosterLoadedAtLogin(true);
-        config.setSendPresence(false);
+        final XMPPTCPConnectionConfiguration configuration = builder.build();
 
         if (localPref.isPKIEnabled()) {
-            SASLAuthentication.supportSASLMechanism("EXTERNAL");
-            config.setKeystoreType(localPref.getPKIStore());
+            SASLAuthentication.registerSASLMechanism( new SASLExternalMechanism() );
+            builder.setKeystoreType(localPref.getPKIStore());
             if(localPref.getPKIStore().equals("PKCS11")) {
-                config.setPKCS11Library(localPref.getPKCS11Library());
+                builder.setPKCS11Library(localPref.getPKCS11Library());
             }
             else if(localPref.getPKIStore().equals("JKS")) {
-                config.setKeystoreType("JKS");
-                config.setKeystorePath(localPref.getJKSPath());
+                builder.setKeystoreType("JKS");
+                builder.setKeystorePath(localPref.getJKSPath());
 
             }
             else if(localPref.getPKIStore().equals("X509")) {
                 //do something
             }
             else if(localPref.getPKIStore().equals("Apple")) {
-                config.setKeystoreType("Apple");
+                builder.setKeystoreType("Apple");
             }
         }
 
-        boolean compressionEnabled = localPref.isCompressionEnabled();
-        config.setCompressionEnabled(compressionEnabled);            
-        if(ModelUtil.hasLength(localPref.getTrustStorePath())) {
-        	config.setTruststorePath(localPref.getTrustStorePath());
-        	config.setTruststorePassword(localPref.getTrustStorePassword());
-        }
-        return config;
+        // TODO These were used in Smack 3. Find Smack 4 alternative.
+//        config.setReconnectionAllowed(true);
+//        config.setRosterLoadedAtLogin(true);
+//        if(ModelUtil.hasLength(localPref.getTrustStorePath())) {
+//        	config.setTruststorePath(localPref.getTrustStorePath());
+//        	config.setTruststorePassword(localPref.getTrustStorePassword());
+//        }
+        return builder.build();
     }
     
     /**
@@ -388,7 +362,7 @@ public class LoginDialog {
 
         final JPanel buttonPanel = new JPanel(new GridBagLayout());
         private final GridBagLayout GRIDBAGLAYOUT = new GridBagLayout();
-        private XMPPConnection connection = null;
+        private AbstractXMPPConnection connection = null;
 
         private JLabel headerLabel = new JLabel();
         private JLabel accountLabel = new JLabel();
@@ -601,7 +575,7 @@ public class LoginDialog {
 
 
             if (userProp != null) {
-                usernameField.setText(StringUtils.unescapeNode(userProp));
+                usernameField.setText( XmppStringUtils.unescapeLocalpart(userProp));
             }
             if (serverProp != null) {
                 serverField.setText(serverProp);
@@ -672,7 +646,7 @@ public class LoginDialog {
          * @return the username.
          */
         private String getUsername() {
-            return StringUtils.escapeNode(usernameField.getText().trim());
+            return XmppStringUtils.escapeLocalpart(usernameField.getText().trim());
         }
 
         /**
@@ -1085,15 +1059,14 @@ public class LoginDialog {
             if (!hasErrors) {
                 localPref = SettingsManager.getLocalPreferences();
                 if (localPref.isDebuggerEnabled()) {
-                    XMPPConnection.DEBUG_ENABLED = true;
+                    SmackConfiguration.DEBUG = true;
                 }
 
-                SmackConfiguration.setPacketReplyTimeout(localPref.getTimeOut() * 1000);
+                SmackConfiguration.setDefaultPacketReplyTimeout(localPref.getTimeOut() * 1000);
 
                 // Get connection
                 try {
-                	ConnectionConfiguration config = retrieveConnectionConfiguration();
-                    connection = new XMPPConnection(config,this);
+                    connection = new XMPPTCPConnection(retrieveConnectionConfiguration());
                     //If we want to use the debug version of smack, we have to check if
                     //we are on the dispatch thread because smack will create an UI
 		    if (localPref.isDebuggerEnabled()) {
@@ -1106,7 +1079,7 @@ public class LoginDialog {
 				public void run() {
 				    try {
 					connection.connect();
-				    } catch (XMPPException e) {
+				    } catch (IOException | XMPPException | SmackException e) {
 					Log.error("connection error",e);
 				    }
 
@@ -1143,39 +1116,42 @@ public class LoginDialog {
                     sessionManager.setJID(connection.getUser());
                 }
                 catch (Exception xee) {
-                   
-                   
+
+                    errorMessage = SparkRes.getString(SparkRes.UNRECOVERABLE_ERROR);
+                    hasErrors = true;
+
                     if (!loginDialog.isVisible()) {
                         loginDialog.setVisible(true);
                     }
-                    if (xee instanceof XMPPException) {
+                    if (xee instanceof XMPPException.XMPPErrorException) {
 
-                       XMPPException xe = (XMPPException)xee;
-                       final XMPPError error = xe.getXMPPError();
-                       int errorCode = 0;
-                       if (error != null) {
-                           errorCode = error.getCode();
-                       }
-                       if (errorCode == 401) {
-                           errorMessage = Res.getString("message.invalid.username.password");
-                       }
-                       else if (errorCode == 502 || errorCode == 504) {
-                           errorMessage = Res.getString("message.server.unavailable");
-                       }
-                       else if (errorCode == 409) {
-                           errorMessage = Res.getString("label.conflict.error");
-                       }
-                       else {
-                           errorMessage = Res.getString("message.unrecoverable.error");
-                       }
-                   }
-                   else {
-                       errorMessage = SparkRes.getString(SparkRes.UNRECOVERABLE_ERROR);
+                        XMPPException.XMPPErrorException xe = (XMPPException.XMPPErrorException)xee;
+                        switch ( xe.getXMPPError().getCondition() )
+                        {
+                            case conflict:
+                                errorMessage = Res.getString("label.conflict.error");
+                                break;
+
+                            case not_authorized:
+                                errorMessage = Res.getString("message.invalid.username.password");
+                                break;
+
+                            case remote_server_not_found:
+                                errorMessage = Res.getString("message.server.unavailable");
+                                break;
+
+                            case remote_server_timeout:
+                                errorMessage = Res.getString("message.server.unavailable");
+                                break;
+
+                            default:
+                                errorMessage = Res.getString("message.unrecoverable.error");
+                                break;
+                        }
                    }
 
                     // Log Error
                     Log.warning("Exception in Login:", xee);
-                    hasErrors = true;
                 }
             }
 

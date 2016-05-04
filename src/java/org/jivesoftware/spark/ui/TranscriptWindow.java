@@ -56,7 +56,8 @@ import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.util.StringUtils;
-import org.jivesoftware.smackx.packet.DelayInformation;
+import org.jivesoftware.smackx.delay.packet.DelayInformation;
+import org.jivesoftware.smackx.jiveproperties.packet.JivePropertiesExtension;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.ContextMenuListener;
@@ -65,6 +66,7 @@ import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+import org.jxmpp.util.XmppStringUtils;
 
 /**
  * The <CODE>TranscriptWindow</CODE> class. Provides a default implementation
@@ -464,13 +466,19 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener {
                     }
 
                     if (Message.Type.groupchat == message.getType()) {
-                        if (ModelUtil.hasLength(StringUtils.parseResource(from))) {
-                            from = StringUtils.parseResource(from);
+                        if (ModelUtil.hasLength( XmppStringUtils.parseResource(from))) {
+                            from = XmppStringUtils.parseResource(from);
                         }
                     }
 
                     final String body = message.getBody();
-                    final Date insertionDate = (Date)message.getProperty("insertionDate");
+
+                    final JivePropertiesExtension extension = ((JivePropertiesExtension) message.getExtension( JivePropertiesExtension.NAMESPACE ));
+                    Date insertionDate = null;
+                    if ( extension != null ) {
+                        insertionDate = (Date) extension.getProperty( "insertionDate" );
+                    }
+
                     formatter = new SimpleDateFormat("hh:mm:ss");
 
                     String value = "";

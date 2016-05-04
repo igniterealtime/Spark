@@ -44,7 +44,7 @@ import javax.swing.JWindow;
 import javax.swing.Timer;
 
 import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.smackx.packet.VCard;
+import org.jivesoftware.smackx.vcardtemp.packet.VCard;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.UserManager;
 import org.jivesoftware.spark.util.GraphicUtils;

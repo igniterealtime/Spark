@@ -53,14 +53,15 @@ import javax.swing.UIManager;
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.smack.PacketListener;
-import org.jivesoftware.smack.filter.PacketFilter;
-import org.jivesoftware.smack.filter.PacketTypeFilter;
+import org.jivesoftware.smack.StanzaListener;
+import org.jivesoftware.smack.filter.StanzaFilter;
+import org.jivesoftware.smack.filter.StanzaTypeFilter;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Message.Type;
-import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.util.StringUtils;
-import org.jivesoftware.smackx.packet.DelayInformation;
+import org.jivesoftware.smackx.delay.packet.DelayInformation;
+import org.jivesoftware.smackx.jiveproperties.packet.JivePropertiesExtension;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.UserManager;
@@ -87,11 +88,12 @@ import org.jivesoftware.sparkimpl.preference.sounds.SoundPreference;
 import org.jivesoftware.sparkimpl.preference.sounds.SoundPreferences;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+import org.jxmpp.util.XmppStringUtils;
 
 /**
  * Handles broadcasts from server and allows for roster wide broadcasts.
  */
-public class BroadcastPlugin extends SparkTabHandler implements Plugin, PacketListener {
+public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaListener {
 
     private Set<ChatRoom> broadcastRooms = new HashSet<ChatRoom>();
 
@@ -104,8 +106,8 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, PacketLi
         // Add as ContainerDecoratr
         SparkManager.getChatManager().addSparkTabHandler(this);
 
-        PacketFilter serverFilter = new PacketTypeFilter(Message.class);
-        SparkManager.getConnection().addPacketListener(this, serverFilter);
+        StanzaFilter serverFilter = new StanzaTypeFilter(Message.class);
+        SparkManager.getConnection().addAsyncStanzaListener(this, serverFilter);
 
         // Register with action menu
         final JMenu actionsMenu = SparkManager.getMainWindow().getMenuByName(Res.getString("menuitem.actions"));
@@ -137,7 +139,7 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, PacketLi
                 UIManager.put("OptionPane.cancelButtonText", Res.getString("cancel"));
                 
                 String jid = (String)JOptionPane.showInputDialog(SparkManager.getMainWindow(), Res.getString("label.enter.address"), Res.getString("title.start.chat"), JOptionPane.QUESTION_MESSAGE, null, null, selectedUser);
-                if (ModelUtil.hasLength(jid) && ModelUtil.hasLength(StringUtils.parseServer(jid))) {
+                if (ModelUtil.hasLength(jid) && ModelUtil.hasLength( XmppStringUtils.parseDomain(jid))) {
                     if (ModelUtil.hasLength(jid) && jid.indexOf('@') == -1) {
                         // Append server address
                         jid = jid + "@" + SparkManager.getConnection().getServiceName();
@@ -209,11 +211,11 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, PacketLi
         return false;
     }
 
-    public void processPacket(final Packet packet) {
+    public void processPacket(final Stanza stanza) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 try {
-                    final Message message = (Message)packet;
+                    final Message message = (Message)stanza;
 
                     // Do not handle errors or offline messages
                     final DelayInformation offlineInformation = (DelayInformation)message.getExtension("delay", "urn:xmpp:delay");
@@ -221,17 +223,18 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, PacketLi
                         return;
                     }
 
-                    boolean broadcast = message.getProperty("broadcast") != null;
+                    final JivePropertiesExtension extension = ((JivePropertiesExtension) message.getExtension( JivePropertiesExtension.NAMESPACE ));
+                    final boolean broadcast = extension != null && extension.getProperty( "broadcast" ) != null;
 
                     if ((broadcast || message.getType() == Message.Type.normal
                 	    || message.getType() == Message.Type.headline) && message.getBody() != null) {
-                        showAlert((Message)packet);
+                        showAlert((Message)stanza);
                     }
                     else {
                         String host = SparkManager.getSessionManager().getServerAddress();
-                        String from = packet.getFrom() != null ? packet.getFrom() : "";
+                        String from = stanza.getFrom() != null ? stanza.getFrom() : "";
                         if (host.equalsIgnoreCase(from) || !ModelUtil.hasLength(from)) {
-                            showAlert((Message)packet);
+                            showAlert((Message)stanza);
                         }
                     }
                 }
@@ -317,7 +320,7 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, PacketLi
      *            the sender
      */
     private void userToUserBroadcast(Message message, Type type, String from) {
-	String jid = StringUtils.parseBareAddress(from);
+	String jid = XmppStringUtils.parseBareJid(from);
 	String nickname = SparkManager.getUserManager().getUserNicknameFromJID(jid);
 	ChatManager chatManager = SparkManager.getChatManager();
 	ChatContainer container = chatManager.getChatContainer();
@@ -335,7 +338,7 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, PacketLi
 	m.setBody(message.getBody());
 	m.setTo(message.getTo());
 
-	String name = StringUtils.parseName(message.getFrom());
+	String name = XmppStringUtils.parseLocalpart(message.getFrom());
 
 	String broadcasttype = type == Message.Type.normal ? Res.getString("broadcast") : Res.getString("message.alert.notify");
 	//m.setFrom(name +" "+broadcasttype);

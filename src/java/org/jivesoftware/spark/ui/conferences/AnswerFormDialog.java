@@ -38,9 +38,10 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import org.jivesoftware.resource.Res;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smackx.Form;
-import org.jivesoftware.smackx.FormField;
+import org.jivesoftware.smackx.xdata.Form;
+import org.jivesoftware.smackx.xdata.FormField;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
@@ -78,18 +79,15 @@ public class AnswerFormDialog {
 	dialog = new JDialog(parent, true);
 	dialog.setTitle(Res.getString("button.register").replace("&", ""));
 
-	Iterator<FormField> iterator = form.getFields();
 	int row = 0;
-	while (iterator.hasNext()) {
-	    FormField formfield = iterator.next();
-	    
+	for ( final FormField formfield : form.getFields() ) {
 	    JLabel label = new JLabel(formfield.getLabel());
-	    String type = formfield.getType();
+	    FormField.Type type = formfield.getType();
 
 	    JComponent comp = null;
-	    if (type.equals(FormField.TYPE_TEXT_SINGLE)) {
+	    if (type.equals(FormField.Type.text_single)) {
 		comp = new JTextField();
-	    } else if (type.equals(FormField.TYPE_TEXT_MULTI)) {
+	    } else if (type.equals(FormField.Type.text_multi)) {
 		comp = new JTextArea();
 		comp.setBorder(new JTextField().getBorder());
 	    }
@@ -150,7 +148,7 @@ public class AnswerFormDialog {
 	    
 	    String reg = Res.getString("message.groupchat.registered.member", chat.getRoom());
 	   room.getTranscriptWindow().insertNotificationMessage(reg,ChatManager.NOTIFICATION_COLOR);
-	} catch (XMPPException e) {
+	} catch (XMPPException | SmackException e) {
 	    room.getTranscriptWindow().insertNotificationMessage(e.getMessage(),ChatManager.ERROR_COLOR);
 	}
 

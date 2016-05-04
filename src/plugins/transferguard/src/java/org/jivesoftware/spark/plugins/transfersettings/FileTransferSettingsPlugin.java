@@ -19,6 +19,7 @@
  */
 package org.jivesoftware.spark.plugins.transfersettings;
 
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smackx.filetransfer.FileTransferRequest;
 import org.jivesoftware.spark.SparkManager;
@@ -26,6 +27,7 @@ import org.jivesoftware.spark.filetransfer.FileTransferListener;
 import org.jivesoftware.spark.filetransfer.SparkTransferManager;
 import org.jivesoftware.spark.plugin.Plugin;
 import org.jivesoftware.spark.preference.PreferenceManager;
+import org.jivesoftware.spark.util.log.Log;
 
 /**
  * Spark plugin which allows configuration of allowed file sizes, types, and senders for file transfer.
@@ -136,19 +138,30 @@ public class FileTransferSettingsPlugin implements Plugin {
             public boolean handleTransfer(FileTransferRequest request) {
                 FileTransferSettings settings = (FileTransferSettings)prefManager.getPreferenceData("transferSettings");
 
-                if (requestContainsBannedFile(request, settings)) {
-                    request.reject();
+                try
+                {
+                    if ( requestContainsBannedFile( request, settings ) )
+                    {
+                        request.reject();
 
-                    String responseMessage = settings.getCannedRejectionMessage();
-                    if (responseMessage != null && responseMessage.length() > 0) {
-                        Message message = new Message();
-                        message.setTo(request.getRequestor());
-                        message.setBody(responseMessage);
-                        SparkManager.getConnection().sendPacket(message);
+                        String responseMessage = settings.getCannedRejectionMessage();
+                        if ( responseMessage != null && responseMessage.length() > 0 )
+                        {
+                            Message message = new Message();
+                            message.setTo( request.getRequestor() );
+                            message.setBody( responseMessage );
+                            SparkManager.getConnection().sendStanza( message );
+                        }
+                        return true;
                     }
-                    return true;
+                    else
+                    {
+                        return false;
+                    }
                 }
-                else {
+                catch (SmackException ex)
+                {
+                    Log.warning( "Unable to handle file transfer.", ex );
                     return false;
                 }
             }

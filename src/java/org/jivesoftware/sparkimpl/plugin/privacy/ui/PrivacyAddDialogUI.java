@@ -48,11 +48,11 @@ import javax.swing.JScrollPane;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.smack.Roster;
-import org.jivesoftware.smack.RosterEntry;
-import org.jivesoftware.smack.RosterGroup;
+import org.jivesoftware.smack.roster.Roster;
+import org.jivesoftware.smack.roster.RosterEntry;
+import org.jivesoftware.smack.roster.RosterGroup;
 import org.jivesoftware.smack.packet.Presence;
-import org.jivesoftware.smack.packet.PrivacyItem;
+import org.jivesoftware.smackx.privacy.packet.PrivacyItem;
 import org.jivesoftware.spark.PresenceManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.TitlePanel;
@@ -129,7 +129,7 @@ public class PrivacyAddDialogUI extends JPanel {
 
     private void createList() {
         _userList.clear();
-        final Roster roster = SparkManager.getConnection().getRoster();
+        final Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
         if (_showGroups) {
             for (RosterGroup group : roster.getGroups()) {
                 _showOffCheckbox.setVisible(false);
@@ -239,12 +239,11 @@ public class PrivacyAddDialogUI extends JPanel {
                 ContactItem item = (ContactItem) values[i];
 
                 PrivacyItem.Type type = _showGroups ? PrivacyItem.Type.group : PrivacyItem.Type.jid;
-                PrivacyItem pitem = new PrivacyItem(type.name(), false, 999);
+                PrivacyItem pitem = new PrivacyItem(type, item.getJID(), false, 999);
                 pitem.setFilterIQ(_blockIQ.isSelected());
                 pitem.setFilterMessage(_blockMsg.isSelected());
-                pitem.setFilterPresence_in(_blockPIn.isSelected());
-                pitem.setFilterPresence_out(_blockPOout.isSelected());
-                pitem.setValue(item.getJID());
+                pitem.setFilterPresenceIn(_blockPIn.isSelected());
+                pitem.setFilterPresenceOut(_blockPOout.isSelected());
 
                 selectedContacts.add(pitem);
             } catch (NullPointerException e) {

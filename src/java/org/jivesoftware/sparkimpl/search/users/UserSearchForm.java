@@ -23,8 +23,9 @@ package org.jivesoftware.sparkimpl.search.users;
 import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smackx.Form;
+import org.jivesoftware.smackx.xdata.Form;
 import org.jivesoftware.smackx.search.UserSearchManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.TitlePanel;
@@ -176,7 +177,7 @@ public class UserSearchForm extends JPanel {
                             try {
                                 newForm = searchManager.getSearchForm(serviceName);
                             }
-                            catch (XMPPException e) {
+                            catch (XMPPException | SmackException e) {
                                 // Nothing to do
                             }
                             return newForm;

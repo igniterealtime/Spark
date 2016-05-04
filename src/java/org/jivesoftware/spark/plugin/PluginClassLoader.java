@@ -20,9 +20,9 @@
 package org.jivesoftware.spark.plugin;
 
 import org.jivesoftware.smack.packet.IQ;
-import org.jivesoftware.smack.packet.PacketExtension;
+import org.jivesoftware.smack.packet.ExtensionElement;
+import org.jivesoftware.smack.provider.ExtensionElementProvider;
 import org.jivesoftware.smack.provider.IQProvider;
-import org.jivesoftware.smack.provider.PacketExtensionProvider;
 import org.jivesoftware.smack.provider.ProviderManager;
 import org.jivesoftware.spark.util.URLFileSystem;
 import org.jivesoftware.spark.util.log.Log;
@@ -145,10 +145,10 @@ public class PluginClassLoader extends URLClassLoader {
                             // Add the provider to the map.
                             Class<?> provider = this.loadClass(className);
                             if (IQProvider.class.isAssignableFrom(provider)) {
-                                ProviderManager.getInstance().addIQProvider(elementName, namespace, provider.newInstance());
+                                ProviderManager.addIQProvider(elementName, namespace, provider.newInstance());
                             }
                             else if (IQ.class.isAssignableFrom(provider)) {
-                                ProviderManager.getInstance().addIQProvider(elementName, namespace, provider.newInstance());
+                                ProviderManager.addIQProvider(elementName, namespace, provider.newInstance());
                             }
                         }
                         catch (ClassNotFoundException cnfe) {
@@ -176,13 +176,13 @@ public class PluginClassLoader extends URLClassLoader {
                         try {
                             // Add the provider to the map.
                             Class<?> provider = this.loadClass(className);
-                            if (PacketExtensionProvider.class.isAssignableFrom(
+                            if (ExtensionElementProvider.class.isAssignableFrom(
                                     provider)) {
-                                ProviderManager.getInstance().addExtensionProvider(elementName, namespace, provider.newInstance());
+                                ProviderManager.addExtensionProvider(elementName, namespace, provider.newInstance());
                             }
-                            else if (PacketExtension.class.isAssignableFrom(
+                            else if (ExtensionElement.class.isAssignableFrom(
                                     provider)) {
-                                ProviderManager.getInstance().addExtensionProvider(elementName, namespace, provider.newInstance());
+                                ProviderManager.addExtensionProvider(elementName, namespace, provider.newInstance());
                             }
                         }
                         catch (ClassNotFoundException cnfe) {

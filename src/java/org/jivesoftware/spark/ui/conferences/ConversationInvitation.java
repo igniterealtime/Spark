@@ -21,15 +21,19 @@ package org.jivesoftware.spark.ui.conferences;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.muc.MultiUserChat;
+import org.jivesoftware.smackx.muc.MultiUserChatManager;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.WrappedLabel;
 import org.jivesoftware.spark.ui.ContainerComponent;
 import org.jivesoftware.spark.util.ResourceUtils;
+import org.jivesoftware.spark.util.log.Log;
+import org.jxmpp.util.XmppStringUtils;
 
 import java.awt.Color;
 import java.awt.FlowLayout;
@@ -156,11 +160,18 @@ public class ConversationInvitation extends JPanel implements ContainerComponent
     public void actionPerformed(ActionEvent actionEvent) {
         final Object obj = actionEvent.getSource();
         if (obj == joinButton) {
-            String name = StringUtils.parseName(roomName);
+            String name = XmppStringUtils.parseLocalpart(roomName);
             ConferenceUtils.enterRoomOnSameThread(name, roomName, password);
         }
         else {
-            MultiUserChat.decline(SparkManager.getConnection(), roomName, inviter, "No thank you");
+            try
+            {
+                MultiUserChatManager.getInstanceFor( SparkManager.getConnection() ).decline( roomName, inviter, "No thank you");
+            }
+            catch ( SmackException.NotConnectedException e )
+            {
+                Log.warning( "unable to decline invatation from " + inviter + " to join room " + roomName, e );
+            }
         }
 
         // Close Container
