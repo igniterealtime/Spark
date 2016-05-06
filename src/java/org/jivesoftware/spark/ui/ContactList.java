@@ -1016,7 +1016,7 @@ moveToOffline(moveToOfflineContactItem);
 
         ContactGroup rootGroup = null;
         ContactGroup lastGroup = null;
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
 
         boolean groupAdded = false;
         while (tkn.hasMoreTokens()) {
@@ -1733,7 +1733,7 @@ moveToOffline(moveToOfflineContactItem);
 
 
     private void sendMessages(Collection<ContactItem> items) {
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         InputDialog dialog = new InputDialog();
         final String messageText = dialog.getInput(Res.getString("title.broadcast.message"), Res.getString("message.enter.broadcast.message"), SparkRes.getImageIcon(SparkRes.BLANK_IMAGE), SparkManager.getMainWindow());
         if (ModelUtil.hasLength(messageText)) {

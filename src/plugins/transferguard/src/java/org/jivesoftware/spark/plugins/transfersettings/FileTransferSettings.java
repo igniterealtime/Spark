@@ -193,7 +193,7 @@ public class FileTransferSettings {
      * @return a comma separated string.
      */
     public static String convertSettingsListToString(List<String> settings) {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         for (Iterator<String> iter=settings.iterator(); iter.hasNext(); ) {
             buffer.append(iter.next());
             if (iter.hasNext()) {

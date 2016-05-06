@@ -198,7 +198,7 @@ public final class ModelUtil {
      */
     public static String concat(String[] strs, String delim) {
         if (strs != null) {
-            final StringBuffer buf = new StringBuffer();
+            final StringBuilder buf = new StringBuilder();
             final int n = strs.length;
             for (int i = 0; i < n; i++) {
                 final String str = strs[i];
@@ -294,7 +294,7 @@ public final class ModelUtil {
         diff = diff % MS_IN_AN_HOUR;
         long numMinutes = diff / MS_IN_A_MINUTE;
 
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
 
         if(numDays > 0){
             buf.append(numDays).append(" d, ");

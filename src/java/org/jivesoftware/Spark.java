@@ -113,7 +113,7 @@ public final class Spark {
         System.setProperty("apple.laf.useScreenMenuBar", "true");
 
         /** Update Library Path **/
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         buf.append(current);
         buf.append(";");
 

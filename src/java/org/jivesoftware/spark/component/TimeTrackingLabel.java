@@ -71,7 +71,7 @@ public class TimeTrackingLabel extends JLabel {
 //                diff = diff % MS_IN_A_SECOND;
             //long numMilliseconds = diff;
 
-            StringBuffer buf = new StringBuffer();
+            StringBuilder buf = new StringBuilder();
             if (numHours > 0) {
                 buf.append(numHours).append(" ").append(HOURS).append(", ");
             }

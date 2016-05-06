@@ -601,7 +601,7 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
      * @return a string of marked up text.
      */
     public String getMarkup() {
-        final StringBuffer buf = new StringBuffer();
+        final StringBuilder buf = new StringBuilder();
         final String text = getText();
         final StyledDocument doc = getStyledDocument();
         final Element rootElem = doc.getDefaultRootElement();

@@ -63,7 +63,7 @@ public class GatewayPrivateData implements PrivateData {
 
 
     public String toXML() {
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         buf.append("<").append(getElementName()).append(" xmlns=\"").append(getNamespace()).append("\">");
         buf.append("<gateways>");
         for (String serviceName : loginSettingsMap.keySet()) {

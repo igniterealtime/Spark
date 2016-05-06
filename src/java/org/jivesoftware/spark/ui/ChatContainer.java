@@ -842,7 +842,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
     }
 
     public String toString() {
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         for (ChatRoom room : chatRoomList) {
             buf.append("Roomname=").append(room.getRoomname()).append("\n");
         }

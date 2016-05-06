@@ -163,7 +163,7 @@ public class UriManager {
 	String name = "";
 	String query = uri.getQuery();
 	if (query.contains("name=")) {
-	    StringBuffer buf = new StringBuffer();
+	    StringBuilder buf = new StringBuilder();
 	    int x = query.indexOf("name=") + 5;
 	    while (x < query.length() && query.charAt(x) != ';') {
 		buf.append(query.charAt(x));
@@ -172,7 +172,7 @@ public class UriManager {
 	}
 	String group = "";
 	if (query.contains("group=")) {
-	    StringBuffer buf = new StringBuffer();
+	    StringBuilder buf = new StringBuilder();
 	    int x = query.indexOf("group=") + 6;
 	    while (x < query.length() && query.charAt(x) != ';') {
 		buf.append(query.charAt(x));

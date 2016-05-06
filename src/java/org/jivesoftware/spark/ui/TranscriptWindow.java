@@ -450,7 +450,7 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener {
             final File selFile = fileChooser.getSelectedFile();
 
             if (selFile != null && result == JFileChooser.APPROVE_OPTION) {
-                final StringBuffer buf = new StringBuffer();
+                final StringBuilder buf = new StringBuilder();
                 final Iterator<Message> transcripts = transcript.iterator();
                 buf.append("<html><body>");
                 if (headerData != null) {

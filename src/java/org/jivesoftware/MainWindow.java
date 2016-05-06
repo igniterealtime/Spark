@@ -759,7 +759,7 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         final String JAVA_VERSION = Default.getString(Default.JAVA_VERSION);
 
         // Construct About Box text
-        StringBuffer aboutBoxText = new StringBuffer();
+        StringBuilder aboutBoxText = new StringBuilder();
         aboutBoxText.append(
             Default.getString(Default.APPLICATION_NAME) + " " + JiveInfo.getVersion());
 
@@ -833,12 +833,12 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         Font font = p.getFont();
 
         // create some css from the JPanel's font
-        StringBuffer style = new StringBuffer();
+        StringBuilder style = new StringBuilder();
         style.append("font-family:" + font.getFamily() + ";");
         style.append("font-weight:" + (font.isBold() ? "bold" : "normal") + ";");
         style.append("font-size:" + font.getSize() + "pt;");
 
-        StringBuffer text = new StringBuffer();
+        StringBuilder text = new StringBuilder();
         text.append("<html><body style=\"" + style.toString() + "\">" + aboutBoxText.toString() + "</body></html>");
 
         // assemble html

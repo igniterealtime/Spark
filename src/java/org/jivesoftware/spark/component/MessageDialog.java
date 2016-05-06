@@ -256,7 +256,7 @@ dlg.setVisible(false);
      */
     public static String getCustomStackTrace(String heading, Throwable aThrowable) {
         //add the class name and any message passed to constructor
-        final StringBuffer result = new StringBuffer(heading);
+        final StringBuilder result = new StringBuilder(heading);
         result.append(aThrowable.toString());
         final String lineSeperator = System.getProperty("line.separator");
         result.append(lineSeperator);

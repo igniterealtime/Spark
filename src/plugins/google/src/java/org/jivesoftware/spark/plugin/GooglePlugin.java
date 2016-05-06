@@ -188,7 +188,7 @@ public class GooglePlugin implements Plugin {
         String emailHome = vcard.getEmailHome();
         String emailWork = vcard.getEmailWork();
 
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         if (emailHome != null) {
             buf.append(emailHome);
             buf.append(" ");
@@ -213,7 +213,7 @@ public class GooglePlugin implements Plugin {
         List<Message> transcripts = room.getTranscripts();
         Iterator<Message> iter = transcripts.iterator();
 
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         while (iter.hasNext()) {
             Message message = iter.next();
             buf.append(message.getBody());

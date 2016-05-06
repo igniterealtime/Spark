@@ -87,7 +87,7 @@ public class PrivateNotes implements PrivateData {
      * @return the private data as XML.
      */
     public String toXML() {
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         buf.append("<scratchpad xmlns=\"scratchpad:notes\">");
 
         if (getNotes() != null) {

@@ -96,7 +96,7 @@ public class DataFormUI extends JPanel {
             }
             else if (type.equals(FormField.Type.text_multi) ||
                     type.equals(FormField.Type.jid_multi)) {
-                StringBuffer buf = new StringBuffer();
+                StringBuilder buf = new StringBuilder();
                 for ( FormField.Option option : field.getOptions() ) {
                     buf.append(option);
                 }
