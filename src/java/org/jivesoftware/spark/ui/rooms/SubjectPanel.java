@@ -35,6 +35,7 @@ public class SubjectPanel extends JPanel
     public void setSubject( String subject )
     {
         subjectLabel.setText( subject );
+        this.setToolTipText( subject );
     }
 
     public void setRoomLabel( String label )

@@ -103,15 +103,6 @@ public class ChatRoomImpl extends ChatRoom {
 
     private Roster roster;
 
-    private long startNotificationSendingTime;
-    private boolean sendComposingNotification = true;
-    private boolean sendPausingNotification = false;
-    private boolean sendInactiveNotification = false;
-    private boolean sendGoneNotification = false;
-    private ChatState lastNotificationSent = null;
-
-    private TimerTask typingTimerTask;
-    private boolean sendChatStateNotification = false;
     private String threadID;
 
     private long lastActivity;
@@ -123,10 +114,6 @@ public class ChatRoomImpl extends ChatRoom {
 
     private ChatRoomButton addToRosterButton;
     private VCardPanel vcardPanel;
-    
-    private long pauseTimePeriod = 2000;
-    private long inactiveTimePeriod = 120000;
-    private long goneTimePeriod = 600000;
     
     private JComponent chatStatePanel;    
 
@@ -204,82 +191,8 @@ public class ChatRoomImpl extends ChatRoom {
             getToolBar().setVisible(false);
         }
 
-        createChatStateTimerTask();
-        
+
         lastActivity = System.currentTimeMillis();
-        getChatInputEditor().addFocusListener(new ChatStateFocusListener());
-    }
-    
-    protected void createChatStateTimerTask() {
-    	typingTimerTask = new TimerTask() {
-            public void run() {                
-                if (!sendChatStateNotification) {
-                    return;
-                }
-                long now = System.currentTimeMillis();
-                long time = now - startNotificationSendingTime;
-                if (inBetween(time, pauseTimePeriod, inactiveTimePeriod)) {
-                	if (sendPausingNotification) {
-                		// send cancel
-                		//SparkManager.getMessageEventManager().sendCancelledNotification(getParticipantJID(), threadID);
-                		sendChatState(ChatState.paused);
-                		sendPausingNotification = false;
-                		sendComposingNotification = true;
-                	}
-                } else if (inBetween(time, inactiveTimePeriod, goneTimePeriod)) {
-                	if(sendInactiveNotification) {
-                		sendChatState(ChatState.inactive);
-                		sendInactiveNotification = false;
-                	}
-                } else if (time > goneTimePeriod) {
-                	if (sendGoneNotification) {
-                		sendChatState(ChatState.gone);
-                		sendGoneNotification = false;
-                	}
-                }                
-            }
-        };
-        TaskEngine.getInstance().scheduleAtFixedRate(typingTimerTask, pauseTimePeriod, pauseTimePeriod);      
-    }
-    
-    private boolean inBetween(long time, long lowLimit, long highLimit) {
-    	return lowLimit < time && time < highLimit;
-    }    
-        
-    public void activateChatStateNotificationSystem() {
-    	startNotificationSendingTime = System.currentTimeMillis();
-    	sendInactiveNotification = true;    	
-    	sendGoneNotification = true;
-    	sendPausingNotification = false;
-    	sendComposingNotification = true;
-    	if (lastNotificationSent == null || !lastNotificationSent.equals(ChatState.active)) {
-    		sendChatState(ChatState.active);
-    	}
-    }
-      
-    public void inactivateChatStateNotificationSystem() {
-    	startNotificationSendingTime = System.currentTimeMillis();
-    	sendInactiveNotification = false;    	
-    	sendGoneNotification = true;
-    	sendPausingNotification = false;
-    	sendComposingNotification = false;
-    	if (lastNotificationSent != null && !lastNotificationSent.equals(ChatState.inactive) && !lastNotificationSent.equals(ChatState.gone)) {
-    		sendChatState(ChatState.inactive);
-    	}
-    }    
-    
-    private void sendChatState(ChatState state) {
-    	XMPPConnection connection = SparkManager.getConnection();
-    	boolean connected = connection.isConnected();
-		if (connected) {
-			Chat chat = org.jivesoftware.smack.chat.ChatManager.getInstanceFor( connection ).createChat(getParticipantJID(), null);
-			try {
-				ChatStateManager.getInstance(connection).setCurrentState(state, chat);
-				lastNotificationSent = state;
-			} catch (SmackException e) {
-				Log.error("Cannot send " + state + " chat notification");
-			}
-		}
     }
 
     public void closeChatRoom() {
@@ -292,16 +205,10 @@ public class ChatRoomImpl extends ChatRoom {
 
         removeListeners();
 
-        sendChatState(ChatState.gone);
-        sendGoneNotification = false;
-
         SparkManager.getChatManager().removeChat(this);
 
         SparkManager.getConnection().removeAsyncStanzaListener(this);
-        if (typingTimerTask != null) {
-            TaskEngine.getInstance().cancelScheduledTask(typingTimerTask);
-            typingTimerTask = null;
-        }
+
         active = false;
         vcardPanel = null;
 
@@ -392,8 +299,7 @@ public class ChatRoomImpl extends ChatRoom {
         catch (Exception ex) {
             Log.error("Error sending message", ex);
         }
-    	sendChatStateNotification = true;
-        activateChatStateNotificationSystem();         
+        setChatState( ChatState.active );
     }
 
     public String getRoomname() {
@@ -562,28 +468,7 @@ public class ChatRoomImpl extends ChatRoom {
      * @param e - the DocumentEvent to respond to.
      */
     public void insertUpdate(DocumentEvent e) {
-        checkForText(e);
-
-        if (!sendChatStateNotification) {
-            return;
-        }
-        startNotificationSendingTime = System.currentTimeMillis();
-
-        // If the user pauses for more than two seconds, send out a new notice.
-        if (sendComposingNotification) {
-            try {
-                //SparkManager.getMessageEventManager().sendComposingNotification(getParticipantJID(), threadID);            	
-            	sendChatState(ChatState.composing);
-            	
-                sendPausingNotification = true;
-                sendInactiveNotification = true;
-                sendGoneNotification = true;
-                sendComposingNotification = false;
-            }            
-            catch (Exception exception) {
-                Log.error("Error updating", exception);
-            }
-        }
+        super.insertUpdate( e );
     }
 
     public void insertMessage(Message message) {
@@ -686,10 +571,6 @@ public class ChatRoomImpl extends ChatRoom {
      */
     public Presence getPresence() {
         return presence;
-    }
-
-    public void setSendChatStateNotification(boolean isSendChatStateNotification) {
-        this.sendChatStateNotification = isSendChatStateNotification;
     }
 
 
@@ -822,10 +703,6 @@ public class ChatRoomImpl extends ChatRoom {
         }
     }
 
-	protected TimerTask getTypingTimerTask() {
-		return typingTimerTask;
-	}
-	
     public void notifyChatStateChange(ChatState state) {
     	if (chatStatePanel != null) {
     		getEditorWrapperBar().remove(chatStatePanel);
@@ -835,23 +712,23 @@ public class ChatRoomImpl extends ChatRoom {
     	getEditorWrapperBar().add(chatStatePanel, BorderLayout.SOUTH);
     	getEditorWrapperBar().revalidate();
     	getEditorWrapperBar().repaint();
-    }	
-	
-	private class ChatStateFocusListener extends FocusAdapter {
+    }
 
-		@Override
-		public void focusGained(FocusEvent e) {
-			if(e.getComponent().equals(getChatInputEditor())) {
-				if (sendChatStateNotification) {
-					activateChatStateNotificationSystem();
-				}
-			}
-		}
-		@Override
-		public void focusLost(FocusEvent e) {
-			if(e.getComponent().equals(getChatInputEditor())) {
-				inactivateChatStateNotificationSystem();	
-			}
-		}		
-	}
+    @Override
+    protected void sendChatState(ChatState state) throws SmackException.NotConnectedException
+    {
+        // XEP-0085: SHOULD NOT send 'gone' in a MUC.
+        if ( state == ChatState.gone )
+        {
+            return;
+        }
+
+        XMPPConnection connection = SparkManager.getConnection();
+        boolean connected = connection.isConnected();
+        if (connected)
+        {
+            Chat chat = org.jivesoftware.smack.chat.ChatManager.getInstanceFor( connection ).createChat(getParticipantJID(), null);
+            ChatStateManager.getInstance(connection).setCurrentState(state, chat);
+        }
+    }
 }

@@ -112,23 +112,19 @@ public final class QueueActivity extends JPanel implements QueueUsersListener {
 
     public void statusUpdated(final WorkgroupQueue queue, WorkgroupQueue.Status status) {
         
-        EventQueue.invokeLater(new Runnable() {
+        EventQueue.invokeLater( () -> {
+            String oldestEntry = queue.getOldestEntry() != null ? queue.getOldestEntry().toString() : "";
 
-			public void run()
-			{
-				String oldestEntry = queue.getOldestEntry() != null ? queue.getOldestEntry().toString() : "";
-
-				QueueItem item = queues.get(queue);
-				if (item != null) {
-					item.setNumberOfUsersInQueue(queue.getUserCount());
-					item.setAverageWaitTime(queue.getAverageWaitTime());
-					update(item);
-					return;
-				}
-				item = new QueueItem(queue.getName(), queue.getUserCount(), queue.getAverageWaitTime(), oldestEntry);
-				queues.put(queue, item);
-				model.addElement(item);
-			}      	  	
-        });
+            QueueItem item = queues.get(queue);
+            if (item != null) {
+                item.setNumberOfUsersInQueue(queue.getUserCount());
+                item.setAverageWaitTime(queue.getAverageWaitTime());
+                update(item);
+                return;
+            }
+            item = new QueueItem(queue.getName(), queue.getUserCount(), queue.getAverageWaitTime(), oldestEntry);
+            queues.put(queue, item);
+            model.addElement(item);
+        } );
     }
 }
