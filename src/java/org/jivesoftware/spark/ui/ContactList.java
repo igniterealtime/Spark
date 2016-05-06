@@ -464,7 +464,7 @@ public class ContactList extends JPanel implements ActionListener,
             }
 
             if (contactGroup != null) {
-                ContactItem changeContactItem = null;
+                ContactItem changeContactItem;
                 if (contactGroup.getContactItemByJID(entry.getUser()) == null) {
                 	ContactItem offlineCurrentItem = contactGroup.getOfflineContactItemByJID(bareJID);
                 	//prevents from duplicating roster contacts when users going offline and online with Offline Group invisible

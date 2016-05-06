@@ -375,10 +375,8 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
                 if (roomInfo != null) {
                     numberOfOccupants = roomInfo.getOccupantsCount();
                     if (numberOfOccupants == -1) {
-                    stillSearchForOccupants = false;
                     }
                 } else {
-                    stillSearchForOccupants = false;
                 }
                 }
 

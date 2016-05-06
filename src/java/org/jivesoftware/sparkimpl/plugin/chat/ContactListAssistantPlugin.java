@@ -191,7 +191,7 @@ public class ContactListAssistantPlugin implements Plugin {
      */
     private void moveItems(Collection<ContactItem> contactItems, String groupName) {
         final ContactGroup contactGroup = getContactGroup(groupName);
-        ContactGroup oldGroup = null;
+        ContactGroup oldGroup;
         for (ContactItem contactItem : contactItems) {
         	oldGroup = getContactGroup(contactItem.getGroupName());
         	if (oldGroup.isSharedGroup()) {

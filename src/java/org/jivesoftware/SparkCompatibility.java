@@ -91,8 +91,8 @@ public class SparkCompatibility {
             	}
             }
         } else {
-        	InputStream in = null;
-        	OutputStream out = null;
+        	InputStream in;
+        	OutputStream out;
         	
         	try { 
         		in = new FileInputStream(src);

@@ -76,7 +76,7 @@ public class EmoticonPlugin implements Plugin, ChatRoomListener {
 		// emoticonManager.getActiveEmoticonSetName();
 
 		emoticonManager = EmoticonManager.getInstance();
-		Collection<String> emoticonPacks = null;
+		Collection<String> emoticonPacks;
 		emoticonPacks = emoticonManager.getEmoticonPacks();
 
 		if (emoticonPacks != null) {

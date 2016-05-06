@@ -111,8 +111,8 @@ public class FastLookAndFeel extends AbstractLookAndFeel {
         greenProps.setProperty("menuSelectionBackgroundColor", lightGreen);
         greenProps.setProperty("toolbarBackgroundColor", "244 244 244");
 
-        String key = null;
-        String value = null;
+        String key;
+        String value;
         Iterator iter = smallFontProps.keySet().iterator();
         while (iter.hasNext()) {
             key = (String) iter.next();

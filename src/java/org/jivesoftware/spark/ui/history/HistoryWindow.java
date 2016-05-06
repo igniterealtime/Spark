@@ -249,8 +249,8 @@ public class HistoryWindow extends JFrame {
 			String roomName) {
 		HistoryTreeNode top = new HistoryTreeNode(roomName);
 
-		HistoryTreeNode day = null;
-		HistoryTreeNode item = null;
+		HistoryTreeNode day;
+		HistoryTreeNode item;
 
 		for (HistoryEntry entry : file.getHistoryEntries()) {
 			day = new HistoryTreeNode(entry.getName());

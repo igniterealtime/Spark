@@ -349,7 +349,7 @@ groupChatRoom.notifySettingsAccessRight();
 
 	usersandRoles.put(participantJID, affiliation+","+userRole);
 
-	Icon icon = null;
+	Icon icon;
 	if (_localPreferences.isShowingRoleIcons()) {
 	    icon = getIconForRole(userRole, affiliation);
 	} else {
@@ -422,7 +422,7 @@ groupChatRoom.notifySettingsAccessRight();
 	 * @return {@link Icon}
 	 */
     private Icon getIconForRole(String role, String affiliation) {
-	Icon icon = null;
+	Icon icon;
 
 	if (role.equalsIgnoreCase("participant")) {
 	    icon = SparkRes.getImageIcon(SparkRes.STAR_GREEN_IMAGE);
@@ -1227,7 +1227,7 @@ groupChatRoom.notifySettingsAccessRight();
      * 0=owner,1=admin.....5=visitor<br>
      */
     private int getCompareValue(String jid) {
-	int result = 100;
+	int result;
 
 	String affi = usersandRoles.get(jid).split(",")[0];
 	String role = usersandRoles.get(jid).split(",")[1];

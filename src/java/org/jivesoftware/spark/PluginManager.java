@@ -246,7 +246,7 @@ public class PluginManager implements MainWindowListener {
     
 	private boolean hasDependencies(File pluginFile) {
 		SAXReader saxReader = new SAXReader();
-		Document pluginXML = null;
+		Document pluginXML;
 		try {
 			pluginXML = saxReader.read(pluginFile);
 			List<? extends Node> dependencies = pluginXML.selectNodes("plugin/depends/plugin");
@@ -556,8 +556,8 @@ Log.error("Unable to load plugin " + clazz + ".", ex);
     public void initializePlugins() {
       try
 		{
-      	int j = 0;
-			boolean dependsfound = false;
+      	int j;
+			boolean dependsfound;
 
       	// Dependency check
       	for (int i = 0; i< publicPlugins.size(); i++) {

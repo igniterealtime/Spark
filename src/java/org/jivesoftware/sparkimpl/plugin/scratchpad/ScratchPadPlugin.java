@@ -127,7 +127,6 @@ public class ScratchPadPlugin implements Plugin {
         JPanel commandPanel = SparkManager.getWorkspace().getCommandPanel();
         for (int i = 0; i < commandPanel.getComponentCount(); i++) {
             if (commandPanel.getComponent(i) instanceof JLabel) {
-                index = i;
                 break;
             }
         }

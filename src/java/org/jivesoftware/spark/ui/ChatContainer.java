@@ -476,8 +476,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         else if (chatFrame.isVisible() && !chatFrame.isInFocus()) {
         	if (!groupMessageChecked) {
         		groupChatMessageCheck(chatRoom, customMsg, customMsgText, customMsgTitle);
-        		groupMessageChecked = true;
-        	}
+            }
         }
         else if (chatFrame.isVisible() && chatFrame.getState() == Frame.ICONIFIED) {
             // Set to new tab.
@@ -488,16 +487,14 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             // the chatframe.
         	if (!groupMessageChecked) {
         		groupChatMessageCheck(chatRoom, customMsg, customMsgText, customMsgTitle);
-        		groupMessageChecked = true;
-        	}
+            }
         }
 
         // Handle when chat frame is visible but the Contact List is not.
         else if (chatFrame.isVisible() && !SparkManager.getMainWindow().isVisible() && !chatFrame.isInFocus()) {
         	if (!groupMessageChecked) {
         		groupChatMessageCheck(chatRoom, customMsg, customMsgText, customMsgTitle);
-        		groupMessageChecked = true;
-        	}
+            }
         }
         else if (!chatFrame.isVisible()) {
             // Set to new tab.
@@ -514,14 +511,12 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             if (!SparkManager.getMainWindow().isVisible()) {
             	if (!groupMessageChecked) {
             		groupChatMessageCheck(chatRoom, customMsg, customMsgText, customMsgTitle);
-            		groupMessageChecked = true;
-            	}
+                }
             }
             else if (chatFrame.getState() == Frame.ICONIFIED) {
             	if (!groupMessageChecked) {
             		groupChatMessageCheck(chatRoom, customMsg, customMsgText, customMsgTitle);
-            		groupMessageChecked = true;
-            	}
+                }
             }
 
             chatFrame.setTitle(chatRoom.getRoomTitle());
@@ -529,8 +524,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         else if (chatRoom != activeChatRoom) {
         	if (!groupMessageChecked) {
         		groupChatMessageCheck(chatRoom, customMsg, customMsgText, customMsgTitle);
-        		groupMessageChecked = true;
-        	}
+            }
         }
     }
 
@@ -1100,7 +1094,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             // is a group chat, perform some functions
             String fromNickName="";
             Message lastChatMessage= new Message();
-            String mucNickNameT="";
+            String mucNickNameT;
             String finalRoomName ="";
             if(size>0)
             {

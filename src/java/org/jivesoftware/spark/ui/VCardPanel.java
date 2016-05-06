@@ -146,7 +146,7 @@ public class VCardPanel extends JPanel {
             JLabel label = new JLabel();
             _avatarHoverWindow.add(label);
             byte[] bytes = vcard.getAvatar();
-            Image newImage = null;
+            Image newImage;
             if (bytes != null && bytes.length > 0) {
                 try {
                     icon = new ImageIcon(bytes);

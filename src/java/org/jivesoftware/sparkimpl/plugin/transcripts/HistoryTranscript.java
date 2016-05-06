@@ -215,7 +215,7 @@ public class HistoryTranscript extends SwingWorker {
 
 			long lastPostTime = lastPost != null ? lastPost.getTime() : 0;
 
-			int diff = 0;
+			int diff;
 			if (DateUtils.getDaysDiff(lastPostTime, message.getDate()
 					.getTime()) != 0) {
 				diff = DateUtils.getDaysDiff(lastPostTime, message
@@ -345,14 +345,14 @@ public class HistoryTranscript extends SwingWorker {
 
 			if (transcript.size() > 0){
 				ChatTranscript sortedTranscript = new ChatTranscript();
-				HistoryMessage msg = null;
+				HistoryMessage msg;
 
 				// retrieve the first message
 
-				Date oldDate = null;
-                Integer iteratorValue = 0;
-                Integer startValue = 0;
-                Integer endValue = 0;
+				Date oldDate;
+                Integer iteratorValue;
+                Integer startValue;
+                Integer endValue;
 
                 sortDateAsc = pref.getChatHistoryAscending();
 
@@ -388,9 +388,8 @@ public class HistoryTranscript extends SwingWorker {
                         if (history.getMessages().size() > 0) tmpList.add(history);
 
                         // we have handled this entry
-                        handled = true;
 
-                        oldDate = msg.getDate();
+						oldDate = msg.getDate();
                         sortedTranscript = new ChatTranscript();
                     }
                     sortedTranscript.addHistoryMessage(msg);
@@ -435,7 +434,7 @@ public class HistoryTranscript extends SwingWorker {
 				searchString = null;
 
 			List<ChatTranscript> tmpList = new ArrayList<>();
-			ChatTranscript tmpTranscript = null;
+			ChatTranscript tmpTranscript;
 
 			for (int i = 0; i < dateFilteredUnfilteredList.size(); i++){
 				tmpTranscript = new ChatTranscript();

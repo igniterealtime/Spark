@@ -117,7 +117,7 @@ public class UserSearchForm extends JPanel {
         // Load the property file and add the search services that are read
         final Properties props = new Properties();
         String nextprop;
-        boolean numbprop_bool=true;
+        boolean numbprop_bool;
         int numbprop;
         if (pluginsettings.exists()) { 
 	    // Log.warning("Search-service Properties-file does exist= " + pluginsettings.getPath()); 

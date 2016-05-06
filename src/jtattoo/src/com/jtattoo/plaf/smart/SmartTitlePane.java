@@ -56,8 +56,8 @@ public class SmartTitlePane extends BaseTitlePane {
         Graphics2D g2D = (Graphics2D) g;
         int width = getWidth();
         int height = getHeight();
-        Color backColor = null;
-        Color frameColor = null;
+        Color backColor;
+        Color frameColor;
         if (JTattooUtilities.isActive(this)) {
             backColor = AbstractLookAndFeel.getTheme().getWindowTitleColors()[10];
             frameColor = AbstractLookAndFeel.getTheme().getFrameColor();
@@ -111,7 +111,7 @@ public class SmartTitlePane extends BaseTitlePane {
             float dc2 = 5.0f;
 
             Color c1 = ColorHelper.brighter(backColor, dc1);
-            Color c2 = null;
+            Color c2;
             while ((dy + 5) < height) {
                 c2 = ColorHelper.darker(backColor, dc2);
                 dc2 += 5.0f;

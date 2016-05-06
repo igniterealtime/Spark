@@ -252,7 +252,7 @@ Log.warning( "Unable to broadcast.", e1 );
 
     private void hideOfflineUsers() {
 
-	int i = 0;
+	int i;
 	if (OfflineUsers.isSelected()) {
 	    final ContactList contactList = SparkManager.getWorkspace()
 		    .getContactList();

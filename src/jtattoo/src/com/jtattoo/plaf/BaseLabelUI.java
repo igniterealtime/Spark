@@ -45,7 +45,7 @@ public class BaseLabelUI extends BasicLabelUI {
     }
 
     protected void paintEnabledText(JLabel l, Graphics g, String s, int textX, int textY) {
-        int mnemIndex = -1;
+        int mnemIndex;
         if (JTattooUtilities.getJavaVersion() >= 1.4) {
             mnemIndex = l.getDisplayedMnemonicIndex();
         } else {
@@ -56,7 +56,7 @@ public class BaseLabelUI extends BasicLabelUI {
     }
 
     protected void paintDisabledText(JLabel l, Graphics g, String s, int textX, int textY) {
-        int mnemIndex = -1;
+        int mnemIndex;
         if (JTattooUtilities.getJavaVersion() >= 1.4) {
             mnemIndex = l.getDisplayedMnemonicIndex();
         } else {

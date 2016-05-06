@@ -98,7 +98,7 @@ public class EmoticonManager {
 		EMOTICON_DIRECTORY = new File(Spark.getBinDirectory().getParent(),
 				"xtra/emoticons").getAbsoluteFile();
 
-		File[] files = null;
+		File[] files;
 		files = EMOTICON_DIRECTORY.listFiles();
 
 		// If files in this directory, copy this files into the Spark User Home
@@ -207,7 +207,7 @@ public class EmoticonManager {
 	 */
 	public Collection<Emoticon> getActiveEmoticonSet() {
 		final LocalPreferences pref = SettingsManager.getLocalPreferences();
-		String emoticonPack = null;
+		String emoticonPack;
 		emoticonPack = pref.getEmoticonPack();
 		// If EmoticonPack is set
 		//When no emoticon set is available, return an empty list

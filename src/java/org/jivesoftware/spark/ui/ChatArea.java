@@ -115,7 +115,7 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
     public ChatArea() {
         emoticonManager = EmoticonManager.getInstance();
         
-        Collection<String> emoticonPacks = null; 
+        Collection<String> emoticonPacks;
         emoticonPacks = emoticonManager.getEmoticonPacks();
         
         if(emoticonPacks == null) {

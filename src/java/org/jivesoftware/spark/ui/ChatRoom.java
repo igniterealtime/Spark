@@ -258,7 +258,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
                         @Override
                         public Object construct() {
                             int start = textScroller.getVerticalScrollBar().getMaximum();
-                            int second = 0;
+                            int second;
                             int i = 0;
                             do {
                                 try {

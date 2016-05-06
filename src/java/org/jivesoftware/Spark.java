@@ -217,7 +217,7 @@ public final class Spark {
     }
 
     private String getLookandFeel(LocalPreferences preferences) {
-	String result = "";
+	String result;
 
 	String whereToLook = isMac() ? Default.DEFAULT_LOOK_AND_FEEL_MAC
 		: Default.DEFAULT_LOOK_AND_FEEL;

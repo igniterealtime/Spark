@@ -787,7 +787,7 @@ public class ChatManager implements ChatManagerListener {
 	    return;
 	}
 
-	URI uri = null;
+	URI uri;
 	try {
 	    uri = new URI(arguments);
 	} catch (URISyntaxException e) {

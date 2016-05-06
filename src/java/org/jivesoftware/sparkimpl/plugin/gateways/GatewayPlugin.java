@@ -192,7 +192,7 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
     }
 
     private void addTransport(final Transport transport) {
-	GatewayItem item = null;
+	GatewayItem item;
 	if (useTab)
         {
             item = new GatewayTabItem(transport);
