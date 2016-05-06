@@ -1071,9 +1071,7 @@ groupChatRoom.notifySettingsAccessRight();
 	    private static final long serialVersionUID = 2240864466141501086L;
 
 	    public void actionPerformed(ActionEvent actionEvent) {
-		ConferenceUtils.inviteUsersToRoom(
-			groupChatRoom.getConferenceService(),
-			groupChatRoom.getRoomname(), null, false);
+		ConferenceUtils.inviteUsersToRoom( groupChatRoom.getMultiUserChat(), null, false);
 	    }
 	};
 

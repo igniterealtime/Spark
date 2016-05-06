@@ -334,6 +334,16 @@ public class ConferenceUtils {
     /**
      * Invites users to an existing room.
      *
+     * @param chat The room to invite people into.
+     * @param jids a collection of the users to invite.
+     */
+    public static void inviteUsersToRoom(MultiUserChat chat, Collection<String> jids, boolean randomName ) {
+        inviteUsersToRoom( XmppStringUtils.parseDomain( chat.getRoom() ), XmppStringUtils.parseLocalpart( chat.getRoom() ), jids, randomName );
+    }
+
+    /**
+     * Invites users to an existing room.
+     *
      * @param serviceName the service name to use.
      * @param roomName    the name of the room.
      * @param jids        a collection of the users to invite.
