@@ -41,14 +41,12 @@ import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.StanzaListener;
-import org.jivesoftware.smack.packet.ExtensionElement;
 import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.filter.StanzaFilter;
 import org.jivesoftware.smack.filter.StanzaTypeFilter;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.packet.Presence;
-import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.debugger.EnhancedDebuggerWindow;
 import org.jivesoftware.smackx.delay.packet.DelayInformation;
 import org.jivesoftware.smackx.jiveproperties.packet.JivePropertiesExtension;
@@ -73,8 +71,6 @@ import org.jivesoftware.sparkimpl.plugin.bookmarks.BookmarkPlugin;
 import org.jivesoftware.sparkimpl.plugin.gateways.GatewayPlugin;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 import org.jivesoftware.sparkimpl.plugin.transcripts.ChatTranscriptPlugin;
-import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
-import org.jivesoftware.sparkimpl.plugin.privacy.PrivacyManager;
 import org.jxmpp.util.XmppStringUtils;
 
 /**

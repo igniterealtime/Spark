@@ -21,8 +21,6 @@ package org.jivesoftware.spark.plugin.flashing;
 
 import java.awt.Window;
 
-import javax.swing.JFrame;
-
 import org.jivesoftware.spark.NativeHandler;
 import org.jivesoftware.spark.SparkManager;
 

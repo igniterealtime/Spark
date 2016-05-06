@@ -19,7 +19,6 @@
  */
 package org.jivesoftware.spark.util;
 
-import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.spark.util.log.Log;
 
 import javax.crypto.BadPaddingException;

@@ -35,7 +35,6 @@ import org.jivesoftware.spark.util.log.Log;
 import javax.swing.*;
 
 import java.awt.*;
-import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.*;
 import java.util.List;

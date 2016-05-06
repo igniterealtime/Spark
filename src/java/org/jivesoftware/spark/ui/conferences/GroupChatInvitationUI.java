@@ -22,8 +22,6 @@ package org.jivesoftware.spark.ui.conferences;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.SmackException;
-import org.jivesoftware.smack.util.StringUtils;
-import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.muc.MultiUserChatManager;
 import org.jivesoftware.spark.ChatNotFoundException;
 import org.jivesoftware.spark.SparkManager;

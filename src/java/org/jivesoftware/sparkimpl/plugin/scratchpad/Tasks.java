@@ -29,7 +29,6 @@ import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.iqprivate.PrivateDataManager;
 import org.jivesoftware.smackx.iqprivate.packet.PrivateData;
 import org.jivesoftware.smackx.iqprivate.provider.PrivateDataProvider;
-import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
 import org.xmlpull.v1.XmlPullParser;

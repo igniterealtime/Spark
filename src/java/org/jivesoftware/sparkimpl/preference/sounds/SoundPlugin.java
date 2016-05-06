@@ -22,14 +22,9 @@ package org.jivesoftware.sparkimpl.preference.sounds;
 
 import java.io.File;
 
-import org.jivesoftware.smack.XMPPConnection;
-import org.jivesoftware.smack.StanzaListener;
 import org.jivesoftware.smack.filter.StanzaTypeFilter;
 import org.jivesoftware.smack.packet.Message;
-import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.packet.Presence;
-import org.jivesoftware.smackx.muc.InvitationListener;
-import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.delay.packet.DelayInformation;
 import org.jivesoftware.smackx.muc.MultiUserChatManager;
 import org.jivesoftware.spark.PresenceManager;

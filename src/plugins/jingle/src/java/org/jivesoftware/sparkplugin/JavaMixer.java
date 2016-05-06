@@ -24,16 +24,12 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeNode;
 import javax.swing.*;
-import javax.swing.event.TreeSelectionListener;
-import javax.swing.event.TreeSelectionEvent;
 import javax.swing.border.TitledBorder;
 import javax.swing.border.EtchedBorder;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.awt.*;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
 
 /**
  * Pure Java Audio Mixer. Control Volume and Settings for any Sound device in the OS.

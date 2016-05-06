@@ -35,7 +35,6 @@ import org.jivesoftware.spark.component.panes.CollapsiblePane;
 import org.jivesoftware.sparkimpl.profile.VCardManager;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.net.URL;
 import java.util.Iterator;

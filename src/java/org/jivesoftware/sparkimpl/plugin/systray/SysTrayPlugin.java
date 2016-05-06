@@ -50,7 +50,6 @@ import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.NativeHandler;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.Plugin;
-import org.jivesoftware.spark.ui.PresenceListener;
 import org.jivesoftware.spark.ui.status.CustomStatusItem;
 import org.jivesoftware.spark.ui.status.StatusBar;
 import org.jivesoftware.spark.ui.status.StatusItem;

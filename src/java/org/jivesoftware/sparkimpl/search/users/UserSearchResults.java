@@ -23,7 +23,6 @@ package org.jivesoftware.sparkimpl.search.users;
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.resource.Res;
-import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.search.ReportedData;
 import org.jivesoftware.smackx.search.ReportedData.Column;
 import org.jivesoftware.smackx.search.ReportedData.Row;
@@ -34,7 +33,6 @@ import org.jivesoftware.spark.ui.ChatContainer;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.RosterDialog;
 import org.jivesoftware.spark.util.ModelUtil;
-import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.profile.VCardManager;
 import org.jxmpp.util.XmppStringUtils;
 
@@ -53,7 +51,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**

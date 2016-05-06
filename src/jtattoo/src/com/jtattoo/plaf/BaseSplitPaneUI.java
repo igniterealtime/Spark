@@ -23,7 +23,6 @@
 
 package com.jtattoo.plaf;
 
-import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import javax.swing.JComponent;
 import javax.swing.plaf.ComponentUI;

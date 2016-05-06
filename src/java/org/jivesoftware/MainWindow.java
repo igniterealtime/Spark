@@ -52,7 +52,6 @@ import javax.swing.JTextPane;
 import javax.swing.JToolBar;
 import javax.swing.UIManager;
 import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
 
 import org.jivesoftware.launcher.Startup;
 import org.jivesoftware.resource.Default;

@@ -20,7 +20,6 @@
 
 package org.jivesoftware.sparkimpl.settings;
 
-import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smackx.iqprivate.packet.PrivateData;
 import org.jivesoftware.smackx.iqprivate.provider.PrivateDataProvider;
 import org.xmlpull.v1.XmlPullParser;

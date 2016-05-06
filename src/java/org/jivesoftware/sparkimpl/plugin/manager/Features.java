@@ -21,7 +21,6 @@ package org.jivesoftware.sparkimpl.plugin.manager;
 
 import org.jivesoftware.smack.packet.ExtensionElement;
 import org.jivesoftware.smack.provider.ExtensionElementProvider;
-import org.jivesoftware.smackx.attention.packet.AttentionExtension;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 

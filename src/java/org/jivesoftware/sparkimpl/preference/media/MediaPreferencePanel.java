@@ -42,8 +42,6 @@ import javax.media.Format;
 import javax.media.format.AudioFormat;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.util.Vector;

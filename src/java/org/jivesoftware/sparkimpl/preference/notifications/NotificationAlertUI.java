@@ -21,7 +21,6 @@ package org.jivesoftware.sparkimpl.preference.notifications;
 
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.packet.Presence;
-import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.vcardtemp.packet.VCard;
 import org.jivesoftware.spark.PresenceManager;
 import org.jivesoftware.spark.SparkManager;

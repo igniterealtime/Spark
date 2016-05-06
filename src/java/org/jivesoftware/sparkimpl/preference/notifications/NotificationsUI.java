@@ -25,8 +25,6 @@ import org.jivesoftware.resource.Res;
 import org.jivesoftware.spark.util.ResourceUtils;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import java.awt.*;
 
 /**

@@ -20,11 +20,8 @@
 package org.jivesoftware.sparkimpl.plugin.gateways;
 
 import org.jivesoftware.smack.*;
-import org.jivesoftware.smack.filter.IQReplyFilter;
-import org.jivesoftware.smack.filter.PacketIDFilter;
 import org.jivesoftware.smack.filter.StanzaIdFilter;
 import org.jivesoftware.smack.packet.IQ;
-import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.provider.IQProvider;
 import org.jivesoftware.spark.SparkManager;
 import org.xmlpull.v1.XmlPullParser;

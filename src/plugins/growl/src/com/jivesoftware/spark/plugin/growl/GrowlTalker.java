@@ -24,7 +24,6 @@ import info.growl.GrowlCallbackListener;
 import info.growl.GrowlException;
 import info.growl.GrowlUtils;
 
-import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.util.log.Log;

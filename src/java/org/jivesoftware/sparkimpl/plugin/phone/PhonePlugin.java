@@ -27,7 +27,6 @@ import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.provider.ProviderManager;
-import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.phone.PhoneManager;
 import org.jivesoftware.spark.plugin.ContextMenuListener;

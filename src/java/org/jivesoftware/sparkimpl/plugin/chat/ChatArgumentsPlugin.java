@@ -20,7 +20,6 @@
 package org.jivesoftware.sparkimpl.plugin.chat;
 
 import org.jivesoftware.Spark;
-import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.Plugin;
 import org.jivesoftware.spark.ui.conferences.ConferenceUtils;

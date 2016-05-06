@@ -24,7 +24,6 @@ import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.packet.ExtensionElement;
 import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.packet.Presence;
-import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.muc.packet.MUCUser;
 import org.jivesoftware.spark.util.log.Log;
 import org.jxmpp.util.XmppStringUtils;

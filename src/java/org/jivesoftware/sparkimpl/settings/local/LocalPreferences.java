@@ -36,8 +36,6 @@ import javax.swing.UIManager;
 
 import org.jivesoftware.spark.util.Encryptor;
 import org.jivesoftware.spark.util.log.Log;
-import org.jivesoftware.sparkimpl.settings.JiveInfo;
-import org.lobobrowser.html.domimpl.HTMLElementBuilder.Br;
 
 /**
  * Represents the LocalPreference Model for this system.

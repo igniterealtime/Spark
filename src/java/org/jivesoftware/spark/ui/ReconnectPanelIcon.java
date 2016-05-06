@@ -19,8 +19,6 @@
  */
 package org.jivesoftware.spark.ui;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.TimerTask;
 
 import javax.swing.JButton;

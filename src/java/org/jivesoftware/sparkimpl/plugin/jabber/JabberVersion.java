@@ -20,11 +20,9 @@
 package org.jivesoftware.sparkimpl.plugin.jabber;
 
 import org.jivesoftware.smack.SmackException;
-import org.jivesoftware.smack.StanzaListener;
 import org.jivesoftware.smack.filter.StanzaFilter;
 import org.jivesoftware.smack.filter.StanzaTypeFilter;
 import org.jivesoftware.smack.packet.IQ;
-import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smackx.time.packet.Time;
 import org.jivesoftware.smackx.iqversion.packet.Version;

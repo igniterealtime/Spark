@@ -36,7 +36,6 @@ import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.UIComponentRegistry;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
-import org.jivesoftware.sparkimpl.settings.local.PreferenceListener;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
 import javax.swing.AbstractAction;

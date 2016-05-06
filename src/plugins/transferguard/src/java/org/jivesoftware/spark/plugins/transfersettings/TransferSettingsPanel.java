@@ -23,7 +23,6 @@ import org.jivesoftware.spark.component.VerticalFlowLayout;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
 import javax.swing.border.*;
 
 import java.util.List;

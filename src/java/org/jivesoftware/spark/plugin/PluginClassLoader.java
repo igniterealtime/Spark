@@ -30,7 +30,6 @@ import org.xmlpull.mxp1.MXParser;
 import org.xmlpull.v1.XmlPullParser;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
