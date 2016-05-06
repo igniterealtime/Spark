@@ -194,14 +194,18 @@ public class BookmarksUI extends JPanel {
             @Override
             public void run() {
                 Collection<BookmarkedConference> bc = null;
-        		while(bc == null){
-        			try {
-        				bc = manager.getBookmarkedConferences();
-        			}catch (XMPPException | SmackException error) {
-                        Log.error(error);
+                try
+                {
+                    while(bc == null)
+                    {
+                        bc = manager.getBookmarkedConferences();
                     }
+                    setBookmarks(bc);
+                }
+                catch (XMPPException | SmackException error)
+                {
+                    Log.error(error);
         		}
-                setBookmarks(bc);
             }
         };
         
