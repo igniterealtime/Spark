@@ -171,7 +171,7 @@ public class GoogleSearch {
             for (int i = 0; i < elems.getLength(); i++) {
                 int relevance = (int)((double)(count - i) / count * 100);
                 GoogleSearchResult result = new GoogleSearchResult(searchBase, query, relevance, (Element)elems.item(i));
-                if (result.getURL().indexOf("googlemail") == -1) {
+                if ( !result.getURL().contains( "googlemail" ) ) {
                     list.add(result);
                 }
                 if (list.size() == maxDocuments) {

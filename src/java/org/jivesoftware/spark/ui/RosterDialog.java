@@ -229,7 +229,7 @@ public class RosterDialog implements ActionListener {
                 if (!publicBox.isSelected()) {
                     // This is not a transport.
                     String fullJID = getJID();
-                    if (fullJID.indexOf("@") == -1) {
+                    if ( !fullJID.contains( "@" ) ) {
                         fullJID = fullJID + "@" + SparkManager.getConnection().getServiceName();
                     }
 
@@ -389,7 +389,7 @@ public class RosterDialog implements ActionListener {
         }
         if (transport == null) {
             String jid = getJID();
-            if (jid.indexOf("@") == -1) {
+            if ( !jid.contains( "@" ) ) {
                 jid = jid + "@" + SparkManager.getConnection().getServiceName();
             }
             String nickname = nicknameField.getText();

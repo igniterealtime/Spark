@@ -932,7 +932,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
      * @return true if the group is nested.
      */
     public boolean isSubGroup(String groupName) {
-        return groupName.indexOf("::") != -1;
+        return groupName.contains( "::" );
     }
 
     /**

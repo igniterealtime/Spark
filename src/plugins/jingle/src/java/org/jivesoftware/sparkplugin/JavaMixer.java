@@ -446,7 +446,7 @@ public class JavaMixer {
                 boolean find;
 
                 if (byName) {
-                    find = n.toString().toUpperCase().indexOf(nodes[depth].toString().toUpperCase()) > -1;
+                    find = n.toString().toUpperCase().contains( nodes[ depth ].toString().toUpperCase() );
                 } else {
                     find = n.equals(nodes[depth]);
                 }

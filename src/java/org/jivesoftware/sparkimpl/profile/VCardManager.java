@@ -288,7 +288,7 @@ public class VCardManager {
         viewProfileMenu.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 String jidToView = JOptionPane.showInputDialog(SparkManager.getMainWindow(), Res.getString("message.enter.jabber.id") + ":", Res.getString("title.lookup.profile"), JOptionPane.QUESTION_MESSAGE);
-                if (ModelUtil.hasLength(jidToView) && jidToView.indexOf("@") != -1 && ModelUtil.hasLength( XmppStringUtils.parseDomain(jidToView))) {
+                if (ModelUtil.hasLength(jidToView) && jidToView.contains( "@" ) && ModelUtil.hasLength( XmppStringUtils.parseDomain(jidToView))) {
                     viewProfile(jidToView, SparkManager.getWorkspace());
                 }
                 else if (ModelUtil.hasLength(jidToView)) {

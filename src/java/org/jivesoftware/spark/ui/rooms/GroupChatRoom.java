@@ -688,7 +688,7 @@ public class GroupChatRoom extends ChatRoom {
 			return;
 		    }
 
-		    boolean isFromRoom = message.getFrom().indexOf("/") == -1;
+		    boolean isFromRoom = !message.getFrom().contains( "/" );
 
 		    if (!SparkManager.getUserManager().hasVoice(this,
 			    XmppStringUtils.parseResource(message.getFrom()))

@@ -81,7 +81,7 @@ public class ChatTranscript {
 	    	List<HistoryMessage> searchResult = new ArrayList<HistoryMessage>();
 	    	for(HistoryMessage message : messages) {
 	    		// ignore keywords' case
-	    		if(message.getBody().toLowerCase().indexOf(text.toLowerCase()) != -1) {
+	    		if( message.getBody().toLowerCase().contains( text.toLowerCase() ) ) {
 	    			searchResult.add(message);
 	    		}
 	    	}

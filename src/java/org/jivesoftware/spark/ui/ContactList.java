@@ -358,7 +358,7 @@ public class ContactList extends JPanel implements ActionListener,
         // If so, remove from offline group and add to all groups they
         // belong to.
 
-        if (presence.getType() == Presence.Type.available && offlineGroup.getContactItemByJID(bareJID) != null || (presence.getFrom().indexOf("workgroup.") != -1)) {
+        if (presence.getType() == Presence.Type.available && offlineGroup.getContactItemByJID(bareJID) != null || ( presence.getFrom().contains( "workgroup." ) )) {
             changeOfflineToOnline(bareJID, entry, presence);
         }
         else if (presence.getType() == Presence.Type.available) {
@@ -533,7 +533,7 @@ public class ContactList extends JPanel implements ActionListener,
                                 changeContact.updatePresenceIcon(changeContact.getPresence());
                                 toggleGroupVisibility(staticContactGroup.getGroupName(), true);
                                 staticContactGroup.fireContactGroupUpdated();
-                                
+
                             }
 
                       });
