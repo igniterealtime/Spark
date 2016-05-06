@@ -28,6 +28,7 @@ import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.*;
+import org.jivesoftware.smack.filter.IQReplyFilter;
 import org.jivesoftware.smack.filter.PacketIDFilter;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.provider.ProviderManager;
@@ -563,7 +564,7 @@ public class CheckUpdates {
         request.setType(IQ.Type.get);
         request.setTo("updater." + connection.getServiceName());
 
-        PacketCollector collector = connection.createPacketCollector(new PacketIDFilter(request.getPacketID()));
+        PacketCollector collector = connection.createPacketCollector(new IQReplyFilter( request, connection ));
         connection.sendStanza(request);
 
 
