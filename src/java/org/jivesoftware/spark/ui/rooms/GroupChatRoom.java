@@ -29,6 +29,7 @@ import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.packet.XMPPError;
+import org.jivesoftware.smackx.chatstates.ChatState;
 import org.jivesoftware.smackx.delay.packet.DelayInformation;
 import org.jivesoftware.smackx.muc.DefaultParticipantStatusListener;
 import org.jivesoftware.smackx.muc.DefaultUserStatusListener;
@@ -68,17 +69,18 @@ public class GroupChatRoom extends ChatRoom
 {
     private final LocalPreferences pref = SettingsManager.getLocalPreferences();
     private final MultiUserChat chat;
-    private final Icon tabIcon = SparkRes.getImageIcon( SparkRes.CONFERENCE_IMAGE_16x16 );
     private final SubjectPanel subjectPanel;
     private final List<String> currentUserList = new ArrayList<>();
     private final List<String> blockedUsers = new ArrayList<>();
     private final GroupChatParticipantList roomInfo;
     private final RolloverButton settings;
+    private Icon tabIcon = SparkRes.getImageIcon( SparkRes.CONFERENCE_IMAGE_16x16 );
     private String password = null;
     private String tabTitle;
     private boolean isActive = true;
     private long lastActivity;
     private Message lastMessage;
+    private boolean chatStatEnabled;
 
     /**
      * Creates a GroupChatRoom from a <code>MultiUserChat</code>.
@@ -449,6 +451,16 @@ public class GroupChatRoom extends ChatRoom
     public Icon getTabIcon()
     {
         return tabIcon;
+    }
+
+    /**
+     * Sets the icon that should be used in the tab of this GroupChat Pane.
+     *
+     * @param tabIcon the Icon to use in tab.
+     */
+    public void setTabIcon( ImageIcon tabIcon )
+    {
+        this.tabIcon = tabIcon;
     }
 
     /**
@@ -915,11 +927,19 @@ public class GroupChatRoom extends ChatRoom
 
         chat.addSubjectUpdatedListener( ( subject, by ) -> {
             subjectPanel.setSubject( subject );
-            subjectPanel.setToolTipText( subject );
             final String nickname = XmppStringUtils.parseResource( by );
             final String insertMessage = Res.getString( "message.subject.has.been.changed.to", subject, nickname );
             getTranscriptWindow().insertNotificationMessage( insertMessage, ChatManager.NOTIFICATION_COLOR );
         } );
+    }
+
+    /**
+     * Changes the label that is displayed for this room. Does not send an update to the XMPP server (UI only).
+     *
+     * @param label The new label.
+     */
+    public void setRoomLabel( String label ) {
+        subjectPanel.setRoomLabel( label );
     }
 
     /**
@@ -1138,6 +1158,35 @@ public class GroupChatRoom extends ChatRoom
         if ( SparkManager.getUserManager().isOwner( (GroupChatRoom) getChatRoom(), chat.getNickname() ) )
         {
             settings.setVisible( true );
+        }
+    }
+
+    public boolean isChatStatEnabled()
+    {
+        return chatStatEnabled;
+    }
+
+    public void setChatStatEnabled( boolean chatStatEnabled )
+    {
+        this.chatStatEnabled = chatStatEnabled;
+    }
+
+    @Override
+    protected void sendChatState(ChatState state) throws SmackException.NotConnectedException
+    {
+        if (!chatStatEnabled || !SparkManager.getConnection().isConnected() )
+        {
+            return;
+        }
+
+        for ( final String occupant : chat.getOccupants() )
+        {
+            final String occupantNickname = XmppStringUtils.parseResource(occupant);
+            final String myNickname = chat.getNickname();
+            if (occupantNickname != null && !occupantNickname.equals(myNickname))
+            {
+                SparkManager.getMessageEventManager().sendComposingNotification(occupant, "djn");
+            }
         }
     }
 }

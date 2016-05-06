@@ -27,16 +27,7 @@ import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.AdjustmentEvent;
-import java.awt.event.AdjustmentListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.io.File;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -64,11 +55,16 @@ import javax.swing.text.Document;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.ConnectionListener;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.StanzaListener;
+import org.jivesoftware.smack.XMPPConnection;
+import org.jivesoftware.smack.chat.Chat;
 import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.roster.RosterEntry;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Stanza;
+import org.jivesoftware.smackx.chatstates.ChatState;
+import org.jivesoftware.smackx.chatstates.ChatStateManager;
 import org.jivesoftware.smackx.jiveproperties.packet.JivePropertiesExtension;
 import org.jivesoftware.spark.ChatAreaSendField;
 import org.jivesoftware.spark.SparkManager;
@@ -78,6 +74,7 @@ import org.jivesoftware.spark.plugin.ContextMenuListener;
 import org.jivesoftware.spark.ui.rooms.GroupChatRoom;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.SwingWorker;
+import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.util.UIComponentRegistry;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
@@ -125,6 +122,13 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
     private RolloverButton _alwaysOnTopItem;
     private boolean _isAlwaysOnTopActive;
 
+    // Chat state
+    private TimerTask typingTimerTask;
+    private long lastNotificationSentTime;
+    private ChatState lastNotificationSent;
+    private long pauseTimePeriod = 2000;
+    private long inactiveTimePeriod = 120000;
+
     /**
      * Initializes the base layout and base background color.
      */
@@ -170,24 +174,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         transcriptWindow.addMouseListener(transcriptWindowMouseListener);
 
         chatAreaButton = new ChatAreaSendField(Res.getString("button.send"));
-        /*{
-            public Dimension getPreferredSize() {
-                Dimension dim = super.getPreferredSize();
-
-                int windowHeight = getChatRoom().getHeight();
-
-                if (dim.getHeight() > windowHeight - 200) {
-                    dim.height = windowHeight - 200;
-                }
-
-                return dim;
-            }
-        };
-        */
-
-
         textScroller = new JScrollPane(transcriptWindow);
-
         textScroller.setBackground(transcriptWindow.getBackground());
         textScroller.getViewport().setBackground(Color.white);
         transcriptWindow.setBackground(Color.white);
@@ -195,36 +182,6 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         getChatInputEditor().setSelectedTextColor((Color)UIManager.get("ChatInput.SelectedTextColor"));
         getChatInputEditor().setSelectionColor((Color)UIManager.get("ChatInput.SelectionColor"));
 
-
-        init();
-
-        // Initally, set the right pane to null to keep it empty.
-        getSplitPane().setRightComponent(null);
-
-        notificationLabel.setIcon(SparkRes.getImageIcon(SparkRes.BLANK_IMAGE));
-
-
-        getTranscriptWindow().addContextMenuListener(this);
-
-        transferHandler = new ChatRoomTransferHandler(this);
-
-        getTranscriptWindow().setTransferHandler(transferHandler);
-        getChatInputEditor().setTransferHandler(transferHandler);
-
-        addToolbar();
-
-        // Add Connection Listener
-        SparkManager.getConnection().addConnectionListener(this);
-
-        // Add Focus Listener
-        addFocusListener(this);
-
-        scrollToBottom();
-
-    }
-
-    // Setup base layout.
-    private void init() {
         setLayout(new GridBagLayout());
 
         // Remove Default Beveled Borders
@@ -339,9 +296,9 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
 
         getChatInputEditor().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ctrl F4"), "closeTheRoom");
         getChatInputEditor().getActionMap().put("closeTheRoom", new AbstractAction("closeTheRoom") {
-			private static final long serialVersionUID = 1L;
+            private static final long serialVersionUID = 1L;
 
-			public void actionPerformed(ActionEvent evt) {
+            public void actionPerformed(ActionEvent evt) {
                 // Leave this chat.
                 closeChatRoom();
             }
@@ -349,28 +306,28 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
 
         getChatInputEditor().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ctrl SPACE"), "handleCompletion");
         getChatInputEditor().getActionMap().put("handleCompletion", new AbstractAction("handleCompletion") {
-    			private static final long serialVersionUID = 1L;
+            private static final long serialVersionUID = 1L;
 
-    			public void actionPerformed(ActionEvent evt) {
+            public void actionPerformed(ActionEvent evt) {
                 // handle name completion.
                 try {
-		    handleNickNameCompletion();
-		} catch (ChatRoomNotFoundException e) {
-		   Log.error("ctlr-space nickname find", e);
-		}
+                    handleNickNameCompletion();
+                } catch (ChatRoomNotFoundException e) {
+                    Log.error("ctlr-space nickname find", e);
+                }
             }
         });
 
-	    _isAlwaysOnTopActive = SettingsManager.getLocalPreferences().isChatWindowAlwaysOnTop();
-	    _alwaysOnTopItem = UIComponentRegistry.getButtonFactory().createAlwaysOnTop(_isAlwaysOnTopActive);
-	    
+        _isAlwaysOnTopActive = SettingsManager.getLocalPreferences().isChatWindowAlwaysOnTop();
+        _alwaysOnTopItem = UIComponentRegistry.getButtonFactory().createAlwaysOnTop(_isAlwaysOnTopActive);
+
         _alwaysOnTopItem.addActionListener( actionEvent -> {
             if (!_isAlwaysOnTopActive)
             {
                 SettingsManager.getLocalPreferences().setChatWindowAlwaysOnTop(true);
                 _chatFrame.setWindowAlwaysOnTop(true);
                 _isAlwaysOnTopActive = true;
-                 _alwaysOnTopItem.setIcon(SparkRes.getImageIcon("FRAME_ALWAYS_ON_TOP_ACTIVE"));
+                _alwaysOnTopItem.setIcon(SparkRes.getImageIcon("FRAME_ALWAYS_ON_TOP_ACTIVE"));
 
             }
             else
@@ -378,14 +335,99 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
                 SettingsManager.getLocalPreferences().setChatWindowAlwaysOnTop(false);
                 _chatFrame.setWindowAlwaysOnTop(false);
                 _isAlwaysOnTopActive = false;
-                  _alwaysOnTopItem.setIcon(SparkRes.getImageIcon("FRAME_ALWAYS_ON_TOP_DEACTIVE"));
+                _alwaysOnTopItem.setIcon(SparkRes.getImageIcon("FRAME_ALWAYS_ON_TOP_DEACTIVE"));
             }
         } );
 
-
         editorBarRight.add(_alwaysOnTopItem);
+
+        // Initially, set the right pane to null to keep it empty.
+        getSplitPane().setRightComponent(null);
+
+        notificationLabel.setIcon(SparkRes.getImageIcon(SparkRes.BLANK_IMAGE));
+
+
+        getTranscriptWindow().addContextMenuListener(this);
+
+        transferHandler = new ChatRoomTransferHandler(this);
+
+        getTranscriptWindow().setTransferHandler(transferHandler);
+        getChatInputEditor().setTransferHandler(transferHandler);
+
+        addToolbar();
+
+        // Add Connection Listener
+        SparkManager.getConnection().addConnectionListener(this);
+
+        // Add Focus Listener
+        addFocusListener(this);
+
+        setChatState( ChatState.active );
+        createChatStateTimerTask();
+
+        scrollToBottom();
     }
 
+    protected void createChatStateTimerTask() {
+        typingTimerTask = new TimerTask() {
+            public void run() {
+                final long lastUpdate = System.currentTimeMillis() - lastNotificationSentTime;
+                switch ( lastNotificationSent ) {
+                    case paused:
+                    case active:
+                        if ( lastUpdate > inactiveTimePeriod ) {
+                            setChatState( ChatState.inactive );
+                        }
+                        break;
+
+                    case composing:
+                        if ( lastUpdate > pauseTimePeriod ) {
+                            setChatState( ChatState.paused );
+                        }
+                        break;
+                }
+            }
+        };
+        TaskEngine.getInstance().scheduleAtFixedRate(typingTimerTask, pauseTimePeriod /2, pauseTimePeriod / 2);
+    }
+
+    /**
+     * Sends a chat state to all peers.
+     *
+     * @param state the chat state.
+     */
+    protected abstract void sendChatState( ChatState state ) throws SmackException.NotConnectedException;
+
+    /**
+     * Sets the chat state, causing an update to be sent to all peers if the new state warrants an update.
+     *
+     * @param state the chat state (never null).
+     */
+    public final void setChatState(ChatState state)
+    {
+        if ( state == null ) {
+            throw new IllegalArgumentException( "Argument 'state' cannot be null." );
+        }
+
+        // Only sent out a chat state notification when it is different from the last one that was transmitted...
+        final boolean isDifferentState = lastNotificationSent != state;
+
+        // ... unless it's 'composing' - that can be repeated every so many seconds.
+        final boolean isStillComposing = state == ChatState.composing && System.currentTimeMillis() - lastNotificationSentTime > 2000;
+
+        final long now = System.currentTimeMillis();
+        if ( isDifferentState || isStillComposing )
+        {
+            try
+            {
+                sendChatState( state );
+            } catch ( SmackException.NotConnectedException e ) {
+                Log.warning( "Unable to update the chat state to " + state, e );
+            }
+            lastNotificationSent = state;
+            lastNotificationSentTime = now;
+        }
+    }
 
     /**
      * Handles the Nickname Completion dialog, when Pressing CTRL + SPACE<br>
@@ -829,6 +871,13 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
     public void closeChatRoom() {
         fireClosingListeners();
 
+        setChatState(ChatState.gone);
+
+        if (typingTimerTask != null) {
+            TaskEngine.getInstance().cancelScheduledTask(typingTimerTask);
+            typingTimerTask = null;
+        }
+
         getTranscriptWindow().removeContextMenuListener(this);
         getTranscriptWindow().removeMouseListener(transcriptWindowMouseListener);
         getChatInputEditor().removeKeyListener(chatEditorKeyListener);
@@ -963,6 +1012,8 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
     public void insertUpdate(DocumentEvent e) {
         // Meant to be overriden
         checkForText(e);
+
+        setChatState( ChatState.composing );
     }
 
 
@@ -1186,6 +1237,11 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         validate();
         invalidate();
         repaint();
+
+        if(focusEvent.getComponent().equals(getChatInputEditor())) {
+            setChatState( ChatState.active );
+        }
+
     }
 
     public void poppingUp(Object component, JPopupMenu popup) {
@@ -1213,6 +1269,9 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
 
 
     public void focusLost(FocusEvent focusEvent) {
+        if(focusEvent.getComponent().equals(getChatInputEditor())) {
+            setChatState( ChatState.inactive );
+        }
     }
 
 
