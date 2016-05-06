@@ -160,17 +160,16 @@ public class ConferenceServices implements InvitationListener {
 			public void run() {
 				Collection<BookmarkedConference> bc = null;
 
-				while (bc == null) {
-					try {
-						BookmarkManager manager = BookmarkManager
-								.getBookmarkManager(SparkManager.getConnection());
-						bc = manager.getBookmarkedConferences();
-					} catch (XMPPException | SmackException error) {
-						Log.error(error);
-					}
-				}
-              bookmarksUI.loadUI();
-              addBookmarksUI();
+                try {
+                    while (bc == null) {
+                        BookmarkManager manager = BookmarkManager.getBookmarkManager(SparkManager.getConnection());
+                        bc = manager.getBookmarkedConferences();
+                    }
+                } catch (XMPPException | SmackException error) {
+                    Log.error(error);
+                }
+                bookmarksUI.loadUI();
+                addBookmarksUI();
 			}
     		
     	};
