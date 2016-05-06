@@ -1428,8 +1428,8 @@ moveToOffline(moveToOfflineContactItem);
                         try {
                             rosterGroup.removeEntry(entry);
                         }
-                        catch (XMPPException | SmackException e1) {
-                            Log.error("Error removing entry", e1);
+                        catch (XMPPException | SmackException ex) {
+                            Log.error("Error removing entry", ex);
                         }
                     }
                 }
@@ -1462,9 +1462,9 @@ moveToOffline(moveToOfflineContactItem);
                   toggleGroupVisibility(newName, true);
                   getContactGroup(newName).setCollapsed( group.isCollapsed());
               }
-              catch ( XMPPException.XMPPErrorException| SmackException.NotConnectedException | SmackException.NoResponseException e1 )
+              catch ( XMPPException.XMPPErrorException| SmackException.NotConnectedException | SmackException.NoResponseException ex )
               {
-                  Log.warning( "Unable to set new name '" + newName + "' for roster group" + groupName, e1 );
+                  Log.warning( "Unable to set new name '" + newName + "' for roster group" + groupName, ex );
               }
           }
 
