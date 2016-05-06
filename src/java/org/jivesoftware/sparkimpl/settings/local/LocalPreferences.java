@@ -1124,6 +1124,14 @@ public class LocalPreferences {
 		setString("AvailableCodecs", value);
 	}
 
+	public void setAcceptAllCertificates(boolean accept) {
+		setBoolean("AcceptAllCertificates", accept);
+	}
+
+	public boolean isAcceptAllCertificates() {
+		return getBoolean("AcceptAllCertificates", true);
+	}
+
 	private boolean getBoolean(String property, boolean defaultValue) {
 		return Boolean.parseBoolean(props.getProperty(property, Boolean
 				.toString(defaultValue)));
@@ -1252,6 +1260,6 @@ public class LocalPreferences {
 
     public void setUseVersionAsResource(boolean useVersionAsResource) {
 	setBoolean("useVersionAsResource", useVersionAsResource);
-    }    
+    }
 
 }

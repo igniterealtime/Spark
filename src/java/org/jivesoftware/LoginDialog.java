@@ -212,46 +212,46 @@ public class LoginDialog {
 
         ProxyInfo proxyInfo = null;
         if (localPref.isProxyEnabled()) {
-        	ProxyInfo.ProxyType pType = localPref.getProtocol().equals("SOCKS") ?
-        		ProxyInfo.ProxyType.SOCKS5 : ProxyInfo.ProxyType.HTTP;
-        	String pHost = ModelUtil.hasLength(localPref.getHost()) ?
-        		localPref.getHost() : null;
-        	int pPort = ModelUtil.hasLength(localPref.getPort()) ?
-        		Integer.parseInt(localPref.getPort()) : 0;
-        	String pUser = ModelUtil.hasLength(localPref.getProxyUsername()) ?
-        		localPref.getProxyUsername() : null;
-        	String pPass = ModelUtil.hasLength(localPref.getProxyPassword()) ?
-        		localPref.getProxyPassword() : null;
-        	
-        	if (pHost != null && pPort != 0) {
-                   
-        		if (pUser == null || pPass == null) {
-                                
-        			proxyInfo = new ProxyInfo(pType, pHost, pPort, null, null);
-        		} else {
-                               
-        			proxyInfo = new ProxyInfo(pType, pHost, pPort, pUser, pPass);
-                                                                       
-        		}
-        	} else {
-        		Log.error("No proxy info found but proxy type is enabled!");
-        	}
+            ProxyInfo.ProxyType pType = localPref.getProtocol().equals("SOCKS") ?
+                    ProxyInfo.ProxyType.SOCKS5 : ProxyInfo.ProxyType.HTTP;
+            String pHost = ModelUtil.hasLength(localPref.getHost()) ?
+                    localPref.getHost() : null;
+            int pPort = ModelUtil.hasLength(localPref.getPort()) ?
+                    Integer.parseInt(localPref.getPort()) : 0;
+            String pUser = ModelUtil.hasLength(localPref.getProxyUsername()) ?
+                    localPref.getProxyUsername() : null;
+            String pPass = ModelUtil.hasLength(localPref.getProxyPassword()) ?
+                    localPref.getProxyPassword() : null;
+
+            if (pHost != null && pPort != 0) {
+
+                if (pUser == null || pPass == null) {
+
+                    proxyInfo = new ProxyInfo(pType, pHost, pPort, null, null);
+                } else {
+
+                    proxyInfo = new ProxyInfo(pType, pHost, pPort, pUser, pPass);
+
+                }
+            } else {
+                Log.error("No proxy info found but proxy type is enabled!");
+            }
         }
 
         final XMPPTCPConnectionConfiguration.Builder builder = XMPPTCPConnectionConfiguration.builder()
-                .setUsernameAndPassword( loginUsername, loginPassword )
-                .setServiceName( loginServer )
-                .setPort( port )
-                .setSendPresence( false )
-                .setCompressionEnabled( localPref.isCompressionEnabled() );
-        try {
-            TLSUtils.acceptAllCertificates(builder);
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (KeyManagementException e) {
-            e.printStackTrace();
-        }
+                .setUsernameAndPassword(loginUsername, loginPassword)
+                .setServiceName(loginServer)
+                .setPort(port)
+                .setSendPresence(false)
+                .setCompressionEnabled(localPref.isCompressionEnabled());
 
+        if (localPref.isAcceptAllCertificates()) {
+            try {
+                TLSUtils.acceptAllCertificates(builder);
+            } catch (NoSuchAlgorithmException | KeyManagementException e) {
+                Log.warning( "Unable to create configuration.", e );
+            }
+    }
         if ( localPref.isDebuggerEnabled()) {
             builder.setDebuggerEnabled( true );
         }
