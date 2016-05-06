@@ -22,10 +22,6 @@ package org.jivesoftware.spark.ui.conferences;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.SmackException;
-import org.jivesoftware.smack.XMPPConnection;
-import org.jivesoftware.smack.packet.Message;
-import org.jivesoftware.smack.util.StringUtils;
-import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.muc.MultiUserChatManager;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
@@ -74,14 +70,12 @@ public class ConversationInvitation extends JPanel implements ContainerComponent
     /**
      * Builds a new Conference Invitation UI.
      *
-     * @param conn     the XMPPConnection the invitation came in on.
      * @param roomName the name of the room.
      * @param inviter  the person who sent the invitation.
      * @param reason   the reason they want to talk.
      * @param password the password of the room if any.
-     * @param message  any additional message.
      */
-    public ConversationInvitation(XMPPConnection conn, final String roomName, final String inviter, String reason, final String password, Message message) {
+    public ConversationInvitation( final String roomName, final String inviter, String reason, final String password ) {
         this.roomName = roomName;
         this.password = password;
         this.inviter = inviter;
