@@ -591,7 +591,7 @@ public class ChatRoomImpl extends ChatRoom {
         super.insertMessage(message);
         MessageEvent messageEvent = message.getExtension("x", "jabber:x:event");
         if (messageEvent != null) {
-            checkEvents(message.getFrom(), message.getPacketID(), messageEvent);
+            checkEvents(message.getFrom(), message.getStanzaId(), messageEvent);
         }
 
         getTranscriptWindow().insertMessage(participantNickname, message, ChatManager.FROM_COLOR, TRANSPARENT_COLOR);

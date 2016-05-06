@@ -385,7 +385,7 @@ public class GroupChatRoom extends ChatRoom {
 	    MessageEventManager.addNotificationsRequests(message, true, true,
 		    true, true);
 	    // Add packetID to list
-	    addPacketID(message.getPacketID());
+	    addPacketID(message.getStanzaId());
 
 	    // Fire Message Filters
 	    SparkManager.getChatManager().filterOutgoingMessage(this, message);
@@ -437,7 +437,7 @@ public class GroupChatRoom extends ChatRoom {
 	    MessageEventManager.addNotificationsRequests(message, true, true,
 		    true, true);
 	    // Add packetID to list
-	    addPacketID(message.getPacketID());
+	    addPacketID(message.getStanzaId());
 
 	    chat.sendMessage(message);
 	} catch (SmackException ex) {

@@ -408,8 +408,8 @@ public class Workspace extends JPanel implements StanzaListener {
         room.addToTranscript(message, true);
 
         // Send display and notified message back.
-        SparkManager.getMessageEventManager().sendDeliveredNotification(message.getFrom(), message.getPacketID());
-        SparkManager.getMessageEventManager().sendDisplayedNotification(message.getFrom(), message.getPacketID());
+        SparkManager.getMessageEventManager().sendDeliveredNotification(message.getFrom(), message.getStanzaId());
+        SparkManager.getMessageEventManager().sendDisplayedNotification(message.getFrom(), message.getStanzaId());
     }
 
     /**
