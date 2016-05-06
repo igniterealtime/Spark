@@ -67,7 +67,7 @@ exit 0
 /usr/share/spark/documentation/images/*
 %dir  /usr/share/spark/lib
 /usr/share/spark/lib/activation.jar
-/usr/share/spark/lib/asterisk-im-client.jar
+/usr/share/spark/lib/asterisk-im-client-2.0.0-SNAPSHOT.jar
 /usr/share/spark/lib/base.jar
 /usr/share/spark/lib/bccontrib.jar
 /usr/share/spark/lib/bcpkix.jar
@@ -80,6 +80,8 @@ exit 0
 /usr/share/spark/lib/json-simple-1.1.1.jar
 /usr/share/spark/lib/jspeex.jar
 /usr/share/spark/lib/JTattoo.jar
+/usr/share/spark/lib/jxmpp-core.jar
+/usr/share/spark/lib/jxmpp-util-cache.jar
 /usr/share/spark/lib/libjitsi.jar
 %dir /usr/share/spark/lib/linux/
 /usr/share/spark/lib/linux/libcivil.so
@@ -122,15 +124,23 @@ exit 0
 /usr/share/spark/lib/mac/libSystemUtilities.jnilib
 /usr/share/spark/lib/osgi.core.jar
 /usr/share/spark/lib/sdes4j.jar
-/usr/share/spark/lib/smack.jar
-/usr/share/spark/lib/smackx-debug.jar
-/usr/share/spark/lib/smackx.jar
-/usr/share/spark/lib/smackx-workgroup.jar
+/usr/share/spark/lib/smack-bosh.jar
+/usr/share/spark/lib/smack-compression-jzlib.jar
+/usr/share/spark/lib/smack-core.jar
+/usr/share/spark/lib/smack-debug-slf4j.jar
+/usr/share/spark/lib/smack-debug.jar
+/usr/share/spark/lib/smack-experimental.jar
+/usr/share/spark/lib/smack-extensions.jar
+/usr/share/spark/lib/smack-im.jar
+/usr/share/spark/lib/smack-java7.jar
+/usr/share/spark/lib/smack-legacy.jar
+/usr/share/spark/lib/smack-resolver-javax.jar
+/usr/share/spark/lib/smack-sasl-javax.jar
+/usr/share/spark/lib/smack-tcp.jar
 /usr/share/spark/lib/spark.jar
 /usr/share/spark/lib/startup.jar
 /usr/share/spark/lib/swingx-all-1.6.3.jar
 /usr/share/spark/lib/systeminfo.jar
-/usr/share/spark/lib/xpp.jar
 /usr/share/spark/lib/xstream.jar
 /usr/share/spark/lib/lti-civil.jar
 /usr/share/spark/lib/log4j.jar
@@ -143,6 +153,7 @@ exit 0
 /usr/share/spark/lib/lobo.jar
 /usr/share/spark/lib/substance.jar
 /usr/share/spark/lib/trident.jar
+/usr/share/spark/lib/xpp3.jar
 /usr/share/spark/lib/zrtp4j-light.jar
 %dir /usr/share/spark/lib/ext/
 /usr/share/spark/lib/ext/jweb-ext.jar
