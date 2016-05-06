@@ -717,6 +717,11 @@ public class ChatRoomImpl extends ChatRoom {
     @Override
     protected void sendChatState(ChatState state) throws SmackException.NotConnectedException
     {
+        if ( !active )
+        {
+            return;
+        }
+
         // XEP-0085: SHOULD NOT send 'gone' in a MUC.
         if ( state == ChatState.gone )
         {
