@@ -208,6 +208,7 @@ public class LoginSettingDialog implements PropertyChangeListener {
 	private JCheckBox useSSLBox = new JCheckBox();
 	private JCheckBox compressionBox = new JCheckBox();
 	private JCheckBox debuggerBox = new JCheckBox();
+	private JCheckBox acceptAllCertificatesBox = new JCheckBox();
 
 	public GeneralPanel() {
 	    ResourceUtils.resLabel(portLabel, portField,
@@ -231,6 +232,8 @@ public class LoginSettingDialog implements PropertyChangeListener {
 		    Res.getString("checkbox.use.compression"));
 	    ResourceUtils.resButton(debuggerBox,
 		    Res.getString("checkbox.use.debugger.on.startup"));
+		ResourceUtils.resButton(acceptAllCertificatesBox,
+				Res.getString("checkbox.accept.all.certificates"));
 
 	    portField.setText(Integer.toString(localPreferences.getXmppPort()));
 	    timeOutField
@@ -257,6 +260,8 @@ public class LoginSettingDialog implements PropertyChangeListener {
 	    compressionBox.setSelected(localPreferences.isCompressionEnabled());
 
 	    debuggerBox.setSelected(localPreferences.isDebuggerEnabled());
+
+		acceptAllCertificatesBox.setSelected(localPreferences.isAcceptAllCertificates());
 
 	    final JPanel connectionPanel = new JPanel();
 	    connectionPanel.setLayout(new GridBagLayout());
@@ -308,9 +313,12 @@ public class LoginSettingDialog implements PropertyChangeListener {
 	    add(compressionBox, new GridBagConstraints(0, 7, 2, 1, 0.0, 1.0,
 		    GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
 		    new Insets(5, 5, 5, 5), 0, 0));
-	    add(debuggerBox, new GridBagConstraints(0, 8, 2, 1, 0.0, 1.0,
+	    add(acceptAllCertificatesBox, new GridBagConstraints(0, 8, 2, 1, 0.0, 1.0,
 		    GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
 		    new Insets(5, 5, 5, 5), 0, 0));
+		add(debuggerBox, new GridBagConstraints(0, 9, 2, 1, 0.0, 1.0,
+				GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
+				new Insets(5, 5, 5, 5), 0, 0));
 	}
 
 	/**
@@ -427,6 +435,7 @@ public class LoginSettingDialog implements PropertyChangeListener {
 	    localPreferences.setResource(resourceField.getText());
 	    localPreferences.setUseHostnameAsResource(useHostnameAsResourceBox.isSelected());
 	    localPreferences.setUseVersionAsResource(useVersionAsResourceBox.isSelected());
+		localPreferences.setAcceptAllCertificates(acceptAllCertificatesBox.isSelected());
 	    SettingsManager.saveSettings();
 	}
     }
