@@ -26,8 +26,8 @@ import java.util.Map;
 
 public class SparklerDecorator {
 
-    private Map<String,String> urls = new HashMap<String,String>();
-    private Map<String,JComponent> popups = new HashMap<String,JComponent>();
+    private Map<String,String> urls = new HashMap<>();
+    private Map<String,JComponent> popups = new HashMap<>();
 
 
     public void setURL(String matchedText, String url) {

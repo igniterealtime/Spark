@@ -50,8 +50,6 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.RowFilter;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
@@ -65,7 +63,6 @@ import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.muc.MultiUserChatManager;
 import org.jivesoftware.smackx.xdata.Form;
 import org.jivesoftware.smackx.bookmarks.BookmarkedConference;
@@ -134,9 +131,6 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
 
     private JPopupMenu popup;
 
-    private JLabel labelFilter;
-    private JTextField txtFilter;
-
     final TableRowSorter<TableModel> sorter;
 
     /**
@@ -186,16 +180,16 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
 	Hauptpanel.add(toolbar, BorderLayout.WEST);
 	Hauptpanel.add(pane_hiddenButtons, BorderLayout.EAST);
 	this.add(Hauptpanel, BorderLayout.NORTH);
-        
-    labelFilter = new JLabel(Res.getString("label.search"));
-    txtFilter = new JTextField(20);       
+
+        JLabel labelFilter = new JLabel( Res.getString( "label.search" ) );
+        JTextField txtFilter = new JTextField( 20 );
     txtFilter.setMinimumSize(new Dimension(50,20));
         
     //add fields for filter
     final JPanel Filterpanel = new JPanel(new BorderLayout());
 	JPanel toolbarFilter = new JPanel(new FlowLayout(FlowLayout.LEFT));
-	toolbarFilter.add(labelFilter);
-	toolbarFilter.add(txtFilter);
+	toolbarFilter.add( labelFilter );
+	toolbarFilter.add( txtFilter );
 
 	Filterpanel.add(toolbarFilter);
 	this.add(Filterpanel,BorderLayout.SOUTH);
@@ -224,7 +218,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
 	roomsTable = new RoomList();
 
     //build model for roomsTable, ignoring the 1st column              
-    sorter = new TableRowSorter<TableModel>(roomsTable.getModel());
+    sorter = new TableRowSorter<>( roomsTable.getModel() );
     roomsTable.setRowSorter(sorter);
     
 	final JScrollPane pane = new JScrollPane(roomsTable);
@@ -238,12 +232,12 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
 	chatManager = SparkManager.getChatManager();
 
         
-    txtFilter.addKeyListener(new KeyAdapter() {
+    txtFilter.addKeyListener( new KeyAdapter() {
         @Override
         public void keyReleased(KeyEvent e) {
             JTextField textField = (JTextField)e.getSource();
             String text = textField.getText();
-            List<RowFilter<Object,Object>> filters = new ArrayList<RowFilter<Object,Object>>();
+            List<RowFilter<Object,Object>> filters = new ArrayList<>();
             filters.add(RowFilter.regexFilter(text, 1));
             filters.add(RowFilter.regexFilter(text, 2));
             filters.add(RowFilter.regexFilter(text, 3));
@@ -251,46 +245,18 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
             sorter.setRowFilter(af);
         }
     });                   
-	joinRoomButton.addActionListener(new ActionListener() {
-	    public void actionPerformed(ActionEvent actionEvent) {
-		joinSelectedRoom();
-	    }
-	});
-	addRoomButton.addActionListener(new ActionListener() {
-	    public void actionPerformed(ActionEvent actionEvent) {
-		bookmarkRoom(serviceName);
-	    }
-	});
+	joinRoomButton.addActionListener( actionEvent -> joinSelectedRoom() );
+	addRoomButton.addActionListener( actionEvent -> bookmarkRoom(serviceName) );
 
-	refreshButton.addActionListener(new ActionListener() {
-	    public void actionPerformed(ActionEvent actionEvent) {
-		refreshRoomList(serviceName);
-	    }
-	});
+	refreshButton.addActionListener( actionEvent -> refreshRoomList(serviceName) );
 
-	joinRoomItem.addActionListener(new ActionListener() {
-	    public void actionPerformed(ActionEvent actionEvent) {
-		joinSelectedRoom();
-	    }
-	});
+	joinRoomItem.addActionListener( actionEvent -> joinSelectedRoom() );
 
-	addRoomItem.addActionListener(new ActionListener() {
-	    public void actionPerformed(ActionEvent actionEvent) {
-		bookmarkRoom(serviceName);
-	    }
-	});
+	addRoomItem.addActionListener( actionEvent -> bookmarkRoom(serviceName) );
 
-	refreshItem.addActionListener(new ActionListener() {
-	    public void actionPerformed(ActionEvent actionEvent) {
-		refreshRoomList(serviceName);
-	    }
-	});
+	refreshItem.addActionListener( actionEvent -> refreshRoomList(serviceName) );
 
-	showHiddenButtons.addActionListener(new ActionListener() {
-	    public void actionPerformed(ActionEvent actionEvent) {
-		popup.show(showHiddenButtons, 0, showHiddenButtons.getHeight());
-	    }
-	});
+	showHiddenButtons.addActionListener( actionEvent -> popup.show(showHiddenButtons, 0, showHiddenButtons.getHeight()) );
 
 	joinRoomButton.setEnabled(false);
 	addRoomButton.setEnabled(false);
@@ -403,10 +369,8 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
                 if (roomInfo != null) {
                     numberOfOccupants = roomInfo.getOccupantsCount();
                     if (numberOfOccupants == -1) {
-                    stillSearchForOccupants = false;
                     }
                 } else {
-                    stillSearchForOccupants = false;
                 }
                 }
 
@@ -502,33 +466,31 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
 
     private void addTableListener() {
 	roomsTable.getSelectionModel().addListSelectionListener(
-		new ListSelectionListener() {
-		    public void valueChanged(ListSelectionEvent e) {
-			if (e.getValueIsAdjusting())
-			    return;
+            e -> {
+            if (e.getValueIsAdjusting())
+                return;
 
-			int selectedRow = roomsTable.getSelectedRow();
-			if (selectedRow != -1) {
-			    joinRoomButton.setEnabled(true);
-			    joinRoomItem.setEnabled(true);
-			    String roomJID = roomsTable.getValueAt(selectedRow,
-				    2) + "@" + serviceName;
-			    addRoomButton.setEnabled(true);
-			    addRoomItem.setEnabled(true);
-			    if (isBookmarked(roomJID)) {
-				addBookmarkUI(false);
-			    } else {
-				addBookmarkUI(true);
-			    }
-			} else {
-			    joinRoomButton.setEnabled(false);
-			    addRoomButton.setEnabled(false);
-			    joinRoomItem.setEnabled(false);
-			    addRoomItem.setEnabled(false);
-			    addBookmarkUI(true);
-			}
-		    }
-		});
+            int selectedRow = roomsTable.getSelectedRow();
+            if (selectedRow != -1) {
+                joinRoomButton.setEnabled(true);
+                joinRoomItem.setEnabled(true);
+                String roomJID = roomsTable.getValueAt(selectedRow,
+                    2) + "@" + serviceName;
+                addRoomButton.setEnabled(true);
+                addRoomItem.setEnabled(true);
+                if (isBookmarked(roomJID)) {
+                addBookmarkUI(false);
+                } else {
+                addBookmarkUI(true);
+                }
+            } else {
+                joinRoomButton.setEnabled(false);
+                addRoomButton.setEnabled(false);
+                joinRoomItem.setEnabled(false);
+                addRoomItem.setEnabled(false);
+                addBookmarkUI(true);
+            }
+            } );
     }
 
     /**
@@ -747,15 +709,11 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
                 final String roomName = roomsTable.getValueAt(selectedRow, 1).toString();
                 popupMenu.add(roomInfoAction);
                 final JCheckBoxMenuItem autoJoin = new JCheckBoxMenuItem(Res.getString("menuitem.join.on.startup"));
-                autoJoin.addActionListener(new ActionListener() {
-
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        String roomJID = roomsTable.getValueAt(selectedRow, 2) + "@" + serviceName;
-                        conferences.removeBookmark(roomJID);
-                        conferences.addBookmark(roomName, roomJID, autoJoin.isSelected());
-                    }
-                });
+                autoJoin.addActionListener( e1 -> {
+                    String roomJID = roomsTable.getValueAt(selectedRow, 2) + "@" + serviceName;
+                    conferences.removeBookmark(roomJID);
+                    conferences.addBookmark(roomName, roomJID, autoJoin.isSelected());
+                } );
 
 
                 if (selectedRow != -1) {
@@ -858,7 +816,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
 		    form.setAnswer("muc#roomconfig_persistentroom", true);
 		}
 
-		List<String> owners = new ArrayList<String>();
+		List<String> owners = new ArrayList<>();
 		owners.add(SparkManager.getSessionManager().getBareAddress());
 		form.setAnswer("muc#roomconfig_roomowners", owners);
 

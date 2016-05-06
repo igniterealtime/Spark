@@ -39,14 +39,7 @@ public class FlashingPreference implements Preference {
             if (EventQueue.isDispatchThread()) {
                 dialog = new FlashingPreferenceDialog();
             } else {
-                EventQueue.invokeAndWait(new Runnable()
-                {
-                    @Override
-                    public void run()
-                    {
-                	dialog = new FlashingPreferenceDialog();
-                    }
-                });
+                EventQueue.invokeAndWait( () -> dialog = new FlashingPreferenceDialog() );
             }
 		} catch (Exception e) {
             Log.error(e);

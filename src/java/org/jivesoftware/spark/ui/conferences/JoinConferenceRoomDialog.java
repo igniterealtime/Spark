@@ -32,7 +32,6 @@ import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 import javax.swing.JDialog;
@@ -44,26 +43,26 @@ import javax.swing.JTextField;
 
 final class JoinConferenceRoomDialog extends JPanel {
     private static final long serialVersionUID = -6400555509113588047L;
-    private JLabel roomNameLabel = new JLabel();
-    private JLabel nicknameLabel = new JLabel();
     private JLabel passwordLabel = new JLabel();
     private JPasswordField passwordField = new JPasswordField();
     private JTextField nicknameField = new JTextField();
-    private GridBagLayout gridBagLayout1 = new GridBagLayout();
     private JLabel roomNameDescription = new JLabel();
 
     public JoinConferenceRoomDialog() {
-        setLayout(gridBagLayout1);
+        GridBagLayout gridBagLayout1 = new GridBagLayout();
+        setLayout( gridBagLayout1 );
         add(nicknameField, new GridBagConstraints(1, 1, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
         add(passwordField, new GridBagConstraints(1, 2, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
         add(passwordLabel, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-        add(nicknameLabel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-        add(roomNameLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        JLabel nicknameLabel = new JLabel();
+        add( nicknameLabel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        JLabel roomNameLabel = new JLabel();
+        add( roomNameLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         add(roomNameDescription, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
         add(new JLabel(), new GridBagConstraints(0, 3, 2, 1, 0.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.VERTICAL, new Insets(5, 5, 5, 5), 0, 0));
 
         // Add Resource Utils
-        ResourceUtils.resLabel(nicknameLabel, nicknameField, Res.getString("label.nickname") + ":");
+        ResourceUtils.resLabel( nicknameLabel, nicknameField, Res.getString("label.nickname") + ":");
         ResourceUtils.resLabel(passwordLabel, passwordField, Res.getString("label.password") + ":");
 
         roomNameLabel.setText(Res.getString("room.name") +":");
@@ -112,18 +111,16 @@ final class JoinConferenceRoomDialog extends JPanel {
         dlg.setContentPane(mainPanel);
         dlg.setLocationRelativeTo(SparkManager.getMainWindow());
 
-        PropertyChangeListener changeListener = new PropertyChangeListener() {
-            public void propertyChange(PropertyChangeEvent e) {
-                String value = (String)pane.getValue();
-                if (Res.getString("cancel").equals(value)) {
-                    pane.setValue(JOptionPane.UNINITIALIZED_VALUE);
-                    dlg.dispose();
-                }
-                else if (Res.getString("join").equals(value)) {
-                    pane.setValue(JOptionPane.UNINITIALIZED_VALUE);
-                    dlg.dispose();
-                    ConferenceUtils.joinConferenceOnSeperateThread(roomName, roomJID, null);
-                }
+        PropertyChangeListener changeListener = e -> {
+            String value = (String)pane.getValue();
+            if (Res.getString("cancel").equals(value)) {
+                pane.setValue(JOptionPane.UNINITIALIZED_VALUE);
+                dlg.dispose();
+            }
+            else if (Res.getString("join").equals(value)) {
+                pane.setValue(JOptionPane.UNINITIALIZED_VALUE);
+                dlg.dispose();
+                ConferenceUtils.joinConferenceOnSeperateThread(roomName, roomJID, null);
             }
         };
 

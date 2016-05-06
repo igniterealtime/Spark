@@ -19,8 +19,6 @@
  */
 package org.jivesoftware.spark.ui;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.TimerTask;
 
 import javax.swing.JButton;
@@ -59,11 +57,7 @@ public class ReconnectPanelIcon implements ConnectionListener {
 
 	_button = new RolloverButton(SparkRes.getImageIcon(SparkRes.BUSY_IMAGE));
 
-	_button.addActionListener(new ActionListener() {
-	    public void actionPerformed(ActionEvent e) {
-		startReconnecting();
-	    }
-	});
+	_button.addActionListener( e -> startReconnecting() );
     }
 
     public JPanel getPanel() {

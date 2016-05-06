@@ -35,7 +35,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
@@ -62,11 +61,8 @@ import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.roster.RosterEntry;
 import org.jivesoftware.smack.roster.RosterGroup;
 import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.xdata.Form;
 import org.jivesoftware.smackx.search.ReportedData;
-import org.jivesoftware.smackx.search.ReportedData.Column;
-import org.jivesoftware.smackx.search.ReportedData.Row;
 import org.jivesoftware.smackx.vcardtemp.packet.VCard;
 import org.jivesoftware.smackx.search.UserSearchManager;
 import org.jivesoftware.spark.SparkManager;
@@ -92,8 +88,7 @@ public class RosterDialog implements ActionListener {
     private JPanel panel;
     private JTextField jidField;
     private JTextField nicknameField;
-    private final Vector<String> groupModel = new Vector<String>();
-    private final JPanel networkPanel = new JPanel(new GridBagLayout());
+    private final Vector<String> groupModel = new Vector<>();
 
     private JComboBox groupBox;
     private JComboBox accounts;
@@ -168,6 +163,7 @@ public class RosterDialog implements ActionListener {
         panel.add(nicknameField, new GridBagConstraints(1, 1, 1, 1, 1.0D, 0.0D, 17, 2, new Insets(5, 5, 5, 5), 0, 0));
 
 
+        JPanel networkPanel = new JPanel( new GridBagLayout() );
         ComponentTitledBorder componentBorder = new ComponentTitledBorder(publicBox, networkPanel
                 , BorderFactory.createEtchedBorder());
 
@@ -190,7 +186,7 @@ public class RosterDialog implements ActionListener {
         }
         newGroupButton.addActionListener(this);
 
-        panel.add(networkPanel, new GridBagConstraints(0, 5, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+        panel.add( networkPanel, new GridBagConstraints(0, 5, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 
 
         ResourceUtils.resLabel(contactIDLabel, jidField, Res.getString("label.username") + ":");
@@ -229,7 +225,7 @@ public class RosterDialog implements ActionListener {
                 if (!publicBox.isSelected()) {
                     // This is not a transport.
                     String fullJID = getJID();
-                    if (fullJID.indexOf("@") == -1) {
+                    if ( !fullJID.contains( "@" ) ) {
                         fullJID = fullJID + "@" + SparkManager.getConnection().getServiceName();
                     }
 
@@ -260,11 +256,7 @@ public class RosterDialog implements ActionListener {
             networkPanel.setVisible(true);
         }
 
-        publicBox.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent actionEvent) {
-                accounts.setEnabled(publicBox.isSelected());
-            }
-        });
+        publicBox.addActionListener( actionEvent -> accounts.setEnabled(publicBox.isSelected()) );
 
 
     }
@@ -339,20 +331,10 @@ public class RosterDialog implements ActionListener {
        
         JButton addbutton = new JButton(Res.getString("add"));
         
-        addbutton.addActionListener(new ActionListener() {
-	    @Override
-	    public void actionPerformed(ActionEvent e) {
-		addContactButton();
-	    }
-	});
+        addbutton.addActionListener( e -> addContactButton() );
         
         JButton cancelbutton = new JButton(Res.getString("cancel"));
-        cancelbutton.addActionListener(new ActionListener() {    
-	    @Override
-	    public void actionPerformed(ActionEvent e) {
-		dialog.dispose();
-	    }
-	});
+        cancelbutton.addActionListener( e -> dialog.dispose() );
         
         
         JPanel buttonpanel = new JPanel(new FlowLayout());
@@ -389,7 +371,7 @@ public class RosterDialog implements ActionListener {
         }
         if (transport == null) {
             String jid = getJID();
-            if (jid.indexOf("@") == -1) {
+            if ( !jid.contains( "@" ) ) {
                 jid = jid + "@" + SparkManager.getConnection().getServiceName();
             }
             String nickname = nicknameField.getText();
@@ -493,7 +475,7 @@ public class RosterDialog implements ActionListener {
 
 		data = usersearchManager.getSearchResults(answer, search);
 
-		ArrayList<String> columnnames = new ArrayList<String>();
+		ArrayList<String> columnnames = new ArrayList<>();
 		for ( ReportedData.Column column : data.getColumns() ) {
 		    String label = column.getLabel();
 		    columnnames.add(label);
@@ -501,18 +483,15 @@ public class RosterDialog implements ActionListener {
 
 		for (ReportedData.Row row : data.getRows() ) {
 		    if (!row.getValues(columnnames.get(0)).isEmpty()) {
-			String s = (String) row.getValues(columnnames.get(0))
+			String s = row.getValues(columnnames.get(0))
 				.get(0);
 			final JMenuItem item = new JMenuItem(s);
 			popup.add(item);
-			item.addActionListener(new ActionListener() {
-			    @Override
-			    public void actionPerformed(ActionEvent e) {
-				jidField.setText(item.getText());
-				nicknameField.setText(XmppStringUtils
-					.parseLocalpart(item.getText()));
-			    }
-			});
+			item.addActionListener( e -> {
+            jidField.setText(item.getText());
+            nicknameField.setText(XmppStringUtils
+                .parseLocalpart(item.getText()));
+            } );
 		    }
 
 		}
@@ -589,7 +568,7 @@ public class RosterDialog implements ActionListener {
     }
 
     public List<AccountItem> getAccounts() {
-        List<AccountItem> list = new ArrayList<AccountItem>();
+        List<AccountItem> list = new ArrayList<>();
 
         for (Transport transport : TransportUtils.getTransports()) {
             if (TransportUtils.isRegistered(SparkManager.getConnection(), transport)) {
@@ -671,8 +650,7 @@ public class RosterDialog implements ActionListener {
 		&& !isSharedGroup) {
 	    addEntry();
 	    dialog.setVisible(false);
-	    return;
-	} else {
+    } else {
 
 	    JOptionPane.showMessageDialog(dialog, errorMessage,
 		    Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);

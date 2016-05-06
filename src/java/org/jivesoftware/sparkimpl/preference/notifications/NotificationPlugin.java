@@ -24,7 +24,6 @@ import org.jivesoftware.smack.StanzaListener;
 import org.jivesoftware.smack.filter.StanzaTypeFilter;
 import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.packet.Presence;
-import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.Plugin;
 import org.jivesoftware.spark.ui.ContactGroup;
@@ -55,7 +54,7 @@ import java.util.TimerTask;
  */
 public class NotificationPlugin implements Plugin, StanzaListener {
 
-    private Set<String> onlineUsers = new HashSet<String>();
+    private Set<String> onlineUsers = new HashSet<>();
     private LocalPreferences preferences;
 
 
@@ -146,27 +145,25 @@ public class NotificationPlugin implements Plugin, StanzaListener {
      */
     private void notifyUserOnline(final String jid, final Presence presence) {
    	 try {
-   		 EventQueue.invokeAndWait(new Runnable(){
-   			 public void run() {
-   				 SparkToaster toaster = new SparkToaster();
-   				 toaster.setDisplayTime(preferences.getNotificationsDisplayTime());
-   				 toaster.setBorder(BorderFactory.createBevelBorder(0));
-   				 toaster.setCustomAction(new ChatAction(jid));
-   				 NotificationAlertUI alertUI = new NotificationAlertUI(jid, true, presence);
-   				 
-   				 toaster.setToasterHeight((int)alertUI.getPreferredSize().getHeight() + 40);
-   				 
-   				 int width = (int)alertUI.getPreferredSize().getWidth() + 40;
-   				 if (width < 300) {
-   					 width = 300;
-   				 }
-   				 
-   				 toaster.setToasterWidth(width);
-   				 
-   				toaster.showToaster(alertUI.topLabel.getText(), alertUI);
-   				toaster.setTitleAlert(new Font("Dialog", Font.BOLD, 13), presence);
-   			 }
-   		 });
+   		 EventQueue.invokeAndWait( () -> {
+                SparkToaster toaster = new SparkToaster();
+                toaster.setDisplayTime(preferences.getNotificationsDisplayTime());
+                toaster.setBorder(BorderFactory.createBevelBorder(0));
+                toaster.setCustomAction(new ChatAction(jid));
+                NotificationAlertUI alertUI = new NotificationAlertUI(jid, true, presence);
+
+                toaster.setToasterHeight((int)alertUI.getPreferredSize().getHeight() + 40);
+
+                int width = (int)alertUI.getPreferredSize().getWidth() + 40;
+                if (width < 300) {
+                    width = 300;
+                }
+
+                toaster.setToasterWidth(width);
+
+               toaster.showToaster(alertUI.topLabel.getText(), alertUI);
+               toaster.setTitleAlert(new Font("Dialog", Font.BOLD, 13), presence);
+            } );
    	 }
    	 catch(Exception ex) {
    		Log.error(ex); 
@@ -181,28 +178,26 @@ public class NotificationPlugin implements Plugin, StanzaListener {
      */
     private void notifyUserOffline(final String jid, final Presence presence) {
    	 try {
-   		 EventQueue.invokeAndWait(new Runnable(){
-   			 public void run() {   	 
-			        SparkToaster toaster = new SparkToaster();
-			        toaster.setCustomAction(new ChatAction(jid));
-			        toaster.setDisplayTime(preferences.getNotificationsDisplayTime());
-			        toaster.setBorder(BorderFactory.createBevelBorder(0));
-			
-			        NotificationAlertUI alertUI = new NotificationAlertUI(jid, false, presence);
-			
-			        toaster.setToasterHeight((int)alertUI.getPreferredSize().getHeight() + 40);
-			
-			        int width = (int)alertUI.getPreferredSize().getWidth() + 40;
-			        if (width < 300) {
-			            width = 300;
-			        }
-			
-			        toaster.setToasterWidth(width);
-			
-			        toaster.showToaster(alertUI.topLabel.getText(), alertUI);
-			        toaster.setTitleAlert(new Font("Dialog", Font.BOLD, 13), presence);
-   			 }
-   		 });
+   		 EventQueue.invokeAndWait( () -> {
+                SparkToaster toaster = new SparkToaster();
+                toaster.setCustomAction(new ChatAction(jid));
+                toaster.setDisplayTime(preferences.getNotificationsDisplayTime());
+                toaster.setBorder(BorderFactory.createBevelBorder(0));
+
+                NotificationAlertUI alertUI = new NotificationAlertUI(jid, false, presence);
+
+                toaster.setToasterHeight((int)alertUI.getPreferredSize().getHeight() + 40);
+
+                int width = (int)alertUI.getPreferredSize().getWidth() + 40;
+                if (width < 300) {
+                    width = 300;
+                }
+
+                toaster.setToasterWidth(width);
+
+                toaster.showToaster(alertUI.topLabel.getText(), alertUI);
+                toaster.setTitleAlert(new Font("Dialog", Font.BOLD, 13), presence);
+            } );
    	 }
    	 catch(Exception ex) {
    		Log.error(ex); 

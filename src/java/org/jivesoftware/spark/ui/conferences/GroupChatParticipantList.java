@@ -60,13 +60,10 @@ import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.PresenceListener;
 import org.jivesoftware.smack.SmackException;
-import org.jivesoftware.smack.StanzaListener;
 import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.packet.ExtensionElement;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.packet.XMPPError;
-import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.muc.*;
 import org.jivesoftware.smackx.disco.packet.DiscoverInfo;
@@ -78,7 +75,6 @@ import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.UserManager;
 import org.jivesoftware.spark.component.ImageTitlePanel;
 import org.jivesoftware.spark.ui.ChatRoom;
-import org.jivesoftware.spark.ui.ChatRoomListener;
 import org.jivesoftware.spark.ui.ChatRoomNotFoundException;
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 import org.jivesoftware.spark.ui.rooms.GroupChatRoom;
@@ -87,8 +83,6 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jxmpp.util.XmppStringUtils;
-
-import static org.jivesoftware.smackx.privacy.packet.PrivacyItem.Type.jid;
 
 /**
  * The <code>RoomInfo</code> class is used to display all room information, such
@@ -103,7 +97,7 @@ public class GroupChatParticipantList extends JPanel {
 	private MultiUserChat chat;
 	private LocalPreferences _localPreferences = SettingsManager.getLocalPreferences();
 
-	private final Map<String, String> userMap = new HashMap<String, String>();
+	private final Map<String, String> userMap = new HashMap<>();
 
 	private UserManager userManager = SparkManager.getUserManager();
 
@@ -113,15 +107,15 @@ public class GroupChatParticipantList extends JPanel {
 
 	private PresenceListener listener = null;
 
-	private Map<String, String> invitees = new HashMap<String, String>();
+	private Map<String, String> invitees = new HashMap<>();
 
 	private boolean allowNicknameChange = true;
 
 	private DiscoverInfo roomInformation;
 
-	private List<JLabel> users = new ArrayList<JLabel>();
+	private List<JLabel> users = new ArrayList<>();
 
-	private HashMap<String,String> usersandRoles = new HashMap<String,String>();
+	private HashMap<String,String> usersandRoles = new HashMap<>();
 
 	/**
 	 * Creates a new RoomInfo instance using the specified ChatRoom. The
@@ -181,61 +175,52 @@ public class GroupChatParticipantList extends JPanel {
 
 	chat = groupChatRoom.getMultiUserChat();
 
-	chat.addInvitationRejectionListener(new InvitationRejectionListener() {
-	    public void invitationDeclined(String jid, String message) {
-		String nickname = userManager.getUserNicknameFromJID(jid);
+	chat.addInvitationRejectionListener( ( jid1, message ) -> {
+    String nickname = userManager.getUserNicknameFromJID( jid1 );
 
-		userHasLeft(nickname);
+    userHasLeft(nickname);
 
-		chatRoom.getTranscriptWindow().insertNotificationMessage(
-			nickname + " has rejected the invitation.",
-			ChatManager.NOTIFICATION_COLOR);
-	    }
-	});
+    chatRoom.getTranscriptWindow().insertNotificationMessage(
+        nickname + " has rejected the invitation.",
+        ChatManager.NOTIFICATION_COLOR);
+    } );
 
-	listener = new PresenceListener() {
-	    public void processPresence(final Presence p) {
-		SwingUtilities.invokeLater(new Runnable() {
-		    public void run() {
-			if (p.getError() != null) {
-			    if (p.getError()
-				    .getCondition()
-				    .equals(XMPPError.Condition.conflict
-					    .toString())) {
-				return;
-			    }
-			}
-			final String userid = p.getFrom();
+	listener = p -> SwingUtilities.invokeLater( () -> {
+if (p.getError() != null) {
+if (p.getError()
+.getCondition()
+.equals(XMPPError.Condition.conflict
+.toString())) {
+return;
+}
+}
+final String userid = p.getFrom();
 
-			String displayName = XmppStringUtils.parseResource(userid);
-			userMap.put(displayName, userid);			
+String displayName = XmppStringUtils.parseResource(userid);
+userMap.put(displayName, userid);
 
-			if (p.getType() == Presence.Type.available) {
-			    addParticipant(userid, p);
-			    agentInfoPanel.setVisible(true);
-			} else {
-			    removeUser(displayName);
-			}
+if (p.getType() == Presence.Type.available) {
+addParticipant(userid, p);
+agentInfoPanel.setVisible(true);
+} else {
+removeUser(displayName);
+}
 
-			// When joining a room, check if the current user is an owner/admin. If so, the UI should allow the current
-			// user to change settings of this MUC.
-			final MUCUser mucUserEx = p.getExtension( MUCUser.ELEMENT, MUCUser.NAMESPACE );
-			if (mucUserEx != null && mucUserEx.getStatus().contains( MUCUser.Status.create( 110 ) ) ) // 110 = Inform user that presence refers to itself
-			{
-				final MUCItem item = mucUserEx.getItem();
-				if ( item != null )
-				{
-					if ( item.getAffiliation() == MUCAffiliation.admin || item.getAffiliation() == MUCAffiliation.owner )
-					{
-						groupChatRoom.notifySettingsAccessRight();
-					}
-				}
-			}
-		    }
-		});
-
-	    }
-	};
+// When joining a room, check if the current user is an owner/admin. If so, the UI should allow the current
+// user to change settings of this MUC.
+final MUCUser mucUserEx = p.getExtension( MUCUser.ELEMENT, MUCUser.NAMESPACE );
+if (mucUserEx != null && mucUserEx.getStatus().contains( MUCUser.Status.create( 110 ) ) ) // 110 = Inform user that presence refers to itself
+{
+final MUCItem item = mucUserEx.getItem();
+if ( item != null )
+{
+if ( item.getAffiliation() == MUCAffiliation.admin || item.getAffiliation() == MUCAffiliation.owner )
+{
+groupChatRoom.notifySettingsAccessRight();
+}
+}
+}
+} );
 
 	chat.addParticipantListener(listener);
 
@@ -358,7 +343,7 @@ public class GroupChatParticipantList extends JPanel {
 
 	usersandRoles.put(participantJID, affiliation+","+userRole);
 
-	Icon icon = null;
+	Icon icon;
 	if (_localPreferences.isShowingRoleIcons()) {
 	    icon = getIconForRole(userRole, affiliation);
 	} else {
@@ -431,7 +416,7 @@ public class GroupChatParticipantList extends JPanel {
 	 * @return {@link Icon}
 	 */
     private Icon getIconForRole(String role, String affiliation) {
-	Icon icon = null;
+	Icon icon;
 
 	if (role.equalsIgnoreCase("participant")) {
 	    icon = SparkRes.getImageIcon(SparkRes.STAR_GREEN_IMAGE);
@@ -1236,7 +1221,7 @@ public class GroupChatParticipantList extends JPanel {
      * 0=owner,1=admin.....5=visitor<br>
      */
     private int getCompareValue(String jid) {
-	int result = 100;
+	int result;
 
 	String affi = usersandRoles.get(jid).split(",")[0];
 	String role = usersandRoles.get(jid).split(",")[1];

@@ -45,7 +45,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 
 public class SearchForm extends JPanel {
@@ -85,11 +84,7 @@ public class SearchForm extends JPanel {
         ResourceUtils.resButton(searchButton, Res.getString("button.search"));
         add(searchButton, new GridBagConstraints(0, 1, 3, 1, 1.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
 
-        searchButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                performSearch();
-            }
-        });
+        searchButton.addActionListener( e -> performSearch() );
 
         KeyStroke enter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
         String enterString = org.jivesoftware.spark.util.StringUtils.keyStroke2String(enter);

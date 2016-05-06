@@ -60,8 +60,8 @@ public class PhoneManager implements ChatRoomListener, ContextMenuListener {
     private static PhoneManager singleton;
     private static final Object LOCK = new Object();
 
-    private List<Phone> phones = new CopyOnWriteArrayList<Phone>();
-    private List<String> currentCalls = new ArrayList<String>();
+    private List<Phone> phones = new CopyOnWriteArrayList<>();
+    private List<String> currentCalls = new ArrayList<>();
     // Static Media Locator
     static private MediaLocator mediaLocator = null;
     // Static Media Locator Preference
@@ -126,7 +126,7 @@ public class PhoneManager implements ChatRoomListener, ContextMenuListener {
             final ChatRoomButton dialButton = new ChatRoomButton(SparkRes.getImageIcon(SparkRes.DIAL_PHONE_IMAGE_24x24));
             dialButton.setToolTipText(Res.getString("tooltip.place.voice.call"));
 
-            final List<Action> actions = new ArrayList<Action>();
+            final List<Action> actions = new ArrayList<>();
             SwingWorker actionWorker = new SwingWorker() {
                 public Object construct() {
                     for (Phone phone : phones) {
@@ -202,7 +202,7 @@ public class PhoneManager implements ChatRoomListener, ContextMenuListener {
         if (!phones.isEmpty()) {
             if (object instanceof ContactItem) {
                 final ContactItem contactItem = (ContactItem) object;
-                final List<Action> actions = new ArrayList<Action>();
+                final List<Action> actions = new ArrayList<>();
 
                 SwingWorker worker = new SwingWorker() {
                     public Object construct() {

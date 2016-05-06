@@ -20,11 +20,9 @@
 package org.jivesoftware.sparkimpl.plugin.jabber;
 
 import org.jivesoftware.smack.SmackException;
-import org.jivesoftware.smack.StanzaListener;
 import org.jivesoftware.smack.filter.StanzaFilter;
 import org.jivesoftware.smack.filter.StanzaTypeFilter;
 import org.jivesoftware.smack.packet.IQ;
-import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smackx.time.packet.Time;
 import org.jivesoftware.smackx.iqversion.packet.Version;
@@ -55,41 +53,39 @@ public class JabberVersion implements Plugin {
     public void initialize() {
         // Create IQ Filter
         StanzaFilter packetFilter = new StanzaTypeFilter(IQ.class);
-        SparkManager.getConnection().addAsyncStanzaListener(new StanzaListener() {
-            public void processPacket(Stanza stanza) {
-                IQ iq = (IQ)stanza;
+        SparkManager.getConnection().addAsyncStanzaListener( stanza -> {
+            IQ iq = (IQ)stanza;
 
-                try
-                {
-                    // Handle Version Request
-                    if (iq instanceof Version && iq.getType() == IQ.Type.get) {
-                        // Send Version
-                        Version version = new Version( JiveInfo.getName(), JiveInfo.getVersion(), JiveInfo.getOS() );
+            try
+            {
+                // Handle Version Request
+                if (iq instanceof Version && iq.getType() == IQ.Type.get) {
+                    // Send Version
+                    Version version = new Version( JiveInfo.getName(), JiveInfo.getVersion(), JiveInfo.getOS() );
 
-                        // Send back as a reply
-                        version.setStanzaId(iq.getStanzaId());
-                        version.setType(IQ.Type.result);
-                        version.setTo(iq.getFrom());
-                        version.setFrom(iq.getTo());
-                        SparkManager.getConnection().sendStanza(version);
-                    }
-                    // Send time
-                    else if (iq instanceof Time && iq.getType() == IQ.Type.get) {
-                        Time time = new Time();
-                        time.setStanzaId(iq.getStanzaId());
-                        time.setFrom(iq.getTo());
-                        time.setTo(iq.getFrom());
-                        time.setTime(new Date());
-                        time.setType(IQ.Type.result);
-
-                        // Send Time
-                        SparkManager.getConnection().sendStanza(time);
-                    }
+                    // Send back as a reply
+                    version.setStanzaId(iq.getStanzaId());
+                    version.setType(IQ.Type.result);
+                    version.setTo(iq.getFrom());
+                    version.setFrom(iq.getTo());
+                    SparkManager.getConnection().sendStanza(version);
                 }
-                catch ( SmackException.NotConnectedException e )
-                {
-                    Log.warning( "Unable to answer request: " + stanza, e);
+                // Send time
+                else if (iq instanceof Time && iq.getType() == IQ.Type.get) {
+                    Time time = new Time();
+                    time.setStanzaId(iq.getStanzaId());
+                    time.setFrom(iq.getTo());
+                    time.setTo(iq.getFrom());
+                    time.setTime(new Date());
+                    time.setType(IQ.Type.result);
+
+                    // Send Time
+                    SparkManager.getConnection().sendStanza(time);
                 }
+            }
+            catch ( SmackException.NotConnectedException e )
+            {
+                Log.warning( "Unable to answer request: " + stanza, e);
             }
         }, packetFilter);
 

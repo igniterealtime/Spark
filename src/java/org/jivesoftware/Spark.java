@@ -73,9 +73,7 @@ public final class Spark {
     private static File RESOURCE_DIRECTORY;
     private static File BIN_DIRECTORY;
     private static File LOG_DIRECTORY;
-    private static File USER_DIRECTORY;
     private static File PLUGIN_DIRECTORY;
-    private static File XTRA_DIRECTORY;
 
 
     /**
@@ -113,14 +111,14 @@ public final class Spark {
         System.setProperty("apple.laf.useScreenMenuBar", "true");
 
         /** Update Library Path **/
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         buf.append(current);
         buf.append(";");
 
     	SparkCompatibility sparkCompat = new SparkCompatibility();
     	try {
     		// Absolute paths to a collection of files or directories to skip
-			Collection<String> skipFiles = new HashSet<String>();
+			Collection<String> skipFiles = new HashSet<>();
 			skipFiles.add(new File(USER_SPARK_HOME, "plugins").getAbsolutePath());
 
     		sparkCompat.transferConfig(USER_SPARK_HOME, skipFiles);
@@ -132,9 +130,9 @@ public final class Spark {
     	RESOURCE_DIRECTORY = initializeDirectory("resources");
     	BIN_DIRECTORY = initializeDirectory("bin");
     	LOG_DIRECTORY = initializeDirectory("logs");
-    	USER_DIRECTORY = initializeDirectory("user");
+        File USER_DIRECTORY = initializeDirectory( "user" );
     	PLUGIN_DIRECTORY = initializeDirectory("plugins");
-    	XTRA_DIRECTORY = initializeDirectory("xtra");
+        File XTRA_DIRECTORY = initializeDirectory( "xtra" );
     	// TODO implement copyEmoticonFiles();
         final String workingDirectory = System.getProperty("appdir");
         
@@ -153,7 +151,7 @@ public final class Spark {
             File workingDir = new File(workingDirectory);
             RESOURCE_DIRECTORY = initializeDirectory(workingDir, "resources");
             BIN_DIRECTORY = initializeDirectory(workingDir, "bin");
-            File emoticons = new File(XTRA_DIRECTORY, "emoticons").getAbsoluteFile();
+            File emoticons = new File( XTRA_DIRECTORY, "emoticons").getAbsoluteFile();
             if(!emoticons.exists()){
 
             	//Copy emoticon files from install directory to the spark user home directory
@@ -189,12 +187,10 @@ public final class Spark {
         System.setProperty("sun.java2d.noddraw", "true");
         System.setProperty("file.encoding", "UTF-8");
 
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                // Start Application
-                new Spark();
-            }
-        });
+        SwingUtilities.invokeLater( () -> {
+            // Start Application
+            new Spark();
+        } );
 
         //load plugins before Workspace initialization to avoid any UI delays
         //during plugin rendering
@@ -208,12 +204,10 @@ public final class Spark {
         }
 
         try {
-	        EventQueue.invokeAndWait(new Runnable(){
-	        	public void run() {
-				final LoginDialog dialog = UIComponentRegistry.createLoginDialog();
-	        		dialog.invoke(new JFrame());
-	        	}
-	        });
+	        EventQueue.invokeAndWait( () -> {
+            final LoginDialog dialog = UIComponentRegistry.createLoginDialog();
+                dialog.invoke(new JFrame());
+            } );
         }
         catch(Exception ex) {
         	ex.printStackTrace();
@@ -221,7 +215,7 @@ public final class Spark {
     }
 
     private String getLookandFeel(LocalPreferences preferences) {
-	String result = "";
+	String result;
 
 	String whereToLook = isMac() ? Default.DEFAULT_LOOK_AND_FEEL_MAC
 		: Default.DEFAULT_LOOK_AND_FEEL;
@@ -247,20 +241,18 @@ public final class Spark {
 
 	try {
 	    if (laf.toLowerCase().contains("substance")) {
-		EventQueue.invokeLater(new Runnable() {
-		    public void run() {
-			try {
-			    if (Spark.isWindows()) {
-				JFrame.setDefaultLookAndFeelDecorated(true);
-				JDialog.setDefaultLookAndFeelDecorated(true);
-			    }
-			    UIManager.setLookAndFeel(laf);
-			} catch (Exception e) {
-			    // dont care
-			    e.printStackTrace();
-			}
-		    }
-		});
+		EventQueue.invokeLater( () -> {
+        try {
+            if (Spark.isWindows()) {
+            JFrame.setDefaultLookAndFeelDecorated(true);
+            JDialog.setDefaultLookAndFeelDecorated(true);
+            }
+            UIManager.setLookAndFeel(laf);
+        } catch (Exception e) {
+            // dont care
+            e.printStackTrace();
+        }
+        } );
 	    } else {
 		try {
 		    if(Spark.isWindows()) {
@@ -326,7 +318,7 @@ public final class Spark {
      */
     public static boolean isMac() {
         String lcOSName = System.getProperty("os.name").toLowerCase();
-        return lcOSName.indexOf("mac") != -1;
+        return lcOSName.contains( "mac" );
     }
 
 

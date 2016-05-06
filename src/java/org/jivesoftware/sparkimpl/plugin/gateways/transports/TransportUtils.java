@@ -21,11 +21,8 @@ package org.jivesoftware.sparkimpl.plugin.gateways.transports;
 
 import org.jivesoftware.smack.*;
 import org.jivesoftware.smack.filter.IQReplyFilter;
-import org.jivesoftware.smack.filter.PacketIDFilter;
-import org.jivesoftware.smack.filter.StanzaIdFilter;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.ExtensionElement;
-import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smackx.iqregister.packet.Registration;
 import org.jivesoftware.smackx.iqprivate.PrivateDataManager;
 import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
@@ -45,7 +42,7 @@ import java.util.Map;
  */
 public class TransportUtils {
 
-    private static Map<String, Transport> transports = new HashMap<String, Transport>();
+    private static Map<String, Transport> transports = new HashMap<>();
     private static GatewayPrivateData gatewayPreferences;
 
     private TransportUtils() {
@@ -54,21 +51,19 @@ public class TransportUtils {
     static {
         PrivateDataManager.addPrivateDataProvider(GatewayPrivateData.ELEMENT, GatewayPrivateData.NAMESPACE, new GatewayPrivateData.ConferencePrivateDataProvider());
 
-        final Runnable loadGateways = new Runnable() {
-            public void run() {
-            	PrivateDataManager pdm = SparkManager.getSessionManager().getPersonalDataManager();
-            	gatewayPreferences = null;
-            	//Re: SPARK-1483 comment the loop as it causes Out Of Memory (infinite loop) if preferences not found
-            	//If really necessary to try more times, a Thread Pool may be used: java ScheduledThreadPoolExecutor for example            	
-                //while (gatewayPreferences == null){
-                	try {
-                        gatewayPreferences = (GatewayPrivateData)pdm.getPrivateData(GatewayPrivateData.ELEMENT, GatewayPrivateData.NAMESPACE);
-                    }
-                    catch (XMPPException | SmackException e) {
-                        Log.error("Unable to load private data for Gateways", e);
-                    }
-                //}
-            }
+        final Runnable loadGateways = () -> {
+            PrivateDataManager pdm = SparkManager.getSessionManager().getPersonalDataManager();
+            gatewayPreferences = null;
+            //Re: SPARK-1483 comment the loop as it causes Out Of Memory (infinite loop) if preferences not found
+            //If really necessary to try more times, a Thread Pool may be used: java ScheduledThreadPoolExecutor for example
+            //while (gatewayPreferences == null){
+                try {
+                    gatewayPreferences = (GatewayPrivateData)pdm.getPrivateData(GatewayPrivateData.ELEMENT, GatewayPrivateData.NAMESPACE);
+                }
+                catch (XMPPException | SmackException e) {
+                    Log.error("Unable to load private data for Gateways", e);
+                }
+            //}
         };
 
         TaskEngine.getInstance().submit(loadGateways);
@@ -159,7 +154,7 @@ public class TransportUtils {
      */
     public static void registerUser(XMPPConnection con, String gatewayDomain, String username, String password, String nickname, StanzaListener callback) throws SmackException.NotConnectedException
     {
-        Map<String, String> attributes = new HashMap<String, String>();
+        Map<String, String> attributes = new HashMap<>();
         if (username != null) {
             attributes.put("username", username);
         }
@@ -184,23 +179,18 @@ public class TransportUtils {
      */
     public static void unregister(XMPPConnection con, String gatewayDomain) throws SmackException.NotConnectedException
     {
-        Map<String,String> map = new HashMap<String,String>();
+        Map<String,String> map = new HashMap<>();
         map.put("remove", "");
         Registration registration = new Registration( map );
         registration.setType(IQ.Type.set);
         registration.setTo(gatewayDomain);
 
-        con.sendStanzaWithResponseCallback( registration, new IQReplyFilter( registration, con ), new StanzaListener()
-        {
-            @Override
-            public void processPacket( Stanza stanza ) throws SmackException.NotConnectedException
-            {
-                IQ response = (IQ) stanza;
-                if (response.getType() == IQ.Type.error ) {
-                    Log.warning( "Unable to unregister from gateway: " + stanza );
-                }
+        con.sendStanzaWithResponseCallback( registration, new IQReplyFilter( registration, con ), stanza -> {
+            IQ response = (IQ) stanza;
+            if (response.getType() == IQ.Type.error ) {
+                Log.warning( "Unable to unregister from gateway: " + stanza );
             }
-        });
+        } );
     }
 
 
@@ -215,10 +205,9 @@ public class TransportUtils {
         }
 
         public String toXML() {
-            StringBuilder builder = new StringBuilder();
-            builder.append("<").append(getElementName()).append(" xmlns=\"").append(getNamespace()).append(
-                "\"/>");
-            return builder.toString();
+            String builder = "<" + getElementName() + " xmlns=\"" + getNamespace() +
+                    "\"/>";
+            return builder;
         }
     }
 

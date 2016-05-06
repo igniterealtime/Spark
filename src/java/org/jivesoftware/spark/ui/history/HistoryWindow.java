@@ -9,7 +9,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Point;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileInputStream;
@@ -27,7 +26,6 @@ import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.JTree;
-import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
@@ -72,7 +70,6 @@ public class HistoryWindow extends JFrame {
 	private JScrollPane historyTreeView;
 	private String sizeText;
 	private XMLHistoryFile historyFile;
-	private HistoryTreeNode historyTreeTopNode;
 	private TreeModel historyOriginalModel;
 
 	public HistoryWindow(InputStream is, String roomName) {
@@ -112,8 +109,8 @@ public class HistoryWindow extends JFrame {
 		btnFind = createJButton(BTN_FIND);
 		btnFind.setFont(TEXT_FONT);
 
-		historyTreeTopNode = buildHistoryTree(historyFile, roomName);
-		historyTree = createJTree(historyTreeTopNode);
+		HistoryTreeNode historyTreeTopNode = buildHistoryTree( historyFile, roomName );
+		historyTree = createJTree( historyTreeTopNode );
 		historyOriginalModel = historyTree.getModel();
 		historyTree.setFont(TEXT_FONT);
 		historyTreeView = new JScrollPane(historyTree);
@@ -249,8 +246,8 @@ public class HistoryWindow extends JFrame {
 			String roomName) {
 		HistoryTreeNode top = new HistoryTreeNode(roomName);
 
-		HistoryTreeNode day = null;
-		HistoryTreeNode item = null;
+		HistoryTreeNode day;
+		HistoryTreeNode item;
 
 		for (HistoryEntry entry : file.getHistoryEntries()) {
 			day = new HistoryTreeNode(entry.getName());
@@ -269,64 +266,52 @@ public class HistoryWindow extends JFrame {
 	}
 
 	private ActionListener onCloseBtnClick() {
-		return new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				hideWindow();
-			}
-		};
+		return e -> hideWindow();
 	}
 
 	private ActionListener onFindBtnClick() {
-		return new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
+		return e -> {
 
-				String searchText = findTextField.getText().toString().trim();
-				if (EMPTY.equals(searchText)) {
-					historyTree.setModel(historyOriginalModel);
-					selectVeryFirstLeaf();
-					return;
-				}
+            String searchText = findTextField.getText().toString().trim();
+            if (EMPTY.equals(searchText)) {
+                historyTree.setModel(historyOriginalModel);
+                selectVeryFirstLeaf();
+                return;
+            }
 
-				List<HistoryEntry> results = historyFile.search(findTextField
-						.getText().toString());
+            List<HistoryEntry> results = historyFile.search(findTextField
+                    .getText().toString());
 
-				HistoryTreeNode top = new HistoryTreeNode(searchText);
+            HistoryTreeNode top = new HistoryTreeNode(searchText);
 
-				for (HistoryEntry entry : results) {
-					top.add(new HistoryTreeNode(entry, entry.getName()));
-				}
+            for (HistoryEntry entry : results) {
+                top.add(new HistoryTreeNode(entry, entry.getName()));
+            }
 
-				historyTree.setModel(new DefaultTreeModel(top));
-				selectVeryFirstLeaf();
-			}
-		};
+            historyTree.setModel(new DefaultTreeModel(top));
+            selectVeryFirstLeaf();
+        };
 	}
 
 	private TreeSelectionListener onTreeSelected() {
-		return new TreeSelectionListener() {
+		return e -> {
 
-			@Override
-			public void valueChanged(TreeSelectionEvent e) {
+            TreePath tp = e.getNewLeadSelectionPath();
+            if (tp == null)
+                return;
 
-				TreePath tp = e.getNewLeadSelectionPath();
-				if (tp == null)
-					return;
+            Object node = tp.getLastPathComponent();
+            if (!(node instanceof HistoryTreeNode))
+                return;
 
-				Object node = tp.getLastPathComponent();
-				if (!(node instanceof HistoryTreeNode))
-					return;
+            HistoryTreeNode entry = (HistoryTreeNode) node;
+            HistoryEntry historyEntry = entry.getHistoryEntry();
 
-				HistoryTreeNode entry = (HistoryTreeNode) node;
-				HistoryEntry historyEntry = entry.getHistoryEntry();
+            String historyText = (historyEntry == null || historyEntry
+                    .isEmpty()) ? EMPTY : historyEntry.getHistory();
 
-				String historyText = (historyEntry == null || historyEntry
-						.isEmpty()) ? EMPTY : historyEntry.getHistory();
-
-				historyContentText.setText(historyText);
-			}
-		};
+            historyContentText.setText(historyText);
+        };
 	}
 
 	private void selectVeryFirstLeaf() {

@@ -47,7 +47,7 @@ public class AcrylTabbedPaneUI extends BaseTabbedPaneUI {
         if ((tabIndex >= 0) && (tabIndex < tabPane.getTabCount())) {
             boolean isEnabled = tabPane.isEnabledAt(tabIndex);
             Color backColor = tabPane.getBackgroundAt(tabIndex);
-            Color colorArr[] = AbstractLookAndFeel.getTheme().getTabColors();
+            Color colorArr[];
             if ((backColor instanceof UIResource)) {
                 if (isSelected) {
                     colorArr = AbstractLookAndFeel.getTheme().getDefaultColors();

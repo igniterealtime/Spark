@@ -69,7 +69,7 @@ public class IncomingCall extends JPanel {
     }
 
     public void setCallerNumber(String number) {
-        final StringBuffer buf = new StringBuffer();
+        final StringBuilder buf = new StringBuilder();
         if (number == null) {
             return;
         }

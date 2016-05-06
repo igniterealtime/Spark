@@ -42,7 +42,7 @@ public class BernsteinMenuBarUI extends BasicMenuBarUI {
     public void installUI(JComponent c) {
         super.installUI(c);
         if ((c != null) && (c instanceof JMenuBar)) {
-            ((JMenuBar) c).setBorder(BernsteinBorders.getMenuBarBorder());
+            c.setBorder(BernsteinBorders.getMenuBarBorder());
             ((JMenuBar) c).setBorderPainted(true);
         }
     }

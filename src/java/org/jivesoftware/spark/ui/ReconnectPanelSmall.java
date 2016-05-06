@@ -20,8 +20,6 @@
 package org.jivesoftware.spark.ui;
 
 import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.TimerTask;
@@ -103,11 +101,7 @@ public class ReconnectPanelSmall extends ContactGroup implements
 			    .getImageIcon(SparkRes.SMALL_CHECK));
 		    popupmenu.add(reconnect);
 
-		    reconnect.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-			    reconnect();
-			}
-		    });
+		    reconnect.addActionListener( e1 -> reconnect() );
 
 		    popupmenu.show(thiscomp, x, y);
 		}

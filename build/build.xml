@@ -171,14 +171,13 @@
 		<condition property="java.not.ok" value="true">
 			<not>
 				<or>
-					<contains string="${ant.java.version}" substring="1.7"/>
-                    <contains string="${ant.java.version}" substring="1.8"/>
-                    <contains string="${ant.java.version}" substring="1.9"/>
+                    <contains string="${java.version}" substring="1.8"/>
+                    <contains string="${java.version}" substring="1.9"/>
 				</or>
 			</not>
 		</condition>
-		<fail if="ant.not.ok" message="Must use Ant 1.7.1 or higher to build Spark"/>
-		<fail if="java.not.ok" message="Must use JDK 1.7.x or higher to build Spark"/>
+		<fail if="ant.not.ok" message="Must use Ant 1.7.1 or higher to build Spark."/>
+		<fail if="java.not.ok" message="Must use JDK 1.8.x or higher to build Spark. Found: ${java.version}"/>
 
 		<!-- Platform-specific initializations -->
 		<condition property="windows">
@@ -278,8 +277,8 @@
 		<!--Compiles the java code from ${src} directory into ${classes} directory-->
 		<javac destdir="${classes}"
                debug="true"
-               source="1.7"
-               target="1.7"
+               source="1.8"
+               target="1.8"
                includeantruntime="false"
             >
 			<compilerarg value="-Xlint:deprecation" />
@@ -521,8 +520,8 @@
 		<mkdir dir="${test.classes}" />
 		<javac destdir="${test.classes}"
     	               debug="true"
-    	               source="1.7"
-    	               target="1.7"
+    	               source="1.8"
+    	               target="1.8"
     	       	>
 			<compilerarg value="-Xlint:deprecation" />
 			<classpath>

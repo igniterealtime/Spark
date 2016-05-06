@@ -20,7 +20,6 @@
 
 package org.jivesoftware;
 
-import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
 
 /**

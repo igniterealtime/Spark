@@ -43,7 +43,7 @@ public class AluminiumMenuBarUI extends BaseMenuBarUI {
     public void installUI(JComponent c) {
         super.installUI(c);
         if ((c != null) && (c instanceof JMenuBar)) {
-            ((JMenuBar) c).setBorder(AluminiumBorders.getMenuBarBorder());
+            c.setBorder(AluminiumBorders.getMenuBarBorder());
         }
     }
 

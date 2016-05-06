@@ -157,8 +157,8 @@ public class AcrylLookAndFeel extends AbstractLookAndFeel {
         redProps.setProperty("toolbarColorLight", "248 248 248");
         redProps.setProperty("toolbarColorDark", "236 236 236");
 
-        String key = null;
-        String value = null;
+        String key;
+        String value;
         Iterator iter = smallFontProps.keySet().iterator();
         while (iter.hasNext()) {
             key = (String) iter.next();

@@ -34,11 +34,8 @@ import javax.swing.JPopupMenu;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.smack.StanzaListener;
 import org.jivesoftware.smack.filter.StanzaTypeFilter;
-import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.packet.Presence;
-import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.ContextMenuListener;
@@ -59,7 +56,7 @@ import org.jxmpp.util.XmppStringUtils;
  */
 public class PresenceChangePlugin implements Plugin {
 
-    private final Set<String> sparkContacts = new HashSet<String>();
+    private final Set<String> sparkContacts = new HashSet<>();
     private LocalPreferences localPref = SettingsManager.getLocalPreferences(); 
 
     public void initialize() {
@@ -126,80 +123,76 @@ public class PresenceChangePlugin implements Plugin {
         });
 
         // Check presence changes
-        SparkManager.getConnection().addAsyncStanzaListener(new StanzaListener() {
-	    public void processPacket(final Stanza stanza) {
-		try {
-		    EventQueue.invokeAndWait(new Runnable() {
-			public void run() {
-			    Presence presence = (Presence) stanza;
-			    if (!presence.isAvailable() || presence.isAway()) {
-				return;
-			    }
-			    String from = presence.getFrom();
+        SparkManager.getConnection().addAsyncStanzaListener( stanza -> {
+        try {
+            EventQueue.invokeAndWait( () -> {
+Presence presence = (Presence) stanza;
+if (!presence.isAvailable() || presence.isAway()) {
+return;
+}
+String from = presence.getFrom();
 
-			    ArrayList<String> removelater = new ArrayList<String>();
-			    
-			    for (final String jid : sparkContacts) {
-				if (jid.equals(XmppStringUtils
-					.parseBareJid(from))) {
-				    removelater.add(jid);
-				    // sparkContacts.remove(jid);
+ArrayList<String> removelater = new ArrayList<>();
 
-				    String nickname = SparkManager
-					    .getUserManager()
-					    .getUserNicknameFromJID(jid);
-				    String time = SparkManager.DATE_SECOND_FORMATTER
-					    .format(new Date());
-				    String infoText = Res
-					    .getString(
-						    "message.user.now.available.to.chat",
-						    nickname, time);
+for (final String jid : sparkContacts) {
+if (jid.equals(XmppStringUtils
+.parseBareJid(from))) {
+removelater.add(jid);
+// sparkContacts.remove(jid);
 
-				    if (localPref.getShowToasterPopup()) {
-					SparkToaster toaster = new SparkToaster();
-					toaster.setDisplayTime(5000);
-					toaster.setBorder(BorderFactory
-						.createBevelBorder(0));
+String nickname = SparkManager
+.getUserManager()
+.getUserNicknameFromJID(jid);
+String time = SparkManager.DATE_SECOND_FORMATTER
+.format(new Date());
+String infoText = Res
+.getString(
+"message.user.now.available.to.chat",
+nickname, time);
 
-					toaster.setToasterHeight(150);
-					toaster.setToasterWidth(200);
+if (localPref.getShowToasterPopup()) {
+SparkToaster toaster = new SparkToaster();
+toaster.setDisplayTime(5000);
+toaster.setBorder(BorderFactory
+.createBevelBorder(0));
 
-					toaster.setTitle(nickname);
-					toaster.showToaster(null, infoText);
+toaster.setToasterHeight(150);
+toaster.setToasterWidth(200);
 
-					toaster.setCustomAction(new AbstractAction() {
-					    private static final long serialVersionUID = 4827542713848133369L;
+toaster.setTitle(nickname);
+toaster.showToaster(null, infoText);
 
-					    @Override
-					    public void actionPerformed(
-						    ActionEvent e) {
-						SparkManager.getChatManager()
-							.getChatRoom(jid);
-					    }
-					});
-				    } 
-				   
-				    ChatRoom room = SparkManager.getChatManager().getChatRoom(jid);
-				    
-				    if (localPref.getWindowTakesFocus())
-				    {
-					SparkManager.getChatManager().activateChat(jid, nickname);
-				    }
-				   
-				    room.getTranscriptWindow().insertNotificationMessage(infoText, ChatManager.NOTIFICATION_COLOR);
-				    
-				}
-			    }
-			    for(String s : removelater){
-				sparkContacts.remove(s);
-			    }
-			}
-		    });
-		} catch (Exception ex) {
-		    ex.printStackTrace();
-		}
-            }
-        }, new StanzaTypeFilter(Presence.class));
+toaster.setCustomAction(new AbstractAction() {
+private static final long serialVersionUID = 4827542713848133369L;
+
+@Override
+public void actionPerformed(
+ActionEvent e) {
+SparkManager.getChatManager()
+.getChatRoom(jid);
+}
+});
+}
+
+ChatRoom room = SparkManager.getChatManager().getChatRoom(jid);
+
+if (localPref.getWindowTakesFocus())
+{
+SparkManager.getChatManager().activateChat(jid, nickname);
+}
+
+room.getTranscriptWindow().insertNotificationMessage(infoText, ChatManager.NOTIFICATION_COLOR);
+
+}
+}
+for(String s : removelater){
+sparkContacts.remove(s);
+}
+} );
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+}, new StanzaTypeFilter(Presence.class));
     }
 
     public void shutdown() {

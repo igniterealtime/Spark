@@ -21,7 +21,6 @@ package org.jivesoftware.sparkimpl.plugin.manager;
 
 import org.jivesoftware.smack.packet.ExtensionElement;
 import org.jivesoftware.smack.provider.ExtensionElementProvider;
-import org.jivesoftware.smackx.attention.packet.AttentionExtension;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -32,7 +31,7 @@ import java.util.List;
 
 public class Features implements ExtensionElement {
 
-    private List<String> availableFeatures = new ArrayList<String>();
+    private List<String> availableFeatures = new ArrayList<>();
 
 
     public List<String> getAvailableFeatures() {
@@ -63,9 +62,7 @@ public class Features implements ExtensionElement {
     }
 
     public String toXML() {
-        StringBuffer buf = new StringBuffer();
-        buf.append("<event xmlns=\"" + NAMESPACE + "\"").append("</event>");
-        return buf.toString();
+        return ( "<event xmlns=\"" + NAMESPACE + "\"" ) + "</event>";
     }
 
     public static class Provider extends ExtensionElementProvider<Features>

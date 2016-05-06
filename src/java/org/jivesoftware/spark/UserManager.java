@@ -20,9 +20,7 @@
 package org.jivesoftware.spark;
 
 import org.jivesoftware.resource.Res;
-import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.packet.Presence;
-import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.muc.MUCAffiliation;
 import org.jivesoftware.smackx.muc.MUCRole;
 import org.jivesoftware.smackx.muc.Occupant;
@@ -63,7 +61,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TimerTask;
@@ -74,7 +71,7 @@ import java.util.TimerTask;
  */
 public class UserManager {
 
-    private Map<JFrame,Component> parents = new HashMap<JFrame,Component>();
+    private Map<JFrame,Component> parents = new HashMap<>();
 
     public UserManager() {
     }
@@ -136,7 +133,7 @@ public class UserManager {
      * @return a Collection of jids found in the room.
      */
     public Collection<String> getUserJidsInRoom(String room, boolean fullJID) {
-        return new ArrayList<String>();
+        return new ArrayList<>();
     }
 
     /**
@@ -279,7 +276,7 @@ public class UserManager {
      * @see <code>ChatUser</code>
      */
     public Collection<String> getAllParticipantsInRoom(ChatRoom chatRoom) {
-        return new ArrayList<String>();
+        return new ArrayList<>();
     }
 
 
@@ -370,8 +367,8 @@ public class UserManager {
         final Component glassPane = parents.get(parent);
         parent.setGlassPane(glassPane);
 
-        final Map<String, ContactItem> contactMap = new HashMap<String, ContactItem>();
-        final List<ContactItem> contacts = new ArrayList<ContactItem>();
+        final Map<String, ContactItem> contactMap = new HashMap<>();
+        final List<ContactItem> contacts = new ArrayList<>();
 
         final ContactList contactList = SparkManager.getWorkspace().getContactList();
 
@@ -388,7 +385,7 @@ public class UserManager {
         // Sort
         Collections.sort(contacts, itemComparator);
 
-        final JContactItemField contactField = new JContactItemField(new ArrayList<ContactItem>(contacts));
+        final JContactItemField contactField = new JContactItemField( new ArrayList<>( contacts ));
 
 
         JPanel layoutPanel = new JPanel();
@@ -496,11 +493,7 @@ public class UserManager {
     /**
      * Sorts ContactItems.
      */
-    final Comparator<ContactItem> itemComparator = new Comparator<ContactItem>() {
-        public int compare(ContactItem item1, ContactItem item2) {
-            return item1.getDisplayName().toLowerCase().compareTo(item2.getDisplayName().toLowerCase());
-        }
-    };
+    final Comparator<ContactItem> itemComparator = ( item1, item2 ) -> item1.getDisplayName().toLowerCase().compareTo(item2.getDisplayName().toLowerCase());
 
 }
 

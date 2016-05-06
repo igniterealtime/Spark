@@ -24,8 +24,6 @@ import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.HashMap;
@@ -43,7 +41,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import org.jivesoftware.spark.component.VerticalFlowLayout;
 import org.jivesoftware.spark.roar.RoarProperties;
@@ -76,14 +73,12 @@ public class RoarPreferencePanel extends JPanel {
 
     private HashMap<String, Object> _components;
 
-    private String[] _typelistdata;
-
     private Insets INSETS = new Insets(5, 5, 5, 5);
     
     public RoarPreferencePanel() {
 
-        _components = new HashMap<String, Object>();
-        _colormap = new HashMap<ColorTypes, Color>();
+        _components = new HashMap<>();
+        _colormap = new HashMap<>();
         for (ColorTypes e : ColorTypes.values()) {
             _colormap.put(e, Color.BLACK);
         }
@@ -98,11 +93,7 @@ public class RoarPreferencePanel extends JPanel {
         _enabledCheckbox = new JCheckBox(RoarResources.getString("roar.enabled"));
 
         _singleColorpicker = new ColorPick(false);
-        _singleColorpicker.addChangeListener(new ChangeListener() {
-            public void stateChanged(ChangeEvent e) {
-                stateChangedSingleColorPicker(e);
-            }
-        });
+        _singleColorpicker.addChangeListener( e -> stateChangedSingleColorPicker(e) );
 
         DefaultListModel<ColorTypes> listModel = new DefaultListModel<>();
         listModel.addElement(ColorTypes.BACKGROUNDCOLOR);
@@ -111,17 +102,13 @@ public class RoarPreferencePanel extends JPanel {
         _singleColorlist = new JList<>(listModel);
 
         List<RoarDisplayType> roarDisplayTypes = RoarProperties.getInstance().getDisplayTypes();
-        _typelistdata = new String[roarDisplayTypes.size()];
+        String[] _typelistdata = new String[ roarDisplayTypes.size() ];
         for (int i = 0; i < roarDisplayTypes.size(); i++) {
             _typelistdata[i] = roarDisplayTypes.get(i).getLocalizedName();
         }
             
-        _typelist = new JComboBox<String>(_typelistdata);
-        _typelist.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                updateWarningLabel(getDisplayTypeClass().getWarningMessage());
-            }
-        });
+        _typelist = new JComboBox<>( _typelistdata );
+        _typelist.addActionListener( e -> updateWarningLabel(getDisplayTypeClass().getWarningMessage()) );
 
         add(makeGeneralSettingsPanel());
         _singleColorlist.addMouseListener(new MouseAdapter() {
@@ -209,11 +196,7 @@ public class RoarPreferencePanel extends JPanel {
         JCheckBox disableGroup = new JCheckBox(RoarResources.getString("roar.group.disable"));
         JTextField durationGroup = new JTextField();
 
-        enableDifferentGroup.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                toggleDifferentSettingsForGroup(enableDifferentGroup.isSelected());
-            }
-        });
+        enableDifferentGroup.addActionListener( e -> toggleDifferentSettingsForGroup(enableDifferentGroup.isSelected()) );
 
         int rowcount = 0;
         groupPanel.add(enableDifferentGroup,
@@ -242,11 +225,7 @@ public class RoarPreferencePanel extends JPanel {
         panel.setBorder(BorderFactory.createTitledBorder(RoarResources.getString("roar.keyword")));
 
         final JCheckBox differentKeyword = new JCheckBox(RoarResources.getString("roar.keyword.different"));
-        differentKeyword.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                toggleDifferentSettingsForKeyword(differentKeyword.isSelected());
-            }
-        });
+        differentKeyword.addActionListener( e -> toggleDifferentSettingsForKeyword(differentKeyword.isSelected()) );
 
         JTextField durationKeyword = new JTextField();
         JTextField keywords = new JTextField();
@@ -384,7 +363,7 @@ public class RoarPreferencePanel extends JPanel {
 
     private void colorListMouseClicked(MouseEvent e) {
         if (e.getSource() == _singleColorlist) {
-            ColorTypes key = (ColorTypes) _singleColorlist.getSelectedValue();
+            ColorTypes key = _singleColorlist.getSelectedValue();
             _singleColorpicker.setColor(_colormap.get(key));
         }
     }
@@ -465,7 +444,7 @@ public class RoarPreferencePanel extends JPanel {
 
     private void stateChangedSingleColorPicker(ChangeEvent e) {
         if (e.getSource() instanceof JSlider) {
-            _colormap.put((ColorTypes) _singleColorlist.getSelectedValue(), _singleColorpicker.getColor());
+            _colormap.put( _singleColorlist.getSelectedValue(), _singleColorpicker.getColor());
         }
     }
 

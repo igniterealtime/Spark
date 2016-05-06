@@ -26,8 +26,6 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -68,7 +66,7 @@ import org.jivesoftware.spark.util.log.Log;
 
 public class DataFormDialog extends JPanel {
     private static final long serialVersionUID = -1536217028590811636L;
-    private final Map<String,JComponent> valueMap = new HashMap<String,JComponent>();
+    private final Map<String,JComponent> valueMap = new HashMap<>();
     private int row = 0;
     JDialog dialog = null;
 
@@ -112,7 +110,7 @@ public class DataFormDialog extends JPanel {
                 }
                 else if (type.equals(FormField.Type.text_multi) ||
                         type.equals(FormField.Type.jid_multi)) {
-                    StringBuffer buf = new StringBuffer();
+                    StringBuilder buf = new StringBuilder();
                     final Iterator<String> iter = valueList.iterator();
                     while (iter.hasNext()) {
                         buf.append( iter.next() );
@@ -133,7 +131,7 @@ public class DataFormDialog extends JPanel {
                         box.addItem(value);
                     }
                     if (valueList.size() > 0) {
-                        String defaultValue = (String)valueList.get(0);
+                        String defaultValue = valueList.get(0);
                         box.setSelectedItem(defaultValue);
                     }
 
@@ -158,13 +156,11 @@ public class DataFormDialog extends JPanel {
 
         JButton button = new JButton();
         ResourceUtils.resButton(button, Res.getString("button.update"));
-        button.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                dialog.dispose();
-                // Now submit all information
-                updateRoomConfiguration(submitForm, chat);
-            }
-        });
+        button.addActionListener( e -> {
+            dialog.dispose();
+            // Now submit all information
+            updateRoomConfiguration(submitForm, chat);
+        } );
 
         final JScrollPane pane = new JScrollPane(this);
         pane.getVerticalScrollBar().setBlockIncrement(200);
@@ -180,11 +176,7 @@ public class DataFormDialog extends JPanel {
 
         JButton cancelButton = new JButton();
         ResourceUtils.resButton(cancelButton, Res.getString("button.cancel"));
-        cancelButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent actionEvent) {
-                dialog.dispose();
-            }
-        });
+        cancelButton.addActionListener( actionEvent -> dialog.dispose() );
 
         bottomPanel.add(cancelButton);
 
@@ -206,7 +198,7 @@ public class DataFormDialog extends JPanel {
                 boolean isSelected = ((JCheckBox) o).isSelected();
                 submitForm.setAnswer(answer, isSelected);
             } else if (o instanceof JTextArea) {
-                List<String> list = new ArrayList<String>();
+                List<String> list = new ArrayList<>();
                 String value = ((JTextArea) o).getText();
                 StringTokenizer tokenizer = new StringTokenizer(value, ", ", false);
                 while (tokenizer.hasMoreTokens()) {
@@ -222,7 +214,7 @@ public class DataFormDialog extends JPanel {
                 }
             } else if (o instanceof JComboBox) {
                 String value = (String) ((JComboBox) o).getSelectedItem();
-                List<String> list = new ArrayList<String>();
+                List<String> list = new ArrayList<>();
                 list.add(value);
                 if (list.size() > 0) {
                     submitForm.setAnswer(answer, list);

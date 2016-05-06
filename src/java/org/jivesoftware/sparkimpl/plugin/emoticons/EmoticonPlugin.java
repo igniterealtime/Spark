@@ -32,12 +32,10 @@ import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.plugin.Plugin;
 import org.jivesoftware.spark.ui.ChatInputEditor;
 import org.jivesoftware.spark.ui.ChatRoom;
-import org.jivesoftware.spark.ui.ChatRoomClosingListener;
 import org.jivesoftware.spark.ui.ChatRoomListener;
 import org.jivesoftware.spark.ui.themes.ThemePreference;
 import org.jivesoftware.spark.util.UIComponentRegistry;
 import org.jivesoftware.spark.util.log.Log;
-import org.jivesoftware.sparkimpl.plugin.emoticons.EmoticonUI.EmoticonPickListener;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
 /**
@@ -76,7 +74,7 @@ public class EmoticonPlugin implements Plugin, ChatRoomListener {
 		// emoticonManager.getActiveEmoticonSetName();
 
 		emoticonManager = EmoticonManager.getInstance();
-		Collection<String> emoticonPacks = null;
+		Collection<String> emoticonPacks;
 		emoticonPacks = emoticonManager.getEmoticonPacks();
 
 		if (emoticonPacks != null) {
@@ -92,36 +90,30 @@ public class EmoticonPlugin implements Plugin, ChatRoomListener {
 					final JPopupMenu popup = new JPopupMenu();
 					EmoticonUI emoticonUI = new EmoticonUI();
 					emoticonUI
-							.setEmoticonPickListener(new EmoticonPickListener() {
-								public void emoticonPicked(String emoticon) {
-									try {
-										popup.setVisible(false);
-										final ChatInputEditor editor = room.getChatInputEditor();
-										String currentText = editor.getText();
-										if (currentText.length() == 0 || currentText.endsWith(" ")) {
-											room.getChatInputEditor().insertText(emoticon + " ");
-										} else {
-											room.getChatInputEditor()
-													.insertText(" " + emoticon + " ");
-										}
-										room.getChatInputEditor().requestFocus();
-									} catch (BadLocationException e1) {
-										Log.error(e1);
-									}
+							.setEmoticonPickListener( emoticon -> {
+                                try {
+                                    popup.setVisible(false);
+                                    final ChatInputEditor editor = room.getChatInputEditor();
+                                    String currentText = editor.getText();
+                                    if (currentText.length() == 0 || currentText.endsWith(" ")) {
+                                        room.getChatInputEditor().insertText(emoticon + " ");
+                                    } else {
+                                        room.getChatInputEditor()
+                                                .insertText(" " + emoticon + " ");
+                                    }
+                                    room.getChatInputEditor().requestFocus();
+                                } catch (BadLocationException e1) {
+                                    Log.error(e1);
+                                }
 
-								}
-							});
+                            } );
 
 					popup.add(emoticonUI);
 					popup.show(emoticonPicker, e.getX(), e.getY());
 				}
 			});
 
-			room.addClosingListener(new ChatRoomClosingListener() {
-				public void closing() {
-					room.removeEditorComponent(emoticonPicker);
-				}
-			});
+			room.addClosingListener( () -> room.removeEditorComponent(emoticonPicker) );
 		}
 	}
 

@@ -22,7 +22,6 @@ package org.jivesoftware.sparkimpl.plugin.history;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.packet.Message;
-import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.Plugin;
 import org.jivesoftware.spark.ui.ChatRoom;
@@ -76,7 +75,7 @@ import javax.swing.SwingUtilities;
  */
 public class ConversationHistoryPlugin implements Plugin {
 
-    private List<String> historyList = new ArrayList<String>();
+    private List<String> historyList = new ArrayList<>();
     private File transcriptDir;
     private File conFile;
 
@@ -84,7 +83,7 @@ public class ConversationHistoryPlugin implements Plugin {
     private JList contacts;
     private Window window;
 
-    private Map<JLabel, String> jidMap = new HashMap<JLabel, String>();
+    private Map<JLabel, String> jidMap = new HashMap<>();
 
     public void initialize() {
         transcriptDir = new File(SparkManager.getUserDirectory(), "transcripts");
@@ -113,8 +112,8 @@ public class ConversationHistoryPlugin implements Plugin {
 
 		    contacts.setSelectedIndex(contacts.locationToIndex(e
 			    .getPoint()));
-		    String user = jidMap.get((JLabel) contacts
-			    .getSelectedValue());
+		    String user = jidMap.get( contacts
+			    .getSelectedValue() );
 		    ContactItem contact = SparkManager.getContactList()
 			    .getContactItemByJID(user);
 		    SparkManager.getContactList().setSelectedUser(contact.getJID());

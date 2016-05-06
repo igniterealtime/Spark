@@ -27,7 +27,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.BufferedWriter;
@@ -58,8 +57,6 @@ import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.SmackException;
-import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.filetransfer.FileTransfer;
 import org.jivesoftware.smackx.filetransfer.FileTransferRequest;
 import org.jivesoftware.smackx.filetransfer.IncomingFileTransfer;
@@ -658,15 +655,13 @@ public class ReceiveFileTransfer extends JPanel {
         cancelButton.setFont(new Font("Dialog", Font.BOLD, 11));
         cancelButton.setIcon(SparkRes.getImageIcon(SparkRes.SMALL_DELETE));
 
-        cancelButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                cancelTransfer();
-                acceptButton.setVisible(false);
-                declineButton.setVisible(false);
-                cancelButton.setVisible(false);
-                
-            }
-        });
+        cancelButton.addActionListener( e -> {
+            cancelTransfer();
+            acceptButton.setVisible(false);
+            declineButton.setVisible(false);
+            cancelButton.setVisible(false);
+
+        } );
 
         cancelButton.addMouseListener(new MouseAdapter() {
             public void mouseEntered(MouseEvent e) {

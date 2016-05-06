@@ -135,21 +135,15 @@ public abstract class SwingWorker {
             }
         };
 
-        Runnable doConstruct = new Runnable() {
-            public void run() {
-                try {
-							setValue(construct());
-                }
-                finally {
-                    threadVar.clear();
-                }
-                SwingUtilities.invokeLater(new Runnable() {
-                    public void run() {
-                        finished();
-                    }
-                });
-
+        Runnable doConstruct = () -> {
+            try {
+                        setValue(construct());
             }
+            finally {
+                threadVar.clear();
+            }
+            SwingUtilities.invokeLater( () -> finished() );
+
         };
 
         Thread t = new Thread(doConstruct);

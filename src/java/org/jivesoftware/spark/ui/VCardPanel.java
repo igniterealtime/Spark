@@ -27,8 +27,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
@@ -146,7 +144,7 @@ public class VCardPanel extends JPanel {
             JLabel label = new JLabel();
             _avatarHoverWindow.add(label);
             byte[] bytes = vcard.getAvatar();
-            Image newImage = null;
+            Image newImage;
             if (bytes != null && bytes.length > 0) {
                 try {
                     icon = new ImageIcon(bytes);
@@ -186,11 +184,7 @@ public class VCardPanel extends JPanel {
                 }
             }
 
-            final Timer timer = new Timer(500, new ActionListener() {
-                public void actionPerformed(ActionEvent actionEvent) {
-                    showAvatarBig(true, vcard);
-                }
-            });
+            final Timer timer = new Timer(500, actionEvent -> showAvatarBig(true, vcard) );
 
             @Override
             public void mouseEntered(MouseEvent e) {

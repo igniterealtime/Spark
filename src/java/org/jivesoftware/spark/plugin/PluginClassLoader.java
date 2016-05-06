@@ -30,7 +30,6 @@ import org.xmlpull.mxp1.MXParser;
 import org.xmlpull.v1.XmlPullParser;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -69,19 +68,17 @@ public class PluginClassLoader extends URLClassLoader {
     public void addPlugin(File pluginDir) throws MalformedURLException {
         File libDir = new File(pluginDir, "lib");
 
-        File[] jars = libDir.listFiles(new FilenameFilter() {
-            public boolean accept(File dir, String name) {
-                boolean accept = false;
-                String smallName = name.toLowerCase();
-                if (smallName.endsWith(".jar")) {
-                    accept = true;
-                }
-                else if (smallName.endsWith(".zip")) {
-                    accept = true;
-                }
-                return accept;
+        File[] jars = libDir.listFiles( ( dir, name ) -> {
+            boolean accept = false;
+            String smallName = name.toLowerCase();
+            if (smallName.endsWith(".jar")) {
+                accept = true;
             }
-        });
+            else if (smallName.endsWith(".zip")) {
+                accept = true;
+            }
+            return accept;
+        } );
 
         // Do nothing if no jar or zip files were found
         if (jars == null) {

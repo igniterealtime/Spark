@@ -48,8 +48,6 @@ import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
@@ -83,24 +81,22 @@ public class ConferenceServiceBrowser {
         mainPanel.add(scrollPane, new GridBagConstraints(0, 3, 3, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
 
         // Add Listener to find button
-        findButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                String address = serverAddress.getText();
-                if (ModelUtil.hasLength(address)) {
-                    try {
-                        Collection<String> col = getConferenceServices(address);
-                        for (String aCol : col) {
-                            String service = aCol;
-                            model.addElement(service);
-                        }
+        findButton.addActionListener( e -> {
+            String address = serverAddress.getText();
+            if (ModelUtil.hasLength(address)) {
+                try {
+                    Collection<String> col = getConferenceServices(address);
+                    for (String aCol : col) {
+                        String service = aCol;
+                        model.addElement(service);
                     }
-                    catch (Exception e1) {
-                        Log.error(e1);
-                    }
-
                 }
+                catch (Exception e1) {
+                    Log.error(e1);
+                }
+
             }
-        });
+        } );
 
         // The user should only be able to close this dialog.
         Object[] options = {Res.getString("ok"), Res.getString("close")};
@@ -148,7 +144,7 @@ public class ConferenceServiceBrowser {
     }
 
     public Collection<String> getConferenceServices(String server) throws Exception {
-        List<String> answer = new ArrayList<String>();
+        List<String> answer = new ArrayList<>();
         ServiceDiscoveryManager discoManager = ServiceDiscoveryManager.getInstanceFor(SparkManager.getConnection());
         DiscoverItems items = discoManager.discoverItems(server);
         for (DiscoverItems.Item item : items.getItems() ) {

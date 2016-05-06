@@ -24,7 +24,6 @@ import info.growl.GrowlException;
 import javax.swing.SwingUtilities;
 
 import org.jivesoftware.smack.packet.Message;
-import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.ui.ChatFrame;
 import org.jivesoftware.spark.ui.ChatRoom;
@@ -53,18 +52,14 @@ public class GrowlMessageListener implements GlobalMessageListener {
 
     public void messageReceived(final ChatRoom chatRoom, final Message message) {
 
-	SwingUtilities.invokeLater(new Runnable() {
+	SwingUtilities.invokeLater( () -> {
+    final ChatFrame chatFrame = SparkManager.getChatManager().getChatContainer()
+        .getChatFrame();
 
-	    @Override
-	    public void run() {
-		final ChatFrame chatFrame = SparkManager.getChatManager().getChatContainer()
-			.getChatFrame();
-
-		if (!chatFrame.isInFocus()) {
-		    showGrowlNotification(message);
-		}
-	    }
-	});
+    if (!chatFrame.isInFocus()) {
+        showGrowlNotification(message);
+    }
+    } );
 
     }
 

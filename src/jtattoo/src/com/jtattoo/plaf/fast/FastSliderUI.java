@@ -67,8 +67,8 @@ public class FastSliderUI extends BaseSliderUI {
         int overhang = 5;
         int trackLeft = 0;
         int trackTop = 0;
-        int trackRight = 0;
-        int trackBottom = 0;
+        int trackRight;
+        int trackBottom;
 
         // Draw the track
         if (slider.getOrientation() == JSlider.HORIZONTAL) {
@@ -90,11 +90,11 @@ public class FastSliderUI extends BaseSliderUI {
         g.setColor(Color.gray);
         g.drawRect(trackLeft, trackTop, (trackRight - trackLeft) - 1, (trackBottom - trackTop) - 1);
 
-        int middleOfThumb = 0;
-        int fillTop = 0;
-        int fillLeft = 0;
-        int fillBottom = 0;
-        int fillRight = 0;
+        int middleOfThumb;
+        int fillTop;
+        int fillLeft;
+        int fillBottom;
+        int fillRight;
 
         if (slider.getOrientation() == JSlider.HORIZONTAL) {
             middleOfThumb = thumbRect.x + (thumbRect.width / 2);

@@ -175,7 +175,6 @@ public class OutgoingCall extends JPanel implements JingleSessionListener, ChatR
      */
     private void updateOutgoingCallPanel() {
         if (session == null || session.isClosed()) {
-            return;
         }
         else if (session instanceof JingleSession) {
             showAlert(false);
@@ -344,29 +343,17 @@ public class OutgoingCall extends JPanel implements JingleSessionListener, ChatR
         };
         TaskEngine.getInstance().schedule(mediaReceivedTask, WAIT_FOR_MEDIA_DELAY, WAIT_FOR_MEDIA_DELAY);
 
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                updateOutgoingCallPanel();
-            }
-        });
+        SwingUtilities.invokeLater( () -> updateOutgoingCallPanel() );
     }
 
     public void sessionDeclined(String string, JingleSession jingleSession) {
         showCallEndedState("The Session was rejected.");
 
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                updateOutgoingCallPanel();
-            }
-        });
+        SwingUtilities.invokeLater( () -> updateOutgoingCallPanel() );
     }
 
     public void sessionRedirected(String string, JingleSession jingleSession) {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                updateOutgoingCallPanel();
-            }
-        });
+        SwingUtilities.invokeLater( () -> updateOutgoingCallPanel() );
     }
 
     public void sessionClosed(String string, JingleSession jingleSession) {
@@ -384,11 +371,7 @@ public class OutgoingCall extends JPanel implements JingleSessionListener, ChatR
             PhoneManager.setUsingMediaLocator(false);
         }
 
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                updateOutgoingCallPanel();
-            }
-        });
+        SwingUtilities.invokeLater( () -> updateOutgoingCallPanel() );
     }
 
     public void sessionClosedOnError(XMPPException xmppException, JingleSession jingleSession) {
@@ -397,10 +380,6 @@ public class OutgoingCall extends JPanel implements JingleSessionListener, ChatR
             PhoneManager.setUsingMediaLocator(false);
         }                
 
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                updateOutgoingCallPanel();
-            }
-        });
+        SwingUtilities.invokeLater( () -> updateOutgoingCallPanel() );
     }
 }

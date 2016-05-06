@@ -40,7 +40,6 @@ import java.util.StringTokenizer;
 
 import javax.swing.Icon;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.UIManager;
 
 /**

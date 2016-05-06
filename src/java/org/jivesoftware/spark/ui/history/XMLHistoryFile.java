@@ -27,7 +27,6 @@ public class XMLHistoryFile extends AbstractHistoryFile {
 
 	private static final String MESSAGE_TAG = "message";
 	private InputStream roomFileStream;
-	private Document historyXML;
 
 	/**
 	 * @param roomFileStream
@@ -52,13 +51,13 @@ public class XMLHistoryFile extends AbstractHistoryFile {
 
 	@Override
 	protected List<HistoryEntry> createEntries() {
-		historyXML = read();
-		if (historyXML == null)
+		Document historyXML = read();
+		if ( historyXML == null)
 			return Collections.emptyList();
 
 		Element document = historyXML.getDocumentElement();
-		Map<Date, HistoryEntry> months = new HashMap<Date, HistoryEntry>();
-		Map<Date, HistoryEntry> days = new HashMap<Date, HistoryEntry>();
+		Map<Date, HistoryEntry> months = new HashMap<>();
+		Map<Date, HistoryEntry> days = new HashMap<>();
 
 		NodeList nl = document.getElementsByTagName(MESSAGE_TAG);
 		for (int i = 0; i < nl.getLength(); i++) {

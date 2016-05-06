@@ -23,7 +23,6 @@ package org.jivesoftware.sparkimpl.search.users;
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.resource.Res;
-import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.search.ReportedData;
 import org.jivesoftware.smackx.search.ReportedData.Column;
 import org.jivesoftware.smackx.search.ReportedData.Row;
@@ -34,7 +33,6 @@ import org.jivesoftware.spark.ui.ChatContainer;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.RosterDialog;
 import org.jivesoftware.spark.util.ModelUtil;
-import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.profile.VCardManager;
 import org.jxmpp.util.XmppStringUtils;
 
@@ -53,7 +51,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -77,7 +74,7 @@ public class UserSearchResults extends JPanel {
      * @param data the <code>ReportedData</code> returned by the Search Service.
      */
     public void showUsersFound(ReportedData data) {
-        List<String> columnList = new ArrayList<String>();
+        List<String> columnList = new ArrayList<>();
         for ( final Column column : data.getColumns() ) {
             String label = column.getLabel();
             columnList.add(label);
@@ -114,7 +111,7 @@ public class UserSearchResults extends JPanel {
         // Populate with answers
         List<String> modelList;
         for ( final Row row : data.getRows() ) {
-            modelList = new ArrayList<String>();
+            modelList = new ArrayList<>();
             for (int i = 0; i < resultsTable.getColumnCount(); i++) {
                 String tableValue = (String)resultsTable.getTableHeader().getColumnModel().getColumn(i).getHeaderValue();
                 for ( final Column column : data.getColumns() ) {

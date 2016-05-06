@@ -27,6 +27,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.util.Iterator;
+import java.util.Objects;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JComponent;
@@ -48,15 +49,10 @@ import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 public class PreferencesPanel extends JPanel implements ListSelectionListener {
 
     private static final long serialVersionUID = 1520420979038154046L;
-    private final JLabel titleLabel = new JLabel();
     /**
      * flowpanel is the right panel, where the plugin specific UI is displayed
      */
     private final JPanel flowPanel = new JPanel(new BorderLayout());
-    /**
-     * scrollPane is the left panel displaying the preference icons
-     */
-    private JScrollPane scrollPane;
     private DefaultListModel listModel = new DefaultListModel();
     private JList list = new JList(listModel);
     private Preference currentPreference;
@@ -77,7 +73,7 @@ public class PreferencesPanel extends JPanel implements ListSelectionListener {
             for (int i = 0; i < listModel.size(); i++){
                 PreferenceUI p = (PreferenceUI)listModel.get( i );
                 // check if the namespace is the namespace we search for
-                if (p.getPreference().getNamespace() == displayPref.getNamespace()){
+                if ( Objects.equals( p.getPreference().getNamespace(), displayPref.getNamespace() ) ){
                     // if we've got our target, we can select this item and stop the search
                     list.setSelectedIndex( i );
                     break; 
@@ -91,14 +87,18 @@ public class PreferencesPanel extends JPanel implements ListSelectionListener {
     public PreferencesPanel(Iterator<Preference> preferences) {
         this.setLayout(new GridBagLayout());
 
+        JLabel titleLabel = new JLabel();
         titleLabel.setText(Res.getString("title.preferences"));
         titleLabel.setFont(new Font("Dialog", Font.BOLD, 15));
-        scrollPane = new JScrollPane(list);
+        /*
+      scrollPane is the left panel displaying the preference icons
+     */
+        JScrollPane scrollPane = new JScrollPane( list );
         scrollPane.setPreferredSize(new Dimension(125, 0));
         scrollPane.setMinimumSize(new Dimension(125,100));
         list.setFixedCellHeight(50);
 
-        add(scrollPane, new GridBagConstraints(0, 0, 1, 1, 0.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.VERTICAL, new Insets(5, 5, 5, 5), 50, 0));
+        add( scrollPane, new GridBagConstraints(0, 0, 1, 1, 0.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.VERTICAL, new Insets(5, 5, 5, 5), 50, 0));
         add(flowPanel, new GridBagConstraints(1, 0, 1, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
 
 

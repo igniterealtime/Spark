@@ -20,7 +20,6 @@
 
 package org.jivesoftware.sparkimpl.settings;
 
-import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smackx.iqprivate.packet.PrivateData;
 import org.jivesoftware.smackx.iqprivate.provider.PrivateDataProvider;
 import org.xmlpull.v1.XmlPullParser;
@@ -37,7 +36,7 @@ public class SettingsDataProvider implements PrivateDataProvider {
 
     public PrivateData parsePrivateData(XmlPullParser parser) throws XmlPullParserException, IOException
     {
-        Map<String,String> map = new HashMap<String,String>();
+        Map<String,String> map = new HashMap<>();
         parser.getEventType();
         parser.nextTag();
         for (String text = parser.getName(); text.equals("entry"); text = parser.getName()) {

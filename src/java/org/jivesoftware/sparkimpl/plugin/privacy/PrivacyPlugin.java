@@ -19,8 +19,6 @@
  */
 package org.jivesoftware.sparkimpl.plugin.privacy;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.util.TimerTask;
 
@@ -112,48 +110,38 @@ public class PrivacyPlugin implements Plugin {
 
                             if (activeList.isBlockedItem(item.getJID())) {
                                 blockMenu = new JMenuItem(Res.getString("menuitem.unblock.contact"), SparkRes.getImageIcon(SparkRes.UNBLOCK_CONTACT_16x16));
-                                blockMenu.addActionListener(new ActionListener() { // unblock
-                                                                                   // contact
-
-                                            @Override
-                                            public void actionPerformed(ActionEvent ae) {
-                                                if (item != null) {
-                                                    try
-                                                    {
-                                                        activeList.removeItem(((ContactItem) item).getJID());
-                                                        activeList.save();
-                                                    }
-                                                    catch ( SmackException.NotConnectedException e )
-                                                    {
-                                                        Log.warning( "Unable to remove item from block list: " + item, e );
-                                                    }
-                                                }
-                                            }
-                                        });
+                                blockMenu.addActionListener( ae -> {
+                                    if (item != null) {
+                                        try
+                                        {
+                                            activeList.removeItem( item.getJID());
+                                            activeList.save();
+                                        }
+                                        catch ( SmackException.NotConnectedException e )
+                                        {
+                                            Log.warning( "Unable to remove item from block list: " + item, e );
+                                        }
+                                    }
+                                } );
                             } else {
                                 blockMenu = new JMenuItem(Res.getString("menuitem.block.contact"), SparkRes.getImageIcon(SparkRes.BLOCK_CONTACT_16x16));
-                                blockMenu.addActionListener(new ActionListener() { // Block
-                                                                                   // contact
+                                blockMenu.addActionListener( ae -> {
+                                    if (item != null) {
+                                        PrivacyItem pItem = new PrivacyItem(Type.jid, item.getJID(), false, activeList.getNewItemOrder());
+                                        pItem.setFilterMessage(true);
+                                        pItem.setFilterPresenceOut(true);
 
-                                            @Override
-                                            public void actionPerformed(ActionEvent ae) {
-                                                if (item != null) {
-                                                    PrivacyItem pItem = new PrivacyItem(Type.jid, item.getJID(), false, activeList.getNewItemOrder());
-                                                    pItem.setFilterMessage(true);
-                                                    pItem.setFilterPresenceOut(true);
-
-                                                    try
-                                                    {
-                                                        activeList.addItem(pItem);
-                                                        activeList.save();
-                                                    }
-                                                    catch ( SmackException.NotConnectedException e )
-                                                    {
-                                                        Log.warning( "Unable to add item to block list: " + item, e );
-                                                    }
-                                                }
-                                            }
-                                        });
+                                        try
+                                        {
+                                            activeList.addItem(pItem);
+                                            activeList.save();
+                                        }
+                                        catch ( SmackException.NotConnectedException e )
+                                        {
+                                            Log.warning( "Unable to add item to block list: " + item, e );
+                                        }
+                                    }
+                                } );
                             }
 
                             popup.add(blockMenu);

@@ -237,8 +237,8 @@ public class SmartLookAndFeel extends AbstractLookAndFeel {
         grayProps.setProperty("toolbarColorDark", "232 232 232");
         grayProps.setProperty("desktopColor", "240 240 240");
 
-        String key = null;
-        String value = null;
+        String key;
+        String value;
         Iterator iter = smallFontProps.keySet().iterator();
         while (iter.hasNext()) {
             key = (String) iter.next();

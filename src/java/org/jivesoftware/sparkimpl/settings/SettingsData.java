@@ -46,7 +46,7 @@ public class SettingsData implements PrivateData {
     }
 
     public String toXML() {
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         buf.append("<").append(getElementName()).append(" xmlns=\"").append(getNamespace()).append("\">");
         String key;
         for (Iterator<String> iter = settingsMap.keySet().iterator(); iter.hasNext(); buf.append("</").append(key).append("></entry>")) {

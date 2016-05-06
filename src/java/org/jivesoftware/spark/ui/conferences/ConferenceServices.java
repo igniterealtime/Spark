@@ -45,7 +45,6 @@ import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Presence;
-import org.jivesoftware.smack.packet.XMPPError;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.bookmarks.BookmarkManager;
@@ -104,43 +103,35 @@ public class ConferenceServices implements InvitationListener {
               final JMenu actionsMenu = SparkManager.getMainWindow().getMenuByName(Res.getString("menuitem.actions"));
             JMenuItem actionMenuItem = new JMenuItem(Res.getString("message.join.conference.room"), SparkRes.getImageIcon(SparkRes.CONFERENCE_IMAGE_16x16));
             actionsMenu.add(actionMenuItem,1);
-            actionMenuItem.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    ConferenceRoomBrowser rooms = new ConferenceRoomBrowser(bookmarksUI, getDefaultServiceName());
-                    rooms.invoke();
-                }
-            });
+            actionMenuItem.addActionListener( e -> {
+                ConferenceRoomBrowser rooms = new ConferenceRoomBrowser(bookmarksUI, getDefaultServiceName());
+                rooms.invoke();
+            } );
 
             // Add Presence Listener to send directed presence to Group Chat Rooms.
-            PresenceListener presenceListener = new PresenceListener() {
-                public void presenceChanged(final Presence presence) {
-                    SwingUtilities.invokeLater(new Runnable() {
-                        public void run() {
-                            for (ChatRoom room : SparkManager.getChatManager().getChatContainer().getChatRooms()) {
-                                if (room instanceof GroupChatRoom) {
-                                	int priority = presence.getPriority();
-                                	//Sometimes priority is not set in the presence packet received. Make sure priority is in valid range
-                                	priority = (priority < -128 || priority > 128) ? 1 : priority;
-                                	final Presence p = new Presence(presence.getType(), presence.getStatus(), priority, presence.getMode());
+            PresenceListener presenceListener = presence -> SwingUtilities.invokeLater( () -> {
+                for (ChatRoom room : SparkManager.getChatManager().getChatContainer().getChatRooms()) {
+                    if (room instanceof GroupChatRoom) {
+                        int priority = presence.getPriority();
+                        //Sometimes priority is not set in the presence packet received. Make sure priority is in valid range
+                        priority = (priority < -128 || priority > 128) ? 1 : priority;
+                        final Presence p = new Presence(presence.getType(), presence.getStatus(), priority, presence.getMode());
 
-                                    GroupChatRoom groupChatRoom = (GroupChatRoom)room;
-                                    String jid = groupChatRoom.getMultiUserChat().getRoom();
+                        GroupChatRoom groupChatRoom = (GroupChatRoom)room;
+                        String jid = groupChatRoom.getMultiUserChat().getRoom();
 
-                                    p.setTo(jid);
-                                    try
-                                    {
-                                        SparkManager.getConnection().sendStanza(p);
-                                    }
-                                    catch ( SmackException.NotConnectedException e )
-                                    {
-                                        Log.warning( "Unable to send stanza to " + p.getTo(), e );
-                                    }
-                                }
-                            }
+                        p.setTo(jid);
+                        try
+                        {
+                            SparkManager.getConnection().sendStanza(p);
                         }
-                    });
+                        catch ( SmackException.NotConnectedException e )
+                        {
+                            Log.warning( "Unable to send stanza to " + p.getTo(), e );
+                        }
+                    }
                 }
-            };
+            } );
 
             SparkManager.getSessionManager().addPresenceListener(presenceListener);
         }
@@ -303,7 +294,7 @@ public class ConferenceServices implements InvitationListener {
 
     private void startConference(Collection<ContactItem> items) {
         final ContactList contactList = SparkManager.getWorkspace().getContactList();
-        List<String> jids = new ArrayList<String>();
+        List<String> jids = new ArrayList<>();
         for (ContactItem item : items) {
             ContactGroup contactGroup = contactList.getContactGroup(item.getGroupName());
             contactGroup.clearSelection();
@@ -393,7 +384,7 @@ public class ConferenceServices implements InvitationListener {
             final String roomName = userName + "_" + StringUtils.randomString(3);
 
 
-            final List<String> jids = new ArrayList<String>();
+            final List<String> jids = new ArrayList<>();
             jids.add(((ChatRoomImpl)chatRoom).getParticipantJID());
 
             final String serviceName = getDefaultServiceName();
@@ -435,85 +426,82 @@ public class ConferenceServices implements InvitationListener {
     @Override
     public void invitationReceived(final XMPPConnection conn, final MultiUserChat room, final String inviter, final String reason,
 	    final String password, final Message message) {
-	SwingUtilities.invokeLater(new Runnable() {
-	    public void run() {
-		Collection<RoomInvitationListener> listeners = new ArrayList<RoomInvitationListener>(SparkManager
-			.getChatManager().getInvitationListeners());
-		for (RoomInvitationListener listener : listeners) {
-		    boolean handle = listener.handleInvitation(conn, room, inviter, reason, password, message);
-		    if (handle) {
-			return;
-		    }
-		}
+	SwingUtilities.invokeLater( () -> {
+    Collection<RoomInvitationListener> listeners = new ArrayList<>( SparkManager
+            .getChatManager().getInvitationListeners() );
+    for (RoomInvitationListener listener : listeners) {
+        boolean handle = listener.handleInvitation(conn, room, inviter, reason, password, message);
+        if (handle) {
+        return;
+        }
+    }
 
-		// Make sure the user is not already in the
-		// room.
-		try {
-		    SparkManager.getChatManager().getChatContainer().getChatRoom(room.getRoom());
-		    return;
-		} catch (ChatRoomNotFoundException e) {
-		    // Ignore :)
-		}
+    // Make sure the user is not already in the
+    // room.
+    try {
+        SparkManager.getChatManager().getChatContainer().getChatRoom(room.getRoom());
+        return;
+    } catch (ChatRoomNotFoundException e) {
+        // Ignore :)
+    }
 
-		final GroupChatInvitationUI invitationUI = new GroupChatInvitationUI(room.getRoom(), inviter, password, reason);
-		String message = Res.getString("message.invite.to.groupchat", inviter);
-		String title = Res.getString("title.group.chat");
-		String bareJID = XmppStringUtils.parseBareJid(inviter);
+    final GroupChatInvitationUI invitationUI = new GroupChatInvitationUI(room.getRoom(), inviter, password, reason);
+    String message1 = Res.getString("message.invite.to.groupchat", inviter);
+    String title = Res.getString("title.group.chat");
+    String bareJID = XmppStringUtils.parseBareJid(inviter);
 
-		if (_localPreferences.isAutoAcceptMucInvite()) {
-		    ConferenceUtils.enterRoomOnSameThread(XmppStringUtils.parseLocalpart(room.getRoom()), room.getRoom(), password);
-            MultiUserChatManager manager = MultiUserChatManager.getInstanceFor( SparkManager.getConnection() );
-            GroupChatRoom chat = UIComponentRegistry.createGroupChatRoom(manager.getMultiUserChat( room.getRoom() ));
+    if (_localPreferences.isAutoAcceptMucInvite()) {
+        ConferenceUtils.enterRoomOnSameThread(XmppStringUtils.parseLocalpart(room.getRoom()), room.getRoom(), password);
+        MultiUserChatManager manager = MultiUserChatManager.getInstanceFor( SparkManager.getConnection() );
+        GroupChatRoom chat = UIComponentRegistry.createGroupChatRoom(manager.getMultiUserChat( room.getRoom() ));
 
-		    showToaster(message, title, chat);
-		    return;
-		    // Nothing to do here, we want to join the
-		    // room, and stuff
-		}
-		try {
-		    ChatRoom chatRoom = SparkManager.getChatManager().getChatContainer().getChatRoom(bareJID);
+        showToaster( message1, title, chat);
+        return;
+        // Nothing to do here, we want to join the
+        // room, and stuff
+    }
+    try {
+        ChatRoom chatRoom = SparkManager.getChatManager().getChatContainer().getChatRoom(bareJID);
 
-		    // If the ChatRoom exists, add an invitationUI.
-		    chatRoom.getTranscriptWindow().addComponent(invitationUI);
+        // If the ChatRoom exists, add an invitationUI.
+        chatRoom.getTranscriptWindow().addComponent(invitationUI);
 
-		    // Notify user of incoming invitation.
-		    chatRoom.increaseUnreadMessageCount();
+        // Notify user of incoming invitation.
+        chatRoom.increaseUnreadMessageCount();
 
-		    chatRoom.scrollToBottom();
+        chatRoom.scrollToBottom();
 
-		    SparkManager.getChatManager().getChatContainer()
-			    .fireNotifyOnMessage(chatRoom, true, message, title);
-		} catch (ChatRoomNotFoundException e) {
-		    // If it doesn't exists. Create a new Group
-		    // Chat Room
-		    // Create the Group Chat Room
-            final MultiUserChatManager manager = MultiUserChatManager.getInstanceFor( SparkManager.getConnection() );
-            final GroupChatRoom groupChatRoom = UIComponentRegistry.createGroupChatRoom(manager.getMultiUserChat( room.getRoom() ));
+        SparkManager.getChatManager().getChatContainer()
+            .fireNotifyOnMessage(chatRoom, true, message1, title);
+    } catch (ChatRoomNotFoundException e) {
+        // If it doesn't exists. Create a new Group
+        // Chat Room
+        // Create the Group Chat Room
+        final MultiUserChatManager manager = MultiUserChatManager.getInstanceFor( SparkManager.getConnection() );
+        final GroupChatRoom groupChatRoom = UIComponentRegistry.createGroupChatRoom(manager.getMultiUserChat( room.getRoom() ));
 
-		    showToaster(message, title, groupChatRoom);
+        showToaster( message1, title, groupChatRoom);
 
-		    groupChatRoom.getSplitPane().setDividerSize(5);
-		    groupChatRoom.getVerticalSlipPane().setDividerLocation(0.6);
-		    groupChatRoom.getSplitPane().setDividerLocation(0.6);
-		    String roomName = XmppStringUtils.parseLocalpart(room.getRoom());
-		    groupChatRoom.setTabTitle(roomName);
-		    groupChatRoom.getToolBar().setVisible(true);
-		    SparkManager.getChatManager().getChatContainer().addChatRoom(groupChatRoom);
-		    groupChatRoom.getTranscriptWindow().addComponent(invitationUI);
-		    // Notify user of incoming invitation.
-		    groupChatRoom.increaseUnreadMessageCount();
-		    groupChatRoom.scrollToBottom();
-		    SparkManager.getChatManager().getChatContainer().fireNotifyOnMessage(groupChatRoom, true, message,
-			    title);
+        groupChatRoom.getSplitPane().setDividerSize(5);
+        groupChatRoom.getVerticalSlipPane().setDividerLocation(0.6);
+        groupChatRoom.getSplitPane().setDividerLocation(0.6);
+        String roomName = XmppStringUtils.parseLocalpart(room.getRoom());
+        groupChatRoom.setTabTitle(roomName);
+        groupChatRoom.getToolBar().setVisible(true);
+        SparkManager.getChatManager().getChatContainer().addChatRoom(groupChatRoom);
+        groupChatRoom.getTranscriptWindow().addComponent(invitationUI);
+        // Notify user of incoming invitation.
+        groupChatRoom.increaseUnreadMessageCount();
+        groupChatRoom.scrollToBottom();
+        SparkManager.getChatManager().getChatContainer().fireNotifyOnMessage(groupChatRoom, true, message1,
+            title);
 
-		}
-		// If no listeners handled the invitation,
-		// default to generic invite.
-		// new ConversationInvitation(conn, room,
-		// inviter, reason, password, message);
-	    }
-
-	});
+    }
+    // If no listeners handled the invitation,
+    // default to generic invite.
+    // new ConversationInvitation(conn, room,
+    // inviter, reason, password, message);
+    } );
 
     }
 

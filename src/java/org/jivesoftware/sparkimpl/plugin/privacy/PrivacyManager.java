@@ -22,7 +22,6 @@ package org.jivesoftware.sparkimpl.plugin.privacy;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -31,10 +30,7 @@ import org.jivesoftware.smackx.privacy.PrivacyList;
 import org.jivesoftware.smackx.privacy.PrivacyListManager;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smackx.privacy.packet.PrivacyItem;
-import org.jivesoftware.smack.util.DNSUtil;
-import org.jivesoftware.smack.util.dns.HostAddress;
 import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.disco.packet.DiscoverInfo;
 import org.jivesoftware.smackx.disco.packet.DiscoverInfo.Feature;
@@ -62,10 +58,10 @@ public class PrivacyManager {
     // with regard to roster groups and JIDs. Obviously list names could become rather complex, 
     // such as "visible-to-Group1 Group2 Group3".
     private static final String INVISIBLE_LIST_NAME = "invisible";
-    private List<SparkPrivacyList> _privacyLists = new ArrayList<SparkPrivacyList>();
+    private List<SparkPrivacyList> _privacyLists = new ArrayList<>();
     private PrivacyListManager privacyManager;
     private PrivacyPresenceHandler _presenceHandler = new PrivacyPresenceHandler();
-    private Set<SparkPrivacyListListener> _listListeners = new HashSet<SparkPrivacyListListener>();
+    private Set<SparkPrivacyListListener> _listListeners = new HashSet<>();
     private boolean _active = false;
     private SparkPrivacyList previousActiveList;
 
@@ -243,7 +239,7 @@ public class PrivacyManager {
 
     public SparkPrivacyList createPrivacyList(String listName) {
         PrivacyItem item = new PrivacyItem(true,999999);
-        ArrayList<PrivacyItem> items = new ArrayList<PrivacyItem>();
+        ArrayList<PrivacyItem> items = new ArrayList<>();
         items.add(item);
         SparkPrivacyList sparklist = null;
         try {
@@ -274,7 +270,7 @@ public class PrivacyManager {
 
 
     public List<SparkPrivacyList> getPrivacyLists() {
-        return new ArrayList<SparkPrivacyList>(_privacyLists);
+        return new ArrayList<>( _privacyLists );
     }
 
     

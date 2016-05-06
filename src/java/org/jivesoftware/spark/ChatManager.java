@@ -26,7 +26,6 @@ import org.jivesoftware.smack.chat.ChatManagerListener;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Presence;
-import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.chatstates.ChatState;
 import org.jivesoftware.smackx.chatstates.ChatStateListener;
 import org.jivesoftware.smackx.muc.MultiUserChatManager;
@@ -96,28 +95,28 @@ public class ChatManager implements ChatManagerListener {
         new Color(255, 69, 0), new Color(255, 99, 72), new Color(109, 130, 180), new Color(233, 0, 0), new Color(139, 69, 19), new Color(255, 127, 80),
         new Color(140, 105, 225)};
 
-    private List<MessageFilter> messageFilters = new ArrayList<MessageFilter>();
+    private List<MessageFilter> messageFilters = new ArrayList<>();
 
-    private List<GlobalMessageListener> globalMessageListeners = new ArrayList<GlobalMessageListener>();
+    private List<GlobalMessageListener> globalMessageListeners = new ArrayList<>();
 
-    private List<RoomInvitationListener> invitationListeners = new ArrayList<RoomInvitationListener>();
+    private List<RoomInvitationListener> invitationListeners = new ArrayList<>();
 
-    private List<TranscriptWindowInterceptor> interceptors = new ArrayList<TranscriptWindowInterceptor>();
+    private List<TranscriptWindowInterceptor> interceptors = new ArrayList<>();
 
-    private List<SparkTabHandler> sparkTabHandlers = new CopyOnWriteArrayList<SparkTabHandler>();
+    private List<SparkTabHandler> sparkTabHandlers = new CopyOnWriteArrayList<>();
 
 
     private final ChatContainer chatContainer;
 
     private String conferenceService;
 
-    private List<ContactItemHandler> contactItemHandlers = new ArrayList<ContactItemHandler>();
+    private List<ContactItemHandler> contactItemHandlers = new ArrayList<>();
 
-    private Set<ChatRoom> typingNotificationList = new HashSet<ChatRoom>();
+    private Set<ChatRoom> typingNotificationList = new HashSet<>();
 
     private UriManager _uriManager = new UriManager();
     
-    private List<ChatMessageHandler> chatMessageHandlers = new ArrayList<ChatMessageHandler> ();
+    private List<ChatMessageHandler> chatMessageHandlers = new ArrayList<>();
 
     /**
      * The listener instance that we use to track chat states according to
@@ -618,49 +617,45 @@ public class ChatManager implements ChatManagerListener {
     }
 
     public void composingNotification(final String from) {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                final ContactList contactList = SparkManager.getWorkspace().getContactList();
+        SwingUtilities.invokeLater( () -> {
+            final ContactList contactList = SparkManager.getWorkspace().getContactList();
 
-                ChatRoom chatRoom;
-                try {
-                    chatRoom = getChatContainer().getChatRoom( XmppStringUtils.parseBareJid(from));
-                    if (chatRoom != null && chatRoom instanceof ChatRoomImpl) {                    	
-                        typingNotificationList.add(chatRoom);
-                        // Notify Decorators
-                        notifySparkTabHandlers(chatRoom);
-                        ((ChatRoomImpl)chatRoom).notifyChatStateChange(ChatState.composing);
-                    }
+            ChatRoom chatRoom;
+            try {
+                chatRoom = getChatContainer().getChatRoom( XmppStringUtils.parseBareJid(from));
+                if (chatRoom != null && chatRoom instanceof ChatRoomImpl) {
+                    typingNotificationList.add(chatRoom);
+                    // Notify Decorators
+                    notifySparkTabHandlers(chatRoom);
+                    ((ChatRoomImpl)chatRoom).notifyChatStateChange(ChatState.composing);
                 }
-                catch (ChatRoomNotFoundException e) {
-                    // Do nothing
-                }
-                contactList.setIconFor(from, SparkRes.getImageIcon(SparkRes.SMALL_MESSAGE_EDIT_IMAGE));
             }
-        });
+            catch (ChatRoomNotFoundException e) {
+                // Do nothing
+            }
+            contactList.setIconFor(from, SparkRes.getImageIcon(SparkRes.SMALL_MESSAGE_EDIT_IMAGE));
+        } );
     }
 
     public void cancelledNotification(final String from, final ChatState state) {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                ContactList contactList = SparkManager.getWorkspace().getContactList();
+        SwingUtilities.invokeLater( () -> {
+            ContactList contactList = SparkManager.getWorkspace().getContactList();
 
-                ChatRoom chatRoom;
-                try {
-                    chatRoom = getChatContainer().getChatRoom(XmppStringUtils.parseBareJid(from));
-                    if (chatRoom != null && chatRoom instanceof ChatRoomImpl) {
-                        typingNotificationList.remove(chatRoom);
-                        // Notify Decorators
-                        notifySparkTabHandlers(chatRoom);
-                        ((ChatRoomImpl)chatRoom).notifyChatStateChange(state);
-                    }
+            ChatRoom chatRoom;
+            try {
+                chatRoom = getChatContainer().getChatRoom(XmppStringUtils.parseBareJid(from));
+                if (chatRoom != null && chatRoom instanceof ChatRoomImpl) {
+                    typingNotificationList.remove(chatRoom);
+                    // Notify Decorators
+                    notifySparkTabHandlers(chatRoom);
+                    ((ChatRoomImpl)chatRoom).notifyChatStateChange(state);
                 }
-                catch (ChatRoomNotFoundException e) {
-                    // Do nothing
-                }
-                contactList.useDefaults(from);
             }
-        });
+            catch (ChatRoomNotFoundException e) {
+                // Do nothing
+            }
+            contactList.useDefaults(from);
+        } );
     }
 
     /**
@@ -791,7 +786,7 @@ public class ChatManager implements ChatManagerListener {
 	    return;
 	}
 
-	URI uri = null;
+	URI uri;
 	try {
 	    uri = new URI(arguments);
 	} catch (URISyntaxException e) {

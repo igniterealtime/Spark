@@ -58,7 +58,7 @@ public class GoogleSearch {
 
         // Google Desktop API tosearch
         try {
-            searchUrl = (String) WinRegistry.readString(WinRegistry.HKEY_CURRENT_USER, "Software\\Google\\Google Desktop\\API", "search_url");
+            searchUrl = WinRegistry.readString(WinRegistry.HKEY_CURRENT_USER, "Software\\Google\\Google Desktop\\API", "search_url");
             searchBase = searchUrl.substring(0, searchUrl.indexOf('/', 8));
 
             db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
@@ -93,7 +93,7 @@ public class GoogleSearch {
      * @param showFiles Show the files
      */
     public void search(String query, boolean showFiles) {
-        final List<GoogleSearchResult> list = new ArrayList<GoogleSearchResult>();
+        final List<GoogleSearchResult> list = new ArrayList<>();
 
         if (query == null || "".equals(query)) {
             return;
@@ -145,7 +145,7 @@ public class GoogleSearch {
      * @return List containing search resilts.
      */
     public List<GoogleSearchResult> searchText(String query, int maxDocuments) {
-        final List<GoogleSearchResult> list = new ArrayList<GoogleSearchResult>();
+        final List<GoogleSearchResult> list = new ArrayList<>();
 
         if (query == null || "".equals(query)) {
             return null;
@@ -171,7 +171,7 @@ public class GoogleSearch {
             for (int i = 0; i < elems.getLength(); i++) {
                 int relevance = (int)((double)(count - i) / count * 100);
                 GoogleSearchResult result = new GoogleSearchResult(searchBase, query, relevance, (Element)elems.item(i));
-                if (result.getURL().indexOf("googlemail") == -1) {
+                if ( !result.getURL().contains( "googlemail" ) ) {
                     list.add(result);
                 }
                 if (list.size() == maxDocuments) {
@@ -192,7 +192,7 @@ public class GoogleSearch {
      * @param query the query to search on.
      */
     public void searchConversations(String query) {
-        final List<GoogleSearchResult> list = new ArrayList<GoogleSearchResult>();
+        final List<GoogleSearchResult> list = new ArrayList<>();
 
         if (query == null || "".equals(query)) {
             return;
@@ -244,7 +244,7 @@ public class GoogleSearch {
      * @return Collection of search documents retreived.
      */
     public Collection<GoogleSearchResult> searchDocuments(String query) {
-        final Set<GoogleSearchResult> set = new HashSet<GoogleSearchResult>();
+        final Set<GoogleSearchResult> set = new HashSet<>();
 
         if (query == null || "".equals(query)) {
             return null;

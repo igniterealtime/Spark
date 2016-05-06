@@ -220,8 +220,8 @@ public class TextureLookAndFeel extends AbstractLookAndFeel {
         snowProps.setProperty("desktopColor", "240 240 240");
         snowProps.setProperty("tooltipBackgroundColor", "242 246 254");
 
-        String key = null;
-        String value = null;
+        String key;
+        String value;
         Iterator iter = smallFontProps.keySet().iterator();
         while (iter.hasNext()) {
             key = (String)iter.next();

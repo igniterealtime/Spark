@@ -23,13 +23,11 @@ import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.*;
 import org.jivesoftware.smack.filter.StanzaTypeFilter;
 import org.jivesoftware.smack.packet.Presence;
-import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.disco.packet.DiscoverInfo;
 import org.jivesoftware.smackx.jingleold.JingleManager;
 import org.jivesoftware.smackx.jingleold.JingleSession;
 import org.jivesoftware.smackx.jingleold.JingleSessionRequest;
-import org.jivesoftware.smackx.jingleold.listeners.JingleSessionRequestListener;
 import org.jivesoftware.smackx.jingleold.media.JingleMediaManager;
 import org.jivesoftware.smackx.jingleold.mediaimpl.jmf.JmfMediaManager;
 import org.jivesoftware.smackx.jingleold.mediaimpl.jspeex.SpeexMediaManager;
@@ -72,7 +70,7 @@ public class JinglePlugin implements Plugin, Phone, ConnectionListener {
     private String stunServer = "";
     private int stunPort = 0;
     private boolean readyToConnect = false;
-    private Map<String, Boolean> jingleFeature = new HashMap<String, Boolean>();
+    private Map<String, Boolean> jingleFeature = new HashMap<>();
     private boolean fallbackStunEnabled = false;
 
     public void initialize() {
@@ -135,7 +133,7 @@ public class JinglePlugin implements Plugin, Phone, ConnectionListener {
                     if ( readyToConnect )
                     {
                         JingleTransportManager transportManager = new ICETransportManager( SparkManager.getConnection(), stunServer, stunPort );
-                        List<JingleMediaManager> mediaManagers = new ArrayList<JingleMediaManager>();
+                        List<JingleMediaManager> mediaManagers = new ArrayList<>();
 
                         // Get the Locator from the Settings
                         String locator = SettingsManager.getLocalPreferences().getAudioDevice();
@@ -194,15 +192,7 @@ public class JinglePlugin implements Plugin, Phone, ConnectionListener {
 	
 
         // Listen in for new incoming Jingle requests.
-        jingleManager.addJingleSessionRequestListener(new JingleSessionRequestListener() {
-            public void sessionRequested(final JingleSessionRequest request) {            	
-                SwingUtilities.invokeLater(new Runnable() {
-                    public void run() {
-                        incomingJingleSession(request);
-                    }
-                });
-            }
-        });
+        jingleManager.addJingleSessionRequestListener( request -> SwingUtilities.invokeLater( () -> incomingJingleSession(request) ) );
     }
 
 
@@ -244,7 +234,7 @@ public class JinglePlugin implements Plugin, Phone, ConnectionListener {
             return Collections.emptyList();
         }
 
-        final List<Action> actions = new ArrayList<Action>();
+        final List<Action> actions = new ArrayList<>();
         Action action = new AbstractAction() {
 			private static final long serialVersionUID = 1467355627829748086L;
 
@@ -345,19 +335,17 @@ public class JinglePlugin implements Plugin, Phone, ConnectionListener {
      */
     private void addPresenceListener() {
         // Check presence changes
-        SparkManager.getConnection().addAsyncStanzaListener(new StanzaListener() {
-            public void processPacket(Stanza stanza) {
-                Presence presence = (Presence)stanza;
-                if (!presence.isAvailable()) {
-                    String from = presence.getFrom();
-                    if (ModelUtil.hasLength(from)) {
-                        // Remove from
-                        jingleFeature.remove(from);
-                    }
+        SparkManager.getConnection().addAsyncStanzaListener( stanza -> {
+            Presence presence = (Presence)stanza;
+            if (!presence.isAvailable()) {
+                String from = presence.getFrom();
+                if (ModelUtil.hasLength(from)) {
+                    // Remove from
+                    jingleFeature.remove(from);
                 }
-
-
             }
+
+
         }, new StanzaTypeFilter(Presence.class));
     }
 

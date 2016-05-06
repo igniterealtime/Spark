@@ -36,8 +36,6 @@ import javax.swing.UIManager;
 
 import org.jivesoftware.spark.util.Encryptor;
 import org.jivesoftware.spark.util.log.Log;
-import org.jivesoftware.sparkimpl.settings.JiveInfo;
-import org.lobobrowser.html.domimpl.HTMLElementBuilder.Br;
 
 /**
  * Represents the LocalPreference Model for this system.
@@ -800,7 +798,7 @@ public class LocalPreferences {
 	}
 
     public String getLookAndFeel() {
-	String defaultstring = "";
+	String defaultstring;
 	try {
 	    defaultstring = Spark.isMac() ? Default.getString(Default.DEFAULT_LOOK_AND_FEEL_MAC)
 		    : Default.getString(Default.DEFAULT_LOOK_AND_FEEL);
@@ -1210,7 +1208,7 @@ public class LocalPreferences {
     public List<String> getDeactivatedPlugins()
     {
 	String plugs = getString("deactivatedPlugins", "");
-	ArrayList<String> liste = new ArrayList<String>();
+	ArrayList<String> liste = new ArrayList<>();
 
 	StringTokenizer tokenz = new StringTokenizer(plugs, ",");
 

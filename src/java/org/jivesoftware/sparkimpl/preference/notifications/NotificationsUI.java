@@ -25,8 +25,6 @@ import org.jivesoftware.resource.Res;
 import org.jivesoftware.spark.util.ResourceUtils;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import java.awt.*;
 
 /**
@@ -112,27 +110,23 @@ public class NotificationsUI extends JPanel {
         }   
         	add(pn);	
 
-        windowFocusBox.addChangeListener(new ChangeListener(){
-        	public void stateChanged(ChangeEvent ce){
-        		if(shouldWindowPopup()) {
-        			setSystemTrayNotification(false);
-        			setSystemTrayNotificationEnabled(false);
-        		}
-        		else
-        			setSystemTrayNotificationEnabled(true);
-        	}
-        });
+        windowFocusBox.addChangeListener( ce -> {
+            if(shouldWindowPopup()) {
+                setSystemTrayNotification(false);
+                setSystemTrayNotificationEnabled(false);
+            }
+            else
+                setSystemTrayNotificationEnabled(true);
+        } );
         
-        SystemTrayNotificationBox.addChangeListener(new ChangeListener(){
-        	public void stateChanged(ChangeEvent ce){
-        		if(isSystemTrayNotificationEnabled()) {
-        			setShowWindowPopup(false);
-        			setShowWindowPopupEnabled(false);
-        		}
-        		else
-        			setShowWindowPopupEnabled(true);
-        	}
-        });
+        SystemTrayNotificationBox.addChangeListener( ce -> {
+            if(isSystemTrayNotificationEnabled()) {
+                setShowWindowPopup(false);
+                setShowWindowPopupEnabled(false);
+            }
+            else
+                setShowWindowPopupEnabled(true);
+        } );
     }
 
     public void setShowToaster(boolean show) {

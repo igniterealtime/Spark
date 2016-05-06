@@ -38,9 +38,8 @@ import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 public class Downloads {
     private static File downloadedDir;
     private static JFileChooser chooser;
-    private static LocalPreferences _localPreferences;
 
-    /**
+	/**
      * Returns the Downloaddirectory
      * 
      * @return the download directory as <code>file</code>
@@ -91,8 +90,8 @@ public class Downloads {
     public static JFileChooser getFileChooser() {
 	if (chooser == null) {
 
-	    _localPreferences = SettingsManager.getLocalPreferences();
-	    downloadedDir = new File(_localPreferences.getDownloadDir());
+		LocalPreferences _localPreferences = SettingsManager.getLocalPreferences();
+	    downloadedDir = new File( _localPreferences.getDownloadDir());
 
 	    chooser = new JFileChooser(downloadedDir);
 	    if (Spark.isWindows()) {

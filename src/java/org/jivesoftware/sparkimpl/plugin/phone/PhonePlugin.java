@@ -27,7 +27,6 @@ import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.provider.ProviderManager;
-import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.phone.PhoneManager;
 import org.jivesoftware.spark.plugin.ContextMenuListener;
@@ -93,47 +92,42 @@ public class PhonePlugin implements Plugin {
         ResourceUtils.resButton(dialNumberMenu, Res.getString("button.dial.number"));
 
         // Add Listener
-        dialNumberMenu.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                dialPanel = new DialPanel();
-                dialPanel.getDialButton().addActionListener(new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        String number = dialPanel.getNumberToDial();
-                        if (ModelUtil.hasLength(number)) {
-                            dialPanel.setText(Res.getString("message.calling", number));
-                            dialPanel.changeToRinging();
-                            callExtension(number);
+        dialNumberMenu.addActionListener( e -> {
+            dialPanel = new DialPanel();
+            dialPanel.getDialButton().addActionListener( e1 -> {
+                String number = dialPanel.getNumberToDial();
+                if (ModelUtil.hasLength(number)) {
+                    dialPanel.setText(Res.getString("message.calling", number));
+                    dialPanel.changeToRinging();
+                    callExtension(number);
 
+                }
+
+            } );
+
+            dialDialog = PhoneDialog.invoke(dialPanel, Res.getString("title.dial.phone"), Res.getString("message.number.to.call"), null);
+            dialPanel.getDialField().requestFocusInWindow();
+
+            dialPanel.getDialField().addKeyListener(new KeyAdapter() {
+                public void keyPressed(KeyEvent e) {
+                    if (e.getKeyChar() == KeyEvent.VK_ENTER) {
+                        try {
+                            String number = dialPanel.getNumberToDial();
+                            if (ModelUtil.hasLength(number)) {
+                                dialPanel.setText(Res.getString("message.calling", number));
+                                dialPanel.changeToRinging();
+                                callExtension(number);
+
+                            }
+                            e.consume();
                         }
-
-                    }
-                });
-
-                dialDialog = PhoneDialog.invoke(dialPanel, Res.getString("title.dial.phone"), Res.getString("message.number.to.call"), null);
-                dialPanel.getDialField().requestFocusInWindow();
-
-                dialPanel.getDialField().addKeyListener(new KeyAdapter() {
-                    public void keyPressed(KeyEvent e) {
-                        if (e.getKeyChar() == KeyEvent.VK_ENTER) {
-                            try {
-                                String number = dialPanel.getNumberToDial();
-                                if (ModelUtil.hasLength(number)) {
-                                    dialPanel.setText(Res.getString("message.calling", number));
-                                    dialPanel.changeToRinging();
-                                    callExtension(number);
-
-                                }
-                                e.consume();
-                            }
-                            catch (Exception ex) {
-                                Log.error(ex);
-                            }
+                        catch (Exception ex) {
+                            Log.error(ex);
                         }
                     }
-                });
-            }
-
-        });
+                }
+            });
+        } );
         viewMenu.add(dialNumberMenu);
 
         // Add ChatRoomListener to call users based on JID
@@ -153,11 +147,7 @@ public class PhonePlugin implements Plugin {
 
                     if (phoneEnabled) {
                         room.addChatRoomButton(callButton);
-                        callButton.addActionListener(new ActionListener() {
-                            public void actionPerformed(ActionEvent e) {
-                                callJID(chatRoom.getParticipantJID());
-                            }
-                        });
+                        callButton.addActionListener( e -> callJID(chatRoom.getParticipantJID()) );
                     }
                 }
             }
@@ -310,14 +300,12 @@ public class PhonePlugin implements Plugin {
 
 
     public void callExtension(final String number) {
-        final Runnable caller = new Runnable() {
-            public void run() {
-                try {
-                    phoneClient.dialByExtension(number);
-                }
-                catch (PhoneActionException e) {
-                    Log.error(e);
-                }
+        final Runnable caller = () -> {
+            try {
+                phoneClient.dialByExtension(number);
+            }
+            catch (PhoneActionException e) {
+                Log.error(e);
             }
         };
 
@@ -325,14 +313,12 @@ public class PhonePlugin implements Plugin {
     }
 
     public void callJID(final String jid) {
-        final Runnable caller = new Runnable() {
-            public void run() {
-                try {
-                    phoneClient.dialByJID(jid);
-                }
-                catch (PhoneActionException e) {
-                    Log.error(e);
-                }
+        final Runnable caller = () -> {
+            try {
+                phoneClient.dialByJID(jid);
+            }
+            catch (PhoneActionException e) {
+                Log.error(e);
             }
         };
 

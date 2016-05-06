@@ -43,7 +43,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -73,15 +72,13 @@ public class JabberBrowser implements Plugin {
 
         RolloverButton backButton = new RolloverButton();
         backButton.setIcon(SparkRes.getImageIcon(SparkRes.LEFT_ARROW_IMAGE));
-        backButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                int selectedItem = addressField.getSelectedIndex();
-                if (selectedItem > 0) {
-                    Object historyItem = addressField.getItemAt(selectedItem - 1);
-                    browse((String)historyItem);
-                }
+        backButton.addActionListener( e -> {
+            int selectedItem = addressField.getSelectedIndex();
+            if (selectedItem > 0) {
+                Object historyItem = addressField.getItemAt(selectedItem - 1);
+                browse((String)historyItem);
             }
-        });
+        } );
 
         mainPanel.add(backButton, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         mainPanel.add(addressLabel, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
@@ -90,15 +87,13 @@ public class JabberBrowser implements Plugin {
 
         JButton browseButton = new JButton("");
         ResourceUtils.resButton(browseButton, Res.getString("button.browse"));
-        browseButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                String serviceName = (String)addressField.getSelectedItem();
-                if (!ModelUtil.hasLength(serviceName)) {
-                    return;
-                }
-                browse(serviceName);
+        browseButton.addActionListener( e -> {
+            String serviceName = (String)addressField.getSelectedItem();
+            if (!ModelUtil.hasLength(serviceName)) {
+                return;
             }
-        });
+            browse(serviceName);
+        } );
         mainPanel.add(addressField, new GridBagConstraints(2, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
         mainPanel.add(browseButton, new GridBagConstraints(3, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
 
@@ -163,7 +158,7 @@ public class JabberBrowser implements Plugin {
             return;
         }
 
-        List<Entity> list = new ArrayList<Entity>();
+        List<Entity> list = new ArrayList<>();
         for (DiscoverItems.Item item : result.getItems() ) {
             Entity entity = new Entity(item);
             browsePanel.add(entity);
@@ -188,11 +183,7 @@ public class JabberBrowser implements Plugin {
             setText(item.getName());
             setIcon(SparkRes.getImageIcon(SparkRes.USER1_MESSAGE_24x24));
 
-            addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    browseItem(item);
-                }
-            });
+            addActionListener( e -> browseItem(item) );
 
         }
 
@@ -208,16 +199,12 @@ public class JabberBrowser implements Plugin {
 
     public void initialize() {
     	this.con = SparkManager.getConnection();
-    	EventQueue.invokeLater(new Runnable() {
-    		@Override
-    		public void run() {
-    			addressLabel = new JLabel();
-    			addressField = new JComboBox();
-    			addressField.setEditable(true);
-    			addressField.addItem(con.getHost());
-    		}
-
-    	});      	
+    	EventQueue.invokeLater( () -> {
+            addressLabel = new JLabel();
+            addressField = new JComboBox();
+            addressField.setEditable(true);
+            addressField.addItem(con.getHost());
+        } );
         SparkManager.getWorkspace().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("F8"), "showBrowser");
         SparkManager.getWorkspace().getActionMap().put("showBrowser", new AbstractAction("showBrowser") {
 			private static final long serialVersionUID = 341826581565007606L;

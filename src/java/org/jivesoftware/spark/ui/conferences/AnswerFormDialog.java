@@ -25,10 +25,7 @@ import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.HashMap;
-import java.util.Iterator;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
@@ -59,9 +56,8 @@ public class AnswerFormDialog {
     private static final long serialVersionUID = 3637412110943006392L;
     private JDialog dialog = null;
     private JPanel centerpanel;
-    private JPanel bottompanel;
 
-    HashMap<String, JComponent> _map = new HashMap<String, JComponent>();
+	HashMap<String, JComponent> _map = new HashMap<>();
 
     /**
      * Creates an Answer Form Dialog from the specified Form
@@ -73,7 +69,7 @@ public class AnswerFormDialog {
 	    final Form form) {
 
 	centerpanel = new JPanel();
-	bottompanel = new JPanel();
+		JPanel bottompanel = new JPanel();
 	centerpanel.setLayout(new GridBagLayout());
 
 	dialog = new JDialog(parent, true);
@@ -100,19 +96,17 @@ public class AnswerFormDialog {
 
 	JButton updatebutton = new JButton();
 	ResourceUtils.resButton(updatebutton, Res.getString("apply"));
-	updatebutton.addActionListener(new ActionListener() {
-	    public void actionPerformed(ActionEvent e) {
-		dialog.dispose();
-		sendAnswerForm(form.createAnswerForm(), chat);
-	    }
-	});
+	updatebutton.addActionListener( e -> {
+    dialog.dispose();
+    sendAnswerForm(form.createAnswerForm(), chat);
+    } );
 
 	bottompanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
 	bottompanel.add(updatebutton);
 
 	dialog.getContentPane().setLayout(new BorderLayout());
 	dialog.getContentPane().add(centerpanel, BorderLayout.CENTER);
-	dialog.getContentPane().add(bottompanel, BorderLayout.SOUTH);
+	dialog.getContentPane().add( bottompanel, BorderLayout.SOUTH);
 	dialog.pack();
 	dialog.setSize(600, 400);
 	GraphicUtils.centerWindowOnScreen(dialog);

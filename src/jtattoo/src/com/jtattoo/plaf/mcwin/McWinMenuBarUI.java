@@ -44,7 +44,7 @@ public class McWinMenuBarUI extends BaseMenuBarUI {
     public void installUI(JComponent c) {
         super.installUI(c);
         if ((c != null) && (c instanceof JMenuBar)) {
-            ((JMenuBar) c).setBorder(McWinBorders.getMenuBarBorder());
+            c.setBorder(McWinBorders.getMenuBarBorder());
             ((JMenuBar) c).setBorderPainted(true);
         }
     }

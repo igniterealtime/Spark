@@ -25,7 +25,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -102,10 +101,10 @@ public class GroupChatRoom extends ChatRoom {
     private boolean isActive = true;
     private SubjectPanel subjectPanel;
 
-    private List<String> currentUserList = new ArrayList<String>();
+    private List<String> currentUserList = new ArrayList<>();
 
     private String conferenceService;
-    private List<String> blockedUsers = new ArrayList<String>();
+    private List<String> blockedUsers = new ArrayList<>();
 
     private ChatRoomMessageManager messageManager;
     private Timer typingTimer;
@@ -386,7 +385,7 @@ public class GroupChatRoom extends ChatRoom {
 	    MessageEventManager.addNotificationsRequests(message, true, true,
 		    true, true);
 	    // Add packetID to list
-	    addPacketID(message.getPacketID());
+	    addPacketID(message.getStanzaId());
 
 	    // Fire Message Filters
 	    SparkManager.getChatManager().filterOutgoingMessage(this, message);
@@ -438,7 +437,7 @@ public class GroupChatRoom extends ChatRoom {
 	    MessageEventManager.addNotificationsRequests(message, true, true,
 		    true, true);
 	    // Add packetID to list
-	    addPacketID(message.getPacketID());
+	    addPacketID(message.getStanzaId());
 
 	    chat.sendMessage(message);
 	} catch (SmackException ex) {
@@ -621,22 +620,16 @@ public class GroupChatRoom extends ChatRoom {
     public void processPacket(final Stanza stanza) {
 	super.processPacket(stanza);
 	if (stanza instanceof Presence) {
-	    SwingUtilities.invokeLater(new Runnable() {
-		public void run() {
-		    handlePresencePacket(stanza);
-		}
-	    });
+	    SwingUtilities.invokeLater( () -> handlePresencePacket(stanza) );
 
 	}
 	if (stanza instanceof Message) {
-	    SwingUtilities.invokeLater(new Runnable() {
-		public void run() {
-		    handleMessagePacket(stanza);
+	    SwingUtilities.invokeLater( () -> {
+            handleMessagePacket(stanza);
 
-		    // Set last activity
-		    lastActivity = System.currentTimeMillis();
-		}
-	    });
+            // Set last activity
+            lastActivity = System.currentTimeMillis();
+        } );
 
 	}
     }
@@ -652,7 +645,7 @@ public class GroupChatRoom extends ChatRoom {
 	final Message message = (Message) stanza;
 	lastMessage = message;
 	if (message.getType() == Message.Type.groupchat) {
-	    DelayInformation inf = (DelayInformation) message.getExtension("delay",
+	    DelayInformation inf = message.getExtension("delay",
 		    "urn:xmpp:delay");
 	    Date sentDate;
 	    if (inf != null) {
@@ -688,7 +681,7 @@ public class GroupChatRoom extends ChatRoom {
 			return;
 		    }
 
-		    boolean isFromRoom = message.getFrom().indexOf("/") == -1;
+		    boolean isFromRoom = !message.getFrom().contains( "/" );
 
 		    if (!SparkManager.getUserManager().hasVoice(this,
 			    XmppStringUtils.parseResource(message.getFrom()))
@@ -773,7 +766,7 @@ public class GroupChatRoom extends ChatRoom {
 	final String from = presence.getFrom();
 	final String nickname = XmppStringUtils.parseResource(from);
 
-	MUCUser mucUser = (MUCUser) stanza.getExtension("x",
+	MUCUser mucUser = stanza.getExtension("x",
 		"http://jabber.org/protocol/muc#user");
 	Set<MUCUser.Status> status = new HashSet<>();
 	if (mucUser != null) {
@@ -1092,11 +1085,7 @@ public class GroupChatRoom extends ChatRoom {
     public void setSendAndReceiveTypingNotifications(
 	    boolean sendAndReceiveTypingNotifications) {
 	if (sendAndReceiveTypingNotifications) {
-	    typingTimer = new Timer(10000, new ActionListener() {
-		public void actionPerformed(ActionEvent e) {
-		    showDefaultTabIcon();
-		}
-	    });
+	    typingTimer = new Timer(10000, e -> showDefaultTabIcon() );
 	    SparkManager.getMessageEventManager()
 		    .addMessageEventNotificationListener(messageManager);
 	} else {
@@ -1150,15 +1139,13 @@ public class GroupChatRoom extends ChatRoom {
 	}
 
 	public void composingNotification(final String from, String packetID) {
-	    SwingUtilities.invokeLater(new Runnable() {
-		public void run() {
-		    String bareAddress = XmppStringUtils.parseBareJid(from);
+	    SwingUtilities.invokeLater( () -> {
+            String bareAddress = XmppStringUtils.parseBareJid(from);
 
-		    if (bareAddress.equals(getRoomname())) {
-			showUserIsTyping();
-		    }
-		}
-	    });
+            if (bareAddress.equals(getRoomname())) {
+            showUserIsTyping();
+            }
+        } );
 	}
 
 	public void offlineNotification(String from, String packetID) {
@@ -1280,14 +1267,10 @@ public class GroupChatRoom extends ChatRoom {
 	final String roomJID = chat.getRoom();
 	final String roomName= tabTitle;
 	isActive = false;
-	EventQueue.invokeLater(new Runnable() {
-
-	    @Override
-	    public void run() {
-		ConferenceUtils.joinConferenceOnSeperateThread(roomName, roomJID, password);
-		closeChatRoom();
-	    }
-	});
+	EventQueue.invokeLater( () -> {
+    ConferenceUtils.joinConferenceOnSeperateThread(roomName, roomJID, password);
+    closeChatRoom();
+    } );
     }
 
     /**
@@ -1433,23 +1416,20 @@ public class GroupChatRoom extends ChatRoom {
 	    }
 	});
 
-	register.addActionListener(new ActionListener() {
-	    @Override
-	    public void actionPerformed(ActionEvent e) {
-		try {
-		    Form form = chat.getRegistrationForm();
-		    ChatFrame chatFrame = SparkManager.getChatManager()
-			    .getChatContainer().getChatFrame();
+	register.addActionListener( e -> {
+    try {
+        Form form = chat.getRegistrationForm();
+        ChatFrame chatFrame = SparkManager.getChatManager()
+            .getChatContainer().getChatFrame();
 
-		    new AnswerFormDialog(chatFrame, chat, form);
+        new AnswerFormDialog(chatFrame, chat, form);
 
-		}  catch (XMPPException | SmackException xmpe) {
-		    getTranscriptWindow().insertNotificationMessage(
-			    xmpe.getMessage(), ChatManager.ERROR_COLOR);
-		    scrollToBottom();
-		}
-	    }
-	});
+    }  catch (XMPPException | SmackException xmpe) {
+        getTranscriptWindow().insertNotificationMessage(
+            xmpe.getMessage(), ChatManager.ERROR_COLOR);
+        scrollToBottom();
+    }
+    } );
 
     }
     

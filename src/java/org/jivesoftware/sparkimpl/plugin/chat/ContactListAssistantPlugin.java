@@ -36,7 +36,6 @@ import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.UIComponentRegistry;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
-import org.jivesoftware.sparkimpl.settings.local.PreferenceListener;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
 import javax.swing.AbstractAction;
@@ -169,12 +168,7 @@ public class ContactListAssistantPlugin implements Plugin {
 
         updateAvatarsInContactList();
 
-        SettingsManager.addPreferenceListener(new PreferenceListener() {
-            @Override
-            public void preferencesChanged(LocalPreferences preference) {
-                updateAvatarsInContactList();
-            }
-        });
+        SettingsManager.addPreferenceListener( preference -> updateAvatarsInContactList() );
     }
     
 	private boolean isContactItemInGroup(Collection<ContactItem> contactItems, ContactGroup group) {
@@ -196,7 +190,7 @@ public class ContactListAssistantPlugin implements Plugin {
      */
     private void moveItems(Collection<ContactItem> contactItems, String groupName) {
         final ContactGroup contactGroup = getContactGroup(groupName);
-        ContactGroup oldGroup = null;
+        ContactGroup oldGroup;
         for (ContactItem contactItem : contactItems) {
         	oldGroup = getContactGroup(contactItem.getGroupName());
         	if (oldGroup.isSharedGroup()) {

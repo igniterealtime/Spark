@@ -30,7 +30,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
@@ -63,7 +62,6 @@ public class JingleRoom extends JPanel {
 	private static final long serialVersionUID = 2910998210426650565L;
 	private JLabel connectedLabel;
     private String phoneNumber;
-    private JLabel phoneLabel;
     private PreviousConversationPanel historyPanel;
 
     private boolean transmitting;
@@ -121,10 +119,10 @@ public class JingleRoom extends JPanel {
         panel.setOpaque(false);
 
         // Add phone label
-        phoneLabel = new JLabel();
+        JLabel phoneLabel = new JLabel();
         phoneLabel.setFont(new Font("Arial", Font.BOLD, 13));
         phoneLabel.setForeground(new Color(64, 103, 162));
-        panel.add(phoneLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0, 2, 2, 2), 0, 0));
+        panel.add( phoneLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0, 2, 2, 2), 0, 0));
 
         // Add Connected Label
         connectedLabel = new JLabel(CONNECTED);
@@ -206,17 +204,15 @@ public class JingleRoom extends JPanel {
         });
 
 
-        hangUpButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent actionEvent) {
-                hangUpButton.setEnabled(false);
-                try {
-                    session.terminate();
-                }
-                catch (XMPPException | SmackException e) {
-                    e.printStackTrace();
-                }
+        hangUpButton.addActionListener( actionEvent -> {
+            hangUpButton.setEnabled(false);
+            try {
+                session.terminate();
             }
-        });
+            catch (XMPPException | SmackException e) {
+                e.printStackTrace();
+            }
+        } );
     }
 
 

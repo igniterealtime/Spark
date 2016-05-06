@@ -48,7 +48,7 @@ public class CollapsiblePane extends JPanel {
 	private BaseCollapsibleTitlePane titlePane;
     private JPanel mainPanel;
 
-    private List<CollapsiblePaneListener> listeners = new ArrayList<CollapsiblePaneListener>();
+    private List<CollapsiblePaneListener> listeners = new ArrayList<>();
 
     private boolean subPane;
 

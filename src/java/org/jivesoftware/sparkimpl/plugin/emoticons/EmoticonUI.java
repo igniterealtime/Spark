@@ -28,8 +28,6 @@ import javax.swing.BorderFactory;
 import java.awt.Container;
 import java.awt.Dimension;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.net.URL;
 import java.util.Collection;
 
@@ -93,11 +91,7 @@ public class EmoticonUI extends JPanel {
 
 				RolloverButton emotButton = new RolloverButton();
 				emotButton.setIcon(icon);
-				emotButton.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-						listener.emoticonPicked(text);
-					}
-				});
+				emotButton.addActionListener( e -> listener.emoticonPicked(text) );
 
                                 gridContainer.add(emotButton);
 			}

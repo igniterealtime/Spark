@@ -2,7 +2,6 @@ package org.jivesoftware.spark.roar.displaytype;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.packet.Message;
-import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.jiveproperties.packet.JivePropertiesExtension;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.ui.ChatRoom;

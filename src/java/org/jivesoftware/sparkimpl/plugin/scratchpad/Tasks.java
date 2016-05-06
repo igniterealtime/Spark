@@ -29,7 +29,6 @@ import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.iqprivate.PrivateDataManager;
 import org.jivesoftware.smackx.iqprivate.packet.PrivateData;
 import org.jivesoftware.smackx.iqprivate.provider.PrivateDataProvider;
-import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
 import org.xmlpull.v1.XmlPullParser;
@@ -40,7 +39,7 @@ import org.xmlpull.v1.XmlPullParserException;
  */
 public class Tasks implements PrivateData {
 
-    private List<Task> tasks = new ArrayList<Task>();
+    private List<Task> tasks = new ArrayList<>();
 
     /**
      * Required Empty Constructor to use Tasks.
@@ -85,7 +84,7 @@ public class Tasks implements PrivateData {
      * @return the private data as XML.
      */
     public String toXML() {
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         buf.append("<scratchpad xmlns=\"scratchpad:tasks\">");
         buf.append("<tasks showAll=\"").append(ScratchPadPlugin.SHOW_ALL_TASKS).append("\">");
 
@@ -222,7 +221,7 @@ public class Tasks implements PrivateData {
      */
     public static void deleteTask(Task task) {
     	
-    	List<TaskUI> taskList = (List<TaskUI>) ScratchPadPlugin.getTaskList();
+    	List<TaskUI> taskList = ScratchPadPlugin.getTaskList();
     	
     	// find and delete task in list
     	for ( int i = 0; i < taskList.size(); i++ ) {

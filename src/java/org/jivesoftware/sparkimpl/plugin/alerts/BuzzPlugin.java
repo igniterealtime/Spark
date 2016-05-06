@@ -20,12 +20,9 @@
 package org.jivesoftware.sparkimpl.plugin.alerts;
 
 import org.jivesoftware.resource.Res;
-import org.jivesoftware.smack.StanzaListener;
 import org.jivesoftware.smack.filter.StanzaTypeFilter;
 import org.jivesoftware.smack.packet.Message;
-import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.provider.ProviderManager;
-import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.Plugin;
@@ -62,24 +59,18 @@ public class BuzzPlugin implements Plugin {
 	ProviderManager.addExtensionProvider(ELEMENTNAME_OLD,
 		NAMESPACE_OLD, new BuzzPacket.Provider() );
 
-	SparkManager.getConnection().addAsyncStanzaListener(new StanzaListener() {
-	    public void processPacket(Stanza stanza) {
-		if (stanza instanceof Message) {
-		    final Message message = (Message) stanza;
+	SparkManager.getConnection().addAsyncStanzaListener( stanza -> {
+    if (stanza instanceof Message) {
+        final Message message = (Message) stanza;
 
-		    boolean buzz = message.getExtension(ELEMENTNAME_OLD,
-			    NAMESPACE_OLD) != null
-			    || message.getExtension(ELEMENTNAME, NAMESPACE) != null;
-		    if (buzz) {
-			SwingUtilities.invokeLater(new Runnable() {
-			    public void run() {
-				shakeWindow(message);
-			    }
-			});
-		    }
-		}
-	    }
-	}, new StanzaTypeFilter(Message.class));
+        boolean buzz = message.getExtension(ELEMENTNAME_OLD,
+            NAMESPACE_OLD) != null
+            || message.getExtension(ELEMENTNAME, NAMESPACE) != null;
+        if (buzz) {
+        SwingUtilities.invokeLater( () -> shakeWindow(message) );
+        }
+    }
+    }, new StanzaTypeFilter(Message.class));
 
 	SparkManager.getChatManager().addChatRoomListener(
 		new ChatRoomListener() {

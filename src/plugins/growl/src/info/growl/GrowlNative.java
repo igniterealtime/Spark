@@ -63,8 +63,8 @@ class GrowlNative implements Growl {
      *                The name of the application sending notifications.
      */
     GrowlNative(String appName) {
-	notifications = new ArrayList<NotificationType>();
-	callbackListeners = new ArrayList<GrowlCallbackListener>();
+	notifications = new ArrayList<>();
+	callbackListeners = new ArrayList<>();
 	this.appName = appName;
     }
 

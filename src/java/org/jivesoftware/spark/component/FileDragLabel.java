@@ -49,11 +49,11 @@ import javax.swing.JLabel;
  */
 public class FileDragLabel extends JLabel implements DropTargetListener, DragSourceListener, DragGestureListener {
 	private static final long serialVersionUID = -4814392353136597318L;
-	private final DragSource dragSource = DragSource.getDefaultDragSource();
 
     private File file;
 
     public FileDragLabel() {
+        DragSource dragSource = DragSource.getDefaultDragSource();
         dragSource.createDefaultDragGestureRecognizer(this, DnDConstants.ACTION_COPY, this);
     }
 

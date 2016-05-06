@@ -134,7 +134,7 @@ public class UserSearchService implements Searchable {
      * @throws XMPPException thrown if a server error has occurred.
      */
     private Collection<String> getServices() throws Exception {
-        final Set<String> searchServices = new HashSet<String>();
+        final Set<String> searchServices = new HashSet<>();
         ServiceDiscoveryManager discoManager = ServiceDiscoveryManager.getInstanceFor(SparkManager.getConnection());
         DiscoverItems items = SparkManager.getSessionManager().getDiscoveredItems();
         for (DiscoverItems.Item item : items.getItems() ) {

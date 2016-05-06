@@ -29,7 +29,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
@@ -81,7 +80,7 @@ public class ScratchPadPlugin implements Plugin {
 
     private static final String dateShortFormat = ((SimpleDateFormat)SimpleDateFormat.getDateInstance(SimpleDateFormat.SHORT)).toPattern();
     private SimpleDateFormat formatter = new SimpleDateFormat(dateShortFormat);
-    private static List<TaskUI> taskList = new ArrayList<TaskUI>();
+    private static List<TaskUI> taskList = new ArrayList<>();
     private static JPanel panel_events;
     private static JPanel mainPanel;
     private static JFrame frame;
@@ -127,7 +126,6 @@ public class ScratchPadPlugin implements Plugin {
         JPanel commandPanel = SparkManager.getWorkspace().getCommandPanel();
         for (int i = 0; i < commandPanel.getComponentCount(); i++) {
             if (commandPanel.getComponent(i) instanceof JLabel) {
-                index = i;
                 break;
             }
         }
@@ -139,17 +137,9 @@ public class ScratchPadPlugin implements Plugin {
         JMenuItem notesMenu = new JMenuItem(Res.getString("button.view.notes"),
         	SparkRes.getImageIcon(SparkRes.DOCUMENT_16x16));
 
-        taskMenu.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                showTaskList();
-            }
-        });
+        taskMenu.addActionListener( e -> showTaskList() );
 
-        notesMenu.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                retrieveNotes();
-            }
-        });
+        notesMenu.addActionListener( e -> retrieveNotes() );
 
         // Add To toolbar
       final JMenu actionsMenu = SparkManager.getMainWindow().getMenuByName(Res.getString("menuitem.actions"));
@@ -397,7 +387,7 @@ public class ScratchPadPlugin implements Plugin {
             Task task = (Task) o;
             final TaskUI taskUI = new TaskUI(task);
             
-            if ( SHOW_ALL_TASKS == false ) {
+            if ( !SHOW_ALL_TASKS ) {
             	if ( taskUI.isSelected() ) {
             		taskUI.setVisible(false);
             	}else {
@@ -500,22 +490,16 @@ public class ScratchPadPlugin implements Plugin {
         frame.setVisible(true);
         pane.setCaretPosition(0);
 
-        button.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent actionEvent) {
-                frame.dispose();
+        button.addActionListener( actionEvent -> {
+            frame.dispose();
 
-                // Save it.
-                String text = pane.getText();
-                privateNotes.setNotes(text);
-                PrivateNotes.savePrivateNotes(privateNotes);
-            }
-        });
+            // Save it.
+            String text1 = pane.getText();
+            privateNotes.setNotes( text1 );
+            PrivateNotes.savePrivateNotes(privateNotes);
+        } );
 
-        cancelButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent actionEvent) {
-                frame.dispose();
-            }
-        });
+        cancelButton.addActionListener( actionEvent -> frame.dispose() );
     }
 
     public void shutdown() {

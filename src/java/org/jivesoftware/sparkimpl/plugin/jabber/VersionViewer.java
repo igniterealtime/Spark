@@ -22,11 +22,9 @@ package org.jivesoftware.sparkimpl.plugin.jabber;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.SmackException;
-import org.jivesoftware.smack.StanzaListener;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.filter.IQReplyFilter;
 import org.jivesoftware.smack.packet.IQ;
-import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smackx.time.packet.Time;
 import org.jivesoftware.smackx.iqversion.packet.Version;
 import org.jivesoftware.spark.SparkManager;
@@ -93,16 +91,11 @@ public class VersionViewer {
             versionRequest.setType(IQ.Type.get);
             versionRequest.setTo(jid);
 
-            connection.sendStanzaWithResponseCallback( versionRequest, new IQReplyFilter( versionRequest, connection ), new StanzaListener()
-            {
-                @Override
-                public void processPacket( Stanza stanza ) throws SmackException.NotConnectedException
-                {
-                    final Version versionResult = (Version) stanza;
-                    softwareField.setText(versionResult.getName());
-                    versionField.setText(versionResult.getVersion());
-                    osField.setText(versionResult.getOs());
-                }
+            connection.sendStanzaWithResponseCallback( versionRequest, new IQReplyFilter( versionRequest, connection ), stanza -> {
+                final Version versionResult = (Version) stanza;
+                softwareField.setText(versionResult.getName());
+                versionField.setText(versionResult.getVersion());
+                osField.setText(versionResult.getOs());
             } );
 
             // Time
@@ -110,13 +103,8 @@ public class VersionViewer {
             time.setType(IQ.Type.get);
             time.setTo(jid);
 
-            connection.sendStanzaWithResponseCallback( time, new IQReplyFilter( time, connection ), new StanzaListener()
-            {
-                @Override
-                public void processPacket( Stanza stanza ) throws SmackException.NotConnectedException
-                {;
-                    timeField.setText( new SimpleDateFormat( ).format( ((Time)stanza).getTime()));
-                }
+            connection.sendStanzaWithResponseCallback( time, new IQReplyFilter( time, connection ), stanza -> {;
+                timeField.setText( new SimpleDateFormat( ).format( ((Time)stanza).getTime()));
             } );
         }
         catch ( SmackException.NotConnectedException e )

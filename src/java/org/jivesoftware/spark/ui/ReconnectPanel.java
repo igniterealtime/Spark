@@ -23,8 +23,6 @@ import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.TimerTask;
 
 import javax.swing.JEditorPane;
@@ -70,11 +68,7 @@ public class ReconnectPanel extends JPanel implements ConnectionListener {
 
         layoutComponents();
 
-        retryButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent actionEvent) {
-                attemptReconnection();
-            }
-        });
+        retryButton.addActionListener( actionEvent -> attemptReconnection() );
 
 
         setBackground(Color.white);
@@ -122,14 +116,13 @@ public class ReconnectPanel extends JPanel implements ConnectionListener {
             reason = Res.getString("message.generic.reconnect.message");
         }
 
-        StringBuilder builder = new StringBuilder();
-        builder.append("<html><body><table height=100% width=100%><tr><td align=center>");
-        builder.append("<b><u>");
-        builder.append(reason);
-        builder.append("</u></b>");
-        builder.append("</td></tr></table></body></html>");
+        String builder = "<html><body><table height=100% width=100%><tr><td align=center>" +
+                "<b><u>" +
+                reason +
+                "</u></b>" +
+                "</td></tr></table></body></html>";
 
-        pane.setText(builder.toString());
+        pane.setText( builder );
     }
 
     private void layoutComponents() {

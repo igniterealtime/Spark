@@ -87,7 +87,7 @@ import org.jxmpp.util.XmppStringUtils;
  */
 public class ChatRoomImpl extends ChatRoom {
     private static final long serialVersionUID = 6163762803773980872L;
-    private List<MessageEventListener> messageEventListeners = new ArrayList<MessageEventListener>();
+    private List<MessageEventListener> messageEventListeners = new ArrayList<>();
     private String roomname;
     private Icon tabIcon;
     private String roomTitle;
@@ -465,83 +465,81 @@ public class ChatRoomImpl extends ChatRoom {
      * @param stanza - the packet to process
      */
     public void processPacket(final Stanza stanza) {
-        final Runnable runnable = new Runnable() {
-            public void run() {
-                if (stanza instanceof Presence) {
-                	
-                	Presence.Type oldType = presence.getType();
-                	
-                    presence = (Presence)stanza;
+        final Runnable runnable = () -> {
+            if (stanza instanceof Presence) {
 
-                    final Presence presence = (Presence)stanza;
+                Presence.Type oldType = presence.getType();
 
-                    ContactList list = SparkManager.getWorkspace().getContactList();
-                    ContactItem contactItem = list.getContactItemByJID(getParticipantJID());
+                presence = (Presence)stanza;
 
-                    String time = DateFormat.getTimeInstance(DateFormat.SHORT).format(new Date());
+                final Presence presence1 = (Presence)stanza;
 
-                    if (presence.getType() == Presence.Type.unavailable && contactItem != null) {
-                        getTranscriptWindow().insertNotificationMessage("*** " + Res.getString("message.went.offline", participantNickname, time), ChatManager.NOTIFICATION_COLOR);
+                ContactList list = SparkManager.getWorkspace().getContactList();
+                ContactItem contactItem = list.getContactItemByJID(getParticipantJID());
+
+                String time = DateFormat.getTimeInstance(DateFormat.SHORT).format(new Date());
+
+                if ( presence1.getType() == Presence.Type.unavailable && contactItem != null) {
+                    getTranscriptWindow().insertNotificationMessage("*** " + Res.getString("message.went.offline", participantNickname, time), ChatManager.NOTIFICATION_COLOR);
+                }
+                else if (oldType == Presence.Type.unavailable && presence1.getType() == Presence.Type.available) {
+                    getTranscriptWindow().insertNotificationMessage("*** " + Res.getString("message.came.online", participantNickname, time), ChatManager.NOTIFICATION_COLOR);
+                }
+            }
+            else if (stanza instanceof Message) {
+                lastActivity = System.currentTimeMillis();
+
+
+                // Do something with the incoming packet here.
+                final Message message = (Message)stanza;
+                fireReceivingIncomingMessage(message);
+                if (message.getError() != null) {
+                    if (message.getError().getCondition() == XMPPError.Condition.item_not_found) {
+                        // Check to see if the user is online to recieve this message.
+                        RosterEntry entry = roster.getEntry(participantJID);
+                        if (!presence.isAvailable() && !offlineSent && entry != null) {
+                            getTranscriptWindow().insertNotificationMessage(Res.getString("message.offline.error"), ChatManager.ERROR_COLOR);
+                            offlineSent = true;
+                        }
                     }
-                    else if (oldType == Presence.Type.unavailable && presence.getType() == Presence.Type.available) {
-                        getTranscriptWindow().insertNotificationMessage("*** " + Res.getString("message.came.online", participantNickname, time), ChatManager.NOTIFICATION_COLOR);
+                    return;
+                }
+
+                // Check to see if the user is online to recieve this message.
+                RosterEntry entry = roster.getEntry(participantJID);
+                if (!presence.isAvailable() && !offlineSent && entry != null) {
+                    getTranscriptWindow().insertNotificationMessage(Res.getString("message.offline"), ChatManager.ERROR_COLOR);
+                    offlineSent = true;
+                }
+
+                if (threadID == null) {
+                    threadID = message.getThread();
+                    if (threadID == null) {
+                        threadID = StringUtils.randomString(6);
                     }
                 }
-                else if (stanza instanceof Message) {
-                    lastActivity = System.currentTimeMillis();
 
+                final JivePropertiesExtension extension = ((JivePropertiesExtension) message.getExtension( JivePropertiesExtension.NAMESPACE ));
+                final boolean broadcast = extension != null && extension.getProperty( "broadcast" ) != null;
 
-                    // Do something with the incoming packet here.
-                    final Message message = (Message)stanza;
-                    fireReceivingIncomingMessage(message);
-                    if (message.getError() != null) {
-                        if (message.getError().getCondition() == XMPPError.Condition.item_not_found) {
-                            // Check to see if the user is online to recieve this message.
-                            RosterEntry entry = roster.getEntry(participantJID);
-                            if (!presence.isAvailable() && !offlineSent && entry != null) {
-                                getTranscriptWindow().insertNotificationMessage(Res.getString("message.offline.error"), ChatManager.ERROR_COLOR);
-                                offlineSent = true;
-                            }
-                        }
-                        return;
-                    }
+                // If this is a group chat message, discard
+                if (message.getType() == Message.Type.groupchat || broadcast || message.getType() == Message.Type.normal ||
+                        message.getType() == Message.Type.headline) {
+                    return;
+                }
 
-                    // Check to see if the user is online to recieve this message.
-                    RosterEntry entry = roster.getEntry(participantJID);
-                    if (!presence.isAvailable() && !offlineSent && entry != null) {
-                        getTranscriptWindow().insertNotificationMessage(Res.getString("message.offline"), ChatManager.ERROR_COLOR);
-                        offlineSent = true;
-                    }
+                // Do not accept Administrative messages.
+                final String host = SparkManager.getSessionManager().getServerAddress();
+                if (host.equals(message.getFrom())) {
+                    return;
+                }
 
-                    if (threadID == null) {
-                        threadID = message.getThread();
-                        if (threadID == null) {
-                            threadID = StringUtils.randomString(6);
-                        }
-                    }
+                // If the message is not from the current agent. Append to chat.
+                if (message.getBody() != null) {
+                    participantJID = message.getFrom();
+                    insertMessage(message);
 
-                    final JivePropertiesExtension extension = ((JivePropertiesExtension) message.getExtension( JivePropertiesExtension.NAMESPACE ));
-                    final boolean broadcast = extension != null && extension.getProperty( "broadcast" ) != null;
-
-                    // If this is a group chat message, discard
-                    if (message.getType() == Message.Type.groupchat || broadcast || message.getType() == Message.Type.normal ||
-                            message.getType() == Message.Type.headline) {
-                        return;
-                    }
-
-                    // Do not accept Administrative messages.
-                    final String host = SparkManager.getSessionManager().getServerAddress();
-                    if (host.equals(message.getFrom())) {
-                        return;
-                    }
-
-                    // If the message is not from the current agent. Append to chat.
-                    if (message.getBody() != null) {
-                        participantJID = message.getFrom();
-                        insertMessage(message);
-
-                        showTyping(false);
-                    }
+                    showTyping(false);
                 }
             }
         };
@@ -591,9 +589,9 @@ public class ChatRoomImpl extends ChatRoom {
     public void insertMessage(Message message) {
         // Debug info
         super.insertMessage(message);
-        MessageEvent messageEvent = (MessageEvent)message.getExtension("x", "jabber:x:event");
+        MessageEvent messageEvent = message.getExtension("x", "jabber:x:event");
         if (messageEvent != null) {
-            checkEvents(message.getFrom(), message.getPacketID(), messageEvent);
+            checkEvents(message.getFrom(), message.getStanzaId(), messageEvent);
         }
 
         getTranscriptWindow().insertMessage(participantNickname, message, ChatManager.FROM_COLOR, TRANSPARENT_COLOR);
@@ -641,13 +639,13 @@ public class ChatRoomImpl extends ChatRoom {
     }
 
     public void fireOutgoingMessageSending(Message message) {
-        for (MessageEventListener messageEventListener : new ArrayList<MessageEventListener>(messageEventListeners)) {
+        for (MessageEventListener messageEventListener : new ArrayList<>( messageEventListeners )) {
             messageEventListener.sendingMessage(message);
         }
     }
 
     public void fireReceivingIncomingMessage(Message message) {
-        for (MessageEventListener messageEventListener : new ArrayList<MessageEventListener>(messageEventListeners)) {
+        for (MessageEventListener messageEventListener : new ArrayList<>( messageEventListeners )) {
             messageEventListener.receivingMessage(message);
         }
     }

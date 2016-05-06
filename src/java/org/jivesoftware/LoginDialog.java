@@ -90,11 +90,9 @@ import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.*;
 import org.jivesoftware.smack.proxy.ProxyInfo;
-import org.jivesoftware.smack.packet.XMPPError;
 import org.jivesoftware.smack.sasl.javax.SASLExternalMechanism;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
-import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.chatstates.ChatStateManager;
 import org.jivesoftware.spark.SessionManager;
 import org.jivesoftware.spark.SparkManager;
@@ -123,7 +121,7 @@ public class LoginDialog {
     private static final String BUTTON_PANEL = "buttonpanel"; // NOTRANS
     private static final String PROGRESS_BAR = "progressbar"; // NOTRANS
     private LocalPreferences localPref;
-    private ArrayList<String> _usernames = new ArrayList<String>();
+    private ArrayList<String> _usernames = new ArrayList<>();
     private String loginUsername;
     private String loginPassword;
     private String loginServer;
@@ -160,64 +158,62 @@ public class LoginDialog {
 
 
         // Construct Dialog
-    	 EventQueue.invokeLater(new Runnable() {
-   		 public void run() {
-   	        loginDialog = new JFrame(Default.getString(Default.APPLICATION_NAME));
-   	        loginDialog.setIconImage(SparkManager.getApplicationImage().getImage());
-   	        LoginPanel loginPanel = new LoginPanel();
-   	        final JPanel mainPanel = new LoginBackgroundPanel();
-   	        final GridBagLayout mainLayout = new GridBagLayout();
-   	        mainPanel.setLayout(mainLayout);
+    	 EventQueue.invokeLater( () -> {
+            loginDialog = new JFrame(Default.getString(Default.APPLICATION_NAME));
+            loginDialog.setIconImage(SparkManager.getApplicationImage().getImage());
+            LoginPanel loginPanel = new LoginPanel();
+            final JPanel mainPanel = new LoginBackgroundPanel();
+            final GridBagLayout mainLayout = new GridBagLayout();
+            mainPanel.setLayout(mainLayout);
 
-   	        final ImagePanel imagePanel = new ImagePanel();
+            final ImagePanel imagePanel = new ImagePanel();
 
-   	        mainPanel.add(imagePanel,
-   	                new GridBagConstraints(0, 0, 4, 1,
-   	                        1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH,
-   	                        new Insets(0, 0, 0, 0), 0, 0));
+            mainPanel.add(imagePanel,
+                    new GridBagConstraints(0, 0, 4, 1,
+                            1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH,
+                            new Insets(0, 0, 0, 0), 0, 0));
 
-   	        final String showPoweredBy = Default.getString(Default.SHOW_POWERED_BY);
-   	        if (ModelUtil.hasLength(showPoweredBy) && "true".equals(showPoweredBy)) {
-   	            // Handle Powered By for custom clients.
-   	            final JLabel poweredBy = new JLabel(SparkRes.getImageIcon(SparkRes.POWERED_BY_IMAGE));
-   	            mainPanel.add(poweredBy,
-   	                    new GridBagConstraints(0, 1, 4, 1,
-   	                            1.0, 0.0, GridBagConstraints.NORTHEAST, GridBagConstraints.HORIZONTAL,
-   	                            new Insets(0, 0, 2, 0), 0, 0));
+            final String showPoweredBy = Default.getString(Default.SHOW_POWERED_BY);
+            if (ModelUtil.hasLength(showPoweredBy) && "true".equals(showPoweredBy)) {
+                // Handle Powered By for custom clients.
+                final JLabel poweredBy = new JLabel(SparkRes.getImageIcon(SparkRes.POWERED_BY_IMAGE));
+                mainPanel.add(poweredBy,
+                        new GridBagConstraints(0, 1, 4, 1,
+                                1.0, 0.0, GridBagConstraints.NORTHEAST, GridBagConstraints.HORIZONTAL,
+                                new Insets(0, 0, 2, 0), 0, 0));
 
-   	        }
+            }
 
-   	        loginPanel.setOpaque(false);
-   	        mainPanel.add(loginPanel,
-   	                new GridBagConstraints(0, 2, 2, 1,
-   	                        1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH,
-   	                        new Insets(0, 0, 0, 0), 0, 0));
+            loginPanel.setOpaque(false);
+            mainPanel.add(loginPanel,
+                    new GridBagConstraints(0, 2, 2, 1,
+                            1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH,
+                            new Insets(0, 0, 0, 0), 0, 0));
 
-   	        loginDialog.setContentPane(mainPanel);
-   	        loginDialog.setLocationRelativeTo(parentFrame);
+            loginDialog.setContentPane(mainPanel);
+            loginDialog.setLocationRelativeTo(parentFrame);
 
-   	        loginDialog.setResizable(false);
-   	        loginDialog.pack();
+            loginDialog.setResizable(false);
+            loginDialog.pack();
 
-   	        // Center dialog on screen
-   	        GraphicUtils.centerWindowOnScreen(loginDialog);
+            // Center dialog on screen
+            GraphicUtils.centerWindowOnScreen(loginDialog);
 
-   	        // Show dialog
-   	        loginDialog.addWindowListener(new WindowAdapter() {
-   	            public void windowClosing(WindowEvent e) {
-   	                quitLogin();
-   	            }
-   	        });
-   	        if (loginPanel.getUsername().trim().length() > 0) {
-   	            loginPanel.getPasswordField().requestFocus();
-   	        }
+            // Show dialog
+            loginDialog.addWindowListener(new WindowAdapter() {
+                public void windowClosing(WindowEvent e) {
+                    quitLogin();
+                }
+            });
+            if (loginPanel.getUsername().trim().length() > 0) {
+                loginPanel.getPasswordField().requestFocus();
+            }
 
-   	        if (!localPref.isStartedHidden() || !localPref.isAutoLogin()) {
-   	            // Make dialog top most.
-   	            loginDialog.setVisible(true);
-   	        }
-   		 }
-   	 });
+            if (!localPref.isStartedHidden() || !localPref.isAutoLogin()) {
+                // Make dialog top most.
+                loginDialog.setVisible(true);
+            }
+         } );
 
 
     }
@@ -742,26 +738,22 @@ public class LoginDialog {
 
 		final String username = key.split("@")[0];
 		final String host = key.split("@")[1];
-		menu.addActionListener(new ActionListener() {
+		menu.addActionListener( e -> {
+        usernameField.setText(username);
+        serverField.setText(host);
 
-		    @Override
-		    public void actionPerformed(ActionEvent e) {
-			usernameField.setText(username);
-			serverField.setText(host);
+        try {
+            passwordField.setText(localPref.getPasswordForUser(getBareJid()));
+            if(passwordField.getPassword().length<1) {
+            loginButton.setEnabled(false);
+            }
+            else {
+            loginButton.setEnabled(true);
+            }
+        } catch (Exception e1) {
+        }
 
-			try {
-			    passwordField.setText(localPref.getPasswordForUser(getBareJid()));
-			    if(passwordField.getPassword().length<1) {
-				loginButton.setEnabled(false);
-			    }
-			    else {
-				loginButton.setEnabled(true);
-			    }
-			} catch (Exception e1) {
-			}
-
-		    }
-		});
+        } );
 
 		popup.add(menu);
 	    }
@@ -886,17 +878,13 @@ public class LoginDialog {
                         // new ChangeLogDialog().showDialog();
                     }
                     else {
-                        EventQueue.invokeLater(new Runnable() {
-
-                            @Override
-                            public void run() {
-                                savePasswordBox.setEnabled(true);
-                                autoLoginBox.setEnabled(true);
-				loginAsInvisibleBox.setVisible(true);
-                                enableComponents(true);
-                                setProgressBarVisible(false);
-                            }
-                        });
+                        EventQueue.invokeLater( () -> {
+                            savePasswordBox.setEnabled(true);
+                            autoLoginBox.setEnabled(true);
+            loginAsInvisibleBox.setVisible(true);
+                            enableComponents(true);
+                            setProgressBarVisible(false);
+                        } );
 
                     }
                     return loginSuccessfull;
@@ -1073,18 +1061,14 @@ public class LoginDialog {
 			if (EventQueue.isDispatchThread()) {
 			    connection.connect();
 			} else {
-			    EventQueue.invokeAndWait(new Runnable() {
+			    EventQueue.invokeAndWait( () -> {
+                    try {
+                    connection.connect();
+                    } catch (IOException | XMPPException | SmackException e) {
+                    Log.error("connection error",e);
+                    }
 
-				@Override
-				public void run() {
-				    try {
-					connection.connect();
-				    } catch (IOException | XMPPException | SmackException e) {
-					Log.error("connection error",e);
-				    }
-
-				}
-			    });
+                } );
 			}
 		    } else {
 			connection.connect();
@@ -1158,30 +1142,25 @@ public class LoginDialog {
             if (hasErrors) {
 
             	final String finalerrorMessage = errorMessage;
-               EventQueue.invokeLater(new Runnable() {
+               EventQueue.invokeLater( () -> {
+                       progressBar.setVisible(false);
+                       //progressBar.setIndeterminate(false);
 
-     					@Override
-     					public void run()
-     					{
-     							progressBar.setVisible(false);
-     							//progressBar.setIndeterminate(false);
-
-     							// Show error dialog
-     							UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
-     							if (loginDialog.isVisible()) {
-     								if (!localPref.isSSOEnabled()) {
-     	                        JOptionPane.showMessageDialog(loginDialog, finalerrorMessage, Res.getString("title.login.error"),
-     	                                JOptionPane.ERROR_MESSAGE);
-     								}
-     								else {
-     	                        JOptionPane.showMessageDialog(loginDialog, Res.getString("title.advanced.connection.sso.unable"), Res.getString("title.login.error"),
-     	                                JOptionPane.ERROR_MESSAGE);
-     	                        //useSSO(false);
-     	                        //localPref.setSSOEnabled(false);
-     								}
-     							}
-     						}
-     				});
+                       // Show error dialog
+                       UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
+                       if (loginDialog.isVisible()) {
+                           if (!localPref.isSSOEnabled()) {
+JOptionPane.showMessageDialog(loginDialog, finalerrorMessage, Res.getString("title.login.error"),
+JOptionPane.ERROR_MESSAGE);
+                           }
+                           else {
+JOptionPane.showMessageDialog(loginDialog, Res.getString("title.advanced.connection.sso.unable"), Res.getString("title.login.error"),
+JOptionPane.ERROR_MESSAGE);
+//useSSO(false);
+//localPref.setSSOEnabled(false);
+                           }
+                       }
+                   } );
 
                 setEnabled(true);
                 return false;
@@ -1250,68 +1229,66 @@ public class LoginDialog {
         // Invoke the MainWindow.
        try
 		{
-			EventQueue.invokeLater(new Runnable() {
-			 	public void run() {
-			      final MainWindow mainWindow = MainWindow.getInstance();
+			EventQueue.invokeLater( () -> {
+             final MainWindow mainWindow = MainWindow.getInstance();
 
 
-			      /*
-			      if (tray != null) {
-			          // Remove trayIcon
-			          tray.removeTrayIcon(trayIcon);
-			      }
-			      */
-			      // Creates the Spark  Workspace and add to MainWindow
-			      Workspace workspace = Workspace.getInstance();
+             /*
+             if (tray != null) {
+                 // Remove trayIcon
+                 tray.removeTrayIcon(trayIcon);
+             }
+             */
+             // Creates the Spark  Workspace and add to MainWindow
+             Workspace workspace = Workspace.getInstance();
 
-			      LayoutSettings settings = LayoutSettingsManager.getLayoutSettings();
-			      int x = settings.getMainWindowX();
-			      int y = settings.getMainWindowY();
-			      int width = settings.getMainWindowWidth();
-			      int height = settings.getMainWindowHeight();
+             LayoutSettings settings = LayoutSettingsManager.getLayoutSettings();
+             int x = settings.getMainWindowX();
+             int y = settings.getMainWindowY();
+             int width = settings.getMainWindowWidth();
+             int height = settings.getMainWindowHeight();
 
-			      LocalPreferences pref = SettingsManager.getLocalPreferences();
-			      if (pref.isDockingEnabled()) {
-			          JSplitPane splitPane = mainWindow.getSplitPane();
-			          workspace.getCardPanel().setMinimumSize(null);
-			          splitPane.setLeftComponent(workspace.getCardPanel());
-			          SparkManager.getChatManager().getChatContainer().setMinimumSize(null);
-			          splitPane.setRightComponent(SparkManager.getChatManager().getChatContainer());
-			          int dividerLoc = settings.getSplitPaneDividerLocation();
-			          if (dividerLoc != -1) {
-			              mainWindow.getSplitPane().setDividerLocation(dividerLoc);
-			          }
-			          else {
-			              mainWindow.getSplitPane().setDividerLocation(240);
-			          }
+             LocalPreferences pref = SettingsManager.getLocalPreferences();
+             if (pref.isDockingEnabled()) {
+                 JSplitPane splitPane = mainWindow.getSplitPane();
+                 workspace.getCardPanel().setMinimumSize(null);
+                 splitPane.setLeftComponent(workspace.getCardPanel());
+                 SparkManager.getChatManager().getChatContainer().setMinimumSize(null);
+                 splitPane.setRightComponent(SparkManager.getChatManager().getChatContainer());
+                 int dividerLoc = settings.getSplitPaneDividerLocation();
+                 if (dividerLoc != -1) {
+                     mainWindow.getSplitPane().setDividerLocation(dividerLoc);
+                 }
+                 else {
+                     mainWindow.getSplitPane().setDividerLocation(240);
+                 }
 
-			          mainWindow.getContentPane().add(splitPane, BorderLayout.CENTER);
-			      }
-			      else {
-			          mainWindow.getContentPane().add(workspace.getCardPanel(), BorderLayout.CENTER);
-			      }
+                 mainWindow.getContentPane().add(splitPane, BorderLayout.CENTER);
+             }
+             else {
+                 mainWindow.getContentPane().add(workspace.getCardPanel(), BorderLayout.CENTER);
+             }
 
-			      if (x == 0 && y == 0) {
-			          // Use Default size
-			          mainWindow.setSize(310, 520);
+             if (x == 0 && y == 0) {
+                 // Use Default size
+                 mainWindow.setSize(310, 520);
 
-			          // Center Window on Screen
-			          GraphicUtils.centerWindowOnScreen(mainWindow);
-			      }
-			      else {
-			          mainWindow.setBounds(x, y, width, height);
-			      }
+                 // Center Window on Screen
+                 GraphicUtils.centerWindowOnScreen(mainWindow);
+             }
+             else {
+                 mainWindow.setBounds(x, y, width, height);
+             }
 
-			      if (loginDialog.isVisible()) {
-			          mainWindow.setVisible(true);
-			      }
+             if (loginDialog.isVisible()) {
+                 mainWindow.setVisible(true);
+             }
 
-			      loginDialog.setVisible(false);
+             loginDialog.setVisible(false);
 
-			      // Build the layout in the workspace
-			      workspace.buildLayout();
-			 	}
-			 });
+             // Build the layout in the workspace
+             workspace.buildLayout();
+            } );
 		}
 		catch (Exception e)
 		{
@@ -1480,13 +1457,13 @@ public class LoginDialog {
         //Assumption: the KDC will be found with the SRV record
         // _kerberos._udp.$realm
         try {
-            Hashtable<String,String> env= new Hashtable<String,String>();
+            Hashtable<String,String> env= new Hashtable<>();
             env.put("java.naming.factory.initial","com.sun.jndi.dns.DnsContextFactory");
             DirContext context = new InitialDirContext(env);
             Attributes dnsLookup = context.getAttributes("_kerberos._udp."+realm, new String[]{"SRV"});
 
-            ArrayList<Integer> priorities = new ArrayList<Integer>();
-            HashMap<Integer,List<String>> records = new HashMap<Integer,List<String>>();
+            ArrayList<Integer> priorities = new ArrayList<>();
+            HashMap<Integer,List<String>> records = new HashMap<>();
             for (Enumeration<?> e = dnsLookup.getAll() ; e.hasMoreElements() ; ) {
                 Attribute record = (Attribute)e.nextElement();
                 for (Enumeration<?> e2 = record.getAll() ; e2.hasMoreElements() ; ) {
@@ -1495,11 +1472,11 @@ public class LoginDialog {
                     Integer pri = Integer.valueOf(sRecParts[0]);
                     if(priorities.contains(pri)) {
                         List<String> recs = records.get(pri);
-                        if(recs == null) recs = new ArrayList<String>();
+                        if(recs == null) recs = new ArrayList<>();
                         recs.add(sRecord);
                     } else {
                         priorities.add(pri);
-                        List<String> recs = new ArrayList<String>();
+                        List<String> recs = new ArrayList<>();
                         recs.add(sRecord);
                         records.put(pri,recs);
                     }

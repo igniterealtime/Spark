@@ -41,14 +41,12 @@ import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.StanzaListener;
-import org.jivesoftware.smack.packet.ExtensionElement;
 import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.filter.StanzaFilter;
 import org.jivesoftware.smack.filter.StanzaTypeFilter;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.packet.Presence;
-import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.debugger.EnhancedDebuggerWindow;
 import org.jivesoftware.smackx.delay.packet.DelayInformation;
 import org.jivesoftware.smackx.jiveproperties.packet.JivePropertiesExtension;
@@ -73,8 +71,6 @@ import org.jivesoftware.sparkimpl.plugin.bookmarks.BookmarkPlugin;
 import org.jivesoftware.sparkimpl.plugin.gateways.GatewayPlugin;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 import org.jivesoftware.sparkimpl.plugin.transcripts.ChatTranscriptPlugin;
-import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
-import org.jivesoftware.sparkimpl.plugin.privacy.PrivacyManager;
 import org.jxmpp.util.XmppStringUtils;
 
 /**
@@ -236,25 +232,23 @@ public class Workspace extends JPanel implements StanzaListener {
         SparkManager.getSessionManager().getConnection().addAsyncStanzaListener(this, workspaceMessageFilter);
 
         // Make presence available to anonymous requests, if from anonymous user in the system.
-        StanzaListener workspacePresenceListener = new StanzaListener() {
-            public void processPacket(Stanza stanza) {
-                Presence presence = (Presence)stanza;
-                JivePropertiesExtension extension = (JivePropertiesExtension) presence.getExtension( JivePropertiesExtension.NAMESPACE );
-                if (extension != null && extension.getProperty("anonymous") != null) {
-                    boolean isAvailable = statusBox.getPresence().getMode() == Presence.Mode.available;
-                    Presence reply = new Presence(Presence.Type.available);
-                    if (!isAvailable) {
-                        reply.setType(Presence.Type.unavailable);
-                    }
-                    reply.setTo(presence.getFrom());
-                    try
-                    {
-                        SparkManager.getSessionManager().getConnection().sendStanza(reply);
-                    }
-                    catch ( SmackException.NotConnectedException e )
-                    {
-                        Log.warning( "Unable to send presence reply to " + reply.getTo(), e );
-                    }
+        StanzaListener workspacePresenceListener = stanza -> {
+            Presence presence = (Presence)stanza;
+            JivePropertiesExtension extension = (JivePropertiesExtension) presence.getExtension( JivePropertiesExtension.NAMESPACE );
+            if (extension != null && extension.getProperty("anonymous") != null) {
+                boolean isAvailable = statusBox.getPresence().getMode() == Presence.Mode.available;
+                Presence reply = new Presence(Presence.Type.available);
+                if (!isAvailable) {
+                    reply.setType(Presence.Type.unavailable);
+                }
+                reply.setTo(presence.getFrom());
+                try
+                {
+                    SparkManager.getSessionManager().getConnection().sendStanza(reply);
+                }
+                catch ( SmackException.NotConnectedException e )
+                {
+                    Log.warning( "Unable to send presence reply to " + reply.getTo(), e );
                 }
             }
         };
@@ -312,19 +306,17 @@ public class Workspace extends JPanel implements StanzaListener {
      * @param stanza the smack packet to process.
      */
     public void processPacket(final Stanza stanza) {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                try
-                {
-                    handleIncomingPacket(stanza);
-                }
-                catch ( SmackException.NotConnectedException e )
-                {
-                    // This would be odd: not being connected while receiving a stanza...
-                    Log.warning( "Unable to handle incoming stanza: " + stanza , e );
-                }
+        SwingUtilities.invokeLater( () -> {
+            try
+            {
+                handleIncomingPacket(stanza);
             }
-        });
+            catch ( SmackException.NotConnectedException e )
+            {
+                // This would be odd: not being connected while receiving a stanza...
+                Log.warning( "Unable to handle incoming stanza: " + stanza , e );
+            }
+        } );
     }
 
 
@@ -345,7 +337,7 @@ public class Workspace extends JPanel implements StanzaListener {
             final boolean broadcast = extension != null && extension.getProperty( "broadcast" ) != null;
 
             // Handle offline message.
-            DelayInformation offlineInformation = (DelayInformation)message.getExtension("delay", "urn:xmpp:delay");
+            DelayInformation offlineInformation = message.getExtension("delay", "urn:xmpp:delay");
             if (offlineInformation != null && (Message.Type.chat == message.getType() ||
                 Message.Type.normal == message.getType())) {
                 handleOfflineMessage(message);
@@ -416,8 +408,8 @@ public class Workspace extends JPanel implements StanzaListener {
         room.addToTranscript(message, true);
 
         // Send display and notified message back.
-        SparkManager.getMessageEventManager().sendDeliveredNotification(message.getFrom(), message.getPacketID());
-        SparkManager.getMessageEventManager().sendDisplayedNotification(message.getFrom(), message.getPacketID());
+        SparkManager.getMessageEventManager().sendDeliveredNotification(message.getFrom(), message.getStanzaId());
+        SparkManager.getMessageEventManager().sendDisplayedNotification(message.getFrom(), message.getStanzaId());
     }
 
     /**

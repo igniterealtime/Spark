@@ -22,8 +22,6 @@ package org.jivesoftware.spark.ui.conferences;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.SmackException;
-import org.jivesoftware.smack.util.StringUtils;
-import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.muc.MultiUserChatManager;
 import org.jivesoftware.spark.ChatNotFoundException;
 import org.jivesoftware.spark.SparkManager;
@@ -70,8 +68,6 @@ public class GroupChatInvitationUI extends JPanel implements ActionListener {
     private String inviter;
     private String password;
 
-    private String invitationDateFormat = ((SimpleDateFormat)SimpleDateFormat.getTimeInstance(SimpleDateFormat.MEDIUM)).toPattern();
-
     public GroupChatInvitationUI(String room, String inviter, String password, String reason) {
         setLayout(new GridBagLayout());
 
@@ -83,7 +79,8 @@ public class GroupChatInvitationUI extends JPanel implements ActionListener {
 
         // Build invitation time label.
         final Date now = new Date();
-        final SimpleDateFormat dateFormatter = new SimpleDateFormat(invitationDateFormat);
+        String invitationDateFormat = ( (SimpleDateFormat) SimpleDateFormat.getTimeInstance( SimpleDateFormat.MEDIUM ) ).toPattern();
+        final SimpleDateFormat dateFormatter = new SimpleDateFormat( invitationDateFormat );
         final String invitationTime = dateFormatter.format(now);
 
         // Get users nickname, if there is one.

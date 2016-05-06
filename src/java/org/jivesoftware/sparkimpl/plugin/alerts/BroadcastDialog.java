@@ -24,8 +24,6 @@ import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -74,9 +72,9 @@ public class BroadcastDialog extends JPanel {
     private JCheckBox OfflineUsers = new JCheckBox(Res.getString("checkbox.broadcast.hide.offline.user"));
     private JRadioButton normalMessageButton;
     
-    private ArrayList<ArrayList<Object>> NodesGroups = new ArrayList<ArrayList<Object>>();
-    private List<CheckNode> nodes = new ArrayList<CheckNode>();
-    private List<CheckNode> groupNodes = new ArrayList<CheckNode>();
+    private ArrayList<ArrayList<Object>> NodesGroups = new ArrayList<>();
+    private List<CheckNode> nodes = new ArrayList<>();
+    private List<CheckNode> groupNodes = new ArrayList<>();
     private CheckNode rosterNode; 
     private CheckTree checkTree; 
     private Integer OfflineGroup;
@@ -92,7 +90,7 @@ public class BroadcastDialog extends JPanel {
         CheckNode groupNode = new CheckNode(groupName);
         groupNodes.add(groupNode);
         rosterNode.add(groupNode);
-        List<String> onlineJIDs = new ArrayList<String>();
+        List<String> onlineJIDs = new ArrayList<>();
         //ContactGroup groupp;
         for(ContactGroup group : contactList.getContactGroups())
 	        for (ContactItem item : group.getContactItems()) 
@@ -126,7 +124,7 @@ public class BroadcastDialog extends JPanel {
                 nodes.add(itemNode);
             }
 
-            final List<ContactItem> offlineContacts = new ArrayList<ContactItem>(group.getOfflineContacts());
+            final List<ContactItem> offlineContacts = new ArrayList<>( group.getOfflineContacts() );
             Collections.sort(offlineContacts, ContactList.ContactItemComparator);
 
             for (ContactItem item : offlineContacts) {
@@ -159,13 +157,7 @@ public class BroadcastDialog extends JPanel {
         add(treePane, new GridBagConstraints(1, 0, 1, 3, 0.5, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(2, 5, 2, 5), 0, 0));
         add(OfflineUsers, new GridBagConstraints(1, 3, 1, 0, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(2, 5, 2, 5), 0, 0));
         
-        OfflineUsers.addActionListener(new ActionListener()
- 	     {
-      	  public void actionPerformed(ActionEvent e)
-      	  {
-      		  hideOfflineUsers();
-           }
- 	     });
+        OfflineUsers.addActionListener( e -> hideOfflineUsers() );
         
         normalMessageButton.setSelected(true);
         checkTree.expandTree();
@@ -232,31 +224,21 @@ public class BroadcastDialog extends JPanel {
         dlg.setLocationRelativeTo(SparkManager.getMainWindow());
         
         // Add listener
-        okButton.addActionListener(new ActionListener() {
+        okButton.addActionListener( e -> {
+try
+{
+if (sendBroadcasts(dlg)) {
+dlg.setVisible(false);
+}
+}
+catch ( SmackException.NotConnectedException e1 )
+{
+Log.warning( "Unable to broadcast.", e1 );
+}
 
-	    @Override
-	    public void actionPerformed(ActionEvent e) {
-            try
-            {
-                if (sendBroadcasts(dlg)) {
-                    dlg.setVisible(false);
-                }
-            }
-            catch ( SmackException.NotConnectedException e1 )
-            {
-                Log.warning( "Unable to broadcast.", e1 );
-            }
+} );
 
-        }
-	});
-
-        closeButton.addActionListener(new ActionListener() {
-	    
-	    @Override
-	    public void actionPerformed(ActionEvent e) {
-		dlg.setVisible(false);
-	    }
-	});
+        closeButton.addActionListener( e -> dlg.setVisible(false) );
 
         dlg.setVisible(true);
         dlg.toFront();
@@ -268,7 +250,7 @@ public class BroadcastDialog extends JPanel {
 
     private void hideOfflineUsers() {
 
-	int i = 0;
+	int i;
 	if (OfflineUsers.isSelected()) {
 	    final ContactList contactList = SparkManager.getWorkspace()
 		    .getContactList();
@@ -284,7 +266,7 @@ public class BroadcastDialog extends JPanel {
 				.removeNodeFromParent(node);
 			checkTree.getTree()
 				.setSelectionPath(new TreePath(path));
-			NodesGroups.add(new ArrayList<Object>());
+			NodesGroups.add( new ArrayList<>());
 			NodesGroups.get(i).add(parent);
 			NodesGroups.get(i).add(node);
 			i++;
@@ -335,7 +317,7 @@ public class BroadcastDialog extends JPanel {
      */
     private boolean sendBroadcasts(JDialog dlg) throws SmackException.NotConnectedException
     {
-        final Set<String> jids = new HashSet<String>();
+        final Set<String> jids = new HashSet<>();
         
         UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
         

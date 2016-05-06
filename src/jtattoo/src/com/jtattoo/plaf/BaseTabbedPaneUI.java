@@ -920,7 +920,7 @@ public class BaseTabbedPaneUI extends TabbedPaneUI implements SwingConstants {
             tabPane.putClientProperty("html", v);
         }
 
-        SwingUtilities.layoutCompoundLabel((JComponent) tabPane,
+        SwingUtilities.layoutCompoundLabel( tabPane,
                 metrics, title, icon,
                 SwingUtilities.CENTER,
                 SwingUtilities.CENTER,
@@ -3674,12 +3674,7 @@ public class BaseTabbedPaneUI extends TabbedPaneUI implements SwingConstants {
     public class TabComponentHandler implements ComponentListener {
 
         public void componentResized(ComponentEvent ce) {
-            SwingUtilities.invokeLater(new Runnable() {
-
-                public void run() {
-                    tabPane.doLayout();
-                }
-            });
+            SwingUtilities.invokeLater( () -> tabPane.doLayout() );
         }
 
         public void componentMoved(ComponentEvent ce) {

@@ -5,8 +5,6 @@ import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
@@ -14,11 +12,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.TimerTask;
+import java.util.*;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -37,7 +31,6 @@ import javax.swing.text.html.HTMLEditorKit;
 import org.jdesktop.swingx.calendar.DateUtils;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.BackgroundPanel;
 import org.jivesoftware.spark.ui.VCardPanel;
@@ -63,7 +56,7 @@ public class HistoryTranscript extends SwingWorker {
 	private final String period_oneYear = "message.search.period.year.one";
 	private final String period_noPeriod = "message.search.period.none";
 	private String searchPeriod = "";
-	private List<String> periods = new ArrayList<String>();
+	private List<String> periods = new ArrayList<>();
 	private final timerTranscript transcriptTask = new timerTranscript();
 	private JLabel pageCounter = new JLabel("0 / 0");
 	private JButton pageLeft = new JButton("<");
@@ -87,10 +80,9 @@ public class HistoryTranscript extends SwingWorker {
 	private final JScrollPane pane = new JScrollPane(window);
 	private final JFrame frame = new JFrame(Res.getString("title.history.for", jid));
 	private final StringBuilder builder = new StringBuilder();
-	private List<ChatTranscript> searchFilteredList = new ArrayList<ChatTranscript>();
-	private List<ChatTranscript> dateFilteredUnfilteredList = new ArrayList<ChatTranscript>();
+	private List<ChatTranscript> searchFilteredList = new ArrayList<>();
+	private List<ChatTranscript> dateFilteredUnfilteredList = new ArrayList<>();
     private AtomicBoolean isHistoryLoaded = new AtomicBoolean(false);
-    private boolean sortDateAsc = false; 
 
 
 	/**
@@ -122,7 +114,7 @@ public class HistoryTranscript extends SwingWorker {
 	private synchronized void handlePeriodChange(String change){
 		try {
 			token.acquire();
-			if (change != searchPeriod && isInitialized.get()){
+			if ( !Objects.equals( change, searchPeriod ) && isInitialized.get()){
 				searchPeriod = change;
 				pref.setSearchPeriod(searchPeriod);
 				isHistoryLoaded.set(false);
@@ -219,7 +211,7 @@ public class HistoryTranscript extends SwingWorker {
 
 			long lastPostTime = lastPost != null ? lastPost.getTime() : 0;
 
-			int diff = 0;
+			int diff;
 			if (DateUtils.getDaysDiff(lastPostTime, message.getDate()
 					.getTime()) != 0) {
 				diff = DateUtils.getDaysDiff(lastPostTime, message
@@ -345,22 +337,22 @@ public class HistoryTranscript extends SwingWorker {
 		 * @return List of transcript sorted by period. each transcript contains the messages of the giving period 
 		 */
 		private List<ChatTranscript> getDateSortedTranscript(ChatTranscript transcript){
-			List<ChatTranscript> tmpList = new ArrayList<ChatTranscript>();
+			List<ChatTranscript> tmpList = new ArrayList<>();
 
 			if (transcript.size() > 0){
 				ChatTranscript sortedTranscript = new ChatTranscript();
-				HistoryMessage msg = null;
+				HistoryMessage msg;
 
 				// retrieve the first message
 
-				Date oldDate = null;
-                Integer iteratorValue = 0;
-                Integer startValue = 0;
-                Integer endValue = 0;
+				Date oldDate;
+                Integer iteratorValue;
+                Integer startValue;
+                Integer endValue;
 
-                sortDateAsc = pref.getChatHistoryAscending();
+				boolean sortDateAsc = pref.getChatHistoryAscending();
 
-				if (sortDateAsc){
+				if ( sortDateAsc ){
 				    oldDate = transcript.getMessage(0).getDate();
 				    iteratorValue = 1;
 				    startValue = 0;
@@ -392,9 +384,8 @@ public class HistoryTranscript extends SwingWorker {
                         if (history.getMessages().size() > 0) tmpList.add(history);
 
                         // we have handled this entry
-                        handled = true;
 
-                        oldDate = msg.getDate();
+						oldDate = msg.getDate();
                         sortedTranscript = new ChatTranscript();
                     }
                     sortedTranscript.addHistoryMessage(msg);
@@ -438,8 +429,8 @@ public class HistoryTranscript extends SwingWorker {
 					|| searchField.getText().equals(""))
 				searchString = null;
 
-			List<ChatTranscript> tmpList = new ArrayList<ChatTranscript>();
-			ChatTranscript tmpTranscript = null;
+			List<ChatTranscript> tmpList = new ArrayList<>();
+			ChatTranscript tmpTranscript;
 
 			for (int i = 0; i < dateFilteredUnfilteredList.size(); i++){
 				tmpTranscript = new ChatTranscript();
@@ -481,23 +472,9 @@ public class HistoryTranscript extends SwingWorker {
 	 * Set the layout settings
 	 */
 	public void finished() {
-		pageLeft.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				pageLeft();
-			}
-		});
-		pageRight.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				pageRight();
-			}
-		});
-	    periodChooser.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				handlePeriodChange (periods.get(periodChooser.getSelectedIndex()));
-	        }
-	      });
+		pageLeft.addActionListener( arg0 -> pageLeft() );
+		pageRight.addActionListener( arg0 -> pageRight() );
+	    periodChooser.addActionListener( e -> handlePeriodChange (periods.get(periodChooser.getSelectedIndex())) );
 
 		// add search text input
 		searchPanel.setLayout(new GridBagLayout());

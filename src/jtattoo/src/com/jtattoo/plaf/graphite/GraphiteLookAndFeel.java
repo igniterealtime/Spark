@@ -135,8 +135,8 @@ public class GraphiteLookAndFeel extends AbstractLookAndFeel {
         blueProps.setProperty("toolbarColorLight", "228 235 243");
         blueProps.setProperty("toolbarColorDark", "188 204 226");
 
-        String key = null;
-        String value = null;
+        String key;
+        String value;
         Iterator iter = smallFontProps.keySet().iterator();
         while (iter.hasNext()) {
             key = (String)iter.next();

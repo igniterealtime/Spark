@@ -27,7 +27,6 @@ public class BottomRight implements RoarDisplayType {
 
     private int _lastusedXpos;
     private int _lastusedYpos;
-    private Dimension _screensize;
 
     private int _defaultx;
     private int _defaulty;
@@ -41,7 +40,7 @@ public class BottomRight implements RoarDisplayType {
     private static final int TASKBAR = 35;
 
     public BottomRight() {
-        _screensize = Toolkit.getDefaultToolkit().getScreenSize();
+        Dimension _screensize = Toolkit.getDefaultToolkit().getScreenSize();
 
         _lastusedXpos = _screensize.width - 5;
         _lastusedYpos = _screensize.height - HEIGHT - TASKBAR;

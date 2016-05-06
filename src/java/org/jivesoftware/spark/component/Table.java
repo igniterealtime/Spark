@@ -69,7 +69,7 @@ public abstract class Table extends JXTable {
      */
     public static final Color TOOLTIP_COLOR = new Color(166, 202, 240);
 
-    private final Map<Integer,Object> objectMap = new HashMap<Integer,Object>();
+    private final Map<Integer,Object> objectMap = new HashMap<>();
 
     /**
      * Empty Constructor.
