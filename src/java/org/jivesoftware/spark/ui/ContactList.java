@@ -507,7 +507,7 @@ public class ContactList extends JPanel implements ActionListener,
                         //Reconnection and not in dispatch Thread -> Add to EVentQueue
                         EventQueue.invokeLater( () -> {
 
-                            ContactItem changeContact = UIComponentRegistry.createContactItem(entry.getName(), null, entry.getUser());
+                            final ContactItem changeContact = UIComponentRegistry.createContactItem(entry.getName(), null, entry.getUser());
                             staticContactGroup.addContactItem(changeContact);
                             changeContact.setPresence(staticItemPrecense);
                             changeContact.setAvailable(true);
