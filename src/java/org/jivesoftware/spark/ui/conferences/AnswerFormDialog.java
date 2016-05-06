@@ -59,9 +59,8 @@ public class AnswerFormDialog {
     private static final long serialVersionUID = 3637412110943006392L;
     private JDialog dialog = null;
     private JPanel centerpanel;
-    private JPanel bottompanel;
 
-    HashMap<String, JComponent> _map = new HashMap<>();
+	HashMap<String, JComponent> _map = new HashMap<>();
 
     /**
      * Creates an Answer Form Dialog from the specified Form
@@ -73,7 +72,7 @@ public class AnswerFormDialog {
 	    final Form form) {
 
 	centerpanel = new JPanel();
-	bottompanel = new JPanel();
+		JPanel bottompanel = new JPanel();
 	centerpanel.setLayout(new GridBagLayout());
 
 	dialog = new JDialog(parent, true);
@@ -110,7 +109,7 @@ public class AnswerFormDialog {
 
 	dialog.getContentPane().setLayout(new BorderLayout());
 	dialog.getContentPane().add(centerpanel, BorderLayout.CENTER);
-	dialog.getContentPane().add(bottompanel, BorderLayout.SOUTH);
+	dialog.getContentPane().add( bottompanel, BorderLayout.SOUTH);
 	dialog.pack();
 	dialog.setSize(600, 400);
 	GraphicUtils.centerWindowOnScreen(dialog);

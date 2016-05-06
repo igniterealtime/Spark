@@ -46,12 +46,12 @@ import java.util.List;
  */
 public abstract class DroppableFrame extends JFrame implements DropTargetListener, DragSourceListener, DragGestureListener {
     private static final long serialVersionUID = -4250762326200861757L;
-    private DragSource dragSource = DragSource.getDefaultDragSource();
 
     /**
      * Creates an Instance of the Droppable Frame.
      */
     protected DroppableFrame() {
+        DragSource dragSource = DragSource.getDefaultDragSource();
         dragSource.createDefaultDragGestureRecognizer(this, DnDConstants.ACTION_COPY_OR_MOVE, this);
     }
 

@@ -37,11 +37,6 @@ import org.jivesoftware.spark.util.ResourceUtils;
 public class HomePanel extends JPanel {
 
 	private static final long serialVersionUID = -838061087276345124L;
-	private JLabel streetLabel = new JLabel();
-    private JLabel cityLabel = new JLabel();
-    private JLabel stateLabel = new JLabel();
-    private JLabel zipCodeLabel = new JLabel();
-    private JLabel countryLabel = new JLabel();
 
     private JTextField cityField = new JTextField();
     private JTextField stateField = new JTextField();
@@ -50,10 +45,6 @@ public class HomePanel extends JPanel {
     private JTextField streetField = new JTextField();
 
 
-    private JLabel phoneLabel = new JLabel();
-    private JLabel faxLabel = new JLabel();
-    private JLabel pagerLabel = new JLabel();
-    private JLabel mobileLabel = new JLabel();
     private JTextField phoneField = new JTextField();
     private JTextField faxField = new JTextField();
     private JTextField pagerField = new JTextField();
@@ -64,37 +55,46 @@ public class HomePanel extends JPanel {
         this.setLayout(new GridBagLayout());
 
         // Setup Resources
-        ResourceUtils.resLabel(streetLabel, streetField,  Res.getString("label.street.address") + ":");
-        ResourceUtils.resLabel(cityLabel, cityField, Res.getString("label.city") + ":");
-        ResourceUtils.resLabel(stateLabel, stateField,  Res.getString("label.state.and.province") + ":");
-        ResourceUtils.resLabel(zipCodeLabel, zipCodeField,  Res.getString("label.postal.code") + ":");
-        ResourceUtils.resLabel(countryLabel, countryField,  Res.getString("label.country") + ":");
+        JLabel streetLabel = new JLabel();
+        ResourceUtils.resLabel( streetLabel, streetField,  Res.getString("label.street.address") + ":");
+        JLabel cityLabel = new JLabel();
+        ResourceUtils.resLabel( cityLabel, cityField, Res.getString("label.city") + ":");
+        JLabel stateLabel = new JLabel();
+        ResourceUtils.resLabel( stateLabel, stateField,  Res.getString("label.state.and.province") + ":");
+        JLabel zipCodeLabel = new JLabel();
+        ResourceUtils.resLabel( zipCodeLabel, zipCodeField,  Res.getString("label.postal.code") + ":");
+        JLabel countryLabel = new JLabel();
+        ResourceUtils.resLabel( countryLabel, countryField,  Res.getString("label.country") + ":");
 
-        ResourceUtils.resLabel(phoneLabel, phoneField, Res.getString("label.phone") + ":");
-        ResourceUtils.resLabel(faxLabel, faxField,  Res.getString("label.fax") + ":");
-        ResourceUtils.resLabel(mobileLabel, mobileField,  Res.getString("label.mobile") + ":");
-        ResourceUtils.resLabel(pagerLabel, pagerField, Res.getString("label.pager") + ":");
+        JLabel phoneLabel = new JLabel();
+        ResourceUtils.resLabel( phoneLabel, phoneField, Res.getString("label.phone") + ":");
+        JLabel faxLabel = new JLabel();
+        ResourceUtils.resLabel( faxLabel, faxField,  Res.getString("label.fax") + ":");
+        JLabel mobileLabel = new JLabel();
+        ResourceUtils.resLabel( mobileLabel, mobileField,  Res.getString("label.mobile") + ":");
+        JLabel pagerLabel = new JLabel();
+        ResourceUtils.resLabel( pagerLabel, pagerField, Res.getString("label.pager") + ":");
 
-        this.add(streetLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        this.add( streetLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         this.add(streetField, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 
-        this.add(cityLabel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        this.add( cityLabel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         this.add(cityField, new GridBagConstraints(1, 1, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 
-        this.add(stateLabel, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        this.add( stateLabel, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         this.add(stateField, new GridBagConstraints(1, 2, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 
-        this.add(zipCodeLabel, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        this.add( zipCodeLabel, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         this.add(zipCodeField, new GridBagConstraints(1, 3, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 
-        this.add(countryLabel, new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        this.add( countryLabel, new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         this.add(countryField, new GridBagConstraints(1, 4, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 
 
-        this.add(phoneLabel, new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-        this.add(faxLabel, new GridBagConstraints(2, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-        this.add(pagerLabel, new GridBagConstraints(2, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-        this.add(mobileLabel, new GridBagConstraints(2, 3, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        this.add( phoneLabel, new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        this.add( faxLabel, new GridBagConstraints(2, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        this.add( pagerLabel, new GridBagConstraints(2, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        this.add( mobileLabel, new GridBagConstraints(2, 3, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
 
         this.add(phoneField, new GridBagConstraints(3, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
         this.add(faxField, new GridBagConstraints(3, 1, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));

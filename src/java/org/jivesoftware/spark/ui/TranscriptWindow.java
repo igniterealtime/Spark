@@ -77,8 +77,7 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener {
 
 	private static final long serialVersionUID = -2168845249388070573L;
 	private final SimpleDateFormat notificationDateFormatter;
-    private final String notificationDateFormat = ((SimpleDateFormat)SimpleDateFormat.getDateInstance(SimpleDateFormat.FULL)).toPattern();
-    
+
     //code from SPARK-905 patch; it brakes message receiving when there is no old message in the window
     //also related code on 181-186 lines   
     //private SimpleDateFormat myDateFormat = new SimpleDateFormat("dd.MM.yyyy");
@@ -121,7 +120,8 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener {
             }
         });
 
-        notificationDateFormatter = new SimpleDateFormat(notificationDateFormat);
+        String notificationDateFormat = ( (SimpleDateFormat) SimpleDateFormat.getDateInstance( SimpleDateFormat.FULL ) ).toPattern();
+        notificationDateFormatter = new SimpleDateFormat( notificationDateFormat );
     }
 
     /**

@@ -43,12 +43,8 @@ import org.jivesoftware.spark.util.ResourceUtils;
  */
 public class LocalPreferencePanel extends JPanel {
     private static final long serialVersionUID = -1675058807882383560L;
-    private JLabel _portLabel = new JLabel();
-    private JLabel _idleLabel = new JLabel();
-    private JLabel _timeOutLabel = new JLabel();
-    private JLabel _idleStatusLabel = new JLabel();
 
-    private JTextField _portField = new JTextField();
+	private JTextField _portField = new JTextField();
     private JTextField _timeOutField = new JTextField();
     private JTextField _idleField = new JTextField();
     private JTextField _idleStatusText;
@@ -103,18 +99,22 @@ public class LocalPreferencePanel extends JPanel {
 	inputPanel.setBorder(BorderFactory.createTitledBorder(Res
 		.getString("group.login.information")));
 
-	ResourceUtils.resLabel(_portLabel, _portField,Res.getString("label.xmpp.port") + ":");
-	ResourceUtils.resLabel(_timeOutLabel, _timeOutField,
+		JLabel _portLabel = new JLabel();
+		ResourceUtils.resLabel( _portLabel, _portField,Res.getString("label.xmpp.port") + ":");
+		JLabel _timeOutLabel = new JLabel();
+		ResourceUtils.resLabel( _timeOutLabel, _timeOutField,
 		Res.getString("label.response.timeout") + ":");
-	
-	ResourceUtils.resLabel(_idleStatusLabel, _idleStatusText,
+
+		JLabel _idleStatusLabel = new JLabel();
+		ResourceUtils.resLabel( _idleStatusLabel, _idleStatusText,
 		Res.getString("label.time.till.idlemessage") + ":");
 	
 	ResourceUtils.resButton(_autoLoginBox,
 		Res.getString("checkbox.auto.login"));
 	ResourceUtils.resButton(_savePasswordBox,
 		Res.getString("checkbox.save.password"));
-	ResourceUtils.resLabel(_idleLabel, _idleField,
+		JLabel _idleLabel = new JLabel();
+		ResourceUtils.resLabel( _idleLabel, _idleField,
 		Res.getString("label.time.till.idle") + ":");
 	ResourceUtils.resButton(_idleBox,
 		Res.getString("checkbox.idle.enabled"));
@@ -126,13 +126,13 @@ public class LocalPreferencePanel extends JPanel {
 	ResourceUtils.resButton(_useSingleTrayClick,
 			Res.getString("checkbox.click.single.tray"));
 	
-	inputPanel.add(_portLabel,    new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+	inputPanel.add( _portLabel,    new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
 	inputPanel.add(_portField,    new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL,new Insets(5, 5, 5, 5), 0, 0));
-	inputPanel.add(_timeOutLabel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE,new Insets(5, 5, 5, 5), 50, 0));
+	inputPanel.add( _timeOutLabel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE,new Insets(5, 5, 5, 5), 50, 0));
 	inputPanel.add(_timeOutField, new GridBagConstraints(1, 1, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST,GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 0));
-	inputPanel.add(_idleLabel,    new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE,new Insets(5, 5, 5, 5), 50, 0));
+	inputPanel.add( _idleLabel,    new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE,new Insets(5, 5, 5, 5), 50, 0));
 	inputPanel.add(_idleField,    new GridBagConstraints(1, 2, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL,new Insets(5, 5, 5, 5), 50, 0));
-	inputPanel.add(_idleStatusLabel,new GridBagConstraints(0, 3, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST,GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 0));
+	inputPanel.add( _idleStatusLabel,new GridBagConstraints(0, 3, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST,GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 0));
 	inputPanel.add(_idleStatusText, new GridBagConstraints(1, 3, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST,GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 0));	
 	inputPanel.add(_idleBox,        new GridBagConstraints(0, 4, 2, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL,new Insets(5, 5, 5, 5), 50, 0));
 

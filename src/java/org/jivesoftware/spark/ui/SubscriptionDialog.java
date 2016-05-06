@@ -78,13 +78,10 @@ public class SubscriptionDialog {
 
     private final JCheckBox rosterBox = new JCheckBox();
 
-    private final JLabel nicknameLabel = new JLabel();
     private final JTextField nicknameField = new JTextField();
 
-    private final JLabel groupLabel = new JLabel();
     private final JComboBox groupBox = new JComboBox();
 
-    private JLabel usernameLabel = new JLabel();
     private JLabel usernameLabelValue = new JLabel();
 
     private JFrame dialog;
@@ -102,9 +99,12 @@ public class SubscriptionDialog {
         rosterPanel.setLayout(new GridBagLayout());
 
         // Add ResourceUtils
-        ResourceUtils.resLabel(usernameLabel, nicknameField, Res.getString("label.username") + ":");
-        ResourceUtils.resLabel(nicknameLabel, nicknameField, Res.getString("label.nickname") + ":");
-        ResourceUtils.resLabel(groupLabel, groupBox, Res.getString("label.group") + ":");
+        JLabel usernameLabel = new JLabel();
+        ResourceUtils.resLabel( usernameLabel, nicknameField, Res.getString("label.username") + ":");
+        JLabel nicknameLabel = new JLabel();
+        ResourceUtils.resLabel( nicknameLabel, nicknameField, Res.getString("label.nickname") + ":");
+        JLabel groupLabel = new JLabel();
+        ResourceUtils.resLabel( groupLabel, groupBox, Res.getString("label.group") + ":");
 
 
         rosterBox.setText(Res.getString("label.add.to.roster"));
@@ -121,14 +121,14 @@ public class SubscriptionDialog {
         ComponentTitledBorder componentBorder = new ComponentTitledBorder(rosterBox, rosterPanel, BorderFactory.createEtchedBorder());
 
 
-        rosterPanel.add(usernameLabel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        rosterPanel.add( usernameLabel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         rosterPanel.add(usernameLabelValue, new GridBagConstraints(1, 1, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 
 
-        rosterPanel.add(nicknameLabel, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        rosterPanel.add( nicknameLabel, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         rosterPanel.add(nicknameField, new GridBagConstraints(1, 2, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 
-        rosterPanel.add(groupLabel, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        rosterPanel.add( groupLabel, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         rosterPanel.add(groupBox, new GridBagConstraints(1, 3, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
         rosterPanel.add(new JLabel(), new GridBagConstraints(1, 4, 1, 1, 1.0, 1.0, GridBagConstraints.SOUTH, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
 

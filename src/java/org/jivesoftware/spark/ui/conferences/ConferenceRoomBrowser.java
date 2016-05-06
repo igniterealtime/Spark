@@ -134,9 +134,6 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
 
     private JPopupMenu popup;
 
-    private JLabel labelFilter;
-    private JTextField txtFilter;
-
     final TableRowSorter<TableModel> sorter;
 
     /**
@@ -186,16 +183,16 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
 	Hauptpanel.add(toolbar, BorderLayout.WEST);
 	Hauptpanel.add(pane_hiddenButtons, BorderLayout.EAST);
 	this.add(Hauptpanel, BorderLayout.NORTH);
-        
-    labelFilter = new JLabel(Res.getString("label.search"));
-    txtFilter = new JTextField(20);       
+
+        JLabel labelFilter = new JLabel( Res.getString( "label.search" ) );
+        JTextField txtFilter = new JTextField( 20 );
     txtFilter.setMinimumSize(new Dimension(50,20));
         
     //add fields for filter
     final JPanel Filterpanel = new JPanel(new BorderLayout());
 	JPanel toolbarFilter = new JPanel(new FlowLayout(FlowLayout.LEFT));
-	toolbarFilter.add(labelFilter);
-	toolbarFilter.add(txtFilter);
+	toolbarFilter.add( labelFilter );
+	toolbarFilter.add( txtFilter );
 
 	Filterpanel.add(toolbarFilter);
 	this.add(Filterpanel,BorderLayout.SOUTH);
@@ -238,7 +235,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
 	chatManager = SparkManager.getChatManager();
 
         
-    txtFilter.addKeyListener(new KeyAdapter() {
+    txtFilter.addKeyListener( new KeyAdapter() {
         @Override
         public void keyReleased(KeyEvent e) {
             JTextField textField = (JTextField)e.getSource();

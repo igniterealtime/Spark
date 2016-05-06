@@ -72,7 +72,6 @@ public class HistoryWindow extends JFrame {
 	private JScrollPane historyTreeView;
 	private String sizeText;
 	private XMLHistoryFile historyFile;
-	private HistoryTreeNode historyTreeTopNode;
 	private TreeModel historyOriginalModel;
 
 	public HistoryWindow(InputStream is, String roomName) {
@@ -112,8 +111,8 @@ public class HistoryWindow extends JFrame {
 		btnFind = createJButton(BTN_FIND);
 		btnFind.setFont(TEXT_FONT);
 
-		historyTreeTopNode = buildHistoryTree(historyFile, roomName);
-		historyTree = createJTree(historyTreeTopNode);
+		HistoryTreeNode historyTreeTopNode = buildHistoryTree( historyFile, roomName );
+		historyTree = createJTree( historyTreeTopNode );
 		historyOriginalModel = historyTree.getModel();
 		historyTree.setFont(TEXT_FONT);
 		historyTreeView = new JScrollPane(historyTree);

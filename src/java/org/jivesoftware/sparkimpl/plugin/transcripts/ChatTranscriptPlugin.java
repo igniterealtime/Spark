@@ -67,8 +67,6 @@ import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
  */
 public class ChatTranscriptPlugin implements ChatRoomListener {
 
-    private final String timeFormat = "HH:mm:ss";
-    private final String dateFormat = ((SimpleDateFormat)SimpleDateFormat.getDateInstance(SimpleDateFormat.FULL)).toPattern();
     private final SimpleDateFormat notificationDateFormatter;
     private final SimpleDateFormat messageDateFormatter;
     private HashMap<String,Message> lastMessage = new HashMap<>();
@@ -80,8 +78,10 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
     public ChatTranscriptPlugin() {
         SparkManager.getChatManager().addChatRoomListener(this);
 
-        notificationDateFormatter = new SimpleDateFormat(dateFormat);
-        messageDateFormatter = new SimpleDateFormat(timeFormat);
+        String dateFormat = ( (SimpleDateFormat) SimpleDateFormat.getDateInstance( SimpleDateFormat.FULL ) ).toPattern();
+        notificationDateFormatter = new SimpleDateFormat( dateFormat );
+        String timeFormat = "HH:mm:ss";
+        messageDateFormatter = new SimpleDateFormat( timeFormat );
 
         final ContactList contactList = SparkManager.getWorkspace().getContactList();
 

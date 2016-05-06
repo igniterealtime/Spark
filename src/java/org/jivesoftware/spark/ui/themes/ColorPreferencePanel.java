@@ -54,8 +54,7 @@ public class ColorPreferencePanel extends SparkTabbedPane {
 
     private static final long serialVersionUID = -3594152276094474130L;
 
-    private JScrollPane _jScrollPane;
-    private JList _colorliste;
+	private JList _colorliste;
     private ColorSettings _colorsettings;
 
     private JLabel _errorlabel;
@@ -101,10 +100,10 @@ public class ColorPreferencePanel extends SparkTabbedPane {
 	rightpanel.add(_errorlabel, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0 , GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
 
 	_colorliste = new JList(keys);
-	_jScrollPane = new JScrollPane(_colorliste);
+		JScrollPane _jScrollPane = new JScrollPane( _colorliste );
 	
 	setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
-	add(_jScrollPane);
+	add( _jScrollPane );
 	add(rightpanel);
 	
 	

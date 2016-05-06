@@ -93,7 +93,6 @@ public class RosterDialog implements ActionListener {
     private JTextField jidField;
     private JTextField nicknameField;
     private final Vector<String> groupModel = new Vector<>();
-    private final JPanel networkPanel = new JPanel(new GridBagLayout());
 
     private JComboBox groupBox;
     private JComboBox accounts;
@@ -168,6 +167,7 @@ public class RosterDialog implements ActionListener {
         panel.add(nicknameField, new GridBagConstraints(1, 1, 1, 1, 1.0D, 0.0D, 17, 2, new Insets(5, 5, 5, 5), 0, 0));
 
 
+        JPanel networkPanel = new JPanel( new GridBagLayout() );
         ComponentTitledBorder componentBorder = new ComponentTitledBorder(publicBox, networkPanel
                 , BorderFactory.createEtchedBorder());
 
@@ -190,7 +190,7 @@ public class RosterDialog implements ActionListener {
         }
         newGroupButton.addActionListener(this);
 
-        panel.add(networkPanel, new GridBagConstraints(0, 5, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+        panel.add( networkPanel, new GridBagConstraints(0, 5, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 
 
         ResourceUtils.resLabel(contactIDLabel, jidField, Res.getString("label.username") + ":");

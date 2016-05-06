@@ -51,10 +51,6 @@ import java.beans.PropertyChangeListener;
 
 public class RoomBrowser extends JPanel {
     private static final long serialVersionUID = 8820670697089268423L;
-    private JLabel descriptionLabel = new JLabel();
-    private JLabel subjectLabel = new JLabel();
-    private JLabel occupantsLabel = new JLabel();
-    private JLabel roomNameLabel = new JLabel();
 
     private JLabel descriptionValue = new JLabel();
     private JLabel subjectValue = new JLabel();
@@ -65,23 +61,27 @@ public class RoomBrowser extends JPanel {
     private Tree tree;
 
     public RoomBrowser() {
+        JLabel descriptionLabel = new JLabel();
         descriptionLabel.setText(Res.getString("description") + ":");
+        JLabel subjectLabel = new JLabel();
         subjectLabel.setText(Res.getString("subject") + ":");
+        JLabel occupantsLabel = new JLabel();
         occupantsLabel.setText(Res.getString("occupants") + ":");
+        JLabel roomNameLabel = new JLabel();
         roomNameLabel.setText(Res.getString("room.name") + ":");
 
         // Add labels to UI
         setLayout(new GridBagLayout());
-        add(descriptionLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        add( descriptionLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         add(descriptionValue, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 
-        add(subjectLabel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        add( subjectLabel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         add(subjectValue, new GridBagConstraints(1, 1, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 
-        add(occupantsLabel, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        add( occupantsLabel, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         add(occupantsValue, new GridBagConstraints(1, 2, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 
-        add(roomNameLabel, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        add( roomNameLabel, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         add(roomNameValue, new GridBagConstraints(1, 3, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 
 

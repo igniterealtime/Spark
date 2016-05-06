@@ -76,8 +76,6 @@ public class RoarPreferencePanel extends JPanel {
 
     private HashMap<String, Object> _components;
 
-    private String[] _typelistdata;
-
     private Insets INSETS = new Insets(5, 5, 5, 5);
     
     public RoarPreferencePanel() {
@@ -107,7 +105,7 @@ public class RoarPreferencePanel extends JPanel {
         _singleColorlist = new JList<>(listModel);
 
         List<RoarDisplayType> roarDisplayTypes = RoarProperties.getInstance().getDisplayTypes();
-        _typelistdata = new String[roarDisplayTypes.size()];
+        String[] _typelistdata = new String[ roarDisplayTypes.size() ];
         for (int i = 0; i < roarDisplayTypes.size(); i++) {
             _typelistdata[i] = roarDisplayTypes.get(i).getLocalizedName();
         }

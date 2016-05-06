@@ -63,7 +63,6 @@ public class JingleRoom extends JPanel {
 	private static final long serialVersionUID = 2910998210426650565L;
 	private JLabel connectedLabel;
     private String phoneNumber;
-    private JLabel phoneLabel;
     private PreviousConversationPanel historyPanel;
 
     private boolean transmitting;
@@ -121,10 +120,10 @@ public class JingleRoom extends JPanel {
         panel.setOpaque(false);
 
         // Add phone label
-        phoneLabel = new JLabel();
+        JLabel phoneLabel = new JLabel();
         phoneLabel.setFont(new Font("Arial", Font.BOLD, 13));
         phoneLabel.setForeground(new Color(64, 103, 162));
-        panel.add(phoneLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0, 2, 2, 2), 0, 0));
+        panel.add( phoneLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0, 2, 2, 2), 0, 0));
 
         // Add Connected Label
         connectedLabel = new JLabel(CONNECTED);

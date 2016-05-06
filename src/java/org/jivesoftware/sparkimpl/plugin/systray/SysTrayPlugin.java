@@ -61,16 +61,11 @@ import org.jivesoftware.smack.chat.ChatManagerListener;
 import org.jivesoftware.smackx.chatstates.ChatStateListener;
 
 public class SysTrayPlugin implements Plugin, NativeHandler, ChatManagerListener, ChatStateListener {
-	private static String MESSAGE_COUNTER_REG_EXP = "\\[\\d+\\] ";
-    private JPopupMenu popupMenu = new JPopupMenu();
+	private JPopupMenu popupMenu = new JPopupMenu();
 
-    private JMenuItem openMenu;
-    private JMenuItem minimizeMenu;
-    private JMenuItem exitMenu;
-    private JMenu statusMenu;
-    private JMenuItem logoutMenu;
+	private JMenu statusMenu;
 
-    private LocalPreferences pref = SettingsManager.getLocalPreferences();
+	private LocalPreferences pref = SettingsManager.getLocalPreferences();
     private ImageIcon availableIcon;
     private ImageIcon dndIcon;
     private ImageIcon awayIcon;
@@ -92,12 +87,12 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatManagerListener
 
 	if (SystemTray.isSupported()) {
 
-	    openMenu = new JMenuItem(Res.getString("menuitem.open"));
-	    minimizeMenu = new JMenuItem(Res.getString("menuitem.hide"));
-	    exitMenu = new JMenuItem(Res.getString("menuitem.exit"));
+		JMenuItem openMenu = new JMenuItem( Res.getString( "menuitem.open" ) );
+		JMenuItem minimizeMenu = new JMenuItem( Res.getString( "menuitem.hide" ) );
+		JMenuItem exitMenu = new JMenuItem( Res.getString( "menuitem.exit" ) );
 	    statusMenu = new JMenu(Res.getString("menuitem.status"));
-	    logoutMenu = new JMenuItem(
-		    Res.getString("menuitem.logout.no.status"));
+		JMenuItem logoutMenu = new JMenuItem(
+				Res.getString( "menuitem.logout.no.status" ) );
 
 	    SystemTray tray = SystemTray.getSystemTray();
 	    SparkManager.getNativeManager().addNativeHandler(this);
@@ -139,8 +134,8 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatManagerListener
 			.getImageIcon(SparkRes.TRAY_CONNECTING);
 	    }
 
-	    popupMenu.add(openMenu);
-	    openMenu.addActionListener(new AbstractAction() {
+	    popupMenu.add( openMenu );
+	    openMenu.addActionListener( new AbstractAction() {
 
 		private static final long serialVersionUID = 1L;
 
@@ -151,8 +146,8 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatManagerListener
 		}
 
 	    });
-	    popupMenu.add(minimizeMenu);
-	    minimizeMenu.addActionListener(new AbstractAction() {
+	    popupMenu.add( minimizeMenu );
+	    minimizeMenu.addActionListener( new AbstractAction() {
 		private static final long serialVersionUID = 1L;
 
 		@Override
@@ -174,9 +169,9 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatManagerListener
 
 	    if (Spark.isWindows()) {
 		if (!Default.getBoolean("DISABLE_EXIT"))
-		    popupMenu.add(logoutMenu);
+		    popupMenu.add( logoutMenu );
 
-		logoutMenu.addActionListener(new AbstractAction() {
+		logoutMenu.addActionListener( new AbstractAction() {
 		    private static final long serialVersionUID = 1L;
 
 		    @Override
@@ -186,7 +181,7 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatManagerListener
 		});
 	    }
 	    // Exit Menu
-	    exitMenu.addActionListener(new AbstractAction() {
+	    exitMenu.addActionListener( new AbstractAction() {
 		private static final long serialVersionUID = 1L;
 
 		@Override
@@ -195,7 +190,7 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatManagerListener
 		}
 	    });
 	    if (!Default.getBoolean("DISABLE_EXIT"))
-		popupMenu.add(exitMenu);
+		popupMenu.add( exitMenu );
 
 	    /**
 	     * If connection closed set offline tray image
@@ -466,7 +461,8 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatManagerListener
 
 	private String getCounteredTitle(String title, int counter) {
 		String stringCounter = String.format("[%s] ", counter);
-		return counter > 0 ? stringCounter + title.replaceFirst(MESSAGE_COUNTER_REG_EXP, "") : title.replaceFirst(MESSAGE_COUNTER_REG_EXP, "");
+		String MESSAGE_COUNTER_REG_EXP = "\\[\\d+\\] ";
+		return counter > 0 ? stringCounter + title.replaceFirst( MESSAGE_COUNTER_REG_EXP, "") : title.replaceFirst( MESSAGE_COUNTER_REG_EXP, "");
 	}  
     
     @Override

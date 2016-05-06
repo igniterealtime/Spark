@@ -27,7 +27,6 @@ public class XMLHistoryFile extends AbstractHistoryFile {
 
 	private static final String MESSAGE_TAG = "message";
 	private InputStream roomFileStream;
-	private Document historyXML;
 
 	/**
 	 * @param roomFileStream
@@ -52,8 +51,8 @@ public class XMLHistoryFile extends AbstractHistoryFile {
 
 	@Override
 	protected List<HistoryEntry> createEntries() {
-		historyXML = read();
-		if (historyXML == null)
+		Document historyXML = read();
+		if ( historyXML == null)
 			return Collections.emptyList();
 
 		Element document = historyXML.getDocumentElement();

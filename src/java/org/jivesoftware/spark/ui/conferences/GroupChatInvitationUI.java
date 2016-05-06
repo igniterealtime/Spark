@@ -70,8 +70,6 @@ public class GroupChatInvitationUI extends JPanel implements ActionListener {
     private String inviter;
     private String password;
 
-    private String invitationDateFormat = ((SimpleDateFormat)SimpleDateFormat.getTimeInstance(SimpleDateFormat.MEDIUM)).toPattern();
-
     public GroupChatInvitationUI(String room, String inviter, String password, String reason) {
         setLayout(new GridBagLayout());
 
@@ -83,7 +81,8 @@ public class GroupChatInvitationUI extends JPanel implements ActionListener {
 
         // Build invitation time label.
         final Date now = new Date();
-        final SimpleDateFormat dateFormatter = new SimpleDateFormat(invitationDateFormat);
+        String invitationDateFormat = ( (SimpleDateFormat) SimpleDateFormat.getTimeInstance( SimpleDateFormat.MEDIUM ) ).toPattern();
+        final SimpleDateFormat dateFormatter = new SimpleDateFormat( invitationDateFormat );
         final String invitationTime = dateFormatter.format(now);
 
         // Get users nickname, if there is one.

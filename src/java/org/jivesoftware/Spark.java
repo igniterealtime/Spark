@@ -73,9 +73,7 @@ public final class Spark {
     private static File RESOURCE_DIRECTORY;
     private static File BIN_DIRECTORY;
     private static File LOG_DIRECTORY;
-    private static File USER_DIRECTORY;
     private static File PLUGIN_DIRECTORY;
-    private static File XTRA_DIRECTORY;
 
 
     /**
@@ -132,9 +130,9 @@ public final class Spark {
     	RESOURCE_DIRECTORY = initializeDirectory("resources");
     	BIN_DIRECTORY = initializeDirectory("bin");
     	LOG_DIRECTORY = initializeDirectory("logs");
-    	USER_DIRECTORY = initializeDirectory("user");
+        File USER_DIRECTORY = initializeDirectory( "user" );
     	PLUGIN_DIRECTORY = initializeDirectory("plugins");
-    	XTRA_DIRECTORY = initializeDirectory("xtra");
+        File XTRA_DIRECTORY = initializeDirectory( "xtra" );
     	// TODO implement copyEmoticonFiles();
         final String workingDirectory = System.getProperty("appdir");
         
@@ -153,7 +151,7 @@ public final class Spark {
             File workingDir = new File(workingDirectory);
             RESOURCE_DIRECTORY = initializeDirectory(workingDir, "resources");
             BIN_DIRECTORY = initializeDirectory(workingDir, "bin");
-            File emoticons = new File(XTRA_DIRECTORY, "emoticons").getAbsoluteFile();
+            File emoticons = new File( XTRA_DIRECTORY, "emoticons").getAbsoluteFile();
             if(!emoticons.exists()){
 
             	//Copy emoticon files from install directory to the spark user home directory

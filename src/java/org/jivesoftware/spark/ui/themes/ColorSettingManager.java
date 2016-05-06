@@ -36,9 +36,7 @@ public class ColorSettingManager {
 
     private static HashMap<String, String> _propertyHashMap = new HashMap<>();
 
-    private static ColorSettings _colorsettings;
-
-    public ColorSettingManager() {
+	public ColorSettingManager() {
 
     }
 
@@ -49,7 +47,7 @@ public class ColorSettingManager {
      */
     public static ColorSettings getColorSettings() {
 	File settings = getSettingsFile();
-	_colorsettings = loadSettings(settings);
+		ColorSettings _colorsettings = loadSettings( settings );
 	return _colorsettings;
     }
 

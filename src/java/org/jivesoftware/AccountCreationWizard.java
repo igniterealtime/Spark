@@ -61,20 +61,15 @@ import javax.swing.UIManager;
  */
 public class AccountCreationWizard extends JPanel {
 	private static final long serialVersionUID = -7808507939643878212L;
-	private JLabel usernameLabel = new JLabel();
     private JTextField usernameField = new JTextField();
 
-    private JLabel passwordLabel = new JLabel();
     private JPasswordField passwordField = new JPasswordField();
 
-    private JLabel confirmPasswordLabel = new JLabel();
     private JPasswordField confirmPasswordField = new JPasswordField();
 
-    private JLabel serverLabel = new JLabel();
     private JTextField serverField = new JTextField();
 
     private JButton createAccountButton = new JButton();
-    private JButton closeButton = new JButton();
 
     private JDialog dialog;
 
@@ -87,25 +82,29 @@ public class AccountCreationWizard extends JPanel {
      */
     public AccountCreationWizard() {
         // Associate Mnemonics
-        ResourceUtils.resLabel(usernameLabel, usernameField, Res.getString("label.username") + ":");
-        ResourceUtils.resLabel(passwordLabel, passwordField, Res.getString("label.password") + ":");
-        ResourceUtils.resLabel(confirmPasswordLabel, confirmPasswordField, Res.getString("label.confirm.password") + ":");
-        ResourceUtils.resLabel(serverLabel, serverField, Res.getString("label.server") + ":");
+        JLabel usernameLabel = new JLabel();
+        ResourceUtils.resLabel( usernameLabel, usernameField, Res.getString("label.username") + ":");
+        JLabel passwordLabel = new JLabel();
+        ResourceUtils.resLabel( passwordLabel, passwordField, Res.getString("label.password") + ":");
+        JLabel confirmPasswordLabel = new JLabel();
+        ResourceUtils.resLabel( confirmPasswordLabel, confirmPasswordField, Res.getString("label.confirm.password") + ":");
+        JLabel serverLabel = new JLabel();
+        ResourceUtils.resLabel( serverLabel, serverField, Res.getString("label.server") + ":");
         ResourceUtils.resButton(createAccountButton, Res.getString("button.create.account"));
 
         setLayout(new GridBagLayout());
 
         // Add component to UI
-        add(usernameLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        add( usernameLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         add(usernameField, new GridBagConstraints(1, 0, 3, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 150, 0));
 
-        add(passwordLabel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        add( passwordLabel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         add(passwordField, new GridBagConstraints(1, 1, 3, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 
-        add(confirmPasswordLabel, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        add( confirmPasswordLabel, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         add(confirmPasswordField, new GridBagConstraints(1, 2, 3, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 
-        add(serverLabel, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        add( serverLabel, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         add(serverField, new GridBagConstraints(1, 3, 3, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 
         progressBar = new JProgressBar();
@@ -116,8 +115,9 @@ public class AccountCreationWizard extends JPanel {
         add(createAccountButton, new GridBagConstraints(2, 5, 1, 1, 1.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
 
 
-        ResourceUtils.resButton(closeButton, Res.getString("button.close"));
-        add(closeButton, new GridBagConstraints(3, 5, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        JButton closeButton = new JButton();
+        ResourceUtils.resButton( closeButton, Res.getString("button.close"));
+        add( closeButton, new GridBagConstraints(3, 5, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
 
 
         createAccountButton.addActionListener( actionEvent -> createAccount() );
