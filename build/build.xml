@@ -1067,7 +1067,7 @@
 
 	<!-- checkcode.checkstyle ============================================================ -->
 	<target name="checkcode.checkstyle" description="Checkcode with checkstyle.">
-		<taskdef resource="checkstyletask.properties" classpath="build/lib/checkstyle.jar" />
+		<taskdef resource="com/puppycrawl/tools/checkstyle/ant/checkstyle-ant-task.properties" classpath="build/lib/checkstyle.jar"/>
 
 		<checkstyle maxErrors="17000" config="build/checkstyle.xml">
 			<fileset dir="src/java" includes="**/*.java" />
