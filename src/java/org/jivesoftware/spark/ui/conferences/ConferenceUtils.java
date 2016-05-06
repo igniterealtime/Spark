@@ -176,7 +176,7 @@ public class ConferenceUtils {
         }
 
 
-        final List<String> errors = new ArrayList<String>();
+        final List<String> errors = new ArrayList<>();
         final String userPassword = password;
 
         final SwingWorker startChat = new SwingWorker() {
@@ -287,7 +287,7 @@ public class ConferenceUtils {
      * @return a List of errors, if any.
      */
     public static List<String> joinRoom(MultiUserChat groupChat, String nickname, String password) {
-        final List<String> errors = new ArrayList<String>();
+        final List<String> errors = new ArrayList<>();
         if (!groupChat.isJoined()) {
             int groupChatCounter = 0;
             while (true) {
@@ -412,7 +412,7 @@ public class ConferenceUtils {
             submitForm.setAnswer("muc#roomconfig_publicroom", false);
             submitForm.setAnswer("muc#roomconfig_roomname", roomName);
 
-            final List<String> owners = new ArrayList<String>();
+            final List<String> owners = new ArrayList<>();
             owners.add(SparkManager.getSessionManager().getBareAddress());
             submitForm.setAnswer("muc#roomconfig_roomowners", owners);
 
@@ -519,7 +519,7 @@ public class ConferenceUtils {
         }
 
 
-        final List<String> errors = new ArrayList<String>();
+        final List<String> errors = new ArrayList<>();
         final String userPassword = password;
 
 
@@ -590,7 +590,7 @@ public class ConferenceUtils {
         final GroupChatRoom room = UIComponentRegistry.createGroupChatRoom(groupChat);
         room.setTabTitle(tabTitle);
 
-        final List<String> errors = new ArrayList<String>();
+        final List<String> errors = new ArrayList<>();
 
         if (!groupChat.isJoined()) {
             int groupChatCounter = 0;
@@ -652,7 +652,7 @@ public class ConferenceUtils {
 
     }
 
-    final static List<String> unclosableChatRooms = new ArrayList<String>();
+    final static List<String> unclosableChatRooms = new ArrayList<>();
 	public synchronized static void addUnclosableChatRoom(String jid) {
 		unclosableChatRooms.add(jid);
 	}

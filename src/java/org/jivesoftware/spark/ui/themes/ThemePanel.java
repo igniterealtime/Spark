@@ -97,7 +97,7 @@ public class ThemePanel extends JPanel {
     private JLabel _lookandfeelLabel;
     private JComboBox _lookandfeel;
     private JButton _lookandfeelpreview;
-    private Vector<String> _lookandfeelname = new Vector<String>();
+    private Vector<String> _lookandfeelname = new Vector<>();
     private JCheckBox _useTabsForTransports;
     private JCheckBox _useTabsForConference;
 
@@ -122,7 +122,7 @@ public class ThemePanel extends JPanel {
         LookAndFeelInfo[]  ui = UIManager.getInstalledLookAndFeels();
 
 
-        Vector<String> lafname = new Vector<String>();
+        Vector<String> lafname = new Vector<>();
 
         for(int i=0;i<ui.length;i++)
         {

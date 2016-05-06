@@ -70,7 +70,7 @@ public class RosterPickList extends JPanel {
      * @return all items choosen in the pick list.
      */
     public Collection<String> showRoster(JDialog parent) {
-        final List<ContactItem> userList = new ArrayList<ContactItem>();
+        final List<ContactItem> userList = new ArrayList<>();
 
         // Populate Invite Panel with Available users.
         final Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
@@ -141,7 +141,7 @@ public class RosterPickList extends JPanel {
         dlg.toFront();
         dlg.requestFocus();
 
-        List<String> selectedContacts = new ArrayList<String>();
+        List<String> selectedContacts = new ArrayList<>();
 
         Object[] values = rosterList.getSelectedValues();
         final int no = values != null ? values.length : 0;

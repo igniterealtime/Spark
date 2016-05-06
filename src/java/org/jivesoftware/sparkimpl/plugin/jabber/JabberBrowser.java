@@ -163,7 +163,7 @@ public class JabberBrowser implements Plugin {
             return;
         }
 
-        List<Entity> list = new ArrayList<Entity>();
+        List<Entity> list = new ArrayList<>();
         for (DiscoverItems.Item item : result.getItems() ) {
             Entity entity = new Entity(item);
             browsePanel.add(entity);

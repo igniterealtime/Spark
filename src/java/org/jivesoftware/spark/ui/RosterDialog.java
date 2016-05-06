@@ -92,7 +92,7 @@ public class RosterDialog implements ActionListener {
     private JPanel panel;
     private JTextField jidField;
     private JTextField nicknameField;
-    private final Vector<String> groupModel = new Vector<String>();
+    private final Vector<String> groupModel = new Vector<>();
     private final JPanel networkPanel = new JPanel(new GridBagLayout());
 
     private JComboBox groupBox;
@@ -493,7 +493,7 @@ public class RosterDialog implements ActionListener {
 
 		data = usersearchManager.getSearchResults(answer, search);
 
-		ArrayList<String> columnnames = new ArrayList<String>();
+		ArrayList<String> columnnames = new ArrayList<>();
 		for ( ReportedData.Column column : data.getColumns() ) {
 		    String label = column.getLabel();
 		    columnnames.add(label);
@@ -589,7 +589,7 @@ public class RosterDialog implements ActionListener {
     }
 
     public List<AccountItem> getAccounts() {
-        List<AccountItem> list = new ArrayList<AccountItem>();
+        List<AccountItem> list = new ArrayList<>();
 
         for (Transport transport : TransportUtils.getTransports()) {
             if (TransportUtils.isRegistered(SparkManager.getConnection(), transport)) {

@@ -40,7 +40,7 @@ import org.xmlpull.v1.XmlPullParserException;
  */
 public class Tasks implements PrivateData {
 
-    private List<Task> tasks = new ArrayList<Task>();
+    private List<Task> tasks = new ArrayList<>();
 
     /**
      * Required Empty Constructor to use Tasks.

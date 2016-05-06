@@ -102,10 +102,10 @@ public class GroupChatRoom extends ChatRoom {
     private boolean isActive = true;
     private SubjectPanel subjectPanel;
 
-    private List<String> currentUserList = new ArrayList<String>();
+    private List<String> currentUserList = new ArrayList<>();
 
     private String conferenceService;
-    private List<String> blockedUsers = new ArrayList<String>();
+    private List<String> blockedUsers = new ArrayList<>();
 
     private ChatRoomMessageManager messageManager;
     private Timer typingTimer;

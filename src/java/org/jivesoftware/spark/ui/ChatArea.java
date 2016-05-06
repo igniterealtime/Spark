@@ -91,7 +91,7 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
      */
     private int fontSize;
 
-    private List<ContextMenuListener> contextMenuListener = new ArrayList<ContextMenuListener>();
+    private List<ContextMenuListener> contextMenuListener = new ArrayList<>();
 
     private JPopupMenu popup;
 
@@ -101,7 +101,7 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
     private JMenuItem pasteMenu;
     private JMenuItem selectAll;
 
-    private List<LinkInterceptor> interceptors = new ArrayList<LinkInterceptor>();
+    private List<LinkInterceptor> interceptors = new ArrayList<>();
 
     protected EmoticonManager emoticonManager;
 
@@ -731,7 +731,7 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
     }
 
     private void fireContextMenuListeners() {
-        for (ContextMenuListener listener : new ArrayList<ContextMenuListener>(contextMenuListener)) {
+        for (ContextMenuListener listener : new ArrayList<>( contextMenuListener )) {
             listener.poppingUp(this, popup);
         }
     }
@@ -745,7 +745,7 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
     }
 
     public boolean fireLinkInterceptors(MouseEvent event, String link) {
-        for (LinkInterceptor linkInterceptor : new ArrayList<LinkInterceptor>(interceptors)) {
+        for (LinkInterceptor linkInterceptor : new ArrayList<>( interceptors )) {
             boolean handled = linkInterceptor.handleLink(event, link);
             if (handled) {
                 return true;

@@ -361,7 +361,7 @@ final class InvitationDialog extends JPanel {
                     }
                     catch (ChatNotFoundException e1) {
                         dlg.setVisible(false);
-                        final List<String> jidList = new ArrayList<String>();
+                        final List<String> jidList = new ArrayList<>();
                         Object[] jids = invitedUserList.getSelectedValues();
                         final int no = jids != null ? jids.length : 0;
                         for (int i = 0; i < no; i++) {

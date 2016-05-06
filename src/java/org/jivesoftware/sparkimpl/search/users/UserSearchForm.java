@@ -75,7 +75,7 @@ public class UserSearchForm extends JPanel {
 
     private TitlePanel titlePanel;
 
-    private Map<String,SearchForm> serviceMap = new HashMap<String,SearchForm>();
+    private Map<String,SearchForm> serviceMap = new HashMap<>();
 
     
     private static File pluginsettings = new File(Spark.getSparkUserHome() + File.separator + "search.properties"); //new

@@ -52,7 +52,7 @@ public final class SessionManager implements ConnectionListener {
 
     private String JID;
 
-    private List<PresenceListener> presenceListeners = new ArrayList<PresenceListener>();
+    private List<PresenceListener> presenceListeners = new ArrayList<>();
 
     private String userBareAddress;
     private DiscoverItems discoverItems;
@@ -196,7 +196,7 @@ public final class SessionManager implements ConnectionListener {
      */
     public void changePresence(Presence presence) {
         // Fire Presence Listeners
-        for (PresenceListener listener : new ArrayList<PresenceListener>(this.presenceListeners)) {
+        for (PresenceListener listener : new ArrayList<>( this.presenceListeners )) {
             listener.presenceChanged(presence);
         }
 

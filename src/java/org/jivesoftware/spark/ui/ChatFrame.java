@@ -55,7 +55,7 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
     private boolean focused;
     private JCheckBox alwaysOnTopItem;
     private ChatFrame chatFrame = this;
-    private Collection<ChatFrameToFrontListener> _windowToFrontListeners = new ArrayList<ChatFrameToFrontListener>();
+    private Collection<ChatFrameToFrontListener> _windowToFrontListeners = new ArrayList<>();
    
     /**
      * Creates default ChatFrame.

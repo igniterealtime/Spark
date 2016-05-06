@@ -34,8 +34,8 @@ import java.util.StringTokenizer;
  */
 public class FileTransferSettings {
 
-    private List<String> extensions = new ArrayList<String>();
-    private List<String> JIDs = new ArrayList<String>();
+    private List<String> extensions = new ArrayList<>();
+    private List<String> JIDs = new ArrayList<>();
     private int kb;
     private boolean checkSize = false;
     String cannedRejectionMessage;
@@ -210,7 +210,7 @@ public class FileTransferSettings {
      * @return  the resultant {@link List}.
      */
     public static List<String> convertSettingsStringToList(String settings) {
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         StringTokenizer tokenizer = new StringTokenizer(settings, ",;\n\t\r ");
         while (tokenizer.hasMoreTokens()) {
             list.add(tokenizer.nextToken());

@@ -82,8 +82,8 @@ public class RoarPreferencePanel extends JPanel {
     
     public RoarPreferencePanel() {
 
-        _components = new HashMap<String, Object>();
-        _colormap = new HashMap<ColorTypes, Color>();
+        _components = new HashMap<>();
+        _colormap = new HashMap<>();
         for (ColorTypes e : ColorTypes.values()) {
             _colormap.put(e, Color.BLACK);
         }
@@ -116,7 +116,7 @@ public class RoarPreferencePanel extends JPanel {
             _typelistdata[i] = roarDisplayTypes.get(i).getLocalizedName();
         }
             
-        _typelist = new JComboBox<String>(_typelistdata);
+        _typelist = new JComboBox<>( _typelistdata );
         _typelist.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 updateWarningLabel(getDisplayTypeClass().getWarningMessage());

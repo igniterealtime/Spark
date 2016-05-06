@@ -32,7 +32,7 @@ public class JingleStateManager {
     private static final Object LOCK = new Object();
 
 
-    private Map<ChatRoom, JingleRoomState> jingleRooms = new HashMap<ChatRoom, JingleRoomState>();
+    private Map<ChatRoom, JingleRoomState> jingleRooms = new HashMap<>();
 
     /**
      * Type of states a jingle call can be in.

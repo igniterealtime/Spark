@@ -83,7 +83,7 @@ import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 public class StatusBar extends JPanel implements VCardListener {
 	private static final long serialVersionUID = -4322806442034868526L;
 
-	private List<StatusItem> statusList = new ArrayList<StatusItem>();
+	private List<StatusItem> statusList = new ArrayList<>();
 
     private JLabel imageLabel = new JLabel();
     private JLabel descriptiveLabel = new JLabel();
@@ -232,7 +232,7 @@ public class StatusBar extends JPanel implements VCardListener {
 
         List<CustomStatusItem> custom = CustomMessages.load();
         if (custom == null) {
-            custom = new ArrayList<CustomStatusItem>();
+            custom = new ArrayList<>();
         }
 
         // Sort Custom Messages
@@ -463,7 +463,7 @@ public class StatusBar extends JPanel implements VCardListener {
     {
     	List<CustomStatusItem> custom = CustomMessages.load();
     	if (custom == null)
-    		custom = new ArrayList<CustomStatusItem>();
+    		custom = new ArrayList<>();
 
     	// Sort Custom Messages
         Collections.sort( custom, new Comparator<CustomStatusItem>()

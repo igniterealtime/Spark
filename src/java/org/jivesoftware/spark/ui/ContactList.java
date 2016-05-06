@@ -111,7 +111,7 @@ public class ContactList extends JPanel implements ActionListener,
     private static final long serialVersionUID = -4391111935248627078L;
     private JPanel mainPanel = new JPanel();
     private JScrollPane contactListScrollPane;
-    private final List<ContactGroup> groupList = new ArrayList<ContactGroup>();
+    private final List<ContactGroup> groupList = new ArrayList<>();
     private final RolloverButton addingGroupButton;
 
     private ContactItem activeItem;
@@ -131,13 +131,13 @@ public class ContactList extends JPanel implements ActionListener,
     private final JCheckBoxMenuItem showOfflineGroupMenu = new JCheckBoxMenuItem();
     private final JCheckBoxMenuItem showOfflineUsersMenu = new JCheckBoxMenuItem();
     
-    private List<String> sharedGroups = new ArrayList<String>();
+    private List<String> sharedGroups = new ArrayList<>();
 
-    private final List<ContextMenuListener> contextListeners = new ArrayList<ContextMenuListener>();
+    private final List<ContextMenuListener> contextListeners = new ArrayList<>();
 
-    private List<Presence> initialPresences = new ArrayList<Presence>();
-    private final List<FileDropListener> dndListeners = new ArrayList<FileDropListener>();
-    private final List<ContactListListener> contactListListeners = new ArrayList<ContactListListener>();
+    private List<Presence> initialPresences = new ArrayList<>();
+    private final List<FileDropListener> dndListeners = new ArrayList<>();
+    private final List<ContactListListener> contactListListeners = new ArrayList<>();
     private Properties props;
     private File propertiesFile;
 
@@ -405,7 +405,7 @@ public class ContactList extends JPanel implements ActionListener,
      * @param bareJID  the bareJID of the user.
      */
     private void moveToOfflineGroup(final Presence presence, final String bareJID) {
-        for (ContactGroup grpItem : new ArrayList<ContactGroup>(groupList)) {
+        for (ContactGroup grpItem : new ArrayList<>( groupList )) {
             final ContactGroup group = grpItem;
             final ContactItem item = group.getContactItemByJID(bareJID);
             if (item != null) {
@@ -845,7 +845,7 @@ public class ContactList extends JPanel implements ActionListener,
 
                         // Now check to see if groups have been modified or removed. This is used
                         // to check if Contact Groups have been renamed or removed.
-                        final Set<String> userGroupSet = new HashSet<String>();
+                        final Set<String> userGroupSet = new HashSet<>();
                         jids = addresses.iterator();
                         while (jids.hasNext()) {
                             jid = (String)jids.next();
@@ -857,7 +857,7 @@ public class ContactList extends JPanel implements ActionListener,
                                 unfiled = false;
                             }
 
-                            for (ContactGroup group : new ArrayList<ContactGroup>(getContactGroups())) {
+                            for (ContactGroup group : new ArrayList<>( getContactGroups() )) {
                                 ContactItem itemFound = group.getContactItemByJID(jid);
                                 if (itemFound != null && !unfiled && group != getUnfiledGroup() && group != offlineGroup) {
                                     if (!userGroupSet.contains(group.getGroupName())) {
@@ -928,7 +928,7 @@ public class ContactList extends JPanel implements ActionListener,
      * @return a Collection of <code>ContactItem</code> items.
      */
     public Collection<ContactItem> getContactItemsByJID(String jid) {
-        final List<ContactItem> list = new ArrayList<ContactItem>();
+        final List<ContactItem> list = new ArrayList<>();
         for (ContactGroup group : getContactGroups()) {
             ContactItem item = group.getContactItemByJID(XmppStringUtils.parseBareJid(jid));
             if (item != null) {
@@ -1117,7 +1117,7 @@ public class ContactList extends JPanel implements ActionListener,
         }
 
 
-        final List<ContactGroup> tempList = new ArrayList<ContactGroup>();
+        final List<ContactGroup> tempList = new ArrayList<>();
         final Component[] comps = mainPanel.getComponents();
         for (Component c : comps) {
             if (c instanceof ContactGroup && c != offlineGroup) {
@@ -1379,7 +1379,7 @@ public class ContactList extends JPanel implements ActionListener,
     }
 
     private void removeContactItem(String jid) {
-        for (ContactGroup group : new ArrayList<ContactGroup>(getContactGroups())) {
+        for (ContactGroup group : new ArrayList<>( getContactGroups() )) {
             ContactItem item = group.getContactItemByJID(jid);
             group.removeOfflineContactItem(jid);
             if (item != null) {
@@ -1610,7 +1610,7 @@ public class ContactList extends JPanel implements ActionListener,
 
         // Check if user is in shared group.
         boolean isInSharedGroup = false;
-        for (ContactGroup cGroup : new ArrayList<ContactGroup>(getContactGroups())) {
+        for (ContactGroup cGroup : new ArrayList<>( getContactGroups() )) {
             if (cGroup.isSharedGroup()) {
                 ContactItem it = cGroup.getContactItemByJID(item.getJID());
                 if (it != null) {
@@ -1760,7 +1760,7 @@ public class ContactList extends JPanel implements ActionListener,
         }
 
         final ContactGroup owner = getContactGroup(selectedItem.getGroupName());
-        for (ContactGroup contactGroup : new ArrayList<ContactGroup>(groupList)) {
+        for (ContactGroup contactGroup : new ArrayList<>( groupList )) {
             if (owner != contactGroup) {
                 contactGroup.clearSelection();
             }
@@ -1774,7 +1774,7 @@ public class ContactList extends JPanel implements ActionListener,
         final String messageText = dialog.getInput(Res.getString("title.broadcast.message"), Res.getString("message.enter.broadcast.message"), SparkRes.getImageIcon(SparkRes.BLANK_IMAGE), SparkManager.getMainWindow());
         if (ModelUtil.hasLength(messageText)) {
 
-            final Map<String, Message> broadcastMessages = new HashMap<String, Message>();
+            final Map<String, Message> broadcastMessages = new HashMap<>();
             for (ContactItem item : items) {
                 final Message message = new Message();
                 message.setTo(item.getJID());
@@ -1959,7 +1959,7 @@ public class ContactList extends JPanel implements ActionListener,
                         public void run() {
 							SwingUtilities.invokeLater(new Runnable() {
 								public void run() {
-		                            for (Presence userToUpdate : new ArrayList<Presence>(initialPresences)) {
+		                            for (Presence userToUpdate : new ArrayList<>( initialPresences )) {
 		                                initialPresences.remove(userToUpdate);
 		                                try {
 		                                    updateUserPresence(userToUpdate);
@@ -2160,7 +2160,7 @@ public class ContactList extends JPanel implements ActionListener,
     }
 
     public List<ContactGroup> getContactGroups() {
-        final List<ContactGroup> gList = new ArrayList<ContactGroup>(groupList);
+        final List<ContactGroup> gList = new ArrayList<>( groupList );
         Collections.sort(gList, GROUP_COMPARATOR);
         return gList;
     }
@@ -2180,7 +2180,7 @@ public class ContactList extends JPanel implements ActionListener,
     }
 
     public void fireContextMenuListenerPopup(JPopupMenu popup, Object object) {
-        for (ContextMenuListener listener : new ArrayList<ContextMenuListener>(contextListeners)) {
+        for (ContextMenuListener listener : new ArrayList<>( contextListeners )) {
             listener.poppingUp(object, popup);
         }
     }
@@ -2194,7 +2194,7 @@ public class ContactList extends JPanel implements ActionListener,
     }
 
     public Collection<ContactItem> getSelectedUsers() {
-        final List<ContactItem> list = new ArrayList<ContactItem>();
+        final List<ContactItem> list = new ArrayList<>();
 
         for (ContactGroup group : getContactGroups()) {
             for (ContactItem item : group.getSelectedContacts()) {
@@ -2243,7 +2243,7 @@ public class ContactList extends JPanel implements ActionListener,
     }
 
     public void fireFilesDropped(Collection<File> files, ContactItem item) {
-        for (FileDropListener fileDropListener : new ArrayList<FileDropListener>(dndListeners)) {
+        for (FileDropListener fileDropListener : new ArrayList<>( dndListeners )) {
             fileDropListener.filesDropped(files, item);
         }
     }
@@ -2269,37 +2269,37 @@ public class ContactList extends JPanel implements ActionListener,
     }
 
     public void fireContactItemAdded(ContactItem item) {
-        for (ContactListListener contactListListener : new ArrayList<ContactListListener>(contactListListeners)) {
+        for (ContactListListener contactListListener : new ArrayList<>( contactListListeners )) {
             contactListListener.contactItemAdded(item);
         }
     }
 
     public void fireContactItemRemoved(ContactItem item) {
-        for (ContactListListener contactListListener : new ArrayList<ContactListListener>(contactListListeners)) {
+        for (ContactListListener contactListListener : new ArrayList<>( contactListListeners )) {
             contactListListener.contactItemRemoved(item);
         }
     }
 
     public void fireContactGroupAdded(ContactGroup group) {
-        for (ContactListListener contactListListener : new ArrayList<ContactListListener>(contactListListeners)) {
+        for (ContactListListener contactListListener : new ArrayList<>( contactListListeners )) {
             contactListListener.contactGroupAdded(group);
         }
     }
 
     public void fireContactGroupRemoved(ContactGroup group) {
-        for (ContactListListener contactListListener : new ArrayList<ContactListListener>(contactListListeners)) {
+        for (ContactListListener contactListListener : new ArrayList<>( contactListListeners )) {
             contactListListener.contactGroupRemoved(group);
         }
     }
 
     public void fireContactItemClicked(ContactItem contactItem) {
-        for (ContactListListener contactListListener : new ArrayList<ContactListListener>(contactListListeners)) {
+        for (ContactListListener contactListListener : new ArrayList<>( contactListListeners )) {
             contactListListener.contactItemClicked(contactItem);
         }
     }
 
     public void fireContactItemDoubleClicked(ContactItem contactItem) {
-        for (ContactListListener contactListListener : new ArrayList<ContactListListener>(contactListListeners)) {
+        for (ContactListListener contactListListener : new ArrayList<>( contactListListeners )) {
             contactListListener.contactItemDoubleClicked(contactItem);
         }
     }
@@ -2484,7 +2484,7 @@ public class ContactList extends JPanel implements ActionListener,
 
     private void removeAllUsers() {
         // Behind the scenes, move everyone to the offline group.
-        for (ContactGroup contactGroup : new ArrayList<ContactGroup>(getContactGroups())) {
+        for (ContactGroup contactGroup : new ArrayList<>( getContactGroups() )) {
             contactGroup.removeAllContacts();
         }
 

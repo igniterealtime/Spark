@@ -148,7 +148,7 @@ public class ConferenceServiceBrowser {
     }
 
     public Collection<String> getConferenceServices(String server) throws Exception {
-        List<String> answer = new ArrayList<String>();
+        List<String> answer = new ArrayList<>();
         ServiceDiscoveryManager discoManager = ServiceDiscoveryManager.getInstanceFor(SparkManager.getConnection());
         DiscoverItems items = discoManager.discoverItems(server);
         for (DiscoverItems.Item item : items.getItems() ) {

@@ -224,7 +224,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
 	roomsTable = new RoomList();
 
     //build model for roomsTable, ignoring the 1st column              
-    sorter = new TableRowSorter<TableModel>(roomsTable.getModel());
+    sorter = new TableRowSorter<>( roomsTable.getModel() );
     roomsTable.setRowSorter(sorter);
     
 	final JScrollPane pane = new JScrollPane(roomsTable);
@@ -243,7 +243,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
         public void keyReleased(KeyEvent e) {
             JTextField textField = (JTextField)e.getSource();
             String text = textField.getText();
-            List<RowFilter<Object,Object>> filters = new ArrayList<RowFilter<Object,Object>>();
+            List<RowFilter<Object,Object>> filters = new ArrayList<>();
             filters.add(RowFilter.regexFilter(text, 1));
             filters.add(RowFilter.regexFilter(text, 2));
             filters.add(RowFilter.regexFilter(text, 3));
@@ -858,7 +858,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
 		    form.setAnswer("muc#roomconfig_persistentroom", true);
 		}
 
-		List<String> owners = new ArrayList<String>();
+		List<String> owners = new ArrayList<>();
 		owners.add(SparkManager.getSessionManager().getBareAddress());
 		form.setAnswer("muc#roomconfig_roomowners", owners);
 

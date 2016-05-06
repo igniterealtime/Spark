@@ -51,7 +51,7 @@ import java.util.StringTokenizer;
  */
 public class DataFormUI extends JPanel {
 	private static final long serialVersionUID = -6313707846021436765L;
-	private final Map<String,JComponent> valueMap = new HashMap<String,JComponent>();
+	private final Map<String,JComponent> valueMap = new HashMap<>();
     private int row = 5;
     private Form searchForm;
 
@@ -144,7 +144,7 @@ public class DataFormUI extends JPanel {
                 answerForm.setAnswer(answer, isSelected);
             }
             else if (o instanceof JTextArea) {
-                List<String> list = new ArrayList<String>();
+                List<String> list = new ArrayList<>();
                 String value = ((JTextArea)o).getText();
                 StringTokenizer tokenizer = new StringTokenizer(value, ", ", false);
                 while (tokenizer.hasMoreTokens()) {
@@ -169,7 +169,7 @@ public class DataFormUI extends JPanel {
                 else {
                     value = (String)v;
                 }
-                List<String> list = new ArrayList<String>();
+                List<String> list = new ArrayList<>();
                 list.add(value);
                 if (list.size() > 0) {
                     answerForm.setAnswer(answer, list);

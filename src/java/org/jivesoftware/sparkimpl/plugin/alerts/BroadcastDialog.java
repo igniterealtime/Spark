@@ -74,9 +74,9 @@ public class BroadcastDialog extends JPanel {
     private JCheckBox OfflineUsers = new JCheckBox(Res.getString("checkbox.broadcast.hide.offline.user"));
     private JRadioButton normalMessageButton;
     
-    private ArrayList<ArrayList<Object>> NodesGroups = new ArrayList<ArrayList<Object>>();
-    private List<CheckNode> nodes = new ArrayList<CheckNode>();
-    private List<CheckNode> groupNodes = new ArrayList<CheckNode>();
+    private ArrayList<ArrayList<Object>> NodesGroups = new ArrayList<>();
+    private List<CheckNode> nodes = new ArrayList<>();
+    private List<CheckNode> groupNodes = new ArrayList<>();
     private CheckNode rosterNode; 
     private CheckTree checkTree; 
     private Integer OfflineGroup;
@@ -92,7 +92,7 @@ public class BroadcastDialog extends JPanel {
         CheckNode groupNode = new CheckNode(groupName);
         groupNodes.add(groupNode);
         rosterNode.add(groupNode);
-        List<String> onlineJIDs = new ArrayList<String>();
+        List<String> onlineJIDs = new ArrayList<>();
         //ContactGroup groupp;
         for(ContactGroup group : contactList.getContactGroups())
 	        for (ContactItem item : group.getContactItems()) 
@@ -126,7 +126,7 @@ public class BroadcastDialog extends JPanel {
                 nodes.add(itemNode);
             }
 
-            final List<ContactItem> offlineContacts = new ArrayList<ContactItem>(group.getOfflineContacts());
+            final List<ContactItem> offlineContacts = new ArrayList<>( group.getOfflineContacts() );
             Collections.sort(offlineContacts, ContactList.ContactItemComparator);
 
             for (ContactItem item : offlineContacts) {
@@ -284,7 +284,7 @@ public class BroadcastDialog extends JPanel {
 				.removeNodeFromParent(node);
 			checkTree.getTree()
 				.setSelectionPath(new TreePath(path));
-			NodesGroups.add(new ArrayList<Object>());
+			NodesGroups.add( new ArrayList<>());
 			NodesGroups.get(i).add(parent);
 			NodesGroups.get(i).add(node);
 			i++;
@@ -335,7 +335,7 @@ public class BroadcastDialog extends JPanel {
      */
     private boolean sendBroadcasts(JDialog dlg) throws SmackException.NotConnectedException
     {
-        final Set<String> jids = new HashSet<String>();
+        final Set<String> jids = new HashSet<>();
         
         UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
         

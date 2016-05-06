@@ -72,7 +72,7 @@ public class JinglePlugin implements Plugin, Phone, ConnectionListener {
     private String stunServer = "";
     private int stunPort = 0;
     private boolean readyToConnect = false;
-    private Map<String, Boolean> jingleFeature = new HashMap<String, Boolean>();
+    private Map<String, Boolean> jingleFeature = new HashMap<>();
     private boolean fallbackStunEnabled = false;
 
     public void initialize() {
@@ -135,7 +135,7 @@ public class JinglePlugin implements Plugin, Phone, ConnectionListener {
                     if ( readyToConnect )
                     {
                         JingleTransportManager transportManager = new ICETransportManager( SparkManager.getConnection(), stunServer, stunPort );
-                        List<JingleMediaManager> mediaManagers = new ArrayList<JingleMediaManager>();
+                        List<JingleMediaManager> mediaManagers = new ArrayList<>();
 
                         // Get the Locator from the Settings
                         String locator = SettingsManager.getLocalPreferences().getAudioDevice();
@@ -244,7 +244,7 @@ public class JinglePlugin implements Plugin, Phone, ConnectionListener {
             return Collections.emptyList();
         }
 
-        final List<Action> actions = new ArrayList<Action>();
+        final List<Action> actions = new ArrayList<>();
         Action action = new AbstractAction() {
 			private static final long serialVersionUID = 1467355627829748086L;
 

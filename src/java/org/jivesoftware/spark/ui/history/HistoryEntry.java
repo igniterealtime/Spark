@@ -50,7 +50,7 @@ public class HistoryEntry {
 	 */
 	public List<HistoryEntry> getEntries() {
 		if (entries == null)
-			entries = new ArrayList<HistoryEntry>();
+			entries = new ArrayList<>();
 		return entries;
 	}
 
@@ -64,7 +64,7 @@ public class HistoryEntry {
 
 	public List<HistoryMessage> getMessages() {
 		if (null == messages)
-			messages = new ArrayList<HistoryMessage>();
+			messages = new ArrayList<>();
 		return messages;
 	}
 

@@ -36,7 +36,7 @@ import javax.swing.JScrollPane;
  */
 public class CheckBoxList extends JPanel {
     private static final long serialVersionUID = 4145933151755357313L;
-    private Map<JCheckBox, String> valueMap = new HashMap<JCheckBox, String>();
+    private Map<JCheckBox, String> valueMap = new HashMap<>();
     private JPanel internalPanel = new JPanel();
 
     /**
@@ -65,7 +65,7 @@ public class CheckBoxList extends JPanel {
      * @return list of selected checkbox values.
      */
     public List<String> getSelectedValues() {
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         for (JCheckBox checkbox : valueMap.keySet()) {
             if (checkbox.isSelected()) {
                 String value = valueMap.get(checkbox);

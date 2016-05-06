@@ -1210,7 +1210,7 @@ public class LocalPreferences {
     public List<String> getDeactivatedPlugins()
     {
 	String plugs = getString("deactivatedPlugins", "");
-	ArrayList<String> liste = new ArrayList<String>();
+	ArrayList<String> liste = new ArrayList<>();
 
 	StringTokenizer tokenz = new StringTokenizer(plugs, ",");
 

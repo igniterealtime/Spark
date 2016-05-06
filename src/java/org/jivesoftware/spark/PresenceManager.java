@@ -42,7 +42,7 @@ import java.util.List;
  */
 public class PresenceManager {
 
-    private static final List<Presence> PRESENCES = new ArrayList<Presence>();
+    private static final List<Presence> PRESENCES = new ArrayList<>();
 
 
     static {

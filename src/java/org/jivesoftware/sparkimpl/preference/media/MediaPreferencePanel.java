@@ -52,8 +52,8 @@ public class MediaPreferencePanel  extends JPanel {
 	private static final long serialVersionUID = 8297469864676223072L;
 	private Vector<CaptureDeviceInfo2> vectorAudioDevices;
 	private Vector<CaptureDeviceInfo> vectorVideoDevices;
-	private Vector<AudioSystem> vectorAudioSystem  = new  Vector<AudioSystem>();
-	private Vector<CaptureDeviceInfo2> vectorPlaybackDevices = new  Vector<CaptureDeviceInfo2>();
+	private Vector<AudioSystem> vectorAudioSystem  = new Vector<>();
+	private Vector<CaptureDeviceInfo2> vectorPlaybackDevices = new Vector<>();
 
 	private JComboBox audioDevice = new JComboBox();
 	private JComboBox audioSystem = new JComboBox();

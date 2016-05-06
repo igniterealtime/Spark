@@ -56,9 +56,9 @@ import java.util.zip.ZipFile;
  * @author Derek DeMoro
  */
 public class PluginManager implements MainWindowListener {
-    private final List<Plugin> plugins = new ArrayList<Plugin>();
+    private final List<Plugin> plugins = new ArrayList<>();
 
-    private final List<PublicPlugin> publicPlugins = new CopyOnWriteArrayList<PublicPlugin>();
+    private final List<PublicPlugin> publicPlugins = new CopyOnWriteArrayList<>();
     private static PluginManager singleton;
     private static final Object LOCK = new Object();
     /**
@@ -766,8 +766,8 @@ public class PluginManager implements MainWindowListener {
 		//Make sure to load first the plugins with no dependencies
 		//If a plugin with dependencies gets loaded before one of dependencies, 
 		//class not found exception may be thrown if a dependency class is used during plugin creation
-		List<File> dependencies = new ArrayList<File>();
-		List<File> nodependencies = new ArrayList<File>();
+		List<File> dependencies = new ArrayList<>();
+		List<File> nodependencies = new ArrayList<>();
 		for (File file : files) {
 			File pluginXML = new File(file, "plugin.xml");
 			if (pluginXML.exists()) {

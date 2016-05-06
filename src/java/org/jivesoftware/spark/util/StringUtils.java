@@ -863,7 +863,7 @@ public class StringUtils {
 	    return new String[0];
 	}
 
-	ArrayList<String> wordList = new ArrayList<String>();
+	ArrayList<String> wordList = new ArrayList<>();
 	BreakIterator boundary = BreakIterator.getWordInstance();
 	boundary.setText(text);
 	int start = 0;

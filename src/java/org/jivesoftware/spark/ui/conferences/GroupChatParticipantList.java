@@ -103,7 +103,7 @@ public class GroupChatParticipantList extends JPanel {
 	private MultiUserChat chat;
 	private LocalPreferences _localPreferences = SettingsManager.getLocalPreferences();
 
-	private final Map<String, String> userMap = new HashMap<String, String>();
+	private final Map<String, String> userMap = new HashMap<>();
 
 	private UserManager userManager = SparkManager.getUserManager();
 
@@ -113,15 +113,15 @@ public class GroupChatParticipantList extends JPanel {
 
 	private PresenceListener listener = null;
 
-	private Map<String, String> invitees = new HashMap<String, String>();
+	private Map<String, String> invitees = new HashMap<>();
 
 	private boolean allowNicknameChange = true;
 
 	private DiscoverInfo roomInformation;
 
-	private List<JLabel> users = new ArrayList<JLabel>();
+	private List<JLabel> users = new ArrayList<>();
 
-	private HashMap<String,String> usersandRoles = new HashMap<String,String>();
+	private HashMap<String,String> usersandRoles = new HashMap<>();
 
 	/**
 	 * Creates a new RoomInfo instance using the specified ChatRoom. The

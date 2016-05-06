@@ -32,7 +32,7 @@ import javax.swing.JFrame;
 import org.jivesoftware.spark.PluginManager;
 
 public class FlashWindow {
-	private HashMap<Window, Thread> flashings = new HashMap<Window, Thread>();
+	private HashMap<Window, Thread> flashings = new HashMap<>();
 
 	static {
 	    

@@ -108,7 +108,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
 
     private boolean mousePressed;
 
-    private List<ChatRoomClosingListener> closingListeners = new CopyOnWriteArrayList<ChatRoomClosingListener>();
+    private List<ChatRoomClosingListener> closingListeners = new CopyOnWriteArrayList<>();
 
 
     private ChatRoomTransferHandler transferHandler;
@@ -132,20 +132,20 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         chatPanel = new JPanel(new GridBagLayout());
         transcriptWindow = UIComponentRegistry.createTranscriptWindow();
         splitPane = new JSplitPane();
-        packetIDList = new ArrayList<String>();
+        packetIDList = new ArrayList<>();
         notificationLabel = new JLabel();
         toolbar = new ChatToolBar();
         bottomPanel = new JPanel();
 
-        messageListeners = new ArrayList<MessageListener>();
-        transcript = new ArrayList<Message>();
+        messageListeners = new ArrayList<>();
+        transcript = new ArrayList<>();
 
         editorWrapperBar = new JPanel(new BorderLayout());
         editorBarLeft = new JPanel(new FlowLayout(FlowLayout.LEFT, 1, 1));
         editorBarRight = new JPanel(new FlowLayout(FlowLayout.RIGHT, 1, 1));
         editorWrapperBar.add(editorBarLeft, BorderLayout.WEST);
         editorWrapperBar.add(editorBarRight, BorderLayout.EAST);
-        fileDropListeners = new ArrayList<FileDropListener>();
+        fileDropListeners = new ArrayList<>();
 
         transcriptWindowMouseListener = new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
@@ -411,7 +411,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
 	    }
 	}
 
-	Collection<String> groupchatlist = new ArrayList<String>();
+	Collection<String> groupchatlist = new ArrayList<>();
 	Collection<RosterEntry> rosterlist = Roster.getInstanceFor( SparkManager.getConnection() ).getEntries();
 
 	if(SparkManager.getChatManager().getChatContainer().getActiveChatRoom() instanceof GroupChatRoom)
@@ -419,7 +419,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
 	    groupchatlist  =((GroupChatRoom) SparkManager.getChatManager().getChatContainer().getActiveChatRoom()).getParticipants();
 	}
 	String newname = null;
-	ArrayList<String> namelist = new ArrayList<String>();
+	ArrayList<String> namelist = new ArrayList<>();
 
 	for (String lol : groupchatlist) {
 	    lol = lol.substring(lol.lastIndexOf("/") + 1);
@@ -1017,7 +1017,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
             Component[] comps = buttonPanel.getComponents();
             final int no = comps != null ? comps.length : 0;
 
-            final List<Component> buttons = new ArrayList<Component>();
+            final List<Component> buttons = new ArrayList<>();
             for (int i = 0; i < no; i++) {
                 try {
                     Component component = comps[i];

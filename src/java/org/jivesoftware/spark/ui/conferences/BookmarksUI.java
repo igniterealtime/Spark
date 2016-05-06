@@ -88,14 +88,14 @@ public class BookmarksUI extends JPanel {
 
     private Collection<String> mucServices;
 
-    private Set<String> autoJoinRooms = new HashSet<String>();
+    private Set<String> autoJoinRooms = new HashSet<>();
 
-    private List<ContextMenuListener> listeners = new ArrayList<ContextMenuListener>();
+    private List<ContextMenuListener> listeners = new ArrayList<>();
 
     /**
      * Bookmarks listeners
      */
-    private List<BookmarksListener> bookmarkListeners = new ArrayList<BookmarksListener>();
+    private List<BookmarksListener> bookmarkListeners = new ArrayList<>();
 
     private BookmarkManager manager;
 
@@ -474,7 +474,7 @@ public class BookmarksUI extends JPanel {
                     serviceField.setText("");
                 }
                 else {
-                    final List<String> serviceList = new ArrayList<String>();
+                    final List<String> serviceList = new ArrayList<>();
                     serviceField.setText(Res.getString("message.searching.please.wait"));
                     serviceField.setEnabled(false);
                     addButton.setEnabled(false);
@@ -554,7 +554,7 @@ public class BookmarksUI extends JPanel {
     }
 
     private Collection<String> getConferenceServices(String server) throws Exception {
-        List<String> answer = new ArrayList<String>();
+        List<String> answer = new ArrayList<>();
         ServiceDiscoveryManager discoManager = ServiceDiscoveryManager.getInstanceFor(SparkManager.getConnection());
         DiscoverItems items = discoManager.discoverItems(server);
         for (DiscoverItems.Item item : items.getItems()) {
@@ -653,7 +653,7 @@ public class BookmarksUI extends JPanel {
     }
 
     private void fireContextMenuListeners(JPopupMenu popup, JiveTreeNode node) {
-        for (ContextMenuListener listener : new ArrayList<ContextMenuListener>(listeners)) {
+        for (ContextMenuListener listener : new ArrayList<>( listeners )) {
             listener.poppingUp(node, popup);
         }
     }
@@ -677,13 +677,13 @@ public class BookmarksUI extends JPanel {
     }
 
     private void fireBookmarksAdded(String roomJID) {
-        for (BookmarksListener bookmarkListener : new ArrayList<BookmarksListener>(bookmarkListeners)) {
+        for (BookmarksListener bookmarkListener : new ArrayList<>( bookmarkListeners )) {
             bookmarkListener.bookmarkAdded(roomJID);
         }
     }
 
     private void fireBookmarksRemoved(String roomJID) {
-        for (BookmarksListener bookmarkListener : new ArrayList<BookmarksListener>(bookmarkListeners)) {
+        for (BookmarksListener bookmarkListener : new ArrayList<>( bookmarkListeners )) {
             bookmarkListener.bookmarkRemoved(roomJID);
         }
     }

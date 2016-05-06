@@ -37,9 +37,9 @@ import java.util.StringTokenizer;
 public class Default {
     private static PropertyResourceBundle prb;
 
-    private static Map<String,Object> customMap = new HashMap<String,Object>();
+    private static Map<String,Object> customMap = new HashMap<>();
 
-    private static Map<String,ImageIcon> cache = new HashMap<String,ImageIcon>();
+    private static Map<String,ImageIcon> cache = new HashMap<>();
 
     public static final String MAIN_IMAGE = "MAIN_IMAGE";
     public static final String APPLICATION_NAME = "APPLICATION_NAME";
@@ -185,7 +185,7 @@ public class Default {
 	String pluginlist = getString("PLUGIN_BLACKLIST").replace(" ", "")
 		.toLowerCase();
 	StringTokenizer tokenizer = new StringTokenizer(pluginlist, ",");
-	ArrayList<String> list = new ArrayList<String>();
+	ArrayList<String> list = new ArrayList<>();
 
 	while (tokenizer.hasMoreTokens()) {
 	    list.add(tokenizer.nextToken());

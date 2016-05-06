@@ -87,7 +87,7 @@ import org.jxmpp.util.XmppStringUtils;
  */
 public class ChatRoomImpl extends ChatRoom {
     private static final long serialVersionUID = 6163762803773980872L;
-    private List<MessageEventListener> messageEventListeners = new ArrayList<MessageEventListener>();
+    private List<MessageEventListener> messageEventListeners = new ArrayList<>();
     private String roomname;
     private Icon tabIcon;
     private String roomTitle;
@@ -641,13 +641,13 @@ public class ChatRoomImpl extends ChatRoom {
     }
 
     public void fireOutgoingMessageSending(Message message) {
-        for (MessageEventListener messageEventListener : new ArrayList<MessageEventListener>(messageEventListeners)) {
+        for (MessageEventListener messageEventListener : new ArrayList<>( messageEventListeners )) {
             messageEventListener.sendingMessage(message);
         }
     }
 
     public void fireReceivingIncomingMessage(Message message) {
-        for (MessageEventListener messageEventListener : new ArrayList<MessageEventListener>(messageEventListeners)) {
+        for (MessageEventListener messageEventListener : new ArrayList<>( messageEventListeners )) {
             messageEventListener.receivingMessage(message);
         }
     }

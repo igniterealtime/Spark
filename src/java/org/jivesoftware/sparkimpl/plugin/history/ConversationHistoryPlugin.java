@@ -76,7 +76,7 @@ import javax.swing.SwingUtilities;
  */
 public class ConversationHistoryPlugin implements Plugin {
 
-    private List<String> historyList = new ArrayList<String>();
+    private List<String> historyList = new ArrayList<>();
     private File transcriptDir;
     private File conFile;
 
@@ -84,7 +84,7 @@ public class ConversationHistoryPlugin implements Plugin {
     private JList contacts;
     private Window window;
 
-    private Map<JLabel, String> jidMap = new HashMap<JLabel, String>();
+    private Map<JLabel, String> jidMap = new HashMap<>();
 
     public void initialize() {
         transcriptDir = new File(SparkManager.getUserDirectory(), "transcripts");

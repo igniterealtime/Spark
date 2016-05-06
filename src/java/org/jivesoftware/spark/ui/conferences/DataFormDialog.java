@@ -68,7 +68,7 @@ import org.jivesoftware.spark.util.log.Log;
 
 public class DataFormDialog extends JPanel {
     private static final long serialVersionUID = -1536217028590811636L;
-    private final Map<String,JComponent> valueMap = new HashMap<String,JComponent>();
+    private final Map<String,JComponent> valueMap = new HashMap<>();
     private int row = 0;
     JDialog dialog = null;
 
@@ -206,7 +206,7 @@ public class DataFormDialog extends JPanel {
                 boolean isSelected = ((JCheckBox) o).isSelected();
                 submitForm.setAnswer(answer, isSelected);
             } else if (o instanceof JTextArea) {
-                List<String> list = new ArrayList<String>();
+                List<String> list = new ArrayList<>();
                 String value = ((JTextArea) o).getText();
                 StringTokenizer tokenizer = new StringTokenizer(value, ", ", false);
                 while (tokenizer.hasMoreTokens()) {
@@ -222,7 +222,7 @@ public class DataFormDialog extends JPanel {
                 }
             } else if (o instanceof JComboBox) {
                 String value = (String) ((JComboBox) o).getSelectedItem();
-                List<String> list = new ArrayList<String>();
+                List<String> list = new ArrayList<>();
                 list.add(value);
                 if (list.size() > 0) {
                     submitForm.setAnswer(answer, list);

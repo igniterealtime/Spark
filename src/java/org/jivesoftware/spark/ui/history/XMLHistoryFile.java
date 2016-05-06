@@ -57,8 +57,8 @@ public class XMLHistoryFile extends AbstractHistoryFile {
 			return Collections.emptyList();
 
 		Element document = historyXML.getDocumentElement();
-		Map<Date, HistoryEntry> months = new HashMap<Date, HistoryEntry>();
-		Map<Date, HistoryEntry> days = new HashMap<Date, HistoryEntry>();
+		Map<Date, HistoryEntry> months = new HashMap<>();
+		Map<Date, HistoryEntry> days = new HashMap<>();
 
 		NodeList nl = document.getElementsByTagName(MESSAGE_TAG);
 		for (int i = 0; i < nl.getLength(); i++) {

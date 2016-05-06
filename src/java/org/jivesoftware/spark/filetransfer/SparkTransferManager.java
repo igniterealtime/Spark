@@ -111,14 +111,14 @@ import org.jxmpp.util.XmppStringUtils;
  */
 public class SparkTransferManager {
 
-    private List<FileTransferListener> listeners = new ArrayList<FileTransferListener>();
+    private List<FileTransferListener> listeners = new ArrayList<>();
     private File defaultDirectory;
 
     private static SparkTransferManager singleton;
     private static final Object LOCK = new Object();
 
     private FileTransferManager transferManager;
-    private Map<String,ArrayList<File>> waitMap = new HashMap<String,ArrayList<File>>();
+    private Map<String,ArrayList<File>> waitMap = new HashMap<>();
     private BufferedImage bufferedImage;
     private ImageSelectionPanel selectionPanel;
     private Robot robot;
@@ -572,7 +572,7 @@ public class SparkTransferManager {
         if (!PresenceManager.isOnline(jid)) {
             ArrayList<File> list = waitMap.get(jid);
             if (list == null) {
-                list = new ArrayList<File>();
+                list = new ArrayList<>();
             }
 
             list.add(file);
@@ -736,7 +736,7 @@ public class SparkTransferManager {
     }
 
     private boolean fireTransferListeners(FileTransferRequest request) {
-        for (FileTransferListener listener : new ArrayList<FileTransferListener>(listeners)) {
+        for (FileTransferListener listener : new ArrayList<>( listeners )) {
             boolean accepted = listener.handleTransfer(request);
             if (accepted) {
                 return true;

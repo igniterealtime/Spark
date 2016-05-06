@@ -59,7 +59,7 @@ import org.jxmpp.util.XmppStringUtils;
  */
 public class PresenceChangePlugin implements Plugin {
 
-    private final Set<String> sparkContacts = new HashSet<String>();
+    private final Set<String> sparkContacts = new HashSet<>();
     private LocalPreferences localPref = SettingsManager.getLocalPreferences(); 
 
     public void initialize() {
@@ -137,7 +137,7 @@ public class PresenceChangePlugin implements Plugin {
 			    }
 			    String from = presence.getFrom();
 
-			    ArrayList<String> removelater = new ArrayList<String>();
+			    ArrayList<String> removelater = new ArrayList<>();
 			    
 			    for (final String jid : sparkContacts) {
 				if (jid.equals(XmppStringUtils

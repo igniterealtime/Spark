@@ -120,7 +120,7 @@ public final class Spark {
     	SparkCompatibility sparkCompat = new SparkCompatibility();
     	try {
     		// Absolute paths to a collection of files or directories to skip
-			Collection<String> skipFiles = new HashSet<String>();
+			Collection<String> skipFiles = new HashSet<>();
 			skipFiles.add(new File(USER_SPARK_HOME, "plugins").getAbsolutePath());
 
     		sparkCompat.transferConfig(USER_SPARK_HOME, skipFiles);

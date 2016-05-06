@@ -58,7 +58,7 @@ public abstract class AbstractHistoryFile {
 	private List<HistoryEntry> search(List<HistoryEntry> entries,
 			String occurrence) {
 
-		List<HistoryEntry> result = new ArrayList<HistoryEntry>();
+		List<HistoryEntry> result = new ArrayList<>();
 		for (HistoryEntry historyEntry : entries) {
 
 			if (!historyEntry.hasRecords()) {
@@ -103,7 +103,7 @@ public abstract class AbstractHistoryFile {
 	}
 
 	protected List<HistoryEntry> toList(Map<Date, HistoryEntry> months) {
-		List<HistoryEntry> entries = new ArrayList<HistoryEntry>();
+		List<HistoryEntry> entries = new ArrayList<>();
 		for (Entry<Date, HistoryEntry> historyEntry : months.entrySet()) {
 			entries.add(historyEntry.getValue());
 		}

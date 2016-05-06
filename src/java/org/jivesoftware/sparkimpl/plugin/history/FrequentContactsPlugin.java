@@ -70,7 +70,7 @@ public class FrequentContactsPlugin implements Plugin {
     private JList contacts;
     private Window window;
 
-    private Map<JLabel, String> jidMap = new HashMap<JLabel, String>();
+    private Map<JLabel, String> jidMap = new HashMap<>();
 
     public void initialize() {
         transcriptDir = new File(SparkManager.getUserDirectory(), "transcripts");
@@ -233,7 +233,7 @@ public class FrequentContactsPlugin implements Plugin {
             size = 10;
         }
 
-        final List<String> jidList = new ArrayList<String>();
+        final List<String> jidList = new ArrayList<>();
         for (int i = 0; i < size; i++) {
             File file = files.get(i);
             String jid;

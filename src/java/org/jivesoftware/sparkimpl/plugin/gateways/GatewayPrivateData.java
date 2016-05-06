@@ -35,7 +35,7 @@ import java.util.Map;
  */
 public class GatewayPrivateData implements PrivateData {
 
-    private final Map<String, String> loginSettingsMap = new HashMap<String, String>();
+    private final Map<String, String> loginSettingsMap = new HashMap<>();
 
     public static final String ELEMENT = "gateway-settings";
     public static final String NAMESPACE = "http://www.jivesoftware.org/spark";

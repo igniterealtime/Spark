@@ -74,7 +74,7 @@ import java.util.TimerTask;
  */
 public class UserManager {
 
-    private Map<JFrame,Component> parents = new HashMap<JFrame,Component>();
+    private Map<JFrame,Component> parents = new HashMap<>();
 
     public UserManager() {
     }
@@ -136,7 +136,7 @@ public class UserManager {
      * @return a Collection of jids found in the room.
      */
     public Collection<String> getUserJidsInRoom(String room, boolean fullJID) {
-        return new ArrayList<String>();
+        return new ArrayList<>();
     }
 
     /**
@@ -279,7 +279,7 @@ public class UserManager {
      * @see <code>ChatUser</code>
      */
     public Collection<String> getAllParticipantsInRoom(ChatRoom chatRoom) {
-        return new ArrayList<String>();
+        return new ArrayList<>();
     }
 
 
@@ -370,8 +370,8 @@ public class UserManager {
         final Component glassPane = parents.get(parent);
         parent.setGlassPane(glassPane);
 
-        final Map<String, ContactItem> contactMap = new HashMap<String, ContactItem>();
-        final List<ContactItem> contacts = new ArrayList<ContactItem>();
+        final Map<String, ContactItem> contactMap = new HashMap<>();
+        final List<ContactItem> contacts = new ArrayList<>();
 
         final ContactList contactList = SparkManager.getWorkspace().getContactList();
 
@@ -388,7 +388,7 @@ public class UserManager {
         // Sort
         Collections.sort(contacts, itemComparator);
 
-        final JContactItemField contactField = new JContactItemField(new ArrayList<ContactItem>(contacts));
+        final JContactItemField contactField = new JContactItemField( new ArrayList<>( contacts ));
 
 
         JPanel layoutPanel = new JPanel();

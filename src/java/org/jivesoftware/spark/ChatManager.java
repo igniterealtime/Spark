@@ -96,28 +96,28 @@ public class ChatManager implements ChatManagerListener {
         new Color(255, 69, 0), new Color(255, 99, 72), new Color(109, 130, 180), new Color(233, 0, 0), new Color(139, 69, 19), new Color(255, 127, 80),
         new Color(140, 105, 225)};
 
-    private List<MessageFilter> messageFilters = new ArrayList<MessageFilter>();
+    private List<MessageFilter> messageFilters = new ArrayList<>();
 
-    private List<GlobalMessageListener> globalMessageListeners = new ArrayList<GlobalMessageListener>();
+    private List<GlobalMessageListener> globalMessageListeners = new ArrayList<>();
 
-    private List<RoomInvitationListener> invitationListeners = new ArrayList<RoomInvitationListener>();
+    private List<RoomInvitationListener> invitationListeners = new ArrayList<>();
 
-    private List<TranscriptWindowInterceptor> interceptors = new ArrayList<TranscriptWindowInterceptor>();
+    private List<TranscriptWindowInterceptor> interceptors = new ArrayList<>();
 
-    private List<SparkTabHandler> sparkTabHandlers = new CopyOnWriteArrayList<SparkTabHandler>();
+    private List<SparkTabHandler> sparkTabHandlers = new CopyOnWriteArrayList<>();
 
 
     private final ChatContainer chatContainer;
 
     private String conferenceService;
 
-    private List<ContactItemHandler> contactItemHandlers = new ArrayList<ContactItemHandler>();
+    private List<ContactItemHandler> contactItemHandlers = new ArrayList<>();
 
-    private Set<ChatRoom> typingNotificationList = new HashSet<ChatRoom>();
+    private Set<ChatRoom> typingNotificationList = new HashSet<>();
 
     private UriManager _uriManager = new UriManager();
     
-    private List<ChatMessageHandler> chatMessageHandlers = new ArrayList<ChatMessageHandler> ();
+    private List<ChatMessageHandler> chatMessageHandlers = new ArrayList<>();
 
     /**
      * The listener instance that we use to track chat states according to

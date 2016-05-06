@@ -63,7 +63,7 @@ public class HistoryTranscript extends SwingWorker {
 	private final String period_oneYear = "message.search.period.year.one";
 	private final String period_noPeriod = "message.search.period.none";
 	private String searchPeriod = "";
-	private List<String> periods = new ArrayList<String>();
+	private List<String> periods = new ArrayList<>();
 	private final timerTranscript transcriptTask = new timerTranscript();
 	private JLabel pageCounter = new JLabel("0 / 0");
 	private JButton pageLeft = new JButton("<");
@@ -87,8 +87,8 @@ public class HistoryTranscript extends SwingWorker {
 	private final JScrollPane pane = new JScrollPane(window);
 	private final JFrame frame = new JFrame(Res.getString("title.history.for", jid));
 	private final StringBuilder builder = new StringBuilder();
-	private List<ChatTranscript> searchFilteredList = new ArrayList<ChatTranscript>();
-	private List<ChatTranscript> dateFilteredUnfilteredList = new ArrayList<ChatTranscript>();
+	private List<ChatTranscript> searchFilteredList = new ArrayList<>();
+	private List<ChatTranscript> dateFilteredUnfilteredList = new ArrayList<>();
     private AtomicBoolean isHistoryLoaded = new AtomicBoolean(false);
     private boolean sortDateAsc = false; 
 
@@ -345,7 +345,7 @@ public class HistoryTranscript extends SwingWorker {
 		 * @return List of transcript sorted by period. each transcript contains the messages of the giving period 
 		 */
 		private List<ChatTranscript> getDateSortedTranscript(ChatTranscript transcript){
-			List<ChatTranscript> tmpList = new ArrayList<ChatTranscript>();
+			List<ChatTranscript> tmpList = new ArrayList<>();
 
 			if (transcript.size() > 0){
 				ChatTranscript sortedTranscript = new ChatTranscript();
@@ -438,7 +438,7 @@ public class HistoryTranscript extends SwingWorker {
 					|| searchField.getText().equals(""))
 				searchString = null;
 
-			List<ChatTranscript> tmpList = new ArrayList<ChatTranscript>();
+			List<ChatTranscript> tmpList = new ArrayList<>();
 			ChatTranscript tmpTranscript = null;
 
 			for (int i = 0; i < dateFilteredUnfilteredList.size(); i++){

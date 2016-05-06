@@ -38,7 +38,7 @@ import java.util.Map;
  */
 public final class GrowlUtils {
     private static final boolean GROWL_LOADED;
-    private static Map<String, Growl> instances = new HashMap<String, Growl>();
+    private static Map<String, Growl> instances = new HashMap<>();
 
 	
 //	public GrowlUtils(String pathtoload)

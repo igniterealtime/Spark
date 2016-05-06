@@ -87,7 +87,7 @@ public class SparkCompatibility {
             	// Skip any directories / files which may need to be skipped.  
             	if (!skipFiles.contains((new File(dest, children[i]).getAbsolutePath()))) {
 	            	copyDirectory(new File(src, children[i]),
-	                        new File(dest, children[i]), new HashSet<String>());
+	                        new File(dest, children[i]), new HashSet<>());
             	}
             }
         } else {

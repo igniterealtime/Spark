@@ -462,7 +462,7 @@ public class PluginViewer extends JPanel implements Plugin {
 
 
     public Collection<PublicPlugin> getPluginList(InputStream response) {
-        final List<PublicPlugin> pluginList = new ArrayList<PublicPlugin>();
+        final List<PublicPlugin> pluginList = new ArrayList<>();
         SAXReader saxReader = new SAXReader();
         Document pluginXML = null;
 

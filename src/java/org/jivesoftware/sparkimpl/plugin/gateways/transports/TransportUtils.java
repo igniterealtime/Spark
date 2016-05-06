@@ -45,7 +45,7 @@ import java.util.Map;
  */
 public class TransportUtils {
 
-    private static Map<String, Transport> transports = new HashMap<String, Transport>();
+    private static Map<String, Transport> transports = new HashMap<>();
     private static GatewayPrivateData gatewayPreferences;
 
     private TransportUtils() {
@@ -159,7 +159,7 @@ public class TransportUtils {
      */
     public static void registerUser(XMPPConnection con, String gatewayDomain, String username, String password, String nickname, StanzaListener callback) throws SmackException.NotConnectedException
     {
-        Map<String, String> attributes = new HashMap<String, String>();
+        Map<String, String> attributes = new HashMap<>();
         if (username != null) {
             attributes.put("username", username);
         }
@@ -184,7 +184,7 @@ public class TransportUtils {
      */
     public static void unregister(XMPPConnection con, String gatewayDomain) throws SmackException.NotConnectedException
     {
-        Map<String,String> map = new HashMap<String,String>();
+        Map<String,String> map = new HashMap<>();
         map.put("remove", "");
         Registration registration = new Registration( map );
         registration.setType(IQ.Type.set);

@@ -185,7 +185,7 @@ public class GoogleSearchResult {
      * @return the values to populate the table with.
      */
     public List<String> getFieldValues() {
-        final List<String> returnList = new ArrayList<String>();
+        final List<String> returnList = new ArrayList<>();
         returnList.add(StringUtils.stripTags(snippet));
         returnList.add(getSubject());
         return returnList;

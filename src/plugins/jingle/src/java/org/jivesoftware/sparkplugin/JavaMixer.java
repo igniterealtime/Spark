@@ -125,7 +125,7 @@ public class JavaMixer {
      * @return List<Mixer> Port Mixers
      */
     private List<Mixer> getPortMixers() {
-        List<Mixer> supportingMixers = new ArrayList<Mixer>();
+        List<Mixer> supportingMixers = new ArrayList<>();
         Mixer.Info[] aMixerInfos = AudioSystem.getMixerInfo();
         for (Mixer.Info aMixerInfo : aMixerInfos) {
             Mixer mixer = AudioSystem.getMixer(aMixerInfo);
@@ -203,7 +203,7 @@ public class JavaMixer {
 
     private Line.Info[] getPortInfo(Mixer mixer) {
         Line.Info[] infos;
-        List<Line.Info> portInfoList = new ArrayList<Line.Info>();
+        List<Line.Info> portInfoList = new ArrayList<>();
         infos = mixer.getSourceLineInfo();
         for (Line.Info info : infos) {
             if (info instanceof Port.Info || info instanceof DataLine.Info) {

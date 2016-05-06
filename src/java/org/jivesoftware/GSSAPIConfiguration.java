@@ -45,13 +45,13 @@ public class GSSAPIConfiguration extends Configuration {
 
    private void init(boolean config_from_file) {
 
-        configs = new HashMap<String, Vector<AppConfigurationEntry>>();
+        configs = new HashMap<>();
 
         //The structure of the options is not well documented in terms of
         //data types.  Since the file version of the Configuration object
         //puts things in quotes, String is assumed. But boolean options
         //do not have quotes, and my represent different types internally.
-        HashMap<String, String> c_options = new HashMap<String, String>();
+        HashMap<String, String> c_options = new HashMap<>();
 
         //If Kerberos config is not from a file, it's not possible to (re-)read the config file.
         //So don't set refreshKrb5Config
@@ -86,7 +86,7 @@ public class GSSAPIConfiguration extends Configuration {
             v = configs.get(name);
         }
         else {
-            v = new Vector<AppConfigurationEntry>();
+            v = new Vector<>();
             configs.put(name, v);
         }
 

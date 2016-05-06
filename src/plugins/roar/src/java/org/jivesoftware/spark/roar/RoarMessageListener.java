@@ -44,7 +44,7 @@ public class RoarMessageListener implements GlobalMessageListener {
     private RoarDisplayType _displaytype;
     private RoarProperties _properties;
 
-    private HashMap<String, Long> _rooms = new HashMap<String, Long>();
+    private HashMap<String, Long> _rooms = new HashMap<>();
 
     public RoarMessageListener() {
         _displaytype = RoarProperties.getInstance().getDisplayTypeClass();

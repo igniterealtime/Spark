@@ -77,7 +77,7 @@ public class UserSearchResults extends JPanel {
      * @param data the <code>ReportedData</code> returned by the Search Service.
      */
     public void showUsersFound(ReportedData data) {
-        List<String> columnList = new ArrayList<String>();
+        List<String> columnList = new ArrayList<>();
         for ( final Column column : data.getColumns() ) {
             String label = column.getLabel();
             columnList.add(label);
@@ -114,7 +114,7 @@ public class UserSearchResults extends JPanel {
         // Populate with answers
         List<String> modelList;
         for ( final Row row : data.getRows() ) {
-            modelList = new ArrayList<String>();
+            modelList = new ArrayList<>();
             for (int i = 0; i < resultsTable.getColumnCount(); i++) {
                 String tableValue = (String)resultsTable.getTableHeader().getColumnModel().getColumn(i).getHeaderValue();
                 for ( final Column column : data.getColumns() ) {

@@ -28,8 +28,8 @@ import java.util.Set;
 
 public class TreeFolder implements Serializable {
     private static final long serialVersionUID = 2692119297116147123L;
-    private Set<TreeFolder> subFolders = new HashSet<TreeFolder>();
-    private Set<TreeItem> paletteItems = new HashSet<TreeItem>();
+    private Set<TreeFolder> subFolders = new HashSet<>();
+    private Set<TreeItem> paletteItems = new HashSet<>();
     private String displayName;
     private String description;
     private String icon;

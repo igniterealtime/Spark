@@ -68,7 +68,7 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
     public static final String GATEWAY = "gateway";
     private boolean useTab;
 
-    private Map<Transport, GatewayItem> uiMap = new HashMap<Transport, GatewayItem>();;
+    private Map<Transport, GatewayItem> uiMap = new HashMap<>();;
     private JPanel transferTab = new JPanel();
 
     public void initialize() {

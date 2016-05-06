@@ -91,7 +91,7 @@ import org.jivesoftware.sparkimpl.updater.CheckUpdates;
 public final class MainWindow extends ChatFrame implements ActionListener {
 	private static final long serialVersionUID = -6062104959613603510L;
 
-	private final Set<MainWindowListener> listeners = new HashSet<MainWindowListener>();
+	private final Set<MainWindowListener> listeners = new HashSet<>();
 
     private final JMenu connectMenu = new JMenu();
     private final JMenu contactsMenu = new JMenu();

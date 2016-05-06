@@ -303,7 +303,7 @@ public class ConferenceServices implements InvitationListener {
 
     private void startConference(Collection<ContactItem> items) {
         final ContactList contactList = SparkManager.getWorkspace().getContactList();
-        List<String> jids = new ArrayList<String>();
+        List<String> jids = new ArrayList<>();
         for (ContactItem item : items) {
             ContactGroup contactGroup = contactList.getContactGroup(item.getGroupName());
             contactGroup.clearSelection();
@@ -393,7 +393,7 @@ public class ConferenceServices implements InvitationListener {
             final String roomName = userName + "_" + StringUtils.randomString(3);
 
 
-            final List<String> jids = new ArrayList<String>();
+            final List<String> jids = new ArrayList<>();
             jids.add(((ChatRoomImpl)chatRoom).getParticipantJID());
 
             final String serviceName = getDefaultServiceName();
@@ -437,8 +437,8 @@ public class ConferenceServices implements InvitationListener {
 	    final String password, final Message message) {
 	SwingUtilities.invokeLater(new Runnable() {
 	    public void run() {
-		Collection<RoomInvitationListener> listeners = new ArrayList<RoomInvitationListener>(SparkManager
-			.getChatManager().getInvitationListeners());
+		Collection<RoomInvitationListener> listeners = new ArrayList<>( SparkManager
+                .getChatManager().getInvitationListeners() );
 		for (RoomInvitationListener listener : listeners) {
 		    boolean handle = listener.handleInvitation(conn, room, inviter, reason, password, message);
 		    if (handle) {

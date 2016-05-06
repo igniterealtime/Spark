@@ -73,7 +73,7 @@ public class ColorPreferencePanel extends SparkTabbedPane {
 	Set<String> sets  = _colorsettings.getKeys();
 	
 	
-	Vector<String> keys= new Vector<String>();
+	Vector<String> keys= new Vector<>();
 	for(String s : sets)
 	{
 	    keys.add(s);

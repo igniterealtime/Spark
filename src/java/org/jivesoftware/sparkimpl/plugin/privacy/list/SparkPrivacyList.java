@@ -44,9 +44,9 @@ public class SparkPrivacyList {
     private String _listName   = "";
     private boolean _isActive = false;
     private boolean _isDefault = false;
-    private List<PrivacyItem> _privacyItems = new LinkedList<PrivacyItem>();
+    private List<PrivacyItem> _privacyItems = new LinkedList<>();
     private PrivacyList _myPrivacyList;
-    private final Set<SparkPrivacyItemListener> _listeners = new HashSet<SparkPrivacyItemListener>();
+    private final Set<SparkPrivacyItemListener> _listeners = new HashSet<>();
     /**
      * Action associated with the items, it MUST be filled and will allow or deny
      * the communication by default
@@ -168,7 +168,7 @@ public class SparkPrivacyList {
      * @return privacyItem id of item into PrivacyItems or -1 on Item not found
      */
     public ArrayList<PrivacyItem> searchPrivacyItems(PrivacyItem.Type type, String value) {
-        ArrayList<PrivacyItem> items = new ArrayList<PrivacyItem>();
+        ArrayList<PrivacyItem> items = new ArrayList<>();
         for (PrivacyItem privacyItem : getPrivacyItems()) {
             if ( privacyItem.getValue().equalsIgnoreCase(value) && privacyItem.getType() == type ) {
                 items.add(privacyItem);
@@ -193,7 +193,7 @@ public class SparkPrivacyList {
     
     public void removeItem(String name) throws SmackException.NotConnectedException
     {
-        List<PrivacyItem> tempList = new ArrayList<PrivacyItem>(_privacyItems);
+        List<PrivacyItem> tempList = new ArrayList<>( _privacyItems );
         for (PrivacyItem item: tempList)
         {
             if (item.getValue().equals(name))
@@ -217,7 +217,7 @@ public class SparkPrivacyList {
      * @return list items
      */
     public ArrayList<PrivacyItem> getPrivacyItems() {
-        return new ArrayList<PrivacyItem>(_privacyItems);
+        return new ArrayList<>( _privacyItems );
     }
 
 

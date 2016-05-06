@@ -102,7 +102,7 @@ public class CustomMessages {
         }
 
         if (list == null) {
-            list = new ArrayList<CustomStatusItem>();
+            list = new ArrayList<>();
         }
 
         // Sort Custom Messages
@@ -246,7 +246,7 @@ public class CustomMessages {
 						private static final long serialVersionUID = -4421868467918912876L;
 
 						public void actionPerformed(ActionEvent actionEvent) {
-                            List<CustomStatusItem> list = new ArrayList<CustomStatusItem>();
+                            List<CustomStatusItem> list = new ArrayList<>();
                             //Refresh customItems list
                             List<CustomStatusItem> customItems = load();
                             Iterator<CustomStatusItem> iter = customItems.iterator();

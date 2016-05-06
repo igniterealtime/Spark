@@ -37,8 +37,8 @@ import java.util.Map;
  */
 public class SoundManager {
 
-    private final Map<String,AudioClip> clipMap = new HashMap<String,AudioClip>();
-    private final Map<URL,AudioClip> fileMap = new HashMap<URL,AudioClip>();
+    private final Map<String,AudioClip> clipMap = new HashMap<>();
+    private final Map<URL,AudioClip> fileMap = new HashMap<>();
 
     /**
      * Default constructor

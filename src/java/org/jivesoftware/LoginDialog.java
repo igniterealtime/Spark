@@ -123,7 +123,7 @@ public class LoginDialog {
     private static final String BUTTON_PANEL = "buttonpanel"; // NOTRANS
     private static final String PROGRESS_BAR = "progressbar"; // NOTRANS
     private LocalPreferences localPref;
-    private ArrayList<String> _usernames = new ArrayList<String>();
+    private ArrayList<String> _usernames = new ArrayList<>();
     private String loginUsername;
     private String loginPassword;
     private String loginServer;
@@ -1480,13 +1480,13 @@ public class LoginDialog {
         //Assumption: the KDC will be found with the SRV record
         // _kerberos._udp.$realm
         try {
-            Hashtable<String,String> env= new Hashtable<String,String>();
+            Hashtable<String,String> env= new Hashtable<>();
             env.put("java.naming.factory.initial","com.sun.jndi.dns.DnsContextFactory");
             DirContext context = new InitialDirContext(env);
             Attributes dnsLookup = context.getAttributes("_kerberos._udp."+realm, new String[]{"SRV"});
 
-            ArrayList<Integer> priorities = new ArrayList<Integer>();
-            HashMap<Integer,List<String>> records = new HashMap<Integer,List<String>>();
+            ArrayList<Integer> priorities = new ArrayList<>();
+            HashMap<Integer,List<String>> records = new HashMap<>();
             for (Enumeration<?> e = dnsLookup.getAll() ; e.hasMoreElements() ; ) {
                 Attribute record = (Attribute)e.nextElement();
                 for (Enumeration<?> e2 = record.getAll() ; e2.hasMoreElements() ; ) {
@@ -1495,11 +1495,11 @@ public class LoginDialog {
                     Integer pri = Integer.valueOf(sRecParts[0]);
                     if(priorities.contains(pri)) {
                         List<String> recs = records.get(pri);
-                        if(recs == null) recs = new ArrayList<String>();
+                        if(recs == null) recs = new ArrayList<>();
                         recs.add(sRecord);
                     } else {
                         priorities.add(pri);
-                        List<String> recs = new ArrayList<String>();
+                        List<String> recs = new ArrayList<>();
                         recs.add(sRecord);
                         records.put(pri,recs);
                     }

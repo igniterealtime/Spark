@@ -94,9 +94,9 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
 	/**
      * List of all ChatRoom Listeners.
      */
-    private final List<ChatRoomListener> chatRoomListeners = new ArrayList<ChatRoomListener>();
-    private final List<ChatRoom> chatRoomList = new ArrayList<ChatRoom>();
-    private final Map<String, StanzaListener> presenceMap = new HashMap<String, StanzaListener>();
+    private final List<ChatRoomListener> chatRoomListeners = new ArrayList<>();
+    private final List<ChatRoom> chatRoomList = new ArrayList<>();
+    private final Map<String, StanzaListener> presenceMap = new HashMap<>();
     private static final String WELCOME_TITLE = SparkRes.getString(SparkRes.WELCOME);
     private ChatFrame chatFrame;
     private LocalPreferences localPref;
@@ -582,7 +582,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             return;
         }
 
-        for (ChatRoom chatRoom : new ArrayList<ChatRoom>(chatRoomList)) {
+        for (ChatRoom chatRoom : new ArrayList<>( chatRoomList )) {
             closeTab(chatRoom);
             chatRoom.closeChatRoom();
         }
@@ -900,7 +900,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
      * @param room - the <code>ChatRoom</code> that has been opened.
      */
     protected void fireChatRoomOpened(ChatRoom room) {
-        for (ChatRoomListener chatRoomListener : new ArrayList<ChatRoomListener>(chatRoomListeners)) {
+        for (ChatRoomListener chatRoomListener : new ArrayList<>( chatRoomListeners )) {
             chatRoomListener.chatRoomOpened(room);
         }
     }
@@ -911,7 +911,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
      * @param room - the <code>ChatRoom</code> that has been left
      */
     protected void fireChatRoomLeft(ChatRoom room) {
-        for (ChatRoomListener chatRoomListener : new HashSet<ChatRoomListener>(chatRoomListeners)) {
+        for (ChatRoomListener chatRoomListener : new HashSet<>( chatRoomListeners )) {
             chatRoomListener.chatRoomLeft(room);
         }
     }
@@ -922,7 +922,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
      * @param room - the <code>ChatRoom</code> that has been closed.
      */
     protected void fireChatRoomClosed(ChatRoom room) {
-        for (ChatRoomListener chatRoomListener : new HashSet<ChatRoomListener>(chatRoomListeners)) {
+        for (ChatRoomListener chatRoomListener : new HashSet<>( chatRoomListeners )) {
             chatRoomListener.chatRoomClosed(room);
         }
     }
@@ -933,7 +933,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
      * @param room - the <code>ChatRoom</code> that has been activated.
      */
     protected void fireChatRoomActivated(ChatRoom room) {
-        for (ChatRoomListener chatRoomListener : new HashSet<ChatRoomListener>(chatRoomListeners)) {
+        for (ChatRoomListener chatRoomListener : new HashSet<>( chatRoomListeners )) {
             chatRoomListener.chatRoomActivated(room);
         }
     }
@@ -947,7 +947,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
     protected void fireUserHasJoined(final ChatRoom room, final String userid) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                for (ChatRoomListener chatRoomListener : new HashSet<ChatRoomListener>(chatRoomListeners)) {
+                for (ChatRoomListener chatRoomListener : new HashSet<>( chatRoomListeners )) {
                     chatRoomListener.userHasJoined(room, userid);
                 }
             }
@@ -964,7 +964,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
     protected void fireUserHasLeft(final ChatRoom room, final String userid) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                for (ChatRoomListener chatRoomListener : new HashSet<ChatRoomListener>(chatRoomListeners)) {
+                for (ChatRoomListener chatRoomListener : new HashSet<>( chatRoomListeners )) {
                     chatRoomListener.userHasLeft(room, userid);
                 }
             }
@@ -1278,7 +1278,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
     }
 
     public Collection<ChatRoom> getChatRooms() {
-        return new ArrayList<ChatRoom>(chatRoomList);
+        return new ArrayList<>( chatRoomList );
     }
 
     public ChatFrame getChatFrame() {
@@ -1377,7 +1377,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
      * @return a collection of stale chat rooms.
      */
     public Collection<ChatRoom> getStaleChatRooms() {
-        final List<ChatRoom> staleRooms = new ArrayList<ChatRoom>();
+        final List<ChatRoom> staleRooms = new ArrayList<>();
         for (ChatRoom chatRoom : getChatRooms()) {
             long lastActivity = chatRoom.getLastActivity();
             long currentTime = System.currentTimeMillis();
@@ -1477,7 +1477,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
     }
     
     public void closeAllGroupChatRooms() {
-        for (ChatRoom chatRoom : new ArrayList<ChatRoom>(chatRoomList)) {
+        for (ChatRoom chatRoom : new ArrayList<>( chatRoomList )) {
         	boolean isGroup = chatRoom.getChatType() == Message.Type.groupchat;
         	if (isGroup)
         	{
@@ -1488,7 +1488,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
     }
     
     public boolean hasGroupChatRooms() {
-    	 for (ChatRoom chatRoom : new ArrayList<ChatRoom>(chatRoomList)) {
+    	 for (ChatRoom chatRoom : new ArrayList<>( chatRoomList )) {
          	boolean isGroup = chatRoom.getChatType() == Message.Type.groupchat;
          	if (isGroup)
          		return true;

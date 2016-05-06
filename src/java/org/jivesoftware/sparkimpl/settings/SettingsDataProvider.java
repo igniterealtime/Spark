@@ -37,7 +37,7 @@ public class SettingsDataProvider implements PrivateDataProvider {
 
     public PrivateData parsePrivateData(XmlPullParser parser) throws XmlPullParserException, IOException
     {
-        Map<String,String> map = new HashMap<String,String>();
+        Map<String,String> map = new HashMap<>();
         parser.getEventType();
         parser.nextTag();
         for (String text = parser.getName(); text.equals("entry"); text = parser.getName()) {

@@ -65,10 +65,10 @@ import javax.swing.JPanel;
  */
 public class ContactGroup extends CollapsiblePane implements MouseListener {
 	private static final long serialVersionUID = 6578057848913010799L;
-	private List<ContactItem> contactItems = new ArrayList<ContactItem>();
-    private List<ContactGroup> contactGroups = new ArrayList<ContactGroup>();
-    private List<ContactGroupListener> listeners = new ArrayList<ContactGroupListener>();
-    private List<ContactItem> offlineContacts = new ArrayList<ContactItem>();
+	private List<ContactItem> contactItems = new ArrayList<>();
+    private List<ContactGroup> contactGroups = new ArrayList<>();
+    private List<ContactGroupListener> listeners = new ArrayList<>();
+    private List<ContactItem> offlineContacts = new ArrayList<>();
 
     private String groupName;
     private DefaultListModel model;
@@ -287,7 +287,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
      * @param jid the offline contact item to remove.
      */
     public void removeOfflineContactItem(String jid) {
-        final List<ContactItem> items = new ArrayList<ContactItem>(offlineContacts);
+        final List<ContactItem> items = new ArrayList<>( offlineContacts );
         for (ContactItem item : items) {
             if (item.getJID().equals(jid)) {
                 removeOfflineContactItem(item);
@@ -301,7 +301,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
      * @param show true if offline contacts should be shown, otherwise false.
      */
     public void toggleOfflineVisibility(boolean show) {
-        final List<ContactItem> items = new ArrayList<ContactItem>(offlineContacts);
+        final List<ContactItem> items = new ArrayList<>( offlineContacts );
         for (ContactItem item : items) {
             if (show) {
                 insertOfflineContactItem(item);
@@ -434,7 +434,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
      * @return the ContactGroup.
      */
     public ContactGroup getContactGroup(String groupName) {
-        for (ContactGroup group : new ArrayList<ContactGroup>(contactGroups)) {
+        for (ContactGroup group : new ArrayList<>( contactGroups )) {
             if (group.getGroupName().equals(groupName)) {
                 return group;
             }
@@ -467,7 +467,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
      * @return the ContactItem.
      */
     public ContactItem getContactItemByDisplayName(String displayName) {
-        for (ContactItem item : new ArrayList<ContactItem>(contactItems)) {
+        for (ContactItem item : new ArrayList<>( contactItems )) {
             if (item.getDisplayName().equals(displayName)) {
                 return item;
             }
@@ -482,7 +482,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
      * @return the ContactItem.
      */
     public ContactItem getOfflineContactItemByDisplayName(String displayName) {
-        for (ContactItem item : new ArrayList<ContactItem>(offlineContacts)) {
+        for (ContactItem item : new ArrayList<>( offlineContacts )) {
             if (item.getDisplayName().equals(displayName)) {
                 return item;
             }
@@ -515,7 +515,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
      * @return the ContactItem.
      */
     public ContactItem getContactItemByJID(String bareJID) {
-        for (ContactItem item : new ArrayList<ContactItem>(contactItems)) {
+        for (ContactItem item : new ArrayList<>( contactItems )) {
             if (item != null && item.getJID().equals(bareJID)) {
                 return item;
             }
@@ -530,7 +530,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
      * @return the ContactItem.
      */
     public ContactItem getOfflineContactItemByJID(String bareJID) {
-        for (ContactItem item : new ArrayList<ContactItem>(offlineContacts)) {
+        for (ContactItem item : new ArrayList<>( offlineContacts )) {
             if (item.getJID().equals(bareJID)) {
                 return item;
             }
@@ -562,7 +562,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
      * @return all ContactItems.
      */
     public List<ContactItem> getContactItems() {
-        final List<ContactItem> list = new ArrayList<ContactItem>(contactItems);
+        final List<ContactItem> list = new ArrayList<>( contactItems );
         Collections.sort(list, itemComparator);
         return list;
     }
@@ -687,44 +687,44 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
     }
 
     private void fireContactItemClicked(ContactItem item) {
-        for (ContactGroupListener contactGroupListener : new ArrayList<ContactGroupListener>(listeners)) {
+        for (ContactGroupListener contactGroupListener : new ArrayList<>( listeners )) {
             contactGroupListener.contactItemClicked(item);
         }
     }
 
     private void fireContactItemDoubleClicked(ContactItem item) {
-        for (ContactGroupListener contactGroupListener : new ArrayList<ContactGroupListener>(listeners)) {
+        for (ContactGroupListener contactGroupListener : new ArrayList<>( listeners )) {
             contactGroupListener.contactItemDoubleClicked(item);
         }
     }
 
 
     private void firePopupEvent(MouseEvent e, ContactItem item) {
-        for (ContactGroupListener contactGroupListener : new ArrayList<ContactGroupListener>(listeners)) {
+        for (ContactGroupListener contactGroupListener : new ArrayList<>( listeners )) {
             contactGroupListener.showPopup(e, item);
         }
     }
 
     private void firePopupEvent(MouseEvent e, Collection<ContactItem> items) {
-        for (ContactGroupListener contactGroupListener : new ArrayList<ContactGroupListener>(listeners)) {
+        for (ContactGroupListener contactGroupListener : new ArrayList<>( listeners )) {
             contactGroupListener.showPopup(e, items);
         }
     }
 
     private void fireContactGroupPopupEvent(MouseEvent e) {
-        for (ContactGroupListener contactGroupListener : new ArrayList<ContactGroupListener>(listeners)) {
+        for (ContactGroupListener contactGroupListener : new ArrayList<>( listeners )) {
             contactGroupListener.contactGroupPopup(e, this);
         }
     }
 
     private void fireContactItemAdded(ContactItem item) {
-        for (ContactGroupListener contactGroupListener : new ArrayList<ContactGroupListener>(listeners)) {
+        for (ContactGroupListener contactGroupListener : new ArrayList<>( listeners )) {
             contactGroupListener.contactItemAdded(item);
         }
     }
 
     private void fireContactItemRemoved(ContactItem item) {
-        for (ContactGroupListener contactGroupListener : new ArrayList<ContactGroupListener>(listeners)) {
+        for (ContactGroupListener contactGroupListener : new ArrayList<>( listeners )) {
             contactGroupListener.contactItemRemoved(item);
         }
     }
@@ -736,7 +736,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
         }
 
         int count = 0;
-        List<ContactItem> list = new ArrayList<ContactItem>(getContactItems());
+        List<ContactItem> list = new ArrayList<>( getContactItems() );
         int size = list.size();
         for (int i = 0; i < size; i++) {
             ContactItem it = list.get(i);
@@ -771,7 +771,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
 
     public void removeAllContacts() {
         // Remove all users from online group.
-        for (ContactItem item : new ArrayList<ContactItem>(getContactItems())) {
+        for (ContactItem item : new ArrayList<>( getContactItems() )) {
             removeContactItem(item);
         }
 
@@ -802,7 +802,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
     }
 
     public Collection<ContactItem> getOfflineContacts() {
-        return new ArrayList<ContactItem>(offlineContacts);
+        return new ArrayList<>( offlineContacts );
     }
 
     /**
@@ -866,7 +866,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
      * @return all selected ContactItems.
      */
     public List<ContactItem> getSelectedContacts() {
-        final List<ContactItem> items = new ArrayList<ContactItem>();
+        final List<ContactItem> items = new ArrayList<>();
         Object[] selections = contactItemList.getSelectedValues();
         final int no = selections != null ? selections.length : 0;
         for (int i = 0; i < no; i++) {

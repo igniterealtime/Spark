@@ -61,7 +61,7 @@ public class IncomingCall implements JingleSessionListener, ChatRoomClosingListe
 
     private ChatRoom chatRoom;
 
-    private Map<ChatRoom, JingleRoom> callMap = new HashMap<ChatRoom, JingleRoom>();
+    private Map<ChatRoom, JingleRoom> callMap = new HashMap<>();
 
     private GenericNotification notificationUI;
 

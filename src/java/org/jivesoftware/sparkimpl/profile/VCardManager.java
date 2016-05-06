@@ -92,9 +92,9 @@ public class VCardManager {
 
     private VCard personalVCard;
 
-    private Map<String, VCard> vcards = Collections.synchronizedMap(new HashMap<String, VCard>());
+    private Map<String, VCard> vcards = Collections.synchronizedMap( new HashMap<>());
 
-    private Set<String> delayedContacts = Collections.synchronizedSet(new HashSet<String>());
+    private Set<String> delayedContacts = Collections.synchronizedSet( new HashSet<>());
     
     private boolean vcardLoaded;
 
@@ -106,13 +106,13 @@ public class VCardManager {
 
     final MXParser parser;
 
-    private LinkedBlockingQueue<String> queue = new LinkedBlockingQueue<String>();
+    private LinkedBlockingQueue<String> queue = new LinkedBlockingQueue<>();
     
     private File contactsDir;
 
-    private List<VCardListener> listeners = new ArrayList<VCardListener>();
+    private List<VCardListener> listeners = new ArrayList<>();
 
-	private List<String> writingQueue = Collections.synchronizedList(new ArrayList<String>());
+	private List<String> writingQueue = Collections.synchronizedList( new ArrayList<>());
 
     /**
      * Initialize VCardManager.
