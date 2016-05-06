@@ -389,7 +389,7 @@ public class ScratchPadPlugin implements Plugin {
             Task task = (Task) o;
             final TaskUI taskUI = new TaskUI(task);
             
-            if ( SHOW_ALL_TASKS == false ) {
+            if ( !SHOW_ALL_TASKS ) {
             	if ( taskUI.isSelected() ) {
             		taskUI.setVisible(false);
             	}else {

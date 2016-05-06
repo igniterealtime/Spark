@@ -101,7 +101,7 @@ public class ChatPreference implements Preference {
     public void commit() {
         LocalPreferences pref = SettingsManager.getLocalPreferences();
         pref.setTimeDisplayedInChat(panel.getShowTime());
-        if(panel.getShowTime() == true)
+        if( panel.getShowTime() )
         {
       	  pref.setTimeFormat(panel.getFormatTime());
         }

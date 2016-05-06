@@ -2487,7 +2487,7 @@ SwingUtilities.invokeLater( () -> loadContactList() );
             getUnfiledGroup().addOfflineContactItem(contactItem.getAlias(), contactItem.getNickname(), contactItem.getJID(), contactItem.getStatus());
         }
         
-        if(localPreferences.isOfflineUsersShown() == false)
+        if( !localPreferences.isOfflineUsersShown() )
         {
 	        for (ContactGroup group : getContactGroups()) 
 	        {
