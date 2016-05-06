@@ -14,11 +14,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.TimerTask;
+import java.util.*;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -122,7 +118,7 @@ public class HistoryTranscript extends SwingWorker {
 	private synchronized void handlePeriodChange(String change){
 		try {
 			token.acquire();
-			if (change != searchPeriod && isInitialized.get()){
+			if ( !Objects.equals( change, searchPeriod ) && isInitialized.get()){
 				searchPeriod = change;
 				pref.setSearchPeriod(searchPeriod);
 				isHistoryLoaded.set(false);

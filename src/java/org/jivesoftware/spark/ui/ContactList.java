@@ -32,20 +32,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-import java.util.StringTokenizer;
-import java.util.TimerTask;
+import java.util.*;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -593,7 +580,7 @@ public class ContactList extends JPanel implements ActionListener,
 
         for (RosterGroup group : roster.getGroups()) {
         	
-        	if(group.getName() == null || group.getName() == ""){
+        	if(group.getName() == null || Objects.equals( group.getName(), "" ) ){
         		for(RosterEntry entry : group.getEntries()){
         			
 				ContactItem buildContactItem = UIComponentRegistry.createContactItem(entry.getName(), null, entry.getUser());
@@ -2488,7 +2475,7 @@ SwingUtilities.invokeLater( () -> loadContactList() );
         final Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
         for (RosterGroup group : roster.getEntry(jid).getGroups()) {
             ContactGroup contactGroup = getContactGroup(group.getName());
-            if(contactGroup == null && group.getName() != ""){
+            if(contactGroup == null && !Objects.equals( group.getName(), "" ) ){
             	contactGroup = addContactGroup(group.getName());
             }
             if (contactGroup != null) {

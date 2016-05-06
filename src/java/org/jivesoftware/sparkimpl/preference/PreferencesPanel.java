@@ -27,6 +27,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.util.Iterator;
+import java.util.Objects;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JComponent;
@@ -77,7 +78,7 @@ public class PreferencesPanel extends JPanel implements ListSelectionListener {
             for (int i = 0; i < listModel.size(); i++){
                 PreferenceUI p = (PreferenceUI)listModel.get( i );
                 // check if the namespace is the namespace we search for
-                if (p.getPreference().getNamespace() == displayPref.getNamespace()){
+                if ( Objects.equals( p.getPreference().getNamespace(), displayPref.getNamespace() ) ){
                     // if we've got our target, we can select this item and stop the search
                     list.setSelectedIndex( i );
                     break; 
