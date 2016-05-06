@@ -86,7 +86,6 @@ public class HistoryTranscript extends SwingWorker {
 	private List<ChatTranscript> searchFilteredList = new ArrayList<>();
 	private List<ChatTranscript> dateFilteredUnfilteredList = new ArrayList<>();
     private AtomicBoolean isHistoryLoaded = new AtomicBoolean(false);
-    private boolean sortDateAsc = false; 
 
 
 	/**
@@ -354,9 +353,9 @@ public class HistoryTranscript extends SwingWorker {
                 Integer startValue;
                 Integer endValue;
 
-                sortDateAsc = pref.getChatHistoryAscending();
+				boolean sortDateAsc = pref.getChatHistoryAscending();
 
-				if (sortDateAsc){
+				if ( sortDateAsc ){
 				    oldDate = transcript.getMessage(0).getDate();
 				    iteratorValue = 1;
 				    startValue = 0;

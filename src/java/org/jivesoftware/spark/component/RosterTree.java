@@ -50,7 +50,6 @@ public final class RosterTree extends JPanel {
     private final JiveTreeNode rootNode = new JiveTreeNode("Contact List");
     private final Tree rosterTree;
     private final Map<JiveTreeNode,String> addressMap = new HashMap<>();
-    private boolean showUnavailableAgents = true;
 
     /**
      * Creates a new Roster Tree.
@@ -130,10 +129,11 @@ public final class RosterTree extends JPanel {
                 final JiveTreeNode entryNode = new JiveTreeNode(name, false);
                 final Presence usersPresence = PresenceManager.getPresence(entry.getUser());
                 addressMap.put(entryNode, entry.getUser());
+                boolean showUnavailableAgents = true;
                 if (usersPresence.isAvailable() && !usersPresence.isAway()) {
                     groupNode.add(entryNode);
                 }
-                else if (showUnavailableAgents) {
+                else if ( showUnavailableAgents ) {
                     groupNode.add(entryNode);
                 }
 

@@ -70,8 +70,6 @@ import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 public class ThemePanel extends JPanel {
     private static final long serialVersionUID = 2943854311454590459L;
 
-    private TranscriptWindow emoticonpreviewtranscript;
-
     private JComboBox messageStyleBox;
 
     private JComboBox emoticonBox;
@@ -101,8 +99,6 @@ public class ThemePanel extends JPanel {
     private JCheckBox _useTabsForTransports;
     private JCheckBox _useTabsForConference;
 
-    private ThemePanel _themepanel;
-
     private JComboBox _showReconnectBox;
 
     private LocalPreferences pref = SettingsManager.getLocalPreferences();
@@ -116,7 +112,7 @@ public class ThemePanel extends JPanel {
      */
     public ThemePanel() {
 
-	_themepanel = this;
+        ThemePanel _themepanel = this;
         _themepanel.setLayout(new GridBagLayout());
 
         LookAndFeelInfo[]  ui = UIManager.getInstalledLookAndFeels();
@@ -322,7 +318,7 @@ public class ThemePanel extends JPanel {
         JButton addThemeButton = new JButton();
         addEmoticonButton = new JButton();
 
-        emoticonpreviewtranscript = new TranscriptWindow();
+        TranscriptWindow emoticonpreviewtranscript = new TranscriptWindow();
         emoticonpreviewtranscript.setForceEmoticons(true);
 
         showAvatarsBox = new JCheckBox();

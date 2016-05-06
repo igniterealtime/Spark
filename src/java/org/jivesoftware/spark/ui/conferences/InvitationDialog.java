@@ -73,15 +73,10 @@ import java.util.List;
 
 final class InvitationDialog extends JPanel {
     private static final long serialVersionUID = -8588678602429200581L;
-    private JLabel roomsLabel = new JLabel();
-    private JComponent roomsField = new JTextField();
     private JTextField textRoomsField;
     private JComboBox comboRoomsField;
 
-    private JLabel messageLabel = new JLabel();
     private JTextField messageField = new JTextField();
-
-    private JLabel inviteLabel = new JLabel();
 
 
     private DefaultListModel invitedUsers = new DefaultListModel();
@@ -89,9 +84,8 @@ final class InvitationDialog extends JPanel {
 
     private JDialog dlg;
 
-    private GridBagLayout gridBagLayout1 = new GridBagLayout();
-
     public InvitationDialog(boolean adhoc) {
+        JComponent roomsField = new JTextField();
         if (adhoc) {
             roomsField = new JTextField();
             textRoomsField = (JTextField) roomsField;
@@ -110,13 +104,16 @@ final class InvitationDialog extends JPanel {
                 }
             } );
         }
-        setLayout(gridBagLayout1);
+        GridBagLayout gridBagLayout1 = new GridBagLayout();
+        setLayout( gridBagLayout1 );
 
-        add(roomsLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-        add(roomsField, new GridBagConstraints(1, 0, 3, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+        JLabel roomsLabel = new JLabel();
+        add( roomsLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        add( roomsField, new GridBagConstraints(1, 0, 3, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 
 
-        add(messageLabel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        JLabel messageLabel = new JLabel();
+        add( messageLabel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         add(messageField, new GridBagConstraints(1, 1, 3, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 
         JLabel jidLabel = new JLabel();
@@ -163,12 +160,13 @@ final class InvitationDialog extends JPanel {
         } );
 
 
-        add(inviteLabel, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+        JLabel inviteLabel = new JLabel();
+        add( inviteLabel, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
         add(new JScrollPane(invitedUserList), new GridBagConstraints(1, 3, 3, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
 
         // Add Resource Utils
-        ResourceUtils.resLabel(messageLabel, messageField, Res.getString("label.message") + ":");
-        ResourceUtils.resLabel(roomsLabel, roomsField, Res.getString("label.room") + ":");
+        ResourceUtils.resLabel( messageLabel, messageField, Res.getString("label.message") + ":");
+        ResourceUtils.resLabel( roomsLabel, roomsField, Res.getString("label.room") + ":");
         inviteLabel.setText(Res.getString("label.invited.users"));
 
         messageField.setText(Res.getString("message.please.join.in.conference"));

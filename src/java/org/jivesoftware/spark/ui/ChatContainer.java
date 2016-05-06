@@ -99,7 +99,6 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
     private final Map<String, StanzaListener> presenceMap = new HashMap<>();
     private static final String WELCOME_TITLE = SparkRes.getString(SparkRes.WELCOME);
     private ChatFrame chatFrame;
-    private LocalPreferences localPref;
     private final TimerTask focusTask;
 
 
@@ -1085,7 +1084,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
      **/
     private void groupChatMessageCheck(ChatRoom chatRoom, boolean customMsg, String customMsgText, String customMsgTitle) {
         // predefine if this is a group chat message or not
-        localPref = SettingsManager.getLocalPreferences();
+        LocalPreferences localPref = SettingsManager.getLocalPreferences();
         boolean isGroupChat = chatRoom.getChatType() == Message.Type.groupchat;
         int size = chatRoom.getTranscripts().size();
         
@@ -1108,7 +1107,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
                     fromNickName = mucNickName[1];
                 }
             }
-            if (localPref.isMucHighToastEnabled()) {
+            if ( localPref.isMucHighToastEnabled()) {
                 // allowed to check for new messages containing name
                 String myNickName = chatRoom.getNickname();
                 String myUserName = SparkManager.getSessionManager().getUsername();
@@ -1122,7 +1121,6 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
                     String customMsgTitleS = Res.getString("group.chat.name.notification");
                        
                     startFlashing(chatRoom, customMsgS, customMsgTextS, customMsgTitleS);
-                    return;
                 } else {
                     // regular group message
                     boolean customMsgS = true;
@@ -1130,7 +1128,6 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
                     String customMsgTitleS = finalRoomName;
                     
                     startFlashing(chatRoom, customMsgS, customMsgTextS, customMsgTitleS);
-                    return;
                 }
             } else {
                 // regular group message
@@ -1139,7 +1136,6 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
                 String customMsgTitleS = finalRoomName;
                 
                 startFlashing(chatRoom, customMsgS, customMsgTextS, customMsgTitleS);
-                return;
             }
         } else if (customMsg) {
             // probablt a file transfer request
@@ -1148,7 +1144,6 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             String customMsgTitleS = customMsgTitle;
             
             startFlashing(chatRoom, customMsgS, customMsgTextS, customMsgTitleS);
-            return;
         } else {
             // normal personal chat
         	Message lastChatMessage = null;
@@ -1165,7 +1160,6 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             }
 
             startFlashing(chatRoom, customMsgS, customMsgTextS, customMsgTitleS);
-            return;
         }
     }
     

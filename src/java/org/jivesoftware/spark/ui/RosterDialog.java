@@ -654,8 +654,7 @@ public class RosterDialog implements ActionListener {
 		&& !isSharedGroup) {
 	    addEntry();
 	    dialog.setVisible(false);
-	    return;
-	} else {
+    } else {
 
 	    JOptionPane.showMessageDialog(dialog, errorMessage,
 		    Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);

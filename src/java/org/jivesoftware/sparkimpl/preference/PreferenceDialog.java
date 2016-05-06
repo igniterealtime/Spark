@@ -120,7 +120,6 @@ pane.setValue(JOptionPane.UNINITIALIZED_VALUE);
     			saveLayout();
             pane.removePropertyChangeListener(this);
             preferenceDialog.dispose();
-            return;
         }
     }
 

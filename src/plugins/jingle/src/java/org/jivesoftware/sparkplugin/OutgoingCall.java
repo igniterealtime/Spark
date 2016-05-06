@@ -175,7 +175,6 @@ public class OutgoingCall extends JPanel implements JingleSessionListener, ChatR
      */
     private void updateOutgoingCallPanel() {
         if (session == null || session.isClosed()) {
-            return;
         }
         else if (session instanceof JingleSession) {
             showAlert(false);
