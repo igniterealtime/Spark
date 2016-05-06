@@ -40,11 +40,9 @@ import org.jivesoftware.fastpath.FpRes;
 import org.jivesoftware.fastpath.resources.FastpathRes;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.packet.Presence;
-import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.workgroup.agent.AgentRoster;
 import org.jivesoftware.smackx.workgroup.agent.AgentRosterListener;
 import org.jivesoftware.smackx.workgroup.packet.AgentStatus;
-import org.jivesoftware.smackx.workgroup.packet.AgentStatus.ChatInfo;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.PresenceManager;
 import org.jivesoftware.spark.SparkManager;
@@ -71,11 +69,11 @@ public final class OnlineAgents extends JPanel {
 	private static final long serialVersionUID = 1L;
 	private AgentRoster agentRoster;
     private ContactGroup contactGroup;
-    private JPanel topToolbar = new JPanel();
 
     public OnlineAgents() {
         setLayout(new BorderLayout());
 
+        JPanel topToolbar = new JPanel();
         topToolbar.setLayout(new GridBagLayout());
 
         topToolbar.setBackground(Color.white);
@@ -85,7 +83,7 @@ public final class OnlineAgents extends JPanel {
         final String title = org.jivesoftware.spark.util.StringUtils.makeFirstWordCaptial(name);
 
         contactGroup = new ContactGroup(FpRes.getString("title.workgroup", title));
-        contactGroup.getContainerPanel().add(topToolbar, BorderLayout.NORTH);
+        contactGroup.getContainerPanel().add( topToolbar, BorderLayout.NORTH);
         contactGroup.setIcon(FastpathRes.getImageIcon(FastpathRes.FASTPATH_IMAGE_16x16));
         contactGroup.setBackground(Color.white);
         contactGroup.setOpaque(false);
@@ -147,7 +145,7 @@ public final class OnlineAgents extends JPanel {
             return;
         }
         SwingWorker agentWorker = new SwingWorker() {
-            Collection agentSet;
+            Collection<String> agentSet;
 
             public Object construct() {
                 // Initialize Agent Roster
@@ -165,29 +163,30 @@ public final class OnlineAgents extends JPanel {
             }
 
             public void finished() {
-                final List agentList = new ArrayList(agentSet);
+                final List<String> agentList = new ArrayList<>(agentSet);
                 Collections.sort(agentList);
 
-                Iterator agents = agentList.iterator();
-                while (agents.hasNext()) {
-                    final String agent = (String)agents.next();
-
-                    String nickname = SparkManager.getUserManager().getUserNicknameFromJID(agent);
-                    if (nickname == null) {
+                for ( String agent : agentList )
+                {
+                    String nickname = SparkManager.getUserManager().getUserNicknameFromJID( agent );
+                    if ( nickname == null )
+                    {
                         nickname = agent;
                     }
 
-                    ContactItem item = new ContactItem(nickname,nickname, agent) {
-						private static final long serialVersionUID = -8888899031363239813L;
+                    ContactItem item = new ContactItem( nickname, nickname, agent )
+                    {
+                        private static final long serialVersionUID = -8888899031363239813L;
 
-						public String getToolTipText() {
-                            Presence agentPresence = agentRoster.getPresence(agent);
-                            return buildTooltip(agentPresence);
+                        public String getToolTipText()
+                        {
+                            Presence agentPresence = agentRoster.getPresence( agent );
+                            return buildTooltip( agentPresence );
                         }
                     };
 
-                    Presence agentPresence = agentRoster.getPresence(agent);
-                    item.setPresence(agentPresence);
+                    Presence agentPresence = agentRoster.getPresence( agent );
+                    item.setPresence( agentPresence );
                 }
 
 
@@ -207,12 +206,12 @@ public final class OnlineAgents extends JPanel {
             return FpRes.getString("message.user.not.logged.in");
         }
 
-        AgentStatus agentStatus = (AgentStatus)presence.getExtension("agent-status", "http://jabber.org/protocol/workgroup");
+        AgentStatus agentStatus = presence.getExtension("agent-status", "http://jabber.org/protocol/workgroup");
         List<AgentStatus.ChatInfo> list = agentStatus.getCurrentChats();
 
         // Add new ones.
         Iterator<AgentStatus.ChatInfo> iter = list.iterator();
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         buf.append("<html>");
         buf.append("<body>");
         buf.append("<table>");
@@ -220,7 +219,6 @@ public final class OnlineAgents extends JPanel {
         while (iter.hasNext()) {
             AgentStatus.ChatInfo chatInfo = iter.next();
             Date startDate = chatInfo.getDate();
-            String username = chatInfo.getUserID();
 
             String nickname = chatInfo.getUsername();
             if (!ModelUtil.hasLength(nickname)) {
@@ -285,7 +283,7 @@ public final class OnlineAgents extends JPanel {
                     chatRoom = chatRooms.getChatRoom(userJID);
                 }
                 catch (ChatRoomNotFoundException e) {
-
+                    Log.warning( "Room not found for jid: " + userJID, e );
                 }
                 return chatRoom;
             }

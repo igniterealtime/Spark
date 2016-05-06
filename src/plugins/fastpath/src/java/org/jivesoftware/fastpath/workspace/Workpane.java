@@ -321,7 +321,7 @@ public class Workpane {
 
         // Specify to use Typing notifications.
         GroupChatRoom groupChat = (GroupChatRoom)room;
-        groupChat.setSendAndReceiveTypingNotifications(true);
+        groupChat.setChatStatEnabled(true);
 
         Properties props = FastpathPlugin.getLitWorkspace().getWorkgroupProperties();
         String initialResponse = props.getProperty(INITIAL_RESPONSE_PROPERTY);
@@ -329,7 +329,7 @@ public class Workpane {
             Message message = new Message();
             message.setBody(initialResponse);
             GroupChatRoom groupChatRoom = (GroupChatRoom)room;
-            groupChatRoom.sendMessageWithoutNotification(message);
+            groupChatRoom.sendMessage(message);
         }
     }
 
@@ -491,11 +491,7 @@ public class Workpane {
 
 
         final GroupChatRoom groupRoom = (GroupChatRoom)room;
-        groupRoom.showPresenceMessages(false);
         room.getTranscriptWindow().clear();
-
-
-        groupRoom.showPresenceMessages(true);
 
         final ChatFrame frame = SparkManager.getChatManager().getChatContainer().getChatFrame();
         if (frame != null) {
@@ -692,7 +688,7 @@ public class Workpane {
                 SparkManager.getChatManager().notifySparkTabHandlers(groupChatRoom);
 
                 // Change subject line.
-                groupChatRoom.getSubjectPanel().setRoomLabel("<html><body><b>Fastpath Conversation with " + roomName + "</b></body></html>");
+                groupChatRoom.setRoomLabel("<html><body><b>Fastpath Conversation with " + roomName + "</b></body></html>");
 
                 return true;
             }
