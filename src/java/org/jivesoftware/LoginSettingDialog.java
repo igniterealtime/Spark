@@ -505,11 +505,7 @@ public class LoginSettingDialog implements PropertyChangeListener {
 		    GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
 		    new Insets(5, 5, 5, 5), 0, 0));
 
-	    useProxyBox.addActionListener(new ActionListener() {
-		public void actionPerformed(ActionEvent e) {
-		    enableFields(useProxyBox.isSelected());
-		}
-	    });
+	    useProxyBox.addActionListener( e -> enableFields(useProxyBox.isSelected()) );
 
 	    // Check localSettings
 	    if (localPreferences.isProxyEnabled()) {

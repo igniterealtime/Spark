@@ -91,14 +91,7 @@ public class MediaPreferencePanel  extends JPanel {
         panel.add(videoDevice, new GridBagConstraints(1, 3, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(10, 15, 5, 0), 0, 0));
 	
         JButton redetect = new JButton(); // Res.getString("button.re.detect") );
-        redetect.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent event) {
-				scanDevices();
-			}
-        	
-        });
+        redetect.addActionListener( event -> scanDevices() );
         
         panel.add(redetect,new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(10, 15, 5, 0), 0, 0));
     

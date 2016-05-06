@@ -219,11 +219,7 @@ public class FrequentContactsPlugin implements Plugin {
             return Collections.emptyList();
         }
 
-        final File[] transcriptFiles = transcriptDir.listFiles(new FilenameFilter() {
-            public boolean accept(File dir, String name) {
-                return !name.contains("_current") && !name.equals("conversations.xml");
-            }
-        });
+        final File[] transcriptFiles = transcriptDir.listFiles( ( dir, name ) -> !name.contains("_current") && !name.equals("conversations.xml") );
         final List<File> files = Arrays.asList(transcriptFiles);
 
         Collections.sort(files, sizeComparator);
@@ -297,25 +293,23 @@ public class FrequentContactsPlugin implements Plugin {
     /**
      * Sorts files by largest to smallest.
      */
-    final Comparator<File> sizeComparator = new Comparator<File>() {
-        public int compare(File item1, File item2) {
-            long int1 = item1.length();
-            long int2 = item2.length();
+    final Comparator<File> sizeComparator = ( item1, item2 ) -> {
+        long int1 = item1.length();
+        long int2 = item2.length();
 
-            if (int1 == int2) {
-                return 0;
-            }
-
-            if (int1 > int2) {
-                return -1;
-            }
-
-            if (int1 < int2) {
-                return 1;
-            }
-
+        if (int1 == int2) {
             return 0;
         }
+
+        if (int1 > int2) {
+            return -1;
+        }
+
+        if (int1 < int2) {
+            return 1;
+        }
+
+        return 0;
     };
 
 }

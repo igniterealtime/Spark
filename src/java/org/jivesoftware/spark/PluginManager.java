@@ -437,25 +437,23 @@ public class PluginManager implements MainWindowListener {
         List<? extends Node> plugins = pluginXML.selectNodes("/plugins/plugin");
         for (final Object plugin1 : plugins) {
 
-          		EventQueue.invokeLater(new Runnable() {
-         			public void run() {
-                     String clazz = null;
-                     String name;
-                     try {
-                         Element plugin = (Element) plugin1;
+          		EventQueue.invokeLater( () -> {
+String clazz = null;
+String name;
+try {
+Element plugin = (Element) plugin1;
 
-                         name = plugin.selectSingleNode("name").getText();
-                         clazz = plugin.selectSingleNode("class").getText();
-                         Plugin pluginClass = (Plugin) Class.forName(clazz).newInstance();
-                         Log.debug(name + " has been loaded. Internal plugin.");
+name = plugin.selectSingleNode("name").getText();
+clazz = plugin.selectSingleNode("class").getText();
+Plugin pluginClass1 = (Plugin) Class.forName(clazz).newInstance();
+Log.debug(name + " has been loaded. Internal plugin.");
 
-                         registerPlugin(pluginClass);
-                     }
-                     catch (Throwable ex) {
-                         Log.error("Unable to load plugin " + clazz + ".", ex);
-                     }
-         			}
-          		});
+registerPlugin( pluginClass1 );
+}
+catch (Throwable ex) {
+Log.error("Unable to load plugin " + clazz + ".", ex);
+}
+                  } );
 
 
         }
@@ -637,23 +635,21 @@ public class PluginManager implements MainWindowListener {
       		}
       	}
 
-			EventQueue.invokeLater(new Runnable() {
-			      public void run() {
-			          for (Plugin plugin1 : plugins) {
-			              long start = System.currentTimeMillis();
-			              Log.debug("Trying to initialize " + plugin1);
-			              try {
-			                  plugin1.initialize();
-			              }
-			              catch (Throwable e) {
-			                  Log.error(e);
-			              }
+			EventQueue.invokeLater( () -> {
+                for (Plugin plugin1 : plugins) {
+                    long start = System.currentTimeMillis();
+                    Log.debug("Trying to initialize " + plugin1);
+                    try {
+                        plugin1.initialize();
+                    }
+                    catch (Throwable e) {
+                        Log.error(e);
+                    }
 
-			              long end = System.currentTimeMillis();
-			              Log.debug("Took " + (end - start) + " ms. to load " + plugin1);
-			          }
-			      }
-			  });
+                    long end = System.currentTimeMillis();
+                    Log.debug("Took " + (end - start) + " ms. to load " + plugin1);
+                }
+            } );
 		}
 		catch (Exception e)
 		{
@@ -699,16 +695,14 @@ public class PluginManager implements MainWindowListener {
      * Expands all plugin packs (.jar files located in the plugin dir with plugin.xml).
      */
     private void expandNewPlugins() {
-        File[] jars = PLUGINS_DIRECTORY.listFiles(new FilenameFilter() {
-            public boolean accept(File dir, String name) {
-                boolean accept = false;
-                String smallName = name.toLowerCase();
-                if (smallName.endsWith(".jar")) {
-                    accept = true;
-                }
-                return accept;
+        File[] jars = PLUGINS_DIRECTORY.listFiles( ( dir, name ) -> {
+            boolean accept = false;
+            String smallName = name.toLowerCase();
+            if (smallName.endsWith(".jar")) {
+                accept = true;
             }
-        });
+            return accept;
+        } );
 
         // Do nothing if no jar or zip files were found
         if (jars == null) {
@@ -753,11 +747,9 @@ public class PluginManager implements MainWindowListener {
 		// First, expand all plugins that have yet to be expanded.
 		expandNewPlugins();
 
-		File[] files = PLUGINS_DIRECTORY.listFiles(new FilenameFilter() {
-			public boolean accept(File dir, String name) {
-				return dir.isDirectory();
-			}
-		});
+		File[] files = PLUGINS_DIRECTORY.listFiles( ( dir, name ) -> {
+            return dir.isDirectory();
+        } );
 
 		// Do nothing if no jar or zip files were found
 		if (files == null) {
@@ -814,14 +806,11 @@ public class PluginManager implements MainWindowListener {
 	pluginClass = loadPublicPlugin(pluginDownload);
 
 	try {
-	    EventQueue.invokeAndWait(new Runnable() {
-		@Override
-		public void run() {
+	    EventQueue.invokeAndWait( () -> {
 
-		    Log.debug("Trying to initialize " + pluginClass);
-		    pluginClass.initialize();
-		}
-	    });
+            Log.debug("Trying to initialize " + pluginClass);
+            pluginClass.initialize();
+        } );
 	} catch (Exception e) {
 	    Log.error(e);
 	}

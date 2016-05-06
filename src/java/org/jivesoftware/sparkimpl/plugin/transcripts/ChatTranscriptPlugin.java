@@ -285,13 +285,7 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
    	 JTextArea textArea = new JTextArea(5, 30);
    	 JButton btn_close = new JButton(Res.getString("button.close"));
 
-   	 btn_close.addActionListener(new ActionListener()
-	    {
-	      public void actionPerformed(ActionEvent e)
-	      {
-	    	  	Frame.setVisible(false);
-	      }
-	    });
+   	 btn_close.addActionListener( e -> Frame.setVisible(false) );
 
    	 textArea.setLineWrap(true);
    	 textArea.setWrapStyleWord(true);
@@ -315,21 +309,19 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
     /**
      * Sort HistoryMessages by date.
      */
-    final Comparator<HistoryMessage> dateComparator = new Comparator<HistoryMessage>() {
-        public int compare(HistoryMessage messageOne, HistoryMessage messageTwo) {
+    final Comparator<HistoryMessage> dateComparator = ( messageOne, messageTwo ) -> {
 
-            long time1 = messageOne.getDate().getTime();
-            long time2 = messageTwo.getDate().getTime();
+        long time1 = messageOne.getDate().getTime();
+        long time2 = messageTwo.getDate().getTime();
 
-            if (time1 < time2) {
-                return 1;
-            }
-            else if (time1 > time2) {
-                return -1;
-            }
-            return 0;
-
+        if (time1 < time2) {
+            return 1;
         }
+        else if (time1 > time2) {
+            return -1;
+        }
+        return 0;
+
     };
 
     private class ChatRoomDecorator implements ActionListener, ChatRoomClosingListener {

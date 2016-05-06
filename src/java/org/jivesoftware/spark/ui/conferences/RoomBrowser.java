@@ -176,13 +176,11 @@ public class RoomBrowser extends JPanel {
         dlg.setContentPane(mainPanel);
         dlg.setLocationRelativeTo(SparkManager.getMainWindow());
 
-        PropertyChangeListener changeListener = new PropertyChangeListener() {
-            public void propertyChange(PropertyChangeEvent e) {
-                String value = (String)pane.getValue();
-                if (Res.getString("close").equals(value)) {
-                    pane.setValue(JOptionPane.UNINITIALIZED_VALUE);
-                    dlg.dispose();
-                }
+        PropertyChangeListener changeListener = e -> {
+            String value = (String)pane.getValue();
+            if (Res.getString("close").equals(value)) {
+                pane.setValue(JOptionPane.UNINITIALIZED_VALUE);
+                dlg.dispose();
             }
         };
 

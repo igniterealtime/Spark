@@ -72,12 +72,7 @@ public class About extends JDialog {
             }
         });
 
-        okButton.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent ev) {
-                System.exit(0);
-            }
-        });
+        okButton.addActionListener( ev -> System.exit(0) );
     }
 
     /** Starten der Anwendung

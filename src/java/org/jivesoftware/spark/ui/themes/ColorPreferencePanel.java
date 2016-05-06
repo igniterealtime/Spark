@@ -108,36 +108,22 @@ public class ColorPreferencePanel extends SparkTabbedPane {
 	add(rightpanel);
 	
 	
-	_colorliste.addListSelectionListener(new ListSelectionListener() {
-		
-	    @Override
-	    public void valueChanged(ListSelectionEvent e) {
-		
-		String v = (String) _colorliste.getSelectedValue();
-		
-		Color c = _colorsettings.getColorFromProperty(v);
-		
-		_colorpick.setColor(c);
-		_errorlabel.setText("");
-	    }
-	});
+	_colorliste.addListSelectionListener( e -> {
+
+    String v = (String) _colorliste.getSelectedValue();
+
+    Color c = _colorsettings.getColorFromProperty(v);
+
+    _colorpick.setColor(c);
+    _errorlabel.setText("");
+    } );
 	
-	savebutton.addActionListener(new ActionListener() {
-	    
-	    @Override
-	    public void actionPerformed(ActionEvent e) {
-		savebuttonaction(e);
-	    }
-	});
+	savebutton.addActionListener( e -> savebuttonaction(e) );
 	
-	restoreDefaults.addActionListener(new ActionListener() {
-	    
-	    @Override
-	    public void actionPerformed(ActionEvent e) {
-		ColorSettingManager.restoreDefault();
-		_colorsettings = ColorSettingManager.getColorSettings();
-	    }
-	});
+	restoreDefaults.addActionListener( e -> {
+    ColorSettingManager.restoreDefault();
+    _colorsettings = ColorSettingManager.getColorSettings();
+    } );
 
     }
     

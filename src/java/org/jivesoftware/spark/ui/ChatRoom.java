@@ -364,25 +364,23 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
 	    _isAlwaysOnTopActive = SettingsManager.getLocalPreferences().isChatWindowAlwaysOnTop();
 	    _alwaysOnTopItem = UIComponentRegistry.getButtonFactory().createAlwaysOnTop(_isAlwaysOnTopActive);
 	    
-        _alwaysOnTopItem.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent actionEvent) {
-                	if (!_isAlwaysOnTopActive)
-                	{
-                		SettingsManager.getLocalPreferences().setChatWindowAlwaysOnTop(true);
-                		_chatFrame.setWindowAlwaysOnTop(true);
-                		_isAlwaysOnTopActive = true;
-                		 _alwaysOnTopItem.setIcon(SparkRes.getImageIcon("FRAME_ALWAYS_ON_TOP_ACTIVE"));
+        _alwaysOnTopItem.addActionListener( actionEvent -> {
+            if (!_isAlwaysOnTopActive)
+            {
+                SettingsManager.getLocalPreferences().setChatWindowAlwaysOnTop(true);
+                _chatFrame.setWindowAlwaysOnTop(true);
+                _isAlwaysOnTopActive = true;
+                 _alwaysOnTopItem.setIcon(SparkRes.getImageIcon("FRAME_ALWAYS_ON_TOP_ACTIVE"));
 
-                	}
-                	else
-                	{
-                		SettingsManager.getLocalPreferences().setChatWindowAlwaysOnTop(false);
-                		_chatFrame.setWindowAlwaysOnTop(false);
-                		_isAlwaysOnTopActive = false;
-                		  _alwaysOnTopItem.setIcon(SparkRes.getImageIcon("FRAME_ALWAYS_ON_TOP_DEACTIVE"));
-                	}
-                }
-        });
+            }
+            else
+            {
+                SettingsManager.getLocalPreferences().setChatWindowAlwaysOnTop(false);
+                _chatFrame.setWindowAlwaysOnTop(false);
+                _isAlwaysOnTopActive = false;
+                  _alwaysOnTopItem.setIcon(SparkRes.getImageIcon("FRAME_ALWAYS_ON_TOP_DEACTIVE"));
+            }
+        } );
 
 
         editorBarRight.add(_alwaysOnTopItem);
@@ -610,13 +608,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
 
         try {
             final JScrollBar scrollBar = textScroller.getVerticalScrollBar();
-            EventQueue.invokeLater(new Runnable() {
-
-                @Override
-                public void run() {
-                    scrollBar.setValue(scrollBar.getMaximum());
-                }
-            });
+            EventQueue.invokeLater( () -> scrollBar.setValue(scrollBar.getMaximum()) );
 
 
         }

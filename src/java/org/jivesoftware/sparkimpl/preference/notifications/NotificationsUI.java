@@ -112,27 +112,23 @@ public class NotificationsUI extends JPanel {
         }   
         	add(pn);	
 
-        windowFocusBox.addChangeListener(new ChangeListener(){
-        	public void stateChanged(ChangeEvent ce){
-        		if(shouldWindowPopup()) {
-        			setSystemTrayNotification(false);
-        			setSystemTrayNotificationEnabled(false);
-        		}
-        		else
-        			setSystemTrayNotificationEnabled(true);
-        	}
-        });
+        windowFocusBox.addChangeListener( ce -> {
+            if(shouldWindowPopup()) {
+                setSystemTrayNotification(false);
+                setSystemTrayNotificationEnabled(false);
+            }
+            else
+                setSystemTrayNotificationEnabled(true);
+        } );
         
-        SystemTrayNotificationBox.addChangeListener(new ChangeListener(){
-        	public void stateChanged(ChangeEvent ce){
-        		if(isSystemTrayNotificationEnabled()) {
-        			setShowWindowPopup(false);
-        			setShowWindowPopupEnabled(false);
-        		}
-        		else
-        			setShowWindowPopupEnabled(true);
-        	}
-        });
+        SystemTrayNotificationBox.addChangeListener( ce -> {
+            if(isSystemTrayNotificationEnabled()) {
+                setShowWindowPopup(false);
+                setShowWindowPopupEnabled(false);
+            }
+            else
+                setShowWindowPopupEnabled(true);
+        } );
     }
 
     public void setShowToaster(boolean show) {

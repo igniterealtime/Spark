@@ -146,11 +146,7 @@ public class TransportRegistrationDialog extends JPanel implements ActionListene
         passwordField.addKeyListener(this);
         registerButton.addActionListener(this);
 
-        cancelButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent actionEvent) {
-                dialog.dispose();
-            }
-        });
+        cancelButton.addActionListener( actionEvent -> dialog.dispose() );
     }
 
     public void addCancelActionListener(ActionListener a)
@@ -189,21 +185,16 @@ public class TransportRegistrationDialog extends JPanel implements ActionListene
         }
 
         try {
-            TransportUtils.registerUser(SparkManager.getConnection(), serviceName, username, password, nickname, new StanzaListener()
-            {
-                @Override
-                public void processPacket( Stanza stanza ) throws SmackException.NotConnectedException
-                {
-                    IQ result = (IQ) stanza;
-                    if ( result.getType() == IQ.Type.error ) {
-                        JOptionPane.showMessageDialog(TransportRegistrationDialog.this, Res.getString("message.registration.transport.failed"), Res.getString("title.registration.error"), JOptionPane.ERROR_MESSAGE);
-                    } else {
-                        // Send Directed Presence
-                        final StatusBar statusBar = SparkManager.getWorkspace().getStatusBar();
-                        Presence presence = statusBar.getPresence();
-                        presence.setTo(transport.getServiceName());
-                        SparkManager.getConnection().sendStanza(presence);
-                    }
+            TransportUtils.registerUser(SparkManager.getConnection(), serviceName, username, password, nickname, stanza -> {
+                IQ result = (IQ) stanza;
+                if ( result.getType() == IQ.Type.error ) {
+                    JOptionPane.showMessageDialog(TransportRegistrationDialog.this, Res.getString("message.registration.transport.failed"), Res.getString("title.registration.error"), JOptionPane.ERROR_MESSAGE);
+                } else {
+                    // Send Directed Presence
+                    final StatusBar statusBar = SparkManager.getWorkspace().getStatusBar();
+                    Presence presence = statusBar.getPresence();
+                    presence.setTo(transport.getServiceName());
+                    SparkManager.getConnection().sendStanza(presence);
                 }
             } );
         }

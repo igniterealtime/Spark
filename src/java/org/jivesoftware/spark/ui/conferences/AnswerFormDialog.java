@@ -100,12 +100,10 @@ public class AnswerFormDialog {
 
 	JButton updatebutton = new JButton();
 	ResourceUtils.resButton(updatebutton, Res.getString("apply"));
-	updatebutton.addActionListener(new ActionListener() {
-	    public void actionPerformed(ActionEvent e) {
-		dialog.dispose();
-		sendAnswerForm(form.createAnswerForm(), chat);
-	    }
-	});
+	updatebutton.addActionListener( e -> {
+    dialog.dispose();
+    sendAnswerForm(form.createAnswerForm(), chat);
+    } );
 
 	bottompanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
 	bottompanel.add(updatebutton);

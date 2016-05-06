@@ -71,14 +71,12 @@ public class SoundManager {
      */
     public void playClip(final AudioClip clip) {
 
-        final Runnable playThread = new Runnable() {
-            public void run() {
-                try {
-                    clip.play();
-                }
-                catch (Exception ex) {
-                    System.err.println("Unable to load sound file");
-                }
+        final Runnable playThread = () -> {
+            try {
+                clip.play();
+            }
+            catch (Exception ex) {
+                System.err.println("Unable to load sound file");
             }
         };
 
@@ -106,20 +104,18 @@ public class SoundManager {
      * @param soundFile the File object representing the wav file.
      */
     public void playClip(final File soundFile) {
-        final Runnable playThread = new Runnable() {
-            public void run() {
-                try {
-                    final URL url = soundFile.toURI().toURL();
-                    AudioClip ac = fileMap.get(url);
-                    if (ac == null) {
-                        ac = Applet.newAudioClip(url);
-                        fileMap.put(url, ac);
-                    }
-                    ac.play();
+        final Runnable playThread = () -> {
+            try {
+                final URL url = soundFile.toURI().toURL();
+                AudioClip ac = fileMap.get(url);
+                if (ac == null) {
+                    ac = Applet.newAudioClip(url);
+                    fileMap.put(url, ac);
                 }
-                catch (MalformedURLException e) {
-                    Log.error(e);
-                }
+                ac.play();
+            }
+            catch (MalformedURLException e) {
+                Log.error(e);
             }
         };
 

@@ -50,14 +50,7 @@ public class FlashingPreferenceDialog extends JPanel {
 		JLabel lTyps = new JLabel();
 		flashingPanel.setLayout(new GridBagLayout());
 		
-		flashingEnabled.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				updateUI(flashingEnabled.isSelected());	
-			}
-			
-		});
+		flashingEnabled.addActionListener( e -> updateUI(flashingEnabled.isSelected()) );
 		
 		flashingType.addItem(FlashingResources.getString("flashing.type.continuous"));
 		flashingType.addItem(FlashingResources.getString("flashing.type.temporary"));

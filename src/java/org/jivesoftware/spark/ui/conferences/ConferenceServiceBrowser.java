@@ -83,24 +83,22 @@ public class ConferenceServiceBrowser {
         mainPanel.add(scrollPane, new GridBagConstraints(0, 3, 3, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
 
         // Add Listener to find button
-        findButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                String address = serverAddress.getText();
-                if (ModelUtil.hasLength(address)) {
-                    try {
-                        Collection<String> col = getConferenceServices(address);
-                        for (String aCol : col) {
-                            String service = aCol;
-                            model.addElement(service);
-                        }
+        findButton.addActionListener( e -> {
+            String address = serverAddress.getText();
+            if (ModelUtil.hasLength(address)) {
+                try {
+                    Collection<String> col = getConferenceServices(address);
+                    for (String aCol : col) {
+                        String service = aCol;
+                        model.addElement(service);
                     }
-                    catch (Exception e1) {
-                        Log.error(e1);
-                    }
-
                 }
+                catch (Exception e1) {
+                    Log.error(e1);
+                }
+
             }
-        });
+        } );
 
         // The user should only be able to close this dialog.
         Object[] options = {Res.getString("ok"), Res.getString("close")};

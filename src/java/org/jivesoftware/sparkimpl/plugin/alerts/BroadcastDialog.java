@@ -159,13 +159,7 @@ public class BroadcastDialog extends JPanel {
         add(treePane, new GridBagConstraints(1, 0, 1, 3, 0.5, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(2, 5, 2, 5), 0, 0));
         add(OfflineUsers, new GridBagConstraints(1, 3, 1, 0, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(2, 5, 2, 5), 0, 0));
         
-        OfflineUsers.addActionListener(new ActionListener()
- 	     {
-      	  public void actionPerformed(ActionEvent e)
-      	  {
-      		  hideOfflineUsers();
-           }
- 	     });
+        OfflineUsers.addActionListener( e -> hideOfflineUsers() );
         
         normalMessageButton.setSelected(true);
         checkTree.expandTree();
@@ -232,31 +226,21 @@ public class BroadcastDialog extends JPanel {
         dlg.setLocationRelativeTo(SparkManager.getMainWindow());
         
         // Add listener
-        okButton.addActionListener(new ActionListener() {
+        okButton.addActionListener( e -> {
+try
+{
+if (sendBroadcasts(dlg)) {
+dlg.setVisible(false);
+}
+}
+catch ( SmackException.NotConnectedException e1 )
+{
+Log.warning( "Unable to broadcast.", e1 );
+}
 
-	    @Override
-	    public void actionPerformed(ActionEvent e) {
-            try
-            {
-                if (sendBroadcasts(dlg)) {
-                    dlg.setVisible(false);
-                }
-            }
-            catch ( SmackException.NotConnectedException e1 )
-            {
-                Log.warning( "Unable to broadcast.", e1 );
-            }
+} );
 
-        }
-	});
-
-        closeButton.addActionListener(new ActionListener() {
-	    
-	    @Override
-	    public void actionPerformed(ActionEvent e) {
-		dlg.setVisible(false);
-	    }
-	});
+        closeButton.addActionListener( e -> dlg.setVisible(false) );
 
         dlg.setVisible(true);
         dlg.toFront();

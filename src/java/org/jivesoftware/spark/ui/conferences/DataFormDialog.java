@@ -158,13 +158,11 @@ public class DataFormDialog extends JPanel {
 
         JButton button = new JButton();
         ResourceUtils.resButton(button, Res.getString("button.update"));
-        button.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                dialog.dispose();
-                // Now submit all information
-                updateRoomConfiguration(submitForm, chat);
-            }
-        });
+        button.addActionListener( e -> {
+            dialog.dispose();
+            // Now submit all information
+            updateRoomConfiguration(submitForm, chat);
+        } );
 
         final JScrollPane pane = new JScrollPane(this);
         pane.getVerticalScrollBar().setBlockIncrement(200);
@@ -180,11 +178,7 @@ public class DataFormDialog extends JPanel {
 
         JButton cancelButton = new JButton();
         ResourceUtils.resButton(cancelButton, Res.getString("button.cancel"));
-        cancelButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent actionEvent) {
-                dialog.dispose();
-            }
-        });
+        cancelButton.addActionListener( actionEvent -> dialog.dispose() );
 
         bottomPanel.add(cancelButton);
 

@@ -134,37 +134,35 @@ public class FileTransferSettingsPlugin implements Plugin {
 
         SparkTransferManager transferManager = SparkManager.getTransferManager();
 
-        transferManager.addTransferListener(new FileTransferListener() {
-            public boolean handleTransfer(FileTransferRequest request) {
-                FileTransferSettings settings = (FileTransferSettings)prefManager.getPreferenceData("transferSettings");
+        transferManager.addTransferListener( request -> {
+            FileTransferSettings settings = (FileTransferSettings)prefManager.getPreferenceData("transferSettings");
 
-                try
+            try
+            {
+                if ( requestContainsBannedFile( request, settings ) )
                 {
-                    if ( requestContainsBannedFile( request, settings ) )
-                    {
-                        request.reject();
+                    request.reject();
 
-                        String responseMessage = settings.getCannedRejectionMessage();
-                        if ( responseMessage != null && responseMessage.length() > 0 )
-                        {
-                            Message message = new Message();
-                            message.setTo( request.getRequestor() );
-                            message.setBody( responseMessage );
-                            SparkManager.getConnection().sendStanza( message );
-                        }
-                        return true;
-                    }
-                    else
+                    String responseMessage = settings.getCannedRejectionMessage();
+                    if ( responseMessage != null && responseMessage.length() > 0 )
                     {
-                        return false;
+                        Message message = new Message();
+                        message.setTo( request.getRequestor() );
+                        message.setBody( responseMessage );
+                        SparkManager.getConnection().sendStanza( message );
                     }
+                    return true;
                 }
-                catch (SmackException ex)
+                else
                 {
-                    Log.warning( "Unable to handle file transfer.", ex );
                     return false;
                 }
             }
-        });
+            catch (SmackException ex)
+            {
+                Log.warning( "Unable to handle file transfer.", ex );
+                return false;
+            }
+        } );
     }
 }

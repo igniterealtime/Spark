@@ -230,83 +230,75 @@ public class ThemePanel extends JPanel {
         _lookandfeelLabel = new JLabel(Res.getString("lookandfeel.select"));
         _lookandfeelpreview = new JButton(Res.getString("lookandfeel.change.now"));
 
-        _lookandfeel.addActionListener(new ActionListener() {
+        _lookandfeel.addActionListener( e -> {
+        // Disable button for java.LaF's and for Synthetica
 
-	    @Override
-	    public void actionPerformed(ActionEvent e) {
-		// Disable button for java.LaF's and for Synthetica
+        if (_lookandfeel.getSelectedIndex() < UIManager.getInstalledLookAndFeels().length) {
+            _lookandfeelpreview.setEnabled(false);
+            _lookandfeelpreview
+                .setToolTipText(Res.getString("lookandfeel.tooltip.restart.yes"));
+            _lookandfeelpreview.revalidate();
+        } else {
+            _lookandfeelpreview.setEnabled(true);
+            _lookandfeelpreview.setToolTipText(Res.getString("lookandfeel.tooltip.restart.no"));
+            _lookandfeelpreview.revalidate();
+        }
 
-		if (_lookandfeel.getSelectedIndex() < UIManager.getInstalledLookAndFeels().length) {
-		    _lookandfeelpreview.setEnabled(false);
-		    _lookandfeelpreview
-			    .setToolTipText(Res.getString("lookandfeel.tooltip.restart.yes"));
-		    _lookandfeelpreview.revalidate();
-		} else {
-		    _lookandfeelpreview.setEnabled(true);
-		    _lookandfeelpreview.setToolTipText(Res.getString("lookandfeel.tooltip.restart.no"));
-		    _lookandfeelpreview.revalidate();
-		}
-
-	    }
-	});
+        } );
 
 
-	_lookandfeelpreview.addActionListener(new ActionListener() {
+	_lookandfeelpreview.addActionListener( e -> {
 
-	    @Override
-	    public void actionPerformed(ActionEvent e) {
+    SwingWorker worker = new SwingWorker() {
+        @Override
+        public Object construct() {
 
-		SwingWorker worker = new SwingWorker() {
-		    @Override
-		    public Object construct() {
+        return 42;
+        }
 
-			return 42;
-		    }
-
-            private void setNewLaF() {
-                try {
-                    UIManager.setLookAndFeel(_lookandfeelname.get(_lookandfeel.getSelectedIndex()));
-                    setJTattooBar(_lookandfeelname.get(_lookandfeel.getSelectedIndex()));
-                } catch (Exception e) {
-                    //WTF, i dont care
-                }
+        private void setNewLaF() {
+            try {
+                UIManager.setLookAndFeel(_lookandfeelname.get(_lookandfeel.getSelectedIndex()));
+                setJTattooBar(_lookandfeelname.get(_lookandfeel.getSelectedIndex()));
+            } catch (Exception e) {
+                //WTF, i dont care
             }
+        }
 
-            private void updateAllComponentsLaF(final Window window) {
-                for (Window childWindow : window.getOwnedWindows()) {
-                    updateAllComponentsLaF(childWindow);
-                }
-                SwingUtilities.updateComponentTreeUI(window);
+        private void updateAllComponentsLaF(final Window window) {
+            for (Window childWindow : window.getOwnedWindows()) {
+                updateAllComponentsLaF(childWindow);
             }
+            SwingUtilities.updateComponentTreeUI(window);
+        }
 
-            @Override
-            public void finished() {
-                // if the current laf is substance, and the new laf is not, we need to refresh all components,
-                //   but since substance is very stubborn, we must restart.
-            	UIManager.put("OptionPane.yesButtonText", Res.getString("yes"));
-            	UIManager.put("OptionPane.noButtonText", Res.getString("no"));
-                if (UIManager.getLookAndFeel().getName().toLowerCase().contains("substance")
-                        && !_lookandfeelname.get(_lookandfeel.getSelectedIndex()).toLowerCase().contains("substance")) { // substance is a PITA!
-                    if (JOptionPane.showConfirmDialog(SparkManager.getPreferenceManager().getPreferenceDialog(), Res.getString("message.restart.required"),
-                            Res.getString("title.alert"), JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-                        setNewLaF();
-                        SettingsManager.getLocalPreferences().setLookAndFeel(getLookAndFeel());
-                        SparkManager.getMainWindow().logout(false);
-                    }
-                } else { // otherwise we're ok to just refresh all components
+        @Override
+        public void finished() {
+            // if the current laf is substance, and the new laf is not, we need to refresh all components,
+            //   but since substance is very stubborn, we must restart.
+            UIManager.put("OptionPane.yesButtonText", Res.getString("yes"));
+            UIManager.put("OptionPane.noButtonText", Res.getString("no"));
+            if (UIManager.getLookAndFeel().getName().toLowerCase().contains("substance")
+                    && !_lookandfeelname.get(_lookandfeel.getSelectedIndex()).toLowerCase().contains("substance")) { // substance is a PITA!
+                if (JOptionPane.showConfirmDialog(SparkManager.getPreferenceManager().getPreferenceDialog(), Res.getString("message.restart.required"),
+                        Res.getString("title.alert"), JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
                     setNewLaF();
-                    for (Frame frame : Frame.getFrames()) {
-                        updateAllComponentsLaF(frame);
-                    }
-                    JFrame.setDefaultLookAndFeelDecorated(true);
-                    JDialog.setDefaultLookAndFeelDecorated(true);
                     SettingsManager.getLocalPreferences().setLookAndFeel(getLookAndFeel());
+                    SparkManager.getMainWindow().logout(false);
                 }
-		    }
-		};
-		worker.start();
-	    }
-	});
+            } else { // otherwise we're ok to just refresh all components
+                setNewLaF();
+                for (Frame frame : Frame.getFrames()) {
+                    updateAllComponentsLaF(frame);
+                }
+                JFrame.setDefaultLookAndFeelDecorated(true);
+                JDialog.setDefaultLookAndFeelDecorated(true);
+                SettingsManager.getLocalPreferences().setLookAndFeel(getLookAndFeel());
+            }
+        }
+    };
+    worker.start();
+    } );
 
 
 	    _useTabsForTransports = new JCheckBox("");
@@ -353,12 +345,10 @@ public class ThemePanel extends JPanel {
 
 	_showReconnectBox.setSelectedIndex(pref.getReconnectPanelType());
 
-	_showReconnectBox.addActionListener(new ActionListener() {
-	    public void actionPerformed(ActionEvent e) {
-		if(_showReconnectBox.getSelectedIndex()!=-1)
-		setShowReconnectPanel(_showReconnectBox.getSelectedIndex());
-	    }
-	});
+	_showReconnectBox.addActionListener( e -> {
+    if(_showReconnectBox.getSelectedIndex()!=-1)
+    setShowReconnectPanel(_showReconnectBox.getSelectedIndex());
+    } );
 
 
 
@@ -426,34 +416,13 @@ public class ThemePanel extends JPanel {
 
 
         _useTabsForTransports.setSelected(pref.getShowTransportTab());
-        _useTabsForTransports.addActionListener(new ActionListener() {
-
-	    @Override
-	    public void actionPerformed(ActionEvent e) {
-		SettingsManager.getLocalPreferences().setShowTransportTab(_useTabsForTransports.isSelected());
-
-	    }
-	});
+        _useTabsForTransports.addActionListener( e -> SettingsManager.getLocalPreferences().setShowTransportTab(_useTabsForTransports.isSelected()) );
 		_useTabsForConference.setSelected(pref.isShowConferenceTab());
-		_useTabsForConference.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				SettingsManager.getLocalPreferences().setShowConferenceTab(
-						_useTabsForConference.isSelected());
-
-			}
-		});
+		_useTabsForConference.addActionListener( e -> SettingsManager.getLocalPreferences().setShowConferenceTab(
+                _useTabsForConference.isSelected()) );
 
         _useTabsForConference.setSelected(pref.isShowConferenceTab());
-        _useTabsForConference.addActionListener(new ActionListener() {
-
-	    @Override
-	    public void actionPerformed(ActionEvent e) {
-		SettingsManager.getLocalPreferences().setShowConferenceTab(_useTabsForConference.isSelected());
-
-	    }
-	});
+        _useTabsForConference.addActionListener( e -> SettingsManager.getLocalPreferences().setShowConferenceTab(_useTabsForConference.isSelected()) );
 
         final EmoticonManager emoticonManager = EmoticonManager.getInstance();
         if (emoticonManager.getEmoticonPacks() != null)
@@ -466,19 +435,13 @@ public class ThemePanel extends JPanel {
         final String activePack = pref.getEmoticonPack();
         emoticonBox.setSelectedItem(activePack);
 
-        emoticonBox.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                emoticonManager.addEmoticonPack((String)emoticonBox.getSelectedItem());
-                emoticonManager.setActivePack((String)emoticonBox.getSelectedItem());
-                showSelectedEmoticon();
-            }
-        });
+        emoticonBox.addActionListener( e -> {
+            emoticonManager.addEmoticonPack((String)emoticonBox.getSelectedItem());
+            emoticonManager.setActivePack((String)emoticonBox.getSelectedItem());
+            showSelectedEmoticon();
+        } );
 
-        addEmoticonButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                addEmoticonPack();
-            }
-        });
+        addEmoticonButton.addActionListener( e -> addEmoticonPack() );
 
         showSelectedEmoticon();
 

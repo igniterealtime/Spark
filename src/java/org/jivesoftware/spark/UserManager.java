@@ -496,11 +496,7 @@ public class UserManager {
     /**
      * Sorts ContactItems.
      */
-    final Comparator<ContactItem> itemComparator = new Comparator<ContactItem>() {
-        public int compare(ContactItem item1, ContactItem item2) {
-            return item1.getDisplayName().toLowerCase().compareTo(item2.getDisplayName().toLowerCase());
-        }
-    };
+    final Comparator<ContactItem> itemComparator = ( item1, item2 ) -> item1.getDisplayName().toLowerCase().compareTo(item2.getDisplayName().toLowerCase());
 
 }
 

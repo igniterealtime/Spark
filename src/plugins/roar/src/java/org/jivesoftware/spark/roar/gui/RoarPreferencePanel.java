@@ -98,11 +98,7 @@ public class RoarPreferencePanel extends JPanel {
         _enabledCheckbox = new JCheckBox(RoarResources.getString("roar.enabled"));
 
         _singleColorpicker = new ColorPick(false);
-        _singleColorpicker.addChangeListener(new ChangeListener() {
-            public void stateChanged(ChangeEvent e) {
-                stateChangedSingleColorPicker(e);
-            }
-        });
+        _singleColorpicker.addChangeListener( e -> stateChangedSingleColorPicker(e) );
 
         DefaultListModel<ColorTypes> listModel = new DefaultListModel<>();
         listModel.addElement(ColorTypes.BACKGROUNDCOLOR);
@@ -117,11 +113,7 @@ public class RoarPreferencePanel extends JPanel {
         }
             
         _typelist = new JComboBox<>( _typelistdata );
-        _typelist.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                updateWarningLabel(getDisplayTypeClass().getWarningMessage());
-            }
-        });
+        _typelist.addActionListener( e -> updateWarningLabel(getDisplayTypeClass().getWarningMessage()) );
 
         add(makeGeneralSettingsPanel());
         _singleColorlist.addMouseListener(new MouseAdapter() {
@@ -209,11 +201,7 @@ public class RoarPreferencePanel extends JPanel {
         JCheckBox disableGroup = new JCheckBox(RoarResources.getString("roar.group.disable"));
         JTextField durationGroup = new JTextField();
 
-        enableDifferentGroup.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                toggleDifferentSettingsForGroup(enableDifferentGroup.isSelected());
-            }
-        });
+        enableDifferentGroup.addActionListener( e -> toggleDifferentSettingsForGroup(enableDifferentGroup.isSelected()) );
 
         int rowcount = 0;
         groupPanel.add(enableDifferentGroup,
@@ -242,11 +230,7 @@ public class RoarPreferencePanel extends JPanel {
         panel.setBorder(BorderFactory.createTitledBorder(RoarResources.getString("roar.keyword")));
 
         final JCheckBox differentKeyword = new JCheckBox(RoarResources.getString("roar.keyword.different"));
-        differentKeyword.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                toggleDifferentSettingsForKeyword(differentKeyword.isSelected());
-            }
-        });
+        differentKeyword.addActionListener( e -> toggleDifferentSettingsForKeyword(differentKeyword.isSelected()) );
 
         JTextField durationKeyword = new JTextField();
         JTextField keywords = new JTextField();

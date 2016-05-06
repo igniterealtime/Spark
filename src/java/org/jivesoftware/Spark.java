@@ -189,12 +189,10 @@ public final class Spark {
         System.setProperty("sun.java2d.noddraw", "true");
         System.setProperty("file.encoding", "UTF-8");
 
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                // Start Application
-                new Spark();
-            }
-        });
+        SwingUtilities.invokeLater( () -> {
+            // Start Application
+            new Spark();
+        } );
 
         //load plugins before Workspace initialization to avoid any UI delays
         //during plugin rendering
@@ -208,12 +206,10 @@ public final class Spark {
         }
 
         try {
-	        EventQueue.invokeAndWait(new Runnable(){
-	        	public void run() {
-				final LoginDialog dialog = UIComponentRegistry.createLoginDialog();
-	        		dialog.invoke(new JFrame());
-	        	}
-	        });
+	        EventQueue.invokeAndWait( () -> {
+            final LoginDialog dialog = UIComponentRegistry.createLoginDialog();
+                dialog.invoke(new JFrame());
+            } );
         }
         catch(Exception ex) {
         	ex.printStackTrace();
@@ -247,20 +243,18 @@ public final class Spark {
 
 	try {
 	    if (laf.toLowerCase().contains("substance")) {
-		EventQueue.invokeLater(new Runnable() {
-		    public void run() {
-			try {
-			    if (Spark.isWindows()) {
-				JFrame.setDefaultLookAndFeelDecorated(true);
-				JDialog.setDefaultLookAndFeelDecorated(true);
-			    }
-			    UIManager.setLookAndFeel(laf);
-			} catch (Exception e) {
-			    // dont care
-			    e.printStackTrace();
-			}
-		    }
-		});
+		EventQueue.invokeLater( () -> {
+        try {
+            if (Spark.isWindows()) {
+            JFrame.setDefaultLookAndFeelDecorated(true);
+            JDialog.setDefaultLookAndFeelDecorated(true);
+            }
+            UIManager.setLookAndFeel(laf);
+        } catch (Exception e) {
+            // dont care
+            e.printStackTrace();
+        }
+        } );
 	    } else {
 		try {
 		    if(Spark.isWindows()) {

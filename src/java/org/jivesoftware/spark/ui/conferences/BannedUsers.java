@@ -87,21 +87,19 @@ public class BannedUsers extends JPanel {
             }
         });
 
-        unBanMenuItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                int index = list.getSelectedIndex();
-                ImageIcon icon = (ImageIcon)list.getModel().getElementAt(index);
-                String jid = icon.getDescription();
-                try {
-                    chat.grantMembership(jid);
-                }
-                catch (XMPPException | SmackException memEx) {
-                    Log.error("Error granting membership", memEx);
-                }
-                listModel.removeElementAt(index);
-
+        unBanMenuItem.addActionListener( e -> {
+            int index = list.getSelectedIndex();
+            ImageIcon icon = (ImageIcon)list.getModel().getElementAt(index);
+            String jid = icon.getDescription();
+            try {
+                chat.grantMembership(jid);
             }
-        });
+            catch (XMPPException | SmackException memEx) {
+                Log.error("Error granting membership", memEx);
+            }
+            listModel.removeElementAt(index);
+
+        } );
     }
 
     /**

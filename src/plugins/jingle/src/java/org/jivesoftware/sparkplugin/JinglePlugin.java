@@ -194,15 +194,7 @@ public class JinglePlugin implements Plugin, Phone, ConnectionListener {
 	
 
         // Listen in for new incoming Jingle requests.
-        jingleManager.addJingleSessionRequestListener(new JingleSessionRequestListener() {
-            public void sessionRequested(final JingleSessionRequest request) {            	
-                SwingUtilities.invokeLater(new Runnable() {
-                    public void run() {
-                        incomingJingleSession(request);
-                    }
-                });
-            }
-        });
+        jingleManager.addJingleSessionRequestListener( request -> SwingUtilities.invokeLater( () -> incomingJingleSession(request) ) );
     }
 
 
@@ -345,19 +337,17 @@ public class JinglePlugin implements Plugin, Phone, ConnectionListener {
      */
     private void addPresenceListener() {
         // Check presence changes
-        SparkManager.getConnection().addAsyncStanzaListener(new StanzaListener() {
-            public void processPacket(Stanza stanza) {
-                Presence presence = (Presence)stanza;
-                if (!presence.isAvailable()) {
-                    String from = presence.getFrom();
-                    if (ModelUtil.hasLength(from)) {
-                        // Remove from
-                        jingleFeature.remove(from);
-                    }
+        SparkManager.getConnection().addAsyncStanzaListener( stanza -> {
+            Presence presence = (Presence)stanza;
+            if (!presence.isAvailable()) {
+                String from = presence.getFrom();
+                if (ModelUtil.hasLength(from)) {
+                    // Remove from
+                    jingleFeature.remove(from);
                 }
-
-
             }
+
+
         }, new StanzaTypeFilter(Presence.class));
     }
 

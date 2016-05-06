@@ -102,19 +102,17 @@ public class SendFileTransfer extends JPanel {
         add(retryButton, new GridBagConstraints(1, 4, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 0, 5), 0, 0));
         retryButton.setVisible(false);
 
-        retryButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    File file = new File(transfer.getFilePath());
-                    transfer = transferManager.createOutgoingFileTransfer(fullJID);
-                    transfer.sendFile(file, "Sending");
-                }
-                catch (SmackException e1) {
-                    Log.error(e1);
-                }
-                sendFile(transfer, transferManager, fullJID, nickname);
+        retryButton.addActionListener( e -> {
+            try {
+                File file = new File(transfer.getFilePath());
+                transfer = transferManager.createOutgoingFileTransfer(fullJID);
+                transfer.sendFile(file, "Sending");
             }
-        });
+            catch (SmackException e1) {
+                Log.error(e1);
+            }
+            sendFile(transfer, transferManager, fullJID, nickname);
+        } );
 
         cancelButton.setForeground(new Color(73, 113, 196));
         cancelButton.setFont(new Font("Dialog", Font.BOLD, 11));
@@ -293,14 +291,12 @@ public class SendFileTransfer extends JPanel {
             }
             
             try {
-            	SwingUtilities.invokeAndWait(new Runnable() {
-            		public void run() {
-            		    // 100 % = Filesize
-        		    // x %   = Currentsize	    
-            		    long p = (transfer.getBytesSent() * 100 / transfer.getFileSize() );
-            		    progressBar.setValue(Math.round(p));
-            		}
-            	});
+            	SwingUtilities.invokeAndWait( () -> {
+                    // 100 % = Filesize
+                // x %   = Currentsize
+                    long p = (transfer.getBytesSent() * 100 / transfer.getFileSize() );
+                    progressBar.setValue(Math.round(p));
+                } );
             }
             catch (Exception e) {
                 Log.error(e);

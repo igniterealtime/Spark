@@ -143,14 +143,12 @@ public final class SessionManager implements ConnectionListener {
      * @param ex the Exception that took place.
      */
     public void connectionClosedOnError(final Exception ex) {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                final Presence presence = new Presence(Presence.Type.unavailable);
-                changePresence(presence);
+        SwingUtilities.invokeLater( () -> {
+            final Presence presence = new Presence(Presence.Type.unavailable);
+            changePresence(presence);
 
-                Log.debug("Connection closed on error.: " + ex.getMessage());
-            }
-        });
+            Log.debug("Connection closed on error.: " + ex.getMessage());
+        } );
     }
 
     @Override

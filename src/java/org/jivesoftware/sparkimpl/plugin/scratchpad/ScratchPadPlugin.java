@@ -139,17 +139,9 @@ public class ScratchPadPlugin implements Plugin {
         JMenuItem notesMenu = new JMenuItem(Res.getString("button.view.notes"),
         	SparkRes.getImageIcon(SparkRes.DOCUMENT_16x16));
 
-        taskMenu.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                showTaskList();
-            }
-        });
+        taskMenu.addActionListener( e -> showTaskList() );
 
-        notesMenu.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                retrieveNotes();
-            }
-        });
+        notesMenu.addActionListener( e -> retrieveNotes() );
 
         // Add To toolbar
       final JMenu actionsMenu = SparkManager.getMainWindow().getMenuByName(Res.getString("menuitem.actions"));
@@ -500,22 +492,16 @@ public class ScratchPadPlugin implements Plugin {
         frame.setVisible(true);
         pane.setCaretPosition(0);
 
-        button.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent actionEvent) {
-                frame.dispose();
+        button.addActionListener( actionEvent -> {
+            frame.dispose();
 
-                // Save it.
-                String text = pane.getText();
-                privateNotes.setNotes(text);
-                PrivateNotes.savePrivateNotes(privateNotes);
-            }
-        });
+            // Save it.
+            String text1 = pane.getText();
+            privateNotes.setNotes( text1 );
+            PrivateNotes.savePrivateNotes(privateNotes);
+        } );
 
-        cancelButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent actionEvent) {
-                frame.dispose();
-            }
-        });
+        cancelButton.addActionListener( actionEvent -> frame.dispose() );
     }
 
     public void shutdown() {

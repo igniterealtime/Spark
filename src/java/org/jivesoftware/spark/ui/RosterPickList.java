@@ -120,18 +120,16 @@ public class RosterPickList extends JPanel {
         dlg.setContentPane(mainPanel);
         dlg.setLocationRelativeTo(parent);
 
-        PropertyChangeListener changeListener = new PropertyChangeListener() {
-            public void propertyChange(PropertyChangeEvent e) {
-                String value = (String)pane.getValue();
-                if (Res.getString("cancel").equals(value)) {
-                    rosterList.clearSelection();
-                    pane.setValue(JOptionPane.UNINITIALIZED_VALUE);
-                    dlg.dispose();
-                }
-                else if (Res.getString("ok").equals(value)) {
-                    pane.setValue(JOptionPane.UNINITIALIZED_VALUE);
-                    dlg.dispose();
-                }
+        PropertyChangeListener changeListener = e -> {
+            String value = (String)pane.getValue();
+            if (Res.getString("cancel").equals(value)) {
+                rosterList.clearSelection();
+                pane.setValue(JOptionPane.UNINITIALIZED_VALUE);
+                dlg.dispose();
+            }
+            else if (Res.getString("ok").equals(value)) {
+                pane.setValue(JOptionPane.UNINITIALIZED_VALUE);
+                dlg.dispose();
             }
         };
 
@@ -162,17 +160,15 @@ public class RosterPickList extends JPanel {
     /**
      * Sorts ContactItems.
      */
-    final Comparator<ContactItem> itemComparator = new Comparator<ContactItem>() {
-        public int compare(ContactItem item1, ContactItem item2) {
-            String nickname1 = item1.getDisplayName();
-            String nickname2 = item2.getDisplayName();
-            if (nickname1 == null || nickname2 == null) {
-                return 0;
-            }
-
-            return nickname1.toLowerCase().compareTo(nickname2.toLowerCase());
-
+    final Comparator<ContactItem> itemComparator = ( item1, item2 ) -> {
+        String nickname1 = item1.getDisplayName();
+        String nickname2 = item2.getDisplayName();
+        if (nickname1 == null || nickname2 == null) {
+            return 0;
         }
+
+        return nickname1.toLowerCase().compareTo(nickname2.toLowerCase());
+
     };
 
 }

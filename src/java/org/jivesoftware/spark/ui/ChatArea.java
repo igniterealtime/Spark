@@ -508,14 +508,7 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
 				JPopupMenu popupmenu = new JPopupMenu();
 				JMenuItem linkcopy = new JMenuItem(
 					Res.getString("action.copy"));
-				linkcopy.addActionListener(new ActionListener() {
-
-				    @Override
-				    public void actionPerformed(ActionEvent e) {
-					SparkManager.setClipboard(url);
-
-				    }
-				});
+				linkcopy.addActionListener( e1 -> SparkManager.setClipboard(url) );
 				linkcopy.setEnabled(true);
 				popupmenu.add(linkcopy);
 				popupmenu.show(this, e.getX(), e.getY());

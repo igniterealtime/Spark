@@ -206,17 +206,15 @@ public class JingleRoom extends JPanel {
         });
 
 
-        hangUpButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent actionEvent) {
-                hangUpButton.setEnabled(false);
-                try {
-                    session.terminate();
-                }
-                catch (XMPPException | SmackException e) {
-                    e.printStackTrace();
-                }
+        hangUpButton.addActionListener( actionEvent -> {
+            hangUpButton.setEnabled(false);
+            try {
+                session.terminate();
             }
-        });
+            catch (XMPPException | SmackException e) {
+                e.printStackTrace();
+            }
+        } );
     }
 
 

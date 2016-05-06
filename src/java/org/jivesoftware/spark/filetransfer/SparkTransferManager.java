@@ -165,35 +165,25 @@ public class SparkTransferManager {
                 final ContactList contactList = SparkManager.getWorkspace().getContactList();
 
                 // Create the listener
-                transferManager.addFileTransferListener(new org.jivesoftware.smackx.filetransfer.FileTransferListener() {
-                    public void fileTransferRequest(final FileTransferRequest request) {
-                        SwingUtilities.invokeLater(new Runnable() {
-                            public void run() {
-                                handleTransferRequest(request, contactList);
-                            }
-                        });
-                    }
-                });
+                transferManager.addFileTransferListener( request -> SwingUtilities.invokeLater( () -> handleTransferRequest(request, contactList) ) );
 
                 // Add Send File to Chat Room
                 addSendFileButton();
 
-                contactList.addFileDropListener(new FileDropListener() {
-                    public void filesDropped(Collection<File> files, Component component) {
-                        if (component instanceof ContactItem) {
-                            ContactItem item = (ContactItem)component;
+                contactList.addFileDropListener( ( files, component ) -> {
+                    if (component instanceof ContactItem) {
+                        ContactItem item = (ContactItem)component;
 
-                            ChatRoom chatRoom = null;
-                            for (File file : files) {
-                                chatRoom = sendFile(file, item.getJID());
-                            }
+                        ChatRoom chatRoom = null;
+                        for (File file : files) {
+                            chatRoom = sendFile(file, item.getJID());
+                        }
 
-                            if (chatRoom != null) {
-                                SparkManager.getChatManager().getChatContainer().activateChatRoom(chatRoom);
-                            }
+                        if (chatRoom != null) {
+                            SparkManager.getChatManager().getChatContainer().activateChatRoom(chatRoom);
                         }
                     }
-                });
+                } );
 
             }
 
@@ -232,11 +222,7 @@ public class SparkTransferManager {
         ResourceUtils.resButton(downloadsMenu, Res.getString("menuitem.view.downloads"));
         actionsMenu.addSeparator();
         actionsMenu.add(downloadsMenu);
-        downloadsMenu.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {        
-   		launchFile(Downloads.getDownloadDirectory());
-            }			
-        });
+        downloadsMenu.addActionListener( e -> launchFile(Downloads.getDownloadDirectory()) );
 
         if (defaultDirectory == null) {
             defaultDirectory = new File(System.getProperty("user.home"));
@@ -317,11 +303,7 @@ public class SparkTransferManager {
         final ReceiveFileTransfer receivingMessageUI = new ReceiveFileTransfer();
         receivingMessageUI.acceptFileTransfer(request);
 
-        chatRoom.addClosingListener(new ChatRoomClosingListener() {
-            public void closing() {
-                receivingMessageUI.cancelTransfer();
-            }
-        });
+        chatRoom.addClosingListener( () -> receivingMessageUI.cancelTransfer() );
         
         transcriptWindow.addComponent(receivingMessageUI);
 
@@ -501,33 +483,31 @@ public class SparkTransferManager {
     }
 
     private void addPresenceListener() {
-        SparkManager.getConnection().addAsyncStanzaListener(new StanzaListener() {
-            public void processPacket(Stanza stanza) {
-                Presence presence = (Presence)stanza;
-                if (presence.isAvailable()) {
-                    String bareJID = XmppStringUtils.parseBareJid(presence.getFrom());
+        SparkManager.getConnection().addAsyncStanzaListener( stanza -> {
+            Presence presence = (Presence)stanza;
+            if (presence.isAvailable()) {
+                String bareJID = XmppStringUtils.parseBareJid(presence.getFrom());
 
-                    // Iterate through map.
-                    ArrayList<File> list = waitMap.get(bareJID);
-                    if (list != null) {
-                        // Iterate through list and send.
-                        Iterator<File> iter = list.iterator();
-                        ChatRoom room = null;
-                        while (iter.hasNext()) {
-                            File file = iter.next();
-                            room = sendFile(file, bareJID);
-                        }
-
-                        if (room != null) {
-                            Message message = new Message();
-                            message.setBody(Res.getString("message.sent.offline.files"));
-                            room.sendMessage(message);
-                        }
+                // Iterate through map.
+                ArrayList<File> list = waitMap.get(bareJID);
+                if (list != null) {
+                    // Iterate through list and send.
+                    Iterator<File> iter = list.iterator();
+                    ChatRoom room = null;
+                    while (iter.hasNext()) {
+                        File file = iter.next();
+                        room = sendFile(file, bareJID);
                     }
 
-
-                    waitMap.remove(bareJID);
+                    if (room != null) {
+                        Message message = new Message();
+                        message.setBody(Res.getString("message.sent.offline.files"));
+                        room.sendMessage(message);
+                    }
                 }
+
+
+                waitMap.remove(bareJID);
             }
         }, new StanzaTypeFilter(Presence.class));
     }
@@ -618,13 +598,11 @@ public class SparkTransferManager {
 
         // Add listener to cancel transfer is sending file to user who just went offline.
         AndFilter presenceFilter = new AndFilter(new StanzaTypeFilter(Presence.class), FromMatchesFilter.createBare(bareJID));
-        final StanzaListener packetListener = new StanzaListener() {
-            public void processPacket(Stanza stanza) {
-                Presence presence = (Presence)stanza;
-                if (!presence.isAvailable()) {
-                    if (transfer != null) {
-                        transfer.cancel();
-                    }
+        final StanzaListener packetListener = stanza -> {
+            Presence presence = (Presence)stanza;
+            if (!presence.isAvailable()) {
+                if (transfer != null) {
+                    transfer.cancel();
                 }
             }
         };
@@ -632,15 +610,13 @@ public class SparkTransferManager {
         // Add presence listener to check if user is offline and cancel sending.
         SparkManager.getConnection().addAsyncStanzaListener(packetListener, presenceFilter);
 
-        chatRoom.addClosingListener(new ChatRoomClosingListener() {
-            public void closing() {
-                SparkManager.getConnection().removeAsyncStanzaListener(packetListener);
+        chatRoom.addClosingListener( () -> {
+            SparkManager.getConnection().removeAsyncStanzaListener(packetListener);
 
-                if (!transfer.isDone()) {
-                    transfer.cancel();
-                }
+            if (!transfer.isDone()) {
+                transfer.cancel();
             }
-        });
+        } );
 
         try {
             sendingUI.sendFile(transfer, transferManager, fullJID, contactItem.getDisplayName());

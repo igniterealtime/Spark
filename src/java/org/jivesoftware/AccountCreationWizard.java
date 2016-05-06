@@ -120,17 +120,9 @@ public class AccountCreationWizard extends JPanel {
         add(closeButton, new GridBagConstraints(3, 5, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
 
 
-        createAccountButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent actionEvent) {
-                createAccount();
-            }
-        });
+        createAccountButton.addActionListener( actionEvent -> createAccount() );
 
-        closeButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent actionEvent) {
-                dialog.dispose();
-            }
-        });
+        closeButton.addActionListener( actionEvent -> dialog.dispose() );
     }
 
     /**

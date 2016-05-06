@@ -477,20 +477,18 @@ public final class MainWindow extends ChatFrame implements ActionListener {
 
         alwaysOnTopItem = new JCheckBoxMenuItem();
         ResourceUtils.resButton(alwaysOnTopItem, Res.getString("menuitem.always.on.top"));
-        alwaysOnTopItem.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent actionEvent) {
-                	if (alwaysOnTopItem.isSelected())
-                	{
-                		SettingsManager.getLocalPreferences().setMainWindowAlwaysOnTop(true);
-                		MainWindow.getInstance().setAlwaysOnTop(true);
-                	}
-                	else
-                	{
-                		SettingsManager.getLocalPreferences().setMainWindowAlwaysOnTop(false);
-                		MainWindow.getInstance().setAlwaysOnTop(false);
-                	}
-                }
-        });
+        alwaysOnTopItem.addActionListener( actionEvent -> {
+            if (alwaysOnTopItem.isSelected())
+            {
+                SettingsManager.getLocalPreferences().setMainWindowAlwaysOnTop(true);
+                MainWindow.getInstance().setAlwaysOnTop(true);
+            }
+            else
+            {
+                SettingsManager.getLocalPreferences().setMainWindowAlwaysOnTop(false);
+                MainWindow.getInstance().setAlwaysOnTop(false);
+            }
+        } );
 
         if (SettingsManager.getLocalPreferences().isMainWindowAlwaysOnTop())
         {
@@ -507,19 +505,11 @@ public final class MainWindow extends ChatFrame implements ActionListener {
 
         JMenuItem logoutMenuItem = new JMenuItem();
         ResourceUtils.resButton(logoutMenuItem, Res.getString("menuitem.logout.no.status"));
-        logoutMenuItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                logout(false);
-           }
-        });
+        logoutMenuItem.addActionListener( e -> logout(false) );
 
         JMenuItem logoutWithStatus = new JMenuItem();
         ResourceUtils.resButton(logoutWithStatus, Res.getString("menuitem.logout.with.status"));
-        logoutWithStatus.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                logout(true);
-            }
-        });
+        logoutWithStatus.addActionListener( e -> logout(true) );
 
         if ((Spark.isWindows() || Spark.isLinux() || Spark.isMac()) && !Default.getBoolean("DISABLE_EXIT")) {
             connectMenu.add(logoutMenuItem);
@@ -533,13 +523,7 @@ public final class MainWindow extends ChatFrame implements ActionListener {
 
         JMenuItem updateMenu= new JMenuItem("", SparkRes.getImageIcon(SparkRes.DOWNLOAD_16x16));
         ResourceUtils.resButton(updateMenu, Res.getString("menuitem.check.for.updates"));
-        updateMenu.addActionListener(new ActionListener() {
-	    @Override
-	    public void actionPerformed(ActionEvent e) {
-		checkForUpdates(true);
-
-	    }
-	});
+        updateMenu.addActionListener( e -> checkForUpdates(true) );
 
         // Add Error Dialog Viewer
         final Action viewErrors = new AbstractAction() {
@@ -652,13 +636,7 @@ public final class MainWindow extends ChatFrame implements ActionListener {
 	{
 	    JMenuItem rawPackets = new JMenuItem(SparkRes.getImageIcon(SparkRes.TRAY_IMAGE));
 	    rawPackets.setText("Send Packets");
-	    rawPackets.addActionListener(new ActionListener() {
-	        @Override
-	        public void actionPerformed(ActionEvent e) {
-	    		new RawPacketSender();
-
-	        }
-	    });
+	    rawPackets.addActionListener( e -> new RawPacketSender() );
 
 	    connectMenu.add(rawPackets,2);
 	}
@@ -867,36 +845,31 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         JEditorPane ep = new JEditorPane("text/html", text.toString());
 
         // handle link events
-        ep.addHyperlinkListener(new HyperlinkListener()
-        {
-            @Override
-            public void hyperlinkUpdate(final javax.swing.event.HyperlinkEvent e)
-            {
-                // if a link is clicked, and it is the APPLICATION_LICENSE_LINK, then load that page
-                if (e.getEventType().equals(HyperlinkEvent.EventType.ACTIVATED)
-                        && e.getURL().toString().equalsIgnoreCase(Default.getString(Default.APPLICATION_LICENSE_LINK))) {
-                    try {
+        ep.addHyperlinkListener( e -> {
+            // if a link is clicked, and it is the APPLICATION_LICENSE_LINK, then load that page
+            if (e.getEventType().equals(HyperlinkEvent.EventType.ACTIVATED)
+                    && e.getURL().toString().equalsIgnoreCase(Default.getString(Default.APPLICATION_LICENSE_LINK))) {
+                try {
 
-                        BrowserLauncher.openURL(Default.getString(Default.APPLICATION_LICENSE_LINK));
+                    BrowserLauncher.openURL(Default.getString(Default.APPLICATION_LICENSE_LINK));
 
-                    } catch (Exception f) {
-                        Log.error("There was an error loading the URL", f);
-                    }
-
-                // else if a link is clicked, and it is the APPLICATION_LINK, then load that page
-                } else if (e.getEventType().equals(HyperlinkEvent.EventType.ACTIVATED)
-                        && e.getURL().toString().equalsIgnoreCase(Default.getString(Default.APPLICATION_LINK))) {
-                    try {
-
-                        BrowserLauncher.openURL(Default.getString(Default.APPLICATION_LINK));
-
-                    } catch (Exception f) {
-                        Log.error("There was an error loading the URL", f);
-                    }
+                } catch (Exception f) {
+                    Log.error("There was an error loading the URL", f);
                 }
 
+            // else if a link is clicked, and it is the APPLICATION_LINK, then load that page
+            } else if (e.getEventType().equals(HyperlinkEvent.EventType.ACTIVATED)
+                    && e.getURL().toString().equalsIgnoreCase(Default.getString(Default.APPLICATION_LINK))) {
+                try {
+
+                    BrowserLauncher.openURL(Default.getString(Default.APPLICATION_LINK));
+
+                } catch (Exception f) {
+                    Log.error("There was an error loading the URL", f);
+                }
             }
-        });
+
+        } );
         ep.setEditable(false);
         ep.setBackground(p.getBackground());
         this.aboutBoxPane = ep;
@@ -947,12 +920,10 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         final JButton copyButton = new JButton(Res.getString("button.copy.to.clipboard"));
         frame.add(copyButton, BorderLayout.SOUTH);
 
-        copyButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                SparkManager.setClipboard(errorLogs);
-                copyButton.setEnabled(false);
-            }
-        });
+        copyButton.addActionListener( e -> {
+            SparkManager.setClipboard(errorLogs);
+            copyButton.setEnabled(false);
+        } );
 
         frame.pack();
         frame.setSize(600, 400);

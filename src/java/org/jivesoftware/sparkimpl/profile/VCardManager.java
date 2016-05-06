@@ -150,32 +150,30 @@ public class VCardManager {
 
         // Intercept all presence packets being sent and append vcard information.
         StanzaFilter presenceFilter = new StanzaTypeFilter(Presence.class);
-        SparkManager.getConnection().addPacketInterceptor(new StanzaListener() {
-            public void processPacket(Stanza stanza) {
-                Presence newPresence = (Presence)stanza;
-                VCardUpdateExtension update = new VCardUpdateExtension();
-                JabberAvatarExtension jax = new JabberAvatarExtension();
+        SparkManager.getConnection().addPacketInterceptor( stanza -> {
+            Presence newPresence = (Presence)stanza;
+            VCardUpdateExtension update = new VCardUpdateExtension();
+            JabberAvatarExtension jax = new JabberAvatarExtension();
 
-                ExtensionElement updateExt = newPresence.getExtension(update.getElementName(), update.getNamespace());
-                ExtensionElement jabberExt = newPresence.getExtension(jax.getElementName(), jax.getNamespace());
+            ExtensionElement updateExt = newPresence.getExtension(update.getElementName(), update.getNamespace());
+            ExtensionElement jabberExt = newPresence.getExtension(jax.getElementName(), jax.getNamespace());
 
-                if (updateExt != null) {
-                    newPresence.removeExtension(updateExt);
-                }
+            if (updateExt != null) {
+                newPresence.removeExtension(updateExt);
+            }
 
-                if (jabberExt != null) {
-                    newPresence.removeExtension(jabberExt);
-                }
+            if (jabberExt != null) {
+                newPresence.removeExtension(jabberExt);
+            }
 
-                if (personalVCard != null) {
-                    byte[] bytes = personalVCard.getAvatar();
-                    if (bytes != null && bytes.length > 0) {
-                        update.setPhotoHash(personalVCard.getAvatarHash());
-                        jax.setPhotoHash(personalVCard.getAvatarHash());
+            if (personalVCard != null) {
+                byte[] bytes = personalVCard.getAvatar();
+                if (bytes != null && bytes.length > 0) {
+                    update.setPhotoHash(personalVCard.getAvatarHash());
+                    jax.setPhotoHash(personalVCard.getAvatarHash());
 
-                        newPresence.addExtension(update);
-                        newPresence.addExtension(jax);
-                    }
+                    newPresence.addExtension(update);
+                    newPresence.addExtension(jax);
                 }
             }
         }, presenceFilter);
@@ -190,17 +188,15 @@ public class VCardManager {
      * Listens for new VCards to lookup in a queue.
      */
     private void startQueueListener() {
-    	final Runnable queueListener = new Runnable() {
-            public void run() {
-                while (true) {
-                    try {
-                       String jid = queue.take();
-                       reloadVCard(jid);
-                    }
-                    catch (InterruptedException e) {
-                        e.printStackTrace();
-                        break;
-                    }
+    	final Runnable queueListener = () -> {
+            while (true) {
+                try {
+                   String jid = queue.take();
+                   reloadVCard(jid);
+                }
+                catch (InterruptedException e) {
+                    e.printStackTrace();
+                    break;
                 }
             }
         };
@@ -208,23 +204,20 @@ public class VCardManager {
         TaskEngine.getInstance().submit(queueListener);
         
         StanzaFilter filter = new StanzaTypeFilter(VCard.class);
-        StanzaListener myListener = new StanzaListener() {
-			@Override
-			public void processPacket(Stanza stanza) {
-				if (stanza instanceof VCard)
-				{
-					VCard VCardpacket = (VCard)stanza;
-					String jid = VCardpacket.getFrom();
-					if (VCardpacket.getType().equals(IQ.Type.result) && jid != null && delayedContacts.contains(jid))
-					{
-						delayedContacts.remove(jid);
-						addVCard(jid, VCardpacket);
-						persistVCard(jid, VCardpacket);
-					}
-					
-				}
-			}
-		};
+        StanzaListener myListener = stanza -> {
+            if (stanza instanceof VCard)
+            {
+                VCard VCardpacket = (VCard)stanza;
+                String jid = VCardpacket.getFrom();
+                if (VCardpacket.getType().equals(IQ.Type.result) && jid != null && delayedContacts.contains(jid))
+                {
+                    delayedContacts.remove(jid);
+                    addVCard(jid, VCardpacket);
+                    persistVCard(jid, VCardpacket);
+                }
+
+            }
+        };
         	
 		SparkManager.getConnection().addAsyncStanzaListener(myListener, filter);
 
@@ -261,42 +254,38 @@ public class VCardManager {
         int size = contactsMenu.getMenuComponentCount();
 
         communicatorMenu.insert(editProfileMenu, 1);
-        editProfileMenu.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                SwingWorker vcardLoaderWorker = new SwingWorker() {
-                    public Object construct() {
-                        try {
-                            personalVCard.load(SparkManager.getConnection());
-                        }
-                        catch (XMPPException | SmackException e) {
-                            Log.error("Error loading vcard information.", e);
-                        }
-                        return true;
+        editProfileMenu.addActionListener( e -> {
+            SwingWorker vcardLoaderWorker = new SwingWorker() {
+                public Object construct() {
+                    try {
+                        personalVCard.load(SparkManager.getConnection());
                     }
+                    catch (XMPPException | SmackException e) {
+                        Log.error("Error loading vcard information.", e);
+                    }
+                    return true;
+                }
 
-                    public void finished() {
-                        editor.editProfile(personalVCard, SparkManager.getWorkspace());
-                    }
-                };
-                vcardLoaderWorker.start();
-            }
-        });
+                public void finished() {
+                    editor.editProfile(personalVCard, SparkManager.getWorkspace());
+                }
+            };
+            vcardLoaderWorker.start();
+        } );
 
         JMenuItem viewProfileMenu = new JMenuItem("", SparkRes.getImageIcon(SparkRes.FIND_TEXT_IMAGE));
         ResourceUtils.resButton(viewProfileMenu, Res.getString("menuitem.lookup.profile"));
         contactsMenu.insert(viewProfileMenu, size > 0 ? size - 1 : 0);
-        viewProfileMenu.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                String jidToView = JOptionPane.showInputDialog(SparkManager.getMainWindow(), Res.getString("message.enter.jabber.id") + ":", Res.getString("title.lookup.profile"), JOptionPane.QUESTION_MESSAGE);
-                if (ModelUtil.hasLength(jidToView) && jidToView.contains( "@" ) && ModelUtil.hasLength( XmppStringUtils.parseDomain(jidToView))) {
-                    viewProfile(jidToView, SparkManager.getWorkspace());
-                }
-                else if (ModelUtil.hasLength(jidToView)) {
-                	UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
-                    JOptionPane.showMessageDialog(SparkManager.getMainWindow(), Res.getString("message.invalid.jabber.id"), Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
-                }
+        viewProfileMenu.addActionListener( e -> {
+            String jidToView = JOptionPane.showInputDialog(SparkManager.getMainWindow(), Res.getString("message.enter.jabber.id") + ":", Res.getString("title.lookup.profile"), JOptionPane.QUESTION_MESSAGE);
+            if (ModelUtil.hasLength(jidToView) && jidToView.contains( "@" ) && ModelUtil.hasLength( XmppStringUtils.parseDomain(jidToView))) {
+                viewProfile(jidToView, SparkManager.getWorkspace());
             }
-        });
+            else if (ModelUtil.hasLength(jidToView)) {
+                UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
+                JOptionPane.showMessageDialog(SparkManager.getMainWindow(), Res.getString("message.invalid.jabber.id"), Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
+            }
+        } );
     }
 
 

@@ -95,27 +95,25 @@ public class GoogleDocument extends JPanel {
             }
         });
 
-        sendButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent actionEvent) {
-                SparkTransferManager transferManager = SparkManager.getTransferManager();
-                ChatRoomImpl chatRoom = (ChatRoomImpl)room;
-                File file = new File(result.getURL());
-                if (file.exists()) {
-                    UserManager userManager = SparkManager.getUserManager();
-                    String fullJID = userManager.getFullJID(chatRoom.getParticipantJID());
-                    if (fullJID != null)
-                        transferManager.sendFile(file, fullJID);
-
-                }
-                else {
-                    Message message = new Message();
-                    message.setBody(result.getURL());
-                    chatRoom.sendMessage(message);
-
-                    chatRoom.getTranscriptWindow().insertNotificationMessage("Sent URL: " + result.getURL(), ChatManager.NOTIFICATION_COLOR);
-                }
+        sendButton.addActionListener( actionEvent -> {
+            SparkTransferManager transferManager = SparkManager.getTransferManager();
+            ChatRoomImpl chatRoom = (ChatRoomImpl)room;
+            File file = new File(result.getURL());
+            if (file.exists()) {
+                UserManager userManager = SparkManager.getUserManager();
+                String fullJID = userManager.getFullJID(chatRoom.getParticipantJID());
+                if (fullJID != null)
+                    transferManager.sendFile(file, fullJID);
 
             }
+            else {
+                Message message = new Message();
+                message.setBody(result.getURL());
+                chatRoom.sendMessage(message);
+
+                chatRoom.getTranscriptWindow().insertNotificationMessage("Sent URL: " + result.getURL(), ChatManager.NOTIFICATION_COLOR);
+            }
+
         }
 
         );

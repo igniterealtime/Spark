@@ -219,45 +219,43 @@ public class CheckUpdates {
 
         titlePanel = new TitlePanel(Res.getString("title.upgrading.client"), Res.getString("message.version", version.getVersion()), SparkRes.getImageIcon(SparkRes.SEND_FILE_24x24), true);
 
-        final Thread thread = new Thread(new Runnable() {
-            public void run() {
-                try {
-                    InputStream stream = post.getResponseBodyAsStream();
-                    long size = post.getResponseContentLength();
-                    ByteFormat formater = new ByteFormat();
-                    sizeText = formater.format(size);
-                    titlePanel.setDescription(Res.getString("message.version", version.getVersion()) + " \n" + Res.getString("message.file.size", sizeText));
+        final Thread thread = new Thread( () -> {
+            try {
+                InputStream stream = post.getResponseBodyAsStream();
+                long size = post.getResponseContentLength();
+                ByteFormat formater = new ByteFormat();
+                sizeText = formater.format(size);
+                titlePanel.setDescription(Res.getString("message.version", version.getVersion()) + " \n" + Res.getString("message.file.size", sizeText));
 
 
-                    downloadedFile.getParentFile().mkdirs();
+                downloadedFile.getParentFile().mkdirs();
 
-                    FileOutputStream out = new FileOutputStream(downloadedFile);
-                    copy(stream, out);
+                FileOutputStream out = new FileOutputStream(downloadedFile);
+                copy(stream, out);
+                out.close();
+
+                if (!cancel) {
+                    downloadComplete = true;
+                    promptForInstallation(downloadedFile, Res.getString("title.download.complete"), Res.getString("message.restart.spark"));
+                }
+                else {
                     out.close();
-
-                    if (!cancel) {
-                        downloadComplete = true;
-                        promptForInstallation(downloadedFile, Res.getString("title.download.complete"), Res.getString("message.restart.spark"));
-                    }
-                    else {
-                        out.close();
-                        downloadedFile.delete();
-                    }
+                    downloadedFile.delete();
+                }
 
 
-                    UPDATING = false;
-                    frame.dispose();
-                }
-                catch (Exception ex) {
-                    // Nothing to do
-                }
-                finally {
-                    timer.cancel();
-                    // Release current connection to the connection pool once you are done
-                    post.releaseConnection();
-                }
+                UPDATING = false;
+                frame.dispose();
             }
-        });
+            catch (Exception ex) {
+                // Nothing to do
+            }
+            finally {
+                timer.cancel();
+                // Release current connection to the connection pool once you are done
+                post.releaseConnection();
+            }
+        } );
 
 
         frame.getContentPane().setLayout(new GridBagLayout());

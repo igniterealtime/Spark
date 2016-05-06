@@ -93,11 +93,7 @@ public class EmoticonUI extends JPanel {
 
 				RolloverButton emotButton = new RolloverButton();
 				emotButton.setIcon(icon);
-				emotButton.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-						listener.emoticonPicked(text);
-					}
-				});
+				emotButton.addActionListener( e -> listener.emoticonPicked(text) );
 
                                 gridContainer.add(emotButton);
 			}

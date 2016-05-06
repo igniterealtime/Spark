@@ -70,11 +70,7 @@ public class ReconnectPanel extends JPanel implements ConnectionListener {
 
         layoutComponents();
 
-        retryButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent actionEvent) {
-                attemptReconnection();
-            }
-        });
+        retryButton.addActionListener( actionEvent -> attemptReconnection() );
 
 
         setBackground(Color.white);

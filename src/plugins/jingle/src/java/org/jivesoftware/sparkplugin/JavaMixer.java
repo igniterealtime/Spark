@@ -346,11 +346,7 @@ public class JavaMixer {
 
         public BooleanControlButtonModel(BooleanControl control) {
             this.control = control;
-            this.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    setSelected(!isSelected());
-                }
-            });
+            this.addActionListener( e -> setSelected(!isSelected()) );
         }
 
         public void setSelected(boolean bSelected) {
@@ -403,20 +399,18 @@ public class JavaMixer {
         jf.setVisible(true);
         jf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        sm.getTree().addTreeSelectionListener(new TreeSelectionListener() {
-            public void valueChanged(TreeSelectionEvent e) {
-                TreePath path = e.getPath();
-                if (path.getLastPathComponent() instanceof JavaMixer.ControlNode) {
-                    JavaMixer.ControlNode controlNode = (JavaMixer.ControlNode) path.getLastPathComponent();
-                    if (!(controlNode.getControl() instanceof CompoundControl)) {
-                        if (jp.getComponentCount() > 1)
-                            jp.remove(1);
-                        jp.add(controlNode.getComponent(), 1);
-                        jp.repaint();
-                    }
+        sm.getTree().addTreeSelectionListener( e -> {
+            TreePath path = e.getPath();
+            if (path.getLastPathComponent() instanceof ControlNode) {
+                ControlNode controlNode = (ControlNode) path.getLastPathComponent();
+                if (!(controlNode.getControl() instanceof CompoundControl)) {
+                    if (jp.getComponentCount() > 1)
+                        jp.remove(1);
+                    jp.add(controlNode.getComponent(), 1);
+                    jp.repaint();
                 }
             }
-        });
+        } );
         jp.add(sm.getPrefferedMasterVolume());
         jp.add(sm.getPrefferedMasterVolume());
         jp.add(sm.getPrefferedInputVolume());

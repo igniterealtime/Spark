@@ -59,11 +59,7 @@ public class ReconnectPanelIcon implements ConnectionListener {
 
 	_button = new RolloverButton(SparkRes.getImageIcon(SparkRes.BUSY_IMAGE));
 
-	_button.addActionListener(new ActionListener() {
-	    public void actionPerformed(ActionEvent e) {
-		startReconnecting();
-	    }
-	});
+	_button.addActionListener( e -> startReconnecting() );
     }
 
     public JPanel getPanel() {

@@ -181,61 +181,52 @@ public class GroupChatParticipantList extends JPanel {
 
 	chat = groupChatRoom.getMultiUserChat();
 
-	chat.addInvitationRejectionListener(new InvitationRejectionListener() {
-	    public void invitationDeclined(String jid, String message) {
-		String nickname = userManager.getUserNicknameFromJID(jid);
+	chat.addInvitationRejectionListener( ( jid1, message ) -> {
+    String nickname = userManager.getUserNicknameFromJID( jid1 );
 
-		userHasLeft(nickname);
+    userHasLeft(nickname);
 
-		chatRoom.getTranscriptWindow().insertNotificationMessage(
-			nickname + " has rejected the invitation.",
-			ChatManager.NOTIFICATION_COLOR);
-	    }
-	});
+    chatRoom.getTranscriptWindow().insertNotificationMessage(
+        nickname + " has rejected the invitation.",
+        ChatManager.NOTIFICATION_COLOR);
+    } );
 
-	listener = new PresenceListener() {
-	    public void processPresence(final Presence p) {
-		SwingUtilities.invokeLater(new Runnable() {
-		    public void run() {
-			if (p.getError() != null) {
-			    if (p.getError()
-				    .getCondition()
-				    .equals(XMPPError.Condition.conflict
-					    .toString())) {
-				return;
-			    }
-			}
-			final String userid = p.getFrom();
+	listener = p -> SwingUtilities.invokeLater( () -> {
+if (p.getError() != null) {
+if (p.getError()
+.getCondition()
+.equals(XMPPError.Condition.conflict
+.toString())) {
+return;
+}
+}
+final String userid = p.getFrom();
 
-			String displayName = XmppStringUtils.parseResource(userid);
-			userMap.put(displayName, userid);			
+String displayName = XmppStringUtils.parseResource(userid);
+userMap.put(displayName, userid);
 
-			if (p.getType() == Presence.Type.available) {
-			    addParticipant(userid, p);
-			    agentInfoPanel.setVisible(true);
-			} else {
-			    removeUser(displayName);
-			}
+if (p.getType() == Presence.Type.available) {
+addParticipant(userid, p);
+agentInfoPanel.setVisible(true);
+} else {
+removeUser(displayName);
+}
 
-			// When joining a room, check if the current user is an owner/admin. If so, the UI should allow the current
-			// user to change settings of this MUC.
-			final MUCUser mucUserEx = p.getExtension( MUCUser.ELEMENT, MUCUser.NAMESPACE );
-			if (mucUserEx != null && mucUserEx.getStatus().contains( MUCUser.Status.create( 110 ) ) ) // 110 = Inform user that presence refers to itself
-			{
-				final MUCItem item = mucUserEx.getItem();
-				if ( item != null )
-				{
-					if ( item.getAffiliation() == MUCAffiliation.admin || item.getAffiliation() == MUCAffiliation.owner )
-					{
-						groupChatRoom.notifySettingsAccessRight();
-					}
-				}
-			}
-		    }
-		});
-
-	    }
-	};
+// When joining a room, check if the current user is an owner/admin. If so, the UI should allow the current
+// user to change settings of this MUC.
+final MUCUser mucUserEx = p.getExtension( MUCUser.ELEMENT, MUCUser.NAMESPACE );
+if (mucUserEx != null && mucUserEx.getStatus().contains( MUCUser.Status.create( 110 ) ) ) // 110 = Inform user that presence refers to itself
+{
+final MUCItem item = mucUserEx.getItem();
+if ( item != null )
+{
+if ( item.getAffiliation() == MUCAffiliation.admin || item.getAffiliation() == MUCAffiliation.owner )
+{
+groupChatRoom.notifySettingsAccessRight();
+}
+}
+}
+} );
 
 	chat.addParticipantListener(listener);
 

@@ -240,21 +240,18 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatManagerListener
 		    });
 
 	    SparkManager.getSessionManager().addPresenceListener(
-		    new PresenceListener() {
-			@Override
-			public void presenceChanged(Presence presence) {
-			    if (presence.getMode() == Presence.Mode.available) {
-				trayIcon.setImage(availableIcon.getImage());
-			    } else if (presence.getMode() == Presence.Mode.away
-				    || presence.getMode() == Presence.Mode.xa) {
-				trayIcon.setImage(awayIcon.getImage());
-			    } else if (presence.getMode() == Presence.Mode.dnd) {
-				trayIcon.setImage(dndIcon.getImage());
-			    } else {
-				trayIcon.setImage(availableIcon.getImage());
-			    }
-			}
-		    });
+				presence -> {
+                    if (presence.getMode() == Presence.Mode.available) {
+                    trayIcon.setImage(availableIcon.getImage());
+                    } else if (presence.getMode() == Presence.Mode.away
+                        || presence.getMode() == Presence.Mode.xa) {
+                    trayIcon.setImage(awayIcon.getImage());
+                    } else if (presence.getMode() == Presence.Mode.dnd) {
+                    trayIcon.setImage(dndIcon.getImage());
+                    } else {
+                    trayIcon.setImage(availableIcon.getImage());
+                    }
+                } );
 
 	    try {
 	

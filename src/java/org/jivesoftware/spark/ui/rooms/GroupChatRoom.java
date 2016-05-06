@@ -621,22 +621,16 @@ public class GroupChatRoom extends ChatRoom {
     public void processPacket(final Stanza stanza) {
 	super.processPacket(stanza);
 	if (stanza instanceof Presence) {
-	    SwingUtilities.invokeLater(new Runnable() {
-		public void run() {
-		    handlePresencePacket(stanza);
-		}
-	    });
+	    SwingUtilities.invokeLater( () -> handlePresencePacket(stanza) );
 
 	}
 	if (stanza instanceof Message) {
-	    SwingUtilities.invokeLater(new Runnable() {
-		public void run() {
-		    handleMessagePacket(stanza);
+	    SwingUtilities.invokeLater( () -> {
+            handleMessagePacket(stanza);
 
-		    // Set last activity
-		    lastActivity = System.currentTimeMillis();
-		}
-	    });
+            // Set last activity
+            lastActivity = System.currentTimeMillis();
+        } );
 
 	}
     }
@@ -1092,11 +1086,7 @@ public class GroupChatRoom extends ChatRoom {
     public void setSendAndReceiveTypingNotifications(
 	    boolean sendAndReceiveTypingNotifications) {
 	if (sendAndReceiveTypingNotifications) {
-	    typingTimer = new Timer(10000, new ActionListener() {
-		public void actionPerformed(ActionEvent e) {
-		    showDefaultTabIcon();
-		}
-	    });
+	    typingTimer = new Timer(10000, e -> showDefaultTabIcon() );
 	    SparkManager.getMessageEventManager()
 		    .addMessageEventNotificationListener(messageManager);
 	} else {
@@ -1150,15 +1140,13 @@ public class GroupChatRoom extends ChatRoom {
 	}
 
 	public void composingNotification(final String from, String packetID) {
-	    SwingUtilities.invokeLater(new Runnable() {
-		public void run() {
-		    String bareAddress = XmppStringUtils.parseBareJid(from);
+	    SwingUtilities.invokeLater( () -> {
+            String bareAddress = XmppStringUtils.parseBareJid(from);
 
-		    if (bareAddress.equals(getRoomname())) {
-			showUserIsTyping();
-		    }
-		}
-	    });
+            if (bareAddress.equals(getRoomname())) {
+            showUserIsTyping();
+            }
+        } );
 	}
 
 	public void offlineNotification(String from, String packetID) {
@@ -1280,14 +1268,10 @@ public class GroupChatRoom extends ChatRoom {
 	final String roomJID = chat.getRoom();
 	final String roomName= tabTitle;
 	isActive = false;
-	EventQueue.invokeLater(new Runnable() {
-
-	    @Override
-	    public void run() {
-		ConferenceUtils.joinConferenceOnSeperateThread(roomName, roomJID, password);
-		closeChatRoom();
-	    }
-	});
+	EventQueue.invokeLater( () -> {
+    ConferenceUtils.joinConferenceOnSeperateThread(roomName, roomJID, password);
+    closeChatRoom();
+    } );
     }
 
     /**
@@ -1433,23 +1417,20 @@ public class GroupChatRoom extends ChatRoom {
 	    }
 	});
 
-	register.addActionListener(new ActionListener() {
-	    @Override
-	    public void actionPerformed(ActionEvent e) {
-		try {
-		    Form form = chat.getRegistrationForm();
-		    ChatFrame chatFrame = SparkManager.getChatManager()
-			    .getChatContainer().getChatFrame();
+	register.addActionListener( e -> {
+    try {
+        Form form = chat.getRegistrationForm();
+        ChatFrame chatFrame = SparkManager.getChatManager()
+            .getChatContainer().getChatFrame();
 
-		    new AnswerFormDialog(chatFrame, chat, form);
+        new AnswerFormDialog(chatFrame, chat, form);
 
-		}  catch (XMPPException | SmackException xmpe) {
-		    getTranscriptWindow().insertNotificationMessage(
-			    xmpe.getMessage(), ChatManager.ERROR_COLOR);
-		    scrollToBottom();
-		}
-	    }
-	});
+    }  catch (XMPPException | SmackException xmpe) {
+        getTranscriptWindow().insertNotificationMessage(
+            xmpe.getMessage(), ChatManager.ERROR_COLOR);
+        scrollToBottom();
+    }
+    } );
 
     }
     

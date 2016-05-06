@@ -68,24 +68,22 @@ public class FlashWindow {
 	 */
 	public void flash(final Window window, final int intratime,
 			final int count) {
-		new Thread(new Runnable() {
-			public void run() {
-				try {
-					if (window instanceof JFrame)
-					{
-						// flash on and off each time
-						for (int i = 0; i < count; i++) {
-							flash(((JFrame) window).getTitle(), true);
-							Thread.sleep(intratime);
-						}
-						// turn the flash off
-						flash(((JFrame) window).getTitle(), false);
-					}
-				} catch (Exception ex) {
-					// System.out.println(ex.getMessage());
-				}
-			}
-		}).start();
+		new Thread( () -> {
+            try {
+                if (window instanceof JFrame)
+                {
+                    // flash on and off each time
+                    for (int i = 0; i < count; i++) {
+                        flash(((JFrame) window).getTitle(), true);
+                        Thread.sleep(intratime);
+                    }
+                    // turn the flash off
+                    flash(((JFrame) window).getTitle(), false);
+                }
+            } catch (Exception ex) {
+                // System.out.println(ex.getMessage());
+            }
+        } ).start();
 	}
 
 	public void startFlashing(final Window window) {
@@ -126,28 +124,18 @@ public class FlashWindow {
 		JButton button = new JButton("Temp Flashing");
 		frame.getContentPane().add(button);
 		final FlashWindow winutil = new FlashWindow();
-		button.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent evt) {
-				winutil.flash(frame, 750, 5);
-			}
-		});
+		button.addActionListener( evt -> winutil.flash(frame, 750, 5) );
 
 		JButton startButton = new JButton("Start Flashing");
 		frame.getContentPane().add(startButton);
-		startButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent evt) {
-				winutil.startFlashing(frame);
-			}
-		});
+		startButton.addActionListener( evt -> winutil.startFlashing(frame) );
 
 		JButton stopButton = new JButton("Stop Flashing");
 		frame.getContentPane().add(stopButton);
-		stopButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent evt) {
-				// winutil.flash(frame,750,1500,5);
-				winutil.stopFlashing(frame);
-			}
-		});
+		stopButton.addActionListener( evt -> {
+            // winutil.flash(frame,750,1500,5);
+            winutil.stopFlashing(frame);
+        } );
 		frame.pack();
 		frame.setVisible(true);
 	}

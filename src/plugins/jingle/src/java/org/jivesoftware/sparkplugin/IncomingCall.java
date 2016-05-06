@@ -109,67 +109,63 @@ public class IncomingCall implements JingleSessionListener, ChatRoomClosingListe
      * Appends the JingleRoom to the ChatRoom.
      */
     private void showCallAnsweredState() {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                final SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy h:mm a");
-                notificationUI.setTitle("Voice chat started on " + formatter.format(new Date()));
-                notificationUI.showAlert(false);
-                notificationUI.setIcon(null);
+        SwingUtilities.invokeLater( () -> {
+            final SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy h:mm a");
+            notificationUI.setTitle("Voice chat started on " + formatter.format(new Date()));
+            notificationUI.showAlert(false);
+            notificationUI.setIcon(null);
 
-                if (ringing != null) {
-                    ringing.stop();
-                }
-
-                final JingleRoom roomUI = new JingleRoom(session, chatRoom);
-                chatRoom.getChatPanel().add(roomUI, new GridBagConstraints(1, 1, 1, 1, 0.05, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
-                chatRoom.getChatPanel().invalidate();
-                chatRoom.getChatPanel().validate();
-                chatRoom.getChatPanel().repaint();
-                callMap.put(chatRoom, roomUI);
-
-                // Add state
-                JingleStateManager.getInstance().addJingleSession(chatRoom, JingleStateManager.JingleRoomState.inJingleCall);
-
-                // Notify state change
-                SparkManager.getChatManager().notifySparkTabHandlers(chatRoom);
+            if (ringing != null) {
+                ringing.stop();
             }
-        });
+
+            final JingleRoom roomUI = new JingleRoom(session, chatRoom);
+            chatRoom.getChatPanel().add(roomUI, new GridBagConstraints(1, 1, 1, 1, 0.05, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
+            chatRoom.getChatPanel().invalidate();
+            chatRoom.getChatPanel().validate();
+            chatRoom.getChatPanel().repaint();
+            callMap.put(chatRoom, roomUI);
+
+            // Add state
+            JingleStateManager.getInstance().addJingleSession(chatRoom, JingleStateManager.JingleRoomState.inJingleCall);
+
+            // Notify state change
+            SparkManager.getChatManager().notifySparkTabHandlers(chatRoom);
+        } );
     }
 
     /**
      * Removes the JingleRoom from the ChatRoom.
      */
     private void showCallEndedState(final String reason) {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                if (ringing != null) {
-                    ringing.stop();
-                }
-
-                notificationUI.setTitle(reason);
-                notificationUI.setIcon(null);
-                notificationUI.showAlert(false);
-
-
-                if (chatRoom != null) {
-                    JingleRoom room = callMap.get(chatRoom);
-                    if (room != null) {
-                        chatRoom.getChatPanel().remove(room);
-                    }
-
-                    callMap.remove(chatRoom);
-                    chatRoom.getChatPanel().invalidate();
-                    chatRoom.getChatPanel().validate();
-                    chatRoom.getChatPanel().repaint();
-                }
-
-                // Add state
-                JingleStateManager.getInstance().removeJingleSession(chatRoom);
-
-                // Notify state change
-                SparkManager.getChatManager().notifySparkTabHandlers(chatRoom);
+        SwingUtilities.invokeLater( () -> {
+            if (ringing != null) {
+                ringing.stop();
             }
-        });
+
+            notificationUI.setTitle(reason);
+            notificationUI.setIcon(null);
+            notificationUI.showAlert(false);
+
+
+            if (chatRoom != null) {
+                JingleRoom room = callMap.get(chatRoom);
+                if (room != null) {
+                    chatRoom.getChatPanel().remove(room);
+                }
+
+                callMap.remove(chatRoom);
+                chatRoom.getChatPanel().invalidate();
+                chatRoom.getChatPanel().validate();
+                chatRoom.getChatPanel().repaint();
+            }
+
+            // Add state
+            JingleStateManager.getInstance().removeJingleSession(chatRoom);
+
+            // Notify state change
+            SparkManager.getChatManager().notifySparkTabHandlers(chatRoom);
+        } );
     }
 
     /**
@@ -228,24 +224,12 @@ public class IncomingCall implements JingleSessionListener, ChatRoomClosingListe
         toasterManager.showToaster("Incoming Voice Chat", incomingCall);
         toasterManager.hideTitle();
 
-        incomingCall.getAcceptButton().addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                acceptSession(request);
-            }
-        });
+        incomingCall.getAcceptButton().addActionListener( e -> acceptSession(request) );
 
-        incomingCall.getRejectButton().addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                rejectIncomingCall();
-            }
-        });
+        incomingCall.getRejectButton().addActionListener( e -> rejectIncomingCall() );
 
         // Start the ringing.
-        final Runnable ringer = new Runnable() {
-            public void run() {
-                ringing.loop();
-            }
-        };
+        final Runnable ringer = () -> ringing.loop();
 
         TaskEngine.getInstance().submit(ringer);
 

@@ -241,48 +241,41 @@ public class UserIdlePlugin extends TimerTask implements Plugin {
 	public void initKeyHook() {
 		System.setProperty( "jna.predictable_field_order","true");
 
-	    thread = new Thread(new Runnable() {
+	    thread = new Thread( () -> {
+            final User32 lib = User32.INSTANCE;
+            HMODULE hMod = Kernel32.INSTANCE.GetModuleHandle(null);
+            keyboardHook = ( nCode, wParam, info ) -> {
+if (nCode >= 0) {
+switch (wParam.intValue()) {
+// case WinUser.WM_KEYUP:
+case WinUser.WM_KEYDOWN:
+// case WinUser.WM_SYSKEYUP:
+case WinUser.WM_SYSKEYDOWN:
+// do active
+userActive();
+}
+}
+return lib.CallNextHookEx(hhk, nCode, wParam,
+info.getPointer());
+};
+            hhk = lib.SetWindowsHookEx(WinUser.WH_KEYBOARD_LL,
+                keyboardHook, hMod, 0);
 
-		@Override
-		public void run() {
-		    final User32 lib = User32.INSTANCE;
-		    HMODULE hMod = Kernel32.INSTANCE.GetModuleHandle(null);
-		    keyboardHook = new LowLevelKeyboardProc() {
-			public LRESULT callback(int nCode, WPARAM wParam,
-				KBDLLHOOKSTRUCT info) {
-			    if (nCode >= 0) {
-				switch (wParam.intValue()) {
-				// case WinUser.WM_KEYUP:
-				case WinUser.WM_KEYDOWN:
-				    // case WinUser.WM_SYSKEYUP:
-				case WinUser.WM_SYSKEYDOWN:
-				    // do active
-				    userActive();
-				}
-			    }
-			    return lib.CallNextHookEx(hhk, nCode, wParam,
-				    info.getPointer());
-			}
-		    };
-		    hhk = lib.SetWindowsHookEx(WinUser.WH_KEYBOARD_LL,
-			    keyboardHook, hMod, 0);
-
-		    // This bit never returns from GetMessage
-		    int result;
-		    MSG msg = new MSG();
-		    while ((result = lib.GetMessage(msg, null, 0, 0)) != 0) {
-			if (result == -1) {
-			    System.err.println("error in get message");
-			    break;
-			} else {
-			    System.err.println("got message");
-			    lib.TranslateMessage(msg);
-			    lib.DispatchMessage(msg);
-			}
-		    }
-		    lib.UnhookWindowsHookEx(hhk);
-		}
-	    });
+            // This bit never returns from GetMessage
+            int result;
+            MSG msg = new MSG();
+            while ((result = lib.GetMessage(msg, null, 0, 0)) != 0) {
+            if (result == -1) {
+                System.err.println("error in get message");
+                break;
+            } else {
+                System.err.println("got message");
+                lib.TranslateMessage(msg);
+                lib.DispatchMessage(msg);
+            }
+            }
+            lib.UnhookWindowsHookEx(hhk);
+        } );
 	    thread.start();
 	}
 

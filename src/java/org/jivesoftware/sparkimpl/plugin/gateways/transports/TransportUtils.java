@@ -54,21 +54,19 @@ public class TransportUtils {
     static {
         PrivateDataManager.addPrivateDataProvider(GatewayPrivateData.ELEMENT, GatewayPrivateData.NAMESPACE, new GatewayPrivateData.ConferencePrivateDataProvider());
 
-        final Runnable loadGateways = new Runnable() {
-            public void run() {
-            	PrivateDataManager pdm = SparkManager.getSessionManager().getPersonalDataManager();
-            	gatewayPreferences = null;
-            	//Re: SPARK-1483 comment the loop as it causes Out Of Memory (infinite loop) if preferences not found
-            	//If really necessary to try more times, a Thread Pool may be used: java ScheduledThreadPoolExecutor for example            	
-                //while (gatewayPreferences == null){
-                	try {
-                        gatewayPreferences = (GatewayPrivateData)pdm.getPrivateData(GatewayPrivateData.ELEMENT, GatewayPrivateData.NAMESPACE);
-                    }
-                    catch (XMPPException | SmackException e) {
-                        Log.error("Unable to load private data for Gateways", e);
-                    }
-                //}
-            }
+        final Runnable loadGateways = () -> {
+            PrivateDataManager pdm = SparkManager.getSessionManager().getPersonalDataManager();
+            gatewayPreferences = null;
+            //Re: SPARK-1483 comment the loop as it causes Out Of Memory (infinite loop) if preferences not found
+            //If really necessary to try more times, a Thread Pool may be used: java ScheduledThreadPoolExecutor for example
+            //while (gatewayPreferences == null){
+                try {
+                    gatewayPreferences = (GatewayPrivateData)pdm.getPrivateData(GatewayPrivateData.ELEMENT, GatewayPrivateData.NAMESPACE);
+                }
+                catch (XMPPException | SmackException e) {
+                    Log.error("Unable to load private data for Gateways", e);
+                }
+            //}
         };
 
         TaskEngine.getInstance().submit(loadGateways);
@@ -190,17 +188,12 @@ public class TransportUtils {
         registration.setType(IQ.Type.set);
         registration.setTo(gatewayDomain);
 
-        con.sendStanzaWithResponseCallback( registration, new IQReplyFilter( registration, con ), new StanzaListener()
-        {
-            @Override
-            public void processPacket( Stanza stanza ) throws SmackException.NotConnectedException
-            {
-                IQ response = (IQ) stanza;
-                if (response.getType() == IQ.Type.error ) {
-                    Log.warning( "Unable to unregister from gateway: " + stanza );
-                }
+        con.sendStanzaWithResponseCallback( registration, new IQReplyFilter( registration, con ), stanza -> {
+            IQ response = (IQ) stanza;
+            if (response.getType() == IQ.Type.error ) {
+                Log.warning( "Unable to unregister from gateway: " + stanza );
             }
-        });
+        } );
     }
 
 

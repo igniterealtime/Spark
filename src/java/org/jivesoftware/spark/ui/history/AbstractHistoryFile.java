@@ -108,13 +108,7 @@ public abstract class AbstractHistoryFile {
 			entries.add(historyEntry.getValue());
 		}
 
-		Collections.sort(entries, new Comparator<HistoryEntry>() {
-
-			@Override
-			public int compare(HistoryEntry o1, HistoryEntry o2) {
-				return o2.getDate().compareTo(o1.getDate());
-			}
-		});
+		Collections.sort(entries, ( o1, o2 ) -> o2.getDate().compareTo(o1.getDate()) );
 
 		return entries;
 	}

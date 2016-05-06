@@ -481,23 +481,9 @@ public class HistoryTranscript extends SwingWorker {
 	 * Set the layout settings
 	 */
 	public void finished() {
-		pageLeft.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				pageLeft();
-			}
-		});
-		pageRight.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				pageRight();
-			}
-		});
-	    periodChooser.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				handlePeriodChange (periods.get(periodChooser.getSelectedIndex()));
-	        }
-	      });
+		pageLeft.addActionListener( arg0 -> pageLeft() );
+		pageRight.addActionListener( arg0 -> pageRight() );
+	    periodChooser.addActionListener( e -> handlePeriodChange (periods.get(periodChooser.getSelectedIndex())) );
 
 		// add search text input
 		searchPanel.setLayout(new GridBagLayout());

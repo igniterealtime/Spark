@@ -110,12 +110,10 @@ public class SubscriptionDialog {
         rosterBox.setText(Res.getString("label.add.to.roster"));
         groupBox.setEditable(true);
 
-        rosterBox.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent actionEvent) {
-                nicknameField.setEnabled(rosterBox.isSelected());
-                groupBox.setEnabled(rosterBox.isSelected());
-            }
-        });
+        rosterBox.addActionListener( actionEvent -> {
+            nicknameField.setEnabled(rosterBox.isSelected());
+            groupBox.setEnabled(rosterBox.isSelected());
+        } );
 
         rosterBox.setSelected(true);
 
@@ -200,54 +198,46 @@ public class SubscriptionDialog {
         usernameLabelValue.setText(UserManager.unescapeJID(jid));
         nicknameField.setText(username);
 
-        acceptButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                if (!rosterBox.isSelected()) {
-                    Presence response = new Presence(Presence.Type.subscribed);
-                    response.setTo(jid);
-                    try
-                    {
-                        SparkManager.getConnection().sendStanza(response);
-                    }
-                    catch ( SmackException.NotConnectedException e1 )
-                    {
-                        Log.warning( "Unable to send stanza accepting subscription from " + jid, e1 );
-                    }
-                    dialog.dispose();
-                    return;
+        acceptButton.addActionListener( e -> {
+            if (!rosterBox.isSelected()) {
+                Presence response = new Presence(Presence.Type.subscribed);
+                response.setTo(jid);
+                try
+                {
+                    SparkManager.getConnection().sendStanza(response);
                 }
+                catch ( SmackException.NotConnectedException e1 )
+                {
+                    Log.warning( "Unable to send stanza accepting subscription from " + jid, e1 );
+                }
+                dialog.dispose();
+                return;
+            }
 
-                boolean addEntry = addEntry();
-                if (addEntry) {
-                    Presence response = new Presence(Presence.Type.subscribed);
-                    response.setTo(jid);
-                    try
-                    {
-                        SparkManager.getConnection().sendStanza(response);
-                    }
-                    catch ( SmackException.NotConnectedException e1 )
-                    {
-                        Log.warning( "Unable to send stanza accepting subscription from " + jid, e1 );
-                    }
+            boolean addEntry = addEntry();
+            if (addEntry) {
+                Presence response = new Presence(Presence.Type.subscribed);
+                response.setTo(jid);
+                try
+                {
+                    SparkManager.getConnection().sendStanza(response);
                 }
-                else {
-                    dialog.dispose();
+                catch ( SmackException.NotConnectedException e1 )
+                {
+                    Log.warning( "Unable to send stanza accepting subscription from " + jid, e1 );
                 }
             }
-        });
-
-        denyButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                // Send subscribed
-                unsubscribeAndClose();
+            else {
+                dialog.dispose();
             }
-        });
+        } );
 
-        viewInfoButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                SparkManager.getVCardManager().viewProfile(jid, mainPanel);
-            }
-        });
+        denyButton.addActionListener( e -> {
+            // Send subscribed
+            unsubscribeAndClose();
+        } );
+
+        viewInfoButton.addActionListener( e -> SparkManager.getVCardManager().viewProfile(jid, mainPanel) );
         
         dialog = new JFrame(Res.getString("title.subscription.request")){
 			private static final long serialVersionUID = 5713933518069623228L;
@@ -268,14 +258,7 @@ public class SubscriptionDialog {
         });
       
         KeyStroke key = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
-        ActionListener action = new ActionListener() {
-            
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                unsubscribeAndClose();
-                
-            }
-        };
+        ActionListener action = e -> unsubscribeAndClose();
         dialog.getRootPane().registerKeyboardAction(action,key,JComponent.WHEN_FOCUSED);
         dialog.setIconImage(SparkManager.getApplicationImage().getImage());
         dialog.getContentPane().add(mainPanel);

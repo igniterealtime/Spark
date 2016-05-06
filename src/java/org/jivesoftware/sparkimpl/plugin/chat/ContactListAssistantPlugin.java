@@ -169,12 +169,7 @@ public class ContactListAssistantPlugin implements Plugin {
 
         updateAvatarsInContactList();
 
-        SettingsManager.addPreferenceListener(new PreferenceListener() {
-            @Override
-            public void preferencesChanged(LocalPreferences preference) {
-                updateAvatarsInContactList();
-            }
-        });
+        SettingsManager.addPreferenceListener( preference -> updateAvatarsInContactList() );
     }
     
 	private boolean isContactItemInGroup(Collection<ContactItem> contactItems, ContactGroup group) {

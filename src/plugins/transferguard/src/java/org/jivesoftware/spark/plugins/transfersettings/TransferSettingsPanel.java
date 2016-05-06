@@ -134,13 +134,11 @@ public class TransferSettingsPanel extends JPanel {
                     new GridBagConstraints(2, 0, 1, 1, 0.75, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0,0,0,0), 0, 0));
             add(pnlSpinner);
 
-            chkMaxEnabled.addActionListener(new ActionListener(){
-                public void actionPerformed(ActionEvent evnt) {
-                    if (spinMaxSize != null) {
-                        spinMaxSize.setEnabled(chkMaxEnabled.isSelected());
-                    }
+            chkMaxEnabled.addActionListener( evnt -> {
+                if (spinMaxSize != null) {
+                    spinMaxSize.setEnabled(chkMaxEnabled.isSelected());
                 }
-            });
+            } );
         }
 
         public void setMaxFileSize(int kb) {

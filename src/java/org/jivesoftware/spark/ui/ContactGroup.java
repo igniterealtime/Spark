@@ -212,28 +212,26 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
        else {
 	    	try {
 	    		// invokeAndWait, because the contacts must be added before they can moved to offline group
-		      	 EventQueue.invokeAndWait(new Runnable(){
-		      		 public void run() {
-		      			 // Build new ContactItem
-					 final ContactItem offlineItem = UIComponentRegistry.createContactItem(alias, nickname, jid);
-		      			 offlineItem.setGroupName(getGroupName());
+		      	 EventQueue.invokeAndWait( () -> {
+                       // Build new ContactItem
+                 final ContactItem offlineItem = UIComponentRegistry.createContactItem(alias, nickname, jid);
+                       offlineItem.setGroupName(getGroupName());
 
-		      			 final Presence offlinePresence = PresenceManager.getPresence(jid);
-		      			 offlineItem.setPresence(offlinePresence);
+                       final Presence offlinePresence = PresenceManager.getPresence(jid);
+                       offlineItem.setPresence(offlinePresence);
 
-		      			 // set offline icon
-		      			 offlineItem.setIcon(PresenceManager.getIconFromPresence(offlinePresence));
+                       // set offline icon
+                       offlineItem.setIcon(PresenceManager.getIconFromPresence(offlinePresence));
 
-		      			 // Set status if applicable.
-		      			 if (ModelUtil.hasLength(status)) {
-		      				 offlineItem.setStatusText(status);
-		      			 }
-		      			 // Add to offline contacts.
-		      			 offlineContacts.add(offlineItem);
+                       // Set status if applicable.
+                       if (ModelUtil.hasLength(status)) {
+                           offlineItem.setStatusText(status);
+                       }
+                       // Add to offline contacts.
+                       offlineContacts.add(offlineItem);
 
-		      			 insertOfflineContactItem(offlineItem);
-		      		 }
-		      	 });
+                       insertOfflineContactItem(offlineItem);
+                   } );
 		    }
 		    catch(Exception ex) {
 		      	 Log.error(ex);
@@ -808,11 +806,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
     /**
      * Sorts ContactItems.
      */
-    final protected Comparator<ContactItem> itemComparator = new Comparator<ContactItem>() {
-        public int compare(ContactItem item1, ContactItem item2) {
-            return item1.getDisplayName().toLowerCase().compareTo(item2.getDisplayName().toLowerCase());
-        }
-    };
+    final protected Comparator<ContactItem> itemComparator = ( item1, item2 ) -> item1.getDisplayName().toLowerCase().compareTo(item2.getDisplayName().toLowerCase());
 
     /**
      * Returns true if this ContactGroup is the Offline Group.

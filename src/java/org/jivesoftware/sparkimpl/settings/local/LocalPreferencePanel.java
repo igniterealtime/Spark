@@ -79,28 +79,20 @@ public class LocalPreferencePanel extends JPanel {
 	
 	_idleStatusText = new JTextField(preferences.getIdleMessage());
 
-	_savePasswordBox.addActionListener(new ActionListener() {
-	    public void actionPerformed(ActionEvent e) {
-		_autoLoginBox.setEnabled(_savePasswordBox.isSelected());
-		if (!_savePasswordBox.isSelected()) {
-		    _autoLoginBox.setSelected(false);
-		}
-	    }
-	});
+	_savePasswordBox.addActionListener( e -> {
+    _autoLoginBox.setEnabled(_savePasswordBox.isSelected());
+    if (!_savePasswordBox.isSelected()) {
+        _autoLoginBox.setSelected(false);
+    }
+    } );
 
-	_autoLoginBox.addActionListener(new ActionListener() {
-	    public void actionPerformed(ActionEvent e) {
-		if (_autoLoginBox.isSelected()) {
-		    _savePasswordBox.setSelected(true);
-		}
-	    }
-	});
+	_autoLoginBox.addActionListener( e -> {
+    if (_autoLoginBox.isSelected()) {
+        _savePasswordBox.setSelected(true);
+    }
+    } );
 
-	_idleBox.addActionListener(new ActionListener() {
-	    public void actionPerformed(ActionEvent e) {
-		_idleField.setEnabled(_idleBox.isSelected());
-	    }
-	});
+	_idleBox.addActionListener( e -> _idleField.setEnabled(_idleBox.isSelected()) );
 
 
 	_idleBox.setSelected(preferences.isIdleOn());
@@ -151,11 +143,7 @@ public class LocalPreferencePanel extends JPanel {
 	
 	if (Spark.isWindows()) {
 	    inputPanel.add(_launchOnStartupBox, new GridBagConstraints(0, 7, 2, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST,GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50,0));
-	    _launchOnStartupBox.addActionListener(new ActionListener() {
-		public void actionPerformed(ActionEvent e) {
-		    setStartOnStartup(_launchOnStartupBox.isSelected());
-		}
-	    });
+	    _launchOnStartupBox.addActionListener( e -> setStartOnStartup(_launchOnStartupBox.isSelected()) );
 
 	    _launchOnStartupBox.setSelected(preferences.getStartOnStartup());
 	}

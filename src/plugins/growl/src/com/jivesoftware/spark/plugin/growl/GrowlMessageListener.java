@@ -53,18 +53,14 @@ public class GrowlMessageListener implements GlobalMessageListener {
 
     public void messageReceived(final ChatRoom chatRoom, final Message message) {
 
-	SwingUtilities.invokeLater(new Runnable() {
+	SwingUtilities.invokeLater( () -> {
+    final ChatFrame chatFrame = SparkManager.getChatManager().getChatContainer()
+        .getChatFrame();
 
-	    @Override
-	    public void run() {
-		final ChatFrame chatFrame = SparkManager.getChatManager().getChatContainer()
-			.getChatFrame();
-
-		if (!chatFrame.isInFocus()) {
-		    showGrowlNotification(message);
-		}
-	    }
-	});
+    if (!chatFrame.isInFocus()) {
+        showGrowlNotification(message);
+    }
+    } );
 
     }
 

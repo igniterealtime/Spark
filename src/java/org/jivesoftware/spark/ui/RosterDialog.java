@@ -260,11 +260,7 @@ public class RosterDialog implements ActionListener {
             networkPanel.setVisible(true);
         }
 
-        publicBox.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent actionEvent) {
-                accounts.setEnabled(publicBox.isSelected());
-            }
-        });
+        publicBox.addActionListener( actionEvent -> accounts.setEnabled(publicBox.isSelected()) );
 
 
     }
@@ -339,20 +335,10 @@ public class RosterDialog implements ActionListener {
        
         JButton addbutton = new JButton(Res.getString("add"));
         
-        addbutton.addActionListener(new ActionListener() {
-	    @Override
-	    public void actionPerformed(ActionEvent e) {
-		addContactButton();
-	    }
-	});
+        addbutton.addActionListener( e -> addContactButton() );
         
         JButton cancelbutton = new JButton(Res.getString("cancel"));
-        cancelbutton.addActionListener(new ActionListener() {    
-	    @Override
-	    public void actionPerformed(ActionEvent e) {
-		dialog.dispose();
-	    }
-	});
+        cancelbutton.addActionListener( e -> dialog.dispose() );
         
         
         JPanel buttonpanel = new JPanel(new FlowLayout());
@@ -505,14 +491,11 @@ public class RosterDialog implements ActionListener {
 				.get(0);
 			final JMenuItem item = new JMenuItem(s);
 			popup.add(item);
-			item.addActionListener(new ActionListener() {
-			    @Override
-			    public void actionPerformed(ActionEvent e) {
-				jidField.setText(item.getText());
-				nicknameField.setText(XmppStringUtils
-					.parseLocalpart(item.getText()));
-			    }
-			});
+			item.addActionListener( e -> {
+            jidField.setText(item.getText());
+            nicknameField.setText(XmppStringUtils
+                .parseLocalpart(item.getText()));
+            } );
 		    }
 
 		}

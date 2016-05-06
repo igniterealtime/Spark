@@ -618,49 +618,45 @@ public class ChatManager implements ChatManagerListener {
     }
 
     public void composingNotification(final String from) {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                final ContactList contactList = SparkManager.getWorkspace().getContactList();
+        SwingUtilities.invokeLater( () -> {
+            final ContactList contactList = SparkManager.getWorkspace().getContactList();
 
-                ChatRoom chatRoom;
-                try {
-                    chatRoom = getChatContainer().getChatRoom( XmppStringUtils.parseBareJid(from));
-                    if (chatRoom != null && chatRoom instanceof ChatRoomImpl) {                    	
-                        typingNotificationList.add(chatRoom);
-                        // Notify Decorators
-                        notifySparkTabHandlers(chatRoom);
-                        ((ChatRoomImpl)chatRoom).notifyChatStateChange(ChatState.composing);
-                    }
+            ChatRoom chatRoom;
+            try {
+                chatRoom = getChatContainer().getChatRoom( XmppStringUtils.parseBareJid(from));
+                if (chatRoom != null && chatRoom instanceof ChatRoomImpl) {
+                    typingNotificationList.add(chatRoom);
+                    // Notify Decorators
+                    notifySparkTabHandlers(chatRoom);
+                    ((ChatRoomImpl)chatRoom).notifyChatStateChange(ChatState.composing);
                 }
-                catch (ChatRoomNotFoundException e) {
-                    // Do nothing
-                }
-                contactList.setIconFor(from, SparkRes.getImageIcon(SparkRes.SMALL_MESSAGE_EDIT_IMAGE));
             }
-        });
+            catch (ChatRoomNotFoundException e) {
+                // Do nothing
+            }
+            contactList.setIconFor(from, SparkRes.getImageIcon(SparkRes.SMALL_MESSAGE_EDIT_IMAGE));
+        } );
     }
 
     public void cancelledNotification(final String from, final ChatState state) {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                ContactList contactList = SparkManager.getWorkspace().getContactList();
+        SwingUtilities.invokeLater( () -> {
+            ContactList contactList = SparkManager.getWorkspace().getContactList();
 
-                ChatRoom chatRoom;
-                try {
-                    chatRoom = getChatContainer().getChatRoom(XmppStringUtils.parseBareJid(from));
-                    if (chatRoom != null && chatRoom instanceof ChatRoomImpl) {
-                        typingNotificationList.remove(chatRoom);
-                        // Notify Decorators
-                        notifySparkTabHandlers(chatRoom);
-                        ((ChatRoomImpl)chatRoom).notifyChatStateChange(state);
-                    }
+            ChatRoom chatRoom;
+            try {
+                chatRoom = getChatContainer().getChatRoom(XmppStringUtils.parseBareJid(from));
+                if (chatRoom != null && chatRoom instanceof ChatRoomImpl) {
+                    typingNotificationList.remove(chatRoom);
+                    // Notify Decorators
+                    notifySparkTabHandlers(chatRoom);
+                    ((ChatRoomImpl)chatRoom).notifyChatStateChange(state);
                 }
-                catch (ChatRoomNotFoundException e) {
-                    // Do nothing
-                }
-                contactList.useDefaults(from);
             }
-        });
+            catch (ChatRoomNotFoundException e) {
+                // Do nothing
+            }
+            contactList.useDefaults(from);
+        } );
     }
 
     /**

@@ -60,12 +60,10 @@ public class TranslatorPlugin implements Plugin {
                     // Create a new ChatRoomButton.
                     final JComboBox<TranslatorUtil.TranslationType> translatorBox = new JComboBox<>(TranslatorUtil.TranslationType.getTypes());
 
-                    translatorBox.addActionListener(new ActionListener() {
-                        public void actionPerformed(ActionEvent e) {
-                            // Set the focus back to the message box.
-                            roomImpl.getChatInputEditor().requestFocusInWindow();
-                        }
-                    });
+                    translatorBox.addActionListener( e -> {
+                        // Set the focus back to the message box.
+                        roomImpl.getChatInputEditor().requestFocusInWindow();
+                    } );
 
                     roomImpl.addChatRoomComponent(translatorBox);
 

@@ -210,47 +210,45 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
     private void registerPresenceListener() {
         StanzaFilter orFilter = new OrFilter(new StanzaTypeFilter(Presence.class), new StanzaTypeFilter(Message.class));
 
-        SparkManager.getConnection().addAsyncStanzaListener(new StanzaListener() {
-            public void processPacket(Stanza stanza) {
-                if (stanza instanceof Presence) {
-                    Presence presence = (Presence)stanza;
-                    Transport transport = TransportUtils.getTransport(stanza.getFrom());
-                    if (transport != null) {
-                        boolean registered = true;
-                        if (presence.getType() == Presence.Type.unavailable) {
-                            registered = false;
-                        }
-
-                        
-                        GatewayItem button = uiMap.get(transport);
-                     
-                        button.signedIn(registered);
-                  
-                        SwingWorker worker = new SwingWorker() {
-			    
-			    @Override
-			    public Object construct() {
-				transferTab.revalidate();
-				transferTab.repaint();
-				return 41;
-			    }
-			};
-			worker.start();
+        SparkManager.getConnection().addAsyncStanzaListener( stanza -> {
+            if (stanza instanceof Presence) {
+                Presence presence = (Presence)stanza;
+                Transport transport = TransportUtils.getTransport(stanza.getFrom());
+                if (transport != null) {
+                    boolean registered = true;
+                    if (presence.getType() == Presence.Type.unavailable) {
+                        registered = false;
                     }
-                }
-                else if (stanza instanceof Message) {
-                    Message message = (Message)stanza;
-                    String from = message.getFrom();
-                    boolean hasError = message.getType() == Message.Type.error;
-                    String body = message.getBody();
 
-                    if (from != null && hasError) {
-                        Transport transport = TransportUtils.getTransport(from);
-                        if (transport != null) {
-                            String title = "Alert from " + transport.getName();
-                            // Show error
-                            MessageDialog.showAlert(body, title, "Information", SparkRes.getImageIcon(SparkRes.INFORMATION_IMAGE));
-                        }
+
+                    GatewayItem button = uiMap.get(transport);
+
+                    button.signedIn(registered);
+
+                    SwingWorker worker = new SwingWorker() {
+
+            @Override
+            public Object construct() {
+            transferTab.revalidate();
+            transferTab.repaint();
+            return 41;
+            }
+        };
+        worker.start();
+                }
+            }
+            else if (stanza instanceof Message) {
+                Message message = (Message)stanza;
+                String from = message.getFrom();
+                boolean hasError = message.getType() == Message.Type.error;
+                String body = message.getBody();
+
+                if (from != null && hasError) {
+                    Transport transport = TransportUtils.getTransport(from);
+                    if (transport != null) {
+                        String title = "Alert from " + transport.getName();
+                        // Show error
+                        MessageDialog.showAlert(body, title, "Information", SparkRes.getImageIcon(SparkRes.INFORMATION_IMAGE));
                     }
                 }
             }
@@ -276,29 +274,27 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
             }
         }
 
-        SparkManager.getSessionManager().addPresenceListener(new PresenceListener() {
-            public void presenceChanged(Presence presence) {
-                for (Transport transport : TransportUtils.getTransports()) {
-                    GatewayItem button = uiMap.get(transport);
-                    if (button.isLoggedIn()) {
-                        if (!presence.isAvailable()) {
-                            return;
-                        }
-                        // Create new presence
-                        Presence p = new Presence(presence.getType(), presence.getStatus(), presence.getPriority(), presence.getMode());
-                        p.setTo(transport.getServiceName());
-                        try
-                        {
-                            SparkManager.getConnection().sendStanza(p);
-                        }
-                        catch ( SmackException.NotConnectedException e )
-                        {
-                            Log.warning( "Unable to forward presence change to transport.", e );
-                        }
+        SparkManager.getSessionManager().addPresenceListener( presence -> {
+            for (Transport transport : TransportUtils.getTransports()) {
+                GatewayItem button = uiMap.get(transport);
+                if (button.isLoggedIn()) {
+                    if (!presence.isAvailable()) {
+                        return;
+                    }
+                    // Create new presence
+                    Presence p = new Presence(presence.getType(), presence.getStatus(), presence.getPriority(), presence.getMode());
+                    p.setTo(transport.getServiceName());
+                    try
+                    {
+                        SparkManager.getConnection().sendStanza(p);
+                    }
+                    catch ( SmackException.NotConnectedException e )
+                    {
+                        Log.warning( "Unable to forward presence change to transport.", e );
                     }
                 }
             }
-        });
+        } );
     }
 
 

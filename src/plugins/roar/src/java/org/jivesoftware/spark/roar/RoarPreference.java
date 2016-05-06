@@ -48,12 +48,7 @@ public class RoarPreference implements Preference {
             if (EventQueue.isDispatchThread()) {
                 _prefPanel = new RoarPreferencePanel();
             } else {
-                EventQueue.invokeAndWait(new Runnable() {
-                    @Override
-                    public void run() {
-                        _prefPanel = new RoarPreferencePanel();
-                    }
-                });
+                EventQueue.invokeAndWait( () -> _prefPanel = new RoarPreferencePanel() );
             }
         } catch (Exception e) {
             Log.error(e);

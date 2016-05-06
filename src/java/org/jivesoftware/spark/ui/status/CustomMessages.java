@@ -106,13 +106,7 @@ public class CustomMessages {
         }
 
         // Sort Custom Messages
-        Collections.sort( list, new Comparator<CustomStatusItem>()
-        {
-        	public int compare( final CustomStatusItem a, final CustomStatusItem b )
-        	{
-        		return( a.getStatus().compareToIgnoreCase( b.getStatus() ) );
-        	}
-        } );
+        Collections.sort( list, ( a, b ) -> ( a.getStatus().compareToIgnoreCase( b.getStatus() ) ) );
 
         return list;
     }
@@ -179,14 +173,12 @@ public class CustomMessages {
         optionsDialog.pack();
         optionsDialog.setLocationRelativeTo(SparkManager.getMainWindow());
 
-        optionPane.addPropertyChangeListener(new PropertyChangeListener() {
-            public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
-                String value = (String)optionPane.getValue();
-                if (Res.getString("close").equals(value)) {
-                    optionsDialog.setVisible(false);
-                }
+        optionPane.addPropertyChangeListener( propertyChangeEvent -> {
+            String value = (String)optionPane.getValue();
+            if (Res.getString("close").equals(value)) {
+                optionsDialog.setVisible(false);
             }
-        });
+        } );
 
         for (int i = 0; i <= tree.getRowCount(); i++) {
             tree.expandPath(tree.getPathForRow(i));
@@ -441,57 +433,55 @@ public class CustomMessages {
             }
 
             optionsDialog.setLocationRelativeTo(SparkManager.getMainWindow());
-            optionPane.addPropertyChangeListener(new PropertyChangeListener() {
-                public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
-                    String value = (String)optionPane.getValue();
-                    if (Res.getString("cancel").equals(value)) {
-                        optionsDialog.setVisible(false);
-                    }
-                    else if (Res.getString("ok").equals(value)) {
-                        List<CustomStatusItem> list = load();
-                        Iterator<CustomStatusItem> iter = list.iterator();
-
-                        CustomStatusItem changeItem = null;
-                        while (iter.hasNext()) {
-                            CustomStatusItem customItem = iter.next();
-                            if (customItem.getType().equals(item.getType()) &&
-                                    customItem.getStatus().equals(item.getStatus()) &&
-                                    customItem.getPriority() == item.getPriority() ) {
-
-                                changeItem = customItem;
-                                break;
-                            }
-                        }
-
-
-                        Iterator<CustomStatusItem> customListIterator = list.iterator();
-                        boolean exists = false;
-                        while (customListIterator.hasNext()) {
-                            CustomStatusItem customItem = customListIterator.next();
-                            String type = customItem.getType();
-                            String status = customItem.getStatus();
-                            int priority = customItem.getPriority();
-
-                            if (type.equals(getType()) && status.equals(getStatus()) && priority == getPriority()) {
-                                exists = true;
-                            }
-                        }
-
-                        if (changeItem != null) {
-                            changeItem.setPriority(getPriority());
-                            changeItem.setStatus(getStatus());
-                            changeItem.setType(getType());
-
-                        }
-
-                        // Otherwise save.
-                        if (!exists) {
-                            save(list);
-                        }
-                        optionsDialog.setVisible(false);
-                    }
+            optionPane.addPropertyChangeListener( propertyChangeEvent -> {
+                String value = (String)optionPane.getValue();
+                if (Res.getString("cancel").equals(value)) {
+                    optionsDialog.setVisible(false);
                 }
-            });
+                else if (Res.getString("ok").equals(value)) {
+                    List<CustomStatusItem> list = load();
+                    Iterator<CustomStatusItem> iter = list.iterator();
+
+                    CustomStatusItem changeItem = null;
+                    while (iter.hasNext()) {
+                        CustomStatusItem customItem = iter.next();
+                        if (customItem.getType().equals(item.getType()) &&
+                                customItem.getStatus().equals(item.getStatus()) &&
+                                customItem.getPriority() == item.getPriority() ) {
+
+                            changeItem = customItem;
+                            break;
+                        }
+                    }
+
+
+                    Iterator<CustomStatusItem> customListIterator = list.iterator();
+                    boolean exists = false;
+                    while (customListIterator.hasNext()) {
+                        CustomStatusItem customItem = customListIterator.next();
+                        String type1 = customItem.getType();
+                        String status = customItem.getStatus();
+                        int priority = customItem.getPriority();
+
+                        if ( type1.equals(getType()) && status.equals(getStatus()) && priority == getPriority()) {
+                            exists = true;
+                        }
+                    }
+
+                    if (changeItem != null) {
+                        changeItem.setPriority(getPriority());
+                        changeItem.setStatus(getStatus());
+                        changeItem.setType(getType());
+
+                    }
+
+                    // Otherwise save.
+                    if (!exists) {
+                        save(list);
+                    }
+                    optionsDialog.setVisible(false);
+                }
+            } );
 
             optionsDialog.setVisible(true);
             optionsDialog.toFront();
@@ -531,78 +521,76 @@ public class CustomMessages {
 
 
             optionsDialog.setLocationRelativeTo(SparkManager.getMainWindow());
-            optionPane.addPropertyChangeListener(new PropertyChangeListener() {
-                public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
-                    String value = (String)optionPane.getValue();
-                    if (Res.getString("cancel").equals(value)) {
-                        optionsDialog.setVisible(false);
-                    }
-                    else if (Res.getString("ok").equals(value)) {
-
-                        if (!ModelUtil.hasLength(getStatus())) {
-                            JOptionPane.showMessageDialog(optionsDialog, Res.getString("message.invalid.status"));
-                            optionPane.setValue(JOptionPane.UNINITIALIZED_VALUE);
-                            return;
-                        }
-
-
-                        if (!persistBox.isSelected()) {
-                            // Change presence and quit.
-                            StatusItem item = statusBar.getStatusItem(getType());
-                            Presence oldPresence = item.getPresence();
-
-                            Presence presence = StatusBar.copyPresence(oldPresence);
-                            presence.setStatus(getStatus());
-                            presence.setPriority(getPriority());
-
-                            SparkManager.getSessionManager().changePresence(presence);
-                            statusBar.setStatus(getStatus());
-                            optionsDialog.setVisible(false);
-
-                            return;
-                        }
-
-                        List<CustomStatusItem> list = load();
-
-                        CustomStatusItem customStatusItem = new CustomStatusItem();
-                        customStatusItem.setPriority(getPriority());
-                        customStatusItem.setStatus(getStatus());
-                        customStatusItem.setType(getType());
-
-
-                        Iterator<CustomStatusItem> customListIterator = list.iterator();
-                        boolean exists = false;
-                        while (customListIterator.hasNext()) {
-                            CustomStatusItem customItem = customListIterator.next();
-                            String type = customItem.getType();
-                            String status = customItem.getStatus();
-
-                            if (type.equals(customStatusItem.getType()) && status.equals(customStatusItem.getStatus())) {
-                                exists = true;
-                            }
-                        }
-
-                        // Otherwise save.
-                        if (!exists) {
-                            list.add(customStatusItem);
-
-                            // Update current status.
-                            StatusItem item = statusBar.getStatusItem(getType());
-                            Presence oldPresence = item.getPresence();
-                            Presence presence = StatusBar.copyPresence(oldPresence);
-                            presence.setStatus(getStatus());
-                            presence.setPriority(getPriority());
-
-                            SparkManager.getSessionManager().changePresence(presence);
-                            statusBar.setStatus(getStatus());
-
-                            // Persist new item.
-                            save(list);
-                        }
-                        optionsDialog.setVisible(false);
-                    }
+            optionPane.addPropertyChangeListener( propertyChangeEvent -> {
+                String value = (String)optionPane.getValue();
+                if (Res.getString("cancel").equals(value)) {
+                    optionsDialog.setVisible(false);
                 }
-            });
+                else if (Res.getString("ok").equals(value)) {
+
+                    if (!ModelUtil.hasLength(getStatus())) {
+                        JOptionPane.showMessageDialog(optionsDialog, Res.getString("message.invalid.status"));
+                        optionPane.setValue(JOptionPane.UNINITIALIZED_VALUE);
+                        return;
+                    }
+
+
+                    if (!persistBox.isSelected()) {
+                        // Change presence and quit.
+                        StatusItem item = statusBar.getStatusItem(getType());
+                        Presence oldPresence = item.getPresence();
+
+                        Presence presence = StatusBar.copyPresence(oldPresence);
+                        presence.setStatus(getStatus());
+                        presence.setPriority(getPriority());
+
+                        SparkManager.getSessionManager().changePresence(presence);
+                        statusBar.setStatus(getStatus());
+                        optionsDialog.setVisible(false);
+
+                        return;
+                    }
+
+                    List<CustomStatusItem> list = load();
+
+                    CustomStatusItem customStatusItem = new CustomStatusItem();
+                    customStatusItem.setPriority(getPriority());
+                    customStatusItem.setStatus(getStatus());
+                    customStatusItem.setType(getType());
+
+
+                    Iterator<CustomStatusItem> customListIterator = list.iterator();
+                    boolean exists = false;
+                    while (customListIterator.hasNext()) {
+                        CustomStatusItem customItem = customListIterator.next();
+                        String type = customItem.getType();
+                        String status = customItem.getStatus();
+
+                        if (type.equals(customStatusItem.getType()) && status.equals(customStatusItem.getStatus())) {
+                            exists = true;
+                        }
+                    }
+
+                    // Otherwise save.
+                    if (!exists) {
+                        list.add(customStatusItem);
+
+                        // Update current status.
+                        StatusItem item = statusBar.getStatusItem(getType());
+                        Presence oldPresence = item.getPresence();
+                        Presence presence = StatusBar.copyPresence(oldPresence);
+                        presence.setStatus(getStatus());
+                        presence.setPriority(getPriority());
+
+                        SparkManager.getSessionManager().changePresence(presence);
+                        statusBar.setStatus(getStatus());
+
+                        // Persist new item.
+                        save(list);
+                    }
+                    optionsDialog.setVisible(false);
+                }
+            } );
 
             optionsDialog.setVisible(true);
             optionsDialog.toFront();

@@ -3674,12 +3674,7 @@ public class BaseTabbedPaneUI extends TabbedPaneUI implements SwingConstants {
     public class TabComponentHandler implements ComponentListener {
 
         public void componentResized(ComponentEvent ce) {
-            SwingUtilities.invokeLater(new Runnable() {
-
-                public void run() {
-                    tabPane.doLayout();
-                }
-            });
+            SwingUtilities.invokeLater( () -> tabPane.doLayout() );
         }
 
         public void componentMoved(ComponentEvent ce) {

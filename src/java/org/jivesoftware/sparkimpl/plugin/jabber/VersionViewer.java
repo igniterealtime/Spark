@@ -93,16 +93,11 @@ public class VersionViewer {
             versionRequest.setType(IQ.Type.get);
             versionRequest.setTo(jid);
 
-            connection.sendStanzaWithResponseCallback( versionRequest, new IQReplyFilter( versionRequest, connection ), new StanzaListener()
-            {
-                @Override
-                public void processPacket( Stanza stanza ) throws SmackException.NotConnectedException
-                {
-                    final Version versionResult = (Version) stanza;
-                    softwareField.setText(versionResult.getName());
-                    versionField.setText(versionResult.getVersion());
-                    osField.setText(versionResult.getOs());
-                }
+            connection.sendStanzaWithResponseCallback( versionRequest, new IQReplyFilter( versionRequest, connection ), stanza -> {
+                final Version versionResult = (Version) stanza;
+                softwareField.setText(versionResult.getName());
+                versionField.setText(versionResult.getVersion());
+                osField.setText(versionResult.getOs());
             } );
 
             // Time
@@ -110,13 +105,8 @@ public class VersionViewer {
             time.setType(IQ.Type.get);
             time.setTo(jid);
 
-            connection.sendStanzaWithResponseCallback( time, new IQReplyFilter( time, connection ), new StanzaListener()
-            {
-                @Override
-                public void processPacket( Stanza stanza ) throws SmackException.NotConnectedException
-                {;
-                    timeField.setText( new SimpleDateFormat( ).format( ((Time)stanza).getTime()));
-                }
+            connection.sendStanzaWithResponseCallback( time, new IQReplyFilter( time, connection ), stanza -> {;
+                timeField.setText( new SimpleDateFormat( ).format( ((Time)stanza).getTime()));
             } );
         }
         catch ( SmackException.NotConnectedException e )
