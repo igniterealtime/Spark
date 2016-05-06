@@ -49,13 +49,12 @@ public class JabberAvatarExtension implements ExtensionElement {
     }
 
     public String toXML() {
-        StringBuilder buf = new StringBuilder();
-        buf.append("<").append(getElementName()).append(" xmlns=\"").append(getNamespace()).append("\">");
-        buf.append("<hash>");
-        buf.append(photoHash);
-        buf.append("</hash>");
-        buf.append("</").append(getElementName()).append(">");
-        return buf.toString();
+        String buf = "<" + getElementName() + " xmlns=\"" + getNamespace() + "\">" +
+                "<hash>" +
+                photoHash +
+                "</hash>" +
+                "</" + getElementName() + ">";
+        return buf;
     }
 
     public static class Provider extends ExtensionElementProvider<JabberAvatarExtension>

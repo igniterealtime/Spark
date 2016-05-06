@@ -833,16 +833,12 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         Font font = p.getFont();
 
         // create some css from the JPanel's font
-        StringBuilder style = new StringBuilder();
-        style.append("font-family:" + font.getFamily() + ";");
-        style.append("font-weight:" + (font.isBold() ? "bold" : "normal") + ";");
-        style.append("font-size:" + font.getSize() + "pt;");
-
-        StringBuilder text = new StringBuilder();
-        text.append("<html><body style=\"" + style.toString() + "\">" + aboutBoxText.toString() + "</body></html>");
+        String style = ( "font-family:" + font.getFamily() + ";" ) +
+                "font-weight:" + ( font.isBold() ? "bold" : "normal" ) + ";" +
+                "font-size:" + font.getSize() + "pt;";
 
         // assemble html
-        JEditorPane ep = new JEditorPane("text/html", text.toString());
+        JEditorPane ep = new JEditorPane("text/html", ( "<html><body style=\"" + style + "\">" + aboutBoxText.toString() + "</body></html>" ) );
 
         // handle link events
         ep.addHyperlinkListener( e -> {

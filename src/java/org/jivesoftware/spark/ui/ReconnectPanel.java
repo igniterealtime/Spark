@@ -118,14 +118,13 @@ public class ReconnectPanel extends JPanel implements ConnectionListener {
             reason = Res.getString("message.generic.reconnect.message");
         }
 
-        StringBuilder builder = new StringBuilder();
-        builder.append("<html><body><table height=100% width=100%><tr><td align=center>");
-        builder.append("<b><u>");
-        builder.append(reason);
-        builder.append("</u></b>");
-        builder.append("</td></tr></table></body></html>");
+        String builder = "<html><body><table height=100% width=100%><tr><td align=center>" +
+                "<b><u>" +
+                reason +
+                "</u></b>" +
+                "</td></tr></table></body></html>";
 
-        pane.setText(builder.toString());
+        pane.setText( builder );
     }
 
     private void layoutComponents() {

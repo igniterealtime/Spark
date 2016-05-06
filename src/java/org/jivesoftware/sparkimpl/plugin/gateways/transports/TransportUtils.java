@@ -208,10 +208,9 @@ public class TransportUtils {
         }
 
         public String toXML() {
-            StringBuilder builder = new StringBuilder();
-            builder.append("<").append(getElementName()).append(" xmlns=\"").append(getNamespace()).append(
-                "\"/>");
-            return builder.toString();
+            String builder = "<" + getElementName() + " xmlns=\"" + getNamespace() +
+                    "\"/>";
+            return builder;
         }
     }
 

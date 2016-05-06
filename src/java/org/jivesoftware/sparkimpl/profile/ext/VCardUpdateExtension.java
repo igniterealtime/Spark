@@ -53,13 +53,12 @@ public class VCardUpdateExtension implements ExtensionElement {
     }
 
     public String toXML() {
-        StringBuilder buf = new StringBuilder();
-        buf.append("<").append(getElementName()).append(" xmlns=\"").append(getNamespace()).append("\">");
-        buf.append("<photo>");
-        buf.append(photoHash);
-        buf.append("</photo>");
-        buf.append("</").append(getElementName()).append(">");
-        return buf.toString();
+        String buf = "<" + getElementName() + " xmlns=\"" + getNamespace() + "\">" +
+                "<photo>" +
+                photoHash +
+                "</photo>" +
+                "</" + getElementName() + ">";
+        return buf;
     }
 
     public static class Provider extends ExtensionElementProvider<VCardUpdateExtension>

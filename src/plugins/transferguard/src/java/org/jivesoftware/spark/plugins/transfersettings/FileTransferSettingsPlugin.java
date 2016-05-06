@@ -101,9 +101,7 @@ public class FileTransferSettingsPlugin implements Plugin {
     private String getFileExtensionFromName(String filename) {
         int dotIdx = filename.lastIndexOf(".");
         if (dotIdx > 0 && dotIdx < (filename.length() - 1)) {
-            StringBuilder buffer = new StringBuilder("*");
-            buffer.append(filename.substring(dotIdx));
-            return buffer.toString();
+            return "*" + filename.substring( dotIdx );
         }
 
         return null;

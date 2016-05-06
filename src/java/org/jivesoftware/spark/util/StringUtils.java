@@ -1379,9 +1379,7 @@ public class StringUtils {
 	if (string == null || string.length() > length) {
 	    return string;
 	}
-	StringBuilder buf = new StringBuilder(length);
-	buf.append(zeroArray, 0, length - string.length()).append(string);
-	return buf.toString();
+		return String.valueOf( zeroArray, 0, length - string.length() ) + string;
     }
 
     /**

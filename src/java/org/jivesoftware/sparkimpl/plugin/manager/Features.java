@@ -63,9 +63,7 @@ public class Features implements ExtensionElement {
     }
 
     public String toXML() {
-        StringBuilder buf = new StringBuilder();
-        buf.append("<event xmlns=\"" + NAMESPACE + "\"").append("</event>");
-        return buf.toString();
+        return ( "<event xmlns=\"" + NAMESPACE + "\"" ) + "</event>";
     }
 
     public static class Provider extends ExtensionElementProvider<Features>
