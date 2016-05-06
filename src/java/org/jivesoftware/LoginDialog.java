@@ -20,40 +20,34 @@
 
 package org.jivesoftware;
 
-import java.awt.BorderLayout;
-import java.awt.CardLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.EventQueue;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Image;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.awt.geom.AffineTransform;
-import java.io.File;
-import java.io.IOException;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.security.Principal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.List;
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.Element;
+import org.dom4j.io.SAXReader;
+import org.jivesoftware.resource.Default;
+import org.jivesoftware.resource.Res;
+import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.smack.*;
+import org.jivesoftware.smack.proxy.ProxyInfo;
+import org.jivesoftware.smack.sasl.javax.SASLExternalMechanism;
+import org.jivesoftware.smack.tcp.XMPPTCPConnection;
+import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
+import org.jivesoftware.smack.util.TLSUtils;
+import org.jivesoftware.smackx.chatstates.ChatStateManager;
+import org.jivesoftware.spark.SessionManager;
+import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.Workspace;
+import org.jivesoftware.spark.component.RolloverButton;
+import org.jivesoftware.spark.util.*;
+import org.jivesoftware.spark.util.SwingWorker;
+import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkimpl.plugin.layout.LayoutSettings;
+import org.jivesoftware.sparkimpl.plugin.layout.LayoutSettingsManager;
+import org.jivesoftware.sparkimpl.settings.JiveInfo;
+import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
+import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+import org.jxmpp.util.XmppStringUtils;
+
 import javax.naming.NamingException;
 import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
@@ -67,50 +61,20 @@ import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.login.Configuration;
 import javax.security.auth.login.LoginContext;
 import javax.security.auth.login.LoginException;
-import javax.swing.ImageIcon;
-import javax.swing.JCheckBox;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPasswordField;
-import javax.swing.JPopupMenu;
-import javax.swing.JSplitPane;
-import javax.swing.JTextField;
-import javax.swing.UIManager;
+import javax.swing.*;
 import javax.swing.text.JTextComponent;
-
-import org.dom4j.Document;
-import org.dom4j.DocumentException;
-import org.dom4j.Element;
-import org.dom4j.io.SAXReader;
-import org.jivesoftware.resource.Default;
-import org.jivesoftware.resource.Res;
-import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.smack.*;
-import org.jivesoftware.smack.proxy.ProxyInfo;
-import org.jivesoftware.smack.sasl.javax.SASLExternalMechanism;
-import org.jivesoftware.smack.tcp.XMPPTCPConnection;
-import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
-import org.jivesoftware.smackx.chatstates.ChatStateManager;
-import org.jivesoftware.spark.SessionManager;
-import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.Workspace;
-import org.jivesoftware.spark.component.RolloverButton;
-import org.jivesoftware.spark.util.BrowserLauncher;
-import org.jivesoftware.spark.util.DummySSLSocketFactory;
-import org.jivesoftware.spark.util.GraphicUtils;
-import org.jivesoftware.spark.util.ModelUtil;
-import org.jivesoftware.spark.util.ResourceUtils;
-import org.jivesoftware.spark.util.SwingWorker;
-import org.jivesoftware.spark.util.log.Log;
-import org.jivesoftware.sparkimpl.settings.JiveInfo;
-import org.jivesoftware.sparkimpl.plugin.layout.LayoutSettings;
-import org.jivesoftware.sparkimpl.plugin.layout.LayoutSettingsManager;
-import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
-import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
-import org.jxmpp.util.XmppStringUtils;
+import java.awt.*;
+import java.awt.event.*;
+import java.awt.geom.AffineTransform;
+import java.io.File;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.Principal;
+import java.util.*;
+import java.util.List;
 
 /**
  * Dialog to log in a user into the Spark Server. The LoginDialog is used only
@@ -246,38 +210,49 @@ public class LoginDialog {
 
         ProxyInfo proxyInfo = null;
         if (localPref.isProxyEnabled()) {
-        	ProxyInfo.ProxyType pType = localPref.getProtocol().equals("SOCKS") ?
-        		ProxyInfo.ProxyType.SOCKS5 : ProxyInfo.ProxyType.HTTP;
-        	String pHost = ModelUtil.hasLength(localPref.getHost()) ?
-        		localPref.getHost() : null;
-        	int pPort = ModelUtil.hasLength(localPref.getPort()) ?
-        		Integer.parseInt(localPref.getPort()) : 0;
-        	String pUser = ModelUtil.hasLength(localPref.getProxyUsername()) ?
-        		localPref.getProxyUsername() : null;
-        	String pPass = ModelUtil.hasLength(localPref.getProxyPassword()) ?
-        		localPref.getProxyPassword() : null;
-        	
-        	if (pHost != null && pPort != 0) {
-                   
-        		if (pUser == null || pPass == null) {
-                                
-        			proxyInfo = new ProxyInfo(pType, pHost, pPort, null, null);
-        		} else {
-                               
-        			proxyInfo = new ProxyInfo(pType, pHost, pPort, pUser, pPass);
-                                                                       
-        		}
-        	} else {
-        		Log.error("No proxy info found but proxy type is enabled!");
-        	}
+            ProxyInfo.ProxyType pType = localPref.getProtocol().equals("SOCKS") ?
+                    ProxyInfo.ProxyType.SOCKS5 : ProxyInfo.ProxyType.HTTP;
+            String pHost = ModelUtil.hasLength(localPref.getHost()) ?
+                    localPref.getHost() : null;
+            int pPort = ModelUtil.hasLength(localPref.getPort()) ?
+                    Integer.parseInt(localPref.getPort()) : 0;
+            String pUser = ModelUtil.hasLength(localPref.getProxyUsername()) ?
+                    localPref.getProxyUsername() : null;
+            String pPass = ModelUtil.hasLength(localPref.getProxyPassword()) ?
+                    localPref.getProxyPassword() : null;
+
+            if (pHost != null && pPort != 0) {
+
+                if (pUser == null || pPass == null) {
+
+                    proxyInfo = new ProxyInfo(pType, pHost, pPort, null, null);
+                } else {
+
+                    proxyInfo = new ProxyInfo(pType, pHost, pPort, pUser, pPass);
+
+                }
+            } else {
+                Log.error("No proxy info found but proxy type is enabled!");
+            }
         }
 
         final XMPPTCPConnectionConfiguration.Builder builder = XMPPTCPConnectionConfiguration.builder()
-                .setUsernameAndPassword( "username", "password" )
-                .setServiceName( loginServer )
-                .setPort( port )
-                .setSendPresence( false )
-                .setCompressionEnabled( localPref.isCompressionEnabled() );
+                .setUsernameAndPassword(loginUsername, loginPassword)
+                .setServiceName(loginServer)
+                .setPort(port)
+                .setSendPresence(false)
+                .setCompressionEnabled(localPref.isCompressionEnabled());
+
+        if (localPref.isAcceptAllCertificates()) {
+            try {
+                TLSUtils.acceptAllCertificates(builder);
+            } catch (NoSuchAlgorithmException | KeyManagementException e) {
+                Log.warning( "Unable to create configuration.", e );
+            }
+    }
+        if ( localPref.isDebuggerEnabled()) {
+            builder.setDebuggerEnabled( true );
+        }
 
         if ( hostPortConfigured ) {
             builder.setHost( localPref.getXmppHost() );
