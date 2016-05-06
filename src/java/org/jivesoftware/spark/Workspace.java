@@ -341,7 +341,7 @@ public class Workspace extends JPanel implements StanzaListener {
             final boolean broadcast = extension != null && extension.getProperty( "broadcast" ) != null;
 
             // Handle offline message.
-            DelayInformation offlineInformation = (DelayInformation)message.getExtension("delay", "urn:xmpp:delay");
+            DelayInformation offlineInformation = message.getExtension("delay", "urn:xmpp:delay");
             if (offlineInformation != null && (Message.Type.chat == message.getType() ||
                 Message.Type.normal == message.getType())) {
                 handleOfflineMessage(message);

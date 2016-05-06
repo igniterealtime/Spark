@@ -138,7 +138,7 @@ public class ColorPreferencePanel extends SparkTabbedPane {
 	    _colorsettings.setColorForProperty(
 		    (String) _colorliste.getSelectedValue(), c);
 
-	    UIManager.put((String) _colorliste.getSelectedValue(), c);
+	    UIManager.put( _colorliste.getSelectedValue(), c);
 
 	    _errorlabel.setText(Res.getString("lookandfeel.color.saved"));
 

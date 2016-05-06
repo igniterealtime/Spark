@@ -189,7 +189,7 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener {
         }*/
         
         try {
-            DelayInformation inf = (DelayInformation)message.getExtension("delay", "urn:xmpp:delay");
+            DelayInformation inf = message.getExtension("delay", "urn:xmpp:delay");
             Date sentDate;
             if (inf != null) {
                 sentDate = inf.getStamp();

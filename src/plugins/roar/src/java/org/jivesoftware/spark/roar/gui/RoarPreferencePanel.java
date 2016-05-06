@@ -366,7 +366,7 @@ public class RoarPreferencePanel extends JPanel {
 
     private void colorListMouseClicked(MouseEvent e) {
         if (e.getSource() == _singleColorlist) {
-            ColorTypes key = (ColorTypes) _singleColorlist.getSelectedValue();
+            ColorTypes key = _singleColorlist.getSelectedValue();
             _singleColorpicker.setColor(_colormap.get(key));
         }
     }
@@ -447,7 +447,7 @@ public class RoarPreferencePanel extends JPanel {
 
     private void stateChangedSingleColorPicker(ChangeEvent e) {
         if (e.getSource() instanceof JSlider) {
-            _colormap.put((ColorTypes) _singleColorlist.getSelectedValue(), _singleColorpicker.getColor());
+            _colormap.put( _singleColorlist.getSelectedValue(), _singleColorpicker.getColor());
         }
     }
 

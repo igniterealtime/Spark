@@ -237,7 +237,7 @@ public class JMFInit extends Frame implements Runnable {
                 String rname;
 
                 for (int i = 0; i < listSize; i++) {
-                    rname = (String)(rendList.elementAt(i));
+                    rname = rendList.elementAt(i);
                     if (rname.equals(dar)) { // DAR is in the registry
                         found = true;
                         rendList.removeElementAt(i);

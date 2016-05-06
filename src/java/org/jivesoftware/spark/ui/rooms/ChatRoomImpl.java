@@ -589,7 +589,7 @@ public class ChatRoomImpl extends ChatRoom {
     public void insertMessage(Message message) {
         // Debug info
         super.insertMessage(message);
-        MessageEvent messageEvent = (MessageEvent)message.getExtension("x", "jabber:x:event");
+        MessageEvent messageEvent = message.getExtension("x", "jabber:x:event");
         if (messageEvent != null) {
             checkEvents(message.getFrom(), message.getPacketID(), messageEvent);
         }

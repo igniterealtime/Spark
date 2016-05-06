@@ -207,13 +207,13 @@ public class JavaMixer {
         infos = mixer.getSourceLineInfo();
         for (Line.Info info : infos) {
             if (info instanceof Port.Info || info instanceof DataLine.Info) {
-                portInfoList.add((Line.Info) info);
+                portInfoList.add( info );
             }
         }
         infos = mixer.getTargetLineInfo();
         for (Line.Info info1 : infos) {
             if (info1 instanceof Port.Info || info1 instanceof DataLine.Info) {
-                portInfoList.add((Line.Info) info1);
+                portInfoList.add( info1 );
             }
         }
         return portInfoList.toArray(EMPTY_PORT_INFO_ARRAY);

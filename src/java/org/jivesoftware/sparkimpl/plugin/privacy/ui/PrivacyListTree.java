@@ -286,7 +286,7 @@ public class PrivacyListTree extends JPanel implements SparkPrivacyListListener 
 
         addList.addActionListener( e -> {
 
-            String s = (String) JOptionPane.showInputDialog(_comp, Res.getString("privacy.dialog.add.list"), Res.getString("privacy.menu.add.list"), JOptionPane.PLAIN_MESSAGE);
+            String s = JOptionPane.showInputDialog(_comp, Res.getString("privacy.dialog.add.list"), Res.getString("privacy.menu.add.list"), JOptionPane.PLAIN_MESSAGE);
             if ((s != null) && (s.length() > 0)) {
                 _pManager.createPrivacyList(s);
                 addListNode(new PrivacyTreeNode(_pManager.getPrivacyList(s)), _top);

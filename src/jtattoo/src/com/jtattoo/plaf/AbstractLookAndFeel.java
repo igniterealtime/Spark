@@ -95,7 +95,7 @@ abstract public class AbstractLookAndFeel extends MetalLookAndFeel {
         };
 
         for (int i = 0; i < systemColors.length; i += 2) {
-            table.put((String) systemColors[i], systemColors[i + 1]);
+            table.put( systemColors[i], systemColors[i + 1]);
         }
     }
 
@@ -451,7 +451,7 @@ abstract public class AbstractLookAndFeel extends MetalLookAndFeel {
         }
 
         MetalLookAndFeel.setCurrentTheme(theme);
-        myTheme = (AbstractTheme) theme;
+        myTheme = theme;
         if (isWindowDecorationOn()) {
             DecorationHelper.decorateWindows(Boolean.TRUE);
         } else {

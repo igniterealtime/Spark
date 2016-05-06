@@ -113,8 +113,8 @@ public class ConversationHistoryPlugin implements Plugin {
 
 		    contacts.setSelectedIndex(contacts.locationToIndex(e
 			    .getPoint()));
-		    String user = jidMap.get((JLabel) contacts
-			    .getSelectedValue());
+		    String user = jidMap.get( contacts
+			    .getSelectedValue() );
 		    ContactItem contact = SparkManager.getContactList()
 			    .getContactItemByJID(user);
 		    SparkManager.getContactList().setSelectedUser(contact.getJID());

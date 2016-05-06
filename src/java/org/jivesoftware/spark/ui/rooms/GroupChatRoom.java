@@ -646,7 +646,7 @@ public class GroupChatRoom extends ChatRoom {
 	final Message message = (Message) stanza;
 	lastMessage = message;
 	if (message.getType() == Message.Type.groupchat) {
-	    DelayInformation inf = (DelayInformation) message.getExtension("delay",
+	    DelayInformation inf = message.getExtension("delay",
 		    "urn:xmpp:delay");
 	    Date sentDate;
 	    if (inf != null) {
@@ -767,7 +767,7 @@ public class GroupChatRoom extends ChatRoom {
 	final String from = presence.getFrom();
 	final String nickname = XmppStringUtils.parseResource(from);
 
-	MUCUser mucUser = (MUCUser) stanza.getExtension("x",
+	MUCUser mucUser = stanza.getExtension("x",
 		"http://jabber.org/protocol/muc#user");
 	Set<MUCUser.Status> status = new HashSet<>();
 	if (mucUser != null) {

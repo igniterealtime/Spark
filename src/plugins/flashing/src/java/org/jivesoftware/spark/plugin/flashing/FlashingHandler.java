@@ -58,7 +58,7 @@ public class FlashingHandler implements NativeHandler {
 
 	@Override
 	public void stopFlashing(Window window) {
-		flasher.stopFlashing((JFrame) window);
+		flasher.stopFlashing( window );
 	}
 
 }

@@ -116,7 +116,7 @@ public class PrivacyPlugin implements Plugin {
                                     if (item != null) {
                                         try
                                         {
-                                            activeList.removeItem(((ContactItem) item).getJID());
+                                            activeList.removeItem( item.getJID());
                                             activeList.save();
                                         }
                                         catch ( SmackException.NotConnectedException e )

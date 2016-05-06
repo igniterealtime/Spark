@@ -812,7 +812,7 @@ moveToOffline(moveToOfflineContactItem);
                     final Set<String> userGroupSet = new HashSet<>();
                     jids = addresses.iterator();
                     while (jids.hasNext()) {
-                        jid = (String)jids.next();
+                        jid = jids.next();
                         rosterEntry = roster.getEntry(jid);
 
                         boolean unfiled = true;

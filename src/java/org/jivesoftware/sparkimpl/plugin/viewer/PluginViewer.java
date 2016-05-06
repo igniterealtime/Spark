@@ -144,7 +144,7 @@ public class PluginViewer extends JPanel implements Plugin {
 
     tabbedPane.addChangeListener( changeEvent -> {
     if (tabbedPane.getSelectedComponent().equals(
-        ((JViewport)availablePanel.getParent()).getParent())) {
+        availablePanel.getParent().getParent())) {
         loadAvailablePlugins();
         loaded = true;
     }

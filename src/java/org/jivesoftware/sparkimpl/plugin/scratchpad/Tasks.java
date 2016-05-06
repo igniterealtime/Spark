@@ -222,7 +222,7 @@ public class Tasks implements PrivateData {
      */
     public static void deleteTask(Task task) {
     	
-    	List<TaskUI> taskList = (List<TaskUI>) ScratchPadPlugin.getTaskList();
+    	List<TaskUI> taskList = ScratchPadPlugin.getTaskList();
     	
     	// find and delete task in list
     	for ( int i = 0; i < taskList.size(); i++ ) {

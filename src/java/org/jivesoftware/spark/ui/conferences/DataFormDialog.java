@@ -133,7 +133,7 @@ public class DataFormDialog extends JPanel {
                         box.addItem(value);
                     }
                     if (valueList.size() > 0) {
-                        String defaultValue = (String)valueList.get(0);
+                        String defaultValue = valueList.get(0);
                         box.setSelectedItem(defaultValue);
                     }
 

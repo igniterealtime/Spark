@@ -487,7 +487,7 @@ public class RosterDialog implements ActionListener {
 
 		for (ReportedData.Row row : data.getRows() ) {
 		    if (!row.getValues(columnnames.get(0)).isEmpty()) {
-			String s = (String) row.getValues(columnnames.get(0))
+			String s = row.getValues(columnnames.get(0))
 				.get(0);
 			final JMenuItem item = new JMenuItem(s);
 			popup.add(item);

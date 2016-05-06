@@ -65,7 +65,7 @@ public class TestTranslator {
             }
 
             Integer id = Integer.valueOf(translationID);
-            TranslatorUtil.TranslationType type = (TranslatorUtil.TranslationType) translationMap.get(id);
+            TranslatorUtil.TranslationType type = translationMap.get(id);
 
             if (type == null) {
                 System.out.println("Not a valid translation type.");

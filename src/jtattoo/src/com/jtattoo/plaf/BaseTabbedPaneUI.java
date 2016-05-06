@@ -920,7 +920,7 @@ public class BaseTabbedPaneUI extends TabbedPaneUI implements SwingConstants {
             tabPane.putClientProperty("html", v);
         }
 
-        SwingUtilities.layoutCompoundLabel((JComponent) tabPane,
+        SwingUtilities.layoutCompoundLabel( tabPane,
                 metrics, title, icon,
                 SwingUtilities.CENTER,
                 SwingUtilities.CENTER,
