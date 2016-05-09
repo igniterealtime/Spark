@@ -72,7 +72,6 @@ import org.jivesoftware.spark.ui.MessageEventListener;
 import org.jivesoftware.spark.ui.RosterDialog;
 import org.jivesoftware.spark.ui.VCardPanel;
 import org.jivesoftware.spark.util.ModelUtil;
-import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.transcripts.ChatTranscript;
 import org.jivesoftware.sparkimpl.plugin.transcripts.ChatTranscripts;
@@ -139,11 +138,11 @@ public class ChatRoomImpl extends ChatRoom {
         loadHistory();
 
         // Register StanzaListeners
-        StanzaFilter fromFilter = new FromMatchesFilter(participantJID, false);
+        StanzaFilter fromFilter = new FromMatchesFilter(participantJID, true);
         StanzaFilter orFilter = new OrFilter(new StanzaTypeFilter(Presence.class), new StanzaTypeFilter(Message.class));
         StanzaFilter andFilter = new AndFilter(orFilter, fromFilter);
 
-        SparkManager.getConnection().addAsyncStanzaListener(this, andFilter);
+        SparkManager.getConnection().addSyncStanzaListener(this, andFilter);
 
         // The roomname will be the participantJID
         this.roomname = participantJID;
