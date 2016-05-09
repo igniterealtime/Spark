@@ -56,6 +56,7 @@ import org.jivesoftware.smack.filter.StanzaTypeFilter;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.chatstates.ChatState;
 import org.jivesoftware.smackx.chatstates.ChatStateManager;
+import org.jivesoftware.smackx.chatstates.packet.ChatStateExtension;
 import org.jivesoftware.smackx.xevent.MessageEventManager;
 import org.jivesoftware.smackx.jiveproperties.packet.JivePropertiesExtension;
 import org.jivesoftware.smackx.xevent.packet.MessageEvent;
@@ -291,6 +292,9 @@ public class ChatRoomImpl extends ChatRoom {
         // information.
         MessageEventManager.addNotificationsRequests(message, true, false, false, true);
 
+        // Set chat state to 'active'
+        message.addExtension( new ChatStateExtension( ChatState.active ) );
+
         // Send the message that contains the notifications request
         try {
             fireOutgoingMessageSending(message);
@@ -299,7 +303,6 @@ public class ChatRoomImpl extends ChatRoom {
         catch (Exception ex) {
             Log.error("Error sending message", ex);
         }
-        setChatState( ChatState.active );
     }
 
     public String getRoomname() {
@@ -558,7 +561,7 @@ public class ChatRoomImpl extends ChatRoom {
     /**
      * The last time this chat room sent or received a message.
      *
-     * @return the last time this chat room sent or receieved a message.
+     * @return the last time this chat room sent or receieved a message.sendChatState
      */
     public long getLastActivity() {
         return lastActivity;
@@ -722,18 +725,17 @@ public class ChatRoomImpl extends ChatRoom {
             return;
         }
 
-        // XEP-0085: SHOULD NOT send 'gone' in a MUC.
-        if ( state == ChatState.gone )
-        {
-            return;
-        }
+        final Message message = new Message();
+        message.setType( Message.Type.chat );
+        message.setTo( participantJID );
+        message.setFrom( SparkManager.getSessionManager().getJID());
 
-        XMPPConnection connection = SparkManager.getConnection();
-        boolean connected = connection.isConnected();
-        if (connected)
-        {
-            Chat chat = org.jivesoftware.smack.chat.ChatManager.getInstanceFor( connection ).createChat(getParticipantJID(), null);
-            ChatStateManager.getInstance(connection).setCurrentState(state, chat);
+        if (threadID == null) {
+            threadID = StringUtils.randomString(6);
         }
+        message.setThread(threadID);
+        message.addExtension( new ChatStateExtension( state ) );
+
+        SparkManager.getConnection().sendStanza( message );
     }
 }

@@ -1179,6 +1179,12 @@ public class GroupChatRoom extends ChatRoom
             return;
         }
 
+        // XEP-0085: SHOULD NOT send 'gone' in a MUC.
+        if ( state == ChatState.gone )
+        {
+            return;
+        }
+
         for ( final String occupant : chat.getOccupants() )
         {
             final String occupantNickname = XmppStringUtils.parseResource(occupant);
