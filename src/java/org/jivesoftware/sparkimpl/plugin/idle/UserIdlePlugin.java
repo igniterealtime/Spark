@@ -21,11 +21,8 @@ package org.jivesoftware.sparkimpl.plugin.idle;
 import com.sun.jna.platform.win32.Kernel32;
 import com.sun.jna.platform.win32.User32;
 import com.sun.jna.platform.win32.WinDef.HMODULE;
-import com.sun.jna.platform.win32.WinDef.LRESULT;
-import com.sun.jna.platform.win32.WinDef.WPARAM;
 import com.sun.jna.platform.win32.WinUser;
 import com.sun.jna.platform.win32.WinUser.HHOOK;
-import com.sun.jna.platform.win32.WinUser.KBDLLHOOKSTRUCT;
 import com.sun.jna.platform.win32.WinUser.LowLevelKeyboardProc;
 import com.sun.jna.platform.win32.WinUser.MSG;
 import org.jivesoftware.Spark;
@@ -55,24 +52,12 @@ public class UserIdlePlugin extends TimerTask implements Plugin {
     public static Presence latestPresence;
 	private KeyHook keyHook;
     private static boolean DesktopLockStatus;
-	public static int IdlePresencePriority = -2;
+	private static String statustext;
 
 	public static boolean getDesktopLockStatus() {
 
         return DesktopLockStatus;
     }
-	private static boolean presencePriority() {
-		if (PhonePlugin.offPhonePresence !=null) {
-			int pp1 = PhonePlugin.offPhonePresence.getPriority();
-			int pp2 = IdlePresencePriority;
-
-			if (pp1 == pp2) {
-				return true;
-			} else {
-				return false;
-			}
-		} else return false;
-	}
 
     @Override
     public boolean canShutDown() {
@@ -107,8 +92,7 @@ public class UserIdlePlugin extends TimerTask implements Plugin {
     private void setIdle() {
 
         latestPresence = SparkManager.getWorkspace().getStatusBar().getPresence();
-        String statustext;
-        
+                
         if (latestPresence.getStatus().equals(Res.getString("status.online")) || latestPresence.getStatus().equals(Res.getString("status.free.to.chat"))) {
     		statustext = pref.getIdleMessage();
     	} else {
@@ -118,7 +102,7 @@ public class UserIdlePlugin extends TimerTask implements Plugin {
         if (latestPresence.isAway()) {
             Log.debug("UserIdlePlugin: Presence is already set to away");
         } else {
-        	Presence statusPresence = new Presence(Presence.Type.available, StringUtils.modifyWildcards(statustext), IdlePresencePriority, Presence.Mode.away);
+			Presence statusPresence = new Presence(Presence.Type.available, StringUtils.modifyWildcards(statustext), 1, Presence.Mode.away);
         	SparkManager.getSessionManager().changePresence(statusPresence);
             Log.debug("UserIdlePlugin: Setting idle presence");
         }
@@ -128,16 +112,10 @@ public class UserIdlePlugin extends TimerTask implements Plugin {
 
     private void setOnline() {
 		DesktopLockStatus = false;
-		Log.debug("presencePriority returned " +presencePriority());
+
 		if (PhonePlugin.onPhonePresence !=null) {
 			SparkManager.getSessionManager().changePresence(PhonePlugin.onPhonePresence);
 			Log.debug("UserIdlePlugin: Returning from idle/lock - On the Phone");
-
-		} else if ((latestPresence.getStatus().contains("On the phone")) && ((PhonePlugin.offPhonePresence !=null)
-				&& (PhonePlugin.offPhonePresence.getStatus().contentEquals(pref.getIdleMessage())))) {
-			Presence presence = new Presence(Presence.Type.available, "Online", 1, Presence.Mode.available);
-			SparkManager.getSessionManager().changePresence(presence);
-			Log.debug("UserIdlePlugin: Setting presence to Online based on PhonePlugin last status");
 
 		} else if ((latestPresence.getStatus().contains("On the phone")) && (PhonePlugin.offPhonePresence !=null)
 				&& ((PhonePlugin.offPhonePresence.getMode().equals(Presence.Mode.dnd))
@@ -146,10 +124,10 @@ public class UserIdlePlugin extends TimerTask implements Plugin {
 			Log.debug("UserIdlePlugin: Matched DND/XA - Setting presence from PhonePlugin");
 
 		} else if (((latestPresence.getStatus().contains("On the phone")) && (PhonePlugin.offPhonePresence !=null)
-				&& (presencePriority()))) {
+				&& (PhonePlugin.offPhonePresence.getStatus().contentEquals(statustext)))) {
 			Presence presence = new Presence(Presence.Type.available, PhonePlugin.offPhonePresence.getStatus(), 1, Presence.Mode.available);
 			SparkManager.getSessionManager().changePresence(presence);
-			Log.debug("UserIdlePlugin: Setting presence from PhonePlugin based on presencePriority value");
+			Log.debug("UserIdlePlugin: Setting presence from PhonePlugin ....");
 
 		} else if ((latestPresence.getStatus().contains("On the phone")) && (PhonePlugin.offPhonePresence !=null)) {
 				SparkManager.getSessionManager().changePresence(PhonePlugin.offPhonePresence);
@@ -260,48 +238,41 @@ public class UserIdlePlugin extends TimerTask implements Plugin {
 	public void initKeyHook() {
 		System.setProperty( "jna.predictable_field_order","true");
 
-	    thread = new Thread(new Runnable() {
+	    thread = new Thread( () -> {
+            final User32 lib = User32.INSTANCE;
+            HMODULE hMod = Kernel32.INSTANCE.GetModuleHandle(null);
+            keyboardHook = ( nCode, wParam, info ) -> {
+if (nCode >= 0) {
+switch (wParam.intValue()) {
+// case WinUser.WM_KEYUP:
+case WinUser.WM_KEYDOWN:
+// case WinUser.WM_SYSKEYUP:
+case WinUser.WM_SYSKEYDOWN:
+// do active
+userActive();
+}
+}
+return lib.CallNextHookEx(hhk, nCode, wParam,
+info.getPointer());
+};
+            hhk = lib.SetWindowsHookEx(WinUser.WH_KEYBOARD_LL,
+                keyboardHook, hMod, 0);
 
-		@Override
-		public void run() {
-		    final User32 lib = User32.INSTANCE;
-		    HMODULE hMod = Kernel32.INSTANCE.GetModuleHandle(null);
-		    keyboardHook = new LowLevelKeyboardProc() {
-			public LRESULT callback(int nCode, WPARAM wParam,
-				KBDLLHOOKSTRUCT info) {
-			    if (nCode >= 0) {
-				switch (wParam.intValue()) {
-				// case WinUser.WM_KEYUP:
-				case WinUser.WM_KEYDOWN:
-				    // case WinUser.WM_SYSKEYUP:
-				case WinUser.WM_SYSKEYDOWN:
-				    // do active
-				    userActive();
-				}
-			    }
-			    return lib.CallNextHookEx(hhk, nCode, wParam,
-				    info.getPointer());
-			}
-		    };
-		    hhk = lib.SetWindowsHookEx(WinUser.WH_KEYBOARD_LL,
-			    keyboardHook, hMod, 0);
-
-		    // This bit never returns from GetMessage
-		    int result;
-		    MSG msg = new MSG();
-		    while ((result = lib.GetMessage(msg, null, 0, 0)) != 0) {
-			if (result == -1) {
-			    System.err.println("error in get message");
-			    break;
-			} else {
-			    System.err.println("got message");
-			    lib.TranslateMessage(msg);
-			    lib.DispatchMessage(msg);
-			}
-		    }
-		    lib.UnhookWindowsHookEx(hhk);
-		}
-	    });
+            // This bit never returns from GetMessage
+            int result;
+            MSG msg = new MSG();
+            while ((result = lib.GetMessage(msg, null, 0, 0)) != 0) {
+            if (result == -1) {
+                System.err.println("error in get message");
+                break;
+            } else {
+                System.err.println("got message");
+                lib.TranslateMessage(msg);
+                lib.DispatchMessage(msg);
+            }
+            }
+            lib.UnhookWindowsHookEx(hhk);
+        } );
 	    thread.start();
 	}
 

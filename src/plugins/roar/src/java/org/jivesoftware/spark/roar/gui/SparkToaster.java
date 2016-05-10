@@ -33,8 +33,6 @@ import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
@@ -186,12 +184,10 @@ public class SparkToaster {
 			    GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0,
 				    0), 0, 0));
 
-	    titleLabel.getCloseButton().addActionListener(new ActionListener() {
-		public void actionPerformed(ActionEvent e) {
-		    setVisible(false);
-		    dispose();
-		}
-	    });
+	    titleLabel.getCloseButton().addActionListener( e -> {
+            setVisible(false);
+            dispose();
+        } );
 
 	    if (border != null) {
 		mainPanel.setBorder(border);
@@ -310,11 +306,7 @@ public class SparkToaster {
 
 		toaster.setLocation(posx, screenHeight);
 		try {
-		    EventQueue.invokeAndWait(new Runnable() {
-			public void run() {
-			    toaster.setVisible(true);
-			}
-		    });
+		    EventQueue.invokeAndWait( () -> toaster.setVisible(true) );
 		} catch (Exception e) {
 		    Log.error(e);
 		}

@@ -24,10 +24,10 @@ import info.growl.GrowlCallbackListener;
 import info.growl.GrowlException;
 import info.growl.GrowlUtils;
 
-import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.util.log.Log;
+import org.jxmpp.util.XmppStringUtils;
 
 /**
  * GrowlTalker Class to send Messages to the GrowlInstance
@@ -53,7 +53,7 @@ public class GrowlTalker implements GrowlCallbackListener {
 
     @Override
     public void notificationWasClicked(String arg0) {
-	String jid = StringUtils.parseBareAddress(arg0);
+	String jid = XmppStringUtils.parseBareJid(arg0);
 	ChatRoom room = SparkManager.getChatManager().getChatRoom(jid);
 
 	SparkManager.getChatManager().getChatContainer().activateChatRoom(room);

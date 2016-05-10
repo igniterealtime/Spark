@@ -24,6 +24,7 @@ import java.util.List;
 
 import org.jivesoftware.fastpath.FastpathPlugin;
 import org.jivesoftware.fastpath.FpRes;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.workgroup.packet.RoomInvitation;
@@ -50,10 +51,7 @@ public class InvitationManager {
      * @param transfer    true if this is a transfer.
      */
     public static void transferOrInviteUser(ChatRoom chatRoom, String workgroup, String sessionID, final String jid, String messageText, final boolean transfer) {
-        messageText = StringUtils.escapeForXML(messageText);
-
-
-        String msg = messageText != null ? messageText : FpRes.getString("message.please.join.me.in.conference");
+        String msg = messageText != null ? StringUtils.escapeForXML(messageText).toString() : FpRes.getString("message.please.join.me.in.conference");
         try {
             if (!transfer) {
             	// TODO : CHECK FASHPATH
@@ -64,7 +62,7 @@ public class InvitationManager {
                 FastpathPlugin.getAgentSession().sendRoomTransfer(RoomTransfer.Type.user, jid, sessionID, msg);
             }
         }
-        catch (XMPPException e) {
+        catch (XMPPException | SmackException e) {
             Log.error(e);
         }
 
@@ -88,10 +86,7 @@ public class InvitationManager {
      * @param transfer    true if this is a transfer.
      */
     public static void transferOrInviteToQueue(ChatRoom chatRoom, String workgroup, String sessionID, final String jid, String messageText, final boolean transfer) {
-        messageText = StringUtils.escapeForXML(messageText);
-
-
-        String msg = messageText != null ? messageText : FpRes.getString("message.please.join.me.in.conference");
+        String msg = messageText != null ? StringUtils.escapeForXML(messageText).toString() : FpRes.getString("message.please.join.me.in.conference");
         try {
             if (!transfer) {
             	// TODO : CHECK FASHPATH
@@ -102,7 +97,7 @@ public class InvitationManager {
                 FastpathPlugin.getAgentSession().sendRoomTransfer(RoomTransfer.Type.queue, jid, sessionID, msg);
             }
         }
-        catch (XMPPException e) {
+        catch (XMPPException | SmackException e) {
             Log.error(e);
         }
 
@@ -126,10 +121,7 @@ public class InvitationManager {
      * @param transfer    true if this is a transfer.
      */
     public static void transferOrInviteToWorkgroup(ChatRoom chatRoom, String workgroup, String sessionID, final String jid, String messageText, final boolean transfer) {
-        messageText = StringUtils.escapeForXML(messageText);
-
-
-        String msg = messageText != null ? messageText : FpRes.getString("message.please.join.me.in.conference");
+        String msg = messageText != null ? StringUtils.escapeForXML(messageText).toString() : FpRes.getString("message.please.join.me.in.conference");
         try {
             if (!transfer) {
             	// TODO : CHECK FASHPATH
@@ -139,7 +131,7 @@ public class InvitationManager {
                 FastpathPlugin.getAgentSession().sendRoomTransfer(RoomTransfer.Type.workgroup, jid, sessionID, msg);
             }
         }
-        catch (XMPPException e) {
+        catch (XMPPException | SmackException e) {
             Log.error(e);
         }
 

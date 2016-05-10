@@ -181,8 +181,8 @@ public class ColorPick extends JPanel implements ChangeListener {
 
 	Container c = _preview.getParent();
 	if (c instanceof JPanel) {
-	    ((JPanel) c).repaint();
-	    ((JPanel) c).revalidate();
+	    c.repaint();
+	    c.revalidate();
 	}
     }
 

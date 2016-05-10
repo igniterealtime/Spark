@@ -39,17 +39,18 @@ import org.jivesoftware.MainWindow;
 import org.jivesoftware.MainWindowListener;
 import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Default;
-import org.jivesoftware.smack.PacketListener;
-import org.jivesoftware.smack.Roster;
-import org.jivesoftware.smack.filter.PacketFilter;
-import org.jivesoftware.smack.filter.PacketTypeFilter;
+import org.jivesoftware.smack.SmackException;
+import org.jivesoftware.smack.StanzaListener;
+import org.jivesoftware.smack.roster.Roster;
+import org.jivesoftware.smack.filter.StanzaFilter;
+import org.jivesoftware.smack.filter.StanzaTypeFilter;
 import org.jivesoftware.smack.packet.Message;
-import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.packet.Presence;
-import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.debugger.EnhancedDebuggerWindow;
-import org.jivesoftware.smackx.packet.DelayInformation;
-import org.jivesoftware.smackx.packet.VCard;
+import org.jivesoftware.smackx.delay.packet.DelayInformation;
+import org.jivesoftware.smackx.jiveproperties.packet.JivePropertiesExtension;
+import org.jivesoftware.smackx.vcardtemp.packet.VCard;
 import org.jivesoftware.spark.component.tabbedPane.SparkTabbedPane;
 import org.jivesoftware.spark.filetransfer.SparkTransferManager;
 import org.jivesoftware.spark.search.SearchManager;
@@ -70,8 +71,7 @@ import org.jivesoftware.sparkimpl.plugin.bookmarks.BookmarkPlugin;
 import org.jivesoftware.sparkimpl.plugin.gateways.GatewayPlugin;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 import org.jivesoftware.sparkimpl.plugin.transcripts.ChatTranscriptPlugin;
-import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
-import org.jivesoftware.sparkimpl.plugin.privacy.PrivacyManager;
+import org.jxmpp.util.XmppStringUtils;
 
 /**
  * The inner Container for Spark. The Workspace is the container for all plugins into the Spark
@@ -88,7 +88,7 @@ import org.jivesoftware.sparkimpl.plugin.privacy.PrivacyManager;
  * <p/>
  * <li>Retrieve the ContactList.
  */
-public class Workspace extends JPanel implements PacketListener {
+public class Workspace extends JPanel implements StanzaListener {
 
 	private static final long serialVersionUID = 7076407890063933765L;
 	private SparkTabbedPane workspacePane;
@@ -226,28 +226,34 @@ public class Workspace extends JPanel implements PacketListener {
         // Add presence and message listeners
         // we listen for these to force open a 1-1 peer chat window from other operators if
         // one isn't already open
-        PacketFilter workspaceMessageFilter = new PacketTypeFilter(Message.class);
+        StanzaFilter workspaceMessageFilter = new StanzaTypeFilter(Message.class);
 
         // Add the packetListener to this instance
-        SparkManager.getSessionManager().getConnection().addPacketListener(this, workspaceMessageFilter);
+        SparkManager.getSessionManager().getConnection().addAsyncStanzaListener(this, workspaceMessageFilter);
 
         // Make presence available to anonymous requests, if from anonymous user in the system.
-        PacketListener workspacePresenceListener = new PacketListener() {
-            public void processPacket(Packet packet) {
-                Presence presence = (Presence)packet;
-                if (presence.getProperty("anonymous") != null) {
-                    boolean isAvailable = statusBox.getPresence().getMode() == Presence.Mode.available;
-                    Presence reply = new Presence(Presence.Type.available);
-                    if (!isAvailable) {
-                        reply.setType(Presence.Type.unavailable);
-                    }
-                    reply.setTo(presence.getFrom());
-                    SparkManager.getSessionManager().getConnection().sendPacket(reply);
+        StanzaListener workspacePresenceListener = stanza -> {
+            Presence presence = (Presence)stanza;
+            JivePropertiesExtension extension = (JivePropertiesExtension) presence.getExtension( JivePropertiesExtension.NAMESPACE );
+            if (extension != null && extension.getProperty("anonymous") != null) {
+                boolean isAvailable = statusBox.getPresence().getMode() == Presence.Mode.available;
+                Presence reply = new Presence(Presence.Type.available);
+                if (!isAvailable) {
+                    reply.setType(Presence.Type.unavailable);
+                }
+                reply.setTo(presence.getFrom());
+                try
+                {
+                    SparkManager.getSessionManager().getConnection().sendStanza(reply);
+                }
+                catch ( SmackException.NotConnectedException e )
+                {
+                    Log.warning( "Unable to send presence reply to " + reply.getTo(), e );
                 }
             }
         };
 
-        SparkManager.getSessionManager().getConnection().addPacketListener(workspacePresenceListener, new PacketTypeFilter(Presence.class));
+        SparkManager.getSessionManager().getConnection().addAsyncStanzaListener(workspacePresenceListener, new StanzaTypeFilter(Presence.class));
 
         // Until we have better plugin management, will init after presence updates.
         gatewayPlugin = new GatewayPlugin();
@@ -275,7 +281,7 @@ public class Workspace extends JPanel implements PacketListener {
                 pluginManager.initializePlugins();
 
                 // Subscriptions are always manual
-                Roster roster = SparkManager.getConnection().getRoster();
+                Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
                 roster.setSubscriptionMode(Roster.SubscriptionMode.manual);
             }
         }, 2000);
@@ -297,21 +303,28 @@ public class Workspace extends JPanel implements PacketListener {
     /**
      * This is to handle agent to agent conversations.
      *
-     * @param packet the smack packet to process.
+     * @param stanza the smack packet to process.
      */
-    public void processPacket(final Packet packet) {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                handleIncomingPacket(packet);
+    public void processPacket(final Stanza stanza) {
+        SwingUtilities.invokeLater( () -> {
+            try
+            {
+                handleIncomingPacket(stanza);
             }
-        });
+            catch ( SmackException.NotConnectedException e )
+            {
+                // This would be odd: not being connected while receiving a stanza...
+                Log.warning( "Unable to handle incoming stanza: " + stanza , e );
+            }
+        } );
     }
 
 
-    private void handleIncomingPacket(Packet packet) {
+    private void handleIncomingPacket(Stanza stanza) throws SmackException.NotConnectedException
+    {
         // We only handle message packets here.
-        if (packet instanceof Message) {
-            final Message message = (Message)packet;
+        if (stanza instanceof Message) {
+            final Message message = (Message)stanza;
             boolean isGroupChat = message.getType() == Message.Type.groupchat;
 
             // Check if Conference invite. If so, do not handle here.
@@ -320,10 +333,11 @@ public class Workspace extends JPanel implements PacketListener {
             }
 
             final String body = message.getBody();
-            boolean broadcast = message.getProperty("broadcast") != null;
+            final JivePropertiesExtension extension = ((JivePropertiesExtension) message.getExtension( JivePropertiesExtension.NAMESPACE ));
+            final boolean broadcast = extension != null && extension.getProperty( "broadcast" ) != null;
 
             // Handle offline message.
-            DelayInformation offlineInformation = (DelayInformation)message.getExtension("delay", "urn:xmpp:delay");
+            DelayInformation offlineInformation = message.getExtension("delay", "urn:xmpp:delay");
             if (offlineInformation != null && (Message.Type.chat == message.getType() ||
                 Message.Type.normal == message.getType())) {
                 handleOfflineMessage(message);
@@ -339,11 +353,11 @@ public class Workspace extends JPanel implements PacketListener {
             }
 
             // Create new chat room for Agent Invite.
-            final String from = packet.getFrom();
+            final String from = stanza.getFrom();
             final String host = SparkManager.getSessionManager().getServerAddress();
 
             // Don't allow workgroup notifications to come through here.
-            final String bareJID = StringUtils.parseBareAddress(from);
+            final String bareJID = XmppStringUtils.parseBareJid(from);
             if (host.equalsIgnoreCase(from) || from == null) {
                 return;
             }
@@ -369,14 +383,15 @@ public class Workspace extends JPanel implements PacketListener {
      *
      * @param message The Offline message.
      */
-    private void handleOfflineMessage(Message message) {
+    private void handleOfflineMessage(Message message) throws SmackException.NotConnectedException
+    {
         if(!ModelUtil.hasLength(message.getBody())){
             return;
         }
 
-        String bareJID = StringUtils.parseBareAddress(message.getFrom());
+        String bareJID = XmppStringUtils.parseBareJid(message.getFrom());
         ContactItem contact = contactList.getContactItemByJID(bareJID);
-        String nickname = StringUtils.parseName(bareJID);
+        String nickname = XmppStringUtils.parseLocalpart(bareJID);
         if (contact != null) {
             nickname = contact.getDisplayName();
         }
@@ -393,8 +408,8 @@ public class Workspace extends JPanel implements PacketListener {
         room.addToTranscript(message, true);
 
         // Send display and notified message back.
-        SparkManager.getMessageEventManager().sendDeliveredNotification(message.getFrom(), message.getPacketID());
-        SparkManager.getMessageEventManager().sendDisplayedNotification(message.getFrom(), message.getPacketID());
+        SparkManager.getMessageEventManager().sendDeliveredNotification(message.getFrom(), message.getStanzaId());
+        SparkManager.getMessageEventManager().sendDisplayedNotification(message.getFrom(), message.getStanzaId());
     }
 
     /**
@@ -405,7 +420,7 @@ public class Workspace extends JPanel implements PacketListener {
      */
     private void createOneToOneRoom(String bareJID, Message message) {
         ContactItem contact = contactList.getContactItemByJID(bareJID);
-        String nickname = StringUtils.parseName(bareJID);
+        String nickname = XmppStringUtils.parseLocalpart(bareJID);
         if (contact != null) {
             nickname = contact.getDisplayName();
         }

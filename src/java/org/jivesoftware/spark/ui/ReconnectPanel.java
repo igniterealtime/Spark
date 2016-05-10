@@ -23,8 +23,6 @@ import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.TimerTask;
 
 import javax.swing.JEditorPane;
@@ -33,7 +31,9 @@ import javax.swing.text.html.HTMLEditorKit;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.smack.AbstractXMPPConnection;
 import org.jivesoftware.smack.ConnectionListener;
+import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.util.ModelUtil;
@@ -68,11 +68,7 @@ public class ReconnectPanel extends JPanel implements ConnectionListener {
 
         layoutComponents();
 
-        retryButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent actionEvent) {
-                attemptReconnection();
-            }
-        });
+        retryButton.addActionListener( actionEvent -> attemptReconnection() );
 
 
         setBackground(Color.white);
@@ -98,7 +94,7 @@ public class ReconnectPanel extends JPanel implements ConnectionListener {
     private void reconnect() {
         try {
             if (closedOnError) {
-            	SparkManager.getConnection().connect();
+                ((AbstractXMPPConnection)SparkManager.getConnection()).connect();
             }
             else {
                 SparkManager.getMainWindow().logout(false);
@@ -120,14 +116,13 @@ public class ReconnectPanel extends JPanel implements ConnectionListener {
             reason = Res.getString("message.generic.reconnect.message");
         }
 
-        StringBuilder builder = new StringBuilder();
-        builder.append("<html><body><table height=100% width=100%><tr><td align=center>");
-        builder.append("<b><u>");
-        builder.append(reason);
-        builder.append("</u></b>");
-        builder.append("</td></tr></table></body></html>");
+        String builder = "<html><body><table height=100% width=100%><tr><td align=center>" +
+                "<b><u>" +
+                reason +
+                "</u></b>" +
+                "</td></tr></table></body></html>";
 
-        pane.setText(builder.toString());
+        pane.setText( builder );
     }
 
     private void layoutComponents() {
@@ -158,6 +153,20 @@ public class ReconnectPanel extends JPanel implements ConnectionListener {
         closedOnError = onError;
     }
 
+
+    @Override
+    public void connected( XMPPConnection xmppConnection )
+    {
+        retryButton.setVisible(false);
+        retryButton.setEnabled(true);
+    }
+
+    @Override
+    public void authenticated( XMPPConnection xmppConnection, boolean b )
+    {
+        retryButton.setVisible(false);
+        retryButton.setEnabled(true);
+    }
 
     public void connectionClosed() {
         retryButton.setVisible(true);

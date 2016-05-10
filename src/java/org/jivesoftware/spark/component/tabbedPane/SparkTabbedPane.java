@@ -31,7 +31,6 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.dnd.DnDConstants;
-import java.awt.dnd.DragGestureEvent;
 import java.awt.dnd.DragGestureListener;
 import java.awt.dnd.DragSource;
 import java.awt.dnd.DragSourceDragEvent;
@@ -56,14 +55,12 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
-import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import org.jivesoftware.Spark;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.ui.ChatRoomNotFoundException;
-import org.jivesoftware.spark.ui.ContactList;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
@@ -71,7 +68,7 @@ import org.jivesoftware.spark.util.log.Log;
 public class SparkTabbedPane extends JPanel {
 	private static final long serialVersionUID = -9007068462231539973L;
 	private static final String NAME = "SparkTabbedPane";
-	private List<SparkTabbedPaneListener> listeners = new ArrayList<SparkTabbedPaneListener>();
+	private List<SparkTabbedPaneListener> listeners = new ArrayList<>();
 	private JTabbedPane pane = null;
 	private Icon closeInactiveButtonIcon;
 	private Icon closeActiveButtonIcon;
@@ -103,15 +100,13 @@ public class SparkTabbedPane extends JPanel {
 
 		setLayout(new BorderLayout());
 		add(pane);
-		ChangeListener changeListener = new ChangeListener() {
-			public void stateChanged(ChangeEvent changeEvent) {
-				JTabbedPane sourceTabbedPane = (JTabbedPane) changeEvent.getSource();
-				int index = sourceTabbedPane.getSelectedIndex();
-				if (index >= 0) {
-					fireTabSelected(getTabAt(index), getTabAt(index).getComponent(), index);
-				}
-			}
-		};
+		ChangeListener changeListener = changeEvent -> {
+            JTabbedPane sourceTabbedPane = (JTabbedPane) changeEvent.getSource();
+            int index = sourceTabbedPane.getSelectedIndex();
+            if (index >= 0) {
+                fireTabSelected(getTabAt(index), getTabAt(index).getComponent(), index);
+            }
+        };
 		pane.addChangeListener(changeListener);
 
 		closeInactiveButtonIcon = SparkRes.getImageIcon(SparkRes.CLOSE_WHITE_X_IMAGE);
@@ -531,19 +526,14 @@ public class SparkTabbedPane extends JPanel {
 
 	    };
 
-	    final DragGestureListener dgl = new DragGestureListener() {
-
-			@Override
-			public void dragGestureRecognized(DragGestureEvent event) {
-                dragTabIndex = pane.indexAtLocation(event.getDragOrigin().x, event.getDragOrigin().y);
-                try {
-                    event.startDrag(DragSource.DefaultMoveDrop, t, dsl);
-                } catch(Exception idoe) {
-                	Log.error(idoe);
-                }
-			}
-
-	    };
+	    final DragGestureListener dgl = event -> {
+dragTabIndex = pane.indexAtLocation(event.getDragOrigin().x, event.getDragOrigin().y);
+try {
+event.startDrag(DragSource.DefaultMoveDrop, t, dsl);
+} catch(Exception idoe) {
+Log.error(idoe);
+}
+        };
 
 	    final DropTargetListener dtl = new DropTargetListener() {
 

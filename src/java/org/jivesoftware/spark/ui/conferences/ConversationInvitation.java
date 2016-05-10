@@ -21,15 +21,15 @@ package org.jivesoftware.spark.ui.conferences;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.smack.XMPPConnection;
-import org.jivesoftware.smack.packet.Message;
-import org.jivesoftware.smack.util.StringUtils;
-import org.jivesoftware.smackx.muc.MultiUserChat;
+import org.jivesoftware.smack.SmackException;
+import org.jivesoftware.smackx.muc.MultiUserChatManager;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.WrappedLabel;
 import org.jivesoftware.spark.ui.ContainerComponent;
 import org.jivesoftware.spark.util.ResourceUtils;
+import org.jivesoftware.spark.util.log.Log;
+import org.jxmpp.util.XmppStringUtils;
 
 import java.awt.Color;
 import java.awt.FlowLayout;
@@ -63,7 +63,6 @@ public class ConversationInvitation extends JPanel implements ContainerComponent
     private String password;
     private String inviter;
 
-    private String invitationDateFormat = ((SimpleDateFormat)SimpleDateFormat.getTimeInstance(SimpleDateFormat.MEDIUM)).toPattern();
     private String tabTitle;
     private String frameTitle;
     private String descriptionText;
@@ -71,14 +70,12 @@ public class ConversationInvitation extends JPanel implements ContainerComponent
     /**
      * Builds a new Conference Invitation UI.
      *
-     * @param conn     the XMPPConnection the invitation came in on.
      * @param roomName the name of the room.
      * @param inviter  the person who sent the invitation.
      * @param reason   the reason they want to talk.
      * @param password the password of the room if any.
-     * @param message  any additional message.
      */
-    public ConversationInvitation(XMPPConnection conn, final String roomName, final String inviter, String reason, final String password, Message message) {
+    public ConversationInvitation( final String roomName, final String inviter, String reason, final String password ) {
         this.roomName = roomName;
         this.password = password;
         this.inviter = inviter;
@@ -119,7 +116,8 @@ public class ConversationInvitation extends JPanel implements ContainerComponent
         // Set Date Label
         dateLabel.setFont(new Font("dialog", Font.BOLD, 12));
         dateLabel.setText(Res.getString("date") + ":");
-        final SimpleDateFormat formatter = new SimpleDateFormat(invitationDateFormat);
+        String invitationDateFormat = ( (SimpleDateFormat) SimpleDateFormat.getTimeInstance( SimpleDateFormat.MEDIUM ) ).toPattern();
+        final SimpleDateFormat formatter = new SimpleDateFormat( invitationDateFormat );
         final String date = formatter.format(new Date());
         dateLabelValue.setText(date);
         dateLabelValue.setFont(new Font("dialog", Font.PLAIN, 12));
@@ -156,11 +154,18 @@ public class ConversationInvitation extends JPanel implements ContainerComponent
     public void actionPerformed(ActionEvent actionEvent) {
         final Object obj = actionEvent.getSource();
         if (obj == joinButton) {
-            String name = StringUtils.parseName(roomName);
+            String name = XmppStringUtils.parseLocalpart(roomName);
             ConferenceUtils.enterRoomOnSameThread(name, roomName, password);
         }
         else {
-            MultiUserChat.decline(SparkManager.getConnection(), roomName, inviter, "No thank you");
+            try
+            {
+                MultiUserChatManager.getInstanceFor( SparkManager.getConnection() ).decline( roomName, inviter, "No thank you");
+            }
+            catch ( SmackException.NotConnectedException e )
+            {
+                Log.warning( "unable to decline invatation from " + inviter + " to join room " + roomName, e );
+            }
         }
 
         // Close Container

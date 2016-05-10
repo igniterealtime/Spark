@@ -44,7 +44,7 @@ public class BernsteinTitlePane extends BaseTitlePane {
         }
         Graphics2D g2D = (Graphics2D) g;
         Composite composite = g2D.getComposite();
-        AlphaComposite alpha = null;
+        AlphaComposite alpha;
         if (backgroundImage != null) {
             alpha = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alphaValue);
         } else {

@@ -19,33 +19,33 @@
  */
 package org.jivesoftware.spark.roar.gui;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.HashMap;
+import java.util.List;
 
 import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
+import javax.swing.DefaultListModel;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import org.jivesoftware.spark.component.VerticalFlowLayout;
+import org.jivesoftware.spark.roar.RoarProperties;
 import org.jivesoftware.spark.roar.RoarResources;
-import org.jivesoftware.spark.roar.displaytype.BottomRight;
-import org.jivesoftware.spark.roar.displaytype.SparkToasterHandler;
-import org.jivesoftware.spark.roar.displaytype.TopRight;
+import org.jivesoftware.spark.roar.displaytype.RoarDisplayType;
 import org.jivesoftware.spark.util.ColorPick;
 
 /**
@@ -54,268 +54,447 @@ import org.jivesoftware.spark.util.ColorPick;
  * @author wolf.posdorfer
  * 
  */
-public class RoarPreferencePanel extends JPanel implements ChangeListener {
+public class RoarPreferencePanel extends JPanel {
 
     private static final long serialVersionUID = -5334936099931215962L;
 
-    private Image _backgroundimage;
+    // private Image _backgroundimage;
 
     private JTextField _duration;
     private JTextField _amount;
-    private JCheckBox _checkbox;
-    
-    private JList _colorlist;
-    private JComboBox _typelist;
+    private JCheckBox _enabledCheckbox;
 
-    private ColorPick _colorpicker;
-    
-    private HashMap<ColorTypes,Color> _colormap;
+    private JComboBox<String> _typelist;
 
-    private String[] _typelistdata;
-    
+    private JList<ColorTypes> _singleColorlist;
+    private ColorPick _singleColorpicker;
 
+    private HashMap<ColorTypes, Color> _colormap;
+
+    private HashMap<String, Object> _components;
+
+    private Insets INSETS = new Insets(5, 5, 5, 5);
+    
     public RoarPreferencePanel() {
-	
-	_colormap = new HashMap<ColorTypes, Color>();
-	for(ColorTypes e : ColorTypes.values())
-	{
-	    _colormap.put(e, Color.BLACK );
-	}
 
-	JPanel contents = new JPanel();
-	contents.setLayout(new GridBagLayout());
-	contents.setBackground(new Color(0,0,0,0));
-	this.setLayout(new VerticalFlowLayout());
-	contents.setBorder(BorderFactory.createTitledBorder(RoarResources.getString("roar.settings")));
-	
-	
-	add(contents);
-	ClassLoader cl = getClass().getClassLoader();
-	_backgroundimage = new ImageIcon(cl.getResource("background2.png"))
-		.getImage();
-		
-	_colorpicker = new ColorPick(false);
-	
-	_colorpicker.addChangeListener(this);
-	
-	_duration = new JTextField();
-	_amount = new JTextField();
-	
-	_checkbox = new JCheckBox(RoarResources.getString("roar.enabled"));
-	
-	ColorTypes[] colortypesdata = {ColorTypes.BACKGROUNDCOLOR, ColorTypes.HEADERCOLOR, ColorTypes.TEXTCOLOR};
-	_colorlist = new JList(colortypesdata);
-	
-	_typelistdata = new String[3];
-	_typelistdata[0] = TopRight.getLocalizedName();
-	_typelistdata[1] = BottomRight.getLocalizedName();
-	_typelistdata[2] = SparkToasterHandler.getLocalizedName();
-	
-	_typelist = new JComboBox(_typelistdata);
+        _components = new HashMap<>();
+        _colormap = new HashMap<>();
+        for (ColorTypes e : ColorTypes.values()) {
+            _colormap.put(e, Color.BLACK);
+        }
 
+        this.setLayout(new BorderLayout());
 
-	Insets in = new Insets(5,5,5,5);
+        // ClassLoader cl = getClass().getClassLoader();
+        // _backgroundimage = new ImageIcon(cl.getResource("background2.png")).getImage();
 
-	contents.add(_colorlist, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, in, 0, 0));
-	contents.add(_colorpicker, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, in, 0, 0));
+        _duration = new JTextField();
+        _amount = new JTextField();
+        _enabledCheckbox = new JCheckBox(RoarResources.getString("roar.enabled"));
 
-	contents.add(new JLabel(RoarResources.getString("roar.duration")), new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, in, 0, 0));
-	contents.add(_duration, new GridBagConstraints(1, 1, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, in, 0, 0));
+        _singleColorpicker = new ColorPick(false);
+        _singleColorpicker.addChangeListener( e -> stateChangedSingleColorPicker(e) );
 
-	contents.add(new JLabel(RoarResources.getString("roar.amount")), new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, in, 0, 0));
-	contents.add(_amount, new GridBagConstraints(1, 2, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, in, 0, 0));
+        DefaultListModel<ColorTypes> listModel = new DefaultListModel<>();
+        listModel.addElement(ColorTypes.BACKGROUNDCOLOR);
+        listModel.addElement(ColorTypes.HEADERCOLOR);
+        listModel.addElement(ColorTypes.TEXTCOLOR);
+        _singleColorlist = new JList<>(listModel);
 
-	
-	contents.add(_checkbox, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, in, 0, 0));
+        List<RoarDisplayType> roarDisplayTypes = RoarProperties.getInstance().getDisplayTypes();
+        String[] _typelistdata = new String[ roarDisplayTypes.size() ];
+        for (int i = 0; i < roarDisplayTypes.size(); i++) {
+            _typelistdata[i] = roarDisplayTypes.get(i).getLocalizedName();
+        }
+            
+        _typelist = new JComboBox<>( _typelistdata );
+        _typelist.addActionListener( e -> updateWarningLabel(getDisplayTypeClass().getWarningMessage()) );
 
-	
-	contents.add(new JLabel(RoarResources.getString("roar.location")), new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, in, 0, 0));
-
-	contents.add(_typelist, new GridBagConstraints(1, 4, 1, 1, 0.8, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, in, 0, 0));
-
-
-	
-	_colorlist.addMouseListener(new MouseAdapter() {
-	    @Override
-	    public void mouseClicked(MouseEvent e) {
-		colorListMouseClicked(e);
-	    }
-	});
+        add(makeGeneralSettingsPanel());
+        _singleColorlist.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent e) {
+                colorListMouseClicked(e);
+            }
+        });
     }
 
-   
-    /**
-     * returns the Current Backgroundcolor of Popups
-     * @return
-     */
-    public Color getColor() {
-	return _colorpicker.getColor();
-    }
-    
-    /**
-     * Sets the Background Color for Popups
-     * @param c
-     */
-    public void setBackgroundColor(Color c) {
-	_colorpicker.setColor(c);
-    }
-    
-    /**
-     * Are Popups enabled
-     * @return boolean
-     */
-    public boolean getShowingPopups() {
-	return _checkbox.isSelected();
+    private JComponent makeGeneralSettingsPanel() {
+        JPanel generalPanel = new JPanel();
+        generalPanel.setLayout(new GridBagLayout());
+        generalPanel.setBorder(BorderFactory.createTitledBorder(RoarResources.getString("roar.settings")));
+
+        int rowcount = 0;
+        generalPanel.add(_enabledCheckbox,
+                new GridBagConstraints(0, rowcount, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, INSETS, 0, 0));
+
+        rowcount++;
+        generalPanel.add(new JLabel(RoarResources.getString("roar.amount")),
+                new GridBagConstraints(0, rowcount, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, INSETS, 0, 0));
+        generalPanel.add(_amount,
+                new GridBagConstraints(1, rowcount, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, INSETS, 0, 0));
+
+        rowcount++;
+        generalPanel.add(new JLabel(RoarResources.getString("roar.location")),
+                new GridBagConstraints(0, rowcount, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, INSETS, 0, 0));
+        generalPanel.add(_typelist,
+                new GridBagConstraints(1, rowcount, 1, 1, 0.8, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, INSETS, 0, 0));
+        
+        
+        rowcount++;
+        JLabel warningLabel = new JLabel("<html>placeholder :-)</html>");
+        //warningLabel.setForeground(Color.RED);
+        generalPanel.add(warningLabel, 
+                new GridBagConstraints(1, rowcount, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, INSETS, 0, 0));
+
+        
+        _components.put("label.warning", warningLabel);
+        
+        JPanel panel = new JPanel(new VerticalFlowLayout());
+        panel.add(generalPanel);
+        panel.add(makeSinglePanel());
+        panel.add(makeGroupChatPanel());
+        panel.add(makeKeyWordPanel());
+
+        JScrollPane scroll = new JScrollPane(panel);
+
+        return scroll;
     }
 
-    /**
-     * Set Popups enabled/disabled
-     * @param pop
-     */
-    public void setShowingPopups(boolean pop) {
-	_checkbox.setSelected(pop);
+    private JPanel makeSinglePanel() {
+        JPanel singlePanel = new JPanel();
+        singlePanel.setLayout(new GridBagLayout());
+        singlePanel.setBorder(BorderFactory.createTitledBorder(RoarResources.getString("roar.single")));
+        JCheckBox disableSingle = new JCheckBox(RoarResources.getString("roar.single.disable"));
+
+        // row
+        int rowcount = 0;
+        singlePanel.add(_singleColorlist,
+                new GridBagConstraints(0, rowcount, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, INSETS, 0, 0));
+        singlePanel.add(_singleColorpicker,
+                new GridBagConstraints(1, rowcount, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, INSETS, 0, 0));
+
+        rowcount++;
+        singlePanel.add(new JLabel(RoarResources.getString("roar.duration")),
+                new GridBagConstraints(0, rowcount, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, INSETS, 0, 0));
+        singlePanel.add(_duration,
+                new GridBagConstraints(1, rowcount, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, INSETS, 0, 0));
+
+        rowcount++;
+        singlePanel.add(disableSingle,
+                new GridBagConstraints(0, rowcount, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, INSETS, 0, 0));
+
+        _components.put("roar.disable.single", disableSingle);
+        return singlePanel;
     }
-    
+
+    private JPanel makeGroupChatPanel() {
+        JPanel groupPanel = new JPanel();
+        groupPanel.setLayout(new GridBagLayout());
+        groupPanel.setBorder(BorderFactory.createTitledBorder(RoarResources.getString("roar.group")));
+
+        final JCheckBox enableDifferentGroup = new JCheckBox(RoarResources.getString("roar.group.different"));
+        JCheckBox disableGroup = new JCheckBox(RoarResources.getString("roar.group.disable"));
+        JTextField durationGroup = new JTextField();
+
+        enableDifferentGroup.addActionListener( e -> toggleDifferentSettingsForGroup(enableDifferentGroup.isSelected()) );
+
+        int rowcount = 0;
+        groupPanel.add(enableDifferentGroup,
+                new GridBagConstraints(0, rowcount, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, INSETS, 0, 0));
+
+        rowcount++;
+        groupPanel.add(new JLabel(RoarResources.getString("roar.duration")),
+                new GridBagConstraints(0, rowcount, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, INSETS, 0, 0));
+        groupPanel.add(durationGroup,
+                new GridBagConstraints(1, rowcount, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, INSETS, 0, 0));
+
+        rowcount++;
+        groupPanel.add(disableGroup,
+                new GridBagConstraints(0, rowcount, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, INSETS, 0, 0));
+
+        _components.put("group.different.enabled", enableDifferentGroup);
+        _components.put("group.duration", durationGroup);
+        _components.put("group.disable", disableGroup);
+
+        return groupPanel;
+    }
+
+    private JPanel makeKeyWordPanel() {
+        JPanel panel = new JPanel();
+        panel.setLayout(new GridBagLayout());
+        panel.setBorder(BorderFactory.createTitledBorder(RoarResources.getString("roar.keyword")));
+
+        final JCheckBox differentKeyword = new JCheckBox(RoarResources.getString("roar.keyword.different"));
+        differentKeyword.addActionListener( e -> toggleDifferentSettingsForKeyword(differentKeyword.isSelected()) );
+
+        JTextField durationKeyword = new JTextField();
+        JTextField keywords = new JTextField();
+
+        int rowcount = 0;
+        panel.add(differentKeyword,
+                new GridBagConstraints(0, rowcount, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, INSETS, 0, 0));
+
+        rowcount++;
+        panel.add(new JLabel(RoarResources.getString("roar.duration")),
+                new GridBagConstraints(0, rowcount, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, INSETS, 0, 0));
+        panel.add(durationKeyword,
+                new GridBagConstraints(1, rowcount, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, INSETS, 0, 0));
+
+        rowcount++;
+        panel.add(new JLabel(RoarResources.getString("roar.keyword.keyword")),
+                new GridBagConstraints(0, rowcount, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, INSETS, 0, 0));
+        panel.add(keywords, new GridBagConstraints(1, rowcount, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, INSETS, 0, 0));
+
+        _components.put("keyword.different.enabled", differentKeyword);
+        _components.put("keyword.duration", durationKeyword);
+        _components.put("keywords", keywords);
+
+        return panel;
+    }
+
+    public void initializeValues() {
+        RoarProperties props = RoarProperties.getInstance();
+
+        _enabledCheckbox.setSelected(props.getShowingPopups());
+        _amount.setText("" + props.getMaximumPopups());
+        setDisplayType(props.getDisplayType());
+
+        setColor(ColorTypes.BACKGROUNDCOLOR, props.getBackgroundColor());
+        setColor(ColorTypes.BACKGROUNDCOLOR_GROUP, props.getColor(RoarProperties.BACKGROUNDCOLOR_GROUP, props.getBackgroundColor()));
+        setColor(ColorTypes.BACKGROUNDCOLOR_KEYWORD, props.getColor(RoarProperties.BACKGROUNDCOLOR_KEYWORD, props.getBackgroundColor()));
+        setColor(ColorTypes.HEADERCOLOR, props.getHeaderColor());
+        setColor(ColorTypes.HEADERCOLOR_GROUP, props.getColor(RoarProperties.HEADERCOLOR_GROUP, props.getHeaderColor()));
+        setColor(ColorTypes.HEADERCOLOR_KEYWORD, props.getColor(RoarProperties.HEADERCOLOR_KEYWORD, props.getHeaderColor()));
+        setColor(ColorTypes.TEXTCOLOR, props.getTextColor());
+        setColor(ColorTypes.TEXTCOLOR_GROUP, props.getColor(RoarProperties.TEXTCOLOR_GROUP, props.getTextColor()));
+        setColor(ColorTypes.TEXTCOLOR_KEYWORD, props.getColor(RoarProperties.TEXTCOLOR_KEYWORD, props.getTextColor()));
+
+        retrieveComponent("roar.disable.single", JCheckBox.class).setSelected(props.getBoolean("roar.disable.single", false));
+        _duration.setText("" + props.getDuration());
+        retrieveComponent("keyword.duration", JTextField.class).setText("" + props.getInt("keyword.duration"));
+        retrieveComponent("group.duration", JTextField.class).setText("" + props.getInt("group.duration"));
+        retrieveComponent("keywords", JTextField.class).setText(props.getProperty("keywords"));
+
+        retrieveComponent("group.disable", JCheckBox.class).setSelected(props.getBoolean("group.disable", false));
+
+        boolean group_different_enabled = props.getBoolean("group.different.enabled", false);
+        retrieveComponent("group.different.enabled", JCheckBox.class).setSelected(group_different_enabled);
+        toggleDifferentSettingsForGroup(group_different_enabled);
+
+        boolean keyword_different_enabled = props.getBoolean("keyword.different.enabled", false);
+        retrieveComponent("keyword.different.enabled", JCheckBox.class).setSelected(keyword_different_enabled);
+        toggleDifferentSettingsForKeyword(keyword_different_enabled);
+    }
+
+    public void storeValues() {
+        RoarProperties props = RoarProperties.getInstance();
+        props.setShowingPopups(_enabledCheckbox.isSelected());
+        props.setDisplayType(this.getDisplayType());
+        props.setMaximumPopups(this.getAmount());
+
+        props.setDuration(this.getDuration());
+        props.setInt("group.duration", getIntFromTextField("group.duration"));
+        props.setInt("keyword.duration", getIntFromTextField("keyword.duration"));
+
+        props.setKeywords(retrieveComponent("keywords", JTextField.class).getText());
+
+        props.setBackgroundColor(getColor(ColorTypes.BACKGROUNDCOLOR));
+        props.setColor(RoarProperties.BACKGROUNDCOLOR_GROUP, getColor(ColorTypes.BACKGROUNDCOLOR_GROUP));
+        props.setColor(RoarProperties.BACKGROUNDCOLOR_KEYWORD, getColor(ColorTypes.BACKGROUNDCOLOR_KEYWORD));
+        props.setTextColor(getColor(ColorTypes.TEXTCOLOR));
+        props.setColor(RoarProperties.TEXTCOLOR_GROUP, getColor(ColorTypes.TEXTCOLOR_GROUP));
+        props.setColor(RoarProperties.TEXTCOLOR_KEYWORD, getColor(ColorTypes.TEXTCOLOR_KEYWORD));
+        props.setHeaderColor(getColor(ColorTypes.HEADERCOLOR));
+        props.setColor(RoarProperties.HEADERCOLOR_GROUP, getColor(ColorTypes.HEADERCOLOR_GROUP));
+        props.setColor(RoarProperties.HEADERCOLOR_KEYWORD, getColor(ColorTypes.HEADERCOLOR_KEYWORD));
+
+        props.setBoolean("roar.disable.single", retrieveComponent("roar.disable.single", JCheckBox.class).isSelected());
+        props.setBoolean("group.different.enabled", retrieveComponent("group.different.enabled", JCheckBox.class).isSelected());
+        props.setBoolean("keyword.different.enabled", retrieveComponent("keyword.different.enabled", JCheckBox.class).isSelected());
+        props.setBoolean("group.disable", retrieveComponent("group.disable", JCheckBox.class).isSelected());
+
+        props.save();
+    }
+
+    @SuppressWarnings("unchecked")
+    private <K> K retrieveComponent(String key, Class<K> classs) {
+        return (K) _components.get(key);
+    }
+
+    private int getIntFromTextField(String key) {
+        JTextField field = retrieveComponent(key, JTextField.class);
+
+        try {
+            return Integer.parseInt(field.getText());
+        } catch (Exception e) {
+            return 3000;
+        }
+    }
+
     /**
      * returns the popup duration
+     * 
      * @return int
      */
     public int getDuration() {
-	try {
-	    return Integer.parseInt(_duration.getText());
-	} catch (Exception e) {
-	    return 3000;
-	}
+        try {
+            return Integer.parseInt(_duration.getText());
+        } catch (Exception e) {
+            return 3000;
+        }
     }
-    
-    /**
-     * Sets Popup duration 
-     * @param duration
-     */
-    public void setDuration(int duration)
-    {
-	_duration.setText(""+duration);
-    }
-    
-    /**
-     * Set the Amount of Windows on Screen
-     * @param am
-     */
-    public void setAmount(int am)
-    {
-	_amount.setText(""+am);
-    }
-    
+
     /**
      * Amount of Windows on Screen
+     * 
      * @return int
      */
-    public int getAmount()
-    {
-	return Integer.parseInt(_amount.getText());
+    public int getAmount() {
+        return Integer.parseInt(_amount.getText());
     }
-    
-    
-    public Color getColor(ColorTypes type)
-    {
-	return _colormap.get(type);	
+
+    public Color getColor(ColorTypes type) {
+        return _colormap.get(type);
     }
-    
-    public void setColor(ColorTypes type, Color color)
-    {
-	_colormap.put(type, color);
+
+    public void setColor(ColorTypes type, Color color) {
+        _colormap.put(type, color);
     }
-    
+
     private void colorListMouseClicked(MouseEvent e) {
-
-	ColorTypes key = (ColorTypes) _colorlist.getSelectedValue();
-
-	_colorpicker.setColor(_colormap.get(key));
-
+        if (e.getSource() == _singleColorlist) {
+            ColorTypes key = _singleColorlist.getSelectedValue();
+            _singleColorpicker.setColor(_colormap.get(key));
+        }
     }
-    
+
     public void setDisplayType(String t) {
-
-	if (t.equals(TopRight.getName())) {
-	    _typelist.setSelectedItem(TopRight.getLocalizedName());
-	}
-	else if(t.equals(SparkToasterHandler.getName()))
-	{
-	    _typelist.setSelectedItem(SparkToasterHandler.getLocalizedName());
-	}	
-	else {
-	    _typelist.setSelectedItem(BottomRight.getLocalizedName());
-	}
+        for (RoarDisplayType type : RoarProperties.getInstance().getDisplayTypes()) {
+            if (type.getName().equals(t)) {
+                _typelist.setSelectedItem(type.getLocalizedName());
+                updateWarningLabel(type.getWarningMessage());
+                return;
+            }
+        }
     }
 
+    
+    public void updateWarningLabel(String text) {
+        retrieveComponent("label.warning", JLabel.class).setText("<html>" + text + "</html>");
+    }
+    
+    
+    public RoarDisplayType getDisplayTypeClass() {
+        String o = (String) _typelist.getSelectedItem();
+
+        for (RoarDisplayType type : RoarProperties.getInstance().getDisplayTypes()) {
+            if (type.getLocalizedName().equals(o)) {
+                return type;
+            }
+        }
+        return RoarProperties.getInstance().getDisplayTypes().get(0); 
+        // topright is default
+    }
+    
     public String getDisplayType() {
-	String o = (String) _typelist.getSelectedItem();
-	if (o.equals(TopRight.getLocalizedName())) 
-	{
-	    return TopRight.getName();
-	} 
-	else if (o.equals(SparkToasterHandler.getLocalizedName())) 
-	{
-	    return SparkToasterHandler.getName();
-	}
-	else 
-	{
-	    return BottomRight.getName();
-	}
-
+        return getDisplayTypeClass().getName();
     }
-    
-    
-    // ====================================================================================
-    // ====================================================================================
-    // ====================================================================================
-    public void paintComponent(Graphics g) {
-	// CENTER LOGO
-	// int imgwi = _backgroundimage.getWidth(null);
-	// int imghe = _backgroundimage.getHeight(null);
-	// int x = this.getSize().width;
-	// x = (x/2)-(imgwi/2) < 0 ? 0 : (x/2)-(imgwi/2) ;
-	//
-	// int y = this.getSize().height;
-	// y = (y/2) -(imghe/2)< 0 ? 0 : y/2-(imghe/2) ;
 
-	
-	// LOGO in bottom right corner
+    private void toggleDifferentSettingsForKeyword(boolean isSelected) {
 
-	int x = this.getSize().width - _backgroundimage.getWidth(null);
-	int y = this.getSize().height - _backgroundimage.getHeight(null);
-	
-	super.paintComponent(g);
-	g.drawImage(_backgroundimage, x, y, this);
+        DefaultListModel<ColorTypes> model = (DefaultListModel<ColorTypes>) _singleColorlist.getModel();
+        JTextField duration = retrieveComponent("keyword.duration", JTextField.class);
+
+        if (isSelected) {
+            if (!model.contains(ColorTypes.BACKGROUNDCOLOR_KEYWORD)) {
+                model.addElement(ColorTypes.BACKGROUNDCOLOR_KEYWORD);
+                model.addElement(ColorTypes.HEADERCOLOR_KEYWORD);
+                model.addElement(ColorTypes.TEXTCOLOR_KEYWORD);
+            }
+            duration.setEnabled(true);
+        } else {
+            model.removeElement(ColorTypes.BACKGROUNDCOLOR_KEYWORD);
+            model.removeElement(ColorTypes.HEADERCOLOR_KEYWORD);
+            model.removeElement(ColorTypes.TEXTCOLOR_KEYWORD);
+            duration.setEnabled(false);
+            duration.setText(_duration.getText());
+        }
     }
-    
-    
+
+    private void toggleDifferentSettingsForGroup(boolean isSelected) {
+
+        DefaultListModel<ColorTypes> model = (DefaultListModel<ColorTypes>) _singleColorlist.getModel();
+        JTextField duration = retrieveComponent("group.duration", JTextField.class);
+
+        if (isSelected) {
+            if (!model.contains(ColorTypes.BACKGROUNDCOLOR_GROUP)) {
+                model.addElement(ColorTypes.BACKGROUNDCOLOR_GROUP);
+                model.addElement(ColorTypes.HEADERCOLOR_GROUP);
+                model.addElement(ColorTypes.TEXTCOLOR_GROUP);
+            }
+            duration.setEnabled(true);
+        } else {
+            model.removeElement(ColorTypes.BACKGROUNDCOLOR_GROUP);
+            model.removeElement(ColorTypes.HEADERCOLOR_GROUP);
+            model.removeElement(ColorTypes.TEXTCOLOR_GROUP);
+            duration.setEnabled(false);
+            duration.setText(_duration.getText());
+        }
+    }
+
+    private void stateChangedSingleColorPicker(ChangeEvent e) {
+        if (e.getSource() instanceof JSlider) {
+            _colormap.put( _singleColorlist.getSelectedValue(), _singleColorpicker.getColor());
+        }
+    }
+
+    // ============================================================================================================
+    // ============================================================================================================
+    // ============================================================================================================
+    // public void paintComponent(Graphics g) {
+    // CENTER LOGO
+    // int imgwi = _backgroundimage.getWidth(null);
+    // int imghe = _backgroundimage.getHeight(null);
+    // int x = this.getSize().width;
+    // x = (x/2)-(imgwi/2) < 0 ? 0 : (x/2)-(imgwi/2) ;
+    //
+    // int y = this.getSize().height;
+    // y = (y/2) -(imghe/2)< 0 ? 0 : y/2-(imghe/2) ;
+    //
+    // LOGO in bottom right corner
+    //
+    // int x = this.getSize().width - _backgroundimage.getWidth(null);
+    // int y = this.getSize().height - _backgroundimage.getHeight(null);
+    //
+    // super.paintComponent(g);
+    // g.drawImage(_backgroundimage, x, y, this);
+    // }
+    // ============================================================================================================
+    // ============================================================================================================
+    // ============================================================================================================
     public enum ColorTypes {
-	BACKGROUNDCOLOR (RoarResources.getString("roar.background")),
-	HEADERCOLOR (RoarResources.getString("roar.header")),
-	TEXTCOLOR (RoarResources.getString("roar.text"));
+        BACKGROUNDCOLOR(RoarResources.getString("roar.background")), 
+        HEADERCOLOR(RoarResources.getString("roar.header")), 
+        TEXTCOLOR(RoarResources.getString("roar.text")), 
+        
+        BACKGROUNDCOLOR_GROUP(RoarResources.getString("roar.background.group")), 
+        HEADERCOLOR_GROUP(RoarResources.getString("roar.header.group")), 
+        TEXTCOLOR_GROUP(RoarResources.getString("roar.text.group")), 
+        
+        BACKGROUNDCOLOR_KEYWORD(RoarResources.getString("roar.background.keyword")), 
+        HEADERCOLOR_KEYWORD(RoarResources.getString("roar.header.keyword")), 
+        TEXTCOLOR_KEYWORD(RoarResources.getString("roar.text.keyword"));
 
-	private String string;
+        private String string;
 
-	private ColorTypes(String c) {
-	    string = c;
-	}
-	
-	public String toString()
-	{
-	    return string;
-	}
+        private ColorTypes(String c) {
+            string = c;
+        }
+
+        public String toString() {
+            return string;
+        }
 
     }
 
-
-    @Override
-    public void stateChanged(ChangeEvent e) {
-	if(e.getSource() instanceof JSlider)
-	{
-	   _colormap.put( (ColorTypes)_colorlist.getSelectedValue() , _colorpicker.getColor());
-	}
-    }
-     
-    
 }

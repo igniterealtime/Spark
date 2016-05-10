@@ -20,9 +20,10 @@
 package org.jivesoftware.sparkimpl.plugin.chat;
 
 import org.jivesoftware.resource.Res;
-import org.jivesoftware.smack.Roster;
-import org.jivesoftware.smack.RosterEntry;
-import org.jivesoftware.smack.RosterGroup;
+import org.jivesoftware.smack.SmackException;
+import org.jivesoftware.smack.roster.Roster;
+import org.jivesoftware.smack.roster.RosterEntry;
+import org.jivesoftware.smack.roster.RosterGroup;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.spark.PresenceManager;
 import org.jivesoftware.spark.SparkManager;
@@ -35,7 +36,6 @@ import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.UIComponentRegistry;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
-import org.jivesoftware.sparkimpl.settings.local.PreferenceListener;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
 import javax.swing.AbstractAction;
@@ -168,12 +168,7 @@ public class ContactListAssistantPlugin implements Plugin {
 
         updateAvatarsInContactList();
 
-        SettingsManager.addPreferenceListener(new PreferenceListener() {
-            @Override
-            public void preferencesChanged(LocalPreferences preference) {
-                updateAvatarsInContactList();
-            }
-        });
+        SettingsManager.addPreferenceListener( preference -> updateAvatarsInContactList() );
     }
     
 	private boolean isContactItemInGroup(Collection<ContactItem> contactItems, ContactGroup group) {
@@ -195,7 +190,7 @@ public class ContactListAssistantPlugin implements Plugin {
      */
     private void moveItems(Collection<ContactItem> contactItems, String groupName) {
         final ContactGroup contactGroup = getContactGroup(groupName);
-        ContactGroup oldGroup = null;
+        ContactGroup oldGroup;
         for (ContactItem contactItem : contactItems) {
         	oldGroup = getContactGroup(contactItem.getGroupName());
         	if (oldGroup.isSharedGroup()) {
@@ -284,7 +279,7 @@ public class ContactListAssistantPlugin implements Plugin {
         SwingWorker worker = new SwingWorker() {
             @Override
             public Object construct() {
-                Roster roster = SparkManager.getConnection().getRoster();
+                Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
                 RosterEntry entry = roster.getEntry(item.getJID());
 
                 RosterGroup groupFound = null;
@@ -299,7 +294,7 @@ public class ContactListAssistantPlugin implements Plugin {
                             }
                             group.addEntry(entry);
                         }
-                        catch (XMPPException e1) {
+                        catch (XMPPException | SmackException e1) {
                             Log.error(e1);
                             return false;
                         }
@@ -316,7 +311,7 @@ public class ContactListAssistantPlugin implements Plugin {
                     	SparkManager.getContactList().toggleGroupVisibility(groupFound.getName(), true);
                         }  
                     }
-                    catch (XMPPException e) {
+                    catch (XMPPException | SmackException e) {
                         Log.error(e);
                     }
                 }
@@ -355,7 +350,7 @@ public class ContactListAssistantPlugin implements Plugin {
         }
 
         // Remove entry from Roster Group
-        Roster roster = SparkManager.getConnection().getRoster();
+        Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
         RosterEntry entry = roster.getEntry(item.getJID());
 
         RosterGroup rosterGroup = null;
@@ -366,7 +361,7 @@ public class ContactListAssistantPlugin implements Plugin {
                     rosterGroup = group;
                     group.removeEntry(entry);
                 }
-                catch (XMPPException e1) {
+                catch (XMPPException | SmackException e1) {
                     return false;
                 }
             }

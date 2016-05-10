@@ -40,36 +40,31 @@ import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.smack.Chat;
+import org.jivesoftware.smack.XMPPConnection;
+import org.jivesoftware.smack.chat.Chat;
 import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Presence;
-import org.jivesoftware.smackx.ChatState;
+import org.jivesoftware.smackx.chatstates.ChatState;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.NativeHandler;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.Plugin;
-import org.jivesoftware.spark.ui.PresenceListener;
 import org.jivesoftware.spark.ui.status.CustomStatusItem;
 import org.jivesoftware.spark.ui.status.StatusBar;
 import org.jivesoftware.spark.ui.status.StatusItem;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
-import org.jivesoftware.smack.ChatManagerListener;
-import org.jivesoftware.smackx.ChatStateListener;
+import org.jivesoftware.smack.chat.ChatManagerListener;
+import org.jivesoftware.smackx.chatstates.ChatStateListener;
 
 public class SysTrayPlugin implements Plugin, NativeHandler, ChatManagerListener, ChatStateListener {
-	private static String MESSAGE_COUNTER_REG_EXP = "\\[\\d+\\] ";
-    private JPopupMenu popupMenu = new JPopupMenu();
+	private JPopupMenu popupMenu = new JPopupMenu();
 
-    private JMenuItem openMenu;
-    private JMenuItem minimizeMenu;
-    private JMenuItem exitMenu;
-    private JMenu statusMenu;
-    private JMenuItem logoutMenu;
+	private JMenu statusMenu;
 
-    private LocalPreferences pref = SettingsManager.getLocalPreferences();
+	private LocalPreferences pref = SettingsManager.getLocalPreferences();
     private ImageIcon availableIcon;
     private ImageIcon dndIcon;
     private ImageIcon awayIcon;
@@ -91,18 +86,18 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatManagerListener
 
 	if (SystemTray.isSupported()) {
 
-	    openMenu = new JMenuItem(Res.getString("menuitem.open"));
-	    minimizeMenu = new JMenuItem(Res.getString("menuitem.hide"));
-	    exitMenu = new JMenuItem(Res.getString("menuitem.exit"));
+		JMenuItem openMenu = new JMenuItem( Res.getString( "menuitem.open" ) );
+		JMenuItem minimizeMenu = new JMenuItem( Res.getString( "menuitem.hide" ) );
+		JMenuItem exitMenu = new JMenuItem( Res.getString( "menuitem.exit" ) );
 	    statusMenu = new JMenu(Res.getString("menuitem.status"));
-	    logoutMenu = new JMenuItem(
-		    Res.getString("menuitem.logout.no.status"));
+		JMenuItem logoutMenu = new JMenuItem(
+				Res.getString( "menuitem.logout.no.status" ) );
 
 	    SystemTray tray = SystemTray.getSystemTray();
 	    SparkManager.getNativeManager().addNativeHandler(this);
 	    ChatManager.getInstance().addChatMessageHandler(chatMessageHandler);
 	    //XEP-0085 suport (replaces the obsolete XEP-0022)
-	    SparkManager.getConnection().getChatManager().addChatListener(this);
+		org.jivesoftware.smack.chat.ChatManager.getInstanceFor( SparkManager.getConnection() ).addChatListener(this);
 
 	    if (Spark.isLinux()) {
 		newMessageIcon = SparkRes
@@ -138,8 +133,8 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatManagerListener
 			.getImageIcon(SparkRes.TRAY_CONNECTING);
 	    }
 
-	    popupMenu.add(openMenu);
-	    openMenu.addActionListener(new AbstractAction() {
+	    popupMenu.add( openMenu );
+	    openMenu.addActionListener( new AbstractAction() {
 
 		private static final long serialVersionUID = 1L;
 
@@ -150,8 +145,8 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatManagerListener
 		}
 
 	    });
-	    popupMenu.add(minimizeMenu);
-	    minimizeMenu.addActionListener(new AbstractAction() {
+	    popupMenu.add( minimizeMenu );
+	    minimizeMenu.addActionListener( new AbstractAction() {
 		private static final long serialVersionUID = 1L;
 
 		@Override
@@ -173,9 +168,9 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatManagerListener
 
 	    if (Spark.isWindows()) {
 		if (!Default.getBoolean("DISABLE_EXIT"))
-		    popupMenu.add(logoutMenu);
+		    popupMenu.add( logoutMenu );
 
-		logoutMenu.addActionListener(new AbstractAction() {
+		logoutMenu.addActionListener( new AbstractAction() {
 		    private static final long serialVersionUID = 1L;
 
 		    @Override
@@ -185,7 +180,7 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatManagerListener
 		});
 	    }
 	    // Exit Menu
-	    exitMenu.addActionListener(new AbstractAction() {
+	    exitMenu.addActionListener( new AbstractAction() {
 		private static final long serialVersionUID = 1L;
 
 		@Override
@@ -194,13 +189,23 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatManagerListener
 		}
 	    });
 	    if (!Default.getBoolean("DISABLE_EXIT"))
-		popupMenu.add(exitMenu);
+		popupMenu.add( exitMenu );
 
 	    /**
 	     * If connection closed set offline tray image
 	     */
 	    SparkManager.getConnection().addConnectionListener(
 		    new ConnectionListener() {
+
+			@Override
+			public void connected( XMPPConnection xmppConnection ) {
+				trayIcon.setImage( availableIcon.getImage() );
+			}
+
+			@Override
+			public void authenticated( XMPPConnection xmppConnection, boolean b ) {
+				trayIcon.setImage( availableIcon.getImage() );
+			}
 
 			@Override
 			public void connectionClosed() {
@@ -229,21 +234,18 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatManagerListener
 		    });
 
 	    SparkManager.getSessionManager().addPresenceListener(
-		    new PresenceListener() {
-			@Override
-			public void presenceChanged(Presence presence) {
-			    if (presence.getMode() == Presence.Mode.available) {
-				trayIcon.setImage(availableIcon.getImage());
-			    } else if (presence.getMode() == Presence.Mode.away
-				    || presence.getMode() == Presence.Mode.xa) {
-				trayIcon.setImage(awayIcon.getImage());
-			    } else if (presence.getMode() == Presence.Mode.dnd) {
-				trayIcon.setImage(dndIcon.getImage());
-			    } else {
-				trayIcon.setImage(availableIcon.getImage());
-			    }
-			}
-		    });
+				presence -> {
+                    if (presence.getMode() == Presence.Mode.available) {
+                    trayIcon.setImage(availableIcon.getImage());
+                    } else if (presence.getMode() == Presence.Mode.away
+                        || presence.getMode() == Presence.Mode.xa) {
+                    trayIcon.setImage(awayIcon.getImage());
+                    } else if (presence.getMode() == Presence.Mode.dnd) {
+                    trayIcon.setImage(dndIcon.getImage());
+                    } else {
+                    trayIcon.setImage(availableIcon.getImage());
+                    }
+                } );
 
 	    try {
 	
@@ -458,7 +460,8 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatManagerListener
 
 	private String getCounteredTitle(String title, int counter) {
 		String stringCounter = String.format("[%s] ", counter);
-		return counter > 0 ? stringCounter + title.replaceFirst(MESSAGE_COUNTER_REG_EXP, "") : title.replaceFirst(MESSAGE_COUNTER_REG_EXP, "");
+		String MESSAGE_COUNTER_REG_EXP = "\\[\\d+\\] ";
+		return counter > 0 ? stringCounter + title.replaceFirst( MESSAGE_COUNTER_REG_EXP, "") : title.replaceFirst( MESSAGE_COUNTER_REG_EXP, "");
 	}  
     
     @Override

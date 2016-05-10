@@ -27,6 +27,7 @@ import javax.swing.JPanel;
 
 import org.jivesoftware.smack.util.StringUtils;
 
+import org.jxmpp.util.XmppStringUtils;
 import tic.tac.toe.Mark;
 import tic.tac.toe.TTTRes;
 
@@ -69,7 +70,7 @@ public class PlayerDisplay extends JPanel {
 	else
 	    you = Mark.X;
 	
-	String name = StringUtils.parseName(opponent);
+	String name = XmppStringUtils.parseLocalpart(opponent);
 	JLabel yourlabel = new JLabel(" | "+name);
 	yourlabel.setIcon(new ImageIcon(you.getImage().getImage()
 		.getScaledInstance(16, 16, Image.SCALE_SMOOTH)));

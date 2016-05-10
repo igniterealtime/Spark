@@ -23,8 +23,9 @@ package org.jivesoftware.sparkimpl.search.users;
 import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smackx.Form;
+import org.jivesoftware.smackx.xdata.Form;
 import org.jivesoftware.smackx.search.UserSearchManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.TitlePanel;
@@ -46,8 +47,6 @@ import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -74,7 +73,7 @@ public class UserSearchForm extends JPanel {
 
     private TitlePanel titlePanel;
 
-    private Map<String,SearchForm> serviceMap = new HashMap<String,SearchForm>();
+    private Map<String,SearchForm> serviceMap = new HashMap<>();
 
     
     private static File pluginsettings = new File(Spark.getSparkUserHome() + File.separator + "search.properties"); //new
@@ -116,7 +115,7 @@ public class UserSearchForm extends JPanel {
         // Load the property file and add the search services that are read
         final Properties props = new Properties();
         String nextprop;
-        boolean numbprop_bool=true;
+        boolean numbprop_bool;
         int numbprop;
         if (pluginsettings.exists()) { 
 	    // Log.warning("Search-service Properties-file does exist= " + pluginsettings.getPath()); 
@@ -164,85 +163,81 @@ public class UserSearchForm extends JPanel {
         final JButton addService = new JButton();
         ResourceUtils.resButton(addService, Res.getString("button.add.service"));
         add(addService, new GridBagConstraints(2, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-        addService.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent actionEvent) {
-                final String serviceName = JOptionPane.showInputDialog(getRootPane(), Res.getString("message.name.of.search.service.question"), Res.getString("title.add.search.service"), JOptionPane.QUESTION_MESSAGE);
-                if (ModelUtil.hasLength(serviceName)) {
+        addService.addActionListener( actionEvent -> {
+            final String serviceName = JOptionPane.showInputDialog(getRootPane(), Res.getString("message.name.of.search.service.question"), Res.getString("title.add.search.service"), JOptionPane.QUESTION_MESSAGE);
+            if (ModelUtil.hasLength(serviceName)) {
 
-                    SwingWorker findServiceThread = new SwingWorker() {
-                        Form newForm;
+                SwingWorker findServiceThread = new SwingWorker() {
+                    Form newForm;
 
-                        public Object construct() {
-                            try {
-                                newForm = searchManager.getSearchForm(serviceName);
-                            }
-                            catch (XMPPException e) {
-                                // Nothing to do
-                            }
-                            return newForm;
-                        }
-
-                        public void finished() {
-                            if (newForm == null) {
-                            	UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
-                                JOptionPane.showMessageDialog(getGUI(), Res.getString("message.search.service.not.available"), Res.getString("title.notification"), JOptionPane.ERROR_MESSAGE);
-                            }
-                            else {
-                                servicesBox.addItem(serviceName);
-                                servicesBox.setSelectedItem(serviceName);
-
-                                int numbprop=0;
-                                boolean numbprop_bool = true;
-                                String nextprop, testsearch;
-                                while (numbprop_bool)
-                            	{
-                                nextprop = "search"+numbprop;
-                               	testsearch = props.getProperty(nextprop);
-                               	if (testsearch != null)
-                               		numbprop++;
-                               	else 
-                               		{
-                               		Log.warning("Search-Service: " + nextprop + " : " + serviceName + " added");
-                               		props.setProperty(nextprop, serviceName);
-                               		numbprop_bool = false;
-                               		}
-                               	}   
-                                try {
-                                    props.store(new FileOutputStream(pluginsettings), null);
-                                } catch (IOException e) {
-                                	 System.err.println(e);
-                                }          
-
-                            }
-                            
-                        }
-
-                    };
-                    findServiceThread.start();
-                }
-            }
-        });
-
-        servicesBox.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent actionEvent) {
-                SwingWorker worker = new SwingWorker() {
                     public Object construct() {
                         try {
-                            Thread.sleep(50);
+                            newForm = searchManager.getSearchForm(serviceName);
                         }
-                        catch (Exception e) {
-                            Log.error("Problem sleeping thread.", e);
+                        catch (XMPPException | SmackException e) {
+                            // Nothing to do
                         }
-                        return "ok";
+                        return newForm;
                     }
 
                     public void finished() {
-                        showService(getSearchService());
+                        if (newForm == null) {
+                            UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
+                            JOptionPane.showMessageDialog(getGUI(), Res.getString("message.search.service.not.available"), Res.getString("title.notification"), JOptionPane.ERROR_MESSAGE);
+                        }
+                        else {
+                            servicesBox.addItem(serviceName);
+                            servicesBox.setSelectedItem(serviceName);
+
+                            int numbprop1 =0;
+                            boolean numbprop_bool1 = true;
+                            String nextprop1, testsearch;
+                            while ( numbprop_bool1 )
+                            {
+                            nextprop1 = "search"+ numbprop1;
+                               testsearch = props.getProperty( nextprop1 );
+                               if (testsearch != null)
+                                   numbprop1++;
+                               else
+                                   {
+                                   Log.warning("Search-Service: " + nextprop1 + " : " + serviceName + " added");
+                                   props.setProperty( nextprop1, serviceName);
+                                   numbprop_bool1 = false;
+                                   }
+                               }
+                            try {
+                                props.store(new FileOutputStream(pluginsettings), null);
+                            } catch (IOException e) {
+                                 System.err.println(e);
+                            }
+
+                        }
+
                     }
+
                 };
-                worker.start();
+                findServiceThread.start();
             }
-        });
+        } );
+
+        servicesBox.addActionListener( actionEvent -> {
+            SwingWorker worker = new SwingWorker() {
+                public Object construct() {
+                    try {
+                        Thread.sleep(50);
+                    }
+                    catch (Exception e) {
+                        Log.error("Problem sleeping thread.", e);
+                    }
+                    return "ok";
+                }
+
+                public void finished() {
+                    showService(getSearchService());
+                }
+            };
+            worker.start();
+        } );
 
         add(cardPanel, new GridBagConstraints(0, 3, 3, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
  

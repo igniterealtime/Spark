@@ -21,8 +21,8 @@ package org.jivesoftware.spark.ui;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.smack.Roster;
-import org.jivesoftware.smack.RosterEntry;
+import org.jivesoftware.smack.roster.Roster;
+import org.jivesoftware.smack.roster.RosterEntry;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.spark.PresenceManager;
 import org.jivesoftware.spark.SparkManager;
@@ -35,7 +35,6 @@ import org.jivesoftware.spark.util.log.Log;
 import javax.swing.*;
 
 import java.awt.*;
-import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.*;
 import java.util.List;
@@ -70,10 +69,10 @@ public class RosterPickList extends JPanel {
      * @return all items choosen in the pick list.
      */
     public Collection<String> showRoster(JDialog parent) {
-        final List<ContactItem> userList = new ArrayList<ContactItem>();
+        final List<ContactItem> userList = new ArrayList<>();
 
         // Populate Invite Panel with Available users.
-        final Roster roster = SparkManager.getConnection().getRoster();
+        final Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
         for (RosterEntry entry : roster.getEntries()) {
             Presence presence = PresenceManager.getPresence(entry.getUser());
             if (presence.isAvailable()) {
@@ -120,18 +119,16 @@ public class RosterPickList extends JPanel {
         dlg.setContentPane(mainPanel);
         dlg.setLocationRelativeTo(parent);
 
-        PropertyChangeListener changeListener = new PropertyChangeListener() {
-            public void propertyChange(PropertyChangeEvent e) {
-                String value = (String)pane.getValue();
-                if (Res.getString("cancel").equals(value)) {
-                    rosterList.clearSelection();
-                    pane.setValue(JOptionPane.UNINITIALIZED_VALUE);
-                    dlg.dispose();
-                }
-                else if (Res.getString("ok").equals(value)) {
-                    pane.setValue(JOptionPane.UNINITIALIZED_VALUE);
-                    dlg.dispose();
-                }
+        PropertyChangeListener changeListener = e -> {
+            String value = (String)pane.getValue();
+            if (Res.getString("cancel").equals(value)) {
+                rosterList.clearSelection();
+                pane.setValue(JOptionPane.UNINITIALIZED_VALUE);
+                dlg.dispose();
+            }
+            else if (Res.getString("ok").equals(value)) {
+                pane.setValue(JOptionPane.UNINITIALIZED_VALUE);
+                dlg.dispose();
             }
         };
 
@@ -141,7 +138,7 @@ public class RosterPickList extends JPanel {
         dlg.toFront();
         dlg.requestFocus();
 
-        List<String> selectedContacts = new ArrayList<String>();
+        List<String> selectedContacts = new ArrayList<>();
 
         Object[] values = rosterList.getSelectedValues();
         final int no = values != null ? values.length : 0;
@@ -162,17 +159,15 @@ public class RosterPickList extends JPanel {
     /**
      * Sorts ContactItems.
      */
-    final Comparator<ContactItem> itemComparator = new Comparator<ContactItem>() {
-        public int compare(ContactItem item1, ContactItem item2) {
-            String nickname1 = item1.getDisplayName();
-            String nickname2 = item2.getDisplayName();
-            if (nickname1 == null || nickname2 == null) {
-                return 0;
-            }
-
-            return nickname1.toLowerCase().compareTo(nickname2.toLowerCase());
-
+    final Comparator<ContactItem> itemComparator = ( item1, item2 ) -> {
+        String nickname1 = item1.getDisplayName();
+        String nickname2 = item2.getDisplayName();
+        if (nickname1 == null || nickname2 == null) {
+            return 0;
         }
+
+        return nickname1.toLowerCase().compareTo(nickname2.toLowerCase());
+
     };
 
 }

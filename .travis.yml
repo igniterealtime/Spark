@@ -1,2 +1,4 @@
 language: java
-script: ant -f build/build.xml
+jdk:
+  - oraclejdk8
+script: ant -f build/build.xml clean release build.plugins

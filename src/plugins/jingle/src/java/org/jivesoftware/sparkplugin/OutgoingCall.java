@@ -41,12 +41,13 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 import org.jivesoftware.resource.Res;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smackx.jingle.JingleSession;
-import org.jivesoftware.smackx.jingle.JingleSessionStatePending;
-import org.jivesoftware.smackx.jingle.listeners.JingleSessionListener;
-import org.jivesoftware.smackx.jingle.media.PayloadType;
-import org.jivesoftware.smackx.jingle.nat.TransportCandidate;
+import org.jivesoftware.smackx.jingleold.JingleSession;
+import org.jivesoftware.smackx.jingleold.JingleSessionStatePending;
+import org.jivesoftware.smackx.jingleold.listeners.JingleSessionListener;
+import org.jivesoftware.smackx.jingleold.media.PayloadType;
+import org.jivesoftware.smackx.jingleold.nat.TransportCandidate;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.FileDragLabel;
 import org.jivesoftware.spark.phone.PhoneManager;
@@ -122,7 +123,8 @@ public class OutgoingCall extends JPanel implements JingleSessionListener, ChatR
      * @param chatRoom the room the session is associated with.
      * @param jid      the users jid.
      */
-    public void handleOutgoingCall(final JingleSession session, ChatRoom chatRoom, final String jid) {
+    public void handleOutgoingCall(final JingleSession session, ChatRoom chatRoom, final String jid) throws SmackException
+    {
         this.chatRoom = chatRoom;
 
         JingleStateManager.getInstance().addJingleSession(chatRoom, JingleStateManager.JingleRoomState.ringing);
@@ -173,7 +175,6 @@ public class OutgoingCall extends JPanel implements JingleSessionListener, ChatR
      */
     private void updateOutgoingCallPanel() {
         if (session == null || session.isClosed()) {
-            return;
         }
         else if (session instanceof JingleSession) {
             showAlert(false);
@@ -297,7 +298,7 @@ public class OutgoingCall extends JPanel implements JingleSessionListener, ChatR
                 session.terminate();
                 session = null;
             }
-            catch (XMPPException e) {
+            catch (XMPPException | SmackException e) {
                 Log.error(e);
             }
         }
@@ -310,7 +311,7 @@ public class OutgoingCall extends JPanel implements JingleSessionListener, ChatR
             try {
                 session.terminate();
             }
-            catch (XMPPException e) {
+            catch (XMPPException | SmackException e) {
                 Log.error(e);
             }
         }
@@ -333,7 +334,7 @@ public class OutgoingCall extends JPanel implements JingleSessionListener, ChatR
                         try {
                             session.terminate("No Media Received. This may be caused by firewall configuration problems.");
                         }
-                        catch (XMPPException e) {
+                        catch (XMPPException | SmackException e) {
                             Log.error(e);
                         }
                     }
@@ -342,29 +343,17 @@ public class OutgoingCall extends JPanel implements JingleSessionListener, ChatR
         };
         TaskEngine.getInstance().schedule(mediaReceivedTask, WAIT_FOR_MEDIA_DELAY, WAIT_FOR_MEDIA_DELAY);
 
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                updateOutgoingCallPanel();
-            }
-        });
+        SwingUtilities.invokeLater( () -> updateOutgoingCallPanel() );
     }
 
     public void sessionDeclined(String string, JingleSession jingleSession) {
         showCallEndedState("The Session was rejected.");
 
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                updateOutgoingCallPanel();
-            }
-        });
+        SwingUtilities.invokeLater( () -> updateOutgoingCallPanel() );
     }
 
     public void sessionRedirected(String string, JingleSession jingleSession) {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                updateOutgoingCallPanel();
-            }
-        });
+        SwingUtilities.invokeLater( () -> updateOutgoingCallPanel() );
     }
 
     public void sessionClosed(String string, JingleSession jingleSession) {
@@ -382,11 +371,7 @@ public class OutgoingCall extends JPanel implements JingleSessionListener, ChatR
             PhoneManager.setUsingMediaLocator(false);
         }
 
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                updateOutgoingCallPanel();
-            }
-        });
+        SwingUtilities.invokeLater( () -> updateOutgoingCallPanel() );
     }
 
     public void sessionClosedOnError(XMPPException xmppException, JingleSession jingleSession) {
@@ -395,10 +380,6 @@ public class OutgoingCall extends JPanel implements JingleSessionListener, ChatR
             PhoneManager.setUsingMediaLocator(false);
         }                
 
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                updateOutgoingCallPanel();
-            }
-        });
+        SwingUtilities.invokeLater( () -> updateOutgoingCallPanel() );
     }
 }

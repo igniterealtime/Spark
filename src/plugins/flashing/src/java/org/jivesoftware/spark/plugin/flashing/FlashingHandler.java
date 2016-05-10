@@ -21,8 +21,6 @@ package org.jivesoftware.spark.plugin.flashing;
 
 import java.awt.Window;
 
-import javax.swing.JFrame;
-
 import org.jivesoftware.spark.NativeHandler;
 import org.jivesoftware.spark.SparkManager;
 
@@ -58,7 +56,7 @@ public class FlashingHandler implements NativeHandler {
 
 	@Override
 	public void stopFlashing(Window window) {
-		flasher.stopFlashing((JFrame) window);
+		flasher.stopFlashing( window );
 	}
 
 }

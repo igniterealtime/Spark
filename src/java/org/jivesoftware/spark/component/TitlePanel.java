@@ -49,8 +49,6 @@ public final class TitlePanel extends JPanel {
     private static final long serialVersionUID = -967166058268240672L;
     private final JLabel titleLabel = new JLabel();
     private final JLabel descriptionLabel = new JLabel();
-    private final JLabel iconLabel = new JLabel();
-    private final GridBagLayout gridBagLayout = new GridBagLayout();
 
     /**
      * Create a new TitlePanel.
@@ -63,6 +61,7 @@ public final class TitlePanel extends JPanel {
     public TitlePanel(String title, String description, Icon icon, boolean showDescription) {
 
         // Set the icon
+        JLabel iconLabel = new JLabel();
         iconLabel.setIcon(icon);
 
         // Set the title
@@ -71,12 +70,13 @@ public final class TitlePanel extends JPanel {
         // Set the description
         setDescription(description);
 
-        setLayout(gridBagLayout);
+        GridBagLayout gridBagLayout = new GridBagLayout();
+        setLayout( gridBagLayout );
 
         descriptionLabel.setBackground(Color.white);
 
         if (showDescription) {
-            add(iconLabel, new GridBagConstraints(2, 0, 1, 2, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+            add( iconLabel, new GridBagConstraints(2, 0, 1, 2, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
             add(descriptionLabel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 9, 5, 5), 0, 0));
             add(titleLabel, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
             setBackground(Color.white);
@@ -90,7 +90,7 @@ public final class TitlePanel extends JPanel {
 
             panel.setLayout(new GridBagLayout());
             panel.add(titleLabel, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(2, 2, 2, 2), 0, 0));
-            panel.add(iconLabel, new GridBagConstraints(2, 0, 1, 2, 0.0, 0.0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0));
+            panel.add( iconLabel, new GridBagConstraints(2, 0, 1, 2, 0.0, 0.0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0));
 
             titleLabel.setVerticalTextPosition(JLabel.CENTER);
             titleLabel.setFont(new Font("dialog", Font.BOLD, 14));

@@ -21,6 +21,7 @@ package org.jivesoftware.spark.ui.conferences;
 
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.resource.Res;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.muc.Affiliate;
 import org.jivesoftware.smackx.muc.MultiUserChat;
@@ -37,8 +38,6 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 
 import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Iterator;
@@ -86,21 +85,19 @@ public class BannedUsers extends JPanel {
             }
         });
 
-        unBanMenuItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                int index = list.getSelectedIndex();
-                ImageIcon icon = (ImageIcon)list.getModel().getElementAt(index);
-                String jid = icon.getDescription();
-                try {
-                    chat.grantMembership(jid);
-                }
-                catch (XMPPException memEx) {
-                    Log.error("Error granting membership", memEx);
-                }
-                listModel.removeElementAt(index);
-
+        unBanMenuItem.addActionListener( e -> {
+            int index = list.getSelectedIndex();
+            ImageIcon icon = (ImageIcon)list.getModel().getElementAt(index);
+            String jid = icon.getDescription();
+            try {
+                chat.grantMembership(jid);
             }
-        });
+            catch (XMPPException | SmackException memEx) {
+                Log.error("Error granting membership", memEx);
+            }
+            listModel.removeElementAt(index);
+
+        } );
     }
 
     /**
@@ -124,7 +121,7 @@ public class BannedUsers extends JPanel {
         try {
             bannedUsers = chat.getOutcasts().iterator();
         }
-        catch (XMPPException e) {
+        catch (XMPPException | SmackException e) {
             Log.error("Error loading all banned users", e);
         }
 

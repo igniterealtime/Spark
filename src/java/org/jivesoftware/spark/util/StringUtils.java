@@ -116,7 +116,7 @@ public class StringUtils {
 	    char[] string2 = string.toCharArray();
 	    char[] newString2 = newString.toCharArray();
 	    int oLength = oldString.length();
-	    StringBuffer buf = new StringBuffer(string2.length);
+	    StringBuilder buf = new StringBuilder(string2.length);
 	    buf.append(string2, 0, i).append(newString2);
 	    i += oLength;
 	    int j = i;
@@ -160,7 +160,7 @@ public class StringUtils {
 	    char[] line2 = line.toCharArray();
 	    char[] newString2 = newString.toCharArray();
 	    int oLength = oldString.length();
-	    StringBuffer buf = new StringBuffer(line2.length);
+	    StringBuilder buf = new StringBuilder(line2.length);
 	    buf.append(line2, 0, i).append(newString2);
 	    i += oLength;
 	    int j = i;
@@ -206,7 +206,7 @@ public class StringUtils {
 	    char[] line2 = line.toCharArray();
 	    char[] newString2 = newString.toCharArray();
 	    int oLength = oldString.length();
-	    StringBuffer buf = new StringBuffer(line2.length);
+	    StringBuilder buf = new StringBuilder(line2.length);
 	    buf.append(line2, 0, i).append(newString2);
 	    i += oLength;
 	    int j = i;
@@ -249,7 +249,7 @@ public class StringUtils {
 	    char[] line2 = line.toCharArray();
 	    char[] newString2 = newString.toCharArray();
 	    int oLength = oldString.length();
-	    StringBuffer buf = new StringBuffer(line2.length);
+	    StringBuilder buf = new StringBuilder(line2.length);
 	    buf.append(line2, 0, i).append(newString2);
 	    i += oLength;
 	    int j = i;
@@ -302,7 +302,7 @@ public class StringUtils {
 	int last = 0;
 	char[] input = in.toCharArray();
 	int len = input.length;
-	StringBuffer out = new StringBuffer((int) (len * 1.3));
+	StringBuilder out = new StringBuilder((int) (len * 1.3));
 	for (; i < len; i++) {
 	    ch = input[i];
 	    if (ch > '>') {
@@ -352,7 +352,7 @@ public class StringUtils {
 	int last = 0;
 	char[] input = in.toCharArray();
 	int len = input.length;
-	StringBuffer out = new StringBuffer((int) (len * 1.3));
+	StringBuilder out = new StringBuilder((int) (len * 1.3));
 	for (; i < len; i++) {
 	    ch = input[i];
 	    if (ch > '>') {
@@ -454,7 +454,7 @@ public class StringUtils {
      * @return generated hex string
      */
     public static String encodeHex(byte[] bytes) {
-	StringBuffer buf = new StringBuffer(bytes.length * 2);
+	StringBuilder buf = new StringBuilder(bytes.length * 2);
 	int i;
 
 	for (i = 0; i < bytes.length; i++) {
@@ -572,7 +572,7 @@ public class StringUtils {
     public static String encodeBase64(byte[] data) {
 	int c;
 	int len = data.length;
-	StringBuffer ret = new StringBuffer(((len / 3) + 1) * 4);
+	StringBuilder ret = new StringBuilder(((len / 3) + 1) * 4);
 	for (int i = 0; i < len; ++i) {
 	    c = (data[i] >> 2) & 0x3f;
 	    ret.append(cvt.charAt(c));
@@ -630,7 +630,7 @@ public class StringUtils {
     public static String decodeBase64(byte[] data) {
 	int c, c1;
 	int len = data.length;
-	StringBuffer ret = new StringBuffer((len * 3) / 4);
+	StringBuilder ret = new StringBuilder((len * 3) / 4);
 	for (int i = 0; i < len; ++i) {
 	    c = cvt.indexOf(data[i]);
 	    ++i;
@@ -825,7 +825,7 @@ public class StringUtils {
 	    throw new UnsupportedEncodingException();
 	}
 
-	StringBuffer buf = new StringBuffer(octets.length);
+	StringBuilder buf = new StringBuilder(octets.length);
 	for (byte octet : octets) {
 	    char c = (char) octet;
 	    if (allowed_query.get(c)) {
@@ -863,7 +863,7 @@ public class StringUtils {
 	    return new String[0];
 	}
 
-	ArrayList<String> wordList = new ArrayList<String>();
+	ArrayList<String> wordList = new ArrayList<>();
 	BreakIterator boundary = BreakIterator.getWordInstance();
 	boundary.setText(text);
 	int start = 0;
@@ -1178,7 +1178,7 @@ public class StringUtils {
 	    return input;
 	}
 
-	StringBuffer buf = new StringBuffer(input);
+	StringBuilder buf = new StringBuilder(input);
 	boolean endOfLine = false;
 	int lineStart = 0;
 
@@ -1252,7 +1252,7 @@ public class StringUtils {
 	    return null;
 	}
 
-	StringBuffer regexp = new StringBuffer();
+	StringBuilder regexp = new StringBuilder();
 	regexp.append("(?i)\\b(");
 	// Iterate through each word and generate a word list for the regexp.
 	for (int x = 0; x < words.length; x++) {
@@ -1289,7 +1289,7 @@ public class StringUtils {
 	int last = 0;
 	char[] input = string.toCharArray();
 	int len = input.length;
-	StringBuffer out = new StringBuffer((int) (len * 1.3));
+	StringBuilder out = new StringBuilder((int) (len * 1.3));
 	for (; i < len; i++) {
 	    ch = input[i];
 
@@ -1379,9 +1379,7 @@ public class StringUtils {
 	if (string == null || string.length() > length) {
 	    return string;
 	}
-	StringBuffer buf = new StringBuffer(length);
-	buf.append(zeroArray, 0, length - string.length()).append(string);
-	return buf.toString();
+		return String.valueOf( zeroArray, 0, length - string.length() ) + string;
     }
 
     /**
@@ -1570,7 +1568,7 @@ public class StringUtils {
      */
 
     public static String keyStroke2String(KeyStroke key) {
-	StringBuffer s = new StringBuffer(50);
+	StringBuilder s = new StringBuilder(50);
 	int m = key.getModifiers();
 
 	if ((m & (InputEvent.SHIFT_DOWN_MASK | InputEvent.SHIFT_MASK)) != 0) {

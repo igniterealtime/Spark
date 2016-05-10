@@ -31,112 +31,85 @@ import org.jivesoftware.spark.util.log.Log;
 
 /**
  * Awesome Preference
+ * 
  * @author wolf.posdorfer
  *
  */
 public class RoarPreference implements Preference {
 
-    
     private RoarPreferencePanel _prefPanel;
     private RoarProperties _props;
 
     public RoarPreference() {
 
-	_props = RoarProperties.getInstance();
-	
-	try {
-	    if (EventQueue.isDispatchThread()) {
-		_prefPanel = new RoarPreferencePanel();
-	    } else {
-		EventQueue.invokeAndWait(new Runnable() {
-		    @Override
-		    public void run() {
-			_prefPanel = new RoarPreferencePanel();
-		    }
-		});
-	    }
-	} catch (Exception e) {
-	    Log.error(e);
-	}
+        _props = RoarProperties.getInstance();
+
+        try {
+            if (EventQueue.isDispatchThread()) {
+                _prefPanel = new RoarPreferencePanel();
+            } else {
+                EventQueue.invokeAndWait( () -> _prefPanel = new RoarPreferencePanel() );
+            }
+        } catch (Exception e) {
+            Log.error(e);
+        }
 
     }
-    
+
     @Override
     public String getTitle() {
-	return "ROAR";
+        return "ROAR";
     }
 
     @Override
     public Icon getIcon() {
-	ClassLoader cl = getClass().getClassLoader();
-	return new ImageIcon(cl.getResource("roar-logo.png"));
+        ClassLoader cl = getClass().getClassLoader();
+        return new ImageIcon(cl.getResource("roar-logo.png"));
     }
 
     @Override
     public String getTooltip() {
-	return "ROAR";
+        return "ROAR";
     }
 
     @Override
     public String getListName() {
-	return "ROAR";
+        return "ROAR";
     }
 
     @Override
     public String getNamespace() {
-	return "roar";
+        return "roar";
     }
 
     @Override
     public JComponent getGUI() {
-	return _prefPanel;
+        return _prefPanel;
     }
 
     @Override
     public void load() {
-
-	_prefPanel.setColor(RoarPreferencePanel.ColorTypes.BACKGROUNDCOLOR, _props.getBackgroundColor());
-	_prefPanel.setColor(RoarPreferencePanel.ColorTypes.HEADERCOLOR, _props.getHeaderColor());
-	_prefPanel.setColor(RoarPreferencePanel.ColorTypes.TEXTCOLOR, _props.getTextColor());
-	
-	_prefPanel.setDisplayType(_props.getDisplayType());
-	
-	_prefPanel.setShowingPopups(_props.getShowingPopups());
-	_prefPanel.setDuration(_props.getDuration());
-	_prefPanel.setAmount(_props.getMaximumPopups());
+        _prefPanel.initializeValues();
     }
 
     @Override
     public void commit() {
-	_props.setDuration(_prefPanel.getDuration());
-	_props.setShowingPopups(_prefPanel.getShowingPopups());
-	
-	
-	_props.setBackgroundColor(_prefPanel.getColor(RoarPreferencePanel.ColorTypes.BACKGROUNDCOLOR));
-	_props.setHeaderColor(_prefPanel.getColor(RoarPreferencePanel.ColorTypes.HEADERCOLOR));
-	_props.setTextColor(_prefPanel.getColor(RoarPreferencePanel.ColorTypes.TEXTCOLOR));
-	
-	_props.setDisplayType(_prefPanel.getDisplayType());
-
-	
-	_props.setMaximumPopups(_prefPanel.getAmount());
-	_props.save();
-
+        _prefPanel.storeValues();
     }
 
     @Override
     public boolean isDataValid() {
-	return true;
+        return true;
     }
 
     @Override
     public String getErrorMessage() {
-	return "roooooooooaaaaaar";
+        return "roooooooooaaaaaar";
     }
 
     @Override
     public Object getData() {
-	return _props;
+        return _props;
     }
 
     @Override

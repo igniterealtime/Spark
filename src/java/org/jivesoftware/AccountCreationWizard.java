@@ -22,12 +22,11 @@
 package org.jivesoftware;
 
 import org.jivesoftware.resource.Res;
-import org.jivesoftware.smack.AccountManager;
-import org.jivesoftware.smack.ConnectionConfiguration;
-import org.jivesoftware.smack.XMPPConnection;
-import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.*;
 import org.jivesoftware.smack.packet.XMPPError;
-import org.jivesoftware.smack.util.StringUtils;
+import org.jivesoftware.smack.tcp.XMPPTCPConnection;
+import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
+import org.jivesoftware.smackx.iqregister.AccountManager;
 import org.jivesoftware.spark.component.TitlePanel;
 import org.jivesoftware.spark.util.DummySSLSocketFactory;
 import org.jivesoftware.spark.util.ModelUtil;
@@ -35,14 +34,14 @@ import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+import org.jxmpp.util.XmppStringUtils;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.io.IOException;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -60,20 +59,15 @@ import javax.swing.UIManager;
  */
 public class AccountCreationWizard extends JPanel {
 	private static final long serialVersionUID = -7808507939643878212L;
-	private JLabel usernameLabel = new JLabel();
     private JTextField usernameField = new JTextField();
 
-    private JLabel passwordLabel = new JLabel();
     private JPasswordField passwordField = new JPasswordField();
 
-    private JLabel confirmPasswordLabel = new JLabel();
     private JPasswordField confirmPasswordField = new JPasswordField();
 
-    private JLabel serverLabel = new JLabel();
     private JTextField serverField = new JTextField();
 
     private JButton createAccountButton = new JButton();
-    private JButton closeButton = new JButton();
 
     private JDialog dialog;
 
@@ -86,25 +80,29 @@ public class AccountCreationWizard extends JPanel {
      */
     public AccountCreationWizard() {
         // Associate Mnemonics
-        ResourceUtils.resLabel(usernameLabel, usernameField, Res.getString("label.username") + ":");
-        ResourceUtils.resLabel(passwordLabel, passwordField, Res.getString("label.password") + ":");
-        ResourceUtils.resLabel(confirmPasswordLabel, confirmPasswordField, Res.getString("label.confirm.password") + ":");
-        ResourceUtils.resLabel(serverLabel, serverField, Res.getString("label.server") + ":");
+        JLabel usernameLabel = new JLabel();
+        ResourceUtils.resLabel( usernameLabel, usernameField, Res.getString("label.username") + ":");
+        JLabel passwordLabel = new JLabel();
+        ResourceUtils.resLabel( passwordLabel, passwordField, Res.getString("label.password") + ":");
+        JLabel confirmPasswordLabel = new JLabel();
+        ResourceUtils.resLabel( confirmPasswordLabel, confirmPasswordField, Res.getString("label.confirm.password") + ":");
+        JLabel serverLabel = new JLabel();
+        ResourceUtils.resLabel( serverLabel, serverField, Res.getString("label.server") + ":");
         ResourceUtils.resButton(createAccountButton, Res.getString("button.create.account"));
 
         setLayout(new GridBagLayout());
 
         // Add component to UI
-        add(usernameLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        add( usernameLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         add(usernameField, new GridBagConstraints(1, 0, 3, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 150, 0));
 
-        add(passwordLabel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        add( passwordLabel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         add(passwordField, new GridBagConstraints(1, 1, 3, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 
-        add(confirmPasswordLabel, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        add( confirmPasswordLabel, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         add(confirmPasswordField, new GridBagConstraints(1, 2, 3, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 
-        add(serverLabel, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        add( serverLabel, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         add(serverField, new GridBagConstraints(1, 3, 3, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 
         progressBar = new JProgressBar();
@@ -115,21 +113,14 @@ public class AccountCreationWizard extends JPanel {
         add(createAccountButton, new GridBagConstraints(2, 5, 1, 1, 1.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
 
 
-        ResourceUtils.resButton(closeButton, Res.getString("button.close"));
-        add(closeButton, new GridBagConstraints(3, 5, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        JButton closeButton = new JButton();
+        ResourceUtils.resButton( closeButton, Res.getString("button.close"));
+        add( closeButton, new GridBagConstraints(3, 5, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
 
 
-        createAccountButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent actionEvent) {
-                createAccount();
-            }
-        });
+        createAccountButton.addActionListener( actionEvent -> createAccount() );
 
-        closeButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent actionEvent) {
-                dialog.dispose();
-            }
-        });
+        closeButton.addActionListener( actionEvent -> dialog.dispose() );
     }
 
     /**
@@ -138,7 +129,7 @@ public class AccountCreationWizard extends JPanel {
      * @return the username.
      */
     public String getUsername() {
-        return StringUtils.escapeNode(usernameField.getText().toLowerCase());
+        return XmppStringUtils.escapeLocalpart(usernameField.getText().toLowerCase());
     }
 
     /**
@@ -228,7 +219,7 @@ public class AccountCreationWizard extends JPanel {
         progressBar.setVisible(true);
 
         final SwingWorker worker = new SwingWorker() {
-            int errorCode;
+            XMPPError.Condition condition = null;
 
 
             public Object construct() {
@@ -236,22 +227,22 @@ public class AccountCreationWizard extends JPanel {
                     createAccountButton.setEnabled(false);
                     connection = getConnection();
                 }
-                catch (XMPPException e) {
+                catch (SmackException | IOException | XMPPException e) {
                     return e;
                 }
                 try {
-                    final AccountManager accountManager = new AccountManager(connection);
+                    final AccountManager accountManager = AccountManager.getInstance(connection);
                     accountManager.createAccount(getUsername(), getPassword());
                 }
-                catch (XMPPException e) {
-                    XMPPError error = e.getXMPPError();
-                    if (error != null) {
-                        errorCode = error.getCode();
-                    }
-                    else {
-                        errorCode = 500;
+                catch (XMPPException | SmackException e) {
+
+                    if ( e instanceof XMPPException.XMPPErrorException ) {
+                        condition = ( (XMPPException.XMPPErrorException) e ).getXMPPError().getCondition();
                     }
 
+                    if ( condition == null ) {
+                        condition = XMPPError.Condition.internal_server_error;
+                    }
                 }
                 return "ok";
             }
@@ -268,11 +259,11 @@ public class AccountCreationWizard extends JPanel {
                     return;
                 }
 
-                if (errorCode == 0) {
+                if (condition == null) {
                     accountCreationSuccessful();
                 }
                 else {
-                    accountCreationFailed(errorCode);
+                    accountCreationFailed(condition);
                 }
             }
         };
@@ -283,11 +274,11 @@ public class AccountCreationWizard extends JPanel {
     /**
      * Called if the account creation failed.
      *
-     * @param errorCode the error code.
+     * @param condition the error code.
      */
-    private void accountCreationFailed(int errorCode) {
+    private void accountCreationFailed( XMPPError.Condition condition ) {
         String message = Res.getString("message.create.account");
-        if (errorCode == 409) {
+        if (condition == XMPPError.Condition.conflict) {
             message = Res.getString("message.already.exists");
             usernameField.setText("");
             usernameField.requestFocus();
@@ -329,13 +320,10 @@ public class AccountCreationWizard extends JPanel {
      * Creates an XMPPConnection based on the users settings.
      *
      * @return the XMPPConnection created.
-     * @throws XMPPException thrown if an exception occured creating the connection.
      */
-    private XMPPConnection getConnection() throws XMPPException {
+    private XMPPConnection getConnection() throws SmackException, IOException, XMPPException
+    {
         final LocalPreferences localPreferences = SettingsManager.getLocalPreferences();
-        XMPPConnection connection = null;
-
-        // Get connection
 
         int port = localPreferences.getXmppPort();
 
@@ -353,41 +341,28 @@ public class AccountCreationWizard extends JPanel {
         boolean useSSL = localPreferences.isSSL();
         boolean hostPortConfigured = localPreferences.isHostAndPortConfigured();
 
-        ConnectionConfiguration config;
+        final XMPPTCPConnectionConfiguration.Builder builder = XMPPTCPConnectionConfiguration.builder()
+                .setUsernameAndPassword( "username", "password" )
+                .setServiceName( serverName )
+                .setPort( port )
+                .setCompressionEnabled( localPreferences.isCompressionEnabled() );
 
+        if ( hostPortConfigured ) {
+            builder.setHost( localPreferences.getXmppHost() );
+        }
         if (useSSL) {
             if (!hostPortConfigured) {
-                config = new ConnectionConfiguration(serverName, 5223);
-                config.setSocketFactory(new DummySSLSocketFactory());
+                builder.setPort( 5223 );
             }
-            else {
-                config = new ConnectionConfiguration(localPreferences.getXmppHost(), port, serverName);
-                config.setSocketFactory(new DummySSLSocketFactory());
-            }
-        }
-        else {
-            if (!hostPortConfigured) {
-                config = new ConnectionConfiguration(serverName);
-            }
-            else {
-                config = new ConnectionConfiguration(localPreferences.getXmppHost(), port, serverName);
-            }
-
-
+            builder.setSocketFactory( new DummySSLSocketFactory() );
         }
 
-        if (config != null) {
-            config.setReconnectionAllowed(true);
-            boolean compressionEnabled = localPreferences.isCompressionEnabled();
-            config.setCompressionEnabled(compressionEnabled);
-            connection = new XMPPConnection(config);
-        }
+        final XMPPTCPConnectionConfiguration configuration = builder.build();
 
-        if (connection != null) {
-            connection.connect();
-        }
+        final AbstractXMPPConnection connection = new XMPPTCPConnection( configuration );
+        connection.connect();
+
         return connection;
-
     }
 
     /**

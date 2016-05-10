@@ -22,8 +22,6 @@ package org.jivesoftware.spark.plugin.flashing;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
@@ -38,26 +36,17 @@ public class FlashingPreferenceDialog extends JPanel {
 
 	private static final long serialVersionUID = -5274539572483246530L;
 
-	private JPanel flashingPanel;
-
 	private JCheckBox flashingEnabled;
 	private JComboBox flashingType;
 	
 	public FlashingPreferenceDialog() {
-		flashingPanel = new JPanel();
+		JPanel flashingPanel = new JPanel();
 		flashingEnabled = new JCheckBox();
 		flashingType = new JComboBox();
 		JLabel lTyps = new JLabel();
 		flashingPanel.setLayout(new GridBagLayout());
 		
-		flashingEnabled.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				updateUI(flashingEnabled.isSelected());	
-			}
-			
-		});
+		flashingEnabled.addActionListener( e -> updateUI(flashingEnabled.isSelected()) );
 		
 		flashingType.addItem(FlashingResources.getString("flashing.type.continuous"));
 		flashingType.addItem(FlashingResources.getString("flashing.type.temporary"));
@@ -74,7 +63,7 @@ public class FlashingPreferenceDialog extends JPanel {
 		ResourceUtils.resLabel(lTyps, flashingType, FlashingResources.getString("flashing.type"));
 		
 		setLayout(new VerticalFlowLayout());
-		add(flashingPanel);
+		add( flashingPanel );
 	}
 	
 	public void updateUI(boolean enabled) {

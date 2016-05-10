@@ -36,7 +36,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
-import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -70,7 +69,7 @@ public class FrequentContactsPlugin implements Plugin {
     private JList contacts;
     private Window window;
 
-    private Map<JLabel, String> jidMap = new HashMap<JLabel, String>();
+    private Map<JLabel, String> jidMap = new HashMap<>();
 
     public void initialize() {
         transcriptDir = new File(SparkManager.getUserDirectory(), "transcripts");
@@ -98,8 +97,8 @@ public class FrequentContactsPlugin implements Plugin {
 
 		    contacts.setSelectedIndex(contacts.locationToIndex(e
 			    .getPoint()));
-		    String user = jidMap.get((JLabel) contacts
-			    .getSelectedValue());
+		    String user = jidMap.get( contacts
+			    .getSelectedValue() );
 		    ContactItem contact = SparkManager.getContactList()
 			    .getContactItemByJID(user);
 		    SparkManager.getContactList().setSelectedUser(contact.getJID());
@@ -219,11 +218,7 @@ public class FrequentContactsPlugin implements Plugin {
             return Collections.emptyList();
         }
 
-        final File[] transcriptFiles = transcriptDir.listFiles(new FilenameFilter() {
-            public boolean accept(File dir, String name) {
-                return !name.contains("_current") && !name.equals("conversations.xml");
-            }
-        });
+        final File[] transcriptFiles = transcriptDir.listFiles( ( dir, name ) -> !name.contains("_current") && !name.equals("conversations.xml") );
         final List<File> files = Arrays.asList(transcriptFiles);
 
         Collections.sort(files, sizeComparator);
@@ -233,7 +228,7 @@ public class FrequentContactsPlugin implements Plugin {
             size = 10;
         }
 
-        final List<String> jidList = new ArrayList<String>();
+        final List<String> jidList = new ArrayList<>();
         for (int i = 0; i < size; i++) {
             File file = files.get(i);
             String jid;
@@ -297,25 +292,23 @@ public class FrequentContactsPlugin implements Plugin {
     /**
      * Sorts files by largest to smallest.
      */
-    final Comparator<File> sizeComparator = new Comparator<File>() {
-        public int compare(File item1, File item2) {
-            long int1 = item1.length();
-            long int2 = item2.length();
+    final Comparator<File> sizeComparator = ( item1, item2 ) -> {
+        long int1 = item1.length();
+        long int2 = item2.length();
 
-            if (int1 == int2) {
-                return 0;
-            }
-
-            if (int1 > int2) {
-                return -1;
-            }
-
-            if (int1 < int2) {
-                return 1;
-            }
-
+        if (int1 == int2) {
             return 0;
         }
+
+        if (int1 > int2) {
+            return -1;
+        }
+
+        if (int1 < int2) {
+            return 1;
+        }
+
+        return 0;
     };
 
 }

@@ -19,7 +19,7 @@
  */
 package org.jivesoftware.spark.ui.conferences;
 
-import org.jivesoftware.smackx.bookmark.BookmarkedConference;
+import org.jivesoftware.smackx.bookmarks.BookmarkedConference;
 
 public class ConferenceItem {
    private BookmarkedConference bookmarkedConf;

@@ -116,7 +116,7 @@ public class BaseRadioButtonUI extends BasicRadioButtonUI {
     protected void paintIcon(Graphics g, JComponent c, Rectangle iconRect) {
         AbstractButton b = (AbstractButton) c;
         ButtonModel model = b.getModel();
-        Icon ico = null;
+        Icon ico;
         if (!model.isEnabled()) {
             if (b.isSelected()) {
                 ico = b.getDisabledSelectedIcon();
@@ -173,7 +173,7 @@ public class BaseRadioButtonUI extends BasicRadioButtonUI {
             Font f = c.getFont();
             g.setFont(f);
             FontMetrics fm = g.getFontMetrics();
-            int mnemIndex = -1;
+            int mnemIndex;
             if (JTattooUtilities.getJavaVersion() >= 1.4) {
                 mnemIndex = b.getDisplayedMnemonicIndex();
             } else {

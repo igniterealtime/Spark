@@ -19,15 +19,16 @@
  */
 package org.jivesoftware.sparkplugin.calllog;
 
-import org.jivesoftware.smack.PacketCollector;
-import org.jivesoftware.smack.SmackConfiguration;
-import org.jivesoftware.smack.XMPPConnection;
-import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.*;
 import org.jivesoftware.smack.filter.PacketIDFilter;
 import org.jivesoftware.smack.packet.IQ;
-import org.jivesoftware.smack.packet.PacketExtension;
+import org.jivesoftware.smack.packet.ExtensionElement;
+import org.jivesoftware.smack.packet.XMPPError;
 import org.jivesoftware.smack.provider.IQProvider;
 import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
+
+import java.io.IOException;
 
 /**
  * Title: SIPark
@@ -62,14 +63,17 @@ public class LogPacket extends IQ {
     private XmlPullParser parser = null;
 
     public LogPacket() {
+        super( ELEMENT_NAME, NAMESPACE );
     }
 
-    public String getChildElementXML() {
-        StringBuffer buf = new StringBuffer();
+    @Override
+    protected IQChildElementXmlStringBuilder getIQChildElementBuilder( IQChildElementXmlStringBuilder buf )
+    {
+        buf.rightAngleBracket();
         buf.append("<" + ELEMENT_NAME + " xmlns='" + NAMESPACE + "'>");
         buf.append(this.getExtensionsXML());
         buf.append("</" + ELEMENT_NAME + ">");
-        return buf.toString();
+        return buf;
     }
 
     /**
@@ -77,13 +81,13 @@ public class LogPacket extends IQ {
      *
      * @author Thiago Rocha
      */
-    public static class Provider implements IQProvider {
+    public static class Provider extends IQProvider<LogPacket> {
 
         public Provider() {
             super();
         }
 
-        public IQ parseIQ(XmlPullParser parser) throws Exception {
+        public LogPacket parse(XmlPullParser parser, int d) throws XmlPullParserException, IOException {
             boolean done = false;
             LogPacket lp = new LogPacket();
             lp.parser = parser;
@@ -121,30 +125,29 @@ public class LogPacket extends IQ {
      * @return the information for about the latest Spark Client.
      * @throws XMPPException
      */
-    public static LogPacket logEvent(XMPPConnection connection, PacketExtension ext)
-            throws XMPPException {
+    public static LogPacket logEvent(XMPPConnection connection, ExtensionElement ext)
+            throws XMPPException, SmackException.NotConnectedException
+    {
 
         LogPacket lp = new LogPacket();
         lp.addExtension(ext);
 
         lp.setTo(NAME + "." + connection.getServiceName());
-        lp.setType(IQ.Type.SET);
+        lp.setType(IQ.Type.set);
 
         PacketCollector collector = connection
                 .createPacketCollector(new PacketIDFilter(lp.getPacketID()));
-        connection.sendPacket(lp);
+        connection.sendStanza(lp);
 
         LogPacket response = (LogPacket)collector
-                .nextResult(SmackConfiguration.getPacketReplyTimeout());
+                .nextResult(SmackConfiguration.getDefaultPacketReplyTimeout());
 
         // Cancel the collector.
         collector.cancel();
         if (response == null) {
-            throw new XMPPException("No response from server.");
+            SmackException.NoResponseException.newWith( connection, collector );
         }
-        if (response.getError() != null) {
-            throw new XMPPException(response.getError());
-        }
+        XMPPException.XMPPErrorException.ifHasErrorThenThrow( response );
         return response;
     }
 	

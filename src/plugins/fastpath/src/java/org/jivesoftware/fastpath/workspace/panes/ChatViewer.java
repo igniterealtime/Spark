@@ -28,10 +28,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
@@ -41,12 +38,13 @@ import javax.swing.JTextPane;
 import org.jivesoftware.fastpath.FastpathPlugin;
 import org.jivesoftware.fastpath.FpRes;
 import org.jivesoftware.fastpath.resources.FastpathRes;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Message;
-import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.packet.Presence;
-import org.jivesoftware.smack.util.StringUtils;
-import org.jivesoftware.smackx.packet.DelayInformation;
+import org.jivesoftware.smackx.delay.packet.DelayInformation;
+import org.jivesoftware.smackx.jiveproperties.packet.JivePropertiesExtension;
 import org.jivesoftware.smackx.workgroup.agent.AgentSession;
 import org.jivesoftware.smackx.workgroup.ext.notes.ChatNotes;
 import org.jivesoftware.smackx.workgroup.packet.Transcript;
@@ -56,6 +54,7 @@ import org.jivesoftware.spark.component.tabbedPane.SparkTabbedPane;
 import org.jivesoftware.spark.ui.ChatPrinter;
 import org.jivesoftware.spark.ui.TranscriptWindow;
 import org.jivesoftware.spark.util.GraphicUtils;
+import org.jxmpp.util.XmppStringUtils;
 
 /**
  * Displays Fastpath transcripts.
@@ -70,32 +69,34 @@ public class ChatViewer extends JPanel {
      * @param transcript the <code>Transcript</code>
      */
     public ChatViewer(final Transcript transcript) {
-        List<Packet> packets = transcript.getPackets();
+        List<Stanza> stanzas = transcript.getPackets();
 
         final TranscriptWindow chatWindow = new TranscriptWindow();
         chatWindow.setBackground(Color.white);
         final List<Message> chatTranscript = new ArrayList<Message>();
 
-        Iterator<Packet> iter = packets.iterator();
+        Iterator<Stanza> iter = stanzas.iterator();
         while (iter.hasNext()) {
-            Packet packet = iter.next();
-            if (packet instanceof Message) {
-                Message message = (Message)packet;
-                String from = StringUtils.parseResource(message.getFrom());
-                DelayInformation delayInformation = (DelayInformation)message.getExtension("delay", "urn:xmpp:delay");
+            Stanza stanza = iter.next();
+            if (stanza instanceof Message) {
+                Message message = (Message)stanza;
+                String from = XmppStringUtils.parseResource(message.getFrom());
+                DelayInformation delayInformation = message.getExtension("delay", "urn:xmpp:delay");
                 Date stamp = null;
                 if (delayInformation != null) {
                     stamp = delayInformation.getStamp();
                 }
                 message.removeExtension(delayInformation);
                 chatWindow.insertMessage(from, message, ChatManager.TO_COLOR);
-                message.setProperty("date", stamp);
+                final Map<String, Object> properties = new HashMap<>();
+                properties.put( "date", stamp );
+                message.addExtension( new JivePropertiesExtension( properties ) );
                 message.setFrom(from);
                 chatTranscript.add(message);
             }
             else {
-                Presence presence = (Presence)packet;
-                String from = StringUtils.parseResource(presence.getFrom());
+                Presence presence = (Presence)stanza;
+                String from = XmppStringUtils.parseResource(presence.getFrom());
                 if (presence.getType() == Presence.Type.available) {
                     from = FpRes.getString("message.user.joined.room", from);
                 }
@@ -163,7 +164,7 @@ public class ChatViewer extends JPanel {
             ChatNotes note = agentSession.getNote(transcript.getSessionID());
             pane.setText(note.getNotes());
         }
-        catch (XMPPException e) {
+        catch (XMPPException | SmackException e) {
             pane.setText("");
             // Log.error(e);
         }

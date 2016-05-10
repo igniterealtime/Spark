@@ -29,8 +29,6 @@ import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.Frame;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class ShakeWindow {
 
@@ -63,39 +61,36 @@ public class ShakeWindow {
         startTime = System.currentTimeMillis();
         shakeTimer =
                 new Timer(SHAKE_UPDATE,
-                        new ActionListener() {
+                        e -> {
+                            // calculate elapsed time
+                            long elapsed = System.currentTimeMillis() - startTime;
+                            // use sin to calculate an x-offset
+                            double waveOffset = (elapsed % SHAKE_CYCLE) /
+                                    SHAKE_CYCLE;
+                            double angle = waveOffset * TWO_PI;
 
-                            public void actionPerformed(ActionEvent e) {
-                                // calculate elapsed time
-                                long elapsed = System.currentTimeMillis() - startTime;
-                                // use sin to calculate an x-offset
-                                double waveOffset = (elapsed % SHAKE_CYCLE) /
-                                        SHAKE_CYCLE;
-                                double angle = waveOffset * TWO_PI;
+                            // offset the x-location by an amount
+                            // proportional to the sine, up to
+                            // shake_distance
+                            int shakenX = (int)((Math.sin(angle) *
+                                    SHAKE_DISTANCE) +
+                                    naturalLocation.x);
 
-                                // offset the x-location by an amount
-                                // proportional to the sine, up to
-                                // shake_distance
-                                int shakenX = (int)((Math.sin(angle) *
-                                        SHAKE_DISTANCE) +
-                                        naturalLocation.x);
-
-                                int shakenY;
-                                if (added) {
-                                    shakenY = naturalLocation.y - 10;
-                                    added = false;
-                                }
-                                else {
-                                    shakenY = naturalLocation.y + 10;
-                                    added = true;
-                                }
-
-                                window.setLocation(shakenX, shakenY);
-                                window.repaint();
-
-                                // should we stop timer?
-                                if (elapsed >= SHAKE_DURATION) stopShake();
+                            int shakenY;
+                            if (added) {
+                                shakenY = naturalLocation.y - 10;
+                                added = false;
                             }
+                            else {
+                                shakenY = naturalLocation.y + 10;
+                                added = true;
+                            }
+
+                            window.setLocation(shakenX, shakenY);
+                            window.repaint();
+
+                            // should we stop timer?
+                            if (elapsed >= SHAKE_DURATION) stopShake();
                         }
                 );
         shakeTimer.start();
@@ -123,29 +118,25 @@ public class ShakeWindow {
         
         final long startTime = System.currentTimeMillis()/1000L;
         
-	moveTimer = new Timer(5, new ActionListener() {
+	moveTimer = new Timer(5, e -> {
+    Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
 
-	    @Override
-	    public void actionPerformed(ActionEvent e) {
-		Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
+    double x = Math.random()*10000 % d.getWidth();
+    double y = Math.random()*10000 % d.getHeight();
+    int xx = Math.round(Math.round(x));
+    int yy = Math.round(Math.round(y));
+    window.setLocation(xx,yy);
+    window.repaint();
 
-		double x = Math.random()*10000 % d.getWidth();
-		double y = Math.random()*10000 % d.getHeight();
-		int xx = Math.round(Math.round(x));
-		int yy = Math.round(Math.round(y));
-		window.setLocation(xx,yy);
-		window.repaint();
-		
-		long now = System.currentTimeMillis()/1000L;
-		long diff = now-startTime;
-		System.out.println(diff);
-		if(diff > seconds)
-		{
-		    moveTimer.stop();
-		}
+    long now = System.currentTimeMillis()/1000L;
+    long diff = now-startTime;
+    System.out.println(diff);
+    if(diff > seconds)
+    {
+        moveTimer.stop();
+    }
 
-	        }
-	    });
+        } );
 	
 	moveTimer.start();
 	

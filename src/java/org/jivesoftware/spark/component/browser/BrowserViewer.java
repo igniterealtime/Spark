@@ -32,7 +32,7 @@ import java.util.List;
  */
 public abstract class BrowserViewer extends JPanel {
 	private static final long serialVersionUID = -5389246902135069702L;
-	private List<BrowserListener> listeners = new ArrayList<BrowserListener>();
+	private List<BrowserListener> listeners = new ArrayList<>();
 
     /**
      * Add a BrowserListener.

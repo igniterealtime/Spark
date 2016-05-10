@@ -33,6 +33,7 @@ import javax.swing.text.BadLocationException;
 import org.jivesoftware.fastpath.FastpathPlugin;
 import org.jivesoftware.fastpath.FpRes;
 import org.jivesoftware.fastpath.workspace.macros.MacrosEditor;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.workgroup.ext.macros.Macro;
 import org.jivesoftware.smackx.workgroup.ext.macros.MacroGroup;
@@ -63,7 +64,7 @@ public class ChatMacroMenu {
         try {
             globalMacros = FastpathPlugin.getAgentSession().getMacros(true);
         }
-        catch (XMPPException e) {
+        catch (XMPPException | SmackException e) {
             // Not Global Macros Set
             Log.error("No global macros have been set.");
         }
@@ -88,7 +89,7 @@ public class ChatMacroMenu {
         try {
             personalGroup = FastpathPlugin.getAgentSession().getMacros(false);
         }
-        catch (XMPPException e) {
+        catch (XMPPException | SmackException e) {
             Log.error("No personal macros set.");
         }
 

@@ -21,8 +21,8 @@ package org.jivesoftware.fastpath.internal;
 
 import org.jivesoftware.spark.component.CheckBoxList;
 import org.jivesoftware.spark.util.ModelUtil;
-import org.jivesoftware.smackx.Form;
-import org.jivesoftware.smackx.FormField;
+import org.jivesoftware.smackx.xdata.Form;
+import org.jivesoftware.smackx.xdata.FormField;
 
 import java.awt.Component;
 import java.awt.GridBagConstraints;
@@ -79,9 +79,7 @@ public class WorkgroupDataForm extends JPanel {
 
     private void buildUI(Form form) {
         // Add default answers to the form to submit
-        Iterator<FormField> fields = form.getFields();
-        while (fields.hasNext()) {
-            FormField field = fields.next();
+        for ( final FormField field : form.getFields() ) {
             String variable = field.getVariable();
             if(field.isRequired()){
                 requiredList.add(variable);
@@ -92,45 +90,41 @@ public class WorkgroupDataForm extends JPanel {
             }
 
             String label = field.getLabel();
-            String type = field.getType();
+            FormField.Type type = field.getType();
 
-            Iterator iter = field.getValues();
             List valueList = new ArrayList();
-            while (iter.hasNext()) {
-                valueList.add(iter.next());
+            for ( String value : field.getValues() ) {
+                valueList.add( value );
             }
 
-            if (type.equals(FormField.TYPE_BOOLEAN)) {
+            if (type.equals(FormField.Type.bool)) {
                 String o = (String)valueList.get(0);
                 boolean isSelected = o.equals("1");
                 JCheckBox box = new JCheckBox(label);
                 box.setSelected(isSelected);
                 addField(label, box, variable);
             }
-            else if (type.equals(FormField.TYPE_TEXT_SINGLE) || type.equals(FormField.TYPE_JID_SINGLE)) {
+            else if (type.equals(FormField.Type.text_single) || type.equals(FormField.Type.jid_single)) {
                 String v = "";
                 if (valueList.size() > 0) {
                     v = (String)valueList.get(0);
                 }
                 addField(label, new JTextField(v), variable);
             }
-            else if (type.equals(FormField.TYPE_TEXT_MULTI) ||
-                type.equals(FormField.TYPE_JID_MULTI)) {
+            else if (type.equals(FormField.Type.text_multi) ||
+                type.equals(FormField.Type.jid_multi)) {
                 StringBuffer buf = new StringBuffer();
-                iter = field.getOptions();
-                while (iter.hasNext()) {
-                    buf.append((String)iter.next());
+                for ( final FormField.Option option : field.getOptions() ) {
+                    buf.append(option);
                 }
                 addField(label, new JTextArea(buf.toString()), variable);
             }
-            else if (type.equals(FormField.TYPE_TEXT_PRIVATE)) {
+            else if (type.equals(FormField.Type.text_private)) {
                 addField(label, new JPasswordField(), variable);
             }
-            else if (type.equals(FormField.TYPE_LIST_SINGLE)) {
+            else if (type.equals(FormField.Type.list_single)) {
                 JComboBox box = new JComboBox();
-                iter = field.getOptions();
-                while (iter.hasNext()) {
-                    FormField.Option option = (FormField.Option)iter.next();
+                for ( final FormField.Option option : field.getOptions() ) {
                     String value = option.getValue();
                     box.addItem(option);
                 }
@@ -141,11 +135,9 @@ public class WorkgroupDataForm extends JPanel {
 
                 addField(label, box, variable);
             }
-            else if (type.equals(FormField.TYPE_LIST_MULTI)) {
+            else if (type.equals(FormField.Type.list_multi)) {
                 CheckBoxList checkBoxList = new CheckBoxList();
-                Iterator i = field.getValues();
-                while (i.hasNext()) {
-                    String value = (String)i.next();
+                for ( final String value : field.getValues() ) {
                     checkBoxList.addCheckBox(new JCheckBox(value), value);
                 }
                 addField(label, checkBoxList, variable);

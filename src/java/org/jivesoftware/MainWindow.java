@@ -52,13 +52,14 @@ import javax.swing.JTextPane;
 import javax.swing.JToolBar;
 import javax.swing.UIManager;
 import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
 
 import org.jivesoftware.launcher.Startup;
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.smack.AbstractXMPPConnection;
 import org.jivesoftware.smack.SmackConfiguration;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.spark.SparkManager;
@@ -89,7 +90,7 @@ import org.jivesoftware.sparkimpl.updater.CheckUpdates;
 public final class MainWindow extends ChatFrame implements ActionListener {
 	private static final long serialVersionUID = -6062104959613603510L;
 
-	private final Set<MainWindowListener> listeners = new HashSet<MainWindowListener>();
+	private final Set<MainWindowListener> listeners = new HashSet<>();
 
     private final JMenu connectMenu = new JMenu();
     private final JMenu contactsMenu = new JMenu();
@@ -284,7 +285,7 @@ public final class MainWindow extends ChatFrame implements ActionListener {
 
         if (con.isConnected()) {
             // Send disconnect.
-            con.disconnect();
+            ((AbstractXMPPConnection)con).disconnect();
         }
 
         // Notify all MainWindowListeners
@@ -343,10 +344,18 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         if (con.isConnected()) {
             if (reason != null) {
                 Presence byePresence = new Presence(Presence.Type.unavailable, reason, -1, null);
-                con.disconnect(byePresence);
+                try
+                {
+                    ((AbstractXMPPConnection)con).disconnect(byePresence);
+                }
+                catch ( SmackException.NotConnectedException e )
+                {
+                    Log.error( "Unable to sign out with presence.", e);
+                    ((AbstractXMPPConnection)con).disconnect();
+                }
             }
             else {
-                con.disconnect();
+                ((AbstractXMPPConnection)con).disconnect();
             }
         }
         if (!restartApplicationWithScript()) {
@@ -467,20 +476,18 @@ public final class MainWindow extends ChatFrame implements ActionListener {
 
         alwaysOnTopItem = new JCheckBoxMenuItem();
         ResourceUtils.resButton(alwaysOnTopItem, Res.getString("menuitem.always.on.top"));
-        alwaysOnTopItem.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent actionEvent) {
-                	if (alwaysOnTopItem.isSelected())
-                	{
-                		SettingsManager.getLocalPreferences().setMainWindowAlwaysOnTop(true);
-                		MainWindow.getInstance().setAlwaysOnTop(true);
-                	}
-                	else
-                	{
-                		SettingsManager.getLocalPreferences().setMainWindowAlwaysOnTop(false);
-                		MainWindow.getInstance().setAlwaysOnTop(false);
-                	}
-                }
-        });
+        alwaysOnTopItem.addActionListener( actionEvent -> {
+            if (alwaysOnTopItem.isSelected())
+            {
+                SettingsManager.getLocalPreferences().setMainWindowAlwaysOnTop(true);
+                MainWindow.getInstance().setAlwaysOnTop(true);
+            }
+            else
+            {
+                SettingsManager.getLocalPreferences().setMainWindowAlwaysOnTop(false);
+                MainWindow.getInstance().setAlwaysOnTop(false);
+            }
+        } );
 
         if (SettingsManager.getLocalPreferences().isMainWindowAlwaysOnTop())
         {
@@ -497,19 +504,11 @@ public final class MainWindow extends ChatFrame implements ActionListener {
 
         JMenuItem logoutMenuItem = new JMenuItem();
         ResourceUtils.resButton(logoutMenuItem, Res.getString("menuitem.logout.no.status"));
-        logoutMenuItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                logout(false);
-           }
-        });
+        logoutMenuItem.addActionListener( e -> logout(false) );
 
         JMenuItem logoutWithStatus = new JMenuItem();
         ResourceUtils.resButton(logoutWithStatus, Res.getString("menuitem.logout.with.status"));
-        logoutWithStatus.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                logout(true);
-            }
-        });
+        logoutWithStatus.addActionListener( e -> logout(true) );
 
         if ((Spark.isWindows() || Spark.isLinux() || Spark.isMac()) && !Default.getBoolean("DISABLE_EXIT")) {
             connectMenu.add(logoutMenuItem);
@@ -523,13 +522,7 @@ public final class MainWindow extends ChatFrame implements ActionListener {
 
         JMenuItem updateMenu= new JMenuItem("", SparkRes.getImageIcon(SparkRes.DOWNLOAD_16x16));
         ResourceUtils.resButton(updateMenu, Res.getString("menuitem.check.for.updates"));
-        updateMenu.addActionListener(new ActionListener() {
-	    @Override
-	    public void actionPerformed(ActionEvent e) {
-		checkForUpdates(true);
-
-	    }
-	});
+        updateMenu.addActionListener( e -> checkForUpdates(true) );
 
         // Add Error Dialog Viewer
         final Action viewErrors = new AbstractAction() {
@@ -642,13 +635,7 @@ public final class MainWindow extends ChatFrame implements ActionListener {
 	{
 	    JMenuItem rawPackets = new JMenuItem(SparkRes.getImageIcon(SparkRes.TRAY_IMAGE));
 	    rawPackets.setText("Send Packets");
-	    rawPackets.addActionListener(new ActionListener() {
-	        @Override
-	        public void actionPerformed(ActionEvent e) {
-	    		new RawPacketSender();
-
-	        }
-	    });
+	    rawPackets.addActionListener( e -> new RawPacketSender() );
 
 	    connectMenu.add(rawPackets,2);
 	}
@@ -771,7 +758,7 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         final String JAVA_VERSION = Default.getString(Default.JAVA_VERSION);
 
         // Construct About Box text
-        StringBuffer aboutBoxText = new StringBuffer();
+        StringBuilder aboutBoxText = new StringBuilder();
         aboutBoxText.append(
             Default.getString(Default.APPLICATION_NAME) + " " + JiveInfo.getVersion());
 
@@ -845,48 +832,39 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         Font font = p.getFont();
 
         // create some css from the JPanel's font
-        StringBuffer style = new StringBuffer();
-        style.append("font-family:" + font.getFamily() + ";");
-        style.append("font-weight:" + (font.isBold() ? "bold" : "normal") + ";");
-        style.append("font-size:" + font.getSize() + "pt;");
-
-        StringBuffer text = new StringBuffer();
-        text.append("<html><body style=\"" + style.toString() + "\">" + aboutBoxText.toString() + "</body></html>");
+        String style = ( "font-family:" + font.getFamily() + ";" ) +
+                "font-weight:" + ( font.isBold() ? "bold" : "normal" ) + ";" +
+                "font-size:" + font.getSize() + "pt;";
 
         // assemble html
-        JEditorPane ep = new JEditorPane("text/html", text.toString());
+        JEditorPane ep = new JEditorPane("text/html", ( "<html><body style=\"" + style + "\">" + aboutBoxText.toString() + "</body></html>" ) );
 
         // handle link events
-        ep.addHyperlinkListener(new HyperlinkListener()
-        {
-            @Override
-            public void hyperlinkUpdate(final javax.swing.event.HyperlinkEvent e)
-            {
-                // if a link is clicked, and it is the APPLICATION_LICENSE_LINK, then load that page
-                if (e.getEventType().equals(HyperlinkEvent.EventType.ACTIVATED)
-                        && e.getURL().toString().equalsIgnoreCase(Default.getString(Default.APPLICATION_LICENSE_LINK))) {
-                    try {
+        ep.addHyperlinkListener( e -> {
+            // if a link is clicked, and it is the APPLICATION_LICENSE_LINK, then load that page
+            if (e.getEventType().equals(HyperlinkEvent.EventType.ACTIVATED)
+                    && e.getURL().toString().equalsIgnoreCase(Default.getString(Default.APPLICATION_LICENSE_LINK))) {
+                try {
 
-                        BrowserLauncher.openURL(Default.getString(Default.APPLICATION_LICENSE_LINK));
+                    BrowserLauncher.openURL(Default.getString(Default.APPLICATION_LICENSE_LINK));
 
-                    } catch (Exception f) {
-                        Log.error("There was an error loading the URL", f);
-                    }
-
-                // else if a link is clicked, and it is the APPLICATION_LINK, then load that page
-                } else if (e.getEventType().equals(HyperlinkEvent.EventType.ACTIVATED)
-                        && e.getURL().toString().equalsIgnoreCase(Default.getString(Default.APPLICATION_LINK))) {
-                    try {
-
-                        BrowserLauncher.openURL(Default.getString(Default.APPLICATION_LINK));
-
-                    } catch (Exception f) {
-                        Log.error("There was an error loading the URL", f);
-                    }
+                } catch (Exception f) {
+                    Log.error("There was an error loading the URL", f);
                 }
 
+            // else if a link is clicked, and it is the APPLICATION_LINK, then load that page
+            } else if (e.getEventType().equals(HyperlinkEvent.EventType.ACTIVATED)
+                    && e.getURL().toString().equalsIgnoreCase(Default.getString(Default.APPLICATION_LINK))) {
+                try {
+
+                    BrowserLauncher.openURL(Default.getString(Default.APPLICATION_LINK));
+
+                } catch (Exception f) {
+                    Log.error("There was an error loading the URL", f);
+                }
             }
-        });
+
+        } );
         ep.setEditable(false);
         ep.setBackground(p.getBackground());
         this.aboutBoxPane = ep;
@@ -937,12 +915,10 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         final JButton copyButton = new JButton(Res.getString("button.copy.to.clipboard"));
         frame.add(copyButton, BorderLayout.SOUTH);
 
-        copyButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                SparkManager.setClipboard(errorLogs);
-                copyButton.setEnabled(false);
-            }
-        });
+        copyButton.addActionListener( e -> {
+            SparkManager.setClipboard(errorLogs);
+            copyButton.setEnabled(false);
+        } );
 
         frame.pack();
         frame.setSize(600, 400);

@@ -49,9 +49,10 @@ import org.jivesoftware.fastpath.resources.FastpathRes;
 import org.jivesoftware.fastpath.workspace.panes.BackgroundPane;
 import org.jivesoftware.fastpath.workspace.panes.ChatViewer;
 import org.jivesoftware.fastpath.workspace.panes.HistoryItemRenderer;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smackx.Form;
-import org.jivesoftware.smackx.ReportedData;
+import org.jivesoftware.smackx.xdata.Form;
+import org.jivesoftware.smackx.search.ReportedData;
 import org.jivesoftware.smackx.workgroup.agent.AgentSession;
 import org.jivesoftware.smackx.workgroup.packet.Transcript;
 import org.jivesoftware.spark.SparkManager;
@@ -93,14 +94,12 @@ public class ChatSearch implements Searchable {
             ReportedData reportedData = null;
             try {
                 reportedData = agentSession.searchTranscripts(filledForm);
-                final Iterator<ReportedData.Row> rows = reportedData.getRows();
-                while (rows.hasNext()) {
-                    ReportedData.Row row = rows.next();
+                for ( final ReportedData.Row row : reportedData.getRows() ) {
                     ChatSearchResult result = new ChatSearchResult(row, query);
                     results.add(result);
                 }
             }
-            catch (XMPPException e) {
+            catch (XMPPException | SmackException e) {
                 Log.error(e);
             }
 
@@ -132,7 +131,7 @@ public class ChatSearch implements Searchable {
                         try {
                             transcript = FastpathPlugin.getAgentSession().getTranscript(item.getSessionID());
                         }
-                        catch (XMPPException ee) {
+                        catch (XMPPException | SmackException ee) {
                             Log.error("Error showing transcripts.", ee);
                         }
 
@@ -200,7 +199,7 @@ public class ChatSearch implements Searchable {
             GraphicUtils.centerWindowOnScreen(frame);
             frame.setVisible(true);
         }
-        catch (XMPPException e) {
+        catch (XMPPException | SmackException e) {
             Log.error(e);
         }
 

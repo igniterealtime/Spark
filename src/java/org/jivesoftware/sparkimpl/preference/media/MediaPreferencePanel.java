@@ -42,8 +42,6 @@ import javax.media.Format;
 import javax.media.format.AudioFormat;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.util.Vector;
@@ -52,8 +50,8 @@ public class MediaPreferencePanel  extends JPanel {
 	private static final long serialVersionUID = 8297469864676223072L;
 	private Vector<CaptureDeviceInfo2> vectorAudioDevices;
 	private Vector<CaptureDeviceInfo> vectorVideoDevices;
-	private Vector<AudioSystem> vectorAudioSystem  = new  Vector<AudioSystem>();
-	private Vector<CaptureDeviceInfo2> vectorPlaybackDevices = new  Vector<CaptureDeviceInfo2>();
+	private Vector<AudioSystem> vectorAudioSystem  = new Vector<>();
+	private Vector<CaptureDeviceInfo2> vectorPlaybackDevices = new Vector<>();
 
 	private JComboBox audioDevice = new JComboBox();
 	private JComboBox audioSystem = new JComboBox();
@@ -91,14 +89,7 @@ public class MediaPreferencePanel  extends JPanel {
         panel.add(videoDevice, new GridBagConstraints(1, 3, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(10, 15, 5, 0), 0, 0));
 	
         JButton redetect = new JButton(); // Res.getString("button.re.detect") );
-        redetect.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent event) {
-				scanDevices();
-			}
-        	
-        });
+        redetect.addActionListener( event -> scanDevices() );
         
         panel.add(redetect,new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(10, 15, 5, 0), 0, 0));
     

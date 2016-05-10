@@ -35,7 +35,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
@@ -57,16 +56,14 @@ import javax.swing.UIManager;
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.smack.Roster;
-import org.jivesoftware.smack.RosterEntry;
-import org.jivesoftware.smack.RosterGroup;
+import org.jivesoftware.smack.SmackException;
+import org.jivesoftware.smack.roster.Roster;
+import org.jivesoftware.smack.roster.RosterEntry;
+import org.jivesoftware.smack.roster.RosterGroup;
 import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smack.util.StringUtils;
-import org.jivesoftware.smackx.Form;
-import org.jivesoftware.smackx.ReportedData;
-import org.jivesoftware.smackx.ReportedData.Column;
-import org.jivesoftware.smackx.ReportedData.Row;
-import org.jivesoftware.smackx.packet.VCard;
+import org.jivesoftware.smackx.xdata.Form;
+import org.jivesoftware.smackx.search.ReportedData;
+import org.jivesoftware.smackx.vcardtemp.packet.VCard;
 import org.jivesoftware.smackx.search.UserSearchManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.UserManager;
@@ -81,6 +78,7 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.gateways.Gateway;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.Transport;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.TransportUtils;
+import org.jxmpp.util.XmppStringUtils;
 
 
 /**
@@ -90,8 +88,7 @@ public class RosterDialog implements ActionListener {
     private JPanel panel;
     private JTextField jidField;
     private JTextField nicknameField;
-    private final Vector<String> groupModel = new Vector<String>();
-    private final JPanel networkPanel = new JPanel(new GridBagLayout());
+    private final Vector<String> groupModel = new Vector<>();
 
     private JComboBox groupBox;
     private JComboBox accounts;
@@ -133,7 +130,7 @@ public class RosterDialog implements ActionListener {
 	    public void mouseClicked(MouseEvent e) {
 		try {
 		    searchForContact(jidField.getText(), e);
-		} catch (XMPPException e1) {
+		} catch (XMPPException | SmackException e1) {
 		    Log.error("search contact", e1);
 		}
 	    }
@@ -166,6 +163,7 @@ public class RosterDialog implements ActionListener {
         panel.add(nicknameField, new GridBagConstraints(1, 1, 1, 1, 1.0D, 0.0D, 17, 2, new Insets(5, 5, 5, 5), 0, 0));
 
 
+        JPanel networkPanel = new JPanel( new GridBagLayout() );
         ComponentTitledBorder componentBorder = new ComponentTitledBorder(publicBox, networkPanel
                 , BorderFactory.createEtchedBorder());
 
@@ -188,7 +186,7 @@ public class RosterDialog implements ActionListener {
         }
         newGroupButton.addActionListener(this);
 
-        panel.add(networkPanel, new GridBagConstraints(0, 5, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+        panel.add( networkPanel, new GridBagConstraints(0, 5, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 
 
         ResourceUtils.resLabel(contactIDLabel, jidField, Res.getString("label.username") + ":");
@@ -227,7 +225,7 @@ public class RosterDialog implements ActionListener {
                 if (!publicBox.isSelected()) {
                     // This is not a transport.
                     String fullJID = getJID();
-                    if (fullJID.indexOf("@") == -1) {
+                    if ( !fullJID.contains( "@" ) ) {
                         fullJID = fullJID + "@" + SparkManager.getConnection().getServiceName();
                     }
 
@@ -236,7 +234,7 @@ public class RosterDialog implements ActionListener {
 
                 String nickname = nicknameField.getText();
                 if (!ModelUtil.hasLength(nickname) && ModelUtil.hasLength(jid)) {
-                    nickname = StringUtils.parseName(jid);
+                    nickname = XmppStringUtils.parseLocalpart(jid);
                     if (!ModelUtil.hasLength(nickname)) {
                         nickname = jid;
                     }
@@ -258,11 +256,7 @@ public class RosterDialog implements ActionListener {
             networkPanel.setVisible(true);
         }
 
-        publicBox.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent actionEvent) {
-                accounts.setEnabled(publicBox.isSelected());
-            }
-        });
+        publicBox.addActionListener( actionEvent -> accounts.setEnabled(publicBox.isSelected()) );
 
 
     }
@@ -305,7 +299,7 @@ public class RosterDialog implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         String group = JOptionPane.showInputDialog(dialog, Res.getString("label.enter.group.name") + ":", Res.getString("title.new.roster.group"), 3);
         if (group != null && group.length() > 0 && !groupModel.contains(group)) {
-            SparkManager.getConnection().getRoster().createGroup(group);
+            Roster.getInstanceFor( SparkManager.getConnection() ).createGroup(group);
             groupModel.add(group);
             int size = groupModel.size();
             groupBox.setSelectedIndex(size - 1);
@@ -337,20 +331,10 @@ public class RosterDialog implements ActionListener {
        
         JButton addbutton = new JButton(Res.getString("add"));
         
-        addbutton.addActionListener(new ActionListener() {
-	    @Override
-	    public void actionPerformed(ActionEvent e) {
-		addContactButton();
-	    }
-	});
+        addbutton.addActionListener( e -> addContactButton() );
         
         JButton cancelbutton = new JButton(Res.getString("cancel"));
-        cancelbutton.addActionListener(new ActionListener() {    
-	    @Override
-	    public void actionPerformed(ActionEvent e) {
-		dialog.dispose();
-	    }
-	});
+        cancelbutton.addActionListener( e -> dialog.dispose() );
         
         
         JPanel buttonpanel = new JPanel(new FlowLayout());
@@ -387,7 +371,7 @@ public class RosterDialog implements ActionListener {
         }
         if (transport == null) {
             String jid = getJID();
-            if (jid.indexOf("@") == -1) {
+            if ( !jid.contains( "@" ) ) {
                 jid = jid + "@" + SparkManager.getConnection().getServiceName();
             }
             String nickname = nicknameField.getText();
@@ -403,7 +387,7 @@ public class RosterDialog implements ActionListener {
             try {
                 jid = Gateway.getJID(transport.getServiceName(), jid);
             }
-            catch (XMPPException e) {
+            catch (SmackException e) {
                 Log.error(e);
             }
 
@@ -451,7 +435,8 @@ public class RosterDialog implements ActionListener {
      * @throws XMPPException
      */
     public void searchForContact(String byname, MouseEvent event)
-	    throws XMPPException {
+            throws XMPPException, SmackException.NotConnectedException, SmackException.NoResponseException
+    {
 
     	UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
     	
@@ -490,31 +475,23 @@ public class RosterDialog implements ActionListener {
 
 		data = usersearchManager.getSearchResults(answer, search);
 
-		ArrayList<String> columnnames = new ArrayList<String>();
-		Iterator<Column> columns = data.getColumns();
-		while (columns.hasNext()) {
-		    ReportedData.Column column = (ReportedData.Column) columns
-			    .next();
+		ArrayList<String> columnnames = new ArrayList<>();
+		for ( ReportedData.Column column : data.getColumns() ) {
 		    String label = column.getLabel();
 		    columnnames.add(label);
 		}
 
-		Iterator<Row> rows = data.getRows();
-		while (rows.hasNext()) {
-		    ReportedData.Row row = (ReportedData.Row) rows.next();
-		    if (row.getValues(columnnames.get(0)).hasNext()) {
-			String s = (String) row.getValues(columnnames.get(0))
-				.next();
+		for (ReportedData.Row row : data.getRows() ) {
+		    if (!row.getValues(columnnames.get(0)).isEmpty()) {
+			String s = row.getValues(columnnames.get(0))
+				.get(0);
 			final JMenuItem item = new JMenuItem(s);
 			popup.add(item);
-			item.addActionListener(new ActionListener() {
-			    @Override
-			    public void actionPerformed(ActionEvent e) {
-				jidField.setText(item.getText());
-				nicknameField.setText(StringUtils
-					.parseName(item.getText()));
-			    }
-			});
+			item.addActionListener( e -> {
+            jidField.setText(item.getText());
+            nicknameField.setText(XmppStringUtils
+                .parseLocalpart(item.getText()));
+            } );
 		    }
 
 		}
@@ -525,7 +502,7 @@ public class RosterDialog implements ActionListener {
 		popup.show(_searchForName, event.getX(), event.getY());
 	    } else if (popup.getComponentCount() == 2) {
 		jidField.setText(((JMenuItem) popup.getComponent(1)).getText());
-		nicknameField.setText(StringUtils.parseName(((JMenuItem) popup
+		nicknameField.setText(XmppStringUtils.parseLocalpart(((JMenuItem) popup
 			.getComponent(1)).getText()));
 	    } else {
 		JOptionPane.showMessageDialog(jidField,
@@ -548,7 +525,7 @@ public class RosterDialog implements ActionListener {
     public RosterEntry addEntry(String jid, String nickname, String group) {
         String[] groups = {group};
 
-        Roster roster = SparkManager.getConnection().getRoster();
+        Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
         RosterEntry userEntry = roster.getEntry(jid);
 
         boolean isSubscribed = true;
@@ -560,7 +537,7 @@ public class RosterDialog implements ActionListener {
             try {
                 roster.createEntry(jid, nickname, new String[]{group});
             }
-            catch (XMPPException e) {
+            catch (XMPPException | SmackException e) {
                 Log.error("Unable to add new entry " + jid, e);
             }
             return roster.getEntry(jid);
@@ -584,14 +561,14 @@ public class RosterDialog implements ActionListener {
 
             userEntry = roster.getEntry(jid);
         }
-        catch (XMPPException ex) {
+        catch (XMPPException | SmackException ex) {
             Log.error(ex);
         }
         return userEntry;
     }
 
     public List<AccountItem> getAccounts() {
-        List<AccountItem> list = new ArrayList<AccountItem>();
+        List<AccountItem> list = new ArrayList<>();
 
         for (Transport transport : TransportUtils.getTransports()) {
             if (TransportUtils.isRegistered(SparkManager.getConnection(), transport)) {
@@ -646,12 +623,12 @@ public class RosterDialog implements ActionListener {
 	    try {
 		vcard.load(SparkManager.getConnection(), contact);
 		nickname = vcard.getNickName();
-	    } catch (XMPPException e1) {
+	    } catch (XMPPException | SmackException e1) {
 		Log.error(e1);
 	    }
 	    // If no nickname, use first name.
 	    if (!ModelUtil.hasLength(nickname)) {
-		nickname = StringUtils.parseName(contact);
+		nickname = XmppStringUtils.parseLocalpart(contact);
 	    }
 	    nicknameField.setText(nickname);
 	}
@@ -665,7 +642,7 @@ public class RosterDialog implements ActionListener {
 		    .getString("message.cannot.add.contact.to.shared.group");
 	} else if (!ModelUtil.hasLength(contact)) {
 	    errorMessage = Res.getString("message.specify.contact.jid");
-	} else if (!StringUtils.parseBareAddress(contact).contains("@")) {
+	} else if (!XmppStringUtils.parseBareJid(contact).contains("@")) {
 	    errorMessage = Res.getString("message.invalid.jid.error");
 	} else if (!ModelUtil.hasLength(group)) {
 	    errorMessage = Res.getString("message.specify.group");
@@ -673,8 +650,7 @@ public class RosterDialog implements ActionListener {
 		&& !isSharedGroup) {
 	    addEntry();
 	    dialog.setVisible(false);
-	    return;
-	} else {
+    } else {
 
 	    JOptionPane.showMessageDialog(dialog, errorMessage,
 		    Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);

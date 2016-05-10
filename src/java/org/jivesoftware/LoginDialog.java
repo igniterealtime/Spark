@@ -20,40 +20,34 @@
 
 package org.jivesoftware;
 
-import java.awt.BorderLayout;
-import java.awt.CardLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.EventQueue;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Image;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.awt.geom.AffineTransform;
-import java.io.File;
-import java.io.IOException;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.security.Principal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.List;
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.Element;
+import org.dom4j.io.SAXReader;
+import org.jivesoftware.resource.Default;
+import org.jivesoftware.resource.Res;
+import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.smack.*;
+import org.jivesoftware.smack.proxy.ProxyInfo;
+import org.jivesoftware.smack.sasl.javax.SASLExternalMechanism;
+import org.jivesoftware.smack.tcp.XMPPTCPConnection;
+import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
+import org.jivesoftware.smack.util.TLSUtils;
+import org.jivesoftware.smackx.chatstates.ChatStateManager;
+import org.jivesoftware.spark.SessionManager;
+import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.Workspace;
+import org.jivesoftware.spark.component.RolloverButton;
+import org.jivesoftware.spark.util.*;
+import org.jivesoftware.spark.util.SwingWorker;
+import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkimpl.plugin.layout.LayoutSettings;
+import org.jivesoftware.sparkimpl.plugin.layout.LayoutSettingsManager;
+import org.jivesoftware.sparkimpl.settings.JiveInfo;
+import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
+import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+import org.jxmpp.util.XmppStringUtils;
+
 import javax.naming.NamingException;
 import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
@@ -67,52 +61,20 @@ import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.login.Configuration;
 import javax.security.auth.login.LoginContext;
 import javax.security.auth.login.LoginException;
-import javax.swing.ImageIcon;
-import javax.swing.JCheckBox;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPasswordField;
-import javax.swing.JPopupMenu;
-import javax.swing.JSplitPane;
-import javax.swing.JTextField;
-import javax.swing.UIManager;
+import javax.swing.*;
 import javax.swing.text.JTextComponent;
-
-import org.dom4j.Document;
-import org.dom4j.DocumentException;
-import org.dom4j.Element;
-import org.dom4j.io.SAXReader;
-import org.jivesoftware.resource.Default;
-import org.jivesoftware.resource.Res;
-import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.smack.ConnectionConfiguration;
-import org.jivesoftware.smack.proxy.ProxyInfo;
-import org.jivesoftware.smack.SASLAuthentication;
-import org.jivesoftware.smack.SmackConfiguration;
-import org.jivesoftware.smack.XMPPConnection;
-import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smack.packet.XMPPError;
-import org.jivesoftware.smack.util.StringUtils;
-import org.jivesoftware.smackx.ChatStateManager;
-import org.jivesoftware.spark.SessionManager;
-import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.Workspace;
-import org.jivesoftware.spark.component.RolloverButton;
-import org.jivesoftware.spark.util.BrowserLauncher;
-import org.jivesoftware.spark.util.DummySSLSocketFactory;
-import org.jivesoftware.spark.util.GraphicUtils;
-import org.jivesoftware.spark.util.ModelUtil;
-import org.jivesoftware.spark.util.ResourceUtils;
-import org.jivesoftware.spark.util.SwingWorker;
-import org.jivesoftware.spark.util.log.Log;
-import org.jivesoftware.sparkimpl.settings.JiveInfo;
-import org.jivesoftware.sparkimpl.plugin.layout.LayoutSettings;
-import org.jivesoftware.sparkimpl.plugin.layout.LayoutSettingsManager;
-import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
-import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+import java.awt.*;
+import java.awt.event.*;
+import java.awt.geom.AffineTransform;
+import java.io.File;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.Principal;
+import java.util.*;
+import java.util.List;
 
 /**
  * Dialog to log in a user into the Spark Server. The LoginDialog is used only
@@ -123,7 +85,7 @@ public class LoginDialog {
     private static final String BUTTON_PANEL = "buttonpanel"; // NOTRANS
     private static final String PROGRESS_BAR = "progressbar"; // NOTRANS
     private LocalPreferences localPref;
-    private ArrayList<String> _usernames = new ArrayList<String>();
+    private ArrayList<String> _usernames = new ArrayList<>();
     private String loginUsername;
     private String loginPassword;
     private String loginServer;
@@ -160,64 +122,62 @@ public class LoginDialog {
 
 
         // Construct Dialog
-    	 EventQueue.invokeLater(new Runnable() {
-   		 public void run() {
-   	        loginDialog = new JFrame(Default.getString(Default.APPLICATION_NAME));
-   	        loginDialog.setIconImage(SparkManager.getApplicationImage().getImage());
-   	        LoginPanel loginPanel = new LoginPanel();
-   	        final JPanel mainPanel = new LoginBackgroundPanel();
-   	        final GridBagLayout mainLayout = new GridBagLayout();
-   	        mainPanel.setLayout(mainLayout);
+    	 EventQueue.invokeLater( () -> {
+            loginDialog = new JFrame(Default.getString(Default.APPLICATION_NAME));
+            loginDialog.setIconImage(SparkManager.getApplicationImage().getImage());
+            LoginPanel loginPanel = new LoginPanel();
+            final JPanel mainPanel = new LoginBackgroundPanel();
+            final GridBagLayout mainLayout = new GridBagLayout();
+            mainPanel.setLayout(mainLayout);
 
-   	        final ImagePanel imagePanel = new ImagePanel();
+            final ImagePanel imagePanel = new ImagePanel();
 
-   	        mainPanel.add(imagePanel,
-   	                new GridBagConstraints(0, 0, 4, 1,
-   	                        1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH,
-   	                        new Insets(0, 0, 0, 0), 0, 0));
+            mainPanel.add(imagePanel,
+                    new GridBagConstraints(0, 0, 4, 1,
+                            1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH,
+                            new Insets(0, 0, 0, 0), 0, 0));
 
-   	        final String showPoweredBy = Default.getString(Default.SHOW_POWERED_BY);
-   	        if (ModelUtil.hasLength(showPoweredBy) && "true".equals(showPoweredBy)) {
-   	            // Handle Powered By for custom clients.
-   	            final JLabel poweredBy = new JLabel(SparkRes.getImageIcon(SparkRes.POWERED_BY_IMAGE));
-   	            mainPanel.add(poweredBy,
-   	                    new GridBagConstraints(0, 1, 4, 1,
-   	                            1.0, 0.0, GridBagConstraints.NORTHEAST, GridBagConstraints.HORIZONTAL,
-   	                            new Insets(0, 0, 2, 0), 0, 0));
+            final String showPoweredBy = Default.getString(Default.SHOW_POWERED_BY);
+            if (ModelUtil.hasLength(showPoweredBy) && "true".equals(showPoweredBy)) {
+                // Handle Powered By for custom clients.
+                final JLabel poweredBy = new JLabel(SparkRes.getImageIcon(SparkRes.POWERED_BY_IMAGE));
+                mainPanel.add(poweredBy,
+                        new GridBagConstraints(0, 1, 4, 1,
+                                1.0, 0.0, GridBagConstraints.NORTHEAST, GridBagConstraints.HORIZONTAL,
+                                new Insets(0, 0, 2, 0), 0, 0));
 
-   	        }
+            }
 
-   	        loginPanel.setOpaque(false);
-   	        mainPanel.add(loginPanel,
-   	                new GridBagConstraints(0, 2, 2, 1,
-   	                        1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH,
-   	                        new Insets(0, 0, 0, 0), 0, 0));
+            loginPanel.setOpaque(false);
+            mainPanel.add(loginPanel,
+                    new GridBagConstraints(0, 2, 2, 1,
+                            1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH,
+                            new Insets(0, 0, 0, 0), 0, 0));
 
-   	        loginDialog.setContentPane(mainPanel);
-   	        loginDialog.setLocationRelativeTo(parentFrame);
+            loginDialog.setContentPane(mainPanel);
+            loginDialog.setLocationRelativeTo(parentFrame);
 
-   	        loginDialog.setResizable(false);
-   	        loginDialog.pack();
+            loginDialog.setResizable(false);
+            loginDialog.pack();
 
-   	        // Center dialog on screen
-   	        GraphicUtils.centerWindowOnScreen(loginDialog);
+            // Center dialog on screen
+            GraphicUtils.centerWindowOnScreen(loginDialog);
 
-   	        // Show dialog
-   	        loginDialog.addWindowListener(new WindowAdapter() {
-   	            public void windowClosing(WindowEvent e) {
-   	                quitLogin();
-   	            }
-   	        });
-   	        if (loginPanel.getUsername().trim().length() > 0) {
-   	            loginPanel.getPasswordField().requestFocus();
-   	        }
+            // Show dialog
+            loginDialog.addWindowListener(new WindowAdapter() {
+                public void windowClosing(WindowEvent e) {
+                    quitLogin();
+                }
+            });
+            if (loginPanel.getUsername().trim().length() > 0) {
+                loginPanel.getPasswordField().requestFocus();
+            }
 
-   	        if (!localPref.isStartedHidden() || !localPref.isAutoLogin()) {
-   	            // Make dialog top most.
-   	            loginDialog.setVisible(true);
-   	        }
-   		 }
-   	 });
+            if (!localPref.isStartedHidden() || !localPref.isAutoLogin()) {
+                // Make dialog top most.
+                loginDialog.setVisible(true);
+            }
+         } );
 
 
     }
@@ -233,7 +193,7 @@ public class LoginDialog {
         // settings
     }    
 
-    protected ConnectionConfiguration retrieveConnectionConfiguration() {
+    protected XMPPTCPConnectionConfiguration retrieveConnectionConfiguration() {
         int port = localPref.getXmppPort();
 
         int checkForPort = loginServer.indexOf(":");
@@ -248,112 +208,97 @@ public class LoginDialog {
         boolean useSSL = localPref.isSSL();
         boolean hostPortConfigured = localPref.isHostAndPortConfigured();
 
-        ConnectionConfiguration config = null;
-
         ProxyInfo proxyInfo = null;
         if (localPref.isProxyEnabled()) {
-        	ProxyInfo.ProxyType pType = localPref.getProtocol().equals("SOCKS") ?
-        		ProxyInfo.ProxyType.SOCKS5 : ProxyInfo.ProxyType.HTTP;
-        	String pHost = ModelUtil.hasLength(localPref.getHost()) ?
-        		localPref.getHost() : null;
-        	int pPort = ModelUtil.hasLength(localPref.getPort()) ?
-        		Integer.parseInt(localPref.getPort()) : 0;
-        	String pUser = ModelUtil.hasLength(localPref.getProxyUsername()) ?
-        		localPref.getProxyUsername() : null;
-        	String pPass = ModelUtil.hasLength(localPref.getProxyPassword()) ?
-        		localPref.getProxyPassword() : null;
-        	
-        	if (pHost != null && pPort != 0) {
-                   
-        		if (pUser == null || pPass == null) {
-                                
-        			proxyInfo = new ProxyInfo(pType, pHost, pPort, null, null);
-        		} else {
-                               
-        			proxyInfo = new ProxyInfo(pType, pHost, pPort, pUser, pPass);
-                                                                       
-        		}
-        	} else {
-        		Log.error("No proxy info found but proxy type is enabled!");
-        	}
+            ProxyInfo.ProxyType pType = localPref.getProtocol().equals("SOCKS") ?
+                    ProxyInfo.ProxyType.SOCKS5 : ProxyInfo.ProxyType.HTTP;
+            String pHost = ModelUtil.hasLength(localPref.getHost()) ?
+                    localPref.getHost() : null;
+            int pPort = ModelUtil.hasLength(localPref.getPort()) ?
+                    Integer.parseInt(localPref.getPort()) : 0;
+            String pUser = ModelUtil.hasLength(localPref.getProxyUsername()) ?
+                    localPref.getProxyUsername() : null;
+            String pPass = ModelUtil.hasLength(localPref.getProxyPassword()) ?
+                    localPref.getProxyPassword() : null;
+
+            if (pHost != null && pPort != 0) {
+
+                if (pUser == null || pPass == null) {
+
+                    proxyInfo = new ProxyInfo(pType, pHost, pPort, null, null);
+                } else {
+
+                    proxyInfo = new ProxyInfo(pType, pHost, pPort, pUser, pPass);
+
+                }
+            } else {
+                Log.error("No proxy info found but proxy type is enabled!");
+            }
         }
-        
+
+        final XMPPTCPConnectionConfiguration.Builder builder = XMPPTCPConnectionConfiguration.builder()
+                .setUsernameAndPassword(loginUsername, loginPassword)
+                .setServiceName(loginServer)
+                .setPort(port)
+                .setSendPresence(false)
+                .setCompressionEnabled(localPref.isCompressionEnabled());
+
+        if (localPref.isAcceptAllCertificates()) {
+            try {
+                TLSUtils.acceptAllCertificates(builder);
+            } catch (NoSuchAlgorithmException | KeyManagementException e) {
+                Log.warning( "Unable to create configuration.", e );
+            }
+    }
+        if ( localPref.isDebuggerEnabled()) {
+            builder.setDebuggerEnabled( true );
+        }
+
+        if ( hostPortConfigured ) {
+            builder.setHost( localPref.getXmppHost() );
+        }
+
+        if ( localPref.isProxyEnabled() )
+        {
+            builder.setProxyInfo( proxyInfo );
+        }
+
         if (useSSL) {
             if (!hostPortConfigured) {
-                config = new ConnectionConfiguration(loginServer, 5223);
-                config.setSocketFactory(new DummySSLSocketFactory());
+                builder.setPort( 5223 );
             }
-            else {
-                config = new ConnectionConfiguration(localPref.getXmppHost(), port, loginServer);
-                config.setSocketFactory(new DummySSLSocketFactory());
-            }
-            if(localPref.isProxyEnabled() &&  !hostPortConfigured)
-            {
-                
-                config = new ConnectionConfiguration(loginServer,5223,proxyInfo);
-            }
-            else if(localPref.isProxyEnabled() &&  !hostPortConfigured)
-            {
-                
-                config = new ConnectionConfiguration(localPref.getXmppHost(), port, loginServer,proxyInfo);
-            
-            }
+            builder.setSocketFactory( new DummySSLSocketFactory() );
         }
-        else {
-            if(!localPref.isProxyEnabled())
-            {
-            if (!hostPortConfigured) {
-                config = new ConnectionConfiguration(loginServer);
-            }
-            else {
-                
-                config = new ConnectionConfiguration(localPref.getXmppHost(), port, loginServer);
-            }
-            }
-            else
-            {
-                 if (!hostPortConfigured) {
-                     
-                config = new ConnectionConfiguration(loginServer,proxyInfo);
-            }
-            else {
-                
-                config = new ConnectionConfiguration(localPref.getXmppHost(), port, loginServer,proxyInfo);
-            }
-            
-            }
 
-        }
-        config.setReconnectionAllowed(true);
-        config.setRosterLoadedAtLogin(true);
-        config.setSendPresence(false);
+        final XMPPTCPConnectionConfiguration configuration = builder.build();
 
         if (localPref.isPKIEnabled()) {
-            SASLAuthentication.supportSASLMechanism("EXTERNAL");
-            config.setKeystoreType(localPref.getPKIStore());
+            SASLAuthentication.registerSASLMechanism( new SASLExternalMechanism() );
+            builder.setKeystoreType(localPref.getPKIStore());
             if(localPref.getPKIStore().equals("PKCS11")) {
-                config.setPKCS11Library(localPref.getPKCS11Library());
+                builder.setPKCS11Library(localPref.getPKCS11Library());
             }
             else if(localPref.getPKIStore().equals("JKS")) {
-                config.setKeystoreType("JKS");
-                config.setKeystorePath(localPref.getJKSPath());
+                builder.setKeystoreType("JKS");
+                builder.setKeystorePath(localPref.getJKSPath());
 
             }
             else if(localPref.getPKIStore().equals("X509")) {
                 //do something
             }
             else if(localPref.getPKIStore().equals("Apple")) {
-                config.setKeystoreType("Apple");
+                builder.setKeystoreType("Apple");
             }
         }
 
-        boolean compressionEnabled = localPref.isCompressionEnabled();
-        config.setCompressionEnabled(compressionEnabled);            
-        if(ModelUtil.hasLength(localPref.getTrustStorePath())) {
-        	config.setTruststorePath(localPref.getTrustStorePath());
-        	config.setTruststorePassword(localPref.getTrustStorePassword());
-        }
-        return config;
+        // TODO These were used in Smack 3. Find Smack 4 alternative.
+//        config.setReconnectionAllowed(true);
+//        config.setRosterLoadedAtLogin(true);
+//        if(ModelUtil.hasLength(localPref.getTrustStorePath())) {
+//        	config.setTruststorePath(localPref.getTrustStorePath());
+//        	config.setTruststorePassword(localPref.getTrustStorePassword());
+//        }
+        return builder.build();
     }
     
     /**
@@ -388,7 +333,7 @@ public class LoginDialog {
 
         final JPanel buttonPanel = new JPanel(new GridBagLayout());
         private final GridBagLayout GRIDBAGLAYOUT = new GridBagLayout();
-        private XMPPConnection connection = null;
+        private AbstractXMPPConnection connection = null;
 
         private JLabel headerLabel = new JLabel();
         private JLabel accountLabel = new JLabel();
@@ -601,7 +546,7 @@ public class LoginDialog {
 
 
             if (userProp != null) {
-                usernameField.setText(StringUtils.unescapeNode(userProp));
+                usernameField.setText( XmppStringUtils.unescapeLocalpart(userProp));
             }
             if (serverProp != null) {
                 serverField.setText(serverProp);
@@ -672,7 +617,7 @@ public class LoginDialog {
          * @return the username.
          */
         private String getUsername() {
-            return StringUtils.escapeNode(usernameField.getText().trim());
+            return XmppStringUtils.escapeLocalpart(usernameField.getText().trim());
         }
 
         /**
@@ -768,26 +713,22 @@ public class LoginDialog {
 
 		final String username = key.split("@")[0];
 		final String host = key.split("@")[1];
-		menu.addActionListener(new ActionListener() {
+		menu.addActionListener( e -> {
+        usernameField.setText(username);
+        serverField.setText(host);
 
-		    @Override
-		    public void actionPerformed(ActionEvent e) {
-			usernameField.setText(username);
-			serverField.setText(host);
+        try {
+            passwordField.setText(localPref.getPasswordForUser(getBareJid()));
+            if(passwordField.getPassword().length<1) {
+            loginButton.setEnabled(false);
+            }
+            else {
+            loginButton.setEnabled(true);
+            }
+        } catch (Exception e1) {
+        }
 
-			try {
-			    passwordField.setText(localPref.getPasswordForUser(getBareJid()));
-			    if(passwordField.getPassword().length<1) {
-				loginButton.setEnabled(false);
-			    }
-			    else {
-				loginButton.setEnabled(true);
-			    }
-			} catch (Exception e1) {
-			}
-
-		    }
-		});
+        } );
 
 		popup.add(menu);
 	    }
@@ -912,17 +853,13 @@ public class LoginDialog {
                         // new ChangeLogDialog().showDialog();
                     }
                     else {
-                        EventQueue.invokeLater(new Runnable() {
-
-                            @Override
-                            public void run() {
-                                savePasswordBox.setEnabled(true);
-                                autoLoginBox.setEnabled(true);
-				loginAsInvisibleBox.setVisible(true);
-                                enableComponents(true);
-                                setProgressBarVisible(false);
-                            }
-                        });
+                        EventQueue.invokeLater( () -> {
+                            savePasswordBox.setEnabled(true);
+                            autoLoginBox.setEnabled(true);
+            loginAsInvisibleBox.setVisible(true);
+                            enableComponents(true);
+                            setProgressBarVisible(false);
+                        } );
 
                     }
                     return loginSuccessfull;
@@ -1085,33 +1022,28 @@ public class LoginDialog {
             if (!hasErrors) {
                 localPref = SettingsManager.getLocalPreferences();
                 if (localPref.isDebuggerEnabled()) {
-                    XMPPConnection.DEBUG_ENABLED = true;
+                    SmackConfiguration.DEBUG = true;
                 }
 
-                SmackConfiguration.setPacketReplyTimeout(localPref.getTimeOut() * 1000);
+                SmackConfiguration.setDefaultPacketReplyTimeout(localPref.getTimeOut() * 1000);
 
                 // Get connection
                 try {
-                	ConnectionConfiguration config = retrieveConnectionConfiguration();
-                    connection = new XMPPConnection(config,this);
+                    connection = new XMPPTCPConnection(retrieveConnectionConfiguration());
                     //If we want to use the debug version of smack, we have to check if
                     //we are on the dispatch thread because smack will create an UI
 		    if (localPref.isDebuggerEnabled()) {
 			if (EventQueue.isDispatchThread()) {
 			    connection.connect();
 			} else {
-			    EventQueue.invokeAndWait(new Runnable() {
+			    EventQueue.invokeAndWait( () -> {
+                    try {
+                    connection.connect();
+                    } catch (IOException | XMPPException | SmackException e) {
+                    Log.error("connection error",e);
+                    }
 
-				@Override
-				public void run() {
-				    try {
-					connection.connect();
-				    } catch (XMPPException e) {
-					Log.error("connection error",e);
-				    }
-
-				}
-			    });
+                } );
 			}
 		    } else {
 			connection.connect();
@@ -1143,69 +1075,67 @@ public class LoginDialog {
                     sessionManager.setJID(connection.getUser());
                 }
                 catch (Exception xee) {
-                   
-                   
+
+                    errorMessage = SparkRes.getString(SparkRes.UNRECOVERABLE_ERROR);
+                    hasErrors = true;
+
                     if (!loginDialog.isVisible()) {
                         loginDialog.setVisible(true);
                     }
-                    if (xee instanceof XMPPException) {
+                    if (xee instanceof XMPPException.XMPPErrorException) {
 
-                       XMPPException xe = (XMPPException)xee;
-                       final XMPPError error = xe.getXMPPError();
-                       int errorCode = 0;
-                       if (error != null) {
-                           errorCode = error.getCode();
-                       }
-                       if (errorCode == 401) {
-                           errorMessage = Res.getString("message.invalid.username.password");
-                       }
-                       else if (errorCode == 502 || errorCode == 504) {
-                           errorMessage = Res.getString("message.server.unavailable");
-                       }
-                       else if (errorCode == 409) {
-                           errorMessage = Res.getString("label.conflict.error");
-                       }
-                       else {
-                           errorMessage = Res.getString("message.unrecoverable.error");
-                       }
-                   }
-                   else {
-                       errorMessage = SparkRes.getString(SparkRes.UNRECOVERABLE_ERROR);
+                        XMPPException.XMPPErrorException xe = (XMPPException.XMPPErrorException)xee;
+                        switch ( xe.getXMPPError().getCondition() )
+                        {
+                            case conflict:
+                                errorMessage = Res.getString("label.conflict.error");
+                                break;
+
+                            case not_authorized:
+                                errorMessage = Res.getString("message.invalid.username.password");
+                                break;
+
+                            case remote_server_not_found:
+                                errorMessage = Res.getString("message.server.unavailable");
+                                break;
+
+                            case remote_server_timeout:
+                                errorMessage = Res.getString("message.server.unavailable");
+                                break;
+
+                            default:
+                                errorMessage = Res.getString("message.unrecoverable.error");
+                                break;
+                        }
                    }
 
                     // Log Error
                     Log.warning("Exception in Login:", xee);
-                    hasErrors = true;
                 }
             }
 
             if (hasErrors) {
 
             	final String finalerrorMessage = errorMessage;
-               EventQueue.invokeLater(new Runnable() {
+               EventQueue.invokeLater( () -> {
+                       progressBar.setVisible(false);
+                       //progressBar.setIndeterminate(false);
 
-     					@Override
-     					public void run()
-     					{
-     							progressBar.setVisible(false);
-     							//progressBar.setIndeterminate(false);
-
-     							// Show error dialog
-     							UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
-     							if (loginDialog.isVisible()) {
-     								if (!localPref.isSSOEnabled()) {
-     	                        JOptionPane.showMessageDialog(loginDialog, finalerrorMessage, Res.getString("title.login.error"),
-     	                                JOptionPane.ERROR_MESSAGE);
-     								}
-     								else {
-     	                        JOptionPane.showMessageDialog(loginDialog, Res.getString("title.advanced.connection.sso.unable"), Res.getString("title.login.error"),
-     	                                JOptionPane.ERROR_MESSAGE);
-     	                        //useSSO(false);
-     	                        //localPref.setSSOEnabled(false);
-     								}
-     							}
-     						}
-     				});
+                       // Show error dialog
+                       UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
+                       if (loginDialog.isVisible()) {
+                           if (!localPref.isSSOEnabled()) {
+JOptionPane.showMessageDialog(loginDialog, finalerrorMessage, Res.getString("title.login.error"),
+JOptionPane.ERROR_MESSAGE);
+                           }
+                           else {
+JOptionPane.showMessageDialog(loginDialog, Res.getString("title.advanced.connection.sso.unable"), Res.getString("title.login.error"),
+JOptionPane.ERROR_MESSAGE);
+//useSSO(false);
+//localPref.setSSOEnabled(false);
+                           }
+                       }
+                   } );
 
                 setEnabled(true);
                 return false;
@@ -1274,68 +1204,66 @@ public class LoginDialog {
         // Invoke the MainWindow.
        try
 		{
-			EventQueue.invokeLater(new Runnable() {
-			 	public void run() {
-			      final MainWindow mainWindow = MainWindow.getInstance();
+			EventQueue.invokeLater( () -> {
+             final MainWindow mainWindow = MainWindow.getInstance();
 
 
-			      /*
-			      if (tray != null) {
-			          // Remove trayIcon
-			          tray.removeTrayIcon(trayIcon);
-			      }
-			      */
-			      // Creates the Spark  Workspace and add to MainWindow
-			      Workspace workspace = Workspace.getInstance();
+             /*
+             if (tray != null) {
+                 // Remove trayIcon
+                 tray.removeTrayIcon(trayIcon);
+             }
+             */
+             // Creates the Spark  Workspace and add to MainWindow
+             Workspace workspace = Workspace.getInstance();
 
-			      LayoutSettings settings = LayoutSettingsManager.getLayoutSettings();
-			      int x = settings.getMainWindowX();
-			      int y = settings.getMainWindowY();
-			      int width = settings.getMainWindowWidth();
-			      int height = settings.getMainWindowHeight();
+             LayoutSettings settings = LayoutSettingsManager.getLayoutSettings();
+             int x = settings.getMainWindowX();
+             int y = settings.getMainWindowY();
+             int width = settings.getMainWindowWidth();
+             int height = settings.getMainWindowHeight();
 
-			      LocalPreferences pref = SettingsManager.getLocalPreferences();
-			      if (pref.isDockingEnabled()) {
-			          JSplitPane splitPane = mainWindow.getSplitPane();
-			          workspace.getCardPanel().setMinimumSize(null);
-			          splitPane.setLeftComponent(workspace.getCardPanel());
-			          SparkManager.getChatManager().getChatContainer().setMinimumSize(null);
-			          splitPane.setRightComponent(SparkManager.getChatManager().getChatContainer());
-			          int dividerLoc = settings.getSplitPaneDividerLocation();
-			          if (dividerLoc != -1) {
-			              mainWindow.getSplitPane().setDividerLocation(dividerLoc);
-			          }
-			          else {
-			              mainWindow.getSplitPane().setDividerLocation(240);
-			          }
+             LocalPreferences pref = SettingsManager.getLocalPreferences();
+             if (pref.isDockingEnabled()) {
+                 JSplitPane splitPane = mainWindow.getSplitPane();
+                 workspace.getCardPanel().setMinimumSize(null);
+                 splitPane.setLeftComponent(workspace.getCardPanel());
+                 SparkManager.getChatManager().getChatContainer().setMinimumSize(null);
+                 splitPane.setRightComponent(SparkManager.getChatManager().getChatContainer());
+                 int dividerLoc = settings.getSplitPaneDividerLocation();
+                 if (dividerLoc != -1) {
+                     mainWindow.getSplitPane().setDividerLocation(dividerLoc);
+                 }
+                 else {
+                     mainWindow.getSplitPane().setDividerLocation(240);
+                 }
 
-			          mainWindow.getContentPane().add(splitPane, BorderLayout.CENTER);
-			      }
-			      else {
-			          mainWindow.getContentPane().add(workspace.getCardPanel(), BorderLayout.CENTER);
-			      }
+                 mainWindow.getContentPane().add(splitPane, BorderLayout.CENTER);
+             }
+             else {
+                 mainWindow.getContentPane().add(workspace.getCardPanel(), BorderLayout.CENTER);
+             }
 
-			      if (x == 0 && y == 0) {
-			          // Use Default size
-			          mainWindow.setSize(310, 520);
+             if (x == 0 && y == 0) {
+                 // Use Default size
+                 mainWindow.setSize(310, 520);
 
-			          // Center Window on Screen
-			          GraphicUtils.centerWindowOnScreen(mainWindow);
-			      }
-			      else {
-			          mainWindow.setBounds(x, y, width, height);
-			      }
+                 // Center Window on Screen
+                 GraphicUtils.centerWindowOnScreen(mainWindow);
+             }
+             else {
+                 mainWindow.setBounds(x, y, width, height);
+             }
 
-			      if (loginDialog.isVisible()) {
-			          mainWindow.setVisible(true);
-			      }
+             if (loginDialog.isVisible()) {
+                 mainWindow.setVisible(true);
+             }
 
-			      loginDialog.setVisible(false);
+             loginDialog.setVisible(false);
 
-			      // Build the layout in the workspace
-			      workspace.buildLayout();
-			 	}
-			 });
+             // Build the layout in the workspace
+             workspace.buildLayout();
+            } );
 		}
 		catch (Exception e)
 		{
@@ -1504,13 +1432,13 @@ public class LoginDialog {
         //Assumption: the KDC will be found with the SRV record
         // _kerberos._udp.$realm
         try {
-            Hashtable<String,String> env= new Hashtable<String,String>();
+            Hashtable<String,String> env= new Hashtable<>();
             env.put("java.naming.factory.initial","com.sun.jndi.dns.DnsContextFactory");
             DirContext context = new InitialDirContext(env);
             Attributes dnsLookup = context.getAttributes("_kerberos._udp."+realm, new String[]{"SRV"});
 
-            ArrayList<Integer> priorities = new ArrayList<Integer>();
-            HashMap<Integer,List<String>> records = new HashMap<Integer,List<String>>();
+            ArrayList<Integer> priorities = new ArrayList<>();
+            HashMap<Integer,List<String>> records = new HashMap<>();
             for (Enumeration<?> e = dnsLookup.getAll() ; e.hasMoreElements() ; ) {
                 Attribute record = (Attribute)e.nextElement();
                 for (Enumeration<?> e2 = record.getAll() ; e2.hasMoreElements() ; ) {
@@ -1519,11 +1447,11 @@ public class LoginDialog {
                     Integer pri = Integer.valueOf(sRecParts[0]);
                     if(priorities.contains(pri)) {
                         List<String> recs = records.get(pri);
-                        if(recs == null) recs = new ArrayList<String>();
+                        if(recs == null) recs = new ArrayList<>();
                         recs.add(sRecord);
                     } else {
                         priorities.add(pri);
-                        List<String> recs = new ArrayList<String>();
+                        List<String> recs = new ArrayList<>();
                         recs.add(sRecord);
                         records.put(pri,recs);
                     }

@@ -24,7 +24,6 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FilenameFilter;
 import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.util.jar.JarOutputStream;
@@ -124,11 +123,9 @@ public class Startup {
      */
     private void unpackArchives(File libDir, boolean printStatus) {
         // Get a list of all packed files in the lib directory.
-        File[] packedFiles = libDir.listFiles(new FilenameFilter() {
-            public boolean accept(File dir, String name) {
-                return name.endsWith(".pack");
-            }
-        });
+        File[] packedFiles = libDir.listFiles( ( dir, name ) -> {
+            return name.endsWith(".pack");
+        } );
 
         if (packedFiles == null) {
             // Do nothing since no .pack files were found

@@ -23,8 +23,6 @@ import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.Collection;
@@ -44,8 +42,10 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.smack.packet.PrivacyItem;
+import org.jivesoftware.smack.SmackException;
+import org.jivesoftware.smackx.privacy.packet.PrivacyItem;
 import org.jivesoftware.spark.component.RolloverButton;
+import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.privacy.PrivacyManager;
 import org.jivesoftware.sparkimpl.plugin.privacy.list.SparkPrivacyList;
 import org.jivesoftware.sparkimpl.plugin.privacy.list.SparkPrivacyListListener;
@@ -117,22 +117,9 @@ public class PrivacyListTree extends JPanel implements SparkPrivacyListListener 
     private void createCurrentListInfoPanel() {
         JPanel listInfo = new JPanel(new GridBagLayout());
         _actList = new RolloverButton();
-        _actList.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                _pManager.declineActiveList();
-            }
-        });
+        _actList.addActionListener( e -> _pManager.declineActiveList() );
         _defList = new RolloverButton();
-        _defList.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                _pManager.declineDefaultList();
-
-            }
-        });
+        _defList.addActionListener( e -> _pManager.declineDefaultList() );
         _actList.setHorizontalTextPosition(SwingConstants.LEFT);
         _defList.setHorizontalTextPosition(SwingConstants.LEFT);
         if (_pManager.hasActiveList()) {
@@ -204,28 +191,29 @@ public class PrivacyListTree extends JPanel implements SparkPrivacyListListener 
         }
         remUser.setIcon(SparkRes.getImageIcon(SparkRes.SMALL_DELETE));
         menu.add(remUser);
-        remUser.addActionListener(new ActionListener() {
+        remUser.addActionListener( e -> {
 
-            @Override
-            public void actionPerformed(ActionEvent e) {
+            for (TreePath path : _tree.getSelectionPaths()) {
 
-                for (TreePath path : _tree.getSelectionPaths()) {
-
-                    PrivacyTreeNode node = (PrivacyTreeNode) path.getLastPathComponent();
-                    // Getting privacy List where we want to remove
-                    PrivacyTreeNode parent = (PrivacyTreeNode) path.getPathComponent(1);
-                    SparkPrivacyList list = parent.getPrivacyList();
-                    // Remove contact or group
-                    list.removeItem(node.getPrivacyItem().getValue());
+                PrivacyTreeNode node1 = (PrivacyTreeNode) path.getLastPathComponent();
+                // Getting privacy List where we want to remove
+                PrivacyTreeNode parent1 = (PrivacyTreeNode) path.getPathComponent(1);
+                SparkPrivacyList list = parent1.getPrivacyList();
+                // Remove contact or group
+                try
+                {
+                    list.removeItem( node1.getPrivacyItem().getValue());
                     //list.removePrivacyItem(node.getPrivacyItem().getType(), node.getPrivacyItem().getValue());
-                  
-                        list.save();
-                    
-                    _model.removeNodeFromParent(node);
+                    list.save();
+                    _model.removeNodeFromParent( node1 );
                 }
-
+                catch ( SmackException.NotConnectedException e1 )
+                {
+                    Log.warning( "Unable to remove item for privacly list.", e1 );
+                }
             }
-        });
+
+        } );
     }
 
     /**
@@ -249,25 +237,26 @@ public class PrivacyListTree extends JPanel implements SparkPrivacyListListener 
         final PrivacyTreeNode parent = (PrivacyTreeNode) _tree.getSelectionPath().getPathComponent(2);
         JMenuItem addContact = new JMenuItem(showStringforAdd);
         addContact.setIcon(SparkRes.getImageIcon(SparkRes.SMALL_ADD_IMAGE));
-        addContact.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                PrivacyAddDialogUI browser = new PrivacyAddDialogUI();
-                Collection<PrivacyItem> col = browser.showRoster(_comp, node.isContactGroup() ? false : true);
+        addContact.addActionListener( e -> {
+            PrivacyAddDialogUI browser = new PrivacyAddDialogUI();
+            Collection<PrivacyItem> col = browser.showRoster(_comp, node.isContactGroup() ? false : true);
+            try
+            {
                 for (PrivacyItem pI : col) {
-                    pI.setOrder(list.getNewItemOrder());
-                  
-                        list.addItem(pI);
-                        PrivacyTreeNode newChild = new PrivacyTreeNode(pI);
-                        _model.insertNodeInto(newChild, parent, 0);
-                    
+                    final PrivacyItem clone = new PrivacyItem( pI.getType(), pI.getValue(), pI.isAllow(), list.getNewItemOrder() );
+                    list.addItem(clone);
+                    PrivacyTreeNode newChild = new PrivacyTreeNode(clone);
+                    _model.insertNodeInto(newChild, parent, 0);
                 }
-                    list.save();
-                
-
+                list.save();
             }
-        });
+            catch ( SmackException.NotConnectedException e1 )
+            {
+                Log.warning( "Unable to add item to privacy list.", e1 );
+            }
+
+
+        } );
 
         menu.add(addContact);
     }
@@ -289,53 +278,33 @@ public class PrivacyListTree extends JPanel implements SparkPrivacyListListener 
         act.setIcon(SparkRes.getImageIcon("PRIVACY_LIGHTNING"));
         JMenuItem def = new JMenuItem(Res.getString("privacy.menu.default.list"));
         def.setIcon(SparkRes.getImageIcon("PRIVACY_CHECK"));
-        act.addActionListener(new ActionListener() {
+        act.addActionListener( e -> node.setListAsActive() );
 
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                node.setListAsActive();
+        def.addActionListener( e -> node.setListAsDefault() );
+
+        addList.addActionListener( e -> {
+
+            String s = JOptionPane.showInputDialog(_comp, Res.getString("privacy.dialog.add.list"), Res.getString("privacy.menu.add.list"), JOptionPane.PLAIN_MESSAGE);
+            if ((s != null) && (s.length() > 0)) {
+                _pManager.createPrivacyList(s);
+                addListNode(new PrivacyTreeNode(_pManager.getPrivacyList(s)), _top);
             }
-        });
 
-        def.addActionListener(new ActionListener() {
+        } );
 
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                node.setListAsDefault();
+        rem.addActionListener( e -> {
+            int n = JOptionPane.showOptionDialog(_comp, Res.getString("privacy.dialog.rem.list", node.getPrivacyList().getListName()), Res.getString("privacy.menu.remove.list"), JOptionPane.YES_NO_OPTION,
+                    JOptionPane.WARNING_MESSAGE, null, // do
+                    // //
+                    // Icon
+                    null, // the titles of buttons
+                    null); // default button title
+
+            if (n == JOptionPane.YES_OPTION) {
+                _pManager.removePrivacyList(node.getPrivacyList().getListName());
+                _model.removeNodeFromParent(node);
             }
-        });
-
-        addList.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-
-                String s = (String) JOptionPane.showInputDialog(_comp, Res.getString("privacy.dialog.add.list"), Res.getString("privacy.menu.add.list"), JOptionPane.PLAIN_MESSAGE);
-                if ((s != null) && (s.length() > 0)) {
-                    _pManager.createPrivacyList(s);
-                    addListNode(new PrivacyTreeNode(_pManager.getPrivacyList(s)), _top);
-                }
-
-            }
-        });
-
-        rem.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                int n = JOptionPane.showOptionDialog(_comp, Res.getString("privacy.dialog.rem.list", node.getPrivacyList().getListName()), Res.getString("privacy.menu.remove.list"), JOptionPane.YES_NO_OPTION,
-                        JOptionPane.WARNING_MESSAGE, null, // do
-                        // //
-                        // Icon
-                        null, // the titles of buttons
-                        null); // default button title
-
-                if (n == JOptionPane.YES_OPTION) {
-                    _pManager.removePrivacyList(node.getPrivacyList().getListName());
-                    _model.removeNodeFromParent(node);
-                }
-            }
-        });
+        } );
         rem.setIcon(SparkRes.getImageIcon(SparkRes.SMALL_DELETE));
 
         menu.add(addList);

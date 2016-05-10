@@ -154,26 +154,22 @@ public class ChatPreferencePanel extends JPanel implements ActionListener {
         generalPanel.add(confirmationPasswordLabel, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         generalPanel.add(confirmationPasswordField, new GridBagConstraints(1, 2, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 100, 0));
         
-        showTimeBox.addActionListener(new ActionListener()
- 	     {
-      	  public void actionPerformed(ActionEvent e)
-      	  {
-      		  if(showTimeBox.isSelected())
-      		  {
-      			  format12.setEnabled(true);
-      			  format24.setEnabled(true);
-      			  format12s.setEnabled(true);
-    			  format24s.setEnabled(true);
-      		  }
-      		  else
-      		  {
-      			  format12.setEnabled(false);
-      			  format24.setEnabled(false);
-      			  format12s.setEnabled(false);
-      			  format24s.setEnabled(false);
-      		  }
-      	  }
- 	     });
+        showTimeBox.addActionListener( e -> {
+            if(showTimeBox.isSelected())
+            {
+                format12.setEnabled(true);
+                format24.setEnabled(true);
+                format12s.setEnabled(true);
+              format24s.setEnabled(true);
+            }
+            else
+            {
+                format12.setEnabled(false);
+                format24.setEnabled(false);
+                format12s.setEnabled(false);
+                format24s.setEnabled(false);
+            }
+        } );
         
         hideChatHistory.addActionListener(this);
 

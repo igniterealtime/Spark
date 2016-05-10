@@ -20,7 +20,7 @@
 package org.jivesoftware.sparkimpl.plugin.privacy.ui;
 
 import javax.swing.tree.DefaultMutableTreeNode;
-import org.jivesoftware.smack.packet.PrivacyItem;
+import org.jivesoftware.smackx.privacy.packet.PrivacyItem;
 import org.jivesoftware.sparkimpl.plugin.privacy.PrivacyManager;
 import org.jivesoftware.sparkimpl.plugin.privacy.list.SparkPrivacyList;
 

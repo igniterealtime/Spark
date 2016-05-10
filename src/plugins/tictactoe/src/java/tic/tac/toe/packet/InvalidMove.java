@@ -1,8 +1,8 @@
 package tic.tac.toe.packet;
 
-import org.jivesoftware.smack.packet.PacketExtension;
+import org.jivesoftware.smack.packet.ExtensionElement;
 
-public class InvalidMove implements PacketExtension {
+public class InvalidMove implements ExtensionElement {
 
     public static final String ELEMENT_NAME = "ttt-invalid";
     public static final String NAMESPACE = "tictactoe";

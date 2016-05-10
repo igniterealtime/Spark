@@ -28,10 +28,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.TimerTask;
+import java.util.*;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -46,11 +43,12 @@ import org.jivesoftware.fastpath.resources.FastpathRes;
 import org.jivesoftware.fastpath.workspace.Workpane;
 import org.jivesoftware.fastpath.workspace.panes.BackgroundPane;
 import org.jivesoftware.smack.ConnectionListener;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.util.StringUtils;
-import org.jivesoftware.smackx.packet.DiscoverItems;
+import org.jivesoftware.smackx.disco.packet.DiscoverItems;
 import org.jivesoftware.smackx.workgroup.agent.Agent;
 import org.jivesoftware.smackx.workgroup.agent.AgentSession;
 import org.jivesoftware.smackx.workgroup.user.Workgroup;
@@ -62,6 +60,7 @@ import org.jivesoftware.spark.util.SwingTimerTask;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.util.log.Log;
+import org.jxmpp.util.XmppStringUtils;
 
 public class FastpathPlugin implements Plugin, ConnectionListener {
     private static Workgroup wgroup;
@@ -104,9 +103,7 @@ public class FastpathPlugin implements Plugin, ConnectionListener {
 			
         try {
             DiscoverItems items = SparkManager.getSessionManager().getDiscoveredItems();
-            Iterator<DiscoverItems.Item> iter = items.getItems();
-            while (iter.hasNext()) {
-                DiscoverItems.Item item = iter.next();
+            for (DiscoverItems.Item item : items.getItems() ) {
                 String entityID = item.getEntityID() != null ? item.getEntityID() : "";
                 if (entityID.startsWith("workgroup")) {
                     // Log into workgroup
@@ -119,7 +116,7 @@ public class FastpathPlugin implements Plugin, ConnectionListener {
                             try {
                                 return Agent.getWorkgroups(workgroupService, jid, SparkManager.getConnection());
                             }
-                            catch (XMPPException e1) {
+                            catch (XMPPException | SmackException e1) {
                                 return Collections.emptyList();
                             }
                         }
@@ -163,9 +160,9 @@ public class FastpathPlugin implements Plugin, ConnectionListener {
         Iterator<String> workgroups = col.iterator();
         while (workgroups.hasNext()) {
             String workgroup = (String)workgroups.next();
-            String componentAddress = StringUtils.parseServer(workgroup);
+            String componentAddress = XmppStringUtils.parseDomain(workgroup);
             setComponentAddress(componentAddress);
-            comboBox.addItem(StringUtils.parseName(workgroup));
+            comboBox.addItem(XmppStringUtils.parseLocalpart(workgroup));
         }
 
         mainPanel.add(workgroupLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
@@ -255,6 +252,18 @@ public class FastpathPlugin implements Plugin, ConnectionListener {
     }
 
 
+    @Override
+    public void connected( XMPPConnection xmppConnection )
+    {
+
+    }
+
+    @Override
+    public void authenticated( XMPPConnection xmppConnection, boolean b )
+    {
+
+    }
+
     public void connectionClosed() {
         lostConnection();
     }
@@ -322,7 +331,7 @@ public class FastpathPlugin implements Plugin, ConnectionListener {
                         agentSession.setOnline(false);
                         agentSession.setOnline(true);
                     }
-                    catch (XMPPException e) {
+                    catch (XMPPException | SmackException e) {
                         Log.error(e);
                         leaveWorkgroup();
                         joinButton.setEnabled(true);
@@ -334,7 +343,7 @@ public class FastpathPlugin implements Plugin, ConnectionListener {
                     try {
                         agentSession.setOnline(true);
                     }
-                    catch (XMPPException e1) {
+                    catch (XMPPException | SmackException e1) {
                         Log.error(e1);
                         leaveWorkgroup();
                         joinButton.setEnabled(true);
@@ -346,9 +355,9 @@ public class FastpathPlugin implements Plugin, ConnectionListener {
                 final Presence actualPresence = SparkManager.getWorkspace().getStatusBar().getPresence();
                 Presence toWorkgroupPresence = new Presence(actualPresence.getType(), actualPresence.getStatus(), actualPresence.getPriority(), actualPresence.getMode());
                 toWorkgroupPresence.setTo(workgroup);
-                con.sendPacket(toWorkgroupPresence);
 
                 try {
+                    con.sendStanza(toWorkgroupPresence);
                     wgroup = new Workgroup(workgroup, con);
                 }
                 catch (Exception e) {
@@ -386,12 +395,12 @@ public class FastpathPlugin implements Plugin, ConnectionListener {
             Iterator<String> workgroups = col.iterator();
             while (workgroups.hasNext()) {
                 String workgroup = workgroups.next();
-                String componentAddress = StringUtils.parseServer(workgroup);
+                String componentAddress = XmppStringUtils.parseDomain(workgroup);
                 setComponentAddress(componentAddress);
-                comboBox.addItem(StringUtils.parseName(workgroup));
+                comboBox.addItem(XmppStringUtils.parseLocalpart(workgroup));
             }
         }
-        catch (XMPPException ee) {
+        catch (XMPPException | SmackException ee) {
             // If the user does not belong to a workgroup, then don't initialize the rest of the plugin.
             return;
         }
@@ -399,7 +408,7 @@ public class FastpathPlugin implements Plugin, ConnectionListener {
         try {
             agentSession.setOnline(false);
         }
-        catch (XMPPException e1) {
+        catch (XMPPException | SmackException e1) {
             Log.error(e1);
         }
         litWorkspace.unload();

@@ -20,8 +20,8 @@ import java.util.Properties;
  */
 public class CompareLocales {
 
-    static HashMap<String, String>_englishlist = new HashMap<String, String>();
-    static HashMap<String, String> _mylocalelist = new HashMap<String, String>();
+    static HashMap<String, String>_englishlist = new HashMap<>();
+    static HashMap<String, String> _mylocalelist = new HashMap<>();
 
     static String _path = "C:\\Dokumente und Einstellungen\\wolf.posdorfer\\Desktop\\eclipse\\spark\\src\\resources\\i18n\\spark_i18n";
     static String english = _path + ".properties";

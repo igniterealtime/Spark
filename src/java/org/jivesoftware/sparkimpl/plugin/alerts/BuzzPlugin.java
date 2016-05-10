@@ -20,12 +20,9 @@
 package org.jivesoftware.sparkimpl.plugin.alerts;
 
 import org.jivesoftware.resource.Res;
-import org.jivesoftware.smack.PacketListener;
-import org.jivesoftware.smack.filter.PacketTypeFilter;
+import org.jivesoftware.smack.filter.StanzaTypeFilter;
 import org.jivesoftware.smack.packet.Message;
-import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.provider.ProviderManager;
-import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.Plugin;
@@ -38,6 +35,7 @@ import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 import org.jivesoftware.spark.util.SwingTimerTask;
 import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+import org.jxmpp.util.XmppStringUtils;
 
 import java.util.TimerTask;
 
@@ -55,30 +53,24 @@ public class BuzzPlugin implements Plugin {
     private static final String NAMESPACE_OLD = "http://www.jivesoftware.com/spark";
 
     public void initialize() {
-	ProviderManager.getInstance().addExtensionProvider(ELEMENTNAME,
-		NAMESPACE, BuzzPacket.class);
+	ProviderManager.addExtensionProvider(ELEMENTNAME,
+		NAMESPACE, new BuzzPacket.Provider());
 
-	ProviderManager.getInstance().addExtensionProvider(ELEMENTNAME_OLD,
-		NAMESPACE_OLD, BuzzPacket.class);
+	ProviderManager.addExtensionProvider(ELEMENTNAME_OLD,
+		NAMESPACE_OLD, new BuzzPacket.Provider() );
 
-	SparkManager.getConnection().addPacketListener(new PacketListener() {
-	    public void processPacket(Packet packet) {
-		if (packet instanceof Message) {
-		    final Message message = (Message) packet;
+	SparkManager.getConnection().addAsyncStanzaListener( stanza -> {
+    if (stanza instanceof Message) {
+        final Message message = (Message) stanza;
 
-		    boolean buzz = message.getExtension(ELEMENTNAME_OLD,
-			    NAMESPACE_OLD) != null
-			    || message.getExtension(ELEMENTNAME, NAMESPACE) != null;
-		    if (buzz) {
-			SwingUtilities.invokeLater(new Runnable() {
-			    public void run() {
-				shakeWindow(message);
-			    }
-			});
-		    }
-		}
-	    }
-	}, new PacketTypeFilter(Message.class));
+        boolean buzz = message.getExtension(ELEMENTNAME_OLD,
+            NAMESPACE_OLD) != null
+            || message.getExtension(ELEMENTNAME, NAMESPACE) != null;
+        if (buzz) {
+        SwingUtilities.invokeLater( () -> shakeWindow(message) );
+        }
+    }
+    }, new StanzaTypeFilter(Message.class));
 
 	SparkManager.getChatManager().addChatRoomListener(
 		new ChatRoomListener() {
@@ -123,10 +115,10 @@ public class BuzzPlugin implements Plugin {
 
     private void shakeWindow(Message message) {
 
-	String bareJID = StringUtils.parseBareAddress(message.getFrom());
+	String bareJID = XmppStringUtils.parseBareJid(message.getFrom());
 	ContactItem contact = SparkManager.getWorkspace().getContactList()
 		.getContactItemByJID(bareJID);
-	String nickname = StringUtils.parseName(bareJID);
+	String nickname = XmppStringUtils.parseLocalpart(bareJID);
 	if (contact != null) {
 	    nickname = contact.getDisplayName();
 	}

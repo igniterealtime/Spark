@@ -91,7 +91,7 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
      */
     private int fontSize;
 
-    private List<ContextMenuListener> contextMenuListener = new ArrayList<ContextMenuListener>();
+    private List<ContextMenuListener> contextMenuListener = new ArrayList<>();
 
     private JPopupMenu popup;
 
@@ -101,7 +101,7 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
     private JMenuItem pasteMenu;
     private JMenuItem selectAll;
 
-    private List<LinkInterceptor> interceptors = new ArrayList<LinkInterceptor>();
+    private List<LinkInterceptor> interceptors = new ArrayList<>();
 
     protected EmoticonManager emoticonManager;
 
@@ -115,7 +115,7 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
     public ChatArea() {
         emoticonManager = EmoticonManager.getInstance();
         
-        Collection<String> emoticonPacks = null; 
+        Collection<String> emoticonPacks;
         emoticonPacks = emoticonManager.getEmoticonPacks();
         
         if(emoticonPacks == null) {
@@ -175,6 +175,7 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
             }
         });
 
+        setEditorKit( new WrapEditorKit() ); // SPARK-1613 Ensure that long text wraps.
     }
 
     /**
@@ -507,14 +508,7 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
 				JPopupMenu popupmenu = new JPopupMenu();
 				JMenuItem linkcopy = new JMenuItem(
 					Res.getString("action.copy"));
-				linkcopy.addActionListener(new ActionListener() {
-
-				    @Override
-				    public void actionPerformed(ActionEvent e) {
-					SparkManager.setClipboard(url);
-
-				    }
-				});
+				linkcopy.addActionListener( e1 -> SparkManager.setClipboard(url) );
 				linkcopy.setEnabled(true);
 				popupmenu.add(linkcopy);
 				popupmenu.show(this, e.getX(), e.getY());
@@ -607,7 +601,7 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
      * @return a string of marked up text.
      */
     public String getMarkup() {
-        final StringBuffer buf = new StringBuffer();
+        final StringBuilder buf = new StringBuilder();
         final String text = getText();
         final StyledDocument doc = getStyledDocument();
         final Element rootElem = doc.getDefaultRootElement();
@@ -730,7 +724,7 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
     }
 
     private void fireContextMenuListeners() {
-        for (ContextMenuListener listener : new ArrayList<ContextMenuListener>(contextMenuListener)) {
+        for (ContextMenuListener listener : new ArrayList<>( contextMenuListener )) {
             listener.poppingUp(this, popup);
         }
     }
@@ -744,7 +738,7 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
     }
 
     public boolean fireLinkInterceptors(MouseEvent event, String link) {
-        for (LinkInterceptor linkInterceptor : new ArrayList<LinkInterceptor>(interceptors)) {
+        for (LinkInterceptor linkInterceptor : new ArrayList<>( interceptors )) {
             boolean handled = linkInterceptor.handleLink(event, link);
             if (handled) {
                 return true;

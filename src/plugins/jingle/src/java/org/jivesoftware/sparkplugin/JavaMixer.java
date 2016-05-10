@@ -24,16 +24,12 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeNode;
 import javax.swing.*;
-import javax.swing.event.TreeSelectionListener;
-import javax.swing.event.TreeSelectionEvent;
 import javax.swing.border.TitledBorder;
 import javax.swing.border.EtchedBorder;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.awt.*;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
 
 /**
  * Pure Java Audio Mixer. Control Volume and Settings for any Sound device in the OS.
@@ -125,7 +121,7 @@ public class JavaMixer {
      * @return List<Mixer> Port Mixers
      */
     private List<Mixer> getPortMixers() {
-        List<Mixer> supportingMixers = new ArrayList<Mixer>();
+        List<Mixer> supportingMixers = new ArrayList<>();
         Mixer.Info[] aMixerInfos = AudioSystem.getMixerInfo();
         for (Mixer.Info aMixerInfo : aMixerInfos) {
             Mixer mixer = AudioSystem.getMixer(aMixerInfo);
@@ -203,17 +199,17 @@ public class JavaMixer {
 
     private Line.Info[] getPortInfo(Mixer mixer) {
         Line.Info[] infos;
-        List<Line.Info> portInfoList = new ArrayList<Line.Info>();
+        List<Line.Info> portInfoList = new ArrayList<>();
         infos = mixer.getSourceLineInfo();
         for (Line.Info info : infos) {
             if (info instanceof Port.Info || info instanceof DataLine.Info) {
-                portInfoList.add((Line.Info) info);
+                portInfoList.add( info );
             }
         }
         infos = mixer.getTargetLineInfo();
         for (Line.Info info1 : infos) {
             if (info1 instanceof Port.Info || info1 instanceof DataLine.Info) {
-                portInfoList.add((Line.Info) info1);
+                portInfoList.add( info1 );
             }
         }
         return portInfoList.toArray(EMPTY_PORT_INFO_ARRAY);
@@ -346,11 +342,7 @@ public class JavaMixer {
 
         public BooleanControlButtonModel(BooleanControl control) {
             this.control = control;
-            this.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    setSelected(!isSelected());
-                }
-            });
+            this.addActionListener( e -> setSelected(!isSelected()) );
         }
 
         public void setSelected(boolean bSelected) {
@@ -403,20 +395,18 @@ public class JavaMixer {
         jf.setVisible(true);
         jf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        sm.getTree().addTreeSelectionListener(new TreeSelectionListener() {
-            public void valueChanged(TreeSelectionEvent e) {
-                TreePath path = e.getPath();
-                if (path.getLastPathComponent() instanceof JavaMixer.ControlNode) {
-                    JavaMixer.ControlNode controlNode = (JavaMixer.ControlNode) path.getLastPathComponent();
-                    if (!(controlNode.getControl() instanceof CompoundControl)) {
-                        if (jp.getComponentCount() > 1)
-                            jp.remove(1);
-                        jp.add(controlNode.getComponent(), 1);
-                        jp.repaint();
-                    }
+        sm.getTree().addTreeSelectionListener( e -> {
+            TreePath path = e.getPath();
+            if (path.getLastPathComponent() instanceof ControlNode) {
+                ControlNode controlNode = (ControlNode) path.getLastPathComponent();
+                if (!(controlNode.getControl() instanceof CompoundControl)) {
+                    if (jp.getComponentCount() > 1)
+                        jp.remove(1);
+                    jp.add(controlNode.getComponent(), 1);
+                    jp.repaint();
                 }
             }
-        });
+        } );
         jp.add(sm.getPrefferedMasterVolume());
         jp.add(sm.getPrefferedMasterVolume());
         jp.add(sm.getPrefferedInputVolume());
@@ -446,7 +436,7 @@ public class JavaMixer {
                 boolean find;
 
                 if (byName) {
-                    find = n.toString().toUpperCase().indexOf(nodes[depth].toString().toUpperCase()) > -1;
+                    find = n.toString().toUpperCase().contains( nodes[ depth ].toString().toUpperCase() );
                 } else {
                     find = n.equals(nodes[depth]);
                 }

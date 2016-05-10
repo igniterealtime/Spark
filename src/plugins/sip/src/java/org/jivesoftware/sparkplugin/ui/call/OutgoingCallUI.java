@@ -39,7 +39,7 @@ import javax.swing.JPanel;
 import net.java.sipmack.sip.InterlocutorUI;
 import net.java.sipmack.softphone.SoftPhoneManager;
 
-import org.jivesoftware.smackx.packet.VCard;
+import org.jivesoftware.smackx.vcardtemp.packet.VCard;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.plugin.phone.resource.PhoneRes;

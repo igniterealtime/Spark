@@ -24,12 +24,12 @@ import info.growl.GrowlException;
 import javax.swing.SwingUtilities;
 
 import org.jivesoftware.smack.packet.Message;
-import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.ui.ChatFrame;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.GlobalMessageListener;
 import org.jivesoftware.spark.util.log.Log;
+import org.jxmpp.util.XmppStringUtils;
 
 /**
  * {@link GrowlMessageListener} implements the {@link GlobalMessageListener} and
@@ -52,18 +52,14 @@ public class GrowlMessageListener implements GlobalMessageListener {
 
     public void messageReceived(final ChatRoom chatRoom, final Message message) {
 
-	SwingUtilities.invokeLater(new Runnable() {
+	SwingUtilities.invokeLater( () -> {
+    final ChatFrame chatFrame = SparkManager.getChatManager().getChatContainer()
+        .getChatFrame();
 
-	    @Override
-	    public void run() {
-		final ChatFrame chatFrame = SparkManager.getChatManager().getChatContainer()
-			.getChatFrame();
-
-		if (!chatFrame.isInFocus()) {
-		    showGrowlNotification(message);
-		}
-	    }
-	});
+    if (!chatFrame.isInFocus()) {
+        showGrowlNotification(message);
+    }
+    } );
 
     }
 
@@ -79,7 +75,7 @@ public class GrowlMessageListener implements GlobalMessageListener {
 	    String jid = message.getFrom();
 
 	    if (name == null) {
-		name = StringUtils.parseName(message.getFrom());
+		name = XmppStringUtils.parseLocalpart(message.getFrom());
 	    }
 
 	    _growltalker.sendNotificationWithCallback(name, message.getBody(), jid);

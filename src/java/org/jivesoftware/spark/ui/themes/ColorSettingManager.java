@@ -34,11 +34,9 @@ import org.jivesoftware.spark.util.log.Log;
 
 public class ColorSettingManager {
 
-    private static HashMap<String, String> _propertyHashMap = new HashMap<String, String>();
+    private static HashMap<String, String> _propertyHashMap = new HashMap<>();
 
-    private static ColorSettings _colorsettings;
-
-    public ColorSettingManager() {
+	public ColorSettingManager() {
 
     }
 
@@ -49,7 +47,7 @@ public class ColorSettingManager {
      */
     public static ColorSettings getColorSettings() {
 	File settings = getSettingsFile();
-	_colorsettings = loadSettings(settings);
+		ColorSettings _colorsettings = loadSettings( settings );
 	return _colorsettings;
     }
 
@@ -181,7 +179,7 @@ public class ColorSettingManager {
     }
 
     public static HashMap<String, String> getDefaultColors() {
-	HashMap<String, String> hashmap = new HashMap<String, String>();
+	HashMap<String, String> hashmap = new HashMap<>();
 
 	Enumeration<String> enu = Default.getAllKeys();
 	while (enu.hasMoreElements()) {

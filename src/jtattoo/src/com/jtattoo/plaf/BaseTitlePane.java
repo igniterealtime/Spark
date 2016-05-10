@@ -873,12 +873,7 @@ public class BaseTitlePane extends JComponent {
 
         public void windowDeiconified(WindowEvent e) {
             if (JTattooUtilities.isMac() && JTattooUtilities.getJavaVersion() >= 1.7 && wasMaximized) {
-                SwingUtilities.invokeLater(new Runnable() {
-
-                    public void run() {
-                        maximize();
-                    }
-                });
+                SwingUtilities.invokeLater( () -> maximize() );
             }
         }
         

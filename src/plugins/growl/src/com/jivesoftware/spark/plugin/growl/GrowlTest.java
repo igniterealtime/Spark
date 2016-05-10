@@ -56,11 +56,7 @@ public class GrowlTest {
 	Growl growl = GrowlUtils.getGrowlInstance(appName);
 	growl.addNotification(appName, true);
 
-	GrowlCallbackListener listener = new GrowlCallbackListener() {
-	    public void notificationWasClicked(final String clickContext) {
-		System.out.println(clickContext + " was clicked");
-	    }
-	};
+	GrowlCallbackListener listener = clickContext -> System.out.println(clickContext + " was clicked");
 
 	growl.addCallbackListener(listener);
 	growl.register();

@@ -116,8 +116,8 @@ public class McWinLookAndFeel extends AbstractLookAndFeel {
         pinkProps.setProperty("menuSelectionBackgroundColor", "248 202 248");
         pinkProps.setProperty("desktopColor", "242 242 242");
 
-        String key = null;
-        String value = null;
+        String key;
+        String value;
         Iterator iter = smallFontProps.keySet().iterator();
         while (iter.hasNext()) {
             key = (String) iter.next();

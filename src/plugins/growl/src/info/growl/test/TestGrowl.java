@@ -76,21 +76,14 @@ public class TestGrowl extends JFrame {
 		    growl.addNotification("Test Notification 2", false);
 		    growl.addNotification("Test Notification 3", true);
 
-		    GrowlCallbackListener listener = new GrowlCallbackListener() {
-			public void notificationWasClicked(
-				final String clickContext) {
-			    SwingUtilities.invokeLater(new Runnable() {
-				public void run() {
-				    if (NOTIF_3_CALLBACK.equals(clickContext)) {
-					JOptionPane
-						.showMessageDialog(
-							TestGrowl.this,
-							"User clicked on 'Test Notification 3'");
-				    }
-				}
-			    });
-			}
-		    };
+		    GrowlCallbackListener listener = clickContext -> SwingUtilities.invokeLater( () -> {
+if (NOTIF_3_CALLBACK.equals(clickContext)) {
+JOptionPane
+.showMessageDialog(
+TestGrowl.this,
+"User clicked on 'Test Notification 3'");
+}
+} );
 
 		    growl.addCallbackListener(listener);
 		    growl.register();

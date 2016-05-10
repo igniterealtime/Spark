@@ -20,7 +20,6 @@
 package org.jivesoftware.launcher;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -48,19 +47,17 @@ class JiveClassLoader extends URLClassLoader {
     JiveClassLoader(ClassLoader parent, File libDir) throws MalformedURLException {
         super(new URL[]{libDir.toURI().toURL()}, parent);
 
-        File[] jars = libDir.listFiles(new FilenameFilter() {
-            public boolean accept(File dir, String name) {
-                boolean accept = false;
-                String smallName = name.toLowerCase();
-                if (smallName.endsWith(".jar")) {
-                    accept = true;
-                }
-                else if (smallName.endsWith(".zip")) {
-                    accept = true;
-                }
-                return accept;
+        File[] jars = libDir.listFiles( ( dir, name ) -> {
+            boolean accept = false;
+            String smallName = name.toLowerCase();
+            if (smallName.endsWith(".jar")) {
+                accept = true;
             }
-        });
+            else if (smallName.endsWith(".zip")) {
+                accept = true;
+            }
+            return accept;
+        } );
 
         // Do nothing if no jar or zip files were found
         if (jars == null) {

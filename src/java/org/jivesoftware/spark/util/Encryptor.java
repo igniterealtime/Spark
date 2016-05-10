@@ -19,7 +19,6 @@
  */
 package org.jivesoftware.spark.util;
 
-import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.spark.util.log.Log;
 
 import javax.crypto.BadPaddingException;
@@ -36,8 +35,6 @@ import java.io.UnsupportedEncodingException;
  * @author Derek DeMoro
  */
 public class Encryptor {
-
-    private static String secretKey = "ugfpV1dMC5jyJtqwVAfTpHkxqJ0+E0ae";
 
     private static Cipher ecipher;
     private static Cipher dcipher;
@@ -60,11 +57,11 @@ public class Encryptor {
 
         // Encrypt
         byte[] enc = ecipher.doFinal(utf8);
-        return org.jivesoftware.smack.util.StringUtils.encodeBase64(enc);
+        return Base64.encodeBytes(enc);
     }
 
     public static String decrypt(String string) {
-        byte[] dec = StringUtils.decodeBase64(string);
+        byte[] dec = Base64.decode( string );
 
         try {
             // Decrypt
@@ -86,7 +83,8 @@ public class Encryptor {
     }
 
     private static SecretKey decodeKey() throws Exception {
-        byte[] bytes = StringUtils.decodeBase64(secretKey);
+        String secretKey = "ugfpV1dMC5jyJtqwVAfTpHkxqJ0+E0ae";
+        byte[] bytes = Base64.decode( secretKey );
         return new SecretKeySpec(bytes, "DESede");
     }
 

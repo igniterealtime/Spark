@@ -59,8 +59,8 @@ public class PrivacyTreeCellRenderer extends DefaultTreeCellRenderer {
             }
 
             Icon iq = node.getPrivacyItem().isFilterIQ() ? SparkRes.getImageIcon("PRIVACY_QUERY_DENY") : SparkRes.getImageIcon("PRIVACY_QUERY_ALLOW");
-            Icon in = node.getPrivacyItem().isFilterPresence_in() ? SparkRes.getImageIcon("PRIVACY_PIN_DENY") : SparkRes.getImageIcon("PRIVACY_PIN_ALLOW");
-            Icon out = node.getPrivacyItem().isFilterPresence_out() ? SparkRes.getImageIcon("PRIVACY_POUT_DENY") : SparkRes.getImageIcon("PRIVACY_POUT_ALLOW");
+            Icon in = node.getPrivacyItem().isFilterPresenceIn() ? SparkRes.getImageIcon("PRIVACY_PIN_DENY") : SparkRes.getImageIcon("PRIVACY_PIN_ALLOW");
+            Icon out = node.getPrivacyItem().isFilterPresenceOut() ? SparkRes.getImageIcon("PRIVACY_POUT_DENY") : SparkRes.getImageIcon("PRIVACY_POUT_ALLOW");
             Icon msg = node.getPrivacyItem().isFilterMessage() ? SparkRes.getImageIcon("PRIVACY_MSG_DENY") : SparkRes.getImageIcon("PRIVACY_MSG_ALLOW");
 
             myPanel.add(new JLabel(node.getPrivacyItem().getValue()), new GridBagConstraints(4, 0, 1, 1, 0, 0, GridBagConstraints.FIRST_LINE_START, GridBagConstraints.HORIZONTAL,

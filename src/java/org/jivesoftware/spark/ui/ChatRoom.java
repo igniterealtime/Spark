@@ -27,21 +27,9 @@ import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.AdjustmentEvent;
-import java.awt.event.AdjustmentListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.AbstractAction;
@@ -67,10 +55,17 @@ import javax.swing.text.Document;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.ConnectionListener;
-import org.jivesoftware.smack.PacketListener;
-import org.jivesoftware.smack.RosterEntry;
+import org.jivesoftware.smack.SmackException;
+import org.jivesoftware.smack.StanzaListener;
+import org.jivesoftware.smack.XMPPConnection;
+import org.jivesoftware.smack.chat.Chat;
+import org.jivesoftware.smack.roster.Roster;
+import org.jivesoftware.smack.roster.RosterEntry;
 import org.jivesoftware.smack.packet.Message;
-import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smack.packet.Stanza;
+import org.jivesoftware.smackx.chatstates.ChatState;
+import org.jivesoftware.smackx.chatstates.ChatStateManager;
+import org.jivesoftware.smackx.jiveproperties.packet.JivePropertiesExtension;
 import org.jivesoftware.spark.ChatAreaSendField;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.BackgroundPanel;
@@ -79,6 +74,7 @@ import org.jivesoftware.spark.plugin.ContextMenuListener;
 import org.jivesoftware.spark.ui.rooms.GroupChatRoom;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.SwingWorker;
+import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.util.UIComponentRegistry;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
@@ -87,7 +83,7 @@ import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 /**
  * The base implementation of all ChatRoom conversations. You would implement this class to have most types of Chat.
  */
-public abstract class ChatRoom extends BackgroundPanel implements ActionListener, PacketListener, DocumentListener, ConnectionListener, FocusListener, ContextMenuListener, ChatFrameToFrontListener {
+public abstract class ChatRoom extends BackgroundPanel implements ActionListener, StanzaListener, DocumentListener, ConnectionListener, FocusListener, ContextMenuListener, ChatFrameToFrontListener {
 	private static final long serialVersionUID = 7981019929515888299L;
 	private final JPanel chatPanel;
     private final JSplitPane splitPane;
@@ -109,7 +105,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
 
     private boolean mousePressed;
 
-    private List<ChatRoomClosingListener> closingListeners = new CopyOnWriteArrayList<ChatRoomClosingListener>();
+    private List<ChatRoomClosingListener> closingListeners = new CopyOnWriteArrayList<>();
 
 
     private ChatRoomTransferHandler transferHandler;
@@ -126,6 +122,13 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
     private RolloverButton _alwaysOnTopItem;
     private boolean _isAlwaysOnTopActive;
 
+    // Chat state
+    private TimerTask typingTimerTask;
+    private long lastNotificationSentTime;
+    private ChatState lastNotificationSent;
+    private long pauseTimePeriod = 2000;
+    private long inactiveTimePeriod = 120000;
+
     /**
      * Initializes the base layout and base background color.
      */
@@ -133,20 +136,20 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         chatPanel = new JPanel(new GridBagLayout());
         transcriptWindow = UIComponentRegistry.createTranscriptWindow();
         splitPane = new JSplitPane();
-        packetIDList = new ArrayList<String>();
+        packetIDList = new ArrayList<>();
         notificationLabel = new JLabel();
         toolbar = new ChatToolBar();
         bottomPanel = new JPanel();
 
-        messageListeners = new ArrayList<MessageListener>();
-        transcript = new ArrayList<Message>();
+        messageListeners = new ArrayList<>();
+        transcript = new ArrayList<>();
 
         editorWrapperBar = new JPanel(new BorderLayout());
         editorBarLeft = new JPanel(new FlowLayout(FlowLayout.LEFT, 1, 1));
         editorBarRight = new JPanel(new FlowLayout(FlowLayout.RIGHT, 1, 1));
         editorWrapperBar.add(editorBarLeft, BorderLayout.WEST);
         editorWrapperBar.add(editorBarRight, BorderLayout.EAST);
-        fileDropListeners = new ArrayList<FileDropListener>();
+        fileDropListeners = new ArrayList<>();
 
         transcriptWindowMouseListener = new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
@@ -171,24 +174,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         transcriptWindow.addMouseListener(transcriptWindowMouseListener);
 
         chatAreaButton = new ChatAreaSendField(Res.getString("button.send"));
-        /*{
-            public Dimension getPreferredSize() {
-                Dimension dim = super.getPreferredSize();
-
-                int windowHeight = getChatRoom().getHeight();
-
-                if (dim.getHeight() > windowHeight - 200) {
-                    dim.height = windowHeight - 200;
-                }
-
-                return dim;
-            }
-        };
-        */
-
-
         textScroller = new JScrollPane(transcriptWindow);
-
         textScroller.setBackground(transcriptWindow.getBackground());
         textScroller.getViewport().setBackground(Color.white);
         transcriptWindow.setBackground(Color.white);
@@ -196,36 +182,6 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         getChatInputEditor().setSelectedTextColor((Color)UIManager.get("ChatInput.SelectedTextColor"));
         getChatInputEditor().setSelectionColor((Color)UIManager.get("ChatInput.SelectionColor"));
 
-
-        init();
-
-        // Initally, set the right pane to null to keep it empty.
-        getSplitPane().setRightComponent(null);
-
-        notificationLabel.setIcon(SparkRes.getImageIcon(SparkRes.BLANK_IMAGE));
-
-
-        getTranscriptWindow().addContextMenuListener(this);
-
-        transferHandler = new ChatRoomTransferHandler(this);
-
-        getTranscriptWindow().setTransferHandler(transferHandler);
-        getChatInputEditor().setTransferHandler(transferHandler);
-
-        addToolbar();
-
-        // Add Connection Listener
-        SparkManager.getConnection().addConnectionListener(this);
-
-        // Add Focus Listener
-        addFocusListener(this);
-
-        scrollToBottom();
-
-    }
-
-    // Setup base layout.
-    private void init() {
         setLayout(new GridBagLayout());
 
         // Remove Default Beveled Borders
@@ -259,7 +215,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
                         @Override
                         public Object construct() {
                             int start = textScroller.getVerticalScrollBar().getMaximum();
-                            int second = 0;
+                            int second;
                             int i = 0;
                             do {
                                 try {
@@ -340,9 +296,9 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
 
         getChatInputEditor().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ctrl F4"), "closeTheRoom");
         getChatInputEditor().getActionMap().put("closeTheRoom", new AbstractAction("closeTheRoom") {
-			private static final long serialVersionUID = 1L;
+            private static final long serialVersionUID = 1L;
 
-			public void actionPerformed(ActionEvent evt) {
+            public void actionPerformed(ActionEvent evt) {
                 // Leave this chat.
                 closeChatRoom();
             }
@@ -350,45 +306,128 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
 
         getChatInputEditor().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ctrl SPACE"), "handleCompletion");
         getChatInputEditor().getActionMap().put("handleCompletion", new AbstractAction("handleCompletion") {
-    			private static final long serialVersionUID = 1L;
+            private static final long serialVersionUID = 1L;
 
-    			public void actionPerformed(ActionEvent evt) {
+            public void actionPerformed(ActionEvent evt) {
                 // handle name completion.
                 try {
-		    handleNickNameCompletion();
-		} catch (ChatRoomNotFoundException e) {
-		   Log.error("ctlr-space nickname find", e);
-		}
+                    handleNickNameCompletion();
+                } catch (ChatRoomNotFoundException e) {
+                    Log.error("ctlr-space nickname find", e);
+                }
             }
         });
 
-	    _isAlwaysOnTopActive = SettingsManager.getLocalPreferences().isChatWindowAlwaysOnTop();
-	    _alwaysOnTopItem = UIComponentRegistry.getButtonFactory().createAlwaysOnTop(_isAlwaysOnTopActive);
-	    
-        _alwaysOnTopItem.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent actionEvent) {
-                	if (!_isAlwaysOnTopActive)
-                	{
-                		SettingsManager.getLocalPreferences().setChatWindowAlwaysOnTop(true);
-                		_chatFrame.setWindowAlwaysOnTop(true);
-                		_isAlwaysOnTopActive = true;
-                		 _alwaysOnTopItem.setIcon(SparkRes.getImageIcon("FRAME_ALWAYS_ON_TOP_ACTIVE"));
+        _isAlwaysOnTopActive = SettingsManager.getLocalPreferences().isChatWindowAlwaysOnTop();
+        _alwaysOnTopItem = UIComponentRegistry.getButtonFactory().createAlwaysOnTop(_isAlwaysOnTopActive);
 
-                	}
-                	else
-                	{
-                		SettingsManager.getLocalPreferences().setChatWindowAlwaysOnTop(false);
-                		_chatFrame.setWindowAlwaysOnTop(false);
-                		_isAlwaysOnTopActive = false;
-                		  _alwaysOnTopItem.setIcon(SparkRes.getImageIcon("FRAME_ALWAYS_ON_TOP_DEACTIVE"));
-                	}
-                }
-        });
+        _alwaysOnTopItem.addActionListener( actionEvent -> {
+            if (!_isAlwaysOnTopActive)
+            {
+                SettingsManager.getLocalPreferences().setChatWindowAlwaysOnTop(true);
+                _chatFrame.setWindowAlwaysOnTop(true);
+                _isAlwaysOnTopActive = true;
+                _alwaysOnTopItem.setIcon(SparkRes.getImageIcon("FRAME_ALWAYS_ON_TOP_ACTIVE"));
 
+            }
+            else
+            {
+                SettingsManager.getLocalPreferences().setChatWindowAlwaysOnTop(false);
+                _chatFrame.setWindowAlwaysOnTop(false);
+                _isAlwaysOnTopActive = false;
+                _alwaysOnTopItem.setIcon(SparkRes.getImageIcon("FRAME_ALWAYS_ON_TOP_DEACTIVE"));
+            }
+        } );
 
         editorBarRight.add(_alwaysOnTopItem);
+
+        // Initially, set the right pane to null to keep it empty.
+        getSplitPane().setRightComponent(null);
+
+        notificationLabel.setIcon(SparkRes.getImageIcon(SparkRes.BLANK_IMAGE));
+
+
+        getTranscriptWindow().addContextMenuListener(this);
+
+        transferHandler = new ChatRoomTransferHandler(this);
+
+        getTranscriptWindow().setTransferHandler(transferHandler);
+        getChatInputEditor().setTransferHandler(transferHandler);
+
+        addToolbar();
+
+        // Add Connection Listener
+        SparkManager.getConnection().addConnectionListener(this);
+
+        // Add Focus Listener
+        addFocusListener(this);
+
+        setChatState( ChatState.active );
+        createChatStateTimerTask();
+
+        scrollToBottom();
     }
 
+    protected void createChatStateTimerTask() {
+        typingTimerTask = new TimerTask() {
+            public void run() {
+                final long lastUpdate = System.currentTimeMillis() - lastNotificationSentTime;
+                switch ( lastNotificationSent ) {
+                    case paused:
+                    case active:
+                        if ( lastUpdate > inactiveTimePeriod ) {
+                            setChatState( ChatState.inactive );
+                        }
+                        break;
+
+                    case composing:
+                        if ( lastUpdate > pauseTimePeriod ) {
+                            setChatState( ChatState.paused );
+                        }
+                        break;
+                }
+            }
+        };
+        TaskEngine.getInstance().scheduleAtFixedRate(typingTimerTask, pauseTimePeriod /2, pauseTimePeriod / 2);
+    }
+
+    /**
+     * Sends a chat state to all peers.
+     *
+     * @param state the chat state.
+     */
+    protected abstract void sendChatState( ChatState state ) throws SmackException.NotConnectedException;
+
+    /**
+     * Sets the chat state, causing an update to be sent to all peers if the new state warrants an update.
+     *
+     * @param state the chat state (never null).
+     */
+    public final void setChatState(ChatState state)
+    {
+        if ( state == null ) {
+            throw new IllegalArgumentException( "Argument 'state' cannot be null." );
+        }
+
+        // Only sent out a chat state notification when it is different from the last one that was transmitted...
+        final boolean isDifferentState = lastNotificationSent != state;
+
+        // ... unless it's 'composing' - that can be repeated every so many seconds.
+        final boolean isStillComposing = state == ChatState.composing && System.currentTimeMillis() - lastNotificationSentTime > 2000;
+
+        final long now = System.currentTimeMillis();
+        if ( isDifferentState || isStillComposing )
+        {
+            try
+            {
+                sendChatState( state );
+            } catch ( SmackException.NotConnectedException e ) {
+                Log.warning( "Unable to update the chat state to " + state, e );
+            }
+            lastNotificationSent = state;
+            lastNotificationSentTime = now;
+        }
+    }
 
     /**
      * Handles the Nickname Completion dialog, when Pressing CTRL + SPACE<br>
@@ -412,15 +451,15 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
 	    }
 	}
 
-	Collection<String> groupchatlist = new ArrayList<String>();
-	Collection<RosterEntry> rosterlist = SparkManager.getConnection().getRoster().getEntries();
+	Collection<String> groupchatlist = new ArrayList<>();
+	Collection<RosterEntry> rosterlist = Roster.getInstanceFor( SparkManager.getConnection() ).getEntries();
 
 	if(SparkManager.getChatManager().getChatContainer().getActiveChatRoom() instanceof GroupChatRoom)
 	{
 	    groupchatlist  =((GroupChatRoom) SparkManager.getChatManager().getChatContainer().getActiveChatRoom()).getParticipants();
 	}
 	String newname = null;
-	ArrayList<String> namelist = new ArrayList<String>();
+	ArrayList<String> namelist = new ArrayList<>();
 
 	for (String lol : groupchatlist) {
 	    lol = lol.substring(lol.lastIndexOf("/") + 1);
@@ -563,10 +602,9 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         newMessage.setTo(message.getTo());
         newMessage.setFrom(message.getFrom());
         newMessage.setBody(message.getBody());
-
-
-
-        newMessage.setProperty("date", new Date());
+        final Map<String, Object> properties = new HashMap<>();
+        properties.put( "date", new Date() );
+        newMessage.addExtension( new JivePropertiesExtension( properties ) );
 
         transcript.add(newMessage);
 
@@ -593,7 +631,9 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         newMessage.setTo(to);
         newMessage.setFrom(from);
         newMessage.setBody(body);
-        newMessage.setProperty("date", date);
+        final Map<String, Object> properties = new HashMap<>();
+        properties.put( "date", new Date() );
+        newMessage.addExtension( new JivePropertiesExtension( properties ) );
         transcript.add(newMessage);
     }
 
@@ -610,13 +650,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
 
         try {
             final JScrollBar scrollBar = textScroller.getVerticalScrollBar();
-            EventQueue.invokeLater(new Runnable() {
-
-                @Override
-                public void run() {
-                    scrollBar.setValue(scrollBar.getMaximum());
-                }
-            });
+            EventQueue.invokeLater( () -> scrollBar.setValue(scrollBar.getMaximum()) );
 
 
         }
@@ -660,9 +694,9 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
     /**
      * Process incoming packets.
      *
-     * @param packet - the packet to process
+     * @param stanza - the packet to process
      */
-    public void processPacket(Packet packet) {
+    public void processPacket(Stanza stanza) {
     }
 
 
@@ -837,6 +871,13 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
     public void closeChatRoom() {
         fireClosingListeners();
 
+        setChatState(ChatState.gone);
+
+        if (typingTimerTask != null) {
+            TaskEngine.getInstance().cancelScheduledTask(typingTimerTask);
+            typingTimerTask = null;
+        }
+
         getTranscriptWindow().removeContextMenuListener(this);
         getTranscriptWindow().removeMouseListener(transcriptWindowMouseListener);
         getChatInputEditor().removeKeyListener(chatEditorKeyListener);
@@ -971,6 +1012,8 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
     public void insertUpdate(DocumentEvent e) {
         // Meant to be overriden
         checkForText(e);
+
+        setChatState( ChatState.composing );
     }
 
 
@@ -1017,7 +1060,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
             Component[] comps = buttonPanel.getComponents();
             final int no = comps != null ? comps.length : 0;
 
-            final List<Component> buttons = new ArrayList<Component>();
+            final List<Component> buttons = new ArrayList<>();
             for (int i = 0; i < no; i++) {
                 try {
                     Component component = comps[i];
@@ -1194,6 +1237,11 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         validate();
         invalidate();
         repaint();
+
+        if(focusEvent.getComponent().equals(getChatInputEditor())) {
+            setChatState( ChatState.active );
+        }
+
     }
 
     public void poppingUp(Object component, JPopupMenu popup) {
@@ -1221,6 +1269,9 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
 
 
     public void focusLost(FocusEvent focusEvent) {
+        if(focusEvent.getComponent().equals(getChatInputEditor())) {
+            setChatState( ChatState.inactive );
+        }
     }
 
 

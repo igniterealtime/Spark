@@ -22,15 +22,11 @@ package org.jivesoftware.sparkimpl.preference.sounds;
 
 import java.io.File;
 
-import org.jivesoftware.smack.Connection;
-import org.jivesoftware.smack.PacketListener;
-import org.jivesoftware.smack.filter.PacketTypeFilter;
+import org.jivesoftware.smack.filter.StanzaTypeFilter;
 import org.jivesoftware.smack.packet.Message;
-import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.Presence;
-import org.jivesoftware.smackx.muc.InvitationListener;
-import org.jivesoftware.smackx.muc.MultiUserChat;
-import org.jivesoftware.smackx.packet.DelayInformation;
+import org.jivesoftware.smackx.delay.packet.DelayInformation;
+import org.jivesoftware.smackx.muc.MultiUserChatManager;
 import org.jivesoftware.spark.PresenceManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.Plugin;
@@ -48,48 +44,40 @@ public class SoundPlugin implements Plugin, MessageListener, ChatRoomListener {
 
         SparkManager.getChatManager().addChatRoomListener(this);
 
-        SparkManager.getConnection().addPacketListener(new PacketListener() {
-            public void processPacket(Packet packet) {
-                Presence presence = (Presence)packet;
-                if (!presence.isAvailable()) {
-                    SoundPreferences preferences = soundPreference.getPreferences();
-                    if (preferences != null && preferences.isPlayOfflineSound()) {
-                        if (!PresenceManager.isOnline(presence.getFrom())) {
-                            String offline = preferences.getOfflineSound();
-                            File offlineFile = new File(offline);
-                            SparkManager.getSoundManager().playClip(offlineFile);
-                        }
+        SparkManager.getConnection().addAsyncStanzaListener( stanza -> {
+            Presence presence = (Presence)stanza;
+            if (!presence.isAvailable()) {
+                SoundPreferences preferences = soundPreference.getPreferences();
+                if (preferences != null && preferences.isPlayOfflineSound()) {
+                    if (!PresenceManager.isOnline(presence.getFrom())) {
+                        String offline = preferences.getOfflineSound();
+                        File offlineFile = new File(offline);
+                        SparkManager.getSoundManager().playClip(offlineFile);
                     }
                 }
             }
-        }, new PacketTypeFilter(Presence.class));
+        }, new StanzaTypeFilter(Presence.class));
 
         // Load sound preferences.
-        final Runnable soundLoader = new Runnable() {
-            public void run() {
-                soundPreference.loadFromFile();
-            }
-        };
+        final Runnable soundLoader = () -> soundPreference.loadFromFile();
 
         TaskEngine.getInstance().submit(soundLoader);
 
-        MultiUserChat.addInvitationListener(SparkManager.getConnection(), new InvitationListener() {
-            public void invitationReceived(Connection xmppConnection, String string, String string1, String string2, String string3, Message message) {
-                SoundPreferences preferences = soundPreference.getPreferences();
-                if (preferences != null && preferences.playIncomingInvitationSound()) {
-                    String incomingSoundFile = preferences.getIncomingInvitationSoundFile();
-                    File offlineFile = new File(incomingSoundFile);
-                    SparkManager.getSoundManager().playClip(offlineFile);
-                }
+        MultiUserChatManager.getInstanceFor(SparkManager.getConnection()).addInvitationListener( ( xmppConnection, muc, string1, string2, string3, message ) -> {
+            SoundPreferences preferences = soundPreference.getPreferences();
+            if (preferences != null && preferences.playIncomingInvitationSound()) {
+                String incomingSoundFile = preferences.getIncomingInvitationSoundFile();
+                File offlineFile = new File(incomingSoundFile);
+                SparkManager.getSoundManager().playClip(offlineFile);
             }
-        });
+        } );
 
     }
 
     public void messageReceived(ChatRoom room, Message message) {
 
         // Do not play sounds on history updates.
-        DelayInformation inf = (DelayInformation)message.getExtension("delay", "urn:xmpp:delay");
+        DelayInformation inf = message.getExtension("delay", "urn:xmpp:delay");
         if (inf != null) {
             return;
         }

@@ -148,8 +148,8 @@ public class HiFiBorders extends BaseBorders {
         public void paintBorder(Component c, Graphics g, int x, int y, int w, int h) {
             Graphics2D g2D = (Graphics2D) g;
             Composite composite = g2D.getComposite();
-            Color c1 = null;
-            Color c2 = null;
+            Color c1;
+            Color c2;
             if (JTattooUtilities.isActive((JComponent) c)) {
                 c1 = ColorHelper.brighter(AbstractLookAndFeel.getFrameColor(), 60);
                 c2 = AbstractLookAndFeel.getFrameColor();

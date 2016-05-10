@@ -76,7 +76,7 @@ public class GrowlPlugin implements Plugin {
      */
     private boolean placeLibs() {
 
-	boolean result = false;
+	boolean result;
 
 	File f = new File(Spark.getUserHome() + "/Library/Java/Extensions/libgrowl.jnilib");
 
