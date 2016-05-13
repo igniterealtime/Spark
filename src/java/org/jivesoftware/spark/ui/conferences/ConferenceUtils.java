@@ -193,7 +193,7 @@ public class ConferenceUtils {
                             try {
                             	if (!confirmToRevealVisibility())
                             		return null;
-                            	
+
                                 if (ModelUtil.hasLength(userPassword)) {
                                     groupChat.join(joinName, userPassword);
                                 }
@@ -211,7 +211,7 @@ public class ConferenceUtils {
                                 final String errorText = ConferenceUtils.getReason( error );
 
                                 errors.add( errorText );
-                                if ( error.getCondition() != XMPPError.Condition.conflict )
+                                if ( error != null && error.getCondition() != XMPPError.Condition.conflict )
                                 {
                                     break;
                                 }
@@ -545,7 +545,7 @@ public class ConferenceUtils {
                     try {
                     	if (!confirmToRevealVisibility())
                     		return null;
-                    	
+
                         if (ModelUtil.hasLength(userPassword)) {
                             groupChat.join(joinName, userPassword);
                         }
@@ -563,7 +563,7 @@ public class ConferenceUtils {
                         final String errorText = ConferenceUtils.getReason( error );
 
                         errors.add( errorText );
-                        if ( error.getCondition() != XMPPError.Condition.conflict )
+                        if ( error != null && error.getCondition() != XMPPError.Condition.conflict )
                         {
                             break;
                         }
@@ -632,7 +632,7 @@ public class ConferenceUtils {
                         final String errorText = ConferenceUtils.getReason( error );
 
                         errors.add( errorText );
-                        if ( error.getCondition() != XMPPError.Condition.conflict )
+                        if ( error != null && error.getCondition() != XMPPError.Condition.conflict )
                         {
                             break;
                         }
