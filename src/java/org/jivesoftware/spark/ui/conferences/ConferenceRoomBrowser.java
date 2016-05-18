@@ -486,7 +486,6 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
 
     private void joinSelectedRoom() {
 	int selectedRow = roomsTable.getSelectedRow();
-        Log.error("T!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!111111111");
 	UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
 	if (-1 == selectedRow) {
 	    JOptionPane.showMessageDialog(dlg,
