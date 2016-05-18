@@ -53,7 +53,7 @@ final class JoinConferenceRoomDialog extends JPanel {
     private JLabel roomNameDescription = new JLabel();
 
     public JoinConferenceRoomDialog() {
-        setLayout(gridBagLayout1);
+	setLayout(gridBagLayout1);
         add(nicknameField, new GridBagConstraints(1, 1, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
         add(passwordField, new GridBagConstraints(1, 2, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
         add(passwordLabel, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
@@ -72,6 +72,7 @@ final class JoinConferenceRoomDialog extends JPanel {
     public void joinRoom(final String roomJID, final String roomName) {
         final LocalPreferences pref = SettingsManager.getLocalPreferences();
 
+	
         // Set default nickname
         nicknameField.setText(pref.getNickname());
 

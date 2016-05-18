@@ -127,7 +127,7 @@ public class ConferenceUtils {
         }
         return creationDate;
     }
-
+  
     public static void joinConferenceOnSeperateThread(final String roomName, String roomJID, String password) {
         joinConferenceOnSeperateThread(roomName, roomJID, password, null, null);
     }
@@ -141,7 +141,8 @@ public class ConferenceUtils {
      */
     public static void joinConferenceOnSeperateThread(final String roomName, String roomJID, String password, final String message, final Collection<String> jids) {
         ChatManager chatManager = SparkManager.getChatManager();
-        LocalPreferences pref = SettingsManager.getLocalPreferences();
+             
+        LocalPreferences pref = SettingsManager.getRelodLocalPreferences();
 
         final MultiUserChat groupChat = new MultiUserChat(SparkManager.getConnection(), roomJID);
         final String nickname = pref.getNickname().trim();
@@ -152,37 +153,48 @@ public class ConferenceUtils {
             MultiUserChat muc = chatRoom.getMultiUserChat();
             chatRoom.setPassword(password);
             if (!muc.isJoined()) {
+               
                 joinRoom(muc, nickname, password);
             }
-
+            
             chatManager.getChatContainer().activateChatRoom(chatRoom);
             invite(groupChat, chatRoom, jids, message);
             return;
         }
         catch (ChatRoomNotFoundException e) {
             // Nothing to do
+           
         }
 
 
         final GroupChatRoom room = UIComponentRegistry.createGroupChatRoom(groupChat);
         room.setTabTitle(roomName);
         room.setPassword(password);
-
+        
         if (isPasswordRequired(roomJID) && password == null) {
             final PasswordDialog passwordDialog = new PasswordDialog();
+            //pref.getGroupChatPassword(roomJID)
+            passwordDialog.setPasswordField(pref.getGroupChatPassword(roomJID));
             password = passwordDialog.getPassword(Res.getString("title.password.required"), Res.getString("message.groupchat.require.password"), SparkRes.getImageIcon(SparkRes.LOCK_16x16), SparkManager.getFocusedComponent());
+            if(passwordDialog.isCheckboxSelected() == true && password!=null)
+            {
+                       passwordDialog.savePassword(room.getRoomname(),password);
+                
+            }
             room.setPassword(password);
             if (!ModelUtil.hasLength(password)) {
                 return;
             }
         }
+        
 
 
         final List<String> errors = new ArrayList<String>();
         final String userPassword = password;
-
+       
         final SwingWorker startChat = new SwingWorker() {
             public Object construct() {
+               
                 if (!groupChat.isJoined()) {
                     int groupChatCounter = 0;
                     while (true) {

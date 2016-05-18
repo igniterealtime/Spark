@@ -32,6 +32,15 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -41,6 +50,12 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JLabel;
+import javax.swing.JCheckBox;
+import org.jivesoftware.Spark;
+import org.jivesoftware.spark.util.Encryptor;
+import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
+import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
 
 /**
@@ -49,18 +64,53 @@ import javax.swing.JLabel;
  * @author Derek DeMoro
  */
 public final class PasswordDialog implements PropertyChangeListener {
-    private JPasswordField passwordField;
+    private JPasswordField passwordField ;
     private JOptionPane optionPane;
     private JDialog dialog;
-
+    private JCheckBox _savePasswordBox = new JCheckBox();
     private String stringValue;
     private int width = 400;
     private int height = 200;
+    private String password;
+    public void setPasswordField(String password)
+    {
+        this.password=password;
+    }
+    public boolean isCheckboxSelected()
+    {
+        return _savePasswordBox.isSelected();
+    }
+    public  void savePassword(String roomName, String password)  
+    {
+             
+        File sparkProperties = new File(Spark.getSparkUserHome().concat(File.separator).concat(SettingsManager.getSettingsFile().getName()));
+        Properties props = new Properties();
+         try {
 
+         props.load(new FileInputStream(sparkProperties));
+        } catch (Exception e) {
+            Log.error("error with file");
+        }
+        LocalPreferences preferences  = new LocalPreferences(props);
+        try {
+            preferences.setGroupChatPassword(roomName,Encryptor.encrypt(password));
+        } catch (Exception ex) {
+            Logger.getLogger(PasswordDialog.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        FileOutputStream fileOut;
+        try {
+            fileOut = new FileOutputStream(sparkProperties);
+            props.store(fileOut, "added room");
+        } catch (Exception ex) {
+            Logger.getLogger(PasswordDialog.class.getName()).log(Level.SEVERE, null, ex);
+        }
+                          
+    }
     /**
      * Empty Constructor.
      */
     public PasswordDialog() {
+        
     }
 
     /**
@@ -91,7 +141,7 @@ public final class PasswordDialog implements PropertyChangeListener {
      */
     public String getPassword(String title, String description, Icon icon, Component parent) {
         passwordField = new JPasswordField();
-
+        passwordField.setText(password);
         TitlePanel titlePanel = new TitlePanel(title, description, icon, true);
 
         // Construct main panel w/ layout.
@@ -103,10 +153,11 @@ public final class PasswordDialog implements PropertyChangeListener {
         JLabel passwordLabel = new JLabel(Res.getString("label.enter.password") + ":");
         passwordPanel.add(passwordLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         passwordPanel.add(passwordField, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
-
-
-        // The user should only be able to close this dialog.
-        final Object[] options = {Res.getString("ok"), Res.getString("cancel")};
+        passwordPanel.add(_savePasswordBox, new GridBagConstraints(1, 1, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+        _savePasswordBox.setText(Res.getString("checkbox.save.password"));
+        
+       
+        final Object[] options = {Res.getString("ok"), Res.getString("cancel") , };
         optionPane = new JOptionPane(passwordPanel, JOptionPane.PLAIN_MESSAGE,
             JOptionPane.OK_CANCEL_OPTION, null, options, options[0]);
 
@@ -171,6 +222,7 @@ public final class PasswordDialog implements PropertyChangeListener {
             dialog.setVisible(false);
         }
         else if (Res.getString("ok").equals(value)) {
+            
             stringValue = String.valueOf(passwordField.getPassword());
             if (stringValue.trim().length() == 0) {
                 stringValue = null;

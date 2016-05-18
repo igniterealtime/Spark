@@ -46,7 +46,18 @@ public class SettingsManager {
 
     private SettingsManager() {
     }
+    public static LocalPreferences getRelodLocalPreferences()
+    {
+        
+       
+            // Do Initial Load from FileSystem.
+            getSettingsFile();
+            localPreferences = load();
+       
 
+        return localPreferences;
+        
+    }
     /**
      * Returns the LocalPreferences for this user.
      *

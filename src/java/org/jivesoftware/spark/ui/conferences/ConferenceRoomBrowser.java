@@ -147,7 +147,6 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
      */
     public ConferenceRoomBrowser(BookmarksUI conferences,
 	    final String serviceName) {
-
 	this.setLayout(new BorderLayout());
 
 	this.conferences = conferences;
@@ -487,6 +486,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
 
     private void joinSelectedRoom() {
 	int selectedRow = roomsTable.getSelectedRow();
+        Log.error("T!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!111111111");
 	UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
 	if (-1 == selectedRow) {
 	    JOptionPane.showMessageDialog(dlg,
@@ -785,9 +785,11 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
     }
 
     private void enterRoom() {
+      
 	int selectedRow = roomsTable.getSelectedRow();
 	UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
 	if (-1 == selectedRow) {
+		
 	    JOptionPane.showMessageDialog(dlg,
 		    Res.getString("message.select.room.to.enter"),
 		    Res.getString("title.group.chat"),
@@ -800,10 +802,13 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
 		selectedRow, 1);
 
 	try {
+           
 	    chatManager.getChatContainer().getChatRoom(roomJID);
 	} catch (ChatRoomNotFoundException e1) {
-	    ConferenceUtils.joinConferenceOnSeperateThread(roomDescription,
-		    roomJID, null);
+            
+            
+            ConferenceUtils.joinConferenceOnSeperateThread(roomDescription,
+		    roomJID,null);
 	}
     }
 
