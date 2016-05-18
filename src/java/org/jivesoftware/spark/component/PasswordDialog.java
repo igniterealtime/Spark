@@ -95,14 +95,14 @@ public final class PasswordDialog implements PropertyChangeListener {
         try {
             preferences.setGroupChatPassword(roomName,Encryptor.encrypt(password));
         } catch (Exception ex) {
-            Logger.getLogger(PasswordDialog.class.getName()).log(Level.SEVERE, null, ex);
+           Log.error(ex.getCause());
         }
         FileOutputStream fileOut;
         try {
             fileOut = new FileOutputStream(sparkProperties);
             props.store(fileOut, "added room");
         } catch (Exception ex) {
-            Logger.getLogger(PasswordDialog.class.getName()).log(Level.SEVERE, null, ex);
+            Log.error(ex.getCause());
         }
                           
     }
