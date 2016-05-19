@@ -89,7 +89,6 @@ public class DataFormDialog extends JPanel {
         try {
             // Add default answers to the form to submit
             for ( final FormField field : form.getFields() ) {
-                submitForm.addField(field);
                 String variable = field.getVariable();
                 String label = field.getLabel();
                 FormField.Type type = field.getType();
@@ -101,11 +100,13 @@ public class DataFormDialog extends JPanel {
                     boolean isSelected = o.equals("1");
                     JCheckBox box = new JCheckBox(label);
                     box.setSelected(isSelected);
+                    submitForm.setAnswer( variable, isSelected );
                     addField(label, box, variable);
                 }
                 else if (type.equals(FormField.Type.text_single) ||
                         type.equals(FormField.Type.jid_single)) {
                     String value = valueList.get(0);
+                    submitForm.setAnswer( variable, value );
                     addField(label, new JTextField(value), variable);
                 }
                 else if (type.equals(FormField.Type.text_multi) ||
@@ -119,9 +120,14 @@ public class DataFormDialog extends JPanel {
                             buf.append(",");
                         }
                     }
+                    submitForm.setAnswer( variable, valueList );
                     addField(label, new JTextArea(buf.toString()), variable);
                 }
                 else if (type.equals(FormField.Type.text_private)) {
+                    if ( !valueList.isEmpty() )
+                    {
+                        submitForm.setAnswer( variable, valueList.get( 0 ) );
+                    }
                     addField(label, new JPasswordField(), variable);
                 }
                 else if (type.equals(FormField.Type.list_single)) {
@@ -133,8 +139,8 @@ public class DataFormDialog extends JPanel {
                     if (valueList.size() > 0) {
                         String defaultValue = valueList.get(0);
                         box.setSelectedItem(defaultValue);
+                        submitForm.setAnswer( variable, valueList );
                     }
-
                     addField(label, box, variable);
                 }
                 else if (type.equals(FormField.Type.list_multi)) {
@@ -145,6 +151,7 @@ public class DataFormDialog extends JPanel {
                         String optionValue = option.getValue();
                         checkBoxList.addCheckBox(new JCheckBox(optionLabel, values.contains(optionValue)), optionValue);
                     }
+                    submitForm.setAnswer( variable, valueList  );
                     addField(label, checkBoxList, variable);
                 }
             }
