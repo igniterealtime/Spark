@@ -49,12 +49,8 @@ final class JoinConferenceRoomDialog extends JPanel {
     private JLabel roomNameDescription = new JLabel();
 
     public JoinConferenceRoomDialog() {
-<<<<<<< HEAD
-	setLayout(gridBagLayout1);
-=======
         GridBagLayout gridBagLayout1 = new GridBagLayout();
         setLayout( gridBagLayout1 );
->>>>>>> upstream/master
         add(nicknameField, new GridBagConstraints(1, 1, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
         add(passwordField, new GridBagConstraints(1, 2, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
         add(passwordLabel, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
