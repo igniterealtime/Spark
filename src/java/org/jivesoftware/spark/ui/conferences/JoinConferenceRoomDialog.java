@@ -71,7 +71,6 @@ final class JoinConferenceRoomDialog extends JPanel {
     public void joinRoom(final String roomJID, final String roomName) {
         final LocalPreferences pref = SettingsManager.getLocalPreferences();
 
-	
         // Set default nickname
         nicknameField.setText(pref.getNickname());
 

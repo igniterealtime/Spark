@@ -125,7 +125,6 @@ public class ConferenceUtils {
         }
         return creationDate;
     }
-  
     public static void joinConferenceOnSeperateThread(final String roomName, String roomJID, String password) {
         joinConferenceOnSeperateThread(roomName, roomJID, password, null, null);
     }
@@ -139,7 +138,6 @@ public class ConferenceUtils {
      */
     public static void joinConferenceOnSeperateThread(final String roomName, String roomJID, String password, final String message, final Collection<String> jids) {
         ChatManager chatManager = SparkManager.getChatManager();
-             
         LocalPreferences pref = SettingsManager.getRelodLocalPreferences();
 
         final MultiUserChat groupChat = MultiUserChatManager.getInstanceFor( SparkManager.getConnection() ).getMultiUserChat( roomJID );
@@ -151,7 +149,6 @@ public class ConferenceUtils {
             MultiUserChat muc = chatRoom.getMultiUserChat();
             chatRoom.setPassword(password);
             if (!muc.isJoined()) {
-               
                 joinRoom(muc, nickname, password);
             }
             
@@ -189,10 +186,8 @@ public class ConferenceUtils {
 
         final List<String> errors = new ArrayList<>();
         final String userPassword = password;
-       
         final SwingWorker startChat = new SwingWorker() {
             public Object construct() {
-               
                 if (!groupChat.isJoined()) {
                     int groupChatCounter = 0;
                     while (true) {

@@ -743,7 +743,6 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
     }
 
     private void enterRoom() {
-      
 	int selectedRow = roomsTable.getSelectedRow();
 	UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
 	if (-1 == selectedRow) {
@@ -760,11 +759,8 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
 		selectedRow, 1);
 
 	try {
-           
 	    chatManager.getChatContainer().getChatRoom(roomJID);
 	} catch (ChatRoomNotFoundException e1) {
-            
-            
             ConferenceUtils.joinConferenceOnSeperateThread(roomDescription,
 		    roomJID,null);
 	}

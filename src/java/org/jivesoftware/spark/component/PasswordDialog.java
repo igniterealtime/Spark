@@ -39,7 +39,6 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Properties;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.swing.AbstractAction;
@@ -89,7 +88,7 @@ public final class PasswordDialog implements PropertyChangeListener {
 
          props.load(new FileInputStream(sparkProperties));
         } catch (Exception e) {
-            Log.error("error with file");
+            Log.error("error with file"+ e.getCause());
         }
         LocalPreferences preferences  = new LocalPreferences(props);
         try {
