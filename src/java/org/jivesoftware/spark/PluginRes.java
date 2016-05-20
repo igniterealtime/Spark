@@ -27,10 +27,10 @@ import org.jivesoftware.spark.plugin.PluginClassLoader;
 
 public abstract class PluginRes {
 	private static PluginClassLoader classLoader;
-	private static final Map<String, String> sparkResCache = new HashMap<String, String>();
-	private static final Map<String, String> defaultResCache = new HashMap<String, String>();
-	private static final Map<String, String> i18nResCache = new HashMap<String, String>();
-	private static final Map<String, String> preferenceResCache = new HashMap<String, String>();
+	private static final Map<String, String> sparkResCache = new HashMap<>();
+	private static final Map<String, String> defaultResCache = new HashMap<>();
+	private static final Map<String, String> i18nResCache = new HashMap<>();
+	private static final Map<String, String> preferenceResCache = new HashMap<>();
 
     public enum ResourceType {
         SPARK, DEFAULT, PREFERENCES, I18N

@@ -24,8 +24,8 @@ import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.XMPPConnection;
-import org.jivesoftware.smackx.MessageEventManager;
-import org.jivesoftware.smackx.ServiceDiscoveryManager;
+import org.jivesoftware.smackx.xevent.MessageEventManager;
+import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
 import org.jivesoftware.spark.filetransfer.SparkTransferManager;
 import org.jivesoftware.spark.preference.PreferenceManager;
 import org.jivesoftware.spark.search.SearchManager;
@@ -42,8 +42,6 @@ import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.text.SimpleDateFormat;
 
@@ -113,14 +111,12 @@ public final class SparkManager {
     static {
         KeyboardFocusManager focusManager = KeyboardFocusManager.getCurrentKeyboardFocusManager();
         focusManager.addPropertyChangeListener(
-            new PropertyChangeListener() {
-                public void propertyChange(PropertyChangeEvent e) {
+                e -> {
                     String prop = e.getPropertyName();
                     if (("focusOwner".equals(prop)) && (e.getNewValue() != null)) {
                         focusedComponent = (Component)e.getNewValue();
                     }
                 }
-            }
         );
     }
 
@@ -239,7 +235,7 @@ public final class SparkManager {
      */
     public static MessageEventManager getMessageEventManager() {
         if (messageEventManager == null) {
-            messageEventManager = new MessageEventManager(getConnection());
+            messageEventManager = MessageEventManager.getInstanceFor( getConnection() );
         }
         return messageEventManager;
     }

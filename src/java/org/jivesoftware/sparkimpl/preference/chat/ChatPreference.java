@@ -26,7 +26,9 @@ import javax.swing.UIManager;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smackx.iqregister.AccountManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.preference.Preference;
 import org.jivesoftware.spark.util.ModelUtil;
@@ -99,7 +101,7 @@ public class ChatPreference implements Preference {
     public void commit() {
         LocalPreferences pref = SettingsManager.getLocalPreferences();
         pref.setTimeDisplayedInChat(panel.getShowTime());
-        if(panel.getShowTime() == true)
+        if( panel.getShowTime() )
         {
       	  pref.setTimeFormat(panel.getFormatTime());
         }
@@ -116,9 +118,9 @@ public class ChatPreference implements Preference {
         // Do not commit if not changed.
         if (ModelUtil.hasLength(panel.getPassword()) && ModelUtil.hasLength(panel.getConfirmationPassword())) {
             try {
-                SparkManager.getConnection().getAccountManager().changePassword(panel.getPassword());
+                AccountManager.getInstance( SparkManager.getConnection() ).changePassword(panel.getPassword());
             }
-            catch (XMPPException passwordEx) {
+            catch (XMPPException | SmackException passwordEx) {
             	UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
                 JOptionPane.showMessageDialog(SparkManager.getMainWindow(), Res.getString("message.unable.to.save.password"),
                     Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);

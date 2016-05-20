@@ -33,8 +33,8 @@ import javax.swing.JPanel;
 import javax.swing.UIManager;
 
 import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.smackx.bookmark.BookmarkedConference;
-import org.jivesoftware.smackx.bookmark.BookmarkedURL;
+import org.jivesoftware.smackx.bookmarks.BookmarkedConference;
+import org.jivesoftware.smackx.bookmarks.BookmarkedURL;
 import org.jivesoftware.spark.ui.conferences.ConferenceUtils;
 import org.jivesoftware.spark.util.BrowserLauncher;
 import org.jivesoftware.spark.util.SwingWorker;

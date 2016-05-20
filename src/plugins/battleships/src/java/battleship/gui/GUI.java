@@ -25,11 +25,11 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import org.jivesoftware.smack.PacketListener;
+import org.jivesoftware.smack.StanzaListener;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.filter.PacketExtensionFilter;
 import org.jivesoftware.smack.packet.Message;
-import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smack.packet.Stanza;
 
 import battleship.listener.ShipPlacementListener;
 import battleship.logic.GameBoard;
@@ -80,12 +80,12 @@ public class GUI extends JPanel implements Observer{
 	add(East, BorderLayout.EAST);
 	add(West, BorderLayout.WEST);
 	
-	_connection.addPacketListener(new PacketListener() {
+	_connection.addAsyncStanzaListener(new StanzaListener() {
 
 	    @Override
-	    public void processPacket(Packet packet) {
+	    public void processPacket(Stanza stanza) {
 
-		MovePacket move = (MovePacket) packet.getExtension(
+		MovePacket move = (MovePacket) stanza.getExtension(
 			MovePacket.ELEMENT_NAME, MovePacket.NAMESPACE);
 
 		if (move.getGameID() == _gameID) {
@@ -93,8 +93,8 @@ public class GUI extends JPanel implements Observer{
 		    
 		    if(opponentMadeHit)
 		    {
-			Message m = createAnswer(move, packet.getFrom());
-			_connection.sendPacket(m);
+			Message m = createAnswer(move, stanza.getFrom());
+			_connection.sendStanza(m);
 		    }
 		}
 

@@ -31,8 +31,6 @@ import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -68,21 +66,15 @@ public class ConfirmDialog extends BackgroundPanel {
         add(yesButton, new GridBagConstraints(3, 1, 1, 1, 1.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         add(noButton, new GridBagConstraints(4, 1, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
 
-        yesButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent actionEvent) {
-                if (listener != null) {
-                    listener.yesOption();
-                    listener = null;
-                }
-                dialog.dispose();
+        yesButton.addActionListener( actionEvent -> {
+            if (listener != null) {
+                listener.yesOption();
+                listener = null;
             }
-        });
+            dialog.dispose();
+        } );
 
-        noButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent actionEvent) {
-                dialog.dispose();
-            }
-        });
+        noButton.addActionListener( actionEvent -> dialog.dispose() );
 
 
     }

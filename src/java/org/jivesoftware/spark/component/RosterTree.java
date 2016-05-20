@@ -20,11 +20,10 @@
 package org.jivesoftware.spark.component;
 
 import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.smack.Roster;
-import org.jivesoftware.smack.RosterEntry;
-import org.jivesoftware.smack.RosterGroup;
-import org.jivesoftware.smack.RosterListener;
-import org.jivesoftware.smack.XMPPConnection;
+import org.jivesoftware.smack.roster.Roster;
+import org.jivesoftware.smack.roster.RosterEntry;
+import org.jivesoftware.smack.roster.RosterGroup;
+import org.jivesoftware.smack.roster.RosterListener;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.spark.PresenceManager;
 import org.jivesoftware.spark.SparkManager;
@@ -49,8 +48,7 @@ public final class RosterTree extends JPanel {
     private static final long serialVersionUID = 7892174130061826144L;
     private final JiveTreeNode rootNode = new JiveTreeNode("Contact List");
     private final Tree rosterTree;
-    private final Map<JiveTreeNode,String> addressMap = new HashMap<JiveTreeNode,String>();
-    private boolean showUnavailableAgents = true;
+    private final Map<JiveTreeNode,String> addressMap = new HashMap<>();
 
     /**
      * Creates a new Roster Tree.
@@ -91,8 +89,7 @@ public final class RosterTree extends JPanel {
     }
 
     private void buildFromRoster() {
-        final XMPPConnection xmppCon = SparkManager.getConnection();
-        final Roster roster = xmppCon.getRoster();
+        final Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
 
         roster.addRosterListener(new RosterListener() {
             public void entriesAdded(Collection<String> addresses) {
@@ -131,10 +128,11 @@ public final class RosterTree extends JPanel {
                 final JiveTreeNode entryNode = new JiveTreeNode(name, false);
                 final Presence usersPresence = PresenceManager.getPresence(entry.getUser());
                 addressMap.put(entryNode, entry.getUser());
+                boolean showUnavailableAgents = true;
                 if (usersPresence.isAvailable() && !usersPresence.isAway()) {
                     groupNode.add(entryNode);
                 }
-                else if (showUnavailableAgents) {
+                else if ( showUnavailableAgents ) {
                     groupNode.add(entryNode);
                 }
 

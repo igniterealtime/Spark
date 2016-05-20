@@ -74,8 +74,11 @@ public class VideoReceiver implements ReceiveStreamListener, SessionListener,
      */
     public synchronized void update(ReceiveStreamEvent evt) {
 
+    	
         Participant participant = evt.getParticipant();    // could be null.
         ReceiveStream stream = evt.getReceiveStream();  // could be null.
+        
+        System.out.println(evt);
         
         if (evt instanceof RemotePayloadChangeEvent) {
 

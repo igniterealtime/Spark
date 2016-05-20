@@ -37,12 +37,10 @@ import javax.swing.UIManager;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.smack.RosterEntry;
-import org.jivesoftware.smack.packet.DefaultPacketExtension;
-import org.jivesoftware.smack.packet.PacketExtension;
+import org.jivesoftware.smack.roster.Roster;
+import org.jivesoftware.smack.roster.RosterEntry;
 import org.jivesoftware.smack.packet.Presence;
-import org.jivesoftware.smack.packet.RosterPacket;
-import org.jivesoftware.smack.util.StringUtils;
+import org.jivesoftware.smack.roster.packet.RosterPacket;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.PresenceManager;
 import org.jivesoftware.spark.SparkManager;
@@ -51,8 +49,10 @@ import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.layout.LayoutSettings;
 import org.jivesoftware.sparkimpl.plugin.layout.LayoutSettingsManager;
+import org.jivesoftware.sparkimpl.profile.ext.VCardUpdateExtension;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+import org.jxmpp.util.XmppStringUtils;
 
 /**
  * Represent a single contact within the <code>ContactList</code>.
@@ -233,9 +233,9 @@ public class ContactItem extends JPanel {
         int windowWidth = settings.getMainWindowWidth();
 
         if (nickLength > windowWidth) {
-            displayNameLabel.setText(StringUtils.unescapeNode(displayName).substring(0, windowWidth) + "...");
+            displayNameLabel.setText(XmppStringUtils.unescapeLocalpart(displayName).substring(0, windowWidth) + "...");
         } else {
-            displayNameLabel.setText(StringUtils.unescapeNode(displayName));
+            displayNameLabel.setText(XmppStringUtils.unescapeLocalpart(displayName));
         }
     }
 
@@ -348,12 +348,11 @@ public class ContactItem extends JPanel {
 
         this.presence = presence;
 
-        final PacketExtension packetExtension = presence.getExtension("x", "vcard-temp:x:update");
+        final VCardUpdateExtension extension = presence.getExtension("x", "vcard-temp:x:update");
 
         // Handle vCard update packet.
-        if (packetExtension != null && packetExtension instanceof DefaultPacketExtension) {
-            DefaultPacketExtension o = (DefaultPacketExtension)packetExtension;
-            String hash = o.getValue("photo");
+        if (extension != null) {
+            String hash = extension.getPhotoHash();
             if (hash != null) {
                 this.hash = hash;
 
@@ -460,7 +459,7 @@ public class ContactItem extends JPanel {
             getNicknameLabel().setFont(new Font("Dialog", Font.PLAIN, fontSize));
             getNicknameLabel().setForeground((Color)UIManager.get("ContactItemOffline.color"));
 
-            RosterEntry entry = SparkManager.getConnection().getRoster().getEntry(getJID());
+            RosterEntry entry = Roster.getInstanceFor( SparkManager.getConnection() ).getEntry(getJID());
             if (entry != null && (entry.getType() == RosterPacket.ItemType.none || entry.getType() == RosterPacket.ItemType.from)
                     && RosterPacket.ItemStatus.SUBSCRIPTION_PENDING == entry.getStatus()) {
                 // Do not move out of group.

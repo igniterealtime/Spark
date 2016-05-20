@@ -38,7 +38,7 @@ public class PublicPlugin {
     private boolean largeIconAvailable;
     private String minVersion;
     private File pluginDir;
-    private List<PluginDependency> dependencies = new ArrayList<PluginDependency>(); 
+    private List<PluginDependency> dependencies = new ArrayList<>();
     
     public String getName() {
         return name;

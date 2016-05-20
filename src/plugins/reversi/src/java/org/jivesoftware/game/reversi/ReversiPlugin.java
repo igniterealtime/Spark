@@ -33,11 +33,13 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 
-import org.jivesoftware.smack.PacketListener;
+import org.jivesoftware.smack.SmackException;
+import org.jivesoftware.smack.StanzaListener;
 import org.jivesoftware.smack.filter.PacketIDFilter;
-import org.jivesoftware.smack.filter.PacketTypeFilter;
+import org.jivesoftware.smack.filter.StanzaIdFilter;
+import org.jivesoftware.smack.filter.StanzaTypeFilter;
 import org.jivesoftware.smack.packet.IQ;
-import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.provider.ProviderManager;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.spark.ChatManager;
@@ -49,6 +51,8 @@ import org.jivesoftware.spark.ui.ChatRoomButton;
 import org.jivesoftware.spark.ui.ChatRoomListener;
 import org.jivesoftware.spark.ui.ChatRoomListenerAdapter;
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
+import org.jivesoftware.spark.util.log.Log;
+import org.jxmpp.util.XmppStringUtils;
 
 /**
  * Reversi plugin. Reversi is a two-player, turn-based game. See
@@ -60,7 +64,7 @@ import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 public class ReversiPlugin implements Plugin {
 
     private ChatRoomListener chatRoomListener;
-    private PacketListener gameOfferListener;
+    private StanzaListener gameOfferListener;
 
     private ConcurrentHashMap<String, JPanel> gameOffers;
     private ConcurrentHashMap<String, JPanel> gameInvitations;
@@ -83,29 +87,29 @@ public class ReversiPlugin implements Plugin {
         // communicate game offers
         // and current game state. Adding the Smack providers lets us use the
         // custom protocol.
-        ProviderManager.getInstance().addIQProvider(GameOffer.ELEMENT_NAME, GameOffer.NAMESPACE, GameOffer.class);
-        ProviderManager.getInstance().addExtensionProvider(GameMove.ELEMENT_NAME, GameMove.NAMESPACE, GameMove.class);
-        ProviderManager.getInstance().addExtensionProvider(GameForfeit.ELEMENT_NAME, GameForfeit.NAMESPACE, GameForfeit.class);
+        ProviderManager.addIQProvider(GameOffer.ELEMENT_NAME, GameOffer.NAMESPACE, GameOffer.class);
+        ProviderManager.addExtensionProvider(GameMove.ELEMENT_NAME, GameMove.NAMESPACE, GameMove.class);
+        ProviderManager.addExtensionProvider(GameForfeit.ELEMENT_NAME, GameForfeit.NAMESPACE, GameForfeit.class);
 
         // Add IQ listener to listen for incoming game invitations.
-        gameOfferListener = new PacketListener() {
-            public void processPacket(Packet packet) {
-                GameOffer invitation = (GameOffer) packet;
-                if (invitation.getType() == IQ.Type.GET) {
+        gameOfferListener = new StanzaListener() {
+            public void processPacket(Stanza stanza) {
+                GameOffer invitation = (GameOffer) stanza;
+                if (invitation.getType() == IQ.Type.get) {
                     showInvitationAlert(invitation);
-                } else if (invitation.getType() == IQ.Type.ERROR) {
+                } else if (invitation.getType() == IQ.Type.error) {
                     handleErrorIQ(invitation);
                 }
             }
         };
-        SparkManager.getConnection().addPacketListener(gameOfferListener, new PacketTypeFilter(GameOffer.class));
+        SparkManager.getConnection().addAsyncStanzaListener(gameOfferListener, new StanzaTypeFilter(GameOffer.class));
     }
 
     public void shutdown() {
         // Remove Reversi button from chat toolbar.
         removeToolbarButton();
         // Remove IQ listener
-        SparkManager.getConnection().removePacketListener(gameOfferListener);
+        SparkManager.getConnection().removeAsyncStanzaListener(gameOfferListener);
 //
 //        // See if there are any pending offers or invitations. If so, cancel
 //        // them.
@@ -121,9 +125,9 @@ public class ReversiPlugin implements Plugin {
         gameInvitations.clear();
 
         // Remove Smack providers.
-        ProviderManager.getInstance().removeIQProvider(GameOffer.ELEMENT_NAME, GameOffer.NAMESPACE);
-        ProviderManager.getInstance().removeExtensionProvider(GameMove.ELEMENT_NAME, GameMove.NAMESPACE);
-        ProviderManager.getInstance().removeExtensionProvider(GameForfeit.ELEMENT_NAME, GameForfeit.NAMESPACE);
+        ProviderManager.removeIQProvider(GameOffer.ELEMENT_NAME, GameOffer.NAMESPACE);
+        ProviderManager.removeExtensionProvider(GameMove.ELEMENT_NAME, GameMove.NAMESPACE);
+        ProviderManager.removeExtensionProvider(GameForfeit.ELEMENT_NAME, GameForfeit.NAMESPACE);
     }
 
     public boolean canShutDown() {
@@ -147,7 +151,7 @@ public class ReversiPlugin implements Plugin {
         // Got an offer to start a new game. So, make sure that a chat is
         // started with the other
         // user and show an invite panel.
-        final ChatRoom room = SparkManager.getChatManager().getChatRoom(StringUtils.parseBareAddress(invitation.getFrom()));
+        final ChatRoom room = SparkManager.getChatManager().getChatRoom( XmppStringUtils.parseBareJid(invitation.getFrom()) );
 
         inviteAlert = new JPanel();
         inviteAlert.setLayout(new BorderLayout());
@@ -178,9 +182,17 @@ public class ReversiPlugin implements Plugin {
                 // Accept the game offer by sending a positive reply packet.
                 GameOffer reply = new GameOffer();
                 reply.setTo(invitation.getFrom());
-                reply.setPacketID(invitation.getPacketID());
-                reply.setType(IQ.Type.RESULT);
-                SparkManager.getConnection().sendPacket(reply);
+                reply.setStanzaId(invitation.getStanzaId());
+                reply.setType(IQ.Type.result);
+                try
+                {
+                    SparkManager.getConnection().sendStanza(reply);
+                }
+                catch ( SmackException.NotConnectedException e1 )
+                {
+                    Log.warning( "Unable to accept game offer from " + invitation.getFrom(), e1 );
+                }
+
                 // Hide the response panel. TODO: make this work.
                 room.getTranscriptWindow().remove(inviteAlert);
                 inviteAlert.remove(1);
@@ -202,9 +214,17 @@ public class ReversiPlugin implements Plugin {
                 // Reject the game offer by sending an error packet.
                 GameOffer reply = new GameOffer();
                 reply.setTo(invitation.getFrom());
-                reply.setPacketID(invitation.getPacketID());
-                reply.setType(IQ.Type.ERROR);
-                SparkManager.getConnection().sendPacket(reply);
+                reply.setStanzaId(invitation.getPacketID());
+                reply.setType(IQ.Type.error);
+                try
+                {
+                    SparkManager.getConnection().sendStanza(reply);
+                }
+                catch ( SmackException.NotConnectedException e1 )
+                {
+                    Log.warning( "Unable to decline game offer from " + invitation.getFrom(), e1 );
+                }
+
                 // Hide the response panel. TODO: make this work.
                 room.getTranscriptWindow().remove(inviteAlert);
 
@@ -296,8 +316,15 @@ public class ReversiPlugin implements Plugin {
                             public void actionPerformed(ActionEvent e) {
                                GameOffer reply = new GameOffer();
                                reply.setTo(((ChatRoomImpl) room).getJID());
-                               reply.setType(IQ.Type.ERROR);
-                               SparkManager.getConnection().sendPacket(reply);
+                               reply.setType(IQ.Type.error);
+                               try
+                               {
+                                   SparkManager.getConnection().sendStanza(reply);
+                               }
+                               catch ( SmackException.NotConnectedException e1 )
+                               {
+                                   Log.warning( "Unable to send invitation cancellation to " + reply.getTo(), e1 );
+                               }
                                cancelButton.setText("Canceled");
                                cancelButton.setEnabled(false);
                             }
@@ -311,18 +338,18 @@ public class ReversiPlugin implements Plugin {
                         offer.setTo(opponentJID);
 
                         // Add a listener for a reply to our offer.
-                        SparkManager.getConnection().addPacketListener(new PacketListener() {
-                            public void processPacket(Packet packet) {
-                                GameOffer offerReply = ((GameOffer) packet);
+                        SparkManager.getConnection().addAsyncStanzaListener(new StanzaListener() {
+                            public void processPacket(Stanza stanza) {
+                                GameOffer offerReply = ((GameOffer) stanza);
 
-                                if (offerReply.getType() == IQ.Type.RESULT) {
+                                if (offerReply.getType() == IQ.Type.result) {
                                     // Remove the offer panel
                                     room.getTranscriptWindow().remove(request);
                                     content.remove(1);
                                     label.setText("Starting game...");
                                     // Show game board (using original offer!).
                                     showReversiBoard(offer.getGameID(), room, offer.isStartingPlayer(), offerReply.getFrom());
-                                } else if (offerReply.getType() == IQ.Type.ERROR) {
+                                } else if (offerReply.getType() == IQ.Type.error) {
                                     cancelButton.setVisible(false);
                                     JPanel userDeclinedPanel = new JPanel(new BorderLayout());
                                     JLabel userDeclined = new JLabel("User declined...");
@@ -331,9 +358,16 @@ public class ReversiPlugin implements Plugin {
                                 }
                                 // TODO: Handle error case
                             }
-                        }, new PacketIDFilter(offer.getPacketID()));
+                        }, new StanzaIdFilter(offer.getStanzaId()));
 
-                        SparkManager.getConnection().sendPacket(offer);
+                        try
+                        {
+                            SparkManager.getConnection().sendStanza(offer);
+                        }
+                        catch ( SmackException.NotConnectedException e1 )
+                        {
+                            Log.warning( "Unable to send invitation to " + offer.getTo(), e1 );
+                        }
                     }
                 });
 

@@ -223,7 +223,7 @@ public class HiFiIcons extends BaseIcons {
             Graphics2D g2D = (Graphics2D) g;
 
             boolean isRollover = button.isRolloverEnabled() && model.isRollover();
-            Color colors[] = null;
+            Color colors[];
             if (button.isEnabled()) {
                 if (isRollover) {
                     colors = AbstractLookAndFeel.getTheme().getRolloverColors();
@@ -301,7 +301,7 @@ public class HiFiIcons extends BaseIcons {
             AbstractButton button = (AbstractButton) c;
             ButtonModel model = button.getModel();
             boolean isRollover = button.isRolloverEnabled() && model.isRollover();
-            Color colors[] = null;
+            Color colors[];
             if (button.isEnabled()) {
                 if (model.isPressed()) {
                     colors = AbstractLookAndFeel.getTheme().getPressedColors();

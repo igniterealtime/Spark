@@ -26,8 +26,6 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
@@ -46,7 +44,7 @@ import javax.swing.SwingUtilities;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smackx.filetransfer.FileTransfer;
 import org.jivesoftware.smackx.filetransfer.FileTransfer.Status;
 import org.jivesoftware.smackx.filetransfer.FileTransferManager;
@@ -101,19 +99,17 @@ public class SendFileTransfer extends JPanel {
         add(retryButton, new GridBagConstraints(1, 4, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 0, 5), 0, 0));
         retryButton.setVisible(false);
 
-        retryButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    File file = new File(transfer.getFilePath());
-                    transfer = transferManager.createOutgoingFileTransfer(fullJID);
-                    transfer.sendFile(file, "Sending");
-                }
-                catch (XMPPException e1) {
-                    Log.error(e1);
-                }
-                sendFile(transfer, transferManager, fullJID, nickname);
+        retryButton.addActionListener( e -> {
+            try {
+                File file = new File(transfer.getFilePath());
+                transfer = transferManager.createOutgoingFileTransfer(fullJID);
+                transfer.sendFile(file, "Sending");
             }
-        });
+            catch (SmackException e1) {
+                Log.error(e1);
+            }
+            sendFile(transfer, transferManager, fullJID, nickname);
+        } );
 
         cancelButton.setForeground(new Color(73, 113, 196));
         cancelButton.setFont(new Font("Dialog", Font.BOLD, 11));
@@ -292,14 +288,12 @@ public class SendFileTransfer extends JPanel {
             }
             
             try {
-            	SwingUtilities.invokeAndWait(new Runnable() {
-            		public void run() {
-            		    // 100 % = Filesize
-        		    // x %   = Currentsize	    
-            		    long p = (transfer.getBytesSent() * 100 / transfer.getFileSize() );
-            		    progressBar.setValue(Math.round(p));
-            		}
-            	});
+            	SwingUtilities.invokeAndWait( () -> {
+                    // 100 % = Filesize
+                // x %   = Currentsize
+                    long p = (transfer.getBytesSent() * 100 / transfer.getFileSize() );
+                    progressBar.setValue(Math.round(p));
+                } );
             }
             catch (Exception e) {
                 Log.error(e);

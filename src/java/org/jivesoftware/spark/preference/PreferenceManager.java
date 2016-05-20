@@ -43,7 +43,7 @@ import org.jivesoftware.sparkimpl.settings.local.LocalPreference;
  * @author Derek DeMoro
  */
 public class PreferenceManager {
-    private Map<String, Preference> map = new LinkedHashMap<String, Preference>();
+    private Map<String, Preference> map = new LinkedHashMap<>();
     private PreferenceDialog preferenceDialog;
 
     public PreferenceManager() {
@@ -121,7 +121,7 @@ public class PreferenceManager {
     }
 
     public Iterator<Preference> getPreferences() {
-        final List<Preference> returnList = new ArrayList<Preference>();
+        final List<Preference> returnList = new ArrayList<>();
         for (String namespace : map.keySet()) {
             returnList.add(map.get(namespace));
         }

@@ -43,9 +43,10 @@ import javax.swing.UIManager;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Presence;
-import org.jivesoftware.smackx.packet.VCard;
+import org.jivesoftware.smackx.vcardtemp.packet.VCard;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.TitlePanel;
 import org.jivesoftware.spark.ui.VCardViewer;
@@ -486,7 +487,7 @@ public class VCardEditor {
 
 	    // Notify listenres
 	    SparkManager.getVCardManager().notifyVCardListeners();
-	} catch (XMPPException e) {
+	} catch (XMPPException | SmackException e) {
 	    Log.error(e);
 	    UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
 	    JOptionPane.showMessageDialog(SparkManager.getMainWindow(),

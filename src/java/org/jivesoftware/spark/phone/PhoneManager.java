@@ -19,6 +19,25 @@
  */
 package org.jivesoftware.spark.phone;
 
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Vector;
+import java.util.concurrent.CopyOnWriteArrayList;
+
+import javax.media.CaptureDeviceInfo;
+import javax.media.CaptureDeviceManager;
+import javax.media.MediaLocator;
+import javax.media.format.AudioFormat;
+import javax.media.format.VideoFormat;
+import javax.media.protocol.DataSource;
+import javax.swing.Action;
+import javax.swing.JMenu;
+import javax.swing.JPopupMenu;
+
+import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.spark.ChatManager;
@@ -32,20 +51,6 @@ import org.jivesoftware.spark.ui.ContactList;
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.sparkimpl.plugin.phone.JMFInit;
-import org.jivesoftware.Spark;
-
-import javax.swing.Action;
-import javax.swing.JMenu;
-import javax.swing.JPopupMenu;
-import javax.media.MediaLocator;
-import javax.media.protocol.DataSource;
-
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Handles general phone behavior in Spark. This allows for many different phone systems
@@ -55,8 +60,8 @@ public class PhoneManager implements ChatRoomListener, ContextMenuListener {
     private static PhoneManager singleton;
     private static final Object LOCK = new Object();
 
-    private List<Phone> phones = new CopyOnWriteArrayList<Phone>();
-    private List<String> currentCalls = new ArrayList<String>();
+    private List<Phone> phones = new CopyOnWriteArrayList<>();
+    private List<String> currentCalls = new ArrayList<>();
     // Static Media Locator
     static private MediaLocator mediaLocator = null;
     // Static Media Locator Preference
@@ -121,7 +126,7 @@ public class PhoneManager implements ChatRoomListener, ContextMenuListener {
             final ChatRoomButton dialButton = new ChatRoomButton(SparkRes.getImageIcon(SparkRes.DIAL_PHONE_IMAGE_24x24));
             dialButton.setToolTipText(Res.getString("tooltip.place.voice.call"));
 
-            final List<Action> actions = new ArrayList<Action>();
+            final List<Action> actions = new ArrayList<>();
             SwingWorker actionWorker = new SwingWorker() {
                 public Object construct() {
                     for (Phone phone : phones) {
@@ -197,7 +202,7 @@ public class PhoneManager implements ChatRoomListener, ContextMenuListener {
         if (!phones.isEmpty()) {
             if (object instanceof ContactItem) {
                 final ContactItem contactItem = (ContactItem) object;
-                final List<Action> actions = new ArrayList<Action>();
+                final List<Action> actions = new ArrayList<>();
 
                 SwingWorker worker = new SwingWorker() {
                     public Object construct() {
@@ -277,6 +282,32 @@ public class PhoneManager implements ChatRoomListener, ContextMenuListener {
     public static MediaLocator getMediaLocator(String locator) {
         MediaLocator auxLocator;
 
+        System.out.println("--------------------------------");
+        System.out.println("locator: " + locator);
+        
+    	Vector<CaptureDeviceInfo> vectorAudioDevices =  CaptureDeviceManager.getDeviceList(new AudioFormat(AudioFormat.LINEAR));
+		for ( CaptureDeviceInfo infoCaptureDevice : vectorAudioDevices)
+		{			     
+			System.out.println(infoCaptureDevice.getLocator() + "-" + locator);
+			if (infoCaptureDevice.getLocator().toString().equals(locator))
+			{
+				System.out.println("Found: " + locator);
+				return infoCaptureDevice.getLocator();
+			}
+		}
+		
+		Vector<CaptureDeviceInfo> vectorVideoDevices = CaptureDeviceManager.getDeviceList(new VideoFormat(VideoFormat.RGB));
+		for (  CaptureDeviceInfo infoCaptureDevice : vectorVideoDevices )
+		{
+			System.out.println(infoCaptureDevice.getLocator() + "-" + locator);
+			if (infoCaptureDevice.getLocator().toString().equals(locator))
+			{
+				System.out.println("Found: " + locator);
+				return infoCaptureDevice.getLocator();
+			}
+		}
+		
+        
         if (useStaticLocator) {
             if (mediaLocator == null) {
                 mediaLocator = new MediaLocator(locator);

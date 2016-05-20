@@ -36,8 +36,6 @@ import javax.swing.UIManager;
 
 import org.jivesoftware.spark.util.Encryptor;
 import org.jivesoftware.spark.util.log.Log;
-import org.jivesoftware.sparkimpl.settings.JiveInfo;
-import org.lobobrowser.html.domimpl.HTMLElementBuilder.Br;
 
 /**
  * Represents the LocalPreference Model for this system.
@@ -658,6 +656,14 @@ public class LocalPreferences {
 	    return getBoolean("toasterPopup", toasterPopup != null ? new Boolean(toasterPopup) : false);
 	}
 
+	public void setDisableAsteriskToasterPopup(boolean disable) {
+		setBoolean("disableAsteriskToasterPopup", disable);
+	}
+
+	public boolean getDisableAsteriskToasterPopup() {
+		return getBoolean("disableAsteriskToasterPopup", false);
+	}
+
 	public void setWindowTakesFocus(boolean focus) {
 		setBoolean("windowTakesFocus", focus);
 	}
@@ -808,7 +814,7 @@ public class LocalPreferences {
 	}
 
     public String getLookAndFeel() {
-	String defaultstring = "";
+	String defaultstring;
 	try {
 	    defaultstring = Spark.isMac() ? Default.getString(Default.DEFAULT_LOOK_AND_FEEL_MAC)
 		    : Default.getString(Default.DEFAULT_LOOK_AND_FEEL);
@@ -1028,6 +1034,15 @@ public class LocalPreferences {
 	public boolean areVCardsVisible() {
 		return getBoolean("showVCards", true);
 	}
+	
+	public void setAudioSystem(String device) {
+		 props.setProperty("audioSystem", device);
+	}
+
+	public String getAudioSystem() {
+		return props.getProperty("audioSystem","wasapi");
+	}
+	
 
 	public void setAudioDevice(String device) {
 		 props.setProperty("audioDevice", device);
@@ -1035,6 +1050,14 @@ public class LocalPreferences {
 
 	public String getAudioDevice() {
 		return props.getProperty("audioDevice","javasound://");
+	}
+	
+	public void setPlaybackDevice(String device) {
+		 props.setProperty("playbackDevice", device);
+	}
+
+	public String getPlaybackDevice() {
+		return props.getProperty("playbackDevice","javasound://");
 	}
 
 	public void setVideoDevice(String device) {
@@ -1113,6 +1136,14 @@ public class LocalPreferences {
 
 	public void setAvailableCodecs(String value) {
 		setString("AvailableCodecs", value);
+	}
+
+	public void setAcceptAllCertificates(boolean accept) {
+		setBoolean("AcceptAllCertificates", accept);
+	}
+
+	public boolean isAcceptAllCertificates() {
+		return getBoolean("AcceptAllCertificates", true);
 	}
 
 	private boolean getBoolean(String property, boolean defaultValue) {
@@ -1201,7 +1232,7 @@ public class LocalPreferences {
     public List<String> getDeactivatedPlugins()
     {
 	String plugs = getString("deactivatedPlugins", "");
-	ArrayList<String> liste = new ArrayList<String>();
+	ArrayList<String> liste = new ArrayList<>();
 
 	StringTokenizer tokenz = new StringTokenizer(plugs, ",");
 
@@ -1243,6 +1274,6 @@ public class LocalPreferences {
 
     public void setUseVersionAsResource(boolean useVersionAsResource) {
 	setBoolean("useVersionAsResource", useVersionAsResource);
-    }    
+    }
 
 }

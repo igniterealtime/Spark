@@ -677,8 +677,8 @@ public class BaseIcons {
             ButtonModel model = btn.getModel();
             int w = c.getWidth();
             int h = c.getHeight();
-            Icon closerIcon = null;
-            Icon pearlIcon = null;
+            Icon closerIcon;
+            Icon pearlIcon;
             if (w <= 18) {
                 closerIcon = CLOSER_10x10;
                 pearlIcon = PEARL_RED_24x24;
@@ -724,8 +724,8 @@ public class BaseIcons {
             ButtonModel model = btn.getModel();
             int w = c.getWidth();
             int h = c.getHeight();
-            Icon iconizerIcon = null;
-            Icon pearlIcon = null;
+            Icon iconizerIcon;
+            Icon pearlIcon;
             if (AbstractLookAndFeel.getTheme().isMacStyleWindowDecorationOn()) {
                 if (w <= 18) {
                     iconizerIcon = ICONIZER_10x10;
@@ -794,8 +794,8 @@ public class BaseIcons {
             ButtonModel model = btn.getModel();
             int w = c.getWidth();
             int h = c.getHeight();
-            Icon maximizerIcon = null;
-            Icon pearlIcon = null;
+            Icon maximizerIcon;
+            Icon pearlIcon;
             if (AbstractLookAndFeel.getTheme().isMacStyleWindowDecorationOn()) {
                 if (w <= 18) {
                     maximizerIcon = MAXIMIZER_10x10;
@@ -863,8 +863,8 @@ public class BaseIcons {
             ButtonModel model = btn.getModel();
             int w = c.getWidth();
             int h = c.getHeight();
-            Icon minimizerIcon = null;
-            Icon pearlIcon = null;
+            Icon minimizerIcon;
+            Icon pearlIcon;
             if (AbstractLookAndFeel.getTheme().isMacStyleWindowDecorationOn()) {
                 if (w <= 18) {
                     minimizerIcon = MINIMIZER_10x10;

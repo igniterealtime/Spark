@@ -46,7 +46,6 @@ public class TaskUI extends JPanel implements ActionListener {
     private static final long serialVersionUID = -8443764502684168188L;
     private Task task;
     private JCheckBox box;
-    private String dateShortFormat = ((SimpleDateFormat)SimpleDateFormat.getDateInstance(SimpleDateFormat.SHORT)).toPattern();
 
     public TaskUI(final Task task) {
         setLayout(new BorderLayout());
@@ -76,7 +75,8 @@ public class TaskUI extends JPanel implements ActionListener {
         long dueDate = task.getDueDate();
         if (dueDate != -1) {
             Date d = new Date(dueDate);
-            SimpleDateFormat formatter = new SimpleDateFormat(dateShortFormat);
+            String dateShortFormat = ( (SimpleDateFormat) SimpleDateFormat.getDateInstance( SimpleDateFormat.SHORT ) ).toPattern();
+            SimpleDateFormat formatter = new SimpleDateFormat( dateShortFormat );
             String theDate = formatter.format(d);
             dueLabel.setText(theDate);
         }

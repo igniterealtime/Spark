@@ -40,6 +40,7 @@ import org.jivesoftware.fastpath.FastpathPlugin;
 import org.jivesoftware.fastpath.FpRes;
 import org.jivesoftware.fastpath.workspace.panes.ChatViewer;
 import org.jivesoftware.fastpath.workspace.panes.HistoryItemRenderer;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.workgroup.packet.Transcript;
 import org.jivesoftware.smackx.workgroup.packet.Transcripts;
@@ -97,7 +98,7 @@ public class UserHistory extends JPanel {
                         transcriptList.add(summary);
                     }
                 }
-                catch (XMPPException e) {
+                catch (XMPPException | SmackException e) {
                     Log.error("Error getting transcripts.", e);
                 }
 
@@ -144,7 +145,7 @@ public class UserHistory extends JPanel {
         try {
             transcript = FastpathPlugin.getAgentSession().getTranscript(sessionID);
         }
-        catch (XMPPException e) {
+        catch (XMPPException | SmackException e) {
             Log.error("Error showing transcripts.", e);
         }
 

@@ -21,13 +21,13 @@ package org.jivesoftware.spark.ui;
 
 import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Res;
-import org.jivesoftware.smack.Roster;
-import org.jivesoftware.smack.RosterEntry;
-import org.jivesoftware.smack.RosterGroup;
+import org.jivesoftware.smack.SmackException;
+import org.jivesoftware.smack.roster.Roster;
+import org.jivesoftware.smack.roster.RosterEntry;
+import org.jivesoftware.smack.roster.RosterGroup;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Presence;
-import org.jivesoftware.smack.packet.RosterPacket;
-import org.jivesoftware.smack.util.StringUtils;
+import org.jivesoftware.smack.roster.packet.RosterPacket;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.UserManager;
 import org.jivesoftware.spark.component.RolloverButton;
@@ -38,6 +38,7 @@ import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.Transport;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.TransportUtils;
+import org.jxmpp.util.XmppStringUtils;
 
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
@@ -57,7 +58,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
@@ -76,13 +76,10 @@ public class SubscriptionDialog {
 
     private final JCheckBox rosterBox = new JCheckBox();
 
-    private final JLabel nicknameLabel = new JLabel();
     private final JTextField nicknameField = new JTextField();
 
-    private final JLabel groupLabel = new JLabel();
     private final JComboBox groupBox = new JComboBox();
 
-    private JLabel usernameLabel = new JLabel();
     private JLabel usernameLabelValue = new JLabel();
 
     private JFrame dialog;
@@ -100,20 +97,21 @@ public class SubscriptionDialog {
         rosterPanel.setLayout(new GridBagLayout());
 
         // Add ResourceUtils
-        ResourceUtils.resLabel(usernameLabel, nicknameField, Res.getString("label.username") + ":");
-        ResourceUtils.resLabel(nicknameLabel, nicknameField, Res.getString("label.nickname") + ":");
-        ResourceUtils.resLabel(groupLabel, groupBox, Res.getString("label.group") + ":");
+        JLabel usernameLabel = new JLabel();
+        ResourceUtils.resLabel( usernameLabel, nicknameField, Res.getString("label.username") + ":");
+        JLabel nicknameLabel = new JLabel();
+        ResourceUtils.resLabel( nicknameLabel, nicknameField, Res.getString("label.nickname") + ":");
+        JLabel groupLabel = new JLabel();
+        ResourceUtils.resLabel( groupLabel, groupBox, Res.getString("label.group") + ":");
 
 
         rosterBox.setText(Res.getString("label.add.to.roster"));
         groupBox.setEditable(true);
 
-        rosterBox.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent actionEvent) {
-                nicknameField.setEnabled(rosterBox.isSelected());
-                groupBox.setEnabled(rosterBox.isSelected());
-            }
-        });
+        rosterBox.addActionListener( actionEvent -> {
+            nicknameField.setEnabled(rosterBox.isSelected());
+            groupBox.setEnabled(rosterBox.isSelected());
+        } );
 
         rosterBox.setSelected(true);
 
@@ -121,14 +119,14 @@ public class SubscriptionDialog {
         ComponentTitledBorder componentBorder = new ComponentTitledBorder(rosterBox, rosterPanel, BorderFactory.createEtchedBorder());
 
 
-        rosterPanel.add(usernameLabel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        rosterPanel.add( usernameLabel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         rosterPanel.add(usernameLabelValue, new GridBagConstraints(1, 1, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 
 
-        rosterPanel.add(nicknameLabel, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        rosterPanel.add( nicknameLabel, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         rosterPanel.add(nicknameField, new GridBagConstraints(1, 2, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 
-        rosterPanel.add(groupLabel, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        rosterPanel.add( groupLabel, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         rosterPanel.add(groupBox, new GridBagConstraints(1, 3, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
         rosterPanel.add(new JLabel(), new GridBagConstraints(1, 4, 1, 1, 1.0, 1.0, GridBagConstraints.SOUTH, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
 
@@ -163,10 +161,11 @@ public class SubscriptionDialog {
         }
     }
 
-    public void invoke(final String jid) {
+    public void invoke(final String jid) throws SmackException.NotConnectedException
+    {
         this.jid = jid;
 
-        final Roster roster = SparkManager.getConnection().getRoster();
+        final Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
 
         // If User is already in roster, do not show.
         RosterEntry entry = roster.getEntry(jid);
@@ -174,12 +173,12 @@ public class SubscriptionDialog {
             Presence response = new Presence(Presence.Type.subscribed);
             response.setTo(jid);
 
-            SparkManager.getConnection().sendPacket(response);
+            SparkManager.getConnection().sendStanza(response);
             return;
         }
 
         String message = Res.getString("message.approve.subscription", UserManager.unescapeJID(jid));
-        Transport transport = TransportUtils.getTransport(StringUtils.parseServer(jid));
+        Transport transport = TransportUtils.getTransport( XmppStringUtils.parseDomain(jid));
         Icon icon = null;
         if (transport != null) {
             icon = transport.getIcon();
@@ -193,44 +192,50 @@ public class SubscriptionDialog {
         UserManager userManager = SparkManager.getUserManager();
         
         String username = userManager.getNickname(userManager.getFullJID(jid));
-        username = username == null ? StringUtils.parseName(UserManager.unescapeJID(jid)) : username;
+        username = username == null ? XmppStringUtils.parseLocalpart(UserManager.unescapeJID(jid)) : username;
         usernameLabelValue.setText(UserManager.unescapeJID(jid));
         nicknameField.setText(username);
 
-        acceptButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                if (!rosterBox.isSelected()) {
-                    Presence response = new Presence(Presence.Type.subscribed);
-                    response.setTo(jid);
-                    SparkManager.getConnection().sendPacket(response);
-                    dialog.dispose();
-                    return;
+        acceptButton.addActionListener( e -> {
+            if (!rosterBox.isSelected()) {
+                Presence response = new Presence(Presence.Type.subscribed);
+                response.setTo(jid);
+                try
+                {
+                    SparkManager.getConnection().sendStanza(response);
                 }
+                catch ( SmackException.NotConnectedException e1 )
+                {
+                    Log.warning( "Unable to send stanza accepting subscription from " + jid, e1 );
+                }
+                dialog.dispose();
+                return;
+            }
 
-                boolean addEntry = addEntry();
-                if (addEntry) {
-                    Presence response = new Presence(Presence.Type.subscribed);
-                    response.setTo(jid);
-                    SparkManager.getConnection().sendPacket(response);
+            boolean addEntry = addEntry();
+            if (addEntry) {
+                Presence response = new Presence(Presence.Type.subscribed);
+                response.setTo(jid);
+                try
+                {
+                    SparkManager.getConnection().sendStanza(response);
                 }
-                else {
-                    dialog.dispose();
+                catch ( SmackException.NotConnectedException e1 )
+                {
+                    Log.warning( "Unable to send stanza accepting subscription from " + jid, e1 );
                 }
             }
-        });
-
-        denyButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                // Send subscribed
-                unsubscribeAndClose();
+            else {
+                dialog.dispose();
             }
-        });
+        } );
 
-        viewInfoButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                SparkManager.getVCardManager().viewProfile(jid, mainPanel);
-            }
-        });
+        denyButton.addActionListener( e -> {
+            // Send subscribed
+            unsubscribeAndClose();
+        } );
+
+        viewInfoButton.addActionListener( e -> SparkManager.getVCardManager().viewProfile(jid, mainPanel) );
         
         dialog = new JFrame(Res.getString("title.subscription.request")){
 			private static final long serialVersionUID = 5713933518069623228L;
@@ -251,14 +256,7 @@ public class SubscriptionDialog {
         });
       
         KeyStroke key = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
-        ActionListener action = new ActionListener() {
-            
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                unsubscribeAndClose();
-                
-            }
-        };
+        ActionListener action = e -> unsubscribeAndClose();
         dialog.getRootPane().registerKeyboardAction(action,key,JComponent.WHEN_FOCUSED);
         dialog.setIconImage(SparkManager.getApplicationImage().getImage());
         dialog.getContentPane().add(mainPanel);
@@ -285,7 +283,14 @@ public class SubscriptionDialog {
     {
         Presence response = new Presence(Presence.Type.unsubscribe);
         response.setTo(jid);
-        SparkManager.getConnection().sendPacket(response);
+        try
+        {
+            SparkManager.getConnection().sendStanza(response);
+        }
+        catch ( SmackException.NotConnectedException e )
+        {
+            Log.warning( "Unable to send stanza unsubscribing from " + jid, e );
+        }
 
         dialog.dispose();
     }
@@ -329,7 +334,7 @@ public class SubscriptionDialog {
     public RosterEntry addEntry(String jid, String nickname, String group) {
         String[] groups = {group};
 
-        Roster roster = SparkManager.getConnection().getRoster();
+        Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
         RosterEntry userEntry = roster.getEntry(jid);
 
         boolean isSubscribed = true;
@@ -341,7 +346,7 @@ public class SubscriptionDialog {
             try {
                 roster.createEntry(jid, nickname, new String[]{group});
             }
-            catch (XMPPException e) {
+            catch (XMPPException | SmackException e) {
                 Log.error("Unable to add new entry " + jid, e);
             }
             return roster.getEntry(jid);
@@ -365,7 +370,7 @@ public class SubscriptionDialog {
 
             userEntry = roster.getEntry(jid);
         }
-        catch (XMPPException ex) {
+        catch (XMPPException | SmackException ex) {
             Log.error(ex);
         }
         return userEntry;

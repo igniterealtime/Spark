@@ -21,7 +21,7 @@ package org.jivesoftware.spark.plugin;
 
 
 import org.jivesoftware.smack.packet.Message;
-import org.jivesoftware.smackx.packet.VCard;
+import org.jivesoftware.smackx.vcardtemp.packet.VCard;
 import org.jivesoftware.spark.ui.ContactList;
 import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.ui.ChatRoomListenerAdapter;
@@ -35,7 +35,6 @@ import org.jivesoftware.spark.component.panes.CollapsiblePane;
 import org.jivesoftware.sparkimpl.profile.VCardManager;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.net.URL;
 import java.util.Iterator;
@@ -95,43 +94,41 @@ public class GooglePlugin implements Plugin {
                 JPanel buttonPanel = room.getEditorBar();
                 buttonPanel.add(searchButton);
 
-                searchButton.addActionListener(new ActionListener() {
-                    public void actionPerformed(ActionEvent actionEvent) {
-                        String text = room.getChatInputEditor().getSelectedText();
-                        if(text == null){
-                            text = room.getTranscriptWindow().getSelectedText();
-                        }
-                        if (ModelUtil.hasLength(text)) {
-                            GoogleSearch search = new GoogleSearch();
-                            List<GoogleSearchResult> list = search.searchText(text, 4);
-                            if(list.size() == 0){
-                                return;
-                            }
-
-                            CollapsiblePane pane = new CollapsiblePane("Search Results");
-                            JPanel panel = new JPanel();
-                            pane.setContentPane(panel);
-
-                            panel.setLayout(new VerticalFlowLayout(VerticalFlowLayout.TOP, 0, 0, true, false));
-
-
-                            for (GoogleSearchResult aList : list) {
-                                GoogleSearchResult result = aList;
-                                GoogleDocument document = new GoogleDocument(room, result);
-                                panel.add(document);
-                            }
-
-                            room.getTranscriptWindow().addComponent(pane);
-                            try {
-                                room.getTranscriptWindow().insertText("\n");
-                            }
-                            catch (BadLocationException e) {
-                                Log.error(e);
-                            }
-
-                        }
+                searchButton.addActionListener( actionEvent -> {
+                    String text = room.getChatInputEditor().getSelectedText();
+                    if(text == null){
+                        text = room.getTranscriptWindow().getSelectedText();
                     }
-                });
+                    if (ModelUtil.hasLength(text)) {
+                        GoogleSearch search = new GoogleSearch();
+                        List<GoogleSearchResult> list = search.searchText(text, 4);
+                        if(list.size() == 0){
+                            return;
+                        }
+
+                        CollapsiblePane pane = new CollapsiblePane("Search Results");
+                        JPanel panel = new JPanel();
+                        pane.setContentPane(panel);
+
+                        panel.setLayout(new VerticalFlowLayout(VerticalFlowLayout.TOP, 0, 0, true, false));
+
+
+                        for (GoogleSearchResult aList : list) {
+                            GoogleSearchResult result = aList;
+                            GoogleDocument document = new GoogleDocument(room, result);
+                            panel.add(document);
+                        }
+
+                        room.getTranscriptWindow().addComponent(pane);
+                        try {
+                            room.getTranscriptWindow().insertText("\n");
+                        }
+                        catch (BadLocationException e) {
+                            Log.error(e);
+                        }
+
+                    }
+                } );
 
 
                 room.getTranscriptWindow().addContextMenuListener(new ContextMenuListener() {
@@ -190,7 +187,7 @@ public class GooglePlugin implements Plugin {
         String emailHome = vcard.getEmailHome();
         String emailWork = vcard.getEmailWork();
 
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         if (emailHome != null) {
             buf.append(emailHome);
             buf.append(" ");
@@ -215,7 +212,7 @@ public class GooglePlugin implements Plugin {
         List<Message> transcripts = room.getTranscripts();
         Iterator<Message> iter = transcripts.iterator();
 
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         while (iter.hasNext()) {
             Message message = iter.next();
             buf.append(message.getBody());

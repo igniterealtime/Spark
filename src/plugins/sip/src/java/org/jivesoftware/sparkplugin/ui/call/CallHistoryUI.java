@@ -20,40 +20,7 @@
 
 package org.jivesoftware.sparkplugin.ui.call;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-
-import javax.swing.BorderFactory;
-import javax.swing.DefaultListModel;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
-import javax.swing.ListCellRenderer;
-import javax.swing.RowFilter;
-import javax.swing.UIManager;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-
 import net.java.sipmack.softphone.SoftPhoneManager;
-
 import org.jdesktop.swingx.JXList;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.spark.SparkManager;
@@ -67,6 +34,20 @@ import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.sparkplugin.callhistory.HistoryCall;
 import org.jivesoftware.sparkplugin.calllog.CallLog;
 import org.jivesoftware.sparkplugin.calllog.LogManager;
+
+import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 /**
  *
@@ -83,7 +64,7 @@ public class CallHistoryUI extends JPanel implements ActionListener, ListSelecti
     private RolloverButton deleteButton;
 
     private JXList activeList;
-    private DefaultListModel model;
+    private DefaultListModel<CallEntry> model;
 
     private CallHistoryRenderer renderer;
 
@@ -104,8 +85,8 @@ public class CallHistoryUI extends JPanel implements ActionListener, ListSelecti
 
         List<HistoryCall> calls = new ArrayList<HistoryCall>(logManager.getCallHistory());
         Collections.sort(calls, itemComparator);
-   
-        model = new DefaultListModel();
+
+        model = new DefaultListModel<CallEntry>();
         for (HistoryCall call : calls) {
             final CallEntry callEntry = new CallEntry(call);
             model.addElement(callEntry);

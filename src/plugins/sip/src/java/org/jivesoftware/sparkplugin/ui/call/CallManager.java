@@ -27,7 +27,7 @@ import net.java.sipmack.softphone.SoftPhoneManager;
 import net.java.sipmack.softphone.listeners.InterlocutorListener;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.packet.Presence;
-import org.jivesoftware.smackx.packet.VCard;
+import org.jivesoftware.smackx.vcardtemp.packet.VCard;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.tabbedPane.SparkTab;
@@ -223,7 +223,7 @@ public class CallManager implements InterlocutorListener {
         }
 
         // Send on phone presence
-        Presence onPhonePresence = new Presence(Presence.Type.available, "On the phone", -1, Presence.Mode.away);
+        Presence onPhonePresence = new Presence(Presence.Type.available, "On the phone", 1, Presence.Mode.away);
         SparkManager.getSessionManager().changePresence(onPhonePresence);
 
         interlocutorUI.getCall().addStateChangeListener(new CallListener() {
@@ -323,7 +323,7 @@ public class CallManager implements InterlocutorListener {
             if (offPhonePresence == null) {
 
                 // Set user to available when all phone calls are hung up.
-                Presence availablePresence = new Presence(Presence.Type.available, "Available", 1, Presence.Mode.available);
+                Presence availablePresence = new Presence(Presence.Type.available, "Online", 1, Presence.Mode.available);
                 SparkManager.getSessionManager().changePresence(availablePresence);
 
             } else {

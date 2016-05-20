@@ -81,19 +81,23 @@ public class MediaPreference implements Preference {
 	@Override
 	public void load() {
 		 LocalPreferences localPreferences = SettingsManager.getLocalPreferences();
+		 panel.setAudioSystem(localPreferences.getAudioSystem());
 		 panel.setVideoDevice(localPreferences.getVideoDevice());
 		 panel.setAudioDevice(localPreferences.getAudioDevice());
 		 panel.setStunServer(localPreferences.getStunFallbackHost());
 		 panel.setStunPort(localPreferences.getStunFallbackPort());
+		 panel.setPlaybackDevice(localPreferences.getPlaybackDevice());
 	}
 
 	@Override
 	public void commit() {
 		LocalPreferences pref = SettingsManager.getLocalPreferences();
+		pref.setAudioSystem(panel.getAudioSystem());
 		pref.setAudioDevice(panel.getAudioDevice());
 		pref.setVideoDevice(panel.getVideoDevice());
 		pref.setStunFallbackHost(panel.getStunServer());
 		pref.setStunFallbackPort(panel.getStunPort());
+		pref.setPlaybackDevice(panel.getPlaybackDevice());
 		SettingsManager.saveSettings();
 	}
 	

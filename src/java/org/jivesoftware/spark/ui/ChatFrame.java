@@ -21,8 +21,6 @@ package org.jivesoftware.spark.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Frame;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.WindowAdapter;
@@ -55,7 +53,7 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
     private boolean focused;
     private JCheckBox alwaysOnTopItem;
     private ChatFrame chatFrame = this;
-    private Collection<ChatFrameToFrontListener> _windowToFrontListeners = new ArrayList<ChatFrameToFrontListener>();
+    private Collection<ChatFrameToFrontListener> _windowToFrontListeners = new ArrayList<>();
    
     /**
      * Creates default ChatFrame.
@@ -67,20 +65,18 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
 	
 	alwaysOnTopItem = new JCheckBox();
 	alwaysOnTopItem.setToolTipText(Res.getString("menuitem.always.on.top"));
-        alwaysOnTopItem.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent actionEvent) {
-                	if (alwaysOnTopItem.isSelected())
-                	{
-                		SettingsManager.getLocalPreferences().setChatWindowAlwaysOnTop(true);
-                		chatFrame.setAlwaysOnTop(true);
-                	}
-                	else
-                	{
-                		SettingsManager.getLocalPreferences().setChatWindowAlwaysOnTop(false);
-                		chatFrame.setAlwaysOnTop(false);
-                	}
-                }
-        });
+        alwaysOnTopItem.addActionListener( actionEvent -> {
+            if (alwaysOnTopItem.isSelected())
+            {
+                SettingsManager.getLocalPreferences().setChatWindowAlwaysOnTop(true);
+                chatFrame.setAlwaysOnTop(true);
+            }
+            else
+            {
+                SettingsManager.getLocalPreferences().setChatWindowAlwaysOnTop(false);
+                chatFrame.setAlwaysOnTop(false);
+            }
+        } );
         
         if (SettingsManager.getLocalPreferences().isChatWindowAlwaysOnTop())
         {

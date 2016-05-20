@@ -295,7 +295,7 @@ public class AcrylIcons extends BaseIcons {
                 if (!model.isEnabled()) {
                     checkDisabledIcon.paintIcon(c, g, xi + 1, yi + 1);
                 } else {
-                    int gv = 0;
+                    int gv;
                     if (model.isRollover()) {
                         gv = ColorHelper.getGrayValue(AbstractLookAndFeel.getTheme().getRolloverColorDark());
                     } else {
@@ -364,7 +364,7 @@ public class AcrylIcons extends BaseIcons {
                     g.setColor(Color.gray);
                     g.fillOval(x + (WIDTH / 2) - 2, y + (HEIGHT / 2) - 2, 5, 5);
                 } else {
-                    int gv = 0;
+                    int gv;
                     if (model.isRollover()) {
                         gv = ColorHelper.getGrayValue(AbstractLookAndFeel.getTheme().getRolloverColorDark());
                     } else {

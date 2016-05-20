@@ -28,7 +28,6 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.Collection;
@@ -53,14 +52,14 @@ import javax.swing.UIManager;
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.smack.PacketListener;
-import org.jivesoftware.smack.filter.PacketFilter;
-import org.jivesoftware.smack.filter.PacketTypeFilter;
+import org.jivesoftware.smack.StanzaListener;
+import org.jivesoftware.smack.filter.StanzaFilter;
+import org.jivesoftware.smack.filter.StanzaTypeFilter;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Message.Type;
-import org.jivesoftware.smack.packet.Packet;
-import org.jivesoftware.smack.util.StringUtils;
-import org.jivesoftware.smackx.packet.DelayInformation;
+import org.jivesoftware.smack.packet.Stanza;
+import org.jivesoftware.smackx.delay.packet.DelayInformation;
+import org.jivesoftware.smackx.jiveproperties.packet.JivePropertiesExtension;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.UserManager;
@@ -87,13 +86,14 @@ import org.jivesoftware.sparkimpl.preference.sounds.SoundPreference;
 import org.jivesoftware.sparkimpl.preference.sounds.SoundPreferences;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+import org.jxmpp.util.XmppStringUtils;
 
 /**
  * Handles broadcasts from server and allows for roster wide broadcasts.
  */
-public class BroadcastPlugin extends SparkTabHandler implements Plugin, PacketListener {
+public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaListener {
 
-    private Set<ChatRoom> broadcastRooms = new HashSet<ChatRoom>();
+    private Set<ChatRoom> broadcastRooms = new HashSet<>();
 
     public void initialize() {
         boolean enabled = Enterprise.containsFeature(Enterprise.BROADCAST_FEATURE);
@@ -104,53 +104,47 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, PacketLi
         // Add as ContainerDecoratr
         SparkManager.getChatManager().addSparkTabHandler(this);
 
-        PacketFilter serverFilter = new PacketTypeFilter(Message.class);
-        SparkManager.getConnection().addPacketListener(this, serverFilter);
+        StanzaFilter serverFilter = new StanzaTypeFilter(Message.class);
+        SparkManager.getConnection().addAsyncStanzaListener(this, serverFilter);
 
         // Register with action menu
         final JMenu actionsMenu = SparkManager.getMainWindow().getMenuByName(Res.getString("menuitem.actions"));
         JMenuItem broadcastMenu = new JMenuItem(Res.getString("title.broadcast.message"), SparkRes.getImageIcon(SparkRes.MEGAPHONE_16x16));
         ResourceUtils.resButton(broadcastMenu, Res.getString("title.broadcast.message"));
         actionsMenu.add(broadcastMenu);
-        broadcastMenu.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                broadcastToRoster();
-            }
-        });
+        broadcastMenu.addActionListener( e -> broadcastToRoster() );
 
         // Register with action menu
         JMenuItem startConversationtMenu = new JMenuItem("", SparkRes.getImageIcon(SparkRes.SMALL_MESSAGE_IMAGE));
         ResourceUtils.resButton(startConversationtMenu, Res.getString("menuitem.start.a.chat"));
         actionsMenu.add(startConversationtMenu,0);
-        startConversationtMenu.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                ContactList contactList = SparkManager.getWorkspace().getContactList();
-                Collection<ContactItem> selectedUsers = contactList.getSelectedUsers();
-                String selectedUser = "";
-                Iterator<ContactItem> selectedUsersIterator = selectedUsers.iterator();
-                if (selectedUsersIterator.hasNext()) {
-                    ContactItem contactItem = selectedUsersIterator.next();
-                    selectedUser = contactItem.getJID();
-                }
-
-                UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
-                UIManager.put("OptionPane.cancelButtonText", Res.getString("cancel"));
-                
-                String jid = (String)JOptionPane.showInputDialog(SparkManager.getMainWindow(), Res.getString("label.enter.address"), Res.getString("title.start.chat"), JOptionPane.QUESTION_MESSAGE, null, null, selectedUser);
-                if (ModelUtil.hasLength(jid) && ModelUtil.hasLength(StringUtils.parseServer(jid))) {
-                    if (ModelUtil.hasLength(jid) && jid.indexOf('@') == -1) {
-                        // Append server address
-                        jid = jid + "@" + SparkManager.getConnection().getServiceName();
-                    }
-
-                    String nickname = SparkManager.getUserManager().getUserNicknameFromJID(jid);
-
-                    jid = UserManager.escapeJID(jid);
-                    ChatRoom chatRoom = SparkManager.getChatManager().createChatRoom(jid, nickname, nickname);
-                    SparkManager.getChatManager().getChatContainer().activateChatRoom(chatRoom);
-                }
+        startConversationtMenu.addActionListener( e -> {
+            ContactList contactList = SparkManager.getWorkspace().getContactList();
+            Collection<ContactItem> selectedUsers = contactList.getSelectedUsers();
+            String selectedUser = "";
+            Iterator<ContactItem> selectedUsersIterator = selectedUsers.iterator();
+            if (selectedUsersIterator.hasNext()) {
+                ContactItem contactItem = selectedUsersIterator.next();
+                selectedUser = contactItem.getJID();
             }
-        });
+
+            UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
+            UIManager.put("OptionPane.cancelButtonText", Res.getString("cancel"));
+
+            String jid = (String)JOptionPane.showInputDialog(SparkManager.getMainWindow(), Res.getString("label.enter.address"), Res.getString("title.start.chat"), JOptionPane.QUESTION_MESSAGE, null, null, selectedUser);
+            if (ModelUtil.hasLength(jid) && ModelUtil.hasLength( XmppStringUtils.parseDomain(jid))) {
+                if (ModelUtil.hasLength(jid) && jid.indexOf('@') == -1) {
+                    // Append server address
+                    jid = jid + "@" + SparkManager.getConnection().getServiceName();
+                }
+
+                String nickname = SparkManager.getUserManager().getUserNicknameFromJID(jid);
+
+                jid = UserManager.escapeJID(jid);
+                ChatRoom chatRoom = SparkManager.getChatManager().createChatRoom(jid, nickname, nickname);
+                SparkManager.getChatManager().getChatContainer().activateChatRoom(chatRoom);
+            }
+        } );
 
 
 
@@ -194,11 +188,7 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, PacketLi
         statusBar.validate();
         statusBar.repaint();
 
-        broadcastToRosterButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                broadcastToRoster();
-            }
-        });
+        broadcastToRosterButton.addActionListener( e -> broadcastToRoster() );
     }
 
     public void shutdown() {
@@ -209,37 +199,36 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, PacketLi
         return false;
     }
 
-    public void processPacket(final Packet packet) {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                try {
-                    final Message message = (Message)packet;
+    public void processPacket(final Stanza stanza) {
+        SwingUtilities.invokeLater( () -> {
+            try {
+                final Message message = (Message)stanza;
 
-                    // Do not handle errors or offline messages
-                    final DelayInformation offlineInformation = (DelayInformation)message.getExtension("delay", "urn:xmpp:delay");
-                    if (offlineInformation != null || message.getError() != null) {
-                        return;
-                    }
-
-                    boolean broadcast = message.getProperty("broadcast") != null;
-
-                    if ((broadcast || message.getType() == Message.Type.normal
-                	    || message.getType() == Message.Type.headline) && message.getBody() != null) {
-                        showAlert((Message)packet);
-                    }
-                    else {
-                        String host = SparkManager.getSessionManager().getServerAddress();
-                        String from = packet.getFrom() != null ? packet.getFrom() : "";
-                        if (host.equalsIgnoreCase(from) || !ModelUtil.hasLength(from)) {
-                            showAlert((Message)packet);
-                        }
-                    }
+                // Do not handle errors or offline messages
+                final DelayInformation offlineInformation = message.getExtension("delay", "urn:xmpp:delay");
+                if (offlineInformation != null || message.getError() != null) {
+                    return;
                 }
-                catch (Exception e) {
-                    Log.error(e);
+
+                final JivePropertiesExtension extension = ((JivePropertiesExtension) message.getExtension( JivePropertiesExtension.NAMESPACE ));
+                final boolean broadcast = extension != null && extension.getProperty( "broadcast" ) != null;
+
+                if ((broadcast || message.getType() == Type.normal
+                    || message.getType() == Type.headline) && message.getBody() != null) {
+                    showAlert((Message)stanza);
+                }
+                else {
+                    String host = SparkManager.getSessionManager().getServerAddress();
+                    String from = stanza.getFrom() != null ? stanza.getFrom() : "";
+                    if (host.equalsIgnoreCase(from) || !ModelUtil.hasLength(from)) {
+                        showAlert((Message)stanza);
+                    }
                 }
             }
-        });
+            catch (Exception e) {
+                Log.error(e);
+            }
+        } );
 
     }
 
@@ -259,7 +248,7 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, PacketLi
         final String body = message.getBody();
         String subject = message.getSubject();
 
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         if (subject != null) {
             buf.append(Res.getString("subject")).append(": ").append(subject);
             buf.append("\n\n");
@@ -317,7 +306,7 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, PacketLi
      *            the sender
      */
     private void userToUserBroadcast(Message message, Type type, String from) {
-	String jid = StringUtils.parseBareAddress(from);
+	String jid = XmppStringUtils.parseBareJid(from);
 	String nickname = SparkManager.getUserManager().getUserNicknameFromJID(jid);
 	ChatManager chatManager = SparkManager.getChatManager();
 	ChatContainer container = chatManager.getChatContainer();
@@ -335,7 +324,7 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, PacketLi
 	m.setBody(message.getBody());
 	m.setTo(message.getTo());
 
-	String name = StringUtils.parseName(message.getFrom());
+	String name = XmppStringUtils.parseLocalpart(message.getFrom());
 
 	String broadcasttype = type == Message.Type.normal ? Res.getString("broadcast") : Res.getString("message.alert.notify");
 	//m.setFrom(name +" "+broadcasttype);
@@ -343,6 +332,7 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, PacketLi
 
 	chatRoom.getTranscriptWindow().insertMessage(m.getFrom(), message, ChatManager.FROM_COLOR, new Color(0,0,0,0));
 	chatRoom.addToTranscript(m,true);
+	chatRoom.increaseUnreadMessageCount();
 	broadcastRooms.add(chatRoom);
 
 
@@ -357,7 +347,7 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, PacketLi
 
         SparkManager.getChatManager().fireGlobalMessageReceievedListeners(chatRoom, message);
 
-        DelayInformation inf = (DelayInformation)message.getExtension("delay", "urn:xmpp:delay");
+        DelayInformation inf = message.getExtension("delay", "urn:xmpp:delay");
         if (inf == null) {
             SoundPreference soundPreference = (SoundPreference)SparkManager.getPreferenceManager().getPreference(new SoundPreference().getNamespace());
             SoundPreferences preferences = soundPreference.getPreferences();

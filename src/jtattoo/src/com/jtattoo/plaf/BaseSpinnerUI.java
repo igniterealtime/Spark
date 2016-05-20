@@ -123,7 +123,7 @@ public class BaseSpinnerUI extends BasicSpinnerUI {
         }
 
         public void paint(Graphics g) {
-            Color colors[] = null;
+            Color colors[];
             ButtonModel model = getModel();
             if (isEnabled()) {
                 if (model.isPressed() && model.isArmed()) {

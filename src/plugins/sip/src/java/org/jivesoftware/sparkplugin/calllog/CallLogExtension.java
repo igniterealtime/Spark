@@ -20,8 +20,8 @@
 
 package org.jivesoftware.sparkplugin.calllog;
 
+import org.jivesoftware.smack.packet.DefaultExtensionElement;
 import org.jivesoftware.sparkplugin.sipaccount.SipAccountPacket;
-import org.jivesoftware.smack.packet.DefaultPacketExtension;
 
 /**
  * Title: SIPark
@@ -33,7 +33,7 @@ import org.jivesoftware.smack.packet.DefaultPacketExtension;
  * @version 1.0, 28/09/2006
  */
 
-public class CallLogExtension extends DefaultPacketExtension {
+public class CallLogExtension extends DefaultExtensionElement {
 
     final static String ELEMENT_NAME = "callLog";
 

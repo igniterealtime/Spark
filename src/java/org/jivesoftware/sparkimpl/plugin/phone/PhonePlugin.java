@@ -19,12 +19,7 @@
  */
 package org.jivesoftware.sparkimpl.plugin.phone;
 
-import org.jivesoftware.phone.client.BasePhoneEventListener;
-import org.jivesoftware.phone.client.HangUpEvent;
-import org.jivesoftware.phone.client.OnPhoneEvent;
-import org.jivesoftware.phone.client.PhoneActionException;
-import org.jivesoftware.phone.client.PhoneClient;
-import org.jivesoftware.phone.client.RingEvent;
+import org.jivesoftware.phone.client.*;
 import org.jivesoftware.phone.client.action.PhoneActionIQProvider;
 import org.jivesoftware.phone.client.event.PhoneEventPacketExtensionProvider;
 import org.jivesoftware.resource.Res;
@@ -32,37 +27,22 @@ import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.provider.ProviderManager;
-import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.phone.PhoneManager;
 import org.jivesoftware.spark.plugin.ContextMenuListener;
 import org.jivesoftware.spark.plugin.Plugin;
-import org.jivesoftware.spark.ui.ChatRoom;
-import org.jivesoftware.spark.ui.ChatRoomButton;
-import org.jivesoftware.spark.ui.ChatRoomListenerAdapter;
-import org.jivesoftware.spark.ui.ContactItem;
-import org.jivesoftware.spark.ui.ContactList;
+import org.jivesoftware.spark.ui.*;
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
-import org.jivesoftware.spark.util.ModelUtil;
-import org.jivesoftware.spark.util.ResourceUtils;
-import org.jivesoftware.spark.util.SwingTimerTask;
+import org.jivesoftware.spark.util.*;
 import org.jivesoftware.spark.util.SwingWorker;
-import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.alerts.SparkToaster;
+import org.jivesoftware.sparkimpl.plugin.idle.UserIdlePlugin;
+import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+import org.jxmpp.util.XmppStringUtils;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
-
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
+import javax.swing.*;
+import java.awt.event.*;
 import java.util.TimerTask;
 
 public class PhonePlugin implements Plugin {
@@ -71,11 +51,11 @@ public class PhonePlugin implements Plugin {
     //    private Alert incomingDialog;
     private JFrame dialDialog;
 
-    private Presence offPhonePresence;
-
+    public static Presence offPhonePresence;
+    public static Presence onPhonePresence;
     public void initialize() {
-        ProviderManager.getInstance().addExtensionProvider("phone-event", "http://jivesoftware.com/xmlns/phone", new PhoneEventPacketExtensionProvider());
-        ProviderManager.getInstance().addIQProvider("phone-action", "http://jivesoftware.com/xmlns/phone", new PhoneActionIQProvider());
+        ProviderManager.addExtensionProvider("phone-event", "http://jivesoftware.com/xmlns/phone", new PhoneEventPacketExtensionProvider());
+        ProviderManager.addIQProvider("phone-action", "http://jivesoftware.com/xmlns/phone", new PhoneActionIQProvider());
 
         final XMPPConnection con = SparkManager.getConnection();
 
@@ -112,47 +92,42 @@ public class PhonePlugin implements Plugin {
         ResourceUtils.resButton(dialNumberMenu, Res.getString("button.dial.number"));
 
         // Add Listener
-        dialNumberMenu.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                dialPanel = new DialPanel();
-                dialPanel.getDialButton().addActionListener(new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        String number = dialPanel.getNumberToDial();
-                        if (ModelUtil.hasLength(number)) {
-                            dialPanel.setText(Res.getString("message.calling", number));
-                            dialPanel.changeToRinging();
-                            callExtension(number);
+        dialNumberMenu.addActionListener( e -> {
+            dialPanel = new DialPanel();
+            dialPanel.getDialButton().addActionListener( e1 -> {
+                String number = dialPanel.getNumberToDial();
+                if (ModelUtil.hasLength(number)) {
+                    dialPanel.setText(Res.getString("message.calling", number));
+                    dialPanel.changeToRinging();
+                    callExtension(number);
 
+                }
+
+            } );
+
+            dialDialog = PhoneDialog.invoke(dialPanel, Res.getString("title.dial.phone"), Res.getString("message.number.to.call"), null);
+            dialPanel.getDialField().requestFocusInWindow();
+
+            dialPanel.getDialField().addKeyListener(new KeyAdapter() {
+                public void keyPressed(KeyEvent e) {
+                    if (e.getKeyChar() == KeyEvent.VK_ENTER) {
+                        try {
+                            String number = dialPanel.getNumberToDial();
+                            if (ModelUtil.hasLength(number)) {
+                                dialPanel.setText(Res.getString("message.calling", number));
+                                dialPanel.changeToRinging();
+                                callExtension(number);
+
+                            }
+                            e.consume();
                         }
-
-                    }
-                });
-
-                dialDialog = PhoneDialog.invoke(dialPanel, Res.getString("title.dial.phone"), Res.getString("message.number.to.call"), null);
-                dialPanel.getDialField().requestFocusInWindow();
-
-                dialPanel.getDialField().addKeyListener(new KeyAdapter() {
-                    public void keyPressed(KeyEvent e) {
-                        if (e.getKeyChar() == KeyEvent.VK_ENTER) {
-                            try {
-                                String number = dialPanel.getNumberToDial();
-                                if (ModelUtil.hasLength(number)) {
-                                    dialPanel.setText(Res.getString("message.calling", number));
-                                    dialPanel.changeToRinging();
-                                    callExtension(number);
-
-                                }
-                                e.consume();
-                            }
-                            catch (Exception ex) {
-                                Log.error(ex);
-                            }
+                        catch (Exception ex) {
+                            Log.error(ex);
                         }
                     }
-                });
-            }
-
-        });
+                }
+            });
+        } );
         viewMenu.add(dialNumberMenu);
 
         // Add ChatRoomListener to call users based on JID
@@ -164,7 +139,7 @@ public class PhonePlugin implements Plugin {
                     final ChatRoomImpl chatRoom = (ChatRoomImpl)room;
                     boolean phoneEnabled = false;
                     try {
-                        phoneEnabled = phoneClient.isPhoneEnabled(StringUtils.parseBareAddress(chatRoom.getParticipantJID()));
+                        phoneEnabled = phoneClient.isPhoneEnabled( XmppStringUtils.parseBareJid(chatRoom.getParticipantJID()));
                     }
                     catch (Exception e) {
                         Log.error(e);
@@ -172,11 +147,7 @@ public class PhonePlugin implements Plugin {
 
                     if (phoneEnabled) {
                         room.addChatRoomButton(callButton);
-                        callButton.addActionListener(new ActionListener() {
-                            public void actionPerformed(ActionEvent e) {
-                                callJID(chatRoom.getParticipantJID());
-                            }
-                        });
+                        callButton.addActionListener( e -> callJID(chatRoom.getParticipantJID()) );
                     }
                 }
             }
@@ -231,35 +202,54 @@ public class PhonePlugin implements Plugin {
                 dialDialog.setVisible(false);
             }
 
-            // Set offline presence if necessary.
-            if (offPhonePresence == null) {
-                offPhonePresence = SparkManager.getWorkspace().getStatusBar().getPresence();
-
-                // Send on phone presence
-                Presence onPhonePresence = new Presence(Presence.Type.available, "On the phone", -1, Presence.Mode.away);
-                SparkManager.getSessionManager().changePresence(onPhonePresence);
-            }
+            // Get current presence if necessary.
+            offPhonePresence = SparkManager.getWorkspace().getStatusBar().getPresence();
 
 
+            // Send "on the phone" presence
+            onPhonePresence = new Presence(Presence.Type.available, "On the phone", 1, Presence.Mode.away);
+            SparkManager.getSessionManager().changePresence(onPhonePresence);
         }
 
+
         public void handleHangUp(HangUpEvent event) {
+            onPhonePresence = null;
             if (dialDialog != null) {
                 dialDialog.setVisible(false);
             }
 
             if (offPhonePresence != null) {
-                // Set user to previous presence state when all phone calls are hung up.
-                SparkManager.getSessionManager().changePresence(offPhonePresence);
 
-                offPhonePresence = null;
-            }
-            else {
+                if (((offPhonePresence.getMode().equals(Presence.Mode.away)) && (!UserIdlePlugin.getDesktopLockStatus())
+                        && (UserIdlePlugin.latestPresence != null)) && (!UserIdlePlugin.latestPresence.getStatus().contentEquals("On the Phone"))) {
+                    SparkManager.getSessionManager().changePresence(UserIdlePlugin.latestPresence);
+                    Log.debug("PhonePlugin: Setting presence from UserIdlePlugin");
+
+                } else if ((UserIdlePlugin.getDesktopLockStatus()) && ((offPhonePresence.getStatus().equals("Online"))
+                        || (offPhonePresence.getStatus().equals("Free to chat")))) {
+                    Presence presence = new Presence(Presence.Type.available, UserIdlePlugin.pref.getIdleMessage(), 1, Presence.Mode.away);
+                    SparkManager.getSessionManager().changePresence(presence);
+                    Log.debug("PhonePlugin: Desktop is Locked - Setting presence from pref.idle message");
+
+                } else if (UserIdlePlugin.getDesktopLockStatus() && (!offPhonePresence.isAway())) {
+                    Presence presence = new Presence(Presence.Type.available, offPhonePresence.getStatus(), 1, Presence.Mode.away);
+                    SparkManager.getSessionManager().changePresence(presence);
+                    Log.debug("PhonePlugin: Desktop is Locked - Setting presence from user defined presence");
+
+                } else {
+                    // Set user to previous presence state when all phone calls are hung up.
+                    SparkManager.getSessionManager().changePresence(offPhonePresence);
+                    Log.debug("PhonePlugin: Setting Presence from PhonePlugin.");
+                }
+
+
+            } else {
                 // If no previous state available, set status to Available
-                Presence availablePresence = new Presence(Presence.Type.available, "Available", 1, Presence.Mode.available);
+                Presence availablePresence = new Presence(Presence.Type.available, "Online", 1, Presence.Mode.available);
 
                 SparkManager.getSessionManager().changePresence(availablePresence);
-                offPhonePresence = null;
+                Log.debug("no previous state available from Phone Plugin..setting to Online");
+
             }
         }
 
@@ -298,25 +288,24 @@ public class PhonePlugin implements Plugin {
             incomingCall.setCallerName(Res.getString("message.no.caller.id"));
         }
 
-        SparkToaster toasterManager = new SparkToaster();
+        if (!SettingsManager.getLocalPreferences().getDisableAsteriskToasterPopup()) {
+            SparkToaster toasterManager = new SparkToaster();
+            toasterManager.setTitle("Incoming Phone Call");
+            toasterManager.setDisplayTime(15000);
+            toasterManager.showToaster(SparkRes.getImageIcon(SparkRes.ON_PHONE_IMAGE));
+            toasterManager.setComponent(incomingCall);
 
-        toasterManager.setTitle("Incoming Phone Call");
-        toasterManager.setDisplayTime(15000);
-        toasterManager.showToaster(SparkRes.getImageIcon(SparkRes.ON_PHONE_IMAGE));
-        toasterManager.setComponent(incomingCall);
-
+        }
     }
 
 
     public void callExtension(final String number) {
-        final Runnable caller = new Runnable() {
-            public void run() {
-                try {
-                    phoneClient.dialByExtension(number);
-                }
-                catch (PhoneActionException e) {
-                    Log.error(e);
-                }
+        final Runnable caller = () -> {
+            try {
+                phoneClient.dialByExtension(number);
+            }
+            catch (PhoneActionException e) {
+                Log.error(e);
             }
         };
 
@@ -324,14 +313,12 @@ public class PhonePlugin implements Plugin {
     }
 
     public void callJID(final String jid) {
-        final Runnable caller = new Runnable() {
-            public void run() {
-                try {
-                    phoneClient.dialByJID(jid);
-                }
-                catch (PhoneActionException e) {
-                    Log.error(e);
-                }
+        final Runnable caller = () -> {
+            try {
+                phoneClient.dialByJID(jid);
+            }
+            catch (PhoneActionException e) {
+                Log.error(e);
             }
         };
 

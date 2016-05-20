@@ -10,6 +10,15 @@ ${libdir}/jdom.jar:\
 ${libdir}/log4j.jar:\
 ${libdir}/lti-civil.jar:\
 ${libdir}/fmj.jar:\
+${libdir}/jspeex.jar:\
+${libdir}/libjitsi.jar:\
+${libdir}/zrtp4j-light.jar:\
+${libdir}/jna.jar:\
+${libdir}/bcpkix.jar:\
+${libdir}/bcprov.jar:\
+${libdir}/bccontrib.jar:\
+${libdir}/ice4j.jar:\
+${libdir}/osgi.core.jar:\
 ${libdir}/startup.jar:\
 ${libdir}/linux/jdic.jar:\
 ${wd}/resources\

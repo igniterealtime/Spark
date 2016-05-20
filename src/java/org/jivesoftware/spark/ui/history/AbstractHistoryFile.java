@@ -9,7 +9,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -58,7 +57,7 @@ public abstract class AbstractHistoryFile {
 	private List<HistoryEntry> search(List<HistoryEntry> entries,
 			String occurrence) {
 
-		List<HistoryEntry> result = new ArrayList<HistoryEntry>();
+		List<HistoryEntry> result = new ArrayList<>();
 		for (HistoryEntry historyEntry : entries) {
 
 			if (!historyEntry.hasRecords()) {
@@ -103,18 +102,12 @@ public abstract class AbstractHistoryFile {
 	}
 
 	protected List<HistoryEntry> toList(Map<Date, HistoryEntry> months) {
-		List<HistoryEntry> entries = new ArrayList<HistoryEntry>();
+		List<HistoryEntry> entries = new ArrayList<>();
 		for (Entry<Date, HistoryEntry> historyEntry : months.entrySet()) {
 			entries.add(historyEntry.getValue());
 		}
 
-		Collections.sort(entries, new Comparator<HistoryEntry>() {
-
-			@Override
-			public int compare(HistoryEntry o1, HistoryEntry o2) {
-				return o2.getDate().compareTo(o1.getDate());
-			}
-		});
+		Collections.sort(entries, ( o1, o2 ) -> o2.getDate().compareTo(o1.getDate()) );
 
 		return entries;
 	}

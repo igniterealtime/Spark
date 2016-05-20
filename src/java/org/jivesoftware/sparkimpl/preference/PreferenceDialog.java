@@ -21,8 +21,6 @@
 package org.jivesoftware.sparkimpl.preference;
 
 import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
@@ -61,34 +59,28 @@ public class PreferenceDialog implements PropertyChangeListener {
         JButton btn_save = new JButton(Res.getString("save"));
         JButton btn_close = new JButton(Res.getString("close"));
         
-        btn_close.addActionListener(new ActionListener () {
-			public void actionPerformed(ActionEvent e) {
-				saveLayout();
-				preferenceDialog.setVisible(false);
-				preferenceDialog.dispose();
-			}
-        });
-        btn_save.addActionListener(new ActionListener () {
-			public void actionPerformed(ActionEvent e) {
-				boolean okToClose = prefPanel.closing();
-	            if (okToClose) {
-	            	 saveLayout();
-	                preferenceDialog.setVisible(false);
-	                preferenceDialog.dispose();
-	            }
-	            else {
-	                pane.setValue(JOptionPane.UNINITIALIZED_VALUE);
-	            }
-			}
-        });
-        btn_apply.addActionListener(new ActionListener () {
-			public void actionPerformed(ActionEvent e) {
-				boolean okToClose = prefPanel.closing();
-	            if (!okToClose) {
-	                pane.setValue(JOptionPane.UNINITIALIZED_VALUE);
-	            }
-			}
-        });
+        btn_close.addActionListener( e -> {
+            saveLayout();
+            preferenceDialog.setVisible(false);
+            preferenceDialog.dispose();
+        } );
+        btn_save.addActionListener( e -> {
+            boolean okToClose = prefPanel.closing();
+if (okToClose) {
+saveLayout();
+preferenceDialog.setVisible(false);
+preferenceDialog.dispose();
+}
+else {
+pane.setValue(JOptionPane.UNINITIALIZED_VALUE);
+}
+        } );
+        btn_apply.addActionListener( e -> {
+            boolean okToClose = prefPanel.closing();
+if (!okToClose) {
+pane.setValue(JOptionPane.UNINITIALIZED_VALUE);
+}
+        } );
         
         Object[] options = {btn_apply, btn_save, btn_close};
         pane = new JOptionPane(contentPane, JOptionPane.PLAIN_MESSAGE,
@@ -126,7 +118,6 @@ public class PreferenceDialog implements PropertyChangeListener {
     			saveLayout();
             pane.removePropertyChangeListener(this);
             preferenceDialog.dispose();
-            return;
         }
     }
 

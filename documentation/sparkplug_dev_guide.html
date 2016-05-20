@@ -791,9 +791,10 @@ public class SearchMe implements Searchable {
 
         // Get the service name you wish to use.
         try {
-            serviceNames = MultiUserChat.getServiceNames(SparkManager.getConnection());
+            final MultiUserChatManager multiUserChatManager = MultiUserChatManager.getInstanceFor( SparkManager.getConnection() );
+            serviceNames = multiUserChatManager.getServiceNames();
         }
-        catch (XMPPException e) {
+        catch (Exception e) {
             e.printStackTrace();
         }
 

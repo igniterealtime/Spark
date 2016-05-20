@@ -6,7 +6,6 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.DefaultListModel;
@@ -20,7 +19,7 @@ import javax.swing.UIManager;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.spark.PresenceManager;
 import org.jivesoftware.spark.SparkManager;
@@ -47,7 +46,6 @@ public class GatewayTabItem extends CollapsiblePane implements GatewayItem {
 
     private Transport _transport;
     private DefaultListModel model = new DefaultListModel();
-    private JList _transportMenu = new JList(model);
     private JLabel _status = new JLabel();
     private JPanel _listPanel = new JPanel(new GridBagLayout());
     private JLabel _statusIcon = new JLabel();
@@ -73,7 +71,8 @@ public class GatewayTabItem extends CollapsiblePane implements GatewayItem {
 	this.setTitle(transport.getName());
 
 	_listPanel.setBackground((Color)UIManager.get("ContactItem.background"));
-	_transportMenu.setCellRenderer(new JPanelRenderer());
+        JList _transportMenu = new JList( model );
+        _transportMenu.setCellRenderer(new JPanelRenderer());
 
 	this.setContentPane(_listPanel);
 
@@ -104,27 +103,32 @@ public class GatewayTabItem extends CollapsiblePane implements GatewayItem {
 	createTransportMenu();
 	// Check if autojoin is enabled an join automatically
 	final StatusBar statusBar = SparkManager.getWorkspace().getStatusBar();
-	final Runnable registerThread = new Runnable() {
-	    public void run() {
-		// Send directed presence if registered with this transport.
-		final boolean isRegistered = TransportUtils.isRegistered(
-			SparkManager.getConnection(), transport);
-		if (isRegistered) {
-		    // Check if auto login is set.
-		    boolean autoJoin = TransportUtils.autoJoinService(transport
-			    .getServiceName());
-		    if (autoJoin) {
-			Presence oldPresence = statusBar.getPresence();
-			Presence presence = new Presence(oldPresence.getType(),
-				oldPresence.getStatus(),
-				oldPresence.getPriority(),
-				oldPresence.getMode());
-			presence.setTo(transport.getServiceName());
-			SparkManager.getConnection().sendPacket(presence);
-		    }
-		}
-	    }
-	};
+	final Runnable registerThread = () -> {
+    // Send directed presence if registered with this transport.
+    final boolean isRegistered = TransportUtils.isRegistered(
+        SparkManager.getConnection(), transport);
+    if (isRegistered) {
+        // Check if auto login is set.
+        boolean autoJoin = TransportUtils.autoJoinService(transport
+            .getServiceName());
+        if (autoJoin) {
+        Presence oldPresence = statusBar.getPresence();
+        Presence presence = new Presence(oldPresence.getType(),
+            oldPresence.getStatus(),
+            oldPresence.getPriority(),
+            oldPresence.getMode());
+        presence.setTo(transport.getServiceName());
+            try
+            {
+                SparkManager.getConnection().sendStanza(presence);
+            }
+            catch ( SmackException.NotConnectedException e )
+            {
+                Log.error( "Unable to send presence.", e );
+            }
+        }
+    }
+    };
 
 	TaskEngine.getInstance().submit(registerThread);
 
@@ -132,30 +136,40 @@ public class GatewayTabItem extends CollapsiblePane implements GatewayItem {
 
     private void createTransportMenu() {
 
-	_signInOut.addActionListener(new ActionListener() {
-	
-	    @Override
-	    public void actionPerformed(ActionEvent e) {
-		if (signedIn) {
+	_signInOut.addActionListener( e -> {
+    if (signedIn) {
 
-		    final Presence offlinePresence = new Presence(
-			    Presence.Type.unavailable);
-		    offlinePresence.setTo(_transport.getServiceName());
-		    SparkManager.getConnection().sendPacket(offlinePresence);
-		    _statusIcon.setIcon(SparkRes
-			    .getImageIcon(SparkRes.YELLOW_BALL));
+        final Presence offlinePresence = new Presence(
+            Presence.Type.unavailable);
+        offlinePresence.setTo(_transport.getServiceName());
+        try
+        {
+            SparkManager.getConnection().sendStanza(offlinePresence);
+            _statusIcon.setIcon(SparkRes
+                    .getImageIcon(SparkRes.YELLOW_BALL));
+        }
+        catch ( SmackException.NotConnectedException e1 )
+        {
+            Log.error( "Unable to send presence.", e1 );
+        }
 
-		} else {
-		    final Presence onlinePresence = new Presence(
-			    Presence.Type.available);
-		    onlinePresence.setTo(_transport.getServiceName());
-		    SparkManager.getConnection().sendPacket(onlinePresence);
-		    _statusIcon.setIcon(SparkRes
-			    .getImageIcon(SparkRes.YELLOW_BALL));
-		}
+    } else {
+        final Presence onlinePresence = new Presence(
+            Presence.Type.available);
+        onlinePresence.setTo(_transport.getServiceName());
+        try
+        {
+            SparkManager.getConnection().sendStanza(onlinePresence);
+            _statusIcon.setIcon(SparkRes
+                    .getImageIcon(SparkRes.YELLOW_BALL));
+        }
+        catch ( SmackException.NotConnectedException e1 )
+        {
+            Log.error( "Unable to send presence.", e1 );
+        }
+    }
 
-	    }
-	});
+    } );
 
 	//_autoJoin.setText(Res.getString("menuitem.sign.in.at.login"));
 
@@ -171,69 +185,57 @@ public class GatewayTabItem extends CollapsiblePane implements GatewayItem {
 	    setNotRegistered();
 	}
 
-	_autoJoinButton.addActionListener(new ActionListener() {
-	    
-	    @Override
-	    public void actionPerformed(ActionEvent e) {
-		_autoJoin.setSelected(!_autoJoin.isSelected());
-		 TransportUtils.setAutoJoin(_transport.getServiceName(), _autoJoin.isSelected());
-		
-	    }
-	});
+	_autoJoinButton.addActionListener( e -> {
+    _autoJoin.setSelected(!_autoJoin.isSelected());
+     TransportUtils.setAutoJoin(_transport.getServiceName(), _autoJoin.isSelected());
+
+    } );
 	
-	_registerButton.addActionListener(new ActionListener() {
+	_registerButton.addActionListener( e -> {
+    // If transport is registered we should show the
+    // "delete information" gui
+        UIManager.put("OptionPane.yesButtonText", Res.getString("yes"));
+        UIManager.put("OptionPane.noButtonText", Res.getString("no"));
+        UIManager.put("OptionPane.cancelButtonText", Res.getString("cancel"));
+    if (TransportUtils.isRegistered(SparkManager.getConnection(),
+        _transport)) {
 
-	    @Override
-	    public void actionPerformed(ActionEvent e) {
-		// If transport is registered we should show the
-		// "delete information" gui
-	    	UIManager.put("OptionPane.yesButtonText", Res.getString("yes"));
-	    	UIManager.put("OptionPane.noButtonText", Res.getString("no"));
-	    	UIManager.put("OptionPane.cancelButtonText", Res.getString("cancel"));
-		if (TransportUtils.isRegistered(SparkManager.getConnection(),
-			_transport)) {
+        int confirm = JOptionPane.showConfirmDialog(SparkManager
+            .getMainWindow(), Res.getString(
+            "message.disable.transport", _transport.getName()),
+            Res.getString("title.disable.transport"),
+            JOptionPane.YES_NO_OPTION);
+        if (confirm == JOptionPane.YES_OPTION) {
+        try {
+            TransportUtils.unregister(
+                SparkManager.getConnection(),
+                _transport.getServiceName());
+            setNotRegistered();
+        } catch (SmackException e1) {
+            Log.error(e1);
+        }
+        }
+    } else {
+        // If transport is not registered we should show the
+        // register gui
+        TransportRegistrationDialog registrationDialog = new TransportRegistrationDialog(
+            _transport.getServiceName());
+        registrationDialog.invoke();
+        // Set user as offline while he fills in the login
+        // information
+        setOffline();
 
-		    int confirm = JOptionPane.showConfirmDialog(SparkManager
-			    .getMainWindow(), Res.getString(
-			    "message.disable.transport", _transport.getName()),
-			    Res.getString("title.disable.transport"),
-			    JOptionPane.YES_NO_OPTION);
-		    if (confirm == JOptionPane.YES_OPTION) {
-			try {
-			    TransportUtils.unregister(
-				    SparkManager.getConnection(),
-				    _transport.getServiceName());
-			    setNotRegistered();
-			} catch (XMPPException e1) {
-			    Log.error(e1);
-			}
-		    }
-		} else {
-		    // If transport is not registered we should show the
-		    // register gui
-		    TransportRegistrationDialog registrationDialog = new TransportRegistrationDialog(
-			    _transport.getServiceName());
-		    registrationDialog.invoke();
-		    // Set user as offline while he fills in the login
-		    // information
-		    setOffline();
+        ActionListener al = e1 -> {
+            // If user canceled the register window, he is sill
+            // not registrated
+            setNotRegistered();
+        };
 
-		    ActionListener al = new ActionListener() {
+        registrationDialog.addCancelActionListener(al);
 
-			@Override
-			public void actionPerformed(ActionEvent e) {
-			    // If user canceled the register window, he is sill
-			    // not registrated
-			    setNotRegistered();
-			}
-		    };
+    }
 
-		    registrationDialog.addCancelActionListener(al);
-
-		}
-
-	    }
-	});
+    } );
 	
 	_autoJoinButton.setText(Res.getString("menuitem.sign.in.at.login"));
 	_autoJoinButton.setHorizontalAlignment(SwingConstants.LEFT);
@@ -288,15 +290,8 @@ public class GatewayTabItem extends CollapsiblePane implements GatewayItem {
     // Set GUI when user is online with rigistered transport
     private void setOnline() {
 	_statusIcon.setIcon(SparkRes.getImageIcon(SparkRes.GREEN_BALL));
-	EventQueue.invokeLater(new Runnable() {
-	    
-	    @Override
-	    public void run() {
-		_autoJoin.setSelected(TransportUtils.autoJoinService(_transport
-			.getServiceName()));
-		
-	    }
-	});
+	EventQueue.invokeLater( () -> _autoJoin.setSelected(TransportUtils.autoJoinService(_transport
+        .getServiceName())) );
 	
 	_signInOut.setText(Res.getString("menuitem.sign.out"));
 	_signInOut.setEnabled(true);

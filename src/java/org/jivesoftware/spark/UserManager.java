@@ -20,11 +20,11 @@
 package org.jivesoftware.spark;
 
 import org.jivesoftware.resource.Res;
-import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.packet.Presence;
-import org.jivesoftware.smack.util.StringUtils;
+import org.jivesoftware.smackx.muc.MUCAffiliation;
+import org.jivesoftware.smackx.muc.MUCRole;
 import org.jivesoftware.smackx.muc.Occupant;
-import org.jivesoftware.smackx.packet.VCard;
+import org.jivesoftware.smackx.vcardtemp.packet.VCard;
 import org.jivesoftware.spark.component.JContactItemField;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ContactGroup;
@@ -36,6 +36,7 @@ import org.jivesoftware.spark.util.SwingTimerTask;
 import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.profile.VCardManager;
+import org.jxmpp.util.XmppStringUtils;
 
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
@@ -60,7 +61,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TimerTask;
@@ -71,7 +71,7 @@ import java.util.TimerTask;
  */
 public class UserManager {
 
-    private Map<JFrame,Component> parents = new HashMap<JFrame,Component>();
+    private Map<JFrame,Component> parents = new HashMap<>();
 
     public UserManager() {
     }
@@ -97,7 +97,7 @@ public class UserManager {
 
         // Default to node if nothing.
         String username = SparkManager.getSessionManager().getUsername();
-        username = StringUtils.unescapeNode(username);
+        username = XmppStringUtils.unescapeLocalpart(username);
 
         return username;
     }
@@ -133,7 +133,7 @@ public class UserManager {
      * @return a Collection of jids found in the room.
      */
     public Collection<String> getUserJidsInRoom(String room, boolean fullJID) {
-        return new ArrayList<String>();
+        return new ArrayList<>();
     }
 
     /**
@@ -143,15 +143,9 @@ public class UserManager {
      * @param nickname      the user's nickname.
      * @return true if the user is an owner.
      */
-    public boolean isOwner(GroupChatRoom groupChatRoom, String nickname) {
-        Occupant occupant = getOccupant(groupChatRoom, nickname);
-        if (occupant != null) {
-            String affiliation = occupant.getAffiliation();
-            if ("owner".equals(affiliation)) {
-                return true;
-            }
-        }
-        return false;
+    public boolean isOwner(GroupChatRoom groupChatRoom, String nickname)
+    {
+        return isOwner( getOccupant( groupChatRoom, nickname ) );
     }
 
     /**
@@ -160,30 +154,20 @@ public class UserManager {
      * @param occupant the occupant of a room.
      * @return true if the user is an owner.
      */
-    public boolean isOwner(Occupant occupant) {
-        if (occupant != null) {
-            String affiliation = occupant.getAffiliation();
-            if ("owner".equals(affiliation)) {
-                return true;
-            }
-        }
-        return false;
+    public boolean isOwner(Occupant occupant)
+    {
+        return occupant != null && occupant.getAffiliation() == MUCAffiliation.owner;
     }
+
     /**
      * Checks if the Occupant is a Member in this Room<br>
      * <b>admins and owners are also members!!!</b>
      * @param occupant
      * @return true if member, else false
      */
-    public boolean isMember(Occupant occupant) {
-	if (occupant != null) {
-	    String affiliation = occupant.getAffiliation();
-	    if ("member".equals(affiliation) || affiliation.equals("owner")
-		    || affiliation.equals("admin")) {
-		return true;
-	    }
-	}
-	return false;
+    public boolean isMember(Occupant occupant)
+    {
+        return occupant != null && ( occupant.getAffiliation() == MUCAffiliation.owner || occupant.getAffiliation() == MUCAffiliation.member || occupant.getAffiliation() == MUCAffiliation.admin );
     }
 
     /**
@@ -193,15 +177,9 @@ public class UserManager {
      * @param nickname      the nickname of the user.
      * @return true if the user is a moderator.
      */
-    public boolean isModerator(GroupChatRoom groupChatRoom, String nickname) {
-        Occupant occupant = getOccupant(groupChatRoom, nickname);
-        if (occupant != null) {
-            String role = occupant.getRole();
-            if ("moderator".equals(role)) {
-                return true;
-            }
-        }
-        return false;
+    public boolean isModerator(GroupChatRoom groupChatRoom, String nickname)
+    {
+        return isModerator( getOccupant( groupChatRoom, nickname ) );
     }
 
     /**
@@ -211,13 +189,7 @@ public class UserManager {
      * @return true if the user is a moderator.
      */
     public boolean isModerator(Occupant occupant) {
-        if (occupant != null) {
-            String role = occupant.getRole();
-            if ("moderator".equals(role)) {
-                return true;
-            }
-        }
-        return false;
+        return occupant != null && occupant.getRole() == MUCRole.moderator;
     }
 
     /**
@@ -228,14 +200,7 @@ public class UserManager {
      * @return true if the user is either an owner or admin of the room.
      */
     public boolean isOwnerOrAdmin(GroupChatRoom groupChatRoom, String nickname) {
-        Occupant occupant = getOccupant(groupChatRoom, nickname);
-        if (occupant != null) {
-            String affiliation = occupant.getAffiliation();
-            if ("owner".equals(affiliation) || "admin".equals(affiliation)) {
-                return true;
-            }
-        }
-        return false;
+        return isOwnerOrAdmin( getOccupant(groupChatRoom, nickname) );
     }
 
     /**
@@ -245,13 +210,7 @@ public class UserManager {
      * @return true if the user is either an owner or admin of the room.
      */
     public boolean isOwnerOrAdmin(Occupant occupant) {
-        if (occupant != null) {
-            String affiliation = occupant.getAffiliation();
-            if ("owner".equals(affiliation) || "admin".equals(affiliation)) {
-                return true;
-            }
-        }
-        return false;
+        return isOwner( occupant ) || isAdmin( occupant );
     }
 
     /**
@@ -284,21 +243,24 @@ public class UserManager {
      * @return true if the user is an admin.
      */
     public boolean isAdmin(GroupChatRoom groupChatRoom, String nickname) {
-        Occupant occupant = getOccupant(groupChatRoom, nickname);
-        if (occupant != null) {
-            String affiliation = occupant.getAffiliation();
-            if ("admin".equals(affiliation)) {
-                return true;
-            }
-        }
-        return false;
+        return isAdmin( getOccupant(groupChatRoom, nickname) );
+    }
+
+    /**
+     * Checks to see if the Occupant is an admin.
+     *
+     * @param occupant the occupant of a room.
+     * @return true if the user is an admin.
+     */
+    public boolean isAdmin(Occupant occupant)
+    {
+        return occupant != null && occupant.getAffiliation() == MUCAffiliation.admin;
     }
 
     public boolean hasVoice(GroupChatRoom groupChatRoom, String nickname) {
         Occupant occupant = getOccupant(groupChatRoom, nickname);
         if (occupant != null) {
-            String role = occupant.getRole();
-            if ("visitor".equals(role)) {
+            if ( MUCRole.visitor == occupant.getRole()) {
                 return false;
             }
         }
@@ -314,7 +276,7 @@ public class UserManager {
      * @see <code>ChatUser</code>
      */
     public Collection<String> getAllParticipantsInRoom(ChatRoom chatRoom) {
-        return new ArrayList<String>();
+        return new ArrayList<>();
     }
 
 
@@ -341,9 +303,9 @@ public class UserManager {
         }
 
         final StringBuilder builder = new StringBuilder();
-        String node = StringUtils.parseName(jid);
+        String node = XmppStringUtils.parseLocalpart(jid);
         String restOfJID = jid.substring(node.length());
-        builder.append(StringUtils.escapeNode(node));
+        builder.append(XmppStringUtils.escapeLocalpart(node));
         builder.append(restOfJID);
         return builder.toString();
     }
@@ -360,9 +322,9 @@ public class UserManager {
         }
 
         final StringBuilder builder = new StringBuilder();
-        String node = StringUtils.parseName(jid);
+        String node = XmppStringUtils.parseLocalpart(jid);
         String restOfJID = jid.substring(node.length());
-        builder.append(StringUtils.unescapeNode(node));
+        builder.append(XmppStringUtils.unescapeLocalpart(node));
         builder.append(restOfJID);
         return builder.toString();
     }
@@ -405,8 +367,8 @@ public class UserManager {
         final Component glassPane = parents.get(parent);
         parent.setGlassPane(glassPane);
 
-        final Map<String, ContactItem> contactMap = new HashMap<String, ContactItem>();
-        final List<ContactItem> contacts = new ArrayList<ContactItem>();
+        final Map<String, ContactItem> contactMap = new HashMap<>();
+        final List<ContactItem> contacts = new ArrayList<>();
 
         final ContactList contactList = SparkManager.getWorkspace().getContactList();
 
@@ -423,7 +385,7 @@ public class UserManager {
         // Sort
         Collections.sort(contacts, itemComparator);
 
-        final JContactItemField contactField = new JContactItemField(new ArrayList<ContactItem>(contacts));
+        final JContactItemField contactField = new JContactItemField( new ArrayList<>( contacts ));
 
 
         JPanel layoutPanel = new JPanel();
@@ -529,38 +491,9 @@ public class UserManager {
     }
 
     /**
-     * Returns the correct JID based on the number of resources signed in.
-     *
-     * @param jid the users jid.
-     * @return the valid jid to use.
-     */
-    public static String getValidJID(String jid) {
-        Roster roster = SparkManager.getConnection().getRoster();
-        Iterator<Presence> presences = roster.getPresences(jid);
-        int count = 0;
-        Presence p = null;
-        if (presences.hasNext()) {
-            p = presences.next();
-            count++;
-        }
-
-        if (count == 1 && p != null) {
-            return p.getFrom();
-        }
-        else {
-            return jid;
-        }
-    }
-
-
-    /**
      * Sorts ContactItems.
      */
-    final Comparator<ContactItem> itemComparator = new Comparator<ContactItem>() {
-        public int compare(ContactItem item1, ContactItem item2) {
-            return item1.getDisplayName().toLowerCase().compareTo(item2.getDisplayName().toLowerCase());
-        }
-    };
+    final Comparator<ContactItem> itemComparator = ( item1, item2 ) -> item1.getDisplayName().toLowerCase().compareTo(item2.getDisplayName().toLowerCase());
 
 }
 

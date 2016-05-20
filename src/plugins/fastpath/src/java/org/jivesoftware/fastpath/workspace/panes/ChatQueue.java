@@ -41,9 +41,10 @@ import org.jivesoftware.fastpath.FpRes;
 import org.jivesoftware.fastpath.resources.FastpathRes;
 import org.jivesoftware.fastpath.workspace.assistants.RoomInformation;
 import org.jivesoftware.fastpath.workspace.util.RequestUtils;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smackx.Form;
-import org.jivesoftware.smackx.FormField;
+import org.jivesoftware.smackx.xdata.Form;
+import org.jivesoftware.smackx.xdata.FormField;
 import org.jivesoftware.smackx.workgroup.agent.Offer;
 import org.jivesoftware.spark.component.LinkLabel;
 import org.jivesoftware.spark.component.RolloverButton;
@@ -106,7 +107,7 @@ public class ChatQueue extends JPanel {
         try {
             form = FastpathPlugin.getWorkgroup().getWorkgroupForm();
         }
-        catch (XMPPException e) {
+        catch (XMPPException | SmackException e) {
             Log.error("Unable to retrieve Workgroup form.", e);
             return;
         }
@@ -118,9 +119,7 @@ public class ChatQueue extends JPanel {
         Color linkColor = new Color(69, 92, 137);
 
         int count = 1;
-        Iterator fields = form.getFields();
-        while (fields.hasNext()) {
-            FormField field = (FormField)fields.next();
+        for ( final FormField field : form.getFields() ) {
             String variable = field.getVariable();
             String label = field.getLabel();
             if (label != null) {

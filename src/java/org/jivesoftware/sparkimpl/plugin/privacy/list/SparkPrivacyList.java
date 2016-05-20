@@ -25,9 +25,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import org.jivesoftware.smack.PrivacyList;
+import org.jivesoftware.smack.SmackException;
+import org.jivesoftware.smackx.privacy.PrivacyList;
 import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smack.packet.PrivacyItem;
+import org.jivesoftware.smackx.privacy.packet.PrivacyItem;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.privacy.PrivacyManager;
 
@@ -43,16 +44,16 @@ public class SparkPrivacyList {
     private String _listName   = "";
     private boolean _isActive = false;
     private boolean _isDefault = false;
-    private List<PrivacyItem> _privacyItems = new LinkedList<PrivacyItem>();
+    private List<PrivacyItem> _privacyItems = new LinkedList<>();
     private PrivacyList _myPrivacyList;
-    private final Set<SparkPrivacyItemListener> _listeners = new HashSet<SparkPrivacyItemListener>();
+    private final Set<SparkPrivacyItemListener> _listeners = new HashSet<>();
     /**
      * Action associated with the items, it MUST be filled and will allow or deny
      * the communication by default
      */
 
 
-    public SparkPrivacyList(PrivacyList list)
+    public SparkPrivacyList(PrivacyList list) throws SmackException.NotConnectedException
     {
         _listName = list.toString();
         _myPrivacyList = list;
@@ -62,7 +63,8 @@ public class SparkPrivacyList {
     }
 
     
-    private void loadItems() {
+    private void loadItems() throws SmackException.NotConnectedException
+    {
        List<PrivacyItem> itemList = _myPrivacyList.getItems();
        
        for (PrivacyItem item: itemList)
@@ -80,7 +82,7 @@ public class SparkPrivacyList {
      *
      * @return
      */
-    private int getMaxItemOrder() {
+    private long getMaxItemOrder() {
         if(getLastItem() != null) {
             return getLastItem().getOrder();
         }
@@ -105,7 +107,7 @@ public class SparkPrivacyList {
      * @return last PrivacyItem ordered by Item order
      */
     public PrivacyItem getLastItem() {
-        int order = 0;
+        long order = 0;
         PrivacyItem item = null;
         for (PrivacyItem privacyItem : _privacyItems) {
             if ( order < privacyItem.getOrder() ) {
@@ -121,14 +123,13 @@ public class SparkPrivacyList {
      * 
      * @return
      */
-    public int getNewItemOrder() {
+    public long getNewItemOrder() {
         return (getMaxItemOrder()+1);
     }
 
     /**
      * Search privancyItem using Type & value
      * 
-     * @param type type of privacy item
      * @param value value of item
      * @return privacyItem or null if Item not found
      */
@@ -167,7 +168,7 @@ public class SparkPrivacyList {
      * @return privacyItem id of item into PrivacyItems or -1 on Item not found
      */
     public ArrayList<PrivacyItem> searchPrivacyItems(PrivacyItem.Type type, String value) {
-        ArrayList<PrivacyItem> items = new ArrayList<PrivacyItem>();
+        ArrayList<PrivacyItem> items = new ArrayList<>();
         for (PrivacyItem privacyItem : getPrivacyItems()) {
             if ( privacyItem.getValue().equalsIgnoreCase(value) && privacyItem.getType() == type ) {
                 items.add(privacyItem);
@@ -177,22 +178,22 @@ public class SparkPrivacyList {
     }
 
     
-    public void addItem (PrivacyItem item)
+    public void addItem (PrivacyItem item) throws SmackException.NotConnectedException
     {
         _privacyItems.add(item);
         fireItemAdded(item);
     }
 
     
-    public void removeItem(PrivacyItem item)
+    public void removeItem(PrivacyItem item) throws SmackException.NotConnectedException
     {
         _privacyItems.remove(item);
         fireItemRemoved(item);
     }
     
-    public void removeItem(String name)
+    public void removeItem(String name) throws SmackException.NotConnectedException
     {
-        List<PrivacyItem> tempList = new ArrayList<PrivacyItem>(_privacyItems);
+        List<PrivacyItem> tempList = new ArrayList<>( _privacyItems );
         for (PrivacyItem item: tempList)
         {
             if (item.getValue().equals(name))
@@ -216,7 +217,7 @@ public class SparkPrivacyList {
      * @return list items
      */
     public ArrayList<PrivacyItem> getPrivacyItems() {
-        return new ArrayList<PrivacyItem>(_privacyItems);
+        return new ArrayList<>( _privacyItems );
     }
 
 
@@ -266,12 +267,12 @@ public class SparkPrivacyList {
      */
     public void save() {
         try {
-            PrivacyItem item = new PrivacyItem(null,true,999999);
+            PrivacyItem item = new PrivacyItem(true,999999);
            _privacyItems.add(item);
             PrivacyManager.getInstance().getPrivacyListManager().updatePrivacyList(getListName(), _privacyItems);
             PrivacyManager.getInstance().getPrivacyListManager().getPrivacyList(_listName).getItems().remove(item);
             _privacyItems.remove(item);
-        } catch (XMPPException e) {
+        } catch (XMPPException | SmackException e) {
             Log.warning("Could not save PrivacyList "+_listName);
             e.printStackTrace();
         }
@@ -291,7 +292,8 @@ public class SparkPrivacyList {
      *
      * @param item user was added into blockList
      */
-    private void fireItemAdded(PrivacyItem item) {
+    private void fireItemAdded(PrivacyItem item) throws SmackException.NotConnectedException
+    {
         for (SparkPrivacyItemListener listener :_listeners) {
             listener.itemAdded(item, _listName);
         }
@@ -301,7 +303,8 @@ public class SparkPrivacyList {
      *
      * @param item user removed from blackList
      */
-    private void fireItemRemoved(PrivacyItem item) {
+    private void fireItemRemoved(PrivacyItem item) throws SmackException.NotConnectedException
+    {
         for (SparkPrivacyItemListener listener : _listeners) {
             listener.itemRemoved(item, _listName);
         }

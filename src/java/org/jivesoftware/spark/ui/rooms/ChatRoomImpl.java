@@ -41,25 +41,25 @@ import javax.swing.event.DocumentEvent;
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.smack.Chat;
-import org.jivesoftware.smack.Connection;
-import org.jivesoftware.smack.Roster;
-import org.jivesoftware.smack.RosterEntry;
+import org.jivesoftware.smack.SmackException;
+import org.jivesoftware.smack.chat.Chat;
+import org.jivesoftware.smack.XMPPConnection;
+import org.jivesoftware.smack.packet.*;
+import org.jivesoftware.smack.roster.Roster;
+import org.jivesoftware.smack.roster.RosterEntry;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.filter.AndFilter;
 import org.jivesoftware.smack.filter.FromMatchesFilter;
 import org.jivesoftware.smack.filter.OrFilter;
-import org.jivesoftware.smack.filter.PacketFilter;
-import org.jivesoftware.smack.filter.PacketTypeFilter;
-import org.jivesoftware.smack.packet.Message;
-import org.jivesoftware.smack.packet.Packet;
-import org.jivesoftware.smack.packet.Presence;
-import org.jivesoftware.smack.packet.StreamError;
+import org.jivesoftware.smack.filter.StanzaFilter;
+import org.jivesoftware.smack.filter.StanzaTypeFilter;
 import org.jivesoftware.smack.util.StringUtils;
-import org.jivesoftware.smackx.ChatState;
-import org.jivesoftware.smackx.ChatStateManager;
-import org.jivesoftware.smackx.MessageEventManager;
-import org.jivesoftware.smackx.packet.MessageEvent;
+import org.jivesoftware.smackx.chatstates.ChatState;
+import org.jivesoftware.smackx.chatstates.ChatStateManager;
+import org.jivesoftware.smackx.chatstates.packet.ChatStateExtension;
+import org.jivesoftware.smackx.xevent.MessageEventManager;
+import org.jivesoftware.smackx.jiveproperties.packet.JivePropertiesExtension;
+import org.jivesoftware.smackx.xevent.packet.MessageEvent;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.PresenceManager;
 import org.jivesoftware.spark.SparkManager;
@@ -72,7 +72,6 @@ import org.jivesoftware.spark.ui.MessageEventListener;
 import org.jivesoftware.spark.ui.RosterDialog;
 import org.jivesoftware.spark.ui.VCardPanel;
 import org.jivesoftware.spark.util.ModelUtil;
-import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.transcripts.ChatTranscript;
 import org.jivesoftware.sparkimpl.plugin.transcripts.ChatTranscripts;
@@ -80,6 +79,7 @@ import org.jivesoftware.sparkimpl.plugin.transcripts.HistoryMessage;
 import org.jivesoftware.sparkimpl.profile.VCardManager;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+import org.jxmpp.util.XmppStringUtils;
 
 /**
  * This is the Person to Person implementation of <code>ChatRoom</code>
@@ -87,7 +87,7 @@ import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
  */
 public class ChatRoomImpl extends ChatRoom {
     private static final long serialVersionUID = 6163762803773980872L;
-    private List<MessageEventListener> messageEventListeners = new ArrayList<MessageEventListener>();
+    private List<MessageEventListener> messageEventListeners = new ArrayList<>();
     private String roomname;
     private Icon tabIcon;
     private String roomTitle;
@@ -103,15 +103,6 @@ public class ChatRoomImpl extends ChatRoom {
 
     private Roster roster;
 
-    private long startNotificationSendingTime;
-    private boolean sendComposingNotification = true;
-    private boolean sendPausingNotification = false;
-    private boolean sendInactiveNotification = false;
-    private boolean sendGoneNotification = false;
-    private ChatState lastNotificationSent = null;
-
-    private TimerTask typingTimerTask;
-    private boolean sendChatStateNotification = false;
     private String threadID;
 
     private long lastActivity;
@@ -123,10 +114,6 @@ public class ChatRoomImpl extends ChatRoom {
 
     private ChatRoomButton addToRosterButton;
     private VCardPanel vcardPanel;
-    
-    private long pauseTimePeriod = 2000;
-    private long inactiveTimePeriod = 120000;
-    private long goneTimePeriod = 600000;
     
     private JComponent chatStatePanel;    
 
@@ -150,12 +137,12 @@ public class ChatRoomImpl extends ChatRoom {
         // Loads the current history for this user.
         loadHistory();
 
-        // Register PacketListeners
-        PacketFilter fromFilter = new FromMatchesFilter(participantJID);
-        PacketFilter orFilter = new OrFilter(new PacketTypeFilter(Presence.class), new PacketTypeFilter(Message.class));
-        PacketFilter andFilter = new AndFilter(orFilter, fromFilter);
+        // Register StanzaListeners
+        StanzaFilter fromFilter = new FromMatchesFilter(participantJID, true);
+        StanzaFilter orFilter = new OrFilter(new StanzaTypeFilter(Presence.class), new StanzaTypeFilter(Message.class));
+        StanzaFilter andFilter = new AndFilter(orFilter, fromFilter);
 
-        SparkManager.getConnection().addPacketListener(this, andFilter);
+        SparkManager.getConnection().addSyncStanzaListener(this, andFilter);
 
         // The roomname will be the participantJID
         this.roomname = participantJID;
@@ -173,7 +160,7 @@ public class ChatRoomImpl extends ChatRoom {
 
         presence = PresenceManager.getPresence(participantJID);
 
-        roster = SparkManager.getConnection().getRoster();
+        roster = Roster.getInstanceFor( SparkManager.getConnection() );
 
         RosterEntry entry = roster.getEntry(participantJID);
 
@@ -191,7 +178,7 @@ public class ChatRoomImpl extends ChatRoom {
 
         // If the user is not in the roster, then allow user to add them.
         addToRosterButton = new ChatRoomButton("", SparkRes.getImageIcon(SparkRes.ADD_IMAGE_24x24));
-        if (entry == null && !StringUtils.parseResource(participantJID).equals(participantNickname)) {
+        if (entry == null && !XmppStringUtils.parseResource(participantJID).equals(participantNickname)) {
             addToRosterButton.setToolTipText(Res.getString("message.add.this.user.to.your.roster"));
             if(!Default.getBoolean(Default.ADD_CONTACT_DISABLED)) {
             	addChatRoomButton(addToRosterButton);
@@ -200,86 +187,12 @@ public class ChatRoomImpl extends ChatRoom {
         }
 
         // If this is a private chat from a group chat room, do not show toolbar.
-        if (StringUtils.parseResource(participantJID).equals(participantNickname)) {
+        if (XmppStringUtils.parseResource(participantJID).equals(participantNickname)) {
             getToolBar().setVisible(false);
         }
 
-        createChatStateTimerTask();
-        
+
         lastActivity = System.currentTimeMillis();
-        getChatInputEditor().addFocusListener(new ChatStateFocusListener());
-    }
-    
-    protected void createChatStateTimerTask() {
-    	typingTimerTask = new TimerTask() {
-            public void run() {                
-                if (!sendChatStateNotification) {
-                    return;
-                }
-                long now = System.currentTimeMillis();
-                long time = now - startNotificationSendingTime;
-                if (inBetween(time, pauseTimePeriod, inactiveTimePeriod)) {
-                	if (sendPausingNotification) {
-                		// send cancel
-                		//SparkManager.getMessageEventManager().sendCancelledNotification(getParticipantJID(), threadID);
-                		sendChatState(ChatState.paused);
-                		sendPausingNotification = false;
-                		sendComposingNotification = true;
-                	}
-                } else if (inBetween(time, inactiveTimePeriod, goneTimePeriod)) {
-                	if(sendInactiveNotification) {
-                		sendChatState(ChatState.inactive);
-                		sendInactiveNotification = false;
-                	}
-                } else if (time > goneTimePeriod) {
-                	if (sendGoneNotification) {
-                		sendChatState(ChatState.gone);
-                		sendGoneNotification = false;
-                	}
-                }                
-            }
-        };
-        TaskEngine.getInstance().scheduleAtFixedRate(typingTimerTask, pauseTimePeriod, pauseTimePeriod);      
-    }
-    
-    private boolean inBetween(long time, long lowLimit, long highLimit) {
-    	return lowLimit < time && time < highLimit;
-    }    
-        
-    public void activateChatStateNotificationSystem() {
-    	startNotificationSendingTime = System.currentTimeMillis();
-    	sendInactiveNotification = true;    	
-    	sendGoneNotification = true;
-    	sendPausingNotification = false;
-    	sendComposingNotification = true;
-    	if (lastNotificationSent == null || !lastNotificationSent.equals(ChatState.active)) {
-    		sendChatState(ChatState.active);
-    	}
-    }
-      
-    public void inactivateChatStateNotificationSystem() {
-    	startNotificationSendingTime = System.currentTimeMillis();
-    	sendInactiveNotification = false;    	
-    	sendGoneNotification = true;
-    	sendPausingNotification = false;
-    	sendComposingNotification = false;
-    	if (lastNotificationSent != null && !lastNotificationSent.equals(ChatState.inactive) && !lastNotificationSent.equals(ChatState.gone)) {
-    		sendChatState(ChatState.inactive);
-    	}
-    }    
-    
-    private void sendChatState(ChatState state) {
-    	Connection connection = SparkManager.getConnection();
-    	boolean connected = connection.isConnected();
-		if (connected) {
-			Chat chat = connection.getChatManager().createChat(getParticipantJID(), null);
-			try {
-				ChatStateManager.getInstance(connection).setCurrentState(state, chat);
-				lastNotificationSent = state;
-			} catch (XMPPException e) {
-				Log.error("Cannot send " + state + " chat notification");
-			}
-		}
     }
 
     public void closeChatRoom() {
@@ -292,16 +205,10 @@ public class ChatRoomImpl extends ChatRoom {
 
         removeListeners();
 
-        sendChatState(ChatState.gone);
-        sendGoneNotification = false;
-
         SparkManager.getChatManager().removeChat(this);
 
-        SparkManager.getConnection().removePacketListener(this);
-        if (typingTimerTask != null) {
-            TaskEngine.getInstance().cancelScheduledTask(typingTimerTask);
-            typingTimerTask = null;
-        }
+        SparkManager.getConnection().removeAsyncStanzaListener(this);
+
         active = false;
         vcardPanel = null;
 
@@ -384,16 +291,17 @@ public class ChatRoomImpl extends ChatRoom {
         // information.
         MessageEventManager.addNotificationsRequests(message, true, false, false, true);
 
+        // Set chat state to 'active'
+        message.addExtension( new ChatStateExtension( ChatState.active ) );
+
         // Send the message that contains the notifications request
         try {
             fireOutgoingMessageSending(message);
-            SparkManager.getConnection().sendPacket(message);
+            SparkManager.getConnection().sendStanza(message);
         }
         catch (Exception ex) {
             Log.error("Error sending message", ex);
         }
-    	sendChatStateNotification = true;
-        activateChatStateNotificationSystem();         
     }
 
     public String getRoomname() {
@@ -462,85 +370,84 @@ public class ChatRoomImpl extends ChatRoom {
     /**
      * Process incoming packets.
      *
-     * @param packet - the packet to process
+     * @param stanza - the packet to process
      */
-    public void processPacket(final Packet packet) {
-        final Runnable runnable = new Runnable() {
-            public void run() {
-                if (packet instanceof Presence) {
-                	
-                	Presence.Type oldType = presence.getType();
-                	
-                    presence = (Presence)packet;
+    public void processPacket(final Stanza stanza) {
+        final Runnable runnable = () -> {
+            if (stanza instanceof Presence) {
 
-                    final Presence presence = (Presence)packet;
+                Presence.Type oldType = presence.getType();
 
-                    ContactList list = SparkManager.getWorkspace().getContactList();
-                    ContactItem contactItem = list.getContactItemByJID(getParticipantJID());
+                presence = (Presence)stanza;
 
-                    String time = DateFormat.getTimeInstance(DateFormat.SHORT).format(new Date());
+                final Presence presence1 = (Presence)stanza;
 
-                    if (presence.getType() == Presence.Type.unavailable && contactItem != null) {
-                        getTranscriptWindow().insertNotificationMessage("*** " + Res.getString("message.went.offline", participantNickname, time), ChatManager.NOTIFICATION_COLOR);
+                ContactList list = SparkManager.getWorkspace().getContactList();
+                ContactItem contactItem = list.getContactItemByJID(getParticipantJID());
+
+                String time = DateFormat.getTimeInstance(DateFormat.SHORT).format(new Date());
+
+                if ( presence1.getType() == Presence.Type.unavailable && contactItem != null) {
+                    getTranscriptWindow().insertNotificationMessage("*** " + Res.getString("message.went.offline", participantNickname, time), ChatManager.NOTIFICATION_COLOR);
+                }
+                else if (oldType == Presence.Type.unavailable && presence1.getType() == Presence.Type.available) {
+                    getTranscriptWindow().insertNotificationMessage("*** " + Res.getString("message.came.online", participantNickname, time), ChatManager.NOTIFICATION_COLOR);
+                }
+            }
+            else if (stanza instanceof Message) {
+                lastActivity = System.currentTimeMillis();
+
+
+                // Do something with the incoming packet here.
+                final Message message = (Message)stanza;
+                fireReceivingIncomingMessage(message);
+                if (message.getError() != null) {
+                    if (message.getError().getCondition() == XMPPError.Condition.item_not_found) {
+                        // Check to see if the user is online to recieve this message.
+                        RosterEntry entry = roster.getEntry(participantJID);
+                        if (!presence.isAvailable() && !offlineSent && entry != null) {
+                            getTranscriptWindow().insertNotificationMessage(Res.getString("message.offline.error"), ChatManager.ERROR_COLOR);
+                            offlineSent = true;
+                        }
                     }
-                    else if (oldType == Presence.Type.unavailable && presence.getType() == Presence.Type.available) {
-                        getTranscriptWindow().insertNotificationMessage("*** " + Res.getString("message.came.online", participantNickname, time), ChatManager.NOTIFICATION_COLOR);
+                    return;
+                }
+
+                // Check to see if the user is online to recieve this message.
+                RosterEntry entry = roster.getEntry(participantJID);
+                if (!presence.isAvailable() && !offlineSent && entry != null) {
+                    getTranscriptWindow().insertNotificationMessage(Res.getString("message.offline"), ChatManager.ERROR_COLOR);
+                    offlineSent = true;
+                }
+
+                if (threadID == null) {
+                    threadID = message.getThread();
+                    if (threadID == null) {
+                        threadID = StringUtils.randomString(6);
                     }
                 }
-                else if (packet instanceof Message) {
-                    lastActivity = System.currentTimeMillis();
 
+                final JivePropertiesExtension extension = ((JivePropertiesExtension) message.getExtension( JivePropertiesExtension.NAMESPACE ));
+                final boolean broadcast = extension != null && extension.getProperty( "broadcast" ) != null;
 
-                    // Do something with the incoming packet here.
-                    final Message message = (Message)packet;
-                    fireReceivingIncomingMessage(message);
-                    if (message.getError() != null) {
-                        if (message.getError().getCode() == 404) {
-                            // Check to see if the user is online to recieve this message.
-                            RosterEntry entry = roster.getEntry(participantJID);
-                            if (!presence.isAvailable() && !offlineSent && entry != null) {
-                                getTranscriptWindow().insertNotificationMessage(Res.getString("message.offline.error"), ChatManager.ERROR_COLOR);
-                                offlineSent = true;
-                            }
-                        }
-                        return;
-                    }
+                // If this is a group chat message, discard
+                if (message.getType() == Message.Type.groupchat || broadcast || message.getType() == Message.Type.normal ||
+                        message.getType() == Message.Type.headline) {
+                    return;
+                }
 
-                    // Check to see if the user is online to recieve this message.
-                    RosterEntry entry = roster.getEntry(participantJID);
-                    if (!presence.isAvailable() && !offlineSent && entry != null) {
-                        getTranscriptWindow().insertNotificationMessage(Res.getString("message.offline"), ChatManager.ERROR_COLOR);
-                        offlineSent = true;
-                    }
+                // Do not accept Administrative messages.
+                final String host = SparkManager.getSessionManager().getServerAddress();
+                if (host.equals(message.getFrom())) {
+                    return;
+                }
 
-                    if (threadID == null) {
-                        threadID = message.getThread();
-                        if (threadID == null) {
-                            threadID = StringUtils.randomString(6);
-                        }
-                    }
+                // If the message is not from the current agent. Append to chat.
+                if (message.getBody() != null) {
+                    participantJID = message.getFrom();
+                    insertMessage(message);
 
-                    boolean broadcast = message.getProperty("broadcast") != null;
-
-                    // If this is a group chat message, discard
-                    if (message.getType() == Message.Type.groupchat || broadcast || message.getType() == Message.Type.normal ||
-                            message.getType() == Message.Type.headline) {
-                        return;
-                    }
-
-                    // Do not accept Administrative messages.
-                    final String host = SparkManager.getSessionManager().getServerAddress();
-                    if (host.equals(message.getFrom())) {
-                        return;
-                    }
-
-                    // If the message is not from the current agent. Append to chat.
-                    if (message.getBody() != null) {
-                        participantJID = message.getFrom();
-                        insertMessage(message);
-
-                        showTyping(false);
-                    }
+                    showTyping(false);
                 }
             }
         };
@@ -563,36 +470,15 @@ public class ChatRoomImpl extends ChatRoom {
      * @param e - the DocumentEvent to respond to.
      */
     public void insertUpdate(DocumentEvent e) {
-        checkForText(e);
-
-        if (!sendChatStateNotification) {
-            return;
-        }
-        startNotificationSendingTime = System.currentTimeMillis();
-
-        // If the user pauses for more than two seconds, send out a new notice.
-        if (sendComposingNotification) {
-            try {
-                //SparkManager.getMessageEventManager().sendComposingNotification(getParticipantJID(), threadID);            	
-            	sendChatState(ChatState.composing);
-            	
-                sendPausingNotification = true;
-                sendInactiveNotification = true;
-                sendGoneNotification = true;
-                sendComposingNotification = false;
-            }            
-            catch (Exception exception) {
-                Log.error("Error updating", exception);
-            }
-        }
+        super.insertUpdate( e );
     }
 
     public void insertMessage(Message message) {
         // Debug info
         super.insertMessage(message);
-        MessageEvent messageEvent = (MessageEvent)message.getExtension("x", "jabber:x:event");
+        MessageEvent messageEvent = message.getExtension("x", "jabber:x:event");
         if (messageEvent != null) {
-            checkEvents(message.getFrom(), message.getPacketID(), messageEvent);
+            checkEvents(message.getFrom(), message.getStanzaId(), messageEvent);
         }
 
         getTranscriptWindow().insertMessage(participantNickname, message, ChatManager.FROM_COLOR, TRANSPARENT_COLOR);
@@ -613,10 +499,17 @@ public class ChatRoomImpl extends ChatRoom {
             if (messageEvent.isDisplayed()) {
                 event.setDisplayed(true);
             }
-            event.setPacketID(packetID);
+            event.setStanzaId(packetID);
             msg.addExtension(event);
             // Send the packet
-            SparkManager.getConnection().sendPacket(msg);
+            try
+            {
+                SparkManager.getConnection().sendStanza(msg);
+            }
+            catch ( SmackException.NotConnectedException e )
+            {
+                Log.warning( "Unable to send message to " + msg.getTo(), e );
+            }
         }
     }
 
@@ -633,13 +526,13 @@ public class ChatRoomImpl extends ChatRoom {
     }
 
     public void fireOutgoingMessageSending(Message message) {
-        for (MessageEventListener messageEventListener : new ArrayList<MessageEventListener>(messageEventListeners)) {
+        for (MessageEventListener messageEventListener : new ArrayList<>( messageEventListeners )) {
             messageEventListener.sendingMessage(message);
         }
     }
 
     public void fireReceivingIncomingMessage(Message message) {
-        for (MessageEventListener messageEventListener : new ArrayList<MessageEventListener>(messageEventListeners)) {
+        for (MessageEventListener messageEventListener : new ArrayList<>( messageEventListeners )) {
             messageEventListener.receivingMessage(message);
         }
     }
@@ -667,7 +560,7 @@ public class ChatRoomImpl extends ChatRoom {
     /**
      * The last time this chat room sent or received a message.
      *
-     * @return the last time this chat room sent or receieved a message.
+     * @return the last time this chat room sent or receieved a message.sendChatState
      */
     public long getLastActivity() {
         return lastActivity;
@@ -682,10 +575,18 @@ public class ChatRoomImpl extends ChatRoom {
         return presence;
     }
 
-    public void setSendChatStateNotification(boolean isSendChatStateNotification) {
-        this.sendChatStateNotification = isSendChatStateNotification;
+
+    @Override
+    public void connected( XMPPConnection xmppConnection )
+    {
+
     }
 
+    @Override
+    public void authenticated( XMPPConnection xmppConnection, boolean b )
+    {
+
+    }
 
     public void connectionClosed() {
         handleDisconnect();
@@ -699,13 +600,9 @@ public class ChatRoomImpl extends ChatRoom {
 
         String message = Res.getString("message.disconnected.error");
 
-        if (ex instanceof XMPPException) {
-            XMPPException xmppEx = (XMPPException)ex;
-            StreamError error = xmppEx.getStreamError();
-            String reason = error.getCode();
-            if ("conflict".equals(reason)) {
-                message = Res.getString("message.disconnected.conflict.error");
-            }
+        if (ex instanceof XMPPException.StreamErrorException && ((XMPPException.StreamErrorException) ex).getStreamError().getCondition() == StreamError.Condition.conflict )
+        {
+            message = Res.getString("message.disconnected.conflict.error");
         }
 
         getTranscriptWindow().insertNotificationMessage(message, ChatManager.ERROR_COLOR);
@@ -752,7 +649,7 @@ public class ChatRoomImpl extends ChatRoom {
             String nickname = SparkManager.getUserManager().getUserNicknameFromJID(message.getFrom());
             String messageBody = message.getBody();
             if (nickname.equals(message.getFrom())) {
-                String otherJID = StringUtils.parseBareAddress(message.getFrom());
+                String otherJID = XmppStringUtils.parseBareJid(message.getFrom());
                 String myJID = SparkManager.getSessionManager().getBareAddress();
 
                 if (otherJID.equals(myJID)) {
@@ -765,7 +662,7 @@ public class ChatRoomImpl extends ChatRoom {
                     }
                     catch(Exception e)
                     {
-                        nickname = StringUtils.parseName(nickname);
+                        nickname = XmppStringUtils.parseLocalpart(nickname);
                     }
                 }
             }
@@ -800,7 +697,7 @@ public class ChatRoomImpl extends ChatRoom {
         }
         else if (e.getSource() == addToRosterButton) {
             RosterDialog rosterDialog = new RosterDialog();
-            rosterDialog.setDefaultJID(StringUtils.parseBareAddress(participantJID));
+            rosterDialog.setDefaultJID(XmppStringUtils.parseBareJid(participantJID));
             rosterDialog.setDefaultNickname(getParticipantNickname());
             rosterDialog.showRosterDialog(SparkManager.getChatManager().getChatContainer().getChatFrame());
         } else {
@@ -808,10 +705,6 @@ public class ChatRoomImpl extends ChatRoom {
         }
     }
 
-	protected TimerTask getTypingTimerTask() {
-		return typingTimerTask;
-	}
-	
     public void notifyChatStateChange(ChatState state) {
     	if (chatStatePanel != null) {
     		getEditorWrapperBar().remove(chatStatePanel);
@@ -821,23 +714,27 @@ public class ChatRoomImpl extends ChatRoom {
     	getEditorWrapperBar().add(chatStatePanel, BorderLayout.SOUTH);
     	getEditorWrapperBar().revalidate();
     	getEditorWrapperBar().repaint();
-    }	
-	
-	private class ChatStateFocusListener extends FocusAdapter {
+    }
 
-		@Override
-		public void focusGained(FocusEvent e) {
-			if(e.getComponent().equals(getChatInputEditor())) {
-				if (sendChatStateNotification) {
-					activateChatStateNotificationSystem();
-				}
-			}
-		}
-		@Override
-		public void focusLost(FocusEvent e) {
-			if(e.getComponent().equals(getChatInputEditor())) {
-				inactivateChatStateNotificationSystem();	
-			}
-		}		
-	}
+    @Override
+    protected void sendChatState(ChatState state) throws SmackException.NotConnectedException
+    {
+        if ( !active )
+        {
+            return;
+        }
+
+        final Message message = new Message();
+        message.setType( Message.Type.chat );
+        message.setTo( participantJID );
+        message.setFrom( SparkManager.getSessionManager().getJID());
+
+        if (threadID == null) {
+            threadID = StringUtils.randomString(6);
+        }
+        message.setThread(threadID);
+        message.addExtension( new ChatStateExtension( state ) );
+
+        SparkManager.getConnection().sendStanza( message );
+    }
 }

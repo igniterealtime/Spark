@@ -20,8 +20,6 @@
 package org.jivesoftware.spark.ui;
 
 import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.TimerTask;
@@ -33,7 +31,9 @@ import javax.swing.SwingUtilities;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.smack.AbstractXMPPConnection;
 import org.jivesoftware.smack.ConnectionListener;
+import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.util.SwingTimerTask;
 import org.jivesoftware.spark.util.TaskEngine;
@@ -101,11 +101,7 @@ public class ReconnectPanelSmall extends ContactGroup implements
 			    .getImageIcon(SparkRes.SMALL_CHECK));
 		    popupmenu.add(reconnect);
 
-		    reconnect.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-			    reconnect();
-			}
-		    });
+		    reconnect.addActionListener( e1 -> reconnect() );
 
 		    popupmenu.show(thiscomp, x, y);
 		}
@@ -138,7 +134,7 @@ public class ReconnectPanelSmall extends ContactGroup implements
     private void reconnect() {
 	try {
 	    if (_closedOnError) {
-		SparkManager.getConnection().connect();
+		((AbstractXMPPConnection) SparkManager.getConnection()).connect();
 	    } else {
 		SparkManager.getMainWindow().logout(false);
 	    }
@@ -152,7 +148,15 @@ public class ReconnectPanelSmall extends ContactGroup implements
 	_reconnectionlabel.setText(s);
     }
 
-    @Override
+	@Override
+	public void connected( XMPPConnection xmppConnection ) {
+	}
+
+	@Override
+	public void authenticated( XMPPConnection xmppConnection, boolean b ) {
+	}
+
+	@Override
     public void connectionClosed() {
     }
 

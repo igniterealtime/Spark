@@ -30,7 +30,7 @@ import java.util.List;
  */
 public class ChatTranscript {
 
-    private List<HistoryMessage> messages = new ArrayList<HistoryMessage>();
+    private List<HistoryMessage> messages = new ArrayList<>();
 
     /**
      * Add a <code>HistoryMessage</code> to users chat transcript.
@@ -78,10 +78,10 @@ public class ChatTranscript {
     	if(text == null || "".equals(text)) {
     		return messages;
     	} else {
-	    	List<HistoryMessage> searchResult = new ArrayList<HistoryMessage>();
+	    	List<HistoryMessage> searchResult = new ArrayList<>();
 	    	for(HistoryMessage message : messages) {
 	    		// ignore keywords' case
-	    		if(message.getBody().toLowerCase().indexOf(text.toLowerCase()) != -1) {
+	    		if( message.getBody().toLowerCase().contains( text.toLowerCase() ) ) {
 	    			searchResult.add(message);
 	    		}
 	    	}

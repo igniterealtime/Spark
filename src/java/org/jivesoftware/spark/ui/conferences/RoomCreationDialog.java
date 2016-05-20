@@ -21,8 +21,10 @@ package org.jivesoftware.spark.ui.conferences;
 
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.resource.Res;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.muc.MultiUserChat;
+import org.jivesoftware.smackx.muc.MultiUserChatManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.TitlePanel;
 import org.jivesoftware.spark.util.ModelUtil;
@@ -136,7 +138,7 @@ public class RoomCreationDialog extends JPanel {
                     if (isValid) {
                         String room = nameField.getText().replaceAll(" ", "_") + "@" + serviceName;
                         try {
-                            MultiUserChat.getRoomInfo(SparkManager.getConnection(), room);
+                            MultiUserChatManager.getInstanceFor( SparkManager.getConnection() ).getRoomInfo( room );
                             //JOptionPane.showMessageDialog(dlg, "Room already exists. Please specify a unique room name.", "Room Exists", JOptionPane.ERROR_MESSAGE);
                             //pane.setValue(JOptionPane.UNINITIALIZED_VALUE);
                             pane.removePropertyChangeListener(this);
@@ -144,7 +146,7 @@ public class RoomCreationDialog extends JPanel {
                             ConferenceUtils.joinConferenceRoom(room, room);
                             return;
                         }
-                        catch (XMPPException e1) {
+                        catch (XMPPException | SmackException e1) {
                             // Nothing to do
                         }
 
@@ -216,7 +218,7 @@ public class RoomCreationDialog extends JPanel {
         String room = roomName.replaceAll(" ", "_") + "@" + serviceName;
 
         // Create a group chat with valid information
-        return new MultiUserChat(SparkManager.getConnection(), room.toLowerCase());
+        return MultiUserChatManager.getInstanceFor( SparkManager.getConnection() ).getMultiUserChat( room.toLowerCase() );
     }
 
 

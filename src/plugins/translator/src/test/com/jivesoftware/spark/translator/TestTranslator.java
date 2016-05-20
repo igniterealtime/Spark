@@ -65,7 +65,7 @@ public class TestTranslator {
             }
 
             Integer id = Integer.valueOf(translationID);
-            TranslatorUtil.TranslationType type = (TranslatorUtil.TranslationType) translationMap.get(id);
+            TranslatorUtil.TranslationType type = translationMap.get(id);
 
             if (type == null) {
                 System.out.println("Not a valid translation type.");
@@ -95,11 +95,13 @@ public class TestTranslator {
 
     private static Map<Integer, TranslationType> initalizeTranslationMap() {
         TranslatorUtil.TranslationType[] types = TranslatorUtil.TranslationType.getTypes();
-        Map<Integer,TranslatorUtil.TranslationType> map = new TreeMap<Integer,TranslatorUtil.TranslationType>(new Comparator<Integer>() {
-            public int compare(Integer i1, Integer i2) {
-                return i1.compareTo(i2);
+        Map<Integer,TranslatorUtil.TranslationType> map = new TreeMap<>( new Comparator<Integer>()
+        {
+            public int compare( Integer i1, Integer i2 )
+            {
+                return i1.compareTo( i2 );
             }
-        });
+        } );
 
         for (int i = 1; i < types.length; i++) {
             map.put(i, types[i]);

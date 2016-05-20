@@ -23,7 +23,6 @@
 
 package com.jtattoo.plaf;
 
-import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import javax.swing.JComponent;
 import javax.swing.plaf.ComponentUI;
@@ -43,12 +42,9 @@ public class BaseSplitPaneUI extends BasicSplitPaneUI {
 
     protected void installListeners() {
         super.installListeners();
-        myPropertyChangeListener = new PropertyChangeListener() {
-
-            public void propertyChange(PropertyChangeEvent evt) {
-                if ("flatMode".equals(evt.getPropertyName()) && evt.getNewValue() instanceof Boolean) {
-                    ((BaseSplitPaneDivider)getDivider()).setFlatMode(((Boolean)evt.getNewValue()).booleanValue());
-                }
+        myPropertyChangeListener = evt -> {
+            if ("flatMode".equals(evt.getPropertyName()) && evt.getNewValue() instanceof Boolean) {
+                ((BaseSplitPaneDivider)getDivider()).setFlatMode(((Boolean)evt.getNewValue()).booleanValue());
             }
         };
         getSplitPane().addPropertyChangeListener(myPropertyChangeListener);

@@ -25,7 +25,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.JOptionPane;
@@ -33,19 +32,21 @@ import javax.swing.UIManager;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Presence;
-import org.jivesoftware.smack.util.StringUtils;
-import org.jivesoftware.smackx.Form;
-import org.jivesoftware.smackx.FormField;
-import org.jivesoftware.smackx.ServiceDiscoveryManager;
-import org.jivesoftware.smackx.bookmark.BookmarkManager;
-import org.jivesoftware.smackx.bookmark.BookmarkedConference;
+import org.jivesoftware.smack.packet.XMPPError;
+import org.jivesoftware.smackx.muc.MultiUserChatManager;
+import org.jivesoftware.smackx.xdata.Form;
+import org.jivesoftware.smackx.xdata.FormField;
+import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
+import org.jivesoftware.smackx.bookmarks.BookmarkManager;
+import org.jivesoftware.smackx.bookmarks.BookmarkedConference;
 import org.jivesoftware.smackx.muc.HostedRoom;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.muc.RoomInfo;
-import org.jivesoftware.smackx.packet.DataForm;
-import org.jivesoftware.smackx.packet.DiscoverInfo;
+import org.jivesoftware.smackx.xdata.packet.DataForm;
+import org.jivesoftware.smackx.disco.packet.DiscoverInfo;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.PresenceManager;
 import org.jivesoftware.spark.SparkManager;
@@ -59,6 +60,7 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.privacy.PrivacyManager;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+import org.jxmpp.util.XmppStringUtils;
 
 /**
  * ConferenceUtils allow for basic joining and inviting of users.
@@ -77,7 +79,7 @@ public class ConferenceUtils {
      * @throws Exception if an error occured during fetch.
      */
     public static Collection<HostedRoom> getRoomList(String serviceName) throws Exception {
-        return MultiUserChat.getHostedRooms(SparkManager.getConnection(), serviceName);
+        return MultiUserChatManager.getInstanceFor( SparkManager.getConnection() ).getHostedRooms( serviceName );
     }
 
     /**
@@ -87,8 +89,8 @@ public class ConferenceUtils {
      * @return the number of occupants in the room if available.
      * @throws XMPPException thrown if an error occured during retrieval of the information.
      */
-    public static int getNumberOfOccupants(String roomJID) throws XMPPException {
-        final RoomInfo roomInfo = MultiUserChat.getRoomInfo(SparkManager.getConnection(), roomJID);
+    public static int getNumberOfOccupants(String roomJID) throws SmackException, XMPPException {
+        final RoomInfo roomInfo = MultiUserChatManager.getInstanceFor( SparkManager.getConnection() ).getRoomInfo( roomJID );
         return roomInfo.getOccupantsCount();
     }
 
@@ -104,22 +106,18 @@ public class ConferenceUtils {
 
         final DateFormat dateFormatter = new SimpleDateFormat("yyyyMMdd'T'HH:mm:ss");
         DiscoverInfo infoResult = discoManager.discoverInfo(roomJID);
-        DataForm dataForm = (DataForm)infoResult.getExtension("x", "jabber:x:data");
+        DataForm dataForm = infoResult.getExtension("x", "jabber:x:data");
         if (dataForm == null) {
             return "Not available";
         }
-        Iterator<FormField> fieldIter = dataForm.getFields();
         String creationDate = "";
-        while (fieldIter.hasNext()) {
-            FormField field = fieldIter.next();
+        for ( final FormField field : dataForm.getFields() ) {
             String label = field.getLabel();
 
 
             if (label != null && "Creation date".equalsIgnoreCase(label)) {
-                Iterator<String> valueIterator = field.getValues();
-                while (valueIterator.hasNext()) {
-                    Object oo = valueIterator.next();
-                    creationDate = "" + oo;
+                for ( String value : field.getValues() ) {
+                    creationDate = value;
                     Date date = dateFormatter.parse(creationDate);
                     creationDate = DateFormat.getDateTimeInstance(DateFormat.FULL,DateFormat.MEDIUM).format(date);
                 }
@@ -144,7 +142,7 @@ public class ConferenceUtils {
              
         LocalPreferences pref = SettingsManager.getRelodLocalPreferences();
 
-        final MultiUserChat groupChat = new MultiUserChat(SparkManager.getConnection(), roomJID);
+        final MultiUserChat groupChat = MultiUserChatManager.getInstanceFor( SparkManager.getConnection() ).getMultiUserChat( roomJID );
         final String nickname = pref.getNickname().trim();
 
         // Check if room already exists. If so, join room again.
@@ -189,7 +187,7 @@ public class ConferenceUtils {
         
 
 
-        final List<String> errors = new ArrayList<String>();
+        final List<String> errors = new ArrayList<>();
         final String userPassword = password;
        
         final SwingWorker startChat = new SwingWorker() {
@@ -207,7 +205,7 @@ public class ConferenceUtils {
                             try {
                             	if (!confirmToRevealVisibility())
                             		return null;
-                            	
+
                                 if (ModelUtil.hasLength(userPassword)) {
                                     groupChat.join(joinName, userPassword);
                                 }
@@ -216,28 +214,17 @@ public class ConferenceUtils {
                                 }
                                 break;
                             }
-                            catch (XMPPException ex) {
-                                int code = 0;
-                                if (ex.getXMPPError() != null) {
-                                    code = ex.getXMPPError().getCode();
+                            catch (XMPPException | SmackException ex) {
+                                XMPPError error = null;
+                                if ( ex instanceof XMPPException.XMPPErrorException) {
+                                    error = (( XMPPException.XMPPErrorException ) ex).getXMPPError();
                                 }
 
-                                if (code == 0) {
-                                    errors.add("No response from server.");
-                                }
-                                else if (code == 401) {
-                                    errors.add("The password did not match the rooms password.");
-                                }
-                                else if (code == 403) {
-                                    errors.add("You have been banned from this room.");
-                                }
-                                else if (code == 404) {
-                                    errors.add("The room you are trying to enter does not exist.");
-                                }
-                                else if (code == 407) {
-                                    errors.add("You are not a member of this room.\nThis room requires you to be a member to join.");
-                                }
-                                else if (code != 409) {
+                                final String errorText = ConferenceUtils.getReason( error );
+
+                                errors.add( errorText );
+                                if ( error != null && error.getCondition() != XMPPError.Condition.conflict )
+                                {
                                     break;
                                 }
                             }
@@ -272,12 +259,20 @@ public class ConferenceUtils {
         startChat.start();
     }
 
-    private static void invite(MultiUserChat groupChat, GroupChatRoom room, Collection<String> jids, String message) {
+    private static void invite(MultiUserChat groupChat, GroupChatRoom room, Collection<String> jids, String message)
+    {
         if (jids != null && message != null) {
             for (String jid : jids) {
-                groupChat.invite(jid, message);
-                room.getTranscriptWindow().insertNotificationMessage(
-                        Res.getString("message.waiting.for.user.to.join", jid), ChatManager.NOTIFICATION_COLOR);
+                try
+                {
+                    groupChat.invite(jid, message);
+                    room.getTranscriptWindow().insertNotificationMessage(
+                            Res.getString("message.waiting.for.user.to.join", jid), ChatManager.NOTIFICATION_COLOR);
+                }
+                catch ( SmackException.NotConnectedException e )
+                {
+                    Log.warning( "Unable to invite " + jid + " to " + room, e );
+                }
             }
         }
     }
@@ -304,7 +299,7 @@ public class ConferenceUtils {
      * @return a List of errors, if any.
      */
     public static List<String> joinRoom(MultiUserChat groupChat, String nickname, String password) {
-        final List<String> errors = new ArrayList<String>();
+        final List<String> errors = new ArrayList<>();
         if (!groupChat.isJoined()) {
             int groupChatCounter = 0;
             while (true) {
@@ -324,28 +319,17 @@ public class ConferenceUtils {
                         changePresenceToAvailableIfInvisible();
                         break;
                     }
-                    catch (XMPPException ex) {
-                        int code = 0;
-                        if (ex.getXMPPError() != null) {
-                            code = ex.getXMPPError().getCode();
+                    catch (XMPPException | SmackException ex) {
+                        XMPPError error = null;
+                        if ( ex instanceof XMPPException.XMPPErrorException) {
+                            error = (( XMPPException.XMPPErrorException ) ex).getXMPPError();
                         }
 
-                        if (code == 0) {
-                            errors.add("No response from server.");
-                        }
-                        else if (code == 401) {
-                            errors.add("A Password is required to enter this room.");
-                        }
-                        else if (code == 403) {
-                            errors.add("You have been banned from this room.");
-                        }
-                        else if (code == 404) {
-                            errors.add("The room you are trying to enter does not exist.");
-                        }
-                        else if (code == 407) {
-                            errors.add("You are not a member of this room.\nThis room requires you to be a member to join.");
-                        }
-                        else if (code != 409) {
+                        final String errorText = ConferenceUtils.getReason( error );
+
+                        errors.add( errorText );
+                        if ( error.getCondition() != XMPPError.Condition.conflict )
+                        {
                             break;
                         }
                     }
@@ -357,6 +341,16 @@ public class ConferenceUtils {
         }
 
         return errors;
+    }
+
+    /**
+     * Invites users to an existing room.
+     *
+     * @param chat The room to invite people into.
+     * @param jids a collection of the users to invite.
+     */
+    public static void inviteUsersToRoom(MultiUserChat chat, Collection<String> jids, boolean randomName ) {
+        inviteUsersToRoom( XmppStringUtils.parseDomain( chat.getRoom() ), XmppStringUtils.parseLocalpart( chat.getRoom() ), jids, randomName );
     }
 
     /**
@@ -382,7 +376,8 @@ public class ConferenceUtils {
         inviteDialog.inviteUsersToRoom(serviceName, rooms, roomName, jids);
     }
 
-    public static Collection<BookmarkedConference> retrieveBookmarkedConferences() throws XMPPException {
+    public static Collection<BookmarkedConference> retrieveBookmarkedConferences() throws XMPPException, SmackException
+    {
         BookmarkManager manager = BookmarkManager.getBookmarkManager(SparkManager.getConnection());
         return manager.getBookmarkedConferences();
     }
@@ -402,7 +397,7 @@ public class ConferenceUtils {
             DiscoverInfo info = discover.discoverInfo(roomJID);
             return info.containsFeature("muc_passwordprotected");
         }
-        catch (XMPPException e) {
+        catch (XMPPException | SmackException e) {
             Log.error(e);
         }
         return false;
@@ -417,9 +412,10 @@ public class ConferenceUtils {
      * @param jids        a collection of the user JIDs to invite.
      * @throws XMPPException thrown if an error occurs during room creation.
      */
-    public static void createPrivateConference(String serviceName, String message, String roomName, Collection<String> jids) throws XMPPException {
-        final String roomJID = StringUtils.escapeNode(roomName) + "@" + serviceName;
-        final MultiUserChat multiUserChat = new MultiUserChat(SparkManager.getConnection(), roomJID);
+    public static void createPrivateConference(String serviceName, String message, String roomName, Collection<String> jids) throws SmackException
+    {
+        final String roomJID = XmppStringUtils.escapeLocalpart(roomName) + "@" + serviceName;
+        final MultiUserChat multiUserChat = MultiUserChatManager.getInstanceFor( SparkManager.getConnection() ).getMultiUserChat( roomJID );
         final LocalPreferences pref = SettingsManager.getLocalPreferences();
 
 
@@ -428,8 +424,8 @@ public class ConferenceUtils {
             // Attempt to create room.
             multiUserChat.create(pref.getNickname());
         }
-        catch (XMPPException e) {
-            throw new XMPPException(e);
+        catch (XMPPException | SmackException e) {
+            throw new SmackException(e);
         }
 
         try {
@@ -438,13 +434,13 @@ public class ConferenceUtils {
             submitForm.setAnswer("muc#roomconfig_publicroom", false);
             submitForm.setAnswer("muc#roomconfig_roomname", roomName);
 
-            final List<String> owners = new ArrayList<String>();
+            final List<String> owners = new ArrayList<>();
             owners.add(SparkManager.getSessionManager().getBareAddress());
             submitForm.setAnswer("muc#roomconfig_roomowners", owners);
 
             multiUserChat.sendConfigurationForm(submitForm);
         }
-        catch (XMPPException e1) {
+        catch (XMPPException | SmackException e1) {
             Log.error("Unable to send conference room chat configuration form.", e1);
         }
 
@@ -469,36 +465,35 @@ public class ConferenceUtils {
     /**
      * Returns an explanation for the exception.
      *
-     * @param ex the <code>XMPPException</code>
+     * @param error The XMPP error
      * @return the reason for the exception.
+     * @see <a href="http://xmpp.org/extensions/xep-0045.html#enter-errorcodes">XEP-0045 Error Conditions</a>
      */
-    public static String getReason(XMPPException ex) {
-        String reason = "";
-        int code = 0;
-        if (ex.getXMPPError() != null) {
-            code = ex.getXMPPError().getCode();
+    public static String getReason(XMPPError error) {
+        if (error == null) {
+            return "No response from server.";
         }
 
-        if (code == 0) {
-            reason = "No response from server.";
-        }
-        else if (code == 401) {
-            reason = "The password did not match the room's password.";
-        }
-        else if (code == 403) {
-            reason = "You have been banned from this room.";
-        }
-        else if (code == 404) {
-            reason = "The room you are trying to enter does not exist.";
-        }
-        else if (code == 405) {
-            reason = "You do not have permission to create a room.";
-        }
-        else if (code == 407) {
-            reason = "You are not a member of this room.\nThis room requires you to be a member to join.";
+        switch ( error.getCondition() )
+        {
+            case conflict:
+                return "Your desired nickname is in use or reserved by someone else.";
+            case forbidden:
+                return "You have been banned from this room.";
+            case item_not_found:
+                return "The room you are trying to enter does not exist.";
+            case not_acceptable:
+                return "You must use your reserved room nick.";
+            case not_allowed:
+                return "You do not have permission to create a room.";
+            case not_authorized:
+                return "The password did not match the room's password.";
+            case registration_required:
+                return "You are not a member of this room.\nThis room requires you to be a member to join.";
+            default:
+                return "An error has occurred: " + error.getConditionText();
         }
 
-        return reason;
     }
 
     /**
@@ -531,7 +526,7 @@ public class ConferenceUtils {
             // Nothing to do
         }
 
-        final MultiUserChat groupChat = new MultiUserChat(SparkManager.getConnection(), roomJID);
+        final MultiUserChat groupChat = MultiUserChatManager.getInstanceFor( SparkManager.getConnection() ).getMultiUserChat( roomJID );
 
 
         final GroupChatRoom room = UIComponentRegistry.createGroupChatRoom(groupChat);
@@ -546,7 +541,7 @@ public class ConferenceUtils {
         }
 
 
-        final List<String> errors = new ArrayList<String>();
+        final List<String> errors = new ArrayList<>();
         final String userPassword = password;
 
 
@@ -562,7 +557,7 @@ public class ConferenceUtils {
                     try {
                     	if (!confirmToRevealVisibility())
                     		return null;
-                    	
+
                         if (ModelUtil.hasLength(userPassword)) {
                             groupChat.join(joinName, userPassword);
                         }
@@ -571,28 +566,17 @@ public class ConferenceUtils {
                         }
                         break;
                     }
-                    catch (XMPPException ex) {
-                        int code = 0;
-                        if (ex.getXMPPError() != null) {
-                            code = ex.getXMPPError().getCode();
+                    catch (XMPPException | SmackException ex) {
+                        XMPPError error = null;
+                        if ( ex instanceof XMPPException.XMPPErrorException) {
+                            error = (( XMPPException.XMPPErrorException ) ex).getXMPPError();
                         }
 
-                        if (code == 0) {
-                            errors.add("No response from server.");
-                        }
-                        else if (code == 401) {
-                            errors.add("The password did not match the room's password.");
-                        }
-                        else if (code == 403) {
-                            errors.add("You have been banned from this room.");
-                        }
-                        else if (code == 404) {
-                            errors.add("The room you are trying to enter does not exist.");
-                        }
-                        else if (code == 407) {
-                            errors.add("You are not a member of this room.\nThis room requires you to be a member to join.");
-                        }
-                        else if (code != 409) {
+                        final String errorText = ConferenceUtils.getReason( error );
+
+                        errors.add( errorText );
+                        if ( error != null && error.getCondition() != XMPPError.Condition.conflict )
+                        {
                             break;
                         }
                     }
@@ -628,7 +612,7 @@ public class ConferenceUtils {
         final GroupChatRoom room = UIComponentRegistry.createGroupChatRoom(groupChat);
         room.setTabTitle(tabTitle);
 
-        final List<String> errors = new ArrayList<String>();
+        final List<String> errors = new ArrayList<>();
 
         if (!groupChat.isJoined()) {
             int groupChatCounter = 0;
@@ -651,28 +635,17 @@ public class ConferenceUtils {
                         }
                         break;
                     }
-                    catch (XMPPException ex) {
-                        int code = 0;
-                        if (ex.getXMPPError() != null) {
-                            code = ex.getXMPPError().getCode();
+                    catch (XMPPException | SmackException ex) {
+                        XMPPError error = null;
+                        if ( ex instanceof XMPPException.XMPPErrorException) {
+                            error = (( XMPPException.XMPPErrorException ) ex).getXMPPError();
                         }
 
-                        if (code == 0) {
-                            errors.add("No response from server.");
-                        }
-                        else if (code == 401) {
-                            errors.add("A Password is required to enter this room.");
-                        }
-                        else if (code == 403) {
-                            errors.add("You have been banned from this room.");
-                        }
-                        else if (code == 404) {
-                            errors.add("The room you are trying to enter does not exist.");
-                        }
-                        else if (code == 407) {
-                            errors.add("You are not a member of this room.\nThis room requires you to be a member to join.");
-                        }
-                        else if (code != 409) {
+                        final String errorText = ConferenceUtils.getReason( error );
+
+                        errors.add( errorText );
+                        if ( error != null && error.getCondition() != XMPPError.Condition.conflict )
+                        {
                             break;
                         }
                     }
@@ -701,7 +674,7 @@ public class ConferenceUtils {
 
     }
 
-    final static List<String> unclosableChatRooms = new ArrayList<String>();
+    final static List<String> unclosableChatRooms = new ArrayList<>();
 	public synchronized static void addUnclosableChatRoom(String jid) {
 		unclosableChatRooms.add(jid);
 	}

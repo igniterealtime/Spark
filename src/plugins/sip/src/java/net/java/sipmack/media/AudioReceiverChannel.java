@@ -19,13 +19,16 @@
  */
 package net.java.sipmack.media;
 
-import java.net.InetAddress;
+import org.jitsi.impl.neomedia.device.AudioMediaDeviceImpl;
+import org.jitsi.service.libjitsi.LibJitsi;
+import org.jitsi.service.neomedia.*;
+import org.jitsi.service.neomedia.device.MediaDevice;
+import org.jitsi.service.neomedia.format.MediaFormat;
 
-import javax.media.control.BufferControl;
-import javax.media.rtp.RTPManager;
-import javax.media.rtp.SessionAddress;
-
-import net.java.sipmack.sip.SIPConfig;
+import javax.media.MediaLocator;
+import java.net.DatagramSocket;
+import java.net.InetSocketAddress;
+import java.util.List;
 
 /**
  * An Easy to use Audio Channel implemented using JMF.
@@ -52,8 +55,8 @@ public class AudioReceiverChannel {
     private String remoteIpAddress;
     private int remotePort;
 
-    private RTPManager rtpMgrs[];
-    private AudioReceiver audioReceiver;
+    private MediaLocator inLocator;
+    private MediaStream mediaStream;
 
     private boolean started = false;
 
@@ -66,11 +69,14 @@ public class AudioReceiverChannel {
     public AudioReceiverChannel(String localIpAddress,
                                 int localPort,
                                 String remoteIpAddress,
-                                int remotePort) {
+                                int remotePort,
+                                int remoteRTCPPort) {
+        this.inLocator = inLocator;
         this.localIpAddress = localIpAddress;
         this.localPort = localPort;
         this.remoteIpAddress = remoteIpAddress;
         this.remotePort = remotePort;
+        System.out.println("AudioReceiverChannel");
     }
 
     /**
@@ -79,19 +85,47 @@ public class AudioReceiverChannel {
      * Starts receive also.
      */
     public synchronized String start() {
-        if (started) return null;
-        started = true;
-        String result;
+    	try
+    	{
+            MediaService mediaService = LibJitsi.getMediaService();
 
-        // Create an RTP session to transmit the output of the
-        // processor to the specified IP address and port no.
-        result = createReceiver();
-        if (result != null) {
-            started = false;
-            return result;
-        }
+            MediaDevice device = mediaService.getDefaultDevice(MediaType.AUDIO, MediaUseCase.CALL);
+            List<MediaDevice> devices = mediaService.getDevices(MediaType.AUDIO, MediaUseCase.CALL);
+            for (MediaDevice foundDevice : devices)
+            {
+                if (foundDevice instanceof AudioMediaDeviceImpl)
+                {
+                    AudioMediaDeviceImpl amdi = (AudioMediaDeviceImpl) foundDevice;
+                    if(inLocator == amdi.getCaptureDeviceInfo().getLocator())
+                    {
+                        System.out.println("Test" + inLocator + "-" + amdi.getCaptureDeviceInfo().getLocator());
+                        device = foundDevice;
+                    }
+                }
+                System.out.println(foundDevice.getClass() + "-" +  inLocator);
+            }
 
-        return null;
+            mediaStream = mediaService.createMediaStream(device);
+            mediaStream.setDirection(MediaDirection.RECVONLY);
+            System.out.println("TEST");
+            MediaFormat format = mediaService.getFormatFactory().createMediaFormat(
+                    "PCMA",
+                    8000);
+            mediaStream.setFormat(format);
+            StreamConnector connector = new DefaultStreamConnector(new DatagramSocket(this.localPort),new DatagramSocket(this.localPort + 1));
+            mediaStream.setConnector(connector);
+            mediaStream.setTarget(
+                    new MediaStreamTarget(
+                            new InetSocketAddress(this.remoteIpAddress, this.remotePort),
+                            new InetSocketAddress(this.remoteIpAddress, this.remotePort+1)));
+            mediaStream.setName(MediaType.AUDIO.toString());
+            mediaStream.start();
+    	}
+    	catch (Exception e)
+    	{
+    		e.printStackTrace();
+    	}
+    	return null;
     }
 
     /**
@@ -99,69 +133,8 @@ public class AudioReceiverChannel {
      * Stops the receiver also.
      */
     public void stop() {
-        if (!started) return;
-        synchronized (this) {
-            try {
-                started = false;
-                for (int i = 0; i < rtpMgrs.length; i++) {
-                    rtpMgrs[i].removeReceiveStreamListener(audioReceiver);
-                    rtpMgrs[i].removeSessionListener(audioReceiver);
-                    rtpMgrs[i].removeTargets("Session ended.");
-                    rtpMgrs[i].dispose();
-                    rtpMgrs[i] = null;
-                }
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        System.err.println("RTP Transmission Stopped.");
+        mediaStream.stop();
     }
 
-    /**
-     * Use the RTPManager API to create sessions for each jmf
-     * track of the processor.
-     */
-    private String createReceiver() {
-
-	rtpMgrs = new RTPManager[1];
-	SessionAddress localAddr, destAddr;
-	audioReceiver = new AudioReceiver(this);
-
-	try {
-	    rtpMgrs[0] = RTPManager.newInstance();
-
-	    localAddr = new SessionAddress(
-		    InetAddress.getByName(this.localIpAddress), localPort);
-
-	    destAddr = new SessionAddress(
-		    InetAddress.getByName(this.remoteIpAddress), remotePort);
-
-	    rtpMgrs[0].addReceiveStreamListener(audioReceiver);
-	    rtpMgrs[0].addSessionListener(audioReceiver);
-
-	    BufferControl bc = (BufferControl) rtpMgrs[0]
-		    .getControl("javax.media.control.BufferControl");
-	    if (bc != null) {
-		int bl = 160;
-		bl = SIPConfig.getDefaultBufferLength() != -1 ? SIPConfig
-			.getDefaultBufferLength() : bl;
-
-		bc.setBufferLength(bl);
-	    }
-
-	    rtpMgrs[0].initialize(localAddr);
-
-	    rtpMgrs[0].addTarget(destAddr);
-
-	    System.err.println("Created RTP session at " + localPort);
-
-	} catch (Exception e) {
-	    e.printStackTrace();
-	    return e.getMessage();
-	}
-
-	return null;
-    }
-
+ 
 }

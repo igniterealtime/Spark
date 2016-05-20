@@ -19,14 +19,13 @@
  */
 package org.jivesoftware.sparkimpl.plugin.manager;
 
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smackx.ServiceDiscoveryManager;
-import org.jivesoftware.smackx.packet.DiscoverInfo;
-import org.jivesoftware.smackx.packet.DiscoverItems;
+import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
+import org.jivesoftware.smackx.disco.packet.DiscoverInfo;
+import org.jivesoftware.smackx.disco.packet.DiscoverItems;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.util.log.Log;
-
-import java.util.Iterator;
 
 /**
  * EnterpriseSparkManager is responsible for the detecting of features on the server. This allows for fine-grain control of
@@ -76,9 +75,7 @@ public class Enterprise {
     private void populateFeatureSet() {
         final ServiceDiscoveryManager disco = ServiceDiscoveryManager.getInstanceFor(SparkManager.getConnection());
         final DiscoverItems items = SparkManager.getSessionManager().getDiscoveredItems();
-        Iterator<DiscoverItems.Item> iter = items.getItems();
-        while (iter.hasNext()) {
-            DiscoverItems.Item item = iter.next();
+        for (DiscoverItems.Item item : items.getItems() ) {
             String entity = item.getEntityID();
             if (entity != null) {
                 if (entity.startsWith("manager.")) {
@@ -88,7 +85,7 @@ public class Enterprise {
                     try {
                         featureInfo = disco.discoverInfo(item.getEntityID());
                     }
-                    catch (XMPPException e) {
+                    catch (XMPPException | SmackException e) {
                         Log.error("Error while retrieving feature list for SparkManager.", e);
                     }
 

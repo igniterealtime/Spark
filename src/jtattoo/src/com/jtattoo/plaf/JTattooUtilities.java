@@ -33,14 +33,14 @@ import javax.swing.plaf.basic.BasicGraphicsUtils;
  */
 public class JTattooUtilities {
 
-    private static final boolean isWindows = System.getProperty("os.name").toLowerCase().indexOf("windows") != -1;
-    private static final boolean isOS2 = System.getProperty("os.name").toLowerCase().indexOf("os/2") != -1;
-    private static final boolean isMac = System.getProperty("os.name").toLowerCase().indexOf("mac") != -1;
-    private static final boolean isLinux = System.getProperty("os.name").toLowerCase().indexOf("linux") != -1;
-    private static final boolean isSunOS = System.getProperty("os.name").toLowerCase().indexOf("sunos") != -1;
-    private static final boolean isAIX = System.getProperty("os.name").toLowerCase().indexOf("aix") != -1;
-    private static final boolean isHPUX = System.getProperty("os.name").toLowerCase().indexOf("hpux") != -1;
-    private static final boolean isFreeBSD = System.getProperty("os.name").toLowerCase().indexOf("freebsd") != -1;
+    private static final boolean isWindows = System.getProperty( "os.name" ).toLowerCase().contains( "windows" );
+    private static final boolean isOS2 = System.getProperty( "os.name" ).toLowerCase().contains( "os/2" );
+    private static final boolean isMac = System.getProperty( "os.name" ).toLowerCase().contains( "mac" );
+    private static final boolean isLinux = System.getProperty( "os.name" ).toLowerCase().contains( "linux" );
+    private static final boolean isSunOS = System.getProperty( "os.name" ).toLowerCase().contains( "sunos" );
+    private static final boolean isAIX = System.getProperty( "os.name" ).toLowerCase().contains( "aix" );
+    private static final boolean isHPUX = System.getProperty( "os.name" ).toLowerCase().contains( "hpux" );
+    private static final boolean isFreeBSD = System.getProperty( "os.name" ).toLowerCase().contains( "freebsd" );
     private static final boolean isHiresScreen = Toolkit.getDefaultToolkit().getScreenSize().width > 1280;
     private static Double javaVersion = null;
     private static final String ELLIPSIS = "...";

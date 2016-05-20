@@ -206,17 +206,14 @@ public class BaseRootPaneUI extends BasicRootPaneUI {
             // fixes a problem with netbeans, decorated windows and java 1.5
             // the MetalLookAndFeel seems to have the same problem
             if ((JTattooUtilities.getJavaVersion() >= 1.5) && (JTattooUtilities.getJavaVersion() <= 1.6)) {
-                SwingUtilities.invokeLater(new Runnable() {
-
-                    public void run() {
-                        if (window != null) {
-                            if (window instanceof JFrame) {
-                                JFrame frame = (JFrame) window;
-                                frame.update(frame.getGraphics());
-                            }
+                SwingUtilities.invokeLater( () -> {
+                    if (window != null) {
+                        if (window instanceof JFrame) {
+                            JFrame frame = (JFrame) window;
+                            frame.update(frame.getGraphics());
                         }
                     }
-                });
+                } );
             }
         }
     }

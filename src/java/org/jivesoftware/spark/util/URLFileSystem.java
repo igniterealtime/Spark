@@ -56,7 +56,7 @@ public class URLFileSystem {
     public static String getContents(InputStream is) {
         byte[] buffer = new byte[2048];
         int length;
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         try {
             while ((length = is.read(buffer)) != -1) {
                 sb.append(new String(buffer, 0, length));

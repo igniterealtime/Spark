@@ -99,8 +99,8 @@ public class AeroLookAndFeel extends AbstractLookAndFeel {
         greenProps.setProperty("menuSelectionBackgroundColor", "150 211 176");
         greenProps.setProperty("tabSelectionForegroundColor", "255 255 255");
         
-        String key = null;
-        String value = null;
+        String key;
+        String value;
         Iterator iter = smallFontProps.keySet().iterator();
         while (iter.hasNext()) {
             key = (String)iter.next();

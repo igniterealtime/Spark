@@ -21,8 +21,8 @@ package org.jivesoftware.spark.ui.conferences;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.smack.util.StringUtils;
-import org.jivesoftware.smackx.muc.MultiUserChat;
+import org.jivesoftware.smack.SmackException;
+import org.jivesoftware.smackx.muc.MultiUserChatManager;
 import org.jivesoftware.spark.ChatNotFoundException;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.RolloverButton;
@@ -32,6 +32,7 @@ import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.SwingTimerTask;
 import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.util.log.Log;
+import org.jxmpp.util.XmppStringUtils;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -67,8 +68,6 @@ public class GroupChatInvitationUI extends JPanel implements ActionListener {
     private String inviter;
     private String password;
 
-    private String invitationDateFormat = ((SimpleDateFormat)SimpleDateFormat.getTimeInstance(SimpleDateFormat.MEDIUM)).toPattern();
-
     public GroupChatInvitationUI(String room, String inviter, String password, String reason) {
         setLayout(new GridBagLayout());
 
@@ -80,7 +79,8 @@ public class GroupChatInvitationUI extends JPanel implements ActionListener {
 
         // Build invitation time label.
         final Date now = new Date();
-        final SimpleDateFormat dateFormatter = new SimpleDateFormat(invitationDateFormat);
+        String invitationDateFormat = ( (SimpleDateFormat) SimpleDateFormat.getTimeInstance( SimpleDateFormat.MEDIUM ) ).toPattern();
+        final SimpleDateFormat dateFormatter = new SimpleDateFormat( invitationDateFormat );
         final String invitationTime = dateFormatter.format(now);
 
         // Get users nickname, if there is one.
@@ -143,7 +143,7 @@ public class GroupChatInvitationUI extends JPanel implements ActionListener {
      */
     private void acceptInvitation() {
         setVisible(false);
-        String name = StringUtils.parseName(room);
+        String name = XmppStringUtils.parseLocalpart(room);
         ConferenceUtils.enterRoomOnSameThread(name, room, password);
 
         final TimerTask removeUITask = new SwingTimerTask() {
@@ -159,7 +159,8 @@ public class GroupChatInvitationUI extends JPanel implements ActionListener {
     /**
      * Action taking when a user clicks on the reject button.
      */
-    private void rejectInvitation() {
+    private void rejectInvitation()
+    {
         removeUI();
 
         try {
@@ -175,8 +176,14 @@ public class GroupChatInvitationUI extends JPanel implements ActionListener {
             // Ignore
         }
 
-
-        MultiUserChat.decline(SparkManager.getConnection(), room, inviter, "No thank you");
+        try
+        {
+            MultiUserChatManager.getInstanceFor( SparkManager.getConnection() ).decline( room, inviter, "No thank you");
+        }
+        catch ( SmackException.NotConnectedException e )
+        {
+            Log.warning( "Unable to decline inviation from " + inviter + " to join room " + room, e );
+        }
     }
 
     /**

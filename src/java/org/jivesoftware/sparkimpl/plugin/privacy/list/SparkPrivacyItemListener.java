@@ -5,7 +5,8 @@
 
 package org.jivesoftware.sparkimpl.plugin.privacy.list;
 
-import org.jivesoftware.smack.packet.PrivacyItem;
+import org.jivesoftware.smack.SmackException;
+import org.jivesoftware.smackx.privacy.packet.PrivacyItem;
 
 /**
  *
@@ -16,15 +17,17 @@ public interface SparkPrivacyItemListener {
     /**
      * New Item added into PrivacyList
      *
-     * @param jid privacyItem jid
+     * @param item privacyItem jid
+     * @param listname name of the privacy list.
      */
-    public void itemAdded(PrivacyItem item, String listname);
+    void itemAdded(PrivacyItem item, String listname) throws SmackException.NotConnectedException;
 
     /**
      * Item removed from PrivacyList
-     * 
-     * @param jid privacyItem jid
+     *
+     * @param item privacyItem jid
+     * @param listname name of the privacy list.
      */
-    public void itemRemoved(PrivacyItem item, String listname);
+    void itemRemoved(PrivacyItem item, String listname) throws SmackException.NotConnectedException;
    
 }

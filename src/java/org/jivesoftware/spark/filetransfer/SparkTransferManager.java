@@ -21,7 +21,6 @@ package org.jivesoftware.spark.filetransfer;
 
 import java.awt.AWTException;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Desktop;
 import java.awt.FileDialog;
@@ -34,8 +33,6 @@ import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -48,7 +45,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -66,14 +62,11 @@ import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.smack.ConnectionListener;
-import org.jivesoftware.smack.PacketListener;
-import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.*;
 import org.jivesoftware.smack.filter.AndFilter;
-import org.jivesoftware.smack.filter.FromContainsFilter;
-import org.jivesoftware.smack.filter.PacketTypeFilter;
+import org.jivesoftware.smack.filter.FromMatchesFilter;
+import org.jivesoftware.smack.filter.StanzaTypeFilter;
 import org.jivesoftware.smack.packet.Message;
-import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.filetransfer.FileTransferManager;
@@ -87,11 +80,9 @@ import org.jivesoftware.spark.preference.PreferenceManager;
 import org.jivesoftware.spark.ui.ChatFrame;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ChatRoomButton;
-import org.jivesoftware.spark.ui.ChatRoomClosingListener;
 import org.jivesoftware.spark.ui.ChatRoomListenerAdapter;
 import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.ui.ContactList;
-import org.jivesoftware.spark.ui.FileDropListener;
 import org.jivesoftware.spark.ui.ImageSelectionPanel;
 import org.jivesoftware.spark.ui.TranscriptWindow;
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
@@ -103,6 +94,7 @@ import org.jivesoftware.sparkimpl.plugin.filetransfer.transfer.ui.ReceiveFileTra
 import org.jivesoftware.sparkimpl.plugin.filetransfer.transfer.ui.SendFileTransfer;
 import org.jivesoftware.sparkimpl.plugin.filetransfer.transfer.ui.TransferUtils;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
+import org.jxmpp.util.XmppStringUtils;
 
 /**
  * Responsible for the handling of File Transfer within Spark. You would use the SparkManager
@@ -112,14 +104,14 @@ import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
  */
 public class SparkTransferManager {
 
-    private List<FileTransferListener> listeners = new ArrayList<FileTransferListener>();
+    private List<FileTransferListener> listeners = new ArrayList<>();
     private File defaultDirectory;
 
     private static SparkTransferManager singleton;
     private static final Object LOCK = new Object();
 
     private FileTransferManager transferManager;
-    private Map<String,ArrayList<File>> waitMap = new HashMap<String,ArrayList<File>>();
+    private Map<String,ArrayList<File>> waitMap = new HashMap<>();
     private BufferedImage bufferedImage;
     private ImageSelectionPanel selectionPanel;
     private Robot robot;
@@ -152,6 +144,42 @@ public class SparkTransferManager {
         }
 
         SparkManager.getConnection().addConnectionListener(new ConnectionListener() {
+            @Override
+            public void connected( XMPPConnection xmppConnection )
+            {
+
+            }
+
+            @Override
+            public void authenticated( XMPPConnection xmppConnection, boolean b )
+            {
+                transferManager = FileTransferManager.getInstanceFor( SparkManager.getConnection() );
+
+                final ContactList contactList = SparkManager.getWorkspace().getContactList();
+
+                // Create the listener
+                transferManager.addFileTransferListener( request -> SwingUtilities.invokeLater( () -> handleTransferRequest(request, contactList) ) );
+
+                // Add Send File to Chat Room
+                addSendFileButton();
+
+                contactList.addFileDropListener( ( files, component ) -> {
+                    if (component instanceof ContactItem) {
+                        ContactItem item = (ContactItem)component;
+
+                        ChatRoom chatRoom = null;
+                        for (File file : files) {
+                            chatRoom = sendFile(file, item.getJID());
+                        }
+
+                        if (chatRoom != null) {
+                            SparkManager.getChatManager().getChatContainer().activateChatRoom(chatRoom);
+                        }
+                    }
+                } );
+
+            }
+
             public void connectionClosed() {
             }
 
@@ -163,7 +191,7 @@ public class SparkTransferManager {
 
             public void reconnectionSuccessful() {
                 // Re-create transfer manager.
-                transferManager = new FileTransferManager(SparkManager.getConnection());
+                transferManager = FileTransferManager.getInstanceFor( SparkManager.getConnection() );
             }
 
             public void reconnectionFailed(Exception e) {
@@ -187,47 +215,7 @@ public class SparkTransferManager {
         ResourceUtils.resButton(downloadsMenu, Res.getString("menuitem.view.downloads"));
         actionsMenu.addSeparator();
         actionsMenu.add(downloadsMenu);
-        downloadsMenu.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {        
-   		launchFile(Downloads.getDownloadDirectory());
-            }			
-        });
-
-        // Create the file transfer manager
-        transferManager = new FileTransferManager(SparkManager.getConnection());
-        final ContactList contactList = SparkManager.getWorkspace().getContactList();
-
-        // Create the listener
-        transferManager.addFileTransferListener(new org.jivesoftware.smackx.filetransfer.FileTransferListener() {
-            public void fileTransferRequest(final FileTransferRequest request) {
-                SwingUtilities.invokeLater(new Runnable() {
-                    public void run() {
-                        handleTransferRequest(request, contactList);
-                    }
-                });
-            }
-        });
-
-        // Add Send File to Chat Room
-        addSendFileButton();
-
-
-        contactList.addFileDropListener(new FileDropListener() {
-            public void filesDropped(Collection<File> files, Component component) {
-                if (component instanceof ContactItem) {
-                    ContactItem item = (ContactItem)component;
-
-                    ChatRoom chatRoom = null;
-                    for (File file : files) {
-                        chatRoom = sendFile(file, item.getJID());
-                    }
-
-                    if (chatRoom != null) {
-                        SparkManager.getChatManager().getChatContainer().activateChatRoom(chatRoom);
-                    }
-                }
-            }
-        });
+        downloadsMenu.addActionListener( e -> launchFile(Downloads.getDownloadDirectory()) );
 
         if (defaultDirectory == null) {
             defaultDirectory = new File(System.getProperty("user.home"));
@@ -288,7 +276,7 @@ public class SparkTransferManager {
         }
 
         String requestor = request.getRequestor();
-        String bareJID = StringUtils.parseBareAddress(requestor);
+        String bareJID = XmppStringUtils.parseBareJid(requestor);
         String fileName = request.getFileName();
 
 
@@ -308,11 +296,7 @@ public class SparkTransferManager {
         final ReceiveFileTransfer receivingMessageUI = new ReceiveFileTransfer();
         receivingMessageUI.acceptFileTransfer(request);
 
-        chatRoom.addClosingListener(new ChatRoomClosingListener() {
-            public void closing() {
-                receivingMessageUI.cancelTransfer();
-            }
-        });
+        chatRoom.addClosingListener( () -> receivingMessageUI.cancelTransfer() );
         
         transcriptWindow.addComponent(receivingMessageUI);
 
@@ -492,35 +476,33 @@ public class SparkTransferManager {
     }
 
     private void addPresenceListener() {
-        SparkManager.getConnection().addPacketListener(new PacketListener() {
-            public void processPacket(Packet packet) {
-                Presence presence = (Presence)packet;
-                if (presence.isAvailable()) {
-                    String bareJID = StringUtils.parseBareAddress(presence.getFrom());
+        SparkManager.getConnection().addAsyncStanzaListener( stanza -> {
+            Presence presence = (Presence)stanza;
+            if (presence.isAvailable()) {
+                String bareJID = XmppStringUtils.parseBareJid(presence.getFrom());
 
-                    // Iterate through map.
-                    ArrayList<File> list = waitMap.get(bareJID);
-                    if (list != null) {
-                        // Iterate through list and send.
-                        Iterator<File> iter = list.iterator();
-                        ChatRoom room = null;
-                        while (iter.hasNext()) {
-                            File file = iter.next();
-                            room = sendFile(file, bareJID);
-                        }
-
-                        if (room != null) {
-                            Message message = new Message();
-                            message.setBody(Res.getString("message.sent.offline.files"));
-                            room.sendMessage(message);
-                        }
+                // Iterate through map.
+                ArrayList<File> list = waitMap.get(bareJID);
+                if (list != null) {
+                    // Iterate through list and send.
+                    Iterator<File> iter = list.iterator();
+                    ChatRoom room = null;
+                    while (iter.hasNext()) {
+                        File file = iter.next();
+                        room = sendFile(file, bareJID);
                     }
 
-
-                    waitMap.remove(bareJID);
+                    if (room != null) {
+                        Message message = new Message();
+                        message.setBody(Res.getString("message.sent.offline.files"));
+                        room.sendMessage(message);
+                    }
                 }
+
+
+                waitMap.remove(bareJID);
             }
-        }, new PacketTypeFilter(Presence.class));
+        }, new StanzaTypeFilter(Presence.class));
     }
 
     /**
@@ -557,13 +539,13 @@ public class SparkTransferManager {
 	}
 	
         final ContactList contactList = SparkManager.getWorkspace().getContactList();
-        String bareJID = StringUtils.parseBareAddress(jid);
+        String bareJID = XmppStringUtils.parseBareJid(jid);
         String fullJID = PresenceManager.getFullyQualifiedJID(jid);
 
         if (!PresenceManager.isOnline(jid)) {
             ArrayList<File> list = waitMap.get(jid);
             if (list == null) {
-                list = new ArrayList<File>();
+                list = new ArrayList<>();
             }
 
             list.add(file);
@@ -603,35 +585,31 @@ public class SparkTransferManager {
         try {
             transfer.sendFile(file, "Sending file");
         }
-        catch (XMPPException e) {
+        catch (SmackException e) {
             Log.error(e);
         }
 
         // Add listener to cancel transfer is sending file to user who just went offline.
-        AndFilter presenceFilter = new AndFilter(new PacketTypeFilter(Presence.class), new FromContainsFilter(bareJID));
-        final PacketListener packetListener = new PacketListener() {
-            public void processPacket(Packet packet) {
-                Presence presence = (Presence)packet;
-                if (!presence.isAvailable()) {
-                    if (transfer != null) {
-                        transfer.cancel();
-                    }
+        AndFilter presenceFilter = new AndFilter(new StanzaTypeFilter(Presence.class), FromMatchesFilter.createBare(bareJID));
+        final StanzaListener packetListener = stanza -> {
+            Presence presence = (Presence)stanza;
+            if (!presence.isAvailable()) {
+                if (transfer != null) {
+                    transfer.cancel();
                 }
             }
         };
 
         // Add presence listener to check if user is offline and cancel sending.
-        SparkManager.getConnection().addPacketListener(packetListener, presenceFilter);
+        SparkManager.getConnection().addAsyncStanzaListener(packetListener, presenceFilter);
 
-        chatRoom.addClosingListener(new ChatRoomClosingListener() {
-            public void closing() {
-                SparkManager.getConnection().removePacketListener(packetListener);
+        chatRoom.addClosingListener( () -> {
+            SparkManager.getConnection().removeAsyncStanzaListener(packetListener);
 
-                if (!transfer.isDone()) {
-                    transfer.cancel();
-                }
+            if (!transfer.isDone()) {
+                transfer.cancel();
             }
-        });
+        } );
 
         try {
             sendingUI.sendFile(transfer, transferManager, fullJID, contactItem.getDisplayName());
@@ -727,7 +705,7 @@ public class SparkTransferManager {
     }
 
     private boolean fireTransferListeners(FileTransferRequest request) {
-        for (FileTransferListener listener : new ArrayList<FileTransferListener>(listeners)) {
+        for (FileTransferListener listener : new ArrayList<>( listeners )) {
             boolean accepted = listener.handleTransfer(request);
             if (accepted) {
                 return true;

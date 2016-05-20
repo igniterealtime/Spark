@@ -41,8 +41,8 @@ public class SmartInternalFrameTitlePane extends BaseInternalFrameTitlePane {
         int width = getWidth();
         int height = getHeight();
 
-        Color backColor = null;
-        Color frameColor = null;
+        Color backColor;
+        Color frameColor;
         if (JTattooUtilities.isFrameActive(this)) {
             JTattooUtilities.fillHorGradient(g, AbstractLookAndFeel.getTheme().getWindowTitleColors(), 0, 0, width, height);
             backColor = AbstractLookAndFeel.getTheme().getWindowTitleColors()[10];
@@ -66,7 +66,7 @@ public class SmartInternalFrameTitlePane extends BaseInternalFrameTitlePane {
         float dc1 = 50.0f;
         float dc2 = 5.0f;
         Color c1 = ColorHelper.brighter(backColor, dc1);
-        Color c2 = null;
+        Color c2;
         while ((dy + 2) < height) {
             c2 = ColorHelper.darker(backColor, dc2);
             dc2 += 5.0f;
@@ -84,8 +84,8 @@ public class SmartInternalFrameTitlePane extends BaseInternalFrameTitlePane {
         Graphics2D g2D = (Graphics2D) g;
         int width = getWidth();
         int height = getHeight();
-        Color backColor = null;
-        Color frameColor = null;
+        Color backColor;
+        Color frameColor;
         if (JTattooUtilities.isActive(this)) {
             backColor = AbstractLookAndFeel.getTheme().getWindowTitleColors()[10];
             frameColor = AbstractLookAndFeel.getTheme().getFrameColor();
@@ -134,7 +134,7 @@ public class SmartInternalFrameTitlePane extends BaseInternalFrameTitlePane {
             float dc2 = 5.0f;
 
             Color c1 = ColorHelper.brighter(backColor, dc1);
-            Color c2 = null;
+            Color c2;
             while ((dy + 5) < height) {
                 c2 = ColorHelper.darker(backColor, dc2);
                 dc2 += 5.0f;

@@ -24,7 +24,6 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.EventQueue;
 import java.awt.Font;
-import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -61,58 +60,53 @@ public final class MessageDialog {
      * @param throwable the throwable object to display.
      */
     public static void showErrorDialog(final Throwable throwable) {
-     	 EventQueue.invokeLater(new Runnable() {
-   		 public void run()
-   		 {
-		        JTextPane textPane;
-		        final JOptionPane pane;
-		        final JDialog dlg;
-		
-		        TitlePanel titlePanel;
-		
-		        textPane = new JTextPane();
-		        textPane.setFont(new Font("Dialog", Font.PLAIN, 12));
-		        textPane.setEditable(false);
-		
-		        String message = getStackTrace(throwable);
-		        textPane.setText(message);
-		        // Create the title panel for this dialog
-		        titlePanel = new TitlePanel(Res.getString("message.default.error"), null, SparkRes.getImageIcon(SparkRes.SMALL_DELETE), true);
-		
-		        // Construct main panel w/ layout.
-		        final JPanel mainPanel = new JPanel();
-		        mainPanel.setLayout(new BorderLayout());
-		        mainPanel.add(titlePanel, BorderLayout.NORTH);
-		
-		        // The user should only be able to close this dialog.
-		        Object[] options = {Res.getString("close")};
-		        pane = new JOptionPane(new JScrollPane(textPane), JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION, null, options, options[0]);
-		
-		        mainPanel.add(pane, BorderLayout.CENTER);
-		
-		        MainWindow mainWindow = SparkManager.getMainWindow();
-		        dlg = new JDialog(mainWindow, Res.getString("title.error"), false);
-		        dlg.pack();
-		        dlg.setSize(600, 400);
-		        dlg.setContentPane(mainPanel);
-		        dlg.setLocationRelativeTo(mainWindow);
-		
-		        PropertyChangeListener changeListener = new PropertyChangeListener() {
-		            public void propertyChange(PropertyChangeEvent e) {
-		                String value = (String)pane.getValue();
-		                if (Res.getString("close").equals(value)) {
-		                    dlg.setVisible(false);
-		                }
-		            }
-		        };
-		
-		        pane.addPropertyChangeListener(changeListener);
-		
-		        dlg.setVisible(true);
-		        dlg.toFront();
-		        dlg.requestFocus();
-   		 }
-     	 });
+     	 EventQueue.invokeLater( () -> {
+              JTextPane textPane;
+              final JOptionPane pane;
+              final JDialog dlg;
+
+              TitlePanel titlePanel;
+
+              textPane = new JTextPane();
+              textPane.setFont(new Font("Dialog", Font.PLAIN, 12));
+              textPane.setEditable(false);
+
+              String message = getStackTrace(throwable);
+              textPane.setText(message);
+              // Create the title panel for this dialog
+              titlePanel = new TitlePanel(Res.getString("message.default.error"), null, SparkRes.getImageIcon(SparkRes.SMALL_DELETE), true);
+
+              // Construct main panel w/ layout.
+              final JPanel mainPanel = new JPanel();
+              mainPanel.setLayout(new BorderLayout());
+              mainPanel.add(titlePanel, BorderLayout.NORTH);
+
+              // The user should only be able to close this dialog.
+              Object[] options = {Res.getString("close")};
+              pane = new JOptionPane(new JScrollPane(textPane), JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION, null, options, options[0]);
+
+              mainPanel.add(pane, BorderLayout.CENTER);
+
+              MainWindow mainWindow = SparkManager.getMainWindow();
+              dlg = new JDialog(mainWindow, Res.getString("title.error"), false);
+              dlg.pack();
+              dlg.setSize(600, 400);
+              dlg.setContentPane(mainPanel);
+              dlg.setLocationRelativeTo(mainWindow);
+
+              PropertyChangeListener changeListener = e -> {
+String value = (String)pane.getValue();
+if (Res.getString("close").equals(value)) {
+dlg.setVisible(false);
+}
+};
+
+              pane.addPropertyChangeListener(changeListener);
+
+              dlg.setVisible(true);
+              dlg.toFront();
+              dlg.requestFocus();
+          } );
     }
 
     /**
@@ -124,59 +118,54 @@ public final class MessageDialog {
      * @param icon    the icon for the alert dialog.
      */
     public static void showAlert(final String message,final String header, final String title, final Icon icon) {
-   	 EventQueue.invokeLater(new Runnable() {
-   		 public void run()
-   		 {
-   	        JTextPane textPane;
-   	        final JOptionPane pane;
-   	        final JDialog dlg;
+   	 EventQueue.invokeLater( () -> {
+           JTextPane textPane;
+           final JOptionPane pane;
+           final JDialog dlg;
 
-   	        TitlePanel titlePanel;
+           TitlePanel titlePanel;
 
-   	        textPane = new JTextPane();
-   	        textPane.setFont(new Font("Dialog", Font.PLAIN, 12));
-   	        textPane.setEditable(false);
-   	        textPane.setText(message);
-   	        textPane.setBackground(Color.white);
+           textPane = new JTextPane();
+           textPane.setFont(new Font("Dialog", Font.PLAIN, 12));
+           textPane.setEditable(false);
+           textPane.setText(message);
+           textPane.setBackground(Color.white);
 
-   	        // Create the title panel for this dialog
-   	        titlePanel = new TitlePanel(header, null, icon, true);
+           // Create the title panel for this dialog
+           titlePanel = new TitlePanel(header, null, icon, true);
 
-   	        // Construct main panel w/ layout.
-   	        final JPanel mainPanel = new JPanel();
-   	        mainPanel.setLayout(new BorderLayout());
-   	        mainPanel.add(titlePanel, BorderLayout.NORTH);
+           // Construct main panel w/ layout.
+           final JPanel mainPanel = new JPanel();
+           mainPanel.setLayout(new BorderLayout());
+           mainPanel.add(titlePanel, BorderLayout.NORTH);
 
-   	        // The user should only be able to close this dialog.
-   	        Object[] options = {Res.getString("close")};
-   	        pane = new JOptionPane(new JScrollPane(textPane), JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION, null, options, options[0]);
+           // The user should only be able to close this dialog.
+           Object[] options = {Res.getString("close")};
+           pane = new JOptionPane(new JScrollPane(textPane), JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION, null, options, options[0]);
 
-   	        mainPanel.add(pane, BorderLayout.CENTER);
+           mainPanel.add(pane, BorderLayout.CENTER);
 
-   	        MainWindow mainWindow = SparkManager.getMainWindow();
-   	        dlg = new JDialog(mainWindow, title, false);
-   	        dlg.pack();
-   	        dlg.setSize(300, 300);
-   	        dlg.setContentPane(mainPanel);
-   	        dlg.setLocationRelativeTo(SparkManager.getMainWindow());
+           MainWindow mainWindow = SparkManager.getMainWindow();
+           dlg = new JDialog(mainWindow, title, false);
+           dlg.pack();
+           dlg.setSize(300, 300);
+           dlg.setContentPane(mainPanel);
+           dlg.setLocationRelativeTo(SparkManager.getMainWindow());
 
-   	        PropertyChangeListener changeListener = new PropertyChangeListener() {
-   	            public void propertyChange(PropertyChangeEvent e) {
-   	                String value = (String)pane.getValue();
-   	                if (Res.getString("close").equals(value)) {
-   	                    dlg.setVisible(false);
-   	                }
-   	            }
-   	        };
+           PropertyChangeListener changeListener = e -> {
+String value = (String)pane.getValue();
+if (Res.getString("close").equals(value)) {
+dlg.setVisible(false);
+}
+};
 
-   	        pane.addPropertyChangeListener(changeListener);
+           pane.addPropertyChangeListener(changeListener);
 
-   	        dlg.setVisible(true);
-   	        dlg.toFront();
-   	        dlg.requestFocus();
-   			 
-   		 }	
-   	 });
+           dlg.setVisible(true);
+           dlg.toFront();
+           dlg.requestFocus();
+
+        } );
 
     }
 
@@ -223,19 +212,17 @@ public final class MessageDialog {
         dlg.setContentPane(mainPanel);
         dlg.setLocationRelativeTo(parent);
 
-        PropertyChangeListener changeListener = new PropertyChangeListener() {
-            public void propertyChange(PropertyChangeEvent e) {
-                String value;
-                try {
-                    value= (String)pane.getValue();
-                    if (Res.getString("close").equals(value)) {
-                        dlg.setVisible(false);
-                    }    
-                } catch (Exception ex) {
-                    // probably <ESC> pressed ;-)
+        PropertyChangeListener changeListener = e -> {
+            String value;
+            try {
+                value= (String)pane.getValue();
+                if (Res.getString("close").equals(value)) {
+                    dlg.setVisible(false);
                 }
-                
+            } catch (Exception ex) {
+                // probably <ESC> pressed ;-)
             }
+
         };
 
         pane.addPropertyChangeListener(changeListener);
@@ -268,7 +255,7 @@ public final class MessageDialog {
      */
     public static String getCustomStackTrace(String heading, Throwable aThrowable) {
         //add the class name and any message passed to constructor
-        final StringBuffer result = new StringBuffer(heading);
+        final StringBuilder result = new StringBuilder(heading);
         result.append(aThrowable.toString());
         final String lineSeperator = System.getProperty("line.separator");
         result.append(lineSeperator);

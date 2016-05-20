@@ -23,7 +23,7 @@
 	<property file="${basedir}/build/build.properties"/>
 	<property name="version.major" value="2"/>
 	<property name="version.minor" value="7"/>
-	<property name="version.revision" value="5"/>
+	<property name="version.revision" value="7"/>
 
     <!-- Spark Build Number
     Passed into ant via cmd line argument:
@@ -120,6 +120,9 @@
 	<property name="mac.app.file" value="${mac.build.dir}/Spark.app"/>
 	<property name="mac.dmg.file" value="${target}/installer/spark_${version.filename}.dmg"/>
 	<property name="mac.volname" value="Spark_${version.major}.${version.minor}.${version.revision}"/>
+	<!-- LOCAL PATH for MAC JRE files -->
+	<property name="mac.jre.localdir" value="/Users/j2ee-bamboo/jres"/>
+
 	<property name="win.msi.withjre" value="${basedir}\installer\spark_${version.filename}.msi"/>
 	<property name="win.msi.nojre" value="${basedir}\installer\spark_${version.filename}_online.msi"/>
 	<property name="pack200.excludes"
@@ -168,14 +171,13 @@
 		<condition property="java.not.ok" value="true">
 			<not>
 				<or>
-					<contains string="${ant.java.version}" substring="1.7"/>
-                    <contains string="${ant.java.version}" substring="1.8"/>
-                    <contains string="${ant.java.version}" substring="1.9"/>
+                    <contains string="${java.version}" substring="1.8"/>
+                    <contains string="${java.version}" substring="1.9"/>
 				</or>
 			</not>
 		</condition>
-		<fail if="ant.not.ok" message="Must use Ant 1.7.1 or higher to build Spark"/>
-		<fail if="java.not.ok" message="Must use JDK 1.7.x or higher to build Spark"/>
+		<fail if="ant.not.ok" message="Must use Ant 1.7.1 or higher to build Spark."/>
+		<fail if="java.not.ok" message="Must use JDK 1.8.x or higher to build Spark. Found: ${java.version}"/>
 
 		<!-- Platform-specific initializations -->
 		<condition property="windows">
@@ -275,8 +277,8 @@
 		<!--Compiles the java code from ${src} directory into ${classes} directory-->
 		<javac destdir="${classes}"
                debug="true"
-               source="1.7"
-               target="1.7"
+               source="1.8"
+               target="1.8"
                includeantruntime="false"
             >
 			<compilerarg value="-Xlint:deprecation" />
@@ -518,8 +520,8 @@
 		<mkdir dir="${test.classes}" />
 		<javac destdir="${test.classes}"
     	               debug="true"
-    	               source="1.7"
-    	               target="1.7"
+    	               source="1.8"
+    	               target="1.8"
     	       	>
 			<compilerarg value="-Xlint:deprecation" />
 			<classpath>
@@ -687,6 +689,7 @@
 		</exec>
 		<delete file="${target}/tmp.dmg" />
 		<delete file="${mac.dmg.file}" />
+		<delete dir="${target}/jre" />
 	</target>
 
 	<target name="mac.build.plugin" depends="jar,build.plugins">
@@ -718,10 +721,18 @@
 				 classname="com.oracle.appbundler.AppBundlerTask"/>
 
 		<mkdir dir="${mac.build.dir}"/>
+		<mkdir dir="${target}/jre"/>
+		<untar dest="${target}/jre" compression="gzip">
+			<cutdirsmapper dirs="1" />
+			<fileset dir="${mac.jre.localdir}">
+				<include name="**/jre*macosx-x64.tar.gz"/>
+			</fileset>
+		</untar>
 
 		<path id="osx.lib">
 			<fileset dir="${target.build}/lib">
 				<include name="**/*.jar"/>
+				<include name="**/*.jnilib"/>
 				<exclude name="**/windows/"/>
 				<exclude name="**/linux/"/>
 			</fileset>
@@ -744,10 +755,12 @@
 					copyright="Ignite Realtime"
 					executablename="SparkLauncher"
 					identifier="com.jivesoftware.SparkBundle"
-					jvmrequired="1.7"
+					jvmrequired="1.8"
 					jrepreferred="true">
 			<arch name="x86_64"/>
-			<arch name="i386"/>
+			<runtime dir="${target}/jre/Contents/Home"/>
+			<option value="-Djava.library.path=$APP_ROOT/Contents/Java/"/>
+			<option value="-Dappdir=$APP_ROOT/Contents/Resources"/>
 			<option value="-Xdock:name=Spark"/>
 
 		</appbundler>
@@ -760,11 +773,6 @@
 				<exclude name="**/jniwrapper.*"/>
 				<exclude name="**/idlelinux.*"/>
 			</fileset>
-		</copy>
-
-		<!-- When building on PowerPC Macs we get a PowerPC binary for the JavaApplicationStub. We've gotten a few requests to fix that from the forums, so we'll manually copy one from an Intel Mac -->
-		<copy todir="${mac.app.file}/Contents/MacOS">
-			<fileset file="${basedir}/src/resources/JavaApplicationStub"/>
 		</copy>
 
 		<delete file="${plugins}/jniwrapper.jar"/>
@@ -995,7 +1003,7 @@
 	</target>
 
 	<!-- installer.rpm ========================================================================= -->
-	<property name="bundle.jre" value="true" />
+	<property name="bundle.jre" value="false" />
 	<property name="target.work.subdir" value="rpm" />
 	<property name="target.rpm" value="${work.dir}/${target.work.subdir}" />
 	<property name="rpm.spec.file" value="${basedir}/build/rpm/spark.spec"/>
@@ -1059,9 +1067,9 @@
 
 	<!-- checkcode.checkstyle ============================================================ -->
 	<target name="checkcode.checkstyle" description="Checkcode with checkstyle.">
-		<taskdef resource="checkstyletask.properties" classpath="build/lib/checkstyle.jar" />
+		<taskdef resource="com/puppycrawl/tools/checkstyle/ant/checkstyle-ant-task.properties" classpath="build/lib/checkstyle.jar"/>
 
-		<checkstyle maxErrors="16500" config="build/checkstyle.xml">
+		<checkstyle maxErrors="17000" config="build/checkstyle.xml">
 			<fileset dir="src/java" includes="**/*.java" />
 			<!-- <formatter type="plain"/> -->
 			<formatter type="xml" toFile="target/checkstyle.xml"/>

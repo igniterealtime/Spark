@@ -24,9 +24,6 @@ import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -48,11 +45,11 @@ import javax.swing.JScrollPane;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.smack.Roster;
-import org.jivesoftware.smack.RosterEntry;
-import org.jivesoftware.smack.RosterGroup;
+import org.jivesoftware.smack.roster.Roster;
+import org.jivesoftware.smack.roster.RosterEntry;
+import org.jivesoftware.smack.roster.RosterGroup;
 import org.jivesoftware.smack.packet.Presence;
-import org.jivesoftware.smack.packet.PrivacyItem;
+import org.jivesoftware.smackx.privacy.packet.PrivacyItem;
 import org.jivesoftware.spark.PresenceManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.TitlePanel;
@@ -66,10 +63,10 @@ public class PrivacyAddDialogUI extends JPanel {
 
     private JCheckBox _showOffCheckbox = new JCheckBox();
     private static final long serialVersionUID = -7725304880236329893L;
-    private DefaultListModel model = new DefaultListModel();
-    private JList rosterList = new JList(model);
+    private DefaultListModel<ContactItem> model = new DefaultListModel<>();
+    private JList<ContactItem> rosterList = new JList<>( model );
     private boolean _showGroups = false;
-    private List<ContactItem> _userList = new ArrayList<ContactItem>();
+    private List<ContactItem> _userList = new ArrayList<>();
     private JCheckBox _blockPIn;
     private JCheckBox _blockPOout;
     private JCheckBox _blockMsg;
@@ -82,14 +79,7 @@ public class PrivacyAddDialogUI extends JPanel {
         setLayout(new GridBagLayout());
 
         _showOffCheckbox.setText(Res.getString("menuitem.show.offline.users"));
-        _showOffCheckbox.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                createList();
-
-            }
-        });
+        _showOffCheckbox.addActionListener( e -> createList() );
 
         JPanel checkBoxPanel = createCheckBoxes();
         this.add(checkBoxPanel, new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
@@ -129,7 +119,7 @@ public class PrivacyAddDialogUI extends JPanel {
 
     private void createList() {
         _userList.clear();
-        final Roster roster = SparkManager.getConnection().getRoster();
+        final Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
         if (_showGroups) {
             for (RosterGroup group : roster.getGroups()) {
                 _showOffCheckbox.setVisible(false);
@@ -206,19 +196,15 @@ public class PrivacyAddDialogUI extends JPanel {
         dlg.setContentPane(mainPanel);
         dlg.setLocationRelativeTo(parent);
 
-        PropertyChangeListener changeListener = new PropertyChangeListener() {
-
-            @Override
-            public void propertyChange(PropertyChangeEvent e) {
-                String value = (String) pane.getValue();
-                if (Res.getString("cancel").equals(value)) {
-                    rosterList.clearSelection();
-                    pane.setValue(JOptionPane.UNINITIALIZED_VALUE);
-                    dlg.dispose();
-                } else if (Res.getString("ok").equals(value)) {
-                    pane.setValue(JOptionPane.UNINITIALIZED_VALUE);
-                    dlg.dispose();
-                }
+        PropertyChangeListener changeListener = e -> {
+            String value = (String) pane.getValue();
+            if (Res.getString("cancel").equals(value)) {
+                rosterList.clearSelection();
+                pane.setValue(JOptionPane.UNINITIALIZED_VALUE);
+                dlg.dispose();
+            } else if (Res.getString("ok").equals(value)) {
+                pane.setValue(JOptionPane.UNINITIALIZED_VALUE);
+                dlg.dispose();
             }
         };
 
@@ -228,7 +214,7 @@ public class PrivacyAddDialogUI extends JPanel {
         dlg.toFront();
         dlg.requestFocus();
 
-        List<PrivacyItem> selectedContacts = new ArrayList<PrivacyItem>();
+        List<PrivacyItem> selectedContacts = new ArrayList<>();
 
 
 
@@ -239,12 +225,11 @@ public class PrivacyAddDialogUI extends JPanel {
                 ContactItem item = (ContactItem) values[i];
 
                 PrivacyItem.Type type = _showGroups ? PrivacyItem.Type.group : PrivacyItem.Type.jid;
-                PrivacyItem pitem = new PrivacyItem(type.name(), false, 999);
+                PrivacyItem pitem = new PrivacyItem(type, item.getJID(), false, 999);
                 pitem.setFilterIQ(_blockIQ.isSelected());
                 pitem.setFilterMessage(_blockMsg.isSelected());
-                pitem.setFilterPresence_in(_blockPIn.isSelected());
-                pitem.setFilterPresence_out(_blockPOout.isSelected());
-                pitem.setValue(item.getJID());
+                pitem.setFilterPresenceIn(_blockPIn.isSelected());
+                pitem.setFilterPresenceOut(_blockPOout.isSelected());
 
                 selectedContacts.add(pitem);
             } catch (NullPointerException e) {
@@ -257,18 +242,14 @@ public class PrivacyAddDialogUI extends JPanel {
     /**
      * Sorts ContactItems.
      */
-    final Comparator<ContactItem> itemComparator = new Comparator<ContactItem>() {
-
-        @Override
-        public int compare(ContactItem item1, ContactItem item2) {
-            String nickname1 = item1.getDisplayName();
-            String nickname2 = item2.getDisplayName();
-            if (nickname1 == null || nickname2 == null) {
-                return 0;
-            }
-
-            return nickname1.toLowerCase().compareTo(nickname2.toLowerCase());
-
+    final Comparator<ContactItem> itemComparator = ( item1, item2 ) -> {
+        String nickname1 = item1.getDisplayName();
+        String nickname2 = item2.getDisplayName();
+        if (nickname1 == null || nickname2 == null) {
+            return 0;
         }
+
+        return nickname1.toLowerCase().compareTo(nickname2.toLowerCase());
+
     };
 }

@@ -28,15 +28,16 @@ import javax.swing.JLabel;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 import org.jivesoftware.spark.util.SwingTimerTask;
 import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.util.UIComponentRegistry;
+import org.jivesoftware.spark.util.log.Log;
 
 /**
  * Adds a simple buzz operation button the each newly created ChatRoom.
@@ -76,7 +77,14 @@ public class BuzzRoomDecorator implements ActionListener {
         Message message = new Message();
         message.setTo(jid);
         message.addExtension(new BuzzPacket());
-        SparkManager.getConnection().sendPacket(message);
+        try
+        {
+            SparkManager.getConnection().sendStanza(message);
+        }
+        catch ( SmackException.NotConnectedException e1 )
+        {
+            Log.warning( "Unable to send stanza to " + jid, e1 );
+        }
 
         chatRoom.getTranscriptWindow().insertNotificationMessage(Res.getString("message.buzz.sent"), ChatManager.NOTIFICATION_COLOR);
         buzzButton.setEnabled(false);

@@ -19,32 +19,6 @@
  */
 package org.jivesoftware.spark;
 
-import java.awt.EventQueue;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Locale;
-import java.util.PropertyResourceBundle;
-import java.util.ResourceBundle;
-import java.util.StringTokenizer;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-
-import javax.swing.JPanel;
-
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
@@ -54,7 +28,6 @@ import org.jivesoftware.MainWindowListener;
 import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.spark.PluginRes.ResourceType;
-import org.jivesoftware.spark.component.tabbedPane.SparkTabbedPane;
 import org.jivesoftware.spark.plugin.Plugin;
 import org.jivesoftware.spark.plugin.PluginClassLoader;
 import org.jivesoftware.spark.plugin.PluginDependency;
@@ -65,15 +38,27 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.JiveInfo;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
+import java.awt.*;
+import java.io.*;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.*;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+
 /**
  * This manager is responsible for the loading of all Plugins and Workspaces within Spark environment.
  *
  * @author Derek DeMoro
  */
 public class PluginManager implements MainWindowListener {
-    private final List<Plugin> plugins = new ArrayList<Plugin>();
+    private final List<Plugin> plugins = new ArrayList<>();
 
-    private final List<PublicPlugin> publicPlugins = new CopyOnWriteArrayList<PublicPlugin>();
+    private final List<PublicPlugin> publicPlugins = new CopyOnWriteArrayList<>();
     private static PluginManager singleton;
     private static final Object LOCK = new Object();
     /**
@@ -113,7 +98,6 @@ public class PluginManager implements MainWindowListener {
         catch (IOException e) {
             Log.error(e);
         }
-
         // Do not use deployable plugins if not installed.
         if (System.getProperty("plugin") == null) {
             movePlugins();
@@ -262,7 +246,7 @@ public class PluginManager implements MainWindowListener {
     
 	private boolean hasDependencies(File pluginFile) {
 		SAXReader saxReader = new SAXReader();
-		Document pluginXML = null;
+		Document pluginXML;
 		try {
 			pluginXML = saxReader.read(pluginFile);
 			List<? extends Node> dependencies = pluginXML.selectNodes("plugin/depends/plugin");
@@ -453,25 +437,23 @@ public class PluginManager implements MainWindowListener {
         List<? extends Node> plugins = pluginXML.selectNodes("/plugins/plugin");
         for (final Object plugin1 : plugins) {
 
-          		EventQueue.invokeLater(new Runnable() {
-         			public void run() {
-                     String clazz = null;
-                     String name;
-                     try {
-                         Element plugin = (Element) plugin1;
+          		EventQueue.invokeLater( () -> {
+String clazz = null;
+String name;
+try {
+Element plugin = (Element) plugin1;
 
-                         name = plugin.selectSingleNode("name").getText();
-                         clazz = plugin.selectSingleNode("class").getText();
-                         Plugin pluginClass = (Plugin) Class.forName(clazz).newInstance();
-                         Log.debug(name + " has been loaded. Internal plugin.");
+name = plugin.selectSingleNode("name").getText();
+clazz = plugin.selectSingleNode("class").getText();
+Plugin pluginClass1 = (Plugin) Class.forName(clazz).newInstance();
+Log.debug(name + " has been loaded. Internal plugin.");
 
-                         registerPlugin(pluginClass);
-                     }
-                     catch (Throwable ex) {
-                         Log.error("Unable to load plugin " + clazz + ".", ex);
-                     }
-         			}
-          		});
+registerPlugin( pluginClass1 );
+}
+catch (Throwable ex) {
+Log.error("Unable to load plugin " + clazz + ".", ex);
+}
+                  } );
 
 
         }
@@ -574,8 +556,8 @@ public class PluginManager implements MainWindowListener {
     public void initializePlugins() {
       try
 		{
-      	int j = 0;
-			boolean dependsfound = false;
+      	int j;
+			boolean dependsfound;
 
       	// Dependency check
       	for (int i = 0; i< publicPlugins.size(); i++) {
@@ -653,23 +635,21 @@ public class PluginManager implements MainWindowListener {
       		}
       	}
 
-			EventQueue.invokeLater(new Runnable() {
-			      public void run() {
-			          for (Plugin plugin1 : plugins) {
-			              long start = System.currentTimeMillis();
-			              Log.debug("Trying to initialize " + plugin1);
-			              try {
-			                  plugin1.initialize();
-			              }
-			              catch (Throwable e) {
-			                  Log.error(e);
-			              }
+			EventQueue.invokeLater( () -> {
+                for (Plugin plugin1 : plugins) {
+                    long start = System.currentTimeMillis();
+                    Log.debug("Trying to initialize " + plugin1);
+                    try {
+                        plugin1.initialize();
+                    }
+                    catch (Throwable e) {
+                        Log.error(e);
+                    }
 
-			              long end = System.currentTimeMillis();
-			              Log.debug("Took " + (end - start) + " ms. to load " + plugin1);
-			          }
-			      }
-			  });
+                    long end = System.currentTimeMillis();
+                    Log.debug("Took " + (end - start) + " ms. to load " + plugin1);
+                }
+            } );
 		}
 		catch (Exception e)
 		{
@@ -715,16 +695,14 @@ public class PluginManager implements MainWindowListener {
      * Expands all plugin packs (.jar files located in the plugin dir with plugin.xml).
      */
     private void expandNewPlugins() {
-        File[] jars = PLUGINS_DIRECTORY.listFiles(new FilenameFilter() {
-            public boolean accept(File dir, String name) {
-                boolean accept = false;
-                String smallName = name.toLowerCase();
-                if (smallName.endsWith(".jar")) {
-                    accept = true;
-                }
-                return accept;
+        File[] jars = PLUGINS_DIRECTORY.listFiles( ( dir, name ) -> {
+            boolean accept = false;
+            String smallName = name.toLowerCase();
+            if (smallName.endsWith(".jar")) {
+                accept = true;
             }
-        });
+            return accept;
+        } );
 
         // Do nothing if no jar or zip files were found
         if (jars == null) {
@@ -769,11 +747,9 @@ public class PluginManager implements MainWindowListener {
 		// First, expand all plugins that have yet to be expanded.
 		expandNewPlugins();
 
-		File[] files = PLUGINS_DIRECTORY.listFiles(new FilenameFilter() {
-			public boolean accept(File dir, String name) {
-				return dir.isDirectory();
-			}
-		});
+		File[] files = PLUGINS_DIRECTORY.listFiles( ( dir, name ) -> {
+            return dir.isDirectory();
+        } );
 
 		// Do nothing if no jar or zip files were found
 		if (files == null) {
@@ -782,8 +758,8 @@ public class PluginManager implements MainWindowListener {
 		//Make sure to load first the plugins with no dependencies
 		//If a plugin with dependencies gets loaded before one of dependencies, 
 		//class not found exception may be thrown if a dependency class is used during plugin creation
-		List<File> dependencies = new ArrayList<File>();
-		List<File> nodependencies = new ArrayList<File>();
+		List<File> dependencies = new ArrayList<>();
+		List<File> nodependencies = new ArrayList<>();
 		for (File file : files) {
 			File pluginXML = new File(file, "plugin.xml");
 			if (pluginXML.exists()) {
@@ -830,14 +806,11 @@ public class PluginManager implements MainWindowListener {
 	pluginClass = loadPublicPlugin(pluginDownload);
 
 	try {
-	    EventQueue.invokeAndWait(new Runnable() {
-		@Override
-		public void run() {
+	    EventQueue.invokeAndWait( () -> {
 
-		    Log.debug("Trying to initialize " + pluginClass);
-		    pluginClass.initialize();
-		}
-	    });
+            Log.debug("Trying to initialize " + pluginClass);
+            pluginClass.initialize();
+        } );
 	} catch (Exception e) {
 	    Log.error(e);
 	}

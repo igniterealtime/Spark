@@ -55,8 +55,8 @@ import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.packet.Message;
-import org.jivesoftware.smack.util.StringUtils;
-import org.jivesoftware.smackx.packet.DelayInformation;
+import org.jivesoftware.smackx.delay.packet.DelayInformation;
+import org.jivesoftware.smackx.jiveproperties.packet.JivePropertiesExtension;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.ContextMenuListener;
@@ -65,6 +65,7 @@ import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+import org.jxmpp.util.XmppStringUtils;
 
 /**
  * The <CODE>TranscriptWindow</CODE> class. Provides a default implementation
@@ -75,8 +76,7 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener {
 
 	private static final long serialVersionUID = -2168845249388070573L;
 	private final SimpleDateFormat notificationDateFormatter;
-    private final String notificationDateFormat = ((SimpleDateFormat)SimpleDateFormat.getDateInstance(SimpleDateFormat.FULL)).toPattern();
-    
+
     //code from SPARK-905 patch; it brakes message receiving when there is no old message in the window
     //also related code on 181-186 lines   
     //private SimpleDateFormat myDateFormat = new SimpleDateFormat("dd.MM.yyyy");
@@ -119,7 +119,8 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener {
             }
         });
 
-        notificationDateFormatter = new SimpleDateFormat(notificationDateFormat);
+        String notificationDateFormat = ( (SimpleDateFormat) SimpleDateFormat.getDateInstance( SimpleDateFormat.FULL ) ).toPattern();
+        notificationDateFormatter = new SimpleDateFormat( notificationDateFormat );
     }
 
     /**
@@ -187,7 +188,7 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener {
         }*/
         
         try {
-            DelayInformation inf = (DelayInformation)message.getExtension("delay", "urn:xmpp:delay");
+            DelayInformation inf = message.getExtension("delay", "urn:xmpp:delay");
             Date sentDate;
             if (inf != null) {
                 sentDate = inf.getStamp();
@@ -448,7 +449,7 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener {
             final File selFile = fileChooser.getSelectedFile();
 
             if (selFile != null && result == JFileChooser.APPROVE_OPTION) {
-                final StringBuffer buf = new StringBuffer();
+                final StringBuilder buf = new StringBuilder();
                 final Iterator<Message> transcripts = transcript.iterator();
                 buf.append("<html><body>");
                 if (headerData != null) {
@@ -464,13 +465,19 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener {
                     }
 
                     if (Message.Type.groupchat == message.getType()) {
-                        if (ModelUtil.hasLength(StringUtils.parseResource(from))) {
-                            from = StringUtils.parseResource(from);
+                        if (ModelUtil.hasLength( XmppStringUtils.parseResource(from))) {
+                            from = XmppStringUtils.parseResource(from);
                         }
                     }
 
                     final String body = message.getBody();
-                    final Date insertionDate = (Date)message.getProperty("insertionDate");
+
+                    final JivePropertiesExtension extension = ((JivePropertiesExtension) message.getExtension( JivePropertiesExtension.NAMESPACE ));
+                    Date insertionDate = null;
+                    if ( extension != null ) {
+                        insertionDate = (Date) extension.getProperty( "insertionDate" );
+                    }
+
                     formatter = new SimpleDateFormat("hh:mm:ss");
 
                     String value = "";

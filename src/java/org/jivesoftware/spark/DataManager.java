@@ -30,7 +30,7 @@ import java.util.Map;
  * Allows a mechanism to associated data with chat rooms.
  */
 public class DataManager {
-    private List<MetadataListener> metadataListeners = new ArrayList<MetadataListener>();
+    private List<MetadataListener> metadataListeners = new ArrayList<>();
 
     private static DataManager singleton;
     private static final Object LOCK = new Object();

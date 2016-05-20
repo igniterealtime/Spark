@@ -44,7 +44,9 @@ import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.ConnectionListener;
+import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.packet.Message;
+import org.jivesoftware.smackx.jiveproperties.packet.JivePropertiesExtension;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.ContextMenuListener;
 import org.jivesoftware.spark.ui.ChatRoom;
@@ -65,11 +67,9 @@ import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
  */
 public class ChatTranscriptPlugin implements ChatRoomListener {
 
-    private final String timeFormat = "HH:mm:ss";
-    private final String dateFormat = ((SimpleDateFormat)SimpleDateFormat.getDateInstance(SimpleDateFormat.FULL)).toPattern();
     private final SimpleDateFormat notificationDateFormatter;
     private final SimpleDateFormat messageDateFormatter;
-    private HashMap<String,Message> lastMessage = new HashMap<String,Message>();
+    private HashMap<String,Message> lastMessage = new HashMap<>();
     private JDialog Frame;
     private HistoryTranscript transcript = null;
     /**
@@ -78,8 +78,10 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
     public ChatTranscriptPlugin() {
         SparkManager.getChatManager().addChatRoomListener(this);
 
-        notificationDateFormatter = new SimpleDateFormat(dateFormat);
-        messageDateFormatter = new SimpleDateFormat(timeFormat);
+        String dateFormat = ( (SimpleDateFormat) SimpleDateFormat.getDateInstance( SimpleDateFormat.FULL ) ).toPattern();
+        notificationDateFormatter = new SimpleDateFormat( dateFormat );
+        String timeFormat = "HH:mm:ss";
+        messageDateFormatter = new SimpleDateFormat( timeFormat );
 
         final ContactList contactList = SparkManager.getWorkspace().getContactList();
 
@@ -144,19 +146,32 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
 
 
         SparkManager.getConnection().addConnectionListener(new ConnectionListener() {
+            @Override
+            public void connected( XMPPConnection xmppConnection ) {
+            }
+
+            @Override
+            public void authenticated( XMPPConnection xmppConnection, boolean b ) {
+            }
+
+            @Override
             public void connectionClosed() {
             }
 
+            @Override
             public void connectionClosedOnError(Exception e) {
                 persistConversations();
             }
 
+            @Override
             public void reconnectingIn(int i) {
             }
 
+            @Override
             public void reconnectionSuccessful() {
             }
 
+            @Override
             public void reconnectionFailed(Exception exception) {
             }
         });
@@ -233,13 +248,12 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
             history.setTo(message.getTo());
             history.setFrom(message.getFrom());
             history.setBody(message.getBody());
-            Date date = (Date)message.getProperty("date");
-            if (date != null) {
-                history.setDate(date);
+            final JivePropertiesExtension extension = ((JivePropertiesExtension) message.getExtension( JivePropertiesExtension.NAMESPACE ));
+            Date date = null;
+            if ( extension != null ) {
+                date = (Date) extension.getProperty( "date" );
             }
-            else {
-                history.setDate(new Date());
-            }
+            history.setDate( date == null ? new Date() : date );
             transcript.addHistoryMessage(history);
         }
 
@@ -271,13 +285,7 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
    	 JTextArea textArea = new JTextArea(5, 30);
    	 JButton btn_close = new JButton(Res.getString("button.close"));
 
-   	 btn_close.addActionListener(new ActionListener()
-	    {
-	      public void actionPerformed(ActionEvent e)
-	      {
-	    	  	Frame.setVisible(false);
-	      }
-	    });
+   	 btn_close.addActionListener( e -> Frame.setVisible(false) );
 
    	 textArea.setLineWrap(true);
    	 textArea.setWrapStyleWord(true);
@@ -301,21 +309,19 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
     /**
      * Sort HistoryMessages by date.
      */
-    final Comparator<HistoryMessage> dateComparator = new Comparator<HistoryMessage>() {
-        public int compare(HistoryMessage messageOne, HistoryMessage messageTwo) {
+    final Comparator<HistoryMessage> dateComparator = ( messageOne, messageTwo ) -> {
 
-            long time1 = messageOne.getDate().getTime();
-            long time2 = messageTwo.getDate().getTime();
+        long time1 = messageOne.getDate().getTime();
+        long time2 = messageTwo.getDate().getTime();
 
-            if (time1 < time2) {
-                return 1;
-            }
-            else if (time1 > time2) {
-                return -1;
-            }
-            return 0;
-
+        if (time1 < time2) {
+            return 1;
         }
+        else if (time1 > time2) {
+            return -1;
+        }
+        return 0;
+
     };
 
     private class ChatRoomDecorator implements ActionListener, ChatRoomClosingListener {

@@ -19,10 +19,12 @@
  */
 package org.jivesoftware.sparkimpl.plugin.gateways;
 
-import org.jivesoftware.smackx.packet.PrivateData;
-import org.jivesoftware.smackx.provider.PrivateDataProvider;
+import org.jivesoftware.smackx.iqprivate.packet.PrivateData;
+import org.jivesoftware.smackx.iqprivate.provider.PrivateDataProvider;
 import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,7 +35,7 @@ import java.util.Map;
  */
 public class GatewayPrivateData implements PrivateData {
 
-    private final Map<String, String> loginSettingsMap = new HashMap<String, String>();
+    private final Map<String, String> loginSettingsMap = new HashMap<>();
 
     public static final String ELEMENT = "gateway-settings";
     public static final String NAMESPACE = "http://www.jivesoftware.org/spark";
@@ -61,7 +63,7 @@ public class GatewayPrivateData implements PrivateData {
 
 
     public String toXML() {
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         buf.append("<").append(getElementName()).append(" xmlns=\"").append(getNamespace()).append("\">");
         buf.append("<gateways>");
         for (String serviceName : loginSettingsMap.keySet()) {
@@ -83,7 +85,8 @@ public class GatewayPrivateData implements PrivateData {
         public ConferencePrivateDataProvider() {
         }
 
-        public PrivateData parsePrivateData(XmlPullParser parser) throws Exception {
+        public PrivateData parsePrivateData(XmlPullParser parser) throws IOException, XmlPullParserException
+        {
             GatewayPrivateData data = new GatewayPrivateData();
 
             boolean done = false;

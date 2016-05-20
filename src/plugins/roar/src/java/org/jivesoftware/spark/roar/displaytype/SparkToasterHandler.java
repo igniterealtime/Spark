@@ -8,7 +8,7 @@ import javax.swing.BorderFactory;
 
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.roar.RoarProperties;
+import org.jivesoftware.spark.roar.RoarResources;
 import org.jivesoftware.spark.roar.gui.SparkToaster;
 import org.jivesoftware.spark.ui.ChatFrame;
 import org.jivesoftware.spark.ui.ChatRoom;
@@ -26,12 +26,11 @@ public class SparkToasterHandler implements RoarDisplayType {
     }
 
     @Override
-    public void messageReceived(ChatRoom room, Message message) {
+    public void messageReceived(ChatRoom room, Message message, PropertyBundle property) {
 
-	int time = RoarProperties.getInstance().getDuration();
 
 	SparkToaster toaster = new SparkToaster();
-	toaster.setDisplayTime(time);
+	toaster.setDisplayTime(property.duration);
 	toaster.setBorder(BorderFactory.createBevelBorder(0));
 	toaster.setTitle(room.getTabTitle());
 
@@ -66,15 +65,20 @@ public class SparkToasterHandler implements RoarDisplayType {
 
     @Override
     public String toString() {
-	return "SparkToaster";
+        return "SparkToaster";
     }
 
-    public static String getName() {
-	return "SparkToaster";
+    public String getName() {
+        return "SparkToaster";
     }
 
-    public static String getLocalizedName() {
-	return "SparkToaster";
+    public String getLocalizedName() {
+        return "SparkToaster";
+    }
+
+    @Override
+    public String getWarningMessage() {
+        return RoarResources.getString("roar.warning.toaster");
     }
 
 }

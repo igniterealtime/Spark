@@ -22,27 +22,10 @@ package org.jivesoftware.sparkimpl.preference.notifications;
 
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
-import org.jivesoftware.spark.component.VerticalFlowLayout;
 import org.jivesoftware.spark.util.ResourceUtils;
-import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 
-import javax.swing.BorderFactory;
-import javax.swing.JCheckBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JSpinner;
-import javax.swing.SpinnerListModel;
-import javax.swing.SpinnerNumberModel;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import javax.swing.*;
+import java.awt.*;
 
 /**
  * Represents the UI for handling notification preferences within Spark.
@@ -53,6 +36,7 @@ public class NotificationsUI extends JPanel {
 
 	private static final long serialVersionUID = -3372199803443605883L;
 	private JCheckBox toasterBox;
+    private JCheckBox asteriskToasterBox;
     private JCheckBox windowFocusBox;
     private JCheckBox offlineNotificationBox;
     private JCheckBox onlineNotificationBox;
@@ -101,48 +85,48 @@ public class NotificationsUI extends JPanel {
         ResourceUtils.resButton(toasterBox, Res.getString("checkbox.show.toaster"));
         pn.add(toasterBox, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
 
+        asteriskToasterBox = new JCheckBox();
+        ResourceUtils.resButton(asteriskToasterBox, Res.getString("checkbox.disable.asterisk.toaster"));
+        pn.add(asteriskToasterBox, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+
         windowFocusBox = new JCheckBox();
         ResourceUtils.resButton(windowFocusBox, Res.getString("checkbox.window.to.front"));
-        pn.add(windowFocusBox, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        pn.add(windowFocusBox, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
                 
-        pn.add(pn_OnOffNotifications, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+        pn.add(pn_OnOffNotifications, new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
         
         SystemTrayNotificationBox = new JCheckBox();
         ResourceUtils.resButton(SystemTrayNotificationBox, Res.getString("checkbox.notify.systemtray"));
-        pn.add(SystemTrayNotificationBox, new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        pn.add(SystemTrayNotificationBox, new GridBagConstraints(0, 5, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
            
         showTypingNotificationBox = new JCheckBox();
         ResourceUtils.resButton(showTypingNotificationBox, Res.getString("checkbox.notify.typing.systemtray"));
-        pn.add(showTypingNotificationBox, new GridBagConstraints(0, 5, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        pn.add(showTypingNotificationBox, new GridBagConstraints(0, 6, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         
         betaCheckBox = new JCheckBox();
         ResourceUtils.resButton(betaCheckBox, Res.getString("menuitem.check.for.updates"));
         if(!Default.getBoolean(Default.DISABLE_UPDATES)){
-        	pn.add(betaCheckBox, new GridBagConstraints(0, 6, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        	pn.add(betaCheckBox, new GridBagConstraints(0, 7, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         }   
         	add(pn);	
 
-        windowFocusBox.addChangeListener(new ChangeListener(){
-        	public void stateChanged(ChangeEvent ce){
-        		if(shouldWindowPopup()) {
-        			setSystemTrayNotification(false);
-        			setSystemTrayNotificationEnabled(false);
-        		}
-        		else
-        			setSystemTrayNotificationEnabled(true);
-        	}
-        });
+        windowFocusBox.addChangeListener( ce -> {
+            if(shouldWindowPopup()) {
+                setSystemTrayNotification(false);
+                setSystemTrayNotificationEnabled(false);
+            }
+            else
+                setSystemTrayNotificationEnabled(true);
+        } );
         
-        SystemTrayNotificationBox.addChangeListener(new ChangeListener(){
-        	public void stateChanged(ChangeEvent ce){
-        		if(isSystemTrayNotificationEnabled()) {
-        			setShowWindowPopup(false);
-        			setShowWindowPopupEnabled(false);
-        		}
-        		else
-        			setShowWindowPopupEnabled(true);
-        	}
-        });
+        SystemTrayNotificationBox.addChangeListener( ce -> {
+            if(isSystemTrayNotificationEnabled()) {
+                setShowWindowPopup(false);
+                setShowWindowPopupEnabled(false);
+            }
+            else
+                setShowWindowPopupEnabled(true);
+        } );
     }
 
     public void setShowToaster(boolean show) {
@@ -151,6 +135,14 @@ public class NotificationsUI extends JPanel {
 
     public boolean showToaster() {
         return toasterBox.isSelected();
+    }
+
+    public void setDisableAsteriskToaster(boolean disable) {
+        asteriskToasterBox.setSelected(disable);
+    }
+
+    public boolean disableAsteriskToaster() {
+        return asteriskToasterBox.isSelected();
     }
 
     public void setShowWindowPopup(boolean popup) {

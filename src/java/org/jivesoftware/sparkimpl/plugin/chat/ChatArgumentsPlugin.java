@@ -20,10 +20,10 @@
 package org.jivesoftware.sparkimpl.plugin.chat;
 
 import org.jivesoftware.Spark;
-import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.Plugin;
 import org.jivesoftware.spark.ui.conferences.ConferenceUtils;
+import org.jxmpp.util.XmppStringUtils;
 
 public class ChatArgumentsPlugin implements Plugin {
 
@@ -32,7 +32,7 @@ public class ChatArgumentsPlugin implements Plugin {
         String start_chat_muc = Spark.getArgumentValue("start_chat_muc");
 
         if (start_chat_jid != null) {
-            String nickname = StringUtils.parseName(start_chat_jid);
+            String nickname = XmppStringUtils.parseLocalpart(start_chat_jid);
             SparkManager.getChatManager().createChatRoom(start_chat_jid, nickname, start_chat_jid);
         }
 

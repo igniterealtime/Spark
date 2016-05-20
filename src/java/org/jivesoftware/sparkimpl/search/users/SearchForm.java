@@ -21,9 +21,10 @@
 package org.jivesoftware.sparkimpl.search.users;
 
 import org.jivesoftware.resource.Res;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smackx.Form;
-import org.jivesoftware.smackx.ReportedData;
+import org.jivesoftware.smackx.xdata.Form;
+import org.jivesoftware.smackx.search.ReportedData;
 import org.jivesoftware.smackx.search.UserSearchManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.ui.DataFormUI;
@@ -44,7 +45,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 
 public class SearchForm extends JPanel {
@@ -66,7 +66,7 @@ public class SearchForm extends JPanel {
         try {
             searchForm = searchManager.getSearchForm(service);
         }
-        catch (XMPPException e) {
+        catch (XMPPException | SmackException e) {
             Log.error("Unable to load search services.", e);
             UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
             JOptionPane.showMessageDialog(SparkManager.getMainWindow(), Res.getString("message.search.service.not.available"), Res.getString("title.notification"), JOptionPane.ERROR_MESSAGE);
@@ -84,11 +84,7 @@ public class SearchForm extends JPanel {
         ResourceUtils.resButton(searchButton, Res.getString("button.search"));
         add(searchButton, new GridBagConstraints(0, 1, 3, 1, 1.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
 
-        searchButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                performSearch();
-            }
-        });
+        searchButton.addActionListener( e -> performSearch() );
 
         KeyStroke enter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
         String enterString = org.jivesoftware.spark.util.StringUtils.keyStroke2String(enter);
@@ -132,7 +128,7 @@ public class SearchForm extends JPanel {
                     Form answerForm = questionForm.getFilledForm();
                     data = searchManager.getSearchResults(answerForm, serviceName);
                 }
-                catch (XMPPException e) {
+                catch (XMPPException | SmackException e) {
                     Log.error("Unable to load search service.", e);
                 }
 

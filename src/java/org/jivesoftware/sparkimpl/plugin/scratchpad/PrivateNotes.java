@@ -19,13 +19,17 @@
  */
 package org.jivesoftware.sparkimpl.plugin.scratchpad;
 
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smackx.PrivateDataManager;
-import org.jivesoftware.smackx.packet.PrivateData;
-import org.jivesoftware.smackx.provider.PrivateDataProvider;
+import org.jivesoftware.smackx.iqprivate.PrivateDataManager;
+import org.jivesoftware.smackx.iqprivate.packet.PrivateData;
+import org.jivesoftware.smackx.iqprivate.provider.PrivateDataProvider;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.util.log.Log;
 import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
+
+import java.io.IOException;
 
 /**
  * @author Derek DeMoro
@@ -46,9 +50,18 @@ public class PrivateNotes implements PrivateData {
     }
 
     public void setNotes(String notes) {
-        this.notes = notes;
+    	if(notes!=null)
+    		{	
+    			this.notes=notes.replaceAll("&","&amp;");
+    		} else {
+    			this.notes=notes;
+    	}
     }
 
+    public void setMyNotes(String notes) {
+    this.notes=notes;
+    
+    }
 
     /**
      * Returns the root element name.
@@ -74,7 +87,7 @@ public class PrivateNotes implements PrivateData {
      * @return the private data as XML.
      */
     public String toXML() {
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         buf.append("<scratchpad xmlns=\"scratchpad:notes\">");
 
         if (getNotes() != null) {
@@ -101,7 +114,7 @@ public class PrivateNotes implements PrivateData {
             super();
         }
 
-        public PrivateData parsePrivateData(XmlPullParser parser) throws Exception {
+        public PrivateData parsePrivateData(XmlPullParser parser) throws XmlPullParserException, IOException {
             boolean done = false;
             while (!done) {
                 int eventType = parser.next();
@@ -121,19 +134,19 @@ public class PrivateNotes implements PrivateData {
     }
 
     public static void savePrivateNotes(PrivateNotes notes) {
-        PrivateDataManager manager = new PrivateDataManager(SparkManager.getConnection());
+        PrivateDataManager manager = PrivateDataManager.getInstanceFor(SparkManager.getConnection());
 
         PrivateDataManager.addPrivateDataProvider("scratchpad", "scratchpad:notes", new PrivateNotes.Provider());
         try {
             manager.setPrivateData(notes);
         }
-        catch (XMPPException e) {
+        catch (XMPPException | SmackException e) {
             Log.error(e);
         }
     }
 
     public static PrivateNotes getPrivateNotes() {
-        PrivateDataManager manager = new PrivateDataManager(SparkManager.getConnection());
+        PrivateDataManager manager = PrivateDataManager.getInstanceFor(SparkManager.getConnection());
 
         PrivateDataManager.addPrivateDataProvider("scratchpad", "scratchpad:notes", new PrivateNotes.Provider());
 
@@ -142,10 +155,16 @@ public class PrivateNotes implements PrivateData {
         try {
             notes = (PrivateNotes)manager.getPrivateData("scratchpad", "scratchpad:notes");
         }
-        catch (XMPPException e) {
+        catch (XMPPException | SmackException e) {
             Log.error(e);
         }
 
+        if(notes.getNotes() != null )
+        	{
+        		String note=notes.getNotes().replaceAll("&amp;","&");
+        		notes.setMyNotes(note);
+        	}
+        
         return notes;
     }
 }

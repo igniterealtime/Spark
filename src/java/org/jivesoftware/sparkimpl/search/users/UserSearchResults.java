@@ -23,10 +23,9 @@ package org.jivesoftware.sparkimpl.search.users;
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.resource.Res;
-import org.jivesoftware.smack.util.StringUtils;
-import org.jivesoftware.smackx.ReportedData;
-import org.jivesoftware.smackx.ReportedData.Column;
-import org.jivesoftware.smackx.ReportedData.Row;
+import org.jivesoftware.smackx.search.ReportedData;
+import org.jivesoftware.smackx.search.ReportedData.Column;
+import org.jivesoftware.smackx.search.ReportedData.Row;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.Table;
@@ -34,8 +33,8 @@ import org.jivesoftware.spark.ui.ChatContainer;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.RosterDialog;
 import org.jivesoftware.spark.util.ModelUtil;
-import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.profile.VCardManager;
+import org.jxmpp.util.XmppStringUtils;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -52,7 +51,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -76,10 +74,8 @@ public class UserSearchResults extends JPanel {
      * @param data the <code>ReportedData</code> returned by the Search Service.
      */
     public void showUsersFound(ReportedData data) {
-        List<String> columnList = new ArrayList<String>();
-        Iterator<Column> columns = data.getColumns();
-        while (columns.hasNext()) {
-            Column column = columns.next();
+        List<String> columnList = new ArrayList<>();
+        for ( final Column column : data.getColumns() ) {
             String label = column.getLabel();
             columnList.add(label);
         }
@@ -113,16 +109,12 @@ public class UserSearchResults extends JPanel {
             resultsTable.clearTable();
         }
         // Populate with answers
-        Iterator<Row> rows = data.getRows();
         List<String> modelList;
-        while (rows.hasNext()) {
-            modelList = new ArrayList<String>();
-            Row row = rows.next();
+        for ( final Row row : data.getRows() ) {
+            modelList = new ArrayList<>();
             for (int i = 0; i < resultsTable.getColumnCount(); i++) {
                 String tableValue = (String)resultsTable.getTableHeader().getColumnModel().getColumn(i).getHeaderValue();
-                Iterator<Column> columnIterator = data.getColumns();
-                while (columnIterator.hasNext()) {
-                    Column column = columnIterator.next();
+                for ( final Column column : data.getColumns() ) {
                     if (column.getLabel().equals(tableValue)) {
                         tableValue = column.getVariable();
                         break;
@@ -170,7 +162,7 @@ public class UserSearchResults extends JPanel {
                     int col = column.getModelIndex();
                     String nickname = (String)resultsTable.getValueAt(row, col);
                     if (!ModelUtil.hasLength(nickname)) {
-                        nickname = StringUtils.parseName(jid);
+                        nickname = XmppStringUtils.parseLocalpart(jid);
                     }
                     dialog.setDefaultNickname(nickname);
                 }
@@ -239,21 +231,13 @@ public class UserSearchResults extends JPanel {
      * @return the first value found in the ReportedData.Row
      */
     public String getFirstValue(ReportedData.Row row, String key) {
-        try {
-            final Iterator<String> rows = row.getValues(key);
-            while (rows.hasNext()) {
-                return rows.next();
-            }
-        }
-        catch (Exception e) {
-            Log.error("Error retrieving the first value.", e);
-        }
-        return null;
+        List<String> values = row.getValues( key );
+        return values == null && values.isEmpty() ? null : values.get( 0 );
     }
 
     private void openChatRoom(int row) {
         String jid = (String)resultsTable.getValueAt(row, 0);
-        String nickname = StringUtils.parseName(jid);
+        String nickname = XmppStringUtils.parseLocalpart(jid);
 
         TableColumn column;
         try {
@@ -261,7 +245,7 @@ public class UserSearchResults extends JPanel {
             int col = column.getModelIndex();
             nickname = (String)resultsTable.getValueAt(row, col);
             if (!ModelUtil.hasLength(nickname)) {
-                nickname = StringUtils.parseName(jid);
+                nickname = XmppStringUtils.parseLocalpart(jid);
             }
         }
         catch (Exception e1) {

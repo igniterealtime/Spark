@@ -58,7 +58,7 @@ public class AluminiumToggleButtonUI extends BaseToggleButtonUI {
         Object savedRenderingHint = g2D.getRenderingHint(RenderingHints.KEY_ANTIALIASING);
         g2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         
-        Color colors[] = null;
+        Color colors[];
         if (b.isEnabled()) {
             Color background = b.getBackground();
             if (background instanceof ColorUIResource) {

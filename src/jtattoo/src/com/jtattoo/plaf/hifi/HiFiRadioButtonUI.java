@@ -52,7 +52,7 @@ public class HiFiRadioButtonUI extends BaseRadioButtonUI {
         } else {
             AbstractButton b = (AbstractButton) c;
             ButtonModel model = b.getModel();
-            int mnemIndex = -1;
+            int mnemIndex;
             if (JTattooUtilities.getJavaVersion() >= 1.4) {
                 mnemIndex = b.getDisplayedMnemonicIndex();
             } else {

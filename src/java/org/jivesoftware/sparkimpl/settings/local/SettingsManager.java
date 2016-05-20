@@ -40,7 +40,7 @@ import org.jivesoftware.spark.util.log.Log;
 public class SettingsManager {
     private static LocalPreferences localPreferences;
 
-    private static List<PreferenceListener> listeners = new ArrayList<PreferenceListener>();
+    private static List<PreferenceListener> listeners = new ArrayList<>();
 
     private static boolean fileExists = false;
 

@@ -22,7 +22,6 @@ package org.jivesoftware.sparkimpl.plugin.history;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.packet.Message;
-import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.Plugin;
 import org.jivesoftware.spark.ui.ChatRoom;
@@ -32,6 +31,7 @@ import org.jivesoftware.spark.ui.MessageFilter;
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.log.Log;
+import org.jxmpp.util.XmppStringUtils;
 import org.xmlpull.mxp1.MXParser;
 import org.xmlpull.v1.XmlPullParser;
 
@@ -75,7 +75,7 @@ import javax.swing.SwingUtilities;
  */
 public class ConversationHistoryPlugin implements Plugin {
 
-    private List<String> historyList = new ArrayList<String>();
+    private List<String> historyList = new ArrayList<>();
     private File transcriptDir;
     private File conFile;
 
@@ -83,7 +83,7 @@ public class ConversationHistoryPlugin implements Plugin {
     private JList contacts;
     private Window window;
 
-    private Map<JLabel, String> jidMap = new HashMap<JLabel, String>();
+    private Map<JLabel, String> jidMap = new HashMap<>();
 
     public void initialize() {
         transcriptDir = new File(SparkManager.getUserDirectory(), "transcripts");
@@ -112,8 +112,8 @@ public class ConversationHistoryPlugin implements Plugin {
 
 		    contacts.setSelectedIndex(contacts.locationToIndex(e
 			    .getPoint()));
-		    String user = jidMap.get((JLabel) contacts
-			    .getSelectedValue());
+		    String user = jidMap.get( contacts
+			    .getSelectedValue() );
 		    ContactItem contact = SparkManager.getContactList()
 			    .getContactItemByJID(user);
 		    SparkManager.getContactList().setSelectedUser(contact.getJID());
@@ -199,7 +199,7 @@ public class ConversationHistoryPlugin implements Plugin {
         if (room instanceof ChatRoomImpl) {
             ChatRoomImpl roomImpl = (ChatRoomImpl) room;
             String jid = roomImpl.getParticipantJID();
-            jid = StringUtils.parseBareAddress(jid);
+            jid = XmppStringUtils.parseBareJid(jid);
             historyList.remove(jid);
             historyList.add(0, jid);
         }
@@ -273,7 +273,7 @@ public class ConversationHistoryPlugin implements Plugin {
             while (!done) {
                 int eventType = parser.next();
                 if (eventType == XmlPullParser.START_TAG && "user".equals(parser.getName())) {
-                    String jid = StringUtils.parseBareAddress(parser.nextText());
+                    String jid = XmppStringUtils.parseBareJid(parser.nextText());
                     historyList.add(jid);
                 }
                 else if (eventType == XmlPullParser.END_TAG && "conversations".equals(parser.getName())) {

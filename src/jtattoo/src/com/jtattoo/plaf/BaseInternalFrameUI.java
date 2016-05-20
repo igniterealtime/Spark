@@ -39,10 +39,8 @@ public class BaseInternalFrameUI extends BasicInternalFrameUI {
     private static final Border HANDY_EMPTY_BORDER = new EmptyBorder(0, 0, 0, 0);
     
     private static String IS_PALETTE = "JInternalFrame.isPalette";
-    private static String FRAME_TYPE = "JInternalFrame.frameType";
     private static String FRAME_BORDER = "InternalFrame.border";
     private static String FRAME_PALETTE_BORDER = "InternalFrame.paletteBorder";
-    private static String PALETTE_FRAME = "palette";
 
     public BaseInternalFrameUI(JInternalFrame b) {
         super(b);
@@ -128,9 +126,11 @@ public class BaseInternalFrameUI extends BasicInternalFrameUI {
 
             BaseInternalFrameUI ui = (BaseInternalFrameUI) jif.getUI();
             String name = e.getPropertyName();
-            if (name.equals(FRAME_TYPE)) {
+            String FRAME_TYPE = "JInternalFrame.frameType";
+            if (name.equals( FRAME_TYPE )) {
                 if (e.getNewValue() instanceof String) {
-                    if (PALETTE_FRAME.equals(e.getNewValue())) {
+                    String PALETTE_FRAME = "palette";
+                    if ( PALETTE_FRAME.equals(e.getNewValue())) {
                         LookAndFeel.installBorder(ui.frame, FRAME_PALETTE_BORDER);
                         ui.setPalette(true);
                     } else {
