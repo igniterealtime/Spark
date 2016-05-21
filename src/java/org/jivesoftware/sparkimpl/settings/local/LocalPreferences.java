@@ -43,7 +43,7 @@ import org.jivesoftware.spark.util.log.Log;
 public class LocalPreferences {
 
     	private Properties props;
-
+        
 	public LocalPreferences(Properties props) {
 		this.props = props;
 	}
@@ -74,6 +74,17 @@ public class LocalPreferences {
 	public void setXmppPort(int xmppPort) {
 		props.setProperty("xmppPort", Integer.toString(xmppPort));
 	}
+        public void setGroupChatPassword(String roomName,String password)
+        {
+                props.setProperty(roomName, password);
+        }
+        public String getGroupChatPassword(String roomName)
+        {
+            if(props.getProperty(roomName)!= null)
+            return Encryptor.decrypt(props.getProperty(roomName));
+            
+            return null;
+        }
 
 	/**
 	 * Return the smack timeout for requests. Default is 5 seconds.
@@ -114,6 +125,11 @@ public class LocalPreferences {
 //		props.setProperty("password", password);
 //	}
 
+        public String getPasswordForRoom(String room)
+        {
+            
+            return props.getProperty(room,"");
+        }
 	/**
 	 * returns the password for an encrypted jid
 	 * @param barejid
