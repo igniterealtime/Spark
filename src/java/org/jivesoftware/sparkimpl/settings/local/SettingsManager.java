@@ -46,6 +46,14 @@ public class SettingsManager {
 
     private SettingsManager() {
     }
+    
+    //should probably not be read in a separate call
+    public static LocalPreferences getRelodLocalPreferences()
+    {
+    	getSettingsFile();
+    	localPreferences = load();
+    	return localPreferences;
+    }
 
     /**
      * Returns the LocalPreferences for this user.
