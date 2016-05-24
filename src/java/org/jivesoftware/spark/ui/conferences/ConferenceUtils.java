@@ -139,7 +139,7 @@ public class ConferenceUtils {
      */
     public static void joinConferenceOnSeperateThread(final String roomName, String roomJID, String password, final String message, final Collection<String> jids) {
         ChatManager chatManager = SparkManager.getChatManager();
-        LocalPreferences pref = SettingsManager.getLocalPreferences();
+        LocalPreferences pref = SettingsManager.getRelodLocalPreferences();
 
         final MultiUserChat groupChat = MultiUserChatManager.getInstanceFor( SparkManager.getConnection() ).getMultiUserChat( roomJID );
         final String nickname = pref.getNickname().trim();
@@ -168,7 +168,12 @@ public class ConferenceUtils {
 
         if (isPasswordRequired(roomJID) && password == null) {
             final PasswordDialog passwordDialog = new PasswordDialog();
+            passwordDialog.setPasswordField(pref.getGroupChatPassword(roomJID));
             password = passwordDialog.getPassword(Res.getString("title.password.required"), Res.getString("message.groupchat.require.password"), SparkRes.getImageIcon(SparkRes.LOCK_16x16), SparkManager.getFocusedComponent());
+            if(passwordDialog.isCheckboxSelected() == true && password!=null)
+            {
+            	passwordDialog.savePassword(room.getRoomname(),password);
+            }
             room.setPassword(password);
             if (!ModelUtil.hasLength(password)) {
                 return;
