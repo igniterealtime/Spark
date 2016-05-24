@@ -74,6 +74,29 @@ public class LocalPreferences {
 	public void setXmppPort(int xmppPort) {
 		props.setProperty("xmppPort", Integer.toString(xmppPort));
 	}
+	
+	/**
+	 * Sets room's password.
+	 *
+	 * @param password
+	 *            sets encrypted password for a room.
+	 */
+	public void setGroupChatPassword(String roomName,String password)
+	{
+		props.setProperty(roomName, password);
+	}
+	
+	/**
+	 * Returns decrypted room's password.
+	 *
+	 * @return decrypted room's password.
+	 */
+	public String getGroupChatPassword(String roomName)
+	{
+		if(props.getProperty(roomName)!= null)
+			return Encryptor.decrypt(props.getProperty(roomName));
+		return null;
+	}
 
 	/**
 	 * Return the smack timeout for requests. Default is 5 seconds.
@@ -113,6 +136,16 @@ public class LocalPreferences {
 //	public void setPassword(String password) {
 //		props.setProperty("password", password);
 //	}
+	
+	/**
+	 * Returns room's password.
+	 *
+	 * @return room's password.
+	 */
+	public String getPasswordForRoom(String room)
+	{
+		return props.getProperty(room,"");
+	}
 
 	/**
 	 * returns the password for an encrypted jid
