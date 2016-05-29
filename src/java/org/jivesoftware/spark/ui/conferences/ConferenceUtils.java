@@ -139,7 +139,7 @@ public class ConferenceUtils {
      */
     public static void joinConferenceOnSeperateThread(final String roomName, String roomJID, String password, final String message, final Collection<String> jids) {
         ChatManager chatManager = SparkManager.getChatManager();
-        LocalPreferences pref = SettingsManager.getRelodLocalPreferences();
+        LocalPreferences pref = SettingsManager.getLocalPreferences();
 
         final MultiUserChat groupChat = MultiUserChatManager.getInstanceFor( SparkManager.getConnection() ).getMultiUserChat( roomJID );
         final String nickname = pref.getNickname().trim();
@@ -168,12 +168,7 @@ public class ConferenceUtils {
 
         if (isPasswordRequired(roomJID) && password == null) {
             final PasswordDialog passwordDialog = new PasswordDialog();
-            passwordDialog.setPasswordField(pref.getGroupChatPassword(roomJID));
             password = passwordDialog.getPassword(Res.getString("title.password.required"), Res.getString("message.groupchat.require.password"), SparkRes.getImageIcon(SparkRes.LOCK_16x16), SparkManager.getFocusedComponent());
-            if(passwordDialog.isCheckboxSelected() == true && password!=null)
-            {
-            	passwordDialog.savePassword(room.getRoomname(),password);
-            }
             room.setPassword(password);
             if (!ModelUtil.hasLength(password)) {
                 return;
@@ -198,7 +193,7 @@ public class ConferenceUtils {
                             try {
                             	if (!confirmToRevealVisibility())
                             		return null;
-
+                            	
                                 if (ModelUtil.hasLength(userPassword)) {
                                     groupChat.join(joinName, userPassword);
                                 }
@@ -216,7 +211,7 @@ public class ConferenceUtils {
                                 final String errorText = ConferenceUtils.getReason( error );
 
                                 errors.add( errorText );
-                                if ( error != null && error.getCondition() != XMPPError.Condition.conflict )
+                                if ( error.getCondition() != XMPPError.Condition.conflict )
                                 {
                                     break;
                                 }
@@ -550,7 +545,7 @@ public class ConferenceUtils {
                     try {
                     	if (!confirmToRevealVisibility())
                     		return null;
-
+                    	
                         if (ModelUtil.hasLength(userPassword)) {
                             groupChat.join(joinName, userPassword);
                         }
@@ -568,7 +563,7 @@ public class ConferenceUtils {
                         final String errorText = ConferenceUtils.getReason( error );
 
                         errors.add( errorText );
-                        if ( error != null && error.getCondition() != XMPPError.Condition.conflict )
+                        if ( error.getCondition() != XMPPError.Condition.conflict )
                         {
                             break;
                         }
@@ -637,7 +632,7 @@ public class ConferenceUtils {
                         final String errorText = ConferenceUtils.getReason( error );
 
                         errors.add( errorText );
-                        if ( error != null && error.getCondition() != XMPPError.Condition.conflict )
+                        if ( error.getCondition() != XMPPError.Condition.conflict )
                         {
                             break;
                         }

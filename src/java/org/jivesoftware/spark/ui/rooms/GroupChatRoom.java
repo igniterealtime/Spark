@@ -428,7 +428,7 @@ public class GroupChatRoom extends ChatRoom
     @Override
     public String getRoomname()
     {
-        return XmppStringUtils.parseBareJid( chat.getRoom() );
+        return XmppStringUtils.parseLocalpart( chat.getRoom() );
     }
 
     /**

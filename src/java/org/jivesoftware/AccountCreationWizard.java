@@ -24,7 +24,6 @@ package org.jivesoftware;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.*;
 import org.jivesoftware.smack.packet.XMPPError;
-import org.jivesoftware.smack.parsing.ExceptionLoggingCallback;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
 import org.jivesoftware.smackx.iqregister.AccountManager;
@@ -361,7 +360,6 @@ public class AccountCreationWizard extends JPanel {
         final XMPPTCPConnectionConfiguration configuration = builder.build();
 
         final AbstractXMPPConnection connection = new XMPPTCPConnection( configuration );
-        connection.setParsingExceptionCallback( new ExceptionLoggingCallback() );
         connection.connect();
 
         return connection;

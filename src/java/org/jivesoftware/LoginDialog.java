@@ -28,7 +28,6 @@ import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.*;
-import org.jivesoftware.smack.parsing.ExceptionLoggingCallback;
 import org.jivesoftware.smack.proxy.ProxyInfo;
 import org.jivesoftware.smack.sasl.javax.SASLExternalMechanism;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
@@ -1031,7 +1030,6 @@ public class LoginDialog {
                 // Get connection
                 try {
                     connection = new XMPPTCPConnection(retrieveConnectionConfiguration());
-                    connection.setParsingExceptionCallback( new ExceptionLoggingCallback() );
                     //If we want to use the debug version of smack, we have to check if
                     //we are on the dispatch thread because smack will create an UI
 		    if (localPref.isDebuggerEnabled()) {

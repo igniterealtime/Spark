@@ -102,7 +102,7 @@ public class UserIdlePlugin extends TimerTask implements Plugin {
         if (latestPresence.isAway()) {
             Log.debug("UserIdlePlugin: Presence is already set to away");
         } else {
-			Presence statusPresence = new Presence(Presence.Type.available, StringUtils.modifyWildcards(statustext), 0, Presence.Mode.away);
+			Presence statusPresence = new Presence(Presence.Type.available, StringUtils.modifyWildcards(statustext), 1, Presence.Mode.away);
         	SparkManager.getSessionManager().changePresence(statusPresence);
             Log.debug("UserIdlePlugin: Setting idle presence");
         }
