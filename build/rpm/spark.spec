@@ -56,7 +56,7 @@ exit 0
 
 
 %files
-%dir /usr/bin/spark
+%attr(0755, root, root) /usr/bin/spark
 %dir /usr/share/spark/bin
 %dir /usr/share/spark
 %dir /usr/share/spark/xtra
