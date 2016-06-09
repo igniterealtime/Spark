@@ -23,7 +23,7 @@ Instant Messenger
 
 %build
 cd build
-/opt/apache-ant-1.8.1/bin/ant jar
+ant jar
 cd ..
 
 
