@@ -88,7 +88,7 @@ public final class ChatTranscripts {
 
     private static void writeToFile(File transcriptFile, Collection<HistoryMessage> messages, boolean append) {
         final StringBuilder builder = new StringBuilder();
-        
+
         final String one = " ";
         final String two = "  ";
         final String three = "   ";
@@ -137,7 +137,7 @@ public final class ChatTranscripts {
             // We want to append near the end of the document as the last
             // child in the transcript.
             final String endTag = " </messages>\n</transcript>";
-            
+
           String line =  raf.readLine();
           if(line.contains("</messages></transcript>"))
           {
@@ -206,6 +206,7 @@ public final class ChatTranscripts {
                     done = true;
                 }
             }
+            in.close();
         }
         catch (Exception e) {
             e.printStackTrace();
