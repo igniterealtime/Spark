@@ -19,21 +19,6 @@
  */
 package org.jivesoftware.sparkplugin.calllog;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.text.DateFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.TimerTask;
-
 import net.java.sipmack.common.Log;
 import net.java.sipmack.sip.Call;
 import net.java.sipmack.sip.event.CallRejectedEvent;
@@ -44,7 +29,6 @@ import net.java.sipmack.softphone.SoftPhone;
 import net.java.sipmack.softphone.SoftPhoneManager;
 import net.java.sipmack.softphone.listeners.RegisterEvent;
 import net.java.sipmack.softphone.listeners.SoftPhoneListener;
-
 import org.jivesoftware.Spark;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
@@ -54,6 +38,10 @@ import org.jivesoftware.sparkplugin.callhistory.HistoryCall;
 import org.jivesoftware.sparkplugin.sipaccount.SipAccountPacket;
 import org.xmlpull.mxp1.MXParser;
 import org.xmlpull.v1.XmlPullParser;
+
+import java.io.*;
+import java.text.DateFormat;
+import java.util.*;
 
 /**
  * Title: SIPark
@@ -243,6 +231,7 @@ public class LogManagerImpl implements SoftPhoneListener, LogManager {
                     done = true;
                 }
             }
+            in.close();
         }
         catch (Exception e) {
             Log.error(e);

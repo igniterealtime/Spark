@@ -122,6 +122,7 @@ public class PhonebookManager implements BookManager
                    done = true;
                }
            }
+           in.close();
        }
        catch (Exception e) {
            Log.error(e);
