@@ -847,7 +847,7 @@
 	<property name="work.dir" value="${basedir}/work"/>
 	<property name="debian.dir" value="${basedir}/build/debian"/>
 	<property name="debian.version" value="${version.major}.${version.minor}.${version.revision}"/>
-	<property name="debian.work.dir" value="${work.dir}/debian/spark-messenger-${debian.version}"/>
+	<property name="debian.work.dir" value="${work.dir}/debian/spark-${debian.version}"/>
 	<property name="debian.release.dir" value="${basedir}/installer"/>
 	<tstamp>
 		<format property="debian.builddate" pattern="EEE, dd MMM yyyy HH:mm:ss Z" locale="en"/>
