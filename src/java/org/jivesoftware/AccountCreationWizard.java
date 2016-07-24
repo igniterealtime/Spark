@@ -22,38 +22,31 @@
 package org.jivesoftware;
 
 import org.jivesoftware.resource.Res;
-import org.jivesoftware.smack.*;
+import org.jivesoftware.smack.AbstractXMPPConnection;
+import org.jivesoftware.smack.SmackException;
+import org.jivesoftware.smack.XMPPConnection;
+import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.XMPPError;
 import org.jivesoftware.smack.parsing.ExceptionLoggingCallback;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
+import org.jivesoftware.smack.util.TLSUtils;
 import org.jivesoftware.smackx.iqregister.AccountManager;
 import org.jivesoftware.spark.component.TitlePanel;
 import org.jivesoftware.spark.util.DummySSLSocketFactory;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.SwingWorker;
+import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jxmpp.util.XmppStringUtils;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import javax.swing.*;
+import java.awt.*;
 import java.io.IOException;
-
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPasswordField;
-import javax.swing.JProgressBar;
-import javax.swing.JTextField;
-import javax.swing.UIManager;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
 
 /**
  * Allows the creation of accounts on an XMPP server.
@@ -347,6 +340,14 @@ public class AccountCreationWizard extends JPanel {
                 .setServiceName( serverName )
                 .setPort( port )
                 .setCompressionEnabled( localPreferences.isCompressionEnabled() );
+
+        if (localPreferences.isAcceptAllCertificates()) {
+            try {
+                TLSUtils.acceptAllCertificates(builder);
+            } catch (NoSuchAlgorithmException | KeyManagementException e) {
+                Log.warning( "Unable to create configuration.", e );
+            }
+        }
 
         if ( hostPortConfigured ) {
             builder.setHost( localPreferences.getXmppHost() );
