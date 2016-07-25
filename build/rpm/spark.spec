@@ -153,6 +153,8 @@ exit 0
 /usr/share/spark/lib/lobo.jar
 /usr/share/spark/lib/substance.jar
 /usr/share/spark/lib/trident.jar
+/usr/share/spark/lib/laf-plugin.jar
+/usr/share/spark/lib/laf-widget.jar
 /usr/share/spark/lib/xpp3.jar
 /usr/share/spark/lib/zrtp4j-light.jar
 %dir /usr/share/spark/lib/ext/
