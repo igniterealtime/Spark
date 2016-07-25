@@ -19,44 +19,6 @@
  */
 package org.jivesoftware.sparkimpl.plugin.scratchpad;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.GradientPaint;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.TimerTask;
-
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.BorderFactory;
-import javax.swing.ButtonGroup;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
-import javax.swing.JTextPane;
-import javax.swing.JToggleButton;
-import javax.swing.KeyStroke;
-
 import org.jdesktop.swingx.calendar.DateUtils;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
@@ -65,11 +27,18 @@ import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.component.VerticalFlowLayout;
 import org.jivesoftware.spark.plugin.Plugin;
 import org.jivesoftware.spark.ui.ContactList;
-import org.jivesoftware.spark.util.GraphicUtils;
-import org.jivesoftware.spark.util.ModelUtil;
-import org.jivesoftware.spark.util.ResourceUtils;
+import org.jivesoftware.spark.util.*;
 import org.jivesoftware.spark.util.SwingWorker;
-import org.jivesoftware.spark.util.TaskEngine;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.TimerTask;
 
 /**
  *
@@ -86,72 +55,75 @@ public class ScratchPadPlugin implements Plugin {
     private static JFrame frame;
 
     public void initialize() {
-   	 
-    	TimerTask startTask = new TimerTask() {
-			@Override
-			public void run() {
-				panel_events = new JPanel();
-				mainPanel = new JPanel();
-			}
-		};
-   	 
- 		TaskEngine.getInstance().schedule(startTask, 500);
- 		
-        ContactList contactList = SparkManager.getWorkspace().getContactList();
-        contactList.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("control F6"), "viewNotes");
 
-        contactList.getActionMap().put("viewNotes", new AbstractAction("viewNotes") {
-	    private static final long serialVersionUID = -3258500919859584696L;
+            TimerTask startTask = new TimerTask() {
+                @Override
+                public void run() {
+                    EventQueue.invokeLater(() -> {
+                        panel_events = new JPanel();
+                        mainPanel = new JPanel();
+                    });
+                }
+            };
 
-	    public void actionPerformed(ActionEvent evt) {
-                // Retrieve notes and dispaly in editor.
-                retrieveNotes();
+            TaskEngine.getInstance().schedule(startTask, 500);
+
+            ContactList contactList = SparkManager.getWorkspace().getContactList();
+            contactList.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("control F6"), "viewNotes");
+
+            contactList.getActionMap().put("viewNotes", new AbstractAction("viewNotes") {
+                private static final long serialVersionUID = -3258500919859584696L;
+
+                public void actionPerformed(ActionEvent evt) {
+                    // Retrieve notes and dispaly in editor.
+                    retrieveNotes();
+                }
+            });
+
+            contactList.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("control F5"), "viewTasks");
+
+            contactList.getActionMap().put("viewTasks", new AbstractAction("viewTasks") {
+                private static final long serialVersionUID = 8589614513097901484L;
+
+                public void actionPerformed(ActionEvent evt) {
+                    // Retrieve notes and dispaly in editor.
+                    showTaskList();
+                }
+            });
+
+            //TODO REMOVE
+            @SuppressWarnings("unused")
+            int index = -1;
+            JPanel commandPanel = SparkManager.getWorkspace().getCommandPanel();
+            for (int i = 0; i < commandPanel.getComponentCount(); i++) {
+                if (commandPanel.getComponent(i) instanceof JLabel) {
+                    break;
+                }
             }
-        });
 
-        contactList.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("control F5"), "viewTasks");
 
-        contactList.getActionMap().put("viewTasks", new AbstractAction("viewTasks") {
-	    private static final long serialVersionUID = 8589614513097901484L;
+            JMenuItem taskMenu = new JMenuItem(Res.getString("button.view.tasklist"),
+                    SparkRes.getImageIcon(SparkRes.DESKTOP_IMAGE));
 
-	    public void actionPerformed(ActionEvent evt) {
-                // Retrieve notes and dispaly in editor.
-                showTaskList();
-            }
-        });
+            JMenuItem notesMenu = new JMenuItem(Res.getString("button.view.notes"),
+                    SparkRes.getImageIcon(SparkRes.DOCUMENT_16x16));
 
-        //TODO REMOVE
-        @SuppressWarnings("unused")
-        int index = -1;
-        JPanel commandPanel = SparkManager.getWorkspace().getCommandPanel();
-        for (int i = 0; i < commandPanel.getComponentCount(); i++) {
-            if (commandPanel.getComponent(i) instanceof JLabel) {
-                break;
-            }
+            taskMenu.addActionListener(e -> showTaskList());
+
+            notesMenu.addActionListener(e -> retrieveNotes());
+
+            // Add To toolbar
+            final JMenu actionsMenu = SparkManager.getMainWindow().getMenuByName(Res.getString("menuitem.actions"));
+            actionsMenu.addSeparator();
+            actionsMenu.add(taskMenu);
+            actionsMenu.add(notesMenu);
+
+
+            // Start notifications.
+            new TaskNotification();
+
         }
 
-        
-        JMenuItem taskMenu = new JMenuItem(Res.getString("button.view.tasklist"),
-        	SparkRes.getImageIcon(SparkRes.DESKTOP_IMAGE));
-        
-        JMenuItem notesMenu = new JMenuItem(Res.getString("button.view.notes"),
-        	SparkRes.getImageIcon(SparkRes.DOCUMENT_16x16));
-
-        taskMenu.addActionListener( e -> showTaskList() );
-
-        notesMenu.addActionListener( e -> retrieveNotes() );
-
-        // Add To toolbar
-      final JMenu actionsMenu = SparkManager.getMainWindow().getMenuByName(Res.getString("menuitem.actions"));
-	      actionsMenu.addSeparator();
-	      actionsMenu.add(taskMenu);
-	      actionsMenu.add(notesMenu);
-
-
-        // Start notifications.
-        new TaskNotification();
-
-    }
 
     private void showTaskList() {
         frame = new JFrame(Res.getString("title.tasks"));
