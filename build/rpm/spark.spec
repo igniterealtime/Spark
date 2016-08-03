@@ -124,12 +124,8 @@ exit 0
 /usr/share/spark/lib/mac/libSystemUtilities.jnilib
 /usr/share/spark/lib/osgi.core.jar
 /usr/share/spark/lib/sdes4j.jar
-/usr/share/spark/lib/smack-bosh.jar
-/usr/share/spark/lib/smack-compression-jzlib.jar
 /usr/share/spark/lib/smack-core.jar
-/usr/share/spark/lib/smack-debug-slf4j.jar
 /usr/share/spark/lib/smack-debug.jar
-/usr/share/spark/lib/smack-experimental.jar
 /usr/share/spark/lib/smack-extensions.jar
 /usr/share/spark/lib/smack-im.jar
 /usr/share/spark/lib/smack-java7.jar
