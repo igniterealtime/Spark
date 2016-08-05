@@ -1,4 +1,4 @@
-package org.jivesoftware.sparkimpl.plugin.idle;
+package org.jivesoftware.sparkimpl.plugin.idle.windows;
 
 import com.sun.jna.WString;
 import com.sun.jna.platform.win32.*;

@@ -25,6 +25,8 @@ import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.Plugin;
 import org.jivesoftware.spark.util.StringUtils;
 import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkimpl.plugin.idle.windows.Win32IdleTime;
+import org.jivesoftware.sparkimpl.plugin.idle.windows.WinLockListener;
 import org.jivesoftware.sparkimpl.plugin.phone.PhonePlugin;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
@@ -34,7 +36,7 @@ import java.awt.event.InputEvent;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import static org.jivesoftware.sparkimpl.plugin.idle.Win32IdleTime.getIdleTimeMillisWin32;
+import static org.jivesoftware.sparkimpl.plugin.idle.windows.Win32IdleTime.getIdleTimeMillisWin32;
 
 public class UserIdlePlugin extends TimerTask implements Plugin {
 
