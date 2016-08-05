@@ -47,7 +47,7 @@ public class UserIdlePlugin extends TimerTask implements Plugin {
 	private int counter = 0;
 	public static LocalPreferences pref = SettingsManager.getLocalPreferences();
 	public static Presence latestPresence;
-	private boolean DesktopLockStatus;
+	private static boolean DesktopLockStatus;
 	private static String statustext;
 	private LockListener isLocked;
 	private boolean IsLocked;
@@ -57,7 +57,7 @@ public class UserIdlePlugin extends TimerTask implements Plugin {
 		return IsLocked;
 	}
 
-	public boolean getDesktopLockStatus() {
+	public static boolean getDesktopLockStatus() {
 
 		return DesktopLockStatus;
 	}
