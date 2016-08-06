@@ -25,17 +25,19 @@ import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.Plugin;
 import org.jivesoftware.spark.util.StringUtils;
 import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkimpl.plugin.idle.linux.LinuxIdleTime;
+import org.jivesoftware.sparkimpl.plugin.idle.mac.MacIdleTime;
 import org.jivesoftware.sparkimpl.plugin.idle.windows.Win32IdleTime;
 import org.jivesoftware.sparkimpl.plugin.idle.windows.WinLockListener;
 import org.jivesoftware.sparkimpl.plugin.phone.PhonePlugin;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
-import java.awt.*;
-import java.awt.event.InputEvent;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import static org.jivesoftware.sparkimpl.plugin.idle.linux.LinuxIdleTime.getIdleTimeMillisLinux;
+import static org.jivesoftware.sparkimpl.plugin.idle.mac.MacIdleTime.getIdleTimeMillisMac;
 import static org.jivesoftware.sparkimpl.plugin.idle.windows.Win32IdleTime.getIdleTimeMillisWin32;
 
 public class UserIdlePlugin extends TimerTask implements Plugin {
@@ -78,9 +80,14 @@ public class UserIdlePlugin extends TimerTask implements Plugin {
 			isLocked.intWinLockListener();
 			idleTimer = new IdleTimer();
 			idleTimer.intWin32IdleTime();
-
-		} else {
-			addGlobalListener();
+		}
+		if (Spark.isMac()) {
+			idleTimer = new IdleTimer();
+			idleTimer.intMacIdleTime();
+		}
+		if (Spark.isLinux()) {
+			idleTimer = new IdleTimer();
+			idleTimer.intLinuxIdleTime();
 		}
 	}
 
@@ -166,53 +173,30 @@ public class UserIdlePlugin extends TimerTask implements Plugin {
 						hasChanged = false;
                     }
 
-				} else {
-
-						// Generic Idle
-						PointerInfo info = MouseInfo.getPointerInfo();
-						int automaticIdleTime = (pref.getIdleTime() * 60) / CHECKTIME;
-						if (info != null) {
-							if (x == info.getLocation().getX() && y == info.getLocation().getY()) {
-								if (counter > automaticIdleTime) {
-									if (!hasChanged) {
-										setIdle();
-										hasChanged = true;
-									}
-								}
-								counter++;
-							} else {
-								if (hasChanged) {
-									setOnline();
-									hasChanged = false;
-								}
-								counter = 0;
-							}
-
-							y = info.getLocation().getY();
-							x = info.getLocation().getX();
-						}
-
-					}
+				}
+			if (Spark.isMac()) {
+				if ((getIdleTimeMillisMac() / 1000 > (pref.getIdleTime() * 60)) && !hasChanged) {
+					setIdle();
+					hasChanged = true;
+				} else if ((getIdleTimeMillisMac() / 1000 < 10) && hasChanged) {
+					setOnline();
+					hasChanged = false;
 				}
 			}
 
-	private void addGlobalListener() {
-		EventQueue e = Toolkit.getDefaultToolkit().getSystemEventQueue();
-		e.push(new EventQueue() {
-
-			@Override
-			protected void dispatchEvent(AWTEvent event) {
-				if (event instanceof InputEvent) {
-					counter = 0;
-					if (hasChanged) {
-						setOnline();
-						hasChanged = false;
-					}
+			if (Spark.isLinux()) {
+				if ((getIdleTimeMillisLinux() / 1000 > (pref.getIdleTime() * 60)) && !hasChanged) {
+					setIdle();
+					hasChanged = true;
+				} else if ((getIdleTimeMillisLinux() / 1000 < 10) && hasChanged) {
+					setOnline();
+					hasChanged = false;
 				}
-				super.dispatchEvent(event);
 			}
-		});
+			
+		}
 	}
+
 
 	public class LockListener {
 
@@ -233,7 +217,6 @@ public class UserIdlePlugin extends TimerTask implements Plugin {
 			}).start();
 		}
 
-
 	}
 
 	public class IdleTimer {
@@ -245,7 +228,20 @@ public class UserIdlePlugin extends TimerTask implements Plugin {
 
 			}).start();
 		}
+		public void intMacIdleTime() {
+			new Thread(() -> {
+				new MacIdleTime() {
+				};
 
+			}).start();
+		}
+		public void intLinuxIdleTime() {
+			new Thread(() -> {
+				new LinuxIdleTime() {
+				};
+
+			}).start();
+		}
 
 	}
 
