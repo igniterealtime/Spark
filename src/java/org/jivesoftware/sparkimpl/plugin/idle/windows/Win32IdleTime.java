@@ -3,6 +3,7 @@ package org.jivesoftware.sparkimpl.plugin.idle.windows;
 import com.sun.jna.Native;
 import com.sun.jna.Structure;
 import com.sun.jna.win32.StdCallLibrary;
+import org.jivesoftware.sparkimpl.plugin.idle.IdleTime;
 
 import java.util.Arrays;
 import java.util.List;
@@ -12,7 +13,7 @@ import java.util.List;
  * JNA shall be present in your classpath for this to work (and compile).
  * @author ochafik
  */
-public class Win32IdleTime {
+public class Win32IdleTime implements IdleTime {
     public interface Kernel32 extends StdCallLibrary {
         Kernel32 INSTANCE = (Kernel32) Native.loadLibrary("kernel32", Kernel32.class);
 
@@ -55,7 +56,7 @@ public class Win32IdleTime {
      * (mouse or keyboard)
      * @return idle time in milliseconds
      */
-    public static int getIdleTimeMillisWin32() {
+    public long getIdleTimeMillis() {
         User32.LASTINPUTINFO lastInputInfo = new User32.LASTINPUTINFO();
         User32.INSTANCE.GetLastInputInfo(lastInputInfo);
         return Kernel32.INSTANCE.GetTickCount() - lastInputInfo.dwTime;
