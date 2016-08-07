@@ -2,12 +2,13 @@ package org.jivesoftware.sparkimpl.plugin.idle.mac;
 
 import com.sun.jna.Library;
 import com.sun.jna.Native;
+import org.jivesoftware.sparkimpl.plugin.idle.IdleTime;
 
 /**
  * Utility method to retrieve the idle time on Mac OS X 10.4+
  * @author kwindszus
  */
-public class MacIdleTime {
+public class MacIdleTime implements IdleTime {
 
     public interface ApplicationServices extends Library {
 
@@ -27,7 +28,7 @@ public class MacIdleTime {
         public double CGEventSourceSecondsSinceLastEventType(int sourceStateId, int eventType);
     }
 
-    public static long getIdleTimeMillisMac() {
+    public long getIdleTimeMillis() {
         double idleTimeSeconds = ApplicationServices.INSTANCE.CGEventSourceSecondsSinceLastEventType(ApplicationServices.kCGEventSourceStateCombinedSessionState, ApplicationServices.kCGAnyInputEventType);
         return (long) (idleTimeSeconds * 1000);
     }

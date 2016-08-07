@@ -36,24 +36,16 @@ import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import static org.jivesoftware.sparkimpl.plugin.idle.linux.LinuxIdleTime.getIdleTimeMillisLinux;
-import static org.jivesoftware.sparkimpl.plugin.idle.mac.MacIdleTime.getIdleTimeMillisMac;
-import static org.jivesoftware.sparkimpl.plugin.idle.windows.Win32IdleTime.getIdleTimeMillisWin32;
-
 public class UserIdlePlugin extends TimerTask implements Plugin {
 
 	private final int CHECKTIME = 2;
-	private double x = 0;
-	private double y = 0;
 	private boolean hasChanged = false;
-	private int counter = 0;
 	public static LocalPreferences pref = SettingsManager.getLocalPreferences();
 	public static Presence latestPresence;
 	private static boolean DesktopLockStatus;
 	private static String statustext;
-	private LockListener isLocked;
 	private boolean IsLocked;
-	private IdleTimer idleTimer;
+
 
 	public boolean getFromLockListener() {
 		return IsLocked;
@@ -76,19 +68,22 @@ public class UserIdlePlugin extends TimerTask implements Plugin {
 		timer.schedule(this, (1000 * 10), (1000 * CHECKTIME));
 
 		if (Spark.isWindows()) {
+			LockListener isLocked;
 			isLocked = new LockListener();
 			isLocked.intWinLockListener();
-			idleTimer = new IdleTimer();
-			idleTimer.intWin32IdleTime();
 		}
-		if (Spark.isMac()) {
-			idleTimer = new IdleTimer();
-			idleTimer.intMacIdleTime();
+	}
+	private long getIdleTime() {
+		IdleTime idleTime;
+		if (Spark.isWindows()) {
+			idleTime = new Win32IdleTime();
+		} else if (Spark.isMac()) {
+			idleTime = new MacIdleTime();
+		} else {
+			// assume/try linux
+			idleTime = new LinuxIdleTime();
 		}
-		if (Spark.isLinux()) {
-			idleTimer = new IdleTimer();
-			idleTimer.intLinuxIdleTime();
-		}
+		return idleTime.getIdleTimeMillis();
 	}
 
 	@Override
@@ -155,45 +150,42 @@ public class UserIdlePlugin extends TimerTask implements Plugin {
 
 			// Windows Desktop Lock
 			if (Spark.isWindows()) {
-
 				if (getFromLockListener() && !getDesktopLockStatus()) {
-						setIdle();
-						hasChanged = true;
-						DesktopLockStatus = true;
-					} else if (!getFromLockListener() && getDesktopLockStatus()) {
-						setOnline();
-						hasChanged = false;
-					}
-
-					if ((getIdleTimeMillisWin32() / 1000 > (pref.getIdleTime() * 60)) && !hasChanged) {
-						setIdle();
-						hasChanged = true;
-					} else if ((getIdleTimeMillisWin32() / 1000 < 10) && hasChanged && !getDesktopLockStatus()) {
-						setOnline();
-						hasChanged = false;
-                    }
-
-				}
-			if (Spark.isMac()) {
-				if ((getIdleTimeMillisMac() / 1000 > (pref.getIdleTime() * 60)) && !hasChanged) {
 					setIdle();
 					hasChanged = true;
-				} else if ((getIdleTimeMillisMac() / 1000 < 10) && hasChanged) {
+					DesktopLockStatus = true;
+				} else if (!getFromLockListener() && getDesktopLockStatus()) {
+					setOnline();
+					hasChanged = false;
+				} else if ((getIdleTime() / 1000 > (pref.getIdleTime() * 60)) && !hasChanged) {
+					setIdle();
+					hasChanged = true;
+				} else if ((getIdleTime() / 1000 < 10) && hasChanged && !getDesktopLockStatus()) {
+					setOnline();
+					hasChanged = false;
+				}
+
+			}
+			if (Spark.isMac()) {
+				if ((getIdleTime() / 1000 > (pref.getIdleTime() * 60)) && !hasChanged) {
+					setIdle();
+					hasChanged = true;
+				} else if ((getIdleTime() / 1000 < 10) && hasChanged) {
 					setOnline();
 					hasChanged = false;
 				}
 			}
 
 			if (Spark.isLinux()) {
-				if ((getIdleTimeMillisLinux() / 1000 > (pref.getIdleTime() * 60)) && !hasChanged) {
+				if ((getIdleTime() / 1000 > (pref.getIdleTime() * 60)) && !hasChanged) {
 					setIdle();
 					hasChanged = true;
-				} else if ((getIdleTimeMillisLinux() / 1000 < 10) && hasChanged) {
+				} else if ((getIdleTime() / 1000 < 10) && hasChanged) {
 					setOnline();
 					hasChanged = false;
 				}
 			}
-			
+
 		}
 	}
 
@@ -218,32 +210,5 @@ public class UserIdlePlugin extends TimerTask implements Plugin {
 		}
 
 	}
-
-	public class IdleTimer {
-
-		public void intWin32IdleTime() {
-			new Thread(() -> {
-				new Win32IdleTime() {
-					};
-
-			}).start();
-		}
-		public void intMacIdleTime() {
-			new Thread(() -> {
-				new MacIdleTime() {
-				};
-
-			}).start();
-		}
-		public void intLinuxIdleTime() {
-			new Thread(() -> {
-				new LinuxIdleTime() {
-				};
-
-			}).start();
-		}
-
-	}
-
 }
 
