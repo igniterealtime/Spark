@@ -147,37 +147,12 @@ public class SparkTransferManager {
             @Override
             public void connected( XMPPConnection xmppConnection )
             {
-
             }
 
             @Override
             public void authenticated( XMPPConnection xmppConnection, boolean b )
             {
                 transferManager = FileTransferManager.getInstanceFor( SparkManager.getConnection() );
-
-                final ContactList contactList = SparkManager.getWorkspace().getContactList();
-
-                // Create the listener
-                transferManager.addFileTransferListener( request -> SwingUtilities.invokeLater( () -> handleTransferRequest(request, contactList) ) );
-
-                // Add Send File to Chat Room
-                addSendFileButton();
-
-                contactList.addFileDropListener( ( files, component ) -> {
-                    if (component instanceof ContactItem) {
-                        ContactItem item = (ContactItem)component;
-
-                        ChatRoom chatRoom = null;
-                        for (File file : files) {
-                            chatRoom = sendFile(file, item.getJID());
-                        }
-
-                        if (chatRoom != null) {
-                            SparkManager.getChatManager().getChatContainer().activateChatRoom(chatRoom);
-                        }
-                    }
-                } );
-
             }
 
             public void connectionClosed() {
@@ -197,6 +172,30 @@ public class SparkTransferManager {
             public void reconnectionFailed(Exception e) {
             }
         });
+
+        final ContactList contactList = SparkManager.getWorkspace().getContactList();
+
+        // Create the listener
+        transferManager = FileTransferManager.getInstanceFor( SparkManager.getConnection() );
+        transferManager.addFileTransferListener( request -> SwingUtilities.invokeLater( () -> handleTransferRequest(request, contactList) ) );
+
+        // Add Send File to Chat Room
+        addSendFileButton();
+
+        contactList.addFileDropListener( ( files, component ) -> {
+            if (component instanceof ContactItem) {
+                ContactItem item = (ContactItem)component;
+
+                ChatRoom chatRoom = null;
+                for (File file : files) {
+                    chatRoom = sendFile(file, item.getJID());
+                }
+
+                if (chatRoom != null) {
+                    SparkManager.getChatManager().getChatContainer().activateChatRoom(chatRoom);
+                }
+            }
+        } );
 
         try {
             robot = new Robot();
