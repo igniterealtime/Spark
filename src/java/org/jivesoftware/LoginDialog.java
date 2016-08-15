@@ -292,8 +292,9 @@ public class LoginDialog {
             }
         }
 
+        ReconnectionManager.setEnabledPerDefault( true );
+
         // TODO These were used in Smack 3. Find Smack 4 alternative.
-//        config.setReconnectionAllowed(true);
 //        config.setRosterLoadedAtLogin(true);
 //        if(ModelUtil.hasLength(localPref.getTrustStorePath())) {
 //        	config.setTruststorePath(localPref.getTrustStorePath());
