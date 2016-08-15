@@ -124,6 +124,11 @@ public class ChatRoomImpl extends ChatRoom {
     /**
      * Constructs a 1-to-1 ChatRoom.
      *
+     * Note that the participantJID value can be a bare JID, or a full JID. In regular one-on-one chats, a bare JID is
+     * expected. This instance will then display relevant data sent by any of the (full) JIDs associated to the bare JID.
+     * When this instance is created to reflect a private message in MUC context, a full JID is expected to be provided
+     * as the participantJID value (room@service/nick). In such case, only data sent from that full JID is displayed.
+     *
      * @param participantJID      the participants jid to chat with.
      * @param participantNickname the nickname of the participant.
      * @param title               the title of the room.
@@ -138,7 +143,7 @@ public class ChatRoomImpl extends ChatRoom {
         loadHistory();
 
         // Register StanzaListeners
-        StanzaFilter fromFilter = new FromMatchesFilter(participantJID, true);
+        StanzaFilter fromFilter = FromMatchesFilter.create(participantJID);
         StanzaFilter orFilter = new OrFilter(new StanzaTypeFilter(Presence.class), new StanzaTypeFilter(Message.class));
         StanzaFilter andFilter = new AndFilter(orFilter, fromFilter);
 
