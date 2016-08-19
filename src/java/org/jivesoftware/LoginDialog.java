@@ -31,6 +31,7 @@ import org.jivesoftware.smack.*;
 import org.jivesoftware.smack.parsing.ExceptionLoggingCallback;
 import org.jivesoftware.smack.proxy.ProxyInfo;
 import org.jivesoftware.smack.sasl.javax.SASLExternalMechanism;
+import org.jivesoftware.smack.sasl.javax.SASLGSSAPIMechanism;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
 import org.jivesoftware.smack.util.TLSUtils;
@@ -290,6 +291,16 @@ public class LoginDialog {
             else if(localPref.getPKIStore().equals("Apple")) {
                 builder.setKeystoreType("Apple");
             }
+        }
+
+        // SPARK-1747: Don't use the GSSAPI mechanism when SSO is disabled.
+        if ( localPref.isSSOEnabled() && !SASLAuthentication.getRegisterdSASLMechanisms().containsKey( SASLGSSAPIMechanism.class.getName() ))
+        {
+            SASLAuthentication.registerSASLMechanism( new SASLGSSAPIMechanism() );
+        }
+        else if ( !localPref.isSSOEnabled() && SASLAuthentication.getRegisterdSASLMechanisms().containsValue( SASLGSSAPIMechanism.NAME ))
+        {
+            SASLAuthentication.unregisterSASLMechanism( SASLGSSAPIMechanism.class.getName() );
         }
 
         ReconnectionManager.setEnabledPerDefault( true );
