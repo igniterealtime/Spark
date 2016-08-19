@@ -341,6 +341,7 @@ public class LoginSettingDialog implements PropertyChangeListener {
 		    if (isSelected) {
 			String resource = InetAddress.getLocalHost().getHostName();
 			resourceField.setText(resource);
+			useVersionAsResourceBox.setSelected( false );
 		    }
 		    resourceField.setEnabled(!isSelected);
 		} catch (UnknownHostException e) {
@@ -360,6 +361,7 @@ public class LoginSettingDialog implements PropertyChangeListener {
 	    if (isSelected) {
 	    String resource = Default.getString(Default.APPLICATION_NAME) + " " + JiveInfo.getVersion() + "." + Default.getString(Default.BUILD_NUMBER);
 		resourceField.setText(resource);
+		useHostnameAsResourceBox.setSelected( false );
 	    }
 		resourceField.setEnabled(!isSelected);
 		//localPreferences.setHostAndPortConfigured(!isSelected);
@@ -744,7 +746,6 @@ public class LoginSettingDialog implements PropertyChangeListener {
 	private static final long serialVersionUID = 3661245275095536202L;
 	private JCheckBox useSSOBox = new JCheckBox();
 	private JPanel settingsPanel = new JPanel();
-	private JCheckBox showAdvBox = new JCheckBox();
 	private JLabel ssoRealmLabel = new JLabel();
 	private JTextField ssoRealmField = new JTextField();
 	private JLabel ssoKDCLabel = new JLabel();
@@ -760,11 +761,8 @@ public class LoginSettingDialog implements PropertyChangeListener {
 	public SsoPanel() {
 	    ResourceUtils.resButton(useSSOBox,
 		    Res.getString("title.advanced.connection.usesso"));
-	    ResourceUtils.resButton(showAdvBox,
-		    Res.getString("title.advanced.connection.preferences"));
 
 	    useSSOBox.addActionListener(this);
-	    showAdvBox.addActionListener(this);
 
 	    final WrappedLabel wrappedLabel = new WrappedLabel();
 	    String principalName = null;
@@ -822,14 +820,8 @@ public class LoginSettingDialog implements PropertyChangeListener {
 	    ssoRealmField.setEnabled(localPreferences.isSSOEnabled());
 	    ssoKDCField.setEnabled(localPreferences.isSSOEnabled());
 
-	    showAdvBox.setSelected(localPreferences.getSSOAdv());
-	    settingsPanel.setVisible(localPreferences.getSSOAdv());
-
 	    setLayout(new GridBagLayout());
 	    add(useSSOBox, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
-		    GridBagConstraints.NORTHWEST, GridBagConstraints.NONE,
-		    new Insets(5, 5, 5, 5), 0, 0));
-	    add(showAdvBox, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0,
 		    GridBagConstraints.NORTHWEST, GridBagConstraints.NONE,
 		    new Insets(5, 5, 5, 5), 0, 0));
 	    add(wrappedLabel,
@@ -929,8 +921,6 @@ public class LoginSettingDialog implements PropertyChangeListener {
 		ssoMethodManualRadio.setEnabled(useSSOBox.isSelected());
 		ssoRealmField.setEnabled(useSSOBox.isSelected());
 		ssoKDCField.setEnabled(useSSOBox.isSelected());
-	    } else if (e.getSource() == showAdvBox) {
-		settingsPanel.setVisible(showAdvBox.isSelected());
 	    }
 	}
 
@@ -939,7 +929,7 @@ public class LoginSettingDialog implements PropertyChangeListener {
 	    boolean valid = true;
 	    UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
 
-	    if (useSSOBox.isSelected() && showAdvBox.isSelected()) {
+	    if (useSSOBox.isSelected()) {
 		if (ssoMethodManualRadio.isSelected()) {
 		    if (!ModelUtil.hasLength(ssoRealmField.getText())) {
 			JOptionPane.showMessageDialog(optionsDialog,
