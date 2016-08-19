@@ -341,6 +341,7 @@ public class LoginSettingDialog implements PropertyChangeListener {
 		    if (isSelected) {
 			String resource = InetAddress.getLocalHost().getHostName();
 			resourceField.setText(resource);
+			useVersionAsResourceBox.setSelected( false );
 		    }
 		    resourceField.setEnabled(!isSelected);
 		} catch (UnknownHostException e) {
@@ -360,6 +361,7 @@ public class LoginSettingDialog implements PropertyChangeListener {
 	    if (isSelected) {
 	    String resource = Default.getString(Default.APPLICATION_NAME) + " " + JiveInfo.getVersion() + "." + Default.getString(Default.BUILD_NUMBER);
 		resourceField.setText(resource);
+		useHostnameAsResourceBox.setSelected( false );
 	    }
 		resourceField.setEnabled(!isSelected);
 		//localPreferences.setHostAndPortConfigured(!isSelected);
