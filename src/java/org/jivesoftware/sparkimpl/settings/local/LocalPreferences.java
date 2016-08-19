@@ -908,14 +908,6 @@ public class LocalPreferences {
 		return getBoolean("ssoEnabled", false);
 	}
 
-	public void setSSOAdv(boolean enabled) {
-		setBoolean("ssoAdv", enabled);
-	}
-
-	public boolean getSSOAdv() {
-		return getBoolean("ssoAdv", false);
-	}
-
 	public void setSSOMethod(String method) {
 		props.setProperty("ssoMethod", method);
 	}
