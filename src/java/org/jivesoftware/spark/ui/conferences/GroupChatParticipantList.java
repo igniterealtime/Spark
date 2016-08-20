@@ -129,6 +129,7 @@ public class GroupChatParticipantList extends JPanel {
 		agentInfoPanel = new ImageTitlePanel(Res
 				.getString("message.participants.in.room"));
 		participantsList = new JXList(model);
+		participantsList.setPreferredSize( new Dimension( 200, getHeight() ));
 		participantsList.setCellRenderer(new ParticipantRenderer());
 
 		// Set the room to track
@@ -202,6 +203,7 @@ userMap.put(displayName, userid);
 if (p.getType() == Presence.Type.available) {
 addParticipant(userid, p);
 agentInfoPanel.setVisible(true);
+	groupChatRoom.validate();
 } else {
 removeUser(displayName);
 }
@@ -655,19 +657,6 @@ groupChatRoom.notifySettingsAccessRight();
 		    "No can do " + e.getMessage(), ChatManager.ERROR_COLOR);
 	}
     }
-
-
-	/**
-	 * Let's make sure that the panel doesn't strech past the scrollpane view
-	 * pane.
-	 *
-	 * @return the preferred dimension
-	 */
-	public Dimension getPreferredSize() {
-		final Dimension size = super.getPreferredSize();
-		size.width = 150;
-		return size;
-	}
 
 	protected void checkPopup(MouseEvent evt) {
 	Point p = evt.getPoint();

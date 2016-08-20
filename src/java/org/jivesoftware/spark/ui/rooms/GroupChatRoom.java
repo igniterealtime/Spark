@@ -105,9 +105,9 @@ public class GroupChatRoom extends ChatRoom
         // Room Information
         roomInfo = UIComponentRegistry.createGroupChatParticipantList();
         getSplitPane().setRightComponent( roomInfo.getGUI() );
+        getSplitPane().setResizeWeight( 0.8 );
 
         roomInfo.setChatRoom( this );
-        getSplitPane().setResizeWeight( 1 );
 
         setupListeners();
 
