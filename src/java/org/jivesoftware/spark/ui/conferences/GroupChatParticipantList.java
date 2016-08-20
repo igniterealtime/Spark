@@ -160,6 +160,7 @@ public class GroupChatParticipantList extends JPanel {
 		});
 
 		JScrollPane scroller = new JScrollPane(participantsList);
+		scroller.setPreferredSize( new Dimension( 200, getHeight() ) );
 
 		// Speed up scrolling. It was way too slow.
 		scroller.getVerticalScrollBar().setBlockIncrement(200);
