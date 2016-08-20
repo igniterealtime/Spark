@@ -130,7 +130,6 @@ public class GroupChatParticipantList extends JPanel {
 		agentInfoPanel = new ImageTitlePanel(Res
 				.getString("message.participants.in.room"));
 		participantsList = new JXList(model);
-		participantsList.setPreferredSize( new Dimension( 200, getHeight() ));
 		participantsList.setCellRenderer(new ParticipantRenderer());
 
 		// Set the room to track
@@ -160,6 +159,7 @@ public class GroupChatParticipantList extends JPanel {
 		});
 
 		JScrollPane scroller = new JScrollPane(participantsList);
+		scroller.setPreferredSize( new Dimension( 200, getHeight() ) );
 
 		// Speed up scrolling. It was way too slow.
 		scroller.getVerticalScrollBar().setBlockIncrement(200);
