@@ -130,7 +130,6 @@ public class GroupChatParticipantList extends JPanel {
 		agentInfoPanel = new ImageTitlePanel(Res
 				.getString("message.participants.in.room"));
 		participantsList = new JXList(model);
-		participantsList.setPreferredSize( new Dimension( 200, getHeight() ));
 		participantsList.setCellRenderer(new ParticipantRenderer());
 
 		// Set the room to track
