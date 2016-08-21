@@ -42,18 +42,15 @@ public class UserIdlePlugin extends TimerTask implements Plugin {
 	private boolean hasChanged = false;
 	public static LocalPreferences pref = SettingsManager.getLocalPreferences();
 	public static Presence latestPresence;
-	private static boolean DesktopLockStatus;
 	private static String statustext;
-	private boolean IsLocked;
+	private static boolean IsLocked;
 
 
-	public boolean getFromLockListener() {
-		return IsLocked;
-	}
+
 
 	public static boolean getDesktopLockStatus() {
 
-		return DesktopLockStatus;
+		return IsLocked;
 	}
 
 	@Override
@@ -115,7 +112,7 @@ public class UserIdlePlugin extends TimerTask implements Plugin {
 
 
 	private void setOnline() {
-		DesktopLockStatus = false;
+
 
 		if (PhonePlugin.onPhonePresence != null) {
 			SparkManager.getSessionManager().changePresence(PhonePlugin.onPhonePresence);
@@ -150,17 +147,13 @@ public class UserIdlePlugin extends TimerTask implements Plugin {
 
 			// Windows Desktop Lock
 			if (Spark.isWindows()) {
-				if (getFromLockListener() && !getDesktopLockStatus()) {
+				if (IsLocked && !hasChanged) {
 					setIdle();
 					hasChanged = true;
-					DesktopLockStatus = true;
-				} else if (!getFromLockListener() && getDesktopLockStatus()) {
-					setOnline();
-					hasChanged = false;
-				} else if ((getIdleTime() / 1000 > (pref.getIdleTime() * 60)) && !hasChanged) {
+				} else if ((getIdleTime() / 1000 > (pref.getIdleTime() * 60)) && !hasChanged && !IsLocked) {
 					setIdle();
 					hasChanged = true;
-				} else if ((getIdleTime() / 1000 < 10) && hasChanged && !getDesktopLockStatus()) {
+				} else if ((getIdleTime() / 1000 < 10) && hasChanged && !IsLocked) {
 					setOnline();
 					hasChanged = false;
 				}
