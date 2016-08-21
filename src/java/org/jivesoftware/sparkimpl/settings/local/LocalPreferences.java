@@ -908,6 +908,13 @@ public class LocalPreferences {
 		return getBoolean("ssoEnabled", false);
 	}
 
+	public boolean isSaslGssapiSmack3Compatible() {
+		return getBoolean("saslGssapiSmack3compat", false);
+	}
+
+	public void setSaslGssapiSmack3Compatible( boolean b) {
+		setBoolean( "saslGssapiSmack3compat", b );
+	}
 	public void setSSOMethod(String method) {
 		props.setProperty("ssoMethod", method);
 	}

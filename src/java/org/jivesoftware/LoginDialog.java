@@ -40,6 +40,9 @@ import org.jivesoftware.spark.SessionManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.Workspace;
 import org.jivesoftware.spark.component.RolloverButton;
+import org.jivesoftware.spark.sasl.SASLGSSAPIv3CompatMechanism;
+import org.jivesoftware.spark.ui.login.GSSAPIConfiguration;
+import org.jivesoftware.spark.ui.login.LoginSettingDialog;
 import org.jivesoftware.spark.util.*;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
@@ -293,14 +296,23 @@ public class LoginDialog {
             }
         }
 
-        // SPARK-1747: Don't use the GSSAPI mechanism when SSO is disabled.
-        if ( localPref.isSSOEnabled() && !SASLAuthentication.getRegisterdSASLMechanisms().containsKey( SASLGSSAPIMechanism.class.getName() ))
+        // SPARK-1747: Don't use the GSS-API SASL mechanism when SSO is disabled.
+        SASLAuthentication.unregisterSASLMechanism( SASLGSSAPIMechanism.class.getName() );
+        SASLAuthentication.unregisterSASLMechanism( SASLGSSAPIv3CompatMechanism.class.getName() );
+
+        // Add the mechanism only when SSO is enabled (which allows us to register the correct one).
+        if ( localPref.isSSOEnabled() )
         {
-            SASLAuthentication.registerSASLMechanism( new SASLGSSAPIMechanism() );
-        }
-        else if ( !localPref.isSSOEnabled() && SASLAuthentication.getRegisterdSASLMechanisms().containsValue( SASLGSSAPIMechanism.NAME ))
-        {
-            SASLAuthentication.unregisterSASLMechanism( SASLGSSAPIMechanism.class.getName() );
+            // SPARK-1740: Register a mechanism that's compatible with Smack 3, when requested.
+            if ( localPref.isSaslGssapiSmack3Compatible() )
+            {
+                // SPARK-1747: Don't use the GSSAPI mechanism when SSO is disabled.
+                SASLAuthentication.registerSASLMechanism( new SASLGSSAPIv3CompatMechanism() );
+            }
+            else
+            {
+                SASLAuthentication.registerSASLMechanism( new SASLGSSAPIMechanism() );
+            }
         }
 
         ReconnectionManager.setEnabledPerDefault( true );
