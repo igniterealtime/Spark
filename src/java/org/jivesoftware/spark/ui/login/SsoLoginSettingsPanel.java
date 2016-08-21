@@ -253,6 +253,7 @@ class SsoLoginSettingsPanel extends JPanel implements ActionListener
         {
             localPreferences.setSSOMethod( "file" );
         }
+        localPreferences.setSaslGssapiSmack3Compatible( useSaslGssapiSmack3compatBox.isSelected() );
         SettingsManager.saveSettings();
     }
 }
