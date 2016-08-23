@@ -19,11 +19,7 @@
  */
 package org.jivesoftware.spark.roar.gui;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.RoundRectangle2D;
@@ -39,6 +35,7 @@ import javax.swing.JWindow;
 import org.jivesoftware.spark.roar.displaytype.RoarDisplayType;
 
 import com.sun.awt.AWTUtilities;
+import org.jivesoftware.spark.util.log.Log;
 
 public class RoarPanel {
     public static int WIDTH = 300;
@@ -65,8 +62,13 @@ public class RoarPanel {
         windowpanel.setBackground(backgroundcolor);
 
         AWTUtilities.setWindowShape(window, new RoundRectangle2D.Float(0, 0, WIDTH, HEIGHT, 20, 20));
-        AWTUtilities.setWindowOpaque(window, true);
 
+        try
+        {
+            AWTUtilities.setWindowOpaque( window, true );
+        } catch ( UnsupportedOperationException ex ) {
+            Log.debug( "Unable to make window opaque: " + ex );
+        }
         JLabel text = new JLabel("<HTML>" + body + "</HTML>");
         text.setForeground(messageColor);
 
@@ -96,9 +98,10 @@ public class RoarPanel {
      * @param window
      */
     private static void fadein(JWindow window) {
-        AWTUtilities.setWindowOpacity(window, 0.3f);
-        AWTUtilities.setWindowOpacity(window, 0.5f);
-        AWTUtilities.setWindowOpacity(window, 0.9f);
+        final boolean supportsTranslucency =  window.getGraphicsConfiguration().getDevice().isWindowTranslucencySupported(  GraphicsDevice.WindowTranslucency.TRANSLUCENT );
+        AWTUtilities.setWindowOpacity(window, supportsTranslucency ? 0.3f : 1.0f);
+        AWTUtilities.setWindowOpacity(window, supportsTranslucency ? 0.5f : 1.0f);
+        AWTUtilities.setWindowOpacity(window, supportsTranslucency ? 0.9f : 1.0f);
         window.setVisible(true);
     }
 

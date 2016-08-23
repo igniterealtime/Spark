@@ -224,6 +224,7 @@ public class ChatRoomImpl extends ChatRoom {
         // Remove info listener
         infoButton.removeActionListener(this);
         addToRosterButton.removeActionListener(this);
+        SparkManager.getConnection().removeSyncStanzaListener(this);
     }
 
     public void sendMessage() {
