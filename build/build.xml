@@ -22,8 +22,8 @@
 	<!-- Optional add this file to override any of the properties below -->
 	<property file="${basedir}/build/build.properties"/>
 	<property name="version.major" value="2"/>
-	<property name="version.minor" value="7"/>
-	<property name="version.revision" value="7"/>
+	<property name="version.minor" value="8"/>
+	<property name="version.revision" value="0"/>
 
     <!-- Spark Build Number
     Passed into ant via cmd line argument:
