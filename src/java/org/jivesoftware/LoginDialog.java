@@ -254,7 +254,10 @@ public class LoginDialog {
             } catch (NoSuchAlgorithmException | KeyManagementException e) {
                 Log.warning( "Unable to create configuration.", e );
             }
-    }
+        }
+        if (localPref.isDisableHostnameVerification()) {
+            TLSUtils.disableHostnameVerificationForTlsCertificicates(builder);
+        }
         if ( localPref.isDebuggerEnabled()) {
             builder.setDebuggerEnabled( true );
         }

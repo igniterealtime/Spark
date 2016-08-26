@@ -1162,6 +1162,14 @@ public class LocalPreferences {
 		return getBoolean("AcceptAllCertificates", true);
 	}
 
+	public void setDisableHostnameVerification(boolean accept) {
+		setBoolean("DisableHostnameVerification", accept);
+	}
+
+	public boolean isDisableHostnameVerification() {
+		return getBoolean("DisableHostnameVerification", false);
+	}
+
 	private boolean getBoolean(String property, boolean defaultValue) {
 		return Boolean.parseBoolean(props.getProperty(property, Boolean
 				.toString(defaultValue)));
