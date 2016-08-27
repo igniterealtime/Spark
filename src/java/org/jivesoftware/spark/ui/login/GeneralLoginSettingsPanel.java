@@ -36,6 +36,7 @@ class GeneralLoginSettingsPanel extends JPanel implements ActionListener
     private JCheckBox compressionBox = new JCheckBox();
     private JCheckBox debuggerBox = new JCheckBox();
     private JCheckBox acceptAllCertificatesBox = new JCheckBox();
+    private JCheckBox disableHostnameVerificationBox = new JCheckBox();
 
     public GeneralLoginSettingsPanel( LocalPreferences localPreferences, JDialog optionsDialog )
     {
@@ -58,7 +59,7 @@ class GeneralLoginSettingsPanel extends JPanel implements ActionListener
         ResourceUtils.resButton( compressionBox, Res.getString( "checkbox.use.compression" ) );
         ResourceUtils.resButton( debuggerBox, Res.getString( "checkbox.use.debugger.on.startup" ) );
         ResourceUtils.resButton( acceptAllCertificatesBox, Res.getString( "checkbox.accept.all.certificates" ) );
-
+        ResourceUtils.resButton( disableHostnameVerificationBox, Res.getString( "checkbox.disable.hostname.verification" ) );
         portField.setText( Integer.toString( localPreferences.getXmppPort() ) );
         timeOutField.setText( Integer.toString( localPreferences.getTimeOut() ) );
         autoLoginBox.setSelected( localPreferences.isAutoLogin() );
@@ -84,6 +85,8 @@ class GeneralLoginSettingsPanel extends JPanel implements ActionListener
         debuggerBox.setSelected( localPreferences.isDebuggerEnabled() );
 
         acceptAllCertificatesBox.setSelected( localPreferences.isAcceptAllCertificates() );
+
+        disableHostnameVerificationBox.setSelected( localPreferences.isDisableHostnameVerification() );
 
         final JPanel connectionPanel = new JPanel();
         connectionPanel.setLayout( new GridBagLayout() );
@@ -112,7 +115,8 @@ class GeneralLoginSettingsPanel extends JPanel implements ActionListener
         add( useSSLBox,                new GridBagConstraints( 0, 6, 2, 1, 0.0, 1.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0 ) );
         add( compressionBox,           new GridBagConstraints( 0, 7, 2, 1, 0.0, 1.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0 ) );
         add( acceptAllCertificatesBox, new GridBagConstraints( 0, 8, 2, 1, 0.0, 1.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0 ) );
-        add( debuggerBox,              new GridBagConstraints( 0, 9, 2, 1, 0.0, 1.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0 ) );
+        add( disableHostnameVerificationBox, new GridBagConstraints( 0, 9, 2, 1, 0.0, 1.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0 ) );
+        add( debuggerBox,              new GridBagConstraints( 0, 10, 2, 1, 0.0, 1.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0 ) );
     }
 
     /**
@@ -247,6 +251,7 @@ class GeneralLoginSettingsPanel extends JPanel implements ActionListener
         localPreferences.setUseHostnameAsResource( useHostnameAsResourceBox.isSelected() );
         localPreferences.setUseVersionAsResource( useVersionAsResourceBox.isSelected() );
         localPreferences.setAcceptAllCertificates( acceptAllCertificatesBox.isSelected() );
+        localPreferences.setDisableHostnameVerification( disableHostnameVerificationBox.isSelected() );
         SettingsManager.saveSettings();
     }
 }
