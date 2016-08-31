@@ -1121,6 +1121,10 @@ public class LoginDialog {
                         errorMessage = Res.getString("message.hostname.cert.verification.failed");
                         ReconnectionManager.getInstanceFor(connection).disableAutomaticReconnection();
 
+                    } else if (xee.getMessage().contains("unable to find valid certification path to requested target")) {
+                        errorMessage = Res.getString("message.cert.verification.failed");
+                        ReconnectionManager.getInstanceFor(connection).disableAutomaticReconnection();
+
                     } else if (xee.getMessage().contains("XMPPError: conflict")) {
                         errorMessage = Res.getString("label.conflict.error");
 
