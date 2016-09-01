@@ -1114,7 +1114,7 @@ public class LoginDialog {
                     if (xee.getMessage().contains("not-authorized")) {
                         errorMessage = Res.getString("message.invalid.username.password");
 
-                    } else if (xee.getMessage().contains("failed because java.net.UnknownHostException:") | xee.getMessage().contains("Network is unreachable")) {
+                    } else if (xee.getMessage().contains("java.net.UnknownHostException:") || xee.getMessage().contains("Network is unreachable") || xee.getMessage().contains("java.net.ConnectException: Connection refused:")) {
                         errorMessage = Res.getString("message.server.unavailable");
 
                     } else if (xee.getMessage().contains("Hostname verification of certificate failed")) {
