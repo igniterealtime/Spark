@@ -1105,42 +1105,35 @@ public class LoginDialog {
                 }
                 catch (Exception xee) {
 
-                    errorMessage = SparkRes.getString(SparkRes.UNRECOVERABLE_ERROR);
                     hasErrors = true;
 
                     if (!loginDialog.isVisible()) {
                         loginDialog.setVisible(true);
                     }
-                    if (xee instanceof XMPPException.XMPPErrorException) {
 
-                        XMPPException.XMPPErrorException xe = (XMPPException.XMPPErrorException)xee;
-                        switch ( xe.getXMPPError().getCondition() )
-                        {
-                            case conflict:
-                                errorMessage = Res.getString("label.conflict.error");
-                                break;
+                    if (xee.getMessage().contains("not-authorized")) {
+                        errorMessage = Res.getString("message.invalid.username.password");
 
-                            case not_authorized:
-                                errorMessage = Res.getString("message.invalid.username.password");
-                                break;
+                    } else if (xee.getMessage().contains("failed because java.net.UnknownHostException:") | xee.getMessage().contains("Network is unreachable")) {
+                        errorMessage = Res.getString("message.server.unavailable");
 
-                            case remote_server_not_found:
-                                errorMessage = Res.getString("message.server.unavailable");
-                                break;
+                    } else if (xee.getMessage().contains("Hostname verification of certificate failed")) {
+                        errorMessage = Res.getString("message.hostname.cert.verification.failed");
+                        ReconnectionManager.getInstanceFor(connection).disableAutomaticReconnection();
 
-                            case remote_server_timeout:
-                                errorMessage = Res.getString("message.server.unavailable");
-                                break;
+                    } else if (xee.getMessage().contains("unable to find valid certification path to requested target")) {
+                        errorMessage = Res.getString("message.cert.verification.failed");
+                        ReconnectionManager.getInstanceFor(connection).disableAutomaticReconnection();
 
-                            default:
-                                errorMessage = Res.getString("message.unrecoverable.error");
-                                break;
-                        }
-                   }
+                    } else if (xee.getMessage().contains("XMPPError: conflict")) {
+                        errorMessage = Res.getString("label.conflict.error");
+
+                    } else errorMessage = Res.getString("message.unrecoverable.error");
 
                     // Log Error
                     Log.warning("Exception in Login:", xee);
                 }
+
             }
 
             if (hasErrors) {
