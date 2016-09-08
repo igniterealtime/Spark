@@ -19,36 +19,6 @@
  */
 package org.jivesoftware.spark.ui;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Font;
-import java.awt.Toolkit;
-import java.awt.datatransfer.StringSelection;
-import java.awt.event.ActionEvent;
-import java.awt.event.MouseEvent;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.JComponent;
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
-import javax.swing.JPopupMenu;
-import javax.swing.KeyStroke;
-import javax.swing.UIManager;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Document;
-import javax.swing.text.SimpleAttributeSet;
-import javax.swing.text.Style;
-import javax.swing.text.StyleConstants;
-import javax.swing.text.StyledDocument;
-
 import org.jdesktop.swingx.calendar.DateUtils;
 import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Default;
@@ -66,6 +36,20 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jxmpp.util.XmppStringUtils;
+
+import javax.swing.*;
+import javax.swing.text.*;
+import java.awt.*;
+import java.awt.datatransfer.StringSelection;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseEvent;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * The <CODE>TranscriptWindow</CODE> class. Provides a default implementation
@@ -168,11 +152,20 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener {
      */
     public void insertMessage(String nickname, Message message, Color foreground, Color background) {
         // Check interceptors.
-        for (TranscriptWindowInterceptor interceptor : SparkManager.getChatManager().getTranscriptWindowInterceptors()) {
-            boolean handled = interceptor.isMessageIntercepted(this, nickname, message);
-            if (handled) {
-                // Do nothing.
-                return;
+        for (TranscriptWindowInterceptor interceptor : SparkManager.getChatManager().getTranscriptWindowInterceptors())
+        {
+            try
+            {
+                boolean handled = interceptor.isMessageIntercepted( this, nickname, message );
+                if ( handled )
+                {
+                    // Do nothing.
+                    return;
+                }
+            }
+            catch ( Exception e )
+            {
+                Log.error( "A TranscriptWindowInterceptor ('" + interceptor + "') threw an exception while processing a chat message (current user: '" + nickname + "').", e );
             }
         }
 
