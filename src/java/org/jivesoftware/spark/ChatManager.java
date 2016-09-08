@@ -21,30 +21,20 @@ package org.jivesoftware.spark;
 
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.SmackException;
+import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.chat.Chat;
 import org.jivesoftware.smack.chat.ChatManagerListener;
-import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smackx.chatstates.ChatState;
 import org.jivesoftware.smackx.chatstates.ChatStateListener;
+import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.muc.MultiUserChatManager;
 import org.jivesoftware.smackx.xdata.Form;
-import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.xdata.packet.DataForm;
 import org.jivesoftware.spark.component.tabbedPane.SparkTab;
 import org.jivesoftware.spark.decorator.DefaultTabHandler;
-import org.jivesoftware.spark.ui.ChatContainer;
-import org.jivesoftware.spark.ui.ChatRoom;
-import org.jivesoftware.spark.ui.ChatRoomListener;
-import org.jivesoftware.spark.ui.ChatRoomNotFoundException;
-import org.jivesoftware.spark.ui.ContactItem;
-import org.jivesoftware.spark.ui.ContactItemHandler;
-import org.jivesoftware.spark.ui.ContactList;
-import org.jivesoftware.spark.ui.GlobalMessageListener;
-import org.jivesoftware.spark.ui.MessageFilter;
-import org.jivesoftware.spark.ui.SparkTabHandler;
-import org.jivesoftware.spark.ui.TranscriptWindowInterceptor;
+import org.jivesoftware.spark.ui.*;
 import org.jivesoftware.spark.ui.conferences.RoomInvitationListener;
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 import org.jivesoftware.spark.ui.rooms.GroupChatRoom;
@@ -57,22 +47,13 @@ import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jxmpp.util.XmppStringUtils;
 
-import java.awt.Color;
-import java.awt.Component;
+import javax.swing.*;
+import java.awt.*;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
+import java.util.*;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
-
-import javax.swing.Icon;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
 
 /**
  * Handles the Chat Management of each individual <code>Workspace</code>. The ChatManager is responsible
@@ -381,15 +362,6 @@ public class ChatManager implements ChatManagerListener {
     }
 
     /**
-     * Returns a Collection of MessageFilters registered to Spark.
-     *
-     * @return the Collection of MessageFilters.
-     */
-    public Collection<MessageFilter> getMessageFilters() {
-        return messageFilters;
-    }
-
-    /**
      * Adds a new <code>GlobalMessageListener</code>.
      *
      * @param listener the listener.
@@ -413,9 +385,18 @@ public class ChatManager implements ChatManagerListener {
      * @param chatRoom the <code>ChatRoom</code> where the message was sent to.
      * @param message  the <code>Message</code>
      */
-    public void fireGlobalMessageReceievedListeners(ChatRoom chatRoom, Message message) {
-        for (GlobalMessageListener listener : globalMessageListeners) {
-            listener.messageReceived(chatRoom, message);
+    public void fireGlobalMessageReceievedListeners( ChatRoom chatRoom, Message message )
+    {
+        for ( GlobalMessageListener listener : globalMessageListeners )
+        {
+            try
+            {
+                listener.messageReceived( chatRoom, message );
+            }
+            catch ( Exception e )
+            {
+                Log.error( "A GlobalMessageListener ('" + listener + "') threw an exception while processing an incoming chat message (from '" + message.getFrom() + "') in a chat room ('" + chatRoom + "').", e );
+            }
         }
     }
 
@@ -425,9 +406,18 @@ public class ChatManager implements ChatManagerListener {
      * @param chatRoom the <code>ChatRoom</code> where the message was sent from.
      * @param message  the <code>Message</code> sent.
      */
-    public void fireGlobalMessageSentListeners(ChatRoom chatRoom, Message message) {
-        for (GlobalMessageListener listener : globalMessageListeners) {
-            listener.messageSent(chatRoom, message);
+    public void fireGlobalMessageSentListeners( ChatRoom chatRoom, Message message )
+    {
+        for ( GlobalMessageListener listener : globalMessageListeners )
+        {
+            try
+            {
+                listener.messageSent( chatRoom, message );
+            }
+            catch ( Exception e )
+            {
+                Log.error( "A GlobalMessageListener ('" + listener + "') threw an exception while processing an outgoing chat message (to '" + message.getTo() + "') in a chat room ('" + chatRoom + "').", e );
+            }
         }
     }
 
@@ -437,20 +427,28 @@ public class ChatManager implements ChatManagerListener {
      * @param room    the room the message belongs to.
      * @param message the message to filter.
      */
-    public void filterIncomingMessage(ChatRoom room, Message message) {
-        // Fire Message Filters
-        final ChatManager chatManager = SparkManager.getChatManager();
-        Iterator<MessageFilter> filters = chatManager.getMessageFilters().iterator();
-        try {
-            cancelledNotification(message.getFrom(), ChatState.paused);
+    public void filterIncomingMessage( ChatRoom room, Message message )
+    {
+        try
+        {
+            // TODO This probably does not belong here (but in a filter?)
+            cancelledNotification( message.getFrom(), ChatState.paused );
         }
-        catch (Exception e) {
-            Log.error(e);
+        catch ( Exception e )
+        {
+            Log.error( e );
         }
 
-        // Notify MessageFilters.
-        while (filters.hasNext()) {
-            (filters.next()).filterIncoming(room, message);
+        for ( final MessageFilter filter : messageFilters )
+        {
+            try
+            {
+                filter.filterIncoming( room, message );
+            }
+            catch ( Exception e )
+            {
+                Log.error( "A MessageFilter ('" + filter + "') threw an exception while processing an incoming chat message (from '" + message.getFrom() + "') in a chat room ('" + room + "').", e );
+            }
         }
     }
 
@@ -460,11 +458,18 @@ public class ChatManager implements ChatManagerListener {
      * @param room    the <code>ChatRoom</code> the message belongs too.
      * @param message the <code>Message</code> being sent.
      */
-    public void filterOutgoingMessage(ChatRoom room, Message message) {
-        // Fire Message Filters
-        final ChatManager chatManager = SparkManager.getChatManager();
-        for (Object o : chatManager.getMessageFilters()) {
-            ((MessageFilter) o).filterOutgoing(room, message);
+    public void filterOutgoingMessage( ChatRoom room, Message message )
+    {
+        for ( final MessageFilter filter : messageFilters )
+        {
+            try
+            {
+                filter.filterOutgoing( room, message );
+            }
+            catch ( Exception e )
+            {
+                Log.error( "A MessageFilter ('" + filter + "') threw an exception while processing an outgoing chat message (from '" + message.getFrom() + "') in a chat room ('" + room + "').", e );
+            }
         }
     }
 
@@ -542,11 +547,20 @@ public class ChatManager implements ChatManagerListener {
     public void removeContactItemHandler(ContactItemHandler handler) {
         contactItemHandlers.remove(handler);
     }
-    
-    public void fireMessageReceived(Message message) {
-    	for (ChatMessageHandler handler : chatMessageHandlers) {
-    		handler.messageReceived(message);
-    	}
+
+    public void fireMessageReceived( Message message )
+    {
+        for ( ChatMessageHandler handler : chatMessageHandlers )
+        {
+            try
+            {
+                handler.messageReceived( message );
+            }
+            catch ( Exception e )
+            {
+                Log.error( "A ChatMessageHandler ('" + handler + "') threw an exception while processing this message: " + message, e );
+            }
+        }
     }
 
     /**
@@ -556,10 +570,20 @@ public class ChatManager implements ChatManagerListener {
      * @param presence the new presence.
      * @return true if it was handled.
      */
-    public boolean fireContactItemPresenceChanged(ContactItem item, Presence presence) {
-        for (ContactItemHandler handler : contactItemHandlers) {
-            if (handler.handlePresence(item, presence)) {
-                return true;
+    public boolean fireContactItemPresenceChanged( ContactItem item, Presence presence )
+    {
+        for ( ContactItemHandler handler : contactItemHandlers )
+        {
+            try
+            {
+                if ( handler.handlePresence( item, presence ) )
+                {
+                    return true;
+                }
+            }
+            catch ( Exception e )
+            {
+                Log.error( "A ContactItemHandler ('" + handler + "') threw an exception while processing a presence change (ContactItem: '" + item + "', presence: [" + presence + "])", e );
             }
         }
 
@@ -572,10 +596,20 @@ public class ChatManager implements ChatManagerListener {
      * @param item the ContactItem that was double clicked.
      * @return true if the event was intercepted and handled.
      */
-    public boolean fireContactItemDoubleClicked(ContactItem item) {
-        for (ContactItemHandler handler : contactItemHandlers) {
-            if (handler.handleDoubleClick(item)) {
-                return true;
+    public boolean fireContactItemDoubleClicked( ContactItem item )
+    {
+        for ( ContactItemHandler handler : contactItemHandlers )
+        {
+            try
+            {
+                if ( handler.handleDoubleClick( item ) )
+                {
+                    return true;
+                }
+            }
+            catch ( Exception e )
+            {
+                Log.error( "A ContactItemHandler ('" + handler + "') threw an exception while processing a double click on ContactItem: '" + item + "'.", e );
             }
         }
 
@@ -588,11 +622,21 @@ public class ChatManager implements ChatManagerListener {
      * @param jid the jid.
      * @return the icon of the handler.
      */
-    public Icon getIconForContactHandler(String jid) {
-        for (ContactItemHandler handler : contactItemHandlers) {
-            Icon icon = handler.getIcon(jid);
-            if (icon != null) {
-                return icon;
+    public Icon getIconForContactHandler( String jid )
+    {
+        for ( ContactItemHandler handler : contactItemHandlers )
+        {
+            try
+            {
+                Icon icon = handler.getIcon( jid );
+                if ( icon != null )
+                {
+                    return icon;
+                }
+            }
+            catch ( Exception e )
+            {
+                Log.error( "A ContactItemHandler ('" + handler + "') threw an exception while processing an icon request for: '" + jid + "'.", e );
             }
         }
 
@@ -605,11 +649,21 @@ public class ChatManager implements ChatManagerListener {
      * @param presence the presence.
      * @return the icon.
      */
-    public Icon getTabIconForContactHandler(Presence presence) {
-        for (ContactItemHandler handler : contactItemHandlers) {
-            Icon icon = handler.getTabIcon(presence);
-            if (icon != null) {
-                return icon;
+    public Icon getTabIconForContactHandler( Presence presence )
+    {
+        for ( ContactItemHandler handler : contactItemHandlers )
+        {
+            try
+            {
+                Icon icon = handler.getTabIcon( presence );
+                if ( icon != null )
+                {
+                    return icon;
+                }
+            }
+            catch ( Exception e )
+            {
+                Log.error( "A ContactItemHandler ('" + handler + "') threw an exception while processing a tab icon request for: '" + presence + "'.", e );
             }
         }
 
@@ -749,18 +803,29 @@ public class ChatManager implements ChatManagerListener {
      *
      * @param component the component within the tab.
      */
-    public void notifySparkTabHandlers(Component component) {
-        final SparkTab tab = chatContainer.getTabContainingComponent(component);
-        if (tab == null) {
+    public void notifySparkTabHandlers( Component component )
+    {
+        final SparkTab tab = chatContainer.getTabContainingComponent( component );
+        if ( tab == null )
+        {
             return;
         }
         boolean isChatFrameInFocus = getChatContainer().getChatFrame().isInFocus();
         boolean isSelectedTab = getChatContainer().getSelectedComponent() == component;
-        for (SparkTabHandler decorator : sparkTabHandlers) {
-            boolean isHandled = decorator.isTabHandled(tab, component, isSelectedTab, isChatFrameInFocus);
-            if (isHandled) {
-                tab.validateTab();
-                return;
+        for ( SparkTabHandler decorator : sparkTabHandlers )
+        {
+            try
+            {
+                boolean isHandled = decorator.isTabHandled( tab, component, isSelectedTab, isChatFrameInFocus );
+                if ( isHandled )
+                {
+                    tab.validateTab();
+                    return;
+                }
+            }
+            catch ( Exception e )
+            {
+                Log.error( "A SparkTabHandler ('" + decorator + "') threw an exception.", e );
             }
         }
     }
