@@ -531,15 +531,33 @@ public class ChatRoomImpl extends ChatRoom {
         return messageEventListeners;
     }
 
-    public void fireOutgoingMessageSending(Message message) {
-        for (MessageEventListener messageEventListener : new ArrayList<>( messageEventListeners )) {
-            messageEventListener.sendingMessage(message);
+    public void fireOutgoingMessageSending( Message message )
+    {
+        for ( final MessageEventListener listener : messageEventListeners )
+        {
+            try
+            {
+                listener.sendingMessage( message );
+            }
+            catch ( Exception e )
+            {
+                Log.error( "A MessageEventListener ('" + listener + "') threw an exception while processing an outgoing message (to '" + message.getTo() + "').", e );
+            }
         }
     }
 
-    public void fireReceivingIncomingMessage(Message message) {
-        for (MessageEventListener messageEventListener : new ArrayList<>( messageEventListeners )) {
-            messageEventListener.receivingMessage(message);
+    public void fireReceivingIncomingMessage( Message message )
+    {
+        for ( final MessageEventListener listener : messageEventListeners )
+        {
+            try
+            {
+                listener.receivingMessage( message );
+            }
+            catch ( Exception e )
+            {
+                Log.error( "A MessageEventListener ('" + listener + "') threw an exception while processing an incoming message (from '" + message.getFrom() + "').", e );
+            }
         }
     }
 
