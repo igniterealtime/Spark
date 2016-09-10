@@ -61,6 +61,9 @@ import org.jivesoftware.sparkimpl.plugin.emoticons.EmoticonManager;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
+import freeseawind.lf.LittleLuck;
+import freeseawind.lf.LuckMetalLookAndFeel;
+
 
 /**
  * ThemePanel is used for the setting of TranscriptWindows and Emoticon packs.
@@ -126,6 +129,7 @@ public class ThemePanel extends JPanel {
 
 	String[] nonSystemLookAndFeels = {
 		//JTattoo
+	    "freeseawind.lf.LuckMetalLookAndFeel",
 		"com.jtattoo.plaf.acryl.AcrylLookAndFeel", // was disabled
 		"com.jtattoo.plaf.aero.AeroLookAndFeel",
 		"com.jtattoo.plaf.aluminium.AluminiumLookAndFeel",
