@@ -21,6 +21,8 @@ package org.jivesoftware.spark.util;
 
 
 
+import org.jivesoftware.spark.util.log.Log;
+
 import javax.swing.SwingUtilities;
 
 /**
@@ -138,6 +140,9 @@ public abstract class SwingWorker {
         Runnable doConstruct = () -> {
             try {
                         setValue(construct());
+            }
+            catch ( Exception e ) {
+                Log.error( e );
             }
             finally {
                 threadVar.clear();

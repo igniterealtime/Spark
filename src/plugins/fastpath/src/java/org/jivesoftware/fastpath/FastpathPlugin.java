@@ -19,26 +19,6 @@
  */
 package org.jivesoftware.fastpath;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.EventQueue;
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.lang.reflect.InvocationTargetException;
-import java.util.*;
-
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
-
 import org.jivesoftware.fastpath.resources.FastpathRes;
 import org.jivesoftware.fastpath.workspace.Workpane;
 import org.jivesoftware.fastpath.workspace.panes.BackgroundPane;
@@ -47,7 +27,6 @@ import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Presence;
-import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.disco.packet.DiscoverItems;
 import org.jivesoftware.smackx.workgroup.agent.Agent;
 import org.jivesoftware.smackx.workgroup.agent.AgentSession;
@@ -61,6 +40,14 @@ import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.util.log.Log;
 import org.jxmpp.util.XmppStringUtils;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.TimerTask;
 
 public class FastpathPlugin implements Plugin, ConnectionListener {
     private static Workgroup wgroup;
@@ -79,7 +66,9 @@ public class FastpathPlugin implements Plugin, ConnectionListener {
 
     public void initialize() {
 
-   	 EventQueue.invokeLater(new Runnable() {
+        new WorkgroupInitializer().initialize();
+
+        EventQueue.invokeLater(new Runnable() {
 
 			@Override
 			public void run() {

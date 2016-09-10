@@ -115,7 +115,8 @@ public class GroupChatParticipantList extends JPanel {
 
 	private List<JLabel> users = new ArrayList<>();
 
-	private HashMap<String,String> usersandRoles = new HashMap<>();
+	private Map<String,MUCRole> usersToRoles = new HashMap<>();
+	private Map<String,MUCAffiliation> usersToAffiliation = new HashMap<>();
 
 	/**
 	 * Creates a new RoomInfo instance using the specified ChatRoom. The
@@ -158,6 +159,7 @@ public class GroupChatParticipantList extends JPanel {
 		});
 
 		JScrollPane scroller = new JScrollPane(participantsList);
+		scroller.setPreferredSize( new Dimension( 200, getHeight() ) );
 
 		// Speed up scrolling. It was way too slow.
 		scroller.getVerticalScrollBar().setBlockIncrement(200);
@@ -202,6 +204,7 @@ userMap.put(displayName, userid);
 if (p.getType() == Presence.Type.available) {
 addParticipant(userid, p);
 agentInfoPanel.setVisible(true);
+	groupChatRoom.validate();
 } else {
 removeUser(displayName);
 }
@@ -338,14 +341,28 @@ groupChatRoom.notifySettingsAccessRight();
 
 	String nickname = XmppStringUtils.parseResource(participantJID);
 
-	String affiliation  = parseRoleFromPacket(presence)[0];
-	String userRole = parseRoleFromPacket(presence)[1];
+	MUCAffiliation affiliation = null;
+	MUCRole role = null;
+	final MUCUser extension = (MUCUser) presence.getExtension( MUCUser.NAMESPACE );
+	if ( extension != null && extension.getItem() != null )
+	{
+		affiliation = extension.getItem().getAffiliation();
+		role = extension.getItem().getRole();
+	}
 
-	usersandRoles.put(participantJID, affiliation+","+userRole);
+	if ( affiliation == null ) {
+		affiliation = MUCAffiliation.none;
+	}
+	if ( role == null ) {
+		role = MUCRole.none;
+	}
+
+	usersToRoles.put(participantJID, role);
+	usersToAffiliation.put(participantJID, affiliation);
 
 	Icon icon;
 	if (_localPreferences.isShowingRoleIcons()) {
-	    icon = getIconForRole(userRole, affiliation);
+	    icon = getIconForRole(role, affiliation);
 	} else {
 	    icon = PresenceManager.getIconFromPresence(presence);
 	    if (icon == null) {
@@ -365,43 +382,6 @@ groupChatRoom.notifySettingsAccessRight();
 	}
     }
 
-    /**
-     * Parses the Affiliation and Role from the Presence packet
-     * @param p
-     * @return String[] ,[0]=affiliation , [1]=role
-     */
-    protected String[] parseRoleFromPacket(Presence p) {
-	String affi = "";
-	String role = "";
-
-	for (ExtensionElement pack : p.getExtensions()) {
-	    String[] args = pack.toXML().toString().split(" ");
-
-	    for (String ss : args) {
-	    	int first = ss.indexOf("\"");
-	    	int last = ss.lastIndexOf("\"");
-		    if (ss.contains("affiliation")) {
-		    	if (first >=0 && first < last) {
-		    		affi = ss.substring(first + 1, last);
-		    	}
-		    }
-		    if (ss.contains("role")) {
-			    if (first >=0 && first < last) {
-				    role = ss.substring(first + 1, last);
-			    }
-		    }
-	    }
-	}
-
-	if (affi.equals(""))
-	    affi = "none";
-	if (role.equals(""))
-	    role = "participant";
-
-	return new String[] { affi, role };
-
-    }
-
 	/**
 	 * Returns corresponding Icons for each MUC-Role
 	 * icons are: <br>
@@ -415,36 +395,42 @@ groupChatRoom.notifySettingsAccessRight();
 	 * @param role
 	 * @return {@link Icon}
 	 */
-    private Icon getIconForRole(String role, String affiliation) {
-	Icon icon;
+    private Icon getIconForRole(MUCRole role, MUCAffiliation affiliation)
+	{
+		switch ( affiliation )
+		{
+			case owner:
+				return SparkRes.getImageIcon(SparkRes.STAR_OWNER);
 
-	if (role.equalsIgnoreCase("participant")) {
-	    icon = SparkRes.getImageIcon(SparkRes.STAR_GREEN_IMAGE);
+			case admin:
+				return SparkRes.getImageIcon(SparkRes.STAR_ADMIN);
 
-	} else if (role.equalsIgnoreCase("moderator")) {
-	    icon = SparkRes.getImageIcon(SparkRes.STAR_MODERATOR);
+			case member:
+				if ( role == MUCRole.moderator )
+				{
+					return SparkRes.getImageIcon(SparkRes.STAR_MODERATOR);
+				}
+				else
+				{
+					return SparkRes.getImageIcon(SparkRes.STAR_YELLOW_IMAGE);
+				}
 
-	} else if (role.equalsIgnoreCase("visitor")) {
-	    icon = SparkRes.getImageIcon(SparkRes.STAR_BLUE_IMAGE);
+			default:
+				switch ( role )
+				{
+					case participant:
+						return SparkRes.getImageIcon(SparkRes.STAR_GREEN_IMAGE);
 
-	} else {
-	    icon = SparkRes.getImageIcon(SparkRes.STAR_GREY_IMAGE);
-	}
+					case moderator:
+						return SparkRes.getImageIcon(SparkRes.STAR_MODERATOR);
 
-	if (affiliation.equalsIgnoreCase("owner")) {
-	    icon = SparkRes.getImageIcon(SparkRes.STAR_OWNER);
-	}
-	if (affiliation.equalsIgnoreCase("admin")) {
-	    icon = SparkRes.getImageIcon(SparkRes.STAR_ADMIN);
-	}
-	if (affiliation.equalsIgnoreCase("member")) {
-	    if (role.equals("moderator")) {
-		icon = SparkRes.getImageIcon(SparkRes.STAR_MODERATOR);
-	    } else {
-		icon = SparkRes.getImageIcon(SparkRes.STAR_YELLOW_IMAGE);
-	    }
-	}
-	return icon;
+					case visitor:
+						return SparkRes.getImageIcon(SparkRes.STAR_BLUE_IMAGE);
+
+					default:
+						return SparkRes.getImageIcon(SparkRes.STAR_GREY_IMAGE);
+				}
+		}
     }
 
 	public void userHasLeft(String userid) {
@@ -655,19 +641,6 @@ groupChatRoom.notifySettingsAccessRight();
 		    "No can do " + e.getMessage(), ChatManager.ERROR_COLOR);
 	}
     }
-
-
-	/**
-	 * Let's make sure that the panel doesn't strech past the scrollpane view
-	 * pane.
-	 *
-	 * @return the preferred dimension
-	 */
-	public Dimension getPreferredSize() {
-		final Dimension size = super.getPreferredSize();
-		size.width = 150;
-		return size;
-	}
 
 	protected void checkPopup(MouseEvent evt) {
 	Point p = evt.getPoint();
@@ -1218,54 +1191,34 @@ groupChatRoom.notifySettingsAccessRight();
      * and map it to an integer<br>
      * 0=owner,1=admin.....5=visitor<br>
      */
-    private int getCompareValue(String jid) {
-	int result;
-
-	String affi = usersandRoles.get(jid).split(",")[0];
-	String role = usersandRoles.get(jid).split(",")[1];
-
-	if (affi == null)
-	    affi = "z";
-	if (role == null)
-	    role = "z";
-
-	switch (affi.charAt(0)) {
-	case 'o':
-	    result = 0;
-	    break; // owner
-	case 'a':
-	    result = 1;
-	    break; // admin
-	// Moderator is in between with 2
-	case 'm':
-	    result = 3;
-	    break; // member
-	default:
-	    result = 100;
+    private int getCompareValue(String jid)
+	{
+		MUCRole role = usersToRoles.get( jid );
+		MUCAffiliation affiliation = usersToAffiliation.get( jid );
+		switch ( affiliation )
+		{
+			case owner:
+				return 0;
+			case admin:
+				return 1;
+			case member:
+				return ( role == MUCRole.moderator ? 2 : 3 );
+			case none:
+				switch ( role )
+				{
+					case moderator:
+						return 2;
+					case participant:
+						return 4;
+					case visitor:
+						return 5;
+					default:
+						return 100;
+				}
+			default:
+				return 100;
+		}
 	}
-
-	if (affi.equalsIgnoreCase("none")) {
-
-	    switch (role.charAt(0)) {
-	    case 'm':
-		result = 2;
-		break; // moderator
-	    // Member is in between with 3
-	    case 'p':
-		result = 4;
-		break; // participant
-	    case 'v':
-		result = 5;
-		break; // visitor
-	    default:
-		result = 100;
-	    }
-	}
-	if (affi.equalsIgnoreCase("member") && role.charAt(0) == 'm') {
-	    result = 2;
-	}
-	return result;
-    }
 
 	/**
 	 * The <code>JLabelIconRenderer</code> is the an implementation of
@@ -1344,10 +1297,6 @@ groupChatRoom.notifySettingsAccessRight();
 
     protected List<JLabel> getUsers() {
         return users;
-    }
-
-    protected HashMap<String, String> getUsersandRoles() {
-        return usersandRoles;
     }
 
     protected Comparator<JLabel> getLabelComp() {

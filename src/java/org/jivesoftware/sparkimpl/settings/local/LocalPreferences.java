@@ -908,14 +908,13 @@ public class LocalPreferences {
 		return getBoolean("ssoEnabled", false);
 	}
 
-	public void setSSOAdv(boolean enabled) {
-		setBoolean("ssoAdv", enabled);
+	public boolean isSaslGssapiSmack3Compatible() {
+		return getBoolean("saslGssapiSmack3compat", false);
 	}
 
-	public boolean getSSOAdv() {
-		return getBoolean("ssoAdv", false);
+	public void setSaslGssapiSmack3Compatible( boolean b) {
+		setBoolean( "saslGssapiSmack3compat", b );
 	}
-
 	public void setSSOMethod(String method) {
 		props.setProperty("ssoMethod", method);
 	}
@@ -1161,6 +1160,14 @@ public class LocalPreferences {
 
 	public boolean isAcceptAllCertificates() {
 		return getBoolean("AcceptAllCertificates", true);
+	}
+
+	public void setDisableHostnameVerification(boolean accept) {
+		setBoolean("DisableHostnameVerification", accept);
+	}
+
+	public boolean isDisableHostnameVerification() {
+		return getBoolean("DisableHostnameVerification", false);
 	}
 
 	private boolean getBoolean(String property, boolean defaultValue) {

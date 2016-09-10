@@ -19,58 +19,26 @@
  */
 package org.jivesoftware.spark.ui.rooms;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
-import java.text.DateFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.TimerTask;
-
-import javax.swing.Icon;
-import javax.swing.JComponent;
-import javax.swing.SwingUtilities;
-import javax.swing.event.DocumentEvent;
-
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.SmackException;
-import org.jivesoftware.smack.chat.Chat;
 import org.jivesoftware.smack.XMPPConnection;
+import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.filter.*;
 import org.jivesoftware.smack.packet.*;
 import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.roster.RosterEntry;
-import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smack.filter.AndFilter;
-import org.jivesoftware.smack.filter.FromMatchesFilter;
-import org.jivesoftware.smack.filter.OrFilter;
-import org.jivesoftware.smack.filter.StanzaFilter;
-import org.jivesoftware.smack.filter.StanzaTypeFilter;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.chatstates.ChatState;
-import org.jivesoftware.smackx.chatstates.ChatStateManager;
 import org.jivesoftware.smackx.chatstates.packet.ChatStateExtension;
-import org.jivesoftware.smackx.xevent.MessageEventManager;
 import org.jivesoftware.smackx.jiveproperties.packet.JivePropertiesExtension;
+import org.jivesoftware.smackx.xevent.MessageEventManager;
 import org.jivesoftware.smackx.xevent.packet.MessageEvent;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.PresenceManager;
 import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.ui.ChatRoom;
-import org.jivesoftware.spark.ui.ChatRoomButton;
-import org.jivesoftware.spark.ui.ChatStatePanel;
-import org.jivesoftware.spark.ui.ContactItem;
-import org.jivesoftware.spark.ui.ContactList;
-import org.jivesoftware.spark.ui.MessageEventListener;
-import org.jivesoftware.spark.ui.RosterDialog;
-import org.jivesoftware.spark.ui.VCardPanel;
+import org.jivesoftware.spark.ui.*;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.transcripts.ChatTranscript;
@@ -80,6 +48,16 @@ import org.jivesoftware.sparkimpl.profile.VCardManager;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jxmpp.util.XmppStringUtils;
+
+import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.text.DateFormat;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
 
 /**
  * This is the Person to Person implementation of <code>ChatRoom</code>
@@ -124,6 +102,11 @@ public class ChatRoomImpl extends ChatRoom {
     /**
      * Constructs a 1-to-1 ChatRoom.
      *
+     * Note that the participantJID value can be a bare JID, or a full JID. In regular one-on-one chats, a bare JID is
+     * expected. This instance will then display relevant data sent by any of the (full) JIDs associated to the bare JID.
+     * When this instance is created to reflect a private message in MUC context, a full JID is expected to be provided
+     * as the participantJID value (room@service/nick). In such case, only data sent from that full JID is displayed.
+     *
      * @param participantJID      the participants jid to chat with.
      * @param participantNickname the nickname of the participant.
      * @param title               the title of the room.
@@ -138,7 +121,7 @@ public class ChatRoomImpl extends ChatRoom {
         loadHistory();
 
         // Register StanzaListeners
-        StanzaFilter fromFilter = new FromMatchesFilter(participantJID, true);
+        StanzaFilter fromFilter = FromMatchesFilter.create(participantJID);
         StanzaFilter orFilter = new OrFilter(new StanzaTypeFilter(Presence.class), new StanzaTypeFilter(Message.class));
         StanzaFilter andFilter = new AndFilter(orFilter, fromFilter);
 
@@ -219,6 +202,7 @@ public class ChatRoomImpl extends ChatRoom {
         // Remove info listener
         infoButton.removeActionListener(this);
         addToRosterButton.removeActionListener(this);
+        SparkManager.getConnection().removeSyncStanzaListener(this);
     }
 
     public void sendMessage() {
@@ -374,81 +358,101 @@ public class ChatRoomImpl extends ChatRoom {
      */
     public void processPacket(final Stanza stanza) {
         final Runnable runnable = () -> {
-            if (stanza instanceof Presence) {
+            try
+            {
+                if ( stanza instanceof Presence )
+                {
 
-                Presence.Type oldType = presence.getType();
+                    Presence.Type oldType = presence.getType();
 
-                presence = (Presence)stanza;
+                    presence = (Presence) stanza;
 
-                final Presence presence1 = (Presence)stanza;
+                    final Presence presence1 = (Presence) stanza;
 
-                ContactList list = SparkManager.getWorkspace().getContactList();
-                ContactItem contactItem = list.getContactItemByJID(getParticipantJID());
+                    ContactList list = SparkManager.getWorkspace().getContactList();
+                    ContactItem contactItem = list.getContactItemByJID( getParticipantJID() );
 
-                String time = DateFormat.getTimeInstance(DateFormat.SHORT).format(new Date());
+                    String time = DateFormat.getTimeInstance( DateFormat.SHORT ).format( new Date() );
 
-                if ( presence1.getType() == Presence.Type.unavailable && contactItem != null) {
-                    getTranscriptWindow().insertNotificationMessage("*** " + Res.getString("message.went.offline", participantNickname, time), ChatManager.NOTIFICATION_COLOR);
+                    if ( presence1.getType() == Presence.Type.unavailable && contactItem != null )
+                    {
+                        getTranscriptWindow().insertNotificationMessage( "*** " + Res.getString( "message.went.offline", participantNickname, time ), ChatManager.NOTIFICATION_COLOR );
+                    }
+                    else if ( oldType == Presence.Type.unavailable && presence1.getType() == Presence.Type.available )
+                    {
+                        getTranscriptWindow().insertNotificationMessage( "*** " + Res.getString( "message.came.online", participantNickname, time ), ChatManager.NOTIFICATION_COLOR );
+                    }
                 }
-                else if (oldType == Presence.Type.unavailable && presence1.getType() == Presence.Type.available) {
-                    getTranscriptWindow().insertNotificationMessage("*** " + Res.getString("message.came.online", participantNickname, time), ChatManager.NOTIFICATION_COLOR);
-                }
-            }
-            else if (stanza instanceof Message) {
-                lastActivity = System.currentTimeMillis();
+                else if ( stanza instanceof Message )
+                {
+                    lastActivity = System.currentTimeMillis();
 
 
-                // Do something with the incoming packet here.
-                final Message message = (Message)stanza;
-                fireReceivingIncomingMessage(message);
-                if (message.getError() != null) {
-                    if (message.getError().getCondition() == XMPPError.Condition.item_not_found) {
-                        // Check to see if the user is online to recieve this message.
-                        RosterEntry entry = roster.getEntry(participantJID);
-                        if (!presence.isAvailable() && !offlineSent && entry != null) {
-                            getTranscriptWindow().insertNotificationMessage(Res.getString("message.offline.error"), ChatManager.ERROR_COLOR);
-                            offlineSent = true;
+                    // Do something with the incoming packet here.
+                    final Message message = (Message) stanza;
+                    fireReceivingIncomingMessage( message );
+                    if ( message.getError() != null )
+                    {
+                        if ( message.getError().getCondition() == XMPPError.Condition.item_not_found )
+                        {
+                            // Check to see if the user is online to recieve this message.
+                            RosterEntry entry = roster.getEntry( participantJID );
+                            if ( !presence.isAvailable() && !offlineSent && entry != null )
+                            {
+                                getTranscriptWindow().insertNotificationMessage( Res.getString( "message.offline.error" ), ChatManager.ERROR_COLOR );
+                                offlineSent = true;
+                            }
+                        }
+                        return;
+                    }
+
+                    // Check to see if the user is online to recieve this message.
+                    RosterEntry entry = roster.getEntry( participantJID );
+                    if ( !presence.isAvailable() && !offlineSent && entry != null )
+                    {
+                        getTranscriptWindow().insertNotificationMessage( Res.getString( "message.offline" ), ChatManager.ERROR_COLOR );
+                        offlineSent = true;
+                    }
+
+                    if ( threadID == null )
+                    {
+                        threadID = message.getThread();
+                        if ( threadID == null )
+                        {
+                            threadID = StringUtils.randomString( 6 );
                         }
                     }
-                    return;
-                }
 
-                // Check to see if the user is online to recieve this message.
-                RosterEntry entry = roster.getEntry(participantJID);
-                if (!presence.isAvailable() && !offlineSent && entry != null) {
-                    getTranscriptWindow().insertNotificationMessage(Res.getString("message.offline"), ChatManager.ERROR_COLOR);
-                    offlineSent = true;
-                }
+                    final JivePropertiesExtension extension = ( (JivePropertiesExtension) message.getExtension( JivePropertiesExtension.NAMESPACE ) );
+                    final boolean broadcast = extension != null && extension.getProperty( "broadcast" ) != null;
 
-                if (threadID == null) {
-                    threadID = message.getThread();
-                    if (threadID == null) {
-                        threadID = StringUtils.randomString(6);
+                    // If this is a group chat message, discard
+                    if ( message.getType() == Message.Type.groupchat || broadcast || message.getType() == Message.Type.normal ||
+                            message.getType() == Message.Type.headline )
+                    {
+                        return;
+                    }
+
+                    // Do not accept Administrative messages.
+                    final String host = SparkManager.getSessionManager().getServerAddress();
+                    if ( host.equals( message.getFrom() ) )
+                    {
+                        return;
+                    }
+
+                    // If the message is not from the current agent. Append to chat.
+                    if ( message.getBody() != null )
+                    {
+                        participantJID = message.getFrom();
+                        insertMessage( message );
+
+                        showTyping( false );
                     }
                 }
-
-                final JivePropertiesExtension extension = ((JivePropertiesExtension) message.getExtension( JivePropertiesExtension.NAMESPACE ));
-                final boolean broadcast = extension != null && extension.getProperty( "broadcast" ) != null;
-
-                // If this is a group chat message, discard
-                if (message.getType() == Message.Type.groupchat || broadcast || message.getType() == Message.Type.normal ||
-                        message.getType() == Message.Type.headline) {
-                    return;
-                }
-
-                // Do not accept Administrative messages.
-                final String host = SparkManager.getSessionManager().getServerAddress();
-                if (host.equals(message.getFrom())) {
-                    return;
-                }
-
-                // If the message is not from the current agent. Append to chat.
-                if (message.getBody() != null) {
-                    participantJID = message.getFrom();
-                    insertMessage(message);
-
-                    showTyping(false);
-                }
+            }
+            catch ( Exception e )
+            {
+                Log.error( "An exception occurred while processing this incoming stanza: " + stanza, e );
             }
         };
         SwingUtilities.invokeLater(runnable);
@@ -525,15 +529,33 @@ public class ChatRoomImpl extends ChatRoom {
         return messageEventListeners;
     }
 
-    public void fireOutgoingMessageSending(Message message) {
-        for (MessageEventListener messageEventListener : new ArrayList<>( messageEventListeners )) {
-            messageEventListener.sendingMessage(message);
+    public void fireOutgoingMessageSending( Message message )
+    {
+        for ( final MessageEventListener listener : messageEventListeners )
+        {
+            try
+            {
+                listener.sendingMessage( message );
+            }
+            catch ( Exception e )
+            {
+                Log.error( "A MessageEventListener ('" + listener + "') threw an exception while processing an outgoing message (to '" + message.getTo() + "').", e );
+            }
         }
     }
 
-    public void fireReceivingIncomingMessage(Message message) {
-        for (MessageEventListener messageEventListener : new ArrayList<>( messageEventListeners )) {
-            messageEventListener.receivingMessage(message);
+    public void fireReceivingIncomingMessage( Message message )
+    {
+        for ( final MessageEventListener listener : messageEventListeners )
+        {
+            try
+            {
+                listener.receivingMessage( message );
+            }
+            catch ( Exception e )
+            {
+                Log.error( "A MessageEventListener ('" + listener + "') threw an exception while processing an incoming message (from '" + message.getFrom() + "').", e );
+            }
         }
     }
 

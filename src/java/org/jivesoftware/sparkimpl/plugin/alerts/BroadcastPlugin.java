@@ -22,6 +22,7 @@ package org.jivesoftware.sparkimpl.plugin.alerts;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -30,6 +31,9 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -46,8 +50,11 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.JTextPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
 
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
@@ -94,7 +101,7 @@ import org.jxmpp.util.XmppStringUtils;
 public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaListener {
 
     private Set<ChatRoom> broadcastRooms = new HashSet<>();
-
+   
     public void initialize() {
         boolean enabled = Enterprise.containsFeature(Enterprise.BROADCAST_FEATURE);
         if (!enabled) {
@@ -324,8 +331,6 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
 	m.setBody(message.getBody());
 	m.setTo(message.getTo());
 
-	String name = XmppStringUtils.parseLocalpart(message.getFrom());
-
 	String broadcasttype = type == Message.Type.normal ? Res.getString("broadcast") : Res.getString("message.alert.notify");
 	//m.setFrom(name +" "+broadcasttype);
         m.setFrom(nickname+" - "+broadcasttype);
@@ -462,6 +467,42 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
         broadcastRooms.add(chatRoom);
     }
 
+   public String  testMethod(String line)
+   {
+        if(line.startsWith("http://") && line.startsWith("https://") )
+                    {
+                        System.out.println("ALEX");
+                        line="\"<a href='"+line+ "\\>";
+                        
+                    }
+        return line;
+   }
+    
+    private String linkCreator(String message)
+    {
+      
+        String []lines=message.split("\\s+");
+        String html="";
+        
+        
+       
+                for (String line:lines)
+                {
+                   if(line.startsWith("www"))
+                   {
+                       line="http://"+line;
+                   }
+                   if(line.startsWith("http:") || line.startsWith("https:") )
+                    {
+                       
+                         line="<a href='"+line+ "'>"+line + "</a>";
+                      //  final JLabel label = new JLabel("<html><a href=\" " + strURL + "\"> click </a></html>");
+                    }
+                    html=html+" "+line;
+                   
+                }
+         return html;
+    }
     /**
      * Displays a Serverbroadcast within a JFrame<br>
      * Messages can contain html-tags
@@ -476,10 +517,12 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
 	alert.setLayout(new GridBagLayout());
 	alert.setIconImage(SparkRes.getImageIcon(SparkRes.MAIN_IMAGE)
 		.getImage());
-	String msg = "<html>" + message.getBody().replace("\n", "<br/>")+ "</html>";
+        String mylink =linkCreator(message.getBody());
+        mylink.replace("\n", "<br/>");
 
 	JLabel icon = new JLabel(SparkRes.getImageIcon(SparkRes.ALERT));
-	JLabel alertlabel = new JLabel(msg);
+	
+       
 
 	JButton close = new JButton(Res.getString("close"));
 
@@ -492,10 +535,35 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
 		alert.dispose();
 	    }
 	});
-
+        final JTextPane textPane = new JTextPane();
+        textPane.setEditable(false);
+        textPane.setBackground(new Color(0,0,0,0));
+        textPane.setContentType("text/html");
+        textPane.setText(mylink);
+        textPane.addHyperlinkListener(new HyperlinkListener() {
+            @Override
+            public void hyperlinkUpdate(HyperlinkEvent e) {
+               if(e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+                   try {
+                       try {
+                           Log.error(e.getURL().toString());
+                           Desktop.getDesktop().browse(new URI(e.getURL().toString()));
+                       } catch (IOException ex) {
+                           Log.error(ex.getCause());
+                       }
+                   } catch (URISyntaxException ex) {
+                        Log.error(ex.getCause());
+                   }
+                
+                
+            }
+            }
+    });
+        
 	alert.add(icon,new GridBagConstraints(0,0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0, 0));
-	alert.add(alertlabel, new GridBagConstraints(1,0, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5,5,5,5), 0, 0));
-	alert.add(close, new GridBagConstraints(1,1, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0, 0));
+	alert.add(textPane, new GridBagConstraints(1,0, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5,5,5,5), 0, 0));
+	alert.add(close, new GridBagConstraints(1,1, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(5,5,5,5), 0, 0));
+       
 
 	alert.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 	alert.setVisible(true);

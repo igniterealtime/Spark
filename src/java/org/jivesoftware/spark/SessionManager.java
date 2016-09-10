@@ -57,6 +57,9 @@ public final class SessionManager implements ConnectionListener {
     private String userBareAddress;
     private DiscoverItems discoverItems;
 
+    // Stores our presence state at the time that the last connectionClosedOnError happened.
+    private Presence preError;
+
     public SessionManager() {
     }
 
@@ -144,6 +147,7 @@ public final class SessionManager implements ConnectionListener {
      */
     public void connectionClosedOnError(final Exception ex) {
         SwingUtilities.invokeLater( () -> {
+            preError = Workspace.getInstance().getStatusBar().getPresence();
             final Presence presence = new Presence(Presence.Type.unavailable);
             changePresence(presence);
 
@@ -276,7 +280,17 @@ public final class SessionManager implements ConnectionListener {
     public void reconnectingIn(int i) {
     }
 
-    public void reconnectionSuccessful() {
+    public void reconnectionSuccessful()
+    {
+        // Restore the presence state that we were in just before the disconnection happened.
+        if ( preError != null )
+        {
+            SwingUtilities.invokeLater( () ->
+            {
+                changePresence( preError );
+                preError = null;
+            });
+        }
     }
 
     public void reconnectionFailed(Exception exception) {

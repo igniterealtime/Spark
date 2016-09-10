@@ -23,7 +23,7 @@ Instant Messenger
 
 %build
 cd build
-/opt/apache-ant-1.8.1/bin/ant jar
+ant jar
 cd ..
 
 
@@ -56,7 +56,7 @@ exit 0
 
 
 %files
-%dir /usr/bin/spark
+%attr(0755, root, root) /usr/bin/spark
 %dir /usr/share/spark/bin
 %dir /usr/share/spark
 %dir /usr/share/spark/xtra
@@ -124,12 +124,8 @@ exit 0
 /usr/share/spark/lib/mac/libSystemUtilities.jnilib
 /usr/share/spark/lib/osgi.core.jar
 /usr/share/spark/lib/sdes4j.jar
-/usr/share/spark/lib/smack-bosh.jar
-/usr/share/spark/lib/smack-compression-jzlib.jar
 /usr/share/spark/lib/smack-core.jar
-/usr/share/spark/lib/smack-debug-slf4j.jar
 /usr/share/spark/lib/smack-debug.jar
-/usr/share/spark/lib/smack-experimental.jar
 /usr/share/spark/lib/smack-extensions.jar
 /usr/share/spark/lib/smack-im.jar
 /usr/share/spark/lib/smack-java7.jar
@@ -153,6 +149,8 @@ exit 0
 /usr/share/spark/lib/lobo.jar
 /usr/share/spark/lib/substance.jar
 /usr/share/spark/lib/trident.jar
+/usr/share/spark/lib/laf-plugin.jar
+/usr/share/spark/lib/laf-widget.jar
 /usr/share/spark/lib/xpp3.jar
 /usr/share/spark/lib/zrtp4j-light.jar
 %dir /usr/share/spark/lib/ext/

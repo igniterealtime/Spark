@@ -31,6 +31,7 @@ import org.jivesoftware.smack.*;
 import org.jivesoftware.smack.parsing.ExceptionLoggingCallback;
 import org.jivesoftware.smack.proxy.ProxyInfo;
 import org.jivesoftware.smack.sasl.javax.SASLExternalMechanism;
+import org.jivesoftware.smack.sasl.javax.SASLGSSAPIMechanism;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
 import org.jivesoftware.smack.util.TLSUtils;
@@ -39,6 +40,9 @@ import org.jivesoftware.spark.SessionManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.Workspace;
 import org.jivesoftware.spark.component.RolloverButton;
+import org.jivesoftware.spark.sasl.SASLGSSAPIv3CompatMechanism;
+import org.jivesoftware.spark.ui.login.GSSAPIConfiguration;
+import org.jivesoftware.spark.ui.login.LoginSettingDialog;
 import org.jivesoftware.spark.util.*;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
@@ -250,7 +254,10 @@ public class LoginDialog {
             } catch (NoSuchAlgorithmException | KeyManagementException e) {
                 Log.warning( "Unable to create configuration.", e );
             }
-    }
+        }
+        if (localPref.isDisableHostnameVerification()) {
+            TLSUtils.disableHostnameVerificationForTlsCertificicates(builder);
+        }
         if ( localPref.isDebuggerEnabled()) {
             builder.setDebuggerEnabled( true );
         }
@@ -292,8 +299,28 @@ public class LoginDialog {
             }
         }
 
+        // SPARK-1747: Don't use the GSS-API SASL mechanism when SSO is disabled.
+        SASLAuthentication.unregisterSASLMechanism( SASLGSSAPIMechanism.class.getName() );
+        SASLAuthentication.unregisterSASLMechanism( SASLGSSAPIv3CompatMechanism.class.getName() );
+
+        // Add the mechanism only when SSO is enabled (which allows us to register the correct one).
+        if ( localPref.isSSOEnabled() )
+        {
+            // SPARK-1740: Register a mechanism that's compatible with Smack 3, when requested.
+            if ( localPref.isSaslGssapiSmack3Compatible() )
+            {
+                // SPARK-1747: Don't use the GSSAPI mechanism when SSO is disabled.
+                SASLAuthentication.registerSASLMechanism( new SASLGSSAPIv3CompatMechanism() );
+            }
+            else
+            {
+                SASLAuthentication.registerSASLMechanism( new SASLGSSAPIMechanism() );
+            }
+        }
+
+        ReconnectionManager.setEnabledPerDefault( true );
+
         // TODO These were used in Smack 3. Find Smack 4 alternative.
-//        config.setReconnectionAllowed(true);
 //        config.setRosterLoadedAtLogin(true);
 //        if(ModelUtil.hasLength(localPref.getTrustStorePath())) {
 //        	config.setTruststorePath(localPref.getTrustStorePath());
@@ -1078,42 +1105,35 @@ public class LoginDialog {
                 }
                 catch (Exception xee) {
 
-                    errorMessage = SparkRes.getString(SparkRes.UNRECOVERABLE_ERROR);
                     hasErrors = true;
 
                     if (!loginDialog.isVisible()) {
                         loginDialog.setVisible(true);
                     }
-                    if (xee instanceof XMPPException.XMPPErrorException) {
 
-                        XMPPException.XMPPErrorException xe = (XMPPException.XMPPErrorException)xee;
-                        switch ( xe.getXMPPError().getCondition() )
-                        {
-                            case conflict:
-                                errorMessage = Res.getString("label.conflict.error");
-                                break;
+                    if (xee.getMessage().contains("not-authorized")) {
+                        errorMessage = Res.getString("message.invalid.username.password");
 
-                            case not_authorized:
-                                errorMessage = Res.getString("message.invalid.username.password");
-                                break;
+                    } else if (xee.getMessage().contains("java.net.UnknownHostException:") || xee.getMessage().contains("Network is unreachable") || xee.getMessage().contains("java.net.ConnectException: Connection refused:")) {
+                        errorMessage = Res.getString("message.server.unavailable");
 
-                            case remote_server_not_found:
-                                errorMessage = Res.getString("message.server.unavailable");
-                                break;
+                    } else if (xee.getMessage().contains("Hostname verification of certificate failed")) {
+                        errorMessage = Res.getString("message.cert.hostname.verification.failed");
+                        ReconnectionManager.getInstanceFor(connection).disableAutomaticReconnection();
 
-                            case remote_server_timeout:
-                                errorMessage = Res.getString("message.server.unavailable");
-                                break;
+                    } else if (xee.getMessage().contains("unable to find valid certification path to requested target")) {
+                        errorMessage = Res.getString("message.cert.verification.failed");
+                        ReconnectionManager.getInstanceFor(connection).disableAutomaticReconnection();
 
-                            default:
-                                errorMessage = Res.getString("message.unrecoverable.error");
-                                break;
-                        }
-                   }
+                    } else if (xee.getMessage().contains("XMPPError: conflict")) {
+                        errorMessage = Res.getString("label.conflict.error");
+
+                    } else errorMessage = Res.getString("message.unrecoverable.error");
 
                     // Log Error
                     Log.warning("Exception in Login:", xee);
                 }
+
             }
 
             if (hasErrors) {
