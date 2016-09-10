@@ -34,7 +34,16 @@ public class BrowserLauncher {
 			if (url.startsWith("www")) {
 				url = "http://" + url;
 			}
-			Desktop.getDesktop().browse(new URI(url));
+                        try
+                        {
+			  Desktop.getDesktop().browse(new URI(url));
+                        }
+                        catch(Exception ex)
+                        {
+                           Runtime.getRuntime().exec("xdg-open  " + url);
+                           
+                        }
+                       
 		} else {
 			File f = new File(url);
 			if (f.exists() && Desktop.isDesktopSupported()){
