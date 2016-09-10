@@ -2,8 +2,6 @@ package freeseawind.lf.utils;
 
 import java.awt.image.BufferedImage;
 import java.net.URL;
-import java.util.PropertyResourceBundle;
-import java.util.ResourceBundle;
 
 import javax.imageio.ImageIO;
 
@@ -20,13 +18,9 @@ public class LuckRes
 {
     private static ClassLoader cl;
 
-	private static PropertyResourceBundle prb;
-
 	static
 	{
 	    cl = LuckRes.class.getClassLoader();
-
-	    prb = (PropertyResourceBundle) ResourceBundle.getBundle("i18n/littleluck_i18n");
 	}
 
     /**
@@ -41,7 +35,7 @@ public class LuckRes
 
         try
         {
-            URL url = cl.getResource("images/" + imagePath);
+            URL url = cl.getResource("freeseawind/images/" + imagePath);
 
             bufImg = ImageIO.read(url);
         }
@@ -51,25 +45,5 @@ public class LuckRes
         }
 
         return bufImg;
-    }
-
-    /**
-     * 根据key获取所对应的本地化文本值
-     *
-     * @param propertyName 在配置文件中的属性
-     * @return 本地化文本值
-     */
-    public static String getString(String propertyName)
-    {
-        try
-		{
-			return prb.getString(propertyName);
-		}
-        catch (Exception e)
-		{
-			e.printStackTrace();
-		}
-
-        return propertyName;
     }
 }

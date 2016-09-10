@@ -108,7 +108,7 @@ public class LittleLuck
     {
         if(LuckPlatformUtils.isWindows())
         {
-            String fontName = LuckRes.getString(LuckSystemConstant.DEF_WINDOWS_FONT);
+            String fontName = "Microsoft YaHei";
 
             setApplicationFont(new Font(fontName, Font.PLAIN, 12));
         }

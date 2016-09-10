@@ -49,7 +49,7 @@ public class LuckGlobalBundle extends LuckResourceBundle
     @Override
     protected void installOther()
     {
-        UIManager.put(APPLICATION_TITLE, LuckRes.getString("default.title"));
+        UIManager.put(APPLICATION_TITLE, "");
 
         UIManager.put(PANEL_BACKGROUND, Color.WHITE);
         

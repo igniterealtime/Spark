@@ -8,15 +8,12 @@
 	<property name="target" value="1.7"/>
 
 	<property name="littleluck.src.dir" value="../src"/>
-	<property name="littleluck.res.dir" value="../resources"/>
+	<property name="littleluck.res.dir" value="../src/java/freeseawind/images"/>
 	<property name="littleluck.build.dir" value=""/>
 	<property name="dest.source.build.dir" value="../build"/>
 	<property name="dest.dist.dir" value="../target"/>
 	<property name="dest.bin.dir" value="bin"/>
-	
-	<path id="lib.classpath">
-		<fileset dir="lib" includes="**/*.jar"/>
-	</path>
+
 
 	<!-- =================================================================== -->
 	<!-- Help on usage                                                       -->
@@ -46,9 +43,11 @@
 	<target name="prepare" depends="clean" description="prepares destination dir">
 		<mkdir dir="${dest.dist.dir}"/>
 		<mkdir dir="${dest.bin.dir}"/>
-		<copy todir="${dest.bin.dir}">
+		<!-- -->
+		<copy todir="${dest.bin.dir}/freeseawind/images">
 			<fileset dir="${littleluck.res.dir}" includes="**/*.*"/>
 		</copy>
+	    
 	</target>
 
 	<!-- =================================================================== -->
@@ -58,7 +57,6 @@
 		<javac 
       srcdir="${littleluck.src.dir}"
       destdir="${dest.bin.dir}"
-	  classpathref="lib.classpath"
       debug="${debug}"
       optimize="${optimize}"
       source="${source}"
@@ -74,7 +72,6 @@
 	<target name="jar" depends="compile" description="creates jar-files">
 
 		<jar basedir="${dest.bin.dir}" jarfile="${dest.dist.dir}/littleluck.jar"  compress="true">
-			<zipfileset excludes="META-INF/.MF" src="lib/ninepatch.jar" />
 		</jar>
 	</target>
 
