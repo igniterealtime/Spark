@@ -20,39 +20,6 @@
 
 package org.jivesoftware;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowFocusListener;
-import java.io.File;
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.TimerTask;
-
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JEditorPane;
-import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.JTextPane;
-import javax.swing.JToolBar;
-import javax.swing.UIManager;
-import javax.swing.event.HyperlinkEvent;
-
 import org.jivesoftware.launcher.Startup;
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
@@ -65,13 +32,8 @@ import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.ui.ChatFrame;
 import org.jivesoftware.spark.ui.RawPacketSender;
-import org.jivesoftware.spark.util.BrowserLauncher;
-import org.jivesoftware.spark.util.GraphicUtils;
-import org.jivesoftware.spark.util.ResourceUtils;
-import org.jivesoftware.spark.util.SwingTimerTask;
+import org.jivesoftware.spark.util.*;
 import org.jivesoftware.spark.util.SwingWorker;
-import org.jivesoftware.spark.util.TaskEngine;
-import org.jivesoftware.spark.util.URLFileSystem;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.alerts.InputTextAreaDialog;
 import org.jivesoftware.sparkimpl.plugin.layout.LayoutSettings;
@@ -80,6 +42,16 @@ import org.jivesoftware.sparkimpl.settings.JiveInfo;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jivesoftware.sparkimpl.updater.CheckUpdates;
+
+import javax.swing.*;
+import javax.swing.event.HyperlinkEvent;
+import java.awt.*;
+import java.awt.event.*;
+import java.io.File;
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.TimerTask;
 
 /**
  * The <code>MainWindow</code> class acts as both the DockableHolder and the proxy
@@ -245,9 +217,18 @@ public final class MainWindow extends ChatFrame implements ActionListener {
      * Notifies all {@link MainWindowListener}s that the <code>MainWindow</code>
      * has been activated.
      */
-    private void fireWindowActivated() {
-        for (MainWindowListener listener : listeners) {
-            listener.mainWindowActivated();
+    private void fireWindowActivated()
+    {
+        for ( MainWindowListener listener : listeners )
+        {
+            try
+            {
+                listener.mainWindowActivated();
+            }
+            catch ( Exception e )
+            {
+                Log.error( "A MainWindowListener (" + listener + ") threw an exception while processing a 'activated' event.", e );
+            }
         }
 
         if (Spark.isMac()) {
@@ -259,9 +240,18 @@ public final class MainWindow extends ChatFrame implements ActionListener {
      * Notifies all {@link MainWindowListener}s that the <code>MainWindow</code>
      * is shutting down.
      */
-    private void fireWindowShutdown() {
-        for (MainWindowListener listener : listeners) {
-            listener.shutdown();
+    private void fireWindowShutdown()
+    {
+        for ( MainWindowListener listener : listeners )
+        {
+            try
+            {
+                listener.shutdown();
+            }
+            catch ( Exception e )
+            {
+                Log.error( "A MainWindowListener (" + listener + ") threw an exception while processing a 'shutdown' event.", e );
+            }
         }
     }
 

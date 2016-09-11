@@ -1249,11 +1249,15 @@ public class SipManager implements SipListener {
 
     // ------------ call received dispatch
     void fireMessageReceived(Request message) {
-
-        MessageEvent evt = new MessageEvent(message);
-        for (int i = listeners.size() - 1; i >= 0; i--) {
-            ((CommunicationsListener) listeners.get(i))
-                    .messageReceived(evt);
+        try {
+            MessageEvent evt = new MessageEvent( message );
+            for ( int i = listeners.size() - 1; i >= 0; i-- )
+            {
+                ( (CommunicationsListener) listeners.get( i ) )
+                        .messageReceived( evt );
+            }
+        } catch ( Exception e ) {
+            Log.error("fireMessageReceived", e);
         }
     } // call received
 
@@ -1268,7 +1272,11 @@ public class SipManager implements SipListener {
         }
         RegistrationEvent evt = new RegistrationEvent(address);
         for (int i = listeners.size() - 1; i >= 0; i--) {
-            ((CommunicationsListener) listeners.get(i)).registered(evt);
+            try {
+                ( (CommunicationsListener) listeners.get( i ) ).registered( evt );
+            } catch ( Exception e ) {
+                Log.error("fireRegistered", e);
+            }
         }
     } // call received
 
@@ -1276,7 +1284,11 @@ public class SipManager implements SipListener {
     void fireRegistering(String address) {
         RegistrationEvent evt = new RegistrationEvent(address);
         for (int i = listeners.size() - 1; i >= 0; i--) {
-            ((CommunicationsListener) listeners.get(i)).registering(evt);
+            try {
+                ( (CommunicationsListener) listeners.get( i ) ).registering( evt );
+            } catch ( Exception e ) {
+                Log.error("fireRegistering", e);
+            }
         }
     } // call received
 
@@ -1284,7 +1296,11 @@ public class SipManager implements SipListener {
     public void fireUnregistered(String address) {
         RegistrationEvent evt = new RegistrationEvent(address);
         for (int i = listeners.size() - 1; i >= 0; i--) {
-            ((CommunicationsListener) listeners.get(i)).unregistered(evt);
+            try {
+                ((CommunicationsListener) listeners.get(i)).unregistered(evt);
+            } catch ( Exception e ) {
+                Log.error("fireUnregistere", e);
+            }
         }
     }
 
@@ -1292,7 +1308,11 @@ public class SipManager implements SipListener {
         if (registrationFailed(type)) {
             RegistrationEvent evt = new RegistrationEvent(address, type);
             for (int i = listeners.size() - 1; i >= 0; i--) {
-                ((CommunicationsListener) listeners.get(i)).registrationFailed(evt);
+                try {
+                    ((CommunicationsListener) listeners.get(i)).registrationFailed(evt);
+                } catch ( Exception e ) {
+                    Log.error("fireRegistrationFailed", e);
+                }
             }
         }
     }
@@ -1300,7 +1320,11 @@ public class SipManager implements SipListener {
     void fireUnregistering(String address) {
         RegistrationEvent evt = new RegistrationEvent(address);
         for (int i = listeners.size() - 1; i >= 0; i--) {
-            ((CommunicationsListener) listeners.get(i)).unregistering(evt);
+            try {
+                ((CommunicationsListener) listeners.get(i)).unregistering(evt);
+            } catch ( Exception e ) {
+                Log.error("fireUnregistering", e);
+            }
         }
     }
 
@@ -1308,8 +1332,11 @@ public class SipManager implements SipListener {
     void fireUnknownMessageReceived(Message message) {
         UnknownMessageEvent evt = new UnknownMessageEvent(message);
         for (int i = listeners.size() - 1; i >= 0; i--) {
-            ((CommunicationsListener) listeners.get(i))
-                    .receivedUnknownMessage(evt);
+            try {
+                ((CommunicationsListener) listeners.get(i)).receivedUnknownMessage(evt);
+            } catch ( Exception e ) {
+                Log.error("fireUnknownMessageReceived", e);
+            }
         }
     }
 
@@ -1317,16 +1344,22 @@ public class SipManager implements SipListener {
     public void fireCallRejectedLocally(String reason, Message invite, Call call) {
         CallRejectedEvent evt = new CallRejectedEvent(reason, invite, call);
         for (int i = listeners.size() - 1; i >= 0; i--) {
-            ((CommunicationsListener) listeners.get(i))
-                    .callRejectedLocally(evt);
+            try {
+                ((CommunicationsListener) listeners.get(i)).callRejectedLocally(evt);
+            } catch ( Exception e ) {
+                Log.error("fireCallRejectedLocally", e);
+            }
         }
     }
 
     void fireCallRejectedRemotely(String reason, Message invite, Call call) {
         CallRejectedEvent evt = new CallRejectedEvent(reason, invite, call);
         for (int i = listeners.size() - 1; i >= 0; i--) {
-            ((CommunicationsListener) listeners.get(i))
-                    .callRejectedRemotely(evt);
+            try {
+                ((CommunicationsListener) listeners.get(i)).callRejectedRemotely(evt);
+            } catch ( Exception e ) {
+                Log.error("fireCallRejectedRemotely", e);
+            }
         }
 
     }
@@ -1334,17 +1367,14 @@ public class SipManager implements SipListener {
     // call rejected
     // ---------------- error occurred
     public void fireCommunicationsError(Throwable throwable) {
-        try {
-            CommunicationsErrorEvent evt = new CommunicationsErrorEvent(
-                    throwable);
-            for (int i = listeners.size() - 1; i >= 0; i--) {
+        CommunicationsErrorEvent evt = new CommunicationsErrorEvent(throwable);
+        for (int i = listeners.size() - 1; i >= 0; i--) {
+            try {
                 ((CommunicationsListener) listeners.get(i)).communicationsErrorOccurred(evt);
+            } catch ( Exception e ) {
+                Log.error("fireCommunicationsError", e);
             }
         }
-        catch (Throwable e) {
-            Log.error("fireCommunicationsError", e);
-        }
-
     } // error occurred
 
     // ============================= SIP LISTENER METHODS ==============================

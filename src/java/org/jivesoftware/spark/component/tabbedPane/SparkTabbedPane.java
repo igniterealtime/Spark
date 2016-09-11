@@ -19,44 +19,6 @@
  */
 package org.jivesoftware.spark.component.tabbedPane;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
-import java.awt.dnd.DnDConstants;
-import java.awt.dnd.DragGestureListener;
-import java.awt.dnd.DragSource;
-import java.awt.dnd.DragSourceDragEvent;
-import java.awt.dnd.DragSourceDropEvent;
-import java.awt.dnd.DragSourceEvent;
-import java.awt.dnd.DragSourceListener;
-import java.awt.dnd.DropTarget;
-import java.awt.dnd.DropTargetDragEvent;
-import java.awt.dnd.DropTargetDropEvent;
-import java.awt.dnd.DropTargetEvent;
-import java.awt.dnd.DropTargetListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import javax.swing.Icon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-import javax.swing.event.ChangeListener;
-
 import org.jivesoftware.Spark;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.spark.SparkManager;
@@ -64,6 +26,20 @@ import org.jivesoftware.spark.ui.ChatRoomNotFoundException;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
+
+import javax.swing.*;
+import javax.swing.event.ChangeListener;
+import java.awt.*;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
+import java.awt.dnd.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 public class SparkTabbedPane extends JPanel {
 	private static final long serialVersionUID = -9007068462231539973L;
@@ -303,12 +279,20 @@ public class SparkTabbedPane extends JPanel {
 		listeners.remove(listener);
 	}
 
-	protected void fireTabAdded(SparkTab tab, Component component, int index) {
-		final Iterator<SparkTabbedPaneListener> list = ModelUtil.reverseListIterator(listeners
-				.listIterator());
-		while (list.hasNext()) {
-			(list.next()).tabAdded(tab, component,
-					index);
+	protected void fireTabAdded( SparkTab tab, Component component, int index )
+	{
+		final Iterator<SparkTabbedPaneListener> list = ModelUtil.reverseListIterator( listeners.listIterator() );
+		while ( list.hasNext() )
+		{
+			final SparkTabbedPaneListener listener = list.next();
+			try
+			{
+				listener.tabAdded( tab, component, index );
+			}
+			catch ( Exception e )
+			{
+				Log.error( "A SparkTabbedPaneListener (" + listener + ") threw an exception while processing a 'tabAdded' event (tab: '" + tab + "', component: '" + component + "', index: '" + index + "').", e );
+			}
 		}
 	}
 
@@ -323,21 +307,37 @@ public class SparkTabbedPane extends JPanel {
 		}
 	}
 
-	protected void fireTabRemoved(SparkTab tab, Component component, int index) {
-		final Iterator<SparkTabbedPaneListener> list = ModelUtil.reverseListIterator(listeners
-				.listIterator());
-		while (list.hasNext()) {
-			(list.next()).tabRemoved(tab, component,
-					index);
+	protected void fireTabRemoved( SparkTab tab, Component component, int index )
+	{
+		final Iterator<SparkTabbedPaneListener> list = ModelUtil.reverseListIterator( listeners.listIterator() );
+		while ( list.hasNext() )
+		{
+			final SparkTabbedPaneListener listener = list.next();
+			try
+			{
+				listener.tabRemoved( tab, component, index );
+			}
+			catch ( Exception e )
+			{
+				Log.error( "A SparkTabbedPaneListener (" + listener + ") threw an exception while processing a 'tabRemoved' event (tab: '" + tab + "', component: '" + component + "', index: '" + index + "').", e );
+			}
 		}
 	}
 
-	protected void fireTabSelected(SparkTab tab, Component component, int index) {
-		final Iterator<SparkTabbedPaneListener> list = ModelUtil.reverseListIterator(listeners
-				.listIterator());
-		while (list.hasNext()) {
-			(list.next()).tabSelected(tab, component,
-					index);
+	protected void fireTabSelected( SparkTab tab, Component component, int index )
+	{
+		final Iterator<SparkTabbedPaneListener> list = ModelUtil.reverseListIterator( listeners.listIterator() );
+		while ( list.hasNext() )
+		{
+			final SparkTabbedPaneListener listener = list.next();
+			try
+			{
+				listener.tabSelected( tab, component, index );
+			}
+			catch ( Exception e )
+			{
+				Log.error( "A SparkTabbedPaneListener (" + listener + ") threw an exception while processing a 'tabSelected' event (tab: '" + tab + "', component: '" + component + "', index: '" + index + "').", e );
+			}
 		}
 	}
 

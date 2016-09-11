@@ -20,6 +20,11 @@
 
 package org.jivesoftware.sparkimpl.settings.local;
 
+import org.jivesoftware.Spark;
+import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.spark.util.WinRegistry;
+import org.jivesoftware.spark.util.log.Log;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -27,11 +32,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-
-import org.jivesoftware.Spark;
-import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.spark.util.WinRegistry;
-import org.jivesoftware.spark.util.log.Log;
 
 
 /**
@@ -199,9 +199,18 @@ public class SettingsManager {
         listeners.remove(listener);
     }
 
-    public static void fireListeners() {
-        for (PreferenceListener listener : listeners) {
-            listener.preferencesChanged(localPreferences);
+    public static void fireListeners()
+    {
+        for ( PreferenceListener listener : listeners )
+        {
+            try
+            {
+                listener.preferencesChanged( localPreferences );
+            }
+            catch ( Exception e )
+            {
+                Log.error( "A PreferenceListener (" + listener + ") threw an exception while processing a 'referencesChanged' event.", e );
+            }
         }
     }
 }
