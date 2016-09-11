@@ -19,52 +19,16 @@
  */
 package org.jivesoftware.spark.ui;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.EventQueue;
-import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.*;
-import java.io.File;
-import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
-
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.BorderFactory;
-import javax.swing.Icon;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollBar;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.KeyStroke;
-import javax.swing.UIManager;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Document;
-
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.StanzaListener;
-import org.jivesoftware.smack.XMPPConnection;
-import org.jivesoftware.smack.chat.Chat;
-import org.jivesoftware.smack.roster.Roster;
-import org.jivesoftware.smack.roster.RosterEntry;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Stanza;
+import org.jivesoftware.smack.roster.Roster;
+import org.jivesoftware.smack.roster.RosterEntry;
 import org.jivesoftware.smackx.chatstates.ChatState;
-import org.jivesoftware.smackx.chatstates.ChatStateManager;
 import org.jivesoftware.smackx.jiveproperties.packet.JivePropertiesExtension;
 import org.jivesoftware.spark.ChatAreaSendField;
 import org.jivesoftware.spark.SparkManager;
@@ -79,6 +43,18 @@ import org.jivesoftware.spark.util.UIComponentRegistry;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+
+import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
+import java.awt.*;
+import java.awt.event.*;
+import java.io.File;
+import java.util.*;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * The base implementation of all ChatRoom conversations. You would implement this class to have most types of Chat.
@@ -771,9 +747,18 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
      *
      * @param message the message received.
      */
-    private void fireMessageReceived(Message message) {
-        for (MessageListener messageListener : messageListeners) {
-            messageListener.messageReceived(this, message);
+    private void fireMessageReceived( Message message )
+    {
+        for ( MessageListener listener : messageListeners )
+        {
+            try
+            {
+                listener.messageReceived( this, message );
+            }
+            catch ( Exception e )
+            {
+                Log.error( "A MessageListener (" + listener + ") threw an exception while processing a 'message received' event for message: " + message, e );
+            }
         }
     }
 
@@ -782,9 +767,18 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
      *
      * @param message the message sent.
      */
-    protected void fireMessageSent(Message message) {
-        for (MessageListener messageListener : messageListeners) {
-            messageListener.messageSent(this, message);
+    protected void fireMessageSent( Message message )
+    {
+        for ( MessageListener listener : messageListeners )
+        {
+            try
+            {
+                listener.messageSent( this, message );
+            }
+            catch ( Exception e )
+            {
+                Log.error( "A MessageListener (" + listener + ") threw an exception while processing a 'message sent' event for message: " + message, e );
+            }
         }
     }
 
@@ -1151,9 +1145,18 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
      *
      * @param files the files dropped.
      */
-    public void fireFileDropListeners(Collection<File> files) {
-        for (FileDropListener fileDropListener : fileDropListeners) {
-            fileDropListener.filesDropped(files, this);
+    public void fireFileDropListeners( Collection<File> files )
+    {
+        for ( FileDropListener listener : fileDropListeners )
+        {
+            try
+            {
+                listener.filesDropped( files, this );
+            }
+            catch ( Exception e )
+            {
+                Log.error( "A FileDropListener (" + listener + ") threw an exception while processing a 'files dropped' event.", e );
+            }
         }
     }
 
@@ -1182,8 +1185,12 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
      *
      * @param listener the ChatRoomClosingListener.
      */
-    public void addClosingListener(ChatRoomClosingListener listener) {
-        closingListeners.add(listener);
+    public void addClosingListener(ChatRoomClosingListener listener)
+    {
+        synchronized ( closingListeners )
+        {
+            closingListeners.add( listener );
+        }
     }
 
     /**
@@ -1191,17 +1198,38 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
      *
      * @param listener the ChatRoomClosingListener.
      */
-    public void removeClosingListener(ChatRoomClosingListener listener) {
-        closingListeners.remove(listener);
+    public void removeClosingListener(ChatRoomClosingListener listener)
+    {
+        synchronized ( closingListeners )
+        {
+            closingListeners.remove( listener );
+        }
     }
 
     /**
      * Notifies all <code>ChatRoomClosingListener</code> that this ChatRoom is closing.
      */
-    private void fireClosingListeners() {
-        for (ChatRoomClosingListener chatRoomClosingListener : closingListeners) {
-            chatRoomClosingListener.closing();
-            removeClosingListener(chatRoomClosingListener);
+    private void fireClosingListeners()
+    {
+        synchronized ( closingListeners )
+        {
+            final Iterator<ChatRoomClosingListener> listeners = closingListeners.iterator();
+            while ( listeners.hasNext() )
+            {
+                final ChatRoomClosingListener listener = listeners.next();
+                try
+                {
+                    listener.closing();
+                }
+                catch ( Exception e )
+                {
+                    Log.error( "A ChatRoomClosingListener (" + listener + ") threw an exception while processing a 'closing' event.", e );
+                }
+                finally
+                {
+                    listeners.remove();
+                }
+            }
         }
     }
 

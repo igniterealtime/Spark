@@ -20,17 +20,15 @@
 package org.jivesoftware.spark.component.panes;
 
 import org.jivesoftware.spark.util.ModelUtil;
+import org.jivesoftware.spark.util.log.Log;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
-import javax.swing.Icon;
-import javax.swing.JPanel;
 
 /**
  * CollapsiblePane provides a component which can collapse or expand its content area
@@ -120,17 +118,37 @@ public class CollapsiblePane extends JPanel {
         listeners.remove(listener);
     }
 
-    private void firePaneExpanded() {
-        final Iterator<CollapsiblePaneListener> iter = ModelUtil.reverseListIterator(listeners.listIterator());
-        while (iter.hasNext()) {
-            (iter.next()).paneExpanded();
+    private void firePaneExpanded()
+    {
+        final Iterator<CollapsiblePaneListener> iter = ModelUtil.reverseListIterator( listeners.listIterator() );
+        while ( iter.hasNext() )
+        {
+            final CollapsiblePaneListener listener = iter.next();
+            try
+            {
+                listener.paneExpanded();
+            }
+            catch ( Exception e )
+            {
+                Log.error( "A CollapsiblePaneListener(" + listener + ") threw an exception while processing an 'expanded' event.", e );
+            }
         }
     }
 
-    private void firePaneCollapsed() {
-        final Iterator<CollapsiblePaneListener> iter = ModelUtil.reverseListIterator(listeners.listIterator());
-        while (iter.hasNext()) {
-            (iter.next()).paneCollapsed();
+    private void firePaneCollapsed()
+    {
+        final Iterator<CollapsiblePaneListener> iter = ModelUtil.reverseListIterator( listeners.listIterator() );
+        while ( iter.hasNext() )
+        {
+            final CollapsiblePaneListener listener = iter.next();
+            try
+            {
+                listener.paneCollapsed();
+            }
+            catch ( Exception e )
+            {
+                Log.error( "A CollapsiblePaneListener (" + listener + ") threw an exception while processing a 'collapsed' event.", e );
+            }
         }
     }
 

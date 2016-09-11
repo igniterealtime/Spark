@@ -19,18 +19,14 @@
  */
 package org.jivesoftware.sparkimpl.plugin.privacy.list;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-
 import org.jivesoftware.smack.SmackException;
-import org.jivesoftware.smackx.privacy.PrivacyList;
 import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smackx.privacy.PrivacyList;
 import org.jivesoftware.smackx.privacy.packet.PrivacyItem;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.privacy.PrivacyManager;
+
+import java.util.*;
 
 /**
  *
@@ -289,24 +285,38 @@ public class SparkPrivacyList {
 
 
     /**
-     *
      * @param item user was added into blockList
      */
-    private void fireItemAdded(PrivacyItem item) throws SmackException.NotConnectedException
+    private void fireItemAdded( PrivacyItem item ) throws SmackException.NotConnectedException
     {
-        for (SparkPrivacyItemListener listener :_listeners) {
-            listener.itemAdded(item, _listName);
+        for ( final SparkPrivacyItemListener listener : _listeners )
+        {
+            try
+            {
+                listener.itemAdded( item, _listName );
+            }
+            catch ( Exception e )
+            {
+                Log.error( "A SparkPrivacyItemListener (" + listener + ") threw an exception while processing a 'itemAdded' event for: " + item + " on list: " + _listName, e );
+            }
         }
     }
 
     /**
-     *
      * @param item user removed from blackList
      */
-    private void fireItemRemoved(PrivacyItem item) throws SmackException.NotConnectedException
+    private void fireItemRemoved( PrivacyItem item ) throws SmackException.NotConnectedException
     {
-        for (SparkPrivacyItemListener listener : _listeners) {
-            listener.itemRemoved(item, _listName);
+        for ( final SparkPrivacyItemListener listener : _listeners )
+        {
+            try
+            {
+                listener.itemRemoved( item, _listName );
+            }
+            catch ( Exception e )
+            {
+                Log.error( "A SparkPrivacyItemListener (" + listener + ") threw an exception while processing a 'itemRemoved' event for: " + item + " on list: " + _listName, e );
+            }
         }
     }
 

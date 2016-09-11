@@ -1,7 +1,7 @@
 <!-- Define your plugins -->
 <plugin>
     <name>Phone Client</name>
-    <version>1.1.1</version>
+    <version>1.1.2</version>
     <author>Jive Software</author>
     <homePage>http://www.jivesoftware.org</homePage>
     <email>thiago@jivesoftware.com</email>

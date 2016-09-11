@@ -19,25 +19,23 @@
  */
 package org.jivesoftware.sparkplugin.ui.transfer;
 
-import org.jivesoftware.spark.plugin.phone.resource.PhoneRes;
-import org.jivesoftware.sparkplugin.callhistory.TelephoneUtils;
 import org.jivesoftware.resource.Res;
+import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.roster.RosterEntry;
 import org.jivesoftware.smack.roster.RosterGroup;
-import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smackx.vcardtemp.packet.VCard;
 import org.jivesoftware.spark.PresenceManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.component.VerticalFlowLayout;
+import org.jivesoftware.spark.plugin.phone.resource.PhoneRes;
+import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.spark.util.ModelUtil;
+import org.jivesoftware.sparkplugin.callhistory.TelephoneUtils;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -45,14 +43,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.Icon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.UIManager;
 
 /**
  * The UI that represents one group within the users Roster.
@@ -270,9 +260,18 @@ public class TransferGroupUI extends JPanel {
     /**
      * Notifies all TransferListeners that a number has been selected.
      */
-    public void fireTransferListeners(String number) {
-        for (TransferListener listener : listeners) {
-            listener.numberSelected(number);
+    public void fireTransferListeners( String number )
+    {
+        for ( TransferListener listener : listeners )
+        {
+            try
+            {
+                listener.numberSelected( number );
+            }
+            catch ( Exception e )
+            {
+                Log.error( "A TransferListener (" + listener + ") threw an exception while processing a 'numberSelected' event (number: " + number + ").", e );
+            }
         }
     }
 

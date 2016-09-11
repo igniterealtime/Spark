@@ -19,56 +19,25 @@
  */ 
 package org.jivesoftware.spark.ui;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.EventQueue;
-import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.*;
-
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.BorderFactory;
-import javax.swing.Icon;
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JComponent;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
-import javax.swing.JToolBar;
-import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-
 import org.jivesoftware.MainWindowListener;
 import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.*;
-import org.jivesoftware.smack.packet.*;
+import org.jivesoftware.smack.filter.StanzaFilter;
+import org.jivesoftware.smack.filter.StanzaTypeFilter;
+import org.jivesoftware.smack.packet.Message;
+import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.roster.RosterEntry;
 import org.jivesoftware.smack.roster.RosterGroup;
 import org.jivesoftware.smack.roster.RosterListener;
-import org.jivesoftware.smack.filter.StanzaFilter;
-import org.jivesoftware.smack.filter.StanzaTypeFilter;
 import org.jivesoftware.smack.roster.packet.RosterPacket;
 import org.jivesoftware.smackx.iqlast.LastActivityManager;
+import org.jivesoftware.smackx.iqlast.packet.LastActivity;
 import org.jivesoftware.smackx.jiveproperties.packet.JivePropertiesExtension;
 import org.jivesoftware.smackx.sharedgroups.SharedGroupManager;
-import org.jivesoftware.smackx.iqlast.packet.LastActivity;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.PresenceManager;
 import org.jivesoftware.spark.SparkManager;
@@ -78,18 +47,27 @@ import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.component.VerticalFlowLayout;
 import org.jivesoftware.spark.plugin.ContextMenuListener;
 import org.jivesoftware.spark.plugin.Plugin;
-import org.jivesoftware.spark.util.ModelUtil;
-import org.jivesoftware.spark.util.ResourceUtils;
-import org.jivesoftware.spark.util.SwingTimerTask;
+import org.jivesoftware.spark.util.*;
 import org.jivesoftware.spark.util.SwingWorker;
-import org.jivesoftware.spark.util.TaskEngine;
-import org.jivesoftware.spark.util.UIComponentRegistry;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 import org.jivesoftware.sparkimpl.profile.VCardManager;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jxmpp.util.XmppStringUtils;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.*;
+import java.util.List;
 
 
 public class ContactList extends JPanel implements ActionListener,
@@ -2094,9 +2072,18 @@ SwingUtilities.invokeLater( () -> loadContactList() );
         contextListeners.remove(listener);
     }
 
-    public void fireContextMenuListenerPopup(JPopupMenu popup, Object object) {
-        for (ContextMenuListener listener : new ArrayList<>( contextListeners )) {
-            listener.poppingUp(object, popup);
+    public void fireContextMenuListenerPopup( JPopupMenu popup, Object object )
+    {
+        for ( final ContextMenuListener listener : contextListeners )
+        {
+            try
+            {
+                listener.poppingUp( object, popup );
+            }
+            catch ( Exception e )
+            {
+                Log.error( "A ContextMenuListener (" + listener + ") threw an exception while processing a 'popingUp' event for object: " + object, e );
+            }
         }
     }
 
@@ -2155,9 +2142,18 @@ SwingUtilities.invokeLater( () -> loadContactList() );
         dndListeners.remove(listener);
     }
 
-    public void fireFilesDropped(Collection<File> files, ContactItem item) {
-        for (FileDropListener fileDropListener : new ArrayList<>( dndListeners )) {
-            fileDropListener.filesDropped(files, item);
+    public void fireFilesDropped( Collection<File> files, ContactItem item )
+    {
+        for ( final FileDropListener listener : dndListeners )
+        {
+            try
+            {
+                listener.filesDropped( files, item );
+            }
+            catch ( Exception e )
+            {
+                Log.error( "A FileDropListener (" + listener + ") threw an exception while processing a 'filedDropped' event for: " + item, e );
+            }
         }
     }
 
@@ -2181,39 +2177,93 @@ SwingUtilities.invokeLater( () -> loadContactList() );
         contactListListeners.remove(listener);
     }
 
-    public void fireContactItemAdded(ContactItem item) {
-        for (ContactListListener contactListListener : new ArrayList<>( contactListListeners )) {
-            contactListListener.contactItemAdded(item);
+    public void fireContactItemAdded( ContactItem item )
+    {
+        for ( final ContactListListener listener : contactListListeners )
+        {
+            try
+            {
+                listener.contactItemAdded( item );
+            }
+            catch ( Exception e )
+            {
+                Log.error( "A ContactListListener (" + listener + ") threw an exception while processing a 'contactItemAdded' event for: " + item, e );
+            }
         }
     }
 
-    public void fireContactItemRemoved(ContactItem item) {
-        for (ContactListListener contactListListener : new ArrayList<>( contactListListeners )) {
-            contactListListener.contactItemRemoved(item);
+    public void fireContactItemRemoved( ContactItem item )
+    {
+        for ( final ContactListListener listener : contactListListeners )
+        {
+            try
+            {
+                listener.contactItemRemoved( item );
+            }
+            catch ( Exception e )
+            {
+                Log.error( "A ContactListListener (" + listener + ") threw an exception while processing a 'contactItemRemoved' event for: " + item, e );
+            }
         }
     }
 
-    public void fireContactGroupAdded(ContactGroup group) {
-        for (ContactListListener contactListListener : new ArrayList<>( contactListListeners )) {
-            contactListListener.contactGroupAdded(group);
+    public void fireContactGroupAdded( ContactGroup group )
+    {
+        for ( final ContactListListener listener : contactListListeners )
+        {
+            try
+            {
+                listener.contactGroupAdded( group );
+            }
+            catch ( Exception e )
+            {
+                Log.error( "A ContactListListener (" + listener + ") threw an exception while processing a 'contactGroupAdded' event for: " + group, e );
+            }
         }
     }
 
-    public void fireContactGroupRemoved(ContactGroup group) {
-        for (ContactListListener contactListListener : new ArrayList<>( contactListListeners )) {
-            contactListListener.contactGroupRemoved(group);
+    public void fireContactGroupRemoved( ContactGroup group )
+    {
+        for ( final ContactListListener listener : contactListListeners )
+        {
+            try
+            {
+                listener.contactGroupRemoved( group );
+            }
+            catch ( Exception e )
+            {
+                Log.error( "A ContactListListener (" + listener + ") threw an exception while processing a 'contactGroupRemoved' event for: " + group, e );
+            }
         }
     }
 
-    public void fireContactItemClicked(ContactItem contactItem) {
-        for (ContactListListener contactListListener : new ArrayList<>( contactListListeners )) {
-            contactListListener.contactItemClicked(contactItem);
+    public void fireContactItemClicked( ContactItem item )
+    {
+        for ( final ContactListListener listener : contactListListeners )
+        {
+            try
+            {
+                listener.contactItemClicked( item );
+            }
+            catch ( Exception e )
+            {
+                Log.error( "A ContactListListener (" + listener + ") threw an exception while processing a 'contactItemClicked' event for: " + item, e );
+            }
         }
     }
 
-    public void fireContactItemDoubleClicked(ContactItem contactItem) {
-        for (ContactListListener contactListListener : new ArrayList<>( contactListListeners )) {
-            contactListListener.contactItemDoubleClicked(contactItem);
+    public void fireContactItemDoubleClicked( ContactItem item )
+    {
+        for ( final ContactListListener listener : contactListListeners )
+        {
+            try
+            {
+                listener.contactItemDoubleClicked( item );
+            }
+            catch ( Exception e )
+            {
+                Log.error( "A ContactListListener (" + listener + ") threw an exception while processing a 'contactItemDoubleClicked' event for: " + item, e );
+            }
         }
     }
 

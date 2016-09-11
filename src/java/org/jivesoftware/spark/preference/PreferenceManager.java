@@ -19,16 +19,9 @@
  */ 
 package org.jivesoftware.spark.preference;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.swing.JDialog;
-
 import org.jivesoftware.MainWindowListener;
 import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.privacy.ui.PrivacyPreferences;
 import org.jivesoftware.sparkimpl.preference.PreferenceDialog;
 import org.jivesoftware.sparkimpl.preference.PreferencesPanel;
@@ -36,6 +29,9 @@ import org.jivesoftware.sparkimpl.preference.chat.ChatPreference;
 import org.jivesoftware.sparkimpl.preference.groupchat.GroupChatPreference;
 import org.jivesoftware.sparkimpl.preference.media.MediaPreference;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreference;
+
+import javax.swing.*;
+import java.util.*;
 
 /**
  * Usage of the PreferenceManager to handle loading of preferences within Spark.
@@ -129,10 +125,18 @@ public class PreferenceManager {
 
     }
 
-    private void fireShutdown() {
-        for (String namespace : map.keySet()) {
-            final Preference preference = map.get(namespace);
-            preference.shutdown();
+    private void fireShutdown()
+    {
+        for ( final Preference preference : map.values() )
+        {
+            try
+            {
+                preference.shutdown();
+            }
+            catch ( Exception e )
+            {
+                Log.error( "An exception occurred while trying to shutdown preference: " + preference, e );
+            }
         }
     }
 

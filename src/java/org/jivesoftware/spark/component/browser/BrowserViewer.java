@@ -19,8 +19,9 @@
  */
 package org.jivesoftware.spark.component.browser;
 
-import javax.swing.JPanel;
+import org.jivesoftware.spark.util.log.Log;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,9 +58,18 @@ public abstract class BrowserViewer extends JPanel {
      *
      * @param document the document that has been downloaded.
      */
-    public void fireBrowserListeners(String document) {
-        for (BrowserListener listener : listeners) {
-            listener.documentLoaded(document);
+    public void fireBrowserListeners( String document )
+    {
+        for ( BrowserListener listener : listeners )
+        {
+            try
+            {
+                listener.documentLoaded( document );
+            }
+            catch ( Exception e )
+            {
+                Log.error( "A BrowserListener (" + listener + ") threw an exception while processing a 'downloaded' event for document: " + document, e );
+            }
         }
     }
 

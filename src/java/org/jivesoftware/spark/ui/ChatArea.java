@@ -19,36 +19,6 @@
  */ 
 package org.jivesoftware.spark.ui;
 
-import java.awt.Color;
-import java.awt.Cursor;
-import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.StringTokenizer;
-
-import javax.swing.AbstractAction;
-import javax.swing.Icon;
-import javax.swing.JComponent;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
-import javax.swing.JSeparator;
-import javax.swing.JTextPane;
-import javax.swing.KeyStroke;
-import javax.swing.UIManager;
-import javax.swing.text.AttributeSet;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Document;
-import javax.swing.text.Element;
-import javax.swing.text.SimpleAttributeSet;
-import javax.swing.text.StyleConstants;
-import javax.swing.text.StyledDocument;
-
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.ContextMenuListener;
@@ -58,6 +28,15 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.emoticons.EmoticonManager;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+
+import javax.swing.*;
+import javax.swing.text.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.StringTokenizer;
 
 /**
  * The ChatArea class handles proper chat text formatting such as url handling. Use ChatArea for proper
@@ -91,7 +70,7 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
      */
     private int fontSize;
 
-    private List<ContextMenuListener> contextMenuListener = new ArrayList<>();
+    private List<ContextMenuListener> contextMenuListeners = new ArrayList<>();
 
     private JPopupMenu popup;
 
@@ -711,7 +690,7 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
      * @param listener the ContextMenuListener.
      */
     public void addContextMenuListener(ContextMenuListener listener) {
-        contextMenuListener.add(listener);
+        contextMenuListeners.add(listener);
     }
 
     /**
@@ -720,12 +699,21 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
      * @param listener the ContextMenuListener.
      */
     public void removeContextMenuListener(ContextMenuListener listener) {
-        contextMenuListener.remove(listener);
+        contextMenuListeners.remove(listener);
     }
 
-    private void fireContextMenuListeners() {
-        for (ContextMenuListener listener : new ArrayList<>( contextMenuListener )) {
-            listener.poppingUp(this, popup);
+    private void fireContextMenuListeners()
+    {
+        for ( final ContextMenuListener listener : contextMenuListeners )
+        {
+            try
+            {
+                listener.poppingUp( this, popup );
+            }
+            catch ( Exception e )
+            {
+                Log.error( "A ContextMenuListener (" + listener + ") threw an exception while processing a 'poppingUp' event. ChatArea: '" + this + "', popup: '" + popup + "'.", e );
+            }
         }
     }
 
@@ -737,11 +725,21 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
         interceptors.remove(interceptor);
     }
 
-    public boolean fireLinkInterceptors(MouseEvent event, String link) {
-        for (LinkInterceptor linkInterceptor : new ArrayList<>( interceptors )) {
-            boolean handled = linkInterceptor.handleLink(event, link);
-            if (handled) {
-                return true;
+    public boolean fireLinkInterceptors( MouseEvent event, String link )
+    {
+        for ( final LinkInterceptor interceptor : interceptors )
+        {
+            try
+            {
+                final boolean handled = interceptor.handleLink( event, link );
+                if ( handled )
+                {
+                    return true;
+                }
+            }
+            catch ( Exception e )
+            {
+                Log.error( "A LinkInterceptor (" + interceptor + ") threw an exception while processing link: '" + link + "', event: '" + event + "'.", e );
             }
         }
 

@@ -631,9 +631,18 @@ public class BookmarksUI extends JPanel {
         listeners.remove(listener);
     }
 
-    private void fireContextMenuListeners(JPopupMenu popup, JiveTreeNode node) {
-        for (ContextMenuListener listener : new ArrayList<>( listeners )) {
-            listener.poppingUp(node, popup);
+    private void fireContextMenuListeners( JPopupMenu popup, JiveTreeNode node )
+    {
+        for ( final ContextMenuListener listener : listeners )
+        {
+            try
+            {
+                listener.poppingUp( node, popup );
+            }
+            catch ( Exception e )
+            {
+                Log.error( "A ContextMenuListener (" + listener + ") threw an exception while processing a 'poppingUp' event for node: " + node, e );
+            }
         }
     }
 
@@ -655,15 +664,33 @@ public class BookmarksUI extends JPanel {
         bookmarkListeners.remove(bookmarkListener);
     }
 
-    private void fireBookmarksAdded(String roomJID) {
-        for (BookmarksListener bookmarkListener : new ArrayList<>( bookmarkListeners )) {
-            bookmarkListener.bookmarkAdded(roomJID);
+    private void fireBookmarksAdded( String roomJID )
+    {
+        for ( final BookmarksListener listener : bookmarkListeners )
+        {
+            try
+            {
+                listener.bookmarkAdded( roomJID );
+            }
+            catch ( Exception e )
+            {
+                Log.error( "A BookmarksListener (" + listener + ") threw an exception while processing a 'bookmarkAdded' event for: " + roomJID, e );
+            }
         }
     }
 
-    private void fireBookmarksRemoved(String roomJID) {
-        for (BookmarksListener bookmarkListener : new ArrayList<>( bookmarkListeners )) {
-            bookmarkListener.bookmarkRemoved(roomJID);
+    private void fireBookmarksRemoved( String roomJID )
+    {
+        for ( final BookmarksListener listener : bookmarkListeners )
+        {
+            try
+            {
+                listener.bookmarkRemoved( roomJID );
+            }
+            catch ( Exception e )
+            {
+                Log.error( "A BookmarksListener (" + listener + ") threw an exception while processing a 'bookmarkRemoved' event for: " + roomJID, e );
+            }
         }
     }
 

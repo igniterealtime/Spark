@@ -19,29 +19,21 @@
  */ 
 package org.jivesoftware.spark.ui;
 
-import java.awt.BorderLayout;
-import java.awt.Frame;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowFocusListener;
-import java.util.ArrayList;
-import java.util.Collection;
-
-
-import javax.swing.JCheckBox;
-
-import javax.swing.JFrame;
-
 import org.jivesoftware.MainWindow;
 import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.util.GraphicUtils;
+import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.layout.LayoutSettings;
 import org.jivesoftware.sparkimpl.plugin.layout.LayoutSettingsManager;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * The Window used to display the ChatRoom container.
@@ -246,13 +238,20 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
 	this.fireWindowOnTopListeners(active);
     }
 
-    
-    private void fireWindowOnTopListeners(boolean active) {
-	for (ChatFrameToFrontListener fl: _windowToFrontListeners)
-	{
-	    fl.updateStatus(active);
-	}
-	
+
+    private void fireWindowOnTopListeners( boolean active )
+    {
+        for ( ChatFrameToFrontListener listener : _windowToFrontListeners )
+        {
+            try
+            {
+                listener.updateStatus( active );
+            }
+            catch ( Exception e )
+            {
+                Log.error( "A ChatFrameToFrontListener (" + listener + ") threw an exception while processing a 'updateStatus' event with status: " + active, e );
+            }
+        }
     }
 
     /**

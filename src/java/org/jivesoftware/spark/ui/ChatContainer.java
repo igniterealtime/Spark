@@ -19,41 +19,6 @@
  */ 
 package org.jivesoftware.spark.ui;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Frame;
-import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.TimerTask;
-import java.util.regex.Pattern;
-
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.BorderFactory;
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JPopupMenu;
-import javax.swing.JTabbedPane;
-import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-
 import org.jivesoftware.MainWindow;
 import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Res;
@@ -80,6 +45,15 @@ import org.jivesoftware.sparkimpl.plugin.alerts.SparkToaster;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jxmpp.util.XmppStringUtils;
+
+import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import java.awt.*;
+import java.awt.event.*;
+import java.util.*;
+import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * Contains all <code>ChatRoom</code> objects within Spark.
@@ -878,9 +852,18 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
      *
      * @param room - the <code>ChatRoom</code> that has been opened.
      */
-    protected void fireChatRoomOpened(ChatRoom room) {
-        for (ChatRoomListener chatRoomListener : new ArrayList<>( chatRoomListeners )) {
-            chatRoomListener.chatRoomOpened(room);
+    protected void fireChatRoomOpened( ChatRoom room )
+    {
+        for ( final ChatRoomListener listener : chatRoomListeners )
+        {
+            try
+            {
+                listener.chatRoomOpened( room );
+            }
+            catch ( Exception e )
+            {
+                Log.error( "A ChatRoomListener (" + listener + ") threw an exception while processing a 'opened' event for room: " + room, e );
+            }
         }
     }
 
@@ -889,9 +872,18 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
      *
      * @param room - the <code>ChatRoom</code> that has been left
      */
-    protected void fireChatRoomLeft(ChatRoom room) {
-        for (ChatRoomListener chatRoomListener : new HashSet<>( chatRoomListeners )) {
-            chatRoomListener.chatRoomLeft(room);
+    protected void fireChatRoomLeft( ChatRoom room )
+    {
+        for ( final ChatRoomListener listener : chatRoomListeners )
+        {
+            try
+            {
+                listener.chatRoomLeft( room );
+            }
+            catch ( Exception e )
+            {
+                Log.error( "A ChatRoomListener (" + listener + ") threw an exception while processing a 'left' event for room: " + room, e );
+            }
         }
     }
 
@@ -900,9 +892,18 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
      *
      * @param room - the <code>ChatRoom</code> that has been closed.
      */
-    protected void fireChatRoomClosed(ChatRoom room) {
-        for (ChatRoomListener chatRoomListener : new HashSet<>( chatRoomListeners )) {
-            chatRoomListener.chatRoomClosed(room);
+    protected void fireChatRoomClosed( ChatRoom room )
+    {
+        for ( final ChatRoomListener listener : chatRoomListeners )
+        {
+            try
+            {
+                listener.chatRoomClosed( room );
+            }
+            catch ( Exception e )
+            {
+                Log.error( "A ChatRoomListener (" + listener + ") threw an exception while processing a 'closed' event for room: " + room, e );
+            }
         }
     }
 
@@ -911,9 +912,18 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
      *
      * @param room - the <code>ChatRoom</code> that has been activated.
      */
-    protected void fireChatRoomActivated(ChatRoom room) {
-        for (ChatRoomListener chatRoomListener : new HashSet<>( chatRoomListeners )) {
-            chatRoomListener.chatRoomActivated(room);
+    protected void fireChatRoomActivated( ChatRoom room )
+    {
+        for ( final ChatRoomListener listener : chatRoomListeners )
+        {
+            try
+            {
+                listener.chatRoomActivated( room );
+            }
+            catch ( Exception e )
+            {
+                Log.error( "A ChatRoomListener (" + listener + ") threw an exception while processing a 'activated' event for room: " + room, e );
+            }
         }
     }
 
@@ -923,13 +933,22 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
      * @param room   - the <code>ChatRoom</code> that a user has joined.
      * @param userid - the userid of the person.
      */
-    protected void fireUserHasJoined(final ChatRoom room, final String userid) {
-        SwingUtilities.invokeLater( () -> {
-            for (ChatRoomListener chatRoomListener : new HashSet<>( chatRoomListeners )) {
-                chatRoomListener.userHasJoined(room, userid);
+    protected void fireUserHasJoined( final ChatRoom room, final String userid )
+    {
+        SwingUtilities.invokeLater( () ->
+        {
+            for ( final ChatRoomListener listener : chatRoomListeners )
+            {
+                try
+                {
+                    listener.userHasJoined( room, userid );
+                }
+                catch ( Exception e )
+                {
+                    Log.error( "A ChatRoomListener (" + listener + ") threw an exception while processing a 'user joined' event for user '" + userid + "' in room: " + room, e );
+                }
             }
         } );
-
     }
 
     /**
@@ -938,13 +957,22 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
      * @param room   - the <code>ChatRoom</code> that a user has left.
      * @param userid - the userid of the person.
      */
-    protected void fireUserHasLeft(final ChatRoom room, final String userid) {
-        SwingUtilities.invokeLater( () -> {
-            for (ChatRoomListener chatRoomListener : new HashSet<>( chatRoomListeners )) {
-                chatRoomListener.userHasLeft(room, userid);
+    protected void fireUserHasLeft( final ChatRoom room, final String userid )
+    {
+        SwingUtilities.invokeLater( () ->
+        {
+            for ( final ChatRoomListener listener : chatRoomListeners )
+            {
+                try
+                {
+                    listener.userHasLeft( room, userid );
+                }
+                catch ( Exception e )
+                {
+                    Log.error( "A ChatRoomListener (" + listener + ") threw an exception while processing a 'user left' event for user '" + userid + "' in room: " + room, e );
+                }
             }
         } );
-
     }
 
     /**
@@ -1022,8 +1050,6 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
      * Handles Notification preferences for incoming messages and rooms.
      *
      * @param room the chat room.
-     * @param fileTransfer if it is a file transfer then true
-     * @param fileTName the file name being transfered (if fileTransfer applies)
      *
      */
     private void checkNotificationPreferences(final ChatRoom room, boolean customMsg, String customMsgText, String customMsgTitle) {

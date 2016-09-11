@@ -327,8 +327,16 @@ public class Call implements ReceiveStreamListener {
         Log.debug(this.getState());
         CallStateEvent evt = new CallStateEvent(this);
         evt.setOldState(oldStatus);
-        for (CallListener callListener : listeners) {
-            callListener.callStateChanged(evt);
+        for ( final CallListener listener : listeners )
+        {
+            try
+            {
+                listener.callStateChanged( evt );
+            }
+            catch ( Exception e )
+            {
+                Log.error( "A CallListener (" + listener + ") threw an exception while processing a 'callStateChanged' event (old status: " + oldStatus + ").", e );
+            }
         }
     }
 

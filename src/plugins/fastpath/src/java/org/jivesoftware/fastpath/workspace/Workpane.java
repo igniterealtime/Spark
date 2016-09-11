@@ -19,64 +19,16 @@
  */
 package org.jivesoftware.fastpath.workspace;
 
-import java.applet.Applet;
-import java.applet.AudioClip;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.Frame;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-
-import javax.swing.BorderFactory;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
-import javax.swing.ScrollPaneConstants;
-import javax.swing.SwingUtilities;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-
 import org.jivesoftware.MainWindow;
 import org.jivesoftware.Spark;
 import org.jivesoftware.fastpath.FastpathPlugin;
 import org.jivesoftware.fastpath.FpRes;
 import org.jivesoftware.fastpath.resources.FastpathRes;
-import org.jivesoftware.fastpath.workspace.assistants.ChatMacroMenu;
-import org.jivesoftware.fastpath.workspace.assistants.CoBrowser;
-import org.jivesoftware.fastpath.workspace.assistants.Notes;
-import org.jivesoftware.fastpath.workspace.assistants.RoomInformation;
-import org.jivesoftware.fastpath.workspace.assistants.UserHistory;
+import org.jivesoftware.fastpath.workspace.assistants.*;
 import org.jivesoftware.fastpath.workspace.invite.InvitationManager;
 import org.jivesoftware.fastpath.workspace.invite.WorkgroupInvitationDialog;
 import org.jivesoftware.fastpath.workspace.macros.MacrosEditor;
-import org.jivesoftware.fastpath.workspace.panes.AgentConversations;
-import org.jivesoftware.fastpath.workspace.panes.BackgroundPane;
-import org.jivesoftware.fastpath.workspace.panes.ChatHistory;
-import org.jivesoftware.fastpath.workspace.panes.ChatQueue;
-import org.jivesoftware.fastpath.workspace.panes.InvitationPane;
-import org.jivesoftware.fastpath.workspace.panes.OnlineAgents;
-import org.jivesoftware.fastpath.workspace.panes.QueueActivity;
-import org.jivesoftware.fastpath.workspace.panes.UserInvitationPane;
+import org.jivesoftware.fastpath.workspace.panes.*;
 import org.jivesoftware.fastpath.workspace.search.ChatSearch;
 import org.jivesoftware.fastpath.workspace.util.RequestUtils;
 import org.jivesoftware.resource.SoundsRes;
@@ -85,28 +37,17 @@ import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Presence;
-import org.jivesoftware.smack.util.StringUtils;
-import org.jivesoftware.smackx.xdata.Form;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.workgroup.MetaData;
-import org.jivesoftware.smackx.workgroup.agent.InvitationRequest;
-import org.jivesoftware.smackx.workgroup.agent.Offer;
-import org.jivesoftware.smackx.workgroup.agent.OfferListener;
-import org.jivesoftware.smackx.workgroup.agent.RevokedOffer;
-import org.jivesoftware.smackx.workgroup.agent.TransferRequest;
+import org.jivesoftware.smackx.workgroup.agent.*;
 import org.jivesoftware.smackx.workgroup.user.Workgroup;
+import org.jivesoftware.smackx.xdata.Form;
 import org.jivesoftware.spark.DataManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.UserManager;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.search.SearchManager;
-import org.jivesoftware.spark.ui.ChatContainer;
-import org.jivesoftware.spark.ui.ChatFrame;
-import org.jivesoftware.spark.ui.ChatRoom;
-import org.jivesoftware.spark.ui.ChatRoomButton;
-import org.jivesoftware.spark.ui.ChatRoomListenerAdapter;
-import org.jivesoftware.spark.ui.ChatRoomNotFoundException;
-import org.jivesoftware.spark.ui.PresenceListener;
+import org.jivesoftware.spark.ui.*;
 import org.jivesoftware.spark.ui.conferences.ConferenceUtils;
 import org.jivesoftware.spark.ui.conferences.GroupChatParticipantList;
 import org.jivesoftware.spark.ui.conferences.RoomInvitationListener;
@@ -117,6 +58,20 @@ import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.alerts.SparkToaster;
 import org.jxmpp.util.XmppStringUtils;
+
+import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import java.applet.Applet;
+import java.applet.AudioClip;
+import java.awt.*;
+import java.awt.event.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.net.URL;
+import java.util.*;
 
 public class Workpane {
     // Tracks all the offers coming into the client.
@@ -144,7 +99,7 @@ public class Workpane {
 
     private JPanel toolbar;
 
-    private List listeners = new ArrayList();
+    private java.util.List<FastpathListener> listeners = new ArrayList();
 
     private PresenceChangeListener presenceListener = new PresenceChangeListener();
 
@@ -821,11 +776,18 @@ public class Workpane {
     }
 
 
-    private void fireFastPathChatOpened(ChatRoom room, String sessionID, RequestUtils utils, JTabbedPane tabbedPane) {
-        final Iterator list = new ArrayList(listeners).iterator();
-        while (list.hasNext()) {
-            FastpathListener listener = (FastpathListener)list.next();
-            listener.fastpathRoomOpened(room, sessionID, utils, tabbedPane);
+    private void fireFastPathChatOpened( ChatRoom room, String sessionID, RequestUtils utils, JTabbedPane tabbedPane )
+    {
+        for ( final FastpathListener listener : listeners )
+        {
+            try
+            {
+                listener.fastpathRoomOpened( room, sessionID, utils, tabbedPane );
+            }
+            catch ( Exception e )
+            {
+                Log.error( "A FastpathListener (" + listener + ") threw an exception while processing a 'fastpathRoomOpened' event for: " + room + " in session: " + sessionID, e );
+            }
         }
     }
 
