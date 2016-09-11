@@ -27,38 +27,16 @@ import org.jivesoftware.spark.Workspace;
 import org.jivesoftware.spark.component.VerticalFlowLayout;
 import org.jivesoftware.spark.component.panes.CollapsiblePane;
 import org.jivesoftware.spark.component.renderer.JContactItemRenderer;
-import org.jivesoftware.spark.util.GraphicUtils;
-import org.jivesoftware.spark.util.ModelUtil;
-import org.jivesoftware.spark.util.SwingTimerTask;
-import org.jivesoftware.spark.util.TaskEngine;
-import org.jivesoftware.spark.util.UIComponentRegistry;
+import org.jivesoftware.spark.util.*;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.EventQueue;
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionAdapter;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.util.*;
 import java.util.List;
-
-import javax.swing.DefaultListModel;
-import javax.swing.JList;
-import javax.swing.JPanel;
 
 /**
  * Container representing a RosterGroup within the Contact List.
@@ -684,46 +662,108 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
         listeners.remove(listener);
     }
 
-    private void fireContactItemClicked(ContactItem item) {
-        for (ContactGroupListener contactGroupListener : new ArrayList<>( listeners )) {
-            contactGroupListener.contactItemClicked(item);
+    private void fireContactItemClicked( ContactItem item )
+    {
+        for ( final ContactGroupListener listener : listeners )
+        {
+            try
+            {
+                listener.contactItemClicked( item );
+            }
+            catch ( Exception e )
+            {
+                Log.error( "A ContactGroupListener (" + listener + ") threw an exception while processing a 'contactItemClicked' event for item: " + item, e );
+            }
         }
     }
 
-    private void fireContactItemDoubleClicked(ContactItem item) {
-        for (ContactGroupListener contactGroupListener : new ArrayList<>( listeners )) {
-            contactGroupListener.contactItemDoubleClicked(item);
+    private void fireContactItemDoubleClicked( ContactItem item )
+    {
+        for ( final ContactGroupListener listener : listeners )
+        {
+            try
+            {
+                listener.contactItemDoubleClicked( item );
+            }
+            catch ( Exception e )
+            {
+                Log.error( "A ContactGroupListener (" + listener + ") threw an exception while processing a 'contactItemDoubleClicked' event for item: " + item, e );
+            }
         }
     }
 
-
-    private void firePopupEvent(MouseEvent e, ContactItem item) {
-        for (ContactGroupListener contactGroupListener : new ArrayList<>( listeners )) {
-            contactGroupListener.showPopup(e, item);
+    private void firePopupEvent( MouseEvent event, ContactItem item )
+    {
+        for ( final ContactGroupListener listener : listeners )
+        {
+            try
+            {
+                listener.showPopup( event, item );
+            }
+            catch ( Exception e )
+            {
+                Log.error( "A ContactGroupListener (" + listener + ") threw an exception while processing a 'showPopup' event for item: " + item + ", event: " + event, e );
+            }
         }
     }
 
-    private void firePopupEvent(MouseEvent e, Collection<ContactItem> items) {
-        for (ContactGroupListener contactGroupListener : new ArrayList<>( listeners )) {
-            contactGroupListener.showPopup(e, items);
+    private void firePopupEvent( MouseEvent event, Collection<ContactItem> items )
+    {
+        for ( final ContactGroupListener listener : listeners )
+        {
+            try
+            {
+                listener.showPopup( event, items );
+            }
+            catch ( Exception e )
+            {
+                Log.error( "A ContactGroupListener (" + listener + ") threw an exception while processing a 'showPopup' event for items: " + items + ", event: " + event, e );
+            }
         }
     }
 
-    private void fireContactGroupPopupEvent(MouseEvent e) {
-        for (ContactGroupListener contactGroupListener : new ArrayList<>( listeners )) {
-            contactGroupListener.contactGroupPopup(e, this);
+    private void fireContactGroupPopupEvent( MouseEvent event )
+    {
+        for ( final ContactGroupListener listener : listeners )
+        {
+            try
+            {
+                listener.contactGroupPopup( event, this );
+            }
+            catch ( Exception e )
+            {
+                Log.error( "A ContactGroupListener (" + listener + ") threw an exception while processing a 'contactGroupPopup' event: " + event, e );
+            }
         }
     }
 
-    private void fireContactItemAdded(ContactItem item) {
-        for (ContactGroupListener contactGroupListener : new ArrayList<>( listeners )) {
-            contactGroupListener.contactItemAdded(item);
+    private void fireContactItemAdded( ContactItem item )
+    {
+        for ( final ContactGroupListener listener : listeners )
+        {
+            try
+            {
+                listener.contactItemAdded( item );
+            }
+            catch ( Exception e )
+            {
+                Log.error( "A ContactGroupListener (" + listener + ") threw an exception while processing a 'contactItemAdded' event for item: " + item, e );
+            }
         }
     }
 
-    private void fireContactItemRemoved(ContactItem item) {
-        for (ContactGroupListener contactGroupListener : new ArrayList<>( listeners )) {
-            contactGroupListener.contactItemRemoved(item);
+    private void fireContactItemRemoved( ContactItem item )
+    {
+        for ( final ContactGroupListener listener : listeners )
+        {
+            try
+            {
+                listener.contactItemRemoved( item );
+            }
+            catch ( Exception e )
+            {
+                Log.error( "A ContactGroupListener (" + listener + ") threw an exception while processing a 'contactItemRemoved' event for item: " + item, e );
+            }
         }
     }
 

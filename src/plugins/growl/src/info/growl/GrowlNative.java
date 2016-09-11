@@ -27,15 +27,14 @@
 
 package info.growl;
 
+import org.jivesoftware.spark.util.log.Log;
+
+import javax.imageio.ImageIO;
 import java.awt.image.RenderedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.imageio.ImageIO;
-
-import org.jivesoftware.spark.util.log.Log;
 
 /**
  * Growl notification implementation. This uses JNI to send messages to Growl.
@@ -68,11 +67,20 @@ class GrowlNative implements Growl {
 	this.appName = appName;
     }
 
-    void fireCallbacks(String callbackContext) {
-	for (GrowlCallbackListener listener : callbackListeners) {
-	    listener.notificationWasClicked(callbackContext);
+	void fireCallbacks( String callbackContext )
+	{
+		for ( final GrowlCallbackListener listener : callbackListeners )
+		{
+			try
+			{
+				listener.notificationWasClicked( callbackContext );
+			}
+			catch ( Exception e )
+			{
+				Log.error( "A GrowlCallbackListener (" + listener + ") threw an exception while processing a 'notificationWasClicked' event (context: " + callbackContext + ").", e );
+			}
+		}
 	}
-    }
 
     /**
      * {@inheritDoc}
