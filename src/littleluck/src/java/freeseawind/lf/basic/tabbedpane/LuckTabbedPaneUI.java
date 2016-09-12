@@ -41,6 +41,11 @@ public class LuckTabbedPaneUI extends BasicTabbedPaneUI
 
         configureColor();
     }
+    
+    protected void installDefaults()
+    {
+        super.installDefaults();
+    }
 
     protected void configureColor()
     {
@@ -171,10 +176,14 @@ public class LuckTabbedPaneUI extends BasicTabbedPaneUI
         switch (tabPlacement)
         {
             case LEFT:
+                
+                paintBorder(g, x, y + 1, w - 1, h - 2, new Color(201, 201, 201), NORTH +  SOUTH + WEST);
+
+                break;
 
             case RIGHT:
 
-                paintBorder(g, x, y + 1, w - 1, h - 2, new Color(201, 201, 201), NORTH +  SOUTH);
+                paintBorder(g, x, y + 1, w - 1, h - 2, new Color(201, 201, 201), NORTH +  SOUTH + EAST);
 
                 break;
 

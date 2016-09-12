@@ -94,7 +94,7 @@ public class LuckTabbedPaneUIBundle extends LuckResourceBundle
 
         UIManager.put(SELECTEDTABPADINSETS, new InsetsUIResource(0, 0, 0, 0));
 
-        UIManager.put(TABAREAINSETS, new InsetsUIResource(0, 0, 0, 1));
+        UIManager.put(TABAREAINSETS, new InsetsUIResource(3, 2, 0, 2));
 
         UIManager.put(CONTENTBORDERINSETS, new InsetsUIResource(1, 1, 1, 1));
 
