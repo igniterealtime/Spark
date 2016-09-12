@@ -54,7 +54,6 @@ import java.awt.event.*;
 import java.io.File;
 import java.util.*;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * The base implementation of all ChatRoom conversations. You would implement this class to have most types of Chat.
@@ -81,7 +80,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
 
     private boolean mousePressed;
 
-    private List<ChatRoomClosingListener> closingListeners = new CopyOnWriteArrayList<>();
+    private List<ChatRoomClosingListener> closingListeners = new ArrayList<>();
 
 
     private ChatRoomTransferHandler transferHandler;

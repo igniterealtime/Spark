@@ -129,8 +129,7 @@ public class PrivacyManager {
                    _privacyLists.add(sparkList);
             }  
         } catch (XMPPException | SmackException e) {
-            Log.error("Could not load PrivacyLists");
-            e.printStackTrace();
+            Log.error("Could not load PrivacyLists", e);
         }
         
         if(hasDefaultList())
@@ -147,8 +146,7 @@ public class PrivacyManager {
            
             _privacyLists.remove(getPrivacyList(listName));
         } catch (XMPPException | SmackException e) {
-            Log.warning("Could not remove PrivacyList " + listName);
-            e.printStackTrace();
+            Log.warning("Could not remove PrivacyList " + listName, e);
         }
     }
 
@@ -245,8 +243,7 @@ public class PrivacyManager {
             _privacyLists.add(sparklist);
             sparklist.addSparkPrivacyListener(_presenceHandler);
         } catch (XMPPException | SmackException e) {
-            Log.warning("Could not create PrivacyList "+listName);
-            e.printStackTrace();
+            Log.warning("Could not create PrivacyList "+listName, e);
         }
         
         return sparklist;
@@ -288,8 +285,7 @@ public class PrivacyManager {
             _presenceHandler.setIconsForList(getActiveList());
             
         } catch (XMPPException | SmackException e) {
-            Log.warning("Could not activate PrivacyList " + listname);
-            e.printStackTrace();
+            Log.warning("Could not activate PrivacyList " + listname, e);
         }
     }
     
@@ -304,8 +300,7 @@ public class PrivacyManager {
                     plist.setListIsDefault(false);
             }
         } catch (XMPPException | SmackException e) {
-            Log.warning("Could not set PrivacyList " + listname+" as default");
-            e.printStackTrace();
+            Log.warning("Could not set PrivacyList " + listname+" as default", e);
         }
 
     }
@@ -324,8 +319,7 @@ public class PrivacyManager {
                 plist.setListAsActive(false);
             }
         } catch (XMPPException | SmackException e) {
-            Log.warning("Could not decline active privacy list");
-            e.printStackTrace();
+            Log.warning("Could not decline active privacy list", e);
         }    
     }
     
@@ -341,8 +335,7 @@ public class PrivacyManager {
                 }
             }
         } catch (XMPPException | SmackException e) {
-            Log.warning("Could not decline default privacy list");
-            e.printStackTrace();
+            Log.warning("Could not decline default privacy list", e);
         }    
     }
     
@@ -449,8 +442,7 @@ public class PrivacyManager {
             }
             
         } catch (Exception e) {
-           // e.printStackTrace();
-        	Log.error("PrivacyManager#goToVisible: " + e.getMessage());
+        	Log.error("PrivacyManager#goToVisible: ", e);
         }
     }
     
@@ -467,8 +459,7 @@ public class PrivacyManager {
             SparkManager.getConnection().sendStanza(PresenceManager.getAvailablePresence());
             Log.debug("List \"" + INVISIBLE_LIST_NAME + "\" has been activated ");
         } catch (Exception e) {
-           // e.printStackTrace();
-        	Log.error("PrivacyManager#activateGloballyInvisibleList: " + e.getMessage());
+        	Log.error("PrivacyManager#activateGloballyInvisibleList: ", e);
         }
     }
    
@@ -486,8 +477,7 @@ public class PrivacyManager {
     	} catch (Exception e){
            // it can return item-not-found if there is no active list.
            // so it is fine to fall here.
-           //e.printStackTrace();
-    		Log.error("PrivacyManager#isGloballyInvisibleListActive: " + e.getMessage());
+    		Log.error("PrivacyManager#isGloballyInvisibleListActive: ", e);
        }
        return false;
     }
@@ -518,8 +508,7 @@ public class PrivacyManager {
         } 
         catch (XMPPException | SmackException e)
         {
-            Log.warning("PrivacyManager#ensureGloballyInvisibleListExists: Could not create PrivacyList " + INVISIBLE_LIST_NAME);
-            //e.printStackTrace();
+            Log.warning("PrivacyManager#ensureGloballyInvisibleListExists: Could not create PrivacyList " + INVISIBLE_LIST_NAME, e);
         }
         
         return list;
