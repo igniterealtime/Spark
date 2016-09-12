@@ -1186,10 +1186,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
      */
     public void addClosingListener(ChatRoomClosingListener listener)
     {
-        synchronized ( closingListeners )
-        {
-            closingListeners.add( listener );
-        }
+        closingListeners.add( listener );
     }
 
     /**
@@ -1199,10 +1196,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
      */
     public void removeClosingListener(ChatRoomClosingListener listener)
     {
-        synchronized ( closingListeners )
-        {
-            closingListeners.remove( listener );
-        }
+        closingListeners.remove( listener );
     }
 
     /**
@@ -1210,26 +1204,18 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
      */
     private void fireClosingListeners()
     {
-        synchronized ( closingListeners )
+        for ( final ChatRoomClosingListener listener : new ArrayList<>( closingListeners ) ) // Listener can call #removeClosingListener. Prevent ConcurrentModificationException by using a clone.
         {
-            final Iterator<ChatRoomClosingListener> listeners = closingListeners.iterator();
-            while ( listeners.hasNext() )
+            try
             {
-                final ChatRoomClosingListener listener = listeners.next();
-                try
-                {
-                    listener.closing();
-                }
-                catch ( Exception e )
-                {
-                    Log.error( "A ChatRoomClosingListener (" + listener + ") threw an exception while processing a 'closing' event.", e );
-                }
-                finally
-                {
-                    listeners.remove();
-                }
+                listener.closing();
+            }
+            catch ( Exception e )
+            {
+                Log.error( "A ChatRoomClosingListener (" + listener + ") threw an exception while processing a 'closing' event.", e );
             }
         }
+        closingListeners.clear();
     }
 
     /**
