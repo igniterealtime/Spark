@@ -1826,7 +1826,7 @@ SwingUtilities.invokeLater( () -> loadContactList() );
 
 
             }
-            else if (presence.getType() == Presence.Type.subscribe) {
+            else if (presence.getType() == Presence.Type.subscribed) {
                 // Find Contact in Contact List
                 String jid = XmppStringUtils.parseBareJid(presence.getFrom());
                 ContactItem item = getContactItemByJID(jid);
