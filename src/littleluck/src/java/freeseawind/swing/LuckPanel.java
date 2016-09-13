@@ -10,7 +10,7 @@ import freeseawind.lf.canvas.LuckCanvas;
 import freeseawind.lf.canvas.LuckOpaquePainter;
 
 /**
- * 完全不透明的JPanel实现类, 用于防止字体走样
+ * Opaque JPanel
  * 
  * @author freeseawind@github
  * @version 1.0

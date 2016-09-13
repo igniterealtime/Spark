@@ -9,7 +9,7 @@ import javax.swing.JTable;
 import javax.swing.JViewport;
 
 /**
- * 滚动条悬浮的JScrollPane
+ * implement Scroll bar suspension effect.
  * 
  * @author freeseawind@github
  * @version 1.0

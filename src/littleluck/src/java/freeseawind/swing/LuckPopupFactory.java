@@ -15,7 +15,7 @@ import javax.swing.UIManager;
 import freeseawind.lf.cfg.LuckGlobalBundle;
 
 /**
- * 透明背景popup工厂方法
+ * translucent Popup factory
  * 
  * @author freeseawind@github
  * @version 1.0
@@ -51,6 +51,9 @@ public class LuckPopupFactory extends PopupFactory
     {
         Popup popup = null;
         
+        // JPopupMenu in JDK 1.7 has some problem when you use translucent window.
+        // but in JDK 1.8 return a LightWeightPopup to fix this problem.
+        // API not offered get LightWeightPopup method, use reflect to get a LightWeightPopup here.
         if(contents instanceof JPopupMenu && isHeavyWeight(owner))
         {
             try
@@ -80,15 +83,22 @@ public class LuckPopupFactory extends PopupFactory
         {
             JWindow window = (JWindow) obj;
 
-            // 承载内容的窗体透明
+            // set window translucent
             window.setBackground(UIManager.getColor(LuckGlobalBundle.TRANSLUCENT_COLOR));
 
+            // set contentpane is not completely opaque
             ((JComponent) window.getContentPane()).setOpaque(false);
         }
 
         return popup;
     }
     
+    /**
+     * check if the owner in translucent window
+     * 
+     * @param owner
+     * @return 
+     */
     public boolean isHeavyWeight(Component owner)
     {
         Component c = owner;

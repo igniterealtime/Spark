@@ -41,7 +41,6 @@ public class LuckProgressBarUI extends BasicProgressBarUI
     // 垂直进度条单元进度点九绘图对象
     private SwingNinePatch verticalCellNp;
 
-
     public static ComponentUI createUI(JComponent x)
     {
         return new LuckProgressBarUI();
@@ -53,34 +52,20 @@ public class LuckProgressBarUI extends BasicProgressBarUI
         super.installUI(c);
 
         // -------------初始化扩展属性-------------- //
-
         cellBarInsets = UIManager.getInsets(LuckProgressBarUIBundle.CELLBAR_INSETS);
-
-        //
-        BufferedImage horizontalImg = (BufferedImage) UIManager
-                .get(LuckProgressBarUIBundle.HORIZONTALICON);
-
-        horizontalNp = new SwingNinePatch(horizontalImg);
-
-        //
-        BufferedImage horizontalCellImg = (BufferedImage) UIManager
-                .get(LuckProgressBarUIBundle.HORIZONTALCELLICON);
-
-        horizontalCellNp = new SwingNinePatch(horizontalCellImg,
-                RepeatType.HORIZONTAL);
-
-        //
-        BufferedImage verticalImg = (BufferedImage) UIManager
-                .get(LuckProgressBarUIBundle.VERTICALICON);
-
-        verticalNp = new SwingNinePatch(verticalImg);
-
-        //
-        BufferedImage verticalCellImg = (BufferedImage) UIManager
-                .get(LuckProgressBarUIBundle.VERTICALCELLICON);
-
-        verticalCellNp = new SwingNinePatch(verticalCellImg,
-                RepeatType.VERTICAL);
+    }
+    
+    public void uninstallUI(JComponent c)
+    {
+        super.uninstallUI(c);
+        
+        horizontalNp = null;
+        
+        horizontalCellNp = null;
+        
+        verticalNp = null;
+        
+        verticalCellNp = null;
     }
 
     /**
@@ -235,6 +220,8 @@ public class LuckProgressBarUI extends BasicProgressBarUI
                                       int h,
                                       boolean isHorizontal)
     {
+        configureProgressBarBg(isHorizontal);
+        
         if(isHorizontal)
         {
             horizontalNp.drawNinePatch(g2d, x, y, w, h);
@@ -262,6 +249,8 @@ public class LuckProgressBarUI extends BasicProgressBarUI
                                         int h,
                                         boolean isHorizontal)
     {
+        configureProgressBarCell(isHorizontal);
+        
         if(isHorizontal)
         {
             horizontalCellNp.drawNinePatch(g2d, x, y, w, h);
@@ -269,6 +258,46 @@ public class LuckProgressBarUI extends BasicProgressBarUI
         else
         {
             verticalCellNp.drawNinePatch(g2d, x, y, w, h);
+        }
+    }
+    
+    protected void configureProgressBarBg(boolean isHorizontal)
+    {
+        if(isHorizontal && horizontalNp == null)
+        {
+            //
+            BufferedImage horizontalImg = (BufferedImage) 
+                    UIManager.get(LuckProgressBarUIBundle.HORIZONTALICON);
+
+            horizontalNp = new SwingNinePatch(horizontalImg);
+        }
+        else if (!isHorizontal && verticalNp == null)
+        {
+            //
+            BufferedImage horizontalImg = (BufferedImage) 
+                    UIManager.get(LuckProgressBarUIBundle.VERTICALICON);
+
+            verticalNp = new SwingNinePatch(horizontalImg);
+        }
+    }
+    
+    protected void configureProgressBarCell(boolean isHorizontal)
+    {
+        if(isHorizontal && horizontalCellNp == null)
+        {
+            //
+            BufferedImage horizontalImg = (BufferedImage) 
+                    UIManager.get(LuckProgressBarUIBundle.HORIZONTALCELLICON);
+
+            horizontalCellNp = new SwingNinePatch(horizontalImg, RepeatType.HORIZONTAL);
+        }
+        else if (!isHorizontal && verticalCellNp == null)
+        {
+            //
+            BufferedImage horizontalImg = (BufferedImage) 
+                    UIManager.get(LuckProgressBarUIBundle.VERTICALCELLICON);
+
+            verticalCellNp = new SwingNinePatch(horizontalImg, RepeatType.VERTICAL);
         }
     }
 }

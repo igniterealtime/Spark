@@ -11,7 +11,7 @@ import freeseawind.lf.canvas.LuckCanvas;
 import freeseawind.lf.canvas.LuckOpaquePainter;
 
 /**
- * 完全不透明的JLuckList实现类, 用于防止字体走样
+ * Opaque JLuckList
  * 
  * @author freeseawind@github
  * @version 1.0

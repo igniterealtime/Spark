@@ -9,6 +9,12 @@ import javax.swing.UIManager;
 
 import freeseawind.lf.cfg.LuckGlobalBundle;
 
+/**
+ * TranslucentPopup implement.
+ * 
+ * @author freeseawind@github
+ * @version 1.0
+ */
 public class TranslucentPopup extends Popup
 {
     private JWindow popupWindow;
