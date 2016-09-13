@@ -25,7 +25,6 @@ import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.*;
-import org.jivesoftware.smack.filter.StanzaFilter;
 import org.jivesoftware.smack.filter.StanzaTypeFilter;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Presence;
@@ -68,6 +67,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.*;
 import java.util.List;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 
 public class ContactList extends JPanel implements ActionListener,
@@ -100,7 +100,6 @@ public class ContactList extends JPanel implements ActionListener,
 
     private final List<ContextMenuListener> contextListeners = new ArrayList<>();
 
-    private List<Presence> initialPresences = new ArrayList<>();
     private final List<FileDropListener> dndListeners = new ArrayList<>();
     private final List<ContactListListener> contactListListeners = new ArrayList<>();
     private Properties props;
@@ -1782,114 +1781,133 @@ SwingUtilities.invokeLater( () -> loadContactList() );
 
     }
 
-    public void addSubscriptionListener() {
-        // Add subscription listener
-        StanzaFilter stanzaFilter = new StanzaTypeFilter(Presence.class);
-        StanzaListener subscribeListener = stanza -> {
-            final Presence presence = (Presence)stanza;
-            if (presence.getType() == Presence.Type.subscribe) {
-                SwingUtilities.invokeLater( () -> {
-                    try
+    public void addSubscriptionListener()
+    {
+        // Sometimes, presence changes happen in rapid succession (for instance, when initially connecting). To avoid
+        // having a lot of UI-updates (which are costly), this queue is used to create a short buffer, allowing us to
+        // group UI updates in batches.
+        final ConcurrentLinkedQueue<Presence> presenceBuffer = new ConcurrentLinkedQueue<>();
+        final long bufferTimeMS = 500;
+
+        final StanzaListener subscribeListener = stanza ->
+        {
+            final Presence presence = (Presence) stanza;
+            final Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
+            final RosterEntry entry = roster.getEntry( presence.getFrom() );
+
+            switch ( presence.getType() )
+            {
+                case subscribe:
+                    // Someone else wants to subscribe to our presence. Ask user for approval
+                    SwingUtilities.invokeLater( () ->
                     {
-                        subscriptionRequest(presence.getFrom());
-                    }
-                    catch ( SmackException.NotConnectedException e )
-                    {
-                        Log.warning( "Unable to subscribe to " + presence.getFrom(), e );
-                    }
-                } );
-            }
-            else if (presence.getType() == Presence.Type.unsubscribe) {
-                SwingUtilities.invokeLater( () -> {
-                    Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
-                    RosterEntry entry = roster.getEntry(presence.getFrom());
-                    if (entry != null) {
-                        try {
-                            removeContactItem(presence.getFrom());
-                            roster.removeEntry(entry);
+                        try
+                        {
+                            subscriptionRequest( presence.getFrom() );
                         }
-                        catch (XMPPException | SmackException e) {
-                            Presence unsub = new Presence(Presence.Type.unsubscribed);
-                            unsub.setTo(presence.getFrom());
+                        catch ( SmackException.NotConnectedException e )
+                        {
+                            Log.warning( "Unable to process subscription request from: " + presence.getFrom(), e );
+                        }
+                    } );
+                    break;
+
+                case unsubscribe:
+                    // Someone else is removing their subscription to our presence (we're removed from their roster).
+                    if ( entry != null )
+                    {
+                        try
+                        {
+                            removeContactItem( presence.getFrom() );
+                            roster.removeEntry( entry );
+                        }
+                        catch ( XMPPException | SmackException e )
+                        {
+                            Presence unsub = new Presence( Presence.Type.unsubscribed );
+                            unsub.setTo( presence.getFrom() );
                             try
                             {
-                                SparkManager.getConnection().sendStanza(unsub);
+                                SparkManager.getConnection().sendStanza( unsub );
                             }
                             catch ( SmackException.NotConnectedException e1 )
                             {
                                 Log.warning( "Unable to unsubscribe from " + unsub.getTo(), e1 );
                             }
-                            Log.error(e);
+                            Log.error( e );
                         }
                     }
-                } );
+                    break;
 
+                case subscribed:
+                    // Someone else approved our request to be subscribed to their presence information.
+                    final String jid = XmppStringUtils.parseBareJid( presence.getFrom() );
+                    final ContactItem item = getContactItemByJID( jid );
 
-            }
-            else if (presence.getType() == Presence.Type.subscribe) {
-                // Find Contact in Contact List
-                String jid = XmppStringUtils.parseBareJid(presence.getFrom());
-                ContactItem item = getContactItemByJID(jid);
-
-                // If item is not in the Contact List, add them.
-                if (item == null) {
-                    final Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
-                    RosterEntry entry = roster.getEntry(jid);
-                    if (entry != null) {
-                        item = UIComponentRegistry.createContactItem(entry.getName(), null, jid);
-                        moveToOffline(item);
+                    // If item is not in the Contact List, add them.
+                    if ( item == null && entry != null )
+                    {
+                        final ContactItem newItem = UIComponentRegistry.createContactItem( entry.getName(), null, jid );
+                        moveToOffline( newItem );
                         offlineGroup.fireContactGroupUpdated();
                     }
-                }
-            }
-            else if (presence.getType() == Presence.Type.unsubscribed) {
-                SwingUtilities.invokeLater( () -> {
-                    Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
-                    RosterEntry entry = roster.getEntry(presence.getFrom());
-                    if (entry != null) {
-                        try {
-                            removeContactItem(presence.getFrom());
-                            roster.removeEntry(entry);
-                        }
-                        catch (XMPPException | SmackException e) {
-                            Log.error(e);
-                        }
-                    }
-                    String jid = XmppStringUtils.parseBareJid(presence.getFrom());
-                    removeContactItem(jid);
-                } );
-            }
-            else {
+                    break;
 
-                try {
-                    initialPresences.add(presence);
-                }
-                catch (Exception e) {
-                    Log.error(e);
-                }
-
-                int numberOfMillisecondsInTheFuture = 1000;
-
-                TaskEngine.getInstance().schedule(new TimerTask() {
-                    @Override
-                    public void run() {
-                        SwingUtilities.invokeLater( () -> {
-                            for (Presence userToUpdate : new ArrayList<>( initialPresences )) {
-                                initialPresences.remove(userToUpdate);
-                                try {
-                                    updateUserPresence(userToUpdate);
-                                }
-                                catch (Exception e) {
-                                    Log.error(e);
-                                }
+                case unsubscribed:
+                    // Someone is telling us that we're no longer subscribed to their presence information.
+                    SwingUtilities.invokeLater( () ->
+                    {
+                        if ( entry != null )
+                        {
+                            try
+                            {
+                                removeContactItem( presence.getFrom() );
+                                roster.removeEntry( entry );
                             }
-                        } );
-                    }
-                }, numberOfMillisecondsInTheFuture);
+                            catch ( XMPPException | SmackException e )
+                            {
+                                Log.error( e );
+                            }
+                        }
+                        removeContactItem( XmppStringUtils.parseBareJid( presence.getFrom() ) );
+                    } );
+                    break;
+
+                default:
+                    // Any other presence updates. These are likely regular presence changes, not subscription-state changes.
+                    presenceBuffer.add( presence );
+
+                    TaskEngine.getInstance().schedule( new TimerTask()
+                    {
+                        @Override
+                        public void run()
+                        {
+                            SwingUtilities.invokeLater( () ->
+                            {
+                                final Iterator<Presence> iterator = presenceBuffer.iterator();
+                                while ( iterator.hasNext() )
+                                {
+                                    final Presence presence = iterator.next();
+                                    try
+                                    {
+                                        updateUserPresence( presence );
+                                    }
+                                    catch ( Exception e )
+                                    {
+                                        Log.warning( "Unable to process this presence update that was received: " + presence, e );
+                                    }
+                                    finally
+                                    {
+                                        iterator.remove();
+                                    }
+                                }
+                            } );
+                        }
+                    }, bufferTimeMS );
+                    break;
             }
         };
 
-        SparkManager.getConnection().addAsyncStanzaListener(subscribeListener, stanzaFilter);
+        SparkManager.getConnection().addAsyncStanzaListener( subscribeListener, new StanzaTypeFilter( Presence.class ) );
     }
 
 
