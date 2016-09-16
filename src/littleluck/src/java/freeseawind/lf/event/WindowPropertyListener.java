@@ -12,7 +12,7 @@ import freeseawind.lf.basic.rootpane.LuckTitlePanel;
 import freeseawind.lf.utils.LuckWindowUtil;
 
 /**
- * 窗体属性变化监听器
+ * window property listener.
  *
  * @author freeseawind@github
  * @version 1.0
@@ -33,7 +33,7 @@ public class WindowPropertyListener implements PropertyChangeListener
 
         Window window = (Window)evt.getSource();
 
-        // 改变标题
+        // change title text.
         if(WindowPropertyEventType.TITLE_EVENT.equals(name))
         {
             handleTitleEvent(window);
@@ -41,7 +41,7 @@ public class WindowPropertyListener implements PropertyChangeListener
             return;
         }
 
-        // 改变窗体图标
+        // change window icon.
         if(WindowPropertyEventType.ICONIMAGE_EVENT.equals(name))
         {
             handleIconEvent(window);
@@ -49,7 +49,7 @@ public class WindowPropertyListener implements PropertyChangeListener
             return;
         }
 
-        // 改变拉伸状体
+        // resize window.
         if(WindowPropertyEventType.RESIZABLE_EVENT.equals(name))
         {
         	handleResizableEvent(window);
@@ -57,7 +57,7 @@ public class WindowPropertyListener implements PropertyChangeListener
             return;
         }
 
-        // 改变窗体布局
+        // change window orientation.
         if(WindowPropertyEventType.COMPONENTORIENTATION_EVENT.equals(name))
         {
             handleComponetOrientation(window);
@@ -82,7 +82,6 @@ public class WindowPropertyListener implements PropertyChangeListener
 
     protected void handleResizableEvent(Window window)
     {
-        // 该事件只对JFrame有效
         if(window instanceof JFrame)
         {
             JFrame frame = (JFrame)window;

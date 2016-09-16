@@ -6,7 +6,6 @@ import javax.swing.JButton;
 import javax.swing.UIManager;
 
 /**
- * 窗体按钮鼠标事件适配器
  * 
  * @author freeseawind@github
  * @version 1.0

@@ -24,7 +24,7 @@ import freeseawind.lf.utils.LuckWindowUtil;
 
 
 /**
- * 窗体移动和缩放事件处理类
+ * Window move and resize event handler.
  * 
  * @author freeseawind@github
  * @version 1.0
@@ -33,7 +33,7 @@ import freeseawind.lf.utils.LuckWindowUtil;
 public class WindowMouseHandler implements MouseInputListener
 {
     /**
-     * 是否移动窗体,防止缩放和移动事件互相干扰
+     * true move window, false resize window.
      */
     private boolean isMovingWindow;
 
@@ -58,17 +58,17 @@ public class WindowMouseHandler implements MouseInputListener
     private int dragHeight;
 
     /**
-     * 光标默认图标
+     * default mouse cursor.
      */
     private Cursor lastCursor = Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR);
 
     /**
-     * 可拖拽窗口区域
+     * Window drag area.
      */
     private LuckRectangle dragArea;
 
     /**
-     * 标题栏区域，可双击放大或缩小窗口
+     * Window title area.
      */
     private LuckRectangle titleArea;
 
@@ -93,7 +93,7 @@ public class WindowMouseHandler implements MouseInputListener
     }
 
     /**
-     * 处理JFrame的双击标题面板缩放事件
+     * handle double click titlePane resize window event.
      */
     public void mouseClicked(MouseEvent e)
     {
@@ -105,18 +105,18 @@ public class WindowMouseHandler implements MouseInputListener
 
             JRootPane root = frame.getRootPane();
 
-            // 不包含窗体装饰直接返回
+            // window is undecorated return.
             if (root.getWindowDecorationStyle() == JRootPane.NONE)
             {
                 return;
             }
 
-            // 不在标题栏覆盖区域直接返回
             if(!titleArea.contains(e.getPoint()))
             {
                 return;
             }
 
+            // check is double click.
             if ((e.getClickCount() % 2) == 0 && ((e.getModifiers() & InputEvent.BUTTON1_MASK) != 0))
             {
                 int state = frame.getExtendedState();
@@ -136,22 +136,18 @@ public class WindowMouseHandler implements MouseInputListener
         }
     }
 
-    /**
-     *  v1.0.1:修复自定义拖拽区域BUG, 增加边界判断
-     */
     public void mousePressed(MouseEvent e)
     {
         Window window = (Window) e.getSource();
 
         JRootPane root = LuckWindowUtil.getRootPane(window);
 
-        // 不包含窗体装饰直接返回
         if (root == null || root.getWindowDecorationStyle() == JRootPane.NONE)
         {
             return;
         }
 
-        // 如果是单击标题栏, 则标记接下来的拖动事件为移动窗口, 判断当前鼠标是否超出边界
+        //fix custom drag area bug (v1.0.1): check dragCurosr is move or resize.
         if (dragArea.contains(e.getPoint())
                 && dragCursor == Cursor.DEFAULT_CURSOR)
         {
@@ -194,15 +190,12 @@ public class WindowMouseHandler implements MouseInputListener
 
     public void mouseReleased(MouseEvent e)
     {
-        // 松开鼠标时重置状态
+        // set flag resize.
         isMovingWindow = false;
 
         dragCursor = 0;
     }
 
-    /**
-     *  v1.0.1:修复自定义拖拽区域BUG, 保存游标状态
-     */
     public void mouseMoved(MouseEvent e)
     {
         Window window = (Window)e.getSource();
@@ -233,6 +226,7 @@ public class WindowMouseHandler implements MouseInputListener
             window.setCursor(lastCursor);
         }
         
+        //fix bug (v1.0.1): set last cursor, when custom drag area.
         dragCursor = cursor;
     }
 
@@ -243,7 +237,6 @@ public class WindowMouseHandler implements MouseInputListener
 
     public void mouseExited(MouseEvent e)
     {
-        // 鼠标离开窗体时恢复为默认游标
         Window w = (Window)e.getSource();
         w.setCursor(lastCursor);
     }
@@ -276,42 +269,34 @@ public class WindowMouseHandler implements MouseInputListener
 
         if (point.x <= startX && point.y <= startY)
         {
-            // 左上角
             return Cursor.NW_RESIZE_CURSOR;
         }
         else if (point.x >= endX && point.y <= startY)
         {
-            // 右上角
             return Cursor.NE_RESIZE_CURSOR;
         }
         else if (point.x <= startX && point.y >= endY)
         {
-            // 左下
             return Cursor.SW_RESIZE_CURSOR;
         }
         else if(point.x >= endX && point.y >=  endY)
         {
-            // 右下
             return Cursor.SE_RESIZE_CURSOR;
         }
         else if(point.x <= startX && point.y > startY && point.y < endY)
         {
-            // 西
             return Cursor.W_RESIZE_CURSOR;
         }
         else if(point.y <= startY && point.x > startX && point.x < endX)
         {
-            // 北
             return Cursor.N_RESIZE_CURSOR;
         }
         else if(point.x >= endX && point.y > startY && point.y < endY)
         {
-            // 东
             return Cursor.E_RESIZE_CURSOR;
         }
         else if(point.y >= endY && point.x > startX && point.x < endX)
         {
-            // 南
             return Cursor.S_RESIZE_CURSOR;
         }
         else

@@ -10,7 +10,7 @@ import javax.swing.SwingConstants;
 import javax.swing.plaf.basic.BasicArrowButton;
 
 /**
- * 箭头按钮实现类, 参考BasciArrowButton实现
+ * see {@link BasciArrowButton}, ArrowButton implement.  
  *
  * @see BasicArrowButton
  * @author freeseawind@github

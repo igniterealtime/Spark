@@ -1,7 +1,7 @@
 package freeseawind.lf.constant;
 
 /**
- * UI实现类对应关键字常量
+ * UI class name constant.
  * 
  * @author freeseawind@github
  * @version 1.0

@@ -7,7 +7,9 @@ import java.awt.Insets;
 import java.awt.LayoutManager2;
 
 /**
- * 布局类，重写所有方法，需要时再覆盖，避免每次继承{@link LayoutManager2}时出来一大堆方法
+ * 
+ * {@link LayoutManager2} sub class, override all method.
+ * someone extend it, only override method you need.
  *
  * @author freeseawind@github
  * @version 1.0

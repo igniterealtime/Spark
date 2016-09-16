@@ -12,7 +12,7 @@ import freeseawind.lf.basic.rootpane.LuckBackgroundPanel;
 import freeseawind.lf.basic.rootpane.LuckRootPaneUIBundle;
 
 /**
- * 窗体状态变化监听器, 窗体最大化时去除边框，达到完全全屏的效果，否则会有空隙出现(实际是边框阴影)。在恢复正常状态时，重置边框。
+ * Window state listener. set border null when is max, otherwise set border.
  *
  * @author freeseawind@github
  * @version 1.0

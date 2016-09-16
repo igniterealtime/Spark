@@ -10,7 +10,7 @@ import freeseawind.lf.border.LuckBorderField;
 import freeseawind.lf.border.LuckShapeBorder;
 
 /**
- * 焦点边框监听器
+ * border focus handler
  *
  * @author freeseawind@github
  * @version 1.0
