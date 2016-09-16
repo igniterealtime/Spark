@@ -6,10 +6,9 @@ import java.net.URL;
 import javax.imageio.ImageIO;
 
 /**
- * 资源读取类, 主要读取两类资源
+ * read image resources.
  * <ul>
- * <li>图片资源(images目录下)</li>
- * <li>国际化语言包(i18n/littleluck_i18n)</li>
+ * <li>image resources(images directory)</li>
  * </ul>
  * @author freeseawind@github
  * @version 1.0
@@ -24,9 +23,9 @@ public class LuckRes
 	}
 
     /**
-     * 获取图片资源
+     * get image
      *
-     * @param imagePath 图片在images目录下的路径
+     * @param imagePath 
      * @return <code>BufferedImage</code>
      */
     public static BufferedImage getImage(String imagePath)

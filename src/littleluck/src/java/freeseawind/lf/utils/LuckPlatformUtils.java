@@ -1,7 +1,7 @@
 package freeseawind.lf.utils;
 
 /**
- * 该类主要用来判断运行时的操作系统类型
+ * Platform tool class.
  *
  * @author freeseawind@github
  * @version 1.0
@@ -9,9 +9,9 @@ package freeseawind.lf.utils;
 public class LuckPlatformUtils
 {
     /**
-     * 判断是否是在Linux系统下运行
+     * check is Linux platform.
      *
-     * @return 是Linux系统返回true，否则false
+     * @return 
      */
     public static boolean isLinux()
     {
@@ -21,9 +21,9 @@ public class LuckPlatformUtils
     }
 
     /**
-     * 判断是否是在Mac Os系统下运行
+     * check is Mac OS platform.
      *
-     * @return 是Mac系统返回true，否则false
+     * @return 
      */
     public static boolean isMac()
     {
@@ -33,9 +33,9 @@ public class LuckPlatformUtils
     }
 
     /**
-     * 判断是否是在Windows系统下运行
+     * check is Windows platform.
      *
-     * @return 是Windows系统返回true，否则false
+     * @return
      */
     public static boolean isWindows()
     {
