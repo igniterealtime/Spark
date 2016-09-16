@@ -5,7 +5,8 @@ import java.awt.Color;
 import javax.swing.UIManager;
 
 /**
- * 全局资源绑定类
+ * Global resource bundle.
+ * 
  * @author freeseawind@github
  * @version 1.0
  *
@@ -13,24 +14,29 @@ import javax.swing.UIManager;
 public class LuckGlobalBundle extends LuckResourceBundle
 {
     /**
-     *  [自定义属性]应用默认图标
+     * [custom field] application icon key.
      */
     public static final String APPLICATION_ICON = "Application.icon";
 
     /**
-     *  [自定义属性]应用默认标题
+     * [custom field] application title key.
      */
     public static final String APPLICATION_TITLE = "Application.title";
 
     /**
-     *[自定义属性] 完全透明
+     * [custom field] translucent color key.
      */
     public static final String TRANSLUCENT_COLOR = "translucent.color";
 
     /**
-     * 面板背景颜色属性key
+     * panel background key.
      */
     public static final String PANEL_BACKGROUND = "Panel.background";
+
+    /**
+     * ColorChooserUI background key.
+     */
+    public static final String COLORCHOOSERUI_BACKGROUND = "ColorChooserUI.background";
 
     @Override
     protected void installColor()
@@ -50,7 +56,7 @@ public class LuckGlobalBundle extends LuckResourceBundle
         UIManager.put(APPLICATION_TITLE, "");
 
         UIManager.put(PANEL_BACKGROUND, Color.WHITE);
-        
-        UIManager.put("ColorChooserUI.background", Color.WHITE);
+
+        UIManager.put(COLORCHOOSERUI_BACKGROUND, Color.WHITE);
     }
 }

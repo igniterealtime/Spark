@@ -36,6 +36,12 @@ import freeseawind.lf.basic.toolips.LuckToolTipUI;
 import freeseawind.lf.basic.tree.LuckTreeUI;
 import freeseawind.lf.constant.LuckUIClassKey;
 
+/**
+ * littleluck LookAndFeel UI bundle.
+ * 
+ * @author freeseawind@github
+ * @version 1.0
+ */
 public class LuckUIConfigImpl implements LuckUIConfig
 {
     public void initClassDefaults(UIDefaults table)

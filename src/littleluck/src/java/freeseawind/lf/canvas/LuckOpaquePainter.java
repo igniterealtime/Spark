@@ -13,7 +13,7 @@ import javax.swing.JComponent;
 
 
 /**
- * 一种反走样的绘图工具类
+ * Opaque draw class.
  *
  * @author freeseawind@github
  * @version 1.0
@@ -22,13 +22,14 @@ import javax.swing.JComponent;
 public class LuckOpaquePainter
 {
     /**
-     * 如果面板是半透明则使用父面板的方式进行绘制，否则绘制一个完全不透明的背景，防止字体走样
+     * If the panel is translucent parent panel is used to draw the way,
+     * otherwise draw a completely opaque background to prevent aliasing font.
      *
-     * @param g 绘图画笔对象信息
-     * @param component 需要绘制的容器类
-     * @param canvas 调用父类绘制方法的回调接口
+     * @param g Drawing Canvas object information.
+     * @param component 
+     * @param canvas call parent paint interface.
      * @param <T> <code> JComponent </code> 子类
-     * @param <E> 绘图回调接口实现类
+     * @param <E> canvas callback interface.
      *
      */
     public <T extends JComponent, E extends LuckCanvas> void paintOpaque(Graphics g,
@@ -46,14 +47,15 @@ public class LuckOpaquePainter
 	}
 
     /**
-     * 如果面板是半透明则使用父面板的方式进行绘制，否则绘制一个完全不透明的背景，防止字体走样
-     *
-     * @param g 绘图画笔对象信息
-     * @param component 需要绘图的容器对象信息
-     * @param canvas 绘图回调接口
-     * @param shape 需要绘制的形状, 如果是规则面板则这里传NUL
-     * @param <T> <code> JComponent </code> 子类
-     * @param <E> 绘图回调接口实现类
+     * If the panel is translucent parent panel is used to draw the way,
+     * otherwise draw a completely opaque background to prevent aliasing font.
+     * 
+     * @param g Drawing Canvas object information.
+     * @param component 
+     * @param canvas call parent paint interface.
+     * @param shape pane shape.
+     * @param <T> <code> JComponent </code> sub class.
+     * @param <E> canvas callback interface.
      */
     public <T extends JComponent, E extends LuckCanvas> void paintOpaqueShap(Graphics g,
                                                                              T component,
@@ -71,46 +73,46 @@ public class LuckOpaquePainter
     }
 
     /**
-     * 在完全不透明的背景上绘制组件，防止字体走样
      *
-     * @param g 绘图画笔对象信息
-     * @param component 需要绘图的容器对象信息
-     * @param canvas 绘图回调接口
-     * @param shape 需要绘制的形状, 如果是规则面板则这里传NULL
-     * @param <T> <code> JComponent </code> 子类
-     * @param <E> 绘图回调接口实现类
+     * @param g Drawing Canvas object information
+     * @param component 
+     * @param canvas call parent paint interface.
+     * @param shape pane shape.
+     * @param <T> <code> JComponent </code> sub class.
+     * @param <E> canvas callback interface.
      */
     public <T extends JComponent, E extends LuckCanvas> void paintOpaque(Graphics g,
                                                                          T component,
                                                                          E canvas,
                                                                          Shape shape)
     {
-        // 计算宽高和起始坐标
+        // count width and height.
         Insets insets = component.getInsets();
         int x = insets.left;
         int y = insets.top;
         int width = component.getWidth() - insets.left - insets.right;
         int height = component.getHeight() - insets.top - insets.bottom;
-
-        // 设置画布背景
+        
+        // background image.
         BufferedImage contentImage = new BufferedImage(width, height, Transparency.OPAQUE);
 
         Graphics2D contentG2d = contentImage.createGraphics();
 
-        // 绘制边框和其它
+        // draw component.
         canvas.drawComponent(contentG2d, component);
 
         Graphics2D g2d = (Graphics2D) g;
 
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
+        // if shape not null alphaComposite.
         if(shape != null)
         {
-            g2d.setComposite(AlphaComposite.Src);
             g2d.fill(shape);
             g2d.setComposite(AlphaComposite.SrcAtop);
         }
 
+        // draw component into image.
         g.drawImage(contentImage, x, y, width, height, null);
 
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);

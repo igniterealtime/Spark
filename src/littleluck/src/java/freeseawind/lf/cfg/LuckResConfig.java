@@ -1,7 +1,8 @@
 package freeseawind.lf.cfg;
 
 /**
- * UI资源初始化接口
+ * UI resource bundle interface.
+ * 
  * @author freeseawind@github
  * @version 1.0
  */

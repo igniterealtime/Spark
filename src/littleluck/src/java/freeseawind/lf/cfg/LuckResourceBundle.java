@@ -13,7 +13,7 @@ import javax.swing.plaf.IconUIResource;
 import freeseawind.lf.utils.LuckRes;
 
 /**
- * UI初始化资源绑定类
+ * UI resource bundle class.
  *
  * @author freeseawind@github
  *

@@ -5,7 +5,7 @@ import java.awt.Graphics;
 import javax.swing.JComponent;
 
 /**
- * 绘图回调接口申明
+ * draw callback interface.
  *
  * @author freeseawind@github
  * @version 1.0
@@ -14,11 +14,10 @@ import javax.swing.JComponent;
 public interface LuckCanvas
 {
     /**
-     * 绘图回调方法
      *
-     * @param g Graphics图形操作对象
+     * @param g Graphics
      *
-     * @param c JComponent需要绘制的容器类
+     * @param c JComponent
      *
      */
 	public void drawComponent(Graphics g, JComponent c);
