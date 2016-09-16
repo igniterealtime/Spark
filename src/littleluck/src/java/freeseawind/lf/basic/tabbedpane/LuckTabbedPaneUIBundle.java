@@ -30,6 +30,11 @@ public class LuckTabbedPaneUIBundle extends LuckResourceBundle
      * 选项卡被选中时颜色key
      */
     public static final String SELECTEDCOLOR = "TabbedPane.selected";
+    
+    /**
+     * TabbedPane选中时字体颜色属性key
+     */
+    public static final String SELECTEDFOREGROUND = "TabbedPane.selectedForeground";
 
     /**
      * 内容面板是否透明key
@@ -65,6 +70,11 @@ public class LuckTabbedPaneUIBundle extends LuckResourceBundle
      * 边框颜色key
      */
     public static final String SHADOW = "TabbedPane.shadow";
+    
+    /**
+     * [自定义属性]选项卡选中时的边框颜色属性key
+     */
+    public static final String SELECTEDSHADOW = "TabbedPane.selectedShadow";
 
     /**
      * Tab间距属性key,可通过此属性控制Tab的宽高
@@ -77,10 +87,15 @@ public class LuckTabbedPaneUIBundle extends LuckResourceBundle
         UIManager.put(BACKGROUNDCOLOR, Color.WHITE);
 
         UIManager.put(CONTENTAREACOLOR, Color.WHITE);
+        
+        UIManager.put(SELECTEDFOREGROUND, Color.BLACK);
 
-        UIManager.put(SELECTEDCOLOR, getColorRes(171, 225, 235));
+        //171, 225, 235
+        UIManager.put(SELECTEDCOLOR, getColorRes(201,201,201));
 
         UIManager.put(SHADOW, getColorRes(221, 220, 227));
+        
+        UIManager.put(SELECTEDSHADOW, getColorRes(221, 220, 227));
     }
 
     @Override

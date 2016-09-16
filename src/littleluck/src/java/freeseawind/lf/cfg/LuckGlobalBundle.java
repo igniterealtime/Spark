@@ -4,8 +4,6 @@ import java.awt.Color;
 
 import javax.swing.UIManager;
 
-import freeseawind.lf.utils.LuckRes;
-
 /**
  * 全局资源绑定类
  * @author freeseawind@github

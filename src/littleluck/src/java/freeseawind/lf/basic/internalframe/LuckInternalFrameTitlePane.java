@@ -19,7 +19,6 @@ import freeseawind.lf.canvas.LuckCanvas;
 import freeseawind.lf.canvas.LuckOpaquePainter;
 import freeseawind.lf.layout.AbstractLayout;
 import freeseawind.ninepatch.swing.SwingNinePatch;
-import sun.swing.SwingUtilities2;
 
 /**
  * 内部窗体标题UI实现类, 对原有UI进行扩展
@@ -61,11 +60,19 @@ public class LuckInternalFrameTitlePane extends BasicInternalFrameTitlePane
     
     public void paintComponent(Graphics g)
     {
-        super.paintComponent(g);
-        
         if(np != null)
         {
             np.drawNinePatch((Graphics2D) g, 0, 0, getWidth(), getHeight());
+        }
+        
+        super.paintComponent(g);
+    }
+    
+    protected void paintTitleBackground(Graphics g)
+    {
+        if(np == null)
+        {
+            super.paintTitleBackground(g);
         }
     }
 
@@ -214,15 +221,14 @@ public class LuckInternalFrameTitlePane extends BasicInternalFrameTitlePane
 
             String frameTitle = frame.getTitle();
 
-            int title_w = frameTitle != null
-                    ? SwingUtilities2.stringWidth(frame, fm, frameTitle) : 0;
+            int title_w = frameTitle != null ? fm.stringWidth(frameTitle) : 0;
 
             int title_length = frameTitle != null ? frameTitle.length() : 0;
 
             // Leave room for three characters in the title.
             if (title_length > 3)
             {
-                int subtitle_w = SwingUtilities2.stringWidth(frame, fm, frameTitle.substring(0, 3) + "...");
+                int subtitle_w = fm.stringWidth(frameTitle.substring(0, 3) + "...");
 
                 width += (title_w < subtitle_w) ? title_w : subtitle_w;
             }

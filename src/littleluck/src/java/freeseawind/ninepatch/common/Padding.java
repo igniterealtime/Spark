@@ -2,7 +2,9 @@ package freeseawind.ninepatch.common;
 
 /**
  * 内容显示区域间距控制类
+ * 
  * @author freeseawind@github
+ * @version 1.0
  *
  */
 public class Padding

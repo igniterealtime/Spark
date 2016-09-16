@@ -1,9 +1,7 @@
 package freeseawind.lf.basic.tabbedpane;
 
 import java.awt.Color;
-import java.awt.GradientPaint;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.Rectangle;
 
 import javax.swing.JComponent;
@@ -22,44 +20,36 @@ public class LuckTabbedPaneUI extends BasicTabbedPaneUI
     public static final int SOUTH = 2;
     public static final int WEST = 4;
     public static final int EAST = 8;
-    protected Color outerGradientStart;
-    protected Color outerGradientEnd;
-    protected Color innerGradientStart;
-    protected Color innerGradientEnd;
-    protected Color higlightGradientStart;
-    protected Color higlightGradientEnd;
+    private Color selectedColor;
+    private Color selectedShadow;
 
     public static ComponentUI createUI(JComponent c)
     {
         return new LuckTabbedPaneUI();
     }
 
-
     public void installUI(JComponent c)
     {
         super.installUI(c);
-
-        configureColor();
     }
     
     protected void installDefaults()
     {
         super.installDefaults();
+        
+        selectedColor = UIManager.getColor(LuckTabbedPaneUIBundle.SELECTEDCOLOR);
+        
+        selectedShadow = UIManager.getColor(LuckTabbedPaneUIBundle.SELECTEDSHADOW);
     }
-
-    protected void configureColor()
+    
+    @Override
+    protected void uninstallDefaults()
     {
-        outerGradientStart = new Color(252, 252, 252);
-
-        outerGradientEnd = new Color(226, 226, 226);
-
-        innerGradientStart = new Color(238, 238, 238);
-
-        innerGradientEnd = new Color(217, 217, 217);
-
-        higlightGradientStart = new Color(217, 217, 217);
-
-        higlightGradientEnd = new Color(217, 217, 217);
+        super.uninstallDefaults();
+        
+        selectedColor = null;
+        
+        selectedShadow = null;
     }
 
     protected void paintTab(Graphics g,
@@ -81,75 +71,29 @@ public class LuckTabbedPaneUI extends BasicTabbedPaneUI
                                       int h,
                                       boolean isSelected)
     {
-
-        GradientPaint outerGradient = null;
-
-        GradientPaint innerGradient = null;
-
-        Color innerStart = innerGradientStart;
-
-        Color innerEnd = innerGradientEnd;
-
-        if(isSelected)
-        {
-            innerEnd = innerStart;
-        }
-
+        
+        g.setColor(!isSelected || selectedColor == null?
+                tabPane.getBackgroundAt(tabIndex) : selectedColor);
+        
         switch (tabPlacement)
         {
             case LEFT:
 
-                outerGradient = new GradientPaint(x, y, outerGradientStart, x,
-                        y + h - 1, outerGradientEnd);
-
-                ((Graphics2D) g).setPaint(outerGradient);
-
                 g.fillRect(x, y + 1, w, h - 3);
-
-                innerGradient = new GradientPaint(x + 1, y + 1, innerStart, x + 1,
-                        y + h - 2, innerEnd);
-
-                ((Graphics2D) g).setPaint(innerGradient);
-
-                g.fillRect(x + 1, y + 3, w - 2, h - 6);
 
                 break;
 
             case RIGHT:
 
-                outerGradient = new GradientPaint(x, y, outerGradientStart, x,
-                        y + h - 1, outerGradientEnd);
-
-                ((Graphics2D) g).setPaint(outerGradient);
-
                 g.fillRect(x, y + 1, w, h - 3);
-
-                innerGradient = new GradientPaint(x + 1, y + 1, innerStart, x + 1,
-                        y + h - 2, innerEnd);
-
-                ((Graphics2D) g).setPaint(innerGradient);
-
-                g.fillRect(x + 2, y + 3, w - 3, h - 6);
 
                 break;
 
             case TOP:
 
             case BOTTOM:
-
-                outerGradient = new GradientPaint(x, y, outerGradientStart, x,
-                        y + h - 1, outerGradientEnd);
-
-                ((Graphics2D) g).setPaint(outerGradient);
-
+                
                 g.fillRect(x + 2, y + 1, w - 2, h - 1);
-
-                innerGradient = new GradientPaint(1, 1, innerStart, 1,
-                        h - 2, innerEnd);
-
-                ((Graphics2D) g).setPaint(innerGradient);
-
-                g.fillRect(x + 3, y + 2, w - 5, h - 3);
 
                 break;
 
@@ -171,31 +115,38 @@ public class LuckTabbedPaneUI extends BasicTabbedPaneUI
                                   int h,
                                   boolean isSelected)
     {
-        g.setColor(UIManager.getColor(LuckTabbedPaneUIBundle.SHADOW));
+        if(!isSelected)
+        {
+            g.setColor(shadow);
+        }
+        else
+        {
+            g.setColor(selectedShadow);
+        }
 
         switch (tabPlacement)
         {
             case LEFT:
                 
-                paintBorder(g, x, y + 1, w - 1, h - 2, new Color(201, 201, 201), NORTH +  SOUTH + WEST);
+                paintBorder(g, x, y + 1, w - 1, h - 2, NORTH +  SOUTH + WEST);
 
                 break;
 
             case RIGHT:
 
-                paintBorder(g, x, y + 1, w - 1, h - 2, new Color(201, 201, 201), NORTH +  SOUTH + EAST);
+                paintBorder(g, x, y + 1, w - 1, h - 2, NORTH +  SOUTH + EAST);
 
                 break;
 
             case TOP:
 
-                paintBorder(g, x + 1, y, w - 2, h, new Color(201, 201, 201), NORTH + WEST + EAST);
+                paintBorder(g, x + 1, y, w - 2, h, NORTH + WEST + EAST);
 
                 break;
 
             case BOTTOM:
 
-                paintBorder(g, x + 1, y, w - 2, h, new Color(201, 201, 201), SOUTH + WEST + EAST);
+                paintBorder(g, x + 1, y + 1, w - 2, h, SOUTH + WEST + EAST);
 
                 break;
 
@@ -267,19 +218,39 @@ public class LuckTabbedPaneUI extends BasicTabbedPaneUI
             g.drawLine(x + w, y, x + w, y + h);
         }
     }
+    
+    protected void paintFocusIndicator(Graphics g,
+                                       int tabPlacement,
+                                       Rectangle[] rects,
+                                       int tabIndex,
+                                       Rectangle iconRect,
+                                       Rectangle textRect,
+                                       boolean isSelected)
+    {
+        // undo
+    }
+    
+    protected int getTabLabelShiftY(int tabPlacement,
+                                    int tabIndex,
+                                    boolean isSelected)
+    {
+        return 0;
+    }
+
+    protected int getTabLabelShiftX(int tabPlacement,
+                                    int tabIndex,
+                                    boolean isSelected)
+    {
+        return 0;
+    }
 
     private void paintBorder(Graphics g,
                              int x,
                              int y,
                              int width,
                              int height,
-                             Color color,
                              int rule)
     {
-        Color oldColor = g.getColor();
-
-        g.setColor(color);
-
         // draw top
         if((rule & NORTH) != 0)
         {
@@ -289,7 +260,7 @@ public class LuckTabbedPaneUI extends BasicTabbedPaneUI
         // draw left
         if((rule & WEST) != 0)
         {
-            g.drawLine(x, y, x, y + height);
+            g.drawLine(x, y, x, y + height - 1);
         }
 
         // draw bottom
@@ -303,21 +274,5 @@ public class LuckTabbedPaneUI extends BasicTabbedPaneUI
         {
             g.drawLine(x + width, y, x + width, y + height - 1);
         }
-
-        g.setColor(oldColor);
-    }
-
-    protected int getTabLabelShiftY(int tabPlacement,
-                                    int tabIndex,
-                                    boolean isSelected)
-    {
-        return 0;
-    }
-
-    protected int getTabLabelShiftX(int tabPlacement,
-                                    int tabIndex,
-                                    boolean isSelected)
-    {
-        return 0;
     }
 }

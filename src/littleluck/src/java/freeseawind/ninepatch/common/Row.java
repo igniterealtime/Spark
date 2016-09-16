@@ -3,8 +3,8 @@ package freeseawind.ninepatch.common;
 import java.awt.Rectangle;
 
 /**
- * 九宫格的每一列
  * @author freeseawind@github
+ * @version 1.0
  *
  */
 public class Row implements Comparable<Row>
@@ -42,11 +42,10 @@ public class Row implements Comparable<Row>
 
     static enum Type
     {
-        FIX, // 固定类型
+        FIXED, // 固定类型
         HORIZONTALPATCH, // 水平拉伸类型
         VERTICALPATCH, // 垂直拉伸类型
         TILEPATCH // 平铺类型
     }
-
 
 }

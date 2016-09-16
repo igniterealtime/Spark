@@ -5,6 +5,7 @@ import java.util.List;
 /**
  *
  * @author freeseawind@github
+ * @version 1.0
  *
  */
 public class NinePatchRegion

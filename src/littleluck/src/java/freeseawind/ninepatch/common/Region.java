@@ -1,9 +1,10 @@
 package freeseawind.ninepatch.common;
 
-
 /**
- * 区间类
+ * 
+ * 
  * @author freeseawind@github
+ * @version 1.0
  *
  */
 public class Region
