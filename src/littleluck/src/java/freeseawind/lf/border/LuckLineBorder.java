@@ -8,7 +8,8 @@ import java.awt.Insets;
 import javax.swing.border.AbstractBorder;
 
 /**
- * 可指定边的线型边框
+ * A class implements AbstractBorder. This provides base class from which draws
+ * the specified edge by rule.
  *
  * @author freeseawind@github
  * @version 1.0
@@ -35,13 +36,13 @@ public class LuckLineBorder extends AbstractBorder
      */
     public static final int EAST = 8;
 
-    // 默认绘制矩形
+    // edge rule.
     private int rule = 15;
 
-    //边框间距
+    // border insets.
     private Insets insets;
 
-    // 边框颜色,默认是灰色
+    // border color.
     private Color color;
 
     private static final long serialVersionUID = 8187996726188029495L;
@@ -53,7 +54,7 @@ public class LuckLineBorder extends AbstractBorder
 
     /**
      *
-     * @param insets 边框和内容之间的间距
+     * @param insets 
      * @param rule {@link LuckLineBorder#NORTH},{@link LuckLineBorder#SOUTH}
      *             {@link LuckLineBorder#WEST},{@link LuckLineBorder#EAST}
      */

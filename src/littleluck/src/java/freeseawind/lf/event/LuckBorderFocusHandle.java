@@ -69,7 +69,7 @@ public abstract class LuckBorderFocusHandle extends LuckFocusHandle
      */
     protected void handleFocusLost()
     {
-        if(getBorderField().isFoucusGaind() && !getComponent().isFocusOwner())
+        if(getBorderField().isFocusGaind() && !getComponent().isFocusOwner())
         {
             getBorderField().setFocusGained(false);
 
@@ -82,7 +82,7 @@ public abstract class LuckBorderFocusHandle extends LuckFocusHandle
      */
     protected void handleFocusGained()
     {
-        if(!getBorderField().isFoucusGaind())
+        if(!getBorderField().isFocusGaind())
         {
             getBorderField().setFocusGained(true);
 

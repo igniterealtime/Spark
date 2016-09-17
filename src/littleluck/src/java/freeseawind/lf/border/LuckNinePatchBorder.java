@@ -11,7 +11,8 @@ import javax.swing.border.AbstractBorder;
 import freeseawind.ninepatch.swing.SwingNinePatch;
 
 /**
- * 点九边框，使用点九图片绘制边框。
+ * A class implements AbstractBorder.Use ninepatch image to
+ * draw a border.
  *
  * @author freeseawind@github
  * @version 1.0

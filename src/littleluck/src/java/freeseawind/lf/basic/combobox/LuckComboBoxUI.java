@@ -220,7 +220,7 @@ public class LuckComboBoxUI extends BasicComboBoxUI implements LuckBorderField
         this.isFocusGained = isFoucusGaind;
     }
 
-    public boolean isFoucusGaind()
+    public boolean isFocusGaind()
     {
         return isFocusGained;
     }
@@ -262,7 +262,7 @@ public class LuckComboBoxUI extends BasicComboBoxUI implements LuckBorderField
 
         protected void handleFocusLost()
         {
-            if (getBorderField().isFoucusGaind())
+            if (getBorderField().isFocusGaind())
             {
                 getBorderField().setFocusGained(false);
 
@@ -272,7 +272,7 @@ public class LuckComboBoxUI extends BasicComboBoxUI implements LuckBorderField
 
         protected void handleFocusGained()
         {
-            if (!getBorderField().isFoucusGaind())
+            if (!getBorderField().isFocusGaind())
             {
                 getBorderField().setFocusGained(true);
 

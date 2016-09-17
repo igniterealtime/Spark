@@ -78,7 +78,7 @@ public class LuckTexFieldUI extends BasicTextFieldUI implements LuckBorderField
         this.isFocusGained = isFoucusGaind;
     }
 
-    public boolean isFoucusGaind()
+    public boolean isFocusGaind()
     {
         return isFocusGained;
     }

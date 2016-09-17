@@ -83,7 +83,7 @@ public class LuckPasswordFieldUI extends BasicPasswordFieldUI
         this.isFocusGained = isFoucusGaind;
     }
 
-    public boolean isFoucusGaind()
+    public boolean isFocusGaind()
     {
         return isFocusGained;
     }

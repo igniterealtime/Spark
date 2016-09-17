@@ -69,7 +69,7 @@ public abstract class LuckComboBoxButton extends LuckArrowButton
     protected Color getArrowColor(ButtonModel model)
     {
         if (getModel().isPressed() || getModel().isRollover()
-                || getBorderField().isFoucusGaind())
+                || getBorderField().isFocusGaind())
         {
             return highlight;
         }

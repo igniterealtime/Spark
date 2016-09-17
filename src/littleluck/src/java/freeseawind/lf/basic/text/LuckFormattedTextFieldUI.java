@@ -74,7 +74,7 @@ public class LuckFormattedTextFieldUI extends BasicFormattedTextFieldUI
         this.isFocusGained = isFoucusGaind;
     }
 
-    public boolean isFoucusGaind()
+    public boolean isFocusGaind()
     {
         return isFocusGained;
     }

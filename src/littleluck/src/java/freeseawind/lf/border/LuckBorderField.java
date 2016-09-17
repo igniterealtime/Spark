@@ -3,7 +3,7 @@ package freeseawind.lf.border;
 import java.awt.geom.RectangularShape;
 
 /**
- * 边框属性接口
+ * A Border field interface.
  *
  * @author freeseawind@github
  * @version 1.0
@@ -11,21 +11,21 @@ import java.awt.geom.RectangularShape;
 public interface LuckBorderField
 {
     /**
-     * 设置组件焦点状态
+     * set component isFoucusGaind. 
      *
-     * @param isFoucusGaind 有焦点则true，否则false
+     * @param isFoucusGaind 
      */
     public void setFocusGained(boolean isFoucusGaind);
 
     /**
-     * 判断组件是否获取焦点
+     * get component focus state.
      *
-     * @return 有焦点则返回true，否则返回false
+     * @return
      */
-    public boolean isFoucusGaind();
+    public boolean isFocusGaind();
 
     /**
-     * 获取边框形状
+     * get component border shape.
      *
      * @return <code>RectangularShape</code>
      */
