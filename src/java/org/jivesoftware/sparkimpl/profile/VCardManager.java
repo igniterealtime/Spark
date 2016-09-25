@@ -773,6 +773,7 @@ public class VCardManager {
             VCardProvider provider = new VCardProvider();
             parser.setInput(in);
             parser.next(); // progress past the first start tag.
+            parser.next();
             VCard vcard = provider.parse(parser);
 
             // Check to see if the file is older 10 minutes. If so, reload.
