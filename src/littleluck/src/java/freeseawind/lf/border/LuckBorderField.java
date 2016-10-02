@@ -11,7 +11,7 @@ import java.awt.geom.RectangularShape;
 public interface LuckBorderField
 {
     /**
-     * set component isFoucusGaind. 
+     * set component is FoucusGaind. 
      *
      * @param isFoucusGaind 
      */

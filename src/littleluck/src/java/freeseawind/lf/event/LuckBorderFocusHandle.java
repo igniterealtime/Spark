@@ -10,7 +10,7 @@ import freeseawind.lf.border.LuckBorderField;
 import freeseawind.lf.border.LuckShapeBorder;
 
 /**
- * border focus handler
+ * A border focus handler implement class.
  *
  * @author freeseawind@github
  * @version 1.0
@@ -82,7 +82,7 @@ public abstract class LuckBorderFocusHandle extends LuckFocusHandle
      */
     protected void handleFocusGained()
     {
-        if(!getBorderField().isFocusGaind())
+        if(!getBorderField().isFocusGaind() && getComponent().isEnabled())
         {
             getBorderField().setFocusGained(true);
 

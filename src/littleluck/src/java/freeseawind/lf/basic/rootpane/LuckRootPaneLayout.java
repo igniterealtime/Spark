@@ -2,22 +2,21 @@ package freeseawind.lf.basic.rootpane;
 
 import java.awt.Container;
 import java.awt.Dimension;
-import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.Window;
 
-import javax.swing.ImageIcon;
 import javax.swing.JRootPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
-import freeseawind.lf.event.WindowPropertyListener;
 import freeseawind.lf.layout.AbstractLayout;
 import freeseawind.lf.utils.LuckWindowUtil;
 
 /**
- * 根窗格布局类
+ * <p>RootPane布局实现类。</p>
+ * 
+ * <p>RootPane layout manager implement class.</p>
  *
  * @author freeseawind@github
  * @version 1.0
@@ -32,28 +31,34 @@ public class LuckRootPaneLayout extends AbstractLayout
         Insets inset = root.getInsets();
 
         // 获取内容面板实际宽度, 减去左右边框面积
+        // Calculate the actual width
         int w = bound.width - inset.right - inset.left;
 
         // 获取内容面板实际高度, 减去上下边框面积
         int h = bound.height - inset.top - inset.bottom;
 
         // 设置层级面板在根窗格中的位置
+        // Calculate the actual height
         if(root.getLayeredPane() != null)
         {
             root.getLayeredPane().setBounds(inset.left, inset.top, w, h);
         }
 
-        // 玻璃窗格是在层级面板中,所以坐标从(0, 0)开始
+        // 布局玻璃窗格
+        // layout LayeredPane
         if(root.getGlassPane() != null)
         {
             root.getGlassPane().setBounds(inset.left, inset.top, w, h);
         }
 
         // 获取当前内容面板
+        // get current ContentPane
         Container content = root.getContentPane();
 
         LuckRootPaneUI rootPaneUI = (LuckRootPaneUI) root.getUI();
 
+        // 使用 <code>LuckBackgroundPanel</code>替换当前的内容面板
+        // Use <code>LuckBackgroundPanel</code> replace the current contents of the panel
         if(!(content instanceof LuckBackgroundPanel))
         {
             Window window = SwingUtilities.getWindowAncestor(root);
@@ -67,20 +72,7 @@ public class LuckRootPaneLayout extends AbstractLayout
                 //
                 LuckTitlePanel titlePanel = rootPaneUI.createTitlePanel(initStyle, isResizeableOnInit);
 
-                titlePanel.setTitle(LuckWindowUtil.getWindowTitle(window));
-
-                Image img = LuckWindowUtil.getWindowImage(window);
-
-                if(img != null)
-                {
-                    titlePanel.setIcon(new ImageIcon(img));
-                }
-
                 LuckBackgroundPanel background = rootPaneUI.createContentPane(titlePanel, content);
-
-                window.addPropertyChangeListener(new WindowPropertyListener(background.getTitlePanel()));
-                
-                root.remove(content);
 
                 root.setContentPane(background);
             }

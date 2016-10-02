@@ -15,33 +15,43 @@ import freeseawind.lf.cfg.LuckUIConfigImpl;
 import freeseawind.lf.utils.LuckPlatformUtils;
 
 /**
- * littlelcuk LookAndFeel implement.
+ * <p>Java跨平台观感实现类。</p>
+ * <p>The Java Look and Feel, otherwise known as LittleLuck.</p>
  * 
  * @author freeseawind@github
  * @version 1.0
  *
  */
-public class LuckMetalLookAndFeel extends MetalLookAndFeel
+public class LittleLuckLookAndFeel extends MetalLookAndFeel
 {
     private static final long serialVersionUID = -7537863322955102478L;
+    private static final String BUNDLENAME = "com.github.freeseawind.littleluck";
     private LuckUIConfig uiConfig;
     private LuckResConfig resConfig;
     
     static
     {
-        // setting before load LookandFeel
+        // setting before launch LookandFeel
         // set java2d parameter and application font
-        
         initLookAndFeelParam();
-        
-        setPlatformFont();
     }
 
-    public LuckMetalLookAndFeel()
+    public LittleLuckLookAndFeel()
     {
         super();
         
         initConfig();
+        
+        setPlatformFont();
+    }
+    
+    public void uninitialize()
+    {
+        super.uninitialize();
+        
+        UIManager.getDefaults().removeResourceBundle(BUNDLENAME);
+        
+        resConfig.removeResource();
     }
 
     /**
@@ -50,11 +60,13 @@ public class LuckMetalLookAndFeel extends MetalLookAndFeel
     protected void initComponentDefaults(UIDefaults table)
     {
         super.initComponentDefaults(table);
+        
+        initResourceBundle(table);
 
         if (resConfig != null)
         {
             // load UI resource
-            resConfig.loadResources();
+            resConfig.loadResources(table);
         }
     }
 
@@ -67,6 +79,15 @@ public class LuckMetalLookAndFeel extends MetalLookAndFeel
             // set LookAndFeel UI
             uiConfig.initClassDefaults(table);
         }
+    }
+    
+    /**
+     * Initialize the defaults table with the name of the other ResourceBundle
+     * used for getting localized defaults.
+     */
+    protected void initResourceBundle(UIDefaults table)
+    {
+        table.addResourceBundle(BUNDLENAME);
     }
     
     /**
@@ -86,9 +107,9 @@ public class LuckMetalLookAndFeel extends MetalLookAndFeel
     }
     
     /**
-     * set platform font, if windows use "Microsoft YaHei"
+     * set platform font, if windows platform use "Microsoft YaHei".
      */
-    public static void setPlatformFont()
+    public void setPlatformFont()
     {
         if(LuckPlatformUtils.isWindows())
         {
@@ -99,7 +120,7 @@ public class LuckMetalLookAndFeel extends MetalLookAndFeel
     }
     
     /**
-     * set littleluck LookAndFeel UI class and UI resource class.
+     * initialization LookAndFeel UI and UI resource class bundle.
      */
     public void initConfig()
     {
@@ -115,11 +136,11 @@ public class LuckMetalLookAndFeel extends MetalLookAndFeel
     }
     
     /**
-     * setting global font
+     * setting global font.
      * 
      * @param f Font object
      */
-    public static void setApplicationFont(Font f)
+    public void setApplicationFont(Font f)
     {
         UIDefaults defaults = UIManager.getLookAndFeelDefaults();
 
@@ -142,16 +163,16 @@ public class LuckMetalLookAndFeel extends MetalLookAndFeel
     
     public String getName()
     {
-        return "LuckMetalLookAndFeel";
+        return "LittleLuckLookAndFeel";
     }
 
     public String getDescription()
     {
-        return "The littleluck cross platform Look and Feel";
+        return "The LittleLuck cross platform Look and Feel";
     }
 
     public String getID()
     {
-        return "littleluck";
+        return "LittleLuck";
     }
 }

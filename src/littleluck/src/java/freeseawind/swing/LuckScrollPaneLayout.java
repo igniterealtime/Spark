@@ -9,7 +9,7 @@ import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneLayout;
 
 /**
- * ScrollPane layout class，base on {@link LuckScrollPane} implement.
+ * ScrollPane布局实现类，主要针对{@link LuckScrollPane}实现
  *
  * @author freeseawind@github
  * @version 1.0

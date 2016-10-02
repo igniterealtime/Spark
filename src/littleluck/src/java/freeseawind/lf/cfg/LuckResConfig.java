@@ -1,5 +1,7 @@
 package freeseawind.lf.cfg;
 
+import javax.swing.UIDefaults;
+
 /**
  * UI resource bundle interface.
  * 
@@ -8,5 +10,15 @@ package freeseawind.lf.cfg;
  */
 public interface LuckResConfig
 {
-    public void loadResources();
+    /**
+     * load resource when install LookAndFeel
+     * 
+     * @param table
+     */
+    public void loadResources(UIDefaults table);
+    
+    /**
+     * remove resource when Uninstall LookAndFeel
+     */
+    public void removeResource();
 }

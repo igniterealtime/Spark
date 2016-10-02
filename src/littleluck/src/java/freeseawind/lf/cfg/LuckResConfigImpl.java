@@ -1,5 +1,7 @@
 package freeseawind.lf.cfg;
 
+import javax.swing.UIDefaults;
+
 import freeseawind.lf.basic.button.LuckButtonUIBundle;
 import freeseawind.lf.basic.checkboxmenuitem.LuckCheckboxMenuItemUIBundle;
 import freeseawind.lf.basic.combobox.LuckComboBoxUIBundle;
@@ -25,66 +27,120 @@ import freeseawind.lf.basic.toolips.LuckToolipUIBundle;
 import freeseawind.lf.basic.tree.LuckTreeUIBundle;
 
 /**
+ * A <code>LuckResConfig</code> implement class.
  *
+ * @see LuckResConfig
+ * 
  * @author freeseawind@github
  * @version 1.0
  *
  */
 public class LuckResConfigImpl implements LuckResConfig
 {
-    public void loadResources()
+    public void loadResources(UIDefaults table)
     {
-        getGlobalBundl().installDefaults();
+        getGlobalBundl().installDefaults(table);
 
-        getRootPanelUIBundle().installDefaults();
+        getRootPanelUIBundle().installDefaults(table);
 
-        getInternalFrameUIBundle().installDefaults();
+        getInternalFrameUIBundle().installDefaults(table);
 
-        getOptionPanelUIBundle().installDefaults();
+        getOptionPanelUIBundle().installDefaults(table);
 
-        getButtonUIBundle().installDefaults();
+        getButtonUIBundle().installDefaults(table);
 
-        getToggleButtonUIBundle().installDefaults();
+        getToggleButtonUIBundle().installDefaults(table);
 
-        getTextUIBundle().installDefaults();
+        getTextUIBundle().installDefaults(table);
 
-        getComboboxUIBundle().installDefaults();
+        getComboboxUIBundle().installDefaults(table);
 
-        getMenuUIBundle().installDefaults();
+        getMenuUIBundle().installDefaults(table);
 
-        getMenItemUIBundle().installDefaults();
+        getMenItemUIBundle().installDefaults(table);
 
-        getCheckboxMenItemUIBundle().installDefaults();
+        getCheckboxMenItemUIBundle().installDefaults(table);
 
-        getRadioBtnMenItemUIBundle().installDefaults();
+        getRadioBtnMenItemUIBundle().installDefaults(table);
 
-        getPopupMenuUIBundle().installDefaults();
+        getPopupMenuUIBundle().installDefaults(table);
 
-        getTabbedPaneUIBundle().installDefaults();
+        getTabbedPaneUIBundle().installDefaults(table);
 
-        getScrollUIBundle().installDefaults();
+        getScrollUIBundle().installDefaults(table);
 
-        getTreeUIBundle().installDefaults();
+        getTreeUIBundle().installDefaults(table);
 
-        getListUIBundle().installDefaults();
+        getListUIBundle().installDefaults(table);
 
-        getToolipUIBundle().installDefaults();
+        getToolipUIBundle().installDefaults(table);
 
-        getSpinnerUIBundle().installDefaults();
+        getSpinnerUIBundle().installDefaults(table);
 
-        getSliderUIBundle().installDefaults();
+        getSliderUIBundle().installDefaults(table);
 
-        getTableUIBundle().installDefaults();
+        getTableUIBundle().installDefaults(table);
 
-        getProgressBarUIBundle().installDefaults();
+        getProgressBarUIBundle().installDefaults(table);
 
-        getFileChooserUIBundle().installDefaults();
+        getFileChooserUIBundle().installDefaults(table);
         
-        getSplitPaneUIBundle().installDefaults();
+        getSplitPaneUIBundle().installDefaults(table);
+    }
+    
+    public void removeResource()
+    {
+        getGlobalBundl().uninitialize();
+
+        getRootPanelUIBundle().uninitialize();
+
+        getInternalFrameUIBundle().uninitialize();
+
+        getOptionPanelUIBundle().uninitialize();
+
+        getButtonUIBundle().uninitialize();
+
+        getToggleButtonUIBundle().uninitialize();
+
+        getTextUIBundle().uninitialize();
+
+        getComboboxUIBundle().uninitialize();
+
+        getMenuUIBundle().uninitialize();
+
+        getMenItemUIBundle().uninitialize();
+
+        getCheckboxMenItemUIBundle().uninitialize();
+
+        getRadioBtnMenItemUIBundle().uninitialize();
+
+        getPopupMenuUIBundle().uninitialize();
+
+        getTabbedPaneUIBundle().uninitialize();
+
+        getScrollUIBundle().uninitialize();
+
+        getTreeUIBundle().uninitialize();
+
+        getListUIBundle().uninitialize();
+
+        getToolipUIBundle().uninitialize();
+
+        getSpinnerUIBundle().uninitialize();
+
+        getSliderUIBundle().uninitialize();
+
+        getTableUIBundle().uninitialize();
+
+        getProgressBarUIBundle().uninitialize();
+
+        getFileChooserUIBundle().uninitialize();
+        
+        getSplitPaneUIBundle().uninitialize();
     }
 
     /**
-     * @return global resource bundle.
+     * @return 全局资源配置信息
      */
     protected LuckResourceBundle getGlobalBundl()
     {
@@ -93,7 +149,7 @@ public class LuckResConfigImpl implements LuckResConfig
 
     /**
      *
-     * @return RootPanelUI resource bundle.
+     * @return RootPanelUI resource bundle object.
      */
     protected LuckResourceBundle getRootPanelUIBundle()
     {
@@ -102,7 +158,7 @@ public class LuckResConfigImpl implements LuckResConfig
 
     /**
      *
-     * @return InternalFrameUI resource bundle.
+     * @return InternalFrameUI resource bundle object.
      */
     protected LuckResourceBundle getInternalFrameUIBundle()
     {
@@ -110,7 +166,7 @@ public class LuckResConfigImpl implements LuckResConfig
     }
 
     /**
-     * @return OptionPanelUI resource bundle.
+     * @return OptionPanelUI resource bundle object.
      */
     protected LuckResourceBundle getOptionPanelUIBundle()
     {
@@ -118,7 +174,7 @@ public class LuckResConfigImpl implements LuckResConfig
     }
 
     /**
-     * @return ButtonUI resource bundle.
+     * @return ButtonUI resource bundle object.
      */
     protected LuckResourceBundle getButtonUIBundle()
     {
@@ -126,7 +182,7 @@ public class LuckResConfigImpl implements LuckResConfig
     }
 
     /**
-     * @return ToggleButtonUI resource bundle.
+     * @return ToggleButtonUI resource bundle object.
      */
     protected LuckResourceBundle getToggleButtonUIBundle()
     {
@@ -134,7 +190,7 @@ public class LuckResConfigImpl implements LuckResConfig
     }
 
     /**
-     * @return TextUI resource bundle.
+     * @return 文本控件UI resource bundle object.
      */
     protected LuckResourceBundle getTextUIBundle()
     {
@@ -143,7 +199,7 @@ public class LuckResConfigImpl implements LuckResConfig
 
     /**
      *
-     * @return ComboBoxUI resource bundle.
+     * @return 下拉列表UI resource bundle object.
      */
     protected LuckResourceBundle getComboboxUIBundle()
     {
@@ -152,7 +208,7 @@ public class LuckResConfigImpl implements LuckResConfig
 
     /**
      *
-     * @return PopupMenuUI resource bundle.
+     * @return PopupMenuUI resource bundle object.
      */
     protected LuckResourceBundle getPopupMenuUIBundle()
     {
@@ -161,7 +217,7 @@ public class LuckResConfigImpl implements LuckResConfig
 
     /**
      *
-     * @return TabbedPaneUI resource bundle.
+     * @return TabbedPaneUI resource bundle object.
      */
     protected LuckResourceBundle getTabbedPaneUIBundle()
     {
@@ -170,7 +226,7 @@ public class LuckResConfigImpl implements LuckResConfig
 
     /**
      *
-     * @return MenuUI resource bundle.
+     * @return MenuUI resource bundle object.
      */
     protected LuckResourceBundle getMenuUIBundle()
     {
@@ -179,7 +235,7 @@ public class LuckResConfigImpl implements LuckResConfig
 
     /**
      * 
-     * @return MenItemUI resource bundle.
+     * @return MenItemUI resource bundle object.
      */
     protected LuckResourceBundle getMenItemUIBundle()
     {
@@ -188,7 +244,7 @@ public class LuckResConfigImpl implements LuckResConfig
 
     /**
      * 
-     * @return CheckboxMenItemUI resource bundle.
+     * @return CheckboxMenItemUI resource bundle object.
      */
     protected LuckResourceBundle getCheckboxMenItemUIBundle()
     {
@@ -197,7 +253,7 @@ public class LuckResConfigImpl implements LuckResConfig
 
     /**
      * 
-     * @return RadioBtnMenItemUI resource bundle.
+     * @return RadioBtnMenItemUI resource bundle object.
      */
     protected LuckResourceBundle getRadioBtnMenItemUIBundle()
     {
@@ -206,7 +262,7 @@ public class LuckResConfigImpl implements LuckResConfig
 
     /**
      *
-     * @return ScrollUI resource bundle.
+     * @return ScrollUI resource bundle object.
      */
     protected LuckResourceBundle getScrollUIBundle()
     {
@@ -215,7 +271,7 @@ public class LuckResConfigImpl implements LuckResConfig
 
     /**
      *
-     * @return TreeUI resource bundle.
+     * @return TreeUI resource bundle object.
      */
     protected LuckResourceBundle getTreeUIBundle()
     {
@@ -224,7 +280,7 @@ public class LuckResConfigImpl implements LuckResConfig
 
     /**
      *
-     * @return ListUI resource bundle.
+     * @return ListUI resource bundle object.
      */
     protected LuckResourceBundle getListUIBundle()
     {
@@ -233,7 +289,7 @@ public class LuckResConfigImpl implements LuckResConfig
 
     /**
      *
-     * @return ToolipUI resource bundle.
+     * @return ToolipUI resource bundle object.
      */
     protected LuckResourceBundle getToolipUIBundle()
     {
@@ -242,7 +298,7 @@ public class LuckResConfigImpl implements LuckResConfig
 
     /**
      *
-     * @return SpinnerUI resource bundle.
+     * @return SpinnerUI resource bundle object.
      */
     protected LuckResourceBundle getSpinnerUIBundle()
     {
@@ -251,7 +307,7 @@ public class LuckResConfigImpl implements LuckResConfig
 
     /**
      *
-     * @return SliderUI resource bundle.
+     * @return SliderUI resource bundle object.
      */
     protected LuckResourceBundle getSliderUIBundle()
     {
@@ -260,7 +316,7 @@ public class LuckResConfigImpl implements LuckResConfig
 
     /**
      *
-     * @return TableUI resource bundle.
+     * @return TableUI resource bundle object.
      */
     protected LuckResourceBundle getTableUIBundle()
     {
@@ -269,7 +325,7 @@ public class LuckResConfigImpl implements LuckResConfig
 
     /**
      *
-     * @return ProgressBarUI resource bundle.
+     * @return ProgressBarUI resource bundle object.
      */
     protected LuckResourceBundle getProgressBarUIBundle()
     {
@@ -278,7 +334,7 @@ public class LuckResConfigImpl implements LuckResConfig
 
     /**
      * 
-     * @return FileChooserUI resource bundle.
+     * @return FileChooserUI resource bundle object.
      */
     protected LuckResourceBundle getFileChooserUIBundle()
     {
@@ -287,7 +343,7 @@ public class LuckResConfigImpl implements LuckResConfig
     
     /**
      * 
-     * @return SplitPaneUI resource bundle.
+     * @return SplitPaneUI resource bundle object.
      */
     protected LuckResourceBundle getSplitPaneUIBundle()
     {

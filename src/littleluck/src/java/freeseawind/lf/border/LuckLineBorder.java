@@ -36,12 +36,15 @@ public class LuckLineBorder extends AbstractBorder
      */
     public static final int EAST = 8;
 
+    // 默认绘制矩形
     // edge rule.
     private int rule = 15;
 
+    //边框间距
     // border insets.
     private Insets insets;
 
+    // 边框颜色,默认是灰色
     // border color.
     private Color color;
 

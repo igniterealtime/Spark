@@ -10,7 +10,9 @@ import javax.swing.UIManager;
 import freeseawind.lf.basic.checkboxmenuitem.LuckCheckboxIcon;
 
 /**
- * JMenu弹出子菜单箭头按钮图标实现类
+ * <p>JMenu弹出子菜单箭头按钮图标实现类。</p>
+ *
+ * <p>JMenu Arrow icon implementation class.</p>
  *
  * @author freeseawind@github
  * @version 1.0
@@ -40,23 +42,23 @@ public class LuckArrowIcon extends LuckCheckboxIcon
     }
 
     /**
-     * 获取选中时焦点图片
+     * Gets the selected focus image
      *
      * @return <code>Image</code>
      */
     public Image getRollverImg()
     {
-        return (Image) UIManager.get(LuckMenuUIBundle.ARROW_ROLLVER_ICON);
+        return (Image) UIManager.get(LuckMenuUIBundle.ARROW_ROLLVER_IMG);
     }
 
     /**
-     * 获取选中时图片
+     * Gets the selected image
      *
      * @return <code>Image</code>
      */
     public Image getNormalImg()
     {
-        return (Image) UIManager.get(LuckMenuUIBundle.ARROW_NORMAL_ICON);
+        return (Image) UIManager.get(LuckMenuUIBundle.ARROW_NORMAL_IMG);
     }
 
     public int getIconWidth()

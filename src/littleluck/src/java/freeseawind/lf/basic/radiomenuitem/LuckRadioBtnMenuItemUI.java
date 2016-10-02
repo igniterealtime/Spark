@@ -8,10 +8,19 @@ import javax.swing.plaf.ComponentUI;
 import javax.swing.plaf.basic.BasicRadioButtonMenuItemUI;
 
 /**
- * RadioButtonMenuItemUI实现类, 设置组件为不完全透明, 组件最小高度为20
  * <p>
- * 另请参见 {@link LuckRadioBtnMenuItemUIBundle}
+ * RadioButtonMenuItemUI实现类, 设置组件为不完全透明, 组件最小高度为20。
  * </p>
+ *
+ * <p>
+ * RadioButtonMenuItemUI implementation class, set the component is not
+ * completely transparent, the menu minimum height of 20.
+ * </p>
+ *
+ * <p>
+ * See Also: {@link LuckRadioBtnMenuItemUIBundle}
+ * </p>
+ *
  * @author freeseawind@github
  * @version 1.0
  *
@@ -24,7 +33,14 @@ public class LuckRadioBtnMenuItemUI extends BasicRadioButtonMenuItemUI
     }
 
     /**
+     * <p>
      * 重写方法，设置菜单的最小高度为20， 否则会出现菜单项大小不一致的情况。
+     * </p>
+     *
+     * <p>
+     * Rewrite method, set the minimum height of the menu is 20, otherwise the
+     * menu item size will be inconsistent situation.
+     * </p>
      */
     protected Dimension getPreferredMenuItemSize(JComponent c,
                                                  Icon checkIcon,

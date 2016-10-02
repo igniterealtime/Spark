@@ -5,7 +5,10 @@ import java.awt.Graphics;
 import javax.swing.tree.DefaultTreeCellRenderer;
 
 /**
- * Tree单元处理渲染器，出去焦点边框处理
+ *
+ * <p>Tree单元处理渲染器，去除焦点边框处理。</p>
+ *
+ * <p>Tree renderer processing unit, removing the focus frame processing.</p>
  *
  * @author freeseawind@github
  * @version 1.0
@@ -17,7 +20,7 @@ public class LuckTreeCellRenderer extends DefaultTreeCellRenderer
 
     public void paint(Graphics g)
     {
-        // 不绘制焦点边框
+        // not to draw the focus frame.
         hasFocus = false;
 
         super.paint(g);

@@ -6,9 +6,16 @@ import javax.swing.plaf.ComponentUI;
 import javax.swing.plaf.basic.BasicPopupMenuUI;
 
 /**
- * PopupMenuUI，设置组件为不完全透明。
  * <p>
- * 另请参见 {@link LuckPopupMenuSeparatorUI}, {@link LuckPopupMenuUIBundle}
+ * PopupMenuUI实现类，设置组件为不完全透明。
+ * <p>
+ *
+ * <p>
+ * The PopupMenuUI implementation class sets the component to be completely
+ * transparent.
+ * </p>
+ * <p>
+ * See Also:{@link LuckPopupMenuSeparatorUI}, {@link LuckPopupMenuUIBundle}.
  * </p>
  *
  * @author freeseawind@github

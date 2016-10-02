@@ -11,7 +11,9 @@ import javax.swing.JRootPane;
 import freeseawind.lf.layout.AbstractLayout;
 
 /**
- * 根窗格背景面板布局类
+ * <p>RootPane背景面板布局类。</p>
+ * 
+ * <p>A {@link LuckBackgroundPanel} layout manger implement class.</p>
  *
  * @author freeseawind@github
  * @version 1.0
@@ -26,33 +28,40 @@ public class LuckBgPanelLayout extends AbstractLayout
 
         Insets inset = root.getInsets();
 
-        // 获取内容面板实际宽度, 减去左右边框面积
+        // 计算内容面板实际宽度, 减去左右边框面积
+        // Calculate the actual width
         int w = bound.width - inset.right - inset.left;
 
-        // 获取内容面板实际高度, 减去上下边框面积
+        // 计算内容面板实际高度, 减去上下边框面积
+        // Calculate the actual height
         int h = bound.height - inset.top - inset.bottom;
 
         int nextY = inset.top;
 
         // 避免无用的绘制
+        // avoid useless draw
         if (w <= 0 || h <= 0)
         {
             return;
         }
 
-        // 先布局标题面板
+        // 布局标题面板
+        // layout title panel
         LuckTitlePanel titlePanel = root.getTitlePanel();
 
-        // 如果未取消窗体装饰
-		if (root.getRootPane() != null && titlePanel != null
-		        && JRootPane.NONE != root.getRootPane().getWindowDecorationStyle())
-		{
+        // 计算标题面板的高度，和下一个面板的起始y坐标
+        // Calculate the height of the title of the panel, and a panel at the
+        // start of the y coordinate
+        if (root.getRootPane() != null && titlePanel != null
+                && JRootPane.NONE != root.getRootPane().getWindowDecorationStyle())
+        {
             titlePanel.setBounds(inset.left, inset.top, w, titlePanel.getHeight());
 
             nextY += titlePanel.getHeight();
         }
 
         // 布局JMenuBar
+        // layout JMenuBar
         JMenuBar menuBar = root.getRootPane().getJMenuBar();
 
         if(menuBar != null && menuBar.isVisible())
@@ -71,6 +80,7 @@ public class LuckBgPanelLayout extends AbstractLayout
         }
 
         // 布局内容面板
+        // layout contentPane
         Container contentPane = root.getContentPane();
 
         contentPane.setBounds(inset.left, nextY, w, h - nextY);
@@ -84,16 +94,15 @@ public class LuckBgPanelLayout extends AbstractLayout
 
         int h = 0;
 
-        // 标题面板大小
-        if (JRootPane.NONE != baPanel.getRootPane().getWindowDecorationStyle())
+        if (baPanel.getRootPane() != null && JRootPane.NONE != baPanel
+                .getRootPane().getWindowDecorationStyle())
         {
             Dimension titleDm = baPanel.getTitlePanel().getPreferredSize();
 
             h += titleDm.height;
         }
 
-        if (baPanel.getRootPane().getJMenuBar() != null
-                && baPanel.getRootPane().getJMenuBar().isVisible())
+        if (baPanel.getJMenuBar() != null && baPanel.getJMenuBar().isVisible())
         {
             Dimension menuBarDm = baPanel.getRootPane().getJMenuBar().getPreferredSize();
 
@@ -115,7 +124,6 @@ public class LuckBgPanelLayout extends AbstractLayout
 
         int h = 0;
 
-        // 标题面板大小
         if (JRootPane.NONE != baPanel.getRootPane().getWindowDecorationStyle())
         {
             Dimension titleDm = baPanel.getTitlePanel().getMinimumSize();
@@ -146,7 +154,6 @@ public class LuckBgPanelLayout extends AbstractLayout
 
         int h = 0;
 
-        // 标题面板大小
         if (JRootPane.NONE != baPanel.getRootPane().getWindowDecorationStyle())
         {
             Dimension titleDm = baPanel.getTitlePanel().getMaximumSize();

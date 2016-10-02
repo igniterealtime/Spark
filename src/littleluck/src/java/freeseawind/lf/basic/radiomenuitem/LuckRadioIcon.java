@@ -15,7 +15,9 @@ import javax.swing.UIManager;
 import freeseawind.lf.basic.togglebutton.LuckToggleButtonUIBundle;
 
 /**
- * 单选框图标实现类,Java2D绘制的单选按钮
+ * <p>单选框图标实现类,Java2D绘制的单选按钮。</p>
+ *
+ * <p>Radio button icon implement class, use Java2D drawn radio button.</p>
  *
  * @author freeseawind@github
  * @version 1.0

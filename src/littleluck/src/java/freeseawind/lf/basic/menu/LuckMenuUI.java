@@ -9,11 +9,16 @@ import javax.swing.plaf.ComponentUI;
 import javax.swing.plaf.basic.BasicMenuUI;
 
 /**
- * MenuUI实现类, 设置组件为不完全透明, 组件最小高度为20, JMenu的外观展示通过 {@link LuckMenuUIBundle}来配置
  * <p>
- * 另请参见 {@link LuckMenuUIBundle}
+ * MenuUI实现类, 组件最小高度为20。
  * </p>
  *
+ * <p>
+ * MenuUI implementation class, the menu minimum height of 20.
+ * </p>
+ *
+ * @see LuckMenuUIBundle
+ * 
  * @author freeseawind@github
  * @version 1.0
  *
@@ -38,7 +43,14 @@ public class LuckMenuUI extends BasicMenuUI
     }
 
     /**
+     * <p>
      * 重写方法，设置菜单的最小高度为20， 否则会出现菜单项大小不一致的情况。
+     * </p>
+     *
+     * <p>
+     * Rewrite method, set the minimum height of the menu is 20, otherwise the
+     * menu item size will be inconsistent situation.
+     * </p>
      */
     protected Dimension getPreferredMenuItemSize(JComponent c,
                                                  Icon checkIcon,

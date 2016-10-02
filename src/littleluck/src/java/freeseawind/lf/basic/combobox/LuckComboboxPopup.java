@@ -22,12 +22,18 @@ import freeseawind.swing.LuckScrollPane;
 
 /**
  * <p>
- * Combobox弹出框，使用{@link LuckScrollPane}和{@link LuckList}替换原有实现，使用不透明点九图作为默认边框。
- * </p>
- * <p>
- * 另请参见 {@link LuckList}, {@link LuckScrollPane}, {@link LuckComboBoxUIBundle}
+ * ComboboxPopup实现类，使用{@link LuckScrollPane}和{@link LuckList}
+ * 替换原有实现，使用不透明点九图作为默认边框。
  * </p>
  *
+ * <p>
+ * Combobox Popup implementation class, using LuckScrollPane and LuckList to
+ * replace the original implementation, the use of opaque NinePatch image as the default border.
+ * </p>
+ *
+ * @see LuckList
+ * @see LuckScrollPane
+ * @see LuckComboBoxUIBundle
  * @author freeseawind@github
  * @version 1.0
  */
@@ -48,6 +54,8 @@ public class LuckComboboxPopup extends BasicComboPopup
 
         Point location = getPopupLocation();
 
+        // 使用自定义坐标， 控制Popup的初始弹出位置
+        // Use custom coordinates to control the Popup's initial pop-up position
         Point offset = (Point) UIManager.get(LuckComboBoxUIBundle.POPUPLOCATION);
 
         show(comboBox, location.x + offset.x, location.y + offset.y);
@@ -57,6 +65,8 @@ public class LuckComboboxPopup extends BasicComboPopup
     protected JScrollPane createScroller()
     {
         // 滚动条悬浮在内容面板上的滚动面板
+        // Replace the original implementation with a custom scroll panel
+        // The scroll bar of the current scroll panel is suspended on the content
         JScrollPane sp = new LuckScrollPane(list,
                 ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
                 ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
@@ -69,8 +79,10 @@ public class LuckComboboxPopup extends BasicComboPopup
     @SuppressWarnings({ "unchecked", "rawtypes" })
     protected JList createList()
     {
-        // 使用完全不透明List覆盖原有实现， 只改变容器类，不改变其它实现
-        // 解决字体渲染问题
+        // 使用完全不透明List覆盖原有实现， 只改变容器类不改变其它实现, 解决字体渲染问题
+        // Use the completely opaque List to cover the original implementation,
+        // only change the container class does not change other
+        // implementations, to solve the problem of font rendering
         return new LuckList(comboBox.getModel())
         {
             private static final long serialVersionUID = 2418863980554774059L;
@@ -102,6 +114,7 @@ public class LuckComboboxPopup extends BasicComboPopup
         setBorderPainted(true);
 
         // 使用自定义边框
+        // Use a custom border
         setBorder(UIManager.getBorder(LuckComboBoxUIBundle.POPUPBORDER));
         setOpaque(false);
         add(scroller);

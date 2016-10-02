@@ -9,7 +9,7 @@ import javax.swing.JFrame;
 import javax.swing.JRootPane;
 
 /**
- * Window tool class.
+ * 主要是获取当前窗体的一些简化操作
  *
  * @author freeseawind@github
  * @version 1.0
@@ -17,10 +17,10 @@ import javax.swing.JRootPane;
 public class LuckWindowUtil
 {
     /**
-     * get window title.
+     * 获取窗体标题
      *
-     * @param window 
-     * @return title.
+     * @param window 窗体
+     * @return 窗体标题
      */
     public static String getWindowTitle(Window window)
     {
@@ -38,10 +38,10 @@ public class LuckWindowUtil
     }
 
     /**
-     * get window iconImage.
+     * 获取窗体图标
      *
-     * @param window 
-     * @return iconImage.
+     * @param window 窗体
+     * @return 窗体图标
      */
     public static Image getWindowImage(Window window)
     {
@@ -66,10 +66,10 @@ public class LuckWindowUtil
     }
 
     /**
-     * get window's rootPane.
+     * 获取窗体根窗格
      *
-     * @param window 
-     * @return rootPane.
+     * @param window 窗体
+     * @return 返回窗体根窗格
      */
     public static JRootPane getRootPane(Window window)
     {
@@ -87,10 +87,10 @@ public class LuckWindowUtil
     }
 
     /**
-     * check window is resizable enable.
+     * 判断窗体是否可以拉伸
      *
-     * @param window 
-     * @return enable return true,otherwise false.
+     * @param window 窗体
+     * @return 可以拉伸返回true，否则false
      */
     public static boolean isResizable(Window window)
     {
@@ -115,10 +115,10 @@ public class LuckWindowUtil
     }
 
     /**
-     * Window transformation <code>JFrame</code>
+     * 窗体转为<code>JFrame</code>
      *
-     * @param window 
-     * @return if <code>window instanceof JFrame</code> return <code>JFrame</code>,otherwise return null.
+     * @param window 窗体
+     * @return 如果窗体是<code>JFrame</code>返回<code>JFrame</code>，否则NULL
      */
     public static JFrame getJFrame(Window window)
     {

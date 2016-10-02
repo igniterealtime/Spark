@@ -1,17 +1,20 @@
 package freeseawind.lf.basic.scroll;
 
 import java.awt.Color;
-import java.awt.Dimension;
 
 import javax.swing.BorderFactory;
+import javax.swing.UIDefaults;
 import javax.swing.UIManager;
 import javax.swing.border.LineBorder;
+import javax.swing.plaf.DimensionUIResource;
 
 import freeseawind.lf.cfg.LuckResourceBundle;
 import freeseawind.lf.utils.LuckRes;
 
 /**
- * ScrollPaneUI and ScrollBarUI and ViewportUI 资源绑定类
+ * <p>ScrollPaneUI and ScrollBarUI and ViewportUI 资源绑定类。</p>
+ *
+ * <p>ScrollPaneUI and ScrollBarUI and ViewportUI resource bundle class.</p>
  *
  * @author freeseawind@github
  * @version 1.0
@@ -20,57 +23,78 @@ import freeseawind.lf.utils.LuckRes;
 public class LuckScrollUIBundle extends LuckResourceBundle
 {
     /**
-     * [自定义属性]滚动条点九图属性key
+     * <p>[LittleLuck属性]滚动条点九图属性key。</p>
+     *
+     * <p>[LittLeLuck Attributes] Scroll bar thumb image properties.</p>
      */
-    public static final String SCROLLBAR_THUMBICON = "Scrollbar.thumbIcon";
+    public static final String SCROLLBAR_THUMBIMG = "Scrollbar.thumbIcon";
 
     /**
-     * 滚动条边框属性key
+     * <p>滚动条边框属性key。</p>
+     *
+     * <p>Scroll bar border properties.</p>
      */
     public static final String SCROLLBAR_BORDER = "ScrollBar.border";
 
     /**
-     * 滚动面板边框属性key
+     * <p>滚动面板边框属性key。</p>
+     *
+     * <p>Scroll pane border properties.</p>
      */
     public static final String SCROLLPANE_BORDER = "ScrollPane.border";
 
     /**
-     * 滚动条背景颜色属性key
+     * <p>滚动条背景颜色属性key。</p>
+     *
+     * <p>Scroll bar background color properties.</p>
      */
     public static final String SCROLLBAR_BACKGROUND = "ScrollBar.background";
 
     /**
-     * 滚动条宽度属性key
+     * <p>滚动条宽度属性key, 默认值为9。</p>
+     *
+     * <p>Scroll bar width properties, default value 9.</p>
      */
     public static final String SCROLLBAR_WIDTH = "ScrollBar.width";
 
     /**
-     * 滑块最小大小属性key
+     * <p>
+     * 滑块最小大小属性key, 默认值为Dimension(48,48)。
+     * </p>
+     *
+     * <p>
+     * Scroll bar minimum thumb size properties, default value
+     * <code>Dimension(48, 48)</code>.
+     * </p>
      */
     public static final String MINIMUMTHUMBSIZE = "ScrollBar.minimumThumbSize";
 
-
-    @Override
-    protected void installBorder()
+    public void uninitialize()
     {
-        UIManager.put(SCROLLBAR_BORDER, BorderFactory.createEmptyBorder());
-
-        UIManager.put(SCROLLPANE_BORDER, new LineBorder(new Color(200, 200, 200)));
+        UIManager.put(SCROLLBAR_THUMBIMG, null);
     }
 
     @Override
-    protected void loadImages()
+    protected void installBorder(UIDefaults table)
     {
-        UIManager.put(SCROLLBAR_THUMBICON, LuckRes.getImage("scroll/thumb.png"));
+        table.put(SCROLLBAR_BORDER, getBorderRes(BorderFactory.createEmptyBorder()));
+
+        table.put(SCROLLPANE_BORDER, getBorderRes(new LineBorder(new Color(200, 200, 200))));
     }
 
     @Override
-    protected void installOther()
+    protected void loadImages(UIDefaults table)
     {
-        UIManager.put(SCROLLBAR_WIDTH, 9);
+        table.put(SCROLLBAR_THUMBIMG, LuckRes.getImage("scroll/thumb.png"));
+    }
 
-        UIManager.put(SCROLLBAR_BACKGROUND, Color.WHITE);
+    @Override
+    protected void installOther(UIDefaults table)
+    {
+        table.put(SCROLLBAR_WIDTH, 9);
 
-        UIManager.put(MINIMUMTHUMBSIZE, new Dimension(48, 48));
+        table.put(SCROLLBAR_BACKGROUND, getColorRes(Color.WHITE));
+
+        table.put(MINIMUMTHUMBSIZE, new DimensionUIResource(48, 48));
     }
 }

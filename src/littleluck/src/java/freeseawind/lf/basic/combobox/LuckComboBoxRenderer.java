@@ -4,7 +4,12 @@ import javax.swing.UIManager;
 import javax.swing.plaf.basic.BasicComboBoxRenderer;
 
 /**
- * 使用自定义边框改变内容显示间距
+ * <pre>
+ * ComboBoxRenderer实现类， 使用自定义边框改变内容显示间距。
+ *
+ * The ComboBoxRenderer implementation class uses a custom border to change
+ * the content display spacing.
+ * </pre>
  *
  * @author freeseawind@github
  * @version 1.0
@@ -18,7 +23,9 @@ public class LuckComboBoxRenderer extends BasicComboBoxRenderer
     {
         super();
 
-        // 设置内边框, 用来控制字体显示间距
+        // 设置内边框, 用来控制内容之间的显示间距
+        // Set the inner border, used to control the display spacing
+        // between the content.
         setBorder(UIManager.getBorder(LuckComboBoxUIBundle.RENDERERBORDER));
     }
 }

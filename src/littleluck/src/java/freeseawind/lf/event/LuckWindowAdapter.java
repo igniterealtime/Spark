@@ -8,11 +8,11 @@ import javax.swing.JFrame;
 import javax.swing.JRootPane;
 import javax.swing.UIManager;
 
-import freeseawind.lf.basic.rootpane.LuckBackgroundPanel;
+import freeseawind.lf.basic.rootpane.LuckRootPaneUI;
 import freeseawind.lf.basic.rootpane.LuckRootPaneUIBundle;
 
 /**
- * Window state listener. set border null when is max, otherwise set border.
+ * 窗体状态变化监听器, 窗体最大化时去除边框，达到完全全屏的效果，否则会有空隙出现(实际是边框阴影)。在恢复正常状态时，重置边框。
  *
  * @author freeseawind@github
  * @version 1.0
@@ -34,9 +34,12 @@ public class LuckWindowAdapter extends WindowAdapter
 
             JRootPane rootPane = frame.getRootPane();
 
-            LuckBackgroundPanel bgPanel = (LuckBackgroundPanel) rootPane.getContentPane();
+            if(rootPane.getUI() instanceof LuckRootPaneUI)
+            {
+                LuckRootPaneUI rootPaneUI = (LuckRootPaneUI) rootPane.getUI();
 
-            bgPanel.getTitlePanel().setState(e.getNewState());
+                rootPaneUI.getTitlePane().setState(e.getNewState());
+            }
 
             if (e.getNewState() == JFrame.MAXIMIZED_BOTH)
             {

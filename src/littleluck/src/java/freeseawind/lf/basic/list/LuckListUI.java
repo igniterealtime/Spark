@@ -5,11 +5,11 @@ import javax.swing.plaf.ComponentUI;
 import javax.swing.plaf.basic.BasicListUI;
 
 /**
- * JListUI实现， LuckListUI没有作代码改动， 通过配置的方式进行扩展。
+ * <p>ListUI实现类， LuckListUI没有作代码改动， 通过配置的方式进行扩展。</p>
  *
- * <p>
- * 另请参见: {@link LuckListUIBundle}
- * </p>
+ * <p>A ListUI implement class.</p>
+ *
+ * @see LuckListUIBundle
  *
  * @author freeseawind@github
  * @version 1.0

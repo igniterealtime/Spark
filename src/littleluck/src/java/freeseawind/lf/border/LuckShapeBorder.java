@@ -54,12 +54,14 @@ public abstract class LuckShapeBorder extends AbstractBorder
 
             if(!isFocusGained(c))
             {
+                // 非焦点状态下
                 g2d.setColor(normalColor);
 
                 g2d.draw(shape);
             }
             else
             {
+                // 获取焦点状态下
                 g2d.setColor(outShadowColor);
 
                 g2d.draw(shape);

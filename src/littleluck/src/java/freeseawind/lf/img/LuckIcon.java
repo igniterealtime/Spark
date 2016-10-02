@@ -3,7 +3,7 @@ package freeseawind.lf.img;
 import javax.swing.ImageIcon;
 
 /**
- * Placeholder Icon.
+ * 定义一个占位图标
  * 
  * @author freeseawind@github
  * @version 1.0

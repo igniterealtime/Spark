@@ -3,7 +3,8 @@ package freeseawind.lf.cfg;
 import javax.swing.UIDefaults;
 
 /**
- * UI bundle class.
+ * UI初始化接口
+ * 
  * @author freeseawind@github
  * @version 1.0
  *

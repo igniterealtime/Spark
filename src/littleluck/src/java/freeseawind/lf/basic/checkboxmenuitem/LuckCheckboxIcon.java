@@ -11,7 +11,13 @@ import javax.swing.Icon;
 import javax.swing.UIManager;
 
 /**
- * 复选框图标实现类
+ * <pre>
+ * CheckBoxMenuItem复选框图标实现类, 根据CheckBoxMenuItem的状态绘制相应的图标,
+ * 当前图标大小为16x16。
+ *
+ * CheckBoxMenuItem Check box icon implementation class, according to the state of
+ * CheckBoxMenuItem draw the corresponding icon,the current icon size is 16x16.
+ * </pre>
  *
  * @author freeseawind@github
  * @version 1.0
@@ -35,11 +41,16 @@ public class LuckCheckboxIcon implements Icon, Serializable
     }
 
     /**
-     * 根据按钮状态, 获取当前状态下图片信息
+     * <pre>
+     * 根据按钮状态, 获取当前状态下图片信息。
      *
-     * @param c 图标所属容器类
-     * @param model 按钮状态模型
-     * @return <code>Image</code>，非选中状态返回空，否则返回当前状态下图片信息
+     * According to the button state, access to the current
+     * state of the picture information.
+     * </pre>
+     *
+     * @param c <code>CheckBoxMenuItem</code> object.
+     * @param model <code>ButtonModel</code>
+     * @return <code>Image</code> when is selected return current image, otherwise return null.
      */
     public Image getPreImg(Component c, ButtonModel model)
     {
@@ -59,27 +70,39 @@ public class LuckCheckboxIcon implements Icon, Serializable
     }
 
     /**
-     * 获取鼠标经过时图片信息
+     * <pre>
+     * 获取鼠标经过时的图片信息。
+     *
+     * Get the picture information when mouse over.
+     * </pre>
      *
      * @return <code>Image</code>
      */
     public Image getRollverImg()
     {
-        return (Image) UIManager.get(LuckCheckboxMenuItemUIBundle.ROLLVER_ICON);
+        return (Image) UIManager.get(LuckCheckboxMenuItemUIBundle.ROLLVER_IMG);
     }
 
     /**
-     * 获取无状态时图片信息
+     * <pre>
+     * 获取非选中状态时的图片信息。
+     *
+     * Gets the picture information when unselected.
+     * </pre>
      *
      * @return <code>Image</code>
      */
     public Image getNormalImg()
     {
-        return (Image) UIManager.get(LuckCheckboxMenuItemUIBundle.NORMAL_ICON);
+        return (Image) UIManager.get(LuckCheckboxMenuItemUIBundle.NORMAL_IMG);
     }
 
     /**
+     * <pre>
      * 获取图片宽度
+     *
+     * Gets the width of the image
+     * </pre>
      */
     public int getIconWidth()
     {
@@ -87,7 +110,11 @@ public class LuckCheckboxIcon implements Icon, Serializable
     }
 
     /**
+     * <pre>
      * 获取图片高度
+     *
+     * Gets the height of the image
+     * <pre>
      */
     public int getIconHeight()
     {

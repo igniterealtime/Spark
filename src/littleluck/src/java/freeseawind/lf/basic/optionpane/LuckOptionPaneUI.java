@@ -13,9 +13,17 @@ import javax.swing.plaf.basic.BasicOptionPaneUI;
 import freeseawind.lf.canvas.LuckCanvas;
 
 /**
- * 弹出窗口UI实现类，设置组件为不完全透明， 可实现弹出窗口背景重绘。
  * <p>
- * 另请参见 {@link LuckOptionPaneUIBundle}
+ * 弹出窗口UI实现类，设置组件为不完全透明， 实现弹出窗口背景重绘。
+ * </p>
+ *
+ * <p>
+ * Pop-up window UI implementation class, set the component is not completely
+ * transparent, to achieve a pop-up window background redraw.
+ * </p>
+ *
+ * <p>
+ * See Also:{@link LuckOptionPaneUIBundle}.
  * </p>
  *
  * @see LuckCanvas

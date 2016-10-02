@@ -8,6 +8,7 @@ import java.awt.Image;
 import java.awt.LayoutManager;
 import java.awt.Window;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 
@@ -22,13 +23,25 @@ import javax.swing.UIManager;
 
 import freeseawind.lf.canvas.LuckCanvas;
 import freeseawind.lf.cfg.LuckGlobalBundle;
+import freeseawind.lf.event.LuckWindowAdapter;
 import freeseawind.lf.event.WindowBtnMouseAdapter;
 import freeseawind.lf.event.WindowPropertyListener;
+import freeseawind.lf.utils.LuckWindowUtil;
 import freeseawind.ninepatch.swing.SwingNinePatch;
 
 /**
- * 标题面板
+ * <p>窗体标题面板实现类, 当使用非系统窗体装饰时，该类会被创建。</p>
+ *
+ *
+ * <p>
+ * Class that manages a JLF awt.Window-descendant class's title bar.
+ * This class assumes it will be created with a particular window
+ * decoration style, and that if the style changes, a new one will
+ * be created.
+ * <p>
+ *
  * @author freeseawind@github
+ * @version 1.0
  *
  */
 public class LuckTitlePanel extends JPanel
@@ -41,8 +54,9 @@ public class LuckTitlePanel extends JPanel
     protected JButton closeBtn;
     protected JLabel label;
     protected WindowPropertyListener listener;
+    protected WindowAdapter windowAdapter;
+    protected Window window;
     private SwingNinePatch np;
-    private Window window;
     private LuckCanvas painter;
     private int initStyle;
     private boolean isResizeableOnInit;
@@ -103,11 +117,32 @@ public class LuckTitlePanel extends JPanel
 
         window = getWindow();
 
-        if(window != null && listener == null)
+        if(window != null)
         {
-            listener = new WindowPropertyListener(this);
+            String title = LuckWindowUtil.getWindowTitle(window);
 
-            window.addPropertyChangeListener(listener);
+            setTitle(title);
+
+            Image image = LuckWindowUtil.getWindowImage(window);
+
+            if(image != null)
+            {
+                setIcon(new ImageIcon(image));
+            }
+
+            if(listener == null)
+            {
+                listener = new WindowPropertyListener(this);
+
+                window.addPropertyChangeListener(listener);
+            }
+
+            if(windowAdapter == null && window instanceof JFrame)
+            {
+                windowAdapter = new LuckWindowAdapter();
+
+                window.addWindowStateListener(windowAdapter);
+            }
         }
     }
 
@@ -115,9 +150,17 @@ public class LuckTitlePanel extends JPanel
     {
         super.removeNotify();
 
-        if(window != null && listener != null)
+        if(window != null)
         {
-            window.removePropertyChangeListener(listener);
+            if(listener != null)
+            {
+                window.removePropertyChangeListener(listener);
+            }
+
+            if(windowAdapter != null && window instanceof JFrame)
+            {
+                window.removeWindowStateListener(windowAdapter);
+            }
 
             window = null;
 
@@ -126,9 +169,11 @@ public class LuckTitlePanel extends JPanel
     }
 
     /**
-     * 设置窗体拉伸状体,根据状态隐藏或显示放大按钮
-     * 
-     * @param isResizeable 当前窗体是否可以缩放，可以返回true，否则false
+     * <p>设置窗体拉伸状体,根据状态隐藏或显示放大按钮</p>
+     *
+     * <p>Set the form stretched state, according to the state to hide or display the zoom button</p>
+     *
+     * @param isResizeable resize able return true, otherwise return false
      */
     public void setResizeable(boolean isResizeable)
     {
@@ -143,8 +188,10 @@ public class LuckTitlePanel extends JPanel
     }
 
     /**
-     * 创建标题面板布局
-     * 
+     * <p>创建标题面板布局<p>
+     *
+     * <p>Create TitlePane layout manager</p>
+     *
      * @return 标题面板布局对象
      */
     public LayoutManager createLayout()
@@ -153,11 +200,12 @@ public class LuckTitlePanel extends JPanel
     }
 
     /**
-     * 安装放大、缩小、关闭按钮
+     * <p>安装放大、缩小、关闭按钮<p>
+     *
+     * <p>Installation Form button<p>
      */
     protected void installBtn()
     {
-        // 关闭按钮
         closeBtn = new JButton();
 
         closeBtn.addMouseListener(new CloseMouseAdapter(closeBtn,
@@ -170,9 +218,9 @@ public class LuckTitlePanel extends JPanel
         add(closeBtn);
 
         // 如果是Frame则显示退出和放大按钮
+        // If the Frame is displayed exits and zoom buttons
         if(initStyle == JRootPane.FRAME)
         {
-            // 缩小按钮
             minBtn = new JButton();
 
             minBtn.addMouseListener(new MinMouseAdapter(minBtn,
@@ -184,7 +232,6 @@ public class LuckTitlePanel extends JPanel
 
             add(minBtn);
 
-            // 放大缩小按钮
             maximizeBtn = new JButton();
 
             maximizeBtn.addMouseListener(new MaximizeMouseAdapter(maximizeBtn,
@@ -196,7 +243,8 @@ public class LuckTitlePanel extends JPanel
 
             add(maximizeBtn);
 
-            // 判断面板是否可以拉伸
+            // 判断窗体是否可以拉伸
+            // Determine whether the form can be stretched
             if(!isResizeableOnInit)
             {
                 maximizeBtn.setVisible(false);
@@ -205,7 +253,9 @@ public class LuckTitlePanel extends JPanel
     }
 
     /**
-     * 安装应用图标和标题
+     * <p>安装窗体图标和标题<p>
+     *
+     * <p>Installation Window icon and title<p>
      */
     protected void installTitle()
     {
@@ -225,9 +275,11 @@ public class LuckTitlePanel extends JPanel
     }
 
     /**
-     * 设置按钮属性
+     * <p>设置按钮属性</p>
      *
-     * @param btn 按钮对象
+     * <p>set window button attribute</p>
+     *
+     * @param btn
      */
     protected void setBtnAtrr(JButton btn)
     {
@@ -245,15 +297,20 @@ public class LuckTitlePanel extends JPanel
     }
 
     /**
-     * 获取面板所在的窗体
-     * 
-     * @return 面板所在的窗体
+     * <p>获取面板所在的窗体</p>
+     *
+     * <p>get parent window</p>
+     *
+     * @return
      */
     private Window getWindow()
     {
         return SwingUtilities.getWindowAncestor(this);
     }
 
+    /**
+     * update Maximize button icon when window state change.
+     */
     private void updateMaximizeBtn()
     {
         if((state & JFrame.MAXIMIZED_BOTH) != 0)
@@ -270,7 +327,7 @@ public class LuckTitlePanel extends JPanel
         }
     }
 
-    // 关闭按钮鼠标事件
+    // window close listener.
     private class CloseMouseAdapter extends WindowBtnMouseAdapter
     {
         public CloseMouseAdapter(JButton btn,
@@ -293,7 +350,7 @@ public class LuckTitlePanel extends JPanel
         }
     }
 
-    // 缩小按钮鼠标事件
+    // window minimize listener.
     private class MinMouseAdapter extends WindowBtnMouseAdapter
     {
         public MinMouseAdapter(JButton btn,
@@ -321,7 +378,8 @@ public class LuckTitlePanel extends JPanel
         }
     }
 
-    // 放大缩小按钮鼠标事件
+    // 窗体放大缩小按钮鼠标事件
+    // Window maximize listener.
     private class MaximizeMouseAdapter extends WindowBtnMouseAdapter
     {
         public MaximizeMouseAdapter(JButton btn,
@@ -342,6 +400,7 @@ public class LuckTitlePanel extends JPanel
                 JFrame frame = ((JFrame)window);
 
                 // 必须先禁用按钮否则无法取消焦点事件
+                // must set enable false here.
                 maximizeBtn.setEnabled(false);
 
                 if ((state & JFrame.ICONIFIED) != 0)
@@ -363,7 +422,7 @@ public class LuckTitlePanel extends JPanel
     }
 
     /**
-     * @return 标题面板高度
+     * @return TitlePane height
      */
     public int getHeight()
     {
@@ -431,9 +490,6 @@ public class LuckTitlePanel extends JPanel
         updateMaximizeBtn();
     }
 
-    /**
-     * @param np 背景点九图对象
-     */
     public void setBackgroundNP(SwingNinePatch np)
     {
         this.np = np;

@@ -5,7 +5,7 @@ import java.awt.event.FocusListener;
 import java.awt.event.MouseAdapter;
 
 /**
- * focus handler
+ * 焦点监听器
  * 
  * @author freeseawind@github
  * @version 1.0

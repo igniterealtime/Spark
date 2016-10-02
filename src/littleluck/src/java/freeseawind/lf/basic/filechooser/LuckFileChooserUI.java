@@ -10,7 +10,16 @@ import javax.swing.plaf.ComponentUI;
 import javax.swing.plaf.metal.MetalFileChooserUI;
 
 /**
- * FileChooserUI实现类, 使用系统默认图标来展示。
+ * <p>
+ * FileChooserUI实现类，优先使用系统默认图标，找不到则使用LookAndFeel定义的图标。
+ * </p>
+ *
+ * <p>
+ * JFileChooser implementation class, the use of the system default icon, you
+ * can not find the icon using the LookAndFeel definition.
+ * </p>
+ *
+ * @see LuckFileChooserUIBundle
  *
  * @author freeseawind@github
  * @version 1.0
@@ -30,30 +39,42 @@ public class LuckFileChooserUI extends MetalFileChooserUI
         return new LuckFileChooserUI((JFileChooser) c);
     }
 
+    /**
+     * use custom <code>FileView</code>
+     *
+     * @see LuckFileView
+     * @return <code>FileView</code>
+     */
     public FileView getFileView(JFileChooser fc)
     {
         return fileView;
     }
 
     /**
-     * 参考WindowsFileView实现
-     * @author freeseawind@github
-     * @version 1.0
+     * <p>
+     * 参考<code>WindowsFileView</code>实现,优先使用系统默认图标，找不到则使用LookAndFeel定义的图标。
+     * </p>
      *
+     * <p>
+     * Refer to the <code>WindowsFileView</code> implementation,the use of the system
+     * default icon, you can not find the icon using the LookAndFeel definition.
+     * </p>
      */
     protected class LuckFileView extends BasicFileView
     {
         public Icon getIcon(File f)
         {
-            Icon icon = getCachedIcon(f);
-
-            if (icon != null)
-            {
-                return icon;
-            }
+            Icon icon = null;
 
             if (f != null)
             {
+                icon = getCachedIcon(f);
+
+                if (icon != null)
+                {
+                    return icon;
+                }
+
                 icon = getFileChooser().getFileSystemView().getSystemIcon(f);
             }
 

@@ -9,10 +9,13 @@ import javax.swing.AbstractButton;
 import javax.swing.ButtonModel;
 import javax.swing.Icon;
 import javax.swing.UIManager;
+import static freeseawind.lf.basic.togglebutton.LuckToggleButtonUIBundle.*;
 
 /**
- * 复选框图标实现类, 此类参考Beautyeye的实现
- * 
+ * <p>复选框图标实现类, 此类参考Beautyeye的实现。</p>
+ *
+ * <p>CheckBoxIcon implement class.</p>
+ *
  * @author freeseawind@github
  * @version 1.0
  *
@@ -33,31 +36,30 @@ public class LuckCheckBoxIcon implements Icon, Serializable
 
         boolean isRollver = (model.isRollover() && cb.isRolloverEnabled());
 
-
         if(model.isSelected())
         {
             if(isPressed)
             {
-                image = (Image) UIManager.get(LuckToggleButtonUIBundle.CHECKBOX_UNPRESSED_ICON);
+                image = (Image) UIManager.get(CHECKBOX_UNPRESSED_IMG);
             }
             else
             {
-                image = (Image) UIManager.get(LuckToggleButtonUIBundle.CHECKBOX_PRESSED_ICON);
+                image = (Image) UIManager.get(CHECKBOX_PRESSED_IMG);
             }
         }
         else
         {
             if(isRollver && !isPressed)
             {
-                image = (Image) UIManager.get(LuckToggleButtonUIBundle.CHECKBOX_ROLLVER_ICON);
+                image = (Image) UIManager.get(CHECKBOX_ROLLVER_IMG);
             }
             else if(isRollver && isPressed)
             {
-                image = (Image) UIManager.get(LuckToggleButtonUIBundle.CHECKBOX_UNROLLVER_ICON);
+                image = (Image) UIManager.get(CHECKBOX_UNROLLVER_IMG);
             }
             else
             {
-                image = (Image) UIManager.get(LuckToggleButtonUIBundle.CHECKBOX_NORMAL_ICON);
+                image = (Image) UIManager.get(CHECKBOX_NORMAL_IMG);
             }
         }
 
@@ -67,11 +69,17 @@ public class LuckCheckBoxIcon implements Icon, Serializable
         }
     }
 
+    /**
+     * Gets icon width.
+     */
     public int getIconWidth()
     {
         return 16;
     }
 
+    /**
+     * Gets icon height.
+     */
     public int getIconHeight()
     {
         return 16;

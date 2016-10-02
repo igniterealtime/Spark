@@ -14,8 +14,17 @@ import javax.swing.UIManager;
 import freeseawind.lf.layout.AbstractLayout;
 
 /**
- * 标题面板布局类
+ * <p>
+ * 标题面板布局类, 主要对窗体的标题、图标和按钮就行布局。
+ * </p>
+ * 
+ * <p>
+ * A custom layout manager that is responsible for the layout of window button,
+ * window icon, window title, if one has been installed.
+ * <p>
+ * 
  * @author freeseawind@github
+ * @version 1.0
  *
  */
 public class LuckTitlePanelLayout extends AbstractLayout
@@ -37,15 +46,19 @@ public class LuckTitlePanelLayout extends AbstractLayout
         }
 
         // 判断从左到右进行布局还是从右到左进行布局
+        // get component orientation
         boolean isLeftToRight = titlePanel.isLeftToRight();
 
         // 布局关闭按钮
+        // layout close button
         JButton closebtn = titlePanel.getCloseBtn();
 
         // 起始x坐标
+        // Starting x coordinate
         int startX = isLeftToRight ? (bound.width - insets.right) : 0;
 
         // 起始y坐标
+        // Starting y coordinate
         int startY = insets.top;
 
         if(closebtn != null && closebtn.isVisible())
@@ -62,6 +75,7 @@ public class LuckTitlePanelLayout extends AbstractLayout
         }
 
         // 布局放大或缩小按钮
+        // layout maximize button
         JButton maximizeBtn = titlePanel.getMaximizeBtn();
 
         if(maximizeBtn != null && maximizeBtn.isVisible())
@@ -78,6 +92,7 @@ public class LuckTitlePanelLayout extends AbstractLayout
         }
 
         // 布局最小化按钮
+        // layout minimize button
         JButton minBtn = titlePanel.getMinBtn();
 
         if (minBtn != null && minBtn.isVisible())
@@ -132,6 +147,7 @@ public class LuckTitlePanelLayout extends AbstractLayout
         Insets i = parent.getInsets();
 
         // 高度由父面板决定
+        // Height is determined by the parent panel
         return new Dimension(0 + i.left + i.right, root.getHeight() + i.top + i.bottom);
     }
 

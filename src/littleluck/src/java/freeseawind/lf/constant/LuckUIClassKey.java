@@ -1,7 +1,7 @@
 package freeseawind.lf.constant;
 
 /**
- * UI class name constant.
+ * UI实现类对应关键字常量
  * 
  * @author freeseawind@github
  * @version 1.0
@@ -9,12 +9,12 @@ package freeseawind.lf.constant;
 public class LuckUIClassKey
 {
     /**
-     * 
+     * 按钮UI实现类key
      */
     public static final String BUTTONUI = "ButtonUI";
 
     /**
-     * 
+     * 复选框UI实现类key
      */
     public static final String CHECKBOXUI = "CheckBoxUI";
 
@@ -169,7 +169,7 @@ public class LuckUIClassKey
     public static final String TOOLTIPUI = "ToolTipUI";
     
     /**
-     * 
+     * 下拉列表UI实现类key
      */
     public static final String COMBOBOXUI = "ComboBoxUI";
     
@@ -205,12 +205,12 @@ public class LuckUIClassKey
     
 
     /**
-     * 
+     * 弹出窗口UI实现类key
      */
     public static final String OPTIONPANEUI = "OptionPaneUI";
     
     /**
-     * 
+     * 面板实现类key
      */
     public static final String PANELUI = "PanelUI";
     
@@ -220,7 +220,7 @@ public class LuckUIClassKey
     public static final String VIEWPORTUI = "ViewportUI";
 
     /**
-     * 
+     * 根窗格UI实现类key
      */
     public static final String ROOTPANEUI = "RootPaneUI";
 }

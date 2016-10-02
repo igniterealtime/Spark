@@ -17,18 +17,21 @@ import javax.swing.RowSorter;
 import javax.swing.SortOrder;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
+import javax.swing.plaf.UIResource;
 import javax.swing.table.TableCellRenderer;
 
 import freeseawind.lf.border.LuckLineBorder;
 
 /**
- * TableHeader单元渲染处理实现类
+ * <p>TableHeader单元渲染处理实现类。</p>
+ *
+ * <p>Table Header unit rendering implementation class.</p>
  *
  * @author freeseawind@github
  * @version 1.0
  */
 public class LuckTableCellHeaderRenderer extends JLabel
-        implements TableCellRenderer, Serializable
+        implements TableCellRenderer, UIResource, Serializable
 {
     private static final long serialVersionUID = 4540501865134659334L;
     protected Border noramlBorder;

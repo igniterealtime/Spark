@@ -7,7 +7,14 @@ import javax.swing.plaf.ComponentUI;
 import javax.swing.plaf.basic.BasicScrollPaneUI;
 
 /**
+ * <p>
  * ScrollPaneUI实现类，设置组件为不完全透明。
+ * </p>
+ *
+ * <p>
+ * The ScrollPaneUI implementation class sets the component to be completely
+ * transparent.
+ * </p>
  *
  * @author freeseawind@github
  * @version 1.0

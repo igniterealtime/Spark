@@ -6,19 +6,30 @@ import java.awt.geom.RectangularShape;
 import java.awt.geom.RoundRectangle2D;
 
 import javax.swing.JComponent;
-import javax.swing.LookAndFeel;
 import javax.swing.plaf.ComponentUI;
 import javax.swing.plaf.basic.BasicFormattedTextFieldUI;
-import javax.swing.text.JTextComponent;
 
 import freeseawind.lf.border.LuckBorderField;
+import freeseawind.lf.border.LuckShapeBorder;
 import freeseawind.lf.event.LuckBorderFocusHandle;
 
+/**
+ * <p>
+ * FormattedTextFieldUI实现类，使用圆角焦点边框作为默认边框。
+ * </p>
+ *
+ * <p>
+ * FormattedTextFieldUI implementation class,rounded corners as the default focus frame border.
+ * </p>
+ *
+ * @author freeseawind@github
+ * @version 1.0
+ *
+ */
 public class LuckFormattedTextFieldUI extends BasicFormattedTextFieldUI
         implements LuckBorderField
 {
     protected LuckBorderFocusHandle handle;
-    private RectangularShape contentShape;
     private RectangularShape borderShape;
     private boolean isFocusGained;
 
@@ -30,18 +41,11 @@ public class LuckFormattedTextFieldUI extends BasicFormattedTextFieldUI
     public void installUI(JComponent c)
     {
         super.installUI(c);
-        
-        LookAndFeel.installProperty(c, "opaque", Boolean.FALSE);
 
-        contentShape = new RoundRectangle2D.Float(0, 0, 0, 0, 8, 8);
-
-        borderShape = new RoundRectangle2D.Float(0, 0, 0, 0, 8, 8);
-
-        handle = createFocusHandle();
-
-        c.addMouseListener(handle);
-
-        c.addFocusListener(handle);
+        if(c.getBorder() instanceof LuckShapeBorder)
+        {
+            installFocusListener(c);
+        }
     }
 
     @Override
@@ -49,24 +53,66 @@ public class LuckFormattedTextFieldUI extends BasicFormattedTextFieldUI
     {
         super.uninstallUI(c);
 
-        c.removeMouseListener(handle);
-
-        c.removeFocusListener(handle);
+        uninstallFocusListener(c);
     }
     
+    protected void paintBackground(Graphics g)
+    {
+        JComponent editor = getComponent(); 
+        ((Graphics2D)g).setColor(editor.getBackground());
+        borderShape.setFrame(0, 0, editor.getWidth() - 1, editor.getHeight() - 1);
+        ((Graphics2D)g).fill(borderShape);
+    }
+    
+    /**
+     * <pre>
+     * 初始化边框焦点监听器
+     *
+     * Initializes the border focus listener
+     * <pre>
+     *
+     * @param c
+     */
+    protected void installFocusListener(JComponent c)
+    {
+        handle = createFocusHandle();
+
+        borderShape = new RoundRectangle2D.Float(0, 0, 0, 0, 8, 8);
+
+        c.addMouseListener(handle);
+
+        c.addFocusListener(handle);
+    }
+    
+    /**
+     * remove focus Listener
+     *
+     * @param c
+     */
+    protected void uninstallFocusListener(JComponent c)
+    {
+        if(handle != null)
+        {
+            c.removeMouseListener(handle);
+
+            c.removeFocusListener(handle);
+
+            handle = null;
+        }
+        
+        borderShape = null;
+    }
+
+    /**
+     * <p>创建边框焦点监听器。</p>
+     *
+     * <p>Create the border focus listener.</p>
+     *
+     * @return <code>LuckBorderFocusHandle</code>
+     */
     protected LuckBorderFocusHandle createFocusHandle()
     {
         return new LuckFocusHandler();
-    }
-
-    @Override
-    protected void paintBackground(Graphics g)
-    {
-        JTextComponent editor = this.getComponent();
-        Graphics2D g2d = (Graphics2D)g;
-        g.setColor(editor.getBackground());
-        contentShape.setFrame(0, 0, editor.getWidth() - 1, editor.getHeight() - 1);
-        g2d.fill(contentShape);
     }
 
     public void setFocusGained(boolean isFoucusGaind)
@@ -89,16 +135,6 @@ public class LuckFormattedTextFieldUI extends BasicFormattedTextFieldUI
         this.borderShape = shape;
     }
 
-    public RectangularShape getContentShape()
-    {
-        return contentShape;
-    }
-
-    public void setContentShape(RectangularShape contentShape)
-    {
-        this.contentShape = contentShape;
-    }
-    
     public class LuckFocusHandler extends LuckBorderFocusHandle
     {
         @Override

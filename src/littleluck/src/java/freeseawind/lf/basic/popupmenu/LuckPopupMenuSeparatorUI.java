@@ -9,7 +9,14 @@ import javax.swing.plaf.ComponentUI;
 import javax.swing.plaf.basic.BasicPopupMenuSeparatorUI;
 
 /**
+ * <p>
  * PopupMenuSeparatorUI实现类，默认是保持上下各1个像素的间距，这里设置为0。
+ * </p>
+ *
+ * <p>
+ * PopupMenu Separator UI implementation class, the default is to keep up and
+ * down the 1 pixel spacing, here is set to 0.
+ * </p>
  *
  * @author freeseawind@github
  * @version 1.0

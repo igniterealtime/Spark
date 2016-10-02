@@ -3,7 +3,6 @@ package freeseawind.lf.basic.progress;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Insets;
-import java.awt.image.BufferedImage;
 
 import javax.swing.JComponent;
 import javax.swing.JProgressBar;
@@ -11,13 +10,21 @@ import javax.swing.UIManager;
 import javax.swing.plaf.ComponentUI;
 import javax.swing.plaf.basic.BasicProgressBarUI;
 
+import freeseawind.lf.utils.LuckUtils;
 import freeseawind.ninepatch.common.RepeatType;
 import freeseawind.ninepatch.swing.SwingNinePatch;
 
 /**
- * ProgressBarUI实现类，使用点九图来实现进度条的绘制。
  * <p>
- * 另请参见 {@link LuckProgressBarUIBundle}
+ * ProgressBarUI实现类，使用点九图来实现进度条的绘制。
+ * </p>
+ *
+ * <p>
+ * ProgressBarUI implementation class, the use of NinePatch image to achieve the
+ * progress of the drawing.
+ * </p>
+ * <p>
+ * See Also: {@link LuckProgressBarUIBundle}.
  * </p>
  *
  * @author freeseawind@github
@@ -27,18 +34,23 @@ import freeseawind.ninepatch.swing.SwingNinePatch;
 public class LuckProgressBarUI extends BasicProgressBarUI
 {
     // 单元进度条和背景进度条间距属性
+    // progress bar progress and background spacing properties
     private Insets cellBarInsets;
 
     // 水平进度条背景点九绘图对象
+    // Horizontal progress bar background NinePatch objects
     private SwingNinePatch horizontalNp;
 
     // 水平进度条单元进度点九绘图对象
+    // Horizontal progress bar progress NinePatch objects
     private SwingNinePatch horizontalCellNp;
 
     // 垂直进度条单元进度点九绘图对象
+    // Vertical progress bar background NinePatch objects
     private SwingNinePatch verticalNp;
 
     // 垂直进度条单元进度点九绘图对象
+    // Vertical progress bar progress NinePatch objects
     private SwingNinePatch verticalCellNp;
 
     public static ComponentUI createUI(JComponent x)
@@ -51,26 +63,22 @@ public class LuckProgressBarUI extends BasicProgressBarUI
     {
         super.installUI(c);
 
-        // -------------初始化扩展属性-------------- //
         cellBarInsets = UIManager.getInsets(LuckProgressBarUIBundle.CELLBAR_INSETS);
     }
-    
+
     public void uninstallUI(JComponent c)
     {
         super.uninstallUI(c);
-        
+
         horizontalNp = null;
-        
+
         horizontalCellNp = null;
-        
+
         verticalNp = null;
-        
+
         verticalCellNp = null;
     }
 
-    /**
-     * 不确定进度的进度条绘制方法
-     */
     @Override
     protected void paintIndeterminate(Graphics g, JComponent c)
     {
@@ -89,7 +97,6 @@ public class LuckProgressBarUI extends BasicProgressBarUI
             return;
         }
 
-        // 判断是否是水平进度条
         boolean isHorizontal = (progressBar.getOrientation() == JProgressBar.HORIZONTAL);
 
         Graphics2D g2 = (Graphics2D)g;
@@ -106,6 +113,9 @@ public class LuckProgressBarUI extends BasicProgressBarUI
 
         // 父类中该处调用的是私有的paintString方法。
         // 通读方法后发现实际上有做兼容处理，所以这样调用并不会影响原有效果
+        // The parent class calls the private paintString method.
+        // Read through the method and found that in fact do compatible
+        // processing, so this call will not affect the original effect
         if (progressBar.isStringPainted())
         {
             if (progressBar.getOrientation() == JProgressBar.HORIZONTAL)
@@ -119,9 +129,6 @@ public class LuckProgressBarUI extends BasicProgressBarUI
         }
     }
 
-    /**
-     * 已确定进度的进度条绘制方法
-     */
     @Override
     protected void paintDeterminate(Graphics g, JComponent c)
     {
@@ -142,7 +149,8 @@ public class LuckProgressBarUI extends BasicProgressBarUI
             return;
         }
 
-        // 当前进度条加载的进度, 如果是水平进度条,返回的是宽度值,否则是高度值
+        // Progress of the current progress bar loading, if the horizontal
+        // progress bar, return the width value, otherwise the height value
         int amountFull = getAmountFull(b, barRectWidth, barRectHeight);
 
         Graphics2D g2 = (Graphics2D) g;
@@ -152,6 +160,8 @@ public class LuckProgressBarUI extends BasicProgressBarUI
         paintProgressBarBg(g2, b.left, b.top, barRectWidth, barRectHeight, isHorizontal);
 
         // 以下的处理主要是为了让单元进度和背景保持一定的间距，这样比较美观
+        // The following is mainly to deal with the progress of the unit and the
+        // background to maintain a certain distance, so beautiful
         int cellWidth = barRectWidth;
 
         int cellHeight = barRectHeight;
@@ -166,12 +176,15 @@ public class LuckProgressBarUI extends BasicProgressBarUI
 
             cellHeight = cellHeight - cellBarInsets.top - cellBarInsets.bottom;
 
-            // 因为起始坐标和背景的起始坐标不一样，如过仍按原宽度绘制，会导进度条超出背景宽度
+            // 因为起始坐标和背景的起始坐标不一样，如果仍按原宽度绘制，会导进度条超出背景宽度
+            // Because the starting coordinates and the coordinates of the background is not the same.
+            // if still drawing the original width,will lead the progress bar beyond the background width.
             amountFull = (amountFull < cellWidth ? amountFull : cellWidth);
 
             cellWidth = amountFull;
 
             // 重新计算起始坐标
+            // Recalculate start coordinates
             startx =  b.left + cellBarInsets.left;
 
             starty = b.top + cellBarInsets.top;
@@ -204,14 +217,14 @@ public class LuckProgressBarUI extends BasicProgressBarUI
     }
 
     /**
-     * 绘制进度条背景
+     * Draw progress bar background
      *
-     * @param g2d 绘图画笔对象
-     * @param x 起始x坐标
-     * @param y 起始y坐标
-     * @param w 绘制的宽度
-     * @param h 绘制的高度
-     * @param isHorizontal 水平进度条返回true，否则false
+     * @param g2d The drawing canvas object
+     * @param x The starting x coordinate
+     * @param y The starting y coordinate
+     * @param w The width of the drawing
+     * @param h The height of the drawing
+     * @param isHorizontal The horizontal progress bar returns true, otherwise false
      */
     protected void paintProgressBarBg(Graphics2D g2d,
                                       int x,
@@ -221,7 +234,7 @@ public class LuckProgressBarUI extends BasicProgressBarUI
                                       boolean isHorizontal)
     {
         configureProgressBarBg(isHorizontal);
-        
+
         if(isHorizontal)
         {
             horizontalNp.drawNinePatch(g2d, x, y, w, h);
@@ -233,14 +246,14 @@ public class LuckProgressBarUI extends BasicProgressBarUI
     }
 
     /**
-     * 绘制进度条进度
+     * Draw progress bar progress
      *
-     * @param g2d 绘图画笔对象
-     * @param x 起始x坐标
-     * @param y 起始y坐标
-     * @param w 绘制的宽度
-     * @param h 绘制的高度
-     * @param isHorizontal 水平进度条返回true，否则false
+     * @param g2d The drawing canvas object
+     * @param x The starting x coordinate
+     * @param y The starting y coordinate
+     * @param w The width of the drawing
+     * @param h The height of the drawing
+     * @param isHorizontal The horizontal progress bar returns true, otherwise false
      */
     protected void paintProgressBarCell(Graphics2D g2d,
                                         int x,
@@ -250,7 +263,7 @@ public class LuckProgressBarUI extends BasicProgressBarUI
                                         boolean isHorizontal)
     {
         configureProgressBarCell(isHorizontal);
-        
+
         if(isHorizontal)
         {
             horizontalCellNp.drawNinePatch(g2d, x, y, w, h);
@@ -260,44 +273,34 @@ public class LuckProgressBarUI extends BasicProgressBarUI
             verticalCellNp.drawNinePatch(g2d, x, y, w, h);
         }
     }
-    
+
     protected void configureProgressBarBg(boolean isHorizontal)
     {
         if(isHorizontal && horizontalNp == null)
         {
             //
-            BufferedImage horizontalImg = (BufferedImage) 
-                    UIManager.get(LuckProgressBarUIBundle.HORIZONTALICON);
-
-            horizontalNp = new SwingNinePatch(horizontalImg);
+            horizontalNp = LuckUtils.createNinePatch(LuckProgressBarUIBundle.HORIZONTALIMG);
         }
         else if (!isHorizontal && verticalNp == null)
         {
             //
-            BufferedImage horizontalImg = (BufferedImage) 
-                    UIManager.get(LuckProgressBarUIBundle.VERTICALICON);
-
-            verticalNp = new SwingNinePatch(horizontalImg);
+            verticalNp = LuckUtils.createNinePatch(LuckProgressBarUIBundle.VERTICALIMG);
         }
     }
-    
+
     protected void configureProgressBarCell(boolean isHorizontal)
     {
         if(isHorizontal && horizontalCellNp == null)
         {
             //
-            BufferedImage horizontalImg = (BufferedImage) 
-                    UIManager.get(LuckProgressBarUIBundle.HORIZONTALCELLICON);
-
-            horizontalCellNp = new SwingNinePatch(horizontalImg, RepeatType.HORIZONTAL);
+            horizontalCellNp = LuckUtils.createNinePatch(
+                    LuckProgressBarUIBundle.HORIZONTALCELLIMG, RepeatType.HORIZONTAL);
         }
         else if (!isHorizontal && verticalCellNp == null)
         {
             //
-            BufferedImage horizontalImg = (BufferedImage) 
-                    UIManager.get(LuckProgressBarUIBundle.VERTICALCELLICON);
-
-            verticalCellNp = new SwingNinePatch(horizontalImg, RepeatType.VERTICAL);
+            verticalCellNp = LuckUtils.createNinePatch(
+                    LuckProgressBarUIBundle.VERTICALCELLIMG, RepeatType.VERTICAL);
         }
     }
 }

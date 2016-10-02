@@ -4,7 +4,7 @@ import java.awt.Color;
 import java.io.Serializable;
 
 /**
- * 按钮颜色属性类
+ * Button color attribute class
  *
  * @author freeseawind@github
  * @version 1.0
@@ -13,33 +13,33 @@ public class LuckButtonColorInfo implements Serializable
 {
     private static final long serialVersionUID = -6352677081768535770L;
 
-    // 初始状态颜色
+    // Initial state color
     private Color normalColor;
 
-    // 鼠标经过时颜色
+    // The color of the mouse over time
     private Color rollverColor;
 
-    // 鼠标点击时颜色
+    // The color of the mouse click
     private Color pressedColor;
 
-    // 字体颜色
+    // The Button font color
     private Color fontColor;
 
     /**
      *
-     * @param normal 无状态下按钮颜色
+     * @param normal Initial state color
      *
-     * @param rollver 鼠标经过时按钮颜色
+     * @param rollver The color of the mouse over time
      *
-     * @param pressed 鼠标点击时按钮颜色
+     * @param pressed The color of the mouse click
      *
-     * @param font 按钮字体颜色
+     * @param font The Button font color
      *
      */
     public LuckButtonColorInfo(Color normal,
-                               Color rollver,
-                               Color pressed,
-                               Color font)
+            Color rollver,
+            Color pressed,
+            Color font)
     {
         this.normalColor = normal;
         this.rollverColor = rollver;
@@ -49,7 +49,7 @@ public class LuckButtonColorInfo implements Serializable
 
     /**
      *
-     * @return <code>Color</code> 无状态下按钮颜色
+     * @return <code>Color</code>
      */
     public Color getNormalColor()
     {
@@ -57,27 +57,27 @@ public class LuckButtonColorInfo implements Serializable
     }
 
     /**
-    *
-    * @return <code>Color</code> 鼠标经过时按钮颜色
-    */
+     *
+     * @return <code>Color</code>
+     */
     public Color getRollverColor()
     {
         return rollverColor;
     }
 
     /**
-    *
-    * @return <code>Color</code> 鼠标点击时按钮颜色
-    */
+     *
+     * @return <code>Color</code>
+     */
     public Color getPressedColor()
     {
         return pressedColor;
     }
 
     /**
-    *
-    * @return <code>Color</code> 按钮字体颜色
-    */
+     *
+     * @return <code>Color</code>
+     */
     public Color getFontColor()
     {
         return fontColor;

@@ -8,6 +8,7 @@ import javax.swing.JComponent;
 import freeseawind.lf.geom.LuckProperty.LuckPropertyType;
 
 /**
+ * 自定义矩形类
  *
  * @author freeseawind@github
  * @version 1.0

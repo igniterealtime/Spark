@@ -10,13 +10,6 @@ import java.util.List;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 
-/**
- * ScrollPane mouse handler. when mouse enter on ScrollPane set ScrollBar enable
- * else disable.
- * 
- * @author freeseawind@github
- * @version 1.0
- */
 public class LuckScrollMouseHandle extends MouseAdapter
 {
     private List<JScrollPane> scrollpanes;

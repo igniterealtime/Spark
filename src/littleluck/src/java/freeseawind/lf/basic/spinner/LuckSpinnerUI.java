@@ -7,13 +7,21 @@ import javax.swing.JComponent;
 import javax.swing.JSpinner.DefaultEditor;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
+import javax.swing.border.Border;
 import javax.swing.plaf.ComponentUI;
 import javax.swing.plaf.basic.BasicSpinnerUI;
 
 import freeseawind.lf.controller.LuckArrowButton;
 
 /**
- * SpinnerUI实现类， 取消文本框边框，设置文本区域为不完全透明。
+ * <p>
+ * SpinnerUI实现类， 取消文本框边框，设置文本区域为不完全透明, 使用LittleLuck按钮替换默认按钮。
+ * </p>
+ *
+ * <p>
+ * SpinnerUI implementation class, cancel the text box border, set the text area
+ * is not completely transparent, use the LittleLuck button to replace the default button.
+ * </p>
  *
  * @author freeseawind@github
  * @version 1.0
@@ -21,6 +29,8 @@ import freeseawind.lf.controller.LuckArrowButton;
  */
 public class LuckSpinnerUI extends BasicSpinnerUI
 {
+    protected Border border;
+
     public static ComponentUI createUI(JComponent c)
     {
         return new LuckSpinnerUI();
@@ -30,12 +40,13 @@ public class LuckSpinnerUI extends BasicSpinnerUI
     {
         super.installUI(c);
     }
-
+    
     protected JComponent createEditor()
     {
         JComponent editor = super.createEditor();
 
         // 设置文本框属性
+        // set text frame info.
         if(editor instanceof DefaultEditor)
         {
             ((DefaultEditor)editor).getTextField().setBorder(null);
@@ -48,6 +59,11 @@ public class LuckSpinnerUI extends BasicSpinnerUI
         return editor;
     }
 
+    /**
+     * <p>使用{@link LuckArrowButton}替换默认按钮。</p>
+     *
+     * <p>use {@link LuckArrowButton} to replace the default button.</p>
+     */
     protected Component createNextButton()
     {
         Component c = createArrowButton(SwingConstants.NORTH);
@@ -59,6 +75,11 @@ public class LuckSpinnerUI extends BasicSpinnerUI
         return c;
     }
 
+    /**
+     * <p>使用{@link LuckArrowButton}替换默认按钮。</p>
+     *
+     * <p>use {@link LuckArrowButton} to replace the default button.</p>
+     */
     protected Component createPreviousButton()
     {
         Component c = createArrowButton(SwingConstants.SOUTH);
@@ -71,15 +92,23 @@ public class LuckSpinnerUI extends BasicSpinnerUI
     }
 
     /**
-     * 根据传入的方向创建箭头按钮并设置边框
-     * @param direction
+     * <p>
+     * 根据传入的方向创建箭头按钮并设置边框。
+     * </p>
+     *
+     * <p>
+     * Create an arrow button and set the border according to the direction of the incoming.
+     * </p>
+     *
+     * @param direction <code>SwingConstants.SOUTH</code>,
+     *            <code>SwingConstants.NORTH</code>
      * @return
      */
     private Component createArrowButton(int direction)
     {
         JButton b = new LuckArrowButton(direction);
 
-        b.setBorder(UIManager.getBorder("Spinner.arrowButtonBorder"));
+        b.setBorder(UIManager.getBorder(LuckSpinnerUIBundle.ARROWBUTTONBORDER));
 
         b.setInheritsPopupMenu(true);
 

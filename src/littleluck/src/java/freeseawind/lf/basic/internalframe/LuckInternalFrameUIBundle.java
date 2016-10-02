@@ -4,17 +4,21 @@ import java.awt.Color;
 import java.awt.Insets;
 import java.awt.image.BufferedImage;
 
+import javax.swing.UIDefaults;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
-import javax.swing.plaf.BorderUIResource;
-import javax.swing.plaf.ColorUIResource;
 
 import freeseawind.lf.border.LuckNinePatchBorder;
 import freeseawind.lf.cfg.LuckResourceBundle;
 import freeseawind.lf.utils.LuckRes;
 
 /**
- * LuckInternalFrameUI资源绑定类
+ * <pre>
+ * LuckInternalFrameUI资源绑定类。
+ *
+ * LuckInternalFrameUI resource bundle class.
+ * </pre>
+ *
  * @author freeseawind@github
  * @version 1.0
  *
@@ -22,117 +26,191 @@ import freeseawind.lf.utils.LuckRes;
 public class LuckInternalFrameUIBundle extends LuckResourceBundle
 {
     /**
-     * InternalFrame标题面板活动状态下背景颜色属性key
+     * <p>InternalFrame标题面板活动状态下背景颜色属性key</p>
+     *
+     * <p>InternalFrame title background color properties when active.</p>
      */
     public static final String ACTIVETITLEBACKGROUND = "InternalFrame.activeTitleBackground";
 
     /**
-     * InternalFrame标题面板非活动状态下背景颜色属性key
+     * <p>InternalFrame标题面板非活动状态下背景颜色属性key</p>
+     *
+     * <p>InternalFrame title background color properties when inactive.</p>
      */
     public static final String INACTIVETITLEBACKGROUND = "InternalFrame.inactiveTitleBackground";
 
     /**
-     * InternalFrame桌面背景颜色属性key
+     * <p>InternalFrame桌面背景颜色属性key</p>
+     *
+     * <p>Desktop background color properties.</p>
      */
     public static final String DESKTOP_BACKGROUND = "Desktop.background";
 
     /**
-     * InternalFrame边框属性key
+     * <p>InternalFrame边框属性key</p>
+     *
+     * <p>InternalFrame border properties.</p>
      */
     public static final String BORDER = "InternalFrame.border";
 
     /**
+     * <p>PaletteBorder属性key</p>
      *
+     * <p>PaletteBorder properties.</p>
      */
     public static final String PALETTEBORDER = "InternalFrame.paletteBorder";
 
     /**
-     * InternalFrame弹出框边框属性key
+     * <p>OptionDialog边框属性key</p>
+     *
+     * <p>OptionDialog border properties.</p>
      */
     public static final String OPTIONDIALOGBORDER = "InternalFrame.optionDialogBorder";
 
     /**
-     * [自定义属性] 关闭按钮(无状态)图标属性key
+     * <p><strong>[LittleLuck属性]</strong> 关闭按钮(无状态)图标属性key</p>
+     *
+     * <p><strong>[LittleLuck Attributes]</strong> Close button icon properties.</p>
      */
     public static final String CLOSEICON_NORMAL = "InternalFrame.closeIcon";
 
     /**
-     * [自定义属性] 关闭按钮(鼠标经过)图标属性key
+     * <p><strong>[LittleLuck属性]</strong> 关闭按钮(鼠标经过)图标属性key</p>
+     *
+     * <p><strong>[LittleLuck Attributes]</strong> Close button icon properties when mouse over.</p>
      */
     public static final String CLOSEICON_ROLLVER = "InternalFrame.closeIcon.rollver";
 
     /**
-     * [自定义属性] 关闭按钮(鼠标点击)图标属性key
+     * <p><strong>[LittleLuck属性]</strong> 关闭按钮(鼠标经过)图标属性key</p>
+     *
+     * <p><strong>[LittleLuck Attributes]</strong> Close button icon properties when mouse click.</p>
      */
     public static final String CLOSEICON_PRESSED = "InternalFrame.closeIcon.pressed";
 
     /**
-     * [自定义属性] 最小化按钮(无状态)图标属性key
+     * <p><strong>[LittleLuck属性]</strong> 最小化按钮(无状态)图标属性key</p>
+     *
+     * <p><strong>[LittleLuck Attributes]</strong>Minimize button icon properties.</p>
      */
     public static final String ICONIFYICON_NORMAL = "InternalFrame.iconifyIcon";
 
     /**
-     * [自定义属性] 最小化按钮(鼠标经过)图标属性key
+     * <p><strong>[LittleLuck属性]</strong> 最小化按钮(鼠标经过)图标属性key</p>
+     *
+     * <p><strong>[LittleLuck Attributes]</strong>Minimize button icon properties when mouse over.</p>
      */
     public static final String ICONIFYICON_ROLLVER = "InternalFrame.iconifyIcon.rollver";
 
     /**
-     * [自定义属性] 最小化按钮(鼠标点击)图标属性key
+     * <p><strong>[LittleLuck属性]</strong> 最小化按钮(鼠标点击)图标属性key</p>
+     *
+     * <p><strong>[LittleLuck Attributes]</strong>Minimize button icon properties when mouse click.</p>
      */
     public static final String ICONIFYICON_PRESSED = "InternalFrame.iconifyIcon.pressed";
 
     /**
-     * [自定义属性] 最大或最小化按钮(无状态)图标属性key
+     * <p><strong>[LittleLuck属性]</strong> 最大或最小化按钮(无状态)图标属性key </p>
+     *
+     * <p><strong>[LittleLuck Attributes]</strong>MaxMinimize button icon properties.</p>
      */
-    public static final String MINICON_NORMAL = "InternalFrame.minimizeIcon";
+    public static final String MAXMINIMIZEICON_NORMAL = "InternalFrame.maxMinimizeIcon";
 
     /**
-     * [自定义属性] 最大或最小化按钮(鼠标经过)图标属性key
+     * <p><strong>[LittleLuck属性]</strong> 最大或最小化按钮(鼠标经过)图标属性key</p>
+     *
+     * <p><strong>[LittleLuck Attributes]</strong>MaxMinimize button icon properties when mouse over.</p>
      */
-    public static final String MINICON_ROLLVER = "InternalFrame.minimizeIcon.rollver";
+    public static final String MAXMINIMIZEICON_ROLLVER = "InternalFrame.maxMinimizeIcon.rollver";
 
     /**
-     * [自定义属性] 最大或最小化按钮(鼠标点击)图标属性key
+     * <p><strong>[LittleLuck属性]</strong> 最大或最小化按钮(鼠标点击)图标属性key</p>
+     *
+     * <p><strong>[LittleLuck Attributes]</strong>MaxMinimize button icon properties when mouse click.</p>
      */
-    public static final String MINICON_PRESSED = "InternalFrame.minimizeIcon.pressed";
+    public static final String MAXMINIMIZEICON_PRESSED = "InternalFrame.maxMinimizeIcon.pressed";
 
     /**
-     * [自定义属性] 最大或还原按钮(无状态)图标属性key
+     * <p><strong>[LittleLuck属性]</strong> 最大或还原按钮(无状态)图标属性key</p>
+     *
+     * <p><strong>[LittleLuck Attributes]</strong>Maximize button icon properties.</p>
      */
     public static final String MAXICON_NORMAL = "InternalFrame.maximizeIcon";
 
     /**
-     * [自定义属性] 最大或还原按钮(鼠标经过)图标属性key
+     * <p><strong>[LittleLuck属性]</strong> 最大或还原按钮(鼠标经过)图标属性key</p>
+     *
+     * <p><strong>[LittleLuck Attributes]</strong>Maximize button icon properties when mouse over.</p>
      */
     public static final String MAXICON_ROLLVER = "InternalFrame.maximizeIcon.rollver";
 
     /**
-     * [自定义属性] 最大或还原按钮(鼠标点击)图标属性key
+     * <p><strong>[LittleLuck属性]</strong> 最大或还原按钮(鼠标点击)图标属性key</p>
+     *
+     * <p><strong>[LittleLuck Attributes]</strong>Maximize button icon properties when mouse click.</p>
      */
     public static final String MAXICON_PRESSED = "InternalFrame.maximizeIcon.pressed";
-    
+
     /**
-     * [自定义属性] InternalFrame应用图标属性key
+     * <p><strong>[LittleLuck属性]</strong>InternalFrame应用图标属性key</p>
+     *
+     * <p><strong>[LittleLuck Attributes]</strong>InternalFrame icon properties.</p>
      */
     public static final String INTERNALFRAME_ICON = "InternalFrame.icon";
-    
+
     /**
-     *  [自定义属性]标题面板背景图片属性key
+     * <p><strong>[LittleLuck属性]</strong>标题面板背景图片属性key</p>
+     *
+     * <p><strong>[LittleLuck Attributes]</strong> title panel background image properties.</p>
      */
     public static final String TITLEPANEL_BG_IMG = "InternalFrame.titlePanel.bgImg";
 
     /**
-     * [自定义属性] InternalFrame边标题面板高度属性key
+     * <p><strong>[LittleLuck属性]</strong> InternalFrame边标题面板高度属性key</p>
+     *
+     * <p><strong>[LittleLuck Attributes]</strong> title panel height properties.</p>
      */
     public static final String TITLEPANE_HEIGHT = "InternalFrame.titlePanel.height";
 
     /**
-     * [重要]标题面板布局属性key
+     * <p><strong>[重要]</strong>标题面板布局属性key</p>
+     *
+     * <p>Layout title pane at origin properties.</p>
      */
     public static final String LAYOUTTITLEPANEATORIGIN = "InternalFrame.layoutTitlePaneAtOrigin";
 
+    public void uninitialize()
+    {
+        UIManager.put(INTERNALFRAME_ICON, null);
+
+        // ----------------------分割线--------------------------------- //
+        UIManager.put(CLOSEICON_NORMAL, null);
+        UIManager.put(CLOSEICON_ROLLVER, null);
+        UIManager.put(CLOSEICON_PRESSED, null);
+
+        // ----------------------分割线--------------------------------- //
+        UIManager.put(ICONIFYICON_NORMAL, null);
+        UIManager.put(ICONIFYICON_ROLLVER, null);
+        UIManager.put(ICONIFYICON_PRESSED, null);
+
+        // ----------------------分割线--------------------------------- //
+        UIManager.put(MAXMINIMIZEICON_NORMAL, null);
+        UIManager.put(MAXMINIMIZEICON_ROLLVER, null);
+        UIManager.put(MAXMINIMIZEICON_PRESSED, null);
+
+        // ----------------------分割线--------------------------------- //
+        UIManager.put(MAXICON_NORMAL, null);
+        UIManager.put(MAXICON_ROLLVER, null);
+        UIManager.put(MAXICON_PRESSED, null);
+
+        // ----------------------分割线--------------------------------- //
+        UIManager.put(TITLEPANEL_BG_IMG, null);
+
+        UIManager.put(TITLEPANE_HEIGHT, null);
+    }
+
     @Override
-    protected void installBorder()
+    protected void installBorder(UIDefaults table)
     {
         // 初始化阴影边框
         Insets insets = new Insets(5, 5, 5, 5);
@@ -140,23 +218,23 @@ public class LuckInternalFrameUIBundle extends LuckResourceBundle
         Border shadowBorder = new LuckNinePatchBorder(insets, shadowImg);
 
         //
-        UIManager.put(BORDER, new BorderUIResource(shadowBorder));
-        UIManager.put(PALETTEBORDER, new BorderUIResource(shadowBorder));
-        UIManager.put(OPTIONDIALOGBORDER, new BorderUIResource(shadowBorder));
+        table.put(BORDER, getBorderRes(shadowBorder));
+        table.put(PALETTEBORDER, getBorderRes(shadowBorder));
+        table.put(OPTIONDIALOGBORDER, getBorderRes(shadowBorder));
     }
 
     @Override
-    protected void installColor()
+    protected void installColor(UIDefaults table)
     {
-        UIManager.put(ACTIVETITLEBACKGROUND, new ColorUIResource(Color.WHITE));
+        UIManager.put(ACTIVETITLEBACKGROUND, getColorRes(Color.WHITE));
 
-        UIManager.put(INACTIVETITLEBACKGROUND, new ColorUIResource(Color.WHITE));
+        UIManager.put(INACTIVETITLEBACKGROUND, getColorRes(Color.WHITE));
 
-        UIManager.put(DESKTOP_BACKGROUND, new ColorUIResource(Color.white));
+        UIManager.put(DESKTOP_BACKGROUND, getColorRes(Color.WHITE));
     }
 
     @Override
-    protected void loadImages()
+    protected void loadImages(UIDefaults table)
     {
         UIManager.put(INTERNALFRAME_ICON, getIconRes("frame/default_frame_icon.png"));
 
@@ -171,24 +249,24 @@ public class LuckInternalFrameUIBundle extends LuckResourceBundle
         UIManager.put(ICONIFYICON_PRESSED, getIconRes("frame/frame_min_pressed.png"));
 
         // ----------------------分割线--------------------------------- //
-        UIManager.put(MINICON_NORMAL, getIconRes("frame/frame_max_normal.png"));
-        UIManager.put(MINICON_ROLLVER, getIconRes("frame/frame_max_rover.png"));
-        UIManager.put(MINICON_PRESSED, getIconRes("frame/frame_max_pressed.png"));
+        UIManager.put(MAXMINIMIZEICON_NORMAL, getIconRes("frame/frame_max_normal.png"));
+        UIManager.put(MAXMINIMIZEICON_ROLLVER, getIconRes("frame/frame_max_rover.png"));
+        UIManager.put(MAXMINIMIZEICON_PRESSED, getIconRes("frame/frame_max_pressed.png"));
 
         // ----------------------分割线--------------------------------- //
         UIManager.put(MAXICON_NORMAL, getIconRes("frame/frame_maxwin_normal.png"));
         UIManager.put(MAXICON_ROLLVER, getIconRes("frame/frame_maxwin_rover.png"));
         UIManager.put(MAXICON_PRESSED, getIconRes("frame/frame_maxwin_pressed.png"));
-        
+
         // ----------------------分割线--------------------------------- //
         UIManager.put(TITLEPANEL_BG_IMG, LuckRes.getImage("frame/title_bg.9.png"));
     }
 
     @Override
-    protected void installOther()
+    protected void installOther(UIDefaults table)
     {
         UIManager.put(TITLEPANE_HEIGHT, 26);
 
-        UIManager.put(LAYOUTTITLEPANEATORIGIN, Boolean.FALSE);
+        table.put(LAYOUTTITLEPANEATORIGIN, Boolean.FALSE);
     }
 }

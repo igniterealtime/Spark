@@ -1,9 +1,10 @@
 package freeseawind.lf.basic.button;
 
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 import javax.swing.AbstractButton;
 import javax.swing.ButtonModel;
@@ -11,57 +12,105 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.LookAndFeel;
 import javax.swing.UIManager;
+import javax.swing.plaf.ColorUIResource;
 import javax.swing.plaf.ComponentUI;
 import javax.swing.plaf.basic.BasicButtonUI;
 
 
 /**
- * <p>一种纯色系扁平化按钮UI实现类, 默认带弹簧效果。</p>
- * 以下两种情况将不会绘制颜色按钮：
- * <p>1.JButton.setContentAreaFilled(false);</p>
- * <p>2.JButton.setIcon(Icon icon);</p>
- * <p>如需要在有图标的时候仍绘制背景，调用<code>button.putClientProperty(IS_PAINTBG, "")</code>即可。 </p>
- * 扩展描述：
- * <ul>
+ * <pre>
+ * 按钮ViewUI实现类，在{@link BasicButtonUI}基础上做了如下改变：
  * <li>设置按钮为不完全透明</li>
  * <li>按钮扁平化</li>
  * <li>按钮颜色可配置</li>
- * </ul>
- * <p>以下代码片段演示了如何给按钮自定义颜色：</p>
+ * <li>点击按钮有弹簧效果</li>
  *
- * <pre>
+ * <strong>以下两种情况将不会绘制按钮背景颜色</strong>：
+ *
+ * 1.button.setContentAreaFilled(false);
+ *
+ * 2.button.setIcon(...);
+ *
+ * <strong>如需要在有图标的时候仍绘制背景，使用如下代码</strong>：
+ *
+ * <code>button.putClientProperty(IS_PAINTBG, "")</code>
+ *
+ * 以下代码片段演示了如何给按钮自定义颜色：
+ * ---------------------------------------------------------------------------------------
+ * Button View UI implementation class, based on BasicButtonUI made the following changes:
+ * <li>The setting button is not completely transparent</li>
+ * <li>Button flattened</li>
+ * <li>Button colors can be configured</li>
+ * <li>Click the button Spring Effect</li>
+ *
+ * <strong>The button background color will not be drawn in the following two cases</strong>：
+ *
+ * 1.button.setContentAreaFilled(false);
+ *
+ * 2.button.setIcon(...);
+ *
+ * If you need to draw the background when there is an icon, use the following code：
+ *
+ * <code>button.putClientProperty(IS_PAINTBG, "")</code>
+ *
+ * <strong>The following code snippet demonstrates how to customize a color for a button</strong>：
  * <code>
  * {@link JButton} btn = new {@link JButton}("test");
+ *
  * {@link LuckButtonUI} ui = ({@link LuckButtonUI})btn.getUI();
+ *
  * ui.setBtnColorInfo({@link LuckButtonColorInfo} colorInfo);
+ *
  * btn.updateUI();
  * </code>
  * </pre>
- * <p>
- * 另请参见 {@link LuckButtonUIBundle}， {@link LuckButtonColorInfo}
- *
- * </p>
- *
+ * @see LuckButtonUIBundle
+ * @see LuckButtonColorInfo
  * @author freeseawind@github
  * @version 1.0
  *
  */
 public class LuckButtonUI extends BasicButtonUI
 {
-    private Color oldFontColor;
-
     private LuckButtonColorInfo btnColorInfo;
+    private PropertyChangeListener listener;
 
     public static ComponentUI createUI(JComponent c)
     {
         return new LuckButtonUI();
     }
 
+    public void installDefaults(AbstractButton b)
+    {
+        super.installDefaults(b);
+
+        LookAndFeel.installProperty(b, "rolloverEnabled", Boolean.TRUE);
+
+        LookAndFeel.installProperty(b, "opaque", Boolean.FALSE);
+
+        btnColorInfo = (LuckButtonColorInfo) UIManager.get(LuckButtonUIBundle.COLOR_INFO);
+
+        // 使用配置颜色替换默认字体颜色
+        // Replace the default font color with the configured color
+        if(b.getForeground() instanceof ColorUIResource)
+        {
+            b.setForeground(btnColorInfo.getFontColor());
+        }
+        
+        listener = new ButtonPropertyChangeListener();
+        
+        b.addPropertyChangeListener(listener);
+    }
+
     public void uninstallUI(JComponent c)
     {
         super.uninstallUI(c);
+        
+        c.removePropertyChangeListener(listener);
 
         btnColorInfo = null;
+        
+        listener = null;
     }
 
     public void paint(Graphics g, JComponent c)
@@ -70,16 +119,10 @@ public class LuckButtonUI extends BasicButtonUI
 
         ButtonModel model = b.getModel();
 
-        oldFontColor = b.getForeground();
+        paintBg(g, (AbstractButton) c);
 
-        boolean isPaintBg = paintBg(g, (AbstractButton) c);
-
-        if(isPaintBg)
-        {
-            b.setForeground(btnColorInfo.getFontColor());
-        }
-
-        // 弹簧效果
+        // 设置组件偏移，以达到视觉上的按下和弹起效果
+        // Set the component offsets to achieve visual depress and bounce
         if(model.isPressed() && model.isArmed() && b.getIcon() == null)
         {
             g.translate(2, 1);
@@ -91,38 +134,25 @@ public class LuckButtonUI extends BasicButtonUI
         {
             g.translate(-2, -1);
         }
-
-        b.setForeground(oldFontColor);
-    }
-
-    protected void installDefaults(AbstractButton b)
-    {
-        super.installDefaults(b);
-
-        LookAndFeel.installProperty(b, "rolloverEnabled", Boolean.TRUE);
-
-        // 设置按钮为不完全透明
-        LookAndFeel.installProperty(b, "opaque", Boolean.FALSE);
-
-        btnColorInfo = (LuckButtonColorInfo) UIManager.get(
-                LuckButtonUIBundle.COLOR_INFO);
     }
 
     /**
-     * 绘制按钮背景
+     * <pre>
+     * 绘制圆角背景, 设置组件偏移实现按钮按下和弹起效果。
+     * -------------------------------------------------------------------------------------------------
+     * Draw a rounded background.
+     * set the component offset to achieve the button press and pop-up effect.
+     * </pre>
      *
-     * @param g 绘图画笔对象
-     * @param b 当前按钮对象
-     * @return 绘制颜色背景返回true，否则false
+     * @param g Graphics to paint to
+     * @param b AbstractButton painting on
+     * @return paint background return true, otherwise return false.
      */
-    protected boolean paintBg(Graphics g, AbstractButton b)
+    protected void paintBg(Graphics g, AbstractButton b)
     {
-        Object isPaintBg = b.getClientProperty(LuckButtonUIBundle.IS_PAINTBG);
-        
-        if (!b.isContentAreaFilled()
-                || (b.getIcon() != null && isPaintBg == null))
+        if(!checkIsPaintBg(b))
         {
-            return false;
+            return;
         }
 
         int w = b.getWidth();
@@ -136,11 +166,13 @@ public class LuckButtonUI extends BasicButtonUI
         if(b.getModel().isPressed() && b.getModel().isArmed())
         {
             // 点击按钮
+            // pressed button
             g2d.setColor(btnColorInfo.getPressedColor());
         }
         else if(b.getModel().isRollover() && b.isRolloverEnabled())
         {
             // 鼠标经过
+            // mouse enter button
             g2d.setColor(btnColorInfo.getRollverColor());
         }
         else
@@ -151,17 +183,63 @@ public class LuckButtonUI extends BasicButtonUI
         g2d.fillRoundRect(0, 0, w, h, 8, 8);
 
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+    }
+
+    /**
+     * check if use the default button style.
+     *
+     * @param b
+     * @return default style return true, otherwise return false.
+     */
+    private boolean checkIsPaintBg(AbstractButton b)
+    {
+        if (!b.isContentAreaFilled())
+        {
+            return false;
+        }
+        
+        Object isPaintBg = b.getClientProperty(LuckButtonUIBundle.IS_PAINTBG);
+
+        if (b.getIcon() != null && isPaintBg == null)
+        {
+            return false;
+        }
 
         return true;
     }
 
     /**
-     * 设置按钮颜色信息
+     * set current Button color information
      *
-     * @param btnColorInfo 按钮颜色信息
+     * @param btnColorInfo Button color information
      */
     public void setBtnColorInfo(LuckButtonColorInfo btnColorInfo)
     {
         this.btnColorInfo = btnColorInfo;
+    }
+    
+    public class ButtonPropertyChangeListener implements PropertyChangeListener
+    {
+        private static final String CONTENTAREAFILLED = "contentAreaFilled";
+        
+        @Override
+        public void propertyChange(PropertyChangeEvent evt)
+        {
+            if (evt.getPropertyName().equals(CONTENTAREAFILLED))
+            {
+                JButton btn = (JButton) evt.getSource();
+
+                boolean isDefaultColor = (btn.getForeground() instanceof ColorUIResource);
+
+                if (!checkIsPaintBg(btn) && isDefaultColor)
+                {
+                    btn.setForeground(UIManager.getColor(LuckButtonUIBundle.FOREGROUND));
+                }
+                else
+                {
+                    btn.setForeground(btnColorInfo.getFontColor());
+                }
+            }
+        }
     }
 }

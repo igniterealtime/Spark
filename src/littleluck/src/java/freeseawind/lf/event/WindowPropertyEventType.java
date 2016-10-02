@@ -1,7 +1,7 @@
 package freeseawind.lf.event;
 
 /**
- * Window property event type constant.
+ * 窗体属性事件常量
  * 
  * @author freeseawind@github
  * @version 1.0

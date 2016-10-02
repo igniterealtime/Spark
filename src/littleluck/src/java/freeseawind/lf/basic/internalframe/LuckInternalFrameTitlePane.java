@@ -21,14 +21,20 @@ import freeseawind.lf.layout.AbstractLayout;
 import freeseawind.ninepatch.swing.SwingNinePatch;
 
 /**
- * 内部窗体标题UI实现类, 对原有UI进行扩展
- * <ul>
- * <li>去掉了系统菜单</li>
- * <li>设置标题面板透明</li>
- * <li>重写布局,设置默认高度</li>
- * <li>增加鼠标焦点事件</li>
- * </ul>
- *
+ * <pre>
+ * 内部窗体标题UI实现类，在{@link BasicInternalFrameTitlePane}基础上做了如下改变：
+ * <li><strong>去掉标题栏系统菜单。</strong></li>
+ * <li><strong>使用图片作为标题面板背景。</strong></li>
+ * <li><strong>重写布局设置标题栏默认高度。</strong></li>
+ * <li><strong>扁平化标题栏按钮。</strong></li>
+ * -----------------------------------------------------------------------------
+ * InternalFrame title pane implement class, based on {@link BasicInternalFrameTitlePane}
+ * made the following changes:
+ * <li><strong>Remove the title bar system menu.</strong></li>
+ * <li><strong>Use the image as the title panel background.</strong></li>
+ * <li><strong>Rewrite Layout Sets the title bar's default height.</strong></li>
+ * <li><strong>Flatten the title bar button.</strong></li>
+ * </pre>
  * @author freeseawind@github
  * @version 1.0
  *
@@ -43,7 +49,7 @@ public class LuckInternalFrameTitlePane extends BasicInternalFrameTitlePane
     public LuckInternalFrameTitlePane(JInternalFrame f)
     {
         super(f);
-        
+
         Object obj = UIManager.get(LuckInternalFrameUIBundle.TITLEPANEL_BG_IMG);
 
         if(obj != null)
@@ -57,48 +63,75 @@ public class LuckInternalFrameTitlePane extends BasicInternalFrameTitlePane
     {
         painter.paintOpaque(g, this, this, null);
     }
-    
-    public void paintComponent(Graphics g)
+
+    /**
+     * call super paint method.
+     */
+    public void drawComponent(Graphics g, JComponent c)
     {
-        if(np != null)
-        {
-            np.drawNinePatch((Graphics2D) g, 0, 0, getWidth(), getHeight());
-        }
-        
-        super.paintComponent(g);
+        super.paint(g);
     }
-    
+
+    /**
+     * release resource.
+     */
+    protected void uninstallDefaults()
+    {
+        super.uninstallDefaults();
+
+        maxIcon = null;
+        minIcon = null;
+        iconIcon = null;
+        closeIcon = null;
+        np = null;
+    }
+
+    /**
+     * <p>
+     * 如果设置了背景图片，则使用图片绘制标题栏背景。
+     * </p>
+     *
+     * <p>
+     * If you set the background image, then use the picture to draw the title
+     * bar background.
+     * </p>
+     */
     protected void paintTitleBackground(Graphics g)
     {
         if(np == null)
         {
             super.paintTitleBackground(g);
         }
+        else
+        {
+            np.drawNinePatch((Graphics2D) g, 0, 0, getWidth(), getHeight());
+        }
     }
 
-    public void drawComponent(Graphics g, JComponent c)
-    {
-        super.paint(g);
-    }
-
-    public void uninstallListeners()
-    {
-        super.uninstallListeners();
-    }
-
+    /**
+     * <pre>
+     * use custom title pane layout.
+     *
+     * disable JMenubar.
+     * </pre>
+     */
     protected void installTitlePane()
     {
         super.installTitlePane();
 
         // 使用自定义布局
+        // set custom layout manager.
         setLayout(new LuckTitlePaneLayout());
 
         // 禁用系统菜单
+        // disable MenuBar
         menuBar.setEnabled(false);
     }
 
     /**
-     * 优化按钮焦点处理
+     * <p>根据窗体状态显示不同的按钮图标<p>
+     *
+     * <p>Display different button icons according to the status of the form.<p>
      */
     protected void setButtonIcons()
     {
@@ -114,9 +147,9 @@ public class LuckInternalFrameTitlePane extends BasicInternalFrameTitlePane
         else
         {
             setBtnAtrr(maxButton,
-                    LuckInternalFrameUIBundle.MINICON_NORMAL,
-                    LuckInternalFrameUIBundle.MINICON_ROLLVER,
-                    LuckInternalFrameUIBundle.MINICON_PRESSED);
+                    LuckInternalFrameUIBundle.MAXMINIMIZEICON_NORMAL,
+                    LuckInternalFrameUIBundle.MAXMINIMIZEICON_ROLLVER,
+                    LuckInternalFrameUIBundle.MAXMINIMIZEICON_PRESSED);
         }
 
         if (frame.isIcon())
@@ -125,6 +158,11 @@ public class LuckInternalFrameTitlePane extends BasicInternalFrameTitlePane
                     LuckInternalFrameUIBundle.MAXICON_NORMAL,
                     LuckInternalFrameUIBundle.MAXICON_ROLLVER,
                     LuckInternalFrameUIBundle.MAXICON_PRESSED);
+
+            setBtnAtrr(maxButton,
+                    LuckInternalFrameUIBundle.MAXMINIMIZEICON_NORMAL,
+                    LuckInternalFrameUIBundle.MAXMINIMIZEICON_ROLLVER,
+                    LuckInternalFrameUIBundle.MAXMINIMIZEICON_PRESSED);
         }
         else
         {
@@ -134,7 +172,6 @@ public class LuckInternalFrameTitlePane extends BasicInternalFrameTitlePane
                     LuckInternalFrameUIBundle.ICONIFYICON_PRESSED);
         }
 
-
         //
         setBtnAtrr(closeButton,
                 LuckInternalFrameUIBundle.CLOSEICON_NORMAL,
@@ -142,30 +179,19 @@ public class LuckInternalFrameTitlePane extends BasicInternalFrameTitlePane
                 LuckInternalFrameUIBundle.CLOSEICON_PRESSED);
     }
 
-    protected void uninstallDefaults()
-    {
-        super.uninstallDefaults();
-
-        maxIcon = null;
-        minIcon = null;
-        iconIcon = null;
-        closeIcon = null;
-    }
-
     /**
-     * 设置按钮属性
-     * @param btn 按钮对象
-     * @param normalIcon  无状态下按钮图片属性key
-     * @param rollverIcon 鼠标经过状态下按钮图片属性key
-     * @param pressedIcon 点击状态下按钮图片属性key
+     * set Button attribute.
+     *
+     * @param btn Button object.
+     * @param normalIcon  button icon properties.
+     * @param rollverIcon button icon properties when mouse over.
+     * @param pressedIcon button icon properties when mouse click.
      */
     private void setBtnAtrr(JButton btn,
                             String normalIcon,
                             String rollverIcon,
                             String pressedIcon)
     {
-        btn.setOpaque(false);
-
         btn.setBorder(null);
 
         btn.setFocusPainted(false);
@@ -257,7 +283,6 @@ public class LuckInternalFrameTitlePane extends BasicInternalFrameTitlePane
             int w = getWidth();
 
             Rectangle bound = c.getBounds();
-
 
             int startX = (leftToRight) ? 4 : w - 16 - 5;
 

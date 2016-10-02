@@ -11,7 +11,7 @@ import javax.swing.border.AbstractBorder;
 import freeseawind.ninepatch.swing.SwingNinePatch;
 
 /**
- * A class implements AbstractBorder.Use ninepatch image to
+ * A class implements AbstractBorder.Use NinePatch image to
  * draw a border.
  *
  * @author freeseawind@github

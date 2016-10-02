@@ -79,13 +79,10 @@
 	<!-- Distribution target                                                 -->
 	<!-- =================================================================== -->
 	<target name="dist" depends="jar" description="creates distribution">
-	</target>
-
-	<target name="copy_to_spark" depends="jar" description="creates distribution">
 		<copy todir="../../../build/lib/dist">
 			<fileset dir="${dest.dist.dir}" includes="**/*.jar" />
 		</copy>
-
 	</target>
+
 
 </project>

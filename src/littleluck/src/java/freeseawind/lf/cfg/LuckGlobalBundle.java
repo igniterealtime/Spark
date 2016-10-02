@@ -2,10 +2,13 @@ package freeseawind.lf.cfg;
 
 import java.awt.Color;
 
+import javax.swing.UIDefaults;
 import javax.swing.UIManager;
 
 /**
- * Global resource bundle.
+ * <p>全局资源绑定类</p>
+ * 
+ * <p>Global resource bundle.</p>
  * 
  * @author freeseawind@github
  * @version 1.0
@@ -14,49 +17,74 @@ import javax.swing.UIManager;
 public class LuckGlobalBundle extends LuckResourceBundle
 {
     /**
-     * [custom field] application icon key.
+     * <p><strong>[LittleLuck属性]</strong>窗体默认图标。</p>
+     * 
+     * <p><strong>[LittLeLuck Attributes]</strong> Default window icon properties.</p>
      */
     public static final String APPLICATION_ICON = "Application.icon";
 
     /**
-     * [custom field] application title key.
+     * <p><strong>[LittleLuck属性]</strong>窗体默认标题。</p>
+     * 
+     * <p><strong>[LittLeLuck Attributes]</strong> Default window title properties.</p>
      */
     public static final String APPLICATION_TITLE = "Application.title";
 
     /**
-     * [custom field] translucent color key.
+     * <p><strong>[LittleLuck属性]</strong>窗体透明颜色。</p>
+     * 
+     * <p><strong>[LittLeLuck Attributes]</strong> Translucent color properties.</p>
      */
     public static final String TRANSLUCENT_COLOR = "translucent.color";
 
     /**
-     * panel background key.
+     * <p><strong>[LittleLuck属性]</strong>面板背景颜色属性key。</p>
+     * 
+     * <p>
+     * <strong>[LittLeLuck Attributes]</strong> Panel background color properties.
+     * </p>
      */
     public static final String PANEL_BACKGROUND = "Panel.background";
 
     /**
-     * ColorChooserUI background key.
+     * <p>
+     * <strong>[LittleLuck属性]</strong>颜色选择器背景颜色属性key。
+     * </p>
+     * 
+     * <p>
+     * <strong>[LittLeLuck Attributes]</strong> ColorChooser background color properties.
+     * </p>
      */
     public static final String COLORCHOOSERUI_BACKGROUND = "ColorChooserUI.background";
-
-    @Override
-    protected void installColor()
+    
+    public void uninitialize()
     {
-        UIManager.put(TRANSLUCENT_COLOR, new Color(0, 0, 0, 0));
+        UIManager.put(TRANSLUCENT_COLOR, null);
+        
+        UIManager.put(APPLICATION_ICON, null);
+        
+        UIManager.put(APPLICATION_TITLE, null);
     }
 
     @Override
-    protected void loadImages()
+    protected void installColor(UIDefaults table)
     {
-        UIManager.put(APPLICATION_ICON, getIconRes("frame/default_frame_icon.png"));
+        table.put(TRANSLUCENT_COLOR, getColorRes(0, 0, 0, 0));
     }
 
     @Override
-    protected void installOther()
+    protected void loadImages(UIDefaults table)
     {
-        UIManager.put(APPLICATION_TITLE, "");
+        table.put(APPLICATION_ICON, getIconRes("frame/default_frame_icon.png"));
+    }
 
-        UIManager.put(PANEL_BACKGROUND, Color.WHITE);
+    @Override
+    protected void installOther(UIDefaults table)
+    {
+        table.put(APPLICATION_TITLE, "");
 
-        UIManager.put(COLORCHOOSERUI_BACKGROUND, Color.WHITE);
+        table.put(PANEL_BACKGROUND, getColorRes(Color.WHITE));
+
+        table.put(COLORCHOOSERUI_BACKGROUND, getColorRes(Color.WHITE));
     }
 }

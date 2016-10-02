@@ -6,7 +6,14 @@ import javax.swing.plaf.ComponentUI;
 import javax.swing.plaf.basic.BasicMenuBarUI;
 
 /**
- * MenuBarUI实现类, 设置组件为不完全透明, JMenuBar的外观展示通过 {@link LuckMenuUIBundle}来配置
+ * <p>
+ * MenuBarUI实现类, 设置组件为不完全透明。
+ * </p>
+ *
+ * <p>
+ * MenuBarUI implementation class,set the component is not completely
+ * transparent.
+ * </p>
  *
  * @author freeseawind@github
  * @version 1.0

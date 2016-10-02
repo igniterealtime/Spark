@@ -37,7 +37,7 @@ import freeseawind.lf.basic.tree.LuckTreeUI;
 import freeseawind.lf.constant.LuckUIClassKey;
 
 /**
- * littleluck LookAndFeel UI bundle.
+ * LittleLuck LookAndFeel {@code ComponentUI}s bundle class.
  * 
  * @author freeseawind@github
  * @version 1.0
