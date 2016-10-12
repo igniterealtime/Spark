@@ -640,6 +640,7 @@ Log.error("Unable to load plugin " + clazz + ".", ex);
                     long start = System.currentTimeMillis();
                     Log.debug("Trying to initialize " + plugin1);
                     try {
+                       
                         plugin1.initialize();
                     }
                     catch (Throwable e) {
@@ -661,7 +662,16 @@ Log.error("Unable to load plugin " + clazz + ".", ex);
     public void shutdown() {
         for (Plugin plugin1 : plugins) {
             try {
-                plugin1.shutdown();
+                 
+                try
+                {
+                 plugin1.shutdown();
+                }
+                catch(NoSuchMethodError e)
+                {
+                    Log.error("NoSuchMethodError on shutdown of plugin" + e );
+                    
+                }
             }
             catch (Exception e) {
                 Log.warning("Exception on shutdown of plugin.", e);
