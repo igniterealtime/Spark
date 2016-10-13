@@ -1159,7 +1159,7 @@ public class LocalPreferences {
 	}
 
 	public boolean isAcceptAllCertificates() {
-		return getBoolean("AcceptAllCertificates", true);
+		return getBoolean("AcceptAllCertificates", false);
 	}
 
 	public void setDisableHostnameVerification(boolean accept) {
