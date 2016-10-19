@@ -104,6 +104,8 @@ public class Default {
     public static final String HISTORY_DISABLED = "HISTORY_DISABLED";
     public static final String HIDE_HISTORY_SETTINGS = "HIDE_HISTORY_SETTINGS";
     public static final String HIDE_SAVE_PASSWORD_AND_AUTOLOGIN = "HIDE_SAVE_PASSWORD_AND_AUTOLOGIN";
+    public static final String MAINT_FILESPEC = "MAINT_FILESPEC";
+    public static final String HIDE_LOGIN_AS_INVISIBLE = "HIDE_LOGIN_AS_INVISIBLE";
 
     static ClassLoader cl = SparkRes.class.getClassLoader();
 

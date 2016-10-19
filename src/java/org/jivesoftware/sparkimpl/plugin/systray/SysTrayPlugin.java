@@ -132,8 +132,10 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatManagerListener
 		connectingIcon = SparkRes
 			.getImageIcon(SparkRes.TRAY_CONNECTING);
 	    }
-
-	    popupMenu.add( openMenu );
+	    
+	    // Check if we should disable the Open, Hide and Status options in system tray
+	    if (!Default.getBoolean("DISABLE_OPEN_HIDE_STATUS_IN_SYSTRAY")) popupMenu.add( openMenu );
+	    
 	    openMenu.addActionListener( new AbstractAction() {
 
 		private static final long serialVersionUID = 1L;
@@ -145,7 +147,10 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatManagerListener
 		}
 
 	    });
-	    popupMenu.add( minimizeMenu );
+	    
+  	    // Check if we should disable the Open, Hide and Status options in system tray	    
+	    if (!Default.getBoolean("DISABLE_OPEN_HIDE_STATUS_IN_SYSTRAY")) popupMenu.add( minimizeMenu );
+	    
 	    minimizeMenu.addActionListener( new AbstractAction() {
 		private static final long serialVersionUID = 1L;
 
@@ -154,9 +159,14 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatManagerListener
 		    SparkManager.getMainWindow().setVisible(false);
 		}
 	    });
-	    popupMenu.addSeparator();
-	    addStatusMessages();
-	    popupMenu.add(statusMenu);
+	    
+	    // Check if we should disable the Open, Hide and Status options in system tray	    
+	    if (!Default.getBoolean("DISABLE_OPEN_HIDE_STATUS_IN_SYSTRAY")) {	    
+	    	popupMenu.addSeparator();
+	    	addStatusMessages();
+	    	popupMenu.add(statusMenu);
+	    }
+	    
 	    statusMenu.addActionListener(new AbstractAction() {
 		private static final long serialVersionUID = 1L;
 

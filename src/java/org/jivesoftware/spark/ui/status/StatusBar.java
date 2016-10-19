@@ -579,7 +579,8 @@ public class StatusBar extends JPanel implements VCardListener {
 
             statusLabel.addMouseListener(new MouseAdapter() {
                 public void mouseReleased(MouseEvent e) {
-                    showPopup(e);
+                	// Add option to disable the presence status bar
+                	if(!Default.getBoolean("DISABLE_PRESENCE_STATUS_BAR")) showPopup(e);
                 }
 
                 public void mouseEntered(MouseEvent e) {
