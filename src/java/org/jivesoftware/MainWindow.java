@@ -474,9 +474,7 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         
         final boolean maintMode = (myMaintFile.exists() && !myMaintFile.isDirectory())? true:false;
         
-        if (!Default.getBoolean("DISABLE_PREFERENCES_MENU_ITEM") || maintMode) {
-            connectMenu.add(preferenceMenuItem);
-        }        
+        if (!Default.getBoolean("DISABLE_PREFERENCES_MENU_ITEM") || maintMode) connectMenu.add(preferenceMenuItem);
 
         alwaysOnTopItem = new JCheckBoxMenuItem();
         ResourceUtils.resButton(alwaysOnTopItem, Res.getString("menuitem.always.on.top"));

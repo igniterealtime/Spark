@@ -133,8 +133,7 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatManagerListener
 			.getImageIcon(SparkRes.TRAY_CONNECTING);
 	    }
 	    
-	    // Check if we should disable the Open, Hide and Status options in system tray
-	    if (!Default.getBoolean("DISABLE_OPEN_HIDE_STATUS_IN_SYSTRAY")) popupMenu.add( openMenu );
+	    popupMenu.add( openMenu );
 	    
 	    openMenu.addActionListener( new AbstractAction() {
 
@@ -148,8 +147,7 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatManagerListener
 
 	    });
 	    
-  	    // Check if we should disable the Open, Hide and Status options in system tray	    
-	    if (!Default.getBoolean("DISABLE_OPEN_HIDE_STATUS_IN_SYSTRAY")) popupMenu.add( minimizeMenu );
+	    popupMenu.add( minimizeMenu );
 	    
 	    minimizeMenu.addActionListener( new AbstractAction() {
 		private static final long serialVersionUID = 1L;
@@ -160,8 +158,8 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatManagerListener
 		}
 	    });
 	    
-	    // Check if we should disable the Open, Hide and Status options in system tray	    
-	    if (!Default.getBoolean("DISABLE_OPEN_HIDE_STATUS_IN_SYSTRAY")) {	    
+	    // Check if we should disable the "Status" option in the system tray icon	    
+	    if (!Default.getBoolean("DISABLE_STATUS_IN_SYSTRAY")) {	    
 	    	popupMenu.addSeparator();
 	    	addStatusMessages();
 	    	popupMenu.add(statusMenu);

@@ -568,7 +568,10 @@ public class StatusBar extends JPanel implements VCardListener {
             add(statusLabel, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 2, 0, 0), 0, 0));
 
             statusLabel.setFont(new Font(Font.DIALOG, Font.PLAIN, 11));
-            statusLabel.setIcon(SparkRes.getImageIcon(SparkRes.DOWN_ARROW_IMAGE));
+            
+        	// Add option to disable the presence status bar
+			if(!Default.getBoolean("DISABLE_PRESENCE_STATUS_BAR")) statusLabel.setIcon(SparkRes.getImageIcon(SparkRes.DOWN_ARROW_IMAGE));
+			            
             statusLabel.setHorizontalTextPosition(JLabel.LEFT);
 
             setOpaque(false);
@@ -576,28 +579,29 @@ public class StatusBar extends JPanel implements VCardListener {
             final Border border = BorderFactory.createEmptyBorder(2, 2, 2, 2);
             setBorder(border);
 
+        	// Add option to disable the presence status bar
+            if(!Default.getBoolean("DISABLE_PRESENCE_STATUS_BAR")) {
+            	statusLabel.addMouseListener(new MouseAdapter() {
+            		public void mouseReleased(MouseEvent e) {
+            			showPopup(e);
+            		}
+                
+            		public void mouseEntered(MouseEvent e) {
+            			setCursor(GraphicUtils.HAND_CURSOR);
+            			setBorder(BorderFactory.createBevelBorder(0));
+            		}
 
-            statusLabel.addMouseListener(new MouseAdapter() {
-                public void mouseReleased(MouseEvent e) {
-                	// Add option to disable the presence status bar
-                	if(!Default.getBoolean("DISABLE_PRESENCE_STATUS_BAR")) showPopup(e);
-                }
+            		public void mouseExited(MouseEvent e) {
+            			setCursor(GraphicUtils.DEFAULT_CURSOR);
+            			setBorder(border);
+            		}
 
-                public void mouseEntered(MouseEvent e) {
-                    setCursor(GraphicUtils.HAND_CURSOR);
-
-                    setBorder(BorderFactory.createBevelBorder(0));
-                }
-
-                public void mouseExited(MouseEvent e) {
-                    setCursor(GraphicUtils.DEFAULT_CURSOR);
-                    setBorder(border);
-                }
-
-                public void mousePressed(MouseEvent e) {
-                    setBorder(BorderFactory.createBevelBorder(1));
-                }
-            });
+            		public void mousePressed(MouseEvent e) {
+            			setBorder(BorderFactory.createBevelBorder(1));
+            		}
+                	
+            	});
+            }            
 
         }
 
