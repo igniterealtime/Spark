@@ -460,9 +460,13 @@ public class LoginDialog {
                     new GridBagConstraints(1, 6, 2, 1, 1.0, 0.0,
                             GridBagConstraints.EAST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 0, 5), 0, 0));
             }
-	    add(loginAsInvisibleBox,
+            
+            // Add option to hide "Login as invisible" selection on the login screen
+            if(!Default.getBoolean("HIDE_LOGIN_AS_INVISIBLE")) {            
+            	add(loginAsInvisibleBox,
                     new GridBagConstraints(1, 7, 2, 1, 1.0, 0.0,
                             GridBagConstraints.EAST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 0, 5), 0, 0));
+            }
 
             // Add button but disable the login button initially
             savePasswordBox.addActionListener(this);

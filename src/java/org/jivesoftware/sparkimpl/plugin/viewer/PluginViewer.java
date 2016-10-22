@@ -202,8 +202,9 @@ public class PluginViewer extends JPanel implements Plugin {
         viewAction.putValue(Action.NAME, Res.getString("menuitem.plugins"));
         viewAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.PLUGIN_IMAGE));
         viewPluginsMenu.setAction(viewAction);
-
-        sparkMenu.insert(viewPluginsMenu, 2);
+        
+        // See if we should disable the "Plugins" menu item
+        if (!Default.getBoolean("DISABLE_PLUGINS_MENU_ITEM")) sparkMenu.insert(viewPluginsMenu, 2);
     }
 
     private boolean uninstall(final PublicPlugin plugin) {
