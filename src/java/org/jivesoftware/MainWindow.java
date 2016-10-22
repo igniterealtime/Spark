@@ -461,8 +461,20 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         preferenceMenuItem = new JMenuItem(SparkRes.getImageIcon(SparkRes.PREFERENCES_IMAGE));
         preferenceMenuItem.setText(Res.getString("title.spark.preferences"));
         preferenceMenuItem.addActionListener(this);
-        connectMenu.add(preferenceMenuItem);
 
+        /******************************************************************************************************/
+        /* Show the "Preferences" menu item ONLY under the following conditions:                              */
+        /*                                                                                                    */
+        /*   1) We're currently in Maintenance Mode                                                           */
+        /*                          OR                                                                        */
+        /*   2) DISABLE_PREFERENCES_MENU_ITEM = false                                                         */
+        /******************************************************************************************************/
+        
+        File myMaintFile = new File(Default.getString(Default.MAINT_FILESPEC));
+        
+        final boolean maintMode = (myMaintFile.exists() && !myMaintFile.isDirectory())? true:false;
+        
+        if (!Default.getBoolean("DISABLE_PREFERENCES_MENU_ITEM") || maintMode) connectMenu.add(preferenceMenuItem);
 
         alwaysOnTopItem = new JCheckBoxMenuItem();
         ResourceUtils.resButton(alwaysOnTopItem, Res.getString("menuitem.always.on.top"));
