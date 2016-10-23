@@ -1668,7 +1668,8 @@ moveToOffline(moveToOfflineContactItem);
 
         fireContextMenuListenerPopup(popup, items);
 
-        popup.add(sendMessagesMenu);
+        // See if we should disable all "Broadcast" menu items
+        if (!Default.getBoolean("DISABLE_BROADCAST_MENU_ITEM")) popup.add(sendMessagesMenu);        
 
         sendMessagesMenu.addActionListener( e1 -> sendMessages(items) );
 

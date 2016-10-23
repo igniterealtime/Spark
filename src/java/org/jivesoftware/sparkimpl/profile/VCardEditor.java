@@ -352,18 +352,23 @@ public class VCardEditor {
 
         fillUI(vcard);
         
-	// Set avatar
-	byte[] bytes = vcard.getAvatar();
-	if (bytes != null && bytes.length > 0) {
-	    ImageIcon icon = new ImageIcon(bytes);
-	    avatarPanel.setAvatar(icon);
-	    avatarPanel.setAvatarBytes(bytes);
-	    if (avatarLabel != null) {
-		icon = GraphicUtils.scaleImageIcon(icon, 48, 48);
+        // Set avatar
+        byte[] bytes = vcard.getAvatar();
+        if (bytes != null && bytes.length > 0) {
+        	ImageIcon icon = new ImageIcon(bytes);
+	    
+        	// See if we should remove the Avatar tab in profile dialog	    
+        	if (!Default.getBoolean("DISABLE_AVATAR_TAB")) {	    
+        		avatarPanel.setAvatar(icon);
+        		avatarPanel.setAvatarBytes(bytes);
+        	}
+		
+        	if (avatarLabel != null) {
+        		icon = GraphicUtils.scaleImageIcon(icon, 48, 48);
 
-		avatarLabel.setIcon(icon);
-	    }
-	}
+        		avatarLabel.setIcon(icon);
+        	}
+        }
     }
 
     private void fillUI(VCard vcard){

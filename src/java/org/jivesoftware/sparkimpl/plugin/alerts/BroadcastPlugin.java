@@ -119,7 +119,7 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
         JMenuItem broadcastMenu = new JMenuItem(Res.getString("title.broadcast.message"), SparkRes.getImageIcon(SparkRes.MEGAPHONE_16x16));
         ResourceUtils.resButton(broadcastMenu, Res.getString("title.broadcast.message"));
         
-        // See if we should disable the "Broadcast" menu item
+        // See if we should disable all "Broadcast" menu items
         if (!Default.getBoolean("DISABLE_BROADCAST_MENU_ITEM")) actionsMenu.add(broadcastMenu);
         broadcastMenu.addActionListener( e -> broadcastToRoster() );
 
@@ -173,7 +173,10 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
 
                     broadcastMessageAction.putValue(Action.NAME, Res.getString("menuitem.broadcast.to.group"));
                     broadcastMessageAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.MEGAPHONE_16x16));
-                    popup.add(broadcastMessageAction);
+                    
+                    // See if we should disable all "Broadcast" menu items
+                    if (!Default.getBoolean("DISABLE_BROADCAST_MENU_ITEM")) popup.add(broadcastMessageAction);                  
+
                 }
             }
 
