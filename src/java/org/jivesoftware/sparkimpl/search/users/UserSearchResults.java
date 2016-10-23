@@ -148,11 +148,11 @@ public class UserSearchResults extends JPanel {
 
                 TableColumn column = null;
                 try {
-                    column = resultsTable.getColumn("Username");
+                    column = resultsTable.getColumn("Name");
                 }
                 catch (Exception ex) {
                     try {
-                        column = resultsTable.getColumn("nick");
+                        column = resultsTable.getColumn("Username");
                     }
                     catch (Exception e1) {
                         // Nothing to do
