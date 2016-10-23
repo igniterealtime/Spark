@@ -158,8 +158,8 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatManagerListener
 		}
 	    });
 	    
-	    // Check if we should disable the "Status" option in the system tray icon	    
-	    if (!Default.getBoolean("DISABLE_STATUS_IN_SYSTRAY")) {	    
+	    // See if we should disable ability to change presence status	    
+	    if (!Default.getBoolean("DISABLE_PRESENCE_STATUS_CHANGE")) {	    
 	    	popupMenu.addSeparator();
 	    	addStatusMessages();
 	    	popupMenu.add(statusMenu);
