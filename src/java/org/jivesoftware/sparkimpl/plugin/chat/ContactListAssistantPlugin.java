@@ -20,6 +20,7 @@
 package org.jivesoftware.sparkimpl.plugin.chat;
 
 import org.jivesoftware.resource.Res;
+import org.jivesoftware.resource.Default;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.roster.RosterEntry;
@@ -148,7 +149,9 @@ public class ContactListAssistantPlugin implements Plugin {
                         popup.addSeparator();
                         popup.add(moveToMenu);
                         popup.add(copyToMenu);
-                        popup.addSeparator();
+                        
+                        // Clean up the extra separator if "Broadcast" menu items are disabled
+                        if (!Default.getBoolean("DISABLE_BROADCAST_MENU_ITEM")) popup.addSeparator();                        
                     }
 
 
