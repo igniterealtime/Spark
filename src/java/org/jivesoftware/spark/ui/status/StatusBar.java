@@ -569,8 +569,8 @@ public class StatusBar extends JPanel implements VCardListener {
 
             statusLabel.setFont(new Font(Font.DIALOG, Font.PLAIN, 11));
             
-        	// Add option to disable the presence status bar
-			if(!Default.getBoolean("DISABLE_PRESENCE_STATUS_BAR")) statusLabel.setIcon(SparkRes.getImageIcon(SparkRes.DOWN_ARROW_IMAGE));
+            // See if we should disable ability to change presence status
+			if(!Default.getBoolean("DISABLE_PRESENCE_STATUS_CHANGE")) statusLabel.setIcon(SparkRes.getImageIcon(SparkRes.DOWN_ARROW_IMAGE));
 			            
             statusLabel.setHorizontalTextPosition(JLabel.LEFT);
 
@@ -579,8 +579,8 @@ public class StatusBar extends JPanel implements VCardListener {
             final Border border = BorderFactory.createEmptyBorder(2, 2, 2, 2);
             setBorder(border);
 
-        	// Add option to disable the presence status bar
-            if(!Default.getBoolean("DISABLE_PRESENCE_STATUS_BAR")) {
+        	// See if we should disable ability to change presence status
+            if(!Default.getBoolean("DISABLE_PRESENCE_STATUS_CHANGE")) {
             	statusLabel.addMouseListener(new MouseAdapter() {
             		public void mouseReleased(MouseEvent e) {
             			showPopup(e);
