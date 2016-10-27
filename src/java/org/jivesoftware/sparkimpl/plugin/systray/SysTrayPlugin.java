@@ -49,7 +49,6 @@ import org.jivesoftware.smackx.chatstates.ChatState;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.NativeHandler;
 import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.Workspace;
 import org.jivesoftware.spark.plugin.Plugin;
 import org.jivesoftware.spark.ui.status.CustomStatusItem;
 import org.jivesoftware.spark.ui.status.StatusBar;
@@ -59,7 +58,7 @@ import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jivesoftware.smack.chat.ChatManagerListener;
 import org.jivesoftware.smackx.chatstates.ChatStateListener;
-
+
 public class SysTrayPlugin implements Plugin, NativeHandler, ChatManagerListener, ChatStateListener {
 	private JPopupMenu popupMenu = new JPopupMenu();
 
@@ -75,7 +74,6 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatManagerListener
     private ImageIcon typingIcon;
     private TrayIcon trayIcon;
     private boolean newMessage = false;
-	private Presence presence;
     ChatMessageHandlerImpl chatMessageHandler = new ChatMessageHandlerImpl();
 
     @Override
@@ -476,18 +474,7 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatManagerListener
     
     @Override
     public void flashWindowStopWhenFocused(Window window) {
-		 presence = Workspace.getInstance().getStatusBar().getPresence();
-		if (presence.getMode() == Presence.Mode.available) {
-			trayIcon.setImage(availableIcon.getImage());
-		} else if (presence.getMode() == Presence.Mode.away
-				|| presence.getMode() == Presence.Mode.xa) {
-			trayIcon.setImage(awayIcon.getImage());
-		} else if (presence.getMode() == Presence.Mode.dnd) {
-			trayIcon.setImage(dndIcon.getImage());
-		} else {
-			trayIcon.setImage(availableIcon.getImage());
-		}
-
+    	trayIcon.setImage(availableIcon.getImage());
     	newMessage = false;
     	chatMessageHandler.clearUnreadMessages();
     }
@@ -499,17 +486,7 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatManagerListener
 
     @Override
     public void stopFlashing(Window window) {
-        presence = Workspace.getInstance().getStatusBar().getPresence();
-		if (presence.getMode() == Presence.Mode.available) {
-			trayIcon.setImage(availableIcon.getImage());
-		} else if (presence.getMode() == Presence.Mode.away
-				|| presence.getMode() == Presence.Mode.xa) {
-			trayIcon.setImage(awayIcon.getImage());
-		} else if (presence.getMode() == Presence.Mode.dnd) {
-			trayIcon.setImage(dndIcon.getImage());
-		} else {
-			trayIcon.setImage(availableIcon.getImage());
-		}
+    	trayIcon.setImage(availableIcon.getImage());
     	newMessage = false;
     	chatMessageHandler.clearUnreadMessages();
     }
@@ -522,25 +499,17 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatManagerListener
 	}	
 
 	@Override
-	public void stateChanged(Chat chat, ChatState state) {
-        presence = Workspace.getInstance().getStatusBar().getPresence();
+	public void stateChanged(Chat chat, ChatState state) {		
         if (ChatState.composing.equals(state)) {
-            changeSysTrayIcon();
+        	changeSysTrayIcon();
         } else {
-            if (!newMessage) {
-                if (presence.getMode() == Presence.Mode.available) {
-                    trayIcon.setImage(availableIcon.getImage());
-                } else if (presence.getMode() == Presence.Mode.away
-                        || presence.getMode() == Presence.Mode.xa) {
-                    trayIcon.setImage(awayIcon.getImage());
-                } else if (presence.getMode() == Presence.Mode.dnd) {
-                    trayIcon.setImage(dndIcon.getImage());
-                } else {
-                    trayIcon.setImage(newMessageIcon.getImage());
-                }
-            }
+        	if (!newMessage)
+        		trayIcon.setImage(availableIcon.getImage());
+        	else {
+        		trayIcon.setImage(newMessageIcon.getImage());
+        	}
         }
-    }
+	}
 
 	@Override
 	public void chatCreated(Chat chat, boolean isLocal) {
