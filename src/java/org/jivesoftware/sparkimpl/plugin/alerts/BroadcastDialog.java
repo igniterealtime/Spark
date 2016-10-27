@@ -59,7 +59,6 @@ import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.ui.ContactList;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
-
 /**
  * Allows for better selective broadcasting.
  *
@@ -327,7 +326,7 @@ Log.warning( "Unable to broadcast.", e1 );
                 jids.add(jid);
             }
         }
-        
+        jids.add(SparkManager.getSessionManager().getUsername()+"@"+SparkManager.getSessionManager().getServerAddress());
         if(jids.size() == 0)
         {
             JOptionPane.showMessageDialog(dlg, Res.getString("message.broadcast.no.user.selected"), Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
