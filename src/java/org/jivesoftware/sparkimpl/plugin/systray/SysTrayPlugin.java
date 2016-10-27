@@ -59,8 +59,7 @@ import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jivesoftware.smack.chat.ChatManagerListener;
 import org.jivesoftware.smackx.chatstates.ChatStateListener;
-import org.lobobrowser.html.domimpl.HTMLElementBuilder;
-
+
 public class SysTrayPlugin implements Plugin, NativeHandler, ChatManagerListener, ChatStateListener {
 	private JPopupMenu popupMenu = new JPopupMenu();
 
