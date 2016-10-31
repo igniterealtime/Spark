@@ -2572,8 +2572,9 @@ SwingUtilities.invokeLater( () -> loadContactList() );
         if (unfiledGroup == null) {
             // Add Unfiled Group
         	if(EventQueue.isDispatchThread()) {
-			unfiledGroup = UIComponentRegistry.createContactGroup(Res.getString("unfiled"));
-                addContactGroup(unfiledGroup);
+        		unfiledGroup = UIComponentRegistry.createContactGroup(Res.getString("unfiled"));
+        		// Only show the "Unfiled" group if it is not empty
+        		if (unfiledGroup.hasAvailableContacts()) addContactGroup(unfiledGroup);
         	}
         	else {
         		try {
