@@ -70,10 +70,14 @@ public class ChatRoomTransferDecorator implements KeyListener, FileDropListener,
         	sendFileButton.addActionListener(this);
         }
 
-        sendScreenShotButton = UIComponentRegistry.getButtonFactory().createScreenshotButton();
-        sendScreenShotButton.setToolTipText(Res.getString("message.send.picture"));
-        chatRoom.addChatRoomButton(sendScreenShotButton);
-        sendScreenShotButton.addActionListener(this);
+        // See if we should disable the ability to take screenshots
+        if (!Default.getBoolean("DISABLE_SCREENSHOTS")) {
+        	sendScreenShotButton = UIComponentRegistry.getButtonFactory().createScreenshotButton();
+        	sendScreenShotButton.setToolTipText(Res.getString("message.send.picture"));
+
+        	chatRoom.addChatRoomButton(sendScreenShotButton);
+        	sendScreenShotButton.addActionListener(this);
+        }
     }
 
     public void keyTyped(KeyEvent e) {
