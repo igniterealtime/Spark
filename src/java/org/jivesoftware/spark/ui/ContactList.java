@@ -1379,14 +1379,20 @@ moveToOffline(moveToOfflineContactItem);
         JMenuItem rename = new JMenuItem(Res.getString("menuitem.rename"));
         JMenuItem expand = new JMenuItem(Res.getString("menuitem.expand.all.groups"));
         JMenuItem collapse = new JMenuItem(Res.getString("menuitem.collapse.all.groups"));
-        
+
         if (!group.isSharedGroup()) {
             popup.addSeparator();
-            popup.add(delete);
-            popup.add(rename);
+
+            // See if we should disable the "Delete" menu option
+            if (!Default.getBoolean("DISABLE_REMOVALS")) popup.add(delete);
+
+            // See if we should disable the "Rename" menu option
+            if (!Default.getBoolean("DISABLE_RENAMES")) popup.add(rename);
         }
-        
-        popup.addSeparator();
+
+        // Only display a horizontal separator if at least one of those options is present 
+        if (!Default.getBoolean("DISABLE_REMOVALS") || !Default.getBoolean("DISABLE_RENAMES")) popup.addSeparator();
+
         popup.add(expand);
         popup.add(collapse);
 
@@ -1499,15 +1505,14 @@ moveToOffline(moveToOfflineContactItem);
             }
         };
 
-        sendAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.DOCUMENT_16x16));
-        sendAction.putValue(Action.NAME, Res.getString("menuitem.send.a.file"));
-
-        if ((item.getPresence() != null) && Enterprise.containsFeature(Enterprise.FILE_TRANSFER_FEATURE)) {
-            popup.add(sendAction);
+        // See if we should disable the option to transfer files
+        if (!Default.getBoolean("DISABLE_FILE_XFER")) {
+        	sendAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.DOCUMENT_16x16));
+        	sendAction.putValue(Action.NAME, Res.getString("menuitem.send.a.file"));
+        	if ((item.getPresence() != null) && Enterprise.containsFeature(Enterprise.FILE_TRANSFER_FEATURE)) popup.add(sendAction);
         }
-
+        
         popup.addSeparator();
-
 
         String groupName = item.getGroupName();
         ContactGroup contactGroup = getContactGroup(groupName);
@@ -1551,13 +1556,13 @@ moveToOffline(moveToOfflineContactItem);
             }
         }
 
-
-        if (!contactGroup.isSharedGroup() && !isInSharedGroup) {
-            popup.add(removeAction);
+        // See if we should disable the option to remove a contact
+        if (!Default.getBoolean("DISABLE_REMOVALS")) {
+        	if (!contactGroup.isSharedGroup() && !isInSharedGroup) popup.add(removeAction);
         }
 
-        popup.add(renameMenu);
-
+        // See if we should disable the option to rename a contact
+        if (!Default.getBoolean("DISABLE_RENAMES")) popup.add(renameMenu); 
 
         Action viewProfile = new AbstractAction() {
 			private static final long serialVersionUID = -2562731455090634805L;
