@@ -149,24 +149,29 @@ public class StatusBar extends JPanel implements VCardListener {
             }
         } );
 
-        // Show profile on double click of image label
-        imageLabel.addMouseListener(new MouseAdapter() {
-            public void mouseClicked(MouseEvent mouseEvent) {
-                if (mouseEvent.getClickCount() == 1) {
-                    VCardManager vcardManager = SparkManager.getVCardManager();
-                    VCardEditor editor = new VCardEditor();
-                    editor.editProfile(vcardManager.getVCard(), SparkManager.getWorkspace());
-                }
-            }
+        // See if we should disable the option to edit the profile if clicking on the Avatar image
+        if (!Default.getBoolean("DISABLE_EDIT_PROFILE")) {
 
-            public void mouseEntered(MouseEvent e) {
-                imageLabel.setCursor(GraphicUtils.HAND_CURSOR);
-            }
+            // Show profile when clicking on Avatar image
+        	imageLabel.addMouseListener(new MouseAdapter() {
+        		public void mouseClicked(MouseEvent mouseEvent) {
+        			if (mouseEvent.getClickCount() == 1) {
+        				VCardManager vcardManager = SparkManager.getVCardManager();
+        				VCardEditor editor = new VCardEditor();
+        				editor.editProfile(vcardManager.getVCard(), SparkManager.getWorkspace());
+        			}
+        		}
 
-            public void mouseExited(MouseEvent e) {
-                imageLabel.setCursor(GraphicUtils.DEFAULT_CURSOR);
-            }
-        });
+        		public void mouseEntered(MouseEvent e) {
+        			imageLabel.setCursor(GraphicUtils.HAND_CURSOR);
+        		}
+
+        		public void mouseExited(MouseEvent e) {
+        			imageLabel.setCursor(GraphicUtils.DEFAULT_CURSOR);
+        		}
+        	});
+
+        }
 
         final TimerTask task = new SwingTimerTask() {
             public void doRun() {

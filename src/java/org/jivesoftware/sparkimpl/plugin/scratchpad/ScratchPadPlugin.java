@@ -20,6 +20,7 @@
 package org.jivesoftware.sparkimpl.plugin.scratchpad;
 
 import org.jdesktop.swingx.calendar.DateUtils;
+import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.spark.SparkManager;
@@ -115,9 +116,12 @@ public class ScratchPadPlugin implements Plugin {
             // Add To toolbar
             final JMenu actionsMenu = SparkManager.getMainWindow().getMenuByName(Res.getString("menuitem.actions"));
             actionsMenu.addSeparator();
-            actionsMenu.add(taskMenu);
-            actionsMenu.add(notesMenu);
 
+            // See if we should disable the "View task list" option under "Actions"
+            if (!Default.getBoolean("DISABLE_VIEW_TASK_LIST")) actionsMenu.add(taskMenu);
+
+            // See if we should disable the "View notes" option under "Actions"
+            if (!Default.getBoolean("DISABLE_VIEW_NOTES")) actionsMenu.add(notesMenu);
 
             // Start notifications.
             new TaskNotification();

@@ -19,6 +19,7 @@
  */
 package org.jivesoftware.spark.filetransfer;
 
+import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.ui.ChatRoom;
@@ -60,17 +61,18 @@ public class ChatRoomTransferDecorator implements KeyListener, FileDropListener,
         chatRoom.getChatInputEditor().addKeyListener(this);
         chatRoom.addClosingListener(this);
 
+        // See if we should disable the ability to transfer files
+        if (!Default.getBoolean("DISABLE_FILE_XFER")) {
+        	sendFileButton = UIComponentRegistry.getButtonFactory().createSendFileButton();
+        	sendFileButton.setToolTipText(Res.getString("message.send.file.to.user"));
 
-        sendFileButton = UIComponentRegistry.getButtonFactory().createSendFileButton();
-        sendFileButton.setToolTipText(Res.getString("message.send.file.to.user"));
-
-        chatRoom.addChatRoomButton(sendFileButton);
+        	chatRoom.addChatRoomButton(sendFileButton);
+        	sendFileButton.addActionListener(this);
+        }
 
         sendScreenShotButton = UIComponentRegistry.getButtonFactory().createScreenshotButton();
         sendScreenShotButton.setToolTipText(Res.getString("message.send.picture"));
         chatRoom.addChatRoomButton(sendScreenShotButton);
-
-        sendFileButton.addActionListener(this);
         sendScreenShotButton.addActionListener(this);
     }
 

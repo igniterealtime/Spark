@@ -19,6 +19,7 @@
  */
 package org.jivesoftware.sparkimpl.profile;
 
+import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.SmackException;
@@ -228,7 +229,9 @@ public class VCardManager {
 
         int size = contactsMenu.getMenuComponentCount();
 
-        communicatorMenu.insert(editProfileMenu, 1);
+        // See if we should disable the "Edit my profile" option under "File"
+        if (!Default.getBoolean("DISABLE_EDIT_PROFILE")) communicatorMenu.insert(editProfileMenu, 1);
+
         editProfileMenu.addActionListener( e -> {
             SwingWorker vcardLoaderWorker = new SwingWorker() {
                 public Object construct() {
