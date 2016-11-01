@@ -69,6 +69,7 @@ import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.util.UIComponentRegistry;
 import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 import org.jivesoftware.sparkimpl.plugin.privacy.PrivacyManager;
 import org.jivesoftware.sparkimpl.plugin.privacy.list.SparkPrivacyList;
 import org.jivesoftware.sparkimpl.profile.VCardEditor;
@@ -150,7 +151,10 @@ public class StatusBar extends JPanel implements VCardListener {
         } );
 
         // See if we should disable the option to edit the profile if clicking on the Avatar image
-        if (!Default.getBoolean("DISABLE_EDIT_PROFILE")) {
+        
+        boolean enabled = Enterprise.containsFeature(Enterprise.VCARD_FEATURE);
+        
+        if ((!Default.getBoolean("DISABLE_EDIT_PROFILE")) && (enabled)) {
 
             // Show profile when clicking on Avatar image
         	imageLabel.addMouseListener(new MouseAdapter() {
