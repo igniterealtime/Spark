@@ -141,20 +141,24 @@ public class ContactListAssistantPlugin implements Plugin {
                     if (contactItems.size() == 1) {
                         // Add right after the rename item.
                         if (index != -1) {
-                            popup.add(moveToMenu, index + 1);
-                            popup.add(copyToMenu, index + 2);
+                        	// See if we should disable the "Move to" and "Copy to" menu options
+                        	if (!Default.getBoolean("DISABLE_MOVE_AND_COPY")) {
+                        		popup.add(moveToMenu, index + 1);
+                        		popup.add(copyToMenu, index + 2);
+                        	}
                         }
                     }
                     else if (contactItems.size() > 1) {
-                        popup.addSeparator();
-                        popup.add(moveToMenu);
-                        popup.add(copyToMenu);
-                        
+                    	// See if we should disable the "Move to" and "Copy to" menu options
+                    	if (!Default.getBoolean("DISABLE_MOVE_AND_COPY")) {                    	
+                    		popup.addSeparator();
+                    		popup.add(moveToMenu);
+                    		popup.add(copyToMenu);
+                    	}                        
+
                         // Clean up the extra separator if "Broadcast" menu items are disabled
                         if (!Default.getBoolean("DISABLE_BROADCAST_MENU_ITEM")) popup.addSeparator();                        
                     }
-
-
                 }
             }
 
