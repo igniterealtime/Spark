@@ -215,10 +215,9 @@ public class VCardManager {
      * Adds VCard capabilities to menus and other components in Spark.
      */
     private void initializeUI() {
-        boolean enabled = Enterprise.containsFeature(Enterprise.VCARD_FEATURE);
-        if (!enabled) {
-            return;
-        }
+
+        // See if we should disable the "Edit my profile" option under "File"
+        if (Default.getBoolean("DISABLE_EDIT_PROFILE") || !Enterprise.containsFeature(Enterprise.VCARD_FEATURE)) return;
 
         // Add Actions Menu
         final JMenu contactsMenu = SparkManager.getMainWindow().getMenuByName(Res.getString("menuitem.contacts"));
@@ -229,8 +228,7 @@ public class VCardManager {
 
         int size = contactsMenu.getMenuComponentCount();
 
-        // See if we should disable the "Edit my profile" option under "File"
-        if (!Default.getBoolean("DISABLE_EDIT_PROFILE")) communicatorMenu.insert(editProfileMenu, 1);
+        communicatorMenu.insert(editProfileMenu, 1);
 
         editProfileMenu.addActionListener( e -> {
             SwingWorker vcardLoaderWorker = new SwingWorker() {
