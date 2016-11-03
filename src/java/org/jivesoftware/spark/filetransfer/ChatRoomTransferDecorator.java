@@ -19,7 +19,6 @@
  */
 package org.jivesoftware.spark.filetransfer;
 
-import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.ui.ChatRoom;
@@ -55,29 +54,23 @@ public class ChatRoomTransferDecorator implements KeyListener, FileDropListener,
     private ChatRoomButton sendScreenShotButton;
 
     public ChatRoomTransferDecorator(final ChatRoom chatRoom) {
-        this.chatRoom = chatRoom;
+    	this.chatRoom = chatRoom;
 
-        chatRoom.addFileDropListener(this);
-        chatRoom.getChatInputEditor().addKeyListener(this);
-        chatRoom.addClosingListener(this);
+    	chatRoom.addFileDropListener(this);
+    	chatRoom.getChatInputEditor().addKeyListener(this);
+    	chatRoom.addClosingListener(this);
 
-        // See if we should disable the ability to transfer files
-        if (!Default.getBoolean("DISABLE_FILE_XFER")) {
-        	sendFileButton = UIComponentRegistry.getButtonFactory().createSendFileButton();
-        	sendFileButton.setToolTipText(Res.getString("message.send.file.to.user"));
+    	sendFileButton = UIComponentRegistry.getButtonFactory().createSendFileButton();
+    	sendFileButton.setToolTipText(Res.getString("message.send.file.to.user"));
 
-        	chatRoom.addChatRoomButton(sendFileButton);
-        	sendFileButton.addActionListener(this);
-        }
+    	chatRoom.addChatRoomButton(sendFileButton);
+    	sendFileButton.addActionListener(this);
 
-        // See if we should disable the ability to take screenshots
-        if (!Default.getBoolean("DISABLE_SCREENSHOTS")) {
-        	sendScreenShotButton = UIComponentRegistry.getButtonFactory().createScreenshotButton();
-        	sendScreenShotButton.setToolTipText(Res.getString("message.send.picture"));
+    	sendScreenShotButton = UIComponentRegistry.getButtonFactory().createScreenshotButton();
+    	sendScreenShotButton.setToolTipText(Res.getString("message.send.picture"));
 
-        	chatRoom.addChatRoomButton(sendScreenShotButton);
-        	sendScreenShotButton.addActionListener(this);
-        }
+    	chatRoom.addChatRoomButton(sendScreenShotButton);
+    	sendScreenShotButton.addActionListener(this);
     }
 
     public void keyTyped(KeyEvent e) {

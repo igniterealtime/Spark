@@ -36,6 +36,7 @@ import org.jivesoftware.spark.ui.ContactList;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.UIComponentRegistry;
 import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
@@ -157,7 +158,7 @@ public class ContactListAssistantPlugin implements Plugin {
                     	}                        
 
                         // Clean up the extra separator if "Broadcast" menu items are disabled
-                        if (!Default.getBoolean("DISABLE_BROADCAST_MENU_ITEM")) popup.addSeparator();                        
+                        if (!Default.getBoolean("DISABLE_BROADCAST_MENU_ITEM") && Enterprise.containsFeature(Enterprise.BROADCAST_FEATURE)) popup.addSeparator();                        
                     }
                 }
             }

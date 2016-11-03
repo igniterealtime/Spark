@@ -1505,11 +1505,11 @@ moveToOffline(moveToOfflineContactItem);
             }
         };
 
-        // See if we should disable the option to transfer files
-        if (!Default.getBoolean("DISABLE_FILE_XFER")) {
+        // See if we should disable the option to transfer files and images
+        if (!Default.getBoolean("DISABLE_FILE_XFER") && Enterprise.containsFeature(Enterprise.FILE_TRANSFER_FEATURE)) {
         	sendAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.DOCUMENT_16x16));
         	sendAction.putValue(Action.NAME, Res.getString("menuitem.send.a.file"));
-        	if ((item.getPresence() != null) && Enterprise.containsFeature(Enterprise.FILE_TRANSFER_FEATURE)) popup.add(sendAction);
+        	if (item.getPresence() != null) popup.add(sendAction);
         }
         
         popup.addSeparator();
@@ -1670,11 +1670,10 @@ moveToOffline(moveToOfflineContactItem);
         final JPopupMenu popup = new JPopupMenu();
         final JMenuItem sendMessagesMenu = new JMenuItem(Res.getString("menuitem.send.a.message"), SparkRes.getImageIcon(SparkRes.SMALL_MESSAGE_IMAGE));
 
-
         fireContextMenuListenerPopup(popup, items);
 
         // See if we should disable all "Broadcast" menu items
-        if (!Default.getBoolean("DISABLE_BROADCAST_MENU_ITEM")) popup.add(sendMessagesMenu);
+        if (!Default.getBoolean("DISABLE_BROADCAST_MENU_ITEM") && Enterprise.containsFeature(Enterprise.BROADCAST_FEATURE)) popup.add(sendMessagesMenu);
 
         sendMessagesMenu.addActionListener( e1 -> sendMessages(items) );
 
