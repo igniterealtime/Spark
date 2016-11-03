@@ -138,10 +138,9 @@ public class SparkTransferManager {
     }
 
     private SparkTransferManager() {
-        boolean enabled = Enterprise.containsFeature(Enterprise.FILE_TRANSFER_FEATURE);
-        if (!enabled) {
-            return;
-        }
+    	
+    	// See if we should disable the option to transfer files and images
+    	if (Default.getBoolean("DISABLE_FILE_XFER") || !Enterprise.containsFeature(Enterprise.FILE_TRANSFER_FEATURE)) return;
 
         SparkManager.getConnection().addConnectionListener(new ConnectionListener() {
             @Override
