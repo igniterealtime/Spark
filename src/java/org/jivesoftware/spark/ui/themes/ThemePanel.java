@@ -126,6 +126,7 @@ public class ThemePanel extends JPanel {
 
 	String[] nonSystemLookAndFeels = {
 		//JTattoo
+	    "freeseawind.lf.LittleLuckLookAndFeel",
 		"com.jtattoo.plaf.acryl.AcrylLookAndFeel", // was disabled
 		"com.jtattoo.plaf.aero.AeroLookAndFeel",
 		"com.jtattoo.plaf.aluminium.AluminiumLookAndFeel",

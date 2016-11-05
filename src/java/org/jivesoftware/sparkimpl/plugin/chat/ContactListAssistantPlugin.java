@@ -20,6 +20,7 @@
 package org.jivesoftware.sparkimpl.plugin.chat;
 
 import org.jivesoftware.resource.Res;
+import org.jivesoftware.resource.Default;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.roster.RosterEntry;
@@ -35,6 +36,7 @@ import org.jivesoftware.spark.ui.ContactList;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.UIComponentRegistry;
 import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
@@ -140,18 +142,24 @@ public class ContactListAssistantPlugin implements Plugin {
                     if (contactItems.size() == 1) {
                         // Add right after the rename item.
                         if (index != -1) {
-                            popup.add(moveToMenu, index + 1);
-                            popup.add(copyToMenu, index + 2);
+                        	// See if we should disable the "Move to" and "Copy to" menu options
+                        	if (!Default.getBoolean("DISABLE_MOVE_AND_COPY")) {
+                        		popup.add(moveToMenu, index + 1);
+                        		popup.add(copyToMenu, index + 2);
+                        	}
                         }
                     }
                     else if (contactItems.size() > 1) {
-                        popup.addSeparator();
-                        popup.add(moveToMenu);
-                        popup.add(copyToMenu);
-                        popup.addSeparator();
+                    	// See if we should disable the "Move to" and "Copy to" menu options
+                    	if (!Default.getBoolean("DISABLE_MOVE_AND_COPY")) {                    	
+                    		popup.addSeparator();
+                    		popup.add(moveToMenu);
+                    		popup.add(copyToMenu);
+                    	}                        
+
+                        // Clean up the extra separator if "Broadcast" menu items are disabled
+                        if (!Default.getBoolean("DISABLE_BROADCAST_MENU_ITEM") && Enterprise.containsFeature(Enterprise.BROADCAST_FEATURE)) popup.addSeparator();                        
                     }
-
-
                 }
             }
 

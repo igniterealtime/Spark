@@ -54,24 +54,23 @@ public class ChatRoomTransferDecorator implements KeyListener, FileDropListener,
     private ChatRoomButton sendScreenShotButton;
 
     public ChatRoomTransferDecorator(final ChatRoom chatRoom) {
-        this.chatRoom = chatRoom;
+    	this.chatRoom = chatRoom;
 
-        chatRoom.addFileDropListener(this);
-        chatRoom.getChatInputEditor().addKeyListener(this);
-        chatRoom.addClosingListener(this);
+    	chatRoom.addFileDropListener(this);
+    	chatRoom.getChatInputEditor().addKeyListener(this);
+    	chatRoom.addClosingListener(this);
 
+    	sendFileButton = UIComponentRegistry.getButtonFactory().createSendFileButton();
+    	sendFileButton.setToolTipText(Res.getString("message.send.file.to.user"));
 
-        sendFileButton = UIComponentRegistry.getButtonFactory().createSendFileButton();
-        sendFileButton.setToolTipText(Res.getString("message.send.file.to.user"));
+    	chatRoom.addChatRoomButton(sendFileButton);
+    	sendFileButton.addActionListener(this);
 
-        chatRoom.addChatRoomButton(sendFileButton);
+    	sendScreenShotButton = UIComponentRegistry.getButtonFactory().createScreenshotButton();
+    	sendScreenShotButton.setToolTipText(Res.getString("message.send.picture"));
 
-        sendScreenShotButton = UIComponentRegistry.getButtonFactory().createScreenshotButton();
-        sendScreenShotButton.setToolTipText(Res.getString("message.send.picture"));
-        chatRoom.addChatRoomButton(sendScreenShotButton);
-
-        sendFileButton.addActionListener(this);
-        sendScreenShotButton.addActionListener(this);
+    	chatRoom.addChatRoomButton(sendScreenShotButton);
+    	sendScreenShotButton.addActionListener(this);
     }
 
     public void keyTyped(KeyEvent e) {
