@@ -472,7 +472,7 @@ public class PrivacyManager {
     		return false; 
     	
     	try {
-    		PrivacyList pl = privacyManager.getActiveList();
+    		String pl = privacyManager.getActiveListName();
     		return pl != null && INVISIBLE_LIST_NAME.equalsIgnoreCase(pl.toString());
     	} catch (Exception e){
            // it can return item-not-found if there is no active list.
