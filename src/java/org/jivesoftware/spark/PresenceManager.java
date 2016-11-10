@@ -34,6 +34,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import static org.jivesoftware.smack.util.StringUtils.isEmpty;
+import static org.jivesoftware.smack.util.StringUtils.isNullOrEmpty;
+
 /**
  * Handles the most common presence checks.
  *
@@ -159,7 +162,7 @@ public class PresenceManager {
      */
     public static Icon getIconFromPresence(Presence presence) {
 	if (isInvisible(presence)) {
-            return SparkRes.getImageIcon(SparkRes.INVISIBLE);
+            return SparkRes.getImageIcon(SparkRes.CLEAR_BALL_ICON);
         }
 
         // Handle offline presence
@@ -228,7 +231,7 @@ public class PresenceManager {
     public static boolean isInvisible(Presence presence) {
         return presence != null && presence.getType() == Presence.Type.unavailable 
                 && (Res.getString("status.invisible").equalsIgnoreCase(presence.getStatus())
-                		|| Res.getString("status.offline").equalsIgnoreCase(presence.getStatus()))
+                		|| isNullOrEmpty(presence.getStatus()))
                 && Presence.Mode.available == presence.getMode();
     }
 

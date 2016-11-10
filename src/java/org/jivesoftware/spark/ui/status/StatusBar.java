@@ -644,7 +644,7 @@ public class StatusBar extends JPanel implements VCardListener {
 
 		Presence copyPresence = copyPresence(presence);
 		if (isNewPresenceInvisible) {
-			copyPresence.setStatus(Res.getString("status.offline"));
+			copyPresence.setStatus(null);
 		}
 		if (PresenceManager.areEqual(getCurrentPresence(), copyPresence)) {
 			return presence.getStatus();
