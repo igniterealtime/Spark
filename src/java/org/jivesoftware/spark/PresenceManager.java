@@ -53,9 +53,9 @@ public class PresenceManager {
         final Presence freeToChatPresence = new Presence(Presence.Type.available, Res.getString("status.free.to.chat"), 1, Presence.Mode.chat);
         final Presence awayPresence = new Presence(Presence.Type.available, Res.getString("status.away"), 0, Presence.Mode.away);
         final Presence phonePresence = new Presence(Presence.Type.available, Res.getString("status.on.phone"), 0, Presence.Mode.away);
-        final Presence dndPresence = new Presence(Presence.Type.available, Res.getString("status.do.not.disturb"), 0, Presence.Mode.dnd);
+        final Presence dndPresence = new Presence(Presence.Type.available, Res.getString("status.do.not.disturb"), -1, Presence.Mode.dnd);
         final Presence extendedAway = new Presence(Presence.Type.available, Res.getString("status.extended.away"), 0, Presence.Mode.xa);
-	final Presence invisible = new Presence(Presence.Type.unavailable, Res.getString("status.invisible"), 0, Presence.Mode.available);
+        final Presence invisible = new Presence(Presence.Type.unavailable, Res.getString("status.invisible"), 0, Presence.Mode.available);
 
         PRESENCES.add(freeToChatPresence);
         PRESENCES.add(availablePresence);
