@@ -1,0 +1,12 @@
+<plugin>
+    <name>Openfire Meetings for Spark</name>
+    <version>0.0.2</version>
+    <author>Ignite Realtime</author>
+    <homePage>http://igniterealtime.org</homePage>
+    <email>support@igniterealtime.org</email>
+    <description>Adds support for Openfire Meetings to the Spark IM client.</description>
+    <class>org.jivesoftware.spark.plugin.ofmeet.SparkMeetPlugin</class>
+    <minSparkVersion>2.0.0.0</minSparkVersion>
+    <os>Windows</os>
+    <java>1.7.0</java>    
+</plugin>
