@@ -143,7 +143,7 @@ public class ContactListAssistantPlugin implements Plugin {
                         // Add right after the rename item.
                         if (index != -1) {
                         	// See if we should disable the "Move to" and "Copy to" menu options
-                        	if (!Default.getBoolean("DISABLE_MOVE_AND_COPY")) {
+                        	if (!Default.getBoolean("DISABLE_MOVE_AND_COPY") && Enterprise.containsFeature(Enterprise.MOVE_COPY_FEATURE)) {
                         		popup.add(moveToMenu, index + 1);
                         		popup.add(copyToMenu, index + 2);
                         	}
@@ -151,7 +151,7 @@ public class ContactListAssistantPlugin implements Plugin {
                     }
                     else if (contactItems.size() > 1) {
                     	// See if we should disable the "Move to" and "Copy to" menu options
-                    	if (!Default.getBoolean("DISABLE_MOVE_AND_COPY")) {                    	
+                    	if (!Default.getBoolean("DISABLE_MOVE_AND_COPY") && Enterprise.containsFeature(Enterprise.MOVE_COPY_FEATURE)) {                    	
                     		popup.addSeparator();
                     		popup.add(moveToMenu);
                     		popup.add(copyToMenu);

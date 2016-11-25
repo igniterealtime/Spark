@@ -75,6 +75,7 @@ import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.URLFileSystem;
 import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 import org.jivesoftware.sparkimpl.settings.JiveInfo;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
@@ -204,7 +205,7 @@ public class PluginViewer extends JPanel implements Plugin {
         viewPluginsMenu.setAction(viewAction);
         
         // See if we should disable the "Plugins" menu item
-        if (!Default.getBoolean("DISABLE_PLUGINS_MENU_ITEM")) sparkMenu.insert(viewPluginsMenu, 2);
+        if (!Default.getBoolean("DISABLE_PLUGINS_MENU_ITEM") && Enterprise.containsFeature(Enterprise.PLUGINS_MENU_FEATURE)) sparkMenu.insert(viewPluginsMenu, 2);
     }
 
     private boolean uninstall(final PublicPlugin plugin) {

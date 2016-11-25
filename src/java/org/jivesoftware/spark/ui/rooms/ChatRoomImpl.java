@@ -41,6 +41,7 @@ import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.ui.*;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 import org.jivesoftware.sparkimpl.plugin.transcripts.ChatTranscript;
 import org.jivesoftware.sparkimpl.plugin.transcripts.ChatTranscripts;
 import org.jivesoftware.sparkimpl.plugin.transcripts.HistoryMessage;
@@ -163,9 +164,7 @@ public class ChatRoomImpl extends ChatRoom {
         addToRosterButton = new ChatRoomButton("", SparkRes.getImageIcon(SparkRes.ADD_IMAGE_24x24));
         if (entry == null && !XmppStringUtils.parseResource(participantJID).equals(participantNickname)) {
             addToRosterButton.setToolTipText(Res.getString("message.add.this.user.to.your.roster"));
-            if(!Default.getBoolean(Default.ADD_CONTACT_DISABLED)) {
-            	addChatRoomButton(addToRosterButton);
-            }
+            if (!Default.getBoolean("ADD_CONTACT_DISABLED") && Enterprise.containsFeature(Enterprise.ADD_CONTACTS_FEATURE)) addChatRoomButton(addToRosterButton);
             addToRosterButton.addActionListener(this);
         }
 
@@ -650,57 +649,57 @@ public class ChatRoomImpl extends ChatRoom {
 
 
     protected void loadHistory() {
-        // Add VCard Panel
-        vcardPanel = new VCardPanel(participantJID);
-        getToolBar().add(vcardPanel, new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 2, 0, 2), 0, 0));
+    	// Add VCard Panel
+    	vcardPanel = new VCardPanel(participantJID);
+    	getToolBar().add(vcardPanel, new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 2, 0, 2), 0, 0));
 
-        if (!Default.getBoolean("HISTORY_DISABLED")) {
-        final LocalPreferences localPreferences = SettingsManager.getLocalPreferences();
-        if (!localPreferences.isChatHistoryEnabled()) {
-            return;
-        }
+    	if (!Default.getBoolean("HISTORY_DISABLED") && Enterprise.containsFeature(Enterprise.HISTORY_SETTINGS_FEATURE)) {
+    		final LocalPreferences localPreferences = SettingsManager.getLocalPreferences();
+    		if (!localPreferences.isChatHistoryEnabled()) {
+    			return;
+    		}
 
-        if (!localPreferences.isPrevChatHistoryEnabled()) {
-        	return;
-        }
+    		if (!localPreferences.isPrevChatHistoryEnabled()) {
+    			return;
+    		}
 
-        final ChatTranscript chatTranscript = ChatTranscripts.getCurrentChatTranscript(getParticipantJID());
-        final String personalNickname = SparkManager.getUserManager().getNickname();
+    		final ChatTranscript chatTranscript = ChatTranscripts.getCurrentChatTranscript(getParticipantJID());
+    		final String personalNickname = SparkManager.getUserManager().getNickname();
 
-        for (HistoryMessage message : chatTranscript.getMessages()) {
-            String nickname = SparkManager.getUserManager().getUserNicknameFromJID(message.getFrom());
-            String messageBody = message.getBody();
-            if (nickname.equals(message.getFrom())) {
-                String otherJID = XmppStringUtils.parseBareJid(message.getFrom());
-                String myJID = SparkManager.getSessionManager().getBareAddress();
+    		for (HistoryMessage message : chatTranscript.getMessages()) {
+    			String nickname = SparkManager.getUserManager().getUserNicknameFromJID(message.getFrom());
+    			String messageBody = message.getBody();
+    			if (nickname.equals(message.getFrom())) {
+    				String otherJID = XmppStringUtils.parseBareJid(message.getFrom());
+    				String myJID = SparkManager.getSessionManager().getBareAddress();
 
-                if (otherJID.equals(myJID)) {
-                    nickname = personalNickname;
-                }
-                else {
-                    try
-                    {
-                        nickname = message.getFrom().substring(message.getFrom().indexOf("/")+1);
-                    }
-                    catch(Exception e)
-                    {
-                        nickname = XmppStringUtils.parseLocalpart(nickname);
-                    }
-                }
-            }
+    				if (otherJID.equals(myJID)) {
+    					nickname = personalNickname;
+    				}
+    				else {
+    					try
+    					{
+    						nickname = message.getFrom().substring(message.getFrom().indexOf("/")+1);
+    					}
+    					catch(Exception e)
+    					{
+    						nickname = XmppStringUtils.parseLocalpart(nickname);
+    					}
+    				}
+    			}
 
-            if (ModelUtil.hasLength(messageBody) && messageBody.startsWith("/me ")) {
-                messageBody = messageBody.replaceFirst("/me", nickname);
-            }
+    			if (ModelUtil.hasLength(messageBody) && messageBody.startsWith("/me ")) {
+    				messageBody = messageBody.replaceFirst("/me", nickname);
+    			}
 
-            final Date messageDate = message.getDate();
-            getTranscriptWindow().insertHistoryMessage(nickname, messageBody, messageDate);
-        }
-        if ( 0 < chatTranscript.getMessages().size() ) { // Check if we have history mesages
-            getTranscriptWindow().insertHorizontalLine();
-        }
-        chatTranscript.release();
-    }
+    			final Date messageDate = message.getDate();
+    			getTranscriptWindow().insertHistoryMessage(nickname, messageBody, messageDate);
+    		}
+    		if ( 0 < chatTranscript.getMessages().size() ) { // Check if we have history mesages
+    			getTranscriptWindow().insertHorizontalLine();
+    		}
+    		chatTranscript.release();
+    	}
     }
 
     private boolean isOnline() {

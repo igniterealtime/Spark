@@ -24,6 +24,7 @@ import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.UserManager;
 import org.jivesoftware.spark.util.StringUtils;
 import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 import org.xmlpull.mxp1.MXParser;
 import org.xmlpull.v1.XmlPullParser;
 
@@ -70,20 +71,20 @@ public final class ChatTranscripts {
      * @param transcript the ChatTranscript.
      */
     public static void appendToTranscript(String jid, ChatTranscript transcript) {
-        final File transcriptFile = getTranscriptFile(jid);
+    	final File transcriptFile = getTranscriptFile(jid);
 
-        if (!Default.getBoolean("HISTORY_DISABLED")) {
-        // Write Full Transcript, appending the messages.
-        writeToFile(transcriptFile, transcript.getMessages(), true);
+    	if (!Default.getBoolean("HISTORY_DISABLED") && Enterprise.containsFeature(Enterprise.HISTORY_SETTINGS_FEATURE)) {
+    		// Write Full Transcript, appending the messages.
+    		writeToFile(transcriptFile, transcript.getMessages(), true);
 
-        // Write to current history File
-        final File currentHistoryFile = getCurrentHistoryFile(jid);
-        ChatTranscript tempTranscript = getCurrentChatTranscript(jid);
-        for (HistoryMessage message : transcript.getMessages()) {
-            tempTranscript.addHistoryMessage(message);
-        }
-        writeToFile(currentHistoryFile, tempTranscript.getNumberOfEntries(20), false);
-        }
+    		// Write to current history File
+    		final File currentHistoryFile = getCurrentHistoryFile(jid);
+    		ChatTranscript tempTranscript = getCurrentChatTranscript(jid);
+    		for (HistoryMessage message : transcript.getMessages()) {
+    			tempTranscript.addHistoryMessage(message);
+    		}
+    		writeToFile(currentHistoryFile, tempTranscript.getNumberOfEntries(20), false);
+    	}
     }
 
     private static void writeToFile(File transcriptFile, Collection<HistoryMessage> messages, boolean append) {

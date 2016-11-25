@@ -42,6 +42,7 @@ import org.jivesoftware.resource.Res;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.VerticalFlowLayout;
 import org.jivesoftware.spark.util.ResourceUtils;
+import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
@@ -119,9 +120,7 @@ public class ChatPreferencePanel extends JPanel implements ActionListener {
         generalPanel.setBorder(BorderFactory.createTitledBorder(Res.getString("group.general.information")));
         chatWindowPanel.setBorder(BorderFactory.createTitledBorder(Res.getString("group.chat.window.information")));
 
-        if (!Default.getBoolean(Default.CHANGE_PASSWORD_DISABLED)) {
-        	add(generalPanel);
-        }
+        if (!Default.getBoolean("CHANGE_PASSWORD_DISABLED") && Enterprise.containsFeature(Enterprise.PASSWORD_CHANGE_FEATURE)) add(generalPanel);
         add(chatWindowPanel);
 
         generalPanel.setLayout(new GridBagLayout());
@@ -135,10 +134,12 @@ public class ChatPreferencePanel extends JPanel implements ActionListener {
         chatWindowPanel.add(format12s, new GridBagConstraints(2, 1, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
 
         chatWindowPanel.add(groupChatNotificationBox, new GridBagConstraints(0, 2, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-        if (!Default.getBoolean("HISTORY_DISABLED") && !Default.getBoolean("HIDE_HISTORY_SETTINGS")) {
-        chatWindowPanel.add(hideChatHistory, new GridBagConstraints(0, 3, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-        chatWindowPanel.add(hidePrevChatHistory, new GridBagConstraints(0, 4, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+
+        if (!Default.getBoolean("HISTORY_DISABLED") && !Default.getBoolean("HIDE_HISTORY_SETTINGS") && Enterprise.containsFeature(Enterprise.HISTORY_SETTINGS_FEATURE)) {
+        	chatWindowPanel.add(hideChatHistory, new GridBagConstraints(0, 3, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        	chatWindowPanel.add(hidePrevChatHistory, new GridBagConstraints(0, 4, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         }
+
         chatWindowPanel.add(sortChatHistoryAscending, new GridBagConstraints(0, 5, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         chatWindowPanel.add(tabsOnTopBox, new GridBagConstraints(0, 6, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         chatWindowPanel.add(buzzBox, new GridBagConstraints(0, 7, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));

@@ -55,6 +55,7 @@ import org.jivesoftware.spark.ui.status.CustomStatusItem;
 import org.jivesoftware.spark.ui.status.StatusBar;
 import org.jivesoftware.spark.ui.status.StatusItem;
 import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jivesoftware.smack.chat.ChatManagerListener;
@@ -161,8 +162,8 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatManagerListener
 		}
 	    });
 	    
-	    // See if we should disable ability to change presence status	    
-	    if (!Default.getBoolean("DISABLE_PRESENCE_STATUS_CHANGE")) {	    
+	    // See if we should disable ability to change presence status
+	    if (!Default.getBoolean("DISABLE_PRESENCE_STATUS_CHANGE") && Enterprise.containsFeature(Enterprise.PRESENCE_STATUS_FEATURE)) {
 	    	popupMenu.addSeparator();
 	    	addStatusMessages();
 	    	popupMenu.add(statusMenu);
@@ -178,17 +179,15 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatManagerListener
 	    });
 
 	    if (Spark.isWindows()) {
-		if (!Default.getBoolean("DISABLE_EXIT"))
-		    popupMenu.add( logoutMenu );
+	    	if (!Default.getBoolean("DISABLE_EXIT") && Enterprise.containsFeature(Enterprise.LOGOUT_EXIT_FEATURE)) popupMenu.add(logoutMenu);
+	    	logoutMenu.addActionListener( new AbstractAction() {
+	    		private static final long serialVersionUID = 1L;
 
-		logoutMenu.addActionListener( new AbstractAction() {
-		    private static final long serialVersionUID = 1L;
-
-		    @Override
-		    public void actionPerformed(ActionEvent e) {
-			SparkManager.getMainWindow().logout(false);
-		    }
-		});
+	    		@Override
+	    		public void actionPerformed(ActionEvent e) {
+	    			SparkManager.getMainWindow().logout(false);
+	    		}
+	    	});
 	    }
 	    // Exit Menu
 	    exitMenu.addActionListener( new AbstractAction() {
@@ -199,8 +198,8 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatManagerListener
 		    SparkManager.getMainWindow().shutdown();
 		}
 	    });
-	    if (!Default.getBoolean("DISABLE_EXIT"))
-		popupMenu.add( exitMenu );
+
+	    if (!Default.getBoolean("DISABLE_EXIT") && Enterprise.containsFeature(Enterprise.LOGOUT_EXIT_FEATURE)) popupMenu.add(exitMenu);
 
 	    /**
 	     * If connection closed set offline tray image

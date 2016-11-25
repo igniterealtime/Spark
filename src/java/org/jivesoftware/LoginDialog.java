@@ -46,6 +46,7 @@ import org.jivesoftware.spark.ui.login.LoginSettingDialog;
 import org.jivesoftware.spark.util.*;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 import org.jivesoftware.sparkimpl.plugin.layout.LayoutSettings;
 import org.jivesoftware.sparkimpl.plugin.layout.LayoutSettingsManager;
 import org.jivesoftware.sparkimpl.settings.JiveInfo;
@@ -194,8 +195,15 @@ public class LoginDialog {
     }
     
     protected void afterLogin() {
-        // Does noting by default - but can be overwritten by subclasses to provide additional
-        // settings
+    	// Instantiate the Enterprise class right after a successful login!
+    	new Enterprise();
+    	
+    	// Make certain Enterprise features persist across future logins
+    	localPref.setAccountsReg(Enterprise.containsFeature(Enterprise.ACCOUNTS_REG_FEATURE));
+    	localPref.setAdvancedConfig(Enterprise.containsFeature(Enterprise.ADVANCED_CONFIG_FEATURE));    	
+    	localPref.setHostNameChange(Enterprise.containsFeature(Enterprise.HOST_NAME_FEATURE));
+    	localPref.setInvisibleLogin(Enterprise.containsFeature(Enterprise.INVISIBLE_LOGIN_FEATURE));    	
+    	localPref.setPswdAutologin(Enterprise.containsFeature(Enterprise.SAVE_PASSWORD_FEATURE));
     }    
 
     protected XMPPTCPConnectionConfiguration retrieveConnectionConfiguration() {
@@ -452,17 +460,18 @@ public class LoginDialog {
             add(headerLabel,
                     new GridBagConstraints(0, 5, 2, 1, 1.0, 0.0,
                             GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
-            if(!Default.getBoolean("HIDE_SAVE_PASSWORD_AND_AUTOLOGIN")) {
-            add(savePasswordBox,
-                    new GridBagConstraints(1, 5, 2, 1, 1.0, 0.0,
-                            GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 0, 5), 0, 0));
-            add(autoLoginBox,
-                    new GridBagConstraints(1, 6, 2, 1, 1.0, 0.0,
-                            GridBagConstraints.EAST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 0, 5), 0, 0));
+
+            if(!Default.getBoolean("HIDE_SAVE_PASSWORD_AND_AUTOLOGIN") && localPref.getPswdAutologin()) {
+            	add(savePasswordBox,
+            			new GridBagConstraints(1, 5, 2, 1, 1.0, 0.0,
+            					GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 0, 5), 0, 0));
+            	add(autoLoginBox,
+            			new GridBagConstraints(1, 6, 2, 1, 1.0, 0.0,
+            					GridBagConstraints.EAST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 0, 5), 0, 0));
             }
-            
+
             // Add option to hide "Login as invisible" selection on the login screen
-            if(!Default.getBoolean("HIDE_LOGIN_AS_INVISIBLE")) {            
+            if(!Default.getBoolean("HIDE_LOGIN_AS_INVISIBLE") && localPref.getInvisibleLogin()) {            
             	add(loginAsInvisibleBox,
                     new GridBagConstraints(1, 7, 2, 1, 1.0, 0.0,
                             GridBagConstraints.EAST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 0, 5), 0, 0));
@@ -473,11 +482,11 @@ public class LoginDialog {
             autoLoginBox.addActionListener(this);
 	    loginAsInvisibleBox.addActionListener(this);
 
-            if (!Default.getBoolean(Default.ACCOUNT_DISABLED)) {
-                buttonPanel.add(createAccountButton,
-                        new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0,
-                                GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5, 5, 0, 5), 0, 0));
-            }
+		    if (!Default.getBoolean(Default.ACCOUNT_DISABLED) && localPref.getAccountsReg()) {
+		    	buttonPanel.add(createAccountButton,
+		    			new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0,
+		    					GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5, 5, 0, 5), 0, 0));
+		    }
 
             if (Default.getBoolean(Default.PASSWORD_RESET_ENABLED)) {
                 buttonPanel.add(passwordResetButton, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5, 5, 0, 5), 0, 0));
@@ -497,11 +506,12 @@ public class LoginDialog {
                 });
             }
 
-            if(!Default.getBoolean(Default.ADVANCED_DISABLED)){
-            buttonPanel.add(advancedButton,
-                    new GridBagConstraints(2, 0, 1, 1, 1.0, 0.0,
-                            GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5, 5, 0, 5), 0, 0));
+            if(!Default.getBoolean(Default.ADVANCED_DISABLED) && localPref.getAdvancedConfig()) {
+            	buttonPanel.add(advancedButton,
+            			new GridBagConstraints(2, 0, 1, 1, 1.0, 0.0,
+            					GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5, 5, 0, 5), 0, 0));
             }
+
             buttonPanel.add(loginButton,
                     new GridBagConstraints(3, 0, 4, 1, 1.0, 0.0,
                             GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5, 5, 0, 5), 0, 0));
@@ -636,10 +646,8 @@ public class LoginDialog {
             if (ModelUtil.hasLength(lockedDownURL)) {
                 serverField.setText(lockedDownURL);
             }
-            if (Default.getBoolean("HOST_NAME_CHANGE_DISABLED"))
-                serverField.setEnabled(false);
 
-
+            if (Default.getBoolean("HOST_NAME_CHANGE_DISABLED") || !localPref.getHostNameChange()) serverField.setEnabled(false);
 
         }
 

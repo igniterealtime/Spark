@@ -78,6 +78,7 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.gateways.Gateway;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.Transport;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.TransportUtils;
+import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 import org.jxmpp.util.XmppStringUtils;
 
 
@@ -181,8 +182,8 @@ public class RosterDialog implements ActionListener {
         
         panel.add(groupBox, new GridBagConstraints(1, 4, 1, 1, 1.0D, 0.0D, 17, 2, new Insets(5, 5, 5, 5), 0, 0));
         
-        if(!Default.getBoolean("ADD_CONTACT_GROUP_DISABLED")){
-        panel.add(newGroupButton, new GridBagConstraints(2, 4, 1, 1, 0.0D, 0.0D, 17, 1, new Insets(5, 5, 5, 5), 0, 0));
+        if (!Default.getBoolean("ADD_CONTACT_GROUP_DISABLED") && Enterprise.containsFeature(Enterprise.ADD_GROUPS_FEATURE)) {
+        	panel.add(newGroupButton, new GridBagConstraints(2, 4, 1, 1, 0.0D, 0.0D, 17, 1, new Insets(5, 5, 5, 5), 0, 0));
         }
         newGroupButton.addActionListener(this);
 

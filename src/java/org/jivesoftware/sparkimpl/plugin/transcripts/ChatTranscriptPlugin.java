@@ -57,6 +57,7 @@ import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.ui.ContactList;
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 import org.jivesoftware.spark.util.UIComponentRegistry;
+import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
@@ -114,9 +115,7 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
         contactList.addContextMenuListener(new ContextMenuListener() {
             public void poppingUp(Object object, JPopupMenu popup) {
                 if (object instanceof ContactItem) {
-                	if (!Default.getBoolean("HISTORY_DISABLED")) {
-               	 	popup.add(viewHistoryAction);
-                	}
+                	if (!Default.getBoolean("HISTORY_DISABLED") && Enterprise.containsFeature(Enterprise.HISTORY_SETTINGS_FEATURE)) popup.add(viewHistoryAction);
                	 	popup.add(showStatusMessageAction);
                 }
             }
@@ -340,9 +339,7 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
                 return;
             }
             chatHistoryButton = UIComponentRegistry.getButtonFactory().createChatTranscriptButton();
-            if (!Default.getBoolean("HISTORY_DISABLED")) {
-            chatRoom.addChatRoomButton(chatHistoryButton);
-            }
+            if (!Default.getBoolean("HISTORY_DISABLED") && Enterprise.containsFeature(Enterprise.HISTORY_SETTINGS_FEATURE)) chatRoom.addChatRoomButton(chatHistoryButton);
             chatHistoryButton.setToolTipText(Res.getString("tooltip.view.history"));
             chatHistoryButton.addActionListener(this);
         }

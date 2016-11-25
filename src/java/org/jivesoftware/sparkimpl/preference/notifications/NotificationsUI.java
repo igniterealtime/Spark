@@ -23,6 +23,7 @@ package org.jivesoftware.sparkimpl.preference.notifications;
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.spark.util.ResourceUtils;
+import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 
 import javax.swing.*;
 import java.awt.*;
@@ -105,7 +106,7 @@ public class NotificationsUI extends JPanel {
         
         betaCheckBox = new JCheckBox();
         ResourceUtils.resButton(betaCheckBox, Res.getString("menuitem.check.for.updates"));
-        if(!Default.getBoolean(Default.DISABLE_UPDATES)){
+        if (!Default.getBoolean("DISABLE_UPDATES") && Enterprise.containsFeature(Enterprise.UPDATES_FEATURE)) {
         	pn.add(betaCheckBox, new GridBagConstraints(0, 7, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         }   
         	add(pn);	
