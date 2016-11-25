@@ -1300,4 +1300,45 @@ public class LocalPreferences {
 	setBoolean("useVersionAsResource", useVersionAsResource);
     }
 
+    // The following methods are used by LoginPanel to support certain Enterprise features 
+    public boolean getAccountsReg() {
+    	return Boolean.parseBoolean(props.getProperty("ccAccountsReg","true"));
+    }
+
+    public void setAccountsReg(boolean ccAccountsReg) {
+    	props.setProperty("ccAccountsReg", Boolean.toString(ccAccountsReg));
+    }
+
+    public boolean getAdvancedConfig() {
+    	return Boolean.parseBoolean(props.getProperty("ccAdvancedConfig","true"));
+    }
+
+    public void setAdvancedConfig(boolean ccAdvancedConfig) {
+    	props.setProperty("ccAdvancedConfig", Boolean.toString(ccAdvancedConfig));
+    }
+
+    public boolean getHostNameChange() {
+    	return Boolean.parseBoolean(props.getProperty("ccHostNameChange","true"));
+    }
+
+    public void setHostNameChange(boolean ccHostNameChange) {
+    	props.setProperty("ccHostNameChange", Boolean.toString(ccHostNameChange));
+    }
+
+    public boolean getInvisibleLogin() {
+    	return Boolean.parseBoolean(props.getProperty("ccInvisibleLogin","true"));
+    }
+
+    public void setInvisibleLogin(boolean ccInvisibleLogin) {
+    	props.setProperty("ccInvisibleLogin", Boolean.toString(ccInvisibleLogin));
+    }
+
+    public boolean getPswdAutologin() {
+    	return Boolean.parseBoolean(props.getProperty("ccPswdAutologin","true"));
+    }
+
+    public void setPswdAutologin(boolean ccPswdAutologin) {
+    	props.setProperty("ccPswdAutologin", Boolean.toString(ccPswdAutologin));
+    }
+
 }

@@ -38,6 +38,7 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.alerts.InputTextAreaDialog;
 import org.jivesoftware.sparkimpl.plugin.layout.LayoutSettings;
 import org.jivesoftware.sparkimpl.plugin.layout.LayoutSettingsManager;
+import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 import org.jivesoftware.sparkimpl.settings.JiveInfo;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
@@ -286,8 +287,7 @@ public final class MainWindow extends ChatFrame implements ActionListener {
             Log.error(ex);
         }
         // Close application.
-        if(!Default.getBoolean("DISABLE_EXIT"))
-            System.exit(1);
+        if (!Default.getBoolean("DISABLE_EXIT") && Enterprise.containsFeature(Enterprise.LOGOUT_EXIT_FEATURE)) System.exit(1);        
 
     }
 
@@ -462,19 +462,13 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         preferenceMenuItem.setText(Res.getString("title.spark.preferences"));
         preferenceMenuItem.addActionListener(this);
 
-        /******************************************************************************************************/
-        /* Show the "Preferences" menu item ONLY under the following conditions:                              */
-        /*                                                                                                    */
-        /*   1) We're currently in Maintenance Mode                                                           */
-        /*                          OR                                                                        */
-        /*   2) DISABLE_PREFERENCES_MENU_ITEM = false                                                         */
-        /******************************************************************************************************/
-        
+        // Show the "Preferences" menu item ONLY in Maintenance Mode or when DISABLE_PREFERENCES_MENU_ITEM = false and Client Control allows it.
         File myMaintFile = new File(Default.getString(Default.MAINT_FILESPEC));
-        
-        final boolean maintMode = (myMaintFile.exists() && !myMaintFile.isDirectory())? true:false;
-        
-        if (!Default.getBoolean("DISABLE_PREFERENCES_MENU_ITEM") || maintMode) connectMenu.add(preferenceMenuItem);
+
+        final boolean maintMode = (myMaintFile.exists() && !myMaintFile.isDirectory());
+        final boolean prefsAllowed = (!Default.getBoolean("DISABLE_PREFERENCES_MENU_ITEM") && Enterprise.containsFeature(Enterprise.PREFERENCES_MENU_FEATURE));
+
+        if (maintMode || prefsAllowed) connectMenu.add(preferenceMenuItem);
 
         alwaysOnTopItem = new JCheckBoxMenuItem();
         ResourceUtils.resButton(alwaysOnTopItem, Res.getString("menuitem.always.on.top"));
@@ -498,8 +492,7 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         }
         connectMenu.add(alwaysOnTopItem);
 
-        if(!Default.getBoolean("DISABLE_EXIT"))
-            connectMenu.addSeparator();
+        if (!Default.getBoolean("DISABLE_EXIT") && Enterprise.containsFeature(Enterprise.LOGOUT_EXIT_FEATURE)) connectMenu.addSeparator();
 
         //EventQueue.invokeLater(new Runnable() {
    	   //	public void run() {
@@ -512,14 +505,11 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         ResourceUtils.resButton(logoutWithStatus, Res.getString("menuitem.logout.with.status"));
         logoutWithStatus.addActionListener( e -> logout(true) );
 
-        if ((Spark.isWindows() || Spark.isLinux() || Spark.isMac()) && !Default.getBoolean("DISABLE_EXIT")) {
-            connectMenu.add(logoutMenuItem);
-            connectMenu.add(logoutWithStatus);
-	    connectMenu.addSeparator();
-	}
-
-        if (!Default.getBoolean("DISABLE_EXIT")) {
-            connectMenu.add(exitMenuItem);
+        if (!Default.getBoolean("DISABLE_EXIT") && Enterprise.containsFeature(Enterprise.LOGOUT_EXIT_FEATURE)) {
+        	connectMenu.add(logoutMenuItem);
+        	connectMenu.add(logoutWithStatus);
+        	connectMenu.addSeparator();
+        	connectMenu.add(exitMenuItem);
         }
 
         JMenuItem updateMenu= new JMenuItem("", SparkRes.getImageIcon(SparkRes.DOWNLOAD_16x16));
@@ -561,29 +551,27 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         };
 
 
-	if (!Default.getBoolean("HELP_USER_GUIDE_DISABLED")) {
-	    viewHelpGuideAction.putValue(Action.NAME,
-		    Res.getString("menuitem.user.guide"));
-	    viewHelpGuideAction.putValue(Action.SMALL_ICON,
-		    SparkRes.getImageIcon(SparkRes.SMALL_QUESTION));
-	    helpMenu.add(viewHelpGuideAction);
-	}
-	if (!Default.getBoolean("HELP_FORUM_DISABLED")) {
-	    helpMenu.add(sparkforumItem);
-	}
+        if (!Default.getBoolean("HELP_USER_GUIDE_DISABLED") && Enterprise.containsFeature(Enterprise.HELP_USERGUIDE_FEATURE)) {
+        	viewHelpGuideAction.putValue(Action.NAME,
+        			Res.getString("menuitem.user.guide"));
+        	viewHelpGuideAction.putValue(Action.SMALL_ICON,
+        			SparkRes.getImageIcon(SparkRes.SMALL_QUESTION));
+        	helpMenu.add(viewHelpGuideAction);
+        }
 
-        // Build Help Menu
-	if(!Default.getBoolean(Default.DISABLE_UPDATES)){
-	    helpMenu.add(updateMenu);
-	}
-        helpMenu.addSeparator();
-        helpMenu.add(viewErrors);
-        helpMenu.add(menuAbout);
+        if (!Default.getBoolean("HELP_FORUM_DISABLED") && Enterprise.containsFeature(Enterprise.HELP_FORUMS_FEATURE)) helpMenu.add(sparkforumItem);
 
-        // ResourceUtils - Adds mnemonics
-        ResourceUtils.resButton(preferenceMenuItem, Res.getString("menuitem.preferences"));
-        ResourceUtils.resButton(helpMenu, Res.getString("menuitem.help"));
-        ResourceUtils.resButton(menuAbout, Res.getString("menuitem.about"));
+	// Build Help Menu
+	if (!Default.getBoolean("DISABLE_UPDATES") && Enterprise.containsFeature(Enterprise.UPDATES_FEATURE)) helpMenu.add(updateMenu);
+
+	helpMenu.addSeparator();
+	helpMenu.add(viewErrors);
+	helpMenu.add(menuAbout);
+
+	// ResourceUtils - Adds mnemonics
+	ResourceUtils.resButton(preferenceMenuItem, Res.getString("menuitem.preferences"));
+	ResourceUtils.resButton(helpMenu, Res.getString("menuitem.help"));
+	ResourceUtils.resButton(menuAbout, Res.getString("menuitem.about"));
 
 	if (Default.getString("HELP_FORUM_TEXT").length() > 0) {
 	    ResourceUtils.resButton(sparkforumItem, Default.getString("HELP_FORUM_TEXT"));
@@ -622,15 +610,15 @@ public final class MainWindow extends ChatFrame implements ActionListener {
 	    }
 	});
 
-	if (!Default.getBoolean("DISABLE_UPDATES")) {
-	    // Execute spark update checker after one minute.
-	    final TimerTask task = new SwingTimerTask() {
-		public void doRun() {
-		    checkForUpdates(false);
-		}
-	    };
+	if (!Default.getBoolean("DISABLE_UPDATES") && Enterprise.containsFeature(Enterprise.UPDATES_FEATURE)) {
+		// Execute spark update checker after one minute.
+		final TimerTask task = new SwingTimerTask() {
+			public void doRun() {
+				checkForUpdates(false);
+			}
+		};
 
-	    TaskEngine.getInstance().schedule(task, 60000);
+		TaskEngine.getInstance().schedule(task, 60000);
 	}
 
 	if(SettingsManager.getLocalPreferences().isDebuggerEnabled())

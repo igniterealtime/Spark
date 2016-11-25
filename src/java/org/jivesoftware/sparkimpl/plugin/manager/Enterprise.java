@@ -35,10 +35,33 @@ import org.jivesoftware.spark.util.log.Log;
  */
 public class Enterprise {
 
+    public static final String ACCOUNTS_REG_FEATURE = "accounts-reg";
+    public static final String ADD_CONTACTS_FEATURE = "add-contacts";
+    public static final String ADD_GROUPS_FEATURE = "add-groups";
+    public static final String ADVANCED_CONFIG_FEATURE = "advanced-config";
+    public static final String AVATAR_TAB_FEATURE = "avatar-tab";
     public static final String BROADCAST_FEATURE = "broadcast";
-    public static final String MUC_FEATURE = "muc";
-    public static final String VCARD_FEATURE = "vcard";
+    public static final String REMOVALS_FEATURE = "removals";
+    public static final String RENAMES_FEATURE = "renames";
     public static final String FILE_TRANSFER_FEATURE = "file-transfer";
+    public static final String HELP_FORUMS_FEATURE = "help-forums";
+    public static final String HELP_USERGUIDE_FEATURE = "help-userguide";
+    public static final String HISTORY_SETTINGS_FEATURE = "history-settings";
+    public static final String HOST_NAME_FEATURE = "host-name";
+    public static final String INVISIBLE_LOGIN_FEATURE = "invisible-login";
+    public static final String LOGOUT_EXIT_FEATURE = "logout-exit";
+    public static final String MOVE_COPY_FEATURE = "move-copy";
+    public static final String MUC_FEATURE = "muc";
+    public static final String PASSWORD_CHANGE_FEATURE = "password-change";
+    public static final String PERSON_SEARCH_FEATURE = "person-search";
+    public static final String PLUGINS_MENU_FEATURE = "plugins-menu";
+    public static final String PREFERENCES_MENU_FEATURE = "preferences-menu";
+    public static final String PRESENCE_STATUS_FEATURE = "presence-status";
+    public static final String VCARD_FEATURE = "vcard";
+    public static final String SAVE_PASSWORD_FEATURE = "save-password";
+    public static final String UPDATES_FEATURE = "updates";
+    public static final String VIEW_NOTES_FEATURE = "view-notes";
+    public static final String VIEW_TASKS_FEATURE = "view-tasks";
 
     private static DiscoverInfo featureInfo;
 
