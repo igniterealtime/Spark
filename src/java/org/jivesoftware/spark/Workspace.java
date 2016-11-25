@@ -199,7 +199,8 @@ public class Workspace extends JPanel implements StanzaListener {
      * Builds the Workspace layout.
      */
     public void buildLayout() {
-        new Enterprise();
+    	// Moved this to LoginDialog class
+    	// new Enterprise();
 
         // Initialize Contact List
         contactList = UIComponentRegistry.createContactList();
