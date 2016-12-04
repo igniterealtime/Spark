@@ -194,17 +194,13 @@ public class LoginDialog {
     	return true;
     }
     
-    protected void afterLogin() {
-    	// Instantiate the Enterprise class right after a successful login!
-    	new Enterprise();
-    	
-    	// Make certain Enterprise features persist across future logins
-    	localPref.setAccountsReg(Enterprise.containsFeature(Enterprise.ACCOUNTS_REG_FEATURE));
-    	localPref.setAdvancedConfig(Enterprise.containsFeature(Enterprise.ADVANCED_CONFIG_FEATURE));    	
-    	localPref.setHostNameChange(Enterprise.containsFeature(Enterprise.HOST_NAME_FEATURE));
-    	localPref.setInvisibleLogin(Enterprise.containsFeature(Enterprise.INVISIBLE_LOGIN_FEATURE));    	
-    	localPref.setPswdAutologin(Enterprise.containsFeature(Enterprise.SAVE_PASSWORD_FEATURE));
-    }    
+	protected void afterLogin() {
+		// Make certain Enterprise features persist across future logins
+		persistEnterprise();
+
+		// Initialize and write default values from "Advanced Connection Preferences" to disk
+		initAdvancedDefaults();
+	}
 
     protected XMPPTCPConnectionConfiguration retrieveConnectionConfiguration() {
         int port = localPref.getXmppPort();
@@ -1529,5 +1525,42 @@ JOptionPane.ERROR_MESSAGE);
         return _usernames;
     }
 
+	private void persistEnterprise() {
+		new Enterprise();
+		localPref.setAccountsReg(Enterprise.containsFeature(Enterprise.ACCOUNTS_REG_FEATURE));
+		localPref.setAdvancedConfig(Enterprise.containsFeature(Enterprise.ADVANCED_CONFIG_FEATURE));
+		localPref.setHostNameChange(Enterprise.containsFeature(Enterprise.HOST_NAME_FEATURE));
+		localPref.setInvisibleLogin(Enterprise.containsFeature(Enterprise.INVISIBLE_LOGIN_FEATURE));
+		localPref.setPswdAutologin(Enterprise.containsFeature(Enterprise.SAVE_PASSWORD_FEATURE));
+	}
+
+	private void initAdvancedDefaults() {
+		localPref.setAcceptAllCertificates(localPref.isAcceptAllCertificates());
+		localPref.setCompressionEnabled(localPref.isCompressionEnabled());
+		localPref.setDebuggerEnabled(localPref.isDebuggerEnabled());
+		localPref.setDisableHostnameVerification(localPref.isDisableHostnameVerification());
+		localPref.setHostAndPortConfigured(localPref.isHostAndPortConfigured());
+		localPref.setJKSPath("");
+		localPref.setPKIEnabled(localPref.isPKIEnabled());
+		localPref.setPKIStore("JKS");
+		localPref.setProtocol("SOCKS");
+		localPref.setProxyEnabled(localPref.isProxyEnabled());
+		localPref.setProxyPassword("");
+		localPref.setProxyUsername("");
+		localPref.setResource("Spark");
+		localPref.setSaslGssapiSmack3Compatible(localPref.isSaslGssapiSmack3Compatible());
+		localPref.setSSL(localPref.isSSL());
+		localPref.setSSOEnabled(localPref.isSSOEnabled());
+		localPref.setSSOMethod("file");
+		localPref.setTimeOut(localPref.getTimeOut());
+		localPref.setTrustStorePassword("");
+		localPref.setTrustStorePath("");
+		localPref.setUseHostnameAsResource(localPref.isUseHostnameAsResource());
+		localPref.setUseVersionAsResource(localPref.isUseVersionAsResource());
+		localPref.setXmppHost("");
+		localPref.setXmppPort(localPref.getXmppPort());
+
+		SettingsManager.saveSettings();
+	}
 
 }
