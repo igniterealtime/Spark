@@ -24,11 +24,20 @@ import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
@@ -44,6 +53,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
+import org.jivesoftware.Spark;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.SmackException;
@@ -336,13 +346,16 @@ Log.warning( "Unable to broadcast.", e1 );
             JOptionPane.showMessageDialog(dlg, Res.getString("message.broadcast.no.text"), Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
             return false;
         }
-        String reciverBroadcast="";
+       
+        String recipients="";
+       
+        
         for (String jid : jids) {
             final Message message = new Message();
-            reciverBroadcast=reciverBroadcast+jid+" ";
+            recipients=recipients+jid.split("@")[0]+",";
             message.setTo(jid);
             message.setBody(text);
-
+            
             if (normalMessageButton.isSelected()) {
                 message.setType(Message.Type.normal);
             }
@@ -351,11 +364,32 @@ Log.warning( "Unable to broadcast.", e1 );
             }
             SparkManager.getConnection().sendStanza(message);
         }
-        reciverBroadcast=reciverBroadcast+":";
-        final Message mess_to_source = new Message();
-        mess_to_source.setBody(reciverBroadcast+text);
-        mess_to_source.setTo(SparkManager.getSessionManager().getUsername()+"@"+SparkManager.getSessionManager().getServerAddress());
-        SparkManager.getConnection().sendStanza(mess_to_source);
+        DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+        Date date = new Date();
+        String out=dateFormat.format(date)+" "+recipients+" "+text+"\n";
+        try {
+            addDataToFile(out);
+        } catch (IOException ex) {
+            Logger.getLogger(BroadcastDialog.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
         return true;
+    }
+    private  void addDataToFile(String data) throws IOException
+    {
+         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM");
+         Date date = new Date();
+         String fileName="broadcast_history."+dateFormat.format(date)+".txt";
+         File file = new File(Spark.getSparkUserHome()+File.separator+fileName);
+         
+         if(!file.exists()) 
+         {
+             file.createNewFile();
+         }    
+              FileWriter fileWritter = new FileWriter(file.getPath(),true);
+    	      BufferedWriter out = new BufferedWriter(fileWritter);
+    	      out.write(data);
+    	      out.close();
+         
     }
 }

@@ -30,7 +30,9 @@ import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -55,6 +57,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
+import org.jivesoftware.Spark;
 
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
@@ -94,6 +97,7 @@ import org.jivesoftware.sparkimpl.preference.sounds.SoundPreferences;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jxmpp.util.XmppStringUtils;
+import org.jivesoftware.spark.ui.BroadcastHistoryFrame;
 
 /**
  * Handles broadcasts from server and allows for roster wide broadcasts.
@@ -116,9 +120,14 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
 
         // Register with action menu
         final JMenu actionsMenu = SparkManager.getMainWindow().getMenuByName(Res.getString("menuitem.actions"));
+
         JMenuItem broadcastMenu = new JMenuItem(Res.getString("title.broadcast.message"), SparkRes.getImageIcon(SparkRes.MEGAPHONE_16x16));
+        JMenuItem broadcastHistoryMenu = new JMenuItem(Res.getString("title.broadcast.history"), SparkRes.getImageIcon(SparkRes.HISTORY_16x16));
         ResourceUtils.resButton(broadcastMenu, Res.getString("title.broadcast.message"));
+
         actionsMenu.add(broadcastMenu);
+        actionsMenu.add(broadcastHistoryMenu);
+	broadcastHistoryMenu.addActionListener(e -> {	new BroadcastHistoryFrame().run();   });
         broadcastMenu.addActionListener( e -> broadcastToRoster() );
 
         // Register with action menu
@@ -502,6 +511,22 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
                    
                 }
          return html;
+    }
+     public void addDataToFile(String data) throws IOException
+    {
+        //System.out.print(Spark.getSparkUserHome());
+         String fileName="broadcast.txt";
+         File file = new File(Spark.getSparkUserHome()+File.separator+fileName);
+         
+         if(!file.exists()) 
+         {
+             file.createNewFile();
+         }    
+              FileWriter fileWritter = new FileWriter(file.getPath(),true);
+    	      BufferedWriter out = new BufferedWriter(fileWritter);
+    	      out.write(data);
+    	      out.close();
+         
     }
     /**
      * Displays a Serverbroadcast within a JFrame<br>
