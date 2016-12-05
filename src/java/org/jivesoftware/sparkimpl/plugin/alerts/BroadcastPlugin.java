@@ -512,22 +512,6 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
                 }
          return html;
     }
-     public void addDataToFile(String data) throws IOException
-    {
-        //System.out.print(Spark.getSparkUserHome());
-         String fileName="broadcast.txt";
-         File file = new File(Spark.getSparkUserHome()+File.separator+fileName);
-         
-         if(!file.exists()) 
-         {
-             file.createNewFile();
-         }    
-              FileWriter fileWritter = new FileWriter(file.getPath(),true);
-    	      BufferedWriter out = new BufferedWriter(fileWritter);
-    	      out.write(data);
-    	      out.close();
-         
-    }
     /**
      * Displays a Serverbroadcast within a JFrame<br>
      * Messages can contain html-tags
