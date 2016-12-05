@@ -105,10 +105,8 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
     private Set<ChatRoom> broadcastRooms = new HashSet<>();
    
     public void initialize() {
-        boolean enabled = Enterprise.containsFeature(Enterprise.BROADCAST_FEATURE);
-        if (!enabled) {
-            return;
-        }
+       // See if we should disable all "Broadcast" menu items
+       if (Default.getBoolean("DISABLE_BROADCAST_MENU_ITEM") || !Enterprise.containsFeature(Enterprise.BROADCAST_FEATURE)) return;    
 
         // Add as ContainerDecoratr
         SparkManager.getChatManager().addSparkTabHandler(this);
