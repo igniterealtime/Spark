@@ -9,10 +9,11 @@ import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import org.jivesoftware.Spark;
+
+import org.jivesoftware.spark.util.log.Log;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -78,7 +79,7 @@ public class BroadcastHistoryFrame extends javax.swing.JFrame {
         try {
             readFromFile(myDate);
         } catch (IOException ex) {
-            Logger.getLogger(BroadcastHistoryFrame.class.getName()).log(Level.SEVERE, null, ex);
+            Log.error("Couldn't read from file"+ex.getMessage()+ex.getStackTrace());
         }
        
         jToggleButton1.setText("Search");
@@ -133,7 +134,7 @@ public class BroadcastHistoryFrame extends javax.swing.JFrame {
         try {
             readFromFile(JFormattedTextField1.getText());
         } catch (IOException ex) {
-            Logger.getLogger(BroadcastHistoryFrame.class.getName()).log(Level.SEVERE, null, ex);
+            Log.error("Couldn't read from file"+ex.getCause()+ex.getStackTrace());
         }
        
         

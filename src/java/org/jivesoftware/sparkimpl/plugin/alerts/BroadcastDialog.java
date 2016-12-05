@@ -36,9 +36,6 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -370,7 +367,7 @@ Log.warning( "Unable to broadcast.", e1 );
         try {
             addDataToFile(out);
         } catch (IOException ex) {
-            Logger.getLogger(BroadcastDialog.class.getName()).log(Level.SEVERE, null, ex);
+            Log.error("Couldn't add data to file"+ex.getStackTrace());
         }
         
         return true;
