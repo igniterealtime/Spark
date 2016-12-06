@@ -178,17 +178,23 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatManagerListener
 		}
 	    });
 
+	    // Logout Menu
 	    if (Spark.isWindows()) {
-	    	if (!Default.getBoolean("DISABLE_EXIT") && Enterprise.containsFeature(Enterprise.LOGOUT_EXIT_FEATURE)) popupMenu.add(logoutMenu);
-	    	logoutMenu.addActionListener( new AbstractAction() {
-	    		private static final long serialVersionUID = 1L;
+	    	if (!Default.getBoolean("DISABLE_EXIT") && Enterprise.containsFeature(Enterprise.LOGOUT_EXIT_FEATURE)) {
+	    		if(!Default.getBoolean("HIDE_SAVE_PASSWORD_AND_AUTOLOGIN") && SettingsManager.getLocalPreferences().getPswdAutologin()) {
+	    			logoutMenu.addActionListener( new AbstractAction() {
+	    				private static final long serialVersionUID = 1L;
 
-	    		@Override
-	    		public void actionPerformed(ActionEvent e) {
-	    			SparkManager.getMainWindow().logout(false);
+	    				@Override
+	    				public void actionPerformed(ActionEvent e) {
+	    					SparkManager.getMainWindow().logout(false);
+	    				}
+	    			});
+	    			popupMenu.add(logoutMenu);
 	    		}
-	    	});
+	    	}
 	    }
+
 	    // Exit Menu
 	    exitMenu.addActionListener( new AbstractAction() {
 		private static final long serialVersionUID = 1L;
