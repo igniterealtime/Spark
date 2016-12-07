@@ -59,7 +59,6 @@ import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.ui.ContactList;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
-
 /**
  * Allows for better selective broadcasting.
  *
@@ -327,21 +326,20 @@ Log.warning( "Unable to broadcast.", e1 );
                 jids.add(jid);
             }
         }
-        
         if(jids.size() == 0)
         {
             JOptionPane.showMessageDialog(dlg, Res.getString("message.broadcast.no.user.selected"), Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
             return false;
         }
-
         String text = messageBox.getText();
         if (!ModelUtil.hasLength(text)) {
             JOptionPane.showMessageDialog(dlg, Res.getString("message.broadcast.no.text"), Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
             return false;
         }
-
+        String reciverBroadcast="";
         for (String jid : jids) {
             final Message message = new Message();
+            reciverBroadcast=reciverBroadcast+jid+" ";
             message.setTo(jid);
             message.setBody(text);
 
@@ -353,7 +351,11 @@ Log.warning( "Unable to broadcast.", e1 );
             }
             SparkManager.getConnection().sendStanza(message);
         }
-       
+        reciverBroadcast=reciverBroadcast+":";
+        final Message mess_to_source = new Message();
+        mess_to_source.setBody(reciverBroadcast+text);
+        mess_to_source.setTo(SparkManager.getSessionManager().getUsername()+"@"+SparkManager.getSessionManager().getServerAddress());
+        SparkManager.getConnection().sendStanza(mess_to_source);
         return true;
     }
 }
