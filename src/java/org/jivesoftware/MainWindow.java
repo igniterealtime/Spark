@@ -473,23 +473,13 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         alwaysOnTopItem = new JCheckBoxMenuItem();
         ResourceUtils.resButton(alwaysOnTopItem, Res.getString("menuitem.always.on.top"));
         alwaysOnTopItem.addActionListener( actionEvent -> {
-            if (alwaysOnTopItem.isSelected())
-            {
-                SettingsManager.getLocalPreferences().setMainWindowAlwaysOnTop(true);
-                MainWindow.getInstance().setAlwaysOnTop(true);
-            }
-            else
-            {
-                SettingsManager.getLocalPreferences().setMainWindowAlwaysOnTop(false);
-                MainWindow.getInstance().setAlwaysOnTop(false);
-            }
+        	SettingsManager.getLocalPreferences().setMainWindowAlwaysOnTop(alwaysOnTopItem.isSelected());
+        	MainWindow.getInstance().setAlwaysOnTop(alwaysOnTopItem.isSelected());
         } );
 
-        if (SettingsManager.getLocalPreferences().isMainWindowAlwaysOnTop())
-        {
-        	alwaysOnTopItem.setSelected(true);
-        	this.setAlwaysOnTop(true);
-        }
+        alwaysOnTopItem.setSelected(SettingsManager.getLocalPreferences().isMainWindowAlwaysOnTop());
+        this.setAlwaysOnTop(SettingsManager.getLocalPreferences().isMainWindowAlwaysOnTop());
+
         connectMenu.add(alwaysOnTopItem);
 
         // Set up the Logout and Exit menus...
