@@ -56,7 +56,6 @@ import javax.swing.UIManager;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
-
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
@@ -105,8 +104,8 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
     private Set<ChatRoom> broadcastRooms = new HashSet<>();
    
     public void initialize() {
-       // See if we should disable all "Broadcast" menu items
-       if (Default.getBoolean("DISABLE_BROADCAST_MENU_ITEM") || !Enterprise.containsFeature(Enterprise.BROADCAST_FEATURE)) return;    
+        // See if we should disable all "Broadcast" menu items
+    	if (Default.getBoolean("DISABLE_BROADCAST_MENU_ITEM") || !Enterprise.containsFeature(Enterprise.BROADCAST_FEATURE)) return;
 
         // Add as ContainerDecoratr
         SparkManager.getChatManager().addSparkTabHandler(this);
@@ -116,16 +115,14 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
 
         // Register with action menu
         final JMenu actionsMenu = SparkManager.getMainWindow().getMenuByName(Res.getString("menuitem.actions"));
-
+	JMenuItem broadcastHistoryMenu = new JMenuItem(Res.getString("title.broadcast.history"), SparkRes.getImageIcon(SparkRes.HISTORY_16x16));
         JMenuItem broadcastMenu = new JMenuItem(Res.getString("title.broadcast.message"), SparkRes.getImageIcon(SparkRes.MEGAPHONE_16x16));
-        JMenuItem broadcastHistoryMenu = new JMenuItem(Res.getString("title.broadcast.history"), SparkRes.getImageIcon(SparkRes.HISTORY_16x16));
         ResourceUtils.resButton(broadcastMenu, Res.getString("title.broadcast.message"));
-
+	actionsMenu.add(broadcastHistoryMenu);
         actionsMenu.add(broadcastMenu);
-        actionsMenu.add(broadcastHistoryMenu);
-	broadcastHistoryMenu.addActionListener(e -> {	new BroadcastHistoryFrame().run();   });
+	
         broadcastMenu.addActionListener( e -> broadcastToRoster() );
-
+	broadcastHistoryMenu.addActionListener(e -> {	new BroadcastHistoryFrame().run();   });
         // Register with action menu
         JMenuItem startConversationtMenu = new JMenuItem("", SparkRes.getImageIcon(SparkRes.SMALL_MESSAGE_IMAGE));
         ResourceUtils.resButton(startConversationtMenu, Res.getString("menuitem.start.a.chat"));
@@ -176,6 +173,7 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
 
                     broadcastMessageAction.putValue(Action.NAME, Res.getString("menuitem.broadcast.to.group"));
                     broadcastMessageAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.MEGAPHONE_16x16));
+
                     popup.add(broadcastMessageAction);
                 }
             }
