@@ -83,6 +83,7 @@ exit 0
 /usr/share/spark/lib/jxmpp-core.jar
 /usr/share/spark/lib/jxmpp-util-cache.jar
 /usr/share/spark/lib/libjitsi.jar
+/usr/share/spark/lib/littleluck.jar 
 %dir /usr/share/spark/lib/linux/
 /usr/share/spark/lib/linux/libcivil.so
 /usr/share/spark/lib/linux/libjnawtrenderer.so

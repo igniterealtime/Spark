@@ -54,6 +54,8 @@ import org.jivesoftware.spark.ui.status.StatusBar;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
+import org.jivesoftware.resource.Default;
 
 /**
  * Handles the UI for viewing and editing of VCard information.
@@ -92,8 +94,11 @@ public class VCardEditor {
 	homePanel = new HomePanel();
 	tabbedPane.addTab(Res.getString("tab.home"), homePanel);
 
-	avatarPanel = new AvatarPanel();
-	tabbedPane.addTab(Res.getString("tab.avatar"), avatarPanel);
+	// See if we should remove the Avatar tab in profile dialog
+	if (!Default.getBoolean("DISABLE_AVATAR_TAB") && Enterprise.containsFeature(Enterprise.AVATAR_TAB_FEATURE)) {
+		avatarPanel = new AvatarPanel();
+		tabbedPane.addTab(Res.getString("tab.avatar"), avatarPanel);
+	}
 
 	// Build the UI
 	buildUI(vCard);
@@ -149,7 +154,10 @@ public class VCardEditor {
 	};
 
 	pane.addPropertyChangeListener(changeListener);
-	avatarPanel.setParentDialog(dlg);
+	
+	// See if we should remove the Avatar tab in profile dialog	
+	if (!Default.getBoolean("DISABLE_AVATAR_TAB") && Enterprise.containsFeature(Enterprise.AVATAR_TAB_FEATURE)) avatarPanel.setParentDialog(dlg);
+	
 	dlg.setVisible(true);
 	dlg.toFront();
 	dlg.requestFocus();
@@ -183,10 +191,13 @@ public class VCardEditor {
 	homePanel.allowEditing(false);
 	tabbedPane.addTab(Res.getString("tab.home"), homePanel);
 
-	avatarPanel = new AvatarPanel();
-	avatarPanel.allowEditing(false);
-	tabbedPane.addTab(Res.getString("tab.avatar"), avatarPanel);
-
+	// See if we should remove the Avatar tab in profile dialog
+	if (!Default.getBoolean("DISABLE_AVATAR_TAB") && Enterprise.containsFeature(Enterprise.AVATAR_TAB_FEATURE)) {	
+		avatarPanel = new AvatarPanel();
+		avatarPanel.allowEditing(false);
+		tabbedPane.addTab(Res.getString("tab.avatar"), avatarPanel);
+	}
+	
 	// Build the UI
 	buildUI(vCard);
 	
@@ -342,18 +353,22 @@ public class VCardEditor {
 
         fillUI(vcard);
         
-	// Set avatar
-	byte[] bytes = vcard.getAvatar();
-	if (bytes != null && bytes.length > 0) {
-	    ImageIcon icon = new ImageIcon(bytes);
-	    avatarPanel.setAvatar(icon);
-	    avatarPanel.setAvatarBytes(bytes);
-	    if (avatarLabel != null) {
-		icon = GraphicUtils.scaleImageIcon(icon, 48, 48);
-
-		avatarLabel.setIcon(icon);
-	    }
-	}
+        // Set Avatar
+        byte[] bytes = vcard.getAvatar();
+        if (bytes != null && bytes.length > 0) {
+        	ImageIcon icon = new ImageIcon(bytes);
+	    
+        	// See if we should remove the Avatar tab in profile dialog	    
+        	if (!Default.getBoolean("DISABLE_AVATAR_TAB") && Enterprise.containsFeature(Enterprise.AVATAR_TAB_FEATURE)) {	    
+        		avatarPanel.setAvatar(icon);
+        		avatarPanel.setAvatarBytes(bytes);
+        	}	    
+	    
+        	if (avatarLabel != null) {
+        		icon = GraphicUtils.scaleImageIcon(icon, 48, 48);
+        		avatarLabel.setIcon(icon);
+        	}
+        }
     }
 
     private void fillUI(VCard vcard){

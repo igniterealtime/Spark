@@ -28,6 +28,7 @@ import org.jivesoftware.spark.Workspace;
 import org.jivesoftware.spark.component.IconTextField;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.SwingWorker;
+import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -73,8 +74,10 @@ public class SearchService extends JPanel {
         ResourceUtils.resLabel(findLabel, findField, Res.getString("label.find"));
 
         // add(findLabel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-        boolean hide = Default.getBoolean(Default.HIDE_PERSON_SEARCH_FIELD);
-        if (!hide) {
+
+        boolean showPersonSearchField = (!Default.getBoolean("HIDE_PERSON_SEARCH_FIELD") && Enterprise.containsFeature(Enterprise.PERSON_SEARCH_FEATURE));
+
+        if (showPersonSearchField) {
         	if (Spark.isMac()) {
         		add(findField, new GridBagConstraints(1, 1, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 30), 0, 0));
         	}
@@ -85,20 +88,20 @@ public class SearchService extends JPanel {
 
         // Check for secure connection
         if (SparkManager.getConnection().isSecureConnection()) {
-            final JLabel lockLabel = new JLabel();
-            lockLabel.setHorizontalTextPosition(JLabel.LEFT);
-            lockLabel.setIcon(SparkRes.getImageIcon(SparkRes.LOCK_16x16));
-            if (!hide) {
-            	if (Spark.isMac()) {
-            		add(lockLabel, new GridBagConstraints(2, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 0, 5, 15), 0, 0));
+        	final JLabel lockLabel = new JLabel();
+        	lockLabel.setHorizontalTextPosition(JLabel.LEFT);
+        	lockLabel.setIcon(SparkRes.getImageIcon(SparkRes.LOCK_16x16));
 
-            	}
-            	else {
-            		add(lockLabel, new GridBagConstraints(2, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 0, 5, 5), 0, 0));
+        	if (Spark.isMac()) {
+        		add(lockLabel, new GridBagConstraints(2, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 0, 5, 15), 0, 0));
 
-            	}
-            }
-            lockLabel.setToolTipText(Res.getString("message.spark.secure"));
+        	}
+        	else {
+        		add(lockLabel, new GridBagConstraints(2, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 0, 5, 5), 0, 0));
+
+        	}
+
+        	lockLabel.setToolTipText(Res.getString("message.spark.secure"));
         }
 
         findField.setToolTipText(Res.getString("message.search.for.contacts"));

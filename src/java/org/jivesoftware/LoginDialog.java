@@ -46,6 +46,7 @@ import org.jivesoftware.spark.ui.login.LoginSettingDialog;
 import org.jivesoftware.spark.util.*;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 import org.jivesoftware.sparkimpl.plugin.layout.LayoutSettings;
 import org.jivesoftware.sparkimpl.plugin.layout.LayoutSettingsManager;
 import org.jivesoftware.sparkimpl.settings.JiveInfo;
@@ -193,10 +194,13 @@ public class LoginDialog {
     	return true;
     }
     
-    protected void afterLogin() {
-        // Does noting by default - but can be overwritten by subclasses to provide additional
-        // settings
-    }    
+	protected void afterLogin() {
+		// Make certain Enterprise features persist across future logins
+		persistEnterprise();
+
+		// Initialize and write default values from "Advanced Connection Preferences" to disk
+		initAdvancedDefaults();
+	}
 
     protected XMPPTCPConnectionConfiguration retrieveConnectionConfiguration() {
         int port = localPref.getXmppPort();
@@ -452,28 +456,33 @@ public class LoginDialog {
             add(headerLabel,
                     new GridBagConstraints(0, 5, 2, 1, 1.0, 0.0,
                             GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
-            if(!Default.getBoolean("HIDE_SAVE_PASSWORD_AND_AUTOLOGIN")) {
-            add(savePasswordBox,
-                    new GridBagConstraints(1, 5, 2, 1, 1.0, 0.0,
-                            GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 0, 5), 0, 0));
-            add(autoLoginBox,
-                    new GridBagConstraints(1, 6, 2, 1, 1.0, 0.0,
-                            GridBagConstraints.EAST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 0, 5), 0, 0));
+
+            if(!Default.getBoolean("HIDE_SAVE_PASSWORD_AND_AUTOLOGIN") && localPref.getPswdAutologin()) {
+            	add(savePasswordBox,
+            			new GridBagConstraints(1, 5, 2, 1, 1.0, 0.0,
+            					GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 0, 5), 0, 0));
+            	add(autoLoginBox,
+            			new GridBagConstraints(1, 6, 2, 1, 1.0, 0.0,
+            					GridBagConstraints.EAST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 0, 5), 0, 0));
             }
-	    add(loginAsInvisibleBox,
+
+            // Add option to hide "Login as invisible" selection on the login screen
+            if(!Default.getBoolean("HIDE_LOGIN_AS_INVISIBLE") && localPref.getInvisibleLogin()) {            
+            	add(loginAsInvisibleBox,
                     new GridBagConstraints(1, 7, 2, 1, 1.0, 0.0,
                             GridBagConstraints.EAST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 0, 5), 0, 0));
+            }
 
             // Add button but disable the login button initially
             savePasswordBox.addActionListener(this);
             autoLoginBox.addActionListener(this);
 	    loginAsInvisibleBox.addActionListener(this);
 
-            if (!Default.getBoolean(Default.ACCOUNT_DISABLED)) {
-                buttonPanel.add(createAccountButton,
-                        new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0,
-                                GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5, 5, 0, 5), 0, 0));
-            }
+		    if (!Default.getBoolean(Default.ACCOUNT_DISABLED) && localPref.getAccountsReg()) {
+		    	buttonPanel.add(createAccountButton,
+		    			new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0,
+		    					GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5, 5, 0, 5), 0, 0));
+		    }
 
             if (Default.getBoolean(Default.PASSWORD_RESET_ENABLED)) {
                 buttonPanel.add(passwordResetButton, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5, 5, 0, 5), 0, 0));
@@ -493,11 +502,12 @@ public class LoginDialog {
                 });
             }
 
-            if(!Default.getBoolean(Default.ADVANCED_DISABLED)){
-            buttonPanel.add(advancedButton,
-                    new GridBagConstraints(2, 0, 1, 1, 1.0, 0.0,
-                            GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5, 5, 0, 5), 0, 0));
+            if(!Default.getBoolean(Default.ADVANCED_DISABLED) && localPref.getAdvancedConfig()) {
+            	buttonPanel.add(advancedButton,
+            			new GridBagConstraints(2, 0, 1, 1, 1.0, 0.0,
+            					GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5, 5, 0, 5), 0, 0));
             }
+
             buttonPanel.add(loginButton,
                     new GridBagConstraints(3, 0, 4, 1, 1.0, 0.0,
                             GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5, 5, 0, 5), 0, 0));
@@ -632,10 +642,8 @@ public class LoginDialog {
             if (ModelUtil.hasLength(lockedDownURL)) {
                 serverField.setText(lockedDownURL);
             }
-            if (Default.getBoolean("HOST_NAME_CHANGE_DISABLED"))
-                serverField.setEnabled(false);
 
-
+            if (Default.getBoolean("HOST_NAME_CHANGE_DISABLED") || !localPref.getHostNameChange()) serverField.setEnabled(false);
 
         }
 
@@ -1105,42 +1113,35 @@ public class LoginDialog {
                 }
                 catch (Exception xee) {
 
-                    errorMessage = SparkRes.getString(SparkRes.UNRECOVERABLE_ERROR);
                     hasErrors = true;
 
                     if (!loginDialog.isVisible()) {
                         loginDialog.setVisible(true);
                     }
-                    if (xee instanceof XMPPException.XMPPErrorException) {
 
-                        XMPPException.XMPPErrorException xe = (XMPPException.XMPPErrorException)xee;
-                        switch ( xe.getXMPPError().getCondition() )
-                        {
-                            case conflict:
-                                errorMessage = Res.getString("label.conflict.error");
-                                break;
+                    if (xee.getMessage().contains("not-authorized")) {
+                        errorMessage = Res.getString("message.invalid.username.password");
 
-                            case not_authorized:
-                                errorMessage = Res.getString("message.invalid.username.password");
-                                break;
+                    } else if (xee.getMessage().contains("java.net.UnknownHostException:") || xee.getMessage().contains("Network is unreachable") || xee.getMessage().contains("java.net.ConnectException: Connection refused:")) {
+                        errorMessage = Res.getString("message.server.unavailable");
 
-                            case remote_server_not_found:
-                                errorMessage = Res.getString("message.server.unavailable");
-                                break;
+                    } else if (xee.getMessage().contains("Hostname verification of certificate failed")) {
+                        errorMessage = Res.getString("message.cert.hostname.verification.failed");
+                        ReconnectionManager.getInstanceFor(connection).disableAutomaticReconnection();
 
-                            case remote_server_timeout:
-                                errorMessage = Res.getString("message.server.unavailable");
-                                break;
+                    } else if (xee.getMessage().contains("unable to find valid certification path to requested target")) {
+                        errorMessage = Res.getString("message.cert.verification.failed");
+                        ReconnectionManager.getInstanceFor(connection).disableAutomaticReconnection();
 
-                            default:
-                                errorMessage = Res.getString("message.unrecoverable.error");
-                                break;
-                        }
-                   }
+                    } else if (xee.getMessage().contains("XMPPError: conflict")) {
+                        errorMessage = Res.getString("label.conflict.error");
+
+                    } else errorMessage = Res.getString("message.unrecoverable.error");
 
                     // Log Error
                     Log.warning("Exception in Login:", xee);
                 }
+
             }
 
             if (hasErrors) {
@@ -1524,5 +1525,42 @@ JOptionPane.ERROR_MESSAGE);
         return _usernames;
     }
 
+	private void persistEnterprise() {
+		new Enterprise();
+		localPref.setAccountsReg(Enterprise.containsFeature(Enterprise.ACCOUNTS_REG_FEATURE));
+		localPref.setAdvancedConfig(Enterprise.containsFeature(Enterprise.ADVANCED_CONFIG_FEATURE));
+		localPref.setHostNameChange(Enterprise.containsFeature(Enterprise.HOST_NAME_FEATURE));
+		localPref.setInvisibleLogin(Enterprise.containsFeature(Enterprise.INVISIBLE_LOGIN_FEATURE));
+		localPref.setPswdAutologin(Enterprise.containsFeature(Enterprise.SAVE_PASSWORD_FEATURE));
+	}
+
+	private void initAdvancedDefaults() {
+		localPref.setAcceptAllCertificates(localPref.isAcceptAllCertificates());
+		localPref.setCompressionEnabled(localPref.isCompressionEnabled());
+		localPref.setDebuggerEnabled(localPref.isDebuggerEnabled());
+		localPref.setDisableHostnameVerification(localPref.isDisableHostnameVerification());
+		localPref.setHostAndPortConfigured(localPref.isHostAndPortConfigured());
+		localPref.setJKSPath("");
+		localPref.setPKIEnabled(localPref.isPKIEnabled());
+		localPref.setPKIStore("JKS");
+		localPref.setProtocol("SOCKS");
+		localPref.setProxyEnabled(localPref.isProxyEnabled());
+		localPref.setProxyPassword("");
+		localPref.setProxyUsername("");
+		localPref.setResource("Spark");
+		localPref.setSaslGssapiSmack3Compatible(localPref.isSaslGssapiSmack3Compatible());
+		localPref.setSSL(localPref.isSSL());
+		localPref.setSSOEnabled(localPref.isSSOEnabled());
+		localPref.setSSOMethod("file");
+		localPref.setTimeOut(localPref.getTimeOut());
+		localPref.setTrustStorePassword("");
+		localPref.setTrustStorePath("");
+		localPref.setUseHostnameAsResource(localPref.isUseHostnameAsResource());
+		localPref.setUseVersionAsResource(localPref.isUseVersionAsResource());
+		localPref.setXmppHost("");
+		localPref.setXmppPort(localPref.getXmppPort());
+
+		SettingsManager.saveSettings();
+	}
 
 }

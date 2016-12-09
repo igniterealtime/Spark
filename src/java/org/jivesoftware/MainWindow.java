@@ -20,39 +20,6 @@
 
 package org.jivesoftware;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowFocusListener;
-import java.io.File;
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.TimerTask;
-
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JEditorPane;
-import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.JTextPane;
-import javax.swing.JToolBar;
-import javax.swing.UIManager;
-import javax.swing.event.HyperlinkEvent;
-
 import org.jivesoftware.launcher.Startup;
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
@@ -65,21 +32,27 @@ import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.ui.ChatFrame;
 import org.jivesoftware.spark.ui.RawPacketSender;
-import org.jivesoftware.spark.util.BrowserLauncher;
-import org.jivesoftware.spark.util.GraphicUtils;
-import org.jivesoftware.spark.util.ResourceUtils;
-import org.jivesoftware.spark.util.SwingTimerTask;
+import org.jivesoftware.spark.util.*;
 import org.jivesoftware.spark.util.SwingWorker;
-import org.jivesoftware.spark.util.TaskEngine;
-import org.jivesoftware.spark.util.URLFileSystem;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.alerts.InputTextAreaDialog;
 import org.jivesoftware.sparkimpl.plugin.layout.LayoutSettings;
 import org.jivesoftware.sparkimpl.plugin.layout.LayoutSettingsManager;
+import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 import org.jivesoftware.sparkimpl.settings.JiveInfo;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jivesoftware.sparkimpl.updater.CheckUpdates;
+
+import javax.swing.*;
+import javax.swing.event.HyperlinkEvent;
+import java.awt.*;
+import java.awt.event.*;
+import java.io.File;
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.TimerTask;
 
 /**
  * The <code>MainWindow</code> class acts as both the DockableHolder and the proxy
@@ -245,9 +218,18 @@ public final class MainWindow extends ChatFrame implements ActionListener {
      * Notifies all {@link MainWindowListener}s that the <code>MainWindow</code>
      * has been activated.
      */
-    private void fireWindowActivated() {
-        for (MainWindowListener listener : listeners) {
-            listener.mainWindowActivated();
+    private void fireWindowActivated()
+    {
+        for ( MainWindowListener listener : listeners )
+        {
+            try
+            {
+                listener.mainWindowActivated();
+            }
+            catch ( Exception e )
+            {
+                Log.error( "A MainWindowListener (" + listener + ") threw an exception while processing a 'activated' event.", e );
+            }
         }
 
         if (Spark.isMac()) {
@@ -259,9 +241,18 @@ public final class MainWindow extends ChatFrame implements ActionListener {
      * Notifies all {@link MainWindowListener}s that the <code>MainWindow</code>
      * is shutting down.
      */
-    private void fireWindowShutdown() {
-        for (MainWindowListener listener : listeners) {
-            listener.shutdown();
+    private void fireWindowShutdown()
+    {
+        for ( MainWindowListener listener : listeners )
+        {
+            try
+            {
+                listener.shutdown();
+            }
+            catch ( Exception e )
+            {
+                Log.error( "A MainWindowListener (" + listener + ") threw an exception while processing a 'shutdown' event.", e );
+            }
         }
     }
 
@@ -296,8 +287,7 @@ public final class MainWindow extends ChatFrame implements ActionListener {
             Log.error(ex);
         }
         // Close application.
-        if(!Default.getBoolean("DISABLE_EXIT"))
-            System.exit(1);
+        System.exit(1);
 
     }
 
@@ -471,53 +461,44 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         preferenceMenuItem = new JMenuItem(SparkRes.getImageIcon(SparkRes.PREFERENCES_IMAGE));
         preferenceMenuItem.setText(Res.getString("title.spark.preferences"));
         preferenceMenuItem.addActionListener(this);
-        connectMenu.add(preferenceMenuItem);
 
+        // Show the "Preferences" menu item ONLY in Maintenance Mode or when DISABLE_PREFERENCES_MENU_ITEM = false and Client Control allows it.
+        File myMaintFile = new File(Default.getString(Default.MAINT_FILESPEC));
+
+        final boolean maintMode = (myMaintFile.exists() && !myMaintFile.isDirectory());
+        final boolean prefsAllowed = (!Default.getBoolean("DISABLE_PREFERENCES_MENU_ITEM") && Enterprise.containsFeature(Enterprise.PREFERENCES_MENU_FEATURE));
+
+        if (maintMode || prefsAllowed) connectMenu.add(preferenceMenuItem);
 
         alwaysOnTopItem = new JCheckBoxMenuItem();
         ResourceUtils.resButton(alwaysOnTopItem, Res.getString("menuitem.always.on.top"));
         alwaysOnTopItem.addActionListener( actionEvent -> {
-            if (alwaysOnTopItem.isSelected())
-            {
-                SettingsManager.getLocalPreferences().setMainWindowAlwaysOnTop(true);
-                MainWindow.getInstance().setAlwaysOnTop(true);
-            }
-            else
-            {
-                SettingsManager.getLocalPreferences().setMainWindowAlwaysOnTop(false);
-                MainWindow.getInstance().setAlwaysOnTop(false);
-            }
+        	SettingsManager.getLocalPreferences().setMainWindowAlwaysOnTop(alwaysOnTopItem.isSelected());
+        	MainWindow.getInstance().setAlwaysOnTop(alwaysOnTopItem.isSelected());
         } );
 
-        if (SettingsManager.getLocalPreferences().isMainWindowAlwaysOnTop())
-        {
-        	alwaysOnTopItem.setSelected(true);
-        	this.setAlwaysOnTop(true);
-        }
+        alwaysOnTopItem.setSelected(SettingsManager.getLocalPreferences().isMainWindowAlwaysOnTop());
+        this.setAlwaysOnTop(SettingsManager.getLocalPreferences().isMainWindowAlwaysOnTop());
+
         connectMenu.add(alwaysOnTopItem);
 
-        if(!Default.getBoolean("DISABLE_EXIT"))
-            connectMenu.addSeparator();
+        // Set up the Logout and Exit menus...
+        if (!Default.getBoolean("DISABLE_EXIT") && Enterprise.containsFeature(Enterprise.LOGOUT_EXIT_FEATURE)) {
+        	connectMenu.addSeparator();
+        	if(!Default.getBoolean("HIDE_SAVE_PASSWORD_AND_AUTOLOGIN") && SettingsManager.getLocalPreferences().getPswdAutologin()) {
+        		JMenuItem logoutMenuItem = new JMenuItem();
+        		ResourceUtils.resButton(logoutMenuItem, Res.getString("menuitem.logout.no.status"));
+        		logoutMenuItem.addActionListener( e -> logout(false) );
 
-        //EventQueue.invokeLater(new Runnable() {
-   	   //	public void run() {
+        		JMenuItem logoutWithStatus = new JMenuItem();
+        		ResourceUtils.resButton(logoutWithStatus, Res.getString("menuitem.logout.with.status"));
+        		logoutWithStatus.addActionListener( e -> logout(true) );
 
-        JMenuItem logoutMenuItem = new JMenuItem();
-        ResourceUtils.resButton(logoutMenuItem, Res.getString("menuitem.logout.no.status"));
-        logoutMenuItem.addActionListener( e -> logout(false) );
-
-        JMenuItem logoutWithStatus = new JMenuItem();
-        ResourceUtils.resButton(logoutWithStatus, Res.getString("menuitem.logout.with.status"));
-        logoutWithStatus.addActionListener( e -> logout(true) );
-
-        if ((Spark.isWindows() || Spark.isLinux() || Spark.isMac()) && !Default.getBoolean("DISABLE_EXIT")) {
-            connectMenu.add(logoutMenuItem);
-            connectMenu.add(logoutWithStatus);
-	    connectMenu.addSeparator();
-	}
-
-        if (!Default.getBoolean("DISABLE_EXIT")) {
-            connectMenu.add(exitMenuItem);
+        		connectMenu.add(logoutMenuItem);
+        		connectMenu.add(logoutWithStatus);
+        		connectMenu.addSeparator();
+        	}
+        	connectMenu.add(exitMenuItem);
         }
 
         JMenuItem updateMenu= new JMenuItem("", SparkRes.getImageIcon(SparkRes.DOWNLOAD_16x16));
@@ -559,29 +540,27 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         };
 
 
-	if (!Default.getBoolean("HELP_USER_GUIDE_DISABLED")) {
-	    viewHelpGuideAction.putValue(Action.NAME,
-		    Res.getString("menuitem.user.guide"));
-	    viewHelpGuideAction.putValue(Action.SMALL_ICON,
-		    SparkRes.getImageIcon(SparkRes.SMALL_QUESTION));
-	    helpMenu.add(viewHelpGuideAction);
-	}
-	if (!Default.getBoolean("HELP_FORUM_DISABLED")) {
-	    helpMenu.add(sparkforumItem);
-	}
+        if (!Default.getBoolean("HELP_USER_GUIDE_DISABLED") && Enterprise.containsFeature(Enterprise.HELP_USERGUIDE_FEATURE)) {
+        	viewHelpGuideAction.putValue(Action.NAME,
+        			Res.getString("menuitem.user.guide"));
+        	viewHelpGuideAction.putValue(Action.SMALL_ICON,
+        			SparkRes.getImageIcon(SparkRes.SMALL_QUESTION));
+        	helpMenu.add(viewHelpGuideAction);
+        }
 
-        // Build Help Menu
-	if(!Default.getBoolean(Default.DISABLE_UPDATES)){
-	    helpMenu.add(updateMenu);
-	}
-        helpMenu.addSeparator();
-        helpMenu.add(viewErrors);
-        helpMenu.add(menuAbout);
+        if (!Default.getBoolean("HELP_FORUM_DISABLED") && Enterprise.containsFeature(Enterprise.HELP_FORUMS_FEATURE)) helpMenu.add(sparkforumItem);
 
-        // ResourceUtils - Adds mnemonics
-        ResourceUtils.resButton(preferenceMenuItem, Res.getString("menuitem.preferences"));
-        ResourceUtils.resButton(helpMenu, Res.getString("menuitem.help"));
-        ResourceUtils.resButton(menuAbout, Res.getString("menuitem.about"));
+	// Build Help Menu
+	if (!Default.getBoolean("DISABLE_UPDATES") && Enterprise.containsFeature(Enterprise.UPDATES_FEATURE)) helpMenu.add(updateMenu);
+
+	helpMenu.addSeparator();
+	helpMenu.add(viewErrors);
+	helpMenu.add(menuAbout);
+
+	// ResourceUtils - Adds mnemonics
+	ResourceUtils.resButton(preferenceMenuItem, Res.getString("menuitem.preferences"));
+	ResourceUtils.resButton(helpMenu, Res.getString("menuitem.help"));
+	ResourceUtils.resButton(menuAbout, Res.getString("menuitem.about"));
 
 	if (Default.getString("HELP_FORUM_TEXT").length() > 0) {
 	    ResourceUtils.resButton(sparkforumItem, Default.getString("HELP_FORUM_TEXT"));
@@ -620,15 +599,15 @@ public final class MainWindow extends ChatFrame implements ActionListener {
 	    }
 	});
 
-	if (!Default.getBoolean("DISABLE_UPDATES")) {
-	    // Execute spark update checker after one minute.
-	    final TimerTask task = new SwingTimerTask() {
-		public void doRun() {
-		    checkForUpdates(false);
-		}
-	    };
+	if (!Default.getBoolean("DISABLE_UPDATES") && Enterprise.containsFeature(Enterprise.UPDATES_FEATURE)) {
+		// Execute spark update checker after one minute.
+		final TimerTask task = new SwingTimerTask() {
+			public void doRun() {
+				checkForUpdates(false);
+			}
+		};
 
-	    TaskEngine.getInstance().schedule(task, 60000);
+		TaskEngine.getInstance().schedule(task, 60000);
 	}
 
 	if(SettingsManager.getLocalPreferences().isDebuggerEnabled())

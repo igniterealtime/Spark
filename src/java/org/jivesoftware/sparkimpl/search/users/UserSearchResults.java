@@ -33,6 +33,7 @@ import org.jivesoftware.spark.ui.ChatContainer;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.RosterDialog;
 import org.jivesoftware.spark.util.ModelUtil;
+import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 import org.jivesoftware.sparkimpl.profile.VCardManager;
 import org.jxmpp.util.XmppStringUtils;
 
@@ -148,11 +149,11 @@ public class UserSearchResults extends JPanel {
 
                 TableColumn column = null;
                 try {
-                    column = resultsTable.getColumn("Username");
+                    column = resultsTable.getColumn("Name");
                 }
                 catch (Exception ex) {
                     try {
-                        column = resultsTable.getColumn("nick");
+                        column = resultsTable.getColumn("Username");
                     }
                     catch (Exception e1) {
                         // Nothing to do
@@ -190,7 +191,7 @@ public class UserSearchResults extends JPanel {
             }
         };
 
-        if (!Default.getBoolean(Default.ADD_CONTACT_DISABLED)) {
+        if (!Default.getBoolean("ADD_CONTACT_DISABLED") && Enterprise.containsFeature(Enterprise.ADD_CONTACTS_FEATURE)) {
 	        final JMenuItem addAsContact = new JMenuItem(addContactAction);
 	        addContactAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.SMALL_ADD_IMAGE));
 	        addContactAction.putValue(Action.NAME, Res.getString("menuitem.add.as.contact"));

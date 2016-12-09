@@ -19,56 +19,24 @@
  */ 
 package org.jivesoftware.spark.ui;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.EventQueue;
-import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.*;
-
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.BorderFactory;
-import javax.swing.Icon;
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JComponent;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
-import javax.swing.JToolBar;
-import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-
 import org.jivesoftware.MainWindowListener;
 import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.*;
-import org.jivesoftware.smack.packet.*;
+import org.jivesoftware.smack.filter.StanzaTypeFilter;
+import org.jivesoftware.smack.packet.Message;
+import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.roster.RosterEntry;
 import org.jivesoftware.smack.roster.RosterGroup;
 import org.jivesoftware.smack.roster.RosterListener;
-import org.jivesoftware.smack.filter.StanzaFilter;
-import org.jivesoftware.smack.filter.StanzaTypeFilter;
 import org.jivesoftware.smack.roster.packet.RosterPacket;
 import org.jivesoftware.smackx.iqlast.LastActivityManager;
+import org.jivesoftware.smackx.iqlast.packet.LastActivity;
 import org.jivesoftware.smackx.jiveproperties.packet.JivePropertiesExtension;
 import org.jivesoftware.smackx.sharedgroups.SharedGroupManager;
-import org.jivesoftware.smackx.iqlast.packet.LastActivity;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.PresenceManager;
 import org.jivesoftware.spark.SparkManager;
@@ -78,18 +46,28 @@ import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.component.VerticalFlowLayout;
 import org.jivesoftware.spark.plugin.ContextMenuListener;
 import org.jivesoftware.spark.plugin.Plugin;
-import org.jivesoftware.spark.util.ModelUtil;
-import org.jivesoftware.spark.util.ResourceUtils;
-import org.jivesoftware.spark.util.SwingTimerTask;
+import org.jivesoftware.spark.util.*;
 import org.jivesoftware.spark.util.SwingWorker;
-import org.jivesoftware.spark.util.TaskEngine;
-import org.jivesoftware.spark.util.UIComponentRegistry;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 import org.jivesoftware.sparkimpl.profile.VCardManager;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jxmpp.util.XmppStringUtils;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.*;
+import java.util.List;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 
 public class ContactList extends JPanel implements ActionListener,
@@ -122,7 +100,6 @@ public class ContactList extends JPanel implements ActionListener,
 
     private final List<ContextMenuListener> contextListeners = new ArrayList<>();
 
-    private List<Presence> initialPresences = new ArrayList<>();
     private final List<FileDropListener> dndListeners = new ArrayList<>();
     private final List<ContactListListener> contactListListeners = new ArrayList<>();
     private Properties props;
@@ -1387,13 +1364,10 @@ moveToOffline(moveToOfflineContactItem);
 
 
         final JPopupMenu popup = new JPopupMenu();
-        if (!Default.getBoolean(Default.ADD_CONTACT_DISABLED)) {
-        	popup.add(addContactMenu);
-        }
+        if (!Default.getBoolean("ADD_CONTACT_DISABLED") && Enterprise.containsFeature(Enterprise.ADD_CONTACTS_FEATURE)) popup.add(addContactMenu);
 
-        if(!Default.getBoolean("ADD_CONTACT_GROUP_DISABLED")){
-            popup.add(addContactGroupMenu);
-        }
+        if (!Default.getBoolean("ADD_CONTACT_GROUP_DISABLED") && Enterprise.containsFeature(Enterprise.ADD_GROUPS_FEATURE)) popup.add(addContactGroupMenu);
+
         popup.addSeparator();
 
         fireContextMenuListenerPopup(popup, group);
@@ -1402,14 +1376,22 @@ moveToOffline(moveToOfflineContactItem);
         JMenuItem rename = new JMenuItem(Res.getString("menuitem.rename"));
         JMenuItem expand = new JMenuItem(Res.getString("menuitem.expand.all.groups"));
         JMenuItem collapse = new JMenuItem(Res.getString("menuitem.collapse.all.groups"));
-        
+
         if (!group.isSharedGroup()) {
             popup.addSeparator();
-            popup.add(delete);
-            popup.add(rename);
+
+            // See if we should disable the "Delete" menu option
+            if (!Default.getBoolean("DISABLE_REMOVALS") && Enterprise.containsFeature(Enterprise.REMOVALS_FEATURE)) popup.add(delete);
+
+            // See if we should disable the "Rename" menu option
+            if (!Default.getBoolean("DISABLE_RENAMES") && Enterprise.containsFeature(Enterprise.RENAMES_FEATURE)) popup.add(rename);
         }
-        
-        popup.addSeparator();
+
+        // Only display a horizontal separator if at least one of those options is present
+        final boolean allowRemovals = (!Default.getBoolean("DISABLE_REMOVALS") && Enterprise.containsFeature(Enterprise.REMOVALS_FEATURE));
+        final boolean allowRenames  = (!Default.getBoolean("DISABLE_RENAMES")  && Enterprise.containsFeature(Enterprise.RENAMES_FEATURE));
+        if (allowRemovals || allowRenames) popup.addSeparator();
+
         popup.add(expand);
         popup.add(collapse);
 
@@ -1522,15 +1504,14 @@ moveToOffline(moveToOfflineContactItem);
             }
         };
 
-        sendAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.DOCUMENT_16x16));
-        sendAction.putValue(Action.NAME, Res.getString("menuitem.send.a.file"));
-
-        if ((item.getPresence() != null) && Enterprise.containsFeature(Enterprise.FILE_TRANSFER_FEATURE)) {
-            popup.add(sendAction);
+        // See if we should disable the option to transfer files and images
+        if (!Default.getBoolean("DISABLE_FILE_XFER") && Enterprise.containsFeature(Enterprise.FILE_TRANSFER_FEATURE)) {
+        	sendAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.DOCUMENT_16x16));
+        	sendAction.putValue(Action.NAME, Res.getString("menuitem.send.a.file"));
+        	if (item.getPresence() != null) popup.add(sendAction);
         }
-
+        
         popup.addSeparator();
-
 
         String groupName = item.getGroupName();
         ContactGroup contactGroup = getContactGroup(groupName);
@@ -1574,13 +1555,13 @@ moveToOffline(moveToOfflineContactItem);
             }
         }
 
-
-        if (!contactGroup.isSharedGroup() && !isInSharedGroup) {
-            popup.add(removeAction);
+        // See if we should disable the option to remove a contact
+        if (!Default.getBoolean("DISABLE_REMOVALS") && Enterprise.containsFeature(Enterprise.REMOVALS_FEATURE)) {
+        	if (!contactGroup.isSharedGroup() && !isInSharedGroup) popup.add(removeAction);
         }
 
-        popup.add(renameMenu);
-
+        // See if we should disable the option to rename a contact
+        if (!Default.getBoolean("DISABLE_RENAMES") && Enterprise.containsFeature(Enterprise.RENAMES_FEATURE)) popup.add(renameMenu);
 
         Action viewProfile = new AbstractAction() {
 			private static final long serialVersionUID = -2562731455090634805L;
@@ -1688,10 +1669,10 @@ moveToOffline(moveToOfflineContactItem);
         final JPopupMenu popup = new JPopupMenu();
         final JMenuItem sendMessagesMenu = new JMenuItem(Res.getString("menuitem.send.a.message"), SparkRes.getImageIcon(SparkRes.SMALL_MESSAGE_IMAGE));
 
-
         fireContextMenuListenerPopup(popup, items);
 
-        popup.add(sendMessagesMenu);
+        // See if we should disable all "Broadcast" menu items
+        if (!Default.getBoolean("DISABLE_BROADCAST_MENU_ITEM") && Enterprise.containsFeature(Enterprise.BROADCAST_FEATURE)) popup.add(sendMessagesMenu);
 
         sendMessagesMenu.addActionListener( e1 -> sendMessages(items) );
 
@@ -1804,114 +1785,133 @@ SwingUtilities.invokeLater( () -> loadContactList() );
 
     }
 
-    public void addSubscriptionListener() {
-        // Add subscription listener
-        StanzaFilter stanzaFilter = new StanzaTypeFilter(Presence.class);
-        StanzaListener subscribeListener = stanza -> {
-            final Presence presence = (Presence)stanza;
-            if (presence.getType() == Presence.Type.subscribe) {
-                SwingUtilities.invokeLater( () -> {
-                    try
+    public void addSubscriptionListener()
+    {
+        // Sometimes, presence changes happen in rapid succession (for instance, when initially connecting). To avoid
+        // having a lot of UI-updates (which are costly), this queue is used to create a short buffer, allowing us to
+        // group UI updates in batches.
+        final ConcurrentLinkedQueue<Presence> presenceBuffer = new ConcurrentLinkedQueue<>();
+        final long bufferTimeMS = 500;
+
+        final StanzaListener subscribeListener = stanza ->
+        {
+            final Presence presence = (Presence) stanza;
+            final Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
+            final RosterEntry entry = roster.getEntry( presence.getFrom() );
+
+            switch ( presence.getType() )
+            {
+                case subscribe:
+                    // Someone else wants to subscribe to our presence. Ask user for approval
+                    SwingUtilities.invokeLater( () ->
                     {
-                        subscriptionRequest(presence.getFrom());
-                    }
-                    catch ( SmackException.NotConnectedException e )
-                    {
-                        Log.warning( "Unable to subscribe to " + presence.getFrom(), e );
-                    }
-                } );
-            }
-            else if (presence.getType() == Presence.Type.unsubscribe) {
-                SwingUtilities.invokeLater( () -> {
-                    Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
-                    RosterEntry entry = roster.getEntry(presence.getFrom());
-                    if (entry != null) {
-                        try {
-                            removeContactItem(presence.getFrom());
-                            roster.removeEntry(entry);
+                        try
+                        {
+                            subscriptionRequest( presence.getFrom() );
                         }
-                        catch (XMPPException | SmackException e) {
-                            Presence unsub = new Presence(Presence.Type.unsubscribed);
-                            unsub.setTo(presence.getFrom());
+                        catch ( SmackException.NotConnectedException e )
+                        {
+                            Log.warning( "Unable to process subscription request from: " + presence.getFrom(), e );
+                        }
+                    } );
+                    break;
+
+                case unsubscribe:
+                    // Someone else is removing their subscription to our presence (we're removed from their roster).
+                    if ( entry != null )
+                    {
+                        try
+                        {
+                            removeContactItem( presence.getFrom() );
+                            roster.removeEntry( entry );
+                        }
+                        catch ( XMPPException | SmackException e )
+                        {
+                            Presence unsub = new Presence( Presence.Type.unsubscribed );
+                            unsub.setTo( presence.getFrom() );
                             try
                             {
-                                SparkManager.getConnection().sendStanza(unsub);
+                                SparkManager.getConnection().sendStanza( unsub );
                             }
                             catch ( SmackException.NotConnectedException e1 )
                             {
                                 Log.warning( "Unable to unsubscribe from " + unsub.getTo(), e1 );
                             }
-                            Log.error(e);
+                            Log.error( e );
                         }
                     }
-                } );
+                    break;
 
+                case subscribed:
+                    // Someone else approved our request to be subscribed to their presence information.
+                    final String jid = XmppStringUtils.parseBareJid( presence.getFrom() );
+                    final ContactItem item = getContactItemByJID( jid );
 
-            }
-            else if (presence.getType() == Presence.Type.subscribe) {
-                // Find Contact in Contact List
-                String jid = XmppStringUtils.parseBareJid(presence.getFrom());
-                ContactItem item = getContactItemByJID(jid);
-
-                // If item is not in the Contact List, add them.
-                if (item == null) {
-                    final Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
-                    RosterEntry entry = roster.getEntry(jid);
-                    if (entry != null) {
-                        item = UIComponentRegistry.createContactItem(entry.getName(), null, jid);
-                        moveToOffline(item);
+                    // If item is not in the Contact List, add them.
+                    if ( item == null && entry != null )
+                    {
+                        final ContactItem newItem = UIComponentRegistry.createContactItem( entry.getName(), null, jid );
+                        moveToOffline( newItem );
                         offlineGroup.fireContactGroupUpdated();
                     }
-                }
-            }
-            else if (presence.getType() == Presence.Type.unsubscribed) {
-                SwingUtilities.invokeLater( () -> {
-                    Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
-                    RosterEntry entry = roster.getEntry(presence.getFrom());
-                    if (entry != null) {
-                        try {
-                            removeContactItem(presence.getFrom());
-                            roster.removeEntry(entry);
-                        }
-                        catch (XMPPException | SmackException e) {
-                            Log.error(e);
-                        }
-                    }
-                    String jid = XmppStringUtils.parseBareJid(presence.getFrom());
-                    removeContactItem(jid);
-                } );
-            }
-            else {
+                    break;
 
-                try {
-                    initialPresences.add(presence);
-                }
-                catch (Exception e) {
-                    Log.error(e);
-                }
-
-                int numberOfMillisecondsInTheFuture = 1000;
-
-                TaskEngine.getInstance().schedule(new TimerTask() {
-                    @Override
-                    public void run() {
-                        SwingUtilities.invokeLater( () -> {
-                            for (Presence userToUpdate : new ArrayList<>( initialPresences )) {
-                                initialPresences.remove(userToUpdate);
-                                try {
-                                    updateUserPresence(userToUpdate);
-                                }
-                                catch (Exception e) {
-                                    Log.error(e);
-                                }
+                case unsubscribed:
+                    // Someone is telling us that we're no longer subscribed to their presence information.
+                    SwingUtilities.invokeLater( () ->
+                    {
+                        if ( entry != null )
+                        {
+                            try
+                            {
+                                removeContactItem( presence.getFrom() );
+                                roster.removeEntry( entry );
                             }
-                        } );
-                    }
-                }, numberOfMillisecondsInTheFuture);
+                            catch ( XMPPException | SmackException e )
+                            {
+                                Log.error( e );
+                            }
+                        }
+                        removeContactItem( XmppStringUtils.parseBareJid( presence.getFrom() ) );
+                    } );
+                    break;
+
+                default:
+                    // Any other presence updates. These are likely regular presence changes, not subscription-state changes.
+                    presenceBuffer.add( presence );
+
+                    TaskEngine.getInstance().schedule( new TimerTask()
+                    {
+                        @Override
+                        public void run()
+                        {
+                            SwingUtilities.invokeLater( () ->
+                            {
+                                final Iterator<Presence> iterator = presenceBuffer.iterator();
+                                while ( iterator.hasNext() )
+                                {
+                                    final Presence presence = iterator.next();
+                                    try
+                                    {
+                                        updateUserPresence( presence );
+                                    }
+                                    catch ( Exception e )
+                                    {
+                                        Log.warning( "Unable to process this presence update that was received: " + presence, e );
+                                    }
+                                    finally
+                                    {
+                                        iterator.remove();
+                                    }
+                                }
+                            } );
+                        }
+                    }, bufferTimeMS );
+                    break;
             }
         };
 
-        SparkManager.getConnection().addAsyncStanzaListener(subscribeListener, stanzaFilter);
+        SparkManager.getConnection().addAsyncStanzaListener( subscribeListener, new StanzaTypeFilter( Presence.class ) );
     }
 
 
@@ -1932,13 +1932,10 @@ SwingUtilities.invokeLater( () -> loadContactList() );
         ResourceUtils.resButton(addContactsMenu, Res.getString("menuitem.add.contact"));
         ResourceUtils.resButton(addContactGroupMenu, Res.getString("menuitem.add.contact.group"));
 
-        if (!Default.getBoolean(Default.ADD_CONTACT_DISABLED)) {
-        	contactsMenu.add(addContactsMenu);
-        }
-       if(!Default.getBoolean("ADD_CONTACT_GROUP_DISABLED")){      
-	       contactsMenu.add(addContactGroupMenu);
-       }
-       
+        if (!Default.getBoolean("ADD_CONTACT_DISABLED") && Enterprise.containsFeature(Enterprise.ADD_CONTACTS_FEATURE)) contactsMenu.add(addContactsMenu);
+        
+        if (!Default.getBoolean("ADD_CONTACT_GROUP_DISABLED") && Enterprise.containsFeature(Enterprise.ADD_GROUPS_FEATURE)) contactsMenu.add(addContactGroupMenu);
+
         addContactsMenu.addActionListener( e -> new RosterDialog().showRosterDialog() );
 
         addContactGroupMenu.addActionListener( e -> {
@@ -2094,9 +2091,18 @@ SwingUtilities.invokeLater( () -> loadContactList() );
         contextListeners.remove(listener);
     }
 
-    public void fireContextMenuListenerPopup(JPopupMenu popup, Object object) {
-        for (ContextMenuListener listener : new ArrayList<>( contextListeners )) {
-            listener.poppingUp(object, popup);
+    public void fireContextMenuListenerPopup( JPopupMenu popup, Object object )
+    {
+        for ( final ContextMenuListener listener : contextListeners )
+        {
+            try
+            {
+                listener.poppingUp( object, popup );
+            }
+            catch ( Exception e )
+            {
+                Log.error( "A ContextMenuListener (" + listener + ") threw an exception while processing a 'popingUp' event for object: " + object, e );
+            }
         }
     }
 
@@ -2155,9 +2161,18 @@ SwingUtilities.invokeLater( () -> loadContactList() );
         dndListeners.remove(listener);
     }
 
-    public void fireFilesDropped(Collection<File> files, ContactItem item) {
-        for (FileDropListener fileDropListener : new ArrayList<>( dndListeners )) {
-            fileDropListener.filesDropped(files, item);
+    public void fireFilesDropped( Collection<File> files, ContactItem item )
+    {
+        for ( final FileDropListener listener : dndListeners )
+        {
+            try
+            {
+                listener.filesDropped( files, item );
+            }
+            catch ( Exception e )
+            {
+                Log.error( "A FileDropListener (" + listener + ") threw an exception while processing a 'filedDropped' event for: " + item, e );
+            }
         }
     }
 
@@ -2181,39 +2196,93 @@ SwingUtilities.invokeLater( () -> loadContactList() );
         contactListListeners.remove(listener);
     }
 
-    public void fireContactItemAdded(ContactItem item) {
-        for (ContactListListener contactListListener : new ArrayList<>( contactListListeners )) {
-            contactListListener.contactItemAdded(item);
+    public void fireContactItemAdded( ContactItem item )
+    {
+        for ( final ContactListListener listener : contactListListeners )
+        {
+            try
+            {
+                listener.contactItemAdded( item );
+            }
+            catch ( Exception e )
+            {
+                Log.error( "A ContactListListener (" + listener + ") threw an exception while processing a 'contactItemAdded' event for: " + item, e );
+            }
         }
     }
 
-    public void fireContactItemRemoved(ContactItem item) {
-        for (ContactListListener contactListListener : new ArrayList<>( contactListListeners )) {
-            contactListListener.contactItemRemoved(item);
+    public void fireContactItemRemoved( ContactItem item )
+    {
+        for ( final ContactListListener listener : contactListListeners )
+        {
+            try
+            {
+                listener.contactItemRemoved( item );
+            }
+            catch ( Exception e )
+            {
+                Log.error( "A ContactListListener (" + listener + ") threw an exception while processing a 'contactItemRemoved' event for: " + item, e );
+            }
         }
     }
 
-    public void fireContactGroupAdded(ContactGroup group) {
-        for (ContactListListener contactListListener : new ArrayList<>( contactListListeners )) {
-            contactListListener.contactGroupAdded(group);
+    public void fireContactGroupAdded( ContactGroup group )
+    {
+        for ( final ContactListListener listener : contactListListeners )
+        {
+            try
+            {
+                listener.contactGroupAdded( group );
+            }
+            catch ( Exception e )
+            {
+                Log.error( "A ContactListListener (" + listener + ") threw an exception while processing a 'contactGroupAdded' event for: " + group, e );
+            }
         }
     }
 
-    public void fireContactGroupRemoved(ContactGroup group) {
-        for (ContactListListener contactListListener : new ArrayList<>( contactListListeners )) {
-            contactListListener.contactGroupRemoved(group);
+    public void fireContactGroupRemoved( ContactGroup group )
+    {
+        for ( final ContactListListener listener : contactListListeners )
+        {
+            try
+            {
+                listener.contactGroupRemoved( group );
+            }
+            catch ( Exception e )
+            {
+                Log.error( "A ContactListListener (" + listener + ") threw an exception while processing a 'contactGroupRemoved' event for: " + group, e );
+            }
         }
     }
 
-    public void fireContactItemClicked(ContactItem contactItem) {
-        for (ContactListListener contactListListener : new ArrayList<>( contactListListeners )) {
-            contactListListener.contactItemClicked(contactItem);
+    public void fireContactItemClicked( ContactItem item )
+    {
+        for ( final ContactListListener listener : contactListListeners )
+        {
+            try
+            {
+                listener.contactItemClicked( item );
+            }
+            catch ( Exception e )
+            {
+                Log.error( "A ContactListListener (" + listener + ") threw an exception while processing a 'contactItemClicked' event for: " + item, e );
+            }
         }
     }
 
-    public void fireContactItemDoubleClicked(ContactItem contactItem) {
-        for (ContactListListener contactListListener : new ArrayList<>( contactListListeners )) {
-            contactListListener.contactItemDoubleClicked(contactItem);
+    public void fireContactItemDoubleClicked( ContactItem item )
+    {
+        for ( final ContactListListener listener : contactListListeners )
+        {
+            try
+            {
+                listener.contactItemDoubleClicked( item );
+            }
+            catch ( Exception e )
+            {
+                Log.error( "A ContactListListener (" + listener + ") threw an exception while processing a 'contactItemDoubleClicked' event for: " + item, e );
+            }
         }
     }
 
@@ -2503,8 +2572,9 @@ SwingUtilities.invokeLater( () -> loadContactList() );
         if (unfiledGroup == null) {
             // Add Unfiled Group
         	if(EventQueue.isDispatchThread()) {
-			unfiledGroup = UIComponentRegistry.createContactGroup(Res.getString("unfiled"));
-                addContactGroup(unfiledGroup);
+        		unfiledGroup = UIComponentRegistry.createContactGroup(Res.getString("unfiled"));
+        		// Only show the "Unfiled" group if it is not empty
+        		if (unfiledGroup.hasAvailableContacts()) addContactGroup(unfiledGroup);
         	}
         	else {
         		try {

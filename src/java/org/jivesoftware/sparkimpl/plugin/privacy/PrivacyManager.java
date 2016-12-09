@@ -19,27 +19,23 @@
  */
 package org.jivesoftware.sparkimpl.plugin.privacy;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import org.jivesoftware.smack.SmackException;
-import org.jivesoftware.smackx.privacy.PrivacyList;
-import org.jivesoftware.smackx.privacy.PrivacyListManager;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smackx.privacy.packet.PrivacyItem;
 import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.disco.packet.DiscoverInfo;
 import org.jivesoftware.smackx.disco.packet.DiscoverInfo.Feature;
+import org.jivesoftware.smackx.privacy.PrivacyList;
+import org.jivesoftware.smackx.privacy.PrivacyListManager;
+import org.jivesoftware.smackx.privacy.packet.PrivacyItem;
 import org.jivesoftware.spark.PresenceManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.privacy.list.PrivacyPresenceHandler;
 import org.jivesoftware.sparkimpl.plugin.privacy.list.SparkPrivacyList;
 import org.jivesoftware.sparkimpl.plugin.privacy.list.SparkPrivacyListListener;
+
+import java.util.*;
 
 
 /**
@@ -133,8 +129,7 @@ public class PrivacyManager {
                    _privacyLists.add(sparkList);
             }  
         } catch (XMPPException | SmackException e) {
-            Log.error("Could not load PrivacyLists");
-            e.printStackTrace();
+            Log.error("Could not load PrivacyLists", e);
         }
         
         if(hasDefaultList())
@@ -151,8 +146,7 @@ public class PrivacyManager {
            
             _privacyLists.remove(getPrivacyList(listName));
         } catch (XMPPException | SmackException e) {
-            Log.warning("Could not remove PrivacyList " + listName);
-            e.printStackTrace();
+            Log.warning("Could not remove PrivacyList " + listName, e);
         }
     }
 
@@ -249,8 +243,7 @@ public class PrivacyManager {
             _privacyLists.add(sparklist);
             sparklist.addSparkPrivacyListener(_presenceHandler);
         } catch (XMPPException | SmackException e) {
-            Log.warning("Could not create PrivacyList "+listName);
-            e.printStackTrace();
+            Log.warning("Could not create PrivacyList "+listName, e);
         }
         
         return sparklist;
@@ -292,8 +285,7 @@ public class PrivacyManager {
             _presenceHandler.setIconsForList(getActiveList());
             
         } catch (XMPPException | SmackException e) {
-            Log.warning("Could not activate PrivacyList " + listname);
-            e.printStackTrace();
+            Log.warning("Could not activate PrivacyList " + listname, e);
         }
     }
     
@@ -308,8 +300,7 @@ public class PrivacyManager {
                     plist.setListIsDefault(false);
             }
         } catch (XMPPException | SmackException e) {
-            Log.warning("Could not set PrivacyList " + listname+" as default");
-            e.printStackTrace();
+            Log.warning("Could not set PrivacyList " + listname+" as default", e);
         }
 
     }
@@ -328,8 +319,7 @@ public class PrivacyManager {
                 plist.setListAsActive(false);
             }
         } catch (XMPPException | SmackException e) {
-            Log.warning("Could not decline active privacy list");
-            e.printStackTrace();
+            Log.warning("Could not decline active privacy list", e);
         }    
     }
     
@@ -345,8 +335,7 @@ public class PrivacyManager {
                 }
             }
         } catch (XMPPException | SmackException e) {
-            Log.warning("Could not decline default privacy list");
-            e.printStackTrace();
+            Log.warning("Could not decline default privacy list", e);
         }    
     }
     
@@ -364,33 +353,64 @@ public class PrivacyManager {
     {
         _listListeners.remove(listener);
     }
-    
-    private void fireListActivated(String listname)
+
+    private void fireListActivated( String listName )
     {
-        for (SparkPrivacyListListener listener: _listListeners)
+        for ( final SparkPrivacyListListener listener : _listListeners )
         {
-            listener.listActivated(listname);
+            try
+            {
+                listener.listActivated( listName );
+            }
+            catch ( Exception e )
+            {
+                Log.error( "A SparkPrivacyListListener (" + listener + ") threw an exception while processing a 'listActivated' event for: " + listName, e );
+            }
         }
     }
-    private void fireListDeActivated(String listname)
+
+    private void fireListDeActivated( String listName )
     {
-        for (SparkPrivacyListListener listener: _listListeners)
+        for ( final SparkPrivacyListListener listener : _listListeners )
         {
-            listener.listDeActivated(listname);
+            try
+            {
+                listener.listDeActivated( listName );
+            }
+            catch ( Exception e )
+            {
+                Log.error( "A SparkPrivacyListListener (" + listener + ") threw an exception while processing a 'listDeActivated' event for: " + listName, e );
+            }
         }
     }
-    private void fireListSetAsDefault(String listname)
+
+    private void fireListSetAsDefault( String listName )
     {
-        for (SparkPrivacyListListener listener: _listListeners)
+        for ( final SparkPrivacyListListener listener : _listListeners )
         {
-            listener.listSetAsDefault(listname);
+            try
+            {
+                listener.listSetAsDefault( listName );
+            }
+            catch ( Exception e )
+            {
+                Log.error( "A SparkPrivacyListListener (" + listener + ") threw an exception while processing a 'listSetAsDefault' event for: " + listName, e );
+            }
         }
     }
-    private void fireListRemovedAsDefault(String listname)
+
+    private void fireListRemovedAsDefault( String listName )
     {
-        for (SparkPrivacyListListener listener: _listListeners)
+        for ( final SparkPrivacyListListener listener : _listListeners )
         {
-            listener.listRemovedAsDefault(listname);
+            try
+            {
+                listener.listRemovedAsDefault( listName );
+            }
+            catch ( Exception e )
+            {
+                Log.error( "A SparkPrivacyListListener (" + listener + ") threw an exception while processing a 'listRemovedAsDefault' event for: " + listName, e );
+            }
         }
     }
     
@@ -422,8 +442,7 @@ public class PrivacyManager {
             }
             
         } catch (Exception e) {
-           // e.printStackTrace();
-        	Log.error("PrivacyManager#goToVisible: " + e.getMessage());
+        	Log.error("PrivacyManager#goToVisible: ", e);
         }
     }
     
@@ -440,8 +459,7 @@ public class PrivacyManager {
             SparkManager.getConnection().sendStanza(PresenceManager.getAvailablePresence());
             Log.debug("List \"" + INVISIBLE_LIST_NAME + "\" has been activated ");
         } catch (Exception e) {
-           // e.printStackTrace();
-        	Log.error("PrivacyManager#activateGloballyInvisibleList: " + e.getMessage());
+        	Log.error("PrivacyManager#activateGloballyInvisibleList: ", e);
         }
     }
    
@@ -454,13 +472,12 @@ public class PrivacyManager {
     		return false; 
     	
     	try {
-    		PrivacyList pl = privacyManager.getActiveList();
+    		String pl = privacyManager.getActiveListName();
     		return pl != null && INVISIBLE_LIST_NAME.equalsIgnoreCase(pl.toString());
     	} catch (Exception e){
            // it can return item-not-found if there is no active list.
            // so it is fine to fall here.
-           //e.printStackTrace();
-    		Log.error("PrivacyManager#isGloballyInvisibleListActive: " + e.getMessage());
+    		Log.error("PrivacyManager#isGloballyInvisibleListActive: ", e);
        }
        return false;
     }
@@ -491,8 +508,7 @@ public class PrivacyManager {
         } 
         catch (XMPPException | SmackException e)
         {
-            Log.warning("PrivacyManager#ensureGloballyInvisibleListExists: Could not create PrivacyList " + INVISIBLE_LIST_NAME);
-            //e.printStackTrace();
+            Log.warning("PrivacyManager#ensureGloballyInvisibleListExists: Could not create PrivacyList " + INVISIBLE_LIST_NAME, e);
         }
         
         return list;

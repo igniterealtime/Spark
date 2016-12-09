@@ -49,15 +49,18 @@ import org.jivesoftware.smackx.chatstates.ChatState;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.NativeHandler;
 import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.Workspace;
 import org.jivesoftware.spark.plugin.Plugin;
 import org.jivesoftware.spark.ui.status.CustomStatusItem;
 import org.jivesoftware.spark.ui.status.StatusBar;
 import org.jivesoftware.spark.ui.status.StatusItem;
 import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jivesoftware.smack.chat.ChatManagerListener;
 import org.jivesoftware.smackx.chatstates.ChatStateListener;
+
 
 public class SysTrayPlugin implements Plugin, NativeHandler, ChatManagerListener, ChatStateListener {
 	private JPopupMenu popupMenu = new JPopupMenu();
@@ -74,6 +77,7 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatManagerListener
     private ImageIcon typingIcon;
     private TrayIcon trayIcon;
     private boolean newMessage = false;
+	private Presence presence;
     ChatMessageHandlerImpl chatMessageHandler = new ChatMessageHandlerImpl();
 
     @Override
@@ -132,8 +136,9 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatManagerListener
 		connectingIcon = SparkRes
 			.getImageIcon(SparkRes.TRAY_CONNECTING);
 	    }
-
+	    
 	    popupMenu.add( openMenu );
+	    
 	    openMenu.addActionListener( new AbstractAction() {
 
 		private static final long serialVersionUID = 1L;
@@ -145,7 +150,9 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatManagerListener
 		}
 
 	    });
+	    
 	    popupMenu.add( minimizeMenu );
+	    
 	    minimizeMenu.addActionListener( new AbstractAction() {
 		private static final long serialVersionUID = 1L;
 
@@ -154,9 +161,14 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatManagerListener
 		    SparkManager.getMainWindow().setVisible(false);
 		}
 	    });
-	    popupMenu.addSeparator();
-	    addStatusMessages();
-	    popupMenu.add(statusMenu);
+	    
+	    // See if we should disable ability to change presence status
+	    if (!Default.getBoolean("DISABLE_PRESENCE_STATUS_CHANGE") && Enterprise.containsFeature(Enterprise.PRESENCE_STATUS_FEATURE)) {
+	    	popupMenu.addSeparator();
+	    	addStatusMessages();
+	    	popupMenu.add(statusMenu);
+	    }
+	    
 	    statusMenu.addActionListener(new AbstractAction() {
 		private static final long serialVersionUID = 1L;
 
@@ -166,19 +178,23 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatManagerListener
 		}
 	    });
 
+	    // Logout Menu
 	    if (Spark.isWindows()) {
-		if (!Default.getBoolean("DISABLE_EXIT"))
-		    popupMenu.add( logoutMenu );
+	    	if (!Default.getBoolean("DISABLE_EXIT") && Enterprise.containsFeature(Enterprise.LOGOUT_EXIT_FEATURE)) {
+	    		if(!Default.getBoolean("HIDE_SAVE_PASSWORD_AND_AUTOLOGIN") && SettingsManager.getLocalPreferences().getPswdAutologin()) {
+	    			logoutMenu.addActionListener( new AbstractAction() {
+	    				private static final long serialVersionUID = 1L;
 
-		logoutMenu.addActionListener( new AbstractAction() {
-		    private static final long serialVersionUID = 1L;
-
-		    @Override
-		    public void actionPerformed(ActionEvent e) {
-			SparkManager.getMainWindow().logout(false);
-		    }
-		});
+	    				@Override
+	    				public void actionPerformed(ActionEvent e) {
+	    					SparkManager.getMainWindow().logout(false);
+	    				}
+	    			});
+	    			popupMenu.add(logoutMenu);
+	    		}
+	    	}
 	    }
+
 	    // Exit Menu
 	    exitMenu.addActionListener( new AbstractAction() {
 		private static final long serialVersionUID = 1L;
@@ -188,8 +204,8 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatManagerListener
 		    SparkManager.getMainWindow().shutdown();
 		}
 	    });
-	    if (!Default.getBoolean("DISABLE_EXIT"))
-		popupMenu.add( exitMenu );
+
+	    if (!Default.getBoolean("DISABLE_EXIT") && Enterprise.containsFeature(Enterprise.LOGOUT_EXIT_FEATURE)) popupMenu.add(exitMenu);
 
 	    /**
 	     * If connection closed set offline tray image
@@ -466,10 +482,20 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatManagerListener
     
     @Override
     public void flashWindowStopWhenFocused(Window window) {
-    	trayIcon.setImage(availableIcon.getImage());
+		presence = Workspace.getInstance().getStatusBar().getPresence();
+		if (presence.getMode() == Presence.Mode.available) {
+			trayIcon.setImage(availableIcon.getImage());
+		} else if (presence.getMode() == Presence.Mode.away
+				|| presence.getMode() == Presence.Mode.xa) {
+			trayIcon.setImage(awayIcon.getImage());
+		} else if (presence.getMode() == Presence.Mode.dnd) {
+			trayIcon.setImage(dndIcon.getImage());
+		} else {
+			trayIcon.setImage(availableIcon.getImage());
+		}
     	newMessage = false;
     	chatMessageHandler.clearUnreadMessages();
-    }
+	}
 
     @Override
     public boolean handleNotification() {
@@ -478,7 +504,17 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatManagerListener
 
     @Override
     public void stopFlashing(Window window) {
-    	trayIcon.setImage(availableIcon.getImage());
+		presence = Workspace.getInstance().getStatusBar().getPresence();
+		if (presence.getMode() == Presence.Mode.available) {
+			trayIcon.setImage(availableIcon.getImage());
+		} else if (presence.getMode() == Presence.Mode.away
+				|| presence.getMode() == Presence.Mode.xa) {
+			trayIcon.setImage(awayIcon.getImage());
+		} else if (presence.getMode() == Presence.Mode.dnd) {
+			trayIcon.setImage(dndIcon.getImage());
+		} else {
+			trayIcon.setImage(availableIcon.getImage());
+		}
     	newMessage = false;
     	chatMessageHandler.clearUnreadMessages();
     }
@@ -488,19 +524,27 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatManagerListener
 	public void processMessage(Chat arg0, Message arg1) {
 		// Do nothing - stateChanged is in charge
 		
-	}	
+	}
 
 	@Override
-	public void stateChanged(Chat chat, ChatState state) {		
-        if (ChatState.composing.equals(state)) {
-        	changeSysTrayIcon();
-        } else {
-        	if (!newMessage)
-        		trayIcon.setImage(availableIcon.getImage());
-        	else {
-        		trayIcon.setImage(newMessageIcon.getImage());
-        	}
-        }
+	public void stateChanged(Chat chat, ChatState state) {
+		presence = Workspace.getInstance().getStatusBar().getPresence();
+		if (ChatState.composing.equals(state)) {
+			changeSysTrayIcon();
+		} else {
+			if (!newMessage) {
+				if (presence.getMode() == Presence.Mode.available) {
+					trayIcon.setImage(availableIcon.getImage());
+				} else if (presence.getMode() == Presence.Mode.away
+						|| presence.getMode() == Presence.Mode.xa) {
+					trayIcon.setImage(awayIcon.getImage());
+				} else if (presence.getMode() == Presence.Mode.dnd) {
+					trayIcon.setImage(dndIcon.getImage());
+				} else {
+					trayIcon.setImage(newMessageIcon.getImage());
+				}
+			}
+		}
 	}
 
 	@Override
