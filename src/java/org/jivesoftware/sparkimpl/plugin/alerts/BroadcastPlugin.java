@@ -94,6 +94,7 @@ import org.jivesoftware.sparkimpl.preference.sounds.SoundPreferences;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jxmpp.util.XmppStringUtils;
+import org.jivesoftware.spark.ui.BroadcastHistoryFrame;
 
 /**
  * Handles broadcasts from server and allows for roster wide broadcasts.
@@ -114,13 +115,14 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
 
         // Register with action menu
         final JMenu actionsMenu = SparkManager.getMainWindow().getMenuByName(Res.getString("menuitem.actions"));
+	JMenuItem broadcastHistoryMenu = new JMenuItem(Res.getString("title.broadcast.history"), SparkRes.getImageIcon(SparkRes.HISTORY_16x16));
         JMenuItem broadcastMenu = new JMenuItem(Res.getString("title.broadcast.message"), SparkRes.getImageIcon(SparkRes.MEGAPHONE_16x16));
         ResourceUtils.resButton(broadcastMenu, Res.getString("title.broadcast.message"));
-
+	actionsMenu.add(broadcastHistoryMenu);
         actionsMenu.add(broadcastMenu);
-
+	
         broadcastMenu.addActionListener( e -> broadcastToRoster() );
-
+	broadcastHistoryMenu.addActionListener(e -> {	new BroadcastHistoryFrame().run();   });
         // Register with action menu
         JMenuItem startConversationtMenu = new JMenuItem("", SparkRes.getImageIcon(SparkRes.SMALL_MESSAGE_IMAGE));
         ResourceUtils.resButton(startConversationtMenu, Res.getString("menuitem.start.a.chat"));
