@@ -12,6 +12,7 @@ import java.util.logging.Level;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import org.jivesoftware.Spark;
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.spark.SparkManager;
 
 import org.jivesoftware.spark.util.log.Log;
@@ -74,6 +75,7 @@ public class BroadcastHistoryFrame extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         JScrollPane panelPane = new JScrollPane(jTextArea1);
         jLabel1.setText("Input Date to find broadcast history in format yyyy-MM");
+        setTitle(Res.getString("title.broadcast_history"));
         
         
         
