@@ -40,11 +40,8 @@ public class BroadcastHistoryFrame extends javax.swing.JFrame {
     
     public void readFromFile(String date) throws FileNotFoundException, IOException
     {
-        String fileName="broadcast_history."+date+".txt";
-        String fileLocation=Spark.getSparkUserHome()+File.separator+"user"+File.separator+SparkManager.getSessionManager().getUsername()+"@"+SparkManager.getSessionManager().getServerAddress()+File.separator+"transcripts"+File.separator+fileName;
-      
-        
-        File myfile = new File(fileLocation);
+        String fileLocation=Spark.getSparkUserHome()+File.separator+"user"+File.separator+SparkManager.getSessionManager().getUsername()+"@"+SparkManager.getSessionManager().getServerAddress()+File.separator+"transcripts"+File.separator+"broadcast_history."+date+".txt";
+       File myfile = new File(fileLocation);
        FileInputStream fis = new FileInputStream(myfile);
  
 	
