@@ -31,66 +31,55 @@ public class BroadcastHistoryFrame extends javax.swing.JFrame {
      * Creates new form NewJFrame
      */
     public BroadcastHistoryFrame() {
-        jTextArea1 = new javax.swing.JTextArea();
-        jTextArea1.setEditable(false);
+        BroadcastHistoryArea = new javax.swing.JTextArea();
+        BroadcastHistoryArea.setEditable(false);
         initComponents();
     }
     
-    public void readFromFile(String date) throws FileNotFoundException, IOException
-    {
+    public void readFromFile(String date) throws FileNotFoundException, IOException {
         //String fileName = Spark.getSparkUserHome()+File.separator+"broadcast_history."+date+".txt";
         String fileLocation=Spark.getSparkUserHome()+File.separator+"user"+File.separator+SparkManager.getSessionManager().getUsername()+"@"+SparkManager.getSessionManager().getServerAddress()+File.separator+"transcripts"+File.separator+"broadcast_history."+date+".txt";
-	File myfile = new File(fileLocation);
-       FileInputStream fis = new FileInputStream(myfile);
+        File myfile = new File(fileLocation);
+        FileInputStream fis = new FileInputStream(myfile);
  
 	
-	BufferedReader br = new BufferedReader(new InputStreamReader(fis));
+        BufferedReader br = new BufferedReader(new InputStreamReader(fis));
         
-	String line = null;
+        String line = null;
        
-	while ((line = br.readLine()) != null) {
-            jTextArea1.append(line+"\n");
+        while ((line = br.readLine()) != null) {
+            BroadcastHistoryArea.append(line+"\n");
             }
  
-	br.close();
-       
-        
+	br.close();   
  
-}
-    private void initComponents()
-    {
-        
-        
-        jToggleButton1 = new javax.swing.JToggleButton();
-        JFormattedTextField1 = new javax.swing.JFormattedTextField();
-        jLabel1 = new javax.swing.JLabel();
+    }
+    
+    private void initComponents() {        
+        SearchButton = new javax.swing.JToggleButton();
+        DateField = new javax.swing.JFormattedTextField();
+        SearchDate = new javax.swing.JLabel();
         Date date=new Date();
         Format formatter = new SimpleDateFormat("yyy-MM");
         String myDate = formatter.format(date);
-        JFormattedTextField1.setValue(myDate);
+        DateField.setValue(myDate);
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        JScrollPane panelPane = new JScrollPane(jTextArea1);
-        jLabel1.setText("Input Date to find broadcast history in format yyyy-MM");
-        setTitle(Res.getString("title.broadcast_history"));
-        
-        
-       
-            
+        JScrollPane panelPane = new JScrollPane(BroadcastHistoryArea);
+        SearchDate.setText(Res.getString("label.broadcast.history.search.date"));
+        setTitle(Res.getString("title.broadcast.history"));
+           
         try {
             readFromFile(myDate);
         } catch (IOException ex) {
             Log.error("Couldn't read from file"+ex.getMessage()+ex.getStackTrace());
         }
        
-        jToggleButton1.setText("Search");
-         jToggleButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+        SearchButton.setText((Res.getString("button.search")));
+        SearchButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jToggleButton1MouseClicked(evt);
+                SearchButtonMouseClicked(evt);
             }
         });
-       
-
-       
         
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -100,10 +89,11 @@ public class BroadcastHistoryFrame extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(panelPane, javax.swing.GroupLayout.DEFAULT_SIZE, 533, javax.swing.GroupLayout.DEFAULT_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 38, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 20, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jToggleButton1)
-                    .addComponent(JFormattedTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                	.addComponent(SearchDate)
+                    .addComponent(SearchButton)
+                    .addComponent(DateField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                    .addGap(22, 22, 22))
         );
         layout.setVerticalGroup(
@@ -111,14 +101,16 @@ public class BroadcastHistoryFrame extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(58, 58, 58)
-                        .addComponent(panelPane, javax.swing.GroupLayout.DEFAULT_SIZE, 301, javax.swing.GroupLayout.DEFAULT_SIZE))
+                        .addGap(15, 15, 15)
+                        .addComponent(panelPane, javax.swing.GroupLayout.DEFAULT_SIZE, 350, javax.swing.GroupLayout.DEFAULT_SIZE))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(62, 62, 62)
-                        .addComponent(JFormattedTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jToggleButton1)))
-                .addContainerGap(79, Short.MAX_VALUE))
+                        .addGap(15, 15, 15)
+                        .addComponent(SearchDate)
+                        .addGap(10, 10, 10)
+                        .addComponent(DateField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(10, 10, 10)
+                        .addComponent(SearchButton)))
+                .addContainerGap(15, Short.MAX_VALUE))
         );
   
         pack();  
@@ -126,21 +118,19 @@ public class BroadcastHistoryFrame extends javax.swing.JFrame {
      }
 
 
-    private void jToggleButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jToggleButton1MouseClicked
+    private void SearchButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_SearchButtonMouseClicked
         // TODO add your handling code here:
-        jTextArea1.setText("");
+        BroadcastHistoryArea.setText("");
        
-        
         try {
-            readFromFile(JFormattedTextField1.getText());
+            readFromFile(DateField.getText());
         } catch (IOException ex) {
             Log.error("Couldn't read from file"+ex.getCause()+ex.getStackTrace());
         }
        
         
-    }//GEN-LAST:event_jToggleButton1MouseClicked
-public void run()
-{
+    }//GEN-LAST:event_SearchButtonMouseClicked
+    public void run() {
     java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                BroadcastHistoryFrame frame= new BroadcastHistoryFrame();
@@ -154,11 +144,11 @@ public void run()
      * @param args the command line arguments
      */
 
-   private javax.swing.JFormattedTextField JFormattedTextField1;
+   private javax.swing.JFormattedTextField DateField;
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTextArea  jTextArea1;
-    private javax.swing.JLabel jLabel1;
+    private javax.swing.JTextArea  BroadcastHistoryArea;
+    private javax.swing.JLabel SearchDate;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JToggleButton jToggleButton1;
+    private javax.swing.JToggleButton SearchButton;
     // End of variables declaration//GEN-END:variables
 }
