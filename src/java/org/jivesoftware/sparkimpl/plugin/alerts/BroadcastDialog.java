@@ -349,7 +349,8 @@ Log.warning( "Unable to broadcast.", e1 );
         
         for (String jid : jids) {
             final Message message = new Message();
-            recipients=recipients+jid.split("@")[0]+",";
+            String nickname = SparkManager.getUserManager().getUserNicknameFromJID(jid);
+            recipients=recipients+nickname+", ";
             message.setTo(jid);
             message.setBody(text);
             
@@ -361,9 +362,9 @@ Log.warning( "Unable to broadcast.", e1 );
             }
             SparkManager.getConnection().sendStanza(message);
         }
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd"+" - "+"HH:mm");
         Date date = new Date();
-        String out=dateFormat.format(date)+" "+recipients+" "+text+"\n";
+        String out=dateFormat.format(date)+" ("+recipients+"): "+text+"\n";
         try {
             addDataToFile(out);
         } catch (IOException ex) {
