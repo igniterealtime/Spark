@@ -361,7 +361,7 @@ Log.warning( "Unable to broadcast.", e1 );
             }
             SparkManager.getConnection().sendStanza(message);
         }
-        DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date date = new Date();
         String out=dateFormat.format(date)+" "+recipients+" "+text+"\n";
         try {
@@ -370,6 +370,7 @@ Log.warning( "Unable to broadcast.", e1 );
             Log.error("Couldn't add data to file"+ex.getStackTrace());
         }
         
+       
         return true;
     }
     private  void addDataToFile(String data) throws IOException
@@ -377,7 +378,16 @@ Log.warning( "Unable to broadcast.", e1 );
          DateFormat dateFormat = new SimpleDateFormat("yyyy-MM");
          Date date = new Date();
          String fileName="broadcast_history."+dateFormat.format(date)+".txt";
-         File file = new File(Spark.getSparkUserHome()+File.separator+fileName);
+         String filePath=Spark.getSparkUserHome()+File.separator+"user"+File.separator+SparkManager.getSessionManager().getUsername()+"@"+SparkManager.getSessionManager().getServerAddress()+File.separator+"transcripts";
+         File fileDirectory = new File(filePath);
+         if(!fileDirectory.exists()) 
+         {
+             fileDirectory.mkdir();
+         } 
+         String fileLocation=filePath+File.separator+fileName;
+	 
+         
+         File file = new File(fileLocation);
          
          if(!file.exists()) 
          {
