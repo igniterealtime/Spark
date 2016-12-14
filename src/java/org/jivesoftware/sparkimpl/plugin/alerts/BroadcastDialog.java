@@ -378,7 +378,15 @@ Log.warning( "Unable to broadcast.", e1 );
          DateFormat dateFormat = new SimpleDateFormat("yyyy-MM");
          Date date = new Date();
          String fileName="broadcast_history."+dateFormat.format(date)+".txt";
-         String fileLocation=Spark.getSparkUserHome()+File.separator+"user"+File.separator+SparkManager.getSessionManager().getUsername()+"@"+SparkManager.getSessionManager().getServerAddress()+File.separator+"transcripts"+File.separator+fileName;
+         String filePath=Spark.getSparkUserHome()+File.separator+"user"+File.separator+SparkManager.getSessionManager().getUsername()+"@"+SparkManager.getSessionManager().getServerAddress()+File.separator+"transcripts";
+         File fileDirectory = new File(filePath);
+         if(!fileDirectory.exists()) 
+         {
+             fileDirectory.mkdir();
+         } 
+         String fileLocation=filePath+File.separator+fileName;
+	 
+         
          File file = new File(fileLocation);
          
          if(!file.exists()) 
