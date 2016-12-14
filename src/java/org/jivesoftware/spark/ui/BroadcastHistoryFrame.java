@@ -12,9 +12,9 @@ import java.util.logging.Level;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import org.jivesoftware.Spark;
-
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.spark.util.log.Log;
-
+import org.jivesoftware.spark.SparkManager;
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -39,8 +39,8 @@ public class BroadcastHistoryFrame extends javax.swing.JFrame {
     public void readFromFile(String date) throws FileNotFoundException, IOException
     {
         String fileName = Spark.getSparkUserHome()+File.separator+"broadcast_history."+date+".txt";
-        
-        File myfile = new File(fileName);
+        String fileLocation=Spark.getSparkUserHome()+File.separator+"user"+File.separator+SparkManager.getSessionManager().getUsername()+"@"+SparkManager.getSessionManager().getServerAddress()+File.separator+"transcripts"+File.separator+fileName;
+        File myfile = new File(fileLocation);
        FileInputStream fis = new FileInputStream(myfile);
  
 	
@@ -71,7 +71,7 @@ public class BroadcastHistoryFrame extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         JScrollPane panelPane = new JScrollPane(jTextArea1);
         jLabel1.setText("Input Date to find broadcast history in format yyyy-MM");
-        
+        setTitle(Res.getString("title.broadcast_history"));
         
         
        
@@ -122,7 +122,7 @@ public class BroadcastHistoryFrame extends javax.swing.JFrame {
         );
   
         pack();  
-      
+        setLocationRelativeTo(null);
      }
 
 
