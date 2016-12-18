@@ -227,7 +227,7 @@ public class BroadcastDialog extends JPanel {
         dlg.pack();
         dlg.setSize(800, 600);
         dlg.setResizable(false);
-        dlg.setLocationRelativeTo(SparkManager.getMainWindow());
+        dlg.setLocationRelativeTo(null);
         
         // Add listener
         okButton.addActionListener( e -> {
