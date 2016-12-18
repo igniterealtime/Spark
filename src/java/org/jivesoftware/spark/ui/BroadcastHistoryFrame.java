@@ -33,6 +33,8 @@ public class BroadcastHistoryFrame extends javax.swing.JFrame {
     public BroadcastHistoryFrame() {
         BroadcastHistoryArea = new javax.swing.JTextArea();
         BroadcastHistoryArea.setEditable(false);
+        BroadcastHistoryArea.setLineWrap(true);
+        BroadcastHistoryArea.setWrapStyleWord(true);
         initComponents();
     }
     
