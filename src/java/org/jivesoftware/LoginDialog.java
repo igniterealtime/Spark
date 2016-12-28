@@ -158,7 +158,7 @@ public class LoginDialog {
             mainPanel.add(loginPanel,
                     new GridBagConstraints(0, 2, 2, 1,
                             1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH,
-                            new Insets(0, 0, 0, 0), 0, 0));
+                            new Insets(0, 0, 2, 0), 0, 20));
 
             loginDialog.setContentPane(mainPanel);
             loginDialog.setLocationRelativeTo(parentFrame);
@@ -352,7 +352,8 @@ public class LoginDialog {
         private final RolloverButton loginButton = new RolloverButton();
         private final RolloverButton advancedButton = new RolloverButton();
         private final RolloverButton quitButton = new RolloverButton();
-	private final JCheckBox loginAsInvisibleBox = new JCheckBox();
+        private final JCheckBox loginAsInvisibleBox = new JCheckBox();
+        private final JCheckBox loginAnonymouslyBox = new JCheckBox();
 
         private final RolloverButton createAccountButton = new RolloverButton();
         private final RolloverButton passwordResetButton = new RolloverButton();
@@ -383,11 +384,13 @@ public class LoginDialog {
             ResourceUtils.resLabel(serverLabel, serverField, Res.getString("label.server"));
             ResourceUtils.resButton(createAccountButton, Res.getString("label.accounts"));
             ResourceUtils.resButton(passwordResetButton, Res.getString("label.passwordreset"));
-	    ResourceUtils.resButton(loginAsInvisibleBox, Res.getString("checkbox.login.as.invisible"));
+            ResourceUtils.resButton(loginAsInvisibleBox, Res.getString("checkbox.login.as.invisible"));
+            ResourceUtils.resButton(loginAnonymouslyBox, Res.getString("checkbox.login.anonymously"));
 
             savePasswordBox.setOpaque(false);
             autoLoginBox.setOpaque(false);
-	    loginAsInvisibleBox.setOpaque(false);
+            loginAsInvisibleBox.setOpaque(false);
+            loginAnonymouslyBox.setOpaque(false);
             setLayout(GRIDBAGLAYOUT);
 
             // Set default visibility
@@ -473,10 +476,17 @@ public class LoginDialog {
                             GridBagConstraints.EAST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 0, 5), 0, 0));
             }
 
+            if(!Default.getBoolean("HIDE_LOGIN_ANONYMOUSLY") && localPref.getAnonymousLogin()) {
+	            add(loginAnonymouslyBox,
+	                new GridBagConstraints(1, 8, 2, 1, 1.0, 0.0,
+                            GridBagConstraints.EAST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 0, 5), 0, 0));
+            }
+
             // Add button but disable the login button initially
             savePasswordBox.addActionListener(this);
             autoLoginBox.addActionListener(this);
-	    loginAsInvisibleBox.addActionListener(this);
+            loginAsInvisibleBox.addActionListener(this);
+            loginAnonymouslyBox.addActionListener(this);
 
 		    if (!Default.getBoolean(Default.ACCOUNT_DISABLED) && localPref.getAccountsReg()) {
 		    	buttonPanel.add(createAccountButton,
@@ -522,7 +532,7 @@ public class LoginDialog {
             cardPanel.add(progressBar, PROGRESS_BAR);
 
 
-            add(cardPanel, new GridBagConstraints(0, 8, 4, 1,
+            add(cardPanel, new GridBagConstraints(0, 9, 4, 1,
                     1.0, 1.0, GridBagConstraints.SOUTH, GridBagConstraints.HORIZONTAL,
                     new Insets(2, 2, 2, 2), 0, 0));
             loginButton.setEnabled(false);
@@ -602,12 +612,16 @@ public class LoginDialog {
                 loginButton.setEnabled(true);
             }
             autoLoginBox.setSelected(localPref.isAutoLogin());
-	    loginAsInvisibleBox.setSelected(localPref.isLoginAsInvisible());
+            loginAsInvisibleBox.setSelected(localPref.isLoginAsInvisible());
+            loginAnonymouslyBox.setSelected(localPref.isLoginAnonymously());
+            usernameField.setEnabled(!loginAnonymouslyBox.isSelected());
+            passwordField.setEnabled(!loginAnonymouslyBox.isSelected());
             useSSO(localPref.isSSOEnabled());
             if (autoLoginBox.isSelected()) {
                 savePasswordBox.setEnabled(false);
                 autoLoginBox.setEnabled(false);
-		loginAsInvisibleBox.setEnabled(false);
+                loginAsInvisibleBox.setEnabled(false);
+                loginAnonymouslyBox.setEnabled(false);
                 validateLogin();
                 return;
             }
@@ -632,7 +646,8 @@ public class LoginDialog {
             if (username != null && server != null && password != null) {
                 savePasswordBox.setEnabled(false);
                 autoLoginBox.setEnabled(false);
-		loginAsInvisibleBox.setEnabled(false);
+                loginAsInvisibleBox.setEnabled(false);
+                loginAnonymouslyBox.setEnabled(false);
                 validateLogin();
             }
 
@@ -737,6 +752,11 @@ public class LoginDialog {
                     savePasswordBox.setSelected(true);
                 }
             }
+            else if (e.getSource() == loginAnonymouslyBox) {
+                usernameField.setEnabled(!loginAnonymouslyBox.isSelected());
+                passwordField.setEnabled(!loginAnonymouslyBox.isSelected());
+                validateDialog();
+            }
         }
 
         private JPopupMenu getPopup()
@@ -756,7 +776,7 @@ public class LoginDialog {
         try {
             passwordField.setText(localPref.getPasswordForUser(getBareJid()));
             if(passwordField.getPassword().length<1) {
-            loginButton.setEnabled(false);
+            loginButton.setEnabled(loginAnonymouslyBox.isSelected());
             }
             else {
             loginButton.setEnabled(true);
@@ -796,7 +816,7 @@ public class LoginDialog {
          * Checks the users input and enables/disables the login button depending on state.
          */
         private void validateDialog() {
-            loginButton.setEnabled(
+            loginButton.setEnabled(loginAnonymouslyBox.isSelected() ||
                     ModelUtil.hasLength(getUsername()) &&
                     ( ModelUtil.hasLength(getPassword()) || localPref.isSSOEnabled() ) &&
                     ModelUtil.hasLength(getServerName())   );
@@ -832,10 +852,10 @@ public class LoginDialog {
 
             // Need to set both editable and enabled for best behavior.
             usernameField.setEditable(editable);
-            usernameField.setEnabled(editable);
+            usernameField.setEnabled(editable && !loginAnonymouslyBox.isSelected());
 
             passwordField.setEditable(editable);
-            passwordField.setEnabled(editable);
+            passwordField.setEnabled(editable && !loginAnonymouslyBox.isSelected());
 
             final String lockedDownURL = Default.getString(Default.HOST_NAME);
             if (!ModelUtil.hasLength(lockedDownURL)) {
@@ -892,7 +912,7 @@ public class LoginDialog {
                         EventQueue.invokeLater( () -> {
                             savePasswordBox.setEnabled(true);
                             autoLoginBox.setEnabled(true);
-            loginAsInvisibleBox.setVisible(true);
+                            loginAsInvisibleBox.setVisible(true);
                             enableComponents(true);
                             setProgressBarVisible(false);
                         } );
@@ -939,7 +959,8 @@ public class LoginDialog {
 
                 autoLoginBox.setVisible(true);
                 serverLabel.setVisible(true);
-		loginAsInvisibleBox.setVisible(true);
+                loginAsInvisibleBox.setVisible(true);
+                loginAnonymouslyBox.setVisible(false);
 
                 headerLabel.setVisible(true);
 
@@ -1022,7 +1043,8 @@ public class LoginDialog {
                 passwordLabel.setVisible(true);
                 serverLabel.setVisible(true);
                 serverField.setVisible(true);
-		loginAsInvisibleBox.setVisible(true);
+                loginAsInvisibleBox.setVisible(true);
+                loginAnonymouslyBox.setVisible(true);
 
                 headerLabel.setVisible(false);
                 accountLabel.setVisible(false);
@@ -1049,7 +1071,8 @@ public class LoginDialog {
             boolean hasErrors = false;
             String errorMessage = null;
 
-	    localPref.setLoginAsInvisible(loginAsInvisibleBox.isSelected());
+            localPref.setLoginAsInvisible(loginAsInvisibleBox.isSelected());
+            localPref.setLoginAnonymously(loginAnonymouslyBox.isSelected());
 
             // Handle specifyed Workgroup
             String serverName = getServerName();
@@ -1104,8 +1127,12 @@ public class LoginDialog {
 		    } else if (localPref.isUseVersionAsResource()) {
 		    	resource = Default.getString(Default.APPLICATION_NAME) + " " + JiveInfo.getVersion() + "." + Default.getString(Default.BUILD_NUMBER);
 		    }
+                if (localPref.isLoginAnonymously() && !localPref.isSSOEnabled()) {
+                    ((XMPPTCPConnection)connection).loginAnonymously();
+                } else {
                     connection.login(getLoginUsername(), getLoginPassword(),
                 	    org.jivesoftware.spark.util.StringUtils.modifyWildcards(resource).trim());
+                }
 
                     sessionManager.setServerAddress(connection.getServiceName());
                     sessionManager.initializeSession(connection, getLoginUsername(), getLoginPassword());
@@ -1531,6 +1558,7 @@ JOptionPane.ERROR_MESSAGE);
 		localPref.setAdvancedConfig(Enterprise.containsFeature(Enterprise.ADVANCED_CONFIG_FEATURE));
 		localPref.setHostNameChange(Enterprise.containsFeature(Enterprise.HOST_NAME_FEATURE));
 		localPref.setInvisibleLogin(Enterprise.containsFeature(Enterprise.INVISIBLE_LOGIN_FEATURE));
+		localPref.setAnonymousLogin(Enterprise.containsFeature(Enterprise.ANONYMOUS_LOGIN_FEATURE));
 		localPref.setPswdAutologin(Enterprise.containsFeature(Enterprise.SAVE_PASSWORD_FEATURE));
 	}
 
