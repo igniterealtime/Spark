@@ -49,6 +49,7 @@ public class Enterprise {
     public static final String HISTORY_SETTINGS_FEATURE = "history-settings";
     public static final String HOST_NAME_FEATURE = "host-name";
     public static final String INVISIBLE_LOGIN_FEATURE = "invisible-login";
+    public static final String ANONYMOUS_LOGIN_FEATURE = "anonymous-login";
     public static final String LOGOUT_EXIT_FEATURE = "logout-exit";
     public static final String MOVE_COPY_FEATURE = "move-copy";
     public static final String MUC_FEATURE = "muc";

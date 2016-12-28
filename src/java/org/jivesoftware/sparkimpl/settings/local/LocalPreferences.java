@@ -283,22 +283,42 @@ public class LocalPreferences {
 	/**
 	 * Return true if Login As Invisible is on.
 	 * 
-	 * @return true if Auto Login is on.
+	 * @return true if Login As Invisible is on.
 	 */
 	public boolean isLoginAsInvisible() {
 		return Boolean.parseBoolean(props.getProperty("loginAsInvisibleEnabled",
 				"false"));
 	}
         
-        /**
+    /**
 	 * Turn on or off Login As Invisible option.
 	 * 
 	 * @param autoLogin
-	 *            true if Auto Login should be on.
+	 *            true if Login As Invisible should be on.
 	 */
-        public void setLoginAsInvisible(boolean loginAsInvisible) {
-            props.setProperty("loginAsInvisibleEnabled", Boolean.toString(loginAsInvisible));
-        }
+    public void setLoginAsInvisible(boolean loginAsInvisible) {
+        props.setProperty("loginAsInvisibleEnabled", Boolean.toString(loginAsInvisible));
+    }
+
+    /**
+	 * Return true if Login Anonymously is on.
+	 *
+	 * @return true if Login Anonymously is on.
+	 */
+    public boolean isLoginAnonymously() {
+		return Boolean.parseBoolean(props.getProperty("loginAnonymously",
+				"false"));
+	}
+
+    /**
+	 * Turn on or off Login Anonymously option.
+	 *
+	 * @param autoLogin
+	 *            true if Login Anonymously should be on.
+	 */
+    public void setLoginAnonymously(boolean loginAnonymously) {
+        props.setProperty("loginAnonymously", Boolean.toString(loginAnonymously));
+    }
 
 	/**
 	 * Return true if the password should be encoded and persisted.
@@ -1331,6 +1351,14 @@ public class LocalPreferences {
 
     public void setInvisibleLogin(boolean ccInvisibleLogin) {
     	props.setProperty("ccInvisibleLogin", Boolean.toString(ccInvisibleLogin));
+    }
+
+    public boolean getAnonymousLogin() {
+        return Boolean.parseBoolean(props.getProperty("ccAnonymousLogin","true"));
+    }
+
+    public void setAnonymousLogin(boolean ccAnonymousLogin) {
+        props.setProperty("ccAnonymousLogin", Boolean.toString(ccAnonymousLogin));
     }
 
     public boolean getPswdAutologin() {
