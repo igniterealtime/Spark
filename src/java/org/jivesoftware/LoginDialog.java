@@ -476,6 +476,7 @@ public class LoginDialog {
                             GridBagConstraints.EAST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 0, 5), 0, 0));
             }
 
+            // Add option to hide "Login anonymously" selection on the login screen
             if(!Default.getBoolean("HIDE_LOGIN_ANONYMOUSLY") && localPref.getAnonymousLogin()) {
 	            add(loginAnonymouslyBox,
 	                new GridBagConstraints(1, 8, 2, 1, 1.0, 0.0,
