@@ -218,9 +218,11 @@ public class ContactList extends JPanel implements ActionListener,
         });
 
         // Save state on shutdown.
+        final ContactList instance = this;
         SparkManager.getMainWindow().addMainWindowListener(new MainWindowListener() {
             public void shutdown() {
                 saveState();
+                SparkManager.getConnection().removeConnectionListener( instance );
             }
 
             public void mainWindowActivated() {
