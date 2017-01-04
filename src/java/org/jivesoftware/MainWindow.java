@@ -414,7 +414,7 @@ public final class MainWindow extends ChatFrame implements ActionListener {
             Runtime.getRuntime().exec(command);
             System.exit(0);
             return true;
-        } catch (IOException e) {
+        } catch (Exception e) {
             Log.error("Error trying to restart application with script", e);
             return false;
         }
