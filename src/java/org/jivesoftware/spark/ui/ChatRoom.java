@@ -906,7 +906,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
     public abstract Icon getTabIcon();
 
     /**
-     * Get the roomname to use for this ChatRoom.
+     * Get the roomname to use for this ChatRoom. This is expected to be a bare jid.
      *
      * @return - the Roomname of this ChatRoom.
      */
