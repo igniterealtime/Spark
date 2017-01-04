@@ -165,11 +165,21 @@ public class StatusBar extends JPanel implements VCardListener {
 	}
 
 	public void setAvatar(Icon icon) {
-		Image image = ImageCombiner.iconToImage(icon);
-		if (icon.getIconHeight() > 64 || icon.getIconWidth() > 64) {
-			imageLabel.setIcon(new ImageIcon(image.getScaledInstance(-1, 64, Image.SCALE_SMOOTH)));
-		} else {
-			imageLabel.setIcon(icon);
+		if ( icon == null )
+		{
+			imageLabel.setIcon( null );
+		}
+		else
+		{
+			Image image = ImageCombiner.iconToImage( icon );
+			if ( icon.getIconHeight() > 64 || icon.getIconWidth() > 64 )
+			{
+				imageLabel.setIcon( new ImageIcon( image.getScaledInstance( -1, 64, Image.SCALE_SMOOTH ) ) );
+			}
+			else
+			{
+				imageLabel.setIcon( icon );
+			}
 		}
 		imageLabel.setBorder(null);
 		revalidate();
