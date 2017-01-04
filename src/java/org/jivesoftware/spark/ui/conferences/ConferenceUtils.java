@@ -19,48 +19,41 @@
  */
 package org.jivesoftware.spark.ui.conferences;
 
-import java.awt.Component;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-
-import javax.swing.JOptionPane;
-import javax.swing.UIManager;
-
 import org.jivesoftware.resource.Res;
-import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.packet.XMPPError;
-import org.jivesoftware.smackx.muc.MultiUserChatManager;
-import org.jivesoftware.smackx.xdata.Form;
-import org.jivesoftware.smackx.xdata.FormField;
-import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.bookmarks.BookmarkManager;
 import org.jivesoftware.smackx.bookmarks.BookmarkedConference;
+import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
+import org.jivesoftware.smackx.disco.packet.DiscoverInfo;
 import org.jivesoftware.smackx.muc.HostedRoom;
 import org.jivesoftware.smackx.muc.MultiUserChat;
+import org.jivesoftware.smackx.muc.MultiUserChatManager;
 import org.jivesoftware.smackx.muc.RoomInfo;
+import org.jivesoftware.smackx.xdata.Form;
+import org.jivesoftware.smackx.xdata.FormField;
 import org.jivesoftware.smackx.xdata.packet.DataForm;
-import org.jivesoftware.smackx.disco.packet.DiscoverInfo;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.PresenceManager;
 import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.component.PasswordDialog;
 import org.jivesoftware.spark.ui.ChatRoomNotFoundException;
 import org.jivesoftware.spark.ui.rooms.GroupChatRoom;
 import org.jivesoftware.spark.util.ModelUtil;
-import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.UIComponentRegistry;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.privacy.PrivacyManager;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jxmpp.util.XmppStringUtils;
+
+import javax.swing.*;
+import java.awt.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.List;
 
 /**
  * ConferenceUtils allow for basic joining and inviting of users.
@@ -126,6 +119,28 @@ public class ConferenceUtils {
         return creationDate;
     }
 
+    /**
+     * Enters a GroupChatRoom on the event thread.
+     *
+     * @param roomName the name of the room.
+     * @param roomJID  the rooms jid.
+     * @param password the rooms password (if any).
+     * @return the GroupChatRoom created.
+     */
+    public static GroupChatRoom enterRoomOnSameThread(final String roomName, String roomJID, String password )
+    {
+        final JoinRoomSwingWorker worker = new JoinRoomSwingWorker( roomJID, password, roomName );
+        worker.start();
+        return (GroupChatRoom) worker.get(); // blocks until completed.
+    }
+
+    public static GroupChatRoom enterRoom(final MultiUserChat groupChat, String tabTitle, final String nickname, final String password)
+    {
+        final JoinRoomSwingWorker worker = new JoinRoomSwingWorker( groupChat.getRoom(), nickname, password, tabTitle );
+        worker.start();
+        return (GroupChatRoom) worker.get(); // blocks until completed.
+    }
+
     public static void joinConferenceOnSeperateThread(final String roomName, String roomJID, String password) {
         joinConferenceOnSeperateThread(roomName, roomJID, password, null, null);
     }
@@ -137,137 +152,17 @@ public class ConferenceUtils {
      * @param roomJID  the jid of the room.
      * @param password the rooms password if required.
      */
-    public static void joinConferenceOnSeperateThread(final String roomName, String roomJID, String password, final String message, final Collection<String> jids) {
-        ChatManager chatManager = SparkManager.getChatManager();
-        LocalPreferences pref = SettingsManager.getRelodLocalPreferences();
+    public static void joinConferenceOnSeperateThread(final String roomName, String roomJID, String password, final String inviteMessage, final Collection<String> invites ) {
 
-        final MultiUserChat groupChat = MultiUserChatManager.getInstanceFor( SparkManager.getConnection() ).getMultiUserChat( roomJID );
-        final String nickname = pref.getNickname().trim();
+        final JoinRoomSwingWorker worker = new JoinRoomSwingWorker( roomJID, password, roomName );
 
-        // Check if room already exists. If so, join room again.
-        try {
-            GroupChatRoom chatRoom = (GroupChatRoom)chatManager.getChatContainer().getChatRoom(roomJID);
-            MultiUserChat muc = chatRoom.getMultiUserChat();
-            chatRoom.setPassword(password);
-            if (!muc.isJoined()) {
-                joinRoom(muc, nickname, password);
-            }
-
-            chatManager.getChatContainer().activateChatRoom(chatRoom);
-            invite(groupChat, chatRoom, jids, message);
-            return;
-        }
-        catch (ChatRoomNotFoundException e) {
-            // Nothing to do
+        if ( invites != null && !invites.isEmpty() )
+        {
+            final InviteSwingWorker inviteSwingWorker = new InviteSwingWorker( roomJID, new HashSet<>( invites ), inviteMessage );
+            worker.setFollowUp( inviteSwingWorker );
         }
 
-
-        final GroupChatRoom room = UIComponentRegistry.createGroupChatRoom(groupChat);
-        room.setTabTitle(roomName);
-        room.setPassword(password);
-
-        if (isPasswordRequired(roomJID) && password == null) {
-            final PasswordDialog passwordDialog = new PasswordDialog();
-            passwordDialog.setPasswordField(pref.getGroupChatPassword(roomJID));
-            password = passwordDialog.getPassword(Res.getString("title.password.required"), Res.getString("message.groupchat.require.password"), SparkRes.getImageIcon(SparkRes.LOCK_16x16), SparkManager.getFocusedComponent());
-            if(passwordDialog.isCheckboxSelected() == true && password!=null)
-            {
-            	passwordDialog.savePassword(room.getRoomname(),password);
-            }
-            room.setPassword(password);
-            if (!ModelUtil.hasLength(password)) {
-                return;
-            }
-        }
-
-
-        final List<String> errors = new ArrayList<>();
-        final String userPassword = password;
-
-        final SwingWorker startChat = new SwingWorker() {
-            public Object construct() {
-                if (!groupChat.isJoined()) {
-                    int groupChatCounter = 0;
-                    while (true) {
-                        groupChatCounter++;
-                        String joinName = nickname;
-                        if (groupChatCounter > 1) {
-                            joinName = joinName + groupChatCounter;
-                        }
-                        if (groupChatCounter < 10) {
-                            try {
-                            	if (!confirmToRevealVisibility())
-                            		return null;
-
-                                if (ModelUtil.hasLength(userPassword)) {
-                                    groupChat.join(joinName, userPassword);
-                                }
-                                else {
-                                    groupChat.join(joinName);
-                                }
-                                break;
-                            }
-                            catch (XMPPException | SmackException ex) {
-                                XMPPError error = null;
-                                if ( ex instanceof XMPPException.XMPPErrorException) {
-                                    error = (( XMPPException.XMPPErrorException ) ex).getXMPPError();
-                                }
-
-                                final String errorText = ConferenceUtils.getReason( error );
-
-                                errors.add( errorText );
-                                if ( error != null && error.getCondition() != XMPPError.Condition.conflict )
-                                {
-                                    break;
-                                }
-                            }
-                        }
-                        else {
-                            break;
-                        }
-                    }
-                }
-                invite(groupChat, room, jids, message);
-                return "ok";
-            }
-
-            public void finished() {
-            	UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
-                if (errors.size() > 0) {
-                    String error = errors.get(0);
-                    JOptionPane.showMessageDialog(SparkManager.getMainWindow(), error, "Unable to join the room at this time.", JOptionPane.ERROR_MESSAGE);
-                }
-                else if (groupChat.isJoined()) {
-                	changePresenceToAvailableIfInvisible();
-                    ChatManager chatManager = SparkManager.getChatManager();
-                    chatManager.getChatContainer().addChatRoom(room);
-                    chatManager.getChatContainer().activateChatRoom(room);
-                }
-                else {
-                    JOptionPane.showMessageDialog(SparkManager.getMainWindow(), "Unable to join the room.", "Error", JOptionPane.ERROR_MESSAGE);
-                }
-            }
-        };
-
-        startChat.start();
-    }
-
-    private static void invite(MultiUserChat groupChat, GroupChatRoom room, Collection<String> jids, String message)
-    {
-        if (jids != null && message != null) {
-            for (String jid : jids) {
-                try
-                {
-                    groupChat.invite(jid, message);
-                    room.getTranscriptWindow().insertNotificationMessage(
-                            Res.getString("message.waiting.for.user.to.join", jid), ChatManager.NOTIFICATION_COLOR);
-                }
-                catch ( SmackException.NotConnectedException e )
-                {
-                    Log.warning( "Unable to invite " + jid + " to " + room, e );
-                }
-            }
-        }
+        worker.start();
     }
 
     /**
@@ -293,43 +188,30 @@ public class ConferenceUtils {
      */
     public static List<String> joinRoom(MultiUserChat groupChat, String nickname, String password) {
         final List<String> errors = new ArrayList<>();
-        if (!groupChat.isJoined()) {
-            int groupChatCounter = 0;
-            while (true) {
-                groupChatCounter++;
-                String joinName = nickname;
-                if (groupChatCounter > 1) {
-                    joinName = joinName + groupChatCounter;
+        if ( !groupChat.isJoined() )
+        {
+            try
+            {
+                if ( ModelUtil.hasLength( password ) )
+                {
+                    groupChat.join( nickname, password );
                 }
-                if (groupChatCounter < 10) {
-                    try {
-                        if (ModelUtil.hasLength(password)) {
-                            groupChat.join(joinName, password);
-                        }
-                        else {
-                            groupChat.join(joinName);
-                        }
-                        changePresenceToAvailableIfInvisible();
-                        break;
-                    }
-                    catch (XMPPException | SmackException ex) {
-                        XMPPError error = null;
-                        if ( ex instanceof XMPPException.XMPPErrorException) {
-                            error = (( XMPPException.XMPPErrorException ) ex).getXMPPError();
-                        }
+                else
+                {
+                    groupChat.join( nickname );
+                }
+                changePresenceToAvailableIfInvisible();
+            }
+            catch ( XMPPException | SmackException ex )
+            {
+                XMPPError error = null;
+                if ( ex instanceof XMPPException.XMPPErrorException )
+                {
+                    error = ( (XMPPException.XMPPErrorException) ex ).getXMPPError();
+                }
 
-                        final String errorText = ConferenceUtils.getReason( error );
-
-                        errors.add( errorText );
-                        if ( error.getCondition() != XMPPError.Condition.conflict )
-                        {
-                            break;
-                        }
-                    }
-                }
-                else {
-                    break;
-                }
+                final String errorText = ConferenceUtils.getReason( error );
+                errors.add( errorText );
             }
         }
 
@@ -343,7 +225,7 @@ public class ConferenceUtils {
      * @param jids a collection of the users to invite.
      */
     public static void inviteUsersToRoom(MultiUserChat chat, Collection<String> jids, boolean randomName ) {
-        inviteUsersToRoom( XmppStringUtils.parseDomain( chat.getRoom() ), XmppStringUtils.parseLocalpart( chat.getRoom() ), jids, randomName );
+        inviteUsersToRoom( XmppStringUtils.parseDomain( chat.getRoom() ), chat.getRoom(), jids, randomName );
     }
 
     /**
@@ -385,7 +267,6 @@ public class ConferenceUtils {
         // Check to see if the room is password protected
     	ServiceDiscoveryManager discover = ServiceDiscoveryManager.getInstanceFor(SparkManager.getConnection());
 
-
         try {
             DiscoverInfo info = discover.discoverInfo(roomJID);
             return info.containsFeature("muc_passwordprotected");
@@ -403,7 +284,7 @@ public class ConferenceUtils {
      * @param message     the message sent to each individual invitee.
      * @param roomName    the name of the room to create.
      * @param jids        a collection of the user JIDs to invite.
-     * @throws XMPPException thrown if an error occurs during room creation.
+     * @throws SmackException thrown if an error occurs during room creation.
      */
     public static void createPrivateConference(String serviceName, String message, String roomName, Collection<String> jids) throws SmackException
     {
@@ -485,184 +366,6 @@ public class ConferenceUtils {
                 return "You are not a member of this room.\nThis room requires you to be a member to join.";
             default:
                 return "An error has occurred: " + error.getConditionText();
-        }
-
-    }
-
-    /**
-     * Enters a GroupChatRoom on the event thread.
-     *
-     * @param roomName the name of the room.
-     * @param roomJID  the rooms jid.
-     * @param password the rooms password (if any).
-     * @return the GroupChatRoom created.
-     */
-    public static GroupChatRoom enterRoomOnSameThread(final String roomName, String roomJID, String password) {
-        ChatManager chatManager = SparkManager.getChatManager();
-
-
-        final LocalPreferences pref = SettingsManager.getLocalPreferences();
-
-        final String nickname = pref.getNickname().trim();
-
-
-        try {
-            GroupChatRoom chatRoom = (GroupChatRoom)chatManager.getChatContainer().getChatRoom(roomJID);
-            MultiUserChat muc = chatRoom.getMultiUserChat();
-            if (!muc.isJoined()) {
-                joinRoom(muc, nickname, password);
-            }
-            chatManager.getChatContainer().activateChatRoom(chatRoom);
-            return chatRoom;
-        }
-        catch (ChatRoomNotFoundException e) {
-            // Nothing to do
-        }
-
-        final MultiUserChat groupChat = MultiUserChatManager.getInstanceFor( SparkManager.getConnection() ).getMultiUserChat( roomJID );
-
-
-        final GroupChatRoom room = UIComponentRegistry.createGroupChatRoom(groupChat);
-        room.setTabTitle(roomName);
-
-
-        if (isPasswordRequired(roomJID) && password == null) {
-            password = JOptionPane.showInputDialog(null, "Enter Room Password", "Need Password", JOptionPane.QUESTION_MESSAGE);
-            if (!ModelUtil.hasLength(password)) {
-                return null;
-            }
-        }
-
-
-        final List<String> errors = new ArrayList<>();
-        final String userPassword = password;
-
-
-        if (!groupChat.isJoined()) {
-            int groupChatCounter = 0;
-            while (true) {
-                groupChatCounter++;
-                String joinName = nickname;
-                if (groupChatCounter > 1) {
-                    joinName = joinName + groupChatCounter;
-                }
-                if (groupChatCounter < 10) {
-                    try {
-                    	if (!confirmToRevealVisibility())
-                    		return null;
-
-                        if (ModelUtil.hasLength(userPassword)) {
-                            groupChat.join(joinName, userPassword);
-                        }
-                        else {
-                            groupChat.join(joinName);
-                        }
-                        break;
-                    }
-                    catch (XMPPException | SmackException ex) {
-                        XMPPError error = null;
-                        if ( ex instanceof XMPPException.XMPPErrorException) {
-                            error = (( XMPPException.XMPPErrorException ) ex).getXMPPError();
-                        }
-
-                        final String errorText = ConferenceUtils.getReason( error );
-
-                        errors.add( errorText );
-                        if ( error != null && error.getCondition() != XMPPError.Condition.conflict )
-                        {
-                            break;
-                        }
-                    }
-                }
-                else {
-                    break;
-                }
-            }
-
-        }
-
-
-        if (errors.size() > 0) {
-            String error = errors.get(0);
-            UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
-            JOptionPane.showMessageDialog(SparkManager.getMainWindow(), error, "Unable to join the room at this time.", JOptionPane.ERROR_MESSAGE);
-            return null;
-        }
-        else if (groupChat.isJoined()) {
-        	changePresenceToAvailableIfInvisible();
-            chatManager.getChatContainer().addChatRoom(room);
-            chatManager.getChatContainer().activateChatRoom(room);
-        }
-        else {
-        	UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
-            JOptionPane.showMessageDialog(SparkManager.getMainWindow(), "Unable to join the room.", "Error", JOptionPane.ERROR_MESSAGE);
-            return null;
-        }
-        return room;
-    }
-
-    public static void enterRoom(final MultiUserChat groupChat, String tabTitle, final String nickname, final String password) {
-        final GroupChatRoom room = UIComponentRegistry.createGroupChatRoom(groupChat);
-        room.setTabTitle(tabTitle);
-
-        final List<String> errors = new ArrayList<>();
-
-        if (!groupChat.isJoined()) {
-            int groupChatCounter = 0;
-            while (true) {
-                groupChatCounter++;
-                String joinName = nickname;
-                if (groupChatCounter > 1) {
-                    joinName = joinName + groupChatCounter;
-                }
-                if (groupChatCounter < 10) {
-                    try {
-                    	if (!confirmToRevealVisibility())
-                    		return;
-                    	
-                        if (ModelUtil.hasLength(password)) {
-                            groupChat.join(joinName, password);
-                        }
-                        else {
-                            groupChat.join(joinName);
-                        }
-                        break;
-                    }
-                    catch (XMPPException | SmackException ex) {
-                        XMPPError error = null;
-                        if ( ex instanceof XMPPException.XMPPErrorException) {
-                            error = (( XMPPException.XMPPErrorException ) ex).getXMPPError();
-                        }
-
-                        final String errorText = ConferenceUtils.getReason( error );
-
-                        errors.add( errorText );
-                        if ( error != null && error.getCondition() != XMPPError.Condition.conflict )
-                        {
-                            break;
-                        }
-                    }
-                }
-                else {
-                    break;
-                }
-            }
-        }
-
-        UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
-        
-        if (errors.size() > 0) {
-            String error = errors.get(0);
-            JOptionPane.showMessageDialog(SparkManager.getMainWindow(), error, "Could Not Join Room", JOptionPane.ERROR_MESSAGE);
-        }
-        else if (groupChat.isJoined()) {
-            changePresenceToAvailableIfInvisible();
-            ChatManager chatManager = SparkManager.getChatManager();
-            chatManager.getChatContainer().addChatRoom(room);
-            chatManager.getChatContainer().activateChatRoom(room);
-        }
-        else {
-            JOptionPane.showMessageDialog(SparkManager.getMainWindow(), "Unable to join room.", "Error", JOptionPane.ERROR_MESSAGE);
         }
 
     }
