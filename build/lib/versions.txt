@@ -4,9 +4,6 @@ ant-contrib.jar			 			| ?			 	 		| Apache			| http://ant-contrib.sourceforge.net
 i4jruntime.jar			 			| ?			 			| Commercial		| http://www.ej-technologies.com
 jarbundler-1.4.jar		 			| ?			 	 		| GPL				| http://informagen.com/JarBundler/index.html
 pack200task.jar			 			| ?			 	 		| Sun				| https://java-pack200-ant-task.dev.java.net/
-pmd.jar					 			| 4.2.5		 	 		| BSD				| http://pmd.sf.net
-asm.jar					 			| 3.1		 	 		| BSD				| http://pmd.sf.net
-checkstyle.jar                      | 6.18-all              | Apache 2          | https://sourceforge.net/projects/checkstyle/
 junit.jar							| 4.8.2					| CPL				| http://www.junit.org
 dist/activation.jar					| ? 			 		| Sun				| http://java.sun.com/javase/technologies/desktop/javabeans/jaf/downloads/index.html
 dist/asterisk-im-client.jar			| 2.0.0-SNAPSHOT        | GPL				| http://igniterealtime.org/
