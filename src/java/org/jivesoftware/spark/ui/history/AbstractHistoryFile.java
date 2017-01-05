@@ -1,5 +1,4 @@
 /**
- * 
  */
 package org.jivesoftware.spark.ui.history;
 

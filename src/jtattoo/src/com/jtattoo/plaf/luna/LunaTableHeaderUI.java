@@ -28,7 +28,6 @@ import javax.swing.JComponent;
 import javax.swing.plaf.ComponentUI;
 
 /**
- *
  * @author  Michael Hagen
  */
 public class LunaTableHeaderUI extends BaseTableHeaderUI {

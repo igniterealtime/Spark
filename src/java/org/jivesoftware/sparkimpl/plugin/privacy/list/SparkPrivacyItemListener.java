@@ -9,7 +9,6 @@ import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smackx.privacy.packet.PrivacyItem;
 
 /**
- *
  * @author Zolotarev Konstantin, Bergunde Holger
  */
 public interface SparkPrivacyItemListener {

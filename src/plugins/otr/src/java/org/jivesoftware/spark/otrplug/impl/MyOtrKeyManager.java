@@ -199,7 +199,6 @@ public class MyOtrKeyManager implements OtrKeyManager {
     }
 
     /**
-     * 
      * Returns the local finger print for specified session. If there is no
      * finger print you might generate one.
      * 

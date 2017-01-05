@@ -30,7 +30,6 @@ import javax.swing.plaf.ComponentUI;
 import javax.swing.plaf.basic.BasicSpinnerUI;
 
 /**
- *
  * @author Michael Hagen
  */
 public class BaseSpinnerUI extends BasicSpinnerUI {

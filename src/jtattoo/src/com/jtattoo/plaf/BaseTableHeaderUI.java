@@ -33,7 +33,6 @@ import javax.swing.plaf.basic.BasicTableHeaderUI;
 import javax.swing.table.*;
 
 /**
- *
  * @author Michael Hagen
  */
 public class BaseTableHeaderUI extends BasicTableHeaderUI {

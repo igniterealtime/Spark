@@ -16,7 +16,6 @@ import net.java.otr4j.session.SessionID;
 import org.jivesoftware.spark.util.log.Log;
 
 /**
- * 
  * Implementation of OtrEngineHost provided from otr4j. It handles the message
  * injection to specified chat window and handles key pair.
  * 

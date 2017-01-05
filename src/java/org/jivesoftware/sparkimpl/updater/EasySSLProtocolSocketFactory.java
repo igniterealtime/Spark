@@ -1,8 +1,4 @@
 /**
- * $RCSfile: ,v $
- * $Revision: $
- * $Date: $
- * 
  * Copyright (C) 2004-2011 Jive Software. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,8 +17,6 @@
 package org.jivesoftware.sparkimpl.updater;
 /*
  * $Header: /home/jerenkrantz/tmp/commons/commons-convert/cvs/home/cvs/jakarta-commons//httpclient/src/contrib/org/apache/commons/httpclient/contrib/ssl/EasySSLProtocolSocketFactory.java,v 1.7 2004/06/11 19:26:27 olegk Exp $
- * $Revision$
- * $Date$
  *
  * ====================================================================
  *

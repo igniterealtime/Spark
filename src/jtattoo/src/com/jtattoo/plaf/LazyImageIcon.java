@@ -28,7 +28,6 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
 /**
- *
  * @author Michael Hagen
  */
 public class LazyImageIcon implements Icon {

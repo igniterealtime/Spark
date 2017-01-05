@@ -15,7 +15,6 @@ import org.jivesoftware.sparkimpl.plugin.privacy.PrivacyManager;
 
 
 /**
- *
  * @author Bergunde Holger
  */
 

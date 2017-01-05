@@ -1,8 +1,4 @@
 /**
- * $RCSfile: ,v $
- * $Revision: $
- * $Date: $
- * 
  * Copyright (C) 2004-2011 Jive Software. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -39,7 +35,6 @@ import org.jdesktop.swingx.calendar.DateUtils;
 import org.jivesoftware.resource.SparkRes;
 
 /**
- *
  */
 public class TaskUI extends JPanel implements ActionListener {
 

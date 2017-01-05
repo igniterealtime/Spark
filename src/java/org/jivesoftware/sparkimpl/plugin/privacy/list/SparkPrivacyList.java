@@ -1,8 +1,4 @@
 /**
- * $RCSfile: ,v $
- * $Revision: $
- * $Date: $
- * 
  * Copyright (C) 2004-2011 Jive Software. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -29,7 +25,6 @@ import org.jivesoftware.sparkimpl.plugin.privacy.PrivacyManager;
 import java.util.*;
 
 /**
- *
  * @author Zolotarev Konstantin, Bergunde Holger
  */
 public class SparkPrivacyList {
@@ -275,7 +270,6 @@ public class SparkPrivacyList {
     }
 
     /**
-     * 
      * @return listName
      */
     @Override

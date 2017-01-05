@@ -1,7 +1,6 @@
 package org.jivesoftware.sparkimpl.plugin.privacy.list;
 
 /**
- *
  * @author Bergunde Holger
  */
 

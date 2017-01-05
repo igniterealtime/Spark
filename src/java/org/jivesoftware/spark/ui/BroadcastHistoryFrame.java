@@ -22,7 +22,6 @@ import org.jivesoftware.spark.SparkManager;
  */
 
 /**
- *
  * @author ps
  */
 public class BroadcastHistoryFrame extends javax.swing.JFrame {

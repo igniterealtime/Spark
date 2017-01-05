@@ -1,8 +1,4 @@
 /**
- * $RCSfile: ,v $
- * $Revision: $
- * $Date: $
- * 
  * Copyright (C) 2004-2011 Jive Software. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -44,7 +40,6 @@ import org.jivesoftware.sparkimpl.plugin.gateways.transports.Transport;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.TransportUtils;
 
 /**
- *
  */
 public class GatewayButton extends JPanel implements GatewayItem {
 	private static final long serialVersionUID = -2692869826501622612L;

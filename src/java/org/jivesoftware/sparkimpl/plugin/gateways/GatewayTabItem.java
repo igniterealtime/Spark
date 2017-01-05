@@ -35,11 +35,9 @@ import org.jivesoftware.sparkimpl.plugin.gateways.transports.TransportUtils;
 public class GatewayTabItem extends CollapsiblePane implements GatewayItem {
 
     /**
-     * 
      */
     private static final long serialVersionUID = 5589644402913737488L;
     /**
-     * 
      */
 
     private boolean signedIn;
