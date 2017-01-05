@@ -28,7 +28,6 @@ import java.awt.event.*;
 import javax.swing.*;
 
 /**
- *
  * @author Michael Hagen
  */
 

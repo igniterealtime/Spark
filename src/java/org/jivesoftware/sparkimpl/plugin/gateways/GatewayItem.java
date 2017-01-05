@@ -1,5 +1,4 @@
 /**
- * 
  */
 package org.jivesoftware.sparkimpl.plugin.gateways;
 

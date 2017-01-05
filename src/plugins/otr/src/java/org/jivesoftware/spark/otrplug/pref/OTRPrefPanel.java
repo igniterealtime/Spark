@@ -29,7 +29,6 @@ import org.jivesoftware.spark.otrplug.util.OTRProperties;
 import org.jivesoftware.spark.otrplug.util.OTRResources;
 
 /**
- * 
  * OTR preference panel for Spark Preferences
  * 
  * @author Bergund Holger
