@@ -52,7 +52,6 @@
 		<programlisting>
 			 base                 => Produces Base Jars For Jive Spark
 			 changelog            => Generates an incremental changelog file based upon the XML/RSS feed from JIRA
-			 checkcode.pmd        => Checkcode with pmd.
 			 clean                => Deletes files generated during the build.
 			 development          => Creates a development environment for Sparkplugs
 			 dist.src             => Creates a source distribution package
