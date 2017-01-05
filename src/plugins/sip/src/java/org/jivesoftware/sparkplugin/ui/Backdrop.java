@@ -1,8 +1,4 @@
 /**
- * $RCSfile: ,v $
- * $Revision: $
- * $Date: $
- * 
  * Copyright (C) 2004-2011 Jive Software. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -29,7 +25,6 @@ import java.awt.Image;
 import java.awt.geom.AffineTransform;
 
 /**
- *
  */
 public class Backdrop extends JPanel {
 	private static final long serialVersionUID = -1062382698141913525L;

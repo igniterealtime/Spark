@@ -31,7 +31,6 @@ import javax.swing.*;
 import javax.swing.plaf.ComponentUI;
 
 /**
- *
  * @author  Michael Hagen
  */
 public class SmartScrollBarUI extends BaseScrollBarUI {

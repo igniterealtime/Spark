@@ -1,8 +1,4 @@
 /**
- * $RCSfile: ,v $
- * $Revision: $
- * $Date: $
- * 
  * Copyright (C) 2004-2011 Jive Software. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -31,7 +27,6 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 
 /**
- *
  */
 public class RosterTreeCellRenderer extends DefaultTreeCellRenderer {
 	private static final long serialVersionUID = 4645070076041138834L;

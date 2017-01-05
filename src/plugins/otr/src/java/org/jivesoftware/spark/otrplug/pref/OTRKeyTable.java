@@ -22,7 +22,6 @@ import org.jivesoftware.spark.otrplug.util.OTRResources;
 public class OTRKeyTable extends JPanel {
 
     /**
-     * 
      */
     private static final long serialVersionUID = -2922785387942547350L;
     private JTable _table;
@@ -43,7 +42,6 @@ public class OTRKeyTable extends JPanel {
 
     class MyTableModel extends DefaultTableModel {
         /**
-         * 
          */
         private static final long serialVersionUID = -2930577433474767242L;
 

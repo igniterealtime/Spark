@@ -30,7 +30,6 @@ import javax.swing.JComponent;
 import javax.swing.plaf.ComponentUI;
 
 /**
- *
  * @author  Michael Hagen
  */
 public class HiFiScrollBarUI extends XPScrollBarUI {

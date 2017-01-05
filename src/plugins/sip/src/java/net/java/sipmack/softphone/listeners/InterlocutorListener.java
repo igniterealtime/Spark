@@ -3,10 +3,6 @@ package net.java.sipmack.softphone.listeners;
 import net.java.sipmack.sip.InterlocutorUI;
 
 /**
- * $RCSfile$
- * $Revision: $
- * $Date: 01/12/2006
- *
  * Copyright 2003-2006 Jive Software.
  *
  * All rights reserved. Licensed under the Apache License, Version 2.0 (the "License");
