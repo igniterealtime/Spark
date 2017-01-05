@@ -271,7 +271,7 @@
 	</target>
 
 	<!-- build =================================================================================== -->
-	<target name="build" depends="init, resources, base, checkcode.checkstyle">
+	<target name="build" depends="init, resources, base">
 		<echo message="${ant.version}"/>
 		<echo message="Java Version: ${ant.java.version}"/>
 		<!--Compiles the java code from ${src} directory into ${classes} directory-->
@@ -1042,40 +1042,6 @@
 			</fileset>
 		</copy>
 	</target>
-
-	<!-- checkcode.pmd ========================================================================= -->
-	<target name="checkcode.pmd" description="Checkcode with pmd.">
-		<taskdef name="pmd" classname="net.sourceforge.pmd.ant.PMDTask">
-			<classpath>
-				<pathelement location="${basedir}/build/lib/pmd.jar" />
-				<pathelement location="${basedir}/build/lib/asm.jar" />
-				<pathelement location="${basedir}/build/lib/merge/jaxen.jar" />
-			</classpath>
-		</taskdef>
-		<pmd shortFilenames="true">
-			<ruleset>migrating</ruleset>
-			<ruleset>sunsecure</ruleset>
-			<ruleset>imports</ruleset>
-			<ruleset>strings</ruleset>
-			<formatter type="xml" toFile="target/pmd_report.xml" />
-			<formatter type="html" toFile="target/pmd_report.html" />
-			<fileset dir="src/">
-				<include name="**/*.java" />
-			</fileset>
-		</pmd>
-	</target>
-
-	<!-- checkcode.checkstyle ============================================================ -->
-	<target name="checkcode.checkstyle" description="Checkcode with checkstyle.">
-		<taskdef resource="com/puppycrawl/tools/checkstyle/ant/checkstyle-ant-task.properties" classpath="build/lib/checkstyle.jar"/>
-
-		<checkstyle maxErrors="17000" config="build/checkstyle.xml">
-			<fileset dir="src/java" includes="**/*.java" />
-			<!-- <formatter type="plain"/> -->
-			<formatter type="xml" toFile="target/checkstyle.xml"/>
-		</checkstyle>
-	</target>
-
 
 	<!-- docbook ========================================================================= -->
 	<target name="docbook" description="Docbook">
