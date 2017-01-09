@@ -745,7 +745,7 @@ public class LoginDialog {
                 }
             }
             else if (e.getSource() == autoLoginBox) {
-                if (autoLoginBox.isSelected()) {
+                if ((autoLoginBox.isSelected() && (!localPref.isSSOEnabled()))) {
                     savePasswordBox.setSelected(true);
                 }
             }
@@ -948,6 +948,7 @@ public class LoginDialog {
                 passwordField.setVisible(false);
 
                 savePasswordBox.setVisible(false);
+                savePasswordBox.setSelected(false);
 
                 accountLabel.setVisible(true);
                 accountNameLabel.setVisible(true);
@@ -1203,13 +1204,19 @@ JOptionPane.ERROR_MESSAGE);
             // Persist information
             localPref.setLastUsername(getLoginUsername());
 
-            // Check to see if the password should be saved.
+            // Check to see if the password should be saved or cleared from file.
             if (savePasswordBox.isSelected()) {
                 try {
                     localPref.setPasswordForUser(getBareJid(), getPassword());
                 }
                 catch (Exception e) {
                     Log.error("Error encrypting password.", e);
+                }
+            } else {
+                try {
+                    localPref.clearPasswordForUser(getBareJid());
+                } catch (Exception e) {
+                    Log.debug("Unable to clear saved password..." + e);
                 }
             }
 
