@@ -29,8 +29,10 @@ import javax.swing.JTextField;
 import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
+import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.VerticalFlowLayout;
 import org.jivesoftware.spark.util.ResourceUtils;
+import org.jivesoftware.spark.util.log.Log;
 
 /**
  * UI for editing Local Preferences.
@@ -68,16 +70,26 @@ public class LocalPreferencePanel extends JPanel {
 	_useSingleTrayClick.setSelected(preferences.isUsingSingleTrayClick());
 	
 	_idleStatusText = new JTextField(preferences.getIdleMessage());
+	if (preferences.isSSOEnabled()) {
+		_savePasswordBox.setSelected(false);
+		_autoLoginBox.setEnabled(true);
+	} else {
+		_savePasswordBox.addActionListener(e -> {
+			_autoLoginBox.setEnabled(_savePasswordBox.isSelected());
+			if (!_savePasswordBox.isSelected()) {
+				_autoLoginBox.setSelected(false);
+				try {
+					preferences.clearPasswordForUser(SparkManager.getSessionManager().getBareAddress());
+				} catch (Exception e1) {
+					Log.debug("Unable to clear saved password..." + e1);
+				}
 
-	_savePasswordBox.addActionListener( e -> {
-    _autoLoginBox.setEnabled(_savePasswordBox.isSelected());
-    if (!_savePasswordBox.isSelected()) {
-        _autoLoginBox.setSelected(false);
-    }
-    } );
+			}
+		});
+	}
 
 	_autoLoginBox.addActionListener( e -> {
-    if (_autoLoginBox.isSelected()) {
+    if ((_autoLoginBox.isSelected()) && (!preferences.isSSOEnabled())) {
         _savePasswordBox.setSelected(true);
     }
     } );
@@ -131,7 +143,9 @@ public class LocalPreferencePanel extends JPanel {
 	inputPanel.add(_idleBox,        new GridBagConstraints(0, 4, 2, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL,new Insets(5, 5, 5, 5), 50, 0));
 
 	if(!Default.getBoolean(Default.HIDE_SAVE_PASSWORD_AND_AUTOLOGIN)) {
-	inputPanel.add(_savePasswordBox, new GridBagConstraints(0, 5, 2, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST,GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 0));
+		if (!preferences.isSSOEnabled()) {
+			inputPanel.add(_savePasswordBox, new GridBagConstraints(0, 5, 2, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 0));
+		}
 	inputPanel.add(_autoLoginBox,    new GridBagConstraints(0, 6, 2, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST,GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 0));
 	}
 	
