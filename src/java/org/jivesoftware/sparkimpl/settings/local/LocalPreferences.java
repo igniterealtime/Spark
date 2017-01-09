@@ -172,6 +172,13 @@ public class LocalPreferences {
 	    props.setProperty(user, pw);
 	}
 
+	// Clears saved password
+	public void clearPasswordForUser(String barejid) throws Exception
+	{
+		String pw = "password"+Encryptor.encrypt(barejid);
+		props.remove(pw);
+	}
+
 	/**
 	 * Return true if the IDLE feature is on. The IDLE feature allows to monitor
 	 * computer activity and set presence accordingly.
