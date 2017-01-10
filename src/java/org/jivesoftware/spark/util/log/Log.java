@@ -60,11 +60,11 @@ public class Log {
 			// Create an appending file handler
 			boolean append = true;
 			FileHandler errorHandler = new FileHandler(
-					ERROR_LOG_FILE.getCanonicalPath(), append);
+					ERROR_LOG_FILE.getCanonicalPath(), 1000000, 10, append);
 			errorHandler.setFormatter(new SimpleFormatter());
 
 			FileHandler warnHandler = new FileHandler(
-					WARNING_LOG_FILE.getCanonicalPath(), append);
+					WARNING_LOG_FILE.getCanonicalPath(), 1000000, 10, append);
 			warnHandler.setFormatter(new SimpleFormatter());
 
 			// Add to the desired logger
