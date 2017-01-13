@@ -142,6 +142,26 @@ public class JoinRoomSwingWorker extends SwingWorker
             if ( ex instanceof XMPPException.XMPPErrorException )
             {
                 error = ( (XMPPException.XMPPErrorException) ex ).getXMPPError();
+
+                if ( XMPPError.Condition.conflict.equals( error.getCondition() ) )
+                {
+                    final Object userInput = JOptionPane.showInputDialog(
+                            SparkManager.getMainWindow(),
+                            Res.getString( "message.nickname.in.use" ),
+                            Res.getString( "title.change.nickname" ),
+                            JOptionPane.WARNING_MESSAGE,
+                            null,
+                            null, // null selection values implies text field.
+                            nickname
+                            );
+
+                    if ( userInput != null )
+                    {
+                        Log.debug( "Retry joining room '" + roomJID + "', using nickname: " + userInput );
+                        this.nickname = (String) userInput;
+                        return construct();
+                    }
+                }
             }
 
             final String errorText = ConferenceUtils.getReason( error );
