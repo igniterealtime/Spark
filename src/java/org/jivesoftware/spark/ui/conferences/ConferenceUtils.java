@@ -341,27 +341,27 @@ public class ConferenceUtils {
      */
     public static String getReason(XMPPError error) {
         if (error == null) {
-            return "No response from server.";
+            return Res.getString("message.error.no.response");
         }
 
         switch ( error.getCondition() )
         {
             case conflict:
-                return "Your desired nickname is in use or reserved by someone else.";
+                return Res.getString("message.error.nickname.in.use");
             case forbidden:
-                return "You have been banned from this room.";
+                return Res.getString("message.you.have.been.banned");
             case item_not_found:
-                return "The room you are trying to enter does not exist.";
+                return Res.getString("message.error.room.not.exist");
             case not_acceptable:
-                return "You must use your reserved room nick.";
+                return Res.getString("message.error.must.use.reserved.nick");
             case not_allowed:
-                return "You do not have permission to create a room.";
+                return Res.getString("message.error.no.permission.create.room");
             case not_authorized:
-                return "The password did not match the room's password.";
+                return Res.getString("message.error.room.password.incorrect");
             case registration_required:
-                return "You are not a member of this room.\nThis room requires you to be a member to join.";
+                return Res.getString("message.error.not.member");
             default:
-                return "An error has occurred: " + error.getConditionText();
+                return Res.getString("message.default.error") + ": " + error.getConditionText();
         }
 
     }

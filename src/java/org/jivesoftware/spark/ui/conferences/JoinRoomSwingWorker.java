@@ -112,7 +112,7 @@ public class JoinRoomSwingWorker extends SwingWorker
             {
                 if ( password == null && ConferenceUtils.isPasswordRequired( roomJID ) )
                 {
-                    password = JOptionPane.showInputDialog( null, "Enter Room Password", "Need Password", JOptionPane.QUESTION_MESSAGE );
+                    password = JOptionPane.showInputDialog( null, Res.getString("message.enter.room.password"), Res.getString("title.password.required"), JOptionPane.QUESTION_MESSAGE );
                     if ( !ModelUtil.hasLength( password ) )
                     {
                         return null;
@@ -178,7 +178,7 @@ public class JoinRoomSwingWorker extends SwingWorker
         if ( errors.size() > 0 )
         {
             String error = errors.get( 0 );
-            JOptionPane.showMessageDialog( SparkManager.getMainWindow(), error, "Unable to join the room at this time.", JOptionPane.ERROR_MESSAGE );
+            JOptionPane.showMessageDialog( SparkManager.getMainWindow(), error, Res.getString("message.error.unable.join.room"), JOptionPane.ERROR_MESSAGE );
         }
         else if ( groupChat.isJoined() && getValue() != null )
         {
@@ -198,7 +198,7 @@ public class JoinRoomSwingWorker extends SwingWorker
         }
         else
         {
-            JOptionPane.showMessageDialog( SparkManager.getMainWindow(), "Unable to join the room.", "Error", JOptionPane.ERROR_MESSAGE );
+            JOptionPane.showMessageDialog( SparkManager.getMainWindow(), Res.getString("message.error.unable.join.room"), Res.getString("title.error"), JOptionPane.ERROR_MESSAGE );
         }
     }
 }
