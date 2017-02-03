@@ -32,6 +32,7 @@ import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
 import org.jivesoftware.smack.util.TLSUtils;
 import org.jivesoftware.smackx.chatstates.ChatStateManager;
+import org.jivesoftware.smackx.ping.PingManager;
 import org.jivesoftware.spark.SessionManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.Workspace;
@@ -49,6 +50,7 @@ import org.jivesoftware.sparkimpl.settings.JiveInfo;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jxmpp.util.XmppStringUtils;
+import org.lobobrowser.html.domimpl.HTMLElementBuilder;
 
 import javax.naming.NamingException;
 import javax.naming.directory.Attribute;
@@ -247,6 +249,8 @@ public class LoginDialog {
                 .setPort(port)
                 .setSendPresence(false)
                 .setCompressionEnabled(localPref.isCompressionEnabled());
+                builder.setConnectTimeout(localPref.getTimeOut() * 1000);
+
 
         if (localPref.isAcceptAllCertificates()) {
             try {
@@ -318,7 +322,6 @@ public class LoginDialog {
             }
         }
 
-        ReconnectionManager.setEnabledPerDefault( true );
 
         // TODO These were used in Smack 3. Find Smack 4 alternative.
 //        config.setRosterLoadedAtLogin(true);
@@ -1135,6 +1138,10 @@ public class LoginDialog {
                     sessionManager.setServerAddress(connection.getServiceName());
                     sessionManager.initializeSession(connection, getLoginUsername(), getLoginPassword());
                     sessionManager.setJID(connection.getUser());
+                    ReconnectionManager.getInstanceFor(connection).setFixedDelay(localPref.getReconnectDelay());
+                    ReconnectionManager.getInstanceFor(connection).setReconnectionPolicy(ReconnectionManager.ReconnectionPolicy.FIXED_DELAY);
+                    ReconnectionManager.getInstanceFor(connection).enableAutomaticReconnection();
+
                 }
                 catch (Exception xee) {
 
@@ -1152,11 +1159,9 @@ public class LoginDialog {
 
                     } else if (xee.getMessage().contains("Hostname verification of certificate failed")) {
                         errorMessage = Res.getString("message.cert.hostname.verification.failed");
-                        ReconnectionManager.getInstanceFor(connection).disableAutomaticReconnection();
 
                     } else if (xee.getMessage().contains("unable to find valid certification path to requested target")) {
                         errorMessage = Res.getString("message.cert.verification.failed");
-                        ReconnectionManager.getInstanceFor(connection).disableAutomaticReconnection();
 
                     } else if (xee.getMessage().contains("XMPPError: conflict")) {
                         errorMessage = Res.getString("label.conflict.error");

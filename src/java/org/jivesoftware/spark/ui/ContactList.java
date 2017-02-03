@@ -2372,12 +2372,9 @@ SwingUtilities.invokeLater( () -> loadContactList() );
 	    break;
 	case 1:
 	    switchAllUserOffline(true);
-	    _reconnectpanelsmall.startReconnecting();
 	    break;
-
 	case 2:
 	    switchAllUserOfflineNoGroupEntry(true);
-	    _reconnectpanelicon.startReconnecting();
 	    break;
 	default:
 	    workspace.changeCardLayout(RETRY_PANEL);
