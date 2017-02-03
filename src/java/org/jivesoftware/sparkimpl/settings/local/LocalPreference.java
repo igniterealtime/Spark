@@ -68,7 +68,6 @@ public class LocalPreference implements Preference {
         preferences = SettingsManager.getLocalPreferences();
         preferences.setAutoLogin(panel.getAutoLogin());
         preferences.setTimeOut(Integer.parseInt(panel.getTimeout()));
-        preferences.setReconnectDelay(Integer.parseInt(panel.getReconnectDelay()));
         preferences.setXmppPort(Integer.parseInt(panel.getPort()));
         preferences.setSavePassword(panel.isSavePassword());
         preferences.setIdleOn(panel.isIdleOn());
