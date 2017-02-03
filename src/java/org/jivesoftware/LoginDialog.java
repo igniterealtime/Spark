@@ -249,8 +249,7 @@ public class LoginDialog {
                 .setPort(port)
                 .setSendPresence(false)
                 .setCompressionEnabled(localPref.isCompressionEnabled());
-                builder.setConnectTimeout(localPref.getTimeOut() * 1000);
-
+                
 
         if (localPref.isAcceptAllCertificates()) {
             try {
