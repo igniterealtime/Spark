@@ -46,7 +46,7 @@ public class SparkPrivacyList {
 
     public SparkPrivacyList(PrivacyList list) throws SmackException.NotConnectedException
     {
-        _listName = list.toString();
+        _listName = list.getName();
         _myPrivacyList = list;
         _isActive = _myPrivacyList.isActiveList();
         _isDefault = _myPrivacyList.isDefaultList();
