@@ -15,20 +15,13 @@
  */
 package org.jivesoftware.spark.ui;
 
-import java.util.TimerTask;
-
-import javax.swing.JButton;
-import javax.swing.JPanel;
+import javax.swing.*;
 
 import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.smack.AbstractXMPPConnection;
 import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.component.RolloverButton;
-import org.jivesoftware.spark.util.SwingTimerTask;
 import org.jivesoftware.spark.util.SwingWorker;
-import org.jivesoftware.spark.util.TaskEngine;
 
 /**
  * Used for silent reconnecting<br>
@@ -40,7 +33,7 @@ import org.jivesoftware.spark.util.TaskEngine;
 public class ReconnectPanelIcon implements ConnectionListener {
 
     private static final long serialVersionUID = 437696141257704105L;
-    private RolloverButton _button;
+    private JLabel _icon;
     private JPanel _commandpanel;
     private boolean _closedOnError;
 
@@ -51,57 +44,25 @@ public class ReconnectPanelIcon implements ConnectionListener {
 
 	_commandpanel = SparkManager.getWorkspace().getCommandPanel();
 
-	_button = new RolloverButton(SparkRes.getImageIcon(SparkRes.BUSY_IMAGE));
+	_icon = new JLabel(SparkRes.getImageIcon(SparkRes.BUSY_IMAGE));
 
-	_button.addActionListener( e -> startReconnecting() );
-    }
+	}
 
     public JPanel getPanel() {
 	return _commandpanel;
     }
 
-    public JButton getButton() {
-	return _button;
+    public JLabel getButton() {
+	return _icon;
     }
 
-    /**
-     * Starts the Timer for Icon-reconnection
-     */
-    public void startReconnecting() {
-	if (!SparkManager.getConnection().isConnected()) {
-	    TimerTask task = new SwingTimerTask() {
-		public void doRun() {
-		    reconnect();
-		}
-	    };
-	    TaskEngine.getInstance().schedule(task, 100);
-	}
-
-	SparkManager.getPreferenceManager();
-
-    }
 
     public void setClosedOnError(boolean onError) {
 	_closedOnError = onError;
     }
 
-    /**
-     * Reconnect Thread
-     */
-    private void reconnect() {
-	try {
-	    if (_closedOnError) {
-		((AbstractXMPPConnection) SparkManager.getConnection()).connect();
-	    } else {
-		SparkManager.getMainWindow().logout(false);
-	    }
-	} catch (Exception ex) {
-	    ex.printStackTrace();
-	}
-    }
-
     public void setReconnectText(String text) {
-	_button.setToolTipText(text);
+	_icon.setToolTipText(text);
     }
 
     public void remove() {
@@ -113,7 +74,7 @@ public class ReconnectPanelIcon implements ConnectionListener {
 
 	    @Override
 	    public void finished() {
-		_commandpanel.remove(_button);
+		_commandpanel.remove(_icon);
 	    }
 	};
 	worker.start();
