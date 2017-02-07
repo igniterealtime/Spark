@@ -21,8 +21,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.util.TimerTask;
 
-import javax.swing.JEditorPane;
-import javax.swing.JPanel;
+import javax.swing.*;
 import javax.swing.text.html.HTMLEditorKit;
 
 import org.jivesoftware.resource.Res;
@@ -45,7 +44,7 @@ import org.jivesoftware.spark.util.TaskEngine;
 public class ReconnectPanel extends JPanel implements ConnectionListener {
 	private static final long serialVersionUID = -7099075581561760774L;
 	private JEditorPane pane;
-    private RolloverButton retryButton;
+    private JLabel _icon;
     private boolean closedOnError;
 
     /**
@@ -60,45 +59,15 @@ public class ReconnectPanel extends JPanel implements ConnectionListener {
         pane.setEditorKit(new HTMLEditorKit());
         pane.setEditable(false);
 
-        retryButton = new RolloverButton(SparkRes.getImageIcon(SparkRes.SMALL_CHECK));
+        _icon = new JLabel(SparkRes.getImageIcon(SparkRes.SMALL_CHECK));
 
         layoutComponents();
 
-        retryButton.addActionListener( actionEvent -> attemptReconnection() );
-
-
         setBackground(Color.white);
 
-        retryButton.setText(Res.getString("button.reconnect2"));
+        _icon.setText(Res.getString("button.reconnect2"));
 
         SparkManager.getConnection().addConnectionListener(this);
-    }
-
-    private void attemptReconnection() {
-        retryButton.setText(Res.getString("message.reconnect.attempting"));
-        retryButton.setEnabled(false);
-
-        TimerTask task = new SwingTimerTask() {
-            public void doRun() {
-                reconnect();
-            }
-        };
-
-        TaskEngine.getInstance().schedule(task, 100);
-    }
-    
-    private void reconnect() {
-        try {
-            if (closedOnError) {
-                ((AbstractXMPPConnection)SparkManager.getConnection()).connect();
-            }
-            else {
-                SparkManager.getMainWindow().logout(false);
-            }
-        }
-        catch (Exception ex) {
-            ex.printStackTrace();
-        }
     }
 
 
@@ -124,7 +93,7 @@ public class ReconnectPanel extends JPanel implements ConnectionListener {
     private void layoutComponents() {
         add(pane, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
 
-        add(retryButton, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        add(_icon, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
     }
 
     /**
@@ -134,15 +103,15 @@ public class ReconnectPanel extends JPanel implements ConnectionListener {
      * @param text the text to display on the reconnect button.
      */
     protected void setReconnectText(String text) {
-        retryButton.setVisible(true);
-        retryButton.setText(text);
+        _icon.setVisible(true);
+        _icon.setText(text);
     }
 
     /**
      * Changes the UI to handle when a conflict occurs on the server.
      */
     public void showConflict() {
-        retryButton.setVisible(false);
+        _icon.setVisible(false);
     }
 
     public void setClosedOnError(boolean onError) {
@@ -153,37 +122,37 @@ public class ReconnectPanel extends JPanel implements ConnectionListener {
     @Override
     public void connected( XMPPConnection xmppConnection )
     {
-        retryButton.setVisible(false);
-        retryButton.setEnabled(true);
+        _icon.setVisible(false);
+        _icon.setEnabled(true);
     }
 
     @Override
     public void authenticated( XMPPConnection xmppConnection, boolean b )
     {
-        retryButton.setVisible(false);
-        retryButton.setEnabled(true);
+        _icon.setVisible(false);
+        _icon.setEnabled(true);
     }
 
     public void connectionClosed() {
-        retryButton.setVisible(true);
-        retryButton.setEnabled(true);
+        _icon.setVisible(true);
+        _icon.setEnabled(true);
     }
 
     public void connectionClosedOnError(Exception e) {
-        retryButton.setVisible(true);
-        retryButton.setEnabled(true);
+        _icon.setVisible(true);
+        _icon.setEnabled(true);
     }
 
     public void reconnectingIn(int seconds) {
     }
 
     public void reconnectionSuccessful() {
-        retryButton.setVisible(false);
-        retryButton.setEnabled(true);
+        _icon.setVisible(false);
+        _icon.setEnabled(true);
     }
 
     public void reconnectionFailed(Exception e) {
-        retryButton.setVisible(true);
-        retryButton.setEnabled(true);
+        _icon.setVisible(true);
+        _icon.setEnabled(true);
     }
 }

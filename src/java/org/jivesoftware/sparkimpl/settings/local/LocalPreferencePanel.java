@@ -42,6 +42,7 @@ public class LocalPreferencePanel extends JPanel {
 
 	private JTextField _portField = new JTextField();
     private JTextField _timeOutField = new JTextField();
+	private JTextField _reconnectDelayField = new JTextField();
     private JTextField _idleField = new JTextField();
     private JTextField _idleStatusText;
 
@@ -64,6 +65,7 @@ public class LocalPreferencePanel extends JPanel {
 	LocalPreferences preferences = SettingsManager.getLocalPreferences();
 	_portField.setText(Integer.toString(preferences.getXmppPort()));
 	_timeOutField.setText(Integer.toString(preferences.getTimeOut()));
+	_reconnectDelayField.setText(Integer.toString(preferences.getReconnectDelay()));
 	_autoLoginBox.setSelected(preferences.isAutoLogin());
 	_savePasswordBox.setSelected(preferences.isSavePassword());
 	_startMinimizedBox.setSelected(preferences.isStartedHidden());
@@ -111,6 +113,10 @@ public class LocalPreferencePanel extends JPanel {
 		ResourceUtils.resLabel( _timeOutLabel, _timeOutField,
 		Res.getString("label.response.timeout") + ":");
 
+		JLabel _reconnectDelayLabel = new JLabel();
+		ResourceUtils.resLabel( _reconnectDelayLabel, _reconnectDelayField,
+		Res.getString("label.reconnect.delay") + ":");
+
 		JLabel _idleStatusLabel = new JLabel();
 		ResourceUtils.resLabel( _idleStatusLabel, _idleStatusText,
 		Res.getString("label.time.till.idlemessage") + ":");
@@ -136,29 +142,31 @@ public class LocalPreferencePanel extends JPanel {
 	inputPanel.add(_portField,    new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL,new Insets(5, 5, 5, 5), 0, 0));
 	inputPanel.add( _timeOutLabel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE,new Insets(5, 5, 5, 5), 50, 0));
 	inputPanel.add(_timeOutField, new GridBagConstraints(1, 1, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST,GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 0));
-	inputPanel.add( _idleLabel,    new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE,new Insets(5, 5, 5, 5), 50, 0));
-	inputPanel.add(_idleField,    new GridBagConstraints(1, 2, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL,new Insets(5, 5, 5, 5), 50, 0));
-	inputPanel.add( _idleStatusLabel,new GridBagConstraints(0, 3, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST,GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 0));
-	inputPanel.add(_idleStatusText, new GridBagConstraints(1, 3, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST,GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 0));	
-	inputPanel.add(_idleBox,        new GridBagConstraints(0, 4, 2, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL,new Insets(5, 5, 5, 5), 50, 0));
+	inputPanel.add( _reconnectDelayLabel, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE,new Insets(5, 5, 5, 5), 50, 0));
+	inputPanel.add(_reconnectDelayField, new GridBagConstraints(1, 2, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST,GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 0));
+	inputPanel.add( _idleLabel,    new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE,new Insets(5, 5, 5, 5), 50, 0));
+	inputPanel.add(_idleField,    new GridBagConstraints(1, 3, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL,new Insets(5, 5, 5, 5), 50, 0));
+	inputPanel.add( _idleStatusLabel,new GridBagConstraints(0, 4, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST,GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 0));
+	inputPanel.add(_idleStatusText, new GridBagConstraints(1, 4, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST,GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 0));
+	inputPanel.add(_idleBox,        new GridBagConstraints(0, 5, 2, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL,new Insets(5, 5, 5, 5), 50, 0));
 
 	if(!Default.getBoolean(Default.HIDE_SAVE_PASSWORD_AND_AUTOLOGIN)) {
 		if (!preferences.isSSOEnabled()) {
-			inputPanel.add(_savePasswordBox, new GridBagConstraints(0, 5, 2, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 0));
+			inputPanel.add(_savePasswordBox, new GridBagConstraints(0, 6, 2, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 0));
 		}
-	inputPanel.add(_autoLoginBox,    new GridBagConstraints(0, 6, 2, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST,GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 0));
+	inputPanel.add(_autoLoginBox,    new GridBagConstraints(0, 7, 2, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST,GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 0));
 	}
 	
 	if (Spark.isWindows()) {
-	    inputPanel.add(_launchOnStartupBox, new GridBagConstraints(0, 7, 2, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST,GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50,0));
+	    inputPanel.add(_launchOnStartupBox, new GridBagConstraints(0, 8, 2, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST,GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50,0));
 	    _launchOnStartupBox.addActionListener( e -> setStartOnStartup(_launchOnStartupBox.isSelected()) );
 
 	    _launchOnStartupBox.setSelected(preferences.getStartOnStartup());
 	}
 
-	inputPanel.add(_startMinimizedBox, new GridBagConstraints(0, 8, 2, 1,0.0, 0.0, GridBagConstraints.NORTHWEST,GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 0));
-	inputPanel.add(_useSingleTrayClick, new GridBagConstraints(0, 9, 2, 1,0.0, 0.0, GridBagConstraints.NORTHWEST,GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 0));
-	inputPanel.add(new JLabel(), new GridBagConstraints(0, 10, 2, 1, 1.0,1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH,new Insets(5, 5, 5, 5), 50, 0));
+	inputPanel.add(_startMinimizedBox, new GridBagConstraints(0, 9, 2, 1,0.0, 0.0, GridBagConstraints.NORTHWEST,GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 0));
+	inputPanel.add(_useSingleTrayClick, new GridBagConstraints(0, 10, 2, 1,0.0, 0.0, GridBagConstraints.NORTHWEST,GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 0));
+	inputPanel.add(new JLabel(), new GridBagConstraints(0, 11, 2, 1, 1.0,1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH,new Insets(5, 5, 5, 5), 50, 0));
 	
 	
 	add(inputPanel);
@@ -201,6 +209,14 @@ public class LocalPreferencePanel extends JPanel {
     public String getTimeout() {
 	return _timeOutField.getText();
     }
+
+	public void setReconnectDelay(String reconnectDelay) {
+		_reconnectDelayField.setText(reconnectDelay);
+	}
+
+	public String getReconnectDelay() {
+		return _reconnectDelayField.getText();
+	}
 
     /**
      * Sets Auto Login on and off.

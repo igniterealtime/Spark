@@ -114,6 +114,15 @@ public class LocalPreferences {
 		props.setProperty("timeout", Integer.toString(timeOut));
 	}
 
+	public int getReconnectDelay() {
+		return Integer.parseInt(props.getProperty("reconnectDelay", "10"));
+	}
+
+	public void setReconnectDelay(int reconnectDelay) {
+		props.setProperty("reconnectDelay", Integer.toString(reconnectDelay));
+	}
+
+
 	/**
 	 * Returns the encoded password.
 	 *

@@ -61,82 +61,10 @@ public class ReconnectPanelSmall extends ContactGroup implements
 	this.add(_reconnectionlabel);
 	this.setIcon(SparkRes.getImageIcon(SparkRes.BUSY_IMAGE));
 	thiscomp = this;
-
-	_reconnectionlabel.addMouseListener(new MouseListener() {
-
-	    @Override
-	    public void mouseReleased(MouseEvent e) {
-	    }
-
-	    @Override
-	    public void mousePressed(MouseEvent e) {
-	    }
-
-	    @Override
-	    public void mouseExited(MouseEvent e) {
-	    }
-
-	    @Override
-	    public void mouseEntered(MouseEvent e) {
-	    }
-
-	    @Override
-	    public void mouseClicked(MouseEvent e) {
-
-		if (SwingUtilities.isLeftMouseButton(e)) {
-		    reconnect();
-		} else if (SwingUtilities.isRightMouseButton(e)) {
-
-		    int x = e.getX();
-		    int y = e.getY();
-
-		    final JPopupMenu popupmenu = new JPopupMenu();
-		    final JMenuItem reconnect = new JMenuItem(Res.getString(
-			    "button.reconnect").replace("&", ""));
-		    reconnect.setIcon(SparkRes
-			    .getImageIcon(SparkRes.SMALL_CHECK));
-		    popupmenu.add(reconnect);
-
-		    reconnect.addActionListener( e1 -> reconnect() );
-
-		    popupmenu.show(thiscomp, x, y);
-		}
-	    }
-	});
-    }
-
-    /**
-     * Starts the Timer for no-panel-reconnection
-     */
-    public void startReconnecting() {
-
-	if (!SparkManager.getConnection().isConnected()) {
-	    TimerTask task = new SwingTimerTask() {
-		public void doRun() {
-		    reconnect();
-		}
-	    };
-	    TaskEngine.getInstance().schedule(task, 100);
-	}
     }
 
     public void setClosedOnError(boolean onError) {
 	_closedOnError = onError;
-    }
-
-    /**
-     * Reconnect Thread
-     */
-    private void reconnect() {
-	try {
-	    if (_closedOnError) {
-		((AbstractXMPPConnection) SparkManager.getConnection()).connect();
-	    } else {
-		SparkManager.getMainWindow().logout(false);
-	    }
-	} catch (Exception ex) {
-	    ex.printStackTrace();
-	}
     }
 
     public void setReconnectText(String text) {
