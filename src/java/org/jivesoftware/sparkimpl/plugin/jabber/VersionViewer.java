@@ -29,13 +29,9 @@ import org.jivesoftware.spark.component.MessageDialog;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.log.Log;
 
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
+import javax.swing.*;
 
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import java.awt.*;
 import java.text.SimpleDateFormat;
 
 public class VersionViewer {
@@ -45,8 +41,14 @@ public class VersionViewer {
     }
 
     public static void viewVersion(String jid) {
-        final JPanel panel = new JPanel();
-        panel.setLayout(new GridBagLayout());
+        final JPanel loadingCard = new JPanel();
+        final ImageIcon icon = new ImageIcon( VersionViewer.class.getClassLoader().getResource( "images/ajax-loader.gif"));
+        loadingCard.add(new JLabel("loading... ", icon, JLabel.CENTER));
+        loadingCard.setVisible(true);
+
+        final JPanel dataCard = new JPanel();
+        dataCard.setVisible( false );
+        dataCard.setLayout(new GridBagLayout());
 
         JLabel timeLabel = new JLabel();
         JLabel softwareLabel = new JLabel();
@@ -65,19 +67,28 @@ public class VersionViewer {
         ResourceUtils.resLabel(osLabel, osField, Res.getString("label.os") + ":");
 
         // Add Time Label
-        panel.add(timeLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-        panel.add(timeField, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+        dataCard.add(timeLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        dataCard.add(timeField, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 
-        panel.add(softwareLabel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-        panel.add(softwareField, new GridBagConstraints(1, 1, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
-
-
-        panel.add(versionLabel, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-        panel.add(versionField, new GridBagConstraints(1, 2, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+        dataCard.add(softwareLabel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        dataCard.add(softwareField, new GridBagConstraints(1, 1, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 
 
-        panel.add(osLabel, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-        panel.add(osField, new GridBagConstraints(1, 3, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+        dataCard.add(versionLabel, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        dataCard.add(versionField, new GridBagConstraints(1, 2, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+
+
+        dataCard.add(osLabel, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        dataCard.add(osField, new GridBagConstraints(1, 3, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+
+        osField.setEditable(false);
+        versionField.setEditable(false);
+        softwareField.setEditable(false);
+        timeField.setEditable(false);
+
+        final JPanel cards = new JPanel(new CardLayout());
+        cards.add(loadingCard);
+        cards.add(dataCard);
 
         final XMPPConnection connection = SparkManager.getConnection();
         try
@@ -92,6 +103,7 @@ public class VersionViewer {
                 softwareField.setText(versionResult.getName());
                 versionField.setText(versionResult.getVersion());
                 osField.setText(versionResult.getOs());
+                ((CardLayout)(cards.getLayout())).last( cards );
             } );
 
             // Time
@@ -101,18 +113,16 @@ public class VersionViewer {
 
             connection.sendStanzaWithResponseCallback( time, new IQReplyFilter( time, connection ), stanza -> {;
                 timeField.setText( new SimpleDateFormat( ).format( ((Time)stanza).getTime()));
+                ((CardLayout)(cards.getLayout())).last( cards );
             } );
         }
         catch ( SmackException.NotConnectedException e )
         {
             Log.warning( "Unable to query for version.", e );
+            ((CardLayout)(cards.getLayout())).last( cards );
         }
 
-        osField.setEditable(false);
-        versionField.setEditable(false);
-        softwareField.setEditable(false);
-        timeField.setEditable(false);
-        MessageDialog.showComponent(Res.getString("title.version.and.time"), Res.getString("message.client.information", UserManager.unescapeJID(jid)), SparkRes.getImageIcon(SparkRes.PROFILE_IMAGE_24x24), panel, SparkManager.getMainWindow(), 400, 300, false);
+        MessageDialog.showComponent(Res.getString("title.version.and.time"), Res.getString("message.client.information", UserManager.unescapeJID(jid)), SparkRes.getImageIcon(SparkRes.PROFILE_IMAGE_24x24), cards, SparkManager.getMainWindow(), 400, 300, false);
     }
 
 }
