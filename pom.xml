@@ -1,0 +1,92 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.igniterealtime.spark</groupId>
+    <artifactId>parent</artifactId>
+    <version>3.0.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <name>Spark</name>
+    <description>
+        Spark is an Open Source, cross-platform IM client optimized for businesses and organizations. It features
+        built-in support for group chat, telephony integration, and strong security. It also offers a great end-user
+        experience with features like in-line spell checking, group chat room bookmarks, and tabbed conversations.
+        Combined with the Openfire server, Spark is the easiest and best alternative to using un-secure public IM
+        networks.
+    </description>
+    <url>http://www.igniterealtime.org/projects/spark/</url>
+    <inceptionYear>2006</inceptionYear>
+
+    <organization>
+        <name>Ignite Realtime</name>
+        <url>http://www.igniterealtime.org</url>
+    </organization>
+
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <issueManagement>
+        <system>jira</system>
+        <url>http://www.igniterealtime.org/issues/browse/SPARK</url>
+    </issueManagement>
+
+    <scm>
+        <connection>https://github.com/igniterealtime/Spark.git</connection>
+        <developerConnection>https://github.com/igniterealtime/Spark.git</developerConnection>
+        <url>https://github.com/igniterealtime/Spark</url>
+    </scm>
+
+    <contributors>
+        <contributor>
+            <name>Oleg "Wroot"</name>
+            <roles>
+                <role>Project Lead</role>
+            </roles>
+            <organization>Ignite Realtime</organization>
+            <organizationUrl>http://www.igniterealtime.org</organizationUrl>
+        </contributor>
+    </contributors>
+
+    <developers>
+        <developer>
+            <name>Guus der Kinderen</name>
+            <roles>
+                <role>Developer</role>
+            </roles>
+            <email>guus.der.kinderen@gmail.com</email>
+            <timezone>+1</timezone>
+            <organization>Ignite Realtime</organization>
+            <organizationUrl>http://www.igniterealtime.org</organizationUrl>
+        </developer>
+    </developers>
+
+    <modules>
+        <module>core</module>
+    </modules>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.5.1</version>
+                    <configuration>
+                        <source>1.8</source>
+                        <target>1.8</target>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+</project>

@@ -2,19 +2,17 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.igniterealtime.spark</groupId>
+    <parent>
+        <groupId>org.igniterealtime.spark</groupId>
+        <artifactId>parent</artifactId>
+        <version>3.0.0-SNAPSHOT</version>
+    </parent>
+
     <artifactId>spark-core</artifactId>
-    <version>3.0.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>Spark core</name>
-    <url>http://www.igniterealtime.org/projects/spark/</url>
-
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
-    </properties>
+    <description>The essentials of Spark, including the user interface and startup scripts, excluding most optional components</description>
 
     <build>
         <finalName>spark</finalName>
@@ -22,7 +20,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.5.1</version>
                 <configuration>
                     <excludes>
                         <exclude>**/spark/component/browser/**</exclude>
