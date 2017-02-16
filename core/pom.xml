@@ -153,8 +153,26 @@
 
         <dependency>
             <groupId>com.teamdev.jxbrowser</groupId>
-            <artifactId>jxbrowser-cross-platform</artifactId>
-            <version>6.9</version>
+            <artifactId>jxbrowser-win</artifactId>
+            <version>6.12</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.teamdev.jxbrowser</groupId>
+            <artifactId>jxbrowser-linux32</artifactId>
+            <version>6.12</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.teamdev.jxbrowser</groupId>
+            <artifactId>jxbrowser-linux64</artifactId>
+            <version>6.12</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.teamdev.jxbrowser</groupId>
+            <artifactId>jxbrowser-mac</artifactId>
+            <version>6.12</version>
         </dependency>
 
         <dependency>
@@ -174,7 +192,6 @@
             <id>com.teamdev</id>
             <url>http://maven.teamdev.com/repository/products</url>
         </repository>
-
     </repositories>
 
 </project>

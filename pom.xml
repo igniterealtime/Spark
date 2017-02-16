@@ -69,6 +69,7 @@
     <modules>
         <module>core</module>
         <module>plugins/roar</module>
+        <module>plugins/fastpath</module>
         <module>distribution</module>
     </modules>
 

@@ -31,7 +31,7 @@
               -->
             <useAllReactorProjects>true</useAllReactorProjects>
             <includes>
-                <include>org.igniterealtime.spark.plugins:roar</include>
+                <include>org.igniterealtime.spark.plugins:*</include>
             </includes>
             <binaries>
                 <includeDependencies>false</includeDependencies>
