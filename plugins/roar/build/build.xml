@@ -56,7 +56,7 @@
 		</copy> -->
 
 		<copy todir="${target.dir}">
-			<fileset file="${plug.dir}/plugin.xml"/>
+			<fileset file="/plugin-roar/src/main/plugin.xml"/>
 			<fileset dir="${lib.dir}">
 					<include name="**/*"/>
 			</fileset>

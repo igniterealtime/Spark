@@ -7,7 +7,7 @@
     <version>3.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
-    <name>Spark</name>
+    <name>Spark (parent)</name>
     <description>
         Spark is an Open Source, cross-platform IM client optimized for businesses and organizations. It features
         built-in support for group chat, telephony integration, and strong security. It also offers a great end-user
@@ -68,6 +68,8 @@
 
     <modules>
         <module>core</module>
+        <module>plugins/roar</module>
+        <module>distribution</module>
     </modules>
 
     <properties>

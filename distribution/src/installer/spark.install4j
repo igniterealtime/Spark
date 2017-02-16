@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <install4j version="6.1.4" transformSequenceNumber="5">
-  <directoryPresets config="../../../target/spark-distribution/lib" />
-  <application name="Spark" distributionSourceDir="" applicationId="3057-7228-2063-7466" mediaDir="../../../target/" mediaFilePattern="spark_${compiler:sys.version}" compression="9" lzmaCompression="true" pack200Compression="false" excludeSignedFromPacking="true" commonExternalFiles="true" createMd5Sums="true" shrinkRuntime="true" shortName="Spark" publisher="Ignite Realtime" publisherWeb="http://www.igniterealtime.org" version="3.0.0" allPathsRelative="true" backupOnSave="false" autoSave="false" convertDotsToUnderscores="true" macSignature="????" macVolumeId="ccfadd9e467a1ebd" javaMinVersion="1.8" javaMaxVersion="" allowBetaVM="false" jdkMode="runtimeJre" jdkName="">
+  <directoryPresets config="../../target/distribution-base/lib" />
+  <application name="Spark" distributionSourceDir="" applicationId="3057-7228-2063-7466" mediaDir="../../target/" mediaFilePattern="spark_${compiler:sys.version}" compression="9" lzmaCompression="true" pack200Compression="false" excludeSignedFromPacking="true" commonExternalFiles="true" createMd5Sums="true" shrinkRuntime="true" shortName="Spark" publisher="Ignite Realtime" publisherWeb="http://www.igniterealtime.org" version="3.0.0" allPathsRelative="true" backupOnSave="false" autoSave="false" convertDotsToUnderscores="true" macSignature="????" macVolumeId="ccfadd9e467a1ebd" javaMinVersion="1.8" javaMaxVersion="" allowBetaVM="false" jdkMode="runtimeJre" jdkName="">
     <languages skipLanguageSelection="false" languageSelectionInPrincipalLanguage="false">
       <principalLanguage id="en" customLocalizationFile="" />
       <additionalLanguages />
@@ -22,15 +22,15 @@
       <mountPoint id="1" root="" location="" mode="755" />
     </mountPoints>
     <entries>
-      <dirEntry mountPoint="1" file="../../../target/spark-distribution/" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" entryMode="direct" subDirectory="spark-distribution" excludeSuffixes="" dirMode="755" overrideDirMode="false">
+      <dirEntry mountPoint="1" file="../../target/distribution-base/" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" entryMode="direct" subDirectory="spark-distribution" excludeSuffixes="" dirMode="755" overrideDirMode="false">
         <exclude />
       </dirEntry>
     </entries>
     <components />
   </files>
   <launchers>
-    <launcher name="Spark" id="4" customizedId="" external="false" excludeFromMenu="false" unixMode="755" unixAutoStart="true" menuName="" icnsFile="../../main/resources/images/message.icns" customMacBundleIdentifier="false" macBundleIdentifier="" swtApp="false" fileset="" macBundleBinary="JavaApplicationStub" addMacEntitlements="false" macEntitlementsFile="" useCustomMacosExecutableName="false" customMacosExecutableName="" useJavaMinVersionOverride="false" javaMinVersionOverride="" useJavaMaxVersionOverride="false" javaMaxVersionOverride="">
-      <executable name="Spark" type="1" iconSet="true" iconFile="../../main/resources/images/spark.ico" executableDir="." redirectStderr="true" stderrFile="logs/error.log" stderrMode="overwrite" redirectStdout="true" stdoutFile="logs/output.log" stdoutMode="overwrite" failOnStderrOutput="true" executableMode="1" changeWorkingDirectory="true" workingDirectory="." singleInstance="true" serviceStartType="2" serviceDependencies="" serviceDescription="communicator" jreLocation="" executionLevel="asInvoker" checkConsoleParameter="false" globalSingleInstance="false" singleInstanceActivate="true" dpiAware="false">
+    <launcher name="Spark" id="4" customizedId="" external="false" excludeFromMenu="false" unixMode="755" unixAutoStart="true" menuName="" icnsFile="images/message.icns" customMacBundleIdentifier="false" macBundleIdentifier="" swtApp="false" fileset="" macBundleBinary="JavaApplicationStub" addMacEntitlements="false" macEntitlementsFile="" useCustomMacosExecutableName="false" customMacosExecutableName="" useJavaMinVersionOverride="false" javaMinVersionOverride="" useJavaMaxVersionOverride="false" javaMaxVersionOverride="">
+      <executable name="Spark" type="1" iconSet="true" iconFile="images/spark.ico" executableDir="." redirectStderr="true" stderrFile="logs/error.log" stderrMode="overwrite" redirectStdout="true" stdoutFile="logs/output.log" stdoutMode="overwrite" failOnStderrOutput="true" executableMode="1" changeWorkingDirectory="true" workingDirectory="." singleInstance="true" serviceStartType="2" serviceDependencies="" serviceDescription="communicator" jreLocation="" executionLevel="asInvoker" checkConsoleParameter="false" globalSingleInstance="false" singleInstanceActivate="true" dpiAware="false">
         <versionInfo include="true" fileVersion="" fileDescription="${compiler:sys.shortName}" legalCopyright="${compiler:sys.publisher}" internalName="${compiler:sys.shortName}" productName="" />
       </executable>
       <splashScreen show="false" width="0" height="0" bitmapFile="" windowsNative="false" textOverlay="false">
@@ -64,11 +64,11 @@
         <content />
       </infoPlist>
       <iconImageFiles>
-        <file path="../../main/resources/images/spark-16x16.png" />
-        <file path="../../main/resources/images/spark-24x24.png" />
-        <file path="../../main/resources/images/spark-32x32.png" />
-        <file path="../../main/resources/images/spark-60x60.png" />
-        <file path="../../main/resources/images/spark-64x64.png" />
+        <file path="images/spark-16x16.png" />
+        <file path="images/spark-24x24.png" />
+        <file path="images/spark-32x32.png" />
+        <file path="images/spark-60x60.png" />
+        <file path="images/spark-64x64.png" />
       </iconImageFiles>
     </launcher>
     <launcher name="starter" id="21" customizedId="" external="false" excludeFromMenu="false" unixMode="755" unixAutoStart="true" menuName="" icnsFile="" customMacBundleIdentifier="false" macBundleIdentifier="" swtApp="false" fileset="" macBundleBinary="JavaApplicationStub" addMacEntitlements="false" macEntitlementsFile="" useCustomMacosExecutableName="false" customMacosExecutableName="" useJavaMinVersionOverride="false" javaMinVersionOverride="" useJavaMaxVersionOverride="false" javaMaxVersionOverride="">
@@ -105,31 +105,31 @@
   <installerGui installerType="1" addOnAppId="" suggestPreviousLocations="true" autoUpdateDescriptorUrl="" useAutoUpdateBaseUrl="false" autoUpdateBaseUrl="">
     <staticMembers script="" />
     <customCode>
-      <archive location="../../../target/spark-distribution/lib/spark-core-*.jar" />
+      <archive location="../../target/distribution-base/lib/spark-core-*.jar" />
     </customCode>
     <autoUpdate useMinUpdatableVersion="false" minUpdatableVersion="" useMaxUpdatableVersion="false" maxUpdatableVersion="">
       <commentFiles />
       <customAttributes />
     </autoUpdate>
     <applications>
-      <application name="" id="installer" customizedId="" beanClass="com.install4j.runtime.beans.applications.InstallerApplication" enabled="true" commentSet="false" comment="" actionElevationType="none" fileset="" customIcnsFile="../../main/resources/images/message.icns" customIcoFile="../../main/resources/images/spark.ico" macEntitlementsFile="" automaticLauncherIntegration="false" launchMode="startupFirstWindow" launchInNewProcess="false" launchSchedule="updateSchedule" allLaunchers="true">
+      <application name="" id="installer" customizedId="" beanClass="com.install4j.runtime.beans.applications.InstallerApplication" enabled="true" commentSet="false" comment="" actionElevationType="none" fileset="" customIcnsFile="images/message.icns" customIcoFile="images/spark.ico" macEntitlementsFile="" automaticLauncherIntegration="false" launchMode="startupFirstWindow" launchInNewProcess="false" launchSchedule="updateSchedule" allLaunchers="true">
         <serializedBean>
           <java class="java.beans.XMLDecoder">
             <object class="com.install4j.runtime.beans.applications.InstallerApplication" id="InstallerApplication0">
               <void property="customHeaderImage">
                 <object class="com.install4j.api.beans.ExternalFile">
-                  <string>../../main/resources/images/spark-60x60.png</string>
+                  <string>images/spark-60x60.png</string>
                 </object>
               </void>
               <void property="customIconImageFiles">
                 <void method="add">
                   <object class="com.install4j.api.beans.ExternalFile">
-                    <string>../../main/resources/images/spark-16x16.png</string>
+                    <string>images/spark-16x16.png</string>
                   </object>
                 </void>
                 <void method="add">
                   <object class="com.install4j.api.beans.ExternalFile">
-                    <string>../../main/resources/images/spark-32x32.png</string>
+                    <string>images/spark-32x32.png</string>
                   </object>
                 </void>
               </void>
@@ -421,24 +421,24 @@
           </screen>
         </screens>
       </application>
-      <application name="" id="uninstaller" customizedId="" beanClass="com.install4j.runtime.beans.applications.UninstallerApplication" enabled="true" commentSet="false" comment="" actionElevationType="none" fileset="" customIcnsFile="../../main/resources/images/message.icns" customIcoFile="../../main/resources/images/spark.ico" macEntitlementsFile="" automaticLauncherIntegration="false" launchMode="startupFirstWindow" launchInNewProcess="false" launchSchedule="updateSchedule" allLaunchers="true">
+      <application name="" id="uninstaller" customizedId="" beanClass="com.install4j.runtime.beans.applications.UninstallerApplication" enabled="true" commentSet="false" comment="" actionElevationType="none" fileset="" customIcnsFile="images/message.icns" customIcoFile="images/spark.ico" macEntitlementsFile="" automaticLauncherIntegration="false" launchMode="startupFirstWindow" launchInNewProcess="false" launchSchedule="updateSchedule" allLaunchers="true">
         <serializedBean>
           <java class="java.beans.XMLDecoder">
             <object class="com.install4j.runtime.beans.applications.UninstallerApplication" id="UninstallerApplication0">
               <void property="customHeaderImage">
                 <object class="com.install4j.api.beans.ExternalFile">
-                  <string>../../main/resources/images/spark-60x60.png</string>
+                  <string>images/spark-60x60.png</string>
                 </object>
               </void>
               <void property="customIconImageFiles">
                 <void method="add">
                   <object class="com.install4j.api.beans.ExternalFile">
-                    <string>../../main/resources/images/spark-16x16.png</string>
+                    <string>images/spark-16x16.png</string>
                   </object>
                 </void>
                 <void method="add">
                   <object class="com.install4j.api.beans.ExternalFile">
-                    <string>../../main/resources/images/spark-32x32.png</string>
+                    <string>images/spark-32x32.png</string>
                   </object>
                 </void>
               </void>

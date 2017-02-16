@@ -11,7 +11,7 @@
     <artifactId>spark-core</artifactId>
     <packaging>jar</packaging>
 
-    <name>Spark core</name>
+    <name>Spark Core</name>
     <description>The essentials of Spark, including the user interface and startup scripts, excluding most optional components</description>
 
     <build>
@@ -141,6 +141,7 @@
             <artifactId>xstream</artifactId>
             <version>1.2.2</version>
         </dependency>
+
         <dependency>
             <groupId>com.install4j</groupId>
             <artifactId>install4j-runtime</artifactId>
@@ -174,36 +175,4 @@
         </repository>
     </repositories>
 
-    <profiles>
-        <profile>
-            <id>install4j</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.sonatype.install4j</groupId>
-                        <artifactId>install4j-maven-plugin</artifactId>
-                        <version>1.1.1</version>
-
-                        <executions>
-                            <execution>
-                                <id>compile-installers</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>compile</goal>
-                                </goals>
-                                <configuration>
-                                    <projectFile>${project.basedir}/src/main/installer/spark.install4j</projectFile>
-                                    <variables>
-                                        <sys.version>${project.version}</sys.version>
-                                        <maven-build-directory>${project.build.directory}</maven-build-directory>
-                                    </variables>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-
-    </profiles>
 </project>

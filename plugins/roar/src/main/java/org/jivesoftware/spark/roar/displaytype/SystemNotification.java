@@ -16,11 +16,11 @@ public class SystemNotification implements RoarDisplayType {
     public void messageReceived(ChatRoom room, Message message, PropertyBundle bundle) {
 
         String nickname = RoarPopupHelper.getNickname(room, message);
-        if (Spark.isMac()) {
-            MacNotificationCenter.sendNotification(nickname, message.getBody());
-        } else {
+        //if (Spark.isMac()) {
+        //    MacNotificationCenter.sendNotification(nickname, message.getBody());
+        //} else {
             WindowsNotification.sendNotification(nickname, message.getBody());
-        }
+        //}
     }
     
     @Override
