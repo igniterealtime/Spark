@@ -71,6 +71,7 @@
         <!--<module>plugins/battleships</module>-->
         <module>plugins/apple</module>
         <module>plugins/fastpath</module>
+        <module>plugins/flashing</module>
         <module>plugins/growl</module>
         <module>plugins/reversi</module>
         <module>plugins/roar</module>

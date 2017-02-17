@@ -32,6 +32,11 @@
         </dependency>
         <dependency>
             <groupId>org.igniterealtime.spark.plugins</groupId>
+            <artifactId>flashing</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.igniterealtime.spark.plugins</groupId>
             <artifactId>growl</artifactId>
             <version>${project.version}</version>
         </dependency>
