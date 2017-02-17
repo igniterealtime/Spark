@@ -23,6 +23,12 @@
             <scope>provided</scope>
         </dependency>
 
+        <dependency>
+            <groupId>com.google.code.jgntp</groupId>
+            <artifactId>jgntp</artifactId>
+            <version>1.2.1</version>
+        </dependency>
+
     </dependencies>
 
     <build>
