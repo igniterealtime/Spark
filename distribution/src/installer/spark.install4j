@@ -726,6 +726,52 @@
         <content />
       </postUninstallScript>
     </linuxDeb>
+    <macos name="Mac OS X Single Bundle (with JRE)" id="183" customizedId="" mediaFileName="spark_${compiler:sys.version}-with-jre" installDir="${compiler:sys.fullName}" overridePrincipalLanguage="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" downloadURL="" includeAllDownloadableComponents="false" includedJRE="macosx-amd64-1.8.0_121" manualJREEntry="false" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" appleJre="false" requiredVmIdPrefix="" customInstallBaseDir="" contentFilesType="1" installerName="${i18n:InstallerName(${compiler:sys.fullName})}" volumeName="${compiler:sys.shortName}" compressDmg="false" launcherId="4">
+      <excludedComponents />
+      <includedDownloadableComponents />
+      <excludedBeans />
+      <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
+      <exclude>
+        <entry location="lib/jxbrowser-win-6.12.jar" fileType="regular" />
+        <entry location="lib/jxbrowser-linux32-6.12.jar" fileType="regular" />
+        <entry location="lib/linux64" fileType="regular" />
+        <entry location="lib/windows" fileType="regular" />
+        <entry location="lib/windows64" fileType="regular" />
+        <entry location="lib/linux" fileType="regular" />
+        <entry location="lib/jxbrowser-linux64-6.12.jar" fileType="regular" />
+        <entry location="plugins/flashing.jar" fileType="regular" />
+        <entry location="bin/startup.bat" fileType="regular" />
+      </exclude>
+      <variables />
+      <autoUpdate useMinUpdatableVersion="false" minUpdatableVersion="" useMaxUpdatableVersion="false" maxUpdatableVersion="">
+        <commentFiles />
+        <customAttributes />
+      </autoUpdate>
+      <topLevelFiles />
+    </macos>
+    <windows name="Windows (with JRE)" id="186" customizedId="" mediaFileName="spark_${compiler:sys.version}-with-jre" installDir="${compiler:sys.fullName}" overridePrincipalLanguage="true" jreBitType="32" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" downloadURL="" includeAllDownloadableComponents="false" includedJRE="windows-x86-1.8.0_121" manualJREEntry="false" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="true" customInstallBaseDir="" contentFilesType="1" verifyIntegrity="true">
+      <excludedComponents />
+      <includedDownloadableComponents />
+      <excludedLaunchers />
+      <excludedBeans />
+      <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
+      <exclude>
+        <entry location="lib/jxbrowser-linux32-6.12.jar" fileType="regular" />
+        <entry location="lib/linux64" fileType="regular" />
+        <entry location="lib/jxbrowser-mac-6.12.jar" fileType="regular" />
+        <entry location="lib/linux" fileType="regular" />
+        <entry location="lib/mac" fileType="regular" />
+        <entry location="lib/jxbrowser-linux64-6.12.jar" fileType="regular" />
+        <entry location="plugins/apple.jar" fileType="regular" />
+        <entry location="plugins/growl.jar" fileType="regular" />
+        <entry location="bin/startup.bat" fileType="regular" />
+      </exclude>
+      <variables />
+      <autoUpdate useMinUpdatableVersion="false" minUpdatableVersion="" useMaxUpdatableVersion="false" maxUpdatableVersion="">
+        <commentFiles />
+        <customAttributes />
+      </autoUpdate>
+    </windows>
   </mediaSets>
   <buildIds buildAll="true" />
   <buildOptions verbose="false" faster="false" disableSigning="false" disableJreBundling="false" debug="false" />
