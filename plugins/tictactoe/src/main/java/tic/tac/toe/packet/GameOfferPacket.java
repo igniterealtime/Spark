@@ -15,9 +15,13 @@
  */
 package tic.tac.toe.packet;
 
+import java.io.IOException;
 import java.util.Random;
 
 import org.jivesoftware.smack.packet.IQ;
+import org.jivesoftware.smack.provider.IQProvider;
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
 
 /**
  * The Game Offer Packet
@@ -34,7 +38,7 @@ public class GameOfferPacket extends IQ {
     private boolean imTheStartingPlayer;
 
     public GameOfferPacket() {
-	super();
+	super( ELEMENT_NAME, NAMESPACE );
 	imTheStartingPlayer = new Random().nextBoolean();
 	gameID = Math.abs(new Random().nextInt());
     }
@@ -79,17 +83,56 @@ public class GameOfferPacket extends IQ {
 	this.imTheStartingPlayer = startingPlayer;
     }
 
-    public String getChildElementXML() {
-	StringBuffer buf = new StringBuffer();
-	buf.append("<" + ELEMENT_NAME + " xmlns=\"" + NAMESPACE + "\">");
-	if (getType() == IQ.Type.get) {
-	    buf.append("<gameID>").append(gameID).append("</gameID>");
-	    buf.append("<startingPlayer>").append(imTheStartingPlayer)
-		    .append("</startingPlayer>");
-	    buf.append(getExtensionsXML());
-	}
-	buf.append("</" + ELEMENT_NAME + ">");
-	return buf.toString();
+    @Override
+    protected IQChildElementXmlStringBuilder getIQChildElementBuilder( IQChildElementXmlStringBuilder buf )
+    {
+        buf.rightAngleBracket();
+        buf.append( "<" + ELEMENT_NAME + " xmlns=\"" + NAMESPACE + "\">" );
+        buf.element( "gameID", Integer.toString( gameID ) );
+        buf.element( "startingPlayer", Boolean.toString( imTheStartingPlayer ) );
+        buf.append( "</" + ELEMENT_NAME + ">" );
+        return buf;
+    }
+    public static class Provider extends IQProvider<GameOfferPacket>
+    {
+        public Provider()
+        {
+            super();
+        }
+
+        public GameOfferPacket parse( XmlPullParser parser, int i ) throws XmlPullParserException, IOException
+        {
+            final GameOfferPacket gameOffer = new GameOfferPacket();
+
+            boolean done = false;
+            while ( !done )
+            {
+                int eventType = parser.next();
+                if ( eventType == XmlPullParser.START_TAG )
+                {
+                    if ( parser.getName().equals( "gameID" ) )
+                    {
+                        final int gameID = Integer.valueOf( parser.nextText() );
+                        gameOffer.setGameID( gameID );
+                    }
+                    else if ( parser.getName().equals( "startingPlayer" ) )
+                    {
+                        boolean startingPlayer = Boolean.valueOf( parser.nextText() );
+                        gameOffer.setStartingPlayer( startingPlayer );
+                    }
+                }
+
+                else if ( eventType == XmlPullParser.END_TAG )
+                {
+                    if ( parser.getName().equals( ELEMENT_NAME ) )
+                    {
+                        done = true;
+                    }
+                }
+            }
+
+            return gameOffer;
+        }
     }
 
 }

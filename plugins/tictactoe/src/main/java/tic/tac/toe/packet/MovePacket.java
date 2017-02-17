@@ -16,6 +16,11 @@
 package tic.tac.toe.packet;
 
 import org.jivesoftware.smack.packet.ExtensionElement;
+import org.jivesoftware.smack.provider.ExtensionElementProvider;
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
+
+import java.io.IOException;
 
 /**
  * The Move Packet extension
@@ -83,4 +88,44 @@ public class MovePacket implements ExtensionElement {
 
     }
 
+    public static class Provider extends ExtensionElementProvider<MovePacket>
+    {
+        public MovePacket parse( XmlPullParser parser, int initialDepth ) throws XmlPullParserException, IOException
+        {
+            final MovePacket gameMove = new MovePacket();
+            boolean done = false;
+            while ( !done )
+            {
+                final int eventType = parser.next();
+
+                if ( eventType == XmlPullParser.START_TAG )
+                {
+                    if ( "gameID".equals( parser.getName() ) )
+                    {
+                        final int gameID = Integer.valueOf( parser.nextText() );
+                        gameMove.setGameID( gameID );
+                    }
+                    if ( "positionX".equals( parser.getName() ) )
+                    {
+                        final int position = Integer.valueOf( parser.nextText() );
+                        gameMove.setPositionX( position );
+                    }
+                    if ( "positionY".equals( parser.getName() ) )
+                    {
+                        final int position = Integer.valueOf( parser.nextText() );
+                        gameMove.setPositionY( position );
+                    }
+                }
+                else if ( eventType == XmlPullParser.END_TAG )
+                {
+                    if ( ELEMENT_NAME.equals( parser.getName() ) )
+                    {
+                        done = true;
+                    }
+                }
+            }
+
+            return gameMove;
+        }
+    }
 }

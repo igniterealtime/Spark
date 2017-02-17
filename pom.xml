@@ -74,6 +74,7 @@
         <module>plugins/growl</module>
         <module>plugins/reversi</module>
         <module>plugins/roar</module>
+        <module>plugins/tictactoe</module>
         <module>distribution</module>
     </modules>
 

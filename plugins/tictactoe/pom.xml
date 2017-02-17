@@ -10,10 +10,10 @@
     </parent>
 
     <groupId>org.igniterealtime.spark.plugins</groupId>
-    <artifactId>reversi</artifactId>
+    <artifactId>tictactoe</artifactId>
 
-    <name>Spark Reversi Plugin</name>
-    <description>Multiplayer game of Reversi.</description>
+    <name>Spark TicTacToe Plugin</name>
+    <description>The most sophisticated TicTacToe Game ever created.</description>
 
     <dependencies>
         <dependency>
