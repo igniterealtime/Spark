@@ -1,4 +1,4 @@
-<project name="Spark Phone" default="jar" basedir="..">
+<project name="Spark Phone" default="jar" basedir="../../">
 
     <property name="plug.dir" value="${basedir}"/>
     <property name="plug.lib.dir" value="${plug.dir}/build/lib"/>
