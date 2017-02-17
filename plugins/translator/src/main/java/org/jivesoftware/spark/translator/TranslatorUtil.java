@@ -66,7 +66,7 @@ public class TranslatorUtil {
             WebResponse webResponse = wc.getResponse(webRequest);
             //NodeList list = webResponse.getDOM().getDocumentElement().getElementsByTagName("div");
             try {
-				NodeList list2 = XPathAPI.selectNodeList(webResponse.getDOM(), "//span[@id='result_box']/span/text()");
+				NodeList list2 = XPathAPI.selectNodeList(webResponse.getDOM(), "//SPAN[@id='result_box']/SPAN/text()");
 			
 				for (int i = 0; i < list2.getLength(); ++i)
 				{

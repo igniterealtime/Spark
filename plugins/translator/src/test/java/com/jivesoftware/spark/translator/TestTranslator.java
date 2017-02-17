@@ -17,6 +17,7 @@ package com.jivesoftware.spark.translator;
 
 import org.jivesoftware.spark.translator.TranslatorUtil;
 import org.jivesoftware.spark.translator.TranslatorUtil.TranslationType;
+import org.junit.Test;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -27,6 +28,11 @@ import java.util.*;
  * A simple class to test translation functionality.
  */
 public class TestTranslator {
+
+    @Test
+    public void test() {
+        // Dummy test to avoid Maven confusion.
+    }
 
     public static void main(String[] args) {
         Map<Integer, TranslationType> translationMap = initalizeTranslationMap();
