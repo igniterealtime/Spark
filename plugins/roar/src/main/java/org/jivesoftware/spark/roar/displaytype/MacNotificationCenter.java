@@ -6,6 +6,7 @@ import org.jivesoftware.Spark;
 
 import com.sun.jna.Library;
 import com.sun.jna.Native;
+import org.jivesoftware.spark.PluginManager;
 
 /**
  * Provides Notification-Center integration for OSX 10.8+<br>
@@ -21,7 +22,7 @@ public class MacNotificationCenter {
     interface NSUserNotificationsBridge extends Library {
 
         final File dylib = new File(Spark.getPluginDirectory().getAbsolutePath()
-                + "/roar/NSUserNotificationsBridge.dylib");
+                + File.separator + "roar" + File.separator + "native" + File.separator + "NSUserNotificationsBridge.dylib" );
 
         NSUserNotificationsBridge instance = (NSUserNotificationsBridge) Native.loadLibrary(dylib.getAbsolutePath(),
                 NSUserNotificationsBridge.class);

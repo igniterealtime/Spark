@@ -18,4 +18,11 @@
             <source>${project.basedir}/src/main/plugin.xml</source>
         </file>
     </files>
+
+    <fileSets>
+        <fileSet>
+            <directory>${project.basedir}/src/main/native/</directory>
+            <outputDirectory>native</outputDirectory>
+        </fileSet>
+    </fileSets>
 </assembly>
