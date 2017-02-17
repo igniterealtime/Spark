@@ -22,6 +22,21 @@
         </dependency>
         <dependency>
             <groupId>org.igniterealtime.spark.plugins</groupId>
+            <artifactId>apple</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.igniterealtime.spark.plugins</groupId>
+            <artifactId>fastpath</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.igniterealtime.spark.plugins</groupId>
+            <artifactId>growl</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.igniterealtime.spark.plugins</groupId>
             <artifactId>roar</artifactId>
             <version>${project.version}</version>
         </dependency>
