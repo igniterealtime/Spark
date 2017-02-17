@@ -80,6 +80,7 @@
         <module>plugins/roar</module>
         <module>plugins/tictactoe</module>
         <!--<module>plugins/spelling</module>-->
+        <!--<module>plugins/sip</module>-->
         <module>plugins/transferguard</module>
         <module>plugins/translator</module>
         <module>distribution</module>
