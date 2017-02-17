@@ -9,6 +9,9 @@ import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
+import net.java.otr4j.*;
+import net.java.otr4j.session.Session;
+import net.java.otr4j.session.SessionImpl;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.spark.otrplug.OTRManager;
 import org.jivesoftware.spark.otrplug.ui.OTRConnectionPanel;
@@ -21,13 +24,9 @@ import org.jivesoftware.resource.Res;
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 import org.jivesoftware.spark.util.UIComponentRegistry;
 
-import net.java.otr4j.OtrEngineHost;
-import net.java.otr4j.OtrEngineImpl;
-import net.java.otr4j.OtrEngineListener;
-import net.java.otr4j.OtrPolicy;
-import net.java.otr4j.OtrPolicyImpl;
 import net.java.otr4j.session.SessionID;
 import net.java.otr4j.session.SessionStatus;
+import org.jivesoftware.spark.util.log.Log;
 
 /**
  * OTRSession are unique for every conversation. It handles the otrEngine for
@@ -41,8 +40,8 @@ public class OTRSession {
     private String _myJID;
     private String _remoteJID;
     private OtrEngineHost _otrEngineHost;
-    private SessionID _mySession;
-    private OtrEngineImpl _engine;
+    private SessionID _mySessionID;
+    private Session _mySession;
     private OTRManager _manager = OTRManager.getInstance();
     final ChatRoomButton _otrButton = UIComponentRegistry.getButtonFactory().createOtrButton();
     private OTRConnectionPanel _conPanel;
@@ -65,9 +64,9 @@ public class OTRSession {
         _myJID = myJID;
         _remoteJID = remoteJID;
         _otrEngineHost = new OTREngineHost(new OtrPolicyImpl(OtrPolicy.ALLOW_V2 | OtrPolicy.ERROR_START_AKE), _chatRoom);
-        _mySession = new SessionID(_myJID, _remoteJID, "Scytale");
+        _mySessionID = new SessionID( _myJID, _remoteJID, "Scytale");
 
-        _engine = new OtrEngineImpl(_otrEngineHost);
+        _mySession = new SessionImpl( _mySessionID, _otrEngineHost );
 
         setUpMessageListener();
 
@@ -78,10 +77,24 @@ public class OTRSession {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (_engine.getSessionStatus(_mySession).equals(SessionStatus.ENCRYPTED)) {
-                    stopSession();
+                if (_mySession.getSessionStatus().equals(SessionStatus.ENCRYPTED)) {
+                    try
+                    {
+                        stopSession();
+                    }
+                    catch ( OtrException ex )
+                    {
+                        Log.error( "An exception occurred while tyring to stop an OTR session.", ex );
+                    }
                 } else {
-                    startSession();
+                    try
+                    {
+                        startSession();
+                    }
+                    catch ( OtrException ex )
+                    {
+                        Log.error( "An exception occurred while tyring to start an OTR session.", ex );
+                    }
                 }
 
             }
@@ -114,11 +127,18 @@ public class OTRSession {
             @Override
             public void sendingMessage(Message message) {
                 String oldmsg = message.getBody();
-                if (_engine.getSessionStatus(_mySession).equals(SessionStatus.ENCRYPTED)) {
+                if (_mySession.equals( SessionStatus.ENCRYPTED)) {
                     message.setBody(null);
-                    String mesg = _engine.transformSending(_mySession, oldmsg);
-                    message.setBody(mesg);
-
+                    String[] mesg = null;
+                    try
+                    {
+                        mesg = _mySession.transformSending(oldmsg);
+                        message.setBody( String.join( "", mesg ) );
+                    }
+                    catch ( OtrException e )
+                    {
+                        Log.error( "An exception occurred while trying to send a message: " + oldmsg, e );
+                    }
                 }
             }
 
@@ -129,9 +149,16 @@ public class OTRSession {
                     message.setBody(null);
                     String mesg = null;
                     if (old.length() > 2) {
-                        mesg = _engine.transformReceiving(_mySession, old);
+                        try
+                        {
+                            mesg = _mySession.transformReceiving(old);
+                        }
+                        catch ( OtrException e )
+                        {
+                            Log.error( "An exception occurred while receiving a message: " + old, e );
+                        }
                     }
-                    if (_engine.getSessionStatus(_mySession).equals(SessionStatus.ENCRYPTED)) {
+                    if (_mySession.equals( SessionStatus.ENCRYPTED)) {
                         message.setBody(mesg);
                     } else {
                         if (old.length() > 3 && old.substring(0, 4).equals("?OTR")) {
@@ -160,7 +187,7 @@ public class OTRSession {
             final ClassLoader cl = getClass().getClassLoader();
 
             ImageIcon otricon = null;
-            if (_engine.getSessionStatus(_mySession).equals(SessionStatus.ENCRYPTED)) {
+            if (_mySession.getSessionStatus().equals( SessionStatus.ENCRYPTED)) {
                 otricon = new ImageIcon(cl.getResource("otr_on.png"));
                 _conPanel.successfullyCon();
             } else {
@@ -169,7 +196,7 @@ public class OTRSession {
 
             _otrButton.setIcon(otricon);
 
-            _engine.removeOtrEngineListener(_otrListener);
+            _mySession.removeOtrEngineListener(_otrListener);
             _chatRoom.getToolBar().addChatRoomButton(_otrButton);
             _otrListener = new OtrEngineListener() {
 
@@ -179,59 +206,65 @@ public class OTRSession {
                 	UIManager.put("OptionPane.noButtonText", Res.getString("no"));
                 	UIManager.put("OptionPane.cancelButtonText", Res.getString("cancel"));
                 	
-                    if (_engine.getSessionStatus(_mySession).equals(SessionStatus.ENCRYPTED)) {
+                    if (_mySession.getSessionStatus().equals( SessionStatus.ENCRYPTED)) {
                         _conPanel.successfullyCon();
 
-                        String otrkey = _manager.getKeyManager().getRemoteFingerprint(_mySession);
+                        String otrkey = _manager.getKeyManager().getRemoteFingerprint( _mySessionID );
                         if (otrkey == null) {
-                            PublicKey pubkey = _engine.getRemotePublicKey(_mySession);
-                            _manager.getKeyManager().savePublicKey(_mySession, pubkey);
-                            otrkey = _manager.getKeyManager().getRemoteFingerprint(_mySession);
+                            PublicKey pubkey = _mySession.getRemotePublicKey( _mySessionID );
+                            _manager.getKeyManager().savePublicKey( _mySessionID, pubkey);
+                            otrkey = _manager.getKeyManager().getRemoteFingerprint( _mySessionID );
                         }
 
-                        if (!OTRManager.getInstance().getKeyManager().isVerified(_mySession)) {
+                        if (!OTRManager.getInstance().getKeyManager().isVerified( _mySessionID )) {
                             final int n = JOptionPane.showConfirmDialog(_otrButton,
                                     OTRResources.getString("otr.start.session.with", _remoteJID) + "\n" + OTRResources.getString("otr.key.not.verified.text") + "\n" + otrkey
                                             + "\n" + OTRResources.getString("otr.question.verify"), OTRResources.getString("otr.key.not.verified.title"),
                                     JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
 
                             if (n == JOptionPane.YES_OPTION) {
-                                _manager.getKeyManager().verify(_mySession);
+                                _manager.getKeyManager().verify( _mySessionID );
                             }
 
                         }
                         _otrButton.setIcon(new ImageIcon(cl.getResource("otr_on.png")));
-                    } else if (_engine.getSessionStatus(_mySession).equals(SessionStatus.FINISHED)) {
-                        _otrButton.setIcon(new ImageIcon(cl.getResource("otr_off.png")));
-                        stopSession();
-                    } else if (_engine.getSessionStatus(_mySession).equals(SessionStatus.PLAINTEXT)) {
-                        _otrButton.setIcon(new ImageIcon(cl.getResource("otr_off.png")));
-                        stopSession();
+                    } else if (_mySession.getSessionStatus().equals( SessionStatus.FINISHED) || _mySession.getSessionStatus().equals( SessionStatus.PLAINTEXT ) {
+                        try
+                        {
+                            stopSession();
+                            _otrButton.setIcon(new ImageIcon(cl.getResource("otr_off.png")));
+                        }
+                        catch ( OtrException e )
+                        {
+                            Log.error( "An exception occurred while stopping the OTR session.", e );
+                        }
                     }
 
                 }
             };
-            _engine.addOtrEngineListener(_otrListener);
+            _mySession.addOtrEngineListener(_otrListener);
         }
     }
 
     /**
      * Start the OTR session manually from outside
      */
-    public void startSession() {
+    public void startSession() throws OtrException
+    {
         _conPanel.tryToStart();
-        _engine.startSession(_mySession);
+        _mySession.startSession();
     }
 
     /**
      * Stop the OTR session manually from outside
      */
-    public void stopSession() {
+    public void stopSession() throws OtrException
+    {
         _conPanel.connectionClosed();
-        if (_engine.getSessionStatus(_mySession).equals(SessionStatus.ENCRYPTED)) {
+        if (_mySession.getSessionStatus().equals( SessionStatus.ENCRYPTED)) {
             final ClassLoader cl = getClass().getClassLoader();
             _otrButton.setIcon(new ImageIcon(cl.getResource("otr_off.png")));
-            _engine.endSession(_mySession);
+            _mySession.endSession();
         }
     }
 
