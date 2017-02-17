@@ -574,6 +574,7 @@
         <entry location="lib/linux" fileType="regular" />
         <entry location="lib/mac" fileType="regular" />
         <entry location="lib/jxbrowser-linux64-6.12.jar" fileType="regular" />
+        <entry location="plugins/growl.jar" fileType="regular" />
         <entry location="bin/startup.bat" fileType="regular" />
       </exclude>
       <variables />
@@ -594,6 +595,7 @@
         <entry location="lib/windows64" fileType="regular" />
         <entry location="lib/jxbrowser-mac-6.12.jar" fileType="regular" />
         <entry location="lib/mac" fileType="regular" />
+        <entry location="plugins/growl.jar" fileType="regular" />
         <entry location="bin/startup.bat" fileType="regular" />
       </exclude>
       <variables />
@@ -636,6 +638,7 @@
         <entry location="lib/windows64" fileType="regular" />
         <entry location="lib/jxbrowser-mac-6.12.jar" fileType="regular" />
         <entry location="lib/mac" fileType="regular" />
+        <entry location="plugins/growl.jar" fileType="regular" />
         <entry location="bin/startup.bat" fileType="regular" />
       </exclude>
       <variables />
@@ -659,6 +662,7 @@
         <entry location="lib/windows64" fileType="regular" />
         <entry location="lib/jxbrowser-mac-6.12.jar" fileType="regular" />
         <entry location="lib/mac" fileType="regular" />
+        <entry location="plugins/growl.jar" fileType="regular" />
         <entry location="bin/startup.bat" fileType="regular" />
       </exclude>
       <variables />
@@ -691,6 +695,7 @@
         <entry location="lib/windows64" fileType="regular" />
         <entry location="lib/jxbrowser-mac-6.12.jar" fileType="regular" />
         <entry location="lib/mac" fileType="regular" />
+        <entry location="plugins/growl.jar" fileType="regular" />
         <entry location="bin/startup.bat" fileType="regular" />
       </exclude>
       <variables />

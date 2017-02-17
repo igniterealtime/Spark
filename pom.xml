@@ -69,6 +69,7 @@
     <modules>
         <module>core</module>
         <!--<module>plugins/battleships</module>-->
+        <module>plugins/growl</module>
         <module>plugins/fastpath</module>
         <module>plugins/roar</module>
         <module>distribution</module>
