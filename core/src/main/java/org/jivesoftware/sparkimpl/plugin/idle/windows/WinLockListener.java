@@ -15,14 +15,14 @@ public class WinLockListener implements WinUser.WindowProc {
         WinUser.WNDCLASSEX wClass = new WinUser.WNDCLASSEX();
         wClass.hInstance = hInst;
         wClass.lpfnWndProc = WinLockListener.this;
-        wClass.lpszClassName = windowClass;
+        wClass.lpszClassName = windowClass.toString();
 
         // register window class
         User32.INSTANCE.RegisterClassEx(wClass);
         getLastError();
 
         // create new window
-        final WinDef.HWND hWnd = User32.INSTANCE.CreateWindowEx(User32.WS_EX_TOPMOST, windowClass, "'hidden helper window to catch Windows events", 0, 0, 0, 0, 0, null, // WM_DEVICECHANGE contradicts parent=WinUser.HWND_MESSAGE
+        final WinDef.HWND hWnd = User32.INSTANCE.CreateWindowEx(User32.WS_EX_TOPMOST, windowClass.toString(), "'hidden helper window to catch Windows events", 0, 0, 0, 0, 0, null, // WM_DEVICECHANGE contradicts parent=WinUser.HWND_MESSAGE
                 null, hInst, null);
 
         getLastError();
@@ -38,7 +38,7 @@ public class WinLockListener implements WinUser.WindowProc {
 
         /// This code is to clean at the end. You can attach it to your custom application shutdown listener
         Wtsapi32.INSTANCE.WTSUnRegisterSessionNotification(hWnd);
-        User32.INSTANCE.UnregisterClass(windowClass, hInst);
+        User32.INSTANCE.UnregisterClass(windowClass.toString(), hInst);
         User32.INSTANCE.DestroyWindow(hWnd);
         Log.debug("program exit!");
     }

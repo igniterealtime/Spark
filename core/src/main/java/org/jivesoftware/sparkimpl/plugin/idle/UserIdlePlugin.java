@@ -26,7 +26,7 @@ import org.jivesoftware.sparkimpl.plugin.idle.linux.LinuxIdleTime;
 import org.jivesoftware.sparkimpl.plugin.idle.mac.MacIdleTime;
 import org.jivesoftware.sparkimpl.plugin.idle.windows.Win32IdleTime;
 import org.jivesoftware.sparkimpl.plugin.idle.windows.WinLockListener;
-import org.jivesoftware.sparkimpl.plugin.phone.PhonePlugin;
+//import org.jivesoftware.sparkimpl.plugin.phone.PhonePlugin;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
@@ -110,7 +110,7 @@ public class UserIdlePlugin extends TimerTask implements Plugin {
 
 	private void setOnline() {
 
-
+		/* TODO commented out when PhonePlugin was not ported to Maven.
 		if (PhonePlugin.onPhonePresence != null) {
 			SparkManager.getSessionManager().changePresence(PhonePlugin.onPhonePresence);
 			Log.debug("UserIdlePlugin: Returning from idle/lock - On the Phone");
@@ -132,9 +132,11 @@ public class UserIdlePlugin extends TimerTask implements Plugin {
 			Log.debug("UserIdlePlugin: Setting presence from PhonePlugin");
 
 		} else {
+		*/
 			SparkManager.getSessionManager().changePresence(latestPresence);
 			Log.debug("UserIdlePlugin: Setting presence using latestPresence");
-		}
+		/*}*/
+
 
 	}
 
