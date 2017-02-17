@@ -81,6 +81,7 @@
         <module>plugins/tictactoe</module>
         <!--<module>plugins/spelling</module>-->
         <!--<module>plugins/sip</module>-->
+        <module>plugins/systemtray</module>
         <module>plugins/transferguard</module>
         <module>plugins/translator</module>
         <module>distribution</module>
