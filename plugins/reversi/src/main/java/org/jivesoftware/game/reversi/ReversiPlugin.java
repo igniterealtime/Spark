@@ -83,9 +83,9 @@ public class ReversiPlugin implements Plugin {
         // communicate game offers
         // and current game state. Adding the Smack providers lets us use the
         // custom protocol.
-        ProviderManager.addIQProvider(GameOffer.ELEMENT_NAME, GameOffer.NAMESPACE, GameOffer.class);
-        ProviderManager.addExtensionProvider(GameMove.ELEMENT_NAME, GameMove.NAMESPACE, GameMove.class);
-        ProviderManager.addExtensionProvider(GameForfeit.ELEMENT_NAME, GameForfeit.NAMESPACE, GameForfeit.class);
+        ProviderManager.addIQProvider(GameOffer.ELEMENT_NAME, GameOffer.NAMESPACE, new GameOffer.Provider());
+        ProviderManager.addExtensionProvider(GameMove.ELEMENT_NAME, GameMove.NAMESPACE, new GameMove.Provider());
+        ProviderManager.addExtensionProvider(GameForfeit.ELEMENT_NAME, GameForfeit.NAMESPACE, new GameForfeit.Provider());
 
         // Add IQ listener to listen for incoming game invitations.
         gameOfferListener = new StanzaListener() {
