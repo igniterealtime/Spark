@@ -60,6 +60,11 @@
             <artifactId>tictactoe</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.igniterealtime.spark.plugins</groupId>
+            <artifactId>transferguard</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
     </dependencies>
 

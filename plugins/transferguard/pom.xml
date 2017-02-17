@@ -10,10 +10,10 @@
     </parent>
 
     <groupId>org.igniterealtime.spark.plugins</groupId>
-    <artifactId>tictactoe</artifactId>
+    <artifactId>transferguard</artifactId>
 
-    <name>Spark TicTacToe Plugin</name>
-    <description>The most sophisticated TicTacToe Game ever created.</description>
+    <name>Spark TransferGuard Plugin</name>
+    <description>Adds the ability to automatically reject file transfers based on preference configuration.</description>
 
     <dependencies>
         <dependency>
