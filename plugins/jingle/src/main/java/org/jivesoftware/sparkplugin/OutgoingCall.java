@@ -374,7 +374,7 @@ public class OutgoingCall extends JPanel implements JingleSessionListener, ChatR
         showCallEndedState("Voice chat ended due: " + xmppException.getMessage());
         if(PhoneManager.isUseStaticLocator()&&PhoneManager.isUsingMediaLocator()){
             PhoneManager.setUsingMediaLocator(false);
-        }                
+        }
 
         SwingUtilities.invokeLater( () -> updateOutgoingCallPanel() );
     }

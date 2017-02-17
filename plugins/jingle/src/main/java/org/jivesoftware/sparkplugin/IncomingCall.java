@@ -310,7 +310,7 @@ public class IncomingCall implements JingleSessionListener, ChatRoomClosingListe
         showCallEndedState("Voice chat ended due an error: " + xmppException.getMessage());
         if(PhoneManager.isUseStaticLocator()&&PhoneManager.isUsingMediaLocator()){
             PhoneManager.setUsingMediaLocator(false);
-        }        
+        }
     }
 
     public void closing() {

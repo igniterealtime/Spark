@@ -1,4 +1,4 @@
-<project name="Jingle" default="jar" basedir="..">
+<project name="Jingle" default="jar" basedir="../../">
 
     <property name="plug.dir" value="${basedir}"/>
     <property name="plug.lib.dir" value="${plug.dir}/build/lib"/>
@@ -13,7 +13,7 @@
     <property name="target.lib.dir" value="${plug.dir}/target/lib"/>
     <property name="jar.file" value="${target.dir}/lib/plugin-classes.jar"/>
 
-    <property name="spark.home" value="../../../"/>
+    <property name="spark.home" value="../../../..//"/>
     <property name="spark.libs.dir" value="${spark.home}/target/build/lib"/>
 
     <path id="lib.classpath">
