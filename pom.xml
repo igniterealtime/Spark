@@ -72,7 +72,6 @@
         <module>plugins/apple</module>
         <module>plugins/fastpath</module>
         <module>plugins/flashing</module>
-        <module>plugins/google</module>
         <module>plugins/growl</module>
         <!--<module>plugins/jingle</module>-->
         <!--<module>plugins/meet</module>-->

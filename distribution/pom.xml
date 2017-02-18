@@ -37,11 +37,6 @@
         </dependency>
         <dependency>
             <groupId>org.igniterealtime.spark.plugins</groupId>
-            <artifactId>google</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.igniterealtime.spark.plugins</groupId>
             <artifactId>growl</artifactId>
             <version>${project.version}</version>
         </dependency>
