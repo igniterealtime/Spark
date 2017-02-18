@@ -65,62 +65,62 @@
         <dependency>
             <groupId>org.igniterealtime.smack</groupId>
             <artifactId>smack-core</artifactId>
-            <version>4.1.7</version>
+            <version>${dependency.smack.version}</version>
         </dependency>
         <dependency>
             <groupId>org.igniterealtime.smack</groupId>
             <artifactId>smack-tcp</artifactId>
-            <version>4.1.7</version>
+            <version>${dependency.smack.version}</version>
         </dependency>
         <dependency>
             <groupId>org.igniterealtime.smack</groupId>
             <artifactId>smack-im</artifactId>
-            <version>4.1.7</version>
+            <version>${dependency.smack.version}</version>
         </dependency>
         <dependency>
             <groupId>org.igniterealtime.smack</groupId>
             <artifactId>smack-sasl-javax</artifactId>
-            <version>4.1.7</version>
+            <version>${dependency.smack.version}</version>
         </dependency>
         <dependency>
             <groupId>org.igniterealtime.smack</groupId>
             <artifactId>smack-extensions</artifactId>
-            <version>4.1.7</version>
+            <version>${dependency.smack.version}</version>
         </dependency>
         <dependency>
             <groupId>org.igniterealtime.smack</groupId>
             <artifactId>smack-experimental</artifactId>
-            <version>4.1.7</version>
+            <version>${dependency.smack.version}</version>
         </dependency>
         <dependency>
             <groupId>org.igniterealtime.smack</groupId>
             <artifactId>smack-debug</artifactId>
-            <version>4.1.7</version>
+            <version>${dependency.smack.version}</version>
         </dependency>
         <dependency>
             <groupId>org.igniterealtime.smack</groupId>
             <artifactId>smack-debug-slf4j</artifactId>
-            <version>4.1.7</version>
+            <version>${dependency.smack.version}</version>
         </dependency>
         <dependency>
             <groupId>org.igniterealtime.smack</groupId>
             <artifactId>smack-legacy</artifactId>
-            <version>4.1.7</version>
+            <version>${dependency.smack.version}</version>
         </dependency>
         <dependency>
             <groupId>org.igniterealtime.smack</groupId>
             <artifactId>smack-java7</artifactId>
-            <version>4.1.7</version>
+            <version>${dependency.smack.version}</version>
         </dependency>
         <dependency>
             <groupId>org.igniterealtime.smack</groupId>
             <artifactId>smack-compression-jzlib</artifactId>
-            <version>4.1.7</version>
+            <version>${dependency.smack.version}</version>
         </dependency>
         <dependency>
             <groupId>org.igniterealtime.smack</groupId>
             <artifactId>smack-resolver-javax</artifactId>
-            <version>4.1.7</version>
+            <version>${dependency.smack.version}</version>
         </dependency>
         <dependency>
             <groupId>dom4j</groupId>
