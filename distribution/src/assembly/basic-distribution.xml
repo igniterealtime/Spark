@@ -31,8 +31,13 @@
               -->
             <useAllReactorProjects>true</useAllReactorProjects>
             <includes>
+                <!-- This includes all modules in this groupId, assuming that most of them are plugin implementations. -->
                 <include>org.igniterealtime.spark.plugins:*</include>
             </includes>
+            <excludes>
+                <!-- The assembly-descriptor artifact is not a plugin. It should not be included. -->
+                <exclude>org.igniterealtime.spark.plugins:assembly-descriptor</exclude>
+            </excludes>
             <binaries>
                 <includeDependencies>false</includeDependencies>
                 <attachmentClassifier>spark-plugin</attachmentClassifier>

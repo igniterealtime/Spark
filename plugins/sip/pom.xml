@@ -35,10 +35,17 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <version>3.0.0</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.igniterealtime.spark.plugins</groupId>
+                        <artifactId>assembly-descriptor</artifactId>
+                        <version>${project.version}</version>
+                    </dependency>
+                </dependencies>
                 <configuration>
-                    <descriptors>
-                        <descriptor>src/assembly/spark-plugin.xml</descriptor>
-                    </descriptors>
+                    <descriptorRefs>
+                        <descriptorRef>spark-plugin</descriptorRef>
+                    </descriptorRefs>
                 </configuration>
                 <executions>
                     <execution>
