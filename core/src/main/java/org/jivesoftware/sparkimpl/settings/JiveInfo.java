@@ -16,7 +16,6 @@
 
 package org.jivesoftware.sparkimpl.settings;
 
-import org.jivesoftware.resource.Default;
 
 public class JiveInfo {
 
@@ -25,21 +24,11 @@ public class JiveInfo {
     }
     
     public static String getName() {
-    	return Default.getString(Default.APPLICATION_NAME);
+        return JiveInfo.class.getPackage().getImplementationTitle();
     }
 
     public static String getVersion() {
-        return Default.getString(Default.APPLICATION_VERSION);
-    }
-
-    /*
-     * This should be used for an actual
-     * build number, rather than duplicating
-     * getVersion(); i propose to use the
-     * SVN revision number of the build
-     */
-    public static String getBuildNumber() {
-        return "12555";
+        return JiveInfo.class.getPackage().getImplementationVersion();
     }
 
     public static String getOS() {

@@ -164,7 +164,7 @@ class GeneralLoginSettingsPanel extends JPanel implements ActionListener
         boolean isSelected = useVersionAsResourceBox.isSelected();
         if ( isSelected )
         {
-            String resource = Default.getString( Default.APPLICATION_NAME ) + " " + JiveInfo.getVersion() + "." + Default.getString( Default.BUILD_NUMBER );
+            String resource = Default.getString( Default.APPLICATION_NAME ) + " " + JiveInfo.getVersion();
             resourceField.setText( resource );
             useHostnameAsResourceBox.setSelected( false );
         }

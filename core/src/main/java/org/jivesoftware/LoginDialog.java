@@ -1122,9 +1122,9 @@ public class LoginDialog {
 			    Log.error("unable to retrieve hostname",e);
 			}
 		    } else if (Default.getBoolean("VERSION_AS_RESOURCE")) {
-		    	resource = Default.getString(Default.APPLICATION_NAME) + " " + JiveInfo.getVersion() + "." + Default.getString(Default.BUILD_NUMBER);
+                resource = JiveInfo.getName() + " " + JiveInfo.getVersion();
 		    } else if (localPref.isUseVersionAsResource()) {
-		    	resource = Default.getString(Default.APPLICATION_NAME) + " " + JiveInfo.getVersion() + "." + Default.getString(Default.BUILD_NUMBER);
+                resource = JiveInfo.getName() + " " + JiveInfo.getVersion();
 		    }
                 if (localPref.isLoginAnonymously() && !localPref.isSSOEnabled()) {
                     ((XMPPTCPConnection)connection).loginAnonymously();
