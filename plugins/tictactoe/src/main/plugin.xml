@@ -2,7 +2,7 @@
     <name>TicTacToe of Doom</name>
     <class>tic.tac.toe.TicTacToePlugin</class>
     <author>Wolf Posdorfer</author>
-    <version>0.1</version>
+    <version>0.2</version>
     <homePage>http://www.jivesoftware.com</homePage>
     <description>The most sophisticated TicTacToe Game ever created</description>
     <email>9posdorf@informatik.uni-hamburg.de</email>

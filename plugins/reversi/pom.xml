@@ -10,8 +10,32 @@
     </parent>
 
     <artifactId>reversi</artifactId>
+    <version>1.4</version>
 
     <name>Spark Reversi Plugin</name>
     <description>Multiplayer game of Reversi.</description>
+
+    <contributors>
+        <contributor>
+            <name>Holger Bergunde</name>
+            <email>holger@bergunde.de</email>
+            <url>http://www.stytrix.de</url>
+            <roles>
+                <role>Author</role>
+            </roles>
+        </contributor>
+        <contributor>
+            <name>Matt Tucker</name>
+            <roles>
+                <role>Author</role>
+            </roles>
+        </contributor>
+        <contributor>
+            <name>Bill Lynch</name>
+            <roles>
+                <role>Author</role>
+            </roles>
+        </contributor>
+    </contributors>
 
 </project>

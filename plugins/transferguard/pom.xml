@@ -10,8 +10,25 @@
     </parent>
 
     <artifactId>transferguard</artifactId>
+    <version>1.1.0</version>
 
     <name>Spark TransferGuard Plugin</name>
     <description>Adds the ability to automatically reject file transfers based on preference configuration.</description>
 
+    <contributors>
+        <contributor>
+            <name>Pete Matern</name>
+            <organization>Jive Software</organization>
+            <email>pete@jivesoftware.com</email>
+            <roles>
+                <role>Author</role>
+            </roles>
+        </contributor>
+        <contributor>
+            <name>Tim Jentz</name>
+            <roles>
+                <role>Author</role>
+            </roles>
+        </contributor>
+    </contributors>
 </project>

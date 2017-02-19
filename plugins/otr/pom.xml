@@ -10,9 +10,21 @@
     </parent>
 
     <artifactId>otr</artifactId>
+    <version>0.5-SNAPSHOT</version>
 
     <name>Spark OTR Plugin</name>
     <description>Adds Off-The-Record support to Spark.</description>
+
+    <contributors>
+        <contributor>
+            <name>Holger Bergunde</name>
+            <email>holger@bergunde.de</email>
+            <url>http://www.stytrix.de</url>
+            <roles>
+                <role>Author</role>
+            </roles>
+        </contributor>
+    </contributors>
 
     <dependencies>
         <dependency>

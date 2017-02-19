@@ -10,9 +10,21 @@
     </parent>
 
     <artifactId>systemtray</artifactId>
+    <version>1.1</version>
 
     <name>Spark SystemTray Plugin</name>
     <description>Notification and System Tray Plugin for Spark.</description>
+
+    <contributors>
+        <contributor>
+            <name>Derek DeMoro</name>
+            <organization>Jive Software</organization>
+            <email>spark@jivesoftware.com</email>
+            <roles>
+                <role>Author</role>
+            </roles>
+        </contributor>
+    </contributors>
 
     <dependencies>
         <dependency>

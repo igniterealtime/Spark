@@ -10,8 +10,18 @@
     </parent>
 
     <artifactId>meet</artifactId>
+    <version>0.0.3</version>
 
     <name>Spark Meetings Plugin</name>
     <description>Adds support for Openfire Meetings to the Spark IM client.</description>
+
+    <contributors>
+        <contributor>
+            <name>Dele Olajide</name>
+            <roles>
+                <role>Author</role>
+            </roles>
+        </contributor>
+    </contributors>
 
 </project>

@@ -10,9 +10,20 @@
     </parent>
 
     <artifactId>growl</artifactId>
+    <version>2.3</version>
 
     <name>Spark Growl Plugin</name>
     <description>Provides Growl notifications (see http://growl.info).</description>
+
+    <contributors>
+        <contributor>
+            <name>Wolf Posdorfer</name>
+            <email>9posdorf@informatik.uni-hamburg.de</email>
+            <roles>
+                <role>Author</role>
+            </roles>
+        </contributor>
+    </contributors>
 
     <dependencies>
         <dependency>

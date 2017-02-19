@@ -10,8 +10,18 @@
     </parent>
 
     <artifactId>flashing</artifactId>
+    <version>1.2</version>
 
     <name>Spark Flashing Plugin</name>
     <description>Flashes window on new messages (Microsoft Windows only).</description>
 
+    <contributors>
+        <contributor>
+            <name>Michael Will</name>
+            <email>michael-will@gmx.net</email>
+            <roles>
+                <role>Author</role>
+            </roles>
+        </contributor>
+    </contributors>
 </project>

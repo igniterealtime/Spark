@@ -10,8 +10,18 @@
     </parent>
 
     <artifactId>battleships</artifactId>
+    <version>0.2</version>
 
     <name>Spark Battleships Plugin</name>
     <description>An implementation of the classic Battleships guessing game.</description>
 
+    <contributors>
+        <contributor>
+            <name>Wolf Posdorfer</name>
+            <email>9posdorf@informatik.uni-hamburg.de</email>
+            <roles>
+                <role>Author</role>
+            </roles>
+        </contributor>
+    </contributors>
 </project>

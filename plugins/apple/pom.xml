@@ -10,9 +10,20 @@
     </parent>
 
     <artifactId>apple</artifactId>
+    <version>3.0</version>
 
     <name>Spark Apple Plugin</name>
     <description>Provides Mac OS X features for Spark.</description>
+
+    <contributors>
+        <contributor>
+            <name>Wolf Posdorfer</name>
+            <email>9posdorf@informatik.uni-hamburg.de</email>
+            <roles>
+                <role>Author</role>
+            </roles>
+        </contributor>
+    </contributors>
 
     <dependencies>
         <dependency>

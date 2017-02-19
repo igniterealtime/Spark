@@ -1,7 +1,7 @@
 <!-- Define your plugins -->
 <plugin>
     <name>Transfer Guard</name>
-    <version>1.0.2</version>
+    <version>1.1.0</version>
     <author>Pete Matern, Tim Jentz</author>
     <homePage>http://www.jivesoftware.org</homePage>
     <email>pete@jivesoftware.com</email>

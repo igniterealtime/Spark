@@ -10,9 +10,19 @@
     </parent>
 
     <artifactId>translator</artifactId>
+    <version>1.6</version>
 
     <name>Spark Translator Plugin</name>
     <description>Translates instant messages between users using Google Translation Service.</description>
+
+    <contributors>
+        <contributor>
+            <organization>Jive Software</organization>
+            <roles>
+                <role>Author</role>
+            </roles>
+        </contributor>
+    </contributors>
 
     <dependencies>
         <dependency>

@@ -10,8 +10,18 @@
     </parent>
 
     <artifactId>spelling</artifactId>
+    <version>0.7</version>
 
     <name>Spark Spelling Plugin</name>
     <description>Provides spellchecker functionality.</description>
 
+    <contributors>
+        <contributor>
+            <name>Michael Will</name>
+            <email>michael-will@gmx.net</email>
+            <roles>
+                <role>Author</role>
+            </roles>
+        </contributor>
+    </contributors>
 </project>

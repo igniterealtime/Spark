@@ -1,7 +1,7 @@
 <!-- Define your plugins -->
 <plugin>
     <name>Reversi</name>
-    <version>1.3</version>
+    <version>1.4</version>
     <author>Matt Tucker, Bill Lynch, Holger Bergunde</author>
     <homePage>http://www.jivesoftware.org</homePage>
     <email>plugins@jivesoftware.org</email>

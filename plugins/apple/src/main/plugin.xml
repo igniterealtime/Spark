@@ -1,7 +1,7 @@
 <!-- Define your plugins -->
 <plugin>
     <name>Mac OSX Plugin</name>
-    <version>2.1</version>
+    <version>2.2</version>
     <author>Wolf Posdorfer</author>
     <homePage>http://www.jivesoftware.com</homePage>
     <email>9posdorf@informatik.uni-hamburg.de</email>

@@ -1,7 +1,7 @@
 <!-- Define your plugins -->
 <plugin>
     <name>OTR Plugin</name>
-    <version>0.4 Beta </version>
+    <version>0.5 Beta</version>
     <author>Holger Bergunde</author>
     <homePage>http://www.stytrix.de</homePage>
     <email>holger@bergunde.de</email>

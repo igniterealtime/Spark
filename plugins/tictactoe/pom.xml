@@ -10,8 +10,18 @@
     </parent>
 
     <artifactId>tictactoe</artifactId>
+    <version>0.2</version>
 
     <name>Spark TicTacToe Plugin</name>
     <description>The most sophisticated TicTacToe Game ever created.</description>
 
+    <contributors>
+        <contributor>
+            <name>Wolf Posdorfer</name>
+            <email>9posdorf@informatik.uni-hamburg.de</email>
+            <roles>
+                <role>Author</role>
+            </roles>
+        </contributor>
+    </contributors>
 </project>

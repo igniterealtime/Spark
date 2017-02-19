@@ -1,7 +1,7 @@
 <!-- Define your plugins -->
 <plugin>
     <name>Notification and System Tray Plugin for Spark IM</name>
-    <version>1.0</version>
+    <version>1.1</version>
     <author>Derek DeMoro</author>
     <homePage>http://www.jivesoftware.com</homePage>
     <email>derek@jivesoftware.com</email>

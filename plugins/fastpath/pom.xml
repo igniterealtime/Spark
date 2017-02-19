@@ -10,8 +10,18 @@
     </parent>
 
     <artifactId>fastpath</artifactId>
+    <version>3.3.0</version>
 
     <name>Spark Fastpath Plugin</name>
     <description>Provides FastPath Agent functionality.</description>
 
+    <contributors>
+        <contributor>
+            <organization>Jive Software</organization>
+            <email>spark@jivesoftware.com</email>
+            <roles>
+                <role>Author</role>
+            </roles>
+        </contributor>
+    </contributors>
 </project>

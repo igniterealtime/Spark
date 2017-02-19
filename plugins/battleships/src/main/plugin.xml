@@ -2,7 +2,7 @@
     <name>Battleships</name>
     <class>battleship.BattleshipPlugin</class>
     <author>Wolf Posdorfer</author>
-    <version>0.1</version>
+    <version>0.2</version>
     <homePage>http://www.jivesoftware.com</homePage>
     <description>Battleship plugin for Spark</description>
     <email>9posdorf@informatik.uni-hamburg.de</email>
