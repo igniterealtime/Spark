@@ -17,36 +17,24 @@
 
 package org.jivesoftware;
 
-import java.awt.Color;
-import java.awt.EventQueue;
-import java.awt.Font;
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.Method;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Locale;
-import java.util.Properties;
-
-import javax.swing.BorderFactory;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
-import javax.swing.UIDefaults;
-import javax.swing.UIManager;
-
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.spark.PluginManager;
 import org.jivesoftware.spark.ui.themes.ColorSettingManager;
 import org.jivesoftware.spark.ui.themes.ColorSettings;
+import org.jivesoftware.spark.ui.themes.LookAndFeelManager;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.UIComponentRegistry;
-import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
+import javax.swing.*;
+import java.awt.*;
+import java.io.File;
+import java.io.IOException;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Locale;
 
 
 /**
@@ -170,7 +158,7 @@ public final class Spark {
         /**
          * Loads the LookandFeel
          */
-        loadLookAndFeel();
+        LookAndFeelManager.loadPreferredLookAndFeel();
 
 
         buf.append(classPath);
@@ -209,78 +197,6 @@ public final class Spark {
         	ex.printStackTrace();
         }
     }
-
-    private String getLookandFeel(LocalPreferences preferences) {
-	String result;
-
-	String whereToLook = isMac() ? Default.DEFAULT_LOOK_AND_FEEL_MAC
-		: Default.DEFAULT_LOOK_AND_FEEL;
-
-	if (!Default.getBoolean(Default.LOOK_AND_FEEL_DISABLED)) {
-	    result = preferences.getLookAndFeel();
-	} else if (Default.getString(whereToLook).length() > 0) {
-	    result = Default.getString(whereToLook);
-	} else {
-	    result = UIManager.getSystemLookAndFeelClassName();
-	}
-
-	return result;
-
-    }
-
-    /**
-     * Handles the Loading of the Look And Feel
-     */
-    private void loadLookAndFeel() {
-	final LocalPreferences preferences = SettingsManager.getLocalPreferences();
-	final String laf = getLookandFeel(preferences);
-
-	try {
-	    if (laf.toLowerCase().contains("substance")) {
-		EventQueue.invokeLater( () -> {
-        try {
-            if (Spark.isWindows()) {
-            JFrame.setDefaultLookAndFeelDecorated(true);
-            JDialog.setDefaultLookAndFeelDecorated(true);
-            }
-            UIManager.setLookAndFeel(laf);
-        } catch (Exception e) {
-            // dont care
-            e.printStackTrace();
-        }
-        } );
-	    } else {
-		try {
-		    if(Spark.isWindows()) {
-			JFrame.setDefaultLookAndFeelDecorated(true);
-			JDialog.setDefaultLookAndFeelDecorated(true);
-		    }
-		    UIManager.setLookAndFeel(laf);
-
-
-		} catch (Exception e) {
-		    e.printStackTrace();
-		}
-	    }
-	} catch (Exception e) {
-	    Log.error(e);
-	}
-
-	if (laf.contains("jtattoo")) {
-	    Properties props = new Properties();
-	    String menubar = Default.getString(Default.MENUBAR_TEXT) == null ? ""
-		    : Default.getString(Default.MENUBAR_TEXT);
-	    props.put("logoString", menubar);
-	    try {
-		Class<?> c = Thread.currentThread().getContextClassLoader().loadClass(laf);
-		Method m = c.getMethod("setCurrentTheme", Properties.class);
-		m.invoke(c.newInstance(), props);
-	    } catch (Exception e) {
-		Log.error("Error Setting JTattoo ", e);
-	    }
-	}
-    }
-
 
     // Setup the look and feel of this application.
     static {

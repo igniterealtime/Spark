@@ -193,6 +193,18 @@
         </dependency>
 
         <dependency>
+            <groupId>com.github.insubstantial</groupId>
+            <artifactId>substance-swingx</artifactId>
+            <version>7.3</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.freeseawind</groupId>
+            <artifactId>littleluck</artifactId>
+            <version>2.0.0</version>
+        </dependency>
+
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.8.2</version>

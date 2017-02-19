@@ -33,10 +33,7 @@ public class ThemePreference implements Preference {
 
     public static String NAMESPACE = "themes";
 
-    public ThemePreference() {
-
-    }
-
+    public ThemePreference() {}
 
     public String getTitle() {
         return Res.getString("title.appearance.preferences");
@@ -62,26 +59,8 @@ public class ThemePreference implements Preference {
         panel = new MainThemePanel();
         return panel;
     }
-    
-    /**
-     * Returns the LookAndFeel with package origin <br>
-     * for example:
-     * <code>com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel</code>
-     * 
-     * @return {@link String}
-     */
-    public String getLookAndFeel()
-    {
-	return panel.getThemePanel().getLookAndFeel();
-    }
 
-    public void loadFromFile() {
-
-    }
-
-    public void load() {
-
-    }
+    public void load() {}
 
     public boolean isDataValid() {
         return true;
@@ -104,7 +83,7 @@ public class ThemePreference implements Preference {
             pref.setEmoticonPack(pack);
         }
         pref.setEmoticonsEnabled(emotEnabled);
-        pref.setLookAndFeel(panel.getThemePanel().getLookAndFeel());
+        pref.setLookAndFeel(panel.getThemePanel().getSelectedLookAndFeelClassName());
         pref.setAvatarVisible(panel.getThemePanel().areAvatarsVisible());
         pref.setContactListIconSize(panel.getThemePanel().getContactListIconSize());
         pref.setVCardsVisible(panel.getThemePanel().areVCardsVisible());
@@ -127,12 +106,7 @@ public class ThemePreference implements Preference {
         SettingsManager.saveSettings();
     }
 
-
-    public void shutdown() {
-
-    }
-
-
+    public void shutdown() {}
 }
 
 
