@@ -1,11 +1,11 @@
 <!-- Define your plugins -->
 <plugin>
-    <name>Phone Client</name>
-    <version>1.2.0</version>
+    <name>${project.name}</name>
+    <version>${project.version}</version>
+    <description>${project.description}</description>
     <author>Jive Software</author>
     <homePage>http://www.jivesoftware.org</homePage>
     <email>thiago@jivesoftware.com</email>
-    <description>SIP Softphone Plugin</description>
     <class>org.jivesoftware.sparkplugin.SoftPhonePlugin</class>
     <minSparkVersion>2.7.0</minSparkVersion>
     <os>Windows,Mac,Linux</os>

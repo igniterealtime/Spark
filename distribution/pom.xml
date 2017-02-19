@@ -12,67 +12,6 @@
 
     <name>Spark Distribution</name>
 
-    <dependencies>
-
-        <!-- These dependencies are needed only to ensure that this module is executed after all of its dependencies have finished execution. -->
-        <dependency>
-            <groupId>org.igniterealtime.spark</groupId>
-            <artifactId>spark-core</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.igniterealtime.spark.plugins</groupId>
-            <artifactId>apple</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.igniterealtime.spark.plugins</groupId>
-            <artifactId>fastpath</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.igniterealtime.spark.plugins</groupId>
-            <artifactId>flashing</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.igniterealtime.spark.plugins</groupId>
-            <artifactId>growl</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.igniterealtime.spark.plugins</groupId>
-            <artifactId>reversi</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.igniterealtime.spark.plugins</groupId>
-            <artifactId>roar</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.igniterealtime.spark.plugins</groupId>
-            <artifactId>systemtray</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.igniterealtime.spark.plugins</groupId>
-            <artifactId>tictactoe</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.igniterealtime.spark.plugins</groupId>
-            <artifactId>transferguard</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.igniterealtime.spark.plugins</groupId>
-            <artifactId>translator</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-    </dependencies>
-
     <build>
         <finalName>distribution</finalName>
         <plugins>

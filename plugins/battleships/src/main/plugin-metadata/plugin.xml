@@ -1,10 +1,10 @@
 <plugin>
-    <name>Roar!!!</name>
-    <class>org.jivesoftware.spark.roar.Roar</class>
+    <name>${project.name}</name>
+    <version>${project.version}</version>
+    <description>${project.description}</description>
+    <class>battleship.BattleshipPlugin</class>
     <author>Wolf Posdorfer</author>
-    <version>0.5.0</version>
     <homePage>http://www.jivesoftware.com</homePage>
-    <description>Shows awesome Popups</description>
     <email>9posdorf@informatik.uni-hamburg.de</email>
     <minSparkVersion>2.7.0</minSparkVersion>
     <os>Windows,Linux,Mac</os>

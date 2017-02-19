@@ -1,10 +1,10 @@
 <plugin>
-    <name>Jingle Client</name>
-    <version>1.1</version>
+    <name>${project.name}</name>
+    <version>${project.version}</version>
+    <description>${project.description}</description>
     <author>Jive Software</author>
     <homePage>http://www.jivesoftware.org</homePage>
     <email>derek@jivesoftware.com</email>
-    <description>Allows for PC to PC calling.</description>
     <class>org.jivesoftware.sparkplugin.JinglePlugin</class>
     <minSparkVersion>2.7.0</minSparkVersion>
     <os>Windows,mac,linux</os>

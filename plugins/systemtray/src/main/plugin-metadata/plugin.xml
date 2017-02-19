@@ -1,11 +1,11 @@
 <!-- Define your plugins -->
 <plugin>
-    <name>Notification and System Tray Plugin for Spark IM</name>
-    <version>1.1</version>
+    <name>${project.name}</name>
+    <version>${project.version}</version>
+    <description>${project.description}</description>
     <author>Derek DeMoro</author>
     <homePage>http://www.jivesoftware.com</homePage>
     <email>derek@jivesoftware.com</email>
-    <description>Adds System Tray functionality.</description>
     <class>org.jivesoftware.spark.plugins.SystemTrayPlugin</class>
     <minSparkVersion>2.7.0</minSparkVersion>
     <java>1.7.0</java>

@@ -15,7 +15,8 @@
 
     <files>
         <file>
-            <source>${project.basedir}/src/main/plugin.xml</source>
+            <!-- The outputDirectory will have the 'filtered' resources, which is why that is used, instead of the original source directory. -->
+            <source>${project.build.outputDirectory}/plugin.xml</source>
         </file>
     </files>
 

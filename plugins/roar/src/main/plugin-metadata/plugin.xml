@@ -1,10 +1,10 @@
 <plugin>
-    <name>Battleships</name>
-    <class>battleship.BattleshipPlugin</class>
+    <name>${project.name}</name>
+    <version>${project.version}</version>
+    <description>${project.description}</description>
+    <class>org.jivesoftware.spark.roar.Roar</class>
     <author>Wolf Posdorfer</author>
-    <version>0.2</version>
     <homePage>http://www.jivesoftware.com</homePage>
-    <description>Battleship plugin for Spark</description>
     <email>9posdorf@informatik.uni-hamburg.de</email>
     <minSparkVersion>2.7.0</minSparkVersion>
     <os>Windows,Linux,Mac</os>

@@ -23,12 +23,21 @@
         <dependency>
             <groupId>org.igniterealtime.spark</groupId>
             <artifactId>spark-core</artifactId>
-            <version>${project.version}</version>
+            <version>${project.parent.version}</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
 
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+            <resource>
+                <directory>src/main/plugin-metadata</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -38,7 +47,7 @@
                     <dependency>
                         <groupId>org.igniterealtime.spark.plugins</groupId>
                         <artifactId>assembly-descriptor</artifactId>
-                        <version>${project.version}</version>
+                        <version>${project.parent.version}</version>
                     </dependency>
                 </dependencies>
                 <configuration>

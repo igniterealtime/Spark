@@ -1,10 +1,10 @@
 <plugin>
-    <name>Growl Plugin</name>
-    <version>2.3</version>
+    <name>${project.name}</name>
+    <version>${project.version}</version>
+    <description>${project.description}</description>
     <author>Wolf Posdorfer</author>
     <homePage>http://www.jivesoftware.com</homePage>
     <email>9posdorf@informatik.uni-hamburg.de</email>
-    <description>Provides Growl notifications on Mac OS X.(http://growl.info)</description>
     <class>com.jivesoftware.spark.plugin.growl.GrowlPlugin</class>
     <minSparkVersion>2.7.0</minSparkVersion>
     <os>Mac,Windows</os>
