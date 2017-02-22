@@ -1,0 +1,13 @@
+<plugin>
+    <name>${project.name}</name>
+    <version>${project.version}</version>
+    <description>${project.description}</description>
+    <author>Wolf Posdorfer</author>
+    <homePage>http://www.jivesoftware.com</homePage>
+    <email>9posdorf@informatik.uni-hamburg.de</email>
+    <class>com.jivesoftware.spark.plugin.apple.ApplePlugin</class>
+    <minSparkVersion>2.7.0</minSparkVersion>
+	<os>Mac</os>
+	<java>1.7.0</java>
+</plugin>
+

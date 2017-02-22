@@ -1,0 +1,14 @@
+<!-- Define your plugins -->
+<plugin>
+    <name>${project.name}</name>
+    <version>${project.version}</version>
+    <description>${project.description}</description>
+    <author>Jive Software</author>
+    <homePage>http://www.jivesoftware.org</homePage>
+    <email>thiago@jivesoftware.com</email>
+    <class>org.jivesoftware.sparkplugin.SoftPhonePlugin</class>
+    <minSparkVersion>2.7.0</minSparkVersion>
+    <os>Windows,Mac,Linux</os>
+    <java>1.7.0</java>
+</plugin>
+

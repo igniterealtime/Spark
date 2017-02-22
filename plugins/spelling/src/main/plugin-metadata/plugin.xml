@@ -1,0 +1,14 @@
+<!-- Define your plugins -->
+<plugin>
+    <name>${project.name}</name>
+    <version>${project.version}</version>
+    <description>${project.description}</description>
+    <author>Michael Will</author>
+    <homePage>http://www.igniterealtime.org</homePage>
+    <email>michael-will@gmx.net</email>
+    <class>org.jivesoftware.spellchecker.SpellcheckerPlugin</class>
+    <minSparkVersion>2.7.0</minSparkVersion>
+    <os>Windows,Mac,Linux</os>
+    <java>1.7.0</java>
+</plugin>
+

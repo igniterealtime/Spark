@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Define new plugins -->
+<plugins>
+    <plugin>
+        <name>Jabber Browser</name>
+        <version>1.0</version>
+        <author>Derek DeMoro</author>
+        <homePage>http://www.jivesoftware.com</homePage>
+        <email>derek@jivesoftware.com</email>
+        <description>Used for discovering items on a XMPP server.</description>
+        <class>org.jivesoftware.sparkimpl.plugin.jabber.JabberBrowser</class>
+    </plugin>
+    <!--<plugin>-->
+        <!--<name>Asterisks Phone Plugin</name>-->
+        <!--<version>1.0</version>-->
+        <!--<author>Derek DeMoro</author>-->
+        <!--<homePage>http://www.jivesoftware.com</homePage>-->
+        <!--<email>derek@jivesoftware.com</email>-->
+        <!--<description>Adds phone-pbx capabilities within Spark. Users can make calls, take incoming calls and be-->
+            <!--notified of presence changes.-->
+        <!--</description>-->
+        <!--<class>org.jivesoftware.sparkimpl.plugin.phone.PhonePlugin</class>-->
+    <!--</plugin>-->
+    <plugin>
+        <name>Jabber Version</name>
+        <version>1.0</version>
+        <author>Derek DeMoro</author>
+        <homePage>http://www.jivesoftware.com</homePage>
+        <email>derek@jivesoftware.com</email>
+        <description>Displays which version of Spark users are running.</description>
+        <class>org.jivesoftware.sparkimpl.plugin.jabber.JabberVersion</class>
+    </plugin>
+    <plugin>
+        <name>Sounds Plugin</name>
+        <version>1.0</version>
+        <author>Derek DeMoro</author>
+        <homePage>http://www.jivesoftware.com</homePage>
+        <email>derek@jivesoftware.com</email>
+        <description>Adds sound preferences for Spark.</description>
+        <class>org.jivesoftware.sparkimpl.preference.sounds.SoundPlugin</class>
+    </plugin>
+    <plugin>
+        <name>Layout Plugin</name>
+        <version>1.0</version>
+        <author>Derek DeMoro</author>
+        <homePage>http://www.jivesoftware.com</homePage>
+        <email>derek@jivesoftware.com</email>
+        <description>Persists users layouts on subsequent loads</description>
+        <class>org.jivesoftware.sparkimpl.plugin.layout.LayoutPlugin</class>
+    </plugin>
+    <plugin>
+        <name>Chat Post Loader</name>
+        <version>1.0</version>
+        <author>Derek DeMoro</author>
+        <homePage>http://www.jivesoftware.com</homePage>
+        <email>derek@jivesoftware.com</email>
+        <description>Allows users to specify command-line arguments to control Spark on startup.</description>
+        <class>org.jivesoftware.sparkimpl.plugin.chat.ChatArgumentsPlugin</class>
+    </plugin>
+    <plugin>
+        <name>Presence Change Plugin</name>
+        <version>1.0</version>
+        <author>Derek DeMoro</author>
+        <homePage>http://www.jivesoftware.com</homePage>
+        <email>derek@jivesoftware.com</email>
+        <description>Tracks users presenences during the runtime of Spark.</description>
+        <class>org.jivesoftware.sparkimpl.plugin.chat.PresenceChangePlugin</class>
+    </plugin>
+    <plugin>
+        <name>Plugin Viewer Plugin</name>
+        <version>1.0</version>
+        <author>Derek DeMoro</author>
+        <homePage>http://www.jivesoftware.com</homePage>
+        <email>derek@jivesoftware.com</email>
+        <description>Allows users to download, install and uninstall 3rd party plugins</description>
+        <class>org.jivesoftware.sparkimpl.plugin.viewer.PluginViewer</class>
+    </plugin>
+    <plugin>
+        <name>Emoticon Plugin</name>
+        <version>1.0</version>
+        <author>Derek DeMoro</author>
+        <homePage>http://www.jivesoftware.com</homePage>
+        <email>derek@jivesoftware.com</email>
+        <description>Allows users to use a pick list for Emoticons.</description>
+        <class>org.jivesoftware.sparkimpl.plugin.emoticons.EmoticonPlugin</class>
+    </plugin>
+    <plugin>
+        <name>Sparklers Plugin</name>
+        <version>1.0</version>
+        <author>Derek DeMoro</author>
+        <homePage>http://www.jivesoftware.com</homePage>
+        <email>derek@jivesoftware.com</email>
+        <description>Allows users set Active Sparklers within a Chat Conversation.</description>
+        <class>org.jivesoftware.sparkimpl.plugin.sparklers.SparklersPlugin</class>
+    </plugin>
+    <plugin>
+        <name>Notes Plugin</name>
+        <version>1.0</version>
+        <author>Derek DeMoro</author>
+        <homePage>http://www.jivesoftware.com</homePage>
+        <email>derek@jivesoftware.com</email>
+        <description>Allows users to have scratch paper within Spark.</description>
+        <class>org.jivesoftware.sparkimpl.plugin.scratchpad.ScratchPadPlugin</class>
+    </plugin>
+    <plugin>
+        <name>Buzz Plugin</name>
+        <version>1.0</version>
+        <author>Derek DeMoro</author>
+        <homePage>http://www.jivesoftware.com</homePage>
+        <email>derek@jivesoftware.com</email>
+        <description>Allows users to shake a users frame.</description>
+        <class>org.jivesoftware.sparkimpl.plugin.alerts.BuzzPlugin</class>
+    </plugin>
+    <plugin>
+        <name>Notifications Plugin</name>
+        <version>1.0</version>
+        <author>Derek DeMoro</author>
+        <homePage>http://www.jivesoftware.com</homePage>
+        <email>derek@jivesoftware.com</email>
+        <description>Adds generic notification handling to Spark.</description>
+        <class>org.jivesoftware.sparkimpl.preference.notifications.NotificationPlugin</class>
+    </plugin>
+    <plugin>
+        <name>Shortcut Plugin</name>
+        <version>1.0</version>
+        <author>Derek DeMoro</author>
+        <homePage>http://www.jivesoftware.com</homePage>
+        <email>derek@jivesoftware.com</email>
+        <description>Adds simple IRC style shortcuts.</description>
+        <class>org.jivesoftware.sparkimpl.plugin.chat.ShortcutPlugin</class>
+    </plugin>
+    <plugin>
+        <name>History Plugin</name>
+        <version>1.0</version>
+        <author>Derek DeMoro</author>
+        <homePage>http://www.jivesoftware.com</homePage>
+        <email>derek@jivesoftware.com</email>
+        <description>Adds a simple shortcut to view most previous conversations.</description>
+        <class>org.jivesoftware.sparkimpl.plugin.history.ConversationHistoryPlugin</class>
+    </plugin>
+    <plugin>
+        <name>Contact List Assistant</name>
+        <version>1.0</version>
+        <author>Derek DeMoro</author>
+        <homePage>http://www.jivesoftware.com</homePage>
+        <email>derek@jivesoftware.com</email>
+        <description>Adds simple extras to use with the Contact List.</description>
+        <class>org.jivesoftware.sparkimpl.plugin.chat.ContactListAssistantPlugin</class>
+    </plugin>
+    <plugin>
+        <name>My Favorites</name>
+        <version>1.0</version>
+        <author>Derek DeMoro</author>
+        <homePage>http://www.jivesoftware.com</homePage>
+        <email>derek@jivesoftware.com</email>
+        <description>Adds simple extras to show your most popular contacts.</description>
+        <class>org.jivesoftware.sparkimpl.plugin.history.FrequentContactsPlugin</class>
+    </plugin>
+    <plugin>
+        <name>Language Plugin</name>
+        <version>1.0</version>
+        <author>Derek DeMoro</author>
+        <homePage>http://www.jivesoftware.com</homePage>
+        <email>derek@jivesoftware.com</email>
+        <description>Allows users to explicitly set their language.</description>
+        <class>org.jivesoftware.sparkimpl.plugin.language.LanguagePlugin</class>
+    </plugin>    
+    <plugin>
+        <name>SystemTray</name>
+        <version>1.0</version>
+        <author>Michael Will</author>
+        <homePage>http://www.igniterealtime.org</homePage>
+        <email>michael-will@gmx.net</email>
+        <description>SystemTray.</description>
+        <class>org.jivesoftware.sparkimpl.plugin.systray.SysTrayPlugin</class>
+    </plugin>
+    <!--<plugin>-->
+        <!--<name>UserIdle</name>-->
+        <!--<version>1.0</version>-->
+        <!--<author>Michael Will</author>-->
+        <!--<homePage>http://www.igniterealtime.org</homePage>-->
+        <!--<email>michael-will@gmx.net</email>-->
+        <!--<description>SystemTray.</description>-->
+        <!--<class>org.jivesoftware.sparkimpl.plugin.idle.UserIdlePlugin</class>-->
+    <!--</plugin>-->
+    <plugin>
+        <name>Privacy Lists</name>
+        <version>2.0</version>
+        <author>Holger Bergunde</author>
+        <homePage>http://www.igniterealtime.org</homePage>
+        <email>9bergund@informatik.uni-hamburg.de</email>
+        <description>Privacy lists.</description>
+        <class>org.jivesoftware.sparkimpl.plugin.privacy.PrivacyPlugin</class>
+    </plugin>
+</plugins>

@@ -1,0 +1,94 @@
+<project name="Jingle" default="jar" basedir="../../">
+
+    <property name="plug.dir" value="${basedir}"/>
+    <property name="plug.lib.dir" value="${plug.dir}/build/lib"/>
+    <property name="plug.lib.dist.dir" value="${plug.lib.dir}/dist"/>
+
+    <property name="classes.dir" value="${basedir}/build/classes"/>
+
+    <property name="src.dir" value="${plug.dir}/src"/>
+    <property name="java.dir" value="${src.dir}/java"/>
+    <property name="resources.dir" value="${src.dir}/resources"/>
+    <property name="target.dir" value="${plug.dir}/target"/>
+    <property name="target.lib.dir" value="${plug.dir}/target/lib"/>
+    <property name="jar.file" value="${target.dir}/lib/plugin-classes.jar"/>
+
+    <property name="spark.home" value="../../../..//"/>
+    <property name="spark.libs.dir" value="${spark.home}/target/build/lib"/>
+
+    <path id="lib.classpath">
+        <fileset dir="${spark.libs.dir}" includes="**/*.jar, **/*.zip"/>
+        <fileset dir="${plug.lib.dist.dir}" includes="**/*.jar, **/*.zip"/>
+        <fileset dir="${spark.home}/build/lib/dist" includes="**/*.jar, **/*.zip"/>
+        <fileset dir="${spark.home}/build/lib/dist/windows" includes="**/*.jar"/>
+        <fileset dir="${spark.home}/build/lib/dist/mac" includes="**/*.jar"/>
+    </path>
+
+    <target name="clean" description="Cleans all build related output">
+        <delete file="${jar.file}"/>
+        <delete dir="${classes.dir}"/>
+        <delete dir="${target.dir}"/>
+    </target>
+
+
+    <target name="compile" description="Compiles plugin source">
+        <mkdir dir="${classes.dir}"/>
+        <javac srcdir="${java.dir}"
+               destdir="${classes.dir}"
+               classpathref="lib.classpath"
+               source="1.8"
+               debug="true"
+               target="1.8"/>
+        <copy todir="${classes.dir}">
+            <fileset dir="${java.dir}" includes="**/*.png"/>
+            <fileset dir="${java.dir}" includes="**/*.gif"/>
+            <fileset dir="${java.dir}" includes="**/*.jpg"/>
+            <fileset dir="${java.dir}" includes="**/*.jpeg"/>
+            <fileset dir="${java.dir}" includes="**/*.properties"/>
+            <fileset dir="${resources.dir}" includes="**/*"/>
+        </copy>
+    </target>
+
+    <target name="jar" depends="clean, compile" description="Makes a plugin jar">
+        <mkdir dir="${target.dir}"/>
+        <mkdir dir="${target.lib.dir}"/>
+
+        <copy todir="${target.lib.dir}">
+            <fileset file="${plug.lib.dist.dir}/*.*"/>
+        </copy>
+
+        <copy todir="${target.dir}">
+            <fileset file="${plug.dir}/plugin.xml"/>
+        </copy>
+
+        <copy todir="${target.dir}">
+            <fileset dir="${plug.dir}">
+                <include name="**/*.html"/>
+                <include name="**/*.txt"/>
+            </fileset>
+        </copy>
+
+        <jar basedir="${classes.dir}" file="${jar.file}" update="false"/>
+
+        <!--<zip zipfile="${target.dir}/jingle.jar" basedir="${target.dir}"/>-->
+        <jar file="${target.dir}/jingle.jar" basedir="${target.dir}">
+            <manifest>
+                <attribute name="Class-Path" value="
+                    ./
+                    ./lib/JingleExtenion.jar
+                    ./lib/JingleMedia.jar
+                    ./lib/Speex.jar
+                    ./lib/jspeex-0.9.7-jfcom.jar
+                    ./lib/jstun-0.6.1.jar
+                    ./lib/plugin-classes.jar
+                    "/>
+            </manifest>
+        </jar>
+
+        <copy todir="${spark.home}/src/commercial">
+            <fileset file="${target.dir}/jingle.jar"/>
+        </copy>
+
+    </target>
+
+</project>

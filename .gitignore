@@ -1,5 +1,5 @@
 # Spark ignores
-/target
+**/target
 
 # Java ignores
 *.class

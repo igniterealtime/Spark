@@ -1,0 +1,12 @@
+<plugin>
+    <name>${project.name}</name>
+    <version>${project.version}</version>
+    <description>${project.description}</description>
+    <class>tic.tac.toe.TicTacToePlugin</class>
+    <author>Wolf Posdorfer</author>
+    <homePage>http://www.jivesoftware.com</homePage>
+    <email>9posdorf@informatik.uni-hamburg.de</email>
+    <minSparkVersion>2.7.0</minSparkVersion>
+    <os>Windows,Linux,Mac</os>
+    <java>1.7.0</java>
+</plugin>

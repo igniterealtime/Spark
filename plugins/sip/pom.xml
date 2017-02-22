@@ -1,0 +1,35 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.igniterealtime.spark.plugins</groupId>
+        <artifactId>plugin</artifactId>
+        <version>3.0.0-SNAPSHOT</version>
+        <relativePath>../plugin/pom.xml</relativePath>
+    </parent>
+
+    <artifactId>sip</artifactId>
+    <version>1.2.0</version>
+
+    <name>Spark SIP Plugin</name>
+    <description>Adds SIP Softphone functionality to Spark.</description>
+
+    <contributors>
+        <contributor>
+            <name>Thiago Camargo</name>
+            <roles>
+                <role>Author</role>
+            </roles>
+        </contributor>
+    </contributors>
+
+    <dependencies>
+        <dependency>
+            <groupId>javax.sip</groupId>
+            <artifactId>jain-sip-ri</artifactId>
+            <version>1.2.324</version>
+        </dependency>
+    </dependencies>
+
+</project>
