@@ -1,0 +1,13 @@
+<!-- Define your plugins -->
+<plugin>
+    <name>${project.name}</name>
+    <version>${project.version}</version>
+    <description>${project.description}</description>
+    <author>Derek DeMoro</author>
+    <homePage>http://www.jivesoftware.com</homePage>
+    <email>derek@jivesoftware.com</email>
+    <class>org.jivesoftware.spark.plugins.SystemTrayPlugin</class>
+    <minSparkVersion>2.7.0</minSparkVersion>
+    <java>1.7.0</java>
+</plugin>
+

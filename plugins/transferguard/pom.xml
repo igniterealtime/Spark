@@ -1,0 +1,34 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.igniterealtime.spark.plugins</groupId>
+        <artifactId>plugin</artifactId>
+        <version>3.0.0-SNAPSHOT</version>
+        <relativePath>../plugin/pom.xml</relativePath>
+    </parent>
+
+    <artifactId>transferguard</artifactId>
+    <version>1.1.0</version>
+
+    <name>Spark TransferGuard Plugin</name>
+    <description>Adds the ability to automatically reject file transfers based on preference configuration.</description>
+
+    <contributors>
+        <contributor>
+            <name>Pete Matern</name>
+            <organization>Jive Software</organization>
+            <email>pete@jivesoftware.com</email>
+            <roles>
+                <role>Author</role>
+            </roles>
+        </contributor>
+        <contributor>
+            <name>Tim Jentz</name>
+            <roles>
+                <role>Author</role>
+            </roles>
+        </contributor>
+    </contributors>
+</project>

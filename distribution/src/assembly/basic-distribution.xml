@@ -1,0 +1,51 @@
+<assembly xmlns="http://maven.apache.org/ASSEMBLY/2.0.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/ASSEMBLY/2.0.0 http://maven.apache.org/xsd/assembly-2.0.0.xsd">
+    <id>base</id>
+    <formats>
+        <format>dir</format>
+    </formats>
+    <includeBaseDirectory>false</includeBaseDirectory>
+
+    <moduleSets>
+        <moduleSet>
+            <!--
+              - Module-set to move over the installation-directory assembly artifact from 'core'. This is the
+              - base of all distributables.
+              -->
+            <useAllReactorProjects>true</useAllReactorProjects>
+            <includes>
+                <include>org.igniterealtime.spark:spark-core</include>
+            </includes>
+            <binaries>
+                <includeDependencies>false</includeDependencies>
+                <attachmentClassifier>installation-directory</attachmentClassifier>
+                <unpack>true</unpack>
+            </binaries>
+        </moduleSet>
+
+        <moduleSet>
+            <!--
+              - Module-set to move over the spark-plugin assembly artifact from every maven module that generates a
+              - plugin. These are added as-is to the plugins directory.
+              -->
+            <useAllReactorProjects>true</useAllReactorProjects>
+            <includes>
+                <!-- This includes all modules in this groupId, assuming that most of them are plugin implementations. -->
+                <include>org.igniterealtime.spark.plugins:*</include>
+            </includes>
+            <excludes>
+                <!-- The assembly-descriptor artifact is not a plugin. It should not be included. -->
+                <exclude>org.igniterealtime.spark.plugins:assembly-descriptor</exclude>
+            </excludes>
+            <binaries>
+                <includeDependencies>false</includeDependencies>
+                <attachmentClassifier>spark-plugin</attachmentClassifier>
+                <outputDirectory>plugins</outputDirectory>
+                <unpack>false</unpack>
+                <outputFileNameMapping>${artifact.artifactId}.${artifact.extension}</outputFileNameMapping>
+            </binaries>
+        </moduleSet>
+
+    </moduleSets>
+</assembly>

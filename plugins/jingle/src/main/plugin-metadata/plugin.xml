@@ -1,0 +1,12 @@
+<plugin>
+    <name>${project.name}</name>
+    <version>${project.version}</version>
+    <description>${project.description}</description>
+    <author>Jive Software</author>
+    <homePage>http://www.jivesoftware.org</homePage>
+    <email>derek@jivesoftware.com</email>
+    <class>org.jivesoftware.sparkplugin.JinglePlugin</class>
+    <minSparkVersion>2.7.0</minSparkVersion>
+    <os>Windows,mac,linux</os>
+    <java>1.7.0</java>
+</plugin>

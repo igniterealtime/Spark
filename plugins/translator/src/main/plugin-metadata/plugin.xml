@@ -1,0 +1,12 @@
+<!-- Google Plugin Structure -->
+<plugin>
+    <name>${project.name}</name>
+    <version>${project.version}</version>
+    <description>${project.description}</description>
+    <class>org.jivesoftware.spark.translator.TranslatorPlugin</class>
+    <author>Jive Software</author>
+    <homePage>http://www.jivesoftware.com</homePage>
+    <email>spark@jivesoftware.com</email>
+    <minSparkVersion>2.7.0</minSparkVersion>
+    <java>1.7.0</java>
+</plugin>
