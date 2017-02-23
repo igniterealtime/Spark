@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Spark source code in Eclipse IDE</title>
+    <style>
+
+        body {
+            background-color: #d3d6d9;
+        }
+        header {
+            background-color: #e7eaee;
+            border: 1px solid #cccccc;
+            margin-top: 10px;
+            padding-left: 20px;
+            border-bottom: 20px solid #335588;
+        }
+        header h1 {
+            font-size: 1.7em;
+            font-weight: bold;
+            color: #670e15;
+        }
+        header p {
+            color: black;
+        }
+        article {
+            background-color: #fff;
+            border: 1px solid #999;
+            padding: 40px;
+            margin: 30px;
+        }
+        img {
+            height: 250px;
+        }
+    </style>
+</head>
+<body>
+    <article>
+        <header>
+            <h1>Spark source code in Eclipse IDE</h1>
+            <p>
+                This is a short tutorial on how to load the Spark source code in the Eclipse IDE.
+            </p>
+        </header>
+        <p>
+            Eclipse is very versatile, and offers many options that are not explored in this guide. Instead, this guide
+            focuses on the bare minimum that is needed to get started.
+        </p>
+
+        <h2>Prepare your environment</h2>
+        <p>
+            This guide assumes that you have Eclipse installed, and have a copy of the source code available locally.
+            Additionally, a Java Development Kit (version 8) should be installed.
+        </p>
+        <p>
+            Start by creating a new, empty workspace.
+        </p>
+
+        <h2>Create a project and import the source code</h2>
+        <p>
+            The Spark source code is using an Apache Maven project structure. As Eclipse recognizes this structure,
+            importing the source code into an Eclipse project is very easy.
+        </p>
+        <p>
+            The 'import' option (in the 'file' menu) can be used to quickly import the Spark source code into a new
+            Eclipse project.
+        </p>
+
+        <figure>
+            <a href="images/eclipse-maven-step-1.png"><img src="images/eclipse-maven-step-1.png" alt="Use the 'import' functionality of Eclipse."></a>
+            <a href="images/eclipse-maven-step-2.png"><img src="images/eclipse-maven-step-2.png" alt="Select the option that will import our (pre)existing Maven project."></a>
+            <a href="images/eclipse-maven-step-3.png"><img src="images/eclipse-maven-step-3.png" alt="Eclipse identifies all modules automatically."></a>
+            <figcaption>Use the 'import' functionality of Eclipse to import the source code.</figcaption>
+        </figure>
+
+        <p>
+            Using the 'import' option, select the option that allows you to import an existing Maven project into your
+            Eclipse project. Then, select the directory in which the Spark source code is stored.
+        </p>
+        <p>
+            Eclipse will automatically recognize and process the Maven structure of Spark, as soon as it is pointed to
+            the correct directory. It will immediately display the hierarchy of modules as a result.
+        </p>
+        <p>
+            Once the import wizard has been closed, the Eclipse workspace will show all modules that are part of Spark.
+            That's all to it! You're ready to start working on the code now!
+        </p>
+
+        <figure>
+            <a href="images/eclipse-maven-step-4.png"><img src="images/eclipse-maven-step-4.png" alt="Spark modules in the Eclipse workspace."></a>
+            <figcaption>Spark modules in the Eclipse workspace</figcaption>
+        </figure>
+
+        <h2>Run Spark from Eclipse</h2>
+        <p>
+            When developing, it is often useful to run the code straight from your IDE. The following will explain how
+            you can start a Spark instance from the code that is in the Eclipse workspace.
+        </p>
+
+        <figure>
+            <a href="images/eclipse-maven-step-5.png"><img src="images/eclipse-maven-step-5.png" alt="Launch the 'Startup' class as a Java application."></a>
+            <a href="images/eclipse-maven-step-6.png"><img src="images/eclipse-maven-step-6.png" alt="The Spark login screen, after launching the 'Startup' class."></a>
+            <figcaption>Run Spark straight from the source code.</figcaption>
+        </figure>
+
+        <p>
+            The 'spark-core' module contains a class named <code>Startup</code> (in the <code>org.jivesoftware.launcher</code>
+            package) that can be used to start Spark. Find the class in the Eclipse Package Explorer, and open its context
+            menu (right-click on the file). In that menu, use the 'Run as Java Application' option. Eclipse wil start
+            to build Spark from the source code, after which Spark itself is started. If everything goes well, you will
+            see the Spark login screen within a matter of seconds!
+        </p>
+        <footer>
+            <p>You can find more information on Spark at <a href="https://www.igniterealtime.org/projects/spark/">https://www.igniterealtime.org/projects/spark</a></p>
+        </footer>
+    </article>
+</body>
+</html>
