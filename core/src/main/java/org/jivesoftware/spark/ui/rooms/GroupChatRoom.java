@@ -610,17 +610,18 @@ public class GroupChatRoom extends ChatRoom
 
             if ( ModelUtil.hasLength( message.getBody() ) )
             {
-                // Update transcript
-                super.insertMessage( message );
-
                 final String from = XmppStringUtils.parseResource( message.getFrom() );
 
                 if ( inf != null )
                 {
+                    // This is part of the MUC history. No need to add it to the transcript again.
+
+                    // Add to the UI component that shows the chat.
                     getTranscriptWindow().insertHistoryMessage( from, message.getBody(), sentDate );
                 }
                 else
                 {
+                    // A 'regular' chat message.
                     if ( isBlocked( message.getFrom() ) )
                     {
                         return;
@@ -633,6 +634,10 @@ public class GroupChatRoom extends ChatRoom
                         return;
                     }
 
+                    // Update transcript
+                    super.insertMessage( message );
+
+                    // Add to the UI component that shows the chat.
                     getTranscriptWindow().insertMessage( from, message, getColor( from ), getMessageBackground( from, message.getBody() ) );
                 }
             }
