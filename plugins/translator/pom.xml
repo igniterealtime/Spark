@@ -12,7 +12,7 @@
     <artifactId>translator</artifactId>
     <version>1.6</version>
 
-    <name>Spark Translator Plugin</name>
+    <name>Translator Plugin</name>
     <description>Translates instant messages between users using Google Translation Service.</description>
 
     <contributors>

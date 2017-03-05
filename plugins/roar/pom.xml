@@ -12,7 +12,7 @@
     <artifactId>roar</artifactId>
     <version>0.5.0</version>
 
-    <name>Spark Roar Plugin</name>
+    <name>Roar Plugin</name>
     <description>Provides customizable popup/notification functionality.</description>
 
     <contributors>

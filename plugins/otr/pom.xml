@@ -12,7 +12,7 @@
     <artifactId>otr</artifactId>
     <version>0.5-SNAPSHOT</version>
 
-    <name>Spark OTR Plugin</name>
+    <name>OTR Plugin</name>
     <description>Adds Off-The-Record support to Spark.</description>
 
     <contributors>

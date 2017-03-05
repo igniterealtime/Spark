@@ -12,7 +12,7 @@
     <artifactId>growl</artifactId>
     <version>2.3</version>
 
-    <name>Spark Growl Plugin</name>
+    <name>Growl Plugin</name>
     <description>Provides Growl notifications (see http://growl.info).</description>
 
     <contributors>
