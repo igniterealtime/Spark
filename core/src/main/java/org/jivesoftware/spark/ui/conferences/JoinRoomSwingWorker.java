@@ -10,6 +10,7 @@ import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.ui.ChatContainer;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ChatRoomNotFoundException;
+import org.jivesoftware.spark.ui.RequestFocusListener;
 import org.jivesoftware.spark.ui.rooms.GroupChatRoom;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.SwingWorker;
@@ -112,7 +113,12 @@ public class JoinRoomSwingWorker extends SwingWorker
             {
                 if ( password == null && ConferenceUtils.isPasswordRequired( roomJID ) )
                 {
-                    password = JOptionPane.showInputDialog( null, Res.getString("message.enter.room.password"), Res.getString("title.password.required"), JOptionPane.QUESTION_MESSAGE );
+                    JLabel label = new JLabel(Res.getString("message.enter.room.password"));
+                    JPasswordField passwordField = new JPasswordField();
+                    passwordField.addAncestorListener(new RequestFocusListener());
+                    JOptionPane.showConfirmDialog(null, new Object[]{label, passwordField}, Res.getString("title.password.required"), JOptionPane.OK_CANCEL_OPTION);
+                    password = new String(passwordField.getPassword());
+
                     if ( !ModelUtil.hasLength( password ) )
                     {
                         return null;
