@@ -12,7 +12,7 @@
     <artifactId>jingle</artifactId>
     <version>1.1</version>
 
-    <name>Spark Jingle Plugin</name>
+    <name>Jingle Plugin</name>
     <description>Allows for PC to PC calling.</description>
 
     <contributors>

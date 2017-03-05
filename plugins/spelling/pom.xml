@@ -12,7 +12,7 @@
     <artifactId>spelling</artifactId>
     <version>0.7</version>
 
-    <name>Spark Spelling Plugin</name>
+    <name>Spelling Plugin</name>
     <description>Provides spellchecker functionality.</description>
 
     <contributors>

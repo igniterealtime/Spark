@@ -12,7 +12,7 @@
     <artifactId>flashing</artifactId>
     <version>1.2</version>
 
-    <name>Spark Flashing Plugin</name>
+    <name>Flashing Plugin</name>
     <description>Flashes window on new messages (Microsoft Windows only).</description>
 
     <contributors>

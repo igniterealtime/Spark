@@ -12,7 +12,7 @@
     <artifactId>battleships</artifactId>
     <version>0.2</version>
 
-    <name>Spark Battleships Plugin</name>
+    <name>Battleships Plugin</name>
     <description>An implementation of the classic Battleships guessing game.</description>
 
     <contributors>

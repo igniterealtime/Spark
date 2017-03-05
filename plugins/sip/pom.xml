@@ -12,7 +12,7 @@
     <artifactId>sip</artifactId>
     <version>1.2.0</version>
 
-    <name>Spark SIP Plugin</name>
+    <name>SIP Plugin</name>
     <description>Adds SIP Softphone functionality to Spark.</description>
 
     <contributors>
