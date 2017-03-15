@@ -444,7 +444,7 @@ public class RosterDialog implements ActionListener {
 	    byname = byname.substring(0, byname.indexOf("@"));
 	}
 
-	if (byname.length() <= 4) {
+	if (byname.length() <= 1) {
 	    JOptionPane.showMessageDialog(jidField,
 		    Res.getString("message.search.input.short"),
 		    Res.getString("title.notification"),
