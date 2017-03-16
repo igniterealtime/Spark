@@ -236,7 +236,7 @@ public class HistoryTranscript extends SwingWorker {
 
 			String value = "(" + messageDateFormatter.format(message.getDate()) + ") ";
 
-			builder.append("<tr valign=top><td colspan=2 nowrap>");
+			builder.append("<tr valign=top><td colspan=2>");
 			builder.append("<font face=dialog size=3 color='").append(color).append("'>");
 			builder.append(value);
 			if (broadcastnick == null){
