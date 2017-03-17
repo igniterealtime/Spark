@@ -109,6 +109,7 @@ public class UserSearchService implements Searchable {
 
         GraphicUtils.centerWindowOnScreen(dialog);
         dialog.setVisible(true);
+        frame.setVisible(false);
     }
 
     /**
