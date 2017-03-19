@@ -12,7 +12,7 @@
     <artifactId>tictactoe</artifactId>
     <version>0.2</version>
 
-    <name>TicTacToe Plugin</name>
+    <name>TicTacToe</name>
     <description>The most sophisticated TicTacToe Game ever created.</description>
 
     <contributors>

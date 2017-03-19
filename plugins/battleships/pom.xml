@@ -12,7 +12,7 @@
     <artifactId>battleships</artifactId>
     <version>0.2</version>
 
-    <name>Battleships Plugin</name>
+    <name>Battleships</name>
     <description>An implementation of the classic Battleships guessing game.</description>
 
     <contributors>
