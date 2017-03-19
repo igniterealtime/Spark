@@ -12,7 +12,7 @@
     <artifactId>fastpath</artifactId>
     <version>3.3.0</version>
 
-    <name>Fastpath Plugin</name>
+    <name>Fastpath</name>
     <description>Provides FastPath Agent functionality.</description>
 
     <contributors>

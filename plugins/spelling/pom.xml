@@ -12,7 +12,7 @@
     <artifactId>spelling</artifactId>
     <version>0.7</version>
 
-    <name>Spelling Plugin</name>
+    <name>Spellchecker Plugin</name>
     <description>Provides spellchecker functionality.</description>
 
     <contributors>
