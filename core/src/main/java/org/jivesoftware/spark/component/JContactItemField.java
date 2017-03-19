@@ -175,12 +175,12 @@ public class JContactItemField extends JPanel {
             }
         }
 
-        if (validItems.size() != 0 && !popup.isVisible()) {
+        if (validItems.size() != 0) {
             popup.pack();
-            if(validItems.size()*16<=SparkManager.getMainWindow().getHeight()-SparkManager.getSearchManager().getSearchServiceUI().getHeight()-SparkManager.getMainWindow().getTopToolBar().getHeight()-SparkManager.getWorkspace().getStatusBar().getHeight()-48){
+            if(validItems.size()*16<=SparkManager.getContactList().getHeight()-SparkManager.getSearchManager().getSearchServiceUI().getHeight()-14){
             	popup.setSize(textField.getWidth(), validItems.size()*16+5);
             }else{
-            	popup.setSize(textField.getWidth(), SparkManager.getMainWindow().getHeight()-SparkManager.getSearchManager().getSearchServiceUI().getHeight()-SparkManager.getMainWindow().getTopToolBar().getHeight()-SparkManager.getWorkspace().getStatusBar().getHeight()-48);
+            	popup.setSize(textField.getWidth(), SparkManager.getContactList().getHeight()-SparkManager.getSearchManager().getSearchServiceUI().getHeight()-14);
             }
             Point pt = textField.getLocationOnScreen();
             pt.translate(0, textField.getHeight());
