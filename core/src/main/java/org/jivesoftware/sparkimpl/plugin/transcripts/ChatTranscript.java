@@ -78,13 +78,15 @@ public class ChatTranscript {
 	    	for(HistoryMessage message : messages) {
 	    		// ignore keywords' case
 	    		if( message.getBody().toLowerCase().contains( text.toLowerCase() ) ) {
-	    			searchResult.add(message);
+                    message.setBody(message.getBody().toLowerCase().replaceAll(text.toLowerCase(),
+                            "<span style=\"background-color: #FFFF00\">"+ text.toLowerCase() +"</span>"));
+                    searchResult.add(message);
 	    		}
 	    	}
 	    	return searchResult;
     	}
     }
-    
+
     /**
      * Clears the Message History if its not needed anymore
      */

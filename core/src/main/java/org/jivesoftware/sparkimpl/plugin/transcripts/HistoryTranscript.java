@@ -166,8 +166,6 @@ public class HistoryTranscript extends SwingWorker {
 
 	/**
      * Builds html string with the stored messages
-     * @param notificationDateFormatter SimpleDateFormat for formating notifications
-     * @param messageDateFormatter notificationDateFormatter SimpleDateFormat for formating messages
      * @return String containing the messages as html 
      */
     public final String buildString(List<HistoryMessage> messages){
@@ -262,7 +260,8 @@ public class HistoryTranscript extends SwingWorker {
 			token.acquire();
 
 			if ((searchFilteredList.size() > 0) && (pageIndex <= searchFilteredList.size())) {
-				builder.append(buildString(searchFilteredList.get(pageIndex-1).getMessages()));
+                builder.append(org.apache.commons.lang3.StringEscapeUtils.unescapeHtml4(
+                        buildString(searchFilteredList.get(pageIndex-1).getMessages())));
 
 			}else{
 				// Handle no history
