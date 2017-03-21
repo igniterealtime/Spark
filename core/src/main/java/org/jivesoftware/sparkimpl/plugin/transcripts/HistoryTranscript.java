@@ -261,6 +261,7 @@ public class HistoryTranscript extends SwingWorker {
 			token.acquire();
 
 			if ((searchFilteredList.size() > 0) && (pageIndex <= searchFilteredList.size())) {
+                builder.append("<html><body><table cellpadding=0 cellspacing=0>");
                 builder.append(unescapeHtml4(buildString(searchFilteredList.get(pageIndex-1).getMessages())));
 			}else{
 				// Handle no history
@@ -623,8 +624,6 @@ public class HistoryTranscript extends SwingWorker {
 		GraphicUtils.centerWindowOnScreen(frame);
 		frame.setVisible(true);
 		window.setEditable(false);
-
-		builder.append("<html><body><table cellpadding=0 cellspacing=0>");
 
 		searchField.addKeyListener(new KeyListener() {
 			@Override
