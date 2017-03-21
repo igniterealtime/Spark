@@ -71,20 +71,29 @@ public class ChatTranscript {
      * @return the messages that included search keywords.
      */
     public List<HistoryMessage> getMessage(String text) {
-    	if(text == null || "".equals(text)) {
-    		return messages;
-    	} else {
-	    	List<HistoryMessage> searchResult = new ArrayList<>();
-	    	for(HistoryMessage message : messages) {
-	    		// ignore keywords' case
-	    		if( message.getBody().toLowerCase().contains( text.toLowerCase() ) ) {
-	    			searchResult.add(message);
-	    		}
-	    	}
-	    	return searchResult;
-    	}
+        if (text == null || "".equals(text)) {
+            return messages;
+        } else {
+            List<HistoryMessage> searchResult = new ArrayList<>();
+            int iter = 0;
+            HistoryMessage previous = null;
+            for(HistoryMessage message : messages) {
+                iter++;
+                if (message.getBody().toLowerCase().contains(text.toLowerCase())) {
+                    if (previous != null) {
+                        searchResult.add(previous);
+                    }
+                    searchResult.add(message);
+                    if (iter + 1 != messages.size()) {
+                        searchResult.add(messages.get(iter + 1));
+                    }
+                }
+                previous = message;
+            }
+            return searchResult;
+        }
     }
-    
+
     /**
      * Clears the Message History if its not needed anymore
      */
