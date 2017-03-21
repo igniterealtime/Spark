@@ -35,6 +35,7 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jxmpp.util.XmppStringUtils;
+import static org.apache.commons.lang3.StringEscapeUtils.unescapeHtml4;
 
 /**
  * This class represents the history transcript
@@ -260,9 +261,7 @@ public class HistoryTranscript extends SwingWorker {
 			token.acquire();
 
 			if ((searchFilteredList.size() > 0) && (pageIndex <= searchFilteredList.size())) {
-                builder.append(org.apache.commons.lang3.StringEscapeUtils.unescapeHtml4(
-                        buildString(searchFilteredList.get(pageIndex-1).getMessages())));
-
+                builder.append(unescapeHtml4(buildString(searchFilteredList.get(pageIndex-1).getMessages())));
 			}else{
 				// Handle no history
 				builder.replace(0, builder.length(), "");

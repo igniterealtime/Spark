@@ -72,14 +72,18 @@ public class ChatTranscript {
      */
     public List<HistoryMessage> getMessage(String text) {
     	if(text == null || "".equals(text)) {
+            for (HistoryMessage message : messages) {
+                message.setBody(message.getBody().toLowerCase().replaceAll("#ffff00","#ffffff"));
+                System.out.println(message.getBody());
+            }
     		return messages;
     	} else {
 	    	List<HistoryMessage> searchResult = new ArrayList<>();
-	    	for(HistoryMessage message : messages) {
+	    	for (HistoryMessage message : messages) {
 	    		// ignore keywords' case
-	    		if( message.getBody().toLowerCase().contains( text.toLowerCase() ) ) {
+	    		if (message.getBody().toLowerCase().contains(text.toLowerCase())) {
                     message.setBody(message.getBody().toLowerCase().replaceAll(text.toLowerCase(),
-                            "<span style=\"background-color: #FFFF00\">"+ text.toLowerCase() +"</span>"));
+                            "<span style=\"background-color: #ffff00\">" + text.toLowerCase() + "</span>"));
                     searchResult.add(message);
 	    		}
 	    	}
