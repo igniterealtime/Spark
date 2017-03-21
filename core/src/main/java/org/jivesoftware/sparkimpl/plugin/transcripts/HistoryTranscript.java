@@ -166,8 +166,6 @@ public class HistoryTranscript extends SwingWorker {
 
 	/**
      * Builds html string with the stored messages
-     * @param notificationDateFormatter SimpleDateFormat for formating notifications
-     * @param messageDateFormatter notificationDateFormatter SimpleDateFormat for formating messages
      * @return String containing the messages as html 
      */
     public final String buildString(List<HistoryMessage> messages){
