@@ -16,12 +16,17 @@
 package org.jivesoftware.sparkimpl.profile;
 
 import org.jivesoftware.resource.Res;
+import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.URLFileSystem;
 import org.jivesoftware.spark.util.log.Log;
 
+import net.coobird.thumbnailator.Thumbnails;
+import net.coobird.thumbnailator.geometry.Positions;
+
+import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -42,6 +47,8 @@ import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -172,7 +179,7 @@ public class AvatarPanel extends JPanel implements ActionListener {
                 changeAvatar(file, this);
             }
             else {
-            	UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
+                UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
                 JOptionPane.showMessageDialog(this, "Please choose a valid image file.", Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
             }
 
@@ -182,24 +189,12 @@ public class AvatarPanel extends JPanel implements ActionListener {
 
     private void changeAvatar(final File selectedFile, final Component parent) {
         SwingWorker worker = new SwingWorker() {
-            public Object construct() {
-                try {
-                    ImageIcon imageOnDisk = new ImageIcon(selectedFile.getCanonicalPath());
-                    Image avatarImage = imageOnDisk.getImage();
-                    if (avatarImage.getHeight(null) > 128 || avatarImage.getWidth(null) > 128) {
-                        avatarImage = avatarImage.getScaledInstance(-1, 128, Image.SCALE_SMOOTH);
-                    }
-                    return avatarImage;
-                }
-                catch (IOException ex) {
-                    Log.error(ex);
-                }
-                return null;
+            public Object construct() {                
+                return cropImageFile(selectedFile);
             }
 
             public void finished() {
-                Image avatarImage = (Image)get();
-
+                BufferedImage avatarImage = (BufferedImage)get();
                 /*
                 // Check size.
                 long length = GraphicUtils.getBytesFromImage(avatarImage).length * 8;
@@ -214,8 +209,14 @@ public class AvatarPanel extends JPanel implements ActionListener {
                     return;
                 }
                 */
-                setAvatar(new ImageIcon(avatarImage));
-                avatarFile = selectedFile;
+                //convert BufferedImage to bytes
+                try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {                    
+                    ImageIO.write(avatarImage, "png", baos);
+                    setAvatar(new ImageIcon(avatarImage));
+                    setAvatarBytes(baos.toByteArray());
+                } catch (IOException ex) {
+                    Log.error(ex);
+                }                
             }
         };
 
@@ -291,7 +292,43 @@ public class AvatarPanel extends JPanel implements ActionListener {
         this.dlg = dialog;
     }
 
+    /*
+     * Crop the given image file to the target dimensions 
+     * without changing aspect ratio.
+     * Returns modified image as BufferedImage.  
+     */
+    private BufferedImage cropImageFile(File selectedFile) {
 
+        int targetImageWidth = 64;
+        int targetImageHeight = 64;
+
+        BufferedImage croppedImage = null;
+        try {
+            BufferedImage avatarImageBuffered = ImageIO.read(selectedFile);
+            int currentImageWidth = avatarImageBuffered.getWidth(null);
+            int currentImageHeight = avatarImageBuffered.getHeight(null);
+            
+            if (currentImageHeight == targetImageHeight && currentImageWidth == targetImageHeight) {
+                //no need to crop
+                croppedImage = avatarImageBuffered;
+            } else {
+                double targetImageRatio = (double)targetImageWidth / (double)targetImageHeight;
+
+                if (currentImageWidth < targetImageRatio * currentImageHeight) {
+                    currentImageHeight = new Double((double)currentImageWidth / (double)targetImageRatio).intValue();
+                } else {
+                    currentImageWidth = new Double(((double)currentImageHeight * targetImageRatio)).intValue();
+                }
+                //crop image in the center
+                croppedImage = Thumbnails.of(avatarImageBuffered).sourceRegion(Positions.CENTER, currentImageWidth, currentImageHeight).
+                        size(targetImageWidth, targetImageHeight).asBufferedImage();
+            }
+
+        } catch (IOException ex) {
+            Log.error(ex);
+        }
+        return croppedImage;
+    }
 }
 
 

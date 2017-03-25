@@ -442,18 +442,7 @@ public class VCardEditor {
 	vcard.setPhoneHome("CELL", homePanel.getMobile());
 
 	// Save Avatar
-	final File avatarFile = avatarPanel.getAvatarFile();
 	byte[] avatarBytes = avatarPanel.getAvatarBytes();
-
-	if (avatarFile != null) {
-	    avatarBytes = GraphicUtils.getBytesFromImage(avatarFile);
-	    ImageIcon icon = new ImageIcon(avatarBytes);
-	    Image image = icon.getImage();
-	    if (icon.getIconHeight() > 128 || icon.getIconWidth() > 128) {
-	        image = image.getScaledInstance(-1, 128, Image.SCALE_SMOOTH);
-	    } 
-
-	}
 
 	// If avatar bytes, persist as vcard.
 	if (avatarBytes != null) {
@@ -467,7 +456,7 @@ public class VCardEditor {
 	    vcard.save(SparkManager.getConnection());
 
 	    // Notify users.
-	    if (avatarFile != null || avatarBytes != null) {
+	    if (avatarBytes != null) {
 		Presence presence = SparkManager.getWorkspace().getStatusBar()
 			.getPresence();
 		Presence newPresence = new Presence(presence.getType(),
