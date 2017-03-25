@@ -17,7 +17,9 @@ package org.jivesoftware.sparkimpl.plugin.transcripts;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * A single chat transcript mapped to one JID.
@@ -75,17 +77,24 @@ public class ChatTranscript {
             return messages;
         } else {
             List<HistoryMessage> searchResult = new ArrayList<>();
-            int iter = 0;
+            Set<Integer> lines = new HashSet<>();
             HistoryMessage previous = null;
+            int iter = -1;
             for(HistoryMessage message : messages) {
                 iter++;
                 if (message.getBody().toLowerCase().contains(text.toLowerCase())) {
-                    if (previous != null) {
+                    if (previous != null && !lines.contains(iter - 1)) {
                         searchResult.add(previous);
+                        lines.add(iter - 1);
                     }
-                    searchResult.add(message);
-                    if (iter + 1 != messages.size()) {
+                    if (!lines.contains(iter)) {
+                        searchResult.add(message);
+                        lines.add(iter);
+                    }
+                    if (iter + 1 <= messages.size() - 1
+                            && !lines.contains(iter + 1)) {
                         searchResult.add(messages.get(iter + 1));
+                        lines.add(iter + 1);
                     }
                 }
                 previous = message;
