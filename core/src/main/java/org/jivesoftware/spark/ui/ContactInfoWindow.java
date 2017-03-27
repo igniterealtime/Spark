@@ -38,6 +38,7 @@ import javax.swing.JWindow;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smackx.caps.EntityCapsManager;
 import org.jivesoftware.smackx.vcardtemp.packet.VCard;
 import org.jivesoftware.smackx.iqlast.packet.LastActivity;
 import org.jivesoftware.smackx.iqlast.LastActivityManager;
@@ -231,6 +232,7 @@ public class ContactInfoWindow extends JPanel {
         }
         if (status.equals(Res.getString("offline")) || contactItem.getPresence().isAway()) {
         	//If user is offline or away, try to see last activity
+
 	        try {
 				String client = "";
 				if (!status.equals(Res.getString("offline"))) {
@@ -240,7 +242,6 @@ public class ContactInfoWindow extends JPanel {
 						client = client.substring(client.lastIndexOf("/"));
 					} else client = "/";
 				}
-	
 	            LastActivity activity = LastActivityManager.getInstanceFor( SparkManager.getConnection() ).getLastActivity( contactItem.getJID()+client);
 	
 	            long idleTime = (activity.getIdleTime() * 1000);
@@ -265,6 +266,7 @@ public class ContactInfoWindow extends JPanel {
 	                }
 	            }
 	        } catch (Exception e1) {
+	            Log.warning( "Unable to get Last Activity from: " + contactItem.toString(), e1 );
 	        }
         }
         statusLabel.setText(status);
