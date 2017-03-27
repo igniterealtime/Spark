@@ -24,6 +24,7 @@ import org.jivesoftware.spark.component.VerticalFlowLayout;
 import org.jivesoftware.spark.component.panes.CollapsiblePane;
 import org.jivesoftware.spark.component.renderer.JContactItemRenderer;
 import org.jivesoftware.spark.util.*;
+import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
@@ -1074,7 +1075,18 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
      */
     private void displayWindow(MouseEvent e) {
     	if(preferences.areVCardsVisible()) {
-    		UIComponentRegistry.getContactInfoWindow().display(this, e);
+            final ContactGroup parent = this;
+            final SwingWorker worker = new SwingWorker()
+            {
+                @Override
+                public Object construct()
+                {
+                    UIComponentRegistry.getContactInfoWindow().display(parent, e);
+                    return null;
+                }
+            };
+            worker.start();
+
     	}
     }
     
