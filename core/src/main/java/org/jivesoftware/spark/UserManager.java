@@ -448,7 +448,7 @@ public class UserManager {
 
         final JPanel mainPanel = new JPanel(new BorderLayout());
         mainPanel.setLayout(new GridBagLayout());
-        mainPanel.add(layoutPanel, new GridBagConstraints(0, 0, 1, 1, 0.5, 0.5, GridBagConstraints.NORTH, GridBagConstraints.NONE, new Insets(60, 1, 5, 1), 200, 0));
+        mainPanel.add(layoutPanel, new GridBagConstraints(0, 0, 1, 1, 0.5, 0.5, GridBagConstraints.NORTH, GridBagConstraints.NONE, new Insets(115, 1, 5, 1), 200, 0));
         mainPanel.setOpaque(false);
 
         contactField.setText(contact);
