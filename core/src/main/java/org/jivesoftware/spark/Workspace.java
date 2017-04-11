@@ -401,7 +401,7 @@ public class Workspace extends JPanel implements StanzaListener {
         }
 
         // Insert offline message
-        room.getTranscriptWindow().insertMessage(nickname, message, ChatManager.FROM_COLOR, Color.white);
+        room.getTranscriptWindow().insertMessage(nickname, message, ChatManager.FROM_COLOR);
         room.addToTranscript(message, true);
 
         // Send display and notified message back.

@@ -29,22 +29,14 @@ import javax.swing.*;
 import javax.swing.text.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.*;
 import java.util.List;
-import java.util.StringTokenizer;
 
 /**
  * The ChatArea class handles proper chat text formatting such as url handling. Use ChatArea for proper
  * formatting of bold, italics, underlined and urls.
  */
 public class ChatArea extends JTextPane implements MouseListener, MouseMotionListener, ActionListener {
-	private static final long serialVersionUID = -2155445968040220072L;
-
-	/**
-     * The SimpleAttributeSet used within this instance of JTextPane.
-     */
-    public final SimpleAttributeSet styles = new SimpleAttributeSet();
 
     /**
      * The default Hand cursor.
@@ -56,20 +48,9 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
      */
     public static final Cursor DEFAULT_CURSOR = new Cursor(Cursor.DEFAULT_CURSOR);
 
-    /**
-     * The currently selected Font Family to use.
-     */
-    private String fontFamily;
-
-    /**
-     * The currently selected Font Size to use.
-     */
-    private int fontSize;
-
     private List<ContextMenuListener> contextMenuListeners = new ArrayList<>();
 
     private JPopupMenu popup;
-
 
     private JMenuItem cutMenu;
     private JMenuItem copyMenu;
@@ -96,13 +77,6 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
         if(emoticonPacks == null) {
         	emoticonsAvailable = false;
         }
-
-        // Set Default Font
-        final LocalPreferences pref = SettingsManager.getLocalPreferences();
-        int fs = pref.getChatRoomFontSize();
-        fontSize = fs;
-        setFontSize(fs);
-
 
         cutMenu = new JMenuItem(Res.getString("action.cut"));
         cutMenu.addActionListener(this);
@@ -154,29 +128,6 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
     }
 
     /**
-     * Set the current text of the ChatArea.
-     *
-     * @param message inserts the text directly into the ChatArea
-     */
-    public void setText(String message) {
-        // By default, use the hand cursor for link selection
-        // and scrolling.
-      //  setCursor(HAND_CURSOR);
-
-        // Make sure the message is not null.
-        //  message = message.trim();
-        // Why?
-//        message = message.replaceAll("/\"", "");
-        if (ModelUtil.hasLength(message)) {
-            try {
-                insert(message);
-            }
-            catch (BadLocationException e) {
-                Log.error(e);
-            }
-        }
-    }
-    /**
      * setText is a core JTextPane method that can beused to inject a different Document type
      * for instance HTMLDocument (setText("<HTML></HTML>")
      * We should keep the functionality - it is useful when we want to inject a different Document type
@@ -215,252 +166,6 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
      */
     public void clear() {
         super.setText("");
-        if (fontFamily != null) {
-            setFont(fontFamily);
-        }
-
-        if (fontSize != 0) {
-            setFontSize(fontSize);
-        }
-
-        StyleConstants.setUnderline(styles, false);
-        StyleConstants.setBold(styles, false);
-        StyleConstants.setItalic(styles, false);
-        setCharacterAttributes(styles, false);
-    }
-
-
-    /**
-     * Does the actual insertion of text, adhering to the styles
-     * specified during message creation in either the thin or thick client.
-     *
-     * @param text - the text to insert.
-     * @throws BadLocationException if location is not available to insert into.
-     */
-    public void insert(String text) throws BadLocationException {
-        boolean bold = false;
-        boolean italic = false;
-        boolean underlined = false;
-        final StringTokenizer tokenizer = new StringTokenizer(text, " \n \t", true);
-        while (tokenizer.hasMoreTokens()) {
-            String textFound = tokenizer.nextToken();
-            if ((textFound.startsWith("http://") || textFound.startsWith("ftp://")
-                    || textFound.startsWith("https://") || textFound.startsWith("www.") || textFound.startsWith("file:/") ) &&
-                    textFound.indexOf(".") > 1) {
-                insertLink(textFound);
-            }
-            else if ( textFound.startsWith("\\\\")  || (textFound.indexOf("://") > 0 && textFound.indexOf(".") < 1) ) {
-                insertAddress(textFound);
-            }     
-            else if (!insertImage(textFound)) {
-                insertText(textFound);
-            }
-        }
-
-        // By default, always have decorations off.
-        StyleConstants.setBold(styles, bold);
-        StyleConstants.setItalic(styles, italic);
-        StyleConstants.setUnderline(styles, underlined);
-    }
-
-    /**
-     * Inserts text into the current document.
-     *
-     * @param text the text to insert
-     * @throws BadLocationException if the location is not available for insertion.
-     */
-    public void insertText(String text) throws BadLocationException {
-        final Document doc = getDocument();
-        styles.removeAttribute("link");
-        doc.insertString(doc.getLength(), text, styles);
-        setCaretPosition(doc.getLength());
-    }
-
-    /**
-     * Inserts text into the current document.
-     *
-     * @param text  the text to insert
-     * @param color the color of the text
-     * @throws BadLocationException if the location is not available for insertion.
-     */
-    public void insertText(String text, Color color) throws BadLocationException {
-        final Document doc = getDocument();
-        StyleConstants.setForeground(styles, color);
-        doc.insertString(doc.getLength(), text, styles);
-        setCaretPosition(doc.getLength());
-    }
-
-    /**
-     * Inserts a link into the current document.
-     *
-     * @param link - the link to insert( ex. http://www.javasoft.com )
-     * @throws BadLocationException if the location is not available for insertion.
-     */
-    public void insertLink(String link) throws BadLocationException {
-        final Document doc = getDocument();
-        styles.addAttribute("link", link);
-
-        StyleConstants.setForeground(styles, (Color)UIManager.get("Link.foreground"));
-        StyleConstants.setUnderline(styles, true);
-        doc.insertString(doc.getLength(), link, styles);
-        StyleConstants.setUnderline(styles, false);
-        StyleConstants.setForeground(styles, (Color)UIManager.get("TextPane.foreground"));
-        styles.removeAttribute("link");
-        setCharacterAttributes(styles, false);
-        setCaretPosition(doc.getLength());
-
-    }
-    
-     /**
-     * Inserts a network address into the current document. 
-     *
-     * @param address - the address to insert( ex. \superpc\etc\file\ OR http://localhost/ )
-     * @throws BadLocationException if the location is not available for insertion.
-     */
-    public void insertAddress(String address) throws BadLocationException {
-        final Document doc = getDocument();
-        styles.addAttribute("link", address);
-
-        StyleConstants.setForeground(styles, (Color)UIManager.get("Address.foreground"));
-        StyleConstants.setUnderline(styles, true);
-        doc.insertString(doc.getLength(), address, styles);
-        StyleConstants.setUnderline(styles, false);
-        StyleConstants.setForeground(styles, (Color)UIManager.get("TextPane.foreground"));
-        styles.removeAttribute("link");
-        setCharacterAttributes(styles, false);
-        setCaretPosition(doc.getLength());
-
-    }
-
-    /**
-     * Inserts an emotion icon into the current document.
-     *
-     * @param imageKey - the smiley representation of the image.( ex. :) )
-     * @return true if the image was found, otherwise false.
-     */
-    public boolean insertImage(String imageKey) {
-    	
-        if(!forceEmoticons && !SettingsManager.getLocalPreferences().areEmoticonsEnabled() || !emoticonsAvailable){
-            return false;
-        }
-        final Document doc = getDocument();
-        Icon emotion = emoticonManager.getEmoticonImage(imageKey.toLowerCase());
-        if (emotion == null) {
-            return false;
-        }
-
-        select(doc.getLength(), doc.getLength());
-        insertIcon(emotion);
-        setCaretPosition(doc.getLength());
-
-        return true;
-    }
-
-    /**
-     * Inserts horizontal line
-     */
-    public void insertHorizontalLine() {
-        try {
-            insertComponent( new JSeparator() );
-            insertText("\n");
-        }
-        catch (BadLocationException e) {
-            Log.error("Error message.", e);
-        }
-    }
-
-    /**     
-     * Sets the current element to be either bold or not depending
-     * on the current state. If the element is currently set as bold,
-     * it will be set to false, and vice-versa.
-     */
-    public void setBold() {
-        final Element element = getStyledDocument().getCharacterElement(getCaretPosition() - 1);
-        if (element != null) {
-            AttributeSet as = element.getAttributes();
-            boolean isBold = StyleConstants.isBold(as);
-            StyleConstants.setBold(styles, !isBold);
-            try {
-                setCharacterAttributes(styles, true);
-            }
-            catch (Exception ex) {
-                Log.error("Error settings bold:", ex);
-            }
-        }
-    }
-
-    /**
-     * Sets the current element to be either italicized or not depending
-     * on the current state. If the element is currently set as italic,
-     * it will be set to false, and vice-versa.
-     */
-    public void setItalics() {
-        final Element element = getStyledDocument().getCharacterElement(getCaretPosition() - 1);
-        if (element != null) {
-            AttributeSet as = element.getAttributes();
-            boolean isItalic = StyleConstants.isItalic(as);
-            StyleConstants.setItalic(styles, !isItalic);
-            try {
-                setCharacterAttributes(styles, true);
-            }
-            catch (Exception fontException) {
-                Log.error("Error settings italics:", fontException);
-            }
-        }
-    }
-
-    /**
-     * Sets the current document to be either underlined or not depending
-     * on the current state. If the element is currently set as underlined,
-     * it will be set to false, and vice-versa.
-     */
-    public void setUnderlined() {
-        final Element element = getStyledDocument().getCharacterElement(getCaretPosition() - 1);
-        if (element != null) {
-            AttributeSet as = element.getAttributes();
-            boolean isUnderlined = StyleConstants.isUnderline(as);
-            StyleConstants.setUnderline(styles, !isUnderlined);
-            try {
-                setCharacterAttributes(styles, true);
-            }
-            catch (Exception underlineException) {
-                Log.error("Error settings underline:", underlineException);
-            }
-        }
-    }
-
-    /**
-     * Set the font on the current element.
-     *
-     * @param font the font to use with the current element
-     */
-    public void setFont(String font) {
-        StyleConstants.setFontFamily(styles, font);
-        try {
-            setCharacterAttributes(styles, false);
-        }
-        catch (Exception fontException) {
-            Log.error("Error settings font:", fontException);
-        }
-
-        fontFamily = font;
-    }
-
-    /**
-     * Set the current font size.
-     *
-     * @param size the current font size.
-     */
-    public void setFontSize(int size) {
-        StyleConstants.setFontSize(styles, size);
-        try {
-            setCharacterAttributes(styles, false);
-        }
-        catch (Exception fontException) {
-            Log.error("Error settings font:", fontException);
-        }
-
-        fontSize = size;
     }
 
     public void mouseClicked(MouseEvent e) {
@@ -567,98 +272,6 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
         catch (Exception ex) {
             Log.error("Error in CheckLink:", ex);
         }
-    }
-
-    /**
-     * Examines the chatInput text pane, and returns a string containing the text with any markup
-     * (jive markup in our case). This will strip any terminating new line from the input.
-     *
-     * @return a string of marked up text.
-     */
-    public String getMarkup() {
-        final StringBuilder buf = new StringBuilder();
-        final String text = getText();
-        final StyledDocument doc = getStyledDocument();
-        final Element rootElem = doc.getDefaultRootElement();
-
-        // MAY RETURN THIS BLOCK
-        if (text.trim().length() <= 0) {
-            return null;
-        }
-
-        boolean endsInNewline = text.charAt(text.length() - 1) == '\n';
-        for (int j = 0; j < rootElem.getElementCount(); j++) {
-            final Element pElem = rootElem.getElement(j);
-
-            for (int i = 0; i < pElem.getElementCount(); i++) {
-                final Element e = pElem.getElement(i);
-                final AttributeSet as = e.getAttributes();
-                final boolean bold = StyleConstants.isBold(as);
-                final boolean italic = StyleConstants.isItalic(as);
-                final boolean underline = StyleConstants.isUnderline(as);
-                int end = e.getEndOffset();
-
-                if (end > text.length()) {
-                    end = text.length();
-                }
-
-                if (endsInNewline && end >= text.length() - 1) {
-                    end--;
-                }
-
-                // swing text.. :-/
-                if (j == rootElem.getElementCount() - 1
-                        && i == pElem.getElementCount() - 1) {
-                    end = text.length();
-                }
-
-                final String current = text.substring(e.getStartOffset(), end);
-                if (bold) {
-                    buf.append("[b]");
-                }
-                if (italic) {
-                    buf.append("[i]");
-                }
-                if (underline) {
-                    buf.append("[u]");
-                }
-                //buf.append( "[font face=/\"" + fontFamily + "/\" size=/\"" + fontSize + "/\"/]" );
-
-                // Iterator over current string to find url tokens
-                final StringTokenizer tkn = new StringTokenizer(current, " ", true);
-                while (tkn.hasMoreTokens()) {
-                    final String token = tkn.nextToken();
-                    if (token.startsWith("http://") || token.startsWith("ftp://")
-                            || token.startsWith("https://")) {
-                        buf.append("[url]").append(token).append("[/url]");
-                    }
-                    else if (token.startsWith("www")) {
-                        buf.append("[url ");
-                        buf.append("http://").append(token);
-                        buf.append("]");
-                        buf.append(token);
-                        buf.append("[/url]");
-                    }
-                    else {
-                        buf.append(token);
-                    }
-                }
-
-                // Always add end tags for markup
-                if (underline) {
-                    buf.append("[/u]");
-                }
-                if (italic) {
-                    buf.append("[/i]");
-                }
-                if (bold) {
-                    buf.append("[/b]");
-                }
-                //  buf.append( "[/font]" );
-            }
-        }
-
-        return buf.toString();
     }
 
     private void handlePopup(MouseEvent e) {

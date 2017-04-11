@@ -93,7 +93,7 @@ public class ChatRoomTransferHandler extends TransferHandler {
                 Object o = t.getTransferData(flavors[1]);
                 if (o instanceof String) {
                     // Otherwise fire files dropped event.
-                    chatRoom.getChatInputEditor().insert((String)o);
+                    chatRoom.getChatInputEditor().insertText((String)o);
                     return true;
                 }
             }
