@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2004-2011 Jive Software. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -55,7 +55,6 @@ import java.util.List;
  * The base implementation of all ChatRoom conversations. You would implement this class to have most types of Chat.
  */
 public abstract class ChatRoom extends BackgroundPanel implements ActionListener, StanzaListener, DocumentListener, ConnectionListener, FocusListener, ContextMenuListener, ChatFrameToFrontListener {
-	private static final long serialVersionUID = 7981019929515888299L;
 	private final JPanel chatPanel;
     private final JSplitPane splitPane;
     private JSplitPane verticalSplit;
@@ -409,89 +408,83 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
      *             when for some reason the GroupChatRoom cannot be found, this
      *             should <u>not</u> happen, since we retrieve it from the
      *             ActiveWindowTab and thus <u>can be ignored</u>
-     * @author wolf.posdorfer
      */
-    private void handleNickNameCompletion() throws ChatRoomNotFoundException {
+    private void handleNickNameCompletion() throws ChatRoomNotFoundException
+    {
+        // Search for a name that starts with the same word as the last word in the chat input editor.
+        final String text = getChatInputEditor().getText();
+        if ( text == null || text.isEmpty() )
+        {
+            return;
+        }
 
-	String name = getChatInputEditor().getText();
-	if (name.length() < 1)
-	    return;
-	else if (name.contains(" ")) {
-	    if (name.substring(name.lastIndexOf(" ") + 1).length() > 0) {
-		name = name.substring(name.lastIndexOf(" ") + 1);
-	    }
-	}
+        final int lastSpaceCharacterIndex = text.lastIndexOf( ' ' ); // -1 when space does not occur.
+        final String needle = text.substring( lastSpaceCharacterIndex + 1 );
 
-	Collection<String> groupchatlist = new ArrayList<>();
-	Collection<RosterEntry> rosterlist = Roster.getInstanceFor( SparkManager.getConnection() ).getEntries();
+        final Set<String> matches = new TreeSet<>( String::compareToIgnoreCase );
 
-	if(SparkManager.getChatManager().getChatContainer().getActiveChatRoom() instanceof GroupChatRoom)
-	{
-	    groupchatlist  =((GroupChatRoom) SparkManager.getChatManager().getChatContainer().getActiveChatRoom()).getParticipants();
-	}
-	String newname = null;
-	ArrayList<String> namelist = new ArrayList<>();
+        if ( SparkManager.getChatManager().getChatContainer().getActiveChatRoom() instanceof GroupChatRoom )
+        {
+            final GroupChatRoom activeChatRoom = (GroupChatRoom) SparkManager.getChatManager().getChatContainer().getActiveChatRoom();
+            for ( String participant : activeChatRoom.getParticipants() )
+            {
+                final String nickname = participant.substring( participant.lastIndexOf( "/" ) + 1 );
+                if ( nickname.toLowerCase().startsWith( needle.toLowerCase() ) )
+                {
+                    matches.add( nickname );
+                }
+            }
+        }
+        else
+        {
+            for ( RosterEntry re : Roster.getInstanceFor( SparkManager.getConnection() ).getEntries() )
+            {
+                // Use the name if available, otherwise the localpart of the JID.
+                final String username;
+                if ( re.getName() != null )
+                {
+                    username = re.getName();
+                }
+                else
+                {
+                    username = re.getUser().substring( 0, re.getUser().indexOf( '@' ) );
+                }
 
-	for (String lol : groupchatlist) {
-	    lol = lol.substring(lol.lastIndexOf("/") + 1);
-	    if (lol.toLowerCase().startsWith(name.toLowerCase())) {
-		if (newname == null) {
-		    newname = lol;
-		}
-		namelist.add(lol);
-	    }
-	}
+                if ( username.toLowerCase().startsWith( needle.toLowerCase() ) )
+                {
+                    matches.add( username );
+                }
+            }
+        }
 
-	for (RosterEntry re : rosterlist) {
-	    try {
-		if (re.getName().toLowerCase().startsWith(name.toLowerCase()) && !namelist.contains(re.getName())) {
-		    if (newname == null) {
-			newname = re.getName();
-		    }
-		    namelist.add(re.getName());
-		}
-	    } catch (NullPointerException npe) {
-		// AWESOME!!!
-		// happens on shared rosters
-		// or when no vcard is set
-	    }
-	}
+        if ( matches.size() == 1 )
+        {
+            // If we only have 1 match, that match can be used immediately.
+            getChatInputEditor().appendText( matches.iterator().next().substring( needle.length() ) );
+        }
+        else
+        {
+            // More than one match: create Popupmenu and let the user select one.
+            final JPopupMenu popup = new JPopupMenu();
+            for ( final String match : matches )
+            {
+                final JMenuItem menuItem = new JMenuItem( match );
+                popup.add( menuItem );
+                menuItem.addActionListener( new AbstractAction()
+                {
+                    @Override
+                    public void actionPerformed( ActionEvent e )
+                    {
+                        getChatInputEditor().appendText( match.substring( needle.length() ) );
+                        popup.setVisible( false );
+                    }
+                } );
+            }
 
-	if (newname == null) {
-	    newname = "";
-	} else {
-	    newname = newname.substring(name.length());
-	}
-
-	if (namelist.size() <= 1) {
-	    // If we only have 1 match, use newname
-	    getChatInputEditor().setText(newname);
-	} else {
-	    // create Popupmenu creating all other matches
-	    final JPopupMenu popup = new JPopupMenu();
-	    final String namefinal = name;
-	    for (final String s : namelist) {
-		    JMenuItem temp = new JMenuItem(s);
-		    popup.add(temp);
-		    temp.addActionListener(new AbstractAction() {
-			private static final long serialVersionUID = 168886428519741638L;
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-			    getChatInputEditor().setText(
-				    s.substring(namefinal.length()));
-			    popup.setVisible(false);
-
-			}
-		    });
-
-	    }
-	    popup.show(SparkManager.getChatManager()
-		    .getChatContainer(), getChatInputEditor().getCaret()
-		    .getMagicCaretPosition().x, SparkManager.getChatManager()
-		    .getChatContainer().getHeight() - 20);
-	}
-
+            popup.show( SparkManager.getChatManager().getChatContainer(),
+                        getChatInputEditor().getCaret().getMagicCaretPosition().x,
+                        SparkManager.getChatManager().getChatContainer().getHeight() - 20 );
+        }
     }
 
     // I would normally use the command pattern, but
