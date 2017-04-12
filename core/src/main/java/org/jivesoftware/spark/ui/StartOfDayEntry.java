@@ -47,7 +47,8 @@ public class StartOfDayEntry extends TranscriptWindowEntry
 
     protected StartOfDayEntry( ZonedDateTime timestamp )
     {
-        super( timestamp );
+    	//delay here is true because StartOfDayEntry can appear among MessageEntries with delay
+        super( timestamp,true );
     }
 
     @Override
