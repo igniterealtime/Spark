@@ -51,7 +51,22 @@ public class MessageEntry extends TimeStampedEntry
      */
     public MessageEntry( ZonedDateTime timestamp, String prefix, Color prefixColor, String message, Color messageColor )
     {
-        this( timestamp, prefix, prefixColor, message, messageColor, null );
+        this( timestamp, false, prefix, prefixColor, message, messageColor, null );
+    }
+    
+    /**
+     * Creates a new entry using the default background color (white/transparent).
+     *
+     * @param timestamp The timestamp of the entry (cannot be null).
+     * @param isDelayed Set true if entry contain delayed delivery, historic timestamp.
+     * @param prefix The prefix of the message (typically, the name of the author of the message.
+     * @param prefixColor The color to be used for the timestamp and prefix text.
+     * @param message The message text itself.
+     * @param messageColor The color to be used for the message text.
+     */
+    public MessageEntry( ZonedDateTime timestamp, boolean isDelayed, String prefix, Color prefixColor, String message, Color messageColor )
+    {
+        this( timestamp, isDelayed, prefix, prefixColor, message, messageColor, null );
     }
 
     /**
@@ -66,7 +81,24 @@ public class MessageEntry extends TimeStampedEntry
      */
     public MessageEntry( ZonedDateTime timestamp, String prefix, Color prefixColor, String message, Color messageColor, Color backgroundColor )
     {
-        super( timestamp );
+        this( timestamp, false, prefix, prefixColor, message, messageColor,backgroundColor );
+
+    }
+    
+    /**
+     * Creates a new entry using the default background color (white/transparent).
+     *
+     * @param timestamp The timestamp of the entry (cannot be null).
+     * @param isDelayed Set true if entry contain delayed delivery, historic timestamp.
+     * @param prefix The prefix of the message (typically, the name of the author of the message.
+     * @param prefixColor The color to be used for the timestamp and prefix text.
+     * @param message The message text itself.
+     * @param messageColor The color to be used for the message text.
+     * @param backgroundColor The color to be used for the entire entry (prefix as well ass message text).
+     */
+    public MessageEntry( ZonedDateTime timestamp, boolean isDelayed, String prefix, Color prefixColor, String message, Color messageColor, Color backgroundColor )
+    {
+        super( timestamp, isDelayed );
         this.prefix = prefix == null ? "" : prefix;
         this.prefixColor = prefixColor;
         this.message = message;

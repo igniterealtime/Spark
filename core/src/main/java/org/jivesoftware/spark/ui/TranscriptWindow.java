@@ -110,7 +110,7 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener
         //boolean reorderEverything = false;
         if ( !entries.isEmpty() )
         {
-            if ( entry.getTimestamp().isBefore( entries.getLast().getTimestamp() ) )
+            if ( entry.getTimestamp().isBefore( entries.getLast().getTimestamp() ) && !(entries.getLast() instanceof CustomTextEntry) )
             {
                 Log.warning( "A chat entry appears to have been delivered out of order. The transcript window must be reordered!" );
                 //reorderEverything = true;
@@ -123,7 +123,7 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener
                                                 // Clear and refill the UI component.
                                                 try
                                                 {
-                                                    entries.sort( Comparator.comparing( TranscriptWindowEntry::getTimestamp ) );
+                                                    entries.sort( Comparator.comparing(TranscriptWindowEntry::isDelayed).thenComparing( TranscriptWindowEntry::getTimestamp ) );
                                                     clear();
                                                     for ( TranscriptWindowEntry e : entries )
                                                     {
@@ -136,7 +136,7 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener
                                                 }
                                             } );
             }
-            else if ( !entry.getTimestamp().withZoneSameInstant( ZoneId.systemDefault() ).toLocalDate().isEqual( entries.getLast().getTimestamp().withZoneSameInstant( ZoneId.systemDefault() ).toLocalDate() ) )
+            if ( !entry.getTimestamp().withZoneSameInstant( ZoneId.systemDefault() ).toLocalDate().isEqual( entries.getLast().getTimestamp().withZoneSameInstant( ZoneId.systemDefault() ).toLocalDate() ) )
             {
                 // The date appeared to have rolled over, since the last entry. Add a 'start-of-day' entry before we add
                 // the new entry, unless we're already in the process of adding exactly that 'start-of-day' entry.
@@ -248,17 +248,19 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener
         // Verify the timestamp of this message. Determine if it is a 'live' message, or one that was sent earlier.
         final DelayInformation inf = message.getExtension( "delay", "urn:xmpp:delay" );
         final ZonedDateTime sentDate;
+        final boolean isDelayed;
         if ( inf != null )
         {
             sentDate = inf.getStamp().toInstant().atZone( ZoneOffset.UTC );
             body = "(" + Res.getString( "offline" ) + ") " + body;
+            isDelayed = true;
         }
         else
         {
             sentDate = ZonedDateTime.now();
+            isDelayed = false;
         }
-
-        add( new MessageEntry( sentDate, nickname, foreground, body, (Color) UIManager.get( "Message.foreground" ), background ) );
+        add( new MessageEntry( sentDate, isDelayed, nickname, foreground, body, (Color) UIManager.get( "Message.foreground" ), background ) );
     }
 
 
@@ -337,7 +339,7 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener
         final ZonedDateTime sentDate = date.toInstant().atZone( ZoneOffset.UTC );
         final Color historyColor = (Color) UIManager.get( "History.foreground" );
 
-        add( new MessageEntry( sentDate, userid, historyColor, message, historyColor ) );
+        add( new MessageEntry( sentDate, true, userid, historyColor, message, historyColor ) );
     }
 
     public void insertHorizontalLine()

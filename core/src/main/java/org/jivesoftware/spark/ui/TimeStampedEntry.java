@@ -31,9 +31,9 @@ public abstract class TimeStampedEntry extends TranscriptWindowEntry
 {
     private final DateTimeFormatter format;
 
-    protected TimeStampedEntry( ZonedDateTime timestamp )
+    protected TimeStampedEntry( ZonedDateTime timestamp, boolean isDelayed )
     {
-        super( timestamp );
+        super( timestamp, isDelayed );
         format = DateTimeFormatter.ofPattern( SettingsManager.getLocalPreferences().getTimeFormat() );
     }
 

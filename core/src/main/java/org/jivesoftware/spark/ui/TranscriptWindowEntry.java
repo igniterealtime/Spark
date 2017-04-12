@@ -29,6 +29,7 @@ import java.time.ZonedDateTime;
 public abstract class TranscriptWindowEntry
 {
     private final ZonedDateTime timestamp;
+    protected final boolean isDelayed;
 
     /**
      * Constructs a new entry.
@@ -38,13 +39,26 @@ public abstract class TranscriptWindowEntry
      *
      * @param timestamp The timestamp of the entry (cannot be null).
      */
-    protected TranscriptWindowEntry( ZonedDateTime timestamp )
+    protected TranscriptWindowEntry( ZonedDateTime timestamp ){
+    	this(timestamp, false);    	
+    }
+    /**
+     * Constructs a new entry.
+     *
+     * When displayed in context of a conversation, chat entries are ordered by time. This is why the time component
+     * of an entry is non-optional. Note that multiple entries can exist that have the same time component.
+     *
+     * @param timestamp The timestamp of the entry (cannot be null).
+     * @param isDelayed Set true if contain delayed, historic timestamp.
+     */
+    protected TranscriptWindowEntry( ZonedDateTime timestamp, boolean isDelayed )
     {
         if ( timestamp == null )
         {
             throw new IllegalArgumentException( "Argument 'timestamp' cannot be null." );
         }
         this.timestamp = timestamp;
+        this.isDelayed = isDelayed;
     }
 
     /**
@@ -89,4 +103,12 @@ public abstract class TranscriptWindowEntry
     {
         return timestamp.toInstant().hashCode();
     }
+   
+    /**
+     * Is it delayed message.
+     * @return True if message contain historic, delayed delivery timestamp. 
+     */
+	public boolean isDelayed() {
+		return isDelayed;
+	}
 }
