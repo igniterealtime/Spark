@@ -28,7 +28,7 @@ import java.time.ZonedDateTime;
  *
  * @author Guus der Kinderen, guus.der.kinderen@gmail.com
  */
-public class CustomTextEntry extends TranscriptWindowEntry
+public class CustomTextEntry extends TimeStampedEntry
 {
     private final String message;
     private final Color textColor;
@@ -39,7 +39,7 @@ public class CustomTextEntry extends TranscriptWindowEntry
 
     protected CustomTextEntry( ZonedDateTime timestamp, String message, Color textColor, boolean bold, boolean italic, boolean underline, boolean strikeThrough )
     {
-        super( timestamp );
+        super( timestamp, false );
         this.message = message;
         this.textColor = textColor;
         this.bold = bold;
@@ -71,7 +71,7 @@ public class CustomTextEntry extends TranscriptWindowEntry
     {
         final Document doc = chatArea.getDocument();
 
-        doc.insertString( doc.getLength(), message + "\n", getStyle() );
+        doc.insertString( doc.getLength(), getFormattedTimestamp() + message + "\n", getStyle() );
         chatArea.setCaretPosition( doc.getLength() );
     }
 }
