@@ -70,8 +70,6 @@ public class ChatRoomImpl extends ChatRoom {
     private String participantJID;
     private String participantNickname;
 
-    private final Color TRANSPARENT_COLOR = new Color(0,0,0,0);
-
     private Presence presence;
 
     private boolean offlineSent;
@@ -246,7 +244,7 @@ public class ChatRoomImpl extends ChatRoom {
         message.setTo(participantJID);
         message.setFrom(SparkManager.getSessionManager().getJID());
         try {
-            getTranscriptWindow().insertMessage(getNickname(), message, ChatManager.TO_COLOR, TRANSPARENT_COLOR);
+            getTranscriptWindow().insertMessage(getNickname(), message, ChatManager.TO_COLOR);
             getChatInputEditor().selectAll();
 
             getTranscriptWindow().validate();
@@ -480,7 +478,7 @@ public class ChatRoomImpl extends ChatRoom {
             checkEvents(message.getFrom(), message.getStanzaId(), messageEvent);
         }
 
-        getTranscriptWindow().insertMessage(participantNickname, message, ChatManager.FROM_COLOR, TRANSPARENT_COLOR);
+        getTranscriptWindow().insertMessage(participantNickname, message, ChatManager.FROM_COLOR);
 
         // Set the participant jid to their full JID.
         participantJID = message.getFrom();

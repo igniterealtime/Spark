@@ -51,6 +51,8 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -764,37 +766,41 @@ public class VCardManager {
             return null;
         }
 
-        try {
+        final VCard vcard;
+        try ( final BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(vcardFile), "UTF-8")) )
+        {
             // Otherwise load from file system.
-            BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(vcardFile), "UTF-8"));
             VCardProvider provider = new VCardProvider();
-            parser.setInput(in);
-            parser.next(); // progress past the first start tag.
-            parser.next();
-            VCard vcard = provider.parse(parser);
+            parser.setInput( in );
 
-            // Check to see if the file is older 10 minutes. If so, reload.
-            String timestamp = vcard.getField("timestamp");
-            if (timestamp != null) {
-                long time = Long.parseLong(timestamp);
-                long now = System.currentTimeMillis();
-
-
-                long hour = (1000 * 60) * 60;
-                if (now - time > hour) {
-                    addToQueue(jid);
-                }
+            // Skip forward until we're at <vCard xmlns='vcard-temp'>
+            while ( !( parser.getEventType() == XmlPullParser.START_TAG && VCard.ELEMENT.equals( parser.getName() ) && VCard.NAMESPACE.equals( parser.getNamespace() ) ) )
+            {
+                parser.next();
             }
 
-            addVCard(jid, vcard);
-            in.close();
-            return vcard;
+            vcard = provider.parse( parser );
         }
         catch (Exception e) {
             Log.warning("Unable to load vCard for " + jid, e);
+            vcardFile.delete();
+            return null;
         }
 
-        return null;
+        addVCard(jid, vcard);
+
+        // Check to see if the file is older 60 minutes. If so, reload.
+        final String timestamp = vcard.getField( "timestamp" );
+        if ( timestamp != null )
+        {
+            final Duration duration = Duration.between( Instant.ofEpochMilli( Long.parseLong( timestamp ) ), Instant.now() );
+            if ( duration.toMinutes() >= 60 )
+            {
+                addToQueue( jid );
+            }
+        }
+
+        return vcard;
     }
 
 

@@ -265,7 +265,7 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
         String from = message.getFrom() != null ? message.getFrom() : "";
 
         final TranscriptWindow window = new TranscriptWindow();
-        window.insertPrefixAndMessage(null, buf.toString(), ChatManager.TO_COLOR);
+        window.insertNotificationMessage(buf.toString(), ChatManager.TO_COLOR);
 
         JPanel p = new JPanel();
         p.setLayout(new BorderLayout());
@@ -334,7 +334,7 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
 	//m.setFrom(name +" "+broadcasttype);
         m.setFrom(nickname+" - "+broadcasttype);
 
-	chatRoom.getTranscriptWindow().insertMessage(m.getFrom(), message, ChatManager.FROM_COLOR, new Color(0,0,0,0));
+	chatRoom.getTranscriptWindow().insertMessage(m.getFrom(), message, ChatManager.FROM_COLOR);
 	chatRoom.addToTranscript(m,true);
 	chatRoom.increaseUnreadMessageCount();
 	broadcastRooms.add(chatRoom);
