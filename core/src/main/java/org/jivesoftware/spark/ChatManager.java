@@ -66,12 +66,12 @@ public class ChatManager implements ChatManagerListener {
     public static Color NOTIFICATION_COLOR = (Color)UIManager.get("Notification.foreground");
     public static Color ERROR_COLOR = (Color)UIManager.get("Error.foreground");
 
-    public static Color[] COLORS = {Color.red, Color.blue, Color.gray, Color.magenta, new Color(238, 153, 247), new Color(128, 128, 0), new Color(173, 205, 50),
-        new Color(181, 0, 0), new Color(0, 100, 0), new Color(237, 150, 122), new Color(0, 139, 139), new Color(218, 14, 0), new Color(147, 112, 219),
-        new Color(205, 133, 63), new Color(163, 142, 35), new Color(72, 160, 237), new Color(255, 140, 0), new Color(106, 90, 205), new Color(224, 165, 32),
-        new Color(255, 69, 0), new Color(255, 99, 72), new Color(109, 130, 180), new Color(233, 0, 0), new Color(139, 69, 19), new Color(255, 127, 80),
-        new Color(140, 105, 225)};
-
+	public static Color[] COLORS = { Color.blue, Color.gray, Color.magenta, Color.red, Color.PINK,
+			new Color(238, 153, 247), new Color(181, 0, 0), new Color(237, 150, 122), new Color(204, 51, 153),
+			new Color(0, 139, 139), new Color(218, 14, 0), new Color(147, 112, 219), new Color(205, 133, 63),
+			new Color(72, 160, 237), new Color(255, 140, 0), new Color(106, 90, 205), new Color(224, 165, 32),
+			new Color(255, 69, 0), new Color(255, 99, 72), new Color(109, 130, 180), new Color(233, 0, 0),
+			new Color(255, 127, 80), new Color(140, 105, 225), new Color(173, 205, 50) };
     private List<MessageFilter> messageFilters = new ArrayList<>();
 
     private List<GlobalMessageListener> globalMessageListeners = new ArrayList<>();
