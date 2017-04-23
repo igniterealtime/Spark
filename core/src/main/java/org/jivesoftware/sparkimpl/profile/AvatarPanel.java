@@ -317,8 +317,7 @@ public class AvatarPanel extends JPanel implements ActionListener {
         try {
             BufferedImage avatarImageBuffered = ImageIO.read(selectedFile);
             int currentImageWidth = avatarImageBuffered.getWidth(null);
-            int currentImageHeight = avatarImageBuffered.getHeight(null);
-            
+            int currentImageHeight = avatarImageBuffered.getHeight(null);            
             if (currentImageHeight <= 96 && currentImageWidth <= 96) {
                 // no need to resize
                 resizedImage = avatarImageBuffered;

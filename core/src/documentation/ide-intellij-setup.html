@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Spark source code in IntelliJ IDE</title>
+    <style>
+
+        body {
+            background-color: #d3d6d9;
+        }
+        header {
+            background-color: #e7eaee;
+            border: 1px solid #cccccc;
+            margin-top: 10px;
+            padding-left: 20px;
+            border-bottom: 20px solid #335588;
+        }
+        header h1 {
+            font-size: 1.7em;
+            font-weight: bold;
+            color: #670e15;
+        }
+        header p {
+            color: black;
+        }
+        article {
+            background-color: #fff;
+            border: 1px solid #999;
+            padding: 40px;
+            margin: 30px;
+        }
+        img {
+            height: 250px;
+        }
+    </style>
+</head>
+<body>
+    <article>
+        <header>
+            <h1>Spark source code in IntelliJ IDE</h1>
+            <p>
+                This is a short tutorial on how to load the Spark source code in the IntelliJ IDE.
+            </p>
+        </header>
+        <p>
+            IntelliJ is very versatile, and offers many options that are not explored in this guide. Instead, this guide
+            focuses on the bare minimum that is needed to get started.
+        </p>
+
+        <h2>Prepare your environment</h2>
+        <p>
+            This guide assumes that you have IntelliJ installed, and have a copy of the source code available locally.
+            Additionally, a Java Development Kit (version 8) should be installed.
+        </p>
+        <p>
+            Start by creating a new, empty workspace.
+        </p>
+
+        <h2>Create a project and import the source code</h2>
+        <p>
+            The Spark source code is using an Apache Maven project structure. As IntelliJ recognizes this structure,
+            importing the source code into an IntelliJ project is very easy.
+        </p>
+        <p>
+            Select the 'import' option. This will quickly import the Spark source code into a new
+            IntelliJ project.
+        </p>
+
+        <figure>
+            <a href="images/IntelliJ-1.JPG"><img src="images/IntelliJ-1.JPG" alt="Use the 'import' functionality of IntelliJ."></a>
+            <a href="images/IntelliJ-2.JPG"><img src="images/IntelliJ-2.JPG" alt="Select the option that will import our (pre)existing Maven project."></a>
+            <a href="images/IntelliJ-3.JPG"><img src="images/IntelliJ-3.JPG" alt="IntelliJ project options. Defaults should be ok"></a>
+	    <figcaption>Creating a new project in IntelliJ.</figcaption>            
+        </figure>
+
+        <p>
+            Using the 'import' option, select the directory in which the Spark source code is stored. Select the Maven project file (pom.xml).
+        </p>
+        <p>
+            IntelliJ will automatically recognize and process the Maven structure of Spark, as soon as it is pointed to
+            the correct directory. In most cases, You can accept the defaults on the following screens of the import wizard.
+        </p>
+	    
+	<figure>
+            <a href="images/IntelliJ-4.JPG"><img src="images/IntelliJ-4.JPG" alt="Project to import."></a>
+            <a href="images/IntelliJ-5.JPG"><img src="images/IntelliJ-5.JPG" alt="Select the SDK to use. This should auto detect your JDK and path"></a>
+            <a href="images/IntelliJ-6.JPG"><img src="images/IntelliJ-6.JPG" alt="IntelliJ Project Name and Path. Defaults should be ok."></a>
+	    <figcaption>Use the 'import' functionality of IntelliJ to import the source code.</figcaption>            
+        </figure>
+
+        <p>
+            Once the import wizard has been closed, the IntelliJ workspace will show. There are menu bars to the left and right edge. Left edge, click "Project" to extend Project tree. On the right, click "Maven Project" to extend Modules.
+            That's it! You're ready to start working on the code now!
+        </p>
+
+        <figure>
+            <a href="images/IntelliJ-9.JPG"><img src="images/IntelliJ-9.JPG" alt="IntelliJ workspace."></a>
+            <a href="images/IntelliJ-10.JPG"><img src="images/IntelliJ-10.JPG" alt="ntelliJ workspace."></a>
+            <figcaption>Spark modules in the IntelliJ workspace</figcaption>
+        </figure>
+
+        <h2>Run Spark from IntelliJ</h2>
+        <p>
+            When developing, it is often useful to run the code straight from your IDE. The following will explain how
+            you can start a Spark instance from the code that is in the IntelliJ workspace.
+        </p>
+
+        <figure>
+            <a href="images/IntelliJ-7.JPG"><img src="images/IntelliJ-7.JPG" alt="Launch the 'Startup' class as a Java application."></a>
+            <a href="images/IntelliJ-8.JPG"><img src="images/IntelliJ-8.JPG" alt="The Spark login screen, after launching the 'Startup' class."></a>
+            <figcaption>Run Spark straight from the source code.</figcaption>
+        </figure>
+
+        <p>
+            The 'spark-core' module contains a class named <code>Startup</code> (in the <code>org.jivesoftware.launcher</code>
+            package) that can be used to start Spark. Find the class in the Project Explorer, and open its context
+            menu (right-click on the file). In that menu, use the 'Run Startup.main()' option. IntelliJ wil start
+            to build Spark from the source code, after which Spark itself is started. If everything goes well, you will
+            see the Spark login screen within a matter of seconds!
+        </p>
+        <footer>
+            <p>You can find more information on Spark at <a href="https://www.igniterealtime.org/projects/spark/">https://www.igniterealtime.org/projects/spark</a></p>
+        </footer>
+    </article>
+</body>
+</html>

@@ -11,10 +11,16 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.StringReader;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.*;
 import javax.swing.text.*;
@@ -78,7 +84,9 @@ public class HistoryTranscript extends SwingWorker {
 	private List<ChatTranscript> dateFilteredUnfilteredList = new ArrayList<>();
     private AtomicBoolean isHistoryLoaded = new AtomicBoolean(false);
     private final String SEPARATOR = System.getProperty("line.separator");
-
+	private final DefaultHighlighter.DefaultHighlightPainter highlighter = new DefaultHighlighter.DefaultHighlightPainter(Color.YELLOW);
+	private boolean focusFlag = false;
+	private String searchQuery = Res.getString("message.search.for.history");
 
 	/**
 	 * Open the Transcript with the given formatter.
@@ -166,8 +174,6 @@ public class HistoryTranscript extends SwingWorker {
 
 	/**
      * Builds html string with the stored messages
-     * @param notificationDateFormatter SimpleDateFormat for formating notifications
-     * @param messageDateFormatter notificationDateFormatter SimpleDateFormat for formating messages
      * @return String containing the messages as html 
      */
     public final String buildString(List<HistoryMessage> messages){
@@ -260,11 +266,10 @@ public class HistoryTranscript extends SwingWorker {
 	private synchronized void display() {
 		try {
 			token.acquire();
-
 			if ((searchFilteredList.size() > 0) && (pageIndex <= searchFilteredList.size())) {
+				builder.append("<html><body><table cellpadding=0 cellspacing=0>");
 				builder.append(buildString(searchFilteredList.get(pageIndex-1).getMessages()));
-
-			}else{
+			} else {
 				// Handle no history
 				builder.replace(0, builder.length(), "");
 				builder.append("<b>")
@@ -272,6 +277,37 @@ public class HistoryTranscript extends SwingWorker {
 						.append("</b>");
 			}
 			window.setText(builder.toString());
+
+			// highlighting searched text
+			try {
+				String text = searchQuery;
+				Document doc = window.getDocument();
+				String line;
+				if (text.length() > 0 && focusFlag) {
+					String str = doc.getText(1, doc.getLength());
+					BufferedReader buf = new BufferedReader(new StringReader(str));
+					int globalPos = 1;
+					while ((line = buf.readLine()) != null){
+						Matcher matcherTime = Pattern
+								.compile("\\(\\d\\d:\\d\\d:\\d\\d\\)\\s[a-zA-Z0-9]+:\\s")
+								.matcher(line);
+						if (matcherTime.find()) {
+							for (int i = matcherTime.end(); i + text.length() < line.length() + 1; i++) {
+								String match = line.substring(i, i + text.length());
+								if (text.equalsIgnoreCase(match)) {
+									window.getHighlighter().addHighlight(globalPos + i,
+											globalPos + i + text.length(), highlighter);
+								}
+							}
+						}
+						globalPos = globalPos + line.length() + 1;
+					}
+				}
+			} catch (BadLocationException | IOException ex) {
+				Log.error(ex);
+				ex.printStackTrace();
+			}
+
 			builder.replace(0, builder.length(), "");
 			if (window.getText().length() > 0) window.setCaretPosition(0);
 			pageCounter.setText(pageIndex + " / " + maxPages);
@@ -626,8 +662,6 @@ public class HistoryTranscript extends SwingWorker {
 		frame.setVisible(true);
 		window.setEditable(false);
 
-		builder.append("<html><body><table cellpadding=0 cellspacing=0>");
-
 		searchField.addKeyListener(new KeyListener() {
 			@Override
 			public void keyTyped(KeyEvent e) {
@@ -636,8 +670,10 @@ public class HistoryTranscript extends SwingWorker {
 			@Override
 			public void keyReleased(KeyEvent e) {
 				if (e.getKeyChar() == KeyEvent.VK_ENTER) {
+					searchQuery = searchField.getText();
 					TaskEngine.getInstance().schedule(transcriptTask, 10);
 					searchField.requestFocus();
+					focusFlag = true;
 				}
 			}
 
@@ -648,7 +684,9 @@ public class HistoryTranscript extends SwingWorker {
 		});
 		searchField.addFocusListener(new FocusListener() {
 			public void focusGained(FocusEvent e) {
-				searchField.setText("");
+				if (searchField.getText().equals(Res.getString("message.search.for.history"))) {
+					searchField.setText("");
+				}
 				searchField.setForeground((Color) UIManager
 						.get("TextField.foreground"));
 			}
@@ -656,7 +694,9 @@ public class HistoryTranscript extends SwingWorker {
 			public void focusLost(FocusEvent e) {
 				searchField.setForeground((Color) UIManager
 						.get("TextField.lightforeground"));
-				searchField.setText(Res.getString("message.search.for.history"));
+				if (searchField.getText().length() <= 1) {
+					searchField.setText(Res.getString("message.search.for.history"));
+				}
 			}
 		});
 
