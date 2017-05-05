@@ -43,6 +43,7 @@ public class Enterprise {
     public static final String HELP_FORUMS_FEATURE = "help-forums";
     public static final String HELP_USERGUIDE_FEATURE = "help-userguide";
     public static final String HISTORY_SETTINGS_FEATURE = "history-settings";
+    public static final String HISTORY_TRANSCRIPTS_FEATURE = "history-transcripts";
     public static final String HOST_NAME_FEATURE = "host-name";
     public static final String INVISIBLE_LOGIN_FEATURE = "invisible-login";
     public static final String ANONYMOUS_LOGIN_FEATURE = "anonymous-login";

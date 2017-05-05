@@ -131,7 +131,8 @@ public class ChatPreferencePanel extends JPanel implements ActionListener {
 
         chatWindowPanel.add(groupChatNotificationBox, new GridBagConstraints(0, 2, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
 
-        if (!Default.getBoolean("HISTORY_DISABLED") && !Default.getBoolean("HIDE_HISTORY_SETTINGS") && Enterprise.containsFeature(Enterprise.HISTORY_SETTINGS_FEATURE)) {
+        if (!Default.getBoolean("HISTORY_DISABLED") && !Default.getBoolean("HIDE_HISTORY_SETTINGS")
+        		&& Enterprise.containsFeature(Enterprise.HISTORY_SETTINGS_FEATURE) && Enterprise.containsFeature(Enterprise.HISTORY_TRANSCRIPTS_FEATURE)) {
         	chatWindowPanel.add(hideChatHistory, new GridBagConstraints(0, 3, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         	chatWindowPanel.add(hidePrevChatHistory, new GridBagConstraints(0, 4, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         }
