@@ -128,15 +128,19 @@ public class ContactListAssistantPlugin implements Plugin {
                     });
 
                     int index = -1;
-                    for (int i = 0; i < popup.getComponentCount(); i++) {
-                        Object o = popup.getComponent(i);
-                        if (o instanceof JMenuItem && ((JMenuItem)o).getText().equals(Res.getString("menuitem.rename"))) {
-                            index = i;
-                            break;
-                        }
-                    }
+                    if (!Default.getBoolean("DISABLE_RENAMES") && Enterprise.containsFeature(Enterprise.RENAMES_FEATURE)) {
+                    	for (int i = 0; i < popup.getComponentCount(); i++) {
+                    		Object o = popup.getComponent(i);
+                    		if (o instanceof JMenuItem && ((JMenuItem)o).getText().equals(Res.getString("menuitem.rename"))) {
+                    			index = i;
+                    			break;
+                    		}
+                    	}
+
+                    } else index = 3;
+
                     if (contactItems.size() == 1) {
-                        // Add right after the rename item.
+                        // Add MOVE/COPY options right after the RENAME option or in it's place if it doesn't exist.
                         if (index != -1) {
                         	// See if we should disable the "Move to" and "Copy to" menu options
                         	if (!Default.getBoolean("DISABLE_MOVE_AND_COPY") && Enterprise.containsFeature(Enterprise.MOVE_COPY_FEATURE)) {
@@ -151,7 +155,7 @@ public class ContactListAssistantPlugin implements Plugin {
                     		popup.addSeparator();
                     		popup.add(moveToMenu);
                     		popup.add(copyToMenu);
-                    	}                        
+                   	}                        
 
                         // Clean up the extra separator if "Broadcast" menu items are disabled
                         if (!Default.getBoolean("DISABLE_BROADCAST_MENU_ITEM") && Enterprise.containsFeature(Enterprise.BROADCAST_FEATURE)) popup.addSeparator();                        
