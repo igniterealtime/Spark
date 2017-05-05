@@ -28,6 +28,7 @@ import org.jivesoftware.spark.plugin.ContextMenuListener;
 import org.jivesoftware.spark.ui.history.HistoryWindow;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 import org.jivesoftware.sparkimpl.plugin.emoticons.EmoticonManager;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
@@ -479,8 +480,8 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener
             }
         } );
 
-        if ( !Default.getBoolean( "HIDE_HISTORY_SETTINGS" ) )
-        {
+        if (!Default.getBoolean("HIDE_HISTORY_SETTINGS") && Enterprise.containsFeature(Enterprise.HISTORY_SETTINGS_FEATURE) 
+        		&& !Default.getBoolean("HISTORY_DISABLED") && Enterprise.containsFeature(Enterprise.HISTORY_TRANSCRIPTS_FEATURE)) {
             popup.add( new AbstractAction( Res.getString( "action.clear" ), SparkRes.getImageIcon( SparkRes.ERASER_IMAGE ) )
             {
                 public void actionPerformed( ActionEvent actionEvent )
@@ -517,24 +518,26 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener
         }
 
         // History window
-        popup.add( new AbstractAction( Res.getString( "action.viewlog" ) )
-        {
-            @Override
-            public void actionPerformed( ActionEvent e )
-            {
-                ChatRoom room = null;
-                try
-                {
-                    room = SparkManager.getChatManager().getChatContainer().getActiveChatRoom();
-                    HistoryWindow hw = new HistoryWindow( SparkManager.getUserDirectory(), room.getRoomname() );
-                    hw.showWindow();
-                }
-                catch ( Exception ex )
-                {
-                    Log.error( "An exception occurred while trying to open history window for room " + room, ex );
-                }
-            }
-        } );
+        if (!Default.getBoolean("HISTORY_DISABLED") && Enterprise.containsFeature(Enterprise.HISTORY_TRANSCRIPTS_FEATURE)) {
+        	popup.add( new AbstractAction( Res.getString( "action.viewlog" ) )
+        	{
+        		@Override
+        		public void actionPerformed( ActionEvent e )
+        		{
+        			ChatRoom room = null;
+        			try
+        			{
+        				room = SparkManager.getChatManager().getChatContainer().getActiveChatRoom();
+        				HistoryWindow hw = new HistoryWindow( SparkManager.getUserDirectory(), room.getRoomname() );
+        				hw.showWindow();
+        			}
+        			catch ( Exception ex )
+        			{
+        				Log.error( "An exception occurred while trying to open history window for room " + room, ex );
+        			}
+        		}
+        	} );
+        }
     }
 
     public void poppingDown( JPopupMenu popup )
