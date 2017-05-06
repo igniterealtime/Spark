@@ -647,7 +647,7 @@ public class ChatRoomImpl extends ChatRoom {
     	vcardPanel = new VCardPanel(participantJID);
     	getToolBar().add(vcardPanel, new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 2, 0, 2), 0, 0));
 
-    	if (!Default.getBoolean("HISTORY_DISABLED") && Enterprise.containsFeature(Enterprise.HISTORY_SETTINGS_FEATURE)) {
+       	if (!Default.getBoolean("HISTORY_DISABLED") && Enterprise.containsFeature(Enterprise.HISTORY_TRANSCRIPTS_FEATURE)) {
     		final LocalPreferences localPreferences = SettingsManager.getLocalPreferences();
     		if (!localPreferences.isChatHistoryEnabled()) {
     			return;

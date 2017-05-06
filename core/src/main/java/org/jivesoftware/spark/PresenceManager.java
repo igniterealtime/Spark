@@ -16,12 +16,14 @@
 package org.jivesoftware.spark;
 
 import org.jivesoftware.resource.Res;
+import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.packet.ExtensionElement;
 import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smackx.muc.packet.MUCUser;
 import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 import org.jxmpp.util.XmppStringUtils;
 
 import javax.swing.Icon;
@@ -30,7 +32,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import static org.jivesoftware.smack.util.StringUtils.isEmpty;
 import static org.jivesoftware.smack.util.StringUtils.isNullOrEmpty;
 
 /**
@@ -51,7 +52,7 @@ public class PresenceManager {
         final Presence phonePresence = new Presence(Presence.Type.available, Res.getString("status.on.phone"), 0, Presence.Mode.away);
         final Presence dndPresence = new Presence(Presence.Type.available, Res.getString("status.do.not.disturb"), 0, Presence.Mode.dnd);
         final Presence extendedAway = new Presence(Presence.Type.available, Res.getString("status.extended.away"), 0, Presence.Mode.xa);
-	final Presence invisible = new Presence(Presence.Type.unavailable, Res.getString("status.invisible"), 0, Presence.Mode.available);
+        final Presence invisible = new Presence(Presence.Type.unavailable, Res.getString("status.invisible"), 0, Presence.Mode.available);
 
         PRESENCES.add(freeToChatPresence);
         PRESENCES.add(availablePresence);
@@ -59,7 +60,8 @@ public class PresenceManager {
         PRESENCES.add(extendedAway);
         PRESENCES.add(phonePresence);
         PRESENCES.add(dndPresence);
-	PRESENCES.add(invisible);
+
+        if (!Default.getBoolean("HIDE_LOGIN_AS_INVISIBLE") && Enterprise.containsFeature(Enterprise.INVISIBLE_LOGIN_FEATURE)) PRESENCES.add(invisible);        
     }
 
     /**
