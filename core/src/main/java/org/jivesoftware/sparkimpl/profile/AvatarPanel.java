@@ -24,8 +24,6 @@ import org.jivesoftware.spark.util.URLFileSystem;
 import org.jivesoftware.spark.util.log.Log;
 
 import net.coobird.thumbnailator.Thumbnails;
-import net.coobird.thumbnailator.geometry.Positions;
-
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
@@ -189,12 +187,28 @@ public class AvatarPanel extends JPanel implements ActionListener {
 
     private void changeAvatar(final File selectedFile, final Component parent) {
         SwingWorker worker = new SwingWorker() {
-            public Object construct() {                
-                return cropImageFile(selectedFile);
+            public Object construct() {
+                return resizeImage(selectedFile);
             }
 
             public void finished() {
                 BufferedImage avatarImage = (BufferedImage)get();
+                String message = "";
+                int finalImageWidth = avatarImage.getWidth();
+                int finalImageHeight = avatarImage.getHeight();
+                boolean showWarning = false;
+                if (finalImageWidth != finalImageHeight) {
+                    message += "\u2022 " + Res.getString("message.image.not.square") + "\n";
+                    showWarning = true;
+                }
+                if (finalImageWidth < 32 && finalImageHeight < 32) {
+                    message += "\u2022 " + Res.getString("message.image.small.resolution") + "\n";
+                    showWarning = true;
+                }
+                if (showWarning) {
+                    message += Res.getString("message.image.suggestion");
+                    JOptionPane.showMessageDialog(parent, message, Res.getString("title.warning"), JOptionPane.WARNING_MESSAGE);
+                }
                 /*
                 // Check size.
                 long length = GraphicUtils.getBytesFromImage(avatarImage).length * 8;
@@ -210,13 +224,13 @@ public class AvatarPanel extends JPanel implements ActionListener {
                 }
                 */
                 //convert BufferedImage to bytes
-                try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {                    
+                try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
                     ImageIO.write(avatarImage, "png", baos);
                     setAvatar(new ImageIcon(avatarImage));
                     setAvatarBytes(baos.toByteArray());
                 } catch (IOException ex) {
                     Log.error(ex);
-                }                
+                }
             }
         };
 
@@ -291,44 +305,35 @@ public class AvatarPanel extends JPanel implements ActionListener {
     public void setParentDialog(Dialog dialog) {
         this.dlg = dialog;
     }
-
     /*
-     * Crop the given image file to the target dimensions 
+     * Resize images larger than 96 pixels
      * without changing aspect ratio.
-     * Returns modified image as BufferedImage.  
+     * Returns modified image as BufferedImage.
      */
-    private BufferedImage cropImageFile(File selectedFile) {
+    private BufferedImage resizeImage(File selectedFile) {
 
-        int targetImageWidth = 64;
-        int targetImageHeight = 64;
-
-        BufferedImage croppedImage = null;
+        int targetImagePixels = 64;
+        BufferedImage resizedImage = null;
         try {
             BufferedImage avatarImageBuffered = ImageIO.read(selectedFile);
             int currentImageWidth = avatarImageBuffered.getWidth(null);
-            int currentImageHeight = avatarImageBuffered.getHeight(null);
-            
-            if (currentImageHeight == targetImageHeight && currentImageWidth == targetImageHeight) {
-                //no need to crop
-                croppedImage = avatarImageBuffered;
+            int currentImageHeight = avatarImageBuffered.getHeight(null);            
+            if (currentImageHeight <= 96 && currentImageWidth <= 96) {
+                // no need to resize
+                resizedImage = avatarImageBuffered;
             } else {
-                double targetImageRatio = (double)targetImageWidth / (double)targetImageHeight;
-
-                if (currentImageWidth < targetImageRatio * currentImageHeight) {
-                    currentImageHeight = new Double((double)currentImageWidth / (double)targetImageRatio).intValue();
+                double scaleFactor;
+                if (currentImageHeight > currentImageWidth) {
+                    scaleFactor = (double) targetImagePixels / (double) currentImageHeight;
                 } else {
-                    currentImageWidth = new Double(((double)currentImageHeight * targetImageRatio)).intValue();
+                    scaleFactor = (double) targetImagePixels / (double) currentImageWidth;
                 }
-                //crop image in the center
-                croppedImage = Thumbnails.of(avatarImageBuffered).sourceRegion(Positions.CENTER, currentImageWidth, currentImageHeight).
-                        size(targetImageWidth, targetImageHeight).asBufferedImage();
+                // resize image
+                resizedImage = Thumbnails.of(avatarImageBuffered).scale(scaleFactor).asBufferedImage();
             }
-
         } catch (IOException ex) {
             Log.error(ex);
         }
-        return croppedImage;
+        return resizedImage;
     }
 }
-
-

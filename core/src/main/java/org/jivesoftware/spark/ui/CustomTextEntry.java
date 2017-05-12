@@ -39,7 +39,7 @@ public class CustomTextEntry extends TimeStampedEntry
 
     protected CustomTextEntry( ZonedDateTime timestamp, String message, Color textColor, boolean bold, boolean italic, boolean underline, boolean strikeThrough )
     {
-        super( timestamp );
+        super( timestamp, false );
         this.message = message;
         this.textColor = textColor;
         this.bold = bold;
