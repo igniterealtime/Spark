@@ -78,6 +78,7 @@ public class Default {
     public static final String SSO_DISABLED = "SSO_DISABLED";
     public static final String PROXY_DISABLED = "PROXY_DISABLED";
     public static final String PKI_DISABLED = "PKI_DISABLED";
+    public static final String CERTIFICATES_MANAGER_DISABLED = "CERTIFICATES_MANAGER_DISABLED";
     public static final String HELP_USER_GUIDE = "HELP_USER_GUIDE";
     public static final String BROADCAST_IN_CHATWINDOW = "BROADCAST_IN_CHATWINDOW";
     public static final String MENUBAR_TEXT = "MENUBAR_TEXT";

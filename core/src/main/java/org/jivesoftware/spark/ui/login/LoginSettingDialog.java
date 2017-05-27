@@ -42,6 +42,7 @@ public class LoginSettingDialog implements PropertyChangeListener
     private ProxyLoginSettingsPanel proxyPanel;
     private PkiLoginSettingsPanel pkiPanel;
     private SsoLoginSettingsPanel ssoPanel;
+	private CertificatesManagerSettingsPanel certManager;
 
     /**
      * Empty Constructor.
@@ -53,6 +54,7 @@ public class LoginSettingDialog implements PropertyChangeListener
         proxyPanel = new ProxyLoginSettingsPanel( localPreferences, optionsDialog );
         ssoPanel = new SsoLoginSettingsPanel( localPreferences, optionsDialog );
         pkiPanel = new PkiLoginSettingsPanel( localPreferences, optionsDialog );
+        certManager = new CertificatesManagerSettingsPanel(localPreferences, optionsDialog);
     }
 
     /**
@@ -82,7 +84,10 @@ public class LoginSettingDialog implements PropertyChangeListener
         {
             tabbedPane.addTab( Res.getString( "tab.pki" ), pkiPanel );
         }
-
+        if ( !Default.getBoolean(Default.CERTIFICATES_MANAGER_DISABLED))
+        {
+        	tabbedPane.addTab( Res.getString( "tab.certificates" ), certManager );
+        }
         // Construct main panel w/ layout.
         final JPanel mainPanel = new JPanel();
         mainPanel.setLayout( new BorderLayout() );
