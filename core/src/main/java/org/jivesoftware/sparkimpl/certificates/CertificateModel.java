@@ -2,11 +2,10 @@ package org.jivesoftware.sparkimpl.certificates;
 
 import java.util.List;
 
+/**
+ * Model that keep certificate fields as String values.
+ */
 public class CertificateModel {
-
-	/**
-	 * Model that keep certificate fields.
-	 */
 
 	private String version;
 	private String serialNumber;
