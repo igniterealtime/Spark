@@ -2,16 +2,13 @@ package org.jivesoftware.sparkimpl.certificates;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.swing.DefaultCellEditor;
-import javax.swing.JCheckBox;
 import javax.swing.table.DefaultTableModel;
 
 import org.jivesoftware.resource.Res;
 
 /**
  * This class serve to extract certificates, storage them during runtime and
- * format them to put them in
+ * format them and support management of them.
  * 
  * @author Paweł Ścibiorski
  *
