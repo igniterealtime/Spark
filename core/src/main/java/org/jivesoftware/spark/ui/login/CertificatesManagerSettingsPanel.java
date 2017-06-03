@@ -8,8 +8,6 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.List;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
@@ -32,7 +30,7 @@ public class CertificatesManagerSettingsPanel extends JPanel implements ActionLi
 	private final static Insets DEFAULT_INSETS = new Insets(5, 5, 5, 5);
 	private final LocalPreferences localPreferences;
 	private JDialog optionsDialog;
-	private CertificateController certControll = new CertificateController();
+	private CertificateController certControll;
 	private JTable certTable = new JTable();
 	private JCheckBox acceptAll = new JCheckBox();
 	private JCheckBox acceptExpired = new JCheckBox();
@@ -46,6 +44,7 @@ public class CertificatesManagerSettingsPanel extends JPanel implements ActionLi
 
 		this.localPreferences = localPreferences;
 		this.optionsDialog = optionsDialog;
+		certControll = new CertificateController(localPreferences);
 		setLayout(new GridBagLayout());
 
 		certTable.setModel(certControll.getTableModel());

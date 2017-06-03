@@ -1,5 +1,6 @@
 package org.jivesoftware.sparkimpl.certificates;
 
+import java.security.cert.X509Certificate;
 import java.util.List;
 
 /**
@@ -7,7 +8,7 @@ import java.util.List;
  */
 public class CertificateModel {
 
-	private String version;
+	private int version;
 	private String serialNumber;
 	private String signatureValue;
 	private String signatureAlgorithm;
@@ -15,12 +16,13 @@ public class CertificateModel {
 	private String subject;
 	private String notBefore;
 	private String notAfter;
-	private String publicKeyInfo;
+	private String publicKey;
+	private String publicKeyAlgorithm;
 	private String issuerUniqueID;
-	
+
 	private boolean valid;
 	private boolean exempted;
-	//List<String> extensionList;
+	// List<String> extensionList;
 
 	/**
 	 * Creates certificate model.
@@ -36,10 +38,9 @@ public class CertificateModel {
 	 * @param notAfter
 	 * @param publickKeyInfo
 	 */
-	public CertificateModel(String version, String serialNumber, String signatureValue, String signatureAlgorithm,
-			String issuer, String subject, String notBefore, String notAfter, String publicKeyInfo,
-			String issuerUniqueID, boolean valid, Boolean exempted) {
-		super();
+	public CertificateModel(int version, String serialNumber, String signatureValue, String signatureAlgorithm,
+			String issuer, String subject, String notBefore, String notAfter, String publicKey,
+			String publicKeyAlgorithm, String issuerUniqueID, boolean valid, Boolean exempted) {
 		this.version = version;
 		this.serialNumber = serialNumber;
 		this.signatureValue = signatureValue;
@@ -48,14 +49,33 @@ public class CertificateModel {
 		this.subject = subject;
 		this.notBefore = notBefore;
 		this.notAfter = notAfter;
-		this.publicKeyInfo = publicKeyInfo;
+		this.publicKey = publicKey;
+		this.publicKeyAlgorithm = publicKeyAlgorithm;
 		this.issuerUniqueID = issuerUniqueID;
+
 		this.valid = valid;
 		this.exempted = exempted;
-		//this.extensionList = extensionList;
+		// this.extensionList = extensionList;
 	}
 
-	public String getVersion() {
+	public CertificateModel(X509Certificate certificate) {
+		this.version = certificate.getVersion();
+		this.serialNumber = certificate.getSerialNumber().toString();
+		this.signatureValue = certificate.getSignature().toString();
+		this.signatureAlgorithm = certificate.getSigAlgName();
+		this.issuer = certificate.getIssuerX500Principal().toString();
+		this.subject = certificate.getSubjectX500Principal().getName().toString();
+		this.notBefore = certificate.getNotBefore().toString();
+		this.notAfter = certificate.getNotAfter().toString();
+		this.publicKey = certificate.getPublicKey().toString();
+		this.publicKeyAlgorithm = certificate.getPublicKey().getAlgorithm().toString();
+		// this.issuerUniqueID = certificate.getIssuerUniqueID().toString();
+
+		this.valid = valid;
+		this.exempted = exempted;
+	}
+
+	public int getVersion() {
 		return version;
 	}
 
@@ -87,10 +107,14 @@ public class CertificateModel {
 		return notAfter;
 	}
 
-	public String getPublicKeyInfo() {
-		return publicKeyInfo;
+	public String getPublicKey() {
+		return publicKey;
 	}
 
+	public String getPublicKeyAlgorithm() {
+		return publicKeyAlgorithm;
+	}
+	
 	public String getIssuerUniqueID() {
 		return issuerUniqueID;
 	}
