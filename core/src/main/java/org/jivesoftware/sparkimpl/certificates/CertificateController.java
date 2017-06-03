@@ -1,10 +1,21 @@
 package org.jivesoftware.sparkimpl.certificates;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
 import javax.swing.table.DefaultTableModel;
 
 import org.jivesoftware.resource.Res;
+import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 
 /**
  * This class serve to extract certificates, storage them during runtime and
@@ -18,13 +29,16 @@ public class CertificateController {
 	List<CertificateModel> certificates;
 	DefaultTableModel tableModel;
 	Object[] certEntry;
+	LocalPreferences localPreferences;
 	private static final String[] COLUMN_NAMES = { Res.getString("table.column.certificate.certificate"),
 			Res.getString("table.column.certificate.subject"), Res.getString("table.column.certificate.valid"),
 			Res.getString("table.column.certificate.exempted") };
 	private static final int NUMBER_OF_COLUMNS = COLUMN_NAMES.length;
+	KeyStore trustStore;
 
-	public CertificateController() {
+	public CertificateController(LocalPreferences localPreferences) {
 
+		this.localPreferences = localPreferences;
 		certificates = new ArrayList<>();
 		tableModel = new DefaultTableModel() {
 			// return adequate classes for columns so last column is Boolean
@@ -51,22 +65,28 @@ public class CertificateController {
 		certEntry = new Object[NUMBER_OF_COLUMNS];
 		// some certificates to fill table until creating extraction of
 		// certificates
-		certificates.add(new CertificateModel("3", "421214142", "364321641", "SHA256WITHRSA", "CN = someone", "someone",
-				"22-02-2017", "22-02-2018", "RSA", "413525", true, new Boolean(false)));
-		certificates.add(new CertificateModel("3", "421214142", "364321641", "SHA256WITHRSA", "CN = someone", "someone",
-				"22-02-2017", "22-02-2018", "RSA", "413525", true, new Boolean(false)));
-		certificates.add(new CertificateModel("3", "421214142", "364321641", "SHA256WITHRSA", "CN = someone", "someone",
-				"22-02-2017", "22-02-2018", "RSA", "413525", true, new Boolean(true)));
-		certificates.add(new CertificateModel("3", "421214142", "364321641", "SHA256WITHRSA", "CN = someone", "someone",
-				"22-02-2017", "22-02-2018", "RSA", "413525", true, new Boolean(false)));
+		try {
+			FileInputStream input = new FileInputStream(localPreferences.getTrustStorePath());
+			trustStore = KeyStore.getInstance(localPreferences.getPKIStore().toString());
+			trustStore.load(input, localPreferences.getTrustStorePassword().toCharArray());
 
-		// put certificate from arrayList into rows with chosen columns
-		for (CertificateModel cert : certificates) {
-			certEntry[0] = cert.getIssuer();
-			certEntry[1] = cert.getSubject();
-			certEntry[2] = cert.isValid();
-			certEntry[3] = cert.isExempted();
-			tableModel.addRow(certEntry);
+			Enumeration store = trustStore.aliases();
+			while (store.hasMoreElements()) {
+				String alias = (String) store.nextElement();
+				X509Certificate certificate = (X509Certificate) trustStore.getCertificate(alias);
+				certificates.add(new CertificateModel(certificate));
+			}
+
+			// put certificate from arrayList into rows with chosen columns
+			for (CertificateModel cert : certificates) {
+				certEntry[0] = cert.getIssuer();
+				certEntry[1] = cert.getSubject();
+				certEntry[2] = cert.isValid();
+				certEntry[3] = cert.isExempted();
+				tableModel.addRow(certEntry);
+			}
+		} catch (KeyStoreException | NoSuchAlgorithmException | CertificateException | IOException e) {
+			Log.warning("Cannot acces Truststore, it might be not set up", e);
 		}
 	}
 
