@@ -86,7 +86,7 @@ public class LoginSettingDialog implements PropertyChangeListener
         }
         if ( !Default.getBoolean(Default.CERTIFICATES_MANAGER_DISABLED))
         {
-        	tabbedPane.addTab( Res.getString( "tab.certificates" ), certManager );
+        //	tabbedPane.addTab( Res.getString( "tab.certificates" ), certManager );
         }
         // Construct main panel w/ layout.
         final JPanel mainPanel = new JPanel();
