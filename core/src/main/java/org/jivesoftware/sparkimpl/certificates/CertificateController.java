@@ -12,14 +12,13 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import javax.swing.table.DefaultTableModel;
-
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 
 /**
- * This class serve to extract certificates, storage them during runtime and
- * format them and support management of them.
+ * This class serve to extract certificates, storage them during runtime and format them and support management of them.
+ * Together with CertificateManagerSettingsPanel and CertificateModel Classes this apply MVC pattern.
  * 
  * @author Paweł Ścibiorski
  *
@@ -37,6 +36,9 @@ public class CertificateController {
 	KeyStore trustStore;
 
 	public CertificateController(LocalPreferences localPreferences) {
+		if (localPreferences == null) {
+			throw new IllegalArgumentException("localPreferences cannot be null");
+		}
 
 		this.localPreferences = localPreferences;
 		certificates = new ArrayList<>();
@@ -63,8 +65,7 @@ public class CertificateController {
 
 		tableModel.setColumnIdentifiers(COLUMN_NAMES);
 		certEntry = new Object[NUMBER_OF_COLUMNS];
-		// some certificates to fill table until creating extraction of
-		// certificates
+
 		try {
 			FileInputStream input = new FileInputStream(localPreferences.getTrustStorePath());
 			trustStore = KeyStore.getInstance(localPreferences.getPKIStore().toString());
