@@ -19,8 +19,8 @@ import org.jivesoftware.sparkimpl.certificates.CertificateController;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 
 /**
- * This class serve as visual in implementation of manageable list of
- * certificates.
+ * This class serve as visual in implementation of manageable list of certificates. Together with CertificateController
+ * and CertificateModel Classes this apply MVC pattern.
  * 
  * @author Paweł Ścibiorski
  *

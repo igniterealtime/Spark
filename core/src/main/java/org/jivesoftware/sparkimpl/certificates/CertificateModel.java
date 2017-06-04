@@ -2,9 +2,11 @@ package org.jivesoftware.sparkimpl.certificates;
 
 import java.security.cert.X509Certificate;
 import java.util.List;
+import org.jivesoftware.spark.util.log.Log;
 
 /**
- * Model that keep certificate fields as String values.
+ * Model that keep certificate fields as String values.Together with CertificateController and
+ * CertificateManagerSettingsPanel classes this apply MVC pattern.
  */
 public class CertificateModel {
 
@@ -19,6 +21,7 @@ public class CertificateModel {
 	private String publicKey;
 	private String publicKeyAlgorithm;
 	private String issuerUniqueID;
+	private String subjectUniqueID;
 
 	private boolean valid;
 	private boolean exempted;
@@ -40,7 +43,21 @@ public class CertificateModel {
 	 */
 	public CertificateModel(int version, String serialNumber, String signatureValue, String signatureAlgorithm,
 			String issuer, String subject, String notBefore, String notAfter, String publicKey,
-			String publicKeyAlgorithm, String issuerUniqueID, boolean valid, Boolean exempted) {
+			String publicKeyAlgorithm, String issuerUniqueID, String subjectUniqueID, boolean valid, Boolean exempted) {
+
+		if (version != 3 || version != 2 || version != 1) {
+			throw new IllegalArgumentException("Version have to be 1, 2 or 3");
+		}
+		if (serialNumber == null || signatureValue == null || signatureAlgorithm == null || issuer == null
+				|| subject == null || notBefore == null || notAfter == null || publicKey == null
+				|| publicKeyAlgorithm == null || exempted == null) {
+			throw new IllegalArgumentException("Value cannot be null");
+		}
+		if (version == 1 && issuerUniqueID != null) {
+			throw new IllegalArgumentException(
+					"Unique Identifiers are present then certificate version must be 2 or 3");
+		}
+
 		this.version = version;
 		this.serialNumber = serialNumber;
 		this.signatureValue = signatureValue;
@@ -52,7 +69,7 @@ public class CertificateModel {
 		this.publicKey = publicKey;
 		this.publicKeyAlgorithm = publicKeyAlgorithm;
 		this.issuerUniqueID = issuerUniqueID;
-
+		this.subjectUniqueID = subjectUniqueID;
 		this.valid = valid;
 		this.exempted = exempted;
 		// this.extensionList = extensionList;
@@ -69,8 +86,16 @@ public class CertificateModel {
 		this.notAfter = certificate.getNotAfter().toString();
 		this.publicKey = certificate.getPublicKey().toString();
 		this.publicKeyAlgorithm = certificate.getPublicKey().getAlgorithm().toString();
-		// this.issuerUniqueID = certificate.getIssuerUniqueID().toString();
-
+		try {
+			this.issuerUniqueID = certificate.getIssuerUniqueID().toString();
+		} catch (NullPointerException e) {
+			Log.warning("Certificate doesn't have issuerUniqueID ", e);
+		}
+		try {
+			this.subjectUniqueID = certificate.getIssuerUniqueID().toString();
+		} catch (NullPointerException e) {
+			Log.warning("Certificate doesn't have subjectUniqueID ", e);
+		}
 		this.valid = valid;
 		this.exempted = exempted;
 	}
