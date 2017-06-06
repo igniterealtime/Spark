@@ -24,6 +24,7 @@ import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.Dialog.ModalityType;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
@@ -100,6 +101,7 @@ public class LoginSettingDialog implements PropertyChangeListener
         mainPanel.add( optionPane, BorderLayout.CENTER );
 
         optionsDialog = new JDialog( owner, Res.getString( "title.preferences" ), true );
+        optionsDialog.setModalityType(ModalityType.DOCUMENT_MODAL);
         optionsDialog.setContentPane( mainPanel );
         optionsDialog.pack();
 

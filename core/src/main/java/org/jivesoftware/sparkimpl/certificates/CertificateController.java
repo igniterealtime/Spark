@@ -91,6 +91,10 @@ public class CertificateController {
 		}
 	}
 
+	public List<CertificateModel> getCertificates() {
+		return certificates;
+	}
+
 	public DefaultTableModel getTableModel() {
 		return tableModel;
 	}

@@ -8,6 +8,9 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
@@ -25,11 +28,10 @@ import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
  * @author Paweł Ścibiorski
  *
  */
-public class CertificatesManagerSettingsPanel extends JPanel implements ActionListener {
+public class CertificatesManagerSettingsPanel extends JPanel implements ActionListener, MouseListener {
 
 	private final static Insets DEFAULT_INSETS = new Insets(5, 5, 5, 5);
 	private final LocalPreferences localPreferences;
-	private JDialog optionsDialog;
 	private CertificateController certControll;
 	private JTable certTable = new JTable();
 	private JCheckBox acceptAll = new JCheckBox();
@@ -43,7 +45,6 @@ public class CertificatesManagerSettingsPanel extends JPanel implements ActionLi
 	public CertificatesManagerSettingsPanel(LocalPreferences localPreferences, JDialog optionsDialog) {
 
 		this.localPreferences = localPreferences;
-		this.optionsDialog = optionsDialog;
 		certControll = new CertificateController(localPreferences);
 		setLayout(new GridBagLayout());
 
@@ -59,6 +60,7 @@ public class CertificatesManagerSettingsPanel extends JPanel implements ActionLi
 		ResourceUtils.resButton(checkOCSP, Res.getString("checkbox.check.ocsp"));
 
 		acceptAll.addActionListener(this);
+		certTable.addMouseListener(this);
 
 		add(scrollPane, new GridBagConstraints(0, 0, 6, 1, 0.0, 1.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
 		add(acceptAll, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.5, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
@@ -84,6 +86,39 @@ public class CertificatesManagerSettingsPanel extends JPanel implements ActionLi
 			acceptExpired.setEnabled(true);
 			acceptRevoked.setEnabled(true);
 		}
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		if (e.getSource() == certTable) {
+			System.out.println(certTable.getSelectedRow());
+			CertificateDialog certDialog = new CertificateDialog(localPreferences,
+					certControll.getCertificates().get(certTable.getSelectedRow()));
+
+		}
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent arg0) {
+		// TODO Auto-generated method stub
 
 	}
 
