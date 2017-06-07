@@ -778,6 +778,12 @@ public class VCardManager {
             {
                 parser.next();
             }
+            else
+            {
+            	//vCard xml schema changed 2.7->2.8
+            	//if we have a valid file, but no valid timestamp - reload the vCard (probably in old style) 
+            	addToQueue(jid);
+            }
 
             vcard = provider.parse( parser );
         }
