@@ -139,9 +139,13 @@ public class CertificateModel {
 	public String getPublicKeyAlgorithm() {
 		return publicKeyAlgorithm;
 	}
-	
+
 	public String getIssuerUniqueID() {
 		return issuerUniqueID;
+	}
+
+	public String getSubjectUniqueID() {
+		return subjectUniqueID;
 	}
 
 	public boolean isValid() {
@@ -151,5 +155,4 @@ public class CertificateModel {
 	public boolean isExempted() {
 		return exempted;
 	}
-	
 }
