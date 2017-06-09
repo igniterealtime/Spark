@@ -62,7 +62,7 @@ public class CertificatesManagerSettingsPanel extends JPanel implements ActionLi
 		acceptAll.addActionListener(this);
 		certTable.addMouseListener(this);
 
-		add(scrollPane, new GridBagConstraints(0, 0, 6, 1, 0.0, 1.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
+		add(scrollPane, new GridBagConstraints(0, 0, 6, 1, 1.0, 1.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
 		add(acceptAll, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.5, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
 		add(acceptSelfSigned, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.5, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
 		add(acceptExpired, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.5, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
@@ -90,35 +90,34 @@ public class CertificatesManagerSettingsPanel extends JPanel implements ActionLi
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		if (e.getSource() == certTable) {
-			System.out.println(certTable.getSelectedRow());
-			CertificateDialog certDialog = new CertificateDialog(localPreferences,
-					certControll.getCertificates().get(certTable.getSelectedRow()));
 
-		}
 	}
 
 	@Override
 	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
+		if (e.getClickCount() == 2) {
+			JTable source = (JTable) e.getSource();
+			if (e.getSource() == certTable && source.getSelectedColumn() != 3) {
+				CertificateDialog certDialog = new CertificateDialog(localPreferences,
+						certControll.getCertificates().get(certTable.getSelectedRow()));
+
+			}
+		}
 
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent arg0) {
-		// TODO Auto-generated method stub
 
 	}
 
