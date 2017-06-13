@@ -2,7 +2,6 @@ package org.jivesoftware.spark.ui.login;
 
 import static java.awt.GridBagConstraints.HORIZONTAL;
 import static java.awt.GridBagConstraints.WEST;
-
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -23,6 +22,14 @@ import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.sparkimpl.certificates.CertificateModel;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 
+/**
+ * This class show to user all fields of certificate as well as options to check it's validity and set trust toward it.
+ * When certificate is invalid then setting radio button on trust will put certificate to exceptions list. When
+ * certificate is valid and radio button is set on distrust then it will be put on distrusted list. In other situations
+ * trust will work according to validity
+ * 
+ * @author Pawel Scibiorski
+ */
 public class CertificateDialog extends JDialog {
 
 	private final static Insets DEFAULT_INSETS = new Insets(5, 5, 5, 5);
@@ -64,7 +71,7 @@ public class CertificateDialog extends JDialog {
 	private JButton checkValidity = new JButton();
 
 	public CertificateDialog(LocalPreferences localPreferences, CertificateModel cert) {
-		if(localPreferences == null || cert == null){
+		if (localPreferences == null || cert == null) {
 			throw new IllegalArgumentException();
 		}
 		this.localPreferences = localPreferences;
@@ -101,41 +108,40 @@ public class CertificateDialog extends JDialog {
 		
 		ResourceUtils.resLabel(versionLabel, versionField, Res.getString("label.certificate.version"));
 		ResourceUtils.resLabel(serialNumberLabel, serialNumberField, Res.getString("label.certificate.serial.number"));
-		ResourceUtils.resLabel(signatureValueLabel, signatureValueField, Res.getString("label.certificate.signature.value"));
-		ResourceUtils.resLabel(signatureAlgorithmLabel, signatureAlgorithmField, Res.getString("label.certificate.signature.algorithm"));
+		ResourceUtils.resLabel(signatureValueLabel, signatureValueField,
+				Res.getString("label.certificate.signature.value"));
+		ResourceUtils.resLabel(signatureAlgorithmLabel, signatureAlgorithmField,
+				Res.getString("label.certificate.signature.algorithm"));
 		ResourceUtils.resLabel(issuerLabel, issuerField, Res.getString("label.certificate.issuer"));
 		ResourceUtils.resLabel(subjectLabel, subjectField, Res.getString("label.certificate.subject"));
 		ResourceUtils.resLabel(notBeforeLabel, notBeforeField, Res.getString("label.certificate.not.before"));
 		ResourceUtils.resLabel(notAfterLabel, notAfterField, Res.getString("label.certificate.not.after"));
 		ResourceUtils.resLabel(publicKeyLabel, publicKeyField, Res.getString("label.certificate.public.key"));
-		ResourceUtils.resLabel(publicKeyAlgorithmLabel, publicKeyAlgorithmField, Res.getString("label.certificate.public.key.algorithm"));
-		ResourceUtils.resLabel(issuerUniqueIDLabel, issuerUniqueIDField, Res.getString("label.certificate.issuer.unique.id"));
-		ResourceUtils.resLabel(subjectUniqueIDLabel, subjectUniqueIDField, Res.getString("label.certificate.subject.unique.id"));
+		ResourceUtils.resLabel(publicKeyAlgorithmLabel, publicKeyAlgorithmField,
+				Res.getString("label.certificate.public.key.algorithm"));
+		ResourceUtils.resLabel(issuerUniqueIDLabel, issuerUniqueIDField,
+				Res.getString("label.certificate.issuer.unique.id"));
+		ResourceUtils.resLabel(subjectUniqueIDLabel, subjectUniqueIDField,
+				Res.getString("label.certificate.subject.unique.id"));
 		ResourceUtils.resButton(trust, Res.getString("radio.certificate.trust"));
-		ResourceUtils.resButton(distrust, Res.getString("radio.certificate.distrust"));	
+		ResourceUtils.resButton(distrust, Res.getString("radio.certificate.distrust"));
 		ResourceUtils.resButton(checkValidity, Res.getString("button.check.validity"));
 		
 		panel.setLayout(new GridBagLayout());
 		buttonPanel.setLayout(new GridBagLayout());
-		
-		panel.add(versionLabel,
-				new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
+
+		panel.add(versionLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
 		panel.add(serialNumberLabel,
 				new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
 		panel.add(signatureValueLabel,
 				new GridBagConstraints(0, 2, 1, 1, 1.0, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
 		panel.add(signatureAlgorithmLabel,
 				new GridBagConstraints(0, 3, 1, 1, 1.0, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
-		panel.add(issuerLabel,
-				new GridBagConstraints(0, 4, 1, 1, 1.0, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
-		panel.add(subjectLabel,
-				new GridBagConstraints(0, 5, 1, 1, 1.0, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
-		panel.add(notBeforeLabel,
-				new GridBagConstraints(0, 6, 1, 1, 1.0, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
-		panel.add(notAfterLabel,
-				new GridBagConstraints(0, 7, 1, 1, 1.0, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
-		panel.add(publicKeyLabel,
-				new GridBagConstraints(0, 8, 1, 1, 1.0, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
+		panel.add(issuerLabel, new GridBagConstraints(0, 4, 1, 1, 1.0, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
+		panel.add(subjectLabel, new GridBagConstraints(0, 5, 1, 1, 1.0, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
+		panel.add(notBeforeLabel, new GridBagConstraints(0, 6, 1, 1, 1.0, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
+		panel.add(notAfterLabel, new GridBagConstraints(0, 7, 1, 1, 1.0, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
+		panel.add(publicKeyLabel, new GridBagConstraints(0, 8, 1, 1, 1.0, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
 		panel.add(publicKeyAlgorithmLabel,
 				new GridBagConstraints(0, 9, 1, 1, 1.0, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
 		panel.add(issuerUniqueIDLabel,
@@ -152,16 +158,11 @@ public class CertificateDialog extends JDialog {
 				new GridBagConstraints(2, 2, 6, 1, 0.0, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
 		panel.add(signatureAlgorithmField,
 				new GridBagConstraints(2, 3, 6, 1, 1.0, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
-		panel.add(issuerField,
-				new GridBagConstraints(2, 4, 6, 1, 1.0, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
-		panel.add(subjectField,
-				new GridBagConstraints(2, 5, 6, 1, 1.0, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
-		panel.add(notBeforeField,
-				new GridBagConstraints(2, 6, 6, 1, 1.0, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
-		panel.add(notAfterField,
-				new GridBagConstraints(2, 7, 6, 1, 1.0, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
-		panel.add(publicKeyField,
-				new GridBagConstraints(2, 8, 6, 1, 1.0, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
+		panel.add(issuerField, new GridBagConstraints(2, 4, 6, 1, 1.0, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
+		panel.add(subjectField, new GridBagConstraints(2, 5, 6, 1, 1.0, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
+		panel.add(notBeforeField, new GridBagConstraints(2, 6, 6, 1, 1.0, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
+		panel.add(notAfterField, new GridBagConstraints(2, 7, 6, 1, 1.0, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
+		panel.add(publicKeyField, new GridBagConstraints(2, 8, 6, 1, 1.0, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
 		panel.add(publicKeyAlgorithmField,
 				new GridBagConstraints(2, 9, 6, 1, 1.0, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
 		panel.add(issuerUniqueIDField,
@@ -177,10 +178,10 @@ public class CertificateDialog extends JDialog {
 		scrollPane = new JScrollPane(panel);
 		scrollPane.setMinimumSize(new Dimension(380, 300));
 		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-		
-		add(scrollPane, new GridBagConstraints(0, 0, 4, 1, 1.0, 0.5, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
-		add(buttonPanel, new GridBagConstraints(0, 1, 1, 1, 1.0, 0.5, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
-		
+
+		add(scrollPane, new GridBagConstraints(0, 0, 4, 1, 1.0, 1.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
+		add(buttonPanel, new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
+
 		scrollPane.setVisible(true);
 		setVisible(true);
 
