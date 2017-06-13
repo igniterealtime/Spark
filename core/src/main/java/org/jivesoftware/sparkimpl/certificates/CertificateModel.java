@@ -155,4 +155,5 @@ public class CertificateModel {
 	public boolean isExempted() {
 		return exempted;
 	}
+
 }
