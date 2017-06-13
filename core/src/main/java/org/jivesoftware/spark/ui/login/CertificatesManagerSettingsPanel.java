@@ -10,7 +10,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
-
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -53,7 +52,6 @@ public class CertificatesManagerSettingsPanel extends JPanel implements ActionLi
 	private JScrollPane scrollPane;
 	private JLabel addCertLabel = new JLabel(Res.getString("label.certificate.add.certificate.to.truststore"));
 	private JPanel filePanel = new JPanel();
-
 	public CertificatesManagerSettingsPanel(LocalPreferences localPreferences, JDialog optionsDialog) {
 
 		this.localPreferences = localPreferences;
