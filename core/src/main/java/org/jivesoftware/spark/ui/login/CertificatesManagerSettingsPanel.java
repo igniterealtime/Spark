@@ -61,6 +61,7 @@ public class CertificatesManagerSettingsPanel extends JPanel implements ActionLi
 		certTable.setModel(certControll.getTableModel());
 		scrollPane = new JScrollPane(certTable);
 		certTable.setFillsViewportHeight(true);
+		certTable.setAutoCreateRowSorter(true);
 
 		ResourceUtils.resButton(acceptAll, Res.getString("checkbox.accept.all"));
 		ResourceUtils.resButton(acceptExpired, Res.getString("checkbox.accept.expired"));
