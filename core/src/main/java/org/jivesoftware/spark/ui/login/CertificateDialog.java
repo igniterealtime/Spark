@@ -2,11 +2,15 @@ package org.jivesoftware.spark.ui.login;
 
 import static java.awt.GridBagConstraints.HORIZONTAL;
 import static java.awt.GridBagConstraints.WEST;
+import static java.awt.GridBagConstraints.BOTH;
+import static java.awt.GridBagConstraints.NONE;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -30,7 +34,7 @@ import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
  * 
  * @author Pawel Scibiorski
  */
-public class CertificateDialog extends JDialog {
+public class CertificateDialog extends JDialog implements ActionListener {
 
 	private final static Insets DEFAULT_INSETS = new Insets(5, 5, 5, 5);
 	private final LocalPreferences localPreferences;
@@ -69,6 +73,7 @@ public class CertificateDialog extends JDialog {
 	private JRadioButton trust = new JRadioButton();
 	private JRadioButton distrust = new JRadioButton();
 	private JButton checkValidity = new JButton();
+	private JButton okButton = new JButton();
 
 	public CertificateDialog(LocalPreferences localPreferences, CertificateModel cert) {
 		if (localPreferences == null || cert == null) {
@@ -106,6 +111,8 @@ public class CertificateDialog extends JDialog {
 		radioGroup.add(distrust);
 		radioGroup.add(trust);
 		
+		okButton.addActionListener(this);
+		
 		ResourceUtils.resLabel(versionLabel, versionField, Res.getString("label.certificate.version"));
 		ResourceUtils.resLabel(serialNumberLabel, serialNumberField, Res.getString("label.certificate.serial.number"));
 		ResourceUtils.resLabel(signatureValueLabel, signatureValueField,
@@ -126,6 +133,7 @@ public class CertificateDialog extends JDialog {
 		ResourceUtils.resButton(trust, Res.getString("radio.certificate.trust"));
 		ResourceUtils.resButton(distrust, Res.getString("radio.certificate.distrust"));
 		ResourceUtils.resButton(checkValidity, Res.getString("button.check.validity"));
+		ResourceUtils.resButton(okButton, Res.getString("ok"));
 		
 		panel.setLayout(new GridBagLayout());
 		buttonPanel.setLayout(new GridBagLayout());
@@ -151,7 +159,7 @@ public class CertificateDialog extends JDialog {
 		
 		
 		panel.add(versionField,
-				new GridBagConstraints(2, 0, 12, 1, 0.0, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 240, 0));
+				new GridBagConstraints(2, 0, 12, 1, 0.0, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
 		panel.add(serialNumberField,
 				new GridBagConstraints(2, 1, 6, 1, 0.0, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
 		panel.add(signatureValueField,
@@ -172,19 +180,29 @@ public class CertificateDialog extends JDialog {
 
 		buttonPanel.add(trust, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
 		buttonPanel.add(distrust, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
-		buttonPanel.add(checkValidity,
-				new GridBagConstraints(0, 1, 2, 1, 0.0, 0.0, WEST, HORIZONTAL, new Insets(5, 5, 5, 300), 0, 0));
+		buttonPanel.add(checkValidity, new GridBagConstraints(0, 1, 2, 1, 0.0, 0.0, WEST, NONE, DEFAULT_INSETS, 0, 0));
+		buttonPanel.add(okButton, new GridBagConstraints(2, 2, 2, 1, 0.0, 0.0, WEST, NONE, new Insets(5, 5, 5, 200), 60, 0));
 
 		scrollPane = new JScrollPane(panel);
-		scrollPane.setMinimumSize(new Dimension(380, 300));
+		scrollPane.setMinimumSize(new Dimension(250, 500));
 		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
-		add(scrollPane, new GridBagConstraints(0, 0, 4, 1, 1.0, 1.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
+		add(scrollPane, new GridBagConstraints(0, 0, 4, 1, 1.0, 1.0, WEST, BOTH, DEFAULT_INSETS, 0, 0));
 		add(buttonPanel, new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
 
 		scrollPane.setVisible(true);
 		setVisible(true);
+		
+		scrollPane.getVerticalScrollBar().setValue(0);
+		scrollPane.repaint();
+		repaint();
+	}
 
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		if(e.getSource() == okButton){
+			this.dispose();
+		}
 	}
 
 }
