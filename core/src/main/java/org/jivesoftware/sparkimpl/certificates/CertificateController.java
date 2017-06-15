@@ -90,6 +90,10 @@ public class CertificateController {
 			Log.warning("Cannot acces Truststore, it might be not set up", e);
 		}
 	}
+  
+	public List<CertificateModel> getCertificates() {
+		return certificates;
+	}
 
 	public DefaultTableModel getTableModel() {
 		return tableModel;
