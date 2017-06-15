@@ -1,6 +1,7 @@
 package org.jivesoftware.sparkimpl.certificates;
 
 import java.security.cert.X509Certificate;
+import java.util.Base64;
 import java.util.List;
 import org.jivesoftware.spark.util.log.Log;
 
@@ -78,7 +79,7 @@ public class CertificateModel {
 	public CertificateModel(X509Certificate certificate) {
 		this.version = certificate.getVersion();
 		this.serialNumber = certificate.getSerialNumber().toString();
-		this.signatureValue = certificate.getSignature().toString();
+		this.signatureValue = Base64.getEncoder().encodeToString(certificate.getSignature());
 		this.signatureAlgorithm = certificate.getSigAlgName();
 		this.issuer = certificate.getIssuerX500Principal().toString();
 		this.subject = certificate.getSubjectX500Principal().getName().toString();
@@ -139,9 +140,13 @@ public class CertificateModel {
 	public String getPublicKeyAlgorithm() {
 		return publicKeyAlgorithm;
 	}
-	
+
 	public String getIssuerUniqueID() {
 		return issuerUniqueID;
+	}
+
+	public String getSubjectUniqueID() {
+		return subjectUniqueID;
 	}
 
 	public boolean isValid() {
@@ -151,5 +156,5 @@ public class CertificateModel {
 	public boolean isExempted() {
 		return exempted;
 	}
-	
+
 }
