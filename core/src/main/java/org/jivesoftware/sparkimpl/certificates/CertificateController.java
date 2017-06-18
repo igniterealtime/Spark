@@ -1,12 +1,15 @@
 package org.jivesoftware.sparkimpl.certificates;
 
+import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -25,15 +28,15 @@ import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
  */
 
 public class CertificateController {
-	List<CertificateModel> certificates;
-	DefaultTableModel tableModel;
-	Object[] certEntry;
-	LocalPreferences localPreferences;
+	private List<CertificateModel> certificates;
+	private DefaultTableModel tableModel;
+	private Object[] certEntry;
+	private LocalPreferences localPreferences;
 	private static final String[] COLUMN_NAMES = { Res.getString("table.column.certificate.certificate"),
 			Res.getString("table.column.certificate.subject"), Res.getString("table.column.certificate.valid"),
 			Res.getString("table.column.certificate.exempted") };
 	private static final int NUMBER_OF_COLUMNS = COLUMN_NAMES.length;
-	KeyStore trustStore;
+	private KeyStore trustStore;
 
 	public CertificateController(LocalPreferences localPreferences) {
 		if (localPreferences == null) {
@@ -91,6 +94,20 @@ public class CertificateController {
 		}
 	}
   
+	public void addCertificateToKeystore(File file, String alias) throws KeyStoreException, CertificateException, NoSuchAlgorithmException, IOException{
+		if(file == null){
+			throw new IllegalArgumentException();
+		}
+		CertificateFactory cf = CertificateFactory.getInstance("X509");
+		InputStream inputStream = new FileInputStream(file);
+		X509Certificate addedCert = (X509Certificate) cf.generateCertificate(inputStream);
+		trustStore.setCertificateEntry(alias, addedCert);
+		FileOutputStream outputStream = new FileOutputStream(localPreferences.getTrustStorePath());
+		trustStore.store(outputStream, localPreferences.getTrustStorePassword().toCharArray());
+		inputStream.close();
+		outputStream.close();
+	}
+	
 	public List<CertificateModel> getCertificates() {
 		return certificates;
 	}

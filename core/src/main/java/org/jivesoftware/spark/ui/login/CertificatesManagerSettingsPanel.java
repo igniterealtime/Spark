@@ -2,6 +2,7 @@ package org.jivesoftware.spark.ui.login;
 
 import static java.awt.GridBagConstraints.HORIZONTAL;
 import static java.awt.GridBagConstraints.WEST;
+
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -10,18 +11,26 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
+import java.io.IOException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
+
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
-import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.filechooser.FileNameExtensionFilter;
+
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.spark.util.ResourceUtils;
+import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.certificates.CertificateController;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 
@@ -45,13 +54,13 @@ public class CertificatesManagerSettingsPanel extends JPanel implements ActionLi
 	private JCheckBox checkCRL = new JCheckBox();
 	private JCheckBox checkOCSP = new JCheckBox();
 	private JButton showCert = new JButton();
-	private JButton uploadCert = new JButton();
 	private JFileChooser fileChooser = new JFileChooser();
 	private JButton fileButton = new JButton();
 	private JTextField fileField = new JTextField();
 	private JScrollPane scrollPane;
-	private JLabel addCertLabel = new JLabel(Res.getString("label.certificate.add.certificate.to.truststore"));
 	private JPanel filePanel = new JPanel();
+	private FileNameExtensionFilter certFilter = new FileNameExtensionFilter(Res.getString("menuitem.certificate.files.filter"),"cer", "crt", "der");
+
 	public CertificatesManagerSettingsPanel(LocalPreferences localPreferences, JDialog optionsDialog) {
 
 		this.localPreferences = localPreferences;
@@ -111,11 +120,7 @@ public class CertificatesManagerSettingsPanel extends JPanel implements ActionLi
 		} else if (e.getSource() == showCert) {
 			showCertificate();
 		} else if (e.getSource() == fileButton) {
-			int retVal = fileChooser.showOpenDialog(this);
-			if (retVal == JFileChooser.APPROVE_OPTION) {
-				File file = fileChooser.getSelectedFile();
-				fileField.setText(file.getAbsolutePath());
-			}
+			addCertificate();
 		}
 	}
 
@@ -152,7 +157,33 @@ public class CertificatesManagerSettingsPanel extends JPanel implements ActionLi
 		CertificateDialog certDialog = new CertificateDialog(localPreferences,
 				certControll.getCertificates().get(certTable.getSelectedRow()));
 	}
+	
+	private void addCertificate(){
+		
+		fileChooser.setAcceptAllFileFilterUsed(false);
+		fileChooser.addChoosableFileFilter(certFilter);
+		fileChooser.setFileFilter(certFilter);
 
+		int retVal = fileChooser.showOpenDialog(this);
+		if (retVal == JFileChooser.APPROVE_OPTION) {
+
+			File file = fileChooser.getSelectedFile();
+			
+			try {
+				fileField.setText(file.getAbsolutePath());
+				String certAlias = (String) JOptionPane.showInputDialog(null, Res.getString("dialog.provide.alias"));
+				if (certAlias == null) {
+					throw new IllegalArgumentException();
+				}
+				certControll.addCertificateToKeystore(file, certAlias);
+			} catch (KeyStoreException | CertificateException | NoSuchAlgorithmException | IOException ex) {
+				Log.error("Cannot upload certificate file", ex);
+			} catch (IllegalArgumentException ex) {
+				Log.warning("Certificate alias cannot be null");
+			}
+		}
+	}
+	
 	@Override
 	public void mouseReleased(MouseEvent arg0) {
 
