@@ -11,6 +11,7 @@ import org.jivesoftware.spark.util.log.Log;
  */
 public class CertificateModel {
 
+	private String alias;
 	private int version;
 	private String serialNumber;
 	private String signatureValue;
@@ -42,9 +43,10 @@ public class CertificateModel {
 	 * @param notAfter
 	 * @param publickKeyInfo
 	 */
-	public CertificateModel(int version, String serialNumber, String signatureValue, String signatureAlgorithm,
-			String issuer, String subject, String notBefore, String notAfter, String publicKey,
-			String publicKeyAlgorithm, String issuerUniqueID, String subjectUniqueID, boolean valid, Boolean exempted) {
+	public CertificateModel(String alias, int version, String serialNumber, String signatureValue,
+			String signatureAlgorithm, String issuer, String subject, String notBefore, String notAfter,
+			String publicKey, String publicKeyAlgorithm, String issuerUniqueID, String subjectUniqueID, boolean valid,
+			Boolean exempted) {
 
 		if (version != 3 || version != 2 || version != 1) {
 			throw new IllegalArgumentException("Version have to be 1, 2 or 3");
@@ -58,7 +60,7 @@ public class CertificateModel {
 			throw new IllegalArgumentException(
 					"Unique Identifiers are present then certificate version must be 2 or 3");
 		}
-
+		this.alias = alias;
 		this.version = version;
 		this.serialNumber = serialNumber;
 		this.signatureValue = signatureValue;
@@ -74,6 +76,11 @@ public class CertificateModel {
 		this.valid = valid;
 		this.exempted = exempted;
 		// this.extensionList = extensionList;
+	}
+
+	public CertificateModel(X509Certificate certificate, String alias) {
+		this(certificate);
+		this.alias = alias;
 	}
 
 	public CertificateModel(X509Certificate certificate) {
@@ -99,6 +106,10 @@ public class CertificateModel {
 		}
 		this.valid = valid;
 		this.exempted = exempted;
+	}
+
+	public String getAlias() {
+		return alias;
 	}
 
 	public int getVersion() {
