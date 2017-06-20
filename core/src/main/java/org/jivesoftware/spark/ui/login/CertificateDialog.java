@@ -23,6 +23,7 @@ import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.spark.util.ResourceUtils;
+import org.jivesoftware.sparkimpl.certificates.CertificateController;
 import org.jivesoftware.sparkimpl.certificates.CertificateModel;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 
@@ -39,6 +40,7 @@ public class CertificateDialog extends JDialog implements ActionListener {
 	private final static Insets DEFAULT_INSETS = new Insets(5, 5, 5, 5);
 	private final LocalPreferences localPreferences;
 	private CertificateModel cert;
+	private CertificateController certControll;
 
 	private JScrollPane scrollPane;
 	private JPanel panel = new JPanel();
@@ -74,11 +76,14 @@ public class CertificateDialog extends JDialog implements ActionListener {
 	private JRadioButton distrust = new JRadioButton();
 	private JButton checkValidity = new JButton();
 	private JButton okButton = new JButton();
+	private JButton cancelButton = new JButton();
 
-	public CertificateDialog(LocalPreferences localPreferences, CertificateModel cert) {
+	public CertificateDialog(LocalPreferences localPreferences, CertificateModel cert,
+			CertificateController certificateController) {
 		if (localPreferences == null || cert == null) {
 			throw new IllegalArgumentException();
 		}
+		certControll = certificateController;
 		this.localPreferences = localPreferences;
 		this.cert = cert;
 		setTitle(Res.getString("title.certificate"));
@@ -112,6 +117,7 @@ public class CertificateDialog extends JDialog implements ActionListener {
 		radioGroup.add(trust);
 		
 		okButton.addActionListener(this);
+		cancelButton.addActionListener(this);
 		
 		ResourceUtils.resLabel(versionLabel, versionField, Res.getString("label.certificate.version"));
 		ResourceUtils.resLabel(serialNumberLabel, serialNumberField, Res.getString("label.certificate.serial.number"));
@@ -134,6 +140,7 @@ public class CertificateDialog extends JDialog implements ActionListener {
 		ResourceUtils.resButton(distrust, Res.getString("radio.certificate.distrust"));
 		ResourceUtils.resButton(checkValidity, Res.getString("button.check.validity"));
 		ResourceUtils.resButton(okButton, Res.getString("ok"));
+		ResourceUtils.resButton(cancelButton, Res.getString("cancel"));
 		
 		panel.setLayout(new GridBagLayout());
 		buttonPanel.setLayout(new GridBagLayout());
@@ -181,7 +188,8 @@ public class CertificateDialog extends JDialog implements ActionListener {
 		buttonPanel.add(trust, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
 		buttonPanel.add(distrust, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
 		buttonPanel.add(checkValidity, new GridBagConstraints(0, 1, 2, 1, 0.0, 0.0, WEST, NONE, DEFAULT_INSETS, 0, 0));
-		buttonPanel.add(okButton, new GridBagConstraints(2, 2, 2, 1, 0.0, 0.0, WEST, NONE, new Insets(5, 5, 5, 200), 60, 0));
+		buttonPanel.add(okButton, new GridBagConstraints(2, 2, 2, 1, 0.0, 0.0, WEST, HORIZONTAL, new Insets(5, 5, 5, 100), 80, 0));
+		buttonPanel.add(cancelButton, new GridBagConstraints(3, 2, 2, 1, 0.0, 0.0, WEST, HORIZONTAL, new Insets(5, 200, 5, 5), 80, 0));
 
 		scrollPane = new JScrollPane(panel);
 		scrollPane.setMinimumSize(new Dimension(250, 500));
@@ -198,9 +206,23 @@ public class CertificateDialog extends JDialog implements ActionListener {
 		repaint();
 	}
 
+	public CertificateDialog(LocalPreferences localPreferences, CertificateModel certificateModel) {
+		this(localPreferences, certificateModel, null);
+	}
+
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource() == okButton){
+			//controller should be passed to this class only if there is need to modification content of Keystore.
+			System.out.println(certControll);
+			if (certControll != null) {
+				certControll.setAddToKeystore(true);
+			}
+			this.dispose();
+		}else if(e.getSource() == cancelButton){
+			if (certControll != null) {
+				certControll.setAddToKeystore(false);
+			}
 			this.dispose();
 		}
 	}

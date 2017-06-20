@@ -32,6 +32,7 @@ import org.jivesoftware.resource.Res;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.certificates.CertificateController;
+import org.jivesoftware.sparkimpl.certificates.CertificateModel;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 
 /**
@@ -46,7 +47,7 @@ public class CertificatesManagerSettingsPanel extends JPanel implements ActionLi
 	private final static Insets DEFAULT_INSETS = new Insets(5, 5, 5, 5);
 	private final LocalPreferences localPreferences;
 	private CertificateController certControll;
-	private JTable certTable = new JTable();
+	private static JTable certTable = new JTable();
 	private JCheckBox acceptAll = new JCheckBox();
 	private JCheckBox acceptExpired = new JCheckBox();
 	private JCheckBox acceptRevoked = new JCheckBox();
@@ -56,7 +57,6 @@ public class CertificatesManagerSettingsPanel extends JPanel implements ActionLi
 	private JButton showCert = new JButton();
 	private JFileChooser fileChooser = new JFileChooser();
 	private JButton fileButton = new JButton();
-	private JTextField fileField = new JTextField();
 	private JScrollPane scrollPane;
 	private JPanel filePanel = new JPanel();
 	private FileNameExtensionFilter certFilter = new FileNameExtensionFilter(Res.getString("menuitem.certificate.files.filter"),"cer", "crt", "der");
@@ -87,8 +87,7 @@ public class CertificatesManagerSettingsPanel extends JPanel implements ActionLi
 		fileButton.addActionListener(this);
 
 		filePanel.setLayout(new GridBagLayout());
-		filePanel.add(fileField, new GridBagConstraints(0, 1, 1, 1, 0.1, 1.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
-		filePanel.add(fileButton, new GridBagConstraints(1, 1, 2, 1, 0.0, 1.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
+		filePanel.add(fileButton, new GridBagConstraints(0, 0, 2, 1, 0.0, 1.0, WEST, HORIZONTAL, DEFAULT_INSETS, 120, 0));
 		filePanel.setBorder(
 				BorderFactory.createTitledBorder(Res.getString("label.certificate.add.certificate.to.truststore")));
 
@@ -118,7 +117,7 @@ public class CertificatesManagerSettingsPanel extends JPanel implements ActionLi
 			acceptExpired.setEnabled(true);
 			acceptRevoked.setEnabled(true);
 		} else if (e.getSource() == showCert) {
-			showCertificate();
+			certControll.showCertificate();
 		} else if (e.getSource() == fileButton) {
 			addCertificate();
 		}
@@ -144,22 +143,13 @@ public class CertificatesManagerSettingsPanel extends JPanel implements ActionLi
 		if (e.getClickCount() == 2) {
 			JTable source = (JTable) e.getSource();
 			if (e.getSource() == certTable && source.getSelectedColumn() != 3) {
-				showCertificate();
+				certControll.showCertificate();
 			}
 		}
-
 	}
 
-	/**
-	 * Open dialog with certificate.
-	 */
-	private void showCertificate() {
-		CertificateDialog certDialog = new CertificateDialog(localPreferences,
-				certControll.getCertificates().get(certTable.getSelectedRow()));
-	}
-	
-	private void addCertificate(){
-		
+	private void addCertificate() {
+
 		fileChooser.setAcceptAllFileFilterUsed(false);
 		fileChooser.addChoosableFileFilter(certFilter);
 		fileChooser.setFileFilter(certFilter);
@@ -168,25 +158,23 @@ public class CertificatesManagerSettingsPanel extends JPanel implements ActionLi
 		if (retVal == JFileChooser.APPROVE_OPTION) {
 
 			File file = fileChooser.getSelectedFile();
-			
 			try {
-				fileField.setText(file.getAbsolutePath());
-				String certAlias = (String) JOptionPane.showInputDialog(null, Res.getString("dialog.provide.alias"));
-				if (certAlias == null) {
-					throw new IllegalArgumentException();
-				}
-				certControll.addCertificateToKeystore(file, certAlias);
+				certControll.addCertificateToKeystore(file);
 			} catch (KeyStoreException | CertificateException | NoSuchAlgorithmException | IOException ex) {
 				Log.error("Cannot upload certificate file", ex);
 			} catch (IllegalArgumentException ex) {
-				Log.warning("Certificate alias cannot be null");
+				Log.warning("Certificate or it's alias cannot be null", ex);
 			}
 		}
 	}
-	
+
 	@Override
 	public void mouseReleased(MouseEvent arg0) {
 
+	}
+
+	public static JTable getCertTable() {
+		return certTable;
 	}
 
 }
