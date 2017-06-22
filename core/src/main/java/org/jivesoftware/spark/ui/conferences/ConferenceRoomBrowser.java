@@ -625,6 +625,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
 
         showHiddenButtons.setVisible(false);
 
+        dlg.pack();
         dlg.setVisible(true);
         dlg.toFront();
         dlg.requestFocus();  
