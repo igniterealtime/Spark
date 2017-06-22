@@ -27,6 +27,7 @@ public class LayoutSettings
     private Rectangle pluginViewerBounds;
     private Rectangle broadcastHistoryBounds;
     private Rectangle broadcastMessageBounds;
+    private Rectangle vCardEditorBounds;
 
     private int splitPaneDividerLocation;
 
@@ -108,5 +109,15 @@ public class LayoutSettings
     public void setBroadcastMessageBounds( Rectangle broadcastMessageBounds )
     {
         this.broadcastMessageBounds = broadcastMessageBounds;
+    }
+
+    public Rectangle getVCardEditorBounds()
+    {
+        return vCardEditorBounds;
+    }
+
+    public void setVCardEditorBounds( Rectangle vCardEditorBounds )
+    {
+        this.vCardEditorBounds = vCardEditorBounds;
     }
 }

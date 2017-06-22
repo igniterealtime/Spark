@@ -16,9 +16,9 @@
 
 package org.jivesoftware.sparkimpl.profile;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Image;
+import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
@@ -50,6 +50,7 @@ import org.jivesoftware.spark.ui.status.StatusBar;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkimpl.plugin.layout.LayoutSettingsManager;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 import org.jivesoftware.resource.Default;
 
@@ -130,10 +131,35 @@ public class VCardEditor {
 	dlg.setModal(false);
 
 	dlg.pack();
-	dlg.setSize(600, 400);
 	dlg.setResizable(true);
 	dlg.setContentPane(mainPanel);
-	dlg.setLocationRelativeTo(parent);
+
+	final Rectangle bounds = LayoutSettingsManager.getLayoutSettings().getVCardEditorBounds();
+	if ( bounds == null || bounds.width <= 0 || bounds.height <= 0 )
+	{
+		// Use default settings.
+		dlg.setLocationRelativeTo( parent );
+		dlg.setSize( 600, 400 );
+	}
+	else
+	{
+		dlg.setBounds( bounds );
+	}
+
+	dlg.addComponentListener( new ComponentAdapter()
+	{
+		@Override
+		public void componentResized( ComponentEvent e )
+		{
+			LayoutSettingsManager.getLayoutSettings().setVCardEditorBounds( dlg.getBounds() );
+		}
+
+		@Override
+		public void componentMoved( ComponentEvent e )
+		{
+			LayoutSettingsManager.getLayoutSettings().setVCardEditorBounds( dlg.getBounds() );
+		}
+	} );
 
 	PropertyChangeListener changeListener = new PropertyChangeListener() {
 	    public void propertyChange(PropertyChangeEvent e) {
