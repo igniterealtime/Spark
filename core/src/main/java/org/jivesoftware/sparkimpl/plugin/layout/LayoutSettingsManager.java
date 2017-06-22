@@ -110,6 +110,24 @@ public class LayoutSettingsManager
             props.setProperty( "pluginViewerWidth", Integer.toString( pluginViewer.width ) );
         }
 
+        final Rectangle broadcastHistory = layoutSettings.getBroadcastHistoryBounds();
+        if ( broadcastHistory != null )
+        {
+            props.setProperty( "broadcastHistoryX", Integer.toString( broadcastHistory.x ) );
+            props.setProperty( "broadcastHistoryY", Integer.toString( broadcastHistory.y ) );
+            props.setProperty( "broadcastHistoryHeight", Integer.toString( broadcastHistory.height ) );
+            props.setProperty( "broadcastHistoryWidth", Integer.toString( broadcastHistory.width ) );
+        }
+
+        final Rectangle broadcastMessage = layoutSettings.getBroadcastMessageBounds();
+        if ( broadcastMessage != null )
+        {
+            props.setProperty( "broadcastMessageX", Integer.toString( broadcastMessage.x ) );
+            props.setProperty( "broadcastMessageY", Integer.toString( broadcastMessage.y ) );
+            props.setProperty( "broadcastMessageHeight", Integer.toString( broadcastMessage.height ) );
+            props.setProperty( "broadcastMessageWidth", Integer.toString( broadcastMessage.width ) );
+        }
+
         try
         {
             props.store( new FileOutputStream( getSettingsFile() ), "Storing Spark Layout Settings" );
@@ -241,6 +259,34 @@ public class LayoutSettingsManager
                 pluginViewerDimension );
 
             settings.setPluginViewerBounds( new Rectangle( pluginViewerLocation, pluginViewerDimension ) );
+
+            // Broadcast History
+            final Dimension broadcastHistoryDimension = new Dimension(
+                asInt( props, "broadcastHistoryWidth" ),
+                asInt( props, "broadcastHistoryHeight" )
+            );
+            final Point broadcastHistoryLocation = ensureValidWindowPosition(
+                new Point(
+                    asInt( props, "broadcastHistoryX" ),
+                    asInt( props, "broadcastHistoryY" )
+                ),
+                broadcastHistoryDimension );
+
+            settings.setBroadcastHistoryBounds( new Rectangle( broadcastHistoryLocation, broadcastHistoryDimension ) );
+
+            // Broadcast Message
+            final Dimension broadcastMessageDimension = new Dimension(
+                asInt( props, "broadcastMessageWidth" ),
+                asInt( props, "broadcastMessageHeight" )
+            );
+            final Point broadcastMessageLocation = ensureValidWindowPosition(
+                new Point(
+                    asInt( props, "broadcastMessageX" ),
+                    asInt( props, "broadcastMessageY" )
+                ),
+                broadcastMessageDimension );
+
+            settings.setBroadcastMessageBounds( new Rectangle( broadcastMessageLocation, broadcastMessageDimension ) );
 
             // Split Divider
             settings.setSplitPaneDividerLocation( asInt( props, "splitDividerLocation" ) );

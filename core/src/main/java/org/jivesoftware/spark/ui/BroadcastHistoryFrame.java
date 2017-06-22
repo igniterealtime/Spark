@@ -1,4 +1,7 @@
 package org.jivesoftware.spark.ui;
+import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -15,6 +18,7 @@ import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.sparkimpl.plugin.layout.LayoutSettingsManager;
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -114,9 +118,34 @@ public class BroadcastHistoryFrame extends javax.swing.JFrame {
                 .addContainerGap(15, Short.MAX_VALUE))
         );
   
-        pack();  
-        setLocationRelativeTo(null);
-     }
+        pack();
+
+        final Rectangle bounds = LayoutSettingsManager.getLayoutSettings().getBroadcastHistoryBounds();
+        if ( bounds == null || bounds.width <= 0 || bounds.height <= 0 )
+        {
+            // Use default settings.
+            setLocationRelativeTo( null );
+        }
+        else
+        {
+            setBounds( bounds );
+        }
+
+        addComponentListener( new ComponentAdapter()
+        {
+            @Override
+            public void componentResized( ComponentEvent e )
+            {
+                LayoutSettingsManager.getLayoutSettings().setBroadcastHistoryBounds( getBounds() );
+            }
+
+            @Override
+            public void componentMoved( ComponentEvent e )
+            {
+                LayoutSettingsManager.getLayoutSettings().setBroadcastHistoryBounds( getBounds() );
+            }
+        } );
+    }
 
 
     private void SearchButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_SearchButtonMouseClicked
