@@ -4,6 +4,8 @@ import static java.awt.GridBagConstraints.HORIZONTAL;
 import static java.awt.GridBagConstraints.WEST;
 import static java.awt.GridBagConstraints.BOTH;
 import static java.awt.GridBagConstraints.NONE;
+import static java.awt.GridBagConstraints.CENTER;
+
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -41,24 +43,26 @@ public class CertificateDialog extends JDialog implements ActionListener {
 	private final LocalPreferences localPreferences;
 	private CertificateModel cert;
 	private CertificateController certControll;
+	private boolean addInfo;
 
 	private JScrollPane scrollPane;
 	private JPanel panel = new JPanel();
 	private JPanel buttonPanel = new JPanel();
 
-	private JTextField versionField = new JTextField();
-	private JTextField serialNumberField = new JTextField();
+	private JTextArea versionField = new JTextArea();
+	private JTextArea serialNumberField = new JTextArea();
 	private JTextArea signatureValueField = new JTextArea();
-	private JTextField signatureAlgorithmField = new JTextField();
-	private JTextField issuerField = new JTextField();
-	private JTextField subjectField = new JTextField();
-	private JTextField notBeforeField = new JTextField();
-	private JTextField notAfterField = new JTextField();
+	private JTextArea signatureAlgorithmField = new JTextArea();
+	private JTextArea issuerField = new JTextArea();
+	private JTextArea subjectField = new JTextArea();
+	private JTextArea notBeforeField = new JTextArea();
+	private JTextArea notAfterField = new JTextArea();
 	private JTextArea publicKeyField = new JTextArea();
-	private JTextField publicKeyAlgorithmField = new JTextField();
-	private JTextField issuerUniqueIDField = new JTextField();
-	private JTextField subjectUniqueIDField = new JTextField();
+	private JTextArea publicKeyAlgorithmField = new JTextArea();
+	private JTextArea issuerUniqueIDField = new JTextArea();
+	private JTextArea subjectUniqueIDField = new JTextArea();
 
+	private JLabel infoLabel = new JLabel();
 	private JLabel versionLabel = new JLabel();
 	private JLabel serialNumberLabel = new JLabel();
 	private JLabel signatureValueLabel = new JLabel();
@@ -79,7 +83,7 @@ public class CertificateDialog extends JDialog implements ActionListener {
 	private JButton cancelButton = new JButton();
 
 	public CertificateDialog(LocalPreferences localPreferences, CertificateModel cert,
-			CertificateController certificateController) {
+			CertificateController certificateController, boolean addInfo) {
 		if (localPreferences == null || cert == null) {
 			throw new IllegalArgumentException();
 		}
@@ -94,6 +98,7 @@ public class CertificateDialog extends JDialog implements ActionListener {
 		setModal(true);
 		setLayout(new GridBagLayout());
 		isAlwaysOnTop();
+		setResizable(false);
 		
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 
@@ -110,8 +115,20 @@ public class CertificateDialog extends JDialog implements ActionListener {
 		issuerUniqueIDField.setText(cert.getIssuerUniqueID());
 		subjectUniqueIDField.setText(cert.getSubjectUniqueID());
 
+		versionField.setLineWrap(true);
+		serialNumberField.setLineWrap(true);
 		signatureValueField.setLineWrap(true);
+		signatureAlgorithmField.setLineWrap(true);
+		issuerField.setLineWrap(true);
+		subjectField.setLineWrap(true);
+		notBeforeField.setLineWrap(true);
+		notAfterField.setLineWrap(true);
 		publicKeyField.setLineWrap(true);
+		publicKeyAlgorithmField.setLineWrap(true);
+		issuerUniqueIDField.setLineWrap(true);
+		subjectUniqueIDField.setLineWrap(true);
+		
+		
 		ButtonGroup radioGroup = new ButtonGroup();
 		radioGroup.add(distrust);
 		radioGroup.add(trust);
@@ -141,6 +158,7 @@ public class CertificateDialog extends JDialog implements ActionListener {
 		ResourceUtils.resButton(checkValidity, Res.getString("button.check.validity"));
 		ResourceUtils.resButton(okButton, Res.getString("ok"));
 		ResourceUtils.resButton(cancelButton, Res.getString("cancel"));
+		infoLabel.setText(Res.getString("dialog.certificate.show"));
 		
 		panel.setLayout(new GridBagLayout());
 		buttonPanel.setLayout(new GridBagLayout());
@@ -185,36 +203,36 @@ public class CertificateDialog extends JDialog implements ActionListener {
 		panel.add(subjectUniqueIDField,
 				new GridBagConstraints(2, 11, 6, 1, 1.0, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
 
-		buttonPanel.add(trust, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
-		buttonPanel.add(distrust, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
+		buttonPanel.add(trust, new GridBagConstraints(0, 0, 1, 1, 0.2, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
+		buttonPanel.add(distrust, new GridBagConstraints(1, 0, 1, 1, 0.1, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
 		buttonPanel.add(checkValidity, new GridBagConstraints(0, 1, 2, 1, 0.0, 0.0, WEST, NONE, DEFAULT_INSETS, 0, 0));
-		buttonPanel.add(okButton, new GridBagConstraints(2, 2, 2, 1, 0.0, 0.0, WEST, HORIZONTAL, new Insets(5, 5, 5, 100), 80, 0));
-		buttonPanel.add(cancelButton, new GridBagConstraints(3, 2, 2, 1, 0.0, 0.0, WEST, HORIZONTAL, new Insets(5, 200, 5, 5), 80, 0));
+		buttonPanel.add(okButton, new GridBagConstraints(1, 2, 1, 1, 0.2, 0.0, CENTER, HORIZONTAL, new Insets(5, 100, 5, 5), 0, 0));
+		buttonPanel.add(cancelButton, new GridBagConstraints(2, 2, 1, 1, 0.2, 0.0, CENTER, HORIZONTAL, new Insets(5, 5, 5, 100), 0, 0));
 
 		scrollPane = new JScrollPane(panel);
-		scrollPane.setMinimumSize(new Dimension(250, 500));
 		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		
+		if (addInfo) {
+			add(infoLabel, new GridBagConstraints(0, 0, 4, 1, 1.0, 1.0, WEST, BOTH, DEFAULT_INSETS, 0, 0));
+		}
+		
+		add(scrollPane, new GridBagConstraints(0, 1, 4, 1, 1.0, 1.0, WEST, BOTH, DEFAULT_INSETS, 0, 0));
+		add(buttonPanel, new GridBagConstraints(0, 2, 1, 1, 1.0, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
 
-		add(scrollPane, new GridBagConstraints(0, 0, 4, 1, 1.0, 1.0, WEST, BOTH, DEFAULT_INSETS, 0, 0));
-		add(buttonPanel, new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
-
-		scrollPane.setVisible(true);
 		setVisible(true);
 		
 		scrollPane.getVerticalScrollBar().setValue(0);
-		scrollPane.repaint();
-		repaint();
+		
 	}
-
+	
 	public CertificateDialog(LocalPreferences localPreferences, CertificateModel certificateModel) {
-		this(localPreferences, certificateModel, null);
+		this(localPreferences, certificateModel, null, false);
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource() == okButton){
 			//controller should be passed to this class only if there is need to modification content of Keystore.
-			System.out.println(certControll);
 			if (certControll != null) {
 				certControll.setAddToKeystore(true);
 			}
