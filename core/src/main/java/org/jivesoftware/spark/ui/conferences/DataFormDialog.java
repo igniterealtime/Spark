@@ -121,11 +121,13 @@ public class DataFormDialog extends JPanel {
                     addField(label, new JTextArea(buf.toString()), variable);
                 }
                 else if (type.equals(FormField.Type.text_private)) {
+                    String value = null;
                     if ( !valueList.isEmpty() )
                     {
-                        submitForm.setAnswer( variable, valueList.get( 0 ) );
+                        value = valueList.get( 0 );
+                        submitForm.setAnswer( variable, value );
                     }
-                    addField(label, new JPasswordField(), variable);
+                    addField(label, new JPasswordField( value ), variable);
                 }
                 else if (type.equals(FormField.Type.list_single)) {
                     JComboBox box = new JComboBox();
