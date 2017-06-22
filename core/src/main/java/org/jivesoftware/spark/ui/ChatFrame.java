@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2004-2011 Jive Software. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,7 +21,6 @@ import org.jivesoftware.resource.Res;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.log.Log;
-import org.jivesoftware.sparkimpl.plugin.layout.LayoutSettings;
 import org.jivesoftware.sparkimpl.plugin.layout.LayoutSettingsManager;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
@@ -80,16 +79,41 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
         getContentPane().setLayout(new BorderLayout());
         getContentPane().add(SparkManager.getChatManager().getChatContainer(), BorderLayout.CENTER);
 
-        LayoutSettings settings = LayoutSettingsManager.getLayoutSettings();
-        if (settings.getChatFrameX() == 0 && settings.getChatFrameY() == 0) {
+        setMinimumSize( new Dimension( 300, 300 ) );
+        final Rectangle chatFrameBounds = LayoutSettingsManager.getLayoutSettings().getChatFrameBounds();
+        if (chatFrameBounds == null || chatFrameBounds.width <= 0 || chatFrameBounds.height <= 0)
+        {
             // Use default settings.
             setSize(500, 400);
             GraphicUtils.centerWindowOnScreen(this);
         }
-        else {
-            setBounds(settings.getChatFrameX(), settings.getChatFrameY(), settings.getChatFrameWidth(), settings.getChatFrameHeight());
+        else
+        {
+            setBounds( chatFrameBounds );
         }
 
+        addComponentListener( new ComponentAdapter()
+        {
+            @Override
+            public void componentResized( ComponentEvent e )
+            {
+                // Don't do this for subclasses.
+                if ( e.getComponent().getClass().getSimpleName().equalsIgnoreCase( "ChatFrame" ) )
+                {
+                    LayoutSettingsManager.getLayoutSettings().setChatFrameBounds( getBounds() );
+                }
+            }
+
+            @Override
+            public void componentMoved( ComponentEvent e )
+            {
+                // Don't do this for subclasses.
+                if ( e.getComponent().getClass().getSimpleName().equalsIgnoreCase( "ChatFrame" ) )
+                {
+                    LayoutSettingsManager.getLayoutSettings().setChatFrameBounds( getBounds() );
+                }
+            }
+        } );
 
         addWindowFocusListener(this);
 
@@ -185,18 +209,6 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
         }
 
         return System.currentTimeMillis() - inactiveTime;
-    }
-
-    /**
-     * Saves the layout on closing of the chat frame.
-     */
-    public void saveLayout() {
-        LayoutSettings settings = LayoutSettingsManager.getLayoutSettings();
-        settings.setChatFrameHeight(getHeight());
-        settings.setChatFrameWidth(getWidth());
-        settings.setChatFrameX(getX());
-        settings.setChatFrameY(getY());
-        LayoutSettingsManager.saveLayoutSettings();
     }
 
     /**
