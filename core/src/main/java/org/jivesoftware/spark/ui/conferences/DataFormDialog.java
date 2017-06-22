@@ -55,6 +55,7 @@ import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.muc.RoomInfo;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.CheckBoxList;
+import org.jivesoftware.spark.component.MessageDialog;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.ResourceUtils;
@@ -241,6 +242,7 @@ public class DataFormDialog extends JPanel {
         }
         catch (XMPPException | SmackException e) {
             Log.error(e);
+            MessageDialog.showErrorDialog( Res.getString( "group.send_config.error" ), e);
         }
     }
 
