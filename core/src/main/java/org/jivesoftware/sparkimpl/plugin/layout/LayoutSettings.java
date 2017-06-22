@@ -23,6 +23,7 @@ public class LayoutSettings
     private Rectangle mainWindowBounds;
     private Rectangle chatFrameBounds;
     private Rectangle preferencesBounds;
+    private Rectangle conferenceRoomBrowserBounds;
 
     private int splitPaneDividerLocation;
 
@@ -64,5 +65,15 @@ public class LayoutSettings
     public void setSplitPaneDividerLocation( int splitPaneDividerLocation )
     {
         this.splitPaneDividerLocation = splitPaneDividerLocation;
+    }
+
+    public Rectangle getConferenceRoomBrowserBounds()
+    {
+        return conferenceRoomBrowserBounds;
+    }
+
+    public void setConferenceRoomBrowserBounds( Rectangle conferenceRoomBrowserBounds )
+    {
+        this.conferenceRoomBrowserBounds = conferenceRoomBrowserBounds;
     }
 }

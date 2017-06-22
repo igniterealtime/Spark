@@ -92,6 +92,14 @@ public class LayoutSettingsManager
         }
         props.setProperty( "splitDividerLocation", Integer.toString( layoutSettings.getSplitPaneDividerLocation() ) );
 
+        final Rectangle conferenceRoomBrowser = layoutSettings.getConferenceRoomBrowserBounds();
+        if ( conferenceRoomBrowser != null )
+        {
+            props.setProperty( "conferenceRoomBrowserX", Integer.toString( conferenceRoomBrowser.x ) );
+            props.setProperty( "conferenceRoomBrowserY", Integer.toString( conferenceRoomBrowser.y ) );
+            props.setProperty( "conferenceRoomBrowserHeight", Integer.toString( conferenceRoomBrowser.height ) );
+            props.setProperty( "conferenceRoomBrowserWidth", Integer.toString( conferenceRoomBrowser.width ) );
+        }
         try
         {
             props.store( new FileOutputStream( getSettingsFile() ), "Storing Spark Layout Settings" );
@@ -195,6 +203,20 @@ public class LayoutSettingsManager
                 chatFrameDimension );
 
             settings.setPreferencesBounds( new Rectangle( preferencesLocation, preferencesDimension ) );
+
+            // Conference Room Browser
+            final Dimension conferenceRoomBrowserDimension = new Dimension(
+                asInt( props, "conferenceRoomBrowserWidth" ),
+                asInt( props, "conferenceRoomBrowserHeight" )
+            );
+            final Point conferenceRoomBrowserLocation = ensureValidWindowPosition(
+                new Point(
+                    asInt( props, "conferenceRoomBrowserX" ),
+                    asInt( props, "conferenceRoomBrowserY" )
+                ),
+                chatFrameDimension );
+
+            settings.setConferenceRoomBrowserBounds( new Rectangle( conferenceRoomBrowserLocation, conferenceRoomBrowserDimension ) );
 
             // Split Divider
             settings.setSplitPaneDividerLocation( asInt( props, "splitDividerLocation" ) );
