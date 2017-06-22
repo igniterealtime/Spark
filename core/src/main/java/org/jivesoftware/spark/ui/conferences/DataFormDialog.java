@@ -55,6 +55,7 @@ import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.muc.RoomInfo;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.CheckBoxList;
+import org.jivesoftware.spark.component.MessageDialog;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.ResourceUtils;
@@ -120,11 +121,13 @@ public class DataFormDialog extends JPanel {
                     addField(label, new JTextArea(buf.toString()), variable);
                 }
                 else if (type.equals(FormField.Type.text_private)) {
+                    String value = null;
                     if ( !valueList.isEmpty() )
                     {
-                        submitForm.setAnswer( variable, valueList.get( 0 ) );
+                        value = valueList.get( 0 );
+                        submitForm.setAnswer( variable, value );
                     }
-                    addField(label, new JPasswordField(), variable);
+                    addField(label, new JPasswordField( value ), variable);
                 }
                 else if (type.equals(FormField.Type.list_single)) {
                     JComboBox box = new JComboBox();
@@ -241,6 +244,7 @@ public class DataFormDialog extends JPanel {
         }
         catch (XMPPException | SmackException e) {
             Log.error(e);
+            MessageDialog.showErrorDialog( Res.getString( "group.send_config.error" ), e);
         }
     }
 
