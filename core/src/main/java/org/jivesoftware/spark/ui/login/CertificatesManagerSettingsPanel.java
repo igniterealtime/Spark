@@ -142,7 +142,7 @@ public class CertificatesManagerSettingsPanel extends JPanel implements ActionLi
 	public void mousePressed(MouseEvent e) {
 		if (e.getClickCount() == 2) {
 			JTable source = (JTable) e.getSource();
-			if (e.getSource() == certTable && source.getSelectedColumn() != 3) {
+			if (e.getSource() == certTable && source.getSelectedColumn() != 4) {
 				certControll.showCertificate();
 			}
 		}

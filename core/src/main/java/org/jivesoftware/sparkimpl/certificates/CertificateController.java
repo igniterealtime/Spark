@@ -1,5 +1,6 @@
 package org.jivesoftware.sparkimpl.certificates;
 
+import java.awt.HeadlessException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -12,6 +13,7 @@ import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Enumeration;
 import java.util.List;
 
@@ -67,7 +69,7 @@ public class CertificateController {
 				case 4:
 					return Boolean.class;
 				default:
-					return String.class;
+					throw new RuntimeException("Cannot assign classes for columns");
 
 				}
 			}
@@ -119,21 +121,84 @@ public class CertificateController {
 		try (InputStream inputStream = new FileInputStream(file)) {
 			CertificateFactory cf = CertificateFactory.getInstance("X509");
 			X509Certificate addedCert = (X509Certificate) cf.generateCertificate(inputStream);
-			showCertificate(new CertificateModel(addedCert));
+			showCertificate(new CertificateModel(addedCert), true);
+
 			// value of addToKeyStore is changed by setter in CertificateDialog
 			if (addToKeystore == true) {
 				addToKeystore = false;
-				String alias = JOptionPane.showInputDialog(null, Res.getString("dialog.provide.alias.and.confirm" ));
-				if (alias != null) {
-					trustStore.setCertificateEntry(alias, addedCert);
-					try (FileOutputStream outputStream = new FileOutputStream(localPreferences.getTrustStorePath())) {
-						trustStore.store(outputStream, localPreferences.getTrustStorePassword().toCharArray());
+				String alias;
+				do{
+				alias =null;
+				alias = JOptionPane.showInputDialog(null, Res.getString("dialog.certificate.provide.alias.and.confirm"));
+
+				//check if entry pass all requirements
+					if (alias != null 
+							&& checkForSameAlias(alias) == false
+							&& checkForSameCertificate(alias, addedCert) == false
+							&& checkIfAliasIsEmpty(alias) == false) {
+						//add entry to Truststore
+						trustStore.setCertificateEntry(alias, addedCert);
+						try (FileOutputStream outputStream = new FileOutputStream(localPreferences.getTrustStorePath())) {
+							trustStore.store(outputStream, localPreferences.getTrustStorePassword().toCharArray());
+							break;
+						}
 					}
-				}
+				} while (alias != null);
+
 			}
 		}
 	}
 
+	/**
+	 * Check if alias is empty String.
+	 * @return
+	 */
+	private boolean checkIfAliasIsEmpty(String alias){
+		if(alias.equals("")){
+			JOptionPane.showMessageDialog(null, Res.getString("dialog.certificate.alias.cannot.be.empty"));
+		return true;
+		}
+		return false;
+	}
+	/**
+	 * Check if there is certificate entry in Truststore with the same alias.
+	 * @param alias
+	 * @return
+	 * @throws HeadlessException
+	 * @throws KeyStoreException
+	 */
+	private boolean checkForSameAlias(String alias) throws HeadlessException, KeyStoreException {
+		if (trustStore.getCertificate(alias) != null) {
+			JOptionPane.showMessageDialog(null, Res.getString("dialog.certificate.wrong.alias"));
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * Check if this certificate already exist in Truststore.
+	 * 
+	 * @param alias
+	 * @return
+	 * @throws KeyStoreException 
+	 */	
+	private boolean checkForSameCertificate(String alias, X509Certificate addedCert) throws KeyStoreException{
+		// check if this certificate isn't already added to Truststore
+		Enumeration storeCheck = trustStore.aliases();
+		while (storeCheck.hasMoreElements()) {
+
+			String aliasCheck = (String) storeCheck.nextElement();
+			X509Certificate certificateCheck = (X509Certificate) trustStore.getCertificate(aliasCheck);
+			String signature = Base64.getEncoder().encodeToString(certificateCheck.getSignature());
+			String addedSignature = Base64.getEncoder().encodeToString(addedCert.getSignature());
+			if (addedSignature.equals(signature)) {
+				JOptionPane.showMessageDialog(null, Res.getString("dialog.certificate.cannot.have.copy"));
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	/**
 	 * Open dialog with certificate.
 	 */
@@ -147,8 +212,8 @@ public class CertificateController {
 	 * 
 	 * @param CertificateModel
 	 */
-	public void showCertificate(CertificateModel certModel) {
-		CertificateDialog certDialog = new CertificateDialog(localPreferences, certModel, this);
+	public void showCertificate(CertificateModel certModel, boolean addInfo) {
+		CertificateDialog certDialog = new CertificateDialog(localPreferences, certModel, this, addInfo);
 	}
 	
 	public List<CertificateModel> getCertificates() {
