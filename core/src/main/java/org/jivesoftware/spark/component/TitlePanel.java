@@ -122,7 +122,10 @@ public final class TitlePanel extends JPanel {
      * @param desc - brief description
      */
     public final void setDescription(String desc) {
-	desc = "<HTML><BODY>"+desc+"</HTML></BODY>";
+        if ( desc != null )
+        {
+            desc = "<HTML><BODY>" + desc + "</HTML></BODY>";
+        }
         descriptionLabel.setText(desc);
     }
 

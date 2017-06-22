@@ -606,6 +606,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
         setButtonsWidth();
 
         showHiddenButtons.setVisible(false);
+        dlg.pack();
 
         final Rectangle bounds = LayoutSettingsManager.getLayoutSettings().getConferenceRoomBrowserBounds();
         if ( bounds == null || bounds.width <= 0 || bounds.height <= 0 )
