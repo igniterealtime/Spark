@@ -128,6 +128,15 @@ public class LayoutSettingsManager
             props.setProperty( "broadcastMessageWidth", Integer.toString( broadcastMessage.width ) );
         }
 
+        final Rectangle vCardEditor = layoutSettings.getVCardEditorBounds();
+        if ( vCardEditor != null )
+        {
+            props.setProperty( "vCardEditorX", Integer.toString( vCardEditor.x ) );
+            props.setProperty( "vCardEditorY", Integer.toString( vCardEditor.y ) );
+            props.setProperty( "vCardEditorHeight", Integer.toString( vCardEditor.height ) );
+            props.setProperty( "vCardEditorWidth", Integer.toString( vCardEditor.width ) );
+        }
+
         try
         {
             props.store( new FileOutputStream( getSettingsFile() ), "Storing Spark Layout Settings" );
@@ -287,6 +296,20 @@ public class LayoutSettingsManager
                 broadcastMessageDimension );
 
             settings.setBroadcastMessageBounds( new Rectangle( broadcastMessageLocation, broadcastMessageDimension ) );
+
+            // VCard Editor
+            final Dimension vCardEditorDimension = new Dimension(
+                asInt( props, "vCardEditorWidth" ),
+                asInt( props, "vCardEditorHeight" )
+            );
+            final Point vCardEditorLocation = ensureValidWindowPosition(
+                new Point(
+                    asInt( props, "vCardEditorX" ),
+                    asInt( props, "vCardEditorY" )
+                ),
+                vCardEditorDimension );
+
+            settings.setVCardEditorBounds( new Rectangle( vCardEditorLocation, vCardEditorDimension ) );
 
             // Split Divider
             settings.setSplitPaneDividerLocation( asInt( props, "splitDividerLocation" ) );
