@@ -25,6 +25,8 @@ public class LayoutSettings
     private Rectangle preferencesBounds;
     private Rectangle conferenceRoomBrowserBounds;
     private Rectangle pluginViewerBounds;
+    private Rectangle broadcastHistoryBounds;
+    private Rectangle broadcastMessageBounds;
 
     private int splitPaneDividerLocation;
 
@@ -86,5 +88,25 @@ public class LayoutSettings
     public void setPluginViewerBounds( Rectangle pluginViewerBounds )
     {
         this.pluginViewerBounds = pluginViewerBounds;
+    }
+
+    public Rectangle getBroadcastHistoryBounds()
+    {
+        return broadcastHistoryBounds;
+    }
+
+    public void setBroadcastHistoryBounds( Rectangle broadcastHistoryBounds )
+    {
+        this.broadcastHistoryBounds = broadcastHistoryBounds;
+    }
+
+    public Rectangle getBroadcastMessageBounds()
+    {
+        return broadcastMessageBounds;
+    }
+
+    public void setBroadcastMessageBounds( Rectangle broadcastMessageBounds )
+    {
+        this.broadcastMessageBounds = broadcastMessageBounds;
     }
 }

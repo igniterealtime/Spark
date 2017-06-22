@@ -15,11 +15,9 @@
  */
 package org.jivesoftware.sparkimpl.plugin.alerts;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -62,6 +60,8 @@ import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.ui.ContactList;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkimpl.plugin.layout.LayoutSettingsManager;
+
 /**
  * Allows for better selective broadcasting.
  *
@@ -221,10 +221,37 @@ public class BroadcastDialog extends JPanel {
         dlg = new JDialog(SparkManager.getMainWindow(), Res.getString("broadcast"));
         dlg.setContentPane(mainPanel);
         dlg.pack();
-        dlg.setSize(800, 600);
+
+
+        final Rectangle bounds = LayoutSettingsManager.getLayoutSettings().getBroadcastMessageBounds();
+        if ( bounds == null || bounds.width <= 0 || bounds.height <= 0 )
+        {
+            // Use default settings.
+            dlg.setSize( 800, 600 );
+            dlg.setLocationRelativeTo( null );
+        }
+        else
+        {
+            dlg.setBounds( bounds );
+        }
+
+        dlg.addComponentListener( new ComponentAdapter()
+        {
+            @Override
+            public void componentResized( ComponentEvent e )
+            {
+                LayoutSettingsManager.getLayoutSettings().setBroadcastMessageBounds( dlg.getBounds() );
+            }
+
+            @Override
+            public void componentMoved( ComponentEvent e )
+            {
+                LayoutSettingsManager.getLayoutSettings().setBroadcastMessageBounds( dlg.getBounds() );
+            }
+        } );
+
         dlg.setResizable(false);
-        dlg.setLocationRelativeTo(null);
-        
+
         // Add listener
         okButton.addActionListener( e -> {
 try
