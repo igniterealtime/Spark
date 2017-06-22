@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,53 +19,55 @@ import org.jivesoftware.MainWindow;
 import org.jivesoftware.MainWindowListener;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.Plugin;
+import org.jivesoftware.spark.ui.ChatFrame;
 
-public class LayoutPlugin implements Plugin {
+public class LayoutPlugin implements Plugin
+{
 
-    public void initialize() {
+    public void initialize()
+    {
         final MainWindow mainWindow = SparkManager.getMainWindow();
 
-        SparkManager.getMainWindow().addMainWindowListener(new MainWindowListener() {
-            public void shutdown() {
-                int x = mainWindow.getX();
-                int y = mainWindow.getY();
-                int width = mainWindow.getWidth();
-                int height = mainWindow.getHeight();
-
-                LayoutSettings settings = LayoutSettingsManager.getLayoutSettings();
-               
-                settings.setMainWindowHeight(height);
-                settings.setMainWindowWidth(width);
-                settings.setMainWindowX(x);
-                settings.setMainWindowY(y);
-                if (mainWindow.isDocked()){
-                	settings.setSplitPaneDividerLocation(mainWindow.getSplitPane().getDividerLocation());
+        SparkManager.getMainWindow().addMainWindowListener( new MainWindowListener()
+        {
+            public void shutdown()
+            {
+                LayoutSettingsManager.getLayoutSettings().setMainWindowBounds( mainWindow.getBounds() );
+                if ( mainWindow.isDocked() )
+                {
+                    LayoutSettingsManager.getLayoutSettings().setSplitPaneDividerLocation( mainWindow.getSplitPane().getDividerLocation() );
                 }
-                else{
-                	settings.setSplitPaneDividerLocation(-1);
+                else
+                {
+                    LayoutSettingsManager.getLayoutSettings().setSplitPaneDividerLocation( -1 );
                 }
                 LayoutSettingsManager.saveLayoutSettings();
             }
 
-            public void mainWindowActivated() {
+            public void mainWindowActivated()
+            {
 
             }
 
-            public void mainWindowDeactivated() {
+            public void mainWindowDeactivated()
+            {
 
             }
-        });
+        } );
     }
 
-    public void shutdown() {
+    public void shutdown()
+    {
 
     }
 
-    public boolean canShutDown() {
+    public boolean canShutDown()
+    {
         return true;
     }
 
-    public void uninstall() {
+    public void uninstall()
+    {
         // Do nothing.
     }
 }
