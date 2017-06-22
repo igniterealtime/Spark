@@ -55,7 +55,18 @@ public final class MessageDialog {
      *
      * @param throwable the throwable object to display.
      */
-    public static void showErrorDialog(final Throwable throwable) {
+    public static void showErrorDialog(final Throwable throwable)
+    {
+        showErrorDialog( null, throwable );
+    }
+
+    /**
+     * Display a dialog with an exception.
+     *
+     * @param description Human readable text (can be null or empty).
+     * @param throwable the throwable object to display.
+     */
+    public static void showErrorDialog(final String description, final Throwable throwable) {
      	 EventQueue.invokeLater( () -> {
               JTextPane textPane;
               final JOptionPane pane;
@@ -70,7 +81,7 @@ public final class MessageDialog {
               String message = getStackTrace(throwable);
               textPane.setText(message);
               // Create the title panel for this dialog
-              titlePanel = new TitlePanel(Res.getString("message.default.error"), null, SparkRes.getImageIcon(SparkRes.SMALL_DELETE), true);
+              titlePanel = new TitlePanel(Res.getString("message.default.error"), description == null || description.trim().isEmpty() ? null : description.trim(), SparkRes.getImageIcon(SparkRes.SMALL_DELETE), true);
 
               // Construct main panel w/ layout.
               final JPanel mainPanel = new JPanel();
