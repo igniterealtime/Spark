@@ -15,11 +15,7 @@
  */
 package org.jivesoftware.spark.component;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.EventQueue;
-import java.awt.Font;
+import java.awt.*;
 import java.beans.PropertyChangeListener;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -35,6 +31,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 
+import jdk.nashorn.internal.scripts.JD;
 import org.jivesoftware.MainWindow;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
@@ -163,6 +160,63 @@ dlg.setVisible(false);
 
         } );
 
+    }
+
+    /**
+     * Creates, but does not display, a dialog with a specified component.
+     *
+     * @param title       the title of the dialog.
+     * @param description the description to display.
+     * @param icon        the icon.
+     * @param comp        the component to display.
+     * @param parent      the parent of this dialog.
+     * @param modal       true if it is modal.
+     * @return the <code>JDialog</code> created.
+     */
+    public static JDialog createComponent( String title, String description, Icon icon, JComponent comp, Component parent, boolean modal) {
+        final JOptionPane pane;
+        final JDialog dlg;
+
+        TitlePanel titlePanel;
+
+        // Create the title panel for this dialog
+        titlePanel = new TitlePanel(title, description, icon, true);
+
+        // Construct main panel w/ layout.
+        final JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new BorderLayout());
+        mainPanel.add(titlePanel, BorderLayout.NORTH);
+
+        // The user should only be able to close this dialog.
+        Object[] options = {Res.getString("close")};
+        pane = new JOptionPane(comp, JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION, null, options, options[0]);
+
+        mainPanel.add(pane, BorderLayout.CENTER);
+
+        JOptionPane p = new JOptionPane();
+        dlg = p.createDialog(parent, title);
+        dlg.setModal(modal);
+
+        dlg.pack();
+        dlg.setResizable(true);
+        dlg.setContentPane(mainPanel);
+
+        PropertyChangeListener changeListener = e -> {
+            String value;
+            try {
+                value= (String)pane.getValue();
+                if (Res.getString("close").equals(value)) {
+                    dlg.setVisible(false);
+                }
+            } catch (Exception ex) {
+                // probably <ESC> pressed ;-)
+            }
+
+        };
+
+        pane.addPropertyChangeListener(changeListener);
+
+        return dlg;
     }
 
     /**
