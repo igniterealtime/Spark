@@ -80,6 +80,8 @@ public final class MessageDialog {
 
               String message = getStackTrace(throwable);
               textPane.setText(message);
+              textPane.setCaretPosition( 0 ); // scroll to top
+
               // Create the title panel for this dialog
               titlePanel = new TitlePanel(Res.getString("message.default.error"), description == null || description.trim().isEmpty() ? null : description.trim(), SparkRes.getImageIcon(SparkRes.SMALL_DELETE), true);
 
