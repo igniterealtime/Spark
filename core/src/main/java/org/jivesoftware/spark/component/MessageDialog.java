@@ -112,6 +112,7 @@ dlg.setVisible(false);
 
               pane.addPropertyChangeListener(changeListener);
 
+              dlg.pack();
               dlg.setVisible(true);
               dlg.toFront();
               dlg.requestFocus();
