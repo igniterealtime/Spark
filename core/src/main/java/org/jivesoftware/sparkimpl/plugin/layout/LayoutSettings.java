@@ -24,6 +24,7 @@ public class LayoutSettings
     private Rectangle chatFrameBounds;
     private Rectangle preferencesBounds;
     private Rectangle conferenceRoomBrowserBounds;
+    private Rectangle pluginViewerBounds;
 
     private int splitPaneDividerLocation;
 
@@ -75,5 +76,15 @@ public class LayoutSettings
     public void setConferenceRoomBrowserBounds( Rectangle conferenceRoomBrowserBounds )
     {
         this.conferenceRoomBrowserBounds = conferenceRoomBrowserBounds;
+    }
+
+    public Rectangle getPluginViewerBounds()
+    {
+        return pluginViewerBounds;
+    }
+
+    public void setPluginViewerBounds( Rectangle pluginViewerBounds )
+    {
+        this.pluginViewerBounds = pluginViewerBounds;
     }
 }

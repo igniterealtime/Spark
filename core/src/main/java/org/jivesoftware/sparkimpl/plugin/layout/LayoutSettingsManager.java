@@ -100,6 +100,16 @@ public class LayoutSettingsManager
             props.setProperty( "conferenceRoomBrowserHeight", Integer.toString( conferenceRoomBrowser.height ) );
             props.setProperty( "conferenceRoomBrowserWidth", Integer.toString( conferenceRoomBrowser.width ) );
         }
+
+        final Rectangle pluginViewer = layoutSettings.getPluginViewerBounds();
+        if ( pluginViewer != null )
+        {
+            props.setProperty( "pluginViewerX", Integer.toString( pluginViewer.x ) );
+            props.setProperty( "pluginViewerY", Integer.toString( pluginViewer.y ) );
+            props.setProperty( "pluginViewerHeight", Integer.toString( pluginViewer.height ) );
+            props.setProperty( "pluginViewerWidth", Integer.toString( pluginViewer.width ) );
+        }
+
         try
         {
             props.store( new FileOutputStream( getSettingsFile() ), "Storing Spark Layout Settings" );
@@ -200,7 +210,7 @@ public class LayoutSettingsManager
                     asInt( props, "preferencesFrameX" ),
                     asInt( props, "preferencesFrameY" )
                 ),
-                chatFrameDimension );
+                preferencesDimension );
 
             settings.setPreferencesBounds( new Rectangle( preferencesLocation, preferencesDimension ) );
 
@@ -214,9 +224,23 @@ public class LayoutSettingsManager
                     asInt( props, "conferenceRoomBrowserX" ),
                     asInt( props, "conferenceRoomBrowserY" )
                 ),
-                chatFrameDimension );
+                conferenceRoomBrowserDimension );
 
             settings.setConferenceRoomBrowserBounds( new Rectangle( conferenceRoomBrowserLocation, conferenceRoomBrowserDimension ) );
+
+            // Plugin viewer
+            final Dimension pluginViewerDimension = new Dimension(
+                asInt( props, "pluginViewerWidth" ),
+                asInt( props, "pluginViewerHeight" )
+            );
+            final Point pluginViewerLocation = ensureValidWindowPosition(
+                new Point(
+                    asInt( props, "pluginViewerX" ),
+                    asInt( props, "pluginViewerY" )
+                ),
+                pluginViewerDimension );
+
+            settings.setPluginViewerBounds( new Rectangle( pluginViewerLocation, pluginViewerDimension ) );
 
             // Split Divider
             settings.setSplitPaneDividerLocation( asInt( props, "splitDividerLocation" ) );
