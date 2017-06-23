@@ -16,14 +16,7 @@
 package org.jivesoftware.spark.ui.conferences;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
@@ -80,6 +73,7 @@ import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.util.UIComponentRegistry;
 import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkimpl.plugin.layout.LayoutSettingsManager;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jxmpp.util.XmppStringUtils;
@@ -580,19 +574,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
         dlg = p.createDialog(SparkManager.getMainWindow(),
             Res.getString("title.browse.room.service", serviceName));
         dlg.setModal(false);
-        dlg.pack();
         dlg.addComponentListener(this);
-
-        /*
-         * looking up which bundle is used to set the size of the Window (not
-         * using Localpreferences getLanguage() because sometimes language is
-         * not saved in the properties file and so the method only returns an
-         * empty String)
-         */
-        if (Res.getBundle().getLocale().toString().equals("de"))
-            dlg.setSize(700, 400);
-        else
-            dlg.setSize(500, 400);
 
         dlg.setResizable(true);
         dlg.setContentPane(mainPanel);
@@ -624,8 +606,48 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
         setButtonsWidth();
 
         showHiddenButtons.setVisible(false);
-
         dlg.pack();
+
+        final Rectangle bounds = LayoutSettingsManager.getLayoutSettings().getConferenceRoomBrowserBounds();
+        if ( bounds == null || bounds.width <= 0 || bounds.height <= 0 )
+        {
+            // Use default settings.
+
+            /*
+             * looking up which bundle is used to set the size of the Window (not
+             * using Localpreferences getLanguage() because sometimes language is
+             * not saved in the properties file and so the method only returns an
+             * empty String)
+             */
+                if (Res.getBundle().getLocale().toString().equals("de"))
+                {
+                    dlg.setSize( 700, 400 );
+                }
+                else
+                {
+                    dlg.setSize( 500, 400 );
+                }
+        }
+        else
+        {
+            dlg.setBounds( bounds );
+        }
+
+        dlg.addComponentListener( new ComponentAdapter()
+        {
+            @Override
+            public void componentResized( ComponentEvent e )
+            {
+                LayoutSettingsManager.getLayoutSettings().setConferenceRoomBrowserBounds( dlg.getBounds() );
+            }
+
+            @Override
+            public void componentMoved( ComponentEvent e )
+            {
+                LayoutSettingsManager.getLayoutSettings().setConferenceRoomBrowserBounds( dlg.getBounds() );
+            }
+        } );
+
         dlg.setVisible(true);
         dlg.toFront();
         dlg.requestFocus();  

@@ -1243,11 +1243,8 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
 
 
 	    public void windowClosing(WindowEvent windowEvent) {
-		// Save layout
-		    chatFrame.saveLayout();
 		    SparkManager.getChatManager().getChatContainer()
 			    .closeAllChatRooms();
-
 		}
         });
 
