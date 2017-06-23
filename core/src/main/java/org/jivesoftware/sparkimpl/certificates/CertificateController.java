@@ -17,6 +17,9 @@ import java.util.Base64;
 import java.util.Enumeration;
 import java.util.List;
 
+import javax.naming.InvalidNameException;
+import javax.naming.ldap.LdapName;
+import javax.naming.ldap.Rdn;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import org.jivesoftware.resource.Res;
@@ -100,7 +103,7 @@ public class CertificateController {
 				tableModel.addRow(certEntry);
 			}
 		} catch (KeyStoreException | NoSuchAlgorithmException | CertificateException | IOException e) {
-			Log.warning("Cannot acces Truststore, it might be not set up", e);
+			Log.warning("Cannot access Truststore, it might be not set up", e);
 		}
 	}
   
@@ -112,56 +115,74 @@ public class CertificateController {
 	 * @throws CertificateException
 	 * @throws NoSuchAlgorithmException
 	 * @throws IOException
+	 * @throws InvalidNameException 
+	 * @throws HeadlessException 
 	 */
 	
-	public void addCertificateToKeystore(File file) throws KeyStoreException, CertificateException, NoSuchAlgorithmException, IOException{
+	public void addCertificateToKeystore(File file) throws KeyStoreException, CertificateException, NoSuchAlgorithmException, IOException, HeadlessException, InvalidNameException{
 		if(file == null){
 			throw new IllegalArgumentException();
 		}
 		try (InputStream inputStream = new FileInputStream(file)) {
 			CertificateFactory cf = CertificateFactory.getInstance("X509");
 			X509Certificate addedCert = (X509Certificate) cf.generateCertificate(inputStream);
-			showCertificate(new CertificateModel(addedCert), true);
-
+			if (checkForSameCertificate(addedCert) == false) {
+				showCertificate(new CertificateModel(addedCert), true);
+			}
 			// value of addToKeyStore is changed by setter in CertificateDialog
 			if (addToKeystore == true) {
 				addToKeystore = false;
-				String alias;
-				do{
-				alias =null;
-				alias = JOptionPane.showInputDialog(null, Res.getString("dialog.certificate.provide.alias.and.confirm"));
 
-				//check if entry pass all requirements
-					if (alias != null 
-							&& checkForSameAlias(alias) == false
-							&& checkForSameCertificate(alias, addedCert) == false
-							&& checkIfAliasIsEmpty(alias) == false) {
-						//add entry to Truststore
-						trustStore.setCertificateEntry(alias, addedCert);
-						try (FileOutputStream outputStream = new FileOutputStream(localPreferences.getTrustStorePath())) {
-							trustStore.store(outputStream, localPreferences.getTrustStorePassword().toCharArray());
-							break;
-						}
-					}
-				} while (alias != null);
-
+				String alias = useCommonNameAsAlias(addedCert);
+				trustStore.setCertificateEntry(alias, addedCert);
+				try (FileOutputStream outputStream = new FileOutputStream(localPreferences.getTrustStorePath())) {
+					trustStore.store(outputStream, localPreferences.getTrustStorePassword().toCharArray());
+					JOptionPane.showMessageDialog(null, Res.getString("dialog.certificate.has.been.added"));
+				}
 			}
 		}
 	}
+	/**
+	 * Extract from certificate common name ("CN") and returns it to use as certificate name.
+	 * This method also assure that it will not add second same alias to Truststore by adding number to alias. 
+	 * In case when common name cannot be extracted method will return "cert{number}".
+	 * 
+	 * @param cert
+	 * @return
+	 * @throws InvalidNameException
+	 * @throws HeadlessException
+	 * @throws KeyStoreException
+	 */
+	private String useCommonNameAsAlias(X509Certificate cert) throws InvalidNameException, HeadlessException, KeyStoreException {
+		String alias = null;
+		String dn = cert.getSubjectX500Principal().getName();
+		LdapName ldapDN = new LdapName(dn);
+		for (Rdn rdn : ldapDN.getRdns()) {
+			if (rdn.getType().equals("CN")) {
+				alias = rdn.getValue().toString();
+				int i = 1;
+				while (checkForSameAlias(alias)) {
+					alias = alias + Integer.toString(i);
+					i++;
+				}
+				break;
+			}
+		}
+		// Certificate subject doesn't have easy distinguishable common name then generate alias as cert{integer}
+		if (alias == null) {
+			alias = "cert";
+			int i = 1;
+			while (checkForSameAlias(alias)) {
+				alias = alias + Integer.toString(i);
+				i++;
+			}
+		}
+		return alias;
+	}
 
 	/**
-	 * Check if alias is empty String.
-	 * @return
-	 */
-	private boolean checkIfAliasIsEmpty(String alias){
-		if(alias.equals("")){
-			JOptionPane.showMessageDialog(null, Res.getString("dialog.certificate.alias.cannot.be.empty"));
-		return true;
-		}
-		return false;
-	}
-	/**
 	 * Check if there is certificate entry in Truststore with the same alias.
+	 * 
 	 * @param alias
 	 * @return
 	 * @throws HeadlessException
@@ -169,7 +190,6 @@ public class CertificateController {
 	 */
 	private boolean checkForSameAlias(String alias) throws HeadlessException, KeyStoreException {
 		if (trustStore.getCertificate(alias) != null) {
-			JOptionPane.showMessageDialog(null, Res.getString("dialog.certificate.wrong.alias"));
 			return true;
 		}
 		return false;
@@ -182,7 +202,7 @@ public class CertificateController {
 	 * @return
 	 * @throws KeyStoreException 
 	 */	
-	private boolean checkForSameCertificate(String alias, X509Certificate addedCert) throws KeyStoreException{
+	private boolean checkForSameCertificate(X509Certificate addedCert) throws KeyStoreException{
 		// check if this certificate isn't already added to Truststore
 		Enumeration storeCheck = trustStore.aliases();
 		while (storeCheck.hasMoreElements()) {
