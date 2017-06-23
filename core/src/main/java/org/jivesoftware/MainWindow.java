@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2004-2011 Jive Software. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -32,7 +32,6 @@ import org.jivesoftware.spark.util.*;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.alerts.InputTextAreaDialog;
-import org.jivesoftware.sparkimpl.plugin.layout.LayoutSettings;
 import org.jivesoftware.sparkimpl.plugin.layout.LayoutSettingsManager;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 import org.jivesoftware.sparkimpl.settings.JiveInfo;
@@ -126,14 +125,17 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         // Add Workspace Container
         getContentPane().setLayout(new BorderLayout());
 
-        LayoutSettings settings = LayoutSettingsManager.getLayoutSettings();
-        if (settings.getMainWindowX() == 0 && settings.getMainWindowY() == 0) {
+        setMinimumSize( new Dimension( 100, 200 ) );
+        final Rectangle mainWindowBounds = LayoutSettingsManager.getLayoutSettings().getMainWindowBounds();
+        if ( mainWindowBounds == null || mainWindowBounds.width <= 0 || mainWindowBounds.height <= 0 )
+        {
             // Use default settings.
             setSize(300, 500);
             GraphicUtils.centerWindowOnScreen(this);
         }
-        else {
-            setBounds(settings.getMainWindowX(), settings.getMainWindowY(), settings.getMainWindowWidth(), settings.getMainWindowHeight());
+        else
+        {
+            setBounds( mainWindowBounds );
         }
 
         // Add menubar
@@ -143,36 +145,25 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         setTitle(title);
         setIconImage(icon.getImage());
 
+        addComponentListener( new ComponentAdapter()
+        {
+            @Override
+            public void componentResized( ComponentEvent e )
+            {
+                LayoutSettingsManager.getLayoutSettings().setMainWindowBounds( getBounds() );
+            }
 
+            @Override
+            public void componentMoved( ComponentEvent e )
+            {
+                LayoutSettingsManager.getLayoutSettings().setMainWindowBounds( getBounds() );
+            }
+        } );
 
         // Setup WindowListener to be the proxy to the actual window listener
         // which cannot normally be used outside of the Window component because
         // of protected access.
         addWindowListener(new WindowAdapter() {
-
-            /**
-             * This event fires when the window has become active.
-             *
-             * @param e WindowEvent is not used.
-             */
-            public void windowActivated(WindowEvent e) {
-                fireWindowActivated();
-            }
-
-            /**
-             * Invoked when a window is de-activated.
-             */
-            public void windowDeactivated(WindowEvent e) {
-            }
-
-            /**
-             * This event fires whenever a user minimizes the window
-             * from the toolbar.
-             *
-             * @param e WindowEvent is not used.
-             */
-            public void windowIconified(WindowEvent e) {
-            }
 
             /**
              * This event fires when the application is closing.
@@ -182,7 +173,6 @@ public final class MainWindow extends ChatFrame implements ActionListener {
              * @param e WindowEvent is never used.
              */
             public void windowClosing(WindowEvent e) {
-                saveLayout();
                 setVisible(false);
             }
         });
@@ -892,23 +882,6 @@ public final class MainWindow extends ChatFrame implements ActionListener {
 
         GraphicUtils.centerWindowOnScreen(frame);
         frame.setVisible(true);
-    }
-
-    /**
-     * Saves the layout on closing of the main window.
-     */
-    public void saveLayout() {
-        try {
-            LayoutSettings settings = LayoutSettingsManager.getLayoutSettings();
-            settings.setMainWindowHeight(getHeight());
-            settings.setMainWindowWidth(getWidth());
-            settings.setMainWindowX(getX());
-            settings.setMainWindowY(getY());
-            LayoutSettingsManager.saveLayoutSettings();
-        }
-        catch (Exception e) {
-            // Don't let this cause a real problem shutting down.
-        }
     }
 
     /**

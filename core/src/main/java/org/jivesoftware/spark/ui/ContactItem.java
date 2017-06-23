@@ -226,9 +226,9 @@ public class ContactItem extends JPanel {
         int nickLength = displayName.length();
 
         LayoutSettings settings = LayoutSettingsManager.getLayoutSettings();
-        int windowWidth = settings.getMainWindowWidth();
+        int windowWidth = settings.getMainWindowBounds() != null ? settings.getMainWindowBounds().width : 50;
 
-        if (nickLength > windowWidth) {
+        if (nickLength > windowWidth) { // FIXME comparing pixel-width with character count - that can't be good.
             displayNameLabel.setText(XmppStringUtils.unescapeLocalpart(displayName).substring(0, windowWidth) + "...");
         } else {
             displayNameLabel.setText(XmppStringUtils.unescapeLocalpart(displayName));

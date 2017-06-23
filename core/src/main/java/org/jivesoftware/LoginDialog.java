@@ -1284,10 +1284,6 @@ JOptionPane.ERROR_MESSAGE);
              Workspace workspace = Workspace.getInstance();
 
              LayoutSettings settings = LayoutSettingsManager.getLayoutSettings();
-             int x = settings.getMainWindowX();
-             int y = settings.getMainWindowY();
-             int width = settings.getMainWindowWidth();
-             int height = settings.getMainWindowHeight();
 
              LocalPreferences pref = SettingsManager.getLocalPreferences();
              if (pref.isDockingEnabled()) {
@@ -1310,15 +1306,18 @@ JOptionPane.ERROR_MESSAGE);
                  mainWindow.getContentPane().add(workspace.getCardPanel(), BorderLayout.CENTER);
              }
 
-             if (x == 0 && y == 0) {
+             final Rectangle mainWindowBounds = settings.getMainWindowBounds();
+             if ( mainWindowBounds == null || mainWindowBounds.width <= 0 || mainWindowBounds.height <= 0 )
+             {
                  // Use Default size
                  mainWindow.setSize(310, 520);
 
                  // Center Window on Screen
                  GraphicUtils.centerWindowOnScreen(mainWindow);
              }
-             else {
-                 mainWindow.setBounds(x, y, width, height);
+             else
+             {
+                 mainWindow.setBounds( mainWindowBounds );
              }
 
              if (loginDialog.isVisible()) {
