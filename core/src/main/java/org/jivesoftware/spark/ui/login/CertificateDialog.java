@@ -23,6 +23,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingUtilities;
+
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.sparkimpl.certificates.CertificateController;
@@ -209,19 +211,27 @@ public class CertificateDialog extends JDialog implements ActionListener {
 		buttonPanel.add(okButton, new GridBagConstraints(1, 2, 1, 1, 0.2, 0.0, CENTER, HORIZONTAL, new Insets(5, 100, 5, 5), 0, 0));
 		buttonPanel.add(cancelButton, new GridBagConstraints(2, 2, 1, 1, 0.2, 0.0, CENTER, HORIZONTAL, new Insets(5, 5, 5, 100), 0, 0));
 
+		trust.setSelected(cert.isValid() || cert.isExempted());
+		distrust.setSelected(!cert.isValid() && !cert.isExempted());
+		
 		scrollPane = new JScrollPane(panel);
 		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		
 		if (addInfo) {
-			add(infoLabel, new GridBagConstraints(0, 0, 4, 1, 1.0, 1.0, WEST, BOTH, DEFAULT_INSETS, 0, 0));
+			add(infoLabel, new GridBagConstraints(0, 0, 4, 1, 1.0, 0.0, WEST, BOTH, DEFAULT_INSETS, 0, 0));
 		}
 		
 		add(scrollPane, new GridBagConstraints(0, 1, 4, 1, 1.0, 1.0, WEST, BOTH, DEFAULT_INSETS, 0, 0));
 		add(buttonPanel, new GridBagConstraints(0, 2, 1, 1, 1.0, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
-
-		setVisible(true);
 		
-		scrollPane.getVerticalScrollBar().setValue(0);
+		//scrolls scrollPane to top 
+		SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+            	panel.scrollRectToVisible(versionField.getBounds());            }
+        });
+		
+		setVisible(true);
 		
 	}
 	

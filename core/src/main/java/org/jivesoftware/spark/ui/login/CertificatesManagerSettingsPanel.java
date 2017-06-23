@@ -5,6 +5,7 @@ import static java.awt.GridBagConstraints.WEST;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.HeadlessException;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -16,6 +17,7 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 
+import javax.naming.InvalidNameException;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -164,6 +166,8 @@ public class CertificatesManagerSettingsPanel extends JPanel implements ActionLi
 				Log.error("Cannot upload certificate file", ex);
 			} catch (IllegalArgumentException ex) {
 				Log.warning("Certificate or it's alias cannot be null", ex);
+			} catch (HeadlessException | InvalidNameException ex) {
+				Log.error("Error at setting certificate alias", ex);
 			}
 		}
 	}
