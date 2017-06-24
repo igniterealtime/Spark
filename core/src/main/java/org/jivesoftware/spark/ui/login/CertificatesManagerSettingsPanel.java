@@ -3,6 +3,7 @@ package org.jivesoftware.spark.ui.login;
 import static java.awt.GridBagConstraints.HORIZONTAL;
 import static java.awt.GridBagConstraints.WEST;
 
+import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.HeadlessException;
@@ -29,6 +30,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumnModel;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.spark.util.ResourceUtils;
@@ -73,6 +76,9 @@ public class CertificatesManagerSettingsPanel extends JPanel implements ActionLi
 		scrollPane = new JScrollPane(certTable);
 		certTable.setFillsViewportHeight(true);
 		certTable.setAutoCreateRowSorter(true);
+		
+		resizeColumnWidth(certTable);
+		certTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
 		ResourceUtils.resButton(acceptAll, Res.getString("checkbox.accept.all"));
 		ResourceUtils.resButton(acceptExpired, Res.getString("checkbox.accept.expired"));
@@ -85,11 +91,12 @@ public class CertificatesManagerSettingsPanel extends JPanel implements ActionLi
 
 		acceptAll.addActionListener(this);
 		certTable.addMouseListener(this);
+		showCert.setEnabled(false);
 		showCert.addActionListener(this);
 		fileButton.addActionListener(this);
 
 		filePanel.setLayout(new GridBagLayout());
-		filePanel.add(fileButton, new GridBagConstraints(0, 0, 2, 1, 0.0, 1.0, WEST, HORIZONTAL, DEFAULT_INSETS, 120, 0));
+		filePanel.add(fileButton, new GridBagConstraints(0, 0, 2, 1, 1.0, 1.0, WEST, HORIZONTAL, DEFAULT_INSETS, 40, 0));
 		filePanel.setBorder(
 				BorderFactory.createTitledBorder(Res.getString("label.certificate.add.certificate.to.truststore")));
 
@@ -100,8 +107,8 @@ public class CertificatesManagerSettingsPanel extends JPanel implements ActionLi
 		add(acceptRevoked, new GridBagConstraints(1, 2, 1, 1, 0.0, 0.5, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
 		add(checkCRL, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.5, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
 		add(checkOCSP, new GridBagConstraints(1, 3, 1, 1, 0.0, 0.5, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
-		add(showCert, new GridBagConstraints(2, 1, 2, 1, 1.0, 1.0, WEST, HORIZONTAL, new Insets(5, 5, 5, 200), 0, 0));
-		add(filePanel, new GridBagConstraints(2, 2, 2, 4, 0.0, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
+		add(showCert, new GridBagConstraints(2, 1, 2, 1, 0.0, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 40, 0));
+		add(filePanel, new GridBagConstraints(2, 2, 2, 4, 0.0, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 40, 0));
 	}
 
 	@Override
@@ -148,6 +155,9 @@ public class CertificatesManagerSettingsPanel extends JPanel implements ActionLi
 				certControll.showCertificate();
 			}
 		}
+		if(e.getSource() == certTable){
+			showCert.setEnabled(true);
+		}
 	}
 
 	private void addCertificate() {
@@ -181,4 +191,18 @@ public class CertificatesManagerSettingsPanel extends JPanel implements ActionLi
 		return certTable;
 	}
 
+	private void resizeColumnWidth(JTable table) {
+		final TableColumnModel columnModel = table.getColumnModel();
+		for (int column = 0; column < table.getColumnCount(); column++) {
+			int width = 80; // Min width
+			for (int row = 0; row < table.getRowCount(); row++) {
+				TableCellRenderer renderer = table.getCellRenderer(row, column);
+				Component comp = table.prepareRenderer(renderer, row, column);
+				width = Math.max(comp.getPreferredSize().width + 1, width);
+			}
+			if (width > 475)
+				width = 475;
+			columnModel.getColumn(column).setPreferredWidth(width);
+		}
+	}
 }

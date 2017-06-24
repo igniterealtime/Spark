@@ -41,9 +41,8 @@ public class CertificateController {
 	private DefaultTableModel tableModel;
 	private Object[] certEntry;
 	private LocalPreferences localPreferences;
-	private static final String[] COLUMN_NAMES = { Res.getString("table.column.certificate.alias"), Res.getString("table.column.certificate.issuer"),
-			Res.getString("table.column.certificate.subject"), Res.getString("table.column.certificate.valid"),
-			Res.getString("table.column.certificate.exempted") };
+	private static final String[] COLUMN_NAMES = { Res.getString("table.column.certificate.subject"),
+			Res.getString("table.column.certificate.valid"), Res.getString("table.column.certificate.exempted") };
 	private static final int NUMBER_OF_COLUMNS = COLUMN_NAMES.length;
 	private KeyStore trustStore;
 	private boolean addToKeystore;
@@ -66,10 +65,6 @@ public class CertificateController {
 				case 1:
 					return String.class;
 				case 2:
-					return String.class;
-				case 3:
-					return String.class;
-				case 4:
 					return Boolean.class;
 				default:
 					throw new RuntimeException("Cannot assign classes for columns");
@@ -95,11 +90,9 @@ public class CertificateController {
 
 			// put certificate from arrayList into rows with chosen columns
 			for (CertificateModel cert : certificates) {
-				certEntry[0] = cert.getAlias();
-				certEntry[1] = cert.getIssuer();
-				certEntry[2] = cert.getSubject();
-				certEntry[3] = cert.isValid();
-				certEntry[4] = cert.isExempted();
+				certEntry[0] = cert.getSubject();
+				certEntry[1] = cert.isValid();
+				certEntry[2] = cert.isExempted();
 				tableModel.addRow(certEntry);
 			}
 		} catch (KeyStoreException | NoSuchAlgorithmException | CertificateException | IOException e) {

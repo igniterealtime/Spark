@@ -17,6 +17,7 @@ import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
@@ -214,6 +215,7 @@ public class CertificateDialog extends JDialog implements ActionListener {
 		trust.setSelected(cert.isValid() || cert.isExempted());
 		distrust.setSelected(!cert.isValid() && !cert.isExempted());
 		
+		
 		scrollPane = new JScrollPane(panel);
 		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		
@@ -223,12 +225,18 @@ public class CertificateDialog extends JDialog implements ActionListener {
 		
 		add(scrollPane, new GridBagConstraints(0, 1, 4, 1, 1.0, 1.0, WEST, BOTH, DEFAULT_INSETS, 0, 0));
 		add(buttonPanel, new GridBagConstraints(0, 2, 1, 1, 1.0, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
-		
-		//scrolls scrollPane to top 
+				 
 		SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-            	panel.scrollRectToVisible(versionField.getBounds());            }
+            	//scrolls scrollPane to top
+            	panel.scrollRectToVisible(versionField.getBounds());           
+        		
+            	//info that certificate is distrusted
+        		if(addInfo && !cert.isValid()){
+        			JOptionPane.showMessageDialog(null, Res.getString("dialog.certificate.is.distrusted"));
+        		}
+            }
         });
 		
 		setVisible(true);
