@@ -2,7 +2,13 @@ package org.jivesoftware.sparkimpl.certificates;
 
 import java.security.cert.X509Certificate;
 import java.util.Base64;
-import java.util.List;
+import java.util.Calendar;
+
+import javax.naming.InvalidNameException;
+import javax.naming.ldap.LdapName;
+import javax.naming.ldap.Rdn;
+
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.spark.util.log.Log;
 
 /**
@@ -11,7 +17,10 @@ import org.jivesoftware.spark.util.log.Log;
  */
 public class CertificateModel {
 
+	private X509Certificate certificate;
 	private String alias;
+	private String subjectCommonName;
+	private String issuerCommonName;
 	private int version;
 	private String serialNumber;
 	private String signatureValue;
@@ -26,6 +35,9 @@ public class CertificateModel {
 	private String subjectUniqueID;
 
 	private boolean valid;
+	private boolean expired;
+	private boolean revoked;
+	private boolean notValidYet;
 	private boolean exempted;
 	// List<String> extensionList;
 
@@ -84,11 +96,12 @@ public class CertificateModel {
 	}
 
 	public CertificateModel(X509Certificate certificate) {
+		this.certificate = certificate;
 		this.version = certificate.getVersion();
 		this.serialNumber = certificate.getSerialNumber().toString();
 		this.signatureValue = Base64.getEncoder().encodeToString(certificate.getSignature());
 		this.signatureAlgorithm = certificate.getSigAlgName();
-		this.issuer = certificate.getIssuerX500Principal().toString();
+		this.issuer = certificate.getIssuerX500Principal().getName().toString();
 		this.subject = certificate.getSubjectX500Principal().getName().toString();
 		this.notBefore = certificate.getNotBefore().toString();
 		this.notAfter = certificate.getNotAfter().toString();
@@ -104,8 +117,88 @@ public class CertificateModel {
 		} catch (NullPointerException e) {
 			Log.warning("Certificate doesn't have subjectUniqueID ", e);
 		}
-		this.valid = valid;
+		try {
+			this.subjectCommonName = extractCommonName(subject);
+		} catch (InvalidNameException e) {
+			Log.warning("Couldn't extract subject Common Name (CN)", e);
+		}
+		try {
+			this.issuerCommonName = extractCommonName(issuer);
+		} catch (InvalidNameException e) {
+			Log.warning("Couldn't extract issuer Common Name (CN)", e);
+		}
+		this.valid = checkValidity();
 		this.exempted = exempted;
+	}
+
+	private String extractCommonName(String certName) throws InvalidNameException {
+		String name = null;
+		LdapName ldapDN = new LdapName(certName);
+		for (Rdn rdn : ldapDN.getRdns()) {
+			if (rdn.getType().equals("CN")) {
+				name = rdn.getValue().toString();
+			}
+		}
+		return name;
+	}
+
+	public String getValidityStatus() {
+		if (checkRevoked()) {
+			return Res.getString("cert.revoked");
+			
+		} else if (isAfterNotAfter() == true) {
+			return Res.getString("cert.expired");
+			
+		} else if (isBeforeNotBefore()) {
+			return "cert.not.valid.yet";
+			
+		} else if (isSelfSigned()) {
+			return Res.getString("cert.self.signed");
+			
+		} else {
+			return Res.getString("cert.valid");
+		}
+	}
+	
+	private boolean isSelfSigned(){
+		if(subject.equals(issuer)){
+			return true;
+		}else{
+			return false;
+		}
+	}
+	
+	private boolean checkValidity() {
+		if (isAfterNotAfter() && isBeforeNotBefore() && checkRevoked()) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	private boolean checkRevoked() {
+		// TO-DO
+		return false;
+	}
+
+	private boolean isBeforeNotBefore() {
+		Calendar today = Calendar.getInstance();
+
+		if (today.before(certificate.getNotBefore())) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	private boolean isAfterNotAfter() {
+		Calendar today = Calendar.getInstance();
+
+		if (today.after(certificate.getNotAfter())) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	public String getAlias() {
@@ -168,4 +261,24 @@ public class CertificateModel {
 		return exempted;
 	}
 
+	public String getSubjectCommonName() {
+		return subjectCommonName;
+	}
+
+	public boolean isRevoked() {
+		return revoked;
+	}
+
+	public boolean isNotValidYet() {
+		return notValidYet;
+	}
+
+	public boolean isExpired() {
+		return expired;
+	}
+
+	public String getIssuerCommonName() {
+		return issuerCommonName;
+	}
+	
 }

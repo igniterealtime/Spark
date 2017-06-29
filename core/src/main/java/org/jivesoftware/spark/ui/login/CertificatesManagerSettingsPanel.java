@@ -3,6 +3,7 @@ package org.jivesoftware.spark.ui.login;
 import static java.awt.GridBagConstraints.HORIZONTAL;
 import static java.awt.GridBagConstraints.WEST;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -22,14 +23,16 @@ import javax.naming.InvalidNameException;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumnModel;
 
@@ -37,7 +40,6 @@ import org.jivesoftware.resource.Res;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.certificates.CertificateController;
-import org.jivesoftware.sparkimpl.certificates.CertificateModel;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 
 /**
@@ -52,7 +54,7 @@ public class CertificatesManagerSettingsPanel extends JPanel implements ActionLi
 	private final static Insets DEFAULT_INSETS = new Insets(5, 5, 5, 5);
 	private final LocalPreferences localPreferences;
 	private CertificateController certControll;
-	private static JTable certTable = new JTable();
+	private static JTable certTable;
 	private JCheckBox acceptAll = new JCheckBox();
 	private JCheckBox acceptExpired = new JCheckBox();
 	private JCheckBox acceptRevoked = new JCheckBox();
@@ -71,14 +73,39 @@ public class CertificatesManagerSettingsPanel extends JPanel implements ActionLi
 		this.localPreferences = localPreferences;
 		certControll = new CertificateController(localPreferences);
 		setLayout(new GridBagLayout());
+		certTable = new JTable(certControll.getTableModel()){
+			
+			@Override
+	        public Component prepareRenderer(TableCellRenderer renderer, int rowIndex,
+	                int columnIndex) {
+	            JComponent component = (JComponent) super.prepareRenderer(renderer, rowIndex, columnIndex);  
+	            Object value = getModel().getValueAt(rowIndex, columnIndex);
+	            
+	    		DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+	    		centerRenderer.setHorizontalAlignment( JLabel.CENTER );
+	    		this.getColumnModel().getColumn(1).setCellRenderer(centerRenderer);
+	    		
+	            if (value.equals(Res.getString("cert.self.signed"))) {
+	                component.setBackground(Color.lightGray);
+	            } else if (value.equals(Res.getString("cert.valid"))) {
+	                component.setBackground(Color.green);
+	            } else if(value.equals(Res.getString("cert.expired")) || value.equals(Res.getString("cert.not.valid.yet"))){
+	            	component.setBackground(Color.red);
+	            } else {
+	               component.setBackground(Color.white);
+	            }
+	            return component;
+	        }
+			
+		};
 
-		certTable.setModel(certControll.getTableModel());
+		
 		scrollPane = new JScrollPane(certTable);
 		certTable.setFillsViewportHeight(true);
 		certTable.setAutoCreateRowSorter(true);
 		
 		resizeColumnWidth(certTable);
-		certTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		certTable.setAutoResizeMode(JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
 
 		ResourceUtils.resButton(acceptAll, Res.getString("checkbox.accept.all"));
 		ResourceUtils.resButton(acceptExpired, Res.getString("checkbox.accept.expired"));
@@ -151,7 +178,7 @@ public class CertificatesManagerSettingsPanel extends JPanel implements ActionLi
 	public void mousePressed(MouseEvent e) {
 		if (e.getClickCount() == 2) {
 			JTable source = (JTable) e.getSource();
-			if (e.getSource() == certTable && source.getSelectedColumn() != 4) {
+			if (e.getSource() == certTable && source.getSelectedColumn() != 2) {
 				certControll.showCertificate();
 			}
 		}
@@ -192,17 +219,17 @@ public class CertificatesManagerSettingsPanel extends JPanel implements ActionLi
 	}
 
 	private void resizeColumnWidth(JTable table) {
-		final TableColumnModel columnModel = table.getColumnModel();
-		for (int column = 0; column < table.getColumnCount(); column++) {
-			int width = 80; // Min width
-			for (int row = 0; row < table.getRowCount(); row++) {
-				TableCellRenderer renderer = table.getCellRenderer(row, column);
-				Component comp = table.prepareRenderer(renderer, row, column);
-				width = Math.max(comp.getPreferredSize().width + 1, width);
+		
+		SwingUtilities.invokeLater(new Runnable() {
+			
+			@Override
+			public void run() {
+				final TableColumnModel columnModel = table.getColumnModel();
+				final int maxWidth = certTable.getParent().getWidth();
+				columnModel.getColumn(1).setPreferredWidth(80);
+				columnModel.getColumn(2).setPreferredWidth(60);
+				columnModel.getColumn(0).setPreferredWidth(maxWidth - 140);
 			}
-			if (width > 475)
-				width = 475;
-			columnModel.getColumn(column).setPreferredWidth(width);
-		}
+		});
 	}
 }
