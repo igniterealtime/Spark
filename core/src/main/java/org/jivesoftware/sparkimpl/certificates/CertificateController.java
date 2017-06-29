@@ -42,7 +42,7 @@ public class CertificateController {
 	private Object[] certEntry;
 	private LocalPreferences localPreferences;
 	private static final String[] COLUMN_NAMES = { Res.getString("table.column.certificate.subject"),
-			Res.getString("table.column.certificate.valid"), Res.getString("table.column.certificate.exempted") };
+			Res.getString("table.column.certificate.validity"), Res.getString("table.column.certificate.exempted") };
 	private static final int NUMBER_OF_COLUMNS = COLUMN_NAMES.length;
 	private KeyStore trustStore;
 	private boolean addToKeystore;
@@ -90,8 +90,12 @@ public class CertificateController {
 
 			// put certificate from arrayList into rows with chosen columns
 			for (CertificateModel cert : certificates) {
-				certEntry[0] = cert.getSubject();
-				certEntry[1] = cert.isValid();
+				if (cert.getSubjectCommonName() != null) {
+					certEntry[0] = cert.getSubjectCommonName();
+				} else {
+					certEntry[0] = cert.getSubject();
+				}
+				certEntry[1] = cert.getValidityStatus();
 				certEntry[2] = cert.isExempted();
 				tableModel.addRow(certEntry);
 			}
