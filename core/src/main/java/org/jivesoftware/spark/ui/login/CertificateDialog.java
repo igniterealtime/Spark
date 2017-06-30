@@ -5,6 +5,7 @@ import static java.awt.GridBagConstraints.WEST;
 import static java.awt.GridBagConstraints.BOTH;
 import static java.awt.GridBagConstraints.NONE;
 import static java.awt.GridBagConstraints.CENTER;
+import static java.awt.GridBagConstraints.EAST;
 
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -13,6 +14,10 @@ import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -30,6 +35,7 @@ import org.jivesoftware.resource.Res;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.sparkimpl.certificates.CertificateController;
 import org.jivesoftware.sparkimpl.certificates.CertificateModel;
+import org.jivesoftware.sparkimpl.certificates.OIDTranslator;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 
 /**
@@ -64,6 +70,7 @@ public class CertificateDialog extends JDialog implements ActionListener {
 	private JTextArea publicKeyAlgorithmField = new JTextArea();
 	private JTextArea issuerUniqueIDField = new JTextArea();
 	private JTextArea subjectUniqueIDField = new JTextArea();
+	private JTextArea unsupportedExtensionsArea = new JTextArea();
 
 	private JLabel infoLabel = new JLabel();
 	private JLabel versionLabel = new JLabel();
@@ -78,12 +85,16 @@ public class CertificateDialog extends JDialog implements ActionListener {
 	private JLabel publicKeyAlgorithmLabel = new JLabel();
 	private JLabel issuerUniqueIDLabel = new JLabel();
 	private JLabel subjectUniqueIDLabel = new JLabel();
+	private JLabel unsupportedExtensionsLabel = new JLabel();
+	private JLabel extensionsLabel = new JLabel();
 	
 	private JRadioButton trust = new JRadioButton();
 	private JRadioButton distrust = new JRadioButton();
 	private JButton checkValidity = new JButton();
 	private JButton okButton = new JButton();
 	private JButton cancelButton = new JButton();
+	private List<String> certUnsupportedExtension;
+	private HashMap<String,String> certExtensions;
 
 	public CertificateDialog(LocalPreferences localPreferences, CertificateModel cert,
 			CertificateController certificateController, boolean addInfo) {
@@ -93,6 +104,8 @@ public class CertificateDialog extends JDialog implements ActionListener {
 		certControll = certificateController;
 		this.localPreferences = localPreferences;
 		this.cert = cert;
+		this.certExtensions = cert.getExtensions();
+		this.certUnsupportedExtension = cert.getUnsupportedExtensions();
 		setTitle(Res.getString("title.certificate"));
 		setSize(500, 600);
 		setLayout(new GridBagLayout());
@@ -117,7 +130,8 @@ public class CertificateDialog extends JDialog implements ActionListener {
 		publicKeyAlgorithmField.setText(cert.getPublicKeyAlgorithm());
 		issuerUniqueIDField.setText(cert.getIssuerUniqueID());
 		subjectUniqueIDField.setText(cert.getSubjectUniqueID());
-
+		extensionsLabel.setText(Res.getString("cert.extensions"));
+		
 		versionField.setLineWrap(true);
 		serialNumberField.setLineWrap(true);
 		signatureValueField.setLineWrap(true);
@@ -131,7 +145,7 @@ public class CertificateDialog extends JDialog implements ActionListener {
 		issuerUniqueIDField.setLineWrap(true);
 		subjectUniqueIDField.setLineWrap(true);
 		
-		
+		unsupportedExtensionsArea.setLineWrap(true);
 		ButtonGroup radioGroup = new ButtonGroup();
 		radioGroup.add(distrust);
 		radioGroup.add(trust);
@@ -156,6 +170,8 @@ public class CertificateDialog extends JDialog implements ActionListener {
 				Res.getString("label.certificate.issuer.unique.id"));
 		ResourceUtils.resLabel(subjectUniqueIDLabel, subjectUniqueIDField,
 				Res.getString("label.certificate.subject.unique.id"));
+		ResourceUtils.resLabel(unsupportedExtensionsLabel, unsupportedExtensionsArea,
+				Res.getString("cert.extensions.unsupported"));
 		ResourceUtils.resButton(trust, Res.getString("radio.certificate.trust"));
 		ResourceUtils.resButton(distrust, Res.getString("radio.certificate.distrust"));
 		ResourceUtils.resButton(checkValidity, Res.getString("button.check.validity"));
@@ -206,8 +222,35 @@ public class CertificateDialog extends JDialog implements ActionListener {
 		panel.add(subjectUniqueIDField,
 				new GridBagConstraints(2, 11, 6, 1, 1.0, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
 
+		// extensions
+		panel.add(extensionsLabel, new GridBagConstraints(2, 12, 6, 1, 1.0, 0.0, EAST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
+		int i =13; //place extensions in next rows
+		for(HashMap.Entry<String, String> entry : certExtensions.entrySet()) {
+		    String oid = entry.getKey();
+		    String value = entry.getValue();
+		    JTextArea extensionArea = new JTextArea();
+		    extensionArea.setLineWrap(true);
+		    extensionArea.setText(value);
+		    JLabel extensionLabel = new JLabel();
+		    ResourceUtils.resLabel(extensionLabel, extensionArea, OIDTranslator.getDescription(oid));
+
+			panel.add(extensionLabel,
+					new GridBagConstraints(0, i, 1, 1, 1.0, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
+			panel.add(extensionArea,
+					new GridBagConstraints(2, i, 6, 1, 1.0, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
+			i++;
+		}
+			for (String extension : certUnsupportedExtension) {
+				unsupportedExtensionsArea.append(extension + ": " + OIDTranslator.getDescription(extension) + '\n');
+			}
+		
+		panel.add(unsupportedExtensionsLabel, new GridBagConstraints(0, i, 1, 1, 1.0, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
+		panel.add(unsupportedExtensionsArea, new GridBagConstraints(2, i, 6, 1, 1.0, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
+		
+
 		buttonPanel.add(trust, new GridBagConstraints(0, 0, 1, 1, 0.2, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
 		buttonPanel.add(distrust, new GridBagConstraints(1, 0, 1, 1, 0.1, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
+
 		buttonPanel.add(checkValidity, new GridBagConstraints(0, 1, 2, 1, 0.0, 0.0, WEST, NONE, DEFAULT_INSETS, 0, 0));
 		buttonPanel.add(okButton, new GridBagConstraints(1, 2, 1, 1, 0.2, 0.0, CENTER, HORIZONTAL, new Insets(5, 100, 5, 5), 0, 0));
 		buttonPanel.add(cancelButton, new GridBagConstraints(2, 2, 1, 1, 0.2, 0.0, CENTER, HORIZONTAL, new Insets(5, 5, 5, 100), 0, 0));

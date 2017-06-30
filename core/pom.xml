@@ -212,6 +212,20 @@
             <artifactId>thumbnailator</artifactId>
             <version>0.4.8</version>
         </dependency>
+        <dependency>
+        	<groupId>
+        		org.bouncycastle.bcprov-jdk15on.1.57.org.bouncycastle
+        	</groupId>
+        	<artifactId>bcprov-jdk15on</artifactId>
+        	<version>1.57</version>
+        </dependency>
+        <dependency>
+        	<groupId>
+        		org.bouncycastle.bcpkix-jdk15on.1.57.org.bouncycastle
+        	</groupId>
+        	<artifactId>bcpkix-jdk15on</artifactId>
+        	<version>1.57</version>
+        </dependency>
     </dependencies>
 
     <repositories>
