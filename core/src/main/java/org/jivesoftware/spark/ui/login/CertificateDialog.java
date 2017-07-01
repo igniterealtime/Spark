@@ -93,7 +93,8 @@ public class CertificateDialog extends JDialog implements ActionListener {
 	private JButton checkValidity = new JButton();
 	private JButton okButton = new JButton();
 	private JButton cancelButton = new JButton();
-	private List<String> certUnsupportedExtension;
+	private List<String> certUnsupportedCriticalExtensions;
+	private List<String> certUnsupportedNonCriticalExtensions;
 	private HashMap<String,String> certExtensions;
 
 	public CertificateDialog(LocalPreferences localPreferences, CertificateModel cert,
@@ -105,7 +106,8 @@ public class CertificateDialog extends JDialog implements ActionListener {
 		this.localPreferences = localPreferences;
 		this.cert = cert;
 		this.certExtensions = cert.getExtensions();
-		this.certUnsupportedExtension = cert.getUnsupportedExtensions();
+		this.certUnsupportedCriticalExtensions = cert.getUnsupportedCriticalExtensions();
+		this.certUnsupportedNonCriticalExtensions = cert.getUnsupportedNonCriticalExtensions();
 		setTitle(Res.getString("title.certificate"));
 		setSize(500, 600);
 		setLayout(new GridBagLayout());
@@ -240,10 +242,15 @@ public class CertificateDialog extends JDialog implements ActionListener {
 					new GridBagConstraints(2, i, 6, 1, 1.0, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
 			i++;
 		}
-			for (String extension : certUnsupportedExtension) {
-				unsupportedExtensionsArea.append(extension + ": " + OIDTranslator.getDescription(extension) + '\n');
-			}
-		
+		for (String extension : certUnsupportedCriticalExtensions) {
+			unsupportedExtensionsArea.append(Res.getString("cert.critical") + "\n" + extension + ": "
+					+ OIDTranslator.getDescription(extension) + '\n');
+		}
+		for (String extension : certUnsupportedNonCriticalExtensions) {
+			unsupportedExtensionsArea.append(Res.getString("cert.not.critical") + "\n" + extension + ": "
+					+ OIDTranslator.getDescription(extension) + '\n');
+		}
+
 		panel.add(unsupportedExtensionsLabel, new GridBagConstraints(0, i, 1, 1, 1.0, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
 		panel.add(unsupportedExtensionsArea, new GridBagConstraints(2, i, 6, 1, 1.0, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
 		
