@@ -108,7 +108,7 @@ public final class OIDTranslator {
 			return OIDtoDescriptionMap.get(oid).toString();
 		} else {
 			Log.warning("Unknown description for  Object ID (OID: " + oid + ")");
-			return Res.getString("Unknown description");
+			return Res.getString("cert.unknown.oid");
 		}
 	}
 }

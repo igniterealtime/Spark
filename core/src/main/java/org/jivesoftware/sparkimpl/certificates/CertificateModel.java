@@ -65,7 +65,8 @@ public class CertificateModel {
 	private Set<String> criticalExtensionSet;
 	private Set<String> nonCriticalExtensionSet;
 	private HashMap<String, String> extensions = new HashMap<String,String>();
-	private ArrayList<String> unsupportedExtensions = new ArrayList<String>();
+	private ArrayList<String> unsupportedCriticalExtensions = new ArrayList<String>();
+	private ArrayList<String> unsupportedNonCriticalExtensions = new ArrayList<String>();
 	
 	private String subjectDirectoryAttributesExtension; // OID 2.5.29.9
 	private String subjectKeyIdentifierExtension; // OID 2.5.29.14
@@ -180,175 +181,215 @@ public class CertificateModel {
 		if (criticalExtensionSet != null) {
 			for (String oid : criticalExtensionSet) {
 				
-					extensionExtractHandler(cert, oid);
+					extensionExtractHandler(cert, oid, true);
 			
 			}
 		}
 		if (nonCriticalExtensionSet != null) {
 			for (String oid : nonCriticalExtensionSet) {
-					extensionExtractHandler(cert, oid);
+					extensionExtractHandler(cert, oid, false);
 				
 			}
 		}
 	}
 
-	private void extensionExtractHandler(X509Certificate cert, String oid) {
+	/**
+	 * Get values of the extension and format them into readable Strings.
+	 * @param cert
+	 * @param oid
+	 */
+	private void extensionExtractHandler(X509Certificate cert, String oid, boolean critical) {
+		try {
+			ASN1Primitive primitive;
+			if (oid.equals("2.5.29.9")) {
+				try {
+					primitive = JcaX509ExtensionUtils.parseExtensionValue(cert.getExtensionValue(oid));
+					SubjectDirectoryAttributes sub = SubjectDirectoryAttributes.getInstance(primitive);
+					subjectDirectoryAttributesExtension = Res.getString("cert.is.critical") + critical + "\n";
+					subjectDirectoryAttributesExtension += sub.toString();
+					extensions.put(oid, subjectDirectoryAttributesExtension);
+				} catch (IOException e) {
+					Log.warning("Couldn't extract subject directory attributes extension", e);
+				}
+			} else if (oid.equals("2.5.29.14")) {
+				try {
+					SubjectKeyIdentifier subjectKeyIdentifier = SubjectKeyIdentifier
+							.fromExtensions(new JcaX509CertificateHolder(cert).getExtensions());
+					subjectKeyIdentifierExtension = Res.getString("cert.is.critical") + critical + "\n";
+					subjectKeyIdentifierExtension += Hex.toHexString(subjectKeyIdentifier.getKeyIdentifier());
+					extensions.put(oid, subjectKeyIdentifierExtension);
+				} catch (CertificateEncodingException e) {
+					Log.warning("Couldn't extract subject key identifier from certificate", e);
+				}
 
-		ASN1Primitive primitive;
-		if (oid.equals("2.5.29.9")) {
-			try {
-				primitive = JcaX509ExtensionUtils.parseExtensionValue(cert.getExtensionValue(oid));
-				SubjectDirectoryAttributes sub = SubjectDirectoryAttributes.getInstance(primitive);
-				subjectDirectoryAttributesExtension = sub.toString();
-				extensions.put(oid, subjectDirectoryAttributesExtension);
-			} catch (IOException e) {
-				Log.warning("Couldn't extract subject directory attributes extension", e);
-			}
-		} else if (oid.equals("2.5.29.14")) {
-			try {
-				SubjectKeyIdentifier subjectKeyIdentifier = SubjectKeyIdentifier
-						.fromExtensions(new JcaX509CertificateHolder(cert).getExtensions());
-				subjectKeyIdentifierExtension = Hex.toHexString(subjectKeyIdentifier.getKeyIdentifier());
-				extensions.put(oid, subjectKeyIdentifierExtension);
-			} catch (CertificateEncodingException e) {
-				Log.warning("Couldn't extract subject key identifier from certificate", e);
-			}
+			} else if (oid.equals("2.5.29.15")) {
+				keyUsageExtension = Res.getString("cert.is.critical") + critical + "\n";
+				keyUsageExtension += Res.getString("cert.extension.extended.usage.digital.signature") + ": "
+						+ cert.getKeyUsage()[0] + "\n";
+				keyUsageExtension += Res.getString("cert.extension.extended.usage.non.repudiation") + ": "
+						+ cert.getKeyUsage()[1] + "\n";
+				keyUsageExtension += Res.getString("cert.extension.extended.usage.key.encipherment") + ": "
+						+ cert.getKeyUsage()[2] + "\n";
+				keyUsageExtension += Res.getString("cert.extension.extended.usage.data.encipherment") + ": "
+						+ cert.getKeyUsage()[3] + "\n";
+				keyUsageExtension += Res.getString("cert.extension.extended.usage.key.agreement") + ": "
+						+ cert.getKeyUsage()[4] + "\n";
+				keyUsageExtension += Res.getString("cert.extension.extended.usage.key.cert.sign") + ": "
+						+ cert.getKeyUsage()[5] + "\n";
+				keyUsageExtension += Res.getString("cert.extension.extended.usage.crl.sign") + ": "
+						+ cert.getKeyUsage()[6] + "\n";
+				keyUsageExtension += Res.getString("cert.extension.extended.usage.encipher.only") + ": "
+						+ cert.getKeyUsage()[7] + "\n";
+				keyUsageExtension += Res.getString("cert.extension.extended.usage.decipher.only") + ": "
+						+ cert.getKeyUsage()[8];
+				extensions.put(oid, keyUsageExtension);
+			} else if (oid.equals("2.5.29.16")) {
+				// irivateKeyUsagePeriodExtension;
 
-		} else if (oid.equals("2.5.29.15")) {
-			keyUsageExtension = Res.getString("cert.extension.extended.usage.digital.signature") + ": "
-					+ cert.getKeyUsage()[0] + "\n";
-			keyUsageExtension += Res.getString("cert.extension.extended.usage.non.repudiation") + ": "
-					+ cert.getKeyUsage()[1] + "\n";
-			keyUsageExtension += Res.getString("cert.extension.extended.usage.key.encipherment") + ": "
-					+ cert.getKeyUsage()[2] + "\n";
-			keyUsageExtension += Res.getString("cert.extension.extended.usage.data.encipherment") + ": "
-					+ cert.getKeyUsage()[3] + "\n";
-			keyUsageExtension += Res.getString("cert.extension.extended.usage.key.agreement") + ": "
-					+ cert.getKeyUsage()[4] + "\n";
-			keyUsageExtension += Res.getString("cert.extension.extended.usage.key.cert.sign") + ": "
-					+ cert.getKeyUsage()[5] + "\n";
-			keyUsageExtension += Res.getString("cert.extension.extended.usage.crl.sign") + ": " 
-					+ cert.getKeyUsage()[6]	+ "\n";
-			keyUsageExtension += Res.getString("cert.extension.extended.usage.encipher.only") + ": "
-					+ cert.getKeyUsage()[7] + "\n";
-			keyUsageExtension += Res.getString("cert.extension.extended.usage.decipher.only") + ": "
-					+ cert.getKeyUsage()[8];
-			extensions.put(oid, keyUsageExtension);
-		} else if (oid.equals("2.5.29.16")) {
-			// irivateKeyUsagePeriodExtension;
-
-		} else if (oid.equals("2.5.29.17")) {
-			try {
-				subjectAlternativeNameExtension ="";
-				Collection<List<?>> rootNames = cert.getIssuerAlternativeNames();
-				for(List names:rootNames){
-					for(Object name:names){
-						issuerAlternativeNameExtension =name.toString() + "\n";
+			} else if (oid.equals("2.5.29.17")) {
+				try {
+					subjectAlternativeNameExtension = Res.getString("cert.is.critical") + critical + "\n";;
+					Collection<List<?>> rootNames = cert.getIssuerAlternativeNames();
+					for (List names : rootNames) {
+						for (Object name : names) {
+							issuerAlternativeNameExtension += name.toString() + "\n";
+						}
 					}
+					extensions.put(oid, issuerAlternativeNameExtension);
+				} catch (CertificateParsingException | NullPointerException e) {
+					Log.warning("Couldn't extract issuer alternatives name extension", e);
 				}
-				extensions.put(oid, issuerAlternativeNameExtension);
-			} catch (CertificateParsingException | NullPointerException e) {
-				Log.warning("Couldn't extract issuer alternatives name extension", e);
-			}
 
-		} else if (oid.equals("2.5.29.18")) {
-			try {
-				issuerAlternativeNameExtension ="";
-				Collection<List<?>> rootNames = cert.getIssuerAlternativeNames();
-				for(List names:rootNames){
-					for(Object name:names){
-						issuerAlternativeNameExtension =name.toString() + "\n";
+			} else if (oid.equals("2.5.29.18")) {
+				try {
+					issuerAlternativeNameExtension = Res.getString("cert.is.critical") + critical + "\n";;
+					Collection<List<?>> rootNames = cert.getIssuerAlternativeNames();
+					for (List names : rootNames) {
+						for (Object name : names) {
+							issuerAlternativeNameExtension += name.toString() + "\n";
+						}
 					}
+					extensions.put(oid, issuerAlternativeNameExtension);
+				} catch (CertificateParsingException e) {
+					Log.warning("Couldn't extract issuer alternatives name extension", e);
 				}
-				extensions.put(oid, issuerAlternativeNameExtension);
-			} catch (CertificateParsingException e) {
-				Log.warning("Couldn't extract issuer alternatives name extension", e);
-			}
 
-		} else if (oid.equals("2.5.29.19")) {
-			try {
-				primitive = JcaX509ExtensionUtils.parseExtensionValue(cert.getExtensionValue(oid));
-				BasicConstraints bc = BasicConstraints.getInstance(primitive);
-				basicConstraintsExtension = Res.getString("cert.extension.basic.constraints.is.ca") + ": " + bc.isCA();
-				if (bc.getPathLenConstraint() != null) {
-					basicConstraintsExtension += "\n" + Res.getString("cert.extension.basic.constraints.path.length")
-							+ ": " + bc.getPathLenConstraint();
+			} else if (oid.equals("2.5.29.19")) {
+				try {
+					primitive = JcaX509ExtensionUtils.parseExtensionValue(cert.getExtensionValue(oid));
+					BasicConstraints bc = BasicConstraints.getInstance(primitive);
+					basicConstraintsExtension = Res.getString("cert.is.critical") + critical + "\n";
+					basicConstraintsExtension += Res.getString("cert.extension.basic.constraints.is.ca") + ": "
+							+ bc.isCA();
+					if (bc.getPathLenConstraint() != null) {
+						basicConstraintsExtension += "\n"
+								+ Res.getString("cert.extension.basic.constraints.path.length") + ": "
+								+ bc.getPathLenConstraint();
+					}
+					extensions.put(oid, basicConstraintsExtension);
+				} catch (IOException e) {
+					Log.warning("Couldn't extract basic constraints extension", e);
 				}
-				extensions.put(oid, basicConstraintsExtension);
-			} catch (IOException e) {
-				Log.warning("Couldn't extract basic constraints extension", e);
-			}
 
-		} else if (oid.equals("2.5.29.30")) {
-			try {
-				primitive = JcaX509ExtensionUtils.parseExtensionValue(cert.getExtensionValue(oid));
-				NameConstraints nc = NameConstraints.getInstance(primitive);
-				nameConstraintsExtension = Res.getString("cert.extension.name.constraints.permitted.subtrees") + ": \n";
-				for (GeneralSubtree subtree : nc.getPermittedSubtrees()) {
-					nameConstraintsExtension += subtree.toString() + "\n";
+			} else if (oid.equals("2.5.29.30")) {
+				try {
+					primitive = JcaX509ExtensionUtils.parseExtensionValue(cert.getExtensionValue(oid));
+					NameConstraints nc = NameConstraints.getInstance(primitive);
+					nameConstraintsExtension = Res.getString("cert.is.critical") + critical + "\n";
+					if (nc.getPermittedSubtrees() != null) {
+						nameConstraintsExtension += Res.getString("cert.extension.name.constraints.permitted.subtrees")
+								+ ": \n";
+						for (GeneralSubtree subtree : nc.getPermittedSubtrees()) {
+							nameConstraintsExtension += subtree.toString() + "\n";
+						}
+					}
+					if (nc.getExcludedSubtrees() != null) {
+						nameConstraintsExtension += Res.getString("cert.extension.name.constraints.excluded.subtrees")
+								+ ": \n";
+						for (GeneralSubtree subtree : nc.getExcludedSubtrees()) {
+							nameConstraintsExtension += subtree.toString() + "\n";
+						}
+					}
+					extensions.put(oid, nameConstraintsExtension);
+				} catch (IOException e) {
+					Log.warning("Couldn't extract name constraints extension", e);
 				}
-				nameConstraintsExtension = Res.getString("cert.extension.name.constraints.excluded.subtrees") + ": \n";
-				for (GeneralSubtree subtree : nc.getExcludedSubtrees()) {
-					nameConstraintsExtension += subtree.toString() + "\n";
+
+			} else if (oid.equals("2.5.29.31")) {
+				// CRLDistributionPointsExtension;
+				try {
+					primitive = JcaX509ExtensionUtils.parseExtensionValue(cert.getExtensionValue(oid));
+					CRLDistPoint point = CRLDistPoint.getInstance(primitive);
+					CRLDistributionPointsExtension = Res.getString("cert.is.critical") + critical + "\n";
+					CRLDistributionPointsExtension += point.toString();
+					extensions.put(oid, CRLDistributionPointsExtension);
+				} catch (IOException e) {
+					Log.warning("Couldn't extract CRL Distribution Points extension from certificate", e);
 				}
-				extensions.put(oid, nameConstraintsExtension);
-			} catch (IOException e) {
-				Log.warning("Couldn't extract name constraints extension", e);
-			}
 
-		} else if (oid.equals("2.5.29.31")) {
-			// CRLDistributionPointsExtension;
-			try {
-				primitive = JcaX509ExtensionUtils.parseExtensionValue(cert.getExtensionValue(oid));
-				CRLDistPoint point = CRLDistPoint.getInstance(primitive);
-				CRLDistributionPointsExtension = point.toString();
-				extensions.put(oid, CRLDistributionPointsExtension);
-			} catch (IOException e) {
-				Log.warning("Couldn't extract CRL Distribution Points extension from certificate", e);
-			}
-
-		} else if (oid.equals("2.5.29.33")) {
+			} else if (oid.equals("2.5.29.33")) {
 				ASN1OctetString oct = ASN1OctetString.getInstance(cert.getExtensionValue(oid));
-				policyMappingsExtension = oct.toString();
+				policyMappingsExtension = Res.getString("cert.is.critical") + critical + "\n";
+				policyMappingsExtension += oct.toString();
 				extensions.put(oid, policyMappingsExtension);
-		} else if (oid.equals("2.5.29.35")) {
-			try {
-				AuthorityKeyIdentifier authorityKeyIdentifier = AuthorityKeyIdentifier
-						.fromExtensions(new JcaX509CertificateHolder(cert).getExtensions());
-				authorityKeyIdentifierExtension = Hex.toHexString(authorityKeyIdentifier.getKeyIdentifier());
-			} catch (CertificateEncodingException e) {
-				Log.warning("Couldn't extract authority key identifier extension", e);
-			}
-			extensions.put(oid, authorityKeyIdentifierExtension);
-		} else if (oid.equals("2.5.29.36")) {
-			try {
-				primitive = JcaX509ExtensionUtils.parseExtensionValue(cert.getExtensionValue(oid));
-				PolicyConstraints pc = PolicyConstraints.getInstance(primitive);
-				policyConstraintsExtension = Res.getString("cert.extension.policy.constraints.inhibit.policy.mapping")
-						+ ": " + pc.getInhibitPolicyMapping() + "\n"
-						+ Res.getString("cert.extension.policy.constraints.require.explicit.policy.mapping") + ": "
-						+ pc.getRequireExplicitPolicyMapping();
-				extensions.put(oid, policyConstraintsExtension);
-			} catch (IOException e) {
-				Log.warning("Couldn't extract policy constraints exception", e);
-			}
-
-		} else if (oid.equals("2.5.29.37")) {
-			try {
-				extendedKeyUsageExtension = "";
-				List<String> extKeyUsage = cert.getExtendedKeyUsage();
-				for (String use : extKeyUsage) {
-					extendedKeyUsageExtension += use + ": " + OIDTranslator.getDescription(use) + "\n";
+			} else if (oid.equals("2.5.29.35")) {
+				try {
+					AuthorityKeyIdentifier authorityKeyIdentifier = AuthorityKeyIdentifier
+							.fromExtensions(new JcaX509CertificateHolder(cert).getExtensions());
+					authorityKeyIdentifierExtension = Res.getString("cert.is.critical") + critical + "\n";
+					authorityKeyIdentifierExtension += Hex.toHexString(authorityKeyIdentifier.getKeyIdentifier());
+				} catch (CertificateEncodingException e) {
+					Log.warning("Couldn't extract authority key identifier extension", e);
 				}
-				extensions.put(oid, extendedKeyUsageExtension);
-			} catch (CertificateParsingException e) {
-				Log.warning("Couldn't parse extended key usage extension", e);
+				extensions.put(oid, authorityKeyIdentifierExtension);
+			} else if (oid.equals("2.5.29.36")) {
+				try {
+					primitive = JcaX509ExtensionUtils.parseExtensionValue(cert.getExtensionValue(oid));
+					PolicyConstraints pc = PolicyConstraints.getInstance(primitive);
+					policyConstraintsExtension = Res.getString("cert.is.critical") + critical + "\n";
+					if (pc.getInhibitPolicyMapping() != null) {
+						policyConstraintsExtension += Res
+								.getString("cert.extension.policy.constraints.inhibit.policy.mapping") + ": "
+								+ pc.getInhibitPolicyMapping() + "\n";
+					}
+					if (pc.getRequireExplicitPolicyMapping() != null) {
+						policyConstraintsExtension += Res
+								.getString("cert.extension.policy.constraints.require.explicit.policy.mapping") + ": "
+								+ pc.getRequireExplicitPolicyMapping();
+					}
+					extensions.put(oid, policyConstraintsExtension);
+				} catch (IOException e) {
+					Log.warning("Couldn't extract policy constraints exception", e);
+				}
+
+			} else if (oid.equals("2.5.29.37")) {
+				try {
+					extendedKeyUsageExtension = Res.getString("cert.is.critical") + critical + "\n";
+					List<String> extKeyUsage = cert.getExtendedKeyUsage();
+					for (String use : extKeyUsage) {
+						extendedKeyUsageExtension += use + ": " + OIDTranslator.getDescription(use) + "\n";
+					}
+					extensions.put(oid, extendedKeyUsageExtension);
+				} catch (CertificateParsingException e) {
+					Log.warning("Couldn't parse extended key usage extension", e);
+				}
+			} else {
+				addToUnsupported(critical, oid);
 			}
-		} else {
-			unsupportedExtensions.add(oid);
+		} catch (NullPointerException e) {
+			Log.error("Couldn't extract " + oid + ": " + OIDTranslator.getDescription(oid) + "extension.", e);
+			addToUnsupported(critical, oid);
 		}
 	}
 
+	private void addToUnsupported(boolean critical, String oid){
+		if (critical) {
+			unsupportedCriticalExtensions.add(oid);
+		} else {
+			unsupportedNonCriticalExtensions.add(oid);
+		}
+	}
+	
 	private String extractCommonName(String certName) throws InvalidNameException {
 		String name = null;
 		LdapName ldapDN = new LdapName(certName);
@@ -556,7 +597,11 @@ public class CertificateModel {
 		return extensions;
 	}
 
-	public ArrayList<String> getUnsupportedExtensions() {
-		return unsupportedExtensions;
+	public ArrayList<String> getUnsupportedCriticalExtensions() {
+		return unsupportedCriticalExtensions;
+	}
+	
+	public ArrayList<String> getUnsupportedNonCriticalExtensions() {
+		return unsupportedNonCriticalExtensions;
 	}
 }
