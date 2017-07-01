@@ -14,11 +14,16 @@ import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -33,7 +38,9 @@ import javax.swing.SwingUtilities;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.spark.util.ResourceUtils;
+import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.certificates.CertificateController;
+import org.jivesoftware.sparkimpl.certificates.CertificateDialogReason;
 import org.jivesoftware.sparkimpl.certificates.CertificateModel;
 import org.jivesoftware.sparkimpl.certificates.OIDTranslator;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
@@ -52,11 +59,12 @@ public class CertificateDialog extends JDialog implements ActionListener {
 	private final LocalPreferences localPreferences;
 	private CertificateModel cert;
 	private CertificateController certControll;
-	private boolean addInfo;
+	private CertificateDialogReason reason;
 
 	private JScrollPane scrollPane;
 	private JPanel panel = new JPanel();
 	private JPanel buttonPanel = new JPanel();
+	private JPanel certStatusPanel = new JPanel();
 
 	private JTextArea versionField = new JTextArea();
 	private JTextArea serialNumberField = new JTextArea();
@@ -71,6 +79,7 @@ public class CertificateDialog extends JDialog implements ActionListener {
 	private JTextArea issuerUniqueIDField = new JTextArea();
 	private JTextArea subjectUniqueIDField = new JTextArea();
 	private JTextArea unsupportedExtensionsArea = new JTextArea();
+	private JTextArea certStatusArea = new JTextArea();
 
 	private JLabel infoLabel = new JLabel();
 	private JLabel versionLabel = new JLabel();
@@ -96,9 +105,10 @@ public class CertificateDialog extends JDialog implements ActionListener {
 	private List<String> certUnsupportedCriticalExtensions;
 	private List<String> certUnsupportedNonCriticalExtensions;
 	private HashMap<String,String> certExtensions;
-
+	private JButton deleteButton = new JButton();
+	
 	public CertificateDialog(LocalPreferences localPreferences, CertificateModel cert,
-			CertificateController certificateController, boolean addInfo) {
+			CertificateController certificateController, CertificateDialogReason reason) {
 		if (localPreferences == null || cert == null) {
 			throw new IllegalArgumentException();
 		}
@@ -108,6 +118,7 @@ public class CertificateDialog extends JDialog implements ActionListener {
 		this.certExtensions = cert.getExtensions();
 		this.certUnsupportedCriticalExtensions = cert.getUnsupportedCriticalExtensions();
 		this.certUnsupportedNonCriticalExtensions = cert.getUnsupportedNonCriticalExtensions();
+		this.reason = reason;
 		setTitle(Res.getString("title.certificate"));
 		setSize(500, 600);
 		setLayout(new GridBagLayout());
@@ -133,6 +144,9 @@ public class CertificateDialog extends JDialog implements ActionListener {
 		issuerUniqueIDField.setText(cert.getIssuerUniqueID());
 		subjectUniqueIDField.setText(cert.getSubjectUniqueID());
 		extensionsLabel.setText(Res.getString("cert.extensions"));
+		certStatusArea.setText(cert.getCertStatusAll());
+
+		certStatusArea.setEditable(false);
 		
 		versionField.setLineWrap(true);
 		serialNumberField.setLineWrap(true);
@@ -146,14 +160,16 @@ public class CertificateDialog extends JDialog implements ActionListener {
 		publicKeyAlgorithmField.setLineWrap(true);
 		issuerUniqueIDField.setLineWrap(true);
 		subjectUniqueIDField.setLineWrap(true);
-		
 		unsupportedExtensionsArea.setLineWrap(true);
+		certStatusArea.setLineWrap(true);
+		
 		ButtonGroup radioGroup = new ButtonGroup();
 		radioGroup.add(distrust);
 		radioGroup.add(trust);
 		
 		okButton.addActionListener(this);
 		cancelButton.addActionListener(this);
+		deleteButton.addActionListener(this);
 		
 		ResourceUtils.resLabel(versionLabel, versionField, Res.getString("label.certificate.version"));
 		ResourceUtils.resLabel(serialNumberLabel, serialNumberField, Res.getString("label.certificate.serial.number"));
@@ -179,6 +195,7 @@ public class CertificateDialog extends JDialog implements ActionListener {
 		ResourceUtils.resButton(checkValidity, Res.getString("button.check.validity"));
 		ResourceUtils.resButton(okButton, Res.getString("ok"));
 		ResourceUtils.resButton(cancelButton, Res.getString("cancel"));
+		ResourceUtils.resButton(deleteButton, Res.getString("delete"));
 		infoLabel.setText(Res.getString("dialog.certificate.show"));
 		
 		panel.setLayout(new GridBagLayout());
@@ -223,6 +240,11 @@ public class CertificateDialog extends JDialog implements ActionListener {
 				new GridBagConstraints(2, 10, 6, 1, 1.0, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
 		panel.add(subjectUniqueIDField,
 				new GridBagConstraints(2, 11, 6, 1, 1.0, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
+		certStatusPanel.setLayout(new GridBagLayout());
+		certStatusPanel.add(certStatusArea, new GridBagConstraints(0, 0, 1, 1, 1, 1, CENTER, HORIZONTAL, DEFAULT_INSETS, 0, 0));
+		certStatusPanel.setBorder(
+				BorderFactory.createTitledBorder(Res.getString("label.certificate.add.certificate.to.truststore")));
+		
 
 		// extensions
 		panel.add(extensionsLabel, new GridBagConstraints(2, 12, 6, 1, 1.0, 0.0, EAST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
@@ -257,19 +279,27 @@ public class CertificateDialog extends JDialog implements ActionListener {
 
 		buttonPanel.add(trust, new GridBagConstraints(0, 0, 1, 1, 0.2, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
 		buttonPanel.add(distrust, new GridBagConstraints(1, 0, 1, 1, 0.1, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
-
+		buttonPanel.add(certStatusPanel, new GridBagConstraints(2, 0, 3, 2, 0.2, 0.0, CENTER, HORIZONTAL, DEFAULT_INSETS, 0, 0));
 		buttonPanel.add(checkValidity, new GridBagConstraints(0, 1, 2, 1, 0.0, 0.0, WEST, NONE, DEFAULT_INSETS, 0, 0));
-		buttonPanel.add(okButton, new GridBagConstraints(1, 2, 1, 1, 0.2, 0.0, CENTER, HORIZONTAL, new Insets(5, 100, 5, 5), 0, 0));
-		buttonPanel.add(cancelButton, new GridBagConstraints(2, 2, 1, 1, 0.2, 0.0, CENTER, HORIZONTAL, new Insets(5, 5, 5, 100), 0, 0));
+		buttonPanel.add(okButton, new GridBagConstraints(2, 2, 1, 1, 0.2, 0.0, CENTER, HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 
+		if (reason == CertificateDialogReason.ADD_CERTIFICATE) {
+			buttonPanel.add(cancelButton,
+					new GridBagConstraints(3, 2, 1, 1, 0.2, 0.0, CENTER, HORIZONTAL, new Insets(5, 5, 5, 100), 0, 0));
+		}
+		if (reason == CertificateDialogReason.SHOW_CERTIFICATE) {
+			buttonPanel.add(cancelButton,
+					new GridBagConstraints(3, 2, 1, 1, 0.2, 0.0, CENTER, HORIZONTAL, DEFAULT_INSETS, 0, 0));
+			buttonPanel.add(deleteButton,
+					new GridBagConstraints(4, 2, 1, 1, 0.2, 0.0, CENTER, HORIZONTAL, new Insets(5, 5, 5, 0), 0, 0));
+		}
 		trust.setSelected(cert.isValid() || cert.isExempted());
 		distrust.setSelected(!cert.isValid() && !cert.isExempted());
-		
 		
 		scrollPane = new JScrollPane(panel);
 		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		
-		if (addInfo) {
+		if (reason == CertificateDialogReason.ADD_CERTIFICATE) {
 			add(infoLabel, new GridBagConstraints(0, 0, 4, 1, 1.0, 0.0, WEST, BOTH, DEFAULT_INSETS, 0, 0));
 		}
 		
@@ -283,7 +313,7 @@ public class CertificateDialog extends JDialog implements ActionListener {
             	panel.scrollRectToVisible(versionField.getBounds());           
         		
             	//info that certificate is distrusted
-        		if(addInfo && !cert.isValid()){
+        		if(reason == CertificateDialogReason.ADD_CERTIFICATE && !cert.isValid()){
         			JOptionPane.showMessageDialog(null, Res.getString("dialog.certificate.is.distrusted"));
         		}
             }
@@ -294,7 +324,7 @@ public class CertificateDialog extends JDialog implements ActionListener {
 	}
 	
 	public CertificateDialog(LocalPreferences localPreferences, CertificateModel certificateModel) {
-		this(localPreferences, certificateModel, null, false);
+		this(localPreferences, certificateModel, null, CertificateDialogReason.SHOW_CERTIFICATE);
 	}
 
 	@Override
@@ -310,6 +340,13 @@ public class CertificateDialog extends JDialog implements ActionListener {
 				certControll.setAddToKeystore(false);
 			}
 			this.dispose();
+		}else if(e.getSource() == deleteButton){
+			try {
+				certControll.deleteCertificate(cert.getAlias());
+				this.dispose();
+			} catch (KeyStoreException | NoSuchAlgorithmException | CertificateException | IOException ex) {
+				Log.error("Couldn't delete the certificate", ex);
+			}
 		}
 	}
 
