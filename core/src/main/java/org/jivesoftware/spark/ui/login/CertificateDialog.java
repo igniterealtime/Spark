@@ -243,7 +243,7 @@ public class CertificateDialog extends JDialog implements ActionListener {
 		certStatusPanel.setLayout(new GridBagLayout());
 		certStatusPanel.add(certStatusArea, new GridBagConstraints(0, 0, 1, 1, 1, 1, CENTER, HORIZONTAL, DEFAULT_INSETS, 0, 0));
 		certStatusPanel.setBorder(
-				BorderFactory.createTitledBorder(Res.getString("label.certificate.add.certificate.to.truststore")));
+				BorderFactory.createTitledBorder(Res.getString("label.certificate.status")));
 		
 
 		// extensions
