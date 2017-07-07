@@ -1,6 +1,10 @@
 package org.jivesoftware.sparkimpl.certificates;
 
+import java.io.IOException;
+import java.security.cert.CertificateEncodingException;
+import java.security.cert.CertificateParsingException;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Calendar;
 
@@ -8,6 +12,26 @@ import javax.naming.InvalidNameException;
 import javax.naming.ldap.LdapName;
 import javax.naming.ldap.Rdn;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
+
+import org.bouncycastle.asn1.ASN1OctetString;
+import org.bouncycastle.asn1.ASN1Primitive;
+import org.bouncycastle.asn1.x509.AuthorityKeyIdentifier;
+import org.bouncycastle.asn1.x509.BasicConstraints;
+import org.bouncycastle.asn1.x509.CRLDistPoint;
+import org.bouncycastle.asn1.x509.Extension;
+import org.bouncycastle.asn1.x509.GeneralSubtree;
+import org.bouncycastle.asn1.x509.NameConstraints;
+import org.bouncycastle.asn1.x509.PolicyConstraints;
+import org.bouncycastle.asn1.x509.PolicyQualifierInfo;
+import org.bouncycastle.asn1.x509.SubjectDirectoryAttributes;
+import org.bouncycastle.asn1.x509.SubjectKeyIdentifier;
+import org.bouncycastle.cert.jcajce.JcaX509CertificateHolder;
+import org.bouncycastle.cert.jcajce.JcaX509ExtensionUtils;
+import org.bouncycastle.util.encoders.Hex;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.spark.util.log.Log;
 
@@ -39,56 +63,11 @@ public class CertificateModel {
 	private boolean revoked;
 	private boolean notValidYet;
 	private boolean exempted;
-	// List<String> extensionList;
-
-	/**
-	 * Creates certificate model.
-	 * 
-	 * @param version
-	 * @param serialNumber
-	 * @param signatureValue
-	 * @param signatureAlgorithm
-	 * @param issuer
-	 * @param issuerUniqueID
-	 * @param subject
-	 * @param notBefore
-	 * @param notAfter
-	 * @param publickKeyInfo
-	 */
-	public CertificateModel(String alias, int version, String serialNumber, String signatureValue,
-			String signatureAlgorithm, String issuer, String subject, String notBefore, String notAfter,
-			String publicKey, String publicKeyAlgorithm, String issuerUniqueID, String subjectUniqueID, boolean valid,
-			Boolean exempted) {
-
-		if (version != 3 || version != 2 || version != 1) {
-			throw new IllegalArgumentException("Version have to be 1, 2 or 3");
-		}
-		if (serialNumber == null || signatureValue == null || signatureAlgorithm == null || issuer == null
-				|| subject == null || notBefore == null || notAfter == null || publicKey == null
-				|| publicKeyAlgorithm == null || exempted == null) {
-			throw new IllegalArgumentException("Value cannot be null");
-		}
-		if (version == 1 && issuerUniqueID != null) {
-			throw new IllegalArgumentException(
-					"Unique Identifiers are present then certificate version must be 2 or 3");
-		}
-		this.alias = alias;
-		this.version = version;
-		this.serialNumber = serialNumber;
-		this.signatureValue = signatureValue;
-		this.signatureAlgorithm = signatureAlgorithm;
-		this.issuer = issuer;
-		this.subject = subject;
-		this.notBefore = notBefore;
-		this.notAfter = notAfter;
-		this.publicKey = publicKey;
-		this.publicKeyAlgorithm = publicKeyAlgorithm;
-		this.issuerUniqueID = issuerUniqueID;
-		this.subjectUniqueID = subjectUniqueID;
-		this.valid = valid;
-		this.exempted = exempted;
-		// this.extensionList = extensionList;
-	}
+	private Set<String> criticalExtensionSet;
+	private Set<String> nonCriticalExtensionSet;
+	private HashMap<String, String> extensions = new HashMap<String,String>();
+	private ArrayList<String> unsupportedCriticalExtensions = new ArrayList<String>();
+	private ArrayList<String> unsupportedNonCriticalExtensions = new ArrayList<String>();
 
 	public CertificateModel(X509Certificate certificate, String alias) {
 		this(certificate);
@@ -129,8 +108,210 @@ public class CertificateModel {
 		}
 		this.valid = checkValidity();
 		this.exempted = exempted;
+
+		setupExtensions(certificate);
+
 	}
 
+	private void setupExtensions(X509Certificate cert) {
+
+		criticalExtensionSet = cert.getCriticalExtensionOIDs();
+		nonCriticalExtensionSet = cert.getNonCriticalExtensionOIDs();
+		if (criticalExtensionSet != null) {
+			for (String oid : criticalExtensionSet) {
+				extensionExtractHandler(cert, oid, true);
+			}
+		}
+		if (nonCriticalExtensionSet != null) {
+			for (String oid : nonCriticalExtensionSet) {
+				extensionExtractHandler(cert, oid, false);
+			}
+		}
+	}
+
+	/**
+	 * Get values of the extension and format them into readable Strings.
+	 * 
+	 * @param cert
+	 * @param oid
+	 */
+	private void extensionExtractHandler(X509Certificate cert, String oid, boolean critical) {
+		try {
+			ASN1Primitive primitive = JcaX509ExtensionUtils.parseExtensionValue(cert.getExtensionValue(oid));
+			String value = Res.getString("cert.is.critical") + critical + "\n";
+			boolean isSupported = true;
+
+			if (oid.equals(Extension.subjectDirectoryAttributes)) {
+				value += subjectDirectoryAttributesExtractor(primitive);
+
+			} else if (oid.equals(Extension.subjectKeyIdentifier.toString())) {
+				value += subjectKeyIdentifierExtractor(primitive);
+
+			} else if (oid.equals(Extension.keyUsage.toString())) {
+				value += keyUsageExtractor(cert);
+
+			} else if (oid.equals(Extension.subjectAlternativeName.toString())) {
+				value += alternativeNameExtractor(cert.getSubjectAlternativeNames());
+
+			} else if (oid.equals(Extension.issuerAlternativeName.toString())) {
+				value += alternativeNameExtractor(cert.getIssuerAlternativeNames());
+
+			} else if (oid.equals(Extension.basicConstraints.toString())) {
+				value += basicConstraintsExtractor(primitive);
+
+			} else if (oid.equals(Extension.nameConstraints.toString())) {
+				value += NameConstraintsExtractor(primitive);
+
+			} else if (oid.equals(Extension.cRLDistributionPoints.toString())) {
+				value += CRLPointsExtractor(primitive);
+
+			} else if (oid.equals(Extension.policyMappings.toString())) {
+				value += policyMappingsExtractor(cert);
+
+			} else if (oid.equals(Extension.authorityKeyIdentifier.toString())) {
+				value += authorityKeyIdentifierExtractor(primitive);
+
+			} else if (oid.equals(Extension.policyConstraints.toString())) {
+				value += policyConstraintsExtractor(primitive);
+
+			} else if (oid.equals(Extension.extendedKeyUsage.toString())) {
+				value += extendedKeyUsageExtractor(cert);
+
+			} else {
+				addToUnsupported(critical, oid);
+				isSupported = false;
+			}
+			if (isSupported) {
+				extensions.put(oid, value);
+			}
+		} catch (NullPointerException | IOException | CertificateParsingException e) {
+			Log.error("Couldn't extract " + oid + ": " + OIDTranslator.getDescription(oid) + "extension.", e);
+			addToUnsupported(critical, oid);
+		}
+	}
+
+	private String subjectDirectoryAttributesExtractor(ASN1Primitive primitive) {
+		SubjectDirectoryAttributes sub = SubjectDirectoryAttributes.getInstance(primitive);
+		return sub.toString();
+	}
+
+	private String extendedKeyUsageExtractor(X509Certificate cert) throws CertificateParsingException {
+		String value = "";
+		List<String> extKeyUsage = cert.getExtendedKeyUsage();
+		for (String use : extKeyUsage) {
+			value += use + ": " + OIDTranslator.getDescription(use) + "\n";
+		}
+		return value;
+	}
+
+	private String policyConstraintsExtractor(ASN1Primitive primitive) {
+		PolicyConstraints pc = PolicyConstraints.getInstance(primitive);
+		String value = "";
+		if (pc.getInhibitPolicyMapping() != null) {
+			value += Res.getString("cert.extension.policy.constraints.inhibit.policy.mapping") + ": "
+					+ pc.getInhibitPolicyMapping() + "\n";
+		}
+		if (pc.getRequireExplicitPolicyMapping() != null) {
+			value += Res.getString("cert.extension.policy.constraints.require.explicit.policy.mapping") + ": "
+					+ pc.getRequireExplicitPolicyMapping();
+		}
+		return value;
+	}
+
+	private String authorityKeyIdentifierExtractor(ASN1Primitive primitive) {
+		AuthorityKeyIdentifier authorityKeyIdentifier = AuthorityKeyIdentifier.getInstance(primitive);
+		return Hex.toHexString(authorityKeyIdentifier.getKeyIdentifier());
+	}
+	
+	private String subjectKeyIdentifierExtractor(ASN1Primitive primitive) {
+		SubjectKeyIdentifier subjectKeyIdentifier = SubjectKeyIdentifier.getInstance(primitive);
+		return Hex.toHexString(subjectKeyIdentifier.getKeyIdentifier());
+	}
+
+	private String policyMappingsExtractor(X509Certificate cert) {
+		ASN1OctetString oct = ASN1OctetString.getInstance(cert.getExtensionValue(Extension.policyMappings.toString()));
+		return oct.toString();
+	}
+
+	private String CRLPointsExtractor(ASN1Primitive primitive) {
+		CRLDistPoint point = CRLDistPoint.getInstance(primitive);
+		return point.toString();
+	}
+
+	private String NameConstraintsExtractor(ASN1Primitive primitive) {
+		NameConstraints nc = NameConstraints.getInstance(primitive);
+		String value = "";
+		if (nc.getPermittedSubtrees() != null) {
+			value += Res.getString("cert.extension.name.constraints.permitted.subtrees") + ": \n";
+			for (GeneralSubtree subtree : nc.getPermittedSubtrees()) {
+				value += subtree.toString() + "\n";
+			}
+		}
+		if (nc.getExcludedSubtrees() != null) {
+			value += Res.getString("cert.extension.name.constraints.excluded.subtrees") + ": \n";
+			for (GeneralSubtree subtree : nc.getExcludedSubtrees()) {
+				value += subtree.toString() + "\n";
+			}
+		}
+		return value;
+	}
+
+	private String basicConstraintsExtractor(ASN1Primitive primitive) {
+		BasicConstraints bc = BasicConstraints.getInstance(primitive);
+		String value = Res.getString("cert.extension.basic.constraints.is.ca") + ": " + bc.isCA();
+		if (bc.getPathLenConstraint() != null) {
+			value += "\n" + Res.getString("cert.extension.basic.constraints.path.length") + ": "
+					+ bc.getPathLenConstraint();
+		}
+		return value;
+	}
+
+	private String alternativeNameExtractor(Collection<List<?>> rootNames) throws CertificateParsingException {
+		String value = "";
+		if (rootNames != null) {
+			for (List names : rootNames) {
+				if (names != null) {
+					for (Object name : names) {
+						value += name.toString() + "\n";
+					}
+				}
+			}
+		}
+		return value;
+	}
+
+	
+	private String keyUsageExtractor(X509Certificate cert){
+		String value;
+		value = Res.getString("cert.extension.extended.usage.digital.signature") + ": " + cert.getKeyUsage()[0]
+				+ "\n";
+		value += Res.getString("cert.extension.extended.usage.non.repudiation") + ": " + cert.getKeyUsage()[1]
+				+ "\n";
+		value += Res.getString("cert.extension.extended.usage.key.encipherment") + ": " + cert.getKeyUsage()[2]
+				+ "\n";
+		value += Res.getString("cert.extension.extended.usage.data.encipherment") + ": " + cert.getKeyUsage()[3]
+				+ "\n";
+		value += Res.getString("cert.extension.extended.usage.key.agreement") + ": " + cert.getKeyUsage()[4]
+				+ "\n";
+		value += Res.getString("cert.extension.extended.usage.key.cert.sign") + ": " + cert.getKeyUsage()[5]
+				+ "\n";
+		value += Res.getString("cert.extension.extended.usage.crl.sign") + ": " + cert.getKeyUsage()[6] 
+				+ "\n";
+		value += Res.getString("cert.extension.extended.usage.encipher.only") + ": " + cert.getKeyUsage()[7]
+				+ "\n";
+		value += Res.getString("cert.extension.extended.usage.decipher.only") + ": " + cert.getKeyUsage()[8];
+
+		return value;
+	}
+	
+	private void addToUnsupported(boolean critical, String oid){
+		if (critical) {
+			unsupportedCriticalExtensions.add(oid);
+		} else {
+			unsupportedNonCriticalExtensions.add(oid);
+		}
+	}
+	
 	private String extractCommonName(String certName) throws InvalidNameException {
 		String name = null;
 		LdapName ldapDN = new LdapName(certName);
@@ -281,4 +462,19 @@ public class CertificateModel {
 		return issuerCommonName;
 	}
 	
+	public Set<String> getCriticalExtensionSet() {
+		return criticalExtensionSet;
+	}
+
+	public HashMap<String, String> getExtensions() {
+		return extensions;
+	}
+
+	public ArrayList<String> getUnsupportedCriticalExtensions() {
+		return unsupportedCriticalExtensions;
+	}
+	
+	public ArrayList<String> getUnsupportedNonCriticalExtensions() {
+		return unsupportedNonCriticalExtensions;
+	}
 }
