@@ -460,6 +460,10 @@ public class CertificateModel {
 	public boolean isExempted() {
 		return exempted;
 	}
+	
+	public void setExempted(boolean exempted){
+		this.exempted = exempted;
+	}
 
 	public String getSubjectCommonName() {
 		return subjectCommonName;
