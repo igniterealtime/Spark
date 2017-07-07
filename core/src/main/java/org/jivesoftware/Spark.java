@@ -58,6 +58,7 @@ public final class Spark {
     private static File BIN_DIRECTORY;
     private static File LOG_DIRECTORY;
     private static File PLUGIN_DIRECTORY;
+    private static File SECURITY_DIRECTORY;
 
 
     /**
@@ -117,12 +118,13 @@ public final class Spark {
         File USER_DIRECTORY = initializeDirectory( "user" );
     	PLUGIN_DIRECTORY = initializeDirectory("plugins");
         File XTRA_DIRECTORY = initializeDirectory( "xtra" );
+        SECURITY_DIRECTORY = initializeDirectory("security");
     	// TODO implement copyEmoticonFiles();
         final String workingDirectory = System.getProperty("appdir");
         
         if (workingDirectory == null) {
 
-            if (!RESOURCE_DIRECTORY.exists() || !LOG_DIRECTORY.exists() || !USER_DIRECTORY.exists() || !PLUGIN_DIRECTORY.exists() || !XTRA_DIRECTORY.exists()) {
+            if (!RESOURCE_DIRECTORY.exists() || !LOG_DIRECTORY.exists() || !USER_DIRECTORY.exists() || !PLUGIN_DIRECTORY.exists() || !XTRA_DIRECTORY.exists() || !SECURITY_DIRECTORY.exists()) {
             	UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
             	JOptionPane.showMessageDialog(new JFrame(), "Unable to create directories necessary for runtime.", "Spark Error", JOptionPane.ERROR_MESSAGE);
                 System.exit(1);
@@ -140,7 +142,7 @@ public final class Spark {
 
             	//Copy emoticon files from install directory to the spark user home directory
             }
-            
+            SECURITY_DIRECTORY = initializeDirectory(workingDir, "security");
             LOG_DIRECTORY = initializeDirectory("logs");
             LOG_DIRECTORY = new File(USER_SPARK_HOME, "logs").getAbsoluteFile();
             LOG_DIRECTORY.mkdirs();
