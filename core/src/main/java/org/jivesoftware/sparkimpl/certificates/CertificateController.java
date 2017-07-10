@@ -103,7 +103,27 @@ public class CertificateController {
 			Log.warning("Cannot access Truststore, it might be not set up", e);
 		}
 	}
-  
+	
+	/**
+	 * This method delete certificate with provided alias from the Truststore
+	 * @param alias
+	 * @throws KeyStoreException
+	 * @throws IOException
+	 * @throws NoSuchAlgorithmException
+	 * @throws CertificateException
+	 */
+	public void deleteCertificate(String alias) throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException{
+		int dialogButton = JOptionPane.YES_NO_OPTION;
+		int dialogValue = JOptionPane.showConfirmDialog(null, Res.getString("dialog.certificate.sure.to.delete"), null, dialogButton);
+		if (dialogValue == JOptionPane.YES_OPTION) {
+			trustStore.deleteEntry(alias);
+			try (FileOutputStream outputStream = new FileOutputStream(localPreferences.getTrustStorePath())) {
+				trustStore.store(outputStream, localPreferences.getTrustStorePassword().toCharArray());
+				JOptionPane.showMessageDialog(null, Res.getString("dialog.certificate.has.been.deleted"));
+			}
+
+		}
+	} 
 	/**
 	 * This method add certifiate from file ((*.cer), (*.crt), (*.der)) to Truststore.
 	 * 
@@ -124,7 +144,7 @@ public class CertificateController {
 			CertificateFactory cf = CertificateFactory.getInstance("X509");
 			X509Certificate addedCert = (X509Certificate) cf.generateCertificate(inputStream);
 			if (checkForSameCertificate(addedCert) == false) {
-				showCertificate(new CertificateModel(addedCert), true);
+				showCertificate(new CertificateModel(addedCert), CertificateDialogReason.ADD_CERTIFICATE);
 			}
 			// value of addToKeyStore is changed by setter in CertificateDialog
 			if (addToKeystore == true) {
@@ -221,7 +241,7 @@ public class CertificateController {
 	 */
 	public void showCertificate() {
 		CertificateDialog certDialog = new CertificateDialog(localPreferences,
-				certificates.get(CertificatesManagerSettingsPanel.getCertTable().getSelectedRow()));
+				certificates.get(CertificatesManagerSettingsPanel.getCertTable().getSelectedRow()), this, CertificateDialogReason.SHOW_CERTIFICATE);
 	}
 
 	/**
@@ -229,8 +249,8 @@ public class CertificateController {
 	 * 
 	 * @param CertificateModel
 	 */
-	public void showCertificate(CertificateModel certModel, boolean addInfo) {
-		CertificateDialog certDialog = new CertificateDialog(localPreferences, certModel, this, addInfo);
+	public void showCertificate(CertificateModel certModel, CertificateDialogReason reason) {
+		CertificateDialog certDialog = new CertificateDialog(localPreferences, certModel, this, reason);
 	}
 	
 	public List<CertificateModel> getCertificates() {
