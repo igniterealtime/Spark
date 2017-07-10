@@ -7,6 +7,7 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Calendar;
+import java.util.Date;
 
 import javax.naming.InvalidNameException;
 import javax.naming.ldap.LdapName;
@@ -341,6 +342,26 @@ public class CertificateModel {
 		}
 	}
 	
+	public String getCertStatusAll() {
+		String status = "";
+		if (checkRevoked()) {
+			status += Res.getString("cert.revoked") + "\n";
+		}
+		if (isAfterNotAfter()) {
+			status += Res.getString("cert.expired") + "\n";
+		}
+		if (isBeforeNotBefore()) {
+			status += Res.getString("cert.not.valid.yet") + "\n";
+		}
+		if (!checkRevoked() && !isAfterNotAfter() && !isBeforeNotBefore()) {
+			status += Res.getString("cert.valid") + "\n";
+		}
+		if (isSelfSigned()) {
+			status += Res.getString("cert.self.signed") + "\n";
+		}
+		return status;
+	}
+
 	private boolean isSelfSigned(){
 		if(subject.equals(issuer)){
 			return true;
@@ -363,8 +384,7 @@ public class CertificateModel {
 	}
 
 	private boolean isBeforeNotBefore() {
-		Calendar today = Calendar.getInstance();
-
+		Date today = new Date();
 		if (today.before(certificate.getNotBefore())) {
 			return true;
 		} else {
@@ -373,8 +393,7 @@ public class CertificateModel {
 	}
 
 	private boolean isAfterNotAfter() {
-		Calendar today = Calendar.getInstance();
-
+		Date today = new Date();
 		if (today.after(certificate.getNotAfter())) {
 			return true;
 		} else {
