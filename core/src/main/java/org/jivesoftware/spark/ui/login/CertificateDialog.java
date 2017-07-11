@@ -26,6 +26,7 @@ import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -97,8 +98,7 @@ public class CertificateDialog extends JDialog implements ActionListener {
 	private JLabel unsupportedExtensionsLabel = new JLabel();
 	private JLabel extensionsLabel = new JLabel();
 	
-	private JRadioButton trust = new JRadioButton();
-	private JRadioButton distrust = new JRadioButton();
+	private JCheckBox exceptionBox = new JCheckBox();
 	private JButton checkValidity = new JButton();
 	private JButton okButton = new JButton();
 	private JButton cancelButton = new JButton();
@@ -163,13 +163,10 @@ public class CertificateDialog extends JDialog implements ActionListener {
 		unsupportedExtensionsArea.setLineWrap(true);
 		certStatusArea.setLineWrap(true);
 		
-		ButtonGroup radioGroup = new ButtonGroup();
-		radioGroup.add(distrust);
-		radioGroup.add(trust);
-		
 		okButton.addActionListener(this);
 		cancelButton.addActionListener(this);
 		deleteButton.addActionListener(this);
+		exceptionBox.addActionListener(this);
 		
 		ResourceUtils.resLabel(versionLabel, versionField, Res.getString("label.certificate.version"));
 		ResourceUtils.resLabel(serialNumberLabel, serialNumberField, Res.getString("label.certificate.serial.number"));
@@ -190,8 +187,7 @@ public class CertificateDialog extends JDialog implements ActionListener {
 				Res.getString("label.certificate.subject.unique.id"));
 		ResourceUtils.resLabel(unsupportedExtensionsLabel, unsupportedExtensionsArea,
 				Res.getString("cert.extensions.unsupported"));
-		ResourceUtils.resButton(trust, Res.getString("radio.certificate.trust"));
-		ResourceUtils.resButton(distrust, Res.getString("radio.certificate.distrust"));
+		ResourceUtils.resButton(exceptionBox, Res.getString("checkbox.on.exception.list"));
 		ResourceUtils.resButton(checkValidity, Res.getString("button.check.validity"));
 		ResourceUtils.resButton(okButton, Res.getString("ok"));
 		ResourceUtils.resButton(cancelButton, Res.getString("cancel"));
@@ -277,8 +273,7 @@ public class CertificateDialog extends JDialog implements ActionListener {
 		panel.add(unsupportedExtensionsArea, new GridBagConstraints(2, i, 6, 1, 1.0, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
 		
 
-		buttonPanel.add(trust, new GridBagConstraints(0, 0, 1, 1, 0.2, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
-		buttonPanel.add(distrust, new GridBagConstraints(1, 0, 1, 1, 0.1, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
+		buttonPanel.add(exceptionBox, new GridBagConstraints(0, 0, 1, 1, 0.2, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
 		buttonPanel.add(certStatusPanel, new GridBagConstraints(2, 0, 3, 2, 0.2, 0.0, CENTER, HORIZONTAL, DEFAULT_INSETS, 0, 0));
 		buttonPanel.add(checkValidity, new GridBagConstraints(0, 1, 2, 1, 0.0, 0.0, WEST, NONE, DEFAULT_INSETS, 0, 0));
 		buttonPanel.add(okButton, new GridBagConstraints(2, 2, 1, 1, 0.2, 0.0, CENTER, HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
@@ -293,8 +288,8 @@ public class CertificateDialog extends JDialog implements ActionListener {
 			buttonPanel.add(deleteButton,
 					new GridBagConstraints(4, 2, 1, 1, 0.2, 0.0, CENTER, HORIZONTAL, new Insets(5, 5, 5, 0), 0, 0));
 		}
-		trust.setSelected(cert.isValid() || cert.isExempted());
-		distrust.setSelected(!cert.isValid() && !cert.isExempted());
+
+		exceptionBox.setSelected(certificateController.isOnExceptionList(cert.getAlias()));
 		
 		scrollPane = new JScrollPane(panel);
 		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
@@ -347,6 +342,9 @@ public class CertificateDialog extends JDialog implements ActionListener {
 			} catch (KeyStoreException | NoSuchAlgorithmException | CertificateException | IOException ex) {
 				Log.error("Couldn't delete the certificate", ex);
 			}
+
+		} else if (e.getSource() == exceptionBox) {
+			certControll.addOrRemoveFromExceptionList(exceptionBox.isSelected());
 		}
 	}
 

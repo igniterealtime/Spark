@@ -197,21 +197,8 @@ public class CertificatesManagerSettingsPanel extends JPanel implements ActionLi
 	    int column = e.getColumn();
 	    if (column == 2) {
 	        TableModel model = (TableModel) e.getSource();
-	        String columnName = model.getColumnName(column);
 	        Boolean checked = (Boolean) model.getValueAt(row, column);
-			if (checked) {
-				try {
-					certControll.moveCertificate(certControll.TRUSTED, certControll.EXCEPTIONS);
-				} catch (KeyStoreException | NoSuchAlgorithmException | CertificateException | IOException ex) {
-					Log.error("Error at moving certificate from trusted list to the exception list", ex);
-				}
-			} else {
-				try {
-					certControll.moveCertificate(certControll.EXCEPTIONS, certControll.TRUSTED);
-				} catch (KeyStoreException | NoSuchAlgorithmException | CertificateException | IOException ex) {
-					Log.error("Error at moving certificate from exceptions list to trusted list", ex);
-				}
-			}
+			certControll.addOrRemoveFromExceptionList(checked);
 		}
 
 	}

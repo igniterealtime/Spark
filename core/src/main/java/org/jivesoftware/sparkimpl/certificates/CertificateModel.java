@@ -63,7 +63,6 @@ public class CertificateModel {
 	private boolean expired;
 	private boolean revoked;
 	private boolean notValidYet;
-	private boolean exempted;
 	private Set<String> criticalExtensionSet;
 	private Set<String> nonCriticalExtensionSet;
 	private HashMap<String, String> extensions = new HashMap<String,String>();
@@ -108,7 +107,6 @@ public class CertificateModel {
 			Log.warning("Couldn't extract issuer Common Name (CN)", e);
 		}
 		this.valid = checkValidity();
-		this.exempted = exempted;
 
 		setupExtensions(certificate);
 
@@ -456,15 +454,7 @@ public class CertificateModel {
 	public boolean isValid() {
 		return valid;
 	}
-
-	public boolean isExempted() {
-		return exempted;
-	}
 	
-	public void setExempted(boolean exempted){
-		this.exempted = exempted;
-	}
-
 	public String getSubjectCommonName() {
 		return subjectCommonName;
 	}

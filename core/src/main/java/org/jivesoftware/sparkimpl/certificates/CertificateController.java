@@ -39,10 +39,9 @@ import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
  */
 
 public class CertificateController {
-	public final static String TRUSTED = System.getProperty("user.dir") + "\\src\\main\\security\\truststore";
-	public final static String BLACKLIST = System.getProperty("user.dir") + "\\src\\main\\security\\blacklist";
-	public final static String EXCEPTIONS = System.getProperty("user.dir") + "\\src\\main\\security\\exceptions";
-	File directory = new File("");
+	public final static File TRUSTED = new File(System.getProperty("user.dir") +"\\src\\main\\security\\truststore");
+	public final static File BLACKLIST = new File(System.getProperty("user.dir") +"\\src\\main\\security\\blacklist");
+	public final static File EXCEPTIONS = new File(System.getProperty("user.dir") +"\\src\\main\\security\\exceptions");
 	public static String trustStorePath;
 	private final static char[] passwd = "changeit".toCharArray();
 	
@@ -61,7 +60,6 @@ public class CertificateController {
 		if (localPreferences == null) {
 			throw new IllegalArgumentException("localPreferences cannot be null");
 		}
-		
 		this.localPreferences = localPreferences;
 		certificates = new ArrayList<>();
 		tableModel = new DefaultTableModel() {
@@ -100,14 +98,57 @@ public class CertificateController {
 					certEntry[0] = cert.getSubject();
 				}
 				certEntry[1] = cert.getValidityStatus();
-				certEntry[2] = cert.isExempted();
+				certEntry[2] = isOnExceptionList(cert.getAlias());
 				tableModel.addRow(certEntry);
 			}
 		}
 	}
 	
-	public void isOnExceptionList(X509Certificate cert){
+	
+	/**
+	 * If argument is true then move certificate to the exceptions Keystore, if false then move to the trusted Keystore.
+	 * Useful for checkboxes where it's selected value indicates where certificate should be moved.
+	 * @param checked
+	 */
+	public void addOrRemoveFromExceptionList(boolean checked){
+		if (checked) {
+			try {
+				moveCertificate(TRUSTED, EXCEPTIONS);
+			} catch (KeyStoreException | NoSuchAlgorithmException | CertificateException | IOException ex) {
+				Log.error("Error at moving certificate from trusted list to the exception list", ex);
+			}
+		} else {
+			try {
+				moveCertificate(EXCEPTIONS, TRUSTED);
+			} catch (KeyStoreException | NoSuchAlgorithmException | CertificateException | IOException ex) {
+				Log.error("Error at moving certificate from exceptions list to trusted list", ex);
+			}
+		}
+	}
+	
+	/**
+	 * Return information if certificate is on exception list.
+	 * @param alias
+	 * @return
+	 */
+	public boolean isOnExceptionList(String alias){
+		try (FileInputStream input = new FileInputStream(EXCEPTIONS)) {
+			trustStore = KeyStore.getInstance("JKS");
+			trustStore.load(input, passwd);
+
+			Enumeration store = trustStore.aliases();
+			while (store.hasMoreElements()) {
+				String searchAlias = (String) store.nextElement();
+				X509Certificate certificate = (X509Certificate) trustStore.getCertificate(alias);
+				if (alias.equals(searchAlias)) {
+					return true;
+				}
+			}
+			} catch (IOException | KeyStoreException | NoSuchAlgorithmException | CertificateException e) {
+				Log.error("Cannot access Keystore", e);
+			}
 		
+			return false;
 	}
 	
 	
@@ -116,9 +157,9 @@ public class CertificateController {
 	 * @param storePath
 	 */
 	
-	private void fillCertTableWithKeyStoreContent(String storePath) {
-		try {
-			FileInputStream input = new FileInputStream(storePath);
+	private void fillCertTableWithKeyStoreContent(File storePath) {
+
+		try (FileInputStream input = new FileInputStream(storePath)) {
 			trustStore = KeyStore.getInstance("JKS");
 			trustStore.load(input, passwd);
 
@@ -127,20 +168,48 @@ public class CertificateController {
 				String alias = (String) store.nextElement();
 				X509Certificate certificate = (X509Certificate) trustStore.getCertificate(alias);
 				CertificateModel certModel = new CertificateModel(certificate, alias);
-				if (storePath.equals(EXCEPTIONS)) {
-					certModel.setExempted(true);
-				}
 				certificates.add(certModel);
 			}
-
 		} catch (KeyStoreException | NoSuchAlgorithmException | CertificateException | IOException e) {
 			Log.warning("Cannot access Truststore, it might be not set up", e);
 		}
 
 	}
-	
+/**
+ * Return file which contains certificate with given alias;
+ * @param alias
+ * @return
+ */
+	public File getAliasKeyStore(String alias) {
+		File storePath = null;
+		for (int i = 0; i < 3; i++) {
+			switch (i) {
+				case 0:	storePath = TRUSTED;
+				case 1:	storePath = EXCEPTIONS;
+				case 2:	storePath = BLACKLIST;
+			}
+			try (FileInputStream input = new FileInputStream(storePath)) {
+				trustStore = KeyStore.getInstance("JKS");
+				trustStore.load(input, passwd);
+
+				Enumeration store = trustStore.aliases();
+				while (store.hasMoreElements()) {
+					String searchAlias = (String) store.nextElement();
+					X509Certificate certificate = (X509Certificate) trustStore.getCertificate(alias);
+					if (alias.equals(alias)) {
+						return storePath;
+					}
+				}
+			} catch (IOException | KeyStoreException | NoSuchAlgorithmException | CertificateException e) {
+				Log.error("Cannot access Keystore", e);
+			}
+		}
+		return storePath;
+	}
+
 	/**
 	 * This method delete certificate with provided alias from the Truststore
+	 * 
 	 * @param alias
 	 * @throws KeyStoreException
 	 * @throws IOException
@@ -151,12 +220,16 @@ public class CertificateController {
 		int dialogButton = JOptionPane.YES_NO_OPTION;
 		int dialogValue = JOptionPane.showConfirmDialog(null, Res.getString("dialog.certificate.sure.to.delete"), null, dialogButton);
 		if (dialogValue == JOptionPane.YES_OPTION) {
-			trustStore.deleteEntry(alias);
-			try (FileOutputStream outputStream = new FileOutputStream(localPreferences.getTrustStorePath())) {
-				trustStore.store(outputStream, localPreferences.getTrustStorePassword().toCharArray());
+			File storeFile = getAliasKeyStore(alias); 
+			try(FileInputStream inputStream = new FileInputStream(storeFile)){
+			KeyStore store = KeyStore.getInstance("JKS");
+			store.load(inputStream, passwd);
+			store.deleteEntry(alias);
+			try (FileOutputStream outputStream = new FileOutputStream(storeFile)) {
+				store.store(outputStream, localPreferences.getTrustStorePassword().toCharArray());
 				JOptionPane.showMessageDialog(null, Res.getString("dialog.certificate.has.been.deleted"));
 			}
-
+			}
 		}
 	} 
 	/**
@@ -167,7 +240,7 @@ public class CertificateController {
 	 * @throws KeyStoreException 
 	 * @throws FileNotFoundException 
 	 */
-	public void moveCertificate(String source, String target) throws FileNotFoundException, KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
+	public void moveCertificate(File source, File target) throws FileNotFoundException, KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
 		
 			int row = CertificatesManagerSettingsPanel.getCertTable().getSelectedRow();
 			String alias = certificates.get(row).getAlias();
@@ -187,7 +260,7 @@ public class CertificateController {
 	 * @throws NoSuchAlgorithmException
 	 * @throws CertificateException
 	 */
-	public void moveCertificate(String source, String target, String alias) throws FileNotFoundException, IOException,
+	public void moveCertificate(File source, File target, String alias) throws FileNotFoundException, IOException,
 			KeyStoreException, NoSuchAlgorithmException, CertificateException {
 		if (!source.equals(TRUSTED) && !source.equals(BLACKLIST) && !source.equals(EXCEPTIONS)
 				&& !target.equals(TRUSTED) && !target.equals(EXCEPTIONS) && !target.equals(BLACKLIST)) {
@@ -209,8 +282,6 @@ public class CertificateController {
 				}
 				targetStore.setCertificateEntry(alias, cert);
 				sourceStore.deleteEntry(alias);
-				sourceInput.close();
-				targetInput.close();
 				try (FileOutputStream sourceOutput = new FileOutputStream(source)) {
 
 					try (FileOutputStream targetOutput = new FileOutputStream(target)) {
