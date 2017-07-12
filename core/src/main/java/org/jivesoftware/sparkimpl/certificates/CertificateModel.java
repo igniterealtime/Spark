@@ -399,6 +399,10 @@ public class CertificateModel {
 		}
 	}
 
+	public X509Certificate getCertificate() {
+		return certificate;
+	}
+
 	public String getAlias() {
 		return alias;
 	}
