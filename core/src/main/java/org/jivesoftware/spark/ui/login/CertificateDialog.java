@@ -289,7 +289,7 @@ public class CertificateDialog extends JDialog implements ActionListener {
 					new GridBagConstraints(4, 2, 1, 1, 0.2, 0.0, CENTER, HORIZONTAL, new Insets(5, 5, 5, 0), 0, 0));
 		}
 
-		exceptionBox.setSelected(certificateController.isOnExceptionList(cert.getAlias()));
+		exceptionBox.setSelected(certificateController.isOnExceptionList(cert));
 		
 		scrollPane = new JScrollPane(panel);
 		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
