@@ -1,11 +1,14 @@
 package org.jivesoftware.sparkimpl.certificates;
 
 import java.awt.HeadlessException;
+import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -37,23 +40,31 @@ import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
  */
 
 public class CertificateController {
-	private List<CertificateModel> certificates;
+	public final static File TRUSTED = new File(System.getProperty("user.dir") +"\\src\\main\\security\\truststore");
+	public final static File BLACKLIST = new File(System.getProperty("user.dir") +"\\src\\main\\security\\blacklist");
+	public final static File EXCEPTIONS = new File(System.getProperty("user.dir") +"\\src\\main\\security\\exceptions");
+	public static String trustStorePath;
+	private final static char[] passwd = "changeit".toCharArray();
+	
+	
+	private List<CertificateModel> certificates = new ArrayList<>(); // contain all certificates from all keystores
+	private List<CertificateModel> exemptedCertificates = new ArrayList<>(); // contain only certificates from exempted list
+	private List<CertificateModel> blackListedCertificates = new ArrayList<>(); //contain only revoked certificates
+	
 	private DefaultTableModel tableModel;
 	private Object[] certEntry;
 	private LocalPreferences localPreferences;
 	private static final String[] COLUMN_NAMES = { Res.getString("table.column.certificate.subject"),
 			Res.getString("table.column.certificate.validity"), Res.getString("table.column.certificate.exempted") };
 	private static final int NUMBER_OF_COLUMNS = COLUMN_NAMES.length;
-	private KeyStore trustStore;
 	private boolean addToKeystore;
 
 	public CertificateController(LocalPreferences localPreferences) {
 		if (localPreferences == null) {
 			throw new IllegalArgumentException("localPreferences cannot be null");
 		}
-
 		this.localPreferences = localPreferences;
-		certificates = new ArrayList<>();
+		
 		tableModel = new DefaultTableModel() {
 			// return adequate classes for columns so last column is Boolean
 			// displayed as checkbox
@@ -76,18 +87,12 @@ public class CertificateController {
 		tableModel.setColumnIdentifiers(COLUMN_NAMES);
 		certEntry = new Object[NUMBER_OF_COLUMNS];
 
-		try {
-			FileInputStream input = new FileInputStream(localPreferences.getTrustStorePath());
-			trustStore = KeyStore.getInstance(localPreferences.getPKIStore().toString());
-			trustStore.load(input, localPreferences.getTrustStorePassword().toCharArray());
+		fillCertTableWithKeyStoreContent(TRUSTED);
+		fillCertTableWithKeyStoreContent(EXCEPTIONS);
+		fillCertTableWithKeyStoreContent(BLACKLIST);
+		
 
-			Enumeration store = trustStore.aliases();
-			while (store.hasMoreElements()) {
-				String alias = (String) store.nextElement();
-				X509Certificate certificate = (X509Certificate) trustStore.getCertificate(alias);
-				certificates.add(new CertificateModel(certificate, alias));
-			}
-
+		if (certificates != null) {
 			// put certificate from arrayList into rows with chosen columns
 			for (CertificateModel cert : certificates) {
 				if (cert.getSubjectCommonName() != null) {
@@ -96,16 +101,104 @@ public class CertificateController {
 					certEntry[0] = cert.getSubject();
 				}
 				certEntry[1] = cert.getValidityStatus();
-				certEntry[2] = cert.isExempted();
+				certEntry[2] = isOnExceptionList(cert);
 				tableModel.addRow(certEntry);
 			}
-		} catch (KeyStoreException | NoSuchAlgorithmException | CertificateException | IOException e) {
-			Log.warning("Cannot access Truststore, it might be not set up", e);
+		}
+	}
+	
+	
+	/**
+	 * If argument is true then move certificate to the exceptions Keystore, if false then move to the trusted Keystore.
+	 * Useful for checkboxes where it's selected value indicates where certificate should be moved.
+	 * @param checked
+	 */
+	public void addOrRemoveFromExceptionList(boolean checked) {
+		int row = CertificatesManagerSettingsPanel.getCertTable().getSelectedRow();
+		if (checked) {
+			try {
+				moveCertificate(TRUSTED, EXCEPTIONS);
+				exemptedCertificates.add(certificates.get(row));
+			} catch (KeyStoreException | NoSuchAlgorithmException | CertificateException | IOException ex) {
+				Log.error("Error at moving certificate from trusted list to the exception list", ex);
+			}
+		} else {
+			try {
+				moveCertificate(EXCEPTIONS, TRUSTED);
+				exemptedCertificates.remove(certificates.get(row));
+			} catch (KeyStoreException | NoSuchAlgorithmException | CertificateException | IOException ex) {
+				Log.error("Error at moving certificate from exceptions list to trusted list", ex);
+			}
 		}
 	}
 	
 	/**
+	 * Return information if certificate is on exception list.
+	 * 
+	 * @param alias
+	 */
+	public boolean isOnExceptionList(CertificateModel cert) {
+		if(exemptedCertificates.contains(cert)){
+			return true;
+		}
+		return false;
+		}	
+	
+	/**
+	 * Add certificates from keyStore to 
+	 * @param storePath
+	 */
+	
+	private void fillCertTableWithKeyStoreContent(File storePath) {
+
+		try (FileInputStream input = new FileInputStream(storePath)) {
+			KeyStore keyStore = KeyStore.getInstance("JKS");
+			keyStore.load(input, passwd);
+
+			Enumeration store = keyStore.aliases();
+			while (store.hasMoreElements()) {
+				String alias = (String) store.nextElement();
+				X509Certificate certificate = (X509Certificate) keyStore.getCertificate(alias);
+				CertificateModel certModel = new CertificateModel(certificate, alias);
+				certificates.add(certModel);
+				if(storePath.equals(EXCEPTIONS)){
+					exemptedCertificates.add(certModel);
+				}
+			}
+		} catch (KeyStoreException | NoSuchAlgorithmException | CertificateException | IOException e) {
+			Log.warning("Cannot access Truststore, it might be not set up", e);
+		}
+
+	}
+
+	/**
+	 * Return file which contains certificate with given alias;
+	 * 
+	 * @param alias
+	 * @return File path
+	 */
+	private File getAliasKeyStore(String alias) {
+		for (CertificateModel model : exemptedCertificates) {
+			if (model.getAlias().equals(alias)) {
+				return EXCEPTIONS;
+			}
+		}
+		for (CertificateModel model : blackListedCertificates) {
+			if (model.getAlias().equals(alias)) {
+				return BLACKLIST;
+			}
+		}
+		for (CertificateModel model : certificates) {
+			if (model.getAlias().equals(alias)) {
+				return TRUSTED;
+			}
+		}
+		return null;
+	}
+
+	/**
 	 * This method delete certificate with provided alias from the Truststore
+	 * 
 	 * @param alias
 	 * @throws KeyStoreException
 	 * @throws IOException
@@ -116,14 +209,80 @@ public class CertificateController {
 		int dialogButton = JOptionPane.YES_NO_OPTION;
 		int dialogValue = JOptionPane.showConfirmDialog(null, Res.getString("dialog.certificate.sure.to.delete"), null, dialogButton);
 		if (dialogValue == JOptionPane.YES_OPTION) {
-			trustStore.deleteEntry(alias);
-			try (FileOutputStream outputStream = new FileOutputStream(localPreferences.getTrustStorePath())) {
-				trustStore.store(outputStream, localPreferences.getTrustStorePassword().toCharArray());
+			File storeFile = getAliasKeyStore(alias); 
+			try(FileInputStream inputStream = new FileInputStream(storeFile)){
+			KeyStore store = KeyStore.getInstance("JKS");
+			store.load(inputStream, passwd);
+			store.deleteEntry(alias);
+			try (FileOutputStream outputStream = new FileOutputStream(storeFile)) {
+				store.store(outputStream, localPreferences.getTrustStorePassword().toCharArray());
 				JOptionPane.showMessageDialog(null, Res.getString("dialog.certificate.has.been.deleted"));
 			}
-
+			}
 		}
 	} 
+	/**
+	 * This method transfer certificate from source KeyStore to target KeyStore.
+	 * @throws IOException 
+	 * @throws CertificateException 
+	 * @throws NoSuchAlgorithmException 
+	 * @throws KeyStoreException 
+	 * @throws FileNotFoundException 
+	 */
+	public void moveCertificate(File source, File target) throws FileNotFoundException, KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
+		
+			int row = CertificatesManagerSettingsPanel.getCertTable().getSelectedRow();
+			String alias = certificates.get(row).getAlias();
+			moveCertificate(source, target, alias);
+
+	}
+
+	/**
+	 * This method transfer certificate from source KeyStore to target KeyStore.
+	 * 
+	 * @param source
+	 * @param target
+	 * @param alias
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 * @throws KeyStoreException
+	 * @throws NoSuchAlgorithmException
+	 * @throws CertificateException
+	 */
+	public void moveCertificate(File source, File target, String alias) throws FileNotFoundException, IOException,
+			KeyStoreException, NoSuchAlgorithmException, CertificateException {
+		if (!source.equals(TRUSTED) && !source.equals(BLACKLIST) && !source.equals(EXCEPTIONS)
+				&& !target.equals(TRUSTED) && !target.equals(EXCEPTIONS) && !target.equals(BLACKLIST)) {
+			throw new IllegalArgumentException();
+		}
+		try (FileInputStream sourceInput = new FileInputStream(source)) {
+			KeyStore sourceStore = KeyStore.getInstance("JKS");
+			sourceStore.load(sourceInput, passwd);
+			X509Certificate cert = (X509Certificate) sourceStore.getCertificate(alias);
+
+			try (FileInputStream targetInput = new FileInputStream(target)) {
+				KeyStore targetStore = KeyStore.getInstance("JKS");
+				try{
+				targetStore.load(targetInput, passwd);	
+				}catch (EOFException ex){
+					Log.warning("Keystore was empty", ex);
+					//in case when KeyStore is empty it have to be initialized with null value 
+					targetStore.load(null, passwd);
+				}
+				targetStore.setCertificateEntry(alias, cert);
+				sourceStore.deleteEntry(alias);
+				try (FileOutputStream sourceOutput = new FileOutputStream(source)) {
+
+					try (FileOutputStream targetOutput = new FileOutputStream(target)) {
+						sourceStore.store(sourceOutput, passwd);
+						targetStore.store(targetOutput, passwd);
+					}
+				}
+
+			}
+		}
+	}
+
 	/**
 	 * This method add certifiate from file ((*.cer), (*.crt), (*.der)) to Truststore.
 	 * 
@@ -134,8 +293,7 @@ public class CertificateController {
 	 * @throws IOException
 	 * @throws InvalidNameException 
 	 * @throws HeadlessException 
-	 */
-	
+	 */	
 	public void addCertificateToKeystore(File file) throws KeyStoreException, CertificateException, NoSuchAlgorithmException, IOException, HeadlessException, InvalidNameException{
 		if(file == null){
 			throw new IllegalArgumentException();
@@ -149,23 +307,31 @@ public class CertificateController {
 			// value of addToKeyStore is changed by setter in CertificateDialog
 			if (addToKeystore == true) {
 				addToKeystore = false;
+				
+				try (InputStream trustStoreStream = new FileInputStream(TRUSTED)) {
 
-				String alias = useCommonNameAsAlias(addedCert);
-				trustStore.setCertificateEntry(alias, addedCert);
-				try (FileOutputStream outputStream = new FileOutputStream(localPreferences.getTrustStorePath())) {
-					trustStore.store(outputStream, localPreferences.getTrustStorePassword().toCharArray());
-					JOptionPane.showMessageDialog(null, Res.getString("dialog.certificate.has.been.added"));
+					KeyStore trustStore = KeyStore.getInstance("JKS");
+					trustStore.load(trustStoreStream, passwd);
+					
+					String alias = useCommonNameAsAlias(addedCert);
+					trustStore.setCertificateEntry(alias, addedCert);
+					try (OutputStream outputStream = new FileOutputStream(TRUSTED)) {
+						trustStore.store(outputStream, passwd);
+						certificates.add(new CertificateModel(addedCert));
+						JOptionPane.showMessageDialog(null, Res.getString("dialog.certificate.has.been.added"));
+					}
 				}
 			}
 		}
 	}
+	
 	/**
 	 * Extract from certificate common name ("CN") and returns it to use as certificate name.
 	 * This method also assure that it will not add second same alias to Truststore by adding number to alias. 
 	 * In case when common name cannot be extracted method will return "cert{number}".
 	 * 
 	 * @param cert
-	 * @return
+	 * @return String Common Name
 	 * @throws InvalidNameException
 	 * @throws HeadlessException
 	 * @throws KeyStoreException
@@ -201,13 +367,15 @@ public class CertificateController {
 	 * Check if there is certificate entry in Truststore with the same alias.
 	 * 
 	 * @param alias
-	 * @return
+	 * @return True if KeyStore contain the same alias.
 	 * @throws HeadlessException
 	 * @throws KeyStoreException
 	 */
 	private boolean checkForSameAlias(String alias) throws HeadlessException, KeyStoreException {
-		if (trustStore.getCertificate(alias) != null) {
-			return true;
+		for(CertificateModel model: certificates){
+			if(model.getAlias().equals(alias)){
+				return true;
+			}
 		}
 		return false;
 	}
@@ -216,16 +384,13 @@ public class CertificateController {
 	 * Check if this certificate already exist in Truststore.
 	 * 
 	 * @param alias
-	 * @return
+	 * @return true if KeyStore already have this certificate.
 	 * @throws KeyStoreException 
 	 */	
 	private boolean checkForSameCertificate(X509Certificate addedCert) throws KeyStoreException{
 		// check if this certificate isn't already added to Truststore
-		Enumeration storeCheck = trustStore.aliases();
-		while (storeCheck.hasMoreElements()) {
-
-			String aliasCheck = (String) storeCheck.nextElement();
-			X509Certificate certificateCheck = (X509Certificate) trustStore.getCertificate(aliasCheck);
+		for(CertificateModel model :certificates){
+			X509Certificate certificateCheck = model.getCertificate();
 			String signature = Base64.getEncoder().encodeToString(certificateCheck.getSignature());
 			String addedSignature = Base64.getEncoder().encodeToString(addedCert.getSignature());
 			if (addedSignature.equals(signature)) {

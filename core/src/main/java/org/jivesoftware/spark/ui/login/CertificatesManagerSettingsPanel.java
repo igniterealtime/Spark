@@ -31,10 +31,13 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumnModel;
+import javax.swing.table.TableModel;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.spark.util.ResourceUtils;
@@ -49,7 +52,7 @@ import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
  * @author Paweł Ścibiorski
  *
  */
-public class CertificatesManagerSettingsPanel extends JPanel implements ActionListener, MouseListener {
+public class CertificatesManagerSettingsPanel extends JPanel implements ActionListener, MouseListener, TableModelListener {
 
 	private final static Insets DEFAULT_INSETS = new Insets(5, 5, 5, 5);
 	private final LocalPreferences localPreferences;
@@ -118,6 +121,7 @@ public class CertificatesManagerSettingsPanel extends JPanel implements ActionLi
 
 		acceptAll.addActionListener(this);
 		certTable.addMouseListener(this);
+		certTable.getModel().addTableModelListener(this);
 		showCert.setEnabled(false);
 		showCert.addActionListener(this);
 		fileButton.addActionListener(this);
@@ -187,6 +191,18 @@ public class CertificatesManagerSettingsPanel extends JPanel implements ActionLi
 		}
 	}
 
+	@Override
+	public void tableChanged(TableModelEvent e) {
+		int row = e.getFirstRow();
+	    int column = e.getColumn();
+	    if (column == 2) {
+	        TableModel model = (TableModel) e.getSource();
+	        Boolean checked = (Boolean) model.getValueAt(row, column);
+			certControll.addOrRemoveFromExceptionList(checked);
+		}
+
+	}
+	
 	private void addCertificate() {
 
 		fileChooser.setAcceptAllFileFilterUsed(false);
