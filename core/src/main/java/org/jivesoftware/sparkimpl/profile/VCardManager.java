@@ -65,6 +65,8 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class VCardManager {
 
     private VCard personalVCard;
+    private transient byte[] personalVCardAvatar = null; // lazy loaded cache of avatar binary data.
+    private transient String personalVCardHash = null; // lazy loaded cache of avatar hash.
 
     private Map<String, VCard> vcards = Collections.synchronizedMap( new HashMap<>());
 
@@ -111,6 +113,8 @@ public class VCardManager {
 
         // Initialize vCard.
         personalVCard = new VCard();
+        personalVCardAvatar = null;
+        personalVCardHash = null;
 
         // Set VCard Storage
         vcardStorageDirectory = new File(SparkManager.getUserDirectory(), "vcards");
@@ -141,10 +145,18 @@ public class VCardManager {
             }
 
             if (personalVCard != null) {
-                byte[] bytes = personalVCard.getAvatar();
-                if (bytes != null && bytes.length > 0) {
-                    update.setPhotoHash(personalVCard.getAvatarHash());
-                    jax.setPhotoHash(personalVCard.getAvatarHash());
+
+                if ( personalVCardAvatar == null )
+                {
+                    personalVCardAvatar = personalVCard.getAvatar();
+                }
+                if (personalVCardAvatar != null && personalVCardAvatar.length > 0) {
+                    if ( personalVCardHash == null )
+                    {
+                        personalVCardHash = personalVCard.getAvatarHash();
+                    }
+                    update.setPhotoHash(personalVCardHash);
+                    jax.setPhotoHash(personalVCardHash);
 
                     newPresence.addExtension(update);
                     newPresence.addExtension(jax);
@@ -242,6 +254,8 @@ public class VCardManager {
 
                 public void finished() {
                     editor.editProfile(personalVCard, SparkManager.getWorkspace());
+                    personalVCardAvatar = null;
+                    personalVCardHash = null;
                 }
             };
             vcardLoaderWorker.start();
@@ -345,12 +359,14 @@ public class VCardManager {
 	public void reloadPersonalVCard() {
 		try {
 			personalVCard.load(SparkManager.getConnection());
-			// If VCard is loaded, then save the avatar to the personal folder.
-			byte[] bytes = personalVCard.getAvatar();
-			if (bytes != null && bytes.length > 0) {
-				ImageIcon icon = new ImageIcon(bytes);
+            personalVCardAvatar = personalVCard.getAvatar();
+            personalVCardHash = null; // reload lazy later, when need
+
+            // If VCard is loaded, then save the avatar to the personal folder.
+			if (personalVCardAvatar != null && personalVCardAvatar.length > 0) {
+				ImageIcon icon = new ImageIcon(personalVCardAvatar);
 				icon = VCardManager.scale(icon);
-				if (icon != null && icon.getIconWidth() != -1) {
+				if (icon.getIconWidth() != -1) {
 					BufferedImage image = GraphicUtils.convert(icon.getImage());
 					ImageIO.write(image, "PNG", imageFile);
 				}
@@ -358,6 +374,8 @@ public class VCardManager {
 		}
 		catch (Exception e) {
 			personalVCard.setError(new XMPPError(XMPPError.Condition.conflict));
+            personalVCardAvatar = null;
+            personalVCardHash = null;
 			Log.error(e);
 		}
 	}
@@ -625,6 +643,8 @@ public class VCardManager {
      */
     public void setPersonalVCard(VCard vcard) {
         this.personalVCard = vcard;
+        this.personalVCardHash = null;
+        this.personalVCardAvatar = null;
     }
 
     public URL getAvatarURL(String jid) {
