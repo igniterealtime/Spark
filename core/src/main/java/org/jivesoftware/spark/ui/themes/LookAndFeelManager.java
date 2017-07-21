@@ -41,7 +41,7 @@ public class LookAndFeelManager
         com.jtattoo.plaf.texture.TextureLookAndFeel.class,
 
         // Insubstance (Substance)
-        org.pushingpixels.substance.api.skin.SubstanceAutumnLookAndFeel.class,
+        //org.pushingpixels.substance.api.skin.SubstanceAutumnLookAndFeel.class, // Disabled. Uses an internal 'Noise factory', which adds 2 seconds to Sparks boot time!
         org.pushingpixels.substance.api.skin.SubstanceBusinessBlackSteelLookAndFeel.class,
         org.pushingpixels.substance.api.skin.SubstanceBusinessBlueSteelLookAndFeel.class,
         org.pushingpixels.substance.api.skin.SubstanceBusinessLookAndFeel.class,
@@ -61,8 +61,8 @@ public class LookAndFeelManager
         org.pushingpixels.substance.api.skin.SubstanceMistAquaLookAndFeel.class,
         org.pushingpixels.substance.api.skin.SubstanceMistSilverLookAndFeel.class,
         org.pushingpixels.substance.api.skin.SubstanceModerateLookAndFeel.class,
-        org.pushingpixels.substance.api.skin.SubstanceNebulaBrickWallLookAndFeel.class,
-        org.pushingpixels.substance.api.skin.SubstanceNebulaLookAndFeel.class,
+        //org.pushingpixels.substance.api.skin.SubstanceNebulaBrickWallLookAndFeel.class, // Disabled. Uses an internal 'Noise factory', which adds 2 seconds to Sparks boot time!
+        //org.pushingpixels.substance.api.skin.SubstanceNebulaLookAndFeel.class, // Disabled. Uses an internal 'Noise factory', which adds 2 seconds to Sparks boot time!
         org.pushingpixels.substance.api.skin.SubstanceOfficeBlack2007LookAndFeel.class,
         org.pushingpixels.substance.api.skin.SubstanceOfficeBlue2007LookAndFeel.class,
         org.pushingpixels.substance.api.skin.SubstanceOfficeSilver2007LookAndFeel.class,
