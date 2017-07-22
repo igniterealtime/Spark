@@ -207,7 +207,7 @@ public class MessageEntry extends TimeStampedEntry
             return false;
         }
 
-        final Icon emotion = EmoticonManager.getInstance().getEmoticonImage( imageKey.toLowerCase() );
+        final Icon emotion = EmoticonManager.getInstance().getEmoticonImage( imageKey );
         if ( emotion == null )
         {
             return false;
