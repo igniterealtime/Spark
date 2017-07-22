@@ -35,14 +35,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.zip.ZipFile;
@@ -59,7 +52,8 @@ public class EmoticonManager {
 	private static EmoticonManager singleton;
 	private static final Object LOCK = new Object();
 
-	private Map<String, Collection<Emoticon>> emoticonMap = new HashMap<>();
+	// Mapped by pack name, then by 'equivalent' key.
+	private Map<String, Map<String, Emoticon>> emoticonMap = new HashMap<>();
 	private Map<String, ImageIcon> imageMap = new HashMap<>();
 
 	/**
@@ -208,9 +202,9 @@ public class EmoticonManager {
 		// If EmoticonPack is set
 		//When no emoticon set is available, return an empty list
 		if (emoticonPack != null) {
-			Collection<Emoticon> emoticonSet = emoticonMap.get(emoticonPack);
+			Map<String, Emoticon> emoticons = emoticonMap.get(emoticonPack);
 			Collection<Emoticon> empty = Collections.emptyList();
-			return emoticonSet == null ? empty : emoticonSet;
+			return emoticons == null ? empty : new LinkedHashSet<>(emoticons.values());
 		}
 		return Collections.emptyList();
 	}
@@ -288,7 +282,7 @@ public class EmoticonManager {
 			setActivePack("Default");
 		}
 
-		List<Emoticon> emoticons = new ArrayList<>();
+		Map<String, Emoticon> emoticons = new LinkedHashMap<>();
 
 		final File plist = new File(emoticonSet, "Emoticons.plist");
 
@@ -363,7 +357,11 @@ public class EmoticonManager {
 
 			final Emoticon emoticon = new Emoticon(key, name, equivs,
 					emoticonSet);
-			emoticons.add(emoticon);
+
+			for ( String equivalent : emoticon.getEquivalants() )
+            {
+                emoticons.put( equivalent, emoticon );
+            }
 		}
 
 		emoticonMap.put(packName, emoticons);
@@ -398,19 +396,11 @@ public class EmoticonManager {
 	 * @return the emoticon.
 	 */
 	public Emoticon getEmoticon(String packName, String key) {
-		final Collection<Emoticon> emoticons = emoticonMap.get(packName);
+		final Map<String, Emoticon> emoticons = emoticonMap.get(packName);
 		if (emoticons == null) {
 		    return null;
 		}
-		for (Emoticon emoticon : emoticons) {
-			for (String string : emoticon.getEquivalants()) {
-				if (key.equals(string)) {
-					return emoticon;
-				}
-			}
-		}
-
-		return null;
+		return emoticons.get( key );
 	}
 
 	/**
@@ -422,18 +412,7 @@ public class EmoticonManager {
 	 * @return the Emoticon found. If no emoticon is found, null is returned.
 	 */
 	public Emoticon getEmoticon(String key) {
-		final Collection<Emoticon> emoticons = emoticonMap
-				.get(getActiveEmoticonSetName());
-
-		for (Emoticon emoticon : emoticons) {
-			for (String string : emoticon.getEquivalants()) {
-				if (key.toLowerCase().equals(string.toLowerCase())) {
-					return emoticon;
-				}
-			}
-		}
-
-		return null;
+	    return getEmoticon( getActiveEmoticonSetName(), key );
 	}
 
 	/**
