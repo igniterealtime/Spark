@@ -53,7 +53,7 @@ import org.jxmpp.util.XmppStringUtils;
 public class PresenceChangePlugin implements Plugin {
 
     private final Set<String> sparkContacts = new HashSet<>();
-    private LocalPreferences localPref = SettingsManager.getLocalPreferences(); 
+    private LocalPreferences localPref = SettingsManager.getLocalPreferences();
 
     public void initialize() {
         // Listen for right-clicks on ContactItem
@@ -63,7 +63,7 @@ public class PresenceChangePlugin implements Plugin {
 	    private static final long serialVersionUID = 7705539667621148816L;
 
 	    public void actionPerformed(ActionEvent e) {
-		
+
 		for (ContactItem item : contactList.getSelectedUsers()) {
 		    String bareAddress = XmppStringUtils.parseBareJid(item
 			    .getJID());
@@ -121,7 +121,6 @@ public class PresenceChangePlugin implements Plugin {
         // Check presence changes
         SparkManager.getConnection().addAsyncStanzaListener( stanza -> {
         try {
-            EventQueue.invokeAndWait( () -> {
 Presence presence = (Presence) stanza;
 if (!presence.isAvailable() || presence.isAway()) {
 return;
@@ -147,44 +146,46 @@ String infoText = Res
 nickname, time);
 
 if (localPref.getShowToasterPopup()) {
-SparkToaster toaster = new SparkToaster();
-toaster.setDisplayTime(5000);
-toaster.setBorder(BorderFactory
-.createBevelBorder(0));
+    EventQueue.invokeLater( () ->
+                            {
+                                SparkToaster toaster = new SparkToaster();
+                                toaster.setDisplayTime( 5000 );
+                                toaster.setBorder( BorderFactory.createBevelBorder( 0 ) );
 
-toaster.setToasterHeight(150);
-toaster.setToasterWidth(200);
+                                toaster.setToasterHeight( 150 );
+                                toaster.setToasterWidth( 200 );
 
-toaster.setTitle(nickname);
-toaster.showToaster(null, infoText);
+                                toaster.setTitle( nickname );
+                                toaster.showToaster( null, infoText );
 
-toaster.setCustomAction(new AbstractAction() {
-private static final long serialVersionUID = 4827542713848133369L;
+                                toaster.setCustomAction( new AbstractAction()
+                                {
+                                    private static final long serialVersionUID = 4827542713848133369L;
 
-@Override
-public void actionPerformed(
-ActionEvent e) {
-SparkManager.getChatManager()
-.getChatRoom(jid);
-}
-});
+                                    @Override
+                                    public void actionPerformed( ActionEvent e )
+                                    {
+                                        SparkManager.getChatManager().getChatRoom( jid );
+                                    }
+                                } );
+                            } );
 }
 
 ChatRoom room = SparkManager.getChatManager().getChatRoom(jid);
 
 if (localPref.getWindowTakesFocus())
 {
-SparkManager.getChatManager().activateChat(jid, nickname);
+    EventQueue.invokeLater( () -> SparkManager.getChatManager().activateChat( jid, nickname ) );
 }
 
-room.getTranscriptWindow().insertNotificationMessage(infoText, ChatManager.NOTIFICATION_COLOR);
+EventQueue.invokeLater( () -> room.getTranscriptWindow().insertNotificationMessage(infoText, ChatManager.NOTIFICATION_COLOR) );
 
 }
 }
 for(String s : removelater){
 sparkContacts.remove(s);
 }
-} );
+
         } catch (Exception ex) {
             ex.printStackTrace();
         }
