@@ -10,6 +10,17 @@
         <dependencySet>
             <outputDirectory>lib</outputDirectory>
             <scope>runtime</scope>
+            <excludes>
+                <exclude>org.igniterealtime.spark:emoticons</exclude>
+            </excludes>
+        </dependencySet>
+        <dependencySet>
+            <outputDirectory>xtra/emoticons</outputDirectory>
+            <scope>runtime</scope>
+            <includes>
+                <include>org.igniterealtime.spark:emoticons</include>
+            </includes>
+            <outputFileNameMapping>${artifact.classifier}.${artifact.extension}</outputFileNameMapping>
         </dependencySet>
     </dependencySets>
 
@@ -17,11 +28,6 @@
         <fileSet>
             <directory>${project.basedir}/src/main/native/</directory>
             <outputDirectory>lib</outputDirectory>
-        </fileSet>
-
-        <fileSet>
-            <directory>${project.basedir}/src/main/xtra/</directory>
-            <outputDirectory>xtra</outputDirectory>
         </fileSet>
 
         <fileSet>
