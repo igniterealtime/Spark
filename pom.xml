@@ -68,6 +68,7 @@
 
     <modules>
         <module>core</module>
+        <module>emoticons</module>
         <module>plugins/assembly-descriptor</module>
         <!--<module>plugins/battleships</module>-->
         <module>plugins/apple</module>
