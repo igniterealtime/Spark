@@ -131,7 +131,7 @@ class SsoLoginSettingsPanel extends JPanel implements ActionListener
         add( realmField,                   new GridBagConstraints( 2, 5, 1, 1, 1.0, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0 ) );
         add( kdcLabel,                     new GridBagConstraints( 1, 6, 1, 1, 0.0, 0.0, WEST, NONE,       DEFAULT_INSETS, 0, 0 ) );
         add( kdcField,                     new GridBagConstraints( 2, 6, 1, 1, 1.0, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0 ) );
-        add( useSaslGssapiSmack3compatBox, new GridBagConstraints( 0, 7, 3, 1, 1.0, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0 ) );
+        add( useSaslGssapiSmack3compatBox, new GridBagConstraints( 0, 7, 3, 1, 1.0, 1.0, NORTHWEST, HORIZONTAL, DEFAULT_INSETS, 0, 0 ) );
 
         useSSOBox.setSelected( localPreferences.isSSOEnabled() );
         useSaslGssapiSmack3compatBox.setSelected( localPreferences.isSaslGssapiSmack3Compatible() );
