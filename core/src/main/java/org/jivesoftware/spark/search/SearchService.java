@@ -26,13 +26,7 @@ import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.Icon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.UIManager;
+import javax.swing.*;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -82,22 +76,32 @@ public class SearchService extends JPanel {
         	}
         }
 
-        // Check for secure connection
-        if (SparkManager.getConnection().isSecureConnection()) {
-        	final JLabel lockLabel = new JLabel();
-        	lockLabel.setHorizontalTextPosition(JLabel.LEFT);
-        	lockLabel.setIcon(SparkRes.getImageIcon(SparkRes.LOCK_16x16));
+        // Add an icon that indicates if connection is secure.
+        final String tooltip;
+        final ImageIcon icon;
+        if (SparkManager.getConnection().isSecureConnection())
+        {
+            icon = SparkRes.getImageIcon( SparkRes.LOCK_16x16 );
+            tooltip = Res.getString( "message.spark.secure" );
+        }
+        else
+        {
+            icon = SparkRes.getImageIcon( SparkRes.LOCK_UNLOCK_16x16 );
+            tooltip = Res.getString( "message.spark.unsecure" );
+        }
 
-        	if (Spark.isMac()) {
-        		add(lockLabel, new GridBagConstraints(2, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 0, 5, 15), 0, 0));
+        final JLabel lockLabel = new JLabel();
+        lockLabel.setHorizontalTextPosition(JLabel.LEFT);
+        lockLabel.setIcon( icon );
+        lockLabel.setToolTipText( tooltip  );
 
-        	}
-        	else {
-        		add(lockLabel, new GridBagConstraints(2, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 0, 5, 5), 0, 0));
-
-        	}
-
-        	lockLabel.setToolTipText(Res.getString("message.spark.secure"));
+        if (Spark.isMac())
+        {
+            add(lockLabel, new GridBagConstraints(2, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 0, 5, 15), 0, 0));
+        }
+        else
+        {
+            add(lockLabel, new GridBagConstraints(2, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 0, 5, 5), 0, 0));
         }
 
         findField.setToolTipText(Res.getString("message.search.for.contacts"));
