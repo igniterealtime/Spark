@@ -59,7 +59,7 @@ class ProxyLoginSettingsPanel extends JPanel
         add( usernameLabel, new GridBagConstraints( 0, 4, 1, 1, 0.0, 0.0, NORTHWEST, NONE,       DEFAULT_INSETS, 0, 0 ) );
         add( usernameField, new GridBagConstraints( 1, 4, 1, 1, 1.0, 0.0, NORTHWEST, HORIZONTAL, DEFAULT_INSETS, 0, 0 ) );
         add( passwordLabel, new GridBagConstraints( 0, 5, 1, 1, 0.0, 0.0, NORTHWEST, NONE,       DEFAULT_INSETS, 0, 0 ) );
-        add( passwordField, new GridBagConstraints( 1, 5, 1, 1, 1.0, 0.0, NORTHWEST, HORIZONTAL, DEFAULT_INSETS, 0, 0 ) );
+        add( passwordField, new GridBagConstraints( 1, 5, 1, 1, 1.0, 1.0, NORTHWEST, HORIZONTAL, DEFAULT_INSETS, 0, 0 ) );
 
         useProxyBox.addActionListener( e -> enableFields( useProxyBox.isSelected() ) );
 

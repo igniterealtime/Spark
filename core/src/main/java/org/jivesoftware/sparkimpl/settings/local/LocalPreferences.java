@@ -19,6 +19,7 @@ package org.jivesoftware.sparkimpl.settings.local;
 import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
+import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.spark.PluginRes;
 import org.jivesoftware.spark.SparkManager;
 import java.io.File;
@@ -410,20 +411,59 @@ public class LocalPreferences {
 		props.setProperty("newInstall", Boolean.toString(newInstall));
 	}
 
+    /**
+     * Return the desirability of encryption.
+     *
+     * @return The security mode.
+     * @see org.jivesoftware.smack.ConnectionConfiguration.SecurityMode
+     */
+	public ConnectionConfiguration.SecurityMode getSecurityMode()
+    {
+        try
+        {
+            final String securityMode = props.getProperty( "securityMode", ConnectionConfiguration.SecurityMode.ifpossible.toString() );
+            return ConnectionConfiguration.SecurityMode.valueOf( securityMode );
+        }
+        catch ( Exception e )
+        {
+            Log.warning( "Unable to parse 'securityMode' value. Using default instead.", e );
+            return ConnectionConfiguration.SecurityMode.ifpossible;
+        }
+    }
+
+    /**
+     * Sets the desirability of encryption.
+     *
+     * @return The security mode.
+     * @see org.jivesoftware.smack.ConnectionConfiguration.SecurityMode
+     */
+    public void setSecurityMode( ConnectionConfiguration.SecurityMode securityMode )
+    {
+        props.setProperty( "securityMode", securityMode.toString() );
+    }
+
 	/**
-	 * Returns true to use SSL.
+	 * Returns true to use 'old style' SSL.
+     *
+     * This type of encryption typically occurs on port 5223, and causes the socket to be SSL-encrypted immediately.
+     *
+     * When this options is <em>disabled</em>, but encryption is still to be used, STARTTLS will be used instead.
 	 *
-	 * @return true if we should connect via SSL.
+	 * @return true if we should connect via 'old-style' SSL (otherwise, STARTTLS might be used).
 	 */
 	public boolean isSSL() {
 		return Boolean.parseBoolean(props.getProperty("sslEnabled", "false"));
 	}
 
 	/**
-	 * Sets if the agent should use SSL for connecting.
+	 * Sets if the agent should use 'old style' SSL for connecting.
 	 *
+     * This type of encryption typically occurs on port 5223, and causes the socket to be SSL-encrypted immediately.
+     *
+     * When this options is <em>disabled</em>, but encryption is still to be used, STARTTLS will be used instead.
+     *
 	 * @param ssl
-	 *            true if we should be using SSL.
+	 *            true if we should be using SSL, false if STARTTLS is to be used for encryption.
 	 */
 	public void setSSL(boolean ssl) {
 		props.setProperty("sslEnabled", Boolean.toString(ssl));

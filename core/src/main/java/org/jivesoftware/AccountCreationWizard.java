@@ -18,14 +18,12 @@
 package org.jivesoftware;
 
 import org.jivesoftware.resource.Res;
-import org.jivesoftware.smack.AbstractXMPPConnection;
-import org.jivesoftware.smack.SmackException;
-import org.jivesoftware.smack.XMPPConnection;
-import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.*;
 import org.jivesoftware.smack.packet.XMPPError;
 import org.jivesoftware.smack.parsing.ExceptionLoggingCallback;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
+import org.jivesoftware.smack.util.DNSUtil;
 import org.jivesoftware.smack.util.TLSUtils;
 import org.jivesoftware.smackx.iqregister.AccountManager;
 import org.jivesoftware.spark.component.TitlePanel;
@@ -328,31 +326,48 @@ public class AccountCreationWizard extends JPanel {
             }
         }
 
-        boolean useSSL = localPreferences.isSSL();
+        ConnectionConfiguration.SecurityMode securityMode = localPreferences.getSecurityMode();
+        boolean useOldSSL = localPreferences.isSSL();
         boolean hostPortConfigured = localPreferences.isHostAndPortConfigured();
 
         final XMPPTCPConnectionConfiguration.Builder builder = XMPPTCPConnectionConfiguration.builder()
                 .setUsernameAndPassword( "username", "password" )
                 .setServiceName( serverName )
                 .setPort( port )
-                .setCompressionEnabled( localPreferences.isCompressionEnabled() );
+                .setCompressionEnabled( localPreferences.isCompressionEnabled() )
+                .setSecurityMode( securityMode );
 
-        if (localPreferences.isAcceptAllCertificates()) {
-            try {
-                TLSUtils.acceptAllCertificates(builder);
-            } catch (NoSuchAlgorithmException | KeyManagementException e) {
+        if ( securityMode != ConnectionConfiguration.SecurityMode.disabled && localPreferences.isAcceptAllCertificates() )
+        {
+            try
+            {
+                TLSUtils.acceptAllCertificates( builder );
+            }
+            catch ( NoSuchAlgorithmException | KeyManagementException e )
+            {
                 Log.warning( "Unable to create configuration.", e );
             }
         }
 
-        if ( hostPortConfigured ) {
+        if ( hostPortConfigured )
+        {
             builder.setHost( localPreferences.getXmppHost() );
         }
-        if (useSSL) {
+
+        if ( securityMode != ConnectionConfiguration.SecurityMode.disabled && useOldSSL )
+        {
             if (!hostPortConfigured) {
+                // SMACK 4.1.9 does not support XEP-0368, and does not apply a port change, if the host is not changed too.
+                // Here, we force the host to be set (by doing a DNS lookup), and force the port to 5223 (which is the
+                // default 'old-style' SSL port).
+                builder.setHost( DNSUtil.resolveXMPPDomain( serverName, null ).get( 0 ).getFQDN() );
                 builder.setPort( 5223 );
             }
             builder.setSocketFactory( new DummySSLSocketFactory() );
+            // SMACK 4.1.9  does not recognize an 'old-style' SSL socket as being secure, which will cause a failure when
+            // the 'required' Security Mode is defined. Here, we work around this by replacing that security mode with an
+            // 'if-possible' setting.
+            builder.setSecurityMode( ConnectionConfiguration.SecurityMode.ifpossible );
         }
 
         final XMPPTCPConnectionConfiguration configuration = builder.build();

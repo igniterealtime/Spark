@@ -40,6 +40,7 @@ public class LoginSettingDialog implements PropertyChangeListener
     private JOptionPane optionPane;
 
     private GeneralLoginSettingsPanel generalPanel;
+    private SecurityLoginSettingsPanel securityPanel;
     private ProxyLoginSettingsPanel proxyPanel;
     private PkiLoginSettingsPanel pkiPanel;
     private SsoLoginSettingsPanel ssoPanel;
@@ -53,6 +54,7 @@ public class LoginSettingDialog implements PropertyChangeListener
         LocalPreferences localPreferences = SettingsManager.getLocalPreferences();
         generalPanel = new GeneralLoginSettingsPanel( localPreferences, optionsDialog );
         proxyPanel = new ProxyLoginSettingsPanel( localPreferences, optionsDialog );
+        securityPanel = new SecurityLoginSettingsPanel( localPreferences, optionsDialog );
         ssoPanel = new SsoLoginSettingsPanel( localPreferences, optionsDialog );
         pkiPanel = new PkiLoginSettingsPanel( localPreferences, optionsDialog );
         certManager = new CertificatesManagerSettingsPanel(localPreferences, optionsDialog);
@@ -73,6 +75,7 @@ public class LoginSettingDialog implements PropertyChangeListener
         // Create the title panel for this dialog
         titlePanel = new TitlePanel( Res.getString( "title.advanced.connection.preferences" ), "", SparkRes.getImageIcon( SparkRes.BLANK_24x24 ), true );
         tabbedPane.addTab( Res.getString( "tab.general" ), generalPanel );
+        tabbedPane.addTab( Res.getString( "tab.security" ), securityPanel );
         if ( !Default.getBoolean( Default.PROXY_DISABLED ) )
         {
             tabbedPane.addTab( Res.getString( "tab.proxy" ), proxyPanel );
@@ -133,6 +136,7 @@ public class LoginSettingDialog implements PropertyChangeListener
         {
 
             boolean valid = generalPanel.validate_settings();
+            valid = valid && securityPanel.validate_settings();
             valid = valid && proxyPanel.validate_settings();
             valid = valid && ssoPanel.validate_settings();
             valid = valid && pkiPanel.validate_settings();
@@ -140,6 +144,7 @@ public class LoginSettingDialog implements PropertyChangeListener
             if ( valid )
             {
                 generalPanel.saveSettings();
+                securityPanel.saveSettings();
                 proxyPanel.saveSettings();
                 ssoPanel.saveSettings();
                 pkiPanel.saveSettings();
