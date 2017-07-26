@@ -145,7 +145,7 @@ class PkiLoginSettingsPanel extends JPanel implements ActionListener
         trustStorePanel.add( trustStorePasswordLabel, new GridBagConstraints( 0, 1, 1, 1, 0.0, 0.0, NORTHWEST, NONE, DEFAULT_INSETS, 0, 0 ) );
         trustStorePanel.add( trustStorePassword,      new GridBagConstraints( 1, 1, 1, 1, 0.0, 0.0, NORTHWEST, HORIZONTAL, DEFAULT_INSETS, 100, 0 ) );
 
-        add( trustStorePanel, new GridBagConstraints( 0, 3, 2, 1, 0.0, 0.0, NORTHWEST, HORIZONTAL, DEFAULT_INSETS, 150, 0 ) );
+        add( trustStorePanel, new GridBagConstraints( 0, 3, 2, 1, 0.0, 1.0, NORTHWEST, HORIZONTAL, DEFAULT_INSETS, 150, 0 ) );
 
         usePKIBox.addActionListener( this );
         pkiStore.addActionListener( this );

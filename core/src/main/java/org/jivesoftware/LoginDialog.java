@@ -30,6 +30,7 @@ import org.jivesoftware.smack.sasl.javax.SASLExternalMechanism;
 import org.jivesoftware.smack.sasl.javax.SASLGSSAPIMechanism;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
+import org.jivesoftware.smack.util.DNSUtil;
 import org.jivesoftware.smack.util.TLSUtils;
 import org.jivesoftware.smackx.chatstates.ChatStateManager;
 import org.jivesoftware.spark.SessionManager;
@@ -211,7 +212,8 @@ public class LoginDialog {
             }
         }
 
-        boolean useSSL = localPref.isSSL();
+        ConnectionConfiguration.SecurityMode securityMode = localPref.getSecurityMode();
+        boolean useOldSSL = localPref.isSSL();
         boolean hostPortConfigured = localPref.isHostAndPortConfigured();
 
         ProxyInfo proxyInfo = null;
@@ -247,17 +249,17 @@ public class LoginDialog {
                 .setServiceName(loginServer)
                 .setPort(port)
                 .setSendPresence(false)
-                .setCompressionEnabled(localPref.isCompressionEnabled());
+                .setCompressionEnabled(localPref.isCompressionEnabled())
+                .setSecurityMode( securityMode );
                 
-
-        if (localPref.isAcceptAllCertificates()) {
+        if (securityMode != ConnectionConfiguration.SecurityMode.disabled && localPref.isAcceptAllCertificates()) {
             try {
                 TLSUtils.acceptAllCertificates(builder);
             } catch (NoSuchAlgorithmException | KeyManagementException e) {
                 Log.warning( "Unable to create configuration.", e );
             }
         }
-        if (localPref.isDisableHostnameVerification()) {
+        if ( securityMode != ConnectionConfiguration.SecurityMode.disabled && localPref.isDisableHostnameVerification()) {
             TLSUtils.disableHostnameVerificationForTlsCertificicates(builder);
         }
         if ( localPref.isDebuggerEnabled()) {
@@ -273,16 +275,22 @@ public class LoginDialog {
             builder.setProxyInfo( proxyInfo );
         }
 
-        if (useSSL) {
+        if ( securityMode != ConnectionConfiguration.SecurityMode.disabled && useOldSSL ) {
             if (!hostPortConfigured) {
+                // SMACK 4.1.9 does not support XEP-0368, and does not apply a port change, if the host is not changed too.
+                // Here, we force the host to be set (by doing a DNS lookup), and force the port to 5223 (which is the
+                // default 'old-style' SSL port).
+                builder.setHost( DNSUtil.resolveXMPPDomain( loginServer, null ).get( 0 ).getFQDN() );
                 builder.setPort( 5223 );
             }
             builder.setSocketFactory( new DummySSLSocketFactory() );
+            // SMACK 4.1.9  does not recognize an 'old-style' SSL socket as being secure, which will cause a failure when
+            // the 'required' Security Mode is defined. Here, we work around this by replacing that security mode with an
+            // 'if-possible' setting.
+            builder.setSecurityMode( ConnectionConfiguration.SecurityMode.ifpossible );
         }
 
-        final XMPPTCPConnectionConfiguration configuration = builder.build();
-
-        if (localPref.isPKIEnabled()) {
+        if (securityMode != ConnectionConfiguration.SecurityMode.disabled && localPref.isPKIEnabled()) {
             SASLAuthentication.registerSASLMechanism( new SASLExternalMechanism() );
             builder.setKeystoreType(localPref.getPKIStore());
             if(localPref.getPKIStore().equals("PKCS11")) {
@@ -306,7 +314,7 @@ public class LoginDialog {
         SASLAuthentication.unregisterSASLMechanism( SASLGSSAPIv3CompatMechanism.class.getName() );
 
         // Add the mechanism only when SSO is enabled (which allows us to register the correct one).
-        if ( localPref.isSSOEnabled() )
+        if ( securityMode != ConnectionConfiguration.SecurityMode.disabled && localPref.isSSOEnabled() )
         {
             // SPARK-1740: Register a mechanism that's compatible with Smack 3, when requested.
             if ( localPref.isSaslGssapiSmack3Compatible() )
@@ -1586,6 +1594,7 @@ JOptionPane.ERROR_MESSAGE);
 		localPref.setResource("Spark");
 		localPref.setSaslGssapiSmack3Compatible(localPref.isSaslGssapiSmack3Compatible());
 		localPref.setSSL(localPref.isSSL());
+		localPref.setSecurityMode(localPref.getSecurityMode());
 		localPref.setSSOEnabled(localPref.isSSOEnabled());
 		localPref.setSSOMethod("file");
 		localPref.setTimeOut(localPref.getTimeOut());
