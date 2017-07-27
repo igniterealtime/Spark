@@ -254,6 +254,13 @@
         	<artifactId>bcpkix-jdk15on</artifactId>
         	<version>1.57</version>
         </dependency>
+        <dependency>
+        	<groupId>
+        		org.bouncycastle.bctls-jdk15on.1.57.org.bouncycastle
+        	</groupId>
+        	<artifactId>bctls-jdk15on</artifactId>
+        	<version>1.57</version>
+        </dependency>
     </dependencies>
 
     <repositories>

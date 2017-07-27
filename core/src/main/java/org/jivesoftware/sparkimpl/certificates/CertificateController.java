@@ -43,15 +43,14 @@ public class CertificateController {
 	public final static File TRUSTED = new File(System.getProperty("user.dir") +"\\src\\main\\security\\truststore");
 	public final static File BLACKLIST = new File(System.getProperty("user.dir") +"\\src\\main\\security\\blacklist");
 	public final static File EXCEPTIONS = new File(System.getProperty("user.dir") +"\\src\\main\\security\\exceptions");
-	public static String trustStorePath;
-	private final static char[] passwd = "changeit".toCharArray();
+	public final static char[] passwd = "changeit".toCharArray();
 	
 	
 	private List<CertificateModel> certificates = new ArrayList<>(); // contain all certificates from all keystores
 	private List<CertificateModel> exemptedCertificates = new ArrayList<>(); // contain only certificates from exempted list
 	private List<CertificateModel> blackListedCertificates = new ArrayList<>(); //contain only revoked certificates
 	
-	private DefaultTableModel tableModel;
+	private static DefaultTableModel tableModel;
 	private Object[] certEntry;
 	private LocalPreferences localPreferences;
 	private static final String[] COLUMN_NAMES = { Res.getString("table.column.certificate.subject"),
@@ -64,7 +63,9 @@ public class CertificateController {
 			throw new IllegalArgumentException("localPreferences cannot be null");
 		}
 		this.localPreferences = localPreferences;
-		
+	}
+	
+	public void createCertTableModel(){
 		tableModel = new DefaultTableModel() {
 			// return adequate classes for columns so last column is Boolean
 			// displayed as checkbox
@@ -106,12 +107,10 @@ public class CertificateController {
 			}
 		}
 	}
-	
-	
 	/**
 	 * If argument is true then move certificate to the exceptions Keystore, if false then move to the trusted Keystore.
 	 * Useful for checkboxes where it's selected value indicates where certificate should be moved.
-	 * @param checked
+	 * @param checked should it be moved?
 	 */
 	public void addOrRemoveFromExceptionList(boolean checked) {
 		int row = CertificatesManagerSettingsPanel.getCertTable().getSelectedRow();
@@ -135,18 +134,16 @@ public class CertificateController {
 	/**
 	 * Return information if certificate is on exception list.
 	 * 
-	 * @param alias
+	 * @param alias of the certificate
 	 */
 	public boolean isOnExceptionList(CertificateModel cert) {
-		if(exemptedCertificates.contains(cert)){
-			return true;
-		}
-		return false;
-		}	
-	
+		return exemptedCertificates.contains(cert);
+	}
+
 	/**
-	 * Add certificates from keyStore to 
-	 * @param storePath
+	 * Add certificates from keyStore to
+	 * 
+	 * @param storePath path of the store which will fill certificate table
 	 */
 	
 	private void fillCertTableWithKeyStoreContent(File storePath) {
@@ -174,8 +171,8 @@ public class CertificateController {
 	/**
 	 * Return file which contains certificate with given alias;
 	 * 
-	 * @param alias
-	 * @return File path
+	 * @param alias of the certificate
+	 * @return File path of KeyStore with certificate
 	 */
 	private File getAliasKeyStore(String alias) {
 		for (CertificateModel model : exemptedCertificates) {
@@ -199,7 +196,7 @@ public class CertificateController {
 	/**
 	 * This method delete certificate with provided alias from the Truststore
 	 * 
-	 * @param alias
+	 * @param alias Alias of the certificate to delete
 	 * @throws KeyStoreException
 	 * @throws IOException
 	 * @throws NoSuchAlgorithmException
@@ -237,12 +234,16 @@ public class CertificateController {
 
 	}
 
+	public void moveCertificateToBlackList(String alias) throws FileNotFoundException, KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException{
+		moveCertificate(getAliasKeyStore(alias), BLACKLIST, alias);
+	}
+	
 	/**
 	 * This method transfer certificate from source KeyStore to target KeyStore.
 	 * 
-	 * @param source
-	 * @param target
-	 * @param alias
+	 * @param source File with source KeyStore
+	 * @param target File with target KeyStore
+	 * @param alias Alias of the certificate meant to move
 	 * @throws FileNotFoundException
 	 * @throws IOException
 	 * @throws KeyStoreException
@@ -286,7 +287,7 @@ public class CertificateController {
 	/**
 	 * This method add certifiate from file ((*.cer), (*.crt), (*.der)) to Truststore.
 	 * 
-	 * @param file
+	 * @param file File with certificate that is added
 	 * @throws KeyStoreException
 	 * @throws CertificateException
 	 * @throws NoSuchAlgorithmException
@@ -330,8 +331,8 @@ public class CertificateController {
 	 * This method also assure that it will not add second same alias to Truststore by adding number to alias. 
 	 * In case when common name cannot be extracted method will return "cert{number}".
 	 * 
-	 * @param cert
-	 * @return String Common Name
+	 * @param cert Certificate which Common Name is meant to use
+	 * @return String Common Name of the certificate
 	 * @throws InvalidNameException
 	 * @throws HeadlessException
 	 * @throws KeyStoreException
@@ -366,7 +367,7 @@ public class CertificateController {
 	/**
 	 * Check if there is certificate entry in Truststore with the same alias.
 	 * 
-	 * @param alias
+	 * @param alias Alias of the certificate which is looked for in the model list
 	 * @return True if KeyStore contain the same alias.
 	 * @throws HeadlessException
 	 * @throws KeyStoreException
@@ -383,7 +384,7 @@ public class CertificateController {
 	/**
 	 * Check if this certificate already exist in Truststore.
 	 * 
-	 * @param alias
+	 * @param alias Alias of the certificate for which it method look in the model list
 	 * @return true if KeyStore already have this certificate.
 	 * @throws KeyStoreException 
 	 */	
@@ -412,7 +413,7 @@ public class CertificateController {
 	/**
 	 * Open dialog with certificate.
 	 * 
-	 * @param CertificateModel
+	 * @param CertificateModel Model of the certificate which details are meant to be shown.
 	 */
 	public void showCertificate(CertificateModel certModel, CertificateDialogReason reason) {
 		CertificateDialog certDialog = new CertificateDialog(localPreferences, certModel, this, reason);
