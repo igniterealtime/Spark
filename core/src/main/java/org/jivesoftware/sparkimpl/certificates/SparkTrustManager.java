@@ -32,6 +32,7 @@ import java.security.cert.X509CRL;
 import java.security.cert.X509CertSelector;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.List;
@@ -71,6 +72,7 @@ public class SparkTrustManager implements X509TrustManager {
     private boolean acceptSelfSigned;
 
     private CertStore crlStore;
+    private Collection<X509CRL> crlCollection = new ArrayList<>();
     private X509TrustManager exceptionsTrustManager;
     private Provider bcProvider = new BouncyCastleProvider(); // bc provider for path validation
     private KeyStore trustStore;
@@ -109,25 +111,49 @@ public class SparkTrustManager implements X509TrustManager {
         } catch (CertificateException ex) {
             // in case when certificate isn't on exceptions list then make use of this Trust Manager
 
-            // check if certificate isn't self signed, self signed certificate still have to be in TrustStore to be
-            // accepted
-            if (chain.length == 1 && acceptSelfSigned == false) {
-                throw new CertificateException("SelfSigned certificate");
-            }
-
             // validate chain by date (expired/not valid yet)
             checkDateValidity(chain);
 
-            // validate certificate path
-            try {
-                validatePath(chain);
-            } catch (NoSuchAlgorithmException | KeyStoreException | InvalidAlgorithmParameterException
-                    | CertPathValidatorException | CertPathBuilderException e) {
-                Log.error("Validating path failed", e);
-                throw new CertificateException("Certificate path validation failed", e);
+            // check if certificate isn't self signed, self signed certificate still have to be in TrustStore to be
+            // accepted
+            if (chain.length > 1) {
+                // validate certificate path
+                try {
+                    validatePath(chain);
+
+                } catch (NoSuchAlgorithmException | KeyStoreException | InvalidAlgorithmParameterException
+                        | CertPathValidatorException | CertPathBuilderException e) {
+                    Log.error("Validating path failed", e);
+                    throw new CertificateException("Certificate path validation failed", e);
+
+                }
+            } else if (chain.length == 1 && !acceptSelfSigned) {
+                // Self Signed certificate while it isn't accepted
+                throw new CertificateException("Self Signed certificate");
+
+            } else if (chain.length == 1 && acceptSelfSigned) {
+                // check if certificate is in Keystore and check CRL, but do not validate path as certificate is Self
+                // Signed important reminder: hostname validation must be also turned off to accept self signed
+                // certificate
+                List<X509Certificate> certList = new ArrayList<>(Arrays.asList(getAcceptedIssuers()));
+                if (!certList.contains(chain[0])) {
+                    throw new CertificateException("Certificate not in the TrustStore");
+                }
+                try {
+                    loadCRL(chain);
+                    for (X509CRL crl : crlCollection) {
+                        if (crl.isRevoked(chain[0])) {
+                            throw new CertificateException("Certificate is revoked");
+                        }
+                    }
+                } catch (InvalidAlgorithmParameterException | NoSuchAlgorithmException | CertStoreException
+                        | CRLException | IOException e) {
+                    Log.warning("Couldn't load CRL");
+                }
+            }else {
+                throw new CertificateException("Certificate chain cannot be trusted");
             }
         }
-        // check if have basic constraints
     }
 
     @Override
@@ -195,9 +221,7 @@ public class SparkTrustManager implements X509TrustManager {
                     loadCRL(chain);
                     parameters.addCertStore(crlStore);
                     if (checkOCSP) {
-                        // check OCSP, important reminder if CRL is disabled then then OCSP will not work either, for
-                        // reference:
-                        // http://docs.oracle.com/javase/7/docs/technotes/guides/security/certpath/CertPathProgGuide.html#AppC
+                        // check OCSP, important reminder if CRL is disabled then then OCSP will not work either 
                         // parameters.setCertPathCheckers(checkers);
                     }
 
@@ -289,8 +313,6 @@ public class SparkTrustManager implements X509TrustManager {
 
     private void loadCRL(X509Certificate[] chain) throws IOException, InvalidAlgorithmParameterException,
             NoSuchAlgorithmException, CertStoreException, CRLException, CertificateException {
-
-        Collection<X509CRL> crlCollection = new ArrayList<>();
 
         // for each certificate in chain
         for (X509Certificate cert : chain) {
