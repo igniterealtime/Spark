@@ -25,6 +25,8 @@ import javax.naming.ldap.LdapName;
 import javax.naming.ldap.Rdn;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+
+import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.spark.ui.login.CertificateDialog;
 import org.jivesoftware.spark.ui.login.CertificatesManagerSettingsPanel;
@@ -40,9 +42,9 @@ import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
  */
 
 public class CertificateController {
-	public final static File TRUSTED = new File(System.getProperty("user.dir") +"\\src\\main\\security\\truststore");
-	public final static File BLACKLIST = new File(System.getProperty("user.dir") +"\\src\\main\\security\\blacklist");
-	public final static File EXCEPTIONS = new File(System.getProperty("user.dir") +"\\src\\main\\security\\exceptions");
+	public final static File TRUSTED = new File(Spark.getSparkUserHome() + File.separator + "security" + File.separator + "truststore");
+	public final static File BLACKLIST = new File(Spark.getSparkUserHome() + File.separator + "security" + File.separator + "blacklist");
+	public final static File EXCEPTIONS = new File(Spark.getSparkUserHome() + File.separator + "security" + File.separator + "exceptions");
 	public final static char[] passwd = "changeit".toCharArray();
 	
 	
