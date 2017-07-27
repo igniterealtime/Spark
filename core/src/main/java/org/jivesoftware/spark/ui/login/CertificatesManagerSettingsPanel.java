@@ -44,6 +44,7 @@ import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.certificates.CertificateController;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
+import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
 /**
  * This class serve as visual in implementation of manageable list of certificates. Together with CertificateController
@@ -76,6 +77,7 @@ public class CertificatesManagerSettingsPanel extends JPanel implements ActionLi
 		this.localPreferences = localPreferences;
 		certControll = new CertificateController(localPreferences);
 		setLayout(new GridBagLayout());
+		certControll.createCertTableModel();
 		certTable = new JTable(certControll.getTableModel()){
 			
 			@Override
@@ -112,19 +114,30 @@ public class CertificatesManagerSettingsPanel extends JPanel implements ActionLi
 
 		ResourceUtils.resButton(acceptAll, Res.getString("checkbox.accept.all"));
 		ResourceUtils.resButton(acceptExpired, Res.getString("checkbox.accept.expired"));
-		ResourceUtils.resButton(acceptRevoked, Res.getString("checkbox.accept.invalid"));
+		ResourceUtils.resButton(acceptRevoked, Res.getString("checkbox.accept.revoked"));
 		ResourceUtils.resButton(acceptSelfSigned, Res.getString("checkbox.accept.self.signed"));
 		ResourceUtils.resButton(checkCRL, Res.getString("checkbox.check.crl"));
 		ResourceUtils.resButton(checkOCSP, Res.getString("checkbox.check.ocsp"));
 		ResourceUtils.resButton(showCert, Res.getString("button.show.certificate"));
 		ResourceUtils.resButton(fileButton, Res.getString("label.choose.file"));
-
+		
+		acceptAll.setSelected(localPreferences.isAcceptAllCertificates());
+		acceptSelfSigned.setSelected(localPreferences.isAcceptSelfSigned());
+		acceptExpired.setSelected(localPreferences.isAcceptExpired());
+		acceptRevoked.setSelected(localPreferences.isAcceptRevoked());
+		checkCRL.setSelected(localPreferences.isCheckCRL());
+		checkOCSP.setSelected(localPreferences.isCheckOCSP());
+		
 		acceptAll.addActionListener(this);
 		certTable.addMouseListener(this);
 		certTable.getModel().addTableModelListener(this);
 		showCert.setEnabled(false);
 		showCert.addActionListener(this);
 		fileButton.addActionListener(this);
+		checkCRL.addActionListener(this);
+		acceptRevoked.addActionListener(this);
+		checkCRL.setEnabled(!acceptRevoked.isSelected());
+		checkOCSP.setEnabled(checkCRL.isSelected());
 
 		filePanel.setLayout(new GridBagLayout());
 		filePanel.add(fileButton, new GridBagConstraints(0, 0, 2, 1, 1.0, 1.0, WEST, HORIZONTAL, DEFAULT_INSETS, 40, 0));
@@ -160,8 +173,21 @@ public class CertificatesManagerSettingsPanel extends JPanel implements ActionLi
 			certControll.showCertificate();
 		} else if (e.getSource() == fileButton) {
 			addCertificate();
-		}
-	}
+        } else if (e.getSource() == checkCRL && checkCRL.isSelected()) {
+            checkOCSP.setEnabled(true);
+        } else if (e.getSource() == checkCRL && !checkCRL.isSelected()) {
+            checkOCSP.setSelected(false);
+            checkOCSP.setEnabled(false);
+        } else if (e.getSource() == acceptRevoked && acceptRevoked.isSelected()) {
+            checkCRL.setSelected(false);
+            checkOCSP.setSelected(false);
+
+            checkCRL.setEnabled(false);
+            checkOCSP.setEnabled(false);
+        } else if (e.getSource() == acceptRevoked && !acceptRevoked.isSelected()) {
+            checkCRL.setEnabled(true);
+        }
+    }
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
@@ -248,4 +274,15 @@ public class CertificatesManagerSettingsPanel extends JPanel implements ActionLi
 			}
 		});
 	}
+	
+    public void saveSettings() {
+        localPreferences.setAcceptExpired(acceptExpired.isSelected());
+        localPreferences.setAcceptSelfSigned(acceptSelfSigned.isSelected());
+        localPreferences.setAcceptRevoked(acceptRevoked.isSelected());
+        localPreferences.setAcceptAllCertificates(acceptAll.isSelected());
+        localPreferences.setCheckCRL(checkCRL.isSelected());
+        localPreferences.setCheckOCSP(checkOCSP.isSelected());
+
+        SettingsManager.saveSettings();
+    }
 }

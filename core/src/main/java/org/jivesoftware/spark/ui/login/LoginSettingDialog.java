@@ -148,6 +148,7 @@ public class LoginSettingDialog implements PropertyChangeListener
                 proxyPanel.saveSettings();
                 ssoPanel.saveSettings();
                 pkiPanel.saveSettings();
+                certManager.saveSettings();
                 SettingsManager.saveSettings();
                 optionsDialog.setVisible( false );
             }

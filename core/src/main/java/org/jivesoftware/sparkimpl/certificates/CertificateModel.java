@@ -1,12 +1,10 @@
 package org.jivesoftware.sparkimpl.certificates;
 
 import java.io.IOException;
-import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateParsingException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Base64;
-import java.util.Calendar;
 import java.util.Date;
 
 import javax.naming.InvalidNameException;
@@ -27,10 +25,8 @@ import org.bouncycastle.asn1.x509.Extension;
 import org.bouncycastle.asn1.x509.GeneralSubtree;
 import org.bouncycastle.asn1.x509.NameConstraints;
 import org.bouncycastle.asn1.x509.PolicyConstraints;
-import org.bouncycastle.asn1.x509.PolicyQualifierInfo;
 import org.bouncycastle.asn1.x509.SubjectDirectoryAttributes;
 import org.bouncycastle.asn1.x509.SubjectKeyIdentifier;
-import org.bouncycastle.cert.jcajce.JcaX509CertificateHolder;
 import org.bouncycastle.cert.jcajce.JcaX509ExtensionUtils;
 import org.bouncycastle.util.encoders.Hex;
 import org.jivesoftware.resource.Res;
@@ -140,7 +136,7 @@ public class CertificateModel {
 			String value = Res.getString("cert.is.critical") + critical + "\n";
 			boolean isSupported = true;
 
-			if (oid.equals(Extension.subjectDirectoryAttributes)) {
+			if (oid.equals(Extension.subjectDirectoryAttributes.toString())) {
 				value += subjectDirectoryAttributesExtractor(primitive);
 
 			} else if (oid.equals(Extension.subjectKeyIdentifier.toString())) {
@@ -331,9 +327,6 @@ public class CertificateModel {
 			
 		} else if (isBeforeNotBefore()) {
 			return "cert.not.valid.yet";
-			
-		} else if (isSelfSigned()) {
-			return Res.getString("cert.self.signed");
 			
 		} else {
 			return Res.getString("cert.valid");

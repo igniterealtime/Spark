@@ -16,6 +16,7 @@
 
 package org.jivesoftware;
 
+import org.bouncycastle.jsse.provider.BouncyCastleJsseProvider;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
@@ -44,9 +45,11 @@ import org.jivesoftware.spark.ui.login.LoginSettingDialog;
 import org.jivesoftware.spark.util.*;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
+import org.jivesoftware.sparkimpl.certificates.SparkSSLContext;
+import org.jivesoftware.sparkimpl.certificates.SparkTrustManager;
 import org.jivesoftware.sparkimpl.plugin.layout.LayoutSettings;
 import org.jivesoftware.sparkimpl.plugin.layout.LayoutSettingsManager;
-import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 import org.jivesoftware.sparkimpl.settings.JiveInfo;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
@@ -57,6 +60,7 @@ import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
 import javax.naming.directory.DirContext;
 import javax.naming.directory.InitialDirContext;
+import javax.net.ssl.SSLContext;
 import javax.security.auth.Subject;
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
@@ -77,6 +81,9 @@ import java.net.UnknownHostException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.Principal;
+import java.security.Provider;
+import java.security.SecureRandom;
+import java.security.Security;
 import java.util.*;
 import java.util.List;
 
@@ -277,6 +284,22 @@ public class LoginDialog {
             builder.setProxyInfo( proxyInfo );
         }
 
+        if (securityMode != ConnectionConfiguration.SecurityMode.disabled && !useOldSSL) {
+            builder.setPort(5222);
+            // This use STARTTLS which starts initially plain connection to upgrade it to TLS, it use the same port as
+            // plain connections which is 5222.
+            try {
+                Provider bcProvider = new BouncyCastleJsseProvider();
+                Security.addProvider(bcProvider);
+                SSLContext context = SparkSSLContext.getInstance("TLS");
+                context.init(null, SparkTrustManager.getTrustManagerList(), new SecureRandom());
+                builder.setCustomSSLContext(context);
+                builder.setSecurityMode( securityMode );
+            } catch (NoSuchAlgorithmException | KeyManagementException e) {
+                Log.warning("Couldnt establish secured connection", e);
+            }
+        }
+        
         if ( securityMode != ConnectionConfiguration.SecurityMode.disabled && useOldSSL ) {
             if (!hostPortConfigured) {
                 // SMACK 4.1.9 does not support XEP-0368, and does not apply a port change, if the host is not changed too.
