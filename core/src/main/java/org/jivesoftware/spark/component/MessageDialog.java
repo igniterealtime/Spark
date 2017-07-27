@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2004-2011 Jive Software. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,6 +15,12 @@
  */
 package org.jivesoftware.spark.component;
 
+import org.jivesoftware.MainWindow;
+import org.jivesoftware.resource.Res;
+import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.spark.SparkManager;
+
+import javax.swing.*;
 import java.awt.*;
 import java.beans.PropertyChangeListener;
 import java.io.PrintWriter;
@@ -23,97 +29,124 @@ import java.io.Writer;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.swing.Icon;
-import javax.swing.JComponent;
-import javax.swing.JDialog;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextPane;
-
-import jdk.nashorn.internal.scripts.JD;
-import org.jivesoftware.MainWindow;
-import org.jivesoftware.resource.Res;
-import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.spark.SparkManager;
-
-
 /**
  * <code>MessageDialog</code> class is used to easily display the most commonly used dialogs.
  */
-public final class MessageDialog {
-
-    private MessageDialog() {
-   	 
+public final class MessageDialog
+{
+    /**
+     * Display a dialog with an exception.
+     *
+     * The dialog's owner (to which the dialog is positioned relative to) is the Spark "Main Window".
+     *
+     * @param throwable the throwable object to display.
+     */
+    public static void showErrorDialog( final Throwable throwable )
+    {
+        showErrorDialog( SparkManager.getMainWindow(), null, throwable );
     }
 
     /**
      * Display a dialog with an exception.
      *
+     * @param owner The owner of the dialog, to which the dialog is positioned relative to.
      * @param throwable the throwable object to display.
      */
-    public static void showErrorDialog(final Throwable throwable)
+    public static void showErrorDialog( final JFrame owner, final Throwable throwable )
     {
-        showErrorDialog( null, throwable );
+        showErrorDialog( owner, null, throwable );
     }
 
     /**
      * Display a dialog with an exception.
+     *
+     * The dialog's owner (to which the dialog is positioned relative to) is the Spark "Main Window".
      *
      * @param description Human readable text (can be null or empty).
      * @param throwable the throwable object to display.
      */
-    public static void showErrorDialog(final String description, final Throwable throwable) {
-     	 EventQueue.invokeLater( () -> {
-              JTextPane textPane;
-              final JOptionPane pane;
-              final JDialog dlg;
+    public static void showErrorDialog( final String description, final Throwable throwable )
+    {
+        showErrorDialog( SparkManager.getMainWindow(), description, throwable );
+    }
+    /**
+     * Display a dialog with an exception.
+     *
+     * @param owner The owner of the dialog, to which the dialog is positioned relative to.
+     * @param description Human readable text (can be null or empty).
+     * @param throwable the throwable object to display.
+     */
+    public static void showErrorDialog( final JFrame owner, final String description, final Throwable throwable )
+    {
+        EventQueue.invokeLater( () ->
+        {
+            // Create the title panel for this dialog
+            final TitlePanel titlePanel = new TitlePanel( Res.getString( "message.default.error" ), description == null || description.trim().isEmpty() ? null : description.trim(), SparkRes.getImageIcon( SparkRes.SMALL_DELETE ), true );
 
-              TitlePanel titlePanel;
+            final JLabel titleLabel = new JLabel( Res.getString( "message.default.error" ) );
+            titleLabel.setFont(new Font("dialog", Font.BOLD, 11 ) );
 
-              textPane = new JTextPane();
-              textPane.setFont(new Font("Dialog", Font.PLAIN, 12));
-              textPane.setEditable(false);
+            final JLabel descriptionLabel = new JLabel( description == null || description.trim().isEmpty() ? null : description.trim() );
+            descriptionLabel.setFont(new Font("dialog", 0, 10 ) );
 
-              String message = getStackTrace(throwable);
-              textPane.setText(message);
-              textPane.setCaretPosition( 0 ); // scroll to top
+            // The stacktrace content.
+            final JTextArea textPane = new JTextArea();
+            textPane.setFont( new Font( "Dialog", Font.PLAIN, 12 ) );
+            textPane.setEditable( false );
+            textPane.setText( getStackTrace( throwable ) );
+            textPane.setCaretPosition( 0 ); // scroll to top
+            final JScrollPane scrollPane = new JScrollPane( textPane );
+            scrollPane.setPreferredSize( new Dimension( 600, 400 ) );
+            scrollPane.setVisible( false );
 
-              // Create the title panel for this dialog
-              titlePanel = new TitlePanel(Res.getString("message.default.error"), description == null || description.trim().isEmpty() ? null : description.trim(), SparkRes.getImageIcon(SparkRes.SMALL_DELETE), true);
+            // Construct main panel w/ layout.
+            final JPanel mainPanel = new JPanel();
+            mainPanel.setLayout( new BorderLayout() );
 
-              // Construct main panel w/ layout.
-              final JPanel mainPanel = new JPanel();
-              mainPanel.setLayout(new BorderLayout());
-              mainPanel.add(titlePanel, BorderLayout.NORTH);
+            mainPanel.add( titleLabel, BorderLayout.NORTH );
+            if ( description != null && !description.trim().isEmpty() )
+            {
+                mainPanel.add( descriptionLabel, BorderLayout.CENTER );
+            }
+            mainPanel.add( scrollPane, BorderLayout.SOUTH );
 
-              // The user should only be able to close this dialog.
-              Object[] options = {Res.getString("close")};
-              pane = new JOptionPane(new JScrollPane(textPane), JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION, null, options, options[0]);
+            // The user should only be able to close this dialog.
+            final Object[] options = { Res.getString( "details" ), Res.getString( "close" ) };
+            final JOptionPane pane = new JOptionPane( mainPanel, JOptionPane.ERROR_MESSAGE, JOptionPane.OK_CANCEL_OPTION, null, options, options[ 1 ] );
 
-              mainPanel.add(pane, BorderLayout.CENTER);
+            final JDialog dlg = new JDialog( owner, Res.getString( "title.error" ), false );
+            dlg.setContentPane( pane );
+            dlg.setLocationRelativeTo( owner );
 
-              MainWindow mainWindow = SparkManager.getMainWindow();
-              dlg = new JDialog(mainWindow, Res.getString("title.error"), false);
-              dlg.pack();
-              dlg.setSize(600, 400);
-              dlg.setContentPane(mainPanel);
-              dlg.setLocationRelativeTo(mainWindow);
+            pane.addPropertyChangeListener( "value", evt ->
+            {
+                if ( dlg.isVisible() && evt.getSource() == pane )
+                {
+                    String value = (String) pane.getValue();
+                    if ( Res.getString( "close" ).equals( value ) )
+                    {
+                        dlg.setVisible( false );
+                    }
+                    if ( Res.getString( "details" ).equals( value ) )
+                    {
+                        scrollPane.setVisible( !scrollPane.isVisible() );
+                        dlg.pack();
+                        pane.setValue( null ); // reset the value, otherwise the value change listener won't fire again!
+                    }
+                }
+            } );
 
-              PropertyChangeListener changeListener = e -> {
-String value = (String)pane.getValue();
-if (Res.getString("close").equals(value)) {
-dlg.setVisible(false);
-}
-};
+            dlg.pack();
 
-              pane.addPropertyChangeListener(changeListener);
+            // By setting the preferred size to whatever is the size after packaging, the size of these components is
+            // unlikely to be modified by the expanding/collapsing of the stack trace pane.
+            titleLabel.setPreferredSize( titleLabel.getSize() );
+            descriptionLabel.setPreferredSize( descriptionLabel.getSize() );
 
-              dlg.pack();
-              dlg.setVisible(true);
-              dlg.toFront();
-              dlg.requestFocus();
-          } );
+            dlg.setVisible( true );
+            dlg.toFront();
+            dlg.requestFocus();
+        } );
     }
 
     /**
@@ -124,56 +157,57 @@ dlg.setVisible(false);
      * @param title   the title to display.
      * @param icon    the icon for the alert dialog.
      */
-    public static void showAlert(final String message,final String header, final String title, final Icon icon) {
-   	 EventQueue.invokeLater( () -> {
-           JTextPane textPane;
-           final JOptionPane pane;
-           final JDialog dlg;
+    public static void showAlert( final String message, final String header, final String title, final Icon icon )
+    {
+        EventQueue.invokeLater( () -> {
+            JTextPane textPane;
+            final JOptionPane pane;
+            final JDialog dlg;
 
-           TitlePanel titlePanel;
+            TitlePanel titlePanel;
 
-           textPane = new JTextPane();
-           textPane.setFont(new Font("Dialog", Font.PLAIN, 12));
-           textPane.setEditable(false);
-           textPane.setText(message);
-           textPane.setBackground(Color.white);
+            textPane = new JTextPane();
+            textPane.setFont( new Font( "Dialog", Font.PLAIN, 12 ) );
+            textPane.setEditable( false );
+            textPane.setText( message );
+            textPane.setBackground( Color.white );
 
-           // Create the title panel for this dialog
-           titlePanel = new TitlePanel(header, null, icon, true);
+            // Create the title panel for this dialog
+            titlePanel = new TitlePanel( header, null, icon, true );
 
-           // Construct main panel w/ layout.
-           final JPanel mainPanel = new JPanel();
-           mainPanel.setLayout(new BorderLayout());
-           mainPanel.add(titlePanel, BorderLayout.NORTH);
+            // Construct main panel w/ layout.
+            final JPanel mainPanel = new JPanel();
+            mainPanel.setLayout( new BorderLayout() );
+            mainPanel.add( titlePanel, BorderLayout.NORTH );
 
-           // The user should only be able to close this dialog.
-           Object[] options = {Res.getString("close")};
-           pane = new JOptionPane(new JScrollPane(textPane), JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION, null, options, options[0]);
+            // The user should only be able to close this dialog.
+            Object[] options = { Res.getString( "close" ) };
+            pane = new JOptionPane( new JScrollPane( textPane ), JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION, null, options, options[ 0 ] );
 
-           mainPanel.add(pane, BorderLayout.CENTER);
+            mainPanel.add( pane, BorderLayout.CENTER );
 
-           MainWindow mainWindow = SparkManager.getMainWindow();
-           dlg = new JDialog(mainWindow, title, false);
-           dlg.pack();
-           dlg.setSize(300, 300);
-           dlg.setContentPane(mainPanel);
-           dlg.setLocationRelativeTo(SparkManager.getMainWindow());
+            MainWindow mainWindow = SparkManager.getMainWindow();
+            dlg = new JDialog( mainWindow, title, false );
+            dlg.pack();
+            dlg.setSize( 300, 300 );
+            dlg.setContentPane( mainPanel );
+            dlg.setLocationRelativeTo( SparkManager.getMainWindow() );
 
-           PropertyChangeListener changeListener = e -> {
-String value = (String)pane.getValue();
-if (Res.getString("close").equals(value)) {
-dlg.setVisible(false);
-}
-};
+            PropertyChangeListener changeListener = e ->
+            {
+                String value = (String) pane.getValue();
+                if ( Res.getString( "close" ).equals( value ) )
+                {
+                    dlg.setVisible( false );
+                }
+            };
 
-           pane.addPropertyChangeListener(changeListener);
+            pane.addPropertyChangeListener( changeListener );
 
-           dlg.setVisible(true);
-           dlg.toFront();
-           dlg.requestFocus();
-
+            dlg.setVisible( true );
+            dlg.toFront();
+            dlg.requestFocus();
         } );
-
     }
 
     /**
@@ -187,48 +221,53 @@ dlg.setVisible(false);
      * @param modal       true if it is modal.
      * @return the <code>JDialog</code> created.
      */
-    public static JDialog createComponent( String title, String description, Icon icon, JComponent comp, Component parent, boolean modal) {
+    public static JDialog createComponent( String title, String description, Icon icon, JComponent comp, Component parent, boolean modal )
+    {
         final JOptionPane pane;
         final JDialog dlg;
 
         TitlePanel titlePanel;
 
         // Create the title panel for this dialog
-        titlePanel = new TitlePanel(title, description, icon, true);
+        titlePanel = new TitlePanel( title, description, icon, true );
 
         // Construct main panel w/ layout.
         final JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new BorderLayout());
-        mainPanel.add(titlePanel, BorderLayout.NORTH);
+        mainPanel.setLayout( new BorderLayout() );
+        mainPanel.add( titlePanel, BorderLayout.NORTH );
 
         // The user should only be able to close this dialog.
-        Object[] options = {Res.getString("close")};
-        pane = new JOptionPane(comp, JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION, null, options, options[0]);
+        Object[] options = { Res.getString( "close" ) };
+        pane = new JOptionPane( comp, JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION, null, options, options[ 0 ] );
 
-        mainPanel.add(pane, BorderLayout.CENTER);
+        mainPanel.add( pane, BorderLayout.CENTER );
 
         JOptionPane p = new JOptionPane();
-        dlg = p.createDialog(parent, title);
-        dlg.setModal(modal);
+        dlg = p.createDialog( parent, title );
+        dlg.setModal( modal );
 
         dlg.pack();
-        dlg.setResizable(true);
-        dlg.setContentPane(mainPanel);
+        dlg.setResizable( true );
+        dlg.setContentPane( mainPanel );
 
         PropertyChangeListener changeListener = e -> {
             String value;
-            try {
-                value= (String)pane.getValue();
-                if (Res.getString("close").equals(value)) {
-                    dlg.setVisible(false);
+            try
+            {
+                value = (String) pane.getValue();
+                if ( Res.getString( "close" ).equals( value ) )
+                {
+                    dlg.setVisible( false );
                 }
-            } catch (Exception ex) {
+            }
+            catch ( Exception ex )
+            {
                 // probably <ESC> pressed ;-)
             }
 
         };
 
-        pane.addPropertyChangeListener(changeListener);
+        pane.addPropertyChangeListener( changeListener );
 
         return dlg;
     }
@@ -246,52 +285,56 @@ dlg.setVisible(false);
      * @param modal       true if it is modal.
      * @return the <code>JDialog</code> created.
      */
-    public static JDialog showComponent(String title, String description, Icon icon, JComponent comp, Component parent, int width, int height, boolean modal) {
+    public static JDialog showComponent( String title, String description, Icon icon, JComponent comp, Component parent, int width, int height, boolean modal )
+    {
         final JOptionPane pane;
         final JDialog dlg;
 
         TitlePanel titlePanel;
 
         // Create the title panel for this dialog
-        titlePanel = new TitlePanel(title, description, icon, true);
+        titlePanel = new TitlePanel( title, description, icon, true );
 
         // Construct main panel w/ layout.
         final JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new BorderLayout());
-        mainPanel.add(titlePanel, BorderLayout.NORTH);
+        mainPanel.setLayout( new BorderLayout() );
+        mainPanel.add( titlePanel, BorderLayout.NORTH );
 
         // The user should only be able to close this dialog.
-        Object[] options = {Res.getString("close")};
-        pane = new JOptionPane(comp, JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION, null, options, options[0]);
+        Object[] options = { Res.getString( "close" ) };
+        pane = new JOptionPane( comp, JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION, null, options, options[ 0 ] );
 
-        mainPanel.add(pane, BorderLayout.CENTER);
+        mainPanel.add( pane, BorderLayout.CENTER );
 
         JOptionPane p = new JOptionPane();
-        dlg = p.createDialog(parent, title);
-        dlg.setModal(modal);
+        dlg = p.createDialog( parent, title );
+        dlg.setModal( modal );
 
         dlg.pack();
-        dlg.setSize(width, height);
-        dlg.setResizable(true);
-        dlg.setContentPane(mainPanel);
-        dlg.setLocationRelativeTo(parent);
+        dlg.setSize( width, height );
+        dlg.setResizable( true );
+        dlg.setContentPane( mainPanel );
+        dlg.setLocationRelativeTo( parent );
 
         PropertyChangeListener changeListener = e -> {
             String value;
-            try {
-                value= (String)pane.getValue();
-                if (Res.getString("close").equals(value)) {
-                    dlg.setVisible(false);
+            try
+            {
+                value = (String) pane.getValue();
+                if ( Res.getString( "close" ).equals( value ) )
+                {
+                    dlg.setVisible( false );
                 }
-            } catch (Exception ex) {
+            }
+            catch ( Exception ex )
+            {
                 // probably <ESC> pressed ;-)
             }
-
         };
 
-        pane.addPropertyChangeListener(changeListener);
+        pane.addPropertyChangeListener( changeListener );
 
-        dlg.setVisible(true);
+        dlg.setVisible( true );
         dlg.toFront();
         dlg.requestFocus();
         return dlg;
@@ -303,10 +346,11 @@ dlg.setVisible(false);
      * @param aThrowable the throwable object.
      * @return the string.
      */
-    public static String getStackTrace(Throwable aThrowable) {
+    public static String getStackTrace( Throwable aThrowable )
+    {
         final Writer result = new StringWriter();
-        final PrintWriter printWriter = new PrintWriter(result);
-        aThrowable.printStackTrace(printWriter);
+        final PrintWriter printWriter = new PrintWriter( result );
+        aThrowable.printStackTrace( printWriter );
         return result.toString();
     }
 
@@ -317,22 +361,22 @@ dlg.setVisible(false);
      * @param aThrowable the throwable object.
      * @return the string.
      */
-    public static String getCustomStackTrace(String heading, Throwable aThrowable) {
+    public static String getCustomStackTrace( String heading, Throwable aThrowable )
+    {
         //add the class name and any message passed to constructor
-        final StringBuilder result = new StringBuilder(heading);
-        result.append(aThrowable.toString());
-        final String lineSeperator = System.getProperty("line.separator");
-        result.append(lineSeperator);
+        final StringBuilder result = new StringBuilder( heading );
+        result.append( aThrowable.toString() );
+        final String lineSeperator = System.getProperty( "line.separator" );
+        result.append( lineSeperator );
 
         //add each element of the stack trace
         StackTraceElement[] stackTrace = aThrowable.getStackTrace();
-        final List<StackTraceElement> traceElements = Arrays.asList(stackTrace);
-        for (StackTraceElement traceElement : traceElements) {
-            result.append(traceElement);
-            result.append(lineSeperator);
+        final List<StackTraceElement> traceElements = Arrays.asList( stackTrace );
+        for ( StackTraceElement traceElement : traceElements )
+        {
+            result.append( traceElement );
+            result.append( lineSeperator );
         }
         return result.toString();
     }
-
-
 }
