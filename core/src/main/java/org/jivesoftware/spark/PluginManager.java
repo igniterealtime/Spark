@@ -1027,6 +1027,7 @@ public class PluginManager implements MainWindowListener
         {
             if ( plugin.getName().equals( publicPlugin.getName() ) )
             {
+                uninstall( plugin.getPluginDir() );
                 publicPlugins.remove( plugin );
             }
         }
