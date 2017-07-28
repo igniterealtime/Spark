@@ -116,7 +116,6 @@ public final class MessageDialog
 
             final JDialog dlg = new JDialog( owner, Res.getString( "title.error" ), false );
             dlg.setContentPane( pane );
-            dlg.setLocationRelativeTo( owner );
 
             pane.addPropertyChangeListener( "value", evt ->
             {
@@ -131,12 +130,14 @@ public final class MessageDialog
                     {
                         scrollPane.setVisible( !scrollPane.isVisible() );
                         dlg.pack();
+                        dlg.setLocationRelativeTo( owner );
                         pane.setValue( null ); // reset the value, otherwise the value change listener won't fire again!
                     }
                 }
             } );
 
             dlg.pack();
+            dlg.setLocationRelativeTo( owner );
 
             // By setting the preferred size to whatever is the size after packaging, the size of these components is
             // unlikely to be modified by the expanding/collapsing of the stack trace pane.
