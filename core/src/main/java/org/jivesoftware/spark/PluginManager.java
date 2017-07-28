@@ -38,6 +38,11 @@ import java.awt.*;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -986,30 +991,30 @@ public class PluginManager implements MainWindowListener
 
     private void uninstall( File pluginDir )
     {
-        File[] files = pluginDir.listFiles();
-        for ( File f : files )
+        try
         {
-            if ( f.isFile() )
+            Files.walkFileTree( pluginDir.toPath(), new SimpleFileVisitor<Path>()
             {
-                f.delete();
-            }
+                @Override
+                public FileVisitResult visitFile( Path file, BasicFileAttributes attrs ) throws IOException
+                {
+                    Files.delete( file );
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult postVisitDirectory( Path dir, IOException exc ) throws IOException
+                {
+                    Files.delete( dir );
+                    return FileVisitResult.CONTINUE;
+                }
+            } );
         }
-
-        File libDir = new File( pluginDir, "lib" );
-
-        File[] libs = libDir.listFiles();
-        if ( libs != null )
+        catch ( IOException e )
         {
-            for ( File f : libs )
-            {
-                f.delete();
-            }
+            Log.error( "An unexpected exception occurred while trying to uninstall a plugin from: " + pluginDir, e );
         }
-
-        libDir.delete();
-
-        pluginDir.delete();
-    }
+   }
 
     /**
      * Removes and uninstall a plugin from Spark.
