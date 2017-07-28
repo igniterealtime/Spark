@@ -87,6 +87,7 @@ public class PreferenceDialog implements PropertyChangeListener
         mainPanel.add( pane, BorderLayout.CENTER );
         preferenceDialog.setContentPane( mainPanel );
 
+        preferenceDialog.pack();
         final Rectangle preferencesBounds = LayoutSettingsManager.getLayoutSettings().getPreferencesBounds();
         if ( preferencesBounds == null || preferencesBounds.width <= 0 || preferencesBounds.height <= 0 )
         {
@@ -101,7 +102,6 @@ public class PreferenceDialog implements PropertyChangeListener
 
         pane.addPropertyChangeListener( this );
 
-        preferenceDialog.pack();
         preferenceDialog.setVisible( true );
         preferenceDialog.toFront();
 
