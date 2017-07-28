@@ -36,6 +36,7 @@ import org.jivesoftware.smackx.chatstates.ChatStateManager;
 import org.jivesoftware.spark.SessionManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.Workspace;
+import org.jivesoftware.spark.component.MessageDialog;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.sasl.SASLGSSAPIv3CompatMechanism;
 import org.jivesoftware.spark.ui.login.GSSAPIConfiguration;
@@ -43,14 +44,13 @@ import org.jivesoftware.spark.ui.login.LoginSettingDialog;
 import org.jivesoftware.spark.util.*;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
-import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 import org.jivesoftware.sparkimpl.plugin.layout.LayoutSettings;
 import org.jivesoftware.sparkimpl.plugin.layout.LayoutSettingsManager;
+import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 import org.jivesoftware.sparkimpl.settings.JiveInfo;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jxmpp.util.XmppStringUtils;
-
 
 import javax.naming.NamingException;
 import javax.naming.directory.Attribute;
@@ -79,6 +79,8 @@ import java.security.NoSuchAlgorithmException;
 import java.security.Principal;
 import java.util.*;
 import java.util.List;
+
+import static org.jivesoftware.spark.util.StringUtils.modifyWildcards;
 
 /**
  * Dialog to log in a user into the Spark Server. The LoginDialog is used only
@@ -1062,8 +1064,6 @@ public class LoginDialog {
 
                 validateDialog();
             }
-
-
         }
 
         /**
@@ -1072,180 +1072,183 @@ public class LoginDialog {
          *
          * @return true if login was successful, false otherwise
          */
-        private boolean login() {
-            final SessionManager sessionManager = SparkManager.getSessionManager();
+        private boolean login()
+        {
+            localPref = SettingsManager.getLocalPreferences();
+            localPref.setLoginAsInvisible( loginAsInvisibleBox.isSelected() );
+            localPref.setLoginAnonymously( loginAnonymouslyBox.isSelected() );
 
-            boolean hasErrors = false;
-            String errorMessage = null;
-
-            localPref.setLoginAsInvisible(loginAsInvisibleBox.isSelected());
-            localPref.setLoginAnonymously(loginAnonymouslyBox.isSelected());
-
-            // Handle specifyed Workgroup
-            String serverName = getServerName();
-
-
-            if (!hasErrors) {
-                localPref = SettingsManager.getLocalPreferences();
-                if (localPref.isDebuggerEnabled()) {
-                    SmackConfiguration.DEBUG = true;
-                }
-
-                SmackConfiguration.setDefaultPacketReplyTimeout(localPref.getTimeOut() * 1000);
-
-                // Get connection
-                try {
-                    connection = new XMPPTCPConnection(retrieveConnectionConfiguration());
-                    connection.setParsingExceptionCallback( new ExceptionLoggingCallback() );
-                    //If we want to use the debug version of smack, we have to check if
-                    //we are on the dispatch thread because smack will create an UI
-		    if (localPref.isDebuggerEnabled()) {
-			if (EventQueue.isDispatchThread()) {
-			    connection.connect();
-			} else {
-			    EventQueue.invokeAndWait( () -> {
-                    try {
-                    connection.connect();
-                    } catch (IOException | XMPPException | SmackException e) {
-                    Log.error("connection error",e);
-                    }
-
-                } );
-			}
-		    } else {
-			connection.connect();
-		    }
-
-                    String resource = localPref.getResource();
-            if (Default.getBoolean("HOSTNAME_AS_RESOURCE")) {
-            try {
-    			    resource = InetAddress.getLocalHost().getHostName();
-    			} catch(UnknownHostException e) {
-    			    Log.error("unable to retrieve hostname",e);
-    			}
-            } else if (localPref.isUseHostnameAsResource()) {
-			try {
-			    resource = InetAddress.getLocalHost().getHostName();
-			} catch(UnknownHostException e) {
-			    Log.error("unable to retrieve hostname",e);
-			}
-		    } else if (Default.getBoolean("VERSION_AS_RESOURCE")) {
-                resource = JiveInfo.getName() + " " + JiveInfo.getVersion();
-		    } else if (localPref.isUseVersionAsResource()) {
-                resource = JiveInfo.getName() + " " + JiveInfo.getVersion();
-		    }
-                if (localPref.isLoginAnonymously() && !localPref.isSSOEnabled()) {
-                    ((XMPPTCPConnection)connection).loginAnonymously();
-                } else {
-                    connection.login(getLoginUsername(), getLoginPassword(),
-                	    org.jivesoftware.spark.util.StringUtils.modifyWildcards(resource).trim());
-                }
-
-                    sessionManager.setServerAddress(connection.getServiceName());
-                    sessionManager.initializeSession(connection, getLoginUsername(), getLoginPassword());
-                    sessionManager.setJID(connection.getUser());
-                    ReconnectionManager.getInstanceFor(connection).setFixedDelay(localPref.getReconnectDelay());
-                    ReconnectionManager.getInstanceFor(connection).setReconnectionPolicy(ReconnectionManager.ReconnectionPolicy.FIXED_DELAY);
-                    ReconnectionManager.getInstanceFor(connection).enableAutomaticReconnection();
-
-                }
-                catch (Exception xee) {
-
-                    hasErrors = true;
-
-                    if (!loginDialog.isVisible()) {
-                        loginDialog.setVisible(true);
-                    }
-
-                    // Log Error
-                    Log.warning("Exception in Login:", xee);
-                    xee.printStackTrace();
-
-                    if (xee.getMessage() != null && xee.getMessage().contains("not-authorized")) {
-                        errorMessage = Res.getString("message.invalid.username.password");
-
-                    } else if (xee.getMessage() != null && (xee.getMessage().contains("java.net.UnknownHostException:") || xee.getMessage().contains("Network is unreachable") || xee.getMessage().contains("java.net.ConnectException: Connection refused:"))) {
-                        errorMessage = Res.getString("message.server.unavailable");
-
-                    } else if (xee.getMessage() != null && xee.getMessage().contains("Hostname verification of certificate failed")) {
-                        errorMessage = Res.getString("message.cert.hostname.verification.failed");
-
-                    } else if (xee.getMessage() != null && xee.getMessage().contains("unable to find valid certification path to requested target")) {
-                        errorMessage = Res.getString("message.cert.verification.failed");
-
-                    } else if (xee.getMessage() != null && xee.getMessage().contains("XMPPError: conflict")) {
-                        errorMessage = Res.getString("label.conflict.error");
-
-                    } else errorMessage = Res.getString("message.unrecoverable.error");
-
-                }
-
+            if ( localPref.isDebuggerEnabled() )
+            {
+                SmackConfiguration.DEBUG = true;
             }
 
-            if (hasErrors) {
+            SmackConfiguration.setDefaultPacketReplyTimeout( localPref.getTimeOut() * 1000 );
 
-            	final String finalerrorMessage = errorMessage;
-               EventQueue.invokeLater( () -> {
-                       progressBar.setVisible(false);
-                       //progressBar.setIndeterminate(false);
+            try
+            {
+                connection = new XMPPTCPConnection( retrieveConnectionConfiguration() );
+                connection.setParsingExceptionCallback( new ExceptionLoggingCallback() );
 
-                       // Show error dialog
-                       UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
-                       if (loginDialog.isVisible()) {
-                           if (!localPref.isSSOEnabled()) {
-JOptionPane.showMessageDialog(loginDialog, finalerrorMessage, Res.getString("title.login.error"),
-JOptionPane.ERROR_MESSAGE);
-                           }
-                           else {
-JOptionPane.showMessageDialog(loginDialog, Res.getString("title.advanced.connection.sso.unable"), Res.getString("title.login.error"),
-JOptionPane.ERROR_MESSAGE);
-//useSSO(false);
-//localPref.setSSOEnabled(false);
-                           }
-                       }
-                   } );
+                // If we want to launch the Smack debugger, we have to check if we are on the dispatch thread, because Smack will create an UI.
+                if ( localPref.isDebuggerEnabled() && !EventQueue.isDispatchThread() )
+                {
+                    // Exception handling should be no different from the regular flow.
+                    final Exception[] exception = new Exception[ 1 ];
+                    EventQueue.invokeAndWait( () -> {
+                        try
+                        {
+                            connection.connect();
+                        }
+                        catch ( IOException | SmackException | XMPPException e )
+                        {
+                            exception[ 0 ] = e;
+                        }
+                    } );
+                    if ( exception[ 0 ] != null )
+                    {
+                        throw exception[ 0 ];
+                    }
+                }
+                else
+                {
+                    connection.connect();
+                }
 
-                setEnabled(true);
+                if ( localPref.isLoginAnonymously() && !localPref.isSSOEnabled() )
+                {
+                    ( (XMPPTCPConnection) connection ).loginAnonymously();
+                }
+                else
+                {
+                    String resource = localPref.getResource();
+                    if ( Default.getBoolean( "HOSTNAME_AS_RESOURCE" ) || localPref.isUseHostnameAsResource() )
+                    {
+                        try
+                        {
+                            resource = InetAddress.getLocalHost().getHostName();
+                        }
+                        catch ( UnknownHostException e )
+                        {
+                            Log.warning( "Cannot set hostname as resource - unable to retrieve hostname.", e );
+                        }
+                    }
+                    else if ( Default.getBoolean( "VERSION_AS_RESOURCE" ) || localPref.isUseVersionAsResource() )
+                    {
+                        resource = JiveInfo.getName() + " " + JiveInfo.getVersion();
+                    }
+
+                    connection.login( getLoginUsername(), getLoginPassword(), modifyWildcards( resource ).trim() );
+                }
+
+                final SessionManager sessionManager = SparkManager.getSessionManager();
+                sessionManager.setServerAddress( connection.getServiceName() );
+                sessionManager.initializeSession( connection, getLoginUsername(), getLoginPassword() );
+                sessionManager.setJID( connection.getUser() );
+
+                final ReconnectionManager reconnectionManager = ReconnectionManager.getInstanceFor( connection );
+                reconnectionManager.setFixedDelay( localPref.getReconnectDelay() );
+                reconnectionManager.setReconnectionPolicy( ReconnectionManager.ReconnectionPolicy.FIXED_DELAY );
+                reconnectionManager.enableAutomaticReconnection();
+            }
+            catch ( Exception xee )
+            {
+                Log.error( "Exception in Login:", xee );
+
+                final String errorMessage;
+                if ( localPref.isSSOEnabled() )
+                {
+                    errorMessage = Res.getString( "title.advanced.connection.sso.unable" );
+                }
+                else if ( xee.getMessage() != null && xee.getMessage().contains( "not-authorized" ) )
+                {
+                    errorMessage = Res.getString( "message.invalid.username.password" );
+                }
+                else if ( xee.getMessage() != null && ( xee.getMessage().contains( "java.net.UnknownHostException:" ) || xee.getMessage().contains( "Network is unreachable" ) || xee.getMessage().contains( "java.net.ConnectException: Connection refused:" ) ) )
+                {
+                    errorMessage = Res.getString( "message.server.unavailable" );
+                }
+                else if ( xee.getMessage() != null && xee.getMessage().contains( "Hostname verification of certificate failed" ) )
+                {
+                    errorMessage = Res.getString( "message.cert.hostname.verification.failed" );
+                }
+                else if ( xee.getMessage() != null && xee.getMessage().contains( "unable to find valid certification path to requested target" ) )
+                {
+                    errorMessage = Res.getString( "message.cert.verification.failed" );
+                }
+                else if ( xee.getMessage() != null && xee.getMessage().contains( "XMPPError: conflict" ) )
+                {
+                    errorMessage = Res.getString( "label.conflict.error" );
+                }
+                else if ( xee instanceof SmackException )
+                {
+                    errorMessage = xee.getLocalizedMessage();
+                }
+                else
+                {
+                    errorMessage = Res.getString( "message.unrecoverable.error" );
+                }
+
+                EventQueue.invokeLater( () -> {
+                    progressBar.setVisible( false );
+
+                    // Show error dialog
+                    UIManager.put( "OptionPane.okButtonText", Res.getString( "ok" ) );
+                    if ( !loginDialog.isVisible() )
+                    {
+                        loginDialog.setVisible( true );
+                    }
+                    if ( loginDialog.isVisible() )
+                    {
+                        MessageDialog.showErrorDialog( loginDialog, errorMessage, xee );
+                        //JOptionPane.showMessageDialog( loginDialog, errorMessage, Res.getString( "title.login.error" ), JOptionPane.ERROR_MESSAGE );
+                    }
+                } );
+
+                setEnabled( true );
                 return false;
             }
 
             // Since the connection and workgroup are valid. Add a ConnectionListener
-            connection.addConnectionListener(SparkManager.getSessionManager());
-            //Initialize chat state notification mechanism in smack
-            ChatStateManager.getInstance(SparkManager.getConnection());
+            connection.addConnectionListener( SparkManager.getSessionManager() );
+
+            // Initialize chat state notification mechanism in smack
+            ChatStateManager.getInstance( SparkManager.getConnection() );
 
             // Persist information
-            localPref.setLastUsername(getLoginUsername());
+            localPref.setLastUsername( getLoginUsername() );
 
             // Check to see if the password should be saved or cleared from file.
-            if (savePasswordBox.isSelected()) {
-                try {
-                    localPref.setPasswordForUser(getBareJid(), getPassword());
+            if ( savePasswordBox.isSelected() )
+            {
+                try
+                {
+                    localPref.setPasswordForUser( getBareJid(), getPassword() );
                 }
-                catch (Exception e) {
-                    Log.error("Error encrypting password.", e);
+                catch ( Exception e )
+                {
+                    Log.error( "Error encrypting password.", e );
                 }
-            } else {
-                try {
-                    localPref.clearPasswordForUser(getBareJid());
-                } catch (Exception e) {
-                    Log.debug("Unable to clear saved password..." + e);
+            }
+            else
+            {
+                try
+                {
+                    localPref.clearPasswordForUser( getBareJid() );
+                }
+                catch ( Exception e )
+                {
+                    Log.debug( "Unable to clear saved password..." + e );
                 }
             }
 
-            localPref.setSavePassword(savePasswordBox.isSelected());
-            localPref.setAutoLogin(autoLoginBox.isSelected());
+            localPref.setSavePassword( savePasswordBox.isSelected() );
+            localPref.setAutoLogin( autoLoginBox.isSelected() );
 
-//            if (localPref.isSSOEnabled()) {
-//                localPref.setAutoLogin(true);
-//            }
-
-            localPref.setServer(serverField.getText());
-
-
+            localPref.setServer( serverField.getText() );
             SettingsManager.saveSettings();
 
-            return !hasErrors;
+            return true;
         }
 
 	public void handle(Callback[] callbacks) throws IOException  {
