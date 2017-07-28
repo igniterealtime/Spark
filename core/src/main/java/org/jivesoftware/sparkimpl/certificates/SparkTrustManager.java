@@ -47,6 +47,7 @@ import org.bouncycastle.asn1.x509.Extension;
 import org.bouncycastle.asn1.x509.GeneralName;
 import org.bouncycastle.asn1.x509.GeneralNames;
 import org.bouncycastle.cert.jcajce.JcaX509ExtensionUtils;
+import org.bouncycastle.jcajce.provider.asymmetric.X509;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
@@ -116,7 +117,7 @@ public class SparkTrustManager implements X509TrustManager {
 
             // check if certificate isn't self signed, self signed certificate still have to be in TrustStore to be
             // accepted
-            if (chain.length > 1) {
+            if (isSelfSigned(chain) == false) {
                 // validate certificate path
                 try {
                     validatePath(chain);
@@ -127,11 +128,11 @@ public class SparkTrustManager implements X509TrustManager {
                     throw new CertificateException("Certificate path validation failed", e);
 
                 }
-            } else if (chain.length == 1 && !acceptSelfSigned) {
+            } else if (isSelfSigned(chain) && !acceptSelfSigned) {
                 // Self Signed certificate while it isn't accepted
                 throw new CertificateException("Self Signed certificate");
 
-            } else if (chain.length == 1 && acceptSelfSigned) {
+            } else if (isSelfSigned(chain) && acceptSelfSigned) {
                 // check if certificate is in Keystore and check CRL, but do not validate path as certificate is Self
                 // Signed important reminder: hostname validation must be also turned off to accept self signed
                 // certificate
@@ -186,6 +187,17 @@ public class SparkTrustManager implements X509TrustManager {
         return X509Certs;
     }
 
+    /**
+     * Return true if the certificate chain contain only one Self Signed certificate
+     */
+    private boolean isSelfSigned(X509Certificate[] chain) {
+        if(chain[0].getIssuerX500Principal().getName().equals(chain[0].getSubjectX500Principal().getName())){
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
     /**
      * Validate certificate path
      * 
