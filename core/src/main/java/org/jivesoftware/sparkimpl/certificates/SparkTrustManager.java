@@ -9,8 +9,6 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
-import java.security.Provider;
-import java.security.Security;
 import java.security.cert.CRLException;
 import java.security.cert.CertPath;
 import java.security.cert.CertPathBuilder;
@@ -28,12 +26,14 @@ import java.security.cert.CertificateRevokedException;
 import java.security.cert.CollectionCertStoreParameters;
 import java.security.cert.PKIXBuilderParameters;
 import java.security.cert.PKIXCertPathValidatorResult;
+import java.security.cert.PKIXRevocationChecker;
 import java.security.cert.X509CRL;
 import java.security.cert.X509CertSelector;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.EnumSet;
 import java.util.Enumeration;
 import java.util.List;
 
@@ -47,8 +47,7 @@ import org.bouncycastle.asn1.x509.Extension;
 import org.bouncycastle.asn1.x509.GeneralName;
 import org.bouncycastle.asn1.x509.GeneralNames;
 import org.bouncycastle.cert.jcajce.JcaX509ExtensionUtils;
-import org.bouncycastle.jcajce.provider.asymmetric.X509;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
+
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
@@ -75,13 +74,11 @@ public class SparkTrustManager implements X509TrustManager {
     private CertStore crlStore;
     private Collection<X509CRL> crlCollection = new ArrayList<>();
     private X509TrustManager exceptionsTrustManager;
-    private Provider bcProvider = new BouncyCastleProvider(); // bc provider for path validation
     private KeyStore trustStore;
     private CertificateController certControll = new CertificateController(localPref);
 
     public SparkTrustManager() {
         exceptionsTrustManager = new SparkExceptionsTrustManager();
-        Security.addProvider(bcProvider);
 
         checkCRL = localPref.isCheckCRL();
         checkOCSP = localPref.isCheckOCSP();
@@ -211,8 +208,9 @@ public class SparkTrustManager implements X509TrustManager {
     private void validatePath(X509Certificate[] chain)
             throws NoSuchAlgorithmException, KeyStoreException, InvalidAlgorithmParameterException,
             CertPathValidatorException, CertPathBuilderException, CertificateException {
-
-        CertPathValidator certPathValidator = CertPathValidator.getInstance("PKIX", bcProvider);
+        
+        // PKIX algorithm is defined in rfc3280
+        CertPathValidator certPathValidator = CertPathValidator.getInstance("PKIX");
         CertPathBuilder certPathBuilder = CertPathBuilder.getInstance("PKIX");
 
         X509CertSelector certSelector = new X509CertSelector();
@@ -227,15 +225,24 @@ public class SparkTrustManager implements X509TrustManager {
         PKIXBuilderParameters parameters = new PKIXBuilderParameters(trustStore, certSelector);
 
         if (acceptRevoked == false) {
-            if (checkCRL) {
-                // check add CRL store and download CRL list to this store.
+            // check OCSP, CRL serve as backup
+            if (checkOCSP && checkCRL) {
+                // OCSP checking is done according to Java PKI Programmer's Guide, PKIXRevocationChecker was added in Java 8:
+                // https://docs.oracle.com/javase/8/docs/technotes/guides/security/certpath/CertPathProgGuide.html#PKIXRevocationChecker
+                PKIXRevocationChecker checker = (PKIXRevocationChecker) certPathBuilder.getRevocationChecker();
+                // soft fail option mean that OCSP or CRL must pass validation, in case when OCSP cannot be
+                // validated it will validate CRL and then if both cannot be checked it will fail
+                checker.setOptions(EnumSet.of(PKIXRevocationChecker.Option.SOFT_FAIL));
+                parameters.addCertPathChecker(checker);
+                // will use PKIXRevocationChecker instead of the default revocation checker
+                parameters.setRevocationEnabled(false);
+            } else if (!checkOCSP && checkCRL) {
+                // check only CRL, need custom implementation
+                // add CRL store and download CRL list to this store.
                 try {
                     loadCRL(chain);
                     parameters.addCertStore(crlStore);
-                    if (checkOCSP) {
-                        // check OCSP, important reminder if CRL is disabled then then OCSP will not work either 
-                        // parameters.setCertPathCheckers(checkers);
-                    }
+                    parameters.setRevocationEnabled(true);
 
                 } catch (CertStoreException | IOException | CRLException e) {
                     Log.error("Couldn't load crl", e);
@@ -243,6 +250,7 @@ public class SparkTrustManager implements X509TrustManager {
                 }
 
             } else {
+                //revocation checks disabled
                 parameters.setRevocationEnabled(false);
             }
 
