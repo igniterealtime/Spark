@@ -122,7 +122,7 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
         // Register with action menu
         JMenuItem startConversationtMenu = new JMenuItem("", SparkRes.getImageIcon(SparkRes.SMALL_MESSAGE_IMAGE));
         ResourceUtils.resButton(startConversationtMenu, Res.getString("menuitem.start.a.chat"));
-        if (Default.getBoolean("HIDE_START_A_CHAT") || !Enterprise.containsFeature(Enterprise.START_A_CHAT_FEATURE)){
+        if (!Default.getBoolean("HIDE_START_A_CHAT") || Enterprise.containsFeature(Enterprise.START_A_CHAT_FEATURE)){
         actionsMenu.add(startConversationtMenu,0);}
         startConversationtMenu.addActionListener( e -> {
             ContactList contactList = SparkManager.getWorkspace().getContactList();
