@@ -60,6 +60,7 @@ public class Enterprise {
     public static final String UPDATES_FEATURE = "updates";
     public static final String VIEW_NOTES_FEATURE = "view-notes";
     public static final String VIEW_TASKS_FEATURE = "view-tasks";
+    public static final String START_A_CHAT_FEATURE = "start-a-chat";
 
     private static DiscoverInfo featureInfo;
 
