@@ -1445,6 +1445,14 @@ public class LocalPreferences {
         props.setProperty("acceptExpired", Boolean.toString(acceptExpired));
     }
 
+    public boolean isAcceptNotValidYet() {
+        return Boolean.parseBoolean(props.getProperty("acceptNotValidYet", "false"));
+    }
+    
+    public void setAcceptNotValidYet(boolean acceptNotValidYet) {
+        props.setProperty("acceptNotValidYet", Boolean.toString(acceptNotValidYet));
+    }
+    
     public boolean isCheckCRL() {
         return Boolean.parseBoolean(props.getProperty("checkCRL", "true"));
     }
@@ -1460,5 +1468,13 @@ public class LocalPreferences {
     public void setCheckOCSP(boolean checkOCSP) {
         props.setProperty("checkOCSP", Boolean.toString(checkOCSP));
     }
+    public boolean isAllowSoftFail() {
+        return Boolean.parseBoolean(props.getProperty("allowSoftFail", "true"));
+    }
 
+    public void setAllowSoftFail(boolean allowSoftFail) {
+        props.setProperty("allowSoftFail", Boolean.toString(allowSoftFail));
+    }
+
+    
 }
