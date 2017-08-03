@@ -70,6 +70,7 @@ public class SparkTrustManager implements X509TrustManager {
     private boolean acceptNotValidYet;
     private boolean acceptRevoked;
     private boolean acceptSelfSigned;
+    private boolean allowSoftFail;
 
     private CertStore crlStore;
     private Collection<X509CRL> crlCollection = new ArrayList<>();
@@ -83,10 +84,11 @@ public class SparkTrustManager implements X509TrustManager {
         checkCRL = localPref.isCheckCRL();
         checkOCSP = localPref.isCheckOCSP();
         acceptExpired = localPref.isAcceptExpired();
-        // acceptNotValidYet = localPref.isAcceptNotValidYet();
+        acceptNotValidYet = localPref.isAcceptNotValidYet();
         acceptRevoked = localPref.isAcceptRevoked();
         acceptSelfSigned = localPref.isAcceptSelfSigned();
-
+        allowSoftFail = localPref.isAllowSoftFail();
+        
         loadTrustStore();
     }
 
@@ -188,11 +190,8 @@ public class SparkTrustManager implements X509TrustManager {
      * Return true if the certificate chain contain only one Self Signed certificate
      */
     private boolean isSelfSigned(X509Certificate[] chain) {
-        if(chain[0].getIssuerX500Principal().getName().equals(chain[0].getSubjectX500Principal().getName())){
-            return true;
-        } else {
-            return false;
-        }
+        return chain[0].getIssuerX500Principal().getName().equals(chain[0].getSubjectX500Principal().getName())
+                && chain.length == 1;
     }
     
     /**
@@ -232,7 +231,9 @@ public class SparkTrustManager implements X509TrustManager {
                 PKIXRevocationChecker checker = (PKIXRevocationChecker) certPathBuilder.getRevocationChecker();
                 // soft fail option mean that OCSP or CRL must pass validation, in case when OCSP cannot be
                 // validated it will validate CRL and then if both cannot be checked it will fail
-                checker.setOptions(EnumSet.of(PKIXRevocationChecker.Option.SOFT_FAIL));
+                if (allowSoftFail) {
+                    checker.setOptions(EnumSet.of(PKIXRevocationChecker.Option.SOFT_FAIL));
+                }
                 parameters.addCertPathChecker(checker);
                 // will use PKIXRevocationChecker instead of the default revocation checker
                 parameters.setRevocationEnabled(false);
