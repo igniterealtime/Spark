@@ -16,7 +16,6 @@
 
 package org.jivesoftware;
 
-import org.bouncycastle.jsse.provider.BouncyCastleJsseProvider;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
@@ -47,7 +46,6 @@ import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 import org.jivesoftware.sparkimpl.certificates.SparkSSLContext;
-import org.jivesoftware.sparkimpl.certificates.SparkTrustManager;
 import org.jivesoftware.sparkimpl.plugin.layout.LayoutSettings;
 import org.jivesoftware.sparkimpl.plugin.layout.LayoutSettingsManager;
 import org.jivesoftware.sparkimpl.settings.JiveInfo;
@@ -81,9 +79,6 @@ import java.net.UnknownHostException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.Principal;
-import java.security.Provider;
-import java.security.SecureRandom;
-import java.security.Security;
 import java.util.*;
 import java.util.List;
 
@@ -285,14 +280,10 @@ public class LoginDialog {
         }
 
         if (securityMode != ConnectionConfiguration.SecurityMode.disabled && !useOldSSL) {
-            builder.setPort(5222);
             // This use STARTTLS which starts initially plain connection to upgrade it to TLS, it use the same port as
             // plain connections which is 5222.
             try {
-                Provider bcProvider = new BouncyCastleJsseProvider();
-                Security.addProvider(bcProvider);
-                SSLContext context = SparkSSLContext.getInstance("TLS");
-                context.init(null, SparkTrustManager.getTrustManagerList(), new SecureRandom());
+                SSLContext context = SparkSSLContext.setUpContext();
                 builder.setCustomSSLContext(context);
                 builder.setSecurityMode( securityMode );
             } catch (NoSuchAlgorithmException | KeyManagementException e) {

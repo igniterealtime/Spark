@@ -24,9 +24,6 @@ import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
 import static java.awt.GridBagConstraints.*;
 
 /**
@@ -49,7 +46,6 @@ public class SecurityLoginSettingsPanel extends JPanel
     // Checkbox that toggles between 'old' style SSL (socket encryption, typically on port 5223), or STARTTLS. A check indicates 'old' behavior.
     private JCheckBox useSSLBox;
 
-    private JCheckBox acceptAllCertificatesBox;
     private JCheckBox disableHostnameVerificationBox;
 
     public SecurityLoginSettingsPanel( LocalPreferences localPreferences, JDialog optionsDialog )
@@ -73,7 +69,6 @@ public class SecurityLoginSettingsPanel extends JPanel
         modeDisabledRadio.setToolTipText( Res.getString( "tooltip.encryptionmode.disabled" ) );
 
         useSSLBox = new JCheckBox();
-        acceptAllCertificatesBox = new JCheckBox();
         disableHostnameVerificationBox = new JCheckBox();
 
         // .. Set labels/text for all the components.
@@ -81,7 +76,6 @@ public class SecurityLoginSettingsPanel extends JPanel
         ResourceUtils.resButton( modeIfPossibleRadio,            Res.getString( "radio.encryptionmode.ifpossible" ) );
         ResourceUtils.resButton( modeDisabledRadio,              Res.getString( "radio.encryptionmode.disabled" ) );
         ResourceUtils.resButton( useSSLBox,                      Res.getString( "label.old.ssl" ) );
-        ResourceUtils.resButton( acceptAllCertificatesBox,       Res.getString( "checkbox.accept.all.certificates" ) );
         ResourceUtils.resButton( disableHostnameVerificationBox, Res.getString( "checkbox.disable.hostname.verification" ) );
 
         // ... add the radio buttons to a group to make them interdependent.
@@ -94,7 +88,6 @@ public class SecurityLoginSettingsPanel extends JPanel
         modeDisabledRadio.addChangeListener( e -> {
             final boolean encryptionPossible = !modeDisabledRadio.isSelected();
             useSSLBox.setEnabled( encryptionPossible );
-            acceptAllCertificatesBox.setEnabled( encryptionPossible );
             disableHostnameVerificationBox.setEnabled( encryptionPossible );
         } );
 
@@ -103,7 +96,6 @@ public class SecurityLoginSettingsPanel extends JPanel
         modeIfPossibleRadio.setSelected( localPreferences.getSecurityMode() == ConnectionConfiguration.SecurityMode.ifpossible );
         modeDisabledRadio.setSelected( localPreferences.getSecurityMode() == ConnectionConfiguration.SecurityMode.disabled );
         useSSLBox.setSelected( localPreferences.isSSL() );
-        acceptAllCertificatesBox.setSelected( localPreferences.isAcceptAllCertificates() );
         disableHostnameVerificationBox.setSelected( localPreferences.isDisableHostnameVerification() );
 
         // ... place the components on the titled-border panel.
@@ -116,8 +108,7 @@ public class SecurityLoginSettingsPanel extends JPanel
         add( encryptionModePanel,            new GridBagConstraints( 0, 0, 1, 1, 1.0, 0.0, NORTHWEST, HORIZONTAL, DEFAULT_INSETS, 0, 0 ) );
 
         // ... place the other components under the titled-border panel.
-        add( acceptAllCertificatesBox,       new GridBagConstraints( 0, 1, 1, 1, 0.0, 0.0, NORTHWEST, HORIZONTAL, DEFAULT_INSETS, 0, 0 ) );
-        add( disableHostnameVerificationBox, new GridBagConstraints( 0, 2, 1, 1, 0.0, 1.0, NORTHWEST, HORIZONTAL, DEFAULT_INSETS, 0, 0 ) );
+        add( disableHostnameVerificationBox, new GridBagConstraints( 0, 1, 1, 1, 0.0, 1.0, NORTHWEST, HORIZONTAL, DEFAULT_INSETS, 0, 0 ) );
     }
 
     public boolean validate_settings()
@@ -140,7 +131,6 @@ public class SecurityLoginSettingsPanel extends JPanel
             localPreferences.setSecurityMode( ConnectionConfiguration.SecurityMode.disabled );
         }
         localPreferences.setSSL( useSSLBox.isSelected() );
-        localPreferences.setAcceptAllCertificates( acceptAllCertificatesBox.isSelected() );
         localPreferences.setDisableHostnameVerification( disableHostnameVerificationBox.isSelected() );
         SettingsManager.saveSettings();
     }
