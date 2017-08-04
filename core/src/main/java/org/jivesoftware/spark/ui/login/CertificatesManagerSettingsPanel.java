@@ -57,8 +57,22 @@ public class CertificatesManagerSettingsPanel extends JPanel implements ActionLi
 
 	private final static Insets DEFAULT_INSETS = new Insets(5, 5, 5, 5);
 	private final LocalPreferences localPreferences;
-	private CertificateController certControll;
-	private static JTable certTable;
+	
+	//table with certificates
+    private CertificateController certControll;
+    private static JTable certTable;
+    private JButton showCert = new JButton();
+
+    private JScrollPane scrollPane;
+    
+    //add certificate utilities
+    private JFileChooser fileChooser = new JFileChooser();
+    private JButton fileButton = new JButton();
+    private JPanel filePanel = new JPanel();
+    private FileNameExtensionFilter certFilter = new FileNameExtensionFilter(
+            Res.getString("menuitem.certificate.files.filter"), "cer", "crt", "der");
+	
+    //checboxes with options
 	private JCheckBox acceptAll = new JCheckBox();
 	private JCheckBox acceptExpired = new JCheckBox();
 	private JCheckBox acceptRevoked = new JCheckBox();
@@ -67,53 +81,16 @@ public class CertificatesManagerSettingsPanel extends JPanel implements ActionLi
 	private JCheckBox checkOCSP = new JCheckBox();
 	private JCheckBox allowSoftFail = new JCheckBox();
 	private JCheckBox acceptNotValidYet = new JCheckBox();
-	private JButton showCert = new JButton();
-	private JFileChooser fileChooser = new JFileChooser();
-	private JButton fileButton = new JButton();
-	private JScrollPane scrollPane;
-	private JPanel filePanel = new JPanel();
-	private FileNameExtensionFilter certFilter = new FileNameExtensionFilter(Res.getString("menuitem.certificate.files.filter"),"cer", "crt", "der");
 
 	public CertificatesManagerSettingsPanel(LocalPreferences localPreferences, JDialog optionsDialog) {
 
 		this.localPreferences = localPreferences;
+		
 		certControll = new CertificateController(localPreferences);
 		setLayout(new GridBagLayout());
-		certControll.createCertTableModel();
-		certTable = new JTable(certControll.getTableModel()){
-			
-			@Override
-	        public Component prepareRenderer(TableCellRenderer renderer, int rowIndex,
-	                int columnIndex) {
-	            JComponent component = (JComponent) super.prepareRenderer(renderer, rowIndex, columnIndex);  
-	            Object value = getModel().getValueAt(rowIndex, columnIndex);
-	            
-	    		DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-	    		centerRenderer.setHorizontalAlignment( JLabel.CENTER );
-	    		this.getColumnModel().getColumn(1).setCellRenderer(centerRenderer);
-	    		
-	            if (value.equals(Res.getString("cert.self.signed"))) {
-	                component.setBackground(Color.lightGray);
-	            } else if (value.equals(Res.getString("cert.valid"))) {
-	                component.setBackground(Color.green);
-	            } else if(value.equals(Res.getString("cert.expired")) || value.equals(Res.getString("cert.not.valid.yet"))){
-	            	component.setBackground(Color.red);
-	            } else {
-	               component.setBackground(Color.white);
-	            }
-	            return component;
-	        }
-			
-		};
-
 		
-		scrollPane = new JScrollPane(certTable);
-		certTable.setFillsViewportHeight(true);
-		certTable.setAutoCreateRowSorter(true);
+		addCertTableToPanel();
 		
-		resizeColumnWidth(certTable);
-		certTable.setAutoResizeMode(JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
-
 		ResourceUtils.resButton(acceptAll, Res.getString("checkbox.accept.all"));
 		ResourceUtils.resButton(acceptExpired, Res.getString("checkbox.accept.expired"));
 		ResourceUtils.resButton(acceptNotValidYet, Res.getString("checkbox.accept.not.valid.yet"));
@@ -133,8 +110,7 @@ public class CertificatesManagerSettingsPanel extends JPanel implements ActionLi
 		checkCRL.setSelected(localPreferences.isCheckCRL());
 		checkOCSP.setSelected(localPreferences.isCheckOCSP());
 		allowSoftFail.setSelected(localPreferences.isAllowSoftFail());
-		
-		
+			
 		acceptAll.addActionListener(this);
 		certTable.addMouseListener(this);
 		certTable.getModel().addTableModelListener(this);
@@ -144,6 +120,7 @@ public class CertificatesManagerSettingsPanel extends JPanel implements ActionLi
 		checkCRL.addActionListener(this);
 		checkOCSP.addActionListener(this);
 		acceptRevoked.addActionListener(this);
+		
 		acceptExpired.setEnabled(!acceptAll.isSelected());
 		acceptNotValidYet.setEnabled(!acceptAll.isSelected());
 		acceptRevoked.setEnabled(!acceptAll.isSelected());
@@ -151,7 +128,6 @@ public class CertificatesManagerSettingsPanel extends JPanel implements ActionLi
 		checkCRL.setEnabled(!acceptRevoked.isSelected());
 		checkOCSP.setEnabled(checkCRL.isSelected());
 		allowSoftFail.setEnabled(checkOCSP.isSelected());
-
 		filePanel.setLayout(new GridBagLayout());
 		filePanel.add(fileButton, new GridBagConstraints(0, 0, 2, 1, 1.0, 1.0, WEST, HORIZONTAL, DEFAULT_INSETS, 40, 0));
 		filePanel.setBorder(
@@ -174,6 +150,46 @@ public class CertificatesManagerSettingsPanel extends JPanel implements ActionLi
 		add(showCert,             new GridBagConstraints(4, 1, 2, 1, 0.0, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
 		add(filePanel,            new GridBagConstraints(4, 2, 2, 4, 0.0, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
 	}
+
+    public void addCertTableToPanel() {
+        certControll.loadKeysStores();
+        certControll.createCertTableModel();
+        certTable = new JTable(certControll.getTableModel()){
+            
+            @Override
+            public Component prepareRenderer(TableCellRenderer renderer, int rowIndex,
+                    int columnIndex) {
+                JComponent component = (JComponent) super.prepareRenderer(renderer, rowIndex, columnIndex);  
+                Object value = getModel().getValueAt(rowIndex, columnIndex);
+                
+                DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+                centerRenderer.setHorizontalAlignment( JLabel.CENTER );
+                this.getColumnModel().getColumn(1).setCellRenderer(centerRenderer);
+                
+                
+                 if (value.equals(Res.getString("cert.valid"))) {
+                    component.setBackground(Color.green);
+                } else if (value.equals(Res.getString("cert.expired")) || value
+                        .equals(Res.getString("cert.not.valid.yet")) || value.equals(Res.getString("cert.revoked"))) {
+                    component.setBackground(Color.red);
+                } else {
+                   component.setBackground(Color.white);
+                }
+                return component;
+            }
+            
+        };
+
+        
+        scrollPane = new JScrollPane(certTable);
+        certTable.setFillsViewportHeight(true);
+        certTable.setAutoCreateRowSorter(true);
+        
+        certControll.resizeColumnWidth(certTable);
+        certTable.setAutoResizeMode(JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
+
+        
+    }
 
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -201,7 +217,6 @@ public class CertificatesManagerSettingsPanel extends JPanel implements ActionLi
                 acceptExpired.setEnabled(true);
                 acceptNotValidYet.setEnabled(true);
                 acceptRevoked.setEnabled(true);
-
             }
         } else if (e.getSource() == showCert) {
             certControll.showCertificate();
@@ -315,20 +330,7 @@ public class CertificatesManagerSettingsPanel extends JPanel implements ActionLi
 		return certTable;
 	}
 
-	private void resizeColumnWidth(JTable table) {
-		
-		SwingUtilities.invokeLater(new Runnable() {
-			
-			@Override
-			public void run() {
-				final TableColumnModel columnModel = table.getColumnModel();
-				final int maxWidth = certTable.getParent().getWidth();
-				columnModel.getColumn(1).setPreferredWidth(80);
-				columnModel.getColumn(2).setPreferredWidth(60);
-				columnModel.getColumn(0).setPreferredWidth(maxWidth - 140);
-			}
-		});
-	}
+	
 	
     public void saveSettings() {
         localPreferences.setAcceptExpired(acceptExpired.isSelected());
@@ -339,6 +341,7 @@ public class CertificatesManagerSettingsPanel extends JPanel implements ActionLi
         localPreferences.setCheckCRL(checkCRL.isSelected());
         localPreferences.setCheckOCSP(checkOCSP.isSelected());
         localPreferences.setAllowSoftFail(allowSoftFail.isSelected());
+        certControll.overWriteKeyStores();
         SettingsManager.saveSettings();
     }
 }
