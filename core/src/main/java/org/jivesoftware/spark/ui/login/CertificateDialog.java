@@ -162,6 +162,22 @@ public class CertificateDialog extends JDialog implements ActionListener {
 		subjectUniqueIDField.setLineWrap(true);
 		unsupportedExtensionsArea.setLineWrap(true);
 		certStatusArea.setLineWrap(true);
+
+		versionField.setEditable(false);
+        serialNumberField.setEditable(false);
+        signatureValueField.setEditable(false);
+        signatureAlgorithmField.setEditable(false);
+        issuerField.setEditable(false);
+        subjectField.setEditable(false);
+        notBeforeField.setEditable(false);
+        notAfterField.setEditable(false);
+        publicKeyField.setEditable(false);
+        publicKeyAlgorithmField.setEditable(false);
+        issuerUniqueIDField.setEditable(false);
+        subjectUniqueIDField.setEditable(false);
+        unsupportedExtensionsArea.setEditable(false);
+        certStatusArea.setEditable(false);
+
 		
 		okButton.addActionListener(this);
 		cancelButton.addActionListener(this);
@@ -251,6 +267,7 @@ public class CertificateDialog extends JDialog implements ActionListener {
 		    JTextArea extensionArea = new JTextArea();
 		    extensionArea.setLineWrap(true);
 		    extensionArea.setText(value);
+		    extensionArea.setEditable(false);
 		    JLabel extensionLabel = new JLabel();
 		    ResourceUtils.resLabel(extensionLabel, extensionArea, OIDTranslator.getDescription(oid));
 

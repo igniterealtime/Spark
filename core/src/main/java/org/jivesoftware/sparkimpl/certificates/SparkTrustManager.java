@@ -47,7 +47,6 @@ import org.bouncycastle.asn1.x509.Extension;
 import org.bouncycastle.asn1.x509.GeneralName;
 import org.bouncycastle.asn1.x509.GeneralNames;
 import org.bouncycastle.cert.jcajce.JcaX509ExtensionUtils;
-
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
@@ -73,14 +72,13 @@ public class SparkTrustManager implements X509TrustManager {
     private boolean allowSoftFail;
 
     private CertStore crlStore;
-    private Collection<X509CRL> crlCollection = new ArrayList<>();
     private X509TrustManager exceptionsTrustManager;
-    private KeyStore trustStore;
+    private KeyStore trustStore, blackStore;
     private CertificateController certControll = new CertificateController(localPref);
-
+    private Collection<X509CRL> crlCollection = new ArrayList<>();
+    
     public SparkTrustManager() {
         exceptionsTrustManager = new SparkExceptionsTrustManager();
-
         checkCRL = localPref.isCheckCRL();
         checkOCSP = localPref.isCheckOCSP();
         acceptExpired = localPref.isAcceptExpired();
@@ -88,7 +86,7 @@ public class SparkTrustManager implements X509TrustManager {
         acceptRevoked = localPref.isAcceptRevoked();
         acceptSelfSigned = localPref.isAcceptSelfSigned();
         allowSoftFail = localPref.isAllowSoftFail();
-        
+
         loadTrustStore();
     }
 
@@ -162,6 +160,9 @@ public class SparkTrustManager implements X509TrustManager {
         try {
             // See how many certificates are in the keystore.
             int numberOfEntry = trustStore.size();
+            if (acceptRevoked) {
+                numberOfEntry += blackStore.size();
+            }
             // If there are any certificates in the keystore.
             if (numberOfEntry > 0) {
                 // Create an array of X509Certificates
@@ -176,6 +177,15 @@ public class SparkTrustManager implements X509TrustManager {
                 while (aliases.hasMoreElements()) {
                     X509Certs[i] = (X509Certificate) trustStore.getCertificate((String) aliases.nextElement());
                     i++;
+                }
+                if (acceptRevoked) {
+                    Enumeration<String> blackListedAliases = blackStore.aliases();
+                    // Add all certificates from black list KeyStore
+                    while (aliases.hasMoreElements()) {
+                        X509Certs[i] = (X509Certificate) trustStore
+                                .getCertificate((String) blackListedAliases.nextElement());
+                        i++;
+                    }
                 }
 
             }
@@ -207,7 +217,6 @@ public class SparkTrustManager implements X509TrustManager {
     private void validatePath(X509Certificate[] chain)
             throws NoSuchAlgorithmException, KeyStoreException, InvalidAlgorithmParameterException,
             CertPathValidatorException, CertPathBuilderException, CertificateException {
-        
         // PKIX algorithm is defined in rfc3280
         CertPathValidator certPathValidator = CertPathValidator.getInstance("PKIX");
         CertPathBuilder certPathBuilder = CertPathBuilder.getInstance("PKIX");
@@ -251,10 +260,8 @@ public class SparkTrustManager implements X509TrustManager {
                 }
 
             } else {
-                //revocation checks disabled
                 parameters.setRevocationEnabled(false);
             }
-
         } else {
             parameters.setRevocationEnabled(false);
         }
@@ -276,7 +283,18 @@ public class SparkTrustManager implements X509TrustManager {
             }
         } catch (CertificateRevokedException e) {
             Log.warning("Certificate was revoked", e);
-            // moveToBlackList(cert);
+            for (X509Certificate cert : chain) {
+                for (X509CRL crl : crlCollection) {
+                    if (crl.isRevoked(cert)) {
+                        try {
+                            moveToBlackList(cert);
+                        } catch (IOException e1) {
+                            Log.error("Couldn't move to the blacklist", e1);
+                        }
+                        break;
+                    }
+                }
+            }
             throw new CertificateException("Certificate was revoked");
         }
     }
@@ -310,8 +328,7 @@ public class SparkTrustManager implements X509TrustManager {
     /**
      * Check if certificate have basic constraints exception.
      * 
-     * @param chain
-     *            - with certificates given by server
+     * @param certificate given by server
      * @throws CertificateException
      */
     private void checkBasicConstraints(X509Certificate cert) throws CertificateException {
@@ -321,15 +338,24 @@ public class SparkTrustManager implements X509TrustManager {
     }
 
     /**
-     * loads truststore
+     * loads truststore and potentially (depending on settings) blacklist
      */
     private void loadTrustStore() {
         try (FileInputStream inputStream = new FileInputStream(CertificateController.TRUSTED)) {
             trustStore = KeyStore.getInstance("JKS");
             trustStore.load(inputStream, CertificateController.passwd);
         } catch (NoSuchAlgorithmException | CertificateException | IOException | KeyStoreException e) {
-            Log.error("Error at accesing truststore", e);
+            Log.error("Error at accesing Truststore", e);
         }
+        if(acceptRevoked){
+            try (FileInputStream inputStream = new FileInputStream(CertificateController.BLACKLIST)) {
+                blackStore = KeyStore.getInstance("JKS");
+                blackStore.load(inputStream, CertificateController.passwd);
+            } catch (NoSuchAlgorithmException | CertificateException | IOException | KeyStoreException e) {
+                Log.error("Error at accesing blacklist Keystore", e);
+            }   
+        }
+        
     }
 
     private void loadCRL(X509Certificate[] chain) throws IOException, InvalidAlgorithmParameterException,

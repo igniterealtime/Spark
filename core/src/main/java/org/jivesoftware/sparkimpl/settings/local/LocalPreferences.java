@@ -1468,6 +1468,7 @@ public class LocalPreferences {
     public void setCheckOCSP(boolean checkOCSP) {
         props.setProperty("checkOCSP", Boolean.toString(checkOCSP));
     }
+
     public boolean isAllowSoftFail() {
         return Boolean.parseBoolean(props.getProperty("allowSoftFail", "true"));
     }
