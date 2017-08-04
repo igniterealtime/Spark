@@ -1476,6 +1476,14 @@ public class LocalPreferences {
     public void setAllowSoftFail(boolean allowSoftFail) {
         props.setProperty("allowSoftFail", Boolean.toString(allowSoftFail));
     }
+    
+    public boolean isAllowClientSideAuthentication() {
+        return Boolean.parseBoolean(props.getProperty("allowClientSideAuthentication", "false"));
+    }
+
+    public void setAllowClientSideAuthentication(boolean allowClientSideAuthentication) {
+        props.setProperty("allowClientSideAuthentication", Boolean.toString(allowClientSideAuthentication));
+    }
 
     
 }

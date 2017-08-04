@@ -1,0 +1,265 @@
+package org.jivesoftware.spark.ui.login;
+
+import static java.awt.GridBagConstraints.HORIZONTAL;
+import static java.awt.GridBagConstraints.WEST;
+
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.HeadlessException;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.io.File;
+import java.io.IOException;
+import java.security.KeyPair;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
+
+import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.filechooser.FileNameExtensionFilter;
+
+import org.bouncycastle.operator.OperatorCreationException;
+import org.bouncycastle.pkcs.PKCS10CertificationRequest;
+import org.jivesoftware.resource.Res;
+import org.jivesoftware.spark.util.ResourceUtils;
+import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkimpl.certificates.IdentityController;
+import org.jivesoftware.sparkimpl.certificates.PemHelper;
+import org.jivesoftware.sparkimpl.certificates.PemHelper.PemBuilder;
+import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
+import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+
+public class MutualAuthenticationSettingsPanel extends JPanel implements ActionListener, MouseListener {
+    private final static Insets DEFAULT_INSETS = new Insets(5, 5, 5, 5);
+
+    private IdentityController idControll;
+    
+    private static JTable idTable;
+    private static JScrollPane scrollPane;
+    
+    private JFileChooser fileChooser = new JFileChooser();
+    private JButton addCertButton = new JButton();
+    private JButton showCert =      new JButton();
+    
+    private JPanel uploadCertificatePanel = new JPanel();
+    private JPanel creationPanel =          new JPanel();
+    
+    private JRadioButton selfSignedCertificate =     new JRadioButton();
+    private JRadioButton certificateSigningRequest = new JRadioButton();
+    private JButton createButton = new JButton();
+    
+    private JTextField commonNameField =        new JTextField();
+    private JTextField organizationUnitField =  new JTextField();
+    private JTextField organizationField =      new JTextField();
+    private JTextField countryField =           new JTextField();
+    private JTextField cityField =              new JTextField();
+    
+    private JLabel commonNameLabel =        new JLabel();
+    private JLabel organizationUnitLabel =  new JLabel();
+    private JLabel organizationLabel =      new JLabel();
+    private JLabel countryLabel =           new JLabel();
+    private JLabel cityLabel =              new JLabel();
+    private ButtonGroup radioGroup = new ButtonGroup();
+    //current Spark version support only .pem format of RSA private key with certificate
+    private FileNameExtensionFilter certFilter = new FileNameExtensionFilter(Res.getString("menuitem.certificate.files.filter"),"pem");
+
+    public MutualAuthenticationSettingsPanel(LocalPreferences localPreferences, JDialog optionsDialog) {
+        setLayout(new GridBagLayout());
+        
+        idControll = new IdentityController(localPreferences);
+        idTable = new JTable(IdentityController.getTableModel());
+        idTable.addMouseListener(this);
+        idTable.setPreferredSize(new Dimension(50, 50));
+        idTable.setPreferredScrollableViewportSize(idTable.getPreferredSize());
+        idTable.setFillsViewportHeight(true);
+        scrollPane = new JScrollPane(idTable);
+        scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+        
+        ResourceUtils.resButton(addCertButton, Res.getString("label.choose.file"));
+        
+        ResourceUtils.resButton(selfSignedCertificate,      Res.getString("cert.self.signed"));
+        ResourceUtils.resButton(certificateSigningRequest,  Res.getString("cert.sign.request"));
+        
+        ResourceUtils.resLabel( commonNameLabel,        commonNameField,        Res.getString("cert.common.name"));
+        ResourceUtils.resLabel( organizationUnitLabel,  organizationUnitField,  Res.getString("cert.organization.unit"));
+        ResourceUtils.resLabel( organizationLabel,      organizationField,      Res.getString("cert.organization"));
+        ResourceUtils.resLabel( countryLabel,           countryField,           Res.getString("cert.country"));
+        ResourceUtils.resLabel( cityLabel,              cityField,              Res.getString("cert.city"));
+        
+        ResourceUtils.resButton(createButton, Res.getString("create"));
+        ResourceUtils.resButton(showCert, Res.getString("button.show.certificate"));
+
+        
+        uploadCertificatePanel.setLayout(new GridBagLayout());
+        uploadCertificatePanel.setBorder(BorderFactory.createTitledBorder(Res.getString("label.certificate.add.certificate.to.identitystore")));
+        uploadCertificatePanel.add(addCertButton,    new GridBagConstraints(0, 0, 1, 1, 0.05, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
+        
+        radioGroup.add(selfSignedCertificate);
+        radioGroup.add(certificateSigningRequest);
+        certificateSigningRequest.setSelected(true);
+        
+        creationPanel.setLayout(new GridBagLayout());
+
+        creationPanel.add(certificateSigningRequest, new GridBagConstraints(0, 0, 1, 1, 0.05, 1.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
+        creationPanel.add(selfSignedCertificate,     new GridBagConstraints(1, 0, 1, 1, 0.95, 1.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
+        
+        creationPanel.add(commonNameLabel,           new GridBagConstraints(0, 1, 1, 1, 0.05, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
+        creationPanel.add(organizationUnitLabel,     new GridBagConstraints(0, 2, 1, 1, 0.05, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
+        creationPanel.add(organizationLabel,         new GridBagConstraints(0, 3, 1, 1, 0.05, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
+        creationPanel.add(countryLabel,              new GridBagConstraints(0, 4, 1, 1, 0.05, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
+        creationPanel.add(cityLabel,                 new GridBagConstraints(0, 5, 1, 1, 0.05, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
+        creationPanel.add(createButton,              new GridBagConstraints(0, 6, 1, 1, 0.05, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
+        
+        creationPanel.add(commonNameField,           new GridBagConstraints(1, 1, 1, 1, 0.95, 1.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
+        creationPanel.add(organizationUnitField,     new GridBagConstraints(1, 2, 1, 1, 0.95, 1.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
+        creationPanel.add(organizationField,         new GridBagConstraints(1, 3, 1, 1, 0.95, 1.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
+        creationPanel.add(countryField,              new GridBagConstraints(1, 4, 1, 1, 0.95, 1.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
+        creationPanel.add(cityField,                 new GridBagConstraints(1, 5, 1, 1, 0.95, 1.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
+        
+        
+        add(scrollPane,             new GridBagConstraints(0, 0, 1, 1, 1.0, 0.3, WEST, GridBagConstraints.BOTH, DEFAULT_INSETS, 0, 0));
+        add(uploadCertificatePanel, new GridBagConstraints(0, 1, 1, 1, 0.2, 0.2, WEST, GridBagConstraints.BOTH, new Insets(5, 5, 5, 400), 0, 0));
+        add(showCert,               new GridBagConstraints(0, 2, 1, 1, 0.2, 0.2, WEST, HORIZONTAL, new Insets(5, 5, 5, 400), 0, 0));
+        add(creationPanel,          new GridBagConstraints(0, 3, 1, 6, 1.0, 0.5, WEST, GridBagConstraints.BOTH, DEFAULT_INSETS, 0, 0));
+    
+        showCert.setEnabled(false);
+        showCert.addActionListener(this);
+        addCertButton.addActionListener(this);
+        createButton.addActionListener(this);
+        
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if(e.getSource() == addCertButton){
+           addCertificate();
+        }
+        if(e.getSource() == idTable){
+            showCert.setEnabled(true);    
+        }
+        if(e.getSource() == showCert){
+            idControll.showCertificate();
+        }
+        if (e.getSource() == createButton) {
+            idControll.setUpData(commonNameField.getText(), organizationUnitField.getText(),
+                    organizationField.getText(), countryField.getText(), cityField.getText());
+            if (certificateSigningRequest.isSelected()) {
+                try {
+                    KeyPair keyPair = idControll.createKeyPair();
+
+                    PKCS10CertificationRequest request = idControll.createCSR(keyPair);
+                    PemHelper.saveToPemFile(keyPair, IdentityController.KEY_FILE);
+                    PemHelper.saveToPemFile(request, IdentityController.CSR_FILE);
+                    JOptionPane.showMessageDialog(null, Res.getString("dialog.certificate.request.has.been.created") + IdentityController.SECURITY_DIRECTORY.toString());
+                } catch (OperatorCreationException | NoSuchAlgorithmException | IOException
+                        | NoSuchProviderException e1) {
+                    Log.error("Couldn't create Certificate Signing Request", e1);
+                }
+            } else if (selfSignedCertificate.isSelected()) {
+                try {
+                    KeyPair keyPair = idControll.createKeyPair();
+                    PemBuilder pemBuilder = new PemHelper().new PemBuilder();
+
+                    X509Certificate cert = idControll.createSelfSignedCertificate(idControll.createKeyPair());
+                    pemBuilder.add(keyPair);
+                    pemBuilder.add(cert);
+                    pemBuilder.saveToPemFile(IdentityController.CERT_FILE);
+                    JOptionPane.showMessageDialog(null, Res.getString("dialog.self.signed.certificate.has.been.created") + IdentityController.SECURITY_DIRECTORY.toString());
+                    
+
+                } catch (NoSuchAlgorithmException | NoSuchProviderException | IOException | OperatorCreationException
+                        | CertificateException e1) {
+                    Log.error("Couldn't create Self Signed Certificate", e1);
+                }
+            }
+        }        
+        
+    }
+
+    public static JTable getIdTable() {
+        return idTable;
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+        if (e.getClickCount() == 2) {
+            JTable source = (JTable) e.getSource();
+            if (e.getSource() == idTable) {
+                idControll.showCertificate();
+            }
+        }
+        if (e.getSource() == idTable) {
+            showCert.setEnabled(true);
+        }
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+
+    }
+
+    private void addCertificate() {
+
+        fileChooser.setAcceptAllFileFilterUsed(false);
+        fileChooser.addChoosableFileFilter(certFilter);
+        fileChooser.setFileFilter(certFilter);
+
+        int retVal = fileChooser.showOpenDialog(this);
+        if (retVal == JFileChooser.APPROVE_OPTION) {
+
+            File file = fileChooser.getSelectedFile();
+            try {
+                idControll.addEntryToKeyStore(file);
+                // idControll.addCertificateToKeystore(file);
+            } catch (IOException e) {
+                Log.error("Cannot upload certificate file", e);
+            } catch (IllegalArgumentException e) {
+                Log.warning("Certificate or it's alias cannot be null", e);
+            } catch (HeadlessException e) {
+                Log.error("Error at setting certificate alias", e);
+            }
+        }
+    }
+
+    public void saveSettings() {
+
+        idControll.overWriteKeyStores();
+        SettingsManager.saveSettings();
+
+    }
+}

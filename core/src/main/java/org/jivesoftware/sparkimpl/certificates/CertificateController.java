@@ -14,14 +14,11 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
-import java.util.Base64;
 import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.naming.InvalidNameException;
-import javax.naming.ldap.LdapName;
-import javax.naming.ldap.Rdn;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
@@ -43,27 +40,22 @@ import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
  *
  */
 
-public class CertificateController {
+public class CertificateController extends CertManager {
 	public final static File TRUSTED = new File(Spark.getSparkUserHome() + File.separator + "security" + File.separator + "truststore");
 	public final static File BLACKLIST = new File(Spark.getSparkUserHome() + File.separator + "security" + File.separator + "blacklist");
 	public final static File EXCEPTIONS = new File(Spark.getSparkUserHome() + File.separator + "security" + File.separator + "exceptions");
-	public final static char[] passwd = "changeit".toCharArray();
+	
 	
 	private KeyStore trustStore, blackListStore, exceptionsStore;
 	
-	//contain all certificates, used for help in managing certificates, but isn't directly displayed on the certificate table
-	private List<CertificateModel> allCertificates = new LinkedList<>(); 
 	private List<CertificateModel> trustedCertificates = new LinkedList<>(); // contain certificates which aren't revoked or exempted
 	private List<CertificateModel> exemptedCertificates = new LinkedList<>(); // contain only certificates from exempted list
 	private List<CertificateModel> blackListedCertificates = new LinkedList<>(); //contain only revoked certificates
 	
-	private static DefaultTableModel tableModel;
-	private Object[] certEntry;
-	private LocalPreferences localPreferences;
+	
 	private static final String[] COLUMN_NAMES = { Res.getString("table.column.certificate.subject"),
 			Res.getString("table.column.certificate.validity"), Res.getString("table.column.certificate.exempted") };
 	private static final int NUMBER_OF_COLUMNS = COLUMN_NAMES.length;
-	private boolean addToKeystore;
 
     public CertificateController(LocalPreferences localPreferences) {
         if (localPreferences == null) {
@@ -75,7 +67,8 @@ public class CertificateController {
     /**
      * Load KeyStores files.
      */
-    public void loadKeysStores() {
+    @Override
+    public void loadKeyStores() {
         try (InputStream inputStram = new FileInputStream(TRUSTED)) {
 
             trustStore = KeyStore.getInstance("JKS");
@@ -122,9 +115,7 @@ public class CertificateController {
 
     }
 
-    /**
-     * Save KeyStores.
-     */
+    @Override
     public void overWriteKeyStores() {
         try (OutputStream outputStream = new FileOutputStream(TRUSTED)) {
             trustStore.store(outputStream, passwd);
@@ -174,7 +165,7 @@ public class CertificateController {
 		};
 
 		tableModel.setColumnIdentifiers(COLUMN_NAMES);
-		certEntry = new Object[NUMBER_OF_COLUMNS];
+		Object[] certEntry;certEntry = new Object[NUMBER_OF_COLUMNS];
 
         if (trustedCertificates != null) {
             // put certificate from arrayList into rows with chosen columns
@@ -210,6 +201,7 @@ public class CertificateController {
 	 * Useful for checkboxes where it's selected value indicates where certificate should be moved.
 	 * @param checked should it be moved?
 	 */
+    @Override
 	public void addOrRemoveFromExceptionList(boolean checked) {
 		int row = CertificatesManagerSettingsPanel.getCertTable().getSelectedRow();
 		if (checked) {
@@ -232,6 +224,7 @@ public class CertificateController {
 	 * 
 	 * @param Certificate Model entry
 	 */
+    @Override
 	public boolean isOnExceptionList(CertificateModel cert) {
 		return exemptedCertificates.contains(cert);
     }
@@ -326,31 +319,34 @@ public class CertificateController {
 	 * @throws NoSuchAlgorithmException
 	 * @throws CertificateException
 	 */
-	public void deleteCertificate(String alias) throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException{
-		int dialogButton = JOptionPane.YES_NO_OPTION;
-		int dialogValue = JOptionPane.showConfirmDialog(null, Res.getString("dialog.certificate.sure.to.delete"), null, dialogButton);
-		if (dialogValue == JOptionPane.YES_OPTION) {
-            KeyStore store = getAliasKeyStore(alias);            
-                store.deleteEntry(alias);
-                    JOptionPane.showMessageDialog(null, Res.getString("dialog.certificate.has.been.deleted"));
-                    CertificateModel model = null;
-                    for (CertificateModel certModel : allCertificates) {
-                        if (certModel.getAlias().equals(alias)) {
-                            model = certModel;
-                        }
-                    }
-                    exemptedCertificates.remove(model);
-                    trustedCertificates.remove(model);
-                    blackListedCertificates.remove(model);
-                    allCertificates.remove(model);
+    @Override
+    public void deleteEntry(String alias) throws KeyStoreException {
+        int dialogButton = JOptionPane.YES_NO_OPTION;
+        int dialogValue = JOptionPane.showConfirmDialog(null, Res.getString("dialog.certificate.sure.to.delete"), null,
+                dialogButton);
+        if (dialogValue == JOptionPane.YES_OPTION) {
+            KeyStore store = getAliasKeyStore(alias);
+            store.deleteEntry(alias);
+            JOptionPane.showMessageDialog(null, Res.getString("dialog.certificate.has.been.deleted"));
+            CertificateModel model = null;
+            for (CertificateModel certModel : allCertificates) {
+                if (certModel.getAlias().equals(alias)) {
+                    model = certModel;
                 }
-		    refreshCertTable();
+            }
+            exemptedCertificates.remove(model);
+            trustedCertificates.remove(model);
+            blackListedCertificates.remove(model);
+            allCertificates.remove(model);
+        }
+        refreshCertTable();
     }
 
     /**
      * Refresh certificate table to make visible changes in it's model
      */
-    private void refreshCertTable() {
+	@Override
+    public void refreshCertTable() {
         createCertTableModel();
         SwingUtilities.invokeLater(new Runnable() {
 
@@ -451,9 +447,10 @@ public class CertificateController {
     }
 
 	/**
-	 * This method add certifiate from file ((*.cer), (*.crt), (*.der)) to Truststore.
+	 * This method add certificate from file (*.cer), (*.crt), (*.der), (*.pem) to Identity Store.
 	 * 
 	 * @param file File with certificate that is added
+	 * @throws FileNotFoundException 
 	 * @throws KeyStoreException
 	 * @throws CertificateException
 	 * @throws NoSuchAlgorithmException
@@ -461,8 +458,9 @@ public class CertificateController {
 	 * @throws InvalidNameException 
 	 * @throws HeadlessException 
 	 */	
-    public void addCertificateToKeystore(File file) throws KeyStoreException, CertificateException,
-            NoSuchAlgorithmException, IOException, HeadlessException, InvalidNameException {
+	@Override
+    public void addEntryToKeyStore(File file) throws FileNotFoundException, IOException, CertificateException,
+            KeyStoreException, HeadlessException, InvalidNameException {
         if (file == null) {
             throw new IllegalArgumentException();
         }
@@ -486,43 +484,6 @@ public class CertificateController {
         }
     }
 	
-	/**
-	 * Extract from certificate common name ("CN") and returns it to use as certificate name.
-	 * This method also assure that it will not add second same alias to Truststore by adding number to alias. 
-	 * In case when common name cannot be extracted method will return "cert{number}".
-	 * 
-	 * @param cert Certificate which Common Name is meant to use
-	 * @return String Common Name of the certificate
-	 * @throws InvalidNameException
-	 * @throws HeadlessException
-	 * @throws KeyStoreException
-	 */
-	private String useCommonNameAsAlias(X509Certificate cert) throws InvalidNameException, HeadlessException, KeyStoreException {
-		String alias = null;
-		String dn = cert.getSubjectX500Principal().getName();
-		LdapName ldapDN = new LdapName(dn);
-		for (Rdn rdn : ldapDN.getRdns()) {
-			if (rdn.getType().equals("CN")) {
-				alias = rdn.getValue().toString();
-				int i = 1;
-				while (checkForSameAlias(alias)) {
-					alias = alias + Integer.toString(i);
-					i++;
-				}
-				break;
-			}
-		}
-		// Certificate subject doesn't have easy distinguishable common name then generate alias as cert{integer}
-		if (alias == null) {
-			alias = "cert";
-			int i = 1;
-			while (checkForSameAlias(alias)) {
-				alias = alias + Integer.toString(i);
-				i++;
-			}
-		}
-		return alias;
-	}
 
 	/**
 	 * Check if there is certificate entry in Truststore with the same alias.
@@ -532,30 +493,9 @@ public class CertificateController {
 	 * @throws HeadlessException
 	 * @throws KeyStoreException
 	 */
-	private boolean checkForSameAlias(String alias) throws HeadlessException, KeyStoreException {
+	protected boolean checkForSameAlias(String alias) throws HeadlessException, KeyStoreException {
 		for(CertificateModel model: allCertificates){
 			if(model.getAlias().equals(alias)){
-				return true;
-			}
-		}
-		return false;
-	}
-	
-	/**
-	 * Check if this certificate already exist in Truststore.
-	 * 
-	 * @param alias Alias of the certificate for which it method look in the model list
-	 * @return true if KeyStore already have this certificate.
-	 * @throws KeyStoreException 
-	 */	
-	private boolean checkForSameCertificate(X509Certificate addedCert) throws KeyStoreException{
-		// check if this certificate isn't already added to Truststore
-		for(CertificateModel model :allCertificates){
-			X509Certificate certificateCheck = model.getCertificate();
-			String signature = Base64.getEncoder().encodeToString(certificateCheck.getSignature());
-			String addedSignature = Base64.getEncoder().encodeToString(addedCert.getSignature());
-			if (addedSignature.equals(signature)) {
-				JOptionPane.showMessageDialog(null, Res.getString("dialog.certificate.cannot.have.copy"));
 				return true;
 			}
 		}
@@ -569,15 +509,6 @@ public class CertificateController {
 		CertificateDialog certDialog = new CertificateDialog(localPreferences,
 				allCertificates.get(CertificatesManagerSettingsPanel.getCertTable().getSelectedRow()), this, CertificateDialogReason.SHOW_CERTIFICATE);
 	}
-
-	/**
-	 * Open dialog with certificate.
-	 * 
-	 * @param CertificateModel Model of the certificate which details are meant to be shown.
-	 */
-	public void showCertificate(CertificateModel certModel, CertificateDialogReason reason) {
-		CertificateDialog certDialog = new CertificateDialog(localPreferences, certModel, this, reason);
-	}
 	
 	public List<CertificateModel> getAllCertificates() {
 		return allCertificates;
@@ -590,12 +521,5 @@ public class CertificateController {
 	public void setTableModel(DefaultTableModel tableModel) {
 		CertificateController.tableModel = tableModel;
 	}
-
-	public boolean isAddToKeystore() {
-		return addToKeystore;
-	}
-
-	public void setAddToKeystore(boolean addToKeystore) {
-		this.addToKeystore = addToKeystore;
-	}
+	
 }

@@ -362,7 +362,7 @@ public class CertificateModel {
 	}
 	
 	private boolean checkValidity() {
-		if (isAfterNotAfter() && isBeforeNotBefore() && checkRevoked()) {
+		if (!isAfterNotAfter() && !isBeforeNotBefore() && !checkRevoked()) {
 			return true;
 		} else {
 			return false;
