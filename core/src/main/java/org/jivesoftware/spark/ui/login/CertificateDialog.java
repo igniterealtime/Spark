@@ -1,11 +1,11 @@
 package org.jivesoftware.spark.ui.login;
 
-import static java.awt.GridBagConstraints.HORIZONTAL;
-import static java.awt.GridBagConstraints.WEST;
 import static java.awt.GridBagConstraints.BOTH;
-import static java.awt.GridBagConstraints.NONE;
 import static java.awt.GridBagConstraints.CENTER;
 import static java.awt.GridBagConstraints.EAST;
+import static java.awt.GridBagConstraints.HORIZONTAL;
+import static java.awt.GridBagConstraints.NONE;
+import static java.awt.GridBagConstraints.WEST;
 
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -18,20 +18,16 @@ import java.io.IOException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
-
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import javax.swing.BorderFactory;
-import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.ScrollPaneConstants;
@@ -40,7 +36,7 @@ import javax.swing.SwingUtilities;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.log.Log;
-import org.jivesoftware.sparkimpl.certificates.CertificateController;
+import org.jivesoftware.sparkimpl.certificates.CertManager;
 import org.jivesoftware.sparkimpl.certificates.CertificateDialogReason;
 import org.jivesoftware.sparkimpl.certificates.CertificateModel;
 import org.jivesoftware.sparkimpl.certificates.OIDTranslator;
@@ -59,7 +55,7 @@ public class CertificateDialog extends JDialog implements ActionListener {
 	private final static Insets DEFAULT_INSETS = new Insets(5, 5, 5, 5);
 	private final LocalPreferences localPreferences;
 	private CertificateModel cert;
-	private CertificateController certControll;
+	private CertManager certControll;
 	private CertificateDialogReason reason;
 
 	private JScrollPane scrollPane;
@@ -108,10 +104,11 @@ public class CertificateDialog extends JDialog implements ActionListener {
 	private JButton deleteButton = new JButton();
 	
 	public CertificateDialog(LocalPreferences localPreferences, CertificateModel cert,
-			CertificateController certificateController, CertificateDialogReason reason) {
+			CertManager certificateController, CertificateDialogReason reason) {
 		if (localPreferences == null || cert == null) {
 			throw new IllegalArgumentException();
 		}
+		
 		certControll = certificateController;
 		this.localPreferences = localPreferences;
 		this.cert = cert;
@@ -208,7 +205,11 @@ public class CertificateDialog extends JDialog implements ActionListener {
 		ResourceUtils.resButton(okButton, Res.getString("ok"));
 		ResourceUtils.resButton(cancelButton, Res.getString("cancel"));
 		ResourceUtils.resButton(deleteButton, Res.getString("delete"));
-		infoLabel.setText(Res.getString("dialog.certificate.show"));
+        if (reason == CertificateDialogReason.ADD_CERTIFICATE) {
+            infoLabel.setText(Res.getString("dialog.certificate.show"));
+        }else if (reason == CertificateDialogReason.ADD_ID_CERTIFICATE){
+            infoLabel.setText(Res.getString("dialog.id.certificate.show"));
+        }
 		
 		panel.setLayout(new GridBagLayout());
 		buttonPanel.setLayout(new GridBagLayout());
@@ -289,29 +290,33 @@ public class CertificateDialog extends JDialog implements ActionListener {
 		panel.add(unsupportedExtensionsLabel, new GridBagConstraints(0, i, 1, 1, 1.0, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
 		panel.add(unsupportedExtensionsArea, new GridBagConstraints(2, i, 6, 1, 1.0, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
 		
+		if(reason != CertificateDialogReason.SHOW_ID_CERTIFICATE && reason != CertificateDialogReason.ADD_ID_CERTIFICATE){
+		
+		    buttonPanel.add(exceptionBox, new GridBagConstraints(0, 0, 1, 1, 0.2, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
+		
+		}
+		
+		buttonPanel.add(certStatusPanel,  new GridBagConstraints(2, 0, 3, 2, 0.2, 0.0, CENTER, HORIZONTAL, DEFAULT_INSETS, 0, 0));
+		buttonPanel.add(checkValidity,    new GridBagConstraints(0, 1, 2, 1, 0.0, 0.0, WEST, NONE, DEFAULT_INSETS, 0, 0));
+		buttonPanel.add(okButton,         new GridBagConstraints(2, 2, 1, 1, 0.2, 0.0, CENTER, HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 
-		buttonPanel.add(exceptionBox, new GridBagConstraints(0, 0, 1, 1, 0.2, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
-		buttonPanel.add(certStatusPanel, new GridBagConstraints(2, 0, 3, 2, 0.2, 0.0, CENTER, HORIZONTAL, DEFAULT_INSETS, 0, 0));
-		buttonPanel.add(checkValidity, new GridBagConstraints(0, 1, 2, 1, 0.0, 0.0, WEST, NONE, DEFAULT_INSETS, 0, 0));
-		buttonPanel.add(okButton, new GridBagConstraints(2, 2, 1, 1, 0.2, 0.0, CENTER, HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
-
-		if (reason == CertificateDialogReason.ADD_CERTIFICATE) {
+		if (reason == CertificateDialogReason.ADD_CERTIFICATE || reason == CertificateDialogReason.ADD_ID_CERTIFICATE) {
 			buttonPanel.add(cancelButton,
 					new GridBagConstraints(3, 2, 1, 1, 0.2, 0.0, CENTER, HORIZONTAL, new Insets(5, 5, 5, 100), 0, 0));
 		}
-		if (reason == CertificateDialogReason.SHOW_CERTIFICATE) {
+		if (reason == CertificateDialogReason.SHOW_CERTIFICATE || reason == CertificateDialogReason.SHOW_ID_CERTIFICATE) {
 			buttonPanel.add(cancelButton,
 					new GridBagConstraints(3, 2, 1, 1, 0.2, 0.0, CENTER, HORIZONTAL, DEFAULT_INSETS, 0, 0));
 			buttonPanel.add(deleteButton,
 					new GridBagConstraints(4, 2, 1, 1, 0.2, 0.0, CENTER, HORIZONTAL, new Insets(5, 5, 5, 0), 0, 0));
 		}
-
+		
 		exceptionBox.setSelected(certificateController.isOnExceptionList(cert));
 		
 		scrollPane = new JScrollPane(panel);
 		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		
-		if (reason == CertificateDialogReason.ADD_CERTIFICATE) {
+		if (reason == CertificateDialogReason.ADD_CERTIFICATE || reason == CertificateDialogReason.ADD_ID_CERTIFICATE) {
 			add(infoLabel, new GridBagConstraints(0, 0, 4, 1, 1.0, 0.0, WEST, BOTH, DEFAULT_INSETS, 0, 0));
 		}
 		
@@ -325,7 +330,7 @@ public class CertificateDialog extends JDialog implements ActionListener {
             	panel.scrollRectToVisible(versionField.getBounds());           
         		
             	//info that certificate is distrusted
-        		if(reason == CertificateDialogReason.ADD_CERTIFICATE && !cert.isValid()){
+        		if((reason == CertificateDialogReason.ADD_CERTIFICATE || reason == CertificateDialogReason.ADD_ID_CERTIFICATE) && !cert.isValid()){
         			JOptionPane.showMessageDialog(null, Res.getString("dialog.certificate.is.distrusted"));
         		}
             }
@@ -335,10 +340,6 @@ public class CertificateDialog extends JDialog implements ActionListener {
 		
 	}
 	
-	public CertificateDialog(LocalPreferences localPreferences, CertificateModel certificateModel) {
-		this(localPreferences, certificateModel, null, CertificateDialogReason.SHOW_CERTIFICATE);
-	}
-
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource() == okButton){
@@ -354,7 +355,7 @@ public class CertificateDialog extends JDialog implements ActionListener {
 			this.dispose();
 		}else if(e.getSource() == deleteButton){
 			try {
-				certControll.deleteCertificate(cert.getAlias());
+				certControll.deleteEntry(cert.getAlias());
 				this.dispose();
 			} catch (KeyStoreException | NoSuchAlgorithmException | CertificateException | IOException ex) {
 				Log.error("Couldn't delete the certificate", ex);

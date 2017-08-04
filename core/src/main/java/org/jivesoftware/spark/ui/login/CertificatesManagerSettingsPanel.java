@@ -16,7 +16,6 @@ import java.awt.event.MouseListener;
 import java.io.File;
 import java.io.IOException;
 import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 
 import javax.naming.InvalidNameException;
@@ -30,13 +29,11 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.SwingUtilities;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 
 import org.jivesoftware.resource.Res;
@@ -70,7 +67,7 @@ public class CertificatesManagerSettingsPanel extends JPanel implements ActionLi
     private JButton fileButton = new JButton();
     private JPanel filePanel = new JPanel();
     private FileNameExtensionFilter certFilter = new FileNameExtensionFilter(
-            Res.getString("menuitem.certificate.files.filter"), "cer", "crt", "der");
+            Res.getString("menuitem.certificate.files.filter"), "cer", "crt", "der", "pem");
 	
     //checboxes with options
 	private JCheckBox acceptAll = new JCheckBox();
@@ -133,26 +130,26 @@ public class CertificatesManagerSettingsPanel extends JPanel implements ActionLi
 		filePanel.setBorder(
 				BorderFactory.createTitledBorder(Res.getString("label.certificate.add.certificate.to.truststore")));
 
-		add(scrollPane,           new GridBagConstraints(0, 0, 6, 1, 1.0, 1.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
+		add(scrollPane,           new GridBagConstraints(0, 0, 6, 1, 1.0, 0.8, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
 		
-		add(acceptAll,            new GridBagConstraints(0, 1, 1, 1, 0.0, 0.5, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
-		add(acceptSelfSigned,     new GridBagConstraints(1, 1, 1, 1, 0.0, 0.5, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
+		add(acceptAll,            new GridBagConstraints(0, 1, 1, 1, 0.0, 0.1, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
+		add(acceptSelfSigned,     new GridBagConstraints(1, 1, 1, 1, 0.0, 0.1, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
 		
-		add(acceptExpired,        new GridBagConstraints(0, 2, 1, 1, 0.0, 0.5, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
-		add(acceptNotValidYet,    new GridBagConstraints(1, 2, 1, 1, 0.0, 0.5, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
+		add(acceptExpired,        new GridBagConstraints(0, 2, 1, 1, 0.0, 0.1, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
+		add(acceptNotValidYet,    new GridBagConstraints(1, 2, 1, 1, 0.0, 0.1, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
 		
-		add(acceptRevoked,        new GridBagConstraints(2, 1, 1, 1, 0.0, 0.5, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
-		add(checkCRL,             new GridBagConstraints(3, 1, 1, 1, 0.0, 0.5, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
+		add(acceptRevoked,        new GridBagConstraints(2, 1, 1, 1, 0.0, 0.1, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
+		add(checkCRL,             new GridBagConstraints(3, 1, 1, 1, 0.0, 0.1, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
 		
-		add(checkOCSP,            new GridBagConstraints(2, 2, 1, 1, 0.0, 0.5, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
-		add(allowSoftFail,        new GridBagConstraints(3, 2, 1, 1, 0.0, 0.5, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
+		add(checkOCSP,            new GridBagConstraints(2, 2, 1, 1, 0.0, 0.1, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
+		add(allowSoftFail,        new GridBagConstraints(3, 2, 1, 1, 0.0, 0.1, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
 		
-		add(showCert,             new GridBagConstraints(4, 1, 2, 1, 0.0, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
-		add(filePanel,            new GridBagConstraints(4, 2, 2, 4, 0.0, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
+		add(showCert,             new GridBagConstraints(4, 1, 2, 1, 0.0, 0.1, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
+		add(filePanel,            new GridBagConstraints(4, 2, 2, 4, 0.0, 0.1, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
 	}
 
     public void addCertTableToPanel() {
-        certControll.loadKeysStores();
+        certControll.loadKeyStores();
         certControll.createCertTableModel();
         certTable = new JTable(certControll.getTableModel()){
             
@@ -310,8 +307,8 @@ public class CertificatesManagerSettingsPanel extends JPanel implements ActionLi
 
 			File file = fileChooser.getSelectedFile();
 			try {
-				certControll.addCertificateToKeystore(file);
-			} catch (KeyStoreException | CertificateException | NoSuchAlgorithmException | IOException ex) {
+				certControll.addEntryToKeyStore(file);
+			} catch (KeyStoreException | CertificateException | IOException ex) {
 				Log.error("Cannot upload certificate file", ex);
 			} catch (IllegalArgumentException ex) {
 				Log.warning("Certificate or it's alias cannot be null", ex);
