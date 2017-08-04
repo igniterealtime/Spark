@@ -34,7 +34,6 @@ import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.certificates.SparkSSLContext;
-import org.jivesoftware.sparkimpl.certificates.SparkTrustManager;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jxmpp.util.XmppStringUtils;
@@ -45,9 +44,6 @@ import java.awt.*;
 import java.io.IOException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
-import java.security.Provider;
-import java.security.SecureRandom;
-import java.security.Security;
 
 /**
  * Allows the creation of accounts on an XMPP server.
@@ -362,14 +358,10 @@ public class AccountCreationWizard extends JPanel {
         }
         
         if (securityMode != ConnectionConfiguration.SecurityMode.disabled && !useOldSSL) {
-            builder.setPort(5222);
             // This use STARTTLS which starts initially plain connection to upgrade it to TLS, it use the same port as
             // plain connections which is 5222.
             try {
-                Provider bcProvider = new BouncyCastleJsseProvider();
-                Security.addProvider(bcProvider);
-                SSLContext context = SparkSSLContext.getInstance("TLS");
-                context.init(null, SparkTrustManager.getTrustManagerList(), new SecureRandom());
+                SSLContext context = SparkSSLContext.setUpContext();
                 builder.setCustomSSLContext(context);
                 builder.setSecurityMode( securityMode );
             } catch (NoSuchAlgorithmException | KeyManagementException e) {

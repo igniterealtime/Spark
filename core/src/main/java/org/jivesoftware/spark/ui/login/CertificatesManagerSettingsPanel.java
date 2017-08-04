@@ -144,6 +144,10 @@ public class CertificatesManagerSettingsPanel extends JPanel implements ActionLi
 		checkCRL.addActionListener(this);
 		checkOCSP.addActionListener(this);
 		acceptRevoked.addActionListener(this);
+		acceptExpired.setEnabled(!acceptAll.isSelected());
+		acceptNotValidYet.setEnabled(!acceptAll.isSelected());
+		acceptRevoked.setEnabled(!acceptAll.isSelected());
+		acceptSelfSigned.setEnabled(!acceptAll.isSelected());
 		checkCRL.setEnabled(!acceptRevoked.isSelected());
 		checkOCSP.setEnabled(checkCRL.isSelected());
 		allowSoftFail.setEnabled(checkOCSP.isSelected());
@@ -197,9 +201,6 @@ public class CertificatesManagerSettingsPanel extends JPanel implements ActionLi
                 acceptExpired.setEnabled(true);
                 acceptNotValidYet.setEnabled(true);
                 acceptRevoked.setEnabled(true);
-                checkCRL.setEnabled(true);
-                checkOCSP.setEnabled(true);
-                allowSoftFail.setEnabled(true);
 
             }
         } else if (e.getSource() == showCert) {
@@ -213,7 +214,6 @@ public class CertificatesManagerSettingsPanel extends JPanel implements ActionLi
             if (checkCRL.isSelected()) {
 
                 checkOCSP.setEnabled(true);
-                allowSoftFail.setEnabled(true);
             } else if (!checkCRL.isSelected()) {
 
                 checkOCSP.setSelected(false);
