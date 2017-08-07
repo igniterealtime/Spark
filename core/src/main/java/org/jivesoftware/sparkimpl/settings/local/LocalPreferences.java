@@ -1420,5 +1420,61 @@ public class LocalPreferences {
     public void setPswdAutologin(boolean ccPswdAutologin) {
     	props.setProperty("ccPswdAutologin", Boolean.toString(ccPswdAutologin));
     }
+    
+    public boolean isAcceptSelfSigned() {
+        return Boolean.parseBoolean(props.getProperty("acceptSelfSigned", "false"));
+    }
 
+    public void setAcceptSelfSigned(boolean acceptSelfSigned) {
+        props.setProperty("acceptSelfSigned", Boolean.toString(acceptSelfSigned));
+    }
+
+    public boolean isAcceptRevoked() {
+        return Boolean.parseBoolean(props.getProperty("acceptRevoked", "false"));
+    }
+
+    public void setAcceptRevoked(boolean acceptRevoked) {
+        props.setProperty("acceptRevoked", Boolean.toString(acceptRevoked));
+    }
+
+    public boolean isAcceptExpired() {
+        return Boolean.parseBoolean(props.getProperty("acceptExpired", "false"));
+    }
+
+    public void setAcceptExpired(boolean acceptExpired) {
+        props.setProperty("acceptExpired", Boolean.toString(acceptExpired));
+    }
+
+    public boolean isAcceptNotValidYet() {
+        return Boolean.parseBoolean(props.getProperty("acceptNotValidYet", "false"));
+    }
+    
+    public void setAcceptNotValidYet(boolean acceptNotValidYet) {
+        props.setProperty("acceptNotValidYet", Boolean.toString(acceptNotValidYet));
+    }
+    
+    public boolean isCheckCRL() {
+        return Boolean.parseBoolean(props.getProperty("checkCRL", "true"));
+    }
+
+    public void setCheckCRL(boolean checkCRL) {
+        props.setProperty("checkCRL", Boolean.toString(checkCRL));
+    }
+
+    public boolean isCheckOCSP() {
+        return Boolean.parseBoolean(props.getProperty("checkOCSP", "true"));
+    }
+
+    public void setCheckOCSP(boolean checkOCSP) {
+        props.setProperty("checkOCSP", Boolean.toString(checkOCSP));
+    }
+    public boolean isAllowSoftFail() {
+        return Boolean.parseBoolean(props.getProperty("allowSoftFail", "true"));
+    }
+
+    public void setAllowSoftFail(boolean allowSoftFail) {
+        props.setProperty("allowSoftFail", Boolean.toString(allowSoftFail));
+    }
+
+    
 }
