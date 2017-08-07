@@ -44,6 +44,7 @@ import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.certificates.CertificateController;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
+import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
 /**
  * This class serve as visual in implementation of manageable list of certificates. Together with CertificateController
@@ -64,6 +65,8 @@ public class CertificatesManagerSettingsPanel extends JPanel implements ActionLi
 	private JCheckBox acceptSelfSigned = new JCheckBox();
 	private JCheckBox checkCRL = new JCheckBox();
 	private JCheckBox checkOCSP = new JCheckBox();
+	private JCheckBox allowSoftFail = new JCheckBox();
+	private JCheckBox acceptNotValidYet = new JCheckBox();
 	private JButton showCert = new JButton();
 	private JFileChooser fileChooser = new JFileChooser();
 	private JButton fileButton = new JButton();
@@ -76,6 +79,7 @@ public class CertificatesManagerSettingsPanel extends JPanel implements ActionLi
 		this.localPreferences = localPreferences;
 		certControll = new CertificateController(localPreferences);
 		setLayout(new GridBagLayout());
+		certControll.createCertTableModel();
 		certTable = new JTable(certControll.getTableModel()){
 			
 			@Override
@@ -112,64 +116,141 @@ public class CertificatesManagerSettingsPanel extends JPanel implements ActionLi
 
 		ResourceUtils.resButton(acceptAll, Res.getString("checkbox.accept.all"));
 		ResourceUtils.resButton(acceptExpired, Res.getString("checkbox.accept.expired"));
-		ResourceUtils.resButton(acceptRevoked, Res.getString("checkbox.accept.invalid"));
+		ResourceUtils.resButton(acceptNotValidYet, Res.getString("checkbox.accept.not.valid.yet"));
+		ResourceUtils.resButton(acceptRevoked, Res.getString("checkbox.accept.revoked"));
 		ResourceUtils.resButton(acceptSelfSigned, Res.getString("checkbox.accept.self.signed"));
 		ResourceUtils.resButton(checkCRL, Res.getString("checkbox.check.crl"));
 		ResourceUtils.resButton(checkOCSP, Res.getString("checkbox.check.ocsp"));
+		ResourceUtils.resButton(allowSoftFail, Res.getString("checkbox.allow.soft.fail"));
 		ResourceUtils.resButton(showCert, Res.getString("button.show.certificate"));
 		ResourceUtils.resButton(fileButton, Res.getString("label.choose.file"));
-
+		
+		acceptAll.setSelected(localPreferences.isAcceptAllCertificates());
+		acceptSelfSigned.setSelected(localPreferences.isAcceptSelfSigned());
+		acceptExpired.setSelected(localPreferences.isAcceptExpired());
+		acceptNotValidYet.setSelected(localPreferences.isAcceptNotValidYet());
+		acceptRevoked.setSelected(localPreferences.isAcceptRevoked());
+		checkCRL.setSelected(localPreferences.isCheckCRL());
+		checkOCSP.setSelected(localPreferences.isCheckOCSP());
+		allowSoftFail.setSelected(localPreferences.isAllowSoftFail());
+		
+		
 		acceptAll.addActionListener(this);
 		certTable.addMouseListener(this);
 		certTable.getModel().addTableModelListener(this);
 		showCert.setEnabled(false);
 		showCert.addActionListener(this);
 		fileButton.addActionListener(this);
+		checkCRL.addActionListener(this);
+		checkOCSP.addActionListener(this);
+		acceptRevoked.addActionListener(this);
+		acceptExpired.setEnabled(!acceptAll.isSelected());
+		acceptNotValidYet.setEnabled(!acceptAll.isSelected());
+		acceptRevoked.setEnabled(!acceptAll.isSelected());
+		acceptSelfSigned.setEnabled(!acceptAll.isSelected());
+		checkCRL.setEnabled(!acceptRevoked.isSelected());
+		checkOCSP.setEnabled(checkCRL.isSelected());
+		allowSoftFail.setEnabled(checkOCSP.isSelected());
 
 		filePanel.setLayout(new GridBagLayout());
 		filePanel.add(fileButton, new GridBagConstraints(0, 0, 2, 1, 1.0, 1.0, WEST, HORIZONTAL, DEFAULT_INSETS, 40, 0));
 		filePanel.setBorder(
 				BorderFactory.createTitledBorder(Res.getString("label.certificate.add.certificate.to.truststore")));
 
-		add(scrollPane, new GridBagConstraints(0, 0, 6, 1, 1.0, 1.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
-		add(acceptAll, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.5, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
-		add(acceptSelfSigned, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.5, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
-		add(acceptExpired, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.5, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
-		add(acceptRevoked, new GridBagConstraints(1, 2, 1, 1, 0.0, 0.5, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
-		add(checkCRL, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.5, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
-		add(checkOCSP, new GridBagConstraints(1, 3, 1, 1, 0.0, 0.5, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
-		add(showCert, new GridBagConstraints(2, 1, 2, 1, 0.0, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 40, 0));
-		add(filePanel, new GridBagConstraints(2, 2, 2, 4, 0.0, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 40, 0));
+		add(scrollPane,           new GridBagConstraints(0, 0, 6, 1, 1.0, 1.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
+		
+		add(acceptAll,            new GridBagConstraints(0, 1, 1, 1, 0.0, 0.5, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
+		add(acceptSelfSigned,     new GridBagConstraints(1, 1, 1, 1, 0.0, 0.5, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
+		
+		add(acceptExpired,        new GridBagConstraints(0, 2, 1, 1, 0.0, 0.5, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
+		add(acceptNotValidYet,    new GridBagConstraints(1, 2, 1, 1, 0.0, 0.5, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
+		
+		add(acceptRevoked,        new GridBagConstraints(2, 1, 1, 1, 0.0, 0.5, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
+		add(checkCRL,             new GridBagConstraints(3, 1, 1, 1, 0.0, 0.5, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
+		
+		add(checkOCSP,            new GridBagConstraints(2, 2, 1, 1, 0.0, 0.5, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
+		add(allowSoftFail,        new GridBagConstraints(3, 2, 1, 1, 0.0, 0.5, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
+		
+		add(showCert,             new GridBagConstraints(4, 1, 2, 1, 0.0, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
+		add(filePanel,            new GridBagConstraints(4, 2, 2, 4, 0.0, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
 	}
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		if (e.getSource() == acceptAll && acceptAll.isSelected()) {
-			acceptSelfSigned.setSelected(true);
-			acceptExpired.setSelected(true);
-			acceptRevoked.setSelected(true);
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == acceptAll) {
+            if (acceptAll.isSelected()) {
 
-			acceptSelfSigned.setEnabled(false);
-			acceptExpired.setEnabled(false);
-			acceptRevoked.setEnabled(false);
-		} else if (e.getSource() == acceptAll && !acceptAll.isSelected()) {
-			acceptSelfSigned.setEnabled(true);
-			acceptExpired.setEnabled(true);
-			acceptRevoked.setEnabled(true);
-		} else if (e.getSource() == showCert) {
-			certControll.showCertificate();
-		} else if (e.getSource() == fileButton) {
-			addCertificate();
-		}
-	}
+                acceptSelfSigned.setSelected(true);
+                acceptExpired.setSelected(true);
+                acceptNotValidYet.setSelected(true);
+                acceptRevoked.setSelected(true);
+                checkCRL.setSelected(false);
+                checkOCSP.setSelected(false);
+                allowSoftFail.setSelected(false);
 
-	@Override
-	public void mouseClicked(MouseEvent e) {
+                acceptSelfSigned.setEnabled(false);
+                acceptExpired.setEnabled(false);
+                acceptNotValidYet.setEnabled(false);
+                acceptRevoked.setEnabled(false);
+                checkCRL.setEnabled(false);
+                checkOCSP.setEnabled(false);
+                allowSoftFail.setEnabled(false);
+            } else if (!acceptAll.isSelected()) {
 
-	}
+                acceptSelfSigned.setEnabled(true);
+                acceptExpired.setEnabled(true);
+                acceptNotValidYet.setEnabled(true);
+                acceptRevoked.setEnabled(true);
 
-	@Override
-	public void mouseEntered(MouseEvent e) {
+            }
+        } else if (e.getSource() == showCert) {
+            certControll.showCertificate();
+
+        } else if (e.getSource() == fileButton) {
+            addCertificate();
+
+        } else if (e.getSource() == checkCRL) {
+
+            if (checkCRL.isSelected()) {
+
+                checkOCSP.setEnabled(true);
+            } else if (!checkCRL.isSelected()) {
+
+                checkOCSP.setSelected(false);
+                checkOCSP.setEnabled(false);
+                allowSoftFail.setEnabled(false);
+            }
+
+        } else if (e.getSource() == acceptRevoked) {
+            if (acceptRevoked.isSelected()) {
+
+                checkCRL.setSelected(false);
+                checkOCSP.setSelected(false);
+
+                checkCRL.setEnabled(false);
+                checkOCSP.setEnabled(false);
+            } else if (!acceptRevoked.isSelected()) {
+                checkCRL.setEnabled(true);
+            }
+        } else if (e.getSource() == checkOCSP) {
+            if (checkOCSP.isSelected()) {
+
+                allowSoftFail.setEnabled(true);
+            } else if (!checkOCSP.isSelected()) {
+
+                allowSoftFail.setEnabled(false);
+                allowSoftFail.setSelected(false);
+            }
+        }
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
 
 	}
 
@@ -248,4 +329,16 @@ public class CertificatesManagerSettingsPanel extends JPanel implements ActionLi
 			}
 		});
 	}
+	
+    public void saveSettings() {
+        localPreferences.setAcceptExpired(acceptExpired.isSelected());
+        localPreferences.setAcceptNotValidYet(acceptNotValidYet.isSelected());
+        localPreferences.setAcceptSelfSigned(acceptSelfSigned.isSelected());
+        localPreferences.setAcceptRevoked(acceptRevoked.isSelected());
+        localPreferences.setAcceptAllCertificates(acceptAll.isSelected());
+        localPreferences.setCheckCRL(checkCRL.isSelected());
+        localPreferences.setCheckOCSP(checkOCSP.isSelected());
+        localPreferences.setAllowSoftFail(allowSoftFail.isSelected());
+        SettingsManager.saveSettings();
+    }
 }
