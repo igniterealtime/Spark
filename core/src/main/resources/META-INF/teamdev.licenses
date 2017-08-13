@@ -1,12 +1,12 @@
 Product: JxBrowser
 Version: 6.x
-Licensed to:
+Licensed to: 
 License type: Evaluation
-License info: Single-user license
-Expiration date: 18-03-2017
-Support expiration date: 18-03-2017
-Generation date: 16-02-2017
-Platforms: mac/x64;mac/x86;win32/x64;win32/x86;linux/x86;linux/x64;mac/ppc
-Company name: NO COMPANY
-SigB: rrt59luk7qlr6u6zcqydo13f5e2p4gb70t9586hgl0fd4xc0kocrlgzrkhg6l0eivow5121ajhlb5u2
-SigA: tmtod5dujdr4si8o17iqmgiosa3443253kmjpqkfdf9kw61ozpt3m4nbx59hz8ua330e0ht8ilxqu2rs
+License info: JxBrowser Demo License
+Expiration date: 06-09-2017
+Support expiration date: NO SUPPORT
+Generation date: 06-07-2017
+Platforms: win32/x86;win32/x64;mac/x86;mac/x64;linux/x86;linux/x64
+Company name: TeamDev Ltd.
+SigB: rdc3d69szylqsyktu3twh18xckhu6hymf0y3aj5q00n2qrkf1mxb4ckh9y7zt8xqiwi99hut8249ml19
+SigA: x18a3xeiv6cdsiqkodj9vzhgi35zxyqsygee36x0zpv250jh7pk0qnyl2ph0yyf6wv7v3npfmjb8tak2
