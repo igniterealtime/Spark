@@ -77,8 +77,11 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.security.KeyManagementException;
+import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.security.Principal;
+import java.security.UnrecoverableKeyException;
 import java.util.*;
 import java.util.List;
 
@@ -282,11 +285,17 @@ public class LoginDialog {
         if (securityMode != ConnectionConfiguration.SecurityMode.disabled && !useOldSSL) {
             // This use STARTTLS which starts initially plain connection to upgrade it to TLS, it use the same port as
             // plain connections which is 5222.
-            try {
-                SSLContext context = SparkSSLContext.setUpContext();
+            SparkSSLContext.Options options;
+            if(localPref.isAllowClientSideAuthentication()){
+            options = SparkSSLContext.Options.BOTH;
+            } else {
+                options = SparkSSLContext.Options.ONLY_SERVER_SIDE;
+            }
+            try {               
+                SSLContext context = SparkSSLContext.setUpContext(options);
                 builder.setCustomSSLContext(context);
                 builder.setSecurityMode( securityMode );
-            } catch (NoSuchAlgorithmException | KeyManagementException e) {
+            } catch (NoSuchAlgorithmException | KeyManagementException | UnrecoverableKeyException | KeyStoreException | NoSuchProviderException e) {
                 Log.warning("Couldnt establish secured connection", e);
             }
         }

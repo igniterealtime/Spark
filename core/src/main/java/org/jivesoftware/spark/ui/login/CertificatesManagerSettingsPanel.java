@@ -7,7 +7,6 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.HeadlessException;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -16,7 +15,6 @@ import java.awt.event.MouseListener;
 import java.io.File;
 import java.io.IOException;
 import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 
 import javax.naming.InvalidNameException;
@@ -27,16 +25,15 @@ import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.SwingUtilities;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 
 import org.jivesoftware.resource.Res;
@@ -57,8 +54,22 @@ public class CertificatesManagerSettingsPanel extends JPanel implements ActionLi
 
 	private final static Insets DEFAULT_INSETS = new Insets(5, 5, 5, 5);
 	private final LocalPreferences localPreferences;
-	private CertificateController certControll;
-	private static JTable certTable;
+	
+	//table with certificates
+    private CertificateController certControll;
+    private static JTable certTable;
+    private JButton showCert = new JButton();
+
+    private JScrollPane scrollPane;
+    
+    //add certificate utilities
+    private JFileChooser fileChooser = new JFileChooser();
+    private JButton fileButton = new JButton();
+    private JPanel filePanel = new JPanel();
+    private FileNameExtensionFilter certFilter = new FileNameExtensionFilter(
+            Res.getString("menuitem.certificate.files.filter"), "cer", "crt", "der", "pem");
+	
+    //checboxes with options
 	private JCheckBox acceptAll = new JCheckBox();
 	private JCheckBox acceptExpired = new JCheckBox();
 	private JCheckBox acceptRevoked = new JCheckBox();
@@ -67,53 +78,16 @@ public class CertificatesManagerSettingsPanel extends JPanel implements ActionLi
 	private JCheckBox checkOCSP = new JCheckBox();
 	private JCheckBox allowSoftFail = new JCheckBox();
 	private JCheckBox acceptNotValidYet = new JCheckBox();
-	private JButton showCert = new JButton();
-	private JFileChooser fileChooser = new JFileChooser();
-	private JButton fileButton = new JButton();
-	private JScrollPane scrollPane;
-	private JPanel filePanel = new JPanel();
-	private FileNameExtensionFilter certFilter = new FileNameExtensionFilter(Res.getString("menuitem.certificate.files.filter"),"cer", "crt", "der");
 
 	public CertificatesManagerSettingsPanel(LocalPreferences localPreferences, JDialog optionsDialog) {
 
 		this.localPreferences = localPreferences;
+		
 		certControll = new CertificateController(localPreferences);
 		setLayout(new GridBagLayout());
-		certControll.createCertTableModel();
-		certTable = new JTable(certControll.getTableModel()){
-			
-			@Override
-	        public Component prepareRenderer(TableCellRenderer renderer, int rowIndex,
-	                int columnIndex) {
-	            JComponent component = (JComponent) super.prepareRenderer(renderer, rowIndex, columnIndex);  
-	            Object value = getModel().getValueAt(rowIndex, columnIndex);
-	            
-	    		DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-	    		centerRenderer.setHorizontalAlignment( JLabel.CENTER );
-	    		this.getColumnModel().getColumn(1).setCellRenderer(centerRenderer);
-	    		
-	            if (value.equals(Res.getString("cert.self.signed"))) {
-	                component.setBackground(Color.lightGray);
-	            } else if (value.equals(Res.getString("cert.valid"))) {
-	                component.setBackground(Color.green);
-	            } else if(value.equals(Res.getString("cert.expired")) || value.equals(Res.getString("cert.not.valid.yet"))){
-	            	component.setBackground(Color.red);
-	            } else {
-	               component.setBackground(Color.white);
-	            }
-	            return component;
-	        }
-			
-		};
-
 		
-		scrollPane = new JScrollPane(certTable);
-		certTable.setFillsViewportHeight(true);
-		certTable.setAutoCreateRowSorter(true);
+		addCertTableToPanel();
 		
-		resizeColumnWidth(certTable);
-		certTable.setAutoResizeMode(JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
-
 		ResourceUtils.resButton(acceptAll, Res.getString("checkbox.accept.all"));
 		ResourceUtils.resButton(acceptExpired, Res.getString("checkbox.accept.expired"));
 		ResourceUtils.resButton(acceptNotValidYet, Res.getString("checkbox.accept.not.valid.yet"));
@@ -133,8 +107,7 @@ public class CertificatesManagerSettingsPanel extends JPanel implements ActionLi
 		checkCRL.setSelected(localPreferences.isCheckCRL());
 		checkOCSP.setSelected(localPreferences.isCheckOCSP());
 		allowSoftFail.setSelected(localPreferences.isAllowSoftFail());
-		
-		
+			
 		acceptAll.addActionListener(this);
 		certTable.addMouseListener(this);
 		certTable.getModel().addTableModelListener(this);
@@ -144,6 +117,7 @@ public class CertificatesManagerSettingsPanel extends JPanel implements ActionLi
 		checkCRL.addActionListener(this);
 		checkOCSP.addActionListener(this);
 		acceptRevoked.addActionListener(this);
+		
 		acceptExpired.setEnabled(!acceptAll.isSelected());
 		acceptNotValidYet.setEnabled(!acceptAll.isSelected());
 		acceptRevoked.setEnabled(!acceptAll.isSelected());
@@ -151,29 +125,68 @@ public class CertificatesManagerSettingsPanel extends JPanel implements ActionLi
 		checkCRL.setEnabled(!acceptRevoked.isSelected());
 		checkOCSP.setEnabled(checkCRL.isSelected());
 		allowSoftFail.setEnabled(checkOCSP.isSelected());
-
 		filePanel.setLayout(new GridBagLayout());
 		filePanel.add(fileButton, new GridBagConstraints(0, 0, 2, 1, 1.0, 1.0, WEST, HORIZONTAL, DEFAULT_INSETS, 40, 0));
 		filePanel.setBorder(
 				BorderFactory.createTitledBorder(Res.getString("label.certificate.add.certificate.to.truststore")));
 
-		add(scrollPane,           new GridBagConstraints(0, 0, 6, 1, 1.0, 1.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
+		add(scrollPane,           new GridBagConstraints(0, 0, 6, 1, 1.0, 0.8, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
 		
-		add(acceptAll,            new GridBagConstraints(0, 1, 1, 1, 0.0, 0.5, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
-		add(acceptSelfSigned,     new GridBagConstraints(1, 1, 1, 1, 0.0, 0.5, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
+		add(acceptAll,            new GridBagConstraints(0, 1, 1, 1, 0.0, 0.1, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
+		add(acceptSelfSigned,     new GridBagConstraints(1, 1, 1, 1, 0.0, 0.1, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
 		
-		add(acceptExpired,        new GridBagConstraints(0, 2, 1, 1, 0.0, 0.5, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
-		add(acceptNotValidYet,    new GridBagConstraints(1, 2, 1, 1, 0.0, 0.5, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
+		add(acceptExpired,        new GridBagConstraints(0, 2, 1, 1, 0.0, 0.1, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
+		add(acceptNotValidYet,    new GridBagConstraints(1, 2, 1, 1, 0.0, 0.1, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
 		
-		add(acceptRevoked,        new GridBagConstraints(2, 1, 1, 1, 0.0, 0.5, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
-		add(checkCRL,             new GridBagConstraints(3, 1, 1, 1, 0.0, 0.5, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
+		add(acceptRevoked,        new GridBagConstraints(2, 1, 1, 1, 0.0, 0.1, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
+		add(checkCRL,             new GridBagConstraints(3, 1, 1, 1, 0.0, 0.1, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
 		
-		add(checkOCSP,            new GridBagConstraints(2, 2, 1, 1, 0.0, 0.5, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
-		add(allowSoftFail,        new GridBagConstraints(3, 2, 1, 1, 0.0, 0.5, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
+		add(checkOCSP,            new GridBagConstraints(2, 2, 1, 1, 0.0, 0.1, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
+		add(allowSoftFail,        new GridBagConstraints(3, 2, 1, 1, 0.0, 0.1, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
 		
-		add(showCert,             new GridBagConstraints(4, 1, 2, 1, 0.0, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
-		add(filePanel,            new GridBagConstraints(4, 2, 2, 4, 0.0, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
+		add(showCert,             new GridBagConstraints(4, 1, 2, 1, 0.0, 0.1, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
+		add(filePanel,            new GridBagConstraints(4, 2, 2, 4, 0.0, 0.1, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
 	}
+
+    public void addCertTableToPanel() {
+        certControll.loadKeyStores();
+        certControll.createCertTableModel();
+        certTable = new JTable(certControll.getTableModel()){
+            
+            @Override
+            public Component prepareRenderer(TableCellRenderer renderer, int rowIndex,
+                    int columnIndex) {
+                JComponent component = (JComponent) super.prepareRenderer(renderer, rowIndex, columnIndex);  
+                Object value = getModel().getValueAt(rowIndex, columnIndex);
+                
+                DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+                centerRenderer.setHorizontalAlignment( JLabel.CENTER );
+                this.getColumnModel().getColumn(1).setCellRenderer(centerRenderer);
+                
+                
+                 if (value.equals(Res.getString("cert.valid"))) {
+                    component.setBackground(Color.green);
+                } else if (value.equals(Res.getString("cert.expired")) || value
+                        .equals(Res.getString("cert.not.valid.yet")) || value.equals(Res.getString("cert.revoked"))) {
+                    component.setBackground(Color.red);
+                } else {
+                   component.setBackground(Color.white);
+                }
+                return component;
+            }
+            
+        };
+
+        
+        scrollPane = new JScrollPane(certTable);
+        certTable.setFillsViewportHeight(true);
+        certTable.setAutoCreateRowSorter(true);
+        
+        certControll.resizeColumnWidth(certTable);
+        certTable.setAutoResizeMode(JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
+
+        
+    }
 
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -201,7 +214,6 @@ public class CertificatesManagerSettingsPanel extends JPanel implements ActionLi
                 acceptExpired.setEnabled(true);
                 acceptNotValidYet.setEnabled(true);
                 acceptRevoked.setEnabled(true);
-
             }
         } else if (e.getSource() == showCert) {
             certControll.showCertificate();
@@ -295,14 +307,18 @@ public class CertificatesManagerSettingsPanel extends JPanel implements ActionLi
 
 			File file = fileChooser.getSelectedFile();
 			try {
-				certControll.addCertificateToKeystore(file);
-			} catch (KeyStoreException | CertificateException | NoSuchAlgorithmException | IOException ex) {
-				Log.error("Cannot upload certificate file", ex);
-			} catch (IllegalArgumentException ex) {
-				Log.warning("Certificate or it's alias cannot be null", ex);
-			} catch (HeadlessException | InvalidNameException ex) {
-				Log.error("Error at setting certificate alias", ex);
-			}
+				certControll.addEntryToKeyStore(file);
+            } catch (CertificateException e) {
+
+                JOptionPane.showMessageDialog(null, Res.getString("dialog.cannot.upload.certificate.might.be.ill.formated"));
+                Log.error("Cannot upload certificate file", e);
+            
+            } catch (KeyStoreException | InvalidNameException
+                    | IOException e) {
+
+                JOptionPane.showMessageDialog(null, "dialog.cannot.upload.certificate");
+                Log.error("Cannot upload certificate file", e);
+            }
 		}
 	}
 
@@ -315,20 +331,7 @@ public class CertificatesManagerSettingsPanel extends JPanel implements ActionLi
 		return certTable;
 	}
 
-	private void resizeColumnWidth(JTable table) {
-		
-		SwingUtilities.invokeLater(new Runnable() {
-			
-			@Override
-			public void run() {
-				final TableColumnModel columnModel = table.getColumnModel();
-				final int maxWidth = certTable.getParent().getWidth();
-				columnModel.getColumn(1).setPreferredWidth(80);
-				columnModel.getColumn(2).setPreferredWidth(60);
-				columnModel.getColumn(0).setPreferredWidth(maxWidth - 140);
-			}
-		});
-	}
+	
 	
     public void saveSettings() {
         localPreferences.setAcceptExpired(acceptExpired.isSelected());
@@ -339,6 +342,7 @@ public class CertificatesManagerSettingsPanel extends JPanel implements ActionLi
         localPreferences.setCheckCRL(checkCRL.isSelected());
         localPreferences.setCheckOCSP(checkOCSP.isSelected());
         localPreferences.setAllowSoftFail(allowSoftFail.isSelected());
+        certControll.overWriteKeyStores();
         SettingsManager.saveSettings();
     }
 }
