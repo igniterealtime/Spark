@@ -45,6 +45,7 @@ public class LoginSettingDialog implements PropertyChangeListener
     private PkiLoginSettingsPanel pkiPanel;
     private SsoLoginSettingsPanel ssoPanel;
 	private CertificatesManagerSettingsPanel certManager;
+	private MutualAuthenticationSettingsPanel mutAuthPanel;
 
     /**
      * Empty Constructor.
@@ -58,6 +59,7 @@ public class LoginSettingDialog implements PropertyChangeListener
         ssoPanel = new SsoLoginSettingsPanel( localPreferences, optionsDialog );
         pkiPanel = new PkiLoginSettingsPanel( localPreferences, optionsDialog );
         certManager = new CertificatesManagerSettingsPanel(localPreferences, optionsDialog);
+        mutAuthPanel = new MutualAuthenticationSettingsPanel(localPreferences, optionsDialog);
     }
 
     /**
@@ -91,6 +93,9 @@ public class LoginSettingDialog implements PropertyChangeListener
         if ( !Default.getBoolean(Default.CERTIFICATES_MANAGER_DISABLED))
         {
         	tabbedPane.addTab( Res.getString( "tab.certificates" ), certManager );
+        }
+        if ( !Default.getBoolean( Default.MUTUAL_AUTH_DISABLED)){
+            tabbedPane.addTab("Mutual auth", mutAuthPanel);
         }
         // Construct main panel w/ layout.
         final JPanel mainPanel = new JPanel();
@@ -149,6 +154,7 @@ public class LoginSettingDialog implements PropertyChangeListener
                 ssoPanel.saveSettings();
                 pkiPanel.saveSettings();
                 certManager.saveSettings();
+                mutAuthPanel.saveSettings();
                 SettingsManager.saveSettings();
                 optionsDialog.setVisible( false );
             }

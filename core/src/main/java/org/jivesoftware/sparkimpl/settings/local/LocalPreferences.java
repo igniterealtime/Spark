@@ -1468,12 +1468,21 @@ public class LocalPreferences {
     public void setCheckOCSP(boolean checkOCSP) {
         props.setProperty("checkOCSP", Boolean.toString(checkOCSP));
     }
+
     public boolean isAllowSoftFail() {
         return Boolean.parseBoolean(props.getProperty("allowSoftFail", "true"));
     }
 
     public void setAllowSoftFail(boolean allowSoftFail) {
         props.setProperty("allowSoftFail", Boolean.toString(allowSoftFail));
+    }
+    
+    public boolean isAllowClientSideAuthentication() {
+        return Boolean.parseBoolean(props.getProperty("allowClientSideAuthentication", "false"));
+    }
+
+    public void setAllowClientSideAuthentication(boolean allowClientSideAuthentication) {
+        props.setProperty("allowClientSideAuthentication", Boolean.toString(allowClientSideAuthentication));
     }
 
     

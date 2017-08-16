@@ -43,7 +43,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
 import java.security.KeyManagementException;
+import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.UnrecoverableKeyException;
 
 /**
  * Allows the creation of accounts on an XMPP server.
@@ -361,10 +364,10 @@ public class AccountCreationWizard extends JPanel {
             // This use STARTTLS which starts initially plain connection to upgrade it to TLS, it use the same port as
             // plain connections which is 5222.
             try {
-                SSLContext context = SparkSSLContext.setUpContext();
+                SSLContext context = SparkSSLContext.setUpContext(SparkSSLContext.Options.ONLY_SERVER_SIDE);
                 builder.setCustomSSLContext(context);
                 builder.setSecurityMode( securityMode );
-            } catch (NoSuchAlgorithmException | KeyManagementException e) {
+            } catch (NoSuchAlgorithmException | KeyManagementException | UnrecoverableKeyException | KeyStoreException | NoSuchProviderException e) {
                 Log.warning("Couldnt establish secured connection", e);
             }
         }
