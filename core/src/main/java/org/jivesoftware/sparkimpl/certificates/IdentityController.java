@@ -299,24 +299,22 @@ public class IdentityController extends CertManager {
      * @throws InvalidNameException
      */
     @Override
-    public void addEntryToKeyStore(File file) throws IOException {
-        
+    public void addEntryToKeyStore(File file) throws IOException, CertificateException, InvalidKeySpecException,
+            NoSuchAlgorithmException, KeyStoreException, InvalidNameException {
+
         byte[] certAndKey = Files.readAllBytes(file.toPath());
-        try {
-            byte[] certBytes = PemHelper.parseDERFromPEM(certAndKey, 
-                    PemHelper.knowDelimeter(certAndKey, PemHelper.typeOfDelimeter.CERT_BEGIN), 
-                    PemHelper.knowDelimeter(certAndKey, PemHelper.typeOfDelimeter.CERT_END)
-                    );
-        
+        byte[] certBytes = PemHelper.parseDERFromPEM(certAndKey,
+                PemHelper.knowDelimeter(certAndKey, PemHelper.typeOfDelimeter.CERT_BEGIN),
+                PemHelper.knowDelimeter(certAndKey, PemHelper.typeOfDelimeter.CERT_END));
+
         X509Certificate addedCert = PemHelper.generateCertificateFromDER(certBytes);
-        
-        byte[] keyBytes = PemHelper.parseDERFromPEM(certAndKey, 
-                    PemHelper.knowDelimeter(certAndKey, PemHelper.typeOfDelimeter.KEY_BEGIN),
-                    PemHelper.knowDelimeter(certAndKey,  PemHelper.typeOfDelimeter.KEY_END)
-                    );
-                      
-        PrivateKey key  = PemHelper.generatePrivateKeyFromDER(keyBytes);
-        
+
+        byte[] keyBytes = PemHelper.parseDERFromPEM(certAndKey,
+                PemHelper.knowDelimeter(certAndKey, PemHelper.typeOfDelimeter.KEY_BEGIN),
+                PemHelper.knowDelimeter(certAndKey, PemHelper.typeOfDelimeter.KEY_END));
+
+        PrivateKey key = PemHelper.generatePrivateKeyFromDER(keyBytes);
+
         CertificateModel certModel = new CertificateModel(addedCert);
         if (checkForSameCertificate(addedCert) == false) {
             showCertificate(certModel, CertificateDialogReason.ADD_ID_CERTIFICATE);
@@ -335,10 +333,7 @@ public class IdentityController extends CertManager {
             JOptionPane.showMessageDialog(null, Res.getString("dialog.certificate.has.been.added"));
         }
 
-        } catch(Exception e){
-            Log.warning("Cannot upload key with the certificate", e);
-            
-        }
+        
        
     }
     

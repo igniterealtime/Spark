@@ -7,7 +7,6 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.HeadlessException;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -26,6 +25,7 @@ import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -308,13 +308,17 @@ public class CertificatesManagerSettingsPanel extends JPanel implements ActionLi
 			File file = fileChooser.getSelectedFile();
 			try {
 				certControll.addEntryToKeyStore(file);
-			} catch (KeyStoreException | CertificateException | IOException ex) {
-				Log.error("Cannot upload certificate file", ex);
-			} catch (IllegalArgumentException ex) {
-				Log.warning("Certificate or it's alias cannot be null", ex);
-			} catch (HeadlessException | InvalidNameException ex) {
-				Log.error("Error at setting certificate alias", ex);
-			}
+            } catch (CertificateException e) {
+
+                JOptionPane.showMessageDialog(null, Res.getString("dialog.cannot.upload.certificate.might.be.ill.formated"));
+                Log.error("Cannot upload certificate file", e);
+            
+            } catch (KeyStoreException | InvalidNameException
+                    | IOException e) {
+
+                JOptionPane.showMessageDialog(null, "dialog.cannot.upload.certificate");
+                Log.error("Cannot upload certificate file", e);
+            }
 		}
 	}
 

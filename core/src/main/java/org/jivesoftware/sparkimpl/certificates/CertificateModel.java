@@ -71,6 +71,9 @@ public class CertificateModel {
 	}
 
 	public CertificateModel(X509Certificate certificate) {
+	    if(certificate == null){
+	        throw new IllegalArgumentException("Certificate cannot be null");
+	    }
 		this.certificate = certificate;
 		this.version = certificate.getVersion();
 		this.serialNumber = certificate.getSerialNumber().toString();
@@ -361,6 +364,10 @@ public class CertificateModel {
 		}
 	}
 	
+	/**
+	 * Check validity of the certificate.
+	 * @return True if certificate isn't expired, isn't not valid yet and isn't revoked.
+	 */
 	private boolean checkValidity() {
 		if (!isAfterNotAfter() && !isBeforeNotBefore() && !checkRevoked()) {
 			return true;
