@@ -196,25 +196,25 @@
         <dependency>
             <groupId>com.teamdev.jxbrowser</groupId>
             <artifactId>jxbrowser-win</artifactId>
-            <version>6.12</version>
+            <version>6.14</version>
         </dependency>
 
         <dependency>
             <groupId>com.teamdev.jxbrowser</groupId>
             <artifactId>jxbrowser-linux32</artifactId>
-            <version>6.12</version>
+            <version>6.14</version>
         </dependency>
 
         <dependency>
             <groupId>com.teamdev.jxbrowser</groupId>
             <artifactId>jxbrowser-linux64</artifactId>
-            <version>6.12</version>
+            <version>6.14</version>
         </dependency>
 
         <dependency>
             <groupId>com.teamdev.jxbrowser</groupId>
             <artifactId>jxbrowser-mac</artifactId>
-            <version>6.12</version>
+            <version>6.14</version>
         </dependency>
 
         <dependency>
@@ -241,25 +241,25 @@
             <version>0.4.8</version>
         </dependency>
         <dependency>
-        	<groupId>
-        		org.bouncycastle.bcprov-jdk15on.1.57.org.bouncycastle
-        	</groupId>
-        	<artifactId>bcprov-jdk15on</artifactId>
-        	<version>1.57</version>
+            <groupId>
+                org.bouncycastle.bcprov-jdk15on.1.57.org.bouncycastle
+            </groupId>
+            <artifactId>bcprov-jdk15on</artifactId>
+            <version>1.57</version>
         </dependency>
         <dependency>
-        	<groupId>
-        		org.bouncycastle.bcpkix-jdk15on.1.57.org.bouncycastle
-        	</groupId>
-        	<artifactId>bcpkix-jdk15on</artifactId>
-        	<version>1.57</version>
+            <groupId>
+                org.bouncycastle.bcpkix-jdk15on.1.57.org.bouncycastle
+            </groupId>
+            <artifactId>bcpkix-jdk15on</artifactId>
+            <version>1.57</version>
         </dependency>
         <dependency>
-        	<groupId>
-        		org.bouncycastle.bctls-jdk15on.1.57.org.bouncycastle
-        	</groupId>
-        	<artifactId>bctls-jdk15on</artifactId>
-        	<version>1.57</version>
+            <groupId>
+                org.bouncycastle.bctls-jdk15on.1.57.org.bouncycastle
+            </groupId>
+            <artifactId>bctls-jdk15on</artifactId>
+            <version>1.57</version>
         </dependency>
     </dependencies>
 
