@@ -76,9 +76,10 @@ public class PemHelper {
      * @param pem it's byte array representation of pem file
      * @param type
      * @return
+     * @throws PEMException 
      * @throws Exception 
      */
-    protected static String knowDelimeter(byte[] pem, typeOfDelimeter type) throws Exception{
+    protected static String knowDelimeter(byte[] pem, typeOfDelimeter type) throws PEMException {
         if(type instanceof typeOfDelimeter == false){
             throw new IllegalArgumentException();
         }
@@ -103,7 +104,7 @@ public class PemHelper {
             }
         }
         if(knownDelimeter == null){
-            throw new Exception("Pem file doesn't include: "+ type.toString() + " kind of delimeter");
+            throw new PEMException("Pem file doesn't include: "+ type.toString() + " kind of delimeter");
         }
         return knownDelimeter;
         

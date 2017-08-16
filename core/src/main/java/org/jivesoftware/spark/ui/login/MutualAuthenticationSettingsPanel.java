@@ -6,7 +6,6 @@ import static java.awt.GridBagConstraints.WEST;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.HeadlessException;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -15,11 +14,14 @@ import java.awt.event.MouseListener;
 import java.io.File;
 import java.io.IOException;
 import java.security.KeyPair;
+import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.security.spec.InvalidKeySpecException;
 
+import javax.naming.InvalidNameException;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -158,39 +160,50 @@ public class MutualAuthenticationSettingsPanel extends JPanel implements ActionL
             idControll.showCertificate();
         }
         if (e.getSource() == createButton) {
-            idControll.setUpData(commonNameField.getText(), organizationUnitField.getText(),
-                    organizationField.getText(), countryField.getText(), cityField.getText());
+
             if (certificateSigningRequest.isSelected()) {
-                try {
-                    KeyPair keyPair = idControll.createKeyPair();
-
-                    PKCS10CertificationRequest request = idControll.createCSR(keyPair);
-                    PemHelper.saveToPemFile(keyPair, IdentityController.KEY_FILE);
-                    PemHelper.saveToPemFile(request, IdentityController.CSR_FILE);
-                    JOptionPane.showMessageDialog(null, Res.getString("dialog.certificate.request.has.been.created") + IdentityController.SECURITY_DIRECTORY.toString());
-                } catch (OperatorCreationException | NoSuchAlgorithmException | IOException
-                        | NoSuchProviderException e1) {
-                    Log.error("Couldn't create Certificate Signing Request", e1);
-                }
+                createCertificateSignRequest();
             } else if (selfSignedCertificate.isSelected()) {
-                try {
-                    KeyPair keyPair = idControll.createKeyPair();
-                    PemBuilder pemBuilder = new PemHelper().new PemBuilder();
-
-                    X509Certificate cert = idControll.createSelfSignedCertificate(idControll.createKeyPair());
-                    pemBuilder.add(keyPair);
-                    pemBuilder.add(cert);
-                    pemBuilder.saveToPemFile(IdentityController.CERT_FILE);
-                    JOptionPane.showMessageDialog(null, Res.getString("dialog.self.signed.certificate.has.been.created") + IdentityController.SECURITY_DIRECTORY.toString());
-                    
-
-                } catch (NoSuchAlgorithmException | NoSuchProviderException | IOException | OperatorCreationException
-                        | CertificateException e1) {
-                    Log.error("Couldn't create Self Signed Certificate", e1);
-                }
+                createSelfSignedCertificate();
             }
-        }        
-        
+        }
+
+    }
+
+    private void createCertificateSignRequest() {
+        idControll.setUpData(commonNameField.getText(), organizationUnitField.getText(), organizationField.getText(),
+                countryField.getText(), cityField.getText());
+        try {
+            KeyPair keyPair = idControll.createKeyPair();
+
+            PKCS10CertificationRequest request = idControll.createCSR(keyPair);
+            PemHelper.saveToPemFile(keyPair, IdentityController.KEY_FILE);
+            PemHelper.saveToPemFile(request, IdentityController.CSR_FILE);
+            JOptionPane.showMessageDialog(null, Res.getString("dialog.certificate.request.has.been.created") + IdentityController.SECURITY_DIRECTORY.toString());
+        } catch (OperatorCreationException | NoSuchAlgorithmException | IOException | NoSuchProviderException e1) {
+            Log.error("Couldn't create Certificate Signing Request", e1);
+        }
+    }
+    
+    private void createSelfSignedCertificate() {
+        idControll.setUpData(commonNameField.getText(), organizationUnitField.getText(), organizationField.getText(),
+                countryField.getText(), cityField.getText());
+        try {
+            KeyPair keyPair = idControll.createKeyPair();
+            PemBuilder pemBuilder = new PemHelper().new PemBuilder();
+
+            X509Certificate cert = idControll.createSelfSignedCertificate(keyPair);
+            pemBuilder.add(keyPair.getPrivate());
+            pemBuilder.add(cert);
+            pemBuilder.saveToPemFile(IdentityController.CERT_FILE);
+            JOptionPane.showMessageDialog(null, Res.getString("dialog.self.signed.certificate.has.been.created") + IdentityController.SECURITY_DIRECTORY.toString());
+            
+
+        } catch (NoSuchAlgorithmException | NoSuchProviderException | IOException | OperatorCreationException
+                | CertificateException e1) {
+            Log.error("Couldn't create Self Signed Certificate", e1);
+        }
+
     }
 
     public static JTable getIdTable() {
@@ -244,15 +257,19 @@ public class MutualAuthenticationSettingsPanel extends JPanel implements ActionL
 
             File file = fileChooser.getSelectedFile();
             try {
+
                 idControll.addEntryToKeyStore(file);
-                // idControll.addCertificateToKeystore(file);
-            } catch (IOException e) {
+            } catch (CertificateException e) {
+
+                JOptionPane.showMessageDialog(null, Res.getString("dialog.cannot.upload.certificate.might.be.ill.formated"));
                 Log.error("Cannot upload certificate file", e);
-            } catch (IllegalArgumentException e) {
-                Log.warning("Certificate or it's alias cannot be null", e);
-            } catch (HeadlessException e) {
-                Log.error("Error at setting certificate alias", e);
+            } catch (InvalidKeySpecException | NoSuchAlgorithmException | KeyStoreException | InvalidNameException
+                    | IOException e) {
+
+                JOptionPane.showMessageDialog(null, "dialog.cannot.upload.certificate");
+                Log.error("Cannot upload certificate file", e);
             }
+
         }
     }
 
