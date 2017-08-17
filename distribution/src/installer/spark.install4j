@@ -576,12 +576,12 @@
       <excludedBeans />
       <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
       <exclude>
-        <entry location="lib/jxbrowser-linux32-6.12.jar" fileType="regular" />
+        <entry location="lib/jxbrowser-linux32-6.14.jar" fileType="regular" />
         <entry location="lib/linux64" fileType="regular" />
-        <entry location="lib/jxbrowser-mac-6.12.jar" fileType="regular" />
+        <entry location="lib/jxbrowser-mac-6.14.jar" fileType="regular" />
         <entry location="lib/linux" fileType="regular" />
         <entry location="lib/mac" fileType="regular" />
-        <entry location="lib/jxbrowser-linux64-6.12.jar" fileType="regular" />
+        <entry location="lib/jxbrowser-linux64-6.14.jar" fileType="regular" />
         <entry location="plugins/apple.jar" fileType="regular" />
         <entry location="plugins/growl.jar" fileType="regular" />
         <entry location="bin/startup.bat" fileType="regular" />
@@ -599,10 +599,10 @@
       <excludedBeans />
       <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
       <exclude>
-        <entry location="lib/jxbrowser-win-6.12.jar" fileType="regular" />
+        <entry location="lib/jxbrowser-win-6.14.jar" fileType="regular" />
         <entry location="lib/windows" fileType="regular" />
         <entry location="lib/windows64" fileType="regular" />
-        <entry location="lib/jxbrowser-mac-6.12.jar" fileType="regular" />
+        <entry location="lib/jxbrowser-mac-6.14.jar" fileType="regular" />
         <entry location="lib/mac" fileType="regular" />
         <entry location="plugins/apple.jar" fileType="regular" />
         <entry location="plugins/growl.jar" fileType="regular" />
@@ -621,13 +621,13 @@
       <excludedBeans />
       <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
       <exclude>
-        <entry location="lib/jxbrowser-win-6.12.jar" fileType="regular" />
-        <entry location="lib/jxbrowser-linux32-6.12.jar" fileType="regular" />
+        <entry location="lib/jxbrowser-win-6.14.jar" fileType="regular" />
+        <entry location="lib/jxbrowser-linux32-6.14.jar" fileType="regular" />
         <entry location="lib/linux64" fileType="regular" />
         <entry location="lib/windows" fileType="regular" />
         <entry location="lib/windows64" fileType="regular" />
         <entry location="lib/linux" fileType="regular" />
-        <entry location="lib/jxbrowser-linux64-6.12.jar" fileType="regular" />
+        <entry location="lib/jxbrowser-linux64-6.14.jar" fileType="regular" />
         <entry location="plugins/flashing.jar" fileType="regular" />
         <entry location="bin/startup.bat" fileType="regular" />
       </exclude>
@@ -645,10 +645,10 @@
       <excludedBeans />
       <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
       <exclude>
-        <entry location="lib/jxbrowser-win-6.12.jar" fileType="regular" />
+        <entry location="lib/jxbrowser-win-6.14.jar" fileType="regular" />
         <entry location="lib/windows" fileType="regular" />
         <entry location="lib/windows64" fileType="regular" />
-        <entry location="lib/jxbrowser-mac-6.12.jar" fileType="regular" />
+        <entry location="lib/jxbrowser-mac-6.14.jar" fileType="regular" />
         <entry location="lib/mac" fileType="regular" />
         <entry location="plugins/apple.jar" fileType="regular" />
         <entry location="plugins/growl.jar" fileType="regular" />
@@ -671,10 +671,10 @@
       <excludedBeans />
       <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
       <exclude>
-        <entry location="lib/jxbrowser-win-6.12.jar" fileType="regular" />
+        <entry location="lib/jxbrowser-win-6.14.jar" fileType="regular" />
         <entry location="lib/windows" fileType="regular" />
         <entry location="lib/windows64" fileType="regular" />
-        <entry location="lib/jxbrowser-mac-6.12.jar" fileType="regular" />
+        <entry location="lib/jxbrowser-mac-6.14.jar" fileType="regular" />
         <entry location="lib/mac" fileType="regular" />
         <entry location="plugins/apple.jar" fileType="regular" />
         <entry location="plugins/growl.jar" fileType="regular" />
@@ -706,10 +706,10 @@
       <excludedBeans />
       <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
       <exclude>
-        <entry location="lib/jxbrowser-win-6.12.jar" fileType="regular" />
+        <entry location="lib/jxbrowser-win-6.14.jar" fileType="regular" />
         <entry location="lib/windows" fileType="regular" />
         <entry location="lib/windows64" fileType="regular" />
-        <entry location="lib/jxbrowser-mac-6.12.jar" fileType="regular" />
+        <entry location="lib/jxbrowser-mac-6.14.jar" fileType="regular" />
         <entry location="lib/mac" fileType="regular" />
         <entry location="plugins/apple.jar" fileType="regular" />
         <entry location="plugins/growl.jar" fileType="regular" />
@@ -740,13 +740,13 @@
       <excludedBeans />
       <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
       <exclude>
-        <entry location="lib/jxbrowser-win-6.12.jar" fileType="regular" />
-        <entry location="lib/jxbrowser-linux32-6.12.jar" fileType="regular" />
+        <entry location="lib/jxbrowser-win-6.14.jar" fileType="regular" />
+        <entry location="lib/jxbrowser-linux32-6.14.jar" fileType="regular" />
         <entry location="lib/linux64" fileType="regular" />
         <entry location="lib/windows" fileType="regular" />
         <entry location="lib/windows64" fileType="regular" />
         <entry location="lib/linux" fileType="regular" />
-        <entry location="lib/jxbrowser-linux64-6.12.jar" fileType="regular" />
+        <entry location="lib/jxbrowser-linux64-6.14.jar" fileType="regular" />
         <entry location="plugins/flashing.jar" fileType="regular" />
         <entry location="bin/startup.bat" fileType="regular" />
       </exclude>
@@ -764,12 +764,12 @@
       <excludedBeans />
       <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
       <exclude>
-        <entry location="lib/jxbrowser-linux32-6.12.jar" fileType="regular" />
+        <entry location="lib/jxbrowser-linux32-6.14.jar" fileType="regular" />
         <entry location="lib/linux64" fileType="regular" />
-        <entry location="lib/jxbrowser-mac-6.12.jar" fileType="regular" />
+        <entry location="lib/jxbrowser-mac-6.14.jar" fileType="regular" />
         <entry location="lib/linux" fileType="regular" />
         <entry location="lib/mac" fileType="regular" />
-        <entry location="lib/jxbrowser-linux64-6.12.jar" fileType="regular" />
+        <entry location="lib/jxbrowser-linux64-6.14.jar" fileType="regular" />
         <entry location="plugins/apple.jar" fileType="regular" />
         <entry location="plugins/growl.jar" fileType="regular" />
         <entry location="bin/startup.bat" fileType="regular" />
