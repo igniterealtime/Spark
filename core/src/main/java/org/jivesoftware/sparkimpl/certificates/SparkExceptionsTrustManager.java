@@ -32,13 +32,23 @@ public class SparkExceptionsTrustManager implements X509TrustManager {
     private Provider bcProvider = new BouncyCastleProvider(); // bc provider for path validation
 
     public SparkExceptionsTrustManager() {
-        try (InputStream inputStream = new FileInputStream(CertificateController.EXCEPTIONS)) {
-            this.exceptionsStore = KeyStore.getInstance("JKS");
-            exceptionsStore.load(inputStream, CertificateController.passwd);
-        } catch (NoSuchAlgorithmException | CertificateException | IOException | KeyStoreException e) {
-            Log.error("Couldn't load keystore for certificate exceptions authentication", e);
-            ;
+
+        try {
+            exceptionsStore = KeyStore.getInstance("JKS");
+            if (CertificateController.EXCEPTIONS.exists() && !CertificateController.EXCEPTIONS.isDirectory()
+                    && CertificateController.EXCEPTIONS.length() > 0) {
+                try (InputStream inputStream = new FileInputStream(CertificateController.EXCEPTIONS)) {
+                    exceptionsStore.load(inputStream, CertificateController.passwd);
+                } catch (IOException | NoSuchAlgorithmException | CertificateException e) {
+                    Log.error("Error at accesing exceptions KeyStore");
+                }
+            } else {
+                exceptionsStore.load(null, CertificateController.passwd);
+            }
+        } catch (KeyStoreException | NoSuchAlgorithmException | CertificateException | IOException e) {
+            Log.warning("Cannot create exceptions KeyStore", e);
         }
+
     }
 
     @Override
