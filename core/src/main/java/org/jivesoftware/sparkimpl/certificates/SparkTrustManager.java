@@ -341,40 +341,10 @@ public class SparkTrustManager implements X509TrustManager {
      * loads truststore and potentially (depending on settings) blacklist
      */
     private void loadTrustStore() {
-        try {
-            trustStore = KeyStore.getInstance("JKS");
-            // checking if length >0 prevents EOFExceptions
-            if (CertificateController.TRUSTED.exists() && !CertificateController.TRUSTED.isDirectory()
-                    && CertificateController.TRUSTED.length() > 0) {
-                try (InputStream inputStream = new FileInputStream(CertificateController.TRUSTED)) {
-                    trustStore.load(inputStream, CertificateController.passwd);
-                } catch (IOException | NoSuchAlgorithmException | CertificateException e) {
-                    Log.error("Error at accesing exceptions KeyStore");
-                }
-            } else {
-                trustStore.load(null, CertificateController.passwd); // if cannot open KeyStore then new empty one will
-                                                                     // be created
-            }
-        } catch (KeyStoreException | NoSuchAlgorithmException | CertificateException | IOException e) {
-            Log.warning("Cannot create exceptions KeyStore", e);
-        }
+      trustStore = certControll.openKeyStore(CertificateController.TRUSTED);
 
         if (acceptRevoked) {
-            try {
-                blackStore = KeyStore.getInstance("JKS");
-                if (CertificateController.BLACKLIST.exists() && !CertificateController.BLACKLIST.isDirectory()
-                        && CertificateController.BLACKLIST.length() > 0) {
-                    try (InputStream inputStream = new FileInputStream(CertificateController.BLACKLIST)) {
-                        blackStore.load(inputStream, CertificateController.passwd);
-                    } catch (IOException | NoSuchAlgorithmException | CertificateException e) {
-                        Log.error("Error at accesing exceptions KeyStore");
-                    }
-                } else {
-                    blackStore.load(null, CertificateController.passwd);
-                }
-            } catch (KeyStoreException | NoSuchAlgorithmException | CertificateException | IOException e) {
-                Log.warning("Cannot create exceptions KeyStore", e);
-            }
+            blackStore = certControll.openKeyStore(CertificateController.BLACKLIST);
         }
 
     }

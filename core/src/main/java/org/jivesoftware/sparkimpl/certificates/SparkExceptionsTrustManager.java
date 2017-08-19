@@ -25,29 +25,17 @@ import javax.net.ssl.X509TrustManager;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
+import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
 public class SparkExceptionsTrustManager implements X509TrustManager {
 
     KeyStore exceptionsStore;
     private Provider bcProvider = new BouncyCastleProvider(); // bc provider for path validation
-
+    private LocalPreferences localPref = SettingsManager.getLocalPreferences();
     public SparkExceptionsTrustManager() {
-
-        try {
-            exceptionsStore = KeyStore.getInstance("JKS");
-            if (CertificateController.EXCEPTIONS.exists() && !CertificateController.EXCEPTIONS.isDirectory()
-                    && CertificateController.EXCEPTIONS.length() > 0) {
-                try (InputStream inputStream = new FileInputStream(CertificateController.EXCEPTIONS)) {
-                    exceptionsStore.load(inputStream, CertificateController.passwd);
-                } catch (IOException | NoSuchAlgorithmException | CertificateException e) {
-                    Log.error("Error at accesing exceptions KeyStore");
-                }
-            } else {
-                exceptionsStore.load(null, CertificateController.passwd);
-            }
-        } catch (KeyStoreException | NoSuchAlgorithmException | CertificateException | IOException e) {
-            Log.warning("Cannot create exceptions KeyStore", e);
-        }
+        CertificateController certControll = new CertificateController(localPref);
+        exceptionsStore = certControll.openKeyStore(CertificateController.EXCEPTIONS);
 
     }
 

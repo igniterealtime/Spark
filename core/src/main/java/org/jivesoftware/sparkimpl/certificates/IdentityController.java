@@ -93,23 +93,9 @@ public class IdentityController extends CertManager {
 
     public void loadKeyStores() {
 
-        try {
-            idStore = KeyStore.getInstance("JKS");
-            if (IDENTITY.exists() && !IDENTITY.isDirectory() && IDENTITY.length() > 0) {
-                try (InputStream inputStream = new FileInputStream(IDENTITY)) {
-                    idStore.load(inputStream, passwd);
-                    allCertificates = fillTableListWithKeyStoreContent(idStore, allCertificates);
-                } catch (IOException | NoSuchAlgorithmException | CertificateException e) {
-                    Log.error("Error at accesing exceptions KeyStore", e);
-                }
-            } else {
-                idStore.load(null, passwd);
-            }
-        } catch (KeyStoreException | NoSuchAlgorithmException | CertificateException | IOException e) {
-            Log.warning("Cannot create exceptions KeyStore", e);
-        }
-
-            
+        idStore = openKeyStore(IDENTITY);
+        allCertificates = fillTableListWithKeyStoreContent(idStore, allCertificates);
+           
     }
 
     @Override
@@ -161,17 +147,22 @@ public class IdentityController extends CertManager {
         }
     }
 
-    private List<CertificateModel> fillTableListWithKeyStoreContent(KeyStore keyStore, List<CertificateModel> list)
-            throws KeyStoreException {
+    protected List<CertificateModel> fillTableListWithKeyStoreContent(KeyStore keyStore, List<CertificateModel> list) {
+        if (keyStore != null) {
+            Enumeration<String> store;
+            try {
+                store = keyStore.aliases();
 
-        Enumeration<String> store = keyStore.aliases();
-        while (store.hasMoreElements()) {
-            String alias = (String) store.nextElement();
-            X509Certificate certificate = (X509Certificate) keyStore.getCertificate(alias);
-            CertificateModel certModel = new CertificateModel(certificate, alias);
-            list.add(certModel);
+                while (store.hasMoreElements()) {
+                    String alias = (String) store.nextElement();
+                    X509Certificate certificate = (X509Certificate) keyStore.getCertificate(alias);
+                    CertificateModel certModel = new CertificateModel(certificate, alias);
+                    list.add(certModel);
+                }
+            } catch (KeyStoreException e) {
+                Log.error("Cannot read KeyStore", e);
+            }
         }
-
         return list;
     }
 
