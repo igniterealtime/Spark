@@ -2,11 +2,9 @@ package org.jivesoftware.sparkimpl.certificates;
 
 import java.awt.HeadlessException;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigInteger;
 import java.nio.file.Files;
@@ -94,7 +92,7 @@ public class IdentityController extends CertManager {
     public void loadKeyStores() {
 
         idStore = openKeyStore(IDENTITY);
-        allCertificates = fillTableListWithKeyStoreContent(idStore, allCertificates);
+        fillTableListWithKeyStoreContent(idStore, null);
            
     }
 
@@ -145,25 +143,6 @@ public class IdentityController extends CertManager {
             }
             tableModel.addRow(certEntry);
         }
-    }
-
-    protected List<CertificateModel> fillTableListWithKeyStoreContent(KeyStore keyStore, List<CertificateModel> list) {
-        if (keyStore != null) {
-            Enumeration<String> store;
-            try {
-                store = keyStore.aliases();
-
-                while (store.hasMoreElements()) {
-                    String alias = (String) store.nextElement();
-                    X509Certificate certificate = (X509Certificate) keyStore.getCertificate(alias);
-                    CertificateModel certModel = new CertificateModel(certificate, alias);
-                    list.add(certModel);
-                }
-            } catch (KeyStoreException e) {
-                Log.error("Cannot read KeyStore", e);
-            }
-        }
-        return list;
     }
 
     @Override

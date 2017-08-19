@@ -204,33 +204,7 @@ public class CertificateController extends CertManager {
         return blackListedCertificates.contains(cert);
     }
 
-	/**
-	 * Add certificates from keyStore to list. Useful for displaying in certificate table.
-	 * 
-	 * @param KeyStore source keystore.
-	 * @param List list which will be filled with certificate models. 
-	 * @throws KeyStoreException 
-	 */
 
-    protected List<CertificateModel> fillTableListWithKeyStoreContent(KeyStore keyStore, List<CertificateModel> list) {
-        if (keyStore != null) {
-            Enumeration<String> store;
-            try {
-                store = keyStore.aliases();
-
-                while (store.hasMoreElements()) {
-                    String alias = (String) store.nextElement();
-                    X509Certificate certificate = (X509Certificate) keyStore.getCertificate(alias);
-                    CertificateModel certModel = new CertificateModel(certificate, alias);
-                    list.add(certModel);
-                    allCertificates.add(certModel);
-                }
-            } catch (KeyStoreException e) {
-                Log.error("Cannot read KeyStore", e);
-            }
-        }
-        return list;
-    }
 
 	/**
      * Return file path which contains certificate with given alias;
