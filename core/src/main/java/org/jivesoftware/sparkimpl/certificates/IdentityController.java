@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigInteger;
 import java.nio.file.Files;
@@ -65,7 +66,7 @@ public class IdentityController extends CertManager {
      */
 
     private static String commonName, organizationUnit, organization,city, country;
-    public final static File IDENTITY =           new File( Spark.getSparkUserHome() + File.separator + "security" + File.separator + "identitystore.jks");
+    public final static File IDENTITY =           new File( Spark.getSparkUserHome() + File.separator + "security" + File.separator + "identitystore");
     public final static File SECURITY_DIRECTORY = new File( Spark.getSparkUserHome() + File.separator + "security"); 
     public static File CSR_FILE =                 new File( Spark.getSparkUserHome() + File.separator + "security" + File.separator + commonName + "_csr.pem");
     public static File KEY_FILE =                 new File( Spark.getSparkUserHome() + File.separator + "security" + File.separator + commonName + "_key.pem");
@@ -85,45 +86,40 @@ public class IdentityController extends CertManager {
         }
         this.localPreferences = localPreferences;
 
-        try {
-            fillTableListWithKeyStoreContent(idStore, allCertificates);
-        } catch (KeyStoreException e) {
-            Log.error("Couldn't fill identity certificates list", e);
-        }
+
         createTableModel();
 
     }
 
     public void loadKeyStores() {
-        if (IDENTITY.exists() && IDENTITY.isFile()) {
 
-            try (final FileInputStream inputStream = new FileInputStream(IDENTITY)) {
-
-                idStore = KeyStore.getInstance("JKS");
-                idStore.load(inputStream, passwd);
-
-            } catch (KeyStoreException | NoSuchAlgorithmException | CertificateException | IOException e) {
-                Log.error("Couldn't open idetity store", e);
-            }
-        } else {
-            try {
-
-                idStore = KeyStore.getInstance("JKS");
+        try {
+            idStore = KeyStore.getInstance("JKS");
+            if (IDENTITY.exists() && !IDENTITY.isDirectory() && IDENTITY.length() > 0) {
+                try (InputStream inputStream = new FileInputStream(IDENTITY)) {
+                    idStore.load(inputStream, passwd);
+                    allCertificates = fillTableListWithKeyStoreContent(idStore, allCertificates);
+                } catch (IOException | NoSuchAlgorithmException | CertificateException e) {
+                    Log.error("Error at accesing exceptions KeyStore", e);
+                }
+            } else {
                 idStore.load(null, passwd);
-
-            } catch (KeyStoreException | NoSuchAlgorithmException | CertificateException | IOException e) {
-                Log.error("Couldn't create identity store", e);
             }
+        } catch (KeyStoreException | NoSuchAlgorithmException | CertificateException | IOException e) {
+            Log.warning("Cannot create exceptions KeyStore", e);
         }
+
+            
     }
 
     @Override
     public void overWriteKeyStores() {
         try (OutputStream outputStream = new FileOutputStream(IDENTITY)) {
-            idStore.store(outputStream, passwd);
-
+            if (idStore != null) {
+                idStore.store(outputStream, passwd);
+            }
         } catch (IOException | KeyStoreException | NoSuchAlgorithmException | CertificateException e) {
-            Log.error("Couldn't save TrustStore");
+            Log.error("Couldn't save TrustStore" , e);
         }
 
     }
@@ -327,7 +323,6 @@ public class IdentityController extends CertManager {
             X509Certificate[] chain = {addedCert};
             
             idStore.setKeyEntry(alias, key, passwd, chain);
-            idStore.setCertificateEntry(alias, addedCert);
             allCertificates.add(new CertificateModel(addedCert));
             refreshCertTable();
             JOptionPane.showMessageDialog(null, Res.getString("dialog.certificate.has.been.added"));

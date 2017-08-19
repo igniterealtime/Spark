@@ -341,21 +341,42 @@ public class SparkTrustManager implements X509TrustManager {
      * loads truststore and potentially (depending on settings) blacklist
      */
     private void loadTrustStore() {
-        try (FileInputStream inputStream = new FileInputStream(CertificateController.TRUSTED)) {
+        try {
             trustStore = KeyStore.getInstance("JKS");
-            trustStore.load(inputStream, CertificateController.passwd);
-        } catch (NoSuchAlgorithmException | CertificateException | IOException | KeyStoreException e) {
-            Log.error("Error at accesing Truststore", e);
+            // checking if length >0 prevents EOFExceptions
+            if (CertificateController.TRUSTED.exists() && !CertificateController.TRUSTED.isDirectory()
+                    && CertificateController.TRUSTED.length() > 0) {
+                try (InputStream inputStream = new FileInputStream(CertificateController.TRUSTED)) {
+                    trustStore.load(inputStream, CertificateController.passwd);
+                } catch (IOException | NoSuchAlgorithmException | CertificateException e) {
+                    Log.error("Error at accesing exceptions KeyStore");
+                }
+            } else {
+                trustStore.load(null, CertificateController.passwd); // if cannot open KeyStore then new empty one will
+                                                                     // be created
+            }
+        } catch (KeyStoreException | NoSuchAlgorithmException | CertificateException | IOException e) {
+            Log.warning("Cannot create exceptions KeyStore", e);
         }
-        if(acceptRevoked){
-            try (FileInputStream inputStream = new FileInputStream(CertificateController.BLACKLIST)) {
+
+        if (acceptRevoked) {
+            try {
                 blackStore = KeyStore.getInstance("JKS");
-                blackStore.load(inputStream, CertificateController.passwd);
-            } catch (NoSuchAlgorithmException | CertificateException | IOException | KeyStoreException e) {
-                Log.error("Error at accesing blacklist Keystore", e);
-            }   
+                if (CertificateController.BLACKLIST.exists() && !CertificateController.BLACKLIST.isDirectory()
+                        && CertificateController.BLACKLIST.length() > 0) {
+                    try (InputStream inputStream = new FileInputStream(CertificateController.BLACKLIST)) {
+                        blackStore.load(inputStream, CertificateController.passwd);
+                    } catch (IOException | NoSuchAlgorithmException | CertificateException e) {
+                        Log.error("Error at accesing exceptions KeyStore");
+                    }
+                } else {
+                    blackStore.load(null, CertificateController.passwd);
+                }
+            } catch (KeyStoreException | NoSuchAlgorithmException | CertificateException | IOException e) {
+                Log.warning("Cannot create exceptions KeyStore", e);
+            }
         }
-        
+
     }
 
     private void loadCRL(X509Certificate[] chain) throws IOException, InvalidAlgorithmParameterException,
