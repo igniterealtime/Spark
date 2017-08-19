@@ -69,56 +69,15 @@ public class CertificateController extends CertManager {
      */
     @Override
     public void loadKeyStores() {
-        try {
-            trustStore = KeyStore.getInstance("JKS");
-            // checking if length >0 prevents EOFExceptions
-            if (TRUSTED.exists() && !TRUSTED.isDirectory() && TRUSTED.length() > 0) {
-                try (InputStream inputStream = new FileInputStream(TRUSTED)) {
-                    trustStore.load(inputStream, passwd);
-                    trustedCertificates = fillTableListWithKeyStoreContent(trustStore, trustedCertificates);
-                } catch (IOException | NoSuchAlgorithmException | CertificateException e) {
-                    Log.error("Error at accesing exceptions KeyStore", e);
-                }
-            } else {
-                trustStore.load(null, passwd); // if cannot open KeyStore then new empty one will be created
-            }
-        } catch (KeyStoreException | NoSuchAlgorithmException | CertificateException | IOException e) {
-            Log.warning("Cannot create exceptions KeyStore", e);
-        }
-
-        try {
-            exceptionsStore = KeyStore.getInstance("JKS");
-            if (EXCEPTIONS.exists() && !EXCEPTIONS.isDirectory() && EXCEPTIONS.length() > 0) {
-                try (InputStream inputStream = new FileInputStream(EXCEPTIONS)) {
-                    exceptionsStore.load(inputStream, passwd);
-                    exemptedCertificates = fillTableListWithKeyStoreContent(exceptionsStore, exemptedCertificates);
-                } catch (IOException | NoSuchAlgorithmException | CertificateException e) {
-                    Log.error("Error at accesing exceptions KeyStore", e);
-                }
-            } else {
-                exceptionsStore.load(null, passwd);
-            }
-        } catch (KeyStoreException | NoSuchAlgorithmException | CertificateException | IOException e) {
-            Log.warning("Cannot create exceptions KeyStore", e);
-        }
-
-        try {
-            blackListStore = KeyStore.getInstance("JKS");
-            if (BLACKLIST.exists() && !BLACKLIST.isDirectory() && BLACKLIST.length() > 0) {
-                try (InputStream inputStream = new FileInputStream(BLACKLIST)) {
-                    blackListStore.load(inputStream, passwd);
-                    blackListedCertificates = fillTableListWithKeyStoreContent(blackListStore, blackListedCertificates);
-                } catch (IOException | NoSuchAlgorithmException | CertificateException e) {
-                    Log.error("Error at accesing exceptions KeyStore", e);
-                }
-            } else {
-                blackListStore.load(null, passwd);
-            }
-        } catch (KeyStoreException | NoSuchAlgorithmException | CertificateException | IOException e) {
-            Log.warning("Cannot create exceptions KeyStore", e);
-        }
+        trustStore =      openKeyStore(TRUSTED);
+        exceptionsStore = openKeyStore(EXCEPTIONS);
+        blackListStore =  openKeyStore(BLACKLIST);
+        trustedCertificates = fillTableListWithKeyStoreContent(trustStore, trustedCertificates);
+        exemptedCertificates = fillTableListWithKeyStoreContent(exceptionsStore, exemptedCertificates);
+        blackListedCertificates = fillTableListWithKeyStoreContent(blackListStore, blackListedCertificates);
+        
     }
-
+        
     @Override
     public void overWriteKeyStores() {
         try (OutputStream outputStream = new FileOutputStream(TRUSTED)) {
@@ -252,20 +211,26 @@ public class CertificateController extends CertManager {
 	 * @param List list which will be filled with certificate models. 
 	 * @throws KeyStoreException 
 	 */
-	
-	private List<CertificateModel> fillTableListWithKeyStoreContent(KeyStore keyStore, List<CertificateModel> list) throws KeyStoreException {
 
-			Enumeration<String> store = keyStore.aliases();
-			while (store.hasMoreElements()) {
-				String alias = (String) store.nextElement();
-                X509Certificate certificate = (X509Certificate) keyStore.getCertificate(alias);
-                CertificateModel certModel = new CertificateModel(certificate, alias);
-                list.add(certModel);
-                allCertificates.add(certModel);
+    protected List<CertificateModel> fillTableListWithKeyStoreContent(KeyStore keyStore, List<CertificateModel> list) {
+        if (keyStore != null) {
+            Enumeration<String> store;
+            try {
+                store = keyStore.aliases();
+
+                while (store.hasMoreElements()) {
+                    String alias = (String) store.nextElement();
+                    X509Certificate certificate = (X509Certificate) keyStore.getCertificate(alias);
+                    CertificateModel certModel = new CertificateModel(certificate, alias);
+                    list.add(certModel);
+                    allCertificates.add(certModel);
+                }
+            } catch (KeyStoreException e) {
+                Log.error("Cannot read KeyStore", e);
             }
-        
-			return list;
-	}
+        }
+        return list;
+    }
 
 	/**
      * Return file path which contains certificate with given alias;

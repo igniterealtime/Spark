@@ -2,7 +2,10 @@ package org.jivesoftware.sparkimpl.certificates;
 
 import java.awt.HeadlessException;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
@@ -21,6 +24,7 @@ import javax.swing.table.DefaultTableModel;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.spark.ui.login.CertificateDialog;
+import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 
 /**
@@ -43,7 +47,7 @@ public abstract class CertManager {
     
     public abstract void deleteEntry(String alias) throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException;
     public abstract void addOrRemoveFromExceptionList(boolean checked);
-
+    protected abstract List<CertificateModel> fillTableListWithKeyStoreContent(KeyStore keyStore, List<CertificateModel> list) throws KeyStoreException;
     public abstract boolean isOnExceptionList(CertificateModel cert);
 
     protected abstract void refreshCertTable();
@@ -148,5 +152,24 @@ public abstract class CertManager {
 
         new CertificateDialog(localPreferences, certModel, this, reason);
     }
-
+    
+    protected KeyStore openKeyStore(File file){
+        KeyStore keyStore = null;
+        try {
+            keyStore = KeyStore.getInstance("JKS");
+            // checking if length >0 prevents EOFExceptions
+            if (file.exists() && !file.isDirectory() && file.length() > 0) {
+                try (InputStream inputStream = new FileInputStream(file)) {
+                    keyStore.load(inputStream, passwd);
+                } catch (IOException | NoSuchAlgorithmException | CertificateException e) {
+                    Log.error("Error at accesing exceptions KeyStore", e);
+                }
+            } else {
+                keyStore.load(null, passwd); // if cannot open KeyStore then new empty one will be created
+            }
+        } catch (KeyStoreException | NoSuchAlgorithmException | CertificateException | IOException e) {
+            Log.warning("Cannot create exceptions KeyStore", e);
+        }
+        return keyStore;
+    }
 }
