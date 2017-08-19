@@ -341,21 +341,12 @@ public class SparkTrustManager implements X509TrustManager {
      * loads truststore and potentially (depending on settings) blacklist
      */
     private void loadTrustStore() {
-        try (FileInputStream inputStream = new FileInputStream(CertificateController.TRUSTED)) {
-            trustStore = KeyStore.getInstance("JKS");
-            trustStore.load(inputStream, CertificateController.passwd);
-        } catch (NoSuchAlgorithmException | CertificateException | IOException | KeyStoreException e) {
-            Log.error("Error at accesing Truststore", e);
+      trustStore = certControll.openKeyStore(CertificateController.TRUSTED);
+
+        if (acceptRevoked) {
+            blackStore = certControll.openKeyStore(CertificateController.BLACKLIST);
         }
-        if(acceptRevoked){
-            try (FileInputStream inputStream = new FileInputStream(CertificateController.BLACKLIST)) {
-                blackStore = KeyStore.getInstance("JKS");
-                blackStore.load(inputStream, CertificateController.passwd);
-            } catch (NoSuchAlgorithmException | CertificateException | IOException | KeyStoreException e) {
-                Log.error("Error at accesing blacklist Keystore", e);
-            }   
-        }
-        
+
     }
 
     private void loadCRL(X509Certificate[] chain) throws IOException, InvalidAlgorithmParameterException,

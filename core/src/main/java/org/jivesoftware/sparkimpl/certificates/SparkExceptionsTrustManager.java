@@ -25,20 +25,18 @@ import javax.net.ssl.X509TrustManager;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
+import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
 public class SparkExceptionsTrustManager implements X509TrustManager {
 
     KeyStore exceptionsStore;
     private Provider bcProvider = new BouncyCastleProvider(); // bc provider for path validation
-
+    private LocalPreferences localPref = SettingsManager.getLocalPreferences();
     public SparkExceptionsTrustManager() {
-        try (InputStream inputStream = new FileInputStream(CertificateController.EXCEPTIONS)) {
-            this.exceptionsStore = KeyStore.getInstance("JKS");
-            exceptionsStore.load(inputStream, CertificateController.passwd);
-        } catch (NoSuchAlgorithmException | CertificateException | IOException | KeyStoreException e) {
-            Log.error("Couldn't load keystore for certificate exceptions authentication", e);
-            ;
-        }
+        CertificateController certControll = new CertificateController(localPref);
+        exceptionsStore = certControll.openKeyStore(CertificateController.EXCEPTIONS);
+
     }
 
     @Override

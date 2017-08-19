@@ -69,78 +69,44 @@ public class CertificateController extends CertManager {
      */
     @Override
     public void loadKeyStores() {
-        try (InputStream inputStram = new FileInputStream(TRUSTED)) {
-
-            trustStore = KeyStore.getInstance("JKS");
-            trustStore.load(inputStram, passwd);
-            trustedCertificates = fillTableListWithKeyStoreContent(trustStore, trustedCertificates);
-
-        } catch (IOException | KeyStoreException | NoSuchAlgorithmException | CertificateException e) {
-            Log.warning("TrustStore couldn't be loaded: maybe empty");
-            try {
-                trustStore.load(null, passwd);
-            } catch (NoSuchAlgorithmException | CertificateException | IOException e1) {
-                Log.warning("TrustStore couldn't be loaded: other bug");
-            }
-        }
-        try (InputStream inputStram = new FileInputStream(EXCEPTIONS)) {
-
-            exceptionsStore = KeyStore.getInstance("JKS");
-            exceptionsStore.load(inputStram, passwd);
-            exemptedCertificates = fillTableListWithKeyStoreContent(exceptionsStore, exemptedCertificates);
-
-        } catch (IOException | KeyStoreException | NoSuchAlgorithmException | CertificateException e) {
-            Log.warning("ExceptionsStore couldn't be loaded: maybe empty");
-            try {
-                exceptionsStore.load(null, passwd);
-            } catch (NoSuchAlgorithmException | CertificateException | IOException e1) {
-                Log.warning("ExceptionsStore couldn't be loaded: other bug");
-            }
-        }
-        try (InputStream inputStram = new FileInputStream(BLACKLIST)) {
-         
-            blackListStore = KeyStore.getInstance("JKS");
-            blackListStore.load(inputStram, passwd);
-            blackListedCertificates = fillTableListWithKeyStoreContent(blackListStore, blackListedCertificates);
-       
-        } catch (IOException | KeyStoreException | NoSuchAlgorithmException | CertificateException e) {
-
-            try {
-                Log.warning("BlackListStore couldn't be loaded: maybe empty");
-                blackListStore.load(null, passwd);
-            } catch (NoSuchAlgorithmException | CertificateException | IOException e1) {
-                Log.warning("BlackListStore couldn't be loaded: other bug");
-            }
-        }
-
+        trustStore =      openKeyStore(TRUSTED);
+        exceptionsStore = openKeyStore(EXCEPTIONS);
+        blackListStore =  openKeyStore(BLACKLIST);
+        trustedCertificates = fillTableListWithKeyStoreContent(trustStore, trustedCertificates);
+        exemptedCertificates = fillTableListWithKeyStoreContent(exceptionsStore, exemptedCertificates);
+        blackListedCertificates = fillTableListWithKeyStoreContent(blackListStore, blackListedCertificates);
+        
     }
-
+        
     @Override
     public void overWriteKeyStores() {
         try (OutputStream outputStream = new FileOutputStream(TRUSTED)) {
-            trustStore.store(outputStream, passwd);
-
+            if (trustStore != null) {
+                trustStore.store(outputStream, passwd);
+            }
         } catch (IOException | KeyStoreException | NoSuchAlgorithmException | CertificateException e) {
-            Log.error("Couldn't save TrustStore");
+            Log.error("Couldn't save TrustStore", e);
         }
 
         try (OutputStream outputStream = new FileOutputStream(EXCEPTIONS)) {
-            exceptionsStore.store(outputStream, passwd);
-
+            if (exceptionsStore != null) {
+                exceptionsStore.store(outputStream, passwd);
+            }
         } catch (IOException | KeyStoreException | NoSuchAlgorithmException | CertificateException e) {
-            Log.error("Couldn't save ExceptionsStore");
+            Log.error("Couldn't save ExceptionsStore", e);
         }
 
         try (OutputStream outputStream = new FileOutputStream(BLACKLIST)) {
-            blackListStore.store(outputStream, passwd);
-
+            if (blackListStore != null) {
+                blackListStore.store(outputStream, passwd);
+            }
         } catch (IOException | KeyStoreException | NoSuchAlgorithmException | CertificateException e) {
-            Log.error("Couldn't save BlackListStore");
+            Log.error("Couldn't save BlackListStore", e);
         }
 
     }
-	
-	public void createCertTableModel(){
+
+    public void createCertTableModel(){
 		tableModel = new DefaultTableModel() {
 			// return adequate classes for columns so last column is Boolean
 			// displayed as checkbox
@@ -165,7 +131,7 @@ public class CertificateController extends CertManager {
 		};
 
 		tableModel.setColumnIdentifiers(COLUMN_NAMES);
-		Object[] certEntry;certEntry = new Object[NUMBER_OF_COLUMNS];
+		Object[] certEntry = new Object[NUMBER_OF_COLUMNS];
 
         if (trustedCertificates != null) {
             // put certificate from arrayList into rows with chosen columns
@@ -238,27 +204,7 @@ public class CertificateController extends CertManager {
         return blackListedCertificates.contains(cert);
     }
 
-	/**
-	 * Add certificates from keyStore to list. Useful for displaying in certificate table.
-	 * 
-	 * @param KeyStore source keystore.
-	 * @param List list which will be filled with certificate models. 
-	 * @throws KeyStoreException 
-	 */
-	
-	private List<CertificateModel> fillTableListWithKeyStoreContent(KeyStore keyStore, List<CertificateModel> list) throws KeyStoreException {
 
-			Enumeration<String> store = keyStore.aliases();
-			while (store.hasMoreElements()) {
-				String alias = (String) store.nextElement();
-                X509Certificate certificate = (X509Certificate) keyStore.getCertificate(alias);
-                CertificateModel certModel = new CertificateModel(certificate, alias);
-                list.add(certModel);
-                allCertificates.add(certModel);
-            }
-        
-			return list;
-	}
 
 	/**
      * Return file path which contains certificate with given alias;

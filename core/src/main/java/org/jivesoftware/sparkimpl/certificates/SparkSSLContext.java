@@ -46,10 +46,8 @@ public class SparkSSLContext extends SSLContext {
         } else if (options == options.BOTH) {
 
             IdentityController identityController = new IdentityController(SettingsManager.getLocalPreferences());
-          //X509ExtendedKeyManager[] km= (X509ExtendedKeyManager[]) identityController.initKeyManagerFactory().getKeyManagers();
-          
             context.init(identityController.initKeyManagerFactory().getKeyManagers(), SparkTrustManager.getTrustManagerList(), new SecureRandom());
-            
+  
         } else if (options == options.ONLY_CLIENT_SIDE){
             IdentityController identityController = new IdentityController(SettingsManager.getLocalPreferences());
             context.init(identityController.initKeyManagerFactory().getKeyManagers(), null, new SecureRandom());
