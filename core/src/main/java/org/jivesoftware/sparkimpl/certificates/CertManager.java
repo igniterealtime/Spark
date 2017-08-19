@@ -13,6 +13,7 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.security.spec.InvalidKeySpecException;
 import java.util.Base64;
+import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -47,7 +48,6 @@ public abstract class CertManager {
     
     public abstract void deleteEntry(String alias) throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException;
     public abstract void addOrRemoveFromExceptionList(boolean checked);
-    protected abstract List<CertificateModel> fillTableListWithKeyStoreContent(KeyStore keyStore, List<CertificateModel> list) throws KeyStoreException;
     public abstract boolean isOnExceptionList(CertificateModel cert);
 
     protected abstract void refreshCertTable();
@@ -171,5 +171,35 @@ public abstract class CertManager {
             Log.warning("Cannot create exceptions KeyStore", e);
         }
         return keyStore;
+    }
+    
+    /**
+     * Add certificates from keyStore to list. Useful for displaying in certificate table.
+     * 
+     * @param KeyStore source keystore.
+     * @param List list which will be filled with certificate models. 
+     * @throws KeyStoreException 
+     */
+
+    protected List<CertificateModel> fillTableListWithKeyStoreContent(KeyStore keyStore, List<CertificateModel> list) {
+        if (keyStore != null) {
+            Enumeration<String> store;
+            try {
+                store = keyStore.aliases();
+
+                while (store.hasMoreElements()) {
+                    String alias = (String) store.nextElement();
+                    X509Certificate certificate = (X509Certificate) keyStore.getCertificate(alias);
+                    CertificateModel certModel = new CertificateModel(certificate, alias);
+                    if (list != null) {
+                        list.add(certModel);
+                    }
+                    allCertificates.add(certModel);
+                }
+            } catch (KeyStoreException e) {
+                Log.error("Cannot read KeyStore", e);
+            }
+        }
+        return list;
     }
 }
