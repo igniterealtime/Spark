@@ -3,8 +3,10 @@ package org.jivesoftware.sparkimpl.certificates;
 import java.awt.HeadlessException;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -201,5 +203,15 @@ public abstract class CertManager {
             }
         }
         return list;
+    }
+    
+    protected void saveKeyStore(KeyStore keyStore, File file){
+        try (OutputStream outputStream = new FileOutputStream(file)) {
+            if (keyStore != null) {
+                keyStore.store(outputStream, passwd);
+            }
+        } catch (IOException | KeyStoreException | NoSuchAlgorithmException | CertificateException e) {
+            Log.error("Couldn't save KeyStore" , e);
+        }
     }
 }

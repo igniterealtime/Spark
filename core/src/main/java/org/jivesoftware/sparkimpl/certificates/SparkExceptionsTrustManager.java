@@ -1,8 +1,7 @@
 package org.jivesoftware.sparkimpl.certificates;
 
-import java.io.FileInputStream;
+import java.awt.HeadlessException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -19,23 +18,27 @@ import java.security.cert.PKIXBuilderParameters;
 import java.security.cert.PKIXCertPathValidatorResult;
 import java.security.cert.X509CertSelector;
 import java.security.cert.X509Certificate;
-import java.util.Enumeration;
 
+import javax.naming.InvalidNameException;
 import javax.net.ssl.X509TrustManager;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.jivesoftware.spark.util.log.Log;
-import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
-import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
-public class SparkExceptionsTrustManager implements X509TrustManager {
 
-    KeyStore exceptionsStore;
+/**
+ * This TrustManager serves for purpose of accepting certificates from exceptions lists. The only check it does is check
+ * if certification path can be builded. It doesn't do any checks against time of expiration or revocation.
+ * 
+ * @author Pawel Scibiorski
+ *
+ */
+public class SparkExceptionsTrustManager extends GeneralTrustManager implements X509TrustManager {
+
+    KeyStore exceptionsStore, cacertsExceptionsStore;
     private Provider bcProvider = new BouncyCastleProvider(); // bc provider for path validation
-    private LocalPreferences localPref = SettingsManager.getLocalPreferences();
     public SparkExceptionsTrustManager() {
-        CertificateController certControll = new CertificateController(localPref);
-        exceptionsStore = certControll.openKeyStore(CertificateController.EXCEPTIONS);
+        loadKeyStores();
 
     }
 
@@ -53,36 +56,6 @@ public class SparkExceptionsTrustManager implements X509TrustManager {
             Log.warning("Cannot build certificate chain", e);
             throw new CertificateException("Cannot build certificate chain");
         }
-    }
-
-    @Override
-    public X509Certificate[] getAcceptedIssuers() {
-        X509Certificate[] X509Certs = null;
-        try {
-            // See how many certificates are in the keystore.
-            int numberOfEntry = exceptionsStore.size();
-            // If there are any certificates in the keystore.
-            if (numberOfEntry > 0) {
-                // Create an array of X509Certificates
-                X509Certs = new X509Certificate[numberOfEntry];
-
-                // Get all of the certificate alias out of the keystore.
-                Enumeration<String> aliases = exceptionsStore.aliases();
-
-                // Retrieve all of the certificates out of the keystore
-                // via the alias name.
-                int i = 0;
-                while (aliases.hasMoreElements()) {
-                    X509Certs[i] = (X509Certificate) exceptionsStore.getCertificate((String) aliases.nextElement());
-                    i++;
-                }
-
-            }
-        } catch (Exception e) {
-            Log.error(e.getMessage(), e);
-            X509Certs = null;
-        }
-        return X509Certs;
     }
 
     /**
@@ -107,7 +80,7 @@ public class SparkExceptionsTrustManager implements X509TrustManager {
         certSelector.setCertificate(chain[chain.length - 1]);
         // checks against time validity aren't done here as it exceptions list
         certSelector.setCertificateValid(null);
-        PKIXBuilderParameters parameters = new PKIXBuilderParameters(exceptionsStore, certSelector);
+        PKIXBuilderParameters parameters = new PKIXBuilderParameters(allStore, certSelector);
         // no checks against revocation as it is exception
         parameters.setRevocationEnabled(false);
 
@@ -121,6 +94,32 @@ public class SparkExceptionsTrustManager implements X509TrustManager {
             throw new CertificateException("Certificate path failed");
         } else {
             Log.debug("ClientTrustManager: Trusted CA: " + trustedCert.getSubjectDN());
+        }
+
+    }
+    
+    /**
+     * Load KeyStores and add it's content to the allStore
+     */
+    @Override
+    protected void loadKeyStores() {
+        exceptionsStore = certControll.openKeyStore(CertificateController.EXCEPTIONS);
+        cacertsExceptionsStore = certControll.openKeyStore(CertificateController.CACERTS_EXCEPTIONS);
+        try {
+            loadAllStore();
+        } catch (KeyStoreException | NoSuchAlgorithmException | CertificateException | IOException | HeadlessException e) {
+            Log.error("Cannot create allStore KeyStore");
+        }
+        
+        try {
+            addKeyStoreContentToAllStore(exceptionsStore);
+        } catch (HeadlessException | KeyStoreException | InvalidNameException e) {
+            Log.error("Cannot add exceptionStore content to allStore", e);
+        }
+        try {
+            addKeyStoreContentToAllStore(cacertsExceptionsStore);
+        } catch (HeadlessException | KeyStoreException | InvalidNameException e) {
+           Log.error("Cannot add cacertsExceptionsStore to allStore", e);
         }
 
     }

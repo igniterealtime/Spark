@@ -3,9 +3,7 @@ package org.jivesoftware.sparkimpl.certificates;
 import java.awt.HeadlessException;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.math.BigInteger;
 import java.nio.file.Files;
 import java.security.KeyPair;
@@ -22,8 +20,6 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.security.spec.InvalidKeySpecException;
 import java.util.Date;
-import java.util.Enumeration;
-import java.util.List;
 
 import javax.naming.InvalidNameException;
 import javax.net.ssl.KeyManagerFactory;
@@ -55,7 +51,6 @@ import org.jivesoftware.resource.Res;
 import org.jivesoftware.spark.ui.login.CertificateDialog;
 import org.jivesoftware.spark.ui.login.CertificatesManagerSettingsPanel;
 import org.jivesoftware.spark.ui.login.MutualAuthenticationSettingsPanel;
-import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 
 public class IdentityController extends CertManager {
@@ -98,14 +93,7 @@ public class IdentityController extends CertManager {
 
     @Override
     public void overWriteKeyStores() {
-        try (OutputStream outputStream = new FileOutputStream(IDENTITY)) {
-            if (idStore != null) {
-                idStore.store(outputStream, passwd);
-            }
-        } catch (IOException | KeyStoreException | NoSuchAlgorithmException | CertificateException e) {
-            Log.error("Couldn't save TrustStore" , e);
-        }
-
+        saveKeyStore(idStore, IDENTITY);
     }
 
     public KeyManagerFactory initKeyManagerFactory()

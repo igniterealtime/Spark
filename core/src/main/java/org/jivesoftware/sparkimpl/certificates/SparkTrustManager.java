@@ -1,7 +1,6 @@
 package org.jivesoftware.sparkimpl.certificates;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.awt.HeadlessException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -34,9 +33,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.EnumSet;
-import java.util.Enumeration;
 import java.util.List;
 
+import javax.naming.InvalidNameException;
 import javax.net.ssl.X509TrustManager;
 
 import org.bouncycastle.asn1.ASN1Primitive;
@@ -48,8 +47,6 @@ import org.bouncycastle.asn1.x509.GeneralName;
 import org.bouncycastle.asn1.x509.GeneralNames;
 import org.bouncycastle.cert.jcajce.JcaX509ExtensionUtils;
 import org.jivesoftware.spark.util.log.Log;
-import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
-import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
 /**
  * This trust manager wrap around SparkExceptionsTrustManager. In case when SparkExceptionsTrustManager fail then this
@@ -57,12 +54,12 @@ import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
  * acceptance of self-signed certificates and basic constraints.
  * 
  * 
- * @author A
+ * @author Pawel Scibiorsk
  *
  */
-public class SparkTrustManager implements X509TrustManager {
+public class SparkTrustManager extends GeneralTrustManager implements X509TrustManager {
 
-    private LocalPreferences localPref = SettingsManager.getLocalPreferences();
+    
     private boolean checkCRL;
     private boolean checkOCSP;
     private boolean acceptExpired;
@@ -73,8 +70,7 @@ public class SparkTrustManager implements X509TrustManager {
 
     private CertStore crlStore;
     private X509TrustManager exceptionsTrustManager;
-    private KeyStore trustStore, blackStore;
-    private CertificateController certControll = new CertificateController(localPref);
+    private KeyStore trustStore, blackStore, displayedCaCerts;
     private Collection<X509CRL> crlCollection = new ArrayList<>();
     
     public SparkTrustManager() {
@@ -87,7 +83,7 @@ public class SparkTrustManager implements X509TrustManager {
         acceptSelfSigned = localPref.isAcceptSelfSigned();
         allowSoftFail = localPref.isAllowSoftFail();
 
-        loadTrustStore();
+        loadKeyStores();
     }
 
     public static X509TrustManager[] getTrustManagerList() {
@@ -154,47 +150,7 @@ public class SparkTrustManager implements X509TrustManager {
         }
     }
 
-    @Override
-    public X509Certificate[] getAcceptedIssuers() {
-        X509Certificate[] X509Certs = null;
-        try {
-            // See how many certificates are in the keystore.
-            int numberOfEntry = trustStore.size();
-            if (acceptRevoked) {
-                numberOfEntry += blackStore.size();
-            }
-            // If there are any certificates in the keystore.
-            if (numberOfEntry > 0) {
-                // Create an array of X509Certificates
-                X509Certs = new X509Certificate[numberOfEntry];
 
-                // Get all of the certificate alias out of the keystore.
-                Enumeration<String> aliases = trustStore.aliases();
-
-                // Retrieve all of the certificates out of the keystore
-                // via the alias name.
-                int i = 0;
-                while (aliases.hasMoreElements()) {
-                    X509Certs[i] = (X509Certificate) trustStore.getCertificate((String) aliases.nextElement());
-                    i++;
-                }
-                if (acceptRevoked) {
-                    Enumeration<String> blackListedAliases = blackStore.aliases();
-                    // Add all certificates from black list KeyStore
-                    while (aliases.hasMoreElements()) {
-                        X509Certs[i] = (X509Certificate) trustStore
-                                .getCertificate((String) blackListedAliases.nextElement());
-                        i++;
-                    }
-                }
-
-            }
-        } catch (Exception e) {
-            Log.error(e.getMessage(), e);
-            X509Certs = null;
-        }
-        return X509Certs;
-    }
 
     /**
      * Return true if the certificate chain contain only one Self Signed certificate
@@ -230,7 +186,7 @@ public class SparkTrustManager implements X509TrustManager {
         // chain)
         certSelector.setCertificateValid(null);
         // create parameters using trustStore as source of Trust Anchors and using X509CertSelector
-        PKIXBuilderParameters parameters = new PKIXBuilderParameters(trustStore, certSelector);
+        PKIXBuilderParameters parameters = new PKIXBuilderParameters(allStore, certSelector);
 
         if (acceptRevoked == false) {
             // check OCSP, CRL serve as backup
@@ -338,17 +294,45 @@ public class SparkTrustManager implements X509TrustManager {
     }
 
     /**
-     * loads truststore and potentially (depending on settings) blacklist
+     * loads truststores and potentially (depending on settings) blacklist
      */
-    private void loadTrustStore() {
-      trustStore = certControll.openKeyStore(CertificateController.TRUSTED);
+    @Override
+    protected void loadKeyStores() {
+        certControll.loadKeyStores();
+        trustStore = certControll.openKeyStore(CertificateController.TRUSTED);
+        displayedCaCerts = certControll.openCacertsKeyStore();
 
         if (acceptRevoked) {
             blackStore = certControll.openKeyStore(CertificateController.BLACKLIST);
         }
+        try {
+            loadAllStore();
+        } catch (KeyStoreException | NoSuchAlgorithmException | CertificateException | IOException
+                | HeadlessException e) {
+            Log.error("Cannot create allStore KeyStore");
+        }
+
+        try {
+            addKeyStoreContentToAllStore(trustStore);
+        } catch (HeadlessException | KeyStoreException | InvalidNameException e) {
+            Log.error("Cannot add trustStore content to allStore", e);
+        }
+        try {
+            addKeyStoreContentToAllStore(displayedCaCerts);
+        } catch (HeadlessException | KeyStoreException | InvalidNameException e) {
+            Log.error("Cannot add displayedCaCerts to the allStore", e);
+        }
+        if (acceptRevoked) {
+            try {
+                addKeyStoreContentToAllStore(blackStore);
+            } catch (HeadlessException | KeyStoreException | InvalidNameException e) {
+                Log.error("Cannot add blackStore content to allStore", e);
+            }
+        }
 
     }
 
+    
     private void loadCRL(X509Certificate[] chain) throws IOException, InvalidAlgorithmParameterException,
             NoSuchAlgorithmException, CertStoreException, CRLException, CertificateException {
 
@@ -394,13 +378,12 @@ public class SparkTrustManager implements X509TrustManager {
      * 
      * @param cert
      *            - certificate which is meant to move into blacklist
-     * @throws FileNotFoundException
      * @throws KeyStoreException
      * @throws NoSuchAlgorithmException
      * @throws CertificateException
      * @throws IOException
      */
-    private void moveToBlackList(X509Certificate cert) throws FileNotFoundException, KeyStoreException,
+    private void moveToBlackList(X509Certificate cert) throws KeyStoreException,
             NoSuchAlgorithmException, CertificateException, IOException {
         certControll.moveCertificateToBlackList(trustStore.getCertificateAlias(cert));
     }
