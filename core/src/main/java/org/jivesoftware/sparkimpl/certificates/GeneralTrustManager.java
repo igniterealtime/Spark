@@ -76,8 +76,8 @@ public abstract class GeneralTrustManager implements X509TrustManager {
                     i++;
                 }
             }
-        } catch (Exception e) {
-            Log.error(e.getMessage(), e);
+        } catch (KeyStoreException e) {
+            Log.error("Cannot create accepted issuers list", e);
             X509Certs = null;
         }
         return X509Certs;

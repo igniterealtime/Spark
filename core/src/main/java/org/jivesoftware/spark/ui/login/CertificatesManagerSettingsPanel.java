@@ -180,7 +180,7 @@ public class CertificatesManagerSettingsPanel extends JPanel implements ActionLi
         
         scrollPane = new JScrollPane(certTable);
         certTable.setFillsViewportHeight(true);
-        certTable.setAutoCreateRowSorter(true);
+        certTable.setAutoCreateRowSorter(false);
         
         certControll.resizeColumnWidth(certTable);
         certTable.setAutoResizeMode(JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
