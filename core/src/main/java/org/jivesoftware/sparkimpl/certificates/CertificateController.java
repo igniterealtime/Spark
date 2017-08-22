@@ -38,17 +38,29 @@ import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
  */
 
 public class CertificateController extends CertManager {
-	public final static File TRUSTED =            new File(Spark.getSparkUserHome() + File.separator + "security" + File.separator + "truststore");
-	public final static File BLACKLIST =          new File(Spark.getSparkUserHome() + File.separator + "security" + File.separator + "blacklist");
-	public final static File EXCEPTIONS =         new File(Spark.getSparkUserHome() + File.separator + "security" + File.separator + "exceptions");
-    public final static File DISTRUSTED_CACERTS = new File(Spark.getSparkUserHome() + File.separator + "security" + File.separator + "distrusted_cacerts");
-    public final static File CACERTS_EXCEPTIONS = new File(Spark.getSparkUserHome() + File.separator + "security" + File.separator + "cacerts_exceptions");
-    //DISPLAYED_CACERTS isn't used de facto as file as it is never saved but this object helps in keystore management
-    public final static File DISPLAYED_CACERTS =  new File(Spark.getSparkUserHome() + File.separator + "security" + File.separator + "displayed_cacerts");
-    //CACERTS should be used only for read
-    public final static File CACERTS =            new File(System.getProperty("java.home") + File.separator + "lib"
-            + File.separator + "security" + File.separator + "cacerts");
     
+    /**
+     * There are 7 KeyStores: 
+     * TRUSTED contain user's trusted certificates 
+     * EXCEPTIONS contain user's certificates that are added to exceptions (their's validity isn't checked) 
+     * CACERTS contain only JRE default certificates, data is only read from it, never saved to this file 
+     * BLACKLIST used for revoked certificates 
+     * DISTRUSTED_CACERTS when user remove JRE certificate then really copy of this is created in this KeyStore 
+     * CACERTS_EXCEPTIONS used for JRE certificates that are added to exceptions (their's validity isn;t checked)
+     * DISPLAYED_CACERTS isn't used de facto as file as it is never saved but this object helps in keystore management. 
+     * It contain CACERTS - (DISTRUSTED_CACERTS + CACERTSEXCEPTIONS)
+     * 
+     */
+    public final static File TRUSTED =              new File(Spark.getSparkUserHome() + File.separator + "security" + File.separator + "truststore");
+    public final static File BLACKLIST =            new File(Spark.getSparkUserHome() + File.separator + "security" + File.separator + "blacklist");
+    public final static File EXCEPTIONS =           new File(Spark.getSparkUserHome() + File.separator + "security" + File.separator + "exceptions");
+    public final static File DISTRUSTED_CACERTS =   new File(Spark.getSparkUserHome() + File.separator + "security" + File.separator + "distrusted_cacerts");
+    public final static File CACERTS_EXCEPTIONS =   new File(Spark.getSparkUserHome() + File.separator + "security" + File.separator + "cacerts_exceptions");
+    public final static File DISPLAYED_CACERTS =    new File(Spark.getSparkUserHome() + File.separator + "security" + File.separator + "displayed_cacerts");
+    //CACERTS should be used only for read
+    public final static File CACERTS =              new File(System.getProperty("java.home") + File.separator + "lib"
+            + File.separator + "security" + File.separator + "cacerts");
+
 	private KeyStore trustStore, blackListStore, exceptionsStore, displayCaStore, distrustedCaStore, exceptionsCaStore;
 	
 	private List<CertificateModel> trustedCertificates = new LinkedList<>(); // contain certificates which aren't revoked or exempted
