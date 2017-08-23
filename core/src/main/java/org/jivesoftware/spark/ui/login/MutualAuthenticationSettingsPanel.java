@@ -266,7 +266,7 @@ public class MutualAuthenticationSettingsPanel extends JPanel implements ActionL
             } catch (InvalidKeySpecException | NoSuchAlgorithmException | KeyStoreException | InvalidNameException
                     | IOException e) {
 
-                JOptionPane.showMessageDialog(null, "dialog.cannot.upload.certificate");
+                JOptionPane.showMessageDialog(null, Res.getString("dialog.cannot.upload.certificate"));
                 Log.error("Cannot upload certificate file", e);
             }
 

@@ -322,7 +322,7 @@ public class CertificateModel {
 	}
 
 	public String getValidityStatus() {
-		if (checkRevoked()) {
+		if (isRevoked()) {
 			return Res.getString("cert.revoked");
 			
 		} else if (isAfterNotAfter() == true) {
@@ -338,7 +338,7 @@ public class CertificateModel {
 	
 	public String getCertStatusAll() {
 		String status = "";
-		if (checkRevoked()) {
+		if (isRevoked()) {
 			status += Res.getString("cert.revoked") + "\n";
 		}
 		if (isAfterNotAfter()) {
@@ -347,7 +347,7 @@ public class CertificateModel {
 		if (isBeforeNotBefore()) {
 			status += Res.getString("cert.not.valid.yet") + "\n";
 		}
-		if (!checkRevoked() && !isAfterNotAfter() && !isBeforeNotBefore()) {
+		if (!isRevoked() && !isAfterNotAfter() && !isBeforeNotBefore()) {
 			status += Res.getString("cert.valid") + "\n";
 		}
 		if (isSelfSigned()) {
@@ -369,16 +369,11 @@ public class CertificateModel {
 	 * @return True if certificate isn't expired, isn't not valid yet and isn't revoked.
 	 */
 	private boolean checkValidity() {
-		if (!isAfterNotAfter() && !isBeforeNotBefore() && !checkRevoked()) {
+		if (!isAfterNotAfter() && !isBeforeNotBefore() && !isRevoked()) {
 			return true;
 		} else {
 			return false;
 		}
-	}
-
-	private boolean checkRevoked() {
-		// TO-DO
-		return false;
 	}
 
 	private boolean isBeforeNotBefore() {
@@ -465,6 +460,10 @@ public class CertificateModel {
 
 	public boolean isRevoked() {
 		return revoked;
+	}
+	
+	public void setRevoked(boolean revoked) {
+	    this.revoked = revoked;
 	}
 
 	public boolean isNotValidYet() {

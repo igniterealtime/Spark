@@ -243,8 +243,8 @@ public class SparkTrustManager extends GeneralTrustManager implements X509TrustM
                 for (X509CRL crl : crlCollection) {
                     if (crl.isRevoked(cert)) {
                         try {
-                            moveToBlackList(cert);
-                        } catch (IOException e1) {
+                            addToBlackList(cert);
+                        } catch (IOException | HeadlessException | InvalidNameException e1) {
                             Log.error("Couldn't move to the blacklist", e1);
                         }
                         break;
@@ -302,9 +302,6 @@ public class SparkTrustManager extends GeneralTrustManager implements X509TrustM
         trustStore = certControll.openKeyStore(CertificateController.TRUSTED);
         displayedCaCerts = certControll.openCacertsKeyStore();
 
-        if (acceptRevoked) {
-            blackStore = certControll.openKeyStore(CertificateController.BLACKLIST);
-        }
         try {
             loadAllStore();
         } catch (KeyStoreException | NoSuchAlgorithmException | CertificateException | IOException
@@ -322,18 +319,11 @@ public class SparkTrustManager extends GeneralTrustManager implements X509TrustM
         } catch (HeadlessException | KeyStoreException | InvalidNameException e) {
             Log.error("Cannot add displayedCaCerts to the allStore", e);
         }
-        if (acceptRevoked) {
-            try {
-                addKeyStoreContentToAllStore(blackStore);
-            } catch (HeadlessException | KeyStoreException | InvalidNameException e) {
-                Log.error("Cannot add blackStore content to allStore", e);
-            }
-        }
 
     }
 
     
-    private void loadCRL(X509Certificate[] chain) throws IOException, InvalidAlgorithmParameterException,
+    public Collection<X509CRL> loadCRL(X509Certificate[] chain) throws IOException, InvalidAlgorithmParameterException,
             NoSuchAlgorithmException, CertStoreException, CRLException, CertificateException {
 
         // for each certificate in chain
@@ -371,6 +361,7 @@ public class SparkTrustManager extends GeneralTrustManager implements X509TrustM
             // this parameters are next used for creation of certificate store with crls
             crlStore = CertStore.getInstance("Collection", params);
         }
+        return crlCollection;
     }
 
     /**
@@ -382,10 +373,12 @@ public class SparkTrustManager extends GeneralTrustManager implements X509TrustM
      * @throws NoSuchAlgorithmException
      * @throws CertificateException
      * @throws IOException
+     * @throws InvalidNameException
+     * @throws HeadlessException
      */
-    private void moveToBlackList(X509Certificate cert) throws KeyStoreException,
-            NoSuchAlgorithmException, CertificateException, IOException {
-        certControll.moveCertificateToBlackList(trustStore.getCertificateAlias(cert));
+    private void addToBlackList(X509Certificate cert) throws KeyStoreException, NoSuchAlgorithmException,
+            CertificateException, IOException, HeadlessException, InvalidNameException {
+        certControll.addCertificateToBlackList(cert);
     }
 
     /**
