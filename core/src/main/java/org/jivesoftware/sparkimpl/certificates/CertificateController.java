@@ -44,7 +44,7 @@ public class CertificateController extends CertManager {
      * TRUSTED contain user's trusted certificates 
      * EXCEPTIONS contain user's certificates that are added to exceptions (their's validity isn't checked) 
      * CACERTS contain only JRE default certificates, data is only read from it, never saved to this file 
-     * BLACKLIST used for revoked certificates 
+     * BLACKLIST used for revoked certificates, part of super class CertManager 
      * DISTRUSTED_CACERTS when user remove JRE certificate then really copy of this is created in this KeyStore 
      * CACERTS_EXCEPTIONS used for JRE certificates that are added to exceptions (their's validity isn;t checked)
      * DISPLAYED_CACERTS isn't used de facto as file as it is never saved but this object helps in keystore management. 
@@ -52,7 +52,6 @@ public class CertificateController extends CertManager {
      * 
      */
     public final static File TRUSTED =              new File(Spark.getSparkUserHome() + File.separator + "security" + File.separator + "truststore");
-    public final static File BLACKLIST =            new File(Spark.getSparkUserHome() + File.separator + "security" + File.separator + "blacklist");
     public final static File EXCEPTIONS =           new File(Spark.getSparkUserHome() + File.separator + "security" + File.separator + "exceptions");
     public final static File DISTRUSTED_CACERTS =   new File(Spark.getSparkUserHome() + File.separator + "security" + File.separator + "distrusted_cacerts");
     public final static File CACERTS_EXCEPTIONS =   new File(Spark.getSparkUserHome() + File.separator + "security" + File.separator + "cacerts_exceptions");
@@ -61,11 +60,10 @@ public class CertificateController extends CertManager {
     public final static File CACERTS =              new File(System.getProperty("java.home") + File.separator + "lib"
             + File.separator + "security" + File.separator + "cacerts");
 
-	private KeyStore trustStore, blackListStore, exceptionsStore, displayCaStore, distrustedCaStore, exceptionsCaStore;
+	private KeyStore trustStore, exceptionsStore, displayCaStore, distrustedCaStore, exceptionsCaStore;
 	
 	private List<CertificateModel> trustedCertificates = new LinkedList<>(); // contain certificates which aren't revoked or exempted
 	private List<CertificateModel> exemptedCertificates = new LinkedList<>(); // contain only certificates from exempted list
-	private List<CertificateModel> blackListedCertificates = new LinkedList<>(); //contain only revoked certificates
 	private List<CertificateModel> exemptedCacerts = new LinkedList<>(); // contain only exempted cacerts certificates
 	private List<CertificateModel> displayCaCertificates = new LinkedList<>(); // contain cacerts displayed certificates that aren't exempted
 	
@@ -85,16 +83,16 @@ public class CertificateController extends CertManager {
      */
     @Override
     public void loadKeyStores() {
+
+        blackListStore =    openKeyStore(BLACKLIST); 
         trustStore =        openKeyStore(TRUSTED);
         exceptionsStore =   openKeyStore(EXCEPTIONS);
-        blackListStore =    openKeyStore(BLACKLIST); 
         distrustedCaStore = openKeyStore(DISTRUSTED_CACERTS);
         exceptionsCaStore = openKeyStore(CACERTS_EXCEPTIONS);
         displayCaStore =    openCacertsKeyStore();
         
         trustedCertificates =       fillTableListWithKeyStoreContent(trustStore, trustedCertificates);
         exemptedCertificates =      fillTableListWithKeyStoreContent(exceptionsStore, exemptedCertificates);
-        blackListedCertificates =   fillTableListWithKeyStoreContent(blackListStore, blackListedCertificates);
         displayCaCertificates =     fillTableListWithKeyStoreContent(displayCaStore, displayCaCertificates);
         exemptedCacerts =           fillTableListWithKeyStoreContent(exceptionsCaStore, exemptedCacerts);
         
@@ -172,7 +170,6 @@ public class CertificateController extends CertManager {
 		Object[] certEntry = new Object[NUMBER_OF_COLUMNS];
 		addRowsToTableModel(trustedCertificates, certEntry);
 		addRowsToTableModel(exemptedCertificates, certEntry);
-		addRowsToTableModel(blackListedCertificates, certEntry);
 		addRowsToTableModel(displayCaCertificates, certEntry);
 		addRowsToTableModel(exemptedCacerts, certEntry);
     }
@@ -445,17 +442,7 @@ public class CertificateController extends CertManager {
 			moveCertificate(source, target, alias);
 
 	}
-	/**
-	 * This method transfer certificate with given alias to certificate blackList
-	 * @param alias
-	 * @throws KeyStoreException
-	 * @throws NoSuchAlgorithmException
-	 * @throws CertificateException
-	 * @throws IOException
-	 */
-	public void moveCertificateToBlackList(String alias) throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException{
-		moveCertificate(getAliasKeyStorePath(alias), BLACKLIST, alias);
-	}
+	
 	
 	/**
      * This method transfer certificate from source KeyStore to target KeyStore.
