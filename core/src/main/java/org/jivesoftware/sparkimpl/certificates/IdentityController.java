@@ -49,7 +49,6 @@ import org.bouncycastle.pkcs.jcajce.JcaPKCS10CertificationRequestBuilder;
 import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.spark.ui.login.CertificateDialog;
-import org.jivesoftware.spark.ui.login.CertificatesManagerSettingsPanel;
 import org.jivesoftware.spark.ui.login.MutualAuthenticationSettingsPanel;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 
@@ -87,6 +86,8 @@ public class IdentityController extends CertManager {
     public void loadKeyStores() {
 
         idStore = openKeyStore(IDENTITY);
+        blackListStore = openKeyStore(BLACKLIST);
+        
         fillTableListWithKeyStoreContent(idStore, null);
            
     }
@@ -233,7 +234,7 @@ public class IdentityController extends CertManager {
 
             @Override
             public void run() {
-                CertificatesManagerSettingsPanel.getCertTable().setModel(tableModel);
+                MutualAuthenticationSettingsPanel.getIdTable().setModel(tableModel);
                 tableModel.fireTableDataChanged();
             }
         });

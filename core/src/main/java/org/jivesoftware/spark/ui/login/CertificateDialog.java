@@ -10,6 +10,7 @@ import static java.awt.GridBagConstraints.WEST;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.HeadlessException;
 import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -21,6 +22,7 @@ import java.security.cert.CertificateException;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.naming.InvalidNameException;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -179,6 +181,7 @@ public class CertificateDialog extends JDialog implements ActionListener {
 		okButton.addActionListener(this);
 		cancelButton.addActionListener(this);
 		deleteButton.addActionListener(this);
+		checkValidity.addActionListener(this);
 		exceptionBox.addActionListener(this);
 		
 		ResourceUtils.resLabel(versionLabel, versionField, Res.getString("label.certificate.version"));
@@ -359,11 +362,22 @@ public class CertificateDialog extends JDialog implements ActionListener {
 				this.dispose();
 			} catch (KeyStoreException | NoSuchAlgorithmException | CertificateException | IOException ex) {
 				Log.error("Couldn't delete the certificate", ex);
-			}
+            }
 
-		} else if (e.getSource() == exceptionBox) {
-			certControll.addOrRemoveFromExceptionList(exceptionBox.isSelected());
-		}
-	}
+        } else if (e.getSource() == exceptionBox) {
+            certControll.addOrRemoveFromExceptionList(exceptionBox.isSelected());
+        } else if (e.getSource() == checkValidity) {
+            if (certControll.checkRevocation(cert.getCertificate())) {
+                certStatusArea.setText(cert.getCertStatusAll());
+                try {
+                    certControll.addCertificateToBlackList(cert.getCertificate());
+                } catch (HeadlessException | KeyStoreException | NoSuchAlgorithmException | CertificateException
+                        | InvalidNameException | IOException ex) {
+                    Log.warning("Couldn't add certificate to the blacklist", ex);
+                }
+                certStatusArea.updateUI();
+            }
+        }
+    }
 
 }

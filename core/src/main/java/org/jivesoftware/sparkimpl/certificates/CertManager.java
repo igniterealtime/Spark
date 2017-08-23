@@ -7,14 +7,20 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
+import java.security.cert.CRLException;
+import java.security.cert.CertStoreException;
 import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.security.spec.InvalidKeySpecException;
 import java.util.Base64;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
@@ -25,6 +31,7 @@ import javax.naming.ldap.Rdn;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
+import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.spark.ui.login.CertificateDialog;
 import org.jivesoftware.spark.util.log.Log;
@@ -43,9 +50,15 @@ public abstract class CertManager {
     protected LocalPreferences localPreferences;
     public final static char[] passwd = "changeit".toCharArray();       
     protected boolean addToKeystore;
-    
-    //contain all certificates, used for help in managing certificates, but isn't directly displayed on the certificate table
-    protected List<CertificateModel> allCertificates = new LinkedList<>(); 
+    // BLACKLIST is KeyStore with certificates revoked certificates, it isn't directly displayed but when other
+    // KeyStores content is added then it is compared with this list and information about revocation is added to
+    // certificate status
+    public final static File BLACKLIST = new File( Spark.getSparkUserHome() + File.separator + "security" + File.separator + "blacklist");
+    // contain all certificates, used for help in managing certificates, but isn't directly displayed on the certificate
+    // table
+    protected KeyStore blackListStore;
+    protected List<CertificateModel> allCertificates =          new LinkedList<>();
+    protected List<CertificateModel> blackListedCertificates =  new LinkedList<>(); //contain only revoked certificates
     protected static DefaultTableModel tableModel;
     
     public abstract void deleteEntry(String alias) throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException;
@@ -100,7 +113,48 @@ public abstract class CertManager {
         }
         return false;
     }
-    
+
+    /**
+     * Check if given certificate is revoked looking on it's CRL (if exist).
+     * @param cert which is validated
+     * @return true if certificate is revoked, false if it isn't or CRL cannot be accessed (because it might not exist).
+     */
+    public boolean checkRevocation(X509Certificate cert) {
+        boolean revoked = false;
+        try {
+            SparkTrustManager man = new SparkTrustManager();
+            Collection<X509CRL> crls = man.loadCRL(new X509Certificate[] { cert });
+            CertificateFactory cf = CertificateFactory.getInstance("X.509");
+            for (X509CRL crl : crls) {
+                if (crl.isRevoked(cert)) {
+                    revoked = true;
+                    break;
+                }
+            }
+        } catch (CRLException | CertificateException | IOException | InvalidAlgorithmParameterException
+                | NoSuchAlgorithmException | CertStoreException e) {
+            Log.warning("Cannot check validity", e);
+        }
+        return revoked;
+    }
+
+    /**
+     * This method transfer certificate with given alias to certificate blackList
+     * 
+     * @param alias
+     * @throws KeyStoreException
+     * @throws NoSuchAlgorithmException
+     * @throws CertificateException
+     * @throws IOException
+     * @throws InvalidNameException
+     * @throws HeadlessException
+     */
+    public void addCertificateToBlackList(X509Certificate cert) throws KeyStoreException, NoSuchAlgorithmException,
+            CertificateException, IOException, HeadlessException, InvalidNameException {
+        blackListStore.setCertificateEntry(useCommonNameAsAlias(cert), cert);
+        blackListedCertificates.add(new CertificateModel(cert));
+    }
+
     
     /**
      * Extract from certificate common name ("CN") and returns it to use as certificate name.
@@ -193,6 +247,7 @@ public abstract class CertManager {
                     String alias = (String) store.nextElement();
                     X509Certificate certificate = (X509Certificate) keyStore.getCertificate(alias);
                     CertificateModel certModel = new CertificateModel(certificate, alias);
+                    certModel.setRevoked(blackListStore.getCertificateAlias(certificate) != null);
                     if (list != null) {
                         list.add(certModel);
                     }
