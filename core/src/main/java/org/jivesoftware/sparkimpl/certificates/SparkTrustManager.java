@@ -133,7 +133,12 @@ public class SparkTrustManager implements X509TrustManager {
                 // check if certificate is in Keystore and check CRL, but do not validate path as certificate is Self
                 // Signed important reminder: hostname validation must be also turned off to accept self signed
                 // certificate
-                List<X509Certificate> certList = new ArrayList<>(Arrays.asList(getAcceptedIssuers()));
+                X509Certificate[] cert=getAcceptedIssuers();
+                if(cert == null)
+                {
+                    throw new CertificateException("Couldn't load trusted certificates");
+                }
+                List<X509Certificate> certList = new ArrayList<>(Arrays.asList(cert));
                 if (!certList.contains(chain[0])) {
                     throw new CertificateException("Certificate not in the TrustStore");
                 }
@@ -160,6 +165,7 @@ public class SparkTrustManager implements X509TrustManager {
         try {
             // See how many certificates are in the keystore.
             int numberOfEntry = trustStore.size();
+            System.out.println("numberOfEntry==="+numberOfEntry);
             if (acceptRevoked) {
                 numberOfEntry += blackStore.size();
             }
