@@ -59,7 +59,7 @@ public class LocalPreferences {
 	 * @return the XMPP Port to communicate on. Default is 5222.
 	 */
 	public int getXmppPort() {
-		return Integer.parseInt(props.getProperty("xmppPort", "5222"));
+		return Integer.parseInt(props.getProperty("xmppPort", Default.getString(Default.XMPP_PORT)));
 	}
 
 	/**
@@ -101,7 +101,7 @@ public class LocalPreferences {
 	 * @return the smack timeout for requests.
 	 */
 	public int getTimeOut() {
-		return Integer.parseInt(props.getProperty("timeout", "10"));
+		return Integer.parseInt(props.getProperty("timeout", Default.getString(Default.TIME_OUT)));
 	}
 
 	/**
@@ -421,7 +421,7 @@ public class LocalPreferences {
     {
         try
         {
-            final String securityMode = props.getProperty( "securityMode", ConnectionConfiguration.SecurityMode.ifpossible.toString() );
+            final String securityMode = props.getProperty( "securityMode", Default.getString(Default.SECURITY_MODE) );
             return ConnectionConfiguration.SecurityMode.valueOf( securityMode );
         }
         catch ( Exception e )
@@ -452,7 +452,7 @@ public class LocalPreferences {
 	 * @return true if we should connect via 'old-style' SSL (otherwise, STARTTLS might be used).
 	 */
 	public boolean isSSL() {
-		return Boolean.parseBoolean(props.getProperty("sslEnabled", "false"));
+		return getBoolean("sslEnabled", Default.getBoolean(Default.OLD_SSL_ENABLED));
 	}
 
 	/**
@@ -511,7 +511,7 @@ public class LocalPreferences {
 	}
 
 	public boolean isProxyEnabled() {
-		return getBoolean("proxyEnabled", false);
+		return getBoolean("proxyEnabled", Default.getBoolean(Default.PROXY_ENABLED));
 	}
 
 	public void setProxyEnabled(boolean proxyEnabled) {
@@ -595,7 +595,7 @@ public class LocalPreferences {
 	}
 
 	public boolean isHostAndPortConfigured() {
-		return getBoolean("hostAndPort", false);
+		return getBoolean("hostAndPort", Default.getBoolean(Default.HOST_AND_PORT_CONFIGURED));
 	}
 
 	public void setHostAndPortConfigured(boolean configured) {
@@ -796,7 +796,7 @@ public class LocalPreferences {
 	}
 
 	public boolean isCompressionEnabled() {
-		return getBoolean("compressionOn", false);
+		return getBoolean("compressionOn", Default.getBoolean(Default.COMPRESSION_ENABLED));
 	}
 
 	public void setTheme(String theme) {
@@ -977,11 +977,11 @@ public class LocalPreferences {
 	}
 
 	public boolean isSSOEnabled() {
-		return getBoolean("ssoEnabled", false);
+		return getBoolean("ssoEnabled", Default.getBoolean(Default.USE_SSO));
 	}
 
 	public boolean isSaslGssapiSmack3Compatible() {
-		return getBoolean("saslGssapiSmack3compat", false);
+		return getBoolean("saslGssapiSmack3compat", Default.getBoolean(Default.USE_SASL_GSS_API_SMACK_3_COMPATIBLE));
 	}
 
 	public void setSaslGssapiSmack3Compatible( boolean b) {
@@ -1072,7 +1072,7 @@ public class LocalPreferences {
 	}
 
 	public boolean isDebuggerEnabled() {
-		return getBoolean("debuggerEnabled", false);
+		return getBoolean("debuggerEnabled", Default.getBoolean(Default.DEBUGGER_ENABLED));
 	}
 
 	public void setContactListFontSize(int fontSize) {
@@ -1231,7 +1231,7 @@ public class LocalPreferences {
 	}
 
 	public boolean isAcceptAllCertificates() {
-		return getBoolean("AcceptAllCertificates", false);
+		return getBoolean("AcceptAllCertificates", Default.getBoolean(Default.ACCEPT_ALL));
 	}
 
 	public void setDisableHostnameVerification(boolean accept) {
@@ -1239,7 +1239,7 @@ public class LocalPreferences {
 	}
 
 	public boolean isDisableHostnameVerification() {
-		return getBoolean("DisableHostnameVerification", false);
+		return getBoolean("DisableHostnameVerification", Default.getBoolean(Default.DISABLE_HOSTNAME_VERIFICATION));
 	}
 
 	private boolean getBoolean(String property, boolean defaultValue) {
@@ -1357,7 +1357,7 @@ public class LocalPreferences {
     }
 
     public boolean isUseHostnameAsResource() {
-	return getBoolean("useHostnameAsResource", false);
+	return getBoolean("useHostnameAsResource", Default.getBoolean(Default.USE_HOSTNAME_AS_RESOURCE));
     }
 
     public void setUseHostnameAsResource(boolean useHostnameAsResource) {
@@ -1365,7 +1365,7 @@ public class LocalPreferences {
     }
     
     public boolean isUseVersionAsResource() {
-	return getBoolean("useVersionAsResource", false);
+	return getBoolean("useVersionAsResource", Default.getBoolean(Default.USE_VERSION_AS_RESOURCE));
     }
 
     public void setUseVersionAsResource(boolean useVersionAsResource) {
@@ -1422,7 +1422,7 @@ public class LocalPreferences {
     }
     
     public boolean isAcceptSelfSigned() {
-        return Boolean.parseBoolean(props.getProperty("acceptSelfSigned", "false"));
+        return getBoolean("acceptSelfSigned", Default.getBoolean(Default.ACCEPT_SELF_SIGNED));
     }
 
     public void setAcceptSelfSigned(boolean acceptSelfSigned) {
@@ -1430,7 +1430,7 @@ public class LocalPreferences {
     }
 
     public boolean isAcceptRevoked() {
-        return Boolean.parseBoolean(props.getProperty("acceptRevoked", "false"));
+        return getBoolean("acceptRevoked", Default.getBoolean(Default.ACCEPT_REVOKED));
     }
 
     public void setAcceptRevoked(boolean acceptRevoked) {
@@ -1438,7 +1438,8 @@ public class LocalPreferences {
     }
 
     public boolean isAcceptExpired() {
-        return Boolean.parseBoolean(props.getProperty("acceptExpired", "false"));
+        
+        return getBoolean("acceptExpired", Default.getBoolean(Default.ACCEPT_EXPIRED));
     }
 
     public void setAcceptExpired(boolean acceptExpired) {
@@ -1446,7 +1447,7 @@ public class LocalPreferences {
     }
 
     public boolean isAcceptNotValidYet() {
-        return Boolean.parseBoolean(props.getProperty("acceptNotValidYet", "false"));
+        return getBoolean("acceptNotValidYet", Default.getBoolean(Default.ACCEPT_NOT_VALID_YET));
     }
     
     public void setAcceptNotValidYet(boolean acceptNotValidYet) {
@@ -1454,7 +1455,7 @@ public class LocalPreferences {
     }
     
     public boolean isCheckCRL() {
-        return Boolean.parseBoolean(props.getProperty("checkCRL", "true"));
+        return getBoolean("checkCRL", Default.getBoolean(Default.CHECK_CRL));
     }
 
     public void setCheckCRL(boolean checkCRL) {
@@ -1462,7 +1463,7 @@ public class LocalPreferences {
     }
 
     public boolean isCheckOCSP() {
-        return Boolean.parseBoolean(props.getProperty("checkOCSP", "true"));
+        return getBoolean("checkOCSP", Default.getBoolean(Default.CHECK_OCSP));
     }
 
     public void setCheckOCSP(boolean checkOCSP) {
@@ -1470,7 +1471,7 @@ public class LocalPreferences {
     }
 
     public boolean isAllowSoftFail() {
-        return Boolean.parseBoolean(props.getProperty("allowSoftFail", "true"));
+        return getBoolean("allowSoftFail", Default.getBoolean(Default.ALLOW_SOFT_FAIL));
     }
 
     public void setAllowSoftFail(boolean allowSoftFail) {
@@ -1478,7 +1479,7 @@ public class LocalPreferences {
     }
     
     public boolean isAllowClientSideAuthentication() {
-        return Boolean.parseBoolean(props.getProperty("allowClientSideAuthentication", "false"));
+        return getBoolean("allowClientSideAuthentication", Default.getBoolean(Default.ALLOW_CLIENT_SIDE_AUTH));
     }
 
     public void setAllowClientSideAuthentication(boolean allowClientSideAuthentication) {
