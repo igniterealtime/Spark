@@ -1,5 +1,6 @@
 package org.jivesoftware.spark.ui.login;
 
+import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.spark.component.WrappedLabel;
 import org.jivesoftware.spark.util.ModelUtil;
@@ -232,6 +233,17 @@ class SsoLoginSettingsPanel extends JPanel implements ActionListener
         return valid;
     }
 
+    public void useDefault(){
+        useSSOBox.setSelected(Default.getBoolean(Default.USE_SSO));
+        methodFileRadio.setSelected(Default.getString(Default.SSO_METHOD).equals("file"));
+        methodDNSRadio.setSelected(Default.getString(Default.SSO_METHOD).equals("dns"));
+        methodManualRadio.setSelected(Default.getString(Default.SSO_METHOD).equals("manual"));
+        setFormEnabled(useSSOBox.isSelected());
+        useSaslGssapiSmack3compatBox.setSelected(Default.getBoolean(Default.USE_SASL_GSS_API_SMACK_3_COMPATIBLE));
+
+    
+    }
+    
     public void saveSettings()
     {
         localPreferences.setSSOEnabled( useSSOBox.isSelected() );

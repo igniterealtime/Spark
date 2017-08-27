@@ -39,12 +39,14 @@ public class LoginSettingDialog implements PropertyChangeListener
     private JDialog optionsDialog;
     private JOptionPane optionPane;
 
+    private JTabbedPane tabbedPane = new JTabbedPane();
+    
     private GeneralLoginSettingsPanel generalPanel;
     private SecurityLoginSettingsPanel securityPanel;
     private ProxyLoginSettingsPanel proxyPanel;
     private PkiLoginSettingsPanel pkiPanel;
     private SsoLoginSettingsPanel ssoPanel;
-	private CertificatesManagerSettingsPanel certManager;
+	private CertificatesManagerSettingsPanel certManagerPanel;
 	private MutualAuthenticationSettingsPanel mutAuthPanel;
 
     /**
@@ -58,7 +60,7 @@ public class LoginSettingDialog implements PropertyChangeListener
         securityPanel = new SecurityLoginSettingsPanel( localPreferences, optionsDialog );
         ssoPanel = new SsoLoginSettingsPanel( localPreferences, optionsDialog );
         pkiPanel = new PkiLoginSettingsPanel( localPreferences, optionsDialog );
-        certManager = new CertificatesManagerSettingsPanel(localPreferences, optionsDialog);
+        certManagerPanel = new CertificatesManagerSettingsPanel(localPreferences, optionsDialog);
         mutAuthPanel = new MutualAuthenticationSettingsPanel(localPreferences, optionsDialog);
     }
 
@@ -71,7 +73,6 @@ public class LoginSettingDialog implements PropertyChangeListener
      */
     public boolean invoke( JFrame owner )
     {
-        JTabbedPane tabbedPane = new JTabbedPane();
         TitlePanel titlePanel;
 
         // Create the title panel for this dialog
@@ -92,10 +93,10 @@ public class LoginSettingDialog implements PropertyChangeListener
         }
         if ( !Default.getBoolean(Default.CERTIFICATES_MANAGER_DISABLED))
         {
-        	tabbedPane.addTab( Res.getString( "tab.certificates" ), certManager );
+        	tabbedPane.addTab( Res.getString( "tab.certificates" ), certManagerPanel );
         }
         if ( !Default.getBoolean( Default.MUTUAL_AUTH_DISABLED)){
-            tabbedPane.addTab("Mutual auth", mutAuthPanel);
+            tabbedPane.addTab( Res.getString("tab.mutual.auth"), mutAuthPanel);
         }
         // Construct main panel w/ layout.
         final JPanel mainPanel = new JPanel();
@@ -153,7 +154,7 @@ public class LoginSettingDialog implements PropertyChangeListener
                 proxyPanel.saveSettings();
                 ssoPanel.saveSettings();
                 pkiPanel.saveSettings();
-                certManager.saveSettings();
+                certManagerPanel.saveSettings();
                 mutAuthPanel.saveSettings();
                 SettingsManager.saveSettings();
                 optionsDialog.setVisible( false );
@@ -164,9 +165,24 @@ public class LoginSettingDialog implements PropertyChangeListener
                 optionPane.setValue( JOptionPane.UNINITIALIZED_VALUE );
                 optionPane.addPropertyChangeListener( this );
             }
-        }
-        else
-        {
+        } else if (Res.getString("use.default") == value) {
+            if (tabbedPane.getSelectedComponent().equals(generalPanel)) {
+                generalPanel.useDefault();
+            } else if (tabbedPane.getSelectedComponent().equals(securityPanel)) {
+                securityPanel.useDefault();
+            } else if (tabbedPane.getSelectedComponent().equals(proxyPanel)) {
+                proxyPanel.useDefault();
+            } else if (tabbedPane.getSelectedComponent().equals(ssoPanel)) {
+                ssoPanel.useDefault();
+            } else if (tabbedPane.getSelectedComponent().equals(certManagerPanel)) {
+                certManagerPanel.useDefault();
+            }  
+                
+                optionPane.removePropertyChangeListener( this );
+                optionPane.setValue( JOptionPane.UNINITIALIZED_VALUE );
+                optionPane.addPropertyChangeListener( this );
+            
+        } else {
             // Some unknown operation happened
             optionPane.setValue( JOptionPane.UNINITIALIZED_VALUE );
         }

@@ -97,8 +97,31 @@ public class Default {
     public static final String HIDE_SAVE_PASSWORD_AND_AUTOLOGIN = "HIDE_SAVE_PASSWORD_AND_AUTOLOGIN";
     public static final String HIDE_LOGIN_AS_INVISIBLE = "HIDE_LOGIN_AS_INVISIBLE"; 
     public static final String MAINT_FILESPEC = "MAINT_FILESPEC";
-    public static final String HIDE_START_A_CHAT = "HIDE_START_A_CHAT";
-
+    public static final String HIDE_START_A_CHAT = "HIDE_START_A_CHAT";    
+    public static final String ACCEPT_ALL = "ACCEPT_ALL";
+    public static final String ACCEPT_EXPIRED = "ACCEPT_EXPIRED";
+    public static final String ACCEPT_NOT_VALID_YET = "ACCEPT_NOT_VALID_YET";
+    public static final String ACCEPT_SELF_SIGNED = "ACCEPT_SELF_SIGNED";
+    public static final String ACCEPT_REVOKED = "ACCEPT_REVOKED";
+    public static final String CHECK_CRL = "CHECK_CRL"; 
+    public static final String CHECK_OCSP = "CHECK_OCSP";
+    public static final String ALLOW_SOFT_FAIL = "ALLOW_SOFT_FAIL";
+    public static final String ALLOW_CLIENT_SIDE_AUTH = "ALLOW_CLIENT_SIDE_AUTH";
+    public static final String DISABLE_HOSTNAME_VERIFICATION = "DISABLE_HOSTNAME_VERIFICATION";
+    public static final String SECURITY_MODE = "SECURITY_MODE";
+    public static final String HOST_AND_PORT_CONFIGURED = "HOST_AND_PORT_CONFIGURED";
+    public static final String XMPP_PORT = "XMPP_PORT";
+    public static final String USE_HOSTNAME_AS_RESOURCE = "USE_HOSTNAME_AS_RESOURCE";
+    public static final String USE_VERSION_AS_RESOURCE = "USE_VERSION_AS_RESOURCE";
+    public static final String TIME_OUT = "TIME_OUT";
+    public static final String COMPRESSION_ENABLED = "COMPRESSION_ENABLED";
+    public static final String DEBUGGER_ENABLED = "DEBUGGER_ENABLED";
+    public static final String USE_SSO = "USE_SSO";
+    public static final String USE_SASL_GSS_API_SMACK_3_COMPATIBLE = "USE_SASL_GSS_API_SMACK_3_COMPATIBLE";
+    public static final String SSO_METHOD = "SSO_METHOD";
+    public static final String PROXY_ENABLED = "PROXY_ENABLED";
+    public static final String OLD_SSL_ENABLED = "OLD_SSL_ENABLED";
+    
     static ClassLoader cl = SparkRes.class.getClassLoader();
 
     static {
