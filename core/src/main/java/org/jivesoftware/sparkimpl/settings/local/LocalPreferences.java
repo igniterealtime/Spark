@@ -1011,54 +1011,6 @@ public class LocalPreferences {
 		return props.getProperty("ssoKDC");
 	}
 
-	public void setPKIEnabled(boolean enabled) {
-		setBoolean("pkiEnabled", enabled);
-	}
-
-	public boolean isPKIEnabled() {
-		return getBoolean("pkiEnabled", false);
-	}
-
-	public void setPKIStore(String type) {
-		props.setProperty("pkiStore", type);
-	}
-
-	public String getPKIStore() {
-		return props.getProperty("pkiStore");
-	}
-
-	public void setJKSPath(String file) {
-		props.setProperty("jksPath", file);
-	}
-
-	public String getJKSPath() {
-		return props.getProperty("jksPath");
-	}
-
-	public void setPKCS11Library(String file) {
-		props.setProperty("pkcs11Library", file);
-	}
-
-	public String getPKCS11Library() {
-		return props.getProperty("pkcs11Library");
-	}
-
-	public void setTrustStorePath(String file) {
-		props.setProperty("trustStorePath", file);
-	}
-
-	public String getTrustStorePath() {
-		return props.getProperty("trustStorePath");
-	}
-
-	public void setTrustStorePassword(String password) {
-		props.setProperty("trustStorePassword", password);
-	}
-
-	public String getTrustStorePassword() {
-		return props.getProperty("trustStorePassword");
-	}
-
 	public boolean getDebug() {
 		return getBoolean("debug", false);
 	}

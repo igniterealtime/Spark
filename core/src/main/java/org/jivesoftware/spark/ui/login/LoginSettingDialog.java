@@ -44,7 +44,6 @@ public class LoginSettingDialog implements PropertyChangeListener
     private GeneralLoginSettingsPanel generalPanel;
     private SecurityLoginSettingsPanel securityPanel;
     private ProxyLoginSettingsPanel proxyPanel;
-    private PkiLoginSettingsPanel pkiPanel;
     private SsoLoginSettingsPanel ssoPanel;
 	private CertificatesManagerSettingsPanel certManagerPanel;
 	private MutualAuthenticationSettingsPanel mutAuthPanel;
@@ -59,7 +58,6 @@ public class LoginSettingDialog implements PropertyChangeListener
         proxyPanel = new ProxyLoginSettingsPanel( localPreferences, optionsDialog );
         securityPanel = new SecurityLoginSettingsPanel( localPreferences, optionsDialog );
         ssoPanel = new SsoLoginSettingsPanel( localPreferences, optionsDialog );
-        pkiPanel = new PkiLoginSettingsPanel( localPreferences, optionsDialog );
         certManagerPanel = new CertificatesManagerSettingsPanel(localPreferences, optionsDialog);
         mutAuthPanel = new MutualAuthenticationSettingsPanel(localPreferences, optionsDialog);
     }
@@ -86,10 +84,6 @@ public class LoginSettingDialog implements PropertyChangeListener
         if ( !Default.getBoolean( Default.SSO_DISABLED ) )
         {
             tabbedPane.addTab( Res.getString( "tab.sso" ), ssoPanel );
-        }
-        if ( !Default.getBoolean( Default.PKI_DISABLED ) )
-        {
-            tabbedPane.addTab( Res.getString( "tab.pki" ), pkiPanel );
         }
         if ( !Default.getBoolean(Default.CERTIFICATES_MANAGER_DISABLED))
         {
@@ -145,7 +139,6 @@ public class LoginSettingDialog implements PropertyChangeListener
             valid = valid && securityPanel.validate_settings();
             valid = valid && proxyPanel.validate_settings();
             valid = valid && ssoPanel.validate_settings();
-            valid = valid && pkiPanel.validate_settings();
 
             if ( valid )
             {
@@ -153,7 +146,6 @@ public class LoginSettingDialog implements PropertyChangeListener
                 securityPanel.saveSettings();
                 proxyPanel.saveSettings();
                 ssoPanel.saveSettings();
-                pkiPanel.saveSettings();
                 certManagerPanel.saveSettings();
                 mutAuthPanel.saveSettings();
                 SettingsManager.saveSettings();
