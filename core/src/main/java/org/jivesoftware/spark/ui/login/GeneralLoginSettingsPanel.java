@@ -225,6 +225,17 @@ class GeneralLoginSettingsPanel extends JPanel implements ActionListener
         return valid;
     }
 
+    public void useDefault(){
+        autoDiscoverBox.setSelected(!Default.getBoolean(Default.HOST_AND_PORT_CONFIGURED));
+        useHostnameAsResourceBox.setSelected(Default.getBoolean(Default.USE_HOSTNAME_AS_RESOURCE));
+        useVersionAsResourceBox.setSelected(Default.getBoolean(Default.USE_VERSION_AS_RESOURCE));
+        compressionBox.setSelected(Default.getBoolean(Default.COMPRESSION_ENABLED));
+        debuggerBox.setSelected(Default.getBoolean(Default.DEBUGGER_ENABLED));
+        portField.setText(Default.getString(Default.XMPP_PORT));
+        resourceField.setText(Default.getString(Default.SHORT_NAME));
+        timeOutField.setText(Default.getString(Default.TIME_OUT));
+    }
+    
     public void saveSettings()
     {
         localPreferences.setTimeOut( Integer.parseInt( timeOutField.getText() ) );

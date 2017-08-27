@@ -16,6 +16,7 @@
 
 package org.jivesoftware.spark.ui.login;
 
+import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.spark.util.ResourceUtils;
@@ -120,6 +121,15 @@ public class SecurityLoginSettingsPanel extends JPanel
         return true;
     }
 
+    public void useDefault() {
+        modeRequiredRadio.setSelected(Default.getString(Default.SECURITY_MODE).equals("required"));
+        modeIfPossibleRadio.setSelected(Default.getString(Default.SECURITY_MODE).equals("ifpossible"));
+        modeDisabledRadio.setSelected(Default.getString(Default.SECURITY_MODE).equals("disabled"));
+        disableHostnameVerificationBox.setSelected(Default.getBoolean(Default.DISABLE_HOSTNAME_VERIFICATION));
+        allowClientSideAuthentication.setSelected(Default.getBoolean(Default.ALLOW_CLIENT_SIDE_AUTH));
+        useSSLBox.setSelected(Default.getBoolean(Default.OLD_SSL_ENABLED));
+    }
+    
     public void saveSettings()
     {
         if ( modeRequiredRadio.isSelected() )

@@ -36,6 +36,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
 
+import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.log.Log;
@@ -331,7 +332,27 @@ public class CertificatesManagerSettingsPanel extends JPanel implements ActionLi
 		return certTable;
 	}
 
-	
+	public void useDefault() {
+
+	    acceptAll.setSelected(Default.getBoolean(Default.ACCEPT_ALL));
+	    acceptExpired.setSelected(Default.getBoolean(Default.ACCEPT_EXPIRED));
+        acceptNotValidYet.setSelected(Default.getBoolean(Default.ACCEPT_NOT_VALID_YET));
+        acceptSelfSigned.setSelected(Default.getBoolean(Default.ACCEPT_SELF_SIGNED));
+        acceptRevoked.setSelected(Default.getBoolean(Default.ACCEPT_REVOKED));
+        checkCRL.setSelected(Default.getBoolean(Default.CHECK_CRL));
+        checkOCSP.setSelected(Default.getBoolean(Default.CHECK_OCSP));
+        allowSoftFail.setSelected(Default.getBoolean(Default.ALLOW_SOFT_FAIL));
+        
+        acceptAll.setEnabled(true);
+        acceptExpired.setEnabled(true);
+        acceptNotValidYet.setEnabled(true);
+        acceptSelfSigned.setEnabled(true);
+        acceptRevoked.setEnabled(true);
+        checkCRL.setEnabled(true);
+        checkOCSP.setEnabled(true);
+        allowSoftFail.setEnabled(true);
+    
+	}
 	
     public void saveSettings() {
         localPreferences.setAcceptExpired(acceptExpired.isSelected());

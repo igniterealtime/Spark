@@ -221,6 +221,11 @@ class ProxyLoginSettingsPanel extends JPanel
         return valid;
     }
 
+    public void useDefault() {
+        useProxyBox.setSelected(Default.getBoolean(Default.PROXY_ENABLED));
+        enableFields(useProxyBox.isSelected());
+    }
+    
     /**
      * Persist the proxy settings to local preferences.
      */
