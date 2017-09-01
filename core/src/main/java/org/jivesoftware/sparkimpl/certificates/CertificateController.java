@@ -119,13 +119,12 @@ public class CertificateController extends CertManager {
                     // if getCertificateAlias return null then entry doesn't exist in distrustedCaStore (Java's default).
                     if (distrustedCaStore.getCertificateAlias(certificate) == null && exceptionsCaStore.getCertificateAlias(certificate) == null) {
 
-                        displayCerts.setCertificateEntry(useCommonNameAsAlias(certificate), certificate);                        
+                        displayCerts.setCertificateEntry(alias, certificate);                        
                     }
 
                 }
             }
-        } catch (KeyStoreException | HeadlessException | InvalidNameException | NoSuchAlgorithmException
-                | CertificateException | IOException e) {
+        } catch (KeyStoreException | NoSuchAlgorithmException | CertificateException | IOException e) {
             Log.error("Cannot read KeyStore", e);
 
         }
