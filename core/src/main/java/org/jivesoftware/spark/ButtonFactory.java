@@ -63,10 +63,12 @@ public class ButtonFactory {
 		final EmoticonManager emoticonManager = EmoticonManager.getInstance();
 		final String activeEmoticonSetName = emoticonManager.getActiveEmoticonSetName();
 		final Emoticon smileEmoticon = emoticonManager.getEmoticon(activeEmoticonSetName, ":)");
-		URL smileURL = emoticonManager.getEmoticonURL(smileEmoticon);
-		ImageIcon icon = new ImageIcon(smileURL);
-
+                Emoticon firstEmoticon=(smileEmoticon == null) ? firstEmoticon=emoticonManager.getFirstEmotion(activeEmoticonSetName) : smileEmoticon;
+		URL emotionURL = emoticonManager.getEmoticonURL(firstEmoticon);
+		ImageIcon icon = new ImageIcon(emotionURL);
+                firstEmoticon=null;
 		return new RolloverButton(icon);
+                
 	}
 
 	public JLabel createDivider() {
