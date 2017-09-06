@@ -369,7 +369,7 @@ public class CertificateController extends CertManager {
         if (dialogValue == JOptionPane.YES_OPTION) {
             KeyStore store = getAliasKeyStore(alias);
             
-            if(store.equals(displayCaStore)){
+            if(store.equals(displayCaStore) || store.equals(exceptionsCaStore)){
                 // adds entry do distrusted store so it will be not displayed next time
                 distrustedCaStore.setCertificateEntry(alias, store.getCertificate(alias));
             }
@@ -385,6 +385,7 @@ public class CertificateController extends CertManager {
             trustedCertificates.remove(model);
             blackListedCertificates.remove(model);
             displayCaCertificates.remove(model);
+            exemptedCacerts.remove(model);
              
             allCertificates.remove(model);
         }
