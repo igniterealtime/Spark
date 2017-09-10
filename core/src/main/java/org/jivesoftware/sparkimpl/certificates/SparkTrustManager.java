@@ -59,7 +59,7 @@ import org.jivesoftware.spark.util.log.Log;
  */
 public class SparkTrustManager extends GeneralTrustManager implements X509TrustManager {
 
-    
+    private boolean acceptAll;
     private boolean checkCRL;
     private boolean checkOCSP;
     private boolean acceptExpired;
@@ -75,6 +75,7 @@ public class SparkTrustManager extends GeneralTrustManager implements X509TrustM
     
     public SparkTrustManager() {
         exceptionsTrustManager = new SparkExceptionsTrustManager();
+        acceptAll = localPref.isAcceptAllCertificates();
         checkCRL = localPref.isCheckCRL();
         checkOCSP = localPref.isCheckOCSP();
         acceptExpired = localPref.isAcceptExpired();
@@ -98,6 +99,9 @@ public class SparkTrustManager extends GeneralTrustManager implements X509TrustM
 
     @Override
     public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+        if(acceptAll){
+            return;
+        }
         try {
             // first check if certificate is accepted as as certificate from exceptions list, exceptionsTrustManager
             // will make use of chain provided by exceptions KeyStore
