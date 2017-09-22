@@ -44,6 +44,7 @@ import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smackx.filetransfer.FileTransfer;
 import org.jivesoftware.smackx.filetransfer.FileTransfer.Status;
 import org.jivesoftware.smackx.filetransfer.FileTransferManager;
+import org.jivesoftware.smackx.filetransfer.FileTransferNegotiator;
 import org.jivesoftware.smackx.filetransfer.OutgoingFileTransfer;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.FileDragLabel;
@@ -53,6 +54,7 @@ import org.jivesoftware.spark.util.ByteFormat;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
 public class SendFileTransfer extends JPanel {
 
@@ -122,6 +124,9 @@ public class SendFileTransfer extends JPanel {
 
     public void sendFile(final OutgoingFileTransfer transfer, FileTransferManager transferManager, final String jid, final String nickname) {
         this.transferManager = transferManager;
+        //SPARK-1869
+        FileTransferNegotiator.getInstanceFor(SparkManager.getConnection());
+        FileTransferNegotiator.IBB_ONLY = SettingsManager.getLocalPreferences().isFileTransferIbbOnly();
 
         cancelButton.setVisible(true);
         retryButton.setVisible(false);

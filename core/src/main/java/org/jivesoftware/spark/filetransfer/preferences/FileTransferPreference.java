@@ -71,10 +71,13 @@ public class FileTransferPreference implements Preference {
         int timeout = localPreferences.getFileTransferTimeout();
         ui.setDownloadDirectory(localPreferences.getDownloadDir());
         ui.setTimeout(Integer.toString(timeout));
+        ui.setIbbOnly(localPreferences.isFileTransferIbbOnly());
+
     }
 
     public void commit() {
         LocalPreferences pref = SettingsManager.getLocalPreferences();
+        localPreferences.setFileTransferIbbOnly(ui.getIbbOnly());
 
         String downloadDir = ui.getDownloadDirectory();
         if (ModelUtil.hasLength(downloadDir)) {
