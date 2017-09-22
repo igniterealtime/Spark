@@ -1485,13 +1485,13 @@ public class LocalPreferences {
     public void setAllowClientSideAuthentication(boolean allowClientSideAuthentication) {
         props.setProperty("allowClientSideAuthentication", Boolean.toString(allowClientSideAuthentication));
     }
-    public void setFileTransferIbbOnly(boolean fileTransferIbbOnly) {
-        setBoolean("fileTransferIbbOnly", true);
+    public void setFileTransferIbbOnly(boolean enable) {
+        setBoolean("fileTransferIbbOnly", enable);
     }
 
     public boolean isFileTransferIbbOnly() {
         return getBoolean("fileTransferIbbOnly", Default.getBoolean(Default.FILE_TRANSFER_IBB_ONLY));
     }
 
-    
+
 }
