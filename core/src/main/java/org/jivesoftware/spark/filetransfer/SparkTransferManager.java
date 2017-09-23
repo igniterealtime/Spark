@@ -65,6 +65,7 @@ import org.jivesoftware.smack.filter.StanzaTypeFilter;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.util.StringUtils;
+import org.jivesoftware.smackx.bytestreams.ibb.InBandBytestreamManager;
 import org.jivesoftware.smackx.filetransfer.FileTransferManager;
 import org.jivesoftware.smackx.filetransfer.FileTransferRequest;
 import org.jivesoftware.smackx.filetransfer.OutgoingFileTransfer;
@@ -111,6 +112,7 @@ public class SparkTransferManager {
     private BufferedImage bufferedImage;
     private ImageSelectionPanel selectionPanel;
     private Robot robot;
+    private InBandBytestreamManager ibbmanager;
 
 
     /**
@@ -173,7 +175,9 @@ public class SparkTransferManager {
         // Create the listener
         transferManager = FileTransferManager.getInstanceFor( SparkManager.getConnection() );
         transferManager.addFileTransferListener( request -> SwingUtilities.invokeLater( () -> handleTransferRequest(request, contactList) ) );
-
+        //SPARK-1869
+        ibbmanager = InBandBytestreamManager.getByteStreamManager( SparkManager.getConnection());
+        ibbmanager.setDefaultBlockSize(61440);
         // Add Send File to Chat Room
         addSendFileButton();
 
