@@ -54,6 +54,7 @@ import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smackx.filetransfer.FileTransfer;
+import org.jivesoftware.smackx.filetransfer.FileTransferNegotiator;
 import org.jivesoftware.smackx.filetransfer.FileTransferRequest;
 import org.jivesoftware.smackx.filetransfer.IncomingFileTransfer;
 import org.jivesoftware.spark.SparkManager;
@@ -68,6 +69,8 @@ import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.URLFileSystem;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.filetransfer.transfer.Downloads;
+
+import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jxmpp.util.XmppStringUtils;
 
 public class ReceiveFileTransfer extends JPanel {
@@ -159,6 +162,9 @@ public class ReceiveFileTransfer extends JPanel {
         long fileSize = request.getFileSize();
         String requestor = request.getRequestor();
         String bareJID = XmppStringUtils.parseBareJid(requestor);
+        //SPARK-1869
+        FileTransferNegotiator.getInstanceFor(SparkManager.getConnection());
+        FileTransferNegotiator.IBB_ONLY = SettingsManager.getLocalPreferences().isFileTransferIbbOnly();
 
         ByteFormat format = new ByteFormat();
         String text = format.format(fileSize);
@@ -574,7 +580,7 @@ public class ReceiveFileTransfer extends JPanel {
         repaint();
     }
 
-  
+
 
     private class TransferButton extends JButton {
 

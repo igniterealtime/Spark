@@ -121,6 +121,7 @@ public class Default {
     public static final String SSO_METHOD = "SSO_METHOD";
     public static final String PROXY_ENABLED = "PROXY_ENABLED";
     public static final String OLD_SSL_ENABLED = "OLD_SSL_ENABLED";
+    public static final String FILE_TRANSFER_IBB_ONLY = "FILE_TRANSFER_IBB_ONLY";
     
     static ClassLoader cl = SparkRes.class.getClassLoader();
 
