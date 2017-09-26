@@ -37,6 +37,7 @@ import java.util.List;
 
 import javax.naming.InvalidNameException;
 import javax.net.ssl.X509TrustManager;
+import javax.swing.JOptionPane;
 
 import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.x509.CRLDistPoint;
@@ -46,6 +47,7 @@ import org.bouncycastle.asn1.x509.Extension;
 import org.bouncycastle.asn1.x509.GeneralName;
 import org.bouncycastle.asn1.x509.GeneralNames;
 import org.bouncycastle.cert.jcajce.JcaX509ExtensionUtils;
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.spark.util.log.Log;
 
 /**
@@ -99,6 +101,49 @@ public class SparkTrustManager extends GeneralTrustManager implements X509TrustM
     @Override
     public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
         try {
+            doTheChecks(chain, authType);
+        } catch (CertificateException e) {
+            int response = JOptionPane.showConfirmDialog(null,
+                    Res.getString("dialog.certificate.click.yes.if.you.want.to.see.certificate"),
+                    Res.getString("dialog.certificate.title.certificate.not.in.truststore"), JOptionPane.YES_NO_OPTION);
+            if (response == JOptionPane.YES_OPTION) {
+                try {
+                    if (isOrderFromSubjectToIssuer(chain)) {
+                        certControll.addEntryToKeyStore(chain[chain.length - 1]);
+                    } else {
+                        certControll.addEntryToKeyStore(chain[0]);
+                    }
+                    certControll.overWriteKeyStores();
+                } catch (HeadlessException | KeyStoreException | InvalidNameException e1) {
+                    Log.error("Couldn't add certificate from presented chain");
+                }
+            }
+            throw e;
+        }
+    }
+    /**
+     * Checks if certificate order in chain is end entity certificate for first certifciate in the chain and root CA is last in the chain
+     * @param chain with certificates
+     * @return
+     */
+    private boolean isOrderFromSubjectToIssuer(X509Certificate[] chain){
+        boolean order = true;
+            for (int i = 0; i < chain.length - 1; i++) {
+                if(!chain[i].getIssuerX500Principal().getName().equals(chain[i + 1].getSubjectX500Principal().getName())){
+                    order = false;
+                }
+            }
+        return order;
+    }
+
+    /**
+     * Do chain validity checks
+     * @param chain with certificates from server
+     * @param authType
+     * @throws CertificateException
+     */
+    private void doTheChecks(X509Certificate[] chain, String authType) throws CertificateException {
+        try {
             // first check if certificate is accepted as as certificate from exceptions list, exceptionsTrustManager
             // will make use of chain provided by exceptions KeyStore
             exceptionsTrustManager.checkServerTrusted(chain, authType);
@@ -144,13 +189,11 @@ public class SparkTrustManager extends GeneralTrustManager implements X509TrustM
                         | CRLException | IOException e) {
                     Log.warning("Couldn't load CRL");
                 }
-            }else {
+            } else {
                 throw new CertificateException("Certificate chain cannot be trusted");
             }
         }
     }
-
-
 
     /**
      * Return true if the certificate chain contain only one Self Signed certificate
