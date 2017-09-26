@@ -293,7 +293,7 @@ public class CertificateDialog extends JDialog implements ActionListener {
 		panel.add(unsupportedExtensionsLabel, new GridBagConstraints(0, i, 1, 1, 1.0, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
 		panel.add(unsupportedExtensionsArea, new GridBagConstraints(2, i, 6, 1, 1.0, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
 		
-		if(reason != CertificateDialogReason.SHOW_ID_CERTIFICATE && reason != CertificateDialogReason.ADD_ID_CERTIFICATE){
+		if(reason == CertificateDialogReason.SHOW_CERTIFICATE ){
 		
 		    buttonPanel.add(exceptionBox, new GridBagConstraints(0, 0, 1, 1, 0.2, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
 		

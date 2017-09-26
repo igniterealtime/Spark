@@ -3,6 +3,7 @@ package org.jivesoftware.sparkimpl.certificates;
 import java.awt.HeadlessException;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.KeyStore;
@@ -497,7 +498,22 @@ public class CertificateController extends CertManager {
         targetStore.setCertificateEntry(alias, cert);
         sourceStore.deleteEntry(alias);
     }
-
+    
+    /**
+     * This method add certificate entry to the TrustStore.
+     * @param cert Certificate which is added.
+     * @throws HeadlessException
+     * @throws InvalidNameException
+     * @throws KeyStoreException
+     */
+    public void addEntryToKeyStore(X509Certificate cert) throws HeadlessException, InvalidNameException, KeyStoreException {
+        if (cert == null){
+            throw new IllegalArgumentException("Cert cannot be null");
+        }
+        addEntryToKeyStoreImpl(cert);
+        
+    }
+    
 	/**
 	 * This method add certificate from file (*.cer), (*.crt), (*.der), (*.pem) to TrustStore.
 	 * 
@@ -513,28 +529,55 @@ public class CertificateController extends CertManager {
     public void addEntryToKeyStore(File file) throws IOException, CertificateException,
             KeyStoreException, HeadlessException, InvalidNameException {
         if (file == null) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("File cannot be null");
         }
-        try (InputStream inputStream = new FileInputStream(file)) {
-            CertificateFactory cf = CertificateFactory.getInstance("X509");
-            X509Certificate addedCert = (X509Certificate) cf.generateCertificate(inputStream);
-            CertificateModel certModel = new CertificateModel(addedCert);
-            if (checkForSameCertificate(addedCert) == false) {
-                showCertificate(certModel, CertificateDialogReason.ADD_CERTIFICATE);
-            }
-            // value of addToKeyStore is changed by setter in CertificateDialog
-            if (addToKeystore == true) {
-                addToKeystore = false;
-                
-                String alias = useCommonNameAsAlias(addedCert);
-                trustStore.setCertificateEntry(alias, addedCert);
-                trustedCertificates.add(new CertificateModel(addedCert));
-                refreshCertTable();
-                JOptionPane.showMessageDialog(null, Res.getString("dialog.certificate.has.been.added"));
-            }
-        }
+        X509Certificate addedCert = certificateFromFile(file);
+        addEntryToKeyStoreImpl(addedCert);
     }
+	/**
+	 * This method takes certificate and add it to the TrustStore
+	 * @param addedCert certificate which is added
+	 * @throws HeadlessException
+	 * @throws InvalidNameException
+	 * @throws KeyStoreException
+	 */
+	private void addEntryToKeyStoreImpl(X509Certificate addedCert) throws HeadlessException, InvalidNameException, KeyStoreException{
+        CertificateModel certModel = new CertificateModel(addedCert);
+        if (checkForSameCertificate(addedCert) == false) {
+            showCertificate(certModel, CertificateDialogReason.ADD_CERTIFICATE);
+        }
+        // value of addToKeyStore is changed by setter in CertificateDialog
+        if (addToKeystore == true) {
+            addToKeystore = false;
+
+            String alias = useCommonNameAsAlias(addedCert);
+            trustStore.setCertificateEntry(alias, addedCert);
+            trustedCertificates.add(new CertificateModel(addedCert));
+            if (tableModel != null) {
+                refreshCertTable();
+            }
+            JOptionPane.showMessageDialog(null, Res.getString("dialog.certificate.has.been.added"));
+        }
+
+
+	}
 	
+	/**
+	 * Takes file with certificate and return X509Representation of the certificate;
+	 * @param file
+	 * @return
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 * @throws CertificateException
+	 */
+	private X509Certificate certificateFromFile(File file) throws FileNotFoundException, IOException, CertificateException{
+	    X509Certificate cert;
+	    try (InputStream inputStream = new FileInputStream(file)) {
+            CertificateFactory cf = CertificateFactory.getInstance("X509");
+            cert = (X509Certificate) cf.generateCertificate(inputStream);
+	    }
+        return cert;
+	}
 
 	/**
 	 * Check if there is certificate entry in Truststore with the same alias.
