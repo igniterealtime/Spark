@@ -97,8 +97,7 @@ public class Default {
     public static final String HIDE_SAVE_PASSWORD_AND_AUTOLOGIN = "HIDE_SAVE_PASSWORD_AND_AUTOLOGIN";
     public static final String HIDE_LOGIN_AS_INVISIBLE = "HIDE_LOGIN_AS_INVISIBLE"; 
     public static final String MAINT_FILESPEC = "MAINT_FILESPEC";
-    public static final String HIDE_START_A_CHAT = "HIDE_START_A_CHAT";    
-    public static final String ACCEPT_ALL = "ACCEPT_ALL";
+    public static final String HIDE_START_A_CHAT = "HIDE_START_A_CHAT";  
     public static final String ACCEPT_EXPIRED = "ACCEPT_EXPIRED";
     public static final String ACCEPT_NOT_VALID_YET = "ACCEPT_NOT_VALID_YET";
     public static final String ACCEPT_SELF_SIGNED = "ACCEPT_SELF_SIGNED";
