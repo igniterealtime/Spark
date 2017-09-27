@@ -343,18 +343,6 @@ public class AccountCreationWizard extends JPanel {
                 .setCompressionEnabled( localPreferences.isCompressionEnabled() )
                 .setSecurityMode( securityMode );
 
-        if ( securityMode != ConnectionConfiguration.SecurityMode.disabled && localPreferences.isAcceptAllCertificates() )
-        {
-            try
-            {
-                TLSUtils.acceptAllCertificates( builder );
-            }
-            catch ( NoSuchAlgorithmException | KeyManagementException e )
-            {
-                Log.warning( "Unable to create configuration.", e );
-            }
-        }
-
         if ( hostPortConfigured )
         {
             builder.setHost( localPreferences.getXmppHost() );
