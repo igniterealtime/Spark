@@ -212,6 +212,8 @@ public class CertificateDialog extends JDialog implements ActionListener {
             infoLabel.setText(Res.getString("dialog.certificate.show"));
         }else if (reason == CertificateDialogReason.ADD_ID_CERTIFICATE){
             infoLabel.setText(Res.getString("dialog.id.certificate.show"));
+        } else if (reason == CertificateDialogReason.ADD_CERTIFICATE_FROM_CONNECTION){
+            infoLabel.setText(Res.getString("dialog.certificate.add.from.connection"));
         }
 		
 		panel.setLayout(new GridBagLayout());
@@ -303,8 +305,9 @@ public class CertificateDialog extends JDialog implements ActionListener {
 		buttonPanel.add(checkValidity,    new GridBagConstraints(0, 1, 2, 1, 0.0, 0.0, WEST, NONE, DEFAULT_INSETS, 0, 0));
 		buttonPanel.add(okButton,         new GridBagConstraints(2, 2, 1, 1, 0.2, 0.0, CENTER, HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 
-		if (reason == CertificateDialogReason.ADD_CERTIFICATE || reason == CertificateDialogReason.ADD_ID_CERTIFICATE) {
-			buttonPanel.add(cancelButton,
+        if (reason == CertificateDialogReason.ADD_CERTIFICATE || reason == CertificateDialogReason.ADD_ID_CERTIFICATE
+                || reason == CertificateDialogReason.ADD_CERTIFICATE_FROM_CONNECTION) {
+            buttonPanel.add(cancelButton,
 					new GridBagConstraints(3, 2, 1, 1, 0.2, 0.0, CENTER, HORIZONTAL, new Insets(5, 5, 5, 100), 0, 0));
 		}
 		if (reason == CertificateDialogReason.SHOW_CERTIFICATE || reason == CertificateDialogReason.SHOW_ID_CERTIFICATE) {
@@ -319,8 +322,9 @@ public class CertificateDialog extends JDialog implements ActionListener {
 		scrollPane = new JScrollPane(panel);
 		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		
-		if (reason == CertificateDialogReason.ADD_CERTIFICATE || reason == CertificateDialogReason.ADD_ID_CERTIFICATE) {
-			add(infoLabel, new GridBagConstraints(0, 0, 4, 1, 1.0, 0.0, WEST, BOTH, DEFAULT_INSETS, 0, 0));
+        if (reason == CertificateDialogReason.ADD_CERTIFICATE || reason == CertificateDialogReason.ADD_ID_CERTIFICATE
+                || reason == CertificateDialogReason.ADD_CERTIFICATE_FROM_CONNECTION) {
+            add(infoLabel, new GridBagConstraints(0, 0, 4, 1, 1.0, 0.0, WEST, BOTH, DEFAULT_INSETS, 0, 0));
 		}
 		
 		add(scrollPane, new GridBagConstraints(0, 1, 4, 1, 1.0, 1.0, WEST, BOTH, DEFAULT_INSETS, 0, 0));
@@ -332,10 +336,12 @@ public class CertificateDialog extends JDialog implements ActionListener {
             	//scrolls scrollPane to top
             	panel.scrollRectToVisible(versionField.getBounds());           
         		
-            	//info that certificate is distrusted
-        		if((reason == CertificateDialogReason.ADD_CERTIFICATE || reason == CertificateDialogReason.ADD_ID_CERTIFICATE) && !cert.isValid()){
-        			JOptionPane.showMessageDialog(null, Res.getString("dialog.certificate.is.distrusted"));
-        		}
+                // info that certificate is distrusted
+                if ((      reason == CertificateDialogReason.ADD_CERTIFICATE
+                        || reason == CertificateDialogReason.ADD_ID_CERTIFICATE
+                        || reason == CertificateDialogReason.ADD_CERTIFICATE_FROM_CONNECTION) && !cert.isValid()) {
+                    JOptionPane.showMessageDialog(null, Res.getString("dialog.certificate.is.distrusted"));
+                }
             }
         });
 		

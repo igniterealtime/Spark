@@ -506,11 +506,11 @@ public class CertificateController extends CertManager {
      * @throws InvalidNameException
      * @throws KeyStoreException
      */
-    public void addEntryToKeyStore(X509Certificate cert) throws HeadlessException, InvalidNameException, KeyStoreException {
+    public void addEntryToKeyStore(X509Certificate cert, CertificateDialogReason reason) throws HeadlessException, InvalidNameException, KeyStoreException {
         if (cert == null){
             throw new IllegalArgumentException("Cert cannot be null");
         }
-        addEntryToKeyStoreImpl(cert);
+        addEntryToKeyStoreImpl(cert, reason);
         
     }
     
@@ -532,27 +532,34 @@ public class CertificateController extends CertManager {
             throw new IllegalArgumentException("File cannot be null");
         }
         X509Certificate addedCert = certificateFromFile(file);
-        addEntryToKeyStoreImpl(addedCert);
+        addEntryToKeyStoreImpl(addedCert, CertificateDialogReason.ADD_CERTIFICATE);
     }
+	
 	/**
 	 * This method takes certificate and add it to the TrustStore
 	 * @param addedCert certificate which is added
+	 * @param reason changes displayed text in certificate dialog
 	 * @throws HeadlessException
 	 * @throws InvalidNameException
 	 * @throws KeyStoreException
 	 */
-	private void addEntryToKeyStoreImpl(X509Certificate addedCert) throws HeadlessException, InvalidNameException, KeyStoreException{
+	private void addEntryToKeyStoreImpl(X509Certificate addedCert, CertificateDialogReason reason) throws HeadlessException, InvalidNameException, KeyStoreException{
         CertificateModel certModel = new CertificateModel(addedCert);
         if (checkForSameCertificate(addedCert) == false) {
-            showCertificate(certModel, CertificateDialogReason.ADD_CERTIFICATE);
+            showCertificate(certModel, reason);
         }
         // value of addToKeyStore is changed by setter in CertificateDialog
         if (addToKeystore == true) {
             addToKeystore = false;
 
             String alias = useCommonNameAsAlias(addedCert);
-            trustStore.setCertificateEntry(alias, addedCert);
-            trustedCertificates.add(new CertificateModel(addedCert));
+            if (certModel.isValid() && !checkRevocation(addedCert) && !certModel.isSelfSigned()) {
+                trustStore.setCertificateEntry(alias, addedCert);
+                trustedCertificates.add(certModel);
+            } else {
+                exceptionsStore.setCertificateEntry(alias, addedCert);
+                exemptedCertificates.add(certModel);
+            }
             if (tableModel != null) {
                 refreshCertTable();
             }
@@ -563,9 +570,9 @@ public class CertificateController extends CertManager {
 	}
 	
 	/**
-	 * Takes file with certificate and return X509Representation of the certificate;
-	 * @param file
-	 * @return
+	 * Takes file with certificate and return X509Representation of the certificate.
+	 * @param file with certificate
+	 * @return X509Certificate from file
 	 * @throws FileNotFoundException
 	 * @throws IOException
 	 * @throws CertificateException

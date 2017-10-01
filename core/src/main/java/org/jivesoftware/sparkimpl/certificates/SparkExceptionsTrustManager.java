@@ -6,7 +6,6 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
-import java.security.Provider;
 import java.security.cert.CertPath;
 import java.security.cert.CertPathBuilder;
 import java.security.cert.CertPathBuilderException;
@@ -22,7 +21,6 @@ import java.security.cert.X509Certificate;
 import javax.naming.InvalidNameException;
 import javax.net.ssl.X509TrustManager;
 
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.jivesoftware.spark.util.log.Log;
 
 
@@ -36,7 +34,6 @@ import org.jivesoftware.spark.util.log.Log;
 public class SparkExceptionsTrustManager extends GeneralTrustManager implements X509TrustManager {
 
     KeyStore exceptionsStore, cacertsExceptionsStore;
-    private Provider bcProvider = new BouncyCastleProvider(); // bc provider for path validation
     public SparkExceptionsTrustManager() {
         loadKeyStores();
 
@@ -74,7 +71,7 @@ public class SparkExceptionsTrustManager extends GeneralTrustManager implements 
             throws NoSuchAlgorithmException, KeyStoreException, InvalidAlgorithmParameterException,
             CertPathValidatorException, CertPathBuilderException, CertificateException {
 
-        CertPathValidator certPathValidator = CertPathValidator.getInstance("PKIX", bcProvider);
+        CertPathValidator certPathValidator = CertPathValidator.getInstance("PKIX");
         CertPathBuilder certPathBuilder = CertPathBuilder.getInstance("PKIX");
         X509CertSelector certSelector = new X509CertSelector();
         certSelector.setCertificate(chain[chain.length - 1]);
