@@ -801,19 +801,11 @@ public final class GraphicUtils {
      * @return the native icon, otherwise default document icon.
      */
     public static Icon getIcon(File file) {
-	try {
-	    sun.awt.shell.ShellFolder sf = sun.awt.shell.ShellFolder
-		    .getShellFolder(file);
-
-	    // Get large icon
-	    return new ImageIcon(sf.getIcon(true), sf.getFolderType());
-	} catch (Exception e) {
-	    try {
-		return new JFileChooser().getIcon(file);
-	    } catch (Exception e1) {
-		// Do nothing.
-	    }
-	}
+        try {
+            return new JFileChooser().getIcon(file);
+        } catch (Exception e) {
+            Log.debug("unable to get icon");
+        }
 
 	return SparkRes.getImageIcon(SparkRes.DOCUMENT_INFO_32x32);
     }
