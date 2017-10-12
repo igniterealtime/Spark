@@ -426,8 +426,6 @@ public class VCardEditor {
         homePanel.setPager(vcard.getPhoneHome("PAGER"));
         homePanel.setMobile(vcard.getPhoneHome("CELL"));
     }
-    
-    
     /**
      * Saves the VCard.
      */
@@ -468,13 +466,16 @@ public class VCardEditor {
 	vcard.setPhoneHome("CELL", homePanel.getMobile());
 
 	// Save Avatar
-	byte[] avatarBytes = avatarPanel.getAvatarBytes();
-
-	// If avatar bytes, persist as vcard.
-	if (avatarBytes != null) {
-	    vcard.setAvatar(avatarBytes);
-	}
-
+        byte[] avatarBytes = null;
+        if(avatarPanel!=null)
+        {
+	    avatarBytes = avatarPanel.getAvatarBytes();
+            // If avatar bytes, persist as vcard.
+            if (avatarBytes != null) {
+                vcard.setAvatar(avatarBytes);
+            }
+        }
+        
 	try {
 	    final VCardManager vcardManager = SparkManager.getVCardManager();
 	    vcardManager.setPersonalVCard(vcard);
