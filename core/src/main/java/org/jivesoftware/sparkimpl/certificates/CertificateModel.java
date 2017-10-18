@@ -84,22 +84,29 @@ public class CertificateModel {
 		this.notBefore = certificate.getNotBefore().toString();
 		this.notAfter = certificate.getNotAfter().toString();
 		this.publicKey = certificate.getPublicKey().toString();
-		this.publicKeyAlgorithm = certificate.getPublicKey().getAlgorithm().toString();
-		try {
-			this.issuerUniqueID = certificate.getIssuerUniqueID().toString();
-		} catch (NullPointerException e) {
-			Log.warning("Certificate doesn't have issuerUniqueID ", e);
-		}
-		try {
-			this.subjectUniqueID = certificate.getIssuerUniqueID().toString();
-		} catch (NullPointerException e) {
-			Log.warning("Certificate doesn't have subjectUniqueID ", e);
-		}
+        this.publicKeyAlgorithm = certificate.getPublicKey().getAlgorithm().toString();
+        // rfc5280 in section 4.1.2.8. Unique Identifiers
+        // "CAs conforming to this profile MUST NOT generate certificates with unique identifiers."
+        // "These fields MUST NOT appear if the version is 1."
+        if (version != 1 && ((certificate.getKeyUsage() != null && certificate.getKeyUsage()[5] == false)
+                || certificate.getBasicConstraints() == -1)) {
+            try {
+                this.issuerUniqueID = certificate.getIssuerUniqueID().toString();
+            } catch (NullPointerException e) {
+                Log.warning("Certificate doesn't have issuerUniqueID: " + issuer, e);
+            }
+            try {
+                this.subjectUniqueID = certificate.getIssuerUniqueID().toString();
+            } catch (NullPointerException e) {
+                Log.warning("Certificate doesn't have subjectUniqueID: " + subject, e);
+            }
+        }
 		try {
 			this.subjectCommonName = extractCommonName(subject);
 		} catch (InvalidNameException e) {
 			Log.warning("Couldn't extract subject Common Name (CN)", e);
 		}
+		
 		try {
 			this.issuerCommonName = extractCommonName(issuer);
 		} catch (InvalidNameException e) {
