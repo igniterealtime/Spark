@@ -16,7 +16,28 @@ Combined with the [Openfire] server, [Spark] is the easiest and best alternative
 
 [![Build Status](https://travis-ci.org/igniterealtime/Spark.svg?branch=master)](https://travis-ci.org/igniterealtime/Spark)
 
--------
+Bug Reporting
+-------------
+
+Only a few users have access for for filling bugs in the tracker. New
+users should:
+
+1. Create a forums account (only e-mail is a requirement, you can skip all the other fields).
+2. Login to a forum account
+3. Press New in your toolbar and choose Discussion
+4. Choose the [Spark Dev forum](http://community.igniterealtime.org/community/developers/spark_dev) of Ignite Realtime and add the tag 'bug_report' to your new post
+
+Please search for your issues in the bug tracker before reporting.
+
+Resources
+---------
+
+- Documentation: http://www.igniterealtime.org/projects/spark/documentation.jsp
+- Bug Tracker: http://issues.igniterealtime.org/browse/SPARK
+- Nightly Builds: http://www.igniterealtime.org/downloads/nightly_spark.jsp
+
+Ignite Realtime
+===============
 
 [Ignite Realtime] is an Open Source community composed of end-users and developers around the world who 
 are interested in applying innovative, open-standards-based Real Time Collaboration to their businesses and organizations. 
