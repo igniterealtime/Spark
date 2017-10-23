@@ -24,8 +24,8 @@ users should:
 
 1. Create a Discourse account
 2. Login to a Discourse account
-3. Click on the New Topic button.
-4. Choose the [Spark Dev category](https://discourse.igniterealtime.org/c/spark/spark-dev) of Ignite Realtime and provide a detailed description of the bug.
+3. Click on the New Topic button
+4. Choose the [Spark Dev category](https://discourse.igniterealtime.org/c/spark/spark-dev) and provide a detailed description of the bug.
 
 Please search for your issues in the bug tracker before reporting.
 
