@@ -259,13 +259,6 @@ public class LoginDialog {
                 .setCompressionEnabled(localPref.isCompressionEnabled())
                 .setSecurityMode( securityMode );
                 
-        if (securityMode != ConnectionConfiguration.SecurityMode.disabled && localPref.isAcceptAllCertificates()) {
-            try {
-                TLSUtils.acceptAllCertificates(builder);
-            } catch (NoSuchAlgorithmException | KeyManagementException e) {
-                Log.warning( "Unable to create configuration.", e );
-            }
-        }
         if ( securityMode != ConnectionConfiguration.SecurityMode.disabled && localPref.isDisableHostnameVerification()) {
             TLSUtils.disableHostnameVerificationForTlsCertificicates(builder);
         }
@@ -1605,7 +1598,6 @@ public class LoginDialog {
 	}
 
 	private void initAdvancedDefaults() {
-		localPref.setAcceptAllCertificates(localPref.isAcceptAllCertificates());
 		localPref.setCompressionEnabled(localPref.isCompressionEnabled());
 		localPref.setDebuggerEnabled(localPref.isDebuggerEnabled());
 		localPref.setDisableHostnameVerification(localPref.isDisableHostnameVerification());
