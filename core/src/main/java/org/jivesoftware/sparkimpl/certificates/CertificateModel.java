@@ -363,7 +363,7 @@ public class CertificateModel {
 		return status;
 	}
 
-	private boolean isSelfSigned(){
+	public boolean isSelfSigned(){
 		if(subject.equals(issuer)){
 			return true;
 		}else{

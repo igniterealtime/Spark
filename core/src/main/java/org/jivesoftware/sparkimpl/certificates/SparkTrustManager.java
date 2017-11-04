@@ -37,6 +37,7 @@ import java.util.List;
 
 import javax.naming.InvalidNameException;
 import javax.net.ssl.X509TrustManager;
+import javax.swing.JOptionPane;
 
 import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.x509.CRLDistPoint;
@@ -46,6 +47,7 @@ import org.bouncycastle.asn1.x509.Extension;
 import org.bouncycastle.asn1.x509.GeneralName;
 import org.bouncycastle.asn1.x509.GeneralNames;
 import org.bouncycastle.cert.jcajce.JcaX509ExtensionUtils;
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.spark.util.log.Log;
 
 /**
@@ -99,12 +101,50 @@ public class SparkTrustManager extends GeneralTrustManager implements X509TrustM
     @Override
     public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
         try {
+            doTheChecks(chain, authType);
+        } catch (CertPathValidatorException e) {
+            try {
+                if (isOrderFromSubjectToIssuer(chain)) {
+                    certControll.addEntryToKeyStore(chain[chain.length - 1], CertificateDialogReason.ADD_CERTIFICATE_FROM_CONNECTION);
+                } else {
+                    certControll.addEntryToKeyStore(chain[0], CertificateDialogReason.ADD_CERTIFICATE_FROM_CONNECTION);
+                }
+                certControll.overWriteKeyStores();
+            } catch (HeadlessException | KeyStoreException | InvalidNameException e1) {
+                Log.error("Couldn't add certificate from presented chain");
+            }
+            throw new CertificateException(e);
+        }
+    }
+    /**
+     * Checks if certificate order in chain is end entity certificate for first certificate in the chain and root CA is last in the chain
+     * @param chain with certificates
+     * @return
+     */
+    private boolean isOrderFromSubjectToIssuer(X509Certificate[] chain){
+        boolean order = true;
+            for (int i = 0; i < chain.length - 1; i++) {
+                if(!chain[i].getIssuerX500Principal().getName().equals(chain[i + 1].getSubjectX500Principal().getName())){
+                    order = false;
+                }
+            }
+        return order;
+    }
+
+    /**
+     * Do chain validity checks
+     * @param chain with certificates from server
+     * @param authType
+     * @throws CertificateException
+     * @throws CertPathValidatorException 
+     */
+    private void doTheChecks(X509Certificate[] chain, String authType) throws CertificateException, CertPathValidatorException {
+        try {
             // first check if certificate is accepted as as certificate from exceptions list, exceptionsTrustManager
             // will make use of chain provided by exceptions KeyStore
             exceptionsTrustManager.checkServerTrusted(chain, authType);
         } catch (CertificateException ex) {
             // in case when certificate isn't on exceptions list then make use of this Trust Manager
-
             // validate chain by date (expired/not valid yet)
             checkDateValidity(chain);
 
@@ -118,7 +158,7 @@ public class SparkTrustManager extends GeneralTrustManager implements X509TrustM
                 } catch (NoSuchAlgorithmException | KeyStoreException | InvalidAlgorithmParameterException
                         | CertPathValidatorException | CertPathBuilderException e) {
                     Log.error("Validating path failed", e);
-                    throw new CertificateException("Certificate path validation failed", e);
+                    throw new CertPathValidatorException("Certificate path validation failed", e);
 
                 }
             } else if (isSelfSigned(chain) && !acceptSelfSigned) {
@@ -131,7 +171,7 @@ public class SparkTrustManager extends GeneralTrustManager implements X509TrustM
                 // certificate
                 List<X509Certificate> certList = new ArrayList<>(Arrays.asList(getAcceptedIssuers()));
                 if (!certList.contains(chain[0])) {
-                    throw new CertificateException("Certificate not in the TrustStore");
+                    throw new CertPathValidatorException("Certificate not in the TrustStore");
                 }
                 try {
                     loadCRL(chain);
@@ -144,13 +184,11 @@ public class SparkTrustManager extends GeneralTrustManager implements X509TrustM
                         | CRLException | IOException e) {
                     Log.warning("Couldn't load CRL");
                 }
-            }else {
+            } else {
                 throw new CertificateException("Certificate chain cannot be trusted");
             }
         }
     }
-
-
 
     /**
      * Return true if the certificate chain contain only one Self Signed certificate

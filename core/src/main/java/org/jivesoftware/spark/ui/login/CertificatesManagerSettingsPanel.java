@@ -71,7 +71,6 @@ public class CertificatesManagerSettingsPanel extends JPanel implements ActionLi
             Res.getString("menuitem.certificate.files.filter"), "cer", "crt", "der", "pem");
 	
     //checboxes with options
-	private JCheckBox acceptAll = new JCheckBox();
 	private JCheckBox acceptExpired = new JCheckBox();
 	private JCheckBox acceptRevoked = new JCheckBox();
 	private JCheckBox acceptSelfSigned = new JCheckBox();
@@ -89,7 +88,6 @@ public class CertificatesManagerSettingsPanel extends JPanel implements ActionLi
 		
 		addCertTableToPanel();
 		
-		ResourceUtils.resButton(acceptAll, Res.getString("checkbox.accept.all"));
 		ResourceUtils.resButton(acceptExpired, Res.getString("checkbox.accept.expired"));
 		ResourceUtils.resButton(acceptNotValidYet, Res.getString("checkbox.accept.not.valid.yet"));
 		ResourceUtils.resButton(acceptRevoked, Res.getString("checkbox.accept.revoked"));
@@ -100,7 +98,6 @@ public class CertificatesManagerSettingsPanel extends JPanel implements ActionLi
 		ResourceUtils.resButton(showCert, Res.getString("button.show.certificate"));
 		ResourceUtils.resButton(fileButton, Res.getString("label.choose.file"));
 		
-		acceptAll.setSelected(localPreferences.isAcceptAllCertificates());
 		acceptSelfSigned.setSelected(localPreferences.isAcceptSelfSigned());
 		acceptExpired.setSelected(localPreferences.isAcceptExpired());
 		acceptNotValidYet.setSelected(localPreferences.isAcceptNotValidYet());
@@ -109,7 +106,6 @@ public class CertificatesManagerSettingsPanel extends JPanel implements ActionLi
 		checkOCSP.setSelected(localPreferences.isCheckOCSP());
 		allowSoftFail.setSelected(localPreferences.isAllowSoftFail());
 			
-		acceptAll.addActionListener(this);
 		certTable.addMouseListener(this);
 		certTable.getModel().addTableModelListener(this);
 		showCert.setEnabled(false);
@@ -119,10 +115,6 @@ public class CertificatesManagerSettingsPanel extends JPanel implements ActionLi
 		checkOCSP.addActionListener(this);
 		acceptRevoked.addActionListener(this);
 		
-		acceptExpired.setEnabled(!acceptAll.isSelected());
-		acceptNotValidYet.setEnabled(!acceptAll.isSelected());
-		acceptRevoked.setEnabled(!acceptAll.isSelected());
-		acceptSelfSigned.setEnabled(!acceptAll.isSelected());
 		checkCRL.setEnabled(!acceptRevoked.isSelected());
 		checkOCSP.setEnabled(checkCRL.isSelected());
 		allowSoftFail.setEnabled(checkOCSP.isSelected());
@@ -133,17 +125,16 @@ public class CertificatesManagerSettingsPanel extends JPanel implements ActionLi
 
 		add(scrollPane,           new GridBagConstraints(0, 0, 6, 1, 1.0, 0.8, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
 		
-		add(acceptAll,            new GridBagConstraints(0, 1, 1, 1, 0.0, 0.1, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
-		add(acceptSelfSigned,     new GridBagConstraints(1, 1, 1, 1, 0.0, 0.1, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
+		add(acceptSelfSigned,     new GridBagConstraints(0, 1, 1, 1, 0.0, 0.1, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
 		
-		add(acceptExpired,        new GridBagConstraints(0, 2, 1, 1, 0.0, 0.1, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
-		add(acceptNotValidYet,    new GridBagConstraints(1, 2, 1, 1, 0.0, 0.1, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
+		add(acceptExpired,        new GridBagConstraints(1, 1, 1, 1, 0.0, 0.1, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
+		add(acceptNotValidYet,    new GridBagConstraints(0, 2, 1, 1, 0.0, 0.1, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
 		
-		add(acceptRevoked,        new GridBagConstraints(2, 1, 1, 1, 0.0, 0.1, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
-		add(checkCRL,             new GridBagConstraints(3, 1, 1, 1, 0.0, 0.1, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
+		add(acceptRevoked,        new GridBagConstraints(1, 2, 1, 1, 0.0, 0.1, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
+		add(checkCRL,             new GridBagConstraints(2, 1, 1, 1, 0.0, 0.1, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
 		
-		add(checkOCSP,            new GridBagConstraints(2, 2, 1, 1, 0.0, 0.1, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
-		add(allowSoftFail,        new GridBagConstraints(3, 2, 1, 1, 0.0, 0.1, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
+		add(checkOCSP,            new GridBagConstraints(3, 1, 1, 1, 0.0, 0.1, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
+		add(allowSoftFail,        new GridBagConstraints(2, 2, 1, 1, 0.0, 0.1, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
 		
 		add(showCert,             new GridBagConstraints(4, 1, 2, 1, 0.0, 0.1, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
 		add(filePanel,            new GridBagConstraints(4, 2, 2, 4, 0.0, 0.1, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
@@ -191,32 +182,7 @@ public class CertificatesManagerSettingsPanel extends JPanel implements ActionLi
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == acceptAll) {
-            if (acceptAll.isSelected()) {
-
-                acceptSelfSigned.setSelected(true);
-                acceptExpired.setSelected(true);
-                acceptNotValidYet.setSelected(true);
-                acceptRevoked.setSelected(true);
-                checkCRL.setSelected(false);
-                checkOCSP.setSelected(false);
-                allowSoftFail.setSelected(false);
-
-                acceptSelfSigned.setEnabled(false);
-                acceptExpired.setEnabled(false);
-                acceptNotValidYet.setEnabled(false);
-                acceptRevoked.setEnabled(false);
-                checkCRL.setEnabled(false);
-                checkOCSP.setEnabled(false);
-                allowSoftFail.setEnabled(false);
-            } else if (!acceptAll.isSelected()) {
-
-                acceptSelfSigned.setEnabled(true);
-                acceptExpired.setEnabled(true);
-                acceptNotValidYet.setEnabled(true);
-                acceptRevoked.setEnabled(true);
-            }
-        } else if (e.getSource() == showCert) {
+        if (e.getSource() == showCert) {
             certControll.showCertificate();
 
         } else if (e.getSource() == fileButton) {
@@ -232,6 +198,7 @@ public class CertificatesManagerSettingsPanel extends JPanel implements ActionLi
                 checkOCSP.setSelected(false);
                 checkOCSP.setEnabled(false);
                 allowSoftFail.setEnabled(false);
+                allowSoftFail.setSelected(false);
             }
 
         } else if (e.getSource() == acceptRevoked) {
@@ -239,9 +206,11 @@ public class CertificatesManagerSettingsPanel extends JPanel implements ActionLi
 
                 checkCRL.setSelected(false);
                 checkOCSP.setSelected(false);
-
+                allowSoftFail.setSelected(false);
+                
                 checkCRL.setEnabled(false);
                 checkOCSP.setEnabled(false);
+                allowSoftFail.setEnabled(false);
             } else if (!acceptRevoked.isSelected()) {
                 checkCRL.setEnabled(true);
             }
@@ -334,7 +303,6 @@ public class CertificatesManagerSettingsPanel extends JPanel implements ActionLi
 
 	public void useDefault() {
 
-	    acceptAll.setSelected(Default.getBoolean(Default.ACCEPT_ALL));
 	    acceptExpired.setSelected(Default.getBoolean(Default.ACCEPT_EXPIRED));
         acceptNotValidYet.setSelected(Default.getBoolean(Default.ACCEPT_NOT_VALID_YET));
         acceptSelfSigned.setSelected(Default.getBoolean(Default.ACCEPT_SELF_SIGNED));
@@ -343,7 +311,6 @@ public class CertificatesManagerSettingsPanel extends JPanel implements ActionLi
         checkOCSP.setSelected(Default.getBoolean(Default.CHECK_OCSP));
         allowSoftFail.setSelected(Default.getBoolean(Default.ALLOW_SOFT_FAIL));
         
-        acceptAll.setEnabled(true);
         acceptExpired.setEnabled(true);
         acceptNotValidYet.setEnabled(true);
         acceptSelfSigned.setEnabled(true);
@@ -359,7 +326,6 @@ public class CertificatesManagerSettingsPanel extends JPanel implements ActionLi
         localPreferences.setAcceptNotValidYet(acceptNotValidYet.isSelected());
         localPreferences.setAcceptSelfSigned(acceptSelfSigned.isSelected());
         localPreferences.setAcceptRevoked(acceptRevoked.isSelected());
-        localPreferences.setAcceptAllCertificates(acceptAll.isSelected());
         localPreferences.setCheckCRL(checkCRL.isSelected());
         localPreferences.setCheckOCSP(checkOCSP.isSelected());
         localPreferences.setAllowSoftFail(allowSoftFail.isSelected());

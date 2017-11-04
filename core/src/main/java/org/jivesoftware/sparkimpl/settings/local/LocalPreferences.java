@@ -1226,14 +1226,6 @@ public class LocalPreferences {
 		setString("AvailableCodecs", value);
 	}
 
-	public void setAcceptAllCertificates(boolean accept) {
-		setBoolean("AcceptAllCertificates", accept);
-	}
-
-	public boolean isAcceptAllCertificates() {
-		return getBoolean("AcceptAllCertificates", Default.getBoolean(Default.ACCEPT_ALL));
-	}
-
 	public void setDisableHostnameVerification(boolean accept) {
 		setBoolean("DisableHostnameVerification", accept);
 	}
