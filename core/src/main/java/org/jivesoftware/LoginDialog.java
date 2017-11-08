@@ -45,6 +45,7 @@ import org.jivesoftware.spark.util.*;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
+import org.jivesoftware.sparkimpl.certificates.SparkSSLSocketFactory;
 import org.jivesoftware.sparkimpl.certificates.SparkSSLContext;
 import org.jivesoftware.sparkimpl.plugin.layout.LayoutSettings;
 import org.jivesoftware.sparkimpl.plugin.layout.LayoutSettingsManager;
@@ -308,7 +309,13 @@ public class LoginDialog {
                 builder.setHost( DNSUtil.resolveXMPPDomain( loginServer, null ).get( 0 ).getFQDN() );
                 builder.setPort( 5223 );
             }
-            builder.setSocketFactory( new DummySSLSocketFactory() );
+            SparkSSLContext.Options options;
+            if(localPref.isAllowClientSideAuthentication()){
+            options = SparkSSLContext.Options.BOTH;
+            } else {
+                options = SparkSSLContext.Options.ONLY_SERVER_SIDE;
+            }
+            builder.setSocketFactory( new SparkSSLSocketFactory(options) );
             // SMACK 4.1.9  does not recognize an 'old-style' SSL socket as being secure, which will cause a failure when
             // the 'required' Security Mode is defined. Here, we work around this by replacing that security mode with an
             // 'if-possible' setting.
