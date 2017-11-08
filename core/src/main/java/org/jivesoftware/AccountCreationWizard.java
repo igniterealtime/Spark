@@ -17,7 +17,6 @@
 
 package org.jivesoftware;
 
-import org.bouncycastle.jsse.provider.BouncyCastleJsseProvider;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.*;
 import org.jivesoftware.smack.packet.XMPPError;
@@ -28,11 +27,11 @@ import org.jivesoftware.smack.util.DNSUtil;
 import org.jivesoftware.smack.util.TLSUtils;
 import org.jivesoftware.smackx.iqregister.AccountManager;
 import org.jivesoftware.spark.component.TitlePanel;
-import org.jivesoftware.spark.util.DummySSLSocketFactory;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkimpl.certificates.SparkSSLSocketFactory;
 import org.jivesoftware.sparkimpl.certificates.SparkSSLContext;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
@@ -369,7 +368,7 @@ public class AccountCreationWizard extends JPanel {
                 builder.setHost( DNSUtil.resolveXMPPDomain( serverName, null ).get( 0 ).getFQDN() );
                 builder.setPort( 5223 );
             }
-            builder.setSocketFactory( new DummySSLSocketFactory() );
+            builder.setSocketFactory( new SparkSSLSocketFactory(SparkSSLContext.Options.ONLY_SERVER_SIDE) );
             // SMACK 4.1.9  does not recognize an 'old-style' SSL socket as being secure, which will cause a failure when
             // the 'required' Security Mode is defined. Here, we work around this by replacing that security mode with an
             // 'if-possible' setting.
