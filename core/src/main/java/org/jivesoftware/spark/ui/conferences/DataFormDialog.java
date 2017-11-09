@@ -93,8 +93,18 @@ public class DataFormDialog extends JPanel {
                 List<String> valueList = field.getValues();
 
                 if (type.equals(FormField.Type.bool)) {
-                    String o = valueList.get(0);
-                    boolean isSelected = o.equals("1");
+                    boolean isSelected;
+                    if ( valueList == null || valueList.isEmpty() )
+                    {
+                        // Bool's default value is 'false'.
+                        isSelected = false;
+                    }
+                    else
+                    {
+                        String o = valueList.get( 0 );
+                        isSelected = o.equals( "1" );
+                    }
+
                     JCheckBox box = new JCheckBox(label);
                     box.setSelected(isSelected);
                     submitForm.setAnswer( variable, isSelected );
