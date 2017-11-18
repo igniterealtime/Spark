@@ -229,7 +229,7 @@ public class UserSearchResults extends JPanel {
      */
     public String getFirstValue(ReportedData.Row row, String key) {
         List<String> values = row.getValues( key );
-        return values == null && values.isEmpty() ? null : values.get( 0 );
+        return values == null || values.isEmpty() ? null : values.get( 0 );
     }
 
     private void openChatRoom(int row) {
