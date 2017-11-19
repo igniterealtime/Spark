@@ -118,7 +118,7 @@ public class CertificateController extends CertManager {
                     String alias = (String) store.nextElement();
                     X509Certificate certificate = (X509Certificate) caStore.getCertificate(alias);
                     // if getCertificateAlias return null then entry doesn't exist in distrustedCaStore (Java's default).
-                    if (distrustedCaStore.getCertificateAlias(certificate) == null && exceptionsCaStore.getCertificateAlias(certificate) == null) {
+                    if (distrustedCaStore.getCertificateAlias(certificate) == null) {
 
                         displayCerts.setCertificateEntry(alias, certificate);                        
                     }
@@ -169,10 +169,8 @@ public class CertificateController extends CertManager {
 		tableModel.setColumnIdentifiers(COLUMN_NAMES);
 		Object[] certEntry = new Object[NUMBER_OF_COLUMNS];
 		addRowsToTableModel(trustedCertificates, certEntry);
-		addRowsToTableModel(exemptedCertificates, certEntry);
 		addRowsToTableModel(displayCaCertificates, certEntry);
-		addRowsToTableModel(exemptedCacerts, certEntry);
-    }
+	}
     
     /**
      * Adds list to the certificate table so it is displayed in the table.
@@ -206,7 +204,62 @@ public class CertificateController extends CertManager {
         certEntry[2] = isOnExceptionList(cert);
         return certEntry;
     }
-	
+    
+	/**
+	 * Adds certificate with given entry to exceptions KeyStore
+	 * @param alias of the certificate
+	 */
+    private void addCertToExceptions(String alias) {
+
+        try {
+            X509Certificate cert = (X509Certificate) trustStore.getCertificate(alias);
+            exceptionsStore.setCertificateEntry(alias, cert);
+        } catch (KeyStoreException ex) {
+            Log.error("Error at moving certificate from trusted list to the exceptions list", ex);
+        }
+    }
+    
+    /**
+     * Removes certificate with the given alias from the exceptions list
+     * @param alias of the certificate
+     */
+    private void removeCertFromExceptions(String alias) {
+
+        try {
+            X509Certificate cert = (X509Certificate) trustStore.getCertificate(alias);
+            exceptionsStore.deleteEntry(alias);
+        } catch (KeyStoreException ex) {
+            Log.error("Error at moving certificate from exceptions list to trusted list", ex);
+        }
+    }
+    
+    /**
+     * Adds CA certificate with given entry to CA exceptions KeyStore
+     * @param alias of the certificate
+     */
+    private void addCaCertToExceptions(String alias) {
+
+        try {
+            X509Certificate cert = (X509Certificate) displayCaStore.getCertificate(alias);
+            exceptionsCaStore.setCertificateEntry(alias, cert);
+        } catch (KeyStoreException ex) {
+            Log.error("Error at moving certificate from trusted list to the exception list", ex);
+        }
+    }
+    
+    /**
+     * Removes CA certificate with the given alias from the exceptions list
+     * @param alias of the certificate
+     */
+    private void removeCaCertFromExceptions(String alias) {
+        try {
+            X509Certificate cert = (X509Certificate) displayCaStore.getCertificate(alias);
+            exceptionsCaStore.deleteEntry(alias);
+        } catch (KeyStoreException ex) {
+            Log.error("Error at moving certificate from exceptions list to trusted list", ex);
+        }
+    }
+
 	/**
 	 * If argument is true then move certificate to the exceptions Keystore, if false then move to the trusted Keystore.
 	 * Useful for checkboxes where it's selected value indicates where certificate should be moved.
@@ -214,59 +267,44 @@ public class CertificateController extends CertManager {
 	 */
     @Override
 	public void addOrRemoveFromExceptionList(boolean checked) {
-
         int row = CertificatesManagerSettingsPanel.getCertTable().getSelectedRow();
         String alias = allCertificates.get(row).getAlias();
-        
-        if (getAliasKeyStorePath(alias).equals(TRUSTED) || getAliasKeyStorePath(alias).equals(EXCEPTIONS)) {
+        if (getAliasKeyStorePath(alias).equals(TRUSTED)) {
 
-            if (checked) {
-
-                try {
-                    moveCertificate(TRUSTED, EXCEPTIONS);
-                } catch (KeyStoreException | NoSuchAlgorithmException | CertificateException | IOException ex) {
-                    Log.error("Error at moving certificate from trusted list to the exception list", ex);
-                }
+            if(checked) {
+                addCertToExceptions(alias);
             } else {
-                try {
-                    moveCertificate(EXCEPTIONS, TRUSTED);
-                } catch (KeyStoreException | NoSuchAlgorithmException | CertificateException | IOException ex) {
-                    Log.error("Error at moving certificate from exceptions list to trusted list", ex);
-                }
+                removeCertFromExceptions(alias);
             }
-        } else if (getAliasKeyStorePath(alias).equals(DISPLAYED_CACERTS)
-                || getAliasKeyStorePath(alias).equals(CACERTS_EXCEPTIONS)) {
-            if (checked) {
-
-                try {
-                    moveCertificate(DISPLAYED_CACERTS, CACERTS_EXCEPTIONS);
-                } catch (KeyStoreException | NoSuchAlgorithmException | CertificateException | IOException ex) {
-                    Log.error("Error at moving certificate from trusted list to the exception list", ex);
-                }
+            
+        }else if (getAliasKeyStorePath(alias).equals(DISPLAYED_CACERTS)) {
+            if(checked) {
+                addCaCertToExceptions(alias);
             } else {
-                try {
-                    moveCertificate(CACERTS_EXCEPTIONS, DISPLAYED_CACERTS);
-                } catch (KeyStoreException | NoSuchAlgorithmException | CertificateException | IOException ex) {
-                    Log.error("Error at moving certificate from exceptions list to trusted list", ex);
-                }
+                removeCaCertFromExceptions(alias);
             }
         }
     }
-	
-	/**
-	 * Return information if certificate is on exception list.
-	 * 
-	 * @param Certificate Model entry
-	 */
+
+    /**
+     * Return information if certificate is on exception list.
+     * 
+     * @param Certificate
+     *            Model entry
+     */
     @Override
-	public boolean isOnExceptionList(CertificateModel cert) {
-		if(exemptedCertificates.contains(cert)){
-		    return true;
-		}else if (exemptedCacerts.contains(cert)){
-		    return true;
-		}else {
-		    return false;
-		}
+    public boolean isOnExceptionList(CertificateModel cert) {
+        try {
+            if (exceptionsStore.getCertificateAlias(cert.getCertificate()) != null) {
+                return true;
+            } else if (exceptionsCaStore.getCertificateAlias(cert.getCertificate()) != null) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (KeyStoreException e) {
+            return false;
+        }
     }
 
     /**
@@ -287,32 +325,30 @@ public class CertificateController extends CertManager {
      * @return File path of KeyStore with certificate
      */
     private KeyStore getAliasKeyStore(String alias) {
-        for (CertificateModel model : exemptedCertificates) {
-            if (model.getAlias().equals(alias)) {
+        try {
+            if (exceptionsStore.containsAlias(alias)) {
                 return exceptionsStore;
             }
-        }
-        for (CertificateModel model : blackListedCertificates) {
-            if (model.getAlias().equals(alias)) {
+
+            if (blackListStore.containsAlias(alias)) {
                 return blackListStore;
             }
-        }
-        for (CertificateModel model : trustedCertificates) {
-            if (model.getAlias().equals(alias)) {
+
+            if (trustStore.containsAlias(alias)) {
                 return trustStore;
             }
-        }
-        for (CertificateModel model : displayCaCertificates) {
-            if (model.getAlias().equals(alias)) {
-                return displayCaStore;
-            }
-        }
-        for (CertificateModel model : exemptedCacerts) {
-            if (model.getAlias().equals(alias)) {
+            if (exceptionsCaStore.containsAlias(alias)) {
                 return exceptionsCaStore;
             }
+            if (displayCaStore.containsAlias(alias)) {
+                return displayCaStore;
+            }
+
+        } catch (KeyStoreException e) {
+            Log.error(e);
+            return null;
+
         }
-        
         return null;
     }
     
@@ -322,34 +358,32 @@ public class CertificateController extends CertManager {
 	 * @param alias of the certificate
 	 * @return File path of KeyStore with certificate
 	 */
-	private File getAliasKeyStorePath(String alias) {
-		for (CertificateModel model : exemptedCertificates) {
-			if (model.getAlias().equals(alias)) {
-				return EXCEPTIONS;
-			}
-		}
-		for (CertificateModel model : blackListedCertificates) {
-			if (model.getAlias().equals(alias)) {
-				return BLACKLIST;
-			}
-		}
-		for (CertificateModel model : trustedCertificates) {
-			if (model.getAlias().equals(alias)) {
-				return TRUSTED;
-			}
-		}
-        for (CertificateModel model : displayCaCertificates) {
-            if (model.getAlias().equals(alias)) {
+    private File getAliasKeyStorePath(String alias) {
+
+        try {
+
+            if (blackListStore.containsAlias(alias)) {
+                return BLACKLIST;
+            }
+            if (trustStore.containsAlias(alias)) {
+                return TRUSTED;
+            }
+            if (exceptionsStore.containsAlias(alias)) {
+                return EXCEPTIONS;
+            }
+            if (displayCaStore.containsAlias(alias)) {
                 return DISPLAYED_CACERTS;
             }
-        }
-        for (CertificateModel model : exemptedCacerts) {
-            if (model.getAlias().equals(alias)) {
+            if (exceptionsCaStore.containsAlias(alias)) {
                 return CACERTS_EXCEPTIONS;
             }
+        } catch (KeyStoreException e) {
+
+            Log.error(e);
+            return null;
         }
-		return null;
-	}
+        return null;
+    }
 
 	
 	
@@ -428,78 +462,9 @@ public class CertificateController extends CertManager {
             }
         });
     }
-	
+
+
 	/**
-	 * This method transfer certificate from source KeyStore to target KeyStore.
-	 * @throws IOException 
-	 * @throws CertificateException 
-	 * @throws NoSuchAlgorithmException 
-	 * @throws KeyStoreException 
-	 */
-	public void moveCertificate(File source, File target) throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
-		
-			int row = CertificatesManagerSettingsPanel.getCertTable().getSelectedRow();
-			String alias = allCertificates.get(row).getAlias();
-			moveCertificate(source, target, alias);
-
-	}
-	
-	
-	/**
-     * This method transfer certificate from source KeyStore to target KeyStore.
-     * 
-     * @param source
-     *            File with source KeyStore
-     * @param target
-     *            File with target KeyStore
-     * @param alias
-     *            Alias of the certificate meant to move
-     * @throws IOException
-     * @throws KeyStoreException
-     * @throws NoSuchAlgorithmException
-     * @throws CertificateException
-     */
-    public void moveCertificate(File source, File target, String alias)
-            throws IOException, KeyStoreException, NoSuchAlgorithmException, CertificateException {
-        if (!source.equals(TRUSTED) && !source.equals(BLACKLIST) && !source.equals(EXCEPTIONS)
-                && !source.equals(DISPLAYED_CACERTS) && !source.equals(CACERTS_EXCEPTIONS) &&
-
-                !target.equals(TRUSTED) && !target.equals(EXCEPTIONS) && !target.equals(BLACKLIST)
-                && !target.equals(DISPLAYED_CACERTS) && !target.equals(CACERTS_EXCEPTIONS)) {
-            throw new IllegalArgumentException();
-        }
-        KeyStore sourceStore = null;
-        if (source.equals(TRUSTED)) {
-            sourceStore = trustStore;
-        } else if (source.equals(EXCEPTIONS)) {
-            sourceStore = exceptionsStore;
-        } else if (source.equals(BLACKLIST)) {
-            sourceStore = blackListStore;
-        } else if (source.equals(DISPLAYED_CACERTS)) {
-            sourceStore = displayCaStore;
-        } else if (source.equals(CACERTS_EXCEPTIONS)) {
-            sourceStore = exceptionsCaStore;
-        }
-
-        KeyStore targetStore = null;
-        if (target.equals(TRUSTED)) {
-            targetStore = trustStore;
-        } else if (target.equals(EXCEPTIONS)) {
-            targetStore = exceptionsStore;
-        } else if (target.equals(BLACKLIST)) {
-            targetStore = blackListStore;
-        } else if (target.equals(DISPLAYED_CACERTS)) {
-            targetStore = displayCaStore;
-        } else if (target.equals(CACERTS_EXCEPTIONS)) {
-            targetStore = exceptionsCaStore;
-        }
-        
-        X509Certificate cert = (X509Certificate) sourceStore.getCertificate(alias);
-        targetStore.setCertificateEntry(alias, cert);
-        sourceStore.deleteEntry(alias);
-    }
-    
-    /**
      * This method add certificate entry to the TrustStore.
      * @param cert Certificate which is added.
      * @throws HeadlessException
@@ -553,13 +518,14 @@ public class CertificateController extends CertManager {
             addToKeystore = false;
 
             String alias = useCommonNameAsAlias(addedCert);
-            if (certModel.isValid() && !checkRevocation(addedCert) && !certModel.isSelfSigned()) {
-                trustStore.setCertificateEntry(alias, addedCert);
-                trustedCertificates.add(certModel);
-            } else {
+            //if certificate is invalid in some way then it is added to exceptions
+            if (!certModel.isValid() || checkRevocation(addedCert) || certModel.isSelfSigned()) {
                 exceptionsStore.setCertificateEntry(alias, addedCert);
                 exemptedCertificates.add(certModel);
-            }
+            }                
+                trustStore.setCertificateEntry(alias, addedCert);
+                trustedCertificates.add(certModel);
+
             if (tableModel != null) {
                 refreshCertTable();
             }
