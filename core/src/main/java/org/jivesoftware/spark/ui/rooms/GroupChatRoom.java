@@ -629,7 +629,7 @@ public class GroupChatRoom extends ChatRoom
 
                     final boolean isFromRoom = !message.getFrom().contains( "/" );
 
-                    if ( !SparkManager.getUserManager().hasVoice( this, from ) && !isFromRoom )
+                    if ( !isFromRoom && SparkManager.getUserManager().getOccupant( this, from ) == null )
                     {
                         return;
                     }
