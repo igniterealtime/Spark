@@ -149,7 +149,7 @@ public class CertificatesManagerSettingsPanel extends JPanel implements ActionLi
             public Component prepareRenderer(TableCellRenderer renderer, int rowIndex,
                     int columnIndex) {
                 JComponent component = (JComponent) super.prepareRenderer(renderer, rowIndex, columnIndex);  
-                Object value = getModel().getValueAt(rowIndex, columnIndex);
+                Object value = getModel().getValueAt(convertRowIndexToModel(rowIndex), columnIndex);
                 
                 DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
                 centerRenderer.setHorizontalAlignment( JLabel.CENTER );
@@ -172,7 +172,7 @@ public class CertificatesManagerSettingsPanel extends JPanel implements ActionLi
         
         scrollPane = new JScrollPane(certTable);
         certTable.setFillsViewportHeight(true);
-        certTable.setAutoCreateRowSorter(false);
+        certTable.setAutoCreateRowSorter(true);
         
         certControll.resizeColumnWidth(certTable);
         certTable.setAutoResizeMode(JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
