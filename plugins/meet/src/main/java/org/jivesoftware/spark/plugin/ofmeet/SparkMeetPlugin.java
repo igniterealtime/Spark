@@ -17,31 +17,26 @@
 
 package org.jivesoftware.spark.plugin.ofmeet;
 
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
-import java.util.*;
-import java.util.zip.*;
-import java.io.*;
-import java.net.*;
-import java.lang.reflect.*;
-
-
-import org.jivesoftware.Spark;
-import org.jivesoftware.spark.*;
-import org.jivesoftware.spark.component.*;
-import org.jivesoftware.spark.component.browser.*;
-import org.jivesoftware.spark.plugin.*;
-import org.jivesoftware.spark.ui.rooms.*;
-import org.jivesoftware.spark.ui.*;
-import org.jivesoftware.spark.util.*;
-import org.jivesoftware.spark.util.log.*;
-
-import org.jivesoftware.smack.*;
-import org.jivesoftware.smack.packet.Message;
-
 import com.teamdev.jxbrowser.chromium.Browser;
 import com.teamdev.jxbrowser.chromium.swing.BrowserView;
+import org.jivesoftware.smack.packet.Message;
+import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.plugin.Plugin;
+import org.jivesoftware.spark.ui.ChatRoom;
+import org.jivesoftware.spark.ui.ChatRoomListener;
+import org.jivesoftware.spark.ui.GlobalMessageListener;
+import org.jivesoftware.spark.util.log.Log;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FileInputStream;
+import java.net.URLEncoder;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 
 
 public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageListener
@@ -79,7 +74,7 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
 
         if (pluginsettings.exists())
         {
-            Log.warning("ofmeet-info: Properties-file does exist= " + pluginsettings.getPath());
+            Log.debug("ofmeet-info: Properties-file does exist= " + pluginsettings.getPath());
 
             try {
                 props.load(new FileInputStream(pluginsettings));
@@ -87,37 +82,37 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
                 if (props.getProperty("port") != null)
                 {
                     port = props.getProperty("port");
-                    Log.warning("ofmeet-info: ofmeet-port from properties-file is= " + port);
+                    Log.debug("ofmeet-info: ofmeet-port from properties-file is= " + port);
                 }
 
                 if (props.getProperty("protocol") != null)
                 {
                     protocol = props.getProperty("protocol");
-                    Log.warning("ofmeet-info: ofmeet-protocol from properties-file is= " + protocol);
+                    Log.debug("ofmeet-info: ofmeet-protocol from properties-file is= " + protocol);
                 }
 
                 if (props.getProperty("server") != null)
                 {
                     server = props.getProperty("server");
-                    Log.warning("ofmeet-info: ofmeet-server from properties-file is= " + server);
+                    Log.debug("ofmeet-info: ofmeet-server from properties-file is= " + server);
                 }
 
                 if (props.getProperty("path") != null)
                 {
                     path = props.getProperty("path");
-                    Log.warning("ofmeet-info: ofmeet-path from properties-file is= " + path);
+                    Log.debug("ofmeet-info: ofmeet-path from properties-file is= " + path);
                 }
 
                 if (props.getProperty("width") != null)
                 {
                     width = Integer.parseInt(props.getProperty("width"));
-                    Log.warning("ofmeet-info: ofmeet-width from properties-file is= " + width);
+                    Log.debug("ofmeet-info: ofmeet-width from properties-file is= " + width);
                 }
 
                 if (props.getProperty("height") != null)
                 {
                     height = Integer.parseInt(props.getProperty("height"));
-                    Log.warning("ofmeet-info: ofmeet-height from properties-file is= " + height);
+                    Log.debug("ofmeet-info: ofmeet-height from properties-file is= " + height);
                 }
 
 
@@ -175,7 +170,7 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
     {
         try
         {
-            Log.warning("shutdown");
+            Log.debug("shutdown");
 
             chatManager.removeChatRoomListener(this);
             chatManager.removeGlobalMessageListener(this);
@@ -310,7 +305,7 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
     {
         String roomId = chatroom.getRoomname();
 
-        Log.warning("chatRoomClosed:  " + roomId);
+        Log.debug("chatRoomClosed:  " + roomId);
 
         if (decorators.containsKey(roomId))
         {
@@ -330,28 +325,28 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
     {
         String roomId = chatroom.getRoomname();
 
-        Log.warning("chatRoomActivated:  " + roomId);
+        Log.debug("chatRoomActivated:  " + roomId);
     }
 
     public void userHasJoined(ChatRoom room, String s)
     {
         String roomId = room.getRoomname();
 
-        Log.warning("userHasJoined:  " + roomId + " " + s);
+        Log.debug("userHasJoined:  " + roomId + " " + s);
     }
 
     public void userHasLeft(ChatRoom room, String s)
     {
         String roomId = room.getRoomname();
 
-        Log.warning("userHasLeft:  " + roomId + " " + s);
+        Log.debug("userHasLeft:  " + roomId + " " + s);
     }
 
     public void chatRoomOpened(final ChatRoom room)
     {
         String roomId = room.getRoomname();
 
-        Log.warning("chatRoomOpened:  " + roomId);
+        Log.debug("chatRoomOpened:  " + roomId);
 
         if (roomId.indexOf('/') == -1 && decorators.containsKey(roomId) == false)
         {
@@ -362,9 +357,6 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
     /**
      * Display an alert that allows the user to accept or reject a meet
      * invitation.
-     *
-     * @param invitation
-     *            the meet invitation.
      */
     private void showInvitationAlert(final String meetUrl, final ChatRoom room, final String roomId)
     {
