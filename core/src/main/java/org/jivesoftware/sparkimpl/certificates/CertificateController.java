@@ -267,8 +267,7 @@ public class CertificateController extends CertManager {
 	 */
     @Override
 	public void addOrRemoveFromExceptionList(boolean checked) {
-        int row = CertificatesManagerSettingsPanel.getCertTable().getSelectedRow();
-        String alias = allCertificates.get(row).getAlias();
+        String alias = allCertificates.get(getTranslatedRow()).getAlias();
         if (getAliasKeyStorePath(alias).equals(TRUSTED)) {
 
             if(checked) {
@@ -569,14 +568,23 @@ public class CertificateController extends CertManager {
 		return false;
 	}
 	
-	/**
-	 * Open dialog with certificate.
-	 */
-	public void showCertificate() {
-		CertificateDialog certDialog = new CertificateDialog(localPreferences,
-				allCertificates.get(CertificatesManagerSettingsPanel.getCertTable().getSelectedRow()), this, CertificateDialogReason.SHOW_CERTIFICATE);
-	}
-	
+    /**
+     * Open dialog with certificate.
+     */
+    public void showCertificate() {
+        CertificateDialog certDialog = new CertificateDialog(localPreferences,
+                allCertificates.get(getTranslatedRow()), this, CertificateDialogReason.SHOW_CERTIFICATE);
+    }
+    
+    /**
+     * Gets index of element in table model in selected row of table after sorting.
+     * @return index of row
+     */
+    private int getTranslatedRow() {
+        int selectedRow = CertificatesManagerSettingsPanel.getCertTable().getSelectedRow();
+        return CertificatesManagerSettingsPanel.getCertTable().convertRowIndexToModel(selectedRow);
+    }
+    
 	public List<CertificateModel> getAllCertificates() {
 		return allCertificates;
 	}
