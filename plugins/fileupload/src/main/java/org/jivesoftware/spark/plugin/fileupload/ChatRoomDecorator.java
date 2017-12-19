@@ -183,9 +183,10 @@ public class ChatRoomDecorator
         URLConnection urlconnection = null;
 
         try {
-            Protocol.registerProtocol( "https", new Protocol( "https", new EasySSLProtocolSocketFactory(), 7443 ) );
-            HttpClient client = new HttpClient();
             PutMethod put = new PutMethod(response.putUrl);
+            Protocol.registerProtocol( "https", new Protocol( "https", new EasySSLProtocolSocketFactory(), put.getURI().getPort() ) );
+            HttpClient client = new HttpClient();
+
             RequestEntity entity = new FileRequestEntity(file, "application/binary");
             put.setRequestEntity(entity);
             put.setRequestHeader("User-Agent", "Spark HttpFileUpload");
