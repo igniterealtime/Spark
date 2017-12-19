@@ -1,0 +1,27 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.igniterealtime.spark.plugins</groupId>
+        <artifactId>plugin</artifactId>
+        <version>2.9.0-SNAPSHOT</version>
+        <relativePath>../plugin/pom.xml</relativePath>
+    </parent>
+
+    <artifactId>fileupload</artifactId>
+    <version>0.0.1</version>
+
+    <name>Http File Upload Plugin</name>
+    <description>Adds support for Openfire httpfileupload plugin to Spark</description>
+
+    <contributors>
+        <contributor>
+            <name>Dele Olajide</name>
+            <roles>
+                <role>Author</role>
+            </roles>
+        </contributor>
+    </contributors>
+
+</project>
