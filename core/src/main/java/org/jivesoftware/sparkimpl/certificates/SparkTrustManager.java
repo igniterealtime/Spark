@@ -37,7 +37,6 @@ import java.util.List;
 
 import javax.naming.InvalidNameException;
 import javax.net.ssl.X509TrustManager;
-import javax.swing.JOptionPane;
 
 import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.x509.CRLDistPoint;
@@ -47,7 +46,6 @@ import org.bouncycastle.asn1.x509.Extension;
 import org.bouncycastle.asn1.x509.GeneralName;
 import org.bouncycastle.asn1.x509.GeneralNames;
 import org.bouncycastle.cert.jcajce.JcaX509ExtensionUtils;
-import org.jivesoftware.resource.Res;
 import org.jivesoftware.spark.util.log.Log;
 
 /**
@@ -217,7 +215,7 @@ public class SparkTrustManager extends GeneralTrustManager implements X509TrustM
 
         X509CertSelector certSelector = new X509CertSelector();
 
-        // set root CA certificate from chain for CertSelector so trust store must contain it
+        // set last certificate (often root CA) from chain for CertSelector so trust store must contain it
         certSelector.setCertificate(chain[chain.length - 1]);
 
         // checks against time validity aren't done here as are already done in checkDateValidity (X509Certificate[]
@@ -226,39 +224,39 @@ public class SparkTrustManager extends GeneralTrustManager implements X509TrustM
         // create parameters using trustStore as source of Trust Anchors and using X509CertSelector
         PKIXBuilderParameters parameters = new PKIXBuilderParameters(allStore, certSelector);
 
+        // will use PKIXRevocationChecker (or nothing if revocation mechanisms are
+        // disabled) instead of the default revocation checker
+        parameters.setRevocationEnabled(false);   
+
+        // if revoked certificates aren't accepted, but no revocation checks then only
+        // certificates from blacklist will be rejected
         if (acceptRevoked == false) {
+            
+            // OCSP checking is done according to Java PKI Programmer's Guide, PKIXRevocationChecker was added in Java 8:
+            // https://docs.oracle.com/javase/8/docs/technotes/guides/security/certpath/CertPathProgGuide.html#PKIXRevocationChecker
+            PKIXRevocationChecker checker = (PKIXRevocationChecker) certPathBuilder.getRevocationChecker();
+
+            EnumSet<PKIXRevocationChecker.Option> checkerOptions = EnumSet.noneOf(PKIXRevocationChecker.Option.class);
+            // if soft fail isn't enabled then OCSP or CRL must pass validation, in case
+            // when any of them cannot be validated verification will fail, if soft fail
+            // is enabled then in case of network issues revocation checking is omitted
+            if (allowSoftFail) {
+                checkerOptions.add(PKIXRevocationChecker.Option.SOFT_FAIL);
+            }
             // check OCSP, CRL serve as backup
             if (checkOCSP && checkCRL) {
-                // OCSP checking is done according to Java PKI Programmer's Guide, PKIXRevocationChecker was added in Java 8:
-                // https://docs.oracle.com/javase/8/docs/technotes/guides/security/certpath/CertPathProgGuide.html#PKIXRevocationChecker
-                PKIXRevocationChecker checker = (PKIXRevocationChecker) certPathBuilder.getRevocationChecker();
-                // soft fail option mean that OCSP or CRL must pass validation, in case when OCSP cannot be
-                // validated it will validate CRL and then if both cannot be checked it will fail
-                if (allowSoftFail) {
-                    checker.setOptions(EnumSet.of(PKIXRevocationChecker.Option.SOFT_FAIL));
-                }
+                checker.setOptions(checkerOptions);
                 parameters.addCertPathChecker(checker);
-                // will use PKIXRevocationChecker instead of the default revocation checker
-                parameters.setRevocationEnabled(false);
             } else if (!checkOCSP && checkCRL) {
-                // check only CRL, need custom implementation
-                // add CRL store and download CRL list to this store.
-                try {
-                    loadCRL(chain);
-                    parameters.addCertStore(crlStore);
-                    parameters.setRevocationEnabled(true);
-
-                } catch (CertStoreException | IOException | CRLException e) {
-                    Log.error("Couldn't load crl", e);
-                    throw new CertificateException();
-                }
-
-            } else {
-                parameters.setRevocationEnabled(false);
+                // check only CRL, if CRL fail then there is no fallback to OCSP
+                checkerOptions.add(PKIXRevocationChecker.Option.PREFER_CRLS);
+                checkerOptions.add(PKIXRevocationChecker.Option.NO_FALLBACK);
+                checker.setOptions(checkerOptions);
+                parameters.addCertPathChecker(checker);
             }
-        } else {
-            parameters.setRevocationEnabled(false);
+                        
         }
+        
         try {
             CertPathBuilderResult pathResult = certPathBuilder.build(parameters);
             CertPath certPath = pathResult.getCertPath();
@@ -405,8 +403,7 @@ public class SparkTrustManager extends GeneralTrustManager implements X509TrustM
     /**
      * Move certificate to the blacklist of the revoked certificates.
      * 
-     * @param cert
-     *            - certificate which is meant to move into blacklist
+     * @param cert certificate which is meant to move into blacklist
      * @throws KeyStoreException
      * @throws NoSuchAlgorithmException
      * @throws CertificateException
@@ -422,8 +419,7 @@ public class SparkTrustManager extends GeneralTrustManager implements X509TrustM
     /**
      * Downloads a CRL from given URL
      * 
-     * @param url
-     *            - the web address with given CRL
+     * @param url web address with given CRL
      * @throws IOException
      * @throws CertificateException
      * @throws CRLException

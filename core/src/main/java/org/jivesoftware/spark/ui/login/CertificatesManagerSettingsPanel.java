@@ -193,6 +193,7 @@ public class CertificatesManagerSettingsPanel extends JPanel implements ActionLi
             if (checkCRL.isSelected()) {
 
                 checkOCSP.setEnabled(true);
+                allowSoftFail.setEnabled(true);
             } else if (!checkCRL.isSelected()) {
 
                 checkOCSP.setSelected(false);
@@ -214,16 +215,8 @@ public class CertificatesManagerSettingsPanel extends JPanel implements ActionLi
             } else if (!acceptRevoked.isSelected()) {
                 checkCRL.setEnabled(true);
             }
-        } else if (e.getSource() == checkOCSP) {
-            if (checkOCSP.isSelected()) {
-
-                allowSoftFail.setEnabled(true);
-            } else if (!checkOCSP.isSelected()) {
-
-                allowSoftFail.setEnabled(false);
-                allowSoftFail.setSelected(false);
-            }
-        }
+        } 
+        
     }
 
     @Override
