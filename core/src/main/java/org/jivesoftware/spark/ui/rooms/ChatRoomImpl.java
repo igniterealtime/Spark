@@ -16,6 +16,7 @@
 package org.jivesoftware.spark.ui.rooms;
 
 import org.jivesoftware.resource.Default;
+import org.jivesoftware.spark.component.MessageDialog;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.SmackException;
@@ -55,6 +56,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import org.jivesoftware.smack.ExceptionCallback;
 
 /**
  * This is the Person to Person implementation of <code>ChatRoom</code>
@@ -273,8 +275,15 @@ public class ChatRoomImpl extends ChatRoom {
 
         // Send the message that contains the notifications request
         try {
+            
             fireOutgoingMessageSending(message);
-            SparkManager.getConnection().sendStanza(message);
+            StanzaFilter filter=new StanzaTypeFilter(Message.class);
+            SparkManager.getConnection().sendStanzaWithResponseCallback(message, filter, this, new ExceptionCallback(){
+             public void processException(Exception exception) {
+                 Log.error( "Error send message", exception );
+                 MessageDialog.showErrorDialog(  exception );                                                   
+             }           
+            });
         }
         catch (Exception ex) {
             Log.error("Error sending message", ex);
