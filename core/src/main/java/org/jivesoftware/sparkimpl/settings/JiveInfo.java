@@ -17,6 +17,15 @@
 package org.jivesoftware.sparkimpl.settings;
 
 
+import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
+
 public class JiveInfo {
 
     private JiveInfo() {
@@ -24,11 +33,23 @@ public class JiveInfo {
     }
     
     public static String getName() {
-        return JiveInfo.class.getPackage().getImplementationTitle();
+        final String name = SparkRes.getString( "APP_NAME" );
+        if ( name != null && !name.trim().isEmpty() )
+        {
+            return name.trim();
+        }
+
+        return "Spark";
     }
 
     public static String getVersion() {
-        return JiveInfo.class.getPackage().getImplementationVersion();
+        final String version = SparkRes.getString( "VERSION" );
+        if ( version!= null && !version.trim().isEmpty() )
+        {
+            return version.trim();
+        }
+
+        return null;
     }
 
     public static String getOS() {
