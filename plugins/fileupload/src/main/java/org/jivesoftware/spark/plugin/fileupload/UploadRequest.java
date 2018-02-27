@@ -77,11 +77,11 @@ public class UploadRequest extends IQ
                 {
                     if ( parser.getName().equals( "put" ) )
                     {
-                        uploadRequest.getUrl = parser.nextText();
+                        uploadRequest.putUrl = parser.getAttributeValue(null, "url");
                     }
                     else if ( parser.getName().equals( "get" ) )
                     {
-                        uploadRequest.putUrl = parser.nextText();
+                        uploadRequest.getUrl = parser.getAttributeValue(null, "url");
                     }
                 }
 
