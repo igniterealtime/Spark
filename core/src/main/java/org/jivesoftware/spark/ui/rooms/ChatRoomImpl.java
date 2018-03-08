@@ -26,8 +26,10 @@ import org.jivesoftware.smack.packet.*;
 import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.roster.RosterEntry;
 import org.jivesoftware.smack.util.StringUtils;
+import org.jivesoftware.smackx.carbons.packet.CarbonExtension;
 import org.jivesoftware.smackx.chatstates.ChatState;
 import org.jivesoftware.smackx.chatstates.packet.ChatStateExtension;
+import org.jivesoftware.smackx.forward.packet.Forwarded;
 import org.jivesoftware.smackx.jiveproperties.packet.JivePropertiesExtension;
 import org.jivesoftware.smackx.xevent.MessageEventManager;
 import org.jivesoftware.smackx.xevent.packet.MessageEvent;
@@ -116,11 +118,22 @@ public class ChatRoomImpl extends ChatRoom {
         loadHistory();
 
         // Register StanzaListeners
-        StanzaFilter fromFilter = FromMatchesFilter.create(participantJID);
-        StanzaFilter orFilter = new OrFilter(new StanzaTypeFilter(Presence.class), new StanzaTypeFilter(Message.class));
-        StanzaFilter andFilter = new AndFilter(orFilter, fromFilter);
+        final StanzaFilter directFilter = new AndFilter(
+            FromMatchesFilter.create( participantJID ),
+            new OrFilter( new StanzaTypeFilter( Presence.class ),
+                          new StanzaTypeFilter( Message.class ) )
+        );
 
-        SparkManager.getConnection().addSyncStanzaListener(this, andFilter);
+        final StanzaFilter carbonFilter = new AndFilter(
+            FromMatchesFilter.create( SparkManager.getSessionManager().getBareAddress() ), // Security Consideration, see https://xmpp.org/extensions/xep-0280.html#security
+            new StanzaTypeFilter( Message.class ),
+            new OrFilter(
+                new StanzaExtensionFilter( "sent", CarbonExtension.NAMESPACE ),
+                new StanzaExtensionFilter( "received", CarbonExtension.NAMESPACE )
+            )
+        );
+
+        SparkManager.getConnection().addSyncStanzaListener( this, new OrFilter( directFilter, carbonFilter ) );
 
         // The roomname will be the participantJID
         this.roomname = participantJID;
@@ -236,33 +249,14 @@ public class ChatRoomImpl extends ChatRoom {
      * @param message the message to send.
      */
     public void sendMessage(Message message) {
-        lastActivity = System.currentTimeMillis();
         //Before sending message, let's add our full jid for full verification
         //Set message attributes before insertMessage is called - this is useful when transcript window is extended
         //more information will be available to be displayed for the chat area Document
         message.setType(Message.Type.chat);
         message.setTo(participantJID);
         message.setFrom(SparkManager.getSessionManager().getJID());
-        try {
-            getTranscriptWindow().insertMessage(getNickname(), message, ChatManager.TO_COLOR);
-            getChatInputEditor().selectAll();
 
-            getTranscriptWindow().validate();
-            getTranscriptWindow().repaint();
-            getChatInputEditor().clear();
-        }
-        catch (Exception ex) {
-            Log.error("Error sending message", ex);
-        }
-
-        // Notify users that message has been sent
-        fireMessageSent(message);
-
-        addToTranscript(message, false);
-
-        getChatInputEditor().setCaretPosition(0);
-        getChatInputEditor().requestFocusInWindow();
-        scrollToBottom();
+        displaySendMessage( message );
 
         // No need to request displayed or delivered as we aren't doing anything with this
         // information.
@@ -279,6 +273,37 @@ public class ChatRoomImpl extends ChatRoom {
         catch (Exception ex) {
             Log.error("Error sending message", ex);
         }
+    }
+
+    /**
+     * Adds a message that is to be sent to the transcript window.
+     *
+     * @param message The message to be displayed.
+     */
+    private void displaySendMessage( Message message )
+    {
+        lastActivity = System.currentTimeMillis();
+
+        try {
+            getTranscriptWindow().insertMessage( getNickname(), message, ChatManager.TO_COLOR);
+            getChatInputEditor().selectAll();
+
+            getTranscriptWindow().validate();
+            getTranscriptWindow().repaint();
+            getChatInputEditor().clear();
+        }
+        catch (Exception ex) {
+            Log.error( "Error sending message", ex);
+        }
+
+        // Notify users that message has been sent
+        fireMessageSent(message);
+
+        addToTranscript(message, false);
+
+        getChatInputEditor().setCaretPosition(0);
+        getChatInputEditor().requestFocusInWindow();
+        scrollToBottom();
     }
 
     public String getRoomname() {
@@ -433,9 +458,31 @@ public class ChatRoomImpl extends ChatRoom {
                         return;
                     }
 
-                    // If the message is not from the current agent. Append to chat.
-                    if ( message.getBody() != null )
+                    final CarbonExtension carbon = (CarbonExtension) message.getExtension( CarbonExtension.NAMESPACE );
+                    if ( carbon != null )
                     {
+                        // Is the a carbon copy?
+                        final Message forwardedStanza = (Message) carbon.getForwarded().getForwardedPacket();
+                        if ( forwardedStanza.getBody() != null )
+                        {
+                            if ( carbon.getDirection() == CarbonExtension.Direction.received )
+                            {
+                                // This is a stanza that we received from someone on one of our other clients.
+                                participantJID = forwardedStanza.getFrom();
+                                insertMessage( forwardedStanza );
+                            }
+                            else
+                            {
+                                // This is a stanza that one of our own clients sent.
+                                participantJID = forwardedStanza.getTo();
+                                displaySendMessage( forwardedStanza );
+                            }
+                            showTyping( false );
+                        }
+                    }
+                    else if ( message.getBody() != null )
+                    {
+                        // If the message is not from the current agent. Append to chat.
                         participantJID = message.getFrom();
                         insertMessage( message );
 
