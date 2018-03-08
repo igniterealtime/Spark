@@ -31,6 +31,7 @@ import org.jivesoftware.smackx.chatstates.ChatState;
 import org.jivesoftware.smackx.chatstates.packet.ChatStateExtension;
 import org.jivesoftware.smackx.forward.packet.Forwarded;
 import org.jivesoftware.smackx.jiveproperties.packet.JivePropertiesExtension;
+import org.jivesoftware.smackx.muc.packet.MUCUser;
 import org.jivesoftware.smackx.xevent.MessageEventManager;
 import org.jivesoftware.smackx.xevent.packet.MessageEvent;
 import org.jivesoftware.spark.ChatManager;
@@ -83,6 +84,9 @@ public class ChatRoomImpl extends ChatRoom {
     private long lastActivity;
 
     private boolean active;
+
+    // True if this is a one-on-one with a participant of a multi-user chatroom.
+    private boolean privateChat;
 
     // Information button
     private ChatRoomButton infoButton;
@@ -176,12 +180,23 @@ public class ChatRoomImpl extends ChatRoom {
         }
 
         // If this is a private chat from a group chat room, do not show toolbar.
-        if (XmppStringUtils.parseResource(participantJID).equals(participantNickname)) {
+        privateChat = XmppStringUtils.parseResource(participantJID).equals(participantNickname);
+        if ( privateChat ) {
             getToolBar().setVisible(false);
         }
 
 
         lastActivity = System.currentTimeMillis();
+    }
+
+    /**
+     * Returns true if this is a private chat from a group chat room.
+     *
+     * @return true if this this is a PM-based chat with one MUC participant, otherwise false.
+     */
+    public boolean isPrivateChat()
+    {
+        return privateChat;
     }
 
     public void closeChatRoom() {
@@ -223,6 +238,12 @@ public class ChatRoomImpl extends ChatRoom {
             threadID = StringUtils.randomString(6);
         }
         message.setThread(threadID);
+
+        if ( privateChat )
+        {
+            // XEP-0045: 7.5 Sending a Private Message
+            message.addExtension( new MUCUser() );
+        }
 
         // Set the body of the message using typedMessage and remove control
         // characters
