@@ -32,6 +32,7 @@ import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
 import org.jivesoftware.smack.util.DNSUtil;
 import org.jivesoftware.smack.util.TLSUtils;
+import org.jivesoftware.smackx.carbons.CarbonManager;
 import org.jivesoftware.smackx.chatstates.ChatStateManager;
 import org.jivesoftware.spark.SessionManager;
 import org.jivesoftware.spark.SparkManager;
@@ -1173,6 +1174,12 @@ public class LoginDialog {
                 reconnectionManager.setFixedDelay( localPref.getReconnectDelay() );
                 reconnectionManager.setReconnectionPolicy( ReconnectionManager.ReconnectionPolicy.FIXED_DELAY );
                 reconnectionManager.enableAutomaticReconnection();
+
+                final CarbonManager carbonManager = CarbonManager.getInstanceFor( connection );
+                if ( carbonManager.isSupportedByServer() )
+                {
+                    carbonManager.enableCarbons();
+                }
             }
             catch ( Exception xee )
             {
