@@ -127,9 +127,14 @@ public class ChatRoomDecorator
     private void handleUpload(File file, ChatRoom room, Message.Type type)
     {
         Log.warning("Uploading file: " + file.getAbsolutePath());
-
+        String fileName = null;
         try {
-            UploadRequest request = new UploadRequest(file.getName(), file.length());
+            fileName = URLEncoder.encode(file.getName(), "UTF-8");
+        } catch (UnsupportedEncodingException ignored) {
+            // Can be safely ignored because UTF-8 is always supported
+        }
+        try {
+            UploadRequest request = new UploadRequest(fileName, file.length());
             request.setTo("httpfileupload." + SparkManager.getSessionManager().getServerAddress());
             request.setType(IQ.Type.get);
 
