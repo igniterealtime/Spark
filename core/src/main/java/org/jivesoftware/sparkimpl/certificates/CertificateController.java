@@ -142,7 +142,7 @@ public class CertificateController extends CertManager {
 
     }
 
-    public void createCertTableModel(){
+    public void createTableModel(){
 		tableModel = new DefaultTableModel() {
 			// return adequate classes for columns so last column is Boolean
 			// displayed as checkbox
@@ -431,7 +431,7 @@ public class CertificateController extends CertManager {
      */
 	@Override
     public void refreshCertTable() {
-        createCertTableModel();
+        createTableModel();
         SwingUtilities.invokeLater(new Runnable() {
 
             @Override
@@ -498,6 +498,16 @@ public class CertificateController extends CertManager {
         X509Certificate addedCert = certificateFromFile(file);
         addEntryToKeyStoreImpl(addedCert, CertificateDialogReason.ADD_CERTIFICATE);
     }
+	
+	//Opens new dialog which will ask to add certificates from chain
+	public void addChain(X509Certificate[] chain){
+	    try {
+            InBandCertificateChainDialog chainDialog = new InBandCertificateChainDialog(chain, this);
+        } catch (Exception e) {
+            Log.error("Cannot open InBandCertificateChainDialog", e);
+        }
+	    
+	}
 	
 	/**
 	 * This method takes certificate and add it to the TrustStore
@@ -589,12 +599,8 @@ public class CertificateController extends CertManager {
 		return allCertificates;
 	}
 
-	public DefaultTableModel getTableModel() {
-		return tableModel;
-	}
-
 	public void setTableModel(DefaultTableModel tableModel) {
-		CertManager.tableModel = tableModel;
+		this.tableModel = tableModel;
 	}
 	
 }

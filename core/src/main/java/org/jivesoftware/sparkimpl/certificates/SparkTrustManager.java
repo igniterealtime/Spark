@@ -37,6 +37,7 @@ import java.util.List;
 
 import javax.naming.InvalidNameException;
 import javax.net.ssl.X509TrustManager;
+import javax.swing.SwingUtilities;
 
 import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.x509.CRLDistPoint;
@@ -102,31 +103,19 @@ public class SparkTrustManager extends GeneralTrustManager implements X509TrustM
             doTheChecks(chain, authType);
         } catch (CertPathValidatorException e) {
             try {
-                if (isOrderFromSubjectToIssuer(chain)) {
-                    certControll.addEntryToKeyStore(chain[chain.length - 1], CertificateDialogReason.ADD_CERTIFICATE_FROM_CONNECTION);
-                } else {
-                    certControll.addEntryToKeyStore(chain[0], CertificateDialogReason.ADD_CERTIFICATE_FROM_CONNECTION);
-                }
-                certControll.overWriteKeyStores();
-            } catch (HeadlessException | KeyStoreException | InvalidNameException e1) {
+                SwingUtilities.invokeLater(new Runnable() {
+                    
+                    @Override
+                    public void run() {
+                    certControll.addChain(chain);
+                    }
+                });
+
+            } catch (HeadlessException e1) {
                 Log.error("Couldn't add certificate from presented chain");
             }
             throw new CertificateException(e);
         }
-    }
-    /**
-     * Checks if certificate order in chain is end entity certificate for first certificate in the chain and root CA is last in the chain
-     * @param chain with certificates
-     * @return
-     */
-    private boolean isOrderFromSubjectToIssuer(X509Certificate[] chain){
-        boolean order = true;
-            for (int i = 0; i < chain.length - 1; i++) {
-                if(!chain[i].getIssuerX500Principal().getName().equals(chain[i + 1].getSubjectX500Principal().getName())){
-                    order = false;
-                }
-            }
-        return order;
     }
 
     /**
@@ -419,7 +408,7 @@ public class SparkTrustManager extends GeneralTrustManager implements X509TrustM
     /**
      * Downloads a CRL from given URL
      * 
-     * @param url web address with given CRL
+     * @param url the web address with given CRL
      * @throws IOException
      * @throws CertificateException
      * @throws CRLException

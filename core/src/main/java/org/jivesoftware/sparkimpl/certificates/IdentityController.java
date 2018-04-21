@@ -186,9 +186,6 @@ public class IdentityController extends CertManager {
 
     }
 
-    public static DefaultTableModel getTableModel() {
-        return tableModel;
-    }
     /**
      * This method add certificate from file (*.pem) to Identity Store.
      * 

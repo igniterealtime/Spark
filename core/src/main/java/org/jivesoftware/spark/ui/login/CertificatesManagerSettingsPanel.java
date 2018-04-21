@@ -142,7 +142,7 @@ public class CertificatesManagerSettingsPanel extends JPanel implements ActionLi
 
     public void addCertTableToPanel() {
         certControll.loadKeyStores();
-        certControll.createCertTableModel();
+        certControll.createTableModel();
         certTable = new JTable(certControll.getTableModel()){
             
             @Override
