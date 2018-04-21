@@ -82,4 +82,19 @@ public abstract class GeneralTrustManager implements X509TrustManager {
         }
         return X509Certs;
     }
+    
+    /**
+     * Checks if certificate order in chain is end entity certificate for first certificate in the chain and root CA is last in the chain
+     * @param chain with certificates
+     * @return true if first certificate in chain is end entity
+     */
+    protected boolean isOrderFromSubjectToIssuer(X509Certificate[] chain){
+        boolean order = true;
+            for (int i = 0; i < chain.length - 1; i++) {
+                if(!chain[i].getIssuerX500Principal().getName().equals(chain[i + 1].getSubjectX500Principal().getName())){
+                    order = false;
+                }
+            }
+        return order;
+    }
 }
