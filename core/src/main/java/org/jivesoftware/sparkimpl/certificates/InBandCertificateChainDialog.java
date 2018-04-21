@@ -31,15 +31,15 @@ import org.jivesoftware.spark.util.log.Log;
 public class InBandCertificateChainDialog extends JDialog implements ActionListener {
     private final static Insets DEFAULT_INSETS = new Insets(5, 5, 5, 5);
 
-    KeyStore trustStore, caCertsStore;
-
-    CertificateController certMan;
-    X509Certificate[] chain;
+    private KeyStore trustStore, caCertsStore;
+    private boolean readyToAddChain = false;
+    private CertificateController certMan;
+    private X509Certificate[] chain;
     private JScrollPane scrollPane;
     private JPanel panel = new JPanel();
     private JButton addChainButton = new JButton();
     private JButton cancelButton = new JButton();
-    ImageIcon imgIconInStore = SparkRes.getImageIcon(SparkRes.ACCEPT_INVITE_IMAGE);
+    private ImageIcon imgIconInStore = SparkRes.getImageIcon(SparkRes.ACCEPT_INVITE_IMAGE);
 
     private JLabel informationLabel;
 
@@ -110,6 +110,7 @@ public class InBandCertificateChainDialog extends JDialog implements ActionListe
         addChainButton.setText(Res.getString("dialog.certificate.add.chain"));
         cancelButton.setText(Res.getString("cancel"));
         
+        addChainButton.addActionListener(this);
         cancelButton.addActionListener(this);
 
         add(informationLabel, new GridBagConstraints(0, 0, 2, 1, 1.0, 0.2, WEST, GridBagConstraints.HORIZONTAL,
@@ -131,8 +132,14 @@ public class InBandCertificateChainDialog extends JDialog implements ActionListe
             this.dispose();
         }
         if(e.getSource() == addChainButton) {
-            certMan.addChain(chain);
+            readyToAddChain = true;
+            this.dispose();
         }
       
     }
+
+    public boolean isReadyToAddChain() {
+        return readyToAddChain;
+    }
+    
 }
