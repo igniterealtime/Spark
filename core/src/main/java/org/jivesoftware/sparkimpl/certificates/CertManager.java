@@ -59,12 +59,13 @@ public abstract class CertManager {
     protected KeyStore blackListStore;
     protected List<CertificateModel> allCertificates =          new LinkedList<>();
     protected List<CertificateModel> blackListedCertificates =  new LinkedList<>(); //contain only revoked certificates
-    protected static DefaultTableModel tableModel;
+    protected DefaultTableModel tableModel;
     
     public abstract void deleteEntry(String alias) throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException;
     public abstract void addOrRemoveFromExceptionList(boolean checked);
     public abstract boolean isOnExceptionList(CertificateModel cert);
 
+    public abstract void createTableModel();
     protected abstract void refreshCertTable();
 
     public abstract void addEntryToKeyStore(File file)
@@ -268,5 +269,9 @@ public abstract class CertManager {
         } catch (IOException | KeyStoreException | NoSuchAlgorithmException | CertificateException e) {
             Log.error("Couldn't save KeyStore" , e);
         }
+    }
+    
+    public DefaultTableModel getTableModel() {
+        return tableModel;
     }
 }

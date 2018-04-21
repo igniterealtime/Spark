@@ -36,7 +36,6 @@ public class SparkExceptionsTrustManager extends GeneralTrustManager implements 
     KeyStore exceptionsStore, cacertsExceptionsStore;
     public SparkExceptionsTrustManager() {
         loadKeyStores();
-
     }
 
     @Override
@@ -45,9 +44,12 @@ public class SparkExceptionsTrustManager extends GeneralTrustManager implements 
 
     @Override
     public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
-        // doesen't do any checks as there is it use only accepted issuers from exception list
+        // if end entity certificate is on the exception list then pass checks
         try {
-            validatePath(chain);
+            if (!isFirstCertExempted(chain)) {
+                // else exempted certificate can be higher in chain, in this case certificate list have to be build
+                validatePath(chain);
+            }
         } catch (NoSuchAlgorithmException | KeyStoreException | InvalidAlgorithmParameterException
                 | CertPathValidatorException | CertPathBuilderException e) {
             Log.warning("Cannot build certificate chain", e);
@@ -93,6 +95,22 @@ public class SparkExceptionsTrustManager extends GeneralTrustManager implements 
             Log.debug("ClientTrustManager: Trusted CA: " + trustedCert.getSubjectDN());
         }
 
+    }
+
+    /**
+     * Check if the first certificate in chain is exempted
+     * 
+     * @param chain contain certificates from server
+     * @return true if the first certificate is in exceptionsStore
+     * @throws KeyStoreException
+     */
+    private boolean isFirstCertExempted(X509Certificate[] chain) throws KeyStoreException {
+        if (isOrderFromSubjectToIssuer(chain)) {
+            return exceptionsStore.getCertificateAlias(chain[0]) != null;
+        } else {
+            return exceptionsStore.getCertificateAlias(chain[chain.length - 1]) != null;
+        }
+        
     }
     
     /**

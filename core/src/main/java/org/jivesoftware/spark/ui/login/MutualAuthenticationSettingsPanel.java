@@ -86,7 +86,7 @@ public class MutualAuthenticationSettingsPanel extends JPanel implements ActionL
         setLayout(new GridBagLayout());
         
         idControll = new IdentityController(localPreferences);
-        idTable = new JTable(IdentityController.getTableModel());
+        idTable = new JTable(idControll.getTableModel());
         idTable.addMouseListener(this);
         idTable.setPreferredSize(new Dimension(50, 50));
         idTable.setPreferredScrollableViewportSize(idTable.getPreferredSize());
