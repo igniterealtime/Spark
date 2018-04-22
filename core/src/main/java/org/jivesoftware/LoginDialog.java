@@ -1230,8 +1230,11 @@ public class LoginDialog {
                     }
                     if ( loginDialog.isVisible() )
                     {
-                        MessageDialog.showErrorDialog( loginDialog, errorMessage, xee );
-                        //JOptionPane.showMessageDialog( loginDialog, errorMessage, Res.getString( "title.login.error" ), JOptionPane.ERROR_MESSAGE );
+                        //cert path val errors are causing popup of certificates adding dialog so can be ommited here
+                        if (xee.getMessage() != null
+                                && !xee.getMessage().contains("Certificate path validation failed")) {
+                            MessageDialog.showErrorDialog(loginDialog, errorMessage, xee);
+                        }
                     }
                 } );
 
