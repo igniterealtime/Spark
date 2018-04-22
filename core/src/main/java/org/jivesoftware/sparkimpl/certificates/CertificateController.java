@@ -509,8 +509,6 @@ public class CertificateController extends CertManager {
 	        InBandCertificateChainDialog chainDialog = new InBandCertificateChainDialog(chain, this);
              if(chainDialog.isReadyToAddChain()) {
                  addChainImpl(chain);
-
-                 System.out.println(chainDialog.isReadyToAddChain());
              }
         } catch (Exception e) {
             Log.error("Cannot open InBandCertificateChainDialog", e);
