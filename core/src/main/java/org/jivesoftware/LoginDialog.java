@@ -1232,7 +1232,8 @@ public class LoginDialog {
                     {
                         //cert path val errors are causing popup of certificates adding dialog so can be ommited here
                         if (xee.getMessage() != null
-                                && !xee.getMessage().contains("Certificate path validation failed")) {
+                                && !xee.getMessage().contains("Certificate path validation failed")
+                                && !xee.getMessage().contains("Certificate not in the Truststore")) {
                             MessageDialog.showErrorDialog(loginDialog, errorMessage, xee);
                         }
                     }

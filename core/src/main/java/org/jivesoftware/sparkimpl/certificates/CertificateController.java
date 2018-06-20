@@ -207,9 +207,9 @@ public class CertificateController extends CertManager {
     
 	/**
 	 * Adds certificate with given entry to exceptions KeyStore
-	 * @param alias of the certificate
+	 * @param alias of the certificate, assuming that certificate is in TrustStore
 	 */
-    private void addCertToExceptions(String alias) {
+    public void addCertToExceptions(String alias) {
 
         try {
             X509Certificate cert = (X509Certificate) trustStore.getCertificate(alias);
@@ -218,6 +218,7 @@ public class CertificateController extends CertManager {
             Log.error("Error at moving certificate from trusted list to the exceptions list", ex);
         }
     }
+    
     
     /**
      * Removes certificate with the given alias from the exceptions list
@@ -408,6 +409,9 @@ public class CertificateController extends CertManager {
                 distrustedCaStore.setCertificateEntry(alias, store.getCertificate(alias));
             }
             store.deleteEntry(alias);
+            if(store.equals(trustStore) ) {
+                removeCertFromExceptions(alias);
+            }
             JOptionPane.showMessageDialog(null, Res.getString("dialog.certificate.has.been.deleted"));
             CertificateModel model = null;
             for (CertificateModel certModel : allCertificates) {
@@ -462,7 +466,13 @@ public class CertificateController extends CertManager {
         });
     }
 
-
+    public void addEntryToKeyStore(X509Certificate cert, boolean exempted) throws HeadlessException, InvalidNameException, KeyStoreException {
+        if (cert == null){
+            throw new IllegalArgumentException("Cert cannot be null");
+        }
+        addEntryToKeyStoreImpl(new CertificateModel(cert), exempted);
+    }
+    
 	/**
      * This method add certificate entry to the TrustStore.
      * @param cert Certificate which is added.
@@ -477,7 +487,7 @@ public class CertificateController extends CertManager {
         if(reason != null) {
         addEntryToKeyStoreImpl(cert, reason);
         } else {
-        addEntryToKeyStoreImpl(new CertificateModel(cert));
+        addEntryToKeyStoreImpl(new CertificateModel(cert), false);
         }
         
     }
@@ -525,21 +535,27 @@ public class CertificateController extends CertManager {
 	 */
 	public void addChainImpl(X509Certificate[] chain) throws HeadlessException, InvalidNameException, KeyStoreException {
 	    for(X509Certificate cert:chain) {
-	        addEntryToKeyStoreImpl(new CertificateModel(cert));
+	        addEntryToKeyStoreImpl(new CertificateModel(cert), false);
 	        overWriteKeyStores();
 	    }
 	}
+	
+	public void addCertificateAsExempted(CertificateModel certModel) throws HeadlessException, InvalidNameException, KeyStoreException {
+	    addEntryToKeyStoreImpl(certModel, true);
+	}
 	/**
-	 * 
+	 * This method add certificate to KeyStore. If it is invalid, revoked or self-signed it will be added as exempted certificate.
+	 * It can be added as exempted also on purpose by setting on true exempted.
 	 * @param certModel CertificateModel
+	 * @param exempted if it is set on true then certificate will be also added to exempted certificates
 	 * @throws HeadlessException
 	 * @throws InvalidNameException
 	 * @throws KeyStoreException
 	 */
-	private void addEntryToKeyStoreImpl(CertificateModel certModel) throws HeadlessException, InvalidNameException, KeyStoreException {
+	private void addEntryToKeyStoreImpl(CertificateModel certModel, boolean exempted) throws HeadlessException, InvalidNameException, KeyStoreException {
 	    String alias = useCommonNameAsAlias(certModel.getCertificate());
-        //if certificate is invalid in some way then it is added to exceptions
-        if (!certModel.isValid() || checkRevocation(certModel.getCertificate()) || certModel.isSelfSigned()) {
+        //if certificate is invalid in some way then it is added to exceptions, also it can be intentionally set as exempted
+        if (!certModel.isValid() || checkRevocation(certModel.getCertificate()) || certModel.isSelfSigned() || exempted) {
             exceptionsStore.setCertificateEntry(alias, certModel.getCertificate());
             exemptedCertificates.add(certModel);
         }                
@@ -561,13 +577,13 @@ public class CertificateController extends CertManager {
 	 */
 	private void addEntryToKeyStoreImpl(X509Certificate addedCert, CertificateDialogReason reason) throws HeadlessException, InvalidNameException, KeyStoreException{
         CertificateModel certModel = new CertificateModel(addedCert);
+        CertificateDialog certDialog = null;
         if (checkForSameCertificate(addedCert) == false) {
-            showCertificate(certModel, reason);
+            certDialog = showCertificate(certModel, reason);
         }
         // value of addToKeyStore is changed by setter in CertificateDialog
-        if (addToKeystore == true) {
-            addToKeystore = false;
-            addEntryToKeyStoreImpl(certModel);
+        if (certDialog != null && certDialog.isAddCert()) {
+            addEntryToKeyStoreImpl(certModel, false);
 
             JOptionPane.showMessageDialog(null, Res.getString("dialog.certificate.has.been.added"));
         }
@@ -632,6 +648,5 @@ public class CertificateController extends CertManager {
 
 	public void setTableModel(DefaultTableModel tableModel) {
 		this.tableModel = tableModel;
-	}
-	
+	}	
 }
