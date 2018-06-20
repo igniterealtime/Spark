@@ -84,34 +84,6 @@
     </build>
     <dependencies>
         <dependency>
-            <groupId>org.igniterealtime.spark</groupId>
-            <artifactId>emoticons</artifactId>
-            <version>${project.version}</version>
-            <classifier>Default.adiumemoticonset</classifier>
-            <type>zip</type>
-        </dependency>
-        <dependency>
-            <groupId>org.igniterealtime.spark</groupId>
-            <artifactId>emoticons</artifactId>
-            <version>${project.version}</version>
-            <classifier>GTalk.AdiumEmoticonset</classifier>
-            <type>zip</type>
-        </dependency>
-        <dependency>
-            <groupId>org.igniterealtime.spark</groupId>
-            <artifactId>emoticons</artifactId>
-            <version>${project.version}</version>
-            <classifier>POPO.adiumemoticonset</classifier>
-            <type>zip</type>
-        </dependency>
-        <dependency>
-            <groupId>org.igniterealtime.spark</groupId>
-            <artifactId>emoticons</artifactId>
-            <version>${project.version}</version>
-            <classifier>sparkEmoticonSet</classifier>
-            <type>zip</type>
-        </dependency>
-        <dependency>
             <groupId>org.igniterealtime.smack</groupId>
             <artifactId>smack-core</artifactId>
             <version>${dependency.smack.version}</version>
