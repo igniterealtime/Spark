@@ -383,7 +383,11 @@ Log.warning( "Unable to broadcast.", e1 );
             else {
                 message.setType(Message.Type.headline);
             }
-            SparkManager.getConnection().sendStanza(message);
+            try {
+                SparkManager.getConnection().sendStanza(message);
+            } catch (InterruptedException e) {
+                throw new IllegalStateException(e);
+            }
         }
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd"+" - "+"HH:mm");
         Date date = new Date();

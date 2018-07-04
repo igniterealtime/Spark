@@ -25,6 +25,10 @@ import org.jivesoftware.spark.component.WrappedLabel;
 import org.jivesoftware.spark.ui.ContainerComponent;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.log.Log;
+import org.jxmpp.jid.EntityBareJid;
+import org.jxmpp.jid.impl.JidCreate;
+import org.jxmpp.jid.parts.Localpart;
+import org.jxmpp.stringprep.XmppStringprepException;
 import org.jxmpp.util.XmppStringUtils;
 
 import java.awt.Color;
@@ -55,9 +59,9 @@ public class ConversationInvitation extends JPanel implements ContainerComponent
 
     private JButton joinButton;
 
-    private String roomName;
+    private EntityBareJid roomName;
     private String password;
-    private String inviter;
+    private EntityBareJid inviter;
 
     private String tabTitle;
     private String frameTitle;
@@ -72,9 +76,17 @@ public class ConversationInvitation extends JPanel implements ContainerComponent
      * @param password the password of the room if any.
      */
     public ConversationInvitation( final String roomName, final String inviter, String reason, final String password ) {
-        this.roomName = roomName;
+		try {
+			this.roomName = JidCreate.entityBareFrom(roomName);
+		} catch (XmppStringprepException e) {
+			throw new IllegalStateException(e);
+		}
         this.password = password;
-        this.inviter = inviter;
+		try {
+			this.inviter = JidCreate.entityBareFrom(inviter);
+		} catch (XmppStringprepException e) {
+			throw new IllegalStateException(e);
+		}
 
         // Set Layout
         setLayout(new GridBagLayout());
@@ -150,15 +162,15 @@ public class ConversationInvitation extends JPanel implements ContainerComponent
     public void actionPerformed(ActionEvent actionEvent) {
         final Object obj = actionEvent.getSource();
         if (obj == joinButton) {
-            String name = XmppStringUtils.parseLocalpart(roomName);
-            ConferenceUtils.enterRoomOnSameThread(name, roomName, password);
+            Localpart name = roomName.getLocalpart();
+            ConferenceUtils.enterRoomOnSameThread(name.toString(), roomName, password);
         }
         else {
             try
             {
                 MultiUserChatManager.getInstanceFor( SparkManager.getConnection() ).decline( roomName, inviter, "No thank you");
             }
-            catch ( SmackException.NotConnectedException e )
+            catch ( SmackException.NotConnectedException | InterruptedException e )
             {
                 Log.warning( "unable to decline invatation from " + inviter + " to join room " + roomName, e );
             }

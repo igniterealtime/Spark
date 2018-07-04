@@ -48,6 +48,9 @@ import org.jivesoftware.sparkimpl.plugin.layout.LayoutSettingsManager;
 import org.jivesoftware.sparkimpl.profile.ext.VCardUpdateExtension;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+import org.jxmpp.jid.BareJid;
+import org.jxmpp.jid.impl.JidCreate;
+import org.jxmpp.stringprep.XmppStringprepException;
 import org.jxmpp.util.XmppStringUtils;
 
 /**
@@ -61,7 +64,10 @@ public class ContactItem extends JPanel {
     private JLabel descriptionLabel;
     private String nickname;
     private String alias;
-    private final String fullyQualifiedJID;
+
+
+    private final BareJid jid;
+
 	private JLabel specialImageLabel;
     private Icon icon;
 
@@ -84,7 +90,7 @@ public class ContactItem extends JPanel {
 
     private boolean avatarsShowing;
 
-	public ContactItem(String alias, String nickname, String fullyQualifiedJID) {
+	public ContactItem(String alias, String nickname, BareJid fullyQualifiedJID) {
 		this(alias, nickname, fullyQualifiedJID, true);
 	}
 
@@ -93,9 +99,9 @@ public class ContactItem extends JPanel {
      *
      * @param alias             the alias of the contact
      * @param nickname          the nickname of the contact.
-     * @param fullyQualifiedJID the fully-qualified jid of the contact (ex. derek@jivesoftware.com)
+     * @param jid               the fully-qualified jid of the contact (ex. derek@jivesoftware.com)
      */
-    public ContactItem(String alias, String nickname, String fullyQualifiedJID, boolean initUi) {
+    public ContactItem(String alias, String nickname, BareJid jid, boolean initUi) {
         setLayout(new GridBagLayout());
 
         // Set Default Font
@@ -111,7 +117,7 @@ public class ContactItem extends JPanel {
 
         this.alias = alias;
         this.nickname = nickname;
-        this.fullyQualifiedJID = fullyQualifiedJID;
+        this.jid = jid;
 
         if (initUi) {
 		displayNameLabel = new JLabel();
@@ -157,13 +163,16 @@ public class ContactItem extends JPanel {
 	 * @return a name suitable to be displayed
 	 */
     public String getDisplayName() {
-    	final String displayName;
+    	String displayName = null;
 		if (alias != null && !alias.trim().isEmpty()) {
 			displayName = alias.trim();
 		} else if (nickname != null && !nickname.trim().isEmpty()) {
 			displayName = nickname.trim();
 		} else {
-			displayName = getJID();
+		    BareJid bareJid = getJid();
+		    if (bareJid != null) {
+		        displayName = bareJid.toString();
+		    }
 		}
 
 		if (displayName != null) {
@@ -240,9 +249,20 @@ public class ContactItem extends JPanel {
      * return the bare jid.
      *
      * @return the fully qualified jid (ex. derek@jivesoftware.com).
+     * @deprecated use {@link #getJid()} instead.
      */
+    @Deprecated
     public String getJID() {
-        return fullyQualifiedJID;
+        return getJid().toString();
+    }
+
+    /**
+     * Return the XMPP address, aka. JID< of this contact item.
+     *
+     * @return the XMPP address of this item.
+     */
+    public BareJid getJid() {
+        return jid;
     }
 
     /**
@@ -392,14 +412,14 @@ public class ContactItem extends JPanel {
             }
         }
 
-        return SparkManager.getVCardManager().getAvatarURLIfAvailable(getJID());
+        return SparkManager.getVCardManager().getAvatarURLIfAvailable(getJid());
     }
 
     /**
      * Persists the avatar locally based on the new hash.
      */
     private void updateAvatar() {
-    	SparkManager.getVCardManager().addToQueue(getJID());
+    	SparkManager.getVCardManager().addToQueue(getJid().asBareJid());
     }
 
     public String toString() {
@@ -455,9 +475,16 @@ public class ContactItem extends JPanel {
             getNicknameLabel().setFont(new Font("Dialog", Font.PLAIN, fontSize));
             getNicknameLabel().setForeground((Color)UIManager.get("ContactItemOffline.color"));
 
-            RosterEntry entry = Roster.getInstanceFor( SparkManager.getConnection() ).getEntry(getJID());
+            BareJid bareJid;
+            try {
+                bareJid = JidCreate.bareFrom(getJID());
+            } catch (XmppStringprepException e) {
+                throw new IllegalStateException(e);
+            }
+
+            RosterEntry entry = Roster.getInstanceFor( SparkManager.getConnection() ).getEntry(bareJid);
             if (entry != null && (entry.getType() == RosterPacket.ItemType.none || entry.getType() == RosterPacket.ItemType.from)
-                    && RosterPacket.ItemStatus.SUBSCRIPTION_PENDING == entry.getStatus()) {
+                    && entry.isSubscriptionPending()) {
                 // Do not move out of group.
                 setIcon(SparkRes.getImageIcon(SparkRes.SMALL_QUESTION));
                 getNicknameLabel().setFont(new Font("Dialog", Font.PLAIN, fontSize));
@@ -611,8 +638,15 @@ public class ContactItem extends JPanel {
         return displayNameLabel;
     }
 
+    /**
+     * Get the JID.
+     *
+     * @return the JID
+     * @deprecated use {@link #getJid()} instead.
+     */
+    @Deprecated
     protected String getFullyQualifiedJID() {
-        return fullyQualifiedJID;
+        return jid.toString();
     }
 
     protected void setDisplayNameLabel(JLabel displayNameLabel) {

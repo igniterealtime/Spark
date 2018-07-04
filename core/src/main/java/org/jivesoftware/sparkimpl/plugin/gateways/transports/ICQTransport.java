@@ -17,6 +17,7 @@ package org.jivesoftware.sparkimpl.plugin.gateways.transports;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
+import org.jxmpp.jid.DomainBareJid;
 
 import javax.swing.Icon;
 
@@ -24,9 +25,9 @@ import javax.swing.Icon;
  */
 public class ICQTransport implements Transport {
 
-    private String serviceName;
+    private DomainBareJid serviceName;
 
-    public ICQTransport(String serviceName){
+    public ICQTransport(DomainBareJid serviceName){
         this.serviceName = serviceName;
     }
 
@@ -50,11 +51,12 @@ public class ICQTransport implements Transport {
         return "ICQ";
     }
 
-    public String getServiceName() {
+    @Override
+    public DomainBareJid getXMPPServiceDomain() {
         return serviceName;
     }
 
-    public void setServiceName(String serviceName) {
+    public void setServiceName(DomainBareJid serviceName) {
         this.serviceName = serviceName;
     }
 

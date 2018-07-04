@@ -18,12 +18,12 @@ package org.jivesoftware.spark;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smack.chat.Chat;
-import org.jivesoftware.smack.chat.ChatManagerListener;
+import org.jivesoftware.smack.chat2.Chat;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smackx.chatstates.ChatState;
 import org.jivesoftware.smackx.chatstates.ChatStateListener;
+import org.jivesoftware.smackx.chatstates.ChatStateManager;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.muc.MultiUserChatManager;
 import org.jivesoftware.smackx.xdata.Form;
@@ -41,6 +41,15 @@ import org.jivesoftware.spark.util.UIComponentRegistry;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+import org.jxmpp.jid.BareJid;
+import org.jxmpp.jid.DomainBareJid;
+import org.jxmpp.jid.EntityBareJid;
+import org.jxmpp.jid.EntityJid;
+import org.jxmpp.jid.Jid;
+import org.jxmpp.jid.impl.JidCreate;
+import org.jxmpp.jid.parts.Localpart;
+import org.jxmpp.jid.parts.Resourcepart;
+import org.jxmpp.stringprep.XmppStringprepException;
 import org.jxmpp.util.XmppStringUtils;
 
 import javax.swing.*;
@@ -55,7 +64,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * Handles the Chat Management of each individual <code>Workspace</code>. The ChatManager is responsible
  * for creation and removal of chat rooms, transcripts, and transfers and room invitations.
  */
-public class ChatManager implements ChatManagerListener {
+public class ChatManager {
 
     private static ChatManager singleton;
     private static final Object LOCK = new Object();
@@ -99,7 +108,7 @@ public class ChatManager implements ChatManagerListener {
      * The listener instance that we use to track chat states according to
      * XEP-0085;
      */
-    private SmackChatStateListener smackChatStateListener = null;    
+    private SmackChatStateListener smackChatStateListener = new SmackChatStateListener();
 
     /**
      * Returns the singleton instance of <CODE>ChatManager</CODE>,
@@ -131,7 +140,8 @@ public class ChatManager implements ChatManagerListener {
         // Add Default Chat Room Decorator
         addSparkTabHandler(new DefaultTabHandler());
         // Add a Message Handler
-        org.jivesoftware.smack.chat.ChatManager.getInstanceFor( SparkManager.getConnection() ).addChatListener(this);
+        ChatStateManager chatStateManager = ChatStateManager.getInstance(SparkManager.getConnection());
+        chatStateManager.addChatStateListener(smackChatStateListener);
     }
 
 
@@ -174,6 +184,10 @@ public class ChatManager implements ChatManagerListener {
         return chatContainer;
     }
 
+	public GroupChatRoom getGroupChat(EntityBareJid roomAddress) throws ChatNotFoundException {
+		return getGroupChat(roomAddress.toString());
+	}
+
     /**
      * Returns the MultiUserChat associated with the specified roomname.
      *
@@ -200,11 +214,12 @@ public class ChatManager implements ChatManagerListener {
      * Creates and/or opens a chat room with the specified user.
      *
      * @param userJID  the jid of the user to chat with.
-     * @param nickname the nickname to use for the user.
+     * @param nicknameCs the nickname to use for the user.
      * @param title    the title to use for the room.
      * @return the newly created <code>ChatRoom</code>.
      */
-    public ChatRoom createChatRoom(String userJID, String nickname, String title) {
+    public ChatRoom createChatRoom(EntityJid userJID, CharSequence nicknameCs, CharSequence title) {
+        Resourcepart nickname = Resourcepart.fromOrThrowUnchecked(nicknameCs);
         ChatRoom chatRoom;
         try {
             chatRoom = getChatContainer().getChatRoom(userJID);
@@ -223,8 +238,29 @@ public class ChatManager implements ChatManagerListener {
      *
      * @param jid the jid of the user to chat with.
      * @return the ChatRoom.
+     * @deprecated use {@link #getChatRoom(BareJid)} instead.
      */
+    @Deprecated
     public ChatRoom getChatRoom(String jid) {
+        BareJid mucAddress;
+        try {
+            mucAddress = JidCreate.bareFrom(jid);
+        } catch (XmppStringprepException e) {
+            throw new IllegalStateException(e);
+        }
+        return getChatRoom(mucAddress);
+    }
+
+    /**
+     * Returns the <code>ChatRoom</code> for the giving jid. If the ChatRoom is not found,
+     * a new ChatRoom will be created.
+     *
+     * @param jid the jid of the user to chat with.
+     * @return the ChatRoom.
+     */
+    public ChatRoom getChatRoom(BareJid bareJid) {
+        // TODO: Change signature of method to use EntityBareJid.
+        EntityBareJid jid = bareJid.asEntityBareJidOrThrow();
         ChatRoom chatRoom;
         try {
             chatRoom = getChatContainer().getChatRoom(jid);
@@ -233,11 +269,14 @@ public class ChatManager implements ChatManagerListener {
             ContactList contactList = SparkManager.getWorkspace().getContactList();
             ContactItem item = contactList.getContactItemByJID(jid);
             if (item != null) {
-                String nickname = item.getDisplayName();
+                String nicknameString = item.getDisplayName();
+                Resourcepart nickname = Resourcepart.fromOrThrowUnchecked(nicknameString);
                 chatRoom = UIComponentRegistry.createChatRoom(jid, nickname, nickname);
             }
             else {
-                chatRoom = UIComponentRegistry.createChatRoom(jid, jid, jid);
+                // TODO Better nickname?
+                Resourcepart nickname = Resourcepart.EMPTY;
+                chatRoom = UIComponentRegistry.createChatRoom(jid, nickname, jid);
             }
 
 
@@ -253,21 +292,44 @@ public class ChatManager implements ChatManagerListener {
      * @param roomName    the name of the room.
      * @param serviceName the service name to use (ex.conference.jivesoftware.com)
      * @return the new ChatRoom created. If an error occured, null will be returned.
+     * @deprecated use {@link #createConferenceRoom(Localpart, DomainBareJid)} instead.
      */
+    @Deprecated
     public ChatRoom createConferenceRoom(String roomName, String serviceName) {
-        final MultiUserChat chatRoom = MultiUserChatManager.getInstanceFor( SparkManager.getConnection()).getMultiUserChat( roomName + "@" + serviceName );
+        DomainBareJid serviceAddress;
+        Localpart localpart;
+        try {
+            localpart = Localpart.from(roomName);
+            serviceAddress = JidCreate.domainBareFrom(serviceName);
+        } catch (XmppStringprepException e) {
+            throw new IllegalStateException(e);
+        }
+        return createConferenceRoom(localpart, serviceAddress);
+    }
+
+    /**
+     * Creates a new public Conference Room.
+     *
+     * @param roomName    the name of the room.
+     * @param serviceName the service name to use (ex.conference.jivesoftware.com)
+     * @return the new ChatRoom created. If an error occured, null will be returned.
+     */
+    public ChatRoom createConferenceRoom(Localpart roomName, DomainBareJid serviceName) {
+        EntityBareJid roomAddress = JidCreate.entityBareFrom(roomName, serviceName);
+        final MultiUserChat chatRoom = MultiUserChatManager.getInstanceFor( SparkManager.getConnection()).getMultiUserChat( roomAddress);
 
         final GroupChatRoom room = UIComponentRegistry.createGroupChatRoom(chatRoom);
 
         try {
             LocalPreferences pref = SettingsManager.getLocalPreferences();
-            chatRoom.create(pref.getNickname());
+            Resourcepart nickname = pref.getNickname();
+            chatRoom.create(nickname);
 
             // Send an empty room configuration form which indicates that we want
             // an instant room
             chatRoom.sendConfigurationForm(new Form( DataForm.Type.submit ));
         }
-        catch (XMPPException | SmackException e1) {
+        catch (XMPPException | SmackException | InterruptedException e1) {
             Log.error("Unable to send conference room chat configuration form.", e1);
             return null;
         }
@@ -282,10 +344,9 @@ public class ChatManager implements ChatManagerListener {
      * @param jid      the jid of the user to chat with.
      * @param nickname the nickname of the user.
      */
-    public void activateChat(final String jid, final String nickname) {
-        if (!ModelUtil.hasLength(jid)) {
-            return;
-        }
+    public void activateChat(final CharSequence jidCs, final String nicknameString) {
+        final Resourcepart nickname = Resourcepart.fromOrThrowUnchecked(nicknameString);
+        final EntityBareJid jid = JidCreate.entityBareFromUnescapedOrThrowUnchecked(jidCs);
 
         SwingWorker worker = new SwingWorker() {
             final ChatManager chatManager = SparkManager.getChatManager();
@@ -505,12 +566,12 @@ public class ChatManager implements ChatManagerListener {
         if (conferenceService == null) {
             try {
                 final MultiUserChatManager multiUserChatManager = MultiUserChatManager.getInstanceFor( SparkManager.getConnection() );
-                Collection<String> col = multiUserChatManager.getServiceNames();
+                List<DomainBareJid> col = multiUserChatManager.getXMPPServiceDomains();
                 if (col.size() > 0) {
-                    conferenceService = col.iterator().next();
+                    conferenceService = col.iterator().next().toString();
                 }
             }
-            catch (XMPPException | SmackException e) {
+            catch (XMPPException | SmackException | InterruptedException e) {
                 Log.error(e);
             }
         }
@@ -620,11 +681,12 @@ public class ChatManager implements ChatManagerListener {
      */
     public Icon getIconForContactHandler( String jid )
     {
+        BareJid bareJid = JidCreate.bareFromOrThrowUnchecked(jid);
         for ( ContactItemHandler handler : contactItemHandlers )
         {
             try
             {
-                Icon icon = handler.getIcon( jid );
+                Icon icon = handler.getIcon( bareJid );
                 if ( icon != null )
                 {
                     return icon;
@@ -666,13 +728,13 @@ public class ChatManager implements ChatManagerListener {
         return null;
     }
 
-    public void composingNotification(final String from) {
+    public void composingNotification(final Jid from) {
         SwingUtilities.invokeLater( () -> {
             final ContactList contactList = SparkManager.getWorkspace().getContactList();
 
             ChatRoom chatRoom;
             try {
-                chatRoom = getChatContainer().getChatRoom( XmppStringUtils.parseBareJid(from));
+                chatRoom = getChatContainer().getChatRoom( from.asBareJid() );
                 if (chatRoom != null && chatRoom instanceof ChatRoomImpl) {
                     typingNotificationList.add(chatRoom);
                     // Notify Decorators
@@ -687,13 +749,13 @@ public class ChatManager implements ChatManagerListener {
         } );
     }
 
-    public void cancelledNotification(final String from, final ChatState state) {
+    public void cancelledNotification(final Jid from, final ChatState state) {
         SwingUtilities.invokeLater( () -> {
             ContactList contactList = SparkManager.getWorkspace().getContactList();
 
             ChatRoom chatRoom;
             try {
-                chatRoom = getChatContainer().getChatRoom(XmppStringUtils.parseBareJid(from));
+                chatRoom = getChatContainer().getChatRoom(from.asBareJid());
                 if (chatRoom != null && chatRoom instanceof ChatRoomImpl) {
                     typingNotificationList.remove(chatRoom);
                     // Notify Decorators
@@ -861,12 +923,12 @@ public class ChatManager implements ChatManagerListener {
 	String query = uri.getQuery();
 	if (query == null) {
 	    // No query string, so assume the URI is xmpp:JID
-	    String jid = _uriManager.retrieveJID(uri);
+	    EntityBareJid jid = _uriManager.retrieveJID(uri).asEntityBareJidOrThrow();
 
 	    UserManager userManager = SparkManager.getUserManager();
 	    String nickname = userManager.getUserNicknameFromJID(jid);
 	    if (nickname == null) {
-		nickname = jid;
+		nickname = jid.toString();
 	    }
 
 	    ChatManager chatManager = SparkManager.getChatManager();
@@ -912,14 +974,6 @@ public class ChatManager implements ChatManagerListener {
 	}
     }
 
-	@Override
-	public void chatCreated(Chat chat, boolean isLocal) {
-        if(smackChatStateListener == null) {
-            smackChatStateListener = new SmackChatStateListener();
-        }        
-        chat.addMessageListener(smackChatStateListener);		
-	}
-	
     /**
      * The listener that we use to track chat state notifications according
      * to XEP-0085.
@@ -932,8 +986,8 @@ public class ChatManager implements ChatManagerListener {
          * @param state the new state of the chat.
          */
     	@Override
-        public void stateChanged(Chat chat, ChatState state) {
-    		String participant = chat.getParticipant();
+        public void stateChanged(Chat chat, ChatState state, Message message) {
+    	    Jid participant = chat.getXmppAddressOfChatPartner();
             if (ChatState.composing.equals(state)) {
                 composingNotification(participant);
             } else {
@@ -941,10 +995,5 @@ public class ChatManager implements ChatManagerListener {
             }
             
         }
-
-		@Override
-		public void processMessage(Chat arg0, Message arg1) {			
-			// TODO Auto-generated method stub			
-		}
-    }    	
+    }
 }

@@ -29,6 +29,7 @@ import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.util.log.Log;
+import org.jxmpp.jid.Jid;
 
 public class InvitationManager {
     private static List<ChatRoom> inviteListeners = new ArrayList<ChatRoom>();
@@ -46,8 +47,8 @@ public class InvitationManager {
      * @param messageText the message to send to the user.
      * @param transfer    true if this is a transfer.
      */
-    public static void transferOrInviteUser(ChatRoom chatRoom, String workgroup, String sessionID, final String jid, String messageText, final boolean transfer) {
-        String msg = messageText != null ? StringUtils.escapeForXML(messageText).toString() : FpRes.getString("message.please.join.me.in.conference");
+    public static void transferOrInviteUser(ChatRoom chatRoom, String workgroup, String sessionID, final Jid jid, String messageText, final boolean transfer) {
+        String msg = messageText != null ? StringUtils.escapeForXml(messageText).toString() : FpRes.getString("message.please.join.me.in.conference");
         try {
             if (!transfer) {
             	// TODO : CHECK FASHPATH
@@ -55,15 +56,15 @@ public class InvitationManager {
             }
             else {
             	// TODO : CHECK FASHPATH
-                FastpathPlugin.getAgentSession().sendRoomTransfer(RoomTransfer.Type.user, jid, sessionID, msg);
+                FastpathPlugin.getAgentSession().sendRoomTransfer(RoomTransfer.Type.user, jid.toString(), sessionID, msg);
             }
         }
-        catch (XMPPException | SmackException e) {
+        catch (XMPPException | SmackException | InterruptedException e) {
             Log.error(e);
         }
 
 
-        String username = SparkManager.getUserManager().getUserNicknameFromJID(jid);
+        String username = SparkManager.getUserManager().getUserNicknameFromJID(jid.asBareJid());
 
         String notification = FpRes.getString("message.user.has.been.invited", username);
         if (transfer) {
@@ -81,8 +82,8 @@ public class InvitationManager {
      * @param messageText the message to send to the user.
      * @param transfer    true if this is a transfer.
      */
-    public static void transferOrInviteToQueue(ChatRoom chatRoom, String workgroup, String sessionID, final String jid, String messageText, final boolean transfer) {
-        String msg = messageText != null ? StringUtils.escapeForXML(messageText).toString() : FpRes.getString("message.please.join.me.in.conference");
+    public static void transferOrInviteToQueue(ChatRoom chatRoom, String workgroup, String sessionID, final Jid jid, String messageText, final boolean transfer) {
+        String msg = messageText != null ? StringUtils.escapeForXml(messageText).toString() : FpRes.getString("message.please.join.me.in.conference");
         try {
             if (!transfer) {
             	// TODO : CHECK FASHPATH
@@ -90,15 +91,15 @@ public class InvitationManager {
             }
             else {
             	// TODO : CHECK FASHPATH
-                FastpathPlugin.getAgentSession().sendRoomTransfer(RoomTransfer.Type.queue, jid, sessionID, msg);
+                FastpathPlugin.getAgentSession().sendRoomTransfer(RoomTransfer.Type.queue, jid.toString(), sessionID, msg);
             }
         }
-        catch (XMPPException | SmackException e) {
+        catch (XMPPException | SmackException | InterruptedException e) {
             Log.error(e);
         }
 
 
-        String username = SparkManager.getUserManager().getUserNicknameFromJID(jid);
+        String username = SparkManager.getUserManager().getUserNicknameFromJID(jid.asBareJid());
 
         String notification = FpRes.getString("message.user.has.been.invited", username);
         if (transfer) {
@@ -116,23 +117,23 @@ public class InvitationManager {
      * @param messageText the message to send to the user.
      * @param transfer    true if this is a transfer.
      */
-    public static void transferOrInviteToWorkgroup(ChatRoom chatRoom, String workgroup, String sessionID, final String jid, String messageText, final boolean transfer) {
-        String msg = messageText != null ? StringUtils.escapeForXML(messageText).toString() : FpRes.getString("message.please.join.me.in.conference");
+    public static void transferOrInviteToWorkgroup(ChatRoom chatRoom, String workgroup, String sessionID, final Jid jid, String messageText, final boolean transfer) {
+        String msg = messageText != null ? StringUtils.escapeForXml(messageText).toString() : FpRes.getString("message.please.join.me.in.conference");
         try {
             if (!transfer) {
             	// TODO : CHECK FASHPATH
                 FastpathPlugin.getAgentSession().sendRoomInvitation(RoomInvitation.Type.workgroup, jid, sessionID, msg);
             }
             else {
-                FastpathPlugin.getAgentSession().sendRoomTransfer(RoomTransfer.Type.workgroup, jid, sessionID, msg);
+                FastpathPlugin.getAgentSession().sendRoomTransfer(RoomTransfer.Type.workgroup, jid.toString(), sessionID, msg);
             }
         }
-        catch (XMPPException | SmackException e) {
+        catch (XMPPException | SmackException | InterruptedException e) {
             Log.error(e);
         }
 
 
-        String username = SparkManager.getUserManager().getUserNicknameFromJID(jid);
+        String username = SparkManager.getUserManager().getUserNicknameFromJID(jid.asBareJid());
 
         String notification = FpRes.getString("message.user.has.been.invited", username);
         if (transfer) {

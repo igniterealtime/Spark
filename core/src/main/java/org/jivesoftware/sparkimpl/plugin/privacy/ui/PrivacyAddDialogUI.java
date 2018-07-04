@@ -119,19 +119,20 @@ public class PrivacyAddDialogUI extends JPanel {
         if (_showGroups) {
             for (RosterGroup group : roster.getGroups()) {
                 _showOffCheckbox.setVisible(false);
-                ContactItem item = new ContactItem(group.getName(), null, group.getName());
+//                ContactItem item = new ContactItem(group.getName(), null, group.getName());
+                ContactItem item = new ContactItem(group.getName(), null, null);
                 _userList.add(item);
             }
         } else {
             for (RosterEntry entry : roster.getEntries()) {
-                Presence presence = PresenceManager.getPresence(entry.getUser());
+                Presence presence = PresenceManager.getPresence(entry.getJid());
 
                 if (presence.isAvailable()) {
-                    ContactItem item = new ContactItem(entry.getName(), null, entry.getUser());
+                    ContactItem item = new ContactItem(entry.getName(), null, entry.getJid());
                     item.setPresence(presence);
                     _userList.add(item);
                 } else if (_showOffCheckbox.isSelected()) {
-                    ContactItem item = new ContactItem(entry.getName(), null, entry.getUser());
+                    ContactItem item = new ContactItem(entry.getName(), null, entry.getJid());
                     item.setPresence(presence);
                     _userList.add(item);
                 }

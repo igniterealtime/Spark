@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
@@ -54,6 +55,12 @@ import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
+import org.jxmpp.jid.BareJid;
+import org.jxmpp.jid.EntityBareJid;
+import org.jxmpp.jid.impl.JidCreate;
+import org.jxmpp.jid.parts.Localpart;
+import org.jxmpp.jid.parts.Resourcepart;
+import org.jxmpp.jid.util.JidUtil;
 import org.jxmpp.util.XmppStringUtils;
 
 
@@ -75,7 +82,7 @@ public final class OnlineAgents extends JPanel {
         topToolbar.setBackground(Color.white);
         setBackground(Color.white);
 
-        final String name = XmppStringUtils.parseLocalpart(FastpathPlugin.getWorkgroup().getWorkgroupJID());
+        final Localpart name = FastpathPlugin.getWorkgroup().getWorkgroupJID().getLocalpartOrThrow();
         final String title = org.jivesoftware.spark.util.StringUtils.makeFirstWordCaptial(name);
 
         contactGroup = new ContactGroup(FpRes.getString("title.workgroup", title));
@@ -96,7 +103,11 @@ public final class OnlineAgents extends JPanel {
             }
 
             public void contactItemDoubleClicked(ContactItem item) {
-                activateChat(item.getJID(), item.getNickname());
+                Resourcepart resourcepart = Resourcepart.fromOrThrowUnchecked(item.getNickname());
+                // TODO: This is a good indicator that
+                // - nickname should be of type Resourcepart pretty sure
+                // - item.getJid() should possibly return an EntityBareJid
+                activateChat(item.getJid().asEntityBareJidOrThrow(), resourcepart);
             }
 
             public void contactItemClicked(ContactItem item) {
@@ -141,7 +152,7 @@ public final class OnlineAgents extends JPanel {
             return;
         }
         SwingWorker agentWorker = new SwingWorker() {
-            Collection<String> agentSet;
+            Collection<EntityBareJid> agentSet;
 
             public Object construct() {
                 // Initialize Agent Roster
@@ -151,7 +162,7 @@ public final class OnlineAgents extends JPanel {
                     agentSet = agentRoster.getAgents();
                     return agentSet;
                 }
-                catch ( SmackException.NotConnectedException e )
+                catch ( SmackException.NotConnectedException | InterruptedException e )
                 {
                     Log.error( "Unable to load agent roster.", e);
                     return null;
@@ -159,15 +170,15 @@ public final class OnlineAgents extends JPanel {
             }
 
             public void finished() {
-                final List<String> agentList = new ArrayList<>(agentSet);
+                final List<EntityBareJid> agentList = new ArrayList<>(agentSet);
                 Collections.sort(agentList);
 
-                for ( String agent : agentList )
+                for ( EntityBareJid agent : agentList )
                 {
                     String nickname = SparkManager.getUserManager().getUserNicknameFromJID( agent );
                     if ( nickname == null )
                     {
-                        nickname = agent;
+                        nickname = agent.toString();
                     }
 
                     ContactItem item = new ContactItem( nickname, nickname, agent )
@@ -256,7 +267,7 @@ public final class OnlineAgents extends JPanel {
     /**
      * Activate a chat room with the selected user.
      */
-    private void activateChat(final String userJID, final String nickname) {
+    private void activateChat(final EntityBareJid userJID, final Resourcepart nickname) {
         if (!ModelUtil.hasLength(userJID)) {
             return;
         }
@@ -298,10 +309,11 @@ public final class OnlineAgents extends JPanel {
     }
 
     public class OnlineAgentListener implements AgentRosterListener {
-        public void agentAdded(final String agent) {
+        @Override
+        public void agentAdded(final EntityBareJid agent) {
             String nickname = SparkManager.getUserManager().getUserNicknameFromJID(agent);
             if (nickname == null) {
-                nickname = agent;
+                nickname = agent.toString();
             }
 
             Presence agentPresence = agentRoster.getPresence(agent);
@@ -321,14 +333,16 @@ public final class OnlineAgents extends JPanel {
             }
         }
 
-        public void agentRemoved(String jid) {
+        @Override
+        public void agentRemoved(EntityBareJid jid) {
             ContactItem item = contactGroup.getContactItemByJID(jid);
             contactGroup.removeContactItem(item);
             contactGroup.fireContactGroupUpdated();
         }
 
+        @Override
         public void presenceChanged(Presence presence) {
-            String jid = XmppStringUtils.parseBareJid(presence.getFrom());
+            BareJid jid = presence.getFrom().asBareJid();
             ContactItem item = contactGroup.getContactItemByJID(jid);
 
             if (item != null) {
@@ -346,12 +360,12 @@ public final class OnlineAgents extends JPanel {
             }
             else {
                 if (presence.getType() == Presence.Type.available) {
-                    String agent = XmppStringUtils.parseBareJid(presence.getFrom());
+                    EntityBareJid agent = presence.getFrom().asEntityBareJidOrThrow();
                     String nickname = SparkManager.getUserManager().getUserNicknameFromJID(agent);
                     if (nickname == null) {
-                        nickname = agent;
+                        nickname = agent.toString();
                     }
-                    ContactItem contactItem = new ContactItem(nickname,nickname, XmppStringUtils.parseBareJid(presence.getFrom()));
+                    ContactItem contactItem = new ContactItem(nickname,nickname, presence.getFrom().asBareJid());
                     contactItem.setPresence(presence);
                     contactGroup.addContactItem(contactItem);
                 }

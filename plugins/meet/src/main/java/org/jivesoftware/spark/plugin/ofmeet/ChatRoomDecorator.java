@@ -28,6 +28,8 @@ import org.jivesoftware.spark.util.*;
 import org.jivesoftware.spark.util.log.*;
 import org.jivesoftware.smack.*;
 import org.jivesoftware.smack.packet.*;
+import org.jxmpp.jid.Jid;
+import org.jxmpp.jid.parts.Localpart;
 import org.jxmpp.util.XmppStringUtils;
 
 import sun.misc.BASE64Decoder;
@@ -52,27 +54,28 @@ public class ChatRoomDecorator
             ImageIcon ofmeetIcon = new ImageIcon(imageByte);
             ofmeetButton = new RolloverButton(ofmeetIcon);
             ofmeetButton.setToolTipText(GraphicUtils.createToolTip("Openfire Meetings"));
-            final String roomId = getNode(room.getRoomname());
+            final Localpart roomId = room.getRoomJid().getLocalpart();
             final String sessionID = roomId + "-" + System.currentTimeMillis();
-            final String nickname = getNode(XmppStringUtils.parseBareAddress(SparkManager.getSessionManager().getJID()));
+            final Localpart nickname = SparkManager.getSessionManager().getJID().getLocalpart();
 
             ofmeetButton.addActionListener( new ActionListener()
             {
                     public void actionPerformed(ActionEvent event)
                     {
-                        String newUrl, newRoomId;
+                        String newUrl;
+                        Localpart newRoomId;
 
                         if ("groupchat".equals(room.getChatType().toString()))
                         {
                             newRoomId = roomId;
                             newUrl = url + "/" + newRoomId;
-                            sendInvite(room.getRoomname(), newUrl, Message.Type.groupchat);
+                            sendInvite(room.getRoomJid(), newUrl, Message.Type.groupchat);
 
                         } else {
 
-                            newRoomId = sessionID;
+                            newRoomId = Localpart.fromOrThrowUnchecked(sessionID);
                             newUrl = url + "/" + newRoomId;
-                            sendInvite(room.getRoomname(), newUrl, Message.Type.chat);
+                            sendInvite(room.getRoomJid(), newUrl, Message.Type.chat);
                         }
 
                         plugin.openUrl(newUrl, newRoomId);
@@ -89,21 +92,10 @@ public class ChatRoomDecorator
 
     public void finished()
     {
-        Log.warning("ChatRoomDecorator: finished " + room.getRoomname());
+        Log.warning("ChatRoomDecorator: finished " + room.getRoomJid());
     }
 
-    private String getNode(String jid)
-    {
-        String node = jid;
-        int pos = node.indexOf("@");
-
-        if (pos > -1)
-            node = jid.substring(0, pos);
-
-        return node;
-    }
-
-    private void sendInvite(String jid, String url, Message.Type type)
+    private void sendInvite(Jid jid, String url, Message.Type type)
     {
         Message message2 = new Message();
         message2.setTo(jid);

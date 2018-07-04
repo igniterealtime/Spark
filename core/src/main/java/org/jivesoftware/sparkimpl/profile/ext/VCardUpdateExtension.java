@@ -48,7 +48,8 @@ public class VCardUpdateExtension implements ExtensionElement {
         return NAMESPACE;
     }
 
-    public String toXML() {
+    @Override
+    public String toXML(String enclosingNamespace) {
         String buf = "<" + getElementName() + " xmlns=\"" + getNamespace() + "\">" +
                 "<photo>" +
                 photoHash +

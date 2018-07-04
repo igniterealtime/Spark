@@ -44,7 +44,7 @@ public class JabberAvatarExtension implements ExtensionElement {
         return NAMESPACE;
     }
 
-    public String toXML() {
+    public String toXML(String enclosingNamespace) {
         String buf = "<" + getElementName() + " xmlns=\"" + getNamespace() + "\">" +
                 "<hash>" +
                 photoHash +

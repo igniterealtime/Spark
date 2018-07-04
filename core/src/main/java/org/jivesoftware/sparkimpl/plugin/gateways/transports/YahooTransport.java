@@ -16,6 +16,7 @@
 package org.jivesoftware.sparkimpl.plugin.gateways.transports;
 
 import org.jivesoftware.resource.SparkRes;
+import org.jxmpp.jid.DomainBareJid;
 import org.jivesoftware.resource.Res;
 
 import javax.swing.Icon;
@@ -24,9 +25,9 @@ import javax.swing.Icon;
  */
 public class YahooTransport implements Transport {
 
-    private String serviceName;
+    private final DomainBareJid serviceName;
 
-    public YahooTransport(String serviceName) {
+    public YahooTransport(DomainBareJid serviceName) {
         this.serviceName = serviceName;
     }
 
@@ -46,7 +47,8 @@ public class YahooTransport implements Transport {
         return SparkRes.getImageIcon(SparkRes.YAHOO_TRANSPORT_INACTIVE_IMAGE);
     }
 
-    public String getServiceName() {
+    @Override
+    public DomainBareJid getXMPPServiceDomain() {
         return serviceName;
     }
 

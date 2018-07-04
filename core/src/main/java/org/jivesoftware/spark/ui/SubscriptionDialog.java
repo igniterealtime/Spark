@@ -34,6 +34,7 @@ import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.Transport;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.TransportUtils;
+import org.jxmpp.jid.BareJid;
 import org.jxmpp.util.XmppStringUtils;
 
 import javax.swing.BorderFactory;
@@ -80,7 +81,7 @@ public class SubscriptionDialog {
 
     private JFrame dialog;
 
-    private String jid;
+    private BareJid jid;
 
 
     public SubscriptionDialog() {
@@ -157,7 +158,7 @@ public class SubscriptionDialog {
         }
     }
 
-    public void invoke(final String jid) throws SmackException.NotConnectedException
+    public void invoke(final BareJid jid) throws SmackException.NotConnectedException, InterruptedException
     {
         this.jid = jid;
 
@@ -173,8 +174,8 @@ public class SubscriptionDialog {
             return;
         }
 
-        String message = Res.getString("message.approve.subscription", UserManager.unescapeJID(jid));
-        Transport transport = TransportUtils.getTransport( XmppStringUtils.parseDomain(jid));
+        String message = Res.getString("message.approve.subscription", jid.asUnescapedString());
+        Transport transport = TransportUtils.getTransport( jid.asDomainBareJid() );
         Icon icon = null;
         if (transport != null) {
             icon = transport.getIcon();
@@ -187,9 +188,9 @@ public class SubscriptionDialog {
         
         UserManager userManager = SparkManager.getUserManager();
         
-        String username = userManager.getNickname(userManager.getFullJID(jid));
-        username = username == null ? XmppStringUtils.parseLocalpart(UserManager.unescapeJID(jid)) : username;
-        usernameLabelValue.setText(UserManager.unescapeJID(jid));
+        String username = userManager.getNickname(jid);
+        username = username == null ? XmppStringUtils.parseLocalpart(jid.asUnescapedString()) : username;
+        usernameLabelValue.setText(jid.asUnescapedString());
         nicknameField.setText(username);
 
         acceptButton.addActionListener( e -> {
@@ -200,7 +201,7 @@ public class SubscriptionDialog {
                 {
                     SparkManager.getConnection().sendStanza(response);
                 }
-                catch ( SmackException.NotConnectedException e1 )
+                catch ( SmackException.NotConnectedException | InterruptedException e1 )
                 {
                     Log.warning( "Unable to send stanza accepting subscription from " + jid, e1 );
                 }
@@ -216,7 +217,7 @@ public class SubscriptionDialog {
                 {
                     SparkManager.getConnection().sendStanza(response);
                 }
-                catch ( SmackException.NotConnectedException e1 )
+                catch ( SmackException.NotConnectedException | InterruptedException e1 )
                 {
                     Log.warning( "Unable to send stanza accepting subscription from " + jid, e1 );
                 }
@@ -283,7 +284,7 @@ public class SubscriptionDialog {
         {
             SparkManager.getConnection().sendStanza(response);
         }
-        catch ( SmackException.NotConnectedException e )
+        catch ( SmackException.NotConnectedException | InterruptedException e )
         {
             Log.warning( "Unable to send stanza unsubscribing from " + jid, e );
         }
@@ -327,7 +328,7 @@ public class SubscriptionDialog {
      * @param group    the contact group.
      * @return the new RosterEntry.
      */
-    public RosterEntry addEntry(String jid, String nickname, String group) {
+    public RosterEntry addEntry(BareJid jid, String nickname, String group) {
         String[] groups = {group};
 
         Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
@@ -342,7 +343,7 @@ public class SubscriptionDialog {
             try {
                 roster.createEntry(jid, nickname, new String[]{group});
             }
-            catch (XMPPException | SmackException e) {
+            catch (XMPPException | SmackException | InterruptedException e) {
                 Log.error("Unable to add new entry " + jid, e);
             }
             return roster.getEntry(jid);
@@ -366,7 +367,7 @@ public class SubscriptionDialog {
 
             userEntry = roster.getEntry(jid);
         }
-        catch (XMPPException | SmackException ex) {
+        catch (XMPPException | SmackException | InterruptedException ex) {
             Log.error(ex);
         }
         return userEntry;

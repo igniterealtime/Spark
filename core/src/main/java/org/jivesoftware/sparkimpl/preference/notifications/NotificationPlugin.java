@@ -31,7 +31,8 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.alerts.SparkToaster;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
-import org.jxmpp.util.XmppStringUtils;
+import org.jxmpp.jid.BareJid;
+import org.jxmpp.jid.Jid;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
@@ -50,7 +51,7 @@ import java.util.TimerTask;
  */
 public class NotificationPlugin implements Plugin, StanzaListener {
 
-    private Set<String> onlineUsers = new HashSet<>();
+    private Set<BareJid> onlineUsers = new HashSet<>();
     private LocalPreferences preferences;
 
 
@@ -76,8 +77,8 @@ public class NotificationPlugin implements Plugin, StanzaListener {
         ContactList contactList = SparkManager.getWorkspace().getContactList();
         for (ContactGroup contactGroup : contactList.getContactGroups()) {
             for (ContactItem item : contactGroup.getContactItems()) {
-                if (item != null && item.getJID() != null && item.getPresence().isAvailable()) {
-                    String bareJID = XmppStringUtils.parseBareJid(item.getJID());
+                if (item != null && item.getJid() != null && item.getPresence().isAvailable()) {
+                    BareJid bareJID = item.getJid().asBareJid();
                     onlineUsers.add(bareJID);
                 }
             }
@@ -88,9 +89,10 @@ public class NotificationPlugin implements Plugin, StanzaListener {
     }
 
 
-    public void processPacket(Stanza stanza) {
+    @Override
+    public void processStanza(Stanza stanza) {
         final Presence presence = (Presence)stanza;
-        String jid = presence.getFrom();
+        Jid jid = presence.getFrom();
         if (jid == null) {
             return;
         }
@@ -101,24 +103,24 @@ public class NotificationPlugin implements Plugin, StanzaListener {
             return;
         }
 
-        jid = XmppStringUtils.parseBareJid(jid);
+        BareJid bareJid = jid.asBareJid();
         boolean isOnline = onlineUsers.contains(jid);
 
         if (presence.isAvailable()) {
             if (preferences.isOnlineNotificationsOn()) {
                 if (!isOnline) {
-                    notifyUserOnline(jid, presence);
+                    notifyUserOnline(bareJid, presence);
                 }
             }
 
-            onlineUsers.add(jid);
+            onlineUsers.add(bareJid);
         }
         else {
             if (preferences.isOfflineNotificationsOn() && isOnline) {
-                notifyUserOffline(jid, presence);
+                notifyUserOffline(bareJid, presence);
             }
 
-            onlineUsers.remove(jid);
+            onlineUsers.remove(bareJid);
         }
     }
 
@@ -139,7 +141,7 @@ public class NotificationPlugin implements Plugin, StanzaListener {
      * @param jid the jid of the user that has come online.
      * @param presence Presence of the online user.
      */
-    private void notifyUserOnline(final String jid, final Presence presence) {
+    private void notifyUserOnline(final BareJid jid, final Presence presence) {
    	 try {
    		 EventQueue.invokeAndWait( () -> {
                 SparkToaster toaster = new SparkToaster();
@@ -172,7 +174,7 @@ public class NotificationPlugin implements Plugin, StanzaListener {
      * @param jid the jid of the user who has gone offline.
      * @param presence of the offline user.
      */
-    private void notifyUserOffline(final String jid, final Presence presence) {
+    private void notifyUserOffline(final BareJid jid, final Presence presence) {
    	 try {
    		 EventQueue.invokeAndWait( () -> {
                 SparkToaster toaster = new SparkToaster();
@@ -203,9 +205,9 @@ public class NotificationPlugin implements Plugin, StanzaListener {
     private class ChatAction extends AbstractAction {
 
 	private static final long serialVersionUID = 4752515615833181939L;
-	private String jid;
+	private final BareJid jid;
 
-        public ChatAction(String jid) {
+        public ChatAction(BareJid jid) {
             this.jid = jid;
         }
 

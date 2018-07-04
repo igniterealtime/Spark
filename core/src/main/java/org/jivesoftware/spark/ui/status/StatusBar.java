@@ -117,7 +117,7 @@ public class StatusBar extends JPanel implements VCardListener {
 			add(nicknameLabel, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(2, 12, 0, 0), 0, 0));
 			add(statusPanel, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0, 7, 0, 0), 0, 0));
 			add(commandPanel, new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0, GridBagConstraints.SOUTHWEST, GridBagConstraints.NONE, new Insets(0, 5, 0, 0), 0, 0));
-			nicknameLabel.setToolTipText(SparkManager.getConnection().getUser());
+			nicknameLabel.setToolTipText(SparkManager.getConnection().getUser().toString());
 			nicknameLabel.setFont(new Font(Font.DIALOG, Font.BOLD, 12));
 			setStatus(Res.getString("status.online"));
 		}

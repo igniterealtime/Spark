@@ -31,6 +31,7 @@ import org.jivesoftware.smack.packet.DefaultExtensionElement;
 import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.spark.util.log.Log;
+import org.jxmpp.jid.Jid;
 
 /**
  * The game UI, which is created after both players have accepted a new game.
@@ -53,7 +54,7 @@ public class ReversiPanel extends JPanel {
     private XMPPConnection connection;
     private int otherPlayer;
     private int gameID;
-    private String opponentJID;
+    private Jid opponentJID;
     private StanzaListener gameMoveListener;
 
     private List<ReversiBlock> blocks = new ArrayList<ReversiBlock>();
@@ -81,7 +82,7 @@ public class ReversiPanel extends JPanel {
      * @param startingPlayer Whether we are the starting player or not
      * @param opponentJID JID of opponent
      */
-    public ReversiPanel(XMPPConnection connection, final int gameID, boolean startingPlayer, String opponentJID) {
+    public ReversiPanel(XMPPConnection connection, final int gameID, boolean startingPlayer, Jid opponentJID) {
         this.connection = connection;
         this.gameID = gameID;
         this.opponentJID = opponentJID;
@@ -94,7 +95,8 @@ public class ReversiPanel extends JPanel {
 
         if (connection != null) {
             gameMoveListener = new StanzaListener() {
-                public void processPacket(Stanza stanza) {
+                @Override
+                public void processStanza(Stanza stanza) {
                     GameMove move = (GameMove)stanza.getExtension(GameMove.ELEMENT_NAME, GameMove.NAMESPACE);
                     // If this is a move for the current game.
                     if (move.getGameID() == gameID) {
@@ -152,7 +154,11 @@ public class ReversiPanel extends JPanel {
         Message message = new Message();
         message.setTo(opponentJID);
         message.addExtension(forfeit);
-        connection.sendStanza(message);
+        try {
+            connection.sendStanza(message);
+        } catch (InterruptedException e) {
+            throw new IllegalStateException(e);
+        }
         connection.removeAsyncStanzaListener(gameMoveListener);
     }
 
@@ -342,7 +348,7 @@ public class ReversiPanel extends JPanel {
                 {
                     connection.sendStanza(message);
                 }
-                catch ( SmackException.NotConnectedException e1 )
+                catch ( SmackException.NotConnectedException | InterruptedException e1 )
                 {
                     Log.warning( "Unable to send move to " + message.getTo(), e1 );
                 }

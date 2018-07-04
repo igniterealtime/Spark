@@ -16,6 +16,7 @@
 package org.jivesoftware.spark.ui;
 
 import org.jivesoftware.smack.packet.Presence;
+import org.jxmpp.jid.BareJid;
 
 import javax.swing.Icon;
 
@@ -40,7 +41,7 @@ public interface ContactItemHandler {
      * @param jid the users jid.
      * @return the icon, if any. null may be returned.
      */
-    Icon getIcon(String jid);
+    Icon getIcon(BareJid jid);
 
     /**
      * Return the icon to use on the chat room tab.

@@ -24,6 +24,8 @@ import org.jivesoftware.smackx.disco.packet.DiscoverItems;
 import org.jivesoftware.spark.ui.PresenceListener;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.manager.Features;
+import org.jxmpp.jid.EntityBareJid;
+import org.jxmpp.jid.EntityFullJid;
 import org.jxmpp.util.XmppStringUtils;
 
 import javax.swing.SwingUtilities;
@@ -46,11 +48,11 @@ public final class SessionManager implements ConnectionListener {
     private String username;
     private String password;
 
-    private String JID;
+    private EntityFullJid JID;
 
     private List<PresenceListener> presenceListeners = new ArrayList<>();
 
-    private String userBareAddress;
+    private EntityBareJid userBareAddress;
     private DiscoverItems discoverItems;
 
     // Stores our presence state at the time that the last connectionClosedOnError happened.
@@ -70,7 +72,7 @@ public final class SessionManager implements ConnectionListener {
         this.connection = connection;
         this.username = username;
         this.password = password;
-        this.userBareAddress = XmppStringUtils.parseBareJid(connection.getUser());
+        this.userBareAddress = connection.getUser().asEntityBareJid();
 
         // create workgroup session
         personalDataManager = PrivateDataManager.getInstanceFor( getConnection() );
@@ -88,9 +90,9 @@ public final class SessionManager implements ConnectionListener {
     private void discoverItems() {
         ServiceDiscoveryManager disco = ServiceDiscoveryManager.getInstanceFor(SparkManager.getConnection());
         try {
-            discoverItems = disco.discoverItems(SparkManager.getConnection().getServiceName());
+            discoverItems = disco.discoverItems(SparkManager.getConnection().getXMPPServiceDomain());
         }
-        catch (XMPPException | SmackException e) {
+        catch (XMPPException | SmackException | InterruptedException e) {
             Log.error(e);
             discoverItems = new DiscoverItems();
         }
@@ -132,8 +134,8 @@ public final class SessionManager implements ConnectionListener {
      *
      * @param address the address of the server.
      */
-    public void setServerAddress(String address) {
-        this.serverAddress = address;
+    public void setServerAddress(CharSequence address) {
+        this.serverAddress = address.toString();
     }
 
     /**
@@ -205,7 +207,7 @@ public final class SessionManager implements ConnectionListener {
             {
                 SparkManager.getConnection().sendStanza(presence);
             }
-            catch ( SmackException.NotConnectedException e )
+            catch ( SmackException.NotConnectedException | InterruptedException e )
             {
                 Log.error( "Unable to send presence to " + presence.getTo(), e );
             }
@@ -217,7 +219,7 @@ public final class SessionManager implements ConnectionListener {
      *
      * @return the jid of the Spark user.
      */
-    public String getJID() {
+    public EntityFullJid getJID() {
         return JID;
     }
 
@@ -226,7 +228,7 @@ public final class SessionManager implements ConnectionListener {
      *
      * @param jid the jid of the current Spark user.
      */
-    public void setJID(String jid) {
+    public void setJID(EntityFullJid jid) {
         this.JID = jid;
     }
 
@@ -254,11 +256,22 @@ public final class SessionManager implements ConnectionListener {
      * be derek@jivesoftware.com)
      *
      * @return the users bare address.
+     * @deprecated use {@link #getBareUserAddress()} instead.
      */
+    @Deprecated
     public String getBareAddress() {
-        return userBareAddress;
+        return userBareAddress.toString();
     }
 
+    /**
+     * Returns the users bare address. A bare-address is the address without a resource (ex. derek@jivesoftware.com/spark would
+     * be derek@jivesoftware.com)
+     *
+     * @return the users bare address.
+     */
+    public EntityBareJid getBareUserAddress() {
+        return userBareAddress;
+    }
 
     /**
      * Returns the Discovered Items.

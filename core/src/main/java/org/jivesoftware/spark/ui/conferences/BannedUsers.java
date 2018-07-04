@@ -25,6 +25,9 @@ import org.jivesoftware.spark.component.renderer.ListIconRenderer;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.rooms.GroupChatRoom;
 import org.jivesoftware.spark.util.log.Log;
+import org.jxmpp.jid.Jid;
+import org.jxmpp.jid.impl.JidCreate;
+import org.jxmpp.stringprep.XmppStringprepException;
 
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
@@ -84,11 +87,12 @@ public class BannedUsers extends JPanel {
         unBanMenuItem.addActionListener( e -> {
             int index = list.getSelectedIndex();
             ImageIcon icon = (ImageIcon)list.getModel().getElementAt(index);
-            String jid = icon.getDescription();
+            String jidString = icon.getDescription();
             try {
+                Jid jid = JidCreate.fromUnescaped(jidString);
                 chat.grantMembership(jid);
             }
-            catch (XMPPException | SmackException memEx) {
+            catch (XMPPException | SmackException | XmppStringprepException | InterruptedException memEx) {
                 Log.error("Error granting membership", memEx);
             }
             listModel.removeElementAt(index);
@@ -117,14 +121,14 @@ public class BannedUsers extends JPanel {
         try {
             bannedUsers = chat.getOutcasts().iterator();
         }
-        catch (XMPPException | SmackException e) {
+        catch (XMPPException | SmackException | InterruptedException e) {
             Log.error("Error loading all banned users", e);
         }
 
         while (bannedUsers != null && bannedUsers.hasNext()) {
             Affiliate bannedUser = bannedUsers.next();
             ImageIcon icon = SparkRes.getImageIcon(SparkRes.STAR_RED_IMAGE);
-            icon.setDescription(bannedUser.getJid());
+            icon.setDescription(bannedUser.getJid().toString());
             listModel.addElement(icon);
         }
     }

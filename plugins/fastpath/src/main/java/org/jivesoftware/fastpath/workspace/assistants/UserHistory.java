@@ -44,17 +44,18 @@ import org.jivesoftware.smackx.workgroup.packet.Transcripts.TranscriptSummary;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
+import org.jxmpp.jid.EntityBareJid;
 
 public class UserHistory extends JPanel {
 	private static final long serialVersionUID = -1067239194964815379L;
 	private DefaultListModel model = new DefaultListModel();
     private JFrame userFrame;
     private JList list;
-    private String userID;
+    private final EntityBareJid userID;
 
     private JFrame frame;
 
-    public UserHistory(String userID) {
+    public UserHistory(EntityBareJid userID) {
         this.userID = userID;
 
         list = new JList(model);
@@ -94,7 +95,7 @@ public class UserHistory extends JPanel {
                         transcriptList.add(summary);
                     }
                 }
-                catch (XMPPException | SmackException e) {
+                catch (XMPPException | SmackException | InterruptedException e) {
                     Log.error("Error getting transcripts.", e);
                 }
 
@@ -141,7 +142,7 @@ public class UserHistory extends JPanel {
         try {
             transcript = FastpathPlugin.getAgentSession().getTranscript(sessionID);
         }
-        catch (XMPPException | SmackException e) {
+        catch (XMPPException | SmackException | InterruptedException e) {
             Log.error("Error showing transcripts.", e);
         }
 

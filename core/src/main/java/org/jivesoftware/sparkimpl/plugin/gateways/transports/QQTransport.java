@@ -17,6 +17,7 @@ package org.jivesoftware.sparkimpl.plugin.gateways.transports;
 
 
 import org.jivesoftware.resource.SparkRes;
+import org.jxmpp.jid.DomainBareJid;
 import org.jivesoftware.resource.Res;
 
 import javax.swing.Icon;
@@ -24,9 +25,9 @@ import javax.swing.Icon;
 /**
  */
 public class QQTransport implements Transport {
-    private String serviceName;
+    private DomainBareJid serviceName;
 
-    public QQTransport(String serviceName) {
+    public QQTransport(DomainBareJid serviceName) {
         this.serviceName = serviceName;
 
     }
@@ -47,7 +48,8 @@ public class QQTransport implements Transport {
         return SparkRes.getImageIcon(SparkRes.QQ_TRANSPORT_INACTIVE_IMAGE);
     }
 
-    public String getServiceName() {
+    @Override
+    public DomainBareJid getXMPPServiceDomain() {
         return serviceName;
     }
 
@@ -55,7 +57,7 @@ public class QQTransport implements Transport {
         return "QQ";
     }
 
-    public void setServiceName(String serviceName) {
+    public void setServiceName(DomainBareJid serviceName) {
         this.serviceName = serviceName;
     }
 

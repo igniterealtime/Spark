@@ -35,6 +35,11 @@ import org.jivesoftware.spark.util.SwingTimerTask;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.util.log.Log;
+import org.jxmpp.jid.DomainBareJid;
+import org.jxmpp.jid.EntityBareJid;
+import org.jxmpp.jid.EntityFullJid;
+import org.jxmpp.jid.Jid;
+import org.jxmpp.jid.impl.JidCreate;
 import org.jxmpp.util.XmppStringUtils;
 
 import javax.swing.*;
@@ -89,11 +94,11 @@ public class FastpathPlugin implements Plugin, ConnectionListener {
         try {
             DiscoverItems items = SparkManager.getSessionManager().getDiscoveredItems();
             for (DiscoverItems.Item item : items.getItems() ) {
-                String entityID = item.getEntityID() != null ? item.getEntityID() : "";
+                String entityID = item.getEntityID() != null ? item.getEntityID().toString() : "";
                 if (entityID.startsWith("workgroup")) {
                     // Log into workgroup
-                    final String workgroupService = "workgroup." + SparkManager.getSessionManager().getServerAddress();
-                    final String jid = SparkManager.getSessionManager().getJID();
+                    final DomainBareJid workgroupService = JidCreate.domainBareFromOrThrowUnchecked("workgroup." + SparkManager.getSessionManager().getServerAddress());
+                    final EntityFullJid jid = SparkManager.getSessionManager().getJID();
 
 
                     SwingWorker worker = new SwingWorker() {
@@ -101,7 +106,7 @@ public class FastpathPlugin implements Plugin, ConnectionListener {
                             try {
                                 return Agent.getWorkgroups(workgroupService, jid, SparkManager.getConnection());
                             }
-                            catch (XMPPException | SmackException e1) {
+                            catch (XMPPException | SmackException | InterruptedException e1) {
                                 return Collections.emptyList();
                             }
                         }
@@ -310,13 +315,13 @@ public class FastpathPlugin implements Plugin, ConnectionListener {
                 logoutButton.setVisible(true);
                 joinButton.setVisible(false);
                 comboBox.setVisible(false);
-                String workgroup = comboBox.getSelectedItem() + "@" + getComponentAddress();
+                EntityBareJid workgroup = JidCreate.entityBareFromOrThrowUnchecked(comboBox.getSelectedItem() + "@" + getComponentAddress());
                 if (agentSession != null && agentSession.isOnline()) {
                     try {
                         agentSession.setOnline(false);
                         agentSession.setOnline(true);
                     }
-                    catch (XMPPException | SmackException e) {
+                    catch (XMPPException | SmackException | InterruptedException e) {
                         Log.error(e);
                         leaveWorkgroup();
                         joinButton.setEnabled(true);
@@ -328,7 +333,7 @@ public class FastpathPlugin implements Plugin, ConnectionListener {
                     try {
                         agentSession.setOnline(true);
                     }
-                    catch (XMPPException | SmackException e1) {
+                    catch (XMPPException | SmackException | InterruptedException e1) {
                         Log.error(e1);
                         leaveWorkgroup();
                         joinButton.setEnabled(true);
@@ -371,8 +376,8 @@ public class FastpathPlugin implements Plugin, ConnectionListener {
 
         comboBox.removeAllItems();
         // Log into workgroup
-        String workgroupService = "workgroup." + SparkManager.getSessionManager().getServerAddress();
-        String jid = SparkManager.getSessionManager().getJID();
+        DomainBareJid workgroupService = JidCreate.domainBareFromOrThrowUnchecked("workgroup." + SparkManager.getSessionManager().getServerAddress());
+        EntityFullJid jid = SparkManager.getSessionManager().getJID();
 
         try {
             Collection<String> col = Agent.getWorkgroups(workgroupService, jid, SparkManager.getConnection());
@@ -385,7 +390,7 @@ public class FastpathPlugin implements Plugin, ConnectionListener {
                 comboBox.addItem(XmppStringUtils.parseLocalpart(workgroup));
             }
         }
-        catch (XMPPException | SmackException ee) {
+        catch (XMPPException | SmackException | InterruptedException ee) {
             // If the user does not belong to a workgroup, then don't initialize the rest of the plugin.
             return;
         }
@@ -393,7 +398,7 @@ public class FastpathPlugin implements Plugin, ConnectionListener {
         try {
             agentSession.setOnline(false);
         }
-        catch (XMPPException | SmackException e1) {
+        catch (XMPPException | SmackException | InterruptedException e1) {
             Log.error(e1);
         }
         litWorkspace.unload();

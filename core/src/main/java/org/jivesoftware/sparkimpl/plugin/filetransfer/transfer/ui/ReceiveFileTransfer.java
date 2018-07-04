@@ -71,6 +71,8 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.filetransfer.transfer.Downloads;
 
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+import org.jxmpp.jid.BareJid;
+import org.jxmpp.jid.Jid;
 import org.jxmpp.util.XmppStringUtils;
 
 public class ReceiveFileTransfer extends JPanel {
@@ -160,8 +162,8 @@ public class ReceiveFileTransfer extends JPanel {
     public void acceptFileTransfer(final FileTransferRequest request) {
         String fileName = request.getFileName();
         long fileSize = request.getFileSize();
-        String requestor = request.getRequestor();
-        String bareJID = XmppStringUtils.parseBareJid(requestor);
+        Jid requestor = request.getRequestor();
+        BareJid bareJID = requestor.asBareJid();
         //SPARK-1869
         FileTransferNegotiator.getInstanceFor(SparkManager.getConnection());
         FileTransferNegotiator.IBB_ONLY = SettingsManager.getLocalPreferences().isFileTransferIbbOnly();
@@ -208,7 +210,7 @@ public class ReceiveFileTransfer extends JPanel {
                     {
                         request.reject();
                     }
-                    catch ( SmackException.NotConnectedException e1 )
+                    catch ( SmackException.NotConnectedException | InterruptedException e1 )
                     {
                         Log.warning( "Unable to reject the request.", ex);
                     }
@@ -258,7 +260,7 @@ public class ReceiveFileTransfer extends JPanel {
         {
             request.reject();
         }
-        catch ( SmackException.NotConnectedException ex )
+        catch ( SmackException.NotConnectedException | InterruptedException ex )
         {
             Log.warning( "Unable to reject the request.", ex);
         }
@@ -275,8 +277,8 @@ public class ReceiveFileTransfer extends JPanel {
     }
 
     private void acceptRequest(final FileTransferRequest request) {
-	String requestor = request.getRequestor();
-	String bareJID = XmppStringUtils.parseBareJid(requestor);
+	Jid requestor = request.getRequestor();
+	BareJid bareJID = requestor.asBareJid();
 
 	ContactList contactList = SparkManager.getWorkspace().getContactList();
 	final ContactItem contactItem = contactList
@@ -297,7 +299,7 @@ public class ReceiveFileTransfer extends JPanel {
 	
 	try {
 	    _starttime = System.currentTimeMillis();
-            transfer.recieveFile(downloadedFile);
+            transfer.receiveFile(downloadedFile);
         }
         catch (SmackException | IOException e) {
             Log.error(e);
@@ -484,7 +486,7 @@ public class ReceiveFileTransfer extends JPanel {
 
         showAlert(true);
 
-        String bareJID = XmppStringUtils.parseBareJid(request.getRequestor());
+        BareJid bareJID = request.getRequestor().asBareJid();
 
         ContactList contactList = SparkManager.getWorkspace().getContactList();
         ContactItem contactItem = contactList.getContactItemByJID(bareJID);

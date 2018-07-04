@@ -66,6 +66,9 @@ import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.alerts.SparkToaster;
+import org.jxmpp.jid.EntityBareJid;
+import org.jxmpp.jid.Jid;
+import org.jxmpp.jid.util.JidUtil;
 
 /**
  * Handles invitations and transfers of Fastpath Requests.
@@ -82,7 +85,7 @@ public class UserInvitationPane {
     private SparkToaster toasterManager;
 
 
-    public UserInvitationPane(final Offer offer, final RequestUtils request, final String fullRoomJID, final String inviter, String reason) {
+    public UserInvitationPane(final Offer offer, final RequestUtils request, final EntityBareJid fullRoomJID, final EntityBareJid inviter, String reason) {
         // Add to Chat window
         ChatManager chatManager = SparkManager.getChatManager();
 
@@ -94,7 +97,7 @@ public class UserInvitationPane {
                 return;
             }
         }
-        catch ( SmackException.NotConnectedException | ChatNotFoundException e)
+        catch ( SmackException.NotConnectedException | ChatNotFoundException | InterruptedException e)
         {
             Log.warning( "Unable to reject offer " + offer, e );
         }
@@ -142,7 +145,7 @@ public class UserInvitationPane {
         nameLabel.setFont(new Font("Dialog", Font.BOLD, 11));
         final WrappedLabel valueLabel = new WrappedLabel();
         valueLabel.setBackground(Color.white);
-        valueLabel.setText(fullRoomJID);
+        valueLabel.setText(fullRoomJID.toString());
         topPanel.add(nameLabel, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0));
         topPanel.add(valueLabel, new GridBagConstraints(1, 2, 3, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(2, 2, 2, 2), 0, 0));
 
@@ -195,7 +198,7 @@ public class UserInvitationPane {
                         {
                             offer.accept();
                         }
-                        catch ( SmackException.NotConnectedException e1 )
+                        catch ( SmackException.NotConnectedException | InterruptedException e1 )
                         {
                             Log.warning( "Unable to accept offer " + offer, e1 );
                         }
@@ -283,7 +286,7 @@ public class UserInvitationPane {
         {
             offer.reject();
         }
-        catch ( SmackException.NotConnectedException e )
+        catch ( SmackException.NotConnectedException | InterruptedException e )
         {
             Log.warning( "Unable to reject offer " + offer, e );
         }
@@ -317,7 +320,7 @@ public class UserInvitationPane {
             try {
                 owners = muc.getOwners();
             }
-            catch (XMPPException | SmackException e1) {
+            catch (XMPPException | SmackException | InterruptedException e1) {
                 return;
             }
 
@@ -327,23 +330,24 @@ public class UserInvitationPane {
 
             Iterator<Affiliate> iter = owners.iterator();
 
-            List<String> list = new ArrayList<String>();
+            List<Jid> list = new ArrayList<>();
             while (iter.hasNext()) {
                 Affiliate affilitate = iter.next();
-                String jid = affilitate.getJid();
-                if (!jid.equals(SparkManager.getSessionManager().getBareAddress())) {
+                Jid jid = affilitate.getJid();
+                if (!jid.equals(SparkManager.getSessionManager().getBareUserAddress())) {
                     list.add(jid);
                 }
             }
             if (list.size() > 0) {
                 try {
                     Form form = muc.getConfigurationForm().createAnswerForm();
-                    form.setAnswer("muc#roomconfig_roomowners", list);
+                    List<String> jidStrings = JidUtil.toStringList(list);
+                    form.setAnswer("muc#roomconfig_roomowners", jidStrings);
 
                     // new DataFormDialog(groupChat, form);
                     muc.sendConfigurationForm(form);
                 }
-                catch (XMPPException | SmackException e) {
+                catch (XMPPException | SmackException | InterruptedException e) {
                     Log.error(e);
                 }
             }
@@ -380,7 +384,7 @@ public class UserInvitationPane {
         toasterManager.close();
     }
 
-    private void startFastpathChat(String fullRoomJID, String roomName) {
+    private void startFastpathChat(EntityBareJid fullRoomJID, String roomName) {
         // Add to Chat window
         ChatManager chatManager = SparkManager.getChatManager();
 
@@ -399,7 +403,7 @@ public class UserInvitationPane {
                 {
                     offer.reject();
                 }
-                catch ( SmackException.NotConnectedException e )
+                catch ( SmackException.NotConnectedException | InterruptedException e )
                 {
                     Log.warning( "Unable to reject offer " + offer, e );
                 }
