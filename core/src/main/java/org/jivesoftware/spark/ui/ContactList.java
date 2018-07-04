@@ -21,9 +21,12 @@ import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.*;
+import org.jivesoftware.smack.XMPPException.XMPPErrorException;
 import org.jivesoftware.smack.filter.StanzaTypeFilter;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smack.packet.StanzaError;
+import org.jivesoftware.smack.packet.StanzaError.Condition;
 import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.roster.RosterEntry;
 import org.jivesoftware.smack.roster.RosterGroup;
@@ -49,6 +52,10 @@ import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 import org.jivesoftware.sparkimpl.profile.VCardManager;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+import org.jxmpp.jid.BareJid;
+import org.jxmpp.jid.Jid;
+import org.jxmpp.jid.impl.JidCreate;
+import org.jxmpp.jid.util.JidUtil;
 import org.jxmpp.util.XmppStringUtils;
 
 import javax.swing.*;
@@ -105,7 +112,8 @@ public class ContactList extends JPanel implements ActionListener,
     
     private ContactItem contactItem;
     
-    private String name, user;
+    private String name;
+    private BareJid user;
 
 
     public static final String RETRY_PANEL = "RETRY_PANEL";
@@ -267,7 +275,7 @@ public class ContactList extends JPanel implements ActionListener,
 		for(RosterEntry r : roster)
 		{
 		    Presence p = new Presence(Presence.Type.unavailable);
-		    moveToOfflineGroup(p, r.getUser());
+		    moveToOfflineGroup(p, r.getJid());
 		}
 		return true;
 	    }
@@ -288,7 +296,7 @@ public class ContactList extends JPanel implements ActionListener,
 		final Collection<RosterEntry> roster = Roster.getInstanceFor( SparkManager.getConnection()).getEntries();
 		for (RosterEntry r : roster) {
 		    Presence p = new Presence(Presence.Type.unavailable);
-		    moveToOfflineGroup(p, r.getUser());
+		    moveToOfflineGroup(p, r.getJid());
 		}
 		return true;
 	    }
@@ -310,17 +318,17 @@ public class ContactList extends JPanel implements ActionListener,
 
         final Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
 
-        final String bareJID = XmppStringUtils.parseBareJid(presence.getFrom());
+        final BareJid bareJID = presence.getFrom().asBareJid();
 
         RosterEntry entry = roster.getEntry(bareJID);
         boolean isPending = entry != null && (entry.getType() == RosterPacket.ItemType.none || entry.getType() == RosterPacket.ItemType.from)
-            && RosterPacket.ItemStatus.SUBSCRIPTION_PENDING == entry.getStatus();
+            && entry.isSubscriptionPending();
 
         // If online, check to see if they are in the offline group.
         // If so, remove from offline group and add to all groups they
         // belong to.
 
-        if (presence.getType() == Presence.Type.available && offlineGroup.getContactItemByJID(bareJID) != null || ( presence.getFrom().contains( "workgroup." ) )) {
+        if (presence.getType() == Presence.Type.available && offlineGroup.getContactItemByJID(bareJID) != null || ( presence.getFrom().toString().contains( "workgroup." ) )) {
             changeOfflineToOnline(bareJID, entry, presence);
         }
         else if (presence.getType() == Presence.Type.available) {
@@ -346,7 +354,7 @@ public class ContactList extends JPanel implements ActionListener,
      * @param entry    the roster entry being updated.
      * @param bareJID  the bare jid of the user.
      */
-    private void updateContactItemsPresence(Presence presence, RosterEntry entry, String bareJID) {
+    private void updateContactItemsPresence(Presence presence, RosterEntry entry, BareJid bareJID) {
         for (ContactGroup group : groupList) {
             ContactItem item = group.getContactItemByJID(bareJID);
             if (item != null) {
@@ -366,7 +374,7 @@ public class ContactList extends JPanel implements ActionListener,
      * @param presence the users presence.
      * @param bareJID  the bareJID of the user.
      */
-    private void moveToOfflineGroup(final Presence presence, final String bareJID) {
+    private void moveToOfflineGroup(final Presence presence, final BareJid bareJID) {
         for (ContactGroup grpItem : new ArrayList<>( groupList )) {
             final ContactGroup group = grpItem;
             final ContactItem item = group.getContactItemByJID(bareJID);
@@ -395,7 +403,7 @@ public class ContactList extends JPanel implements ActionListener,
                             group.removeContactItem(item);
                             checkGroup(group);
 
-                            if (offlineGroup.getContactItemByJID(item.getJID()) == null) {
+                            if (offlineGroup.getContactItemByJID(item.getJid()) == null) {
                                 moveToOffline(item);
                                 offlineGroup.fireContactGroupUpdated();
                             }
@@ -418,7 +426,7 @@ public class ContactList extends JPanel implements ActionListener,
      * @param entry    the <code>RosterEntry</code> of the user.
      * @param presence the users presence.
      */
-    private void changeOfflineToOnline(String bareJID, final RosterEntry entry, Presence presence) {
+    private void changeOfflineToOnline(BareJid bareJID, final RosterEntry entry, Presence presence) {
         // Move out of offline group. Add to all groups.
         final ContactItem offlineItem = offlineGroup.getContactItemByJID(bareJID);
 
@@ -440,7 +448,7 @@ public class ContactList extends JPanel implements ActionListener,
 
             if (contactGroup != null) {
                 ContactItem changeContactItem;
-                if (contactGroup.getContactItemByJID(entry.getUser()) == null) {
+                if (contactGroup.getContactItemByJID(entry.getJid()) == null) {
                 	ContactItem offlineCurrentItem = contactGroup.getOfflineContactItemByJID(bareJID);
                 	//prevents from duplicating roster contacts when users going offline and online with Offline Group invisible
                 	contactGroup.removeContactItem(offlineCurrentItem);
@@ -449,7 +457,7 @@ public class ContactList extends JPanel implements ActionListener,
                     // dispatch thread
                     if (EventQueue.isDispatchThread()) {
 
-                        changeContactItem = UIComponentRegistry.createContactItem(entry.getName(), null, entry.getUser());
+                        changeContactItem = UIComponentRegistry.createContactItem(entry.getName(), null, entry.getJid());
                         contactGroup.addContactItem(changeContactItem);
                         changeContactItem.setAvailable(true);
                         changeContactItem.setPresence(presence);                        
@@ -482,7 +490,7 @@ public class ContactList extends JPanel implements ActionListener,
                         //Reconnection and not in dispatch Thread -> Add to EVentQueue
                         EventQueue.invokeLater( () -> {
 
-                            final ContactItem changeContact = UIComponentRegistry.createContactItem(entry.getName(), null, entry.getUser());
+                            final ContactItem changeContact = UIComponentRegistry.createContactItem(entry.getName(), null, entry.getJid());
                             staticContactGroup.addContactItem(changeContact);
                             changeContact.setPresence(staticItemPrecense);
                             changeContact.setAvailable(true);
@@ -502,12 +510,12 @@ public class ContactList extends JPanel implements ActionListener,
         if (!isFiled) {
 
             
-            if (unfiledGroup.getContactItemByJID(entry.getUser()) == null) {
+            if (unfiledGroup.getContactItemByJID(entry.getJid()) == null) {
                 // If we are reconnecting we have to check if we are on the
                 // dispatch thread
                 if (EventQueue.isDispatchThread()) {
 
-                    contactItem = UIComponentRegistry.createContactItem(entry.getName(), null, entry.getUser());
+                    contactItem = UIComponentRegistry.createContactItem(entry.getName(), null, entry.getJid());
                     ContactGroup unfiledGrp = getUnfiledGroup();
                     unfiledGrp.addContactItem(contactItem);
                     contactItem.setPresence(presence);
@@ -522,7 +530,7 @@ public class ContactList extends JPanel implements ActionListener,
                 } else {
                     final Presence staticItemPrecense = presence;
                     EventQueue.invokeLater( () -> {
-                        contactItem = UIComponentRegistry.createContactItem(entry.getName(), null, entry.getUser());
+                        contactItem = UIComponentRegistry.createContactItem(entry.getName(), null, entry.getJid());
                         ContactGroup unfiledGrp = getUnfiledGroup();
 
                         contactItem.setPresence(staticItemPrecense);
@@ -558,7 +566,7 @@ public class ContactList extends JPanel implements ActionListener,
         	if(group.getName() == null || Objects.equals( group.getName(), "" ) ){
         		for(RosterEntry entry : group.getEntries()){
         			
-				ContactItem buildContactItem = UIComponentRegistry.createContactItem(entry.getName(), null, entry.getUser());
+				ContactItem buildContactItem = UIComponentRegistry.createContactItem(entry.getName(), null, entry.getJid());
                     moveToOffline(buildContactItem);
         		}
         	}else{
@@ -571,10 +579,10 @@ public class ContactList extends JPanel implements ActionListener,
 	            for (RosterEntry entry : group.getEntries()) {
 	            	contactItem = null;
 	            	name = entry.getName();
-	            	user = entry.getUser();
+	            	user = entry.getJid();
 	            	// in case of connection lost, the creation must be done in eventqueue
 	            	if(EventQueue.isDispatchThread()) {
-				contactItem = UIComponentRegistry.createContactItem(entry.getName(), null, entry.getUser());
+				contactItem = UIComponentRegistry.createContactItem(entry.getName(), null, entry.getJid());
 	            	}
 	            	else {
 	            		try {
@@ -590,13 +598,13 @@ public class ContactList extends JPanel implements ActionListener,
 	            	
 	                contactItem.setPresence(new Presence(Presence.Type.unavailable));
 	                if ((entry.getType() == RosterPacket.ItemType.none || entry.getType() == RosterPacket.ItemType.from)
-	                    && RosterPacket.ItemStatus.SUBSCRIPTION_PENDING == entry.getStatus()) {
+	                    && entry.isSubscriptionPending()) {
 	                    // Add to contact group.
 	                    contactGroup.addContactItem(contactItem);
 	                    contactGroup.setVisible(true);
 	                }
 	                else {
-	                    if (offlineGroup.getContactItemByJID(entry.getUser()) == null) {
+	                    if (offlineGroup.getContactItemByJID(entry.getJid()) == null) {
 	                        moveToOffline(contactItem);
 	                    }
 	                }
@@ -607,7 +615,7 @@ public class ContactList extends JPanel implements ActionListener,
         if (EventQueue.isDispatchThread()) {
             // Add Unfiled Group
             for (RosterEntry entry : roster.getUnfiledEntries()) {
-                ContactItem moveToOfflineContactItem = UIComponentRegistry.createContactItem(entry.getName(), null, entry.getUser());
+                ContactItem moveToOfflineContactItem = UIComponentRegistry.createContactItem(entry.getName(), null, entry.getJid());
                 moveToOffline(moveToOfflineContactItem);
             }
         }
@@ -616,7 +624,7 @@ public class ContactList extends JPanel implements ActionListener,
         	try {
         	EventQueue.invokeAndWait( () -> {
 for (RosterEntry entry : roster.getUnfiledEntries()) {
-ContactItem moveToOfflineContactItem = UIComponentRegistry.createContactItem(entry.getName(), null, entry.getUser());
+ContactItem moveToOfflineContactItem = UIComponentRegistry.createContactItem(entry.getName(), null, entry.getJid());
 moveToOffline(moveToOfflineContactItem);
 }
             } );
@@ -632,12 +640,13 @@ moveToOffline(moveToOfflineContactItem);
      *
      * @param addresses the address added.
      */
-    public void entriesAdded(final Collection<String> addresses) {
+    @Override
+    public void entriesAdded(final Collection<Jid> addresses) {
         SwingUtilities.invokeLater( () -> {
             Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
 
-            for (String jid : addresses) {
-                RosterEntry entry = roster.getEntry(jid);
+            for (Jid jid : addresses) {
+                RosterEntry entry = roster.getEntry(jid.asBareJid());
                 addUser(entry);
             }
         } );
@@ -649,7 +658,7 @@ moveToOffline(moveToOfflineContactItem);
      * @param entry the <code>RosterEntry</code> of the the user.
      */
     private void addUser(RosterEntry entry) {
-        ContactItem newContactItem = UIComponentRegistry.createContactItem(entry.getName(), null, entry.getUser());
+        ContactItem newContactItem = UIComponentRegistry.createContactItem(entry.getName(), null, entry.getJid());
 
         if (entry.getType() == RosterPacket.ItemType.none || entry.getType() == RosterPacket.ItemType.from) {
             // Ignore, since the new user is pending to be added.
@@ -660,7 +669,7 @@ moveToOffline(moveToOfflineContactItem);
                 }
 
                 boolean isPending = entry.getType() == RosterPacket.ItemType.none || entry.getType() == RosterPacket.ItemType.from
-                    && RosterPacket.ItemStatus.SUBSCRIPTION_PENDING == entry.getStatus();
+                    && entry.isSubscriptionPending();
                 if (isPending) {
                     contactGroup.setVisible(true);
                 }
@@ -674,7 +683,7 @@ moveToOffline(moveToOfflineContactItem);
         }
 
         // Update users icon
-        Presence presence = Roster.getInstanceFor( SparkManager.getConnection() ).getPresence(entry.getUser());
+        Presence presence = Roster.getInstanceFor( SparkManager.getConnection() ).getPresence(entry.getJid());
         try {
             updateUserPresence(presence);
         }
@@ -688,7 +697,8 @@ moveToOffline(moveToOfflineContactItem);
      *
      * @param addresses List of entries that were updated.
      */
-    public void entriesUpdated(final Collection<String> addresses) {
+    @Override
+    public void entriesUpdated(final Collection<Jid> addresses) {
         handleEntriesUpdated(addresses);
     }
 
@@ -697,10 +707,11 @@ moveToOffline(moveToOfflineContactItem);
      *
      * @param addresses the addresses removed from the roster.
      */
-    public void entriesDeleted(final Collection<String> addresses) {
+    @Override
+    public void entriesDeleted(final Collection<Jid> addresses) {
         SwingUtilities.invokeLater( () -> {
-            for (String jid : addresses) {
-                removeContactItem(jid);
+            for (Jid jid : addresses) {
+                removeContactItem(jid.asBareJid());
             }
         } );
 
@@ -711,14 +722,14 @@ moveToOffline(moveToOfflineContactItem);
      *
      * @param addresses the Collection of addresses that have been modified within the Roster.
      */
-    private synchronized void handleEntriesUpdated(final Collection<String> addresses) {
+    private synchronized void handleEntriesUpdated(final Collection<Jid> addresses) {
         SwingUtilities.invokeLater( () -> {
             Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
 
-            Iterator<String> jids = addresses.iterator();
+            Iterator<Jid> jids = addresses.iterator();
             while (jids.hasNext()) {
-                String jid = jids.next();
-                RosterEntry rosterEntry = roster.getEntry(jid);
+                Jid jid = jids.next();
+                RosterEntry rosterEntry = roster.getEntry(jid.asBareJid());
                 if (rosterEntry != null) {
                     // Check for new Roster Groups and add them if they do not exist.
                     boolean isUnfiled = true;
@@ -731,9 +742,9 @@ moveToOffline(moveToOfflineContactItem);
                             ContactGroup contactGroup = addContactGroup(group.getName());
                             contactGroup.setVisible(false);
                             contactGroup = getContactGroup(group.getName());
-                            ContactItem contactItem1 = UIComponentRegistry.createContactItem(rosterEntry.getName(), null, rosterEntry.getUser());
+                            ContactItem contactItem1 = UIComponentRegistry.createContactItem(rosterEntry.getName(), null, rosterEntry.getJid());
                             contactGroup.addContactItem( contactItem1 );
-                            Presence presence = PresenceManager.getPresence(jid);
+                            Presence presence = PresenceManager.getPresence(jid.asBareJid());
                             contactItem1.setPresence(presence);
                             if (presence.isAvailable()) {
                                 contactGroup.setVisible(true);
@@ -741,14 +752,14 @@ moveToOffline(moveToOfflineContactItem);
                         }
                         else {
                             ContactGroup contactGroup = getContactGroup(group.getName());
-                            ContactItem item = offlineGroup.getContactItemByJID(jid);
+                            ContactItem item = offlineGroup.getContactItemByJID(jid.asBareJid());
                             if (item == null) {
-                                item = contactGroup.getContactItemByJID(jid);
+                                item = contactGroup.getContactItemByJID(jid.asBareJid());
                             }
                             // Check to see if this entry is new to a pre-existing group.
                             if (item == null) {
-                                item = UIComponentRegistry.createContactItem(rosterEntry.getName(), null, rosterEntry.getUser());
-                                Presence presence = PresenceManager.getPresence(jid);
+                                item = UIComponentRegistry.createContactItem(rosterEntry.getName(), null, rosterEntry.getJid());
+                                Presence presence = PresenceManager.getPresence(jid.asBareJid());
                                 item.setPresence(presence);
                                 if (presence.isAvailable()) {
                                     contactGroup.addContactItem(item);
@@ -762,8 +773,8 @@ moveToOffline(moveToOfflineContactItem);
 
                             // If not, just update their presence.
                             else {
-                                RosterEntry entry = roster.getEntry(jid);
-                                Presence presence = PresenceManager.getPresence(jid);
+                                RosterEntry entry = roster.getEntry(jid.asBareJid());
+                                Presence presence = PresenceManager.getPresence(jid.asBareJid());
                                 item.setPresence(presence);
                                 try {
                                     updateUserPresence(presence);
@@ -773,7 +784,7 @@ moveToOffline(moveToOfflineContactItem);
                                 }
 
                                 if (entry != null && (entry.getType() == RosterPacket.ItemType.none || entry.getType() == RosterPacket.ItemType.from)
-                                    && RosterPacket.ItemStatus.SUBSCRIPTION_PENDING == entry.getStatus()) {
+                                    && entry.isSubscriptionPending()) {
                                     contactGroup.setVisible(true);
 
                                 }
@@ -788,7 +799,7 @@ moveToOffline(moveToOfflineContactItem);
                     jids = addresses.iterator();
                     while (jids.hasNext()) {
                         jid = jids.next();
-                        rosterEntry = roster.getEntry(jid);
+                        rosterEntry = roster.getEntry(jid.asBareJid());
 
                         boolean unfiled = true;
                         for (RosterGroup g : rosterEntry.getGroups()) {
@@ -797,7 +808,7 @@ moveToOffline(moveToOfflineContactItem);
                         }
 
                         for (ContactGroup group : new ArrayList<>( getContactGroups() )) {
-                            ContactItem itemFound = group.getContactItemByJID(jid);
+                            ContactItem itemFound = group.getContactItemByJID(jid.asBareJid());
                             if (itemFound != null && !unfiled && group != getUnfiledGroup() && group != offlineGroup) {
                                 if (!userGroupSet.contains(group.getGroupName())) {
                                     if (group.getContactItems().isEmpty()) {
@@ -817,15 +828,15 @@ moveToOffline(moveToOfflineContactItem);
                     }
 
                     ContactGroup unfiledGrp = getUnfiledGroup();
-                    ContactItem unfiledItem = unfiledGrp.getContactItemByJID(jid);
+                    ContactItem unfiledItem = unfiledGrp.getContactItemByJID(jid.asBareJid());
                     if (unfiledItem != null) {
 
                     }
                     else {
-                        ContactItem offlineItem = offlineGroup.getContactItemByJID(jid);
+                        ContactItem offlineItem = offlineGroup.getContactItemByJID(jid.asBareJid());
                         if (offlineItem != null) {
                             if ((rosterEntry.getType() == RosterPacket.ItemType.none || rosterEntry.getType() == RosterPacket.ItemType.from)
-                                && RosterPacket.ItemStatus.SUBSCRIPTION_PENDING == rosterEntry.getStatus()) {
+                                && rosterEntry.isSubscriptionPending()) {
                                 // Remove from offlineItem and add to unfiledItem.
                                 offlineGroup.removeContactItem(offlineItem);
                                 unfiledGrp.addContactItem(offlineItem);
@@ -843,15 +854,20 @@ moveToOffline(moveToOfflineContactItem);
 
     }
 
+    public ContactItem getContactItemByJID(CharSequence jid) {
+        BareJid bareJid = JidCreate.bareFromOrThrowUnchecked(jid);
+        return getContactItemByJID(bareJid);
+    }
+
     /**
      * Retrieve the ContactItem by it's jid.
      *
      * @param jid the JID of the user.
      * @return the "first" contact item found.
      */
-    public ContactItem getContactItemByJID(String jid) {
+    public ContactItem getContactItemByJID(BareJid jid) {
         for (ContactGroup group : getContactGroups()) {
-            ContactItem item = group.getContactItemByJID(XmppStringUtils.parseBareJid(jid));
+            ContactItem item = group.getContactItemByJID(jid);
             if (item != null) {
                 return item;
             }
@@ -865,10 +881,11 @@ moveToOffline(moveToOfflineContactItem);
      * @param jid the users JID.
      * @return a Collection of <code>ContactItem</code> items.
      */
-    public Collection<ContactItem> getContactItemsByJID(String jid) {
+    public Collection<ContactItem> getContactItemsByJID(Jid jid) {
+        final BareJid bareJid = jid.asBareJid();
         final List<ContactItem> list = new ArrayList<>();
         for (ContactGroup group : getContactGroups()) {
-            ContactItem item = group.getContactItemByJID(XmppStringUtils.parseBareJid(jid));
+            ContactItem item = group.getContactItemByJID(bareJid);
             if (item != null) {
                 list.add(item);
             }
@@ -879,7 +896,7 @@ moveToOffline(moveToOfflineContactItem);
          */
         for( ContactGroup group : getContactGroups() ) {
             for (ContactItem offlineItem : group.getOfflineContacts() ) {
-                if ( offlineItem != null && offlineItem.getJID().equalsIgnoreCase(XmppStringUtils.parseBareJid(jid)) ) {
+                if ( offlineItem != null && offlineItem.getJid().equals(bareJid) ) {
                     if ( !list.contains(offlineItem) ) {
                         list.add(offlineItem);
                     }
@@ -896,9 +913,9 @@ moveToOffline(moveToOfflineContactItem);
      * @param jid  the users jid.
      * @param icon the icon to use.
      */
-    public void setIconFor(String jid, Icon icon) {
+    public void setIconFor(Jid jid, Icon icon) {
         for (ContactGroup group : getContactGroups()) {
-            ContactItem item = group.getContactItemByJID(XmppStringUtils.parseBareJid(jid));
+            ContactItem item = group.getContactItemByJID(jid.asBareJid());
             if (item != null) {
                 item.setIcon(icon);
                 group.fireContactGroupUpdated();
@@ -911,9 +928,9 @@ moveToOffline(moveToOfflineContactItem);
      *
      * @param jid the users jid.
      */
-    public void useDefaults(String jid) {
+    public void useDefaults(Jid jid) {
         for (ContactGroup group : getContactGroups()) {
-            ContactItem item = group.getContactItemByJID(XmppStringUtils.parseBareJid(jid));
+            ContactItem item = group.getContactItemByJID(jid.asBareJid());
             if (item != null) {
                 item.updatePresenceIcon(item.getPresence());
                 group.fireContactGroupUpdated();
@@ -928,7 +945,7 @@ moveToOffline(moveToOfflineContactItem);
      * @param displayName the users nickname in the contact list.
      * @return the "first" contact item found.
      */
-    public ContactItem getContactItemByDisplayName(String displayName) {
+    public ContactItem getContactItemByDisplayName(CharSequence displayName) {
         for (ContactGroup contactGroup : getContactGroups()) {
             ContactItem item = contactGroup.getContactItemByDisplayName(displayName);
             if (item != null) {
@@ -1217,7 +1234,7 @@ moveToOffline(moveToOfflineContactItem);
         }
         else if (e.getSource() == chatMenu) {
             if (activeItem != null) {
-                SparkManager.getChatManager().activateChat(activeItem.getJID(), activeItem.getDisplayName());
+                SparkManager.getChatManager().activateChat(activeItem.getJid(), activeItem.getDisplayName());
             }
         }
         else if (e.getSource() == addContactMenu) {
@@ -1247,7 +1264,7 @@ moveToOffline(moveToOfflineContactItem);
 	            	newAlias = null; // allows you to remove an alias.
 	            }
 	            
-	            String address = activeItem.getJID();
+	            BareJid address = activeItem.getJid().asBareJid();
 	            ContactGroup contactGroup = getContactGroup(activeItem.getGroupName());
 	            ContactItem contactItem = contactGroup.getContactItemByDisplayName(activeItem.getDisplayName());
 	            contactItem.setAlias(newAlias);
@@ -1258,7 +1275,7 @@ moveToOffline(moveToOfflineContactItem);
                 {
                     entry.setName(newAlias);
 
-                    final String user = XmppStringUtils.parseBareJid(address);
+                    final BareJid user = address.asBareJid();
                     for ( ContactGroup cg : groupList ) {
                         ContactItem ci = cg.getContactItemByJID(user);
                         if (ci != null) {
@@ -1266,7 +1283,7 @@ moveToOffline(moveToOfflineContactItem);
                         }
                     }
                 }
-                catch ( XMPPException.XMPPErrorException| SmackException.NotConnectedException | SmackException.NoResponseException e1 )
+                catch ( XMPPException.XMPPErrorException| SmackException.NotConnectedException | SmackException.NoResponseException | InterruptedException e1 )
                 {
                     Log.warning( "Unable to set new alias '" + newAlias + "' for roster entry " + address, e1 );
                 }
@@ -1284,17 +1301,17 @@ moveToOffline(moveToOfflineContactItem);
         String groupName = item.getGroupName();
         ContactGroup contactGroup = getContactGroup(groupName);
         Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
-        RosterEntry entry = roster.getEntry(item.getJID());
+        RosterEntry entry = roster.getEntry(item.getJid().asBareJid());
         if (entry != null && contactGroup != offlineGroup) {
             try {
                 RosterGroup rosterGroup = roster.getGroup(groupName);
                 if (rosterGroup != null) {
-                    RosterEntry rosterEntry = rosterGroup.getEntry(entry.getUser());
+                    RosterEntry rosterEntry = rosterGroup.getEntry(entry.getJid());
                     if (rosterEntry != null) {
                         rosterGroup.removeEntry(rosterEntry);
                     }
                 }
-                contactGroup.removeContactItem(contactGroup.getContactItemByJID(item.getJID()));
+                contactGroup.removeContactItem(contactGroup.getContactItemByJID(item.getJid()));
                 checkGroup(contactGroup);
             }
             catch (Exception e) {
@@ -1305,18 +1322,18 @@ moveToOffline(moveToOfflineContactItem);
 
     private void removeContactFromRoster(ContactItem item) {
         Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
-        RosterEntry entry = roster.getEntry(item.getJID());
+        RosterEntry entry = roster.getEntry(item.getJid().asBareJid());
         if (entry != null) {
             try {
                 roster.removeEntry(entry);
             }
-            catch (XMPPException | SmackException e) {
+            catch (XMPPException | SmackException | InterruptedException e) {
                 Log.warning("Unable to remove roster entry.", e);
             }
         }
     }
 
-    private void removeContactItem(String jid) {
+    private void removeContactItem(BareJid jid) {
         for (ContactGroup group : new ArrayList<>( getContactGroups() )) {
             ContactItem item = group.getContactItemByJID(jid);
             group.removeOfflineContactItem(jid);
@@ -1408,7 +1425,7 @@ moveToOffline(moveToOfflineContactItem);
                         try {
                             rosterGroup.removeEntry(entry);
                         }
-                        catch (XMPPException | SmackException ex) {
+                        catch (XMPPException | SmackException | InterruptedException ex) {
                             Log.error("Error removing entry", ex);
                         }
                     }
@@ -1442,7 +1459,7 @@ moveToOffline(moveToOfflineContactItem);
                   toggleGroupVisibility(newName, true);
                   getContactGroup(newName).setCollapsed( group.isCollapsed());
               }
-              catch ( XMPPException.XMPPErrorException| SmackException.NotConnectedException | SmackException.NoResponseException ex )
+              catch ( XMPPException.XMPPErrorException| SmackException.NotConnectedException | SmackException.NoResponseException | InterruptedException ex )
               {
                   Log.warning( "Unable to set new name '" + newName + "' for roster group" + groupName, ex );
               }
@@ -1482,7 +1499,7 @@ moveToOffline(moveToOfflineContactItem);
      * @param component the owning component
      */
     public void showPopup(Component component, MouseEvent e, final ContactItem item) {
-        if (item.getJID() == null) {
+        if (item.getJid() == null) {
             return;
         }
 
@@ -1517,7 +1534,7 @@ moveToOffline(moveToOfflineContactItem);
         // Only show "Remove Contact From Group" if the user belongs to more than one group.
         if (!contactGroup.isSharedGroup() && !contactGroup.isOfflineGroup() && contactGroup != getUnfiledGroup()) {
             Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
-            RosterEntry entry = roster.getEntry(item.getJID());
+            RosterEntry entry = roster.getEntry(item.getJid().asBareJid());
             if (entry != null) {
                 int groupCount = entry.getGroups().size();
 
@@ -1546,7 +1563,7 @@ moveToOffline(moveToOfflineContactItem);
         boolean isInSharedGroup = false;
         for (ContactGroup cGroup : new ArrayList<>( getContactGroups() )) {
             if (cGroup.isSharedGroup()) {
-                ContactItem it = cGroup.getContactItemByJID(item.getJID());
+                ContactItem it = cGroup.getContactItemByJID(item.getJid().asBareJid());
                 if (it != null) {
                     isInSharedGroup = true;
                 }
@@ -1566,7 +1583,7 @@ moveToOffline(moveToOfflineContactItem);
 
 			public void actionPerformed(ActionEvent e) {
                 VCardManager vcardSupport = SparkManager.getVCardManager();
-                String jid = item.getJID();
+                BareJid jid = item.getJid().asBareJid();
                 vcardSupport.viewProfile(jid, SparkManager.getWorkspace());
             }
         };
@@ -1585,13 +1602,14 @@ moveToOffline(moveToOfflineContactItem);
 	            try {
 					String client = "";
 					if (item.getPresence().getType() != Presence.Type.unavailable) {
-						client = item.getPresence().getFrom();
+						client = item.getPresence().getFrom().toString();
 						if ((client != null) && (client.lastIndexOf("/") != -1)) {
 							client = client.substring(client.lastIndexOf("/"));
 						} else client = "/";
 					}
 	
-	                LastActivity activity = LastActivityManager.getInstanceFor( SparkManager.getConnection() ).getLastActivity(item.getJID()+client);
+                    Jid jid = JidCreate.from(item.getJid().toString() + client);
+	                LastActivity activity = LastActivityManager.getInstanceFor( SparkManager.getConnection() ).getLastActivity(jid);
                     long idleTime = (activity.getIdleTime() * 1000);
                     String time = ModelUtil.getTimeFromLong(idleTime);
                     UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
@@ -1624,7 +1642,7 @@ moveToOffline(moveToOfflineContactItem);
                 {
                     SparkManager.getConnection().sendStanza(response);
                 }
-                catch ( SmackException.NotConnectedException e1 )
+                catch ( SmackException.NotConnectedException | InterruptedException e1 )
                 {
                     Log.warning( "Unable to send subscribe to " + jid, e1 );
                 }
@@ -1635,11 +1653,11 @@ moveToOffline(moveToOfflineContactItem);
         subscribeAction.putValue(Action.NAME, Res.getString("menuitem.subscribe.to"));
 
         Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
-        RosterEntry entry = roster.getEntry(item.getJID());
+        RosterEntry entry = roster.getEntry(item.getJid().asBareJid());
         if (entry != null && entry.getType() == RosterPacket.ItemType.from) {
             popup.add(subscribeAction);
         }       
-        else if( entry!=null && entry.getType() != RosterPacket.ItemType.both && entry.getStatus() == RosterPacket.ItemStatus.SUBSCRIPTION_PENDING)
+        else if( entry!=null && entry.getType() != RosterPacket.ItemType.both && entry.isSubscriptionPending())
         {
             popup.add(subscribeAction);
         }
@@ -1723,7 +1741,7 @@ moveToOffline(moveToOfflineContactItem);
                 {
                     SparkManager.getConnection().sendStanza(message);
                 }
-                catch ( SmackException.NotConnectedException e )
+                catch ( SmackException.NotConnectedException | InterruptedException e )
                 {
                     Log.warning( "Unable to send broadcast to " + message.getTo(), e );
                 }
@@ -1746,14 +1764,20 @@ moveToOffline(moveToOfflineContactItem);
         // Hide top toolbar
         SparkManager.getMainWindow().getTopToolBar().setVisible(false);
 
-        final Runnable sharedGroupLoader = () -> {
-// Retrieve shared group list.
-try {
-sharedGroups = SharedGroupManager.getSharedGroups(SparkManager.getConnection());
-}
-catch (XMPPException | SmackException e) {
-Log.error("Unable to contact shared group info.", e);
-}
+		final Runnable sharedGroupLoader = () -> {
+			// Retrieve shared group list.
+			try {
+				sharedGroups = SharedGroupManager.getSharedGroups(SparkManager.getConnection());
+			} catch (XMPPErrorException e) {
+				StanzaError stanzaError = e.getXMPPError();
+				if (stanzaError.getCondition() == Condition.service_unavailable) {
+					// Server does not support shared groups.
+					return;
+				}
+				Log.error("Unable to contact shared group info.", e);
+			} catch (SmackException | InterruptedException e) {
+				Log.error("Unable to contact shared group info.", e);
+			}
 
 SwingUtilities.invokeLater( () -> loadContactList() );
 
@@ -1795,7 +1819,7 @@ SwingUtilities.invokeLater( () -> loadContactList() );
         {
             final Presence presence = (Presence) stanza;
             final Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
-            final RosterEntry entry = roster.getEntry( presence.getFrom() );
+            final RosterEntry entry = roster.getEntry( presence.getFrom().asBareJid() );
 
             switch ( presence.getType() )
             {
@@ -1805,9 +1829,9 @@ SwingUtilities.invokeLater( () -> loadContactList() );
                     {
                         try
                         {
-                            subscriptionRequest( presence.getFrom() );
+                            subscriptionRequest( presence.getFrom().asBareJid() );
                         }
-                        catch ( SmackException.NotConnectedException e )
+                        catch ( SmackException.NotConnectedException | InterruptedException e )
                         {
                             Log.warning( "Unable to process subscription request from: " + presence.getFrom(), e );
                         }
@@ -1820,7 +1844,7 @@ SwingUtilities.invokeLater( () -> loadContactList() );
                     {
                         try
                         {
-                            removeContactItem( presence.getFrom() );
+                            removeContactItem( presence.getFrom().asBareJid() );
                             roster.removeEntry( entry );
                         }
                         catch ( XMPPException | SmackException e )
@@ -1842,8 +1866,8 @@ SwingUtilities.invokeLater( () -> loadContactList() );
 
                 case subscribed:
                     // Someone else approved our request to be subscribed to their presence information.
-                    final String jid = XmppStringUtils.parseBareJid( presence.getFrom() );
-                    final ContactItem item = getContactItemByJID( jid );
+                    final BareJid jid = presence.getFrom().asBareJid();
+                    final ContactItem item = getContactItemByJID( jid.toString() );
 
                     // If item is not in the Contact List, add them.
                     if ( item == null && entry != null )
@@ -1862,15 +1886,15 @@ SwingUtilities.invokeLater( () -> loadContactList() );
                         {
                             try
                             {
-                                removeContactItem( presence.getFrom() );
+                                removeContactItem( presence.getFrom().asBareJid() );
                                 roster.removeEntry( entry );
                             }
-                            catch ( XMPPException | SmackException e )
+                            catch ( XMPPException | SmackException | InterruptedException e )
                             {
                                 Log.error( e );
                             }
                         }
-                        removeContactItem( XmppStringUtils.parseBareJid( presence.getFrom() ) );
+                        removeContactItem( presence.getFrom().asBareJid().asBareJid() );
                     } );
                     break;
 
@@ -2075,7 +2099,7 @@ SwingUtilities.invokeLater( () -> loadContactList() );
         return gList;
     }
 
-    private void subscriptionRequest(final String jid) throws SmackException.NotConnectedException
+    private void subscriptionRequest(final BareJid jid) throws SmackException.NotConnectedException, InterruptedException
     {
         final SubscriptionDialog subscriptionDialog = new SubscriptionDialog();
         subscriptionDialog.invoke(jid);
@@ -2127,7 +2151,7 @@ SwingUtilities.invokeLater( () -> loadContactList() );
    * Selects the first user found with specified jid
    * @param jid, the Users JID
    */
-    public void setSelectedUser(String jid) {
+    public void setSelectedUser(BareJid jid) {
 	for (ContactGroup group : getContactGroups()) {
 	    if (group.getContactItemByJID(jid) != null) {
 
@@ -2533,7 +2557,7 @@ SwingUtilities.invokeLater( () -> loadContactList() );
     private void moveToOffline(ContactItem contactItem) {
         offlineGroup.addContactItem(contactItem);
         	  
-        String jid = contactItem.getJID();
+        BareJid jid = contactItem.getJid().asBareJid();
         Boolean isFiled = false;
 
         final Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
@@ -2544,11 +2568,11 @@ SwingUtilities.invokeLater( () -> loadContactList() );
             }
             if (contactGroup != null) {
                 isFiled = true;
-                contactGroup.addOfflineContactItem(contactItem.getAlias(), contactItem.getNickname(), contactItem.getJID(), contactItem.getStatus());
+                contactGroup.addOfflineContactItem(contactItem.getAlias(), contactItem.getNickname(), contactItem.getJid(), contactItem.getStatus());
             }
         }
         if (!isFiled) {
-            getUnfiledGroup().addOfflineContactItem(contactItem.getAlias(), contactItem.getNickname(), contactItem.getJID(), contactItem.getStatus());
+            getUnfiledGroup().addOfflineContactItem(contactItem.getAlias(), contactItem.getNickname(), contactItem.getJid(), contactItem.getStatus());
         }
         
         if( !localPreferences.isOfflineUsersShown() )

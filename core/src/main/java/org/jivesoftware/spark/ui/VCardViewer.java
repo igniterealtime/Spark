@@ -44,6 +44,7 @@ import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
+import org.jxmpp.jid.BareJid;
 
 /**
  * UI to display VCard Information in Wizards, Dialogs, Chat Rooms and any other container.
@@ -56,7 +57,7 @@ public class VCardViewer extends JPanel {
 	private Cursor DEFAULT_CURSOR = new Cursor(Cursor.DEFAULT_CURSOR);
     private Cursor LINK_CURSOR = new Cursor(Cursor.HAND_CURSOR);
 
-    private final String jid;
+    private final BareJid jid;
     private final JLabel avatarImage;
 
     private String emailAddress = "";
@@ -66,7 +67,7 @@ public class VCardViewer extends JPanel {
      *
      * @param jid the jid to use when retrieving the vcard information.
      */
-    public VCardViewer(final String jid) {
+    public VCardViewer(final BareJid jid) {
         setLayout(new GridBagLayout());
         setOpaque(false);
 

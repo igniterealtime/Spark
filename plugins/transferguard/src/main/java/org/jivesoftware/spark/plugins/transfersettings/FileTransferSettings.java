@@ -23,7 +23,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 import java.util.StringTokenizer;
+
+import org.jxmpp.jid.EntityBareJid;
+import org.jxmpp.jid.util.JidUtil;
 
 /**
  * Bean whose properties are the various preference settings for file transfer.
@@ -31,7 +35,7 @@ import java.util.StringTokenizer;
 public class FileTransferSettings {
 
     private List<String> extensions = new ArrayList<>();
-    private List<String> JIDs = new ArrayList<>();
+    private List<EntityBareJid> JIDs = new ArrayList<>();
     private int kb;
     private boolean checkSize = false;
     String cannedRejectionMessage;
@@ -58,7 +62,7 @@ public class FileTransferSettings {
      * Returns a {@link List} of blocked JIDs. File transfers from users with those JIDs will be automaticlly rejected.
      * @return a {@link List} of blocked JIDs.
      */
-    public List<String> getBlockedJIDs() {
+    public List<EntityBareJid> getBlockedJIDs() {
         return JIDs;
     }
 
@@ -66,7 +70,7 @@ public class FileTransferSettings {
      * Sets the {@link List} of blocked JIDs.
      * @param JIDs  the {@link List} of blocked JIDs.
      */
-    public void setBlockedJIDS(List<String> JIDs){
+    public void setBlockedJIDS(List<EntityBareJid> JIDs){
         this.JIDs = JIDs;
     }
 
@@ -139,7 +143,9 @@ public class FileTransferSettings {
 
                 String users = props.getProperty("jids");
                 if (users != null) {
-                    this.JIDs = convertSettingsStringToList(users);
+                    List<String> jidStrings = convertSettingsStringToList(users);
+                    Set<EntityBareJid> jidSet = JidUtil.entityBareJidSetFrom(jidStrings);
+                    this.JIDs = new ArrayList<>(jidSet);
                 }
 
                 String ignore = props.getProperty("checkFileSize");
@@ -188,9 +194,9 @@ public class FileTransferSettings {
      * @param settings the {@link List} of strings.
      * @return a comma separated string.
      */
-    public static String convertSettingsListToString(List<String> settings) {
+    public static String convertSettingsListToString(List<? extends CharSequence> settings) {
         StringBuilder buffer = new StringBuilder();
-        for (Iterator<String> iter=settings.iterator(); iter.hasNext(); ) {
+        for (Iterator<? extends CharSequence> iter = settings.iterator(); iter.hasNext(); ) {
             buffer.append(iter.next());
             if (iter.hasNext()) {
                 buffer.append(",");

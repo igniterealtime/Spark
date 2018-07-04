@@ -23,6 +23,7 @@ import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
+import org.jxmpp.jid.BareJid;
 import org.jxmpp.util.XmppStringUtils;
 
 import javax.swing.BorderFactory;
@@ -52,7 +53,7 @@ public class NotificationAlertUI extends JPanel {
     private JLabel professionLabel = new JLabel();
 
     private VCard vcard;
-    private String jid;
+    private BareJid jid;
 
     private boolean available;
 
@@ -61,13 +62,13 @@ public class NotificationAlertUI extends JPanel {
     private static final int AVATAR_HEIGHT = 64;
     private static final int AVATAR_WIDTH = 64;
 
-    public NotificationAlertUI(String jid, boolean available, Presence presence) {
+    public NotificationAlertUI(BareJid jid, boolean available, Presence presence) {
         setLayout(new GridBagLayout());
 
         this.available = available;
-        this.jid = XmppStringUtils.parseBareJid(jid);
+        this.jid = jid;
 
-        vcard = SparkManager.getVCardManager().getVCardFromMemory(XmppStringUtils.parseBareJid(jid));
+        vcard = SparkManager.getVCardManager().getVCardFromMemory(jid);
 
         final Icon presenceIcon = PresenceManager.getIconFromPresence(presence);
 

@@ -182,7 +182,7 @@ public class ContactListAssistantPlugin implements Plugin {
 	private boolean isContactItemInGroup(Collection<ContactItem> contactItems, ContactGroup group) {
 		boolean contactInGroup = false;
 		for (ContactItem ci : contactItems) {
-			if (group.getContactItemByJID(ci.getJID(), true) != null) {
+			if (group.getContactItemByJID(ci.getJid(), true) != null) {
 				contactInGroup = true;
 				break;
 			}
@@ -259,19 +259,19 @@ public class ContactListAssistantPlugin implements Plugin {
      * @param move         true if the ContactItem should be moved, otherwise false.
      */
     private void addContactItem(final ContactGroup contactGroup, final ContactItem item, final boolean move) {
-        ContactItem newContact = UIComponentRegistry.createContactItem(item.getAlias(), item.getNickname(), item.getJID());
+        ContactItem newContact = UIComponentRegistry.createContactItem(item.getAlias(), item.getNickname(), item.getJid());
         newContact.setPresence(item.getPresence());
         newContact.setIcon(item.getIcon());
         newContact.getNicknameLabel().setFont(item.getNicknameLabel().getFont());
         boolean groupHadAvailableContacts = false;
         
         // Do not copy/move a contact item only if it is not already in the Group.
-        if (contactGroup.getContactItemByJID(item.getJID(), true) != null) {
+        if (contactGroup.getContactItemByJID(item.getJid().asBareJid(), true) != null) {
             return;
         }
 
-        if (!PresenceManager.isOnline(item.getJID())) {
-            contactGroup.addOfflineContactItem(item.getAlias(), item.getNickname(), item.getJID(), null);
+        if (!PresenceManager.isOnline(item.getJid().asBareJid())) {
+            contactGroup.addOfflineContactItem(item.getAlias(), item.getNickname(), item.getJid(), null);
         }
         else {
             groupHadAvailableContacts = contactGroup.hasAvailableContacts();
@@ -288,7 +288,7 @@ public class ContactListAssistantPlugin implements Plugin {
             @Override
             public Object construct() {
                 Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
-                RosterEntry entry = roster.getEntry(item.getJID());
+                RosterEntry entry = roster.getEntry(item.getJid().asBareJid());
 
                 RosterGroup groupFound = null;
 
@@ -302,7 +302,7 @@ public class ContactListAssistantPlugin implements Plugin {
                             }
                             group.addEntry(entry);
                         }
-                        catch (XMPPException | SmackException e1) {
+                        catch (XMPPException | SmackException | InterruptedException e1) {
                             Log.error(e1);
                             return false;
                         }
@@ -319,7 +319,7 @@ public class ContactListAssistantPlugin implements Plugin {
                     	SparkManager.getContactList().toggleGroupVisibility(groupFound.getName(), true);
                         }  
                     }
-                    catch (XMPPException | SmackException e) {
+                    catch (XMPPException | SmackException | InterruptedException e) {
                         Log.error(e);
                     }
                 }
@@ -359,7 +359,7 @@ public class ContactListAssistantPlugin implements Plugin {
 
         // Remove entry from Roster Group
         Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
-        RosterEntry entry = roster.getEntry(item.getJID());
+        RosterEntry entry = roster.getEntry(item.getJid().asBareJid());
 
         RosterGroup rosterGroup = null;
 
@@ -369,7 +369,7 @@ public class ContactListAssistantPlugin implements Plugin {
                     rosterGroup = group;
                     group.removeEntry(entry);
                 }
-                catch (XMPPException | SmackException e1) {
+                catch (XMPPException | SmackException | InterruptedException e1) {
                     return false;
                 }
             }

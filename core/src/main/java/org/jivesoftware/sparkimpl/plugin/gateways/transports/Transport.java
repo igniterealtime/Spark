@@ -17,6 +17,8 @@ package org.jivesoftware.sparkimpl.plugin.gateways.transports;
 
 import javax.swing.Icon;
 
+import org.jxmpp.jid.DomainBareJid;
+
 /**
  */
 public interface Transport {
@@ -29,7 +31,7 @@ public interface Transport {
 
     Icon getInactiveIcon();
 
-    String getServiceName();
+    DomainBareJid getXMPPServiceDomain();
 
     String getName();
 

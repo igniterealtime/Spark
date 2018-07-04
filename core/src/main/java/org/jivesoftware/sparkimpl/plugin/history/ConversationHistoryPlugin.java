@@ -27,6 +27,8 @@ import org.jivesoftware.spark.ui.MessageFilter;
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.log.Log;
+import org.jxmpp.jid.EntityBareJid;
+import org.jxmpp.jid.impl.JidCreate;
 import org.jxmpp.util.XmppStringUtils;
 import org.xmlpull.mxp1.MXParser;
 import org.xmlpull.v1.XmlPullParser;
@@ -47,7 +49,7 @@ import java.util.Map;
  */
 public class ConversationHistoryPlugin implements Plugin {
 
-    private List<String> historyList = new ArrayList<>();
+    private List<EntityBareJid> historyList = new ArrayList<>();
     private File transcriptDir;
     private File conFile;
 
@@ -55,7 +57,7 @@ public class ConversationHistoryPlugin implements Plugin {
     private JList contacts;
     private Window window;
 
-    private Map<JLabel, String> jidMap = new HashMap<>();
+    private Map<JLabel, EntityBareJid> jidMap = new HashMap<>();
 
     public void initialize() {
         transcriptDir = new File(SparkManager.getUserDirectory(), "transcripts");
@@ -84,18 +86,18 @@ public class ConversationHistoryPlugin implements Plugin {
 
 		    contacts.setSelectedIndex(contacts.locationToIndex(e
 			    .getPoint()));
-		    String user = jidMap.get( contacts
+		    EntityBareJid user = jidMap.get( contacts
 			    .getSelectedValue() );
 		    ContactItem contact = SparkManager.getContactList()
 			    .getContactItemByJID(user);
-		    SparkManager.getContactList().setSelectedUser(contact.getJID());
+		    SparkManager.getContactList().setSelectedUser(contact.getJid().asBareJid());
 		    SparkManager.getContactList().showPopup(contacts, e,
 			    contact);
 		}
 
 		if (e.getClickCount() == 2) {
 		    final JLabel label = (JLabel) contacts.getSelectedValue();
-		    String user = jidMap.get(label);
+		    EntityBareJid user = jidMap.get(label);
 		    if (user != null) {
 			final String contactUsername = SparkManager
 				.getUserManager().getUserNicknameFromJID(user);
@@ -111,7 +113,7 @@ public class ConversationHistoryPlugin implements Plugin {
             public void keyReleased(KeyEvent e) {
                 if (e.getKeyChar() == KeyEvent.VK_ENTER) {
                     final JLabel label = (JLabel) contacts.getSelectedValue();
-                    String user = jidMap.get(label);
+                    EntityBareJid user = jidMap.get(label);
                     if (user != null) {
                         final String contactUsername = SparkManager.getUserManager().getUserNicknameFromJID(user);
                         SparkManager.getChatManager().activateChat(user, contactUsername);
@@ -170,8 +172,7 @@ public class ConversationHistoryPlugin implements Plugin {
     private void addUserToHistory(ChatRoom room) {
         if (room instanceof ChatRoomImpl) {
             ChatRoomImpl roomImpl = (ChatRoomImpl) room;
-            String jid = roomImpl.getParticipantJID();
-            jid = XmppStringUtils.parseBareJid(jid);
+            EntityBareJid jid = roomImpl.getParticipantJID();
             historyList.remove(jid);
             historyList.add(0, jid);
         }
@@ -194,7 +195,7 @@ public class ConversationHistoryPlugin implements Plugin {
 
         int limit = historyList.size() > 10 ? 10 : historyList.size();
 
-        for (final String user : historyList.subList(0, limit)) {
+        for (final EntityBareJid user : historyList.subList(0, limit)) {
 
             ContactItem contactItem = contactList.getContactItemByJID(user);
             Icon icon;
@@ -245,7 +246,7 @@ public class ConversationHistoryPlugin implements Plugin {
             while (!done) {
                 int eventType = parser.next();
                 if (eventType == XmlPullParser.START_TAG && "user".equals(parser.getName())) {
-                    String jid = XmppStringUtils.parseBareJid(parser.nextText());
+                    EntityBareJid jid = JidCreate.entityBareFromUnescapedOrThrowUnchecked(parser.nextText());
                     historyList.add(jid);
                 }
                 else if (eventType == XmlPullParser.END_TAG && "conversations".equals(parser.getName())) {
@@ -262,7 +263,7 @@ public class ConversationHistoryPlugin implements Plugin {
     public void shutdown() {
         final StringBuilder builder = new StringBuilder();
         builder.append("<conversations>");
-        for (String user : historyList) {
+        for (EntityBareJid user : historyList) {
             builder.append("<user>").append(user).append("</user>");
         }
         builder.append("</conversations>");

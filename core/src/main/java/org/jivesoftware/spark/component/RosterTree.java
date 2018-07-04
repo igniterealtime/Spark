@@ -23,6 +23,7 @@ import org.jivesoftware.smack.roster.RosterListener;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.spark.PresenceManager;
 import org.jivesoftware.spark.SparkManager;
+import org.jxmpp.jid.Jid;
 
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
@@ -88,15 +89,15 @@ public final class RosterTree extends JPanel {
         final Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
 
         roster.addRosterListener(new RosterListener() {
-            public void entriesAdded(Collection<String> addresses) {
+            public void entriesAdded(Collection<Jid> addresses) {
 
             }
 
-            public void entriesUpdated(Collection<String> addresses) {
+            public void entriesUpdated(Collection<Jid> addresses) {
 
             }
 
-            public void entriesDeleted(Collection<String> addresses) {
+            public void entriesDeleted(Collection<Jid> addresses) {
 
             }
 
@@ -117,13 +118,13 @@ public final class RosterTree extends JPanel {
             for (RosterEntry entry : group.getEntries()) {
                 String name = entry.getName();
                 if (name == null) {
-                    name = entry.getUser();
+                    name = entry.getJid().toString();
                 }
 
 
                 final JiveTreeNode entryNode = new JiveTreeNode(name, false);
-                final Presence usersPresence = PresenceManager.getPresence(entry.getUser());
-                addressMap.put(entryNode, entry.getUser());
+                final Presence usersPresence = PresenceManager.getPresence(entry.getJid().toString());
+                addressMap.put(entryNode, entry.getJid().toString());
                 boolean showUnavailableAgents = true;
                 if (usersPresence.isAvailable() && !usersPresence.isAway()) {
                     groupNode.add(entryNode);
@@ -132,7 +133,7 @@ public final class RosterTree extends JPanel {
                     groupNode.add(entryNode);
                 }
 
-                changePresence(entry.getUser(), usersPresence);
+                changePresence(entry.getJid().toString(), usersPresence);
                 final DefaultTreeModel model = (DefaultTreeModel)rosterTree.getModel();
                 model.nodeStructureChanged(groupNode);
             }

@@ -23,15 +23,14 @@ import javax.swing.JPanel;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.StanzaListener;
 import org.jivesoftware.smack.XMPPConnection;
-import org.jivesoftware.smack.filter.PacketExtensionFilter;
+import org.jivesoftware.smack.filter.StanzaExtensionFilter;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Stanza;
-import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ShakeWindow;
 import org.jivesoftware.spark.util.log.Log;
-import org.jxmpp.util.XmppStringUtils;
+import org.jxmpp.jid.EntityFullJid;
 import tic.tac.toe.GameBoard;
 import tic.tac.toe.Mark;
 import tic.tac.toe.TTTRes;
@@ -60,11 +59,11 @@ public class GamePanel extends JPanel {
 
     private int _gameID;
 
-    private String _opponent;
+    private EntityFullJid _opponent;
     private JFrame _frame;
 
     public GamePanel(XMPPConnection connection, final int gameID,
-	    boolean imStarting, String opponentJID, JFrame frame) {
+	    boolean imStarting, EntityFullJid opponentJID, JFrame frame) {
 	
 	_frame = frame;
 
@@ -90,7 +89,7 @@ public class GamePanel extends JPanel {
 	_connection.addAsyncStanzaListener(new StanzaListener() {
 
 	    @Override
-	    public void processPacket(Stanza stanza) throws SmackException.NotConnectedException
+	    public void processStanza(Stanza stanza) throws SmackException.NotConnectedException, InterruptedException
 		{
 
 		MovePacket move = (MovePacket) stanza.getExtension(
@@ -113,7 +112,7 @@ public class GamePanel extends JPanel {
 			message.addExtension(inval);
 			_connection.sendStanza(message);
 			
-			ChatRoom cr = SparkManager.getChatManager().getChatRoom( XmppStringUtils.parseBareJid(_opponent));
+			ChatRoom cr = SparkManager.getChatManager().getChatRoom( _opponent.asBareJid());
 			cr.getTranscriptWindow().insertCustomText(_opponent+"seems to be cheating\n"+
 				"He tried placing a wrong Move", true, false, Color.red);
 			
@@ -121,23 +120,23 @@ public class GamePanel extends JPanel {
 		}
 
 	    }
-	}, new PacketExtensionFilter(MovePacket.ELEMENT_NAME,
+	}, new StanzaExtensionFilter(MovePacket.ELEMENT_NAME,
 		MovePacket.NAMESPACE));
 	
 	_connection.addAsyncStanzaListener(new StanzaListener() {
 	    
 	    @Override
-	    public void processPacket(Stanza stanza) {
+	    public void processStanza(Stanza stanza) {
 		
 		//InvalidMove im = (InvalidMove)packet.getExtension(InvalidMove.ELEMENT_NAME, InvalidMove.NAMESPACE);
-		ChatRoom cr = SparkManager.getChatManager().getChatRoom(XmppStringUtils.parseBareJid(_opponent));
+		ChatRoom cr = SparkManager.getChatManager().getChatRoom(_opponent.asBareJid());
 		cr.getTranscriptWindow().insertCustomText("You seem to be Cheating\n"+
 			"You placed a wrong Move", true, false, Color.red);
 		ShakeWindow sw = new ShakeWindow(_frame);
 		    sw.startRandomMovement(10);
 		
 	    }
-	}, new PacketExtensionFilter(InvalidMove.ELEMENT_NAME,
+	}, new StanzaExtensionFilter(InvalidMove.ELEMENT_NAME,
 		InvalidMove.NAMESPACE));
 
     }
@@ -177,7 +176,7 @@ public class GamePanel extends JPanel {
 		{
 			_connection.sendStanza(message);
 		}
-		catch ( SmackException.NotConnectedException e )
+		catch ( SmackException.NotConnectedException | InterruptedException e )
 		{
 			Log.warning( "Unable to send move to " + message.getTo(), e );
 		}

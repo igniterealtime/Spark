@@ -19,17 +19,28 @@ import org.jivesoftware.Spark;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.Plugin;
 import org.jivesoftware.spark.ui.conferences.ConferenceUtils;
-import org.jxmpp.util.XmppStringUtils;
+import org.jxmpp.jid.EntityBareJid;
+import org.jxmpp.jid.impl.JidCreate;
+import org.jxmpp.jid.parts.Localpart;
+import org.jxmpp.stringprep.XmppStringprepException;
 
 public class ChatArgumentsPlugin implements Plugin {
 
     public void initialize() {
-        String start_chat_jid = Spark.getArgumentValue("start_chat_jid");
-        String start_chat_muc = Spark.getArgumentValue("start_chat_muc");
+        EntityBareJid start_chat_jid = null;
+        try {
+            start_chat_jid = JidCreate.entityBareFromUnescaped(Spark.getArgumentValue("start_chat_jid"));
+        } catch (XmppStringprepException e1) {
+        }
+        EntityBareJid start_chat_muc = null;
+        try {
+            start_chat_muc = JidCreate.entityBareFromUnescaped(Spark.getArgumentValue("start_chat_muc"));
+        } catch (XmppStringprepException e) {
+        }
 
         if (start_chat_jid != null) {
-            String nickname = XmppStringUtils.parseLocalpart(start_chat_jid);
-            SparkManager.getChatManager().createChatRoom(start_chat_jid, nickname, start_chat_jid);
+            Localpart nickname = start_chat_jid.getLocalpart();
+            SparkManager.getChatManager().createChatRoom(start_chat_jid, nickname.toString(), start_chat_jid.toString());
         }
 
         if (start_chat_muc != null) {

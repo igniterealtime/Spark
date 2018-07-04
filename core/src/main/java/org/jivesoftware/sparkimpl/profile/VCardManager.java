@@ -21,12 +21,14 @@ import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.StanzaListener;
 import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.filter.AndFilter;
 import org.jivesoftware.smack.filter.StanzaFilter;
 import org.jivesoftware.smack.filter.StanzaTypeFilter;
 import org.jivesoftware.smack.packet.ExtensionElement;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Presence;
-import org.jivesoftware.smack.packet.XMPPError;
+import org.jivesoftware.smack.packet.Stanza;
+import org.jivesoftware.smack.packet.StanzaError;
 import org.jivesoftware.smack.provider.ProviderManager;
 import org.jivesoftware.smackx.vcardtemp.packet.VCard;
 import org.jivesoftware.smackx.vcardtemp.provider.VCardProvider;
@@ -39,6 +41,11 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 import org.jivesoftware.sparkimpl.profile.ext.JabberAvatarExtension;
 import org.jivesoftware.sparkimpl.profile.ext.VCardUpdateExtension;
+import org.jxmpp.jid.BareJid;
+import org.jxmpp.jid.EntityBareJid;
+import org.jxmpp.jid.Jid;
+import org.jxmpp.jid.impl.JidCreate;
+import org.jxmpp.stringprep.XmppStringprepException;
 import org.jxmpp.util.XmppStringUtils;
 import org.xmlpull.mxp1.MXParser;
 import org.xmlpull.v1.XmlPullParser;
@@ -68,9 +75,9 @@ public class VCardManager {
     private transient byte[] personalVCardAvatar = null; // lazy loaded cache of avatar binary data.
     private transient String personalVCardHash = null; // lazy loaded cache of avatar hash.
 
-    private Map<String, VCard> vcards = Collections.synchronizedMap( new HashMap<>());
+    private Map<BareJid, VCard> vcards = Collections.synchronizedMap( new HashMap<>());
 
-    private Set<String> delayedContacts = Collections.synchronizedSet( new HashSet<>());
+    private Set<BareJid> delayedContacts = Collections.synchronizedSet( new HashSet<>());
     
     private boolean vcardLoaded;
 
@@ -82,13 +89,13 @@ public class VCardManager {
 
     final MXParser parser;
 
-    private LinkedBlockingQueue<String> queue = new LinkedBlockingQueue<>();
+    private LinkedBlockingQueue<BareJid> queue = new LinkedBlockingQueue<>();
     
     private File contactsDir;
 
     private List<VCardListener> listeners = new ArrayList<>();
 
-	private List<String> writingQueue = Collections.synchronizedList( new ArrayList<>());
+	private List<BareJid> writingQueue = Collections.synchronizedList( new ArrayList<>());
 
     /**
      * Initialize VCardManager.
@@ -177,7 +184,7 @@ public class VCardManager {
     	final Runnable queueListener = () -> {
             while (true) {
                 try {
-                   String jid = queue.take();
+                   BareJid jid = queue.take();
                    reloadVCard(jid);
                 }
                 catch (InterruptedException e) {
@@ -188,14 +195,20 @@ public class VCardManager {
         };
 
         TaskEngine.getInstance().submit(queueListener);
-        
-        StanzaFilter filter = new StanzaTypeFilter(VCard.class);
+
+        StanzaFilter filter = new AndFilter(new StanzaFilter() {
+            @Override
+            public boolean accept(Stanza stanza) {
+                Jid from = stanza.getFrom();
+                return from != null;
+            }
+        }, new StanzaTypeFilter(VCard.class));
         StanzaListener myListener = stanza -> {
             if (stanza instanceof VCard)
             {
                 VCard VCardpacket = (VCard)stanza;
-                String jid = VCardpacket.getFrom();
-                if (VCardpacket.getType().equals(IQ.Type.result) && jid != null && delayedContacts.contains(jid))
+                BareJid jid = VCardpacket.getFrom().asBareJid();
+                if (VCardpacket.getType().equals(IQ.Type.result) && delayedContacts.contains(jid))
                 {
                     delayedContacts.remove(jid);
                     addVCard(jid, VCardpacket);
@@ -214,7 +227,7 @@ public class VCardManager {
      *
      * @param jid the jid to lookup.
      */
-    public void addToQueue(String jid) {
+    public void addToQueue(BareJid jid) {
         if (!queue.contains(jid)) {
             queue.add(jid);
         }
@@ -246,7 +259,7 @@ public class VCardManager {
                     try {
                         personalVCard.load(SparkManager.getConnection());
                     }
-                    catch (XMPPException | SmackException e) {
+                    catch (XMPPException | SmackException | InterruptedException e) {
                         Log.error("Error loading vcard information.", e);
                     }
                     return true;
@@ -267,7 +280,13 @@ public class VCardManager {
         viewProfileMenu.addActionListener( e -> {
             String jidToView = JOptionPane.showInputDialog(SparkManager.getMainWindow(), Res.getString("message.enter.jabber.id") + ":", Res.getString("title.lookup.profile"), JOptionPane.QUESTION_MESSAGE);
             if (ModelUtil.hasLength(jidToView) && jidToView.contains( "@" ) && ModelUtil.hasLength( XmppStringUtils.parseDomain(jidToView))) {
-                viewProfile(jidToView, SparkManager.getWorkspace());
+                BareJid bareJid;
+                try {
+                    bareJid = JidCreate.bareFrom(jidToView);
+                } catch (XmppStringprepException e1) {
+                    throw new IllegalStateException(e1);
+                }
+                viewProfile(bareJid, SparkManager.getWorkspace());
             }
             else if (ModelUtil.hasLength(jidToView)) {
                 UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
@@ -283,7 +302,7 @@ public class VCardManager {
      * @param jid    the jid of the user to display.
      * @param parent the parent component to use for displaying dialog.
      */
-    public void viewProfile(final String jid, final JComponent parent) {
+    public void viewProfile(final BareJid jid, final JComponent parent) {
         final SwingWorker vcardThread = new SwingWorker() {
             VCard vcard = new VCard();
 
@@ -314,7 +333,7 @@ public class VCardManager {
      * @param jid    the jid of the user to display.
      * @param parent the parent component to use for displaying dialog.
      */
-    public void viewFullProfile(final String jid, final JComponent parent) {
+    public void viewFullProfile(final BareJid jid, final JComponent parent) {
         final SwingWorker vcardThread = new SwingWorker() {
             VCard vcard = new VCard();
 
@@ -373,7 +392,8 @@ public class VCardManager {
 			}
 		}
 		catch (Exception e) {
-			personalVCard.setError(new XMPPError(XMPPError.Condition.conflict));
+            StanzaError.Builder errorBuilder = StanzaError.getBuilder(StanzaError.Condition.conflict);
+			personalVCard.setError(errorBuilder);
             personalVCardAvatar = null;
             personalVCardHash = null;
 			Log.error(e);
@@ -405,7 +425,7 @@ public class VCardManager {
 	 *            the users jid.
 	 * @return the VCard.
 	 */
-    public VCard getVCard(String jid) {
+    public VCard getVCard(BareJid jid) {
         return getVCard(jid, true);
     }
 
@@ -419,7 +439,7 @@ public class VCardManager {
 	 *            the users jid.
 	 * @return the users VCard or an empty VCard.
 	 */
-    public VCard getVCardFromMemory(String jid) {
+    public VCard getVCardFromMemory(BareJid jid) {
         // Check in memory first.
         if (vcards.containsKey(jid)) {
             return vcards.get(jid);
@@ -432,7 +452,7 @@ public class VCardManager {
 
             // Create temp vcard.
             vcard = new VCard();
-            vcard.setJabberId(jid);
+            vcard.setJabberId(jid.toString());
         } else {
         	//System.out.println(jid+"  HDD ---------->");
         }
@@ -461,8 +481,7 @@ public class VCardManager {
 	 *            network vcard operation.
 	 * @return the VCard.
 	 */
-    public VCard getVCard(String jid, boolean useCachedVCards) {
-        jid = XmppStringUtils.parseBareJid(jid);
+    public VCard getVCard(BareJid jid, boolean useCachedVCards) {
         if (useCachedVCards)
         {
         	return getVCardFromMemory(jid);
@@ -486,30 +505,36 @@ public class VCardManager {
 	 * 
 	 * @return the new network vCard or a vCard with an error 
 	 */
-    public VCard reloadVCard(String jid) {
-        jid = XmppStringUtils.parseBareJid(jid);
+    public VCard reloadVCard(BareJid jidString) {
+        EntityBareJid jid;
+		try {
+			jid = JidCreate.entityBareFrom(jidString);
+		} catch (XmppStringprepException e) {
+			throw new IllegalStateException(e);
+		}
         VCard vcard = new VCard();
         try {
-        	vcard.setJabberId(jid);
+        	vcard.setJabberId(jid.toString());
             vcard.load(SparkManager.getConnection(), jid);
             if (vcard.getNickName() != null && vcard.getNickName().length() > 0)
             {
             	// update nickname.
-            	ContactItem item = SparkManager.getWorkspace().getContactList().getContactItemByJID(jid);
+            	ContactItem item = SparkManager.getWorkspace().getContactList().getContactItemByJID(jid.toString());
             	item.setNickname(vcard.getNickName());
             	// TODO: this doesn't work if someone removes his nickname. If we remove it in that case, it will cause problems with people using another way to manage their nicknames.
             }
             addVCard(jid, vcard);
             persistVCard(jid, vcard);
         }
-        catch (XMPPException | SmackException e) {
+        catch (XMPPException | SmackException | InterruptedException e) {
         	////System.out.println(jid+" Fehler in reloadVCard ----> null");
-        	vcard.setError(new XMPPError(XMPPError.Condition.resource_constraint));
-        	vcard.setJabberId(jid);
-        	delayedContacts.add(jid);
+            StanzaError.Builder errorBuilder = StanzaError.getBuilder(StanzaError.Condition.resource_constraint);
+        	vcard.setError(errorBuilder);
+        	vcard.setJabberId(jid.toString());
+            delayedContacts.add(jid);
         	return vcard;
         	//We dont want cards with error
-           // vcard.setError(new XMPPError(XMPPError.Condition.request_timeout));
+           // vcard.setError(new StanzaError(XMPPError.Condition.request_timeout));
            //addVCard(jid, vcard);
         }
 
@@ -526,10 +551,10 @@ public class VCardManager {
      * @param jid   the jid of the user.
      * @param vcard the users vcard to cache.
      */
-    public void addVCard(String jid, VCard vcard) {
+    public void addVCard(BareJid jid, VCard vcard) {
         if (vcard == null)
         	return; 
-        vcard.setJabberId(jid);
+        vcard.setJabberId(jid.toString());
         if (vcards.containsKey(jid) && vcards.get(jid).getError() == null && vcard.getError()!= null)
         {
         	return;
@@ -559,9 +584,9 @@ public class VCardManager {
      * @param jid the jid of the user.
      * @return the URL of the image. If not image is found, a default avatar is returned.
      */
-    public URL getAvatar(String jid) {
+    public URL getAvatar(BareJid jid) {
         // Handle own avatar file.
-        if (jid != null && XmppStringUtils.parseBareJid(SparkManager.getSessionManager().getJID()).equals(XmppStringUtils.parseBareJid(jid))) {
+        if (jid != null && SparkManager.getSessionManager().getJID().asBareJid().equals(jid)) {
             if (imageFile.exists()) {
                 try {
                     return imageFile.toURI().toURL();
@@ -647,7 +672,7 @@ public class VCardManager {
         this.personalVCardAvatar = null;
     }
 
-    public URL getAvatarURL(String jid) {
+    public URL getAvatarURL(BareJid jid) {
         VCard vcard = getVCard(jid);
         if (vcard != null) {
             String hash = vcard.getAvatarHash();
@@ -676,7 +701,7 @@ public class VCardManager {
 	 *         load vcard in background
 	 * 
 	 */
-	public URL getAvatarURLIfAvailable(String jid) {
+	public URL getAvatarURLIfAvailable(BareJid jid) {
 		if (getVCard(jid) != null) {
 			return getAvatarURL(jid);
 		} else {
@@ -692,13 +717,13 @@ public class VCardManager {
      * @param jid   the users jid.
      * @param vcard the users vcard.
      */
-    private void persistVCard(String jid, VCard vcard) {
-        if (jid == null || jid.trim().isEmpty() || vcard == null) {
+    private void persistVCard(BareJid jid, VCard vcard) {
+        if (jid == null || vcard == null) {
         	return;
         }
         
         
-        String fileName = Base64.encodeBytes(jid.getBytes());
+        String fileName = Base64.encodeBytes(jid.toString().getBytes());
         // remove tab
         fileName   = fileName.replaceAll("\t", "");
         // remove new line (Unix)
@@ -766,13 +791,13 @@ public class VCardManager {
      * @param jid the jid of the user.
      * @return the VCard if found, otherwise null.
      */
-    private VCard loadFromFileSystem(String jid) {
-    	if (jid == null || jid.trim().isEmpty()) {
+    private VCard loadFromFileSystem(BareJid jid) {
+    	if (jid == null) {
     		return null;
     	}
     	
         // Unescape JID
-        String fileName = Base64.encodeBytes(jid.getBytes());
+        String fileName = Base64.encodeBytes(jid.toString().getBytes());
 
         // remove tab
         fileName   = fileName.replaceAll("\t", "");

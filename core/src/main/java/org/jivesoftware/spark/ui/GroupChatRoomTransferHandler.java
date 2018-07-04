@@ -17,6 +17,7 @@ package org.jivesoftware.spark.ui;
 
 import org.jivesoftware.spark.ui.rooms.GroupChatRoom;
 import org.jivesoftware.spark.util.log.Log;
+import org.jxmpp.jid.BareJid;
 
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
@@ -72,8 +73,8 @@ public class GroupChatRoomTransferHandler extends TransferHandler {
                 if (o instanceof ContactItem) {
                     // Invite User
                     final ContactItem contactItem = (ContactItem)o;
-                    String jid = contactItem.getJID();
-                    groupChatRoom.inviteUser(jid, "Please join the conference room.");
+                    BareJid jid = contactItem.getJid();
+                    groupChatRoom.inviteUser(jid.asEntityBareJidOrThrow(), "Please join the conference room.");
 
                     return true;
                 }

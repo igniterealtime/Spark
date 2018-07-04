@@ -51,7 +51,7 @@ public class InvalidMove implements ExtensionElement {
     }
 
     @Override
-    public String toXML() {
+    public String toXML(String enclosingNamespace) {
 	StringBuffer buf = new StringBuffer();
 	buf.append("<" + ELEMENT_NAME + " xmlns=\"" + NAMESPACE + "\">");
 

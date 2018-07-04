@@ -27,6 +27,10 @@ import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.gateways.GatewayPrivateData;
+import org.jxmpp.jid.DomainBareJid;
+import org.jxmpp.jid.Jid;
+import org.jxmpp.jid.impl.JidCreate;
+import org.jxmpp.stringprep.XmppStringprepException;
 import org.jxmpp.util.XmppStringUtils;
 
 import java.util.Collection;
@@ -38,7 +42,7 @@ import java.util.Map;
  */
 public class TransportUtils {
 
-    private static Map<String, Transport> transports = new HashMap<>();
+    private static Map<DomainBareJid, Transport> transports = new HashMap<>();
     private static GatewayPrivateData gatewayPreferences;
 
     private TransportUtils() {
@@ -56,7 +60,7 @@ public class TransportUtils {
                 try {
                     gatewayPreferences = (GatewayPrivateData)pdm.getPrivateData(GatewayPrivateData.ELEMENT, GatewayPrivateData.NAMESPACE);
                 }
-                catch (XMPPException | SmackException e) {
+                catch (XMPPException | SmackException | InterruptedException e) {
                     Log.error("Unable to load private data for Gateways", e);
                 }
             //}
@@ -65,7 +69,7 @@ public class TransportUtils {
         TaskEngine.getInstance().submit(loadGateways);
     }
 
-    public static boolean autoJoinService(String serviceName) {
+    public static boolean autoJoinService(DomainBareJid serviceName) {
         if (gatewayPreferences != null) {
         	return gatewayPreferences.autoLogin(serviceName);
         }else{
@@ -73,14 +77,14 @@ public class TransportUtils {
         }
     }
 
-    public static void setAutoJoin(String serviceName, boolean autoJoin) {
+    public static void setAutoJoin(DomainBareJid serviceName, boolean autoJoin) {
     	if (gatewayPreferences != null) {
     		gatewayPreferences.addService(serviceName, autoJoin);
     		PrivateDataManager pdm = SparkManager.getSessionManager().getPersonalDataManager();
     		try {
     			pdm.setPrivateData(gatewayPreferences);
     		}
-    		catch (XMPPException | SmackException e) {
+    		catch (XMPPException | SmackException | InterruptedException e) {
     			Log.error(e);
     		}
     	} else {
@@ -88,13 +92,21 @@ public class TransportUtils {
     	}
     }
 
+    /**
+     * 
+     * @param serviceName
+     * @return
+     * @deprecated use {@link #getTransport(DomainBareJid)} instead.
+     */
+    @Deprecated
     public static Transport getTransport(String serviceName) {
-        // Return transport.
-        if (transports.containsKey(serviceName)) {
-            return transports.get(serviceName);
-        }
+        DomainBareJid transportAddress = JidCreate.domainBareFromOrThrowUnchecked(serviceName);
+        return getTransport(transportAddress);
+    }
 
-        return null;
+    public static Transport getTransport(DomainBareJid transportAddress) {
+        // Return transport.
+        return transports.get(transportAddress);
     }
 
     /**
@@ -102,13 +114,25 @@ public class TransportUtils {
      * @param jid the jid.
      * @return true if the jid is from a gateway.
      */
-    public static boolean isFromGateway(String jid) {
-        String serviceName = XmppStringUtils.parseDomain(jid);
+    public static boolean isFromGateway(Jid jid) {
+        DomainBareJid serviceName = jid.asDomainBareJid();
         return transports.containsKey(serviceName);
     }
 
+    /**
+     * 
+     * @param serviceName
+     * @param transport
+     * @deprecated use {@link #addTransport(DomainBareJid, Transport)} instead.
+     */
+    @Deprecated
     public static void addTransport(String serviceName, Transport transport) {
-        transports.put(serviceName, transport);
+        DomainBareJid transportAddress = JidCreate.domainBareFromOrThrowUnchecked(serviceName);
+         addTransport(transportAddress, transport);
+    }
+
+    public static void addTransport(DomainBareJid transportAddress, Transport transport) {
+        transports.put(transportAddress, transport);
     }
 
     public static Collection<Transport> getTransports() {
@@ -129,10 +153,11 @@ public class TransportUtils {
 
         ServiceDiscoveryManager discoveryManager = ServiceDiscoveryManager.getInstanceFor(con);
         try {
-            DiscoverInfo info = discoveryManager.discoverInfo(transport.getServiceName());
+            Jid jid = JidCreate.from(transport.getXMPPServiceDomain());
+            DiscoverInfo info = discoveryManager.discoverInfo(jid);
             return info.containsFeature("jabber:iq:registered");
         }
-        catch (XMPPException | SmackException e) {
+        catch (XMPPException | SmackException | XmppStringprepException | InterruptedException e) {
             Log.error(e);
         }
         return false;
@@ -146,9 +171,10 @@ public class TransportUtils {
      * @param username      the username.
      * @param password      the password.
      * @param nickname      the nickname.
+     * @throws InterruptedException 
      * @throws XMPPException thrown if there was an issue registering with the gateway.
      */
-    public static void registerUser(XMPPConnection con, String gatewayDomain, String username, String password, String nickname, StanzaListener callback) throws SmackException.NotConnectedException
+    public static void registerUser(XMPPConnection con, DomainBareJid gatewayDomain, String username, String password, String nickname, StanzaListener callback) throws SmackException.NotConnectedException, InterruptedException
     {
         Map<String, String> attributes = new HashMap<>();
         if (username != null) {
@@ -171,9 +197,10 @@ public class TransportUtils {
     /**
      * @param con           the XMPPConnection.
      * @param gatewayDomain the domain of the gateway (service name)
+     * @throws InterruptedException 
      * @throws XMPPException thrown if there was an issue unregistering with the gateway.
      */
-    public static void unregister(XMPPConnection con, String gatewayDomain) throws SmackException.NotConnectedException
+    public static void unregister(XMPPConnection con, DomainBareJid gatewayDomain) throws SmackException.NotConnectedException, InterruptedException
     {
         Map<String,String> map = new HashMap<>();
         map.put("remove", "");
@@ -200,7 +227,7 @@ public class TransportUtils {
             return "jabber:iq:gateway:register";
         }
 
-        public String toXML() {
+        public String toXML(String enclosingNamespace) {
             String builder = "<" + getElementName() + " xmlns=\"" + getNamespace() +
                     "\"/>";
             return builder;

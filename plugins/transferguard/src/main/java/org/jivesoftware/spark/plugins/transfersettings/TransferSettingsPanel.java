@@ -16,12 +16,16 @@
 package org.jivesoftware.spark.plugins.transfersettings;
 
 import org.jivesoftware.spark.component.VerticalFlowLayout;
+import org.jxmpp.jid.EntityBareJid;
+import org.jxmpp.jid.util.JidUtil;
 
 import javax.swing.*;
 import java.awt.*;
 import javax.swing.border.*;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * UI for the file transfer preferences. It displays all the various preference settings for editing.
@@ -101,12 +105,15 @@ public class TransferSettingsPanel extends JPanel {
             add(txtBlockedPeople, BorderLayout.CENTER);
         }
 
-        public void setBlockedPeople(List<String> people) {
+        public void setBlockedPeople(List<EntityBareJid> people) {
             txtBlockedPeople.setText(FileTransferSettings.convertSettingsListToString(people));
         }
 
-        public List<String> getBlockedPeople() {
-            return FileTransferSettings.convertSettingsStringToList(txtBlockedPeople.getText());
+        public List<EntityBareJid> getBlockedPeople() {
+            List<String> jidStrings = FileTransferSettings.convertSettingsStringToList(txtBlockedPeople.getText());
+            Set<EntityBareJid> jidSet = JidUtil.entityBareJidSetFrom(jidStrings);
+            List<EntityBareJid> jids = new ArrayList<>(jidSet);
+            return jids;
         }
     }
 

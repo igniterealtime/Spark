@@ -44,6 +44,8 @@ import org.jivesoftware.spark.UserManager;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
+import org.jxmpp.jid.BareJid;
+import org.jxmpp.jid.impl.JidCreate;
 
 /**
  * UI to display VCard Information in Wizards, Dialogs, Chat Rooms and any other container.
@@ -57,7 +59,7 @@ public class VCardPanel extends JPanel {
     private Cursor LINK_CURSOR = new Cursor(Cursor.HAND_CURSOR);
 
     private JWindow _avatarHoverWindow = new JWindow();
-    private final String jid;
+    private final BareJid jid;
     private final JLabel avatarImage;
 
     private String emailAddress = "";
@@ -67,7 +69,7 @@ public class VCardPanel extends JPanel {
      *
      * @param jid the jid to use when retrieving the vcard information.
      */
-    public VCardPanel(final String jid) {
+    public VCardPanel(final BareJid jid) {
         setLayout(new GridBagLayout());
         setOpaque(false);
 
@@ -176,7 +178,8 @@ public class VCardPanel extends JPanel {
         avatarImage.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent mouseEvent) {
                 if (mouseEvent.getClickCount() == 2) {
-                    SparkManager.getVCardManager().viewProfile(vcard.getJabberId(), avatarImage);
+                    BareJid bareJid = JidCreate.bareFromOrThrowUnchecked(vcard.getJabberId());
+                    SparkManager.getVCardManager().viewProfile(bareJid, avatarImage);
                 }
             }
 

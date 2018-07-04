@@ -1915,12 +1915,13 @@ public class StringUtils {
     }
 
     /**
-     * Converts the first Character of a String to its Uppercase Instance<br>
+     * Converts the first Character of a CharSequence to its Uppercase Instance<br>
      * test -> Test
-     * @param word 
+     * @param cs 
      * @return String, with first char uppercased
      */
-    public static String makeFirstWordCaptial(String word) {
+    public static String makeFirstWordCaptial(CharSequence cs) {
+        String word = cs.toString();
 	if (word.length() < 2) {
 	    return word;
 	}

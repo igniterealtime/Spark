@@ -24,6 +24,7 @@ import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ChatRoomListener;
 import org.jivesoftware.spark.ui.GlobalMessageListener;
 import org.jivesoftware.spark.util.log.Log;
+import org.jxmpp.jid.EntityBareJid;
 import org.jivesoftware.smack.provider.ProviderManager;
 
 import javax.swing.*;
@@ -36,7 +37,7 @@ import java.util.Properties;
 public class SparkFileUploadPlugin implements Plugin, ChatRoomListener, GlobalMessageListener
 {
     private org.jivesoftware.spark.ChatManager chatManager;
-    private Map<String, ChatRoomDecorator> decorators = new HashMap<String, ChatRoomDecorator>();
+    private Map<EntityBareJid, ChatRoomDecorator> decorators = new HashMap<>();
 
     public void initialize()
     {
@@ -104,7 +105,7 @@ public class SparkFileUploadPlugin implements Plugin, ChatRoomListener, GlobalMe
 
     public void chatRoomClosed(ChatRoom chatroom)
     {
-        String roomId = chatroom.getRoomname();
+        EntityBareJid roomId = chatroom.getRoomJid();
 
         Log.debug("chatRoomClosed:  " + roomId);
 
@@ -118,28 +119,28 @@ public class SparkFileUploadPlugin implements Plugin, ChatRoomListener, GlobalMe
 
     public void chatRoomActivated(ChatRoom chatroom)
     {
-        String roomId = chatroom.getRoomname();
+        EntityBareJid roomId = chatroom.getRoomJid();
 
         Log.debug("chatRoomActivated:  " + roomId);
     }
 
     public void userHasJoined(ChatRoom room, String s)
     {
-        String roomId = room.getRoomname();
+        EntityBareJid roomId = room.getRoomJid();
 
         Log.debug("userHasJoined:  " + roomId + " " + s);
     }
 
     public void userHasLeft(ChatRoom room, String s)
     {
-        String roomId = room.getRoomname();
+        EntityBareJid roomId = room.getRoomJid();
 
         Log.debug("userHasLeft:  " + roomId + " " + s);
     }
 
     public void chatRoomOpened(final ChatRoom room)
     {
-        String roomId = room.getRoomname();
+        EntityBareJid roomId = room.getRoomJid();
 
         Log.debug("chatRoomOpened:  " + roomId);
 

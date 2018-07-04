@@ -91,6 +91,12 @@ import org.jivesoftware.sparkimpl.plugin.filetransfer.transfer.ui.ReceiveFileTra
 import org.jivesoftware.sparkimpl.plugin.filetransfer.transfer.ui.SendFileTransfer;
 import org.jivesoftware.sparkimpl.plugin.filetransfer.transfer.ui.TransferUtils;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
+import org.jxmpp.jid.BareJid;
+import org.jxmpp.jid.EntityBareJid;
+import org.jxmpp.jid.EntityFullJid;
+import org.jxmpp.jid.Jid;
+import org.jxmpp.jid.impl.JidCreate;
+import org.jxmpp.stringprep.XmppStringprepException;
 import org.jxmpp.util.XmppStringUtils;
 
 /**
@@ -108,7 +114,7 @@ public class SparkTransferManager {
     private static final Object LOCK = new Object();
 
     private FileTransferManager transferManager;
-    private Map<String,ArrayList<File>> waitMap = new HashMap<>();
+    private Map<EntityBareJid, ArrayList<File>> waitMap = new HashMap<>();
     private BufferedImage bufferedImage;
     private ImageSelectionPanel selectionPanel;
     private Robot robot;
@@ -187,7 +193,7 @@ public class SparkTransferManager {
 
                 ChatRoom chatRoom = null;
                 for (File file : files) {
-                    chatRoom = sendFile(file, item.getJID());
+                    chatRoom = sendFile(file, item.getJid());
                 }
 
                 if (chatRoom != null) {
@@ -273,8 +279,8 @@ public class SparkTransferManager {
             return;
         }
 
-        String requestor = request.getRequestor();
-        String bareJID = XmppStringUtils.parseBareJid(requestor);
+        Jid requestor = request.getRequestor();
+        EntityBareJid bareJID = requestor.asEntityBareJidOrThrow();
         String fileName = request.getFileName();
 
 
@@ -325,7 +331,7 @@ public class SparkTransferManager {
 
         if (file.exists()) {
             defaultDirectory = file.getParentFile();
-            sendFile( file, item.getJID() );
+            sendFile( file, item.getJid() );
         }
 
     }
@@ -477,7 +483,7 @@ public class SparkTransferManager {
         SparkManager.getConnection().addAsyncStanzaListener( stanza -> {
             Presence presence = (Presence)stanza;
             if (presence.isAvailable()) {
-                String bareJID = XmppStringUtils.parseBareJid(presence.getFrom());
+                BareJid bareJID = presence.getFrom().asBareJid();
 
                 // Iterate through map.
                 ArrayList<File> list = waitMap.get(bareJID);
@@ -510,7 +516,7 @@ public class SparkTransferManager {
      * @param jid  the jid of the user to send the file to.
      * @return the ChatRoom of the user.
      */
-    public ChatRoom sendFile(File file, String jid) {
+    public ChatRoom sendFile(File file, Jid jid) {
 	
 	long maxsize = Long.parseLong(Default.getString(Default.FILE_TRANSFER_MAXIMUM_SIZE));
 	long warningsize = Long.parseLong(Default.getString(Default.FILE_TRANSFER_WARNING_SIZE));
@@ -537,25 +543,26 @@ public class SparkTransferManager {
 	}
 	
         final ContactList contactList = SparkManager.getWorkspace().getContactList();
-        String bareJID = XmppStringUtils.parseBareJid(jid);
-        String fullJID = PresenceManager.getFullyQualifiedJID(jid);
+        EntityFullJid fullJID = PresenceManager.getFullyQualifiedJID(jid.asBareJid());
+        EntityBareJid bareJid = fullJID.asEntityBareJid();
 
-        if (!PresenceManager.isOnline(jid)) {
+
+        if (!PresenceManager.isOnline(bareJid)) {
             ArrayList<File> list = waitMap.get(jid);
             if (list == null) {
                 list = new ArrayList<>();
             }
 
             list.add(file);
-            waitMap.put(jid, list);
+            waitMap.put(bareJid, list);
 
             ChatRoom chatRoom;
             ContactItem contactItem = contactList.getContactItemByJID(jid);
             if (contactItem != null) {
-                chatRoom = SparkManager.getChatManager().createChatRoom(jid, contactItem.getDisplayName(), contactItem.getDisplayName());
+                chatRoom = SparkManager.getChatManager().createChatRoom(bareJid, contactItem.getDisplayName(), contactItem.getDisplayName());
             }
             else {
-                chatRoom = SparkManager.getChatManager().createChatRoom(jid, jid, jid);
+                chatRoom = SparkManager.getChatManager().createChatRoom(bareJid, jid, jid);
             }
 
             chatRoom.getTranscriptWindow().insertNotificationMessage("The user is offline. Will auto-send \"" + file.getName() + "\" when user comes back online.", ChatManager.ERROR_COLOR);
@@ -566,14 +573,14 @@ public class SparkTransferManager {
         final OutgoingFileTransfer transfer = transferManager.createOutgoingFileTransfer(fullJID);
 
 
-        ContactItem contactItem = contactList.getContactItemByJID(bareJID);
+        ContactItem contactItem = contactList.getContactItemByJID(bareJid);
 
         ChatRoom chatRoom;
         if (contactItem != null) {
-            chatRoom = SparkManager.getChatManager().createChatRoom(bareJID, contactItem.getDisplayName(), contactItem.getDisplayName());
+            chatRoom = SparkManager.getChatManager().createChatRoom(bareJid, contactItem.getDisplayName(), contactItem.getDisplayName());
         }
         else {
-            chatRoom = SparkManager.getChatManager().createChatRoom(bareJID, bareJID, bareJID);
+            chatRoom = SparkManager.getChatManager().createChatRoom(bareJid, bareJid.toString(), bareJid.toString());
         }
 
 
@@ -588,7 +595,7 @@ public class SparkTransferManager {
         }
 
         // Add listener to cancel transfer is sending file to user who just went offline.
-        AndFilter presenceFilter = new AndFilter(new StanzaTypeFilter(Presence.class), FromMatchesFilter.createBare(bareJID));
+        AndFilter presenceFilter = new AndFilter(new StanzaTypeFilter(Presence.class), FromMatchesFilter.createBare(bareJid));
         final StanzaListener packetListener = stanza -> {
             Presence presence = (Presence)stanza;
             if (!presence.isAvailable()) {

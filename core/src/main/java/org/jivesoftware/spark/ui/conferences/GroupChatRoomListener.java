@@ -20,6 +20,7 @@ import org.jivesoftware.smackx.muc.UserStatusListener;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ChatRoomListener;
 import org.jivesoftware.spark.ui.rooms.GroupChatRoom;
+import org.jxmpp.jid.Jid;
 /**
  * This listener is notified for every group chat room. The affected chat room
  * is sent as parameter in every method. Keeping such listener tied to a group chat room instance
@@ -34,7 +35,7 @@ public class GroupChatRoomListener implements ChatRoomListener {
 		GroupChatRoom groupChatRoom = (GroupChatRoom)room;
 		MultiUserChat chat = groupChatRoom.getMultiUserChat();
 		chat.addUserStatusListener(new UserStatusListener() {
-			public void kicked(String actor, String reason) {
+			public void kicked(Jid actor, String reason) {
 
 			}
 
@@ -46,7 +47,7 @@ public class GroupChatRoomListener implements ChatRoomListener {
 
 			}
 
-			public void banned(String actor, String reason) {
+			public void banned(Jid actor, String reason) {
 
 			}
 
@@ -80,6 +81,10 @@ public class GroupChatRoomListener implements ChatRoomListener {
 			public void adminRevoked() {
 
 			}
+
+            @Override
+            public void roomDestroyed(MultiUserChat alternateMUC, String reason) {
+            }
 		});
 	}
 

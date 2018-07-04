@@ -26,6 +26,10 @@ import org.jivesoftware.spark.component.TitlePanel;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.log.Log;
+import org.jxmpp.jid.DomainBareJid;
+import org.jxmpp.jid.EntityBareJid;
+import org.jxmpp.jid.impl.JidCreate;
+import org.jxmpp.stringprep.XmppStringprepException;
 
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
@@ -89,7 +93,7 @@ public class RoomCreationDialog extends JPanel {
         ResourceUtils.resButton(privateCheckbox, Res.getString("checkbox.private.room"));
     }
 
-    public MultiUserChat createGroupChat(Component parent, final String serviceName) {
+    public MultiUserChat createGroupChat(Component parent, final DomainBareJid serviceName) {
         final JOptionPane pane;
         final JDialog dlg;
 
@@ -132,17 +136,23 @@ public class RoomCreationDialog extends JPanel {
                 else if (Res.getString("create").equals(value)) {
                     boolean isValid = validatePanel();
                     if (isValid) {
-                        String room = nameField.getText().replaceAll(" ", "_") + "@" + serviceName;
+                        String roomJidString = nameField.getText().replaceAll(" ", "_") + "@" + serviceName;
+                        EntityBareJid room;
+                        try {
+                            room = JidCreate.entityBareFrom(roomJidString);
+                        } catch (XmppStringprepException ex) {
+                            throw new IllegalStateException(ex);
+                        }
                         try {
                             MultiUserChatManager.getInstanceFor( SparkManager.getConnection() ).getRoomInfo( room );
                             //JOptionPane.showMessageDialog(dlg, "Room already exists. Please specify a unique room name.", "Room Exists", JOptionPane.ERROR_MESSAGE);
                             //pane.setValue(JOptionPane.UNINITIALIZED_VALUE);
                             pane.removePropertyChangeListener(this);
                             dlg.setVisible(false);
-                            ConferenceUtils.joinConferenceRoom(room, room);
+                            ConferenceUtils.joinConferenceRoom(room.toString(), room);
                             return;
                         }
-                        catch (XMPPException | SmackException e1) {
+                        catch (XMPPException | SmackException | InterruptedException e1) {
                             // Nothing to do
                         }
 
@@ -210,11 +220,12 @@ public class RoomCreationDialog extends JPanel {
         return true;
     }
 
-    private MultiUserChat createGroupChat(String roomName, String serviceName) {
-        String room = roomName.replaceAll(" ", "_") + "@" + serviceName;
+    private MultiUserChat createGroupChat(String roomName, DomainBareJid serviceName) {
+        String roomString = roomName.replaceAll(" ", "_") + "@" + serviceName;
+        EntityBareJid room = JidCreate.entityBareFromOrThrowUnchecked(roomString);
 
         // Create a group chat with valid information
-        return MultiUserChatManager.getInstanceFor( SparkManager.getConnection() ).getMultiUserChat( room.toLowerCase() );
+        return MultiUserChatManager.getInstanceFor( SparkManager.getConnection() ).getMultiUserChat( room );
     }
 
 

@@ -67,6 +67,11 @@ import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
+import org.jxmpp.jid.BareJid;
+import org.jxmpp.jid.EntityBareJid;
+import org.jxmpp.jid.EntityJid;
+import org.jxmpp.jid.Jid;
+import org.jxmpp.jid.parts.Localpart;
 import org.jxmpp.util.XmppStringUtils;
 
 
@@ -78,8 +83,8 @@ public class WorkgroupManager {
      * Stores the ChatSettings of each workgroup, and will be updated
      * when packet date of workgroup changes.
      */
-    private Map<String, ChatSettings> chatSettings = new HashMap<String, ChatSettings>();
-    private Set<String> invites = new HashSet<String>();
+    private Map<EntityJid, ChatSettings> chatSettings = new HashMap<>();
+    private Set<Jid> invites = new HashSet<>();
 
 
     private static WorkgroupManager singleton;
@@ -145,7 +150,7 @@ public class WorkgroupManager {
      * @param workgroupName the name of the workgroup
      * @return the <code>ChatSetting</code> found with the specified key.
      */
-    public ChatSetting getChatSetting(String key, String workgroupName) {
+    public ChatSetting getChatSetting(String key, EntityBareJid workgroupName) {
         ChatSettings settings = null;
         if (chatSettings.containsKey(workgroupName)) {
             settings = (ChatSettings)chatSettings.get(workgroupName);
@@ -157,7 +162,7 @@ public class WorkgroupManager {
                 settings = workgroup.getChatSettings();
                 chatSettings.put(workgroupName, settings);
             }
-            catch (XMPPException | SmackException e) {
+            catch (XMPPException | SmackException | InterruptedException e) {
                 Log.error("Error retrieving chat setting using key=" + key + " and workgroup=" + workgroupName, e);
             }
         }
@@ -197,14 +202,14 @@ public class WorkgroupManager {
         }
 
 
-        String workgroupJID = contactItem.getJID();
-        String nameOfWorkgroup = XmppStringUtils.parseLocalpart(workgroupJID);
+        EntityBareJid workgroupJID = contactItem.getJid().asEntityBareJidOrThrow();
+        Localpart nameOfWorkgroup = workgroupJID.getLocalpart();
         final JDialog workgroupDialog = new JDialog(SparkManager.getMainWindow(), "Contact " + nameOfWorkgroup + " Workgroup");
         Workgroup workgroup = new Workgroup(workgroupJID, SparkManager.getConnection());
 
         final Form workgroupForm = workgroup.getWorkgroupForm();
-        String welcomeText = FormText.getWelcomeText(workgroupJID);
-        String startButton = FormText.getStartButton(workgroupJID);
+        String welcomeText = FormText.getWelcomeText(workgroupJID.toString());
+        String startButton = FormText.getStartButton(workgroupJID.toString());
 
         final WorkgroupDataForm formUI = new WorkgroupDataForm(workgroupForm, variables);
         formUI.setBackground(Color.white);
@@ -226,7 +231,7 @@ public class WorkgroupManager {
         submitButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (validateForm(workgroupDialog, workgroupForm, formUI.getFilledForm())) {
-                    enterQueue(contactItem.getJID(), formUI.getFilledForm());
+                    enterQueue(contactItem.getJid().asEntityBareJidOrThrow(), formUI.getFilledForm());
                     workgroupDialog.dispose();
                 }
             }
@@ -236,7 +241,7 @@ public class WorkgroupManager {
         formUI.setEnterListener(new WorkgroupDataForm.EnterListener() {
             public void enterPressed() {
                 if (validateForm(workgroupDialog, workgroupForm, formUI.getFilledForm())) {
-                    enterQueue(contactItem.getJID(), formUI.getFilledForm());
+                    enterQueue(contactItem.getJid().asEntityBareJidOrThrow(), formUI.getFilledForm());
                     workgroupDialog.dispose();
                 }
             }
@@ -287,8 +292,8 @@ public class WorkgroupManager {
         }
     }
 
-    private void enterQueue(String workgroupJID, Form form) {
-        String workgroupName = XmppStringUtils.parseLocalpart(workgroupJID).toUpperCase();
+    private void enterQueue(EntityBareJid workgroupJID, Form form) {
+        Localpart workgroupName = workgroupJID.getLocalpart();
 
         final JDialog workgroupDialog = new JDialog(SparkManager.getMainWindow(), workgroupName + " Workgroup");
 
@@ -297,7 +302,7 @@ public class WorkgroupManager {
         try {
             workgroup.joinQueue(form);
         }
-        catch (XMPPException | SmackException e) {
+        catch (XMPPException | SmackException | InterruptedException e) {
             Log.error(e);
         }
 
@@ -333,7 +338,7 @@ public class WorkgroupManager {
                         invites.add(workgroup.getWorkgroupJID());
                         workgroup.departQueue();
                     }
-                    catch (XMPPException | SmackException e1) {
+                    catch (XMPPException | SmackException | InterruptedException e1) {
                         Log.error(e1);
                     }
                 }
@@ -355,7 +360,7 @@ public class WorkgroupManager {
                     try {
                         workgroup.departQueue();
                     }
-                    catch (XMPPException | SmackException e1) {
+                    catch (XMPPException | SmackException | InterruptedException e1) {
                         Log.error(e1);
                     }
                 }
@@ -402,11 +407,11 @@ public class WorkgroupManager {
     private class InviteListener implements RoomInvitationListener {
         // Add own invitation listener
     	@Override
-        public boolean handleInvitation(final XMPPConnection conn, final MultiUserChat room, final String inviter, final String reason, final String password, final Message message) {
+        public boolean handleInvitation(final XMPPConnection conn, final MultiUserChat room, final EntityBareJid inviter, final String reason, final String password, final Message message) {
             invites.add(inviter);
 
             if (message.getExtension("workgroup", "http://jabber.org/protocol/workgroup") != null) {
-                String workgroupName = XmppStringUtils.parseLocalpart(inviter);
+                Localpart workgroupName = inviter.getLocalpart();
                 GroupChatRoom groupChatRoom = ConferenceUtils.enterRoomOnSameThread(workgroupName, room.getRoom(), password);
 
                 int tabLocation = SparkManager.getChatManager().getChatContainer().indexOfComponent(groupChatRoom);

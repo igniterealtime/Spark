@@ -164,10 +164,10 @@ public class SipAccountPacket extends IQ {
     {
         SipAccountPacket sp = new SipAccountPacket();
 
-        sp.setTo("sipark." + connection.getServiceName());
+        sp.setTo("sipark." + connection.getXMPPServiceDomain());
         sp.setType(IQ.Type.get);
 
-        PacketCollector collector = connection.createPacketCollector(new PacketIDFilter(sp.getPacketID()));
+        StanzaCollector collector = connection.createStanzaCollector(new PacketIDFilter(sp.getPacketID()));
         connection.sendStanza(sp);
 
         SipAccountPacket response = (SipAccountPacket)collector.nextResult(SmackConfiguration.getDefaultPacketReplyTimeout());
@@ -194,12 +194,12 @@ public class SipAccountPacket extends IQ {
         }
         SipAccountPacket sp = new SipAccountPacket(SipAccountPacket.Type.status);
 
-        sp.setTo("sipark." + connection.getServiceName());
+        sp.setTo("sipark." + connection.getXMPPServiceDomain());
         sp.setType(IQ.Type.set);
         sp.setContent(register.name());
 
-        PacketCollector collector = connection
-                .createPacketCollector(new PacketIDFilter(sp.getPacketID()));
+        StanzaCollector collector = connection
+                .createStanzaCollector(new PacketIDFilter(sp.getPacketID()));
         connection.sendStanza(sp);
 
         SipAccountPacket response = (SipAccountPacket)collector
@@ -228,7 +228,7 @@ public class SipAccountPacket extends IQ {
         ServiceDiscoveryManager disco = ServiceDiscoveryManager
                 .getInstanceFor(con);
         try {
-            DiscoverItems items = disco.discoverItems(con.getServiceName());
+            DiscoverItems items = disco.discoverItems(con.getXMPPServiceDomain());
             for ( DiscoverItems.Item item : items.getItems() ) {
                 if ("SIP Controller".equals(item.getName())) {
                     Log.debug("SIP Controller Found");

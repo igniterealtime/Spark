@@ -27,6 +27,9 @@ import org.jivesoftware.spark.ui.DataFormUI;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
+import org.jxmpp.jid.DomainBareJid;
+import org.jxmpp.jid.impl.JidCreate;
+import org.jxmpp.stringprep.XmppStringprepException;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
@@ -48,11 +51,16 @@ public class SearchForm extends JPanel {
     private UserSearchResults searchResults;
     private DataFormUI questionForm;
     private UserSearchManager searchManager;
-    private String serviceName;
+    private final DomainBareJid serviceName;
     private Form searchForm;
 
-    public SearchForm(String service) {
-        this.serviceName = service;
+    // TODO: Constructor should use DomainBareJid type instead of String.
+    public SearchForm(String serviceString) {
+        try {
+            this.serviceName = JidCreate.domainBareFrom(serviceString);
+        } catch (XmppStringprepException e) {
+            throw new IllegalStateException(e);
+        }
 
         searchManager = new UserSearchManager(SparkManager.getConnection());
         setLayout(new GridBagLayout());
@@ -60,9 +68,9 @@ public class SearchForm extends JPanel {
         // Load searchForm
 
         try {
-            searchForm = searchManager.getSearchForm(service);
+            searchForm = searchManager.getSearchForm(serviceName);
         }
-        catch (XMPPException | SmackException e) {
+        catch (XMPPException | SmackException | InterruptedException e) {
             Log.error("Unable to load search services.", e);
             UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
             JOptionPane.showMessageDialog(SparkManager.getMainWindow(), Res.getString("message.search.service.not.available"), Res.getString("title.notification"), JOptionPane.ERROR_MESSAGE);
@@ -124,7 +132,7 @@ public class SearchForm extends JPanel {
                     Form answerForm = questionForm.getFilledForm();
                     data = searchManager.getSearchResults(answerForm, serviceName);
                 }
-                catch (XMPPException | SmackException e) {
+                catch (XMPPException | SmackException | InterruptedException e) {
                     Log.error("Unable to load search service.", e);
                 }
 
