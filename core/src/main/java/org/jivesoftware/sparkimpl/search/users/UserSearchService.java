@@ -28,6 +28,7 @@ import org.jivesoftware.spark.ui.DataFormUI;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
+import org.jxmpp.jid.DomainBareJid;
 
 import javax.swing.*;
 import java.util.Collection;
@@ -35,7 +36,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class UserSearchService implements Searchable {
-    private Collection<String> searchServices;
+    private Collection<DomainBareJid> searchServices;
 
     public UserSearchService() {
         loadSearchServices();
@@ -129,8 +130,8 @@ public class UserSearchService implements Searchable {
      * @return a Collection of search services found on the server.
      * @throws XMPPException thrown if a server error has occurred.
      */
-    private Collection<String> getServices() throws Exception {
-        final Set<String> searchServices = new HashSet<>();
+    private Collection<DomainBareJid> getServices() throws Exception {
+        final Set<DomainBareJid> searchServices = new HashSet<>();
         ServiceDiscoveryManager discoManager = ServiceDiscoveryManager.getInstanceFor(SparkManager.getConnection());
         DiscoverItems items = SparkManager.getSessionManager().getDiscoveredItems();
         for (DiscoverItems.Item item : items.getItems() ) {
@@ -148,7 +149,7 @@ public class UserSearchService implements Searchable {
                     // Check that the search service belongs to user searches (and not room searches or other searches)
                     for (DiscoverInfo.Identity identity : info.getIdentities() ) {
                         if ("directory".equals(identity.getCategory()) && "user".equals(identity.getType())) {
-                            searchServices.add(item.getEntityID());
+                            searchServices.add(item.getEntityID().asDomainBareJid());
                         }
                     }
                 }
@@ -166,7 +167,7 @@ public class UserSearchService implements Searchable {
      *
      * @return the discovered search services.
      */
-    public Collection<String> getSearchServices() {
+    public Collection<DomainBareJid> getSearchServices() {
         return searchServices;
     }
 

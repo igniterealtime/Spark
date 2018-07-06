@@ -98,8 +98,8 @@ public class PrivacyManager {
     	ServiceDiscoveryManager servDisc = ServiceDiscoveryManager.getInstanceFor(conn);
         DiscoverInfo info = null;
     	try {
-    		info = servDisc.discoverInfo(conn.getServiceName());
-        } catch (XMPPException | SmackException e) {
+    		info = servDisc.discoverInfo(conn.getXMPPServiceDomain());
+        } catch (XMPPException | SmackException | InterruptedException e) {
             	// We could not query the server
         }
         if (info != null) {
@@ -124,7 +124,7 @@ public class PrivacyManager {
                if (!isListHidden(sparkList))
                    _privacyLists.add(sparkList);
             }  
-        } catch (XMPPException | SmackException e) {
+        } catch (XMPPException | SmackException | InterruptedException e) {
             Log.error("Could not load PrivacyLists", e);
         }
         
@@ -141,7 +141,7 @@ public class PrivacyManager {
             privacyManager.deletePrivacyList(listName);
            
             _privacyLists.remove(getPrivacyList(listName));
-        } catch (XMPPException | SmackException e) {
+        } catch (XMPPException | SmackException | InterruptedException e) {
             Log.warning("Could not remove PrivacyList " + listName, e);
         }
     }
@@ -238,7 +238,7 @@ public class PrivacyManager {
             sparklist = new SparkPrivacyList(privacyManager.getPrivacyList(listName));
             _privacyLists.add(sparklist);
             sparklist.addSparkPrivacyListener(_presenceHandler);
-        } catch (XMPPException | SmackException e) {
+        } catch (XMPPException | SmackException | InterruptedException e) {
             Log.warning("Could not create PrivacyList "+listName, e);
         }
         
@@ -280,7 +280,7 @@ public class PrivacyManager {
             }
             _presenceHandler.setIconsForList(getActiveList());
             
-        } catch (XMPPException | SmackException e) {
+        } catch (XMPPException | SmackException | InterruptedException e) {
             Log.warning("Could not activate PrivacyList " + listname, e);
         }
     }
@@ -295,7 +295,7 @@ public class PrivacyManager {
                 if (!plist.getListName().equals(listname))
                     plist.setListIsDefault(false);
             }
-        } catch (XMPPException | SmackException e) {
+        } catch (XMPPException | SmackException | InterruptedException e) {
             Log.warning("Could not set PrivacyList " + listname+" as default", e);
         }
 
@@ -314,7 +314,7 @@ public class PrivacyManager {
             for (SparkPrivacyList plist : _privacyLists) {
                 plist.setListAsActive(false);
             }
-        } catch (XMPPException | SmackException e) {
+        } catch (XMPPException | SmackException | InterruptedException e) {
             Log.warning("Could not decline active privacy list", e);
         }    
     }
@@ -330,7 +330,7 @@ public class PrivacyManager {
                     plist.setListIsDefault(false);
                 }
             }
-        } catch (XMPPException | SmackException e) {
+        } catch (XMPPException | SmackException | InterruptedException e) {
             Log.warning("Could not decline default privacy list", e);
         }    
     }
@@ -489,7 +489,7 @@ public class PrivacyManager {
             if (list != null)
                 return list;
             
-        } catch (XMPPException | SmackException e1) {
+        } catch (XMPPException | SmackException | InterruptedException e1) {
             Log.debug("PrivacyManager#ensureGloballyInvisibleListExists: Could not find globally invisible list. We need to create one");
         }
 
@@ -502,7 +502,7 @@ public class PrivacyManager {
             list = privacyManager.getPrivacyList(INVISIBLE_LIST_NAME);
             Log.debug("List \"" + INVISIBLE_LIST_NAME + "\" has been created ");
         } 
-        catch (XMPPException | SmackException e)
+        catch (XMPPException | SmackException | InterruptedException e)
         {
             Log.warning("PrivacyManager#ensureGloballyInvisibleListExists: Could not create PrivacyList " + INVISIBLE_LIST_NAME, e);
         }

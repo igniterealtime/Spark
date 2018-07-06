@@ -23,6 +23,7 @@ import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+import org.jxmpp.jid.EntityBareJid;
 
 import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
@@ -64,11 +65,11 @@ final class JoinConferenceRoomDialog extends JPanel {
         roomNameLabel.setText(Res.getString("room.name") +":");
     }
 
-    public void joinRoom(final String roomJID, final String roomName) {
+    public void joinRoom(final EntityBareJid roomJID, final String roomName) {
         final LocalPreferences pref = SettingsManager.getLocalPreferences();
 
         // Set default nickname
-        nicknameField.setText(pref.getNickname());
+        nicknameField.setText(pref.getNickname().toString());
 
         // Enable password field if a password is required
         passwordField.setVisible(false);

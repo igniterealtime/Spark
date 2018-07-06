@@ -115,7 +115,7 @@ public class MacrosEditor extends JPanel {
         try {
             personalGroup = FastpathPlugin.getAgentSession().getMacros(false);
         }
-        catch (XMPPException | SmackException e) {
+        catch (XMPPException | SmackException | InterruptedException e) {
             Log.error("No personal macros set.");
             personalGroup = new MacroGroup();
         }

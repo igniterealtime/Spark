@@ -29,6 +29,9 @@ import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.log.Log;
+import org.jxmpp.jid.Jid;
+import org.jxmpp.jid.impl.JidCreate;
+import org.jxmpp.stringprep.XmppStringprepException;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -113,7 +116,14 @@ public class JabberBrowser implements Plugin {
         dialog.setVisible(true);
     }
 
-    private void browse(String serviceName) {
+    private void browse(String serviceNameString) {
+        Jid serviceName;
+        try {
+            serviceName = JidCreate.from(serviceNameString);
+        } catch (XmppStringprepException e) {
+            throw new IllegalStateException(e);
+        }
+
         browsePanel.removeAll();
 
         ServiceDiscoveryManager discoManager = ServiceDiscoveryManager.getInstanceFor(con);
@@ -121,12 +131,12 @@ public class JabberBrowser implements Plugin {
         try {
             result = discoManager.discoverItems(serviceName);
         }
-        catch (XMPPException | SmackException e) {
+        catch (XMPPException | SmackException | InterruptedException e) {
             Log.error(e);
             return;
         }
 
-        addAddress(serviceName);
+        addAddress(serviceName.toString());
 
 
         for (DiscoverItems.Item item : result.getItems() ) {
@@ -140,14 +150,14 @@ public class JabberBrowser implements Plugin {
     }
 
     private void browseItem(DiscoverItems.Item discoveredItem) {
-        addAddress(discoveredItem.getEntityID());
+        addAddress(discoveredItem.getEntityID().toString());
         browsePanel.removeAll();
         ServiceDiscoveryManager discoManager = ServiceDiscoveryManager.getInstanceFor(con);
         DiscoverItems result;
         try {
             result = discoManager.discoverItems(discoveredItem.getEntityID());
         }
-        catch (XMPPException | SmackException e) {
+        catch (XMPPException | SmackException | InterruptedException e) {
             browsePanel.invalidate();
             browsePanel.validate();
             browsePanel.repaint();

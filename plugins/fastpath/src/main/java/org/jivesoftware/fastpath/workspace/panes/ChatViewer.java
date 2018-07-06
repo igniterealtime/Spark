@@ -50,7 +50,6 @@ import org.jivesoftware.spark.component.tabbedPane.SparkTabbedPane;
 import org.jivesoftware.spark.ui.ChatPrinter;
 import org.jivesoftware.spark.ui.TranscriptWindow;
 import org.jivesoftware.spark.util.GraphicUtils;
-import org.jxmpp.util.XmppStringUtils;
 
 /**
  * Displays Fastpath transcripts.
@@ -76,7 +75,7 @@ public class ChatViewer extends JPanel {
             Stanza stanza = iter.next();
             if (stanza instanceof Message) {
                 Message message = (Message)stanza;
-                String from = XmppStringUtils.parseResource(message.getFrom());
+                String from = message.getFrom().getResourceOrThrow().toString();
                 DelayInformation delayInformation = message.getExtension("delay", "urn:xmpp:delay");
                 Date stamp = null;
                 if (delayInformation != null) {
@@ -92,7 +91,7 @@ public class ChatViewer extends JPanel {
             }
             else {
                 Presence presence = (Presence)stanza;
-                String from = XmppStringUtils.parseResource(presence.getFrom());
+                String from = presence.getFrom().getResourceOrThrow().toString();
                 if (presence.getType() == Presence.Type.available) {
                     from = FpRes.getString("message.user.joined.room", from);
                 }
@@ -102,7 +101,6 @@ public class ChatViewer extends JPanel {
                 chatWindow.insertNotificationMessage(from, ChatManager.NOTIFICATION_COLOR);
                 Message message = new Message();
                 message.setBody(from);
-                message.setFrom("Room Notice");
                 chatTranscript.add(message);
             }
         }
@@ -160,7 +158,7 @@ public class ChatViewer extends JPanel {
             ChatNotes note = agentSession.getNote(transcript.getSessionID());
             pane.setText(note.getNotes());
         }
-        catch (XMPPException | SmackException e) {
+        catch (XMPPException | SmackException | InterruptedException e) {
             pane.setText("");
             // Log.error(e);
         }

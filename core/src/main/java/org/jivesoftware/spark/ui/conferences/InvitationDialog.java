@@ -31,6 +31,11 @@ import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+import org.jxmpp.jid.DomainBareJid;
+import org.jxmpp.jid.EntityBareJid;
+import org.jxmpp.jid.Jid;
+import org.jxmpp.jid.impl.JidCreate;
+import org.jxmpp.stringprep.XmppStringprepException;
 import org.jxmpp.util.XmppStringUtils;
 
 import javax.swing.AbstractAction;
@@ -206,11 +211,11 @@ final class InvitationDialog extends JPanel {
         if (comboRoomsField != null) {
             // comboRoomsField.setSelectedIndex(-1);
             ConferenceItem bookmarkedConf = null;
-            final String bookmarkedConfJid = SettingsManager.getLocalPreferences().getDefaultBookmarkedConf();
+            final EntityBareJid bookmarkedConfJid = SettingsManager.getLocalPreferences().getDefaultBookmarkedConf();
 
             for (BookmarkedConference room : rooms) {
                 final ConferenceItem ci = new ConferenceItem(room);
-                if (bookmarkedConfJid != null && bookmarkedConfJid.equalsIgnoreCase(ci.getBookmarkedConf().getJid())) {
+                if (bookmarkedConfJid != null && bookmarkedConfJid.equals(ci.getBookmarkedConf().getJid())) {
                     bookmarkedConf = ci;
                 }
                 comboRoomsField.addItem(ci);
@@ -245,7 +250,7 @@ final class InvitationDialog extends JPanel {
         return bookmarkedConf;
     }
 
-    public void inviteUsersToRoom(final String serviceName, Collection<BookmarkedConference> rooms, String adHocRoomName, Collection<String> jids) {
+    public void inviteUsersToRoom(final DomainBareJid serviceName, Collection<BookmarkedConference> rooms, String adHocRoomName, Collection<Jid> jids) {
         fillRoomsUI(rooms, adHocRoomName);
 
 
@@ -256,8 +261,8 @@ final class InvitationDialog extends JPanel {
 
         // Add jids to user list
         if (jids != null) {
-            for (Object jid : jids) {
-                invitedUsers.addElement(jid);
+            for (Jid jid : jids) {
+                invitedUsers.addElement(jid.toString());
             }
         }
 
@@ -315,7 +320,7 @@ final class InvitationDialog extends JPanel {
                     pane.setValue(JOptionPane.UNINITIALIZED_VALUE);
                     return;
                 }
-                String roomName = "";
+                EntityBareJid roomName = null;
 
                 // Add all rooms the user is in to list.
                 ChatManager chatManager = SparkManager.getChatManager();
@@ -342,14 +347,16 @@ final class InvitationDialog extends JPanel {
                 }
                 catch (ChatNotFoundException e1) {
                     dlg.setVisible(false);
-                    final List<String> jidList = new ArrayList<>();
+                    final List<EntityBareJid> jidList = new ArrayList<>();
                     Object[] jids1 = invitedUserList.getSelectedValues();
                     final int no = jids1 != null ? jids1.length : 0;
                     for (int i = 0; i < no; i++) {
                         try {
-                            jidList.add((String) jids1[i]);
+                            String entityBareJidString = (String) jids1[i];
+                            EntityBareJid entityBareJid = JidCreate.entityBareFromUnescaped(entityBareJidString);
+                            jidList.add(entityBareJid);
                         }
-                        catch (NullPointerException ee) {
+                        catch (NullPointerException | XmppStringprepException ee) {
                             Log.error(ee);
                         }
                     }
@@ -376,7 +383,7 @@ final class InvitationDialog extends JPanel {
                                             selectedBookmarkedConf.getPassword(), messageText, jidList);
                                 }
                             }
-                            catch (SmackException ex) {
+                            catch (SmackException | InterruptedException ex) {
                                 UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
                                 JOptionPane.showMessageDialog(pane, "An error occurred.", Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
                             }
@@ -394,17 +401,18 @@ final class InvitationDialog extends JPanel {
                 Object[] values = invitedUserList.getSelectedValues();
                 final int no = values != null ? values.length : 0;
                 for (int i = 0; i < no; i++) {
-                    String jid = (String)values[i];
+                    String jidString = (String)values[i];
                     try
                     {
+                        EntityBareJid jid = JidCreate.entityBareFromUnescaped(jidString);
                         chatRoom.getMultiUserChat().invite(jid, message != null ? message : Res.getString("message.please.join.in.conference"));
+                        String nickname = SparkManager.getUserManager().getUserNicknameFromJID(jid);
+                        chatRoom.getTranscriptWindow().insertNotificationMessage("Invited " + nickname, ChatManager.NOTIFICATION_COLOR);
                     }
-                    catch ( SmackException.NotConnectedException e1 )
+                    catch ( SmackException.NotConnectedException | XmppStringprepException | InterruptedException e1 )
                     {
-                        Log.warning( "Unable to send stanza to " + jid, e1 );
+                        Log.warning( "Unable to send stanza to " + jidString, e1 );
                     }
-                    String nickname = SparkManager.getUserManager().getUserNicknameFromJID(jid);
-                    chatRoom.getTranscriptWindow().insertNotificationMessage("Invited " + nickname, ChatManager.NOTIFICATION_COLOR);
                 }
 
             }

@@ -62,8 +62,11 @@ public class TaskNotification {
 
 					long now = System.currentTimeMillis();
 					Tasks tasks = Tasks.getTaskList(SparkManager.getConnection());
-					Iterator<Task> taskIter = tasks.getTasks().iterator();
-
+					if (tasks == null) {
+						return;
+					}
+					java.util.List<Task> tasksList = tasks.getTasks();
+					Iterator<Task> taskIter = tasksList.iterator();
 
 					final JPanel titlePanel = new JPanel(new BorderLayout()) {
 						private static final long serialVersionUID = -8871487137643685431L;

@@ -116,7 +116,7 @@ public class ChatPreference implements Preference {
             try {
                 AccountManager.getInstance( SparkManager.getConnection() ).changePassword(panel.getPassword());
             }
-            catch (XMPPException | SmackException passwordEx) {
+            catch (XMPPException | SmackException | InterruptedException passwordEx) {
             	UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
                 JOptionPane.showMessageDialog(SparkManager.getMainWindow(), Res.getString("message.unable.to.save.password"),
                     Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);

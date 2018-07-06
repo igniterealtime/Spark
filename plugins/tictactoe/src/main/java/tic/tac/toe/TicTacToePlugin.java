@@ -31,6 +31,7 @@ import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.StanzaListener;
 import org.jivesoftware.smack.filter.PacketIDFilter;
+import org.jivesoftware.smack.filter.StanzaIdFilter;
 import org.jivesoftware.smack.filter.StanzaTypeFilter;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Stanza;
@@ -44,6 +45,9 @@ import org.jivesoftware.spark.ui.ChatRoomListener;
 import org.jivesoftware.spark.ui.ChatRoomListenerAdapter;
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 import org.jivesoftware.spark.util.log.Log;
+import org.jxmpp.jid.EntityBareJid;
+import org.jxmpp.jid.EntityFullJid;
+import org.jxmpp.jid.parts.Localpart;
 import org.jxmpp.util.XmppStringUtils;
 import tic.tac.toe.packet.GameOfferPacket;
 import tic.tac.toe.packet.InvalidMove;
@@ -63,7 +67,7 @@ public class TicTacToePlugin implements Plugin {
     private ChatRoomListener _chatRoomListener;
     private StanzaListener _gameOfferListener;
     
-    private HashSet<String> _currentInvitations;
+    private HashSet<EntityBareJid> _currentInvitations;
        
     private ImageIcon buttonimg;
     
@@ -73,7 +77,7 @@ public class TicTacToePlugin implements Plugin {
     public void initialize() {
 	ClassLoader cl = getClass().getClassLoader();
 	buttonimg = new ImageIcon(cl.getResource("ttt.button.png"));
-	_currentInvitations = new HashSet<String>();
+	_currentInvitations = new HashSet<>();
 
 	ProviderManager.addIQProvider(GameOfferPacket.ELEMENT_NAME, GameOfferPacket.NAMESPACE, new GameOfferPacket.Provider() );
 	ProviderManager.addExtensionProvider(MovePacket.ELEMENT_NAME, MovePacket.NAMESPACE, new MovePacket.Provider() );
@@ -81,7 +85,8 @@ public class TicTacToePlugin implements Plugin {
 
 	// Add IQ listener to listen for incoming game invitations.
 	_gameOfferListener = new StanzaListener() {
-	    public void processPacket(Stanza stanza) {
+	    @Override
+	    public void processStanza(Stanza stanza) {
 		GameOfferPacket invitation = (GameOfferPacket) stanza;
 		if (invitation.getType() == IQ.Type.get) {
 		    showInvitationAlert(invitation);
@@ -116,14 +121,14 @@ public class TicTacToePlugin implements Plugin {
 		final ChatRoomButton sendGameButton = new ChatRoomButton(buttonimg);
 		room.getToolBar().addChatRoomButton(sendGameButton);
 
-		final String opponentJID = ((ChatRoomImpl) room).getJID();
+		final EntityFullJid opponentJID = ((ChatRoomImpl) room).getJID();
 
 		sendGameButton.addActionListener(new ActionListener() {
 
 		    @Override
 		    public void actionPerformed(ActionEvent e) {
 			
-			if(_currentInvitations.contains(XmppStringUtils.parseBareJid(opponentJID)))
+			if(_currentInvitations.contains(opponentJID.asBareJid()))
 			{
 			    return;
 			}
@@ -132,14 +137,14 @@ public class TicTacToePlugin implements Plugin {
 			offer.setTo(opponentJID);
 			offer.setType(IQ.Type.get );
 			
-			_currentInvitations.add(XmppStringUtils.parseBareJid(opponentJID));
+			_currentInvitations.add(opponentJID.asEntityBareJid());
 			room.getTranscriptWindow().insertCustomText
 			    (TTTRes.getString("ttt.request.sent"), false, false, Color.BLUE);
 				try
 				{
 					SparkManager.getConnection().sendStanza(offer);
 				}
-				catch ( SmackException.NotConnectedException e1 )
+				catch ( SmackException.NotConnectedException | InterruptedException e1 )
 				{
 					Log.warning( "Unable to send offer to " + opponentJID, e1 );
 				}
@@ -147,14 +152,14 @@ public class TicTacToePlugin implements Plugin {
 				SparkManager.getConnection().addAsyncStanzaListener(
 				new StanzaListener() {
 				    @Override
-				    public void processPacket(Stanza stanza) {
+				    public void processStanza(Stanza stanza) {
 
 					GameOfferPacket answer = (GameOfferPacket)stanza;
 					answer.setStartingPlayer(offer.isStartingPlayer());
 					answer.setGameID(offer.getGameID());
 					if (answer.getType() == IQ.Type.result) {
 					    // ACCEPT
-					    _currentInvitations.remove(XmppStringUtils.parseBareJid(opponentJID));
+					    _currentInvitations.remove(opponentJID.asBareJid());
 					    
 					    room.getTranscriptWindow().insertCustomText
 					    (TTTRes.getString("ttt.request.accept"), false, false, Color.BLUE);
@@ -164,12 +169,13 @@ public class TicTacToePlugin implements Plugin {
 					    // DECLINE
 					    room.getTranscriptWindow().insertCustomText
 					    (TTTRes.getString("ttt.request.decline"), false, false, Color.RED);
-					    _currentInvitations.remove(XmppStringUtils.parseBareJid(opponentJID));
+					    _currentInvitations.remove(opponentJID.asBareJid());
 					}
 
 				    }
 				},
-				new PacketIDFilter(offer.getPacketID()));
+				// TODO: Just filtering by stanza id is insure, should use Smack's IQ send-response mechanisms.
+				new StanzaIdFilter(offer));
 		    }
 		});
 
@@ -220,9 +226,9 @@ public class TicTacToePlugin implements Plugin {
 	invitation.setTo(invitation.getFrom());
 	
 	
-	final ChatRoom room = SparkManager.getChatManager().getChatRoom( XmppStringUtils.parseBareJid(invitation.getFrom()));
+	final ChatRoom room = SparkManager.getChatManager().getChatRoom( invitation.getFrom().asBareJid());
 	
-	String name = XmppStringUtils.parseLocalpart(invitation.getFrom());
+	Localpart name = invitation.getFrom().getLocalpartOrThrow();
 	
 	final JPanel panel = new JPanel();
 	JLabel text = new JLabel(TTTRes.getString("ttt.game.request",name)); 
@@ -246,12 +252,12 @@ public class TicTacToePlugin implements Plugin {
 		{
 			SparkManager.getConnection().sendStanza(invitation);
 		}
-		catch ( SmackException.NotConnectedException e1 )
+		catch ( SmackException.NotConnectedException | InterruptedException e1 )
 		{
 			Log.warning( "Unable to send invitation accept to " + invitation.getTo(), e1 );
 		}
 		invitation.setStartingPlayer(!invitation.isStartingPlayer());
-		createTTTWindow(invitation, invitation.getFrom());
+		createTTTWindow(invitation, invitation.getFrom().asEntityFullJidOrThrow());
 		panel.remove(3);
 		panel.remove(2);
 		panel.repaint();
@@ -268,7 +274,7 @@ public class TicTacToePlugin implements Plugin {
 		{
 			SparkManager.getConnection().sendStanza(invitation);
 		}
-		catch ( SmackException.NotConnectedException e1 )
+		catch ( SmackException.NotConnectedException | InterruptedException e1 )
 		{
 			Log.warning( "Unable to send invitation decline to " + invitation.getTo(), e1 );
 		}
@@ -288,12 +294,12 @@ public class TicTacToePlugin implements Plugin {
      * @param gop
      * @param opponentJID
      */
-    private void createTTTWindow(GameOfferPacket gop, String opponentJID) {
+    private void createTTTWindow(GameOfferPacket gop, EntityFullJid opponentJID) {
 	
-	String name = XmppStringUtils.parseLocalpart(opponentJID);
+	Localpart name = opponentJID.getLocalpart();
 	
 	// tictactoe versus ${name}
-	JFrame f = new JFrame(TTTRes.getString("ttt.window.title", TTTRes.getString("ttt.game.name"),name));
+	JFrame f = new JFrame(TTTRes.getString("ttt.window.title", TTTRes.getString("ttt.game.name"),name.toString() ));
 	
 	f.setIconImage(buttonimg.getImage());
 	GamePanel gp = new GamePanel(SparkManager.getConnection(),

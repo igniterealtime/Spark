@@ -75,6 +75,11 @@ import org.jivesoftware.sparkimpl.plugin.gateways.Gateway;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.Transport;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.TransportUtils;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
+import org.jxmpp.jid.BareJid;
+import org.jxmpp.jid.DomainBareJid;
+import org.jxmpp.jid.EntityBareJid;
+import org.jxmpp.jid.impl.JidCreate;
+import org.jxmpp.stringprep.XmppStringprepException;
 import org.jxmpp.util.XmppStringUtils;
 
 
@@ -93,7 +98,7 @@ public class RosterDialog implements ActionListener {
     private ContactList contactList;
     private JCheckBox publicBox;
     private JButton _searchForName ;
-    private Collection<String> _usersearchservice;
+    private Collection<DomainBareJid> _usersearchservice;
 
     /**
      * Create a new instance of RosterDialog.
@@ -101,7 +106,7 @@ public class RosterDialog implements ActionListener {
     public RosterDialog() {
         contactList = SparkManager.getWorkspace().getContactList();
         
-        _usersearchservice = SearchManager.getInstance().getSearchServicesAsString();
+        _usersearchservice = SearchManager.getInstance().getSearchServicesAsJid();
 
         panel = new JPanel();
         JLabel contactIDLabel = new JLabel();
@@ -127,7 +132,7 @@ public class RosterDialog implements ActionListener {
 	    public void mouseClicked(MouseEvent e) {
 		try {
 		    searchForContact(jidField.getText(), e);
-		} catch (XMPPException | SmackException e1) {
+		} catch (XMPPException | SmackException | InterruptedException e1) {
 		    Log.error("search contact", e1);
 		}
 	    }
@@ -223,12 +228,13 @@ public class RosterDialog implements ActionListener {
                     // This is not a transport.
                     String fullJID = getJID();
                     if ( !fullJID.contains( "@" ) ) {
-                        fullJID = fullJID + "@" + SparkManager.getConnection().getServiceName();
+                        fullJID = fullJID + "@" + SparkManager.getConnection().getXMPPServiceDomain();
                     }
 
                     if ( !fullJID.isEmpty() && !fullJID.startsWith( "@" ))
                     {
-                        vcardNickname = SparkManager.getUserManager().getNickname( fullJID );
+                        BareJid bareJid = JidCreate.bareFromOrThrowUnchecked(fullJID);
+                        vcardNickname = SparkManager.getUserManager().getNickname( bareJid );
                     }
                 }
 
@@ -372,28 +378,41 @@ public class RosterDialog implements ActionListener {
         if (transport == null) {
             String jid = getJID();
             if ( !jid.contains( "@" ) ) {
-                jid = jid + "@" + SparkManager.getConnection().getServiceName();
+                jid = jid + "@" + SparkManager.getConnection().getXMPPServiceDomain();
             }
             String nickname = nicknameField.getText();
             String group = (String)groupBox.getSelectedItem();
 
             jid = UserManager.escapeJID(jid);
 
+			BareJid bareJid;
+			try {
+				bareJid = JidCreate.bareFrom(jid);
+			} catch (XmppStringprepException e) {
+				throw new IllegalStateException(e);
+			}
+
             // Add as a new entry
-            addRosterEntry(jid, nickname, group);
+            addRosterEntry(bareJid, nickname, group);
         }
         else {
             String jid = getJID();
             try {
-                jid = Gateway.getJID(transport.getServiceName(), jid);
+                jid = Gateway.getJID(transport.getXMPPServiceDomain(), jid);
             }
-            catch (SmackException e) {
+            catch (SmackException | InterruptedException e) {
                 Log.error(e);
             }
 
             String nickname = nicknameField.getText();
             String group = (String)groupBox.getSelectedItem();
-            addRosterEntry(jid, nickname, group);
+			BareJid bareJid;
+			try {
+				bareJid = JidCreate.bareFrom(jid);
+			} catch (XmppStringprepException e) {
+				throw new IllegalStateException(e);
+			}
+            addRosterEntry(bareJid, nickname, group);
         }
     }
 
@@ -406,7 +425,7 @@ public class RosterDialog implements ActionListener {
         return jidField.getText().trim();
     }
 
-    private void addRosterEntry(final String jid, final String nickname, final String group) {
+    private void addRosterEntry(final BareJid jid, final String nickname, final String group) {
         final SwingWorker rosterEntryThread = new SwingWorker() {
             public Object construct() {
                 return addEntry(jid, nickname, group);
@@ -433,9 +452,10 @@ public class RosterDialog implements ActionListener {
      * @param event
      *            , the MouseEvent which triggered it
      * @throws XMPPException
+     * @throws InterruptedException 
      */
     public void searchForContact(String byname, MouseEvent event)
-            throws XMPPException, SmackException.NotConnectedException, SmackException.NoResponseException
+            throws XMPPException, SmackException.NotConnectedException, SmackException.NoResponseException, InterruptedException
     {
 
     	UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
@@ -459,7 +479,7 @@ public class RosterDialog implements ActionListener {
 	    header.setForeground(Color.red);
 	    popup.add(header);
 
-	    for (String search : _usersearchservice) {
+	    for (DomainBareJid search : _usersearchservice) {
 
 		ReportedData data;
 		UserSearchManager usersearchManager = new UserSearchManager(
@@ -484,7 +504,7 @@ public class RosterDialog implements ActionListener {
 		for (ReportedData.Row row : data.getRows() ) {
 		    if (!row.getValues(columnnames.get(0)).isEmpty()) {
 			String s = row.getValues(columnnames.get(0))
-				.get(0);
+				.get(0).toString();
 			final JMenuItem item = new JMenuItem(s);
 			popup.add(item);
 			item.addActionListener( e -> {
@@ -522,7 +542,7 @@ public class RosterDialog implements ActionListener {
      * @param group    the contact group.
      * @return the new RosterEntry.
      */
-    public RosterEntry addEntry(String jid, String nickname, String group) {
+    public RosterEntry addEntry(BareJid jid, String nickname, String group) {
         String[] groups = {group};
 
         Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
@@ -537,7 +557,7 @@ public class RosterDialog implements ActionListener {
             try {
                 roster.createEntry(jid, nickname, new String[]{group});
             }
-            catch (XMPPException | SmackException e) {
+            catch (XMPPException | SmackException | InterruptedException e) {
                 Log.error("Unable to add new entry " + jid, e);
             }
             return roster.getEntry(jid);
@@ -561,7 +581,7 @@ public class RosterDialog implements ActionListener {
 
             userEntry = roster.getEntry(jid);
         }
-        catch (XMPPException | SmackException ex) {
+        catch (XMPPException | SmackException | InterruptedException ex) {
             Log.error(ex);
         }
         return userEntry;
@@ -609,11 +629,11 @@ public class RosterDialog implements ActionListener {
 	if (transport == null) {
 	    if (!contact.contains("@")) {
 		contact = contact + "@"
-			+ SparkManager.getConnection().getServiceName();
+			+ SparkManager.getConnection().getXMPPServiceDomain();
 	    }
 	} else {
 	    if (!contact.contains("@")) {
-		contact = contact + "@" + transport.getServiceName();
+		contact = contact + "@" + transport.getXMPPServiceDomain();
 	    }
 	}
 
@@ -621,9 +641,10 @@ public class RosterDialog implements ActionListener {
 	    // Try to load nickname from VCard
 	    VCard vcard = new VCard();
 	    try {
-		vcard.load(SparkManager.getConnection(), contact);
+			EntityBareJid contactJid = JidCreate.entityBareFrom(contact);
+			vcard.load(SparkManager.getConnection(), contactJid);
 		nickname = vcard.getNickName();
-	    } catch (XMPPException | SmackException e1) {
+	    } catch (XMPPException | SmackException | XmppStringprepException | InterruptedException e1) {
 		Log.error(e1);
 	    }
 	    // If no nickname, use first name.

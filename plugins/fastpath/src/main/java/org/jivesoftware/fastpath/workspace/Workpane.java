@@ -53,6 +53,10 @@ import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.alerts.SparkToaster;
+import org.jxmpp.jid.EntityBareJid;
+import org.jxmpp.jid.Jid;
+import org.jxmpp.jid.impl.JidCreate;
+import org.jxmpp.jid.parts.Localpart;
 import org.jxmpp.util.XmppStringUtils;
 
 import javax.swing.*;
@@ -68,11 +72,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
+import java.util.List;
 
 public class Workpane {
     // Tracks all the offers coming into the client.
-    private Map offerMap = new HashMap();
-    private Map inviteMap = new HashMap();
+    private Map<String, Offer> offerMap = new HashMap<>();
+    private Map<String, Map<String, List<String>>> inviteMap = new HashMap<>();
     private Map<String, UserInvitationPane> invitations = new HashMap<String, UserInvitationPane>();
 
 
@@ -160,7 +165,7 @@ public class Workpane {
             public void actionPerformed(ActionEvent e) {
                 final Workgroup workgroup = FastpathPlugin.getWorkgroup();
                 String serviceName = "conference." + SparkManager.getSessionManager().getServerAddress();
-                final String roomName = "workgroup-" + XmppStringUtils.parseLocalpart(workgroup.getWorkgroupJID()) + "@" + serviceName;
+                final EntityBareJid roomName = JidCreate.entityBareFromOrThrowUnchecked("workgroup-" + workgroup.getWorkgroupJID().getLocalpartOrThrow() + "@" + serviceName);
                 ConferenceUtils.joinConferenceOnSeperateThread("Workgroup Chat", roomName, null);
             }
         });
@@ -235,40 +240,40 @@ public class Workpane {
                 if (!(room instanceof GroupChatRoom)) {
                     return;
                 }
-                String roomName = room.getRoomname();
-                String sessionID = XmppStringUtils.parseLocalpart(roomName);
-                if (offerMap.get(sessionID) != null) {
-                    Offer offer = (Offer)offerMap.get(sessionID);
-                    Map metadata = offer.getMetaData();
+                EntityBareJid roomName = room.getRoomJid();
+                Localpart sessionID = roomName.getLocalpart();
+                if (offerMap.get(sessionID.toString()) != null) {
+                    Offer offer = offerMap.get(sessionID.toString());
+                    Map<String, List<String>> metadata = offer.getMetaData();
                     decorateRoom(room, metadata);
                 }
             }
 
             public void chatRoomClosed(ChatRoom room) {
-                String roomName = room.getRoomname();
-                String sessionID = XmppStringUtils.parseLocalpart(roomName);
-                offerMap.remove(sessionID);
+                EntityBareJid roomName = room.getRoomJid();
+                Localpart sessionID = roomName.getLocalpart();
+                offerMap.remove(sessionID.toString());
             }
         });
     }
 
     public void checkForDecoration(ChatRoom chatRoom, String sessionID) {
         if (inviteMap.get(sessionID) != null) {
-            Map metadata = (Map)inviteMap.get(sessionID);
+            Map<String, List<String>> metadata = inviteMap.get(sessionID);
             decorateRoom(chatRoom, metadata);
         }
     }
 
     public void decorateRoom(ChatRoom room, Map metadata) {
-        String roomName = room.getRoomname();
-        String sessionID = XmppStringUtils.parseLocalpart(roomName);
+        EntityBareJid roomName = room.getRoomJid();
+        Localpart sessionID =roomName.getLocalpart();
 
 
         RequestUtils utils = new RequestUtils(metadata);
 
         addRoomInfo(sessionID, utils, room);
 
-        addButtons(sessionID, utils, room);
+        addButtons(sessionID.toString(), utils, room);
 
         // Specify to use Typing notifications.
         GroupChatRoom groupChat = (GroupChatRoom)room;
@@ -357,17 +362,17 @@ public class Workpane {
 
         boolean ok = dialog.hasSelectedAgent(room, transfer);
         if (ok) {
-            String jid = dialog.getSelectedJID();
-            jid = UserManager.escapeJID(jid);
+            String jidString = dialog.getSelectedJID();
+            Jid jid = JidCreate.fromUnescapedOrThrowUnchecked(jidString);
 
             String message = dialog.getMessage();
 
             // Determine who to send to.
-            if (jid.contains("/")) {
+            if (jid.hasResource()) {
                 // Queueu
                 InvitationManager.transferOrInviteToQueue(room, workgroup, sessionID, jid, message, transfer);
             }
-            else if ( XmppStringUtils.parseDomain(jid).startsWith("workgroup")) {
+            else if (jid.getDomain().toString().startsWith("workgroup")) {
                 InvitationManager.transferOrInviteToWorkgroup(room, workgroup, sessionID, jid, message, transfer);
             }
             else {
@@ -377,7 +382,7 @@ public class Workpane {
     }
 
 
-    private void addRoomInfo(final String sessionID, final RequestUtils utils, final ChatRoom room) {
+    private void addRoomInfo(final CharSequence sessionID, final RequestUtils utils, final ChatRoom room) {
         final JTabbedPane tabbedPane = new JTabbedPane();
 
         GroupChatParticipantList participantList = ((GroupChatRoom)room).getConferenceRoomInfo();
@@ -388,7 +393,7 @@ public class Workpane {
         try {
             form = FastpathPlugin.getWorkgroup().getWorkgroupForm();
         }
-        catch (XMPPException | SmackException e) {
+        catch (XMPPException | SmackException | InterruptedException e) {
             Log.error(e);
             return;
         }
@@ -461,7 +466,7 @@ public class Workpane {
             frame.repaint();
         }
 
-        fireFastPathChatOpened(room, sessionID, utils, tabbedPane);
+        fireFastPathChatOpened(room, sessionID.toString(), utils, tabbedPane);
         DataManager.getInstance().setMetadataForRoom(room, utils.getMetadata());
     }
 
@@ -544,7 +549,7 @@ public class Workpane {
                     {
                         offer.accept();
                     }
-                    catch ( SmackException.NotConnectedException e1 )
+                    catch ( SmackException.NotConnectedException | InterruptedException e1 )
                     {
                         Log.warning( "Unable to accept offer from " + offer.getUserJID(), e1 );
                     }
@@ -559,7 +564,7 @@ public class Workpane {
                     {
                         offer.reject();
                     }
-                    catch ( SmackException.NotConnectedException e1 )
+                    catch ( SmackException.NotConnectedException | InterruptedException e1 )
                     {
                         Log.warning( "Unable to reject offer from " + offer.getUserJID(), e1 );
                     }
@@ -609,7 +614,7 @@ public class Workpane {
     private class InviteListener implements RoomInvitationListener {
         // Add own invitation listener
     	@Override
-        public boolean handleInvitation(final XMPPConnection conn, final MultiUserChat chat, final String inviter, final String reason, final String password, final Message message) {
+        public boolean handleInvitation(final XMPPConnection conn, final MultiUserChat chat, final EntityBareJid inviter, final String reason, final String password, final Message message) {
             if (offerMap.containsKey(reason)) {
                 RequestUtils utils = new RequestUtils(getMetadata(reason));
                 String roomName = utils.getUsername();
@@ -647,7 +652,7 @@ public class Workpane {
                 MetaData metaDataExt = (MetaData)message.getExtension(MetaData.ELEMENT_NAME, MetaData.NAMESPACE);
                 if (metaDataExt != null) {
                     Map metadata = metaDataExt.getMetaData();
-                    metadata.put("sessionID", XmppStringUtils.parseLocalpart(chat.getRoom()));
+                    metadata.put("sessionID", chat.getRoom().getLocalpart().toString());
 
                     RequestUtils utils = new RequestUtils(metadata);
                     inviteMap.put(utils.getSessionID(), metadata);
@@ -677,11 +682,15 @@ public class Workpane {
 
         if (offer.getContent() instanceof InvitationRequest) {
             InvitationRequest request = (InvitationRequest)offer.getContent();
-            invitationPane = new UserInvitationPane(offer, utils, request.getRoom(), request.getInviter(), request.getReason());
+            EntityBareJid room = JidCreate.entityBareFromOrThrowUnchecked(request.getRoom());
+            EntityBareJid inviter = JidCreate.entityBareFromOrThrowUnchecked(request.getInviter());
+            invitationPane = new UserInvitationPane(offer, utils, room, inviter, request.getReason());
         }
         else if (offer.getContent() instanceof TransferRequest) {
             TransferRequest request = (TransferRequest)offer.getContent();
-            invitationPane = new UserInvitationPane(offer, utils, request.getRoom(), request.getInviter(), request.getReason());
+            EntityBareJid room = JidCreate.entityBareFromOrThrowUnchecked(request.getRoom());
+            EntityBareJid inviter = JidCreate.entityBareFromOrThrowUnchecked(request.getInviter());
+            invitationPane = new UserInvitationPane(offer, utils, room, inviter, request.getReason());
         }
 
         invitationPane.setAcceptListener(new UserInvitationPane.AcceptListener() {
@@ -700,7 +709,7 @@ public class Workpane {
 
 
     public Properties getWorkgroupProperties() {
-        String workgroupName = XmppStringUtils.parseLocalpart(FastpathPlugin.getWorkgroup().getWorkgroupJID());
+        Localpart workgroupName = FastpathPlugin.getWorkgroup().getWorkgroupJID().getLocalpartOrThrow();
 
         File workgroupDir = new File(Spark.getSparkUserHome(), "workgroups/" + workgroupName);
         workgroupDir.mkdirs();
@@ -717,7 +726,7 @@ public class Workpane {
     }
 
     public void saveProperties(Properties props) {
-        String workgroupName = XmppStringUtils.parseLocalpart(FastpathPlugin.getWorkgroup().getWorkgroupJID());
+        Localpart workgroupName = FastpathPlugin.getWorkgroup().getWorkgroupJID().getLocalpartOrThrow();
 
         File propertiesFile = new File(new File(Spark.getSparkUserHome(), "workgroups/" + workgroupName), "workgroup.properties");
 
@@ -807,7 +816,7 @@ public class Workpane {
                     FastpathPlugin.getAgentSession().setStatus(presence.getMode(), status);
                 }
             }
-            catch (XMPPException | SmackException e) {
+            catch (XMPPException | SmackException | InterruptedException e) {
                 Log.error(e);
             }
         }

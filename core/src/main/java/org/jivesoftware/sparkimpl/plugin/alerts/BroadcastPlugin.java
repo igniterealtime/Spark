@@ -89,6 +89,11 @@ import org.jivesoftware.sparkimpl.preference.sounds.SoundPreference;
 import org.jivesoftware.sparkimpl.preference.sounds.SoundPreferences;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+import org.jxmpp.jid.BareJid;
+import org.jxmpp.jid.EntityBareJid;
+import org.jxmpp.jid.Jid;
+import org.jxmpp.jid.impl.JidCreate;
+import org.jxmpp.jid.parts.Resourcepart;
 import org.jxmpp.util.XmppStringUtils;
 import org.jivesoftware.spark.ui.BroadcastHistoryFrame;
 
@@ -141,13 +146,14 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
             if (ModelUtil.hasLength(jid) && ModelUtil.hasLength( XmppStringUtils.parseDomain(jid))) {
                 if (ModelUtil.hasLength(jid) && jid.indexOf('@') == -1) {
                     // Append server address
-                    jid = jid + "@" + SparkManager.getConnection().getServiceName();
+                    jid = jid + "@" + SparkManager.getConnection().getXMPPServiceDomain();
                 }
 
-                String nickname = SparkManager.getUserManager().getUserNicknameFromJID(jid);
+                EntityBareJid entityBareJid = JidCreate.entityBareFromUnescapedOrThrowUnchecked(jid);
 
-                jid = UserManager.escapeJID(jid);
-                ChatRoom chatRoom = SparkManager.getChatManager().createChatRoom(jid, nickname, nickname);
+                String nickname = SparkManager.getUserManager().getUserNicknameFromJID(entityBareJid);
+
+                ChatRoom chatRoom = SparkManager.getChatManager().createChatRoom(entityBareJid, nickname, nickname);
                 SparkManager.getChatManager().getChatContainer().activateChatRoom(chatRoom);
             }
         } );
@@ -206,7 +212,8 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
         return false;
     }
 
-    public void processPacket(final Stanza stanza) {
+    @Override
+    public void processStanza(final Stanza stanza) {
         SwingUtilities.invokeLater( () -> {
             try {
                 final Message message = (Message)stanza;
@@ -226,7 +233,7 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
                 }
                 else {
                     String host = SparkManager.getSessionManager().getServerAddress();
-                    String from = stanza.getFrom() != null ? stanza.getFrom() : "";
+                    String from = stanza.getFrom() != null ? stanza.getFrom().toString() : "";
                     if (host.equalsIgnoreCase(from) || !ModelUtil.hasLength(from)) {
                         showAlert((Message)stanza);
                     }
@@ -263,7 +270,7 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
 
         buf.append(body);
 
-        String from = message.getFrom() != null ? message.getFrom() : "";
+        Jid from = message.getFrom();
 
         final TranscriptWindow window = new TranscriptWindow();
         window.insertNotificationMessage(buf.toString(), ChatManager.TO_COLOR);
@@ -284,7 +291,7 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
         // Currently Serverbroadcasts dont contain Subjects, so this might be a MOTD message
         boolean mightbeMOTD = message.getSubject()!=null;
 
-	if (!from.contains("@")) {
+	if (!from.hasLocalpart()) {
 	    // if theres no "@" it means the message came from the server
 	    if (Default.getBoolean(Default.BROADCAST_IN_CHATWINDOW)
 		    || linebreaks > 20 || message.getBody().length() > 1000 || mightbeMOTD) {
@@ -312,9 +319,9 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
      * @param from
      *            the sender
      */
-    private void userToUserBroadcast(Message message, Type type, String from) {
-	String jid = XmppStringUtils.parseBareJid(from);
-	String nickname = SparkManager.getUserManager().getUserNicknameFromJID(jid);
+    private void userToUserBroadcast(Message message, Type type, Jid from) {
+	EntityBareJid jid = from.asEntityBareJidOrThrow();
+	Resourcepart nickname = SparkManager.getUserManager().getUserNicknameAsResourcepartFromJID(jid);
 	ChatManager chatManager = SparkManager.getChatManager();
 	ChatContainer container = chatManager.getChatContainer();
 
@@ -333,9 +340,10 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
 
 	String broadcasttype = type == Message.Type.normal ? Res.getString("broadcast") : Res.getString("message.alert.notify");
 	//m.setFrom(name +" "+broadcasttype);
+	// TODO: It is strange that we (try to) set 'from' here.
         m.setFrom(nickname+" - "+broadcasttype);
 
-	chatRoom.getTranscriptWindow().insertMessage(m.getFrom(), message, ChatManager.FROM_COLOR);
+	chatRoom.getTranscriptWindow().insertMessage(m.getFrom().toString(), message, ChatManager.FROM_COLOR);
 	chatRoom.addToTranscript(m,true);
 	chatRoom.increaseUnreadMessageCount();
 	broadcastRooms.add(chatRoom);
@@ -446,7 +454,7 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
      */
     private void broadcastInChat(Message message)
     {
-	String from = message.getFrom() != null ? message.getFrom() : "";
+	String from = message.getFrom() != null ? message.getFrom().toString() : "";
 	ChatManager chatManager = SparkManager.getChatManager();
         ChatContainer container = chatManager.getChatContainer();
 
@@ -456,7 +464,9 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
         }
         catch (ChatRoomNotFoundException e) {
            String windowtitle = message.getSubject()!=null ? message.getSubject() : Res.getString("administrator");
-           chatRoom = new ChatRoomImpl("serveralert@" + from, Res.getString("broadcast"), windowtitle);
+           EntityBareJid jid = JidCreate.entityBareFromOrThrowUnchecked("serveralert@" + from);
+           Resourcepart resourcepart = Resourcepart.fromOrThrowUnchecked(Res.getString("broadcast"));
+           chatRoom = new ChatRoomImpl(jid, resourcepart, windowtitle);
            chatRoom.getBottomPanel().setVisible(false);
            chatRoom.hideToolbar();
            SparkManager.getChatManager().getChatContainer().addChatRoom(chatRoom);

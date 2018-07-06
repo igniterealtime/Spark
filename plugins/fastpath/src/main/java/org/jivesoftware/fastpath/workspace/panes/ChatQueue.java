@@ -103,7 +103,7 @@ public class ChatQueue extends JPanel {
         try {
             form = FastpathPlugin.getWorkgroup().getWorkgroupForm();
         }
-        catch (XMPPException | SmackException e) {
+        catch (XMPPException | SmackException | InterruptedException e) {
             Log.error("Unable to retrieve Workgroup form.", e);
             return;
         }

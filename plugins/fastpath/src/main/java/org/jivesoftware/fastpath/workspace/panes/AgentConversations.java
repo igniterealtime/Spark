@@ -62,6 +62,13 @@ import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+import org.jxmpp.jid.DomainBareJid;
+import org.jxmpp.jid.EntityBareJid;
+import org.jxmpp.jid.Jid;
+import org.jxmpp.jid.impl.JidCreate;
+import org.jxmpp.jid.parts.Resourcepart;
+import org.jxmpp.jid.util.JidUtil;
+import org.jxmpp.stringprep.XmppStringprepException;
 import org.jxmpp.util.XmppStringUtils;
 
 /**
@@ -159,7 +166,7 @@ public final class AgentConversations extends JPanel implements ChangeListener {
                     {
                         agentRoster = FastpathPlugin.getAgentSession().getAgentRoster();
                     }
-                    catch ( SmackException.NotConnectedException e1 )
+                    catch ( SmackException.NotConnectedException | InterruptedException e1 )
                     {
                         Log.warning( "Unable to get agent roster.", e1 );
                     }
@@ -169,15 +176,18 @@ public final class AgentConversations extends JPanel implements ChangeListener {
 
                 public void finished() {
                     agentRoster.addListener(new AgentRosterListener() {
-                        public void agentAdded(String jid) {
+                        @Override
+                        public void agentAdded(EntityBareJid jid) {
                         }
 
-                        public void agentRemoved(String jid) {
+                        @Override
+                        public void agentRemoved(EntityBareJid jid) {
 
                         }
 
+                        @Override
                         public void presenceChanged(Presence presence) {
-                            String agentJID = XmppStringUtils.parseBareJid(presence.getFrom());
+                            EntityBareJid agentJID = presence.getFrom().asEntityBareJidOrThrow();
                             AgentStatus agentStatus = (AgentStatus)presence.getExtension("agent-status", "http://jabber.org/protocol/workgroup");
 
                             String status = presence.getStatus();
@@ -211,7 +221,7 @@ public final class AgentConversations extends JPanel implements ChangeListener {
                                     if (!ModelUtil.hasLength(email)) {
                                         email = "Not specified";
                                     }
-                                    addAgentChat(agentJID, nickname, email, question, startDate, chatInfo.getSessionID());
+                                    addAgentChat(agentJID.toString(), nickname, email, question, startDate, chatInfo.getSessionID());
                                 }
                             }
                             calculateNumberOfChats(agentRoster);
@@ -229,9 +239,7 @@ public final class AgentConversations extends JPanel implements ChangeListener {
     private void calculateNumberOfChats(AgentRoster agentRoster) {
         int counter = 0;
         // TODO: CHECK FASTPATH
-        //for (String agent : agentRoster.getAgents()) {
-        for (Iterator it = agentRoster.getAgents().iterator(); it.hasNext();) {
-            String agent = (String)it.next();        	
+        for (EntityBareJid agent : agentRoster.getAgents()) {
             Presence presence = agentRoster.getPresence(agent);
             if (presence.isAvailable()) {
                 AgentStatus agentStatus = (AgentStatus)presence.getExtension("agent-status", "http://jabber.org/protocol/workgroup");
@@ -257,9 +265,9 @@ public final class AgentConversations extends JPanel implements ChangeListener {
         return false;
     }
 
-    private void removeOldChats(String agentJID, List chatList) {
+    private void removeOldChats(EntityBareJid agentJID, List chatList) {
         for (AgentConversation agent : sessionMap.values()) {
-            if (agent.getAgentJID().equals(agentJID)) {
+            if (agent.getAgentJID().toString().equals(agentJID)) {
                 String sessionID = agent.getSessionID();
                 boolean listHasID = newListHasSession(sessionID, chatList);
                 if (!listHasID) {
@@ -289,17 +297,17 @@ public final class AgentConversations extends JPanel implements ChangeListener {
                             // Get Conference
                             try {
                                 final MultiUserChatManager multiUserChatManager = MultiUserChatManager.getInstanceFor( SparkManager.getConnection() );
-                                Collection col = multiUserChatManager.getServiceNames();
+                                List<DomainBareJid> col = multiUserChatManager.getXMPPServiceDomains();
                                 if (col.size() == 0) {
                                     return;
                                 }
 
-                                String serviceName = (String)col.iterator().next();
-                                String roomName = sessionID + "@" + serviceName;
+                                DomainBareJid serviceName = col.iterator().next();
+                                EntityBareJid roomName = JidCreate.entityBareFrom(sessionID + "@" + serviceName);
 
                                 LocalPreferences pref = SettingsManager.getLocalPreferences();
 
-                                final String nickname = pref.getNickname();
+                                final Resourcepart nickname = pref.getNickname();
                                 MultiUserChat muc = multiUserChatManager.getMultiUserChat( roomName );
 
                                 ConferenceUtils.enterRoom(muc, roomName, nickname, null);
@@ -315,17 +323,18 @@ public final class AgentConversations extends JPanel implements ChangeListener {
                                     }
                                     Iterator iter = owners.iterator();
 
-                                    List<String> list = new ArrayList<String>();
+                                    List<Jid> list = new ArrayList<>();
                                     while (iter.hasNext()) {
                                         Affiliate affilitate = (Affiliate)iter.next();
-                                        String jid = affilitate.getJid();
-                                        if (!jid.equals(SparkManager.getSessionManager().getBareAddress())) {
+                                        Jid jid = affilitate.getJid();
+                                        if (!jid.equals(SparkManager.getSessionManager().getBareUserAddress())) {
                                             list.add(jid);
                                         }
                                     }
                                     if (list.size() > 0) {
                                         Form form = muc.getConfigurationForm().createAnswerForm();
-                                        form.setAnswer("muc#roomconfig_roomowners", list);
+                                        List<String> listStrings = JidUtil.toStringList(list);
+                                        form.setAnswer("muc#roomconfig_roomowners", listStrings);
 
                                         // new DataFormDialog(groupChat, form);
                                         muc.sendConfigurationForm(form);
@@ -351,22 +360,22 @@ public final class AgentConversations extends JPanel implements ChangeListener {
                                 FastpathPlugin.getAgentSession().makeRoomOwner(SparkManager.getConnection(), sessionID);
 
                                 final MultiUserChatManager multiUserChatManager = MultiUserChatManager.getInstanceFor( SparkManager.getConnection() );
-                                Collection<String> col = multiUserChatManager.getServiceNames();
+                                List<DomainBareJid> col = multiUserChatManager.getXMPPServiceDomains();
                                 if (col.size() == 0) {
                                     return;
                                 }
 
-                                String serviceName = (String)col.iterator().next();
-                                String roomName = sessionID + "@" + serviceName;
+                                DomainBareJid serviceName = col.iterator().next();
+                                EntityBareJid roomName = JidCreate.entityBareFrom(sessionID + "@" + serviceName);
 
                                 LocalPreferences pref = SettingsManager.getLocalPreferences();
-                                final String nickname = pref.getNickname();
+                                final Resourcepart nickname = pref.getNickname();
                                 MultiUserChat muc = multiUserChatManager.getMultiUserChat( roomName);
 
                                 ConferenceUtils.enterRoom(muc, roomName, nickname, null);
 
                             }
-                            catch (XMPPException | SmackException e1) {
+                            catch (XMPPException | SmackException | InterruptedException | XmppStringprepException e1) {
                                 Log.error(e1);
                             }
                         }
@@ -377,7 +386,7 @@ public final class AgentConversations extends JPanel implements ChangeListener {
                     menu.show(list, e.getX(), e.getY());
                 }
             }
-            catch (XMPPException | SmackException e1) {
+            catch (XMPPException | SmackException | InterruptedException e1) {
                 Log.error(e1);
                 return;
             }

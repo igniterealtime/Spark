@@ -28,6 +28,8 @@ import org.jivesoftware.spark.component.TitlePanel;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.log.Log;
+import org.jxmpp.jid.Jid;
+import org.jxmpp.jid.impl.JidCreate;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
@@ -139,19 +141,20 @@ public class ConferenceServiceBrowser {
         return (String)list.getSelectedValue();
     }
 
-    public Collection<String> getConferenceServices(String server) throws Exception {
+    public Collection<String> getConferenceServices(String serverString) throws Exception {
+        Jid server = JidCreate.from(serverString);
         List<String> answer = new ArrayList<>();
         ServiceDiscoveryManager discoManager = ServiceDiscoveryManager.getInstanceFor(SparkManager.getConnection());
         DiscoverItems items = discoManager.discoverItems(server);
         for (DiscoverItems.Item item : items.getItems() ) {
-            if (item.getEntityID().startsWith("conference") || item.getEntityID().startsWith("private")) {
-                answer.add(item.getEntityID());
+            if (item.getEntityID().toString().startsWith("conference") || item.getEntityID().toString().startsWith("private")) {
+                answer.add(item.getEntityID().toString());
             }
             else {
                 try {
                     DiscoverInfo info = discoManager.discoverInfo(item.getEntityID());
                     if (info.containsFeature("http://jabber.org/protocol/muc")) {
-                        answer.add(item.getEntityID());
+                        answer.add(item.getEntityID().toString());
                     }
                 }
                 catch (XMPPException | SmackException e) {

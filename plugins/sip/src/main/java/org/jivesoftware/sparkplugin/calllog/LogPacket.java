@@ -19,7 +19,7 @@ import org.jivesoftware.smack.*;
 import org.jivesoftware.smack.filter.PacketIDFilter;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.ExtensionElement;
-import org.jivesoftware.smack.packet.XMPPError;
+import org.jivesoftware.smack.packet.StanzaError;
 import org.jivesoftware.smack.provider.IQProvider;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -128,11 +128,11 @@ public class LogPacket extends IQ {
         LogPacket lp = new LogPacket();
         lp.addExtension(ext);
 
-        lp.setTo(NAME + "." + connection.getServiceName());
+        lp.setTo(NAME + "." + connection.getXMPPServiceDomain());
         lp.setType(IQ.Type.set);
 
-        PacketCollector collector = connection
-                .createPacketCollector(new PacketIDFilter(lp.getPacketID()));
+        StanzaCollector collector = connection
+                .createStanzaCollector(new PacketIDFilter(lp.getPacketID()));
         connection.sendStanza(lp);
 
         LogPacket response = (LogPacket)collector

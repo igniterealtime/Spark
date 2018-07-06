@@ -12,6 +12,9 @@ import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.ui.ContactGroup;
 import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.sparkimpl.plugin.privacy.PrivacyManager;
+import org.jxmpp.jid.Jid;
+import org.jxmpp.jid.impl.JidCreate;
+import org.jxmpp.stringprep.XmppStringprepException;
 
 
 /**
@@ -27,26 +30,73 @@ public class PrivacyPresenceHandler implements SparkPrivacyItemListener {
      * 
      * @param jid
      *            JID to send offline status
+     * @deprecated use {#link {@link #sendUnavailableTo(Jid)}} instead. 
      */
-    public void sendUnavailableTo(String jid) throws SmackException.NotConnectedException
+    @Deprecated
+    public void sendUnavailableTo(String jidString) throws SmackException.NotConnectedException
+    {
+        Jid jid;
+        try {
+            jid = JidCreate.from(jidString);
+        } catch (XmppStringprepException e) {
+            throw new IllegalStateException(e);
+        }
+        sendUnavailableTo(jid);
+    }
+
+    /**
+     * Send Unavailable (offline status) to jid .
+     * 
+     * @param jid
+     *            JID to send offline status
+     * @throws InterruptedException 
+     */
+    public void sendUnavailableTo(Jid jid) throws SmackException.NotConnectedException
     {
         Presence pack = new Presence(Presence.Type.unavailable);                                                  
         pack.setTo(jid);
-        SparkManager.getConnection().sendStanza(pack);
+        try {
+            SparkManager.getConnection().sendStanza(pack);
+        } catch (InterruptedException e) {
+            throw new IllegalStateException(e);
+        }
     }
 
+    /**
+     * Send my presence for user
+     * 
+     * @param jidString
+     *            JID to send presence
+     * @deprecated use {@link #sendRealPresenceTo(Jid)} instead.
+     */
+    @Deprecated
+    public void sendRealPresenceTo(String jidString) throws SmackException.NotConnectedException
+    {
+        Jid jid;
+        try {
+            jid = JidCreate.from(jidString);
+        } catch (XmppStringprepException e) {
+            throw new IllegalStateException(e);
+        }
+        sendUnavailableTo(jid);
+    }
+    
     /**
      * Send my presence for user
      * 
      * @param jid
      *            JID to send presence
      */
-    public void sendRealPresenceTo(String jid) throws SmackException.NotConnectedException
+    public void sendRealPresenceTo(Jid jid) throws SmackException.NotConnectedException
     {
         Presence presence = SparkManager.getWorkspace().getStatusBar().getPresence(); 
         Presence pack = new Presence(presence.getType(), presence.getStatus(), 1, presence.getMode()); 
         pack.setTo(jid);
-        SparkManager.getConnection().sendStanza(pack);
+        try {
+            SparkManager.getConnection().sendStanza(pack);
+        } catch (InterruptedException e) {
+            throw new IllegalStateException(e);
+        }
     }
 
     public void setIconsForList(SparkPrivacyList list) throws SmackException.NotConnectedException
@@ -74,7 +124,12 @@ public class PrivacyPresenceHandler implements SparkPrivacyItemListener {
         SparkManager.getContactList().updateUI();
     }
 
-    private void setBlockedIconToContact(String jid) {
+    private void setBlockedIconToContact(CharSequence cs) {
+        Jid jid = JidCreate.fromOrThrowUnchecked(cs);
+        setBlockedIconToContact(jid);
+    }
+
+    private void setBlockedIconToContact(Jid jid) {
         Collection<ContactItem> items = SparkManager.getWorkspace().getContactList().getContactItemsByJID(jid);
         for (ContactItem contactItem : items) {
             if (contactItem != null) {
@@ -96,9 +151,9 @@ public class PrivacyPresenceHandler implements SparkPrivacyItemListener {
             if (pItem.getType().equals(PrivacyItem.Type.group)) {
                 ContactGroup group = SparkManager.getWorkspace().getContactList().getContactGroup(pItem.getValue());
                 for (ContactItem citem : group.getContactItems()) {
-                    removeBlockedIconFromContact(citem.getJID());
+                    removeBlockedIconFromContact(citem.getJid());
                     if (pItem.isFilterPresenceOut()) {
-                        sendRealPresenceTo(citem.getJID());
+                        sendRealPresenceTo(citem.getJid());
                     }
                 }
             }
@@ -107,7 +162,12 @@ public class PrivacyPresenceHandler implements SparkPrivacyItemListener {
         SparkManager.getContactList().updateUI();
     }
 
-    private void removeBlockedIconFromContact(String jid) {
+    private void removeBlockedIconFromContact(CharSequence cs) {
+        Jid jid = JidCreate.fromOrThrowUnchecked(cs);
+        removeBlockedIconFromContact(jid);
+    }
+
+    private void removeBlockedIconFromContact(Jid jid) {
         Collection<ContactItem> items = SparkManager.getWorkspace().getContactList().getContactItemsByJID(jid); 
         for (ContactItem item : items) {
             if (item != null) {

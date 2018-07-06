@@ -30,6 +30,8 @@ import org.jivesoftware.spark.component.TitlePanel;
 import org.jivesoftware.spark.component.Tree;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
+import org.jxmpp.jid.EntityBareJid;
+import org.jxmpp.jid.Jid;
 
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -89,7 +91,7 @@ public class RoomBrowser extends JPanel {
 
     }
 
-    public void displayRoomInformation(final String roomJID) {
+    public void displayRoomInformation(final EntityBareJid roomJID) {
         SwingWorker worker = new SwingWorker() {
             RoomInfo roomInfo = null;
             DiscoverItems items = null;
@@ -102,7 +104,7 @@ public class RoomBrowser extends JPanel {
                     ServiceDiscoveryManager manager = ServiceDiscoveryManager.getInstanceFor(SparkManager.getConnection());
                     items = manager.discoverItems(roomJID);
                 }
-                catch (XMPPException | SmackException e) {
+                catch (XMPPException | SmackException | InterruptedException e) {
                     Log.error(e);
                 }
                 return "ok";
@@ -116,7 +118,7 @@ public class RoomBrowser extends JPanel {
         worker.start();
     }
 
-    private void setupRoomInformationUI(String roomJID, final RoomInfo roomInfo, final DiscoverItems items) {
+    private void setupRoomInformationUI(EntityBareJid roomJID, final RoomInfo roomInfo, final DiscoverItems items) {
         descriptionValue.setText(Res.getString("message.no.description.available"));
         subjectValue.setText(Res.getString("message.no.subject.available"));
         occupantsValue.setText("n/a");
@@ -131,11 +133,11 @@ public class RoomBrowser extends JPanel {
             else {
                 occupantsValue.setText(Integer.toString(roomInfo.getOccupantsCount()));
             }
-            roomNameValue.setText(roomInfo.getRoom());
+            roomNameValue.setText(roomInfo.getRoom().toString());
 
             for (DiscoverItems.Item item : items.getItems() ) {
-                String jid = item.getEntityID();
-                rootNode.add(new JiveTreeNode(jid, false, SparkRes.getImageIcon(SparkRes.SMALL_USER1_INFORMATION)));
+                Jid jid = item.getEntityID();
+                rootNode.add(new JiveTreeNode(jid.toString(), false, SparkRes.getImageIcon(SparkRes.SMALL_USER1_INFORMATION)));
             }
             tree.expandRow(0);
         }

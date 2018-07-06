@@ -16,6 +16,7 @@
 package org.jivesoftware.sparkimpl.plugin.gateways.transports;
 
 import org.jivesoftware.resource.SparkRes;
+import org.jxmpp.jid.DomainBareJid;
 import org.jivesoftware.resource.Res;
 
 import javax.swing.Icon;
@@ -24,9 +25,9 @@ import javax.swing.Icon;
  */
 public class MSNTransport implements Transport {
 
-    private String serviceName;
+    private DomainBareJid serviceName;
 
-    public MSNTransport(String serviceName) {
+    public MSNTransport(DomainBareJid serviceName) {
         this.serviceName = serviceName;
     }
 
@@ -46,7 +47,8 @@ public class MSNTransport implements Transport {
         return SparkRes.getImageIcon(SparkRes.MSN_TRANSPORT_INACTIVE_IMAGE);
     }
 
-    public String getServiceName() {
+    @Override
+    public DomainBareJid getXMPPServiceDomain() {
         return serviceName;
     }
 
@@ -54,7 +56,7 @@ public class MSNTransport implements Transport {
         return "MSN";
     }
 
-    public void setServiceName(String serviceName) {
+    public void setServiceName(DomainBareJid serviceName) {
         this.serviceName = serviceName;
     }
 
