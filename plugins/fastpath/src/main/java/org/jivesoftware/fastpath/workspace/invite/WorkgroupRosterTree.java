@@ -28,6 +28,9 @@ import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.JiveTreeCellRenderer;
 import org.jivesoftware.spark.component.JiveTreeNode;
 import org.jivesoftware.spark.component.Tree;
+import org.jxmpp.jid.BareJid;
+import org.jxmpp.jid.EntityBareJid;
+import org.jxmpp.jid.Jid;
 
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
@@ -50,10 +53,10 @@ public final class WorkgroupRosterTree extends JPanel {
 	private static final long serialVersionUID = -1159008318665938338L;
 	private final JiveTreeNode rootNode = new JiveTreeNode(FpRes.getString("title.contact.list"));
     private final Tree rosterTree;
-    private final Map<JiveTreeNode, String> addressMap = new HashMap<JiveTreeNode, String>();
+    private final Map<JiveTreeNode, EntityBareJid> addressMap = new HashMap<>();
     private boolean showUnavailableAgents = true;
     private final List workgroupList;
-    private Collection exclusionList;
+    private Collection<? extends BareJid> exclusionList;
 
     /**
      * Creates a new Roster Tree.
@@ -62,7 +65,7 @@ public final class WorkgroupRosterTree extends JPanel {
      * @param showAgents    true if agents should be visible.
      * @param workgroupList the list of workgroups.
      */
-    public WorkgroupRosterTree(Collection exclusionJIDs, boolean showAgents, List workgroupList) {
+    public WorkgroupRosterTree(Collection<? extends BareJid> exclusionJIDs, boolean showAgents, List workgroupList) {
         this.workgroupList = workgroupList;
         showUnavailableAgents = showAgents;
         exclusionList = exclusionJIDs;
@@ -87,12 +90,12 @@ public final class WorkgroupRosterTree extends JPanel {
         }
     }
 
-    private void changePresence(String user, Presence presence) {
+    private void changePresence(Jid user, Presence presence) {
         final Iterator<JiveTreeNode> iter = addressMap.keySet().iterator();
         while (iter.hasNext()) {
             final JiveTreeNode node = (JiveTreeNode)iter.next();
-            final String nodeUser = (String)addressMap.get(node);
-            if (user.startsWith(nodeUser)) {
+            final BareJid nodeUser = addressMap.get(node);
+            if (user.isParentOf(nodeUser)) {
                 if (!PresenceManager.isAvailable(presence)) {
                     node.setIcon(FastpathRes.getImageIcon(FastpathRes.RED_BALL));
                 }
@@ -142,16 +145,16 @@ public final class WorkgroupRosterTree extends JPanel {
             for (RosterEntry entry : group.getEntries()) {
                 String name = entry.getName();
                 if (name == null) {
-                    name = entry.getUser();
+                    name = entry.getJid().toString();
                 }
 
-                if (exclusionList.contains(entry.getUser())) {
+                if (exclusionList.contains(entry.getJid())) {
                     continue;
                 }
 
                 final JiveTreeNode entryNode = new JiveTreeNode(name, false);
-                final Presence usersPresence = roster.getPresence(entry.getUser());
-                addressMap.put(entryNode, entry.getUser());
+                final Presence usersPresence = roster.getPresence(entry.getJid());
+                addressMap.put(entryNode, entry.getJid().asEntityBareJidOrThrow());
                 if (PresenceManager.isAvailable(usersPresence)) {
                     groupNode.add(entryNode);
                 }
@@ -159,7 +162,7 @@ public final class WorkgroupRosterTree extends JPanel {
                     groupNode.add(entryNode);
                 }
 
-                changePresence(entry.getUser(), usersPresence);
+                changePresence(entry.getJid(), usersPresence);
                 final DefaultTreeModel model = (DefaultTreeModel)rosterTree.getModel();
                 model.nodeStructureChanged(groupNode);
             }
@@ -181,9 +184,8 @@ public final class WorkgroupRosterTree extends JPanel {
      * @param node the JiveTreeNode.
      * @return the selected agent nodes userobject.
      */
-    public String getAgentJID(JiveTreeNode node) {
-        String address = (String)addressMap.get(node);
-        return address;
+    public EntityBareJid getAgentJID(JiveTreeNode node) {
+        return addressMap.get(node);
     }
 
     public String toString() {

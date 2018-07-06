@@ -25,7 +25,7 @@ import org.jivesoftware.smack.filter.*;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.packet.Stanza;
-import org.jivesoftware.smack.packet.XMPPError;
+import org.jivesoftware.smack.packet.StanzaError;
 import org.jivesoftware.smackx.chatstates.ChatState;
 import org.jivesoftware.smackx.delay.packet.DelayInformation;
 import org.jivesoftware.smackx.muc.DefaultParticipantStatusListener;
@@ -49,6 +49,10 @@ import org.jivesoftware.spark.util.UIComponentRegistry;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+import org.jxmpp.jid.EntityBareJid;
+import org.jxmpp.jid.EntityFullJid;
+import org.jxmpp.jid.Jid;
+import org.jxmpp.jid.parts.Resourcepart;
 import org.jxmpp.util.XmppStringUtils;
 
 import javax.swing.*;
@@ -67,8 +71,8 @@ public class GroupChatRoom extends ChatRoom
     private final LocalPreferences pref = SettingsManager.getLocalPreferences();
     private final MultiUserChat chat;
     private final SubjectPanel subjectPanel;
-    private final List<String> currentUserList = new ArrayList<>();
-    private final List<String> blockedUsers = new ArrayList<>();
+    private final List<EntityFullJid> currentUserList = new ArrayList<>();
+    private final List<EntityFullJid> blockedUsers = new ArrayList<>();
     private final GroupChatParticipantList roomInfo;
     private final RolloverButton settings;
     private Icon tabIcon = SparkRes.getImageIcon( SparkRes.CONFERENCE_IMAGE_16x16 );
@@ -97,7 +101,8 @@ public class GroupChatRoom extends ChatRoom
         SparkManager.getConnection().addAsyncStanzaListener( this, andFilter );
 
         // We are just using a generic Group Chat.
-        tabTitle = XmppStringUtils.parseLocalpart( XmppStringUtils.unescapeLocalpart( chat.getRoom() ) );
+//        tabTitle = XmppStringUtils.parseLocalpart( XmppStringUtils.unescapeLocalpart( chat.getRoom() ) );
+        tabTitle = XmppStringUtils.unescapeLocalpart(chat.getRoom().getLocalpart().toString());
 
         // Room Information
         roomInfo = UIComponentRegistry.createGroupChatParticipantList();
@@ -150,7 +155,7 @@ public class GroupChatRoom extends ChatRoom
                             Form form = chat.getConfigurationForm().createAnswerForm();
                             new DataFormDialog( chatFrame, chat, form );
                         }
-                        catch ( XMPPException | SmackException e )
+                        catch ( XMPPException | SmackException | InterruptedException e )
                         {
                             Log.error( "Error configuring room.", e );
                         }
@@ -180,7 +185,7 @@ public class GroupChatRoom extends ChatRoom
                             {
                                 chat.changeSubject( newSubject );
                             }
-                            catch ( XMPPException | SmackException e )
+                            catch ( XMPPException | SmackException | InterruptedException e )
                             {
                                 Log.error( e );
                             }
@@ -221,7 +226,7 @@ public class GroupChatRoom extends ChatRoom
                                 chat.destroy( reason, null );
                                 getChatRoom().leaveChatRoom();
                             }
-                            catch ( XMPPException | SmackException e1 )
+                            catch ( XMPPException | SmackException | InterruptedException e1 )
                             {
                                 Log.warning( "Unable to destroy room", e1 );
                             }
@@ -277,7 +282,7 @@ public class GroupChatRoom extends ChatRoom
                     final Form form = chat.getConfigurationForm().createAnswerForm();
                     new DataFormDialog( chatFrame, chat, form );
                 }
-                catch ( XMPPException | SmackException xmpe )
+                catch ( XMPPException | SmackException | InterruptedException xmpe )
                 {
                     getTranscriptWindow().insertNotificationMessage( xmpe.getMessage(), ChatManager.ERROR_COLOR );
                     scrollToBottom();
@@ -300,7 +305,7 @@ public class GroupChatRoom extends ChatRoom
                     {
                         chat.changeSubject( newSubject );
                     }
-                    catch ( XMPPException | SmackException xmpee )
+                    catch ( XMPPException | SmackException | InterruptedException xmpee )
                     {
                         getTranscriptWindow().insertNotificationMessage( xmpee.getMessage(), ChatManager.ERROR_COLOR );
                         scrollToBottom();
@@ -317,7 +322,7 @@ public class GroupChatRoom extends ChatRoom
 
                 new AnswerFormDialog( chatFrame, chat, form );
             }
-            catch ( XMPPException | SmackException xmpe )
+            catch ( XMPPException | SmackException | InterruptedException xmpe )
             {
                 getTranscriptWindow().insertNotificationMessage( xmpe.getMessage(), ChatManager.ERROR_COLOR );
                 scrollToBottom();
@@ -354,15 +359,15 @@ public class GroupChatRoom extends ChatRoom
      * @param body     Body of message to scan for reasons to highlight.
      * @return Color of message background.
      */
-    private Color getMessageBackground( String nickname, String body )
+    private Color getMessageBackground( Resourcepart nickname, String body )
     {
-        final String myNickName = chat.getNickname();
+        final Resourcepart myNickName = chat.getNickname();
         final String myUserName = SparkManager.getSessionManager().getUsername();
         final Pattern usernameMatch = Pattern.compile( myUserName, Pattern.CASE_INSENSITIVE );
-        final Pattern nicknameMatch = Pattern.compile( myNickName, Pattern.CASE_INSENSITIVE );
+        final Pattern nicknameMatch = Pattern.compile( myNickName.toString(), Pattern.CASE_INSENSITIVE );
 
         // Should we even highlight this packet?
-        if ( pref.isMucHighNameEnabled() && myNickName.equalsIgnoreCase( nickname ) )
+        if ( pref.isMucHighNameEnabled() && myNickName.equals( nickname ) )
         {
             return new Color( 244, 248, 255 );
         }
@@ -396,7 +401,7 @@ public class GroupChatRoom extends ChatRoom
 
             chat.sendMessage( message );
         }
-        catch ( SmackException ex )
+        catch ( SmackException | InterruptedException ex )
         {
             Log.error( "Unable to send message in conference chat.", ex );
         }
@@ -423,18 +428,24 @@ public class GroupChatRoom extends ChatRoom
      * @return the roomname.
      */
     @Override
-    public String getRoomname()
+    public EntityBareJid getRoomname()
     {
-        return XmppStringUtils.parseBareJid( chat.getRoom() );
+        return chat.getRoom();
     }
 
+    @Override
+    public EntityBareJid getRoomJid()
+    {
+        return chat.getRoom();
+    }
+ 
     /**
      * Retrieve the nickname of the user in this groupchat.
      *
      * @return the nickname of the agent in this groupchat
      */
     @Override
-    public String getNickname()
+    public Resourcepart getNickname()
     {
         return chat.getNickname();
     }
@@ -476,9 +487,9 @@ public class GroupChatRoom extends ChatRoom
      *
      * @param tabTitle the title to use on the tab.
      */
-    public void setTabTitle( String tabTitle )
+    public void setTabTitle( CharSequence tabTitle )
     {
-        this.tabTitle = tabTitle;
+        this.tabTitle = tabTitle.toString();
     }
 
     /**
@@ -567,7 +578,7 @@ public class GroupChatRoom extends ChatRoom
      * @param stanza the packet.
      */
     @Override
-    public void processPacket( final Stanza stanza )
+    public void processStanza( final Stanza stanza )
     {
         super.processPacket( stanza );
         if ( stanza instanceof Presence )
@@ -610,14 +621,14 @@ public class GroupChatRoom extends ChatRoom
 
             if ( ModelUtil.hasLength( message.getBody() ) )
             {
-                final String from = XmppStringUtils.parseResource( message.getFrom() );
+                final Resourcepart from = message.getFrom().getResourceOrThrow();
 
                 if ( inf != null )
                 {
                     // This is part of the MUC history. No need to add it to the transcript again.
 
                     // Add to the UI component that shows the chat.
-                    getTranscriptWindow().insertHistoryMessage( from, message.getBody(), sentDate );
+                    getTranscriptWindow().insertHistoryMessage( from.toString(), message.getBody(), sentDate );
                 }
                 else
                 {
@@ -627,7 +638,7 @@ public class GroupChatRoom extends ChatRoom
                         return;
                     }
 
-                    final boolean isFromRoom = !message.getFrom().contains( "/" );
+                    final boolean isFromRoom = !message.getFrom().hasNoResource();
 
                     if ( !isFromRoom && SparkManager.getUserManager().getOccupant( this, from ) == null )
                     {
@@ -650,14 +661,14 @@ public class GroupChatRoom extends ChatRoom
             }
             catch ( ChatRoomNotFoundException e )
             {
-                final String userNickname = XmppStringUtils.parseResource( message.getFrom() );
-                final String roomTitle = userNickname + " - " + XmppStringUtils.parseLocalpart( getRoomname() );
+                final Resourcepart userNickname = message.getFrom().getResourceOrEmpty();
+                final String roomTitle = userNickname + " - " + getRoomname();
 
                 // Check to see if this is a message notification.
                 if ( message.getBody() != null )
                 {
                     // Create new room
-                    ChatRoom chatRoom = new ChatRoomImpl( message.getFrom(), userNickname, roomTitle );
+                    ChatRoom chatRoom = new ChatRoomImpl( message.getFrom().asEntityBareJidOrThrow(), userNickname, roomTitle );
                     SparkManager.getChatManager().getChatContainer().addChatRoom( chatRoom );
 
                     SparkManager.getChatManager().getChatContainer().activateChatRoom( chatRoom );
@@ -670,12 +681,12 @@ public class GroupChatRoom extends ChatRoom
         {
             String errorMessage = "";
 
-            if ( message.getError().getCondition() == XMPPError.Condition.forbidden && message.getSubject() != null )
+            if ( message.getError().getCondition() == StanzaError.Condition.forbidden && message.getSubject() != null )
             {
                 errorMessage = Res.getString( "message.subject.change.error" );
             }
 
-            else if ( message.getError().getCondition() == XMPPError.Condition.forbidden )
+            else if ( message.getError().getCondition() == StanzaError.Condition.forbidden )
             {
                 errorMessage = Res.getString( "message.forbidden.error" );
             }
@@ -703,8 +714,12 @@ public class GroupChatRoom extends ChatRoom
             return;
         }
 
-        final String from = presence.getFrom();
-        final String nickname = XmppStringUtils.parseResource( from );
+        final EntityFullJid from = presence.getFrom().asEntityFullJidIfPossible();
+        if (from == null) {
+           return;
+        }
+
+        final Resourcepart nickname = from.getResourcepart();
 
         final MUCUser mucUser = stanza.getExtension( "x", "http://jabber.org/protocol/muc#user" );
         final Set<MUCUser.Status> status = new HashSet<>();
@@ -761,88 +776,88 @@ public class GroupChatRoom extends ChatRoom
         chat.addParticipantStatusListener( new DefaultParticipantStatusListener()
         {
             @Override
-            public void kicked( String participant, String actor, String reason )
+            public void kicked( EntityFullJid participant, Jid actor, String reason )
             {
-                insertText( Res.getString( "message.user.kicked.from.room", XmppStringUtils.parseResource( participant ), actor, reason ) );
+                insertText( Res.getString( "message.user.kicked.from.room", participant.getResourcepart(), actor, reason ) );
             }
 
             @Override
-            public void voiceGranted( String participant )
+            public void voiceGranted( EntityFullJid participant )
             {
-                insertText( Res.getString( "message.user.given.voice", XmppStringUtils.parseResource( participant ) ) );
+                insertText( Res.getString( "message.user.given.voice", participant.getResourcepart() ) );
             }
 
             @Override
-            public void voiceRevoked( String participant )
+            public void voiceRevoked( EntityFullJid participant )
             {
-                insertText( Res.getString( "message.user.voice.revoked", XmppStringUtils.parseResource( participant ) ) );
+                insertText( Res.getString( "message.user.voice.revoked", participant.getResourcepart() ) );
             }
 
             @Override
-            public void banned( String participant, String actor, String reason )
+            public void banned( EntityFullJid participant, Jid actor, String reason )
             {
-                insertText( Res.getString( "message.user.banned", XmppStringUtils.parseResource( participant ), reason ) );
+                insertText( Res.getString( "message.user.banned", participant.getResourcepart(), reason ) );
             }
 
             @Override
-            public void membershipGranted( String participant )
+            public void membershipGranted( EntityFullJid participant )
             {
-                insertText( Res.getString( "message.user.granted.membership", XmppStringUtils.parseResource( participant ) ) );
+                insertText( Res.getString( "message.user.granted.membership", participant.getResourcepart() ) );
             }
 
             @Override
-            public void membershipRevoked( String participant )
+            public void membershipRevoked( EntityFullJid participant )
             {
-                insertText( Res.getString( "message.user.revoked.membership", XmppStringUtils.parseResource( participant ) ) );
+                insertText( Res.getString( "message.user.revoked.membership", participant.getResourcepart() ) );
             }
 
             @Override
-            public void moderatorGranted( String participant )
+            public void moderatorGranted( EntityFullJid participant )
             {
-                insertText( Res.getString( "message.user.granted.moderator", XmppStringUtils.parseResource( participant ) ) );
+                insertText( Res.getString( "message.user.granted.moderator", participant.getResourcepart() ) );
             }
 
             @Override
-            public void moderatorRevoked( String participant )
+            public void moderatorRevoked( EntityFullJid participant )
             {
-                insertText( Res.getString( "message.user.revoked.moderator", XmppStringUtils.parseResource( participant ) ) );
+                insertText( Res.getString( "message.user.revoked.moderator", participant.getResourcepart() ) );
             }
 
             @Override
-            public void ownershipGranted( String participant )
+            public void ownershipGranted( EntityFullJid participant )
             {
-                insertText( Res.getString( "message.user.granted.owner", XmppStringUtils.parseResource( participant ) ) );
+                insertText( Res.getString( "message.user.granted.owner", participant.getResourcepart() ) );
             }
 
             @Override
-            public void ownershipRevoked( String participant )
+            public void ownershipRevoked( EntityFullJid participant )
             {
-                insertText( Res.getString( "message.user.revoked.owner", XmppStringUtils.parseResource( participant ) ) );
+                insertText( Res.getString( "message.user.revoked.owner", participant.getResourcepart() ) );
             }
 
             @Override
-            public void adminGranted( String participant )
+            public void adminGranted( EntityFullJid participant )
             {
-                insertText( Res.getString( "message.user.granted.admin", XmppStringUtils.parseResource( participant ) ) );
+                insertText( Res.getString( "message.user.granted.admin", participant.getResourcepart() ) );
             }
 
             @Override
-            public void adminRevoked( String participant )
+            public void adminRevoked( EntityFullJid participant )
             {
-                insertText( Res.getString( "message.user.revoked.admin", XmppStringUtils.parseResource( participant ) ) );
+                insertText( Res.getString( "message.user.revoked.admin", participant.getResourcepart() ) );
             }
 
             @Override
-            public void nicknameChanged( String participant, String nickname )
+            public void nicknameChanged( EntityFullJid participant, Resourcepart nickname )
             {
-                insertText( Res.getString( "message.user.nickname.changed", XmppStringUtils.parseResource( participant ), nickname ) );
+                insertText( Res.getString( "message.user.nickname.changed", participant.getResourcepart(), nickname ) );
             }
         } );
 
         chat.addUserStatusListener( new DefaultUserStatusListener()
         {
             @Override
-            public void kicked( String s, String reason )
+            public void kicked( Jid s, String reason )
             {
                 if ( ModelUtil.hasLength( reason ) )
                 {
@@ -873,7 +888,7 @@ public class GroupChatRoom extends ChatRoom
             }
 
             @Override
-            public void banned( String s, String reason )
+            public void banned( Jid s, String reason )
             {
                 insertText( Res.getString( "message.your.banned" ) );
             }
@@ -929,7 +944,10 @@ public class GroupChatRoom extends ChatRoom
 
         chat.addSubjectUpdatedListener( ( subject, by ) -> {
             subjectPanel.setSubject( subject );
-            final String nickname = XmppStringUtils.parseResource( by );
+            Resourcepart nickname = Resourcepart.EMPTY;
+            if (by != null) {
+                nickname = by.getResourcepart();
+            }
             final String insertMessage = Res.getString( "message.subject.has.been.changed.to", subject, nickname );
             getTranscriptWindow().insertNotificationMessage( insertMessage, ChatManager.NOTIFICATION_COLOR );
         } );
@@ -959,7 +977,7 @@ public class GroupChatRoom extends ChatRoom
      *
      * @return the user format (e.g. darkcave@macbeth.shakespeare.lit/thirdwitch) of each user in the room.
      */
-    public Collection<String> getParticipants()
+    public Collection<EntityFullJid> getParticipants()
     {
         return currentUserList;
     }
@@ -1005,7 +1023,7 @@ public class GroupChatRoom extends ChatRoom
      *
      * @param usersJID the room jid of the user (ex.spark@conference.jivesoftware.com/Dan)
      */
-    public void addBlockedUser( String usersJID )
+    public void addBlockedUser( EntityFullJid usersJID )
     {
         blockedUsers.add( usersJID );
     }
@@ -1015,7 +1033,7 @@ public class GroupChatRoom extends ChatRoom
      *
      * @param usersJID the jid of the user (ex. spark@conference.jivesoftware.com/Dan)
      */
-    public void removeBlockedUser( String usersJID )
+    public void removeBlockedUser( EntityFullJid usersJID )
     {
         blockedUsers.remove( usersJID );
     }
@@ -1026,9 +1044,10 @@ public class GroupChatRoom extends ChatRoom
      * @param usersJID the jid of the user (ex. spark@conference.jivesoftware.com/Dan)
      * @return true if the user is blocked, otherwise false.
      */
-    public boolean isBlocked( String usersJID )
+    // TODO: usersJID should probably be of type EntityFullJid.
+    public boolean isBlocked( CharSequence usersJID )
     {
-        return blockedUsers.contains( usersJID );
+        return blockedUsers.contains( usersJID.toString() );
     }
 
     /**
@@ -1037,7 +1056,7 @@ public class GroupChatRoom extends ChatRoom
      * @param jid     the jid of the user to invite.
      * @param message the message to send with the invitation.
      */
-    public void inviteUser( String jid, String message )
+    public void inviteUser( EntityBareJid jid, String message )
     {
         message = message != null && !message.isEmpty() ? message : Res.getString( "message.please.join.in.conference" );
 
@@ -1046,7 +1065,7 @@ public class GroupChatRoom extends ChatRoom
             getMultiUserChat().invite( jid, message );
             roomInfo.addInvitee( jid, message );
         }
-        catch ( SmackException.NotConnectedException e )
+        catch ( SmackException.NotConnectedException | InterruptedException e )
         {
             Log.warning( "Unable to invite " + jid + " to room " + roomInfo.getName(), e );
         }
@@ -1108,7 +1127,7 @@ public class GroupChatRoom extends ChatRoom
     @Override
     public void reconnectionSuccessful()
     {
-        final String roomJID = chat.getRoom();
+        final EntityBareJid roomJID = chat.getRoom();
         final String roomName = tabTitle;
         isActive = false;
         EventQueue.invokeLater( () -> {
@@ -1130,7 +1149,7 @@ public class GroupChatRoom extends ChatRoom
     /**
      * Returns the Color to use. Use Color.blue for yourself
      */
-    public Color getColor( String nickname )
+    public Color getColor( Resourcepart nickname )
     {
         if ( nickname.equals( this.getNickname() ) )
         {
@@ -1174,7 +1193,7 @@ public class GroupChatRoom extends ChatRoom
     }
 
     @Override
-    protected void sendChatState(ChatState state) throws SmackException.NotConnectedException
+    protected void sendChatState(ChatState state) throws SmackException.NotConnectedException, InterruptedException
     {
         if (!chatStatEnabled || !SparkManager.getConnection().isConnected() )
         {
@@ -1187,10 +1206,10 @@ public class GroupChatRoom extends ChatRoom
             return;
         }
 
-        for ( final String occupant : chat.getOccupants() )
+        for ( final EntityFullJid occupant : chat.getOccupants() )
         {
-            final String occupantNickname = XmppStringUtils.parseResource(occupant);
-            final String myNickname = chat.getNickname();
+            final Resourcepart occupantNickname = occupant.getResourcepart();
+            final Resourcepart myNickname = chat.getNickname();
             if (occupantNickname != null && !occupantNickname.equals(myNickname))
             {
                 SparkManager.getMessageEventManager().sendComposingNotification(occupant, "djn");

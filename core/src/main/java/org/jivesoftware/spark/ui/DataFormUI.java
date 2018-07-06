@@ -74,10 +74,10 @@ public class DataFormUI extends JPanel {
             FormField.Type type = field.getType();
 
 
-            List<String> valueList =field.getValues();
+            List<CharSequence> valueList = field.getValues();
 
             if (type.equals(FormField.Type.bool)) {
-                String o = valueList.get(0);
+                String o = valueList.get(0).toString();
                 boolean isSelected = o.equals("1");
                 JCheckBox box = new JCheckBox(label);
                 box.setSelected(isSelected);
@@ -86,7 +86,7 @@ public class DataFormUI extends JPanel {
             else if (type.equals(FormField.Type.text_single) || type.equals(FormField.Type.jid_single)) {
                 String v = "";
                 if (valueList.size() > 0) {
-                    v = valueList.get(0);
+                    v = valueList.get(0).toString();
                 }
                 addField(label, new JTextField(v), variable);
             }
@@ -107,7 +107,7 @@ public class DataFormUI extends JPanel {
                     box.addItem(option);
                 }
                 if (valueList.size() > 0) {
-                    String defaultValue = valueList.get(0);
+                    String defaultValue = valueList.get(0).toString();
                     box.setSelectedItem(defaultValue);
                 }
 
@@ -115,8 +115,8 @@ public class DataFormUI extends JPanel {
             }
             else if (type.equals(FormField.Type.list_multi)) {
                 CheckBoxList checkBoxList = new CheckBoxList();
-                for ( final String value : field.getValues() ) {
-                    checkBoxList.addCheckBox(new JCheckBox(value), value);
+                for (CharSequence value : field.getValues() ) {
+                    checkBoxList.addCheckBox(new JCheckBox(value.toString()), value.toString());
                 }
                 addField(label, checkBoxList, variable);
             }

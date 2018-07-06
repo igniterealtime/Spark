@@ -31,6 +31,8 @@ import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 import org.jivesoftware.spark.util.SwingTimerTask;
 import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+import org.jxmpp.jid.EntityBareJid;
+import org.jxmpp.jid.parts.Localpart;
 import org.jxmpp.util.XmppStringUtils;
 
 import java.util.TimerTask;
@@ -110,12 +112,12 @@ public class BuzzPlugin implements Plugin {
 
     private void shakeWindow(Message message) {
 
-	String bareJID = XmppStringUtils.parseBareJid(message.getFrom());
+	EntityBareJid bareJID = message.getFrom().asEntityBareJidOrThrow();
 	ContactItem contact = SparkManager.getWorkspace().getContactList()
 		.getContactItemByJID(bareJID);
-	String nickname = XmppStringUtils.parseLocalpart(bareJID);
+	Localpart nickname = bareJID.getLocalpart();
 	if (contact != null) {
-	    nickname = contact.getDisplayName();
+	    nickname = Localpart.fromUnescapedOrThrowUnchecked(contact.getDisplayName());
 	}
 
 	ChatRoom room;
@@ -125,7 +127,7 @@ public class BuzzPlugin implements Plugin {
 	} catch (ChatRoomNotFoundException e) {
 	    // Create the room if it does not exist.
 	    room = SparkManager.getChatManager().createChatRoom(bareJID,
-		    nickname, nickname);
+		    nickname.toString(), nickname.toString());
 	}
 
 	ChatFrame chatFrame = SparkManager.getChatManager().getChatContainer()

@@ -55,6 +55,8 @@ import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.search.Searchable;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.log.Log;
+import org.jxmpp.jid.Jid;
+import org.jxmpp.jid.util.JidUtil;
 
 public class ChatSearch implements Searchable {
 
@@ -83,9 +85,10 @@ public class ChatSearch implements Searchable {
             filledForm.setAnswer("queryString", query);
 
             // Define Workgroups
-            final List<String> workgroups = new ArrayList<String>();
+            final List<Jid> workgroups = new ArrayList<>();
             workgroups.add(FastpathPlugin.getWorkgroup().getWorkgroupJID());
-            filledForm.setAnswer("workgroups", workgroups);
+            List<String> workgroupStrings = JidUtil.toStringList(workgroups);
+            filledForm.setAnswer("workgroups", workgroupStrings);
 
             ReportedData reportedData = null;
             try {
@@ -95,7 +98,7 @@ public class ChatSearch implements Searchable {
                     results.add(result);
                 }
             }
-            catch (XMPPException | SmackException e) {
+            catch (XMPPException | SmackException | InterruptedException e) {
                 Log.error(e);
             }
 
@@ -127,7 +130,7 @@ public class ChatSearch implements Searchable {
                         try {
                             transcript = FastpathPlugin.getAgentSession().getTranscript(item.getSessionID());
                         }
-                        catch (XMPPException | SmackException ee) {
+                        catch (XMPPException | SmackException | InterruptedException ee) {
                             Log.error("Error showing transcripts.", ee);
                         }
 
@@ -195,7 +198,7 @@ public class ChatSearch implements Searchable {
             GraphicUtils.centerWindowOnScreen(frame);
             frame.setVisible(true);
         }
-        catch (XMPPException | SmackException e) {
+        catch (XMPPException | SmackException | InterruptedException e) {
             Log.error(e);
         }
 

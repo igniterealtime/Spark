@@ -34,6 +34,9 @@ import org.jivesoftware.spark.util.SwingTimerTask;
 import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.util.UIComponentRegistry;
 import org.jivesoftware.spark.util.log.Log;
+import org.jxmpp.jid.Jid;
+import org.jxmpp.jid.impl.JidCreate;
+import org.jxmpp.stringprep.XmppStringprepException;
 
 /**
  * Adds a simple buzz operation button the each newly created ChatRoom.
@@ -69,7 +72,12 @@ public class BuzzRoomDecorator implements ActionListener {
     }
 
     public void actionPerformed(ActionEvent e) {
-        final String jid = ((ChatRoomImpl)chatRoom).getParticipantJID();
+        Jid jid;
+        try {
+            jid = JidCreate.from(((ChatRoomImpl)chatRoom).getParticipantJID());
+        } catch (XmppStringprepException exception) {
+            throw new IllegalStateException(exception);
+        }
         Message message = new Message();
         message.setTo(jid);
         message.addExtension(new BuzzPacket());
@@ -77,7 +85,7 @@ public class BuzzRoomDecorator implements ActionListener {
         {
             SparkManager.getConnection().sendStanza(message);
         }
-        catch ( SmackException.NotConnectedException e1 )
+        catch ( SmackException.NotConnectedException | InterruptedException e1 )
         {
             Log.warning( "Unable to send stanza to " + jid, e1 );
         }

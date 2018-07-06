@@ -76,6 +76,11 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.layout.LayoutSettingsManager;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+import org.jxmpp.jid.DomainBareJid;
+import org.jxmpp.jid.EntityBareJid;
+import org.jxmpp.jid.impl.JidCreate;
+import org.jxmpp.jid.parts.Resourcepart;
+import org.jxmpp.stringprep.XmppStringprepException;
 import org.jxmpp.util.XmppStringUtils;
 
 /**
@@ -110,7 +115,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
     private JDialog dlg;
 
     private BookmarksUI conferences;
-    private String serviceName;
+    private DomainBareJid serviceName;
 
     private int allButtonWidth;
     private int threeButtonWidth;
@@ -133,7 +138,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
      *
      */
     public ConferenceRoomBrowser(BookmarksUI conferences,
-	    final String serviceName) {
+            final DomainBareJid serviceName) {
 
 	this.setLayout(new BorderLayout());
 
@@ -311,7 +316,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
        clearTable.start();
    }
 
-    private void refreshRoomList(final String serviceName) {
+    private void refreshRoomList(final DomainBareJid serviceName) {
         startLoadingImg();
         clearTable();
 
@@ -346,7 +351,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
         try {
             try {
                 String roomName = room.getName();
-                String roomJID = room.getJid();
+                EntityBareJid roomJID = room.getJid();
                 int numberOfOccupants = -1;
                 if (stillSearchForOccupants) {
                 RoomInfo roomInfo = null;
@@ -377,7 +382,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
         return result;
     }
 
-    private void bookmarkRoom(String serviceName) {
+    private void bookmarkRoom(DomainBareJid serviceName) {
         int selectedRow = roomsTable.getSelectedRow();
         
         UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
@@ -387,7 +392,13 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
             return;
         }
 
-        final String roomJID = roomsTable.getValueAt(selectedRow, 2) + "@" + serviceName;
+        final String roomJIDString = roomsTable.getValueAt(selectedRow, 2) + "@" + serviceName;
+        EntityBareJid roomJID;
+        try {
+            roomJID = JidCreate.entityBareFrom(roomJIDString);
+        } catch (XmppStringprepException e1) {
+            throw new IllegalStateException(e1);
+        }
         final String roomName = roomsTable.getValueAt(selectedRow, 1).toString();
 
         // Check to see what type of room this is.
@@ -407,14 +418,14 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
         Tree serviceTree = conferences.getTree();
         JiveTreeNode rootNode = (JiveTreeNode) serviceTree.getModel().getRoot();
 
-        TreePath rootPath = serviceTree.findByName(serviceTree, new String[] { rootNode.toString(), serviceName });
+        TreePath rootPath = serviceTree.findByName(serviceTree, new String[] { rootNode.toString(), serviceName.toString() });
 
         boolean isBookmarked = isBookmarked(roomJID);
 
         if (!isBookmarked) {
             JiveTreeNode node = (JiveTreeNode) serviceTree.getLastSelectedPathComponent();
             if (node == null) {
-                TreePath path = serviceTree.findByName(serviceTree, new String[] { rootNode.toString(), ConferenceServices.getDefaultServiceName() });
+                TreePath path = serviceTree.findByName(serviceTree, new String[] { rootNode.toString(), ConferenceServices.getDefaultServiceName().toString() });
                 node = (JiveTreeNode) path.getLastPathComponent();
             }
             JiveTreeNode roomNode = new JiveTreeNode(roomName, false, SparkRes.getImageIcon(SparkRes.BOOKMARK_ICON));
@@ -429,14 +440,20 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
             conferences.addBookmark(roomName, roomJID, false);
         } else {
             // Remove bookmark
-            TreePath path = serviceTree.findByName(serviceTree, new String[] { rootNode.toString(), serviceName, roomName });
+            TreePath path = serviceTree.findByName(serviceTree, new String[] { rootNode.toString(), serviceName.toString(), roomName });
             JiveTreeNode node = (JiveTreeNode) path.getLastPathComponent();
             final DefaultTreeModel model = (DefaultTreeModel) serviceTree.getModel();
             model.removeNodeFromParent(node);
             roomsTable.getTableModel().setValueAt(new JLabel(SparkRes.getImageIcon(SparkRes.BLANK_IMAGE)), selectedRow, 0);
             addBookmarkUI(true);
 
-            String jid = (String) node.getAssociatedObject();
+            String jidString = (String) node.getAssociatedObject();
+            EntityBareJid jid;
+            try {
+                jid = JidCreate.entityBareFrom(jidString);
+            } catch (XmppStringprepException e) {
+                throw new IllegalStateException(e);
+            }
             conferences.removeBookmark(jid);
         }
     }
@@ -464,8 +481,15 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
             if (selectedRow != -1) {
                 joinRoomButton.setEnabled(true);
                 joinRoomItem.setEnabled(true);
-                String roomJID = roomsTable.getValueAt(selectedRow,
+                String roomJIDString = roomsTable.getValueAt(selectedRow,
                     2) + "@" + serviceName;
+                EntityBareJid roomJID;
+                try {
+                    roomJID = JidCreate.entityBareFrom(roomJIDString);
+                } catch (XmppStringprepException ex) {
+                    Log.error("Not a JID", ex);
+                    return;
+                }
                 addRoomButton.setEnabled(true);
                 addRoomItem.setEnabled(true);
                 if (isBookmarked(roomJID)) {
@@ -510,7 +534,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
                             for (HostedRoom room : rooms) {
 
                             String roomName = room.getName();
-                            String roomJID = room.getJid();
+                            EntityBareJid roomJID = room.getJid();
 
                             int numberOfOccupants = -1;
 
@@ -714,7 +738,13 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
                     public void actionPerformed(ActionEvent actionEvent) {
                         int selectedRow = roomsTable.getSelectedRow();
                         if (selectedRow != -1) {
-                            String roomJID = roomsTable.getValueAt(selectedRow, 2) + "@" + serviceName;
+                            String roomJIDString = roomsTable.getValueAt(selectedRow, 2) + "@" + serviceName;
+                            EntityBareJid roomJID;
+                            try {
+                                roomJID = JidCreate.entityBareFrom(roomJIDString);
+                            } catch (XmppStringprepException e) {
+                                throw new IllegalStateException(e);
+                            }
                             RoomBrowser roomBrowser = new RoomBrowser();
                             roomBrowser.displayRoomInformation(roomJID);
                         }
@@ -729,7 +759,13 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
                 popupMenu.add(roomInfoAction);
                 final JCheckBoxMenuItem autoJoin = new JCheckBoxMenuItem(Res.getString("menuitem.join.on.startup"));
                 autoJoin.addActionListener( e1 -> {
-                    String roomJID = roomsTable.getValueAt(selectedRow, 2) + "@" + serviceName;
+                    String roomJIDString = roomsTable.getValueAt(selectedRow, 2) + "@" + serviceName;
+                    EntityBareJid roomJID;
+                    try {
+                        roomJID = JidCreate.entityBareFrom(roomJIDString);
+                    } catch (XmppStringprepException e2) {
+                        throw new IllegalStateException(e2);
+                    }
                     conferences.removeBookmark(roomJID);
                     conferences.addBookmark(roomName, roomJID, autoJoin.isSelected());
                 } );
@@ -772,8 +808,9 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
 		    JOptionPane.INFORMATION_MESSAGE);
 	    return;
 	}
-	final String roomJID = roomsTable.getValueAt(selectedRow, 2) + "@"
+	final String roomJIDString = roomsTable.getValueAt(selectedRow, 2) + "@"
 		+ serviceName;
+    EntityBareJid roomJID = JidCreate.entityBareFromUnescapedOrThrowUnchecked(roomJIDString);
 	final String roomDescription = (String) roomsTable.getValueAt(
 		selectedRow, 1);
 
@@ -794,7 +831,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
      * @throws Exception
      *             if a problem occurs while getting the room list
      */
-    private static Collection<HostedRoom> getRoomList(String serviceName)
+    private static Collection<HostedRoom> getRoomList(DomainBareJid serviceName)
 	    throws Exception {
         return MultiUserChatManager.getInstanceFor( SparkManager.getConnection() ).getHostedRooms( serviceName );
     }
@@ -814,7 +851,8 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
 	    try {
 		GroupChatRoom room = UIComponentRegistry.createGroupChatRoom(groupChat);
 
-		groupChat.create(pref.getNickname());
+		Resourcepart nickname = pref.getNickname();
+		groupChat.create(nickname);
 		chatManager.getChatContainer().addChatRoom(room);
 		chatManager.getChatContainer().activateChatRoom(room);
 
@@ -836,13 +874,13 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
 		}
 
 		List<String> owners = new ArrayList<>();
-		owners.add(SparkManager.getSessionManager().getBareAddress());
+		owners.add(SparkManager.getSessionManager().getBareUserAddress().toString());
 		form.setAnswer("muc#roomconfig_roomowners", owners);
 
 		// new DataFormDialog(groupChat, form);
 		groupChat.sendConfigurationForm(form);
-        addRoomToTable(groupChat.getRoom(), XmppStringUtils.parseLocalpart(groupChat.getRoom()), 1);
-	    } catch (XMPPException | SmackException e1) {
+        addRoomToTable(groupChat.getRoom(), groupChat.getRoom().getLocalpart(), 1);
+	    } catch (XMPPException | SmackException | InterruptedException e1) {
 		Log.error("Error creating new room.", e1);
 		UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
 		JOptionPane
@@ -865,7 +903,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
      *            the number of occupants in the conference room. If -1 is
      *            specified, the the occupant count will show as n/a.
      */
-    private void addRoomToTable(final String jid, final String roomName,
+    private void addRoomToTable(final EntityBareJid jid, final CharSequence roomName,
 	    final int numberOfOccupants) {
         SwingWorker addRoomThread = new SwingWorker() {
 
@@ -907,8 +945,8 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
                     occupants = "n/a";
                 }
 
-                final Object[] insertRoom = new Object[] { iconLabel, roomName,
-                    XmppStringUtils.parseLocalpart(jid), occupants };
+                final Object[] insertRoom = new Object[] { iconLabel, roomName.toString(),
+                    jid.getLocalpart().toString(), occupants };
                 return insertRoom;
             }
             
@@ -928,10 +966,10 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
      *            the jid of the room to check.
      * @return true if the room is bookmarked.
      */
-    private boolean isBookmarked(String roomJID) {
+    private boolean isBookmarked(EntityBareJid roomJID) {
 	for (Object o : conferences.getBookmarks()) {
 	    BookmarkedConference bk = (BookmarkedConference) o;
-	    String jid = bk.getJid();
+	    EntityBareJid jid = bk.getJid();
 	    if (jid != null && roomJID.equals(jid)) {
 		return true;
 	    }
@@ -947,7 +985,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
      * @param roomjid
      * @return
      */
-    private boolean isPasswordProtected(String roomjid) {
+    private boolean isPasswordProtected(EntityBareJid roomjid) {
 	boolean result = false;
 	try {
 
@@ -955,7 +993,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
 
 	    result = rif.isMembersOnly() || rif.isPasswordProtected();
 
-	} catch (XMPPException | SmackException | NumberFormatException e) {
+	} catch (XMPPException | SmackException | NumberFormatException | InterruptedException e) {
 
 	}
 
@@ -1002,7 +1040,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
 
     private class RoomObject {
 	private String roomName;
-	private String roomJID;
+	private EntityBareJid roomJID;
 
 	int numberOfOccupants;
 
@@ -1014,11 +1052,11 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
 	    this.roomName = roomName;
 	}
 
-	public String getRoomJID() {
+	public EntityBareJid getRoomJID() {
 	    return roomJID;
 	}
 
-	public void setRoomJID(String roomJID) {
+	public void setRoomJID(EntityBareJid roomJID) {
 	    this.roomJID = roomJID;
 	}
 

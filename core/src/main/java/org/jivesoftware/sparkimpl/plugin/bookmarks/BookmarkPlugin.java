@@ -121,7 +121,7 @@ public class BookmarkPlugin implements Plugin {
                     SparkManager.getMainWindow().getMenu().invalidate();
                     SparkManager.getMainWindow().getMenu().validate();
                     SparkManager.getMainWindow().getMenu().repaint();
-                } catch (XMPPException | SmackException ex) {
+                } catch (XMPPException | SmackException | InterruptedException ex) {
                     Log.error(ex);
                 }
             }
@@ -134,7 +134,7 @@ public class BookmarkPlugin implements Plugin {
             public void createMenu(JMenu bookmarkMenu) {
                 try {
                     setBookmarks(bookmarkMenu);
-                } catch (XMPPException | SmackException ex) {
+                } catch (XMPPException | SmackException | InterruptedException ex) {
                     Log.error(ex);
                 }
             }
@@ -143,8 +143,9 @@ public class BookmarkPlugin implements Plugin {
              * loading menu items and setting bookmarks listeners
              *
              * @param bookmarkMenu menu Jmenu
+             * @throws InterruptedException 
              */
-            public void setBookmarks(JMenu bookmarkMenu) throws XMPPException, SmackException
+            public void setBookmarks(JMenu bookmarkMenu) throws XMPPException, SmackException, InterruptedException
             {
                 BookmarkManager manager = BookmarkManager.getBookmarkManager(SparkManager.getConnection());
 

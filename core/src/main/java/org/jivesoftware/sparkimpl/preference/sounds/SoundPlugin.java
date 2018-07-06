@@ -45,7 +45,7 @@ public class SoundPlugin implements Plugin, MessageListener, ChatRoomListener {
             if (!presence.isAvailable()) {
                 SoundPreferences preferences = soundPreference.getPreferences();
                 if (preferences != null && preferences.isPlayOfflineSound()) {
-                    if (!PresenceManager.isOnline(presence.getFrom())) {
+                    if (!PresenceManager.isOnline(presence.getFrom().asBareJid())) {
                         String offline = preferences.getOfflineSound();
                         File offlineFile = new File(offline);
                         SparkManager.getSoundManager().playClip(offlineFile);
@@ -59,7 +59,7 @@ public class SoundPlugin implements Plugin, MessageListener, ChatRoomListener {
 
         TaskEngine.getInstance().submit(soundLoader);
 
-        MultiUserChatManager.getInstanceFor(SparkManager.getConnection()).addInvitationListener( ( xmppConnection, muc, string1, string2, string3, message ) -> {
+        MultiUserChatManager.getInstanceFor(SparkManager.getConnection()).addInvitationListener( ( xmppConnection, muc, inviter, reason, password, message, invitation ) -> {
             SoundPreferences preferences = soundPreference.getPreferences();
             if (preferences != null && preferences.playIncomingInvitationSound()) {
                 String incomingSoundFile = preferences.getIncomingInvitationSoundFile();

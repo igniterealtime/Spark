@@ -32,6 +32,15 @@ import org.jivesoftware.spark.util.SwingTimerTask;
 import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.profile.VCardManager;
+import org.jxmpp.jid.BareJid;
+import org.jxmpp.jid.EntityBareJid;
+import org.jxmpp.jid.EntityFullJid;
+import org.jxmpp.jid.Jid;
+import org.jxmpp.jid.impl.JidCreate;
+import org.jxmpp.jid.parts.Domainpart;
+import org.jxmpp.jid.parts.Localpart;
+import org.jxmpp.jid.parts.Resourcepart;
+import org.jxmpp.stringprep.XmppStringprepException;
 import org.jxmpp.util.XmppStringUtils;
 
 import javax.swing.BorderFactory;
@@ -98,9 +107,9 @@ public class UserManager {
         return username;
     }
     
-    public String getNickname(String fullJID) {
+    public String getNickname(BareJid jid) {
     	String vcardNickname = null;
-        VCard vCard = SparkManager.getVCardManager().getVCard(fullJID);
+        VCard vCard = SparkManager.getVCardManager().getVCard(jid);
         if (vCard != null && vCard.getError() == null) {
             String firstName = vCard.getFirstName();
             String lastName = vCard.getLastName();
@@ -128,7 +137,7 @@ public class UserManager {
      *                for the bare jid.
      * @return a Collection of jids found in the room.
      */
-    public Collection<String> getUserJidsInRoom(String room, boolean fullJID) {
+    public Collection<String> getUserJidsInRoom(EntityBareJid room, boolean fullJID) {
         return new ArrayList<>();
     }
 
@@ -139,7 +148,7 @@ public class UserManager {
      * @param nickname      the user's nickname.
      * @return true if the user is an owner.
      */
-    public boolean isOwner(GroupChatRoom groupChatRoom, String nickname)
+    public boolean isOwner(GroupChatRoom groupChatRoom, Resourcepart nickname)
     {
         return isOwner( getOccupant( groupChatRoom, nickname ) );
     }
@@ -173,7 +182,7 @@ public class UserManager {
      * @param nickname      the nickname of the user.
      * @return true if the user is a moderator.
      */
-    public boolean isModerator(GroupChatRoom groupChatRoom, String nickname)
+    public boolean isModerator(GroupChatRoom groupChatRoom, Resourcepart nickname)
     {
         return isModerator( getOccupant( groupChatRoom, nickname ) );
     }
@@ -195,7 +204,7 @@ public class UserManager {
      * @param nickname      the user's nickname.
      * @return true if the user is either an owner or admin of the room.
      */
-    public boolean isOwnerOrAdmin(GroupChatRoom groupChatRoom, String nickname) {
+    public boolean isOwnerOrAdmin(GroupChatRoom groupChatRoom, Resourcepart nickname) {
         return isOwnerOrAdmin( getOccupant(groupChatRoom, nickname) );
     }
 
@@ -216,8 +225,8 @@ public class UserManager {
      * @param nickname      the users nickname.
      * @return the Occupant found.
      */
-    public Occupant getOccupant(GroupChatRoom groupChatRoom, String nickname) {
-        String userJID = groupChatRoom.getRoomname() + "/" + nickname;
+    public Occupant getOccupant(GroupChatRoom groupChatRoom, Resourcepart nickname) {
+        EntityFullJid userJID = JidCreate.entityFullFrom(groupChatRoom.getRoomname(), nickname);
         Occupant occ = null;
         try {
             occ = groupChatRoom.getMultiUserChat().getOccupant(userJID);
@@ -238,7 +247,7 @@ public class UserManager {
      *                      derek as a nickname.
      * @return true if the user is an admin.
      */
-    public boolean isAdmin(GroupChatRoom groupChatRoom, String nickname) {
+    public boolean isAdmin(GroupChatRoom groupChatRoom, Resourcepart nickname) {
         return isAdmin( getOccupant(groupChatRoom, nickname) );
     }
 
@@ -253,7 +262,7 @@ public class UserManager {
         return occupant != null && occupant.getAffiliation() == MUCAffiliation.admin;
     }
 
-    public boolean hasVoice(GroupChatRoom groupChatRoom, String nickname) {
+    public boolean hasVoice(GroupChatRoom groupChatRoom, Resourcepart nickname) {
         Occupant occupant = getOccupant(groupChatRoom, nickname);
         if (occupant != null) {
             if ( MUCRole.visitor == occupant.getRole()) {
@@ -275,8 +284,21 @@ public class UserManager {
         return new ArrayList<>();
     }
 
+    /**
+     * @deprecated use {@link #getUserNicknameFromJID(BareJid)} instead.
+     */
+    @Deprecated
+    public String getUserNicknameFromJID(CharSequence jid) {
+        BareJid bareJid;
+        try {
+            bareJid = JidCreate.bareFrom(jid);
+        } catch (XmppStringprepException e) {
+            throw new IllegalStateException(e);
+        }
+        return getUserNicknameFromJID(bareJid);
+    }
 
-    public String getUserNicknameFromJID(String jid) {
+    public String getUserNicknameFromJID(BareJid jid) {
         ContactList contactList = SparkManager.getWorkspace().getContactList();
         ContactItem item = contactList.getContactItemByJID(jid);
         if (item != null) {
@@ -284,6 +306,12 @@ public class UserManager {
         }
 
         return unescapeJID(jid);
+    }
+
+    public Resourcepart getUserNicknameAsResourcepartFromJID(BareJid jid) {
+        String nicknameString = getUserNicknameFromJID(jid);
+        Resourcepart resourcepart = Resourcepart.fromOrThrowUnchecked(nicknameString);
+        return resourcepart;
     }
 
     /**
@@ -306,21 +334,33 @@ public class UserManager {
         return builder.toString();
     }
 
+    public static String unescapeJID(CharSequence jid) {
+        BareJid bareJid;
+        try {
+            bareJid = JidCreate.bareFrom(jid);
+        } catch (XmppStringprepException e) {
+            throw new IllegalStateException(e);
+        }
+        return unescapeJID(bareJid);
+    }
+
     /**
      * Unescapes a complete JID by examing the node itself and unescaping when necessary.
      *
      * @param jid the users jid.
      * @return the unescaped JID.
      */
-    public static String unescapeJID(String jid) {
+    public static String unescapeJID(BareJid jid) {
         if (jid == null) {
             return null;
         }
 
         final StringBuilder builder = new StringBuilder();
-        String node = XmppStringUtils.parseLocalpart(jid);
-        String restOfJID = jid.substring(node.length());
-        builder.append(XmppStringUtils.unescapeLocalpart(node));
+        Localpart node = jid.getLocalpartOrNull();
+        Domainpart restOfJID = jid.getDomain();
+        if (node != null) {
+            builder.append(XmppStringUtils.unescapeLocalpart(node.toString()));
+        }
         builder.append(restOfJID);
         return builder.toString();
     }
@@ -332,11 +372,11 @@ public class UserManager {
      * @param displayName the displayed name of the user.
      * @return the full jid w/ resource of the user.
      */
-    public String getJIDFromDisplayName(String displayName) {
+    public EntityFullJid getJIDFromDisplayName(CharSequence displayName) {
         ContactList contactList = SparkManager.getWorkspace().getContactList();
         ContactItem item = contactList.getContactItemByDisplayName(displayName);
         if (item != null) {
-            return getFullJID(item.getJID());
+            return getFullJID(item.getJid());
         }
 
         return null;
@@ -348,9 +388,10 @@ public class UserManager {
      * @param jid the users bare jid.
      * @return the full jid with resource.
      */
-    public String getFullJID(String jid) {
-        Presence presence = PresenceManager.getPresence(jid);
-        return presence.getFrom();
+    public EntityFullJid getFullJID(BareJid bareJid) {
+        Presence presence = PresenceManager.getPresence(bareJid);
+        Jid jid =  presence.getFrom();
+        return jid.asEntityFullJidIfPossible();
     }
 
 
@@ -424,7 +465,7 @@ public class UserManager {
         	    contactField.setSelectetIndex(e);
         	    ContactItem item = contactField.getSelectedContactItem();
         	    MouseEvent exx = new MouseEvent((Component) e.getSource(),e.getID(), e.getWhen(),e.getModifiers(),e.getX()+20, e.getY(), e.getClickCount(), false);
-        	    SparkManager.getContactList().setSelectedUser(item.getJID());
+        	    SparkManager.getContactList().setSelectedUser(item.getJid().asBareJid());
         	    SparkManager.getContactList().showPopup(contactField.getPopup(),exx,item);
         	}
         	
@@ -438,7 +479,7 @@ public class UserManager {
                             parent.setGlassPane(glassPane);
                             parent.getGlassPane().setVisible(false);
                             contactField.dispose();
-                            SparkManager.getChatManager().activateChat(item.getJID(), item.getDisplayName());
+                            SparkManager.getChatManager().activateChat(item.getJid(), item.getDisplayName());
                         }
                     }
                 }

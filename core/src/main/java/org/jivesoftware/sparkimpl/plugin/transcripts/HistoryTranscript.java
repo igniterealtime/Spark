@@ -40,6 +40,9 @@ import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+import org.jxmpp.jid.BareJid;
+import org.jxmpp.jid.EntityBareJid;
+import org.jxmpp.jid.Jid;
 import org.jxmpp.util.XmppStringUtils;
 
 /**
@@ -61,7 +64,7 @@ public class HistoryTranscript extends SwingWorker {
 	private JLabel pageCounter = new JLabel("0 / 0");
 	private JButton pageLeft = new JButton("<");
 	private JButton pageRight = new JButton(">");
-	private String jid = null;
+	private BareJid jid = null;
 	private SimpleDateFormat notificationDateFormatter = null;
 	private SimpleDateFormat messageDateFormatter = null;
 	private final AtomicBoolean isInitialized = new AtomicBoolean(false);
@@ -102,7 +105,7 @@ public class HistoryTranscript extends SwingWorker {
 	 * Show the History for the given Contact.
 	 * @param jid the JID of the current transcript
 	 */
-	public void showHistory(String jid) {
+	public void showHistory(BareJid jid) {
 		vacardPanel = new VCardPanel(jid);
 		frame.setTitle(Res.getString("title.history.for", jid));
 		this.jid = jid;
@@ -180,22 +183,22 @@ public class HistoryTranscript extends SwingWorker {
     	StringBuilder builder = new StringBuilder();
     	final String personalNickname = SparkManager.getUserManager().getNickname();
 		Date lastPost = null;
-		String broadcastnick = null;
+		Jid broadcastnick = null;
 		boolean initialized = false;
 
 		for (HistoryMessage message : messages) {
 			String color = "blue";
 
-			String from = message.getFrom();
+			Jid from = message.getFrom();
 			String nickname = SparkManager.getUserManager()
-					.getUserNicknameFromJID(message.getFrom());
+					.getUserNicknameFromJID(message.getFrom().asBareJid());
 			String body = org.jivesoftware.spark.util.StringUtils
 					.escapeHTMLTags(message.getBody());
 			if (nickname.equals(message.getFrom())) {
-				String otherJID = XmppStringUtils.parseBareJid(message
-						.getFrom());
-				String myJID = SparkManager.getSessionManager()
-						.getBareAddress();
+				BareJid otherJID = message
+						.getFrom().asBareJid();
+				EntityBareJid myJID = SparkManager.getSessionManager()
+						.getBareUserAddress();
 
 				if (otherJID.equals(myJID)) {
 					nickname = personalNickname;
@@ -205,8 +208,8 @@ public class HistoryTranscript extends SwingWorker {
 				}
 			}
 
-			if (!XmppStringUtils.parseBareJid(from).equals(
-					SparkManager.getSessionManager().getBareAddress())) {
+			if (!from.asBareJid().equals(
+					SparkManager.getSessionManager().getBareUserAddress())) {
 				color = "red";
 			}
 
@@ -721,8 +724,7 @@ public class HistoryTranscript extends SwingWorker {
 
 	@Override
 	public Object construct() {
-		String bareJID = XmppStringUtils.parseBareJid(jid);
-		return ChatTranscripts.getChatTranscript(bareJID);
+		return ChatTranscripts.getChatTranscript(jid);
 	}
 
 }

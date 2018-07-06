@@ -103,7 +103,7 @@ public class CheckUpdates {
                     return serverVersion;
                 }
             }
-            catch (SmackException | XMPPException.XMPPErrorException e) {
+            catch (SmackException | XMPPException.XMPPErrorException | InterruptedException e) {
                 Log.warning( "Unable the check fo new build.", e );
             }
 
@@ -552,22 +552,27 @@ public class CheckUpdates {
      *
      * @param connection the XMPPConnection to use.
      * @return the information for about the latest Spark Client.
+     * @throws InterruptedException 
      * @throws XMPPException If unable to retrieve latest version.
      */
-    public static SparkVersion getLatestVersion(XMPPConnection connection) throws SmackException, XMPPException.XMPPErrorException
+    public static SparkVersion getLatestVersion(XMPPConnection connection) throws SmackException, XMPPException.XMPPErrorException, InterruptedException
     {
         SparkVersion request = new SparkVersion();
         request.setType(IQ.Type.get);
-        request.setTo("updater." + connection.getServiceName());
+        request.setTo("updater." + connection.getXMPPServiceDomain());
 
-        PacketCollector collector = connection.createPacketCollector(new IQReplyFilter( request, connection ));
+        // TODO: This should not use stanza collectors but simply createStanzaCollectorAndSend(IQ).nextResultOrThrow();
+        StanzaCollector collector = connection.createStanzaCollector(new IQReplyFilter( request, connection ));
         connection.sendStanza(request);
 
+        SparkVersion response;
+        try {
+            response = collector.nextResult();
+        } finally {
+            // Cancel the collector.
+            collector.cancel();
+        }
 
-        SparkVersion response = collector.nextResult(SmackConfiguration.getDefaultPacketReplyTimeout());
-
-        // Cancel the collector.
-        collector.cancel();
         if (response == null) {
             throw SmackException.NoResponseException.newWith( connection, collector );
         }

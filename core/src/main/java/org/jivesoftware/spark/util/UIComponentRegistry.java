@@ -18,6 +18,8 @@ package org.jivesoftware.spark.util;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+
+import org.apache.commons.lang3.reflect.ConstructorUtils;
 import org.jivesoftware.LoginDialog;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.spark.ButtonFactory;
@@ -37,6 +39,10 @@ import org.jivesoftware.spark.ui.rooms.GroupChatRoom;
 import org.jivesoftware.spark.ui.status.StatusBar;
 import org.jivesoftware.spark.ui.themes.ThemePanel;
 import org.jivesoftware.spark.util.log.Log;
+import org.jxmpp.jid.BareJid;
+import org.jxmpp.jid.EntityJid;
+import org.jxmpp.jid.impl.JidCreate;
+import org.jxmpp.jid.parts.Resourcepart;
 
 /**
  * This is a registry for components that may be replaced by plugins. Also
@@ -301,10 +307,10 @@ public final class UIComponentRegistry {
      * @return A new instance of the class currently registered as contact item.
      */
     public static ContactItem createContactItem(String alias, String nickname,
-            String fullyQualifiedJID) {
+            BareJid fullyQualifiedJID) {
         // null breaks instantiation by reflection
         final String nick = nickname != null ? nickname : "";
-        final String jid = fullyQualifiedJID != null ? fullyQualifiedJID : "";
+        final BareJid jid = fullyQualifiedJID != null ? fullyQualifiedJID : JidCreate.bareFromOrThrowUnchecked("dummy@dummy.example");
         final String aliass = alias != null ? alias : "";
 
         return instantiate(contactItemClass, aliass, nick, jid);
@@ -432,7 +438,7 @@ public final class UIComponentRegistry {
      *
      * @return A new instance of the class currently registered as chat room.
      */
-    public static ChatRoom createChatRoom(String participantJID, String participantNickname, String title) {
+    public static ChatRoom createChatRoom(EntityJid participantJID, Resourcepart participantNickname, CharSequence title) {
         return instantiate(chatRoomClass, participantJID, participantNickname, title);
     }
 
@@ -487,22 +493,17 @@ public final class UIComponentRegistry {
         T instance = null;
 
         Log.debug("Args: " + Arrays.toString(args));
+        Class<? extends Object>[] classes = new Class<?>[args.length];
         try {
-            if (args != null) {
-                Class<? extends Object>[] classes = new Class<?>[args.length];
-                for (int i = 0; i < args.length; i++) {
-                    classes[i] = args[i].getClass();
-                }
-                final Constructor<? extends T> ctor = currentClass.getDeclaredConstructor(classes);
-                instance = ctor.newInstance(args);
-            } else {
-                final Constructor<? extends T> ctor = currentClass.getDeclaredConstructor();
-                instance = ctor.newInstance();
+            for (int i = 0; i < args.length; i++) {
+                classes[i] = args[i].getClass();
             }
+            final Constructor<? extends T> ctor = ConstructorUtils.getMatchingAccessibleConstructor(currentClass, classes);
+            instance = ctor.newInstance(args);
         } catch (final Exception e) {
             // not pretty but we're catching several exceptions we can do little
             // about
-            Log.error("Error calling constructor for " + currentClass.getName(), e);
+            Log.error("Error calling constructor for " + currentClass.getName() + " with arguments " + classes, e);
         }
         return instance;
     }

@@ -40,6 +40,10 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.alerts.SparkToaster;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+import org.jxmpp.jid.EntityBareJid;
+import org.jxmpp.jid.Jid;
+import org.jxmpp.jid.impl.JidCreate;
+import org.jxmpp.jid.parts.Resourcepart;
 import org.jxmpp.util.XmppStringUtils;
 
 import javax.swing.*;
@@ -64,7 +68,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
      */
     private final List<ChatRoomListener> chatRoomListeners = new ArrayList<>();
     private final List<ChatRoom> chatRoomList = new ArrayList<>();
-    private final Map<String, StanzaListener> presenceMap = new HashMap<>();
+    private final Map<EntityBareJid, StanzaListener> presenceMap = new HashMap<>();
     private static final String WELCOME_TITLE = SparkRes.getString(SparkRes.WELCOME);
     private ChatFrame chatFrame;
     private final TimerTask focusTask;
@@ -250,7 +254,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         createFrameIfNeeded();
        
         room.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.LIGHT_GRAY));
-        AndFilter presenceFilter = new AndFilter(new StanzaTypeFilter(Presence.class), FromMatchesFilter.createBare( room.getRoomname()));
+        AndFilter presenceFilter = new AndFilter(new StanzaTypeFilter(Presence.class), FromMatchesFilter.createBare( room.getRoomJid()));
 
         // Next, create a packet listener. We use an anonymous inner class for brevity.
         StanzaListener myListener = stanza -> SwingUtilities.invokeLater( () -> handleRoomPresence((Presence)stanza) );
@@ -260,17 +264,17 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         SparkManager.getConnection().addAsyncStanzaListener(myListener, presenceFilter);
 
         // Add to PresenceMap
-        presenceMap.put(room.getRoomname(), myListener);
+        presenceMap.put(room.getRoomJid(), myListener);
 
         String tooltip;
         if (room instanceof ChatRoomImpl) {
-            tooltip = ((ChatRoomImpl)room).getParticipantJID();
+            tooltip = ((ChatRoomImpl)room).getParticipantJID().toString();
             String nickname = SparkManager.getUserManager().getUserNicknameFromJID(((ChatRoomImpl)room).getParticipantJID());
 
             tooltip = "<html><body><b>Contact:&nbsp;</b>" + nickname + "<br><b>JID:&nbsp;</b>" + tooltip;
         }
         else {
-            tooltip = room.getRoomname();
+            tooltip = room.getRoomJid().toString();
         }
 
         // Create ChatRoom UI and dock
@@ -336,7 +340,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
      * @param p the presence to handle.
      */
     private void handleRoomPresence(final Presence p) {
-        final String roomname = XmppStringUtils.parseBareJid(p.getFrom());
+        final EntityBareJid roomname = p.getFrom().asEntityBareJidIfPossible();
         ChatRoom chatRoom;
         try {
             chatRoom = getChatRoom(roomname);
@@ -346,7 +350,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             return;
         }
 
-        final String userid = XmppStringUtils.parseResource(p.getFrom());
+        final Resourcepart userid = p.getFrom().getResourceOrNull();
         if (p.getType() == Presence.Type.unavailable) {
             fireUserHasLeft(chatRoom, userid);
         }
@@ -573,7 +577,19 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
      * @return the ChatRoom
      * @throws ChatRoomNotFoundException if the room was not found.
      */
-    public ChatRoom getChatRoom(String roomName) throws ChatRoomNotFoundException {
+    public ChatRoom getChatRoom(CharSequence roomName) throws ChatRoomNotFoundException {
+        EntityBareJid roomAddress = JidCreate.entityBareFromOrThrowUnchecked(roomName);
+        return getChatRoom(roomAddress);
+    }
+
+    /**
+     * Returns a ChatRoom by name.
+     *
+     * @param roomAddress the name of the ChatRoom.
+     * @return the ChatRoom
+     * @throws ChatRoomNotFoundException if the room was not found.
+     */
+    public ChatRoom getChatRoom(EntityBareJid roomAddress) throws ChatRoomNotFoundException {
         for (int i = 0; i < getTabCount(); i++) {
             ChatRoom room = null;
             try {
@@ -583,11 +599,11 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
                 // Ignore
             }
 
-            if (room != null && room.getRoomname().equalsIgnoreCase(roomName) && room.isActive()) {
+            if (room != null && room.getRoomJid().equals(roomAddress) && room.isActive()) {
                 return room;
             }
         }
-        throw new ChatRoomNotFoundException(roomName + " not found.");
+        throw new ChatRoomNotFoundException(roomAddress + " not found.");
     }
 
     /**
@@ -929,7 +945,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
      * @param room   - the <code>ChatRoom</code> that a user has joined.
      * @param userid - the userid of the person.
      */
-    protected void fireUserHasJoined( final ChatRoom room, final String userid )
+    protected void fireUserHasJoined( final ChatRoom room, final Resourcepart userid )
     {
         SwingUtilities.invokeLater( () ->
         {
@@ -937,7 +953,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             {
                 try
                 {
-                    listener.userHasJoined( room, userid );
+                    listener.userHasJoined( room, userid.toString() );
                 }
                 catch ( Exception e )
                 {
@@ -953,7 +969,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
      * @param room   - the <code>ChatRoom</code> that a user has left.
      * @param userid - the userid of the person.
      */
-    protected void fireUserHasLeft( final ChatRoom room, final String userid )
+    protected void fireUserHasLeft( final ChatRoom room, final Resourcepart userid )
     {
         SwingUtilities.invokeLater( () ->
         {
@@ -961,7 +977,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             {
                 try
                 {
-                    listener.userHasLeft( room, userid );
+                    listener.userHasLeft( room, userid.toString() );
                 }
                 catch ( Exception e )
                 {
@@ -1113,13 +1129,13 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             // is a group chat, perform some functions
             String fromNickName="";
             Message lastChatMessage= new Message();
-            String mucNickNameT;
+            Jid mucNickNameT;
             String finalRoomName ="";
             if(size>0)
             {
                 lastChatMessage = chatRoom.getTranscripts().get(size - 1);
                 mucNickNameT = lastChatMessage.getFrom();
-                String[] mucNickName = mucNickNameT.split("/");    
+                String[] mucNickName = mucNickNameT.toString().split("/");    
                 finalRoomName = chatRoom.getRoomTitle();
                 if (mucNickName.length < 2) { // We have no name after "/" in mucNickNameT (must be like: test@conference.jabber.kg/kos)
                     fromNickName = finalRoomName; //Res.getString("label.message");
@@ -1129,10 +1145,10 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             }
             if ( localPref.isMucHighToastEnabled()) {
                 // allowed to check for new messages containing name
-                String myNickName = chatRoom.getNickname();
+                Resourcepart myNickName = chatRoom.getNickname();
                 String myUserName = SparkManager.getSessionManager().getUsername();
                 Pattern usernameMatch = Pattern.compile(myUserName, Pattern.CASE_INSENSITIVE);
-                Pattern nicknameMatch = Pattern.compile(myNickName, Pattern.CASE_INSENSITIVE);
+                Pattern nicknameMatch = Pattern.compile(myNickName.toString(), Pattern.CASE_INSENSITIVE);
                 
                 if (usernameMatch.matcher(lastChatMessage.getBody()).find() || nicknameMatch.matcher(lastChatMessage.getBody()).find()) {
                     // match, send new message

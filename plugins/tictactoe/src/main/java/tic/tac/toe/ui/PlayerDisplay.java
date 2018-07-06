@@ -22,7 +22,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import org.jivesoftware.smack.util.StringUtils;
-
+import org.jxmpp.jid.EntityFullJid;
+import org.jxmpp.jid.parts.Localpart;
 import org.jxmpp.util.XmppStringUtils;
 import tic.tac.toe.Mark;
 import tic.tac.toe.TTTRes;
@@ -46,7 +47,7 @@ public class PlayerDisplay extends JPanel {
     private JLabel _currentplayer;
     private Mark _currentMark;
 
-    public PlayerDisplay(Mark myself, String opponent) {
+    public PlayerDisplay(Mark myself, EntityFullJid opponent) {
 
 	_currentplayer = new JLabel(" | "+TTTRes.getString("ttt.display.current"));
 	
@@ -66,7 +67,7 @@ public class PlayerDisplay extends JPanel {
 	else
 	    you = Mark.X;
 	
-	String name = XmppStringUtils.parseLocalpart(opponent);
+	Localpart name = opponent.getLocalpart();
 	JLabel yourlabel = new JLabel(" | "+name);
 	yourlabel.setIcon(new ImageIcon(you.getImage().getImage()
 		.getScaledInstance(16, 16, Image.SCALE_SMOOTH)));

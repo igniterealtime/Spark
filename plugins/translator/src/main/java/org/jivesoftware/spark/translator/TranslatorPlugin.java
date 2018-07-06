@@ -28,7 +28,6 @@ import org.jivesoftware.spark.ui.ChatRoomListenerAdapter;
 import org.jivesoftware.spark.ui.MessageEventListener;
 import org.jivesoftware.spark.ui.TranscriptWindow;
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
-import org.jxmpp.util.XmppStringUtils;
 
 /**
  * A plugin that uses google's translation service to translate instant messages between two users.
@@ -71,7 +70,7 @@ public class TranslatorPlugin implements Plugin {
                             if (type != null && type != TranslatorUtil.TranslationType.None) {
                             	message.setBody(null);
                             	currentBody = TranslatorUtil.translate(currentBody, type);
-                                TranscriptWindow transcriptWindow = chatManager.getChatRoom( XmppStringUtils.parseBareJid( message.getTo() ) ).getTranscriptWindow();
+                                TranscriptWindow transcriptWindow = chatManager.getChatRoom( message.getTo().asBareJid() ).getTranscriptWindow();
                                 if(oldBody.equals(currentBody.substring(0,currentBody.length()-1)))
                                 {
                                 	transcriptWindow.insertNotificationMessage("Could not translate: "+currentBody, ChatManager.ERROR_COLOR);

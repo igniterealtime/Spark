@@ -77,7 +77,7 @@ public class FileTransferSettingsPlugin implements Plugin {
         if (settings.getCheckFileSize() && request.getFileSize() > settings.getMaxFileSize()) {
             return true;
         }
-        if (settings.getBlockedJIDs().contains(trimJID(request.getRequestor()))) {
+        if (settings.getBlockedJIDs().contains(request.getRequestor().asBareJid())) {
             return true;
         }
         if (settings.getBlockedExtensions().contains(getFileExtensionFromName(request.getFileName()))) {
@@ -102,24 +102,6 @@ public class FileTransferSettingsPlugin implements Plugin {
 
         return null;
     }
-
-    /**
-     * Trims the resource off the end of the supplied JID. For example, 'dude@jivesoftware.com/spark' would return
-     * 'dude@jivesoftware.com'
-     *
-     * @param completeJID the JID which possibly includes a resource.
-     * @return the JID without the resource.
-     */
-    private String trimJID(String completeJID) {
-        int slashIDX = completeJID.indexOf('/');
-        if (slashIDX > 0) {
-            return completeJID.substring(0, slashIDX);
-        }
-        else {
-            return completeJID;
-        }
-    }
-
 
     /**
      * Adds a {@link FileTransferListener} to allow this plugin to intercept {@link FileTransferRequest}s.
@@ -152,7 +134,7 @@ public class FileTransferSettingsPlugin implements Plugin {
                     return false;
                 }
             }
-            catch (SmackException ex)
+            catch (SmackException | InterruptedException ex)
             {
                 Log.warning( "Unable to handle file transfer.", ex );
                 return false;

@@ -42,6 +42,8 @@ import org.jivesoftware.spark.ui.ContactList;
 import org.jivesoftware.sparkimpl.plugin.alerts.SparkToaster;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+import org.jxmpp.jid.BareJid;
+import org.jxmpp.jid.Jid;
 import org.jxmpp.util.XmppStringUtils;
 
 /**
@@ -52,7 +54,7 @@ import org.jxmpp.util.XmppStringUtils;
  */
 public class PresenceChangePlugin implements Plugin {
 
-    private final Set<String> sparkContacts = new HashSet<>();
+    private final Set<BareJid> sparkContacts = new HashSet<>();
     private LocalPreferences localPref = SettingsManager.getLocalPreferences();
 
     public void initialize() {
@@ -65,8 +67,8 @@ public class PresenceChangePlugin implements Plugin {
 	    public void actionPerformed(ActionEvent e) {
 
 		for (ContactItem item : contactList.getSelectedUsers()) {
-		    String bareAddress = XmppStringUtils.parseBareJid(item
-			    .getJID());
+		    BareJid bareAddress = item
+			    .getJid().asBareJid();
 		    sparkContacts.add(bareAddress);
 		}
             }
@@ -81,8 +83,8 @@ public class PresenceChangePlugin implements Plugin {
 	    public void actionPerformed(ActionEvent e) {
 
 		for (ContactItem item : contactList.getSelectedUsers()) {
-		    String bareAddress = XmppStringUtils.parseBareJid(item
-			    .getJID());
+		    BareJid bareAddress = item
+			    .getJid().asBareJid();
 		    sparkContacts.remove(bareAddress);
 		}
 
@@ -125,13 +127,12 @@ Presence presence = (Presence) stanza;
 if (!presence.isAvailable() || presence.isAway()) {
 return;
 }
-String from = presence.getFrom();
+Jid from = presence.getFrom();
 
-ArrayList<String> removelater = new ArrayList<>();
+ArrayList<BareJid> removelater = new ArrayList<>();
 
-for (final String jid : sparkContacts) {
-if (jid.equals(XmppStringUtils
-.parseBareJid(from))) {
+for (final BareJid jid : sparkContacts) {
+if (jid.equals(from.asBareJid())) {
 removelater.add(jid);
 // sparkContacts.remove(jid);
 
@@ -182,7 +183,7 @@ EventQueue.invokeLater( () -> room.getTranscriptWindow().insertNotificationMessa
 
 }
 }
-for(String s : removelater){
+for(BareJid s : removelater){
 sparkContacts.remove(s);
 }
 
@@ -204,19 +205,19 @@ sparkContacts.remove(s);
         // Do nothing.
     }
 
-    public void addWatch(String user){
-	String bareAddress = XmppStringUtils.parseBareJid(user);
+    public void addWatch(Jid user){
+	BareJid bareAddress = user.asBareJid();
 	sparkContacts.add(bareAddress);
     }
 
-    public void removeWatch(String user){
-	String bareAddress = XmppStringUtils.parseBareJid(user);
+    public void removeWatch(Jid user){
+    BareJid bareAddress = user.asBareJid();
 	sparkContacts.remove(bareAddress);
     }
 
-    public boolean getWatched(String user)
+    public boolean getWatched(Jid user)
     {
-	String bareAddress = XmppStringUtils.parseBareJid(user);
+    BareJid bareAddress = user.asBareJid();
 	return sparkContacts.contains(bareAddress)
 ;    }
 

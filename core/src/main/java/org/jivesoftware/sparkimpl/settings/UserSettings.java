@@ -50,7 +50,7 @@ public class UserSettings {
         try {
             settingsData = (SettingsData)privateDataManager.getPrivateData("personal_settings", "jive:user:settings");
         }
-        catch (XMPPException | SmackException e) {
+        catch (XMPPException | SmackException | InterruptedException e) {
             Log.error("Error in User Settings", e);
         }
     }
@@ -89,7 +89,7 @@ public class UserSettings {
         try {
             privateDataManager.setPrivateData(settingsData);
         }
-        catch (XMPPException | SmackException e) {
+        catch (XMPPException | SmackException | InterruptedException e) {
             Log.error("Error in User Settings.", e);
         }
     }
