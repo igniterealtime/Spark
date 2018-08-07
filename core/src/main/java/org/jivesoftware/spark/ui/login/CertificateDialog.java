@@ -132,7 +132,6 @@ public class CertificateDialog extends JDialog implements ActionListener {
 		setLocation(dimension.width / 2 - this.getWidth(), dimension.height / 2 - this.getHeight() / 2);
 		setModal(true);
 		setLayout(new GridBagLayout());
-		setAlwaysOnTop(true);
 		setResizable(false);
 		
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
@@ -364,17 +363,14 @@ public class CertificateDialog extends JDialog implements ActionListener {
 		if(e.getSource() == okButton){
 			//controller should be passed to this class only if there is need to modification content of Keystore.
 			if (certControll != null) {
-				//certControll.setAddToKeystore(true);
 				addCert= true;
-				
 				if (certControll instanceof CertificateController && !certControll.isOnExceptionList(certModel) && exceptionBox.isSelected()) {
 				    
 				    CertificateController crtCtrl = (CertificateController)certControll;
 				    try {
                         crtCtrl.addCertificateAsExempted(certModel);
                     } catch (HeadlessException | InvalidNameException | KeyStoreException e1) {
-                        // TODO Auto-generated catch block
-                        e1.printStackTrace();
+                        Log.error(e1);
                     }
 				}
 			}
@@ -410,6 +406,5 @@ public class CertificateDialog extends JDialog implements ActionListener {
             }
             certStatusArea.updateUI();
         }
-	}
-	
+	}	
 }
