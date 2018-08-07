@@ -134,11 +134,10 @@ public class InBandCertificateChainDialog extends JDialog implements ActionListe
                         && (caCertsStore.getCertificateAlias(chain[i]) == null)) {
 
                     JButton addCertButton = new JButton(Res.getString("button.add2"));
-                    addCertButton.addActionListener(e -> addCertButtonImpl(certModel));
+                    addCertButton.addActionListener(e -> addCertButtonImpl(certModel, addCertButton, buttonOrIconConstraints));
                     panel.add(addCertButton, buttonOrIconConstraints);
 
                 } else {
-
                     panel.add(new JLabel(imgIconInStore), buttonOrIconConstraints);
                 }
             } catch (KeyStoreException e) {
@@ -158,26 +157,33 @@ public class InBandCertificateChainDialog extends JDialog implements ActionListe
             this.dispose();
         }
         if (e.getSource() == advancedButton) {
-            remove(endCertTextField);
-            remove(advancedButton);
-            add(scrollPane, new GridBagConstraints(0, 1, 3, 4, 1.0, 0.6, WEST, GridBagConstraints.HORIZONTAL,
-                    DEFAULT_INSETS, 0, 50));
-            
-            revalidate();
-            repaint();
+            showAdvanced();
         }
         if (e.getSource() == addSingleCertButton) {
-            addCertButtonImpl(endCertModel);
+        //    addCertButtonImpl(endCertModel);
             this.dispose();
         }
-        
-
     }
 
-    private void addCertButtonImpl(CertificateModel certModel) {
+    private void showAdvanced() {
+        remove(endCertTextField);
+        remove(advancedButton);
+        add(scrollPane, new GridBagConstraints(0, 1, 3, 4, 1.0, 0.6, WEST, GridBagConstraints.HORIZONTAL,
+                DEFAULT_INSETS, 0, 50));
+        revalidate();
+        repaint();
+    }
+
+    private void addEndEntityCertButtonImpl(CertificateModel certModel) {
+        
+    }
+    
+    private void addCertButtonImpl(CertificateModel certModel, JButton button, GridBagConstraints constraints) {
         try {
             certMan.addEntryToKeyStore(certModel.getCertificate(), true);
             certMan.overWriteKeyStores();
+            panel.remove(button);
+            panel.add(new JLabel(imgIconInStore), constraints);
         } catch (HeadlessException | InvalidNameException | KeyStoreException e1) {
             Log.error("Cannot add certificate from connection");
         }
