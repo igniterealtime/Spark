@@ -72,37 +72,17 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.6.0</version>
+                <configuration>
+                   <mainClass>org.jivesoftware.launcher.Startup</mainClass>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
     <dependencies>
-        <dependency>
-            <groupId>org.igniterealtime.spark</groupId>
-            <artifactId>emoticons</artifactId>
-            <version>${project.version}</version>
-            <classifier>Default.adiumemoticonset</classifier>
-            <type>zip</type>
-        </dependency>
-        <dependency>
-            <groupId>org.igniterealtime.spark</groupId>
-            <artifactId>emoticons</artifactId>
-            <version>${project.version}</version>
-            <classifier>GTalk.AdiumEmoticonset</classifier>
-            <type>zip</type>
-        </dependency>
-        <dependency>
-            <groupId>org.igniterealtime.spark</groupId>
-            <artifactId>emoticons</artifactId>
-            <version>${project.version}</version>
-            <classifier>POPO.adiumemoticonset</classifier>
-            <type>zip</type>
-        </dependency>
-        <dependency>
-            <groupId>org.igniterealtime.spark</groupId>
-            <artifactId>emoticons</artifactId>
-            <version>${project.version}</version>
-            <classifier>sparkEmoticonSet</classifier>
-            <type>zip</type>
-        </dependency>
         <dependency>
             <groupId>org.igniterealtime.smack</groupId>
             <artifactId>smack-core</artifactId>
@@ -164,6 +144,11 @@
             <version>3.1</version>
         </dependency>
         <dependency>
+             <groupId>org.apache.commons</groupId>
+             <artifactId>commons-lang3</artifactId>
+             <version>3.7</version>
+         </dependency>
+         <dependency>
             <groupId>org.swinglabs.swingx</groupId>
             <artifactId>swingx-all</artifactId>
             <version>1.6.3</version>

@@ -18,6 +18,7 @@ package org.jivesoftware.spark.ui.conferences;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smackx.muc.MultiUserChat;
+import org.jxmpp.jid.EntityBareJid;
 
 
 /**
@@ -36,5 +37,5 @@ public interface RoomInvitationListener {
      * @param message    the appened message.
      * @return true if you wish to intercept this invitation.
      */
-    boolean handleInvitation( final XMPPConnection connection, final MultiUserChat room, final String inviter, final String reason, final String password, final Message message);
+    boolean handleInvitation( final XMPPConnection connection, final MultiUserChat room, final EntityBareJid inviter, final String reason, final String password, final Message message);
 }

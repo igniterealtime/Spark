@@ -208,8 +208,8 @@ public class ContactGroupTransferHandler extends TransferHandler {
         newContact.setIcon(item.getIcon());
         newContact.getNicknameLabel().setFont(item.getNicknameLabel().getFont());
 
-        if (!PresenceManager.isOnline(item.getJID())) {
-            contactGroup.addOfflineContactItem(item.getAlias(), item.getNickname(), item.getJID(), null);
+        if (!PresenceManager.isOnline(item.getJid().asBareJid())) {
+            contactGroup.addOfflineContactItem(item.getAlias(), item.getNickname(), item.getJid(), null);
         }
         else {
             contactGroup.addContactItem(newContact);
@@ -222,7 +222,7 @@ public class ContactGroupTransferHandler extends TransferHandler {
         SwingWorker worker = new SwingWorker() {
             public Object construct() {
                 Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
-                RosterEntry entry = roster.getEntry(item.getJID());
+                RosterEntry entry = roster.getEntry(item.getJid().asBareJid());
 
                 RosterGroup groupFound = null;
 
@@ -232,7 +232,7 @@ public class ContactGroupTransferHandler extends TransferHandler {
                             groupFound = group;
                             group.addEntry(entry);
                         }
-                        catch (XMPPException | SmackException e1) {
+                        catch (XMPPException | SmackException | InterruptedException e1) {
                             Log.error(e1);
                             return false;
                         }
@@ -245,7 +245,7 @@ public class ContactGroupTransferHandler extends TransferHandler {
                     try {
                         groupFound.addEntry(entry);
                     }
-                    catch (XMPPException | SmackException e) {
+                    catch (XMPPException | SmackException | InterruptedException e) {
                         Log.error(e);
                     }
                 }
@@ -278,7 +278,7 @@ public class ContactGroupTransferHandler extends TransferHandler {
 
         // Remove entry from Roster Group
         Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
-        RosterEntry entry = roster.getEntry(item.getJID());
+        RosterEntry entry = roster.getEntry(item.getJid().asBareJid());
 
         RosterGroup rosterGroup = null;
 
@@ -288,7 +288,7 @@ public class ContactGroupTransferHandler extends TransferHandler {
                     rosterGroup = group;
                     group.removeEntry(entry);
                 }
-                catch (XMPPException | SmackException e1) {
+                catch (XMPPException | SmackException | InterruptedException e1) {
                     return false;
                 }
             }

@@ -98,7 +98,7 @@ public class Enterprise {
         final ServiceDiscoveryManager disco = ServiceDiscoveryManager.getInstanceFor(SparkManager.getConnection());
         final DiscoverItems items = SparkManager.getSessionManager().getDiscoveredItems();
         for (DiscoverItems.Item item : items.getItems() ) {
-            String entity = item.getEntityID();
+            String entity = item.getEntityID().toString();
             if (entity != null) {
                 if (entity.startsWith("manager.")) {
                     sparkManagerInstalled = true;
@@ -107,7 +107,7 @@ public class Enterprise {
                     try {
                         featureInfo = disco.discoverInfo(item.getEntityID());
                     }
-                    catch (XMPPException | SmackException e) {
+                    catch (XMPPException | SmackException | InterruptedException e) {
                         Log.error("Error while retrieving feature list for SparkManager.", e);
                     }
 

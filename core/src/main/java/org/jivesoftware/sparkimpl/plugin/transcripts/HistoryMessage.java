@@ -17,26 +17,28 @@ package org.jivesoftware.sparkimpl.plugin.transcripts;
 
 import java.util.Date;
 
+import org.jxmpp.jid.Jid;
+
 public class HistoryMessage {
 
-    private String to;
-    private String from;
+    private Jid to;
+    private Jid from;
     private String body;
     private Date date;
 
-    public String getTo() {
+    public Jid getTo() {
         return to;
     }
 
-    public void setTo(String to) {
+    public void setTo(Jid to) {
         this.to = to;
     }
 
-    public String getFrom() {
+    public Jid getFrom() {
         return from;
     }
 
-    public void setFrom(String from) {
+    public void setFrom(Jid from) {
         this.from = from;
     }
 

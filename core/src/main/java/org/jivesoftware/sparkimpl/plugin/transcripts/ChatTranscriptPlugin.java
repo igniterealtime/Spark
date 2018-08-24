@@ -56,6 +56,8 @@ import org.jivesoftware.spark.util.UIComponentRegistry;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+import org.jxmpp.jid.BareJid;
+import org.jxmpp.jid.EntityBareJid;
 
 /**
  * The <code>ChatTranscriptPlugin</code> is responsible for transcript handling within Spark.
@@ -66,7 +68,7 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
 
     private final SimpleDateFormat notificationDateFormatter;
     private final SimpleDateFormat messageDateFormatter;
-    private HashMap<String,Message> lastMessage = new HashMap<>();
+    private HashMap<EntityBareJid, Message> lastMessage = new HashMap<>();
     private JDialog Frame;
     private HistoryTranscript transcript = null;
     /**
@@ -87,7 +89,7 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
 
 			public void actionPerformed(ActionEvent actionEvent) {
                 ContactItem item = contactList.getSelectedUsers().iterator().next();
-                final String jid = item.getJID();
+                final BareJid jid = item.getJid();
                 transcript = new HistoryTranscript(notificationDateFormatter, messageDateFormatter);
                 transcript.showHistory(jid);
                 //showHistory(jid);
@@ -157,18 +159,6 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
             public void connectionClosedOnError(Exception e) {
                 persistConversations();
             }
-
-            @Override
-            public void reconnectingIn(int i) {
-            }
-
-            @Override
-            public void reconnectionSuccessful() {
-            }
-
-            @Override
-            public void reconnectionFailed(Exception exception) {
-            }
         });
     }
 
@@ -193,7 +183,7 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
             return;
         }
 
-        final String jid = room.getRoomname();
+        final EntityBareJid jid = room.getRoomJid();
 
         File transcriptFile = ChatTranscripts.getTranscriptFile(jid);
         if (!transcriptFile.exists()) {
@@ -222,7 +212,7 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
             return;
         }
 
-        final String jid = room.getRoomname();
+        final EntityBareJid jid = room.getRoomJid();
 
         final List<Message> transcripts = room.getTranscripts();
         ChatTranscript transcript = new ChatTranscript();

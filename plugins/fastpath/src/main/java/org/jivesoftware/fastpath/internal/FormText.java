@@ -19,6 +19,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.jivesoftware.smackx.workgroup.settings.ChatSetting;
+import org.jxmpp.jid.EntityBareJid;
+import org.jxmpp.jid.impl.JidCreate;
 
 public class FormText {
 
@@ -127,7 +129,8 @@ public class FormText {
         return getTextSetting("transferChat_text", workgroup);
     }
 
-    public static String getTextSetting(String key, String workgroup) {
+    public static String getTextSetting(String key, String workgroupString) {
+        EntityBareJid workgroup = JidCreate.entityBareFromUnescapedOrThrowUnchecked(workgroupString);
         WorkgroupManager settingsManager = WorkgroupManager.getInstance();
         ChatSetting chatSettings = settingsManager.getChatSetting(key, workgroup);
 

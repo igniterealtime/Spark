@@ -50,6 +50,8 @@ import org.jivesoftware.smackx.workgroup.packet.Transcript;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
+import org.jxmpp.jid.EntityBareJid;
+import org.jxmpp.jid.parts.Localpart;
 import org.jxmpp.util.XmppStringUtils;
 
 public class ChatHistory extends JPanel {
@@ -109,7 +111,7 @@ public class ChatHistory extends JPanel {
 
     public void showDialog() {
         AgentSession agentSession = FastpathPlugin.getAgentSession();
-        String workgroupName = XmppStringUtils.parseLocalpart(agentSession.getWorkgroupJID());
+        Localpart workgroupName = FastpathPlugin.getWorkgroup().getWorkgroupJID().getLocalpartOrThrow();
 
 
         if (mainFrame == null) {
@@ -140,11 +142,11 @@ public class ChatHistory extends JPanel {
 
 
         agentSession = FastpathPlugin.getAgentSession();
-        String jid = SparkManager.getSessionManager().getBareAddress();
+        EntityBareJid jid = SparkManager.getSessionManager().getBareUserAddress();
         try {
             history = agentSession.getAgentHistory(jid, 10, null);
         }
-        catch (XMPPException | SmackException e1) {
+        catch (XMPPException | SmackException | InterruptedException e1) {
             Log.error("Error retrieving chat history.", e1);
         }
 
@@ -196,7 +198,7 @@ public class ChatHistory extends JPanel {
         try {
             transcript = FastpathPlugin.getAgentSession().getTranscript(sessionID);
         }
-        catch (XMPPException | SmackException e) {
+        catch (XMPPException | SmackException | InterruptedException e) {
             Log.error("Error showing transcripts.", e);
         }
 

@@ -79,7 +79,7 @@ public class GatewayTabItem extends CollapsiblePane implements GatewayItem {
 	// Check if transport is already registered
 	if (_transportRegistered) {
 	    // If yes, check if it is online
-	    if (PresenceManager.isOnline(transport.getServiceName())) {
+	    if (PresenceManager.isOnline(transport.getXMPPServiceDomain())) {
 
 		getTitlePane().setIcon(transport.getIcon());
 		_status.setText(Res.getString("online"));
@@ -108,19 +108,19 @@ public class GatewayTabItem extends CollapsiblePane implements GatewayItem {
     if (isRegistered) {
         // Check if auto login is set.
         boolean autoJoin = TransportUtils.autoJoinService(transport
-            .getServiceName());
+            .getXMPPServiceDomain());
         if (autoJoin) {
         Presence oldPresence = statusBar.getPresence();
         Presence presence = new Presence(oldPresence.getType(),
             oldPresence.getStatus(),
             oldPresence.getPriority(),
             oldPresence.getMode());
-        presence.setTo(transport.getServiceName());
+        presence.setTo(transport.getXMPPServiceDomain());
             try
             {
                 SparkManager.getConnection().sendStanza(presence);
             }
-            catch ( SmackException.NotConnectedException e )
+            catch ( SmackException.NotConnectedException | InterruptedException e )
             {
                 Log.error( "Unable to send presence.", e );
             }
@@ -139,14 +139,14 @@ public class GatewayTabItem extends CollapsiblePane implements GatewayItem {
 
         final Presence offlinePresence = new Presence(
             Presence.Type.unavailable);
-        offlinePresence.setTo(_transport.getServiceName());
+        offlinePresence.setTo(_transport.getXMPPServiceDomain());
         try
         {
             SparkManager.getConnection().sendStanza(offlinePresence);
             _statusIcon.setIcon(SparkRes
                     .getImageIcon(SparkRes.YELLOW_BALL));
         }
-        catch ( SmackException.NotConnectedException e1 )
+        catch ( SmackException.NotConnectedException | InterruptedException e1 )
         {
             Log.error( "Unable to send presence.", e1 );
         }
@@ -154,14 +154,14 @@ public class GatewayTabItem extends CollapsiblePane implements GatewayItem {
     } else {
         final Presence onlinePresence = new Presence(
             Presence.Type.available);
-        onlinePresence.setTo(_transport.getServiceName());
+        onlinePresence.setTo(_transport.getXMPPServiceDomain());
         try
         {
             SparkManager.getConnection().sendStanza(onlinePresence);
             _statusIcon.setIcon(SparkRes
                     .getImageIcon(SparkRes.YELLOW_BALL));
         }
-        catch ( SmackException.NotConnectedException e1 )
+        catch ( SmackException.NotConnectedException | InterruptedException e1 )
         {
             Log.error( "Unable to send presence.", e1 );
         }
@@ -174,7 +174,7 @@ public class GatewayTabItem extends CollapsiblePane implements GatewayItem {
 	// If transport is registered, we can check if the autojoin is enabled
 	if (_transportRegistered) {
 	    _autoJoin.setSelected(TransportUtils.autoJoinService(_transport
-		    .getServiceName()));
+		    .getXMPPServiceDomain()));
 	    _registerButton.setText(Res
 		    .getString("menuitem.delete.login.information"));
 	    _signInOut.setEnabled(true);
@@ -185,7 +185,7 @@ public class GatewayTabItem extends CollapsiblePane implements GatewayItem {
 
 	_autoJoinButton.addActionListener( e -> {
     _autoJoin.setSelected(!_autoJoin.isSelected());
-     TransportUtils.setAutoJoin(_transport.getServiceName(), _autoJoin.isSelected());
+     TransportUtils.setAutoJoin(_transport.getXMPPServiceDomain(), _autoJoin.isSelected());
 
     } );
 	
@@ -207,9 +207,9 @@ public class GatewayTabItem extends CollapsiblePane implements GatewayItem {
         try {
             TransportUtils.unregister(
                 SparkManager.getConnection(),
-                _transport.getServiceName());
+                _transport.getXMPPServiceDomain());
             setNotRegistered();
-        } catch (SmackException e1) {
+        } catch (SmackException | InterruptedException e1) {
             Log.error(e1);
         }
         }
@@ -217,7 +217,7 @@ public class GatewayTabItem extends CollapsiblePane implements GatewayItem {
         // If transport is not registered we should show the
         // register gui
         TransportRegistrationDialog registrationDialog = new TransportRegistrationDialog(
-            _transport.getServiceName());
+            _transport.getXMPPServiceDomain());
         registrationDialog.invoke();
         // Set user as offline while he fills in the login
         // information
@@ -276,7 +276,7 @@ public class GatewayTabItem extends CollapsiblePane implements GatewayItem {
     private void setOffline() {
 	_transportRegistered = true;
 	_autoJoin.setSelected(TransportUtils.autoJoinService(_transport
-		.getServiceName()));
+		.getXMPPServiceDomain()));
 	_registerButton.setText(Res
 		.getString("menuitem.delete.login.information"));
 	_signInOut.setEnabled(true);
@@ -289,7 +289,7 @@ public class GatewayTabItem extends CollapsiblePane implements GatewayItem {
     private void setOnline() {
 	_statusIcon.setIcon(SparkRes.getImageIcon(SparkRes.GREEN_BALL));
 	EventQueue.invokeLater( () -> _autoJoin.setSelected(TransportUtils.autoJoinService(_transport
-        .getServiceName())) );
+        .getXMPPServiceDomain())) );
 	
 	_signInOut.setText(Res.getString("menuitem.sign.out"));
 	_signInOut.setEnabled(true);

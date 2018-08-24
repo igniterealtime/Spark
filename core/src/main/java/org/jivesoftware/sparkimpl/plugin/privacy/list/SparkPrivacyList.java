@@ -263,7 +263,7 @@ public class SparkPrivacyList {
             PrivacyManager.getInstance().getPrivacyListManager().updatePrivacyList(getListName(), _privacyItems);
             PrivacyManager.getInstance().getPrivacyListManager().getPrivacyList(_listName).getItems().remove(item);
             _privacyItems.remove(item);
-        } catch (XMPPException | SmackException e) {
+        } catch (XMPPException | SmackException | InterruptedException e) {
             Log.warning("Could not save PrivacyList "+_listName);
             e.printStackTrace();
         }

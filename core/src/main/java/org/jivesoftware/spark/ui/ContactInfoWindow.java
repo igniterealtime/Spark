@@ -49,6 +49,9 @@ import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.Transport;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.TransportUtils;
+import org.jxmpp.jid.Jid;
+import org.jxmpp.jid.impl.JidCreate;
+import org.jxmpp.jid.parts.Resourcepart;
 import org.jxmpp.util.XmppStringUtils;
 
 import java.text.SimpleDateFormat;
@@ -234,15 +237,15 @@ public class ContactInfoWindow extends JPanel {
         	//If user is offline or away, try to see last activity
 
 	        try {
-				String client = "";
+				Jid client = null;
 				if (!status.equals(Res.getString("offline"))) {
 					//If user is away (not offline), last activity request is sent to client
 					client = contactItem.getPresence().getFrom();
-					if ((client != null) && (client.lastIndexOf("/") != -1)) {
-						client = client.substring(client.lastIndexOf("/"));
-					} else client = "/";
+				} else {
+				    client = contactItem.getJid();
 				}
-	            LastActivity activity = LastActivityManager.getInstanceFor( SparkManager.getConnection() ).getLastActivity( contactItem.getJID()+client);
+
+	            LastActivity activity = LastActivityManager.getInstanceFor( SparkManager.getConnection() ).getLastActivity(client);
 	
 	            long idleTime = (activity.getIdleTime() * 1000);
 	
@@ -310,7 +313,7 @@ public class ContactInfoWindow extends JPanel {
         // Get VCard from memory (if available)
         String title = "";
         String phone = "";
-        VCard vcard = SparkManager.getVCardManager().getVCardFromMemory(XmppStringUtils.parseBareJid(contactItem.getJID()));
+        VCard vcard = SparkManager.getVCardManager().getVCardFromMemory(contactItem.getJid().asBareJid());
         if (vcard != null) {
             title = vcard.getField("TITLE");
             phone = vcard.getPhoneWork("VOICE");

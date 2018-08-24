@@ -88,16 +88,4 @@ public class ReconnectPanelSmall extends ContactGroup implements
     public void connectionClosedOnError(Exception e) {
     }
 
-    @Override
-    public void reconnectingIn(int seconds) {
-    }
-
-    @Override
-    public void reconnectionSuccessful() {
-    }
-
-    @Override
-    public void reconnectionFailed(Exception e) {
-    }
-
 }

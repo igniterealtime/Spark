@@ -24,6 +24,11 @@ import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smackx.muc.packet.MUCUser;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
+import org.jxmpp.jid.BareJid;
+import org.jxmpp.jid.EntityFullJid;
+import org.jxmpp.jid.Jid;
+import org.jxmpp.jid.impl.JidCreate;
+import org.jxmpp.stringprep.XmppStringprepException;
 import org.jxmpp.util.XmppStringUtils;
 
 import javax.swing.Icon;
@@ -74,10 +79,10 @@ public class PresenceManager {
     /**
      * Returns true if the user is online.
      *
-     * @param jid the jid of the user.
+     * @param jidString the jid of the user.
      * @return true if online.
      */
-    public static boolean isOnline(String jid) {
+    public static boolean isOnline(BareJid jid) {
         final Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
         Presence presence = roster.getPresence(jid);
         return presence.isAvailable();
@@ -86,10 +91,22 @@ public class PresenceManager {
     /**
      * Returns true if the user is online and their status is available or free to chat.
      *
-     * @param jid the jid of the user.
+     * @param jidString the jid of the user.
      * @return true if the user is online and available.
+     * @deprecated use {@link #isAvailable(BareJid)} instead.
      */
-    public static boolean isAvailable(String jid) {
+    @Deprecated
+    public static boolean isAvailable(String jidString) {
+        BareJid jid;
+        try {
+            jid = JidCreate.bareFrom(jidString);
+        } catch (XmppStringprepException e) {
+            throw new IllegalStateException(e);
+        }
+        return isAvailable(jid);
+    }
+
+    public static boolean isAvailable(BareJid jid) {
         final Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
         Presence presence = roster.getPresence(jid);
         return presence.isAvailable() && !presence.isAway();
@@ -108,45 +125,64 @@ public class PresenceManager {
     /**
      * Returns the presence of a user.
      *
-     * @param jid the users jid.
+     * @param jidString the users jid.
      * @return the users presence.
+     * @deprecated use {@link #getPresence(BareJid)} instead.
      */
-    public static Presence getPresence(String jid) {
-        if ( jid == null ) {
+    @Deprecated
+    public static Presence getPresence(String jidString) {
+        if ( jidString == null ) {
             Log.error( "Unable to get the presence of a null jid!" );
             return null;
         }
-		if (jid.equals(SparkManager.getSessionManager().getBareAddress())) {
-			return SparkManager.getWorkspace().getStatusBar().getPresence();
-		} else {
-			final Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
-			return roster.getPresence(jid);
-		}
+        BareJid jid;
+        try {
+            jid = JidCreate.bareFrom(jidString);
+        } catch (XmppStringprepException e) {
+            throw new IllegalStateException(e);
+        }
+        return getPresence(jid);
     }
 
     /**
-     * Returns the fully qualified jid of a user.
+     * Returns the presence of a user.
      *
-     * @param jid the users bare jid (ex. derek@jivesoftware.com)
-     * @return the fully qualified jid of a user (ex. derek@jivesoftware.com --> derek@jivesoftware.com/spark)
+     * @param jidString the users jid.
+     * @return the users presence.
      */
-    public static String getFullyQualifiedJID(String jid) {
+    public static Presence getPresence(BareJid jid) {
+        if (jid.equals(SparkManager.getSessionManager().getBareAddress())) {
+            return SparkManager.getWorkspace().getStatusBar().getPresence();
+        } else {
+            final Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
+            return roster.getPresence(jid);
+        }
+    }
+
+    /**
+     * Returns the fully qualified jid of a user. May return {@code null}.
+     *
+     * @param jidString the users bare jid (ex. derek@jivesoftware.com)
+     * @return the fully qualified jid of a user (ex. derek@jivesoftware.com --> derek@jivesoftware.com/spark) or {@code null}.
+     */
+    public static EntityFullJid getFullyQualifiedJID(BareJid jid) {
         final Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
         Presence presence = roster.getPresence(jid);
-        return presence.getFrom();
+        Jid result = presence.getFrom();
+        EntityFullJid entityFullJid = result.asEntityFullJidIfPossible();
+        return entityFullJid;
     }
-    
+
 	public static String getJidFromMUCPresence(Presence presence) {		
 		Collection<ExtensionElement> extensions = presence.getExtensions();
 		for (ExtensionElement extension : extensions) {
 			if (extension instanceof MUCUser) {
 				final MUCUser mucUser = (MUCUser) extension;
-				String fullJid = mucUser.getItem().getJid();
+				Jid fullJid = mucUser.getItem().getJid();
                 if ( fullJid == null) {
                     return null;
                 }
- 				String userJid = XmppStringUtils.parseBareJid(fullJid);
-				return userJid;
+				return fullJid.asBareJid().toString();
 			}
 		}
 		return null;

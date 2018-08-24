@@ -38,7 +38,7 @@ public class QueueItem extends JPanel {
     private JLabel averageWaitTimeLabel = new JLabel();
     private JLabel lastCustomerLabel = new JLabel();
 
-    public QueueItem(String queueName, int numberInQueue, int waitTime, String lastCustomer) {
+    public QueueItem(CharSequence queueName, int numberInQueue, int waitTime, String lastCustomer) {
         setBackground(Color.white);
         setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.LIGHT_GRAY));
         setLayout(new GridBagLayout());
@@ -69,7 +69,7 @@ public class QueueItem extends JPanel {
         add(lastCustomerLabel, new GridBagConstraints(1, 4, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 2, 5), 0, 0));
         lastLabel.setFont(new Font("Dialog", Font.BOLD, 11));
 
-        queueNameLabel.setText(queueName);
+        queueNameLabel.setText(queueName.toString());
         numberInQueueLabel.setText(Integer.toString(numberInQueue));
 
         lastCustomerLabel.setText(lastCustomer);

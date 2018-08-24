@@ -21,6 +21,9 @@ import org.jivesoftware.spark.UserManager;
 import org.jivesoftware.spark.util.StringUtils;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
+import org.jxmpp.jid.EntityBareJid;
+import org.jxmpp.jid.Jid;
+import org.jxmpp.jid.impl.JidCreate;
 import org.xmlpull.mxp1.MXParser;
 import org.xmlpull.v1.XmlPullParser;
 
@@ -66,7 +69,7 @@ public final class ChatTranscripts {
      * @param jid        the jid of the user.
      * @param transcript the ChatTranscript.
      */
-    public static void appendToTranscript(String jid, ChatTranscript transcript) {
+    public static void appendToTranscript(EntityBareJid jid, ChatTranscript transcript) {
     	final File transcriptFile = getTranscriptFile(jid);
 
        	if (!Default.getBoolean("HISTORY_DISABLED") && Enterprise.containsFeature(Enterprise.HISTORY_TRANSCRIPTS_FEATURE)) {
@@ -162,7 +165,7 @@ public final class ChatTranscripts {
      * @param jid the jid of the user whos history you wish to retrieve.
      * @return the ChatTranscript (last 20 messages max).
      */
-    public static ChatTranscript getCurrentChatTranscript(String jid) {
+    public static ChatTranscript getCurrentChatTranscript(CharSequence jid) {
         return getTranscript(getCurrentHistoryFile(jid));
     }
 
@@ -172,7 +175,7 @@ public final class ChatTranscripts {
      * @param jid the jid of the the user whos history you wish to retrieve.
      * @return the ChatTranscript.
      */
-    public static ChatTranscript getChatTranscript(String jid) {
+    public static ChatTranscript getChatTranscript(Jid jid) {
         return getTranscript(getTranscriptFile(jid));
     }
 
@@ -219,11 +222,8 @@ public final class ChatTranscripts {
      * @param jid the
      * @return the settings file.
      */
-    public static File getTranscriptFile(String jid) {
-        // Unescape Node
-        jid = UserManager.unescapeJID(jid);
-
-        return new File(SparkManager.getUserDirectory(), "transcripts/" + jid + ".xml");
+    public static File getTranscriptFile(Jid jid) {
+        return new File(SparkManager.getUserDirectory(), "transcripts/" + jid.asUnescapedString() + ".xml");
     }
 
     /**
@@ -232,7 +232,7 @@ public final class ChatTranscripts {
      * @param jid the jid of the user.
      * @return the current transcript file.
      */
-    public static File getCurrentHistoryFile(String jid) {
+    public static File getCurrentHistoryFile(CharSequence jid) {
         // Unescape Node
         jid = UserManager.unescapeJID(jid);
 
@@ -247,10 +247,14 @@ public final class ChatTranscripts {
         while (!done) {
             int eventType = parser.next();
             if (eventType == XmlPullParser.START_TAG && "to".equals(parser.getName())) {
-                message.setTo(parser.nextText());
+                String jidString = parser.nextText();
+                Jid jid = JidCreate.from(jidString);
+                message.setTo(jid);
             }
             else if (eventType == XmlPullParser.START_TAG && "from".equals(parser.getName())) {
-                message.setFrom(parser.nextText());
+                String jidString = parser.nextText();
+                Jid jid = JidCreate.from(jidString);
+                message.setFrom(jid);
             }
             else if (eventType == XmlPullParser.START_TAG && "body".equals(parser.getName())) {
                 message.setBody(StringUtils.unescapeFromXML(parser.nextText()));

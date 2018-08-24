@@ -31,6 +31,10 @@ import org.jivesoftware.spark.ui.RosterDialog;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 import org.jivesoftware.sparkimpl.profile.VCardManager;
+import org.jxmpp.jid.BareJid;
+import org.jxmpp.jid.EntityBareJid;
+import org.jxmpp.jid.impl.JidCreate;
+import org.jxmpp.jid.parts.Localpart;
 import org.jxmpp.util.XmppStringUtils;
 
 import javax.swing.AbstractAction;
@@ -182,7 +186,8 @@ public class UserSearchResults extends JPanel {
 
 	    public void actionPerformed(ActionEvent e) {
                 VCardManager vcardSupport = SparkManager.getVCardManager();
-                String jid = (String)resultsTable.getValueAt(row, 0);
+                String jidString = (String)resultsTable.getValueAt(row, 0);
+                BareJid jid = JidCreate.bareFromOrThrowUnchecked(jidString);
                 vcardSupport.viewProfile(jid, resultsTable);
             }
         };
@@ -228,21 +233,22 @@ public class UserSearchResults extends JPanel {
      * @return the first value found in the ReportedData.Row
      */
     public String getFirstValue(ReportedData.Row row, String key) {
-        List<String> values = row.getValues( key );
-        return values == null || values.isEmpty() ? null : values.get( 0 );
+        List<CharSequence> values = row.getValues( key );
+        return values == null || values.isEmpty() ? null : values.get( 0 ).toString();
     }
 
     private void openChatRoom(int row) {
-        String jid = (String)resultsTable.getValueAt(row, 0);
-        String nickname = XmppStringUtils.parseLocalpart(jid);
+        String jidString = (String)resultsTable.getValueAt(row, 0);
+        EntityBareJid jid = JidCreate.entityBareFromOrThrowUnchecked(jidString);
+        Localpart nickname = jid.getLocalpart();
 
         TableColumn column;
         try {
             column = resultsTable.getColumn("nick");
             int col = column.getModelIndex();
-            nickname = (String)resultsTable.getValueAt(row, col);
-            if (!ModelUtil.hasLength(nickname)) {
-                nickname = XmppStringUtils.parseLocalpart(jid);
+            String nicknameString = (String)resultsTable.getValueAt(row, col);
+            if (!ModelUtil.hasLength(nicknameString)) {
+                nickname = JidCreate.from(nicknameString).getLocalpartOrThrow();
             }
         }
         catch (Exception e1) {

@@ -17,6 +17,8 @@ package org.jivesoftware.sparkimpl.plugin.gateways;
 
 import org.jivesoftware.smackx.iqprivate.packet.PrivateData;
 import org.jivesoftware.smackx.iqprivate.provider.PrivateDataProvider;
+import org.jxmpp.jid.DomainBareJid;
+import org.jxmpp.jid.impl.JidCreate;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -31,16 +33,16 @@ import java.util.Map;
  */
 public class GatewayPrivateData implements PrivateData {
 
-    private final Map<String, String> loginSettingsMap = new HashMap<>();
+    private final Map<DomainBareJid, String> loginSettingsMap = new HashMap<>();
 
     public static final String ELEMENT = "gateway-settings";
     public static final String NAMESPACE = "http://www.jivesoftware.org/spark";
 
-    public void addService(String serviceName, boolean autoLogin) {
+    public void addService(DomainBareJid serviceName, boolean autoLogin) {
         loginSettingsMap.put(serviceName, Boolean.toString(autoLogin));
     }
 
-    public boolean autoLogin(String serviceName) {
+    public boolean autoLogin(DomainBareJid serviceName) {
         String str = loginSettingsMap.get(serviceName);
         if(str == null){
             return true;
@@ -62,7 +64,7 @@ public class GatewayPrivateData implements PrivateData {
         StringBuilder buf = new StringBuilder();
         buf.append("<").append(getElementName()).append(" xmlns=\"").append(getNamespace()).append("\">");
         buf.append("<gateways>");
-        for (String serviceName : loginSettingsMap.keySet()) {
+        for (DomainBareJid serviceName : loginSettingsMap.keySet()) {
             buf.append("<gateway>");
             String autoLogin = loginSettingsMap.get(serviceName);
             buf.append("<serviceName>").append(serviceName).append("</serviceName>");
@@ -96,12 +98,13 @@ public class GatewayPrivateData implements PrivateData {
 
                 if (eventType == XmlPullParser.START_TAG && parser.getName().equals("gateway")) {
                     boolean gatewayDone = false;
-                    String serviceName = null;
+                    DomainBareJid serviceName = null;
                     String autoLogin = null;
                     while (!gatewayDone) {
                         int eType = parser.next();
                         if (eType == XmlPullParser.START_TAG && parser.getName().equals("serviceName")) {
-                            serviceName = parser.nextText();
+                            String serviceNameString = parser.nextText();
+                            serviceName = JidCreate.domainBareFrom(serviceNameString);
                         }
                         else if (eType == XmlPullParser.START_TAG && parser.getName().equals("autoLogin")) {
                             autoLogin = parser.nextText();

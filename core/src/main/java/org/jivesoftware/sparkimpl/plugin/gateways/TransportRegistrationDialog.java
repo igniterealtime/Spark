@@ -28,7 +28,7 @@ import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.Transport;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.TransportUtils;
-
+import org.jxmpp.jid.DomainBareJid;
 
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -62,7 +62,7 @@ public class TransportRegistrationDialog extends JPanel implements ActionListene
     private RolloverButton registerButton = new RolloverButton("", null);
     private RolloverButton cancelButton = new RolloverButton("", null);
     private JDialog dialog;
-    private String serviceName;
+    private final DomainBareJid serviceName;
     private Transport transport;
 
     /**
@@ -70,7 +70,7 @@ public class TransportRegistrationDialog extends JPanel implements ActionListene
      *
      * @param serviceName the name of the transport service.
      */
-    public TransportRegistrationDialog(String serviceName) {
+    public TransportRegistrationDialog(DomainBareJid serviceName) {
 	
         setLayout(new GridBagLayout());
 
@@ -186,12 +186,12 @@ public class TransportRegistrationDialog extends JPanel implements ActionListene
                     // Send Directed Presence
                     final StatusBar statusBar = SparkManager.getWorkspace().getStatusBar();
                     Presence presence = statusBar.getPresence();
-                    presence.setTo(transport.getServiceName());
+                    presence.setTo(transport.getXMPPServiceDomain());
                     SparkManager.getConnection().sendStanza(presence);
                 }
             } );
         }
-        catch (SmackException e1) {
+        catch (SmackException | InterruptedException e1) {
             JOptionPane.showMessageDialog(TransportRegistrationDialog.this, Res.getString("message.registration.transport.failed"), Res.getString("title.registration.error"), JOptionPane.ERROR_MESSAGE);
         }
 

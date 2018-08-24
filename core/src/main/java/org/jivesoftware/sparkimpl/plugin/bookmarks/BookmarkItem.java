@@ -91,7 +91,7 @@ public class BookmarkItem extends JPanel {
     public void addConferenceRoom(final BookmarkedConference bookmark) {
         imageLabel.setIcon(SparkRes.getImageIcon(SparkRes.CONFERENCE_IMAGE_16x16));
         nameLabel.setText(bookmark.getName());
-        descriptionLabel.setText(bookmark.getJid());
+        descriptionLabel.setText(bookmark.getJid().toString());
         action = new AbstractAction() {
 			private static final long serialVersionUID = 4324785627112595384L;
 

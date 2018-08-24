@@ -19,6 +19,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.jxmpp.jid.EntityBareJid;
+import org.jxmpp.jid.impl.JidCreate;
+
 
 public class RequestUtils {
     private Map metadata;
@@ -92,15 +95,15 @@ public class RequestUtils {
     /**
      * Returns the Unique Identifier of the user.
      *
-     * @return the unique id of the user.
+     * @return the unique id of the user or {@code null}.
      */
-    public String getUserID() {
+    public EntityBareJid getUserID() {
         if (getMetadata() == null) {
             return null;
         }
 
         final String userID = getFirstValue("userID");//NOTRANS
-        return userID;
+        return JidCreate.entityBareFromUnescapedOrThrowUnchecked(userID);
     }
 
     public String getInviter() {

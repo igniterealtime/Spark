@@ -23,6 +23,7 @@ import org.jivesoftware.spark.component.tabbedPane.SparkTab;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.SparkTabHandler;
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
+import org.jxmpp.jid.EntityBareJid;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -53,7 +54,7 @@ public class DefaultTabHandler extends SparkTabHandler {
             }
             else if (room instanceof ChatRoomImpl && !isStaleRoom) {
                 // User is not typing, therefore show default presence icon.
-                String participantJID = ((ChatRoomImpl)room).getParticipantJID();
+                EntityBareJid participantJID = ((ChatRoomImpl)room).getParticipantJID();
                 Presence presence = PresenceManager.getPresence(participantJID);
                 Icon icon = PresenceManager.getIconFromPresence(presence);
                 tab.setIcon(icon);

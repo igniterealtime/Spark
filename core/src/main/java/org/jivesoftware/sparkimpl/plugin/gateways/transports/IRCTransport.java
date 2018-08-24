@@ -16,6 +16,7 @@
 package org.jivesoftware.sparkimpl.plugin.gateways.transports;
 
 import org.jivesoftware.resource.SparkRes;
+import org.jxmpp.jid.DomainBareJid;
 import org.jivesoftware.resource.Res;
 
 import javax.swing.Icon;
@@ -24,9 +25,9 @@ import javax.swing.Icon;
  */
 public class IRCTransport implements Transport {
 
-    private String serviceName;
+    private DomainBareJid serviceName;
 
-    public IRCTransport(String serviceName){
+    public IRCTransport(DomainBareJid serviceName){
         this.serviceName = serviceName;
     }
 
@@ -46,7 +47,8 @@ public class IRCTransport implements Transport {
         return SparkRes.getImageIcon(SparkRes.IRC_TRANSPORT_INACTIVE_IMAGE);
     }
 
-    public String getServiceName() {
+    @Override
+    public DomainBareJid getXMPPServiceDomain() {
         return serviceName;
     }
 
@@ -54,7 +56,7 @@ public class IRCTransport implements Transport {
         return "IRC";
     }
 
-    public void setServiceName(String serviceName) {
+    public void setServiceName(DomainBareJid serviceName) {
         this.serviceName = serviceName;
     }
 

@@ -62,6 +62,12 @@ import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.log.Log;
+import org.jxmpp.jid.BareJid;
+import org.jxmpp.jid.DomainBareJid;
+import org.jxmpp.jid.EntityBareJid;
+import org.jxmpp.jid.EntityFullJid;
+import org.jxmpp.jid.impl.JidCreate;
+import org.jxmpp.jid.parts.Localpart;
 import org.jxmpp.util.XmppStringUtils;
 
 
@@ -103,16 +109,16 @@ public class WorkgroupInvitationDialog implements PropertyChangeListener {
         final JiveTreeNode workgroupsNode = new JiveTreeNode("Workgroups", true);
         final JiveTreeNode queueNode = new JiveTreeNode("Queues", true);
 
-        final String workgroupService = "workgroup." + SparkManager.getSessionManager().getServerAddress();
-        final String jid = SparkManager.getSessionManager().getJID();
+        final DomainBareJid workgroupService = JidCreate.domainBareFromOrThrowUnchecked("workgroup." + SparkManager.getSessionManager().getServerAddress());
+        final EntityFullJid jid = SparkManager.getSessionManager().getJID();
 
-        String room = chatRoom.getRoomname();
+        EntityBareJid room = chatRoom.getRoomJid();
         Collection agents = null;
         try
         {
             agents = getAvailableAgents( FastpathPlugin.getAgentSession().getAgentRoster(), room);
         }
-        catch ( SmackException.NotConnectedException e )
+        catch ( SmackException.NotConnectedException | InterruptedException e )
         {
             Log.warning( "Unable to get agent roster.", e );
         }
@@ -156,8 +162,10 @@ public class WorkgroupInvitationDialog implements PropertyChangeListener {
                         jidField.setText(FastpathPlugin.getWorkgroup().getWorkgroupJID() + "/" + node.getUserObject().toString());
                     }
                     else {
-                        String agent = getAgent();
-                        jidField.setText(agent);
+                        EntityBareJid agent = getAgent();
+                        if (agent != null) {
+                            jidField.setText(agent.toString());
+                        }
                     }
                 }
             }
@@ -188,7 +196,7 @@ public class WorkgroupInvitationDialog implements PropertyChangeListener {
         }
 
         // Build Tree
-        String joinedWorkgroupName = XmppStringUtils.parseLocalpart(FastpathPlugin.getWorkgroup().getWorkgroupJID());
+        Localpart joinedWorkgroupName = FastpathPlugin.getWorkgroup().getWorkgroupJID().getLocalpartOrThrow();
         final JiveTreeNode workgroupNode = new JiveTreeNode(joinedWorkgroupName, true);
 
         final Iterator agentIter = agents.iterator();
@@ -208,7 +216,7 @@ public class WorkgroupInvitationDialog implements PropertyChangeListener {
         try {
             workgroupAgents = Agent.getWorkgroups(workgroupService, jid, SparkManager.getConnection());
         }
-        catch (XMPPException | SmackException e) {
+        catch (XMPPException | SmackException | InterruptedException e) {
             Log.error(e);
             workgroupAgents = Collections.EMPTY_LIST;
         }
@@ -230,7 +238,7 @@ public class WorkgroupInvitationDialog implements PropertyChangeListener {
         while (iter.hasNext()) {
             final WorkgroupQueue queue = (WorkgroupQueue)iter.next();
             if (queue.getStatus() == WorkgroupQueue.Status.OPEN) {
-                final JiveTreeNode qNode = new JiveTreeNode(queue.getName(), false, FastpathRes.getImageIcon(FastpathRes.FASTPATH_IMAGE_16x16));
+                final JiveTreeNode qNode = new JiveTreeNode(queue.getName().toString(), false, FastpathRes.getImageIcon(FastpathRes.FASTPATH_IMAGE_16x16));
                 queueNode.add(qNode);
             }
         }
@@ -369,21 +377,21 @@ public class WorkgroupInvitationDialog implements PropertyChangeListener {
      *
      * @return the agents jid.
      */
-    private String getAgent() {
-        String agentJID;
+    private EntityBareJid getAgent() {
+        EntityBareJid agentJID;
 
         final DefaultMutableTreeNode node = (DefaultMutableTreeNode)tree.getLastSelectedPathComponent();
         if (node == null || node.getAllowsChildren()) {
-            return "";
+            return null;
         }
 
         agentJID = roster.getAgentJID((JiveTreeNode)node);
         if (agentJID == null) {
             final Object nodeInfo = node.getUserObject();
             if (!node.isLeaf()) {
-                return "";
+                return null;
             }
-            agentJID = nodeInfo.toString();
+            agentJID = JidCreate.entityBareFromOrThrowUnchecked(nodeInfo.toString());
         }
         return agentJID;
     }
@@ -395,20 +403,20 @@ public class WorkgroupInvitationDialog implements PropertyChangeListener {
      * @param roomName the name of the room to check.
      * @return collection of available agents.
      */
-    private Collection<String> getAvailableAgents(AgentRoster roster, String roomName) {
-        final Set<String> availableAgents = new HashSet<String>();
+    private Collection<EntityBareJid> getAvailableAgents(AgentRoster roster, EntityBareJid roomName) {
+        final Set<EntityBareJid> availableAgents = new HashSet<>();
 
-        final Iterator<String> agents = roster.getAgents().iterator();
+        final Iterator<EntityBareJid> agents = roster.getAgents().iterator();
         while (agents.hasNext()) {
-            String agent = agents.next();
+            EntityBareJid agent = agents.next();
             if (PresenceManager.isAvailable(agent)) {
-                final Iterator agentsInRoom = SparkManager.getUserManager().getUserJidsInRoom(roomName, false).iterator();
+                final Iterator<String> agentsInRoom = SparkManager.getUserManager().getUserJidsInRoom(roomName, false).iterator();
                 boolean alreadyExists = false;
 
                 while (agentsInRoom.hasNext()) {
-                    String userid = (String)agentsInRoom.next();
+                    String userid = agentsInRoom.next();
 
-                    if (agent.equalsIgnoreCase(userid)) {
+                    if (agent.equals(userid)) {
                         alreadyExists = true;
                     }
                 }

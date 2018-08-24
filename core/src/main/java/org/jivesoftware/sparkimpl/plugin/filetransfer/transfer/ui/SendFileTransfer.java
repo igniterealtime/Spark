@@ -55,6 +55,7 @@ import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+import org.jxmpp.jid.EntityFullJid;
 
 public class SendFileTransfer extends JPanel {
 
@@ -72,7 +73,7 @@ public class SendFileTransfer extends JPanel {
     private TransferButton retryButton = new TransferButton();
 
     private FileTransferManager transferManager;
-    private String fullJID;
+    private EntityFullJid fullJID;
     private String nickname;
     private JLabel progressLabel = new JLabel();
     private long _starttime;
@@ -122,7 +123,7 @@ public class SendFileTransfer extends JPanel {
         setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.white));
     }
 
-    public void sendFile(final OutgoingFileTransfer transfer, FileTransferManager transferManager, final String jid, final String nickname) {
+    public void sendFile(final OutgoingFileTransfer transfer, FileTransferManager transferManager, final EntityFullJid jid, final String nickname) {
         this.transferManager = transferManager;
         //SPARK-1869
         FileTransferNegotiator.getInstanceFor(SparkManager.getConnection());

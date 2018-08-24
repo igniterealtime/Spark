@@ -28,6 +28,11 @@ import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.SwingTimerTask;
 import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.util.log.Log;
+import org.jxmpp.jid.EntityBareJid;
+import org.jxmpp.jid.EntityJid;
+import org.jxmpp.jid.impl.JidCreate;
+import org.jxmpp.jid.parts.Localpart;
+import org.jxmpp.stringprep.XmppStringprepException;
 import org.jxmpp.util.XmppStringUtils;
 
 import javax.swing.JLabel;
@@ -60,17 +65,25 @@ public class GroupChatInvitationUI extends JPanel implements ActionListener {
 
     private RolloverButton acceptButton;
 
-    private String room;
-    private String inviter;
+    private EntityBareJid room;
+    private EntityBareJid inviter;
     private String password;
 
-    public GroupChatInvitationUI(String room, String inviter, String password, String reason) {
+    public GroupChatInvitationUI(String room, String inviter, String password, String reason) throws XmppStringprepException {
+        this(JidCreate.entityBareFrom(room), JidCreate.entityBareFrom(inviter), password, reason);
+    }
+
+    public GroupChatInvitationUI(EntityBareJid room, EntityBareJid inviter, String password, String reason) {
         setLayout(new GridBagLayout());
 
         setBackground(new Color(230, 239, 249));
 
-        this.room = room;
-        this.inviter = inviter;
+        try {
+			this.room = JidCreate.entityBareFrom(room);
+	        this.inviter = JidCreate.entityBareFrom(inviter);
+		} catch (XmppStringprepException e) {
+			throw new IllegalStateException(e);
+		}
         this.password = password;
 
         // Build invitation time label.
@@ -139,8 +152,8 @@ public class GroupChatInvitationUI extends JPanel implements ActionListener {
      */
     private void acceptInvitation() {
         setVisible(false);
-        String name = XmppStringUtils.parseLocalpart(room);
-        ConferenceUtils.enterRoomOnSameThread(name, room, password);
+        Localpart name = room.getLocalpart();
+        ConferenceUtils.enterRoomOnSameThread(name.toString(), room, password);
 
         final TimerTask removeUITask = new SwingTimerTask() {
             public void doRun() {
@@ -176,7 +189,7 @@ public class GroupChatInvitationUI extends JPanel implements ActionListener {
         {
             MultiUserChatManager.getInstanceFor( SparkManager.getConnection() ).decline( room, inviter, "No thank you");
         }
-        catch ( SmackException.NotConnectedException e )
+        catch ( SmackException.NotConnectedException | InterruptedException e )
         {
             Log.warning( "Unable to decline inviation from " + inviter + " to join room " + room, e );
         }
