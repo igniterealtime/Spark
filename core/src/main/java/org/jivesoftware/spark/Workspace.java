@@ -67,6 +67,10 @@ import org.jivesoftware.sparkimpl.plugin.bookmarks.BookmarkPlugin;
 import org.jivesoftware.sparkimpl.plugin.gateways.GatewayPlugin;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 import org.jivesoftware.sparkimpl.plugin.transcripts.ChatTranscriptPlugin;
+import org.jxmpp.jid.BareJid;
+import org.jxmpp.jid.EntityBareJid;
+import org.jxmpp.jid.Jid;
+import org.jxmpp.jid.parts.Localpart;
 import org.jxmpp.util.XmppStringUtils;
 
 /**
@@ -302,13 +306,14 @@ public class Workspace extends JPanel implements StanzaListener {
      *
      * @param stanza the smack packet to process.
      */
-    public void processPacket(final Stanza stanza) {
+    @Override
+    public void processStanza(final Stanza stanza) {
         SwingUtilities.invokeLater( () -> {
             try
             {
                 handleIncomingPacket(stanza);
             }
-            catch ( SmackException.NotConnectedException e )
+            catch ( SmackException.NotConnectedException | InterruptedException e )
             {
                 // This would be odd: not being connected while receiving a stanza...
                 Log.warning( "Unable to handle incoming stanza: " + stanza , e );
@@ -317,7 +322,7 @@ public class Workspace extends JPanel implements StanzaListener {
     }
 
 
-    private void handleIncomingPacket(Stanza stanza) throws SmackException.NotConnectedException
+    private void handleIncomingPacket(Stanza stanza) throws SmackException.NotConnectedException, InterruptedException
     {
         // We only handle message packets here.
         if (stanza instanceof Message) {
@@ -350,12 +355,12 @@ public class Workspace extends JPanel implements StanzaListener {
             }
 
             // Create new chat room for Agent Invite.
-            final String from = stanza.getFrom();
+            final Jid from = stanza.getFrom();
             final String host = SparkManager.getSessionManager().getServerAddress();
 
             // Don't allow workgroup notifications to come through here.
-            final String bareJID = XmppStringUtils.parseBareJid(from);
-            if (host.equalsIgnoreCase(from) || from == null) {
+            final BareJid bareJID = from.asBareJid();
+            if (host.equalsIgnoreCase(from.toString()) || from == null) {
                 return;
             }
 
@@ -370,7 +375,10 @@ public class Workspace extends JPanel implements StanzaListener {
 
             // Check for non-existent rooms.
             if (room == null) {
-                createOneToOneRoom(bareJID, message);
+                EntityBareJid entityBareJid = bareJID.asEntityBareJidIfPossible();
+                if (entityBareJid != null) {
+                    createOneToOneRoom(entityBareJid, message);
+                }
             }
         }
     }
@@ -379,18 +387,22 @@ public class Workspace extends JPanel implements StanzaListener {
      * Creates a new room if necessary and inserts an offline message.
      *
      * @param message The Offline message.
+     * @throws InterruptedException 
      */
-    private void handleOfflineMessage(Message message) throws SmackException.NotConnectedException
+    private void handleOfflineMessage(Message message) throws SmackException.NotConnectedException, InterruptedException
     {
         if(!ModelUtil.hasLength(message.getBody())){
             return;
         }
 
-        String bareJID = XmppStringUtils.parseBareJid(message.getFrom());
+        EntityBareJid bareJID = message.getFrom().asEntityBareJidIfPossible();
+        if (bareJID == null) {
+            return;
+        }
         ContactItem contact = contactList.getContactItemByJID(bareJID);
-        String nickname = XmppStringUtils.parseLocalpart(bareJID);
+        Localpart nickname = bareJID.getLocalpartOrNull();
         if (contact != null) {
-            nickname = contact.getDisplayName();
+            nickname = Localpart.fromOrThrowUnchecked(contact.getDisplayName());
         }
 
         // Create the room if it does not exist.
@@ -415,9 +427,13 @@ public class Workspace extends JPanel implements StanzaListener {
      * @param bareJID the bareJID of the anonymous user.
      * @param message the message from the anonymous user.
      */
-    private void createOneToOneRoom(String bareJID, Message message) {
+    private void createOneToOneRoom(EntityBareJid bareJID, Message message) {
         ContactItem contact = contactList.getContactItemByJID(bareJID);
-        String nickname = XmppStringUtils.parseLocalpart(bareJID);
+        Localpart localpart = bareJID.getLocalpartOrNull();
+        String nickname = null;
+        if (localpart != null) {
+            nickname = localpart.toString();
+        }
         if (contact != null) {
             nickname = contact.getDisplayName();
         }
@@ -450,7 +466,7 @@ public class Workspace extends JPanel implements StanzaListener {
     }
 
 
-    private void insertMessage(final String bareJID, final Message message) throws ChatRoomNotFoundException {
+    private void insertMessage(final BareJid bareJID, final Message message) throws ChatRoomNotFoundException {
         ChatRoom chatRoom = SparkManager.getChatManager().getChatContainer().getChatRoom(bareJID);
         chatRoom.insertMessage(message);
         int chatLength = chatRoom.getTranscriptWindow().getDocument().getLength();

@@ -16,6 +16,7 @@
 package org.jivesoftware.fastpath.internal;
 
 import org.jivesoftware.smack.packet.Message;
+import org.jxmpp.jid.parts.Resourcepart;
 import org.jxmpp.util.XmppStringUtils;
 
 import java.util.Date;
@@ -155,8 +156,8 @@ final public class FormUtils {
      * @param message the message sent.
      * @return the nickname of the user who sent the message.
      */
-    public static String getNickname(Message message) {
-        String from = XmppStringUtils.parseResource(message.getFrom());
+    public static Resourcepart getNickname(Message message) {
+        Resourcepart from = message.getFrom().getResourceOrThrow();
         return from;
     }
 

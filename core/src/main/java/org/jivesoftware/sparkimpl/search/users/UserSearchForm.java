@@ -30,6 +30,9 @@ import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
+import org.jxmpp.jid.DomainBareJid;
+import org.jxmpp.jid.impl.JidCreate;
+import org.jxmpp.stringprep.XmppStringprepException;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -62,7 +65,7 @@ public class UserSearchForm extends JPanel {
     private JComboBox servicesBox;
     private UserSearchManager searchManager;
 
-    private Collection<String> searchServices;
+    private Collection<? extends CharSequence> searchServices;
 
     private CardLayout cardLayout = new CardLayout();
     private JPanel cardPanel = new JPanel();
@@ -79,7 +82,7 @@ public class UserSearchForm extends JPanel {
      *
      * @param searchServices a Collection of all search services found.
      */
-    public UserSearchForm(Collection<String> searchServices) {
+    public UserSearchForm(Collection<? extends CharSequence> searchServices) {
         setLayout(new GridBagLayout());
 
         cardPanel.setLayout(cardLayout);
@@ -102,8 +105,8 @@ public class UserSearchForm extends JPanel {
         // Populate with Search Services
         servicesBox = new JComboBox();
     
-        for (String searchService : searchServices) {
-            String service = searchService;
+        for (CharSequence searchService : searchServices) {
+            String service = searchService.toString();
             servicesBox.addItem(service);
         }
 
@@ -168,9 +171,10 @@ public class UserSearchForm extends JPanel {
 
                     public Object construct() {
                         try {
-                            newForm = searchManager.getSearchForm(serviceName);
+                            DomainBareJid serviceJid = JidCreate.domainBareFrom(serviceName);
+                            newForm = searchManager.getSearchForm(serviceJid);
                         }
-                        catch (XMPPException | SmackException e) {
+                        catch (XMPPException | SmackException | XmppStringprepException | InterruptedException e) {
                             // Nothing to do
                         }
                         return newForm;

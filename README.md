@@ -16,6 +16,15 @@ Combined with the [Openfire] server, [Spark] is the easiest and best alternative
 
 [![Build Status](https://travis-ci.org/igniterealtime/Spark.svg?branch=master)](https://travis-ci.org/igniterealtime/Spark)
 
+Run from sources
+----------------
+
+```bash
+$ git clone https://github.com/igniterealtime/Spark.git
+$ cd Spark/core
+$ mvn exec:java
+```
+
 Bug Reporting
 -------------
 

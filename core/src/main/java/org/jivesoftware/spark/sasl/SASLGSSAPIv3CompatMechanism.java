@@ -17,6 +17,6 @@ public class SASLGSSAPIv3CompatMechanism extends SASLGSSAPIMechanism
     @Override
     protected String getServerName()
     {
-        return super.serviceName;
+        return super.serviceName.toString();
     }
 }

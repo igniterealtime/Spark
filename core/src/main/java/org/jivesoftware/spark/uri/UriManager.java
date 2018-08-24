@@ -28,6 +28,10 @@ import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.UserManager;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.conferences.ConferenceUtils;
+import org.jxmpp.jid.BareJid;
+import org.jxmpp.jid.Jid;
+import org.jxmpp.jid.impl.JidCreate;
+import org.jxmpp.stringprep.XmppStringprepException;
 
 /**
  * Class to handle URI-Mappings defined by <br>
@@ -69,7 +73,7 @@ public class UriManager {
 	String query = uri.getQuery();
 	int bodyIndex = query.indexOf("body=");
 
-	String jid = retrieveJID(uri);
+	Jid jid = retrieveJID(uri);
 	String body = null;
 
 	// Find body
@@ -80,13 +84,13 @@ public class UriManager {
 	body = org.jivesoftware.spark.util.StringUtils.unescapeFromXML(body);
 
 	UserManager userManager = SparkManager.getUserManager();
-	String nickname = userManager.getUserNicknameFromJID(jid);
+	String nickname = userManager.getUserNicknameFromJID(jid.asBareJid());
 	if (nickname == null) {
-	    nickname = jid;
+	    nickname = jid.toString();
 	}
 
 	ChatManager chatManager = SparkManager.getChatManager();
-	ChatRoom chatRoom = chatManager.createChatRoom(jid, nickname, nickname);
+	ChatRoom chatRoom = chatManager.createChatRoom(jid.asEntityJidOrThrow(), nickname, nickname);
 	if (body != null) {
 	    Message message = new Message();
 	    message.setBody(body);
@@ -105,8 +109,8 @@ public class UriManager {
      *             thrown if the conference cannot be joined.
      */
     public void handleConference(URI uri) throws Exception {
-	String jid = retrieveJID(uri);
-	ConferenceUtils.joinConferenceOnSeperateThread(jid, jid, null);
+	Jid jid = retrieveJID(uri);
+	ConferenceUtils.joinConferenceOnSeperateThread(jid, jid.asEntityBareJidOrThrow(), null);
     }
 
     /**
@@ -119,7 +123,7 @@ public class UriManager {
     public void handleSubscribe(URI uri) throws Exception {
 	// xmpp:romeo@montague.net?subscribe
 	// Send contact add request
-	String jid = retrieveJID(uri);
+	Jid jid = retrieveJID(uri);
 
 	Presence response = new Presence(Presence.Type.subscribe);
 	response.setTo(jid);
@@ -134,11 +138,20 @@ public class UriManager {
      */
     public void handleUnsubscribe(URI uri) throws SmackException.NotConnectedException
 	{
-	String jid = retrieveJID(uri);
+	Jid jid;
+    try {
+        jid = JidCreate.from(retrieveJID(uri));
+    } catch (XmppStringprepException e) {
+        throw new IllegalStateException(e);
+    }
 
 	Presence response = new Presence(Presence.Type.unsubscribe);
 	response.setTo(jid);
-	SparkManager.getConnection().sendStanza(response);
+	try {
+        SparkManager.getConnection().sendStanza(response);
+    } catch (InterruptedException e) {
+        throw new IllegalStateException(e);
+    }
     }
 
     /***
@@ -154,7 +167,12 @@ public class UriManager {
 	// xmpp:romeo@montague.net?roster;name=Romeo%20Montague
 	// xmpp:romeo@montague.net?roster;group=Friends
 	// xmpp:romeo@montague.net?roster;name=Romeo%20Montague;group=Friends
-	String jid = retrieveJID(uri);
+    BareJid jid;
+    try {
+        jid = JidCreate.bareFrom(retrieveJID(uri));
+    } catch (XmppStringprepException e) {
+        throw new IllegalStateException(e);
+    }
 
 	String name = "";
 	String query = uri.getQuery();
@@ -208,8 +226,14 @@ public class UriManager {
     public void handleRemove(URI uri) throws Exception {
 	// xmpp:romeo@montague.net?remove
 
-	String jid = retrieveJID(uri);
-	Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
+    BareJid jid;
+    try {
+        jid = JidCreate.bareFrom(retrieveJID(uri));
+    } catch (XmppStringprepException e) {
+        throw new IllegalStateException(e);
+    }
+
+    Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
 	RosterEntry entry = roster.getEntry(jid);
 	roster.removeEntry(entry);
     }
@@ -221,7 +245,7 @@ public class UriManager {
      *            the URI
      * @return romeo@montague.net
      */
-    public String retrieveJID(URI uri) {
+    public Jid retrieveJID(URI uri) {
 	StringBuilder sb = new StringBuilder(32);
 	String user = uri.getUserInfo();
 	if (user != null) {
@@ -234,6 +258,6 @@ public class UriManager {
 	if (resource != null && resource.length() > 0 && !resource.equals("/")) {
 	    sb.append(resource);
 	}
-	return sb.toString();
+	return JidCreate.fromOrThrowUnchecked(sb);
     }
 }

@@ -17,6 +17,8 @@ package org.jivesoftware.spark.search;
 
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.sparkimpl.search.users.UserSearchService;
+import org.jxmpp.jid.DomainBareJid;
+import org.jxmpp.jid.EntityBareJid;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -30,7 +32,7 @@ import java.util.List;
 public class SearchManager {
     private List<Searchable> searchServices = new ArrayList<>();
     private SearchService ui;
-    private Collection<String> _searchservicesHosts;
+    private Collection<DomainBareJid> _searchservicesHosts;
 
     private static SearchManager singleton;
     private static final Object LOCK = new Object();
@@ -117,7 +119,7 @@ public class SearchManager {
      *
      * @return the collection of search services.
      */
-    public Collection<String> getSearchServicesAsString()
+    public Collection<DomainBareJid> getSearchServicesAsJid()
     {
 	return _searchservicesHosts;
     }

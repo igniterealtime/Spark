@@ -28,6 +28,7 @@ import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+import org.jxmpp.jid.BareJid;
 
 import javax.swing.*;
 import java.awt.*;
@@ -47,7 +48,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
 
     private String groupName;
     private DefaultListModel model;
-    private JList contactItemList;
+    private JList<? extends ContactItem> contactItemList;
     private boolean sharedGroup;
     private JPanel listPanel;
 
@@ -163,7 +164,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
      * @param jid      the jid of the offline contact.
      * @param status   the current status of the offline contact.
      */
-    public void addOfflineContactItem(final String alias, final String nickname, final String jid, final String status) {
+    public void addOfflineContactItem(final String alias, final String nickname, final BareJid jid, final String status) {
     	if(EventQueue.isDispatchThread()) {
     	   // Build new ContactItem
 	   final ContactItem offlineItem = UIComponentRegistry.createContactItem(alias, nickname, jid);
@@ -259,10 +260,10 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
      *
      * @param jid the offline contact item to remove.
      */
-    public void removeOfflineContactItem(String jid) {
+    public void removeOfflineContactItem(BareJid jid) {
         final List<ContactItem> items = new ArrayList<>( offlineContacts );
         for (ContactItem item : items) {
-            if (item.getJID().equals(jid)) {
+            if (item.getJid().equals(jid)) {
                 removeOfflineContactItem(item);
             }
         }
@@ -296,7 +297,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
      */
     public void addContactItem(ContactItem item) {
         // Remove from offline group if it exists
-        removeOfflineContactItem(item.getJID());
+        removeOfflineContactItem(item.getJid());
 
         if (model.contains(noContacts)) {
             model.remove(0);
@@ -439,9 +440,9 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
      * @param displayName the displayed name of the user.
      * @return the ContactItem.
      */
-    public ContactItem getContactItemByDisplayName(String displayName) {
+    public ContactItem getContactItemByDisplayName(CharSequence displayName) {
         for (ContactItem item : new ArrayList<>( contactItems )) {
-            if (item.getDisplayName().equals(displayName)) {
+            if (item.getDisplayName().equals(displayName.toString())) {
                 return item;
             }
         }
@@ -487,9 +488,9 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
      * @param bareJID the bareJID of the user.
      * @return the ContactItem.
      */
-    public ContactItem getContactItemByJID(String bareJID) {
+    public ContactItem getContactItemByJID(BareJid bareJID) {
         for (ContactItem item : new ArrayList<>( contactItems )) {
-            if (item != null && item.getJID().equals(bareJID)) {
+            if (item != null && item.getJid().equals(bareJID)) {
                 return item;
             }
         }
@@ -502,9 +503,9 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
      * @param bareJID the bareJID of the user.
      * @return the ContactItem.
      */
-    public ContactItem getOfflineContactItemByJID(String bareJID) {
+    public ContactItem getOfflineContactItemByJID(BareJid bareJID) {
         for (ContactItem item : new ArrayList<>( offlineContacts )) {
-            if (item.getJID().equals(bareJID)) {
+            if (item.getJid().equals(bareJID)) {
                 return item;
             }
         }
@@ -518,7 +519,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
      * @param searchInOffline should we search <code>ContactItem</code> in offline contacts
      * @return the ContactItem.
      */
-    public ContactItem getContactItemByJID(String bareJID, boolean searchInOffline) {
+    public ContactItem getContactItemByJID(BareJid bareJID, boolean searchInOffline) {
         if (searchInOffline) {
             ContactItem item = getContactItemByJID(bareJID);
             if (item == null) {

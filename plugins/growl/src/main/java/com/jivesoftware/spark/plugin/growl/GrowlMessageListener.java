@@ -21,6 +21,8 @@ import org.jivesoftware.spark.ui.ChatFrame;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.GlobalMessageListener;
 import org.jivesoftware.spark.util.log.Log;
+import org.jxmpp.jid.Jid;
+import org.jxmpp.jid.parts.Localpart;
 import org.jxmpp.util.XmppStringUtils;
 
 import javax.swing.*;
@@ -68,15 +70,18 @@ public class GrowlMessageListener implements GlobalMessageListener
     {
         try
         {
-            String name = SparkManager.getUserManager().getUserNicknameFromJID( message.getFrom() );
-            String jid = message.getFrom();
+            String name = SparkManager.getUserManager().getUserNicknameFromJID( message.getFrom().asBareJid() );
+            Jid jid = message.getFrom();
 
             if ( name == null )
             {
-                name = XmppStringUtils.parseLocalpart( message.getFrom() );
+                Localpart localpart = message.getFrom().getLocalpartOrNull();
+                if (localpart != null) {
+                    name = localpart.toString();
+                }
             }
 
-            talker.sendNotificationWithCallback( name, message.getBody(), jid );
+            talker.sendNotificationWithCallback( name, message.getBody(), jid.toString() );
         }
         catch ( Exception e )
         {

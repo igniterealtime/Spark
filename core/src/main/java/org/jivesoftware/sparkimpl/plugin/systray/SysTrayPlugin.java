@@ -37,7 +37,7 @@ import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.XMPPConnection;
-import org.jivesoftware.smack.chat.Chat;
+import org.jivesoftware.smack.chat2.Chat;
 import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Presence;
@@ -54,11 +54,11 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
-import org.jivesoftware.smack.chat.ChatManagerListener;
 import org.jivesoftware.smackx.chatstates.ChatStateListener;
+import org.jivesoftware.smackx.chatstates.ChatStateManager;
 
 
-public class SysTrayPlugin implements Plugin, NativeHandler, ChatManagerListener, ChatStateListener {
+public class SysTrayPlugin implements Plugin, NativeHandler, ChatStateListener {
 	private JPopupMenu popupMenu = new JPopupMenu();
 
 	private JMenu statusMenu;
@@ -97,7 +97,7 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatManagerListener
 	    SparkManager.getNativeManager().addNativeHandler(this);
 	    ChatManager.getInstance().addChatMessageHandler(chatMessageHandler);
 	    //XEP-0085 suport (replaces the obsolete XEP-0022)
-		org.jivesoftware.smack.chat.ChatManager.getInstanceFor( SparkManager.getConnection() ).addChatListener(this);
+	    ChatStateManager.getInstance(SparkManager.getConnection()).addChatStateListener(this);
 
 	    if (Spark.isLinux()) {
 		newMessageIcon = SparkRes
@@ -226,21 +226,6 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatManagerListener
 
 			@Override
 			public void connectionClosedOnError(Exception arg0) {
-			    trayIcon.setImage(offlineIcon.getImage());
-			}
-
-			@Override
-			public void reconnectingIn(int arg0) {
-			    trayIcon.setImage(connectingIcon.getImage());
-			}
-
-			@Override
-			public void reconnectionSuccessful() {
-			    trayIcon.setImage(availableIcon.getImage());
-			}
-
-			@Override
-			public void reconnectionFailed(Exception arg0) {
 			    trayIcon.setImage(offlineIcon.getImage());
 			}
 		    });
@@ -515,15 +500,8 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatManagerListener
     	chatMessageHandler.clearUnreadMessages();
     }
 
-    // For Typing
 	@Override
-	public void processMessage(Chat arg0, Message arg1) {
-		// Do nothing - stateChanged is in charge
-		
-	}
-
-	@Override
-	public void stateChanged(Chat chat, ChatState state) {
+	public void stateChanged(Chat chat, ChatState state, Message message) {
 		presence = Workspace.getInstance().getStatusBar().getPresence();
 		if (ChatState.composing.equals(state)) {
 			changeSysTrayIcon();
@@ -543,11 +521,6 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatManagerListener
 		}
 	}
 
-	@Override
-	public void chatCreated(Chat chat, boolean isLocal) {
-		chat.addMessageListener(this);		
-	}
-	
 	private void changeSysTrayIcon() {
     	if (pref.isTypingNotificationShown()) {
     		trayIcon.setImage(typingIcon.getImage());

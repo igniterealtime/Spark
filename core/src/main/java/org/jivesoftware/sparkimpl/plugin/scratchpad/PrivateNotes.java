@@ -136,7 +136,7 @@ public class PrivateNotes implements PrivateData {
         try {
             manager.setPrivateData(notes);
         }
-        catch (XMPPException | SmackException e) {
+        catch (XMPPException | SmackException | InterruptedException e) {
             Log.error(e);
         }
     }
@@ -151,7 +151,7 @@ public class PrivateNotes implements PrivateData {
         try {
             notes = (PrivateNotes)manager.getPrivateData("scratchpad", "scratchpad:notes");
         }
-        catch (XMPPException | SmackException e) {
+        catch (XMPPException | SmackException | InterruptedException e) {
             Log.error(e);
         }
 

@@ -61,6 +61,9 @@ import org.jivesoftware.spark.ui.rooms.GroupChatRoom;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
+import org.jxmpp.jid.EntityBareJid;
+import org.jxmpp.jid.Jid;
+import org.jxmpp.jid.util.JidUtil;
 import org.jxmpp.util.XmppStringUtils;
 
 public class InvitationPane {
@@ -68,7 +71,7 @@ public class InvitationPane {
     private Map metadata = null;
     private GroupChatRoom chatRoom;
 
-    public InvitationPane(final RequestUtils request, final String room, final String inviter, String reason, final String password, final Message message) {
+    public InvitationPane(final RequestUtils request, final EntityBareJid room, final EntityBareJid inviter, String reason, final String password, final Message message) {
         final JPanel transcriptAlert = new JPanel();
         transcriptAlert.setBackground(Color.white);
         transcriptAlert.setLayout(new GridBagLayout());
@@ -99,7 +102,7 @@ public class InvitationPane {
         final JLabel nameLabel = new JLabel(FpRes.getString("room") + ":");
         nameLabel.setFont(new Font("Dialog", Font.BOLD, 11));
         final WrappedLabel valueLabel = new WrappedLabel();
-        valueLabel.setText(room);
+        valueLabel.setText(room.toString());
         transcriptAlert.add(nameLabel, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0));
         transcriptAlert.add(valueLabel, new GridBagConstraints(1, 2, 3, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(2, 2, 2, 2), 0, 0));
 
@@ -234,7 +237,7 @@ public class InvitationPane {
                 {
                     MultiUserChatManager.getInstanceFor( SparkManager.getConnection() ).decline( room, inviter, "No thank you" );
                 }
-                catch ( SmackException.NotConnectedException e )
+                catch ( SmackException.NotConnectedException | InterruptedException e )
                 {
                     Log.warning( "Unable to deline invatation from " + inviter + " to join room " + room, e );
                 }
@@ -255,7 +258,7 @@ public class InvitationPane {
             try {
                 owners = muc.getOwners();
             }
-            catch (XMPPException | SmackException e1) {
+            catch (XMPPException | SmackException | InterruptedException e1) {
                 return;
             }
 
@@ -265,23 +268,25 @@ public class InvitationPane {
 
             Iterator iter = owners.iterator();
 
-            List list = new ArrayList();
+            List<Jid> list = new ArrayList<>();
             while (iter.hasNext()) {
                 Affiliate affilitate = (Affiliate)iter.next();
-                String jid = affilitate.getJid();
-                if (!jid.equals(SparkManager.getSessionManager().getBareAddress())) {
+                Jid jid = affilitate.getJid();
+                if (!jid.equals(SparkManager.getSessionManager().getBareUserAddress())) {
                     list.add(jid);
                 }
             }
             if (list.size() > 0) {
                 try {
                     Form form = muc.getConfigurationForm().createAnswerForm();
-                    form.setAnswer("muc#roomconfig_roomowners", list);
+                    List<String> jidStrings = new ArrayList<>(list.size());
+                    JidUtil.toStrings(list, jidStrings);
+                    form.setAnswer("muc#roomconfig_roomowners", jidStrings);
 
                     // new DataFormDialog(groupChat, form);
                     muc.sendConfigurationForm(form);
                 }
-                catch (XMPPException | SmackException e) {
+                catch (XMPPException | SmackException | InterruptedException e) {
                     Log.error(e);
                 }
             }

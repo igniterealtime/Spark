@@ -46,7 +46,6 @@ import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smackx.jiveproperties.packet.JivePropertiesExtension;
 import org.jivesoftware.smackx.xevent.MessageEventManager;
-import org.jivesoftware.smackx.workgroup.util.ModelUtil;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.RolloverButton;
@@ -56,6 +55,7 @@ import org.jivesoftware.spark.component.browser.BrowserViewer;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.rooms.GroupChatRoom;
 import org.jivesoftware.spark.util.GraphicUtils;
+import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
 
 
@@ -386,7 +386,7 @@ public class CoBrowser extends JPanel implements ActionListener, BrowserListener
 
             groupChatRoom.getMultiUserChat().sendMessage(message);
         }
-        catch (SmackException ex) {
+        catch (SmackException | InterruptedException ex) {
             Log.error("Unable to send message in conference chat.", ex);
         }
 

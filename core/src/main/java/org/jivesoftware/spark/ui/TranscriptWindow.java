@@ -32,6 +32,7 @@ import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 import org.jivesoftware.sparkimpl.plugin.emoticons.EmoticonManager;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+import org.jxmpp.jid.parts.Resourcepart;
 import org.jxmpp.util.XmppStringUtils;
 
 import javax.swing.*;
@@ -211,7 +212,7 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener
      * @param message    the message to insert.
      * @param foreground the color to use for the nickname (excluding the message text) foreground.
      */
-    public void insertMessage( String nickname, Message message, Color foreground )
+    public void insertMessage( CharSequence nickname, Message message, Color foreground )
     {
         insertMessage( nickname, message, foreground, null );
     }
@@ -224,13 +225,13 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener
      * @param foreground the color to use for the nickname (excluding the message text) foreground.
      * @param background the color to use for the entire background (eg, to highlight).
      */
-    public void insertMessage( String nickname, Message message, Color foreground, Color background )
+    public void insertMessage( CharSequence nickname, Message message, Color foreground, Color background )
     {
         for ( TranscriptWindowInterceptor interceptor : SparkManager.getChatManager().getTranscriptWindowInterceptors() )
         {
             try
             {
-                boolean handled = interceptor.isMessageIntercepted( this, nickname, message );
+                boolean handled = interceptor.isMessageIntercepted( this, nickname.toString(), message );
                 if ( handled )
                 {
                     // Do nothing.
@@ -260,7 +261,7 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener
             sentDate = ZonedDateTime.now();
             isDelayed = false;
         }
-        add( new MessageEntry( sentDate, isDelayed, nickname, foreground, body, (Color) UIManager.get( "Message.foreground" ), background ) );
+        add( new MessageEntry( sentDate, isDelayed, nickname.toString(), foreground, body, (Color) UIManager.get( "Message.foreground" ), background ) );
     }
 
 
@@ -400,10 +401,13 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener
                 while ( transcripts.hasNext() )
                 {
                     final Message message = transcripts.next();
-                    String from = message.getFrom();
+                    String from = null;
+                    if (message.getFrom() != null) {
+                        from = message.getFrom().toString();
+                    }
                     if ( from == null )
                     {
-                        from = pref.getNickname();
+                        from = pref.getNickname().toString();
                     }
 
                     if ( Message.Type.groupchat == message.getType() )
@@ -493,7 +497,7 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener
                     {
                         ChatManager manager = SparkManager.getChatManager();
                         ChatRoom room = manager.getChatContainer().getActiveChatRoom();
-                        user = room.getRoomname();
+                        user = room.getRoomname().toString();
 
                         int ok = JOptionPane.showConfirmDialog( (TranscriptWindow) object,
                                                                 Res.getString( "delete.permanently" ),
@@ -530,7 +534,7 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener
         			try
         			{
         				room = SparkManager.getChatManager().getChatContainer().getActiveChatRoom();
-        				HistoryWindow hw = new HistoryWindow( SparkManager.getUserDirectory(), room.getRoomname() );
+        				HistoryWindow hw = new HistoryWindow( SparkManager.getUserDirectory(), room.getRoomname().toString() );
         				hw.showWindow();
         			}
         			catch ( Exception ex )

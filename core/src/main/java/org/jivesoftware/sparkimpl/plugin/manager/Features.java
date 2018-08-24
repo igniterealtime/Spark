@@ -57,7 +57,7 @@ public class Features implements ExtensionElement {
         return NAMESPACE;
     }
 
-    public String toXML() {
+    public String toXML(String enclosingNamespace) {
         return ( "<event xmlns=\"" + NAMESPACE + "\"" ) + "</event>";
     }
 

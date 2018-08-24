@@ -28,6 +28,7 @@ import org.jivesoftware.spark.ui.ChatRoomNotFoundException;
 import org.jivesoftware.spark.ui.GlobalMessageListener;
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 import org.jivesoftware.spark.ui.rooms.GroupChatRoom;
+import org.jxmpp.jid.EntityBareJid;
 
 /**
  * Message Listener<br>
@@ -40,7 +41,7 @@ public class RoarMessageListener implements GlobalMessageListener {
     private RoarDisplayType _displaytype;
     private RoarProperties _properties;
 
-    private HashMap<String, Long> _rooms = new HashMap<>();
+    private HashMap<EntityBareJid, Long> _rooms = new HashMap<>();
 
     public RoarMessageListener() {
         _displaytype = RoarProperties.getInstance().getDisplayTypeClass();
@@ -133,20 +134,20 @@ public class RoarMessageListener implements GlobalMessageListener {
 
         if (room.getChatType() == Message.Type.groupchat) {
 
-            if (_rooms.containsKey(room.getRoomname()) && _rooms.get(room.getRoomname()) == -1L) {
+            if (_rooms.containsKey(room.getRoomJid()) && _rooms.get(room.getRoomJid()) == -1L) {
                 return true;
             }
 
-            if (!_rooms.containsKey(room.getRoomname())) {
-                _rooms.put(room.getRoomname(), System.currentTimeMillis());
+            if (!_rooms.containsKey(room.getRoomJid())) {
+                _rooms.put(room.getRoomJid(), System.currentTimeMillis());
                 return true;
             } else {
-                long start = _rooms.get(room.getRoomname());
+                long start = _rooms.get(room.getRoomJid());
                 long now = System.currentTimeMillis();
 
                 result = (now - start) < 1500;
                 if (result) {
-                    _rooms.put(room.getRoomname(), -1L);
+                    _rooms.put(room.getRoomJid(), -1L);
                 }
 
             }
@@ -168,7 +169,7 @@ public class RoarMessageListener implements GlobalMessageListener {
      * @return boolean
      */
     private boolean isMessageFromRoom(ChatRoom room, Message message) {
-        return message.getFrom().equals(room.getRoomname());
+        return message.getFrom().equals(room.getRoomJid());
     }
 
 }
