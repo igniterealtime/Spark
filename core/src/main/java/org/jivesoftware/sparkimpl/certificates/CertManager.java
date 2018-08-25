@@ -205,9 +205,9 @@ public abstract class CertManager {
      * 
      * @param CertificateModel Model of the certificate which details are meant to be shown.
      */
-    public void showCertificate(CertificateModel certModel, CertificateDialogReason reason) {
+    public CertificateDialog showCertificate(CertificateModel certModel, CertificateDialogReason reason) {
 
-        new CertificateDialog(localPreferences, certModel, this, reason);
+        return new CertificateDialog(localPreferences, certModel, this, reason);
     }
     
     protected KeyStore openKeyStore(File file){
