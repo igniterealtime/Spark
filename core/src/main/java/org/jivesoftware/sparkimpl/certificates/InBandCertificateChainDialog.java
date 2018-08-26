@@ -148,7 +148,7 @@ public class InBandCertificateChainDialog extends JDialog implements ActionListe
         if (e.getSource() == cancelButton) {
             this.dispose();
         }
-        if (e.getSource() == CertInfoButton) {
+        if (e.getSource() == detailsButton) {
             showCertInfo();
         }
         if (e.getSource() == addSingleCertButton) {
