@@ -40,8 +40,8 @@ public class InBandCertificateChainDialog extends JDialog implements ActionListe
     private JPanel panel = new JPanel();
     private JButton addSingleCertButton =   new JButton();
     private JButton cancelButton =          new JButton();
-    private JButton CertInfoButton =        new JButton();
-    private JButton okButton =              new JButton();
+    private JButton detailsButton =         new JButton();
+    private JButton acceptButton =          new JButton();
     private ImageIcon imgIconInStore = SparkRes.getImageIcon(SparkRes.ACCEPT_INVITE_IMAGE);
     private JLabel informationLabel;
 
@@ -85,13 +85,13 @@ public class InBandCertificateChainDialog extends JDialog implements ActionListe
         
         addSingleCertButton.setText(Res.getString("button.add2"));
         cancelButton.setText(Res.getString("cancel"));
-        CertInfoButton.setText(Res.getString("button.cert.info"));
-        okButton.setText(Res.getString("label.ok"));
+        detailsButton.setText(Res.getString("button.cert.info"));
+        acceptButton.setText(Res.getString("accept"));
 
         addSingleCertButton.addActionListener(this);
         cancelButton.addActionListener(this);
-        CertInfoButton.addActionListener(this);
-        okButton.addActionListener(this);
+        detailsButton.addActionListener(this);
+        acceptButton.addActionListener(this);
 
         add(informationLabel, new GridBagConstraints(0, 0, 3, 1, 1.0, 0.2, WEST, GridBagConstraints.HORIZONTAL,
                 DEFAULT_INSETS, 0, 0));
@@ -99,7 +99,7 @@ public class InBandCertificateChainDialog extends JDialog implements ActionListe
                 DEFAULT_INSETS, 0, 0));
         add(addSingleCertButton, new GridBagConstraints(0, 6, 1, 1, 0.33, 0.1, WEST, GridBagConstraints.HORIZONTAL,
                 new Insets(5, 10, 5, 10), 25, 0));
-        add(CertInfoButton, new GridBagConstraints(1, 6, 1, 1, 0.33, 0.1, WEST, GridBagConstraints.HORIZONTAL,
+        add(detailsButton, new GridBagConstraints(1, 6, 1, 1, 0.33, 0.1, WEST, GridBagConstraints.HORIZONTAL,
                 new Insets(5, 15, 5, 15), 25, 0));
         add(cancelButton, new GridBagConstraints(2, 6, 1, 1, 0.33, 0.1, WEST, GridBagConstraints.HORIZONTAL,
                 new Insets(5, 10, 5, 10), 25, 0));
@@ -155,7 +155,7 @@ public class InBandCertificateChainDialog extends JDialog implements ActionListe
             addEndEntityCertButtonImpl(endCertModel);
             dispose();
         }
-        if (e.getSource() == okButton) {
+        if (e.getSource() == acceptButton) {
             certMan.overWriteKeyStores();
             dispose();
         }
@@ -164,9 +164,9 @@ public class InBandCertificateChainDialog extends JDialog implements ActionListe
     private void showCertInfo() {
         informationLabel.setText(Res.getString("dialog.certificate.chain.add.from.connection"));
         remove(endCertTextField);
-        remove(CertInfoButton);
+        remove(detailsButton);
         remove(addSingleCertButton);
-        add(okButton, new GridBagConstraints(0, 6, 1, 1, 0.33, 0.1, WEST, GridBagConstraints.HORIZONTAL,
+        add(acceptButton, new GridBagConstraints(0, 6, 1, 1, 0.33, 0.1, WEST, GridBagConstraints.HORIZONTAL,
                 new Insets(5, 10, 5, 10), 25, 0));
         add(scrollPane, new GridBagConstraints(0, 1, 3, 4, 1.0, 0.6, WEST, GridBagConstraints.HORIZONTAL,
                 DEFAULT_INSETS, 0, 50));
