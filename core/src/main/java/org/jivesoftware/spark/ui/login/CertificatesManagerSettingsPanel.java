@@ -266,7 +266,7 @@ public class CertificatesManagerSettingsPanel extends JPanel implements ActionLi
 
 			File file = fileChooser.getSelectedFile();
 			try {
-				certControll.addEntryToKeyStore(file);
+				certControll.addEntryFileToKeyStore(file);
             } catch (CertificateException e) {
                 JOptionPane.showMessageDialog(null, Res.getString("dialog.cannot.upload.certificate.might.be.ill.formated"));
                 Log.error("Cannot upload certificate file", e);

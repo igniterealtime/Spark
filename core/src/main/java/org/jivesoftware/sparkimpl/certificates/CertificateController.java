@@ -504,7 +504,7 @@ public class CertificateController extends CertManager {
 	 * @throws HeadlessException 
 	 */	
 	@Override
-    public void addEntryToKeyStore(File file) throws IOException, CertificateException,
+    public void addEntryFileToKeyStore(File file) throws IOException, CertificateException,
             KeyStoreException, HeadlessException, InvalidNameException {
         if (file == null) {
             throw new IllegalArgumentException("File cannot be null");

@@ -40,6 +40,7 @@ import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.X509v3CertificateBuilder;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.openssl.PEMException;
 import org.bouncycastle.operator.ContentSigner;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
@@ -136,7 +137,7 @@ public class IdentityController extends CertManager {
 
     @Override
     public void showCertificate() {
-        CertificateDialog certDialog = new CertificateDialog(localPreferences,
+        new CertificateDialog(localPreferences,
                 allCertificates.get(MutualAuthenticationSettingsPanel.getIdTable().getSelectedRow()), this,
                 CertificateDialogReason.SHOW_ID_CERTIFICATE);
     }
@@ -251,29 +252,38 @@ public class IdentityController extends CertManager {
      * @throws InvalidNameException
      */
     @Override
-    public void addEntryToKeyStore(File file) throws IOException, CertificateException, InvalidKeySpecException,
-            NoSuchAlgorithmException, KeyStoreException, InvalidNameException {
+    public void addEntryFileToKeyStore(File file)
+            throws IOException, CertificateException, InvalidKeySpecException, NoSuchAlgorithmException, KeyStoreException, InvalidNameException {
 
         byte[] certAndKey = Files.readAllBytes(file.toPath());
-        byte[] certBytes = PemHelper.parseDERFromPEM(certAndKey,
-                PemHelper.knowDelimeter(certAndKey, PemHelper.typeOfDelimeter.CERT_BEGIN),
-                PemHelper.knowDelimeter(certAndKey, PemHelper.typeOfDelimeter.CERT_END));
 
-        X509Certificate addedCert = PemHelper.generateCertificateFromDER(certBytes);
+        X509Certificate addedCert = parseCertificate(certAndKey);
+        PrivateKey key = parseKey(certAndKey);
 
-        byte[] keyBytes = PemHelper.parseDERFromPEM(certAndKey,
-                PemHelper.knowDelimeter(certAndKey, PemHelper.typeOfDelimeter.KEY_BEGIN),
+        addEntryToKeyStore(addedCert, key);
+    }
+   
+    public PrivateKey parseKey(byte[] certAndKey) throws PEMException, InvalidKeySpecException, NoSuchAlgorithmException {
+        byte[] keyBytes = PemHelper.parseDERFromPEM(certAndKey, PemHelper.knowDelimeter(certAndKey, PemHelper.typeOfDelimeter.KEY_BEGIN),
                 PemHelper.knowDelimeter(certAndKey, PemHelper.typeOfDelimeter.KEY_END));
 
-        PrivateKey key = PemHelper.generatePrivateKeyFromDER(keyBytes);
+        return PemHelper.generatePrivateKeyFromDER(keyBytes);
+    }
+    
+    public X509Certificate parseCertificate(byte[] certAndKey) throws PEMException, CertificateException {
+        byte[] certBytes = PemHelper.parseDERFromPEM(certAndKey, PemHelper.knowDelimeter(certAndKey, PemHelper.typeOfDelimeter.CERT_BEGIN),
+                PemHelper.knowDelimeter(certAndKey, PemHelper.typeOfDelimeter.CERT_END));
 
+        return PemHelper.generateCertificateFromDER(certBytes);
+    }
+
+    public void addEntryToKeyStore(X509Certificate addedCert, PrivateKey key) throws HeadlessException, InvalidNameException, KeyStoreException {
         CertificateModel certModel = new CertificateModel(addedCert);
         CertificateDialog certDialog = null;
         if (checkForSameCertificate(addedCert) == false) {
             certDialog = showCertificate(certModel, CertificateDialogReason.ADD_ID_CERTIFICATE);
         }
         if (certDialog != null && certDialog.isAddCert()) {
-
             String alias = useCommonNameAsAlias(addedCert);
             X509Certificate[] chain = {addedCert};
             
@@ -293,7 +303,6 @@ public class IdentityController extends CertManager {
         KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA", "BC" );
         generator.initialize(2048, new SecureRandom());
         keyPair = generator.generateKeyPair();
-        PrivateKey privKey = keyPair.getPrivate();
                     
         return keyPair;
     }
