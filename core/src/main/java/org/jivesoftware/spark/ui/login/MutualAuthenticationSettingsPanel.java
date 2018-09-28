@@ -52,27 +52,27 @@ public class MutualAuthenticationSettingsPanel extends JPanel implements ActionL
     private final static Insets DEFAULT_INSETS = new Insets(5, 5, 5, 5);
 
     private IdentityController idControll;
-    
+
     private static JTable idTable;
     private static JScrollPane scrollPane;
-    
+
     private JFileChooser fileChooser = new JFileChooser();
     private JButton addCertButton = new JButton();
     private JButton showCert =      new JButton();
-    
+
     private JPanel uploadCertificatePanel = new JPanel();
     private JPanel creationPanel =          new JPanel();
-    
+
     private JRadioButton selfSignedCertificate =     new JRadioButton();
     private JRadioButton certificateSigningRequest = new JRadioButton();
     private JButton createButton = new JButton();
-    
+
     private JTextField commonNameField =        new JTextField();
     private JTextField organizationUnitField =  new JTextField();
     private JTextField organizationField =      new JTextField();
     private JTextField countryField =           new JTextField();
     private JTextField cityField =              new JTextField();
-    
+
     private JLabel commonNameLabel =        new JLabel();
     private JLabel organizationUnitLabel =  new JLabel();
     private JLabel organizationLabel =      new JLabel();
@@ -84,7 +84,7 @@ public class MutualAuthenticationSettingsPanel extends JPanel implements ActionL
 
     public MutualAuthenticationSettingsPanel(LocalPreferences localPreferences, JDialog optionsDialog) {
         setLayout(new GridBagLayout());
-        
+
         idControll = new IdentityController(localPreferences);
         idTable = new JTable(idControll.getTableModel());
         idTable.addMouseListener(this);
@@ -93,59 +93,58 @@ public class MutualAuthenticationSettingsPanel extends JPanel implements ActionL
         idTable.setFillsViewportHeight(true);
         scrollPane = new JScrollPane(idTable);
         scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-        
+
         ResourceUtils.resButton(addCertButton, Res.getString("label.choose.file"));
-        
+
         ResourceUtils.resButton(selfSignedCertificate,      Res.getString("cert.self.signed"));
         ResourceUtils.resButton(certificateSigningRequest,  Res.getString("cert.sign.request"));
-        
+
         ResourceUtils.resLabel( commonNameLabel,        commonNameField,        Res.getString("cert.common.name"));
         ResourceUtils.resLabel( organizationUnitLabel,  organizationUnitField,  Res.getString("cert.organization.unit"));
         ResourceUtils.resLabel( organizationLabel,      organizationField,      Res.getString("cert.organization"));
         ResourceUtils.resLabel( countryLabel,           countryField,           Res.getString("cert.country"));
         ResourceUtils.resLabel( cityLabel,              cityField,              Res.getString("cert.city"));
-        
+
         ResourceUtils.resButton(createButton, Res.getString("create"));
         ResourceUtils.resButton(showCert, Res.getString("button.show.certificate"));
 
-        
+
         uploadCertificatePanel.setLayout(new GridBagLayout());
         uploadCertificatePanel.setBorder(BorderFactory.createTitledBorder(Res.getString("label.certificate.add.certificate.to.identitystore")));
         uploadCertificatePanel.add(addCertButton,    new GridBagConstraints(0, 0, 1, 1, 0.05, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
-        
+
         radioGroup.add(selfSignedCertificate);
         radioGroup.add(certificateSigningRequest);
         certificateSigningRequest.setSelected(true);
-        
+
         creationPanel.setLayout(new GridBagLayout());
 
         creationPanel.add(certificateSigningRequest, new GridBagConstraints(0, 0, 1, 1, 0.05, 1.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
         creationPanel.add(selfSignedCertificate,     new GridBagConstraints(1, 0, 1, 1, 0.95, 1.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
-        
+
         creationPanel.add(commonNameLabel,           new GridBagConstraints(0, 1, 1, 1, 0.05, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
         creationPanel.add(organizationUnitLabel,     new GridBagConstraints(0, 2, 1, 1, 0.05, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
         creationPanel.add(organizationLabel,         new GridBagConstraints(0, 3, 1, 1, 0.05, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
         creationPanel.add(countryLabel,              new GridBagConstraints(0, 4, 1, 1, 0.05, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
         creationPanel.add(cityLabel,                 new GridBagConstraints(0, 5, 1, 1, 0.05, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
         creationPanel.add(createButton,              new GridBagConstraints(0, 6, 1, 1, 0.05, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
-        
+
         creationPanel.add(commonNameField,           new GridBagConstraints(1, 1, 1, 1, 0.95, 1.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
         creationPanel.add(organizationUnitField,     new GridBagConstraints(1, 2, 1, 1, 0.95, 1.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
         creationPanel.add(organizationField,         new GridBagConstraints(1, 3, 1, 1, 0.95, 1.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
         creationPanel.add(countryField,              new GridBagConstraints(1, 4, 1, 1, 0.95, 1.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
         creationPanel.add(cityField,                 new GridBagConstraints(1, 5, 1, 1, 0.95, 1.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
-        
-        
+
+
         add(scrollPane,             new GridBagConstraints(0, 0, 1, 1, 1.0, 0.3, WEST, GridBagConstraints.BOTH, DEFAULT_INSETS, 0, 0));
         add(uploadCertificatePanel, new GridBagConstraints(0, 1, 1, 1, 0.2, 0.2, WEST, GridBagConstraints.BOTH, new Insets(5, 5, 5, 400), 0, 0));
         add(showCert,               new GridBagConstraints(0, 2, 1, 1, 0.2, 0.2, WEST, HORIZONTAL, new Insets(5, 5, 5, 400), 0, 0));
         add(creationPanel,          new GridBagConstraints(0, 3, 1, 6, 1.0, 0.5, WEST, GridBagConstraints.BOTH, DEFAULT_INSETS, 0, 0));
-    
+
         showCert.setEnabled(false);
         showCert.addActionListener(this);
         addCertButton.addActionListener(this);
         createButton.addActionListener(this);
-        
     }
 
     @Override
@@ -167,7 +166,6 @@ public class MutualAuthenticationSettingsPanel extends JPanel implements ActionL
                 createSelfSignedCertificate();
             }
         }
-
     }
 
     private void createCertificateSignRequest() {
@@ -197,13 +195,11 @@ public class MutualAuthenticationSettingsPanel extends JPanel implements ActionL
             pemBuilder.add(cert);
             pemBuilder.saveToPemFile(IdentityController.CERT_FILE);
             JOptionPane.showMessageDialog(null, Res.getString("dialog.self.signed.certificate.has.been.created") + IdentityController.SECURITY_DIRECTORY.toString());
-            
 
         } catch (NoSuchAlgorithmException | NoSuchProviderException | IOException | OperatorCreationException
                 | CertificateException e1) {
             Log.error("Couldn't create Self Signed Certificate", e1);
         }
-
     }
 
     public static JTable getIdTable() {
@@ -213,19 +209,16 @@ public class MutualAuthenticationSettingsPanel extends JPanel implements ActionL
     @Override
     public void mouseClicked(MouseEvent e) {
         // TODO Auto-generated method stub
-        
     }
 
     @Override
     public void mouseEntered(MouseEvent e) {
         // TODO Auto-generated method stub
-        
     }
 
     @Override
     public void mouseExited(MouseEvent e) {
-        // TODO Auto-generated method stub
-        
+        // TODO Auto-generated method stub   
     }
 
     @Override
@@ -247,7 +240,6 @@ public class MutualAuthenticationSettingsPanel extends JPanel implements ActionL
     }
 
     private void addCertificate() {
-
         fileChooser.setAcceptAllFileFilterUsed(false);
         fileChooser.addChoosableFileFilter(certFilter);
         fileChooser.setFileFilter(certFilter);
@@ -257,26 +249,20 @@ public class MutualAuthenticationSettingsPanel extends JPanel implements ActionL
 
             File file = fileChooser.getSelectedFile();
             try {
-
                 idControll.addEntryToKeyStore(file);
             } catch (CertificateException e) {
-
                 JOptionPane.showMessageDialog(null, Res.getString("dialog.cannot.upload.certificate.might.be.ill.formated"));
                 Log.error("Cannot upload certificate file", e);
             } catch (InvalidKeySpecException | NoSuchAlgorithmException | KeyStoreException | InvalidNameException
                     | IOException e) {
-
                 JOptionPane.showMessageDialog(null, Res.getString("dialog.cannot.upload.certificate"));
                 Log.error("Cannot upload certificate file", e);
             }
-
         }
     }
 
     public void saveSettings() {
-
         idControll.overWriteKeyStores();
         SettingsManager.saveSettings();
-
     }
 }
