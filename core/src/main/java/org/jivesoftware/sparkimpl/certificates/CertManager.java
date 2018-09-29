@@ -68,7 +68,7 @@ public abstract class CertManager {
     public abstract void createTableModel();
     protected abstract void refreshCertTable();
 
-    public abstract void addEntryToKeyStore(File file)
+    public abstract void addEntryFileToKeyStore(File file)
             throws IOException, KeyStoreException, CertificateException, NoSuchAlgorithmException, IOException, HeadlessException,
             InvalidNameException, UnrecoverableKeyException, InvalidKeySpecException;
 /**

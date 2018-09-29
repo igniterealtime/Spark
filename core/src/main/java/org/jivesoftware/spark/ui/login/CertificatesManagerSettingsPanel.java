@@ -165,8 +165,7 @@ public class CertificatesManagerSettingsPanel extends JPanel implements ActionLi
                    component.setBackground(Color.white);
                 }
                 return component;
-            }
-            
+            }  
         };
 
         
@@ -215,8 +214,7 @@ public class CertificatesManagerSettingsPanel extends JPanel implements ActionLi
             } else if (!acceptRevoked.isSelected()) {
                 checkCRL.setEnabled(true);
             }
-        } 
-        
+        }         
     }
 
     @Override
@@ -256,11 +254,9 @@ public class CertificatesManagerSettingsPanel extends JPanel implements ActionLi
 	        Boolean checked = (Boolean) model.getValueAt(row, column);
 			certControll.addOrRemoveFromExceptionList(checked);
 		}
-
 	}
 	
 	private void addCertificate() {
-
 		fileChooser.setAcceptAllFileFilterUsed(false);
 		fileChooser.addChoosableFileFilter(certFilter);
 		fileChooser.setFileFilter(certFilter);
@@ -270,15 +266,11 @@ public class CertificatesManagerSettingsPanel extends JPanel implements ActionLi
 
 			File file = fileChooser.getSelectedFile();
 			try {
-				certControll.addEntryToKeyStore(file);
+				certControll.addEntryFileToKeyStore(file);
             } catch (CertificateException e) {
-
                 JOptionPane.showMessageDialog(null, Res.getString("dialog.cannot.upload.certificate.might.be.ill.formated"));
                 Log.error("Cannot upload certificate file", e);
-            
-            } catch (KeyStoreException | InvalidNameException
-                    | IOException e) {
-
+            } catch (KeyStoreException | InvalidNameException | IOException e) {
                 JOptionPane.showMessageDialog(null, "dialog.cannot.upload.certificate");
                 Log.error("Cannot upload certificate file", e);
             }
@@ -295,7 +287,6 @@ public class CertificatesManagerSettingsPanel extends JPanel implements ActionLi
 	}
 
 	public void useDefault() {
-
 	    acceptExpired.setSelected(Default.getBoolean(Default.ACCEPT_EXPIRED));
         acceptNotValidYet.setSelected(Default.getBoolean(Default.ACCEPT_NOT_VALID_YET));
         acceptSelfSigned.setSelected(Default.getBoolean(Default.ACCEPT_SELF_SIGNED));
@@ -303,7 +294,7 @@ public class CertificatesManagerSettingsPanel extends JPanel implements ActionLi
         checkCRL.setSelected(Default.getBoolean(Default.CHECK_CRL));
         checkOCSP.setSelected(Default.getBoolean(Default.CHECK_OCSP));
         allowSoftFail.setSelected(Default.getBoolean(Default.ALLOW_SOFT_FAIL));
-        
+
         acceptExpired.setEnabled(true);
         acceptNotValidYet.setEnabled(true);
         acceptSelfSigned.setEnabled(true);
@@ -311,7 +302,6 @@ public class CertificatesManagerSettingsPanel extends JPanel implements ActionLi
         checkCRL.setEnabled(true);
         checkOCSP.setEnabled(true);
         allowSoftFail.setEnabled(true);
-    
 	}
 	
     public void saveSettings() {
