@@ -77,7 +77,6 @@ public class Default {
     public static final String ADVANCED_DISABLED = "ADVANCED_DISABLED";
     public static final String SSO_DISABLED = "SSO_DISABLED";
     public static final String PROXY_DISABLED = "PROXY_DISABLED";
-    public static final String PKI_DISABLED = "PKI_DISABLED";
     public static final String CERTIFICATES_MANAGER_DISABLED = "CERTIFICATES_MANAGER_DISABLED";
     public static final String MUTUAL_AUTH_DISABLED = "MUTUAL_AUTH_DISABLED";
     public static final String HELP_USER_GUIDE = "HELP_USER_GUIDE";
