@@ -88,13 +88,13 @@ public class WorkgroupDataForm extends JPanel {
             String label = field.getLabel();
             FormField.Type type = field.getType();
 
-            List valueList = new ArrayList();
-            for ( String value : field.getValues() ) {
+            List<CharSequence> valueList = new ArrayList<>();
+            for ( CharSequence value : field.getValues() ) {
                 valueList.add( value );
             }
 
             if (type.equals(FormField.Type.bool)) {
-                String o = (String)valueList.get(0);
+                String o = valueList.get(0).toString();
                 boolean isSelected = o.equals("1");
                 JCheckBox box = new JCheckBox(label);
                 box.setSelected(isSelected);
@@ -103,7 +103,7 @@ public class WorkgroupDataForm extends JPanel {
             else if (type.equals(FormField.Type.text_single) || type.equals(FormField.Type.jid_single)) {
                 String v = "";
                 if (valueList.size() > 0) {
-                    v = (String)valueList.get(0);
+                    v = valueList.get(0).toString();
                 }
                 addField(label, new JTextField(v), variable);
             }
@@ -133,8 +133,8 @@ public class WorkgroupDataForm extends JPanel {
             }
             else if (type.equals(FormField.Type.list_multi)) {
                 CheckBoxList checkBoxList = new CheckBoxList();
-                for ( final String value : field.getValues() ) {
-                    checkBoxList.addCheckBox(new JCheckBox(value), value);
+                for ( final CharSequence value : field.getValues() ) {
+                    checkBoxList.addCheckBox(new JCheckBox(value.toString()), value.toString());
                 }
                 addField(label, checkBoxList, variable);
             }

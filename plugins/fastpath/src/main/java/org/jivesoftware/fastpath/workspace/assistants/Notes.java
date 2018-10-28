@@ -68,12 +68,12 @@ public class Notes extends JPanel {
     private ChatRoom chatRoom;
     private boolean updated;
 
-    public Notes(String sessionID, ChatRoom room) {
+    public Notes(CharSequence sessionID, ChatRoom room) {
         setLayout(new BorderLayout());
 
         this.chatRoom = room;
 
-        this.sessionID = sessionID;
+        this.sessionID = sessionID.toString();
 
         textPane = new JTextPane();
         textPane.setText(FpRes.getString("message.click.to.add.notes"));
@@ -198,7 +198,7 @@ public class Notes extends JPanel {
             };
             worker.start();
         }
-        catch (XMPPException | SmackException e1) {
+        catch (XMPPException | SmackException | InterruptedException e1) {
             showError(FpRes.getString("message.unable.to.update.notes"));
             Log.error("Could not commit note.", e1);
         }

@@ -19,11 +19,12 @@ import javax.swing.Icon;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
+import org.jxmpp.jid.DomainBareJid;
 
 public class MySpaceTransport implements Transport {
-    private String serviceName;
+    private DomainBareJid serviceName;
 
-    public MySpaceTransport(String serviceName){
+    public MySpaceTransport(DomainBareJid serviceName){
         this.serviceName = serviceName;
     }
     
@@ -43,7 +44,7 @@ public class MySpaceTransport implements Transport {
         return SparkRes.getImageIcon(SparkRes.MYSPACE_TRANSPORT_INACTIVE_IMAGE);
     }
 
-    public String getServiceName() {
+    public DomainBareJid getXMPPServiceDomain() {
         return serviceName;
     }
 
@@ -51,7 +52,7 @@ public class MySpaceTransport implements Transport {
         return "MySpace";
     }
 
-    public void setServiceName(String serviceName) {
+    public void setServiceName(DomainBareJid serviceName) {
         this.serviceName = serviceName;
     }
 

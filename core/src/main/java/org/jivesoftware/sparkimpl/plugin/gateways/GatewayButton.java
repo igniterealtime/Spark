@@ -56,7 +56,7 @@ public class GatewayButton extends JPanel implements GatewayItem {
         final StatusBar statusBar = SparkManager.getWorkspace().getStatusBar();
         final JPanel commandPanel = SparkManager.getWorkspace().getCommandPanel();
 
-        if (PresenceManager.isOnline(transport.getServiceName())) {
+        if (PresenceManager.isOnline(transport.getXMPPServiceDomain())) {
             button.setIcon(transport.getIcon());
         }
         else {
@@ -77,16 +77,16 @@ public class GatewayButton extends JPanel implements GatewayItem {
             final boolean isRegistered = TransportUtils.isRegistered(SparkManager.getConnection(), transport);
             if (isRegistered) {
                 // Check if auto login is set.
-                boolean autoJoin = TransportUtils.autoJoinService(transport.getServiceName());
+                boolean autoJoin = TransportUtils.autoJoinService(transport.getXMPPServiceDomain());
                 if (autoJoin) {
                     Presence oldPresence = statusBar.getPresence();
                     Presence presence = new Presence(oldPresence.getType(), oldPresence.getStatus(), oldPresence.getPriority(), oldPresence.getMode());
-                    presence.setTo(transport.getServiceName());
+                    presence.setTo(transport.getXMPPServiceDomain());
                     try
                     {
                         SparkManager.getConnection().sendStanza(presence);
                     }
-                    catch ( SmackException.NotConnectedException e )
+                    catch ( SmackException.NotConnectedException | InterruptedException e )
                     {
                         Log.error( "Unable to register.", e );
                     }
@@ -109,13 +109,13 @@ public class GatewayButton extends JPanel implements GatewayItem {
         final JMenuItem signOutMenu = new JMenuItem(Res.getString("menuitem.sign.out"));
         signOutMenu.addActionListener( actionEvent -> {
             final Presence offlinePresence = new Presence(Presence.Type.unavailable);
-            offlinePresence.setTo(transport.getServiceName());
+            offlinePresence.setTo(transport.getXMPPServiceDomain());
 
             try
             {
                 SparkManager.getConnection().sendStanza(offlinePresence);
             }
-            catch ( SmackException.NotConnectedException e )
+            catch ( SmackException.NotConnectedException | InterruptedException e )
             {
                 Log.warning( "Unable to send sign-off.", e );
             }
@@ -125,12 +125,12 @@ public class GatewayButton extends JPanel implements GatewayItem {
         final JMenuItem signInMenu = new JMenuItem(Res.getString("menuitem.sign.in"));
         signInMenu.addActionListener( actionEvent -> {
             final Presence onlinePresence = new Presence(Presence.Type.available);
-            onlinePresence.setTo(transport.getServiceName());
+            onlinePresence.setTo(transport.getXMPPServiceDomain());
             try
             {
                 SparkManager.getConnection().sendStanza(onlinePresence);
             }
-            catch ( SmackException.NotConnectedException e )
+            catch ( SmackException.NotConnectedException | InterruptedException e )
             {
                 Log.error( "Unable sign-in.", e );
             }
@@ -139,11 +139,11 @@ public class GatewayButton extends JPanel implements GatewayItem {
         // Create menu item to  toggle signing in at startup.
         final JCheckBoxMenuItem signInAtLoginMenu = new JCheckBoxMenuItem();
         signInAtLoginMenu.setText(Res.getString("menuitem.sign.in.at.login"));
-        signInAtLoginMenu.addActionListener( actionEvent -> TransportUtils.setAutoJoin(transport.getServiceName(), signInAtLoginMenu.isSelected()) );
+        signInAtLoginMenu.addActionListener( actionEvent -> TransportUtils.setAutoJoin(transport.getXMPPServiceDomain(), signInAtLoginMenu.isSelected()) );
 
         final JMenuItem registerMenu = new JMenuItem(Res.getString("menuitem.enter.login.information"));
         registerMenu.addActionListener( actionEvent -> {
-            TransportRegistrationDialog registrationDialog = new TransportRegistrationDialog(transport.getServiceName());
+            TransportRegistrationDialog registrationDialog = new TransportRegistrationDialog(transport.getXMPPServiceDomain());
             registrationDialog.invoke();
         } );
 
@@ -156,9 +156,9 @@ public class GatewayButton extends JPanel implements GatewayItem {
             int confirm = JOptionPane.showConfirmDialog(SparkManager.getMainWindow(), Res.getString("message.disable.transport", transport.getName()), Res.getString("title.disable.transport"), JOptionPane.YES_NO_OPTION);
             if (confirm == JOptionPane.YES_OPTION) {
                 try {
-                    TransportUtils.unregister(SparkManager.getConnection(), transport.getServiceName());
+                    TransportUtils.unregister(SparkManager.getConnection(), transport.getXMPPServiceDomain());
                 }
-                catch (SmackException e1) {
+                catch (SmackException | InterruptedException e1) {
                     Log.error(e1);
                 }
             }
@@ -184,7 +184,7 @@ public class GatewayButton extends JPanel implements GatewayItem {
             popupMenu.add(signInMenu);
         }
 
-        boolean autoJoin = TransportUtils.autoJoinService(transport.getServiceName());
+        boolean autoJoin = TransportUtils.autoJoinService(transport.getXMPPServiceDomain());
         signInAtLoginMenu.setSelected(autoJoin);
 
         popupMenu.add(signInAtLoginMenu);

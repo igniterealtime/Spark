@@ -33,6 +33,8 @@ import org.jivesoftware.spark.util.log.*;
 import org.jivesoftware.smack.*;
 import org.jivesoftware.smack.packet.*;
 import org.jivesoftware.smack.filter.*;
+import org.jxmpp.jid.EntityBareJid;
+import org.jxmpp.jid.parts.Localpart;
 import org.jxmpp.util.XmppStringUtils;
 
 import org.apache.commons.httpclient.Header;
@@ -63,24 +65,16 @@ public class ChatRoomDecorator
             ImageIcon fileuploadIcon = new ImageIcon(imageByte);
             fileuploadButton = new RolloverButton(fileuploadIcon);
             fileuploadButton.setToolTipText(GraphicUtils.createToolTip("Http File Upload"));
-            final String roomId = getNode(room.getRoomname());
-            final String sessionID = roomId + "-" + System.currentTimeMillis();
-            final String nickname = getNode(XmppStringUtils.parseBareAddress(SparkManager.getSessionManager().getJID()));
 
             fileuploadButton.addActionListener( new ActionListener()
             {
+                    @Override
                     public void actionPerformed(ActionEvent event)
                     {
-                        String newRoomId;
-
                         if ("groupchat".equals(room.getChatType().toString()))
                         {
-                            newRoomId = roomId;
                             getUploadUrl(room, Message.Type.groupchat);
-
                         } else {
-
-                            newRoomId = sessionID;
                             getUploadUrl(room, Message.Type.chat);
                         }
                     }
@@ -96,18 +90,7 @@ public class ChatRoomDecorator
 
     public void finished()
     {
-        Log.warning("ChatRoomDecorator: finished " + room.getRoomname());
-    }
-
-    private String getNode(String jid)
-    {
-        String node = jid;
-        int pos = node.indexOf("@");
-
-        if (pos > -1)
-            node = jid.substring(0, pos);
-
-        return node;
+        Log.warning("ChatRoomDecorator: finished " + room.getRoomJid());
     }
 
     private void getUploadUrl(ChatRoom room, Message.Type type)
@@ -127,40 +110,18 @@ public class ChatRoomDecorator
     private void handleUpload(File file, ChatRoom room, Message.Type type)
     {
         Log.warning("Uploading file: " + file.getAbsolutePath());
-
+        String fileName = null;
         try {
-            UploadRequest request = new UploadRequest(file.getName(), file.length());
+            fileName = URLEncoder.encode(file.getName(), "UTF-8");
+        } catch (UnsupportedEncodingException ignored) {
+            // Can be safely ignored because UTF-8 is always supported
+        }
+        try {
+            UploadRequest request = new UploadRequest(fileName, file.length());
             request.setTo("httpfileupload." + SparkManager.getSessionManager().getServerAddress());
             request.setType(IQ.Type.get);
 
-            PacketCollector collector = SparkManager.getConnection().createPacketCollector(new PacketIDFilter(request.getPacketID()));
-
-            SparkManager.getConnection().sendPacket(request);
-
-            IQ result = (IQ) collector.nextResult(5000);
-            collector.cancel();
-
-            if (result == null) {
-               Log.error("No response from the server.");
-               broadcastUploadUrl(room.getRoomname(), file.getName() + " upload failed", type);
-               return;
-            }
-            if (result.getType() == IQ.Type.error) {
-               String errorMsg = result.getError().getConditionText();
-
-               if (errorMsg == null)
-               {
-                    if (result.getError().getCondition() == XMPPError.Condition.not_acceptable)
-                    {
-                        errorMsg = "File too large.";
-                    }
-                    else errorMsg = result.getError().toString();
-               }
-
-               Log.error(errorMsg);
-               broadcastUploadUrl(room.getRoomname(), file.getName() + " upload failed - " + errorMsg, type);
-               return;
-            }
+            IQ result = SparkManager.getConnection().createStanzaCollectorAndSend(request).nextResultOrThrow();
 
             UploadRequest response = (UploadRequest) result;
 
@@ -173,20 +134,24 @@ public class ChatRoomDecorator
 
         } catch (Exception e) {
             Log.error("uploadFile error", e);
-            broadcastUploadUrl(room.getRoomname(), file.getName() + " upload failed", type);
+            broadcastUploadUrl(room.getRoomJid(), file.getName() + " upload failed", type);
         }
     }
 
     private void uploadFile(File file, UploadRequest response, ChatRoom room, Message.Type type)
     {
-        Log.warning("uploadFile request " + room.getRoomname() + " " + response.putUrl);
+        Log.warning("uploadFile request " + room.getRoomJid() + " " + response.putUrl);
         URLConnection urlconnection = null;
 
         try {
             PutMethod put = new PutMethod(response.putUrl);
-            Protocol.registerProtocol( "https", new Protocol( "https", new EasySSLProtocolSocketFactory(), put.getURI().getPort() ) );
+            int port = put.getURI().getPort();
+            if (port > 0)
+            {
+                Protocol.registerProtocol( "https", new Protocol( "https", new EasySSLProtocolSocketFactory(), port ) );
+            }
+            
             HttpClient client = new HttpClient();
-
             RequestEntity entity = new FileRequestEntity(file, "application/binary");
             put.setRequestEntity(entity);
             put.setRequestHeader("User-Agent", "Spark HttpFileUpload");
@@ -199,7 +164,7 @@ public class ChatRoomDecorator
 
             if ((statusCode >= 200) && (statusCode <= 202))
             {
-                broadcastUploadUrl(room.getRoomname(), response.getUrl, type);
+                broadcastUploadUrl(room.getRoomJid(), response.getUrl, type);
             }
 
         } catch (Exception e) {
@@ -207,7 +172,7 @@ public class ChatRoomDecorator
         }
     }
 
-    private void broadcastUploadUrl(String jid, String url, Message.Type type)
+    private void broadcastUploadUrl(EntityBareJid jid, String url, Message.Type type)
     {
         Message message2 = new Message();
         message2.setTo(jid);

@@ -60,7 +60,7 @@ public class ChatMacroMenu {
         try {
             globalMacros = FastpathPlugin.getAgentSession().getMacros(true);
         }
-        catch (XMPPException | SmackException e) {
+        catch (XMPPException | SmackException | InterruptedException e) {
             // Not Global Macros Set
             Log.error("No global macros have been set.");
         }
@@ -85,7 +85,7 @@ public class ChatMacroMenu {
         try {
             personalGroup = FastpathPlugin.getAgentSession().getMacros(false);
         }
-        catch (XMPPException | SmackException e) {
+        catch (XMPPException | SmackException | InterruptedException e) {
             Log.error("No personal macros set.");
         }
 

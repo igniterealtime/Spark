@@ -137,7 +137,7 @@ public class JabberVersion implements Plugin {
         if (selectedUsers.size() == 1) {
             ContactItem item = (ContactItem)selectedUsers.toArray()[0];
             Presence presence = item.getPresence();
-            final String jid = presence.getFrom();
+            final String jid = presence.getFrom().toString();
             SwingWorker worker = new SwingWorker() {
                 public Object construct() {
                     try {

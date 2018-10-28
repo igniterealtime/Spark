@@ -17,6 +17,7 @@ package org.jivesoftware.spark.ui;
 
 import org.jivesoftware.spark.component.tabbedPane.SparkTab;
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
+import org.jxmpp.jid.EntityBareJid;
 import org.jivesoftware.spark.PresenceManager;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.resource.SparkRes;
@@ -41,7 +42,7 @@ public abstract class SparkTabHandler {
         tab.setTitleColor(Color.gray);
         tab.setTabFont(tab.getDefaultFont());
 
-        String jid = ((ChatRoomImpl)chatRoom).getParticipantJID();
+        EntityBareJid jid = ((ChatRoomImpl)chatRoom).getParticipantJID();
         Presence presence = PresenceManager.getPresence(jid);
 
         if (!presence.isAvailable()) {

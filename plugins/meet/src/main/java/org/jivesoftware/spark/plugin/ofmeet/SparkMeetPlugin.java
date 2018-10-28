@@ -26,6 +26,8 @@ import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ChatRoomListener;
 import org.jivesoftware.spark.ui.GlobalMessageListener;
 import org.jivesoftware.spark.util.log.Log;
+import org.jxmpp.jid.EntityBareJid;
+import org.jxmpp.jid.parts.Localpart;
 
 import javax.swing.*;
 import java.awt.*;
@@ -52,7 +54,7 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
     private String path = "ofmeet";
 
     private static File pluginsettings = new File(System.getProperty("user.home") + System.getProperty("file.separator") + "Spark" + System.getProperty("file.separator") + "ofmeet.properties");
-    private Map<String, ChatRoomDecorator> decorators = new HashMap<String, ChatRoomDecorator>();
+    private Map<EntityBareJid, ChatRoomDecorator> decorators = new HashMap<>();
 
     private Browser browser = null;
     private JFrame frame = null;
@@ -136,7 +138,7 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
     public void messageReceived(ChatRoom room, Message message) {
 
         try {
-            String roomId = getNode(room.getRoomname());
+            Localpart roomId = room.getRoomJid().getLocalpart();
             String body = message.getBody();
 
             if ( body.startsWith("https://") && body.endsWith("/" + roomId) ) {
@@ -196,7 +198,7 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
     // before disposing browser and jframe window
 
 
-    public void openUrl(String url, String roomId)
+    public void openUrl(String url, CharSequence roomId)
     {
         String meetUrl = url;
 
@@ -217,7 +219,7 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
         }
     }
 
-    private void openRoom(String roomUrl, String roomId)
+    private void openRoom(String roomUrl, CharSequence roomId)
     {
         try {
             if (browser != null)
@@ -247,7 +249,7 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
         }
     }
 
-    private void open(String roomUrl, String roomId)
+    private void open(String roomUrl, CharSequence roomId)
     {
         browser = new Browser();
         BrowserView view = new BrowserView(browser);
@@ -303,7 +305,7 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
 
     public void chatRoomClosed(ChatRoom chatroom)
     {
-        String roomId = chatroom.getRoomname();
+        Localpart roomId = chatroom.getRoomJid().getLocalpart();
 
         Log.debug("chatRoomClosed:  " + roomId);
 
@@ -323,32 +325,32 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
 
     public void chatRoomActivated(ChatRoom chatroom)
     {
-        String roomId = chatroom.getRoomname();
+        EntityBareJid roomId = chatroom.getRoomJid();
 
         Log.debug("chatRoomActivated:  " + roomId);
     }
 
     public void userHasJoined(ChatRoom room, String s)
     {
-        String roomId = room.getRoomname();
+        EntityBareJid roomId = room.getRoomJid();
 
         Log.debug("userHasJoined:  " + roomId + " " + s);
     }
 
     public void userHasLeft(ChatRoom room, String s)
     {
-        String roomId = room.getRoomname();
+        EntityBareJid roomId = room.getRoomJid();
 
         Log.debug("userHasLeft:  " + roomId + " " + s);
     }
 
     public void chatRoomOpened(final ChatRoom room)
     {
-        String roomId = room.getRoomname();
+        EntityBareJid roomId = room.getRoomJid();
 
         Log.debug("chatRoomOpened:  " + roomId);
 
-        if (roomId.indexOf('/') == -1 && decorators.containsKey(roomId) == false)
+        if (!decorators.containsKey(roomId))
         {
             decorators.put(roomId, new ChatRoomDecorator(room, url, this));
         }
@@ -358,7 +360,7 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
      * Display an alert that allows the user to accept or reject a meet
      * invitation.
      */
-    private void showInvitationAlert(final String meetUrl, final ChatRoom room, final String roomId)
+    private void showInvitationAlert(final String meetUrl, final ChatRoom room, final CharSequence roomId)
     {
         // Got an offer to start a new meet. So, make sure that a chat is
         // started with the other

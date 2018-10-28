@@ -56,7 +56,7 @@ public class ChatSearchResult {
         sessionID = getFirstValue(row, "sessionID");
 
         StringBuffer authors = new StringBuffer();
-        for ( final String agentJID : row.getValues("agentJIDs") )
+        for ( final CharSequence agentJID : row.getValues("agentJIDs") )
         {
             authors.append(agentJID);
             authors.append(" ");
@@ -81,12 +81,12 @@ public class ChatSearchResult {
 
 
     public String getFirstValue(ReportedData.Row row, String key) {
-        final List<String> values = row.getValues( key );
+        final List<CharSequence> values = row.getValues( key );
         if ( values.isEmpty() ) {
             return null;
         }
 
-        return values.get(0);
+        return values.get(0).toString();
     }
 
     public String getSummary() {

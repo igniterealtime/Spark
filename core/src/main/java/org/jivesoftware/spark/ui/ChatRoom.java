@@ -39,6 +39,9 @@ import org.jivesoftware.spark.util.UIComponentRegistry;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+import org.jxmpp.jid.EntityBareJid;
+import org.jxmpp.jid.EntityFullJid;
+import org.jxmpp.jid.parts.Resourcepart;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -365,8 +368,9 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
      * Sends a chat state to all peers.
      *
      * @param state the chat state.
+     * @throws InterruptedException 
      */
-    protected abstract void sendChatState( ChatState state ) throws SmackException.NotConnectedException;
+    protected abstract void sendChatState( ChatState state ) throws SmackException.NotConnectedException, InterruptedException;
 
     /**
      * Sets the chat state, causing an update to be sent to all peers if the new state warrants an update.
@@ -391,7 +395,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
             try
             {
                 sendChatState( state );
-            } catch ( SmackException.NotConnectedException e ) {
+            } catch ( SmackException.NotConnectedException | InterruptedException e ) {
                 Log.warning( "Unable to update the chat state to " + state, e );
             }
             lastNotificationSent = state;
@@ -426,12 +430,12 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         if ( SparkManager.getChatManager().getChatContainer().getActiveChatRoom() instanceof GroupChatRoom )
         {
             final GroupChatRoom activeChatRoom = (GroupChatRoom) SparkManager.getChatManager().getChatContainer().getActiveChatRoom();
-            for ( String participant : activeChatRoom.getParticipants() )
+            for ( EntityFullJid participant : activeChatRoom.getParticipants() )
             {
-                final String nickname = participant.substring( participant.lastIndexOf( "/" ) + 1 );
-                if ( nickname.toLowerCase().startsWith( needle.toLowerCase() ) )
+                final Resourcepart nickname = participant.getResourcepart();
+                if ( nickname.toString().toLowerCase().startsWith( needle.toLowerCase() ) )
                 {
-                    matches.add( nickname );
+                    matches.add( nickname.toString() );
                 }
             }
         }
@@ -525,7 +529,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
      *
      * @return the nickname of the agent.
      */
-    public String getNickname() {
+    public Resourcepart getNickname() {
         LocalPreferences pref = SettingsManager.getLocalPreferences();
         return pref.getNickname();
     }
@@ -898,8 +902,19 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
      * Get the roomname to use for this ChatRoom. This is expected to be a bare jid.
      *
      * @return - the Roomname of this ChatRoom.
+     * @deprecated use {@link #getRoomJid()} instead.
      */
-    public abstract String getRoomname();
+    @Deprecated
+    public EntityBareJid getRoomname() {
+        return getRoomJid();
+    }
+
+    /**
+     * Get the XMPP address of this room.
+     *
+     * @return the XMPP address of this room
+     */
+    public abstract EntityBareJid getRoomJid();
 
     /**
      * Get the title to use in the tab holding this ChatRoom.

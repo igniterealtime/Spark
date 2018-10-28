@@ -19,7 +19,7 @@ import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Presence;
-import org.jivesoftware.smack.packet.XMPPError;
+import org.jivesoftware.smack.packet.StanzaError;
 import org.jivesoftware.smackx.bookmarks.BookmarkManager;
 import org.jivesoftware.smackx.bookmarks.BookmarkedConference;
 import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
@@ -42,6 +42,12 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.privacy.PrivacyManager;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+import org.jxmpp.jid.DomainBareJid;
+import org.jxmpp.jid.EntityBareJid;
+import org.jxmpp.jid.Jid;
+import org.jxmpp.jid.impl.JidCreate;
+import org.jxmpp.jid.parts.Resourcepart;
+import org.jxmpp.stringprep.XmppStringprepException;
 import org.jxmpp.util.XmppStringUtils;
 
 import javax.swing.*;
@@ -67,7 +73,7 @@ public class ConferenceUtils {
      * @return a collection of rooms.
      * @throws Exception if an error occured during fetch.
      */
-    public static Collection<HostedRoom> getRoomList(String serviceName) throws Exception {
+    public static Collection<HostedRoom> getRoomList(DomainBareJid serviceName) throws Exception {
         return MultiUserChatManager.getInstanceFor( SparkManager.getConnection() ).getHostedRooms( serviceName );
     }
 
@@ -77,8 +83,9 @@ public class ConferenceUtils {
      * @param roomJID the full JID of the conference room. (ex. dev@conference.jivesoftware.com)
      * @return the number of occupants in the room if available.
      * @throws XMPPException thrown if an error occured during retrieval of the information.
+     * @throws InterruptedException 
      */
-    public static int getNumberOfOccupants(String roomJID) throws SmackException, XMPPException {
+    public static int getNumberOfOccupants(EntityBareJid roomJID) throws SmackException, XMPPException, InterruptedException {
         final RoomInfo roomInfo = MultiUserChatManager.getInstanceFor( SparkManager.getConnection() ).getRoomInfo( roomJID );
         return roomInfo.getOccupantsCount();
     }
@@ -90,7 +97,7 @@ public class ConferenceUtils {
      * @return the formatted date.
      * @throws Exception throws an exception if we are unable to retrieve the date.
      */
-    public static String getCreationDate(String roomJID) throws Exception {
+    public static String getCreationDate(EntityBareJid roomJID) throws Exception {
         ServiceDiscoveryManager discoManager = ServiceDiscoveryManager.getInstanceFor(SparkManager.getConnection());
 
         final DateFormat dateFormatter = new SimpleDateFormat("yyyyMMdd'T'HH:mm:ss");
@@ -105,8 +112,8 @@ public class ConferenceUtils {
 
 
             if (label != null && "Creation date".equalsIgnoreCase(label)) {
-                for ( String value : field.getValues() ) {
-                    creationDate = value;
+                for ( CharSequence value : field.getValues() ) {
+                    creationDate = value.toString();
                     Date date = dateFormatter.parse(creationDate);
                     creationDate = DateFormat.getDateTimeInstance(DateFormat.FULL,DateFormat.MEDIUM).format(date);
                 }
@@ -123,21 +130,21 @@ public class ConferenceUtils {
      * @param password the rooms password (if any).
      * @return the GroupChatRoom created.
      */
-    public static GroupChatRoom enterRoomOnSameThread(final String roomName, String roomJID, String password )
+    public static GroupChatRoom enterRoomOnSameThread(final CharSequence roomName, EntityBareJid roomJID, String password )
     {
-        final JoinRoomSwingWorker worker = new JoinRoomSwingWorker( roomJID, password, roomName );
+        final JoinRoomSwingWorker worker = new JoinRoomSwingWorker( roomJID, password, roomName.toString() );
         worker.start();
         return (GroupChatRoom) worker.get(); // blocks until completed.
     }
 
-    public static GroupChatRoom enterRoom(final MultiUserChat groupChat, String tabTitle, final String nickname, final String password)
+    public static GroupChatRoom enterRoom(final MultiUserChat groupChat, CharSequence tabTitle, final Resourcepart nickname, final String password)
     {
-        final JoinRoomSwingWorker worker = new JoinRoomSwingWorker( groupChat.getRoom(), nickname, password, tabTitle );
+        final JoinRoomSwingWorker worker = new JoinRoomSwingWorker( groupChat.getRoom(), nickname, password, tabTitle.toString() );
         worker.start();
         return (GroupChatRoom) worker.get(); // blocks until completed.
     }
 
-    public static void joinConferenceOnSeperateThread(final String roomName, String roomJID, String password) {
+    public static void joinConferenceOnSeperateThread(final CharSequence roomName, EntityBareJid roomJID, String password) {
         joinConferenceOnSeperateThread(roomName, roomJID, password, null, null);
     }
 
@@ -148,9 +155,9 @@ public class ConferenceUtils {
      * @param roomJID  the jid of the room.
      * @param password the rooms password if required.
      */
-    public static void joinConferenceOnSeperateThread(final String roomName, String roomJID, String password, final String inviteMessage, final Collection<String> invites ) {
+    public static void joinConferenceOnSeperateThread(final CharSequence roomName, EntityBareJid roomJID, String password, final String inviteMessage, final Collection<EntityBareJid> invites ) {
 
-        final JoinRoomSwingWorker worker = new JoinRoomSwingWorker( roomJID, password, roomName );
+        final JoinRoomSwingWorker worker = new JoinRoomSwingWorker( roomJID, password, roomName.toString() );
 
         if ( invites != null && !invites.isEmpty() )
         {
@@ -167,7 +174,7 @@ public class ConferenceUtils {
      * @param roomName the name of the room.
      * @param roomJID  the rooms jid.
      */
-    public static void joinConferenceRoom(final String roomName, String roomJID) {
+    public static void joinConferenceRoom(final String roomName, EntityBareJid roomJID) {
         JoinConferenceRoomDialog joinDialog = new JoinConferenceRoomDialog();
         joinDialog.joinRoom(roomJID, roomName);
         changePresenceToAvailableIfInvisible();
@@ -182,7 +189,7 @@ public class ConferenceUtils {
      * @param password  the password to join the room with.
      * @return a List of errors, if any.
      */
-    public static List<String> joinRoom(MultiUserChat groupChat, String nickname, String password) {
+    public static List<String> joinRoom(MultiUserChat groupChat, Resourcepart nickname, String password) {
         final List<String> errors = new ArrayList<>();
         if ( !groupChat.isJoined() )
         {
@@ -198,9 +205,9 @@ public class ConferenceUtils {
                 }
                 changePresenceToAvailableIfInvisible();
             }
-            catch ( XMPPException | SmackException ex )
+            catch ( XMPPException | SmackException | InterruptedException ex )
             {
-                XMPPError error = null;
+                StanzaError error = null;
                 if ( ex instanceof XMPPException.XMPPErrorException )
                 {
                     error = ( (XMPPException.XMPPErrorException) ex ).getXMPPError();
@@ -220,8 +227,8 @@ public class ConferenceUtils {
      * @param chat The room to invite people into.
      * @param jids a collection of the users to invite.
      */
-    public static void inviteUsersToRoom(MultiUserChat chat, Collection<String> jids, boolean randomName ) {
-        inviteUsersToRoom( XmppStringUtils.parseDomain( chat.getRoom() ), chat.getRoom(), jids, randomName );
+    public static void inviteUsersToRoom(MultiUserChat chat, Collection<Jid> jids, boolean randomName ) {
+        inviteUsersToRoom(chat.getRoom().asDomainBareJid(), chat.getRoom(), jids, randomName );
     }
 
     /**
@@ -231,7 +238,7 @@ public class ConferenceUtils {
      * @param roomName    the name of the room.
      * @param jids        a collection of the users to invite.
      */
-    public static void inviteUsersToRoom(String serviceName, String roomName, Collection<String> jids, boolean randomName) {
+    public static void inviteUsersToRoom(DomainBareJid serviceName, EntityBareJid roomName, Collection<Jid> jids, boolean randomName) {
         final LocalPreferences pref = SettingsManager.getLocalPreferences();
         boolean useTextField = pref.isUseAdHocRoom();
         Collection<BookmarkedConference> rooms = null;
@@ -244,10 +251,10 @@ public class ConferenceUtils {
             useTextField = !randomName || (rooms == null || rooms.size() == 0);
         }
         InvitationDialog inviteDialog = new InvitationDialog(useTextField);
-        inviteDialog.inviteUsersToRoom(serviceName, rooms, roomName, jids);
+        inviteDialog.inviteUsersToRoom(serviceName, rooms, roomName.toString(), jids);
     }
 
-    public static Collection<BookmarkedConference> retrieveBookmarkedConferences() throws XMPPException, SmackException
+    public static Collection<BookmarkedConference> retrieveBookmarkedConferences() throws XMPPException, SmackException, InterruptedException
     {
         BookmarkManager manager = BookmarkManager.getBookmarkManager(SparkManager.getConnection());
         return manager.getBookmarkedConferences();
@@ -259,7 +266,7 @@ public class ConferenceUtils {
      * @param roomJID the JID of the room.
      * @return true if the room requires a password.
      */
-    public static boolean isPasswordRequired(String roomJID) {
+    public static boolean isPasswordRequired(EntityBareJid roomJID) {
         // Check to see if the room is password protected
     	ServiceDiscoveryManager discover = ServiceDiscoveryManager.getInstanceFor(SparkManager.getConnection());
 
@@ -267,7 +274,7 @@ public class ConferenceUtils {
             DiscoverInfo info = discover.discoverInfo(roomJID);
             return info.containsFeature("muc_passwordprotected");
         }
-        catch (XMPPException | SmackException e) {
+        catch (XMPPException | SmackException | InterruptedException e) {
             Log.error(e);
         }
         return false;
@@ -281,10 +288,11 @@ public class ConferenceUtils {
      * @param roomName    the name of the room to create.
      * @param jids        a collection of the user JIDs to invite.
      * @throws SmackException thrown if an error occurs during room creation.
+     * @throws InterruptedException 
      */
-    public static void createPrivateConference(String serviceName, String message, String roomName, Collection<String> jids) throws SmackException
+    public static void createPrivateConference(DomainBareJid serviceName, String message, String roomName, Collection<EntityBareJid> jids) throws SmackException, InterruptedException
     {
-        final String roomJID = XmppStringUtils.escapeLocalpart(roomName) + "@" + serviceName;
+        final EntityBareJid roomJID = JidCreate.entityBareFromUnescapedOrThrowUnchecked(roomName + "@" + serviceName);
         final MultiUserChat multiUserChat = MultiUserChatManager.getInstanceFor( SparkManager.getConnection() ).getMultiUserChat( roomJID );
         final LocalPreferences pref = SettingsManager.getLocalPreferences();
 
@@ -326,7 +334,7 @@ public class ConferenceUtils {
             chatManager.getChatContainer().activateChatRoom(room);
         }
 
-        for (String jid : jids) {
+        for (EntityBareJid jid : jids) {
             multiUserChat.invite(jid, message);
             room.getTranscriptWindow().insertNotificationMessage(Res.getString("message.waiting.for.user.to.join",jid), ChatManager.NOTIFICATION_COLOR);
         }
@@ -339,7 +347,7 @@ public class ConferenceUtils {
      * @return the reason for the exception.
      * @see <a href="http://xmpp.org/extensions/xep-0045.html#enter-errorcodes">XEP-0045 Error Conditions</a>
      */
-    public static String getReason(XMPPError error) {
+    public static String getReason(StanzaError error) {
         if (error == null) {
             return Res.getString("message.error.no.response");
         }
@@ -366,15 +374,27 @@ public class ConferenceUtils {
 
     }
 
-    final static List<String> unclosableChatRooms = new ArrayList<>();
-	public synchronized static void addUnclosableChatRoom(String jid) {
+    final static List<EntityBareJid> unclosableChatRooms = new ArrayList<>();
+	public synchronized static void addUnclosableChatRoom(EntityBareJid jid) {
 		unclosableChatRooms.add(jid);
 	}
 
+	public static void addUnclosableChatRoom(String jidString) {
+	    EntityBareJid jid;
+        try {
+            jid = JidCreate.entityBareFrom(jidString);
+        } catch (XmppStringprepException e) {
+            throw new IllegalArgumentException(e);
+        }
+	    synchronized (ConferenceUtils.class) {
+	        unclosableChatRooms.add(jid);
+	    }
+	}
+	
 	public static boolean isChatRoomClosable(Component c) {
 		if(c instanceof GroupChatRoom ) {
 			GroupChatRoom groupChatRoom = (GroupChatRoom) c;
-    		String roomName = groupChatRoom.getChatRoom().getRoomname();
+    		EntityBareJid roomName = groupChatRoom.getChatRoom().getRoomJid();
 
     		if(unclosableChatRooms.contains(roomName)){
     			return false;

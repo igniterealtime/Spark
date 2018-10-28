@@ -31,7 +31,7 @@ public class JContactItemRenderer extends ContactItem implements ListCellRendere
 	JPanelRenderer basicPanelRenderer;
 	
 	public JContactItemRenderer() {
-		super("", "", "");
+		super("", "", null);
         setOpaque(true);
 		basicPanelRenderer = new JPanelRenderer();
 	}

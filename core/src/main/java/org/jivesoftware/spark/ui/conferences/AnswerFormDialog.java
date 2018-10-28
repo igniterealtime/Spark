@@ -126,7 +126,7 @@ public class AnswerFormDialog {
      */
     private void sendAnswerForm(Form answer, MultiUserChat chat) {
 	
-	ChatRoom room = SparkManager.getChatManager().getChatRoom(chat.getRoom()); 
+	ChatRoom room = SparkManager.getChatManager().getChatRoom(chat.getRoom().toString()); 
 	
 	for (String key : _map.keySet()) {
 	    String value = getValueFromComponent(key);
@@ -138,7 +138,7 @@ public class AnswerFormDialog {
 	    
 	    String reg = Res.getString("message.groupchat.registered.member", chat.getRoom());
 	   room.getTranscriptWindow().insertNotificationMessage(reg,ChatManager.NOTIFICATION_COLOR);
-	} catch (XMPPException | SmackException e) {
+	} catch (XMPPException | SmackException | InterruptedException e) {
 	    room.getTranscriptWindow().insertNotificationMessage(e.getMessage(),ChatManager.ERROR_COLOR);
 	}
 

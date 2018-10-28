@@ -116,7 +116,7 @@ public class VersionViewer {
                 ((CardLayout)(cards.getLayout())).last( cards );
             } );
         }
-        catch ( SmackException.NotConnectedException e )
+        catch ( SmackException.NotConnectedException | InterruptedException e )
         {
             Log.warning( "Unable to query for version.", e );
             ((CardLayout)(cards.getLayout())).last( cards );
