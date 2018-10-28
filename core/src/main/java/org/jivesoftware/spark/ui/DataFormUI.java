@@ -151,7 +151,7 @@ public class DataFormUI extends JPanel {
                 }
             }
             else if (o instanceof JTextField) {
-	        String value = ((JTextField)o).getText();
+                String value = ((JTextField)o).getText();
                 if (ModelUtil.hasLength(value)) {
                     answerForm.setAnswer(answer, value);
                 }
