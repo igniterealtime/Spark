@@ -133,7 +133,7 @@ public class SearchForm extends JPanel {
                     Form answerForm = questionForm.getFilledForm();
                     data = searchManager.getSearchResults(answerForm, serviceName);
                     JTextField searchField = ((JTextField) questionForm.getComponent("search"));
-                    String searchText = ((JTextField) questionForm.getComponent("search")).getText();
+                    String searchText = searchField.getText();
                     if(searchText != null && searchText.contains(" "))
                     {
                          searchField.setText(searchText.replaceAll(" ", "%20"));
