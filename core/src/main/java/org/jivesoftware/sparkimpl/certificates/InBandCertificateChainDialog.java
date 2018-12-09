@@ -32,7 +32,7 @@ public class InBandCertificateChainDialog extends JDialog implements ActionListe
 
     private KeyStore trustStore, caCertsStore;
     private boolean readyToAddEndCertificate;
-    private CertificateController certMan;
+    private CertificateController certController;
     private X509Certificate[] chain;
     private JTextField endCertTextField = new JTextField();
     private CertificateModel endCertModel;
@@ -53,7 +53,7 @@ public class InBandCertificateChainDialog extends JDialog implements ActionListe
             throw new Exception("Certificate controller cannot be null");
         }
 
-        this.certMan = certMan;
+        this.certController = certMan;
         this.chain = chain;
         // openKeystores
         trustStore = certMan.openKeyStore(CertificateController.TRUSTED);
@@ -156,7 +156,7 @@ public class InBandCertificateChainDialog extends JDialog implements ActionListe
             dispose();
         }
         if (e.getSource() == acceptButton) {
-            certMan.overWriteKeyStores();
+            certController.overWriteKeyStores();
             dispose();
         }
     }
@@ -176,8 +176,8 @@ public class InBandCertificateChainDialog extends JDialog implements ActionListe
 
     private void addEndEntityCertButtonImpl(CertificateModel certModel) {
         try {
-            certMan.addEntryToKeyStore(certModel.getCertificate(), true);
-            certMan.overWriteKeyStores();
+            certController.addEntryToKeyStore(certModel.getCertificate(), true);
+            certController.overWriteKeyStores();
         } catch (HeadlessException | InvalidNameException | KeyStoreException e) {
             Log.error("Cannot add certificate from connection", e);
         }
@@ -185,9 +185,11 @@ public class InBandCertificateChainDialog extends JDialog implements ActionListe
     
     private void addCertButtonImpl(CertificateModel certModel, JButton button, GridBagConstraints constraints) {
         try {
-            certMan.addEntryToKeyStore(certModel.getCertificate(), CertificateDialogReason.ADD_CERTIFICATE_FROM_CONNECTION);      
-            panel.remove(button);
-            panel.add(new JLabel(imgIconInStore), constraints);
+            certController.addEntryToKeyStore(certModel.getCertificate(), CertificateDialogReason.ADD_CERTIFICATE_FROM_CONNECTION);      
+            if (certController.isInTrustStore(certModel)) {
+                panel.remove(button);
+                panel.add(new JLabel(imgIconInStore), constraints);
+            }
         } catch (HeadlessException | InvalidNameException | KeyStoreException e1) {
             Log.error("Cannot add certificate from connection", e1);
         }
