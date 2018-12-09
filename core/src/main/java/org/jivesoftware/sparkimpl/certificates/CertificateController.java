@@ -286,6 +286,20 @@ public class CertificateController extends CertManager {
         }
     }
 
+    public boolean isInTrustStore(CertificateModel cert) {
+        try {
+            if (trustStore.getCertificateAlias(cert.getCertificate()) != null) {
+                return true;
+            } else if (displayCaStore.getCertificateAlias(cert.getCertificate()) != null) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (KeyStoreException e) {
+            return false;
+        }
+    }
+
     /**
      * Return information if certificate is on exception list.
      * 
@@ -315,8 +329,6 @@ public class CertificateController extends CertManager {
     public boolean isOnBlackList(CertificateModel cert) {
         return blackListedCertificates.contains(cert);
     }
-
-
 
 	/**
      * Return file path which contains certificate with given alias;
