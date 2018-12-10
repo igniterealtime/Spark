@@ -139,7 +139,6 @@ public class LoginDialog {
             Log.error(e);
         }
 
-
         // Construct Dialog
     	 EventQueue.invokeLater( () -> {
             loginDialog = new JFrame(Default.getString(Default.APPLICATION_NAME));
@@ -197,7 +196,6 @@ public class LoginDialog {
                 loginDialog.setVisible(true);
             }
          } );
-
 
     }
 
@@ -367,6 +365,11 @@ public class LoginDialog {
             }
         }
 
+        if ( localPref.isLoginAnonymously() && !localPref.isSSOEnabled() )
+        {
+            //later login() is called without arguments
+            builder.performSaslAnonymousAuthentication();
+        }
 
         // TODO These were used in Smack 3. Find Smack 4 alternative.
 //        config.setRosterLoadedAtLogin(true);
@@ -773,12 +776,9 @@ public class LoginDialog {
                     loginButton.setEnabled(true);
                 }
             }
-            else if (e.getSource() == loginButton) {
-		            
-               
+            else if (e.getSource() == loginButton) {  
                     validateLogin();
-                
-                
+                   
             }
             else if (e.getSource() == advancedButton) {
                 final LoginSettingDialog loginSettingsDialog = new LoginSettingDialog();
@@ -1154,9 +1154,9 @@ public class LoginDialog {
 
                 if ( localPref.isLoginAnonymously() && !localPref.isSSOEnabled() )
                 {
-					// TODO: Anonymous login
-                    throw new UnsupportedOperationException();
-//                    ( (XMPPTCPConnection) connection ).loginAnonymously();
+                    // ConnectionConfiguration.performSaslAnonymousAuthentication() used earlier in connection configuration builder,
+                    // so now we can just login()
+                    connection.login();
                 }
                 else
                 {
