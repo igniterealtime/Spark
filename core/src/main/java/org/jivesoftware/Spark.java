@@ -139,7 +139,7 @@ public final class Spark {
             BIN_DIRECTORY = initializeDirectory(workingDir, "bin");
             File emoticons = new File( XTRA_DIRECTORY, "emoticons").getAbsoluteFile();
             if(!emoticons.exists()){
-
+                copyEmoticonFiles(workingDirectory);
             	//Copy emoticon files from install directory to the spark user home directory
             }
             SECURITY_DIRECTORY = initializeDirectory(workingDir, "security");
@@ -419,16 +419,18 @@ public final class Spark {
             }
         }
     }
-   /* public void copyEmoticonFiles() {
+   public void copyEmoticonFiles(String workdir) {
         // Current Plugin directory
-        File newEmoticonDir = new File(Spark.getLogDirectory().getParentFile(), "xtra/emoticons").getAbsoluteFile();
+        File newEmoticonDir = new File(Spark.getLogDirectory().getParentFile(), "xtra" + File.separator + "emoticons").getAbsoluteFile();
         newEmoticonDir.mkdirs();
+
+        File EMOTICON_DIRECTORY = new File(workdir + File.separator + "xtra" +  File.separator+"emoticons");
         //TODO emoticondirectory anpassen
-        File EMOTICON_DIRECTORY = new File("D:/workspace/Spark 2.6 beta/src","xtra/emoticons");
-        File[] files = EMOTICON_DIRECTORY.listFiles();
+        //File EMOTICON_DIRECTORY = new File("D:/workspace/Spark 2.6 beta/src","xtra/emoticons");
+        //File[] files = EMOTICON_DIRECTORY.listFiles();
 
 
-        for (File file : files) {
+        for (File file : EMOTICON_DIRECTORY.listFiles()) {
             if (file.isFile()) {
 
                // Copy over
@@ -436,5 +438,5 @@ public final class Spark {
 
             }
         }
-    }*/
+    }
 }
