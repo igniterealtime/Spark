@@ -55,5 +55,6 @@
                 </executions>
             </plugin>
         </plugins>
+      <directory>../distribution/target/distribution-base/xtra/emoticons</directory>
     </build>
 </project>
