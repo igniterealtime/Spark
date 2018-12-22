@@ -1143,35 +1143,37 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
                     fromNickName = mucNickName[1];
                 }
             }
-            if ( localPref.isMucHighToastEnabled()) {
-                // allowed to check for new messages containing name
-                Resourcepart myNickName = chatRoom.getNickname();
-                String myUserName = SparkManager.getSessionManager().getUsername();
-                Pattern usernameMatch = Pattern.compile(myUserName, Pattern.CASE_INSENSITIVE);
-                Pattern nicknameMatch = Pattern.compile(myNickName.toString(), Pattern.CASE_INSENSITIVE);
-                
-                if (usernameMatch.matcher(lastChatMessage.getBody()).find() || nicknameMatch.matcher(lastChatMessage.getBody()).find()) {
-                    // match, send new message
-                    boolean customMsgS = true;
-                    String customMsgTextS = Res.getString("group.chat.name.match") + " " + finalRoomName + " by " + fromNickName + " (" + lastChatMessage.getBody() + ")";
-                    String customMsgTitleS = Res.getString("group.chat.name.notification");
-                       
-                    startFlashing(chatRoom, customMsgS, customMsgTextS, customMsgTitleS);
+            String myNickName = chatRoom.getNickname().toString();
+            if (!myNickName.equals(fromNickName)) {
+                if (localPref.isMucHighToastEnabled()) {
+                    // allowed to check for new messages containing name
+                    String myUserName = SparkManager.getSessionManager().getUsername();
+                    Pattern usernameMatch = Pattern.compile(myUserName, Pattern.CASE_INSENSITIVE);
+                    Pattern nicknameMatch = Pattern.compile(myNickName, Pattern.CASE_INSENSITIVE);
+
+                    if (usernameMatch.matcher(lastChatMessage.getBody()).find() || nicknameMatch.matcher(lastChatMessage.getBody()).find()) {
+                        // match, send new message
+                        boolean customMsgS = true;
+                        String customMsgTextS = Res.getString("group.chat.name.match") + " " + finalRoomName + " by " + fromNickName + " (" + lastChatMessage.getBody() + ")";
+                        String customMsgTitleS = Res.getString("group.chat.name.notification");
+
+                        startFlashing(chatRoom, customMsgS, customMsgTextS, customMsgTitleS);
+                    } else {
+                        // regular group message
+                        boolean customMsgS = true;
+                        String customMsgTextS = fromNickName + " says: " + lastChatMessage.getBody();
+                        String customMsgTitleS = finalRoomName;
+
+                        startFlashing(chatRoom, customMsgS, customMsgTextS, customMsgTitleS);
+                    }
                 } else {
                     // regular group message
                     boolean customMsgS = true;
                     String customMsgTextS = fromNickName + " says: " + lastChatMessage.getBody();
                     String customMsgTitleS = finalRoomName;
-                    
+
                     startFlashing(chatRoom, customMsgS, customMsgTextS, customMsgTitleS);
                 }
-            } else {
-                // regular group message
-                boolean customMsgS = true;
-                String customMsgTextS = fromNickName + " says: " + lastChatMessage.getBody();
-                String customMsgTitleS = finalRoomName;
-                
-                startFlashing(chatRoom, customMsgS, customMsgTextS, customMsgTitleS);
             }
         } else if (customMsg) {
             // probablt a file transfer request
