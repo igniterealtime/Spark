@@ -13,45 +13,38 @@ import javax.net.ssl.SSLContextSpi;
 
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
-public class SparkSSLContext extends SSLContext {
+public class SparkSSLContextCreator {
 
     /**
-     * 
      * ClientSide is authentication by
      */
     public enum Options {
         BOTH, ONLY_CLIENT_SIDE, ONLY_SERVER_SIDE;
-
-    }
-
-    protected SparkSSLContext(SSLContextSpi contextSpi, Provider provider, String protocol) {
-        super(contextSpi, provider, protocol);
-        // TODO Auto-generated constructor stub
     }
 
     /**
      * Create SSLContext and initialize it
      * 
-     * @return initialized SSL context with BouncyCastleProvider
+     * @return initialized SSL context
      * @throws KeyManagementException
      * @throws NoSuchAlgorithmException
-     * @throws KeyStoreException 
-     * @throws UnrecoverableKeyException 
+     * @throws KeyStoreException
+     * @throws UnrecoverableKeyException
      * @throws NoSuchProviderException
      */
-    public static SSLContext setUpContext(Options options) throws KeyManagementException, NoSuchAlgorithmException, UnrecoverableKeyException, KeyStoreException, NoSuchProviderException {
-        SSLContext context = SparkSSLContext.getInstance("TLS");
-        if (options == options.ONLY_SERVER_SIDE) {
+    public static SSLContext setUpContext(Options options)
+            throws KeyManagementException, NoSuchAlgorithmException, UnrecoverableKeyException, KeyStoreException, NoSuchProviderException {
+        SSLContext context = SSLContext.getInstance("TLS");
+        if (options == Options.ONLY_SERVER_SIDE) {
             context.init(null, SparkTrustManager.getTrustManagerList(), new SecureRandom());
-        } else if (options == options.BOTH) {
-
+        } else if (options == Options.BOTH) {
             IdentityController identityController = new IdentityController(SettingsManager.getLocalPreferences());
             context.init(identityController.initKeyManagerFactory().getKeyManagers(), SparkTrustManager.getTrustManagerList(), new SecureRandom());
-  
-        } else if (options == options.ONLY_CLIENT_SIDE){
+
+        } else if (options == Options.ONLY_CLIENT_SIDE) {
             IdentityController identityController = new IdentityController(SettingsManager.getLocalPreferences());
             context.init(identityController.initKeyManagerFactory().getKeyManagers(), null, new SecureRandom());
-            
+
         }
         return context;
     }

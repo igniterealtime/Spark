@@ -48,7 +48,7 @@ import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 import org.jivesoftware.sparkimpl.certificates.SparkSSLSocketFactory;
-import org.jivesoftware.sparkimpl.certificates.SparkSSLContext;
+import org.jivesoftware.sparkimpl.certificates.SparkSSLContextCreator;
 import org.jivesoftware.sparkimpl.plugin.layout.LayoutSettings;
 import org.jivesoftware.sparkimpl.plugin.layout.LayoutSettingsManager;
 import org.jivesoftware.sparkimpl.settings.JiveInfo;
@@ -290,14 +290,14 @@ public class LoginDialog {
         if (securityMode != ConnectionConfiguration.SecurityMode.disabled && !useOldSSL) {
             // This use STARTTLS which starts initially plain connection to upgrade it to TLS, it use the same port as
             // plain connections which is 5222.
-            SparkSSLContext.Options options;
+            SparkSSLContextCreator.Options options;
             if(localPref.isAllowClientSideAuthentication()){
-            options = SparkSSLContext.Options.BOTH;
+            options = SparkSSLContextCreator.Options.BOTH;
             } else {
-                options = SparkSSLContext.Options.ONLY_SERVER_SIDE;
+                options = SparkSSLContextCreator.Options.ONLY_SERVER_SIDE;
             }
             try {               
-                SSLContext context = SparkSSLContext.setUpContext(options);
+                SSLContext context = SparkSSLContextCreator.setUpContext(options);
                 builder.setCustomSSLContext(context);
                 builder.setSecurityMode( securityMode );
             } catch (NoSuchAlgorithmException | KeyManagementException | UnrecoverableKeyException | KeyStoreException | NoSuchProviderException e) {
@@ -314,11 +314,11 @@ public class LoginDialog {
                 builder.setHost( DNSUtil.resolveXMPPServiceDomain( serverNameDnsName, null, DnssecMode.disabled ).get( 0 ).getFQDN() );
                 builder.setPort( 5223 );
             }
-            SparkSSLContext.Options options;
+            SparkSSLContextCreator.Options options;
             if(localPref.isAllowClientSideAuthentication()){
-            options = SparkSSLContext.Options.BOTH;
+            options = SparkSSLContextCreator.Options.BOTH;
             } else {
-                options = SparkSSLContext.Options.ONLY_SERVER_SIDE;
+                options = SparkSSLContextCreator.Options.ONLY_SERVER_SIDE;
             }
             builder.setSocketFactory( new SparkSSLSocketFactory(options) );
             // SMACK 4.1.9  does not recognize an 'old-style' SSL socket as being secure, which will cause a failure when

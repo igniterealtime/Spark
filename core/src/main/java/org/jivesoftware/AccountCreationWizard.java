@@ -33,7 +33,7 @@ import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.certificates.SparkSSLSocketFactory;
-import org.jivesoftware.sparkimpl.certificates.SparkSSLContext;
+import org.jivesoftware.sparkimpl.certificates.SparkSSLContextCreator;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jxmpp.jid.parts.Localpart;
@@ -356,7 +356,7 @@ public class AccountCreationWizard extends JPanel {
             // This use STARTTLS which starts initially plain connection to upgrade it to TLS, it use the same port as
             // plain connections which is 5222.
             try {
-                SSLContext context = SparkSSLContext.setUpContext(SparkSSLContext.Options.ONLY_SERVER_SIDE);
+                SSLContext context = SparkSSLContextCreator.setUpContext(SparkSSLContextCreator.Options.ONLY_SERVER_SIDE);
                 builder.setCustomSSLContext(context);
                 builder.setSecurityMode( securityMode );
             } catch (NoSuchAlgorithmException | KeyManagementException | UnrecoverableKeyException | KeyStoreException | NoSuchProviderException e) {
@@ -374,7 +374,7 @@ public class AccountCreationWizard extends JPanel {
                 builder.setHost( DNSUtil.resolveXMPPServiceDomain( serverNameDnsName, null, DnssecMode.disabled ).get( 0 ).getFQDN() );
                 builder.setPort( 5223 );
             }
-            builder.setSocketFactory( new SparkSSLSocketFactory(SparkSSLContext.Options.ONLY_SERVER_SIDE) );
+            builder.setSocketFactory( new SparkSSLSocketFactory(SparkSSLContextCreator.Options.ONLY_SERVER_SIDE) );
             // SMACK 4.1.9  does not recognize an 'old-style' SSL socket as being secure, which will cause a failure when
             // the 'required' Security Mode is defined. Here, we work around this by replacing that security mode with an
             // 'if-possible' setting.
