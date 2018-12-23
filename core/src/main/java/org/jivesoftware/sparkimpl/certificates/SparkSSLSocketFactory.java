@@ -28,7 +28,7 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
 
 import org.jivesoftware.spark.util.log.Log;
-import org.jivesoftware.sparkimpl.certificates.SparkSSLContext.Options;
+import org.jivesoftware.sparkimpl.certificates.SparkSSLContextCreator.Options;
 
 /**
  * An SSL socket factory that will let any certifacte past, even if it's expired or not singed by a root CA.
@@ -41,7 +41,7 @@ public class SparkSSLSocketFactory extends SSLSocketFactory {
 
         SSLContext sslcontent;
         try {
-            sslcontent = SparkSSLContext.setUpContext(options);
+            sslcontent = SparkSSLContextCreator.setUpContext(options);
             factory = sslcontent.getSocketFactory();
         } catch (KeyManagementException | UnrecoverableKeyException | NoSuchAlgorithmException | KeyStoreException
                 | NoSuchProviderException e) {
