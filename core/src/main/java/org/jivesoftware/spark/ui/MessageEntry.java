@@ -160,7 +160,7 @@ public class MessageEntry extends TimeStampedEntry
                 for ( final String line : block.lines)
                 {
                     int i = 0;
-                    while ( i < line.length() - 1 )
+                    do
                     {
                         // Skip through prepending whitespace.
                         if ( Character.isWhitespace( line.charAt( i ) ) )
@@ -215,6 +215,7 @@ public class MessageEntry extends TimeStampedEntry
                         doc.insertString( doc.getLength(), textFound, messageStyle );
                         i = end;
                     }
+                    while ( i < line.length() - 1 );
 
                     doc.insertString( doc.getLength(), "\n", messageStyle );
                 }
