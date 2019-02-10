@@ -1629,6 +1629,8 @@ public class LoginDialog {
 		localPref.setInvisibleLogin(Enterprise.containsFeature(Enterprise.INVISIBLE_LOGIN_FEATURE));
 		localPref.setAnonymousLogin(Enterprise.containsFeature(Enterprise.ANONYMOUS_LOGIN_FEATURE));
 		localPref.setPswdAutologin(Enterprise.containsFeature(Enterprise.SAVE_PASSWORD_FEATURE));
+        localPref.setUseHostnameAsResource(Enterprise.containsFeature(Enterprise.HOSTNAME_AS_RESOURCE_FEATURE));
+        localPref.setUseVersionAsResource(Enterprise.containsFeature(Enterprise.VERSION_AS_RESOURCE_FEATURE));
 	}
 
 	private void initAdvancedDefaults() {
