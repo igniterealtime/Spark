@@ -61,6 +61,8 @@ public class Enterprise {
     public static final String VIEW_NOTES_FEATURE = "view-notes";
     public static final String VIEW_TASKS_FEATURE = "view-tasks";
     public static final String START_A_CHAT_FEATURE = "start-a-chat";
+    public static final String HOSTNAME_AS_RESOURCE_FEATURE = "hostname-as-resource";
+    public static final String VERSION_AS_RESOURCE_FEATURE = "version-as-resource";
 
     private static DiscoverInfo featureInfo;
 
