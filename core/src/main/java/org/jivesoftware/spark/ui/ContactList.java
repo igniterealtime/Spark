@@ -1778,11 +1778,9 @@ moveToOffline(moveToOfflineContactItem);
 			} catch (SmackException | InterruptedException e) {
 				Log.error("Unable to contact shared group info.", e);
 			}
+		};
 
-SwingUtilities.invokeLater( () -> loadContactList() );
-
-};
-
+        SwingUtilities.invokeLater( () -> loadContactList() );
         TaskEngine.getInstance().submit(sharedGroupLoader);
     }
 
