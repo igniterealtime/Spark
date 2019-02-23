@@ -85,11 +85,6 @@
     <dependencies>
         <dependency>
             <groupId>org.igniterealtime.smack</groupId>
-            <artifactId>smack-core</artifactId>
-            <version>${dependency.smack.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.igniterealtime.smack</groupId>
             <artifactId>smack-tcp</artifactId>
             <version>${dependency.smack.version}</version>
         </dependency>
