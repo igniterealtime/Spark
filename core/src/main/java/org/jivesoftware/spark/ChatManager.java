@@ -566,7 +566,7 @@ public class ChatManager {
         if (conferenceService == null) {
             try {
                 final MultiUserChatManager multiUserChatManager = MultiUserChatManager.getInstanceFor( SparkManager.getConnection() );
-                List<DomainBareJid> col = multiUserChatManager.getXMPPServiceDomains();
+                List<DomainBareJid> col = multiUserChatManager.getMucServiceDomains();
                 if (col.size() > 0) {
                     conferenceService = col.iterator().next().toString();
                 }
