@@ -520,7 +520,7 @@ public class ChatRoomImpl extends ChatRoom {
                     if ( carbon != null )
                     {
                         // Is the a carbon copy?
-                        final Message forwardedStanza = (Message) carbon.getForwarded().getForwardedPacket();
+                        final Message forwardedStanza = (Message) carbon.getForwarded().getForwardedStanza();
                         if ( forwardedStanza.getBody() != null )
                         {
                             if ( carbon.getDirection() == CarbonExtension.Direction.received )
