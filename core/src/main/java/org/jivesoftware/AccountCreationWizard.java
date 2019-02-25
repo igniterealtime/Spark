@@ -235,7 +235,7 @@ public class AccountCreationWizard extends JPanel {
                 catch (XMPPException | SmackException | InterruptedException | XmppStringprepException e) {
 
                     if ( e instanceof XMPPException.XMPPErrorException ) {
-                        condition = ( (XMPPException.XMPPErrorException) e ).getXMPPError().getCondition();
+                        condition = ( (XMPPException.XMPPErrorException) e ).getStanzaError().getCondition();
                     }
 
                     if ( condition == null ) {

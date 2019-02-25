@@ -149,7 +149,7 @@ public class JoinRoomSwingWorker extends SwingWorker
             StanzaError error = null;
             if ( ex instanceof XMPPException.XMPPErrorException )
             {
-                error = ( (XMPPException.XMPPErrorException) ex ).getXMPPError();
+                error = ( (XMPPException.XMPPErrorException) ex ).getStanzaError();
 
                 if ( StanzaError.Condition.conflict.equals( error.getCondition() ) )
                 {
