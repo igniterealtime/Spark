@@ -1120,7 +1120,7 @@ public class LoginDialog {
                 SmackConfiguration.DEBUG = true;
             }
 
-            SmackConfiguration.setDefaultPacketReplyTimeout( localPref.getTimeOut() * 1000 );
+            SmackConfiguration.setDefaultReplyTimeout( localPref.getTimeOut() * 1000 );
 
             try
             {

@@ -1769,7 +1769,7 @@ moveToOffline(moveToOfflineContactItem);
 			try {
 				sharedGroups = SharedGroupManager.getSharedGroups(SparkManager.getConnection());
 			} catch (XMPPErrorException e) {
-				StanzaError stanzaError = e.getXMPPError();
+				StanzaError stanzaError = e.getStanzaError();
 				if (stanzaError.getCondition() == Condition.service_unavailable) {
 					// Server does not support shared groups.
 					return;
