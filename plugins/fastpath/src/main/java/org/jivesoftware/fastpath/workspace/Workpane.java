@@ -40,7 +40,6 @@ import org.jivesoftware.smackx.workgroup.user.Workgroup;
 import org.jivesoftware.smackx.xdata.Form;
 import org.jivesoftware.spark.DataManager;
 import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.UserManager;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.search.SearchManager;
 import org.jivesoftware.spark.ui.*;
@@ -57,7 +56,6 @@ import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.Jid;
 import org.jxmpp.jid.impl.JidCreate;
 import org.jxmpp.jid.parts.Localpart;
-import org.jxmpp.util.XmppStringUtils;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;

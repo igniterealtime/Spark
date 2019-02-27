@@ -52,7 +52,7 @@ public final class TitlePanel extends JPanel {
      * @param title           the title to use with the panel.
      * @param description     the panel description.
      * @param icon            the icon to use with the panel.
-     * @param showDescription true if the descrption should be shown.
+     * @param showDescription true if the description should be shown.
      */
     public TitlePanel(String title, String description, Icon icon, boolean showDescription) {
 

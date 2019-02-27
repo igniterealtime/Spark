@@ -36,7 +36,6 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.impl.JidCreate;
 import org.jxmpp.jid.parts.Resourcepart;
-import org.jxmpp.stringprep.XmppStringprepException;
 
 /**
  * Represents the LocalPreference Model for this system.

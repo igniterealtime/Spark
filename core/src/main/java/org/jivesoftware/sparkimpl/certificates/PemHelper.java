@@ -28,9 +28,9 @@ public class PemHelper {
 
     public static enum typeOfDelimeter {
         KEY_BEGIN, KEY_END, CERT_BEGIN, CERT_END
-    };
+    }
 
-    
+
     //sometimes key some delimeters might be a bit customized like "RSA PRIVATE KEY" vs "PRIVATE KEY"
     private static String[] keyBeginDelimeters = {  "-----BEGIN RSA PRIVATE KEY-----",                           
                                                     "-----BEGIN PRIVATE KEY-----", 

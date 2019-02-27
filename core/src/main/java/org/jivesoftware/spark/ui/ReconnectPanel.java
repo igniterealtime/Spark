@@ -19,21 +19,16 @@ import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.util.TimerTask;
 
 import javax.swing.*;
 import javax.swing.text.html.HTMLEditorKit;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.smack.AbstractXMPPConnection;
 import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.util.ModelUtil;
-import org.jivesoftware.spark.util.SwingTimerTask;
-import org.jivesoftware.spark.util.TaskEngine;
 
 /**
  * RetryPanel is the UI/Function class to handle reconnection logic. This allows for a simple card layout to replace the current

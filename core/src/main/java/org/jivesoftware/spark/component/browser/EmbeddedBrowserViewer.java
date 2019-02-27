@@ -16,11 +16,8 @@
 package org.jivesoftware.spark.component.browser;
 
 import java.awt.BorderLayout;
-import java.net.MalformedURLException;
 
 import javax.swing.JFrame;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
 
 import com.teamdev.jxbrowser.chromium.*;
 import com.teamdev.jxbrowser.chromium.swing.BrowserView;

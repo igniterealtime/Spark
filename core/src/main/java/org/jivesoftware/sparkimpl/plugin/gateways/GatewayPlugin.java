@@ -41,7 +41,6 @@ import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jxmpp.jid.BareJid;
 import org.jxmpp.jid.DomainBareJid;
 import org.jxmpp.jid.parts.Domainpart;
-import org.jxmpp.util.XmppStringUtils;
 
 
 import javax.swing.*;
@@ -64,7 +63,7 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
     public static final String GATEWAY = "gateway";
     private boolean useTab;
 
-    private Map<Transport, GatewayItem> uiMap = new HashMap<>();;
+    private Map<Transport, GatewayItem> uiMap = new HashMap<>();
     private JPanel transferTab = new JPanel();
 
     public void initialize() {

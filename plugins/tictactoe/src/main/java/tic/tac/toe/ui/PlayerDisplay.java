@@ -21,10 +21,8 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import org.jivesoftware.smack.util.StringUtils;
 import org.jxmpp.jid.EntityFullJid;
 import org.jxmpp.jid.parts.Localpart;
-import org.jxmpp.util.XmppStringUtils;
 import tic.tac.toe.Mark;
 import tic.tac.toe.TTTRes;
 
