@@ -25,7 +25,6 @@ import java.awt.Insets;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.Map;
 
 import javax.swing.JLabel;

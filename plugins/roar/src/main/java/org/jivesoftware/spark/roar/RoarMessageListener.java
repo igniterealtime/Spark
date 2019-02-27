@@ -64,7 +64,7 @@ public class RoarMessageListener implements GlobalMessageListener {
             }
 
         } catch (ChatRoomNotFoundException e) {
-            // i dont care
+            // i don't care
         }
 
     }

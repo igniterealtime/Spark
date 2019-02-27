@@ -23,7 +23,6 @@ import org.jivesoftware.spark.ui.GlobalMessageListener;
 import org.jivesoftware.spark.util.log.Log;
 import org.jxmpp.jid.Jid;
 import org.jxmpp.jid.parts.Localpart;
-import org.jxmpp.util.XmppStringUtils;
 
 import javax.swing.*;
 

@@ -147,7 +147,7 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
 
 
         } catch (Exception e) {
-            // i dont care
+            // i don't care
         }
 
     }

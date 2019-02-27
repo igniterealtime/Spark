@@ -18,7 +18,6 @@ package org.jivesoftware.spark.plugin.fileupload;
 
 import java.io.*;
 import java.net.*;
-import java.util.*;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -32,12 +31,8 @@ import org.jivesoftware.spark.util.*;
 import org.jivesoftware.spark.util.log.*;
 import org.jivesoftware.smack.*;
 import org.jivesoftware.smack.packet.*;
-import org.jivesoftware.smack.filter.*;
 import org.jxmpp.jid.EntityBareJid;
-import org.jxmpp.jid.parts.Localpart;
-import org.jxmpp.util.XmppStringUtils;
 
-import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.FileRequestEntity;
 import org.apache.commons.httpclient.methods.PutMethod;

@@ -4,12 +4,10 @@ import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
-import java.security.Provider;
 import java.security.SecureRandom;
 import java.security.UnrecoverableKeyException;
 
 import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLContextSpi;
 
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 

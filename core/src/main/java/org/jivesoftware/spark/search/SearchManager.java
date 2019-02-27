@@ -18,7 +18,6 @@ package org.jivesoftware.spark.search;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.sparkimpl.search.users.UserSearchService;
 import org.jxmpp.jid.DomainBareJid;
-import org.jxmpp.jid.EntityBareJid;
 
 import java.util.ArrayList;
 import java.util.Collection;

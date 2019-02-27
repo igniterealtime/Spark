@@ -18,13 +18,6 @@ package org.jivesoftware.sparkimpl.settings;
 
 
 import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.spark.util.log.Log;
-import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
-
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
 
 public class JiveInfo {
 

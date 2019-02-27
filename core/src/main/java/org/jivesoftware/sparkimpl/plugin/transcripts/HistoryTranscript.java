@@ -14,7 +14,6 @@ import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.Semaphore;
@@ -24,7 +23,6 @@ import java.util.regex.Pattern;
 
 import javax.swing.*;
 import javax.swing.text.*;
-import javax.swing.text.ParagraphView;
 import javax.swing.text.html.*;
 
 
