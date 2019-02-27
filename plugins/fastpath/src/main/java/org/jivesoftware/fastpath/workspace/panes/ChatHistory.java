@@ -42,7 +42,6 @@ import org.jivesoftware.fastpath.FpRes;
 import org.jivesoftware.fastpath.resources.FastpathRes;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.workgroup.agent.AgentSession;
 import org.jivesoftware.smackx.workgroup.ext.history.AgentChatHistory;
 import org.jivesoftware.smackx.workgroup.ext.history.AgentChatSession;
@@ -52,7 +51,6 @@ import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
 import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.parts.Localpart;
-import org.jxmpp.util.XmppStringUtils;
 
 public class ChatHistory extends JPanel {
 

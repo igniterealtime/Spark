@@ -22,7 +22,7 @@ public class HistoryEntry {
 
 	public HistoryEntry(HistoryEntry orig) {
 		if (orig == null)
-			throw new IllegalArgumentException("Orig cannob be null");
+			throw new IllegalArgumentException("Orig cannot be null");
 		setDate(orig.getDate());
 		setName(orig.getName());
 		for (HistoryMessage msg : orig.getMessages()) {
@@ -96,9 +96,9 @@ public class HistoryEntry {
 
 	public void setDate(Date date) {
 		this.date = date;
-	};
+	}
 
-	/**
+    /**
 	 * {@inheritDoc}
 	 */
 	@Override

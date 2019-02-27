@@ -73,7 +73,6 @@ import org.jivesoftware.sparkimpl.plugin.filetransfer.transfer.Downloads;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jxmpp.jid.BareJid;
 import org.jxmpp.jid.Jid;
-import org.jxmpp.util.XmppStringUtils;
 
 public class ReceiveFileTransfer extends JPanel {
 

@@ -16,7 +16,6 @@
 package org.jivesoftware.sparkimpl.profile;
 
 import org.jivesoftware.resource.Res;
-import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.SwingWorker;

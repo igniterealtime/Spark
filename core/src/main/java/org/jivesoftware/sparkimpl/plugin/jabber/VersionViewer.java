@@ -111,7 +111,7 @@ public class VersionViewer {
             time.setType(IQ.Type.get);
             time.setTo(jid);
 
-            connection.sendStanzaWithResponseCallback( time, new IQReplyFilter( time, connection ), stanza -> {;
+            connection.sendStanzaWithResponseCallback( time, new IQReplyFilter( time, connection ), stanza -> {
                 timeField.setText( new SimpleDateFormat( ).format( ((Time)stanza).getTime()));
                 ((CardLayout)(cards.getLayout())).last( cards );
             } );

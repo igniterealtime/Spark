@@ -83,7 +83,7 @@ public class ConfirmDialog extends BackgroundPanel {
      * @param text    the main text to display.
      * @param yesText the text to use on the OK or Yes button.
      * @param noText  the text to use on the No button.
-     * @param icon    the icon to use for graphical represenation.
+     * @param icon    the icon to use for graphical representation.
      */
     public void showConfirmDialog(JFrame parent, String title, String text, String yesText, String noText, Icon icon) {
         message.setText("<html><body>" + text + "</body></html>");

@@ -55,8 +55,6 @@ import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jxmpp.jid.BareJid;
 import org.jxmpp.jid.Jid;
 import org.jxmpp.jid.impl.JidCreate;
-import org.jxmpp.jid.util.JidUtil;
-import org.jxmpp.util.XmppStringUtils;
 
 import javax.swing.*;
 import java.awt.*;
@@ -2614,8 +2612,8 @@ moveToOffline(moveToOfflineContactItem);
     public void showAddContact(String contact)
     {
 	addContactMenu.doClick();
-    };
-    
+    }
+
     public ContactItem getActiveItem() {
 	return activeItem;
     }

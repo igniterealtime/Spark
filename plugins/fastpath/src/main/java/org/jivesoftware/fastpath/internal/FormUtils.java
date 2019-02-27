@@ -17,7 +17,6 @@ package org.jivesoftware.fastpath.internal;
 
 import org.jivesoftware.smack.packet.Message;
 import org.jxmpp.jid.parts.Resourcepart;
-import org.jxmpp.util.XmppStringUtils;
 
 import java.util.Date;
 

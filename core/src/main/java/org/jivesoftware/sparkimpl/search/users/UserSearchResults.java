@@ -63,7 +63,7 @@ public class UserSearchResults extends JPanel {
     private UsersInfoTable resultsTable;
 
     /**
-     * Intiliaze the Search Service Results UI.
+     * Initialize the Search Service Results UI.
      */
     public UserSearchResults() {
         setLayout(new BorderLayout());

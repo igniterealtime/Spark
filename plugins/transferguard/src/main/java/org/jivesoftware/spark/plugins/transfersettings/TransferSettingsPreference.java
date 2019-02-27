@@ -51,7 +51,7 @@ public class TransferSettingsPreference implements Preference {
      * @return an error message to display if calls to {@link #isDataValid} return false.
      */
     public String getErrorMessage() {
-        return "What happend here?";
+        return "What happened here?";
     }
 
     /**
@@ -120,7 +120,7 @@ public class TransferSettingsPreference implements Preference {
     }
 
     /**
-     * Called when data should be loaded from the persistent stor.
+     * Called when data should be loaded from the persistent store.
      */
     public void load() {
         settings.load();
