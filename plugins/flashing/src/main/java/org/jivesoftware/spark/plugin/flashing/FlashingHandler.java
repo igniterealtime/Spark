@@ -31,7 +31,7 @@ public class FlashingHandler implements NativeHandler {
 	public void flashWindow(Window window) {
 		FlashingPreference preference = (FlashingPreference) SparkManager.getPreferenceManager().getPreference(FlashingPreference.NAMESPACE);
 		if (preference.getPreferences().isFlashingEnabled()) {
-			if (preference.getPreferences().getFlashingType().equals(FlashingPreferences.TYPE_CONTINOUS)) {
+			if (preference.getPreferences().getFlashingType().equals(FlashingPreferences.TYPE_CONTINUOUS)) {
 				flasher.startFlashing(window);
 			}
 			else if (preference.getPreferences().getFlashingType().equals(FlashingPreferences.TYPE_TEMPORARY)) {
