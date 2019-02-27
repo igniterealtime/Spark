@@ -35,7 +35,6 @@ import org.jivesoftware.spark.ui.conferences.RoomInvitationListener;
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 import org.jivesoftware.spark.ui.rooms.GroupChatRoom;
 import org.jivesoftware.spark.uri.UriManager;
-import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.UIComponentRegistry;
 import org.jivesoftware.spark.util.log.Log;
@@ -50,7 +49,6 @@ import org.jxmpp.jid.impl.JidCreate;
 import org.jxmpp.jid.parts.Localpart;
 import org.jxmpp.jid.parts.Resourcepart;
 import org.jxmpp.stringprep.XmppStringprepException;
-import org.jxmpp.util.XmppStringUtils;
 
 import javax.swing.*;
 import java.awt.*;

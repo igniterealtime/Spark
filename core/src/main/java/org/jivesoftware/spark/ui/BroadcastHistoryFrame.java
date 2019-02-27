@@ -11,7 +11,6 @@ import java.io.InputStreamReader;
 import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.logging.Level;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import org.jivesoftware.Spark;

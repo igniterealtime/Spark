@@ -27,11 +27,8 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jxmpp.jid.EntityBareJid;
 import org.jivesoftware.smack.provider.ProviderManager;
 
-import javax.swing.*;
-import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 
 
 public class SparkFileUploadPlugin implements Plugin, ChatRoomListener, GlobalMessageListener
@@ -60,7 +57,7 @@ public class SparkFileUploadPlugin implements Plugin, ChatRoomListener, GlobalMe
             }
 
         } catch (Exception e) {
-            // i dont care
+            // i don't care
         }
 
     }

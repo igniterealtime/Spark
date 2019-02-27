@@ -6,7 +6,6 @@ import org.jivesoftware.Spark;
 
 import com.sun.jna.Library;
 import com.sun.jna.Native;
-import org.jivesoftware.spark.PluginManager;
 
 /**
  * Provides Notification-Center integration for OSX 10.8+<br>

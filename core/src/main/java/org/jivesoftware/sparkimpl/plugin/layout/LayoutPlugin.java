@@ -19,7 +19,6 @@ import org.jivesoftware.MainWindow;
 import org.jivesoftware.MainWindowListener;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.Plugin;
-import org.jivesoftware.spark.ui.ChatFrame;
 
 public class LayoutPlugin implements Plugin
 {

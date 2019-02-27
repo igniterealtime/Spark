@@ -81,7 +81,6 @@ import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.impl.JidCreate;
 import org.jxmpp.jid.parts.Resourcepart;
 import org.jxmpp.stringprep.XmppStringprepException;
-import org.jxmpp.util.XmppStringUtils;
 
 /**
  * A UI that handles all Group Rooms contained in an XMPP Messenger server. This

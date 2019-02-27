@@ -96,7 +96,7 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatStateListener {
 	    SystemTray tray = SystemTray.getSystemTray();
 	    SparkManager.getNativeManager().addNativeHandler(this);
 	    ChatManager.getInstance().addChatMessageHandler(chatMessageHandler);
-	    //XEP-0085 suport (replaces the obsolete XEP-0022)
+	    //XEP-0085 support (replaces the obsolete XEP-0022)
 	    ChatStateManager.getInstance(SparkManager.getConnection()).addChatStateListener(this);
 
 	    if (Spark.isLinux()) {
