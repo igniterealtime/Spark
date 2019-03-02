@@ -718,7 +718,6 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         final String APPLICATION_LINK = Default.getString(Default.APPLICATION_LINK);
         final String APPLICATION_LINK_TXT = Default.getString(Default.APPLICATION_LINK_TXT);
         final boolean DISPLAY_DEV_INFO = Default.getBoolean(Default.DISPLAY_DEV_INFO);
-        final String SMACK_VERSION = Default.getString(Default.SMACK_VERSION);
         final String JAVA_VERSION = Default.getString(Default.JAVA_VERSION);
 
         // Construct About Box text
@@ -768,14 +767,11 @@ public final class MainWindow extends ChatFrame implements ActionListener {
                 + APPLICATION_INFO4);
         }
 
-        if (DISPLAY_DEV_INFO) {
-            // Add Smack Version # if is empty
-            if ("".equals(SMACK_VERSION)) {
-                aboutBoxText.append(
-                    "<br/>"
-                    + "Smack Version: " + SmackConfiguration.getVersion());
-            }
+        aboutBoxText.append(
+                "<br/>"
+                + "Smack Version: " + SmackConfiguration.getVersion());
 
+        if (DISPLAY_DEV_INFO) {
             // Add Java JRE Version if is empty
             if ("".equals(JAVA_VERSION)) {
                 aboutBoxText.append(

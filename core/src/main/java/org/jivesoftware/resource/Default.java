@@ -43,7 +43,6 @@ public class Default {
     public static final String APPLICATION_LINK = "APPLICATION_LINK";
     public static final String APPLICATION_LINK_TXT = "APPLICATION_LINK_TXT";
     public static final String DISPLAY_DEV_INFO = "DISPLAY_DEV_INFO";
-    public static final String SMACK_VERSION = "SMACK_VERSION";
     public static final String JAVA_VERSION = "JAVA_VERSION";
     public static final String SHORT_NAME = "SHORT_NAME";
     public static final String LOGIN_DIALOG_BACKGROUND_IMAGE = "LOGIN_DIALOG_BACKGROUND_IMAGE";
