@@ -202,29 +202,6 @@ public final class MainWindow extends ChatFrame implements ActionListener {
 
     /**
      * Notifies all {@link MainWindowListener}s that the <code>MainWindow</code>
-     * has been activated.
-     */
-    private void fireWindowActivated()
-    {
-        for ( MainWindowListener listener : listeners )
-        {
-            try
-            {
-                listener.mainWindowActivated();
-            }
-            catch ( Exception e )
-            {
-                Log.error( "A MainWindowListener (" + listener + ") threw an exception while processing a 'activated' event.", e );
-            }
-        }
-
-        if (Spark.isMac()) {
-            setJMenuBar(mainWindowBar);
-        }
-    }
-
-    /**
-     * Notifies all {@link MainWindowListener}s that the <code>MainWindow</code>
      * is shutting down.
      */
     private void fireWindowShutdown()
