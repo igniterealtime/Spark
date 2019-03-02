@@ -295,7 +295,7 @@ public final class AgentConversations extends JPanel implements ChangeListener {
                             // Get Conference
                             try {
                                 final MultiUserChatManager multiUserChatManager = MultiUserChatManager.getInstanceFor( SparkManager.getConnection() );
-                                List<DomainBareJid> col = multiUserChatManager.getXMPPServiceDomains();
+                                List<DomainBareJid> col = multiUserChatManager.getMucServiceDomains();
                                 if (col.size() == 0) {
                                     return;
                                 }
@@ -358,7 +358,7 @@ public final class AgentConversations extends JPanel implements ChangeListener {
                                 FastpathPlugin.getAgentSession().makeRoomOwner(SparkManager.getConnection(), sessionID);
 
                                 final MultiUserChatManager multiUserChatManager = MultiUserChatManager.getInstanceFor( SparkManager.getConnection() );
-                                List<DomainBareJid> col = multiUserChatManager.getXMPPServiceDomains();
+                                List<DomainBareJid> col = multiUserChatManager.getMucServiceDomains();
                                 if (col.size() == 0) {
                                     return;
                                 }

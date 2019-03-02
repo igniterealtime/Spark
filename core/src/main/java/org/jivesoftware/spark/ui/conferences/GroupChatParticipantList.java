@@ -694,7 +694,7 @@ groupChatRoom.notifySettingsAccessRight();
 				    chat.changeNickname(Resourcepart.from(newNickname));
 				    break;
 				} catch (XMPPException | SmackException | XmppStringprepException | InterruptedException e1) {
-					if ( e1 instanceof XMPPException.XMPPErrorException && (( XMPPException.XMPPErrorException ) e1).getXMPPError().getCondition() == StanzaError.Condition.not_acceptable )
+					if ( e1 instanceof XMPPException.XMPPErrorException && (( XMPPException.XMPPErrorException ) e1).getStanzaError().getCondition() == StanzaError.Condition.not_acceptable )
 					{
 						// handle deny changing nick.
 				    UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
