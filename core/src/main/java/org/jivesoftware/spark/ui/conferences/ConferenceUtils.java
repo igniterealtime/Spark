@@ -209,7 +209,7 @@ public class ConferenceUtils {
                 StanzaError error = null;
                 if ( ex instanceof XMPPException.XMPPErrorException )
                 {
-                    error = ( (XMPPException.XMPPErrorException) ex ).getXMPPError();
+                    error = ( (XMPPException.XMPPErrorException) ex ).getStanzaError();
                 }
 
                 final String errorText = ConferenceUtils.getReason( error );

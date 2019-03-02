@@ -245,7 +245,7 @@ public final class CurrentActivity extends JPanel {
                             // Get Conference
                             try {
                                 final MultiUserChatManager multiUserChatManager = MultiUserChatManager.getInstanceFor( SparkManager.getConnection() );
-                                List<DomainBareJid> col = multiUserChatManager.getXMPPServiceDomains();
+                                List<DomainBareJid> col = multiUserChatManager.getMucServiceDomains();
                                 if (col.size() == 0) {
                                     return;
                                 }
@@ -307,7 +307,7 @@ public final class CurrentActivity extends JPanel {
                             try {
                                 FastpathPlugin.getAgentSession().makeRoomOwner(SparkManager.getConnection(), sessionID);
                                 MultiUserChatManager manager = MultiUserChatManager.getInstanceFor( SparkManager.getConnection() );
-                                List<DomainBareJid> col = manager.getXMPPServiceDomains();
+                                List<DomainBareJid> col = manager.getMucServiceDomains();
                                 if (col.size() == 0) {
                                     return;
                                 }
