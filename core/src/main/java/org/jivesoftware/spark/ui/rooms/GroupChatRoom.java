@@ -1095,6 +1095,7 @@ public class GroupChatRoom extends ChatRoom
     @Override
     public void authenticated( XMPPConnection xmppConnection, boolean b )
     {
+        reconnectionSuccessful();
     }
 
     @Override
@@ -1121,11 +1122,7 @@ public class GroupChatRoom extends ChatRoom
         this.password = password;
     }
 
-    /**
-     * Part of ConnectionListener. Gets triggered when successfully reconnected.
-     */
-    @Override
-    public void reconnectionSuccessful()
+    private void reconnectionSuccessful()
     {
         final EntityBareJid roomJID = chat.getRoom();
         final String roomName = tabTitle;

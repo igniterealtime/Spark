@@ -163,17 +163,6 @@ public class SparkTransferManager {
 
             public void connectionClosedOnError(Exception e) {
             }
-
-            public void reconnectingIn(int seconds) {
-            }
-
-            public void reconnectionSuccessful() {
-                // Re-create transfer manager.
-                transferManager = FileTransferManager.getInstanceFor( SparkManager.getConnection() );
-            }
-
-            public void reconnectionFailed(Exception e) {
-            }
         });
 
         final ContactList contactList = SparkManager.getWorkspace().getContactList();

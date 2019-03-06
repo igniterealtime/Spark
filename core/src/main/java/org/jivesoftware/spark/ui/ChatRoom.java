@@ -1307,16 +1307,6 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
     public void connectionClosedOnError(Exception e) {
     }
 
-    public void reconnectingIn(int seconds) {
-    }
-
-    public void reconnectionSuccessful() {
-    }
-
-    public void reconnectionFailed(Exception e) {
-    }
-
-
     public void updateStatus(boolean active)
     {
 	_alwaysOnTopItem.setSelected(active);

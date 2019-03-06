@@ -2338,7 +2338,7 @@ moveToOffline(moveToOfflineContactItem);
     @Override
     public void authenticated( XMPPConnection xmppConnection, boolean b )
     {
-
+        clientReconnected();
     }
 
     public void connectionClosed() {
@@ -2521,10 +2521,6 @@ moveToOffline(moveToOfflineContactItem);
 	    break;
 	}
 
-    }
-
-    public void reconnectionSuccessful() {
-        clientReconnected();
     }
 
     public void reconnectionFailed(Exception exception) {

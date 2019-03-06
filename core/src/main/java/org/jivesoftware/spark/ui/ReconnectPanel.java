@@ -19,21 +19,18 @@ import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.util.TimerTask;
 
 import javax.swing.*;
 import javax.swing.text.html.HTMLEditorKit;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.smack.AbstractXMPPConnection;
 import org.jivesoftware.smack.ConnectionListener;
+import org.jivesoftware.smack.ReconnectionListener;
+import org.jivesoftware.smack.ReconnectionManager;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.util.ModelUtil;
-import org.jivesoftware.spark.util.SwingTimerTask;
-import org.jivesoftware.spark.util.TaskEngine;
 
 /**
  * RetryPanel is the UI/Function class to handle reconnection logic. This allows for a simple card layout to replace the current
@@ -41,7 +38,7 @@ import org.jivesoftware.spark.util.TaskEngine;
  *
  * @author Derek DeMoro
  */
-public class ReconnectPanel extends JPanel implements ConnectionListener {
+public class ReconnectPanel extends JPanel implements ConnectionListener, ReconnectionListener {
 	private static final long serialVersionUID = -7099075581561760774L;
 	private JEditorPane pane;
     private JLabel _icon;
@@ -68,6 +65,8 @@ public class ReconnectPanel extends JPanel implements ConnectionListener {
         _icon.setText(Res.getString("button.reconnect2"));
 
         SparkManager.getConnection().addConnectionListener(this);
+
+        ReconnectionManager.getInstanceFor(SparkManager.getConnection()).addReconnectionListener(this);
     }
 
 
@@ -143,14 +142,11 @@ public class ReconnectPanel extends JPanel implements ConnectionListener {
         _icon.setEnabled(true);
     }
 
+    @Override
     public void reconnectingIn(int seconds) {
     }
 
-    public void reconnectionSuccessful() {
-        _icon.setVisible(false);
-        _icon.setEnabled(true);
-    }
-
+    @Override
     public void reconnectionFailed(Exception e) {
         _icon.setVisible(true);
         _icon.setEnabled(true);

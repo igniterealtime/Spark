@@ -103,7 +103,7 @@ public final class SessionManager implements ConnectionListener {
      *
      * @return the XMPPConnection used for this session.
      */
-    public XMPPConnection getConnection() {
+    public AbstractXMPPConnection getConnection() {
         return connection;
     }
 
@@ -162,7 +162,7 @@ public final class SessionManager implements ConnectionListener {
     @Override
     public void authenticated( XMPPConnection xmppConnection, boolean b )
     {
-
+        reconnectionSuccessful();
     }
 
     /**
@@ -286,10 +286,7 @@ public final class SessionManager implements ConnectionListener {
         this.connection = con;
     }
 
-    public void reconnectingIn(int i) {
-    }
-
-    public void reconnectionSuccessful()
+    private void reconnectionSuccessful()
     {
         // Restore the presence state that we were in just before the disconnection happened.
         if ( preError != null )
@@ -300,9 +297,6 @@ public final class SessionManager implements ConnectionListener {
                 preError = null;
             });
         }
-    }
-
-    public void reconnectionFailed(Exception exception) {
     }
 
 }
