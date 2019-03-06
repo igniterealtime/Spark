@@ -19,6 +19,7 @@ import org.jivesoftware.MainWindow;
 import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.smack.AbstractXMPPConnection;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smackx.xevent.MessageEventManager;
 import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
@@ -169,7 +170,7 @@ public final class SparkManager {
      *
      * @return the {@link XMPPConnection} associated with this session.
      */
-    public static XMPPConnection getConnection() {
+    public static AbstractXMPPConnection getConnection() {
         return sessionManager.getConnection();
     }
 
