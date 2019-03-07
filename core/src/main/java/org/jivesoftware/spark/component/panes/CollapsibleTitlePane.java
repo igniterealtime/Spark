@@ -92,11 +92,13 @@ public class CollapsibleTitlePane extends BaseCollapsibleTitlePane {
         titleLabel.setFont(titleFont);
 
         addMouseListener(new MouseAdapter() {
-            public void mouseEntered(MouseEvent e) {
+            @Override
+			public void mouseEntered(MouseEvent e) {
                 setCursor(GraphicUtils.HAND_CURSOR);
             }
 
-            public void mouseExited(MouseEvent e) {
+            @Override
+			public void mouseExited(MouseEvent e) {
                 setCursor(GraphicUtils.DEFAULT_CURSOR);
             }
         });
@@ -122,19 +124,23 @@ public class CollapsibleTitlePane extends BaseCollapsibleTitlePane {
         endColor = color;
     }
 
-    public void setIcon(Icon icon) {
+    @Override
+	public void setIcon(Icon icon) {
         titleLabel.setIcon(icon);
     }
 
-    public void setTitle(String title) {
+    @Override
+	public void setTitle(String title) {
         titleLabel.setText(title);
     }
 
-    public boolean isCollapsed() {
+    @Override
+	public boolean isCollapsed() {
         return collapsed;
     }
 
-    public void setCollapsed(boolean collapsed) {
+    @Override
+	public void setCollapsed(boolean collapsed) {
         this.collapsed = collapsed;
 
         if (!isSubPane()) {
@@ -168,7 +174,8 @@ public class CollapsibleTitlePane extends BaseCollapsibleTitlePane {
     }
 
 
-    public void paintComponent(Graphics g) {
+    @Override
+	public void paintComponent(Graphics g) {
         if (backgroundImage != null) {
             double scaleX = getWidth() / (double)backgroundImage.getWidth(null);
             double scaleY = getHeight() / (double)backgroundImage.getHeight(null);

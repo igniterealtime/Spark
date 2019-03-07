@@ -99,7 +99,8 @@ public class SearchForm extends JPanel {
         getActionMap().put("enter", new AbstractAction("enter") {
 	    private static final long serialVersionUID = -7308854327447291219L;
 
-	    public void actionPerformed(ActionEvent evt) {
+	    @Override
+		public void actionPerformed(ActionEvent evt) {
                 performSearch();
             }
         });
@@ -127,7 +128,8 @@ public class SearchForm extends JPanel {
         SwingWorker worker = new SwingWorker() {
             ReportedData data;
 
-            public Object construct() {
+            @Override
+			public Object construct() {
                 try {
                     Form answerForm = questionForm.getFilledForm();
                     data = searchManager.getSearchResults(answerForm, serviceName);
@@ -139,7 +141,8 @@ public class SearchForm extends JPanel {
                 return data;
             }
 
-            public void finished() {
+            @Override
+			public void finished() {
                 if (data != null) {
                     searchResults.showUsersFound(data);
                     searchResults.invalidate();

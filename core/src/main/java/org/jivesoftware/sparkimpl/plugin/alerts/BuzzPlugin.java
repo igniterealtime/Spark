@@ -47,7 +47,8 @@ public class BuzzPlugin implements Plugin {
     private static final String ELEMENTNAME_OLD = "buzz";
     private static final String NAMESPACE_OLD = "http://www.jivesoftware.com/spark";
 
-    public void initialize() {
+    @Override
+	public void initialize() {
 	ProviderManager.addExtensionProvider(ELEMENTNAME,
 		NAMESPACE, new BuzzPacket.Provider());
 
@@ -69,9 +70,11 @@ public class BuzzPlugin implements Plugin {
 
 	SparkManager.getChatManager().addChatRoomListener(
 		new ChatRoomListener() {
-		    public void chatRoomOpened(final ChatRoom room) {
+		    @Override
+			public void chatRoomOpened(final ChatRoom room) {
 			TimerTask task = new SwingTimerTask() {
-			    public void doRun() {
+			    @Override
+				public void doRun() {
 				addBuzzFeatureToChatRoom(room);
 			    }
 			};
@@ -79,19 +82,24 @@ public class BuzzPlugin implements Plugin {
 			TaskEngine.getInstance().schedule(task, 100);
 		    }
 
-		    public void chatRoomLeft(ChatRoom room) {
+		    @Override
+			public void chatRoomLeft(ChatRoom room) {
 		    }
 
-		    public void chatRoomClosed(ChatRoom room) {
+		    @Override
+			public void chatRoomClosed(ChatRoom room) {
 		    }
 
-		    public void chatRoomActivated(ChatRoom room) {
+		    @Override
+			public void chatRoomActivated(ChatRoom room) {
 		    }
 
-		    public void userHasJoined(ChatRoom room, String userid) {
+		    @Override
+			public void userHasJoined(ChatRoom room, String userid) {
 		    }
 
-		    public void userHasLeft(ChatRoom room, String userid) {
+		    @Override
+			public void userHasLeft(ChatRoom room, String userid) {
 		    }
 		});
     }
@@ -145,13 +153,16 @@ public class BuzzPlugin implements Plugin {
 	room.scrollToBottom();
     }
 
-    public void shutdown() {
+    @Override
+	public void shutdown() {
     }
 
-    public boolean canShutDown() {
+    @Override
+	public boolean canShutDown() {
 	return true;
     }
 
-    public void uninstall() {
+    @Override
+	public void uninstall() {
     }
 }

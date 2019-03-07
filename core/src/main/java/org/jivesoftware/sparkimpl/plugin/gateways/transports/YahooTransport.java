@@ -31,19 +31,23 @@ public class YahooTransport implements Transport {
         this.serviceName = serviceName;
     }
 
-    public String getTitle() {
+    @Override
+	public String getTitle() {
         return Res.getString("title.yahoo.registration");
     }
 
-    public String getInstructions() {
+    @Override
+	public String getInstructions() {
         return Res.getString("message.enter.yahoo");
     }
 
-    public Icon getIcon() {
+    @Override
+	public Icon getIcon() {
         return SparkRes.getImageIcon(SparkRes.YAHOO_TRANSPORT_ACTIVE_IMAGE);
     }
 
-    public Icon getInactiveIcon() {
+    @Override
+	public Icon getInactiveIcon() {
         return SparkRes.getImageIcon(SparkRes.YAHOO_TRANSPORT_INACTIVE_IMAGE);
     }
 
@@ -52,19 +56,23 @@ public class YahooTransport implements Transport {
         return serviceName;
     }
 
-    public String getName(){
+    @Override
+	public String getName(){
         return "Yahoo";
     }
 
-    public Boolean requiresUsername() {
+    @Override
+	public Boolean requiresUsername() {
         return true;
     }
 
-    public Boolean requiresPassword() {
+    @Override
+	public Boolean requiresPassword() {
         return true;
     }
 
-    public Boolean requiresNickname() {
+    @Override
+	public Boolean requiresNickname() {
         return false;
     }
     

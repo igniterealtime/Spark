@@ -58,7 +58,8 @@ public class ConversationHistoryPlugin implements Plugin {
 
     private Map<JLabel, EntityBareJid> jidMap = new HashMap<>();
 
-    public void initialize() {
+    @Override
+	public void initialize() {
         transcriptDir = new File(SparkManager.getUserDirectory(), "transcripts");
         conFile = new File(transcriptDir, "conversations.xml");
 
@@ -80,7 +81,8 @@ public class ConversationHistoryPlugin implements Plugin {
 
         // Add Listeners
 	contacts.addMouseListener(new MouseAdapter() {
-	    public void mouseClicked(MouseEvent e) {
+	    @Override
+		public void mouseClicked(MouseEvent e) {
 		if (SwingUtilities.isRightMouseButton(e)) {
 
 		    contacts.setSelectedIndex(contacts.locationToIndex(e
@@ -109,7 +111,8 @@ public class ConversationHistoryPlugin implements Plugin {
 	});
 
         contacts.addKeyListener(new KeyAdapter() {
-            public void keyReleased(KeyEvent e) {
+            @Override
+			public void keyReleased(KeyEvent e) {
                 if (e.getKeyChar() == KeyEvent.VK_ENTER) {
                     final JLabel label = (JLabel) contacts.getSelectedValue();
                     EntityBareJid user = jidMap.get(label);
@@ -126,11 +129,13 @@ public class ConversationHistoryPlugin implements Plugin {
         });
 
         contacts.addFocusListener(new FocusListener() {
-            public void focusGained(FocusEvent e) {
+            @Override
+			public void focusGained(FocusEvent e) {
 
             }
 
-            public void focusLost(FocusEvent e) {
+            @Override
+			public void focusLost(FocusEvent e) {
                 window.dispose();
             }
         });
@@ -145,6 +150,7 @@ public class ConversationHistoryPlugin implements Plugin {
         SparkManager.getMainWindow().getRootPane().getActionMap().put("historyPeople", new AbstractAction("historyPeople") {
 			private static final long serialVersionUID = 2465628887318732082L;
 
+			@Override
 			public void actionPerformed(ActionEvent e) {
                 // Show History Popup
                 showHistoryPopup();
@@ -153,11 +159,13 @@ public class ConversationHistoryPlugin implements Plugin {
 
         // Persist order of conversations.
         SparkManager.getChatManager().addMessageFilter(new MessageFilter() {
-            public void filterOutgoing(ChatRoom room, Message message) {
+            @Override
+			public void filterOutgoing(ChatRoom room, Message message) {
                 addUserToHistory(room);
             }
 
-            public void filterIncoming(ChatRoom room, Message message) {
+            @Override
+			public void filterIncoming(ChatRoom room, Message message) {
                 addUserToHistory(room);
             }
         });
@@ -259,7 +267,8 @@ public class ConversationHistoryPlugin implements Plugin {
         }
     }
 
-    public void shutdown() {
+    @Override
+	public void shutdown() {
         final StringBuilder builder = new StringBuilder();
         builder.append("<conversations>");
         for (EntityBareJid user : historyList) {
@@ -285,11 +294,13 @@ public class ConversationHistoryPlugin implements Plugin {
         }
     }
 
-    public boolean canShutDown() {
+    @Override
+	public boolean canShutDown() {
         return true;
     }
 
-    public void uninstall() {
+    @Override
+	public void uninstall() {
     }
 
     /**
@@ -305,7 +316,8 @@ public class ConversationHistoryPlugin implements Plugin {
             setOpaque(true);
         }
 
-        public Component getListCellRendererComponent(JList list,
+        @Override
+		public Component getListCellRendererComponent(JList list,
                                                       Object value,
                                                       int index,
                                                       boolean isSelected,

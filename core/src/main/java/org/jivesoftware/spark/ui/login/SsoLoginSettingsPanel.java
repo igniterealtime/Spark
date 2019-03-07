@@ -182,7 +182,8 @@ class SsoLoginSettingsPanel extends JPanel implements ActionListener
         return null;
     }
 
-    public void actionPerformed( ActionEvent e )
+    @Override
+	public void actionPerformed( ActionEvent e )
     {
         if ( e.getSource() == useSSOBox )
         {

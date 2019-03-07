@@ -70,7 +70,8 @@ public class ImageTitlePanel extends JPanel {
         titleLabel.setFont(new Font("Dialog", Font.BOLD, 11));
     }
 
-    public void paintComponent(Graphics g) {
+    @Override
+	public void paintComponent(Graphics g) {
         double scaleX = getWidth() / (double)backgroundImage.getWidth(null);
         double scaleY = getHeight() / (double)backgroundImage.getHeight(null);
         AffineTransform xform = AffineTransform.getScaleInstance(scaleX, scaleY);

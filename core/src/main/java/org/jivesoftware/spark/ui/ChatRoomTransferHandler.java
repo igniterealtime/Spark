@@ -40,12 +40,14 @@ public class ChatRoomTransferHandler extends TransferHandler {
         this.chatRoom = chatRoom;
     }
 
-    public int getSourceActions(JComponent c) {
+    @Override
+	public int getSourceActions(JComponent c) {
         return TransferHandler.COPY_OR_MOVE;
     }
 
 
-    public boolean canImport(JComponent comp, DataFlavor flavor[]) {
+    @Override
+	public boolean canImport(JComponent comp, DataFlavor flavor[]) {
         for (int i = 0, n = flavor.length; i < n; i++) {
             for (int j = 0, m = flavors.length; j < m; j++) {
                 if (flavor[i].equals(flavors[j])) {
@@ -56,12 +58,14 @@ public class ChatRoomTransferHandler extends TransferHandler {
         return false;
     }
 
-    protected void exportDone(JComponent c, Transferable data, int action) {
+    @Override
+	protected void exportDone(JComponent c, Transferable data, int action) {
 
     }
 
 
-    public Transferable createTransferable(JComponent comp) {
+    @Override
+	public Transferable createTransferable(JComponent comp) {
         if (comp instanceof TranscriptWindow) {
             return new TranscriptWindowTransferable((TranscriptWindow)comp);
         }
@@ -69,7 +73,8 @@ public class ChatRoomTransferHandler extends TransferHandler {
         return null;
     }
 
-    public boolean importData(JComponent comp, Transferable t) {
+    @Override
+	public boolean importData(JComponent comp, Transferable t) {
         if (t.isDataFlavorSupported(flavors[0])) {
             try {
                 Object o = t.getTransferData(flavors[0]);
@@ -114,17 +119,20 @@ public class ChatRoomTransferHandler extends TransferHandler {
         }
 
         // Returns supported flavors
-        public DataFlavor[] getTransferDataFlavors() {
+        @Override
+		public DataFlavor[] getTransferDataFlavors() {
             return new DataFlavor[]{DataFlavor.stringFlavor};
         }
 
         // Returns true if flavor is supported
-        public boolean isDataFlavorSupported(DataFlavor flavor) {
+        @Override
+		public boolean isDataFlavorSupported(DataFlavor flavor) {
             return DataFlavor.stringFlavor.equals(flavor);
         }
 
         // Returns Selected Text
-        public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
+        @Override
+		public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
             if (!DataFlavor.stringFlavor.equals(flavor)) {
                 throw new UnsupportedFlavorException(flavor);
             }

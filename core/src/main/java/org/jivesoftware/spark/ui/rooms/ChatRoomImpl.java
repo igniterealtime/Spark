@@ -231,7 +231,8 @@ public class ChatRoomImpl extends ChatRoom {
         return privateChat;
     }
 
-    public void closeChatRoom() {
+    @Override
+	public void closeChatRoom() {
         // If already closed, don't bother.
         if (!active) {
             return;
@@ -258,12 +259,14 @@ public class ChatRoomImpl extends ChatRoom {
         SparkManager.getConnection().removeSyncStanzaListener(this);
     }
 
-    public void sendMessage() {
+    @Override
+	public void sendMessage() {
         String text = getChatInputEditor().getText();
         sendMessage(text);
     }
 
-    public void sendMessage(String text) {
+    @Override
+	public void sendMessage(String text) {
         final Message message = new Message();
 
         if (threadID == null) {
@@ -301,7 +304,8 @@ public class ChatRoomImpl extends ChatRoom {
      *
      * @param message the message to send.
      */
-    public void sendMessage(Message message) {
+    @Override
+	public void sendMessage(Message message) {
         //Before sending message, let's add our full jid for full verification
         //Set message attributes before insertMessage is called - this is useful when transcript window is extended
         //more information will be available to be displayed for the chat area Document
@@ -365,7 +369,8 @@ public class ChatRoomImpl extends ChatRoom {
     }
 
 
-    public Icon getTabIcon() {
+    @Override
+	public Icon getTabIcon() {
         return tabIcon;
     }
 
@@ -373,7 +378,8 @@ public class ChatRoomImpl extends ChatRoom {
         this.tabIcon = icon;
     }
 
-    public String getTabTitle() {
+    @Override
+	public String getTabTitle() {
         return tabTitle;
     }
 
@@ -385,19 +391,23 @@ public class ChatRoomImpl extends ChatRoom {
         this.roomTitle = roomTitle;
     }
 
-    public String getRoomTitle() {
+    @Override
+	public String getRoomTitle() {
         return roomTitle;
     }
 
-    public Message.Type getChatType() {
+    @Override
+	public Message.Type getChatType() {
         return Message.Type.chat;
     }
 
-    public void leaveChatRoom() {
+    @Override
+	public void leaveChatRoom() {
         // There really is no such thing in Agent to Agent
     }
 
-    public boolean isActive() {
+    @Override
+	public boolean isActive() {
         return true;
     }
 
@@ -568,11 +578,13 @@ public class ChatRoomImpl extends ChatRoom {
      *
      * @param e - the DocumentEvent to respond to.
      */
-    public void insertUpdate(DocumentEvent e) {
+    @Override
+	public void insertUpdate(DocumentEvent e) {
         super.insertUpdate( e );
     }
 
-    public void insertMessage(Message message) {
+    @Override
+	public void insertMessage(Message message) {
         // Debug info
         super.insertMessage(message);
         MessageEvent messageEvent = message.getExtension("x", "jabber:x:event");
@@ -679,7 +691,8 @@ public class ChatRoomImpl extends ChatRoom {
      *
      * @return the last time this chat room sent or receieved a message.sendChatState
      */
-    public long getLastActivity() {
+    @Override
+	public long getLastActivity() {
         return lastActivity;
     }
 
@@ -705,14 +718,16 @@ public class ChatRoomImpl extends ChatRoom {
 
     }
 
-    public void connectionClosed() {
+    @Override
+	public void connectionClosed() {
         handleDisconnect();
 
         String message = Res.getString("message.disconnected.error");
         getTranscriptWindow().insertNotificationMessage(message, ChatManager.ERROR_COLOR);
     }
 
-    public void connectionClosedOnError(Exception ex) {
+    @Override
+	public void connectionClosedOnError(Exception ex) {
         handleDisconnect();
 
         String message = Res.getString("message.disconnected.error");
@@ -807,7 +822,8 @@ public class ChatRoomImpl extends ChatRoom {
 
     // I would normally use the command pattern, but
     // have no real use when dealing with just a couple options.
-    public void actionPerformed(ActionEvent e) {
+    @Override
+	public void actionPerformed(ActionEvent e) {
 
         if (e.getSource() == infoButton) {
             VCardManager vcard = SparkManager.getVCardManager();

@@ -95,7 +95,8 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener
         {
             private static final long serialVersionUID = 1797491846835591379L;
 
-            public void actionPerformed( ActionEvent evt )
+            @Override
+			public void actionPerformed( ActionEvent evt )
             {
                 StringSelection stringSelection = new StringSelection( getSelectedText() );
                 Toolkit.getDefaultToolkit().getSystemClipboard().setContents( stringSelection, null );
@@ -473,13 +474,15 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener
      * @param object the TransferWindow
      * @param popup  the popup menu to add to.
      */
-    public void poppingUp( final Object object, JPopupMenu popup )
+    @Override
+	public void poppingUp( final Object object, JPopupMenu popup )
     {
         popup.addSeparator();
 
         popup.add( new AbstractAction( Res.getString( "action.print" ), SparkRes.getImageIcon( SparkRes.PRINTER_IMAGE_16x16 ) )
         {
-            public void actionPerformed( ActionEvent actionEvent )
+            @Override
+			public void actionPerformed( ActionEvent actionEvent )
             {
                 SparkManager.printChatTranscript( (TranscriptWindow) object );
             }
@@ -489,7 +492,8 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener
         		&& !Default.getBoolean("HISTORY_DISABLED") && Enterprise.containsFeature(Enterprise.HISTORY_TRANSCRIPTS_FEATURE)) {
             popup.add( new AbstractAction( Res.getString( "action.clear" ), SparkRes.getImageIcon( SparkRes.ERASER_IMAGE ) )
             {
-                public void actionPerformed( ActionEvent actionEvent )
+                @Override
+				public void actionPerformed( ActionEvent actionEvent )
                 {
                     String user = null;
                     try
@@ -545,11 +549,13 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener
         }
     }
 
-    public void poppingDown( JPopupMenu popup )
+    @Override
+	public void poppingDown( JPopupMenu popup )
     {
     }
 
-    public boolean handleDefaultAction( MouseEvent e )
+    @Override
+	public boolean handleDefaultAction( MouseEvent e )
     {
         return false;
     }

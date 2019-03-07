@@ -64,13 +64,15 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
     private Map<Transport, GatewayItem> uiMap = new HashMap<>();;
     private JPanel transferTab = new JPanel();
 
-    public void initialize() {
+    @Override
+	public void initialize() {
 	ProviderManager.addIQProvider(Gateway.ELEMENT_NAME, Gateway.NAMESPACE, new Gateway.Provider());
 	LocalPreferences localPref = SettingsManager.getLocalPreferences();
 	useTab = localPref.getShowTransportTab();
 	transferTab.setBackground((Color)UIManager.get("ContactItem.background"));
         SwingWorker thread = new SwingWorker() {
-            public Object construct() {
+            @Override
+			public Object construct() {
                 try {
                     // Let's try and avoid any timing issues with the gateway presence.
                     Thread.sleep(5000);
@@ -84,7 +86,8 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
                 return true;
             }
 
-            public void finished() {
+            @Override
+			public void finished() {
         	
         	transferTab.setLayout(new VerticalFlowLayout(0,0,0,true,false));
         	Boolean transportExists = (Boolean)get();
@@ -110,14 +113,17 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
         thread.start();
     }
 
-    public void shutdown() {
+    @Override
+	public void shutdown() {
     }
 
-    public boolean canShutDown() {
+    @Override
+	public boolean canShutDown() {
         return false;
     }
 
-    public void uninstall() {
+    @Override
+	public void uninstall() {
     }
 
     private void populateTransports() throws Exception {
@@ -291,7 +297,8 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
     }
 
 
-    public boolean handlePresence(ContactItem item, Presence presence) {
+    @Override
+	public boolean handlePresence(ContactItem item, Presence presence) {
         if (presence.isAvailable()) {
             Domainpart domain = presence.getFrom().getDomain();
             Transport transport = TransportUtils.getTransport(domain.toString());
@@ -309,11 +316,13 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
         return false;
     }
 
-    public boolean handleDoubleClick(ContactItem item) {
+    @Override
+	public boolean handleDoubleClick(ContactItem item) {
         return false;
     }
 
-    public Icon getIcon(BareJid jid) {
+    @Override
+	public Icon getIcon(BareJid jid) {
         DomainBareJid domain = jid.asDomainBareJid();
         Transport transport = TransportUtils.getTransport(domain);
         if (transport != null) {
@@ -327,7 +336,8 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
         return null;
     }
 
-    public Icon getTabIcon(Presence presence) {
+    @Override
+	public Icon getTabIcon(Presence presence) {
         return null;
     }
 }

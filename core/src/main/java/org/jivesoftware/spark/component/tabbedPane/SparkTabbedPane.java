@@ -379,23 +379,27 @@ public class SparkTabbedPane extends JPanel {
 	    add(titleLabel, BorderLayout.CENTER);
 	    if (closeEnabled) {
 		tabCloseButton.addMouseListener(new MouseAdapter() {
-		    public void mouseEntered(MouseEvent mouseEvent) {
+		    @Override
+			public void mouseEntered(MouseEvent mouseEvent) {
 			if (Spark.isWindows()) {
 			    tabCloseButton.setIcon(closeActiveButtonIcon);
 			}
 			setCursor(HAND_CURSOR);
 		    }
 
-		    public void mouseExited(MouseEvent mouseEvent) {
+		    @Override
+			public void mouseExited(MouseEvent mouseEvent) {
 			if (Spark.isWindows()) {
 			    tabCloseButton.setIcon(closeInactiveButtonIcon);
 			}
 			setCursor(DEFAULT_CURSOR);
 		    }
 
-		    public void mousePressed(MouseEvent mouseEvent) {
+		    @Override
+			public void mousePressed(MouseEvent mouseEvent) {
 			final SwingWorker closeTimerThread = new SwingWorker() {
-			    public Object construct() {
+			    @Override
+				public Object construct() {
 				try {
 				    Thread.sleep(100);
 				} catch (InterruptedException e) {
@@ -404,7 +408,8 @@ public class SparkTabbedPane extends JPanel {
 				return true;
 			    }
 
-			    public void finished() {
+			    @Override
+				public void finished() {
 				close(sparktab);
 			    }
 			};

@@ -67,7 +67,8 @@ public class FrequentContactsPlugin implements Plugin {
 
     private Map<JLabel, String> jidMap = new HashMap<>();
 
-    public void initialize() {
+    @Override
+	public void initialize() {
         transcriptDir = new File(SparkManager.getUserDirectory(), "transcripts");
 
         contacts = new JList(model);
@@ -88,7 +89,8 @@ public class FrequentContactsPlugin implements Plugin {
 
         // Add Listeners
 	contacts.addMouseListener(new MouseAdapter() {
-	    public void mouseClicked(MouseEvent e) {
+	    @Override
+		public void mouseClicked(MouseEvent e) {
 		if (SwingUtilities.isRightMouseButton(e)) {
 
 		    contacts.setSelectedIndex(contacts.locationToIndex(e
@@ -117,7 +119,8 @@ public class FrequentContactsPlugin implements Plugin {
 	});
 
         contacts.addKeyListener(new KeyAdapter() {
-            public void keyReleased(KeyEvent e) {
+            @Override
+			public void keyReleased(KeyEvent e) {
                 if (e.getKeyChar() == KeyEvent.VK_ENTER) {
                     final JLabel label = (JLabel) contacts.getSelectedValue();
                     String user = jidMap.get(label);
@@ -134,11 +137,13 @@ public class FrequentContactsPlugin implements Plugin {
         });
 
         contacts.addFocusListener(new FocusListener() {
-            public void focusGained(FocusEvent e) {
+            @Override
+			public void focusGained(FocusEvent e) {
 
             }
 
-            public void focusLost(FocusEvent e) {
+            @Override
+			public void focusLost(FocusEvent e) {
                 window.dispose();
             }
         });
@@ -149,6 +154,7 @@ public class FrequentContactsPlugin implements Plugin {
         SparkManager.getMainWindow().getRootPane().getActionMap().put("favoritePeople", new AbstractAction("favoritePeople") {
 			private static final long serialVersionUID = 6836584242669218932L;
 
+			@Override
 			public void actionPerformed(ActionEvent e) {
                 // Show History Popup
                 showPopup();
@@ -240,15 +246,18 @@ public class FrequentContactsPlugin implements Plugin {
     }
 
 
-    public void shutdown() {
+    @Override
+	public void shutdown() {
 
     }
 
-    public boolean canShutDown() {
+    @Override
+	public boolean canShutDown() {
         return true;
     }
 
-    public void uninstall() {
+    @Override
+	public void uninstall() {
     }
 
     /**
@@ -264,7 +273,8 @@ public class FrequentContactsPlugin implements Plugin {
             setOpaque(true);
         }
 
-        public Component getListCellRendererComponent(JList list,
+        @Override
+		public Component getListCellRendererComponent(JList list,
                                                       Object value,
                                                       int index,
                                                       boolean isSelected,

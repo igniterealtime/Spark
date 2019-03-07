@@ -80,7 +80,8 @@ public class BroadcastHistoryFrame extends javax.swing.JFrame {
        
         SearchButton.setText((Res.getString("button.search")));
         SearchButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
+            @Override
+			public void mouseClicked(java.awt.event.MouseEvent evt) {
                 SearchButtonMouseClicked(evt);
             }
         });
@@ -161,7 +162,8 @@ public class BroadcastHistoryFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_SearchButtonMouseClicked
     public void run() {
     java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
                BroadcastHistoryFrame frame= new BroadcastHistoryFrame();
                frame.setVisible(true);
                frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);

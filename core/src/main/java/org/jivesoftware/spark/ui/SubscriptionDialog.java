@@ -237,6 +237,7 @@ public class SubscriptionDialog {
         dialog = new JFrame(Res.getString("title.subscription.request")){
 			private static final long serialVersionUID = 5713933518069623228L;
 
+			@Override
 			public Dimension getPreferredSize() {
                 final Dimension dim = super.getPreferredSize();
                 dim.width = 400;

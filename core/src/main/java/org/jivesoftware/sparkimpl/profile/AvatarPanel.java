@@ -160,7 +160,8 @@ public class AvatarPanel extends JPanel implements ActionListener {
         return avatarFile;
     }
 
-    public void actionPerformed(ActionEvent e) {
+    @Override
+	public void actionPerformed(ActionEvent e) {
         // init file chooser (if not already done)
         initFileChooser();
 
@@ -186,11 +187,13 @@ public class AvatarPanel extends JPanel implements ActionListener {
 
     private void changeAvatar(final File selectedFile, final Component parent) {
         SwingWorker worker = new SwingWorker() {
-            public Object construct() {
+            @Override
+			public Object construct() {
                 return resizeImage(selectedFile);
             }
 
-            public void finished() {
+            @Override
+			public void finished() {
                 BufferedImage avatarImage = (BufferedImage)get();
                 String message = "";
                 int finalImageWidth = avatarImage.getWidth();
@@ -243,7 +246,8 @@ public class AvatarPanel extends JPanel implements ActionListener {
         public final String png = "png";
 
         //Accept all directories and all gif, jpg, tiff, or png files.
-        public boolean accept(File f, String string) {
+        @Override
+		public boolean accept(File f, String string) {
             if (f.isDirectory()) {
                 return true;
             }

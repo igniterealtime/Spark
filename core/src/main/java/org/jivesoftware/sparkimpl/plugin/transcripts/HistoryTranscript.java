@@ -503,6 +503,7 @@ public class HistoryTranscript extends SwingWorker {
 	/**
 	 * Set the layout settings
 	 */
+	@Override
 	public void finished() {
 		pageLeft.addActionListener( arg0 -> pageLeft() );
 		pageRight.addActionListener( arg0 -> pageRight() );
@@ -576,11 +577,13 @@ public class HistoryTranscript extends SwingWorker {
             @Override
             public ViewFactory getViewFactory(){
                 return new HTMLFactory(){
-                    public View create(Element e){
+                    @Override
+					public View create(Element e){
                         View v = super.create(e);
                         if(v instanceof InlineView){
                             return new InlineView(e){
-                                public int getBreakWeight(int axis, float pos, float len) {
+                                @Override
+								public int getBreakWeight(int axis, float pos, float len) {
                                     if (axis == View.X_AXIS) {
                                         checkPainter();
                                         int p0 = getStartOffset();
@@ -602,7 +605,8 @@ public class HistoryTranscript extends SwingWorker {
                                     }
                                     return super.getBreakWeight(axis, pos, len);
                                 }
-                                public View breakView(int axis, int p0, float pos, float len) {
+                                @Override
+								public View breakView(int axis, int p0, float pos, float len) {
                                     if (axis == View.X_AXIS) {
                                         checkPainter();
                                         int p1 = getGlyphPainter().getBoundedPosition(this, p0, pos, len);
@@ -625,7 +629,8 @@ public class HistoryTranscript extends SwingWorker {
                         }
                         else if (v instanceof javax.swing.text.html.ParagraphView) {
                             return new javax.swing.text.html.ParagraphView(e) {
-                                protected SizeRequirements calculateMinorAxisRequirements(int axis, SizeRequirements r) {
+                                @Override
+								protected SizeRequirements calculateMinorAxisRequirements(int axis, SizeRequirements r) {
                                     if (r == null) {
                                         r = new SizeRequirements();
                                     }
@@ -684,6 +689,7 @@ public class HistoryTranscript extends SwingWorker {
 			}
 		});
 		searchField.addFocusListener(new FocusListener() {
+			@Override
 			public void focusGained(FocusEvent e) {
 				if (searchField.getText().equals(Res.getString("message.search.for.history"))) {
 					searchField.setText("");
@@ -692,6 +698,7 @@ public class HistoryTranscript extends SwingWorker {
 						.get("TextField.foreground"));
 			}
 
+			@Override
 			public void focusLost(FocusEvent e) {
 				searchField.setForeground((Color) UIManager
 						.get("TextField.lightforeground"));
@@ -706,6 +713,7 @@ public class HistoryTranscript extends SwingWorker {
 		periodChooser.setSelectedIndex(index);
 
 		frame.addWindowListener(new WindowAdapter() {
+			@Override
 			public void windowClosing(WindowEvent e) {
 				window.setText("");
 			}

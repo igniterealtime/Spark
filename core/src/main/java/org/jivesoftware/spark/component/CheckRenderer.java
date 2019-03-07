@@ -51,7 +51,8 @@ public class CheckRenderer extends JPanel implements TreeCellRenderer {
         label.setForeground(UIManager.getColor("Tree.textForeground"));
     }
 
-    public Component getTreeCellRendererComponent(JTree tree, Object value,
+    @Override
+	public Component getTreeCellRendererComponent(JTree tree, Object value,
                                                   boolean isSelected, boolean expanded,
                                                   boolean leaf, int row, boolean hasFocus) {
         String stringValue = tree.convertValueToText(value, isSelected,
@@ -75,14 +76,16 @@ public class CheckRenderer extends JPanel implements TreeCellRenderer {
         return this;
     }
 
-    public Dimension getPreferredSize() {
+    @Override
+	public Dimension getPreferredSize() {
         Dimension d_check = new Dimension(30, 30);
         Dimension d_label = label.getPreferredSize();
         return new Dimension(d_check.width + d_label.width,
             d_check.height < d_label.height ? d_label.height : d_check.height);
     }
 
-    public void doLayout() {
+    @Override
+	public void doLayout() {
         Dimension d_check = check.getPreferredSize();
         Dimension d_label = label.getPreferredSize();
         int y_check = 0;
@@ -100,7 +103,8 @@ public class CheckRenderer extends JPanel implements TreeCellRenderer {
     }
 
 
-    public void setBackground(Color color) {
+    @Override
+	public void setBackground(Color color) {
         if (color instanceof ColorUIResource)
             color = null;
         super.setBackground(color);
@@ -121,13 +125,15 @@ public class CheckRenderer extends JPanel implements TreeCellRenderer {
         public TreeLabel() {
         }
 
-        public void setBackground(Color color) {
+        @Override
+		public void setBackground(Color color) {
             if (color instanceof ColorUIResource)
                 color = null;
             super.setBackground(color);
         }
 
-        public void paint(Graphics g) {
+        @Override
+		public void paint(Graphics g) {
             String str;
             if ((str = getText()) != null) {
                 if (0 < str.length()) {
@@ -153,7 +159,8 @@ public class CheckRenderer extends JPanel implements TreeCellRenderer {
             super.paint(g);
         }
 
-        public Dimension getPreferredSize() {
+        @Override
+		public Dimension getPreferredSize() {
             Dimension retDimension = super.getPreferredSize();
             if (retDimension != null) {
                 retDimension = new Dimension(retDimension.width + 3,

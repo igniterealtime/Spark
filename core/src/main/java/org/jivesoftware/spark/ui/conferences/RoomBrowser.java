@@ -96,7 +96,8 @@ public class RoomBrowser extends JPanel {
             RoomInfo roomInfo = null;
             DiscoverItems items = null;
 
-            public Object construct() {
+            @Override
+			public Object construct() {
                 try {
                     roomInfo = MultiUserChatManager.getInstanceFor( SparkManager.getConnection() ).getRoomInfo( roomJID );
 
@@ -110,7 +111,8 @@ public class RoomBrowser extends JPanel {
                 return "ok";
             }
 
-            public void finished() {
+            @Override
+			public void finished() {
                 setupRoomInformationUI(roomJID, roomInfo, items);
             }
         };

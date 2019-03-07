@@ -51,7 +51,8 @@ public class LanguagePlugin implements Plugin {
     private Locale[] locales;
     private JMenu languageMenu;
 
-    public void initialize() {
+    @Override
+	public void initialize() {
         // Register with action menu
         final JMenu actionsMenu = SparkManager.getMainWindow().getMenuByName(Res.getString("menuitem.actions"));
 
@@ -101,7 +102,8 @@ public class LanguagePlugin implements Plugin {
                 Action action = new AbstractAction() {
 		    private static final long serialVersionUID = -7093236616888591766L;
 
-		    public void actionPerformed(ActionEvent e) {
+		    @Override
+			public void actionPerformed(ActionEvent e) {
                         final LocalPreferences preferences = SettingsManager.getLocalPreferences();
                         preferences.setLanguage(locale.toString());
                         SettingsManager.saveSettings();
@@ -127,14 +129,17 @@ public class LanguagePlugin implements Plugin {
         }
     }
 
-    public void shutdown() {
+    @Override
+	public void shutdown() {
     }
 
-    public boolean canShutDown() {
+    @Override
+	public boolean canShutDown() {
         return false;
     }
 
 
-    public void uninstall() {
+    @Override
+	public void uninstall() {
     }
 }

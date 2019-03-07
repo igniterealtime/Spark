@@ -155,10 +155,12 @@ public class SparkTransferManager {
                 transferManager = FileTransferManager.getInstanceFor( SparkManager.getConnection() );
             }
 
-            public void connectionClosed() {
+            @Override
+			public void connectionClosed() {
             }
 
-            public void connectionClosedOnError(Exception e) {
+            @Override
+			public void connectionClosedOnError(Exception e) {
             }
         });
 
@@ -326,7 +328,8 @@ public class SparkTransferManager {
         final ChatManager chatManager = SparkManager.getChatManager();
         chatManager.addChatRoomListener(new ChatRoomListenerAdapter() {
 
-            public void chatRoomOpened(final ChatRoom room) {
+            @Override
+			public void chatRoomOpened(final ChatRoom room) {
                 if (!(room instanceof ChatRoomImpl)) {
                     return;
                 }
@@ -335,7 +338,8 @@ public class SparkTransferManager {
                 new ChatRoomTransferDecorator(room);
             }
 
-            public void chatRoomClosed(ChatRoom room) {
+            @Override
+			public void chatRoomClosed(ChatRoom room) {
 
             }
         });
@@ -361,7 +365,8 @@ public class SparkTransferManager {
         }
 
         final SwingWorker worker = new SwingWorker() {
-            public Object construct() {
+            @Override
+			public Object construct() {
                 try {
                     Thread.sleep(1000);
                     Rectangle area = new Rectangle(Toolkit.getDefaultToolkit().getScreenSize());
@@ -382,7 +387,8 @@ public class SparkTransferManager {
                 return null;
             }
 
-            public void finished() {
+            @Override
+			public void finished() {
                 bufferedImage = (BufferedImage)get();
                 if (bufferedImage == null) {
                 	UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
@@ -396,7 +402,8 @@ public class SparkTransferManager {
                 selectionPanel.setImage(bufferedImage);
                 selectionPanel.validate();
                 selectionPanel.addMouseListener(new MouseAdapter() {
-                    public void mouseReleased(MouseEvent e) {
+                    @Override
+					public void mouseReleased(MouseEvent e) {
                         Rectangle clip = selectionPanel.getClip();
                         BufferedImage newImage = null;
                         try {
@@ -428,7 +435,8 @@ public class SparkTransferManager {
                 });
 
                 frame.addKeyListener(new KeyAdapter() {
-                    public void keyReleased(KeyEvent e) {
+                    @Override
+					public void keyReleased(KeyEvent e) {
                         if (e.getKeyChar() == KeyEvent.VK_ESCAPE) {
                             frame.dispose();
                             frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
@@ -632,7 +640,8 @@ public class SparkTransferManager {
         room.setCursor(new Cursor(Cursor.WAIT_CURSOR));
 
         SwingWorker writeImageThread = new SwingWorker() {
-            public Object construct() {
+            @Override
+			public Object construct() {
                 try {
                     // Write out file in separate thread.
                     ImageIO.write(image, "png", imageFile);
@@ -643,7 +652,8 @@ public class SparkTransferManager {
                 return true;
             }
 
-            public void finished() {
+            @Override
+			public void finished() {
                 ChatRoomImpl roomImpl = (ChatRoomImpl)room;
                 sendFile(imageFile, roomImpl.getParticipantJID());
                 SparkManager.getChatManager().getChatContainer().activateChatRoom(room);

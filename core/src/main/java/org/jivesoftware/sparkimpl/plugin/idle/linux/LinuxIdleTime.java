@@ -45,7 +45,8 @@ public class LinuxIdleTime implements IdleTime {
                                   XScreenSaverInfo saver_info);
     }
 
-    public long getIdleTimeMillis() {
+    @Override
+	public long getIdleTimeMillis() {
         X11.Window win = null;
         Xss.XScreenSaverInfo info = null;
         X11.Display dpy = null;

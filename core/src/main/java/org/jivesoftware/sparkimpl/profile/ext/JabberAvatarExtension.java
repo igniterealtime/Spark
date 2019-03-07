@@ -36,15 +36,18 @@ public class JabberAvatarExtension implements ExtensionElement {
         photoHash = hash;
     }
 
-    public String getElementName() {
+    @Override
+	public String getElementName() {
         return ELEMENT_NAME;
     }
 
-    public String getNamespace() {
+    @Override
+	public String getNamespace() {
         return NAMESPACE;
     }
 
-    public String toXML(String enclosingNamespace) {
+    @Override
+	public String toXML(String enclosingNamespace) {
         String buf = "<" + getElementName() + " xmlns=\"" + getNamespace() + "\">" +
                 "<hash>" +
                 photoHash +

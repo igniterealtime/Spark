@@ -39,7 +39,8 @@ public class JiveTreeCellRenderer extends DefaultTreeCellRenderer {
     public JiveTreeCellRenderer() {
     }
 
-    public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
+    @Override
+	public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
         this.value = value;
 
         final Component c = super.getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row, hasFocus);
@@ -72,27 +73,33 @@ public class JiveTreeCellRenderer extends DefaultTreeCellRenderer {
         return null;
     }
 
-    public Icon getClosedIcon() {
+    @Override
+	public Icon getClosedIcon() {
         return getCustomIcon();
     }
 
-    public Icon getDefaultClosedIcon() {
+    @Override
+	public Icon getDefaultClosedIcon() {
         return getCustomIcon();
     }
 
-    public Icon getDefaultLeafIcon() {
+    @Override
+	public Icon getDefaultLeafIcon() {
         return getCustomIcon();
     }
 
-    public Icon getDefaultOpenIcon() {
+    @Override
+	public Icon getDefaultOpenIcon() {
         return getCustomIcon();
     }
 
-    public Icon getLeafIcon() {
+    @Override
+	public Icon getLeafIcon() {
         return getCustomIcon();
     }
 
-    public Icon getOpenIcon() {
+    @Override
+	public Icon getOpenIcon() {
         return getCustomIcon();
     }
 

@@ -288,7 +288,8 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
            public Object construct() {
                return null;
            }
-           public void finished() {
+           @Override
+		public void finished() {
                refreshButton.setIcon(SparkRes.getImageIcon(SparkRes.REFRESH_IMAGE));
                refreshButton.validate();
                refreshButton.repaint();
@@ -604,7 +605,8 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
         dlg.setLocationRelativeTo(SparkManager.getMainWindow());
 
         PropertyChangeListener changeListener = new PropertyChangeListener() {
-            public void propertyChange(PropertyChangeEvent e) {
+            @Override
+			public void propertyChange(PropertyChangeEvent e) {
             String value = (String) pane.getValue();
             if (Res.getString("close").equals(value)) {
                 pane.removePropertyChangeListener(this);
@@ -618,7 +620,8 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
         pane.addPropertyChangeListener(changeListener);
 
         dlg.addKeyListener(new KeyAdapter() {
-            public void keyPressed(KeyEvent e) {
+            @Override
+			public void keyPressed(KeyEvent e) {
             if (e.getKeyChar() == KeyEvent.VK_ESCAPE) {
                 dlg.dispose();
             }
@@ -694,16 +697,19 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
 	    // setSortable(true);
 
 	    addMouseListener(new MouseAdapter() {
+		@Override
 		public void mouseClicked(MouseEvent e) {
 		    if (e.getClickCount() == 2) {
 			enterRoom();
 		    }
 		}
 
+		@Override
 		public void mouseReleased(MouseEvent e) {
 		    checkPopup(e);
 		}
 
+		@Override
 		public void mousePressed(MouseEvent e) {
 		    checkPopup(e);
 		}
@@ -712,6 +718,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
 	}
 
 	// Handle image rendering correctly
+	@Override
 	public TableCellRenderer getCellRenderer(int row, int column) {
 	    Object o = getValueAt(row, column);
 	    if (o != null) {
@@ -734,7 +741,8 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
                 Action roomInfoAction = new AbstractAction() {
                     private static final long serialVersionUID = 5142016247851363420L;
 
-                    public void actionPerformed(ActionEvent actionEvent) {
+                    @Override
+					public void actionPerformed(ActionEvent actionEvent) {
                         int selectedRow = roomsTable.getSelectedRow();
                         if (selectedRow != -1) {
                             String roomJIDString = roomsTable.getValueAt(selectedRow, 2) + "@" + serviceName;
@@ -791,7 +799,8 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
 
     }
 
-    public void actionPerformed(ActionEvent e) {
+    @Override
+	public void actionPerformed(ActionEvent e) {
 	if (e.getSource() == createButton || e.getSource() == createItem) {
 	    createRoom();
 	}
@@ -1028,6 +1037,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
 	    setHorizontalAlignment(CENTER);
 	}
 
+	@Override
 	public Component getTableCellRendererComponent(JTable table,
 		Object value, boolean isSelected, boolean hasFocus, int row,
 		int column) {
@@ -1068,15 +1078,18 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
 	}
     }
 
-    public void componentHidden(ComponentEvent e) {
+    @Override
+	public void componentHidden(ComponentEvent e) {
 
     }
 
-    public void componentMoved(ComponentEvent e) {
+    @Override
+	public void componentMoved(ComponentEvent e) {
 
     }
 
-    public void componentResized(ComponentEvent e) {
+    @Override
+	public void componentResized(ComponentEvent e) {
 	if (this.getWidth() <= (oneButtonWidth + 19)) {
 	    joinRoomButton.setVisible(false);
 	    addRoomButton.setVisible(false);
@@ -1148,7 +1161,8 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
 	}
     }
 
-    public void componentShown(ComponentEvent e) {
+    @Override
+	public void componentShown(ComponentEvent e) {
 
     }
 

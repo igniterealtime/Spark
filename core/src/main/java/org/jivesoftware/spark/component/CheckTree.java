@@ -65,7 +65,8 @@ public class CheckTree extends JPanel {
             this.tree = tree;
         }
 
-        public void mouseClicked(MouseEvent e) {
+        @Override
+		public void mouseClicked(MouseEvent e) {
             int x = e.getX();
             int y = e.getY();
             int row = tree.getRowForLocation(x, y);
@@ -108,7 +109,8 @@ public class CheckTree extends JPanel {
             this.textArea = textArea;
         }
 
-        public void actionPerformed(ActionEvent e) {
+        @Override
+		public void actionPerformed(ActionEvent e) {
             Enumeration<CheckNode> nodeEnum = root.breadthFirstEnumeration();
             while (nodeEnum.hasMoreElements()) {
                 CheckNode node = nodeEnum.nextElement();

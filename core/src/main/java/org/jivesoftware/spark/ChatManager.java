@@ -349,7 +349,8 @@ public class ChatManager {
             final ChatManager chatManager = SparkManager.getChatManager();
             ChatRoom chatRoom;
 
-            public Object construct() {
+            @Override
+			public Object construct() {
                 try {
                     Thread.sleep(10);
                 }
@@ -368,7 +369,8 @@ public class ChatManager {
                 return chatRoom;
             }
 
-            public void finished() {
+            @Override
+			public void finished() {
                 if (chatRoom == null) {
                     chatRoom = UIComponentRegistry.createChatRoom(jid, nickname, nickname);
                     chatManager.getChatContainer().addChatRoom(chatRoom);

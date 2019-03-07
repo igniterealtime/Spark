@@ -130,12 +130,14 @@ final class JoinConferenceRoomDialog extends JPanel {
         SwingWorker worker = new SwingWorker() {
             boolean requiresPassword;
 
-            public Object construct() {
+            @Override
+			public Object construct() {
                 requiresPassword = ConferenceUtils.isPasswordRequired(roomJID);
                 return requiresPassword;
             }
 
-            public void finished() {
+            @Override
+			public void finished() {
                 passwordField.setVisible(requiresPassword);
                 passwordLabel.setVisible(requiresPassword);
             }

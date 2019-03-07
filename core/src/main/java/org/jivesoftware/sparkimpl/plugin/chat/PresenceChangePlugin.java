@@ -57,14 +57,16 @@ public class PresenceChangePlugin implements Plugin {
     private final Set<BareJid> sparkContacts = new HashSet<>();
     private LocalPreferences localPref = SettingsManager.getLocalPreferences();
 
-    public void initialize() {
+    @Override
+	public void initialize() {
         // Listen for right-clicks on ContactItem
         final ContactList contactList = SparkManager.getWorkspace().getContactList();
 
         final Action listenAction = new AbstractAction() {
 	    private static final long serialVersionUID = 7705539667621148816L;
 
-	    public void actionPerformed(ActionEvent e) {
+	    @Override
+		public void actionPerformed(ActionEvent e) {
 
 		for (ContactItem item : contactList.getSelectedUsers()) {
 		    BareJid bareAddress = item
@@ -80,7 +82,8 @@ public class PresenceChangePlugin implements Plugin {
 	final Action removeAction = new AbstractAction() {
 	    private static final long serialVersionUID = -8726129089417116105L;
 
-	    public void actionPerformed(ActionEvent e) {
+	    @Override
+		public void actionPerformed(ActionEvent e) {
 
 		for (ContactItem item : contactList.getSelectedUsers()) {
 		    BareJid bareAddress = item
@@ -96,7 +99,8 @@ public class PresenceChangePlugin implements Plugin {
 
 
         contactList.addContextMenuListener(new ContextMenuListener() {
-            public void poppingUp(Object object, JPopupMenu popup) {
+            @Override
+			public void poppingUp(Object object, JPopupMenu popup) {
                 if (object instanceof ContactItem) {
                     ContactItem item = (ContactItem)object;
                     String bareAddress = XmppStringUtils.parseBareJid(item.getJID());
@@ -111,11 +115,13 @@ public class PresenceChangePlugin implements Plugin {
                 }
             }
 
-            public void poppingDown(JPopupMenu popup) {
+            @Override
+			public void poppingDown(JPopupMenu popup) {
 
             }
 
-            public boolean handleDefaultAction(MouseEvent e) {
+            @Override
+			public boolean handleDefaultAction(MouseEvent e) {
                 return false;
             }
         });
@@ -193,15 +199,18 @@ sparkContacts.remove(s);
 }, new StanzaTypeFilter(Presence.class));
     }
 
-    public void shutdown() {
+    @Override
+	public void shutdown() {
 
     }
 
-    public boolean canShutDown() {
+    @Override
+	public boolean canShutDown() {
         return true;
     }
 
-    public void uninstall() {
+    @Override
+	public void uninstall() {
         // Do nothing.
     }
 

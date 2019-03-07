@@ -34,16 +34,19 @@ public class BuzzPacket implements ExtensionElement
 
     public static final String NAMESPACE = "urn:xmpp:attention:0";
 
-    public String getElementName() {
+    @Override
+	public String getElementName() {
 	return ELEMENT_NAME;
     }
 
-    public String getNamespace() {
+    @Override
+	public String getNamespace() {
 	return NAMESPACE;
     }
 
     // TODO 2.7.0 remove buzz only attention gets to stay
-    public String toXML(String enclosingNamespace) {
+    @Override
+	public String toXML(String enclosingNamespace) {
 	return "<" + getElementName() + " xmlns=\"" + getNamespace()
 		+ "\"/><buzz xmlns=\"http://www.jivesoftware.com/spark\"/>";
     }

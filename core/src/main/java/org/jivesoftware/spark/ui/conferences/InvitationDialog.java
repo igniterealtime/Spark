@@ -169,13 +169,15 @@ final class InvitationDialog extends JPanel {
 
         // Add Listener to list
         invitedUserList.addMouseListener(new MouseAdapter() {
-            public void mouseReleased(MouseEvent mouseEvent) {
+            @Override
+			public void mouseReleased(MouseEvent mouseEvent) {
                 if (mouseEvent.isPopupTrigger()) {
                     showPopup(mouseEvent);
                 }
             }
 
-            public void mousePressed(MouseEvent mouseEvent) {
+            @Override
+			public void mousePressed(MouseEvent mouseEvent) {
                 if (mouseEvent.isPopupTrigger()) {
                     showPopup(mouseEvent);
                 }
@@ -190,7 +192,8 @@ final class InvitationDialog extends JPanel {
         Action removeAction = new AbstractAction() {
 	    private static final long serialVersionUID = 7837533277115442942L;
 
-	    public void actionPerformed(ActionEvent e) {
+	    @Override
+		public void actionPerformed(ActionEvent e) {
                 invitedUsers.remove(index);
             }
         };
@@ -362,7 +365,8 @@ final class InvitationDialog extends JPanel {
                     }
 
                     SwingWorker worker = new SwingWorker() {
-                        public Object construct() {
+                        @Override
+						public Object construct() {
                             try {
                                 Thread.sleep(15);
                             }
@@ -372,7 +376,8 @@ final class InvitationDialog extends JPanel {
                             return "ok";
                         }
 
-                        public void finished() {
+                        @Override
+						public void finished() {
                             try {
                                 if (selectedBookmarkedConf == null) {
                                     ConferenceUtils.createPrivateConference(serviceName, messageText, roomTitle,

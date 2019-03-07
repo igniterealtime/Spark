@@ -79,15 +79,18 @@ public class JMultilineLabel extends JComponent {
             repaint();
     }
 
-    public Dimension getPreferredSize() {
+    @Override
+	public Dimension getPreferredSize() {
         return paintOrGetSize(null, getMaxWidth());
     }
 
-    public Dimension getMinimumSize() {
+    @Override
+	public Dimension getMinimumSize() {
         return getPreferredSize();
     }
 
-    protected void paintComponent(Graphics g) {
+    @Override
+	protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         paintOrGetSize((Graphics2D)g, getWidth());
     }

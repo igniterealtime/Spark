@@ -86,7 +86,8 @@ public class Gateway extends IQ {
             super();
         }
 
-        public Gateway parse(XmlPullParser parser, int i) throws IOException, XmlPullParserException
+        @Override
+		public Gateway parse(XmlPullParser parser, int i) throws IOException, XmlPullParserException
         {
             Gateway version = new Gateway();
 

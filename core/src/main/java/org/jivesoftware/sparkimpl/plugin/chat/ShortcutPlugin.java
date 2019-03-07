@@ -30,23 +30,28 @@ import java.awt.Color;
 public class ShortcutPlugin implements Plugin, TranscriptWindowInterceptor {
 
 
-    public void initialize() {
+    @Override
+	public void initialize() {
         // Add TranscriptWindowInterceptor
         SparkManager.getChatManager().addTranscriptWindowInterceptor(this);
     }
 
-    public void shutdown() {
+    @Override
+	public void shutdown() {
     }
 
-    public boolean canShutDown() {
+    @Override
+	public boolean canShutDown() {
         return false;
     }
 
-    public void uninstall() {
+    @Override
+	public void uninstall() {
     }
 
 
-    public boolean isMessageIntercepted(TranscriptWindow window, String userid, Message message) {
+    @Override
+	public boolean isMessageIntercepted(TranscriptWindow window, String userid, Message message) {
         String body = message.getBody();
         if (ModelUtil.hasLength(body) && body.startsWith("/me ")) {
             body = body.replaceFirst("/me", userid);

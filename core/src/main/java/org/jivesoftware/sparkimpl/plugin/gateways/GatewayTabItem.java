@@ -299,7 +299,8 @@ public class GatewayTabItem extends CollapsiblePane implements GatewayItem {
     }
 
     // Change gui if transport signed on or off
-    public void signedIn(final boolean signedIn) {
+    @Override
+	public void signedIn(final boolean signedIn) {
 
 	if (!signedIn) {
 	    getTitlePane().setIcon(_transport.getInactiveIcon());
@@ -322,7 +323,8 @@ public class GatewayTabItem extends CollapsiblePane implements GatewayItem {
 	this.signedIn = signedIn;
     }
 
-    public boolean isLoggedIn() {
+    @Override
+	public boolean isLoggedIn() {
 	return signedIn;
     }
 

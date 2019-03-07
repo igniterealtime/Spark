@@ -50,7 +50,8 @@ public class RosterNode extends DefaultMutableTreeNode {
         }
     }
 
-    public Object getUserObject() {
+    @Override
+	public Object getUserObject() {
         return name + " " + getChildCount();
     }
 

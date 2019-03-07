@@ -49,15 +49,18 @@ public class Features implements ExtensionElement {
     public static final String NAMESPACE = "http://jabber.org/protocol/disco#info";
 
 
-    public String getElementName() {
+    @Override
+	public String getElementName() {
         return ELEMENT_NAME;
     }
 
-    public String getNamespace() {
+    @Override
+	public String getNamespace() {
         return NAMESPACE;
     }
 
-    public String toXML(String enclosingNamespace) {
+    @Override
+	public String toXML(String enclosingNamespace) {
         return ( "<event xmlns=\"" + NAMESPACE + "\"" ) + "</event>";
     }
 
@@ -66,7 +69,8 @@ public class Features implements ExtensionElement {
         public Provider() {
         }
 
-        public Features parse( XmlPullParser parser, int initialDepth) throws XmlPullParserException, IOException {
+        @Override
+		public Features parse( XmlPullParser parser, int initialDepth) throws XmlPullParserException, IOException {
             Features features = new Features();
             boolean done = false;
             while (!done) {

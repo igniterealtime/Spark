@@ -143,7 +143,8 @@ public final class SessionManager implements ConnectionListener {
      *
      * @param ex the Exception that took place.
      */
-    public void connectionClosedOnError(final Exception ex) {
+    @Override
+	public void connectionClosedOnError(final Exception ex) {
         SwingUtilities.invokeLater( () -> {
             preError = Workspace.getInstance().getStatusBar().getPresence();
             final Presence presence = new Presence(Presence.Type.unavailable);
@@ -168,7 +169,8 @@ public final class SessionManager implements ConnectionListener {
     /**
      * Notify agent that the connection has been closed.
      */
-    public void connectionClosed() {
+    @Override
+	public void connectionClosed() {
     }
 
     /**

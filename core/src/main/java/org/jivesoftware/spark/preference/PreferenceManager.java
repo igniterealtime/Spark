@@ -63,15 +63,18 @@ public class PreferenceManager {
         getPreferences();
 
         SparkManager.getMainWindow().addMainWindowListener(new MainWindowListener() {
-            public void shutdown() {
+            @Override
+			public void shutdown() {
                 fireShutdown();
             }
 
-            public void mainWindowActivated() {
+            @Override
+			public void mainWindowActivated() {
 
             }
 
-            public void mainWindowDeactivated() {
+            @Override
+			public void mainWindowDeactivated() {
 
             }
         });

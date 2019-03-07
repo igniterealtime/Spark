@@ -57,35 +57,45 @@ public class FileDragLabel extends JLabel implements DropTargetListener, DragSou
         this.file = file;
     }
 
-    public void dragDropEnd(DragSourceDropEvent DragSourceDropEvent) {
+    @Override
+	public void dragDropEnd(DragSourceDropEvent DragSourceDropEvent) {
     }
 
-    public void dragEnter(DragSourceDragEvent DragSourceDragEvent) {
+    @Override
+	public void dragEnter(DragSourceDragEvent DragSourceDragEvent) {
     }
 
-    public void dragExit(DragSourceEvent DragSourceEvent) {
+    @Override
+	public void dragExit(DragSourceEvent DragSourceEvent) {
     }
 
-    public void dragOver(DragSourceDragEvent DragSourceDragEvent) {
+    @Override
+	public void dragOver(DragSourceDragEvent DragSourceDragEvent) {
     }
 
-    public void dropActionChanged(DragSourceDragEvent DragSourceDragEvent) {
+    @Override
+	public void dropActionChanged(DragSourceDragEvent DragSourceDragEvent) {
     }
 
-    public void dragEnter(DropTargetDragEvent dropTargetDragEvent) {
+    @Override
+	public void dragEnter(DropTargetDragEvent dropTargetDragEvent) {
         dropTargetDragEvent.acceptDrag(DnDConstants.ACTION_COPY_OR_MOVE);
     }
 
-    public void dragExit(DropTargetEvent dropTargetEvent) {
+    @Override
+	public void dragExit(DropTargetEvent dropTargetEvent) {
     }
 
-    public void dragOver(DropTargetDragEvent dropTargetDragEvent) {
+    @Override
+	public void dragOver(DropTargetDragEvent dropTargetDragEvent) {
     }
 
-    public void dropActionChanged(DropTargetDragEvent dropTargetDragEvent) {
+    @Override
+	public void dropActionChanged(DropTargetDragEvent dropTargetDragEvent) {
     }
 
-    public synchronized void drop(DropTargetDropEvent dropTargetDropEvent) {
+    @Override
+	public synchronized void drop(DropTargetDropEvent dropTargetDropEvent) {
         try {
             final Transferable transferable = dropTargetDropEvent.getTransferable();
             if (transferable.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
@@ -102,7 +112,8 @@ public class FileDragLabel extends JLabel implements DropTargetListener, DragSou
         }
     }
 
-    public void dragGestureRecognized(DragGestureEvent dragGestureEvent) {
+    @Override
+	public void dragGestureRecognized(DragGestureEvent dragGestureEvent) {
         if (file == null) {
             // Nothing selected, nothing to drag
             getToolkit().beep();
@@ -127,12 +138,14 @@ public class FileDragLabel extends JLabel implements DropTargetListener, DragSou
         }
 
 
-        public synchronized DataFlavor[] getTransferDataFlavors() {
+        @Override
+		public synchronized DataFlavor[] getTransferDataFlavors() {
             return flavors;
         }
 
 
-        public boolean isDataFlavorSupported(DataFlavor flavor) {
+        @Override
+		public boolean isDataFlavorSupported(DataFlavor flavor) {
             boolean b = false;
             b = b | flavor.equals(flavors[FILE]);
             b |= flavor.equals(flavors[STRING]);
@@ -141,7 +154,8 @@ public class FileDragLabel extends JLabel implements DropTargetListener, DragSou
         }
 
 
-        public synchronized Object getTransferData(DataFlavor flavor)
+        @Override
+		public synchronized Object getTransferData(DataFlavor flavor)
             throws UnsupportedFlavorException, IOException {
             if (flavor.equals(flavors[FILE])) {
                 return this;

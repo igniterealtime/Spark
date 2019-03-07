@@ -255,7 +255,8 @@ public class VCardManager {
 
         editProfileMenu.addActionListener( e -> {
             SwingWorker vcardLoaderWorker = new SwingWorker() {
-                public Object construct() {
+                @Override
+				public Object construct() {
                     try {
                         personalVCard.load(SparkManager.getConnection());
                     }
@@ -265,7 +266,8 @@ public class VCardManager {
                     return true;
                 }
 
-                public void finished() {
+                @Override
+				public void finished() {
                     editor.editProfile(personalVCard, SparkManager.getWorkspace());
                     personalVCardAvatar = null;
                     personalVCardHash = null;
@@ -306,12 +308,14 @@ public class VCardManager {
         final SwingWorker vcardThread = new SwingWorker() {
             VCard vcard = new VCard();
 
-            public Object construct() {
+            @Override
+			public Object construct() {
                 vcard = getVCard(jid);
                 return vcard;
             }
 
-            public void finished() {
+            @Override
+			public void finished() {
                 if (vcard == null) {
                     // Show vcard not found
                 	UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
@@ -337,12 +341,14 @@ public class VCardManager {
         final SwingWorker vcardThread = new SwingWorker() {
             VCard vcard = new VCard();
 
-            public Object construct() {
+            @Override
+			public Object construct() {
                 vcard = getVCard(jid);
                 return vcard;
             }
 
-            public void finished() {
+            @Override
+			public void finished() {
                 if (vcard.getError() != null || vcard == null) {
                     // Show vcard not found
                 	UIManager.put("OptionPane.okButtonText", Res.getString("ok"));

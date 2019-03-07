@@ -135,7 +135,8 @@ public class GroupChatInvitationUI extends JPanel implements ActionListener {
         rejectButton.addActionListener(this);
     }
 
-    public void actionPerformed(ActionEvent event) {
+    @Override
+	public void actionPerformed(ActionEvent event) {
         if (event.getSource() == acceptButton) {
             acceptInvitation();
         }
@@ -153,7 +154,8 @@ public class GroupChatInvitationUI extends JPanel implements ActionListener {
         ConferenceUtils.enterRoomOnSameThread(name.toString(), room, password);
 
         final TimerTask removeUITask = new SwingTimerTask() {
-            public void doRun() {
+            @Override
+			public void doRun() {
                 removeUI();
             }
         };

@@ -41,7 +41,8 @@ public class JLabelIconRenderer extends JLabel implements ListCellRenderer {
         this.setHorizontalAlignment(JLabel.CENTER);
     }
 
-    public Component getListCellRendererComponent(JList list,
+    @Override
+	public Component getListCellRendererComponent(JList list,
                                                   Object value,
                                                   int index,
                                                   boolean isSelected,

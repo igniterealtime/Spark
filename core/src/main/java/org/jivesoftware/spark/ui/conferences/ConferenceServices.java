@@ -173,30 +173,36 @@ public class ConferenceServices implements InvitationListener {
     private void addChatRoomListener() {
         ChatManager chatManager = SparkManager.getChatManager();
         chatManager.addChatRoomListener(new ChatRoomListener() {
-            public void chatRoomOpened(final ChatRoom room) {
+            @Override
+			public void chatRoomOpened(final ChatRoom room) {
                 if (room instanceof ChatRoomImpl) {
                     final ChatRoomDecorator decorator = new ChatRoomDecorator(room);
                     decorator.decorate();
                 }
             }
 
-            public void chatRoomLeft(ChatRoom room) {
+            @Override
+			public void chatRoomLeft(ChatRoom room) {
 
             }
 
-            public void chatRoomClosed(ChatRoom room) {
+            @Override
+			public void chatRoomClosed(ChatRoom room) {
 
             }
 
-            public void chatRoomActivated(ChatRoom room) {
+            @Override
+			public void chatRoomActivated(ChatRoom room) {
 
             }
 
-            public void userHasJoined(ChatRoom room, String userid) {
+            @Override
+			public void userHasJoined(ChatRoom room, String userid) {
 
             }
 
-            public void userHasLeft(ChatRoom room, String userid) {
+            @Override
+			public void userHasLeft(ChatRoom room, String userid) {
 
             }
         });
@@ -226,7 +232,8 @@ public class ConferenceServices implements InvitationListener {
         final Action inviteAllAction = new AbstractAction() {
 	    private static final long serialVersionUID = -7486282521151183678L;
 
-	    public void actionPerformed(ActionEvent actionEvent) {
+	    @Override
+		public void actionPerformed(ActionEvent actionEvent) {
                 Collection<ContactItem> contacts = contactList.getActiveGroup().getContactItems();
                 startConference(contacts);
 
@@ -240,7 +247,8 @@ public class ConferenceServices implements InvitationListener {
         final Action conferenceAction = new AbstractAction() {
 	    private static final long serialVersionUID = 4724119680969496581L;
 
-	    public void actionPerformed(ActionEvent actionEvent) {
+	    @Override
+		public void actionPerformed(ActionEvent actionEvent) {
                 Collection<ContactItem> contacts = contactList.getSelectedUsers();
                 startConference(contacts);
             }
@@ -251,7 +259,8 @@ public class ConferenceServices implements InvitationListener {
 
 
         contactList.addContextMenuListener(new ContextMenuListener() {
-            public void poppingUp(Object component, JPopupMenu popup) {
+            @Override
+			public void poppingUp(Object component, JPopupMenu popup) {
                 Collection<ContactItem> col = contactList.getSelectedUsers();
                 if (component instanceof ContactGroup) {
                     popup.add(inviteAllAction);
@@ -261,11 +270,13 @@ public class ConferenceServices implements InvitationListener {
                 }
             }
 
-            public void poppingDown(JPopupMenu popup) {
+            @Override
+			public void poppingDown(JPopupMenu popup) {
 
             }
 
-            public boolean handleDefaultAction(MouseEvent e) {
+            @Override
+			public boolean handleDefaultAction(MouseEvent e) {
                 return false;
             }
         });
@@ -357,12 +368,14 @@ public class ConferenceServices implements InvitationListener {
         }
 
 
-        public void closing() {
+        @Override
+		public void closing() {
             inviteButton.removeActionListener(this);
             chatRoom.removeClosingListener(this);
         }
 
-        public void actionPerformed(ActionEvent e) {
+        @Override
+		public void actionPerformed(ActionEvent e) {
             Localpart userName = SparkManager.getSessionManager().getJID().getLocalpart();
             final String roomName = userName + "_" + StringUtils.randomString(3);
 
@@ -373,7 +386,8 @@ public class ConferenceServices implements InvitationListener {
             final DomainBareJid serviceName = getDefaultServiceName();
             if (serviceName != null) {
                 SwingWorker worker = new SwingWorker() {
-                    public Object construct() {
+                    @Override
+					public Object construct() {
                         try {
                             Thread.sleep(25);
                         }
@@ -383,7 +397,8 @@ public class ConferenceServices implements InvitationListener {
                         return "ok";
                     }
 
-                    public void finished() {
+                    @Override
+					public void finished() {
                         try {
                             BookmarkedConference selectedBookmarkedConf = _localPreferences.isUseAdHocRoom() ? null : getDefaultBookmark();
                             if (selectedBookmarkedConf == null) {

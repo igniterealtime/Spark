@@ -289,7 +289,8 @@ public class ChatPreferencePanel extends JPanel implements ActionListener {
         }
     }
 
-    public void actionPerformed(ActionEvent actionEvent) {
+    @Override
+	public void actionPerformed(ActionEvent actionEvent) {
         if (hideChatHistory.isSelected()) {
         	UIManager.put("OptionPane.yesButtonText", Res.getString("yes"));
         	UIManager.put("OptionPane.noButtonText", Res.getString("no"));

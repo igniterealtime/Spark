@@ -153,7 +153,8 @@ class PkiLoginSettingsPanel extends JPanel implements ActionListener
         trustStoreButton.addActionListener( this );
     }
 
-    public void actionPerformed( ActionEvent e )
+    @Override
+	public void actionPerformed( ActionEvent e )
     {
         if ( e.getSource() == usePKIBox )
         {

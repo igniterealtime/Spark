@@ -55,7 +55,8 @@ public class JiveTable extends JTable {
 
     }
 
-    public TableCellRenderer getCellRenderer(int row, int column) {
+    @Override
+	public TableCellRenderer getCellRenderer(int row, int column) {
         if (column == 3 || column == 4) {
             return new JiveTable.JButtonRenderer(false);
         }
@@ -111,7 +112,8 @@ public class JiveTable extends JTable {
         /**
          * Returns true if cell is editable.
          */
-        public boolean isCellEditable(int row, int column) {
+        @Override
+		public boolean isCellEditable(int row, int column) {
             return _isEditable;
         }
     }
@@ -126,7 +128,8 @@ public class JiveTable extends JTable {
             super();
         }
 
-        public Component getTableCellRendererComponent(JTable table, Object color, boolean isSelected, boolean hasFocus, int row, int column) {
+        @Override
+		public Component getTableCellRendererComponent(JTable table, Object color, boolean isSelected, boolean hasFocus, int row, int column) {
             final String text = ((JLabel)color).getText();
             setText(text);
 
@@ -179,7 +182,8 @@ public class JiveTable extends JTable {
             //setOpaque(true); //MUST do this for background to show up.
         }
 
-        public Component getTableCellRendererComponent(JTable table, Object color, boolean isSelected, boolean hasFocus, int row, int column) {
+        @Override
+		public Component getTableCellRendererComponent(JTable table, Object color, boolean isSelected, boolean hasFocus, int row, int column) {
             final String text = ((JButton)color).getText();
             setText(text);
 

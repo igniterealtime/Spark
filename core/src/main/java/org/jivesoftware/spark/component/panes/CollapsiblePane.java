@@ -58,7 +58,8 @@ public class CollapsiblePane extends JPanel {
         mainPanel.setLayout(new BorderLayout());
 
         titlePane.addMouseListener(new MouseAdapter() {
-            public void mouseClicked(MouseEvent e) {
+            @Override
+			public void mouseClicked(MouseEvent e) {
                 if (e.isPopupTrigger()) {
                     return;
                 }

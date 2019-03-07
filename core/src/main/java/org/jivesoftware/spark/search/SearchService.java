@@ -107,11 +107,13 @@ public class SearchService extends JPanel {
         findField.setToolTipText(Res.getString("message.search.for.contacts"));
 
         findField.getTextComponent().addKeyListener(new KeyListener() {
-            public void keyTyped(KeyEvent e) {
+            @Override
+			public void keyTyped(KeyEvent e) {
 
             }
 
-            public void keyPressed(KeyEvent e) {
+            @Override
+			public void keyPressed(KeyEvent e) {
                 if (e.getKeyChar() == KeyEvent.VK_ENTER) {
                     final Icon previousIcon = findField.getIcon();
 
@@ -120,12 +122,14 @@ public class SearchService extends JPanel {
                     findField.repaint();
 
                     SwingWorker worker = new SwingWorker() {
-                        public Object construct() {
+                        @Override
+						public Object construct() {
                             activeSearchable.search(findField.getText());
                             return true;
                         }
 
-                        public void finished() {
+                        @Override
+						public void finished() {
                             findField.setIcon(previousIcon);
                             findField.setText("");
                         }
@@ -136,13 +140,15 @@ public class SearchService extends JPanel {
                 }
             }
 
-            public void keyReleased(KeyEvent e) {
+            @Override
+			public void keyReleased(KeyEvent e) {
 
             }
         });
 
         findField.getTextComponent().addMouseListener(new MouseAdapter() {
-            public void mouseClicked(MouseEvent e) {
+            @Override
+			public void mouseClicked(MouseEvent e) {
                 if (newSearch) {
                     findField.setText("");
                     findField.getTextComponent().setForeground((Color) UIManager.get("TextField.foreground"));
@@ -160,7 +166,8 @@ public class SearchService extends JPanel {
 
 
         findField.getImageComponent().addMouseListener(new MouseAdapter() {
-            public void mouseClicked(MouseEvent e) {
+            @Override
+			public void mouseClicked(MouseEvent e) {
                 Collection<Searchable> searchables = SparkManager.getSearchManager().getSearchServices();
                 if (searchables.size() <= 1) {
                     return;
@@ -172,6 +179,7 @@ public class SearchService extends JPanel {
                     Action action = new AbstractAction() {
 			private static final long serialVersionUID = 1289193809077193703L;
 
+			@Override
 			public void actionPerformed(ActionEvent e) {
                             setActiveSearchService(searchable);
                         }
@@ -199,18 +207,21 @@ public class SearchService extends JPanel {
         findField.setToolTipText(searchable.getToolTip());
 
         findField.getTextComponent().addFocusListener(new FocusListener() {
-            public void focusGained(FocusEvent e) {
+            @Override
+			public void focusGained(FocusEvent e) {
                 findField.setText("");
             }
 
-            public void focusLost(FocusEvent e) {
+            @Override
+			public void focusLost(FocusEvent e) {
                 findField.getTextComponent().setForeground((Color) UIManager.get("TextField.lightforeground"));
                 findField.setText(searchable.getDefaultText());
             }
         });
     }
 
-    public void paintComponent(Graphics g) {
+    @Override
+	public void paintComponent(Graphics g) {
         double scaleX = getWidth() / (double) backgroundImage.getWidth(null);
         double scaleY = getHeight() / (double) backgroundImage.getHeight(null);
         AffineTransform xform = AffineTransform.getScaleInstance(scaleX, scaleY);

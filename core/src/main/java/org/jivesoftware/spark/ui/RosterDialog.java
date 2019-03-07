@@ -216,11 +216,13 @@ public class RosterDialog implements ActionListener {
         }
 
         jidField.addFocusListener(new FocusListener() {
-            public void focusGained(FocusEvent e) {
+            @Override
+			public void focusGained(FocusEvent e) {
 
             }
 
-            public void focusLost(FocusEvent e) {
+            @Override
+			public void focusLost(FocusEvent e) {
                 String jid = getJID();
                 String vcardNickname = null;
 
@@ -302,7 +304,8 @@ public class RosterDialog implements ActionListener {
     }
 
 
-    public void actionPerformed(ActionEvent e) {
+    @Override
+	public void actionPerformed(ActionEvent e) {
         String group = JOptionPane.showInputDialog(dialog, Res.getString("label.enter.group.name") + ":", Res.getString("title.new.roster.group"), 3);
         if (group != null && group.length() > 0 && !groupModel.contains(group)) {
             Roster.getInstanceFor( SparkManager.getConnection() ).createGroup(group);
@@ -324,7 +327,8 @@ public class RosterDialog implements ActionListener {
 	JPanel mainPanel = new JPanel() {
 	    private static final long serialVersionUID = -7489967438182277375L;
 
-	    public Dimension getPreferredSize() {
+	    @Override
+		public Dimension getPreferredSize() {
 		final Dimension size = super.getPreferredSize();
 		size.width = 450;
 		return size;
@@ -427,11 +431,13 @@ public class RosterDialog implements ActionListener {
 
     private void addRosterEntry(final BareJid jid, final String nickname, final String group) {
         final SwingWorker rosterEntryThread = new SwingWorker() {
-            public Object construct() {
+            @Override
+			public Object construct() {
                 return addEntry(jid, nickname, group);
             }
 
-            public void finished() {
+            @Override
+			public void finished() {
                 if (get() == null) {
                 	UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
                     JOptionPane.showMessageDialog(dialog, Res.getString("label.unable.to.add.contact"), Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);

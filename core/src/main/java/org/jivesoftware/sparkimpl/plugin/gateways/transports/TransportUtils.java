@@ -217,15 +217,18 @@ public class TransportUtils {
 
     static class GatewayRegisterExtension implements ExtensionElement {
 
-        public String getElementName() {
+        @Override
+		public String getElementName() {
             return "x";
         }
 
-        public String getNamespace() {
+        @Override
+		public String getNamespace() {
             return "jabber:iq:gateway:register";
         }
 
-        public String toXML(String enclosingNamespace) {
+        @Override
+		public String toXML(String enclosingNamespace) {
             String builder = "<" + getElementName() + " xmlns=\"" + getNamespace() +
                     "\"/>";
             return builder;

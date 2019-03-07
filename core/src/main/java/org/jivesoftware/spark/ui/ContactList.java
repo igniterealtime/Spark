@@ -203,6 +203,7 @@ public class ContactList extends JPanel implements ActionListener,
         SparkManager.getMainWindow().getRootPane().getActionMap().put("searchContacts", new AbstractAction("searchContacts") {
 			private static final long serialVersionUID = -5956142123453578689L;
 
+			@Override
 			public void actionPerformed(ActionEvent evt) {
                 SparkManager.getUserManager().searchContacts("", SparkManager.getMainWindow());
             }
@@ -213,6 +214,7 @@ public class ContactList extends JPanel implements ActionListener,
         SparkManager.getMainWindow().getRootPane().getActionMap().put("appleStrokeF", new AbstractAction("appleStrokeF") {
 			private static final long serialVersionUID = 7883006402414136652L;
 
+			@Override
 			public void actionPerformed(ActionEvent evt) {
                 SparkManager.getUserManager().searchContacts("", SparkManager.getMainWindow());
             }
@@ -221,16 +223,19 @@ public class ContactList extends JPanel implements ActionListener,
         // Save state on shutdown.
         final ContactList instance = this;
         SparkManager.getMainWindow().addMainWindowListener(new MainWindowListener() {
-            public void shutdown() {
+            @Override
+			public void shutdown() {
                 saveState();
                 SparkManager.getConnection().removeConnectionListener( instance );
             }
 
-            public void mainWindowActivated() {
+            @Override
+			public void mainWindowActivated() {
 
             }
 
-            public void mainWindowDeactivated() {
+            @Override
+			public void mainWindowDeactivated() {
 
             }
         });
@@ -847,7 +852,8 @@ moveToOffline(moveToOfflineContactItem);
         } );
     }
 
-    public void presenceChanged(Presence presence) {
+    @Override
+	public void presenceChanged(Presence presence) {
 
     }
 
@@ -1225,7 +1231,8 @@ moveToOffline(moveToOfflineContactItem);
         }
     }
 
-    public void actionPerformed(ActionEvent e) {
+    @Override
+	public void actionPerformed(ActionEvent e) {
         if (e.getSource() == addingGroupButton) {
             new RosterDialog().showRosterDialog();
         }
@@ -1341,7 +1348,8 @@ moveToOffline(moveToOfflineContactItem);
         }
     }
 
-    public void contactItemClicked(ContactItem item) {
+    @Override
+	public void contactItemClicked(ContactItem item) {
         activeItem = item;
 
         if (activeKeyEvent == null || ((activeKeyEvent.getModifiers() & KeyEvent.CTRL_MASK) == 0)) {
@@ -1353,7 +1361,8 @@ moveToOffline(moveToOfflineContactItem);
         activeKeyEvent = null;
     }
 
-    public void contactItemDoubleClicked(ContactItem item) {
+    @Override
+	public void contactItemDoubleClicked(ContactItem item) {
         activeItem = item;
 
         ChatManager chatManager = SparkManager.getChatManager();
@@ -1368,7 +1377,8 @@ moveToOffline(moveToOfflineContactItem);
         fireContactItemDoubleClicked(item);
     }
 
-    public void contactGroupPopup(MouseEvent e, final ContactGroup group) {
+    @Override
+	public void contactGroupPopup(MouseEvent e, final ContactGroup group) {
    	  // Do nothing with offline group
         if (group == offlineGroup || group == getUnfiledGroup()) {
             return;
@@ -1484,7 +1494,8 @@ moveToOffline(moveToOfflineContactItem);
     }
 
     
-    public void showPopup(MouseEvent e, final ContactItem item)
+    @Override
+	public void showPopup(MouseEvent e, final ContactItem item)
     {
 	showPopup(null,e,item);
     }
@@ -1511,6 +1522,7 @@ moveToOffline(moveToOfflineContactItem);
         Action sendAction = new AbstractAction() {
 			private static final long serialVersionUID = -7519717310558205566L;
 
+			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
                 SparkManager.getTransferManager().sendFileTo(item);
             }
@@ -1548,6 +1560,7 @@ moveToOffline(moveToOfflineContactItem);
         Action removeAction = new AbstractAction() {
 			private static final long serialVersionUID = -2565914214685979320L;
 
+			@Override
 			public void actionPerformed(ActionEvent e) {
                 removeContactFromRoster(item);
             }
@@ -1578,6 +1591,7 @@ moveToOffline(moveToOfflineContactItem);
         Action viewProfile = new AbstractAction() {
 			private static final long serialVersionUID = -2562731455090634805L;
 
+			@Override
 			public void actionPerformed(ActionEvent e) {
                 VCardManager vcardSupport = SparkManager.getVCardManager();
                 BareJid jid = item.getJid().asBareJid();
@@ -1595,6 +1609,7 @@ moveToOffline(moveToOfflineContactItem);
         Action lastActivityAction = new AbstractAction() {
 			private static final long serialVersionUID = -4884230635430933060L;
 
+			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
 	            try {
 					String client = "";
@@ -1630,6 +1645,7 @@ moveToOffline(moveToOfflineContactItem);
         Action subscribeAction = new AbstractAction() {
 			private static final long serialVersionUID = -7754905015338902300L;
 
+			@Override
 			public void actionPerformed(ActionEvent e) {
                 String jid = item.getJID();
                 Presence response = new Presence(Presence.Type.subscribe);
@@ -1671,7 +1687,8 @@ moveToOffline(moveToOfflineContactItem);
 	}
     }
 
-    public void showPopup(MouseEvent e, final Collection<ContactItem> items) {
+    @Override
+	public void showPopup(MouseEvent e, final Collection<ContactItem> items) {
         ContactGroup group = null;
         for (ContactItem item : items) {
             group = getContactGroup(item.getGroupName());
@@ -1752,7 +1769,8 @@ moveToOffline(moveToOfflineContactItem);
 
     // For plugin use only
 
-    public void initialize() {
+    @Override
+	public void initialize() {
 	this.setBorder(BorderFactory.createEmptyBorder());
 
         // Add Contact List
@@ -1932,11 +1950,13 @@ moveToOffline(moveToOfflineContactItem);
     }
 
 
-    public void shutdown() {
+    @Override
+	public void shutdown() {
         saveState();
     }
 
-    public boolean canShutDown() {
+    @Override
+	public boolean canShutDown() {
         return true;
     }
 
@@ -2193,11 +2213,13 @@ moveToOffline(moveToOfflineContactItem);
         }
     }
 
-    public void contactItemAdded(ContactItem item) {
+    @Override
+	public void contactItemAdded(ContactItem item) {
         fireContactItemAdded(item);
     }
 
-    public void contactItemRemoved(ContactItem item) {
+    @Override
+	public void contactItemRemoved(ContactItem item) {
         fireContactItemRemoved(item);
     }
 
@@ -2304,7 +2326,8 @@ moveToOffline(moveToOfflineContactItem);
     }
 
 
-    public void uninstall() {
+    @Override
+	public void uninstall() {
         // Do nothing.
     }
 
@@ -2338,7 +2361,8 @@ moveToOffline(moveToOfflineContactItem);
         clientReconnected();
     }
 
-    public void connectionClosed() {
+    @Override
+	public void connectionClosed() {
 	// No reason to reconnect.
 
 	// Show MainWindow
@@ -2434,7 +2458,8 @@ moveToOffline(moveToOfflineContactItem);
 
     }
 
-    public void connectionClosedOnError(final Exception ex) {
+    @Override
+	public void connectionClosedOnError(final Exception ex) {
 	String errorMessage = Res.getString("message.disconnected.error");
 
 	if (ex != null && ex instanceof XMPPException.StreamErrorException) {

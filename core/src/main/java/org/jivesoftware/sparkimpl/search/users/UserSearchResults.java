@@ -90,18 +90,21 @@ public class UserSearchResults extends JPanel {
             add(scrollPane, BorderLayout.CENTER);
 
             resultsTable.addMouseListener(new MouseAdapter() {
-                public void mouseClicked(MouseEvent e) {
+                @Override
+				public void mouseClicked(MouseEvent e) {
                     if (e.getClickCount() == 2) {
                         int row = resultsTable.getSelectedRow();
                         openChatRoom(row);
                     }
                 }
 
-                public void mouseReleased(MouseEvent e) {
+                @Override
+				public void mouseReleased(MouseEvent e) {
                     checkPopup(e);
                 }
 
-                public void mousePressed(MouseEvent e) {
+                @Override
+				public void mousePressed(MouseEvent e) {
                     checkPopup(e);
                 }
             });
@@ -143,7 +146,8 @@ public class UserSearchResults extends JPanel {
         Action addContactAction = new AbstractAction() {
 	    private static final long serialVersionUID = -6377937878941477145L;
 
-	    public void actionPerformed(ActionEvent e) {
+	    @Override
+		public void actionPerformed(ActionEvent e) {
                 RosterDialog dialog = new RosterDialog();
                 String jid = (String)resultsTable.getValueAt(row, 0);
 
@@ -176,7 +180,8 @@ public class UserSearchResults extends JPanel {
         Action chatAction = new AbstractAction() {
 	    private static final long serialVersionUID = 5651812282020177800L;
 
-	    public void actionPerformed(ActionEvent e) {
+	    @Override
+		public void actionPerformed(ActionEvent e) {
                 openChatRoom(row);
             }
         };
@@ -184,7 +189,8 @@ public class UserSearchResults extends JPanel {
         Action profileAction = new AbstractAction() {
   	    private static final long serialVersionUID = -2014872840628217586L;
 
-	    public void actionPerformed(ActionEvent e) {
+	    @Override
+		public void actionPerformed(ActionEvent e) {
                 VCardManager vcardSupport = SparkManager.getVCardManager();
                 String jidString = (String)resultsTable.getValueAt(row, 0);
                 BareJid jid = JidCreate.bareFromOrThrowUnchecked(jidString);

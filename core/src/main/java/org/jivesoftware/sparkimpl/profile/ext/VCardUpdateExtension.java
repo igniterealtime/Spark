@@ -40,11 +40,13 @@ public class VCardUpdateExtension implements ExtensionElement {
         return photoHash;
     }
 
-    public String getElementName() {
+    @Override
+	public String getElementName() {
         return ELEMENT_NAME;
     }
 
-    public String getNamespace() {
+    @Override
+	public String getNamespace() {
         return NAMESPACE;
     }
 

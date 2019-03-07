@@ -118,7 +118,8 @@ public class ConferenceServiceBrowser {
         dlg.setLocationRelativeTo(SparkManager.getMainWindow());
 
         PropertyChangeListener changeListener = new PropertyChangeListener() {
-            public void propertyChange(PropertyChangeEvent e) {
+            @Override
+			public void propertyChange(PropertyChangeEvent e) {
                 String value = (String)pane.getValue();
                 if ("Close".equals(value)) {
                     list.clearSelection();

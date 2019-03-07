@@ -13,7 +13,8 @@ public class WrapEditorKit extends StyledEditorKit
 {
     private final ViewFactory defaultFactory = new WrapColumnFactory();
 
-    public ViewFactory getViewFactory()
+    @Override
+	public ViewFactory getViewFactory()
     {
         return defaultFactory;
     }

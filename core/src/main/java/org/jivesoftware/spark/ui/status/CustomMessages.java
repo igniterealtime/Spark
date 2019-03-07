@@ -178,11 +178,13 @@ public class CustomMessages {
         }
 
         tree.addMouseListener(new MouseAdapter() {
-            public void mousePressed(MouseEvent mouseEvent) {
+            @Override
+			public void mousePressed(MouseEvent mouseEvent) {
                 checkPopup(mouseEvent);
             }
 
-            public void mouseReleased(MouseEvent mouseEvent) {
+            @Override
+			public void mouseReleased(MouseEvent mouseEvent) {
                 checkPopup(mouseEvent);
             }
 
@@ -206,6 +208,7 @@ public class CustomMessages {
                     Action addAction = new AbstractAction() {
 						private static final long serialVersionUID = 2187174931315380754L;
 
+						@Override
 						public void actionPerformed(ActionEvent actionEvent) {
                             CustomStatus status = new CustomStatus();
                             String type = (String)selectedNode.getUserObject();
@@ -230,6 +233,7 @@ public class CustomMessages {
                     Action deleteAction = new AbstractAction() {
 						private static final long serialVersionUID = -4421868467918912876L;
 
+						@Override
 						public void actionPerformed(ActionEvent actionEvent) {
                             List<CustomStatusItem> list = new ArrayList<>();
                             //Refresh customItems list
@@ -258,6 +262,7 @@ public class CustomMessages {
                     Action editAction = new AbstractAction() {
 						private static final long serialVersionUID = 39916149252596354L;
 
+						@Override
 						public void actionPerformed(ActionEvent actionEvent) {
                             List<CustomStatusItem> newItems = load();
                             Iterator<CustomStatusItem> iter = newItems.iterator();

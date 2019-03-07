@@ -39,32 +39,39 @@ public class GroupChatPreference implements Preference {
      */
     public static final String NAMESPACE = "Group Chat";
 
-    public String getTitle() {
+    @Override
+	public String getTitle() {
         return Res.getString("title.group.chat");
     }
 
-    public String getListName() {
+    @Override
+	public String getListName() {
         return Res.getString("title.group.chat");
     }
 
-    public String getTooltip() {
+    @Override
+	public String getTooltip() {
         return Res.getString("title.group.chat");
     }
 
-    public Icon getIcon() {
+    @Override
+	public Icon getIcon() {
         return SparkRes.getImageIcon(SparkRes.JOIN_GROUPCHAT_IMAGE);
     }
 
-    public void load() {
+    @Override
+	public void load() {
         SwingWorker thread = new SwingWorker() {
             LocalPreferences localPreferences;
 
-            public Object construct() {
+            @Override
+			public Object construct() {
                 localPreferences = SettingsManager.getLocalPreferences();
                 return localPreferences;
             }
 
-            public void finished() {
+            @Override
+			public void finished() {
                 boolean highlightMyName 	= localPreferences.isMucHighNameEnabled();
                 boolean highlightMyText 	= localPreferences.isMucHighTextEnabled();
                 boolean highlightPopName	= localPreferences.isMucHighToastEnabled();
@@ -89,7 +96,8 @@ public class GroupChatPreference implements Preference {
 
     }
 
-    public void commit() {
+    @Override
+	public void commit() {
         LocalPreferences pref = SettingsManager.getLocalPreferences();
 
         pref.setMucHighNameEnabled(panel.isMucHighNameEnabled());
@@ -103,28 +111,34 @@ public class GroupChatPreference implements Preference {
         SettingsManager.saveSettings();
     }
 
-    public Object getData() {
+    @Override
+	public Object getData() {
         return SettingsManager.getLocalPreferences();
     }
 
-    public String getErrorMessage() {
+    @Override
+	public String getErrorMessage() {
         return null;
     }
 
 
-    public boolean isDataValid() {
+    @Override
+	public boolean isDataValid() {
         return true;
     }
 
-    public JComponent getGUI() {
+    @Override
+	public JComponent getGUI() {
         return panel;
     }
 
-    public String getNamespace() {
+    @Override
+	public String getNamespace() {
         return NAMESPACE;
     }
 
-    public void shutdown() {
+    @Override
+	public void shutdown() {
         commit();
     }
 

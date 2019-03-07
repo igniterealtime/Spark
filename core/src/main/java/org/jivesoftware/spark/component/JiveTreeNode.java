@@ -216,16 +216,19 @@ public class JiveTreeNode extends DefaultMutableTreeNode implements Transferable
     /**
      * Transferable implementation
      */
-    public DataFlavor[] getTransferDataFlavors() {
+    @Override
+	public DataFlavor[] getTransferDataFlavors() {
         return DATA_FLAVORS;
     }
 
-    public boolean isDataFlavorSupported(DataFlavor flavor) {
+    @Override
+	public boolean isDataFlavorSupported(DataFlavor flavor) {
         return flavor == DATA_FLAVORS[0];
 
     }
 
-    public Object getTransferData(DataFlavor flavor)
+    @Override
+	public Object getTransferData(DataFlavor flavor)
             throws UnsupportedFlavorException, IOException {
         if (this.isDataFlavorSupported(flavor)) {
             return this;

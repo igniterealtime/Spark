@@ -167,7 +167,8 @@ public final class PasswordDialog implements PropertyChangeListener {
 
         // Add Key Listener to Send Field
         passwordField.addKeyListener(new KeyAdapter() {
-            public void keyPressed(KeyEvent e) {
+            @Override
+			public void keyPressed(KeyEvent e) {
                 if (e.getKeyChar() == KeyEvent.VK_TAB) {
                     optionPane.requestFocus();
                 }
@@ -190,6 +191,7 @@ public final class PasswordDialog implements PropertyChangeListener {
     public Action nextFocusAction = new AbstractAction(Res.getString("label.move.focus.forwards")) {
 		private static final long serialVersionUID = 6465350147231073505L;
 
+		@Override
 		public void actionPerformed(ActionEvent evt) {
             ((Component)evt.getSource()).transferFocus();
         }
@@ -201,12 +203,14 @@ public final class PasswordDialog implements PropertyChangeListener {
     public Action prevFocusAction = new AbstractAction(Res.getString("label.move.focus.backwards")) {
 		private static final long serialVersionUID = -91177056113094990L;
 
+		@Override
 		public void actionPerformed(ActionEvent evt) {
             ((Component)evt.getSource()).transferFocusBackward();
         }
     };
 
-    public void propertyChange(PropertyChangeEvent e) {
+    @Override
+	public void propertyChange(PropertyChangeEvent e) {
         String value = (String)optionPane.getValue();
         if (Res.getString("cancel").equals(value)) {
             stringValue = null;

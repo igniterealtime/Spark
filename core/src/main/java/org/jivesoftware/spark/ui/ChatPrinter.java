@@ -176,7 +176,8 @@ public class ChatPrinter implements Printable {
      * @param pageIndex  the page to print.
      * @return the page number printed.
      */
-    public int print(Graphics graphics, PageFormat pageFormat, int pageIndex) {
+    @Override
+	public int print(Graphics graphics, PageFormat pageFormat, int pageIndex) {
         double scale = 1.0;
         Graphics2D graphics2D;
         View rootView;

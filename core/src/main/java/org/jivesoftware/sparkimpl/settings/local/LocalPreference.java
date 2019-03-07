@@ -38,33 +38,40 @@ public class LocalPreference implements Preference {
         preferences = SettingsManager.getLocalPreferences();
     }
 
-    public String getTitle() {
+    @Override
+	public String getTitle() {
         return Res.getString("title.login.settings");
     }
 
-    public String getListName() {
+    @Override
+	public String getListName() {
         return Res.getString("title.login");
     }
 
-    public String getTooltip() {
+    @Override
+	public String getTooltip() {
         return Res.getString("title.login.settings");
     }
 
-    public Icon getIcon() {
+    @Override
+	public Icon getIcon() {
         return SparkRes.getImageIcon(SparkRes.LOGIN_KEY_IMAGE);
     }
 
-    public void load() {
+    @Override
+	public void load() {
         preferences = SettingsManager.getLocalPreferences();
     }
 
-    public void commit() {
+    @Override
+	public void commit() {
         getData();
 
         SettingsManager.saveSettings();
     }
 
-    public Object getData() {
+    @Override
+	public Object getData() {
         preferences = SettingsManager.getLocalPreferences();
         preferences.setAutoLogin(panel.getAutoLogin());
         preferences.setTimeOut(Integer.parseInt(panel.getTimeout()));
@@ -81,11 +88,13 @@ public class LocalPreference implements Preference {
         return preferences;
     }
 
-    public String getErrorMessage() {
+    @Override
+	public String getErrorMessage() {
         return errorMessage;
     }
 
-    public boolean isDataValid() {
+    @Override
+	public boolean isDataValid() {
         preferences.setTimeOut(Integer.parseInt(panel.getTimeout()));
         preferences.setXmppPort(Integer.parseInt(panel.getPort()));
 
@@ -108,17 +117,20 @@ public class LocalPreference implements Preference {
         return true;
     }
 
-    public JComponent getGUI() {
+    @Override
+	public JComponent getGUI() {
         panel = new LocalPreferencePanel();
 
         return panel;
     }
 
-    public String getNamespace() {
+    @Override
+	public String getNamespace() {
         return "LOGIN";
     }
 
-    public void shutdown() {
+    @Override
+	public void shutdown() {
         // Commit to file.
         SettingsManager.saveSettings();
     }

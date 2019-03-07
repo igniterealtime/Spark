@@ -85,12 +85,14 @@ public class VCardViewer extends JPanel {
         final SwingWorker vcardLoader = new SwingWorker() {
             VCard vcard = null;
 
-            public Object construct() {
+            @Override
+			public Object construct() {
                 vcard = SparkManager.getVCardManager().getVCard(jid);
                 return vcard;
             }
 
-            public void finished() {
+            @Override
+			public void finished() {
                 if (vcard == null) {
                     // Do nothing.
                     return;
@@ -179,17 +181,20 @@ public class VCardViewer extends JPanel {
         final String hoverText = "<html><body><font color=red><u>" + emailAddress + "</u></font></body></html>";
         final JLabel emailTime = new JLabel(unselectedText);
         emailTime.addMouseListener(new MouseAdapter() {
-            public void mouseClicked(MouseEvent e) {
+            @Override
+			public void mouseClicked(MouseEvent e) {
                 startEmailClient(emailAddress);
             }
 
-            public void mouseEntered(MouseEvent e) {
+            @Override
+			public void mouseEntered(MouseEvent e) {
                 emailTime.setText(hoverText);
                 setCursor(LINK_CURSOR);
 
             }
 
-            public void mouseExited(MouseEvent e) {
+            @Override
+			public void mouseExited(MouseEvent e) {
                 emailTime.setText(unselectedText);
                 setCursor(DEFAULT_CURSOR);
             }
@@ -203,16 +208,19 @@ public class VCardViewer extends JPanel {
         final JLabel jidLabel = new JLabel("<html><body>JID: <font color=" + GraphicUtils.toHTMLColor(linkColor) + "><u>" + jid + "</u></font></body></html>");
         jidLabel.setToolTipText("Click to copy jid to clipboard.");
         jidLabel.addMouseListener(new MouseAdapter() {
-            public void mouseEntered(MouseEvent mouseEvent) {
+            @Override
+			public void mouseEntered(MouseEvent mouseEvent) {
                 jidLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
             }
 
-            public void mouseExited(MouseEvent mouseEvent) {
+            @Override
+			public void mouseExited(MouseEvent mouseEvent) {
                 jidLabel.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 
             }
 
-            public void mouseClicked(MouseEvent mouseEvent) {
+            @Override
+			public void mouseClicked(MouseEvent mouseEvent) {
                 SparkManager.setClipboard(jid);
             }
         });

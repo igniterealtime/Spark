@@ -31,23 +31,28 @@ public class ICQTransport implements Transport {
         this.serviceName = serviceName;
     }
 
-    public String getTitle(){
+    @Override
+	public String getTitle(){
         return Res.getString("title.icq.registration");
     }
 
-    public String getInstructions() {
+    @Override
+	public String getInstructions() {
         return Res.getString("message.enter.icq");
     }
 
-    public Icon getIcon() {
+    @Override
+	public Icon getIcon() {
         return SparkRes.getImageIcon(SparkRes.ICQ_TRANSPORT_ACTIVE_IMAGE);
     }
 
-    public Icon getInactiveIcon() {
+    @Override
+	public Icon getInactiveIcon() {
         return SparkRes.getImageIcon(SparkRes.ICQ_TRANSPORT_INACTIVE_IMAGE);
     }
 
-    public String getName(){
+    @Override
+	public String getName(){
         return "ICQ";
     }
 
@@ -60,15 +65,18 @@ public class ICQTransport implements Transport {
         this.serviceName = serviceName;
     }
 
-    public Boolean requiresUsername() {
+    @Override
+	public Boolean requiresUsername() {
         return true;
     }
 
-    public Boolean requiresPassword() {
+    @Override
+	public Boolean requiresPassword() {
         return true;
     }
 
-    public Boolean requiresNickname() {
+    @Override
+	public Boolean requiresNickname() {
         return false;
     }
     

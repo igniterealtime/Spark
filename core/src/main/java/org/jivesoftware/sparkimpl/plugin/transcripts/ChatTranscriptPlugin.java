@@ -87,6 +87,7 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
         final Action viewHistoryAction = new AbstractAction() {
 			private static final long serialVersionUID = -6498776252446416099L;
 
+			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
                 ContactItem item = contactList.getSelectedUsers().iterator().next();
                 final BareJid jid = item.getJid();
@@ -102,6 +103,7 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
         final Action showStatusMessageAction = new AbstractAction() {
 			private static final long serialVersionUID = -5000370836304286019L;
 
+			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
 				ContactItem item = contactList.getSelectedUsers().iterator().next();
 				showStatusMessage(item);
@@ -111,32 +113,38 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
        showStatusMessageAction.putValue(Action.NAME, Res.getString("menuitem.show.contact.statusmessage"));
 
         contactList.addContextMenuListener(new ContextMenuListener() {
-            public void poppingUp(Object object, JPopupMenu popup) {
+            @Override
+			public void poppingUp(Object object, JPopupMenu popup) {
                 if (object instanceof ContactItem) {
                 	if (!Default.getBoolean("HISTORY_DISABLED") && Enterprise.containsFeature(Enterprise.HISTORY_TRANSCRIPTS_FEATURE)) popup.add(viewHistoryAction);
                	 	popup.add(showStatusMessageAction);
                 }
             }
 
-            public void poppingDown(JPopupMenu popup) {
+            @Override
+			public void poppingDown(JPopupMenu popup) {
 
             }
 
-            public boolean handleDefaultAction(MouseEvent e) {
+            @Override
+			public boolean handleDefaultAction(MouseEvent e) {
                 return false;
             }
         });
 
         SparkManager.getMainWindow().addMainWindowListener(new MainWindowListener() {
-            public void shutdown() {
+            @Override
+			public void shutdown() {
                 persistConversations();
             }
 
-            public void mainWindowActivated() {
+            @Override
+			public void mainWindowActivated() {
 
             }
 
-            public void mainWindowDeactivated() {
+            @Override
+			public void mainWindowDeactivated() {
 
             }
         });
@@ -177,7 +185,8 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
         return true;
     }
 
-    public void chatRoomOpened(final ChatRoom room) {
+    @Override
+	public void chatRoomOpened(final ChatRoom room) {
         LocalPreferences pref = SettingsManager.getLocalPreferences();
         if (!pref.isChatHistoryEnabled()) {
             return;
@@ -195,11 +204,13 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
         }
     }
 
-    public void chatRoomLeft(ChatRoom room) {
+    @Override
+	public void chatRoomLeft(ChatRoom room) {
 
     }
 
-    public void chatRoomClosed(final ChatRoom room) {
+    @Override
+	public void chatRoomClosed(final ChatRoom room) {
         // Persist only agent to agent chat rooms.
         if (room.getChatType() == Message.Type.chat) {
             persistChatRoom(room);
@@ -246,15 +257,18 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
 
     }
 
-    public void chatRoomActivated(ChatRoom room) {
+    @Override
+	public void chatRoomActivated(ChatRoom room) {
 
     }
 
-    public void userHasJoined(ChatRoom room, String userid) {
+    @Override
+	public void userHasJoined(ChatRoom room, String userid) {
 
     }
 
-    public void userHasLeft(ChatRoom room, String userid) {
+    @Override
+	public void userHasLeft(ChatRoom room, String userid) {
 
     }
 
@@ -333,7 +347,8 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
         }
 
 
-        public void closing() {
+        @Override
+		public void closing() {
         	if (localPreferences.isChatHistoryEnabled()) {
         		chatHistoryButton.removeActionListener(this);
             }
@@ -342,7 +357,8 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
             chatHistoryButton = null;
         }
 
-        public void actionPerformed(ActionEvent e) {
+        @Override
+		public void actionPerformed(ActionEvent e) {
         	ChatRoomImpl roomImpl = (ChatRoomImpl)chatRoom;
         	transcript = new HistoryTranscript(notificationDateFormatter, messageDateFormatter);
         	transcript.showHistory(roomImpl.getParticipantJID());

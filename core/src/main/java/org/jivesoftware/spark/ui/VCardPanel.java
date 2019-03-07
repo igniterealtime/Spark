@@ -125,7 +125,8 @@ public class VCardPanel extends JPanel {
     
     private void buildAvatarHover() {
         _avatarHoverWindow.addMouseListener(new MouseAdapter() {
-            public void mouseExited(MouseEvent e) {
+            @Override
+			public void mouseExited(MouseEvent e) {
                 showAvatarBig(false, null);
 
             };
@@ -176,7 +177,8 @@ public class VCardPanel extends JPanel {
     private void buildUI(final VCard vcard) {
 
         avatarImage.addMouseListener(new MouseAdapter() {
-            public void mouseClicked(MouseEvent mouseEvent) {
+            @Override
+			public void mouseClicked(MouseEvent mouseEvent) {
                 if (mouseEvent.getClickCount() == 2) {
                     BareJid bareJid = JidCreate.bareFromOrThrowUnchecked(vcard.getJabberId());
                     SparkManager.getVCardManager().viewProfile(bareJid, avatarImage);
@@ -248,17 +250,20 @@ public class VCardPanel extends JPanel {
         final String hoverText = "<html><body><font color=red><u>" + emailAddress + "</u></font></body></html>";
         final JLabel emailTime = new JLabel(unselectedText);
         emailTime.addMouseListener(new MouseAdapter() {
-            public void mouseClicked(MouseEvent e) {
+            @Override
+			public void mouseClicked(MouseEvent e) {
                 startEmailClient(emailAddress);
             }
 
-            public void mouseEntered(MouseEvent e) {
+            @Override
+			public void mouseEntered(MouseEvent e) {
                 emailTime.setText(hoverText);
                 setCursor(LINK_CURSOR);
 
             }
 
-            public void mouseExited(MouseEvent e) {
+            @Override
+			public void mouseExited(MouseEvent e) {
                 emailTime.setText(unselectedText);
                 setCursor(DEFAULT_CURSOR);
             }

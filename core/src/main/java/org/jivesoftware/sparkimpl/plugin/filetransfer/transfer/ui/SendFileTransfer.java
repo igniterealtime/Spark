@@ -168,18 +168,21 @@ public class SendFileTransfer extends JPanel {
             imageLabel.setIcon(icon);
         }
         cancelButton.addMouseListener(new MouseAdapter() {
-            public void mouseClicked(MouseEvent mouseEvent) {
+            @Override
+			public void mouseClicked(MouseEvent mouseEvent) {
                 transfer.cancel();
             }
         });
 
         cancelButton.addMouseListener(new MouseAdapter() {
-            public void mouseEntered(MouseEvent e) {
+            @Override
+			public void mouseEntered(MouseEvent e) {
                 cancelButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
             }
 
-            public void mouseExited(MouseEvent e) {
+            @Override
+			public void mouseExited(MouseEvent e) {
                 cancelButton.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
             }
         });
@@ -195,7 +198,8 @@ public class SendFileTransfer extends JPanel {
         SwingWorker worker = new SwingWorker() {
             
             
-            public Object construct() {
+            @Override
+			public Object construct() {
                 while (true) {
                     try {
                 	if(transfer.getBytesSent() >0 && _starttime==0){
@@ -227,7 +231,8 @@ public class SendFileTransfer extends JPanel {
                 return "";
             }
 
-            public void finished() {
+            @Override
+			public void finished() {
                 updateBar(transfer, nickname, "??MB/s");
             }
         };
@@ -242,16 +247,19 @@ public class SendFileTransfer extends JPanel {
         label.setToolTipText(Res.getString("message.click.to.open"));
 
         label.addMouseListener(new MouseAdapter() {
-            public void mouseClicked(MouseEvent e) {
+            @Override
+			public void mouseClicked(MouseEvent e) {
                 openFile(fileToSend);
             }
 
-            public void mouseEntered(MouseEvent e) {
+            @Override
+			public void mouseEntered(MouseEvent e) {
                 label.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
             }
 
-            public void mouseExited(MouseEvent e) {
+            @Override
+			public void mouseExited(MouseEvent e) {
                 label.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
             }
         });

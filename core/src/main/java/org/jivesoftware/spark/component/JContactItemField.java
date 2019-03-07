@@ -60,7 +60,8 @@ public class JContactItemField extends JPanel {
         list = new JList(model) {
 	    private static final long serialVersionUID = -9031169221430835595L;
 
-	    public String getToolTipText(MouseEvent e) {
+	    @Override
+		public String getToolTipText(MouseEvent e) {
                 int row = locationToIndex(e.getPoint());
                 if (row >= 0)
                 {
@@ -79,7 +80,8 @@ public class JContactItemField extends JPanel {
 
 
         textField.addKeyListener(new KeyAdapter() {
-            public void keyReleased(KeyEvent keyEvent) {
+            @Override
+			public void keyReleased(KeyEvent keyEvent) {
                 char ch = keyEvent.getKeyChar();
                 if (validateChar(ch)) {
                     showPopupMenu();
@@ -100,7 +102,8 @@ public class JContactItemField extends JPanel {
                 dispatchEvent(keyEvent);
             }
 
-            public void keyPressed(KeyEvent e) {
+            @Override
+			public void keyPressed(KeyEvent e) {
                 if (isArrowKey(e)) {
                     list.dispatchEvent(e);
                 }
@@ -110,10 +113,12 @@ public class JContactItemField extends JPanel {
 
 
         textField.addFocusListener(new FocusListener() {
-            public void focusGained(FocusEvent e) {
+            @Override
+			public void focusGained(FocusEvent e) {
             }
 
-            public void focusLost(FocusEvent e) {
+            @Override
+			public void focusLost(FocusEvent e) {
                 textField.requestFocusInWindow();
             }
         });
@@ -128,7 +133,8 @@ public class JContactItemField extends JPanel {
 
         list.setCellRenderer(new PopupRenderer());
         list.addMouseListener(new MouseAdapter() {
-            public void mouseClicked(MouseEvent e) {
+            @Override
+			public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2) {
                     int index = list.getSelectedIndex();
                     if (index >= 0) {
@@ -280,7 +286,8 @@ public class JContactItemField extends JPanel {
             this.setHorizontalAlignment(JLabel.LEFT);
         }
 
-        public Component getListCellRendererComponent(JList list,
+        @Override
+		public Component getListCellRendererComponent(JList list,
                                                       Object value,
                                                       int index,
                                                       boolean isSelected,

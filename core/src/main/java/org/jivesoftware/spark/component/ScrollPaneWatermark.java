@@ -48,7 +48,8 @@ public class ScrollPaneWatermark extends JViewport {
         this.foregroundImage = image;
     }
 
-    public void paintComponent(Graphics g) {
+    @Override
+	public void paintComponent(Graphics g) {
         super.paintComponent(g);
 
         if(foregroundImage != null){

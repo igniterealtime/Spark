@@ -42,9 +42,11 @@ public class UserSearchService implements Searchable {
         loadSearchServices();
     }
 
-    public void search(final String query) {
+    @Override
+	public void search(final String query) {
         SwingWorker worker = new SwingWorker() {
-            public Object construct() {
+            @Override
+			public Object construct() {
                 // On initialization, find search service.
                 if (searchServices == null) {
                     loadSearchServices();
@@ -52,7 +54,8 @@ public class UserSearchService implements Searchable {
                 return true;
             }
 
-            public void finished() {
+            @Override
+			public void finished() {
                 processQuery(query);
             }
         };
@@ -171,19 +174,23 @@ public class UserSearchService implements Searchable {
         return searchServices;
     }
 
-    public String getToolTip() {
+    @Override
+	public String getToolTip() {
         return Res.getString("message.search.for.other.people");
     }
 
-    public String getDefaultText() {
+    @Override
+	public String getDefaultText() {
         return Res.getString("message.search.for.other.people");
     }
 
-    public String getName() {
+    @Override
+	public String getName() {
         return Res.getString("title.person.search");
     }
 
-    public Icon getIcon() {
+    @Override
+	public Icon getIcon() {
         return SparkRes.getImageIcon(SparkRes.SEARCH_USER_16x16);
     }
 

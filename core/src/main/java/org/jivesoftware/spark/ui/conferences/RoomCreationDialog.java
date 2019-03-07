@@ -122,7 +122,8 @@ public class RoomCreationDialog extends JPanel {
 
 
         PropertyChangeListener changeListener = new PropertyChangeListener() {
-            public void propertyChange(PropertyChangeEvent e) {
+            @Override
+			public void propertyChange(PropertyChangeEvent e) {
                 Object o = pane.getValue();
                 if (o instanceof Integer) {
                     dlg.setVisible(false);
