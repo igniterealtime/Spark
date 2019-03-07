@@ -172,7 +172,8 @@ public final class MainWindow extends ChatFrame implements ActionListener {
              *
              * @param e WindowEvent is never used.
              */
-            public void windowClosing(WindowEvent e) {
+            @Override
+			public void windowClosing(WindowEvent e) {
                 setVisible(false);
             }
         });
@@ -224,7 +225,8 @@ public final class MainWindow extends ChatFrame implements ActionListener {
      *
      * @param e the ActionEvent
      */
-    public void actionPerformed(ActionEvent e) {
+    @Override
+	public void actionPerformed(ActionEvent e) {
         if (e.getSource().equals(preferenceMenuItem)) {
             SparkManager.getPreferenceManager().showPreferences();
         }
@@ -472,6 +474,7 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         final Action viewErrors = new AbstractAction() {
 			private static final long serialVersionUID = -420926784631340112L;
 
+			@Override
 			public void actionPerformed(ActionEvent e) {
                 File logDir = new File(Spark.getLogDirectory(), "errors.log");
                 if (!logDir.exists()) {
@@ -491,6 +494,7 @@ public final class MainWindow extends ChatFrame implements ActionListener {
             	final String url = Default.getString(Default.HELP_USER_GUIDE);
 			private static final long serialVersionUID = 2680369963282231348L;
 
+			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
                 try {
 
@@ -534,7 +538,8 @@ public final class MainWindow extends ChatFrame implements ActionListener {
 	exitMenuItem.addActionListener(new AbstractAction() {
 	    private static final long serialVersionUID = -2301236575241532698L;
 
-	    public void actionPerformed(ActionEvent e) {
+	    @Override
+		public void actionPerformed(ActionEvent e) {
 		shutdown();
 	    }
 	});
@@ -544,7 +549,8 @@ public final class MainWindow extends ChatFrame implements ActionListener {
 
 	    final String url = Default.getString("HELP_FORUM");
 
-	    public void actionPerformed(ActionEvent e) {
+		@Override
+		public void actionPerformed(ActionEvent e) {
 		try {
 		    BrowserLauncher.openURL(url);
 		} catch (Exception browserException) {
@@ -557,7 +563,8 @@ public final class MainWindow extends ChatFrame implements ActionListener {
 	menuAbout.addActionListener(new AbstractAction() {
 	    private static final long serialVersionUID = -7173666373051354502L;
 
-	    public void actionPerformed(ActionEvent e) {
+	    @Override
+		public void actionPerformed(ActionEvent e) {
 		showAboutBox();
 	    }
 	});
@@ -565,6 +572,7 @@ public final class MainWindow extends ChatFrame implements ActionListener {
 	if (!Default.getBoolean("DISABLE_UPDATES") && Enterprise.containsFeature(Enterprise.UPDATES_FEATURE)) {
 		// Execute spark update checker after one minute.
 		final TimerTask task = new SwingTimerTask() {
+			@Override
 			public void doRun() {
 				checkForUpdates(false);
 			}
@@ -619,17 +627,20 @@ public final class MainWindow extends ChatFrame implements ActionListener {
      *
      * @return true if the Spark window is in focus.
      */
-    public boolean isInFocus() {
+    @Override
+	public boolean isInFocus() {
         return focused;
     }
 
     private class MainWindowFocusListener implements WindowFocusListener {
 
-        public void windowGainedFocus(WindowEvent e) {
+        @Override
+		public void windowGainedFocus(WindowEvent e) {
             focused = true;
         }
 
-        public void windowLostFocus(WindowEvent e) {
+        @Override
+		public void windowLostFocus(WindowEvent e) {
             focused = false;
         }
     }
@@ -652,7 +663,8 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         final CheckUpdates updater = new CheckUpdates();
         try {
             final SwingWorker updateThread = new SwingWorker() {
-                public Object construct() {
+                @Override
+				public Object construct() {
                     try {
                         Thread.sleep(50);
                     }
@@ -662,7 +674,8 @@ public final class MainWindow extends ChatFrame implements ActionListener {
                     return "ok";
                 }
 
-                public void finished() {
+                @Override
+				public void finished() {
                     try {
                         updater.checkForUpdate(forced);
                     }

@@ -39,31 +39,38 @@ public class NotificationsPreference implements Preference {
 	 */
 	public static final String NAMESPACE = "http://www.jivesoftware.org/spark/notifications";
 
+	@Override
 	public String getTitle() {
 		return Res.getString("title.notifications");
 	}
 
+	@Override
 	public String getListName() {
 		return Res.getString("title.notifications");
 	}
 
+	@Override
 	public String getTooltip() {
 		return Res.getString("tooltip.notifications");
 	}
 
+	@Override
 	public Icon getIcon() {
 		return SparkRes.getImageIcon(SparkRes.PROFILE_ICON);
 	}
 
+	@Override
 	public void load() {
 		SwingWorker thread = new SwingWorker() {
 			LocalPreferences localPreferences;
 
+			@Override
 			public Object construct() {
 				localPreferences = SettingsManager.getLocalPreferences();
 				return localPreferences;
 			}
 
+			@Override
 			public void finished() {
 				boolean toaster = localPreferences.getShowToasterPopup();
 				boolean asteriskToaster = localPreferences.getDisableAsteriskToasterPopup();
@@ -110,6 +117,7 @@ public class NotificationsPreference implements Preference {
 
 	}
 
+	@Override
 	public void commit() {
 		LocalPreferences pref = SettingsManager.getLocalPreferences();
 
@@ -125,26 +133,32 @@ public class NotificationsPreference implements Preference {
 		SettingsManager.saveSettings();
 	}
 
+	@Override
 	public Object getData() {
 		return SettingsManager.getLocalPreferences();
 	}
 
+	@Override
 	public String getErrorMessage() {
 		return "";
 	}
 
+	@Override
 	public boolean isDataValid() {
 		return true;
 	}
 
+	@Override
 	public JComponent getGUI() {
 		return panel;
 	}
 
+	@Override
 	public String getNamespace() {
 		return NAMESPACE;
 	}
 
+	@Override
 	public void shutdown() {
 		commit();
 	}

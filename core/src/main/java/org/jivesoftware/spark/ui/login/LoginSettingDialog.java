@@ -131,7 +131,8 @@ public class LoginSettingDialog implements PropertyChangeListener
      *
      * @param e the property change event.
      */
-    public void propertyChange( PropertyChangeEvent e )
+    @Override
+	public void propertyChange( PropertyChangeEvent e )
     {
         String value = (String) optionPane.getValue();
         if ( Res.getString( "cancel" ).equals( value ) )

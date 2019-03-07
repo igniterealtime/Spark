@@ -174,11 +174,13 @@ public class NotificationAlertUI extends JPanel {
             final String unselectedText = "<html><body><font color=" + GraphicUtils.toHTMLColor(linkColor) + "><u>" + emailAddress + "</u></font></body></html>";
             final String hoverText = "<html><body><font color=red><u>" + emailAddress + "</u></font></body></html>";
             emailAddressLabel.addMouseListener(new MouseAdapter() {
-                public void mouseEntered(MouseEvent e) {
+                @Override
+				public void mouseEntered(MouseEvent e) {
                     emailAddressLabel.setText(hoverText);
                 }
 
-                public void mouseExited(MouseEvent e) {
+                @Override
+				public void mouseExited(MouseEvent e) {
                     emailAddressLabel.setText(unselectedText);
                 }
             });
@@ -240,7 +242,8 @@ public class NotificationAlertUI extends JPanel {
         repaint();
     }
 
-    public void paintComponent(Graphics g) {
+    @Override
+	public void paintComponent(Graphics g) {
         BufferedImage cache = new BufferedImage(2, getHeight(), BufferedImage.TYPE_INT_RGB);
         Graphics2D g2d = cache.createGraphics();
 

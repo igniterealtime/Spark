@@ -64,7 +64,8 @@ public class PrivateNotes implements PrivateData {
      *
      * @return the element name.
      */
-    public String getElementName() {
+    @Override
+	public String getElementName() {
         return "scratchpad";
     }
 
@@ -73,7 +74,8 @@ public class PrivateNotes implements PrivateData {
      *
      * @return the namespace.
      */
-    public String getNamespace() {
+    @Override
+	public String getNamespace() {
         return "scratchpad:notes";
     }
 
@@ -82,7 +84,8 @@ public class PrivateNotes implements PrivateData {
      *
      * @return the private data as XML.
      */
-    public String toXML() {
+    @Override
+	public String toXML() {
         StringBuilder buf = new StringBuilder();
         buf.append("<scratchpad xmlns=\"scratchpad:notes\">");
 
@@ -110,7 +113,8 @@ public class PrivateNotes implements PrivateData {
             super();
         }
 
-        public PrivateData parsePrivateData(XmlPullParser parser) throws XmlPullParserException, IOException {
+        @Override
+		public PrivateData parsePrivateData(XmlPullParser parser) throws XmlPullParserException, IOException {
             boolean done = false;
             while (!done) {
                 int eventType = parser.next();

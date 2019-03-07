@@ -71,7 +71,8 @@ public class BuzzRoomDecorator implements ActionListener {
     	chatRoom.addEditorComponent(buzzer.buzzButton);
     }
 
-    public void actionPerformed(ActionEvent e) {
+    @Override
+	public void actionPerformed(ActionEvent e) {
         Jid jid;
         try {
             jid = JidCreate.from(((ChatRoomImpl)chatRoom).getParticipantJID());
@@ -95,7 +96,8 @@ public class BuzzRoomDecorator implements ActionListener {
 
         // Enable the button after 30 seconds to prevent abuse.
         final TimerTask enableTask = new SwingTimerTask() {
-            public void doRun() {
+            @Override
+			public void doRun() {
                 buzzButton.setEnabled(true);
             }
         };

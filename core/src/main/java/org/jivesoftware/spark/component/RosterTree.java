@@ -89,19 +89,23 @@ public final class RosterTree extends JPanel {
         final Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
 
         roster.addRosterListener(new RosterListener() {
-            public void entriesAdded(Collection<Jid> addresses) {
+            @Override
+			public void entriesAdded(Collection<Jid> addresses) {
 
             }
 
-            public void entriesUpdated(Collection<Jid> addresses) {
+            @Override
+			public void entriesUpdated(Collection<Jid> addresses) {
 
             }
 
-            public void entriesDeleted(Collection<Jid> addresses) {
+            @Override
+			public void entriesDeleted(Collection<Jid> addresses) {
 
             }
 
-            public void presenceChanged(Presence presence) {
+            @Override
+			public void presenceChanged(Presence presence) {
                 //changePresence(presence.getFrom(), presence.getMode() == Presence.Mode.available);
 
             }
@@ -159,7 +163,8 @@ public final class RosterTree extends JPanel {
         return addressMap.get(node);
     }
 
-    public String toString() {
+    @Override
+	public String toString() {
         return "Roster";
     }
 }

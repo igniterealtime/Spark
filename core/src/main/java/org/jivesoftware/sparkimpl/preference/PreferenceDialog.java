@@ -121,7 +121,8 @@ public class PreferenceDialog implements PropertyChangeListener
         } );
     }
 
-    public void propertyChange( PropertyChangeEvent e )
+    @Override
+	public void propertyChange( PropertyChangeEvent e )
     {
         if ( pane.getValue() instanceof Integer )
         {

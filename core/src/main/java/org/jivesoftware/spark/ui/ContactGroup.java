@@ -98,16 +98,19 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
 
         // Allow for mouse events to take place on the title bar
         getTitlePane().addMouseListener(new MouseAdapter() {
-            public void mousePressed(MouseEvent e) {
+            @Override
+			public void mousePressed(MouseEvent e) {
                 checkPopup(e);
 
             }
 
-            public void mouseReleased(MouseEvent e) {
+            @Override
+			public void mouseReleased(MouseEvent e) {
                 checkPopup(e);
             }
 
-            public void mouseClicked(MouseEvent e) {
+            @Override
+			public void mouseClicked(MouseEvent e) {
 	             if(e.getButton() == MouseEvent.BUTTON1)
 	             {
 	            	 contactList =  Workspace.getInstance().getContactList();
@@ -128,11 +131,13 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
         contactItemList.addMouseListener(this);
 
         contactItemList.addKeyListener(new KeyListener() {
-            public void keyTyped(KeyEvent keyEvent) {
+            @Override
+			public void keyTyped(KeyEvent keyEvent) {
 
             }
 
-            public void keyPressed(KeyEvent keyEvent) {
+            @Override
+			public void keyPressed(KeyEvent keyEvent) {
                 if (keyEvent.getKeyChar() == KeyEvent.VK_ENTER) {
                     ContactItem item = (ContactItem)contactItemList.getSelectedValue();
                     fireContactItemDoubleClicked(item);
@@ -141,7 +146,8 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
                 ContactList.activeKeyEvent = keyEvent;
             }
 
-            public void keyReleased(KeyEvent keyEvent) {
+            @Override
+			public void keyReleased(KeyEvent keyEvent) {
                 ContactList.activeKeyEvent = null;
             }
         });
@@ -551,7 +557,8 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
     }
 
 
-    public void mouseClicked(MouseEvent e) {
+    @Override
+	public void mouseClicked(MouseEvent e) {
 
         Object o = contactItemList.getSelectedValue();
         if (!(o instanceof ContactItem)) {
@@ -569,7 +576,8 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
         }
     }
 
-    public void mouseEntered(MouseEvent e) {
+    @Override
+	public void mouseEntered(MouseEvent e) {
         int loc = contactItemList.locationToIndex(e.getPoint());
 
         Object o = model.getElementAt(loc);
@@ -580,7 +588,8 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
         contactItemList.setCursor(GraphicUtils.HAND_CURSOR);
     }
 
-    public void mouseExited(MouseEvent e) {
+    @Override
+	public void mouseExited(MouseEvent e) {
         Object o;
         try {
             int loc = contactItemList.locationToIndex(e.getPoint());
@@ -603,11 +612,13 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
 
     }
 
-    public void mousePressed(MouseEvent e) {
+    @Override
+	public void mousePressed(MouseEvent e) {
         checkPopup(e);
     }
 
-    public void mouseReleased(MouseEvent e) {
+    @Override
+	public void mouseReleased(MouseEvent e) {
         checkPopup(e);
     }
 
@@ -867,7 +878,8 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
         return Res.getString("unfiled").equals(getGroupName());
     }
 
-    public String toString() {
+    @Override
+	public String toString() {
         return getGroupName();
     }
 
@@ -927,7 +939,8 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
      *
      * @return the preferred dimension
      */
-    public Dimension getPreferredSize() {
+    @Override
+	public Dimension getPreferredSize() {
         final Dimension size = super.getPreferredSize();
         size.width = 0;
         return size;
@@ -990,13 +1003,15 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
      */
     private void addPopupWindow() {
         contactItemList.addMouseListener(new MouseAdapter() {
-            public void mouseEntered(MouseEvent mouseEvent) {               
+            @Override
+			public void mouseEntered(MouseEvent mouseEvent) {               
             	canShowPopup = true;
             	timerTask = new DisplayWindowTask(mouseEvent);            
             	TaskEngine.getInstance().schedule(timerTask, 500, 1000);
             }
 
-            public void mouseExited(MouseEvent mouseEvent) {
+            @Override
+			public void mouseExited(MouseEvent mouseEvent) {
             	if (timerTask != null) {
             		TaskEngine.getInstance().cancelScheduledTask(timerTask);
             	}            	

@@ -48,7 +48,8 @@ public class WinLockListener implements WinUser.WindowProc {
      *
      * @see com.sun.jna.platform.win32.User32.WindowProc#callback(com.sun.jna.platform .win32.WinDef.HWND, int, com.sun.jna.platform.win32.WinDef.WPARAM, com.sun.jna.platform.win32.WinDef.LPARAM)
      */
-    public WinDef.LRESULT callback(WinDef.HWND hwnd, int uMsg, WinDef.WPARAM wParam, WinDef.LPARAM lParam) {
+    @Override
+	public WinDef.LRESULT callback(WinDef.HWND hwnd, int uMsg, WinDef.WPARAM wParam, WinDef.LPARAM lParam) {
         switch (uMsg) {
             case WinUser.WM_DESTROY: {
                 User32.INSTANCE.PostQuitMessage(0);

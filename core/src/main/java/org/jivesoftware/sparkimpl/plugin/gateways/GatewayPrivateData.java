@@ -51,16 +51,19 @@ public class GatewayPrivateData implements PrivateData {
         return Boolean.parseBoolean(str);
     }
 
-    public String getElementName() {
+    @Override
+	public String getElementName() {
         return ELEMENT;
     }
 
-    public String getNamespace() {
+    @Override
+	public String getNamespace() {
         return NAMESPACE;
     }
 
 
-    public String toXML() {
+    @Override
+	public String toXML() {
         StringBuilder buf = new StringBuilder();
         buf.append("<").append(getElementName()).append(" xmlns=\"").append(getNamespace()).append("\">");
         buf.append("<gateways>");
@@ -83,7 +86,8 @@ public class GatewayPrivateData implements PrivateData {
         public ConferencePrivateDataProvider() {
         }
 
-        public PrivateData parsePrivateData(XmlPullParser parser) throws IOException, XmlPullParserException
+        @Override
+		public PrivateData parsePrivateData(XmlPullParser parser) throws IOException, XmlPullParserException
         {
             GatewayPrivateData data = new GatewayPrivateData();
 

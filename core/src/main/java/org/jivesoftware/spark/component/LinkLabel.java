@@ -75,7 +75,8 @@ final public class LinkLabel extends JLabel implements MouseListener {
      *
      * @param me the MouseEvent.
      */
-    public void mouseClicked(MouseEvent me) {
+    @Override
+	public void mouseClicked(MouseEvent me) {
         if (invokeBrowser) {
             try {
                 BrowserLauncher.openURL(labelURL);
@@ -86,18 +87,22 @@ final public class LinkLabel extends JLabel implements MouseListener {
         }
     }
 
-    public void mousePressed(MouseEvent me) {
+    @Override
+	public void mousePressed(MouseEvent me) {
     }
 
-    public void mouseReleased(MouseEvent me) {
+    @Override
+	public void mouseReleased(MouseEvent me) {
     }
 
-    public void mouseEntered(MouseEvent me) {
+    @Override
+	public void mouseEntered(MouseEvent me) {
         this.setForeground(rolloverTextColor);
         this.setCursor(LINK_CURSOR);
     }
 
-    public void mouseExited(MouseEvent me) {
+    @Override
+	public void mouseExited(MouseEvent me) {
         this.setForeground(foregroundTextColor);
         this.setCursor(DEFAULT_CURSOR);
     }

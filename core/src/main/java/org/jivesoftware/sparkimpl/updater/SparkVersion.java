@@ -121,7 +121,8 @@ public class SparkVersion extends IQ {
             super();
         }
 
-        public SparkVersion parse(XmlPullParser parser, int i) throws XmlPullParserException, IOException{
+        @Override
+		public SparkVersion parse(XmlPullParser parser, int i) throws XmlPullParserException, IOException{
             SparkVersion version = new SparkVersion();
 
             boolean done = false;

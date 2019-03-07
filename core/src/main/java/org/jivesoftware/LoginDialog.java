@@ -183,7 +183,8 @@ public class LoginDialog {
 
             // Show dialog
             loginDialog.addWindowListener(new WindowAdapter() {
-                public void windowClosing(WindowEvent e) {
+                @Override
+				public void windowClosing(WindowEvent e) {
                     quitLogin();
                 }
             });
@@ -548,7 +549,8 @@ public class LoginDialog {
                     final String url = Default.getString(Default.PASSWORD_RESET_URL);
                     private static final long serialVersionUID = 2680369963282231348L;
 
-                    public void actionPerformed(ActionEvent actionEvent) {
+                    @Override
+					public void actionPerformed(ActionEvent actionEvent) {
                         try {
 
                             BrowserLauncher.openURL(url);
@@ -760,7 +762,8 @@ public class LoginDialog {
          *
          * @param e the ActionEvent
          */
-        public void actionPerformed(ActionEvent e) {
+        @Override
+		public void actionPerformed(ActionEvent e) {
 
             if (e.getSource() == quitButton) {
                 quitLogin();
@@ -841,11 +844,13 @@ public class LoginDialog {
          *
          * @param e the KeyEvent to process.
          */
-        public void keyTyped(KeyEvent e) {
+        @Override
+		public void keyTyped(KeyEvent e) {
             validate(e);
         }
 
-        public void keyPressed(KeyEvent e) {
+        @Override
+		public void keyPressed(KeyEvent e) {
             if(e.getKeyCode() == KeyEvent.VK_RIGHT &&
         	    ((JTextField)e.getSource()).getCaretPosition()==((JTextField)e.getSource()).getText().length())
             {
@@ -853,7 +858,8 @@ public class LoginDialog {
             }
         }
 
-        public void keyReleased(KeyEvent e) {
+        @Override
+		public void keyReleased(KeyEvent e) {
             validateDialog();
         }
 
@@ -878,14 +884,16 @@ public class LoginDialog {
             }
         }
 
-        public void focusGained(FocusEvent e) {
+        @Override
+		public void focusGained(FocusEvent e) {
             Object o = e.getSource();
             if (o instanceof JTextComponent) {
                 ((JTextComponent)o).selectAll();
             }
         }
 
-        public void focusLost(FocusEvent e) {
+        @Override
+		public void focusLost(FocusEvent e) {
         }
 
         /**
@@ -935,7 +943,8 @@ public class LoginDialog {
          */
         private void validateLogin() {
             final SwingWorker loginValidationThread = new SwingWorker() {
-                public Object construct() {
+                @Override
+				public Object construct() {
                     setLoginUsername(getUsername());
                     setLoginPassword(getPassword());
                     setLoginServer(getServerName());
@@ -981,7 +990,8 @@ public class LoginDialog {
             return passwordField;
         }
 
-        public Dimension getPreferredSize() {
+        @Override
+		public Dimension getPreferredSize() {
             final Dimension dim = super.getPreferredSize();
             dim.height = 230;
             return dim;
@@ -1301,6 +1311,7 @@ public class LoginDialog {
             return true;
         }
 
+	@Override
 	public void handle(Callback[] callbacks) throws IOException  {
             for (Callback callback : callbacks) {
                 if (callback instanceof NameCallback) {
@@ -1465,7 +1476,8 @@ public class LoginDialog {
          *
          * @param g the graphics.
          */
-        public void paintComponent(Graphics g) {
+        @Override
+		public void paintComponent(Graphics g) {
             Image backgroundImage = icons.getImage();
             double scaleX = getWidth() / (double)backgroundImage.getWidth(null);
             double scaleY = getHeight() / (double)backgroundImage.getHeight(null);
@@ -1487,7 +1499,8 @@ public class LoginDialog {
          *
          * @param g the graphics to use.
          */
-        public void paintComponent(Graphics g) {
+        @Override
+		public void paintComponent(Graphics g) {
             final Image backgroundImage = icons.getImage();
             final double scaleX = getWidth() / (double)backgroundImage.getWidth(null);
             final double scaleY = getHeight() / (double)backgroundImage.getHeight(null);
@@ -1495,7 +1508,8 @@ public class LoginDialog {
             ((Graphics2D)g).drawImage(backgroundImage, xform, this);
         }
 
-        public Dimension getPreferredSize() {
+        @Override
+		public Dimension getPreferredSize() {
             final Dimension size = super.getPreferredSize();
             size.width = icons.getIconWidth();
             size.height = icons.getIconHeight();

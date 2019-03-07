@@ -28,7 +28,8 @@ public class MacIdleTime implements IdleTime {
         public double CGEventSourceSecondsSinceLastEventType(int sourceStateId, int eventType);
     }
 
-    public long getIdleTimeMillis() {
+    @Override
+	public long getIdleTimeMillis() {
         double idleTimeSeconds = ApplicationServices.INSTANCE.CGEventSourceSecondsSinceLastEventType(ApplicationServices.kCGEventSourceStateCombinedSessionState, ApplicationServices.kCGAnyInputEventType);
         return (long) (idleTimeSeconds * 1000);
     }

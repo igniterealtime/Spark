@@ -54,6 +54,7 @@ public class ChatInputEditor extends ChatArea implements DocumentListener {
         this.getDocument().addUndoableEditListener(undoManager);
         Action undo = new AbstractAction() {
 			private static final long serialVersionUID = -8897769620508545403L;
+			@Override
 			public void actionPerformed(ActionEvent e) {
 		try {
 		    undoManager.undo();
@@ -143,7 +144,8 @@ public class ChatInputEditor extends ChatArea implements DocumentListener {
         addMouseListener(this);
     }
 
-    public void insertUpdate(DocumentEvent e) {
+    @Override
+	public void insertUpdate(DocumentEvent e) {
         //    this.setCaretPosition(e.getOffset());
         this.requestFocusInWindow();
     }
@@ -155,10 +157,12 @@ public class ChatInputEditor extends ChatArea implements DocumentListener {
         super.setText( super.getText() + str);
     }
 
-    public void removeUpdate(DocumentEvent e) {
+    @Override
+	public void removeUpdate(DocumentEvent e) {
     }
 
-    public void changedUpdate(DocumentEvent e) {
+    @Override
+	public void changedUpdate(DocumentEvent e) {
     }
 
     /**

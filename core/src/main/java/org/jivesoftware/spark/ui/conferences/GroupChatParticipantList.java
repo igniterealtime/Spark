@@ -139,6 +139,7 @@ public class GroupChatParticipantList extends JPanel {
 
 		// Respond to Double-Click in Agent List to start a chat
 		participantsList.addMouseListener(new MouseAdapter() {
+			@Override
 			public void mouseClicked(MouseEvent evt) {
 				if (evt.getClickCount() == 2) {
 					String selectedUser = getSelectedUser();
@@ -149,12 +150,14 @@ public class GroupChatParticipantList extends JPanel {
 				}
 			}
 
+			@Override
 			public void mouseReleased(final MouseEvent evt) {
 				if (evt.isPopupTrigger()) {
 					checkPopup(evt);
 				}
 			}
 
+			@Override
 			public void mousePressed(final MouseEvent evt) {
 				if (evt.isPopupTrigger()) {
 					checkPopup(evt);
@@ -635,7 +638,8 @@ groupChatRoom.notifySettingsAccessRight();
 		Action inviteAgainAction = new AbstractAction() {
 		    private static final long serialVersionUID = -1875073139356098243L;
 
-		    public void actionPerformed(ActionEvent actionEvent) {
+		    @Override
+			public void actionPerformed(ActionEvent actionEvent) {
 			String message = invitees.get(selectedUser);
 			EntityFullJid jid = userManager.getJIDFromDisplayName(selectedUser);
 			try
@@ -656,7 +660,8 @@ groupChatRoom.notifySettingsAccessRight();
 		Action removeInvite = new AbstractAction() {
 		    private static final long serialVersionUID = -3647279452501661970L;
 
-		    public void actionPerformed(ActionEvent actionEvent) {
+		    @Override
+			public void actionPerformed(ActionEvent actionEvent) {
 			int index = getIndex(selectedUser);
 
 			if (index != -1) {
@@ -677,7 +682,8 @@ groupChatRoom.notifySettingsAccessRight();
 		Action changeNicknameAction = new AbstractAction() {
 		    private static final long serialVersionUID = -7891803180672794112L;
 
-		    public void actionPerformed(ActionEvent actionEvent) {
+		    @Override
+			public void actionPerformed(ActionEvent actionEvent) {
 			String newNickname = JOptionPane.showInputDialog(
 				groupChatRoom,
 				Res.getString("label.new.nickname") + ":",
@@ -735,6 +741,7 @@ groupChatRoom.notifySettingsAccessRight();
 	    Action chatAction = new AbstractAction() {
 		private static final long serialVersionUID = -2739549054781928195L;
 
+		@Override
 		public void actionPerformed(ActionEvent actionEvent) {
 		    String selectedUser = getSelectedUser();
 		    if (selectedUser == null) {
@@ -755,6 +762,7 @@ groupChatRoom.notifySettingsAccessRight();
 	    Action blockAction = new AbstractAction() {
 		private static final long serialVersionUID = 8771362206105723776L;
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 		    String user = getSelectedUser();
 		    ImageIcon icon;
@@ -786,6 +794,7 @@ groupChatRoom.notifySettingsAccessRight();
 	    Action kickAction = new AbstractAction() {
 		private static final long serialVersionUID = 5769982955040961189L;
 
+		@Override
 		public void actionPerformed(ActionEvent actionEvent) {
 		    kickUser(selectedUser);
 		}
@@ -803,6 +812,7 @@ groupChatRoom.notifySettingsAccessRight();
 	    Action voiceAction = new AbstractAction() {
 		private static final long serialVersionUID = 7628207942009369329L;
 
+		@Override
 		public void actionPerformed(ActionEvent actionEvent) {
 		    if (userManager.hasVoice(groupChatRoom, selectedUser)) {
 			revokeVoice(selectedUser);
@@ -831,6 +841,7 @@ groupChatRoom.notifySettingsAccessRight();
 	    Action banAction = new AbstractAction() {
 		private static final long serialVersionUID = 4290194898356641253L;
 
+		@Override
 		public void actionPerformed(ActionEvent actionEvent) {
 		    banUser(selectedUser);
 		}
@@ -876,6 +887,7 @@ groupChatRoom.notifySettingsAccessRight();
 	    Action moderatorAction = new AbstractAction() {
 		private static final long serialVersionUID = 8162535640460764896L;
 
+		@Override
 		public void actionPerformed(ActionEvent actionEvent) {
 		    if (!userIsModerator) {
 			grantModerator(selectedUser);
@@ -968,6 +980,7 @@ groupChatRoom.notifySettingsAccessRight();
 	    Action unbanAction = new AbstractAction() {
 		private static final long serialVersionUID = 3672121864443182872L;
 
+		@Override
 		public void actionPerformed(ActionEvent actionEvent) {
 		    String jid = ((JMenuItem) actionEvent.getSource())
 			    .getText();
@@ -1002,7 +1015,8 @@ groupChatRoom.notifySettingsAccessRight();
 	Action inviteAction = new AbstractAction() {
 	    private static final long serialVersionUID = 2240864466141501086L;
 
-	    public void actionPerformed(ActionEvent actionEvent) {
+	    @Override
+		public void actionPerformed(ActionEvent actionEvent) {
 		ConferenceUtils.inviteUsersToRoom( groupChatRoom.getMultiUserChat(), null, false);
 	    }
 	};
@@ -1092,6 +1106,7 @@ groupChatRoom.notifySettingsAccessRight();
      */
     final Comparator<JLabel> labelComp = new Comparator<JLabel>() {
 
+	@Override
 	public int compare(JLabel item1, JLabel item2) {
 	    if (_localPreferences.isShowingRoleIcons()) {
 		return compareWithRole(item1, item2);
@@ -1195,6 +1210,7 @@ groupChatRoom.notifySettingsAccessRight();
 			setOpaque(true);
 		}
 
+		@Override
 		public Component getListCellRendererComponent(JList list, Object value,
 				int index, boolean isSelected, boolean cellHasFocus) {
 			if (isSelected) {

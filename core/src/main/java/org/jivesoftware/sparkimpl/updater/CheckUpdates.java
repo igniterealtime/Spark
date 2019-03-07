@@ -291,7 +291,8 @@ public class CheckUpdates {
         frame.setLocationRelativeTo(SparkManager.getMainWindow());
         GraphicUtils.centerWindowOnScreen(frame);
         frame.addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent windowEvent) {
+            @Override
+			public void windowClosing(WindowEvent windowEvent) {
                 thread.interrupt();
                 cancel = true;
 
@@ -311,7 +312,8 @@ public class CheckUpdates {
         timer.scheduleAtFixedRate(new TimerTask() {
             int seconds = 1;
 
-            public void run() {
+            @Override
+			public void run() {
                 ByteFormat formatter = new ByteFormat();
                 long value = bar.getValue();
                 long average = value / seconds;
@@ -443,9 +445,11 @@ public class CheckUpdates {
                     null);
             confirm.setDialogSize(400, 300);
             confirm.setConfirmListener(new ConfirmListener() {
-                public void yesOption() {
+                @Override
+				public void yesOption() {
                     SwingWorker worker = new SwingWorker() {
-                        public Object construct() {
+                        @Override
+						public Object construct() {
                             try {
                                 Thread.sleep(50);
                             }
@@ -455,7 +459,8 @@ public class CheckUpdates {
                             return "ok";
                         }
 
-                        public void finished() {
+                        @Override
+						public void finished() {
                             if (Spark.isWindows()) {
                                 downloadUpdate(fileToDownload, serverVersion);
                             }
@@ -481,7 +486,8 @@ public class CheckUpdates {
                     worker.start();
                 }
 
-                public void noOption() {
+                @Override
+				public void noOption() {
                     UPDATING = false;
                 }
             });
@@ -623,7 +629,8 @@ public class CheckUpdates {
                 message, Res.getString("yes"), Res.getString("no"),
                 null);
         confirm.setConfirmListener(new ConfirmListener() {
-            public void yesOption() {
+            @Override
+			public void yesOption() {
                 try {
                     if (Spark.isWindows()) {
                         Runtime.getRuntime().exec(downloadedFile.getAbsolutePath());
@@ -638,7 +645,8 @@ public class CheckUpdates {
                 SparkManager.getMainWindow().shutdown();
             }
 
-            public void noOption() {
+            @Override
+			public void noOption() {
 
             }
         });

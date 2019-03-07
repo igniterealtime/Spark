@@ -731,7 +731,8 @@ public class PluginManager implements MainWindowListener
         }
     }
 
-    public void shutdown()
+    @Override
+	public void shutdown()
     {
         for ( Plugin plugin : plugins )
         {
@@ -750,11 +751,13 @@ public class PluginManager implements MainWindowListener
         }
     }
 
-    public void mainWindowActivated()
+    @Override
+	public void mainWindowActivated()
     {
     }
 
-    public void mainWindowDeactivated()
+    @Override
+	public void mainWindowDeactivated()
     {
     }
 

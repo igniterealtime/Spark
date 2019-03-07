@@ -218,7 +218,8 @@ public class AccountCreationWizard extends JPanel {
             StanzaError.Condition condition = null;
 
 
-            public Object construct() {
+            @Override
+			public Object construct() {
                 try {
                     createAccountButton.setEnabled(false);
                     connection = getConnection();
@@ -244,7 +245,8 @@ public class AccountCreationWizard extends JPanel {
                 return "ok";
             }
 
-            public void finished() {
+            @Override
+			public void finished() {
                 progressBar.setVisible(false);
                 if (connection == null) {
                     if (ui.isShowing()) {

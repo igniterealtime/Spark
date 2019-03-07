@@ -102,7 +102,8 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
 
     private Set<ChatRoom> broadcastRooms = new HashSet<>();
    
-    public void initialize() {
+    @Override
+	public void initialize() {
         // See if we should disable all "Broadcast" menu items
     	if (Default.getBoolean("DISABLE_BROADCAST_MENU_ITEM") || !Enterprise.containsFeature(Enterprise.BROADCAST_FEATURE)) return;
 
@@ -161,12 +162,14 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
         // Add send to selected users.
         final ContactList contactList = SparkManager.getWorkspace().getContactList();
         contactList.addContextMenuListener(new ContextMenuListener() {
-            public void poppingUp(Object component, JPopupMenu popup) {
+            @Override
+			public void poppingUp(Object component, JPopupMenu popup) {
                 if (component instanceof ContactGroup) {
                     final ContactGroup group = (ContactGroup)component;
                     Action broadcastMessageAction = new AbstractAction() {
 			private static final long serialVersionUID = -6411248110270296726L;
 
+			@Override
 			public void actionPerformed(ActionEvent e) {
                             broadcastToGroup(group);
                         }
@@ -179,11 +182,13 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
                 }
             }
 
-            public void poppingDown(JPopupMenu popup) {
+            @Override
+			public void poppingDown(JPopupMenu popup) {
 
             }
 
-            public boolean handleDefaultAction(MouseEvent e) {
+            @Override
+			public boolean handleDefaultAction(MouseEvent e) {
                 return false;
             }
         });
@@ -202,11 +207,13 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
         broadcastToRosterButton.addActionListener( e -> broadcastToRoster() );
     }
 
-    public void shutdown() {
+    @Override
+	public void shutdown() {
 
     }
 
-    public boolean canShutDown() {
+    @Override
+	public boolean canShutDown() {
         return false;
     }
 
@@ -371,11 +378,13 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
 	chatRoom.addMessageListener(new MessageListener() {
 	    boolean waiting = true;
 
-	    public void messageReceived(ChatRoom room, Message message) {
+	    @Override
+		public void messageReceived(ChatRoom room, Message message) {
 	        removeAsBroadcast(room);
 	    }
 
-	    public void messageSent(ChatRoom room, Message message) {
+	    @Override
+		public void messageSent(ChatRoom room, Message message) {
 	        removeAsBroadcast(room);
 	    }
 
@@ -409,12 +418,14 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
         broadcastDialog.invokeDialog(group);
     }
 
-    public void uninstall() {
+    @Override
+	public void uninstall() {
         // Do nothing.
     }
 
 
-    public boolean isTabHandled(SparkTab tab, Component component, boolean isSelectedTab, boolean chatFrameFocused) {
+    @Override
+	public boolean isTabHandled(SparkTab tab, Component component, boolean isSelectedTab, boolean chatFrameFocused) {
         if (component instanceof ChatRoom) {
             ChatRoom chatroom = (ChatRoom)component;
             if (broadcastRooms.contains(chatroom)) {

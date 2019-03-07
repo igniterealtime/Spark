@@ -73,7 +73,8 @@ public abstract class Table extends JXTable {
     protected Table() {
     }
 
-    public String getToolTipText(MouseEvent e) {
+    @Override
+	public String getToolTipText(MouseEvent e) {
         int r = rowAtPoint(e.getPoint());
         int c = columnAtPoint(e.getPoint());
         Object value;
@@ -106,7 +107,8 @@ public abstract class Table extends JXTable {
     }
 
     // Handle image rendering correctly
-    public TableCellRenderer getCellRenderer(int row, int column) {
+    @Override
+	public TableCellRenderer getCellRenderer(int row, int column) {
         Object o = getValueAt(row, column);
         if (o != null) {
             if (o instanceof JLabel) {
@@ -141,23 +143,27 @@ public abstract class Table extends JXTable {
         setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
         this.addKeyListener(new KeyListener() {
-            public void keyPressed(KeyEvent e) {
+            @Override
+			public void keyPressed(KeyEvent e) {
                 if (e.getKeyChar() == KeyEvent.VK_ENTER) {
                     e.consume();
                     enterPressed();
                 }
             }
 
-            public void keyReleased(KeyEvent e) {
+            @Override
+			public void keyReleased(KeyEvent e) {
             }
 
-            public void keyTyped(KeyEvent e) {
+            @Override
+			public void keyTyped(KeyEvent e) {
 
             }
         });
     }
 
-    public Component prepareRenderer(TableCellRenderer renderer,
+    @Override
+	public Component prepareRenderer(TableCellRenderer renderer,
                                      int rowIndex, int vColIndex) {
         Component c = super.prepareRenderer(renderer, rowIndex, vColIndex);
         if (rowIndex % 2 == 0 && !isCellSelected(rowIndex, vColIndex)) {
@@ -256,7 +262,8 @@ public abstract class Table extends JXTable {
          * @param column the column to check.
          * @return true if the cell is editable.
          */
-        public boolean isCellEditable(int row, int column) {
+        @Override
+		public boolean isCellEditable(int row, int column) {
             return isEditable;
         }
     }
@@ -281,7 +288,8 @@ public abstract class Table extends JXTable {
             this.isBordered = isBordered;
         }
 
-        public Component getTableCellRendererComponent(JTable table, Object color, boolean isSelected, boolean hasFocus, int row, int column) {
+        @Override
+		public Component getTableCellRendererComponent(JTable table, Object color, boolean isSelected, boolean hasFocus, int row, int column) {
             final String text = ((JLabel)color).getText();
             if (text != null) {
                 setText(" " + text);
@@ -339,7 +347,8 @@ public abstract class Table extends JXTable {
             setFont(font);
         }
 
-        public Component getTableCellRendererComponent(JTable jTable, Object obj, boolean isSelected, boolean hasFocus,
+        @Override
+		public Component getTableCellRendererComponent(JTable jTable, Object obj, boolean isSelected, boolean hasFocus,
                                                        int row, int column) {
             // set color & border here
             setText(obj == null ? "" : obj.toString());
@@ -369,7 +378,8 @@ public abstract class Table extends JXTable {
         }
 
 
-        public Component getTableCellRendererComponent(JTable table, Object color, boolean isSelected, boolean hasFocus, int row, int column) {
+        @Override
+		public Component getTableCellRendererComponent(JTable table, Object color, boolean isSelected, boolean hasFocus, int row, int column) {
             final String text = ((JButton)color).getText();
             setText(text);
 
@@ -420,7 +430,8 @@ public abstract class Table extends JXTable {
             super(items);
         }
 
-        public Component getTableCellRendererComponent(JTable table, Object value,
+        @Override
+		public Component getTableCellRendererComponent(JTable table, Object value,
                                                        boolean isSelected, boolean hasFocus, int row, int column) {
             if (isSelected) {
                 setForeground(table.getSelectionForeground());

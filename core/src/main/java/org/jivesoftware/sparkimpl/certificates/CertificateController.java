@@ -142,10 +142,12 @@ public class CertificateController extends CertManager {
 
     }
 
-    public void createTableModel(){
+    @Override
+	public void createTableModel(){
 		tableModel = new DefaultTableModel() {
 			// return adequate classes for columns so last column is Boolean
 			// displayed as checkbox
+			@Override
 			public Class<?> getColumnClass(int column) {
 				switch (column) {
 
@@ -609,6 +611,7 @@ public class CertificateController extends CertManager {
 	 * @throws HeadlessException
 	 * @throws KeyStoreException
 	 */
+	@Override
 	protected boolean checkForSameAlias(String alias) throws HeadlessException, KeyStoreException {
 		for(CertificateModel model: allCertificates){
 			if(model.getAlias().equals(alias)){
@@ -621,7 +624,8 @@ public class CertificateController extends CertManager {
     /**
      * Open dialog with certificate.
      */
-    public void showCertificate() {
+    @Override
+	public void showCertificate() {
         CertificateDialog certDialog = new CertificateDialog(localPreferences,
                 allCertificates.get(getTranslatedRow()), this, CertificateDialogReason.SHOW_CERTIFICATE);
     }

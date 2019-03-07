@@ -44,7 +44,8 @@ public class PluginRenderer extends JLabel implements TableCellRenderer {
         setOpaque(true);
     }
 
-    public Component getTableCellRendererComponent(JTable table, Object color, boolean isSelected, boolean hasFocus, int row, int column) {
+    @Override
+	public Component getTableCellRendererComponent(JTable table, Object color, boolean isSelected, boolean hasFocus, int row, int column) {
 
         final Icon icon = SparkRes.getImageIcon(SparkRes.PLUGIN_IMAGE);
         setIcon(icon);

@@ -41,7 +41,8 @@ public class AutoCompleteDocument extends PlainDocument {
         dictionary.add(item);
     }
 
-    public void insertString(int offs, String str, AttributeSet a)
+    @Override
+	public void insertString(int offs, String str, AttributeSet a)
         throws BadLocationException {
         super.insertString(offs, str, a);
         String word = autoComplete(getText(0, getLength()));

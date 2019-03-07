@@ -94,7 +94,8 @@ public class HTMLViewer extends JPanel {
      *
      * @return the preferred dimension
      */
-    public Dimension getPreferredSize() {
+    @Override
+	public Dimension getPreferredSize() {
         final Dimension size = super.getPreferredSize();
         size.width = 0;
         return size;

@@ -132,7 +132,8 @@ public class PreferencesPanel extends JPanel implements ListSelectionListener {
         currentPreference = pref;
     }
     
-    public void valueChanged(ListSelectionEvent e) {
+    @Override
+	public void valueChanged(ListSelectionEvent e) {
 
         if (!e.getValueIsAdjusting()) {
 

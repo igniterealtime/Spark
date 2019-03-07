@@ -51,35 +51,45 @@ public abstract class DroppableFrame extends JFrame implements DropTargetListene
         dragSource.createDefaultDragGestureRecognizer(this, DnDConstants.ACTION_COPY_OR_MOVE, this);
     }
 
-    public void dragDropEnd(DragSourceDropEvent DragSourceDropEvent) {
+    @Override
+	public void dragDropEnd(DragSourceDropEvent DragSourceDropEvent) {
     }
 
-    public void dragEnter(DragSourceDragEvent DragSourceDragEvent) {
+    @Override
+	public void dragEnter(DragSourceDragEvent DragSourceDragEvent) {
     }
 
-    public void dragExit(DragSourceEvent DragSourceEvent) {
+    @Override
+	public void dragExit(DragSourceEvent DragSourceEvent) {
     }
 
-    public void dragOver(DragSourceDragEvent DragSourceDragEvent) {
+    @Override
+	public void dragOver(DragSourceDragEvent DragSourceDragEvent) {
     }
 
-    public void dropActionChanged(DragSourceDragEvent DragSourceDragEvent) {
+    @Override
+	public void dropActionChanged(DragSourceDragEvent DragSourceDragEvent) {
     }
 
-    public void dragEnter(DropTargetDragEvent dropTargetDragEvent) {
+    @Override
+	public void dragEnter(DropTargetDragEvent dropTargetDragEvent) {
         dropTargetDragEvent.acceptDrag(DnDConstants.ACTION_COPY_OR_MOVE);
     }
 
-    public void dragExit(DropTargetEvent dropTargetEvent) {
+    @Override
+	public void dragExit(DropTargetEvent dropTargetEvent) {
     }
 
-    public void dragOver(DropTargetDragEvent dropTargetDragEvent) {
+    @Override
+	public void dragOver(DropTargetDragEvent dropTargetDragEvent) {
     }
 
-    public void dropActionChanged(DropTargetDragEvent dropTargetDragEvent) {
+    @Override
+	public void dropActionChanged(DropTargetDragEvent dropTargetDragEvent) {
     }
 
-    public void drop(DropTargetDropEvent dropTargetDropEvent) {
+    @Override
+	public void drop(DropTargetDropEvent dropTargetDropEvent) {
         try {
             Transferable transferable = dropTargetDropEvent.getTransferable();
             if (transferable.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
@@ -108,7 +118,8 @@ public abstract class DroppableFrame extends JFrame implements DropTargetListene
 
     }
 
-    public void dragGestureRecognized(DragGestureEvent dragGestureEvent) {
+    @Override
+	public void dragGestureRecognized(DragGestureEvent dragGestureEvent) {
 
     }
 

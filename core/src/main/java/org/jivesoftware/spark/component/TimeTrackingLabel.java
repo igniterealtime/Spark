@@ -112,7 +112,8 @@ public class TimeTrackingLabel extends JLabel {
         timer.stop();
     }
 
-    public String toString() {
+    @Override
+	public String toString() {
         return getText();
     }
 

@@ -21,24 +21,29 @@ import org.jivesoftware.spark.ui.SparklerDecorator;
 
 public class SparklersPlugin implements Plugin {
 
-    public void initialize() {
+    @Override
+	public void initialize() {
         new Sparkler() {
-            public void decorateMessage(String message, SparklerDecorator decorator) {
+            @Override
+			public void decorateMessage(String message, SparklerDecorator decorator) {
                 decorator.setURL("Spark", "http://www.test.com");
             }
         };
 
     }
 
-    public void shutdown() {
+    @Override
+	public void shutdown() {
 
     }
 
-    public boolean canShutDown() {
+    @Override
+	public boolean canShutDown() {
         return false;
     }
 
-    public void uninstall() {
+    @Override
+	public void uninstall() {
 
     }
 }

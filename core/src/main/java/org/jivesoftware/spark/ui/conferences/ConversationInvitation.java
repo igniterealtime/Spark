@@ -157,7 +157,8 @@ public class ConversationInvitation extends JPanel implements ContainerComponent
     }
 
 
-    public void actionPerformed(ActionEvent actionEvent) {
+    @Override
+	public void actionPerformed(ActionEvent actionEvent) {
         final Object obj = actionEvent.getSource();
         if (obj == joinButton) {
             Localpart name = roomName.getLocalpart();
@@ -180,27 +181,33 @@ public class ConversationInvitation extends JPanel implements ContainerComponent
     }
 
 
-    public String getTabTitle() {
+    @Override
+	public String getTabTitle() {
         return tabTitle;
     }
 
-    public String getFrameTitle() {
+    @Override
+	public String getFrameTitle() {
         return frameTitle;
     }
 
-    public ImageIcon getTabIcon() {
+    @Override
+	public ImageIcon getTabIcon() {
         return SparkRes.getImageIcon(SparkRes.CONFERENCE_IMAGE_16x16);
     }
 
-    public JComponent getGUI() {
+    @Override
+	public JComponent getGUI() {
         return this;
     }
 
-    public String getToolTipDescription() {
+    @Override
+	public String getToolTipDescription() {
         return descriptionText;
     }
 
-    public boolean closing() {
+    @Override
+	public boolean closing() {
         return true;
     }
 }

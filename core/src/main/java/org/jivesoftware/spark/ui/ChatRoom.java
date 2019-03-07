@@ -125,21 +125,24 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         fileDropListeners = new ArrayList<>();
 
         transcriptWindowMouseListener = new MouseAdapter() {
-            public void mouseClicked(MouseEvent e) {
+            @Override
+			public void mouseClicked(MouseEvent e) {
 
         	if(e.getClickCount()!=2){
                 getChatInputEditor().requestFocus();
         	}
             }
 
-            public void mouseReleased(MouseEvent e) {
+            @Override
+			public void mouseReleased(MouseEvent e) {
                 mousePressed = false;
                 if (transcriptWindow.getSelectedText() == null) {
                     getChatInputEditor().requestFocus();
                 }
             }
 
-            public void mousePressed(MouseEvent e) {
+            @Override
+			public void mousePressed(MouseEvent e) {
                 mousePressed = true;
             }
         };
@@ -260,7 +263,8 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
 
         // Add Key Listener to Send Field
         chatEditorKeyListener = new KeyAdapter() {
-            public void keyPressed(KeyEvent e) {
+            @Override
+			public void keyPressed(KeyEvent e) {
                 checkForEnter(e);
             }
         };
@@ -271,7 +275,8 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         getChatInputEditor().getActionMap().put("closeTheRoom", new AbstractAction("closeTheRoom") {
             private static final long serialVersionUID = 1L;
 
-            public void actionPerformed(ActionEvent evt) {
+            @Override
+			public void actionPerformed(ActionEvent evt) {
                 // Leave this chat.
                 closeChatRoom();
             }
@@ -281,7 +286,8 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         getChatInputEditor().getActionMap().put("handleCompletion", new AbstractAction("handleCompletion") {
             private static final long serialVersionUID = 1L;
 
-            public void actionPerformed(ActionEvent evt) {
+            @Override
+			public void actionPerformed(ActionEvent evt) {
                 // handle name completion.
                 try {
                     handleNickNameCompletion();
@@ -343,7 +349,8 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
 
     protected void createChatStateTimerTask() {
         typingTimerTask = new TimerTask() {
-            public void run() {
+            @Override
+			public void run() {
                 final long lastUpdate = System.currentTimeMillis() - lastNotificationSentTime;
                 switch ( lastNotificationSent ) {
                     case paused:
@@ -493,7 +500,8 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
 
     // I would normally use the command pattern, but
     // have no real use when dealing with just a couple options.
-    public void actionPerformed(ActionEvent e) {
+    @Override
+	public void actionPerformed(ActionEvent e) {
         sendMessage();
 
         // Clear send field and disable send button
@@ -820,7 +828,8 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
      *
      * @param event the DocumentEvent from the sendField.
      */
-    public void removeUpdate(DocumentEvent event) {
+    @Override
+	public void removeUpdate(DocumentEvent event) {
         checkForText(event);
     }
 
@@ -829,7 +838,8 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
      *
      * @param docEvent the document event.
      */
-    public void changedUpdate(DocumentEvent docEvent) {
+    @Override
+	public void changedUpdate(DocumentEvent docEvent) {
         // Do nothing.
     }
 
@@ -1006,7 +1016,8 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
     }
 
 
-    public void insertUpdate(DocumentEvent e) {
+    @Override
+	public void insertUpdate(DocumentEvent e) {
         // Meant to be overriden
         checkForText(e);
 
@@ -1250,7 +1261,8 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
     }
 
 
-    public void focusGained(FocusEvent focusEvent) {
+    @Override
+	public void focusGained(FocusEvent focusEvent) {
         validate();
         invalidate();
         repaint();
@@ -1261,10 +1273,12 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
 
     }
 
-    public void poppingUp(Object component, JPopupMenu popup) {
+    @Override
+	public void poppingUp(Object component, JPopupMenu popup) {
         Action saveAction = new AbstractAction() {
 			private static final long serialVersionUID = -3582301239832606653L;
 
+			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
                 saveTranscript();
             }
@@ -1276,16 +1290,19 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         popup.add(saveAction);
     }
 
-    public void poppingDown(JPopupMenu popup) {
+    @Override
+	public void poppingDown(JPopupMenu popup) {
 
     }
 
-    public boolean handleDefaultAction(MouseEvent e) {
+    @Override
+	public boolean handleDefaultAction(MouseEvent e) {
         return false;
     }
 
 
-    public void focusLost(FocusEvent focusEvent) {
+    @Override
+	public void focusLost(FocusEvent focusEvent) {
         if(focusEvent.getComponent().equals(getChatInputEditor())) {
             setChatState( ChatState.inactive );
         }
@@ -1301,18 +1318,22 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
     public abstract long getLastActivity();
 
 
-    public void connectionClosed() {
+    @Override
+	public void connectionClosed() {
     }
 
-    public void connectionClosedOnError(Exception e) {
+    @Override
+	public void connectionClosedOnError(Exception e) {
     }
 
-    public void updateStatus(boolean active)
+    @Override
+	public void updateStatus(boolean active)
     {
 	_alwaysOnTopItem.setSelected(active);
     }
 
-    public void registeredToFrame(ChatFrame chatframe)
+    @Override
+	public void registeredToFrame(ChatFrame chatframe)
     {
 	this._chatFrame = chatframe;
 	_chatFrame.addWindowToFronListener(this);

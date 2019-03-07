@@ -40,7 +40,8 @@ public class TaskNotification {
 
     public TaskNotification() {
         TimerTask task = new TimerTask() {
-            public void run() {
+            @Override
+			public void run() {
                 notifyUser();
             }
         };
@@ -71,6 +72,7 @@ public class TaskNotification {
 					final JPanel titlePanel = new JPanel(new BorderLayout()) {
 						private static final long serialVersionUID = -8871487137643685431L;
 
+						@Override
 						public void paintComponent(Graphics g) {
 							Color startColor = Color.white;
 							Color endColor = new Color(198, 211, 247);

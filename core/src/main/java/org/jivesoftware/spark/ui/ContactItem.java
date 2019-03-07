@@ -422,7 +422,8 @@ public class ContactItem extends JPanel {
     	SparkManager.getVCardManager().addToQueue(getJid().asBareJid());
     }
 
-    public String toString() {
+    @Override
+	public String toString() {
         return displayNameLabel.getText();
     }
 

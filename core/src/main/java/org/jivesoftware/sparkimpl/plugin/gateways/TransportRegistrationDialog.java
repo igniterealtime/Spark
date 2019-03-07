@@ -159,7 +159,8 @@ public class TransportRegistrationDialog extends JPanel implements ActionListene
         return nicknameField.getText();
     }
 
-    public void actionPerformed(ActionEvent e) {
+    @Override
+	public void actionPerformed(ActionEvent e) {
         String username = getScreenName();
         String password = getPassword();
         String nickname = getNickname();
@@ -200,16 +201,19 @@ public class TransportRegistrationDialog extends JPanel implements ActionListene
 
 
     
-    public void keyTyped(KeyEvent keyEvent) {
+    @Override
+	public void keyTyped(KeyEvent keyEvent) {
     }
 
-    public void keyPressed(KeyEvent keyEvent) {
+    @Override
+	public void keyPressed(KeyEvent keyEvent) {
         if (keyEvent.getKeyCode() == KeyEvent.VK_ENTER) {
             actionPerformed(null);
         }
 
     }
 
-    public void keyReleased(KeyEvent keyEvent) {
+    @Override
+	public void keyReleased(KeyEvent keyEvent) {
     }
 }

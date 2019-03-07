@@ -64,7 +64,8 @@ public class TaskEngine {
 
             final AtomicInteger threadNumber = new AtomicInteger(1);
 
-            public Thread newThread(Runnable runnable) {
+            @Override
+			public Thread newThread(Runnable runnable) {
                 // Use our own naming scheme for the threads.
                 Thread thread = new Thread(Thread.currentThread().getThreadGroup(), runnable,
                         "pool-spark" + threadNumber.getAndIncrement(), 0);
@@ -317,7 +318,8 @@ public class TaskEngine {
             this.task = task;
         }
 
-        public void run() {
+        @Override
+		public void run() {
             executor.submit(task);
         }
     }

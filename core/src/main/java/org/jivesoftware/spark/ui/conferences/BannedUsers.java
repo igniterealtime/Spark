@@ -63,7 +63,8 @@ public class BannedUsers extends JPanel {
         add(list, BorderLayout.CENTER);
         // Respond to Double-Click in Agent List to start a chat
         list.addMouseListener(new MouseAdapter() {
-            public void mousePressed(MouseEvent evt) {
+            @Override
+			public void mousePressed(MouseEvent evt) {
                 if (evt.isPopupTrigger()) {
                     int index = list.locationToIndex(evt.getPoint());
                     list.setSelectedIndex(index);
@@ -73,7 +74,8 @@ public class BannedUsers extends JPanel {
                 }
             }
 
-            public void mouseReleased(MouseEvent evt) {
+            @Override
+			public void mouseReleased(MouseEvent evt) {
                 if (evt.isPopupTrigger()) {
                     int index = list.locationToIndex(evt.getPoint());
                     list.setSelectedIndex(index);

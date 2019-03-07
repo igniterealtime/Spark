@@ -434,7 +434,8 @@ public class UserManager {
         layoutPanel.setBorder(BorderFactory.createBevelBorder(0));
         
         contactField.addKeyListener(new KeyAdapter() {
-            public void keyReleased(KeyEvent keyEvent) {
+            @Override
+			public void keyReleased(KeyEvent keyEvent) {
                 if (keyEvent.getKeyChar() == KeyEvent.VK_ENTER) {
                     if (ModelUtil.hasLength(contactField.getText())) {
                         ContactItem item = contactMap.get(contactField.getText());
@@ -459,7 +460,8 @@ public class UserManager {
         });
 
         contactField.getList().addMouseListener(new MouseAdapter() {
-            public void mouseClicked(MouseEvent e) {
+            @Override
+			public void mouseClicked(MouseEvent e) {
         	if(SwingUtilities.isRightMouseButton(e))
         	{
         	    contactField.setSelectetIndex(e);
@@ -498,7 +500,8 @@ public class UserManager {
         contactField.focus();
 
         mainPanel.addMouseListener(new MouseAdapter() {
-            public void mouseClicked(MouseEvent mouseEvent) {
+            @Override
+			public void mouseClicked(MouseEvent mouseEvent) {
                 parent.setGlassPane(glassPane);
                 parent.getGlassPane().setVisible(false);
                 contactField.dispose();
@@ -506,16 +509,19 @@ public class UserManager {
         });
 
         parent.addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent windowEvent) {
+            @Override
+			public void windowClosing(WindowEvent windowEvent) {
                 parent.setGlassPane(glassPane);
                 parent.getGlassPane().setVisible(false);
                 contactField.dispose();
                 parent.removeWindowListener(this);
             }
 
-            public void windowDeactivated(final WindowEvent windowEvent) {
+            @Override
+			public void windowDeactivated(final WindowEvent windowEvent) {
                 TimerTask task = new SwingTimerTask() {
-                    public void doRun() {
+                    @Override
+					public void doRun() {
                         if (contactField.canClose()) {
                             windowClosing(windowEvent);
                         }

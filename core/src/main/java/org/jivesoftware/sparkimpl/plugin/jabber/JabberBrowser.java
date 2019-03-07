@@ -203,7 +203,8 @@ public class JabberBrowser implements Plugin {
         addressField.setSelectedItem(address);
     }
 
-    public void initialize() {
+    @Override
+	public void initialize() {
     	this.con = SparkManager.getConnection();
     	EventQueue.invokeLater( () -> {
             addressLabel = new JLabel();
@@ -215,21 +216,25 @@ public class JabberBrowser implements Plugin {
         SparkManager.getWorkspace().getActionMap().put("showBrowser", new AbstractAction("showBrowser") {
 			private static final long serialVersionUID = 341826581565007606L;
 
+			@Override
 			public void actionPerformed(ActionEvent evt) {
                 display();
             }
         });
     }
 
-    public void shutdown() {
+    @Override
+	public void shutdown() {
 
     }
 
-    public boolean canShutDown() {
+    @Override
+	public boolean canShutDown() {
         return false;
     }
 
-    public void uninstall() {
+    @Override
+	public void uninstall() {
         // Do nothing.
     }
 

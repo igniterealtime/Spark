@@ -46,7 +46,8 @@ import java.util.Date;
 
 public class JabberVersion implements Plugin {
 
-    public void initialize() {
+    @Override
+	public void initialize() {
         // Create IQ Filter
         StanzaFilter packetFilter = new StanzaTypeFilter(IQ.class);
         SparkManager.getConnection().addAsyncStanzaListener( stanza -> {
@@ -88,7 +89,8 @@ public class JabberVersion implements Plugin {
         final ContactList contactList = SparkManager.getWorkspace().getContactList();
         contactList.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("control F11"), "viewClient");
         contactList.addContextMenuListener(new ContextMenuListener() {
-            public void poppingUp(final Object component, JPopupMenu popup) {
+            @Override
+			public void poppingUp(final Object component, JPopupMenu popup) {
                 if (!(component instanceof ContactItem)) {
                     return;
                 }
@@ -101,6 +103,7 @@ public class JabberVersion implements Plugin {
                 Action versionRequest = new AbstractAction() {
 					private static final long serialVersionUID = -5619737417315441711L;
 
+					@Override
 					public void actionPerformed(ActionEvent e) {
                         viewClient();
                     }
@@ -110,11 +113,13 @@ public class JabberVersion implements Plugin {
                 popup.add(versionRequest);
             }
 
-            public void poppingDown(JPopupMenu popup) {
+            @Override
+			public void poppingDown(JPopupMenu popup) {
 
             }
 
-            public boolean handleDefaultAction(MouseEvent e) {
+            @Override
+			public boolean handleDefaultAction(MouseEvent e) {
                 return false;
             }
         });
@@ -123,6 +128,7 @@ public class JabberVersion implements Plugin {
         contactList.getActionMap().put("viewClient", new AbstractAction("viewClient") {
 			private static final long serialVersionUID = 8282301357403753561L;
 
+			@Override
 			public void actionPerformed(ActionEvent evt) {
                 viewClient();
             }
@@ -139,7 +145,8 @@ public class JabberVersion implements Plugin {
             Presence presence = item.getPresence();
             final String jid = presence.getFrom().toString();
             SwingWorker worker = new SwingWorker() {
-                public Object construct() {
+                @Override
+				public Object construct() {
                     try {
                         Thread.sleep(10);
                     }
@@ -149,7 +156,8 @@ public class JabberVersion implements Plugin {
                     return jid;
                 }
 
-                public void finished() {
+                @Override
+				public void finished() {
                     VersionViewer.viewVersion(jid);
                 }
             };
@@ -157,15 +165,18 @@ public class JabberVersion implements Plugin {
         }
     }
 
-    public void shutdown() {
+    @Override
+	public void shutdown() {
 
     }
 
-    public boolean canShutDown() {
+    @Override
+	public boolean canShutDown() {
         return false;
     }
 
-    public void uninstall() {
+    @Override
+	public void uninstall() {
         // Do nothing.
     }
 }

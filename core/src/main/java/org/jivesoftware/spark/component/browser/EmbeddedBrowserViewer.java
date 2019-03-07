@@ -35,6 +35,7 @@ public class EmbeddedBrowserViewer extends BrowserViewer {
 	/**
 	 * Implementation of "Back"-button
 	 */
+	@Override
 	public void goBack() {
 		browser.goBack();
 	}
@@ -42,6 +43,7 @@ public class EmbeddedBrowserViewer extends BrowserViewer {
 	/**
 	 * Initialization of the BrowserViewer
 	 */
+	@Override
 	public void initializeBrowser() {
 		this.setLayout(new BorderLayout());
 
@@ -52,6 +54,7 @@ public class EmbeddedBrowserViewer extends BrowserViewer {
 	/**
 	 * Load the given URL
 	 */
+	@Override
 	public void loadURL(String url) {
 		browser.loadURL( url );
 	}

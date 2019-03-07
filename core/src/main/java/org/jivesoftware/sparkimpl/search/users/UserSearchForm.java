@@ -169,7 +169,8 @@ public class UserSearchForm extends JPanel {
                 SwingWorker findServiceThread = new SwingWorker() {
                     Form newForm;
 
-                    public Object construct() {
+                    @Override
+					public Object construct() {
                         try {
                             DomainBareJid serviceJid = JidCreate.domainBareFrom(serviceName);
                             newForm = searchManager.getSearchForm(serviceJid);
@@ -180,7 +181,8 @@ public class UserSearchForm extends JPanel {
                         return newForm;
                     }
 
-                    public void finished() {
+                    @Override
+					public void finished() {
                         if (newForm == null) {
                             UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
                             JOptionPane.showMessageDialog(getGUI(), Res.getString("message.search.service.not.available"), Res.getString("title.notification"), JOptionPane.ERROR_MESSAGE);
@@ -222,7 +224,8 @@ public class UserSearchForm extends JPanel {
 
         servicesBox.addActionListener( actionEvent -> {
             SwingWorker worker = new SwingWorker() {
-                public Object construct() {
+                @Override
+				public Object construct() {
                     try {
                         Thread.sleep(50);
                     }
@@ -232,7 +235,8 @@ public class UserSearchForm extends JPanel {
                     return "ok";
                 }
 
-                public void finished() {
+                @Override
+				public void finished() {
                     showService(getSearchService());
                 }
             };

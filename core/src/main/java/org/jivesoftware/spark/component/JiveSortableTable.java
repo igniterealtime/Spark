@@ -69,7 +69,8 @@ public abstract class JiveSortableTable extends Table {
     protected JiveSortableTable() {
     }
 
-    public String getToolTipText(MouseEvent e) {
+    @Override
+	public String getToolTipText(MouseEvent e) {
         int r = rowAtPoint(e.getPoint());
         int c = columnAtPoint(e.getPoint());
         Object value;
@@ -102,7 +103,8 @@ public abstract class JiveSortableTable extends Table {
     }
 
     // Handle image rendering correctly
-    public TableCellRenderer getCellRenderer(int row, int column) {
+    @Override
+	public TableCellRenderer getCellRenderer(int row, int column) {
         Object o = getValueAt(row, column);
         if (o != null) {
             if (o instanceof JLabel) {
@@ -130,17 +132,20 @@ public abstract class JiveSortableTable extends Table {
         setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
         this.addKeyListener(new KeyListener() {
-            public void keyPressed(KeyEvent e) {
+            @Override
+			public void keyPressed(KeyEvent e) {
                 if (e.getKeyChar() == KeyEvent.VK_ENTER) {
                     e.consume();
                     enterPressed();
                 }
             }
 
-            public void keyReleased(KeyEvent e) {
+            @Override
+			public void keyReleased(KeyEvent e) {
             }
 
-            public void keyTyped(KeyEvent e) {
+            @Override
+			public void keyTyped(KeyEvent e) {
 
             }
         });
@@ -151,7 +156,8 @@ public abstract class JiveSortableTable extends Table {
      *
      * @param list the list to add to the model.
      */
-    public void add(List<Object> list) {
+    @Override
+	public void add(List<Object> list) {
         for (Object aList : list) {
             Object[] newRow = (Object[]) aList;
             tableModel.addRow(newRow);
@@ -163,7 +169,8 @@ public abstract class JiveSortableTable extends Table {
      *
      * @return the object array of a row.
      */
-    public Object[] getSelectedRowObject() {
+    @Override
+	public Object[] getSelectedRowObject() {
         return getRowObject(getSelectedRow());
     }
 
@@ -173,7 +180,8 @@ public abstract class JiveSortableTable extends Table {
      * @param selectedRow the row to retrieve.
      * @return the object[] of a row.
      */
-    public Object[] getRowObject(int selectedRow) {
+    @Override
+	public Object[] getRowObject(int selectedRow) {
         if (selectedRow < 0) {
             return null;
         }
@@ -191,7 +199,8 @@ public abstract class JiveSortableTable extends Table {
     /**
      * Removes all columns and rows from table.
      */
-    public void clearTable() {
+    @Override
+	public void clearTable() {
         int rowCount = getRowCount();
         for (int i = 0; i < rowCount; i++) {
             getTableModel().removeRow(0);
@@ -225,7 +234,8 @@ public abstract class JiveSortableTable extends Table {
          * @param column the column to check.
          * @return true if the cell is editable.
          */
-        public boolean isCellEditable(int row, int column) {
+        @Override
+		public boolean isCellEditable(int row, int column) {
             return isEditable;
         }
     }
@@ -249,7 +259,8 @@ public abstract class JiveSortableTable extends Table {
             this.isBordered = isBordered;
         }
 
-        public Component getTableCellRendererComponent(JTable table, Object color, boolean isSelected, boolean hasFocus, int row, int column) {
+        @Override
+		public Component getTableCellRendererComponent(JTable table, Object color, boolean isSelected, boolean hasFocus, int row, int column) {
             final String text = ((JLabel)color).getText();
             if (text != null) {
                 setText(" " + text);
@@ -306,7 +317,8 @@ public abstract class JiveSortableTable extends Table {
             setFont(font);
         }
 
-        public Component getTableCellRendererComponent(JTable jTable, Object obj, boolean isSelected, boolean hasFocus,
+        @Override
+		public Component getTableCellRendererComponent(JTable jTable, Object obj, boolean isSelected, boolean hasFocus,
                                                        int row, int column) {
             // set color & border here
             setText(obj == null ? "" : obj.toString());
@@ -335,7 +347,8 @@ public abstract class JiveSortableTable extends Table {
         }
 
 
-        public Component getTableCellRendererComponent(JTable table, Object color, boolean isSelected, boolean hasFocus, int row, int column) {
+        @Override
+		public Component getTableCellRendererComponent(JTable table, Object color, boolean isSelected, boolean hasFocus, int row, int column) {
             final String text = ((JButton)color).getText();
             setText(text);
 
@@ -385,7 +398,8 @@ public abstract class JiveSortableTable extends Table {
             super(items);
         }
 
-        public Component getTableCellRendererComponent(JTable table, Object value,
+        @Override
+		public Component getTableCellRendererComponent(JTable table, Object value,
                                                        boolean isSelected, boolean hasFocus, int row, int column) {
             if (isSelected) {
                 setForeground(table.getSelectionForeground());
@@ -415,14 +429,16 @@ public abstract class JiveSortableTable extends Table {
      *
      * @return the table model.
      */
-    public Table.JiveTableModel getTableModel() {
+    @Override
+	public Table.JiveTableModel getTableModel() {
         return tableModel;
     }
 
     /**
      * Clears all objects from map.
      */
-    public void clearObjectMap() {
+    @Override
+	public void clearObjectMap() {
         objectMap.clear();
     }
 
@@ -432,7 +448,8 @@ public abstract class JiveSortableTable extends Table {
      * @param row    - the current row
      * @param object - the object to associate with the row.
      */
-    public void addObject(int row, Object object) {
+    @Override
+	public void addObject(int row, Object object) {
         objectMap.put(row, object);
     }
 
@@ -442,14 +459,16 @@ public abstract class JiveSortableTable extends Table {
      * @param row - the row associated with the object.
      * @return The object associated with the row.
      */
-    public Object getObject(int row) {
+    @Override
+	public Object getObject(int row) {
         return objectMap.get(row);
     }
 
     /**
      * Override to handle when enter is pressed.
      */
-    public void enterPressed() {
+    @Override
+	public void enterPressed() {
     }
 
 }

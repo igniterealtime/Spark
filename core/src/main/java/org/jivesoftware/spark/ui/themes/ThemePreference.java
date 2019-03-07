@@ -35,46 +35,57 @@ public class ThemePreference implements Preference {
 
     public ThemePreference() {}
 
-    public String getTitle() {
+    @Override
+	public String getTitle() {
         return Res.getString("title.appearance.preferences");
     }
 
-    public Icon getIcon() {
+    @Override
+	public Icon getIcon() {
         return SparkRes.getImageIcon(SparkRes.PALETTE_24x24_IMAGE);
     }
 
-    public String getTooltip() {
+    @Override
+	public String getTooltip() {
         return Res.getString("tooltip.appearance");
     }
 
-    public String getListName() {
+    @Override
+	public String getListName() {
         return Res.getString("title.appearance");
     }
 
-    public String getNamespace() {
+    @Override
+	public String getNamespace() {
         return NAMESPACE;
     }
 
-    public JComponent getGUI() {
+    @Override
+	public JComponent getGUI() {
         panel = new MainThemePanel();
         return panel;
     }
 
-    public void load() {}
+    @Override
+	public void load() {}
 
-    public boolean isDataValid() {
+    @Override
+	public boolean isDataValid() {
         return true;
     }
 
-    public String getErrorMessage() {
+    @Override
+	public String getErrorMessage() {
         return null;
     }
 
-    public Object getData() {
+    @Override
+	public Object getData() {
         return null;
     }
 
-    public void commit() {
+    @Override
+	public void commit() {
         final String pack = panel.getThemePanel().getSelectedEmoticonPack();
         boolean emotEnabled = panel.getThemePanel().areEmoticonsEnabled();
         boolean grayingOutEnabled = panel.getThemePanel().isGrayingOutEnabled();
@@ -106,7 +117,8 @@ public class ThemePreference implements Preference {
         SettingsManager.saveSettings();
     }
 
-    public void shutdown() {}
+    @Override
+	public void shutdown() {}
 }
 
 

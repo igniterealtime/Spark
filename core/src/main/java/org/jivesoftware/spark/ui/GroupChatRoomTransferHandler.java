@@ -42,12 +42,14 @@ public class GroupChatRoomTransferHandler extends TransferHandler {
         this.groupChatRoom = chatRoom;
     }
 
-    public int getSourceActions(JComponent c) {
+    @Override
+	public int getSourceActions(JComponent c) {
         return TransferHandler.COPY;
     }
 
 
-    public boolean canImport(JComponent comp, DataFlavor flavor[]) {
+    @Override
+	public boolean canImport(JComponent comp, DataFlavor flavor[]) {
         for (int i = 0, n = flavor.length; i < n; i++) {
             for (int j = 0, m = flavors.length; j < m; j++) {
                 if (flavor[i].equals(flavors[j])) {
@@ -58,15 +60,18 @@ public class GroupChatRoomTransferHandler extends TransferHandler {
         return false;
     }
 
-    protected void exportDone(JComponent c, Transferable data, int action) {
+    @Override
+	protected void exportDone(JComponent c, Transferable data, int action) {
     }
 
 
-    public Transferable createTransferable(JComponent comp) {
+    @Override
+	public Transferable createTransferable(JComponent comp) {
         return null;
     }
 
-    public boolean importData(JComponent comp, Transferable t) {
+    @Override
+	public boolean importData(JComponent comp, Transferable t) {
         if (t.isDataFlavorSupported(flavors[0])) {
             try {
                 final Object o = t.getTransferData(flavors[0]);

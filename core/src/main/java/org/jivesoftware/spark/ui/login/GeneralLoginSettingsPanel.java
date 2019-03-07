@@ -159,7 +159,8 @@ class GeneralLoginSettingsPanel extends JPanel implements ActionListener
         SettingsManager.saveSettings();
     }
 
-    public void actionPerformed( ActionEvent e )
+    @Override
+	public void actionPerformed( ActionEvent e )
     {
         if ( e.getSource() == autoDiscoverBox )
         {

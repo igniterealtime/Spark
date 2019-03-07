@@ -519,7 +519,8 @@ public class ThemePanel extends JPanel
      */
     private class ZipFilter extends javax.swing.filechooser.FileFilter
     {
-        public boolean accept( File file )
+        @Override
+		public boolean accept( File file )
         {
             String filename = file.getName();
             if ( file.isDirectory() )
@@ -529,7 +530,8 @@ public class ThemePanel extends JPanel
             return filename.endsWith( ".zip" );
         }
 
-        public String getDescription()
+        @Override
+		public String getDescription()
         {
             return "*.zip";
         }

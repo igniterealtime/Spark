@@ -55,14 +55,16 @@ public class NotificationPlugin implements Plugin, StanzaListener {
     private LocalPreferences preferences;
 
 
-    public void initialize() {
+    @Override
+	public void initialize() {
         // Add the preferences
         NotificationsPreference notifications = new NotificationsPreference();
         SparkManager.getPreferenceManager().addPreference(notifications);
         notifications.load();
 
         final TimerTask registerTask = new SwingTimerTask() {
-            public void doRun() {
+            @Override
+			public void doRun() {
                 registerListener();
             }
         };
@@ -124,14 +126,17 @@ public class NotificationPlugin implements Plugin, StanzaListener {
         }
     }
 
-    public void shutdown() {
+    @Override
+	public void shutdown() {
     }
 
-    public boolean canShutDown() {
+    @Override
+	public boolean canShutDown() {
         return true;
     }
 
-    public void uninstall() {
+    @Override
+	public void uninstall() {
         SparkManager.getConnection().removeAsyncStanzaListener(this);
     }
 
@@ -211,7 +216,8 @@ public class NotificationPlugin implements Plugin, StanzaListener {
             this.jid = jid;
         }
 
-        public void actionPerformed(ActionEvent e) {
+        @Override
+		public void actionPerformed(ActionEvent e) {
             String nickname = SparkManager.getUserManager().getUserNicknameFromJID(jid);
             SparkManager.getChatManager().activateChat(jid, nickname);
         }

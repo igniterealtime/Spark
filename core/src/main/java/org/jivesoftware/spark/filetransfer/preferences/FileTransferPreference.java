@@ -43,31 +43,38 @@ public class FileTransferPreference implements Preference {
         ui = new FileTransferPreferencePanel();
     }
 
-    public String getTitle() {
+    @Override
+	public String getTitle() {
         return Res.getString("title.file.transfer.preferences");
     }
 
-    public Icon getIcon() {
+    @Override
+	public Icon getIcon() {
         return SparkRes.getImageIcon(SparkRes.SEND_FILE_24x24);
     }
 
-    public String getTooltip() {
+    @Override
+	public String getTooltip() {
         return Res.getString("tooltip.file.transfer");
     }
 
-    public String getListName() {
+    @Override
+	public String getListName() {
         return Res.getString("title.file.transfer");
     }
 
-    public String getNamespace() {
+    @Override
+	public String getNamespace() {
         return "FILE_TRANSFER";
     }
 
-    public JComponent getGUI() {
+    @Override
+	public JComponent getGUI() {
         return ui;
     }
 
-    public void load() {
+    @Override
+	public void load() {
         boolean ibb = localPreferences.isFileTransferIbbOnly();
         int timeout = localPreferences.getFileTransferTimeout();
         ui.setDownloadDirectory(localPreferences.getDownloadDir());
@@ -75,7 +82,8 @@ public class FileTransferPreference implements Preference {
         ui.setIbbOnly(ibb);
     }
 
-    public void commit() {
+    @Override
+	public void commit() {
         LocalPreferences pref = SettingsManager.getLocalPreferences();
         pref.setFileTransferIbbOnly(ui.getIbbOnly());
 
@@ -103,19 +111,23 @@ public class FileTransferPreference implements Preference {
 
     }
 
-    public boolean isDataValid() {
+    @Override
+	public boolean isDataValid() {
         return true;
     }
 
-    public String getErrorMessage() {
+    @Override
+	public String getErrorMessage() {
         return null;
     }
 
-    public Object getData() {
+    @Override
+	public Object getData() {
         return null;
     }
 
-    public void shutdown() {
+    @Override
+	public void shutdown() {
         commit();
     }
 }

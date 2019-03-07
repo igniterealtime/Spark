@@ -30,7 +30,8 @@ public class SettingsDataProvider implements PrivateDataProvider {
     public SettingsDataProvider() {
     }
 
-    public PrivateData parsePrivateData(XmlPullParser parser) throws XmlPullParserException, IOException
+    @Override
+	public PrivateData parsePrivateData(XmlPullParser parser) throws XmlPullParserException, IOException
     {
         Map<String,String> map = new HashMap<>();
         parser.getEventType();

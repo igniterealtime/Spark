@@ -89,20 +89,25 @@ public class TaskUI extends JPanel implements ActionListener {
         box.addActionListener(this);
         
         btn_del.addMouseListener(new MouseListener() {
-            public void mouseClicked(MouseEvent arg0) {
+            @Override
+			public void mouseClicked(MouseEvent arg0) {
                     Tasks.deleteTask(task);
             }
 
-            public void mouseEntered(MouseEvent e) {
+            @Override
+			public void mouseEntered(MouseEvent e) {
                   
             }
-            public void mouseExited(MouseEvent e) {
+            @Override
+			public void mouseExited(MouseEvent e) {
                     
             }
-            public void mousePressed(MouseEvent e) {
+            @Override
+			public void mousePressed(MouseEvent e) {
                 
             }
-            public void mouseReleased(MouseEvent e) {
+            @Override
+			public void mouseReleased(MouseEvent e) {
                    
             }        	
         });
@@ -137,7 +142,8 @@ public class TaskUI extends JPanel implements ActionListener {
         }
     }
 
-    public void actionPerformed(ActionEvent e) {
+    @Override
+	public void actionPerformed(ActionEvent e) {
         if (isSelected()) {
             task.setCompleted(true);
         }

@@ -63,27 +63,33 @@ public class SoundPreference implements Preference {
     }
 
 
-    public String getTitle() {
+    @Override
+	public String getTitle() {
         return Res.getString("title.sound.preferences");
     }
 
-    public Icon getIcon() {
+    @Override
+	public Icon getIcon() {
         return SparkRes.getImageIcon(SparkRes.SOUND_PREFERENCES_IMAGE);
     }
 
-    public String getTooltip() {
+    @Override
+	public String getTooltip() {
         return Res.getString("title.sounds");
     }
 
-    public String getListName() {
+    @Override
+	public String getListName() {
         return Res.getString("title.sounds");
     }
 
-    public String getNamespace() {
+    @Override
+	public String getNamespace() {
         return NAMESPACE;
     }
 
-    public JComponent getGUI() {
+    @Override
+	public JComponent getGUI() {
         if (soundPanel == null) {
             try {
 		EventQueue.invokeAndWait( () -> soundPanel = new SoundPanel() );
@@ -118,18 +124,21 @@ public class SoundPreference implements Preference {
         }
     }
 
-    public void load() {
+    @Override
+	public void load() {
         if (soundPanel == null) {
             soundPanel = new SoundPanel();
         }
 
         SwingWorker worker = new SwingWorker() {
-            public Object construct() {
+            @Override
+			public Object construct() {
                 loadFromFile();
                 return preferences;
             }
 
-            public void finished() {
+            @Override
+			public void finished() {
                 // Set default settings
                 soundPanel.setIncomingMessageSound(preferences.getIncomingSound());
                 soundPanel.playIncomingSound(preferences.isPlayIncomingSound());
@@ -147,7 +156,8 @@ public class SoundPreference implements Preference {
         worker.start();
     }
 
-    public void commit() {
+    @Override
+	public void commit() {
         preferences.setIncomingSound(soundPanel.getIncomingSound());
         preferences.setOutgoingSound(soundPanel.getOutgoingSound());
 
@@ -163,15 +173,18 @@ public class SoundPreference implements Preference {
         saveSoundsFile();
     }
 
-    public boolean isDataValid() {
+    @Override
+	public boolean isDataValid() {
         return true;
     }
 
-    public String getErrorMessage() {
+    @Override
+	public String getErrorMessage() {
         return null;
     }
 
-    public Object getData() {
+    @Override
+	public Object getData() {
         return null;
     }
 
@@ -355,7 +368,8 @@ public class SoundPreference implements Preference {
         return preferences;
     }
 
-    public void shutdown() {
+    @Override
+	public void shutdown() {
 
     }
 

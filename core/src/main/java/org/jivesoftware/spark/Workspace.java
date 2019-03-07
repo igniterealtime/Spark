@@ -137,7 +137,8 @@ public class Workspace extends JPanel implements StanzaListener {
 
 	        // Add MainWindow listener
 	        mainWindow.addMainWindowListener(new MainWindowListener() {
-	            public void shutdown() {
+	            @Override
+				public void shutdown() {
 	                final ChatContainer container = SparkManager.getChatManager().getChatContainer();
 	                // Close all Chats.
 	                for (ChatRoom chatRoom : container.getChatRooms()) {
@@ -151,11 +152,13 @@ public class Workspace extends JPanel implements StanzaListener {
 	                broadcastPlugin.shutdown();
 	            }
 
-	            public void mainWindowActivated() {
+	            @Override
+				public void mainWindowActivated() {
 
 	            }
 
-	            public void mainWindowDeactivated() {
+	            @Override
+				public void mainWindowDeactivated() {
 
 	            }
 	        });
@@ -183,6 +186,7 @@ public class Workspace extends JPanel implements StanzaListener {
         this.getActionMap().put("showDebugger", new AbstractAction("showDebugger") {
 			private static final long serialVersionUID = 4066886679016416923L;
 
+			@Override
 			public void actionPerformed(ActionEvent evt) {
                 EnhancedDebuggerWindow window = EnhancedDebuggerWindow.getInstance();
                 window.setVisible(true);
@@ -273,7 +277,8 @@ public class Workspace extends JPanel implements StanzaListener {
 
         // Schedule loading of the plugins after two seconds.
         TaskEngine.getInstance().schedule(new TimerTask() {
-            public void run() {
+            @Override
+			public void run() {
                 final PluginManager pluginManager = PluginManager.getInstance();
 
                 SparkManager.getMainWindow().addMainWindowListener(pluginManager);

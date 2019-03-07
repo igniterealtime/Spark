@@ -132,12 +132,14 @@ public class ReconnectPanel extends JPanel implements ConnectionListener, Reconn
         _icon.setEnabled(true);
     }
 
-    public void connectionClosed() {
+    @Override
+	public void connectionClosed() {
         _icon.setVisible(true);
         _icon.setEnabled(true);
     }
 
-    public void connectionClosedOnError(Exception e) {
+    @Override
+	public void connectionClosedOnError(Exception e) {
         _icon.setVisible(true);
         _icon.setEnabled(true);
     }

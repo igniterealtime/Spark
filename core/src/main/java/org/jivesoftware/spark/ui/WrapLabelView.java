@@ -17,7 +17,8 @@ public class WrapLabelView extends LabelView
         super( elem );
     }
 
-    public float getMinimumSpan( int axis )
+    @Override
+	public float getMinimumSpan( int axis )
     {
         switch ( axis )
         {

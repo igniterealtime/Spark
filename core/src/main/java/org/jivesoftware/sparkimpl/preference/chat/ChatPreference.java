@@ -46,32 +46,39 @@ public class ChatPreference implements Preference {
      */
     public static final String NAMESPACE = "http://www.jivesoftware.org/spark/chatwindow";
 
-    public String getTitle() {
+    @Override
+	public String getTitle() {
         return Res.getString("title.general.chat.settings");
     }
 
-    public String getListName() {
+    @Override
+	public String getListName() {
         return Res.getString("title.chat");
     }
 
-    public String getTooltip() {
+    @Override
+	public String getTooltip() {
         return Res.getString("title.general.chat.settings");
     }
 
-    public Icon getIcon() {
+    @Override
+	public Icon getIcon() {
         return SparkRes.getImageIcon(SparkRes.USER1_MESSAGE_24x24);
     }
 
-    public void load() {
+    @Override
+	public void load() {
         SwingWorker thread = new SwingWorker() {
             LocalPreferences localPreferences;
 
-            public Object construct() {
+            @Override
+			public Object construct() {
                 localPreferences = SettingsManager.getLocalPreferences();
                 return localPreferences;
             }
 
-            public void finished() {
+            @Override
+			public void finished() {
                 boolean showTime = localPreferences.isTimeDisplayedInChat();
                 boolean notificationsOn = localPreferences.isChatRoomNotificationsOn();
                 boolean chatHistoryHidden = !localPreferences.isChatHistoryEnabled();
@@ -94,7 +101,8 @@ public class ChatPreference implements Preference {
 
     }
 
-    public void commit() {
+    @Override
+	public void commit() {
         LocalPreferences pref = SettingsManager.getLocalPreferences();
         pref.setTimeDisplayedInChat(panel.getShowTime());
         if( panel.getShowTime() )
@@ -125,16 +133,19 @@ public class ChatPreference implements Preference {
         }
     }
 
-    public Object getData() {
+    @Override
+	public Object getData() {
         return SettingsManager.getLocalPreferences();
     }
 
-    public String getErrorMessage() {
+    @Override
+	public String getErrorMessage() {
         return errorMessage;
     }
 
 
-    public boolean isDataValid() {
+    @Override
+	public boolean isDataValid() {
         boolean dataIsValid = true;
         if (ModelUtil.hasLength(panel.getPassword()) && ModelUtil.hasLength(panel.getConfirmationPassword())) {
             if (!panel.getPassword().equals(panel.getConfirmationPassword())) {
@@ -145,15 +156,18 @@ public class ChatPreference implements Preference {
         return dataIsValid;
     }
 
-    public JComponent getGUI() {
+    @Override
+	public JComponent getGUI() {
         return panel;
     }
 
-    public String getNamespace() {
+    @Override
+	public String getNamespace() {
         return NAMESPACE;
     }
 
-    public void shutdown() {
+    @Override
+	public void shutdown() {
         commit();
     }
 

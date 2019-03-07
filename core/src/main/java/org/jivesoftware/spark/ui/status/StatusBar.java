@@ -140,6 +140,7 @@ public class StatusBar extends JPanel implements VCardListener {
 			// we should re-send it
 			if (PresenceManager.isInvisible(currentPresence)) {
 				TimerTask task = new SwingTimerTask() {
+					@Override
 					public void doRun() {
 						PrivacyManager.getInstance().goToInvisible();
 					}
@@ -149,6 +150,7 @@ public class StatusBar extends JPanel implements VCardListener {
 		} );
 
 		final TimerTask task = new SwingTimerTask() {
+			@Override
 			public void doRun() {
 				SparkManager.getVCardManager().addVCardListener(SparkManager.getWorkspace().getStatusBar());
 			}
@@ -224,6 +226,7 @@ public class StatusBar extends JPanel implements VCardListener {
 			final Action statusAction = new AbstractAction() {
 				private static final long serialVersionUID = -192865863435381702L;
 
+				@Override
 				public void actionPerformed(ActionEvent actionEvent) {
 					final String text = statusItem.getText();
 					final StatusItem si = getStatusItem(text);
@@ -234,10 +237,12 @@ public class StatusBar extends JPanel implements VCardListener {
 					}
 
 					SwingWorker worker = new SwingWorker() {
+						@Override
 						public Object construct() {
 							return changePresence(si.getPresence());
 						}
 
+						@Override
 						public void finished() {
 							setStatus((String) getValue());
 						}
@@ -280,6 +285,7 @@ public class StatusBar extends JPanel implements VCardListener {
 						Action action = new AbstractAction() {
 							private static final long serialVersionUID = -1264239704492879742L;
 
+							@Override
 							public void actionPerformed(ActionEvent actionEvent) {
 								final String text = mainStatusItem.getText();
 								final StatusItem si = getStatusItem(text);
@@ -290,6 +296,7 @@ public class StatusBar extends JPanel implements VCardListener {
 								}
 
 								SwingWorker worker = new SwingWorker() {
+									@Override
 									public Object construct() {
 										Presence presence = PresenceManager.copy(si.getPresence());
 										presence.setStatus(customStatus);
@@ -297,6 +304,7 @@ public class StatusBar extends JPanel implements VCardListener {
 										return changePresence(presence);
 									}
 
+									@Override
 									public void finished() {
 										setStatus((String) getValue());
 									}
@@ -312,6 +320,7 @@ public class StatusBar extends JPanel implements VCardListener {
 
 				// If menu has children, allow it to still be clickable.
 				mainStatusItem.addMouseListener(new MouseAdapter() {
+					@Override
 					public void mouseClicked(MouseEvent mouseEvent) {
 						statusAction.actionPerformed(null);
 						popup.setVisible(false);
@@ -363,6 +372,7 @@ public class StatusBar extends JPanel implements VCardListener {
 		Action editMessagesAction = new AbstractAction() {
 			private static final long serialVersionUID = 7148051050075679995L;
 
+			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
 				CustomMessages.editCustomMessages();
 			}
@@ -444,6 +454,7 @@ public class StatusBar extends JPanel implements VCardListener {
 		return null;
 	}
 
+	@Override
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		if (backgroundImage != null) {
@@ -573,20 +584,24 @@ public class StatusBar extends JPanel implements VCardListener {
 			// See if we should disable ability to change presence status
 			if (!Default.getBoolean("DISABLE_PRESENCE_STATUS_CHANGE") && Enterprise.containsFeature(Enterprise.PRESENCE_STATUS_FEATURE)) {			
 				statusLabel.addMouseListener(new MouseAdapter() {
+					@Override
 					public void mouseReleased(MouseEvent e) {
 						showPopup(e);
 					}
 
+					@Override
 					public void mouseEntered(MouseEvent e) {
 						setCursor(GraphicUtils.HAND_CURSOR);
 						setBorder(BorderFactory.createBevelBorder(0));
 					}
 
+					@Override
 					public void mouseExited(MouseEvent e) {
 						setCursor(GraphicUtils.DEFAULT_CURSOR);
 						setBorder(border);
 					}
 
+					@Override
 					public void mousePressed(MouseEvent e) {
 						setBorder(BorderFactory.createBevelBorder(1));
 					}
@@ -620,6 +635,7 @@ public class StatusBar extends JPanel implements VCardListener {
 		descriptiveLabel.setText(text);
 	}
 
+	@Override
 	public Dimension getPreferredSize() {
 		Dimension dim = super.getPreferredSize();
 		dim.width = 0;
@@ -627,6 +643,7 @@ public class StatusBar extends JPanel implements VCardListener {
 	}
 
 
+	@Override
 	public void vcardChanged(VCard vcard) {
 		updateVCardInformation(vcard);
 	}
@@ -703,6 +720,7 @@ public class StatusBar extends JPanel implements VCardListener {
 
 		// Go ahead and show the profile when clicking on the Avatar image
 		imageLabel.addMouseListener(new MouseAdapter() {
+			@Override
 			public void mouseClicked(MouseEvent mouseEvent) {
 				if (mouseEvent.getClickCount() == 1) {
 					VCardManager vcardManager = SparkManager.getVCardManager();
@@ -711,10 +729,12 @@ public class StatusBar extends JPanel implements VCardListener {
 				}
 			}
 
+			@Override
 			public void mouseEntered(MouseEvent e) {
 				imageLabel.setCursor(GraphicUtils.HAND_CURSOR);
 			}
 
+			@Override
 			public void mouseExited(MouseEvent e) {
 				imageLabel.setCursor(GraphicUtils.DEFAULT_CURSOR);
 			}

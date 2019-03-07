@@ -40,7 +40,8 @@ public class BackgroundPanel extends JPanel {
     }
 
 
-    public void paintComponent(Graphics g) {
+    @Override
+	public void paintComponent(Graphics g) {
         final Image backgroundImage = Default.getImageIcon(Default.TOP_BOTTOM_BACKGROUND_IMAGE).getImage();
         double scaleX = getWidth() / (double)backgroundImage.getWidth(null);
         double scaleY = getHeight() / (double)backgroundImage.getHeight(null);

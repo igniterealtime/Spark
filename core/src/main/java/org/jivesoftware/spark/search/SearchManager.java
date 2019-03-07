@@ -61,12 +61,14 @@ public class SearchManager {
         // By default, the user search is first.
         SwingWorker worker = new SwingWorker() {
             UserSearchService searchWizard;
-            public Object construct() {
+            @Override
+			public Object construct() {
                 searchWizard = new UserSearchService();
                 return searchWizard;
             }
 
-            public void finished() {
+            @Override
+			public void finished() {
                 if (searchWizard.getSearchServices() != null) {
                     ui.setActiveSearchService(searchWizard);
                     addSearchService(searchWizard);

@@ -34,7 +34,8 @@ import org.jivesoftware.spark.util.TaskEngine;
 public class SoundPlugin implements Plugin, MessageListener, ChatRoomListener {
     SoundPreference soundPreference;
 
-    public void initialize() {
+    @Override
+	public void initialize() {
         soundPreference = new SoundPreference();
         SparkManager.getPreferenceManager().addPreference(soundPreference);
 
@@ -70,7 +71,8 @@ public class SoundPlugin implements Plugin, MessageListener, ChatRoomListener {
 
     }
 
-    public void messageReceived(ChatRoom room, Message message) {
+    @Override
+	public void messageReceived(ChatRoom room, Message message) {
 
         // Do not play sounds on history updates.
         DelayInformation inf = message.getExtension("delay", "urn:xmpp:delay");
@@ -85,7 +87,8 @@ public class SoundPlugin implements Plugin, MessageListener, ChatRoomListener {
         }
     }
 
-    public void messageSent(ChatRoom room, Message message) {
+    @Override
+	public void messageSent(ChatRoom room, Message message) {
         SoundPreferences preferences = soundPreference.getPreferences();
         if (preferences.isPlayOutgoingSound()) {
             File outgoingFile = new File(preferences.getOutgoingSound());
@@ -93,39 +96,48 @@ public class SoundPlugin implements Plugin, MessageListener, ChatRoomListener {
         }
     }
 
-    public void shutdown() {
+    @Override
+	public void shutdown() {
 
     }
 
-    public boolean canShutDown() {
+    @Override
+	public boolean canShutDown() {
         return false;
     }
 
-    public void chatRoomOpened(ChatRoom room) {
+    @Override
+	public void chatRoomOpened(ChatRoom room) {
         room.addMessageListener(this);
     }
 
-    public void chatRoomLeft(ChatRoom room) {
+    @Override
+	public void chatRoomLeft(ChatRoom room) {
 
     }
 
-    public void chatRoomClosed(ChatRoom room) {
+    @Override
+	public void chatRoomClosed(ChatRoom room) {
         room.removeMessageListener(this);
     }
 
-    public void chatRoomActivated(ChatRoom room) {
+    @Override
+	public void chatRoomActivated(ChatRoom room) {
 
     }
 
-    public void userHasJoined(ChatRoom room, String userid) {
+    @Override
+	public void userHasJoined(ChatRoom room, String userid) {
 
     }
 
-    public void userHasLeft(ChatRoom room, String userid) {
+    @Override
+	public void userHasLeft(ChatRoom room, String userid) {
 
     }
 
-    public void uninstall() {
+    @Override
+	public void uninstall() {
         // Do nothing.
     }
 }

@@ -128,7 +128,8 @@ public abstract class SwingWorker {
      */
     public SwingWorker() {
         new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
                 finished();
             }
         };

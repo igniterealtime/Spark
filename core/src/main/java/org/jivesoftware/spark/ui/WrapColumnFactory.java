@@ -10,7 +10,8 @@ import javax.swing.text.*;
  */
 public class WrapColumnFactory implements ViewFactory
 {
-    public View create( Element elem )
+    @Override
+	public View create( Element elem )
     {
         String kind = elem.getName();
         if ( kind != null )

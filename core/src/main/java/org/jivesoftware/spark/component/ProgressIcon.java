@@ -38,15 +38,18 @@ public class ProgressIcon implements Icon {
         this.percent = percent;
     }
 
-    public int getIconHeight() {
+    @Override
+	public int getIconHeight() {
         return 10;
     }
 
-    public int getIconWidth() {
+    @Override
+	public int getIconWidth() {
         return percent;
     }
 
-    public void paintIcon(Component c, Graphics g, int x, int y) {
+    @Override
+	public void paintIcon(Component c, Graphics g, int x, int y) {
         g.setColor(Color.blue);
         g.fillRect(x, y, getIconWidth(), getIconHeight());//To change body of implemented methods use File | Settings | File Templates.
     }

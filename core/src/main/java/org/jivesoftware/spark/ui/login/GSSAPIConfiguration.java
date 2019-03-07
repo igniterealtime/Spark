@@ -63,7 +63,8 @@ public class GSSAPIConfiguration extends Configuration
         putAppConfigurationEntry( "com.sun.security.jgss.krb5.initiate", "com.sun.security.auth.module.Krb5LoginModule", AppConfigurationEntry.LoginModuleControlFlag.REQUIRED, c_options );
     }
 
-    public AppConfigurationEntry[] getAppConfigurationEntry( String name )
+    @Override
+	public AppConfigurationEntry[] getAppConfigurationEntry( String name )
     {
         AppConfigurationEntry[] a = new AppConfigurationEntry[ 1 ];
         if ( configs.containsKey( name ) )
@@ -94,7 +95,8 @@ public class GSSAPIConfiguration extends Configuration
         return v.add( new AppConfigurationEntry( module, controlFlag, options ) );
     }
 
-    public void refresh()
+    @Override
+	public void refresh()
     {
     }
 }

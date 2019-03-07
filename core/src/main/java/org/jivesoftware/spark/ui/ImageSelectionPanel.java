@@ -49,7 +49,8 @@ public class ImageSelectionPanel extends JPanel {
         addMouseMotionListener(selector);
     }
 
-    protected void paintComponent(Graphics g) {
+    @Override
+	protected void paintComponent(Graphics g) {
         if (image == null) {
             return;
         }
@@ -75,7 +76,8 @@ public class ImageSelectionPanel extends JPanel {
         repaint();
     }
 
-    public Dimension getPreferredSize() {
+    @Override
+	public Dimension getPreferredSize() {
         return new Dimension(image.getWidth(), image.getHeight());
     }
 
@@ -101,7 +103,8 @@ class Selector extends MouseInputAdapter {
         isClipSet = false;
     }
 
-    public void mousePressed(MouseEvent e) {
+    @Override
+	public void mousePressed(MouseEvent e) {
         if (isClipSet)             // clear existing clip
         {
             selectionPanel.setClipFrame(start, start);
@@ -115,11 +118,13 @@ class Selector extends MouseInputAdapter {
         }
     }
 
-    public void mouseReleased(MouseEvent e) {
+    @Override
+	public void mouseReleased(MouseEvent e) {
         dragging = false;
     }
 
-    public void mouseDragged(MouseEvent e) {
+    @Override
+	public void mouseDragged(MouseEvent e) {
         if (dragging)
             selectionPanel.setClipFrame(start, e.getPoint());
     }

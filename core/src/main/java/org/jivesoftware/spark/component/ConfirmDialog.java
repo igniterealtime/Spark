@@ -100,7 +100,8 @@ public class ConfirmDialog extends BackgroundPanel {
         dialog.setVisible(true);
 
         dialog.addWindowListener(new WindowAdapter() {
-            public void windowClosed(WindowEvent windowEvent) {
+            @Override
+			public void windowClosed(WindowEvent windowEvent) {
                 if (listener != null) {
                     listener.noOption();
                 }

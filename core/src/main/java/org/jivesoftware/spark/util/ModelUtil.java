@@ -352,15 +352,18 @@ class ReverseListIterator<T> implements Iterator<T> {
         while (_i.hasNext()) _i.next();
     }
 
-    public boolean hasNext() {
+    @Override
+	public boolean hasNext() {
         return _i.hasPrevious();
     }
 
-    public T next() {
+    @Override
+	public T next() {
         return _i.previous();
     }
 
-    public void remove() {
+    @Override
+	public void remove() {
         _i.remove();
     }
 }

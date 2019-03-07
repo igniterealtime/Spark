@@ -33,15 +33,18 @@ public class SettingsData implements PrivateData {
         return settingsMap;
     }
 
-    public String getElementName() {
+    @Override
+	public String getElementName() {
         return "personal_settings";
     }
 
-    public String getNamespace() {
+    @Override
+	public String getNamespace() {
         return "jive:user:settings";
     }
 
-    public String toXML() {
+    @Override
+	public String toXML() {
         StringBuilder buf = new StringBuilder();
         buf.append("<").append(getElementName()).append(" xmlns=\"").append(getNamespace()).append("\">");
         String key;

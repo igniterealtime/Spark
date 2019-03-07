@@ -26,7 +26,8 @@ import org.jxmpp.stringprep.XmppStringprepException;
 
 public class ChatArgumentsPlugin implements Plugin {
 
-    public void initialize() {
+    @Override
+	public void initialize() {
         EntityBareJid start_chat_jid = null;
         try {
             start_chat_jid = JidCreate.entityBareFromUnescaped(Spark.getArgumentValue("start_chat_jid"));
@@ -49,15 +50,18 @@ public class ChatArgumentsPlugin implements Plugin {
 
     }
 
-    public void shutdown() {
+    @Override
+	public void shutdown() {
 
     }
 
-    public boolean canShutDown() {
+    @Override
+	public boolean canShutDown() {
         return false;
     }
 
-    public void uninstall() {
+    @Override
+	public void uninstall() {
         // Do nothing.
     }
 }

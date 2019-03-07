@@ -233,7 +233,8 @@ public class SparkToaster {
 
         private class PaneMouseListener extends MouseAdapter {
 
-            public void mouseClicked(MouseEvent e) {
+            @Override
+			public void mouseClicked(MouseEvent e) {
                 if (customAction != null) {
                     customAction.actionPerformed(null);
                 }
@@ -244,12 +245,14 @@ public class SparkToaster {
                 }
             }
 
-            public void mouseEntered(MouseEvent e) {
+            @Override
+			public void mouseEntered(MouseEvent e) {
                 message.setCursor(HAND_CURSOR);
                 setCursor(HAND_CURSOR);
             }
 
-            public void mouseExited(MouseEvent e) {
+            @Override
+			public void mouseExited(MouseEvent e) {
                 message.setCursor(DEFAULT_CURSOR);
                 setCursor(DEFAULT_CURSOR);
             }
@@ -298,7 +301,8 @@ public class SparkToaster {
             toaster.repaint();
         }
 
-        public void run() {
+        @Override
+		public void run() {
             try {
                 boolean animateFromBottom = true;
                 GraphicsEnvironment ge = GraphicsEnvironment
@@ -684,7 +688,8 @@ public class SparkToaster {
                 	return label;
                 }
                 
-        public void paintComponent(Graphics g) {
+        @Override
+		public void paintComponent(Graphics g) {
             final Image backgroundImage = Default.getImageIcon(Default.TOP_BOTTOM_BACKGROUND_IMAGE).getImage();
             double scaleX = getWidth() / (double)backgroundImage.getWidth(null);
             double scaleY = getHeight() / (double)backgroundImage.getHeight(null);

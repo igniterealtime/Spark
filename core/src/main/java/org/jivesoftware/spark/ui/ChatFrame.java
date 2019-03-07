@@ -127,7 +127,8 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
              *
              * @param e WindowEvent is not used.
              */
-            public void windowActivated(WindowEvent e) {
+            @Override
+			public void windowActivated(WindowEvent e) {
                 inactiveTime = 0;
                 if (Spark.isMac()) {
                     setJMenuBar(MainWindow.getInstance().getMenu());
@@ -137,7 +138,8 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
             /**
              * Invoked when a window is de-activated.
              */
-            public void windowDeactivated(WindowEvent e) {
+            @Override
+			public void windowDeactivated(WindowEvent e) {
                 inactiveTime = System.currentTimeMillis();
             }
 
@@ -147,17 +149,20 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
              *
              * @param e WindowEvent is not used.
              */
-            public void windowIconified(WindowEvent e) {
+            @Override
+			public void windowIconified(WindowEvent e) {
             }
 
-            public void windowDeiconified(WindowEvent e) {
+            @Override
+			public void windowDeiconified(WindowEvent e) {
                 setFocusableWindowState(true);
             }
         });
 
         // Adding a Resize Listener to validate component sizes in a Chat Room.
         addComponentListener(new ComponentAdapter() {
-            public void componentResized(ComponentEvent e) {
+            @Override
+			public void componentResized(ComponentEvent e) {
                 try {
                     ChatRoom chatRoom = SparkManager.getChatManager().getChatContainer().getActiveChatRoom();
                     chatRoom.getVerticalSlipPane().setDividerLocation(-1);
@@ -174,7 +179,8 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
 
     
     
-    public void windowGainedFocus(WindowEvent e) {
+    @Override
+	public void windowGainedFocus(WindowEvent e) {
         focused = true;
 
         if(this instanceof MainWindow){
@@ -185,7 +191,8 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
         SparkManager.getChatManager().getChatContainer().focusChat();
     }
 
-    public void windowLostFocus(WindowEvent e) {
+    @Override
+	public void windowLostFocus(WindowEvent e) {
         focused = false;
     }
 

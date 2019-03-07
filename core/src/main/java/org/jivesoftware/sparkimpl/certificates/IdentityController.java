@@ -84,7 +84,8 @@ public class IdentityController extends CertManager {
 
     }
 
-    public void loadKeyStores() {
+    @Override
+	public void loadKeyStores() {
 
         idStore = openKeyStore(IDENTITY);
         blackListStore = openKeyStore(BLACKLIST);
@@ -120,7 +121,8 @@ public class IdentityController extends CertManager {
 
     }
 
-    public void createTableModel() {
+    @Override
+	public void createTableModel() {
 
         tableModel = new DefaultTableModel();
         tableModel.setColumnIdentifiers(COLUMN_NAMES);

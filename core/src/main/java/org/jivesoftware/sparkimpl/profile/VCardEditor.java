@@ -162,7 +162,8 @@ public class VCardEditor {
 	} );
 
 	PropertyChangeListener changeListener = new PropertyChangeListener() {
-	    public void propertyChange(PropertyChangeEvent e) {
+	    @Override
+		public void propertyChange(PropertyChangeEvent e) {
 		String value = (String) pane.getValue();
 		if (Res.getString("cancel").equals(value)) {
 		    pane.removePropertyChangeListener(this);
@@ -259,7 +260,8 @@ public class VCardEditor {
 	dlg.setContentPane(mainPanel);
 	dlg.setLocationRelativeTo(parent);
 	PropertyChangeListener changeListener = new PropertyChangeListener() {
-	    public void propertyChange(PropertyChangeEvent e) {
+	    @Override
+		public void propertyChange(PropertyChangeEvent e) {
 		Object o = pane.getValue();
 		if (o instanceof Integer) {
 		    pane.removePropertyChangeListener(this);
@@ -334,7 +336,8 @@ public class VCardEditor {
 	dlg.setLocationRelativeTo(parent);
 
 	PropertyChangeListener changeListener = new PropertyChangeListener() {
-	    public void propertyChange(PropertyChangeEvent e) {
+	    @Override
+		public void propertyChange(PropertyChangeEvent e) {
 		if (pane.getValue() instanceof Integer) {
 		    pane.removePropertyChangeListener(this);
 		    dlg.dispose();
@@ -354,7 +357,8 @@ public class VCardEditor {
 	pane.addPropertyChangeListener(changeListener);
 
 	dlg.addKeyListener(new KeyAdapter() {
-	    public void keyPressed(KeyEvent keyEvent) {
+	    @Override
+		public void keyPressed(KeyEvent keyEvent) {
 		if (keyEvent.getKeyChar() == KeyEvent.VK_ESCAPE) {
 		    dlg.dispose();
 		}

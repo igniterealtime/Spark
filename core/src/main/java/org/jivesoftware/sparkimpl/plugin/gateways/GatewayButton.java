@@ -67,7 +67,8 @@ public class GatewayButton extends JPanel implements GatewayItem {
         commandPanel.add(button);
 
         button.addMouseListener(new MouseAdapter() {
-            public void mousePressed(MouseEvent mouseEvent) {
+            @Override
+			public void mousePressed(MouseEvent mouseEvent) {
                 handlePopup(mouseEvent);
             }
         });
@@ -193,7 +194,8 @@ public class GatewayButton extends JPanel implements GatewayItem {
         popupMenu.show((Component)event.getSource(), event.getX(), event.getY());
     }
 
-    public void signedIn(boolean signedIn) {
+    @Override
+	public void signedIn(boolean signedIn) {
         if (!signedIn) {
             button.setIcon(transport.getInactiveIcon());
         }
@@ -204,7 +206,8 @@ public class GatewayButton extends JPanel implements GatewayItem {
         this.signedIn = signedIn;
     }
 
-    public boolean isLoggedIn() {
+    @Override
+	public boolean isLoggedIn() {
         return signedIn;
     }
 
