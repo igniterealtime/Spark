@@ -41,9 +41,6 @@ import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jxmpp.jid.BareJid;
 import org.jxmpp.jid.DomainBareJid;
 import org.jxmpp.jid.parts.Domainpart;
-import org.jxmpp.util.XmppStringUtils;
-
-
 import javax.swing.*;
 
 

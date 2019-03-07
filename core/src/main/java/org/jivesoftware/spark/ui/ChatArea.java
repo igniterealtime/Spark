@@ -22,9 +22,6 @@ import org.jivesoftware.spark.util.BrowserLauncher;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.emoticons.EmoticonManager;
-import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
-import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
-
 import javax.swing.*;
 import javax.swing.text.*;
 import java.awt.*;

@@ -29,8 +29,6 @@ import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.impl.JidCreate;
 import org.jxmpp.jid.parts.Localpart;
 import org.jxmpp.stringprep.XmppStringprepException;
-import org.jxmpp.util.XmppStringUtils;
-
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Font;

@@ -33,8 +33,6 @@ import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.parts.Localpart;
-import org.jxmpp.util.XmppStringUtils;
-
 import java.util.TimerTask;
 
 import javax.swing.SwingUtilities;
