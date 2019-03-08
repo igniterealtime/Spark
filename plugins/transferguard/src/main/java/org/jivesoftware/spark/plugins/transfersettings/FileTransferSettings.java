@@ -26,6 +26,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.StringTokenizer;
 
+import org.jivesoftware.Spark;
 import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.util.JidUtil;
 
@@ -39,7 +40,7 @@ public class FileTransferSettings {
     private int kb;
     private boolean checkSize = false;
     String cannedRejectionMessage;
-    private static File BACKING_STORE = new File(System.getProperty("user.home") + "/.sparkExt.properties");
+    private static File BACKING_STORE = new File(Spark.getSparkUserHome() + "/.transferguard.properties");
 
 
     /**
