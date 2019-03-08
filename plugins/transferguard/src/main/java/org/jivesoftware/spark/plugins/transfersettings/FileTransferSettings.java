@@ -40,7 +40,7 @@ public class FileTransferSettings {
     private int kb;
     private boolean checkSize = false;
     String cannedRejectionMessage;
-    private static File BACKING_STORE = new File(Spark.getSparkUserHome() + "/.transferguard.properties");
+    private static File BACKING_STORE = new File(Spark.getSparkUserHome() + "/transferguard.properties");
 
 
     /**
