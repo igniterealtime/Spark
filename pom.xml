@@ -107,10 +107,6 @@
                         <target>1.8</target>
                     </configuration>
                 </plugin>
-            </plugins>
-        </pluginManagement>
-
-        <plugins>
             <plugin>
                 <!--
                     Java has trouble reading translations from UTF-8 files. To work around that,
@@ -130,5 +126,6 @@
                 </executions>
             </plugin>
         </plugins>
+      </pluginManagement>
     </build>
 </project>
