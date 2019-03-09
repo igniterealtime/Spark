@@ -362,18 +362,4 @@ public class JinglePlugin implements Plugin, Phone, ConnectionListener {
     public void connectionClosedOnError(Exception e) {
     }
 
-    @Override
-    public void reconnectingIn(int seconds) {
-    }
-
-    @Override
-    public void reconnectionSuccessful() {
-        // Add Jingle to discovered items list.
-        SparkManager.addFeature(JINGLE_NAMESPACE);
-    }
-
-    @Override
-    public void reconnectionFailed(Exception e) {
-
-    }
 }

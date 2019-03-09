@@ -19,6 +19,8 @@ import org.jivesoftware.fastpath.resources.FastpathRes;
 import org.jivesoftware.fastpath.workspace.Workpane;
 import org.jivesoftware.fastpath.workspace.panes.BackgroundPane;
 import org.jivesoftware.smack.ConnectionListener;
+import org.jivesoftware.smack.ReconnectionListener;
+import org.jivesoftware.smack.ReconnectionManager;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
@@ -251,21 +253,6 @@ public class FastpathPlugin implements Plugin, ConnectionListener {
     @Override
     public void authenticated( XMPPConnection xmppConnection, boolean b )
     {
-
-    }
-
-    public void connectionClosed() {
-        lostConnection();
-    }
-
-    public void connectionClosedOnError(Exception e) {
-        lostConnection();
-    }
-
-    public void reconnectingIn(int seconds) {
-    }
-
-    public void reconnectionSuccessful() {
         // Rejoin the workgroup after 15 seconds.
         final TimerTask rejoinTask = new SwingTimerTask() {
             public void doRun() {
@@ -278,7 +265,12 @@ public class FastpathPlugin implements Plugin, ConnectionListener {
         TaskEngine.getInstance().schedule(rejoinTask, 15000);
     }
 
-    public void reconnectionFailed(Exception e) {
+    public void connectionClosed() {
+        lostConnection();
+    }
+
+    public void connectionClosedOnError(Exception e) {
+        lostConnection();
     }
 
     private void lostConnection() {

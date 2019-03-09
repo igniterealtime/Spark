@@ -71,7 +71,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 
 public class ContactList extends JPanel implements ActionListener,
-	ContactGroupListener, Plugin, RosterListener, ConnectionListener {
+	ContactGroupListener, Plugin, RosterListener, ConnectionListener, ReconnectionListener {
 
     private static final long serialVersionUID = -4391111935248627078L;
     private JPanel mainPanel = new JPanel();
@@ -241,7 +241,7 @@ public class ContactList extends JPanel implements ActionListener,
         });
 
         SparkManager.getConnection().addConnectionListener(this);
-
+        ReconnectionManager.getInstanceFor(SparkManager.getConnection()).addReconnectionListener(this);
         // Get command panel and add View Online/Offline, Add Contact
 //        StatusBar statusBar = SparkManager.getWorkspace().getStatusBar();
 
@@ -2509,6 +2509,7 @@ moveToOffline(moveToOfflineContactItem);
 
     }
 
+    @Override
     public void reconnectingIn(int i) {
 	
 	switch (localPreferences.getReconnectPanelType()) {
@@ -2545,6 +2546,7 @@ moveToOffline(moveToOfflineContactItem);
 
     }
 
+    @Override
     public void reconnectionFailed(Exception exception) {
 
 	switch (localPreferences.getReconnectPanelType()) {
