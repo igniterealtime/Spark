@@ -42,6 +42,7 @@ import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.impl.JidCreate;
 import org.jxmpp.jid.parts.Localpart;
 import org.jxmpp.stringprep.XmppStringprepException;
+
 import javax.swing.*;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
@@ -366,7 +367,7 @@ public class BookmarksUI extends JPanel {
             public Object construct() {
                 try {
                     if (SparkManager.getConnection().isConnected()) {
-                        mucServices = MultiUserChatManager.getInstanceFor( SparkManager.getConnection() ).getXMPPServiceDomains();
+                        mucServices = MultiUserChatManager.getInstanceFor( SparkManager.getConnection() ).getMucServiceDomains();
                     }
                 }
                 catch (XMPPException | SmackException | InterruptedException e) {

@@ -23,7 +23,7 @@ public class Win32IdleTime implements IdleTime {
          * @return number of milliseconds that have elapsed since the system was started.
          */
         public int GetTickCount();
-    };
+    }
 
     public interface User32 extends StdCallLibrary {
         User32 INSTANCE = (User32)Native.loadLibrary("user32", User32.class);

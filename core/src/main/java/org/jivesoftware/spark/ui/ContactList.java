@@ -55,6 +55,7 @@ import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jxmpp.jid.BareJid;
 import org.jxmpp.jid.Jid;
 import org.jxmpp.jid.impl.JidCreate;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -1784,7 +1785,7 @@ moveToOffline(moveToOfflineContactItem);
 			try {
 				sharedGroups = SharedGroupManager.getSharedGroups(SparkManager.getConnection());
 			} catch (XMPPErrorException e) {
-				StanzaError stanzaError = e.getXMPPError();
+				StanzaError stanzaError = e.getStanzaError();
 				if (stanzaError.getCondition() == Condition.service_unavailable) {
 					// Server does not support shared groups.
 					return;
@@ -2634,8 +2635,8 @@ moveToOffline(moveToOfflineContactItem);
     public void showAddContact(String contact)
     {
 	addContactMenu.doClick();
-    };
-    
+    }
+
     public ContactItem getActiveItem() {
 	return activeItem;
     }

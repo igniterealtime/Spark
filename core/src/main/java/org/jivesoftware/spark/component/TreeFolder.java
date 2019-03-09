@@ -32,7 +32,7 @@ public class TreeFolder implements Serializable {
     private ContextMenuListener listener;
 
     public TreeFolder() {
-        // Allow user the flexibilty to create
+        // Allow user the flexibility to create
     }
 
     public TreeFolder(String displayName, String description, String icon) {

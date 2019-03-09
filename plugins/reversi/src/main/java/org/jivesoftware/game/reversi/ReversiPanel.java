@@ -26,7 +26,7 @@ import java.awt.event.MouseEvent;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.StanzaListener;
-import org.jivesoftware.smack.filter.PacketExtensionFilter;
+import org.jivesoftware.smack.filter.StanzaExtensionFilter;
 import org.jivesoftware.smack.packet.DefaultExtensionElement;
 import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.packet.Message;
@@ -115,7 +115,7 @@ public class ReversiPanel extends JPanel {
                 }
             };
 
-            connection.addAsyncStanzaListener(gameMoveListener, new PacketExtensionFilter(GameMove.ELEMENT_NAME,
+            connection.addAsyncStanzaListener(gameMoveListener, new StanzaExtensionFilter(GameMove.ELEMENT_NAME,
                     GameMove.NAMESPACE));
             // TODO: at end of game, remove listener.
         }

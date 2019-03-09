@@ -8,6 +8,7 @@ import java.security.SecureRandom;
 import java.security.UnrecoverableKeyException;
 
 import javax.net.ssl.SSLContext;
+
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
 public class SparkSSLContextCreator {

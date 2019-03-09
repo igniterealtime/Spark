@@ -20,7 +20,7 @@ import org.jivesoftware.spark.SparkManager;
 import com.apple.eawt.Application;
 
 /**
- * Utilities for dealing with the apple dockicon
+ * Utilities for dealing with the apple dock icon
  * 
  * @author Wolf.Posdorfer
  */

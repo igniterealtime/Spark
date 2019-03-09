@@ -40,7 +40,7 @@ public class FlashWindow {
 	    System.load(PluginManager.PLUGINS_DIRECTORY + File.separator + "flashing" + File.separator + "native"
 		    + File.separator + "FlashWindow" + arch + ".dll");
 	} catch (UnsatisfiedLinkError e) {
-	    // So, we are on 64bit using 64bit java and you rather wand a 32bit.dll ?? suuuureeee....
+	    // So, we are on 64bit using 64bit java and you rather want a 32bit.dll ??
 	    if (e.getMessage().contains("Can't load AMD 64-bit .dll on a IA 32-bit platform")) {
 		System.load(PluginManager.PLUGINS_DIRECTORY + File.separator + "flashing" + File.separator + "native"
 			+ File.separator + "FlashWindow.dll" );

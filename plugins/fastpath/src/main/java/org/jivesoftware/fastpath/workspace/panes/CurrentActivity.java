@@ -48,7 +48,6 @@ import org.jivesoftware.fastpath.resources.FastpathRes;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Presence;
-import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.muc.MultiUserChatManager;
 import org.jivesoftware.smackx.xdata.Form;
 import org.jivesoftware.smackx.muc.Affiliate;
@@ -58,7 +57,6 @@ import org.jivesoftware.smackx.workgroup.agent.AgentRosterListener;
 import org.jivesoftware.smackx.workgroup.packet.AgentStatus;
 import org.jivesoftware.smackx.workgroup.packet.AgentStatus.ChatInfo;
 import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.UserManager;
 import org.jivesoftware.spark.ui.conferences.ConferenceUtils;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.SwingWorker;
@@ -72,7 +70,6 @@ import org.jxmpp.jid.Jid;
 import org.jxmpp.jid.impl.JidCreate;
 import org.jxmpp.jid.parts.Resourcepart;
 import org.jxmpp.jid.util.JidUtil;
-import org.jxmpp.util.XmppStringUtils;
 
 /**
  * UI to show all chats occuring.
@@ -248,7 +245,7 @@ public final class CurrentActivity extends JPanel {
                             // Get Conference
                             try {
                                 final MultiUserChatManager multiUserChatManager = MultiUserChatManager.getInstanceFor( SparkManager.getConnection() );
-                                List<DomainBareJid> col = multiUserChatManager.getXMPPServiceDomains();
+                                List<DomainBareJid> col = multiUserChatManager.getMucServiceDomains();
                                 if (col.size() == 0) {
                                     return;
                                 }
@@ -310,7 +307,7 @@ public final class CurrentActivity extends JPanel {
                             try {
                                 FastpathPlugin.getAgentSession().makeRoomOwner(SparkManager.getConnection(), sessionID);
                                 MultiUserChatManager manager = MultiUserChatManager.getInstanceFor( SparkManager.getConnection() );
-                                List<DomainBareJid> col = manager.getXMPPServiceDomains();
+                                List<DomainBareJid> col = manager.getMucServiceDomains();
                                 if (col.size() == 0) {
                                     return;
                                 }

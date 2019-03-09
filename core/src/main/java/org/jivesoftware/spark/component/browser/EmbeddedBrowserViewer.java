@@ -17,6 +17,7 @@ package org.jivesoftware.spark.component.browser;
 
 import java.awt.BorderLayout;
 import javax.swing.JFrame;
+
 import com.teamdev.jxbrowser.chromium.*;
 import com.teamdev.jxbrowser.chromium.swing.BrowserView;
 

@@ -24,7 +24,7 @@ import java.util.Properties;
 import org.jivesoftware.Spark;
 
 public class FlashingPreferences {
-	public static final String TYPE_CONTINOUS = "continuous";
+	public static final String TYPE_CONTINUOUS = "continuous";
 	public static final String TYPE_TEMPORARY = "temporary";
 
 	private Properties props;
@@ -66,7 +66,7 @@ public class FlashingPreferences {
 	}
 
 	public String getFlashingType() {
-		return props.getProperty("flashingType", TYPE_CONTINOUS);
+		return props.getProperty("flashingType", TYPE_CONTINUOUS);
 	}
 
 	public void setFlashingType(String type) {

@@ -129,7 +129,7 @@ public class VCardPanel extends JPanel {
 			public void mouseExited(MouseEvent e) {
                 showAvatarBig(false, null);
 
-            };
+            }
         });
 
     }

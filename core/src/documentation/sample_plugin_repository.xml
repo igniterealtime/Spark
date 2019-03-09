@@ -18,7 +18,7 @@
         <author>Joe Mamma</author>
         <homePage>http://www.jivesoftware.com</homePage>
         <email>Joe@Mama.com</email>
-        <description>Adds some weird features you dont want</description>
+        <description>Adds some weird features you don't want</description>
         <class>org.weird.feature.class.mainclass</class>
      <minSparkVersion>2.6.0</minSparkVersion>
      <downloadURL>http://localhost/test.jar</downloadURL>

@@ -50,6 +50,7 @@ import org.jxmpp.jid.EntityJid;
 import org.jxmpp.jid.Jid;
 import org.jxmpp.jid.impl.JidCreate;
 import org.jxmpp.jid.parts.Localpart;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
