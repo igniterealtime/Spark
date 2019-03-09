@@ -19,6 +19,7 @@ package org.jivesoftware.spark.plugin.ofmeet;
 
 import com.teamdev.jxbrowser.chromium.Browser;
 import com.teamdev.jxbrowser.chromium.swing.BrowserView;
+import org.jivesoftware.Spark;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.Plugin;
@@ -53,7 +54,7 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
     private int height = 768;
     private String path = "ofmeet";
 
-    private static File pluginsettings = new File(System.getProperty("user.home") + System.getProperty("file.separator") + "Spark" + System.getProperty("file.separator") + "ofmeet.properties");
+    private static File pluginsettings = new File(Spark.getSparkUserHome() + "/ofmeet.properties");
     private Map<EntityBareJid, ChatRoomDecorator> decorators = new HashMap<>();
 
     private Browser browser = null;
