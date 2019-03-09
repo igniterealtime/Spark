@@ -896,8 +896,8 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         getChatInputEditor().getActionMap().remove("closeTheRoom");
         chatAreaButton.getButton().removeActionListener(this);
         bottomPanel.remove(chatAreaButton);
+        // TODO: We are seeing NPEs in the next line. Find out why _chatFrame is null.
         _chatFrame.removeWindowToFrontListener(this);
-
     }
 
     /**
