@@ -49,7 +49,7 @@ public class TestTranslator {
             }
 
             if (text == null) {
-                System.out.println("Sorry, I didnt get that.");
+                System.out.println("Sorry, I didn't get that.");
                 continue;
             }
 

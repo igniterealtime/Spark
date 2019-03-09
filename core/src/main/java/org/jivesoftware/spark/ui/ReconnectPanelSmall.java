@@ -17,6 +17,7 @@ package org.jivesoftware.spark.ui;
 
 import java.awt.Component;
 import javax.swing.JLabel;
+
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.ConnectionListener;

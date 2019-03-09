@@ -49,6 +49,7 @@ import org.jxmpp.jid.impl.JidCreate;
 import org.jxmpp.jid.parts.Localpart;
 import org.jxmpp.jid.parts.Resourcepart;
 import org.jxmpp.stringprep.XmppStringprepException;
+
 import javax.swing.*;
 import java.awt.*;
 import java.net.URI;
@@ -565,7 +566,7 @@ public class ChatManager {
         if (conferenceService == null) {
             try {
                 final MultiUserChatManager multiUserChatManager = MultiUserChatManager.getInstanceFor( SparkManager.getConnection() );
-                List<DomainBareJid> col = multiUserChatManager.getXMPPServiceDomains();
+                List<DomainBareJid> col = multiUserChatManager.getMucServiceDomains();
                 if (col.size() > 0) {
                     conferenceService = col.iterator().next().toString();
                 }

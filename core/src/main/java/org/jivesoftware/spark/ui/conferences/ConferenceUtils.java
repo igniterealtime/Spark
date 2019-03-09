@@ -48,6 +48,7 @@ import org.jxmpp.jid.Jid;
 import org.jxmpp.jid.impl.JidCreate;
 import org.jxmpp.jid.parts.Resourcepart;
 import org.jxmpp.stringprep.XmppStringprepException;
+
 import javax.swing.*;
 import java.awt.*;
 import java.text.DateFormat;
@@ -208,7 +209,7 @@ public class ConferenceUtils {
                 StanzaError error = null;
                 if ( ex instanceof XMPPException.XMPPErrorException )
                 {
-                    error = ( (XMPPException.XMPPErrorException) ex ).getXMPPError();
+                    error = ( (XMPPException.XMPPErrorException) ex ).getStanzaError();
                 }
 
                 final String errorText = ConferenceUtils.getReason( error );

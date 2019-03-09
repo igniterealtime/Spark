@@ -87,7 +87,7 @@ public class PrivacyPlugin implements Plugin {
     }
 
     // /**
-    // * Adding block menu item to contact popupmenu
+    // * Adding block menu item to contact popup menu
     // */
     protected void addMenuItemToContactItems() {
         if (PrivacyManager.getInstance().isPrivacyActive()) {

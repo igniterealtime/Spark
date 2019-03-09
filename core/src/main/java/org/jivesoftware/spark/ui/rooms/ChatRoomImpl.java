@@ -55,6 +55,7 @@ import org.jxmpp.jid.impl.JidCreate;
 import org.jxmpp.jid.parts.Localpart;
 import org.jxmpp.jid.parts.Resourcepart;
 import org.jxmpp.stringprep.XmppStringprepException;
+
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import java.awt.*;
@@ -527,7 +528,7 @@ public class ChatRoomImpl extends ChatRoom {
                     if ( carbon != null )
                     {
                         // Is the a carbon copy?
-                        final Message forwardedStanza = (Message) carbon.getForwarded().getForwardedPacket();
+                        final Message forwardedStanza = (Message) carbon.getForwarded().getForwardedStanza();
                         if ( forwardedStanza.getBody() != null )
                         {
                             if ( carbon.getDirection() == CarbonExtension.Direction.received )

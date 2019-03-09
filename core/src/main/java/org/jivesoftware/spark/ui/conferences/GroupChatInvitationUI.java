@@ -32,6 +32,7 @@ import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.impl.JidCreate;
 import org.jxmpp.jid.parts.Localpart;
 import org.jxmpp.stringprep.XmppStringprepException;
+
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextPane;

@@ -202,7 +202,7 @@ public class GameBoard {
     }
     
     /**
-     * Checks if the palced move is Valid
+     * Checks if the placed move is Valid
      * @param x
      * @param y
      * @return

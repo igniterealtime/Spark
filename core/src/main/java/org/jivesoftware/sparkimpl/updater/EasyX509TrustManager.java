@@ -34,7 +34,7 @@ import java.security.cert.X509Certificate;
  * </p>
  * <p/>
  * This trust manager SHOULD NOT be used for productive systems
- * due to security reasons, unless it is a concious decision and
+ * due to security reasons, unless it is a conscious decision and
  * you are perfectly aware of security implications of accepting
  * self-signed certificates
  * </p>

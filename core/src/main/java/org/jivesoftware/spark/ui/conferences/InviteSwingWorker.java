@@ -12,6 +12,7 @@ import org.jivesoftware.spark.ui.TranscriptWindow;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 import org.jxmpp.jid.EntityBareJid;
+
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;

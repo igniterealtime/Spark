@@ -31,6 +31,7 @@ import org.jxmpp.jid.DomainBareJid;
 import org.jxmpp.jid.Jid;
 import org.jxmpp.jid.impl.JidCreate;
 import org.jxmpp.stringprep.XmppStringprepException;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;

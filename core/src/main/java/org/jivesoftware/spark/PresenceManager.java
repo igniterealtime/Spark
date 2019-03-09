@@ -29,6 +29,7 @@ import org.jxmpp.jid.EntityFullJid;
 import org.jxmpp.jid.Jid;
 import org.jxmpp.jid.impl.JidCreate;
 import org.jxmpp.stringprep.XmppStringprepException;
+
 import javax.swing.Icon;
 
 import java.util.ArrayList;

@@ -76,7 +76,7 @@ public class FlashingPreferenceDialog extends JPanel {
     }
     
     public void setFlashingType(String type) {
-    	if (FlashingPreferences.TYPE_CONTINOUS.equals(type)) {
+    	if (FlashingPreferences.TYPE_CONTINUOUS.equals(type)) {
     		flashingType.setSelectedIndex(0);
     	}
     	else if (FlashingPreferences.TYPE_TEMPORARY.equals(type)) {
@@ -89,7 +89,7 @@ public class FlashingPreferenceDialog extends JPanel {
     
     public String getFlashingType() {
     	if (flashingType.getSelectedIndex() == 0) {
-    		return FlashingPreferences.TYPE_CONTINOUS;
+    		return FlashingPreferences.TYPE_CONTINUOUS;
     	}
     	else if (flashingType.getSelectedIndex() == 1) {
     		return FlashingPreferences.TYPE_TEMPORARY;
