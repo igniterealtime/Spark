@@ -35,6 +35,8 @@ import net.java.sipmack.softphone.listeners.RegisterEvent;
 import net.java.sipmack.softphone.listeners.SoftPhoneListener;
 
 import org.jivesoftware.smack.ConnectionListener;
+import org.jivesoftware.smack.ReconnectionListener;
+import org.jivesoftware.smack.ReconnectionManager;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.roster.RosterEntry;
@@ -131,13 +133,22 @@ public class SoftPhonePlugin implements Plugin, SoftPhoneListener {
                 TaskEngine.getInstance().schedule(registerTask, 15000);
             }
 
+            @Override
             public void connectionClosed() {
                 //softPhone.handleUnregisterRequest();
             }
 
+            @Override
             public void connectionClosedOnError(Exception exception) {
                 softPhone.handleUnregisterRequest();
             }
+        });
+
+        ReconnectionManager.getInstanceFor(SparkManager.getConnection()).addReconnectionListener(new ReconnectionListener() {
+
+			@Override
+			public void reconnectionFailed(Exception e) {
+			}
 
             public void reconnectingIn(int i) {
                 // Wait a bit before registering
@@ -149,15 +160,7 @@ public class SoftPhonePlugin implements Plugin, SoftPhoneListener {
 
                 TaskEngine.getInstance().schedule(registerTask, 15000);
             }
-
-            public void reconnectionSuccessful() {
-            }
-
-            public void reconnectionFailed(Exception exception) {
-
-            }
-
-        });
+		});
     }
 
     /**
