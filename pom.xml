@@ -92,7 +92,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <dependency.smack.version>4.3.3-SNAPSHOT</dependency.smack.version>
+        <dependency.smack.version>4.3.3</dependency.smack.version>
     </properties>
 
     <build>
