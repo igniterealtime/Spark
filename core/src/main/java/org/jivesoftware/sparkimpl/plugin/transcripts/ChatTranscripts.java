@@ -165,7 +165,7 @@ public final class ChatTranscripts {
      * @param jid the jid of the user whos history you wish to retrieve.
      * @return the ChatTranscript (last 20 messages max).
      */
-    public static ChatTranscript getCurrentChatTranscript(CharSequence jid) {
+    public static ChatTranscript getCurrentChatTranscript(Jid jid) {
         return getTranscript(getCurrentHistoryFile(jid));
     }
 
@@ -232,11 +232,8 @@ public final class ChatTranscripts {
      * @param jid the jid of the user.
      * @return the current transcript file.
      */
-    public static File getCurrentHistoryFile(CharSequence jid) {
-        // Unescape Node
-        jid = UserManager.unescapeJID(jid);
-
-        return new File(SparkManager.getUserDirectory(), "transcripts/" + jid + "_current.xml");
+    public static File getCurrentHistoryFile(Jid jid) {
+        return new File(SparkManager.getUserDirectory(), "transcripts/" + jid.asUnescapedString() + "_current.xml");
     }
 
     private static HistoryMessage getHistoryMessage(XmlPullParser parser) throws Exception {
