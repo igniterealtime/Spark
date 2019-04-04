@@ -17,7 +17,6 @@ package org.jivesoftware.sparkimpl.plugin.transcripts;
 
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.UserManager;
 import org.jivesoftware.spark.util.StringUtils;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
@@ -165,7 +164,7 @@ public final class ChatTranscripts {
      * @param jid the jid of the user whos history you wish to retrieve.
      * @return the ChatTranscript (last 20 messages max).
      */
-    public static ChatTranscript getCurrentChatTranscript(CharSequence jid) {
+    public static ChatTranscript getCurrentChatTranscript(Jid jid) {
         return getTranscript(getCurrentHistoryFile(jid));
     }
 
@@ -223,6 +222,7 @@ public final class ChatTranscripts {
      * @return the settings file.
      */
     public static File getTranscriptFile(Jid jid) {
+        //replace with Jid.asUrlEncodedString() when available
         return new File(SparkManager.getUserDirectory(), "transcripts/" + jid.asUnescapedString() + ".xml");
     }
 
@@ -232,11 +232,9 @@ public final class ChatTranscripts {
      * @param jid the jid of the user.
      * @return the current transcript file.
      */
-    public static File getCurrentHistoryFile(CharSequence jid) {
-        // Unescape Node
-        jid = UserManager.unescapeJID(jid);
-
-        return new File(SparkManager.getUserDirectory(), "transcripts/" + jid + "_current.xml");
+    public static File getCurrentHistoryFile(Jid jid) {
+        //replace with Jid.asUrlEncodedString() when available
+        return new File(SparkManager.getUserDirectory(), "transcripts/" + jid.asUnescapedString() + "_current.xml");
     }
 
     private static HistoryMessage getHistoryMessage(XmlPullParser parser) throws Exception {
