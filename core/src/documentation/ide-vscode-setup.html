@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Spark source code in Visual Studio Code IDE</title>
+    <style>
+
+        body {
+            background-color: #d3d6d9;
+        }
+        header {
+            background-color: #e7eaee;
+            border: 1px solid #cccccc;
+            margin-top: 10px;
+            padding-left: 20px;
+            border-bottom: 20px solid #335588;
+        }
+        header h1 {
+            font-size: 1.7em;
+            font-weight: bold;
+            color: #670e15;
+        }
+        header p {
+            color: black;
+        }
+        article {
+            background-color: #fff;
+            border: 1px solid #999;
+            padding: 40px;
+            margin: 30px;
+        }
+        img {
+            height: 250px;
+        }
+    </style>
+</head>
+<body>
+    <article>
+        <header>
+            <h1>Spark source code in Visual Studio Code IDE</h1>
+            <p>
+                This is a short tutorial on how to load the Spark source code in the Visual Studio Code IDE.
+            </p>
+        </header>
+        <p>
+            Visual Studio Code or VS Code is a fast editor and ships with great editing features. It includes support for debugging,
+            embedded Git control, syntax highlighting, intelligent code completion, snippets, and code refactoring. 
+            In part thanks to the huge ecosystem of extensions that enhance and enrich the experience in VS Code, 
+            turning it into a super smart text editor, fast and lightweight. This guide focuses on the bare minimum that 
+            is needed to get started Spark source code with VS Code.
+        </p>
+
+        <h2>Prepare your environment</h2>
+        <p>
+            The rest of this guide will assume you have at least those parts installed:
+            <ul>
+                <li><b>JAVA Development Kit (version 8)</b> </li>
+                <li><b>Maven</b></li> 
+                <li><b>Copy of the  Spark source code available locally </b></li>
+                <li><b>Visual Studio Code</b></li>     
+            </ul>
+        <p>
+            Start by Adding Java language support to VS Code by installing the popular minimum requirement  Java extensions.
+            There is a Java Extension Pack, which contains the most popular extensions for most Java developers: 
+        </p>
+        <p>
+            Launch your VS Code and bring up extensions view by clicking on the <b>Extensions</b> icon in the Activity Bar
+            on the left side of VS Code or  <b>View > Extensions</b> then write the name of extension <b>Java Extension Pack</b> and 
+            then click on install link to install all extensions for Pack.
+        </p>
+        <figure>
+            <a href="images/VSCode-1.png"><img src="images/VSCode-1.png" alt="Installing Java Extension Pack to VS Code."></a>
+	    <figcaption>Installing Java Extension Pack to VS Code.</figcaption>            
+        </figure>
+
+        <h2>Open the source code folder</h2>
+        <p>
+            The Spark source code is using an Apache Maven project structure. As VS Code (with Maven Extension) recognizes this structure,
+            opening the source code into an VS Code project is very easy.
+        </p>
+        <p>
+            Select the 'Open' option -- <b>File > Open</b> and choose your spark source code folder then click on the open button. 
+            This will quickly import the Spark source code into  VS Code .
+        </p>
+
+        <figure>
+            <a href="images/VSCode-2.png"><img src="images/VSCode-2.png" alt="Use the 'Open' functionality of VS Code."></a>
+            <a href="images/VSCode-3.png"><img src="images/VSCode-3.png" alt="Select the folder that will open in our VS Code."></a>
+            <a href="images/VSCode-4.png"><img src="images/VSCode-4.png" alt="Overview of project in Visual Studio Code"></a>
+	    <figcaption>Opening Spark Source folder on VS Code.</figcaption>            
+        </figure>
+
+        <p>
+            VS Code will automatically recognize and process the Maven structure of Spark (pom.xml file) and it will automatically download all dependencies.
+        </p>
+	    
+        <h2>Run Spark from VS Code</h2>
+        <p>
+            When developing, it is often useful to run the code straight from your IDE. The following will explain how
+            you can start a Spark instance from the code that is in the VS Code workspace.
+        </p>
+
+        <figure>
+            <a href="images/VSCode-5.png"><img src="images/VSCode-5.png" alt="Launch the 'Startup' class as a Java application."></a>
+            <a href="images/VSCode-6.png"><img src="images/VSCode-6.png" alt="The Spark login screen, after launching the 'Startup' class."></a>
+            <figcaption>Run Spark straight from the source code.</figcaption>
+        </figure>
+
+        <p>
+            The 'spark-core' module contains a class named <code>Startup</code> (in the <code>org.jivesoftware.launcher</code>
+            package) that can be used to start Spark. Find the class in the Project Explorer, open that class you will notice two hyperlinks above 
+            the main method, like in the picture above. You can click on <code>Run</code> and the code will be compiled and executed. VS Code will start
+            to build Spark from the source code, after which Spark itself is started. If everything goes well, you will
+            see the Spark login screen within a matter of seconds!
+        </p>
+        <footer>
+            <p>You can find more information on Spark at <a href="https://www.igniterealtime.org/projects/spark/">https://www.igniterealtime.org/projects/spark</a></p>
+        </footer>
+    </article>
+</body>
+</html>
