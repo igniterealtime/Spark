@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2004-2011 Jive Software. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,8 +20,8 @@ import org.jivesoftware.smack.filter.StanzaFilter;
 import org.jivesoftware.smack.filter.StanzaTypeFilter;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smackx.iqversion.VersionManager;
 import org.jivesoftware.smackx.time.packet.Time;
-import org.jivesoftware.smackx.iqversion.packet.Version;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.ContextMenuListener;
 import org.jivesoftware.spark.plugin.Plugin;
@@ -48,6 +48,14 @@ public class JabberVersion implements Plugin {
 
     @Override
 	public void initialize() {
+
+        // Populate Smack's Version Manager with Sparks version information.
+        VersionManager.getInstanceFor( SparkManager.getConnection() ).setVersion(
+            JiveInfo.getName(),
+            JiveInfo.getVersion(),
+            JiveInfo.getOS()
+        );
+
         // Create IQ Filter
         StanzaFilter packetFilter = new StanzaTypeFilter(IQ.class);
         SparkManager.getConnection().addAsyncStanzaListener( stanza -> {
@@ -55,20 +63,7 @@ public class JabberVersion implements Plugin {
 
             try
             {
-                // Handle Version Request
-                if (iq instanceof Version && iq.getType() == IQ.Type.get) {
-                    // Send Version
-                    Version version = new Version( JiveInfo.getName(), JiveInfo.getVersion(), JiveInfo.getOS() );
-
-                    // Send back as a reply
-                    version.setStanzaId(iq.getStanzaId());
-                    version.setType(IQ.Type.result);
-                    version.setTo(iq.getFrom());
-                    version.setFrom(iq.getTo());
-                    SparkManager.getConnection().sendStanza(version);
-                }
-                // Send time
-                else if (iq instanceof Time && iq.getType() == IQ.Type.get) {
+                if (iq instanceof Time && iq.getType() == IQ.Type.get) {
                     Time time = new Time();
                     time.setStanzaId(iq.getStanzaId());
                     time.setFrom(iq.getTo());
