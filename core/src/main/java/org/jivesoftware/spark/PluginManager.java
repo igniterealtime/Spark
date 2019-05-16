@@ -357,19 +357,16 @@ public class PluginManager implements MainWindowListener
                 // Check for minimum Java version
                 try
                 {
-                    String javaversion = plugin.selectSingleNode( "java" ).getText().replaceAll( "[^0-9]", "" );
-                    javaversion = javaversion == null ? "0" : javaversion;
-                    int jv = Integer.parseInt( attachMissingZero( javaversion ) );
-
-                    String myversion = System.getProperty( "java.version" ).replaceAll( "[^0-9]", "" );
-                    int mv = Integer.parseInt( attachMissingZero( myversion ) );
+                    final String pluginMinVersion = plugin.selectSingleNode( "java" ).getText();
+                    final int jv = StringUtils.getJavaMajorVersion( pluginMinVersion == null || pluginMinVersion.trim().isEmpty() ? "0" : pluginMinVersion.trim() );
+                    final int mv = StringUtils.getJavaMajorVersion( System.getProperty( "java.version" ) );
 
                     boolean ok = ( mv >= jv );
 
                     if ( !ok )
                     {
                         Log.error( "Unable to load plugin " + name +" due to old JavaVersion.\n" +
-                                       "It Requires " + plugin.selectSingleNode( "java" ).getText() +
+                                       "It Requires " + pluginMinVersion +
                                        " you have " + System.getProperty( "java.version" ) );
                         return null;
                     }
@@ -451,15 +448,6 @@ public class PluginManager implements MainWindowListener
         }
 
         return pluginClass;
-    }
-
-    private String attachMissingZero( String value )
-    {
-        while ( value.length() < 5 )
-        {
-            value = value + "0";
-        }
-        return value;
     }
 
     /**

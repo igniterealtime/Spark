@@ -1,0 +1,49 @@
+package org.jivesoftware.spark.util;
+
+import org.jivesoftware.spark.util.StringUtils;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+
+public class JavaVersionTest
+{
+    @Test
+    public void testJava7() throws Exception
+    {
+        // Setup fixture.
+        final String value = "1.7.0";
+
+        // Execute system under test.
+        final int result = StringUtils.getJavaMajorVersion( value );
+
+        // Verify results.
+        assertEquals( 7, result );
+    }
+
+
+    @Test
+    public void testJava9() throws Exception
+    {
+        // Setup fixture.
+        final String value = "9.0.0.15";
+
+        // Execute system under test.
+        final int result = StringUtils.getJavaMajorVersion( value );
+
+        // Verify results.
+        assertEquals( 9, result );
+    }
+
+    @Test
+    public void testJava11() throws Exception
+    {
+        // Setup fixture.
+        final String value = "11.0.1";
+
+        // Execute system under test.
+        final int result = StringUtils.getJavaMajorVersion( value );
+
+        // Verify results.
+        assertEquals( 11, result );
+    }
+}
