@@ -2034,4 +2034,27 @@ public class StringUtils {
 	}
 	return result;
     }
+
+    /**
+     * Returns the value of the major/feature element of the version number.
+     *
+     * @param version A java version String
+     * @return The major
+     */
+    public static int getJavaMajorVersion( String version ) {
+        if (version.startsWith("1.")) {
+            int dot = version.indexOf(".", 2);
+            if ( dot == -1 ) {
+                version = version.substring( 2 );
+            } else {
+                version = version.substring( 2, dot );
+            }
+        } else {
+            int dot = version.indexOf(".");
+            if (dot != -1) {
+                version = version.substring(0, dot);
+            }
+        }
+        return Integer.parseInt(version);
+    }
 }
