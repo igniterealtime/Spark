@@ -143,7 +143,7 @@ public class SearchForm extends JPanel {
 
             @Override
 			public void finished() {
-                if (data != null) {
+                if (data != null && !data.getRows().isEmpty() ) {
                     searchResults.showUsersFound(data);
                     searchResults.invalidate();
                     searchResults.validate();
