@@ -40,6 +40,7 @@ import org.jivesoftware.resource.Res;
 import org.jivesoftware.spark.component.TitlePanel;
 import org.jivesoftware.spark.component.renderer.JLabelIconRenderer;
 import org.jivesoftware.spark.preference.Preference;
+import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
 public class PreferencesPanel extends JPanel implements ListSelectionListener {
@@ -131,25 +132,37 @@ public class PreferencesPanel extends JPanel implements ListSelectionListener {
         flowPanel.repaint();
         currentPreference = pref;
     }
-    
+
     @Override
 	public void valueChanged(ListSelectionEvent e) {
 
         if (!e.getValueIsAdjusting()) {
 
             if (currentPreference != null) {
-                if (currentPreference.isDataValid()) {
-                    currentPreference.commit();
+                try {
+                    if (currentPreference.isDataValid()) {
+                        currentPreference.commit();
+                    }
+                    else {
+                        UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
+                        JOptionPane.showMessageDialog(this, currentPreference.getErrorMessage(),
+                                Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
+                        list.removeListSelectionListener(this);
+                        list.setSelectedIndex(e.getLastIndex());
+                        list.addListSelectionListener(this);
+                    }
                 }
-                else {
-                	UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
-                    JOptionPane.showMessageDialog(this, currentPreference.getErrorMessage(),
-                            Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
-                    list.removeListSelectionListener(this);
-                    list.setSelectedIndex(e.getLastIndex());
-                    list.addListSelectionListener(this);
+                catch ( Throwable t )
+                {
+                    // This is observed with some plugins, that require classes not (no longer) provided by Spark.
+                    Log.error( "An error occurred while trying to commit settings for preference: " + currentPreference.getListName(), t );
+                    UIManager.put( "OptionPane.okButtonText", Res.getString( "ok" ) );
+                    JOptionPane.showMessageDialog( this, "Unable to save all settings for " + currentPreference.getListName() + ":\n" + t.getMessage(),
+                                                   Res.getString( "title.error" ), JOptionPane.ERROR_MESSAGE );
+                    list.removeListSelectionListener( this );
+                    list.setSelectedIndex( e.getLastIndex() );
+                    list.addListSelectionListener( this );
                 }
-
             }
             selectionChanged();
         }
