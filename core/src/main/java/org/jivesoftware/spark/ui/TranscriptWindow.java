@@ -322,7 +322,7 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener
     {
         if ( entries.isEmpty() )
         {
-            new Date( 0 );
+            return new Date( 0 );
         }
         return Date.from( entries.getLast().getTimestamp().toInstant() );
     }
