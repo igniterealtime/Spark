@@ -20,6 +20,7 @@ import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.util.StringUtils;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
+import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.Jid;
 import org.jxmpp.jid.impl.JidCreate;
@@ -81,7 +82,8 @@ public final class ChatTranscripts {
     		for (HistoryMessage message : transcript.getMessages()) {
     			tempTranscript.addHistoryMessage(message);
     		}
-    		writeToFile(currentHistoryFile, tempTranscript.getNumberOfEntries(20), false);
+            int max = SettingsManager.getLocalPreferences().getMaxCurrentHistorySize();
+            writeToFile(currentHistoryFile, tempTranscript.getNumberOfEntries(max), false);
     	}
     }
 
