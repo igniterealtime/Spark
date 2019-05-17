@@ -58,6 +58,11 @@ import java.util.zip.ZipFile;
  */
 public class PluginManager implements MainWindowListener
 {
+    public static final Map<String, String> INCOMPATIBLE_PLUGINS = new HashMap<>();
+    static {
+        INCOMPATIBLE_PLUGINS.put( normalizePluginName( "OTR Plugin" ), "0.4 Beta" );
+    }
+
     private final List<Plugin> plugins = new ArrayList<>();
 
     private final List<PublicPlugin> publicPlugins = new CopyOnWriteArrayList<>();
@@ -283,6 +288,11 @@ public class PluginManager implements MainWindowListener
         }
     }
 
+    static String normalizePluginName( String value )
+    {
+        return value.replaceAll( "[^0-9a-zA-Z]", "" ).toLowerCase();
+    }
+
     /**
      * Loads public plugins.
      *
@@ -313,19 +323,27 @@ public class PluginManager implements MainWindowListener
             String clazz = null;
             String name;
             String minVersion;
+            String version;
 
             try
             {
-                name = plugin.selectSingleNode( "name" ).getText();
-                clazz = plugin.selectSingleNode( "class" ).getText();
+                name = plugin.selectSingleNode( "name" ).getText().trim();
+                clazz = plugin.selectSingleNode( "class" ).getText().trim();
+                version = plugin.selectSingleNode( "version" ).getText().trim();
 
                 try
                 {
-                    String lower = name.replaceAll( "[^0-9a-zA-Z]", "" ).toLowerCase();
-                    // Dont load the plugin if its on the Blacklist
+                    String lower = normalizePluginName( name );
+                    // Don't load the plugin if it's known to be incompatible with this version of Spark.
+                    if ( INCOMPATIBLE_PLUGINS.containsKey( lower ) && INCOMPATIBLE_PLUGINS.get( lower ).compareTo( version ) >= 0 ) {
+                        Log.warning( "Not loading plugin " + name + " (version " + version + ") as it is incompatible with this version of Spark." );
+                        return null;
+                    }
+                    // Don't load the plugin if its on the Blacklist
                     if ( _blacklistPlugins.contains( lower ) || _blacklistPlugins.contains( clazz )
                         || SettingsManager.getLocalPreferences().getDeactivatedPlugins().contains( name ) )
                     {
+                        Log.warning( "Not loading plugin " + name + "as it is blacklisted." );
                         return null;
                     }
                 }
@@ -407,7 +425,6 @@ public class PluginManager implements MainWindowListener
 
                 try
                 {
-                    String version = plugin.selectSingleNode( "version" ).getText();
                     publicPlugin.setVersion( version );
 
                     String author = plugin.selectSingleNode( "author" ).getText();
