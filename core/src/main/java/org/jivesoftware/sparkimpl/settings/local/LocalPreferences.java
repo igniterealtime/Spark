@@ -1494,5 +1494,11 @@ public class LocalPreferences {
         return getBoolean("fileTransferIbbOnly", Default.getBoolean(Default.FILE_TRANSFER_IBB_ONLY));
     }
 
+    public void setMaxCurrentHistorySize( int value ) {
+        setInt( "currentHistoryMaxSize", value );
+    }
 
+    public int getMaxCurrentHistorySize() {
+        return getInt( "currentHistoryMaxSize", 20 );
+    }
 }
