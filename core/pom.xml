@@ -259,7 +259,7 @@
         </repository>
         <repository>
             <id>com.teamdev</id>
-            <url>http://maven.teamdev.com/repository/products</url>
+            <url>https://maven.teamdev.com/repository/products</url>
         </repository>
     </repositories>
 
