@@ -484,8 +484,8 @@ public class PluginManager implements MainWindowListener
         {
             Log.error( e );
         }
-        List<Element> plugins = pluginXML.selectNodes( "/plugins/plugin" );
-        for ( final Element plugin : plugins )
+        List<Node> plugins = pluginXML.selectNodes( "/plugins/plugin" );
+        for ( final Node plugin : plugins )
         {
             EventQueue.invokeLater( () -> {
                 String clazz = null;

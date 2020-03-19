@@ -138,7 +138,7 @@ public class Tree extends JTree implements TreeSelectionListener, MouseMotionLis
 
             // Traverse children
             if (node.getChildCount() >= 0) {
-                for (Enumeration<TreeNode> e = node.children(); e.hasMoreElements();) {
+                for (Enumeration<TreeNode> e = (Enumeration<TreeNode>)node.children(); e.hasMoreElements();) {
                     TreeNode n = e.nextElement();
                     TreePath path = parent.pathByAddingChild(n);
                     TreePath result = find2(tree, path, nodes, depth + 1, byName);

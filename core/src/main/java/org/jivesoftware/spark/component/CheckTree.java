@@ -111,11 +111,11 @@ public class CheckTree extends JPanel {
 
         @Override
 		public void actionPerformed(ActionEvent e) {
-            Enumeration<CheckNode> nodeEnum = root.breadthFirstEnumeration();
+            Enumeration<javax.swing.tree.TreeNode> nodeEnum = root.breadthFirstEnumeration();
             while (nodeEnum.hasMoreElements()) {
-                CheckNode node = nodeEnum.nextElement();
-                if (node.isSelected()) {
-                    TreeNode[] nodes = node.getPath();
+                javax.swing.tree.TreeNode node = nodeEnum.nextElement();
+                if (((CheckNode)node).isSelected()) {
+                    javax.swing.tree.TreeNode[] nodes = ((CheckNode)node).getPath();
                     textArea.append("\n" + nodes[0].toString());
                     for (int i = 1; i < nodes.length; i++) {
                         textArea.append("/" + nodes[i].toString());

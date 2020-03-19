@@ -30,7 +30,7 @@ import org.jivesoftware.smack.packet.*;
 import org.jxmpp.jid.Jid;
 import org.jxmpp.jid.parts.Localpart;
 
-import sun.misc.BASE64Decoder;
+import java.util.Base64;
 
 public class ChatRoomDecorator
 {
@@ -45,10 +45,9 @@ public class ChatRoomDecorator
         this.room = room;
         this.url = url;
 
-        try {
-            BASE64Decoder decoder = new BASE64Decoder();
+        try {            
             String imageString = "iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAACZUlEQVR42o1TS09TQRg999mWgtTGQosiLEQhXVA0Me5swsYFRjBxoyatvwBi4g9g66p7F+2exIDvBYldGOIzbUwMGqw2Sr1YH+21Qsud2zvOTB9UkMQv+e6de2fOme+c+QaUUtCdjLF8TPdGpv7rc4wUnoEYL2F/X4VTKwuMxB8selmmWUawK5zKOpzSB5D8Mqy1e1n2K6qPTJn6iRnIB49B3Q9cL74GtSoirXeLIGt3YPuNiKIhXX2SicKxTT18RRDMdYLtjVeQJBlW7iH7qMHZLMIurGC7x0D/VVFtxLwtzVm5R/P62KU2QQP85Tlo7SdI4Sns9RUG3gBIFZRsQvJ0yCKYk4F5PuYEPlHy1wwk1S3A5P0D2MYLkBDKUJBykVBaK3eVi7ckUBU+veyf1ifOQeoKCAIRlDogqwsgH5cFWBnFIgYQZ1Omy3sd1bs3oP32Q3b7oY5OLmkj5yH3HAGrBHlOwHVD9QiwcxSp3ot0xn+GgmVyW7lZsgOgsrefqsOTJVf4clI+MMjNFwSptjhZ4c88c/oae483yePewaRP5h7IKuTuoA+6N85253PjfxPULbYglLC2mHeV+4mWP5U3U6gTVqXi7jxpPpdQW0fIPZCYBMkbzGqGAXNpKqrxIhmQmIBmAMrESTAZnURRTjAtjiN4qmGmXYXFB58yqDdX6R5mXt9hBu6DMnAaSiDcLoO3Mm1qzbK2zdKtbwlrdcGEopfqpZyQoBwaE02lHb/Q3qgZ+dZd2LHhx9tG48hajLVzCno3lN4hIXEXWEjovIn/yrP8JtL9Y3ZPBf8RQ03feJMN/wHiFFIvPgJ8vgAAAABJRU5ErkJggg==";
-            byte[] imageByte = decoder.decodeBuffer(imageString);
+            byte[] imageByte = Base64.getDecoder().decode(imageString);
             ImageIcon ofmeetIcon = new ImageIcon(imageByte);
             ofmeetButton = new RolloverButton(ofmeetIcon);
             ofmeetButton.setToolTipText(GraphicUtils.createToolTip("Openfire Meetings"));
