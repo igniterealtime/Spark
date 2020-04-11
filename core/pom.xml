@@ -14,6 +14,10 @@
     <name>Spark Core</name>
     <description>The essentials of Spark, including the user interface and startup scripts, excluding most optional components</description>
 
+    <properties>
+        <bouncycastle.version>1.65</bouncycastle.version>
+    </properties>
+
     <build>
         <finalName>spark</finalName>
         <resources>
@@ -226,25 +230,19 @@
             <version>0.4.8</version>
         </dependency>
         <dependency>
-            <groupId>
-                org.bouncycastle.bcprov-jdk15on.1.57.org.bouncycastle
-            </groupId>
+            <groupId>org.bouncycastle</groupId>
             <artifactId>bcprov-jdk15on</artifactId>
-            <version>1.57</version>
+            <version>${bouncycastle.version}</version>
         </dependency>
         <dependency>
-            <groupId>
-                org.bouncycastle.bcpkix-jdk15on.1.57.org.bouncycastle
-            </groupId>
+            <groupId>org.bouncycastle</groupId>
             <artifactId>bcpkix-jdk15on</artifactId>
-            <version>1.57</version>
+            <version>${bouncycastle.version}</version>
         </dependency>
         <dependency>
-            <groupId>
-                org.bouncycastle.bctls-jdk15on.1.57.org.bouncycastle
-            </groupId>
+            <groupId>org.bouncycastle</groupId>
             <artifactId>bctls-jdk15on</artifactId>
-            <version>1.57</version>
+            <version>${bouncycastle.version}</version>
         </dependency>
     </dependencies>
 
