@@ -24,7 +24,10 @@ public class TGuardRes {
     }
     
     public static final String getString(String propertyName) {
+        /* Revert to this code after Spark is moved to Java 11 or newer
         return prb.getString(propertyName);
+        */
+        return new String(prb.getString(propertyName).getBytes("ISO-8859-1"), "UTF-8");
     }
     
 
