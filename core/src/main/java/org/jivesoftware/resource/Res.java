@@ -56,11 +56,10 @@ public class Res {
     }
 
     public static String getString(String propertyName, Object... obj) {
-        try {
-            String pluginString = PluginRes.getI18nRes(propertyName);
-            String str = pluginString != null ? pluginString : prb.getString(propertyName);
-            if (str == null) {
-                return propertyName;
+        String pluginString = PluginRes.getI18nRes(propertyName);
+        String str = pluginString != null ? pluginString : prb.getString(propertyName);
+        if (str == null) {
+            return propertyName;
         }
 
 
