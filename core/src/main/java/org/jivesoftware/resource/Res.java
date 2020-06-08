@@ -43,7 +43,10 @@ public class Res {
     public static String getString(String propertyName) {
         try {
             String pluginString = PluginRes.getI18nRes(propertyName);
+            /* Revert to this code after Spark is moved to Java 11 or newer
             return pluginString != null ? pluginString : prb.getString(propertyName);
+            */
+            return pluginString != null ? pluginString : new String(prb.getString(propertyName).getBytes("ISO-8859-1"), "UTF-8");
         }
         catch (Exception e) {
             Log.error(e);
@@ -54,7 +57,10 @@ public class Res {
 
     public static String getString(String propertyName, Object... obj) {
         String pluginString = PluginRes.getI18nRes(propertyName);
+        /* Revert to this code after Spark is moved to Java 11 or newer
         String str = pluginString != null ? pluginString : prb.getString(propertyName);
+        */
+        String str = pluginString != null ? pluginString : new String(prb.getString(propertyName).getBytes("ISO-8859-1"), "UTF-8");
         if (str == null) {
             return propertyName;
         }
