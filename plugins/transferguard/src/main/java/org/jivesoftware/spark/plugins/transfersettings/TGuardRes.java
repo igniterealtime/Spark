@@ -2,7 +2,7 @@ package org.jivesoftware.spark.plugins.transfersettings;
 
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
-
+import org.jivesoftware.spark.util.log.Log;
 
 /**
  * Use for Transferguard Ressource Internationalization.
