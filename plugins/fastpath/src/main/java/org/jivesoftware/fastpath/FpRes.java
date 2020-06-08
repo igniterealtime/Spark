@@ -38,7 +38,10 @@ public class FpRes {
 
     public static final String getString(String propertyName) {
         try {
+            /* Revert to this code after Spark is moved to Java 11 or newer
             return prb.getString(propertyName);
+            */
+            return new String(prb.getString(propertyName).getBytes("ISO-8859-1"), "UTF-8");
         }
         catch (Exception e) {
             Log.error(e);
