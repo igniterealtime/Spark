@@ -69,7 +69,7 @@ public class Res {
 			if (str == null) {
 				return propertyName;
 			}
-		} catch (UnsupportedEncodingException e) {
+		} catch (Exception e) {
 			Log.error(e);
 			return propertyName;
 		}
