@@ -772,7 +772,7 @@ public class VCardManager {
         // Set timestamp
         vcard.setField("timestamp", Long.toString(System.currentTimeMillis()));
 
-        final String xml = vcard.toString();
+        final String xml = vcard.toXML(null).toString();
 
         File vcardFile = new File(vcardStorageDirectory, fileName);
 
