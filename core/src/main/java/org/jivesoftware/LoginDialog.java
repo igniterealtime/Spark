@@ -328,23 +328,8 @@ public class LoginDialog {
             builder.setSecurityMode( ConnectionConfiguration.SecurityMode.ifpossible );
         }
 
-        if (securityMode != ConnectionConfiguration.SecurityMode.disabled && localPref.isPKIEnabled()) {
+        if (securityMode != ConnectionConfiguration.SecurityMode.disabled) {
             SASLAuthentication.registerSASLMechanism( new SASLExternalMechanism() );
-            builder.setKeystoreType(localPref.getPKIStore());
-            if(localPref.getPKIStore().equals("PKCS11")) {
-                builder.setPKCS11Library(localPref.getPKCS11Library());
-            }
-            else if(localPref.getPKIStore().equals("JKS")) {
-                builder.setKeystoreType("JKS");
-                builder.setKeystorePath(localPref.getJKSPath());
-
-            }
-            else if(localPref.getPKIStore().equals("X509")) {
-                //do something
-            }
-            else if(localPref.getPKIStore().equals("Apple")) {
-                builder.setKeystoreType("Apple");
-            }
         }
 
         // SPARK-1747: Don't use the GSS-API SASL mechanism when SSO is disabled.
@@ -1652,9 +1637,6 @@ public class LoginDialog {
 		localPref.setDebuggerEnabled(localPref.isDebuggerEnabled());
 		localPref.setDisableHostnameVerification(localPref.isDisableHostnameVerification());
 		localPref.setHostAndPortConfigured(localPref.isHostAndPortConfigured());
-	//  localPref.setJKSPath("");
-		localPref.setPKIEnabled(localPref.isPKIEnabled());
-		localPref.setPKIStore("JKS");
 		localPref.setProtocol("SOCKS");
 		localPref.setProxyEnabled(localPref.isProxyEnabled());
 	//  localPref.setProxyPassword("");
