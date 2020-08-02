@@ -114,6 +114,7 @@ public class PluginManager implements MainWindowListener
         {
             PLUGINS_DIRECTORY.mkdirs();
         }
+        System.out.println( "Loading plugins from: " + PLUGINS_DIRECTORY.getAbsolutePath() );
 
         _blacklistPlugins = Default.getPluginBlacklist();
     }
@@ -327,9 +328,9 @@ public class PluginManager implements MainWindowListener
 
             try
             {
-                name = plugin.selectSingleNode( "name" ).getText().trim();
-                clazz = plugin.selectSingleNode( "class" ).getText().trim();
-                version = plugin.selectSingleNode( "version" ).getText().trim();
+                name = plugin.selectSingleNode( "name" ) != null ? plugin.selectSingleNode( "name" ).getText().trim() : null;
+                clazz = plugin.selectSingleNode( "class" ) != null ? plugin.selectSingleNode( "class" ).getText().trim() : null;
+                version = plugin.selectSingleNode( "version" ) != null ? plugin.selectSingleNode( "version" ).getText().trim() : null;
 
                 try
                 {
@@ -356,7 +357,7 @@ public class PluginManager implements MainWindowListener
                 // Check for minimum Spark version
                 try
                 {
-                    minVersion = plugin.selectSingleNode( "minSparkVersion" ).getText();
+                    minVersion = plugin.selectSingleNode( "minSparkVersion" ) != null ? plugin.selectSingleNode( "minSparkVersion" ).getText().trim() : "";
 
                     String buildNumber = JiveInfo.getVersion();
                     boolean ok = buildNumber.compareTo( minVersion ) >= 0;
@@ -375,7 +376,7 @@ public class PluginManager implements MainWindowListener
                 // Check for minimum Java version
                 try
                 {
-                    final String pluginMinVersion = plugin.selectSingleNode( "java" ).getText();
+                    final String pluginMinVersion = plugin.selectSingleNode( "java" ) != null ? plugin.selectSingleNode( "java" ).getText().trim() : "";
                     final int jv = StringUtils.getJavaMajorVersion( pluginMinVersion == null || pluginMinVersion.trim().isEmpty() ? "0" : pluginMinVersion.trim() );
                     final int mv = StringUtils.getJavaMajorVersion( System.getProperty( "java.version" ) );
 
@@ -427,16 +428,16 @@ public class PluginManager implements MainWindowListener
                 {
                     publicPlugin.setVersion( version );
 
-                    String author = plugin.selectSingleNode( "author" ).getText();
+                    String author = plugin.selectSingleNode( "author" ) != null ? plugin.selectSingleNode( "author" ).getText() : null;
                     publicPlugin.setAuthor( author );
 
-                    String email = plugin.selectSingleNode( "email" ).getText();
+                    String email = plugin.selectSingleNode( "email" ) != null ? plugin.selectSingleNode( "email" ).getText() : null;
                     publicPlugin.setEmail( email );
 
-                    String description = plugin.selectSingleNode( "description" ).getText();
+                    String description = plugin.selectSingleNode( "description" ) != null ? plugin.selectSingleNode( "description" ).getText() : null;
                     publicPlugin.setDescription( description );
 
-                    String homePage = plugin.selectSingleNode( "homePage" ).getText();
+                    String homePage = plugin.selectSingleNode( "homePage" ) != null ? plugin.selectSingleNode( "homePage" ).getText() : null;
                     publicPlugin.setHomePage( homePage );
                 }
                 catch ( Exception e )
