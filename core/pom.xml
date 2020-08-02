@@ -128,6 +128,38 @@
             <version>${dependency.smack.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.igniterealtime.spark</groupId>
+            <artifactId>emoticons</artifactId>
+            <version>${project.version}</version>
+            <scope>runtime</scope>
+            <classifier>sparkEmoticonSet</classifier>
+            <type>zip</type>
+        </dependency>
+        <dependency>
+            <groupId>org.igniterealtime.spark</groupId>
+            <artifactId>emoticons</artifactId>
+            <version>${project.version}</version>
+            <scope>runtime</scope>
+            <classifier>POPO.adiumemoticonset</classifier>
+            <type>zip</type>
+        </dependency>
+        <dependency>
+            <groupId>org.igniterealtime.spark</groupId>
+            <artifactId>emoticons</artifactId>
+            <version>${project.version}</version>
+            <scope>runtime</scope>
+            <classifier>GTalk.AdiumEmoticonset</classifier>
+            <type>zip</type>
+        </dependency>
+        <dependency>
+            <groupId>org.igniterealtime.spark</groupId>
+            <artifactId>emoticons</artifactId>
+            <version>${project.version}</version>
+            <scope>runtime</scope>
+            <classifier>Default.adiumemoticonset</classifier>
+            <type>zip</type>
+        </dependency>
+        <dependency>
             <groupId>dom4j</groupId>
             <artifactId>dom4j</artifactId>
             <version>1.6.1</version>
