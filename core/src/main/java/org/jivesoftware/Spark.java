@@ -138,7 +138,7 @@ public final class Spark {
             RESOURCE_DIRECTORY = initializeDirectory(workingDir, "resources");
             BIN_DIRECTORY = initializeDirectory(workingDir, "bin");
             File emoticons = new File( XTRA_DIRECTORY, "emoticons").getAbsoluteFile();
-            if(!emoticons.exists()){
+            if(!emoticons.exists() || emoticons.listFiles() == null || emoticons.listFiles().length == 0 ){
                 copyEmoticonFiles(workingDirectory);
             	//Copy emoticon files from install directory to the spark user home directory
             }
@@ -425,17 +425,16 @@ public final class Spark {
         newEmoticonDir.mkdirs();
 
         File EMOTICON_DIRECTORY = new File(workdir + File.separator + "xtra" +  File.separator+"emoticons");
-        //TODO emoticondirectory anpassen
-        //File EMOTICON_DIRECTORY = new File("D:/workspace/Spark 2.6 beta/src","xtra/emoticons");
-        //File[] files = EMOTICON_DIRECTORY.listFiles();
 
-
-        for (File file : EMOTICON_DIRECTORY.listFiles()) {
-            if (file.isFile()) {
-
-               // Copy over
-               File newFile = new File(newEmoticonDir, file.getName());
-
+        if (EMOTICON_DIRECTORY.listFiles() != null)
+        {
+            for ( File file : EMOTICON_DIRECTORY.listFiles() )
+            {
+                if ( file.isFile() )
+                {
+                    // Copy over
+                    File newFile = new File(newEmoticonDir, file.getName());
+                }
             }
         }
     }
