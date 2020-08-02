@@ -17,8 +17,6 @@
 
 package org.jivesoftware.spark.plugin.ofmeet;
 
-import com.teamdev.jxbrowser.chromium.Browser;
-import com.teamdev.jxbrowser.chromium.swing.BrowserView;
 import org.jivesoftware.Spark;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.spark.SparkManager;

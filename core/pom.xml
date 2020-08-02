@@ -179,27 +179,9 @@
         </dependency>
 
         <dependency>
-            <groupId>com.teamdev.jxbrowser</groupId>
-            <artifactId>jxbrowser-win</artifactId>
-            <version>6.20</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.teamdev.jxbrowser</groupId>
-            <artifactId>jxbrowser-linux32</artifactId>
-            <version>6.14.2</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.teamdev.jxbrowser</groupId>
-            <artifactId>jxbrowser-linux64</artifactId>
-            <version>6.23.1</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.teamdev.jxbrowser</groupId>
-            <artifactId>jxbrowser-mac</artifactId>
-            <version>6.23.1</version>
+            <groupId>org.lobobrowser</groupId>
+            <artifactId>LoboBrowser</artifactId>
+            <version>1.0.0</version>
         </dependency>
 
         <dependency>
@@ -256,10 +238,6 @@
         <repository>
             <id>ej-technologies</id>
             <url>https://maven.ej-technologies.com/repository/</url>
-        </repository>
-        <repository>
-            <id>com.teamdev</id>
-            <url>https://maven.teamdev.com/repository/products</url>
         </repository>
     </repositories>
 

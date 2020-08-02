@@ -16,71 +16,86 @@
 package org.jivesoftware.spark.component.browser;
 
 import java.awt.BorderLayout;
+import java.net.MalformedURLException;
+
 import javax.swing.JFrame;
+import javax.swing.LookAndFeel;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
-import com.teamdev.jxbrowser.chromium.*;
-import com.teamdev.jxbrowser.chromium.swing.BrowserView;
+import org.lobobrowser.gui.ContentEvent;
+import org.lobobrowser.gui.ContentListener;
+import org.lobobrowser.gui.FramePanel;
 
-public class EmbeddedBrowserViewer extends BrowserViewer {
+public class EmbeddedBrowserViewer extends BrowserViewer implements ContentListener {
 
-	private static final long serialVersionUID = -8055149462713514766L;
-	private Browser browser;
-	
-	/**
-	 * Constructs a new LobobrowserViewer
-	 */
-	public EmbeddedBrowserViewer() {
-		browser = new Browser();
-	 }
-	
-	/**
-	 * Implementation of "Back"-button
-	 */
-	@Override
-	public void goBack() {
-		browser.goBack();
-	}
+    private static final long serialVersionUID = -8055149462713514766L;
+    private FramePanel browser;
 
-	/**
-	 * Initialization of the BrowserViewer
-	 */
-	@Override
-	public void initializeBrowser() {
-		this.setLayout(new BorderLayout());
+    /**
+     * Constructs a new LobobrowserViewer
+     */
+    public EmbeddedBrowserViewer() {
+        LookAndFeel laf = UIManager.getLookAndFeel();
 
-		final BrowserView view = new BrowserView( browser );
-		this.add(view, BorderLayout.CENTER);
-	}
+        browser = new FramePanel();
+        //substance look and feel
+        try {
+            UIManager.setLookAndFeel(laf);
+        }
+        catch (UnsupportedLookAndFeelException e) {
+            e.printStackTrace();
+        }
+        browser.addContentListener(this);
+    }
 
-	/**
-	 * Load the given URL
-	 */
-	@Override
-	public void loadURL(String url) {
-		browser.loadURL( url );
-	}
+    /**
+     * Implementation of "Back"-button
+     */
+    public void goBack() {
+        browser.back();
+    }
 
-//	/**
-//	 * React to an event by updating the address bar
-//	 */
-//	public void contentSet(ContentEvent event) {
-//		if (browser == null || browser.getCurrentNavigationEntry() == null) {
-//            return;
-//        }
-//        String url = browser.getCurrentNavigationEntry().getUrl().toExternalForm();
-//        documentLoaded(url);
-//	}
-	
-	public static void main(String[] args) {
-		EmbeddedBrowserViewer  viewer = new EmbeddedBrowserViewer();
-		viewer.initializeBrowser();
-		JFrame frame = new JFrame("Test");
+    /**
+     * Initialization of the BrowserViewer
+     */
+    public void initializeBrowser() {
+        this.setLayout(new BorderLayout());
+        this.add(browser, BorderLayout.CENTER);
+    }
+
+    /**
+     * Load the given URL
+     */
+    public void loadURL(String url) {
+        try {
+            browser.navigate(url);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * React to an event by updating the address bar
+     */
+    public void contentSet(ContentEvent event) {
+        if (browser == null || browser.getCurrentNavigationEntry() == null) {
+            return;
+        }
+        String url = browser.getCurrentNavigationEntry().getUrl().toExternalForm();
+        documentLoaded(url);
+    }
+
+    public static void main(String[] args) {
+        EmbeddedBrowserViewer  viewer = new EmbeddedBrowserViewer();
+        viewer.initializeBrowser();
+        JFrame frame = new JFrame("Test");
 
         frame.getContentPane().setLayout(new BorderLayout());
         frame.getContentPane().add(viewer, BorderLayout.CENTER);
-		frame.setVisible(true);
-	    frame.pack();
+        frame.setVisible(true);
+        frame.pack();
         frame.setSize(600, 400);
-		viewer.loadURL("http://igniterealtime.org");
-	}
+        viewer.loadURL("http://igniterealtime.org");
+    }
 }
