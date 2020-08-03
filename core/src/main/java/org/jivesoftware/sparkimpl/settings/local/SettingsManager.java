@@ -31,7 +31,7 @@ import java.util.Properties;
 
 
 /**
- * Responsbile for the loading and persisting of LocalSettings.
+ * Responsible for the loading and persisting of LocalSettings.
  */
 public class SettingsManager {
     private static LocalPreferences localPreferences;
@@ -56,7 +56,7 @@ public class SettingsManager {
      *
      * @return the LocalPreferences for this user.
      */
-    public static LocalPreferences getLocalPreferences() {
+    public synchronized static LocalPreferences getLocalPreferences() {
         if(localPreferences != null){
             return localPreferences;
         }

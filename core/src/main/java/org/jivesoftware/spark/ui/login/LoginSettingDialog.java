@@ -128,6 +128,13 @@ public class LoginSettingDialog implements PropertyChangeListener
     @Override
 	public void propertyChange( PropertyChangeEvent e )
     {
+        // The event is fired to often - for example when disposing a dialog, after settings have already been saved.
+        // This causes settings to, again, be saved based on the configuration of the options dialog (which by this time
+        // are outdated). A work-around is provided below, to only process changes on events that were fired while the
+        // dialog was actually still visible. See SPARK-2079
+        if (!optionsDialog.isVisible()) {
+            return;
+        }
         String value = (String) optionPane.getValue();
         if ( Res.getString( "cancel" ).equals( value ) )
         {
