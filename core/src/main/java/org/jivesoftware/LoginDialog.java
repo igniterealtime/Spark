@@ -1241,14 +1241,9 @@ public class LoginDialog {
                     }
                     if ( loginDialog.isVisible() )
                     {
-                        //cert path val errors are causing popup of certificates adding dialog so can be ommited here
-                        if (xee.getMessage() != null
-                                && !xee.getMessage().contains("Certificate path validation failed")
-                                && !xee.getMessage().contains("Certificate not in the TrustStore")) {
-                            MessageDialog.showErrorDialog(loginDialog, errorMessage, xee);
-                        }
-                        else
+                        if (xee.getMessage() != null && (xee.getMessage().contains("Certificate path validation failed") || xee.getMessage().contains("Certificate not in the TrustStore") ) )
                         {
+                            // Handle specific case: if path validation failed, show popup allowing the user to add the certificate.
                             final X509Certificate[] lastFailedChain = SparkTrustManager.getLastFailedChain();
                             if (lastFailedChain != null)
                             {
@@ -1260,20 +1255,57 @@ public class LoginDialog {
                                 };
 
                                 final int userChoice = JOptionPane.showOptionDialog(this,
-                                                                     new UnrecognizedServerCertificatePanel(certModel),
-                                                                     Res.getString("title.certificate"),
-                                                                     JOptionPane.YES_NO_OPTION,
-                                                                     JOptionPane.WARNING_MESSAGE,
-                                                                     null,
-                                                                     options,
-                                                                     options[1]);
+                                                                                    new UnrecognizedServerCertificatePanel(certModel),
+                                                                                    Res.getString("title.certificate"),
+                                                                                    JOptionPane.YES_NO_OPTION,
+                                                                                    JOptionPane.WARNING_MESSAGE,
+                                                                                    null,
+                                                                                    options,
+                                                                                    options[1]);
 
                                 if ( userChoice == JOptionPane.YES_OPTION )
                                 {
+                                    // Add the certificate chain to the truststore.
                                     ((SparkTrustManager) SparkTrustManager.getTrustManagerList()[0]).addChain(lastFailedChain);
+
+                                    // Attempt to login again.
                                     validateLogin();
                                 }
                             }
+                        }
+                        else if (xee.getMessage() != null && xee.getMessage().contains("Self Signed certificate"))
+                        {
+                            // Handle specific case: if server certificate is self-signed, but self-signed certs are not allowed, show a popup allowing the user to override.
+                            // Prompt user if they'd like to add the failed chain to the trust store.
+                            final Object[] options = {
+                                Res.getString("yes"),
+                                Res.getString("no")
+                            };
+
+                            final int userChoice = JOptionPane.showOptionDialog(this,
+                                                                                Res.getString("dialog.certificate.ask.allow.self-signed"),
+                                                                                Res.getString("title.certificate"),
+                                                                                JOptionPane.YES_NO_OPTION,
+                                                                                JOptionPane.WARNING_MESSAGE,
+                                                                                null,
+                                                                                options,
+                                                                                options[1]);
+
+                            if ( userChoice == JOptionPane.YES_OPTION )
+                            {
+                                // Toggle the preference.
+                                localPref.setAcceptSelfSigned(true);
+                                SettingsManager.saveSettings();
+
+                                // Attempt to login again.
+                                validateLogin();
+                            }
+
+                        }
+                        else
+                        {
+                            // For anything else, show a generic error dialog.
+                            MessageDialog.showErrorDialog(loginDialog, errorMessage, xee);
                         }
                     }
                 } );
