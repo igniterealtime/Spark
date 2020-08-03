@@ -258,7 +258,8 @@ public class VCardManager {
                 @Override
 				public Object construct() {
                     try {
-                        personalVCard.load(SparkManager.getConnection());
+                        final org.jivesoftware.smackx.vcardtemp.VCardManager smackVCardManager = org.jivesoftware.smackx.vcardtemp.VCardManager.getInstanceFor(SparkManager.getConnection());
+                        personalVCard = smackVCardManager.loadVCard();
                     }
                     catch (XMPPException | SmackException | InterruptedException e) {
                         Log.error("Error loading vcard information.", e);
@@ -383,7 +384,7 @@ public class VCardManager {
      */    
 	public void reloadPersonalVCard() {
 		try {
-			personalVCard.load(SparkManager.getConnection());
+            personalVCard = org.jivesoftware.smackx.vcardtemp.VCardManager.getInstanceFor(SparkManager.getConnection()).loadVCard();
             personalVCardAvatar = personalVCard.getAvatar();
             personalVCardHash = null; // reload lazy later, when need
 
@@ -520,8 +521,8 @@ public class VCardManager {
 		}
         VCard vcard = new VCard();
         try {
-        	vcard.setJabberId(jid.toString());
-            vcard.load(SparkManager.getConnection(), jid);
+            vcard = org.jivesoftware.smackx.vcardtemp.VCardManager.getInstanceFor(SparkManager.getConnection()).loadVCard( jid );
+            vcard.setJabberId(jid.toString());
             if (vcard.getNickName() != null && vcard.getNickName().length() > 0)
             {
             	// update nickname.
