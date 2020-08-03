@@ -40,6 +40,16 @@
             </excludes>
         </fileSet>
 
+        <fileSet>
+            <directory>${project.basedir}/src/main/resources/sounds/</directory>
+            <outputDirectory>resources/sounds</outputDirectory>
+        </fileSet>
+
+        <fileSet>
+            <directory>${project.basedir}/src/documentation/</directory>
+            <outputDirectory>documentation</outputDirectory>
+        </fileSet>
+
     </fileSets>
 
 
@@ -53,6 +63,30 @@
             <source>${project.basedir}/src/main/resources/startup.sh</source>
             <outputDirectory>bin</outputDirectory>
             <fileMode>0755</fileMode>
+        </file>
+        <file>
+            <source>${project.basedir}/src/main/resources/Info.plist</source>
+            <outputDirectory>resources</outputDirectory>
+        </file>
+        <file>
+            <source>${project.basedir}/src/main/resources/jniwrap.dll</source>
+            <outputDirectory>resources</outputDirectory>
+        </file>
+        <file>
+            <source>${project.basedir}/src/main/resources/jniwrap.lic</source>
+            <outputDirectory>resources</outputDirectory>
+        </file>
+        <file>
+            <source>${project.basedir}/src/main/resources/startup.bat</source>
+            <outputDirectory>resources</outputDirectory>
+        </file>
+        <file>
+            <source>${project.basedir}/src/main/resources/startup.sh</source>
+            <outputDirectory>resources</outputDirectory>
+        </file>
+        <file>
+            <source>${project.basedir}/src/main/resources/systeminfo.dll</source>
+            <outputDirectory>resources</outputDirectory>
         </file>
     </files>
 </assembly>
