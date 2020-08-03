@@ -485,7 +485,8 @@ public class VCardEditor {
 	    final VCardManager vcardManager = SparkManager.getVCardManager();
 	    vcardManager.setPersonalVCard(vcard);
 
-	    vcard.save(SparkManager.getConnection());
+        org.jivesoftware.smackx.vcardtemp.VCardManager smackVCardManager = org.jivesoftware.smackx.vcardtemp.VCardManager.getInstanceFor( SparkManager.getConnection() );
+        smackVCardManager.saveVCard( vcard );
 
 	    // Notify users.
 	    if (avatarBytes != null) {

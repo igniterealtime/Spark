@@ -57,6 +57,7 @@ import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.roster.RosterEntry;
 import org.jivesoftware.smack.roster.RosterGroup;
 import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smackx.vcardtemp.VCardManager;
 import org.jivesoftware.smackx.xdata.Form;
 import org.jivesoftware.smackx.search.ReportedData;
 import org.jivesoftware.smackx.vcardtemp.packet.VCard;
@@ -645,13 +646,12 @@ public class RosterDialog implements ActionListener {
 
 	if (!ModelUtil.hasLength(nickname) && ModelUtil.hasLength(contact)) {
 	    // Try to load nickname from VCard
-	    VCard vcard = new VCard();
 	    try {
 			EntityBareJid contactJid = JidCreate.entityBareFrom(contact);
-			vcard.load(SparkManager.getConnection(), contactJid);
-		nickname = vcard.getNickName();
+            final VCard vcard = VCardManager.getInstanceFor(SparkManager.getConnection()).loadVCard(contactJid);
+		    nickname = vcard.getNickName();
 	    } catch (XMPPException | SmackException | XmppStringprepException | InterruptedException e1) {
-		Log.error(e1);
+		    Log.error(e1);
 	    }
 	    // If no nickname, use first name.
 	    if (!ModelUtil.hasLength(nickname)) {
