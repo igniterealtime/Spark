@@ -528,12 +528,22 @@ public class CertificateController extends CertManager {
     }
 	
 	//Opens new dialog which will ask to add certificates from chain
-	public void addChain(X509Certificate[] chain){
-	    try {
-	        InBandCertificateChainDialog chainDialog = new InBandCertificateChainDialog(chain, this);
-        } catch (Exception e) {
-            Log.error("Cannot open InBandCertificateChainDialog", e);
-        }   
+	public void addChain(X509Certificate[] chain) {
+	    try
+        {
+            final KeyStore caCertsStore = openCacertsKeyStore();
+            for ( final X509Certificate cert : chain )
+            {
+                if ( (trustStore.getCertificateAlias(cert) == null)
+                    && (caCertsStore.getCertificateAlias(cert) == null) )
+                {
+                    addEntryToKeyStore(cert, true);
+                }
+            }
+            overWriteKeyStores();
+        } catch ( Exception e ) {
+            Log.error("An exception occurred while trying to add a certificate chain to the truststores", e);
+        }
 	}
 	
 	public void addCertificateAsExempted(CertificateModel certModel) throws HeadlessException, InvalidNameException, KeyStoreException {

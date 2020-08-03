@@ -37,7 +37,6 @@ import java.util.List;
 
 import javax.naming.InvalidNameException;
 import javax.net.ssl.X509TrustManager;
-import javax.swing.SwingUtilities;
 
 import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.x509.CRLDistPoint;
@@ -60,7 +59,8 @@ import org.jivesoftware.spark.util.log.Log;
  */
 public class SparkTrustManager extends GeneralTrustManager implements X509TrustManager {
 
-    
+    static X509Certificate[] lastFailedChain;
+
     private boolean checkCRL;
     private boolean checkOCSP;
     private boolean acceptExpired;
@@ -71,7 +71,7 @@ public class SparkTrustManager extends GeneralTrustManager implements X509TrustM
 
     private CertStore crlStore;
     private X509TrustManager exceptionsTrustManager;
-    private KeyStore trustStore, blackStore, displayedCaCerts;
+    private KeyStore trustStore, blackStore,  displayedCaCerts;
     private Collection<X509CRL> crlCollection = new ArrayList<>();
     
     public SparkTrustManager() {
@@ -97,23 +97,22 @@ public class SparkTrustManager extends GeneralTrustManager implements X509TrustM
 
     }
 
+    public static X509Certificate[] getLastFailedChain()
+    {
+        return lastFailedChain;
+    }
+
+    public void addChain( X509Certificate[] chain ) {
+        certControll.addChain(chain);
+    }
+
     @Override
     public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
         try {
             doTheChecks(chain, authType);
+            lastFailedChain = null;
         } catch (CertPathValidatorException e) {
-            try {
-                SwingUtilities.invokeLater(new Runnable() {
-                    
-                    @Override
-                    public void run() {
-                    certControll.addChain(chain);
-                    }
-                });
-
-            } catch (HeadlessException e1) {
-                Log.error("Couldn't add certificate from presented chain");
-            }
+            lastFailedChain = chain;
             throw new CertificateException(e);
         }
     }

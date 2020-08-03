@@ -46,9 +46,8 @@ import org.jivesoftware.spark.ui.login.LoginSettingDialog;
 import org.jivesoftware.spark.util.*;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkimpl.certificates.*;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
-import org.jivesoftware.sparkimpl.certificates.SparkSSLSocketFactory;
-import org.jivesoftware.sparkimpl.certificates.SparkSSLContextCreator;
 import org.jivesoftware.sparkimpl.plugin.layout.LayoutSettings;
 import org.jivesoftware.sparkimpl.plugin.layout.LayoutSettingsManager;
 import org.jivesoftware.sparkimpl.settings.JiveInfo;
@@ -90,6 +89,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.Principal;
 import java.security.UnrecoverableKeyException;
+import java.security.cert.X509Certificate;
 import java.util.*;
 import java.util.List;
 
@@ -1246,6 +1246,34 @@ public class LoginDialog {
                                 && !xee.getMessage().contains("Certificate path validation failed")
                                 && !xee.getMessage().contains("Certificate not in the TrustStore")) {
                             MessageDialog.showErrorDialog(loginDialog, errorMessage, xee);
+                        }
+                        else
+                        {
+                            final X509Certificate[] lastFailedChain = SparkTrustManager.getLastFailedChain();
+                            if (lastFailedChain != null)
+                            {
+                                // Prompt user if they'd like to add the failed chain to the trust store.
+                                final CertificateModel certModel = new CertificateModel(lastFailedChain[0]);
+                                final Object[] options = {
+                                    Res.getString("yes"),
+                                    Res.getString("no")
+                                };
+
+                                final int userChoice = JOptionPane.showOptionDialog(this,
+                                                                     new UnrecognizedServerCertificatePanel(certModel),
+                                                                     Res.getString("title.certificate"),
+                                                                     JOptionPane.YES_NO_OPTION,
+                                                                     JOptionPane.WARNING_MESSAGE,
+                                                                     null,
+                                                                     options,
+                                                                     options[1]);
+
+                                if ( userChoice == JOptionPane.YES_OPTION )
+                                {
+                                    ((SparkTrustManager) SparkTrustManager.getTrustManagerList()[0]).addChain(lastFailedChain);
+                                    validateLogin();
+                                }
+                            }
                         }
                     }
                 } );
