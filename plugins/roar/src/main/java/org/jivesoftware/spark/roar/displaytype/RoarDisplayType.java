@@ -17,15 +17,21 @@ public interface RoarDisplayType {
 
     /**
      * Do stuff when the Popup closes
-     * 
-     * @param type
-     *            , the owner of the Popup
      */
-    public void closingRoarPanel(int x, int y);
+    void closingRoarPanel(int x, int y);
 
-    public String getName();
+    String getName();
 
-    public String getLocalizedName();
+    String getLocalizedName();
     
-    public String getWarningMessage();
+    String getWarningMessage();
+
+    /**
+     * Checks if the display type is supported on this platform.
+     *
+     * @return true if supported, otherwise false.
+     */
+    default boolean isSupported() {
+        return true;
+    }
 }

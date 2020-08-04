@@ -55,4 +55,8 @@ public class SystemNotification implements RoarDisplayType {
         }
     }
 
+    @Override
+    public boolean isSupported() {
+        return WindowsNotification.isSupported();
+    }
 }
