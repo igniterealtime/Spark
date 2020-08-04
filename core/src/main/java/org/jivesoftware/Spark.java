@@ -123,7 +123,7 @@ public final class Spark {
         final String workingDirectory = System.getProperty("appdir");
         
         if (workingDirectory == null) {
-
+            System.out.println( "Warning: no working directory set. This might cause updated data to be missed. Please set a system property 'appdir' to the location where Spark is installed to correct this." );
             if (!RESOURCE_DIRECTORY.exists() || !LOG_DIRECTORY.exists() || !USER_DIRECTORY.exists() || !PLUGIN_DIRECTORY.exists() || !XTRA_DIRECTORY.exists() || !SECURITY_DIRECTORY.exists()) {
             	UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
             	JOptionPane.showMessageDialog(new JFrame(), "Unable to create directories necessary for runtime.", "Spark Error", JOptionPane.ERROR_MESSAGE);
