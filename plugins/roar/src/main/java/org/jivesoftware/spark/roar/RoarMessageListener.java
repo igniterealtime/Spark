@@ -28,6 +28,7 @@ import org.jivesoftware.spark.ui.ChatRoomNotFoundException;
 import org.jivesoftware.spark.ui.GlobalMessageListener;
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 import org.jivesoftware.spark.ui.rooms.GroupChatRoom;
+import org.jivesoftware.spark.util.log.Log;
 import org.jxmpp.jid.EntityBareJid;
 
 /**
@@ -54,12 +55,22 @@ public class RoarMessageListener implements GlobalMessageListener {
 
             int framestate = SparkManager.getChatManager().getChatContainer().getChatFrame().getState();
 
+            // If the message is for a chat that's currently active and showing, do not popup.
             if (framestate == JFrame.NORMAL && activeroom.equals(room) && room.isShowing()
                     && (isOldGroupChat(room) || isMessageFromRoom(room, message))) {
-                // Do Nothing
-            } else {
-                decideForRoomAndMessage(room, message);
+                Log.debug( "Surpressing popup: chat is currently active and showing.");
+                return;
             }
+
+            // If the message is sent by the local user (potentially using a different client), do not popup.
+            if ( (room instanceof GroupChatRoom && message.getFrom().getResourceOrEmpty().equals(activeroom.getNickname()))
+                || SparkManager.getSessionManager().getJID().equals(message.getFrom())) {
+                Log.debug( "Surpressing popup: sender of message is the local user.");
+                return;
+            }
+
+            // When none of the exceptions above are true, do a popup!
+            decideForRoomAndMessage(room, message);
 
         } catch (ChatRoomNotFoundException e) {
             // i don't care
