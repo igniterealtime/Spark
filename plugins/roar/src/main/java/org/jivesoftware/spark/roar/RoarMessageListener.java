@@ -38,13 +38,11 @@ import org.jxmpp.jid.EntityBareJid;
  */
 public class RoarMessageListener implements GlobalMessageListener {
 
-    private RoarDisplayType _displaytype;
     private RoarProperties _properties;
 
     private HashMap<EntityBareJid, Long> _rooms = new HashMap<>();
 
     public RoarMessageListener() {
-        _displaytype = RoarProperties.getInstance().getDisplayTypeClass();
         _properties = RoarProperties.getInstance();
     }
 
@@ -70,12 +68,13 @@ public class RoarMessageListener implements GlobalMessageListener {
     }
     
     private void decideForRoomAndMessage(ChatRoom room, Message message) {
+        final RoarDisplayType displayType = RoarProperties.getInstance().getDisplayTypeClass();
         if (doesMessageMatchKeywords(message)) {
-            _displaytype.messageReceived(room, message, isKeyWordDifferent() ? getKeywordBundle() : getSingleBundle());
+            displayType.messageReceived(room, message, isKeyWordDifferent() ? getKeywordBundle() : getSingleBundle());
         } else if (room instanceof ChatRoomImpl && !isSingleRoomDisabled()) {
-            _displaytype.messageReceived(room, message, getSingleBundle());
+            displayType.messageReceived(room, message, getSingleBundle());
         } else if (room instanceof GroupChatRoom && !isMutliRoomDisabled()) {
-            _displaytype.messageReceived(room, message, isMultiRoomDifferent() ? getMultiBundle() : getSingleBundle());
+            displayType.messageReceived(room, message, isMultiRoomDifferent() ? getMultiBundle() : getSingleBundle());
         }
     }
 
@@ -158,7 +157,8 @@ public class RoarMessageListener implements GlobalMessageListener {
 
     @Override
     public void messageSent(ChatRoom room, Message message) {
-        _displaytype.messageSent(room, message);
+        final RoarDisplayType displayType = RoarProperties.getInstance().getDisplayTypeClass();
+        displayType.messageSent(room, message);
     }
 
     /**
