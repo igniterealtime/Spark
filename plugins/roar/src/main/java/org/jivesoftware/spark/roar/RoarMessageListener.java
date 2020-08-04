@@ -28,6 +28,7 @@ import org.jivesoftware.spark.ui.ChatRoomNotFoundException;
 import org.jivesoftware.spark.ui.GlobalMessageListener;
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 import org.jivesoftware.spark.ui.rooms.GroupChatRoom;
+import org.jivesoftware.spark.util.log.Log;
 import org.jxmpp.jid.EntityBareJid;
 
 /**
@@ -38,13 +39,11 @@ import org.jxmpp.jid.EntityBareJid;
  */
 public class RoarMessageListener implements GlobalMessageListener {
 
-    private RoarDisplayType _displaytype;
     private RoarProperties _properties;
 
     private HashMap<EntityBareJid, Long> _rooms = new HashMap<>();
 
     public RoarMessageListener() {
-        _displaytype = RoarProperties.getInstance().getDisplayTypeClass();
         _properties = RoarProperties.getInstance();
     }
 
@@ -56,12 +55,22 @@ public class RoarMessageListener implements GlobalMessageListener {
 
             int framestate = SparkManager.getChatManager().getChatContainer().getChatFrame().getState();
 
+            // If the message is for a chat that's currently active and showing, do not popup.
             if (framestate == JFrame.NORMAL && activeroom.equals(room) && room.isShowing()
                     && (isOldGroupChat(room) || isMessageFromRoom(room, message))) {
-                // Do Nothing
-            } else {
-                decideForRoomAndMessage(room, message);
+                Log.debug( "Surpressing popup: chat is currently active and showing.");
+                return;
             }
+
+            // If the message is sent by the local user (potentially using a different client), do not popup.
+            if ( (room instanceof GroupChatRoom && message.getFrom().getResourceOrEmpty().equals(activeroom.getNickname()))
+                || SparkManager.getSessionManager().getJID().equals(message.getFrom())) {
+                Log.debug( "Surpressing popup: sender of message is the local user.");
+                return;
+            }
+
+            // When none of the exceptions above are true, do a popup!
+            decideForRoomAndMessage(room, message);
 
         } catch (ChatRoomNotFoundException e) {
             // i don't care
@@ -70,12 +79,13 @@ public class RoarMessageListener implements GlobalMessageListener {
     }
     
     private void decideForRoomAndMessage(ChatRoom room, Message message) {
+        final RoarDisplayType displayType = RoarProperties.getInstance().getDisplayTypeClass();
         if (doesMessageMatchKeywords(message)) {
-            _displaytype.messageReceived(room, message, isKeyWordDifferent() ? getKeywordBundle() : getSingleBundle());
+            displayType.messageReceived(room, message, isKeyWordDifferent() ? getKeywordBundle() : getSingleBundle());
         } else if (room instanceof ChatRoomImpl && !isSingleRoomDisabled()) {
-            _displaytype.messageReceived(room, message, getSingleBundle());
+            displayType.messageReceived(room, message, getSingleBundle());
         } else if (room instanceof GroupChatRoom && !isMutliRoomDisabled()) {
-            _displaytype.messageReceived(room, message, isMultiRoomDifferent() ? getMultiBundle() : getSingleBundle());
+            displayType.messageReceived(room, message, isMultiRoomDifferent() ? getMultiBundle() : getSingleBundle());
         }
     }
 
@@ -158,7 +168,8 @@ public class RoarMessageListener implements GlobalMessageListener {
 
     @Override
     public void messageSent(ChatRoom room, Message message) {
-        _displaytype.messageSent(room, message);
+        final RoarDisplayType displayType = RoarProperties.getInstance().getDisplayTypeClass();
+        displayType.messageSent(room, message);
     }
 
     /**

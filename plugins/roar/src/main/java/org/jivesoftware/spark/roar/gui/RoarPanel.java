@@ -30,9 +30,6 @@ import javax.swing.JWindow;
 
 import org.jivesoftware.spark.roar.displaytype.RoarDisplayType;
 
-import com.sun.awt.AWTUtilities;
-import org.jivesoftware.spark.util.log.Log;
-
 public class RoarPanel {
     public static int WIDTH = 300;
     public static int HEIGHT = 80;
@@ -55,16 +52,10 @@ public class RoarPanel {
 
         final JWindow window = new JWindow();
         JPanel windowpanel = new JPanel(new GridBagLayout());
-        windowpanel.setBackground(backgroundcolor);
 
-        AWTUtilities.setWindowShape(window, new RoundRectangle2D.Float(0, 0, WIDTH, HEIGHT, 20, 20));
-
-        try
-        {
-            AWTUtilities.setWindowOpaque( window, true );
-        } catch ( UnsupportedOperationException ex ) {
-            Log.debug( "Unable to make window opaque: " + ex );
-        }
+        // Make background opaque
+        windowpanel.setBackground( opacityAdjusted(backgroundcolor, 255) );
+        window.setShape(new RoundRectangle2D.Double(0, 0, WIDTH, HEIGHT, 20, 20));
         JLabel text = new JLabel("<HTML>" + body + "</HTML>");
         text.setForeground(messageColor);
 
@@ -94,10 +85,10 @@ public class RoarPanel {
      * @param window
      */
     private static void fadein(JWindow window) {
-        final boolean supportsTranslucency =  window.getGraphicsConfiguration().getDevice().isWindowTranslucencySupported(  GraphicsDevice.WindowTranslucency.TRANSLUCENT );
-        AWTUtilities.setWindowOpacity(window, supportsTranslucency ? 0.3f : 1.0f);
-        AWTUtilities.setWindowOpacity(window, supportsTranslucency ? 0.5f : 1.0f);
-        AWTUtilities.setWindowOpacity(window, supportsTranslucency ? 0.9f : 1.0f);
+        final boolean supportsTranslucency =  window.getGraphicsConfiguration().getDevice().isWindowTranslucencySupported( GraphicsDevice.WindowTranslucency.TRANSLUCENT );
+        window.setBackground( opacityAdjusted(window.getBackground(), supportsTranslucency ? 76 : 255) );
+        window.setBackground( opacityAdjusted(window.getBackground(), supportsTranslucency ? 127 : 255) );
+        window.setBackground( opacityAdjusted(window.getBackground(), supportsTranslucency ? 229 : 255) );
         window.setVisible(true);
     }
 
@@ -157,4 +148,18 @@ public class RoarPanel {
         }
     }
 
+    /**
+     * Returns a new color, similar to the input color, but with a level of opacity set.
+     *
+     * @param color The original color.
+     * @param opacity The desired amount of opacity.
+     * @return A new color, combining the original color and opacity level.
+     */
+    public static Color opacityAdjusted( final Color color, final int opacity ) {
+        if ( color == null ) {
+            return new Color(0, 0, 0, opacity);
+        }
+
+        return new Color(color.getRed(), color.getGreen(), color.getBlue(), 255);
+    }
 }
