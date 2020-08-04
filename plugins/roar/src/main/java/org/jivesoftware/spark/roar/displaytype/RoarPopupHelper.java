@@ -26,7 +26,7 @@ public final class RoarPopupHelper {
     public static String getNickname(ChatRoom room, Message message) {
         String nickname = SparkManager.getUserManager().getUserNicknameFromJID(message.getFrom());
         if (room.getChatType() == Message.Type.groupchat) {
-            nickname = XmppStringUtils.parseResource(nickname);
+            nickname = message.getFrom().getResourceOrEmpty().toString();
         }
 
         final JivePropertiesExtension extension = ((JivePropertiesExtension) message.getExtension( JivePropertiesExtension.NAMESPACE ));
