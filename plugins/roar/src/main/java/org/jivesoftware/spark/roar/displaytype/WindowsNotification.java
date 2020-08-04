@@ -14,4 +14,7 @@ public class WindowsNotification {
 
     }
 
+    public static boolean isSupported() {
+        return SystemTray.isSupported();
+    }
 }

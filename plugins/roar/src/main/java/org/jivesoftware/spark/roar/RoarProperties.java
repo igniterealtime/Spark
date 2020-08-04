@@ -24,6 +24,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 import org.jivesoftware.Spark;
 import org.jivesoftware.spark.roar.displaytype.BottomRight;
@@ -110,7 +111,7 @@ public class RoarProperties {
     }
     
     public List<RoarDisplayType> getDisplayTypes() {
-        return Arrays.asList(displayTypes);
+        return Arrays.stream(displayTypes).filter(RoarDisplayType::isSupported).collect(Collectors.toList());
     }
 
     public boolean getShowingPopups() {
