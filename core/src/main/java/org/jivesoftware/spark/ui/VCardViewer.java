@@ -152,7 +152,7 @@ public class VCardViewer extends JPanel {
         }
         else {
             String nickname = SparkManager.getUserManager().getUserNicknameFromJID(jid);
-            usernameLabel.setText(UserManager.unescapeJID(nickname));
+            usernameLabel.setText(nickname);
         }
 
 

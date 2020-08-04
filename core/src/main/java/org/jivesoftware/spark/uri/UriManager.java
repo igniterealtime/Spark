@@ -85,10 +85,6 @@ public class UriManager {
 
 	UserManager userManager = SparkManager.getUserManager();
 	String nickname = userManager.getUserNicknameFromJID(jid.asBareJid());
-	if (nickname == null) {
-	    nickname = jid.toString();
-	}
-
 	ChatManager chatManager = SparkManager.getChatManager();
 	ChatRoom chatRoom = chatManager.createChatRoom(jid.asEntityJidOrThrow(), nickname, nickname);
 	if (body != null) {

@@ -927,13 +927,8 @@ public class ChatManager {
 
 	    UserManager userManager = SparkManager.getUserManager();
 	    String nickname = userManager.getUserNicknameFromJID(jid);
-	    if (nickname == null) {
-		nickname = jid.toString();
-	    }
-
 	    ChatManager chatManager = SparkManager.getChatManager();
-	    ChatRoom chatRoom = chatManager.createChatRoom(jid, nickname,
-		    nickname);
+	    ChatRoom chatRoom = chatManager.createChatRoom(jid, nickname, nickname);
 	    chatManager.getChatContainer().activateChatRoom(chatRoom);
 	} else if (query.startsWith(UriManager.uritypes.message.getXML())) {
 	    try {
