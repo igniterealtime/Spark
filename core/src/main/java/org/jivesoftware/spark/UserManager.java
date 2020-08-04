@@ -345,7 +345,7 @@ public class UserManager {
     }
 
     /**
-     * Unescapes a complete JID by examing the node itself and unescaping when necessary.
+     * Unescapes a complete JID by examining the node itself and unescaping when necessary.
      *
      * @param jid the users jid.
      * @return the unescaped JID.
@@ -360,6 +360,7 @@ public class UserManager {
         Domainpart restOfJID = jid.getDomain();
         if (node != null) {
             builder.append(XmppStringUtils.unescapeLocalpart(node.toString()));
+            builder.append('@');
         }
         builder.append(restOfJID);
         return builder.toString();
