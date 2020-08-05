@@ -31,9 +31,11 @@ import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.StanzaListener;
 import org.jivesoftware.smack.filter.StanzaIdFilter;
-import org.jivesoftware.smack.filter.StanzaTypeFilter;
+import org.jivesoftware.smack.iqrequest.AbstractIqRequestHandler;
+import org.jivesoftware.smack.iqrequest.IQRequestHandler;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Stanza;
+import org.jivesoftware.smack.packet.StanzaError;
 import org.jivesoftware.smack.provider.ProviderManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.Plugin;
@@ -62,7 +64,7 @@ import tic.tac.toe.ui.GamePanel;
 public class TicTacToePlugin implements Plugin {
 
     private ChatRoomListener _chatRoomListener;
-    private StanzaListener _gameOfferListener;
+    private IQRequestHandler _gameOfferHandler;
     
     private HashSet<EntityBareJid> _currentInvitations;
        
@@ -81,20 +83,19 @@ public class TicTacToePlugin implements Plugin {
 	ProviderManager.addExtensionProvider(InvalidMove.ELEMENT_NAME, InvalidMove.NAMESPACE, new InvalidMove.Provider() );
 
 	// Add IQ listener to listen for incoming game invitations.
-	_gameOfferListener = new StanzaListener() {
-	    @Override
-	    public void processStanza(Stanza stanza) {
-		GameOfferPacket invitation = (GameOfferPacket) stanza;
-		if (invitation.getType() == IQ.Type.get) {
-		    showInvitationAlert(invitation);
-		}
-	    }
+    _gameOfferHandler = new AbstractIqRequestHandler(
+        GameOfferPacket.ELEMENT_NAME,
+        GameOfferPacket.NAMESPACE,
+        IQ.Type.get,
+        IQRequestHandler.Mode.async)
+    {
+        public IQ handleIQRequest(IQ request) {
+            showInvitationAlert((GameOfferPacket) request);
+            return null;
+        }
+    };
 
-	};
-
-	SparkManager.getConnection().addAsyncStanzaListener(_gameOfferListener,
-		new StanzaTypeFilter(GameOfferPacket.class));
-
+    SparkManager.getConnection().registerIQRequestHandler(_gameOfferHandler);
 	addButtonToToolBar();
 
     }
@@ -197,8 +198,7 @@ public class TicTacToePlugin implements Plugin {
 
 	_currentInvitations.clear();
 	SparkManager.getChatManager().removeChatRoomListener(_chatRoomListener);
-	SparkManager.getConnection().removeAsyncStanzaListener(_gameOfferListener);
-
+        SparkManager.getConnection().unregisterIQRequestHandler(_gameOfferHandler);
     }
 
     @Override
