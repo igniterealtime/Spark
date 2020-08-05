@@ -261,7 +261,7 @@ public class TicTacToePlugin implements Plugin {
 			Log.warning( "Unable to send invitation accept to " + invitation.getTo(), e1 );
 		}
 		invitation.setStartingPlayer(!invitation.isStartingPlayer());
-		createTTTWindow(invitation, invitation.getFrom().asEntityFullJidOrThrow());
+		createTTTWindow(invitation, invitation.getTo().asEntityFullJidOrThrow());
 		panel.remove(3);
 		panel.remove(2);
 		panel.repaint();
