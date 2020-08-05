@@ -264,6 +264,7 @@ public class LoginDialog {
         } catch (XmppStringprepException e) {
             throw new IllegalStateException(e);
         }
+
         final XMPPTCPConnectionConfiguration.Builder builder = XMPPTCPConnectionConfiguration.builder()
                 .setUsernameAndPassword(loginUsername, loginPassword)
                 .setXmppDomain(xmppDomain)
@@ -271,7 +272,7 @@ public class LoginDialog {
                 .setSendPresence(false)
                 .setCompressionEnabled(localPref.isCompressionEnabled())
                 .setSecurityMode( securityMode );
-                
+
         if ( securityMode != ConnectionConfiguration.SecurityMode.disabled && localPref.isDisableHostnameVerification()) {
             TLSUtils.disableHostnameVerificationForTlsCertificates(builder);
         }
@@ -1119,6 +1120,9 @@ public class LoginDialog {
 
             try
             {
+                // TODO: SPARK-2140 - add support to Spark for stream management. Challenges expected around reconnection logic!
+                XMPPTCPConnection.setUseStreamManagementDefault(false);
+
                 connection = new XMPPTCPConnection( retrieveConnectionConfiguration() );
                 connection.setParsingExceptionCallback( new ExceptionLoggingCallback() );
 
