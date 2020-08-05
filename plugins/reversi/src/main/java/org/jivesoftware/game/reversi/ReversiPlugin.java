@@ -15,10 +15,7 @@
  */
 package org.jivesoftware.game.reversi;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Image;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.concurrent.ConcurrentHashMap;
@@ -33,6 +30,8 @@ import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.StanzaListener;
 import org.jivesoftware.smack.filter.StanzaIdFilter;
 import org.jivesoftware.smack.filter.StanzaTypeFilter;
+import org.jivesoftware.smack.iqrequest.AbstractIqRequestHandler;
+import org.jivesoftware.smack.iqrequest.IQRequestHandler;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.packet.StanzaError;
@@ -60,7 +59,7 @@ import org.jxmpp.jid.Jid;
 public class ReversiPlugin implements Plugin {
 
     private ChatRoomListener chatRoomListener;
-    private StanzaListener gameOfferListener;
+    private IQRequestHandler gameOfferHandler;
 
     private ConcurrentHashMap<String, JPanel> gameOffers;
     private ConcurrentHashMap<Jid, JPanel> gameInvitations;
@@ -88,25 +87,26 @@ public class ReversiPlugin implements Plugin {
         ProviderManager.addExtensionProvider(GameForfeit.ELEMENT_NAME, GameForfeit.NAMESPACE, new GameForfeit.Provider());
 
         // Add IQ listener to listen for incoming game invitations.
-        gameOfferListener = new StanzaListener() {
-            @Override
-            public void processStanza(Stanza stanza) {
-                GameOffer invitation = (GameOffer) stanza;
-                if (invitation.getType() == IQ.Type.get) {
-                    showInvitationAlert(invitation);
-                } else if (invitation.getType() == IQ.Type.error) {
-                    handleErrorIQ(invitation);
-                }
+        gameOfferHandler = new AbstractIqRequestHandler(
+            GameOffer.ELEMENT_NAME,
+            GameOffer.NAMESPACE,
+            IQ.Type.get,
+            IQRequestHandler.Mode.async)
+        {
+            public IQ handleIQRequest(IQ request) {
+                showInvitationAlert((GameOffer) request);
+                return null;
             }
         };
-        SparkManager.getConnection().addAsyncStanzaListener(gameOfferListener, new StanzaTypeFilter(GameOffer.class));
+
+        SparkManager.getConnection().registerIQRequestHandler(gameOfferHandler);
     }
 
     public void shutdown() {
         // Remove Reversi button from chat toolbar.
         removeToolbarButton();
         // Remove IQ listener
-        SparkManager.getConnection().removeAsyncStanzaListener(gameOfferListener);
+        SparkManager.getConnection().unregisterIQRequestHandler(gameOfferHandler);
 //
 //        // See if there are any pending offers or invitations. If so, cancel
 //        // them.
@@ -249,16 +249,6 @@ public class ReversiPlugin implements Plugin {
         room.getTranscriptWindow().addComponent(inviteAlert);
     }
 
-    private void handleErrorIQ(final GameOffer invitation) {
-        // Maybe the initiator canceled the game offer, lets check that
-        if (gameInvitations.containsKey(invitation.getFrom())) {
-            inviteAlert.remove(1);
-            JLabel userCanceled = new JLabel("The other player rejected the game invitation"); 
-            inviteAlert.add(userCanceled);
-            gameInvitations.remove(invitation.getFrom());
-        }
-    }
-
     /**
      * Adds the Reversi toolbar button.
      */
@@ -341,6 +331,16 @@ public class ReversiPlugin implements Plugin {
                         SparkManager.getConnection().addAsyncStanzaListener(new StanzaListener() {
                             @Override
                             public void processStanza(Stanza stanza) {
+
+                                if (stanza.getError() != null) {
+                                    cancelButton.setVisible(false);
+                                    JPanel userDeclinedPanel = new JPanel(new BorderLayout());
+                                    JLabel userDeclined = new JLabel("User declined...");
+                                    userDeclinedPanel.add(userDeclined, BorderLayout.SOUTH);
+                                    request.add(userDeclinedPanel, BorderLayout.SOUTH);
+                                    return;
+                                }
+
                                 GameOffer offerReply = ((GameOffer) stanza);
 
                                 if (offerReply.getType() == IQ.Type.result) {
@@ -357,7 +357,6 @@ public class ReversiPlugin implements Plugin {
                                     userDeclinedPanel.add(userDeclined, BorderLayout.SOUTH);
                                     request.add(userDeclinedPanel, BorderLayout.SOUTH);
                                 }
-                                // TODO: Handle error case
                             }
                         }, new StanzaIdFilter(offer.getStanzaId()));
 
