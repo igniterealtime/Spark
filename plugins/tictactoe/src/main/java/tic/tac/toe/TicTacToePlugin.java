@@ -274,6 +274,7 @@ public class TicTacToePlugin implements Plugin {
 	    @Override
 	    public void actionPerformed(ActionEvent e) {
 		invitation.setType(IQ.Type.error);
+		invitation.setError( StanzaError.getBuilder().setCondition(StanzaError.Condition.undefined_condition).setDescriptiveEnText("User declined your request."));
 		try
 		{
 			SparkManager.getConnection().sendStanza(invitation);
