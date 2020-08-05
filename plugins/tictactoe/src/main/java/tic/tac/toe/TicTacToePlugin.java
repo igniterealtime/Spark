@@ -152,6 +152,13 @@ public class TicTacToePlugin implements Plugin {
 				    @Override
 				    public void processStanza(Stanza stanza) {
 
+                    if (stanza.getError() != null) {
+                        room.getTranscriptWindow().insertCustomText
+                            (TTTRes.getString("ttt.request.decline"), false, false, Color.RED);
+                        _currentInvitations.remove(opponentJID.asBareJid());
+                        return;
+                    }
+
 					GameOfferPacket answer = (GameOfferPacket)stanza;
 					answer.setStartingPlayer(offer.isStartingPlayer());
 					answer.setGameID(offer.getGameID());
