@@ -133,6 +133,7 @@ public class ContactList extends JPanel implements ActionListener,
         localPreferences = SettingsManager.getLocalPreferences();
 
         offlineGroup = UIComponentRegistry.createContactGroup(Res.getString("group.offline"));
+        unfiledGroup = getUnfiledGroup();
 
         JToolBar toolbar = new JToolBar();
         toolbar.setFloatable(false);
@@ -194,7 +195,7 @@ public class ContactList extends JPanel implements ActionListener,
         }
 
         // Add ActionListener(s) to menus
-//        addContactGroup(unfiledGroup);
+        addContactGroup(unfiledGroup);
         addContactGroup(offlineGroup);
 
         showHideMenu.setSelected(false);
