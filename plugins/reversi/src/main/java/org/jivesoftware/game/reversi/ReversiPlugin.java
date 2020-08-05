@@ -35,6 +35,7 @@ import org.jivesoftware.smack.filter.StanzaIdFilter;
 import org.jivesoftware.smack.filter.StanzaTypeFilter;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Stanza;
+import org.jivesoftware.smack.packet.StanzaError;
 import org.jivesoftware.smack.provider.ProviderManager;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
@@ -212,6 +213,7 @@ public class ReversiPlugin implements Plugin {
                 reply.setTo(invitation.getFrom());
                 reply.setStanzaId(invitation.getStanzaId());
                 reply.setType(IQ.Type.error);
+                reply.setError(StanzaError.getBuilder().setCondition(StanzaError.Condition.undefined_condition).setDescriptiveEnText("User declined your request."));
                 try
                 {
                     SparkManager.getConnection().sendStanza(reply);
@@ -313,6 +315,8 @@ public class ReversiPlugin implements Plugin {
                                GameOffer reply = new GameOffer();
                                reply.setTo(((ChatRoomImpl) room).getJID());
                                reply.setType(IQ.Type.error);
+                               reply.setError(StanzaError.getBuilder().setCondition(StanzaError.Condition.undefined_condition).setDescriptiveEnText("User cancelled the invitation."));
+
                                try
                                {
                                    SparkManager.getConnection().sendStanza(reply);
