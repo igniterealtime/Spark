@@ -112,6 +112,7 @@ public final class RosterTree extends JPanel {
         });
 
 
+
         for (RosterGroup group : roster.getGroups()) {
             final JiveTreeNode groupNode = new JiveTreeNode(group.getName(), true);
             groupNode.setAllowsChildren(true);
