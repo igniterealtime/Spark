@@ -614,7 +614,7 @@ public class BookmarksUI extends JPanel {
         for (BookmarkedConference bookmark : bookmarks) {
             DomainBareJid serviceName = bookmark.getJid().asDomainBareJid();
             EntityBareJid roomJID = bookmark.getJid();
-            Localpart roomName = roomJID.getLocalpart();
+            String roomName = bookmark.getName() != null && !bookmark.getName().isEmpty() ? bookmark.getName() : roomJID.getLocalpart().toString();
 
             if (bookmark.isAutoJoin()) {
                 ConferenceUtils.joinConferenceOnSeperateThread(roomName, bookmark.getJid(), bookmark.getPassword());
@@ -633,7 +633,7 @@ public class BookmarksUI extends JPanel {
                 serviceNode = (JiveTreeNode)path.getLastPathComponent();
             }
 
-            addBookmark(serviceNode, roomName.toString(), roomJID.toString());
+            addBookmark(serviceNode, roomName, roomJID.toString());
 
             tree.expandPath(path);
         }
