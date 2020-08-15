@@ -201,7 +201,7 @@ public class ChatRoomImpl extends ChatRoom {
      * Set the XMPP address of the participant.
      *
      * @param jidString the XMPP address
-     * @deprecated use {@link #setparticipantJID(EntityJid)} instead.
+     * @deprecated use {@link #setparticipantJID(Jid)} instead.
      */
     @Deprecated
     private void setparticipantJID(String jidString) {
@@ -486,6 +486,11 @@ public class ChatRoomImpl extends ChatRoom {
                                 getTranscriptWindow().insertNotificationMessage( Res.getString( "message.offline.error" ), ChatManager.ERROR_COLOR );
                                 offlineSent = true;
                             }
+                        }
+                        else
+                        {
+                            // Show a generic error if something went wrong: SPARK-1895.
+                            getTranscriptWindow().insertNotificationMessage( Res.getString( "message.default.error" ) + ": " + message.getError().getCondition(), ChatManager.ERROR_COLOR );
                         }
                         return;
                     }
