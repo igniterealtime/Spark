@@ -10,7 +10,7 @@
     </parent>
 
     <artifactId>apple</artifactId>
-    <version>3.0</version>
+    <version>4.0</version>
 
     <name>Apple Plugin</name>
     <description>Provides Mac OS X features for Spark.</description>
