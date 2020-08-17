@@ -1578,6 +1578,11 @@ public class LoginDialog {
             SAXReader saxReader = new SAXReader();
             Document pluginXML;
             try {
+                // SPARK-2147: Disable certain features for security purposes (CVE-2020-10683)
+                saxReader.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+                saxReader.setFeature("http://xml.org/sax/features/external-general-entities", false);
+                saxReader.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+
                 pluginXML = saxReader.read(settingsXML);
             }
             catch (DocumentException e) {

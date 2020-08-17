@@ -43,6 +43,7 @@ import org.jivesoftware.sparkimpl.settings.JiveInfo;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jivesoftware.sparkimpl.updater.EasySSLProtocolSocketFactory;
+import org.xml.sax.SAXException;
 
 import javax.swing.*;
 import java.awt.*;
@@ -515,9 +516,14 @@ public class PluginViewer extends JPanel implements Plugin
 
         try
         {
+            // SPARK-2147: Disable certain features for security purposes (CVE-2020-10683)
+            saxReader.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+            saxReader.setFeature("http://xml.org/sax/features/external-general-entities", false);
+            saxReader.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+
             pluginXML = saxReader.read( response );
         }
-        catch ( DocumentException e )
+        catch ( DocumentException | SAXException e )
         {
             Log.error( e );
         }
