@@ -179,13 +179,215 @@ hr {
 
 <div id="pageBody">
 
-<h2>2.9.0    -- <span style="font-weight: normal;">tbd</span></h2>
-    <p><b>Note:</b> This version is not accepting self-signed certificates by default. If you are using such, your users will have
-    to go to Advanced menu on login screen, Certificates tab and check the "Accept self-signed" option. Also OTR and
-    Spellchecker plugins are not included anymore (have no current Maven artifacts to use).</p>
+<h2>2.9.0    -- <span style="font-weight: normal;">August 17, 2020</span></h2>
+
 <h2>        Bug
 </h2>
+<ul>
+<li>[<a href='https://issues.igniterealtime.org/browse/SPARK-1537'>SPARK-1537</a>] -         Add Contact dialog requires at least 5 letters to find a contact
+</li>
+<li>[<a href='https://issues.igniterealtime.org/browse/SPARK-1635'>SPARK-1635</a>] -         History viewer adds spaces between messages when changing a view
+</li>
+<li>[<a href='https://issues.igniterealtime.org/browse/SPARK-1649'>SPARK-1649</a>] -         Shouldn&#39;t show a toast popup for a last message in history when joining a room
+</li>
+<li>[<a href='https://issues.igniterealtime.org/browse/SPARK-1757'>SPARK-1757</a>] -         Messages in MUC history are out of order
+</li>
+<li>[<a href='https://issues.igniterealtime.org/browse/SPARK-1806'>SPARK-1806</a>] -         PrivacyManager throws an exception
+</li>
+<li>[<a href='https://issues.igniterealtime.org/browse/SPARK-1809'>SPARK-1809</a>] -         Privacy plugin doesn&#39;t work
+</li>
+<li>[<a href='https://issues.igniterealtime.org/browse/SPARK-1811'>SPARK-1811</a>] -         View client version menu option doesn&#39;t show information
+</li>
+<li>[<a href='https://issues.igniterealtime.org/browse/SPARK-1812'>SPARK-1812</a>] -         Some vCard fields are empty when checking contact&#39;s profile
+</li>
+<li>[<a href='https://issues.igniterealtime.org/browse/SPARK-1817'>SPARK-1817</a>] -         Reversi and tic tac toe plugins failed to build
+</li>
+<li>[<a href='https://issues.igniterealtime.org/browse/SPARK-1873'>SPARK-1873</a>] -         Search doesn&#39;t work with AD integration
+</li>
+<li>[<a href='https://issues.igniterealtime.org/browse/SPARK-1888'>SPARK-1888</a>] -         Plugins not being extracted completely
+</li>
+<li>[<a href='https://issues.igniterealtime.org/browse/SPARK-1895'>SPARK-1895</a>] -         Errors are not (always) shown in one-on-one chat.
+</li>
+<li>[<a href='https://issues.igniterealtime.org/browse/SPARK-1902'>SPARK-1902</a>] -         Throws an exception when using custom emoticons set
+</li>
+<li>[<a href='https://issues.igniterealtime.org/browse/SPARK-1905'>SPARK-1905</a>] -         Contact list tooltip causes temporary freeze
+</li>
+<li>[<a href='https://issues.igniterealtime.org/browse/SPARK-1916'>SPARK-1916</a>] -         Not able to move or copy contacts when Rename contact is disabled
+</li>
+<li>[<a href='https://issues.igniterealtime.org/browse/SPARK-2009'>SPARK-2009</a>] -         Should allow profile changes when Avatar tab is disabled
+</li>
+<li>[<a href='https://issues.igniterealtime.org/browse/SPARK-2025'>SPARK-2025</a>] -         Process Data Forms with Bool fields that have no value.
+</li>
+<li>[<a href='https://issues.igniterealtime.org/browse/SPARK-2028'>SPARK-2028</a>] -         Fix logic error in UserSearchResult
+</li>
+<li>[<a href='https://issues.igniterealtime.org/browse/SPARK-2029'>SPARK-2029</a>] -         Shouldn&#39;t check for voice status
+</li>
+<li>[<a href='https://issues.igniterealtime.org/browse/SPARK-2114'>SPARK-2114</a>] -         Spark does not parse Java version string correctly.
+</li>
+<li>[<a href='https://issues.igniterealtime.org/browse/SPARK-2134'>SPARK-2134</a>] -         ROAR plugin should not depend on com.sun package
+</li>
+<li>[<a href='https://issues.igniterealtime.org/browse/SPARK-2141'>SPARK-2141</a>] -         Contact list does not show users that are not in a group
+</li>
+</ul>
+        
+<h2>        New Feature
+</h2>
+<ul>
+<li>[<a href='https://issues.igniterealtime.org/browse/SPARK-1203'>SPARK-1203</a>] -         Add a GUI for managing TLS\SSL certificates
+</li>
+<li>[<a href='https://issues.igniterealtime.org/browse/SPARK-1589'>SPARK-1589</a>] -         Add option to disable invisible login and status via default.properties
+</li>
+<li>[<a href='https://issues.igniterealtime.org/browse/SPARK-1785'>SPARK-1785</a>] -         Add support for XEP-0198 Stream Management
+</li>
+<li>[<a href='https://issues.igniterealtime.org/browse/SPARK-1877'>SPARK-1877</a>] -         Make reconnection delay between attempts configurable
+</li>
+<li>[<a href='https://issues.igniterealtime.org/browse/SPARK-1946'>SPARK-1946</a>] -         Add option to disable Start a chat via Client Control
+</li>
+<li>[<a href='https://issues.igniterealtime.org/browse/SPARK-1968'>SPARK-1968</a>] -         Replace DummyTrustManager with complex trust manager
+</li>
+<li>[<a href='https://issues.igniterealtime.org/browse/SPARK-2001'>SPARK-2001</a>] -         Add a popup for accepting certificate from a connection
+</li>
+<li>[<a href='https://issues.igniterealtime.org/browse/SPARK-2015'>SPARK-2015</a>] -         Add an option to force IBB for file transfers
+</li>
+<li>[<a href='https://issues.igniterealtime.org/browse/SPARK-2030'>SPARK-2030</a>] -         Add support for Message Styling
+</li>
+<li>[<a href='https://issues.igniterealtime.org/browse/SPARK-2040'>SPARK-2040</a>] -         Add Http File Upload plugin
+</li>
+<li>[<a href='https://issues.igniterealtime.org/browse/SPARK-2041'>SPARK-2041</a>] -         Add initial documentation
+</li>
+<li>[<a href='https://issues.igniterealtime.org/browse/SPARK-2086'>SPARK-2086</a>] -         Hostname and Version as resource available in Client Control plugin
+</li>
+</ul>
+        
+<h2>        Task
+</h2>
+<ul>
+<li>[<a href='https://issues.igniterealtime.org/browse/SPARK-1865'>SPARK-1865</a>] -         Update bundled JRE with the latest version
+</li>
+<li>[<a href='https://issues.igniterealtime.org/browse/SPARK-1950'>SPARK-1950</a>] -         Remove &amp; from Plugins menu translations
+</li>
+<li>[<a href='https://issues.igniterealtime.org/browse/SPARK-2132'>SPARK-2132</a>] -         Replace JxBrowser with anything else
+</li>
+</ul>
     
+<h2>        Improvement
+</h2>
+<ul>
+<li>[<a href='https://issues.igniterealtime.org/browse/SPARK-939'>SPARK-939</a>] -         Stretch and move Find dialog
+</li>
+<li>[<a href='https://issues.igniterealtime.org/browse/SPARK-945'>SPARK-945</a>] -         Preferences, broadcast, profile windows should be saving their sizes and positions
+</li>
+<li>[<a href='https://issues.igniterealtime.org/browse/SPARK-1519'>SPARK-1519</a>] -         Spark should show a time stamp for every MUC message/activity
+</li>
+<li>[<a href='https://issues.igniterealtime.org/browse/SPARK-1688'>SPARK-1688</a>] -         Update JTattoo to the latest version
+</li>
+<li>[<a href='https://issues.igniterealtime.org/browse/SPARK-1784'>SPARK-1784</a>] -         ROAR should show MUC popups when window is not in focus
+</li>
+<li>[<a href='https://issues.igniterealtime.org/browse/SPARK-1791'>SPARK-1791</a>] -         Migrate Spark build from Ant to Maven
+</li>
+<li>[<a href='https://issues.igniterealtime.org/browse/SPARK-1843'>SPARK-1843</a>] -         Update Smack to 4.3 branch
+</li>
+<li>[<a href='https://issues.igniterealtime.org/browse/SPARK-1868'>SPARK-1868</a>] -         Add an option to disable Invisible presence
+</li>
+<li>[<a href='https://issues.igniterealtime.org/browse/SPARK-1871'>SPARK-1871</a>] -         Fix output of nicknames in Broadcast History
+</li>
+<li>[<a href='https://issues.igniterealtime.org/browse/SPARK-1872'>SPARK-1872</a>] -         Should resize large photo when applying as an avatar
+</li>
+<li>[<a href='https://issues.igniterealtime.org/browse/SPARK-1875'>SPARK-1875</a>] -         Spark history search should show context
+</li>
+<li>[<a href='https://issues.igniterealtime.org/browse/SPARK-1876'>SPARK-1876</a>] -         Spark history window should wrap text
+</li>
+<li>[<a href='https://issues.igniterealtime.org/browse/SPARK-1883'>SPARK-1883</a>] -         Spark should remove/overwrite old versions of libs during update
+</li>
+<li>[<a href='https://issues.igniterealtime.org/browse/SPARK-1887'>SPARK-1887</a>] -         Shouldn&#39;t show a toast popup for your own message in MUC
+</li>
+<li>[<a href='https://issues.igniterealtime.org/browse/SPARK-1899'>SPARK-1899</a>] -         Room password dialog should mask/hide the actual password
+</li>
+<li>[<a href='https://issues.igniterealtime.org/browse/SPARK-1903'>SPARK-1903</a>] -         Highlight searched keyword in the history search
+</li>
+<li>[<a href='https://issues.igniterealtime.org/browse/SPARK-1904'>SPARK-1904</a>] -         Various improvements to avatar management
+</li>
+<li>[<a href='https://issues.igniterealtime.org/browse/SPARK-1909'>SPARK-1909</a>] -         Transcript Window should be recomposable
+</li>
+<li>[<a href='https://issues.igniterealtime.org/browse/SPARK-1910'>SPARK-1910</a>] -         Replace (some) emojis with emoticons
+</li>
+<li>[<a href='https://issues.igniterealtime.org/browse/SPARK-1912'>SPARK-1912</a>] -         Remove green username colors from chat room
+</li>
+<li>[<a href='https://issues.igniterealtime.org/browse/SPARK-1915'>SPARK-1915</a>] -         Implement separate History settings in Client Control
+</li>
+<li>[<a href='https://issues.igniterealtime.org/browse/SPARK-1947'>SPARK-1947</a>] -         Improve rooms browser, dialogs and error messages
+</li>
+<li>[<a href='https://issues.igniterealtime.org/browse/SPARK-1948'>SPARK-1948</a>] -         Add an EditorConfig file
+</li>
+<li>[<a href='https://issues.igniterealtime.org/browse/SPARK-1961'>SPARK-1961</a>] -         Improve startup by disabling CPU-hungry themes
+</li>
+<li>[<a href='https://issues.igniterealtime.org/browse/SPARK-1962'>SPARK-1962</a>] -         Use a key-based lookup to find an emoticon
+</li>
+<li>[<a href='https://issues.igniterealtime.org/browse/SPARK-1963'>SPARK-1963</a>] -         Lazy load vcard data
+</li>
+<li>[<a href='https://issues.igniterealtime.org/browse/SPARK-1964'>SPARK-1964</a>] -         Non-UI processing should not occur on Event Queue dispatch thread
+</li>
+<li>[<a href='https://issues.igniterealtime.org/browse/SPARK-1965'>SPARK-1965</a>] -         Use unarchived emoticons packages in version control
+</li>
+<li>[<a href='https://issues.igniterealtime.org/browse/SPARK-1972'>SPARK-1972</a>] -         Security settings should go in dedicated tab
+</li>
+<li>[<a href='https://issues.igniterealtime.org/browse/SPARK-1973'>SPARK-1973</a>] -         Add visual hint for &quot;not encrypted&quot; connections
+</li>
+<li>[<a href='https://issues.igniterealtime.org/browse/SPARK-1974'>SPARK-1974</a>] -         Updated Lithuanian translation
+</li>
+<li>[<a href='https://issues.igniterealtime.org/browse/SPARK-1976'>SPARK-1976</a>] -         More descriptive error messages when login fails.
+</li>
+<li>[<a href='https://issues.igniterealtime.org/browse/SPARK-1983'>SPARK-1983</a>] -         Update Polish translation
+</li>
+<li>[<a href='https://issues.igniterealtime.org/browse/SPARK-1984'>SPARK-1984</a>] -         Update LittleLuck skin to 2.0.1
+</li>
+<li>[<a href='https://issues.igniterealtime.org/browse/SPARK-1985'>SPARK-1985</a>] -         Add support for TLS Mutual Authentication
+</li>
+<li>[<a href='https://issues.igniterealtime.org/browse/SPARK-1990'>SPARK-1990</a>] -         Remove PKI tab
+</li>
+<li>[<a href='https://issues.igniterealtime.org/browse/SPARK-1998'>SPARK-1998</a>] -         Add French spelling dictionary
+</li>
+<li>[<a href='https://issues.igniterealtime.org/browse/SPARK-2014'>SPARK-2014</a>] -         Rename 5223 port description
+</li>
+<li>[<a href='https://issues.igniterealtime.org/browse/SPARK-2019'>SPARK-2019</a>] -         Add (requires restart) to single click in system tray option
+</li>
+<li>[<a href='https://issues.igniterealtime.org/browse/SPARK-2024'>SPARK-2024</a>] -         Update Ukranian translation
+</li>
+<li>[<a href='https://issues.igniterealtime.org/browse/SPARK-2039'>SPARK-2039</a>] -         Don&#39;t require i18n source files to be encoded
+</li>
+<li>[<a href='https://issues.igniterealtime.org/browse/SPARK-2047'>SPARK-2047</a>] -         Improve on version detection
+</li>
+<li>[<a href='https://issues.igniterealtime.org/browse/SPARK-2052'>SPARK-2052</a>] -         Updated Brazilian Portguese translation
+</li>
+<li>[<a href='https://issues.igniterealtime.org/browse/SPARK-2062'>SPARK-2062</a>] -         Fix legacy links to community.igniterealtime.org
+</li>
+<li>[<a href='https://issues.igniterealtime.org/browse/SPARK-2081'>SPARK-2081</a>] -         Client Control: Save Password &amp; Auto Login option should also hide in Preferences
+</li>
+<li>[<a href='https://issues.igniterealtime.org/browse/SPARK-2089'>SPARK-2089</a>] -         Schedule loadContactList() outside of sharedGroupLoader
+</li>
+<li>[<a href='https://issues.igniterealtime.org/browse/SPARK-2090'>SPARK-2090</a>] -         Replace deprecated Smack APIs
+</li>
+<li>[<a href='https://issues.igniterealtime.org/browse/SPARK-2101'>SPARK-2101</a>] -         Transfer Guard settings should be in Spark profile
+</li>
+<li>[<a href='https://issues.igniterealtime.org/browse/SPARK-2111'>SPARK-2111</a>] -         Add working with Spark source in VS Code guide 
+</li>
+<li>[<a href='https://issues.igniterealtime.org/browse/SPARK-2130'>SPARK-2130</a>] -         Fix French translation
+</li>
+<li>[<a href='https://issues.igniterealtime.org/browse/SPARK-2133'>SPARK-2133</a>] -         Allow translations to be found when running from IDE
+</li>
+<li>[<a href='https://issues.igniterealtime.org/browse/SPARK-2135'>SPARK-2135</a>] -         ROAR setting changes should not require a restart
+</li>
+<li>[<a href='https://issues.igniterealtime.org/browse/SPARK-2136'>SPARK-2136</a>] -         ROAR should not offer &#39;system notification&#39; if unsupported by OS
+</li>
+<li>[<a href='https://issues.igniterealtime.org/browse/SPARK-2137'>SPARK-2137</a>] -         Plugins should be runnable from IDE
+</li>
+<li>[<a href='https://issues.igniterealtime.org/browse/SPARK-2146'>SPARK-2146</a>] -         Update Bouncy Castle library to 1.66
+</li>
+<li>[<a href='https://issues.igniterealtime.org/browse/SPARK-2147'>SPARK-2147</a>] -         Guard against CVE-2020-10683 (dom4j reading external entities)
+</li>
+</ul>
+
+
 <h2>2.8.3    -- <span style="font-weight: normal;">January 29, 2017</span></h2>
 <h2>        Bug
 </h2>
