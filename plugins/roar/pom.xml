@@ -10,7 +10,7 @@
     </parent>
 
     <artifactId>roar</artifactId>
-    <version>0.5.0</version>
+    <version>0.6</version>
 
     <name>Roar!!!</name>
     <description>Provides customizable popup/notification functionality.</description>

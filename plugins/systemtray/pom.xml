@@ -10,7 +10,7 @@
     </parent>
 
     <artifactId>systemtray</artifactId>
-    <version>1.1</version>
+    <version>1.2</version>
 
     <name>SystemTray Plugin</name>
     <description>Notification and System Tray Plugin for Spark.</description>
