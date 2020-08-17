@@ -291,34 +291,19 @@ public class EmoticonManager {
 		final SAXReader saxParser = new SAXReader();
 		saxParser.setValidation(false);
 		try {
-			saxParser.setFeature("http://xml.org/sax/features/validation",
-					false);
-			saxParser.setFeature("http://xml.org/sax/features/namespaces",
-					false);
-			saxParser.setFeature(
-					"http://apache.org/xml/features/validation/schema", false);
-			saxParser
-					.setFeature(
-							"http://apache.org/xml/features/validation/schema-full-checking",
-							false);
-			saxParser.setFeature(
-					"http://apache.org/xml/features/validation/dynamic", false);
-			saxParser
-					.setFeature(
-							"http://apache.org/xml/features/allow-java-encodings",
-							true);
-			saxParser
-					.setFeature(
-							"http://apache.org/xml/features/continue-after-fatal-error",
-							true);
-			saxParser
-					.setFeature(
-							"http://apache.org/xml/features/nonvalidating/load-dtd-grammar",
-							false);
-			saxParser
-					.setFeature(
-							"http://apache.org/xml/features/nonvalidating/load-external-dtd",
-							false);
+			saxParser.setFeature("http://xml.org/sax/features/validation", false);
+			saxParser.setFeature("http://xml.org/sax/features/namespaces", false);
+			saxParser.setFeature("http://apache.org/xml/features/validation/schema", false);
+			saxParser.setFeature("http://apache.org/xml/features/validation/schema-full-checking", false);
+			saxParser.setFeature("http://apache.org/xml/features/validation/dynamic", false);
+			saxParser.setFeature("http://apache.org/xml/features/allow-java-encodings", true);
+			saxParser.setFeature("http://apache.org/xml/features/continue-after-fatal-error", true);
+			saxParser.setFeature("http://apache.org/xml/features/nonvalidating/load-dtd-grammar", false);
+
+            // SPARK-2147: Disable certain features for security purposes (CVE-2020-10683)
+            saxParser.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+            saxParser.setFeature("http://xml.org/sax/features/external-general-entities", false);
+            saxParser.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
 		} catch (SAXException e) {
 			e.printStackTrace();
 		}
