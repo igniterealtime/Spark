@@ -192,7 +192,7 @@ public class HistoryTranscript extends SwingWorker {
 					.getUserNicknameFromJID(message.getFrom().asBareJid());
 			String body = org.jivesoftware.spark.util.StringUtils
 					.escapeHTMLTags(message.getBody());
-			if (nickname.equals(message.getFrom())) {
+			if (nickname.equals(message.getFrom().toString()) || nickname.equals(message.getFrom().asBareJid().toString())) {
 				BareJid otherJID = message
 						.getFrom().asBareJid();
 				EntityBareJid myJID = SparkManager.getSessionManager()
