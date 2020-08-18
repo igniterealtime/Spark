@@ -786,7 +786,7 @@ public class ChatRoomImpl extends ChatRoom {
     		for (HistoryMessage message : chatTranscript.getMessages()) {
     			String nickname = SparkManager.getUserManager().getUserNicknameFromJID(message.getFrom().asBareJid());
     			String messageBody = message.getBody();
-    			if (nickname.equals(message.getFrom().toString())) {
+    			if (nickname.equals(message.getFrom().toString()) || nickname.equals(message.getFrom().asBareJid().toString())) {
     				BareJid otherJID = message.getFrom().asBareJid();
     				EntityBareJid myJID = SparkManager.getSessionManager().getBareUserAddress();
 
