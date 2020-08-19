@@ -106,7 +106,7 @@ public class NotificationPlugin implements Plugin, StanzaListener {
         }
 
         BareJid bareJid = jid.asBareJid();
-        boolean isOnline = onlineUsers.contains(jid);
+        boolean isOnline = onlineUsers.contains(bareJid);
 
         if (presence.isAvailable()) {
             if (preferences.isOnlineNotificationsOn()) {
