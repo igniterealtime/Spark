@@ -329,7 +329,7 @@ public class ReversiModel {
         }
         // Going down vertically.
         if (position < 48) {
-            for (int i=position+8; i <= 65; i+=8) {
+            for (int i=position+8; i <= 64; i+=8) {
                 if (board[i] == BLANK) {
                     break;
                 }
