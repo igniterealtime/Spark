@@ -49,6 +49,7 @@ import org.jivesoftware.spark.util.UIComponentRegistry;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+import org.jxmpp.jid.DomainBareJid;
 import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.EntityFullJid;
 import org.jxmpp.jid.Jid;
@@ -613,7 +614,7 @@ public class GroupChatRoom extends ChatRoom
             final Date sentDate = inf != null ? inf.getStamp() : new Date();
 
             // Do not accept Administrative messages.
-            final String host = SparkManager.getSessionManager().getServerAddress();
+            final DomainBareJid host = SparkManager.getSessionManager().getServerAddress();
             if ( host.equals( message.getFrom() ) )
             {
                 return;

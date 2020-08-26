@@ -25,7 +25,9 @@ import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ChatRoomListener;
 import org.jivesoftware.spark.ui.GlobalMessageListener;
 import org.jivesoftware.spark.util.log.Log;
+import org.jxmpp.jid.DomainBareJid;
 import org.jxmpp.jid.EntityBareJid;
+import org.jxmpp.jid.impl.JidCreate;
 import org.jxmpp.jid.parts.Localpart;
 
 import javax.swing.*;
@@ -45,7 +47,7 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
     private org.jivesoftware.spark.ChatManager chatManager;
 
     private String protocol = "https";
-    private String server = null;
+    private DomainBareJid server = null;
     private String port = "7443";
     private String url = null;
     private int width = 1024;
@@ -94,7 +96,7 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
 
                 if (props.getProperty("server") != null)
                 {
-                    server = props.getProperty("server");
+                    server = JidCreate.domainBareFrom(props.getProperty("server"));
                     Log.debug("ofmeet-info: ofmeet-server from properties-file is= " + server);
                 }
 
