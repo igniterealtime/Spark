@@ -1904,9 +1904,9 @@ moveToOffline(moveToOfflineContactItem);
                                 removeContactItem( presence.getFrom().asBareJid() );
                                 roster.removeEntry( entry );
                             }
-                            catch ( XMPPException | SmackException | InterruptedException e )
+                            catch ( Throwable e )
                             {
-                                Log.error( e );
+                                Log.error( "Unable to process 'unsubscribed'", e );
                             }
                         }
                         removeContactItem( presence.getFrom().asBareJid().asBareJid() );

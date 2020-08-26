@@ -267,7 +267,13 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         AndFilter presenceFilter = new AndFilter(new StanzaTypeFilter(Presence.class), FromMatchesFilter.createBare( room.getRoomJid()));
 
         // Next, create a packet listener. We use an anonymous inner class for brevity.
-        StanzaListener myListener = stanza -> SwingUtilities.invokeLater( () -> handleRoomPresence((Presence)stanza) );
+        StanzaListener myListener = stanza -> SwingUtilities.invokeLater(() -> {
+            try {
+                handleRoomPresence((Presence) stanza);
+            } catch (Throwable t){
+                Log.warning( "Unable to handle incoming stanza (room presence): " + stanza, t );
+            }
+        });
 
         room.registeredToFrame(chatFrame);
         
