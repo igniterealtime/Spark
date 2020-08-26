@@ -67,6 +67,7 @@ import org.jivesoftware.sparkimpl.plugin.bookmarks.BookmarkPlugin;
 import org.jivesoftware.sparkimpl.plugin.gateways.GatewayPlugin;
 import org.jivesoftware.sparkimpl.plugin.transcripts.ChatTranscriptPlugin;
 import org.jxmpp.jid.BareJid;
+import org.jxmpp.jid.DomainBareJid;
 import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.Jid;
 import org.jxmpp.jid.parts.Localpart;
@@ -358,11 +359,11 @@ public class Workspace extends JPanel implements StanzaListener {
 
             // Create new chat room for Agent Invite.
             final Jid from = stanza.getFrom();
-            final String host = SparkManager.getSessionManager().getServerAddress();
+            final DomainBareJid host = SparkManager.getSessionManager().getServerAddress();
 
             // Don't allow workgroup notifications to come through here.
             final BareJid bareJID = from.asBareJid();
-            if (host.equalsIgnoreCase(from.toString()) || from == null) {
+            if (host.equals(from)) {
                 return;
             }
 

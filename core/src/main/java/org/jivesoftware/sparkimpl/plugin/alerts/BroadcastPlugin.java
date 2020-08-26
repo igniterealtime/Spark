@@ -88,6 +88,7 @@ import org.jivesoftware.sparkimpl.preference.sounds.SoundPreference;
 import org.jivesoftware.sparkimpl.preference.sounds.SoundPreferences;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+import org.jxmpp.jid.DomainBareJid;
 import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.Jid;
 import org.jxmpp.jid.impl.JidCreate;
@@ -237,9 +238,9 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
                     showAlert((Message)stanza);
                 }
                 else {
-                    String host = SparkManager.getSessionManager().getServerAddress();
-                    String from = stanza.getFrom() != null ? stanza.getFrom().toString() : "";
-                    if (host.equalsIgnoreCase(from) || !ModelUtil.hasLength(from)) {
+                    DomainBareJid host = SparkManager.getSessionManager().getServerAddress();
+                    Jid from = stanza.getFrom();
+                    if (host.equals(from)) {
                         showAlert((Message)stanza);
                     }
                 }
