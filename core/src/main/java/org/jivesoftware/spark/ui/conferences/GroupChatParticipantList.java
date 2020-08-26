@@ -15,42 +15,6 @@
  */
 package org.jivesoftware.spark.ui.conferences;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.Point;
-import java.awt.event.ActionEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.DefaultListModel;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
-import javax.swing.ListCellRenderer;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-
 import org.jdesktop.swingx.JXList;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
@@ -60,8 +24,8 @@ import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.packet.StanzaError;
 import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
-import org.jivesoftware.smackx.muc.*;
 import org.jivesoftware.smackx.disco.packet.DiscoverInfo;
+import org.jivesoftware.smackx.muc.*;
 import org.jivesoftware.smackx.muc.packet.MUCItem;
 import org.jivesoftware.smackx.muc.packet.MUCUser;
 import org.jivesoftware.spark.ChatManager;
@@ -84,6 +48,14 @@ import org.jxmpp.jid.Jid;
 import org.jxmpp.jid.impl.JidCreate;
 import org.jxmpp.jid.parts.Resourcepart;
 import org.jxmpp.stringprep.XmppStringprepException;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.List;
+import java.util.*;
 
 /**
  * The <code>RoomInfo</code> class is used to display all room information, such
@@ -194,43 +166,47 @@ public class GroupChatParticipantList extends JPanel {
         ChatManager.NOTIFICATION_COLOR);
     } );
 
-	listener = p -> SwingUtilities.invokeLater( () -> {
-if (p.getError() != null) {
-if (p.getError()
-.getCondition()
-.equals(StanzaError.Condition.conflict
-.toString())) {
-return;
-}
-}
-final EntityFullJid userid = p.getFrom().asEntityFullJidOrThrow();
+    listener = p -> SwingUtilities.invokeLater(() -> {
+        if ( p.getError() != null )
+        {
+            if ( p.getError()
+                .getCondition()
+                .equals(StanzaError.Condition.conflict) )
+            {
+                return;
+            }
+        }
+        final EntityFullJid userid = p.getFrom().asEntityFullJidOrThrow();
 
-Resourcepart displayName = userid.getResourcepart();
-userMap.put(displayName, userid);
+        Resourcepart displayName = userid.getResourcepart();
+        userMap.put(displayName, userid);
 
-if (p.getType() == Presence.Type.available) {
-addParticipant(userid, p);
-agentInfoPanel.setVisible(true);
-	groupChatRoom.validate();
-} else {
-removeUser(displayName);
-}
+        if ( p.getType() == Presence.Type.available )
+        {
+            addParticipant(userid, p);
+            agentInfoPanel.setVisible(true);
+            groupChatRoom.validate();
+        }
+        else
+        {
+            removeUser(displayName);
+        }
 
-// When joining a room, check if the current user is an owner/admin. If so, the UI should allow the current
-// user to change settings of this MUC.
-final MUCUser mucUserEx = p.getExtension( MUCUser.ELEMENT, MUCUser.NAMESPACE );
-if (mucUserEx != null && mucUserEx.getStatus().contains( MUCUser.Status.create( 110 ) ) ) // 110 = Inform user that presence refers to itself
-{
-final MUCItem item = mucUserEx.getItem();
-if ( item != null )
-{
-if ( item.getAffiliation() == MUCAffiliation.admin || item.getAffiliation() == MUCAffiliation.owner )
-{
-groupChatRoom.notifySettingsAccessRight();
-}
-}
-}
-} );
+        // When joining a room, check if the current user is an owner/admin. If so, the UI should allow the current
+        // user to change settings of this MUC.
+        final MUCUser mucUserEx = p.getExtension(MUCUser.ELEMENT, MUCUser.NAMESPACE);
+        if ( mucUserEx != null && mucUserEx.getStatus().contains(MUCUser.Status.create(110)) ) // 110 = Inform user that presence refers to itself
+        {
+            final MUCItem item = mucUserEx.getItem();
+            if ( item != null )
+            {
+                if ( item.getAffiliation() == MUCAffiliation.admin || item.getAffiliation() == MUCAffiliation.owner )
+                {
+                    groupChatRoom.notifySettingsAccessRight();
+                }
+            }
+        }
+    });
 
 	chat.addParticipantListener(listener);
 
@@ -289,7 +265,7 @@ groupChatRoom.notifySettingsAccessRight();
 
 	    Occupant occ = chat.getOccupant(jid);
 	    if (occ != null) {
-		String actualJID = occ.getJid().toString();
+		Jid actualJID = occ.getJid();
 		if (actualJID.equals(jid)) {
 		    removeUser(displayName);
 		}
@@ -612,7 +588,7 @@ groupChatRoom.notifySettingsAccessRight();
 	    final JLabel userLabel = (JLabel) model.getElementAt(index);
 	    final Resourcepart selectedUser = Resourcepart.fromOrThrowUnchecked(userLabel.getText());
 	    final EntityFullJid groupJID = userMap.get(selectedUser);
-	    String groupJIDNickname = groupJID.getResourcepart().toString();
+	    final Resourcepart groupJIDNickname = groupJID.getResourcepart();
 
 	    final Resourcepart nickname = groupChatRoom.getNickname();
 	    final Occupant occupant = userManager.getOccupant(groupChatRoom,
