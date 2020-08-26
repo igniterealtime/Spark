@@ -316,9 +316,8 @@ public class Workspace extends JPanel implements StanzaListener {
             {
                 handleIncomingPacket(stanza);
             }
-            catch ( SmackException.NotConnectedException | InterruptedException e )
+            catch ( Throwable e )
             {
-                // This would be odd: not being connected while receiving a stanza...
                 Log.warning( "Unable to handle incoming stanza: " + stanza , e );
             }
         } );
