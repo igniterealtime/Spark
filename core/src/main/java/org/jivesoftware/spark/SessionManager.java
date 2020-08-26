@@ -24,8 +24,10 @@ import org.jivesoftware.smackx.disco.packet.DiscoverItems;
 import org.jivesoftware.spark.ui.PresenceListener;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.manager.Features;
+import org.jxmpp.jid.DomainBareJid;
 import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.EntityFullJid;
+import org.jxmpp.jid.impl.JidCreate;
 import org.jxmpp.util.XmppStringUtils;
 
 import javax.swing.SwingUtilities;
@@ -44,7 +46,7 @@ public final class SessionManager implements ConnectionListener {
     private AbstractXMPPConnection connection;
     private PrivateDataManager personalDataManager;
 
-    private String serverAddress;
+    private DomainBareJid serverAddress;
     private String username;
     private String password;
 
@@ -125,7 +127,7 @@ public final class SessionManager implements ConnectionListener {
      *
      * @return the connection host.
      */
-    public String getServerAddress() {
+    public DomainBareJid getServerAddress() {
         return serverAddress;
     }
 
@@ -134,8 +136,8 @@ public final class SessionManager implements ConnectionListener {
      *
      * @param address the address of the server.
      */
-    public void setServerAddress(CharSequence address) {
-        this.serverAddress = address.toString();
+    public void setServerAddress(DomainBareJid address) {
+        this.serverAddress = address;
     }
 
     /**
