@@ -26,16 +26,16 @@ public class PluginDependency
 	public boolean compareVersion(String version) {
 		
 		if(version != null && getVersion() != null) {
-			String checkVersion[] = version.split("\\.");
-			String originalVersion[] = getVersion().split("\\.");
-			int maxlength = (originalVersion.length >= checkVersion.length)?originalVersion.length:checkVersion.length;
+			String[] checkVersion = version.split("\\.");
+			String[] originalVersion = getVersion().split("\\.");
+			int maxlength = Math.max(originalVersion.length, checkVersion.length);
 
 
 			// go through all Version-parts
 			for(int i= 0; i < maxlength; i++) {
 				// if the checked version is too short
 				if ( checkVersion.length <= i 
-					&& originalVersion[i].equals(0))
+					&& originalVersion[i].equals("0"))
 					return true;
 				else if (checkVersion.length <= i)
 					return false;
@@ -44,8 +44,8 @@ public class PluginDependency
 					
 					// convert to integer
 					try {
-						int originalVersNumber = Integer.valueOf(originalVersion[i]).intValue();
-						int checkVersNumber = Integer.valueOf(checkVersion[i]).intValue();
+						int originalVersNumber = Integer.parseInt(originalVersion[i]);
+						int checkVersNumber = Integer.parseInt(checkVersion[i]);
 						
 						// check the numbers
 						if(checkVersNumber > originalVersNumber) {
@@ -56,7 +56,7 @@ public class PluginDependency
 						}
 					}
 					catch(Exception e) {
-						Log.error("Version " + checkVersion + " contains letters.", e);
+						Log.error("Version " + version + " contains letters.", e);
 						return false;
 					}
 				}
