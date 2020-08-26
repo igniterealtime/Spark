@@ -198,8 +198,7 @@ public class GroupChatParticipantList extends JPanel {
 if (p.getError() != null) {
 if (p.getError()
 .getCondition()
-.equals(StanzaError.Condition.conflict
-.toString())) {
+.equals(StanzaError.Condition.conflict)) {
 return;
 }
 }
@@ -289,7 +288,7 @@ groupChatRoom.notifySettingsAccessRight();
 
 	    Occupant occ = chat.getOccupant(jid);
 	    if (occ != null) {
-		String actualJID = occ.getJid().toString();
+		Jid actualJID = occ.getJid();
 		if (actualJID.equals(jid)) {
 		    removeUser(displayName);
 		}
@@ -612,7 +611,7 @@ groupChatRoom.notifySettingsAccessRight();
 	    final JLabel userLabel = (JLabel) model.getElementAt(index);
 	    final Resourcepart selectedUser = Resourcepart.fromOrThrowUnchecked(userLabel.getText());
 	    final EntityFullJid groupJID = userMap.get(selectedUser);
-	    String groupJIDNickname = groupJID.getResourcepart().toString();
+	    final Resourcepart groupJIDNickname = groupJID.getResourcepart();
 
 	    final Resourcepart nickname = groupChatRoom.getNickname();
 	    final Occupant occupant = userManager.getOccupant(groupChatRoom,
