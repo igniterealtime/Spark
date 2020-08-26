@@ -134,7 +134,7 @@ public final class AgentConversations extends JPanel implements ChangeListener {
     }
 
 
-    private void addAgentChat(String agentID, String name, String email, String question, Date startDate, String sessionID) {
+    private void addAgentChat(EntityBareJid agentID, String name, String email, String question, Date startDate, String sessionID) {
         if (sessionMap.containsKey(sessionID)) {
             return;
         }
@@ -219,7 +219,7 @@ public final class AgentConversations extends JPanel implements ChangeListener {
                                     if (!ModelUtil.hasLength(email)) {
                                         email = "Not specified";
                                     }
-                                    addAgentChat(agentJID.toString(), nickname, email, question, startDate, chatInfo.getSessionID());
+                                    addAgentChat(agentJID, nickname, email, question, startDate, chatInfo.getSessionID());
                                 }
                             }
                             calculateNumberOfChats(agentRoster);
@@ -265,7 +265,7 @@ public final class AgentConversations extends JPanel implements ChangeListener {
 
     private void removeOldChats(EntityBareJid agentJID, List chatList) {
         for (AgentConversation agent : sessionMap.values()) {
-            if (agent.getAgentJID().toString().equals(agentJID)) {
+            if (agent.getAgentJID().equals(agentJID)) {
                 String sessionID = agent.getSessionID();
                 boolean listHasID = newListHasSession(sessionID, chatList);
                 if (!listHasID) {

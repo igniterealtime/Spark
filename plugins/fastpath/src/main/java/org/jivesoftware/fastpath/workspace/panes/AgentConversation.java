@@ -30,7 +30,7 @@ import java.awt.Insets;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.jivesoftware.spark.UserManager;
+import org.jxmpp.jid.EntityBareJid;
 
 public class AgentConversation extends JPanel {
 
@@ -42,10 +42,9 @@ public class AgentConversation extends JPanel {
     private JLabel questionLabel = new JLabel();
 
     private String sessionID;
-    private String agentJID;
+    private EntityBareJid agentJID;
 
-    public AgentConversation(String agent, String visitor, Date date, String email, String question, String sessionID) {
-        agent = UserManager.unescapeJID(agent);
+    public AgentConversation( EntityBareJid agent, String visitor, Date date, String email, String question, String sessionID) {
         this.agentJID = agent;
 
         setBackground(Color.white);
@@ -89,7 +88,7 @@ public class AgentConversation extends JPanel {
         final SimpleDateFormat simpleFormat = new SimpleDateFormat("MM/dd/yyyy h:mm a");
         String theDate = simpleFormat.format(date);
 
-        agentLabel.setText(agent);
+        agentLabel.setText(agent.asUnescapedString());
         visitorLabel.setText(visitor);
         dateLabel.setText(theDate);
         emailLabel.setText(email);
@@ -98,11 +97,11 @@ public class AgentConversation extends JPanel {
         setSessionID(sessionID);
     }
 
-    public String getAgentJID() {
+    public EntityBareJid getAgentJID() {
         return agentJID;
     }
 
-    public void setAgentJID(String agentJID) {
+    public void setAgentJID(EntityBareJid agentJID) {
         this.agentJID = agentJID;
     }
 
