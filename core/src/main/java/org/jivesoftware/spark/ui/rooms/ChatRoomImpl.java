@@ -46,11 +46,7 @@ import org.jivesoftware.sparkimpl.plugin.transcripts.HistoryMessage;
 import org.jivesoftware.sparkimpl.profile.VCardManager;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
-import org.jxmpp.jid.BareJid;
-import org.jxmpp.jid.EntityBareJid;
-import org.jxmpp.jid.EntityFullJid;
-import org.jxmpp.jid.EntityJid;
-import org.jxmpp.jid.Jid;
+import org.jxmpp.jid.*;
 import org.jxmpp.jid.impl.JidCreate;
 import org.jxmpp.jid.parts.Localpart;
 import org.jxmpp.jid.parts.Resourcepart;
@@ -523,7 +519,7 @@ public class ChatRoomImpl extends ChatRoom {
                     }
 
                     // Do not accept Administrative messages.
-                    final String host = SparkManager.getSessionManager().getServerAddress();
+                    final DomainBareJid host = SparkManager.getSessionManager().getServerAddress();
                     if ( host.equals( message.getFrom() ) )
                     {
                         return;
