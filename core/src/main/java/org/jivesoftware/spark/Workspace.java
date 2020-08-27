@@ -403,9 +403,9 @@ public class Workspace extends JPanel implements StanzaListener {
             return;
         }
         ContactItem contact = contactList.getContactItemByJID(bareJID);
-        Localpart nickname = bareJID.getLocalpartOrNull();
+        String nickname = bareJID.getLocalpartOrNull() == null ? null : bareJID.getLocalpartOrNull().toString();
         if (contact != null) {
-            nickname = Localpart.fromOrThrowUnchecked(contact.getDisplayName());
+            nickname = contact.getDisplayName();
         }
 
         // Create the room if it does not exist.
