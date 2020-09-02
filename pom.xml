@@ -4,7 +4,7 @@
 
     <groupId>org.igniterealtime.spark</groupId>
     <artifactId>parent</artifactId>
-    <version>2.9.3-SNAPSHOT</version>
+    <version>2.9.0</version>
     <packaging>pom</packaging>
 
     <name>Spark (parent)</name>
@@ -107,6 +107,31 @@
                         <target>1.8</target>
                     </configuration>
                 </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-assembly-plugin</artifactId>
+                    <version>3.1.1</version>
+                    <executions>
+                        <execution>
+                            <phase>package</phase>
+                            <goals>
+                                <goal>single</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <archive>
+                            <manifest>
+                                <addClasspath>true</addClasspath>
+                                <classpathPrefix>core/</classpathPrefix>
+                                <mainClass>org.jivesoftware.launcher.Startup</mainClass>
+                            </manifest>
+                        </archive>
+                        <descriptorRefs>
+                            <descriptorRef>jar-with-dependencies</descriptorRef>
+                        </descriptorRefs>
+                    </configuration>
+            </plugin>
             <plugin>
                 <!--
                     Java has trouble reading translations from UTF-8 files. To work around that,
@@ -115,12 +140,12 @@
                   -->
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>native2ascii-maven-plugin</artifactId>
-                <version>1.0-beta-1</version>
+                <version>2.0.1</version>
                 <executions>
                     <execution>
                         <id>native2ascii</id>
                         <goals>
-                            <goal>native2ascii</goal>
+                            <goal>resources</goal>
                         </goals>
                     </execution>
                 </executions>
