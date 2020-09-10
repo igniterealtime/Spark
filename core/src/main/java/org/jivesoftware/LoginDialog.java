@@ -598,7 +598,7 @@ public class LoginDialog {
             GraphicUtils.makeSameSize(usernameField, passwordField);
 
             // Set progress bar description
-            progressBar.setText(Res.getString("message.autenticating"));
+            progressBar.setText(Res.getString("message.authenticating"));
             progressBar.setVerticalTextPosition(JLabel.BOTTOM);
             progressBar.setHorizontalTextPosition(JLabel.CENTER);
             progressBar.setHorizontalAlignment(JLabel.CENTER);

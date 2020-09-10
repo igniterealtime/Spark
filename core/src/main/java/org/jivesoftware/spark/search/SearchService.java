@@ -87,7 +87,7 @@ public class SearchService extends JPanel {
         else
         {
             icon = SparkRes.getImageIcon( SparkRes.LOCK_UNLOCK_16x16 );
-            tooltip = Res.getString( "message.spark.unsecure" );
+            tooltip = Res.getString("message.spark.insecure");
         }
 
         final JLabel lockLabel = new JLabel();

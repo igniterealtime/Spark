@@ -630,7 +630,7 @@ public class GroupChatParticipantList extends JPanel {
 		};
 
 		inviteAgainAction.putValue(Action.NAME,
-			Res.getString("menuitem.inivite.again"));
+			Res.getString("menuitem.invite.again"));
 		popup.add(inviteAgainAction);
 
 		Action removeInvite = new AbstractAction() {
