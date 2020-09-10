@@ -1763,7 +1763,7 @@ moveToOffline(moveToOfflineContactItem);
                 }
             }
             UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
-            JOptionPane.showMessageDialog(SparkManager.getMainWindow(), Res.getString("message.broadcasted.to", buf.toString()), Res.getString("title.notification"), JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(SparkManager.getMainWindow(), Res.getString("message.hasbeenbroadcast.to", buf.toString()), Res.getString("title.notification"), JOptionPane.INFORMATION_MESSAGE);
         }
 
 
