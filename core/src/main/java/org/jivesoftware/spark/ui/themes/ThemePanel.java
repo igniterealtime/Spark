@@ -302,7 +302,7 @@ public class ThemePanel extends JPanel
         add( _useTabsForConference, new GridBagConstraints( 0, 12, 3, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets( 5, 5, 5, 5 ), 50, 0 ) );
 
 
-        JLabel reconnectionlabel = new JLabel( Res.getString( "checkbox.reconnet.info" ) );
+        JLabel reconnectionlabel = new JLabel( Res.getString("checkbox.reconnect.info") );
         add( reconnectionlabel, new GridBagConstraints( 0, 13, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets( 5, 5, 5, 5 ), 50, 0 ) );
         add( _showReconnectBox, new GridBagConstraints( 1, 13, 3, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets( 5, 5, 5, 5 ), 50, 0 ) );
 
