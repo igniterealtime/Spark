@@ -483,7 +483,7 @@ public class LoginDialog {
                 new GridBagConstraints(0, 5, 2, 1, 1.0, 0.0,
                     GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 
-            if (!Default.getBoolean("HIDE_SAVE_PASSWORD_AND_AUTOLOGIN") && localPref.getPswdAutologin()) {
+            if (!Default.getBoolean(Default.HIDE_SAVE_PASSWORD_AND_AUTOLOGIN) && localPref.getPswdAutologin()) {
                 add(savePasswordBox,
                     new GridBagConstraints(1, 5, 2, 1, 1.0, 0.0,
                         GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 0, 5), 0, 0));
@@ -493,14 +493,14 @@ public class LoginDialog {
             }
 
             // Add option to hide "Login as invisible" selection on the login screen
-            if (!Default.getBoolean("HIDE_LOGIN_AS_INVISIBLE") && localPref.getInvisibleLogin()) {
+            if (!Default.getBoolean(Default.HIDE_LOGIN_AS_INVISIBLE) && localPref.getInvisibleLogin()) {
                 add(loginAsInvisibleBox,
                     new GridBagConstraints(1, 7, 2, 1, 1.0, 0.0,
                         GridBagConstraints.EAST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 0, 5), 0, 0));
             }
 
             // Add option to hide "Login anonymously" selection on the login screen
-            if (!Default.getBoolean("HIDE_LOGIN_ANONYMOUSLY") && localPref.getAnonymousLogin()) {
+            if (!Default.getBoolean(Default.HIDE_LOGIN_ANONYMOUSLY) && localPref.getAnonymousLogin()) {
                 add(loginAnonymouslyBox,
                     new GridBagConstraints(1, 8, 2, 1, 1.0, 0.0,
                         GridBagConstraints.EAST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 0, 5), 0, 0));
@@ -1108,13 +1108,13 @@ public class LoginDialog {
                     connection.login();
                 } else {
                     String resource = localPref.getResource();
-                    if (Default.getBoolean("HOSTNAME_AS_RESOURCE") || localPref.isUseHostnameAsResource()) {
+                    if (Default.getBoolean(Default.HOSTNAME_AS_RESOURCE) || localPref.isUseHostnameAsResource()) {
                         try {
                             resource = InetAddress.getLocalHost().getHostName();
                         } catch (UnknownHostException e) {
                             Log.warning("Cannot set hostname as resource - unable to retrieve hostname.", e);
                         }
-                    } else if (Default.getBoolean("VERSION_AS_RESOURCE") || localPref.isUseVersionAsResource()) {
+                    } else if (Default.getBoolean(Default.VERSION_AS_RESOURCE) || localPref.isUseVersionAsResource()) {
                         resource = JiveInfo.getName() + " " + JiveInfo.getVersion();
                     }
 
