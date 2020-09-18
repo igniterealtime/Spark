@@ -638,10 +638,6 @@ public class LoginDialog {
             passwordField.setEnabled(!loginAnonymouslyBox.isSelected());
             useSSO(localPref.isSSOEnabled());
             if (autoLoginBox.isSelected()) {
-                savePasswordBox.setEnabled(false);
-                autoLoginBox.setEnabled(false);
-                loginAsInvisibleBox.setEnabled(false);
-                loginAnonymouslyBox.setEnabled(false);
                 validateLogin();
                 return;
             }
@@ -664,10 +660,6 @@ public class LoginDialog {
             }
 
             if (username != null && server != null && password != null) {
-                savePasswordBox.setEnabled(false);
-                autoLoginBox.setEnabled(false);
-                loginAsInvisibleBox.setEnabled(false);
-                loginAnonymouslyBox.setEnabled(false);
                 validateLogin();
             }
 
@@ -678,8 +670,7 @@ public class LoginDialog {
                 serverField.setText(lockedDownURL);
             }
 
-            if (Default.getBoolean("HOST_NAME_CHANGE_DISABLED") || !localPref.getHostNameChange())
-                serverField.setEnabled(false);
+            setComponentsAvailable(true);
         }
 
         /**
@@ -857,25 +848,31 @@ public class LoginDialog {
         /**
          * Enables/Disables the editable components in the login screen.
          *
-         * @param editable true to enable components, otherwise false to disable.
+         * @param available true to enable components, otherwise false to disable.
          */
-        private void enableComponents(boolean editable) {
+        private void setComponentsAvailable(boolean available) {
+            savePasswordBox.setEnabled(available);
+            autoLoginBox.setEnabled(available);
+            loginAsInvisibleBox.setEnabled(available);
+            loginAnonymouslyBox.setEnabled(available);
 
             // Need to set both editable and enabled for best behavior.
-            usernameField.setEditable(editable);
-            usernameField.setEnabled(editable && !loginAnonymouslyBox.isSelected());
+            usernameField.setEditable(available);
+            usernameField.setEnabled(available && !loginAnonymouslyBox.isSelected());
 
-            passwordField.setEditable(editable);
-            passwordField.setEnabled(editable && !loginAnonymouslyBox.isSelected());
+            passwordField.setEditable(available);
+            passwordField.setEnabled(available && !loginAnonymouslyBox.isSelected());
 
-            final String lockedDownURL = Default.getString(Default.HOST_NAME);
-            if (!ModelUtil.hasLength(lockedDownURL)) {
-                serverField.setEditable(editable);
-                serverField.setEnabled(editable);
+            if (Default.getBoolean(Default.HOST_NAME_CHANGE_DISABLED) || !localPref.getHostNameChange()) {
+                serverField.setEditable(false);
+                serverField.setEnabled(false);
+            } else {
+                serverField.setEditable(available);
+                serverField.setEnabled(available);
             }
 
-            if (editable) {
-                // Reapply focus to username field
+            if (available) {
+                // Reapply focus to password field
                 passwordField.requestFocus();
             }
         }
@@ -919,10 +916,7 @@ public class LoginDialog {
                         // new ChangeLogDialog().showDialog();
                     } else {
                         EventQueue.invokeLater(() -> {
-                            savePasswordBox.setEnabled(true);
-                            autoLoginBox.setEnabled(true);
-                            loginAsInvisibleBox.setVisible(true);
-                            enableComponents(true);
+                            setComponentsAvailable(true);
                             setProgressBarVisible(false);
                         });
 
@@ -933,7 +927,7 @@ public class LoginDialog {
 
             // Start the login process in separate thread.
             // Disable text fields
-            enableComponents(false);
+            setComponentsAvailable(false);
 
             // Show progressbar
             setProgressBarVisible(true);
