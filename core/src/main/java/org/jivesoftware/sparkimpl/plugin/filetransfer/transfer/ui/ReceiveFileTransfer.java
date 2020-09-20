@@ -53,6 +53,7 @@ import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.SmackException;
+import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smackx.filetransfer.FileTransfer;
 import org.jivesoftware.smackx.filetransfer.FileTransferNegotiator;
 import org.jivesoftware.smackx.filetransfer.FileTransferRequest;
@@ -61,6 +62,7 @@ import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.FileDragLabel;
 import org.jivesoftware.spark.filetransfer.preferences.FileTransferPreference;
 import org.jivesoftware.spark.preference.Preference;
+import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.ui.ContactList;
 import org.jivesoftware.spark.util.ByteFormat;
@@ -73,6 +75,7 @@ import org.jivesoftware.sparkimpl.plugin.filetransfer.transfer.Downloads;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jxmpp.jid.BareJid;
 import org.jxmpp.jid.Jid;
+import org.jxmpp.stringprep.XmppStringprepException;
 
 public class ReceiveFileTransfer extends JPanel {
 
@@ -91,8 +94,12 @@ public class ReceiveFileTransfer extends JPanel {
     private long bytesRead;
     private long _starttime;
     private long _endtime;
+    private ChatRoom chatRoom;
+    private String nickname;
+    private String fileName;
 
-    public ReceiveFileTransfer() {
+    public ReceiveFileTransfer(ChatRoom chatRoom ) {
+        this.chatRoom = chatRoom;
         setLayout(new GridBagLayout());
 
         setBackground(new Color(250, 249, 242));
@@ -165,7 +172,7 @@ public class ReceiveFileTransfer extends JPanel {
     }
 
     public void acceptFileTransfer(final FileTransferRequest request) {
-        String fileName = request.getFileName();
+        fileName = request.getFileName();
         long fileSize = request.getFileSize();
         Jid requestor = request.getRequestor();
         BareJid bareJID = requestor.asBareJid();
@@ -174,14 +181,16 @@ public class ReceiveFileTransfer extends JPanel {
         FileTransferNegotiator.IBB_ONLY = SettingsManager.getLocalPreferences().isFileTransferIbbOnly();
 
         ByteFormat format = new ByteFormat();
-        String text = format.format(fileSize);
+        String fileSizeString = format.format(fileSize);
 
-        fileLabel.setText(fileName + " (" + text + ")");
+        fileLabel.setText(fileName + " (" + fileSizeString + ")");
 
         ContactList contactList = SparkManager.getWorkspace().getContactList();
         ContactItem contactItem = contactList.getContactItemByJID(bareJID);
+        nickname = contactItem.getDisplayName();
 
-        titleLabel.setText(Res.getString("message.user.is.sending.you.a.file", contactItem.getDisplayName()));
+        saveEventToHistory(Res.getString("message.file.transfer.history.request.received", fileName, fileSizeString, nickname));
+        titleLabel.setText(Res.getString("message.user.is.sending.you.a.file", nickname));
 
         File tempFile = new File(Spark.getSparkUserHome(), "/tmp");
         try {
@@ -207,11 +216,13 @@ public class ReceiveFileTransfer extends JPanel {
 
             @Override
 			public void mousePressed(MouseEvent e) {
+                saveEventToHistory(Res.getString("message.file.transfer.history.you.accepted", fileName, nickname));
             	try{
             		Downloads.checkDownloadDirectory();
             		acceptRequest(request);
             	}catch (Exception ex){
                     // this means there is a problem with the download directory
+                    saveEventToHistory(Res.getString("message.file.transfer.history.receive.failed", fileName, nickname));
                     try
                     {
                         request.reject();
@@ -257,6 +268,7 @@ public class ReceiveFileTransfer extends JPanel {
         declineButton.addMouseListener(new MouseAdapter() {
             @Override
 			public void mousePressed(MouseEvent e) {
+                saveEventToHistory(Res.getString("message.file.transfer.history.you.rejected", fileName, nickname));
                 rejectRequest(request);
             }
         });
@@ -463,6 +475,7 @@ public class ReceiveFileTransfer extends JPanel {
                 Log.error("There was an error during file transfer.", transfer.getException());
             }
             transferMessage = Res.getString("message.error.during.file.transfer");
+            saveEventToHistory(Res.getString("message.file.transfer.history.receive.failed", fileName, nickname));
         }
         else if (transfer.getStatus() == FileTransfer.Status.refused) {
             transferMessage = Res.getString("message.transfer.refused");
@@ -470,10 +483,12 @@ public class ReceiveFileTransfer extends JPanel {
         else if (transfer.getStatus() == FileTransfer.Status.cancelled ||
             transfer.getAmountWritten() < request.getFileSize()) {
             transferMessage = Res.getString("message.transfer.cancelled");
+            saveEventToHistory(Res.getString("message.file.transfer.history.receive.canceled", fileName, nickname));
         }
         else if(transfer.getAmountWritten() >= request.getFileSize())
         {
             transferMessage = Res.getString("message.transfer.complete", transfer.getFileName());
+            saveEventToHistory(Res.getString("message.file.transfer.history.receive.success", fileName, nickname));
         }
 
         setFinishedText(transferMessage);
@@ -604,7 +619,21 @@ public class ReceiveFileTransfer extends JPanel {
         repaint();
     }
 
-
+    /***
+     * Adds an event text as a message to transcript and saves it to history
+     * @param eventText Contains file transfer event text
+     */
+    private void saveEventToHistory(String eventText)
+    {
+        try {
+            Message message = new Message(nickname, eventText);
+            message.setFrom(SparkManager.getSessionManager().getJID());
+            chatRoom.addToTranscript(message, false);
+            SparkManager.getWorkspace().getTranscriptPlugin().persistChatRoom(chatRoom);
+        } catch (XmppStringprepException e) {
+            e.printStackTrace();
+        }
+    }
 
     private class TransferButton extends JButton {
 

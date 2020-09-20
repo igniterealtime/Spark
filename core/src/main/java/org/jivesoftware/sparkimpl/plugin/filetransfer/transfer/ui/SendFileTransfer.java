@@ -41,6 +41,7 @@ import javax.swing.SwingUtilities;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.SmackException;
+import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smackx.filetransfer.FileTransfer;
 import org.jivesoftware.smackx.filetransfer.FileTransfer.Status;
 import org.jivesoftware.smackx.filetransfer.FileTransferManager;
@@ -48,6 +49,7 @@ import org.jivesoftware.smackx.filetransfer.FileTransferNegotiator;
 import org.jivesoftware.smackx.filetransfer.OutgoingFileTransfer;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.FileDragLabel;
+import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.ui.ContactList;
 import org.jivesoftware.spark.util.ByteFormat;
@@ -56,6 +58,7 @@ import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jxmpp.jid.EntityFullJid;
+import org.jxmpp.stringprep.XmppStringprepException;
 
 public class SendFileTransfer extends JPanel {
 
@@ -77,8 +80,11 @@ public class SendFileTransfer extends JPanel {
     private String nickname;
     private JLabel progressLabel = new JLabel();
     private long _starttime;
+    private ChatRoom chatRoom;
 
-    public SendFileTransfer() {
+    public SendFileTransfer(ChatRoom chatRoom) {
+        this.chatRoom = chatRoom;
+
         setLayout(new GridBagLayout());
 
         setBackground(new Color(250, 249, 242));
@@ -136,18 +142,20 @@ public class SendFileTransfer extends JPanel {
 
         this.transfer = transfer;
         String fileName = transfer.getFileName();
+        String filePath = transfer.getFilePath();
         long fileSize = transfer.getFileSize();
         ByteFormat format = new ByteFormat();
-        String text = format.format(fileSize);
+        String fileSizeString = format.format(fileSize);
 
         fileToSend = new File(transfer.getFilePath());
         imageLabel.setFile(fileToSend);
 
-        fileLabel.setText(fileName + " (" + text + ")");
+        fileLabel.setText(fileName + " (" + fileSizeString + ")");
 
         ContactList contactList = SparkManager.getWorkspace().getContactList();
         ContactItem contactItem = contactList.getContactItemByJID(jid);
 
+        saveEventToHistory(Res.getString("message.file.transfer.history.request.sent", filePath, fileSizeString, nickname));
         titleLabel.setText(Res.getString("message.transfer.waiting.on.user", contactItem.getDisplayName()));
 
         if (isImage(fileName)) {
@@ -210,9 +218,17 @@ public class SendFileTransfer extends JPanel {
                 	long startbyte = transfer.getBytesSent();
                         Thread.sleep(500);
                         FileTransfer.Status status = transfer.getStatus();
-                        if (status == Status.error ||
-                            status == Status.complete || status == Status.cancelled ||
-                            status == Status.refused) {
+                        if (status == Status.complete) {
+                            saveEventToHistory(Res.getString("message.file.transfer.history.send.complete", filePath, nickname));
+                            break;
+                        } else if (status == Status.error) {
+                            saveEventToHistory(Res.getString("message.file.transfer.history.send.error", filePath, nickname));
+                            break;
+                        } else if (status == Status.cancelled) {
+                            saveEventToHistory(Res.getString("message.file.transfer.history.send.canceled", filePath, nickname));
+                            break;
+                        } else if (status == Status.refused) {
+                            saveEventToHistory(Res.getString("message.file.transfer.history.contact.rejected", filePath, nickname));
                             break;
                         }
                         long endtime = System.currentTimeMillis();
@@ -341,6 +357,22 @@ public class SendFileTransfer extends JPanel {
             showAlert(true);
         }
 
+    }
+
+    /***
+     * Adds an event text as a message to transcript and saves it to history
+     * @param eventText Contains file transfer event text
+     */
+    private void saveEventToHistory(String eventText)
+    {
+        try {
+            Message message = new Message(nickname, eventText);
+            message.setFrom(SparkManager.getSessionManager().getJID());
+            chatRoom.addToTranscript(message, false);
+            SparkManager.getWorkspace().getTranscriptPlugin().persistChatRoom(chatRoom);
+        } catch (XmppStringprepException e) {
+            e.printStackTrace();
+        }
     }
 
     private class TransferButton extends JButton {
