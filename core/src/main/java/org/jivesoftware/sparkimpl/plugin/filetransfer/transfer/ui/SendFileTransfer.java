@@ -62,8 +62,8 @@ import org.jxmpp.stringprep.XmppStringprepException;
 
 public class SendFileTransfer extends JPanel {
 
-	private static final long serialVersionUID = -4403839897649365671L;
-	private FileDragLabel imageLabel = new FileDragLabel();
+    private static final long serialVersionUID = -4403839897649365671L;
+    private FileDragLabel imageLabel = new FileDragLabel();
     private JLabel titleLabel = new JLabel();
     private JLabel fileLabel = new JLabel();
 
@@ -72,14 +72,13 @@ public class SendFileTransfer extends JPanel {
     private File fileToSend;
     private OutgoingFileTransfer transfer;
 
-
     private TransferButton retryButton = new TransferButton();
 
     private FileTransferManager transferManager;
     private EntityFullJid fullJID;
     private String nickname;
     private JLabel progressLabel = new JLabel();
-    private long _starttime;
+    private long _startTime;
     private ChatRoom chatRoom;
 
     public SendFileTransfer(ChatRoom chatRoom) {
@@ -104,27 +103,24 @@ public class SendFileTransfer extends JPanel {
         add(retryButton, new GridBagConstraints(1, 4, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 0, 5), 0, 0));
         retryButton.setVisible(false);
 
-        retryButton.addActionListener( e -> {
+        retryButton.addActionListener(e -> {
             try {
                 File file = new File(transfer.getFilePath());
                 transfer = transferManager.createOutgoingFileTransfer(fullJID);
                 transfer.sendFile(file, "Sending");
-            }
-            catch (SmackException e1) {
+            } catch (SmackException e1) {
                 Log.error(e1);
             }
             sendFile(transfer, transferManager, fullJID, nickname);
-        } );
+        });
 
         cancelButton.setForeground(new Color(73, 113, 196));
         cancelButton.setFont(new Font("Dialog", Font.BOLD, 11));
         cancelButton.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(73, 113, 196)));
 
-
         retryButton.setForeground(new Color(73, 113, 196));
         retryButton.setFont(new Font("Dialog", Font.BOLD, 11));
         retryButton.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(73, 113, 196)));
-
 
         setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.white));
     }
@@ -164,58 +160,51 @@ public class SendFileTransfer extends JPanel {
                 ImageIcon image = new ImageIcon(imageURL);
                 image = GraphicUtils.scaleImageIcon(image, 64, 64);
                 imageLabel.setIcon(image);
-            }
-            catch (MalformedURLException e) {
+            } catch (MalformedURLException e) {
                 Log.error("Could not locate image.", e);
                 imageLabel.setIcon(SparkRes.getImageIcon(SparkRes.DOCUMENT_INFO_32x32));
             }
-        }
-        else {
+        } else {
             File file = new File(transfer.getFilePath());
             Icon icon = GraphicUtils.getIcon(file);
             imageLabel.setIcon(icon);
         }
         cancelButton.addMouseListener(new MouseAdapter() {
             @Override
-			public void mouseClicked(MouseEvent mouseEvent) {
+            public void mouseClicked(MouseEvent mouseEvent) {
                 transfer.cancel();
             }
         });
 
         cancelButton.addMouseListener(new MouseAdapter() {
             @Override
-			public void mouseEntered(MouseEvent e) {
+            public void mouseEntered(MouseEvent e) {
                 cancelButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
-
             }
 
             @Override
-			public void mouseExited(MouseEvent e) {
+            public void mouseExited(MouseEvent e) {
                 cancelButton.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
             }
         });
 
-
-	progressBar.setMaximum(100);
+        progressBar.setMaximum(100);
         progressBar.setVisible(false);
         progressBar.setStringPainted(true);
         add(progressBar, new GridBagConstraints(1, 2, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 0, 5), 150, 0));
-	add(progressLabel, new GridBagConstraints(1, 3, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 0, 5), 150, 0));
-
+        add(progressLabel, new GridBagConstraints(1, 3, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 0, 5), 150, 0));
 
         SwingWorker worker = new SwingWorker() {
-            
-            
             @Override
-			public Object construct() {
+            public Object construct() {
                 while (true) {
                     try {
-                	if(transfer.getBytesSent() >0 && _starttime==0){
-                	   _starttime = System.currentTimeMillis();
-                	}
-                	
-                	long starttime = System.currentTimeMillis();
-                	long startbyte = transfer.getBytesSent();
+                        if (transfer.getBytesSent() > 0 && _startTime == 0) {
+                            _startTime = System.currentTimeMillis();
+                        }
+
+                        long startTime = System.currentTimeMillis();
+                        long startByte = transfer.getBytesSent();
                         Thread.sleep(500);
                         FileTransfer.Status status = transfer.getStatus();
                         if (status == Status.complete) {
@@ -231,24 +220,22 @@ public class SendFileTransfer extends JPanel {
                             saveEventToHistory(Res.getString("message.file.transfer.history.contact.rejected", filePath, nickname));
                             break;
                         }
-                        long endtime = System.currentTimeMillis();
-                        long endbyte = transfer.getBytesSent();
-                        
-                        long timediff = endtime-starttime;
-                        long bytediff = endbyte-startbyte;
-                           
-                        updateBar(transfer, nickname, TransferUtils.calculateSpeed(bytediff, timediff) );
-                    }
-                    catch (InterruptedException e) {
+                        long endTime = System.currentTimeMillis();
+                        long endByte = transfer.getBytesSent();
+
+                        long timeDiff = endTime - startTime;
+                        long byteDiff = endByte - startByte;
+
+                        updateBar(transfer, nickname, TransferUtils.calculateSpeed(byteDiff, timeDiff));
+                    } catch (InterruptedException e) {
                         Log.error("Unable to sleep thread.", e);
                     }
-
                 }
                 return "";
             }
 
             @Override
-			public void finished() {
+            public void finished() {
                 updateBar(transfer, nickname, "??MB/s");
             }
         };
@@ -264,37 +251,36 @@ public class SendFileTransfer extends JPanel {
 
         label.addMouseListener(new MouseAdapter() {
             @Override
-			public void mouseClicked(MouseEvent e) {
+            public void mouseClicked(MouseEvent e) {
                 openFile(fileToSend);
             }
 
             @Override
-			public void mouseEntered(MouseEvent e) {
+            public void mouseEntered(MouseEvent e) {
                 label.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
             }
 
             @Override
-			public void mouseExited(MouseEvent e) {
+            public void mouseExited(MouseEvent e) {
                 label.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
             }
         });
     }
 
     private void openFile(File downloadedFile) {
-    	try {
-    		Desktop.getDesktop().open(downloadedFile);
-		} catch (IOException e) {
-			Log.error(e);
-		}
+        try {
+            Desktop.getDesktop().open(downloadedFile);
+        } catch (IOException e) {
+            Log.error(e);
+        }
     }
 
     private void updateBar(final OutgoingFileTransfer transfer, String nickname, String kBperSecond) {
         FileTransfer.Status status = transfer.getStatus();
         if (status == Status.negotiating_stream) {
             titleLabel.setText(Res.getString("message.negotiation.file.transfer", nickname));
-        }
-        else if (status == Status.error) {
+        } else if (status == Status.error) {
             if (transfer.getException() != null) {
                 Log.error("Error occured during file transfer.", transfer.getException());
             }
@@ -304,51 +290,46 @@ public class SendFileTransfer extends JPanel {
             cancelButton.setVisible(false);
             retryButton.setVisible(true);
             showAlert(true);
-        }
-        else if (status == Status.in_progress) {
+        } else if (status == Status.in_progress) {
             titleLabel.setText(Res.getString("message.sending.file.to", nickname));
             showAlert(false);
             if (!progressBar.isVisible()) {
                 progressBar.setVisible(true);
                 progressLabel.setVisible(true);
             }
-            
+
             try {
-            	SwingUtilities.invokeAndWait( () -> {
+                SwingUtilities.invokeAndWait(() -> {
                     // 100 % = Filesize
-                // x %   = Currentsize
-                    long p = (transfer.getBytesSent() * 100 / transfer.getFileSize() );
+                    // x %   = Currentsize
+                    long p = (transfer.getBytesSent() * 100 / transfer.getFileSize());
                     progressBar.setValue(Math.round(p));
-                } );
-            }
-            catch (Exception e) {
+                });
+            } catch (Exception e) {
                 Log.error(e);
             }
 
             ByteFormat format = new ByteFormat();
             String bytesSent = format.format(transfer.getBytesSent());
-            String est = TransferUtils.calculateEstimate(transfer.getBytesSent(), transfer.getFileSize(), _starttime, System.currentTimeMillis());
-           
+            String est = TransferUtils.calculateEstimate(transfer.getBytesSent(), transfer.getFileSize(), _startTime, System.currentTimeMillis());
+
             progressLabel.setText(Res.getString("message.transfer.progressbar.text.sent", bytesSent, kBperSecond, est));
-        }
-        else if (status == Status.complete) {
+        } else if (status == Status.complete) {
             progressBar.setVisible(false);
-            
-            String fin = TransferUtils.convertSecondstoHHMMSS(Math.round(System.currentTimeMillis()-_starttime)/1000);
+
+            String fin = TransferUtils.convertSecondstoHHMMSS(Math.round(System.currentTimeMillis() - _startTime) / 1000);
             progressLabel.setText(Res.getString("label.time", fin));
             titleLabel.setText(Res.getString("message.you.have.sent", nickname));
             cancelButton.setVisible(false);
             showAlert(true);
-        }
-        else if (status == Status.cancelled) {
+        } else if (status == Status.cancelled) {
             progressBar.setVisible(false);
             progressLabel.setVisible(false);
             titleLabel.setText(Res.getString("message.file.transfer.canceled"));
             cancelButton.setVisible(false);
             retryButton.setVisible(true);
             showAlert(true);
-        }
-        else if (status == Status.refused) {
+        } else if (status == Status.refused) {
             progressBar.setVisible(false);
             progressLabel.setVisible(false);
             titleLabel.setText(Res.getString("message.file.transfer.rejected", nickname));
@@ -356,15 +337,13 @@ public class SendFileTransfer extends JPanel {
             retryButton.setVisible(true);
             showAlert(true);
         }
-
     }
 
     /***
      * Adds an event text as a message to transcript and saves it to history
      * @param eventText Contains file transfer event text
      */
-    private void saveEventToHistory(String eventText)
-    {
+    private void saveEventToHistory(String eventText) {
         try {
             Message message = new Message(nickname, eventText);
             message.setFrom(SparkManager.getSessionManager().getJID());
@@ -376,26 +355,23 @@ public class SendFileTransfer extends JPanel {
     }
 
     private class TransferButton extends JButton {
+        private static final long serialVersionUID = 8807434179541503654L;
 
-	private static final long serialVersionUID = 8807434179541503654L;
+        public TransferButton() {
+            decorate();
+        }
 
-	public TransferButton() {
-	    decorate();
-	}
+        /**
+         * Decorates the button with the approriate UI configurations.
+         */
+        private void decorate() {
+            setBorderPainted(false);
+            setOpaque(true);
 
-	/**
-	 * Decorates the button with the approriate UI configurations.
-	 */
-	private void decorate() {
-	    setBorderPainted(false);
-	    setOpaque(true);
-
-	    setContentAreaFilled(false);
-	    setMargin(new Insets(1, 1, 1, 1));
-	}
-
+            setContentAreaFilled(false);
+            setMargin(new Insets(1, 1, 1, 1));
+        }
     }
-
 
     private boolean isImage(String fileName) {
         fileName = fileName.toLowerCase();
@@ -406,7 +382,6 @@ public class SendFileTransfer extends JPanel {
                 return true;
             }
         }
-
         return false;
     }
 
@@ -414,8 +389,7 @@ public class SendFileTransfer extends JPanel {
         if (alert) {
             titleLabel.setForeground(new Color(211, 174, 102));
             setBackground(new Color(250, 249, 242));
-        }
-        else {
+        } else {
             setBackground(new Color(239, 245, 250));
             titleLabel.setForeground(new Color(65, 139, 179));
         }
@@ -426,6 +400,5 @@ public class SendFileTransfer extends JPanel {
             transfer.cancel();
         }
     }
-
 
 }
