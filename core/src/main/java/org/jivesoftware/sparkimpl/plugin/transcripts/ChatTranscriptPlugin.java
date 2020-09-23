@@ -116,7 +116,7 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
             @Override
 			public void poppingUp(Object object, JPopupMenu popup) {
                 if (object instanceof ContactItem) {
-                	if (!Default.getBoolean("HISTORY_DISABLED") && Enterprise.containsFeature(Enterprise.HISTORY_TRANSCRIPTS_FEATURE)) popup.add(viewHistoryAction);
+                	if (!Default.getBoolean(Default.HISTORY_DISABLED) && Enterprise.containsFeature(Enterprise.HISTORY_TRANSCRIPTS_FEATURE)) popup.add(viewHistoryAction);
                	 	popup.add(showStatusMessageAction);
                 }
             }
@@ -340,7 +340,7 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
             }
             chatHistoryButton = UIComponentRegistry.getButtonFactory().createChatTranscriptButton();
 
-            if (!Default.getBoolean("HISTORY_DISABLED") && Enterprise.containsFeature(Enterprise.HISTORY_TRANSCRIPTS_FEATURE)) chatRoom.addChatRoomButton(chatHistoryButton);
+            if (!Default.getBoolean(Default.HISTORY_DISABLED) && Enterprise.containsFeature(Enterprise.HISTORY_TRANSCRIPTS_FEATURE)) chatRoom.addChatRoomButton(chatHistoryButton);
 
             chatHistoryButton.setToolTipText(Res.getString("tooltip.view.history"));
             chatHistoryButton.addActionListener(this);

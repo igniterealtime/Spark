@@ -232,7 +232,7 @@ public class Default {
      * @return Collection
      */
     public static Collection<String> getPluginBlacklist() {
-	String pluginlist = getString("PLUGIN_BLACKLIST").replace(" ", "")
+	String pluginlist = getString(Default.PLUGIN_BLACKLIST).replace(" ", "")
 		.toLowerCase();
 	StringTokenizer tokenizer = new StringTokenizer(pluginlist, ",");
 	ArrayList<String> list = new ArrayList<>();
@@ -242,7 +242,7 @@ public class Default {
 	}
 
 	StringTokenizer clazztokenz = new StringTokenizer(
-		getString("PLUGIN_BLACKLIST_CLASS").replace(" ", ""), ",");
+		getString(Default.PLUGIN_BLACKLIST_CLASS).replace(" ", ""), ",");
 
 	while (clazztokenz.hasMoreTokens()) {
 	    list.add(clazztokenz.nextToken());

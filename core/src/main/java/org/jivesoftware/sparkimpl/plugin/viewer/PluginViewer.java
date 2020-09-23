@@ -66,7 +66,7 @@ public class PluginViewer extends JPanel implements Plugin
 
     private boolean loaded = false;
 
-    private String retrieveListURL = Default.getString( "PLUGIN_REPOSITORY" );
+    private String retrieveListURL = Default.getString( Default.PLUGIN_REPOSITORY );
 
     private JProgressBar progressBar;
 
@@ -191,7 +191,7 @@ public class PluginViewer extends JPanel implements Plugin
         viewPluginsMenu.setAction( viewAction );
 
         // See if we should disable the "Plugins" menu item
-        if ( !Default.getBoolean( "DISABLE_PLUGINS_MENU_ITEM" ) && Enterprise.containsFeature( Enterprise.PLUGINS_MENU_FEATURE ) )
+        if ( !Default.getBoolean( Default.DISABLE_PLUGINS_MENU_ITEM ) && Enterprise.containsFeature( Enterprise.PLUGINS_MENU_FEATURE ) )
         {
             sparkMenu.insert( viewPluginsMenu, 2 );
         }
@@ -307,7 +307,7 @@ public class PluginViewer extends JPanel implements Plugin
                 Protocol.registerProtocol( "https", new Protocol( "https", new EasySSLProtocolSocketFactory(), 443 ) );
                 final HttpClient httpclient = new HttpClient();
 
-                if ( Default.getBoolean( "PLUGIN_REPOSITORY_USE_PROXY" ) )
+                if ( Default.getBoolean( Default.PLUGIN_REPOSITORY_USE_PROXY ) )
                 {
                     String proxyHost = System.getProperty( "http.proxyHost" );
                     String proxyPort = System.getProperty( "http.proxyPort" );
@@ -392,7 +392,7 @@ public class PluginViewer extends JPanel implements Plugin
         String proxyHost = System.getProperty( "http.proxyHost" );
         String proxyPort = System.getProperty( "http.proxyPort" );
 
-        if ( Default.getBoolean( "PLUGIN_REPOSITORY_USE_PROXY" ) )
+        if ( Default.getBoolean( Default.PLUGIN_REPOSITORY_USE_PROXY ) )
         {
             if ( ModelUtil.hasLength( proxyHost )
                     && ModelUtil.hasLength( proxyPort ) )

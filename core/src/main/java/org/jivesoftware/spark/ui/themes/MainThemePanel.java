@@ -49,7 +49,7 @@ public class MainThemePanel extends JPanel {
 	ImageIcon color = new ImageIcon(SparkRes.getImageIcon(SparkRes.COLOR_ICON).getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH));
 	
 	tabs.addTab(Res.getString("title.appearance.preferences"),appe, _themepanel);	
-	if(!Default.getBoolean("CHANGE_COLORS_DISABLED")){
+	if(!Default.getBoolean(Default.CHANGE_COLORS_DISABLED)){
 	    tabs.addTab(Res.getString("lookandfeel.color.label"),color,_colorpanel);
 	}
 	add(tabs);

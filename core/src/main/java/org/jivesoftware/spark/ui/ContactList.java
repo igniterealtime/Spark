@@ -1388,9 +1388,9 @@ moveToOffline(moveToOfflineContactItem);
 
 
         final JPopupMenu popup = new JPopupMenu();
-        if (!Default.getBoolean("ADD_CONTACT_DISABLED") && Enterprise.containsFeature(Enterprise.ADD_CONTACTS_FEATURE)) popup.add(addContactMenu);
+        if (!Default.getBoolean(Default.ADD_CONTACT_DISABLED) && Enterprise.containsFeature(Enterprise.ADD_CONTACTS_FEATURE)) popup.add(addContactMenu);
 
-        if (!Default.getBoolean("ADD_CONTACT_GROUP_DISABLED") && Enterprise.containsFeature(Enterprise.ADD_GROUPS_FEATURE)) popup.add(addContactGroupMenu);
+        if (!Default.getBoolean(Default.ADD_CONTACT_GROUP_DISABLED) && Enterprise.containsFeature(Enterprise.ADD_GROUPS_FEATURE)) popup.add(addContactGroupMenu);
 
         popup.addSeparator();
 
@@ -1405,15 +1405,15 @@ moveToOffline(moveToOfflineContactItem);
             popup.addSeparator();
 
             // See if we should disable the "Delete" menu option
-            if (!Default.getBoolean("DISABLE_REMOVALS") && Enterprise.containsFeature(Enterprise.REMOVALS_FEATURE)) popup.add(delete);
+            if (!Default.getBoolean(Default.DISABLE_REMOVALS) && Enterprise.containsFeature(Enterprise.REMOVALS_FEATURE)) popup.add(delete);
 
             // See if we should disable the "Rename" menu option
-            if (!Default.getBoolean("DISABLE_RENAMES") && Enterprise.containsFeature(Enterprise.RENAMES_FEATURE)) popup.add(rename);
+            if (!Default.getBoolean(Default.DISABLE_RENAMES) && Enterprise.containsFeature(Enterprise.RENAMES_FEATURE)) popup.add(rename);
         }
 
         // Only display a horizontal separator if at least one of those options is present
-        final boolean allowRemovals = (!Default.getBoolean("DISABLE_REMOVALS") && Enterprise.containsFeature(Enterprise.REMOVALS_FEATURE));
-        final boolean allowRenames  = (!Default.getBoolean("DISABLE_RENAMES")  && Enterprise.containsFeature(Enterprise.RENAMES_FEATURE));
+        final boolean allowRemovals = (!Default.getBoolean(Default.DISABLE_REMOVALS) && Enterprise.containsFeature(Enterprise.REMOVALS_FEATURE));
+        final boolean allowRenames  = (!Default.getBoolean(Default.DISABLE_RENAMES)  && Enterprise.containsFeature(Enterprise.RENAMES_FEATURE));
         if (allowRemovals || allowRenames) popup.addSeparator();
 
         popup.add(expand);
@@ -1531,7 +1531,7 @@ moveToOffline(moveToOfflineContactItem);
         };
 
         // See if we should disable the option to transfer files and images
-        if (!Default.getBoolean("DISABLE_FILE_XFER") && Enterprise.containsFeature(Enterprise.FILE_TRANSFER_FEATURE)) {
+        if (!Default.getBoolean(Default.DISABLE_FILE_XFER) && Enterprise.containsFeature(Enterprise.FILE_TRANSFER_FEATURE)) {
         	sendAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.DOCUMENT_16x16));
         	sendAction.putValue(Action.NAME, Res.getString("menuitem.send.a.file"));
         	if (item.getPresence() != null) popup.add(sendAction);
@@ -1583,12 +1583,12 @@ moveToOffline(moveToOfflineContactItem);
         }
 
         // See if we should disable the option to remove a contact
-        if (!Default.getBoolean("DISABLE_REMOVALS") && Enterprise.containsFeature(Enterprise.REMOVALS_FEATURE)) {
+        if (!Default.getBoolean(Default.DISABLE_REMOVALS) && Enterprise.containsFeature(Enterprise.REMOVALS_FEATURE)) {
         	if (!contactGroup.isSharedGroup() && !isInSharedGroup) popup.add(removeAction);
         }
 
         // See if we should disable the option to rename a contact
-        if (!Default.getBoolean("DISABLE_RENAMES") && Enterprise.containsFeature(Enterprise.RENAMES_FEATURE)) popup.add(renameMenu);
+        if (!Default.getBoolean(Default.DISABLE_RENAMES) && Enterprise.containsFeature(Enterprise.RENAMES_FEATURE)) popup.add(renameMenu);
 
         Action viewProfile = new AbstractAction() {
 			private static final long serialVersionUID = -2562731455090634805L;
@@ -1704,7 +1704,7 @@ moveToOffline(moveToOfflineContactItem);
         fireContextMenuListenerPopup(popup, items);
 
         // See if we should disable all "Broadcast" menu items
-        if (!Default.getBoolean("DISABLE_BROADCAST_MENU_ITEM") && Enterprise.containsFeature(Enterprise.BROADCAST_FEATURE)) popup.add(sendMessagesMenu);
+        if (!Default.getBoolean(Default.DISABLE_BROADCAST_MENU_ITEM) && Enterprise.containsFeature(Enterprise.BROADCAST_FEATURE)) popup.add(sendMessagesMenu);
 
         sendMessagesMenu.addActionListener( e1 -> sendMessages(items) );
 
@@ -1971,9 +1971,9 @@ moveToOffline(moveToOfflineContactItem);
         ResourceUtils.resButton(addContactsMenu, Res.getString("menuitem.add.contact"));
         ResourceUtils.resButton(addContactGroupMenu, Res.getString("menuitem.add.contact.group"));
 
-        if (!Default.getBoolean("ADD_CONTACT_DISABLED") && Enterprise.containsFeature(Enterprise.ADD_CONTACTS_FEATURE)) contactsMenu.add(addContactsMenu);
+        if (!Default.getBoolean(Default.ADD_CONTACT_DISABLED) && Enterprise.containsFeature(Enterprise.ADD_CONTACTS_FEATURE)) contactsMenu.add(addContactsMenu);
         
-        if (!Default.getBoolean("ADD_CONTACT_GROUP_DISABLED") && Enterprise.containsFeature(Enterprise.ADD_GROUPS_FEATURE)) contactsMenu.add(addContactGroupMenu);
+        if (!Default.getBoolean(Default.ADD_CONTACT_GROUP_DISABLED) && Enterprise.containsFeature(Enterprise.ADD_GROUPS_FEATURE)) contactsMenu.add(addContactGroupMenu);
 
         addContactsMenu.addActionListener( e -> new RosterDialog().showRosterDialog() );
 
