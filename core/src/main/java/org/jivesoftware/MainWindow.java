@@ -431,7 +431,7 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         File myMaintFile = new File(Default.getString(Default.MAINT_FILESPEC));
 
         final boolean maintMode = (myMaintFile.exists() && !myMaintFile.isDirectory());
-        final boolean prefsAllowed = (!Default.getBoolean("DISABLE_PREFERENCES_MENU_ITEM") && Enterprise.containsFeature(Enterprise.PREFERENCES_MENU_FEATURE));
+        final boolean prefsAllowed = (!Default.getBoolean(Default.DISABLE_PREFERENCES_MENU_ITEM) && Enterprise.containsFeature(Enterprise.PREFERENCES_MENU_FEATURE));
 
         if (maintMode || prefsAllowed) connectMenu.add(preferenceMenuItem);
 
@@ -448,9 +448,9 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         connectMenu.add(alwaysOnTopItem);
 
         // Set up the Logout and Exit menus...
-        if (!Default.getBoolean("DISABLE_EXIT") && Enterprise.containsFeature(Enterprise.LOGOUT_EXIT_FEATURE)) {
+        if (!Default.getBoolean(Default.DISABLE_EXIT) && Enterprise.containsFeature(Enterprise.LOGOUT_EXIT_FEATURE)) {
         	connectMenu.addSeparator();
-        	if(!Default.getBoolean("HIDE_SAVE_PASSWORD_AND_AUTOLOGIN") && SettingsManager.getLocalPreferences().getPswdAutologin()) {
+        	if(!Default.getBoolean(Default.HIDE_SAVE_PASSWORD_AND_AUTOLOGIN) && SettingsManager.getLocalPreferences().getPswdAutologin()) {
         		JMenuItem logoutMenuItem = new JMenuItem();
         		ResourceUtils.resButton(logoutMenuItem, Res.getString("menuitem.logout.no.status"));
         		logoutMenuItem.addActionListener( e -> logout(false) );
@@ -507,7 +507,7 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         };
 
 
-        if (!Default.getBoolean("HELP_USER_GUIDE_DISABLED") && Enterprise.containsFeature(Enterprise.HELP_USERGUIDE_FEATURE)) {
+        if (!Default.getBoolean(Default.HELP_USER_GUIDE_DISABLED) && Enterprise.containsFeature(Enterprise.HELP_USERGUIDE_FEATURE)) {
         	viewHelpGuideAction.putValue(Action.NAME,
         			Res.getString("menuitem.user.guide"));
         	viewHelpGuideAction.putValue(Action.SMALL_ICON,
@@ -515,10 +515,10 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         	helpMenu.add(viewHelpGuideAction);
         }
 
-        if (!Default.getBoolean("HELP_FORUM_DISABLED") && Enterprise.containsFeature(Enterprise.HELP_FORUMS_FEATURE)) helpMenu.add(sparkforumItem);
+        if (!Default.getBoolean(Default.HELP_FORUM_DISABLED) && Enterprise.containsFeature(Enterprise.HELP_FORUMS_FEATURE)) helpMenu.add(sparkforumItem);
 
 	// Build Help Menu
-	if (!Default.getBoolean("DISABLE_UPDATES") && Enterprise.containsFeature(Enterprise.UPDATES_FEATURE)) helpMenu.add(updateMenu);
+	if (!Default.getBoolean(Default.DISABLE_UPDATES) && Enterprise.containsFeature(Enterprise.UPDATES_FEATURE)) helpMenu.add(updateMenu);
 
 	helpMenu.addSeparator();
 	helpMenu.add(viewErrors);
@@ -529,8 +529,8 @@ public final class MainWindow extends ChatFrame implements ActionListener {
 	ResourceUtils.resButton(helpMenu, Res.getString("menuitem.help"));
 	ResourceUtils.resButton(menuAbout, Res.getString("menuitem.about"));
 
-	if (Default.getString("HELP_FORUM_TEXT").length() > 0) {
-	    ResourceUtils.resButton(sparkforumItem, Default.getString("HELP_FORUM_TEXT"));
+	if (Default.getString(Default.HELP_FORUM_TEXT).length() > 0) {
+	    ResourceUtils.resButton(sparkforumItem, Default.getString(Default.HELP_FORUM_TEXT));
 	} else {
 	    ResourceUtils.resButton(sparkforumItem, Res.getString("menuitem.online.help"));
 	}
@@ -547,7 +547,7 @@ public final class MainWindow extends ChatFrame implements ActionListener {
 	sparkforumItem.addActionListener(new AbstractAction() {
 	    private static final long serialVersionUID = -1423433460333010339L;
 
-	    final String url = Default.getString("HELP_FORUM");
+	    final String url = Default.getString(Default.HELP_FORUM);
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -569,7 +569,7 @@ public final class MainWindow extends ChatFrame implements ActionListener {
 	    }
 	});
 
-	if (!Default.getBoolean("DISABLE_UPDATES") && Enterprise.containsFeature(Enterprise.UPDATES_FEATURE)) {
+	if (!Default.getBoolean(Default.DISABLE_UPDATES) && Enterprise.containsFeature(Enterprise.UPDATES_FEATURE)) {
 		// Execute spark update checker after one minute.
 		final TimerTask task = new SwingTimerTask() {
 			@Override

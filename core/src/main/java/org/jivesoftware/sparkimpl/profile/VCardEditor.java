@@ -92,7 +92,7 @@ public class VCardEditor {
 	tabbedPane.addTab(Res.getString("tab.home"), homePanel);
 
 	// See if we should remove the Avatar tab in profile dialog
-	if (!Default.getBoolean("DISABLE_AVATAR_TAB") && Enterprise.containsFeature(Enterprise.AVATAR_TAB_FEATURE)) {
+	if (!Default.getBoolean(Default.DISABLE_AVATAR_TAB) && Enterprise.containsFeature(Enterprise.AVATAR_TAB_FEATURE)) {
 		avatarPanel = new AvatarPanel();
 		tabbedPane.addTab(Res.getString("tab.avatar"), avatarPanel);
 	}
@@ -179,7 +179,7 @@ public class VCardEditor {
 	pane.addPropertyChangeListener(changeListener);
 	
 	// See if we should remove the Avatar tab in profile dialog	
-	if (!Default.getBoolean("DISABLE_AVATAR_TAB") && Enterprise.containsFeature(Enterprise.AVATAR_TAB_FEATURE)) avatarPanel.setParentDialog(dlg);
+	if (!Default.getBoolean(Default.DISABLE_AVATAR_TAB) && Enterprise.containsFeature(Enterprise.AVATAR_TAB_FEATURE)) avatarPanel.setParentDialog(dlg);
 	
 	dlg.setVisible(true);
 	dlg.toFront();
@@ -215,7 +215,7 @@ public class VCardEditor {
 	tabbedPane.addTab(Res.getString("tab.home"), homePanel);
 
 	// See if we should remove the Avatar tab in profile dialog
-	if (!Default.getBoolean("DISABLE_AVATAR_TAB") && Enterprise.containsFeature(Enterprise.AVATAR_TAB_FEATURE)) {	
+	if (!Default.getBoolean(Default.DISABLE_AVATAR_TAB) && Enterprise.containsFeature(Enterprise.AVATAR_TAB_FEATURE)) {
 		avatarPanel = new AvatarPanel();
 		avatarPanel.allowEditing(false);
 		tabbedPane.addTab(Res.getString("tab.avatar"), avatarPanel);
@@ -386,7 +386,7 @@ public class VCardEditor {
         	ImageIcon icon = new ImageIcon(bytes);
 	    
         	// See if we should remove the Avatar tab in profile dialog	    
-        	if (!Default.getBoolean("DISABLE_AVATAR_TAB") && Enterprise.containsFeature(Enterprise.AVATAR_TAB_FEATURE)) {	    
+        	if (!Default.getBoolean(Default.DISABLE_AVATAR_TAB) && Enterprise.containsFeature(Enterprise.AVATAR_TAB_FEATURE)) {
         		avatarPanel.setAvatar(icon);
         		avatarPanel.setAvatarBytes(bytes);
         	}	    

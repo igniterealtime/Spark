@@ -185,7 +185,7 @@ public final class Spark {
 
         installBaseUIProperties();
 
-        if (Default.getBoolean("CHANGE_COLORS_DISABLED")) {
+        if (Default.getBoolean(Default.CHANGE_COLORS_DISABLED)) {
             ColorSettingManager.restoreDefault();
         }
 
@@ -369,7 +369,7 @@ public final class Spark {
     }
 
     public static boolean disableUpdatesOnCustom() {
-	return Default.getBoolean("DISABLE_UPDATES");
+	return Default.getBoolean(Default.DISABLE_UPDATES);
     }
 
 	public static void setApplicationFont(Font f) {
