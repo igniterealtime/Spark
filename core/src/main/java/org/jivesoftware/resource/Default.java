@@ -121,7 +121,31 @@ public class Default {
     public static final String PROXY_ENABLED = "PROXY_ENABLED";
     public static final String OLD_SSL_ENABLED = "OLD_SSL_ENABLED";
     public static final String FILE_TRANSFER_IBB_ONLY = "FILE_TRANSFER_IBB_ONLY";
-    
+    public static final String CHANGE_COLORS_DISABLED = "CHANGE_COLORS_DISABLED";
+    public static final String ADD_CONTACT_GROUP_DISABLED = "ADD_CONTACT_GROUP_DISABLED";
+    public static final String DISABLE_AVATAR_TAB = "DISABLE_AVATAR_TAB";
+    public static final String DISABLE_BROADCAST_MENU_ITEM = "DISABLE_BROADCAST_MENU_ITEM";
+    public static final String DISABLE_EDIT_PROFILE = "DISABLE_EDIT_PROFILE";
+    public static final String DISABLE_EXIT = "DISABLE_EXIT";
+    public static final String DISABLE_FILE_XFER = "DISABLE_FILE_XFER";
+    public static final String DISABLE_MOVE_AND_COPY = "DISABLE_MOVE_AND_COPY";
+    public static final String DISABLE_PLUGINS_MENU_ITEM = "DISABLE_PLUGINS_MENU_ITEM";
+    public static final String DISABLE_PREFERENCES_MENU_ITEM = "DISABLE_PREFERENCES_MENU_ITEM";
+    public static final String DISABLE_PRESENCE_STATUS_CHANGE = "DISABLE_PRESENCE_STATUS_CHANGE";
+    public static final String DISABLE_REMOVALS = "DISABLE_REMOVALS";
+    public static final String DISABLE_RENAMES = "DISABLE_RENAMES";
+    public static final String DISABLE_VIEW_NOTES = "DISABLE_VIEW_NOTES";
+    public static final String DISABLE_VIEW_TASK_LIST = "DISABLE_VIEW_TASK_LIST";
+    public static final String HELP_FORUM = "HELP_FORUM";
+    public static final String HELP_FORUM_DISABLED = "HELP_FORUM_DISABLED";
+    public static final String HELP_FORUM_TEXT = "HELP_FORUM_TEXT";
+    public static final String HELP_USER_GUIDE_DISABLED = "HELP_USER_GUIDE_DISABLED";
+    public static final String PLUGIN_BLACKLIST = "PLUGIN_BLACKLIST";
+    public static final String PLUGIN_BLACKLIST_CLASS = "PLUGIN_BLACKLIST_CLASS";
+    public static final String PLUGIN_REPOSITORY = "PLUGIN_REPOSITORY";
+    public static final String PLUGIN_REPOSITORY_USE_PROXY = "PLUGIN_REPOSITORY_USE_PROXY";
+    public static final String PROXY_PROTOCOL = "PROXY_PROTOCOL";
+
     static ClassLoader cl = SparkRes.class.getClassLoader();
 
     static {
