@@ -1531,7 +1531,7 @@ moveToOffline(moveToOfflineContactItem);
         };
 
         // See if we should disable the option to transfer files and images
-        if (!Default.getBoolean(Default.DISABLE_FILE_XFER) && Enterprise.containsFeature(Enterprise.FILE_TRANSFER_FEATURE)) {
+        if (!Default.getBoolean(Default.DISABLE_FILE_TRANSFER) && Enterprise.containsFeature(Enterprise.FILE_TRANSFER_FEATURE)) {
         	sendAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.DOCUMENT_16x16));
         	sendAction.putValue(Action.NAME, Res.getString("menuitem.send.a.file"));
         	if (item.getPresence() != null) popup.add(sendAction);
