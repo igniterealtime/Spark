@@ -483,7 +483,7 @@ public class LoginDialog {
                 new GridBagConstraints(0, 5, 2, 1, 1.0, 0.0,
                     GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 
-            if (!Default.getBoolean(Default.HIDE_SAVE_PASSWORD_AND_AUTOLOGIN) && localPref.getPswdAutologin()) {
+            if (!Default.getBoolean(Default.HIDE_SAVE_PASSWORD_AND_AUTO_LOGIN) && localPref.getPswdAutologin()) {
                 add(savePasswordBox,
                     new GridBagConstraints(1, 5, 2, 1, 1.0, 0.0,
                         GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 0, 5), 0, 0));

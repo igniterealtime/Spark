@@ -428,7 +428,7 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         preferenceMenuItem.addActionListener(this);
 
         // Show the "Preferences" menu item ONLY in Maintenance Mode or when DISABLE_PREFERENCES_MENU_ITEM = false and Client Control allows it.
-        File myMaintFile = new File(Default.getString(Default.MAINT_FILESPEC));
+        File myMaintFile = new File(Default.getString(Default.MAINTENANCE_FILE_PATH));
 
         final boolean maintMode = (myMaintFile.exists() && !myMaintFile.isDirectory());
         final boolean prefsAllowed = (!Default.getBoolean(Default.DISABLE_PREFERENCES_MENU_ITEM) && Enterprise.containsFeature(Enterprise.PREFERENCES_MENU_FEATURE));
@@ -450,7 +450,7 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         // Set up the Logout and Exit menus...
         if (!Default.getBoolean(Default.DISABLE_EXIT) && Enterprise.containsFeature(Enterprise.LOGOUT_EXIT_FEATURE)) {
         	connectMenu.addSeparator();
-        	if(!Default.getBoolean(Default.HIDE_SAVE_PASSWORD_AND_AUTOLOGIN) && SettingsManager.getLocalPreferences().getPswdAutologin()) {
+        	if(!Default.getBoolean(Default.HIDE_SAVE_PASSWORD_AND_AUTO_LOGIN) && SettingsManager.getLocalPreferences().getPswdAutologin()) {
         		JMenuItem logoutMenuItem = new JMenuItem();
         		ResourceUtils.resButton(logoutMenuItem, Res.getString("menuitem.logout.no.status"));
         		logoutMenuItem.addActionListener( e -> logout(false) );

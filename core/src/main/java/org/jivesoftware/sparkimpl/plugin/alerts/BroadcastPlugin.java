@@ -299,7 +299,7 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
 
 	if (!from.hasLocalpart()) {
 	    // if theres no "@" it means the message came from the server
-	    if (Default.getBoolean(Default.BROADCAST_IN_CHATWINDOW)
+	    if (Default.getBoolean(Default.BROADCAST_IN_CHAT_WINDOW)
 		    || linebreaks > 20 || message.getBody().length() > 1000 || mightbeMOTD) {
 		// if we have more than 20 linebreaks or the message is longer
 		// than 1000characters we should broadcast
