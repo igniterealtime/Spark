@@ -138,7 +138,7 @@ public class SparkPlugUI extends JPanel {
             setBackground(new Color(234, 230, 212));
             showOperationButton();
             setBorder(BorderFactory.createEtchedBorder());
-	    if (Default.getBoolean(Default.DEINSTALL_PLUGINS_DISABLED)) {
+	    if (Default.getBoolean(Default.UNINSTALL_PLUGINS_DISABLED)) {
 		installButton.setVisible(false);
 	    }
         }

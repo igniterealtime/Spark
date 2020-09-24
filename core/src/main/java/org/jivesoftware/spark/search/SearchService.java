@@ -65,7 +65,7 @@ public class SearchService extends JPanel {
 
         // add(findLabel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
 
-        boolean showPersonSearchField = (!Default.getBoolean("HIDE_PERSON_SEARCH_FIELD") && Enterprise.containsFeature(Enterprise.PERSON_SEARCH_FEATURE));
+        boolean showPersonSearchField = (!Default.getBoolean(Default.HIDE_PERSON_SEARCH_FIELD) && Enterprise.containsFeature(Enterprise.PERSON_SEARCH_FEATURE));
 
         if (showPersonSearchField) {
         	if (Spark.isMac()) {

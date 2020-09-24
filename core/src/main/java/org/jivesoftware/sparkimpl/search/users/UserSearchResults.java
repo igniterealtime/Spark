@@ -198,7 +198,7 @@ public class UserSearchResults extends JPanel {
             }
         };
 
-        if (!Default.getBoolean("ADD_CONTACT_DISABLED") && Enterprise.containsFeature(Enterprise.ADD_CONTACTS_FEATURE)) {
+        if (!Default.getBoolean(Default.ADD_CONTACT_DISABLED) && Enterprise.containsFeature(Enterprise.ADD_CONTACTS_FEATURE)) {
 	        final JMenuItem addAsContact = new JMenuItem(addContactAction);
 	        addContactAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.SMALL_ADD_IMAGE));
 	        addContactAction.putValue(Action.NAME, Res.getString("menuitem.add.as.contact"));

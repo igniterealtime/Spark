@@ -72,7 +72,7 @@ public class Default {
     public static final String DEFAULT_LOOK_AND_FEEL = "DEFAULT_LOOK_AND_FEEL";
     public static final String DEFAULT_LOOK_AND_FEEL_MAC = "DEFAULT_LOOK_AND_FEEL_MAC";
     public static final String INSTALL_PLUGINS_DISABLED = "INSTALL_PLUGINS_DISABLED";
-    public static final String DEINSTALL_PLUGINS_DISABLED = "DEINSTALL_PLUGINS_DISABLED";
+    public static final String UNINSTALL_PLUGINS_DISABLED = "UNINSTALL_PLUGINS_DISABLED";
     public static final String ADVANCED_DISABLED = "ADVANCED_DISABLED";
     public static final String SSO_DISABLED = "SSO_DISABLED";
     public static final String PROXY_DISABLED = "PROXY_DISABLED";
@@ -80,7 +80,7 @@ public class Default {
     public static final String CERTIFICATES_MANAGER_DISABLED = "CERTIFICATES_MANAGER_DISABLED";
     public static final String MUTUAL_AUTH_DISABLED = "MUTUAL_AUTH_DISABLED";
     public static final String HELP_USER_GUIDE = "HELP_USER_GUIDE";
-    public static final String BROADCAST_IN_CHATWINDOW = "BROADCAST_IN_CHATWINDOW";
+    public static final String BROADCAST_IN_CHAT_WINDOW = "BROADCAST_IN_CHAT_WINDOW";
     public static final String MENUBAR_TEXT = "MENUBAR_TEXT";
     public static final String FILE_TRANSFER_WARNING_SIZE = "FILE_TRANSFER_WARNING_SIZE";
     public static final String FILE_TRANSFER_MAXIMUM_SIZE = "FILE_TRANSFER_MAXIMUM_SIZE";
@@ -93,10 +93,10 @@ public class Default {
     public static final String VERSION_AS_RESOURCE = "VERSION_AS_RESOURCE";
     public static final String HISTORY_DISABLED = "HISTORY_DISABLED";
     public static final String HIDE_HISTORY_SETTINGS = "HIDE_HISTORY_SETTINGS";
-    public static final String HIDE_SAVE_PASSWORD_AND_AUTOLOGIN = "HIDE_SAVE_PASSWORD_AND_AUTOLOGIN";
+    public static final String HIDE_SAVE_PASSWORD_AND_AUTO_LOGIN = "HIDE_SAVE_PASSWORD_AND_AUTO_LOGIN";
     public static final String HIDE_LOGIN_AS_INVISIBLE = "HIDE_LOGIN_AS_INVISIBLE";
     public static final String HIDE_LOGIN_ANONYMOUSLY = "HIDE_LOGIN_ANONYMOUSLY";
-    public static final String MAINT_FILESPEC = "MAINT_FILESPEC";
+    public static final String MAINTENANCE_FILE_PATH = "MAINTENANCE_FILE_PATH";
     public static final String HIDE_START_A_CHAT = "HIDE_START_A_CHAT";  
     public static final String ACCEPT_EXPIRED = "ACCEPT_EXPIRED";
     public static final String ACCEPT_NOT_VALID_YET = "ACCEPT_NOT_VALID_YET";
@@ -121,7 +121,31 @@ public class Default {
     public static final String PROXY_ENABLED = "PROXY_ENABLED";
     public static final String OLD_SSL_ENABLED = "OLD_SSL_ENABLED";
     public static final String FILE_TRANSFER_IBB_ONLY = "FILE_TRANSFER_IBB_ONLY";
-    
+    public static final String CHANGE_COLORS_DISABLED = "CHANGE_COLORS_DISABLED";
+    public static final String ADD_CONTACT_GROUP_DISABLED = "ADD_CONTACT_GROUP_DISABLED";
+    public static final String DISABLE_AVATAR_TAB = "DISABLE_AVATAR_TAB";
+    public static final String DISABLE_BROADCAST_MENU_ITEM = "DISABLE_BROADCAST_MENU_ITEM";
+    public static final String DISABLE_EDIT_PROFILE = "DISABLE_EDIT_PROFILE";
+    public static final String DISABLE_EXIT = "DISABLE_EXIT";
+    public static final String DISABLE_FILE_TRANSFER = "DISABLE_FILE_TRANSFER";
+    public static final String DISABLE_MOVE_AND_COPY = "DISABLE_MOVE_AND_COPY";
+    public static final String DISABLE_PLUGINS_MENU_ITEM = "DISABLE_PLUGINS_MENU_ITEM";
+    public static final String DISABLE_PREFERENCES_MENU_ITEM = "DISABLE_PREFERENCES_MENU_ITEM";
+    public static final String DISABLE_PRESENCE_STATUS_CHANGE = "DISABLE_PRESENCE_STATUS_CHANGE";
+    public static final String DISABLE_REMOVALS = "DISABLE_REMOVALS";
+    public static final String DISABLE_RENAMES = "DISABLE_RENAMES";
+    public static final String DISABLE_VIEW_NOTES = "DISABLE_VIEW_NOTES";
+    public static final String DISABLE_VIEW_TASK_LIST = "DISABLE_VIEW_TASK_LIST";
+    public static final String HELP_FORUM = "HELP_FORUM";
+    public static final String HELP_FORUM_DISABLED = "HELP_FORUM_DISABLED";
+    public static final String HELP_FORUM_TEXT = "HELP_FORUM_TEXT";
+    public static final String HELP_USER_GUIDE_DISABLED = "HELP_USER_GUIDE_DISABLED";
+    public static final String PLUGIN_BLACKLIST = "PLUGIN_BLACKLIST";
+    public static final String PLUGIN_BLACKLIST_CLASS = "PLUGIN_BLACKLIST_CLASS";
+    public static final String PLUGIN_REPOSITORY = "PLUGIN_REPOSITORY";
+    public static final String PLUGIN_REPOSITORY_USE_PROXY = "PLUGIN_REPOSITORY_USE_PROXY";
+    public static final String PROXY_PROTOCOL = "PROXY_PROTOCOL";
+
     static ClassLoader cl = SparkRes.class.getClassLoader();
 
     static {
@@ -208,7 +232,7 @@ public class Default {
      * @return Collection
      */
     public static Collection<String> getPluginBlacklist() {
-	String pluginlist = getString("PLUGIN_BLACKLIST").replace(" ", "")
+	String pluginlist = getString(Default.PLUGIN_BLACKLIST).replace(" ", "")
 		.toLowerCase();
 	StringTokenizer tokenizer = new StringTokenizer(pluginlist, ",");
 	ArrayList<String> list = new ArrayList<>();
@@ -218,7 +242,7 @@ public class Default {
 	}
 
 	StringTokenizer clazztokenz = new StringTokenizer(
-		getString("PLUGIN_BLACKLIST_CLASS").replace(" ", ""), ",");
+		getString(Default.PLUGIN_BLACKLIST_CLASS).replace(" ", ""), ",");
 
 	while (clazztokenz.hasMoreTokens()) {
 	    list.add(clazztokenz.nextToken());

@@ -72,7 +72,7 @@ public final class ChatTranscripts {
     public static void appendToTranscript(EntityBareJid jid, ChatTranscript transcript) {
     	final File transcriptFile = getTranscriptFile(jid);
 
-       	if (!Default.getBoolean("HISTORY_DISABLED") && Enterprise.containsFeature(Enterprise.HISTORY_TRANSCRIPTS_FEATURE)) {
+       	if (!Default.getBoolean(Default.HISTORY_DISABLED) && Enterprise.containsFeature(Enterprise.HISTORY_TRANSCRIPTS_FEATURE)) {
     		// Write Full Transcript, appending the messages.
     		writeToFile(transcriptFile, transcript.getMessages(), true);
 
