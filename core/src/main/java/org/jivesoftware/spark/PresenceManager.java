@@ -65,7 +65,7 @@ public class PresenceManager {
         PRESENCES.add(phonePresence);
         PRESENCES.add(dndPresence);
 
-        if (!Default.getBoolean("HIDE_LOGIN_AS_INVISIBLE") && Enterprise.containsFeature(Enterprise.INVISIBLE_LOGIN_FEATURE)) PRESENCES.add(invisible);        
+        if (!Default.getBoolean(Default.HIDE_LOGIN_AS_INVISIBLE) && Enterprise.containsFeature(Enterprise.INVISIBLE_LOGIN_FEATURE)) PRESENCES.add(invisible);
     }
 
     /**

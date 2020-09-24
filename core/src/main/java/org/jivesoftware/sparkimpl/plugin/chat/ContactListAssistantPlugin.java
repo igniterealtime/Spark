@@ -128,7 +128,7 @@ public class ContactListAssistantPlugin implements Plugin {
                     });
 
                     int index = -1;
-                    if (!Default.getBoolean("DISABLE_RENAMES") && Enterprise.containsFeature(Enterprise.RENAMES_FEATURE)) {
+                    if (!Default.getBoolean(Default.DISABLE_RENAMES) && Enterprise.containsFeature(Enterprise.RENAMES_FEATURE)) {
                     	for (int i = 0; i < popup.getComponentCount(); i++) {
                     		Object o = popup.getComponent(i);
                     		if (o instanceof JMenuItem && ((JMenuItem)o).getText().equals(Res.getString("menuitem.rename"))) {
@@ -143,7 +143,7 @@ public class ContactListAssistantPlugin implements Plugin {
                         // Add MOVE/COPY options right after the RENAME option or in it's place if it doesn't exist.
                         if (index != -1) {
                         	// See if we should disable the "Move to" and "Copy to" menu options
-                        	if (!Default.getBoolean("DISABLE_MOVE_AND_COPY") && Enterprise.containsFeature(Enterprise.MOVE_COPY_FEATURE)) {
+                        	if (!Default.getBoolean(Default.DISABLE_MOVE_AND_COPY) && Enterprise.containsFeature(Enterprise.MOVE_COPY_FEATURE)) {
                         		popup.add(moveToMenu, index + 1);
                         		popup.add(copyToMenu, index + 2);
                         	}
@@ -151,14 +151,14 @@ public class ContactListAssistantPlugin implements Plugin {
                     }
                     else if (contactItems.size() > 1) {
                     	// See if we should disable the "Move to" and "Copy to" menu options
-                    	if (!Default.getBoolean("DISABLE_MOVE_AND_COPY") && Enterprise.containsFeature(Enterprise.MOVE_COPY_FEATURE)) {                    	
+                    	if (!Default.getBoolean(Default.DISABLE_MOVE_AND_COPY) && Enterprise.containsFeature(Enterprise.MOVE_COPY_FEATURE)) {
                     		popup.addSeparator();
                     		popup.add(moveToMenu);
                     		popup.add(copyToMenu);
                    	}                        
 
                         // Clean up the extra separator if "Broadcast" menu items are disabled
-                        if (!Default.getBoolean("DISABLE_BROADCAST_MENU_ITEM") && Enterprise.containsFeature(Enterprise.BROADCAST_FEATURE)) popup.addSeparator();                        
+                        if (!Default.getBoolean(Default.DISABLE_BROADCAST_MENU_ITEM) && Enterprise.containsFeature(Enterprise.BROADCAST_FEATURE)) popup.addSeparator();
                     }
                 }
             }
