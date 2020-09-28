@@ -1371,7 +1371,7 @@ moveToOffline(moveToOfflineContactItem);
         boolean handled = chatManager.fireContactItemDoubleClicked(item);
 
         if (!handled) {
-            chatManager.activateChat(item.getJID(), item.getDisplayName());
+            chatManager.activateChat(item.getJid().asUnescapedString(), item.getDisplayName());
         }
 
         clearSelectionList(item);
