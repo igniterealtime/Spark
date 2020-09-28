@@ -194,9 +194,9 @@ public class MessageEntry extends TimeStampedEntry
                             }
                         }
 
-                        to = from + 1;
-                        while (to < line.length()) {
-                            if (Character.isWhitespace(line.charAt(to++))) break;
+                        to = from;
+                        while (++to < line.length()) {
+                            if (Character.isWhitespace(line.charAt(to))) break;
                         }
                         insertFragment(chatArea, line.substring(from, to), messageStyle);
                     }
