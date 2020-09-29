@@ -272,7 +272,7 @@ public class ConversationHistoryPlugin implements Plugin {
         final StringBuilder builder = new StringBuilder();
         builder.append("<conversations>");
         for (EntityBareJid user : historyList) {
-            builder.append("<user>").append(user).append("</user>");
+            builder.append("<user>").append(user.asUnescapedString()).append("</user>");
         }
         builder.append("</conversations>");
 
