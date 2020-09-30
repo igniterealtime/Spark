@@ -430,6 +430,11 @@ public class ChatRoomImpl extends ChatRoom {
         return presence.getFrom().asEntityFullJidOrThrow();
     }
 
+    @Override
+    public EntityJid getJid() {
+        return participantJID;
+    }
+
     /**
      * Process incoming packets.
      *
