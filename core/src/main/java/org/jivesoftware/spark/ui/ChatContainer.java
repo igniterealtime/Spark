@@ -41,6 +41,7 @@ import org.jivesoftware.sparkimpl.plugin.alerts.SparkToaster;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jxmpp.jid.EntityBareJid;
+import org.jxmpp.jid.EntityJid;
 import org.jxmpp.jid.Jid;
 import org.jxmpp.jid.impl.JidCreate;
 import org.jxmpp.jid.parts.Resourcepart;
@@ -67,7 +68,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
      */
     private final List<ChatRoomListener> chatRoomListeners = new ArrayList<>();
     private final List<ChatRoom> chatRoomList = new ArrayList<>();
-    private final Map<EntityBareJid, StanzaListener> presenceMap = new HashMap<>();
+    private final Map<EntityJid, StanzaListener> presenceMap = new HashMap<>();
     private static final String WELCOME_TITLE = SparkRes.getString(SparkRes.WELCOME);
     private ChatFrame chatFrame;
     private final TimerTask focusTask;
@@ -280,7 +281,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         SparkManager.getConnection().addAsyncStanzaListener(myListener, presenceFilter);
 
         // Add to PresenceMap
-        presenceMap.put(room.getRoomJid(), myListener);
+        presenceMap.put(room.getJid(), myListener);
 
         String tooltip;
         if (room instanceof ChatRoomImpl) {
@@ -529,7 +530,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             room.closeChatRoom();
         }
 
-        final StanzaListener listener = presenceMap.get(room.getRoomname());
+        final StanzaListener listener = presenceMap.get(room.getJid());
         if (listener != null) {
             SparkManager.getConnection().removeAsyncStanzaListener(listener);
         }
@@ -538,7 +539,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         room.removeMessageListener(this);
 
         // Remove mappings
-        presenceMap.remove(room.getRoomname());
+        presenceMap.remove(room.getJid());
 
         chatRoomList.remove(room);
 
@@ -583,7 +584,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         fireChatRoomLeft(room);
         room.leaveChatRoom();
 
-        final StanzaListener listener = presenceMap.get(room.getRoomname());
+        final StanzaListener listener = presenceMap.get(room.getJid());
         if (listener != null && SparkManager.getConnection().isConnected()) {
             SparkManager.getConnection().removeAsyncStanzaListener(listener);
         }
@@ -608,7 +609,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
      * @return the ChatRoom
      * @throws ChatRoomNotFoundException if the room was not found.
      */
-    public ChatRoom getChatRoom(EntityBareJid roomAddress) throws ChatRoomNotFoundException {
+    public ChatRoom getChatRoom(EntityJid roomAddress) throws ChatRoomNotFoundException {
         for (int i = 0; i < getTabCount(); i++) {
             ChatRoom room = null;
             try {
@@ -618,7 +619,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
                 // Ignore
             }
 
-            if (room != null && room.getRoomJid().equals(roomAddress) && room.isActive()) {
+            if (room != null && room.getJid().equals(roomAddress) && room.isActive()) {
                 return room;
             }
         }
