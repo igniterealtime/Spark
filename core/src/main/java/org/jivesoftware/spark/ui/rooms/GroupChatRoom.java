@@ -674,7 +674,6 @@ public class GroupChatRoom extends ChatRoom
                     ChatRoom chatRoom = new ChatRoomImpl( message.getFrom().asEntityJidOrThrow(), userNickname, roomTitle );
                     SparkManager.getChatManager().getChatContainer().addChatRoom( chatRoom );
 
-                    SparkManager.getChatManager().getChatContainer().activateChatRoom( chatRoom );
                     chatRoom.insertMessage( message );
                 }
             }
