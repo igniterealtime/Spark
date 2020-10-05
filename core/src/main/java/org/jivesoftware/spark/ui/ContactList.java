@@ -626,6 +626,20 @@ public class ContactList extends JPanel implements ActionListener,
 
     }
 
+    private void updateContactList(ContactGroup group) throws Exception {
+        if (group != null) {
+            for (ContactItem item : group.getContactItems()) {
+                updateUserPresence(PresenceManager.getPresence(item.getJid()));
+            }
+        }
+
+        Collection<ContactGroup> subGroups = group != null ? group.getContactGroups() : this.getContactGroups();
+
+        for (ContactGroup subGroup : subGroups) {
+            updateContactList(subGroup);
+        }
+    }
+
     /**
      * Called when NEW entries are added.
      *
@@ -2334,7 +2348,13 @@ public class ContactList extends JPanel implements ActionListener,
         }
 
         offlineGroup.fireContactGroupUpdated();
-        buildContactList();
+
+        try {
+            updateContactList(null);
+        }
+        catch (Exception e) {
+            Log.error(e);
+        }
 
         final Presence myPresence = SparkManager.getWorkspace().getStatusBar()
             .getPresence();
