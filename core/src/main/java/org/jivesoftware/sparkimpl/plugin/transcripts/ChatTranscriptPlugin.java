@@ -192,7 +192,7 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
             return;
         }
 
-        final EntityBareJid jid = room.getRoomJid();
+        final EntityBareJid jid = room.getBareJid();
 
         File transcriptFile = ChatTranscripts.getTranscriptFile(jid);
         if (!transcriptFile.exists()) {
@@ -223,7 +223,7 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
             return;
         }
 
-        final EntityBareJid jid = room.getRoomJid();
+        final EntityBareJid jid = room.getBareJid();
 
         final List<Message> transcripts = room.getTranscripts();
         ChatTranscript transcript = new ChatTranscript();

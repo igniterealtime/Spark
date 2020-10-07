@@ -432,7 +432,7 @@ public class GroupChatRoom extends ChatRoom
     }
 
     @Override
-    public EntityBareJid getRoomJid()
+    public EntityBareJid getBareJid()
     {
         return chat.getRoom();
     }

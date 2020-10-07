@@ -361,7 +361,7 @@ public class ChatRoomImpl extends ChatRoom {
     }
 
     @Override
-    public EntityBareJid getRoomJid() {
+    public EntityBareJid getBareJid() {
         return roomname;
     }
 
