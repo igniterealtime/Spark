@@ -174,7 +174,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
             final ContactItem offlineItem = UIComponentRegistry.createContactItem(alias, nickname, jid);
             offlineItem.setGroupName(getGroupName());
 
-            final Presence offlinePresence = PresenceManager.getPresence(jid);
+            final Presence offlinePresence = new Presence(Presence.Type.unavailable);
             offlineItem.setPresence(offlinePresence);
 
             // set offline icon
@@ -196,7 +196,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
                     final ContactItem offlineItem = UIComponentRegistry.createContactItem(alias, nickname, jid);
                     offlineItem.setGroupName(getGroupName());
 
-                    final Presence offlinePresence = PresenceManager.getPresence(jid);
+                    final Presence offlinePresence = new Presence(Presence.Type.unavailable);
                     offlineItem.setPresence(offlinePresence);
 
                     // set offline icon
