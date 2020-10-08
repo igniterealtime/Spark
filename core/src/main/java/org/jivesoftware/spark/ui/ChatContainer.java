@@ -626,6 +626,23 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         throw new ChatRoomNotFoundException(roomAddress + " not found.");
     }
 
+    public ChatRoom getChatRoom(EntityBareJid bareJid) throws ChatRoomNotFoundException {
+        for (int i = 0; i < getTabCount(); i++) {
+            ChatRoom room = null;
+            try {
+                room = getChatRoom(i);
+            }
+            catch (ChatRoomNotFoundException e1) {
+                // Ignore
+            }
+
+            if (room != null && room.getBareJid().equals(bareJid) && room.isActive()) {
+                return room;
+            }
+        }
+        throw new ChatRoomNotFoundException(bareJid + " not found.");
+    }
+
     /**
      * Returns a ChatRoom in the specified tab location.
      *
