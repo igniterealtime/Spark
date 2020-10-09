@@ -389,12 +389,6 @@ public class ContactList extends JPanel implements ActionListener,
                     TaskEngine.getInstance().schedule(new SwingTimerTask() {
                         @Override
                         public void doRun() {
-                            // Check to see if the user is offline, if so, move them to the offline group.
-                            Presence userPresence = PresenceManager.getPresence(bareJID);
-                            if (userPresence.isAvailable()) {
-                                return;
-                            }
-
                             item.setPresence(presence);
 
                             // Check for ContactItemHandler.

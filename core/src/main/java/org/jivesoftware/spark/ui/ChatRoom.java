@@ -913,11 +913,11 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
      * Get the roomname to use for this ChatRoom. This is expected to be a bare jid.
      *
      * @return - the Roomname of this ChatRoom.
-     * @deprecated use {@link #getRoomJid()} instead.
+     * @deprecated use {@link #getBareJid()} instead.
      */
     @Deprecated
     public EntityBareJid getRoomname() {
-        return getRoomJid();
+        return getBareJid();
     }
 
     /**
@@ -925,7 +925,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
      *
      * @return the XMPP address of this room
      */
-    public abstract EntityBareJid getRoomJid();
+    public abstract EntityBareJid getBareJid();
 
     public abstract EntityJid getJid();
 

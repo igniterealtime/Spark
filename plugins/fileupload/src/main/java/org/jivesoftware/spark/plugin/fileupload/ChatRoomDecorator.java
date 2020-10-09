@@ -85,7 +85,7 @@ public class ChatRoomDecorator
 
     public void finished()
     {
-        Log.warning("ChatRoomDecorator: finished " + room.getRoomJid());
+        Log.warning("ChatRoomDecorator: finished " + room.getBareJid());
     }
 
     private void getUploadUrl(ChatRoom room, Message.Type type)
@@ -129,13 +129,13 @@ public class ChatRoomDecorator
 
         } catch (Exception e) {
             Log.error("uploadFile error", e);
-            broadcastUploadUrl(room.getRoomJid(), file.getName() + " upload failed", type);
+            broadcastUploadUrl(room.getBareJid(), file.getName() + " upload failed", type);
         }
     }
 
     private void uploadFile(File file, UploadRequest response, ChatRoom room, Message.Type type)
     {
-        Log.warning("uploadFile request " + room.getRoomJid() + " " + response.putUrl);
+        Log.warning("uploadFile request " + room.getBareJid() + " " + response.putUrl);
         URLConnection urlconnection = null;
 
         try {
@@ -159,7 +159,7 @@ public class ChatRoomDecorator
 
             if ((statusCode >= 200) && (statusCode <= 202))
             {
-                broadcastUploadUrl(room.getRoomJid(), response.getUrl, type);
+                broadcastUploadUrl(room.getBareJid(), response.getUrl, type);
             }
 
         } catch (Exception e) {
