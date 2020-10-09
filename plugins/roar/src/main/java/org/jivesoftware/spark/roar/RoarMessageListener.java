@@ -146,20 +146,20 @@ public class RoarMessageListener implements GlobalMessageListener {
 
         if (room.getChatType() == Message.Type.groupchat) {
 
-            if (_rooms.containsKey(room.getRoomJid()) && _rooms.get(room.getRoomJid()) == -1L) {
+            if (_rooms.containsKey(room.getBareJid()) && _rooms.get(room.getBareJid()) == -1L) {
                 return true;
             }
 
-            if (!_rooms.containsKey(room.getRoomJid())) {
-                _rooms.put(room.getRoomJid(), System.currentTimeMillis());
+            if (!_rooms.containsKey(room.getBareJid())) {
+                _rooms.put(room.getBareJid(), System.currentTimeMillis());
                 return true;
             } else {
-                long start = _rooms.get(room.getRoomJid());
+                long start = _rooms.get(room.getBareJid());
                 long now = System.currentTimeMillis();
 
                 result = (now - start) < 1500;
                 if (result) {
-                    _rooms.put(room.getRoomJid(), -1L);
+                    _rooms.put(room.getBareJid(), -1L);
                 }
 
             }
@@ -182,7 +182,7 @@ public class RoarMessageListener implements GlobalMessageListener {
      * @return boolean
      */
     private boolean isMessageFromRoom(ChatRoom room, Message message) {
-        return message.getFrom().equals(room.getRoomJid());
+        return message.getFrom().equals(room.getBareJid());
     }
 
 }

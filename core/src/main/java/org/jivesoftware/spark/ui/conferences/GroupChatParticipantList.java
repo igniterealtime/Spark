@@ -397,7 +397,7 @@ public class GroupChatParticipantList extends JPanel {
 	protected void startChat(ChatRoom groupChat, EntityFullJid groupJID) {
 		Resourcepart userNickname = groupJID.getResourcepart();
 		String roomTitle = userNickname + " - "
-				+ groupChat.getRoomJid();
+				+ groupChat.getBareJid();
 
 		// TODO: Remove duplicate variable userNickname and nicknameOfUser.
 		Resourcepart nicknameOfUser = userNickname;

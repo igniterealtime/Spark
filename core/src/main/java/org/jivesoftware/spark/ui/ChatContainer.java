@@ -265,7 +265,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         createFrameIfNeeded();
        
         room.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.LIGHT_GRAY));
-        AndFilter presenceFilter = new AndFilter(new StanzaTypeFilter(Presence.class), FromMatchesFilter.createBare( room.getRoomJid()));
+        AndFilter presenceFilter = new AndFilter(new StanzaTypeFilter(Presence.class), FromMatchesFilter.createBare( room.getBareJid()));
 
         // Next, create a packet listener. We use an anonymous inner class for brevity.
         StanzaListener myListener = stanza -> SwingUtilities.invokeLater(() -> {
@@ -291,7 +291,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             tooltip = "<html><body><b>Contact:&nbsp;</b>" + nickname + "<br><b>JID:&nbsp;</b>" + tooltip;
         }
         else {
-            tooltip = room.getRoomJid().toString();
+            tooltip = room.getBareJid().toString();
         }
 
         // Create ChatRoom UI and dock
@@ -624,6 +624,23 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             }
         }
         throw new ChatRoomNotFoundException(roomAddress + " not found.");
+    }
+
+    public ChatRoom getChatRoom(EntityBareJid bareJid) throws ChatRoomNotFoundException {
+        for (int i = 0; i < getTabCount(); i++) {
+            ChatRoom room = null;
+            try {
+                room = getChatRoom(i);
+            }
+            catch (ChatRoomNotFoundException e1) {
+                // Ignore
+            }
+
+            if (room != null && room.getBareJid().equals(bareJid) && room.isActive()) {
+                return room;
+            }
+        }
+        throw new ChatRoomNotFoundException(bareJid + " not found.");
     }
 
     /**

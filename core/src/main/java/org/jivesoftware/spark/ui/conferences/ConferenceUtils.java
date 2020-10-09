@@ -393,7 +393,7 @@ public class ConferenceUtils {
 	public static boolean isChatRoomClosable(Component c) {
 		if(c instanceof GroupChatRoom ) {
 			GroupChatRoom groupChatRoom = (GroupChatRoom) c;
-    		EntityBareJid roomName = groupChatRoom.getChatRoom().getRoomJid();
+    		EntityBareJid roomName = groupChatRoom.getChatRoom().getBareJid();
 
     		if(unclosableChatRooms.contains(roomName)){
     			return false;
