@@ -15,6 +15,7 @@
  */ 
 package org.jivesoftware.spark.ui;
 
+import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.tabbedPane.SparkTab;
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 import org.jxmpp.jid.EntityBareJid;
