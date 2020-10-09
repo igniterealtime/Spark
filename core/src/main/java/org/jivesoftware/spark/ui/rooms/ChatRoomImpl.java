@@ -722,7 +722,7 @@ public class ChatRoomImpl extends ChatRoom {
     @Override
     public void authenticated( XMPPConnection xmppConnection, boolean b )
     {
-
+        reconnectionSuccessful();
     }
 
     @Override
