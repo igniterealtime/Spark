@@ -45,7 +45,7 @@ public abstract class SparkTabHandler {
         EntityBareJid jid = ((ChatRoomImpl)chatRoom).getParticipantJID();
         Presence presence = PresenceManager.getPresence(jid);
 
-        if (!presence.isAvailable()) {
+        if (!presence.isAvailable() || !SparkManager.getConnection().isConnected()) {
             tab.setIcon(SparkRes.getImageIcon(SparkRes.IM_UNAVAILABLE_STALE_IMAGE));
         }
         else {
