@@ -159,7 +159,7 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatStateListener {
 	    });
 	    
 	    // See if we should disable ability to change presence status
-	    if (!Default.getBoolean("DISABLE_PRESENCE_STATUS_CHANGE") && Enterprise.containsFeature(Enterprise.PRESENCE_STATUS_FEATURE)) {
+	    if (!Default.getBoolean(Default.DISABLE_PRESENCE_STATUS_CHANGE) && Enterprise.containsFeature(Enterprise.PRESENCE_STATUS_FEATURE)) {
 	    	popupMenu.addSeparator();
 	    	addStatusMessages();
 	    	popupMenu.add(statusMenu);
@@ -176,8 +176,8 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatStateListener {
 
 	    // Logout Menu
 	    if (Spark.isWindows()) {
-	    	if (!Default.getBoolean("DISABLE_EXIT") && Enterprise.containsFeature(Enterprise.LOGOUT_EXIT_FEATURE)) {
-	    		if(!Default.getBoolean("HIDE_SAVE_PASSWORD_AND_AUTOLOGIN") && SettingsManager.getLocalPreferences().getPswdAutologin()) {
+	    	if (!Default.getBoolean(Default.DISABLE_EXIT) && Enterprise.containsFeature(Enterprise.LOGOUT_EXIT_FEATURE)) {
+	    		if(!Default.getBoolean(Default.HIDE_SAVE_PASSWORD_AND_AUTO_LOGIN) && SettingsManager.getLocalPreferences().getPswdAutologin()) {
 	    			logoutMenu.addActionListener( new AbstractAction() {
 	    				private static final long serialVersionUID = 1L;
 
@@ -201,7 +201,7 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatStateListener {
 		}
 	    });
 
-	    if (!Default.getBoolean("DISABLE_EXIT") && Enterprise.containsFeature(Enterprise.LOGOUT_EXIT_FEATURE)) popupMenu.add(exitMenu);
+	    if (!Default.getBoolean(Default.DISABLE_EXIT) && Enterprise.containsFeature(Enterprise.LOGOUT_EXIT_FEATURE)) popupMenu.add(exitMenu);
 
 	    /**
 	     * If connection closed set offline tray image

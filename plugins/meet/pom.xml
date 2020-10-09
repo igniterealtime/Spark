@@ -10,10 +10,10 @@
     </parent>
 
     <artifactId>meet</artifactId>
-    <version>0.1</version>
+    <version>0.0.5</version>
 
-    <name>Meetings Plugin</name>
-    <description>Adds support for Openfire Meetings to the Spark IM client.</description>
+    <name>Pade Meetings Plugin</name>
+    <description>Adds support for Pade Meetings to the Spark IM client.</description>
 
     <contributors>
         <contributor>

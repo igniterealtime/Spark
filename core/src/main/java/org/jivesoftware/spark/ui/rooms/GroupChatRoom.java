@@ -49,10 +49,7 @@ import org.jivesoftware.spark.util.UIComponentRegistry;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
-import org.jxmpp.jid.DomainBareJid;
-import org.jxmpp.jid.EntityBareJid;
-import org.jxmpp.jid.EntityFullJid;
-import org.jxmpp.jid.Jid;
+import org.jxmpp.jid.*;
 import org.jxmpp.jid.parts.Resourcepart;
 import org.jxmpp.util.XmppStringUtils;
 
@@ -439,7 +436,12 @@ public class GroupChatRoom extends ChatRoom
     {
         return chat.getRoom();
     }
- 
+
+    @Override
+    public EntityJid getJid() {
+        return chat.getRoom();
+    }
+
     /**
      * Retrieve the nickname of the user in this groupchat.
      *
@@ -658,7 +660,7 @@ public class GroupChatRoom extends ChatRoom
         {
             try
             {
-                SparkManager.getChatManager().getChatContainer().getChatRoom( message.getFrom() );
+                SparkManager.getChatManager().getChatContainer().getChatRoom( message.getFrom().asEntityJidOrThrow() );
             }
             catch ( ChatRoomNotFoundException e )
             {
@@ -669,10 +671,9 @@ public class GroupChatRoom extends ChatRoom
                 if ( message.getBody() != null )
                 {
                     // Create new room
-                    ChatRoom chatRoom = new ChatRoomImpl( message.getFrom().asEntityBareJidOrThrow(), userNickname, roomTitle );
+                    ChatRoom chatRoom = new ChatRoomImpl( message.getFrom().asEntityJidOrThrow(), userNickname, roomTitle );
                     SparkManager.getChatManager().getChatContainer().addChatRoom( chatRoom );
 
-                    SparkManager.getChatManager().getChatContainer().activateChatRoom( chatRoom );
                     chatRoom.insertMessage( message );
                 }
             }

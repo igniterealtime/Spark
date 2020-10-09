@@ -106,7 +106,7 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
     @Override
 	public void initialize() {
         // See if we should disable all "Broadcast" menu items
-    	if (Default.getBoolean("DISABLE_BROADCAST_MENU_ITEM") || !Enterprise.containsFeature(Enterprise.BROADCAST_FEATURE)) return;
+    	if (Default.getBoolean(Default.DISABLE_BROADCAST_MENU_ITEM) || !Enterprise.containsFeature(Enterprise.BROADCAST_FEATURE)) return;
 
         // Add as ContainerDecoratr
         SparkManager.getChatManager().addSparkTabHandler(this);
@@ -127,7 +127,7 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
         // Register with action menu
         JMenuItem startConversationtMenu = new JMenuItem("", SparkRes.getImageIcon(SparkRes.SMALL_MESSAGE_IMAGE));
         ResourceUtils.resButton(startConversationtMenu, Res.getString("menuitem.start.a.chat"));
-        if (!Default.getBoolean("HIDE_START_A_CHAT") && Enterprise.containsFeature(Enterprise.START_A_CHAT_FEATURE)){
+        if (!Default.getBoolean(Default.HIDE_START_A_CHAT) && Enterprise.containsFeature(Enterprise.START_A_CHAT_FEATURE)){
         actionsMenu.add(startConversationtMenu,0);}
         startConversationtMenu.addActionListener( e -> {
             ContactList contactList = SparkManager.getWorkspace().getContactList();
@@ -299,7 +299,7 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
 
 	if (!from.hasLocalpart()) {
 	    // if theres no "@" it means the message came from the server
-	    if (Default.getBoolean(Default.BROADCAST_IN_CHATWINDOW)
+	    if (Default.getBoolean(Default.BROADCAST_IN_CHAT_WINDOW)
 		    || linebreaks > 20 || message.getBody().length() > 1000 || mightbeMOTD) {
 		// if we have more than 20 linebreaks or the message is longer
 		// than 1000characters we should broadcast

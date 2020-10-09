@@ -1,5 +1,6 @@
 package org.jivesoftware.spark.ui.themes;
 
+import com.formdev.flatlaf.FlatLightLaf;
 import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.spark.util.log.Log;
@@ -15,16 +16,17 @@ import java.util.*;
  *
  * @author Guus der Kinderen, guus.der.kinderen@gmail.com
  */
-public class LookAndFeelManager
-{
+public class LookAndFeelManager {
+
     /**
      * All non-system provided look and feel implementations that are available.
      */
-    public static final Class<? extends LookAndFeel> lafs[] = new Class[]
-    {
+    public static final Class<? extends LookAndFeel> lafs[] = new Class[]{
+        //flatlaf
+        com.formdev.flatlaf.FlatLightLaf.class,
+        /*
         // LittleLuck
         freeseawind.lf.LittleLuckLookAndFeel.class,
-
         // JTattoo
         com.jtattoo.plaf.acryl.AcrylLookAndFeel.class,
         com.jtattoo.plaf.aero.AeroLookAndFeel.class,
@@ -39,7 +41,6 @@ public class LookAndFeelManager
         com.jtattoo.plaf.noire.NoireLookAndFeel.class,
         com.jtattoo.plaf.smart.SmartLookAndFeel.class,
         com.jtattoo.plaf.texture.TextureLookAndFeel.class,
-
         // Insubstance (Substance)
         //org.pushingpixels.substance.api.skin.SubstanceAutumnLookAndFeel.class, // Disabled. Uses an internal 'Noise factory', which adds 2 seconds to Sparks boot time!
         org.pushingpixels.substance.api.skin.SubstanceBusinessBlackSteelLookAndFeel.class,
@@ -68,7 +69,8 @@ public class LookAndFeelManager
         org.pushingpixels.substance.api.skin.SubstanceOfficeSilver2007LookAndFeel.class,
         org.pushingpixels.substance.api.skin.SubstanceRavenLookAndFeel.class,
         org.pushingpixels.substance.api.skin.SubstanceSaharaLookAndFeel.class,
-        org.pushingpixels.substance.api.skin.SubstanceTwilightLookAndFeel.class
+        org.pushingpixels.substance.api.skin.SubstanceTwilightLookAndFeel.class,
+    */
     };
 
     // Maybe Sometime well get a Synthetica License
@@ -86,41 +88,35 @@ public class LookAndFeelManager
     //"de.javasoft.plaf.synthetica.SyntheticaSimple2DLookAndFeel", //commerc
     //"de.javasoft.plaf.synthetica.SyntheticaSkyMetallicLookAndFeel", //commerc
     //"de.javasoft.plaf.synthetica.SyntheticaWhiteVisionLookAndFeel", //commerc
-
-    static
-    {
+    static {
         // Add all additional look and feels to the UIManager.
-        for ( Class<? extends LookAndFeel> laf : lafs )
-        {
+        for (Class<? extends LookAndFeel> laf : lafs) {
             String name;
-            try
-            {
+            try {
                 name = laf.newInstance().getName();
-            }
-            catch ( InstantiationException | IllegalAccessException e )
-            {
+            } catch (InstantiationException | IllegalAccessException e) {
                 name = laf.getTypeName();
             }
 
-            UIManager.installLookAndFeel( name, laf.getName() );
+            UIManager.installLookAndFeel(name, laf.getName());
         }
     }
 
     private static transient Map<String, String> lookAndFeelClassByName = null;
 
     /**
-     * Gets the (human readable) name of a Look and Feel, based on its class name.
+     * Gets the (human readable) name of a Look and Feel, based on its class
+     * name.
      *
-     * @param className A class name (eg: com.jtattoo.plaf.luna.LunaLookAndFeel).
-     * @return a human readable name, or null if the class name is not recognized.
+     * @param className A class name (eg:
+     * com.jtattoo.plaf.luna.LunaLookAndFeel).
+     * @return a human readable name, or null if the class name is not
+     * recognized.
      */
-    public static String getName( String className )
-    {
+    public static String getName(String className) {
         final Map<String, String> lookAndFeelClassByName = getLookAndFeelClassByName();
-        for ( final Map.Entry<String, String> entry : lookAndFeelClassByName.entrySet() )
-        {
-            if ( entry.getValue().equalsIgnoreCase( className ) )
-            {
+        for (final Map.Entry<String, String> entry : lookAndFeelClassByName.entrySet()) {
+            if (entry.getValue().equalsIgnoreCase(className)) {
                 return entry.getKey();
             }
         }
@@ -129,46 +125,43 @@ public class LookAndFeelManager
     }
 
     /**
-     * Gets the class name of a Look and Feel, based on its (human readable) name.
+     * Gets the class name of a Look and Feel, based on its (human readable)
+     * name.
      *
      * @param name a human readable name (eg: "Luna")
-     * @return A class name (eg: com.jtattoo.plaf.luna.LunaLookAndFeel) or null if the class name is not recognized
+     * @return A class name (eg: com.jtattoo.plaf.luna.LunaLookAndFeel) or null
+     * if the class name is not recognized
      */
-    public static String getClassName( String name )
-    {
-        return getLookAndFeelClassByName().get( name );
+    public static String getClassName(String name) {
+        return getLookAndFeelClassByName().get(name);
     }
 
     /**
-     * Determines if setting the look and feel as identified by it's human readable name requires a Spark restart.
+     * Determines if setting the look and feel as identified by it's human
+     * readable name requires a Spark restart.
      *
      * @param name The (human readable name (eg: "Luna").
      * @return true when Spark must be restarted to apply this Look And Feel.
      */
-    public static boolean requiresRestart( String name )
-    {
+    public static boolean requiresRestart(String name) {
         // TODO: the original code required a restart for the java-provided LaFs and Synthetica, but perhaps that's no longer needed?
         return false;
     }
 
-    private synchronized static Map<String, String> getLookAndFeelClassByName()
-    {
+    private synchronized static Map<String, String> getLookAndFeelClassByName() {
         // Lazy loading of the ordered collection.
-        if ( lookAndFeelClassByName == null )
-        {
+        if (lookAndFeelClassByName == null) {
             final UIManager.LookAndFeelInfo[] lafis = UIManager.getInstalledLookAndFeels();
 
-            lookAndFeelClassByName = new TreeMap<>( String::compareToIgnoreCase );
-            for ( final UIManager.LookAndFeelInfo lafi : lafis )
-            {
-                lookAndFeelClassByName.put( lafi.getName(), lafi.getClassName() );
+            lookAndFeelClassByName = new TreeMap<>(String::compareToIgnoreCase);
+            for (final UIManager.LookAndFeelInfo lafi : lafis) {
+                lookAndFeelClassByName.put(lafi.getName(), lafi.getClassName());
             }
         }
         return lookAndFeelClassByName;
     }
 
-    private static String getLookandFeel(LocalPreferences preferences)
-    {
+    private static String getLookandFeel(LocalPreferences preferences) {
         String result;
 
         String whereToLook = Spark.isMac() ? Default.DEFAULT_LOOK_AND_FEEL_MAC : Default.DEFAULT_LOOK_AND_FEEL;
@@ -185,20 +178,17 @@ public class LookAndFeelManager
     }
 
     /**
-     * Handles the Loading of the Look And Feel, as defined as the prefered Look And Feel in the local settings.
+     * Handles the Loading of the Look And Feel, as defined as the prefered Look
+     * And Feel in the local settings.
      */
-    public static void loadPreferredLookAndFeel()
-    {
+    public static void loadPreferredLookAndFeel() {
         final LocalPreferences preferences = SettingsManager.getLocalPreferences();
-        final String laf = getLookandFeel( preferences );
+        final String laf = getLookandFeel(preferences);
 
-        if ( laf.toLowerCase().contains( "substance" ) )
-        {
-            EventQueue.invokeLater( () -> doSetLookAndFeel( laf ) );
-        }
-        else
-        {
-            doSetLookAndFeel( laf );
+        if (laf.toLowerCase().contains("substance")) {
+            EventQueue.invokeLater(() -> doSetLookAndFeel(laf));
+        } else {
+            doSetLookAndFeel(laf);
         }
 
 //        if ( laf.contains( "jtattoo" ) )
@@ -220,20 +210,15 @@ public class LookAndFeelManager
 //        }
     }
 
-    private static void doSetLookAndFeel( String laf )
-    {
-        try
-        {
-            if ( Spark.isWindows() )
-            {
-                JFrame.setDefaultLookAndFeelDecorated( true );
-                JDialog.setDefaultLookAndFeelDecorated( true );
-            }
+    private static void doSetLookAndFeel(String laf) {
+        try {
+            if (Spark.isWindows()) {
+                JFrame.setDefaultLookAndFeelDecorated(true);
+                JDialog.setDefaultLookAndFeelDecorated(true);
+            }            
             UIManager.setLookAndFeel( laf );
-        }
-        catch ( Exception e )
-        {
-            Log.error( "An exception occurred while trying to load the look and feel.", e );
+        } catch (Exception e) {
+            Log.error("An exception occurred while trying to load the look and feel.", e);
         }
     }
 
@@ -242,8 +227,7 @@ public class LookAndFeelManager
      *
      * @return An array of names, never null.
      */
-    public static String[] getLookAndFeelNames()
-    {
-        return getLookAndFeelClassByName().keySet().toArray( new String[0] );
+    public static String[] getLookAndFeelNames() {
+        return getLookAndFeelClassByName().keySet().toArray(new String[0]);
     }
 }

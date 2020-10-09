@@ -2,7 +2,7 @@
     <name>${project.name}</name>
     <version>${project.version}</version>
     <description>${project.description}</description>
-    <author>Ignite Realtime</author>
+    <author>Dele Olajide</author>
     <homePage>http://igniterealtime.org</homePage>
     <email>support@igniterealtime.org</email>
     <class>org.jivesoftware.spark.plugin.ofmeet.SparkMeetPlugin</class>
