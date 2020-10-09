@@ -35,6 +35,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Locale;
+import org.jivesoftware.gui.LoginPanel;
 
 
 /**
@@ -185,13 +186,13 @@ public final class Spark {
 
         installBaseUIProperties();
 
-        if (Default.getBoolean("CHANGE_COLORS_DISABLED")) {
+        if (Default.getBoolean(Default.CHANGE_COLORS_DISABLED)) {
             ColorSettingManager.restoreDefault();
         }
 
         try {
 	        EventQueue.invokeAndWait( () -> {
-            final LoginDialog dialog = UIComponentRegistry.createLoginDialog();
+            final LoginPanel dialog = UIComponentRegistry.createLoginDialog();
                 dialog.invoke(new JFrame());
             } );
         }
@@ -369,7 +370,7 @@ public final class Spark {
     }
 
     public static boolean disableUpdatesOnCustom() {
-	return Default.getBoolean("DISABLE_UPDATES");
+	return Default.getBoolean(Default.DISABLE_UPDATES);
     }
 
 	public static void setApplicationFont(Font f) {

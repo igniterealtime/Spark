@@ -159,70 +159,61 @@ public class MessageEntry extends TimeStampedEntry
                 // for now, we'll not visually differentiate between quotes and non-quotes.
                 for ( final String line : block.lines)
                 {
-                    int i = 0;
+                    int to = 0;
                     do
                     {
-                        // Skip through prepending whitespace.
-                        if ( Character.isWhitespace( line.charAt( i ) ) )
-                        {
-                            doc.insertString( doc.getLength(), line.substring( i, i+1 ), messageStyle );
-                            i++;
-                        }
+                        int from = to;
 
-                        // Find the next whitespace or line-ending (used for links, addresses, images, but not style)
-                        int end = line.indexOf( ' ', i+1 );
-                        if ( end == -1 ) end = line.indexOf(  '\t', i+1 );
-                        if ( end == -1 ) end = line.length();
-                        final String textFound = line.substring( i, end );
-                        if ( ( textFound.startsWith( "http://" ) || textFound.startsWith( "ftp://" ) || textFound.startsWith( "https://" ) || textFound.startsWith( "www." ) || textFound.startsWith( "file:/" ) ) && textFound.indexOf( "." ) > 1 )
-                        {
-                            insertLink( doc, textFound );
-                            i = end;
+                        // Handle whitespace
+                        if (Character.isWhitespace(line.charAt(to))) {
+                            while (++to < line.length()) {
+                                if (!Character.isWhitespace(line.charAt(to))) break;
+                            }
+                            doc.insertString(doc.getLength(), line.substring(from, to), messageStyle);
                             continue;
                         }
 
-                        if ( textFound.startsWith( "\\\\" ) || ( textFound.indexOf( "://" ) > 0 && textFound.indexOf( "." ) < 1 ) )
-                        {
-                            insertAddress( doc, textFound );
-                            i = end;
-                            continue;
-                        }
-
-                        if ( insertImage( chatArea, textFound ) )
-                        {
-                            i = end;
-                            continue;
-                        }
-
-                        // Opening directive (must be preceeded by a whitespace-character, or be the first character of the line)
-                        if ( (i == 0 || Character.isWhitespace( line.charAt( i-1 ) ) ) && DIRECTIVE_CHARS.contains( line.charAt( i ) ) )
-                        {
-                            final char directive = line.charAt( i );
-                            final int closing = line.indexOf( directive, i + 1 );
-
-                            // Closing directive must not be preceeded by a whitespace character.
-                            if ( closing != -1 && !Character.isWhitespace( line.charAt( closing-1 ) ) )
-                            {
-                                final MutableAttributeSet applied = applyMessageStyle( directive, messageStyle );
-                                doc.insertString( doc.getLength(), line.substring( i, i+1 ), directiveStyle ); // Opening directive
-                                doc.insertString( doc.getLength(), line.substring( i+1, closing ), applied ); // Styled text
-                                doc.insertString( doc.getLength(), line.substring( closing, closing+1 ), directiveStyle ); // Closing directive
-                                i = closing + 1;
+                        // Handle directives
+                        if (DIRECTIVE_CHARS.contains(line.charAt(from))) {
+                            char directive = line.charAt(from);
+                            to = line.indexOf(directive, from + 1);
+                            if (to != -1 && !Character.isWhitespace(line.charAt(to - 1)) && (to - from) > 1) {
+                                insertFragment(chatArea, line.substring(from + 1, to++), applyMessageStyle(directive, messageStyle));
                                 continue;
                             }
                         }
 
-                        doc.insertString( doc.getLength(), textFound, messageStyle );
-                        i = end;
-                    }
-                    while ( i < line.length() - 1 );
+                        // Handle quoted text ("", not >)
+                        if (line.charAt(from) == '\"') {
+                            to = line.indexOf('\"', from + 1);
+                            if (to != -1) {
+                                doc.insertString(doc.getLength(), "\"", messageStyle);
+                                insertFragment(chatArea, line.substring(from + 1, to++), messageStyle);
+                                doc.insertString(doc.getLength(), "\"", messageStyle);
+                                continue;
+                            }
+                        }
 
+                        to = from;
+                        while (++to < line.length()) {
+                            if (Character.isWhitespace(line.charAt(to))) break;
+                        }
+                        insertFragment(chatArea, line.substring(from, to), messageStyle);
+                    }
+                    while (to < line.length());
                     doc.insertString( doc.getLength(), "\n", messageStyle );
                 }
             }
         }
 
         chatArea.setCaretPosition( doc.getLength() );
+    }
+
+    protected void insertFragment(ChatArea chatArea, String fragment, MutableAttributeSet style) throws BadLocationException {
+        if (insertLink(chatArea.getDocument(), fragment, style)) return;
+        if (insertAddress(chatArea.getDocument(), fragment, style)) return;
+        if (insertImage(chatArea, fragment)) return;
+        chatArea.getDocument().insertString(chatArea.getDocument().getLength(), fragment, style);
     }
 
     /**
@@ -358,15 +349,23 @@ public class MessageEntry extends TimeStampedEntry
      * @param link - the link to insert( ex. http://www.javasoft.com )
      * @throws BadLocationException if the location is not available for insertion.
      */
-    public void insertLink( Document doc, String link ) throws BadLocationException
+    public boolean insertLink(Document doc, String link, MutableAttributeSet style) throws BadLocationException
     {
-        // Create a new style, based on the style used for generic text, for the link.
-        final MutableAttributeSet linkStyle = new SimpleAttributeSet( getMessageStyle().copyAttributes() );
-        StyleConstants.setForeground( linkStyle, (Color) UIManager.get( "Link.foreground" ) );
-        StyleConstants.setUnderline( linkStyle, true );
-        linkStyle.addAttribute( "link", link );
+        if ((link.startsWith("http://") ||
+            link.startsWith("ftp://") ||
+            link.startsWith("https://") ||
+            link.startsWith("www.") ||
+            link.startsWith("file:/")) && link.indexOf(".") > 1) {
 
-        doc.insertString( doc.getLength(), link, linkStyle );
+            // Create a new style, based on the style used for generic text, for the link.
+            final MutableAttributeSet linkStyle = new SimpleAttributeSet(style.copyAttributes());
+            StyleConstants.setForeground(linkStyle, (Color) UIManager.get("Link.foreground"));
+            StyleConstants.setUnderline(linkStyle, true);
+            linkStyle.addAttribute("link", link);
+            doc.insertString(doc.getLength(), link, linkStyle);
+            return true;
+        }
+        else { return false; }
     }
 
     /**
@@ -375,15 +374,20 @@ public class MessageEntry extends TimeStampedEntry
      * @param address - the address to insert( ex. \superpc\etc\file\ OR http://localhost/ )
      * @throws BadLocationException if the location is not available for insertion.
      */
-    public void insertAddress( Document doc, String address ) throws BadLocationException
+    public Boolean insertAddress(Document doc, String address, MutableAttributeSet style) throws BadLocationException
     {
-        // Create a new style, based on the style used for generic text, for the address.
-        final MutableAttributeSet addressStyle = new SimpleAttributeSet( getMessageStyle().copyAttributes() );
-        StyleConstants.setForeground( addressStyle, (Color) UIManager.get( "Address.foreground" ) );
-        StyleConstants.setUnderline( addressStyle, true );
-        addressStyle.addAttribute( "link", address );
+        if (address.startsWith("\\\\") ||
+            (address.indexOf("://") > 0 && address.indexOf(".") < 1)) {
 
-        doc.insertString( doc.getLength(), address, addressStyle );
+            // Create a new style, based on the style used for generic text, for the address.
+            final MutableAttributeSet addressStyle = new SimpleAttributeSet(style.copyAttributes());
+            StyleConstants.setForeground(addressStyle, (Color) UIManager.get("Address.foreground"));
+            StyleConstants.setUnderline(addressStyle, true);
+            addressStyle.addAttribute("link", address);
+            doc.insertString(doc.getLength(), address, addressStyle);
+            return true;
+        }
+        else { return false; }
     }
 
     /**

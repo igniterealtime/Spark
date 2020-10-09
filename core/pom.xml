@@ -80,7 +80,7 @@
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>1.6.0</version>
                 <configuration>
-                   <mainClass>org.jivesoftware.launcher.Startup</mainClass>
+                    <mainClass>org.jivesoftware.launcher.Startup</mainClass>
                 </configuration>
             </plugin>
         </plugins>
@@ -174,11 +174,11 @@
             <version>3.1</version>
         </dependency>
         <dependency>
-             <groupId>org.apache.commons</groupId>
-             <artifactId>commons-lang3</artifactId>
-             <version>3.9</version>
-         </dependency>
-         <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.9</version>
+        </dependency>
+        <dependency>
             <groupId>org.swinglabs.swingx</groupId>
             <artifactId>swingx-all</artifactId>
             <version>1.6.5-1</version>
@@ -258,13 +258,19 @@
             <artifactId>bctls-jdk15on</artifactId>
             <version>${bouncycastle.version}</version>
         </dependency>
+        <dependency>
+        <groupId>com.formdev</groupId>
+        <artifactId>flatlaf</artifactId>
+        <version>0.41</version>
+        <type>jar</type>
+    </dependency>
     </dependencies>
-
+    
     <repositories>
-      <repository>
-         <id>maven-snapshots-repo</id>
-         <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-       </repository>
+        <repository>
+            <id>maven-snapshots-repo</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </repository>
         <repository>
             <id>ej-technologies</id>
             <url>https://maven.ej-technologies.com/repository/</url>
@@ -273,27 +279,27 @@
 
     <profiles>
         <profile>
-        <id>owasp-check</id>
-        <build>
-            <plugins>
-	            <plugin>
-    	            <groupId>org.owasp</groupId>
-        	        <artifactId>dependency-check-maven</artifactId>
-        	        <version>4.0.2</version>
-            	    <executions>
-                        <execution>
-                            <goals>
-                                <goal>check</goal>
-                      	    </goals>
-                 	    </execution>
-              	    </executions>
-                </plugin>
-        	</plugins>
-        </build>
-        <activation>
-          <activeByDefault>false</activeByDefault>
-        </activation>
-      </profile>
+            <id>owasp-check</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.owasp</groupId>
+                        <artifactId>dependency-check-maven</artifactId>
+                        <version>4.0.2</version>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>check</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+        </profile>
     </profiles>
 
 </project>

@@ -141,7 +141,7 @@ public class SparkTransferManager {
     private SparkTransferManager() {
     	
     	// See if we should disable the option to transfer files and images
-    	if (Default.getBoolean("DISABLE_FILE_XFER") || !Enterprise.containsFeature(Enterprise.FILE_TRANSFER_FEATURE)) return;
+    	if (Default.getBoolean(Default.DISABLE_FILE_TRANSFER) || !Enterprise.containsFeature(Enterprise.FILE_TRANSFER_FEATURE)) return;
 
         SparkManager.getConnection().addConnectionListener(new ConnectionListener() {
             @Override
@@ -285,7 +285,7 @@ public class SparkTransferManager {
         TranscriptWindow transcriptWindow = chatRoom.getTranscriptWindow();
         transcriptWindow.insertCustomText(Res.getString("message.file.transfer.chat.window"), true, false, Color.BLACK);        
 
-        final ReceiveFileTransfer receivingMessageUI = new ReceiveFileTransfer();
+        final ReceiveFileTransfer receivingMessageUI = new ReceiveFileTransfer(chatRoom);
         receivingMessageUI.acceptFileTransfer(request);
 
         chatRoom.addClosingListener( () -> receivingMessageUI.cancelTransfer() );
@@ -580,7 +580,7 @@ public class SparkTransferManager {
 
         TranscriptWindow transcriptWindow = chatRoom.getTranscriptWindow();
 
-        SendFileTransfer sendingUI = new SendFileTransfer();
+        SendFileTransfer sendingUI = new SendFileTransfer(chatRoom);
         try {
             transfer.sendFile(file, "Sending file");
         }

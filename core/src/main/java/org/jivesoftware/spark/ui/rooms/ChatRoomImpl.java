@@ -186,7 +186,7 @@ public class ChatRoomImpl extends ChatRoom {
         addToRosterButton = new ChatRoomButton("", SparkRes.getImageIcon(SparkRes.ADD_IMAGE_24x24));
         if (entry == null && !privateChat) {
             addToRosterButton.setToolTipText(Res.getString("message.add.this.user.to.your.roster"));
-            if (!Default.getBoolean("ADD_CONTACT_DISABLED") && Enterprise.containsFeature(Enterprise.ADD_CONTACTS_FEATURE)) addChatRoomButton(addToRosterButton);
+            if (!Default.getBoolean(Default.ADD_CONTACT_DISABLED) && Enterprise.containsFeature(Enterprise.ADD_CONTACTS_FEATURE)) addChatRoomButton(addToRosterButton);
             addToRosterButton.addActionListener(this);
         }
 
@@ -428,6 +428,11 @@ public class ChatRoomImpl extends ChatRoom {
     public EntityFullJid getJID() {
         presence = PresenceManager.getPresence(getParticipantJID());
         return presence.getFrom().asEntityFullJidOrThrow();
+    }
+
+    @Override
+    public EntityJid getJid() {
+        return participantJID;
     }
 
     /**
@@ -766,7 +771,7 @@ public class ChatRoomImpl extends ChatRoom {
     	vcardPanel = new VCardPanel(participantJID.asBareJid());
     	getToolBar().add(vcardPanel, new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 2, 0, 2), 0, 0));
 
-       	if (!Default.getBoolean("HISTORY_DISABLED") && Enterprise.containsFeature(Enterprise.HISTORY_TRANSCRIPTS_FEATURE)) {
+       	if (!Default.getBoolean(Default.HISTORY_DISABLED) && Enterprise.containsFeature(Enterprise.HISTORY_TRANSCRIPTS_FEATURE)) {
     		final LocalPreferences localPreferences = SettingsManager.getLocalPreferences();
     		if (!localPreferences.isChatHistoryEnabled()) {
     			return;

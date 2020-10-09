@@ -117,10 +117,10 @@ public class ScratchPadPlugin implements Plugin {
             actionsMenu.addSeparator();
 
             // See if we should disable the "View task list" option under "Actions"
-            if (!Default.getBoolean("DISABLE_VIEW_TASK_LIST") && Enterprise.containsFeature(Enterprise.VIEW_TASKS_FEATURE)) actionsMenu.add(taskMenu);
+            if (!Default.getBoolean(Default.DISABLE_VIEW_TASK_LIST) && Enterprise.containsFeature(Enterprise.VIEW_TASKS_FEATURE)) actionsMenu.add(taskMenu);
 
             // See if we should disable the "View notes" option under "Actions"
-            if (!Default.getBoolean("DISABLE_VIEW_NOTES") && Enterprise.containsFeature(Enterprise.VIEW_NOTES_FEATURE)) actionsMenu.add(notesMenu);
+            if (!Default.getBoolean(Default.DISABLE_VIEW_NOTES) && Enterprise.containsFeature(Enterprise.VIEW_NOTES_FEATURE)) actionsMenu.add(notesMenu);
 
             // Start notifications.
             new TaskNotification();
