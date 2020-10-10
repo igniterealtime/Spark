@@ -605,11 +605,11 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
     /**
      * Returns a ChatRoom by name.
      *
-     * @param roomAddress the name of the ChatRoom.
+     * @param jid the name of the ChatRoom.
      * @return the ChatRoom
      * @throws ChatRoomNotFoundException if the room was not found.
      */
-    public ChatRoom getChatRoom(EntityJid roomAddress) throws ChatRoomNotFoundException {
+    public ChatRoom getChatRoom(EntityJid jid) throws ChatRoomNotFoundException {
         for (int i = 0; i < getTabCount(); i++) {
             ChatRoom room = null;
             try {
@@ -619,28 +619,13 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
                 // Ignore
             }
 
-            if (room != null && room.getJid().equals(roomAddress) && room.isActive()) {
-                return room;
+            if (jid instanceof EntityBareJid) {
+                if (room != null && room.getBareJid().equals(jid) && room.isActive()) return room;
+            } else {
+                if (room != null && room.getJid().equals(jid) && room.isActive()) return room;
             }
         }
-        throw new ChatRoomNotFoundException(roomAddress + " not found.");
-    }
-
-    public ChatRoom getChatRoom(EntityBareJid bareJid) throws ChatRoomNotFoundException {
-        for (int i = 0; i < getTabCount(); i++) {
-            ChatRoom room = null;
-            try {
-                room = getChatRoom(i);
-            }
-            catch (ChatRoomNotFoundException e1) {
-                // Ignore
-            }
-
-            if (room != null && room.getBareJid().equals(bareJid) && room.isActive()) {
-                return room;
-            }
-        }
-        throw new ChatRoomNotFoundException(bareJid + " not found.");
+        throw new ChatRoomNotFoundException(jid + " not found.");
     }
 
     /**
