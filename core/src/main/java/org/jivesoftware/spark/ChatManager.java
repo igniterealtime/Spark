@@ -211,19 +211,23 @@ public class ChatManager {
     /**
      * Creates and/or opens a chat room with the specified user.
      *
-     * @param userJID  the jid of the user to chat with.
+     * @param jid  the jid of the user to chat with.
      * @param nicknameCs the nickname to use for the user.
      * @param title    the title to use for the room.
      * @return the newly created <code>ChatRoom</code>.
      */
-    public ChatRoom createChatRoom(EntityJid userJID, CharSequence nicknameCs, CharSequence title) {
+    public ChatRoom createChatRoom(EntityJid jid, CharSequence nicknameCs, CharSequence title) {
         Resourcepart nickname = Resourcepart.fromOrThrowUnchecked(nicknameCs);
         ChatRoom chatRoom;
         try {
-            chatRoom = getChatContainer().getChatRoom(userJID);
+            if (jid instanceof EntityBareJid) {
+                chatRoom = getChatContainer().getChatRoom((EntityBareJid) jid);
+            } else {
+                chatRoom = getChatContainer().getChatRoom(jid);
+            }
         }
         catch (ChatRoomNotFoundException e) {
-            chatRoom = UIComponentRegistry.createChatRoom(userJID, nickname, title);
+            chatRoom = UIComponentRegistry.createChatRoom(jid, nickname, title);
             getChatContainer().addChatRoom(chatRoom);
         }
 
