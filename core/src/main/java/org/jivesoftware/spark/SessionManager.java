@@ -152,6 +152,8 @@ public final class SessionManager implements ConnectionListener {
             final Presence presence = new Presence(Presence.Type.unavailable);
             changePresence(presence);
 
+            Workspace.getInstance().getStatusBar().setStatusPanelEnabled(false);
+
             Log.debug("Connection closed on error.: " + ex.getMessage());
         } );
     }
@@ -299,6 +301,8 @@ public final class SessionManager implements ConnectionListener {
             {
                 changePresence( preError );
                 preError = null;
+
+                Workspace.getInstance().getStatusBar().setStatusPanelEnabled(true);
             });
         }
     }
