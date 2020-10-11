@@ -403,31 +403,27 @@ public class Workspace extends JPanel implements StanzaListener {
             return;
         }
 
-        // Create the room if it does not exist.;
-        try {
-            ChatManager.getInstance().getChatContainer().getChatRoom(bareJID);
-        } catch (ChatRoomNotFoundException e) {
-            String nickname;
-            ContactItem contact = contactList.getContactItemByJID(bareJID);
-            if (contact != null) {
-                nickname = contact.getDisplayName();
-            } else {
-                nickname = bareJID.getLocalpartOrNull() == null ? null : bareJID.getLocalpartOrNull().toString();
-            }
-
-            ChatRoom room = SparkManager.getChatManager().createChatRoom(bareJID, nickname, nickname);
-            if (!SparkManager.getChatManager().getChatContainer().getChatFrame().isVisible()) {
-                SparkManager.getChatManager().getChatContainer().getChatFrame().setVisible(true);
-            }
-
-            // Insert offline message
-            room.getTranscriptWindow().insertMessage(nickname, message, ChatManager.FROM_COLOR);
-            room.addToTranscript(message, true);
-
-            // Send display and notified message back.
-            SparkManager.getMessageEventManager().sendDeliveredNotification(message.getFrom(), message.getStanzaId());
-            SparkManager.getMessageEventManager().sendDisplayedNotification(message.getFrom(), message.getStanzaId());
+        String nickname;
+        ContactItem contact = contactList.getContactItemByJID(bareJID);
+        if (contact != null) {
+            nickname = contact.getDisplayName();
+        } else {
+            nickname = bareJID.getLocalpartOrNull() == null ? null : bareJID.getLocalpartOrNull().toString();
         }
+
+        // Create the room if it does not exist.;
+        ChatRoom room = SparkManager.getChatManager().createChatRoom(bareJID, nickname, nickname);
+        if (!SparkManager.getChatManager().getChatContainer().getChatFrame().isVisible()) {
+            SparkManager.getChatManager().getChatContainer().getChatFrame().setVisible(true);
+        }
+
+        // Insert offline message
+        room.getTranscriptWindow().insertMessage(nickname, message, ChatManager.FROM_COLOR);
+        room.addToTranscript(message, true);
+
+        // Send display and notified message back.
+        SparkManager.getMessageEventManager().sendDeliveredNotification(message.getFrom(), message.getStanzaId());
+        SparkManager.getMessageEventManager().sendDisplayedNotification(message.getFrom(), message.getStanzaId());
     }
 
     /**
