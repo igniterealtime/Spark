@@ -29,6 +29,7 @@ import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.carbons.packet.CarbonExtension;
 import org.jivesoftware.smackx.chatstates.ChatState;
 import org.jivesoftware.smackx.chatstates.packet.ChatStateExtension;
+import org.jivesoftware.smackx.delay.packet.DelayInformation;
 import org.jivesoftware.smackx.jiveproperties.packet.JivePropertiesExtension;
 import org.jivesoftware.smackx.muc.packet.MUCUser;
 import org.jivesoftware.smackx.xevent.MessageEventManager;
@@ -527,6 +528,14 @@ public class ChatRoomImpl extends ChatRoom {
                     final DomainBareJid host = SparkManager.getSessionManager().getServerAddress();
                     if ( host.equals( message.getFrom() ) )
                     {
+                        return;
+                    }
+
+                    // Do not Handle offline messages. Offline messages are handling by Workspace.
+                    DelayInformation offlineInformation = message.getExtension("delay", "urn:xmpp:delay");
+                    if (offlineInformation != null &&
+                        (message.getType() == Message.Type.chat ||
+                        message.getType() == Message.Type.normal)) {
                         return;
                     }
 
