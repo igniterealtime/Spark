@@ -548,6 +548,10 @@ public class StatusBar extends JPanel implements VCardListener {
 		return nicknameLabel;
 	}
 
+	public void setStatusPanelEnabled(Boolean enabled) {
+	    getStatusPanel().setEnabled(enabled);
+    }
+
 	private class StatusPanel extends JPanel {
 		private static final long serialVersionUID = -5086334443225239032L;
 		private JLabel iconLabel;
@@ -586,11 +590,13 @@ public class StatusBar extends JPanel implements VCardListener {
 				statusLabel.addMouseListener(new MouseAdapter() {
 					@Override
 					public void mouseReleased(MouseEvent e) {
-						showPopup(e);
+						if (!isEnabled()) return;
+					    showPopup(e);
 					}
 
 					@Override
 					public void mouseEntered(MouseEvent e) {
+                        if (!isEnabled()) return;
 						setCursor(GraphicUtils.HAND_CURSOR);
 						setBorder(BorderFactory.createBevelBorder(0));
 					}
@@ -603,6 +609,7 @@ public class StatusBar extends JPanel implements VCardListener {
 
 					@Override
 					public void mousePressed(MouseEvent e) {
+                        if (!isEnabled()) return;
 						setBorder(BorderFactory.createBevelBorder(1));
 					}
 

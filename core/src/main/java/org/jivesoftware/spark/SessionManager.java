@@ -15,6 +15,7 @@
  */
 package org.jivesoftware.spark;
 
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.*;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.provider.ProviderManager;
@@ -150,7 +151,10 @@ public final class SessionManager implements ConnectionListener {
         SwingUtilities.invokeLater( () -> {
             preError = Workspace.getInstance().getStatusBar().getPresence();
             final Presence presence = new Presence(Presence.Type.unavailable);
+            presence.setStatus(Res.getString("status.offline"));
             changePresence(presence);
+
+            Workspace.getInstance().getStatusBar().setStatusPanelEnabled(false);
 
             Log.debug("Connection closed on error.: " + ex.getMessage());
         } );
@@ -299,6 +303,8 @@ public final class SessionManager implements ConnectionListener {
             {
                 changePresence( preError );
                 preError = null;
+
+                Workspace.getInstance().getStatusBar().setStatusPanelEnabled(true);
             });
         }
     }
