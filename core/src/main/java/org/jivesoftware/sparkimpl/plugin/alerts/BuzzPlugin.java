@@ -117,11 +117,13 @@ public class BuzzPlugin implements Plugin {
 
     private void shakeWindow(Message message) {
         EntityBareJid bareJID = message.getFrom().asEntityBareJidOrThrow();
-        ContactItem contact = SparkManager.getWorkspace().getContactList()
-            .getContactItemByJID(bareJID);
-        Localpart nickname = bareJID.getLocalpart();
+        String nickname;
+        ContactItem contact = SparkManager.getWorkspace().getContactList().getContactItemByJID(bareJID);
         if (contact != null) {
-            nickname = Localpart.fromUnescapedOrThrowUnchecked(contact.getDisplayName());
+            nickname = contact.getDisplayName();
+        }
+        else {
+            nickname = bareJID.getLocalpart().asUnescapedString();
         }
 
         ChatRoom room;
@@ -131,7 +133,7 @@ public class BuzzPlugin implements Plugin {
         } catch (ChatRoomNotFoundException e) {
             // Create the room if it does not exist.
             room = SparkManager.getChatManager().createChatRoom(bareJID,
-                nickname.toString(), nickname.toString());
+                nickname, nickname);
         }
 
         ChatFrame chatFrame = SparkManager.getChatManager().getChatContainer()
