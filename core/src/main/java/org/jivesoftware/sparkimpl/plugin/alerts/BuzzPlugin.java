@@ -1,12 +1,12 @@
 /**
  * Copyright (C) 2004-2011 Jive Software. All rights reserved.
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -49,121 +49,118 @@ public class BuzzPlugin implements Plugin {
     private static final String NAMESPACE_OLD = "http://www.jivesoftware.com/spark";
 
     @Override
-	public void initialize() {
-	ProviderManager.addExtensionProvider(ELEMENTNAME,
-		NAMESPACE, new BuzzPacket.Provider());
+    public void initialize() {
+        ProviderManager.addExtensionProvider(ELEMENTNAME,
+            NAMESPACE, new BuzzPacket.Provider());
 
-	ProviderManager.addExtensionProvider(ELEMENTNAME_OLD,
-		NAMESPACE_OLD, new BuzzPacket.Provider() );
+        ProviderManager.addExtensionProvider(ELEMENTNAME_OLD,
+            NAMESPACE_OLD, new BuzzPacket.Provider());
 
-	SparkManager.getConnection().addAsyncStanzaListener( stanza -> {
-    if (stanza instanceof Message) {
-        final Message message = (Message) stanza;
+        SparkManager.getConnection().addAsyncStanzaListener(stanza -> {
+            if (stanza instanceof Message) {
+                final Message message = (Message) stanza;
 
-        boolean buzz = message.getExtension(ELEMENTNAME_OLD,
-            NAMESPACE_OLD) != null
-            || message.getExtension(ELEMENTNAME, NAMESPACE) != null;
-        if (buzz) {
-        SwingUtilities.invokeLater( () -> shakeWindow(message) );
-        }
-    }
-    }, new StanzaTypeFilter(Message.class));
+                boolean buzz = message.getExtension(ELEMENTNAME_OLD,
+                    NAMESPACE_OLD) != null
+                    || message.getExtension(ELEMENTNAME, NAMESPACE) != null;
+                if (buzz) {
+                    SwingUtilities.invokeLater(() -> shakeWindow(message));
+                }
+            }
+        }, new StanzaTypeFilter(Message.class));
 
-	SparkManager.getChatManager().addChatRoomListener(
-		new ChatRoomListener() {
-		    @Override
-			public void chatRoomOpened(final ChatRoom room) {
-			TimerTask task = new SwingTimerTask() {
-			    @Override
-				public void doRun() {
-				addBuzzFeatureToChatRoom(room);
-			    }
-			};
+        SparkManager.getChatManager().addChatRoomListener(
+            new ChatRoomListener() {
+                @Override
+                public void chatRoomOpened(final ChatRoom room) {
+                    TimerTask task = new SwingTimerTask() {
+                        @Override
+                        public void doRun() {
+                            addBuzzFeatureToChatRoom(room);
+                        }
+                    };
 
-			TaskEngine.getInstance().schedule(task, 100);
-		    }
+                    TaskEngine.getInstance().schedule(task, 100);
+                }
 
-		    @Override
-			public void chatRoomLeft(ChatRoom room) {
-		    }
+                @Override
+                public void chatRoomLeft(ChatRoom room) {
+                }
 
-		    @Override
-			public void chatRoomClosed(ChatRoom room) {
-		    }
+                @Override
+                public void chatRoomClosed(ChatRoom room) {
+                }
 
-		    @Override
-			public void chatRoomActivated(ChatRoom room) {
-		    }
+                @Override
+                public void chatRoomActivated(ChatRoom room) {
+                }
 
-		    @Override
-			public void userHasJoined(ChatRoom room, String userid) {
-		    }
+                @Override
+                public void userHasJoined(ChatRoom room, String userid) {
+                }
 
-		    @Override
-			public void userHasLeft(ChatRoom room, String userid) {
-		    }
-		});
+                @Override
+                public void userHasLeft(ChatRoom room, String userid) {
+                }
+            });
     }
 
     private void addBuzzFeatureToChatRoom(final ChatRoom room) {
-	if (room instanceof ChatRoomImpl) {
-	    // Add Button to toolbar
-	    if (!SettingsManager.getLocalPreferences().isBuzzEnabled()) {
-		return;
-	    }
-
-	    new BuzzRoomDecorator(room);
-	}
-
+        if (room instanceof ChatRoomImpl) {
+            // Add Button to toolbar
+            if (!SettingsManager.getLocalPreferences().isBuzzEnabled()) {
+                return;
+            }
+            new BuzzRoomDecorator(room);
+        }
     }
 
     private void shakeWindow(Message message) {
+        EntityBareJid bareJID = message.getFrom().asEntityBareJidOrThrow();
+        ContactItem contact = SparkManager.getWorkspace().getContactList()
+            .getContactItemByJID(bareJID);
+        Localpart nickname = bareJID.getLocalpart();
+        if (contact != null) {
+            nickname = Localpart.fromUnescapedOrThrowUnchecked(contact.getDisplayName());
+        }
 
-	EntityBareJid bareJID = message.getFrom().asEntityBareJidOrThrow();
-	ContactItem contact = SparkManager.getWorkspace().getContactList()
-		.getContactItemByJID(bareJID);
-	Localpart nickname = bareJID.getLocalpart();
-	if (contact != null) {
-	    nickname = Localpart.fromUnescapedOrThrowUnchecked(contact.getDisplayName());
-	}
+        ChatRoom room;
+        try {
+            room = SparkManager.getChatManager().getChatContainer()
+                .getChatRoom(bareJID);
+        } catch (ChatRoomNotFoundException e) {
+            // Create the room if it does not exist.
+            room = SparkManager.getChatManager().createChatRoom(bareJID,
+                nickname.toString(), nickname.toString());
+        }
 
-	ChatRoom room;
-	try {
-	    room = SparkManager.getChatManager().getChatContainer()
-		    .getChatRoom(bareJID);
-	} catch (ChatRoomNotFoundException e) {
-	    // Create the room if it does not exist.
-	    room = SparkManager.getChatManager().createChatRoom(bareJID,
-		    nickname.toString(), nickname.toString());
-	}
+        ChatFrame chatFrame = SparkManager.getChatManager().getChatContainer()
+            .getChatFrame();
+        if (chatFrame != null) {
+            if (SettingsManager.getLocalPreferences().isBuzzEnabled()) {
+                chatFrame.buzz();
+                SparkManager.getChatManager().getChatContainer()
+                    .activateChatRoom(room);
+            }
+        }
 
-	ChatFrame chatFrame = SparkManager.getChatManager().getChatContainer()
-		.getChatFrame();
-	if (chatFrame != null) {
-	    if (SettingsManager.getLocalPreferences().isBuzzEnabled()) {
-		chatFrame.buzz();
-		SparkManager.getChatManager().getChatContainer()
-			.activateChatRoom(room);
-	    }
-	}
-
-	// Insert offline message
-	room.getTranscriptWindow().insertNotificationMessage(
-		Res.getString("message.buzz.message", nickname),
-		ChatManager.NOTIFICATION_COLOR);
-	room.scrollToBottom();
+        // Insert offline message
+        room.getTranscriptWindow().insertNotificationMessage(
+            Res.getString("message.buzz.message", nickname),
+            ChatManager.NOTIFICATION_COLOR);
+        room.scrollToBottom();
     }
 
     @Override
-	public void shutdown() {
+    public void shutdown() {
     }
 
     @Override
-	public boolean canShutDown() {
-	return true;
+    public boolean canShutDown() {
+        return true;
     }
 
     @Override
-	public void uninstall() {
+    public void uninstall() {
     }
 }
