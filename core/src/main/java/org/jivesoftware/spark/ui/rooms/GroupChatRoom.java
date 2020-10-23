@@ -1099,10 +1099,19 @@ public class GroupChatRoom extends ChatRoom
     {
         final EntityBareJid roomJID = chat.getRoom();
         final String roomName = tabTitle;
+        final String password = this.password;
+
+        try {
+            chat.leave();
+        }
+        catch (Exception e) {
+            Log.error(e);
+        }
+
         isActive = false;
         EventQueue.invokeLater( () -> {
-            ConferenceUtils.joinConferenceOnSeperateThread( roomName, roomJID, password );
             closeChatRoom();
+            ConferenceUtils.joinConferenceOnSeperateThread( roomName, roomJID, password );
         } );
     }
 
