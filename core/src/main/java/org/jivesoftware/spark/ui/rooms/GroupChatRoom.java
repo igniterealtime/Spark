@@ -1097,7 +1097,22 @@ public class GroupChatRoom extends ChatRoom
     @Override
     public void authenticated( XMPPConnection xmppConnection, boolean b )
     {
-        reconnectionSuccessful();
+        final EntityBareJid roomJID = chat.getRoom();
+        final String roomName = tabTitle;
+        final String password = this.password;
+
+        try {
+            chat.leave();
+        }
+        catch (Exception e) {
+            Log.error(e);
+        }
+
+        isActive = false;
+        EventQueue.invokeLater( () -> {
+            closeChatRoom();
+            ConferenceUtils.joinConferenceOnSeperateThread( roomName, roomJID, password );
+        } );
     }
 
     @Override
@@ -1122,17 +1137,6 @@ public class GroupChatRoom extends ChatRoom
     public void setPassword( String password )
     {
         this.password = password;
-    }
-
-    private void reconnectionSuccessful()
-    {
-        final EntityBareJid roomJID = chat.getRoom();
-        final String roomName = tabTitle;
-        isActive = false;
-        EventQueue.invokeLater( () -> {
-            ConferenceUtils.joinConferenceOnSeperateThread( roomName, roomJID, password );
-            closeChatRoom();
-        } );
     }
 
     /**
