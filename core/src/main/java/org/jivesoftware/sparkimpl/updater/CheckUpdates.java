@@ -581,7 +581,7 @@ public class CheckUpdates {
         }
 
         if (response == null) {
-            throw SmackException.NoResponseException.newWith( connection, collector );
+            throw SmackException.NoResponseException.newWith(connection, collector.getStanzaFilter());
         }
         XMPPException.XMPPErrorException.ifHasErrorThenThrow( response );
 
