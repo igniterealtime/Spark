@@ -157,7 +157,7 @@ public class GroupChatParticipantList extends JPanel {
 	chat = groupChatRoom.getMultiUserChat();
 
 	chat.addInvitationRejectionListener( ( jid1, reason, message, rejection ) -> {
-    String nickname = userManager.getUserNicknameFromJID( jid1.toString() );
+    String nickname = userManager.getUserNicknameFromJID(jid1);
 
     userHasLeft(nickname);
 
