@@ -1603,7 +1603,7 @@ public class ContactList extends JPanel implements ActionListener,
                     JOptionPane.showMessageDialog(getGUI(), Res.getString("message.idle.for", time), Res.getString("title.last.activity"), JOptionPane.INFORMATION_MESSAGE);
                 } catch (Exception e1) {
                     UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
-                    JOptionPane.showMessageDialog(getGUI(), Res.getString("message.unable.to.retrieve.last.activity", item.getJID()), Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(getGUI(), Res.getString("message.unable.to.retrieve.last.activity", item.getJid()), Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
                 }
 
             }
@@ -1621,7 +1621,7 @@ public class ContactList extends JPanel implements ActionListener,
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                String jid = item.getJID();
+                BareJid jid = item.getJid();
                 Presence response = new Presence(Presence.Type.subscribe);
                 response.setTo(jid);
 
@@ -1708,14 +1708,14 @@ public class ContactList extends JPanel implements ActionListener,
             final Map<String, Message> broadcastMessages = new HashMap<>();
             for (ContactItem item : items) {
                 final Message message = new Message();
-                message.setTo(item.getJID());
+                message.setTo(item.getJid());
                 final Map<String, Object> properties = new HashMap<>();
                 properties.put("broadcast", true);
                 message.addExtension(new JivePropertiesExtension(properties));
                 message.setBody(messageText);
-                if (!broadcastMessages.containsKey(item.getJID())) {
+                if (!broadcastMessages.containsKey(item.getJid().toString())) {
                     buf.append(item.getDisplayName()).append("\n");
-                    broadcastMessages.put(item.getJID(), message);
+                    broadcastMessages.put(item.getJid().toString(), message);
                 }
             }
 

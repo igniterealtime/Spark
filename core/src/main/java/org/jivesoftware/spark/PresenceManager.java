@@ -146,11 +146,11 @@ public class PresenceManager {
     /**
      * Returns the presence of a user.
      *
-     * @param jidString the users jid.
+     * @param jid the users JID.
      * @return the users presence.
      */
     public static Presence getPresence(BareJid jid) {
-        if (jid.equals(SparkManager.getSessionManager().getBareAddress())) {
+        if (jid.equals(SparkManager.getSessionManager().getUserBareAddress())) {
             return SparkManager.getWorkspace().getStatusBar().getPresence();
         } else {
             final Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );

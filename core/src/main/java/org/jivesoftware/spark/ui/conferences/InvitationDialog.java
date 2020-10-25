@@ -330,7 +330,7 @@ final class InvitationDialog extends JPanel {
                 for (ChatRoom chatRoom : chatManager.getChatContainer().getChatRooms()) {
                     if (chatRoom instanceof GroupChatRoom) {
                         GroupChatRoom groupRoom = (GroupChatRoom) chatRoom;
-                        if (groupRoom.getRoomname().equals(roomTitle)) {
+                        if (groupRoom.getBareJid().equals(roomTitle)) {
                             roomName = groupRoom.getMultiUserChat().getRoom();
                             break;
                         }

@@ -28,7 +28,6 @@ import org.jivesoftware.sparkimpl.plugin.manager.Features;
 import org.jxmpp.jid.DomainBareJid;
 import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.EntityFullJid;
-import org.jxmpp.jid.impl.JidCreate;
 import org.jxmpp.util.XmppStringUtils;
 
 import javax.swing.SwingUtilities;
@@ -260,24 +259,12 @@ public final class SessionManager implements ConnectionListener {
     }
 
     /**
-     * Returns the users bare address. A bare-address is the address without a resource (ex. derek@jivesoftware.com/spark would
+     * Returns the users bare JID. A bare-JID is the JID without a resource (ex. derek@jivesoftware.com/spark would
      * be derek@jivesoftware.com)
      *
-     * @return the users bare address.
-     * @deprecated use {@link #getBareUserAddress()} instead.
+     * @return the users bare JID.
      */
-    @Deprecated
-    public String getBareAddress() {
-        return userBareAddress.toString();
-    }
-
-    /**
-     * Returns the users bare address. A bare-address is the address without a resource (ex. derek@jivesoftware.com/spark would
-     * be derek@jivesoftware.com)
-     *
-     * @return the users bare address.
-     */
-    public EntityBareJid getBareUserAddress() {
+    public EntityBareJid getUserBareAddress() {
         return userBareAddress;
     }
 

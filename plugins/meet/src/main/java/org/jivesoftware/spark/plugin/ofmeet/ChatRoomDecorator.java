@@ -52,7 +52,7 @@ public class ChatRoomDecorator
             ImageIcon ofmeetIcon = new ImageIcon(imageByte);
             ofmeetButton = new RolloverButton(ofmeetIcon);
             ofmeetButton.setToolTipText(GraphicUtils.createToolTip("Pade Meetings"));
-            final String roomId = getNode(room.getRoomname().toString());
+            final String roomId = getNode(room.getBareJid().toString());
             final String sessionID = roomId + "-" + System.currentTimeMillis();
             final String nickname = getNode(XmppStringUtils.parseBareAddress(SparkManager.getSessionManager().getJID().toString()));
 
@@ -86,7 +86,7 @@ public class ChatRoomDecorator
 
     public void finished()
     {
-        Log.warning("ChatRoomDecorator: finished " + room.getRoomname());
+        Log.warning("ChatRoomDecorator: finished " + room.getBareJid());
     }
 
     private String getNode(String jid)

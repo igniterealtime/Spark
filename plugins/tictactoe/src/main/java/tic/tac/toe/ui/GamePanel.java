@@ -112,7 +112,7 @@ public class GamePanel extends JPanel {
 			message.addExtension(inval);
 			_connection.sendStanza(message);
 			
-			ChatRoom cr = SparkManager.getChatManager().getChatRoom( _opponent.asBareJid());
+			ChatRoom cr = SparkManager.getChatManager().getChatRoom( _opponent.asEntityBareJid());
 			cr.getTranscriptWindow().insertCustomText(_opponent+"seems to be cheating\n"+
 				"He tried placing a wrong Move", true, false, Color.red);
 			
@@ -129,7 +129,7 @@ public class GamePanel extends JPanel {
 	    public void processStanza(Stanza stanza) {
 		
 		//InvalidMove im = (InvalidMove)packet.getExtension(InvalidMove.ELEMENT_NAME, InvalidMove.NAMESPACE);
-		ChatRoom cr = SparkManager.getChatManager().getChatRoom(_opponent.asBareJid());
+		ChatRoom cr = SparkManager.getChatManager().getChatRoom(_opponent.asEntityBareJid());
 		cr.getTranscriptWindow().insertCustomText("You seem to be Cheating\n"+
 			"You placed a wrong Move", true, false, Color.red);
 		ShakeWindow sw = new ShakeWindow(_frame);

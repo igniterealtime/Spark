@@ -312,7 +312,7 @@ public class ConferenceUtils {
             submitForm.setAnswer("muc#roomconfig_roomname", roomName);
 
             final List<String> owners = new ArrayList<>();
-            owners.add(SparkManager.getSessionManager().getBareAddress());
+            owners.add(SparkManager.getSessionManager().getUserBareAddress().toString());
             submitForm.setAnswer("muc#roomconfig_roomowners", owners);
 
             multiUserChat.sendConfigurationForm(submitForm);
@@ -326,7 +326,7 @@ public class ConferenceUtils {
 
         // Check if room already is open
         try {
-            chatManager.getChatContainer().getChatRoom(room.getRoomname());
+            chatManager.getChatContainer().getChatRoom(room.getBareJid());
         }
         catch (ChatRoomNotFoundException e) {
             chatManager.getChatContainer().addChatRoom(room);
