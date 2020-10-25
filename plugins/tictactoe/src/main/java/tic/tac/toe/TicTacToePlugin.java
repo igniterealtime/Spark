@@ -230,7 +230,7 @@ public class TicTacToePlugin implements Plugin {
 	invitation.setTo(invitation.getFrom());
 	
 	
-	final ChatRoom room = SparkManager.getChatManager().getChatRoom( invitation.getFrom().asBareJid());
+	final ChatRoom room = SparkManager.getChatManager().getChatRoom( invitation.getFrom().asEntityBareJidOrThrow());
 	
 	Localpart name = invitation.getFrom().getLocalpartOrThrow();
 	
