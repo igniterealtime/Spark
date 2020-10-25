@@ -104,13 +104,13 @@ public class PrivacyPlugin implements Plugin {
                             final ContactItem item = (ContactItem) object;
                             JMenuItem blockMenu;
 
-                            if (activeList.isBlockedItem(item.getJID())) {
+                            if (activeList.isBlockedItem(item.getJid().toString())) {
                                 blockMenu = new JMenuItem(Res.getString("menuitem.unblock.contact"), SparkRes.getImageIcon(SparkRes.UNBLOCK_CONTACT_16x16));
                                 blockMenu.addActionListener( ae -> {
                                     if (item != null) {
                                         try
                                         {
-                                            activeList.removeItem( item.getJID());
+                                            activeList.removeItem( item.getJid().toString());
                                             activeList.save();
                                         }
                                         catch ( SmackException.NotConnectedException e )
@@ -123,7 +123,7 @@ public class PrivacyPlugin implements Plugin {
                                 blockMenu = new JMenuItem(Res.getString("menuitem.block.contact"), SparkRes.getImageIcon(SparkRes.BLOCK_CONTACT_16x16));
                                 blockMenu.addActionListener( ae -> {
                                     if (item != null) {
-                                        PrivacyItem pItem = new PrivacyItem(Type.jid, item.getJID(), false, activeList.getNewItemOrder());
+                                        PrivacyItem pItem = new PrivacyItem(Type.jid, item.getJid().toString(), false, activeList.getNewItemOrder());
                                         pItem.setFilterMessage(true);
                                         pItem.setFilterPresenceOut(true);
 

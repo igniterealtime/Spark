@@ -19,6 +19,8 @@ import com.google.code.jgntp.*;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.util.log.Log;
+import org.jxmpp.jid.EntityBareJid;
+import org.jxmpp.jid.impl.JidCreate;
 import org.jxmpp.util.XmppStringUtils;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -120,8 +122,8 @@ public class GrowlTalker implements GntpListener
     public void onClickCallback( GntpNotification notification )
     {
         Log.debug( "Callback clicked: " + notification );
-        final String jid = XmppStringUtils.parseBareJid( (String) notification.getContext() );
-        final ChatRoom room = SparkManager.getChatManager().getChatRoom( jid );
+        final EntityBareJid jid = JidCreate.entityBareFromOrThrowUnchecked( (String) notification.getContext() );
+        final ChatRoom room = SparkManager.getChatManager().getChatRoom(jid);
         SparkManager.getChatManager().getChatContainer().activateChatRoom( room );
         SparkManager.getChatManager().getChatContainer().requestFocusInWindow();
     }

@@ -24,7 +24,7 @@ public final class RoarPopupHelper {
      * @return nickname
      */
     public static String getNickname(ChatRoom room, Message message) {
-        String nickname = SparkManager.getUserManager().getUserNicknameFromJID(message.getFrom());
+        String nickname = SparkManager.getUserManager().getUserNicknameFromJID(message.getFrom().asBareJid());
         if (room.getChatType() == Message.Type.groupchat) {
             nickname = message.getFrom().getResourceOrEmpty().toString();
         }

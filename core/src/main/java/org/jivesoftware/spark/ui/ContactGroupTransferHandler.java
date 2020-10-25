@@ -124,7 +124,7 @@ public class ContactGroupTransferHandler extends TransferHandler {
                     if (o instanceof java.util.Collection) {
                         Collection<File> files = (Collection<File>)o;
                         ContactItem source = (ContactItem)list.getSelectedValue();
-                        if (source == null || source.getJID() == null) {
+                        if (source == null || source.getJid() == null) {
                             return false;
                         }
 
