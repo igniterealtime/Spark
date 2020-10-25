@@ -1621,7 +1621,7 @@ public class ContactList extends JPanel implements ActionListener,
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                String jid = item.getJID();
+                BareJid jid = item.getJid();
                 Presence response = new Presence(Presence.Type.subscribe);
                 response.setTo(jid);
 
@@ -1708,7 +1708,7 @@ public class ContactList extends JPanel implements ActionListener,
             final Map<String, Message> broadcastMessages = new HashMap<>();
             for (ContactItem item : items) {
                 final Message message = new Message();
-                message.setTo(item.getJID());
+                message.setTo(item.getJid());
                 final Map<String, Object> properties = new HashMap<>();
                 properties.put("broadcast", true);
                 message.addExtension(new JivePropertiesExtension(properties));

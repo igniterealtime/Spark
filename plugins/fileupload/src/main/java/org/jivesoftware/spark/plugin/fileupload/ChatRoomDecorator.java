@@ -41,6 +41,7 @@ import org.apache.commons.httpclient.protocol.Protocol;
 
 import org.jivesoftware.sparkimpl.updater.EasySSLProtocolSocketFactory;
 
+import org.jxmpp.jid.impl.JidCreate;
 import sun.misc.BASE64Decoder;
 
 public class ChatRoomDecorator
@@ -113,7 +114,7 @@ public class ChatRoomDecorator
         }
         try {
             UploadRequest request = new UploadRequest(fileName, file.length());
-            request.setTo("httpfileupload." + SparkManager.getSessionManager().getServerAddress());
+            request.setTo(JidCreate.fromOrThrowUnchecked("httpfileupload." + SparkManager.getSessionManager().getServerAddress()));
             request.setType(IQ.Type.get);
 
             IQ result = SparkManager.getConnection().createStanzaCollectorAndSend(request).nextResultOrThrow();
