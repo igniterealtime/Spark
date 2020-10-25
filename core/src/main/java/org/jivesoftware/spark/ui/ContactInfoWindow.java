@@ -277,7 +277,7 @@ public class ContactInfoWindow extends JPanel {
         }
         statusLabel.setText(status);
 
-        Transport transport = TransportUtils.getTransport( XmppStringUtils.parseDomain(contactItem.getJID()));
+        Transport transport = TransportUtils.getTransport(contactItem.getJid().asDomainBareJid());
         if (transport != null) {
             fullJIDLabel.setIcon(transport.getIcon());
             String name = XmppStringUtils.parseLocalpart(contactItem.getJID());
