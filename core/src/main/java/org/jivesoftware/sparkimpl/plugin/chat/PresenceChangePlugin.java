@@ -43,6 +43,7 @@ import org.jivesoftware.sparkimpl.plugin.alerts.SparkToaster;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jxmpp.jid.BareJid;
+import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.Jid;
 import org.jxmpp.util.XmppStringUtils;
 
@@ -172,13 +173,13 @@ if (localPref.getShowToasterPopup()) {
                                     @Override
                                     public void actionPerformed( ActionEvent e )
                                     {
-                                        SparkManager.getChatManager().getChatRoom( jid );
+                                        SparkManager.getChatManager().getChatRoom( jid.asEntityBareJidOrThrow() );
                                     }
                                 } );
                             } );
 }
 
-ChatRoom room = SparkManager.getChatManager().getChatRoom(jid);
+ChatRoom room = SparkManager.getChatManager().getChatRoom(jid.asEntityBareJidOrThrow());
 
 if (localPref.getWindowTakesFocus())
 {

@@ -238,30 +238,11 @@ public class ChatManager {
      * Returns the <code>ChatRoom</code> for the giving jid. If the ChatRoom is not found,
      * a new ChatRoom will be created.
      *
-     * @param jid the jid of the user to chat with.
-     * @return the ChatRoom.
-     * @deprecated use {@link #getChatRoom(BareJid)} instead.
-     */
-    @Deprecated
-    public ChatRoom getChatRoom(String jid) {
-        BareJid mucAddress;
-        try {
-            mucAddress = JidCreate.bareFrom(jid);
-        } catch (XmppStringprepException e) {
-            throw new IllegalStateException(e);
-        }
-        return getChatRoom(mucAddress);
-    }
-
-    /**
-     * Returns the <code>ChatRoom</code> for the giving jid. If the ChatRoom is not found,
-     * a new ChatRoom will be created.
-     *
-     * @param jid the jid of the user to chat with.
+     * @param bareJid the jid of the user to chat with.
+     * @param bareJid
      * @return the ChatRoom.
      */
-    public ChatRoom getChatRoom(BareJid bareJid) {
-        // TODO: Change signature of method to use EntityBareJid.
+    public ChatRoom getChatRoom(EntityBareJid bareJid) {
         EntityBareJid jid = bareJid.asEntityBareJidOrThrow();
         ChatRoom chatRoom;
         try {

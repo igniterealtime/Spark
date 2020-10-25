@@ -148,7 +148,7 @@ public class ReversiPlugin implements Plugin {
         // Got an offer to start a new game. So, make sure that a chat is
         // started with the other
         // user and show an invite panel.
-        final ChatRoom room = SparkManager.getChatManager().getChatRoom( invitation.getFrom().asBareJid() );
+        final ChatRoom room = SparkManager.getChatManager().getChatRoom( invitation.getFrom().asEntityBareJidOrThrow() );
 
         inviteAlert = new JPanel();
         inviteAlert.setLayout(new BorderLayout());
