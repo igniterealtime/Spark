@@ -196,7 +196,7 @@ public class HistoryTranscript extends SwingWorker {
 				BareJid otherJID = message
 						.getFrom().asBareJid();
 				EntityBareJid myJID = SparkManager.getSessionManager()
-						.getBareUserAddress();
+						.getUserBareAddress();
 
 				if (otherJID.equals(myJID)) {
 					nickname = personalNickname;
@@ -207,7 +207,7 @@ public class HistoryTranscript extends SwingWorker {
 			}
 
 			if (!from.asBareJid().equals(
-					SparkManager.getSessionManager().getBareUserAddress())) {
+					SparkManager.getSessionManager().getUserBareAddress())) {
 				color = "red";
 			}
 
