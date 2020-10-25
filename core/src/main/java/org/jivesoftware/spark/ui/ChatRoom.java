@@ -459,7 +459,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
                 }
                 else
                 {
-                    username = re.getUser().substring( 0, re.getUser().indexOf( '@' ) );
+                    username = re.getJid().toString().substring( 0, re.getJid().toString().indexOf( '@' ) );
                 }
 
                 if ( username.toLowerCase().startsWith( needle.toLowerCase() ) )
