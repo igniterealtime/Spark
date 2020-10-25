@@ -93,16 +93,9 @@ public class TransportUtils {
 
     /**
      * 
-     * @param serviceName
+     * @param transportAddress
      * @return
-     * @deprecated use {@link #getTransport(DomainBareJid)} instead.
      */
-    @Deprecated
-    public static Transport getTransport(String serviceName) {
-        DomainBareJid transportAddress = JidCreate.domainBareFromOrThrowUnchecked(serviceName);
-        return getTransport(transportAddress);
-    }
-
     public static Transport getTransport(DomainBareJid transportAddress) {
         // Return transport.
         return transports.get(transportAddress);
