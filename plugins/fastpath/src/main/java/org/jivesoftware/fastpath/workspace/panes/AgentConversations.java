@@ -325,7 +325,7 @@ public final class AgentConversations extends JPanel implements ChangeListener {
                                     while (iter.hasNext()) {
                                         Affiliate affilitate = (Affiliate)iter.next();
                                         Jid jid = affilitate.getJid();
-                                        if (!jid.equals(SparkManager.getSessionManager().getBareUserAddress())) {
+                                        if (!jid.equals(SparkManager.getSessionManager().getUserBareAddress())) {
                                             list.add(jid);
                                         }
                                     }
