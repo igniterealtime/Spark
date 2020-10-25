@@ -104,7 +104,7 @@ public class PresenceChangePlugin implements Plugin {
 			public void poppingUp(Object object, JPopupMenu popup) {
                 if (object instanceof ContactItem) {
                     ContactItem item = (ContactItem)object;
-                    String bareAddress = XmppStringUtils.parseBareJid(item.getJID());
+                    BareJid bareAddress = item.getJid();
                     if (!item.getPresence().isAvailable() || item.getPresence().isAway()) {
                         if (sparkContacts.contains(bareAddress)) {
                             popup.add(removeAction);

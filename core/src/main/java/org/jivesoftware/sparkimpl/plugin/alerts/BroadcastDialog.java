@@ -98,13 +98,13 @@ public class BroadcastDialog extends JPanel {
         for(ContactGroup group : contactList.getContactGroups())
 	        for (ContactItem item : group.getContactItems()) 
 	        {
-	      	  if(item.isAvailable() && !onlineJIDs.contains(item.getJID()))
+	      	  if(item.isAvailable() && !onlineJIDs.contains(item.getJid().toString()))
 	      	  {
 	           CheckNode itemNode = new CheckNode(item.getDisplayName(), false, item.getIcon());
-	           itemNode.setAssociatedObject(item.getJID());
+	           itemNode.setAssociatedObject(item.getJid().toString());
 	           groupNode.add(itemNode);
 	           nodes.add(itemNode);
-	           onlineJIDs.add(item.getJID());
+	           onlineJIDs.add(item.getJid().toString());
 	      	  }
 	        }
 	        
@@ -122,7 +122,7 @@ public class BroadcastDialog extends JPanel {
             // Now add contact items from contact group.
             for (ContactItem item : group.getContactItems()) {
                 CheckNode itemNode = new CheckNode(item.getDisplayName(), false, item.getIcon());
-                itemNode.setAssociatedObject(item.getJID());
+                itemNode.setAssociatedObject(item.getJid().toString());
                 groupNode.add(itemNode);
                 nodes.add(itemNode);
             }
@@ -132,7 +132,7 @@ public class BroadcastDialog extends JPanel {
 
             for (ContactItem item : offlineContacts) {
                 CheckNode itemNode = new CheckNode(item.getDisplayName(), false, item.getIcon());
-                itemNode.setAssociatedObject(item.getJID());
+                itemNode.setAssociatedObject(item.getJid().toString());
                 groupNode.add(itemNode);
                 nodes.add(itemNode);
             }
@@ -173,7 +173,7 @@ public class BroadcastDialog extends JPanel {
             // Iterate through selected users.
             for (ContactItem item : selectedUsers) {
                 for (CheckNode node : nodes) {
-                    if (node.getAssociatedObject().toString().equals(item.getJID())) {
+                    if (node.getAssociatedObject().toString().equals(item.getJid().toString())) {
                         node.setSelected(true);
                     }
                 }

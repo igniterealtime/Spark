@@ -136,7 +136,7 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
             Iterator<ContactItem> selectedUsersIterator = selectedUsers.iterator();
             if (selectedUsersIterator.hasNext()) {
                 ContactItem contactItem = selectedUsersIterator.next();
-                selectedUser = contactItem.getJID();
+                selectedUser = contactItem.getJid().toString();
             }
 
             UIManager.put("OptionPane.okButtonText", Res.getString("ok"));

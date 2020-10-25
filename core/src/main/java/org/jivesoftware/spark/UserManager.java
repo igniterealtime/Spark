@@ -399,9 +399,9 @@ public class UserManager {
         for (ContactGroup contactGroup : contactList.getContactGroups()) {
             contactGroup.clearSelection();
             for (ContactItem contactItem : contactGroup.getContactItems()) {
-                if (!contactMap.containsKey(contactItem.getJID())) {
+                if (!contactMap.containsKey(contactItem.getJid().toString())) {
                     contacts.add(contactItem);
-                    contactMap.put(contactItem.getJID(), contactItem);
+                    contactMap.put(contactItem.getJid().toString(), contactItem);
                 }
             }
         }
@@ -433,7 +433,7 @@ public class UserManager {
                             parent.setGlassPane(glassPane);
                             parent.getGlassPane().setVisible(false);
                             contactField.dispose();
-                            SparkManager.getChatManager().activateChat(item.getJID(), item.getDisplayName());
+                            SparkManager.getChatManager().activateChat(item.getJid(), item.getDisplayName());
                         }
                     }
 
