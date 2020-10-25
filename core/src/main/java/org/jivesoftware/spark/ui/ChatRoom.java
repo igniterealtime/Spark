@@ -910,17 +910,6 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
     public abstract Icon getTabIcon();
 
     /**
-     * Get the roomname to use for this ChatRoom. This is expected to be a bare jid.
-     *
-     * @return - the Roomname of this ChatRoom.
-     * @deprecated use {@link #getBareJid()} instead.
-     */
-    @Deprecated
-    public EntityBareJid getRoomname() {
-        return getBareJid();
-    }
-
-    /**
      * Get the XMPP address of this room.
      *
      * @return the XMPP address of this room

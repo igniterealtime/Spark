@@ -197,7 +197,7 @@ public class ChatManager {
         for (ChatRoom chatRoom : getChatContainer().getChatRooms()) {
             if (chatRoom instanceof GroupChatRoom) {
                 GroupChatRoom groupChat = (GroupChatRoom)chatRoom;
-                if (groupChat.getRoomname().equals(roomName)) {
+                if (groupChat.getBareJid().equals(roomName)) {
                     return groupChat;
                 }
             }
