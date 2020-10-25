@@ -284,20 +284,6 @@ public class UserManager {
         return new ArrayList<>();
     }
 
-    /**
-     * @deprecated use {@link #getUserNicknameFromJID(BareJid)} instead.
-     */
-    @Deprecated
-    public String getUserNicknameFromJID(CharSequence jid) {
-        BareJid bareJid;
-        try {
-            bareJid = JidCreate.bareFrom(jid);
-        } catch (XmppStringprepException e) {
-            throw new IllegalStateException(e);
-        }
-        return getUserNicknameFromJID(bareJid);
-    }
-
     public String getUserNicknameFromJID(BareJid jid) {
         ContactList contactList = SparkManager.getWorkspace().getContactList();
         ContactItem item = contactList.getContactItemByJID(jid);
