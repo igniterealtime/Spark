@@ -113,18 +113,11 @@ public class TransportUtils {
 
     /**
      * 
-     * @param serviceName
+     * @param address
      * @param transport
-     * @deprecated use {@link #addTransport(DomainBareJid, Transport)} instead.
      */
-    @Deprecated
-    public static void addTransport(String serviceName, Transport transport) {
-        DomainBareJid transportAddress = JidCreate.domainBareFromOrThrowUnchecked(serviceName);
-         addTransport(transportAddress, transport);
-    }
-
-    public static void addTransport(DomainBareJid transportAddress, Transport transport) {
-        transports.put(transportAddress, transport);
+    public static void addTransport(DomainBareJid address, Transport transport) {
+        transports.put(address, transport);
     }
 
     public static Collection<Transport> getTransports() {
