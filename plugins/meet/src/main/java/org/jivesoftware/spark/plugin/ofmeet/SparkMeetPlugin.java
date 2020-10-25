@@ -114,7 +114,7 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
     public void messageReceived(ChatRoom room, Message message) {
 
         try {
-            Localpart roomId = room.getRoomJid().getLocalpart();
+            Localpart roomId = room.getJid().getLocalpart();
             String body = message.getBody();
             int pos = body.indexOf("https://");
 
