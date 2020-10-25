@@ -326,7 +326,7 @@ public class ConferenceUtils {
 
         // Check if room already is open
         try {
-            chatManager.getChatContainer().getChatRoom(room.getRoomname());
+            chatManager.getChatContainer().getChatRoom(room.getBareJid());
         }
         catch (ChatRoomNotFoundException e) {
             chatManager.getChatContainer().addChatRoom(room);

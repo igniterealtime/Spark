@@ -420,17 +420,6 @@ public class GroupChatRoom extends ChatRoom
         lastActivity = System.currentTimeMillis();
     }
 
-    /**
-     * Return name of the room specified when the room was created.
-     *
-     * @return the roomname.
-     */
-    @Override
-    public EntityBareJid getRoomname()
-    {
-        return chat.getRoom();
-    }
-
     @Override
     public EntityBareJid getBareJid()
     {
@@ -665,7 +654,7 @@ public class GroupChatRoom extends ChatRoom
             catch ( ChatRoomNotFoundException e )
             {
                 final Resourcepart userNickname = message.getFrom().getResourceOrEmpty();
-                final String roomTitle = userNickname + " - " + getRoomname();
+                final String roomTitle = userNickname + " - " + getBareJid();
 
                 // Check to see if this is a message notification.
                 if ( message.getBody() != null )

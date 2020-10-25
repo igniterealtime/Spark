@@ -226,7 +226,7 @@ public class UserManager {
      * @return the Occupant found.
      */
     public Occupant getOccupant(GroupChatRoom groupChatRoom, Resourcepart nickname) {
-        EntityFullJid userJID = JidCreate.entityFullFrom(groupChatRoom.getRoomname(), nickname);
+        EntityFullJid userJID = JidCreate.entityFullFrom(groupChatRoom.getBareJid(), nickname);
         Occupant occ = null;
         try {
             occ = groupChatRoom.getMultiUserChat().getOccupant(userJID);
