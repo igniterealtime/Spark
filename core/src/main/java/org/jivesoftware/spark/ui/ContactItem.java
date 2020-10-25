@@ -245,18 +245,6 @@ public class ContactItem extends JPanel {
     }
 
     /**
-     * Returns the fully qualified JID of the contact. (If available). Otherwise will
-     * return the bare jid.
-     *
-     * @return the fully qualified jid (ex. derek@jivesoftware.com).
-     * @deprecated use {@link #getJid()} instead.
-     */
-    @Deprecated
-    public String getJID() {
-        return getJid().toString();
-    }
-
-    /**
      * Return the XMPP address, aka. JID< of this contact item.
      *
      * @return the XMPP address of this item.
@@ -476,14 +464,7 @@ public class ContactItem extends JPanel {
             getNicknameLabel().setFont(new Font("Dialog", Font.PLAIN, fontSize));
             getNicknameLabel().setForeground((Color)UIManager.get("ContactItemOffline.color"));
 
-            BareJid bareJid;
-            try {
-                bareJid = JidCreate.bareFrom(getJID());
-            } catch (XmppStringprepException e) {
-                throw new IllegalStateException(e);
-            }
-
-            RosterEntry entry = Roster.getInstanceFor( SparkManager.getConnection() ).getEntry(bareJid);
+            RosterEntry entry = Roster.getInstanceFor( SparkManager.getConnection() ).getEntry(getJid());
             if (entry != null && (entry.getType() == RosterPacket.ItemType.none || entry.getType() == RosterPacket.ItemType.from)
                     && entry.isSubscriptionPending()) {
                 // Do not move out of group.
