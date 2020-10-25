@@ -61,6 +61,7 @@ import org.jivesoftware.spark.ui.ContactList;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.layout.LayoutSettingsManager;
+import org.jxmpp.jid.impl.JidCreate;
 
 /**
  * Allows for better selective broadcasting.
@@ -374,7 +375,7 @@ Log.warning( "Unable to broadcast.", e1 );
             final Message message = new Message();
             String nickname = SparkManager.getUserManager().getUserNicknameFromJID(jid);
             recipients.add(nickname);
-            message.setTo(jid);
+            message.setTo(JidCreate.fromOrThrowUnchecked(jid));
             message.setBody(text);
             
             if (normalMessageButton.isSelected()) {

@@ -42,6 +42,7 @@ import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.EntityFullJid;
 import org.jxmpp.jid.EntityJid;
+import org.jxmpp.jid.impl.JidCreate;
 import org.jxmpp.jid.parts.Resourcepart;
 
 import javax.swing.*;
@@ -605,8 +606,8 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
      */
     public void addToTranscript(String to, String from, String body, Date date) {
         final Message newMessage = new Message();
-        newMessage.setTo(to);
-        newMessage.setFrom(from);
+        newMessage.setTo(JidCreate.fromOrThrowUnchecked(to));
+        newMessage.setFrom(JidCreate.fromOrThrowUnchecked(from));
         newMessage.setBody(body);
         final Map<String, Object> properties = new HashMap<>();
         properties.put( "date", new Date() );
