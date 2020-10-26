@@ -620,17 +620,6 @@ public class ContactItem extends JPanel {
         return displayNameLabel;
     }
 
-    /**
-     * Get the JID.
-     *
-     * @return the JID
-     * @deprecated use {@link #getJid()} instead.
-     */
-    @Deprecated
-    protected String getFullyQualifiedJID() {
-        return jid.toString();
-    }
-
     protected void setDisplayNameLabel(JLabel displayNameLabel) {
         this.displayNameLabel = displayNameLabel;
     }
