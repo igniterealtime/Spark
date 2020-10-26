@@ -59,16 +59,18 @@ import org.jxmpp.util.XmppStringUtils;
 public class ContactItem extends JPanel {
 
 	private static final long serialVersionUID = 1514044406550293152L;
-	private JLabel imageLabel;
-    private JLabel displayNameLabel;
-    private JLabel descriptionLabel;
+	private final JLabel imageLabel;
+    private final JLabel displayNameLabel;
+    private final JLabel descriptionLabel;
+    private final JLabel specialImageLabel;
+    private final JLabel sideIcon;
+
     private String nickname;
     private String alias;
 
 
     private final BareJid jid;
 
-	private JLabel specialImageLabel;
     private Icon icon;
 
     private String status;
@@ -82,8 +84,6 @@ public class ContactItem extends JPanel {
 
     private File contactsDir;
 
-    private JLabel sideIcon;
-
     int fontSize;
 
     private int iconSize;
@@ -92,7 +92,7 @@ public class ContactItem extends JPanel {
 
 	public ContactItem(String alias, String nickname, BareJid fullyQualifiedJID) {
 		this(alias, nickname, fullyQualifiedJID, true);
-	}
+    }
 
     /**
      * Creates a new instance of a contact.
@@ -120,37 +120,42 @@ public class ContactItem extends JPanel {
         this.jid = jid;
 
         if (initUi) {
-		displayNameLabel = new JLabel();
-		descriptionLabel = new JLabel();
-		imageLabel = new JLabel();
-		specialImageLabel = new JLabel();
-		sideIcon = new JLabel();
-		if (avatarsShowing) {
-			sideIcon.setMinimumSize(new Dimension(iconSize, iconSize));
-			sideIcon.setMaximumSize(new Dimension(iconSize, iconSize));
-			sideIcon.setPreferredSize(new Dimension(iconSize, iconSize));
-		}
+            displayNameLabel = new JLabel();
+            descriptionLabel = new JLabel();
+            imageLabel = new JLabel();
+            specialImageLabel = new JLabel();
+            sideIcon = new JLabel();
+            if (avatarsShowing) {
+                sideIcon.setMinimumSize(new Dimension(iconSize, iconSize));
+                sideIcon.setMaximumSize(new Dimension(iconSize, iconSize));
+                sideIcon.setPreferredSize(new Dimension(iconSize, iconSize));
+            }
 
-		displayNameLabel.setHorizontalTextPosition(JLabel.LEFT);
-		displayNameLabel.setHorizontalAlignment(JLabel.LEFT);
-		//displayNameLabel.setText(nickname);
+            displayNameLabel.setHorizontalTextPosition(JLabel.LEFT);
+            displayNameLabel.setHorizontalAlignment(JLabel.LEFT);
+            //displayNameLabel.setText(nickname);
 
+            descriptionLabel.setFont(new Font("Dialog", Font.PLAIN, fontSize));
+            descriptionLabel.setForeground((Color) UIManager.get("ContactItemDescription.foreground"));
+            descriptionLabel.setHorizontalTextPosition(JLabel.LEFT);
+            descriptionLabel.setHorizontalAlignment(JLabel.LEFT);
 
-		descriptionLabel.setFont(new Font("Dialog", Font.PLAIN, fontSize));
-		descriptionLabel.setForeground((Color)UIManager.get("ContactItemDescription.foreground"));
-		descriptionLabel.setHorizontalTextPosition(JLabel.LEFT);
-		descriptionLabel.setHorizontalAlignment(JLabel.LEFT);
+            this.setOpaque(true);
 
+            add(imageLabel, new GridBagConstraints(0, 0, 1, 2, 0.0, 0.0, GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL, new Insets(0, 15, 0, 0), 0, 0));
+            add(displayNameLabel, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 0, 0), 0, 0));
+            add(descriptionLabel, new GridBagConstraints(2, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 2, 0), 0, 0));
+            add(specialImageLabel, new GridBagConstraints(3, 0, 1, 2, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 0, 0), 0, 0));
+            add(sideIcon, new GridBagConstraints(4, 0, 1, 2, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 0, 0), 0, 0));
 
-		this.setOpaque(true);
-
-		add(imageLabel, new GridBagConstraints(0, 0, 1, 2, 0.0, 0.0, GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL, new Insets(0, 15, 0, 0), 0, 0));
-		add(displayNameLabel, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 0, 0), 0, 0));
-		add(descriptionLabel, new GridBagConstraints(2, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 2, 0), 0, 0));
-		add(specialImageLabel, new GridBagConstraints(3, 0, 1, 2, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 0, 0), 0, 0));
-		add(sideIcon, new GridBagConstraints(4, 0, 1, 2, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 0, 0), 0, 0));
-
-		setDisplayName();
+            setDisplayName();
+        }
+        else {
+            imageLabel = null;
+            displayNameLabel = null;
+            descriptionLabel = null;
+            specialImageLabel = null;
+            sideIcon = null;
         }
     }
 
@@ -620,20 +625,8 @@ public class ContactItem extends JPanel {
         return displayNameLabel;
     }
 
-    protected void setDisplayNameLabel(JLabel displayNameLabel) {
-        this.displayNameLabel = displayNameLabel;
-    }
-
-    protected void setDescriptionLabel(JLabel descriptionLabel) {
-        this.descriptionLabel = descriptionLabel;
-    }
-
     public JLabel getSpecialImageLabel() {
         return specialImageLabel;
-    }
-
-    protected void setSpecialImageLabel(JLabel specialImageLabel) {
-        this.specialImageLabel = specialImageLabel;
     }
 
 	public JLabel getSideIcon() {
