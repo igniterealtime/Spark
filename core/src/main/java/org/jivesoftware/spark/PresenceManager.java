@@ -90,21 +90,9 @@ public class PresenceManager {
     /**
      * Returns true if the user is online and their status is available or free to chat.
      *
-     * @param jidString the jid of the user.
+     * @param jid the jid of the user.
      * @return true if the user is online and available.
-     * @deprecated use {@link #isAvailable(BareJid)} instead.
      */
-    @Deprecated
-    public static boolean isAvailable(String jidString) {
-        BareJid jid;
-        try {
-            jid = JidCreate.bareFrom(jidString);
-        } catch (XmppStringprepException e) {
-            throw new IllegalStateException(e);
-        }
-        return isAvailable(jid);
-    }
-
     public static boolean isAvailable(BareJid jid) {
         final Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
         Presence presence = roster.getPresence(jid);
