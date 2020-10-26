@@ -112,28 +112,6 @@ public class PresenceManager {
     /**
      * Returns the presence of a user.
      *
-     * @param jidString the users jid.
-     * @return the users presence.
-     * @deprecated use {@link #getPresence(BareJid)} instead.
-     */
-    @Deprecated
-    public static Presence getPresence(String jidString) {
-        if ( jidString == null ) {
-            Log.error( "Unable to get the presence of a null jid!" );
-            return null;
-        }
-        BareJid jid;
-        try {
-            jid = JidCreate.bareFrom(jidString);
-        } catch (XmppStringprepException e) {
-            throw new IllegalStateException(e);
-        }
-        return getPresence(jid);
-    }
-
-    /**
-     * Returns the presence of a user.
-     *
      * @param jid the users JID.
      * @return the users presence.
      */
