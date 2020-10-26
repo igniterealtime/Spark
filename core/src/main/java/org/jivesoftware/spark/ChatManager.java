@@ -275,27 +275,6 @@ public class ChatManager {
      * @param roomName    the name of the room.
      * @param serviceName the service name to use (ex.conference.jivesoftware.com)
      * @return the new ChatRoom created. If an error occured, null will be returned.
-     * @deprecated use {@link #createConferenceRoom(Localpart, DomainBareJid)} instead.
-     */
-    @Deprecated
-    public ChatRoom createConferenceRoom(String roomName, String serviceName) {
-        DomainBareJid serviceAddress;
-        Localpart localpart;
-        try {
-            localpart = Localpart.from(roomName);
-            serviceAddress = JidCreate.domainBareFrom(serviceName);
-        } catch (XmppStringprepException e) {
-            throw new IllegalStateException(e);
-        }
-        return createConferenceRoom(localpart, serviceAddress);
-    }
-
-    /**
-     * Creates a new public Conference Room.
-     *
-     * @param roomName    the name of the room.
-     * @param serviceName the service name to use (ex.conference.jivesoftware.com)
-     * @return the new ChatRoom created. If an error occured, null will be returned.
      */
     public ChatRoom createConferenceRoom(Localpart roomName, DomainBareJid serviceName) {
         EntityBareJid roomAddress = JidCreate.entityBareFrom(roomName, serviceName);
