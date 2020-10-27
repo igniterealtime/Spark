@@ -351,15 +351,13 @@ final class InvitationDialog extends JPanel {
                 catch (ChatNotFoundException e1) {
                     dlg.setVisible(false);
                     final List<EntityBareJid> jidList = new ArrayList<>();
-                    Object[] jids1 = invitedUserList.getSelectedValues();
-                    final int no = jids1 != null ? jids1.length : 0;
-                    for (int i = 0; i < no; i++) {
+                    Object[] jids1 = invitedUserList.getSelectedValuesList().toArray();
+                    for (Object o : jids1) {
                         try {
-                            String entityBareJidString = (String) jids1[i];
+                            String entityBareJidString = (String) o;
                             EntityBareJid entityBareJid = JidCreate.entityBareFromUnescaped(entityBareJidString);
                             jidList.add(entityBareJid);
-                        }
-                        catch (NullPointerException | XmppStringprepException ee) {
+                        } catch (NullPointerException | XmppStringprepException ee) {
                             Log.error(ee);
                         }
                     }
@@ -403,20 +401,16 @@ final class InvitationDialog extends JPanel {
                 pane.setValue(JOptionPane.UNINITIALIZED_VALUE);
                 dlg.dispose();
 
-                Object[] values = invitedUserList.getSelectedValues();
-                final int no = values != null ? values.length : 0;
-                for (int i = 0; i < no; i++) {
-                    String jidString = (String)values[i];
-                    try
-                    {
+                Object[] values = invitedUserList.getSelectedValuesList().toArray();
+                for (Object o : values) {
+                    String jidString = (String) o;
+                    try {
                         EntityBareJid jid = JidCreate.entityBareFromUnescaped(jidString);
                         chatRoom.getMultiUserChat().invite(jid, message != null ? message : Res.getString("message.please.join.in.conference"));
                         String nickname = SparkManager.getUserManager().getUserNicknameFromJID(jid);
                         chatRoom.getTranscriptWindow().insertNotificationMessage("Invited " + nickname, ChatManager.NOTIFICATION_COLOR);
-                    }
-                    catch ( SmackException.NotConnectedException | XmppStringprepException | InterruptedException e1 )
-                    {
-                        Log.warning( "Unable to send stanza to " + jidString, e1 );
+                    } catch (SmackException.NotConnectedException | XmppStringprepException | InterruptedException e1) {
+                        Log.warning("Unable to send stanza to " + jidString, e1);
                     }
                 }
 

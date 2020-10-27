@@ -215,11 +215,10 @@ public class PrivacyAddDialogUI extends JPanel {
 
 
 
-        Object[] values = rosterList.getSelectedValues();
-        final int no = values != null ? values.length : 0;
-        for (int i = 0; i < no; i++) {
+        Object[] values = rosterList.getSelectedValuesList().toArray();
+        for (Object value : values) {
             try {
-                ContactItem item = (ContactItem) values[i];
+                ContactItem item = (ContactItem) value;
 
                 PrivacyItem.Type type = _showGroups ? PrivacyItem.Type.group : PrivacyItem.Type.jid;
                 PrivacyItem pitem = new PrivacyItem(type, item.getJid().toString(), false, 999);
