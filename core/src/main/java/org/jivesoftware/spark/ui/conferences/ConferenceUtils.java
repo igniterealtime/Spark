@@ -65,18 +65,6 @@ public class ConferenceUtils {
     }
 
     /**
-     * Return a list of available Conference rooms from the server
-     * based on the service name.
-     *
-     * @param serviceName the service name (ex. conference@jivesoftware.com)
-     * @return a collection of rooms.
-     * @throws Exception if an error occured during fetch.
-     */
-    public static Collection<HostedRoom> getRoomList(DomainBareJid serviceName) throws Exception {
-        return MultiUserChatManager.getInstanceFor( SparkManager.getConnection() ).getHostedRooms( serviceName );
-    }
-
-    /**
      * Return the number of occupants in a room.
      *
      * @param roomJID the full JID of the conference room. (ex. dev@conference.jivesoftware.com)
