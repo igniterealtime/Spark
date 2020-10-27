@@ -54,7 +54,6 @@ public class ChatRoomDecorator
             ofmeetButton.setToolTipText(GraphicUtils.createToolTip("Pade Meetings"));
             final String roomId = getNode(room.getBareJid().toString());
             final String sessionID = roomId + "-" + System.currentTimeMillis();
-            final String nickname = getNode(XmppStringUtils.parseBareAddress(SparkManager.getSessionManager().getJID().toString()));
 
             ofmeetButton.addActionListener( new ActionListener()
             {
