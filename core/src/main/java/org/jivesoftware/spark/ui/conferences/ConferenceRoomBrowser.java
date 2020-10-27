@@ -19,10 +19,8 @@ import java.awt.*;
 import java.awt.event.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.*;
 import java.util.List;
-import java.util.TimerTask;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -321,15 +319,15 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
         clearTable();
 
         TimerTask refreshTask = new TimerTask() {
-            Collection<HostedRoom> rooms;
+            Map<EntityBareJid, HostedRoom> rooms;
 
             @Override
             public void run() {
                 try {
-                    rooms = getRoomList(serviceName);
+                    rooms = MultiUserChatManager.getInstanceFor(SparkManager.getConnection()).getRoomsHostedBy(serviceName);
                     try { 
-                        for (HostedRoom aResult : rooms) {
-                            RoomObject room = getRoomsAndInfo(aResult);
+                        for (Map.Entry<EntityBareJid, HostedRoom> entry : rooms.entrySet()) {
+                            RoomObject room = getRoomsAndInfo(entry.getValue());
                             addRoomToTable(room.getRoomJID(), room.getRoomName(),
                             room.getNumberOfOccupants());
                         }
@@ -513,12 +511,12 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
     public void invoke() {
         startLoadingImg();
         TimerTask invokeThread = new TimerTask() {
-            Collection<HostedRoom> rooms;
+            Map<EntityBareJid, HostedRoom> rooms;
 
             @Override
             public void run() {
                 try {
-                    rooms = getRoomList(serviceName);
+                    rooms = MultiUserChatManager.getInstanceFor(SparkManager.getConnection()).getRoomsHostedBy(serviceName);
 
                     if (rooms == null) {
                     	UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
@@ -531,10 +529,10 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
                         }
                     }else{
                         try {
-                            for (HostedRoom room : rooms) {
+                            for (Map.Entry<EntityBareJid, HostedRoom> room : rooms.entrySet()) {
 
-                            String roomName = room.getName();
-                            EntityBareJid roomJID = room.getJid();
+                            String roomName = room.getValue().getName();
+                            EntityBareJid roomJID = room.getValue().getJid();
 
                             int numberOfOccupants = -1;
 
@@ -828,20 +826,6 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
 	    ConferenceUtils.joinConferenceOnSeperateThread(roomDescription,
 		    roomJID, null);
 	}
-    }
-
-    /**
-     * Returns a Collection of all rooms in the specified Conference Service.
-     *
-     * @param serviceName
-     *            the name of the conference service.
-     * @return a Collection of all rooms in the Conference service.
-     * @throws Exception
-     *             if a problem occurs while getting the room list
-     */
-    private static Collection<HostedRoom> getRoomList(DomainBareJid serviceName)
-	    throws Exception {
-        return MultiUserChatManager.getInstanceFor( SparkManager.getConnection() ).getHostedRooms( serviceName );
     }
 
     /**

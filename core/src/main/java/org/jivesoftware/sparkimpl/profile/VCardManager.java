@@ -135,7 +135,7 @@ public class VCardManager {
 
         // Intercept all presence packets being sent and append vcard information.
         StanzaFilter presenceFilter = new StanzaTypeFilter(Presence.class);
-        SparkManager.getConnection().addPacketInterceptor( stanza -> {
+        SparkManager.getConnection().addStanzaInterceptor( stanza -> {
             Presence newPresence = (Presence)stanza;
             VCardUpdateExtension update = new VCardUpdateExtension();
             JabberAvatarExtension jax = new JabberAvatarExtension();
