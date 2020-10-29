@@ -50,6 +50,7 @@ import org.jivesoftware.spark.component.tabbedPane.SparkTabbedPane;
 import org.jivesoftware.spark.ui.ChatPrinter;
 import org.jivesoftware.spark.ui.TranscriptWindow;
 import org.jivesoftware.spark.util.GraphicUtils;
+import org.jxmpp.jid.impl.JidCreate;
 
 /**
  * Displays Fastpath transcripts.
@@ -86,7 +87,7 @@ public class ChatViewer extends JPanel {
                 final Map<String, Object> properties = new HashMap<>();
                 properties.put( "date", stamp );
                 message.addExtension( new JivePropertiesExtension( properties ) );
-                message.setFrom(from);
+                message.setFrom(JidCreate.fromOrThrowUnchecked(from));
                 chatTranscript.add(message);
             }
             else {

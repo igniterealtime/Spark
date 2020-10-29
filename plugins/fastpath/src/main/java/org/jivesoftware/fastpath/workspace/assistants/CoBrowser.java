@@ -379,7 +379,7 @@ public class CoBrowser extends JPanel implements ActionListener, BrowserListener
     private void send(Message message) {
         GroupChatRoom groupChatRoom = (GroupChatRoom)chatRoom;
         try {
-            message.setTo(groupChatRoom.getRoomname());
+            message.setTo(groupChatRoom.getBareJid());
             message.setType(Message.Type.groupchat);
             MessageEventManager.addNotificationsRequests(message, true, true, true, true);
 

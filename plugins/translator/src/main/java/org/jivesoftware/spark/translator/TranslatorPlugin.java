@@ -70,7 +70,7 @@ public class TranslatorPlugin implements Plugin {
                             if (type != null && type != TranslatorUtil.TranslationType.None) {
                             	message.setBody(null);
                             	currentBody = TranslatorUtil.translate(currentBody, type);
-                                TranscriptWindow transcriptWindow = chatManager.getChatRoom( message.getTo().asBareJid() ).getTranscriptWindow();
+                                TranscriptWindow transcriptWindow = chatManager.getChatRoom( message.getTo().asEntityBareJidOrThrow() ).getTranscriptWindow();
                                 if(oldBody.equals(currentBody.substring(0,currentBody.length()-1)))
                                 {
                                 	transcriptWindow.insertNotificationMessage("Could not translate: "+currentBody, ChatManager.ERROR_COLOR);

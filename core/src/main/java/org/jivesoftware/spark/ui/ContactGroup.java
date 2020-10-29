@@ -174,7 +174,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
             final ContactItem offlineItem = UIComponentRegistry.createContactItem(alias, nickname, jid);
             offlineItem.setGroupName(getGroupName());
 
-            final Presence offlinePresence = PresenceManager.getPresence(jid);
+            final Presence offlinePresence = new Presence(Presence.Type.unavailable);
             offlineItem.setPresence(offlinePresence);
 
             // set offline icon
@@ -196,7 +196,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
                     final ContactItem offlineItem = UIComponentRegistry.createContactItem(alias, nickname, jid);
                     offlineItem.setGroupName(getGroupName());
 
-                    final Presence offlinePresence = PresenceManager.getPresence(jid);
+                    final Presence offlinePresence = new Presence(Presence.Type.unavailable);
                     offlineItem.setPresence(offlinePresence);
 
                     // set offline icon
@@ -320,7 +320,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
         int index = tempItems.indexOf(item);
 
 
-        Object[] objs = contactItemList.getSelectedValues();
+        Object[] objs = contactItemList.getSelectedValuesList().toArray();
 
         model.insertElementAt(item, index);
 
@@ -868,11 +868,10 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
      */
     public List<ContactItem> getSelectedContacts() {
         final List<ContactItem> items = new ArrayList<>();
-        Object[] selections = contactItemList.getSelectedValues();
-        final int no = selections != null ? selections.length : 0;
-        for (int i = 0; i < no; i++) {
+        Object[] selections = contactItemList.getSelectedValuesList().toArray();
+        for (Object selection : selections) {
             try {
-                ContactItem item = (ContactItem) selections[i];
+                ContactItem item = (ContactItem) selection;
                 items.add(item);
             } catch (NullPointerException e) {
                 // TODO: Evaluate if we should do something here.
@@ -1064,7 +1063,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
         ContactInfoWindow contact = UIComponentRegistry.getContactInfoWindow();
         int loc = getList().locationToIndex(e.getPoint());
         ContactItem item = (ContactItem) getList().getModel().getElementAt(loc);
-        return item == null || contact == null || contact.getContactItem() == null ? true : !contact.getContactItem().getJID().equals(item.getJID());
+        return item == null || contact == null || contact.getContactItem() == null ? true : !contact.getContactItem().getJid().equals(item.getJid());
     }
 
     protected DefaultListModel getModel() {

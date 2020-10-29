@@ -67,7 +67,7 @@ public class JContactItemField extends JPanel {
                 {
                     final ContactItem item = (ContactItem)getModel().getElementAt(row);
                     if (item != null) {
-                        return item.getJID();
+                        return item.getJid().toString();
                 }
                 }
                 return null;

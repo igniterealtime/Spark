@@ -29,6 +29,7 @@ import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.carbons.packet.CarbonExtension;
 import org.jivesoftware.smackx.chatstates.ChatState;
 import org.jivesoftware.smackx.chatstates.packet.ChatStateExtension;
+import org.jivesoftware.smackx.delay.packet.DelayInformation;
 import org.jivesoftware.smackx.jiveproperties.packet.JivePropertiesExtension;
 import org.jivesoftware.smackx.muc.packet.MUCUser;
 import org.jivesoftware.smackx.xevent.MessageEventManager;
@@ -47,10 +48,8 @@ import org.jivesoftware.sparkimpl.profile.VCardManager;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jxmpp.jid.*;
-import org.jxmpp.jid.impl.JidCreate;
 import org.jxmpp.jid.parts.Localpart;
 import org.jxmpp.jid.parts.Resourcepart;
-import org.jxmpp.stringprep.XmppStringprepException;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -123,7 +122,7 @@ public class ChatRoomImpl extends ChatRoom {
     public ChatRoomImpl(final EntityJid participantJID, Resourcepart participantNickname, CharSequence title, boolean initUi) {
         this.active = true;
         //activateNotificationTime = System.currentTimeMillis();
-        setparticipantJID(participantJID);
+        setParticipantJID(participantJID);
         this.participantNickname = participantNickname;
 
         // Loads the current history for this user.
@@ -137,7 +136,7 @@ public class ChatRoomImpl extends ChatRoom {
         );
 
         final StanzaFilter carbonFilter = new AndFilter(
-            FromMatchesFilter.create( SparkManager.getSessionManager().getBareUserAddress() ), // Security Consideration, see https://xmpp.org/extensions/xep-0280.html#security
+            FromMatchesFilter.create( SparkManager.getSessionManager().getUserBareAddress() ), // Security Consideration, see https://xmpp.org/extensions/xep-0280.html#security
             new StanzaTypeFilter( Message.class ),
             new OrFilter(
                 new StanzaExtensionFilter( "sent", CarbonExtension.NAMESPACE ),
@@ -196,21 +195,9 @@ public class ChatRoomImpl extends ChatRoom {
     /**
      * Set the XMPP address of the participant.
      *
-     * @param jidString the XMPP address
-     * @deprecated use {@link #setparticipantJID(Jid)} instead.
+     * @param jid the XMPP address
      */
-    @Deprecated
-    private void setparticipantJID(String jidString) {
-        EntityJid jid;
-        try {
-            jid = JidCreate.entityFrom(jidString);
-        } catch (XmppStringprepException e) {
-            throw new IllegalStateException(e);
-        }
-        setparticipantJID(jid);
-    }
-
-    private void setparticipantJID(Jid jid) {
+    private void setParticipantJID(Jid jid) {
         if (!jid.isEntityJid()) {
             return;
         }
@@ -361,7 +348,7 @@ public class ChatRoomImpl extends ChatRoom {
     }
 
     @Override
-    public EntityBareJid getRoomJid() {
+    public EntityBareJid getBareJid() {
         return roomname;
     }
 
@@ -530,6 +517,14 @@ public class ChatRoomImpl extends ChatRoom {
                         return;
                     }
 
+                    // Do not Handle offline messages. Offline messages are handling by Workspace.
+                    DelayInformation offlineInformation = message.getExtension("delay", "urn:xmpp:delay");
+                    if (offlineInformation != null &&
+                        (message.getType() == Message.Type.chat ||
+                        message.getType() == Message.Type.normal)) {
+                        return;
+                    }
+
                     final CarbonExtension carbon = (CarbonExtension) message.getExtension( CarbonExtension.NAMESPACE );
                     if ( carbon != null )
                     {
@@ -540,13 +535,13 @@ public class ChatRoomImpl extends ChatRoom {
                             if ( carbon.getDirection() == CarbonExtension.Direction.received )
                             {
                                 // This is a stanza that we received from someone on one of our other clients.
-                                setparticipantJID(forwardedStanza.getFrom());
+                                setParticipantJID(forwardedStanza.getFrom());
                                 insertMessage( forwardedStanza );
                             }
                             else
                             {
                                 // This is a stanza that one of our own clients sent.
-                                setparticipantJID(forwardedStanza.getTo());
+                                setParticipantJID(forwardedStanza.getTo());
                                 displaySendMessage( forwardedStanza );
                             }
                             showTyping( false );
@@ -555,7 +550,7 @@ public class ChatRoomImpl extends ChatRoom {
                     else if ( message.getBody() != null )
                     {
                         // If the message is not from the current agent. Append to chat.
-                        setparticipantJID(message.getFrom());
+                        setParticipantJID(message.getFrom());
                         insertMessage( message );
 
                         showTyping( false );
@@ -602,7 +597,7 @@ public class ChatRoomImpl extends ChatRoom {
         getTranscriptWindow().insertMessage(participantNickname, message, ChatManager.FROM_COLOR);
 
         // Set the participant jid to their full JID.
-        setparticipantJID(message.getFrom());
+        setParticipantJID(message.getFrom());
     }
 
     private void checkEvents(Jid from, String packetID, MessageEvent messageEvent) {
@@ -722,7 +717,7 @@ public class ChatRoomImpl extends ChatRoom {
     @Override
     public void authenticated( XMPPConnection xmppConnection, boolean b )
     {
-
+        reconnectionSuccessful();
     }
 
     @Override
@@ -789,7 +784,7 @@ public class ChatRoomImpl extends ChatRoom {
     			String messageBody = message.getBody();
     			if (nickname.equals(message.getFrom().toString()) || nickname.equals(message.getFrom().asBareJid().toString())) {
     				BareJid otherJID = message.getFrom().asBareJid();
-    				EntityBareJid myJID = SparkManager.getSessionManager().getBareUserAddress();
+    				EntityBareJid myJID = SparkManager.getSessionManager().getUserBareAddress();
 
     				if (otherJID.equals(myJID)) {
     					nickname = personalNickname;

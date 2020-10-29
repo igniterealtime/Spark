@@ -42,6 +42,7 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.JiveInfo;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+import org.jxmpp.jid.impl.JidCreate;
 
 import javax.swing.JEditorPane;
 import javax.swing.JFrame;
@@ -565,7 +566,7 @@ public class CheckUpdates {
     {
         SparkVersion request = new SparkVersion();
         request.setType(IQ.Type.get);
-        request.setTo("updater." + connection.getXMPPServiceDomain());
+        request.setTo(JidCreate.fromOrThrowUnchecked("updater." + connection.getXMPPServiceDomain()));
 
         // TODO: This should not use stanza collectors but simply createStanzaCollectorAndSend(IQ).nextResultOrThrow();
         StanzaCollector collector = connection.createStanzaCollector(new IQReplyFilter( request, connection ));
@@ -580,7 +581,7 @@ public class CheckUpdates {
         }
 
         if (response == null) {
-            throw SmackException.NoResponseException.newWith( connection, collector );
+            throw SmackException.NoResponseException.newWith(connection, collector.getStanzaFilter());
         }
         XMPPException.XMPPErrorException.ifHasErrorThenThrow( response );
 

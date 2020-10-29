@@ -22,6 +22,7 @@ import org.jivesoftware.spark.plugin.Plugin;
 import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.ui.ContactList;
 import org.jivesoftware.spark.util.GraphicUtils;
+import org.jxmpp.jid.impl.JidCreate;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -109,7 +110,7 @@ public class FrequentContactsPlugin implements Plugin {
 		    String user = jidMap.get(label);
 		    if (user != null) {
 			final String contactUsername = SparkManager
-				.getUserManager().getUserNicknameFromJID(user);
+				.getUserManager().getUserNicknameFromJID(JidCreate.bareFromOrThrowUnchecked(user));
 			SparkManager.getChatManager().activateChat(user,
 				contactUsername);
 			window.dispose();
@@ -125,7 +126,7 @@ public class FrequentContactsPlugin implements Plugin {
                     final JLabel label = (JLabel) contacts.getSelectedValue();
                     String user = jidMap.get(label);
                     if (user != null) {
-                        final String contactUsername = SparkManager.getUserManager().getUserNicknameFromJID(user);
+                        final String contactUsername = SparkManager.getUserManager().getUserNicknameFromJID(JidCreate.bareFromOrThrowUnchecked(user));
                         SparkManager.getChatManager().activateChat(user, contactUsername);
                         window.dispose();
                     }

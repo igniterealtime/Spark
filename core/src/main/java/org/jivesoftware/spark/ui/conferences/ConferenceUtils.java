@@ -65,18 +65,6 @@ public class ConferenceUtils {
     }
 
     /**
-     * Return a list of available Conference rooms from the server
-     * based on the service name.
-     *
-     * @param serviceName the service name (ex. conference@jivesoftware.com)
-     * @return a collection of rooms.
-     * @throws Exception if an error occured during fetch.
-     */
-    public static Collection<HostedRoom> getRoomList(DomainBareJid serviceName) throws Exception {
-        return MultiUserChatManager.getInstanceFor( SparkManager.getConnection() ).getHostedRooms( serviceName );
-    }
-
-    /**
      * Return the number of occupants in a room.
      *
      * @param roomJID the full JID of the conference room. (ex. dev@conference.jivesoftware.com)
@@ -312,7 +300,7 @@ public class ConferenceUtils {
             submitForm.setAnswer("muc#roomconfig_roomname", roomName);
 
             final List<String> owners = new ArrayList<>();
-            owners.add(SparkManager.getSessionManager().getBareAddress());
+            owners.add(SparkManager.getSessionManager().getUserBareAddress().toString());
             submitForm.setAnswer("muc#roomconfig_roomowners", owners);
 
             multiUserChat.sendConfigurationForm(submitForm);
@@ -326,7 +314,7 @@ public class ConferenceUtils {
 
         // Check if room already is open
         try {
-            chatManager.getChatContainer().getChatRoom(room.getRoomname());
+            chatManager.getChatContainer().getChatRoom(room.getBareJid());
         }
         catch (ChatRoomNotFoundException e) {
             chatManager.getChatContainer().addChatRoom(room);
@@ -393,7 +381,7 @@ public class ConferenceUtils {
 	public static boolean isChatRoomClosable(Component c) {
 		if(c instanceof GroupChatRoom ) {
 			GroupChatRoom groupChatRoom = (GroupChatRoom) c;
-    		EntityBareJid roomName = groupChatRoom.getChatRoom().getRoomJid();
+    		EntityBareJid roomName = groupChatRoom.getChatRoom().getBareJid();
 
     		if(unclosableChatRooms.contains(roomName)){
     			return false;

@@ -102,7 +102,7 @@ public class SparkFileUploadPlugin implements Plugin, ChatRoomListener, GlobalMe
 
     public void chatRoomClosed(ChatRoom chatroom)
     {
-        EntityBareJid roomId = chatroom.getRoomJid();
+        EntityBareJid roomId = chatroom.getBareJid();
 
         Log.debug("chatRoomClosed:  " + roomId);
 
@@ -116,28 +116,28 @@ public class SparkFileUploadPlugin implements Plugin, ChatRoomListener, GlobalMe
 
     public void chatRoomActivated(ChatRoom chatroom)
     {
-        EntityBareJid roomId = chatroom.getRoomJid();
+        EntityBareJid roomId = chatroom.getBareJid();
 
         Log.debug("chatRoomActivated:  " + roomId);
     }
 
     public void userHasJoined(ChatRoom room, String s)
     {
-        EntityBareJid roomId = room.getRoomJid();
+        EntityBareJid roomId = room.getBareJid();
 
         Log.debug("userHasJoined:  " + roomId + " " + s);
     }
 
     public void userHasLeft(ChatRoom room, String s)
     {
-        EntityBareJid roomId = room.getRoomJid();
+        EntityBareJid roomId = room.getBareJid();
 
         Log.debug("userHasLeft:  " + roomId + " " + s);
     }
 
     public void chatRoomOpened(final ChatRoom room)
     {
-        EntityBareJid roomId = room.getRoomJid();
+        EntityBareJid roomId = room.getBareJid();
 
         Log.debug("chatRoomOpened:  " + roomId);
 
