@@ -1,6 +1,5 @@
 package org.jivesoftware.spark.ui.themes;
 
-import com.formdev.flatlaf.FlatLightLaf;
 import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.spark.util.log.Log;
@@ -10,6 +9,7 @@ import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import javax.swing.*;
 import java.awt.*;
 import java.util.*;
+import org.jivesoftware.spark.ui.themes.lafs.SparkLightLaf;
 
 /**
  * Manages the Look and Feel instances that can be used by Spark.
@@ -23,8 +23,7 @@ public class LookAndFeelManager {
      */
     public static final Class<? extends LookAndFeel> lafs[] = new Class[]{
         //flatlaf
-        com.formdev.flatlaf.FlatLightLaf.class,
-        /*
+        org.jivesoftware.spark.ui.themes.lafs.SparkLightLaf.class,/*
         // LittleLuck
         freeseawind.lf.LittleLuckLookAndFeel.class,
         // JTattoo
@@ -70,8 +69,7 @@ public class LookAndFeelManager {
         org.pushingpixels.substance.api.skin.SubstanceRavenLookAndFeel.class,
         org.pushingpixels.substance.api.skin.SubstanceSaharaLookAndFeel.class,
         org.pushingpixels.substance.api.skin.SubstanceTwilightLookAndFeel.class,
-    */
-    };
+     */};
 
     // Maybe Sometime well get a Synthetica License
     //"de.javasoft.plaf.synthetica.SyntheticaStandardLookAndFeel", //commec
@@ -215,8 +213,8 @@ public class LookAndFeelManager {
             if (Spark.isWindows()) {
                 JFrame.setDefaultLookAndFeelDecorated(true);
                 JDialog.setDefaultLookAndFeelDecorated(true);
-            }            
-            UIManager.setLookAndFeel( laf );
+            }
+            UIManager.setLookAndFeel(laf);
         } catch (Exception e) {
             Log.error("An exception occurred while trying to load the look and feel.", e);
         }
