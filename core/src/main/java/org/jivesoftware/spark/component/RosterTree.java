@@ -128,7 +128,7 @@ public final class RosterTree extends JPanel {
 
 
                 final JiveTreeNode entryNode = new JiveTreeNode(name, false);
-                final Presence usersPresence = PresenceManager.getPresence(entry.getJid().toString());
+                final Presence usersPresence = PresenceManager.getPresence(entry.getJid());
                 addressMap.put(entryNode, entry.getJid().toString());
                 boolean showUnavailableAgents = true;
                 if (usersPresence.isAvailable() && !usersPresence.isAway()) {

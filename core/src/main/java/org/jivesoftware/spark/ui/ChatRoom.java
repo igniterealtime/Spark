@@ -41,6 +41,8 @@ import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.EntityFullJid;
+import org.jxmpp.jid.EntityJid;
+import org.jxmpp.jid.impl.JidCreate;
 import org.jxmpp.jid.parts.Resourcepart;
 
 import javax.swing.*;
@@ -458,7 +460,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
                 }
                 else
                 {
-                    username = re.getUser().substring( 0, re.getUser().indexOf( '@' ) );
+                    username = re.getJid().toString().substring( 0, re.getJid().toString().indexOf( '@' ) );
                 }
 
                 if ( username.toLowerCase().startsWith( needle.toLowerCase() ) )
@@ -604,8 +606,8 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
      */
     public void addToTranscript(String to, String from, String body, Date date) {
         final Message newMessage = new Message();
-        newMessage.setTo(to);
-        newMessage.setFrom(from);
+        newMessage.setTo(JidCreate.fromOrThrowUnchecked(to));
+        newMessage.setFrom(JidCreate.fromOrThrowUnchecked(from));
         newMessage.setBody(body);
         final Map<String, Object> properties = new HashMap<>();
         properties.put( "date", new Date() );
@@ -909,22 +911,13 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
     public abstract Icon getTabIcon();
 
     /**
-     * Get the roomname to use for this ChatRoom. This is expected to be a bare jid.
-     *
-     * @return - the Roomname of this ChatRoom.
-     * @deprecated use {@link #getRoomJid()} instead.
-     */
-    @Deprecated
-    public EntityBareJid getRoomname() {
-        return getRoomJid();
-    }
-
-    /**
      * Get the XMPP address of this room.
      *
      * @return the XMPP address of this room
      */
-    public abstract EntityBareJid getRoomJid();
+    public abstract EntityBareJid getBareJid();
+
+    public abstract EntityJid getJid();
 
     /**
      * Get the title to use in the tab holding this ChatRoom.

@@ -272,7 +272,7 @@ public class MutualAuthenticationSettingsPanel extends JPanel implements ActionL
             try {
                 idControll.addEntryFileToKeyStore(file);
             } catch (CertificateException e) {
-                JOptionPane.showMessageDialog(null, Res.getString("dialog.cannot.upload.certificate.might.be.ill.formated"));
+                JOptionPane.showMessageDialog(null, Res.getString("dialog.cannot.upload.certificate.might.be.ill.formatted"));
                 Log.error("Cannot upload certificate file", e);
             } catch (InvalidKeySpecException | NoSuchAlgorithmException | KeyStoreException | InvalidNameException
                     | IOException e) {

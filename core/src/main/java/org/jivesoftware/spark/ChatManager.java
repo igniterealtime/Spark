@@ -197,7 +197,7 @@ public class ChatManager {
         for (ChatRoom chatRoom : getChatContainer().getChatRooms()) {
             if (chatRoom instanceof GroupChatRoom) {
                 GroupChatRoom groupChat = (GroupChatRoom)chatRoom;
-                if (groupChat.getRoomname().equals(roomName)) {
+                if (groupChat.getBareJid().equals(roomName)) {
                     return groupChat;
                 }
             }
@@ -211,19 +211,23 @@ public class ChatManager {
     /**
      * Creates and/or opens a chat room with the specified user.
      *
-     * @param userJID  the jid of the user to chat with.
+     * @param jid  the jid of the user to chat with.
      * @param nicknameCs the nickname to use for the user.
      * @param title    the title to use for the room.
      * @return the newly created <code>ChatRoom</code>.
      */
-    public ChatRoom createChatRoom(EntityJid userJID, CharSequence nicknameCs, CharSequence title) {
+    public ChatRoom createChatRoom(EntityJid jid, CharSequence nicknameCs, CharSequence title) {
         Resourcepart nickname = Resourcepart.fromOrThrowUnchecked(nicknameCs);
         ChatRoom chatRoom;
         try {
-            chatRoom = getChatContainer().getChatRoom(userJID);
+            if (jid instanceof EntityBareJid) {
+                chatRoom = getChatContainer().getChatRoom((EntityBareJid) jid);
+            } else {
+                chatRoom = getChatContainer().getChatRoom(jid);
+            }
         }
         catch (ChatRoomNotFoundException e) {
-            chatRoom = UIComponentRegistry.createChatRoom(userJID, nickname, title);
+            chatRoom = UIComponentRegistry.createChatRoom(jid, nickname, title);
             getChatContainer().addChatRoom(chatRoom);
         }
 
@@ -234,30 +238,11 @@ public class ChatManager {
      * Returns the <code>ChatRoom</code> for the giving jid. If the ChatRoom is not found,
      * a new ChatRoom will be created.
      *
-     * @param jid the jid of the user to chat with.
-     * @return the ChatRoom.
-     * @deprecated use {@link #getChatRoom(BareJid)} instead.
-     */
-    @Deprecated
-    public ChatRoom getChatRoom(String jid) {
-        BareJid mucAddress;
-        try {
-            mucAddress = JidCreate.bareFrom(jid);
-        } catch (XmppStringprepException e) {
-            throw new IllegalStateException(e);
-        }
-        return getChatRoom(mucAddress);
-    }
-
-    /**
-     * Returns the <code>ChatRoom</code> for the giving jid. If the ChatRoom is not found,
-     * a new ChatRoom will be created.
-     *
-     * @param jid the jid of the user to chat with.
+     * @param bareJid the jid of the user to chat with.
+     * @param bareJid
      * @return the ChatRoom.
      */
-    public ChatRoom getChatRoom(BareJid bareJid) {
-        // TODO: Change signature of method to use EntityBareJid.
+    public ChatRoom getChatRoom(EntityBareJid bareJid) {
         EntityBareJid jid = bareJid.asEntityBareJidOrThrow();
         ChatRoom chatRoom;
         try {
@@ -282,27 +267,6 @@ public class ChatManager {
         }
 
         return chatRoom;
-    }
-
-    /**
-     * Creates a new public Conference Room.
-     *
-     * @param roomName    the name of the room.
-     * @param serviceName the service name to use (ex.conference.jivesoftware.com)
-     * @return the new ChatRoom created. If an error occured, null will be returned.
-     * @deprecated use {@link #createConferenceRoom(Localpart, DomainBareJid)} instead.
-     */
-    @Deprecated
-    public ChatRoom createConferenceRoom(String roomName, String serviceName) {
-        DomainBareJid serviceAddress;
-        Localpart localpart;
-        try {
-            localpart = Localpart.from(roomName);
-            serviceAddress = JidCreate.domainBareFrom(serviceName);
-        } catch (XmppStringprepException e) {
-            throw new IllegalStateException(e);
-        }
-        return createConferenceRoom(localpart, serviceAddress);
     }
 
     /**

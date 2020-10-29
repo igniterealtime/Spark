@@ -26,9 +26,9 @@ import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.util.*;
 import org.jivesoftware.spark.util.log.*;
+import org.jivesoftware.smack.*;
 import org.jivesoftware.smack.packet.*;
-import org.jxmpp.jid.Jid;
-import org.jxmpp.jid.parts.Localpart;
+import org.jxmpp.util.XmppStringUtils;
 
 import sun.misc.BASE64Decoder;
 
@@ -47,58 +47,55 @@ public class ChatRoomDecorator
 
         try {
             BASE64Decoder decoder = new BASE64Decoder();
-            String imageString = "iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAACZUlEQVR42o1TS09TQRg999mWgtTGQosiLEQhXVA0Me5swsYFRjBxoyatvwBi4g9g66p7F+2exIDvBYldGOIzbUwMGqw2Sr1YH+21Qsud2zvOTB9UkMQv+e6de2fOme+c+QaUUtCdjLF8TPdGpv7rc4wUnoEYL2F/X4VTKwuMxB8selmmWUawK5zKOpzSB5D8Mqy1e1n2K6qPTJn6iRnIB49B3Q9cL74GtSoirXeLIGt3YPuNiKIhXX2SicKxTT18RRDMdYLtjVeQJBlW7iH7qMHZLMIurGC7x0D/VVFtxLwtzVm5R/P62KU2QQP85Tlo7SdI4Sns9RUG3gBIFZRsQvJ0yCKYk4F5PuYEPlHy1wwk1S3A5P0D2MYLkBDKUJBykVBaK3eVi7ckUBU+veyf1ifOQeoKCAIRlDogqwsgH5cFWBnFIgYQZ1Omy3sd1bs3oP32Q3b7oY5OLmkj5yH3HAGrBHlOwHVD9QiwcxSp3ot0xn+GgmVyW7lZsgOgsrefqsOTJVf4clI+MMjNFwSptjhZ4c88c/oae483yePewaRP5h7IKuTuoA+6N85253PjfxPULbYglLC2mHeV+4mWP5U3U6gTVqXi7jxpPpdQW0fIPZCYBMkbzGqGAXNpKqrxIhmQmIBmAMrESTAZnURRTjAtjiN4qmGmXYXFB58yqDdX6R5mXt9hBu6DMnAaSiDcLoO3Mm1qzbK2zdKtbwlrdcGEopfqpZyQoBwaE02lHb/Q3qgZ+dZd2LHhx9tG48hajLVzCno3lN4hIXEXWEjovIn/yrP8JtL9Y3ZPBf8RQ03feJMN/wHiFFIvPgJ8vgAAAABJRU5ErkJggg==";
+            String imageString = "iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAKDSURBVDhPXVM7axVBFP5m7maN5gFyJTdNEEVDUt3C/yAIKkRSidjEUsTKRyrtLSyi/gArSRfFOiBqY5UqICaRYDCvm7177+7Ozj7G70wSSJzlmzk75/WdmTMqLwq3ubKCcGQEOgjgBgKoYACq0YBrKGh+rqrh6gKqqFGVBVCUKJMexqenoba2t937qSmcu3QRmk5aN7yz4tfQGrVzkOG4ermuUBPdzT+4v7wMHYYhMg3k1JkaSJktyQyigwPsdfYRRV0keY7EWpiyRFpWMGJbVQjPDCLQSiGJe9Bxn2lI0VUYao1jcmYGDTJJow6+v3mH860xlkSGcNBOI4oPyBGgv0bKmpIiR7+wPmP7ziyuP37EWi2utK/hdZKgZwyyNEWaW29r8hJK84w0p5yRLBWWNAVRt4vVL9+w+OIlXt27i6+LHzC78BbR7i5y6gUZfRTZ0531EDlrt5VDQWS5Qd9knmJIbP1cg7HG6wViK0lFHwiDHQqms8eZTGqHDg9tdH8XG/y/PDmJG/PP8XC8hR5Pv087cfxLaEq8KEbkT8lAHpTjuIuxdhvzH5dw8+kTzDWb2NneQR3oU3aHh8hFAuQ8WSugbEjxx6fPeHbrNhbmHqDb6bA3gkM9IbapBOCtkYA7OgPeLyHBMpvD8r4HKQtN9qDXHcPbUsd7lxKopGjJR8BGRZJkiPsxqhP7/0MS0R/K9mN3dXgUY7JxNKQMqXGIOGzk04P++E382lgnQ7avZK25e4yA/0JfgggLjxN6gfhI+Srd33PDzQtoycbR4NPwmY9XGbIyl88u2CKi1VWosq5db30N4dkh35q+tRRfI7tMwImJ6MpsruZKyMussgzhxAT+AQRKd557vsR7AAAAAElFTkSuQmCC";
             byte[] imageByte = decoder.decodeBuffer(imageString);
             ImageIcon ofmeetIcon = new ImageIcon(imageByte);
             ofmeetButton = new RolloverButton(ofmeetIcon);
-            ofmeetButton.setToolTipText(GraphicUtils.createToolTip("Openfire Meetings"));
-            final Localpart roomId = room.getRoomJid().getLocalpart();
+            ofmeetButton.setToolTipText(GraphicUtils.createToolTip("Pade Meetings"));
+            final String roomId = getNode(room.getBareJid().toString());
             final String sessionID = roomId + "-" + System.currentTimeMillis();
-            final Localpart nickname = SparkManager.getSessionManager().getJID().getLocalpart();
 
             ofmeetButton.addActionListener( new ActionListener()
             {
                     public void actionPerformed(ActionEvent event)
                     {
-                        String newUrl;
-                        Localpart newRoomId;
+                        String newUrl, newRoomId;
 
                         if ("groupchat".equals(room.getChatType().toString()))
                         {
-                            newRoomId = roomId;
-                            newUrl = url + "/" + newRoomId;
-                            sendInvite(room.getRoomJid(), newUrl, Message.Type.groupchat);
+                            newRoomId = roomId + "-" + sessionID;
+                            newUrl = url + newRoomId;
+                            plugin.handleClick(newUrl, room, newUrl, Message.Type.groupchat);
 
                         } else {
-
-                            newRoomId = Localpart.fromOrThrowUnchecked(sessionID);
-                            newUrl = url + "/" + newRoomId;
-                            sendInvite(room.getRoomJid(), newUrl, Message.Type.chat);
+                            newRoomId = sessionID;
+                            newUrl = url + newRoomId;
+                            plugin.handleClick(newUrl, room, newUrl, Message.Type.chat);
                         }
-
-                        plugin.openUrl(newUrl, newRoomId);
                     }
             });
             room.getEditorBar().add(ofmeetButton);
 
         } catch (Exception e) {
 
-            Log.error("cannot create openfire meetings icon", e);
+            Log.error("cannot create pade meetings icon", e);
         }
 
     }
 
     public void finished()
     {
-        Log.warning("ChatRoomDecorator: finished " + room.getRoomJid());
+        Log.warning("ChatRoomDecorator: finished " + room.getBareJid());
     }
 
-    private void sendInvite(Jid jid, String url, Message.Type type)
+    private String getNode(String jid)
     {
-        Message message2 = new Message();
-        message2.setTo(jid);
-        message2.setType(type);
-        message2.setBody(url);
-        room.sendMessage(message2);
+        String node = jid;
+        int pos = node.indexOf("@");
+
+        if (pos > -1)
+            node = jid.substring(0, pos);
+
+        return node;
     }
 }

@@ -488,8 +488,8 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener
             }
         } );
 
-        if (!Default.getBoolean("HIDE_HISTORY_SETTINGS") && Enterprise.containsFeature(Enterprise.HISTORY_SETTINGS_FEATURE) 
-        		&& !Default.getBoolean("HISTORY_DISABLED") && Enterprise.containsFeature(Enterprise.HISTORY_TRANSCRIPTS_FEATURE)) {
+        if (!Default.getBoolean(Default.HIDE_HISTORY_SETTINGS) && Enterprise.containsFeature(Enterprise.HISTORY_SETTINGS_FEATURE)
+        		&& !Default.getBoolean(Default.HISTORY_DISABLED) && Enterprise.containsFeature(Enterprise.HISTORY_TRANSCRIPTS_FEATURE)) {
             popup.add( new AbstractAction( Res.getString( "action.clear" ), SparkRes.getImageIcon( SparkRes.ERASER_IMAGE ) )
             {
                 @Override
@@ -500,7 +500,7 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener
                     {
                         ChatManager manager = SparkManager.getChatManager();
                         ChatRoom room = manager.getChatContainer().getActiveChatRoom();
-                        user = room.getRoomname().toString();
+                        user = room.getBareJid().toString();
 
                         int ok = JOptionPane.showConfirmDialog( (TranscriptWindow) object,
                                                                 Res.getString( "delete.permanently" ),
@@ -527,7 +527,7 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener
         }
 
         // History window
-        if (!Default.getBoolean("HISTORY_DISABLED") && Enterprise.containsFeature(Enterprise.HISTORY_TRANSCRIPTS_FEATURE)) {
+        if (!Default.getBoolean(Default.HISTORY_DISABLED) && Enterprise.containsFeature(Enterprise.HISTORY_TRANSCRIPTS_FEATURE)) {
         	popup.add( new AbstractAction( Res.getString( "action.viewlog" ) )
         	{
         		@Override
@@ -537,7 +537,7 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener
         			try
         			{
         				room = SparkManager.getChatManager().getChatContainer().getActiveChatRoom();
-        				HistoryWindow hw = new HistoryWindow( SparkManager.getUserDirectory(), room.getRoomname().toString() );
+        				HistoryWindow hw = new HistoryWindow( SparkManager.getUserDirectory(), room.getBareJid().toString() );
         				hw.showWindow();
         			}
         			catch ( Exception ex )

@@ -5,15 +5,15 @@
     <parent>
         <groupId>org.igniterealtime.spark.plugins</groupId>
         <artifactId>plugin</artifactId>
-        <version>2.9.3-SNAPSHOT</version>
+        <version>2.9.4-SNAPSHOT</version>
         <relativePath>../plugin/pom.xml</relativePath>
     </parent>
 
     <artifactId>meet</artifactId>
-    <version>0.1</version>
+    <version>0.0.5</version>
 
-    <name>Meetings Plugin</name>
-    <description>Adds support for Openfire Meetings to the Spark IM client.</description>
+    <name>Pade Meetings Plugin</name>
+    <description>Adds support for Pade Meetings to the Spark IM client.</description>
 
     <contributors>
         <contributor>

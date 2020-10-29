@@ -99,7 +99,7 @@ public class ConversationInvitation extends JPanel implements ContainerComponent
         final JLabel dateLabelValue = new JLabel();
 
 
-        String nickname = SparkManager.getUserManager().getUserNicknameFromJID(inviter);
+        String nickname = SparkManager.getUserManager().getUserNicknameFromJID(this.inviter);
 
 
         add(titleLabel, new GridBagConstraints(0, 0, 4, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(2, 5, 2, 5), 0, 0));

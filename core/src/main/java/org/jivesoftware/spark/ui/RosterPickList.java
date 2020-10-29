@@ -136,18 +136,15 @@ public class RosterPickList extends JPanel {
 
         List<String> selectedContacts = new ArrayList<>();
 
-        Object[] values = rosterList.getSelectedValues();
-        final int no = values != null ? values.length : 0;
-        for (int i = 0; i < no; i++) {
+        Object[] values = rosterList.getSelectedValuesList().toArray();
+        for (Object value : values) {
             try {
-                ContactItem item = (ContactItem)values[i];
-                selectedContacts.add(item.getJID());
-            }
-            catch (NullPointerException e) {
+                ContactItem item = (ContactItem) value;
+                selectedContacts.add(item.getJid().toString());
+            } catch (NullPointerException e) {
                 Log.error(e);
             }
         }
-
         return selectedContacts;
     }
 

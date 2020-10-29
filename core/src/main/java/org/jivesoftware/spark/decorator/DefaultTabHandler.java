@@ -55,10 +55,15 @@ public class DefaultTabHandler extends SparkTabHandler {
             }
             else if (room instanceof ChatRoomImpl && !isStaleRoom) {
                 // User is not typing, therefore show default presence icon.
-                EntityBareJid participantJID = ((ChatRoomImpl)room).getParticipantJID();
-                Presence presence = PresenceManager.getPresence(participantJID);
-                Icon icon = PresenceManager.getIconFromPresence(presence);
-                tab.setIcon(icon);
+                if (SparkManager.getConnection().isConnected()) {
+                    EntityBareJid participantJID = ((ChatRoomImpl) room).getParticipantJID();
+                    Presence presence = PresenceManager.getPresence(participantJID);
+                    Icon icon = PresenceManager.getIconFromPresence(presence);
+                    tab.setIcon(icon);
+                }
+                else {
+                    tab.setIcon(SparkRes.getImageIcon(SparkRes.CLEAR_BALL_ICON));
+                }
             }
 
 

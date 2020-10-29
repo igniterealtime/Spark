@@ -239,7 +239,7 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
             }
             else if (stanza instanceof Message) {
                 Message message = (Message)stanza;
-                String from = message.getFrom().toString();
+                DomainBareJid from = message.getFrom().asDomainBareJid();
                 boolean hasError = message.getType() == Message.Type.error;
                 String body = message.getBody();
 
@@ -264,8 +264,8 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
             for (ContactItem contactItem : contactGroup.getContactItems()) {
                 Presence presence = contactItem.getPresence();
                 if (presence.isAvailable()) {
-                    Domainpart domain = presence.getFrom().getDomain();
-                    Transport transport = TransportUtils.getTransport(domain.toString());
+                    DomainBareJid domain = presence.getFrom().asDomainBareJid();
+                    Transport transport = TransportUtils.getTransport(domain);
                     if (transport != null) {
                         handlePresence(contactItem, presence);
                         contactGroup.fireContactGroupUpdated();
@@ -301,8 +301,8 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
     @Override
 	public boolean handlePresence(ContactItem item, Presence presence) {
         if (presence.isAvailable()) {
-            Domainpart domain = presence.getFrom().getDomain();
-            Transport transport = TransportUtils.getTransport(domain.toString());
+            DomainBareJid domain = presence.getFrom().asDomainBareJid();
+            Transport transport = TransportUtils.getTransport(domain);
             if (transport != null) {
                 if (presence.getType() == Presence.Type.available) {
                     item.setSpecialIcon(transport.getIcon());

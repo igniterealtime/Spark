@@ -28,6 +28,8 @@ import org.jivesoftware.spark.UserManager;
 import org.jivesoftware.spark.component.MessageDialog;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.log.Log;
+import org.jxmpp.jid.Jid;
+import org.jxmpp.jid.impl.JidCreate;
 
 import javax.swing.*;
 
@@ -40,7 +42,9 @@ public class VersionViewer {
 
     }
 
-    public static void viewVersion(String jid) {
+    public static void viewVersion(String jidString) {
+        final Jid jid = JidCreate.fromOrThrowUnchecked(jidString);
+
         final JPanel loadingCard = new JPanel();
         final ImageIcon icon = new ImageIcon( VersionViewer.class.getClassLoader().getResource( "images/ajax-loader.gif"));
         loadingCard.add(new JLabel("loading... ", icon, JLabel.CENTER));
@@ -122,7 +126,7 @@ public class VersionViewer {
             ((CardLayout)(cards.getLayout())).last( cards );
         }
 
-        MessageDialog.showComponent(Res.getString("title.version.and.time"), Res.getString("message.client.information", UserManager.unescapeJID(jid)), SparkRes.getImageIcon(SparkRes.PROFILE_IMAGE_24x24), cards, SparkManager.getMainWindow(), 400, 300, false);
+        MessageDialog.showComponent(Res.getString("title.version.and.time"), Res.getString("message.client.information", UserManager.unescapeJID(jidString)), SparkRes.getImageIcon(SparkRes.PROFILE_IMAGE_24x24), cards, SparkManager.getMainWindow(), 400, 300, false);
     }
 
 }

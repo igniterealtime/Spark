@@ -110,7 +110,7 @@ public class WorkgroupInvitationDialog implements PropertyChangeListener {
         final DomainBareJid workgroupService = JidCreate.domainBareFromOrThrowUnchecked("workgroup." + SparkManager.getSessionManager().getServerAddress());
         final EntityFullJid jid = SparkManager.getSessionManager().getJID();
 
-        EntityBareJid room = chatRoom.getRoomJid();
+        EntityBareJid room = chatRoom.getBareJid();
         Collection agents = null;
         try
         {

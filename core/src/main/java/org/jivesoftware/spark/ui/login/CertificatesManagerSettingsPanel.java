@@ -268,7 +268,7 @@ public class CertificatesManagerSettingsPanel extends JPanel implements ActionLi
 			try {
 				certControll.addEntryFileToKeyStore(file);
             } catch (CertificateException e) {
-                JOptionPane.showMessageDialog(null, Res.getString("dialog.cannot.upload.certificate.might.be.ill.formated"));
+                JOptionPane.showMessageDialog(null, Res.getString("dialog.cannot.upload.certificate.might.be.ill.formatted"));
                 Log.error("Cannot upload certificate file", e);
             } catch (KeyStoreException | InvalidNameException | IOException e) {
                 JOptionPane.showMessageDialog(null, "dialog.cannot.upload.certificate");

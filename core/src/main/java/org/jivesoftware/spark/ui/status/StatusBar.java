@@ -548,6 +548,10 @@ public class StatusBar extends JPanel implements VCardListener {
 		return nicknameLabel;
 	}
 
+	public void setStatusPanelEnabled(Boolean enabled) {
+	    getStatusPanel().setEnabled(enabled);
+    }
+
 	private class StatusPanel extends JPanel {
 		private static final long serialVersionUID = -5086334443225239032L;
 		private JLabel iconLabel;
@@ -572,7 +576,7 @@ public class StatusBar extends JPanel implements VCardListener {
 			statusLabel.setFont(new Font(Font.DIALOG, Font.PLAIN, 11));
 
 			// See if we should disable ability to change presence status
-			if (!Default.getBoolean("DISABLE_PRESENCE_STATUS_CHANGE") && Enterprise.containsFeature(Enterprise.PRESENCE_STATUS_FEATURE)) statusLabel.setIcon(SparkRes.getImageIcon(SparkRes.DOWN_ARROW_IMAGE));
+			if (!Default.getBoolean(Default.DISABLE_PRESENCE_STATUS_CHANGE) && Enterprise.containsFeature(Enterprise.PRESENCE_STATUS_FEATURE)) statusLabel.setIcon(SparkRes.getImageIcon(SparkRes.DOWN_ARROW_IMAGE));
 
 			statusLabel.setHorizontalTextPosition(JLabel.LEFT);
 
@@ -582,15 +586,17 @@ public class StatusBar extends JPanel implements VCardListener {
 			setBorder(border);
 
 			// See if we should disable ability to change presence status
-			if (!Default.getBoolean("DISABLE_PRESENCE_STATUS_CHANGE") && Enterprise.containsFeature(Enterprise.PRESENCE_STATUS_FEATURE)) {			
+			if (!Default.getBoolean(Default.DISABLE_PRESENCE_STATUS_CHANGE) && Enterprise.containsFeature(Enterprise.PRESENCE_STATUS_FEATURE)) {
 				statusLabel.addMouseListener(new MouseAdapter() {
 					@Override
 					public void mouseReleased(MouseEvent e) {
-						showPopup(e);
+						if (!isEnabled()) return;
+					    showPopup(e);
 					}
 
 					@Override
 					public void mouseEntered(MouseEvent e) {
+                        if (!isEnabled()) return;
 						setCursor(GraphicUtils.HAND_CURSOR);
 						setBorder(BorderFactory.createBevelBorder(0));
 					}
@@ -603,6 +609,7 @@ public class StatusBar extends JPanel implements VCardListener {
 
 					@Override
 					public void mousePressed(MouseEvent e) {
+                        if (!isEnabled()) return;
 						setBorder(BorderFactory.createBevelBorder(1));
 					}
 
@@ -716,7 +723,7 @@ public class StatusBar extends JPanel implements VCardListener {
 
 	public void allowProfileEditing() {
 		// Allow profile editing ONLY if both client-side and server-side settings permit it
-		if (Default.getBoolean("DISABLE_EDIT_PROFILE") || !Enterprise.containsFeature(Enterprise.VCARD_FEATURE)) return;
+		if (Default.getBoolean(Default.DISABLE_EDIT_PROFILE) || !Enterprise.containsFeature(Enterprise.VCARD_FEATURE)) return;
 
 		// Go ahead and show the profile when clicking on the Avatar image
 		imageLabel.addMouseListener(new MouseAdapter() {

@@ -176,7 +176,7 @@ public class ContactInfoWindow extends JPanel {
 
 
         ContactItem item = (ContactItem)group.getList().getModel().getElementAt(loc);
-        if (item == null || item.getJID() == null) {
+        if (item == null || item.getJid() == null) {
             return;
         }
 
@@ -277,16 +277,13 @@ public class ContactInfoWindow extends JPanel {
         }
         statusLabel.setText(status);
 
-        Transport transport = TransportUtils.getTransport( XmppStringUtils.parseDomain(contactItem.getJID()));
+        Transport transport = TransportUtils.getTransport(contactItem.getJid().asDomainBareJid());
         if (transport != null) {
             fullJIDLabel.setIcon(transport.getIcon());
-            String name = XmppStringUtils.parseLocalpart(contactItem.getJID());
-            name = XmppStringUtils.unescapeLocalpart(name);
-            fullJIDLabel.setText(transport.getName() + " - " + name);
+            fullJIDLabel.setText(transport.getName() + " - " + contactItem.getJid().getLocalpartOrThrow().asUnescapedString());
         }
         else {
-            String name = XmppStringUtils.unescapeLocalpart(contactItem.getJID());
-            fullJIDLabel.setText(name);
+            fullJIDLabel.setText(contactItem.getJid().getLocalpartOrThrow().asUnescapedString());
             fullJIDLabel.setIcon(null);
         }
 

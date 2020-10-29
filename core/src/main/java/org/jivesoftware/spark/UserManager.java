@@ -226,7 +226,7 @@ public class UserManager {
      * @return the Occupant found.
      */
     public Occupant getOccupant(GroupChatRoom groupChatRoom, Resourcepart nickname) {
-        EntityFullJid userJID = JidCreate.entityFullFrom(groupChatRoom.getRoomname(), nickname);
+        EntityFullJid userJID = JidCreate.entityFullFrom(groupChatRoom.getBareJid(), nickname);
         Occupant occ = null;
         try {
             occ = groupChatRoom.getMultiUserChat().getOccupant(userJID);
@@ -282,20 +282,6 @@ public class UserManager {
      */
     public Collection<String> getAllParticipantsInRoom(ChatRoom chatRoom) {
         return new ArrayList<>();
-    }
-
-    /**
-     * @deprecated use {@link #getUserNicknameFromJID(BareJid)} instead.
-     */
-    @Deprecated
-    public String getUserNicknameFromJID(CharSequence jid) {
-        BareJid bareJid;
-        try {
-            bareJid = JidCreate.bareFrom(jid);
-        } catch (XmppStringprepException e) {
-            throw new IllegalStateException(e);
-        }
-        return getUserNicknameFromJID(bareJid);
     }
 
     public String getUserNicknameFromJID(BareJid jid) {
@@ -413,9 +399,9 @@ public class UserManager {
         for (ContactGroup contactGroup : contactList.getContactGroups()) {
             contactGroup.clearSelection();
             for (ContactItem contactItem : contactGroup.getContactItems()) {
-                if (!contactMap.containsKey(contactItem.getJID())) {
+                if (!contactMap.containsKey(contactItem.getJid().toString())) {
                     contacts.add(contactItem);
-                    contactMap.put(contactItem.getJID(), contactItem);
+                    contactMap.put(contactItem.getJid().toString(), contactItem);
                 }
             }
         }
@@ -447,7 +433,7 @@ public class UserManager {
                             parent.setGlassPane(glassPane);
                             parent.getGlassPane().setVisible(false);
                             contactField.dispose();
-                            SparkManager.getChatManager().activateChat(item.getJID(), item.getDisplayName());
+                            SparkManager.getChatManager().activateChat(item.getJid(), item.getDisplayName());
                         }
                     }
 

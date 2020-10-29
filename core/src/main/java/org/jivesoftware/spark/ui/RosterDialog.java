@@ -184,7 +184,7 @@ public class RosterDialog implements ActionListener {
         
         panel.add(groupBox, new GridBagConstraints(1, 4, 1, 1, 1.0D, 0.0D, 17, 2, new Insets(5, 5, 5, 5), 0, 0));
         
-        if (!Default.getBoolean("ADD_CONTACT_GROUP_DISABLED") && Enterprise.containsFeature(Enterprise.ADD_GROUPS_FEATURE)) {
+        if (!Default.getBoolean(Default.ADD_CONTACT_GROUP_DISABLED) && Enterprise.containsFeature(Enterprise.ADD_GROUPS_FEATURE)) {
         	panel.add(newGroupButton, new GridBagConstraints(2, 4, 1, 1, 0.0D, 0.0D, 17, 1, new Insets(5, 5, 5, 5), 0, 0));
         }
         newGroupButton.addActionListener(this);
