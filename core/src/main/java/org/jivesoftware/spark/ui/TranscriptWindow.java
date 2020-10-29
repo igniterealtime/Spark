@@ -500,7 +500,7 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener
                     {
                         ChatManager manager = SparkManager.getChatManager();
                         ChatRoom room = manager.getChatContainer().getActiveChatRoom();
-                        user = room.getRoomname().toString();
+                        user = room.getBareJid().toString();
 
                         int ok = JOptionPane.showConfirmDialog( (TranscriptWindow) object,
                                                                 Res.getString( "delete.permanently" ),
@@ -537,7 +537,7 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener
         			try
         			{
         				room = SparkManager.getChatManager().getChatContainer().getActiveChatRoom();
-        				HistoryWindow hw = new HistoryWindow( SparkManager.getUserDirectory(), room.getRoomname().toString() );
+        				HistoryWindow hw = new HistoryWindow( SparkManager.getUserDirectory(), room.getBareJid().toString() );
         				hw.showWindow();
         			}
         			catch ( Exception ex )

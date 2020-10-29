@@ -114,7 +114,7 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
     public void messageReceived(ChatRoom room, Message message) {
 
         try {
-            Localpart roomId = room.getRoomJid().getLocalpart();
+            Localpart roomId = room.getJid().getLocalpart();
             String body = message.getBody();
             int pos = body.indexOf("https://");
 
@@ -262,7 +262,7 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
 
     public void chatRoomClosed(ChatRoom chatroom)
     {
-        String roomId = chatroom.getRoomname().toString();
+        String roomId = chatroom.getBareJid().toString();
 
         Log.warning("chatRoomClosed:  " + roomId);
 
@@ -283,28 +283,28 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
 
     public void chatRoomActivated(ChatRoom chatroom)
     {
-        String roomId = chatroom.getRoomname().toString();
+        String roomId = chatroom.getBareJid().toString();
 
         Log.warning("chatRoomActivated:  " + roomId);
     }
 
     public void userHasJoined(ChatRoom room, String s)
     {
-        String roomId = room.getRoomname().toString();
+        String roomId = room.getBareJid().toString();
 
         Log.warning("userHasJoined:  " + roomId + " " + s);
     }
 
     public void userHasLeft(ChatRoom room, String s)
     {
-        String roomId = room.getRoomname().toString();
+        String roomId = room.getBareJid().toString();
 
         Log.warning("userHasLeft:  " + roomId + " " + s);
     }
 
     public void chatRoomOpened(final ChatRoom room)
     {
-        String roomId = room.getRoomname().toString();
+        String roomId = room.getBareJid().toString();
 
         Log.warning("chatRoomOpened:  " + roomId);
 
@@ -428,7 +428,7 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
     private void sendInvite(ChatRoom room, String url, Message.Type type)
     {
         Message message2 = new Message();
-        message2.setTo(room.getRoomname().toString());
+        message2.setTo(room.getBareJid());
         message2.setType(type);
         message2.setBody(url);
         room.sendMessage(message2);

@@ -140,7 +140,7 @@ public class ChatHistory extends JPanel {
 
 
         agentSession = FastpathPlugin.getAgentSession();
-        EntityBareJid jid = SparkManager.getSessionManager().getBareUserAddress();
+        EntityBareJid jid = SparkManager.getSessionManager().getUserBareAddress();
         try {
             history = agentSession.getAgentHistory(jid, 10, null);
         }

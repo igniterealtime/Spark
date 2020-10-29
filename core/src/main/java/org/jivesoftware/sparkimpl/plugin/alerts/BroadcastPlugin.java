@@ -136,7 +136,7 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
             Iterator<ContactItem> selectedUsersIterator = selectedUsers.iterator();
             if (selectedUsersIterator.hasNext()) {
                 ContactItem contactItem = selectedUsersIterator.next();
-                selectedUser = contactItem.getJID();
+                selectedUser = contactItem.getJid().toString();
             }
 
             UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
@@ -256,7 +256,6 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
      * Show Server Alert.
      *
      * @param message the message to show.
-     * @param type
      */
     private void showAlert(Message message) {
 	Type type = message.getType();
@@ -347,7 +346,7 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
 	String broadcasttype = type == Message.Type.normal ? Res.getString("broadcast") : Res.getString("message.alert.notify");
 	//m.setFrom(name +" "+broadcasttype);
 	// TODO: It is strange that we (try to) set 'from' here.
-        m.setFrom(nickname+" - "+broadcasttype);
+    m.setFrom(JidCreate.fromOrThrowUnchecked(nickname+" - "+broadcasttype));
 
 	chatRoom.getTranscriptWindow().insertMessage(m.getFrom().toString(), message, ChatManager.FROM_COLOR);
 	chatRoom.addToTranscript(m,true);

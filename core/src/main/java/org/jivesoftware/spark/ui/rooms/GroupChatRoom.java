@@ -420,19 +420,8 @@ public class GroupChatRoom extends ChatRoom
         lastActivity = System.currentTimeMillis();
     }
 
-    /**
-     * Return name of the room specified when the room was created.
-     *
-     * @return the roomname.
-     */
     @Override
-    public EntityBareJid getRoomname()
-    {
-        return chat.getRoom();
-    }
-
-    @Override
-    public EntityBareJid getRoomJid()
+    public EntityBareJid getBareJid()
     {
         return chat.getRoom();
     }
@@ -665,7 +654,7 @@ public class GroupChatRoom extends ChatRoom
             catch ( ChatRoomNotFoundException e )
             {
                 final Resourcepart userNickname = message.getFrom().getResourceOrEmpty();
-                final String roomTitle = userNickname + " - " + getRoomname();
+                final String roomTitle = userNickname + " - " + getBareJid();
 
                 // Check to see if this is a message notification.
                 if ( message.getBody() != null )
@@ -1097,7 +1086,22 @@ public class GroupChatRoom extends ChatRoom
     @Override
     public void authenticated( XMPPConnection xmppConnection, boolean b )
     {
-        reconnectionSuccessful();
+        final EntityBareJid roomJID = chat.getRoom();
+        final String roomName = tabTitle;
+        final String password = this.password;
+
+        try {
+            chat.leave();
+        }
+        catch (Exception e) {
+            Log.error(e);
+        }
+
+        isActive = false;
+        EventQueue.invokeLater( () -> {
+            closeChatRoom();
+            ConferenceUtils.joinConferenceOnSeperateThread( roomName, roomJID, password );
+        } );
     }
 
     @Override
@@ -1122,17 +1126,6 @@ public class GroupChatRoom extends ChatRoom
     public void setPassword( String password )
     {
         this.password = password;
-    }
-
-    private void reconnectionSuccessful()
-    {
-        final EntityBareJid roomJID = chat.getRoom();
-        final String roomName = tabTitle;
-        isActive = false;
-        EventQueue.invokeLater( () -> {
-            ConferenceUtils.joinConferenceOnSeperateThread( roomName, roomJID, password );
-            closeChatRoom();
-        } );
     }
 
     /**
