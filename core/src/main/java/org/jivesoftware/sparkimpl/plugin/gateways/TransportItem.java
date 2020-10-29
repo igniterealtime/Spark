@@ -62,7 +62,7 @@ public class TransportItem extends JPanel {
         activeLabel.setFont(new Font("Dialog", Font.PLAIN, 10));
 
         if (active) {
-            activeLabel.setText(Res.getString("active"));
+            activeLabel.setText(Res.getString("is.active"));
             activeLabel.setForeground(Color.green);
         }
         else {

@@ -334,7 +334,7 @@ public class UserInvitationPane {
             while (iter.hasNext()) {
                 Affiliate affilitate = iter.next();
                 Jid jid = affilitate.getJid();
-                if (!jid.equals(SparkManager.getSessionManager().getBareUserAddress())) {
+                if (!jid.equals(SparkManager.getSessionManager().getUserBareAddress())) {
                     list.add(jid);
                 }
             }

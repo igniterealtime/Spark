@@ -144,6 +144,8 @@ public class UserIdlePlugin extends TimerTask implements Plugin {
 	public void run() {
 		if (pref.isIdleOn()) {
 
+		    if (!SparkManager.getConnection().isConnected()) return;
+
 			// Windows Desktop Lock
 			if (Spark.isWindows()) {
 				if (IsLocked && !hasChanged) {

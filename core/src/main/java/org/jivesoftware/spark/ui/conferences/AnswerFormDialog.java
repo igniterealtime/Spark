@@ -126,7 +126,7 @@ public class AnswerFormDialog {
      */
     private void sendAnswerForm(Form answer, MultiUserChat chat) {
 	
-	ChatRoom room = SparkManager.getChatManager().getChatRoom(chat.getRoom().toString()); 
+	ChatRoom room = SparkManager.getChatManager().getChatRoom(chat.getRoom());
 	
 	for (String key : _map.keySet()) {
 	    String value = getValueFromComponent(key);

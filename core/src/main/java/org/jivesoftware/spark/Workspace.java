@@ -402,16 +402,18 @@ public class Workspace extends JPanel implements StanzaListener {
         if (bareJID == null) {
             return;
         }
+
+        String nickname;
         ContactItem contact = contactList.getContactItemByJID(bareJID);
-        String nickname = bareJID.getLocalpartOrNull() == null ? null : bareJID.getLocalpartOrNull().toString();
         if (contact != null) {
             nickname = contact.getDisplayName();
+        } else {
+            nickname = bareJID.getLocalpartOrNull() == null ? null : bareJID.getLocalpartOrNull().toString();
         }
 
-        // Create the room if it does not exist.
+        // Create the room if it does not exist.;
         ChatRoom room = SparkManager.getChatManager().createChatRoom(bareJID, nickname, nickname);
-        if(!SparkManager.getChatManager().getChatContainer().getChatFrame().isVisible())
-        {
+        if (!SparkManager.getChatManager().getChatContainer().getChatFrame().isVisible()) {
             SparkManager.getChatManager().getChatContainer().getChatFrame().setVisible(true);
         }
 

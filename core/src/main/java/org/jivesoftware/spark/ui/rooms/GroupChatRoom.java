@@ -49,10 +49,7 @@ import org.jivesoftware.spark.util.UIComponentRegistry;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
-import org.jxmpp.jid.DomainBareJid;
-import org.jxmpp.jid.EntityBareJid;
-import org.jxmpp.jid.EntityFullJid;
-import org.jxmpp.jid.Jid;
+import org.jxmpp.jid.*;
 import org.jxmpp.jid.parts.Resourcepart;
 import org.jxmpp.util.XmppStringUtils;
 
@@ -423,23 +420,17 @@ public class GroupChatRoom extends ChatRoom
         lastActivity = System.currentTimeMillis();
     }
 
-    /**
-     * Return name of the room specified when the room was created.
-     *
-     * @return the roomname.
-     */
     @Override
-    public EntityBareJid getRoomname()
+    public EntityBareJid getBareJid()
     {
         return chat.getRoom();
     }
 
     @Override
-    public EntityBareJid getRoomJid()
-    {
+    public EntityJid getJid() {
         return chat.getRoom();
     }
- 
+
     /**
      * Retrieve the nickname of the user in this groupchat.
      *
@@ -658,21 +649,20 @@ public class GroupChatRoom extends ChatRoom
         {
             try
             {
-                SparkManager.getChatManager().getChatContainer().getChatRoom( message.getFrom() );
+                SparkManager.getChatManager().getChatContainer().getChatRoom( message.getFrom().asEntityJidOrThrow() );
             }
             catch ( ChatRoomNotFoundException e )
             {
                 final Resourcepart userNickname = message.getFrom().getResourceOrEmpty();
-                final String roomTitle = userNickname + " - " + getRoomname();
+                final String roomTitle = userNickname + " - " + getBareJid();
 
                 // Check to see if this is a message notification.
                 if ( message.getBody() != null )
                 {
                     // Create new room
-                    ChatRoom chatRoom = new ChatRoomImpl( message.getFrom().asEntityBareJidOrThrow(), userNickname, roomTitle );
+                    ChatRoom chatRoom = new ChatRoomImpl( message.getFrom().asEntityJidOrThrow(), userNickname, roomTitle );
                     SparkManager.getChatManager().getChatContainer().addChatRoom( chatRoom );
 
-                    SparkManager.getChatManager().getChatContainer().activateChatRoom( chatRoom );
                     chatRoom.insertMessage( message );
                 }
             }
@@ -1096,7 +1086,22 @@ public class GroupChatRoom extends ChatRoom
     @Override
     public void authenticated( XMPPConnection xmppConnection, boolean b )
     {
-        reconnectionSuccessful();
+        final EntityBareJid roomJID = chat.getRoom();
+        final String roomName = tabTitle;
+        final String password = this.password;
+
+        try {
+            chat.leave();
+        }
+        catch (Exception e) {
+            Log.error(e);
+        }
+
+        isActive = false;
+        EventQueue.invokeLater( () -> {
+            closeChatRoom();
+            ConferenceUtils.joinConferenceOnSeperateThread( roomName, roomJID, password );
+        } );
     }
 
     @Override
@@ -1121,17 +1126,6 @@ public class GroupChatRoom extends ChatRoom
     public void setPassword( String password )
     {
         this.password = password;
-    }
-
-    private void reconnectionSuccessful()
-    {
-        final EntityBareJid roomJID = chat.getRoom();
-        final String roomName = tabTitle;
-        isActive = false;
-        EventQueue.invokeLater( () -> {
-            ConferenceUtils.joinConferenceOnSeperateThread( roomName, roomJID, password );
-            closeChatRoom();
-        } );
     }
 
     /**

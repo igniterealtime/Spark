@@ -238,7 +238,7 @@ public class Workpane {
                 if (!(room instanceof GroupChatRoom)) {
                     return;
                 }
-                EntityBareJid roomName = room.getRoomJid();
+                EntityBareJid roomName = room.getBareJid();
                 Localpart sessionID = roomName.getLocalpart();
                 if (offerMap.get(sessionID.toString()) != null) {
                     Offer offer = offerMap.get(sessionID.toString());
@@ -248,7 +248,7 @@ public class Workpane {
             }
 
             public void chatRoomClosed(ChatRoom room) {
-                EntityBareJid roomName = room.getRoomJid();
+                EntityBareJid roomName = room.getBareJid();
                 Localpart sessionID = roomName.getLocalpart();
                 offerMap.remove(sessionID.toString());
             }
@@ -263,7 +263,7 @@ public class Workpane {
     }
 
     public void decorateRoom(ChatRoom room, Map metadata) {
-        EntityBareJid roomName = room.getRoomJid();
+        EntityBareJid roomName = room.getBareJid();
         Localpart sessionID =roomName.getLocalpart();
 
 

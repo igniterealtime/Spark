@@ -157,7 +157,7 @@ public class GroupChatParticipantList extends JPanel {
 	chat = groupChatRoom.getMultiUserChat();
 
 	chat.addInvitationRejectionListener( ( jid1, reason, message, rejection ) -> {
-    String nickname = userManager.getUserNicknameFromJID( jid1.toString() );
+    String nickname = userManager.getUserNicknameFromJID(jid1);
 
     userHasLeft(nickname);
 
@@ -397,7 +397,7 @@ public class GroupChatParticipantList extends JPanel {
 	protected void startChat(ChatRoom groupChat, EntityFullJid groupJID) {
 		Resourcepart userNickname = groupJID.getResourcepart();
 		String roomTitle = userNickname + " - "
-				+ groupChat.getRoomJid();
+				+ groupChat.getBareJid();
 
 		// TODO: Remove duplicate variable userNickname and nicknameOfUser.
 		Resourcepart nicknameOfUser = userNickname;
@@ -414,7 +414,7 @@ public class GroupChatParticipantList extends JPanel {
 			Log.debug("Could not find chat room - " + groupJID);
 
 			// Create new room
-			chatRoom = new ChatRoomImpl(groupJID.asEntityBareJid(), nicknameOfUser, roomTitle);
+			chatRoom = new ChatRoomImpl(groupJID, nicknameOfUser, roomTitle);
 			chatManager.getChatContainer().addChatRoom(chatRoom);
 		}
 
@@ -630,7 +630,7 @@ public class GroupChatParticipantList extends JPanel {
 		};
 
 		inviteAgainAction.putValue(Action.NAME,
-			Res.getString("menuitem.inivite.again"));
+			Res.getString("menuitem.invite.again"));
 		popup.add(inviteAgainAction);
 
 		Action removeInvite = new AbstractAction() {
@@ -723,7 +723,7 @@ public class GroupChatParticipantList extends JPanel {
 		    if (selectedUser == null) {
 		        return;
 		    }
-		    startChat(groupChatRoom, userMap.get(selectedUser));
+		    startChat(groupChatRoom, userMap.get(Resourcepart.fromOrThrowUnchecked(selectedUser)));
 		}
 	    };
 

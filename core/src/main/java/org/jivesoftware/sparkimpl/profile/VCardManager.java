@@ -135,7 +135,7 @@ public class VCardManager {
 
         // Intercept all presence packets being sent and append vcard information.
         StanzaFilter presenceFilter = new StanzaTypeFilter(Presence.class);
-        SparkManager.getConnection().addPacketInterceptor( stanza -> {
+        SparkManager.getConnection().addStanzaInterceptor( stanza -> {
             Presence newPresence = (Presence)stanza;
             VCardUpdateExtension update = new VCardUpdateExtension();
             JabberAvatarExtension jax = new JabberAvatarExtension();
@@ -240,7 +240,7 @@ public class VCardManager {
     private void initializeUI() {
 
         // See if we should disable the "Edit my profile" option under "File"
-        if (Default.getBoolean("DISABLE_EDIT_PROFILE") || !Enterprise.containsFeature(Enterprise.VCARD_FEATURE)) return;
+        if (Default.getBoolean(Default.DISABLE_EDIT_PROFILE) || !Enterprise.containsFeature(Enterprise.VCARD_FEATURE)) return;
 
         // Add Actions Menu
         final JMenu contactsMenu = SparkManager.getMainWindow().getMenuByName(Res.getString("menuitem.contacts"));

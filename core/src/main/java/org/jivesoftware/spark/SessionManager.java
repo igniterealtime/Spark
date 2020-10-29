@@ -15,6 +15,7 @@
  */
 package org.jivesoftware.spark;
 
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.*;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.provider.ProviderManager;
@@ -27,7 +28,6 @@ import org.jivesoftware.sparkimpl.plugin.manager.Features;
 import org.jxmpp.jid.DomainBareJid;
 import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.EntityFullJid;
-import org.jxmpp.jid.impl.JidCreate;
 import org.jxmpp.util.XmppStringUtils;
 
 import javax.swing.SwingUtilities;
@@ -150,7 +150,10 @@ public final class SessionManager implements ConnectionListener {
         SwingUtilities.invokeLater( () -> {
             preError = Workspace.getInstance().getStatusBar().getPresence();
             final Presence presence = new Presence(Presence.Type.unavailable);
+            presence.setStatus(Res.getString("status.offline"));
             changePresence(presence);
+
+            Workspace.getInstance().getStatusBar().setStatusPanelEnabled(false);
 
             Log.debug("Connection closed on error.: " + ex.getMessage());
         } );
@@ -256,24 +259,12 @@ public final class SessionManager implements ConnectionListener {
     }
 
     /**
-     * Returns the users bare address. A bare-address is the address without a resource (ex. derek@jivesoftware.com/spark would
+     * Returns the users bare JID. A bare-JID is the JID without a resource (ex. derek@jivesoftware.com/spark would
      * be derek@jivesoftware.com)
      *
-     * @return the users bare address.
-     * @deprecated use {@link #getBareUserAddress()} instead.
+     * @return the users bare JID.
      */
-    @Deprecated
-    public String getBareAddress() {
-        return userBareAddress.toString();
-    }
-
-    /**
-     * Returns the users bare address. A bare-address is the address without a resource (ex. derek@jivesoftware.com/spark would
-     * be derek@jivesoftware.com)
-     *
-     * @return the users bare address.
-     */
-    public EntityBareJid getBareUserAddress() {
+    public EntityBareJid getUserBareAddress() {
         return userBareAddress;
     }
 
@@ -299,6 +290,8 @@ public final class SessionManager implements ConnectionListener {
             {
                 changePresence( preError );
                 preError = null;
+
+                Workspace.getInstance().getStatusBar().setStatusPanelEnabled(true);
             });
         }
     }

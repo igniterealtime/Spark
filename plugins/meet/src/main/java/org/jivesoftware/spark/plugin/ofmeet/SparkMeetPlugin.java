@@ -17,133 +17,109 @@
 
 package org.jivesoftware.spark.plugin.ofmeet;
 
-import org.jivesoftware.Spark;
-import org.jivesoftware.smack.packet.Message;
-import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.plugin.Plugin;
-import org.jivesoftware.spark.ui.ChatRoom;
-import org.jivesoftware.spark.ui.ChatRoomListener;
-import org.jivesoftware.spark.ui.GlobalMessageListener;
-import org.jivesoftware.spark.util.log.Log;
-import org.jxmpp.jid.DomainBareJid;
-import org.jxmpp.jid.EntityBareJid;
-import org.jxmpp.jid.impl.JidCreate;
-import org.jxmpp.jid.parts.Localpart;
-
-import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.FileInputStream;
-import java.net.URLEncoder;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
+import java.awt.event.*;
+import javax.swing.*;
+import java.util.*;
+import java.util.zip.*;
+import java.io.*;
+import java.net.*;
+import java.lang.reflect.*;
+
+
+import org.jivesoftware.Spark;
+import org.jivesoftware.spark.*;
+import org.jivesoftware.smack.packet.Message;
+import org.jivesoftware.spark.component.*;
+import org.jivesoftware.spark.component.browser.*;
+import org.jivesoftware.spark.plugin.*;
+import org.jivesoftware.spark.ui.rooms.*;
+import org.jivesoftware.spark.ui.*;
+import org.jivesoftware.spark.util.*;
+import org.jivesoftware.smack.*;
+import org.jivesoftware.spark.util.log.*;
+
+import org.jitsi.util.OSUtils;
+import de.mxro.process.*;
+import org.jxmpp.jid.parts.*;
 
 
 public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageListener
 {
     private org.jivesoftware.spark.ChatManager chatManager;
-
-    private String protocol = "https";
-    private DomainBareJid server = null;
-    private String port = "7443";
     private String url = null;
-    private int width = 1024;
-    private int height = 768;
-    private String path = "ofmeet";
 
-    private static File pluginsettings = new File(Spark.getSparkUserHome() + "/ofmeet.properties");
-    private Map<EntityBareJid, ChatRoomDecorator> decorators = new HashMap<>();
-
-    private Browser browser = null;
-    private JFrame frame = null;
+    private static File pluginsettings = new File(System.getProperty("user.home") + System.getProperty("file.separator") + "Spark" + System.getProperty("file.separator") + "ofmeet.properties");
+    private Map<String, ChatRoomDecorator> decorators = new HashMap<String, ChatRoomDecorator>();
+    private String electronExePath = null;
+    private String electronHomePath = null;
+    private XProcess electronThread = null;
     private JPanel inviteAlert;
-
-
-    public SparkMeetPlugin()
-    {
-
-    }
 
     public void initialize()
     {
+        checkNatives();
+
         chatManager = SparkManager.getChatManager();
 
-        server = SparkManager.getSessionManager().getServerAddress();
+        String server = SparkManager.getSessionManager().getServerAddress().toString();
+        String port = "7443";
+        url = "https://" + server + ":" + port + "/ofmeet/";
 
         Properties props = new Properties();
 
         if (pluginsettings.exists())
         {
-            Log.debug("ofmeet-info: Properties-file does exist= " + pluginsettings.getPath());
+            Log.warning("ofmeet-info: Properties-file does exist= " + pluginsettings.getPath());
 
             try {
                 props.load(new FileInputStream(pluginsettings));
 
-                if (props.getProperty("port") != null)
+                if (props.getProperty("url") != null)
                 {
-                    port = props.getProperty("port");
-                    Log.debug("ofmeet-info: ofmeet-port from properties-file is= " + port);
+                    url = props.getProperty("url");
+                    Log.warning("ofmeet-info: ofmeet url from properties-file is= " + url);
                 }
 
-                if (props.getProperty("protocol") != null)
-                {
-                    protocol = props.getProperty("protocol");
-                    Log.debug("ofmeet-info: ofmeet-protocol from properties-file is= " + protocol);
-                }
-
-                if (props.getProperty("server") != null)
-                {
-                    server = JidCreate.domainBareFrom(props.getProperty("server"));
-                    Log.debug("ofmeet-info: ofmeet-server from properties-file is= " + server);
-                }
-
-                if (props.getProperty("path") != null)
-                {
-                    path = props.getProperty("path");
-                    Log.debug("ofmeet-info: ofmeet-path from properties-file is= " + path);
-                }
-
-                if (props.getProperty("width") != null)
-                {
-                    width = Integer.parseInt(props.getProperty("width"));
-                    Log.debug("ofmeet-info: ofmeet-width from properties-file is= " + width);
-                }
-
-                if (props.getProperty("height") != null)
-                {
-                    height = Integer.parseInt(props.getProperty("height"));
-                    Log.debug("ofmeet-info: ofmeet-height from properties-file is= " + height);
-                }
-
-
-            } catch (Exception e) {
-                System.err.println(e);
+            } catch (IOException ioe) {
+                 Log.warning("ofmeet-Error:", ioe);
             }
 
         } else {
-
             Log.warning("ofmeet-Error: Properties-file does not exist= " + pluginsettings.getPath() + ", using default " + url);
         }
 
-        url = "https://" + server + ":" + port + "/" + path;
-
         chatManager.addChatRoomListener(this);
         chatManager.addGlobalMessageListener(this);
+    }
 
+
+    public void shutdown()
+    {
+        try
+        {
+            Log.warning("shutdown");
+            chatManager.removeChatRoomListener(this);
+
+            if (electronThread != null) electronThread.destory();
+            electronThread = null;
+        }
+        catch(Exception e)
+        {
+            Log.warning("shutdown ", e);
+        }
     }
 
     @Override
     public void messageReceived(ChatRoom room, Message message) {
 
         try {
-            Localpart roomId = room.getRoomJid().getLocalpart();
+            Localpart roomId = room.getJid().getLocalpart();
             String body = message.getBody();
+            int pos = body.indexOf("https://");
 
-            if ( body.startsWith("https://") && body.endsWith("/" + roomId) ) {
-                showInvitationAlert(message.getBody(), room, roomId);
+            if ( pos > -1 && (body.contains("/" + roomId + "-") || body.contains("meeting")) ) {
+                showInvitationAlert(message.getBody().substring(pos), room, roomId);
             }
 
 
@@ -153,214 +129,6 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
 
     }
 
-    @Override
-    public void messageSent(ChatRoom room, Message message) {
-
-    }
-
-    private String getNode(String jid)
-    {
-        String node = jid;
-        int pos = node.indexOf("@");
-
-        if (pos > -1)
-            node = jid.substring(0, pos);
-
-        return node;
-    }
-
-    public void shutdown()
-    {
-        try
-        {
-            Log.debug("shutdown");
-
-            chatManager.removeChatRoomListener(this);
-            chatManager.removeGlobalMessageListener(this);
-        }
-        catch(Exception e)
-        {
-            Log.warning("shutdown ", e);
-        }
-    }
-
-    public boolean canShutDown()
-    {
-        return true;
-    }
-
-    public void uninstall()
-    {
-
-    }
-
-    // openUrl keep only one ofmeet window opened at any time
-    // to close window, send hangup command and wait for 1 sec.
-    // before disposing browser and jframe window
-
-
-    public void openUrl(String url, CharSequence roomId)
-    {
-        String meetUrl = url;
-
-        try {
-            String username = URLEncoder.encode(SparkManager.getSessionManager().getUsername(), "UTF-8");
-            String password = URLEncoder.encode(SparkManager.getSessionManager().getPassword(), "UTF-8");
-
-            if (meetUrl.startsWith("https://"))
-            {
-                meetUrl = "https://" + username + ":" + password + "@" + url.substring(8);
-                openRoom(meetUrl, roomId);
-
-            } else Log.warning("openUrl:  unexpected url " + meetUrl);
-
-        } catch (Exception e) {
-            Log.warning("Error with username/password:  " + meetUrl);
-            openRoom(meetUrl, roomId);
-        }
-    }
-
-    private void openRoom(String roomUrl, CharSequence roomId)
-    {
-        try {
-            if (browser != null)
-            {
-                ActionListener taskPerformer = new ActionListener()
-                {
-                    public void actionPerformed(ActionEvent evt)
-                    {
-                        if (browser != null) browser.dispose();
-                        if (frame != null)   frame.dispose();
-
-                        open(roomUrl, roomId);
-                    }
-                };
-
-                browser.executeJavaScript("APP.conference.hangup();");
-
-                javax.swing.Timer timer = new javax.swing.Timer(1000 ,taskPerformer);
-                timer.setRepeats(false);
-                timer.start();
-
-            } else open(roomUrl, roomId);
-
-        } catch (Exception t) {
-
-            Log.warning("openRoom " + roomUrl, t);
-        }
-    }
-
-    private void open(String roomUrl, CharSequence roomId)
-    {
-        browser = new Browser();
-        BrowserView view = new BrowserView(browser);
-
-        frame = new JFrame();
-        frame.add(view, BorderLayout.CENTER);
-        frame.setSize(width, height);
-        frame.setVisible(true);
-        frame.setTitle("Openfire Meetings - " + roomId);
-
-        frame.addWindowListener(new java.awt.event.WindowAdapter()
-        {
-            @Override public void windowClosing(java.awt.event.WindowEvent windowEvent)
-            {
-                close();
-            }
-        });
-
-        browser.loadURL(roomUrl);
-    }
-
-    private void close()
-    {
-        ActionListener taskPerformer = new ActionListener()
-        {
-            public void actionPerformed(ActionEvent evt)
-            {
-                if (browser != null)
-                {
-                    browser.dispose();
-                    browser = null;
-                }
-
-                if (frame != null)
-                {
-                    frame.dispose();
-                    frame = null;
-                }
-            }
-        };
-
-        browser.executeJavaScript("APP.conference.hangup();");
-
-        javax.swing.Timer timer = new javax.swing.Timer(1000 ,taskPerformer);
-        timer.setRepeats(false);
-        timer.start();
-    }
-
-    public void chatRoomLeft(ChatRoom chatroom)
-    {
-
-    }
-
-    public void chatRoomClosed(ChatRoom chatroom)
-    {
-        Localpart roomId = chatroom.getRoomJid().getLocalpart();
-
-        Log.debug("chatRoomClosed:  " + roomId);
-
-        if (decorators.containsKey(roomId))
-        {
-            ChatRoomDecorator decorator = decorators.remove(roomId);
-            decorator.finished();
-            decorator = null;
-        }
-
-        if (browser != null)
-        {
-            browser.dispose();
-            browser = null;
-        }
-    }
-
-    public void chatRoomActivated(ChatRoom chatroom)
-    {
-        EntityBareJid roomId = chatroom.getRoomJid();
-
-        Log.debug("chatRoomActivated:  " + roomId);
-    }
-
-    public void userHasJoined(ChatRoom room, String s)
-    {
-        EntityBareJid roomId = room.getRoomJid();
-
-        Log.debug("userHasJoined:  " + roomId + " " + s);
-    }
-
-    public void userHasLeft(ChatRoom room, String s)
-    {
-        EntityBareJid roomId = room.getRoomJid();
-
-        Log.debug("userHasLeft:  " + roomId + " " + s);
-    }
-
-    public void chatRoomOpened(final ChatRoom room)
-    {
-        EntityBareJid roomId = room.getRoomJid();
-
-        Log.debug("chatRoomOpened:  " + roomId);
-
-        if (!decorators.containsKey(roomId))
-        {
-            decorators.put(roomId, new ChatRoomDecorator(room, url, this));
-        }
-    }
-
-    /**
-     * Display an alert that allows the user to accept or reject a meet
-     * invitation.
-     */
     private void showInvitationAlert(final String meetUrl, final ChatRoom room, final CharSequence roomId)
     {
         // Got an offer to start a new meet. So, make sure that a chat is
@@ -389,11 +157,11 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
                 // Hide the response panel. TODO: make this work.
                 room.getTranscriptWindow().remove(inviteAlert);
                 inviteAlert.remove(1);
-                inviteAlert.add(new JLabel("Joining audio/conference conference ..."), BorderLayout.CENTER);
+                inviteAlert.add(new JLabel("Meeting at " + meetUrl), BorderLayout.CENTER);
                 declineButton.setEnabled(false);
                 acceptButton.setEnabled(false);
 
-                openUrl(meetUrl, roomId);
+                openURL(meetUrl);
             }
         });
         buttonPanel.add(acceptButton);
@@ -416,5 +184,253 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
 
         // Add the response panel to the transcript window.
         room.getTranscriptWindow().addComponent(inviteAlert);
+    }
+
+    @Override
+    public void messageSent(ChatRoom room, Message message) {
+
+    }
+
+    public boolean canShutDown()
+    {
+        return true;
+    }
+
+    public void uninstall()
+    {
+
+    }
+
+    public void handleClick(String newUrl, ChatRoom room, String url, Message.Type type)
+    {
+        if (electronThread != null)
+        {
+            electronThread.destory();
+            electronThread = null;
+            return;
+        }
+
+        sendInvite(room, url, type);
+        openURL(newUrl);
+    }
+
+    public void openURL(String newUrl)
+    {
+        checkNatives();
+
+        try {
+            String username = URLEncoder.encode(SparkManager.getSessionManager().getUsername(), "UTF-8");
+            String password = URLEncoder.encode(SparkManager.getSessionManager().getPassword(), "UTF-8");
+
+            electronThread = Spawn.startProcess(electronExePath + " --ignore-certificate-errors " + newUrl, new File(electronHomePath), new ProcessListener() {
+
+                public void onOutputLine(final String line) {
+                    System.out.println(line);
+                }
+
+                public void onProcessQuit(int code) {
+                    electronThread = null;
+                }
+
+                public void onOutputClosed() {
+                    System.out.println("process completed");
+                }
+
+                public void onErrorLine(final String line) {
+
+                    if (!line.contains("Corrupt JPEG data"))
+                    {
+                        Log.warning("Electron error " + line);
+                    }
+                }
+
+                public void onError(final Throwable t) {
+                    Log.warning("Electron error", t);
+                }
+            });
+
+        } catch (Exception t) {
+
+            Log.warning("Error opening url " + newUrl, t);
+        }
+    }
+
+
+    public void chatRoomLeft(ChatRoom chatroom)
+    {
+    }
+
+    public void chatRoomClosed(ChatRoom chatroom)
+    {
+        String roomId = chatroom.getBareJid().toString();
+
+        Log.warning("chatRoomClosed:  " + roomId);
+
+        if (decorators.containsKey(roomId))
+        {
+            ChatRoomDecorator decorator = decorators.remove(roomId);
+            decorator.finished();
+            decorator = null;
+        }
+
+        if (electronThread != null)
+        {
+            electronThread.destory();
+            electronThread = null;
+            return;
+        }
+    }
+
+    public void chatRoomActivated(ChatRoom chatroom)
+    {
+        String roomId = chatroom.getBareJid().toString();
+
+        Log.warning("chatRoomActivated:  " + roomId);
+    }
+
+    public void userHasJoined(ChatRoom room, String s)
+    {
+        String roomId = room.getBareJid().toString();
+
+        Log.warning("userHasJoined:  " + roomId + " " + s);
+    }
+
+    public void userHasLeft(ChatRoom room, String s)
+    {
+        String roomId = room.getBareJid().toString();
+
+        Log.warning("userHasLeft:  " + roomId + " " + s);
+    }
+
+    public void chatRoomOpened(final ChatRoom room)
+    {
+        String roomId = room.getBareJid().toString();
+
+        Log.warning("chatRoomOpened:  " + roomId);
+
+        if (roomId.indexOf('/') == -1)
+        {
+            decorators.put(roomId, new ChatRoomDecorator(room, url, this));
+        }
+    }
+
+    private void checkNatives()
+    {
+        Log.warning("checkNatives");
+
+        // Find the root path of the class that will be our plugin lib folder.
+        try
+        {
+            String nativeLibsJarPath = Spark.getSparkUserHome() + File.separator + "plugins" + File.separator + "meet" + File.separator + "lib";
+            File nativeLibFolder = new File(nativeLibsJarPath, "native");
+
+            electronHomePath = nativeLibsJarPath + File.separator + "native";
+            electronExePath = electronHomePath + File.separator + "electron";
+
+            if(!nativeLibFolder.exists())
+            {
+                nativeLibFolder.mkdir();
+
+                String jarFileSuffix = null;
+
+                if(OSUtils.IS_LINUX32)
+                {
+                    jarFileSuffix = "-linux-ia32.zip";
+                }
+                else if(OSUtils.IS_LINUX64)
+                {
+                    jarFileSuffix = "-linux-x64.zip";
+                }
+                else if(OSUtils.IS_WINDOWS32)
+                {
+                    jarFileSuffix = "-win32-ia32.zip";
+                }
+                else if(OSUtils.IS_WINDOWS64)
+                {
+                    jarFileSuffix = "-win32-x64.zip";
+                }
+                else if(OSUtils.IS_MAC)
+                {
+                    jarFileSuffix = "-darwin-x64.zip";
+                }
+
+                InputStream inputStream = new URL("https://github.com/electron/electron/releases/download/v10.1.1/electron-v10.1.1" + jarFileSuffix).openStream();
+                ZipInputStream zipIn = new ZipInputStream(inputStream);
+                ZipEntry entry = zipIn.getNextEntry();
+
+                while (entry != null)
+                {
+                    try
+                    {
+                        String filePath = electronHomePath + File.separator + entry.getName();
+
+                        Log.warning("writing file..." + filePath);
+
+                        if (!entry.isDirectory())
+                        {
+                            File file = new File(filePath);
+                            file.setReadable(true, true);
+                            file.setWritable(true, true);
+                            file.setExecutable(true, true);
+
+                            new File(file.getParent()).mkdirs();
+
+                            extractFile(zipIn, filePath);
+                        }
+                        zipIn.closeEntry();
+                        entry = zipIn.getNextEntry();
+                    }
+                    catch(Exception e) {
+                        Log.error("Error", e);
+                    }
+                }
+                zipIn.close();
+
+                Log.warning("Native lib folder created and natives extracted");
+            }
+            else {
+                Log.warning("Native lib folder already exist.");
+            }
+
+
+            String libPath = nativeLibFolder.getCanonicalPath();
+
+            if (!System.getProperty("java.library.path").contains(libPath))
+            {
+                String newLibPath = libPath + File.pathSeparator + System.getProperty("java.library.path");
+                System.setProperty("java.library.path", newLibPath);
+
+                // this will reload the new setting
+                Field fieldSysPath = ClassLoader.class.getDeclaredField("sys_paths");
+                fieldSysPath.setAccessible(true);
+                fieldSysPath.set(System.class.getClassLoader(), null);
+            }
+        }
+        catch (Exception e)
+        {
+            Log.warning(e.getMessage(), e);
+        }
+    }
+
+    private void extractFile(ZipInputStream zipIn, String filePath) throws IOException
+    {
+        BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(filePath));
+        byte[] bytesIn = new byte[4096];
+        int read = 0;
+
+        while ((read = zipIn.read(bytesIn)) != -1)
+        {
+            bos.write(bytesIn, 0, read);
+        }
+        bos.close();
+    }
+
+    private void sendInvite(ChatRoom room, String url, Message.Type type)
+    {
+        Message message2 = new Message();
+        message2.setTo(room.getBareJid());
+        message2.setType(type);
+        message2.setBody(url);
+        room.sendMessage(message2);
     }
 }
