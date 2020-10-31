@@ -201,10 +201,9 @@ public class SparkTrustManager extends GeneralTrustManager implements X509TrustM
         CertPathValidator certPathValidator = CertPathValidator.getInstance("PKIX");
         CertPathBuilder certPathBuilder = CertPathBuilder.getInstance("PKIX");
 
+        // Selects the target to be validated. This is the end-entity/leaf certificate, typically the first in the chain.
         X509CertSelector certSelector = new X509CertSelector();
-
-        // set last certificate (often root CA) from chain for CertSelector so trust store must contain it
-        certSelector.setCertificate(chain[chain.length - 1]);
+        certSelector.setCertificate(chain[0]);
 
         // checks against time validity aren't done here as are already done in checkDateValidity (X509Certificate[]
         // chain)
