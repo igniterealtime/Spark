@@ -246,8 +246,8 @@ public class SparkTrustManager extends GeneralTrustManager implements X509TrustM
         }
         
         try {
-            CertPathBuilderResult pathResult = certPathBuilder.build(parameters);
-            CertPath certPath = pathResult.getCertPath();
+            // Construct a certPath entity that represents the chain that is to be validated.
+            CertPath certPath = CertificateFactory.getInstance("X.509").generateCertPath(Arrays.asList(chain));
 
             // OF-2185: Ensure that what we validate is not empty.
             if ( certPath.getCertificates().isEmpty() ) {
