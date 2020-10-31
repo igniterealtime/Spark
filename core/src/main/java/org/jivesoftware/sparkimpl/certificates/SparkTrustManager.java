@@ -249,6 +249,10 @@ public class SparkTrustManager extends GeneralTrustManager implements X509TrustM
             CertPathBuilderResult pathResult = certPathBuilder.build(parameters);
             CertPath certPath = pathResult.getCertPath();
 
+            // OF-2185: Ensure that what we validate is not empty.
+            if ( certPath.getCertificates().isEmpty() ) {
+                throw new CertificateException("Unable to build a certificate path from the provided chain.");
+            }
             PKIXCertPathValidatorResult validationResult = (PKIXCertPathValidatorResult) certPathValidator
                     .validate(certPath, parameters);
             X509Certificate trustAnchor = validationResult.getTrustAnchor().getTrustedCert();
@@ -283,6 +287,8 @@ public class SparkTrustManager extends GeneralTrustManager implements X509TrustM
     private void checkDateValidity(X509Certificate[] chain) throws CertificateException {
 
         for (X509Certificate cert : chain) {
+            System.out.println("cert: " + cert.getSubjectDN().getName());
+            System.out.println(" ...: " + cert.getIssuerDN().getName());
             // expiration check
             try {
                 cert.checkValidity();
