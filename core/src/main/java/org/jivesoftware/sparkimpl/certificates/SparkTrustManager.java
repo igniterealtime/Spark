@@ -251,16 +251,12 @@ public class SparkTrustManager extends GeneralTrustManager implements X509TrustM
 
             PKIXCertPathValidatorResult validationResult = (PKIXCertPathValidatorResult) certPathValidator
                     .validate(certPath, parameters);
-            X509Certificate trustedCert = validationResult.getTrustAnchor().getTrustedCert();
+            X509Certificate trustAnchor = validationResult.getTrustAnchor().getTrustedCert();
 
-            if (trustedCert == null) {
+            if (trustAnchor == null) {
                 throw new CertificateException("certificate path failed: Trusted CA is NULL");
             }
-            // check if all certificates in path have Basic Constraints, only certificate that isn't required to have
-            // this extension is last certificate: root CA
-            for (int i = 0; i < chain.length - 1; i++) {
-                checkBasicConstraints(chain[i]);
-            }
+            checkBasicConstraints(chain, trustAnchor);
         } catch (CertificateRevokedException e) {
             Log.warning("Certificate was revoked", e);
             for (X509Certificate cert : chain) {
@@ -306,14 +302,46 @@ public class SparkTrustManager extends GeneralTrustManager implements X509TrustM
     }
 
     /**
-     * Check if certificate have basic constraints exception.
-     * 
-     * @param certificate given by server
-     * @throws CertificateException
+     * Checks the validity of the BasicConstraints extension of each certificate in the chain.
+     *
+     * Each certificate is assumed to have a BasicConstraints extension, with the exception of the leaf (end-entity)
+     * certificate, which _can_ have a certificate.
+     *
+     * All non-leaf certificates must have the cA field set to 'true'.
+     *
+     * The pathLen is valid: it defines the maximum amount of intermediate certificates between the CA and the leaf
+     * certificate. The leaf certificate itself is not included in the count (eg: a value of 'one' would allow for a
+     * chain length of three: the leaf, one intermediate, and the root (where the value of 'one' is defined).
+     *
+     * This method assumes that the provided chain is in order, where the first chain is the end-entity / leaf certificate.
+     *
+     * @param chain The certificate chain, possibly incomplete.
+     * @param trustAnchor the root CA certificate.
+     * @throws CertificateException When the BasicConstraint verification fails.
      */
-    private void checkBasicConstraints(X509Certificate cert) throws CertificateException {
-        if (cert.getBasicConstraints() != -1) {
-            throw new CertificateException("Certificate has no basic constraints");
+    private void checkBasicConstraints(X509Certificate[] chain, X509Certificate trustAnchor) throws CertificateException {
+        // Intentionally skipping over the first certificate, which is the end-entity certificate.
+        for (int i = 1; i<chain.length; i++)
+        {
+            // The amount of certificates between the current certificate and the end-entity certificate cannot
+            // exceed the value of pathLenConstraint (if the CA flag is not set, -1 will be returned)
+            final int pathLenConstraint = chain[i].getBasicConstraints();
+            final int certsSeparatingThisCertFromEndEntity = i - 1;
+            if (certsSeparatingThisCertFromEndEntity > pathLenConstraint) {
+                throw new CertificateException("Certificate number " + i + " in the chain failed the BasicConstraints check: "
+                    + (pathLenConstraint == -1 ? "CA flag not set" : "pathLenConstraint to small (was: " +pathLenConstraint+ " needed:" + certsSeparatingThisCertFromEndEntity+")"));
+            }
+        }
+
+        // Explicitly check the trustAnchor (that need not be in the chain)
+        if (!trustAnchor.equals(chain[chain.length-1]))
+        {
+            final int pathLenConstraint = trustAnchor.getBasicConstraints();
+            final int certsSeparatingThisCertFromEndEntity = chain.length - 1;
+            if (certsSeparatingThisCertFromEndEntity > pathLenConstraint) {
+                throw new CertificateException("Trust anchor of the chain failed the BasicConstraints check: "
+                    + (pathLenConstraint == -1 ? "CA flag not set" : "pathLenConstraint to small (was: " + pathLenConstraint + " needed:" + certsSeparatingThisCertFromEndEntity + ")"));
+            }
         }
     }
 
