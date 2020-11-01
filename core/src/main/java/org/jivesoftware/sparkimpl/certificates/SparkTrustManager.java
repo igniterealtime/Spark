@@ -175,7 +175,19 @@ public class SparkTrustManager extends GeneralTrustManager implements X509TrustM
         return cert.getIssuerX500Principal().getName().equals(cert.getSubjectX500Principal().getName()) && cert.getBasicConstraints() > -1;
     }
 
-    
+    /**
+     * Verifies if Spark's trust stores recognize the issuer of at least one of the certificates in the chain.
+     *
+     * @param chain The chain to verify
+     * @return false if none of the issuers are present in any of the trust stores of Spark.
+     */
+    public boolean containsTrustAnchorFor(X509Certificate[] chain) {
+        final Collection<String> allAcceptedIssuers = Arrays.stream(getAcceptedIssuers())
+            .map(x509Certificate -> x509Certificate.getSubjectDN().getName())
+            .collect(Collectors.toSet());
+        return Arrays.stream(chain).anyMatch( cert -> allAcceptedIssuers.contains( cert.getIssuerDN().getName()) );
+    }
+
     /**
      * Validate certificate path
      *
@@ -198,8 +210,8 @@ public class SparkTrustManager extends GeneralTrustManager implements X509TrustM
 
         // The certificate representing the {@link TrustAnchor TrustAnchor} should not be included in the certification
         // path. If it does, certain validation (like OCSP) might give unexpected results/fail. SPARK-2188
-        final List<X509Certificate> certificates = Arrays.stream(chain).
-            filter( cert -> !isRootCACertificate(cert))
+        final List<X509Certificate> certificates = Arrays.stream(chain)
+            .filter( cert -> !isRootCACertificate(cert))
             .collect(Collectors.toList());
 
         // Construct a certPath entity that represents the chain that is to be validated. Does not include the trust anchor.
