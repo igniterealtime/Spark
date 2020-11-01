@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.naming.InvalidNameException;
 import javax.net.ssl.X509TrustManager;
@@ -162,25 +163,50 @@ public class SparkTrustManager extends GeneralTrustManager implements X509TrustM
         return chain[0].getIssuerX500Principal().getName().equals(chain[0].getSubjectX500Principal().getName())
                 && chain.length == 1;
     }
+
+    /**
+     * Returns true if a certificate is a 'root' certificate, by verifying that its issuer matches its subject, and the
+     * subject of the certificate is a CA (by checking the Basic Constraints).
+     *
+     * @param cert The certificate to check
+     * @return 'true' if the certificate is a root certificate, otherwise false.
+     */
+    private boolean isRootCACertificate( final X509Certificate cert ) {
+        return cert.getIssuerX500Principal().getName().equals(cert.getSubjectX500Principal().getName()) && cert.getBasicConstraints() > -1;
+    }
+
     
     /**
      * Validate certificate path
-     * 
+     *
+     * Note that the provided chain cannot be a self-signed certificate. This method assumes a CA-signed chain is
+     * provided.
+     *
      * @throws NoSuchAlgorithmException
      * @throws KeyStoreException
      * @throws InvalidAlgorithmParameterException
      * @throws CertPathValidatorException
      * @throws CertificateException
      */
-    private void validatePath(X509Certificate[] certs)
+    private void validatePath(X509Certificate[] chain)
             throws NoSuchAlgorithmException, KeyStoreException, InvalidAlgorithmParameterException,
             CertPathValidatorException, CertificateException
     {
-        // Construct a certPath entity that represents the chain that is to be validated.
-        CertPath chain = CertificateFactory.getInstance("X.509").generateCertPath(Arrays.asList(certs));
+        if (isSelfSigned(chain)) {
+            throw new IllegalArgumentException("Method cannot be used with self-signed certificate.");
+        }
 
-        // OF-2185: Ensure that what we validate is not empty.
-        if ( chain.getCertificates().isEmpty() ) {
+        // The certificate representing the {@link TrustAnchor TrustAnchor} should not be included in the certification
+        // path. If it does, certain validation (like OCSP) might give unexpected results/fail. SPARK-2188
+        final List<X509Certificate> certificates = Arrays.stream(chain).
+            filter( cert -> !isRootCACertificate(cert))
+            .collect(Collectors.toList());
+
+        // Construct a certPath entity that represents the chain that is to be validated. Does not include the trust anchor.
+        final CertPath certPath = CertificateFactory.getInstance("X.509").generateCertPath(certificates);
+
+        // SPARK-2185: Ensure that what we validate is not empty.
+        if ( certPath.getCertificates().isEmpty() ) {
             throw new CertificateException("Unable to build a certificate path from the provided chain.");
         }
 
@@ -190,7 +216,7 @@ public class SparkTrustManager extends GeneralTrustManager implements X509TrustM
 
         // Selects the target to be validated. This is the end-entity/leaf certificate, typically the first in the chain.
         X509CertSelector toBeValidated = new X509CertSelector();
-        toBeValidated.setCertificate((X509Certificate) chain.getCertificates().get(0));
+        toBeValidated.setCertificate((X509Certificate) certPath.getCertificates().get(0));
 
         // checks against time validity aren't done here as are already done in checkDateValidity (X509Certificate[]
         // chain)
@@ -233,16 +259,16 @@ public class SparkTrustManager extends GeneralTrustManager implements X509TrustM
         
         try {
             PKIXCertPathValidatorResult validationResult = (PKIXCertPathValidatorResult) certPathValidator
-                    .validate(chain, parameters);
+                    .validate(certPath, parameters);
             X509Certificate trustAnchor = validationResult.getTrustAnchor().getTrustedCert();
 
             if (trustAnchor == null) {
                 throw new CertificateException("certificate path failed: Trusted CA is NULL");
             }
-            checkBasicConstraints(chain, trustAnchor);
+            checkBasicConstraints(certPath, trustAnchor);
         } catch (CertificateRevokedException e) {
             Log.warning("Certificate was revoked", e);
-            for (Certificate c : chain.getCertificates()) {
+            for (Certificate c : certPath.getCertificates()) {
                 X509Certificate cert = (X509Certificate) c;
                 for (X509CRL crl : crlCollection) {
                     if (crl.isRevoked(cert)) {
@@ -299,6 +325,8 @@ public class SparkTrustManager extends GeneralTrustManager implements X509TrustM
      *
      * This method assumes that the provided chain is in order, where the first chain is the end-entity / leaf certificate.
      *
+     * The trust anchor / root CA should not be part of the certPath chain.
+     *
      * @param chain The certificate chain, possibly incomplete.
      * @param trustAnchor the root CA certificate.
      * @throws CertificateException When the BasicConstraint verification fails.
@@ -318,15 +346,12 @@ public class SparkTrustManager extends GeneralTrustManager implements X509TrustM
             }
         }
 
-        // Explicitly check the trustAnchor (that need not be in the chain)
-        if (!chain.getCertificates().contains(trustAnchor))
-        {
-            final int pathLenConstraint = trustAnchor.getBasicConstraints();
-            final int certsSeparatingThisCertFromEndEntity = chain.getCertificates().size() - 1;
-            if (certsSeparatingThisCertFromEndEntity > pathLenConstraint) {
-                throw new CertificateException("Trust anchor of the chain failed the BasicConstraints check: "
-                    + (pathLenConstraint == -1 ? "CA flag not set" : "pathLenConstraint to small (was: " + pathLenConstraint + " needed:" + certsSeparatingThisCertFromEndEntity + ")"));
-            }
+        // Explicitly check the trustAnchor (as it should not be in the chain)
+        final int pathLenConstraint = trustAnchor.getBasicConstraints();
+        final int certsSeparatingThisCertFromEndEntity = chain.getCertificates().size() - 1;
+        if (certsSeparatingThisCertFromEndEntity > pathLenConstraint) {
+            throw new CertificateException("Trust anchor of the chain failed the BasicConstraints check: "
+                + (pathLenConstraint == -1 ? "CA flag not set" : "pathLenConstraint to small (was: " + pathLenConstraint + " needed:" + certsSeparatingThisCertFromEndEntity + ")"));
         }
     }
 
