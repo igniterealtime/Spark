@@ -109,7 +109,7 @@ public class SendFileTransfer extends JPanel {
                 transfer = transferManager.createOutgoingFileTransfer(fullJID);
                 transfer.sendFile(file, "Sending");
             } catch (SmackException e1) {
-                Log.error(e1);
+                Log.error("An error occurred while creating an outgoing file transfer.", e1);
             }
             sendFile(transfer, transferManager, fullJID, nickname);
         });
@@ -272,7 +272,7 @@ public class SendFileTransfer extends JPanel {
         try {
             Desktop.getDesktop().open(downloadedFile);
         } catch (IOException e) {
-            Log.error(e);
+            Log.error("An error occurred while trying to open downloaded file: " + downloadedFile, e);
         }
     }
 
@@ -282,7 +282,7 @@ public class SendFileTransfer extends JPanel {
             titleLabel.setText(Res.getString("message.negotiation.file.transfer", nickname));
         } else if (status == Status.error) {
             if (transfer.getException() != null) {
-                Log.error("Error occured during file transfer.", transfer.getException());
+                Log.error("Error occurred during file transfer.", transfer.getException());
             }
             progressBar.setVisible(false);
             progressLabel.setVisible(false);
@@ -306,7 +306,7 @@ public class SendFileTransfer extends JPanel {
                     progressBar.setValue(Math.round(p));
                 });
             } catch (Exception e) {
-                Log.error(e);
+                Log.error("An error occurred while trying to update the file transfer progress bar.", e);
             }
 
             ByteFormat format = new ByteFormat();

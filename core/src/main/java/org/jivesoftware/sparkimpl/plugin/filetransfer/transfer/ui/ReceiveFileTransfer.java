@@ -54,6 +54,7 @@ import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.packet.Message;
+import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smackx.filetransfer.FileTransfer;
 import org.jivesoftware.smackx.filetransfer.FileTransferNegotiator;
 import org.jivesoftware.smackx.filetransfer.FileTransferRequest;
@@ -204,66 +205,80 @@ public class ReceiveFileTransfer extends JPanel {
             file.delete();
         } catch (IOException e) {
             imageLabel.setIcon(SparkRes.getImageIcon(SparkRes.DOCUMENT_INFO_32x32));
-            Log.error(e);
+            Log.error("An exception occurred while accepting a file transfer.", e);
         }
 
+        if (SettingsManager.getLocalPreferences().isAutoAcceptFileTransferFromContacts()) {
+            final Roster roster = Roster.getInstanceFor(SparkManager.getConnection());
+            if (roster.isSubscribedToMyPresence(requestor)) {
+                doAccept(request);
+                return;
+            }
+        }
         acceptButton.addMouseListener(new MouseAdapter() {
-
             @Override
             public void mousePressed(MouseEvent e) {
-                saveEventToHistory(Res.getString("message.file.transfer.history.you.accepted", fileName, nickname));
-                try {
-                    Downloads.checkDownloadDirectory();
-                    acceptRequest(request);
-                } catch (Exception ex) {
-                    // this means there is a problem with the download directory
-                    saveEventToHistory(Res.getString("message.file.transfer.history.receive.failed", fileName, nickname));
-                    try {
-                        request.reject();
-                    } catch (SmackException.NotConnectedException | InterruptedException e1) {
-                        Log.warning("Unable to reject the request.", ex);
-                    }
-
-                    setBackground(new Color(239, 245, 250));
-                    acceptButton.setVisible(false);
-                    declineButton.setVisible(false);
-                    if (Downloads.getDownloadDirectory() == null) {
-                        fileLabel.setText("");
-                    } else {
-                        ResourceUtils.resLabel(fileLabel, null, Res.getString("label.transfer.download.directory") +
-                            " " + Downloads.getDownloadDirectory().getAbsolutePath());
-                    }
-
-                    // option to set a new path for the file-download
-                    pathButton.setVisible(true);
-                    pathButton.addMouseListener(new MouseAdapter() {
-                        @Override
-                        public void mousePressed(MouseEvent e) {
-                            Preference p = SparkManager.getPreferenceManager().getPreference(
-                                new FileTransferPreference().getNamespace());
-                            // retrieve the file transfer preferences and show the preference menu
-                            // to the user
-                            SparkManager.getPreferenceManager().showPreferences(p);
-                        }
-                    });
-
-                    titleLabel.setText(ex.getMessage());
-                    titleLabel.setForeground(new Color(65, 139, 179));
-
-                    invalidate();
-                    validate();
-                    repaint();
-                }
+                doAccept(request);
             }
         });
 
         declineButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                saveEventToHistory(Res.getString("message.file.transfer.history.you.rejected", fileName, nickname));
-                rejectRequest(request);
+                doReject(request);
             }
         });
+    }
+
+    private void doAccept(FileTransferRequest request) {
+        saveEventToHistory(Res.getString("message.file.transfer.history.you.accepted", fileName, nickname));
+        try {
+            Downloads.checkDownloadDirectory();
+            acceptRequest(request);
+        } catch (Exception ex) {
+            // this means there is a problem with the download directory
+            saveEventToHistory(Res.getString("message.file.transfer.history.receive.failed", fileName, nickname));
+            try {
+                request.reject();
+            } catch (SmackException.NotConnectedException | InterruptedException e1) {
+                Log.warning("Unable to reject the request.", ex);
+            }
+
+            setBackground(new Color(239, 245, 250));
+            acceptButton.setVisible(false);
+            declineButton.setVisible(false);
+            if (Downloads.getDownloadDirectory() == null) {
+                fileLabel.setText("");
+            } else {
+                ResourceUtils.resLabel(fileLabel, null, Res.getString("label.transfer.download.directory") +
+                    " " + Downloads.getDownloadDirectory().getAbsolutePath());
+            }
+
+            // option to set a new path for the file-download
+            pathButton.setVisible(true);
+            pathButton.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mousePressed(MouseEvent e) {
+                    Preference p = SparkManager.getPreferenceManager().getPreference(
+                        new FileTransferPreference().getNamespace());
+                    // retrieve the file transfer preferences and show the preference menu
+                    // to the user
+                    SparkManager.getPreferenceManager().showPreferences(p);
+                }
+            });
+
+            titleLabel.setText(ex.getMessage());
+            titleLabel.setForeground(new Color(65, 139, 179));
+
+            invalidate();
+            validate();
+            repaint();
+        }
+    }
+
+    private void doReject(FileTransferRequest request) {
+        saveEventToHistory(Res.getString("message.file.transfer.history.you.rejected", fileName, nickname));
+        rejectRequest(request);
     }
 
     private void rejectRequest(FileTransferRequest request) {
@@ -309,7 +324,7 @@ public class ReceiveFileTransfer extends JPanel {
             startTime = System.currentTimeMillis();
             transfer.receiveFile(downloadedFile);
         } catch (SmackException | IOException e) {
-            Log.error(e);
+            Log.error("An error occurred while accepting a file transfer request.", e);
         }
 
         progressBar.setMaximum(100); // setting it to percent
@@ -712,7 +727,7 @@ public class ReceiveFileTransfer extends JPanel {
                             }
                             URLFileSystem.copy(downloadedFile.toURI().toURL(), file);
                         } catch (IOException e1) {
-                            Log.error(e1);
+                            Log.error("An exception occurred while selecting a location to save a received file.", e1);
                         }
                     }
                 }

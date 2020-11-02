@@ -37,7 +37,8 @@ public class FileTransferPreferencePanel extends JPanel {
 	private static final long serialVersionUID = -2404221882867691253L;
 	private JTextField timeoutField;
     private JTextField downloadDirectoryField;
-    private JCheckBox ibbOnly = new JCheckBox();
+    private JCheckBox ibbOnly;
+    private JCheckBox autoAccept;
 
     private JFileChooser fc;
 
@@ -49,28 +50,30 @@ public class FileTransferPreferencePanel extends JPanel {
         timeoutField = new JTextField();
         downloadDirectoryField = new JTextField();
         ibbOnly = new JCheckBox();
+        autoAccept = new JCheckBox();
 
         JLabel timeoutLabel = new JLabel();
         JLabel downloadDirectoryLabel = new JLabel();
+        final JButton downloadButton = new JButton();
 
         ResourceUtils.resLabel(timeoutLabel, timeoutField, Res.getString("label.transfer.timeout"));
         ResourceUtils.resLabel(downloadDirectoryLabel, downloadDirectoryField, Res.getString("label.transfer.download.directory"));
         ResourceUtils.resButton(ibbOnly, Res.getString("checkbox.filetransfer.ibb.only"));
+        ResourceUtils.resButton(autoAccept, Res.getString("checkbox.filetransfer.autoaccept.presence"));
+        ResourceUtils.resButton(downloadButton, Res.getString("button.browse"));
 
-        add(ibbOnly, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        add(ibbOnly, new GridBagConstraints(0, 0, 3, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
 
-        add(timeoutLabel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-        add(timeoutField, new GridBagConstraints(1, 1, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 100, 0));
+        add(autoAccept, new GridBagConstraints(0, 1, 3, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
 
-        add(downloadDirectoryLabel, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-        add(downloadDirectoryField, new GridBagConstraints(1, 2, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+        add(timeoutLabel, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        add(timeoutField, new GridBagConstraints(1, 2, 2, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 100, 0));
 
-        final JButton button = new JButton();
-        ResourceUtils.resButton(button, Res.getString("button.browse"));
-        add(button, new GridBagConstraints(2, 2, 1, 1, 0.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        add(downloadDirectoryLabel, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        add(downloadDirectoryField, new GridBagConstraints(1, 3, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+        add(downloadButton, new GridBagConstraints(2, 3, 1, 1, 0.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
 
-        button.addActionListener( e -> pickFile(Res.getString("title.choose.directory"), downloadDirectoryField) );
-
+        downloadButton.addActionListener( e -> pickFile(Res.getString("title.choose.directory"), downloadDirectoryField) );
     }
 
     public void setTimeout(String minutes) {
@@ -94,6 +97,12 @@ public class FileTransferPreferencePanel extends JPanel {
     }
 
     public boolean getIbbOnly() { return ibbOnly.isSelected();  }
+
+    public void setAutoAccept(boolean enable) {
+        autoAccept.setSelected(enable);
+    }
+
+    public boolean getAutoAccept() { return autoAccept.isSelected();  }
 
     private void pickFile(String title, JTextField field) {
         if (fc == null) {
