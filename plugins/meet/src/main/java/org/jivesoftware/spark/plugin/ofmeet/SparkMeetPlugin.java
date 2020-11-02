@@ -30,13 +30,8 @@ import java.lang.reflect.*;
 import org.jivesoftware.Spark;
 import org.jivesoftware.spark.*;
 import org.jivesoftware.smack.packet.Message;
-import org.jivesoftware.spark.component.*;
-import org.jivesoftware.spark.component.browser.*;
 import org.jivesoftware.spark.plugin.*;
-import org.jivesoftware.spark.ui.rooms.*;
 import org.jivesoftware.spark.ui.*;
-import org.jivesoftware.spark.util.*;
-import org.jivesoftware.smack.*;
 import org.jivesoftware.spark.util.log.*;
 
 import org.jitsi.util.OSUtils;
