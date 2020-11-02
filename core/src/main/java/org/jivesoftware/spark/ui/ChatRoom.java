@@ -1074,7 +1074,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
                 }
             }
 
-            GraphicUtils.makeSameSize(buttons.toArray(new JComponent[buttons.size()]));
+            GraphicUtils.makeSameSize(buttons.toArray(new Component[0]));
         }
 
         /**

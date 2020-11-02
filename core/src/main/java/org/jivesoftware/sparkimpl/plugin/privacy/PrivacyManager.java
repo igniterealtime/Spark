@@ -497,7 +497,7 @@ public class PrivacyManager {
             PrivacyItem item = new PrivacyItem(false, 1);
             item.setFilterPresenceOut(true);
 
-            List<PrivacyItem> items = Arrays.asList(item);
+            List<PrivacyItem> items = Collections.singletonList(item);
             privacyManager.createPrivacyList(INVISIBLE_LIST_NAME, items);
             list = privacyManager.getPrivacyList(INVISIBLE_LIST_NAME);
             Log.debug("List \"" + INVISIBLE_LIST_NAME + "\" has been created ");
