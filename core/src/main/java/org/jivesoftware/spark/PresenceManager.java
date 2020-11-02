@@ -78,7 +78,7 @@ public class PresenceManager {
     /**
      * Returns true if the user is online.
      *
-     * @param jidString the jid of the user.
+     * @param jid the JID of the user.
      * @return true if online.
      */
     public static boolean isOnline(BareJid jid) {
@@ -127,8 +127,8 @@ public class PresenceManager {
     /**
      * Returns the fully qualified jid of a user. May return {@code null}.
      *
-     * @param jidString the users bare jid (ex. derek@jivesoftware.com)
-     * @return the fully qualified jid of a user (ex. derek@jivesoftware.com --> derek@jivesoftware.com/spark) or {@code null}.
+     * @param jid the users bare JID (ex. derek@jivesoftware.com)
+     * @return the fully qualified JID of a user (ex. derek@jivesoftware.com --> derek@jivesoftware.com/spark) or {@code null}.
      */
     public static EntityFullJid getFullyQualifiedJID(BareJid jid) {
         final Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );

@@ -372,8 +372,8 @@ public class UserManager {
     /**
      * Returns the full jid (with resource) based on the user's jid.
      *
-     * @param jid the users bare jid.
-     * @return the full jid with resource.
+     * @param bareJid the users bare JID.
+     * @return the full JID with resource.
      */
     public EntityFullJid getFullJID(BareJid bareJid) {
         Presence presence = PresenceManager.getPresence(bareJid);

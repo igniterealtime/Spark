@@ -28,7 +28,7 @@ public abstract class GeneralTrustManager implements X509TrustManager {
     protected abstract void loadKeyStores();
     /**
      * Adds content of the keystore to allStore which should contain all certificates from accepted issuers.
-     * @param store 
+     * @param keyStore
      * @throws KeyStoreException
      * @throws HeadlessException
      * @throws InvalidNameException
