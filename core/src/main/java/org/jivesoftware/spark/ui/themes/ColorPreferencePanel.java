@@ -63,13 +63,9 @@ public class ColorPreferencePanel extends SparkTabbedPane {
 
 	_colorsettings = ColorSettingManager.getColorSettings();
 	Set<String> sets  = _colorsettings.getKeys();
-	
-	
-	Vector<String> keys= new Vector<>();
-	for(String s : sets)
-	{
-	    keys.add(s);
-	}	
+
+
+	Vector<String> keys = new Vector<>(sets);
 	sortList(keys);
 	
 	JPanel rightpanel = new JPanel(new GridBagLayout());
