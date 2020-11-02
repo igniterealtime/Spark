@@ -498,29 +498,21 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
     
     private String linkCreator(String message)
     {
-      
         String []lines=message.split("\\s+");
-        String html="";
-        
-        
-       
-                for (String line:lines)
-                {
-                   if(line.startsWith("www"))
-                   {
-                       line="http://"+line;
-                   }
-                   if(line.startsWith("http:") || line.startsWith("https:") )
-                    {
-                       
-                         line="<a href='"+line+ "'>"+line + "</a>";
-                      //  final JLabel label = new JLabel("<html><a href=\" " + strURL + "\"> click </a></html>");
-                    }
-                    html=html+" "+line;
-                   
-                }
-         return html;
+        StringBuilder html= new StringBuilder();
+        for (String line : lines) {
+            if (line.startsWith("www")) {
+                line = "http://" + line;
+            }
+            if (line.startsWith("http:") || line.startsWith("https:")) {
+                line = "<a href='" + line + "'>" + line + "</a>";
+                //  final JLabel label = new JLabel("<html><a href=\" " + strURL + "\"> click </a></html>");
+            }
+            html.append(" ").append(line);
+        }
+         return html.toString();
     }
+
     /**
      * Displays a Serverbroadcast within a JFrame<br>
      * Messages can contain html-tags

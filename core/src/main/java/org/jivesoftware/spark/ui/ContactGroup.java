@@ -625,6 +625,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
                 for (int o : indexes) {
                     if (index == o) {
                         selected = true;
+                        break;
                     }
                 }
 
