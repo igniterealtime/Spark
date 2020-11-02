@@ -77,16 +77,18 @@ public class FileTransferPreference implements Preference {
 	public void load() {
         boolean ibb = localPreferences.isFileTransferIbbOnly();
         int timeout = localPreferences.getFileTransferTimeout();
+        boolean auto = localPreferences.isAutoAcceptFileTransferFromContacts();
         ui.setDownloadDirectory(localPreferences.getDownloadDir());
         ui.setTimeout(Integer.toString(timeout));
         ui.setIbbOnly(ibb);
+        ui.setAutoAccept(auto);
     }
 
     @Override
 	public void commit() {
         LocalPreferences pref = SettingsManager.getLocalPreferences();
         pref.setFileTransferIbbOnly(ui.getIbbOnly());
-
+        pref.setAutoAcceptFileTransferFromContacts(ui.getAutoAccept());
         String downloadDir = ui.getDownloadDirectory();
         if (ModelUtil.hasLength(downloadDir)) {
             pref.setDownloadDir(downloadDir);

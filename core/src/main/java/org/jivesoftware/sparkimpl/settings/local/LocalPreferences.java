@@ -478,7 +478,7 @@ public class LocalPreferences {
 		File downloadedDir = null;
 		if (Spark.isLinux() || Spark.isMac()) {
 			downloadedDir = new File(System.getProperty("user.home") + "/Downloads/");
-            Log.error(downloadedDir.getAbsolutePath());
+            Log.debug("Absolute path for download directory: " + downloadedDir.getAbsolutePath());
 		} else if (Spark.isWindows()) {
 
 			String regpath = WinRegistryReader.getMyDocumentsFromWinRegistry();
@@ -1440,6 +1440,14 @@ public class LocalPreferences {
 
     public boolean isFileTransferIbbOnly() {
         return getBoolean("fileTransferIbbOnly", Default.getBoolean(Default.FILE_TRANSFER_IBB_ONLY));
+    }
+
+    public void setAutoAcceptFileTransferFromContacts(boolean enable) {
+        setBoolean("fileTransferAutoAcceptPresence", enable);
+    }
+
+    public boolean isAutoAcceptFileTransferFromContacts() {
+        return getBoolean("fileTransferAutoAcceptPresence", Default.getBoolean(Default.FILE_TRANSFER_AUTO_ACCEPT_PRESENCE));
     }
 
     public void setMaxCurrentHistorySize( int value ) {

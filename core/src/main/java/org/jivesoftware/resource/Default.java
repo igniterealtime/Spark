@@ -124,6 +124,7 @@ public class Default {
     public static final String PROXY_ENABLED = "PROXY_ENABLED";
     public static final String OLD_SSL_ENABLED = "OLD_SSL_ENABLED";
     public static final String FILE_TRANSFER_IBB_ONLY = "FILE_TRANSFER_IBB_ONLY";
+    public static final String FILE_TRANSFER_AUTO_ACCEPT_PRESENCE = "FILE_TRANSFER_AUTO_ACCEPT_PRESENCE";
     public static final String CHANGE_COLORS_DISABLED = "CHANGE_COLORS_DISABLED";
     public static final String ADD_CONTACT_GROUP_DISABLED = "ADD_CONTACT_GROUP_DISABLED";
     public static final String DISABLE_AVATAR_TAB = "DISABLE_AVATAR_TAB";
