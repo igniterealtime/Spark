@@ -305,8 +305,7 @@ public class CertificateController extends CertManager {
     /**
      * Return information if certificate is on exception list.
      * 
-     * @param Certificate
-     *            Model entry
+     * @param cert the model entry
      */
     @Override
     public boolean isOnExceptionList(CertificateModel cert) {
@@ -326,7 +325,7 @@ public class CertificateController extends CertManager {
     /**
      * Return information if certificate is on blacklist (revoked).
      * 
-     * @param Certificate Model entry
+     * @param cert Model entry
      */
     public boolean isOnBlackList(CertificateModel cert) {
         return blackListedCertificates.contains(cert);

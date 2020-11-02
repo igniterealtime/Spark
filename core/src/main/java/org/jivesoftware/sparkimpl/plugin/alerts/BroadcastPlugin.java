@@ -459,7 +459,6 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
      * Displays the Serverbroadcast like all other messages
      * in its on chatcontainer with transcript history
      * @param message
-     * @param from
      */
     private void broadcastInChat(Message message)
     {

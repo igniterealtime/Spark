@@ -354,8 +354,6 @@ public final class UIComponentRegistry {
     /**
      * Creates a new contact group object
      *
-     * @param name
-     *
      * @return A new instance of the class currently registered as status bar.
      */
     public static StatusBar createStatusBar() {
@@ -364,8 +362,6 @@ public final class UIComponentRegistry {
 
     /**
      * Creates a new command panel object
-     *
-     * @param name
      *
      * @return A new instance of the class currently registered as status bar.
      */
@@ -376,9 +372,7 @@ public final class UIComponentRegistry {
     /**
      * Creates a new workspace tab panel object
      *
-     * @param name
-     *
-     * @return
+     * @return A new instance of the class currently registered as workspace tab pane
      */
     public static SparkTabbedPane createWorkspaceTabPanel(int tabPosition) {
         return instantiate(workspaceTabPaneClass, new Integer(tabPosition));
@@ -387,9 +381,7 @@ public final class UIComponentRegistry {
     /**
      * Creates a new login dialog panel object
      *
-     * @param name
-     *
-     * @return
+     * @return  A new instance of the class currently registered as login dialog
      */
     public static LoginDialog createLoginDialog() {
         return instantiate(loginDialogClass);

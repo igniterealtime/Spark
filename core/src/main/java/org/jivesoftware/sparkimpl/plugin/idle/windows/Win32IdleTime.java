@@ -19,7 +19,7 @@ public class Win32IdleTime implements IdleTime {
 
         /**
          * Retrieves the number of milliseconds that have elapsed since the system was started.
-         * @see http://msdn2.microsoft.com/en-us/library/ms724408.aspx
+         * @see "http://msdn2.microsoft.com/en-us/library/ms724408.aspx"
          * @return number of milliseconds that have elapsed since the system was started.
          */
         public int GetTickCount();
@@ -29,7 +29,7 @@ public class Win32IdleTime implements IdleTime {
         User32 INSTANCE = (User32)Native.loadLibrary("user32", User32.class);
         /**
          * Contains the time of the last input.
-         * @see http://msdn.microsoft.com/library/default.asp?url=/library/en-us/winui/winui/windowsuserinterface/userinput/keyboardinput/keyboardinputreference/keyboardinputstructures/lastinputinfo.asp
+         * @see "http://msdn.microsoft.com/library/default.asp?url=/library/en-us/winui/winui/windowsuserinterface/userinput/keyboardinput/keyboardinputreference/keyboardinputstructures/lastinputinfo.asp"
          */
         public static class LASTINPUTINFO extends Structure {
             public int cbSize = 8;
@@ -45,7 +45,7 @@ public class Win32IdleTime implements IdleTime {
         }
         /**
          * Retrieves the time of the last input event.
-         * @see http://msdn.microsoft.com/library/default.asp?url=/library/en-us/winui/winui/windowsuserinterface/userinput/keyboardinput/keyboardinputreference/keyboardinputfunctions/getlastinputinfo.asp
+         * @see "http://msdn.microsoft.com/library/default.asp?url=/library/en-us/winui/winui/windowsuserinterface/userinput/keyboardinput/keyboardinputreference/keyboardinputfunctions/getlastinputinfo.asp"
          * @return time of the last input event, in milliseconds
          */
         public boolean GetLastInputInfo(LASTINPUTINFO result);

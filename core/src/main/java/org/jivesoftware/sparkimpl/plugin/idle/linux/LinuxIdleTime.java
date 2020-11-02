@@ -17,7 +17,7 @@ import org.jivesoftware.sparkimpl.plugin.idle.IdleTime;
  * @author Martin
  * @author MoonRockSeven
  * @author Ian Zwanink
- * @see http://ochafik.com/blog/?p=98
+ * @see "http://ochafik.com/blog/?p=98"
  */
 public class LinuxIdleTime implements IdleTime {
     /** Definition (incomplete) of the Xext library. */
