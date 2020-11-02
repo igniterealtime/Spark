@@ -55,16 +55,16 @@ public abstract class GeneralTrustManager implements X509TrustManager {
     
     @Override
     public X509Certificate[] getAcceptedIssuers() {
-        X509Certificate[] X509Certs = null;
+        X509Certificate[] X509Certs;
         try {
             // See how many certificates are in the keystore.
             int numberOfEntry = allStore.size();
 
+            // Create an array of X509Certificates
+            X509Certs = new X509Certificate[numberOfEntry];
+
             // If there are any certificates in the keystore.
             if (numberOfEntry > 0) {
-                
-                // Create an array of X509Certificates
-                X509Certs = new X509Certificate[numberOfEntry];
                 
                 // Get all of the certificate alias out of the keystore.
                 Enumeration<String> aliases = allStore.aliases();
