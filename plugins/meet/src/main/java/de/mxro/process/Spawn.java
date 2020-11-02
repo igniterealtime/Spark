@@ -82,7 +82,7 @@ public class Spawn {
 
         final StringBuilder sb = new StringBuilder();
         for (final String line : new ArrayList<String>(output)) {
-            sb.append(line + "\n");
+            sb.append(line).append("\n");
         }
 
         process.destory();

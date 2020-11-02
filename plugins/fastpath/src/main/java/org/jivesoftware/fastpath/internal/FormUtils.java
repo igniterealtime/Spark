@@ -184,13 +184,13 @@ final public class FormUtils {
         seconds = seconds % MS_IN_A_SECOND;
         long numMilliseconds = seconds;
 
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         if (numHours > 0) {
-            buf.append(numHours + " " + HOURS + ", ");
+            buf.append(numHours).append(" ").append(HOURS).append(", ");
         }
 
         if (numMinutes > 0) {
-            buf.append(numMinutes + " " + MINUTES);
+            buf.append(numMinutes).append(" ").append(MINUTES);
         }
 
         String result = buf.toString();

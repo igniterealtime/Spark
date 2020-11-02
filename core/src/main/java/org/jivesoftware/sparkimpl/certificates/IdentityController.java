@@ -171,19 +171,19 @@ public class IdentityController extends CertManager {
         if (commonName == null || commonName.isEmpty()) {
             throw new IllegalArgumentException("Common Name cannot be empty");
         } else {
-            sb.append("CN=" + commonName);
+            sb.append("CN=").append(commonName);
         }
         if (organizationUnit != null && !organizationUnit.isEmpty()) {
-            sb.append(", OU=" + organizationUnit);
+            sb.append(", OU=").append(organizationUnit);
         }
         if (organization != null && !organization.isEmpty()) {
-            sb.append(", O=" + organization);
+            sb.append(", O=").append(organization);
         }
         if (city != null && !city.isEmpty()) {
-            sb.append(", L=" + city);
+            sb.append(", L=").append(city);
         }
         if (country != null && !country.isEmpty()) {
-            sb.append(", C=" + country);
+            sb.append(", C=").append(country);
         }
         
         return sb.toString();

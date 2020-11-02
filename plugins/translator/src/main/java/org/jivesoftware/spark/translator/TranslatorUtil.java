@@ -49,7 +49,7 @@ public class TranslatorUtil {
 
     private static String useGoogleTranslator(String text, TranslationType type) {
     	
-        String response = "";
+        StringBuilder response = new StringBuilder();
         String urlString = "http://translate.google.com/translate_t?text=" + text + "&langpair=" + type.getID();
         // disable scripting to avoid requiring js.jar
         HttpUnitOptions.setScriptingEnabled(false);
@@ -70,7 +70,7 @@ public class TranslatorUtil {
 			
 				for (int i = 0; i < list2.getLength(); ++i)
 				{
-					response = response + list2.item(i).getNodeValue()+" ";
+					response.append(list2.item(i).getNodeValue()).append(" ");
 				}
 				
 				
@@ -99,7 +99,7 @@ public class TranslatorUtil {
             Log.error("Could not parse response content: " + e);
         }
 
-        return response;
+        return response.toString();
     }
 
     /**
