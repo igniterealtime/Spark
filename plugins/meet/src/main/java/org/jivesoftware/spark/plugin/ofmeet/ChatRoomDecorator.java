@@ -21,14 +21,11 @@ import java.awt.event.ActionListener;
 
 import javax.swing.ImageIcon;
 
-import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.util.*;
 import org.jivesoftware.spark.util.log.*;
-import org.jivesoftware.smack.*;
 import org.jivesoftware.smack.packet.*;
-import org.jxmpp.util.XmppStringUtils;
 
 import sun.misc.BASE64Decoder;
 

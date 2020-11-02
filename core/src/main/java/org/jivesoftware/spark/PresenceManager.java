@@ -22,13 +22,10 @@ import org.jivesoftware.smack.packet.ExtensionElement;
 import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smackx.muc.packet.MUCUser;
-import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 import org.jxmpp.jid.BareJid;
 import org.jxmpp.jid.EntityFullJid;
 import org.jxmpp.jid.Jid;
-import org.jxmpp.jid.impl.JidCreate;
-import org.jxmpp.stringprep.XmppStringprepException;
 
 import javax.swing.Icon;
 
