@@ -880,7 +880,7 @@ public class StringUtils {
 		wordList.add(tmp);
 	    }
 	}
-	return wordList.toArray(new String[wordList.size()]);
+	return wordList.toArray(new String[0]);
     }
 
     /**

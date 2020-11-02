@@ -82,7 +82,7 @@ public class UserSearchResults extends JPanel {
         }
 
         if (resultsTable == null) {
-            resultsTable = new UsersInfoTable(columnList.toArray(new String[columnList.size()]));
+            resultsTable = new UsersInfoTable(columnList.toArray(new String[0]));
 
             final JScrollPane scrollPane = new JScrollPane(resultsTable);
             scrollPane.getViewport().setBackground(Color.white);

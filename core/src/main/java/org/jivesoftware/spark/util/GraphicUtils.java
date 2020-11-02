@@ -487,19 +487,19 @@ public final class GraphicUtils {
      * 
      * @param comps
      */
-    public static void makeSameSize(JComponent... comps) {
+    public static void makeSameSize(Component... comps) {
 	if (comps.length == 0) {
 	    return;
 	}
 
 	int max = 0;
-	for (JComponent comp1 : comps) {
+	for (Component comp1 : comps) {
 	    int w = comp1.getPreferredSize().width;
 	    max = w > max ? w : max;
 	}
 
 	Dimension dim = new Dimension(max, comps[0].getPreferredSize().height);
-	for (JComponent comp : comps) {
+	for (Component comp : comps) {
 	    comp.setPreferredSize(dim);
 	}
     }
