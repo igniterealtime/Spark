@@ -214,16 +214,15 @@ public class LocalPreferences {
 	}
 
 	/**
-	 * Returns true if it is wanted that a new ad hoc room to be created every time Actions/Start conference room is chosen,
-	 * or, from a chat window - invite to group chat room icon is pressed.
-	 * Returns false if it is wanted that the bookmarked room (if any) to be opened every time Actions/Start conference room is chosen,
-	 * or, from a chat window - invite to group chat room icon is pressed.
-	 * @param adHocRoom
-	 * @return
+	 * Is "Use ad hoc room" enabled
+	 * @return true if it is wanted that a new ad hoc room to be created every time Actions/Start conference room is chosen,
+     * 	 or, from a chat window - invite to group chat room icon is pressed.
+     * 	 Returns false if it is wanted that the bookmarked room (if any) to be opened every time Actions/Start conference room is chosen,
+     * 	 or, from a chat window - invite to group chat room icon is pressed.
 	 */
 	public boolean isUseAdHocRoom() {
 	    String adhoc = PluginRes.getPreferenceRes("useAdHocRoom");
-	    return getBoolean("useAdHocRoom", adhoc != null ? new Boolean(adhoc) : true);
+	    return getBoolean("useAdHocRoom", adhoc == null || Boolean.parseBoolean(adhoc));
 	}
 
     /**
@@ -309,8 +308,7 @@ public class LocalPreferences {
     /**
 	 * Turn on or off Login As Invisible option.
 	 * 
-	 * @param autoLogin
-	 *            true if Login As Invisible should be on.
+	 * @param loginAsInvisible true if Login As Invisible should be on.
 	 */
     public void setLoginAsInvisible(boolean loginAsInvisible) {
         props.setProperty("loginAsInvisibleEnabled", Boolean.toString(loginAsInvisible));
@@ -329,8 +327,7 @@ public class LocalPreferences {
     /**
 	 * Turn on or off Login Anonymously option.
 	 *
-	 * @param autoLogin
-	 *            true if Login Anonymously should be on.
+	 * @param loginAnonymously true if Login Anonymously should be on.
 	 */
     public void setLoginAnonymously(boolean loginAnonymously) {
         props.setProperty("loginAnonymously", Boolean.toString(loginAnonymously));
@@ -695,7 +692,7 @@ public class LocalPreferences {
 
 	public boolean isTypingNotificationShown() {
 	    String showTypingNotification = PluginRes.getPreferenceRes("showTypingNotification");
-	    return getBoolean("showTypingNotification", showTypingNotification != null ? new Boolean(showTypingNotification) : false);
+	    return getBoolean("showTypingNotification", Boolean.parseBoolean(showTypingNotification));
 	}
 
 	public void setSystemTrayNotificationEnabled(boolean shown) {
@@ -704,7 +701,7 @@ public class LocalPreferences {
 
 	public boolean isSystemTrayNotificationEnabled() {
 	    String SystemTrayNotificationEnabled = PluginRes.getPreferenceRes("SystemTrayNotificationEnabled");
-	    return getBoolean("SystemTrayNotificationEnabled", SystemTrayNotificationEnabled != null ? new Boolean(SystemTrayNotificationEnabled) : false);
+	    return getBoolean("SystemTrayNotificationEnabled", Boolean.parseBoolean(SystemTrayNotificationEnabled));
 	}
 
 	public void setTypingNotificationOn(boolean shown) {
@@ -747,7 +744,7 @@ public class LocalPreferences {
 
 	public boolean getShowToasterPopup() {
 	    String toasterPopup = PluginRes.getPreferenceRes("toasterPopup");
-	    return getBoolean("toasterPopup", toasterPopup != null ? new Boolean(toasterPopup) : false);
+	    return getBoolean("toasterPopup", Boolean.parseBoolean(toasterPopup));
 	}
 
 	public void setDisableAsteriskToasterPopup(boolean disable) {
@@ -834,7 +831,7 @@ public class LocalPreferences {
 
 	public boolean isOfflineNotificationsOn() {
 	    String notifyOnOffline = PluginRes.getPreferenceRes("notifyOnOffline");
-	    return getBoolean("notifyOnOffline", notifyOnOffline != null ? new Boolean(notifyOnOffline) : false);
+	    return getBoolean("notifyOnOffline", Boolean.parseBoolean(notifyOnOffline));
 	}
 
 	public void setOnlineNotifications(boolean notify) {
@@ -843,7 +840,7 @@ public class LocalPreferences {
 
 	public boolean isOnlineNotificationsOn() {
 	    String notifyOnOnline = PluginRes.getPreferenceRes("notifyOnOnline");
-	    return getBoolean("notifyOnOnline", notifyOnOnline != null ? new Boolean(notifyOnOnline) : false);
+	    return getBoolean("notifyOnOnline", Boolean.parseBoolean(notifyOnOnline));
 	}
 
 	public void setDockingEnabled(boolean dockingEnabled) {

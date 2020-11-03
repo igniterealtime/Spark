@@ -88,10 +88,7 @@ public class WorkgroupDataForm extends JPanel {
             String label = field.getLabel();
             FormField.Type type = field.getType();
 
-            List<CharSequence> valueList = new ArrayList<>();
-            for ( CharSequence value : field.getValues() ) {
-                valueList.add( value );
-            }
+            List<CharSequence> valueList = new ArrayList<>(field.getValues());
 
             if (type.equals(FormField.Type.bool)) {
                 String o = valueList.get(0).toString();

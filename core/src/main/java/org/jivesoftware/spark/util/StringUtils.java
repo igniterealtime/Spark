@@ -880,7 +880,7 @@ public class StringUtils {
 		wordList.add(tmp);
 	    }
 	}
-	return wordList.toArray(new String[wordList.size()]);
+	return wordList.toArray(new String[0]);
     }
 
     /**
@@ -1987,12 +1987,12 @@ public class StringUtils {
      * @throws Exception
      */
     public static String getMD5Checksum(String filepath) throws NoSuchAlgorithmException, IOException {
-	byte[] b = createChecksum(filepath);
-	String result = "";
-	for (int i = 0; i < b.length; i++) {
-	    result += Integer.toString((b[i] & 0xff) + 0x100, 16).substring(1);
-	}
-	return result;
+        byte[] b = createChecksum(filepath);
+        StringBuilder result = new StringBuilder();
+        for (byte value : b) {
+            result.append(Integer.toString((value & 0xff) + 0x100, 16).substring(1));
+        }
+        return result.toString();
     }
     
     /**

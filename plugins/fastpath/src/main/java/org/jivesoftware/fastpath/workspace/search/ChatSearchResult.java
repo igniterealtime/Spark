@@ -89,12 +89,12 @@ public class ChatSearchResult {
     }
 
     public String getSummary() {
-        final StringBuffer buf = new StringBuffer();
-        buf.append(FpRes.getString("chat.with") + " ");
+        final StringBuilder buf = new StringBuilder();
+        buf.append(FpRes.getString("chat.with")).append(" ");
         buf.append(customerName);
         buf.append(" ");
         if (question != null) {
-            buf.append(FpRes.getString("question") + ": ");
+            buf.append(FpRes.getString("question")).append(": ");
             buf.append(question);
         }
         return buf.toString();
