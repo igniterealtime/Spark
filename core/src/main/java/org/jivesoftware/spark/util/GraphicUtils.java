@@ -41,6 +41,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.StringTokenizer;
@@ -495,7 +496,7 @@ public final class GraphicUtils {
 	int max = 0;
 	for (Component comp1 : comps) {
 	    int w = comp1.getPreferredSize().width;
-	    max = w > max ? w : max;
+	    max = Math.max(w, max);
 	}
 
 	Dimension dim = new Dimension(max, comps[0].getPreferredSize().height);
@@ -644,12 +645,10 @@ public final class GraphicUtils {
      * @return
      */
     private static ConvolveOp getBlurOp(int size) {
-	float[] data = new float[size * size];
-	float value = 1 / (float) (size * size);
-	for (int i = 0; i < data.length; i++) {
-	    data[i] = value;
-	}
-	return new ConvolveOp(new Kernel(size, size, data));
+        float[] data = new float[size * size];
+        float value = 1 / (float) (size * size);
+        Arrays.fill(data, value);
+        return new ConvolveOp(new Kernel(size, size, data));
     }
 
     /**
@@ -818,19 +817,18 @@ public final class GraphicUtils {
      * @return {@link BufferedImage}
      */
     public static BufferedImage getBufferedImage(File file) {
-	// Why wasn't this using it's code that pulled from the file? Hrm.
-	Icon icon = SparkRes.getImageIcon(SparkRes.DOCUMENT_INFO_32x32);
+        // Why wasn't this using it's code that pulled from the file? Hrm.
+        ImageIcon icon = SparkRes.getImageIcon(SparkRes.DOCUMENT_INFO_32x32);
 
-	BufferedImage bi = new BufferedImage(icon.getIconWidth(),
-		icon.getIconHeight(), BufferedImage.OPAQUE);
-	Graphics bg = bi.getGraphics();
+        BufferedImage bi = null;
+        if (icon != null) {
+            bi = new BufferedImage(icon.getIconWidth(), icon.getIconHeight(), BufferedImage.OPAQUE);
+            Graphics bg = bi.getGraphics();
 
-	ImageIcon i = (ImageIcon) icon;
-
-	bg.drawImage(i.getImage(), 0, 0, null);
-	bg.dispose();
-
-	return bi;
+            bg.drawImage(icon.getImage(), 0, 0, null);
+            bg.dispose();
+        }
+        return bi;
     }
 
 	/**

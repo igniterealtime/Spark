@@ -12,7 +12,7 @@ public class MacIdleTime implements IdleTime {
 
     public interface ApplicationServices extends Library {
 
-        ApplicationServices INSTANCE = (ApplicationServices) Native.loadLibrary("ApplicationServices", ApplicationServices.class);
+        ApplicationServices INSTANCE = Native.loadLibrary("ApplicationServices", ApplicationServices.class);
 
         int kCGAnyInputEventType = ~0;
         int kCGEventSourceStatePrivate = -1;

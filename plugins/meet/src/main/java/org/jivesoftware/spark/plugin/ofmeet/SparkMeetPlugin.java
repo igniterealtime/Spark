@@ -272,7 +272,6 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
         {
             electronThread.destory();
             electronThread = null;
-            return;
         }
     }
 

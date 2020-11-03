@@ -127,9 +127,7 @@ public class MacrosEditor extends JPanel {
         }
 
         List<Macro> macros = personalGroup.getMacros();
-        Iterator<Macro> iter = macros.iterator();
-        while (iter.hasNext()) {
-            Macro macro = (Macro)iter.next();
+        for (Macro macro : macros) {
             String title = macro.getTitle();
             String response = macro.getResponse();
 

@@ -185,13 +185,13 @@ public class Default {
     public static ImageIcon getImageIcon(String imageName) {
         // Check custom map
         Object o = customMap.get(imageName);
-        if (o != null && o instanceof ImageIcon) {
+        if (o instanceof ImageIcon) {
             return (ImageIcon)o;
         }
 
         // Otherwise check cache
         o = cache.get(imageName);
-        if (o != null && o instanceof ImageIcon) {
+        if (o != null) {
             return (ImageIcon)o;
         }
 

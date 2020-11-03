@@ -118,7 +118,7 @@ public final class ResourceUtils {
     public static int getMnemonicKeyCode(String mnemonic) {
         int mindex = mnemonic.indexOf("&");
         if (mindex > -1) {
-            return (int)mnemonic.toUpperCase().charAt(mindex + 1);
+            return mnemonic.toUpperCase().charAt(mindex + 1);
         }
         return 0;
     }

@@ -494,7 +494,7 @@ public class ThemePanel extends JPanel
                 // If the name does not exists, add it to the message box.
                 for ( int i = 0; i < emoticonBox.getItemCount(); i++ )
                 {
-                    String n = (String) emoticonBox.getItemAt( i );
+                    String n = emoticonBox.getItemAt( i );
                     if ( name.equals( n ) )
                     {
                         return;

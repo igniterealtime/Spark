@@ -309,13 +309,13 @@ public class SparkTrustManager extends GeneralTrustManager implements X509TrustM
             try {
                 cert.checkValidity();
             } catch (CertificateExpiredException e) {
-                Log.warning("Certificate is expired " + cert.getSubjectX500Principal().getName().toString(), e);
-                if (acceptExpired == false) {
+                Log.warning("Certificate is expired " + cert.getSubjectX500Principal().getName(), e);
+                if (!acceptExpired) {
                     throw new CertificateException("Certificate is expired");
                 }
             } catch (CertificateNotYetValidException e) {
-                Log.warning("Certificate is not valid yet " + cert.getSubjectX500Principal().getName().toString(), e);
-                if (acceptNotValidYet == false) {
+                Log.warning("Certificate is not valid yet " + cert.getSubjectX500Principal().getName(), e);
+                if (!acceptNotValidYet) {
                     throw new CertificateException("Certificate is not valid yet");
                 }
             }
@@ -428,7 +428,7 @@ public class SparkTrustManager extends GeneralTrustManager implements X509TrustM
                     }
                 }
             } else {
-                Log.warning("Certificate " + cert.getSubjectX500Principal().getName().toString() + " have no CRLs");
+                Log.warning("Certificate " + cert.getSubjectX500Principal().getName() + " have no CRLs");
             }
             // parameters for cert store is collection type, using collection with crl create parameters
             CollectionCertStoreParameters params = new CollectionCertStoreParameters(crlCollection);

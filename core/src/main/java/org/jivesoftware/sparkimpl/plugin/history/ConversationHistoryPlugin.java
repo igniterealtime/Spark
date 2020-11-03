@@ -200,7 +200,7 @@ public class ConversationHistoryPlugin implements Plugin {
 
         final ContactList contactList = SparkManager.getWorkspace().getContactList();
 
-        int limit = historyList.size() > 10 ? 10 : historyList.size();
+        int limit = Math.min(historyList.size(), 10);
 
         for (final EntityBareJid user : historyList.subList(0, limit)) {
 

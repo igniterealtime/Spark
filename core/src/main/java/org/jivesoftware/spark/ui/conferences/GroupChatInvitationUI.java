@@ -173,10 +173,9 @@ public class GroupChatInvitationUI extends JPanel implements ActionListener {
         removeUI();
 
         try {
-            ChatRoom chatRoom = SparkManager.getChatManager().getGroupChat(room);
-            if (chatRoom instanceof GroupChatRoom) {
-                GroupChatRoom gcr = (GroupChatRoom)chatRoom;
-                if (!gcr.getMultiUserChat().isJoined()) {
+            GroupChatRoom chatRoom = SparkManager.getChatManager().getGroupChat(room);
+            if (chatRoom != null) {
+                if (!chatRoom.getMultiUserChat().isJoined()) {
                     chatRoom.closeChatRoom();
                 }
             }

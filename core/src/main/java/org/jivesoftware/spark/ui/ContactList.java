@@ -2358,7 +2358,7 @@ public class ContactList extends JPanel implements ActionListener,
     public void connectionClosedOnError(final Exception ex) {
         String errorMessage = Res.getString("message.disconnected.error");
 
-        if (ex != null && ex instanceof XMPPException.StreamErrorException) {
+        if (ex instanceof XMPPException.StreamErrorException) {
             XMPPException.StreamErrorException xmppEx = (XMPPException.StreamErrorException) ex;
             switch (xmppEx.getStreamError().getCondition()) {
                 case conflict:

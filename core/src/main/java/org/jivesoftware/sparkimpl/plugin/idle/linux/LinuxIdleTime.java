@@ -34,8 +34,7 @@ public class LinuxIdleTime implements IdleTime {
 
             @Override
             protected List<String> getFieldOrder() {
-                return Arrays.asList(new String[] { "window", "state", "kind", "til_or_since",
-                        "idle", "event_mask" });
+                return Arrays.asList("window", "state", "kind", "til_or_since", "idle", "event_mask");
             }
         }
 
