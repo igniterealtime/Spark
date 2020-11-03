@@ -115,7 +115,7 @@ public class CertificateController extends CertManager {
                 store = caStore.aliases();
 
                 while (store.hasMoreElements()) {
-                    String alias = (String) store.nextElement();
+                    String alias = store.nextElement();
                     X509Certificate certificate = (X509Certificate) caStore.getCertificate(alias);
                     // if getCertificateAlias return null then entry doesn't exist in distrustedCaStore (Java's default).
                     if (distrustedCaStore.getCertificateAlias(certificate) == null) {
@@ -149,18 +149,16 @@ public class CertificateController extends CertManager {
 			// displayed as checkbox
 			@Override
 			public Class<?> getColumnClass(int column) {
-				switch (column) {
+                switch (column) {
 
-				case 0:
-					return String.class;
-				case 1:
-					return String.class;
-				case 2:
-					return Boolean.class;
-				default:
-					throw new RuntimeException("Cannot assign classes for columns");
-
-				}
+                    case 0:
+                    case 1:
+                        return String.class;
+                    case 2:
+                        return Boolean.class;
+                    default:
+                        throw new RuntimeException("Cannot assign classes for columns");
+                }
 			}
 			@Override
 			public boolean isCellEditable(int row, int column) {

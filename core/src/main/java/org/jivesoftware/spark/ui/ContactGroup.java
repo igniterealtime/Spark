@@ -137,7 +137,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
             @Override
             public void keyPressed(KeyEvent keyEvent) {
                 if (keyEvent.getKeyChar() == KeyEvent.VK_ENTER) {
-                    ContactItem item = (ContactItem) contactItemList.getSelectedValue();
+                    ContactItem item = contactItemList.getSelectedValue();
                     fireContactItemDoubleClicked(item);
                 }
 
@@ -554,14 +554,10 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
 
     @Override
     public void mouseClicked(MouseEvent e) {
-
-        Object o = contactItemList.getSelectedValue();
-        if (!(o instanceof ContactItem)) {
+        ContactItem item = contactItemList.getSelectedValue();
+        if (item == null) {
             return;
         }
-
-        // Iterator through rest
-        ContactItem item = (ContactItem) o;
 
         if (e.getClickCount() == 2) {
             fireContactItemDoubleClicked(item);
@@ -631,7 +627,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
 
                 if (!selected) {
                     contactItemList.setSelectedIndex(index);
-                    fireContactItemClicked((ContactItem) contactItemList.getSelectedValue());
+                    fireContactItemClicked(contactItemList.getSelectedValue());
                 }
             }
 

@@ -39,7 +39,7 @@ public abstract class GeneralTrustManager implements X509TrustManager {
         Enumeration<String> aliases = keyStore.aliases();
         // Retrieve all of the certificates out of the KeyStore using aliases
         while (aliases.hasMoreElements()) {
-            String alias = (String) aliases.nextElement();
+            String alias = aliases.nextElement();
             X509Certificate certificate = (X509Certificate) keyStore.getCertificate(alias);
             allStore.setCertificateEntry(certControll.useCommonNameAsAlias(certificate), certificate);
         }
@@ -72,7 +72,7 @@ public abstract class GeneralTrustManager implements X509TrustManager {
                 // via the alias name.
                 int i = 0;
                 while (aliases.hasMoreElements()) {
-                    X509Certs[i] = (X509Certificate) allStore.getCertificate((String) aliases.nextElement());
+                    X509Certs[i] = (X509Certificate) allStore.getCertificate(aliases.nextElement());
                     i++;
                 }
             }

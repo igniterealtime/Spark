@@ -219,11 +219,7 @@ public class ChatManager {
         Resourcepart nickname = Resourcepart.fromOrThrowUnchecked(nicknameCs);
         ChatRoom chatRoom;
         try {
-            if (jid instanceof EntityBareJid) {
-                chatRoom = getChatContainer().getChatRoom((EntityBareJid) jid);
-            } else {
-                chatRoom = getChatContainer().getChatRoom(jid);
-            }
+            chatRoom = getChatContainer().getChatRoom(jid);
         }
         catch (ChatRoomNotFoundException e) {
             chatRoom = UIComponentRegistry.createChatRoom(jid, nickname, title);
@@ -698,7 +694,7 @@ public class ChatManager {
             ChatRoom chatRoom;
             try {
                 chatRoom = getChatContainer().getChatRoom( from.asBareJid() );
-                if (chatRoom != null && chatRoom instanceof ChatRoomImpl) {
+                if (chatRoom instanceof ChatRoomImpl) {
                     typingNotificationList.add(chatRoom);
                     // Notify Decorators
                     notifySparkTabHandlers(chatRoom);
@@ -719,7 +715,7 @@ public class ChatManager {
             ChatRoom chatRoom;
             try {
                 chatRoom = getChatContainer().getChatRoom(from.asBareJid());
-                if (chatRoom != null && chatRoom instanceof ChatRoomImpl) {
+                if (chatRoom instanceof ChatRoomImpl) {
                     typingNotificationList.remove(chatRoom);
                     // Notify Decorators
                     notifySparkTabHandlers(chatRoom);

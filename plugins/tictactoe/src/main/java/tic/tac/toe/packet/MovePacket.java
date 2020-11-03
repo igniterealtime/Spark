@@ -73,19 +73,11 @@ public class MovePacket implements ExtensionElement {
 
     @Override
     public String toXML(String enclosingNamespace) {
-
-	StringBuffer buf = new StringBuffer();
-	buf.append("<" + ELEMENT_NAME + " xmlns=\"" + NAMESPACE + "\">");
-
-	buf.append("<gameID>").append(gameID).append("</gameID>");
-
-	buf.append("<positionX>").append(posx).append("</positionX>");
-
-	buf.append("<positionY>").append(posy).append("</positionY>");
-
-	buf.append("</" + ELEMENT_NAME + ">");
-	return buf.toString();
-
+        return "<" + ELEMENT_NAME + " xmlns=\"" + NAMESPACE + "\">"
+            + "<gameID>" + gameID + "</gameID>"
+            + "<positionX>" + posx + "</positionX>"
+            + "<positionY>" + posy + "</positionY>"
+            + "</" + ELEMENT_NAME + ">";
     }
 
     public static class Provider extends ExtensionElementProvider<MovePacket>

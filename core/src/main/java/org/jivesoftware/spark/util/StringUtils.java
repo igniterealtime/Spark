@@ -1137,8 +1137,7 @@ public class StringUtils {
 		return input.substring(beginIdx, endIdx);
 	    }
 	}
-	return input.substring(0,
-		(input.length() >= 200) ? 200 : input.length());
+	return input.substring(0, Math.min(input.length(), 200));
     }
 
     /**

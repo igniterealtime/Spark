@@ -443,10 +443,7 @@ public class BookmarksUI extends JPanel {
 
     public void removeBookmark(EntityBareJid roomJID) {
         try {
-            if (autoJoinRooms.contains(roomJID))
-            {
-                autoJoinRooms.remove(roomJID);
-            }
+            autoJoinRooms.remove(roomJID);
             manager.removeBookmarkedConference(roomJID);
             fireBookmarksRemoved(roomJID); // fire bookmark remove event
         }

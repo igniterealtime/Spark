@@ -220,12 +220,6 @@ public class GroupChatParticipantList extends JPanel {
 	}
     }
 
-	public void chatRoomOpened(ChatRoom room) {
-		if (room != groupChatRoom) {
-			return;
-		}
-	}
-
 	public void addInvitee(EntityBareJid jid, String message) {
 		// So the problem with this is that I have no idea what the users actual
 		// jid is in most cases.

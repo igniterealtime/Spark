@@ -223,11 +223,11 @@ public class Workpane {
     public Map getMetadata(String sessionID) {
         Map map = null;
         if (offerMap.get(sessionID) != null) {
-            Offer offer = (Offer)offerMap.get(sessionID);
+            Offer offer = offerMap.get(sessionID);
             map = offer.getMetaData();
         }
         else if (inviteMap.get(sessionID) != null) {
-            map = (Map)inviteMap.get(sessionID);
+            map = inviteMap.get(sessionID);
         }
         return map;
     }
@@ -471,10 +471,7 @@ public class Workpane {
     public void blink() {
         final MainWindow mainWindow = SparkManager.getMainWindow();
 
-        if (mainWindow.isFocused()) {
-            return;
-        }
-        else {
+        if (!mainWindow.isFocused()) {
             // Set to new tab.
             if (Spark.isWindows()) {
                 mainWindow.addWindowListener(new WindowAdapter() {
@@ -647,7 +644,7 @@ public class Workpane {
                 return true;
             }
             else if (message != null) {
-                MetaData metaDataExt = (MetaData)message.getExtension(MetaData.ELEMENT_NAME, MetaData.NAMESPACE);
+                MetaData metaDataExt = message.getExtension(MetaData.ELEMENT_NAME, MetaData.NAMESPACE);
                 if (metaDataExt != null) {
                     Map metadata = metaDataExt.getMetaData();
                     metadata.put("sessionID", chat.getRoom().getLocalpart().toString());
