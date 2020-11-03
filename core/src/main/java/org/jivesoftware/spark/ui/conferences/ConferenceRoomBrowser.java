@@ -978,16 +978,13 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
      * @return
      */
     private boolean isPasswordProtected(EntityBareJid roomjid) {
-	boolean result = false;
-	try {
-
-	    RoomInfo rif = MultiUserChatManager.getInstanceFor( SparkManager.getConnection() ).getRoomInfo( roomjid );
-
-	    result = rif.isMembersOnly() || rif.isPasswordProtected();
-
-	} catch (XMPPException | SmackException | NumberFormatException | InterruptedException e) {
-
-	}
+        boolean result = false;
+        try {
+            RoomInfo rif = MultiUserChatManager.getInstanceFor(SparkManager.getConnection()).getRoomInfo(roomjid);
+            result = rif.isMembersOnly() || rif.isPasswordProtected();
+        } catch (XMPPException | SmackException | NumberFormatException | InterruptedException e) {
+            Log.error(e);
+        }
 
         return result;
     }
