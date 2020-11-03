@@ -22,7 +22,7 @@ import org.jivesoftware.sparkimpl.plugin.idle.IdleTime;
 public class LinuxIdleTime implements IdleTime {
     /** Definition (incomplete) of the Xext library. */
     interface Xss extends Library {
-        Xss INSTANCE = (Xss) Native.loadLibrary("Xss", Xss.class);
+        Xss INSTANCE = Native.loadLibrary("Xss", Xss.class);
 
         public class XScreenSaverInfo extends Structure {
             public X11.Window window; /* screen saver window */
