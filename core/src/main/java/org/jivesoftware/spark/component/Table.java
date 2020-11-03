@@ -271,7 +271,7 @@ public abstract class Table extends JXTable {
     /**
      * A swing renderer used to display labels within a table.
      */
-    public class JLabelRenderer extends JLabel implements TableCellRenderer {
+    public static class JLabelRenderer extends JLabel implements TableCellRenderer {
 
 	private static final long serialVersionUID = 4433780600297455731L;
 	Border unselectedBorder;
@@ -332,7 +332,7 @@ public abstract class Table extends JXTable {
     /**
      * A swing renderer to dispaly Textareas within a table.
      */
-    public class TextAreaCellRenderer extends JTextArea implements TableCellRenderer {
+    public static class TextAreaCellRenderer extends JTextArea implements TableCellRenderer {
 
 	private static final long serialVersionUID = -8533968851464831361L;
 
@@ -364,7 +364,7 @@ public abstract class Table extends JXTable {
     /**
      * A swing renderer used to display Buttons within a table.
      */
-    public class JButtonRenderer extends JButton implements TableCellRenderer {
+    public static class JButtonRenderer extends JButton implements TableCellRenderer {
 
 	private static final long serialVersionUID = 1268514163461994738L;
 	Border unselectedBorder;
@@ -418,7 +418,7 @@ public abstract class Table extends JXTable {
         }
     }
 
-    public class ComboBoxRenderer extends JComboBox implements TableCellRenderer {
+    public static class ComboBoxRenderer extends JComboBox implements TableCellRenderer {
 
 	private static final long serialVersionUID = -545496178928790522L;
 
@@ -448,7 +448,7 @@ public abstract class Table extends JXTable {
         }
     }
 
-    public class MyComboBoxEditor extends DefaultCellEditor {
+    public static class MyComboBoxEditor extends DefaultCellEditor {
 
 	private static final long serialVersionUID = 6097118754932234992L;
 

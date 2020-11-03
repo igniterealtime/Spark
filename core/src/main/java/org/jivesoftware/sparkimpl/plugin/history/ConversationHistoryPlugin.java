@@ -306,7 +306,7 @@ public class ConversationHistoryPlugin implements Plugin {
     /**
      * Internal handling of a Jlabel Renderer.
      */
-    public class InternalRenderer extends JLabel implements ListCellRenderer {
+    public static class InternalRenderer extends JLabel implements ListCellRenderer {
 		private static final long serialVersionUID = 1812281106979897477L;
 
 		/**

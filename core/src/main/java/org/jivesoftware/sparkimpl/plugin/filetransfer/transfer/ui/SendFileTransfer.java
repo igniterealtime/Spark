@@ -354,7 +354,7 @@ public class SendFileTransfer extends JPanel {
         }
     }
 
-    private class TransferButton extends JButton {
+    private static class TransferButton extends JButton {
         private static final long serialVersionUID = 8807434179541503654L;
 
         public TransferButton() {

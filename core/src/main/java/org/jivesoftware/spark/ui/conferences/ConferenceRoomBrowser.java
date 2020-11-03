@@ -1031,7 +1031,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
 	}
     }
 
-    private class RoomObject {
+    private static class RoomObject {
 	private String roomName;
 	private EntityBareJid roomJID;
 

@@ -1402,7 +1402,7 @@ public class LoginDialog {
     /**
      * Defines the background to use with the Login panel.
      */
-    public class LoginBackgroundPanel extends JPanel {
+    public static class LoginBackgroundPanel extends JPanel {
         private static final long serialVersionUID = -2449309600851007447L;
         final ImageIcon icons = Default.getImageIcon(Default.LOGIN_DIALOG_BACKGROUND_IMAGE);
 
@@ -1430,7 +1430,7 @@ public class LoginDialog {
     /**
      * The image panel to display the Spark Logo.
      */
-    public class ImagePanel extends JPanel {
+    public static class ImagePanel extends JPanel {
         private static final long serialVersionUID = -1778389077647562606L;
         private final ImageIcon icons = Default.getImageIcon(Default.MAIN_IMAGE);
 

@@ -136,7 +136,7 @@ public class PemHelper {
      * @author Paweł Ścibiorski
      *
      */
-    public class PemBuilder {
+    public static class PemBuilder {
         private List<Object> buildList = new ArrayList<>();
 
         public void add(Object object) {
