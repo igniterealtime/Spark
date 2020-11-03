@@ -1176,7 +1176,7 @@ public class GroupChatParticipantList extends JPanel {
 	 *
 	 * @author Derek DeMoro
 	 */
-	public class ParticipantRenderer extends JLabel implements ListCellRenderer {
+	public static class ParticipantRenderer extends JLabel implements ListCellRenderer {
 		private static final long serialVersionUID = -7509947975798079141L;
 
 		/**

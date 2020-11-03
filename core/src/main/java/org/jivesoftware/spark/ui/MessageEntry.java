@@ -235,14 +235,14 @@ public class MessageEntry extends TimeStampedEntry
 
             if ( block == null )
             {
-                block = new Block( line );
+                block = new Block(line);
             }
             else if ( !block.tryAppend( line ) )
             {
                 // If this line does not belong to the block that's already being constructed, then that block is
                 // done. Add it to the resul    t, and create a new one.
                 result.add( block );
-                block = new Block( line );
+                block = new Block(line);
             }
         }
 
@@ -263,7 +263,7 @@ public class MessageEntry extends TimeStampedEntry
      * <li>A preformatted code block</li>
      * </ul>
      */
-    class Block
+    static class Block
     {
         java.util.Deque<String> lines = new ArrayDeque<>();
 

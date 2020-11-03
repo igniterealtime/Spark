@@ -114,7 +114,7 @@ public class CheckRenderer extends JPanel implements TreeCellRenderer {
     /**
      * Represents one UI node for the checkbox node.
      */
-    public class TreeLabel extends JLabel {
+    public static class TreeLabel extends JLabel {
 	private static final long serialVersionUID = -6367572474576692556L;
 	boolean isSelected;
         boolean hasFocus;

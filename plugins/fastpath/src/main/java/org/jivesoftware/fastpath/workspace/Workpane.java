@@ -795,7 +795,7 @@ public class Workpane {
     }
 
 
-    private class PresenceChangeListener implements PresenceListener {
+    private static class PresenceChangeListener implements PresenceListener {
         public void presenceChanged(Presence presence) {
             String status = presence.getStatus();
             if (status == null) {

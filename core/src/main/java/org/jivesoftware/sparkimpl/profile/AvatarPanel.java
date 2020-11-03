@@ -239,7 +239,7 @@ public class AvatarPanel extends JPanel implements ActionListener {
         worker.start();
     }
 
-    public class ImageFilter implements FilenameFilter {
+    public static class ImageFilter implements FilenameFilter {
         public final String jpeg = "jpeg";
         public final String jpg = "jpg";
         public final String gif = "gif";
