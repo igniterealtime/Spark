@@ -5,7 +5,6 @@ import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smackx.jiveproperties.packet.JivePropertiesExtension;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.ui.ChatRoom;
-import org.jxmpp.util.XmppStringUtils;
 
 /**
  * Utility methods for popups

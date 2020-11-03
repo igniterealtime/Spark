@@ -242,9 +242,9 @@ public class HistoryTranscript extends SwingWorker {
 			builder.append("<font face=dialog size=3 color='").append(color).append("'>");
 			builder.append(value);
 			if (broadcastnick == null){
-				builder.append(nickname + ": ");
+				builder.append(nickname).append(": ");
 			} else {
-				builder.append(broadcastnick + ": ");
+				builder.append(broadcastnick).append(": ");
 			}
 			builder.append("</font>");
 			builder.append("<font face=dialog size=3>");

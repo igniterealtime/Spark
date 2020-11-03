@@ -25,7 +25,6 @@ import java.util.List;
  * Abstract class describing a particular type of component capable of rendering html.
  *
  * @author Derek DeMoro
- * @see NativeBrowserViewer
  */
 public abstract class BrowserViewer extends JPanel {
 	private static final long serialVersionUID = -5389246902135069702L;

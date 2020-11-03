@@ -201,12 +201,12 @@ public class CertificateModel {
 	}
 
 	private String extendedKeyUsageExtractor(X509Certificate cert) throws CertificateParsingException {
-		String value = "";
+		StringBuilder value = new StringBuilder();
 		List<String> extKeyUsage = cert.getExtendedKeyUsage();
 		for (String use : extKeyUsage) {
-			value += use + ": " + OIDTranslator.getDescription(use) + "\n";
+			value.append(use).append(": ").append(OIDTranslator.getDescription(use)).append("\n");
 		}
-		return value;
+		return value.toString();
 	}
 
 	private String policyConstraintsExtractor(ASN1Primitive primitive) {
@@ -245,20 +245,20 @@ public class CertificateModel {
 
 	private String NameConstraintsExtractor(ASN1Primitive primitive) {
 		NameConstraints nc = NameConstraints.getInstance(primitive);
-		String value = "";
+		StringBuilder value = new StringBuilder();
 		if (nc.getPermittedSubtrees() != null) {
-			value += Res.getString("cert.extension.name.constraints.permitted.subtrees") + ": \n";
+			value.append(Res.getString("cert.extension.name.constraints.permitted.subtrees")).append(": \n");
 			for (GeneralSubtree subtree : nc.getPermittedSubtrees()) {
-				value += subtree.toString() + "\n";
+				value.append(subtree.toString()).append("\n");
 			}
 		}
 		if (nc.getExcludedSubtrees() != null) {
-			value += Res.getString("cert.extension.name.constraints.excluded.subtrees") + ": \n";
+			value.append(Res.getString("cert.extension.name.constraints.excluded.subtrees")).append(": \n");
 			for (GeneralSubtree subtree : nc.getExcludedSubtrees()) {
-				value += subtree.toString() + "\n";
+				value.append(subtree.toString()).append("\n");
 			}
 		}
-		return value;
+		return value.toString();
 	}
 
 	private String basicConstraintsExtractor(ASN1Primitive primitive) {
@@ -272,17 +272,17 @@ public class CertificateModel {
 	}
 
 	private String alternativeNameExtractor(Collection<List<?>> rootNames) throws CertificateParsingException {
-		String value = "";
+		StringBuilder value = new StringBuilder();
 		if (rootNames != null) {
-			for (List names : rootNames) {
+			for (List<?> names : rootNames) {
 				if (names != null) {
 					for (Object name : names) {
-						value += name.toString() + "\n";
+						value.append(name.toString()).append("\n");
 					}
 				}
 			}
 		}
-		return value;
+		return value.toString();
 	}
 
 	
