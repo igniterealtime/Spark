@@ -696,24 +696,23 @@ public final class GraphicUtils {
      * @return byte[]
      */
     public static byte[] getBytesFromImage(File file) {
-	 FileInputStream fileInputStream = null;
+        FileInputStream fileInputStream = null;
         try {
             fileInputStream = new FileInputStream(file);
             byte[] data = new byte[(int) file.length()];
-	    fileInputStream.read(data);
-	    fileInputStream.close();
-	        return data;
-	} catch (IOException e) {
-	    if (fileInputStream != null) {
-		try {
-		    fileInputStream.close();
-		} catch (IOException e1) {
-		}
-	    }
-	   return null;
-	}
-       
-
+            fileInputStream.read(data);
+            fileInputStream.close();
+            return data;
+        } catch (IOException e) {
+            if (fileInputStream != null) {
+                try {
+                    fileInputStream.close();
+                } catch (IOException e1) {
+                    Log.error(e1);
+                }
+            }
+            return null;
+        }
     }
 
     /**

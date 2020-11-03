@@ -780,6 +780,7 @@ public class LoginDialog {
                             loginButton.setEnabled(true);
                         }
                     } catch (Exception e1) {
+                        Log.error(e1);
                     }
 
                 });
