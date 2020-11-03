@@ -317,7 +317,11 @@ public class SendFileTransfer extends JPanel {
         } else if (status == Status.complete) {
             progressBar.setVisible(false);
 
-            String fin = TransferUtils.convertSecondstoHHMMSS(Math.round(System.currentTimeMillis() - _startTime) / 1000);
+            if ( _startTime == 0 ) { // SPARK-2192: Sometimes, the startTime of the transfer hasn't been recorded yet when it already finished.
+                _startTime = System.currentTimeMillis();
+            }
+            String fin = TransferUtils.convertSecondstoHHMMSS(Math.round(Math.max(0, System.currentTimeMillis() - _startTime)) / 1000);
+            _startTime = 0;
             progressLabel.setText(Res.getString("label.time", fin));
             titleLabel.setText(Res.getString("message.you.have.sent", nickname));
             cancelButton.setVisible(false);
