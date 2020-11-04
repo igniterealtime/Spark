@@ -136,7 +136,7 @@ public class UserSearchForm extends JPanel {
                		}
 
                	} catch (IOException ioe) {
-                 System.err.println(ioe); 
+                Log.error(ioe);
                 
                } 
            } 
@@ -210,7 +210,7 @@ public class UserSearchForm extends JPanel {
                             try {
                                 props.store(new FileOutputStream(pluginsettings), null);
                             } catch (IOException e) {
-                                 System.err.println(e);
+                                Log.error(e);
                             }
 
                         }
