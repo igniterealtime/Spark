@@ -22,7 +22,6 @@ import org.jivesoftware.spark.ui.conferences.ConferenceUtils;
 import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.impl.JidCreate;
 import org.jxmpp.jid.parts.Localpart;
-import org.jxmpp.stringprep.XmppStringprepException;
 
 import java.util.Objects;
 
