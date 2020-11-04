@@ -38,11 +38,7 @@ final public class FormUtils {
      * @return true if String has been assigned a value, false otherwise.
      */
     final public static boolean isNotNull(String str) {
-        if (str != null && str.trim().length() > 0) {
-            return true;
-        }
-
-        return false;
+        return str != null && str.trim().length() > 0;
     }
 
     /**

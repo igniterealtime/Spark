@@ -80,28 +80,28 @@ public class FlashWindow {
         } ).start();
 	}
 
-	public void startFlashing(final Window window) {
-		if (flashings.get(window) == null) {
-			Thread t = new Thread() {
-				public void run() {
-					try {
-						while (true) {
-							Thread.sleep(1500);
-							// System.out.println("Flash Window");
-							if (window instanceof JFrame)
-								flash(((JFrame) window).getTitle(), true);
-						}
-					} catch (Exception ex) {
-						flash(((JFrame) window).getTitle(), false);
-						// System.out.println(ex.getMessage());
-					}
+    public void startFlashing(final Window window) {
+        if (flashings.get(window) == null) {
+            Thread t = new Thread() {
+                public void run() {
+                    try {
+                        while (true) {
+                            Thread.sleep(1500);
+                            // System.out.println("Flash Window");
+                            if (window instanceof JFrame)
+                                flash(((JFrame) window).getTitle(), true);
+                        }
+                    } catch (Exception ex) {
+                        flash(((JFrame) window).getTitle(), false);
+                        // System.out.println(ex.getMessage());
+                    }
 
-				}
-			};
-			t.start();
-			flashings.put(window, t);
-		}
-	}
+                }
+            };
+            t.start();
+            flashings.put(window, t);
+        }
+    }
 
 	public void stopFlashing(final Window window) {
 		if (flashings.get(window) != null) {

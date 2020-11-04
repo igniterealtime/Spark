@@ -84,11 +84,7 @@ public class TestTranslator {
             String cont;
             try {
                 cont = reader.readLine();
-                if ("yes".equals(cont.toLowerCase().trim()) || "y".equals(cont.toLowerCase().trim())) {
-                    again = true;
-                } else {
-                    again = false;
-                }
+                again = "yes".equals(cont.toLowerCase().trim()) || "y".equals(cont.toLowerCase().trim());
             } catch (IOException e) {
                 System.out.println("Could not read text:" + e);
             }

@@ -282,7 +282,7 @@ public class IdentityController extends CertManager {
     public void addEntryToKeyStore(X509Certificate addedCert, PrivateKey key) throws HeadlessException, InvalidNameException, KeyStoreException {
         CertificateModel certModel = new CertificateModel(addedCert);
         CertificateDialog certDialog = null;
-        if (checkForSameCertificate(addedCert) == false) {
+        if (!checkForSameCertificate(addedCert)) {
             certDialog = showCertificate(certModel, CertificateDialogReason.ADD_ID_CERTIFICATE);
         }
         if (certDialog != null && certDialog.isAddCert()) {

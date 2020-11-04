@@ -253,16 +253,13 @@ public class UserSearchForm extends JPanel {
      * @param service the search service to display.
      */
     public void showService(String service) {
-        if (serviceMap.containsKey(service)) {
-            cardLayout.show(cardPanel, service);
-        }
-        else {
+        if (!serviceMap.containsKey(service)) {
             // Create new Form
             SearchForm searchForm = new SearchForm(service);
             cardPanel.add(searchForm, service);
             serviceMap.put(service, searchForm);
-            cardLayout.show(cardPanel, service);
         }
+        cardLayout.show(cardPanel, service);
 
         SearchForm searchForm = serviceMap.get(service);
         Form form = searchForm.getSearchForm();

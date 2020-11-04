@@ -117,7 +117,7 @@ public class SparkTrustManager extends GeneralTrustManager implements X509TrustM
 
             // check if certificate isn't self signed, self signed certificate still have to be in TrustStore to be
             // accepted
-            if (isSelfSigned(chain) == false) {
+            if (!isSelfSigned(chain)) {
                 // validate certificate path
                 try {
                     validatePath(chain);
@@ -239,7 +239,7 @@ public class SparkTrustManager extends GeneralTrustManager implements X509TrustM
 
         // if revoked certificates aren't accepted, but no revocation checks then only
         // certificates from blacklist will be rejected
-        if (acceptRevoked == false) {
+        if (!acceptRevoked) {
             
             // OCSP checking is done according to Java PKI Programmer's Guide, PKIXRevocationChecker was added in Java 8:
             // https://docs.oracle.com/javase/8/docs/technotes/guides/security/certpath/CertPathProgGuide.html#PKIXRevocationChecker

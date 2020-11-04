@@ -1060,7 +1060,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
         ContactInfoWindow contact = UIComponentRegistry.getContactInfoWindow();
         int loc = getList().locationToIndex(e.getPoint());
         ContactItem item = (ContactItem) getList().getModel().getElementAt(loc);
-        return item == null || contact == null || contact.getContactItem() == null ? true : !contact.getContactItem().getJid().equals(item.getJid());
+        return (item == null || contact == null || contact.getContactItem() == null) || !contact.getContactItem().getJid().equals(item.getJid());
     }
 
     protected DefaultListModel getModel() {

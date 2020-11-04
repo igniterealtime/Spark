@@ -216,12 +216,9 @@ public class PresenceManager {
     	 if (presenceMode == null) {
         	 presenceMode = Presence.Mode.available;
         }
-    	if (presence.getStatus() != null && 
-    		presence.getStatus().contains(Res.getString("status.on.phone")) && 
-    		presenceMode.equals(Presence.Mode.away)) {
-    		return true;
-    	}
-    	return false;
+        return presence.getStatus() != null &&
+            presence.getStatus().contains(Res.getString("status.on.phone")) &&
+            presenceMode.equals(Presence.Mode.away);
     }
 
     public static boolean isInvisible(Presence presence) {

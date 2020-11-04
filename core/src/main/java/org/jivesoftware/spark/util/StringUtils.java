@@ -1406,61 +1406,58 @@ public class StringUtils {
      * @return true if the address is valid, false otherwise
      */
     public static boolean isValidEmailAddress(String addr) {
-	if (addr == null) {
-	    return false;
-	}
+        if (addr == null) {
+            return false;
+        }
 
-	addr = addr.trim();
+        addr = addr.trim();
 
-	if (addr.length() == 0) {
-	    return false;
-	}
-	// basic address check
-	Matcher matcher = basicAddressPattern.matcher(addr);
-	if (!matcher.matches()) {
-	    return false;
-	}
-	String userPart = matcher.group(1);
-	String domainPart = matcher.group(2);
-	// user address check
-	matcher = validUserPattern.matcher(userPart);
-	if (!matcher.matches()) {
-	    return false;
-	}
-	// ip domain check
-	matcher = ipDomainPattern.matcher(domainPart);
-	if (matcher.matches()) {
-	    // if the pattern matched, check to make sure that the ip range is
-	    // valid
-	    for (int i = 1; i < 5; i++) {
-		String num = matcher.group(i);
+        if (addr.length() == 0) {
+            return false;
+        }
+        // basic address check
+        Matcher matcher = basicAddressPattern.matcher(addr);
+        if (!matcher.matches()) {
+            return false;
+        }
+        String userPart = matcher.group(1);
+        String domainPart = matcher.group(2);
+        // user address check
+        matcher = validUserPattern.matcher(userPart);
+        if (!matcher.matches()) {
+            return false;
+        }
+        // ip domain check
+        matcher = ipDomainPattern.matcher(domainPart);
+        if (matcher.matches()) {
+            // if the pattern matched, check to make sure that the ip range is
+            // valid
+            for (int i = 1; i < 5; i++) {
+                String num = matcher.group(i);
 
-		if (num == null) {
-		    return false;
-		}
+                if (num == null) {
+                    return false;
+                }
 
-		if (Integer.parseInt(num) > 254) {
-		    return false;
-		}
-	    }
-	    return true;
-	}
-	// symbolic domain check
-	matcher = domainPattern.matcher(domainPart);
-	if (matcher.matches()) {
-	    String tld = matcher.group(matcher.groupCount());
-	    // Permit top-level-domains of 3 (includes dot separator) because
-	    // these could be
-	    // country codes which we are not going to check for.
-	    matcher = tldPattern.matcher(tld);
-	    if (tld.length() != 3 && !matcher.matches()) {
-		return false;
-	    }
-	} else {
-	    return false;
-	}
-	// all tests passed
-	return true;
+                if (Integer.parseInt(num) > 254) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        // symbolic domain check
+        matcher = domainPattern.matcher(domainPart);
+        if (matcher.matches()) {
+            String tld = matcher.group(matcher.groupCount());
+            // Permit top-level-domains of 3 (includes dot separator) because
+            // these could be
+            // country codes which we are not going to check for.
+            matcher = tldPattern.matcher(tld);
+            return tld.length() == 3 || matcher.matches();
+        } else {
+            return false;
+        }
+        // all tests passed
     }
 
     // Testing method
