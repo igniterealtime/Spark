@@ -645,12 +645,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
      */
     protected void checkForText(DocumentEvent e) {
         final int length = e.getDocument().getLength();
-        if (length > 0) {
-            chatAreaButton.getButton().setEnabled(true);
-        }
-        else {
-            chatAreaButton.getButton().setEnabled(false);
-        }
+        chatAreaButton.getButton().setEnabled(length > 0);
     }
 
     /**

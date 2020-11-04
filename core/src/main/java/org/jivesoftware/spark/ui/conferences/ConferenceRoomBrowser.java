@@ -490,11 +490,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
                 }
                 addRoomButton.setEnabled(true);
                 addRoomItem.setEnabled(true);
-                if (isBookmarked(roomJID)) {
-                addBookmarkUI(false);
-                } else {
-                addBookmarkUI(true);
-                }
+                addBookmarkUI(!isBookmarked(roomJID));
             } else {
                 joinRoomButton.setEnabled(false);
                 addRoomButton.setEnabled(false);

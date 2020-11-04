@@ -97,7 +97,7 @@ public class ConferenceUtils {
             String label = field.getLabel();
 
 
-            if (label != null && "Creation date".equalsIgnoreCase(label)) {
+            if ("Creation date".equalsIgnoreCase(label)) {
                 for ( CharSequence value : field.getValues() ) {
                     creationDate = value.toString();
                     Date date = dateFormatter.parse(creationDate);
@@ -376,19 +376,16 @@ public class ConferenceUtils {
 	        unclosableChatRooms.add(jid);
 	    }
 	}
-	
-	public static boolean isChatRoomClosable(Component c) {
-		if(c instanceof GroupChatRoom ) {
-			GroupChatRoom groupChatRoom = (GroupChatRoom) c;
-    		EntityBareJid roomName = groupChatRoom.getChatRoom().getBareJid();
 
-    		if(unclosableChatRooms.contains(roomName)){
-    			return false;
-    		}
-		}
-		return true;
-
-	}
+    public static boolean isChatRoomClosable(Component c) {
+        if (c instanceof GroupChatRoom) {
+            GroupChatRoom groupChatRoom = (GroupChatRoom) c;
+            EntityBareJid roomName = groupChatRoom.getChatRoom().getBareJid();
+            return !unclosableChatRooms.contains(roomName);
+        } else {
+            return true;
+        }
+    }
 
 	public static boolean confirmToRevealVisibility() {
 		Presence currentPresence = SparkManager.getWorkspace().getStatusBar().getPresence();

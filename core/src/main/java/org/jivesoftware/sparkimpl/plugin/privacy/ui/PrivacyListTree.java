@@ -235,7 +235,7 @@ public class PrivacyListTree extends JPanel implements SparkPrivacyListListener 
         addContact.setIcon(SparkRes.getImageIcon(SparkRes.SMALL_ADD_IMAGE));
         addContact.addActionListener( e -> {
             PrivacyAddDialogUI browser = new PrivacyAddDialogUI();
-            Collection<PrivacyItem> col = browser.showRoster(_comp, node.isContactGroup() ? false : true);
+            Collection<PrivacyItem> col = browser.showRoster(_comp, !node.isContactGroup());
             try
             {
                 for (PrivacyItem pI : col) {

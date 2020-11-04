@@ -265,9 +265,7 @@ public class UserManager {
     public boolean hasVoice(GroupChatRoom groupChatRoom, Resourcepart nickname) {
         Occupant occupant = getOccupant(groupChatRoom, nickname);
         if (occupant != null) {
-            if ( MUCRole.visitor == occupant.getRole()) {
-                return false;
-            }
+            return MUCRole.visitor != occupant.getRole();
         }
         return true;
     }
