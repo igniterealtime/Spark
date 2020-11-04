@@ -184,7 +184,7 @@ public class UserIdlePlugin extends TimerTask implements Plugin {
 	}
 
 
-	public class LockListener {
+	public static class LockListener {
 
 		public void intWinLockListener() {
 			new Thread(() -> {

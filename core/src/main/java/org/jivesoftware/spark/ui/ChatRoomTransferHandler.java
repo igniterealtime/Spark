@@ -67,7 +67,7 @@ public class ChatRoomTransferHandler extends TransferHandler {
     @Override
 	public Transferable createTransferable(JComponent comp) {
         if (comp instanceof TranscriptWindow) {
-            return new TranscriptWindowTransferable((TranscriptWindow)comp);
+            return new TranscriptWindowTransferable((TranscriptWindow) comp);
         }
 
         return null;
@@ -110,7 +110,7 @@ public class ChatRoomTransferHandler extends TransferHandler {
         return false;
     }
 
-    public class TranscriptWindowTransferable implements Transferable {
+    public static class TranscriptWindowTransferable implements Transferable {
 
         private TranscriptWindow item;
 

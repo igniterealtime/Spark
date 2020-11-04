@@ -264,7 +264,7 @@ public class FrequentContactsPlugin implements Plugin {
     /**
      * Internal handling of a JLabel Renderer.
      */
-    public class InternalRenderer extends JLabel implements ListCellRenderer {
+    public static class InternalRenderer extends JLabel implements ListCellRenderer {
 		private static final long serialVersionUID = -2925096995694392323L;
 
 		/**

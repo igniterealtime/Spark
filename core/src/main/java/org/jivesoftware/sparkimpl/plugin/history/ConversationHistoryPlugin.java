@@ -200,7 +200,7 @@ public class ConversationHistoryPlugin implements Plugin {
 
         final ContactList contactList = SparkManager.getWorkspace().getContactList();
 
-        int limit = historyList.size() > 10 ? 10 : historyList.size();
+        int limit = Math.min(historyList.size(), 10);
 
         for (final EntityBareJid user : historyList.subList(0, limit)) {
 
@@ -306,7 +306,7 @@ public class ConversationHistoryPlugin implements Plugin {
     /**
      * Internal handling of a Jlabel Renderer.
      */
-    public class InternalRenderer extends JLabel implements ListCellRenderer {
+    public static class InternalRenderer extends JLabel implements ListCellRenderer {
 		private static final long serialVersionUID = 1812281106979897477L;
 
 		/**

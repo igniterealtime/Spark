@@ -1029,7 +1029,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
     /**
      * Used for the top toolbar.
      */
-    public class ChatToolBar extends JPanel {
+    public static class ChatToolBar extends JPanel {
 		private static final long serialVersionUID = 5926527530611601841L;
 		private JPanel buttonPanel;
 

@@ -143,7 +143,7 @@ public class ContactGroupTransferHandler extends TransferHandler {
         return false;
     }
 
-    public class ContactItemTransferable implements Transferable {
+    public static class ContactItemTransferable implements Transferable {
 
         private ContactItem item;
 

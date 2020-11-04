@@ -272,15 +272,14 @@ public class HistoryWindow extends JFrame {
 	private ActionListener onFindBtnClick() {
 		return e -> {
 
-            String searchText = findTextField.getText().toString().trim();
+            String searchText = findTextField.getText().trim();
             if (EMPTY.equals(searchText)) {
                 historyTree.setModel(historyOriginalModel);
                 selectVeryFirstLeaf();
                 return;
             }
 
-            List<HistoryEntry> results = historyFile.search(findTextField
-                    .getText().toString());
+            List<HistoryEntry> results = historyFile.search(findTextField.getText());
 
             HistoryTreeNode top = new HistoryTreeNode(searchText);
 

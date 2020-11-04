@@ -241,7 +241,7 @@ public abstract class CertManager {
                 store = keyStore.aliases();
 
                 while (store.hasMoreElements()) {
-                    String alias = (String) store.nextElement();
+                    String alias = store.nextElement();
                     X509Certificate certificate = (X509Certificate) keyStore.getCertificate(alias);
                     CertificateModel certModel = new CertificateModel(certificate, alias);
                     certModel.setRevoked(blackListStore.getCertificateAlias(certificate) != null);

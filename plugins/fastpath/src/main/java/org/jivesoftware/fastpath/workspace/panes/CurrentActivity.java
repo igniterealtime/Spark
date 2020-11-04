@@ -170,7 +170,7 @@ public final class CurrentActivity extends JPanel {
                     @Override
                     public void presenceChanged(Presence presence) {
                         BareJid agentJID = presence.getFrom().asBareJid();
-                        AgentStatus agentStatus = (AgentStatus)presence.getExtension("agent-status", "http://jabber.org/protocol/workgroup");
+                        AgentStatus agentStatus = presence.getExtension("agent-status", "http://jabber.org/protocol/workgroup");
 
                         String status = presence.getStatus();
                         if (status == null) {
@@ -334,7 +334,6 @@ public final class CurrentActivity extends JPanel {
             }
             catch (XMPPException | SmackException | InterruptedException e1) {
                 Log.error(e1);
-                return;
             }
         }
     }

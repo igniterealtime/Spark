@@ -79,12 +79,12 @@ public class CertificateModel {
 		this.serialNumber = certificate.getSerialNumber().toString();
 		this.signatureValue = Base64.getEncoder().encodeToString(certificate.getSignature());
 		this.signatureAlgorithm = certificate.getSigAlgName();
-		this.issuer = certificate.getIssuerX500Principal().getName().toString();
-		this.subject = certificate.getSubjectX500Principal().getName().toString();
+		this.issuer = certificate.getIssuerX500Principal().getName();
+		this.subject = certificate.getSubjectX500Principal().getName();
 		this.notBefore = certificate.getNotBefore().toString();
 		this.notAfter = certificate.getNotAfter().toString();
 		this.publicKey = certificate.getPublicKey().toString();
-        this.publicKeyAlgorithm = certificate.getPublicKey().getAlgorithm().toString();
+        this.publicKeyAlgorithm = certificate.getPublicKey().getAlgorithm();
         // rfc5280 in section 4.1.2.8. Unique Identifiers
         // "CAs conforming to this profile MUST NOT generate certificates with unique identifiers."
         // "These fields MUST NOT appear if the version is 1."

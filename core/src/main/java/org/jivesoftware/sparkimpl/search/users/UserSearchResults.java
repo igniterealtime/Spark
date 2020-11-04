@@ -219,7 +219,7 @@ public class UserSearchResults extends JPanel {
         menu.show(resultsTable, e.getX(), e.getY());
     }
 
-    private final class UsersInfoTable extends Table {
+    private static final class UsersInfoTable extends Table {
 	private static final long serialVersionUID = -7097826349368800291L;
 
 	UsersInfoTable(String[] headers) {
