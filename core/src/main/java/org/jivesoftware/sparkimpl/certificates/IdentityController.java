@@ -157,9 +157,8 @@ public class IdentityController extends CertManager {
        
         JcaContentSignerBuilder csBuilder = new JcaContentSignerBuilder("SHA256withRSA");
             ContentSigner signer = csBuilder.build(keyPair.getPrivate());
-        PKCS10CertificationRequest csr = p10Builder.build(signer);
-       
-            return csr;
+
+        return p10Builder.build(signer);
     }
     
     /**
@@ -328,8 +327,7 @@ public class IdentityController extends CertManager {
         JcaContentSignerBuilder csBuilder = new JcaContentSignerBuilder("SHA256withRSA");
         ContentSigner signer = csBuilder.build(keyPair.getPrivate());
         X509CertificateHolder certHolder = certBuilder.build(signer);
-        X509Certificate cert = new JcaX509CertificateConverter().getCertificate(certHolder);
-        
-        return cert;
+
+        return new JcaX509CertificateConverter().getCertificate(certHolder);
     }
 }

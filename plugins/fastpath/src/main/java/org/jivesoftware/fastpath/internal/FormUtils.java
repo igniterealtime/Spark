@@ -152,8 +152,7 @@ final public class FormUtils {
      * @return the nickname of the user who sent the message.
      */
     public static Resourcepart getNickname(Message message) {
-        Resourcepart from = message.getFrom().getResourceOrThrow();
-        return from;
+        return message.getFrom().getResourceOrThrow();
     }
 
     /**

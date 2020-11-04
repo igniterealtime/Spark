@@ -933,9 +933,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
                     occupants = "n/a";
                 }
 
-                final Object[] insertRoom = new Object[] { iconLabel, roomName.toString(),
-                    jid.getLocalpart().toString(), occupants };
-                return insertRoom;
+                return new Object[] { iconLabel, roomName.toString(), jid.getLocalpart().toString(), occupants };
             }
             
             @Override

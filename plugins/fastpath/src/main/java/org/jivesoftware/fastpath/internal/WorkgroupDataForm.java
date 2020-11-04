@@ -246,8 +246,7 @@ public class WorkgroupDataForm extends JPanel {
     }
 
     public Component getComponent(String label) {
-        Component comp = (Component)valueMap.get(label);
-        return comp;
+        return (Component)valueMap.get(label);
     }
 
 

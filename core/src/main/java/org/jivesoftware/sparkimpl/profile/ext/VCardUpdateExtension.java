@@ -52,12 +52,11 @@ public class VCardUpdateExtension implements ExtensionElement {
 
     @Override
     public String toXML(String enclosingNamespace) {
-        String buf = "<" + getElementName() + " xmlns=\"" + getNamespace() + "\">" +
-                "<photo>" +
-                photoHash +
-                "</photo>" +
-                "</" + getElementName() + ">";
-        return buf;
+        return "<" + getElementName() + " xmlns=\"" + getNamespace() + "\">"
+                + "<photo>"
+                + photoHash
+                + "</photo>"
+                + "</" + getElementName() + ">";
     }
 
     public static class Provider extends ExtensionElementProvider<VCardUpdateExtension>

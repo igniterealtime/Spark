@@ -112,8 +112,7 @@ public class TransferSettingsPanel extends JPanel {
         public List<EntityBareJid> getBlockedPeople() {
             List<String> jidStrings = FileTransferSettings.convertSettingsStringToList(txtBlockedPeople.getText());
             Set<EntityBareJid> jidSet = JidUtil.entityBareJidSetFrom(jidStrings);
-            List<EntityBareJid> jids = new ArrayList<>(jidSet);
-            return jids;
+            return new ArrayList<>(jidSet);
         }
     }
 

@@ -216,9 +216,7 @@ public class TransportUtils {
 
         @Override
 		public String toXML(String enclosingNamespace) {
-            String builder = "<" + getElementName() + " xmlns=\"" + getNamespace() +
-                    "\"/>";
-            return builder;
+            return "<" + getElementName() + " xmlns=\"" + getNamespace() + "\"/>";
         }
     }
 

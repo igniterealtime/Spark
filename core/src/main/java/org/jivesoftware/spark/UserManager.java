@@ -293,9 +293,7 @@ public class UserManager {
     }
 
     public Resourcepart getUserNicknameAsResourcepartFromJID(BareJid jid) {
-        String nicknameString = getUserNicknameFromJID(jid);
-        Resourcepart resourcepart = Resourcepart.fromOrThrowUnchecked(nicknameString);
-        return resourcepart;
+        return Resourcepart.fromOrThrowUnchecked(getUserNicknameFromJID(jid));
     }
 
     /**
