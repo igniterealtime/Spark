@@ -148,7 +148,7 @@ public class WorkgroupDataForm extends JPanel {
         Iterator<String> valueIter = valueMap.keySet().iterator();
         Form answerForm = searchForm.createAnswerForm();
         while (valueIter.hasNext()) {
-            String answer = (String)valueIter.next();
+            String answer = valueIter.next();
             Object o = valueMap.get(answer);
             if (o instanceof JCheckBox) {
                 boolean isSelected = ((JCheckBox)o).isSelected();
@@ -187,7 +187,7 @@ public class WorkgroupDataForm extends JPanel {
                 }
             }
             else if (o instanceof CheckBoxList) {
-                List list = (List)((CheckBoxList)o).getSelectedValues();
+                List list = ((CheckBoxList)o).getSelectedValues();
                 if (list.size() > 0) {
                     answerForm.setAnswer(answer, list);
                 }

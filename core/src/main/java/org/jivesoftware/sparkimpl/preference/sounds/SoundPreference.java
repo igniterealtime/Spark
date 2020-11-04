@@ -92,7 +92,7 @@ public class SoundPreference implements Preference {
 	public JComponent getGUI() {
         if (soundPanel == null) {
             try {
-		EventQueue.invokeAndWait( () -> soundPanel = new SoundPanel() );
+		EventQueue.invokeAndWait( () -> soundPanel = new SoundPanel());
 	    } catch (Exception e) {
 		e.printStackTrace();
 	    }
@@ -189,7 +189,7 @@ public class SoundPreference implements Preference {
     }
 
 
-    private class SoundPanel extends JPanel {
+    private static class SoundPanel extends JPanel {
 	private static final long serialVersionUID = 4332294589601051699L;
 	private final JCheckBox incomingMessageBox = new JCheckBox();
 	private final JTextField incomingMessageSound = new JTextField();

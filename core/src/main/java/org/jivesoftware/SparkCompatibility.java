@@ -80,7 +80,7 @@ public class SparkCompatibility {
             }
             String[] children = src.list();
             for (int i=0; i<children.length; i++) {
-            	// Skip any directories / files which may need to be skipped.  
+            	// Skip any directories / files which may need to be skipped.
             	if (!skipFiles.contains((new File(dest, children[i]).getAbsolutePath()))) {
 	            	copyDirectory(new File(src, children[i]),
 	                        new File(dest, children[i]), new HashSet<>());
@@ -95,15 +95,13 @@ public class SparkCompatibility {
         		out = new FileOutputStream(dest);
         	} catch (FileNotFoundException e) {
         		IOException wrapper = new IOException("copyDirectory: Unable to open handle on file: "
-        				+ src.getAbsolutePath() + "and" + dest.getAbsolutePath() + ".");
-        				wrapper.initCause(e);
-        				wrapper.setStackTrace(e.getStackTrace());
-        				throw wrapper;
+                    + src.getAbsolutePath() + "and" + dest.getAbsolutePath() + ".", e);
+                wrapper.setStackTrace(e.getStackTrace());
+                throw wrapper;
         	} catch (SecurityException e) {
         		IOException wrapper = new IOException("copyDirectory: access denied to copy file: "
-        				+ src.getAbsolutePath() + "and" + dest.getAbsolutePath() + ".");
-				wrapper.initCause(e);
-				wrapper.setStackTrace(e.getStackTrace());
+                    + src.getAbsolutePath() + "and" + dest.getAbsolutePath() + ".", e);
+                wrapper.setStackTrace(e.getStackTrace());
 				throw wrapper;
         	}
         	try { 
@@ -115,10 +113,9 @@ public class SparkCompatibility {
 	            }
         	} catch (IOException e) {
         		IOException wrapper = new IOException("copyDirectory: Unable to copy file: "
-        				+ src.getAbsolutePath() + "to" + dest.getAbsolutePath() + ".");
-        				wrapper.initCause(e);
-        				wrapper.setStackTrace(e.getStackTrace());
-        				throw wrapper;
+                    + src.getAbsolutePath() + "to" + dest.getAbsolutePath() + ".", e);
+                wrapper.setStackTrace(e.getStackTrace());
+        		throw wrapper;
         	} finally {
         		in.close();
         		out.close();

@@ -220,12 +220,6 @@ public class GroupChatParticipantList extends JPanel {
 	}
     }
 
-	public void chatRoomOpened(ChatRoom room) {
-		if (room != groupChatRoom) {
-			return;
-		}
-	}
-
 	public void addInvitee(EntityBareJid jid, String message) {
 		// So the problem with this is that I have no idea what the users actual
 		// jid is in most cases.
@@ -1176,7 +1170,7 @@ public class GroupChatParticipantList extends JPanel {
 	 *
 	 * @author Derek DeMoro
 	 */
-	public class ParticipantRenderer extends JLabel implements ListCellRenderer {
+	public static class ParticipantRenderer extends JLabel implements ListCellRenderer {
 		private static final long serialVersionUID = -7509947975798079141L;
 
 		/**

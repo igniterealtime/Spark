@@ -372,15 +372,13 @@ public final class Spark {
 	return Default.getBoolean(Default.DISABLE_UPDATES);
     }
 
-	public static void setApplicationFont(Font f) {
-		UIDefaults defaults = UIManager.getLookAndFeelDefaults();
-		synchronized(defaults) {
-		    for (Object ui_property: defaults.keySet()) {
-		        if (ui_property.toString().endsWith(".font")) {
-		            UIManager.put(ui_property, f);
-		        }
-		    }
-		}
+	public static synchronized void setApplicationFont(Font f) {
+        UIDefaults defaults = UIManager.getLookAndFeelDefaults();
+        for (Object ui_property : defaults.keySet()) {
+            if (ui_property.toString().endsWith(".font")) {
+                UIManager.put(ui_property, f);
+            }
+        }
 	}
 
     /**

@@ -274,7 +274,7 @@ public class JContactItemField extends JPanel {
         return popup;
     }
 
-    class PopupRenderer extends JLabel implements ListCellRenderer {
+    static class PopupRenderer extends JLabel implements ListCellRenderer {
 	private static final long serialVersionUID = 239608430590852355L;
 
 	/**

@@ -207,7 +207,7 @@ public class NotificationPlugin implements Plugin, StanzaListener {
    	 }
     }
 
-    private class ChatAction extends AbstractAction {
+    private static class ChatAction extends AbstractAction {
 
 	private static final long serialVersionUID = 4752515615833181939L;
 	private final BareJid jid;

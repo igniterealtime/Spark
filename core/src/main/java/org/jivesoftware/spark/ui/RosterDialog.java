@@ -684,7 +684,7 @@ public class RosterDialog implements ActionListener {
 	}
     }
 
-    class AccountItem extends JPanel {
+    static class AccountItem extends JPanel {
 		private static final long serialVersionUID = -7657731912529801653L;
 		private Transport transport;
 

@@ -77,7 +77,7 @@ public class StreamReader {
 	private volatile boolean stopped = false;
 
 	public void read() {
-		t.run();
+        t.start();
 	}
 
 	public void stop() {

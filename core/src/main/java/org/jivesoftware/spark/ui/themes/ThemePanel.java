@@ -472,7 +472,7 @@ public class ThemePanel extends JPanel
         }
         fc.setDialogTitle( "Add Emoticon Pack" );
 
-        fc.addChoosableFileFilter( new ZipFilter() );
+        fc.addChoosableFileFilter(new ZipFilter());
 
         int returnVal = fc.showOpenDialog( this );
 
@@ -494,7 +494,7 @@ public class ThemePanel extends JPanel
                 // If the name does not exists, add it to the message box.
                 for ( int i = 0; i < emoticonBox.getItemCount(); i++ )
                 {
-                    String n = (String) emoticonBox.getItemAt( i );
+                    String n = emoticonBox.getItemAt( i );
                     if ( name.equals( n ) )
                     {
                         return;
@@ -517,7 +517,7 @@ public class ThemePanel extends JPanel
      * The ZipFilter class is used by the emoticon file picker to filter out all
      * other files besides *.zip files.
      */
-    private class ZipFilter extends javax.swing.filechooser.FileFilter
+    private static class ZipFilter extends javax.swing.filechooser.FileFilter
     {
         @Override
 		public boolean accept( File file )

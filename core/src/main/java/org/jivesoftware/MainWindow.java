@@ -237,11 +237,11 @@ public final class MainWindow extends ChatFrame implements ActionListener {
      * setting the Agent to be offline.
      */
     public void shutdown() {
-        final XMPPConnection con = SparkManager.getConnection();
+        final AbstractXMPPConnection con = SparkManager.getConnection();
 
         if (con.isConnected()) {
             // Send disconnect.
-            ((AbstractXMPPConnection)con).disconnect();
+            con.disconnect();
         }
 
         // Notify all MainWindowListeners
@@ -295,22 +295,22 @@ public final class MainWindow extends ChatFrame implements ActionListener {
      * @param reason the reason for logging out. This can be if user gave no reason.
      */
     public void closeConnectionAndInvoke(String reason) {
-        final XMPPConnection con = SparkManager.getConnection();
+        final AbstractXMPPConnection con = SparkManager.getConnection();
         if (con.isConnected()) {
             if (reason != null) {
                 Presence byePresence = new Presence(Presence.Type.unavailable, reason, -1, null);
                 try
                 {
-                    ((AbstractXMPPConnection)con).disconnect(byePresence);
+                    con.disconnect(byePresence);
                 }
                 catch ( SmackException.NotConnectedException e )
                 {
                     Log.error( "Unable to sign out with presence.", e);
-                    ((AbstractXMPPConnection)con).disconnect();
+                    con.disconnect();
                 }
             }
             else {
-                ((AbstractXMPPConnection)con).disconnect();
+                con.disconnect();
             }
         }
         if (!restartApplicationWithScript()) {
