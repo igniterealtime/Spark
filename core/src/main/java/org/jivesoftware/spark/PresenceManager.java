@@ -131,8 +131,7 @@ public class PresenceManager {
         final Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
         Presence presence = roster.getPresence(jid);
         Jid result = presence.getFrom();
-        EntityFullJid entityFullJid = result.asEntityFullJidIfPossible();
-        return entityFullJid;
+        return result.asEntityFullJidIfPossible();
     }
 
 	public static String getJidFromMUCPresence(Presence presence) {		
