@@ -230,9 +230,6 @@ public class SparkTrustManager extends GeneralTrustManager implements X509TrustM
         X509CertSelector toBeValidated = new X509CertSelector();
         toBeValidated.setCertificate((X509Certificate) certPath.getCertificates().get(0));
 
-        // checks against time validity aren't done here as are already done in checkDateValidity (X509Certificate[]
-        // chain)
-        toBeValidated.setCertificateValid(null);
         // create parameters using trustStore as source of Trust Anchors and using X509CertSelector
         PKIXBuilderParameters parameters = new PKIXBuilderParameters(allStore, toBeValidated);
 
@@ -294,6 +291,16 @@ public class SparkTrustManager extends GeneralTrustManager implements X509TrustM
                 }
             }
             throw new CertificateException("Certificate was revoked");
+        } catch (CertPathValidatorException e) {
+            // Spark can be configured to disregard some of the issues that can pop up through validation.
+            if ( e.getReason() == CertPathValidatorException.BasicReason.EXPIRED && acceptExpired ) {
+                Log.debug("Chain validation detected expiry, but Spark is configured to allow this. Not failing validation.");
+            } else if ( e.getReason() == CertPathValidatorException.BasicReason.NOT_YET_VALID && acceptNotValidYet ) {
+                Log.debug("Chain validation detected not-yet-valid, but Spark is configured to allow this. Not failing validation.");
+            } else {
+                // When Spark is not configured to ignore the validation issue, rethrow the original exception.
+                throw e;
+            }
         }
     }
 
