@@ -178,11 +178,6 @@ public final class Spark {
             new Spark();
         } );
 
-        //load plugins before Workspace initialization to avoid any UI delays
-        //during plugin rendering
-        final PluginManager pluginManager = PluginManager.getInstance();
-        pluginManager.loadPlugins();
-
         installBaseUIProperties();
 
         if (Default.getBoolean(Default.CHANGE_COLORS_DISABLED)) {
