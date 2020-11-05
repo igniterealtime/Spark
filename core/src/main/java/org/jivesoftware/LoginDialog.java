@@ -35,6 +35,7 @@ import org.jivesoftware.smack.util.DNSUtil;
 import org.jivesoftware.smack.util.TLSUtils;
 import org.jivesoftware.smackx.carbons.CarbonManager;
 import org.jivesoftware.smackx.chatstates.ChatStateManager;
+import org.jivesoftware.spark.PluginManager;
 import org.jivesoftware.spark.SessionManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.Workspace;
@@ -207,6 +208,10 @@ public class LoginDialog {
     protected void afterLogin() {
         // Make certain Enterprise features persist across future logins
         persistEnterprise();
+
+        // Load plugins before Workspace initialization to avoid any UI delays during plugin rendering, but after
+        // Enterprise initialization, which can pull in additional plugin configuration (eg: blacklist).
+        PluginManager.getInstance().loadPlugins();
 
         // Initialize and write default values from "Advanced Connection Preferences" to disk
         initAdvancedDefaults();
