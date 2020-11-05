@@ -313,10 +313,7 @@ public class WorkgroupInvitationDialog implements PropertyChangeListener {
         dlg.toFront();
         dlg.requestFocus();
 
-        if (!isValid) {
-            return false;
-        }
-        return true;
+        return isValid;
     }
 
 

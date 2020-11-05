@@ -162,7 +162,7 @@ public class CertificateController extends CertManager {
 			}
 			@Override
 			public boolean isCellEditable(int row, int column) {
-			    return column !=2 ? false:true;
+			    return column == 2;
 			}
 		};
 
@@ -290,10 +290,8 @@ public class CertificateController extends CertManager {
         try {
             if (trustStore.getCertificateAlias(cert.getCertificate()) != null) {
                 return true;
-            } else if (displayCaStore.getCertificateAlias(cert.getCertificate()) != null) {
-                return true;
             } else {
-                return false;
+                return displayCaStore.getCertificateAlias(cert.getCertificate()) != null;
             }
         } catch (KeyStoreException e) {
             return false;
@@ -310,10 +308,8 @@ public class CertificateController extends CertManager {
         try {
             if (exceptionsStore.getCertificateAlias(cert.getCertificate()) != null) {
                 return true;
-            } else if (exceptionsCaStore.getCertificateAlias(cert.getCertificate()) != null) {
-                return true;
             } else {
-                return false;
+                return exceptionsCaStore.getCertificateAlias(cert.getCertificate()) != null;
             }
         } catch (KeyStoreException e) {
             return false;
@@ -581,7 +577,7 @@ public class CertificateController extends CertManager {
 	private void addEntryToKeyStoreImpl(X509Certificate addedCert, CertificateDialogReason reason) throws HeadlessException, InvalidNameException, KeyStoreException{
         CertificateModel certModel = new CertificateModel(addedCert);
         CertificateDialog certDialog = null;
-        if (checkForSameCertificate(addedCert) == false) {
+        if (!checkForSameCertificate(addedCert)) {
             certDialog = showCertificate(certModel, reason);
         }
         if (certDialog != null && certDialog.isAddCert()) {

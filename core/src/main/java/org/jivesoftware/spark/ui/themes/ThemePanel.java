@@ -103,14 +103,13 @@ public class ThemePanel extends JPanel
                 {
                     _lookandfeelpreview.setEnabled( false );
                     _lookandfeelpreview.setToolTipText( Res.getString( "lookandfeel.tooltip.restart.yes" ) );
-                    _lookandfeelpreview.revalidate();
                 }
                 else
                 {
                     _lookandfeelpreview.setEnabled( true );
                     _lookandfeelpreview.setToolTipText( Res.getString( "lookandfeel.tooltip.restart.no" ) );
-                    _lookandfeelpreview.revalidate();
                 }
+                _lookandfeelpreview.revalidate();
             } );
 
         _lookandfeelpreview.addActionListener( e ->

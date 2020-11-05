@@ -734,8 +734,7 @@ public class LocalPreferences {
 	public Resourcepart getNickname() {
 		String nicknameString = props.getProperty("nickname", SparkManager.getUserManager()
 				.getNickname());
-		Resourcepart nickname = Resourcepart.fromOrThrowUnchecked(nicknameString);
-		return nickname;
+        return Resourcepart.fromOrThrowUnchecked(nicknameString);
 	}
 
 	public void setShowToasterPopup(boolean show) {

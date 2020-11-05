@@ -93,14 +93,10 @@ public final class MainWindow extends ChatFrame implements ActionListener {
      * @return the singleton instance of <Code>MainWindow</CODE>
      */
     public static MainWindow getInstance() {
-        // Synchronize on LOCK to ensure that we don't end up creating
-        // two singletons.
-
-
+        // Synchronize on LOCK to ensure that we don't end up creating two singletons.
         synchronized (LOCK) {
             if (null == singleton) {
-            	MainWindow controller = new MainWindow(Default.getString(Default.APPLICATION_NAME), SparkManager.getApplicationImage());
-            	singleton = controller;
+                singleton = new MainWindow(Default.getString(Default.APPLICATION_NAME), SparkManager.getApplicationImage());
             }
         }
         return singleton;
@@ -330,8 +326,7 @@ public final class MainWindow extends ChatFrame implements ActionListener {
             Log.error("The startup class is not packaged in a jar file");
             return null;
         }
-        File libDir = jarFile.getParentFile();
-        return libDir;
+        return jarFile.getParentFile();
     }
     
     private String getClasspath() throws IOException {

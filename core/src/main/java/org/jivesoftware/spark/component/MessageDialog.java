@@ -26,8 +26,6 @@ import java.beans.PropertyChangeListener;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * <code>MessageDialog</code> class is used to easily display the most commonly used dialogs.
