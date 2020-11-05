@@ -131,8 +131,7 @@ public class PresenceManager {
         final Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
         Presence presence = roster.getPresence(jid);
         Jid result = presence.getFrom();
-        EntityFullJid entityFullJid = result.asEntityFullJidIfPossible();
-        return entityFullJid;
+        return result.asEntityFullJidIfPossible();
     }
 
 	public static String getJidFromMUCPresence(Presence presence) {		
@@ -216,12 +215,9 @@ public class PresenceManager {
     	 if (presenceMode == null) {
         	 presenceMode = Presence.Mode.available;
         }
-    	if (presence.getStatus() != null && 
-    		presence.getStatus().contains(Res.getString("status.on.phone")) && 
-    		presenceMode.equals(Presence.Mode.away)) {
-    		return true;
-    	}
-    	return false;
+        return presence.getStatus() != null &&
+            presence.getStatus().contains(Res.getString("status.on.phone")) &&
+            presenceMode.equals(Presence.Mode.away);
     }
 
     public static boolean isInvisible(Presence presence) {

@@ -15,6 +15,8 @@
  */
 package org.jivesoftware.sparkimpl.settings.local;
 
+import org.jivesoftware.spark.util.log.Log;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
@@ -76,7 +78,7 @@ public class WinRegistryReader {
                 while ((c = is.read()) != -1)
                     sw.write(c);
             } catch (IOException e) {
-                System.err.println(e);
+                Log.error(e);
             }
         }
 

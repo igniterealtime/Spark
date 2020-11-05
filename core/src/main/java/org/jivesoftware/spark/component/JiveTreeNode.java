@@ -199,19 +199,15 @@ public class JiveTreeNode extends DefaultMutableTreeNode implements Transferable
      */
     public final boolean hasParent(String parentName) {
         JiveTreeNode parent = (JiveTreeNode)getParent();
-        while (true) {
-            if (parent.getAssociatedObject() == null) {
-                break;
-            }
-            final TreeFolder folder = (TreeFolder)parent.getAssociatedObject();
+        while (parent.getAssociatedObject() != null) {
+            final TreeFolder folder = (TreeFolder) parent.getAssociatedObject();
             if (folder.getDisplayName().equals(parentName)) {
                 return true;
             }
-            parent = (JiveTreeNode)parent.getParent();
+            parent = (JiveTreeNode) parent.getParent();
         }
         return false;
     }
-
 
     /**
      * Transferable implementation

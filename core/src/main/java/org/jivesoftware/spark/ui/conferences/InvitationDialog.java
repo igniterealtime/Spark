@@ -147,11 +147,9 @@ final class InvitationDialog extends JPanel {
             Collection<String> col = browser.showRoster(dlg);
 
             for (String aCol : col) {
-                String jid = aCol;
-                if (!invitedUsers.contains(jid)) {
-                    invitedUsers.addElement(jid);
+                if (!invitedUsers.contains(aCol)) {
+                    invitedUsers.addElement(aCol);
                 }
-
             }
         } );
 

@@ -88,7 +88,7 @@ public class CertificateModel {
         // rfc5280 in section 4.1.2.8. Unique Identifiers
         // "CAs conforming to this profile MUST NOT generate certificates with unique identifiers."
         // "These fields MUST NOT appear if the version is 1."
-        if (version != 1 && ((certificate.getKeyUsage() != null && certificate.getKeyUsage()[5] == false)
+        if (version != 1 && ((certificate.getKeyUsage() != null && !certificate.getKeyUsage()[5])
                 || certificate.getBasicConstraints() == -1)) {
             try {
                 this.issuerUniqueID = certificate.getIssuerUniqueID().toString();
@@ -332,7 +332,7 @@ public class CertificateModel {
 		if (isRevoked()) {
 			return Res.getString("cert.revoked");
 			
-		} else if (isAfterNotAfter() == true) {
+		} else if (isAfterNotAfter()) {
 			return Res.getString("cert.expired");
 			
 		} else if (isBeforeNotBefore()) {
@@ -364,11 +364,7 @@ public class CertificateModel {
 	}
 
 	public boolean isSelfSigned(){
-		if(subject.equals(issuer)){
-			return true;
-		}else{
-			return false;
-		}
+        return subject.equals(issuer);
 	}
 	
 	/**
@@ -376,29 +372,17 @@ public class CertificateModel {
 	 * @return True if certificate isn't expired, isn't not valid yet and isn't revoked.
 	 */
 	private boolean checkValidity() {
-		if (!isAfterNotAfter() && !isBeforeNotBefore() && !isRevoked()) {
-			return true;
-		} else {
-			return false;
-		}
+        return !isAfterNotAfter() && !isBeforeNotBefore() && !isRevoked();
 	}
 
 	private boolean isBeforeNotBefore() {
 		Date today = new Date();
-		if (today.before(certificate.getNotBefore())) {
-			return true;
-		} else {
-			return false;
-		}
+        return today.before(certificate.getNotBefore());
 	}
 
 	private boolean isAfterNotAfter() {
 		Date today = new Date();
-		if (today.after(certificate.getNotAfter())) {
-			return true;
-		} else {
-			return false;
-		}
+        return today.after(certificate.getNotAfter());
 	}
 
 	public X509Certificate getCertificate() {

@@ -394,10 +394,9 @@ public class GroupChatParticipantList extends JPanel {
 				+ groupChat.getBareJid();
 
 		// TODO: Remove duplicate variable userNickname and nicknameOfUser.
-		Resourcepart nicknameOfUser = userNickname;
-		Resourcepart nickname = groupChat.getNickname();
+        Resourcepart nickname = groupChat.getNickname();
 
-		if (nicknameOfUser.equals(nickname)) {
+		if (userNickname.equals(nickname)) {
 			return;
 		}
 
@@ -408,7 +407,7 @@ public class GroupChatParticipantList extends JPanel {
 			Log.debug("Could not find chat room - " + groupJID);
 
 			// Create new room
-			chatRoom = new ChatRoomImpl(groupJID, nicknameOfUser, roomTitle);
+			chatRoom = new ChatRoomImpl(groupJID, userNickname, roomTitle);
 			chatManager.getChatContainer().addChatRoom(chatRoom);
 		}
 

@@ -157,9 +157,8 @@ public class IdentityController extends CertManager {
        
         JcaContentSignerBuilder csBuilder = new JcaContentSignerBuilder("SHA256withRSA");
             ContentSigner signer = csBuilder.build(keyPair.getPrivate());
-        PKCS10CertificationRequest csr = p10Builder.build(signer);
-       
-            return csr;
+
+        return p10Builder.build(signer);
     }
     
     /**
@@ -282,7 +281,7 @@ public class IdentityController extends CertManager {
     public void addEntryToKeyStore(X509Certificate addedCert, PrivateKey key) throws HeadlessException, InvalidNameException, KeyStoreException {
         CertificateModel certModel = new CertificateModel(addedCert);
         CertificateDialog certDialog = null;
-        if (checkForSameCertificate(addedCert) == false) {
+        if (!checkForSameCertificate(addedCert)) {
             certDialog = showCertificate(certModel, CertificateDialogReason.ADD_ID_CERTIFICATE);
         }
         if (certDialog != null && certDialog.isAddCert()) {
@@ -328,8 +327,7 @@ public class IdentityController extends CertManager {
         JcaContentSignerBuilder csBuilder = new JcaContentSignerBuilder("SHA256withRSA");
         ContentSigner signer = csBuilder.build(keyPair.getPrivate());
         X509CertificateHolder certHolder = certBuilder.build(signer);
-        X509Certificate cert = new JcaX509CertificateConverter().getCertificate(certHolder);
-        
-        return cert;
+
+        return new JcaX509CertificateConverter().getCertificate(certHolder);
     }
 }

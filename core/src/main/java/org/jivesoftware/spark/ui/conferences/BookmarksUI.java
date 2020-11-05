@@ -528,17 +528,14 @@ public class BookmarksUI extends JPanel {
                                 		addServiceToList(aServiceList);
                                 	}
                                 }
-                                serviceField.setText("");
-                                serviceField.setEnabled(true);
-                                addButton.setEnabled(true);
                             }
                             else {
                             	UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
                                 JOptionPane.showMessageDialog(SparkManager.getMainWindow(), Res.getString("message.conference.service.error"), Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
-                                serviceField.setText("");
-                                serviceField.setEnabled(true);
-                                addButton.setEnabled(true);
                             }
+                            serviceField.setText("");
+                            serviceField.setEnabled(true);
+                            addButton.setEnabled(true);
                         }
                     };
                     worker.start();

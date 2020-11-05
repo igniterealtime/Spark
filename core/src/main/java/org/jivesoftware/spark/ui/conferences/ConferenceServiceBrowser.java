@@ -85,8 +85,7 @@ public class ConferenceServiceBrowser {
                 try {
                     Collection<String> col = getConferenceServices(address);
                     for (String aCol : col) {
-                        String service = aCol;
-                        model.addElement(service);
+                        model.addElement(aCol);
                     }
                 }
                 catch (Exception e1) {
