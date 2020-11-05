@@ -74,8 +74,7 @@ public class SparkTrustManager extends GeneralTrustManager implements X509TrustM
 
     @Override
     public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
-        // TODO Auto-generated method stub
-
+        throw new UnsupportedOperationException("This implementation cannot be used to validate client-provided certificate chains.");
     }
 
     public static X509Certificate[] getLastFailedChain()
@@ -159,7 +158,7 @@ public class SparkTrustManager extends GeneralTrustManager implements X509TrustM
     /**
      * Return true if the certificate chain contain only one Self Signed certificate
      */
-    private boolean isSelfSigned(X509Certificate[] chain) {
+    public static boolean isSelfSigned(X509Certificate[] chain) {
         return chain[0].getIssuerX500Principal().getName().equals(chain[0].getSubjectX500Principal().getName())
                 && chain.length == 1;
     }
@@ -171,7 +170,7 @@ public class SparkTrustManager extends GeneralTrustManager implements X509TrustM
      * @param cert The certificate to check
      * @return 'true' if the certificate is a root certificate, otherwise false.
      */
-    private boolean isRootCACertificate( final X509Certificate cert ) {
+    public static boolean isRootCACertificate( final X509Certificate cert ) {
         return cert.getIssuerX500Principal().getName().equals(cert.getSubjectX500Principal().getName()) && cert.getBasicConstraints() > -1;
     }
 
