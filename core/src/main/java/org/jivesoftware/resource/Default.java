@@ -17,6 +17,7 @@ package org.jivesoftware.resource;
 
 import org.jivesoftware.spark.PluginRes;
 import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 
 import javax.swing.ImageIcon;
 
@@ -24,6 +25,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.*;
+
+import static org.jivesoftware.sparkimpl.plugin.manager.Enterprise.PLUGINS_BLACKLIST_NODE;
 
 public class Default {
     private static Properties prb;
@@ -232,24 +235,37 @@ public class Default {
      * @return Collection
      */
     public static Collection<String> getPluginBlacklist() {
-	String pluginlist = getString(Default.PLUGIN_BLACKLIST).replace(" ", "")
-		.toLowerCase();
-	StringTokenizer tokenizer = new StringTokenizer(pluginlist, ",");
-	ArrayList<String> list = new ArrayList<>();
+        ArrayList<String> list = new ArrayList<>();
 
-	while (tokenizer.hasMoreTokens()) {
-	    list.add(tokenizer.nextToken());
-	}
+        // Load the blacklist from the (local) configuration.
+        String pluginlist = getString(Default.PLUGIN_BLACKLIST).replace(" ", "").toLowerCase();
+        StringTokenizer tokenizer = new StringTokenizer(pluginlist, ",");
 
-	StringTokenizer clazztokenz = new StringTokenizer(
-		getString(Default.PLUGIN_BLACKLIST_CLASS).replace(" ", ""), ",");
+        while (tokenizer.hasMoreTokens()) {
+            final String pluginName = tokenizer.nextToken();
+            Log.debug("Local config plugin blacklist: " + pluginName);
+            list.add(pluginName);
+        }
 
-	while (clazztokenz.hasMoreTokens()) {
-	    list.add(clazztokenz.nextToken());
-	}
+        StringTokenizer clazztokenz = new StringTokenizer(
+            getString(Default.PLUGIN_BLACKLIST_CLASS).replace(" ", ""), ",");
 
-	return list;
+        while (clazztokenz.hasMoreTokens()) {
+            final String pluginClass = clazztokenz.nextToken();
+            Log.debug("Local config plugin blacklist: " + pluginClass);
+            list.add(pluginClass);
+        }
 
+        // Load the blacklist from Openfire's clientControl plugin
+        for( final String entry : Enterprise.getItemsForNode(PLUGINS_BLACKLIST_NODE) ) {
+            final String normalized = entry.toLowerCase();
+            Log.debug("Server-dictated plugin blacklist: " + normalized);
+            if (!list.contains(normalized)) {
+                list.add(normalized);
+            }
+        }
+
+        return list;
     }
 
     /**
