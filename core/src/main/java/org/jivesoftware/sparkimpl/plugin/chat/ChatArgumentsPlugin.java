@@ -29,10 +29,11 @@ public class ChatArgumentsPlugin implements Plugin {
 
     @Override
 	public void initialize() {
-        EntityBareJid start_chat_jid = JidCreate.entityBareFromUnescapedOrThrowUnchecked(
-            Objects.requireNonNull(Spark.getArgumentValue("start_chat_jid")));
-        EntityBareJid start_chat_muc = JidCreate.entityBareFromUnescapedOrThrowUnchecked(
-            Objects.requireNonNull(Spark.getArgumentValue("start_chat_muc")));
+        String value;
+        EntityBareJid start_chat_jid = (value = Spark.getArgumentValue("start_chat_jid")) == null ? null
+            : JidCreate.entityBareFromUnescapedOrThrowUnchecked(Objects.requireNonNull(value));
+        EntityBareJid start_chat_muc = (value = Spark.getArgumentValue("start_chat_muc")) == null ? null
+            : JidCreate.entityBareFromUnescapedOrThrowUnchecked(Objects.requireNonNull(value));
 
         if (start_chat_jid != null) {
             Localpart nickname = start_chat_jid.getLocalpart();
