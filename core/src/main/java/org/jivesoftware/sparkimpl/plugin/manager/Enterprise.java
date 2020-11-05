@@ -23,6 +23,12 @@ import org.jivesoftware.smackx.disco.packet.DiscoverItems;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.util.log.Log;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 /**
  * EnterpriseSparkManager is responsible for the detecting of features on the server. This allows for fine-grain control of
  * feature sets to enable/disable within Spark.
@@ -63,8 +69,10 @@ public class Enterprise {
     public static final String START_A_CHAT_FEATURE = "start-a-chat";
     public static final String HOSTNAME_AS_RESOURCE_FEATURE = "hostname-as-resource";
     public static final String VERSION_AS_RESOURCE_FEATURE = "version-as-resource";
+    public static final String PLUGINS_BLACKLIST_NODE = "spark-plugins-blacklist";
 
     private static DiscoverInfo featureInfo;
+    private static Map<String, DiscoverItems> nodeInfo = new HashMap<>();
 
     private boolean sparkManagerInstalled;
 
@@ -96,23 +104,60 @@ public class Enterprise {
         return featureInfo.containsFeature(feature);
     }
 
+    /**
+     * Returns all items (node-attribute values) for a particular node
+     *
+     * @param node The node for which to return items.
+     * @return A collection of node item names, possibly empty, never null.
+     */
+    public static Set<String> getItemsForNode(String node) {
+        if (nodeInfo == null || nodeInfo.isEmpty()) {
+            return Collections.emptySet();
+        }
+
+        final DiscoverItems discoverItems = nodeInfo.get(node);
+        if (discoverItems == null) {
+            return Collections.emptySet();
+        }
+
+        return discoverItems.getItems().stream().map(DiscoverItems.Item::getNode).collect(Collectors.toSet());
+    }
+
     private void populateFeatureSet() {
         final ServiceDiscoveryManager disco = ServiceDiscoveryManager.getInstanceFor(SparkManager.getConnection());
         final DiscoverItems items = SparkManager.getSessionManager().getDiscoveredItems();
         for (DiscoverItems.Item item : items.getItems() ) {
             String entity = item.getEntityID().toString();
-            if (entity != null) {
-                if (entity.startsWith("manager.")) {
-                    sparkManagerInstalled = true;
+            if (entity.startsWith("manager.")) {
+                sparkManagerInstalled = true;
 
-                    // Populate with feature sets.
-                    try {
-                        featureInfo = disco.discoverInfo(item.getEntityID());
-                    }
-                    catch (XMPPException | SmackException | InterruptedException e) {
-                        Log.error("Error while retrieving feature list for SparkManager.", e);
-                    }
+                // Populate with feature sets.
+                try {
+                    featureInfo = disco.discoverInfo(item.getEntityID());
+                }
+                catch (XMPPException | SmackException | InterruptedException e) {
+                    Log.error("Error while retrieving feature list for SparkManager.", e);
+                }
 
+                // Check for nodes.
+                try {
+                    final DiscoverItems discoveredItems = disco.discoverItems(item.getEntityID());
+                    for (DiscoverItems.Item discoveredItem : discoveredItems.getItems()) {
+                        final String node = discoveredItem.getNode();
+                        if (node != null) {
+                            try {
+                                // We're expecting Openfire to return unique JID/Node combinations.
+                                final DiscoverItems nodeItems = disco.discoverItems(discoveredItem.getEntityID(), node);
+                                nodeInfo.put(node, nodeItems);
+                            }
+                            catch (XMPPException | SmackException | InterruptedException e) {
+                                Log.error("Error while retrieving node items for SparkManager, node " + node, e);
+                            }
+                        }
+                    }
+                }
+                catch (XMPPException | SmackException | InterruptedException e) {
+                    Log.error("Error while retrieving feature list for SparkManager.", e);
                 }
             }
         }
