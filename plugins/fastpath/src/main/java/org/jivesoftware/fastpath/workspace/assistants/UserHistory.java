@@ -22,7 +22,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
@@ -89,17 +88,13 @@ public class UserHistory extends JPanel {
             public Object construct() {
                 try {
                     Transcripts transcripts = FastpathPlugin.getAgentSession().getTranscripts(userID);
-                    Iterator<TranscriptSummary> iter = transcripts.getSummaries().iterator();
-                    while (iter.hasNext()) {
-                        Transcripts.TranscriptSummary summary = (Transcripts.TranscriptSummary)iter.next();
-                        transcriptList.add(summary);
-                    }
+                    transcriptList.addAll(transcripts.getSummaries());
                 }
                 catch (XMPPException | SmackException | InterruptedException e) {
                     Log.error("Error getting transcripts.", e);
                 }
 
-                Collections.sort(transcriptList, timeComparator);
+                transcriptList.sort(timeComparator);
                 return transcriptList;
             }
 
@@ -173,32 +168,8 @@ public class UserHistory extends JPanel {
         return size;
     }
 
-    private final Comparator timeComparator = new Comparator() {
-        public int compare(Object o1, Object o2) {
-            final Transcripts.TranscriptSummary item1 = (Transcripts.TranscriptSummary)o1;
-            final Transcripts.TranscriptSummary item2 = (Transcripts.TranscriptSummary)o2;
-
-            long int1 = item1.getJoinTime().getTime();
-            long int2 = item2.getJoinTime().getTime();
-
-
-            if (int1 == int2) {
-                return 0;
-            }
-
-            if (int1 > int2) {
-                return -1;
-            }
-
-            if (int1 < int2) {
-                return 1;
-            }
-
-            return 0;
-        }
-    };
-
-
+    private final Comparator<Transcripts.TranscriptSummary> timeComparator = (first, second) ->
+        Long.compare(second.getJoinTime().getTime(), first.getJoinTime().getTime());
 }
 
 

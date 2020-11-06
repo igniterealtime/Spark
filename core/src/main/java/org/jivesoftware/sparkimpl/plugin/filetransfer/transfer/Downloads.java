@@ -50,9 +50,8 @@ public class Downloads {
     }
 
     /**
-     * Check if the downloaddirectory is accessable and throws exceptions if not
+     * Check if the download directory is accessible and throws exceptions if not
      * 
-     * @param downloadDir
      * @throws FileNotFoundException if the directory not exist
      * @throws SecurityException if user hasn't permissions to write to the directory
      * @throws NullPointerException if the directory is not set in preferences

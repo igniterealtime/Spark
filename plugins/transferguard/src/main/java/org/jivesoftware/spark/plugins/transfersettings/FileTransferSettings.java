@@ -27,6 +27,7 @@ import java.util.Set;
 import java.util.StringTokenizer;
 
 import org.jivesoftware.Spark;
+import org.jivesoftware.spark.util.log.Log;
 import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.util.JidUtil;
 
@@ -186,7 +187,7 @@ public class FileTransferSettings {
             props.store(new FileOutputStream(BACKING_STORE), BACKING_STORE.getAbsolutePath());
 
         } catch (IOException ioe) {
-            System.err.println(ioe);
+            Log.error(ioe);
         }
     }
 

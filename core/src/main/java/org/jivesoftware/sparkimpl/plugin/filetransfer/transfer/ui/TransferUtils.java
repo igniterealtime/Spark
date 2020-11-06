@@ -48,8 +48,7 @@ public class TransferUtils {
      */
     public static double calculateSpeedLong(long bytediff, long timediff) {
 	timediff = timediff == 0 ? 1 : timediff;
-	double kB = ((bytediff / timediff) * 1000.0) / 1024.0;
-	return kB;
+	return (double) bytediff / (double) timediff * 1000.0 / 1024.0;
     }
 
     /**
@@ -90,8 +89,8 @@ public class TransferUtils {
      */
     public static String convertSecondstoHHMMSS(int second) {
 
-	int hours = Math.round(second / 3600);
-	int minutes = Math.round((second / 60) % 60);
+	int hours = Math.round((float) second / 3600);
+	int minutes = Math.round((float) second / 60 % 60);
 	int seconds = Math.round(second % 60);
 	String hh = hours < 10 ? "0" + hours : "" + hours;
 	String mm = minutes < 10 ? "0" + minutes : "" + minutes;

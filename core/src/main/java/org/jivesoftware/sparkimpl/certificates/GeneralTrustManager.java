@@ -28,7 +28,7 @@ public abstract class GeneralTrustManager implements X509TrustManager {
     protected abstract void loadKeyStores();
     /**
      * Adds content of the keystore to allStore which should contain all certificates from accepted issuers.
-     * @param store 
+     * @param keyStore
      * @throws KeyStoreException
      * @throws HeadlessException
      * @throws InvalidNameException
@@ -39,7 +39,7 @@ public abstract class GeneralTrustManager implements X509TrustManager {
         Enumeration<String> aliases = keyStore.aliases();
         // Retrieve all of the certificates out of the KeyStore using aliases
         while (aliases.hasMoreElements()) {
-            String alias = (String) aliases.nextElement();
+            String alias = aliases.nextElement();
             X509Certificate certificate = (X509Certificate) keyStore.getCertificate(alias);
             allStore.setCertificateEntry(certControll.useCommonNameAsAlias(certificate), certificate);
         }
@@ -55,16 +55,16 @@ public abstract class GeneralTrustManager implements X509TrustManager {
     
     @Override
     public X509Certificate[] getAcceptedIssuers() {
-        X509Certificate[] X509Certs = null;
+        X509Certificate[] X509Certs;
         try {
             // See how many certificates are in the keystore.
             int numberOfEntry = allStore.size();
 
+            // Create an array of X509Certificates
+            X509Certs = new X509Certificate[numberOfEntry];
+
             // If there are any certificates in the keystore.
             if (numberOfEntry > 0) {
-                
-                // Create an array of X509Certificates
-                X509Certs = new X509Certificate[numberOfEntry];
                 
                 // Get all of the certificate alias out of the keystore.
                 Enumeration<String> aliases = allStore.aliases();
@@ -72,7 +72,7 @@ public abstract class GeneralTrustManager implements X509TrustManager {
                 // via the alias name.
                 int i = 0;
                 while (aliases.hasMoreElements()) {
-                    X509Certs[i] = (X509Certificate) allStore.getCertificate((String) aliases.nextElement());
+                    X509Certs[i] = (X509Certificate) allStore.getCertificate(aliases.nextElement());
                     i++;
                 }
             }

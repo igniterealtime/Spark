@@ -43,7 +43,6 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -90,15 +89,12 @@ public final class WorkgroupRosterTree extends JPanel {
     }
 
     private void changePresence(Jid user, Presence presence) {
-        final Iterator<JiveTreeNode> iter = addressMap.keySet().iterator();
-        while (iter.hasNext()) {
-            final JiveTreeNode node = (JiveTreeNode)iter.next();
+        for (JiveTreeNode node : addressMap.keySet()) {
             final BareJid nodeUser = addressMap.get(node);
             if (user.isParentOf(nodeUser)) {
                 if (!PresenceManager.isAvailable(presence)) {
                     node.setIcon(FastpathRes.getImageIcon(FastpathRes.RED_BALL));
-                }
-                else {
+                } else {
                     node.setIcon(FastpathRes.getImageIcon(FastpathRes.GREEN_BALL));
                 }
             }

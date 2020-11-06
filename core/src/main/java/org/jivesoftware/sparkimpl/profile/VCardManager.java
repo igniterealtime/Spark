@@ -507,8 +507,7 @@ public class VCardManager {
 	 * jid) if you want VCardManager to update the VCard by the given jid. The
 	 * method will block until the result is available or a timeout occurs.
 	 * 
-	 * @param jid
-	 *            the jid of the user.
+	 * @param jidString the JID of the user.
 	 * 
 	 * @return the new network vCard or a vCard with an error 
 	 */

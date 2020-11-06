@@ -74,15 +74,13 @@ class SsoLoginSettingsPanel extends JPanel implements ActionListener
         {
             switch ( method )
             {
-                case "file":
-                    methodFileRadio.setSelected( true );
-                    break;
                 case "dns":
                     methodDNSRadio.setSelected( true );
                     break;
                 case "manual":
                     methodManualRadio.setSelected( true );
                     break;
+                case "file":
                 default:
                     methodFileRadio.setSelected( true );
                     break;

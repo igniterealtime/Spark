@@ -38,11 +38,7 @@ final public class FormUtils {
      * @return true if String has been assigned a value, false otherwise.
      */
     final public static boolean isNotNull(String str) {
-        if (str != null && str.trim().length() > 0) {
-            return true;
-        }
-
-        return false;
+        return str != null && str.trim().length() > 0;
     }
 
     /**
@@ -156,8 +152,7 @@ final public class FormUtils {
      * @return the nickname of the user who sent the message.
      */
     public static Resourcepart getNickname(Message message) {
-        Resourcepart from = message.getFrom().getResourceOrThrow();
-        return from;
+        return message.getFrom().getResourceOrThrow();
     }
 
     /**
@@ -184,13 +179,13 @@ final public class FormUtils {
         seconds = seconds % MS_IN_A_SECOND;
         long numMilliseconds = seconds;
 
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         if (numHours > 0) {
-            buf.append(numHours + " " + HOURS + ", ");
+            buf.append(numHours).append(" ").append(HOURS).append(", ");
         }
 
         if (numMinutes > 0) {
-            buf.append(numMinutes + " " + MINUTES);
+            buf.append(numMinutes).append(" ").append(MINUTES);
         }
 
         String result = buf.toString();

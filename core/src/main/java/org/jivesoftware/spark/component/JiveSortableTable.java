@@ -243,7 +243,7 @@ public abstract class JiveSortableTable extends Table {
     /**
      * A swing renderer used to display labels within a table.
      */
-    public class JLabelRenderer extends JLabel implements TableCellRenderer {
+    public static class JLabelRenderer extends JLabel implements TableCellRenderer {
 	private static final long serialVersionUID = 8670248883432881619L;
 	Border unselectedBorder;
         Border selectedBorder;
@@ -303,7 +303,7 @@ public abstract class JiveSortableTable extends Table {
     /**
      * A swing renderer to dispaly Textareas within a table.
      */
-    public class TextAreaCellRenderer extends JTextArea implements TableCellRenderer {
+    public static class TextAreaCellRenderer extends JTextArea implements TableCellRenderer {
 	private static final long serialVersionUID = -1704445909682732833L;
 
 	/**
@@ -334,7 +334,7 @@ public abstract class JiveSortableTable extends Table {
     /**
      * A swing renderer used to display Buttons within a table.
      */
-    public class JButtonRenderer extends JButton implements TableCellRenderer {
+    public static class JButtonRenderer extends JButton implements TableCellRenderer {
  	private static final long serialVersionUID = -1847536957519732935L;
 	Border unselectedBorder;
         Border selectedBorder;
@@ -387,7 +387,7 @@ public abstract class JiveSortableTable extends Table {
         }
     }
 
-    public class ComboBoxRenderer extends JComboBox implements TableCellRenderer {
+    public static class ComboBoxRenderer extends JComboBox implements TableCellRenderer {
 	private static final long serialVersionUID = 5892858463680797611L;
 
 	public ComboBoxRenderer() {
@@ -416,7 +416,7 @@ public abstract class JiveSortableTable extends Table {
         }
     }
 
-    public class MyComboBoxEditor extends DefaultCellEditor {
+    public static class MyComboBoxEditor extends DefaultCellEditor {
 	private static final long serialVersionUID = 1003726653998005772L;
 
 	public MyComboBoxEditor(String[] items) {

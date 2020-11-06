@@ -50,12 +50,10 @@ public class GameMove implements ExtensionElement {
 
     @Override
     public String toXML(String enclosingNamespace) {
-        StringBuffer buf = new StringBuffer();
-        buf.append("<" + ELEMENT_NAME + " xmlns=\"" + NAMESPACE + "\">");
-        buf.append("<gameID>").append(gameID).append("</gameID>");
-        buf.append("<position>").append(position).append("</position>");
-        buf.append("</" + ELEMENT_NAME + ">");
-        return buf.toString();
+        return "<" + ELEMENT_NAME + " xmlns=\"" + NAMESPACE + "\">"
+            + "<gameID>" + gameID + "</gameID>"
+            + "<position>" + position + "</position>"
+            + "</" + ELEMENT_NAME + ">";
     }
 
     /**

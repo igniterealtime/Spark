@@ -115,7 +115,7 @@ public class CertificateController extends CertManager {
                 store = caStore.aliases();
 
                 while (store.hasMoreElements()) {
-                    String alias = (String) store.nextElement();
+                    String alias = store.nextElement();
                     X509Certificate certificate = (X509Certificate) caStore.getCertificate(alias);
                     // if getCertificateAlias return null then entry doesn't exist in distrustedCaStore (Java's default).
                     if (distrustedCaStore.getCertificateAlias(certificate) == null) {
@@ -149,22 +149,20 @@ public class CertificateController extends CertManager {
 			// displayed as checkbox
 			@Override
 			public Class<?> getColumnClass(int column) {
-				switch (column) {
+                switch (column) {
 
-				case 0:
-					return String.class;
-				case 1:
-					return String.class;
-				case 2:
-					return Boolean.class;
-				default:
-					throw new RuntimeException("Cannot assign classes for columns");
-
-				}
+                    case 0:
+                    case 1:
+                        return String.class;
+                    case 2:
+                        return Boolean.class;
+                    default:
+                        throw new RuntimeException("Cannot assign classes for columns");
+                }
 			}
 			@Override
 			public boolean isCellEditable(int row, int column) {
-			    return column !=2 ? false:true;
+			    return column == 2;
 			}
 		};
 
@@ -292,10 +290,8 @@ public class CertificateController extends CertManager {
         try {
             if (trustStore.getCertificateAlias(cert.getCertificate()) != null) {
                 return true;
-            } else if (displayCaStore.getCertificateAlias(cert.getCertificate()) != null) {
-                return true;
             } else {
-                return false;
+                return displayCaStore.getCertificateAlias(cert.getCertificate()) != null;
             }
         } catch (KeyStoreException e) {
             return false;
@@ -305,18 +301,15 @@ public class CertificateController extends CertManager {
     /**
      * Return information if certificate is on exception list.
      * 
-     * @param Certificate
-     *            Model entry
+     * @param cert the model entry
      */
     @Override
     public boolean isOnExceptionList(CertificateModel cert) {
         try {
             if (exceptionsStore.getCertificateAlias(cert.getCertificate()) != null) {
                 return true;
-            } else if (exceptionsCaStore.getCertificateAlias(cert.getCertificate()) != null) {
-                return true;
             } else {
-                return false;
+                return exceptionsCaStore.getCertificateAlias(cert.getCertificate()) != null;
             }
         } catch (KeyStoreException e) {
             return false;
@@ -326,7 +319,7 @@ public class CertificateController extends CertManager {
     /**
      * Return information if certificate is on blacklist (revoked).
      * 
-     * @param Certificate Model entry
+     * @param cert Model entry
      */
     public boolean isOnBlackList(CertificateModel cert) {
         return blackListedCertificates.contains(cert);
@@ -584,7 +577,7 @@ public class CertificateController extends CertManager {
 	private void addEntryToKeyStoreImpl(X509Certificate addedCert, CertificateDialogReason reason) throws HeadlessException, InvalidNameException, KeyStoreException{
         CertificateModel certModel = new CertificateModel(addedCert);
         CertificateDialog certDialog = null;
-        if (checkForSameCertificate(addedCert) == false) {
+        if (!checkForSameCertificate(addedCert)) {
             certDialog = showCertificate(certModel, reason);
         }
         if (certDialog != null && certDialog.isAddCert()) {

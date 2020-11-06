@@ -19,30 +19,28 @@ import javax.swing.ImageIcon;
 
 /**
  * The Variations of Marks
- * 
+ *
  * @author wolf.posdorfer
  * @version 16.06.2011
  */
 public enum Mark {
-    BLANK (0, "empty.png", "empty.png"),
-    X	  (1, "x.png", "x.blue.png"),
-    O	  (2, "o.png", "o.blue.png");
+    BLANK(0, "empty.png", "empty.png"),
+    X(1, "x.png", "x.blue.png"),
+    O(2, "o.png", "o.blue.png");
 
     private int value;
     private String icon;
     private String redicon;
 
     public static Mark valueOf(int x) {
-	switch (x) {
-	case 0:
-	    return BLANK;
-	case 1:
-	    return X;
-	case 2:
-	    return O;
-	default:
-	    return BLANK;
-	}
+        switch (x) {
+            case 1:
+                return X;
+            case 2:
+                return O;
+            default:
+                return BLANK;
+        }
     }
 
     public ImageIcon getImage() {
@@ -50,7 +48,7 @@ public enum Mark {
 	return new ImageIcon(cl.getResource(icon));
 
     }
-    
+
     public ImageIcon getRedImage()
     {
 	ClassLoader cl = getClass().getClassLoader();

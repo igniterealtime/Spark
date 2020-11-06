@@ -93,14 +93,10 @@ public final class MainWindow extends ChatFrame implements ActionListener {
      * @return the singleton instance of <Code>MainWindow</CODE>
      */
     public static MainWindow getInstance() {
-        // Synchronize on LOCK to ensure that we don't end up creating
-        // two singletons.
-
-
+        // Synchronize on LOCK to ensure that we don't end up creating two singletons.
         synchronized (LOCK) {
             if (null == singleton) {
-            	MainWindow controller = new MainWindow(Default.getString(Default.APPLICATION_NAME), SparkManager.getApplicationImage());
-            	singleton = controller;
+                singleton = new MainWindow(Default.getString(Default.APPLICATION_NAME), SparkManager.getApplicationImage());
             }
         }
         return singleton;
@@ -237,11 +233,11 @@ public final class MainWindow extends ChatFrame implements ActionListener {
      * setting the Agent to be offline.
      */
     public void shutdown() {
-        final XMPPConnection con = SparkManager.getConnection();
+        final AbstractXMPPConnection con = SparkManager.getConnection();
 
         if (con.isConnected()) {
             // Send disconnect.
-            ((AbstractXMPPConnection)con).disconnect();
+            con.disconnect();
         }
 
         // Notify all MainWindowListeners
@@ -295,22 +291,22 @@ public final class MainWindow extends ChatFrame implements ActionListener {
      * @param reason the reason for logging out. This can be if user gave no reason.
      */
     public void closeConnectionAndInvoke(String reason) {
-        final XMPPConnection con = SparkManager.getConnection();
+        final AbstractXMPPConnection con = SparkManager.getConnection();
         if (con.isConnected()) {
             if (reason != null) {
                 Presence byePresence = new Presence(Presence.Type.unavailable, reason, -1, null);
                 try
                 {
-                    ((AbstractXMPPConnection)con).disconnect(byePresence);
+                    con.disconnect(byePresence);
                 }
                 catch ( SmackException.NotConnectedException e )
                 {
                     Log.error( "Unable to sign out with presence.", e);
-                    ((AbstractXMPPConnection)con).disconnect();
+                    con.disconnect();
                 }
             }
             else {
-                ((AbstractXMPPConnection)con).disconnect();
+                con.disconnect();
             }
         }
         if (!restartApplicationWithScript()) {
@@ -330,18 +326,25 @@ public final class MainWindow extends ChatFrame implements ActionListener {
             Log.error("The startup class is not packaged in a jar file");
             return null;
         }
-        File libDir = jarFile.getParentFile();
-        return libDir;
+        return jarFile.getParentFile();
     }
     
     private String getClasspath() throws IOException {
         File libDir = getLibDirectory();
-        String libPath = libDir.getCanonicalPath();
-        String[] files = libDir.list();
+        String libPath = null;
+        String[] files = new String[0];
+
+        if (libDir != null) {
+            libPath = libDir.getCanonicalPath();
+            files = libDir.list();
+        }
+
         StringBuilder classpath = new StringBuilder();
-        for (String file : files) {
-            if (file.endsWith(".jar")) {
-                classpath.append(libPath + File.separatorChar + file + File.pathSeparatorChar);
+        if (files != null) {
+            for (String file : files) {
+                if (file.endsWith(".jar")) {
+                    classpath.append(libPath).append(File.separatorChar).append(file).append(File.pathSeparatorChar);
+                }
             }
         }
         return classpath.toString();
@@ -712,61 +715,46 @@ public final class MainWindow extends ChatFrame implements ActionListener {
 
         // Construct About Box text
         StringBuilder aboutBoxText = new StringBuilder();
-        aboutBoxText.append(
-            Default.getString(Default.APPLICATION_NAME) + " " + JiveInfo.getVersion());
+        aboutBoxText.append(Default.getString(Default.APPLICATION_NAME)).append(" ").append(JiveInfo.getVersion());
 
         // Add APPLICATION_INFO1 if not empty
         if (!("".equals(APPLICATION_INFO1))) {
-            aboutBoxText.append(
-                "<br/>"
-                + APPLICATION_INFO1);
+            aboutBoxText.append("<br/>").append(APPLICATION_INFO1);
         }
 
         // Add APPLICATION_INFO2 if not empty
         if (!( "".equals(APPLICATION_INFO2))) {
-            aboutBoxText.append(
-                "<br/>"
-                + APPLICATION_INFO2);
+            aboutBoxText.append("<br/>").append(APPLICATION_INFO2);
         }
 
         // Add APPLICATION_INFO3 if not empty
         if (!("".equals(APPLICATION_INFO3))) {
-            aboutBoxText.append(
-                "<br/>"
-                + APPLICATION_INFO3);
+            aboutBoxText.append("<br/>").append(APPLICATION_INFO3);
         }
 
         // Add APPLICATION_LICENSE_LINK if not empty
         if (!( "".equals(APPLICATION_LICENSE_LINK))) {
-            aboutBoxText.append(
-                "<br/>"
-                + "<a href=\"" + APPLICATION_LICENSE_LINK + "\">" + APPLICATION_LICENSE_LINK_TXT + "</a>");
+            aboutBoxText.append("<br/><a href=\"").append(APPLICATION_LICENSE_LINK).append("\">")
+                .append(APPLICATION_LICENSE_LINK_TXT).append("</a>");
         }
 
         // Add APPLICATION_LINK if not empty
         if (!( "".equals(APPLICATION_LINK))) {
-            aboutBoxText.append(
-                "<br/>"
-                + "<a href=\"" + APPLICATION_LINK + "\">" + APPLICATION_LINK_TXT + "</a>");
+            aboutBoxText.append("<br/><a href=\"").append(APPLICATION_LINK).append("\">")
+                .append(APPLICATION_LINK_TXT).append("</a>");
         }
 
         // Add APPLICATION_INFO4 if not empty
         if (!( "".equals(APPLICATION_INFO4))) {
-            aboutBoxText.append(
-                "<br/>"
-                + APPLICATION_INFO4);
+            aboutBoxText.append("<br/>").append(APPLICATION_INFO4);
         }
 
-        aboutBoxText.append(
-                "<br/>"
-                + "Smack Version: " + SmackConfiguration.getVersion());
+        aboutBoxText.append("<br/>Smack Version: ").append(SmackConfiguration.getVersion());
 
         if (DISPLAY_DEV_INFO) {
             // Add Java JRE Version if is empty
             if ("".equals(JAVA_VERSION)) {
-                aboutBoxText.append(
-                    "<br/>"
-                    + "JRE Version: " + System.getProperty("java.version"));
+                aboutBoxText.append("<br/>JRE Version: ").append(System.getProperty("java.version"));
             }
         }
 

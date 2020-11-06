@@ -80,8 +80,7 @@ public class CheckRenderer extends JPanel implements TreeCellRenderer {
 	public Dimension getPreferredSize() {
         Dimension d_check = new Dimension(30, 30);
         Dimension d_label = label.getPreferredSize();
-        return new Dimension(d_check.width + d_label.width,
-            d_check.height < d_label.height ? d_label.height : d_check.height);
+        return new Dimension(d_check.width + d_label.width, Math.max(d_check.height, d_label.height));
     }
 
     @Override
@@ -114,7 +113,7 @@ public class CheckRenderer extends JPanel implements TreeCellRenderer {
     /**
      * Represents one UI node for the checkbox node.
      */
-    public class TreeLabel extends JLabel {
+    public static class TreeLabel extends JLabel {
 	private static final long serialVersionUID = -6367572474576692556L;
 	boolean isSelected;
         boolean hasFocus;

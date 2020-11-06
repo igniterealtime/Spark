@@ -40,17 +40,16 @@ public class ColorSettings {
 
     public Color getColorFromProperty(String propertyname) {
 
-	String s = _hashmap.get(propertyname).replaceAll(" ","");
-	s = s.replaceAll("[a-zA-Z]","");
+        String s = _hashmap.get(propertyname).replaceAll(" ", "");
+        s = s.replaceAll("[a-zA-Z]", "");
 
-	String[] items = s.split(",");
+        String[] items = s.split(",");
 
-	Color c = new Color(Integer.parseInt(items[0]),
-		Integer.parseInt(items[1]), Integer.parseInt(items[2]),
-		Integer.parseInt(items[3]));
-
-	return c;
-
+        return new Color(
+            Integer.parseInt(items[0]),
+            Integer.parseInt(items[1]),
+            Integer.parseInt(items[2]),
+            Integer.parseInt(items[3]));
     }
     
     /**

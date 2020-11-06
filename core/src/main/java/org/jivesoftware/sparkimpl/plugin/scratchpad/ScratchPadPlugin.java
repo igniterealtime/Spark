@@ -371,11 +371,7 @@ public class ScratchPadPlugin implements Plugin {
             final TaskUI taskUI = new TaskUI(task);
             
             if ( !SHOW_ALL_TASKS ) {
-            	if ( taskUI.isSelected() ) {
-            		taskUI.setVisible(false);
-            	}else {
-            		taskUI.setVisible(true);
-            	}
+                taskUI.setVisible(!taskUI.isSelected());
             }
             
             panel_events.add(taskUI);

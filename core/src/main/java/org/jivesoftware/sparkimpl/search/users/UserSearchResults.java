@@ -82,7 +82,7 @@ public class UserSearchResults extends JPanel {
         }
 
         if (resultsTable == null) {
-            resultsTable = new UsersInfoTable(columnList.toArray(new String[columnList.size()]));
+            resultsTable = new UsersInfoTable(columnList.toArray(new String[0]));
 
             final JScrollPane scrollPane = new JScrollPane(resultsTable);
             scrollPane.getViewport().setBackground(Color.white);
@@ -219,7 +219,7 @@ public class UserSearchResults extends JPanel {
         menu.show(resultsTable, e.getX(), e.getY());
     }
 
-    private final class UsersInfoTable extends Table {
+    private static final class UsersInfoTable extends Table {
 	private static final long serialVersionUID = -7097826349368800291L;
 
 	UsersInfoTable(String[] headers) {

@@ -469,7 +469,7 @@ public class PrivacyManager {
     	
     	try {
     		String pl = privacyManager.getActiveListName();
-    		return pl != null && INVISIBLE_LIST_NAME.equalsIgnoreCase(pl.toString());
+    		return INVISIBLE_LIST_NAME.equalsIgnoreCase(pl);
     	} catch (Exception e){
            // it can return item-not-found if there is no active list.
            // so it is fine to fall here.
@@ -497,7 +497,7 @@ public class PrivacyManager {
             PrivacyItem item = new PrivacyItem(false, 1);
             item.setFilterPresenceOut(true);
 
-            List<PrivacyItem> items = Arrays.asList(item);
+            List<PrivacyItem> items = Collections.singletonList(item);
             privacyManager.createPrivacyList(INVISIBLE_LIST_NAME, items);
             list = privacyManager.getPrivacyList(INVISIBLE_LIST_NAME);
             Log.debug("List \"" + INVISIBLE_LIST_NAME + "\" has been created ");

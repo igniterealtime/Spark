@@ -96,13 +96,12 @@ public abstract class DroppableFrame extends JFrame implements DropTargetListene
                 dropTargetDropEvent.acceptDrop(DnDConstants.ACTION_COPY_OR_MOVE);
                 List<File> fileList = (List<File>) transferable.getTransferData(DataFlavor.javaFileListFlavor);
                 for (File aFileList : fileList) {
-                    File file = aFileList;
-                    if (file.isFile()) {
-                        fileDropped(file);
+                    if (aFileList.isFile()) {
+                        fileDropped(aFileList);
                     }
 
-                    if (file.isDirectory()) {
-                        directoryDropped(file);
+                    if (aFileList.isDirectory()) {
+                        directoryDropped(aFileList);
                     }
                 }
                 dropTargetDropEvent.getDropTargetContext().dropComplete(true);

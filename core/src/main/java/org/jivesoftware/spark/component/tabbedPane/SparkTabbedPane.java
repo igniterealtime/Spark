@@ -589,13 +589,13 @@ Log.error(idoe);
 		boolean isTB = pane.getTabPlacement()==JTabbedPane.TOP || pane.getTabPlacement()==JTabbedPane.BOTTOM;
 		for(int i=0;i < getTabCount();i++) {
 			Rectangle r = pane.getBoundsAt(i);
-			if(isTB) r.setRect(r.x-r.width/2, r.y,  r.width, r.height);
-			else   r.setRect(r.x, r.y-r.height/2, r.width, r.height);
+			if(isTB) r.setRect(r.x- (r.width >> 1), r.y,  r.width, r.height);
+			else   r.setRect(r.x, r.y- (r.height >> 1), r.width, r.height);
 				if(r.contains(tabPt)) return i;
 		}
 		Rectangle r = pane.getBoundsAt(getTabCount()-1);
-		if(isTB) r.setRect(r.x+r.width/2, r.y,  r.width, r.height);
-		else   r.setRect(r.x, r.y+r.height/2, r.width, r.height);
+		if(isTB) r.setRect(r.x+ (r.width >> 1), r.y,  r.width, r.height);
+		else   r.setRect(r.x, r.y+ (r.height >> 1), r.width, r.height);
 		return   r.contains(tabPt)?getTabCount():-1;
 	}
 

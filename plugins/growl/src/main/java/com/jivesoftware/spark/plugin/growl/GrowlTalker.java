@@ -21,7 +21,6 @@ import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.util.log.Log;
 import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.impl.JidCreate;
-import org.jxmpp.util.XmppStringUtils;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 

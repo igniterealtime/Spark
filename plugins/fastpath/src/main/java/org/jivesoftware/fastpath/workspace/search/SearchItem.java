@@ -69,10 +69,8 @@ public class SearchItem extends JPanel {
     }
 
     public String getToolTipText(){
-        StringBuffer buf = new StringBuffer();
-        buf.append("<html><body>");
-        buf.append("<table width=200><tr><td>"+FpRes.getString("question") + ": "+questionLabel.getText()+"</td></tr></table></body></html>");
-        return buf.toString();
+        return "<html><body>" + "<table width=200><tr><td>" + FpRes.getString("question")
+            + ": " + questionLabel.getText() + "</td></tr></table></body></html>";
     }
 
     public void setSessionID(String sessionID) {

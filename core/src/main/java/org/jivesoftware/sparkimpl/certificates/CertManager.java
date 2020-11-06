@@ -97,10 +97,9 @@ public abstract class CertManager {
     /**
      * Check if this certificate already exist in Truststore.
      * 
-     * @param alias Alias of the certificate for which it method look in the model list
+     * @param addedCert the certificate for which it method look in the model list
      * @return true if KeyStore already have this certificate.
-     * @throws KeyStoreException 
-     */ 
+     */
     protected boolean checkForSameCertificate(X509Certificate addedCert) throws KeyStoreException{
         // check if this certificate isn't already added to Truststore
         for(CertificateModel model :allCertificates){
@@ -140,13 +139,10 @@ public abstract class CertManager {
     }
 
     /**
-     * This method transfer certificate with given alias to certificate blackList
+     * This method adds certificate to blackList
      * 
-     * @param alias
+     * @param cert the certificate to be added to blacklist
      * @throws KeyStoreException
-     * @throws NoSuchAlgorithmException
-     * @throws CertificateException
-     * @throws IOException
      * @throws InvalidNameException
      * @throws HeadlessException
      */
@@ -203,7 +199,8 @@ public abstract class CertManager {
     /**
      * Open dialog with certificate.
      * 
-     * @param CertificateModel Model of the certificate which details are meant to be shown.
+     * @param certModel Model of the certificate which details are meant to be shown.
+     * @param reason The reason for Certificate dialog to be shown.
      */
     public CertificateDialog showCertificate(CertificateModel certModel, CertificateDialogReason reason) {
 
@@ -233,9 +230,8 @@ public abstract class CertManager {
     /**
      * Add certificates from keyStore to list. Useful for displaying in certificate table.
      * 
-     * @param KeyStore source keystore.
-     * @param List list which will be filled with certificate models. 
-     * @throws KeyStoreException 
+     * @param keyStore source keystore.
+     * @param list list which will be filled with certificate models.
      */
 
     protected List<CertificateModel> fillTableListWithKeyStoreContent(KeyStore keyStore, List<CertificateModel> list) {
@@ -245,7 +241,7 @@ public abstract class CertManager {
                 store = keyStore.aliases();
 
                 while (store.hasMoreElements()) {
-                    String alias = (String) store.nextElement();
+                    String alias = store.nextElement();
                     X509Certificate certificate = (X509Certificate) keyStore.getCertificate(alias);
                     CertificateModel certModel = new CertificateModel(certificate, alias);
                     certModel.setRevoked(blackListStore.getCertificateAlias(certificate) != null);
