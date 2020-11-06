@@ -336,7 +336,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
                         Log.error("Unable to retrieve room list and info.", e);
                     }
                 } catch ( Exception e1 ) {
-                    System.err.println(e1);
+                    Log.error(e1);
                 }
             }
         };
@@ -375,7 +375,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
                 Log.error("Error setting up GroupChatTable", e);
             }
         } catch (Exception e) {
-            System.err.println(e);
+            Log.error(e);
         }
         return result;
     }
@@ -490,11 +490,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
                 }
                 addRoomButton.setEnabled(true);
                 addRoomItem.setEnabled(true);
-                if (isBookmarked(roomJID)) {
-                addBookmarkUI(false);
-                } else {
-                addBookmarkUI(true);
-                }
+                addBookmarkUI(!isBookmarked(roomJID));
             } else {
                 joinRoomButton.setEnabled(false);
                 addRoomButton.setEnabled(false);
@@ -937,9 +933,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
                     occupants = "n/a";
                 }
 
-                final Object[] insertRoom = new Object[] { iconLabel, roomName.toString(),
-                    jid.getLocalpart().toString(), occupants };
-                return insertRoom;
+                return new Object[] { iconLabel, roomName.toString(), jid.getLocalpart().toString(), occupants };
             }
             
             @Override
@@ -978,16 +972,13 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
      * @return
      */
     private boolean isPasswordProtected(EntityBareJid roomjid) {
-	boolean result = false;
-	try {
-
-	    RoomInfo rif = MultiUserChatManager.getInstanceFor( SparkManager.getConnection() ).getRoomInfo( roomjid );
-
-	    result = rif.isMembersOnly() || rif.isPasswordProtected();
-
-	} catch (XMPPException | SmackException | NumberFormatException | InterruptedException e) {
-
-	}
+        boolean result = false;
+        try {
+            RoomInfo rif = MultiUserChatManager.getInstanceFor(SparkManager.getConnection()).getRoomInfo(roomjid);
+            result = rif.isMembersOnly() || rif.isPasswordProtected();
+        } catch (XMPPException | SmackException | NumberFormatException | InterruptedException e) {
+            Log.error(e);
+        }
 
         return result;
     }
@@ -1031,7 +1022,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
 	}
     }
 
-    private class RoomObject {
+    private static class RoomObject {
 	private String roomName;
 	private EntityBareJid roomJID;
 

@@ -129,7 +129,7 @@ public final class TitlePanel extends JPanel {
         descriptionLabel.setText(desc);
     }
 
-    public class ImagePanel extends JPanel {
+    public static class ImagePanel extends JPanel {
  	private static final long serialVersionUID = 5155908601530113727L;
 	final ImageIcon icons = Default.getImageIcon(Default.SECONDARY_BACKGROUND_IMAGE);
 

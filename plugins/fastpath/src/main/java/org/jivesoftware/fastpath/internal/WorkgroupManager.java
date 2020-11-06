@@ -149,7 +149,7 @@ public class WorkgroupManager {
     public ChatSetting getChatSetting(String key, EntityBareJid workgroupName) {
         ChatSettings settings = null;
         if (chatSettings.containsKey(workgroupName)) {
-            settings = (ChatSettings)chatSettings.get(workgroupName);
+            settings = chatSettings.get(workgroupName);
         }
         else {
             XMPPConnection connection = SparkManager.getConnection();

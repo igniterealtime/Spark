@@ -265,9 +265,7 @@ public class UserManager {
     public boolean hasVoice(GroupChatRoom groupChatRoom, Resourcepart nickname) {
         Occupant occupant = getOccupant(groupChatRoom, nickname);
         if (occupant != null) {
-            if ( MUCRole.visitor == occupant.getRole()) {
-                return false;
-            }
+            return MUCRole.visitor != occupant.getRole();
         }
         return true;
     }
@@ -295,9 +293,7 @@ public class UserManager {
     }
 
     public Resourcepart getUserNicknameAsResourcepartFromJID(BareJid jid) {
-        String nicknameString = getUserNicknameFromJID(jid);
-        Resourcepart resourcepart = Resourcepart.fromOrThrowUnchecked(nicknameString);
-        return resourcepart;
+        return Resourcepart.fromOrThrowUnchecked(getUserNicknameFromJID(jid));
     }
 
     /**
@@ -372,8 +368,8 @@ public class UserManager {
     /**
      * Returns the full jid (with resource) based on the user's jid.
      *
-     * @param jid the users bare jid.
-     * @return the full jid with resource.
+     * @param bareJid the users bare JID.
+     * @return the full JID with resource.
      */
     public EntityFullJid getFullJID(BareJid bareJid) {
         Presence presence = PresenceManager.getPresence(bareJid);

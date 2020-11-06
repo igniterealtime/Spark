@@ -42,9 +42,7 @@ public class ColorSettingManager {
      * @return ColorSettingagent
      */
     public static ColorSettings getColorSettings() {
-	File settings = getSettingsFile();
-		ColorSettings _colorsettings = loadSettings( settings );
-	return _colorsettings;
+        return loadSettings(getSettingsFile());
     }
 
     public static boolean exists() {
@@ -96,31 +94,22 @@ public class ColorSettingManager {
      * @return
      */
     private static ColorSettings loadSettings(File file) {
-	// load from file
-	loadSettingsToMap(file);
+        // load from file
+        loadSettingsToMap(file);
 
-	if (_propertyHashMap.size() == 0) {
-
-	    Properties p = new Properties();
-	    try {
-		p.load(new FileInputStream(getSettingsFile()));
-		initialLoad(p);
-		loadSettingsToMap(file);
-
-	    } catch (FileNotFoundException e) {
-		Log.error("Error saving settings.", e);
-	    } catch (IOException e) {
-		Log.error("Error saving settings.", e);
-	    }
-
-	} else if (_propertyHashMap.size() != getDefaultColors().size()) {
-	    compareSettings(_propertyHashMap, getDefaultColors());
-	}
-
-	ColorSettings settings = new ColorSettings(_propertyHashMap);
-
-	return settings;
-
+        if (_propertyHashMap.size() == 0) {
+            Properties p = new Properties();
+            try {
+                p.load(new FileInputStream(getSettingsFile()));
+                initialLoad(p);
+                loadSettingsToMap(file);
+            } catch (IOException e) {
+                Log.error("Error saving settings.", e);
+            }
+        } else if (_propertyHashMap.size() != getDefaultColors().size()) {
+            compareSettings(_propertyHashMap, getDefaultColors());
+        }
+        return new ColorSettings(_propertyHashMap);
     }
 
     /**

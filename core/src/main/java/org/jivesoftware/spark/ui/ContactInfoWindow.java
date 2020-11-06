@@ -49,7 +49,6 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.Transport;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.TransportUtils;
 import org.jxmpp.jid.Jid;
-import org.jxmpp.util.XmppStringUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

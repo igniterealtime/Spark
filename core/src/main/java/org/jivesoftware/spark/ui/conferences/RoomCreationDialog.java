@@ -245,11 +245,7 @@ public class RoomCreationDialog extends JPanel {
 
     public boolean isPasswordProtected() {
         String password = new String(passwordField.getPassword());
-        if (password.length() > 0) {
-            return true;
-        }
-
-        return false;
+        return password.length() > 0;
     }
 
     public String getPassword() {

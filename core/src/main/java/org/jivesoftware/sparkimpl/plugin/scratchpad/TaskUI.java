@@ -144,12 +144,7 @@ public class TaskUI extends JPanel implements ActionListener {
 
     @Override
 	public void actionPerformed(ActionEvent e) {
-        if (isSelected()) {
-            task.setCompleted(true);
-        }
-        else {
-            task.setCompleted(false);
-        }
+        task.setCompleted(isSelected());
 
         updateTitleFont();
 

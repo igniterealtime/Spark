@@ -12,7 +12,7 @@ public class MacIdleTime implements IdleTime {
 
     public interface ApplicationServices extends Library {
 
-        ApplicationServices INSTANCE = (ApplicationServices) Native.loadLibrary("ApplicationServices", ApplicationServices.class);
+        ApplicationServices INSTANCE = Native.loadLibrary("ApplicationServices", ApplicationServices.class);
 
         int kCGAnyInputEventType = ~0;
         int kCGEventSourceStatePrivate = -1;
@@ -20,7 +20,7 @@ public class MacIdleTime implements IdleTime {
         int kCGEventSourceStateHIDSystemState = 1;
 
         /**
-         * @see http://developer.apple.com/mac/library/documentation/Carbon/Reference/QuartzEventServicesRef/Reference/reference.html#//apple_ref/c/func/CGEventSourceSecondsSinceLastEventType
+         * @see "http://developer.apple.com/mac/library/documentation/Carbon/Reference/QuartzEventServicesRef/Reference/reference.html#//apple_ref/c/func/CGEventSourceSecondsSinceLastEventType"
          * @param sourceStateId
          * @param eventType
          * @return the elapsed seconds since the last input event

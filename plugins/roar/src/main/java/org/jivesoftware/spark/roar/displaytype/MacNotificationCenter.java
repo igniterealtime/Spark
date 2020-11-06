@@ -23,8 +23,7 @@ public class MacNotificationCenter {
         final File dylib = new File(Spark.getPluginDirectory().getAbsolutePath()
                 + File.separator + "roar" + File.separator + "native" + File.separator + "NSUserNotificationsBridge.dylib" );
 
-        NSUserNotificationsBridge instance = (NSUserNotificationsBridge) Native.loadLibrary(dylib.getAbsolutePath(),
-                NSUserNotificationsBridge.class);
+        NSUserNotificationsBridge instance = Native.loadLibrary(dylib.getAbsolutePath(), NSUserNotificationsBridge.class);
 
         public int sendNotification(String title, String subtitle, String text, int timeoffset, String sound);
     }

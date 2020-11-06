@@ -186,7 +186,7 @@ public final class AgentConversations extends JPanel implements ChangeListener {
                         @Override
                         public void presenceChanged(Presence presence) {
                             EntityBareJid agentJID = presence.getFrom().asEntityBareJidOrThrow();
-                            AgentStatus agentStatus = (AgentStatus)presence.getExtension("agent-status", "http://jabber.org/protocol/workgroup");
+                            AgentStatus agentStatus = presence.getExtension("agent-status", "http://jabber.org/protocol/workgroup");
 
                             String status = presence.getStatus();
                             if (status == null) {
@@ -240,7 +240,7 @@ public final class AgentConversations extends JPanel implements ChangeListener {
         for (EntityBareJid agent : agentRoster.getAgents()) {
             Presence presence = agentRoster.getPresence(agent);
             if (presence.isAvailable()) {
-                AgentStatus agentStatus = (AgentStatus)presence.getExtension("agent-status", "http://jabber.org/protocol/workgroup");
+                AgentStatus agentStatus = presence.getExtension("agent-status", "http://jabber.org/protocol/workgroup");
                 if (agentStatus != null) {
                     counter += agentStatus.getCurrentChats().size();
                 }
@@ -252,9 +252,8 @@ public final class AgentConversations extends JPanel implements ChangeListener {
 
     private boolean newListHasSession(String sessionID, List chatList) {
         // Add new ones.
-        Iterator iter = chatList.iterator();
-        while (iter.hasNext()) {
-            AgentStatus.ChatInfo chatInfo = (AgentStatus.ChatInfo)iter.next();
+        for (Object o : chatList) {
+            AgentStatus.ChatInfo chatInfo = (AgentStatus.ChatInfo) o;
             String session = chatInfo.getSessionID();
             if (session.equalsIgnoreCase(sessionID)) {
                 return true;
@@ -386,7 +385,6 @@ public final class AgentConversations extends JPanel implements ChangeListener {
             }
             catch (XMPPException | SmackException | InterruptedException e1) {
                 Log.error(e1);
-                return;
             }
         }
     }

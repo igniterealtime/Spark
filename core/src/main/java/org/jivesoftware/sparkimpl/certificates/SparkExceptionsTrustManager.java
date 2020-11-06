@@ -6,23 +6,15 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
-import java.security.cert.CertPath;
-import java.security.cert.CertPathBuilder;
-import java.security.cert.CertPathBuilderException;
-import java.security.cert.CertPathBuilderResult;
-import java.security.cert.CertPathValidator;
-import java.security.cert.CertPathValidatorException;
-import java.security.cert.CertificateException;
-import java.security.cert.PKIXBuilderParameters;
-import java.security.cert.PKIXCertPathValidatorResult;
-import java.security.cert.X509CertSelector;
-import java.security.cert.X509Certificate;
+import java.security.cert.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.naming.InvalidNameException;
 import javax.net.ssl.X509TrustManager;
 
 import org.jivesoftware.spark.util.log.Log;
-
 
 /**
  * This TrustManager serves for purpose of accepting certificates from exceptions lists. The only check it does is check
@@ -40,18 +32,19 @@ public class SparkExceptionsTrustManager extends GeneralTrustManager implements 
 
     @Override
     public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+        throw new UnsupportedOperationException("This implementation cannot be used to validate client-provided certificate chains.");
     }
 
     @Override
     public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
         // if end entity certificate is on the exception list then pass checks
         try {
-            if (!isFirstCertExempted(chain)) {
+            if (!isFirstCertExempted(chain) && !SparkTrustManager.isSelfSigned(chain)) {
                 // else exempted certificate can be higher in chain, in this case certificate list have to be build
                 validatePath(chain);
             }
         } catch (NoSuchAlgorithmException | KeyStoreException | InvalidAlgorithmParameterException
-                | CertPathValidatorException | CertPathBuilderException e) {
+                | CertPathValidatorException e) {
             Log.warning("Cannot build certificate chain", e);
             throw new CertificateException("Cannot build certificate chain");
         }
@@ -66,35 +59,61 @@ public class SparkExceptionsTrustManager extends GeneralTrustManager implements 
      * @throws KeyStoreException
      * @throws InvalidAlgorithmParameterException
      * @throws CertPathValidatorException
-     * @throws CertPathBuilderException
      * @throws CertificateException
      */
     private void validatePath(X509Certificate[] chain)
             throws NoSuchAlgorithmException, KeyStoreException, InvalidAlgorithmParameterException,
-            CertPathValidatorException, CertPathBuilderException, CertificateException {
+            CertPathValidatorException, CertificateException {
 
-        CertPathValidator certPathValidator = CertPathValidator.getInstance("PKIX");
-        CertPathBuilder certPathBuilder = CertPathBuilder.getInstance("PKIX");
-        X509CertSelector certSelector = new X509CertSelector();
-        certSelector.setCertificate(chain[chain.length - 1]);
-        // checks against time validity aren't done here as it exceptions list
-        certSelector.setCertificateValid(null);
-        PKIXBuilderParameters parameters = new PKIXBuilderParameters(allStore, certSelector);
-        // no checks against revocation as it is exception
-        parameters.setRevocationEnabled(false);
-
-        CertPathBuilderResult pathResult = certPathBuilder.build(parameters);
-        CertPath certPath = pathResult.getCertPath();
-        PKIXCertPathValidatorResult validationResult = (PKIXCertPathValidatorResult) certPathValidator
-                .validate(certPath, parameters);
-        X509Certificate trustedCert = validationResult.getTrustAnchor().getTrustedCert();
-
-        if (trustedCert == null) {
-            throw new CertificateException("Certificate path failed");
-        } else {
-            Log.debug("ClientTrustManager: Trusted CA: " + trustedCert.getSubjectDN());
+        if (SparkTrustManager.isSelfSigned(chain)) {
+            throw new IllegalArgumentException("Method cannot be used with self-signed certificate.");
         }
 
+        // The certificate representing the {@link TrustAnchor TrustAnchor} should not be included in the certification
+        // path. If it does, certain validation (like OCSP) might give unexpected results/fail. SPARK-2188
+        final List<X509Certificate> certificates = Arrays.stream(chain)
+            .filter( cert -> !SparkTrustManager.isRootCACertificate(cert))
+            .collect(Collectors.toList());
+
+        // Construct a certPath entity that represents the chain that is to be validated. Does not include the trust anchor.
+        final CertPath certPath = CertificateFactory.getInstance("X.509").generateCertPath(certificates);
+
+        // SPARK-2185: Ensure that what we validate is not empty.
+        if ( certPath.getCertificates().isEmpty() ) {
+            throw new CertificateException("Unable to build a certificate path from the provided chain.");
+        }
+
+        // PKIX algorithm is defined in rfc3280
+        CertPathValidator certPathValidator = CertPathValidator.getInstance("PKIX");
+
+        // Selects the target to be validated. This is the end-entity/leaf certificate, typically the first in the chain.
+        X509CertSelector toBeValidated = new X509CertSelector();
+        toBeValidated.setCertificate((X509Certificate) certPath.getCertificates().get(0));
+
+        // create parameters using trustStore as source of Trust Anchors and using X509CertSelector
+        PKIXBuilderParameters parameters = new PKIXBuilderParameters(allStore, toBeValidated);
+
+        // no checks against revocation as this is the 'exception' trust manager.
+        parameters.setRevocationEnabled(false);
+
+        try {
+            PKIXCertPathValidatorResult validationResult = (PKIXCertPathValidatorResult) certPathValidator
+                .validate(certPath, parameters);
+            X509Certificate trustAnchor = validationResult.getTrustAnchor().getTrustedCert();
+
+            if (trustAnchor == null) {
+                throw new CertificateException("certificate path failed: Trusted CA is NULL");
+            }
+        } catch (CertPathValidatorException e) {
+            // This exception trust manager ignores the expiration dates
+            if ( e.getReason() == CertPathValidatorException.BasicReason.EXPIRED) {
+                Log.debug("Chain validation detected expiry, but this 'exception' trust manager allows this Not failing validation.");
+            } else if ( e.getReason() == CertPathValidatorException.BasicReason.NOT_YET_VALID) {
+                Log.debug("Chain validation detected not-yet-valid, but this 'exception' trust manager allows this Not failing validation.");
+            } else {
+                throw e;
+            }
+        }
     }
 
     /**

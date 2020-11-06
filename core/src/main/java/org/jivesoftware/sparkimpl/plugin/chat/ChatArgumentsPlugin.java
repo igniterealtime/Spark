@@ -22,22 +22,18 @@ import org.jivesoftware.spark.ui.conferences.ConferenceUtils;
 import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.impl.JidCreate;
 import org.jxmpp.jid.parts.Localpart;
-import org.jxmpp.stringprep.XmppStringprepException;
+
+import java.util.Objects;
 
 public class ChatArgumentsPlugin implements Plugin {
 
     @Override
 	public void initialize() {
-        EntityBareJid start_chat_jid = null;
-        try {
-            start_chat_jid = JidCreate.entityBareFromUnescaped(Spark.getArgumentValue("start_chat_jid"));
-        } catch (XmppStringprepException e1) {
-        }
-        EntityBareJid start_chat_muc = null;
-        try {
-            start_chat_muc = JidCreate.entityBareFromUnescaped(Spark.getArgumentValue("start_chat_muc"));
-        } catch (XmppStringprepException e) {
-        }
+        String value;
+        EntityBareJid start_chat_jid = (value = Spark.getArgumentValue("start_chat_jid")) == null ? null
+            : JidCreate.entityBareFromUnescapedOrThrowUnchecked(Objects.requireNonNull(value));
+        EntityBareJid start_chat_muc = (value = Spark.getArgumentValue("start_chat_muc")) == null ? null
+            : JidCreate.entityBareFromUnescapedOrThrowUnchecked(Objects.requireNonNull(value));
 
         if (start_chat_jid != null) {
             Localpart nickname = start_chat_jid.getLocalpart();
@@ -47,7 +43,6 @@ public class ChatArgumentsPlugin implements Plugin {
         if (start_chat_muc != null) {
             ConferenceUtils.joinConferenceOnSeperateThread(start_chat_muc, start_chat_muc, null);
         }
-
     }
 
     @Override

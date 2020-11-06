@@ -151,9 +151,7 @@ public class RoarPreferencePanel extends JPanel {
         panel.add(makeGroupChatPanel());
         panel.add(makeKeyWordPanel());
 
-        JScrollPane scroll = new JScrollPane(panel);
-
-        return scroll;
+        return new JScrollPane(panel);
     }
 
     private JPanel makeSinglePanel() {

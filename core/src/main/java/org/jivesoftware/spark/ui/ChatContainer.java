@@ -1180,35 +1180,23 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
 
                     if (usernameMatch.matcher(lastChatMessage.getBody()).find() || nicknameMatch.matcher(lastChatMessage.getBody()).find()) {
                         // match, send new message
-                        boolean customMsgS = true;
                         String customMsgTextS = Res.getString("group.chat.name.match") + " " + finalRoomName + " by " + fromNickName + " (" + lastChatMessage.getBody() + ")";
                         String customMsgTitleS = Res.getString("group.chat.name.notification");
-
-                        startFlashing(chatRoom, customMsgS, customMsgTextS, customMsgTitleS);
+                        startFlashing(chatRoom, true, customMsgTextS, customMsgTitleS);
                     } else {
                         // regular group message
-                        boolean customMsgS = true;
                         String customMsgTextS = fromNickName + " says: " + lastChatMessage.getBody();
-                        String customMsgTitleS = finalRoomName;
-
-                        startFlashing(chatRoom, customMsgS, customMsgTextS, customMsgTitleS);
+                        startFlashing(chatRoom, true, customMsgTextS, finalRoomName);
                     }
                 } else {
                     // regular group message
-                    boolean customMsgS = true;
                     String customMsgTextS = fromNickName + " says: " + lastChatMessage.getBody();
-                    String customMsgTitleS = finalRoomName;
-
-                    startFlashing(chatRoom, customMsgS, customMsgTextS, customMsgTitleS);
+                    startFlashing(chatRoom, true, customMsgTextS, finalRoomName);
                 }
             }
         } else if (customMsg) {
-            // probablt a file transfer request
-            boolean customMsgS = customMsg;
-            String customMsgTextS = customMsgText;
-            String customMsgTitleS = customMsgTitle;
-            
-            startFlashing(chatRoom, customMsgS, customMsgTextS, customMsgTitleS);
+            // probably a file transfer request
+            startFlashing(chatRoom, true, customMsgText, customMsgTitle);
         } else {
             // normal personal chat
         	Message lastChatMessage = null;
@@ -1217,14 +1205,11 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             String finalRoomName = chatRoom.getRoomTitle();
             
             String customMsgTextS = "";
-            boolean customMsgS = true;
-            String customMsgTitleS = finalRoomName;
-            
+
             if(lastChatMessage != null) {
             	customMsgTextS = lastChatMessage.getBody();
             }
-
-            startFlashing(chatRoom, customMsgS, customMsgTextS, customMsgTitleS);
+            startFlashing(chatRoom, true, customMsgTextS, finalRoomName);
         }
     }
     

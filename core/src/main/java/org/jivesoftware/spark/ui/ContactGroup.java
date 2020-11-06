@@ -137,7 +137,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
             @Override
             public void keyPressed(KeyEvent keyEvent) {
                 if (keyEvent.getKeyChar() == KeyEvent.VK_ENTER) {
-                    ContactItem item = (ContactItem) contactItemList.getSelectedValue();
+                    ContactItem item = contactItemList.getSelectedValue();
                     fireContactItemDoubleClicked(item);
                 }
 
@@ -554,14 +554,10 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
 
     @Override
     public void mouseClicked(MouseEvent e) {
-
-        Object o = contactItemList.getSelectedValue();
-        if (!(o instanceof ContactItem)) {
+        ContactItem item = contactItemList.getSelectedValue();
+        if (item == null) {
             return;
         }
-
-        // Iterator through rest
-        ContactItem item = (ContactItem) o;
 
         if (e.getClickCount() == 2) {
             fireContactItemDoubleClicked(item);
@@ -625,12 +621,13 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
                 for (int o : indexes) {
                     if (index == o) {
                         selected = true;
+                        break;
                     }
                 }
 
                 if (!selected) {
                     contactItemList.setSelectedIndex(index);
-                    fireContactItemClicked((ContactItem) contactItemList.getSelectedValue());
+                    fireContactItemClicked(contactItemList.getSelectedValue());
                 }
             }
 
@@ -1063,7 +1060,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
         ContactInfoWindow contact = UIComponentRegistry.getContactInfoWindow();
         int loc = getList().locationToIndex(e.getPoint());
         ContactItem item = (ContactItem) getList().getModel().getElementAt(loc);
-        return item == null || contact == null || contact.getContactItem() == null ? true : !contact.getContactItem().getJid().equals(item.getJid());
+        return (item == null || contact == null || contact.getContactItem() == null) || !contact.getContactItem().getJid().equals(item.getJid());
     }
 
     protected DefaultListModel getModel() {

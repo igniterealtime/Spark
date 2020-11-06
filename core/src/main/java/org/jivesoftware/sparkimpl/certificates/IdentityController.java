@@ -157,9 +157,8 @@ public class IdentityController extends CertManager {
        
         JcaContentSignerBuilder csBuilder = new JcaContentSignerBuilder("SHA256withRSA");
             ContentSigner signer = csBuilder.build(keyPair.getPrivate());
-        PKCS10CertificationRequest csr = p10Builder.build(signer);
-       
-            return csr;
+
+        return p10Builder.build(signer);
     }
     
     /**
@@ -171,19 +170,19 @@ public class IdentityController extends CertManager {
         if (commonName == null || commonName.isEmpty()) {
             throw new IllegalArgumentException("Common Name cannot be empty");
         } else {
-            sb.append("CN=" + commonName);
+            sb.append("CN=").append(commonName);
         }
         if (organizationUnit != null && !organizationUnit.isEmpty()) {
-            sb.append(", OU=" + organizationUnit);
+            sb.append(", OU=").append(organizationUnit);
         }
         if (organization != null && !organization.isEmpty()) {
-            sb.append(", O=" + organization);
+            sb.append(", O=").append(organization);
         }
         if (city != null && !city.isEmpty()) {
-            sb.append(", L=" + city);
+            sb.append(", L=").append(city);
         }
         if (country != null && !country.isEmpty()) {
-            sb.append(", C=" + country);
+            sb.append(", C=").append(country);
         }
         
         return sb.toString();
@@ -282,7 +281,7 @@ public class IdentityController extends CertManager {
     public void addEntryToKeyStore(X509Certificate addedCert, PrivateKey key) throws HeadlessException, InvalidNameException, KeyStoreException {
         CertificateModel certModel = new CertificateModel(addedCert);
         CertificateDialog certDialog = null;
-        if (checkForSameCertificate(addedCert) == false) {
+        if (!checkForSameCertificate(addedCert)) {
             certDialog = showCertificate(certModel, CertificateDialogReason.ADD_ID_CERTIFICATE);
         }
         if (certDialog != null && certDialog.isAddCert()) {
@@ -328,8 +327,7 @@ public class IdentityController extends CertManager {
         JcaContentSignerBuilder csBuilder = new JcaContentSignerBuilder("SHA256withRSA");
         ContentSigner signer = csBuilder.build(keyPair.getPrivate());
         X509CertificateHolder certHolder = certBuilder.build(signer);
-        X509Certificate cert = new JcaX509CertificateConverter().getCertificate(certHolder);
-        
-        return cert;
+
+        return new JcaX509CertificateConverter().getCertificate(certHolder);
     }
 }

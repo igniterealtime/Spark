@@ -127,12 +127,7 @@ public class SearchManager {
 
     private void checkSearchService() {
         Collection<Searchable> searchables = getSearchServices();
-        if (searchables.size() <= 1) {
-            ui.getFindField().enableDropdown(false);
-        }
-        else {
-            ui.getFindField().enableDropdown(true);
-        }
+        ui.getFindField().enableDropdown(searchables.size() > 1);
     }
 
     public SearchService getSearchServiceUI() {
