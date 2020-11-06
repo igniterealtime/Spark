@@ -80,11 +80,7 @@ public class FileTransferSettingsPlugin implements Plugin {
         if (settings.getBlockedJIDs().contains(request.getRequestor().asBareJid())) {
             return true;
         }
-        if (settings.getBlockedExtensions().contains(getFileExtensionFromName(request.getFileName()))) {
-            return true;
-        }
-        return false;
-
+        return settings.getBlockedExtensions().contains(getFileExtensionFromName(request.getFileName()));
     }
 
     /**

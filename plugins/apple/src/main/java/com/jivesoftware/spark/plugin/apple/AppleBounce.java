@@ -18,6 +18,7 @@ package com.jivesoftware.spark.plugin.apple;
 import org.jivesoftware.spark.SparkManager;
 
 import com.apple.eawt.Application;
+import org.jivesoftware.spark.util.log.Log;
 
 /**
  * Utilities for dealing with the apple dock icon
@@ -32,40 +33,35 @@ public final class AppleBounce {
 
     @SuppressWarnings("deprecation")
     public AppleBounce(AppleProperties props) {
-	_app = new Application();
-	_props = props;
+        _app = new Application();
+        _props = props;
 
-	final Thread iconThread = new Thread(new Runnable() {
-
-	    public void run() {
-		while (true) {
-		    if (!_flash) {
-			setDockBadge(_app, getMessageCount());
-			try {
-			    Thread.sleep(100);
-			} catch (InterruptedException e) {
-			}
-		    } else {
-
-			setDockBadge(_app, getMessageCount());
-			try {
-			    Thread.sleep(500);
-			} catch (InterruptedException e) {
-			}
-			setDockBadge(_app, getMessageCount());
-			try {
-			    Thread.sleep(500);
-			} catch (InterruptedException e) {
-			}
-
-		    }
-
-		}
-	    }
-	});
-
-	iconThread.start();
-
+        final Thread iconThread = new Thread(() -> {
+            while (true) {
+                if (!_flash) {
+                    setDockBadge(_app, getMessageCount());
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        Log.error(e);
+                    }
+                } else {
+                    setDockBadge(_app, getMessageCount());
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException e) {
+                        Log.error(e);
+                    }
+                    setDockBadge(_app, getMessageCount());
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException e) {
+                        Log.error(e);
+                    }
+                }
+            }
+        });
+        iconThread.start();
     }
 
     /**

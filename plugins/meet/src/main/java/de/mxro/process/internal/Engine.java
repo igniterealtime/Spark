@@ -135,8 +135,7 @@ public class Engine {
 					listener.onProcessQuit(returnValue);
 				} catch (final InterruptedException e) {
 					listener.onError(e);
-					return;
-				}
+                }
 
 			}
 

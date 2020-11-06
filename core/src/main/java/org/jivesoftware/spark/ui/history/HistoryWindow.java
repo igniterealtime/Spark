@@ -272,15 +272,14 @@ public class HistoryWindow extends JFrame {
 	private ActionListener onFindBtnClick() {
 		return e -> {
 
-            String searchText = findTextField.getText().toString().trim();
+            String searchText = findTextField.getText().trim();
             if (EMPTY.equals(searchText)) {
                 historyTree.setModel(historyOriginalModel);
                 selectVeryFirstLeaf();
                 return;
             }
 
-            List<HistoryEntry> results = historyFile.search(findTextField
-                    .getText().toString());
+            List<HistoryEntry> results = historyFile.search(findTextField.getText());
 
             HistoryTreeNode top = new HistoryTreeNode(searchText);
 
@@ -334,22 +333,18 @@ public class HistoryWindow extends JFrame {
 	}
 
 	private static JTextField createJTextField() {
-		JTextField field = new JTextField();
-		return field;
+        return new JTextField();
 	}
 
 	private static JTree createJTree(DefaultMutableTreeNode top) {
-		JTree tree = new JTree(top);
-		return tree;
+        return new JTree(top);
 	}
 
 	private static JTextPane createJTextPane() {
-		JTextPane pane = new JTextPane();
-		return pane;
+        return new JTextPane();
 	}
 
 	private static JLabel createJLabel(String title) {
-		JLabel label = new JLabel(title);
-		return label;
+        return new JLabel(title);
 	}
 }

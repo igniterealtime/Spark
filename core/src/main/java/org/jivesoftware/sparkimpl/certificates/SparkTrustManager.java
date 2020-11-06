@@ -8,32 +8,13 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
-import java.security.cert.CRLException;
-import java.security.cert.CertPath;
-import java.security.cert.CertPathBuilder;
-import java.security.cert.CertPathBuilderException;
-import java.security.cert.CertPathBuilderResult;
-import java.security.cert.CertPathValidator;
-import java.security.cert.CertPathValidatorException;
-import java.security.cert.CertStore;
-import java.security.cert.CertStoreException;
-import java.security.cert.CertificateException;
-import java.security.cert.CertificateExpiredException;
-import java.security.cert.CertificateFactory;
-import java.security.cert.CertificateNotYetValidException;
-import java.security.cert.CertificateRevokedException;
-import java.security.cert.CollectionCertStoreParameters;
-import java.security.cert.PKIXBuilderParameters;
-import java.security.cert.PKIXCertPathValidatorResult;
-import java.security.cert.PKIXRevocationChecker;
-import java.security.cert.X509CRL;
-import java.security.cert.X509CertSelector;
-import java.security.cert.X509Certificate;
+import java.security.cert.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.naming.InvalidNameException;
 import javax.net.ssl.X509TrustManager;
@@ -93,8 +74,7 @@ public class SparkTrustManager extends GeneralTrustManager implements X509TrustM
 
     @Override
     public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
-        // TODO Auto-generated method stub
-
+        throw new UnsupportedOperationException("This implementation cannot be used to validate client-provided certificate chains.");
     }
 
     public static X509Certificate[] getLastFailedChain()
@@ -136,13 +116,12 @@ public class SparkTrustManager extends GeneralTrustManager implements X509TrustM
 
             // check if certificate isn't self signed, self signed certificate still have to be in TrustStore to be
             // accepted
-            if (isSelfSigned(chain) == false) {
+            if (!isSelfSigned(chain)) {
                 // validate certificate path
                 try {
                     validatePath(chain);
 
-                } catch (NoSuchAlgorithmException | KeyStoreException | InvalidAlgorithmParameterException
-                        | CertPathValidatorException | CertPathBuilderException e) {
+                } catch (NoSuchAlgorithmException | KeyStoreException | InvalidAlgorithmParameterException | CertPathValidatorException e) {
                     Log.error("Validating path failed", e);
                     throw new CertPathValidatorException("Certificate path validation failed", e);
 
@@ -179,38 +158,79 @@ public class SparkTrustManager extends GeneralTrustManager implements X509TrustM
     /**
      * Return true if the certificate chain contain only one Self Signed certificate
      */
-    private boolean isSelfSigned(X509Certificate[] chain) {
+    public static boolean isSelfSigned(X509Certificate[] chain) {
         return chain[0].getIssuerX500Principal().getName().equals(chain[0].getSubjectX500Principal().getName())
                 && chain.length == 1;
     }
-    
+
+    /**
+     * Returns true if a certificate is a 'root' certificate, by verifying that its issuer matches its subject, and the
+     * subject of the certificate is a CA (by checking the Basic Constraints).
+     *
+     * @param cert The certificate to check
+     * @return 'true' if the certificate is a root certificate, otherwise false.
+     */
+    public static boolean isRootCACertificate( final X509Certificate cert ) {
+        return cert.getIssuerX500Principal().getName().equals(cert.getSubjectX500Principal().getName()) && cert.getBasicConstraints() > -1;
+    }
+
+    /**
+     * Verifies if Spark's trust stores recognize the issuer of at least one of the certificates in the chain.
+     *
+     * @param chain The chain to verify
+     * @return false if none of the issuers are present in any of the trust stores of Spark.
+     */
+    public boolean containsTrustAnchorFor(X509Certificate[] chain) {
+        final Collection<String> allAcceptedIssuers = Arrays.stream(getAcceptedIssuers())
+            .map(x509Certificate -> x509Certificate.getSubjectDN().getName())
+            .collect(Collectors.toSet());
+        return Arrays.stream(chain).anyMatch( cert -> allAcceptedIssuers.contains( cert.getIssuerDN().getName()) );
+    }
+
     /**
      * Validate certificate path
-     * 
+     *
+     * Note that the provided chain cannot be a self-signed certificate. This method assumes a CA-signed chain is
+     * provided.
+     *
      * @throws NoSuchAlgorithmException
      * @throws KeyStoreException
      * @throws InvalidAlgorithmParameterException
      * @throws CertPathValidatorException
-     * @throws CertPathBuilderException
      * @throws CertificateException
      */
     private void validatePath(X509Certificate[] chain)
             throws NoSuchAlgorithmException, KeyStoreException, InvalidAlgorithmParameterException,
-            CertPathValidatorException, CertPathBuilderException, CertificateException {
+            CertPathValidatorException, CertificateException
+    {
+        if (isSelfSigned(chain)) {
+            throw new IllegalArgumentException("Method cannot be used with self-signed certificate.");
+        }
+
+        // The certificate representing the {@link TrustAnchor TrustAnchor} should not be included in the certification
+        // path. If it does, certain validation (like OCSP) might give unexpected results/fail. SPARK-2188
+        final List<X509Certificate> certificates = Arrays.stream(chain)
+            .filter( cert -> !isRootCACertificate(cert))
+            .collect(Collectors.toList());
+
+        // Construct a certPath entity that represents the chain that is to be validated. Does not include the trust anchor.
+        final CertPath certPath = CertificateFactory.getInstance("X.509").generateCertPath(certificates);
+
+        // SPARK-2185: Ensure that what we validate is not empty.
+        if ( certPath.getCertificates().isEmpty() ) {
+            throw new CertificateException("Unable to build a certificate path from the provided chain.");
+        }
+
         // PKIX algorithm is defined in rfc3280
         CertPathValidator certPathValidator = CertPathValidator.getInstance("PKIX");
         CertPathBuilder certPathBuilder = CertPathBuilder.getInstance("PKIX");
 
-        X509CertSelector certSelector = new X509CertSelector();
+        // Selects the target to be validated. This is the end-entity/leaf certificate, typically the first in the chain.
+        X509CertSelector toBeValidated = new X509CertSelector();
+        toBeValidated.setCertificate((X509Certificate) certPath.getCertificates().get(0));
 
-        // set last certificate (often root CA) from chain for CertSelector so trust store must contain it
-        certSelector.setCertificate(chain[chain.length - 1]);
-
-        // checks against time validity aren't done here as are already done in checkDateValidity (X509Certificate[]
-        // chain)
-        certSelector.setCertificateValid(null);
         // create parameters using trustStore as source of Trust Anchors and using X509CertSelector
-        PKIXBuilderParameters parameters = new PKIXBuilderParameters(allStore, certSelector);
+        PKIXBuilderParameters parameters = new PKIXBuilderParameters(allStore, toBeValidated);
 
         // will use PKIXRevocationChecker (or nothing if revocation mechanisms are
         // disabled) instead of the default revocation checker
@@ -218,7 +238,7 @@ public class SparkTrustManager extends GeneralTrustManager implements X509TrustM
 
         // if revoked certificates aren't accepted, but no revocation checks then only
         // certificates from blacklist will be rejected
-        if (acceptRevoked == false) {
+        if (!acceptRevoked) {
             
             // OCSP checking is done according to Java PKI Programmer's Guide, PKIXRevocationChecker was added in Java 8:
             // https://docs.oracle.com/javase/8/docs/technotes/guides/security/certpath/CertPathProgGuide.html#PKIXRevocationChecker
@@ -246,24 +266,18 @@ public class SparkTrustManager extends GeneralTrustManager implements X509TrustM
         }
         
         try {
-            CertPathBuilderResult pathResult = certPathBuilder.build(parameters);
-            CertPath certPath = pathResult.getCertPath();
-
             PKIXCertPathValidatorResult validationResult = (PKIXCertPathValidatorResult) certPathValidator
                     .validate(certPath, parameters);
-            X509Certificate trustedCert = validationResult.getTrustAnchor().getTrustedCert();
+            X509Certificate trustAnchor = validationResult.getTrustAnchor().getTrustedCert();
 
-            if (trustedCert == null) {
+            if (trustAnchor == null) {
                 throw new CertificateException("certificate path failed: Trusted CA is NULL");
             }
-            // check if all certificates in path have Basic Constraints, only certificate that isn't required to have
-            // this extension is last certificate: root CA
-            for (int i = 0; i < chain.length - 1; i++) {
-                checkBasicConstraints(chain[i]);
-            }
+            checkBasicConstraints(certPath, trustAnchor);
         } catch (CertificateRevokedException e) {
             Log.warning("Certificate was revoked", e);
-            for (X509Certificate cert : chain) {
+            for (Certificate c : certPath.getCertificates()) {
+                X509Certificate cert = (X509Certificate) c;
                 for (X509CRL crl : crlCollection) {
                     if (crl.isRevoked(cert)) {
                         try {
@@ -276,6 +290,16 @@ public class SparkTrustManager extends GeneralTrustManager implements X509TrustM
                 }
             }
             throw new CertificateException("Certificate was revoked");
+        } catch (CertPathValidatorException e) {
+            // Spark can be configured to disregard some of the issues that can pop up through validation.
+            if ( e.getReason() == CertPathValidatorException.BasicReason.EXPIRED && acceptExpired ) {
+                Log.debug("Chain validation detected expiry, but Spark is configured to allow this. Not failing validation.");
+            } else if ( e.getReason() == CertPathValidatorException.BasicReason.NOT_YET_VALID && acceptNotValidYet ) {
+                Log.debug("Chain validation detected not-yet-valid, but Spark is configured to allow this. Not failing validation.");
+            } else {
+                // When Spark is not configured to ignore the validation issue, rethrow the original exception.
+                throw e;
+            }
         }
     }
 
@@ -291,13 +315,13 @@ public class SparkTrustManager extends GeneralTrustManager implements X509TrustM
             try {
                 cert.checkValidity();
             } catch (CertificateExpiredException e) {
-                Log.warning("Certificate is expired " + cert.getSubjectX500Principal().getName().toString(), e);
-                if (acceptExpired == false) {
+                Log.warning("Certificate is expired " + cert.getSubjectX500Principal().getName(), e);
+                if (!acceptExpired) {
                     throw new CertificateException("Certificate is expired");
                 }
             } catch (CertificateNotYetValidException e) {
-                Log.warning("Certificate is not valid yet " + cert.getSubjectX500Principal().getName().toString(), e);
-                if (acceptNotValidYet == false) {
+                Log.warning("Certificate is not valid yet " + cert.getSubjectX500Principal().getName(), e);
+                if (!acceptNotValidYet) {
                     throw new CertificateException("Certificate is not valid yet");
                 }
             }
@@ -306,14 +330,46 @@ public class SparkTrustManager extends GeneralTrustManager implements X509TrustM
     }
 
     /**
-     * Check if certificate have basic constraints exception.
-     * 
-     * @param certificate given by server
-     * @throws CertificateException
+     * Checks the validity of the BasicConstraints extension of each certificate in the chain.
+     *
+     * Each certificate is assumed to have a BasicConstraints extension, with the exception of the leaf (end-entity)
+     * certificate, which _can_ have a certificate.
+     *
+     * All non-leaf certificates must have the cA field set to 'true'.
+     *
+     * The pathLen is valid: it defines the maximum amount of intermediate certificates between the CA and the leaf
+     * certificate. The leaf certificate itself is not included in the count (eg: a value of 'one' would allow for a
+     * chain length of three: the leaf, one intermediate, and the root (where the value of 'one' is defined).
+     *
+     * This method assumes that the provided chain is in order, where the first chain is the end-entity / leaf certificate.
+     *
+     * The trust anchor / root CA should not be part of the certPath chain.
+     *
+     * @param chain The certificate chain, possibly incomplete.
+     * @param trustAnchor the root CA certificate.
+     * @throws CertificateException When the BasicConstraint verification fails.
      */
-    private void checkBasicConstraints(X509Certificate cert) throws CertificateException {
-        if (cert.getBasicConstraints() != -1) {
-            throw new CertificateException("Certificate has no basic constraints");
+    private void checkBasicConstraints(CertPath chain, X509Certificate trustAnchor) throws CertificateException {
+        // Intentionally skipping over the first certificate, which is the end-entity certificate.
+        for (int i = 1; i<chain.getCertificates().size(); i++)
+        {
+            final X509Certificate cert = (X509Certificate) chain.getCertificates().get(i);
+            // The amount of certificates between the current certificate and the end-entity certificate cannot
+            // exceed the value of pathLenConstraint (if the CA flag is not set, -1 will be returned)
+            final int pathLenConstraint = cert.getBasicConstraints();
+            final int certsSeparatingThisCertFromEndEntity = i - 1;
+            if (certsSeparatingThisCertFromEndEntity > pathLenConstraint) {
+                throw new CertificateException("Certificate number " + i + " in the chain failed the BasicConstraints check: "
+                    + (pathLenConstraint == -1 ? "CA flag not set" : "pathLenConstraint to small (was: " +pathLenConstraint+ " needed:" + certsSeparatingThisCertFromEndEntity+")"));
+            }
+        }
+
+        // Explicitly check the trustAnchor (as it should not be in the chain)
+        final int pathLenConstraint = trustAnchor.getBasicConstraints();
+        final int certsSeparatingThisCertFromEndEntity = chain.getCertificates().size() - 1;
+        if (certsSeparatingThisCertFromEndEntity > pathLenConstraint) {
+            throw new CertificateException("Trust anchor of the chain failed the BasicConstraints check: "
+                + (pathLenConstraint == -1 ? "CA flag not set" : "pathLenConstraint to small (was: " + pathLenConstraint + " needed:" + certsSeparatingThisCertFromEndEntity + ")"));
         }
     }
 
@@ -378,7 +434,7 @@ public class SparkTrustManager extends GeneralTrustManager implements X509TrustM
                     }
                 }
             } else {
-                Log.warning("Certificate " + cert.getSubjectX500Principal().getName().toString() + " have no CRLs");
+                Log.warning("Certificate " + cert.getSubjectX500Principal().getName() + " have no CRLs");
             }
             // parameters for cert store is collection type, using collection with crl create parameters
             CollectionCertStoreParameters params = new CollectionCertStoreParameters(crlCollection);

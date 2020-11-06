@@ -19,8 +19,6 @@ import org.jivesoftware.fastpath.resources.FastpathRes;
 import org.jivesoftware.fastpath.workspace.Workpane;
 import org.jivesoftware.fastpath.workspace.panes.BackgroundPane;
 import org.jivesoftware.smack.ConnectionListener;
-import org.jivesoftware.smack.ReconnectionListener;
-import org.jivesoftware.smack.ReconnectionManager;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
@@ -59,7 +57,7 @@ public class FastpathPlugin implements Plugin, ConnectionListener {
     private static BackgroundPane mainPanel;
     private static FastpathContainer container;
     private JLabel workgroupLabel;
-    private JComboBox comboBox;
+    private JComboBox<String> comboBox;
     private JButton joinButton;
     private RolloverButton logoutButton;
     private static boolean wasConnected;
@@ -76,7 +74,7 @@ public class FastpathPlugin implements Plugin, ConnectionListener {
 			public void run() {
 				  container = new FastpathContainer();
 				  workgroupLabel = new JLabel(FpRes.getString("workgroup"));
-				  comboBox = new JComboBox();
+				  comboBox = new JComboBox<>();
 				  joinButton = new JButton(FpRes.getString("join"), null);
 				  logoutButton = new RolloverButton(FpRes.getString("logout"), null);
 		        // Initialize tab handler for Fastpath chats.
@@ -148,9 +146,7 @@ public class FastpathPlugin implements Plugin, ConnectionListener {
         logoutButton.setVisible(false);
 
         // Add workgroups to combobox
-        Iterator<String> workgroups = col.iterator();
-        while (workgroups.hasNext()) {
-            String workgroup = (String)workgroups.next();
+        for (String workgroup : col) {
             String componentAddress = XmppStringUtils.parseDomain(workgroup);
             setComponentAddress(componentAddress);
             comboBox.addItem(XmppStringUtils.parseLocalpart(workgroup));

@@ -32,7 +32,6 @@ import org.jivesoftware.spark.util.SwingTimerTask;
 import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jxmpp.jid.EntityBareJid;
-import org.jxmpp.jid.parts.Localpart;
 
 import java.util.TimerTask;
 

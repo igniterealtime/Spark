@@ -88,10 +88,7 @@ public class WorkgroupDataForm extends JPanel {
             String label = field.getLabel();
             FormField.Type type = field.getType();
 
-            List<CharSequence> valueList = new ArrayList<>();
-            for ( CharSequence value : field.getValues() ) {
-                valueList.add( value );
-            }
+            List<CharSequence> valueList = new ArrayList<>(field.getValues());
 
             if (type.equals(FormField.Type.bool)) {
                 String o = valueList.get(0).toString();
@@ -151,7 +148,7 @@ public class WorkgroupDataForm extends JPanel {
         Iterator<String> valueIter = valueMap.keySet().iterator();
         Form answerForm = searchForm.createAnswerForm();
         while (valueIter.hasNext()) {
-            String answer = (String)valueIter.next();
+            String answer = valueIter.next();
             Object o = valueMap.get(answer);
             if (o instanceof JCheckBox) {
                 boolean isSelected = ((JCheckBox)o).isSelected();
@@ -190,7 +187,7 @@ public class WorkgroupDataForm extends JPanel {
                 }
             }
             else if (o instanceof CheckBoxList) {
-                List list = (List)((CheckBoxList)o).getSelectedValues();
+                List list = ((CheckBoxList)o).getSelectedValues();
                 if (list.size() > 0) {
                     answerForm.setAnswer(answer, list);
                 }
@@ -249,8 +246,7 @@ public class WorkgroupDataForm extends JPanel {
     }
 
     public Component getComponent(String label) {
-        Component comp = (Component)valueMap.get(label);
-        return comp;
+        return (Component)valueMap.get(label);
     }
 
 

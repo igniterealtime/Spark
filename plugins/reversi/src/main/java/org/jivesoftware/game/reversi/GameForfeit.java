@@ -42,11 +42,10 @@ public class GameForfeit implements ExtensionElement {
 
     @Override
     public String toXML(String enclosingNamespace) {
-        StringBuffer buf = new StringBuffer();
-        buf.append("<" + ELEMENT_NAME + " xmlns=\"" + NAMESPACE + "\">");
-        buf.append("<gameID>").append(gameID).append("</gameID>");
-        buf.append("</" + ELEMENT_NAME + ">");
-        return buf.toString();
+        return "<" + ELEMENT_NAME + " xmlns=\"" + NAMESPACE + "\">"
+            + "<gameID>" + gameID
+            + "</gameID>"
+            + "</" + ELEMENT_NAME + ">";
     }
 
     /**

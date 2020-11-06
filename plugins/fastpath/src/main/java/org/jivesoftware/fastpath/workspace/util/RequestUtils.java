@@ -18,6 +18,7 @@ package org.jivesoftware.fastpath.workspace.util;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.impl.JidCreate;
@@ -41,12 +42,7 @@ public class RequestUtils {
      *         was asked, null will be returned.
      */
     public String getQuestion() {
-        if (getMetadata() == null) {
-            return null;
-        }
-
-        final String question = getFirstValue("question"); //NOTRANS
-        return question;
+        return getMetadata() == null ? null : getFirstValue("question");
     }
 
     /**
@@ -55,12 +51,7 @@ public class RequestUtils {
      * @return the nickname of the visitor.
      */
     public String getUsername() {
-        if (getMetadata() == null) {
-            return null;
-        }
-
-        final String vistorName = getFirstValue("username");//NOTRANS
-        return vistorName;
+        return getMetadata() == null ? null : getFirstValue("username");
     }
 
     /**
@@ -70,12 +61,7 @@ public class RequestUtils {
      *         address was not specified.
      */
     public String getEmailAddress() {
-        if (getMetadata() == null) {
-            return null;
-        }
-
-        final String emailAddress = getFirstValue("email");//NOTRANS
-        return emailAddress;
+        return getMetadata() == null ? null : getFirstValue("email");
     }
 
     /**
@@ -84,12 +70,7 @@ public class RequestUtils {
      * @return the url (string format) of where the user made the initial request.
      */
     public String getRequestLocation() {
-        if (getMetadata() == null) {
-            return null;
-        }
-
-        final String requestLocation = getFirstValue("Location");//NOTRANS
-        return requestLocation;
+        return getMetadata() == null ? null : getFirstValue("Location");
     }
 
     /**
@@ -98,39 +79,20 @@ public class RequestUtils {
      * @return the unique id of the user or {@code null}.
      */
     public EntityBareJid getUserID() {
-        if (getMetadata() == null) {
-            return null;
-        }
-
-        final String userID = getFirstValue("userID");//NOTRANS
-        return JidCreate.entityBareFromUnescapedOrThrowUnchecked(userID);
+        return getMetadata() == null ? null : JidCreate.entityBareFromUnescapedOrThrowUnchecked(
+            Objects.requireNonNull(getFirstValue("userID")));
     }
 
     public String getInviter() {
-        if (getMetadata() == null) {
-            return null;
-        }
-
-        final String inviter = getFirstValue("inviter");//NOTRANS
-        return inviter;
+        return getMetadata() == null ? null : getFirstValue("inviter");
     }
 
     public String getWorkgroup() {
-        if (getMetadata() == null) {
-            return null;
-        }
-
-        final String workgroup = getFirstValue("workgroup");//NOTRANS
-        return workgroup;
+        return getMetadata() == null ? null : getFirstValue("workgroup");
     }
 
     public boolean isTransfer() {
-        if (getMetadata() == null) {
-            return false;
-        }
-
-        boolean isTransfer = Boolean.valueOf(getFirstValue("transfer")).booleanValue();//NOTRANS
-        return isTransfer;
+        return getMetadata() != null && Boolean.parseBoolean(getFirstValue("transfer"));
     }
 
     public boolean isInviteOrTransfer() {
@@ -142,12 +104,7 @@ public class RequestUtils {
     }
 
     public String getSessionID() {
-        if (getMetadata() == null) {
-            return null;
-        }
-
-        final String workgroup = getFirstValue("sessionID");//NOTRANS
-        return workgroup;
+        return getMetadata() == null ? null : getFirstValue("sessionID");
     }
 
     public Map getMap() {

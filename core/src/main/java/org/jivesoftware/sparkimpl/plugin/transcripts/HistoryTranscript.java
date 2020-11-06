@@ -242,9 +242,9 @@ public class HistoryTranscript extends SwingWorker {
 			builder.append("<font face=dialog size=3 color='").append(color).append("'>");
 			builder.append(value);
 			if (broadcastnick == null){
-				builder.append(nickname + ": ");
+				builder.append(nickname).append(": ");
 			} else {
-				builder.append(broadcastnick + ": ");
+				builder.append(broadcastnick).append(": ");
 			}
 			builder.append("</font>");
 			builder.append("<font face=dialog size=3>");
@@ -614,8 +614,7 @@ public class HistoryTranscript extends SwingWorker {
                                             //if the view contains line break char break the view
                                             int index = getDocument().getText(p0, p1 - p0).indexOf(SEPARATOR);
                                             if (index >= 0) {
-                                                GlyphView v = (GlyphView) createFragment(p0, p0 + index + 1);
-                                                return v;
+                                                return createFragment(p0, p0 + index + 1);
                                             }
                                         }
                                         catch (BadLocationException ex) {

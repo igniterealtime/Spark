@@ -92,7 +92,7 @@ public class GamePanel extends JPanel {
 	    public void processStanza(Stanza stanza) throws SmackException.NotConnectedException, InterruptedException
 		{
 
-		MovePacket move = (MovePacket) stanza.getExtension(
+		MovePacket move = stanza.getExtension(
 			MovePacket.ELEMENT_NAME, MovePacket.NAMESPACE);
 
 		if (move.getGameID() == _gameID) {

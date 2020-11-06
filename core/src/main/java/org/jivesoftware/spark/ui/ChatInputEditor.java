@@ -103,11 +103,7 @@ public class ChatInputEditor extends ChatArea implements DocumentListener {
 		    ChatInputEditor.this.removeWordInBetween(lastSpace,
 			    getCaretPosition());
 
-		    if (lastSpace <= getText().length()) {
-			setCaretPosition(lastSpace);
-		    } else {
-			setCaretPosition(getText().length());
-		    }
+            setCaretPosition(Math.min(lastSpace, getText().length()));
 
 		    // We are at the end and will remove until the next SPACE
 		} else if (getText().contains(" ")) {

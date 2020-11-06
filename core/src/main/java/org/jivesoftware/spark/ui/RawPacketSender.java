@@ -31,6 +31,7 @@ import javax.swing.JTextArea;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.util.log.Log;
 
 /**
  * Class to Send Raw packets useful when debugging
@@ -110,12 +111,12 @@ public class RawPacketSender implements ActionListener {
         }
 	    };
 
-	    try {
-		SparkManager.getConnection().sendStanza(stanza);
-		_textarea.append("\n" + _inputarea.getText());
-	    } catch (Exception exc) {
-
-	    }
+        try {
+            SparkManager.getConnection().sendStanza(stanza);
+            _textarea.append("\n" + _inputarea.getText());
+        } catch (Exception exc) {
+            Log.error(exc);
+        }
 	}
 	else if (e.getSource().equals(_clear)) {
 	    _textarea.setText("");

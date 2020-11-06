@@ -234,20 +234,13 @@ public class JContactItemField extends JPanel {
      * @return true if the given text is valid, false otherwise.
      */
     public boolean validateChar(char ch) {
-        if (!Character.isLetterOrDigit(ch) && ch != '@' && ch != '-' && ch != '_'
-                && ch != '.' && ch != ',' && ch != ' ' && ch != KeyEvent.VK_BACK_SPACE && ch != KeyEvent.CTRL_DOWN_MASK
-                && ch != KeyEvent.CTRL_MASK) {
-            return false;
-        }
-
-        return true;
+        return Character.isLetterOrDigit(ch) || ch == '@' || ch == '-' || ch == '_'
+            || ch == '.' || ch == ',' || ch == ' ' || ch == KeyEvent.VK_BACK_SPACE || ch == KeyEvent.CTRL_DOWN_MASK
+            || ch == KeyEvent.CTRL_MASK;
     }
 
     public boolean isArrowKey(KeyEvent e) {
-        if (e.getKeyCode() == KeyEvent.VK_UP || e.getKeyCode() == KeyEvent.VK_DOWN) {
-            return true;
-        }
-        return false;
+        return e.getKeyCode() == KeyEvent.VK_UP || e.getKeyCode() == KeyEvent.VK_DOWN;
     }
 
     public String getText() {
@@ -274,7 +267,7 @@ public class JContactItemField extends JPanel {
         return popup;
     }
 
-    class PopupRenderer extends JLabel implements ListCellRenderer {
+    static class PopupRenderer extends JLabel implements ListCellRenderer {
 	private static final long serialVersionUID = 239608430590852355L;
 
 	/**

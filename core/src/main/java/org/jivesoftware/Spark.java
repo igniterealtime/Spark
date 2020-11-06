@@ -179,11 +179,6 @@ public final class Spark {
             new Spark();
         } );
 
-        //load plugins before Workspace initialization to avoid any UI delays
-        //during plugin rendering
-        final PluginManager pluginManager = PluginManager.getInstance();
-        pluginManager.loadPlugins();
-
         installBaseUIProperties();
 
         if (Default.getBoolean(Default.CHANGE_COLORS_DISABLED)) {
@@ -373,15 +368,13 @@ public final class Spark {
 	return Default.getBoolean(Default.DISABLE_UPDATES);
     }
 
-	public static void setApplicationFont(Font f) {
-		UIDefaults defaults = UIManager.getLookAndFeelDefaults();
-		synchronized(defaults) {
-		    for (Object ui_property: defaults.keySet()) {
-		        if (ui_property.toString().endsWith(".font")) {
-		            UIManager.put(ui_property, f);
-		        }
-		    }
-		}
+	public static synchronized void setApplicationFont(Font f) {
+        UIDefaults defaults = UIManager.getLookAndFeelDefaults();
+        for (Object ui_property : defaults.keySet()) {
+            if (ui_property.toString().endsWith(".font")) {
+                UIManager.put(ui_property, f);
+            }
+        }
 	}
 
     /**

@@ -645,12 +645,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
      */
     protected void checkForText(DocumentEvent e) {
         final int length = e.getDocument().getLength();
-        if (length > 0) {
-            chatAreaButton.getButton().setEnabled(true);
-        }
-        else {
-            chatAreaButton.getButton().setEnabled(false);
-        }
+        chatAreaButton.getButton().setEnabled(length > 0);
     }
 
     /**
@@ -1031,7 +1026,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
     /**
      * Used for the top toolbar.
      */
-    public class ChatToolBar extends JPanel {
+    public static class ChatToolBar extends JPanel {
 		private static final long serialVersionUID = 5926527530611601841L;
 		private JPanel buttonPanel;
 
@@ -1076,7 +1071,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
                 }
             }
 
-            GraphicUtils.makeSameSize(buttons.toArray(new JComponent[buttons.size()]));
+            GraphicUtils.makeSameSize(buttons.toArray(new Component[0]));
         }
 
         /**
