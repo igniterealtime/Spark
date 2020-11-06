@@ -207,7 +207,7 @@ public class MutualAuthenticationSettingsPanel extends JPanel implements ActionL
 
 	    X509Certificate cert = idControll.createSelfSignedCertificate(keyPair);
             if (saveCertToFile.isSelected()) {
-                PemBuilder pemBuilder = new PemHelper().new PemBuilder();
+                PemBuilder pemBuilder = new PemBuilder();
                 pemBuilder.add(keyPair.getPrivate());
                 pemBuilder.add(cert);
                 pemBuilder.saveToPemFile(IdentityController.CERT_FILE);

@@ -22,13 +22,10 @@ import org.jivesoftware.smack.packet.ExtensionElement;
 import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smackx.muc.packet.MUCUser;
-import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 import org.jxmpp.jid.BareJid;
 import org.jxmpp.jid.EntityFullJid;
 import org.jxmpp.jid.Jid;
-import org.jxmpp.jid.impl.JidCreate;
-import org.jxmpp.stringprep.XmppStringprepException;
 
 import javax.swing.Icon;
 
@@ -78,7 +75,7 @@ public class PresenceManager {
     /**
      * Returns true if the user is online.
      *
-     * @param jidString the jid of the user.
+     * @param jid the JID of the user.
      * @return true if online.
      */
     public static boolean isOnline(BareJid jid) {
@@ -127,15 +124,14 @@ public class PresenceManager {
     /**
      * Returns the fully qualified jid of a user. May return {@code null}.
      *
-     * @param jidString the users bare jid (ex. derek@jivesoftware.com)
-     * @return the fully qualified jid of a user (ex. derek@jivesoftware.com --> derek@jivesoftware.com/spark) or {@code null}.
+     * @param jid the users bare JID (ex. derek@jivesoftware.com)
+     * @return the fully qualified JID of a user (ex. derek@jivesoftware.com --> derek@jivesoftware.com/spark) or {@code null}.
      */
     public static EntityFullJid getFullyQualifiedJID(BareJid jid) {
         final Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
         Presence presence = roster.getPresence(jid);
         Jid result = presence.getFrom();
-        EntityFullJid entityFullJid = result.asEntityFullJidIfPossible();
-        return entityFullJid;
+        return result.asEntityFullJidIfPossible();
     }
 
 	public static String getJidFromMUCPresence(Presence presence) {		
@@ -219,12 +215,9 @@ public class PresenceManager {
     	 if (presenceMode == null) {
         	 presenceMode = Presence.Mode.available;
         }
-    	if (presence.getStatus() != null && 
-    		presence.getStatus().contains(Res.getString("status.on.phone")) && 
-    		presenceMode.equals(Presence.Mode.away)) {
-    		return true;
-    	}
-    	return false;
+        return presence.getStatus() != null &&
+            presence.getStatus().contains(Res.getString("status.on.phone")) &&
+            presenceMode.equals(Presence.Mode.away);
     }
 
     public static boolean isInvisible(Presence presence) {

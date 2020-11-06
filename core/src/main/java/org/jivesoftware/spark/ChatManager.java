@@ -48,7 +48,6 @@ import org.jxmpp.jid.Jid;
 import org.jxmpp.jid.impl.JidCreate;
 import org.jxmpp.jid.parts.Localpart;
 import org.jxmpp.jid.parts.Resourcepart;
-import org.jxmpp.stringprep.XmppStringprepException;
 
 import javax.swing.*;
 import java.awt.*;
@@ -220,11 +219,7 @@ public class ChatManager {
         Resourcepart nickname = Resourcepart.fromOrThrowUnchecked(nicknameCs);
         ChatRoom chatRoom;
         try {
-            if (jid instanceof EntityBareJid) {
-                chatRoom = getChatContainer().getChatRoom((EntityBareJid) jid);
-            } else {
-                chatRoom = getChatContainer().getChatRoom(jid);
-            }
+            chatRoom = getChatContainer().getChatRoom(jid);
         }
         catch (ChatRoomNotFoundException e) {
             chatRoom = UIComponentRegistry.createChatRoom(jid, nickname, title);
@@ -303,8 +298,8 @@ public class ChatManager {
     /**
      * Activate a chat room with the selected user.
      *
-     * @param jid      the jid of the user to chat with.
-     * @param nickname the nickname of the user.
+     * @param jidCs the jid of the user to chat with.
+     * @param nicknameString the nickname of the user.
      */
     public void activateChat(final CharSequence jidCs, final String nicknameString) {
         final Resourcepart nickname = Resourcepart.fromOrThrowUnchecked(nicknameString);
@@ -699,7 +694,7 @@ public class ChatManager {
             ChatRoom chatRoom;
             try {
                 chatRoom = getChatContainer().getChatRoom( from.asBareJid() );
-                if (chatRoom != null && chatRoom instanceof ChatRoomImpl) {
+                if (chatRoom instanceof ChatRoomImpl) {
                     typingNotificationList.add(chatRoom);
                     // Notify Decorators
                     notifySparkTabHandlers(chatRoom);
@@ -720,7 +715,7 @@ public class ChatManager {
             ChatRoom chatRoom;
             try {
                 chatRoom = getChatContainer().getChatRoom(from.asBareJid());
-                if (chatRoom != null && chatRoom instanceof ChatRoomImpl) {
+                if (chatRoom instanceof ChatRoomImpl) {
                     typingNotificationList.remove(chatRoom);
                     // Notify Decorators
                     notifySparkTabHandlers(chatRoom);

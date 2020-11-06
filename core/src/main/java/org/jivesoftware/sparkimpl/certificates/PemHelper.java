@@ -80,7 +80,7 @@ public class PemHelper {
      * @throws Exception 
      */
     protected static String knowDelimeter(byte[] pem, typeOfDelimeter type) throws PEMException {
-        if(type instanceof typeOfDelimeter == false){
+        if(!(type instanceof typeOfDelimeter)){
             throw new IllegalArgumentException();
         }
         String header = new String(pem);
@@ -136,7 +136,7 @@ public class PemHelper {
      * @author Paweł Ścibiorski
      *
      */
-    public class PemBuilder {
+    public static class PemBuilder {
         private List<Object> buildList = new ArrayList<>();
 
         public void add(Object object) {

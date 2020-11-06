@@ -52,17 +52,12 @@ public class InvalidMove implements ExtensionElement {
 
     @Override
     public String toXML(String enclosingNamespace) {
-	StringBuffer buf = new StringBuffer();
-	buf.append("<" + ELEMENT_NAME + " xmlns=\"" + NAMESPACE + "\">");
 
-	buf.append("<gameID>").append(_gameID).append("</gameID>");
-
-	buf.append("<positionX>").append(_posx).append("</positionX>");
-
-	buf.append("<positionY>").append(_posy).append("</positionY>");
-
-	buf.append("</" + ELEMENT_NAME + ">");
-	return buf.toString();
+        return "<" + ELEMENT_NAME + " xmlns=\"" + NAMESPACE + "\">"
+            + "<gameID>" + _gameID + "</gameID>"
+            + "<positionX>" + _posx + "</positionX>"
+            + "<positionY>" + _posy + "</positionY>"
+            + "</" + ELEMENT_NAME + ">";
     }
 
     public static class Provider extends ExtensionElementProvider<InvalidMove>

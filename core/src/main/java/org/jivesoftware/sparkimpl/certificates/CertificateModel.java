@@ -79,16 +79,16 @@ public class CertificateModel {
 		this.serialNumber = certificate.getSerialNumber().toString();
 		this.signatureValue = Base64.getEncoder().encodeToString(certificate.getSignature());
 		this.signatureAlgorithm = certificate.getSigAlgName();
-		this.issuer = certificate.getIssuerX500Principal().getName().toString();
-		this.subject = certificate.getSubjectX500Principal().getName().toString();
+		this.issuer = certificate.getIssuerX500Principal().getName();
+		this.subject = certificate.getSubjectX500Principal().getName();
 		this.notBefore = certificate.getNotBefore().toString();
 		this.notAfter = certificate.getNotAfter().toString();
 		this.publicKey = certificate.getPublicKey().toString();
-        this.publicKeyAlgorithm = certificate.getPublicKey().getAlgorithm().toString();
+        this.publicKeyAlgorithm = certificate.getPublicKey().getAlgorithm();
         // rfc5280 in section 4.1.2.8. Unique Identifiers
         // "CAs conforming to this profile MUST NOT generate certificates with unique identifiers."
         // "These fields MUST NOT appear if the version is 1."
-        if (version != 1 && ((certificate.getKeyUsage() != null && certificate.getKeyUsage()[5] == false)
+        if (version != 1 && ((certificate.getKeyUsage() != null && !certificate.getKeyUsage()[5])
                 || certificate.getBasicConstraints() == -1)) {
             try {
                 this.issuerUniqueID = certificate.getIssuerUniqueID().toString();
@@ -201,12 +201,12 @@ public class CertificateModel {
 	}
 
 	private String extendedKeyUsageExtractor(X509Certificate cert) throws CertificateParsingException {
-		String value = "";
+		StringBuilder value = new StringBuilder();
 		List<String> extKeyUsage = cert.getExtendedKeyUsage();
 		for (String use : extKeyUsage) {
-			value += use + ": " + OIDTranslator.getDescription(use) + "\n";
+			value.append(use).append(": ").append(OIDTranslator.getDescription(use)).append("\n");
 		}
-		return value;
+		return value.toString();
 	}
 
 	private String policyConstraintsExtractor(ASN1Primitive primitive) {
@@ -245,20 +245,20 @@ public class CertificateModel {
 
 	private String NameConstraintsExtractor(ASN1Primitive primitive) {
 		NameConstraints nc = NameConstraints.getInstance(primitive);
-		String value = "";
+		StringBuilder value = new StringBuilder();
 		if (nc.getPermittedSubtrees() != null) {
-			value += Res.getString("cert.extension.name.constraints.permitted.subtrees") + ": \n";
+			value.append(Res.getString("cert.extension.name.constraints.permitted.subtrees")).append(": \n");
 			for (GeneralSubtree subtree : nc.getPermittedSubtrees()) {
-				value += subtree.toString() + "\n";
+				value.append(subtree.toString()).append("\n");
 			}
 		}
 		if (nc.getExcludedSubtrees() != null) {
-			value += Res.getString("cert.extension.name.constraints.excluded.subtrees") + ": \n";
+			value.append(Res.getString("cert.extension.name.constraints.excluded.subtrees")).append(": \n");
 			for (GeneralSubtree subtree : nc.getExcludedSubtrees()) {
-				value += subtree.toString() + "\n";
+				value.append(subtree.toString()).append("\n");
 			}
 		}
-		return value;
+		return value.toString();
 	}
 
 	private String basicConstraintsExtractor(ASN1Primitive primitive) {
@@ -272,17 +272,17 @@ public class CertificateModel {
 	}
 
 	private String alternativeNameExtractor(Collection<List<?>> rootNames) throws CertificateParsingException {
-		String value = "";
+		StringBuilder value = new StringBuilder();
 		if (rootNames != null) {
-			for (List names : rootNames) {
+			for (List<?> names : rootNames) {
 				if (names != null) {
 					for (Object name : names) {
-						value += name.toString() + "\n";
+						value.append(name.toString()).append("\n");
 					}
 				}
 			}
 		}
-		return value;
+		return value.toString();
 	}
 
 	
@@ -332,7 +332,7 @@ public class CertificateModel {
 		if (isRevoked()) {
 			return Res.getString("cert.revoked");
 			
-		} else if (isAfterNotAfter() == true) {
+		} else if (isAfterNotAfter()) {
 			return Res.getString("cert.expired");
 			
 		} else if (isBeforeNotBefore()) {
@@ -364,11 +364,7 @@ public class CertificateModel {
 	}
 
 	public boolean isSelfSigned(){
-		if(subject.equals(issuer)){
-			return true;
-		}else{
-			return false;
-		}
+        return subject.equals(issuer);
 	}
 	
 	/**
@@ -376,29 +372,17 @@ public class CertificateModel {
 	 * @return True if certificate isn't expired, isn't not valid yet and isn't revoked.
 	 */
 	private boolean checkValidity() {
-		if (!isAfterNotAfter() && !isBeforeNotBefore() && !isRevoked()) {
-			return true;
-		} else {
-			return false;
-		}
+        return !isAfterNotAfter() && !isBeforeNotBefore() && !isRevoked();
 	}
 
 	private boolean isBeforeNotBefore() {
 		Date today = new Date();
-		if (today.before(certificate.getNotBefore())) {
-			return true;
-		} else {
-			return false;
-		}
+        return today.before(certificate.getNotBefore());
 	}
 
 	private boolean isAfterNotAfter() {
 		Date today = new Date();
-		if (today.after(certificate.getNotAfter())) {
-			return true;
-		} else {
-			return false;
-		}
+        return today.after(certificate.getNotAfter());
 	}
 
 	public X509Certificate getCertificate() {

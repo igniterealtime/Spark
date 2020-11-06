@@ -26,8 +26,6 @@ import java.beans.PropertyChangeListener;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * <code>MessageDialog</code> class is used to easily display the most commonly used dialogs.
@@ -81,12 +79,13 @@ public final class MessageDialog
         EventQueue.invokeLater( () ->
         {
             // Create the title panel for this dialog
-            final TitlePanel titlePanel = new TitlePanel( Res.getString( "message.default.error" ), description == null || description.trim().isEmpty() ? null : description.trim(), SparkRes.getImageIcon( SparkRes.SMALL_DELETE ), true );
+            final String desc = description == null || description.trim().isEmpty() ? null : description.trim();
+            final TitlePanel titlePanel = new TitlePanel( Res.getString( "message.default.error" ), desc, SparkRes.getImageIcon( SparkRes.SMALL_DELETE ), true );
 
             final JLabel titleLabel = new JLabel( Res.getString( "message.default.error" ) );
             titleLabel.setFont(new Font("dialog", Font.BOLD, 11 ) );
 
-            final JLabel descriptionLabel = new JLabel( description == null || description.trim().isEmpty() ? null : description.trim() );
+            final JLabel descriptionLabel = new JLabel(desc);
             descriptionLabel.setFont(new Font("dialog", 0, 10 ) );
 
             // The stacktrace content.
@@ -372,8 +371,7 @@ public final class MessageDialog
 
         //add each element of the stack trace
         StackTraceElement[] stackTrace = aThrowable.getStackTrace();
-        final List<StackTraceElement> traceElements = Arrays.asList( stackTrace );
-        for ( StackTraceElement traceElement : traceElements )
+        for ( StackTraceElement traceElement : stackTrace)
         {
             result.append( traceElement );
             result.append( lineSeperator );

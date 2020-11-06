@@ -141,7 +141,7 @@ public class SparkFileUploadPlugin implements Plugin, ChatRoomListener, GlobalMe
 
         Log.debug("chatRoomOpened:  " + roomId);
 
-        if (decorators.containsKey(roomId) == false)
+        if (!decorators.containsKey(roomId))
         {
             decorators.put(roomId, new ChatRoomDecorator(room, this));
         }

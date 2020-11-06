@@ -220,12 +220,6 @@ public class GroupChatParticipantList extends JPanel {
 	}
     }
 
-	public void chatRoomOpened(ChatRoom room) {
-		if (room != groupChatRoom) {
-			return;
-		}
-	}
-
 	public void addInvitee(EntityBareJid jid, String message) {
 		// So the problem with this is that I have no idea what the users actual
 		// jid is in most cases.
@@ -400,10 +394,9 @@ public class GroupChatParticipantList extends JPanel {
 				+ groupChat.getBareJid();
 
 		// TODO: Remove duplicate variable userNickname and nicknameOfUser.
-		Resourcepart nicknameOfUser = userNickname;
-		Resourcepart nickname = groupChat.getNickname();
+        Resourcepart nickname = groupChat.getNickname();
 
-		if (nicknameOfUser.equals(nickname)) {
+		if (userNickname.equals(nickname)) {
 			return;
 		}
 
@@ -414,7 +407,7 @@ public class GroupChatParticipantList extends JPanel {
 			Log.debug("Could not find chat room - " + groupJID);
 
 			// Create new room
-			chatRoom = new ChatRoomImpl(groupJID, nicknameOfUser, roomTitle);
+			chatRoom = new ChatRoomImpl(groupJID, userNickname, roomTitle);
 			chatManager.getChatContainer().addChatRoom(chatRoom);
 		}
 
@@ -1176,7 +1169,7 @@ public class GroupChatParticipantList extends JPanel {
 	 *
 	 * @author Derek DeMoro
 	 */
-	public class ParticipantRenderer extends JLabel implements ListCellRenderer {
+	public static class ParticipantRenderer extends JLabel implements ListCellRenderer {
 		private static final long serialVersionUID = -7509947975798079141L;
 
 		/**

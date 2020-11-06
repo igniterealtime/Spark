@@ -41,7 +41,7 @@ public class JiveTable extends JTable {
 
 
     public JiveTable(String[] headers, Integer[] columnsToUseRenderer) {
-        tableModel = new JiveTable.JiveTableModel(headers, 0, false);
+        tableModel = new JiveTableModel(headers, 0, false);
         this.setModel(tableModel);
 
         getTableHeader().setReorderingAllowed(false);
@@ -58,10 +58,10 @@ public class JiveTable extends JTable {
     @Override
 	public TableCellRenderer getCellRenderer(int row, int column) {
         if (column == 3 || column == 4) {
-            return new JiveTable.JButtonRenderer(false);
+            return new JButtonRenderer(false);
         }
         else if (column == 1) {
-            return new JiveTable.JLabelRenderer(false);
+            return new JLabelRenderer(false);
         }
         else {
             return super.getCellRenderer(row, column);
@@ -92,7 +92,7 @@ public class JiveTable extends JTable {
         return obj;
     }
 
-    public class JiveTableModel extends DefaultTableModel {
+    public static class JiveTableModel extends DefaultTableModel {
  	private static final long serialVersionUID = -2072664365332767844L;
 	private boolean _isEditable;
 
@@ -118,7 +118,7 @@ public class JiveTable extends JTable {
         }
     }
 
-    class JLabelRenderer extends JLabel implements TableCellRenderer {
+    static class JLabelRenderer extends JLabel implements TableCellRenderer {
   	private static final long serialVersionUID = 4387574944818048720L;
 	Border unselectedBorder = null;
         Border selectedBorder = null;
@@ -169,7 +169,7 @@ public class JiveTable extends JTable {
     }
 
 
-    class JButtonRenderer extends JButton implements TableCellRenderer {
+    static class JButtonRenderer extends JButton implements TableCellRenderer {
 
 	private static final long serialVersionUID = -5287214156125954342L;
 	Border unselectedBorder = null;

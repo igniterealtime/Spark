@@ -40,7 +40,6 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jxmpp.jid.DomainBareJid;
 import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.impl.JidCreate;
-import org.jxmpp.jid.parts.Localpart;
 import org.jxmpp.stringprep.XmppStringprepException;
 
 import javax.swing.*;
@@ -444,10 +443,7 @@ public class BookmarksUI extends JPanel {
 
     public void removeBookmark(EntityBareJid roomJID) {
         try {
-            if (autoJoinRooms.contains(roomJID))
-            {
-                autoJoinRooms.remove(roomJID);
-            }
+            autoJoinRooms.remove(roomJID);
             manager.removeBookmarkedConference(roomJID);
             fireBookmarksRemoved(roomJID); // fire bookmark remove event
         }
@@ -532,17 +528,14 @@ public class BookmarksUI extends JPanel {
                                 		addServiceToList(aServiceList);
                                 	}
                                 }
-                                serviceField.setText("");
-                                serviceField.setEnabled(true);
-                                addButton.setEnabled(true);
                             }
                             else {
                             	UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
                                 JOptionPane.showMessageDialog(SparkManager.getMainWindow(), Res.getString("message.conference.service.error"), Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
-                                serviceField.setText("");
-                                serviceField.setEnabled(true);
-                                addButton.setEnabled(true);
                             }
+                            serviceField.setText("");
+                            serviceField.setEnabled(true);
+                            addButton.setEnabled(true);
                         }
                     };
                     worker.start();

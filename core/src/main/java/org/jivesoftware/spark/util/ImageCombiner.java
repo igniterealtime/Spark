@@ -80,12 +80,7 @@ public class ImageCombiner {
     }
 
     public static Image returnTransparentImage(int w, int h) {
-
-	BufferedImage image = new BufferedImage(w, h,
-		BufferedImage.TYPE_INT_ARGB);
-
-	return image;
-
+        return new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
     }
     
  

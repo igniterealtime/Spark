@@ -36,7 +36,6 @@ public class BrowserFactory {
      * Returns the Browser UI to use for system Spark is currently running on.
      *
      * @return the BrowserViewer.
-     * @see NativeBrowserViewer
      * @see HTMLViewer
      */
     public static BrowserViewer getBrowser() {

@@ -30,7 +30,7 @@ public class FormText {
     public static String getChatRoomWelcomeMessage(String agent, String workgroup) {
         String value = getTextSetting("acceptedChat_text", workgroup);
         value = FormUtils.replace(value, "${agent}", agent);
-        value = FormUtils.replace(value, "'", "\\\'");
+        value = FormUtils.replace(value, "'", "\\'");
         value = FormUtils.replace(value, "\n", "<br>");
 
         return value.trim();
@@ -115,7 +115,7 @@ public class FormText {
 
     public static String getNoAgentText(String workgroup) {
         String value = getTextSetting("no_agent_text", workgroup);
-        value = FormUtils.replace(value, "'", "\\\'");
+        value = FormUtils.replace(value, "'", "\\'");
         value = FormUtils.replace(value, "\n", "<br>");
 
         return value.trim();

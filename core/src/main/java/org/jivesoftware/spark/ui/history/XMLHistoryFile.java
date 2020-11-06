@@ -29,7 +29,7 @@ public class XMLHistoryFile extends AbstractHistoryFile {
 	private InputStream roomFileStream;
 
 	/**
-	 * @param roomFileStream
+	 * @param fileStream
 	 */
 	public XMLHistoryFile(InputStream fileStream) {
 

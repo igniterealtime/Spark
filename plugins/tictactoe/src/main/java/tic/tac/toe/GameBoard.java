@@ -86,35 +86,29 @@ public class GameBoard {
      */
     private boolean didCurrentPlayerWin() {
 
-	for (int x = 0; x < 3; x++) {
+        for (int x = 0; x < 3; x++) {
 
-	    if (_board[x][0] == _currentPlayer
-		    && _board[x][1] == _currentPlayer
-		    && _board[x][2] == _currentPlayer) {
-		return true;
-	    }
+            if (_board[x][0] == _currentPlayer
+                && _board[x][1] == _currentPlayer
+                && _board[x][2] == _currentPlayer) {
+                return true;
+            }
 
-	}
+        }
 
-	for (int y = 0; y < 3; y++) {
-	    if (_board[0][y] == _currentPlayer
-		    && _board[1][y] == _currentPlayer
-		    && _board[2][y] == _currentPlayer) {
-		return true;
-	    }
-	}
+        for (int y = 0; y < 3; y++) {
+            if (_board[0][y] == _currentPlayer
+                && _board[1][y] == _currentPlayer
+                && _board[2][y] == _currentPlayer) {
+                return true;
+            }
+        }
 
-	if (_board[0][0] == _currentPlayer && _board[1][1] == _currentPlayer
-		&& _board[2][2] == _currentPlayer) {
-	    return true;
-	}
-	if (_board[2][0] == _currentPlayer && _board[1][1] == _currentPlayer
-		&& _board[0][2] == _currentPlayer) {
-	    return true;
-	}
-
-	return false;
-
+        if (_board[0][0] == _currentPlayer && _board[1][1] == _currentPlayer && _board[2][2] == _currentPlayer) {
+            return true;
+        } else {
+            return _board[2][0] == _currentPlayer && _board[1][1] == _currentPlayer && _board[0][2] == _currentPlayer;
+        }
     }
 
     /**

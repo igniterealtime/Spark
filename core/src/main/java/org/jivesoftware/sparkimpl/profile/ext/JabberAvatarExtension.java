@@ -48,12 +48,9 @@ public class JabberAvatarExtension implements ExtensionElement {
 
     @Override
 	public String toXML(String enclosingNamespace) {
-        String buf = "<" + getElementName() + " xmlns=\"" + getNamespace() + "\">" +
-                "<hash>" +
-                photoHash +
-                "</hash>" +
-                "</" + getElementName() + ">";
-        return buf;
+        return "<" + getElementName() + " xmlns=\"" + getNamespace() + "\">"
+            + "<hash>" + photoHash + "</hash>"
+            + "</" + getElementName() + ">";
     }
 
     public static class Provider extends ExtensionElementProvider<JabberAvatarExtension>

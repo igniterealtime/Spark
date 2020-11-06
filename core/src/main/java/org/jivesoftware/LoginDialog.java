@@ -35,6 +35,7 @@ import org.jivesoftware.smack.util.DNSUtil;
 import org.jivesoftware.smack.util.TLSUtils;
 import org.jivesoftware.smackx.carbons.CarbonManager;
 import org.jivesoftware.smackx.chatstates.ChatStateManager;
+import org.jivesoftware.spark.PluginManager;
 import org.jivesoftware.spark.SessionManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.Workspace;
@@ -207,6 +208,10 @@ public class LoginDialog {
     protected void afterLogin() {
         // Make certain Enterprise features persist across future logins
         persistEnterprise();
+
+        // Load plugins before Workspace initialization to avoid any UI delays during plugin rendering, but after
+        // Enterprise initialization, which can pull in additional plugin configuration (eg: blacklist).
+        PluginManager.getInstance().loadPlugins();
 
         // Initialize and write default values from "Advanced Connection Preferences" to disk
         initAdvancedDefaults();
@@ -780,6 +785,7 @@ public class LoginDialog {
                             loginButton.setEnabled(true);
                         }
                     } catch (Exception e1) {
+                        Log.error(e1);
                     }
 
                 });
@@ -1167,35 +1173,7 @@ public class LoginDialog {
                         loginDialog.setVisible(true);
                     }
                     if (loginDialog.isVisible()) {
-                        if (xee.getMessage() != null && (xee.getMessage().contains("Certificate path validation failed") || xee.getMessage().contains("Certificate not in the TrustStore"))) {
-                            // Handle specific case: if path validation failed, show popup allowing the user to add the certificate.
-                            final X509Certificate[] lastFailedChain = SparkTrustManager.getLastFailedChain();
-                            if (lastFailedChain != null) {
-                                // Prompt user if they'd like to add the failed chain to the trust store.
-                                final CertificateModel certModel = new CertificateModel(lastFailedChain[0]);
-                                final Object[] options = {
-                                    Res.getString("yes"),
-                                    Res.getString("no")
-                                };
-
-                                final int userChoice = JOptionPane.showOptionDialog(this,
-                                    new UnrecognizedServerCertificatePanel(certModel),
-                                    Res.getString("title.certificate"),
-                                    JOptionPane.YES_NO_OPTION,
-                                    JOptionPane.WARNING_MESSAGE,
-                                    null,
-                                    options,
-                                    options[1]);
-
-                                if (userChoice == JOptionPane.YES_OPTION) {
-                                    // Add the certificate chain to the truststore.
-                                    ((SparkTrustManager) SparkTrustManager.getTrustManagerList()[0]).addChain(lastFailedChain);
-
-                                    // Attempt to login again.
-                                    validateLogin();
-                                }
-                            }
-                        } else if (xee.getMessage() != null && xee.getMessage().contains("Self Signed certificate")) {
+                        if (xee.getMessage() != null && xee.getMessage().contains("Self Signed certificate")) {
                             // Handle specific case: if server certificate is self-signed, but self-signed certs are not allowed, show a popup allowing the user to override.
                             // Prompt user if they'd like to add the failed chain to the trust store.
                             final Object[] options = {
@@ -1220,10 +1198,38 @@ public class LoginDialog {
                                 // Attempt to login again.
                                 validateLogin();
                             }
-
                         } else {
-                            // For anything else, show a generic error dialog.
-                            MessageDialog.showErrorDialog(loginDialog, errorMessage, xee);
+                            final X509Certificate[] lastFailedChain = SparkTrustManager.getLastFailedChain();
+                            final SparkTrustManager sparkTrustManager = (SparkTrustManager) SparkTrustManager.getTrustManagerList()[0];
+                            // Handle specific case: if path validation failed because of an unrecognized CA, show popup allowing the user to add the certificate.
+                            if (lastFailedChain != null && ((xee.getMessage() != null && xee.getMessage().contains("Certificate not in the TrustStore")) || !sparkTrustManager.containsTrustAnchorFor(lastFailedChain))) {
+                                // Prompt user if they'd like to add the failed chain to the trust store.
+                                final CertificateModel certModel = new CertificateModel(lastFailedChain[0]);
+                                final Object[] options = {
+                                    Res.getString("yes"),
+                                    Res.getString("no")
+                                };
+
+                                final int userChoice = JOptionPane.showOptionDialog(this,
+                                    new UnrecognizedServerCertificatePanel(certModel),
+                                    Res.getString("title.certificate"),
+                                    JOptionPane.YES_NO_OPTION,
+                                    JOptionPane.WARNING_MESSAGE,
+                                    null,
+                                    options,
+                                    options[1]);
+
+                                if (userChoice == JOptionPane.YES_OPTION) {
+                                    // Add the certificate chain to the truststore.
+                                    sparkTrustManager.addChain(lastFailedChain);
+
+                                    // Attempt to login again.
+                                    validateLogin();
+                                }
+                            } else {
+                                // For anything else, show a generic error dialog.
+                                MessageDialog.showErrorDialog(loginDialog, errorMessage, xee);
+                            }
                         }
                     }
                 });
@@ -1402,7 +1408,7 @@ public class LoginDialog {
     /**
      * Defines the background to use with the Login panel.
      */
-    public class LoginBackgroundPanel extends JPanel {
+    public static class LoginBackgroundPanel extends JPanel {
         private static final long serialVersionUID = -2449309600851007447L;
         final ImageIcon icons = Default.getImageIcon(Default.LOGIN_DIALOG_BACKGROUND_IMAGE);
 
@@ -1430,7 +1436,7 @@ public class LoginDialog {
     /**
      * The image panel to display the Spark Logo.
      */
-    public class ImagePanel extends JPanel {
+    public static class ImagePanel extends JPanel {
         private static final long serialVersionUID = -1778389077647562606L;
         private final ImageIcon icons = Default.getImageIcon(Default.MAIN_IMAGE);
 
