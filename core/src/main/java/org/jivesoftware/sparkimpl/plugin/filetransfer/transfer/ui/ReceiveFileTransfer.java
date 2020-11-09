@@ -767,12 +767,12 @@ public class ReceiveFileTransfer extends JPanel {
     /**
      * Return correct URI for filePath. dont mind of local or remote path
      *
-     * @param filePath
-     * @return
+     * @param file to open
+     * @return URI for the file.
      */
-    private static URI getFileURI(String filePath) {
+    private static URI getFileURI(File file) {
         URI uri = null;
-        filePath = filePath.trim();
+        String filePath = file.getPath().trim();
         if (filePath.indexOf("http") == 0 || filePath.indexOf("\\") == 0) {
             if (filePath.indexOf("\\") == 0)
                 filePath = "file:" + filePath;
@@ -786,45 +786,46 @@ public class ReceiveFileTransfer extends JPanel {
                 ex.printStackTrace();
             }
         } else {
-            File file = new File(filePath);
-            uri = file.toURI();
+            uri = new File(filePath).toURI();
         }
         return uri;
     }
 
     /**
-     * Launches a file browser or opens a file with java Desktop.open() if is
-     * supported
+     * Attempts to open the file. If no associated application can be found, or if that application fails to launch, or
+     * if the provided file is a directory, a file browser that shows the content of the folder in which the file
+     * resides is shown.
      *
-     * @param file
+     * @param file the file to be shown.
      */
     private void launchFile(File file) {
-        if (!Desktop.isDesktopSupported())
+        if (!Desktop.isDesktopSupported()) {
+            Log.warning("Cannot launch file (not supported in this environment).");
             return;
-        Desktop dt = Desktop.getDesktop();
-        try {
-            dt.open(file);
-        } catch (IOException ex) {
-            launchFile(file.getPath());
         }
-    }
 
-    /**
-     * Launches a file browser or opens a file with java Desktop.open() if is
-     * supported
-     *
-     * @param filePath
-     */
-    private void launchFile(String filePath) {
-        if (filePath == null || filePath.trim().length() == 0)
-            return;
-        if (!Desktop.isDesktopSupported())
-            return;
-        Desktop dt = Desktop.getDesktop();
+        final Desktop desktop = Desktop.getDesktop();
         try {
-            dt.browse(getFileURI(filePath));
-        } catch (Exception ex) {
-            ex.printStackTrace();
+            desktop.open(file);
+        } catch (IOException ex) {
+            try {
+                // Potentially trying to open on a network path that has spaces (SPARK-1350). Try again, using a URI.
+                desktop.browse(getFileURI(file));
+                return;
+            } catch (Exception ex1) {
+                // The specified file has no associated application or the associated application fails to be launched.
+                // Show the folder containing the file as a last-ditch effort (SPARK-2199).
+                if (file.isFile() && file.getParentFile() != null) {
+                    try {
+                        desktop.open(file.getParentFile());
+                        return;
+                    } catch (IOException ex2) {
+                        // Log the original exception (see below)
+                    }
+                }
+            }
+            // In case of failure, log the original exception, which is likely to be most relevant.
+            Log.warning("Unable to open file: " + file.getName(), ex);
         }
     }
 }
