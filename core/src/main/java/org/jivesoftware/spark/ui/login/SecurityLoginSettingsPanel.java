@@ -25,6 +25,9 @@ import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import static java.awt.GridBagConstraints.*;
 
 /**
@@ -49,6 +52,9 @@ public class SecurityLoginSettingsPanel extends JPanel
 
     private JCheckBox disableHostnameVerificationBox;
     private JCheckBox allowClientSideAuthentication;
+
+    private JButton deleteSavedPasswords;
+
     public SecurityLoginSettingsPanel( LocalPreferences localPreferences, JDialog optionsDialog )
     {
         this.localPreferences = localPreferences;
@@ -72,6 +78,9 @@ public class SecurityLoginSettingsPanel extends JPanel
         useSSLBox = new JCheckBox();
         disableHostnameVerificationBox = new JCheckBox();
         allowClientSideAuthentication  = new JCheckBox();
+
+        deleteSavedPasswords = new JButton();
+        deleteSavedPasswords.setEnabled( localPreferences.hasStoredPasswords() );
         
         // .. Set labels/text for all the components.
         ResourceUtils.resButton( modeRequiredRadio,              Res.getString( "radio.encryptionmode.required" ) );
@@ -80,7 +89,8 @@ public class SecurityLoginSettingsPanel extends JPanel
         ResourceUtils.resButton( useSSLBox,                      Res.getString( "label.old.ssl" ) );
         ResourceUtils.resButton( disableHostnameVerificationBox, Res.getString( "checkbox.disable.hostname.verification" ) );
         ResourceUtils.resButton( allowClientSideAuthentication,  Res.getString( "checkbox.allow.client.side.authentication" ) );
-        
+        ResourceUtils.resButton( deleteSavedPasswords,           Res.getString( "button.delete.saved.passwords" ) );
+
         // ... add the radio buttons to a group to make them interdependent.
         final ButtonGroup modeGroup = new ButtonGroup();
         modeGroup.add( modeRequiredRadio );
@@ -102,6 +112,14 @@ public class SecurityLoginSettingsPanel extends JPanel
         useSSLBox.setSelected( localPreferences.isSSL() );
         disableHostnameVerificationBox.setSelected( localPreferences.isDisableHostnameVerification() );
         allowClientSideAuthentication.setSelected(true);
+
+        // ... register click-handler that deletes stored passwords.
+        deleteSavedPasswords.addActionListener(actionEvent -> {
+            SettingsManager.getLocalPreferences().clearPasswordForAllUsers();
+            SettingsManager.saveSettings();
+            deleteSavedPasswords.setEnabled(false);
+        });
+
         // ... place the components on the titled-border panel.
         encryptionModePanel.add( modeRequiredRadio,   new GridBagConstraints( 0, 0, 1, 1, 1.0, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0 ) );
         encryptionModePanel.add( modeIfPossibleRadio, new GridBagConstraints( 0, 1, 1, 1, 1.0, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0 ) );
@@ -113,7 +131,8 @@ public class SecurityLoginSettingsPanel extends JPanel
 
         // ... place the other components under the titled-border panel.
         add( disableHostnameVerificationBox, new GridBagConstraints( 0, 1, 1, 1, 0.0, 0.0, NORTHWEST, HORIZONTAL, DEFAULT_INSETS, 0, 0 ) );
-        add( allowClientSideAuthentication,  new GridBagConstraints( 0, 2, 1, 1, 0.0, 1.0, NORTHWEST, HORIZONTAL, DEFAULT_INSETS, 0, 0 ) );
+        add( allowClientSideAuthentication,  new GridBagConstraints( 0, 2, 1, 1, 0.0, 0.0, NORTHWEST, HORIZONTAL, DEFAULT_INSETS, 0, 0 ) );
+        add( deleteSavedPasswords,           new GridBagConstraints( 0, 3, 1, 1, 0.0, 1.0, NORTHWEST, HORIZONTAL, DEFAULT_INSETS, 0, 0 ) );
     }
 
     public boolean validate_settings()
