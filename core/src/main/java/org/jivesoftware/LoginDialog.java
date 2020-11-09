@@ -1256,7 +1256,7 @@ public class LoginDialog {
                 }
             } else {
                 try {
-                    localPref.clearPasswordForUser(getBareJid());
+                    localPref.clearPasswordForAllUsers();
                 } catch (Exception e) {
                     Log.debug("Unable to clear saved password..." + e);
                 }
