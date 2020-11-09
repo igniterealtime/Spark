@@ -81,7 +81,7 @@ public class LocalPreferencePanel extends JPanel {
 			if (!_savePasswordBox.isSelected()) {
 				_autoLoginBox.setSelected(false);
 				try {
-					preferences.clearPasswordForUser(SparkManager.getSessionManager().getUserBareAddress().toString());
+					preferences.clearPasswordForAllUsers();
 				} catch (Exception e1) {
 					Log.debug("Unable to clear saved password..." + e1);
 				}

@@ -24,6 +24,7 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Encrypts and Decrypts text based on DESede keys.
@@ -57,25 +58,23 @@ public class Encryptor {
     }
 
     public static String decrypt(String string) {
+        try {
+            return decryptOrThrow(string);
+        }
+        catch (IllegalBlockSizeException | BadPaddingException | UnsupportedEncodingException e) {
+            Log.error(e);
+            return null;
+        }
+    }
+
+    public static String decryptOrThrow(String string) throws UnsupportedEncodingException, BadPaddingException, IllegalBlockSizeException {
         byte[] dec = Base64.decode( string );
 
-        try {
-            // Decrypt
-            byte[] utf8 = dcipher.doFinal(dec);
+        // Decrypt
+        byte[] utf8 = dcipher.doFinal(dec);
 
-            // Decode using utf-8
-            return new String(utf8, "UTF8");
-        }
-        catch (IllegalBlockSizeException e) {
-            Log.error(e);
-        }
-        catch (BadPaddingException e) {
-            Log.error(e);
-        }
-        catch (UnsupportedEncodingException e) {
-            Log.error(e);
-        }
-        return null;
+        // Decode using utf-8
+        return new String(utf8, StandardCharsets.UTF_8);
     }
 
     private static SecretKey decodeKey() throws Exception {
