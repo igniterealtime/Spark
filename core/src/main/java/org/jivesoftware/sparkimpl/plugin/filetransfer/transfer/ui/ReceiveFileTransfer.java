@@ -33,8 +33,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -318,7 +317,8 @@ public class ReceiveFileTransfer extends JPanel {
         add(cancelButton, new GridBagConstraints(1, 4, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 5, 5), 0, 0));
         cancelButton.setVisible(true);
         transfer = request.accept();
-        final File downloadedFile = new File(Downloads.getDownloadDirectory(), request.getFileName());
+
+        final File downloadedFile = toUniqueDownloadedFile(request);
 
         try {
             startTime = System.currentTimeMillis();
@@ -398,10 +398,38 @@ public class ReceiveFileTransfer extends JPanel {
         timer2.scheduleAtFixedRate(updateProgressBarText, 10, 500);
     }
 
+    /**
+     * Return a file reference that is suitable to store the content from the inbound file transfer into.
+     *
+     * This method will use the filename as provided by the request, but will add increments to that name in case a file
+     * of the same name already exists in the download directory.
+     *
+     * @param request The file transfer request
+     * @return A file object that can be used to store the inbound file data into.
+     * @see <a href="https://igniterealtime.atlassian.net/browse/SPARK-2198">SPARK-2198</a> Prevent incoming file transfer to overwrite existing file.
+     */
+    protected static File toUniqueDownloadedFile(FileTransferRequest request)
+    {
+        File downloadedFile = new File(Downloads.getDownloadDirectory(), request.getFileName());
+        int count = 1;
+        while (downloadedFile.isFile() && downloadedFile.exists()) {
+            if ( request.getFileName().contains(".")) {
+                // start finding unused names like 'file (1).txt' and 'file (2).txt'
+                final String name = request.getFileName().substring(0, request.getFileName().lastIndexOf('.'));
+                final String ext = request.getFileName().substring(request.getFileName().lastIndexOf('.'));
+                downloadedFile = new File(Downloads.getDownloadDirectory(), name +" ("+count++ +")" + ext);
+            } else {
+                // start finding unused names like 'file-1' and 'file-2'
+                downloadedFile = new File(Downloads.getDownloadDirectory(), request.getFileName() + "-"+count++);
+            }
+        }
+        return downloadedFile;
+    }
+
     private void updateOnFinished(final FileTransferRequest request,
                                   final File downloadedFile) {
         if (transfer.getAmountWritten() >= request.getFileSize()) {
-            transferDone(request, transfer);
+            transferDone(request.getRequestor().asBareJid(), downloadedFile);
 
             imageLabel.setFile(downloadedFile);
             imageLabel.setToolTipText(Res.getString("message.click.to.open"));
@@ -491,18 +519,16 @@ public class ReceiveFileTransfer extends JPanel {
         repaint();
     }
 
-    private void transferDone(final FileTransferRequest request, FileTransfer transfer) {
+    private void transferDone(final BareJid requestor, final File downloadedFile) {
         cancelButton.setVisible(false);
 
         showAlert(true);
 
-        BareJid bareJID = request.getRequestor().asBareJid();
-
         ContactList contactList = SparkManager.getWorkspace().getContactList();
-        ContactItem contactItem = contactList.getContactItemByJID(bareJID);
+        ContactItem contactItem = contactList.getContactItemByJID(requestor);
 
         titleLabel.setText(Res.getString("message.received.file", contactItem.getDisplayName()));
-        fileLabel.setText(request.getFileName());
+        fileLabel.setText(downloadedFile.getName());
 
         remove(acceptButton);
         remove(declineButton);
@@ -514,7 +540,6 @@ public class ReceiveFileTransfer extends JPanel {
         add(openFileButton, new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 0, 5), 0, 0));
         add(openFolderButton, new GridBagConstraints(2, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 0, 5), 0, 0));
 
-        final File downloadedFile = new File(Downloads.getDownloadDirectory(), request.getFileName());
         openFileButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
@@ -528,7 +553,7 @@ public class ReceiveFileTransfer extends JPanel {
 
             @Override
             public void mousePressed(MouseEvent e) {
-                launchFile(Downloads.getDownloadDirectory() + File.separator + request.getFileName());
+                launchFile(downloadedFile);
             }
         });
 
