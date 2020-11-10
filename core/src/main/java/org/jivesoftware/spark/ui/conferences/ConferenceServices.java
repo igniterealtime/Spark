@@ -300,7 +300,7 @@ public class ConferenceServices implements InvitationListener {
         }
 
         Localpart userName = SparkManager.getSessionManager().getJID().getLocalpart();
-        final EntityBareJid roomName = JidCreate.entityBareFromOrThrowUnchecked(userName + "_" + StringUtils.randomString(3));
+        final Localpart roomName = Localpart.fromUnescapedOrThrowUnchecked( userName.asUnescapedString() + "_" + StringUtils.randomString(3) );
 
         DomainBareJid serviceName = getDefaultServiceName();
         if (serviceName != null) {
