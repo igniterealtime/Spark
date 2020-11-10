@@ -182,6 +182,9 @@ public class ChatManager {
     }
 
 	public GroupChatRoom getGroupChat(EntityBareJid roomAddress) throws ChatNotFoundException {
+        if ( roomAddress == null ) {
+            throw new ChatNotFoundException();
+        }
 		return getGroupChat(roomAddress.toString());
 	}
 

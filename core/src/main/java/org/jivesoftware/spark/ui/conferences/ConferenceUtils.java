@@ -45,6 +45,7 @@ import org.jxmpp.jid.DomainBareJid;
 import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.Jid;
 import org.jxmpp.jid.impl.JidCreate;
+import org.jxmpp.jid.parts.Localpart;
 import org.jxmpp.jid.parts.Resourcepart;
 import org.jxmpp.stringprep.XmppStringprepException;
 
@@ -214,7 +215,7 @@ public class ConferenceUtils {
      * @param jids a collection of the users to invite.
      */
     public static void inviteUsersToRoom(MultiUserChat chat, Collection<Jid> jids, boolean randomName ) {
-        inviteUsersToRoom(chat.getRoom().asDomainBareJid(), chat.getRoom(), jids, randomName );
+        inviteUsersToRoom(chat.getRoom().asDomainBareJid(), chat.getRoom().getLocalpart(), jids, randomName );
     }
 
     /**
@@ -224,7 +225,7 @@ public class ConferenceUtils {
      * @param roomName    the name of the room.
      * @param jids        a collection of the users to invite.
      */
-    public static void inviteUsersToRoom(DomainBareJid serviceName, EntityBareJid roomName, Collection<Jid> jids, boolean randomName) {
+    public static void inviteUsersToRoom(DomainBareJid serviceName, Localpart roomName, Collection<Jid> jids, boolean randomName) {
         final LocalPreferences pref = SettingsManager.getLocalPreferences();
         boolean useTextField = pref.isUseAdHocRoom();
         Collection<BookmarkedConference> rooms = null;
