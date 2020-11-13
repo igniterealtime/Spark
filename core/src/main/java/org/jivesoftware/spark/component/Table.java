@@ -276,7 +276,7 @@ public abstract class Table extends JXTable {
 	private static final long serialVersionUID = 4433780600297455731L;
 	Border unselectedBorder;
         Border selectedBorder;
-        boolean isBordered = true;
+        boolean isBordered;
 
         /**
          * JLabelConstructor to build ui.

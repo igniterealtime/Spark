@@ -42,7 +42,7 @@ public class SparkTabbedPane extends JPanel {
 	private static final long serialVersionUID = -9007068462231539973L;
 	private static final String NAME = "SparkTabbedPane";
 	private List<SparkTabbedPaneListener> listeners = new ArrayList<>();
-	private JTabbedPane pane = null;
+	private JTabbedPane pane;
 	private Icon closeInactiveButtonIcon;
 	private Icon closeActiveButtonIcon;
 	private boolean closeEnabled = false;

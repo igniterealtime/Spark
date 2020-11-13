@@ -50,7 +50,7 @@ public class GatewayTabItem extends CollapsiblePane implements GatewayItem {
     private RolloverButton _signInOut = new RolloverButton();
     private RolloverButton _registerButton = new RolloverButton();
     private JCheckBox _autoJoin = new JCheckBox();
-    private boolean _transportRegistered = false;
+    private boolean _transportRegistered;
 
     private RolloverButton _autoJoinButton = new RolloverButton();
     
