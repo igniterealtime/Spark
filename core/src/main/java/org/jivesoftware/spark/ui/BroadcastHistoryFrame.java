@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.text.Format;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
@@ -75,7 +76,7 @@ public class BroadcastHistoryFrame extends javax.swing.JFrame {
         try {
             readFromFile(myDate);
         } catch (IOException ex) {
-            Log.error("Couldn't read from file"+ex.getMessage()+ex.getStackTrace());
+            Log.error("Couldn't read from file"+ex.getMessage()+ Arrays.toString(ex.getStackTrace()));
         }
        
         SearchButton.setText((Res.getString("button.search")));
@@ -155,7 +156,7 @@ public class BroadcastHistoryFrame extends javax.swing.JFrame {
         try {
             readFromFile(DateField.getText());
         } catch (IOException ex) {
-            Log.error("Couldn't read from file"+ex.getCause()+ex.getStackTrace());
+            Log.error("Couldn't read from file"+ex.getCause()+ Arrays.toString(ex.getStackTrace()));
         }
        
         
