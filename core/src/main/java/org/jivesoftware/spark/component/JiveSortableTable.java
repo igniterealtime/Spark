@@ -247,7 +247,7 @@ public abstract class JiveSortableTable extends Table {
 	private static final long serialVersionUID = 8670248883432881619L;
 	Border unselectedBorder;
         Border selectedBorder;
-        boolean isBordered = true;
+        boolean isBordered;
 
         /**
          * JLabelConstructor to build ui.

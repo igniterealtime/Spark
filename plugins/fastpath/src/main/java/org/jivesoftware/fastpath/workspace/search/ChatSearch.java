@@ -90,7 +90,7 @@ public class ChatSearch implements Searchable {
             List<String> workgroupStrings = JidUtil.toStringList(workgroups);
             filledForm.setAnswer("workgroups", workgroupStrings);
 
-            ReportedData reportedData = null;
+            ReportedData reportedData;
             try {
                 reportedData = agentSession.searchTranscripts(filledForm);
                 for ( final ReportedData.Row row : reportedData.getRows() ) {

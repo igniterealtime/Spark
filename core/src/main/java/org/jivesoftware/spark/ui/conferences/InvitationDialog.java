@@ -81,7 +81,7 @@ final class InvitationDialog extends JPanel {
     private JDialog dlg;
 
     public InvitationDialog(boolean adhoc) {
-        JComponent roomsField = new JTextField();
+        JComponent roomsField;
         if (adhoc) {
             roomsField = new JTextField();
             textRoomsField = (JTextField) roomsField;
@@ -91,7 +91,7 @@ final class InvitationDialog extends JPanel {
             comboRoomsField.setEditable(true);
             comboRoomsField.addActionListener( e -> {
                 // get selected bookmark and persist it:
-                BookmarkedConference bookmarkedConf = null;
+                BookmarkedConference bookmarkedConf;
                 Object bookmarkedConfItem = comboRoomsField.getSelectedItem();
                 if (bookmarkedConfItem instanceof ConferenceItem) {
                     bookmarkedConf = ((ConferenceItem) bookmarkedConfItem).getBookmarkedConf();

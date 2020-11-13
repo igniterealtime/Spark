@@ -72,8 +72,8 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class VCardManager {
 
     private VCard personalVCard;
-    private transient byte[] personalVCardAvatar = null; // lazy loaded cache of avatar binary data.
-    private transient String personalVCardHash = null; // lazy loaded cache of avatar hash.
+    private transient byte[] personalVCardAvatar; // lazy loaded cache of avatar binary data.
+    private transient String personalVCardHash; // lazy loaded cache of avatar hash.
 
     private Map<BareJid, VCard> vcards = Collections.synchronizedMap( new HashMap<>());
 

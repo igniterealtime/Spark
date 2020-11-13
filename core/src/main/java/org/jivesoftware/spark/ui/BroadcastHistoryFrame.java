@@ -40,24 +40,20 @@ public class BroadcastHistoryFrame extends javax.swing.JFrame {
         BroadcastHistoryArea.setWrapStyleWord(true);
         initComponents();
     }
-    
+
     public void readFromFile(String date) throws FileNotFoundException, IOException {
         //String fileName = Spark.getSparkUserHome()+File.separator+"broadcast_history."+date+".txt";
-        String fileLocation=Spark.getSparkUserHome()+File.separator+"user"+File.separator+SparkManager.getSessionManager().getUsername()+"@"+SparkManager.getSessionManager().getServerAddress()+File.separator+"transcripts"+File.separator+"broadcast_history."+date+".txt";
+        String fileLocation = Spark.getSparkUserHome() + File.separator + "user" + File.separator + SparkManager.getSessionManager().getUsername() + "@" + SparkManager.getSessionManager().getServerAddress() + File.separator + "transcripts" + File.separator + "broadcast_history." + date + ".txt";
         File myfile = new File(fileLocation);
         FileInputStream fis = new FileInputStream(myfile);
- 
-	
+
         BufferedReader br = new BufferedReader(new InputStreamReader(fis));
-        
-        String line = null;
-       
+
+        String line;
         while ((line = br.readLine()) != null) {
-            BroadcastHistoryArea.append(line+"\n");
-            }
- 
-	br.close();   
- 
+            BroadcastHistoryArea.append(line + "\n");
+        }
+        br.close();
     }
     
     private void initComponents() {        

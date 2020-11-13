@@ -758,7 +758,7 @@ public class Base64 {
 
         java.io.ByteArrayInputStream bais = null;
         java.io.ObjectInputStream ois = null;
-        Object obj = null;
+        Object obj;
 
         try {
             bais = new java.io.ByteArrayInputStream(objBytes);

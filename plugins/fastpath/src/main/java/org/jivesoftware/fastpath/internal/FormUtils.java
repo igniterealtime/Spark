@@ -133,7 +133,7 @@ final public class FormUtils {
 
 
     public static String getPushedURL(String body) {
-        String urlToPush = null;
+        String urlToPush;
         int index = body.indexOf("]");
         urlToPush = body.substring(index + 1);
         int index2 = urlToPush.indexOf("http://");
