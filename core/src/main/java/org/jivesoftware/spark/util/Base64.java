@@ -15,6 +15,7 @@
  */
 package org.jivesoftware.spark.util;
 
+import org.jetbrains.annotations.NotNull;
 import org.jivesoftware.spark.util.log.Log;
 
 /**
@@ -978,26 +979,20 @@ public class Base64 {
          * @since 1.3
          */
         @Override
-		public int read(byte[] dest, int off, int len) throws java.io.IOException {
+		public int read(@NotNull byte[] dest, int off, int len) throws java.io.IOException {
             int i;
-            int b;
             for (i = 0; i < len; i++) {
-                b = read();
-
-                //if( b < 0 && i == 0 )
-                //    return -1;
-
+                int b = read();
                 if (b >= 0)
-                    dest[off + i] = (byte)b;
+                    dest[off + i] = (byte) b;
                 else if (i == 0)
                     return -1;
                 else
-                    break; // Out of 'for' loop
-            }   // end for: each byte read
+                    break;
+            }
             return i;
-        }   // end read
-
-    }   // end inner class InputStream
+        }
+    }
 
     /* ********  I N N E R   C L A S S   O U T P U T S T R E A M  ******** */
 
@@ -1132,7 +1127,7 @@ public class Base64 {
          * @since 1.3
          */
         @Override
-		public void write(byte[] theBytes, int off, int len) throws java.io.IOException {
+		public void write(@NotNull byte[] theBytes, int off, int len) throws java.io.IOException {
             // Encoding suspended?
             if (suspendEncoding) {
                 super.out.write(theBytes, off, len);

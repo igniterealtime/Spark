@@ -15,6 +15,7 @@
  */
 package org.jivesoftware.spark.util;
 
+import org.jetbrains.annotations.NotNull;
 import org.jivesoftware.spark.util.log.Log;
 
 import java.util.Date;
@@ -65,7 +66,7 @@ public class TaskEngine {
             final AtomicInteger threadNumber = new AtomicInteger(1);
 
             @Override
-			public Thread newThread(Runnable runnable) {
+			public Thread newThread(@NotNull Runnable runnable) {
                 // Use our own naming scheme for the threads.
                 Thread thread = new Thread(Thread.currentThread().getThreadGroup(), runnable,
                         "pool-spark" + threadNumber.getAndIncrement(), 0);
