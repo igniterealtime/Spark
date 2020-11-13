@@ -307,7 +307,7 @@ public class RosterDialog implements ActionListener {
 
     @Override
 	public void actionPerformed(ActionEvent e) {
-        String group = JOptionPane.showInputDialog(dialog, Res.getString("label.enter.group.name") + ":", Res.getString("title.new.roster.group"), 3);
+        String group = JOptionPane.showInputDialog(dialog, Res.getString("label.enter.group.name") + ":", Res.getString("title.new.roster.group"), JOptionPane.QUESTION_MESSAGE);
         if (group != null && group.length() > 0 && !groupModel.contains(group)) {
             Roster.getInstanceFor( SparkManager.getConnection() ).createGroup(group);
             groupModel.add(group);

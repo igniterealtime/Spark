@@ -303,7 +303,7 @@ public class GroupChatParticipantList extends JPanel {
 	    int index = getIndex(nickname);
 	    if (index != -1) {
 		final JLabel userLabel = new JLabel(nickname.toString(), icon,
-			JLabel.HORIZONTAL);
+            SwingConstants.CENTER);
 		model.setElementAt(userLabel, index);
 	    }
 	}
@@ -743,7 +743,7 @@ public class GroupChatParticipantList extends JPanel {
 			icon = SparkRes.getImageIcon(SparkRes.BRICKWALL_IMAGE);
 		    }
 
-		    JLabel label = new JLabel(user, icon, JLabel.HORIZONTAL);
+		    JLabel label = new JLabel(user, icon, SwingConstants.CENTER);
 		    model.setElementAt(label, index);
 		}
 	    };
@@ -1056,7 +1056,7 @@ public class GroupChatParticipantList extends JPanel {
 	public synchronized void addUser(Icon userIcon, CharSequence nickname) {
 		try {
 			final JLabel user = new JLabel(nickname.toString(), userIcon,
-					JLabel.HORIZONTAL);
+                SwingConstants.CENTER);
 			users.add(user);
 
 			// Sort users alpha.

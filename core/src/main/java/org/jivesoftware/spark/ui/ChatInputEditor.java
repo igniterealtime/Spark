@@ -17,6 +17,7 @@ package org.jivesoftware.spark.ui;
 
 import java.awt.Color;
 import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 
 import javax.swing.AbstractAction;
@@ -122,7 +123,7 @@ public class ChatInputEditor extends ChatArea implements DocumentListener {
 	    }
 	};
 
-        undoKeyStroke = KeyStroke.getKeyStroke('z', ActionEvent.CTRL_MASK);       
+        undoKeyStroke = KeyStroke.getKeyStroke('z', InputEvent.CTRL_MASK);
         ctrlbackspaceKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, KeyEvent.CTRL_MASK);
         escapeKeyStroke = KeyStroke.getKeyStroke("ESCAPE");
         
