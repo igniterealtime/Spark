@@ -662,9 +662,6 @@ public class GroupChatParticipantList extends JPanel {
 			    while (true) {
 				newNickname = newNickname.trim();
 				String nick = chat.getNickname().toString();
-				if (newNickname.equals(nick)) {
-				    // return;
-				}
 				try {
 				    chat.changeNickname(Resourcepart.from(newNickname));
 				    break;

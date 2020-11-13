@@ -460,10 +460,7 @@ public class VCardManager {
             // Create temp vcard.
             vcard = new VCard();
             vcard.setJabberId(jid.toString());
-        } else {
-        	//System.out.println(jid+"  HDD ---------->");
         }
-        
 
         return vcard;
     }

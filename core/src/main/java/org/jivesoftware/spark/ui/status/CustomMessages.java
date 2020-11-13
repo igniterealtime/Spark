@@ -241,10 +241,7 @@ public class CustomMessages {
                             Iterator<CustomStatusItem> iter = customItems.iterator();
                             while (iter.hasNext()) {
                                 CustomStatusItem item = iter.next();
-                                if (item.getType().equals(messageType) && item.getStatus().equals(messageStatus)) {
-
-                                }
-                                else {
+                                if (!item.getType().equals(messageType) || !item.getStatus().equals(messageStatus)) {
                                     list.add(item);
                                 }
                             }

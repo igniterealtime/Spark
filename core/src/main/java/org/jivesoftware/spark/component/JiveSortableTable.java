@@ -275,9 +275,6 @@ public abstract class JiveSortableTable extends Table {
             else {
                 setForeground(Color.black);
                 setBackground(Color.white);
-                if (row % 2 == 0) {
-                    //setBackground( new Color( 156, 207, 255 ) );
-                }
             }
 
             if (isBordered) {
@@ -362,9 +359,6 @@ public abstract class JiveSortableTable extends Table {
             else {
                 setForeground(Color.black);
                 setBackground(Color.white);
-                if (row % 2 == 0) {
-                    //setBackground( new Color( 156, 207, 255 ) );
-                }
             }
 
             if (isBordered) {
