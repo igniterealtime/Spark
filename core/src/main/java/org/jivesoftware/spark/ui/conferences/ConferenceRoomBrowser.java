@@ -344,27 +344,21 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
     }
 
     private RoomObject getRoomsAndInfo(final HostedRoom room) {
-        boolean stillSearchForOccupants = true;
         RoomObject result = null;
         try {
             try {
                 String roomName = room.getName();
                 EntityBareJid roomJID = room.getJid();
                 int numberOfOccupants = -1;
-                if (stillSearchForOccupants) {
                 RoomInfo roomInfo = null;
                 try {
-                    roomInfo = MultiUserChatManager.getInstanceFor( SparkManager.getConnection() ).getRoomInfo( roomJID );
+                    roomInfo = MultiUserChatManager.getInstanceFor(SparkManager.getConnection()).getRoomInfo(roomJID);
                 } catch (Exception e) {
                     // Nothing to do
                 }
 
                 if (roomInfo != null) {
                     numberOfOccupants = roomInfo.getOccupantsCount();
-                    if (numberOfOccupants == -1) {
-                    }
-                } else {
-                }
                 }
 
                 result = new RoomObject();

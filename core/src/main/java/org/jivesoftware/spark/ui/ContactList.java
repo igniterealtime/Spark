@@ -824,9 +824,7 @@ public class ContactList extends JPanel implements ActionListener,
 
                     ContactGroup unfiledGrp = getUnfiledGroup();
                     ContactItem unfiledItem = unfiledGrp.getContactItemByJID(jid.asBareJid());
-                    if (unfiledItem != null) {
-
-                    } else {
+                    if (unfiledItem == null) {
                         ContactItem offlineItem = offlineGroup.getContactItemByJID(jid.asBareJid());
                         if (offlineItem != null) {
                             if ((rosterEntry.getType() == RosterPacket.ItemType.none || rosterEntry.getType() == RosterPacket.ItemType.from)

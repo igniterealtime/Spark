@@ -139,16 +139,11 @@ public class UserSearchForm extends JPanel {
                 Log.error(ioe);
                 
                } 
-           } 
-           else { 
-	    // Log.error("Search-Searvice-Error: Properties-file does not exist= " + pluginsettings.getPath()); 
-           }        
-
+           }
 
            if (servicesBox.getItemCount() > 0) {
                servicesBox.setSelectedIndex(0);
            }
-           
         
         titlePanel = new TitlePanel("", "", SparkRes.getImageIcon(SparkRes.BLANK_IMAGE), true);
         add(titlePanel, new GridBagConstraints(0, 0, 3, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
