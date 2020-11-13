@@ -15,6 +15,7 @@
  */
 package org.jivesoftware.spark.component;
 
+import org.jetbrains.annotations.NotNull;
 import org.jivesoftware.spark.util.log.Log;
 
 import java.awt.datatransfer.DataFlavor;
@@ -154,6 +155,7 @@ public class FileDragLabel extends JLabel implements DropTargetListener, DragSou
         }
 
 
+        @NotNull
         @Override
 		public synchronized Object getTransferData(DataFlavor flavor)
             throws UnsupportedFlavorException, IOException {

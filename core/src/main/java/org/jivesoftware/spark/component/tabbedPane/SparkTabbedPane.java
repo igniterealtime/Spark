@@ -15,6 +15,7 @@
  */
 package org.jivesoftware.spark.component.tabbedPane;
 
+import org.jetbrains.annotations.NotNull;
 import org.jivesoftware.Spark;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.spark.SparkManager;
@@ -507,7 +508,8 @@ public class SparkTabbedPane extends JPanel {
 
 	    final Transferable t = new Transferable() {
 	    	private final DataFlavor FLAVOR = new DataFlavor(DataFlavor.javaJVMLocalObjectMimeType, NAME);
-			@Override
+			@NotNull
+            @Override
 			public Object getTransferData(DataFlavor flavor)
 					throws UnsupportedFlavorException, IOException {
 				return pane;
