@@ -43,7 +43,7 @@ public final class QueueActivity extends JPanel implements QueueUsersListener {
 	private final DefaultListModel model = new DefaultListModel();
     private JList list;
 
-    private final Map<WorkgroupQueue, QueueItem> queues = new HashMap<WorkgroupQueue, QueueItem>();
+    private final Map<WorkgroupQueue, QueueItem> queues = new HashMap<>();
 
     /**
      * Add Listeners and build UI.

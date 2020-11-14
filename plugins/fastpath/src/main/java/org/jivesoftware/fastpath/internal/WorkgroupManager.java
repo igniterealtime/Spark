@@ -172,7 +172,7 @@ public class WorkgroupManager {
     private void showWorkgroup(final ContactItem contactItem) throws Exception {
         VCard vcard = SparkManager.getVCardManager().getVCard();
 
-        final Map<String, String> variables = new HashMap<String, String>();
+        final Map<String, String> variables = new HashMap<>();
         String firstName = vcard.getFirstName();
         String lastName = vcard.getLastName();
 

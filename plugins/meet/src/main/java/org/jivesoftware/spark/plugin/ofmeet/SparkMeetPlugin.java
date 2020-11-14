@@ -45,7 +45,7 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
     private String url = null;
 
     private static final File pluginsettings = new File(System.getProperty("user.home") + System.getProperty("file.separator") + "Spark" + System.getProperty("file.separator") + "ofmeet.properties");
-    private final Map<String, ChatRoomDecorator> decorators = new HashMap<String, ChatRoomDecorator>();
+    private final Map<String, ChatRoomDecorator> decorators = new HashMap<>();
     private String electronExePath = null;
     private String electronHomePath = null;
     private XProcess electronThread = null;

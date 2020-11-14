@@ -136,7 +136,7 @@ public class GameBoard {
      */
     public Pair[] getWinningPositions()
     {
-	ArrayList<Pair> liste = new ArrayList<Pair>();
+	ArrayList<Pair> liste = new ArrayList<>();
 	
 	if(_winner == -1)
 	{

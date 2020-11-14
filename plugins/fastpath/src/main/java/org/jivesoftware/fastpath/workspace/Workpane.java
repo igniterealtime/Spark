@@ -76,10 +76,10 @@ public class Workpane {
     // Tracks all the offers coming into the client.
     private final Map<String, Offer> offerMap = new HashMap<>();
     private final Map<String, Map<String, List<String>>> inviteMap = new HashMap<>();
-    private final Map<String, UserInvitationPane> invitations = new HashMap<String, UserInvitationPane>();
+    private final Map<String, UserInvitationPane> invitations = new HashMap<>();
 
 
-    private final Map<ChatRoom, RoomState> fastpathRooms = new HashMap<ChatRoom, RoomState>();
+    private final Map<ChatRoom, RoomState> fastpathRooms = new HashMap<>();
 
     private final OnlineAgents onlineAgentsPane;
     private AgentConversations agentCons;
