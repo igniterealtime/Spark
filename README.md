@@ -43,7 +43,7 @@ Resources
 
 - Documentation: http://www.igniterealtime.org/projects/spark/documentation.jsp
 - Community: https://discourse.igniterealtime.org/c/spark
-- Bug Tracker: http://issues.igniterealtime.org/browse/SPARK
+- Bug Tracker: https://igniterealtime.atlassian.net/browse/SPARK
 - Nightly Builds: http://www.igniterealtime.org/downloads/nightly_spark.jsp
 
 Ignite Realtime
