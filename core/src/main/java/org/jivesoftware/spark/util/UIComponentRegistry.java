@@ -375,7 +375,7 @@ public final class UIComponentRegistry {
      * @return A new instance of the class currently registered as workspace tab pane
      */
     public static SparkTabbedPane createWorkspaceTabPanel(int tabPosition) {
-        return instantiate(workspaceTabPaneClass, new Integer(tabPosition));
+        return instantiate(workspaceTabPaneClass, tabPosition);
     }
 
     /**

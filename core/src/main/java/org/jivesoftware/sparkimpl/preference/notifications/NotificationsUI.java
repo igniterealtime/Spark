@@ -161,7 +161,7 @@ public class NotificationsUI extends JPanel {
        
     public Integer getNotificationsDisplayTime()
     {
-        return Integer.valueOf(notificationDelay.getValue().toString())*1000;
+        return Integer.parseInt(notificationDelay.getValue().toString())*1000;
     }   
 
     public void setOfflineNotification(boolean notify) {
