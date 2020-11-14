@@ -54,7 +54,7 @@ public class UriManager {
 
 	private String _xml;
 
-	private uritypes(String s) {
+	uritypes(String s) {
 	    _xml = s;
 	}
 	public String getXML() {
