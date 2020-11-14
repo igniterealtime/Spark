@@ -67,9 +67,9 @@ public class ContactGroupTransferHandler extends TransferHandler {
             return false;
         }
 
-        for (int i = 0, n = flavor.length; i < n; i++) {
-            for (int j = 0, m = flavors.length; j < m; j++) {
-                if (flavor[i].equals(flavors[j])) {
+        for (DataFlavor dataFlavor : flavor) {
+            for (DataFlavor value : flavors) {
+                if (dataFlavor.equals(value)) {
                     return true;
                 }
             }

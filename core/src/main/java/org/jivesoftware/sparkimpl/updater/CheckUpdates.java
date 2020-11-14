@@ -665,9 +665,7 @@ public class CheckUpdates {
             File binDirectory = Spark.getBinDirectory();
             File[] files = binDirectory.listFiles();
             if (files != null) {
-                int no = files.length;
-                for (int i = 0; i < no; i++) {
-                    File file = files[i];
+                for (File file : files) {
                     String fileName = file.getName();
                     if (fileName.endsWith(".exe")) {
                         int index = fileName.indexOf("_");
@@ -685,8 +683,7 @@ public class CheckUpdates {
                             // Prompt
                             promptForInstallation(file, Res.getString("title.new.client.available"), Res.getString("message.restart.spark.to.install"));
                             return true;
-                        }
-                        else {
+                        } else {
                             file.delete();
                         }
 
