@@ -50,7 +50,7 @@ import java.security.cert.X509Certificate;
  */
 
 public class EasyX509TrustManager implements X509TrustManager {
-    private X509TrustManager standardTrustManager = null;
+    private X509TrustManager standardTrustManager;
 
     /**
      * Log object for this class.

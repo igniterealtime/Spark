@@ -54,7 +54,7 @@ public class PrivacyManager {
     private PrivacyListManager privacyManager;
     private PrivacyPresenceHandler _presenceHandler = new PrivacyPresenceHandler();
     private Set<SparkPrivacyListListener> _listListeners = new HashSet<>();
-    private boolean _active = false;
+    private boolean _active;
     private SparkPrivacyList previousActiveList;
 
     /**

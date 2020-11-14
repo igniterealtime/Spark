@@ -63,8 +63,8 @@ public class HistoryTranscript extends SwingWorker {
 	private JButton pageLeft = new JButton("<");
 	private JButton pageRight = new JButton(">");
 	private BareJid jid = null;
-	private SimpleDateFormat notificationDateFormatter = null;
-	private SimpleDateFormat messageDateFormatter = null;
+	private SimpleDateFormat notificationDateFormatter;
+	private SimpleDateFormat messageDateFormatter;
 	private final AtomicBoolean isInitialized = new AtomicBoolean(false);
 
 	private LocalPreferences pref = SettingsManager.getLocalPreferences();
@@ -400,7 +400,7 @@ public class HistoryTranscript extends SwingWorker {
 				cal.setTime(oldDate);
 				Date newDate;
 
-				ChatTranscript history = new ChatTranscript();
+				ChatTranscript history;
 				boolean handled = true;
 
 				for(int i = startValue; i != endValue; i += iteratorValue){

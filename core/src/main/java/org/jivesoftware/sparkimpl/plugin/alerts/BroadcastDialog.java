@@ -24,12 +24,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
+import java.util.*;
 import java.util.List;
-import java.util.Set;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -396,7 +392,7 @@ Log.warning( "Unable to broadcast.", e1 );
         try {
             addDataToFile(out);
         } catch (IOException ex) {
-            Log.error("Couldn't add data to file"+ex.getStackTrace());
+            Log.error("Couldn't add data to file"+ Arrays.toString(ex.getStackTrace()));
         }
         
        

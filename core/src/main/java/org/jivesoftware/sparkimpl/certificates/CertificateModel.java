@@ -3,18 +3,11 @@ package org.jivesoftware.sparkimpl.certificates;
 import java.io.IOException;
 import java.security.cert.CertificateParsingException;
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.Date;
+import java.util.*;
 
 import javax.naming.InvalidNameException;
 import javax.naming.ldap.LdapName;
 import javax.naming.ldap.Rdn;
-
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
 
 import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.ASN1Primitive;
@@ -91,12 +84,12 @@ public class CertificateModel {
         if (version != 1 && ((certificate.getKeyUsage() != null && !certificate.getKeyUsage()[5])
                 || certificate.getBasicConstraints() == -1)) {
             try {
-                this.issuerUniqueID = certificate.getIssuerUniqueID().toString();
+                this.issuerUniqueID = Arrays.toString(certificate.getIssuerUniqueID());
             } catch (NullPointerException e) {
                 Log.warning("Certificate doesn't have issuerUniqueID: " + issuer, e);
             }
             try {
-                this.subjectUniqueID = certificate.getIssuerUniqueID().toString();
+                this.subjectUniqueID = Arrays.toString(certificate.getIssuerUniqueID());
             } catch (NullPointerException e) {
                 Log.warning("Certificate doesn't have subjectUniqueID: " + subject, e);
             }

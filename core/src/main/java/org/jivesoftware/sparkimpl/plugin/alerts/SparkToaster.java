@@ -127,7 +127,7 @@ public class SparkToaster {
 
     // Flag that indicate if use alwaysOnTop or not.
     // method always on top start only SINCE JDK 5 !
-    boolean useAlwaysOnTop = true;
+    boolean useAlwaysOnTop;
 
     private String title;
 

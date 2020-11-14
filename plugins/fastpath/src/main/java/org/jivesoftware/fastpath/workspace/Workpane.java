@@ -387,7 +387,7 @@ public class Workpane {
 
         room.getSplitPane().setRightComponent(tabbedPane);
 
-        Form form = null;
+        Form form;
         try {
             form = FastpathPlugin.getWorkgroup().getWorkgroupForm();
         }
@@ -801,13 +801,6 @@ public class Workpane {
 
             try {
                 if (FastpathPlugin.getAgentSession().isOnline()) {
-                    Presence.Mode mode = presence.getMode();
-                    if (status == null) {
-                        status = "";
-                    }
-                    if (mode == null) {
-                        mode = Presence.Mode.available;
-                    }
                     FastpathPlugin.getAgentSession().setStatus(presence.getMode(), status);
                 }
             }

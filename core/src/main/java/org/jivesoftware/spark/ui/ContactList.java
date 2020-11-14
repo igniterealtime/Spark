@@ -75,6 +75,7 @@ public class ContactList extends JPanel implements ActionListener,
     ContactGroupListener, Plugin, RosterListener, ConnectionListener, ReconnectionListener {
 
     private static final long serialVersionUID = -4391111935248627078L;
+    private static final String GROUP_DELIMITER = "::";
     private JPanel mainPanel = new JPanel();
     private JScrollPane contactListScrollPane;
     private final List<ContactGroup> groupList = new ArrayList<>();
@@ -823,9 +824,7 @@ public class ContactList extends JPanel implements ActionListener,
 
                     ContactGroup unfiledGrp = getUnfiledGroup();
                     ContactItem unfiledItem = unfiledGrp.getContactItemByJID(jid.asBareJid());
-                    if (unfiledItem != null) {
-
-                    } else {
+                    if (unfiledItem == null) {
                         ContactItem offlineItem = offlineGroup.getContactItemByJID(jid.asBareJid());
                         if (offlineItem != null) {
                             if ((rosterEntry.getType() == RosterPacket.ItemType.none || rosterEntry.getType() == RosterPacket.ItemType.from)
@@ -984,7 +983,7 @@ public class ContactList extends JPanel implements ActionListener,
      * @return the newly created ContactGroup.
      */
     private ContactGroup addContactGroup(String groupName) {
-        StringTokenizer tkn = new StringTokenizer(groupName, "::");
+        StringTokenizer tkn = new StringTokenizer(groupName, GROUP_DELIMITER);
 
         ContactGroup rootGroup = null;
         ContactGroup lastGroup = null;
@@ -1199,7 +1198,7 @@ public class ContactList extends JPanel implements ActionListener,
      * @param visible   true to show, otherwise false.
      */
     public void toggleGroupVisibility(String groupName, boolean visible) {
-        StringTokenizer tkn = new StringTokenizer(groupName, "::");
+        StringTokenizer tkn = new StringTokenizer(groupName, GROUP_DELIMITER);
         while (tkn.hasMoreTokens()) {
             String group = tkn.nextToken();
             ContactGroup contactGroup = getContactGroup(group);

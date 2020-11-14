@@ -29,7 +29,7 @@ public class Emoticon {
     private String imageName;
     private String emoticonName;
     private File emoticonDirectory;
-    private List<String> equivalants = new ArrayList<>();
+    private List<String> equivalants;
 
 
     /**

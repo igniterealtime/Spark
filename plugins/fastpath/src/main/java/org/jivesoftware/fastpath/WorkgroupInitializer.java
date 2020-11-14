@@ -8,7 +8,7 @@ package org.jivesoftware.fastpath;
  * the original problem in Smack is fixed.
  *
  * @author Guus der Kinderen, guus.der.kinderen@gmail.com
- * @see <a href="https://issues.igniterealtime.org/browse/SMACK-729">Issue SMACK-729</a>
+ * @see <a href="https://igniterealtime.atlassian.net/browse/SMACK-729">Issue SMACK-729</a>
  */
 
 import org.jivesoftware.smack.initializer.UrlInitializer;

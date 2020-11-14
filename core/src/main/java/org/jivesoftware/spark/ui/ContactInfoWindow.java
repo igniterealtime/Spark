@@ -239,14 +239,8 @@ public class ContactInfoWindow extends JPanel {
         	//If user is offline or away, try to see last activity
 
 	        try {
-				Jid client = null;
-				if (!status.equals(Res.getString("offline"))) {
-					//If user is away (not offline), last activity request is sent to client
-					client = contactItem.getPresence().getFrom();
-				} else {
-				    client = contactItem.getJid();
-				}
-
+                //If user is away (not offline), last activity request is sent to client
+				Jid client = status.equals(Res.getString("offline")) ? contactItem.getJid() : contactItem.getPresence().getFrom();
 	            LastActivity activity = LastActivityManager.getInstanceFor( SparkManager.getConnection() ).getLastActivity(client);
 	
 	            long idleTime = (activity.getIdleTime() * 1000);

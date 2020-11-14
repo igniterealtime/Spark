@@ -75,20 +75,10 @@ public class CheckTree extends JPanel {
                 CheckNode node = (CheckNode)path.getLastPathComponent();
                 boolean isSelected = !node.isSelected();
                 node.setSelected(isSelected);
-                if (node.getSelectionMode() == CheckNode.DIG_IN_SELECTION) {
-                    if (isSelected) {
-                        //tree.expandPath(path);
-                    }
-                    else {
-                        //tree.collapsePath(path);
-                    }
-                }
                 ((DefaultTreeModel)tree.getModel()).nodeChanged(node);
                 // I need revalidate if node is root.  but why?
-
                 tree.revalidate();
                 tree.repaint();
-
             }
         }
     }

@@ -25,6 +25,7 @@ import java.util.Collection;
 import javax.swing.JComponent;
 import javax.swing.TransferHandler;
 
+import org.jetbrains.annotations.NotNull;
 import org.jivesoftware.spark.util.log.Log;
 
 /**
@@ -131,8 +132,9 @@ public class ChatRoomTransferHandler extends TransferHandler {
         }
 
         // Returns Selected Text
+        @NotNull
         @Override
-		public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
+		public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException {
             if (!DataFlavor.stringFlavor.equals(flavor)) {
                 throw new UnsupportedFlavorException(flavor);
             }

@@ -265,7 +265,6 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
         {
             ChatRoomDecorator decorator = decorators.remove(roomId);
             decorator.finished();
-            decorator = null;
         }
 
         if (electronThread != null)
@@ -410,7 +409,7 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
     {
         BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(filePath));
         byte[] bytesIn = new byte[4096];
-        int read = 0;
+        int read;
 
         while ((read = zipIn.read(bytesIn)) != -1)
         {
