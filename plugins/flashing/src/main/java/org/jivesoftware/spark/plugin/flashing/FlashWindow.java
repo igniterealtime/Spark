@@ -84,16 +84,15 @@ public class FlashWindow {
         if (flashings.get(window) == null) {
             Thread t = new Thread() {
                 public void run() {
-                    try {
-                        while (true) {
+                    while (true) {
+                        try {
                             Thread.sleep(1500);
-                            // System.out.println("Flash Window");
                             if (window instanceof JFrame)
                                 flash(((JFrame) window).getTitle(), true);
+                        } catch (Exception ex) {
+                            flash(((JFrame) window).getTitle(), false);
+                            break;
                         }
-                    } catch (Exception ex) {
-                        flash(((JFrame) window).getTitle(), false);
-                        // System.out.println(ex.getMessage());
                     }
 
                 }
