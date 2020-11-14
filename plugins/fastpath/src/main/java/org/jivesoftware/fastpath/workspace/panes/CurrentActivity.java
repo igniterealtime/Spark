@@ -176,9 +176,7 @@ public final class CurrentActivity extends JPanel {
                             List<ChatInfo> list = agentStatus.getCurrentChats();
 
                             // Add new ones.
-                            Iterator iter = list.iterator();
-                            while (iter.hasNext()) {
-                                AgentStatus.ChatInfo chatInfo = (AgentStatus.ChatInfo)iter.next();
+                            for (ChatInfo chatInfo : list) {
                                 Date startDate = chatInfo.getDate();
                                 String username = chatInfo.getUserID();
 

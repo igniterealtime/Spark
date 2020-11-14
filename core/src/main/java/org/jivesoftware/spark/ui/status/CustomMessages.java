@@ -129,9 +129,7 @@ public class CustomMessages {
         final List<CustomStatusItem> customItems = load();
 
         final StatusBar statusBar = SparkManager.getWorkspace().getStatusBar();
-        Iterator<StatusItem> statusItems = statusBar.getStatusList().iterator();
-        while (statusItems.hasNext()) {
-            StatusItem item = statusItems.next();
+        for (StatusItem item : statusBar.getStatusList()) {
             JiveTreeNode node = new JiveTreeNode(item.getText(), false, item.getIcon());
             Iterator<CustomStatusItem> cMessages = customItems.iterator();
 
@@ -142,13 +140,9 @@ public class CustomMessages {
                 if (csi.getType().equals(item.getText())) {
                     JiveTreeNode subNode = new JiveTreeNode(csi.getStatus(), false);
                     node.add(subNode);
-
                 }
             }
-
-
             rootNode.add(node);
-
         }
 
         final JScrollPane pane = new JScrollPane(tree);
@@ -238,9 +232,7 @@ public class CustomMessages {
                             List<CustomStatusItem> list = new ArrayList<>();
                             //Refresh customItems list
                             List<CustomStatusItem> customItems = load();
-                            Iterator<CustomStatusItem> iter = customItems.iterator();
-                            while (iter.hasNext()) {
-                                CustomStatusItem item = iter.next();
+                            for (CustomStatusItem item : customItems) {
                                 if (!item.getType().equals(messageType) || !item.getStatus().equals(messageStatus)) {
                                     list.add(item);
                                 }
@@ -262,9 +254,7 @@ public class CustomMessages {
 						@Override
 						public void actionPerformed(ActionEvent actionEvent) {
                             List<CustomStatusItem> newItems = load();
-                            Iterator<CustomStatusItem> iter = newItems.iterator();
-                            while (iter.hasNext()) {
-                                CustomStatusItem item = iter.next();
+                            for (CustomStatusItem item : newItems) {
                                 if (item.getType().equals(messageType) && item.getStatus().equals(messageStatus)) {
                                     CustomStatus customStatus = new CustomStatus();
                                     customStatus.showEditDialog(item);
@@ -273,9 +263,7 @@ public class CustomMessages {
                                     reloadTree(rootNode, tree);
                                     break;
                                 }
-
                             }
-
                         }
                     };
 
@@ -294,9 +282,7 @@ public class CustomMessages {
     private static void reloadTree(JiveTreeNode rootNode, Tree tree) {
         StatusBar statusBar = SparkManager.getWorkspace().getStatusBar();
         rootNode.removeAllChildren();
-        Iterator<StatusItem> statusItems = statusBar.getStatusList().iterator();
-        while (statusItems.hasNext()) {
-            StatusItem statusItem = statusItems.next();
+        for (StatusItem statusItem : statusBar.getStatusList()) {
             JiveTreeNode node = new JiveTreeNode(statusItem.getText(), false, statusItem.getIcon());
 
             List<CustomStatusItem> newItems = load();
@@ -309,11 +295,8 @@ public class CustomMessages {
                 if (csi.getType().equals(statusItem.getText())) {
                     JiveTreeNode subNode = new JiveTreeNode(csi.getStatus(), false);
                     node.add(subNode);
-
                 }
             }
-
-
             rootNode.add(node);
         }
 
@@ -360,22 +343,19 @@ public class CustomMessages {
 
             typeBox.setRenderer(new ListIconRenderer());
             // Add Types
-            Iterator<StatusItem> statusIterator = statusBar.getStatusList().iterator();
-            while (statusIterator.hasNext()) {
-                final StatusItem statusItem = statusIterator.next();
+            for (StatusItem statusItem : statusBar.getStatusList()) {
                 if (!PresenceManager.isOnPhone(statusItem.getPresence())) {
-	                ImageIcon icon = (ImageIcon)statusItem.getIcon();
+                    ImageIcon icon = (ImageIcon) statusItem.getIcon();
 
-	                ImageIcon newIcon = new ImageIcon(icon.getImage());
-	                newIcon.setDescription(statusItem.getText());
+                    ImageIcon newIcon = new ImageIcon(icon.getImage());
+                    newIcon.setDescription(statusItem.getText());
 
-	                typeBox.addItem(newIcon);
+                    typeBox.addItem(newIcon);
                 }
             }
 
             priorityField.setText("1");
             statusField.setText(Res.getString("status.online"));
-
         }
 
         public String getType() {
