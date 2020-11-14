@@ -117,7 +117,7 @@ public class BusinessPanel extends JPanel {
         this.add(webPageField, new GridBagConstraints(3, 6, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 
 
-        final Component order[] = new Component[] {	
+        final Component[] order = new Component[] {
         											companyField, streetField,cityField,
         											stateField, zipCodeField,countryField,
         											jobTitleField,departmentField,phoneField,

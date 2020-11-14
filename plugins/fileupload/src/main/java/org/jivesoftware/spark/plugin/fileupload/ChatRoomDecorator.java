@@ -94,7 +94,7 @@ public class ChatRoomDecorator
         FileDialog fd = new FileDialog((Frame)null, "Choose a file to upload", FileDialog.LOAD);
         fd.setMultipleMode(true);
         fd.setVisible(true);
-        File files[] = fd.getFiles();
+        File[] files = fd.getFiles();
 
         for (File file : files)
         {

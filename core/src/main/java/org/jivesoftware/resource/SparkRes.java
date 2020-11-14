@@ -370,7 +370,7 @@ public class SparkRes {
         return pluginUrl != null ? pluginUrl : cl.getResource(getString(propertyName));
     }
 
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         
         JFrame frame = new JFrame();
         frame.getContentPane().setLayout(new BorderLayout());

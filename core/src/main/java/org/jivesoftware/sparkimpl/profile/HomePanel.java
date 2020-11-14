@@ -97,7 +97,7 @@ public class HomePanel extends JPanel {
         this.add(pagerField, new GridBagConstraints(3, 2, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
         this.add(mobileField, new GridBagConstraints(3, 3, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 
-        final Component order[] = new Component[] {	 
+        final Component[] order = new Component[] {
         											 streetField, cityField, stateField,
         											 zipCodeField,countryField, phoneField, 
         											 faxField, pagerField, mobileField, 

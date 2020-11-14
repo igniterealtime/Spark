@@ -35,7 +35,7 @@ public class ChatRoomTransferHandler extends TransferHandler {
 	private static final long serialVersionUID = 6941570710627039031L;
 	private ChatRoom chatRoom;
 
-    private static final DataFlavor flavors[] = {DataFlavor.javaFileListFlavor, DataFlavor.stringFlavor};
+    private static final DataFlavor[] flavors = {DataFlavor.javaFileListFlavor, DataFlavor.stringFlavor};
 
     public ChatRoomTransferHandler(ChatRoom chatRoom) {
         this.chatRoom = chatRoom;
@@ -48,7 +48,7 @@ public class ChatRoomTransferHandler extends TransferHandler {
 
 
     @Override
-	public boolean canImport(JComponent comp, DataFlavor flavor[]) {
+	public boolean canImport(JComponent comp, DataFlavor[] flavor) {
         for (int i = 0, n = flavor.length; i < n; i++) {
             for (int j = 0, m = flavors.length; j < m; j++) {
                 if (flavor[i].equals(flavors[j])) {
