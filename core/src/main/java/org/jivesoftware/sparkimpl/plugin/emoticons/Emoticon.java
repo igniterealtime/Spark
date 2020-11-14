@@ -15,7 +15,6 @@
  */
 package org.jivesoftware.sparkimpl.plugin.emoticons;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.io.File;
 
