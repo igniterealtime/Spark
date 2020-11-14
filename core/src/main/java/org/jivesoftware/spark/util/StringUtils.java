@@ -23,6 +23,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.BreakIterator;
@@ -418,12 +419,8 @@ public class StringUtils {
 	    }
 	}
 	// Now, compute hash.
-	try {
-	    digest.update(data.getBytes("utf-8"));
-	} catch (UnsupportedEncodingException e) {
-	    // Nothing to do
-	}
-	return encodeHex(digest.digest());
+        digest.update(data.getBytes(StandardCharsets.UTF_8));
+        return encodeHex(digest.digest());
     }
 
     public synchronized static String hash(byte[] data) {
@@ -548,12 +545,8 @@ public class StringUtils {
      */
     public static String encodeBase64(String data) {
 	byte[] bytes = null;
-	try {
-	    bytes = data.getBytes("ISO-8859-1");
-	} catch (UnsupportedEncodingException uee) {
-	    // Nothing to do
-	}
-	return encodeBase64(bytes);
+        bytes = data.getBytes(StandardCharsets.ISO_8859_1);
+        return encodeBase64(bytes);
     }
 
     /**
@@ -606,12 +599,8 @@ public class StringUtils {
 
     public static String decodeBase64(String data) {
 	byte[] bytes = null;
-	try {
-	    bytes = data.getBytes("ISO-8859-1");
-	} catch (UnsupportedEncodingException uee) {
-	    // Nothing to do
-	}
-	return decodeBase64(bytes);
+        bytes = data.getBytes(StandardCharsets.ISO_8859_1);
+        return decodeBase64(bytes);
     }
 
     /**
