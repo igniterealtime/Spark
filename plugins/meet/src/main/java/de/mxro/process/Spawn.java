@@ -90,7 +90,7 @@ public class Spawn {
     }
 
     public interface Callback<Type> {
-        public void onDone(Type t);
+        void onDone(Type t);
     }
 
     /**

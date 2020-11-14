@@ -22,7 +22,7 @@ public class Win32IdleTime implements IdleTime {
          * @see "http://msdn2.microsoft.com/en-us/library/ms724408.aspx"
          * @return number of milliseconds that have elapsed since the system was started.
          */
-        public int GetTickCount();
+        int GetTickCount();
     }
 
     public interface User32 extends StdCallLibrary {
@@ -31,7 +31,7 @@ public class Win32IdleTime implements IdleTime {
          * Contains the time of the last input.
          * @see "http://msdn.microsoft.com/library/default.asp?url=/library/en-us/winui/winui/windowsuserinterface/userinput/keyboardinput/keyboardinputreference/keyboardinputstructures/lastinputinfo.asp"
          */
-        public static class LASTINPUTINFO extends Structure {
+        class LASTINPUTINFO extends Structure {
             public int cbSize = 8;
 
             /// Tick count of when the last input event was received.
@@ -48,7 +48,7 @@ public class Win32IdleTime implements IdleTime {
          * @see "http://msdn.microsoft.com/library/default.asp?url=/library/en-us/winui/winui/windowsuserinterface/userinput/keyboardinput/keyboardinputreference/keyboardinputfunctions/getlastinputinfo.asp"
          * @return time of the last input event, in milliseconds
          */
-        public boolean GetLastInputInfo(LASTINPUTINFO result);
+        boolean GetLastInputInfo(LASTINPUTINFO result);
     };
 
     /**
@@ -62,6 +62,5 @@ public class Win32IdleTime implements IdleTime {
         User32.INSTANCE.GetLastInputInfo(lastInputInfo);
         return Kernel32.INSTANCE.GetTickCount() - lastInputInfo.dwTime;
     }
-
 }
 

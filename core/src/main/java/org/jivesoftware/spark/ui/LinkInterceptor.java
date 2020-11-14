@@ -30,5 +30,5 @@ public interface LinkInterceptor {
      * @param link the link that was clicked.
      * @return true if the user wishes to handle the link.
      */
-    public boolean handleLink(MouseEvent mouseEvent, String link);
+    boolean handleLink(MouseEvent mouseEvent, String link);
 }

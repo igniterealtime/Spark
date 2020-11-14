@@ -24,7 +24,7 @@ public class LinuxIdleTime implements IdleTime {
     interface Xss extends Library {
         Xss INSTANCE = Native.loadLibrary("Xss", Xss.class);
 
-        public class XScreenSaverInfo extends Structure {
+        class XScreenSaverInfo extends Structure {
             public X11.Window window; /* screen saver window */
             public int state; /* ScreenSaver{Off,On,Disabled} */
             public int kind; /* ScreenSaver{Blanked,Internal,External} */

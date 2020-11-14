@@ -37,7 +37,7 @@ public interface Plugin {
      *
      * @see org.jivesoftware.spark.PluginManager
      */
-    public void initialize();
+    void initialize();
 
     /**
      * This method is invoked by the <code>PluginManager</code> when Spark
@@ -48,7 +48,7 @@ public interface Plugin {
      * be called, but on normal terminations of Spark, this method will be
      * invoked.
      */
-    public void shutdown();
+    void shutdown();
 
     /**
      * This method is invoked by the <code>PluginManager</code> before Spark
@@ -62,7 +62,7 @@ public interface Plugin {
      *
      * @return true if the plugin can shut currently.
      */
-    public boolean canShutDown();
+    boolean canShutDown();
 
 
     /**
@@ -71,6 +71,6 @@ public interface Plugin {
      * will need to release all your in-memory resources in the #shutdown method.  This
      * method should be used to remove on disk resources such as files, images, etc.
      */
-    public void uninstall();
+    void uninstall();
 
 }
