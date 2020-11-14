@@ -188,11 +188,6 @@ public final class AgentConversations extends JPanel implements ChangeListener {
                             EntityBareJid agentJID = presence.getFrom().asEntityBareJidOrThrow();
                             AgentStatus agentStatus = presence.getExtension("agent-status", "http://jabber.org/protocol/workgroup");
 
-                            String status = presence.getStatus();
-                            if (status == null) {
-                                status = "Available";
-                            }
-
                             if (agentStatus != null) {
                                 List list = agentStatus.getCurrentChats();
 
@@ -224,12 +219,9 @@ public final class AgentConversations extends JPanel implements ChangeListener {
                             }
                             calculateNumberOfChats(agentRoster);
                         }
-
-
                     });
                 }
             };
-
             agentWorker.start();
         }
     }
@@ -311,7 +303,7 @@ public final class AgentConversations extends JPanel implements ChangeListener {
 
                                 if (muc.isJoined()) {
                                     // Try and remove myself as an owner if I am one.
-                                    Collection owners = null;
+                                    Collection owners;
                                     try {
                                         owners = muc.getOwners();
                                     }

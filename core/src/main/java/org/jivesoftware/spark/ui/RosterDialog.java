@@ -307,7 +307,7 @@ public class RosterDialog implements ActionListener {
 
     @Override
 	public void actionPerformed(ActionEvent e) {
-        String group = JOptionPane.showInputDialog(dialog, Res.getString("label.enter.group.name") + ":", Res.getString("title.new.roster.group"), 3);
+        String group = JOptionPane.showInputDialog(dialog, Res.getString("label.enter.group.name") + ":", Res.getString("title.new.roster.group"), JOptionPane.QUESTION_MESSAGE);
         if (group != null && group.length() > 0 && !groupModel.contains(group)) {
             Roster.getInstanceFor( SparkManager.getConnection() ).createGroup(group);
             groupModel.add(group);
@@ -660,28 +660,25 @@ public class RosterDialog implements ActionListener {
 	    nicknameField.setText(nickname);
 	}
 
-	ContactGroup contactGroup = contactList.getContactGroup(group);
-	boolean isSharedGroup = contactGroup != null
-		&& contactGroup.isSharedGroup();
+        ContactGroup contactGroup = contactList.getContactGroup(group);
+        boolean isSharedGroup = contactGroup != null && contactGroup.isSharedGroup();
 
-	if (isSharedGroup) {
-	    errorMessage = Res
-		    .getString("message.cannot.add.contact.to.shared.group");
-	} else if (!ModelUtil.hasLength(contact)) {
-	    errorMessage = Res.getString("message.specify.contact.jid");
-	} else if (!XmppStringUtils.parseBareJid(contact).contains("@")) {
-	    errorMessage = Res.getString("message.invalid.jid.error");
-	} else if (!ModelUtil.hasLength(group)) {
-	    errorMessage = Res.getString("message.specify.group");
-	} else if (ModelUtil.hasLength(contact) && ModelUtil.hasLength(group)
-		&& !isSharedGroup) {
-	    addEntry();
-	    dialog.setVisible(false);
-    } else {
+        if (isSharedGroup) {
+            errorMessage = Res.getString("message.cannot.add.contact.to.shared.group");
+        } else if (!ModelUtil.hasLength(contact)) {
+            errorMessage = Res.getString("message.specify.contact.jid");
+        } else if (!XmppStringUtils.parseBareJid(contact).contains("@")) {
+            errorMessage = Res.getString("message.invalid.jid.error");
+        } else if (!ModelUtil.hasLength(group)) {
+            errorMessage = Res.getString("message.specify.group");
+        }
 
-	    JOptionPane.showMessageDialog(dialog, errorMessage,
-		    Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
-	}
+        if (ModelUtil.hasLength(contact) && ModelUtil.hasLength(group) && !isSharedGroup) {
+            addEntry();
+            dialog.setVisible(false);
+        } else {
+            JOptionPane.showMessageDialog(dialog, errorMessage,Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     static class AccountItem extends JPanel {

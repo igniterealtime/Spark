@@ -107,9 +107,9 @@ public class ReversiPanel extends JPanel {
                             // Redraw board.
                             ReversiPanel.this.repaint();
                         }
-                        else {
-                            // TODO: other user automatically forfeits!
-                        }
+                        // TODO: other user automatically forfeits!
+                        // else {
+                        // }
                         // Execute move.
                     }
                 }

@@ -143,9 +143,6 @@ public class JiveTable extends JTable {
             else {
                 setForeground(Color.black);
                 setBackground(Color.white);
-                if (row % 2 == 0) {
-                    //setBackground( new Color( 156, 207, 255 ) );
-                }
             }
 
             if (isBordered) {
@@ -197,9 +194,6 @@ public class JiveTable extends JTable {
             else {
                 setForeground(Color.black);
                 setBackground(Color.white);
-                if (row % 2 == 0) {
-                    //setBackground( new Color( 156, 207, 255 ) );
-                }
             }
 
             if (isBordered) {

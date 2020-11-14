@@ -110,7 +110,6 @@ public class SparkFileUploadPlugin implements Plugin, ChatRoomListener, GlobalMe
         {
             ChatRoomDecorator decorator = decorators.remove(roomId);
             decorator.finished();
-            decorator = null;
         }
     }
 

@@ -50,7 +50,7 @@ import org.jivesoftware.spark.util.ResourceUtils;
 public class AnswerFormDialog {
 
     private static final long serialVersionUID = 3637412110943006392L;
-    private JDialog dialog = null;
+    private JDialog dialog;
     private JPanel centerpanel;
 
 	HashMap<String, JComponent> _map = new HashMap<>();

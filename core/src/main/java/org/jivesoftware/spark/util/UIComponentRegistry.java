@@ -495,7 +495,7 @@ public final class UIComponentRegistry {
         } catch (final Exception e) {
             // not pretty but we're catching several exceptions we can do little
             // about
-            Log.error("Error calling constructor for " + currentClass.getName() + " with arguments " + classes, e);
+            Log.error("Error calling constructor for " + currentClass.getName() + " with arguments " + Arrays.toString(classes), e);
         }
         return instance;
     }

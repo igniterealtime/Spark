@@ -247,7 +247,7 @@ public abstract class JiveSortableTable extends Table {
 	private static final long serialVersionUID = 8670248883432881619L;
 	Border unselectedBorder;
         Border selectedBorder;
-        boolean isBordered = true;
+        boolean isBordered;
 
         /**
          * JLabelConstructor to build ui.
@@ -275,9 +275,6 @@ public abstract class JiveSortableTable extends Table {
             else {
                 setForeground(Color.black);
                 setBackground(Color.white);
-                if (row % 2 == 0) {
-                    //setBackground( new Color( 156, 207, 255 ) );
-                }
             }
 
             if (isBordered) {
@@ -362,9 +359,6 @@ public abstract class JiveSortableTable extends Table {
             else {
                 setForeground(Color.black);
                 setBackground(Color.white);
-                if (row % 2 == 0) {
-                    //setBackground( new Color( 156, 207, 255 ) );
-                }
             }
 
             if (isBordered) {

@@ -276,7 +276,7 @@ public abstract class Table extends JXTable {
 	private static final long serialVersionUID = 4433780600297455731L;
 	Border unselectedBorder;
         Border selectedBorder;
-        boolean isBordered = true;
+        boolean isBordered;
 
         /**
          * JLabelConstructor to build ui.
@@ -304,9 +304,6 @@ public abstract class Table extends JXTable {
             else {
                 setForeground(Color.black);
                 setBackground(Color.white);
-                if (row % 2 == 0) {
-                    //setBackground( new Color( 156, 207, 255 ) );
-                }
             }
 
             if (isBordered) {
@@ -393,9 +390,6 @@ public abstract class Table extends JXTable {
             else {
                 setForeground(Color.black);
                 setBackground(Color.white);
-                if (row % 2 == 0) {
-                    //setBackground( new Color( 156, 207, 255 ) );
-                }
             }
 
             if (isBordered) {
