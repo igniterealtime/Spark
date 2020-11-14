@@ -85,21 +85,19 @@ public class ChatPreferencePanel extends JPanel implements ActionListener {
         timeFormat.add(format12);
         timeFormat.add(format12s);
         final LocalPreferences pref = SettingsManager.getLocalPreferences();
-        if(pref.getTimeFormat().equals("HH:mm"))
-        {
-      	  format24.setSelected(true);
-        }
-        else if(pref.getTimeFormat().equals("HH:mm:ss"))
-        {
-      	  format24s.setSelected(true);
-        }
-        else if(pref.getTimeFormat().equals("h:mm a"))
-        {
-          format12.setSelected(true);
-        }
-        else
-        {
-          format12s.setSelected(true);
+        switch (pref.getTimeFormat()) {
+            case "HH:mm":
+                format24.setSelected(true);
+                break;
+            case "HH:mm:ss":
+                format24s.setSelected(true);
+                break;
+            case "h:mm a":
+                format12.setSelected(true);
+                break;
+            default:
+                format12s.setSelected(true);
+                break;
         }
         
         // Setup Mnemonics
