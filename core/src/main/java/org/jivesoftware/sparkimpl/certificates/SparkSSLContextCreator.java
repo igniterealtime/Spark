@@ -17,7 +17,7 @@ public class SparkSSLContextCreator {
      * ClientSide is authentication by
      */
     public enum Options {
-        BOTH, ONLY_CLIENT_SIDE, ONLY_SERVER_SIDE;
+        BOTH, ONLY_CLIENT_SIDE, ONLY_SERVER_SIDE
     }
 
     /**

@@ -173,7 +173,7 @@ public abstract class CertManager {
                 alias = rdn.getValue().toString();
                 int i = 1;
                 while (checkForSameAlias(alias)) {
-                    alias = alias + Integer.toString(i);
+                    alias = alias + i;
                     i++;
                 }
                 break;
@@ -184,7 +184,7 @@ public abstract class CertManager {
             alias = "cert";
             int i = 1;
             while (checkForSameAlias(alias)) {
-                alias = alias + Integer.toString(i);
+                alias = alias + i;
                 i++;
             }
         }
