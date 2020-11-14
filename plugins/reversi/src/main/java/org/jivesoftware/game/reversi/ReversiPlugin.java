@@ -71,7 +71,7 @@ public class ReversiPlugin implements Plugin {
         // invitations. The map key is always the opponent's JID. The map value
         // is a transcript alert
         // UI component.
-        gameOffers = new ConcurrentHashMap<String, JPanel>();
+        gameOffers = new ConcurrentHashMap<>();
         gameInvitations = new ConcurrentHashMap<>();
 
         // Add Reversi item to chat toolbar.

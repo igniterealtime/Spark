@@ -77,7 +77,7 @@ public class ChatSearch implements Searchable {
     }
 
     public void search(String query) {
-        final List<ChatSearchResult> results = new ArrayList<ChatSearchResult>();
+        final List<ChatSearchResult> results = new ArrayList<>();
         AgentSession agentSession = FastpathPlugin.getAgentSession();
         try {
             Form form = agentSession.getTranscriptSearchForm();

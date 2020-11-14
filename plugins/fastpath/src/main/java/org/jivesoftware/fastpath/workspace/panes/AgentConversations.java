@@ -78,7 +78,7 @@ public final class AgentConversations extends JPanel implements ChangeListener {
 	private final DefaultListModel model = new DefaultListModel();
     private JList list;
 
-    private final Map<String, AgentConversation> sessionMap = new HashMap<String, AgentConversation>();
+    private final Map<String, AgentConversation> sessionMap = new HashMap<>();
 
     /**
      * Add listeners and construct UI.

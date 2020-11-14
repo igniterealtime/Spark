@@ -83,7 +83,7 @@ public class UserHistory extends JPanel {
     public void loadHistory() {
 
         SwingWorker transcriptThread = new SwingWorker() {
-            final List<TranscriptSummary> transcriptList = new ArrayList<TranscriptSummary>();
+            final List<TranscriptSummary> transcriptList = new ArrayList<>();
 
             public Object construct() {
                 try {

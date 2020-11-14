@@ -54,9 +54,9 @@ public class CertificateModel {
 	private boolean notValidYet;
 	private Set<String> criticalExtensionSet;
 	private Set<String> nonCriticalExtensionSet;
-	private final HashMap<String, String> extensions = new HashMap<String,String>();
-	private final ArrayList<String> unsupportedCriticalExtensions = new ArrayList<String>();
-	private final ArrayList<String> unsupportedNonCriticalExtensions = new ArrayList<String>();
+	private final HashMap<String, String> extensions = new HashMap<>();
+	private final ArrayList<String> unsupportedCriticalExtensions = new ArrayList<>();
+	private final ArrayList<String> unsupportedNonCriticalExtensions = new ArrayList<>();
 
 	public CertificateModel(X509Certificate certificate, String alias) {
 		this(certificate);

@@ -69,7 +69,7 @@ public class ChatViewer extends JPanel {
 
         final TranscriptWindow chatWindow = new TranscriptWindow();
         chatWindow.setBackground(Color.white);
-        final List<Message> chatTranscript = new ArrayList<Message>();
+        final List<Message> chatTranscript = new ArrayList<>();
 
         for (Stanza stanza : stanzas) {
             if (stanza instanceof Message) {

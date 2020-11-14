@@ -53,7 +53,7 @@ public class WorkgroupDataForm extends JPanel {
     private int row = 5;
     private final Form searchForm;
     private final Map presetVariables;
-    private final List<String> requiredList = new ArrayList<String>();
+    private final List<String> requiredList = new ArrayList<>();
     private EnterListener listener;
 
 
@@ -155,7 +155,7 @@ public class WorkgroupDataForm extends JPanel {
                 answerForm.setAnswer(answer, isSelected);
             }
             else if (o instanceof JTextArea) {
-                List<String> list = new ArrayList<String>();
+                List<String> list = new ArrayList<>();
                 String value = ((JTextArea)o).getText();
                 StringTokenizer tokenizer = new StringTokenizer(value, ", ", false);
                 while (tokenizer.hasMoreTokens()) {
@@ -175,7 +175,7 @@ public class WorkgroupDataForm extends JPanel {
                 Object v = ((JComboBox)o).getSelectedItem();
                 String value = (v instanceof FormField.Option) ? ((FormField.Option) v).getValue() : (String) v;
 
-                List<String> list = new ArrayList<String>();
+                List<String> list = new ArrayList<>();
                 list.add(value);
                 if (list.size() > 0) {
                     answerForm.setAnswer(answer, list);

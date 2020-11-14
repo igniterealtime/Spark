@@ -57,7 +57,7 @@ public class ReversiPanel extends JPanel {
     private final Jid opponentJID;
     private StanzaListener gameMoveListener;
 
-    private final List<ReversiBlock> blocks = new ArrayList<ReversiBlock>();
+    private final List<ReversiBlock> blocks = new ArrayList<>();
     // Main game object
     private final ReversiModel reversi;
 
