@@ -50,7 +50,7 @@ public class Encryptor {
     }
 
     public static String encrypt(String string) throws Exception {
-        byte[] utf8 = string.getBytes("UTF8");
+        byte[] utf8 = string.getBytes(StandardCharsets.UTF_8);
 
         // Encrypt
         byte[] enc = ecipher.doFinal(utf8);

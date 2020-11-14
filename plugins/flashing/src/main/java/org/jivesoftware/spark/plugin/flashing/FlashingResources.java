@@ -15,6 +15,7 @@
  */
 package org.jivesoftware.spark.plugin.flashing;
 
+import java.nio.charset.StandardCharsets;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 
@@ -34,7 +35,7 @@ public class FlashingResources {
             /* Revert to this code after Spark is moved to Java 11 or newer
             return prb.getString(propertyName);
             */
-            return new String(prb.getString(propertyName).getBytes("ISO-8859-1"), "UTF-8");
+            return new String(prb.getString(propertyName).getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
         }
         catch (Exception e) {
             Log.error(e);

@@ -36,6 +36,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -247,7 +248,7 @@ public class ConversationHistoryPlugin implements Plugin {
         try {
             final MXParser parser = new MXParser();
             parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, true);
-            BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(conFile), "UTF-8"));
+            BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(conFile), StandardCharsets.UTF_8));
             parser.setInput(in);
             boolean done = false;
             while (!done) {
@@ -285,7 +286,7 @@ public class ConversationHistoryPlugin implements Plugin {
         // Write out new File
         try {
             File conFile = new File(transcriptDir, "conversations.xml");
-            BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(conFile), "UTF-8"));
+            BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(conFile), StandardCharsets.UTF_8));
             out.write(builder.toString());
             out.close();
         }

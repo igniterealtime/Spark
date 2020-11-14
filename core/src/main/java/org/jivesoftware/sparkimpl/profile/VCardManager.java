@@ -58,6 +58,7 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.*;
@@ -775,7 +776,7 @@ public class VCardManager {
 
         // write xml to file
         try {
-            BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(vcardFile), "UTF-8"));
+            BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(vcardFile), StandardCharsets.UTF_8));
             out.write(xml);
             out.close();
         }
@@ -815,7 +816,7 @@ public class VCardManager {
         }
 
         final VCard vcard;
-        try ( final BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(vcardFile), "UTF-8")) )
+        try ( final BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(vcardFile), StandardCharsets.UTF_8)) )
         {
             // Otherwise load from file system.
             VCardProvider provider = new VCardProvider();

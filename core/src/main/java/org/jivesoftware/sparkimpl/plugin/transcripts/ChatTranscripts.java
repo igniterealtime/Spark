@@ -36,6 +36,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.RandomAccessFile;
+import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -121,7 +122,7 @@ public final class ChatTranscripts {
             // Write out new File
             try {
                 transcriptFile.getParentFile().mkdirs();
-                BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(transcriptFile), "UTF-8"));
+                BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(transcriptFile), StandardCharsets.UTF_8));
                 out.write(builder.toString());
                 out.close();
             }
@@ -144,7 +145,7 @@ public final class ChatTranscripts {
           {
               // replace the old one with the new one
               line = line.replace("</messages></transcript>",endTag);
-              raf.write(line.getBytes("UTF-8"));
+              raf.write(line.getBytes(StandardCharsets.UTF_8));
           }
 
             builder.append(endTag);
@@ -152,7 +153,7 @@ public final class ChatTranscripts {
             raf.seek(transcriptFile.length() - endTag.length());
 
             // Append to the end
-            raf.write(builder.toString().getBytes("UTF-8"));
+            raf.write(builder.toString().getBytes(StandardCharsets.UTF_8));
             raf.close();
         }
         catch (IOException e) {
@@ -195,7 +196,7 @@ public final class ChatTranscripts {
         try {
             final MXParser parser = new MXParser();
             parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, true);
-            BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(transcriptFile), "UTF-8"));
+            BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(transcriptFile), StandardCharsets.UTF_8));
             parser.setInput(in);
             boolean done = false;
             while (!done) {
