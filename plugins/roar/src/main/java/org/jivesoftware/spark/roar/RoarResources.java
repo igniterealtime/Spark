@@ -7,7 +7,7 @@ import org.jivesoftware.spark.util.log.Log;
 
 public class RoarResources {
 
-    private static PropertyResourceBundle prb;
+    private static final PropertyResourceBundle prb;
 
     static ClassLoader cl = RoarResources.class.getClassLoader();
 

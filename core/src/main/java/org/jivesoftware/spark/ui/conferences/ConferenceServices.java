@@ -66,9 +66,9 @@ import java.util.TimerTask;
  * you can remove from the plugins.xml file located in the classpath of Communicator.
  */
 public class ConferenceServices implements InvitationListener {
-    private static BookmarksUI bookmarksUI = new BookmarksUI(); //This variable shouldn't be null.
+    private static final BookmarksUI bookmarksUI = new BookmarksUI(); //This variable shouldn't be null.
 
-    private static LocalPreferences _localPreferences = SettingsManager.getLocalPreferences();
+    private static final LocalPreferences _localPreferences = SettingsManager.getLocalPreferences();
     public ConferenceServices() {
         ServiceDiscoveryManager manager = ServiceDiscoveryManager.getInstanceFor(SparkManager.getConnection());
         boolean mucSupported = manager.includesFeature("http://jabber.org/protocol/muc");
@@ -349,7 +349,7 @@ public class ConferenceServices implements InvitationListener {
     }
 
     private class ChatRoomDecorator implements ActionListener, ChatRoomClosingListener {
-        private ChatRoom chatRoom;
+        private final ChatRoom chatRoom;
         private ChatRoomButton inviteButton;
 
         public ChatRoomDecorator(ChatRoom room) {

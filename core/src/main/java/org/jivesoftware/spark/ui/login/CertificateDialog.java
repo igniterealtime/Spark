@@ -57,59 +57,59 @@ public class CertificateDialog extends JDialog implements ActionListener {
 
 	private final static Insets DEFAULT_INSETS = new Insets(5, 5, 5, 5);
 	private final LocalPreferences localPreferences;
-	private CertificateModel certModel;
-	private CertManager certControll;
-	private CertificateDialogReason reason;
+	private final CertificateModel certModel;
+	private final CertManager certControll;
+	private final CertificateDialogReason reason;
 	private boolean addCert = false;
 
-	private JScrollPane scrollPane;
-	private JPanel panel = new JPanel();
+	private final JScrollPane scrollPane;
+	private final JPanel panel = new JPanel();
 	public boolean isAddCert() {
         return addCert;
     }
 
-    private JPanel buttonPanel = new JPanel();
-	private JPanel certStatusPanel = new JPanel();
+    private final JPanel buttonPanel = new JPanel();
+	private final JPanel certStatusPanel = new JPanel();
 
-	private JTextArea versionField = new JTextArea();
-	private JTextArea serialNumberField = new JTextArea();
-	private JTextArea signatureValueField = new JTextArea();
-	private JTextArea signatureAlgorithmField = new JTextArea();
-	private JTextArea issuerField = new JTextArea();
-	private JTextArea subjectField = new JTextArea();
-	private JTextArea notBeforeField = new JTextArea();
-	private JTextArea notAfterField = new JTextArea();
-	private JTextArea publicKeyField = new JTextArea();
-	private JTextArea publicKeyAlgorithmField = new JTextArea();
-	private JTextArea issuerUniqueIDField = new JTextArea();
-	private JTextArea subjectUniqueIDField = new JTextArea();
-	private JTextArea unsupportedExtensionsArea = new JTextArea();
-	private JTextArea certStatusArea = new JTextArea();
+	private final JTextArea versionField = new JTextArea();
+	private final JTextArea serialNumberField = new JTextArea();
+	private final JTextArea signatureValueField = new JTextArea();
+	private final JTextArea signatureAlgorithmField = new JTextArea();
+	private final JTextArea issuerField = new JTextArea();
+	private final JTextArea subjectField = new JTextArea();
+	private final JTextArea notBeforeField = new JTextArea();
+	private final JTextArea notAfterField = new JTextArea();
+	private final JTextArea publicKeyField = new JTextArea();
+	private final JTextArea publicKeyAlgorithmField = new JTextArea();
+	private final JTextArea issuerUniqueIDField = new JTextArea();
+	private final JTextArea subjectUniqueIDField = new JTextArea();
+	private final JTextArea unsupportedExtensionsArea = new JTextArea();
+	private final JTextArea certStatusArea = new JTextArea();
 
-	private JLabel infoLabel = new JLabel();
-	private JLabel versionLabel = new JLabel();
-	private JLabel serialNumberLabel = new JLabel();
-	private JLabel signatureValueLabel = new JLabel();
-	private JLabel signatureAlgorithmLabel = new JLabel();
-	private JLabel issuerLabel = new JLabel();
-	private JLabel subjectLabel = new JLabel();
-	private JLabel notBeforeLabel = new JLabel();
-	private JLabel notAfterLabel = new JLabel();
-	private JLabel publicKeyLabel = new JLabel();
-	private JLabel publicKeyAlgorithmLabel = new JLabel();
-	private JLabel issuerUniqueIDLabel = new JLabel();
-	private JLabel subjectUniqueIDLabel = new JLabel();
-	private JLabel unsupportedExtensionsLabel = new JLabel();
-	private JLabel extensionsLabel = new JLabel();
+	private final JLabel infoLabel = new JLabel();
+	private final JLabel versionLabel = new JLabel();
+	private final JLabel serialNumberLabel = new JLabel();
+	private final JLabel signatureValueLabel = new JLabel();
+	private final JLabel signatureAlgorithmLabel = new JLabel();
+	private final JLabel issuerLabel = new JLabel();
+	private final JLabel subjectLabel = new JLabel();
+	private final JLabel notBeforeLabel = new JLabel();
+	private final JLabel notAfterLabel = new JLabel();
+	private final JLabel publicKeyLabel = new JLabel();
+	private final JLabel publicKeyAlgorithmLabel = new JLabel();
+	private final JLabel issuerUniqueIDLabel = new JLabel();
+	private final JLabel subjectUniqueIDLabel = new JLabel();
+	private final JLabel unsupportedExtensionsLabel = new JLabel();
+	private final JLabel extensionsLabel = new JLabel();
 	
-	private JCheckBox exceptionBox = new JCheckBox();
-	private JButton checkValidity = new JButton();
-	private JButton okButton = new JButton();
-	private JButton cancelButton = new JButton();
-	private List<String> certUnsupportedCriticalExtensions;
-	private List<String> certUnsupportedNonCriticalExtensions;
-	private HashMap<String,String> certExtensions;
-	private JButton deleteButton = new JButton();
+	private final JCheckBox exceptionBox = new JCheckBox();
+	private final JButton checkValidity = new JButton();
+	private final JButton okButton = new JButton();
+	private final JButton cancelButton = new JButton();
+	private final List<String> certUnsupportedCriticalExtensions;
+	private final List<String> certUnsupportedNonCriticalExtensions;
+	private final HashMap<String,String> certExtensions;
+	private final JButton deleteButton = new JButton();
 
 	
 	public CertificateDialog(LocalPreferences localPreferences, CertificateModel certModel,

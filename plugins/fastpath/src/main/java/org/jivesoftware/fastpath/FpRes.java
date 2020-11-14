@@ -24,7 +24,7 @@ import java.util.ResourceBundle;
 /**
  */
 public class FpRes {
-    private static PropertyResourceBundle prb;
+    private static final PropertyResourceBundle prb;
 
     private FpRes() {
 

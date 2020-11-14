@@ -33,7 +33,7 @@ import org.jivesoftware.spark.util.log.Log;
  */
 public class ChatRoomTransferHandler extends TransferHandler {
 	private static final long serialVersionUID = 6941570710627039031L;
-	private ChatRoom chatRoom;
+	private final ChatRoom chatRoom;
 
     private static final DataFlavor[] flavors = {DataFlavor.javaFileListFlavor, DataFlavor.stringFlavor};
 
@@ -113,7 +113,7 @@ public class ChatRoomTransferHandler extends TransferHandler {
 
     public static class TranscriptWindowTransferable implements Transferable {
 
-        private TranscriptWindow item;
+        private final TranscriptWindow item;
 
         public TranscriptWindowTransferable(TranscriptWindow item) {
             this.item = item;

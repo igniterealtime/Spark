@@ -29,8 +29,8 @@ import javax.swing.JComponent;
  */
 public class FileTransferPreference implements Preference {
 
-    private FileTransferPreferencePanel ui;
-    private LocalPreferences localPreferences;
+    private final FileTransferPreferencePanel ui;
+    private final LocalPreferences localPreferences;
 
     public FileTransferPreference() {
         localPreferences = SettingsManager.getLocalPreferences();

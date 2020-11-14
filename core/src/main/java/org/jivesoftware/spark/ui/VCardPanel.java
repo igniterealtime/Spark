@@ -54,10 +54,10 @@ import org.jxmpp.jid.impl.JidCreate;
 public class VCardPanel extends JPanel {
 
 	private static final long serialVersionUID = -5810110243694315630L;
-	private Cursor DEFAULT_CURSOR = new Cursor(Cursor.DEFAULT_CURSOR);
-    private Cursor LINK_CURSOR = new Cursor(Cursor.HAND_CURSOR);
+	private final Cursor DEFAULT_CURSOR = new Cursor(Cursor.DEFAULT_CURSOR);
+    private final Cursor LINK_CURSOR = new Cursor(Cursor.HAND_CURSOR);
 
-    private JWindow _avatarHoverWindow = new JWindow();
+    private final JWindow _avatarHoverWindow = new JWindow();
     private final BareJid jid;
     private final JLabel avatarImage;
 

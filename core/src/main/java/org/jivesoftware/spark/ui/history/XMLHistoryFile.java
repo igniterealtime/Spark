@@ -26,7 +26,7 @@ import org.xml.sax.SAXException;
 public class XMLHistoryFile extends AbstractHistoryFile {
 
 	private static final String MESSAGE_TAG = "message";
-	private InputStream roomFileStream;
+	private final InputStream roomFileStream;
 
 	/**
 	 * @param fileStream

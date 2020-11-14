@@ -32,10 +32,10 @@ import java.util.Set;
  */
 public class TransferSettingsPanel extends JPanel {
     private static final long serialVersionUID = -2481011951921919518L;
-    private BlockedTypesPanel pnlTypes = new BlockedTypesPanel();
-    private BlockedPeoplePanel pnlPeople = new BlockedPeoplePanel();
-    private FileSizePanel pnlSize = new FileSizePanel();
-    private CannedResponsePanel pnlResponse = new CannedResponsePanel();
+    private final BlockedTypesPanel pnlTypes = new BlockedTypesPanel();
+    private final BlockedPeoplePanel pnlPeople = new BlockedPeoplePanel();
+    private final FileSizePanel pnlSize = new FileSizePanel();
+    private final CannedResponsePanel pnlResponse = new CannedResponsePanel();
 
     public TransferSettingsPanel() {
         setLayout(new VerticalFlowLayout());
@@ -71,7 +71,7 @@ public class TransferSettingsPanel extends JPanel {
 
     private static class BlockedTypesPanel extends JPanel {
 	private static final long serialVersionUID = 6152402556852606706L;
-	private JTextArea txtBlockedTypes = new JTextArea(2, 0);
+	private final JTextArea txtBlockedTypes = new JTextArea(2, 0);
 
         BlockedTypesPanel() {
             txtBlockedTypes.setBorder(UIManager.getLookAndFeelDefaults().getBorder("TextField.border"));
@@ -94,7 +94,7 @@ public class TransferSettingsPanel extends JPanel {
 
     private static class BlockedPeoplePanel extends JPanel {
 	private static final long serialVersionUID = -1069560705582838620L;
-	private JTextArea txtBlockedPeople = new JTextArea(2, 0);
+	private final JTextArea txtBlockedPeople = new JTextArea(2, 0);
 
         BlockedPeoplePanel() {
             txtBlockedPeople.setBorder(UIManager.getLookAndFeelDefaults().getBorder("TextField.border"));
@@ -118,8 +118,8 @@ public class TransferSettingsPanel extends JPanel {
 
     private static class FileSizePanel extends JPanel {
 	private static final long serialVersionUID = -8457074359832858639L;
-	private JSpinner spinMaxSize = new JSpinner();
-        private JCheckBox chkMaxEnabled = new JCheckBox(TGuardRes.getString("guard.settings.limitcheck"));
+	private final JSpinner spinMaxSize = new JSpinner();
+        private final JCheckBox chkMaxEnabled = new JCheckBox(TGuardRes.getString("guard.settings.limitcheck"));
 
         FileSizePanel() {
             setLayout(new VerticalFlowLayout());
@@ -161,7 +161,7 @@ public class TransferSettingsPanel extends JPanel {
 
     private static class CannedResponsePanel extends JPanel {
  	private static final long serialVersionUID = -5992704440953686488L;
-	private JTextArea txtMessage = new JTextArea(2, 0);
+	private final JTextArea txtMessage = new JTextArea(2, 0);
 
         CannedResponsePanel() {
             txtMessage.setBorder(UIManager.getLookAndFeelDefaults().getBorder("TextField.border"));

@@ -55,12 +55,12 @@ import org.jivesoftware.spark.util.log.Log;
 public class MacrosEditor extends JPanel {
 
 	private static final long serialVersionUID = 1L;
-	private JLabel initialResponseLabel = new JLabel();
-    private JTextArea initialResponseField = new JTextArea();
-    private RolloverButton newButton = new RolloverButton(FastpathRes.getImageIcon(FastpathRes.SMALL_ADD_IMAGE));
-    private RolloverButton deleteButton = new RolloverButton(FastpathRes.getImageIcon(FastpathRes.SMALL_DELETE));
-    private JButton saveButton = new JButton();
-    private MacroTable table;
+	private final JLabel initialResponseLabel = new JLabel();
+    private final JTextArea initialResponseField = new JTextArea();
+    private final RolloverButton newButton = new RolloverButton(FastpathRes.getImageIcon(FastpathRes.SMALL_ADD_IMAGE));
+    private final RolloverButton deleteButton = new RolloverButton(FastpathRes.getImageIcon(FastpathRes.SMALL_DELETE));
+    private final JButton saveButton = new JButton();
+    private final MacroTable table;
     private MacroGroup personalGroup = null;
     private JDialog dialog;
 

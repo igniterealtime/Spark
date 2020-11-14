@@ -80,7 +80,7 @@ public class ChatPrinter implements Printable {
       pFormat object, the print method gets its PageFormat as an argument.
 */
     private PageFormat pFormat;
-    private PrinterJob pJob;
+    private final PrinterJob pJob;
 
     /**
      * The constructor initializes the pFormat and PJob variables.

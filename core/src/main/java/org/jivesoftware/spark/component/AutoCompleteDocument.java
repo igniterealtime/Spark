@@ -29,8 +29,8 @@ import javax.swing.text.PlainDocument;
 public class AutoCompleteDocument extends PlainDocument {
 
     private static final long serialVersionUID = -6198560336890706214L;
-    private List<String> dictionary = new ArrayList<>();
-    private JTextComponent comp;
+    private final List<String> dictionary = new ArrayList<>();
+    private final JTextComponent comp;
 
     public AutoCompleteDocument(JTextComponent field, String[] aDictionary) {
         comp = field;

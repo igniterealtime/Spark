@@ -50,17 +50,17 @@ import java.beans.PropertyChangeListener;
 
 public class RoomCreationDialog extends JPanel {
     private static final long serialVersionUID = -8391698290385575601L;
-    private JLabel nameLabel = new JLabel();
-    private JLabel topicLabel = new JLabel();
-    private JLabel passwordLabel = new JLabel();
-    private JLabel confirmPasswordLabel = new JLabel();
-    private JCheckBox permanentCheckBox = new JCheckBox();
-    private JCheckBox privateCheckbox = new JCheckBox();
-    private JTextField nameField = new JTextField();
-    private JTextField topicField = new JTextField();
-    private JPasswordField passwordField = new JPasswordField();
-    private JPasswordField confirmPasswordField = new JPasswordField();
-    private GridBagLayout gridBagLayout1 = new GridBagLayout();
+    private final JLabel nameLabel = new JLabel();
+    private final JLabel topicLabel = new JLabel();
+    private final JLabel passwordLabel = new JLabel();
+    private final JLabel confirmPasswordLabel = new JLabel();
+    private final JCheckBox permanentCheckBox = new JCheckBox();
+    private final JCheckBox privateCheckbox = new JCheckBox();
+    private final JTextField nameField = new JTextField();
+    private final JTextField topicField = new JTextField();
+    private final JPasswordField passwordField = new JPasswordField();
+    private final JPasswordField confirmPasswordField = new JPasswordField();
+    private final GridBagLayout gridBagLayout1 = new GridBagLayout();
     private MultiUserChat groupChat = null;
 
     public RoomCreationDialog() {

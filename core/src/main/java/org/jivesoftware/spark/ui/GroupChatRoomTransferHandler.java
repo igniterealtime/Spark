@@ -30,7 +30,7 @@ import javax.swing.TransferHandler;
  */
 public class GroupChatRoomTransferHandler extends TransferHandler {
 	private static final long serialVersionUID = -192689038331188379L;
-	private GroupChatRoom groupChatRoom;
+	private final GroupChatRoom groupChatRoom;
     private static final DataFlavor[] flavors = {DataFlavor.imageFlavor};
 
     /**

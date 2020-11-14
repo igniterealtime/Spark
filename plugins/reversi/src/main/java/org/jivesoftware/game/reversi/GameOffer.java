@@ -35,7 +35,7 @@ public class GameOffer extends IQ
     public static final String ELEMENT_NAME = "reversi";
     public static final String NAMESPACE = "http://jivesoftware.org/protocol/game/reversi";
 
-    private static Random random = new Random();
+    private static final Random random = new Random();
     private int gameID;
 
     private boolean startingPlayer;

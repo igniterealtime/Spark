@@ -52,9 +52,9 @@ public final class WorkgroupRosterTree extends JPanel {
 	private final JiveTreeNode rootNode = new JiveTreeNode(FpRes.getString("title.contact.list"));
     private final Tree rosterTree;
     private final Map<JiveTreeNode, EntityBareJid> addressMap = new HashMap<>();
-    private boolean showUnavailableAgents;
+    private final boolean showUnavailableAgents;
     private final List workgroupList;
-    private Collection<? extends BareJid> exclusionList;
+    private final Collection<? extends BareJid> exclusionList;
 
     /**
      * Creates a new Roster Tree.

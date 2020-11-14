@@ -28,8 +28,8 @@ public class Emoticon {
 
     private String imageName;
     private String emoticonName;
-    private File emoticonDirectory;
-    private List<String> equivalants;
+    private final File emoticonDirectory;
+    private final List<String> equivalants;
 
 
     /**

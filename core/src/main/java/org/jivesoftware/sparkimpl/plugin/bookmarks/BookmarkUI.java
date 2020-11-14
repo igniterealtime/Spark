@@ -34,8 +34,8 @@ import java.awt.event.MouseEvent;
  */
 public class BookmarkUI extends JPanel {
 	private static final long serialVersionUID = 2724141541874364121L;
-	private DefaultListModel model;
-    private JList list;
+	private final DefaultListModel model;
+    private final JList list;
 
 
     public BookmarkUI() {

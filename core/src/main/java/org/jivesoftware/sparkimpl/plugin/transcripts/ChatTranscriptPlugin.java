@@ -68,7 +68,7 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
 
     private final SimpleDateFormat notificationDateFormatter;
     private final SimpleDateFormat messageDateFormatter;
-    private HashMap<EntityBareJid, Message> lastMessage = new HashMap<>();
+    private final HashMap<EntityBareJid, Message> lastMessage = new HashMap<>();
     private JDialog Frame;
     private HistoryTranscript transcript = null;
     /**

@@ -55,17 +55,17 @@ import org.jivesoftware.resource.Res;
 public class Notes extends JPanel {
 	private static final long serialVersionUID = -7789684145607565950L;
 	private JFrame notesFrame;
-    private JScrollPane scrollPane;
-    private JTextPane textPane;
+    private final JScrollPane scrollPane;
+    private final JTextPane textPane;
 
-    private JToolBar toolBar;
-    private RolloverButton saveButton;
+    private final JToolBar toolBar;
+    private final RolloverButton saveButton;
 
-    private String sessionID;
+    private final String sessionID;
     private boolean hasClickedInPane;
-    private JLabel statusLabel;
+    private final JLabel statusLabel;
 
-    private ChatRoom chatRoom;
+    private final ChatRoom chatRoom;
     private boolean updated;
 
     public Notes(CharSequence sessionID, ChatRoom room) {

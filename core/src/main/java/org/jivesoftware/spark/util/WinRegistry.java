@@ -34,9 +34,9 @@ public class WinRegistry {
 
 	private static final int KEY_ALL_ACCESS = 0xf003f;
 	private static final int KEY_READ = 0x20019;
-	private static Preferences userRoot = Preferences.userRoot();
-	private static Preferences systemRoot = Preferences.systemRoot();
-	private static Class<? extends Preferences> userClass = userRoot.getClass();
+	private static final Preferences userRoot = Preferences.userRoot();
+	private static final Preferences systemRoot = Preferences.systemRoot();
+	private static final Class<? extends Preferences> userClass = userRoot.getClass();
 	private static Method regOpenKey = null;
 	private static Method regCloseKey = null;
 	private static Method regQueryValueEx = null;

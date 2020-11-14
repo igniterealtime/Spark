@@ -34,7 +34,7 @@ import java.util.Map;
 public class SparkFileUploadPlugin implements Plugin, ChatRoomListener, GlobalMessageListener
 {
     private org.jivesoftware.spark.ChatManager chatManager;
-    private Map<EntityBareJid, ChatRoomDecorator> decorators = new HashMap<>();
+    private final Map<EntityBareJid, ChatRoomDecorator> decorators = new HashMap<>();
 
     public void initialize()
     {

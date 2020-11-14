@@ -41,15 +41,15 @@ import org.jivesoftware.spark.util.log.Log;
  */
 public class RawPacketSender implements ActionListener {
 
-    private JFrame _mainframe;
-    private JPanel _mainpanel;
+    private final JFrame _mainframe;
+    private final JPanel _mainpanel;
 
-    private JScrollPane _textscroller;
+    private final JScrollPane _textscroller;
 
-    private JTextArea _textarea;
-    private JTextArea _inputarea;
-    private JButton _sendButton;
-    private JButton _clear;
+    private final JTextArea _textarea;
+    private final JTextArea _inputarea;
+    private final JButton _sendButton;
+    private final JButton _clear;
 
     public RawPacketSender() {
 

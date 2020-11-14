@@ -255,7 +255,7 @@ public class ReversiPlugin implements Plugin {
         ChatManager manager = SparkManager.getChatManager();
         chatRoomListener = new ChatRoomListenerAdapter() {
 
-            ImageIcon icon = ReversiRes.getImageIcon(ReversiRes.REVERSI_ICON);
+            final ImageIcon icon = ReversiRes.getImageIcon(ReversiRes.REVERSI_ICON);
 
             public void chatRoomOpened(final ChatRoom room) {
         	if(!(room instanceof ChatRoomImpl))

@@ -41,9 +41,9 @@ import org.jivesoftware.spark.SparkManager;
 public class ChatInputEditor extends ChatArea implements DocumentListener {
 	private static final long serialVersionUID = -3085035737908538581L;
 	private final UndoManager undoManager;
-	private KeyStroke undoKeyStroke;
-	private KeyStroke ctrlbackspaceKeyStroke;
-	private KeyStroke escapeKeyStroke;
+	private final KeyStroke undoKeyStroke;
+	private final KeyStroke ctrlbackspaceKeyStroke;
+	private final KeyStroke escapeKeyStroke;
 
     /**
      * Creates a new Default ChatSendField.

@@ -80,13 +80,13 @@ public class ContactItem extends JPanel {
 
     private String hash = "";
 
-    private File contactsDir;
+    private final File contactsDir;
 
     int fontSize;
 
-    private int iconSize;
+    private final int iconSize;
 
-    private boolean avatarsShowing;
+    private final boolean avatarsShowing;
 
 	public ContactItem(String alias, String nickname, BareJid fullyQualifiedJID) {
 		this(alias, nickname, fullyQualifiedJID, true);

@@ -146,7 +146,7 @@ public class ContactGroupTransferHandler extends TransferHandler {
 
     public static class ContactItemTransferable implements Transferable {
 
-        private ContactItem item;
+        private final ContactItem item;
 
         public ContactItemTransferable(ContactItem item) {
             this.item = item;

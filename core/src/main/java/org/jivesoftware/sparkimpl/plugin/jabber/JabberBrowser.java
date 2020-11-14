@@ -180,7 +180,7 @@ public class JabberBrowser implements Plugin {
 
     public class Entity extends RolloverButton {
 		private static final long serialVersionUID = 2084728014635239794L;
-		private DiscoverItems.Item item;
+		private final DiscoverItems.Item item;
 
         public Entity(final DiscoverItems.Item item) {
             this.item = item;

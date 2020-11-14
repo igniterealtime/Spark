@@ -70,7 +70,7 @@ public class ContactInfoWindow extends JPanel {
 
     private ContactItem contactItem;
 
-    private JWindow window = new JWindow();
+    private final JWindow window = new JWindow();
 
     private static ContactInfoWindow singleton;
     private static final Object LOCK = new Object();

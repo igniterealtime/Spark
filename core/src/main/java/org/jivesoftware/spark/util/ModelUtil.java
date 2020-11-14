@@ -345,7 +345,7 @@ public final class ModelUtil {
  * An Iterator that is the reverse of a ListIterator.
  */
 class ReverseListIterator<T> implements Iterator<T> {
-    private ListIterator<T> _i;
+    private final ListIterator<T> _i;
 
     public ReverseListIterator(ListIterator<T> i) {
         _i = i;

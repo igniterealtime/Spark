@@ -101,7 +101,7 @@ import org.jivesoftware.spark.ui.BroadcastHistoryFrame;
  */
 public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaListener {
 
-    private Set<ChatRoom> broadcastRooms = new HashSet<>();
+    private final Set<ChatRoom> broadcastRooms = new HashSet<>();
    
     @Override
 	public void initialize() {

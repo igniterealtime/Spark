@@ -48,10 +48,10 @@ public class ReversiModel {
      */
     public static int BLACK = 2;
 
-    private int[] board;
+    private final int[] board;
     private int currentPlayer;
     private boolean gameFinished = false;
-    private int[] flipBuffer = new int[7];
+    private final int[] flipBuffer = new int[7];
     private int flipBufferSize = 0;
 
     /**

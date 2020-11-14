@@ -34,7 +34,7 @@ import org.jivesoftware.spark.util.log.Log;
 public class RoarPreference implements Preference {
 
     private RoarPreferencePanel _prefPanel;
-    private RoarProperties _props;
+    private final RoarProperties _props;
 
     public RoarPreference() {
 

@@ -88,18 +88,18 @@ import org.jxmpp.util.XmppStringUtils;
  * The RosterDialog is used to add new users to the users XMPP Roster.
  */
 public class RosterDialog implements ActionListener {
-    private JPanel panel;
-    private JTextField jidField;
-    private JTextField nicknameField;
+    private final JPanel panel;
+    private final JTextField jidField;
+    private final JTextField nicknameField;
     private final Vector<String> groupModel = new Vector<>();
 
-    private JComboBox groupBox;
-    private JComboBox accounts;
+    private final JComboBox groupBox;
+    private final JComboBox accounts;
     private JDialog dialog;
-    private ContactList contactList;
-    private JCheckBox publicBox;
-    private JButton _searchForName ;
-    private Collection<DomainBareJid> _usersearchservice;
+    private final ContactList contactList;
+    private final JCheckBox publicBox;
+    private final JButton _searchForName ;
+    private final Collection<DomainBareJid> _usersearchservice;
 
     /**
      * Create a new instance of RosterDialog.
@@ -683,7 +683,7 @@ public class RosterDialog implements ActionListener {
 
     static class AccountItem extends JPanel {
 		private static final long serialVersionUID = -7657731912529801653L;
-		private Transport transport;
+		private final Transport transport;
 
         public AccountItem(Icon icon, String name, Transport transport) {
             setLayout(new GridBagLayout());

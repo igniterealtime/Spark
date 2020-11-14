@@ -240,7 +240,7 @@ public abstract class Table extends JXTable {
     public static class JiveTableModel extends DefaultTableModel {
 
 	private static final long serialVersionUID = 2256144012470569949L;
-	private boolean isEditable;
+	private final boolean isEditable;
 
         /**
          * Use the JiveTableModel in order to better handle the table. This allows

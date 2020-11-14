@@ -51,9 +51,9 @@ public class WorkgroupDataForm extends JPanel {
 	private static final long serialVersionUID = -2368907321868842234L;
 	private final Map valueMap = new HashMap<String, JComponent>();
     private int row = 5;
-    private Form searchForm;
-    private Map presetVariables;
-    private List<String> requiredList = new ArrayList<String>();
+    private final Form searchForm;
+    private final Map presetVariables;
+    private final List<String> requiredList = new ArrayList<String>();
     private EnterListener listener;
 
 

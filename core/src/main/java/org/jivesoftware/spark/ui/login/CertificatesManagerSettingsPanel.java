@@ -57,27 +57,27 @@ public class CertificatesManagerSettingsPanel extends JPanel implements ActionLi
 	private final LocalPreferences localPreferences;
 	
 	//table with certificates
-    private CertificateController certControll;
+    private final CertificateController certControll;
     private static JTable certTable;
-    private JButton showCert = new JButton();
+    private final JButton showCert = new JButton();
 
     private JScrollPane scrollPane;
     
     //add certificate utilities
-    private JFileChooser fileChooser = new JFileChooser();
-    private JButton fileButton = new JButton();
-    private JPanel filePanel = new JPanel();
-    private FileNameExtensionFilter certFilter = new FileNameExtensionFilter(
+    private final JFileChooser fileChooser = new JFileChooser();
+    private final JButton fileButton = new JButton();
+    private final JPanel filePanel = new JPanel();
+    private final FileNameExtensionFilter certFilter = new FileNameExtensionFilter(
             Res.getString("menuitem.certificate.files.filter"), "cer", "crt", "der", "pem");
 	
     //checboxes with options
-	private JCheckBox acceptExpired = new JCheckBox();
-	private JCheckBox acceptRevoked = new JCheckBox();
-	private JCheckBox acceptSelfSigned = new JCheckBox();
-	private JCheckBox checkCRL = new JCheckBox();
-	private JCheckBox checkOCSP = new JCheckBox();
-	private JCheckBox allowSoftFail = new JCheckBox();
-	private JCheckBox acceptNotValidYet = new JCheckBox();
+	private final JCheckBox acceptExpired = new JCheckBox();
+	private final JCheckBox acceptRevoked = new JCheckBox();
+	private final JCheckBox acceptSelfSigned = new JCheckBox();
+	private final JCheckBox checkCRL = new JCheckBox();
+	private final JCheckBox checkOCSP = new JCheckBox();
+	private final JCheckBox allowSoftFail = new JCheckBox();
+	private final JCheckBox acceptNotValidYet = new JCheckBox();
 
 	public CertificatesManagerSettingsPanel(LocalPreferences localPreferences, JDialog optionsDialog) {
 

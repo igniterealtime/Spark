@@ -85,9 +85,9 @@ public class WorkgroupInvitationDialog implements PropertyChangeListener {
     private TitlePanel titlePanel;
 
     private JTextArea messageField;
-    private JTextField jidField = new JTextField();
+    private final JTextField jidField = new JTextField();
 
-    private List workgroups = new ArrayList();
+    private final List workgroups = new ArrayList();
     private JLabel inviteLabel;
 
     /**

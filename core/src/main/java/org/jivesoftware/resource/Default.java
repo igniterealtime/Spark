@@ -29,11 +29,11 @@ import java.util.*;
 import static org.jivesoftware.sparkimpl.plugin.manager.Enterprise.PLUGINS_BLACKLIST_NODE;
 
 public class Default {
-    private static Properties prb;
+    private static final Properties prb;
 
-    private static Map<String,Object> customMap = new HashMap<>();
+    private static final Map<String,Object> customMap = new HashMap<>();
 
-    private static Map<String,ImageIcon> cache = new HashMap<>();
+    private static final Map<String,ImageIcon> cache = new HashMap<>();
 
     public static final String MAIN_IMAGE = "MAIN_IMAGE";
     public static final String APPLICATION_NAME = "APPLICATION_NAME";

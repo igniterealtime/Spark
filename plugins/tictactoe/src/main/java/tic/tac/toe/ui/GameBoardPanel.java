@@ -41,11 +41,11 @@ public class GameBoardPanel extends JPanel {
 
     private static final long serialVersionUID = -178497456422566485L;
 
-    private Image _backgroundimage;
+    private final Image _backgroundimage;
 
-    private JLabel[][] _labels;
+    private final JLabel[][] _labels;
 
-    private GamePanel _owner;
+    private final GamePanel _owner;
 
     public GameBoardPanel(GamePanel gamepanel) {
 

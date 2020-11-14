@@ -10,7 +10,7 @@ import org.jivesoftware.spark.util.log.Log;
  * @author tim.jentz
  */
 public class TGuardRes {
-    private static PropertyResourceBundle prb;
+    private static final PropertyResourceBundle prb;
 	
     private TGuardRes() {
 

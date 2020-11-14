@@ -74,33 +74,33 @@ import java.util.List;
 
 public class Workpane {
     // Tracks all the offers coming into the client.
-    private Map<String, Offer> offerMap = new HashMap<>();
-    private Map<String, Map<String, List<String>>> inviteMap = new HashMap<>();
-    private Map<String, UserInvitationPane> invitations = new HashMap<String, UserInvitationPane>();
+    private final Map<String, Offer> offerMap = new HashMap<>();
+    private final Map<String, Map<String, List<String>>> inviteMap = new HashMap<>();
+    private final Map<String, UserInvitationPane> invitations = new HashMap<String, UserInvitationPane>();
 
 
-    private Map<ChatRoom, RoomState> fastpathRooms = new HashMap<ChatRoom, RoomState>();
+    private final Map<ChatRoom, RoomState> fastpathRooms = new HashMap<ChatRoom, RoomState>();
 
-    private OnlineAgents onlineAgentsPane;
+    private final OnlineAgents onlineAgentsPane;
     private AgentConversations agentCons;
-    private ChatOfferListener offerListener;
-    private RoomInvitationListener roomInviteListener;
-    private ChatSearch chatSearch;
+    private final ChatOfferListener offerListener;
+    private final RoomInvitationListener roomInviteListener;
+    private final ChatSearch chatSearch;
 
-    private QueueActivity queueActivity;
+    private final QueueActivity queueActivity;
 
-    private RolloverButton historyButton;
-    private RolloverButton workgroupGroupButton;
-    private RolloverButton macrosButton;
+    private final RolloverButton historyButton;
+    private final RolloverButton workgroupGroupButton;
+    private final RolloverButton macrosButton;
 
 
     public static final String INITIAL_RESPONSE_PROPERTY = "initialResponse";
 
-    private JPanel toolbar;
+    private final JPanel toolbar;
 
-    private java.util.List<FastpathListener> listeners = new ArrayList();
+    private final java.util.List<FastpathListener> listeners = new ArrayList();
 
-    private PresenceChangeListener presenceListener = new PresenceChangeListener();
+    private final PresenceChangeListener presenceListener = new PresenceChangeListener();
 
     /**
      * Type of states a fastpath room can be in.

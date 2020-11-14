@@ -90,8 +90,8 @@ import org.jxmpp.jid.parts.Localpart;
 public class Workspace extends JPanel implements StanzaListener {
 
 	private static final long serialVersionUID = 7076407890063933765L;
-	private SparkTabbedPane workspacePane;
-    private StatusBar statusBox;
+	private final SparkTabbedPane workspacePane;
+    private final StatusBar statusBox;
 
     private ContactList contactList;
     private ConferenceServices conferences;
@@ -103,8 +103,8 @@ public class Workspace extends JPanel implements StanzaListener {
     private static Workspace singleton;
     private static final Object LOCK = new Object();
 
-    private JPanel cardPanel;
-    private CardLayout cardLayout;
+    private final JPanel cardPanel;
+    private final CardLayout cardLayout;
 
     public static final String WORKSPACE_PANE = "WORKSPACE_PANE";
 

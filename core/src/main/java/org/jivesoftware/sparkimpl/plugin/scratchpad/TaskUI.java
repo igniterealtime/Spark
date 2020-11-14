@@ -39,8 +39,8 @@ import org.jivesoftware.resource.SparkRes;
 public class TaskUI extends JPanel implements ActionListener {
 
     private static final long serialVersionUID = -8443764502684168188L;
-    private Task task;
-    private JCheckBox box;
+    private final Task task;
+    private final JCheckBox box;
 
     public TaskUI(final Task task) {
         setLayout(new BorderLayout());

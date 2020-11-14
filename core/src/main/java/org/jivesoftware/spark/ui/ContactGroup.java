@@ -41,16 +41,16 @@ import java.util.List;
  */
 public class ContactGroup extends CollapsiblePane implements MouseListener {
     private static final long serialVersionUID = 6578057848913010799L;
-    private List<ContactItem> contactItems = new ArrayList<>();
-    private List<ContactGroup> contactGroups = new ArrayList<>();
-    private List<ContactGroupListener> listeners = new ArrayList<>();
-    private List<ContactItem> offlineContacts = new ArrayList<>();
+    private final List<ContactItem> contactItems = new ArrayList<>();
+    private final List<ContactGroup> contactGroups = new ArrayList<>();
+    private final List<ContactGroupListener> listeners = new ArrayList<>();
+    private final List<ContactItem> offlineContacts = new ArrayList<>();
 
     private String groupName;
-    private DefaultListModel model;
-    private JList<? extends ContactItem> contactItemList;
+    private final DefaultListModel model;
+    private final JList<? extends ContactItem> contactItemList;
     private boolean sharedGroup;
-    private JPanel listPanel;
+    private final JPanel listPanel;
 
     // Used to display no contacts in list.
     private final ContactItem noContacts = UIComponentRegistry.createContactItem(
@@ -62,7 +62,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
 
     private boolean mouseDragged = false;
 
-    private LocalPreferences preferences;
+    private final LocalPreferences preferences;
 
     private ContactList contactList = Workspace.getInstance().getContactList();
 

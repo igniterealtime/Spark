@@ -23,8 +23,8 @@ import java.util.List;
 
 public class SpecifiedOrderFocusTraversalPolicy extends FocusTraversalPolicy {
 	
-	private List<Component> list;
-	private Component[] order;
+	private final List<Component> list;
+	private final Component[] order;
 	
 	public SpecifiedOrderFocusTraversalPolicy(Component[] order)
 	{

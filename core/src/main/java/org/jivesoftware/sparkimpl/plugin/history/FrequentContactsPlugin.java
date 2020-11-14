@@ -66,7 +66,7 @@ public class FrequentContactsPlugin implements Plugin {
     private JList contacts;
     private Window window;
 
-    private Map<JLabel, String> jidMap = new HashMap<>();
+    private final Map<JLabel, String> jidMap = new HashMap<>();
 
     @Override
 	public void initialize() {

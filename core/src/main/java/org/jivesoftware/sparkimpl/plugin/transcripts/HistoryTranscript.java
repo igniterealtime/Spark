@@ -50,24 +50,24 @@ import org.jxmpp.util.XmppStringUtils;
  */
 public class HistoryTranscript extends SwingWorker {
 
-	private Semaphore token = new Semaphore(1);
+	private final Semaphore token = new Semaphore(1);
 	private int pageIndex = 0;
 	private int maxPages = 0;
 	private final String period_oneMonth = "message.search.period.month.one";
 	private final String period_oneYear = "message.search.period.year.one";
 	private final String period_noPeriod = "message.search.period.none";
 	private String searchPeriod = "";
-	private List<String> periods = new ArrayList<>();
+	private final List<String> periods = new ArrayList<>();
 	private final timerTranscript transcriptTask = new timerTranscript();
-	private JLabel pageCounter = new JLabel("0 / 0");
-	private JButton pageLeft = new JButton("<");
-	private JButton pageRight = new JButton(">");
+	private final JLabel pageCounter = new JLabel("0 / 0");
+	private final JButton pageLeft = new JButton("<");
+	private final JButton pageRight = new JButton(">");
 	private BareJid jid = null;
-	private SimpleDateFormat notificationDateFormatter;
-	private SimpleDateFormat messageDateFormatter;
+	private final SimpleDateFormat notificationDateFormatter;
+	private final SimpleDateFormat messageDateFormatter;
 	private final AtomicBoolean isInitialized = new AtomicBoolean(false);
 
-	private LocalPreferences pref = SettingsManager.getLocalPreferences();
+	private final LocalPreferences pref = SettingsManager.getLocalPreferences();
 	private final JComboBox periodChooser= new JComboBox() ;
 	private final JPanel filterPanel = new JPanel();
 	private final JPanel mainPanel = new BackgroundPanel();
@@ -83,7 +83,7 @@ public class HistoryTranscript extends SwingWorker {
 	private final StringBuilder builder = new StringBuilder();
 	private List<ChatTranscript> searchFilteredList = new ArrayList<>();
 	private List<ChatTranscript> dateFilteredUnfilteredList = new ArrayList<>();
-    private AtomicBoolean isHistoryLoaded = new AtomicBoolean(false);
+    private final AtomicBoolean isHistoryLoaded = new AtomicBoolean(false);
     private final String SEPARATOR = System.getProperty("line.separator");
 	private final DefaultHighlighter.DefaultHighlightPainter highlighter = new DefaultHighlighter.DefaultHighlightPainter(Color.YELLOW);
 	private boolean focusFlag = false;

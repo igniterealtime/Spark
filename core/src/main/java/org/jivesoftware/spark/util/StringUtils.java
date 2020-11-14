@@ -49,11 +49,11 @@ public class StringUtils {
     private static final char[] GT_ENCODE = "&gt;".toCharArray();
 
     // patterns for the email address checks
-    private static Pattern basicAddressPattern;
-    private static Pattern validUserPattern;
-    private static Pattern domainPattern;
-    private static Pattern ipDomainPattern;
-    private static Pattern tldPattern;
+    private static final Pattern basicAddressPattern;
+    private static final Pattern validUserPattern;
+    private static final Pattern domainPattern;
+    private static final Pattern ipDomainPattern;
+    private static final Pattern tldPattern;
 
     // prepare the patterns
     static {
@@ -886,7 +886,7 @@ public class StringUtils {
      * Random class is not considered to be cryptographically secure, so only
      * use these random Strings for low to medium security applications.
      */
-    private static Random randGen = new Random();
+    private static final Random randGen = new Random();
 
     /**
      * Array of numbers and letters of mixed case. Numbers appear in the list
@@ -894,7 +894,7 @@ public class StringUtils {
      * We can use the array to get a random number or letter by picking a random
      * array index.
      */
-    private static char[] numbersAndLetters = ("0123456789abcdefghijklmnopqrstuvwxyz"
+    private static final char[] numbersAndLetters = ("0123456789abcdefghijklmnopqrstuvwxyz"
 	    + "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ").toCharArray();
 
     /**

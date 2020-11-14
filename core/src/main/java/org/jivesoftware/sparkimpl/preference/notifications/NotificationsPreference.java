@@ -32,7 +32,7 @@ import javax.swing.JComponent;
  */
 public class NotificationsPreference implements Preference {
 
-	private NotificationsUI panel = new NotificationsUI();
+	private final NotificationsUI panel = new NotificationsUI();
 
 	/**
 	 * Define the Namespace used for this preference.
