@@ -49,7 +49,7 @@ public class Win32IdleTime implements IdleTime {
          * @return time of the last input event, in milliseconds
          */
         boolean GetLastInputInfo(LASTINPUTINFO result);
-    };
+    }
 
     /**
      * Get the amount of milliseconds that have elapsed since the last input event
