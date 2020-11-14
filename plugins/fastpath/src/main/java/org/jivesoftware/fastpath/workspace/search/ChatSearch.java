@@ -216,19 +216,7 @@ public class ChatSearch implements Searchable {
             long int1 = item1.getStartDate().getTime();
             long int2 = item2.getStartDate().getTime();
 
-            if (int1 == int2) {
-                return 0;
-            }
-
-            if (int1 > int2) {
-                return -1;
-            }
-
-            if (int1 < int2) {
-                return 1;
-            }
-
-            return 0;
+            return Long.compare(int2, int1);
         }
     };
 }
