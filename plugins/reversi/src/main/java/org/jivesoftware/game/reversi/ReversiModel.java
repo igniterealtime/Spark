@@ -202,7 +202,7 @@ public class ReversiModel {
      * @return a String representation of the current game board.
      */
     public String printBoard() {
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         buf.append("+----------------+\n");
         for (int i=0; i<64; i++) {
             if (i%8 == 0) {
