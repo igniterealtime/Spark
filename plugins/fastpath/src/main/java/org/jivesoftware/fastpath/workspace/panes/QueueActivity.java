@@ -40,10 +40,10 @@ import org.jivesoftware.smackx.workgroup.agent.WorkgroupQueue;
 public final class QueueActivity extends JPanel implements QueueUsersListener {
 
 	private static final long serialVersionUID = 1L;
-	private DefaultListModel model = new DefaultListModel();
+	private final DefaultListModel model = new DefaultListModel();
     private JList list;
 
-    private Map<WorkgroupQueue, QueueItem> queues = new HashMap<WorkgroupQueue, QueueItem>();
+    private final Map<WorkgroupQueue, QueueItem> queues = new HashMap<WorkgroupQueue, QueueItem>();
 
     /**
      * Add Listeners and build UI.

@@ -75,10 +75,10 @@ import org.jxmpp.stringprep.XmppStringprepException;
 public final class AgentConversations extends JPanel implements ChangeListener {
 
 	private static final long serialVersionUID = 1L;
-	private DefaultListModel model = new DefaultListModel();
+	private final DefaultListModel model = new DefaultListModel();
     private JList list;
 
-    private Map<String, AgentConversation> sessionMap = new HashMap<String, AgentConversation>();
+    private final Map<String, AgentConversation> sessionMap = new HashMap<String, AgentConversation>();
 
     /**
      * Add listeners and construct UI.

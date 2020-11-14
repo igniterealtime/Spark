@@ -26,7 +26,7 @@ import java.util.Arrays;
  */
 public class GameBoard {
 
-    private int[][] _board;
+    private final int[][] _board;
 
     private int _currentPlayer;
 

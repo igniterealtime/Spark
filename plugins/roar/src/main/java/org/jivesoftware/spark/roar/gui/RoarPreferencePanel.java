@@ -56,20 +56,20 @@ public class RoarPreferencePanel extends JPanel {
 
     // private Image _backgroundimage;
 
-    private JTextField _duration;
-    private JTextField _amount;
-    private JCheckBox _enabledCheckbox;
+    private final JTextField _duration;
+    private final JTextField _amount;
+    private final JCheckBox _enabledCheckbox;
 
-    private JComboBox<String> _typelist;
+    private final JComboBox<String> _typelist;
 
-    private JList<ColorTypes> _singleColorlist;
-    private ColorPick _singleColorpicker;
+    private final JList<ColorTypes> _singleColorlist;
+    private final ColorPick _singleColorpicker;
 
-    private HashMap<ColorTypes, Color> _colormap;
+    private final HashMap<ColorTypes, Color> _colormap;
 
-    private HashMap<String, Object> _components;
+    private final HashMap<String, Object> _components;
 
-    private Insets INSETS = new Insets(5, 5, 5, 5);
+    private final Insets INSETS = new Insets(5, 5, 5, 5);
     
     public RoarPreferencePanel() {
 
@@ -479,7 +479,7 @@ public class RoarPreferencePanel extends JPanel {
         HEADERCOLOR_KEYWORD(RoarResources.getString("roar.header.keyword")), 
         TEXTCOLOR_KEYWORD(RoarResources.getString("roar.text.keyword"));
 
-        private String string;
+        private final String string;
 
         ColorTypes(String c) {
             string = c;

@@ -32,7 +32,7 @@ import java.util.Enumeration;
 import java.util.Properties;
 
 public class SparkRes {
-    private static Properties prb;
+    private static final Properties prb;
 
     public static final String ACCEPT_CHAT = "ACCEPT_CHAT";
     public static final String ACCEPT_INVITE_IMAGE = "ACCEPT_INVITE_IMAGE";

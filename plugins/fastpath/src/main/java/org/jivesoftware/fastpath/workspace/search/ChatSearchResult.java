@@ -29,15 +29,15 @@ import org.jivesoftware.fastpath.FpRes;
 
 public class ChatSearchResult {
     private final SimpleDateFormat UTC_FORMAT = new SimpleDateFormat("yyyyMMdd'T'HH:mm:ss");
-    private String sessionID;
+    private final String sessionID;
     private Date creationDate;
-    private int relevance;
+    private final int relevance;
 
-    private String question;
-    private String customerName;
-    private String email;
+    private final String question;
+    private final String customerName;
+    private final String email;
 
-    private List fields = new ArrayList();
+    private final List fields = new ArrayList();
 
     public ChatSearchResult(ReportedData.Row row, String query) {
         UTC_FORMAT.setTimeZone(TimeZone.getTimeZone("GMT+0"));

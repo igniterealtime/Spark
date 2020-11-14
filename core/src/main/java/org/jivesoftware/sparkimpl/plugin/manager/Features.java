@@ -27,7 +27,7 @@ import java.util.List;
 
 public class Features implements ExtensionElement {
 
-    private List<String> availableFeatures = new ArrayList<>();
+    private final List<String> availableFeatures = new ArrayList<>();
 
 
     public List<String> getAvailableFeatures() {

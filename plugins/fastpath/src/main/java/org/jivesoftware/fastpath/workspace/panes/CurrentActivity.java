@@ -77,8 +77,8 @@ import org.jxmpp.jid.util.JidUtil;
 public final class CurrentActivity extends JPanel {
 
 	private static final long serialVersionUID = 1L;
-	private DefaultListModel model = new DefaultListModel();
-    private JList list = new JList(model);
+	private final DefaultListModel model = new DefaultListModel();
+    private final JList list = new JList(model);
     private JFrame mainFrame;
     private JLabel activeConversations;
     private int counter = 0;

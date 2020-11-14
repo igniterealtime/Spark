@@ -32,19 +32,19 @@ public class PemHelper {
 
 
     //sometimes key some delimeters might be a bit customized like "RSA PRIVATE KEY" vs "PRIVATE KEY"
-    private static String[] keyBeginDelimeters = {  "-----BEGIN RSA PRIVATE KEY-----",                           
+    private static final String[] keyBeginDelimeters = {  "-----BEGIN RSA PRIVATE KEY-----",
                                                     "-----BEGIN PRIVATE KEY-----", 
                                     };
-    private static String[] keyEndDelimeters = {    "-----END RSA PRIVATE KEY-----",
+    private static final String[] keyEndDelimeters = {    "-----END RSA PRIVATE KEY-----",
                                                     "-----END PRIVATE KEY-----"
                                     };
 
-    private static String[] certBeginDelimeters = { "-----BEGIN CERTIFICATE-----",
+    private static final String[] certBeginDelimeters = { "-----BEGIN CERTIFICATE-----",
                                                     "-----BEGIN X509 CERTIFICATE-----", 
                                                     "-----BEGIN TRUSTED CERTIFICATE-----"
                                     };
     
-    private static String[] certEndDelimeters = {   "-----END CERTIFICATE-----",
+    private static final String[] certEndDelimeters = {   "-----END CERTIFICATE-----",
                                                     "-----END X509 CERTIFICATE-----", 
                                                     "-----END TRUSTED CERTIFICATE-----"
                                     };
@@ -137,7 +137,7 @@ public class PemHelper {
      *
      */
     public static class PemBuilder {
-        private List<Object> buildList = new ArrayList<>();
+        private final List<Object> buildList = new ArrayList<>();
 
         public void add(Object object) {
             buildList.add(object);

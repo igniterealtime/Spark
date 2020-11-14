@@ -79,8 +79,8 @@ public class WorkgroupManager {
      * Stores the ChatSettings of each workgroup, and will be updated
      * when packet date of workgroup changes.
      */
-    private Map<EntityJid, ChatSettings> chatSettings = new HashMap<>();
-    private Set<Jid> invites = new HashSet<>();
+    private final Map<EntityJid, ChatSettings> chatSettings = new HashMap<>();
+    private final Set<Jid> invites = new HashSet<>();
 
 
     private static WorkgroupManager singleton;

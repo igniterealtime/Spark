@@ -63,19 +63,19 @@ import java.io.IOException;
 public class UserSearchForm extends JPanel {
     private static final long	serialVersionUID	= -9192188543673595941L;
     private JComboBox servicesBox;
-    private UserSearchManager searchManager;
+    private final UserSearchManager searchManager;
 
-    private Collection<? extends CharSequence> searchServices;
+    private final Collection<? extends CharSequence> searchServices;
 
-    private CardLayout cardLayout = new CardLayout();
-    private JPanel cardPanel = new JPanel();
+    private final CardLayout cardLayout = new CardLayout();
+    private final JPanel cardPanel = new JPanel();
 
     private TitlePanel titlePanel;
 
-    private Map<String,SearchForm> serviceMap = new HashMap<>();
+    private final Map<String,SearchForm> serviceMap = new HashMap<>();
 
     
-    private static File pluginsettings = new File(Spark.getSparkUserHome() + File.separator + "search.properties"); //new
+    private static final File pluginsettings = new File(Spark.getSparkUserHome() + File.separator + "search.properties"); //new
     
     /**
      * Initializes the UserSearchForm with all available search services.

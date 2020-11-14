@@ -61,8 +61,8 @@ import org.jivesoftware.spark.util.log.Log;
 import com.thoughtworks.xstream.XStream;
 
 public class CustomMessages {
-    private static File customMessages = new File(SparkManager.getUserDirectory(), "custom_messages.xml");
-    private static XStream xstream = new XStream();
+    private static final File customMessages = new File(SparkManager.getUserDirectory(), "custom_messages.xml");
+    private static final XStream xstream = new XStream();
 
     private CustomMessages() {
 
@@ -324,16 +324,16 @@ public class CustomMessages {
 
     private static class CustomStatus extends JPanel {
 		private static final long serialVersionUID = 1117350001209641469L;
-		private JLabel typeLabel = new JLabel();
-        private JComboBox typeBox = new JComboBox();
+		private final JLabel typeLabel = new JLabel();
+        private final JComboBox typeBox = new JComboBox();
 
-        private JLabel statusLabel = new JLabel();
-        private JTextField statusField = new JTextField();
+        private final JLabel statusLabel = new JLabel();
+        private final JTextField statusField = new JTextField();
 
-        private JLabel priorityLabel = new JLabel();
-        private JTextField priorityField = new JTextField();
+        private final JLabel priorityLabel = new JLabel();
+        private final JTextField priorityField = new JTextField();
 
-        private JCheckBox persistBox = new JCheckBox();
+        private final JCheckBox persistBox = new JCheckBox();
 
         public CustomStatus() {
             StatusBar statusBar = SparkManager.getWorkspace().getStatusBar();

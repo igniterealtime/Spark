@@ -60,7 +60,7 @@ public final class PasswordDialog implements PropertyChangeListener {
     private JOptionPane optionPane;
     private JDialog dialog;
 
-    private JCheckBox _savePasswordBox = new JCheckBox();
+    private final JCheckBox _savePasswordBox = new JCheckBox();
     private String stringValue;
     private int width = 400;
     private int height = 200;

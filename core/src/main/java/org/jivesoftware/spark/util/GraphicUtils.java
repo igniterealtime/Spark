@@ -70,7 +70,7 @@ public final class GraphicUtils {
     };
     protected final static MediaTracker tracker = new MediaTracker(component);
 
-    private static Map<String, Image> imageCache = new HashMap<>();
+    private static final Map<String, Image> imageCache = new HashMap<>();
 
     /**
      * The default Hand cursor.

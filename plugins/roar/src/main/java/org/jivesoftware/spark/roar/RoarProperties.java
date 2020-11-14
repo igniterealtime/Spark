@@ -40,7 +40,7 @@ import org.jivesoftware.spark.roar.displaytype.TopRight;
  * 
  */
 public class RoarProperties {
-    private Properties props;
+    private final Properties props;
     private File configFile;
 
     public static final String ACTIVE = "active";
@@ -67,7 +67,7 @@ public class RoarProperties {
     
     private List<String> keywords = null;
     
-    private RoarDisplayType[] displayTypes = new RoarDisplayType[]{new TopRight(), new BottomRight(), new SparkToasterHandler(), new SystemNotification()};
+    private final RoarDisplayType[] displayTypes = new RoarDisplayType[]{new TopRight(), new BottomRight(), new SparkToasterHandler(), new SystemNotification()};
     
 
     /**

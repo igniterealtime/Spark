@@ -105,7 +105,7 @@ public class LoginDialog {
     private static final String BUTTON_PANEL = "buttonpanel"; // NOTRANS
     private static final String PROGRESS_BAR = "progressbar"; // NOTRANS
     private LocalPreferences localPref;
-    private ArrayList<String> _usernames = new ArrayList<>();
+    private final ArrayList<String> _usernames = new ArrayList<>();
     private String loginUsername;
     private String loginPassword;
     private String loginServer;
@@ -399,13 +399,13 @@ public class LoginDialog {
         private final GridBagLayout GRIDBAGLAYOUT = new GridBagLayout();
         private AbstractXMPPConnection connection = null;
 
-        private JLabel headerLabel = new JLabel();
-        private JLabel accountLabel = new JLabel();
-        private JLabel accountNameLabel = new JLabel();
-        private JLabel serverNameLabel = new JLabel();
-        private JLabel ssoServerLabel = new JLabel();
+        private final JLabel headerLabel = new JLabel();
+        private final JLabel accountLabel = new JLabel();
+        private final JLabel accountNameLabel = new JLabel();
+        private final JLabel serverNameLabel = new JLabel();
+        private final JLabel ssoServerLabel = new JLabel();
 
-        private RolloverButton otherUsers = new RolloverButton(SparkRes.getImageIcon(SparkRes.PANE_UP_ARROW_IMAGE));
+        private final RolloverButton otherUsers = new RolloverButton(SparkRes.getImageIcon(SparkRes.PANE_UP_ARROW_IMAGE));
 
 
         LoginPanel() {

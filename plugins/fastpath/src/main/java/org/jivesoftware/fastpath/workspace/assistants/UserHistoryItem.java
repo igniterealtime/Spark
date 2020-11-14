@@ -38,9 +38,9 @@ import org.jivesoftware.spark.util.ModelUtil;
 
 public class UserHistoryItem extends JPanel {
 	private static final long serialVersionUID = -2251709231519173523L;
-	private WrappedLabel agentsLabel = new WrappedLabel();
-    private JLabel startTimeLabel = new JLabel();
-    private JLabel durationLabel = new JLabel();
+	private final WrappedLabel agentsLabel = new WrappedLabel();
+    private final JLabel startTimeLabel = new JLabel();
+    private final JLabel durationLabel = new JLabel();
 
     private String sessionID;
 

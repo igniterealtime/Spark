@@ -63,23 +63,23 @@ import org.jxmpp.stringprep.XmppStringprepException;
 public class SendFileTransfer extends JPanel {
 
     private static final long serialVersionUID = -4403839897649365671L;
-    private FileDragLabel imageLabel = new FileDragLabel();
-    private JLabel titleLabel = new JLabel();
-    private JLabel fileLabel = new JLabel();
+    private final FileDragLabel imageLabel = new FileDragLabel();
+    private final JLabel titleLabel = new JLabel();
+    private final JLabel fileLabel = new JLabel();
 
-    private TransferButton cancelButton = new TransferButton();
-    private JProgressBar progressBar = new JProgressBar();
+    private final TransferButton cancelButton = new TransferButton();
+    private final JProgressBar progressBar = new JProgressBar();
     private File fileToSend;
     private OutgoingFileTransfer transfer;
 
-    private TransferButton retryButton = new TransferButton();
+    private final TransferButton retryButton = new TransferButton();
 
     private FileTransferManager transferManager;
     private EntityFullJid fullJID;
     private String nickname;
-    private JLabel progressLabel = new JLabel();
+    private final JLabel progressLabel = new JLabel();
     private long _startTime;
-    private ChatRoom chatRoom;
+    private final ChatRoom chatRoom;
 
     public SendFileTransfer(ChatRoom chatRoom) {
         this.chatRoom = chatRoom;

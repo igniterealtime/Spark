@@ -48,7 +48,7 @@ import java.util.Map;
  */
 public class ConversationHistoryPlugin implements Plugin {
 
-    private List<EntityBareJid> historyList = new ArrayList<>();
+    private final List<EntityBareJid> historyList = new ArrayList<>();
     private File transcriptDir;
     private File conFile;
 
@@ -56,7 +56,7 @@ public class ConversationHistoryPlugin implements Plugin {
     private JList contacts;
     private Window window;
 
-    private Map<JLabel, EntityBareJid> jidMap = new HashMap<>();
+    private final Map<JLabel, EntityBareJid> jidMap = new HashMap<>();
 
     @Override
 	public void initialize() {

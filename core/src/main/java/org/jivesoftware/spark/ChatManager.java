@@ -78,34 +78,34 @@ public class ChatManager {
 			new Color(72, 160, 237), new Color(255, 140, 0), new Color(106, 90, 205), new Color(224, 165, 32),
 			new Color(255, 69, 0), new Color(255, 99, 72), new Color(109, 130, 180), new Color(233, 0, 0),
 			new Color(255, 127, 80), new Color(140, 105, 225), new Color(173, 205, 50) };
-    private List<MessageFilter> messageFilters = new ArrayList<>();
+    private final List<MessageFilter> messageFilters = new ArrayList<>();
 
-    private List<GlobalMessageListener> globalMessageListeners = new ArrayList<>();
+    private final List<GlobalMessageListener> globalMessageListeners = new ArrayList<>();
 
-    private List<RoomInvitationListener> invitationListeners = new ArrayList<>();
+    private final List<RoomInvitationListener> invitationListeners = new ArrayList<>();
 
-    private List<TranscriptWindowInterceptor> interceptors = new ArrayList<>();
+    private final List<TranscriptWindowInterceptor> interceptors = new ArrayList<>();
 
-    private List<SparkTabHandler> sparkTabHandlers = new CopyOnWriteArrayList<>();
+    private final List<SparkTabHandler> sparkTabHandlers = new CopyOnWriteArrayList<>();
 
 
     private final ChatContainer chatContainer;
 
     private String conferenceService;
 
-    private List<ContactItemHandler> contactItemHandlers = new ArrayList<>();
+    private final List<ContactItemHandler> contactItemHandlers = new ArrayList<>();
 
-    private Set<ChatRoom> typingNotificationList = new HashSet<>();
+    private final Set<ChatRoom> typingNotificationList = new HashSet<>();
 
-    private UriManager _uriManager = new UriManager();
+    private final UriManager _uriManager = new UriManager();
     
-    private List<ChatMessageHandler> chatMessageHandlers = new ArrayList<>();
+    private final List<ChatMessageHandler> chatMessageHandlers = new ArrayList<>();
 
     /**
      * The listener instance that we use to track chat states according to
      * XEP-0085;
      */
-    private SmackChatStateListener smackChatStateListener = new SmackChatStateListener();
+    private final SmackChatStateListener smackChatStateListener = new SmackChatStateListener();
 
     /**
      * Returns the singleton instance of <CODE>ChatManager</CODE>,

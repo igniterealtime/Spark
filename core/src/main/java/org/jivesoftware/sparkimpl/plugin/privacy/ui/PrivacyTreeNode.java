@@ -35,7 +35,7 @@ public class PrivacyTreeNode extends DefaultMutableTreeNode {
     private boolean _isGroupGroup = false;
     private boolean _isDefault = false;
     private boolean _isActive = false;
-    private PrivacyManager _pmanager = PrivacyManager.getInstance(); 
+    private final PrivacyManager _pmanager = PrivacyManager.getInstance();
 
     /**
      * Creates a Node with a reference to the SparkPrivacyList and changes the

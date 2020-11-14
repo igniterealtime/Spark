@@ -76,7 +76,7 @@ public final class MainWindow extends ChatFrame implements ActionListener {
 
     private boolean focused;
 
-    private JToolBar topToolbar = new JToolBar();
+    private final JToolBar topToolbar = new JToolBar();
 
     private JSplitPane splitPane;
 

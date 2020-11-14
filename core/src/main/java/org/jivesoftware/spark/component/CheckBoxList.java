@@ -32,8 +32,8 @@ import javax.swing.JScrollPane;
  */
 public class CheckBoxList extends JPanel {
     private static final long serialVersionUID = 4145933151755357313L;
-    private Map<JCheckBox, String> valueMap = new HashMap<>();
-    private JPanel internalPanel = new JPanel();
+    private final Map<JCheckBox, String> valueMap = new HashMap<>();
+    private final JPanel internalPanel = new JPanel();
 
     /**
      * Create the CheckBoxList UI.

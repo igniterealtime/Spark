@@ -53,7 +53,7 @@ public final class ChatTranscripts {
     /**
      * Default Date Formatter *
      */
-    private static DateFormat FORMATTER;
+    private static final DateFormat FORMATTER;
 
     static {
         FORMATTER = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S z");

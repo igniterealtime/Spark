@@ -59,11 +59,11 @@ import org.jivesoftware.smackx.chatstates.ChatStateManager;
 
 
 public class SysTrayPlugin implements Plugin, NativeHandler, ChatStateListener {
-	private JPopupMenu popupMenu = new JPopupMenu();
+	private final JPopupMenu popupMenu = new JPopupMenu();
 
 	private JMenu statusMenu;
 
-	private LocalPreferences pref = SettingsManager.getLocalPreferences();
+	private final LocalPreferences pref = SettingsManager.getLocalPreferences();
     private ImageIcon availableIcon;
     private ImageIcon dndIcon;
     private ImageIcon awayIcon;

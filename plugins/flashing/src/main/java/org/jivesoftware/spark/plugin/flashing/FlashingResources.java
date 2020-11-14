@@ -21,7 +21,7 @@ import java.util.ResourceBundle;
 import org.jivesoftware.spark.util.log.Log;
 
 public class FlashingResources {
-	private static PropertyResourceBundle prb;
+	private static final PropertyResourceBundle prb;
 	
 	static ClassLoader cl = FlashingResources.class.getClassLoader();
 

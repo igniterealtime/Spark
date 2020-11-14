@@ -67,15 +67,15 @@ import org.jxmpp.jid.impl.JidCreate;
 public class BroadcastDialog extends JPanel {
 
     private static final long serialVersionUID = -8998994627855985137L;
-    private ChatInputEditor messageBox;
-    private JCheckBox OfflineUsers = new JCheckBox(Res.getString("checkbox.broadcast.hide.offline.user"));
-    private JRadioButton normalMessageButton;
+    private final ChatInputEditor messageBox;
+    private final JCheckBox OfflineUsers = new JCheckBox(Res.getString("checkbox.broadcast.hide.offline.user"));
+    private final JRadioButton normalMessageButton;
     
-    private ArrayList<ArrayList<Object>> NodesGroups = new ArrayList<>();
-    private List<CheckNode> nodes = new ArrayList<>();
-    private List<CheckNode> groupNodes = new ArrayList<>();
-    private CheckNode rosterNode; 
-    private CheckTree checkTree; 
+    private final ArrayList<ArrayList<Object>> NodesGroups = new ArrayList<>();
+    private final List<CheckNode> nodes = new ArrayList<>();
+    private final List<CheckNode> groupNodes = new ArrayList<>();
+    private final CheckNode rosterNode;
+    private final CheckTree checkTree;
     private Integer OfflineGroup;
     
     public BroadcastDialog() {

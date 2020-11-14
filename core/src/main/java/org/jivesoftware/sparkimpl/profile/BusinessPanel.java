@@ -34,21 +34,21 @@ public class BusinessPanel extends JPanel {
 
 	private static final long serialVersionUID = -6319059605447012843L;
 
-    private JTextField companyField = new JTextField();
-    private JTextField cityField = new JTextField();
-    private JTextField stateField = new JTextField();
-    private JTextField zipCodeField = new JTextField();
-    private JTextField countryField = new JTextField();
-    private JTextField streetField = new JTextField();
+    private final JTextField companyField = new JTextField();
+    private final JTextField cityField = new JTextField();
+    private final JTextField stateField = new JTextField();
+    private final JTextField zipCodeField = new JTextField();
+    private final JTextField countryField = new JTextField();
+    private final JTextField streetField = new JTextField();
 
 
-    private JTextField jobTitleField = new JTextField();
-    private JTextField departmentField = new JTextField();
-    private JTextField phoneField = new JTextField();
-    private JTextField faxField = new JTextField();
-    private JTextField pagerField = new JTextField();
-    private JTextField mobileField = new JTextField();
-    private JTextField webPageField = new JTextField();
+    private final JTextField jobTitleField = new JTextField();
+    private final JTextField departmentField = new JTextField();
+    private final JTextField phoneField = new JTextField();
+    private final JTextField faxField = new JTextField();
+    private final JTextField pagerField = new JTextField();
+    private final JTextField mobileField = new JTextField();
+    private final JTextField webPageField = new JTextField();
 
     public BusinessPanel() {
         this.setLayout(new GridBagLayout());

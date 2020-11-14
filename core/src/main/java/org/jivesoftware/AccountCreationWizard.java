@@ -55,21 +55,21 @@ import java.security.UnrecoverableKeyException;
  */
 public class AccountCreationWizard extends JPanel {
 	private static final long serialVersionUID = -7808507939643878212L;
-    private JTextField usernameField = new JTextField();
+    private final JTextField usernameField = new JTextField();
 
-    private JPasswordField passwordField = new JPasswordField();
+    private final JPasswordField passwordField = new JPasswordField();
 
-    private JPasswordField confirmPasswordField = new JPasswordField();
+    private final JPasswordField confirmPasswordField = new JPasswordField();
 
-    private JTextField serverField = new JTextField();
+    private final JTextField serverField = new JTextField();
 
-    private JButton createAccountButton = new JButton();
+    private final JButton createAccountButton = new JButton();
 
     private JDialog dialog;
 
     private boolean registered;
     private XMPPConnection connection = null;
-    private JProgressBar progressBar;
+    private final JProgressBar progressBar;
 
     /**
      * Construct the AccountCreationWizard UI.

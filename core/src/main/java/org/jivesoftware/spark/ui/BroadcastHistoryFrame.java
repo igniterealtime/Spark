@@ -174,7 +174,7 @@ public class BroadcastHistoryFrame extends javax.swing.JFrame {
 
    private javax.swing.JFormattedTextField DateField;
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTextArea  BroadcastHistoryArea;
+    private final javax.swing.JTextArea  BroadcastHistoryArea;
     private javax.swing.JLabel SearchDate;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JToggleButton SearchButton;

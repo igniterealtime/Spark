@@ -32,11 +32,11 @@ public class SparkPrivacyList {
     /**
      * List name will be used to identify PrivacyList
      */
-    private String _listName;
+    private final String _listName;
     private boolean _isActive;
     private boolean _isDefault;
-    private List<PrivacyItem> _privacyItems = new LinkedList<>();
-    private PrivacyList _myPrivacyList;
+    private final List<PrivacyItem> _privacyItems = new LinkedList<>();
+    private final PrivacyList _myPrivacyList;
     private final Set<SparkPrivacyItemListener> _listeners = new HashSet<>();
     /**
      * Action associated with the items, it MUST be filled and will allow or deny

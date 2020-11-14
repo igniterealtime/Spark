@@ -68,14 +68,14 @@ import java.util.Date;
 import java.util.TimerTask;
 
 public class CheckUpdates {
-    private String mainUpdateURL;
+    private final String mainUpdateURL;
     private JProgressBar bar;
     private TitlePanel titlePanel;
     private boolean downloadComplete = false;
     private boolean cancel = false;
     public static boolean UPDATING = false;
-    private boolean sparkPluginInstalled;
-    private XStream xstream = new XStream();
+    private final boolean sparkPluginInstalled;
+    private final XStream xstream = new XStream();
     private String sizeText;
 
 

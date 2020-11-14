@@ -26,7 +26,7 @@ import javax.swing.JFrame;
 import org.jivesoftware.spark.PluginManager;
 
 public class FlashWindow {
-	private HashMap<Window, Thread> flashings = new HashMap<>();
+	private final HashMap<Window, Thread> flashings = new HashMap<>();
 
 	static {
 	    

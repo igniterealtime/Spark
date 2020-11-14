@@ -77,7 +77,7 @@ public class SubscriptionDialog {
 
     private final JComboBox groupBox = new JComboBox();
 
-    private JLabel usernameLabelValue = new JLabel();
+    private final JLabel usernameLabelValue = new JLabel();
 
     private JFrame dialog;
 

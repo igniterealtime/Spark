@@ -67,7 +67,7 @@ import org.jivesoftware.spark.util.log.Log;
 public class CoBrowser extends JPanel implements ActionListener, BrowserListener {
 	private static final long serialVersionUID = 1115198448380589259L;
 	private boolean isShowing;
-    private ChatRoom chatRoom;
+    private final ChatRoom chatRoom;
     private final JTextField pushField = new JTextField();
     private JCheckBox followMeButton;
     private RolloverButton goButton;
@@ -78,7 +78,7 @@ public class CoBrowser extends JPanel implements ActionListener, BrowserListener
     private BrowserViewer browser;
 
     private JTextField urlField;
-    private String sessionID;
+    private final String sessionID;
 
     // Define Constants
     private final static String PUBLIC_TOOLTIP = FpRes.getString("tooltip.allow.cobrowsing");

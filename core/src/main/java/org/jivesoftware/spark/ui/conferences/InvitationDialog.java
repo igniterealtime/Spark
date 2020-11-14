@@ -72,11 +72,11 @@ final class InvitationDialog extends JPanel {
     private JTextField textRoomsField;
     private JComboBox comboRoomsField;
 
-    private JTextField messageField = new JTextField();
+    private final JTextField messageField = new JTextField();
 
 
-    private DefaultListModel invitedUsers = new DefaultListModel();
-    private JList invitedUserList = new JList(invitedUsers);
+    private final DefaultListModel invitedUsers = new DefaultListModel();
+    private final JList invitedUserList = new JList(invitedUsers);
 
     private JDialog dlg;
 

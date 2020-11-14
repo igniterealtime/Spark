@@ -57,12 +57,12 @@ import org.jivesoftware.spark.util.log.Log;
  */
 public class PrivacyAddDialogUI extends JPanel {
 
-    private JCheckBox _showOffCheckbox = new JCheckBox();
+    private final JCheckBox _showOffCheckbox = new JCheckBox();
     private static final long serialVersionUID = -7725304880236329893L;
-    private DefaultListModel<ContactItem> model = new DefaultListModel<>();
-    private JList<ContactItem> rosterList = new JList<>( model );
+    private final DefaultListModel<ContactItem> model = new DefaultListModel<>();
+    private final JList<ContactItem> rosterList = new JList<>( model );
     private boolean _showGroups = false;
-    private List<ContactItem> _userList = new ArrayList<>();
+    private final List<ContactItem> _userList = new ArrayList<>();
     private JCheckBox _blockPIn;
     private JCheckBox _blockPOout;
     private JCheckBox _blockMsg;

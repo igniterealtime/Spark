@@ -40,7 +40,7 @@ import org.jxmpp.jid.parts.Resourcepart;
  */
 public class LocalPreferences {
 
-    	private Properties props;
+    	private final Properties props;
 
 	public LocalPreferences(Properties props) {
 		this.props = props;

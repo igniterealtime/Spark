@@ -34,16 +34,16 @@ import org.jivesoftware.spark.util.ResourceUtils;
 public class GroupChatPreferencePanel extends JPanel {
 
     private static final long serialVersionUID = -4216417602756915148L;
-    private JCheckBox highlightMyName 		= new JCheckBox();
-    private JCheckBox highlightMyText 		= new JCheckBox();
-    private JCheckBox highlightPopName		= new JCheckBox();
-    private JCheckBox showjoinleavemessage 	= new JCheckBox();
-    private JCheckBox showroleicons 	= new JCheckBox();
-    private JCheckBox _autoAcceptInvites = new JCheckBox();
-    private JCheckBox _randomcolors = new JCheckBox();
-    private JCheckBox inviteToBookmark = new JCheckBox();
+    private final JCheckBox highlightMyName 		= new JCheckBox();
+    private final JCheckBox highlightMyText 		= new JCheckBox();
+    private final JCheckBox highlightPopName		= new JCheckBox();
+    private final JCheckBox showjoinleavemessage 	= new JCheckBox();
+    private final JCheckBox showroleicons 	= new JCheckBox();
+    private final JCheckBox _autoAcceptInvites = new JCheckBox();
+    private final JCheckBox _randomcolors = new JCheckBox();
+    private final JCheckBox inviteToBookmark = new JCheckBox();
 
-    private JPanel gCPanel = new JPanel();
+    private final JPanel gCPanel = new JPanel();
     /**
      * Constructor invokes UI setup.
      */

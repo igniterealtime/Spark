@@ -56,15 +56,15 @@ import javax.swing.JPanel;
 public class ConversationInvitation extends JPanel implements ContainerComponent, ActionListener {
     private static final long serialVersionUID = -5830187619047598274L;
 
-    private JButton joinButton;
+    private final JButton joinButton;
 
-    private EntityBareJid roomName;
-    private String password;
-    private EntityBareJid inviter;
+    private final EntityBareJid roomName;
+    private final String password;
+    private final EntityBareJid inviter;
 
-    private String tabTitle;
-    private String frameTitle;
-    private String descriptionText;
+    private final String tabTitle;
+    private final String frameTitle;
+    private final String descriptionText;
 
     /**
      * Builds a new Conference Invitation UI.

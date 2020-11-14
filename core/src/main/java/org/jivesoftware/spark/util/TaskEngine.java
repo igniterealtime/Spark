@@ -41,7 +41,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class TaskEngine {
 
-    private static TaskEngine instance = new TaskEngine();
+    private static final TaskEngine instance = new TaskEngine();
 
     /**
      * Returns a task engine instance (singleton).
@@ -54,7 +54,7 @@ public class TaskEngine {
 
     private Timer timer;
     private ExecutorService executor;
-    private Map<TimerTask, TimerTaskWrapper> wrappedTasks = new ConcurrentHashMap<>();
+    private final Map<TimerTask, TimerTaskWrapper> wrappedTasks = new ConcurrentHashMap<>();
 
     /**
      * Constructs a new task engine.
@@ -313,7 +313,7 @@ public class TaskEngine {
      */
     private class TimerTaskWrapper extends TimerTask {
 
-        private TimerTask task;
+        private final TimerTask task;
 
         public TimerTaskWrapper(TimerTask task) {
             this.task = task;

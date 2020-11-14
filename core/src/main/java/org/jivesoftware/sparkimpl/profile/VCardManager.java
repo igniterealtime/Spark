@@ -75,27 +75,27 @@ public class VCardManager {
     private transient byte[] personalVCardAvatar; // lazy loaded cache of avatar binary data.
     private transient String personalVCardHash; // lazy loaded cache of avatar hash.
 
-    private Map<BareJid, VCard> vcards = Collections.synchronizedMap( new HashMap<>());
+    private final Map<BareJid, VCard> vcards = Collections.synchronizedMap( new HashMap<>());
 
-    private Set<BareJid> delayedContacts = Collections.synchronizedSet( new HashSet<>());
+    private final Set<BareJid> delayedContacts = Collections.synchronizedSet( new HashSet<>());
     
     private boolean vcardLoaded;
 
-    private File imageFile;
+    private final File imageFile;
 
     private final VCardEditor editor;
 
-    private File vcardStorageDirectory;
+    private final File vcardStorageDirectory;
 
     final MXParser parser;
 
-    private LinkedBlockingQueue<BareJid> queue = new LinkedBlockingQueue<>();
+    private final LinkedBlockingQueue<BareJid> queue = new LinkedBlockingQueue<>();
     
-    private File contactsDir;
+    private final File contactsDir;
 
-    private List<VCardListener> listeners = new ArrayList<>();
+    private final List<VCardListener> listeners = new ArrayList<>();
 
-	private List<BareJid> writingQueue = Collections.synchronizedList( new ArrayList<>());
+	private final List<BareJid> writingQueue = Collections.synchronizedList( new ArrayList<>());
 
     /**
      * Initialize VCardManager.

@@ -28,7 +28,7 @@ import java.util.ResourceBundle;
  * @author Derek DeMoro
  */
 public class Res {
-    private static PropertyResourceBundle prb;
+    private static final PropertyResourceBundle prb;
 
     private Res() {
 

@@ -55,7 +55,7 @@ import java.io.IOException;
  */
 public class AvatarPanel extends JPanel implements ActionListener {
     private static final long serialVersionUID = -5526978906063691519L;
-    private JLabel avatar;
+    private final JLabel avatar;
     private byte[] bytes;
     private File avatarFile;
     final JButton browseButton = new JButton();

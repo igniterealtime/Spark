@@ -72,7 +72,7 @@ public class Enterprise {
     public static final String PLUGINS_BLACKLIST_NODE = "spark-plugins-blacklist";
 
     private static DiscoverInfo featureInfo;
-    private static Map<String, DiscoverItems> nodeInfo = new HashMap<>();
+    private static final Map<String, DiscoverItems> nodeInfo = new HashMap<>();
 
     private boolean sparkManagerInstalled;
 

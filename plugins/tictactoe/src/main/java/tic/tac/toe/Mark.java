@@ -28,9 +28,9 @@ public enum Mark {
     X(1, "x.png", "x.blue.png"),
     O(2, "o.png", "o.blue.png");
 
-    private int value;
-    private String icon;
-    private String redicon;
+    private final int value;
+    private final String icon;
+    private final String redicon;
 
     public static Mark valueOf(int x) {
         switch (x) {

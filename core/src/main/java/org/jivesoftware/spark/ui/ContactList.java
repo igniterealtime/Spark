@@ -76,8 +76,8 @@ public class ContactList extends JPanel implements ActionListener,
 
     private static final long serialVersionUID = -4391111935248627078L;
     private static final String GROUP_DELIMITER = "::";
-    private JPanel mainPanel = new JPanel();
-    private JScrollPane contactListScrollPane;
+    private final JPanel mainPanel = new JPanel();
+    private final JScrollPane contactListScrollPane;
     private final List<ContactGroup> groupList = new ArrayList<>();
     private final RolloverButton addingGroupButton;
 
@@ -87,13 +87,13 @@ public class ContactList extends JPanel implements ActionListener,
 
 
     // Create Menus
-    private JMenuItem addContactMenu;
-    private JMenuItem addContactGroupMenu;
-    private JMenuItem removeContactFromGroupMenu;
-    private JMenuItem chatMenu;
-    private JMenuItem renameMenu;
+    private final JMenuItem addContactMenu;
+    private final JMenuItem addContactGroupMenu;
+    private final JMenuItem removeContactFromGroupMenu;
+    private final JMenuItem chatMenu;
+    private final JMenuItem renameMenu;
 
-    private ContactGroup offlineGroup;
+    private final ContactGroup offlineGroup;
     private final JCheckBoxMenuItem showHideMenu = new JCheckBoxMenuItem();
     private final JCheckBoxMenuItem showOfflineGroupMenu = new JCheckBoxMenuItem();
     private final JCheckBoxMenuItem showOfflineUsersMenu = new JCheckBoxMenuItem();
@@ -104,10 +104,10 @@ public class ContactList extends JPanel implements ActionListener,
 
     private final List<FileDropListener> dndListeners = new ArrayList<>();
     private final List<ContactListListener> contactListListeners = new ArrayList<>();
-    private Properties props;
-    private File propertiesFile;
+    private final Properties props;
+    private final File propertiesFile;
 
-    private LocalPreferences localPreferences;
+    private final LocalPreferences localPreferences;
 
     private ContactItem contactItem;
 
@@ -118,11 +118,11 @@ public class ContactList extends JPanel implements ActionListener,
     public static final String RETRY_PANEL = "RETRY_PANEL";
 
 
-    private ReconnectPanel _reconnectPanel;
-    private ReconnectPanelSmall _reconnectpanelsmall;
-    private ReconnectPanelIcon _reconnectpanelicon;
+    private final ReconnectPanel _reconnectPanel;
+    private final ReconnectPanelSmall _reconnectpanelsmall;
+    private final ReconnectPanelIcon _reconnectpanelicon;
 
-    private Workspace workspace;
+    private final Workspace workspace;
 
     public static KeyEvent activeKeyEvent;
 

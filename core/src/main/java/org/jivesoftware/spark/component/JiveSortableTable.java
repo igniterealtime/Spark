@@ -212,7 +212,7 @@ public abstract class JiveSortableTable extends Table {
      */
     public static class JiveTableModel extends DefaultTableModel {
 	private static final long serialVersionUID = -8112392992589859403L;
-	private boolean isEditable;
+	private final boolean isEditable;
 
         /**
          * Use the JiveTableModel in order to better handle the table. This allows

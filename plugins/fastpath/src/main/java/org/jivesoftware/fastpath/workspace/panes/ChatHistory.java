@@ -55,9 +55,9 @@ import org.jxmpp.jid.parts.Localpart;
 public class ChatHistory extends JPanel {
 
 	private static final long serialVersionUID = 1L;
-	private DefaultListModel model = new DefaultListModel();
+	private final DefaultListModel model = new DefaultListModel();
     private AgentSession agentSession;
-    private JList list;
+    private final JList list;
     private JFrame mainFrame;
     private JFrame frame;
 

@@ -30,7 +30,7 @@ import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 
 public class FastpathRes {
-    private static PropertyResourceBundle prb;
+    private static final PropertyResourceBundle prb;
 
     public static final String NOTE_EDIT_16x16 = "NOTE_EDIT_16x16";
     public static final String MAGICIAN_IMAGE = "MAGICIAN_IMAGE";

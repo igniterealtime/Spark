@@ -32,16 +32,16 @@ import java.awt.*;
 public class NotificationsUI extends JPanel {
 
 	private static final long serialVersionUID = -3372199803443605883L;
-	private JCheckBox toasterBox;
-    private JCheckBox asteriskToasterBox;
-    private JCheckBox windowFocusBox;
-    private JCheckBox offlineNotificationBox;
-    private JCheckBox onlineNotificationBox;
-    private JCheckBox betaCheckBox;
-    private JCheckBox SystemTrayNotificationBox;
-    private JCheckBox showTypingNotificationBox;
+	private final JCheckBox toasterBox;
+    private final JCheckBox asteriskToasterBox;
+    private final JCheckBox windowFocusBox;
+    private final JCheckBox offlineNotificationBox;
+    private final JCheckBox onlineNotificationBox;
+    private final JCheckBox betaCheckBox;
+    private final JCheckBox SystemTrayNotificationBox;
+    private final JCheckBox showTypingNotificationBox;
     
-    private JSpinner notificationDelay;
+    private final JSpinner notificationDelay;
 
     public NotificationsUI() {
 

@@ -77,7 +77,7 @@ public class PluginManager implements MainWindowListener
     private Plugin pluginClass;
     private PluginClassLoader classLoader;
 
-    private Collection<String> _blacklistPlugins;
+    private final Collection<String> _blacklistPlugins;
 
     /**
      * Returns the singleton instance of PluginManager, creating it if necessary.

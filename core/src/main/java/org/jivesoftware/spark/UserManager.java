@@ -76,7 +76,7 @@ import java.util.TimerTask;
  */
 public class UserManager {
 
-    private Map<JFrame,Component> parents = new HashMap<>();
+    private final Map<JFrame,Component> parents = new HashMap<>();
 
     public UserManager() {
     }
