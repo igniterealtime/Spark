@@ -598,7 +598,7 @@ public class HistoryTranscript extends SwingWorker {
                                         }
                                         try {
                                             //if the view contains line break char return forced break
-                                            if (getDocument().getText(p0, p1 - p0).indexOf(SEPARATOR) >= 0) {
+                                            if (getDocument().getText(p0, p1 - p0).contains(SEPARATOR)) {
                                                 return View.ForcedBreakWeight;
                                             }
                                         }
