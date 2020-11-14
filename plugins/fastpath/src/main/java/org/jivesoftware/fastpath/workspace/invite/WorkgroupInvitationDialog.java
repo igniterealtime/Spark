@@ -322,7 +322,7 @@ public class WorkgroupInvitationDialog implements PropertyChangeListener {
         }
         else if (FpRes.getString("invite").equals(value) || FpRes.getString("transfer").equals(value)) {
             String agent = jidField.getText();
-            boolean isValidJID = agent.indexOf("@") != -1;
+            boolean isValidJID = agent.contains("@");
 
             if (!ModelUtil.hasLength(agent)) {
                 JOptionPane.showMessageDialog(dlg, FpRes.getString("message.no.agent.selected.error"),
