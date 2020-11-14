@@ -81,7 +81,7 @@ public class GameForfeit implements ExtensionElement {
                 {
                     if ( "gameID".equals( parser.getName() ) )
                     {
-                        final int gameID = Integer.valueOf( parser.nextText() );
+                        final int gameID = Integer.parseInt( parser.nextText() );
                         gameForfeit.setGameID( gameID );
                     }
                 }

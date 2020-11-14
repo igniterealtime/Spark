@@ -971,7 +971,7 @@ public class ContactList extends JPanel implements ActionListener,
         // Check state
         String prop = props.getProperty(group.getGroupName());
         if (prop != null) {
-            boolean isCollapsed = Boolean.valueOf(prop);
+            boolean isCollapsed = Boolean.parseBoolean(prop);
             group.setCollapsed(isCollapsed);
         }
     }
@@ -1048,7 +1048,7 @@ public class ContactList extends JPanel implements ActionListener,
 
             String prop = props.getProperty(newContactGroup.getGroupName());
             if (prop != null) {
-                boolean isCollapsed = Boolean.valueOf(prop);
+                boolean isCollapsed = Boolean.parseBoolean(prop);
                 newContactGroup.setCollapsed(isCollapsed);
             }
 

@@ -225,7 +225,7 @@ public class LoginDialog {
             String portString = loginServer.substring(checkForPort + 1);
             if (ModelUtil.hasLength(portString)) {
                 // Set new port.
-                port = Integer.valueOf(portString);
+                port = Integer.parseInt(portString);
             }
         }
 
