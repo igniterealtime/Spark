@@ -481,7 +481,7 @@ public class RoarPreferencePanel extends JPanel {
 
         private String string;
 
-        private ColorTypes(String c) {
+        ColorTypes(String c) {
             string = c;
         }
 

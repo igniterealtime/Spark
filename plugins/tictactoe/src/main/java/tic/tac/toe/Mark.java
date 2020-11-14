@@ -59,9 +59,9 @@ public enum Mark {
 	return value;
     }
 
-    private Mark(int value, String icon, String redicon) {
-	this.value = value;
-	this.icon = icon;
-	this.redicon = redicon;
+    Mark(int value, String icon, String redicon) {
+        this.value = value;
+        this.icon = icon;
+        this.redicon = redicon;
     }
 }

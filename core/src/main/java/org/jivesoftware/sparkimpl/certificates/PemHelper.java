@@ -26,7 +26,7 @@ import org.bouncycastle.openssl.jcajce.JcaPEMWriter;
 
 public class PemHelper {
 
-    public static enum typeOfDelimeter {
+    public enum typeOfDelimeter {
         KEY_BEGIN, KEY_END, CERT_BEGIN, CERT_END
     }
 

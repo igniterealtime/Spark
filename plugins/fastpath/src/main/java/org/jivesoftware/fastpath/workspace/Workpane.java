@@ -105,7 +105,7 @@ public class Workpane {
     /**
      * Type of states a fastpath room can be in.
      */
-    public static enum RoomState {
+    public enum RoomState {
         /**
          * The room contains an incoming request.
          */
