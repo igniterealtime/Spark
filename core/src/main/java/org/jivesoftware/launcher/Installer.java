@@ -104,8 +104,6 @@ public class Installer implements InstallAction {
      */
     private void setURI(String path) {
         boolean exists = WinRegistry.keyExists(RegistryRoot.HKEY_CLASSES_ROOT, "xmpp");
-        if (exists) {
-        }
         //   JOptionPane.showConfirmDialog(null, "Another application is currently registered to handle XMPP instant messaging. Make Spark the default XMPP instant messaging client?", "Confirmation",         }
         WinRegistry.deleteKey(RegistryRoot.HKEY_CLASSES_ROOT, "xmpp", true);
 

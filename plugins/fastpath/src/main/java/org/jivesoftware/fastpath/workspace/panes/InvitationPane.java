@@ -253,7 +253,7 @@ public class InvitationPane {
     private void removeOwner(MultiUserChat muc) {
         if (muc.isJoined()) {
             // Try and remove myself as an owner if I am one.
-            Collection owners = null;
+            Collection owners;
             try {
                 owners = muc.getOwners();
             }

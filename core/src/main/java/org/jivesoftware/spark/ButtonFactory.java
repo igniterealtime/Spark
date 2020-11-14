@@ -59,17 +59,15 @@ public class ButtonFactory {
 		return new RolloverButton(SparkRes.getImageIcon(SparkRes.BUZZ_IMAGE));
 	}
 
-	public RolloverButton createEmoticonButton() {
-		final EmoticonManager emoticonManager = EmoticonManager.getInstance();
-		final String activeEmoticonSetName = emoticonManager.getActiveEmoticonSetName();
-		final Emoticon smileEmoticon = emoticonManager.getEmoticon(activeEmoticonSetName, ":)");
-                Emoticon firstEmoticon=(smileEmoticon == null) ? firstEmoticon=emoticonManager.getFirstEmotion(activeEmoticonSetName) : smileEmoticon;
-		URL emotionURL = emoticonManager.getEmoticonURL(firstEmoticon);
-		ImageIcon icon = new ImageIcon(emotionURL);
-                firstEmoticon=null;
-		return new RolloverButton(icon);
-                
-	}
+    public RolloverButton createEmoticonButton() {
+        final EmoticonManager emoticonManager = EmoticonManager.getInstance();
+        final String activeEmoticonSetName = emoticonManager.getActiveEmoticonSetName();
+        final Emoticon smileEmoticon = emoticonManager.getEmoticon(activeEmoticonSetName, ":)");
+        Emoticon firstEmoticon = (smileEmoticon == null) ? emoticonManager.getFirstEmotion(activeEmoticonSetName) : smileEmoticon;
+        URL emotionURL = emoticonManager.getEmoticonURL(firstEmoticon);
+        ImageIcon icon = new ImageIcon(emotionURL);
+        return new RolloverButton(icon);
+    }
 
 	public JLabel createDivider() {
 		return new JLabel(SparkRes.getImageIcon("DIVIDER_IMAGE"));

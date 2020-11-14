@@ -52,7 +52,7 @@ public class WorkgroupDataForm extends JPanel {
 	private final Map valueMap = new HashMap<String, JComponent>();
     private int row = 5;
     private Form searchForm;
-    private Map presetVariables = new HashMap();
+    private Map presetVariables;
     private List<String> requiredList = new ArrayList<String>();
     private EnterListener listener;
 
@@ -173,13 +173,8 @@ public class WorkgroupDataForm extends JPanel {
             }
             else if (o instanceof JComboBox) {
                 Object v = ((JComboBox)o).getSelectedItem();
-                String value = "";
-                if (v instanceof FormField.Option) {
-                    value = ((FormField.Option)v).getValue();
-                }
-                else {
-                    value = (String)v;
-                }
+                String value = (v instanceof FormField.Option) ? ((FormField.Option) v).getValue() : (String) v;
+
                 List<String> list = new ArrayList<String>();
                 list.add(value);
                 if (list.size() > 0) {
