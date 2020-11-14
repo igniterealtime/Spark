@@ -108,9 +108,7 @@ public class ChatSearch implements Searchable {
             final JList list = new JList(model);
             list.setCellRenderer(new HistoryItemRenderer());
 
-            Iterator<ChatSearchResult> iter = results.iterator();
-            while (iter.hasNext()) {
-                ChatSearchResult result = iter.next();
+            for (ChatSearchResult result : results) {
                 String person = result.getUsername();
                 String question = result.getQuestion();
                 String sessionID = result.getSessionID();

@@ -151,9 +151,8 @@ public class ChatHistory extends JPanel {
         try {
             model.removeAllElements();
             Collection sessions = history.getAgentChatSessions();
-            Iterator iter = sessions.iterator();
-            while (iter.hasNext()) {
-                AgentChatSession chatSession = (AgentChatSession)iter.next();
+            for (Object session : sessions) {
+                AgentChatSession chatSession = (AgentChatSession) session;
 
                 // Then were in a group chat
                 final String nickname = chatSession.getVisitorsName();

@@ -108,11 +108,7 @@ public class UserHistory extends JPanel {
 
     public void init(Collection<Transcripts.TranscriptSummary> transcriptList) {
         model.removeAllElements();
-        Iterator<Transcripts.TranscriptSummary> iter = transcriptList.iterator();
-        while (iter.hasNext()) {
-            Transcripts.TranscriptSummary summary = iter.next();
-
-
+        for (TranscriptSummary summary : transcriptList) {
             UserHistoryItem item = new UserHistoryItem(summary.getAgentDetails(), summary.getJoinTime(), summary.getLeftTime());
             item.setSessionID(summary.getSessionID());
             model.addElement(item);

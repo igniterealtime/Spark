@@ -189,18 +189,15 @@ public class WorkgroupDataForm extends JPanel {
             }
         }
 
-        final Iterator keys = presetVariables.keySet().iterator();
-        while(keys.hasNext()){
-            String variable = (String)keys.next();
-            String value = (String)presetVariables.get(variable);
+        for (Object o : presetVariables.keySet()) {
+            String variable = (String) o;
+            String value = (String) presetVariables.get(variable);
             answerForm.setAnswer(variable, value);
         }
 
-        final Iterator iter = requiredList.iterator();
-        while(iter.hasNext()){
-            String variable = (String)iter.next();
+        for (String variable : requiredList) {
             FormField field = answerForm.getField(variable);
-            if(field != null){
+            if (field != null) {
                 field.setRequired(true);
             }
         }

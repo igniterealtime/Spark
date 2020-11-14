@@ -194,9 +194,8 @@ public final class AgentConversations extends JPanel implements ChangeListener {
                                 removeOldChats(agentJID, list);
 
                                 // Add new ones.
-                                Iterator iter = list.iterator();
-                                while (iter.hasNext()) {
-                                    AgentStatus.ChatInfo chatInfo = (AgentStatus.ChatInfo)iter.next();
+                                for (Object o : list) {
+                                    AgentStatus.ChatInfo chatInfo = (AgentStatus.ChatInfo) o;
                                     Date startDate = chatInfo.getDate();
                                     String username = chatInfo.getUserID();
 

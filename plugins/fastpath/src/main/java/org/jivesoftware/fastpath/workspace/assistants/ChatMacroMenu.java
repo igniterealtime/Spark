@@ -129,24 +129,17 @@ public class ChatMacroMenu {
     }
 
     private void addSubMenus(JMenu menu, List<MacroGroup> macroGroups) {
-        Iterator<MacroGroup> subFolders = macroGroups.iterator();
-        while (subFolders.hasNext()) {
-            MacroGroup folder = subFolders.next();
+        for (MacroGroup folder : macroGroups) {
             JMenu subMenu = new JMenu(folder.getTitle());
             menu.add(subMenu);
 
             addMenuItems(subMenu, folder.getMacros());
-
-
             addSubMenus(subMenu, folder.getMacroGroups());
-
         }
     }
 
     private void addMenuItems(JMenu menu, List<Macro> macros) {
-        Iterator<Macro> items = macros.iterator();
-        while (items.hasNext()) {
-            final Macro newItem = items.next();
+        for (Macro newItem : macros) {
             final JMenuItem item = new JMenuItem(newItem.getTitle());
             menu.add(item);
             item.addActionListener(new ActionListener() {
@@ -154,8 +147,7 @@ public class ChatMacroMenu {
                     String text = newItem.getResponse() + " ";
                     try {
                         chatRoom.getChatInputEditor().insertText(text);
-                    }
-                    catch (BadLocationException e1) {
+                    } catch (BadLocationException e1) {
                         Log.error("Error inserting macro", e1);
                     }
                 }

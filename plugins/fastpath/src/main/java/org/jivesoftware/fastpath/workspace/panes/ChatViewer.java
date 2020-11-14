@@ -71,11 +71,9 @@ public class ChatViewer extends JPanel {
         chatWindow.setBackground(Color.white);
         final List<Message> chatTranscript = new ArrayList<Message>();
 
-        Iterator<Stanza> iter = stanzas.iterator();
-        while (iter.hasNext()) {
-            Stanza stanza = iter.next();
+        for (Stanza stanza : stanzas) {
             if (stanza instanceof Message) {
-                Message message = (Message)stanza;
+                Message message = (Message) stanza;
                 String from = message.getFrom().getResourceOrThrow().toString();
                 DelayInformation delayInformation = message.getExtension("delay", "urn:xmpp:delay");
                 Date stamp = null;
@@ -85,18 +83,16 @@ public class ChatViewer extends JPanel {
                 message.removeExtension(delayInformation);
                 chatWindow.insertMessage(from, message, ChatManager.TO_COLOR);
                 final Map<String, Object> properties = new HashMap<>();
-                properties.put( "date", stamp );
-                message.addExtension( new JivePropertiesExtension( properties ) );
+                properties.put("date", stamp);
+                message.addExtension(new JivePropertiesExtension(properties));
                 message.setFrom(JidCreate.fromOrThrowUnchecked(from));
                 chatTranscript.add(message);
-            }
-            else {
-                Presence presence = (Presence)stanza;
+            } else {
+                Presence presence = (Presence) stanza;
                 String from = presence.getFrom().getResourceOrThrow().toString();
                 if (presence.getType() == Presence.Type.available) {
                     from = FpRes.getString("message.user.joined.room", from);
-                }
-                else {
+                } else {
                     from = FpRes.getString("message.user.left.room", from);
                 }
                 chatWindow.insertNotificationMessage(from, ChatManager.NOTIFICATION_COLOR);
