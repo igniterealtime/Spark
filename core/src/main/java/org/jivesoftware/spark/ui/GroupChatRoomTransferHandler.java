@@ -31,7 +31,7 @@ import javax.swing.TransferHandler;
 public class GroupChatRoomTransferHandler extends TransferHandler {
 	private static final long serialVersionUID = -192689038331188379L;
 	private GroupChatRoom groupChatRoom;
-    private static final DataFlavor flavors[] = {DataFlavor.imageFlavor};
+    private static final DataFlavor[] flavors = {DataFlavor.imageFlavor};
 
     /**
      * Creates a transfer handler for the given GroupChatRoom
@@ -49,7 +49,7 @@ public class GroupChatRoomTransferHandler extends TransferHandler {
 
 
     @Override
-	public boolean canImport(JComponent comp, DataFlavor flavor[]) {
+	public boolean canImport(JComponent comp, DataFlavor[] flavor) {
         for (int i = 0, n = flavor.length; i < n; i++) {
             for (int j = 0, m = flavors.length; j < m; j++) {
                 if (flavor[i].equals(flavors[j])) {

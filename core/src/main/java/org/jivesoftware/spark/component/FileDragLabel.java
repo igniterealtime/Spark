@@ -130,7 +130,7 @@ public class FileDragLabel extends JLabel implements DropTargetListener, DragSou
 		private final static int FILE = 0;
 		private final static int STRING = 1;
 		private final static int PLAIN = 2;
-        DataFlavor flavors[] = {DataFlavor.javaFileListFlavor,
+        DataFlavor[] flavors = {DataFlavor.javaFileListFlavor,
             DataFlavor.stringFlavor,
             DataFlavor.getTextPlainUnicodeFlavor()};
 
@@ -174,7 +174,7 @@ public class FileDragLabel extends JLabel implements DropTargetListener, DragSou
         }
     }
 
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         JFrame f = new JFrame();
         FileDragLabel p = new FileDragLabel();
         f.add(p);
