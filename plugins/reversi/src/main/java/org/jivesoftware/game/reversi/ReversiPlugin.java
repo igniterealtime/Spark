@@ -240,9 +240,9 @@ public class ReversiPlugin implements Plugin {
         // before adding the new one (possible if the opponent sends two invites
         // in a row).
         Object oldInvitation = gameInvitations.put(invitation.getFrom(), inviteAlert);
-        if (oldInvitation != null) {
-            // TODO: clean it up by removing it from the transcript window.
-        }
+        // TODO: clean it up by removing it from the transcript window.
+        // if (oldInvitation != null) {
+        // }
 
         // Add the response panel to the transcript window.
         room.getTranscriptWindow().addComponent(inviteAlert);

@@ -16,7 +16,7 @@
 package org.jivesoftware.spark.ui;
 
 import java.awt.Component;
-import javax.swing.JLabel;
+import javax.swing.*;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
@@ -36,7 +36,7 @@ public class ReconnectPanelSmall extends ContactGroup implements
     private static final long serialVersionUID = 437696141257704105L;
     private JLabel _reconnectionlabel = new JLabel(
 	    Res.getString("message.reconnect.attempting"),
-	    SparkRes.getImageIcon(SparkRes.BUSY_IMAGE), 0);
+	    SparkRes.getImageIcon(SparkRes.BUSY_IMAGE), SwingConstants.CENTER);
     private Component thiscomp;
     private boolean _closedOnError;
 

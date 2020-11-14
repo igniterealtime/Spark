@@ -172,11 +172,6 @@ public final class CurrentActivity extends JPanel {
                         BareJid agentJID = presence.getFrom().asBareJid();
                         AgentStatus agentStatus = presence.getExtension("agent-status", "http://jabber.org/protocol/workgroup");
 
-                        String status = presence.getStatus();
-                        if (status == null) {
-                            status = "Available";
-                        }
-
                         if (agentStatus != null) {
                             List<ChatInfo> list = agentStatus.getCurrentChats();
 
@@ -261,7 +256,7 @@ public final class CurrentActivity extends JPanel {
 
                                 if (muc.isJoined()) {
                                     // Try and remove myself as an owner if I am one.
-                                    Collection owners = null;
+                                    Collection owners;
                                     try {
                                         owners = muc.getOwners();
                                     }

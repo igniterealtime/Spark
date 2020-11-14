@@ -316,7 +316,6 @@ public class SoundPreference implements Preference {
             return incomingInvitationBox.isSelected();
         }
 
-
         private void pickFile(String title, JTextField field) {
             if (fc == null) {
                 fc = new JFileChooser();
@@ -336,11 +335,7 @@ public class SoundPreference implements Preference {
                     Log.error(e);
                 }
             }
-            else {
-
-            }
         }
-
     }
 
     private File getSoundSettingsFile() {

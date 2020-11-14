@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.text.Format;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
@@ -39,24 +40,20 @@ public class BroadcastHistoryFrame extends javax.swing.JFrame {
         BroadcastHistoryArea.setWrapStyleWord(true);
         initComponents();
     }
-    
+
     public void readFromFile(String date) throws FileNotFoundException, IOException {
         //String fileName = Spark.getSparkUserHome()+File.separator+"broadcast_history."+date+".txt";
-        String fileLocation=Spark.getSparkUserHome()+File.separator+"user"+File.separator+SparkManager.getSessionManager().getUsername()+"@"+SparkManager.getSessionManager().getServerAddress()+File.separator+"transcripts"+File.separator+"broadcast_history."+date+".txt";
+        String fileLocation = Spark.getSparkUserHome() + File.separator + "user" + File.separator + SparkManager.getSessionManager().getUsername() + "@" + SparkManager.getSessionManager().getServerAddress() + File.separator + "transcripts" + File.separator + "broadcast_history." + date + ".txt";
         File myfile = new File(fileLocation);
         FileInputStream fis = new FileInputStream(myfile);
- 
-	
+
         BufferedReader br = new BufferedReader(new InputStreamReader(fis));
-        
-        String line = null;
-       
+
+        String line;
         while ((line = br.readLine()) != null) {
-            BroadcastHistoryArea.append(line+"\n");
-            }
- 
-	br.close();   
- 
+            BroadcastHistoryArea.append(line + "\n");
+        }
+        br.close();
     }
     
     private void initComponents() {        
@@ -75,7 +72,7 @@ public class BroadcastHistoryFrame extends javax.swing.JFrame {
         try {
             readFromFile(myDate);
         } catch (IOException ex) {
-            Log.error("Couldn't read from file"+ex.getMessage()+ex.getStackTrace());
+            Log.error("Couldn't read from file"+ex.getMessage()+ Arrays.toString(ex.getStackTrace()));
         }
        
         SearchButton.setText((Res.getString("button.search")));
@@ -155,7 +152,7 @@ public class BroadcastHistoryFrame extends javax.swing.JFrame {
         try {
             readFromFile(DateField.getText());
         } catch (IOException ex) {
-            Log.error("Couldn't read from file"+ex.getCause()+ex.getStackTrace());
+            Log.error("Couldn't read from file"+ex.getCause()+ Arrays.toString(ex.getStackTrace()));
         }
        
         

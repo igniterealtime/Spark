@@ -164,7 +164,7 @@ public class LoginSettingDialog implements PropertyChangeListener
                 optionPane.setValue( JOptionPane.UNINITIALIZED_VALUE );
                 optionPane.addPropertyChangeListener( this );
             }
-        } else if (Res.getString("use.default") == value) {
+        } else if (Res.getString("use.default").equals(value)) {
             if (tabbedPane.getSelectedComponent().equals(generalPanel)) {
                 generalPanel.useDefault();
             } else if (tabbedPane.getSelectedComponent().equals(securityPanel)) {
