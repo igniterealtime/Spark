@@ -468,11 +468,11 @@ public class HistoryTranscript extends SwingWorker {
 			List<ChatTranscript> tmpList = new ArrayList<>();
 			ChatTranscript tmpTranscript;
 
-			for (int i = 0; i < dateFilteredUnfilteredList.size(); i++){
-				tmpTranscript = new ChatTranscript();
-				tmpTranscript.setList(dateFilteredUnfilteredList.get(i).getMessage(searchString));
-				if (tmpTranscript.size() > 0) tmpList.add(tmpTranscript);
-			}
+            for (ChatTranscript chatTranscript : dateFilteredUnfilteredList) {
+                tmpTranscript = new ChatTranscript();
+                tmpTranscript.setList(chatTranscript.getMessage(searchString));
+                if (tmpTranscript.size() > 0) tmpList.add(tmpTranscript);
+            }
 
 			try {
 				token.acquire();

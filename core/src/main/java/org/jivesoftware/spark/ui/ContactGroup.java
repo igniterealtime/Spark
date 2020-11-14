@@ -738,9 +738,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
 
         int count = 0;
         List<ContactItem> list = new ArrayList<>(getContactItems());
-        int size = list.size();
-        for (int i = 0; i < size; i++) {
-            ContactItem it = list.get(i);
+        for (ContactItem it : list) {
             if (it.isAvailable()) {
                 count++;
             }

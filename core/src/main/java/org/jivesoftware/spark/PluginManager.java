@@ -130,29 +130,20 @@ public class PluginManager implements MainWindowListener
         File[] files = PLUGINS_DIRECTORY.listFiles();
         if ( files != null )
         {
-            final int no = files.length;
-            for ( int i = 0; i < no; i++ )
-            {
-                File file = files[ i ];
-                if ( file.isFile() )
-                {
+            for (File file : files) {
+                if (file.isFile()) {
                     // Copy over
-                    File newFile = new File( newPlugins, file.getName() );
+                    File newFile = new File(newPlugins, file.getName());
 
-                    if ( newFile.lastModified() >= file.lastModified() )
-                    {
+                    if (newFile.lastModified() >= file.lastModified()) {
                         continue;
                     }
 
-                    try
-                    {
-                        URLFileSystem.copy( file.toURI().toURL(), newFile );
+                    try {
+                        URLFileSystem.copy(file.toURI().toURL(), newFile);
+                    } catch (IOException e) {
+                        Log.error(e);
                     }
-                    catch ( IOException e )
-                    {
-                        Log.error( e );
-                    }
-
                 }
             }
         }
