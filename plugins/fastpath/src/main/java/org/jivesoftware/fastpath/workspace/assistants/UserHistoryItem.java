@@ -75,7 +75,7 @@ public class UserHistoryItem extends JPanel {
         add(startTimeLabel, new GridBagConstraints(1, 3, 2, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         startTimeLabel.setText(theDate);
 
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         Iterator<Transcripts.AgentDetail> agents = agentDetails.iterator();
         while (agents.hasNext()) {
             Transcripts.AgentDetail agentDetail = agents.next();

@@ -54,7 +54,7 @@ public class ChatSearchResult {
 
         sessionID = getFirstValue(row, "sessionID");
 
-        StringBuffer authors = new StringBuffer();
+        StringBuilder authors = new StringBuilder();
         for ( final CharSequence agentJID : row.getValues("agentJIDs") )
         {
             authors.append(agentJID);
