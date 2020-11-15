@@ -228,7 +228,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
         }
 
         if (!preferences.isOfflineGroupVisible()) {
-            Collections.sort(offlineContacts, itemComparator);
+            offlineContacts.sort(itemComparator);
             int index = offlineContacts.indexOf(offlineItem);
 
             int totalListSize = contactItems.size();
@@ -314,7 +314,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
         List<ContactItem> tempItems = getContactItems();
 
 
-        Collections.sort(tempItems, itemComparator);
+        tempItems.sort(itemComparator);
 
 
         int index = tempItems.indexOf(item);
@@ -365,7 +365,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
 
         // contactGroup.setStyle(CollapsiblePane.TREE_STYLE);
         contactGroups.add(contactGroup);
-        Collections.sort(contactGroups, ContactList.GROUP_COMPARATOR);
+        contactGroups.sort(ContactList.GROUP_COMPARATOR);
         listPanel.add(panel, contactGroups.indexOf(contactGroup));
     }
 
@@ -538,7 +538,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
      */
     public List<ContactItem> getContactItems() {
         final List<ContactItem> list = new ArrayList<>(contactItems);
-        Collections.sort(list, itemComparator);
+        list.sort(itemComparator);
         return list;
     }
 

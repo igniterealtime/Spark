@@ -224,7 +224,7 @@ public class FrequentContactsPlugin implements Plugin {
         final File[] transcriptFiles = transcriptDir.listFiles( ( dir, name ) -> !name.contains("_current") && !name.equals("conversations.xml") );
         final List<File> files = Arrays.asList(transcriptFiles);
 
-        Collections.sort(files, sizeComparator);
+        files.sort(sizeComparator);
 
         int size = files.size();
         if (size > 10) {

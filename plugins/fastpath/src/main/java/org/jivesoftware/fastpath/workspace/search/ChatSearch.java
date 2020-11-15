@@ -103,7 +103,7 @@ public class ChatSearch implements Searchable {
             }
 
 
-            Collections.sort(results, dateComporator);
+            results.sort(dateComporator);
             DefaultListModel model = new DefaultListModel();
             final JList list = new JList(model);
             list.setCellRenderer(new HistoryItemRenderer());
