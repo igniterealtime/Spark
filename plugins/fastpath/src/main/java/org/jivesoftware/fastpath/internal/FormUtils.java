@@ -62,8 +62,7 @@ final public class FormUtils {
      */
     public static boolean isValidData(String data) {
         char[] chars = data.toCharArray();
-        for (int i = 0; i < chars.length; i++) {
-            char c = chars[i];
+        for (char c : chars) {
             if (Character.isLetterOrDigit(c)) {
                 return true;
             }
@@ -97,7 +96,7 @@ final public class FormUtils {
             char[] string2 = string.toCharArray();
             char[] newString2 = newString.toCharArray();
             int oLength = oldString.length();
-            StringBuffer buf = new StringBuffer(string2.length);
+            StringBuilder buf = new StringBuilder(string2.length);
             buf.append(string2, 0, i).append(newString2);
             i += oLength;
             int j = i;

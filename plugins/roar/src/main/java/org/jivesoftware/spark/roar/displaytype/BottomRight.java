@@ -28,14 +28,14 @@ public class BottomRight implements RoarDisplayType {
     private int _lastusedXpos;
     private int _lastusedYpos;
 
-    private int _defaultx;
-    private int _defaulty;
+    private final int _defaultx;
+    private final int _defaulty;
 
     private int _amount;
 
     private final int WIDTH = RoarPanel.WIDTH;
     private final int HEIGHT = RoarPanel.HEIGHT;
-    private AbstractAction _customaction;
+    private final AbstractAction _customaction;
 
     private static final int TASKBAR = 35;
 

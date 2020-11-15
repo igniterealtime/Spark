@@ -32,11 +32,11 @@ import java.util.Date;
 
 public class HistoryItem extends JPanel {
 	private static final long serialVersionUID = -3410684714855388210L;
-	private JLabel fullNameLabel = new JLabel();
-    private JLabel emailLabel = new JLabel();
-    private JLabel dateLabel = new JLabel();
-    private JLabel questionLabel = new JLabel();
-    private JLabel conversationLabel = new JLabel();
+	private final JLabel fullNameLabel = new JLabel();
+    private final JLabel emailLabel = new JLabel();
+    private final JLabel dateLabel = new JLabel();
+    private final JLabel questionLabel = new JLabel();
+    private final JLabel conversationLabel = new JLabel();
 
     private String sessionID;
 

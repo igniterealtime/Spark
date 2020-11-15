@@ -41,7 +41,7 @@ public class FileTransferSettings {
     private int kb;
     private boolean checkSize = false;
     String cannedRejectionMessage;
-    private static File BACKING_STORE = new File(Spark.getSparkUserHome() + "/transferguard.properties");
+    private static final File BACKING_STORE = new File(Spark.getSparkUserHome() + "/transferguard.properties");
 
 
     /**
@@ -152,7 +152,7 @@ public class FileTransferSettings {
 
                 String ignore = props.getProperty("checkFileSize");
                 if (ignore != null) {
-                    this.checkSize = Boolean.valueOf(ignore);
+                    this.checkSize = Boolean.parseBoolean(ignore);
                 }
 
                 String maxSize = props.getProperty("maxSize");

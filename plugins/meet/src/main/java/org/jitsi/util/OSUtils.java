@@ -117,9 +117,9 @@ public class OSUtils
             IS_LINUX = false;
             IS_MAC = false;
             IS_WINDOWS = true;
-            IS_WINDOWS_VISTA = (osName.indexOf("Vista") != -1);
-            IS_WINDOWS_7 = (osName.indexOf("7") != -1);
-            IS_WINDOWS_8 = (osName.indexOf("8") != -1);
+            IS_WINDOWS_VISTA = (osName.contains("Vista"));
+            IS_WINDOWS_7 = (osName.contains("7"));
+            IS_WINDOWS_8 = (osName.contains("8"));
             IS_FREEBSD = false;
         }
         else if (osName.startsWith("FreeBSD"))
@@ -153,12 +153,12 @@ public class OSUtils
             IS_32_BIT = true;
             IS_64_BIT = false;
         }
-        else if (osArch.indexOf("32") != -1)
+        else if (osArch.contains("32"))
         {
             IS_32_BIT = true;
             IS_64_BIT = false;
         }
-        else if (osArch.indexOf("64") != -1)
+        else if (osArch.contains("64"))
         {
             IS_32_BIT = false;
             IS_64_BIT = true;

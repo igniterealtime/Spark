@@ -68,14 +68,14 @@ import java.util.Date;
 import java.util.TimerTask;
 
 public class CheckUpdates {
-    private String mainUpdateURL;
+    private final String mainUpdateURL;
     private JProgressBar bar;
     private TitlePanel titlePanel;
     private boolean downloadComplete = false;
     private boolean cancel = false;
     public static boolean UPDATING = false;
-    private boolean sparkPluginInstalled;
-    private XStream xstream = new XStream();
+    private final boolean sparkPluginInstalled;
+    private final XStream xstream = new XStream();
     private String sizeText;
 
 
@@ -665,9 +665,7 @@ public class CheckUpdates {
             File binDirectory = Spark.getBinDirectory();
             File[] files = binDirectory.listFiles();
             if (files != null) {
-                int no = files.length;
-                for (int i = 0; i < no; i++) {
-                    File file = files[i];
+                for (File file : files) {
                     String fileName = file.getName();
                     if (fileName.endsWith(".exe")) {
                         int index = fileName.indexOf("_");
@@ -685,8 +683,7 @@ public class CheckUpdates {
                             // Prompt
                             promptForInstallation(file, Res.getString("title.new.client.available"), Res.getString("message.restart.spark.to.install"));
                             return true;
-                        }
-                        else {
+                        } else {
                             file.delete();
                         }
 

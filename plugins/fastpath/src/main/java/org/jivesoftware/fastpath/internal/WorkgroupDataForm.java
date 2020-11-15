@@ -51,9 +51,9 @@ public class WorkgroupDataForm extends JPanel {
 	private static final long serialVersionUID = -2368907321868842234L;
 	private final Map valueMap = new HashMap<String, JComponent>();
     private int row = 5;
-    private Form searchForm;
-    private Map presetVariables;
-    private List<String> requiredList = new ArrayList<String>();
+    private final Form searchForm;
+    private final Map presetVariables;
+    private final List<String> requiredList = new ArrayList<>();
     private EnterListener listener;
 
 
@@ -106,7 +106,7 @@ public class WorkgroupDataForm extends JPanel {
             }
             else if (type.equals(FormField.Type.text_multi) ||
                 type.equals(FormField.Type.jid_multi)) {
-                StringBuffer buf = new StringBuffer();
+                StringBuilder buf = new StringBuilder();
                 for ( final FormField.Option option : field.getOptions() ) {
                     buf.append(option);
                 }
@@ -155,7 +155,7 @@ public class WorkgroupDataForm extends JPanel {
                 answerForm.setAnswer(answer, isSelected);
             }
             else if (o instanceof JTextArea) {
-                List<String> list = new ArrayList<String>();
+                List<String> list = new ArrayList<>();
                 String value = ((JTextArea)o).getText();
                 StringTokenizer tokenizer = new StringTokenizer(value, ", ", false);
                 while (tokenizer.hasMoreTokens()) {
@@ -175,7 +175,7 @@ public class WorkgroupDataForm extends JPanel {
                 Object v = ((JComboBox)o).getSelectedItem();
                 String value = (v instanceof FormField.Option) ? ((FormField.Option) v).getValue() : (String) v;
 
-                List<String> list = new ArrayList<String>();
+                List<String> list = new ArrayList<>();
                 list.add(value);
                 if (list.size() > 0) {
                     answerForm.setAnswer(answer, list);
@@ -189,18 +189,15 @@ public class WorkgroupDataForm extends JPanel {
             }
         }
 
-        final Iterator keys = presetVariables.keySet().iterator();
-        while(keys.hasNext()){
-            String variable = (String)keys.next();
-            String value = (String)presetVariables.get(variable);
+        for (Object o : presetVariables.keySet()) {
+            String variable = (String) o;
+            String value = (String) presetVariables.get(variable);
             answerForm.setAnswer(variable, value);
         }
 
-        final Iterator iter = requiredList.iterator();
-        while(iter.hasNext()){
-            String variable = (String)iter.next();
+        for (String variable : requiredList) {
             FormField field = answerForm.getField(variable);
-            if(field != null){
+            if (field != null) {
                 field.setRequired(true);
             }
         }

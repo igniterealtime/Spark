@@ -34,10 +34,10 @@ public class ReconnectPanelSmall extends ContactGroup implements
 	ConnectionListener {
 
     private static final long serialVersionUID = 437696141257704105L;
-    private JLabel _reconnectionlabel = new JLabel(
+    private final JLabel _reconnectionlabel = new JLabel(
 	    Res.getString("message.reconnect.attempting"),
 	    SparkRes.getImageIcon(SparkRes.BUSY_IMAGE), SwingConstants.CENTER);
-    private Component thiscomp;
+    private final Component thiscomp;
     private boolean _closedOnError;
 
     /**

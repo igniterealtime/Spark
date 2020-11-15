@@ -77,7 +77,7 @@ public class ChatSearch implements Searchable {
     }
 
     public void search(String query) {
-        final List<ChatSearchResult> results = new ArrayList<ChatSearchResult>();
+        final List<ChatSearchResult> results = new ArrayList<>();
         AgentSession agentSession = FastpathPlugin.getAgentSession();
         try {
             Form form = agentSession.getTranscriptSearchForm();
@@ -108,9 +108,7 @@ public class ChatSearch implements Searchable {
             final JList list = new JList(model);
             list.setCellRenderer(new HistoryItemRenderer());
 
-            Iterator<ChatSearchResult> iter = results.iterator();
-            while (iter.hasNext()) {
-                ChatSearchResult result = iter.next();
+            for (ChatSearchResult result : results) {
                 String person = result.getUsername();
                 String question = result.getQuestion();
                 String sessionID = result.getSessionID();
@@ -216,19 +214,7 @@ public class ChatSearch implements Searchable {
             long int1 = item1.getStartDate().getTime();
             long int2 = item2.getStartDate().getTime();
 
-            if (int1 == int2) {
-                return 0;
-            }
-
-            if (int1 > int2) {
-                return -1;
-            }
-
-            if (int1 < int2) {
-                return 1;
-            }
-
-            return 0;
+            return Long.compare(int2, int1);
         }
     };
 }

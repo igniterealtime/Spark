@@ -50,9 +50,9 @@ public class BannedUsers extends JPanel {
 
     private MultiUserChat chat;
 
-    private DefaultListModel listModel = new DefaultListModel();
-    private JList list = new JList(listModel);
-    private JMenuItem unBanMenuItem = new JMenuItem(Res.getString("menuitem.unban"));
+    private final DefaultListModel listModel = new DefaultListModel();
+    private final JList list = new JList(listModel);
+    private final JMenuItem unBanMenuItem = new JMenuItem(Res.getString("menuitem.unban"));
 
     /**
      * Construct UI

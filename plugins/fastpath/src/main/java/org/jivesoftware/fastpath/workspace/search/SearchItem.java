@@ -33,9 +33,9 @@ import javax.swing.BorderFactory;
 
 public class SearchItem extends JPanel {
 	private static final long serialVersionUID = -6319272932605736970L;
-	private JLabel fullNameLabel = new JLabel();
-    private JLabel dateLabel = new JLabel();
-    private JLabel questionLabel = new JLabel();
+	private final JLabel fullNameLabel = new JLabel();
+    private final JLabel dateLabel = new JLabel();
+    private final JLabel questionLabel = new JLabel();
 
     private String sessionID;
 

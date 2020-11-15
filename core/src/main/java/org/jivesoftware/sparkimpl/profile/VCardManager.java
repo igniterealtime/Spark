@@ -58,6 +58,7 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.*;
@@ -75,27 +76,27 @@ public class VCardManager {
     private transient byte[] personalVCardAvatar; // lazy loaded cache of avatar binary data.
     private transient String personalVCardHash; // lazy loaded cache of avatar hash.
 
-    private Map<BareJid, VCard> vcards = Collections.synchronizedMap( new HashMap<>());
+    private final Map<BareJid, VCard> vcards = Collections.synchronizedMap( new HashMap<>());
 
-    private Set<BareJid> delayedContacts = Collections.synchronizedSet( new HashSet<>());
+    private final Set<BareJid> delayedContacts = Collections.synchronizedSet( new HashSet<>());
     
     private boolean vcardLoaded;
 
-    private File imageFile;
+    private final File imageFile;
 
     private final VCardEditor editor;
 
-    private File vcardStorageDirectory;
+    private final File vcardStorageDirectory;
 
     final MXParser parser;
 
-    private LinkedBlockingQueue<BareJid> queue = new LinkedBlockingQueue<>();
+    private final LinkedBlockingQueue<BareJid> queue = new LinkedBlockingQueue<>();
     
-    private File contactsDir;
+    private final File contactsDir;
 
-    private List<VCardListener> listeners = new ArrayList<>();
+    private final List<VCardListener> listeners = new ArrayList<>();
 
-	private List<BareJid> writingQueue = Collections.synchronizedList( new ArrayList<>());
+	private final List<BareJid> writingQueue = Collections.synchronizedList( new ArrayList<>());
 
     /**
      * Initialize VCardManager.
@@ -775,7 +776,7 @@ public class VCardManager {
 
         // write xml to file
         try {
-            BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(vcardFile), "UTF-8"));
+            BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(vcardFile), StandardCharsets.UTF_8));
             out.write(xml);
             out.close();
         }
@@ -815,7 +816,7 @@ public class VCardManager {
         }
 
         final VCard vcard;
-        try ( final BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(vcardFile), "UTF-8")) )
+        try ( final BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(vcardFile), StandardCharsets.UTF_8)) )
         {
             // Otherwise load from file system.
             VCardProvider provider = new VCardProvider();

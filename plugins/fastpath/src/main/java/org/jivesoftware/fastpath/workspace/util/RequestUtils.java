@@ -25,7 +25,7 @@ import org.jxmpp.jid.impl.JidCreate;
 
 
 public class RequestUtils {
-    private Map metadata;
+    private final Map metadata;
 
     public RequestUtils(Map requestData) {
         this.metadata = requestData;

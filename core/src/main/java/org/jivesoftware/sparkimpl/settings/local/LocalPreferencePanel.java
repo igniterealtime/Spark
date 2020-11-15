@@ -29,7 +29,6 @@ import javax.swing.JTextField;
 import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
-import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.VerticalFlowLayout;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.log.Log;
@@ -40,18 +39,18 @@ import org.jivesoftware.spark.util.log.Log;
 public class LocalPreferencePanel extends JPanel {
     private static final long serialVersionUID = -1675058807882383560L;
 
-	private JTextField _portField = new JTextField();
-    private JTextField _timeOutField = new JTextField();
-	private JTextField _reconnectDelayField = new JTextField();
-    private JTextField _idleField = new JTextField();
-    private JTextField _idleStatusText;
+	private final JTextField _portField = new JTextField();
+    private final JTextField _timeOutField = new JTextField();
+	private final JTextField _reconnectDelayField = new JTextField();
+    private final JTextField _idleField = new JTextField();
+    private final JTextField _idleStatusText;
 
-    private JCheckBox _autoLoginBox = new JCheckBox();
-    private JCheckBox _savePasswordBox = new JCheckBox();
-    private JCheckBox _idleBox = new JCheckBox();
-    private JCheckBox _launchOnStartupBox = new JCheckBox();
-    private JCheckBox _startMinimizedBox = new JCheckBox();
-    private JCheckBox _useSingleTrayClick = new JCheckBox();
+    private final JCheckBox _autoLoginBox = new JCheckBox();
+    private final JCheckBox _savePasswordBox = new JCheckBox();
+    private final JCheckBox _idleBox = new JCheckBox();
+    private final JCheckBox _launchOnStartupBox = new JCheckBox();
+    private final JCheckBox _startMinimizedBox = new JCheckBox();
+    private final JCheckBox _useSingleTrayClick = new JCheckBox();
     
 
     /**

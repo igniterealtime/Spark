@@ -60,11 +60,11 @@ public class GroupChatInvitationUI extends JPanel implements ActionListener {
 
     private static final long serialVersionUID = 6066796370413837508L;
 
-    private RolloverButton acceptButton;
+    private final RolloverButton acceptButton;
 
-    private EntityBareJid room;
-    private EntityBareJid inviter;
-    private String password;
+    private final EntityBareJid room;
+    private final EntityBareJid inviter;
+    private final String password;
 
     public GroupChatInvitationUI(String room, String inviter, String password, String reason) throws XmppStringprepException {
         this(JidCreate.entityBareFrom(room), JidCreate.entityBareFrom(inviter), password, reason);

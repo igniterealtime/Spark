@@ -28,14 +28,14 @@ class SsoLoginSettingsPanel extends JPanel implements ActionListener
 {
     private final static Insets DEFAULT_INSETS = new Insets( 5, 5, 5, 5 );
     private final LocalPreferences localPreferences;
-    private JCheckBox useSSOBox = new JCheckBox();
-    private JTextField realmField = new JTextField();
-    private JTextField kdcField = new JTextField();
-    private JRadioButton methodFileRadio = new JRadioButton();
-    private JRadioButton methodDNSRadio = new JRadioButton();
-    private JRadioButton methodManualRadio = new JRadioButton();
-    private JCheckBox useSaslGssapiSmack3compatBox = new JCheckBox();
-    private JDialog optionsDialog;
+    private final JCheckBox useSSOBox = new JCheckBox();
+    private final JTextField realmField = new JTextField();
+    private final JTextField kdcField = new JTextField();
+    private final JRadioButton methodFileRadio = new JRadioButton();
+    private final JRadioButton methodDNSRadio = new JRadioButton();
+    private final JRadioButton methodManualRadio = new JRadioButton();
+    private final JCheckBox useSaslGssapiSmack3compatBox = new JCheckBox();
+    private final JDialog optionsDialog;
 
     public SsoLoginSettingsPanel( LocalPreferences localPreferences, JDialog optionsDialog )
     {

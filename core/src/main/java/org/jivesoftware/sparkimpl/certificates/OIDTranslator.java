@@ -8,7 +8,7 @@ import org.jivesoftware.spark.util.log.Log;
 
 public final class OIDTranslator {
 
-	private static Map<String, String> OIDtoDescriptionMap = new HashMap<String, String>();
+	private static final Map<String, String> OIDtoDescriptionMap = new HashMap<>();
 	static {
 		OIDtoDescriptionMap.put("2.5.29.1", Res.getString("2.5.29.1"));
 		OIDtoDescriptionMap.put("2.5.29.2", Res.getString("2.5.29.2"));

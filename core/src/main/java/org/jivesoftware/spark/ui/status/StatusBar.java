@@ -77,16 +77,16 @@ import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 public class StatusBar extends JPanel implements VCardListener {
 	private static final long serialVersionUID = -4322806442034868526L;
 
-	private List<StatusItem> statusList = new ArrayList<>();
+	private final List<StatusItem> statusList = new ArrayList<>();
 
-	private JLabel imageLabel = new JLabel();
-	private JLabel descriptiveLabel = new JLabel();
-	private JLabel nicknameLabel = new JLabel();
-	private StatusPanel statusPanel = new StatusPanel();
+	private final JLabel imageLabel = new JLabel();
+	private final JLabel descriptiveLabel = new JLabel();
+	private final JLabel nicknameLabel = new JLabel();
+	private final StatusPanel statusPanel = new StatusPanel();
 
-	private CommandPanel commandPanel ;
+	private final CommandPanel commandPanel ;
 	private Image backgroundImage;
-	private Runnable changePresenceRunnable;
+	private final Runnable changePresenceRunnable;
 
 	private Presence currentPresence;
 
@@ -554,8 +554,8 @@ public class StatusBar extends JPanel implements VCardListener {
 
 	private class StatusPanel extends JPanel {
 		private static final long serialVersionUID = -5086334443225239032L;
-		private JLabel iconLabel;
-		private JLabel statusLabel;
+		private final JLabel iconLabel;
+		private final JLabel statusLabel;
 
 		public StatusPanel() {
 			super();

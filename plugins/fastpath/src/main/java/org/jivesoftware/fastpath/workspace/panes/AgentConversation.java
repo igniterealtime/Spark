@@ -35,11 +35,11 @@ import org.jxmpp.jid.EntityBareJid;
 public class AgentConversation extends JPanel {
 
 	private static final long serialVersionUID = 4723796422650155313L;
-	private JLabel agentLabel = new JLabel();
-    private JLabel visitorLabel = new JLabel();
-    private JLabel emailLabel = new JLabel();
-    private JLabel dateLabel = new JLabel();
-    private JLabel questionLabel = new JLabel();
+	private final JLabel agentLabel = new JLabel();
+    private final JLabel visitorLabel = new JLabel();
+    private final JLabel emailLabel = new JLabel();
+    private final JLabel dateLabel = new JLabel();
+    private final JLabel questionLabel = new JLabel();
 
     private String sessionID;
     private EntityBareJid agentJID;

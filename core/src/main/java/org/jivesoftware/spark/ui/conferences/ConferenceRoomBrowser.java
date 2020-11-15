@@ -102,17 +102,17 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
     private final RolloverButton showHiddenButtons = new RolloverButton(
 	    SparkRes.getImageIcon(SparkRes.PANE_UP_ARROW_IMAGE));
 
-    private JMenuItem joinRoomItem;
-    private JMenuItem addRoomItem;
-    private JMenuItem createItem;
-    private JMenuItem refreshItem;
+    private final JMenuItem joinRoomItem;
+    private final JMenuItem addRoomItem;
+    private final JMenuItem createItem;
+    private final JMenuItem refreshItem;
 
-    private ChatManager chatManager;
+    private final ChatManager chatManager;
 
     private JDialog dlg;
 
-    private BookmarksUI conferences;
-    private DomainBareJid serviceName;
+    private final BookmarksUI conferences;
+    private final DomainBareJid serviceName;
 
     private int allButtonWidth;
     private int threeButtonWidth;
@@ -121,7 +121,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
 
     private boolean partialDiscovery = false;
 
-    private JPopupMenu popup;
+    private final JPopupMenu popup;
 
     final TableRowSorter<TableModel> sorter;
 

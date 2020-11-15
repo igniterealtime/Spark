@@ -18,7 +18,7 @@ package org.jivesoftware.spark.ui.conferences;
 import org.jivesoftware.smackx.bookmarks.BookmarkedConference;
 
 public class ConferenceItem {
-   private BookmarkedConference bookmarkedConf;
+   private final BookmarkedConference bookmarkedConf;
 
    public ConferenceItem(BookmarkedConference bookmarkedConf) {
        this.bookmarkedConf = bookmarkedConf;

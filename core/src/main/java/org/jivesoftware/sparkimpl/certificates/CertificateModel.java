@@ -31,32 +31,32 @@ import org.jivesoftware.spark.util.log.Log;
  */
 public class CertificateModel {
 
-	private X509Certificate certificate;
+	private final X509Certificate certificate;
 	private String alias;
 	private String subjectCommonName;
 	private String issuerCommonName;
-	private int version;
-	private String serialNumber;
-	private String signatureValue;
-	private String signatureAlgorithm;
-	private String issuer;
-	private String subject;
-	private String notBefore;
-	private String notAfter;
-	private String publicKey;
-	private String publicKeyAlgorithm;
+	private final int version;
+	private final String serialNumber;
+	private final String signatureValue;
+	private final String signatureAlgorithm;
+	private final String issuer;
+	private final String subject;
+	private final String notBefore;
+	private final String notAfter;
+	private final String publicKey;
+	private final String publicKeyAlgorithm;
 	private String issuerUniqueID;
 	private String subjectUniqueID;
 
-	private boolean valid;
+	private final boolean valid;
 	private boolean expired;
 	private boolean revoked;
 	private boolean notValidYet;
 	private Set<String> criticalExtensionSet;
 	private Set<String> nonCriticalExtensionSet;
-	private HashMap<String, String> extensions = new HashMap<String,String>();
-	private ArrayList<String> unsupportedCriticalExtensions = new ArrayList<String>();
-	private ArrayList<String> unsupportedNonCriticalExtensions = new ArrayList<String>();
+	private final HashMap<String, String> extensions = new HashMap<>();
+	private final ArrayList<String> unsupportedCriticalExtensions = new ArrayList<>();
+	private final ArrayList<String> unsupportedNonCriticalExtensions = new ArrayList<>();
 
 	public CertificateModel(X509Certificate certificate, String alias) {
 		this(certificate);

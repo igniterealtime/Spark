@@ -77,8 +77,8 @@ import org.jxmpp.jid.util.JidUtil;
 public final class CurrentActivity extends JPanel {
 
 	private static final long serialVersionUID = 1L;
-	private DefaultListModel model = new DefaultListModel();
-    private JList list = new JList(model);
+	private final DefaultListModel model = new DefaultListModel();
+    private final JList list = new JList(model);
     private JFrame mainFrame;
     private JLabel activeConversations;
     private int counter = 0;
@@ -176,9 +176,7 @@ public final class CurrentActivity extends JPanel {
                             List<ChatInfo> list = agentStatus.getCurrentChats();
 
                             // Add new ones.
-                            Iterator iter = list.iterator();
-                            while (iter.hasNext()) {
-                                AgentStatus.ChatInfo chatInfo = (AgentStatus.ChatInfo)iter.next();
+                            for (ChatInfo chatInfo : list) {
                                 Date startDate = chatInfo.getDate();
                                 String username = chatInfo.getUserID();
 

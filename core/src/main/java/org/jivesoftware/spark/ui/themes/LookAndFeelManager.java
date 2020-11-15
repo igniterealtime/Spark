@@ -20,7 +20,7 @@ public class LookAndFeelManager
     /**
      * All non-system provided look and feel implementations that are available.
      */
-    public static final Class<? extends LookAndFeel> lafs[] = new Class[]
+    public static final Class<? extends LookAndFeel>[] lafs = new Class[]
     {
         // LittleLuck
         freeseawind.lf.LittleLuckLookAndFeel.class,

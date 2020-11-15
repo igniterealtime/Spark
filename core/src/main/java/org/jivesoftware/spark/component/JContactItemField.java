@@ -49,10 +49,10 @@ import java.util.List;
 public class JContactItemField extends JPanel {
 
     private static final long serialVersionUID = -8556694682789891531L;
-    private JTextField textField = new JTextField();
-    private DefaultListModel model = new DefaultListModel();
-    private JList list;
-    private JWindow popup;
+    private final JTextField textField = new JTextField();
+    private final DefaultListModel model = new DefaultListModel();
+    private final JList list;
+    private final JWindow popup;
     private List<ContactItem> items;
 
     public JContactItemField(List<ContactItem> items) {

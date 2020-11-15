@@ -85,9 +85,9 @@ public class WorkgroupInvitationDialog implements PropertyChangeListener {
     private TitlePanel titlePanel;
 
     private JTextArea messageField;
-    private JTextField jidField = new JTextField();
+    private final JTextField jidField = new JTextField();
 
-    private List workgroups = new ArrayList();
+    private final List workgroups = new ArrayList();
     private JLabel inviteLabel;
 
     /**
@@ -220,10 +220,7 @@ public class WorkgroupInvitationDialog implements PropertyChangeListener {
         }
         if (workgroupAgents.size() > 0) {
             // Add workgroups to combobox
-            Iterator<String> workgroups = workgroupAgents.iterator();
-            while (workgroups.hasNext()) {
-                String workgroup = workgroups.next();
-
+            for (String workgroup : (Iterable<String>) workgroupAgents) {
                 String workgroupName = XmppStringUtils.parseLocalpart(workgroup);
                 final JiveTreeNode wgNode = new JiveTreeNode(workgroupName, false, FastpathRes.getImageIcon(FastpathRes.FASTPATH_IMAGE_16x16));
                 workgroupsNode.add(wgNode);
@@ -325,7 +322,7 @@ public class WorkgroupInvitationDialog implements PropertyChangeListener {
         }
         else if (FpRes.getString("invite").equals(value) || FpRes.getString("transfer").equals(value)) {
             String agent = jidField.getText();
-            boolean isValidJID = agent.indexOf("@") != -1;
+            boolean isValidJID = agent.contains("@");
 
             if (!ModelUtil.hasLength(agent)) {
                 JOptionPane.showMessageDialog(dlg, FpRes.getString("message.no.agent.selected.error"),
@@ -401,9 +398,7 @@ public class WorkgroupInvitationDialog implements PropertyChangeListener {
     private Collection<EntityBareJid> getAvailableAgents(AgentRoster roster, EntityBareJid roomName) {
         final Set<EntityBareJid> availableAgents = new HashSet<>();
 
-        final Iterator<EntityBareJid> agents = roster.getAgents().iterator();
-        while (agents.hasNext()) {
-            EntityBareJid agent = agents.next();
+        for (EntityBareJid agent : roster.getAgents()) {
             if (PresenceManager.isAvailable(agent)) {
                 final Iterator<String> agentsInRoom = SparkManager.getUserManager().getUserJidsInRoom(roomName, false).iterator();
                 boolean alreadyExists = false;
@@ -419,11 +414,8 @@ public class WorkgroupInvitationDialog implements PropertyChangeListener {
                 if (!alreadyExists) {
                     availableAgents.add(agent);
                 }
-
             }
         }
-
-
         return availableAgents;
     }
 }

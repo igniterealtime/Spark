@@ -38,9 +38,9 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
     private static final long serialVersionUID = -7789413067818105293L;
     private long inactiveTime;
     private boolean focused;
-    private JCheckBox alwaysOnTopItem;
-    private ChatFrame chatFrame = this;
-    private Collection<ChatFrameToFrontListener> _windowToFrontListeners = new ArrayList<>();
+    private final JCheckBox alwaysOnTopItem;
+    private final ChatFrame chatFrame = this;
+    private final Collection<ChatFrameToFrontListener> _windowToFrontListeners = new ArrayList<>();
    
     /**
      * Creates default ChatFrame.

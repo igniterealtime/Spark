@@ -47,20 +47,20 @@ public class GamePanel extends JPanel {
 
     private static final long serialVersionUID = 5481864290352375841L;
 
-    private GameBoardPanel _gameboardpanel;
+    private final GameBoardPanel _gameboardpanel;
 
-    private PlayerDisplay _playerdisplay;
+    private final PlayerDisplay _playerdisplay;
 
-    private Mark me;
+    private final Mark me;
 
-    private GameBoard _gameboard;
+    private final GameBoard _gameboard;
 
-    private XMPPConnection _connection;
+    private final XMPPConnection _connection;
 
-    private int _gameID;
+    private final int _gameID;
 
-    private EntityFullJid _opponent;
-    private JFrame _frame;
+    private final EntityFullJid _opponent;
+    private final JFrame _frame;
 
     public GamePanel(XMPPConnection connection, final int gameID,
 	    boolean imStarting, EntityFullJid opponentJID, JFrame frame) {

@@ -26,8 +26,8 @@ import javax.swing.JPanel;
 public class SparkTab extends JPanel 
 {
 	private static final long serialVersionUID = 2027267184472260195L;
-	private SparkTabbedPane pane;
-	private Component component;
+	private final SparkTabbedPane pane;
+	private final Component component;
 	
 	public SparkTab(SparkTabbedPane pane, Component comp)
 	{
