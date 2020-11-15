@@ -219,7 +219,7 @@ public class StatusBar extends JPanel implements VCardListener {
 		}
 
 		// Sort Custom Messages
-		Collections.sort( custom, ( a, b ) -> ( a.getStatus().compareToIgnoreCase( b.getStatus() ) ) );
+		custom.sort((a, b) -> (a.getStatus().compareToIgnoreCase(b.getStatus())));
 
 		// Build menu from StatusList
 		for (final StatusItem statusItem : statusList) {
@@ -436,7 +436,7 @@ public class StatusBar extends JPanel implements VCardListener {
 			custom = new ArrayList<>();
 
 		// Sort Custom Messages
-		Collections.sort( custom, ( a, b ) -> ( a.getStatus().compareToIgnoreCase( b.getStatus() ) ) );
+		custom.sort((a, b) -> (a.getStatus().compareToIgnoreCase(b.getStatus())));
 
 		return custom;
 	}

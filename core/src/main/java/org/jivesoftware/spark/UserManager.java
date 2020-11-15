@@ -403,7 +403,7 @@ public class UserManager {
         }
 
         // Sort
-        Collections.sort(contacts, itemComparator);
+        contacts.sort(itemComparator);
 
         final JContactItemField contactField = new JContactItemField( new ArrayList<>( contacts ));
 

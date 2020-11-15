@@ -99,7 +99,7 @@ public class CustomMessages {
         }
 
         // Sort Custom Messages
-        Collections.sort( list, ( a, b ) -> ( a.getStatus().compareToIgnoreCase( b.getStatus() ) ) );
+        list.sort((a, b) -> (a.getStatus().compareToIgnoreCase(b.getStatus())));
 
         return list;
     }

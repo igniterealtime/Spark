@@ -956,7 +956,7 @@ public class ContactList extends JPanel implements ActionListener,
     private void addContactGroup(ContactGroup group) {
         groupList.add(group);
 
-        Collections.sort(groupList, GROUP_COMPARATOR);
+        groupList.sort(GROUP_COMPARATOR);
 
         try {
             mainPanel.add(group, groupList.indexOf(group));
@@ -1073,7 +1073,7 @@ public class ContactList extends JPanel implements ActionListener,
 
         groupList.add(rootGroup);
 
-        Collections.sort(tempList, GROUP_COMPARATOR);
+        tempList.sort(GROUP_COMPARATOR);
 
         int loc = tempList.indexOf(rootGroup);
 
@@ -2046,7 +2046,7 @@ public class ContactList extends JPanel implements ActionListener,
 
     public List<ContactGroup> getContactGroups() {
         final List<ContactGroup> gList = new ArrayList<>(groupList);
-        Collections.sort(gList, GROUP_COMPARATOR);
+        gList.sort(GROUP_COMPARATOR);
         return gList;
     }
 
