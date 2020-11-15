@@ -66,30 +66,30 @@ public class GroupChatParticipantList extends JPanel {
     	private static final long serialVersionUID = 3809155443119207342L;
 	private GroupChatRoom groupChatRoom;
 	private final ImageTitlePanel agentInfoPanel;
-	private ChatManager chatManager;
+	private final ChatManager chatManager;
 	private MultiUserChat chat;
-	private LocalPreferences _localPreferences = SettingsManager.getLocalPreferences();
+	private final LocalPreferences _localPreferences = SettingsManager.getLocalPreferences();
 
 	private final Map<CharSequence, EntityFullJid> userMap = new HashMap<>();
 
-	private UserManager userManager = SparkManager.getUserManager();
+	private final UserManager userManager = SparkManager.getUserManager();
 
-	private DefaultListModel model = new DefaultListModel();
+	private final DefaultListModel model = new DefaultListModel();
 
-	private JXList participantsList;
+	private final JXList participantsList;
 
 	private PresenceListener listener = null;
 
-	private Map<CharSequence, String> invitees = new HashMap<>();
+	private final Map<CharSequence, String> invitees = new HashMap<>();
 
 	private boolean allowNicknameChange = true;
 
 	private DiscoverInfo roomInformation;
 
-	private List<JLabel> users = new ArrayList<>();
+	private final List<JLabel> users = new ArrayList<>();
 
-	private Map<EntityFullJid, MUCRole> usersToRoles = new HashMap<>();
-	private Map<EntityFullJid, MUCAffiliation> usersToAffiliation = new HashMap<>();
+	private final Map<EntityFullJid, MUCRole> usersToRoles = new HashMap<>();
+	private final Map<EntityFullJid, MUCAffiliation> usersToAffiliation = new HashMap<>();
 
 	/**
 	 * Creates a new RoomInfo instance using the specified ChatRoom. The

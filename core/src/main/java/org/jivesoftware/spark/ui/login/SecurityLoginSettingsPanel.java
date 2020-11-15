@@ -25,8 +25,6 @@ import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import static java.awt.GridBagConstraints.*;
 
@@ -48,12 +46,12 @@ public class SecurityLoginSettingsPanel extends JPanel
     private final JRadioButton modeDisabledRadio;
 
     // Checkbox that toggles between 'old' style SSL (socket encryption, typically on port 5223), or STARTTLS. A check indicates 'old' behavior.
-    private JCheckBox useSSLBox;
+    private final JCheckBox useSSLBox;
 
-    private JCheckBox disableHostnameVerificationBox;
-    private JCheckBox allowClientSideAuthentication;
+    private final JCheckBox disableHostnameVerificationBox;
+    private final JCheckBox allowClientSideAuthentication;
 
-    private JButton deleteSavedPasswords;
+    private final JButton deleteSavedPasswords;
 
     public SecurityLoginSettingsPanel( LocalPreferences localPreferences, JDialog optionsDialog )
     {

@@ -39,9 +39,9 @@ public class CollapsiblePane extends JPanel {
 
 	private static final long serialVersionUID = -6770924580102536726L;
 	private BaseCollapsibleTitlePane titlePane;
-    private JPanel mainPanel;
+    private final JPanel mainPanel;
 
-    private List<CollapsiblePaneListener> listeners = new ArrayList<>();
+    private final List<CollapsiblePaneListener> listeners = new ArrayList<>();
 
     private boolean subPane;
 

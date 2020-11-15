@@ -7,10 +7,6 @@ package org.jivesoftware.sparkimpl.plugin.gateways;
  *
  */
 public interface GatewayItem {
-
-    public void signedIn(boolean signedIn);
-       
-    public boolean isLoggedIn();
-
-    
+    void signedIn(boolean signedIn);
+    boolean isLoggedIn();
 }

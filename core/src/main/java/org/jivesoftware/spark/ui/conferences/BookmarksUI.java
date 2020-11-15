@@ -62,14 +62,14 @@ public class BookmarksUI extends JPanel {
 
     private Collection<DomainBareJid> mucServices;
 
-    private Set<EntityBareJid> autoJoinRooms = new HashSet<>();
+    private final Set<EntityBareJid> autoJoinRooms = new HashSet<>();
 
-    private List<ContextMenuListener> listeners = new ArrayList<>();
+    private final List<ContextMenuListener> listeners = new ArrayList<>();
 
     /**
      * Bookmarks listeners
      */
-    private List<BookmarksListener> bookmarkListeners = new ArrayList<>();
+    private final List<BookmarksListener> bookmarkListeners = new ArrayList<>();
 
     private BookmarkManager manager;
 

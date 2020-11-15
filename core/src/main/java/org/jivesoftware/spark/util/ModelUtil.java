@@ -155,9 +155,8 @@ public final class ModelUtil {
      */
     public static boolean hasNonNullElement(Object[] array) {
         if (array != null) {
-            final int n = array.length;
-            for (int i = 0; i < n; i++) {
-                if (array[i] != null) {
+            for (Object o : array) {
+                if (o != null) {
                     return true;
                 }
             }
@@ -195,9 +194,7 @@ public final class ModelUtil {
     public static String concat(String[] strs, String delim) {
         if (strs != null) {
             final StringBuilder buf = new StringBuilder();
-            final int n = strs.length;
-            for (int i = 0; i < n; i++) {
-                final String str = strs[i];
+            for (final String str : strs) {
                 if (str != null) {
                     buf.append(str).append(delim);
                 }
@@ -345,7 +342,7 @@ public final class ModelUtil {
  * An Iterator that is the reverse of a ListIterator.
  */
 class ReverseListIterator<T> implements Iterator<T> {
-    private ListIterator<T> _i;
+    private final ListIterator<T> _i;
 
     public ReverseListIterator(ListIterator<T> i) {
         _i = i;

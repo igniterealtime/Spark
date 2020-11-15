@@ -40,8 +40,8 @@ import java.util.List;
  */
 public class RosterPickList extends JPanel {
 	private static final long serialVersionUID = -7725304880236329893L;
-	private DefaultListModel model = new DefaultListModel();
-    private JList rosterList = new JList(model);
+	private final DefaultListModel model = new DefaultListModel();
+    private final JList rosterList = new JList(model);
 
     /**
      * Creates a new instance of the RosterBrowser.

@@ -41,7 +41,7 @@ import java.util.Map;
  */
 public class TransportUtils {
 
-    private static Map<DomainBareJid, Transport> transports = new HashMap<>();
+    private static final Map<DomainBareJid, Transport> transports = new HashMap<>();
     private static GatewayPrivateData gatewayPreferences;
 
     private TransportUtils() {

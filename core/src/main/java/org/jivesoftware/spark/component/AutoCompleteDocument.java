@@ -29,8 +29,8 @@ import javax.swing.text.PlainDocument;
 public class AutoCompleteDocument extends PlainDocument {
 
     private static final long serialVersionUID = -6198560336890706214L;
-    private List<String> dictionary = new ArrayList<>();
-    private JTextComponent comp;
+    private final List<String> dictionary = new ArrayList<>();
+    private final JTextComponent comp;
 
     public AutoCompleteDocument(JTextComponent field, String[] aDictionary) {
         comp = field;
@@ -78,7 +78,7 @@ public class AutoCompleteDocument extends PlainDocument {
         return field;
     }
 
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         javax.swing.JFrame frame = new javax.swing.JFrame("foo");
         frame.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
         String[] dict = {"auto", "automobile", "autocrat", "graduation"};

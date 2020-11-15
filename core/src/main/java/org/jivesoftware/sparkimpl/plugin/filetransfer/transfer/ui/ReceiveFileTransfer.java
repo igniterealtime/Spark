@@ -80,21 +80,21 @@ import org.jxmpp.stringprep.XmppStringprepException;
 public class ReceiveFileTransfer extends JPanel {
 
     private static final long serialVersionUID = -2974192409566650923L;
-    private FileDragLabel imageLabel = new FileDragLabel();
-    private JLabel titleLabel = new JLabel();
-    private JLabel fileLabel = new JLabel();
+    private final FileDragLabel imageLabel = new FileDragLabel();
+    private final JLabel titleLabel = new JLabel();
+    private final JLabel fileLabel = new JLabel();
 
-    private TransferButton acceptButton = new TransferButton(Res.getString("accept"), SparkRes.getImageIcon(SparkRes.ACCEPT_INVITE_IMAGE));
-    private TransferButton declineButton = new TransferButton(Res.getString("reject"), SparkRes.getImageIcon(SparkRes.REJECT_INVITE_IMAGE));
-    private TransferButton pathButton = new TransferButton(Res.getString("message.file.transfer.direrror.setdir"), SparkRes.getImageIcon(SparkRes.SETTINGS_IMAGE_16x16));
-    private JProgressBar progressBar = new JProgressBar();
+    private final TransferButton acceptButton = new TransferButton(Res.getString("accept"), SparkRes.getImageIcon(SparkRes.ACCEPT_INVITE_IMAGE));
+    private final TransferButton declineButton = new TransferButton(Res.getString("reject"), SparkRes.getImageIcon(SparkRes.REJECT_INVITE_IMAGE));
+    private final TransferButton pathButton = new TransferButton(Res.getString("message.file.transfer.direrror.setdir"), SparkRes.getImageIcon(SparkRes.SETTINGS_IMAGE_16x16));
+    private final JProgressBar progressBar = new JProgressBar();
     private IncomingFileTransfer transfer;
-    private TransferButton cancelButton = new TransferButton();
-    private JLabel progressLabel = new JLabel();
+    private final TransferButton cancelButton = new TransferButton();
+    private final JLabel progressLabel = new JLabel();
     private long bytesRead;
     private long startTime;
     private long endTime;
-    private ChatRoom chatRoom;
+    private final ChatRoom chatRoom;
     private String nickname;
     private String fileName;
 

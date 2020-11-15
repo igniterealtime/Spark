@@ -30,7 +30,7 @@ import org.lobobrowser.gui.FramePanel;
 public class EmbeddedBrowserViewer extends BrowserViewer implements ContentListener {
 
     private static final long serialVersionUID = -8055149462713514766L;
-    private FramePanel browser;
+    private final FramePanel browser;
 
     /**
      * Constructs a new LobobrowserViewer

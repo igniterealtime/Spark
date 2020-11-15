@@ -37,13 +37,13 @@ import org.jivesoftware.fastpath.FpRes;
 public class MacroPanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
-	private JLabel titleLabel;
-    private JLabel typeLabel;
-    private JLabel responseLabel;
+	private final JLabel titleLabel;
+    private final JLabel typeLabel;
+    private final JLabel responseLabel;
 
-    private JTextField titleField;
-    private JComboBox typeField;
-    private JTextArea responseField;
+    private final JTextField titleField;
+    private final JComboBox typeField;
+    private final JTextArea responseField;
 
     public MacroPanel() {
         titleLabel = new JLabel();

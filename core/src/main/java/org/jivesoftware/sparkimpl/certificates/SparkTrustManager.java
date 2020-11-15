@@ -42,18 +42,18 @@ public class SparkTrustManager extends GeneralTrustManager implements X509TrustM
 
     static X509Certificate[] lastFailedChain;
 
-    private boolean checkCRL;
-    private boolean checkOCSP;
-    private boolean acceptExpired;
-    private boolean acceptNotValidYet;
-    private boolean acceptRevoked;
-    private boolean acceptSelfSigned;
-    private boolean allowSoftFail;
+    private final boolean checkCRL;
+    private final boolean checkOCSP;
+    private final boolean acceptExpired;
+    private final boolean acceptNotValidYet;
+    private final boolean acceptRevoked;
+    private final boolean acceptSelfSigned;
+    private final boolean allowSoftFail;
 
     private CertStore crlStore;
-    private X509TrustManager exceptionsTrustManager;
+    private final X509TrustManager exceptionsTrustManager;
     private KeyStore trustStore, blackStore,  displayedCaCerts;
-    private Collection<X509CRL> crlCollection = new ArrayList<>();
+    private final Collection<X509CRL> crlCollection = new ArrayList<>();
     
     public SparkTrustManager() {
         exceptionsTrustManager = new SparkExceptionsTrustManager();

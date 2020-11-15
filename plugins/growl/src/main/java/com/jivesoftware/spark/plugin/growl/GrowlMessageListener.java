@@ -34,7 +34,7 @@ import javax.swing.*;
  */
 public class GrowlMessageListener implements GlobalMessageListener
 {
-    private GrowlTalker talker;
+    private final GrowlTalker talker;
 
     public GrowlMessageListener( GrowlTalker talker )
     {

@@ -34,9 +34,9 @@ public class ApplePreferencePanel extends JPanel {
      */
     private static final long serialVersionUID = 5817620627545918431L;
 
-    private JCheckBox _dockbadges;
-    private JCheckBox _dockbouncing;
-    private JCheckBox _repeatedbouncing;
+    private final JCheckBox _dockbadges;
+    private final JCheckBox _dockbouncing;
+    private final JCheckBox _repeatedbouncing;
 
     public ApplePreferencePanel() {
 	setLayout(new VerticalFlowLayout());

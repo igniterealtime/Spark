@@ -79,8 +79,8 @@ public class WorkgroupManager {
      * Stores the ChatSettings of each workgroup, and will be updated
      * when packet date of workgroup changes.
      */
-    private Map<EntityJid, ChatSettings> chatSettings = new HashMap<>();
-    private Set<Jid> invites = new HashSet<>();
+    private final Map<EntityJid, ChatSettings> chatSettings = new HashMap<>();
+    private final Set<Jid> invites = new HashSet<>();
 
 
     private static WorkgroupManager singleton;
@@ -172,7 +172,7 @@ public class WorkgroupManager {
     private void showWorkgroup(final ContactItem contactItem) throws Exception {
         VCard vcard = SparkManager.getVCardManager().getVCard();
 
-        final Map<String, String> variables = new HashMap<String, String>();
+        final Map<String, String> variables = new HashMap<>();
         String firstName = vcard.getFirstName();
         String lastName = vcard.getLastName();
 

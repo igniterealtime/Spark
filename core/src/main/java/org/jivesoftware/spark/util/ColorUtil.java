@@ -31,8 +31,8 @@ public class ColorUtil {
         float r = (float)ratio;
         float ir = (float)1.0 - r;
 
-        float rgb1[] = new float[3];
-        float rgb2[] = new float[3];
+        float[] rgb1 = new float[3];
+        float[] rgb2 = new float[3];
 
         color1.getColorComponents(rgb1);
         color2.getColorComponents(rgb2);
@@ -170,8 +170,8 @@ public class ColorUtil {
      * @return Distance between colors.
      */
     public static double colorDistance(Color color1, Color color2) {
-        float rgb1[] = new float[3];
-        float rgb2[] = new float[3];
+        float[] rgb1 = new float[3];
+        float[] rgb2 = new float[3];
 
         color1.getColorComponents(rgb1);
         color2.getColorComponents(rgb2);

@@ -104,14 +104,14 @@ import org.jxmpp.jid.Jid;
  */
 public class SparkTransferManager {
 
-    private List<FileTransferListener> listeners = new ArrayList<>();
+    private final List<FileTransferListener> listeners = new ArrayList<>();
     private File defaultDirectory;
 
     private static SparkTransferManager singleton;
     private static final Object LOCK = new Object();
 
     private FileTransferManager transferManager;
-    private Map<EntityBareJid, ArrayList<File>> waitMap = new HashMap<>();
+    private final Map<EntityBareJid, ArrayList<File>> waitMap = new HashMap<>();
     private BufferedImage bufferedImage;
     private ImageSelectionPanel selectionPanel;
     private Robot robot;

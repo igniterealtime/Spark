@@ -369,9 +369,7 @@ public class FastpathPlugin implements Plugin, ConnectionListener {
         try {
             Collection<String> col = Agent.getWorkgroups(workgroupService, jid, SparkManager.getConnection());
             // Add workgroups to combobox
-            Iterator<String> workgroups = col.iterator();
-            while (workgroups.hasNext()) {
-                String workgroup = workgroups.next();
+            for (String workgroup : col) {
                 String componentAddress = XmppStringUtils.parseDomain(workgroup);
                 setComponentAddress(componentAddress);
                 comboBox.addItem(XmppStringUtils.parseLocalpart(workgroup));

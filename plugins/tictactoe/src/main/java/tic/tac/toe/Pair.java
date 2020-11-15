@@ -23,9 +23,9 @@ package tic.tac.toe;
  */
 public class Pair {
 
-    private int _x;
-    private int _y;
-    private Mark _m;
+    private final int _x;
+    private final int _y;
+    private final Mark _m;
 
     public Pair(int x, int y, Mark m) {
 	_x = x;

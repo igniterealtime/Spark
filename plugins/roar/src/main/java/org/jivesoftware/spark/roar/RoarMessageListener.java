@@ -39,9 +39,9 @@ import org.jxmpp.jid.EntityBareJid;
  */
 public class RoarMessageListener implements GlobalMessageListener {
 
-    private RoarProperties _properties;
+    private final RoarProperties _properties;
 
-    private HashMap<EntityBareJid, Long> _rooms = new HashMap<>();
+    private final HashMap<EntityBareJid, Long> _rooms = new HashMap<>();
 
     public RoarMessageListener() {
         _properties = RoarProperties.getInstance();

@@ -23,7 +23,7 @@ import java.net.URL;
 import java.util.Properties;
 
 public class SoundsRes {
-    private static Properties prb;
+    private static final Properties prb;
     public static final String INCOMING_USER = "INCOMING_USER";
     public static final String TRAY_SHOWING = "TRAY_SHOWING";
     public static final String OPENING = "OPENING";

@@ -18,6 +18,7 @@ package org.jivesoftware.resource;
 import org.jivesoftware.spark.PluginRes;
 import org.jivesoftware.spark.util.log.Log;
 
+import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
@@ -28,7 +29,7 @@ import java.util.ResourceBundle;
  * @author Derek DeMoro
  */
 public class Res {
-    private static PropertyResourceBundle prb;
+    private static final PropertyResourceBundle prb;
 
     private Res() {
 
@@ -46,7 +47,7 @@ public class Res {
             /* Revert to this code after Spark is moved to Java 11 or newer
             return pluginString != null ? pluginString : prb.getString(propertyName);
             */
-            return pluginString != null ? pluginString : new String(prb.getString(propertyName).getBytes("ISO-8859-1"), "UTF-8");
+            return pluginString != null ? pluginString : new String(prb.getString(propertyName).getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
         }
         catch (Exception e) {
             Log.error(e);
@@ -65,7 +66,7 @@ public class Res {
         }
         */
         try {
-			str = pluginString != null ? pluginString : new String(prb.getString(propertyName).getBytes("ISO-8859-1"), "UTF-8");
+			str = pluginString != null ? pluginString : new String(prb.getString(propertyName).getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
 			if (str == null) {
 				return propertyName;
 			}

@@ -25,7 +25,7 @@ public class MacIdleTime implements IdleTime {
          * @param eventType
          * @return the elapsed seconds since the last input event
          */
-        public double CGEventSourceSecondsSinceLastEventType(int sourceStateId, int eventType);
+        double CGEventSourceSecondsSinceLastEventType(int sourceStateId, int eventType);
     }
 
     @Override

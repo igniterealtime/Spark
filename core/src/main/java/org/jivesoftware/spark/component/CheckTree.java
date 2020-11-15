@@ -37,7 +37,7 @@ import javax.swing.tree.TreeSelectionModel;
  */
 public class CheckTree extends JPanel {
     private static final long serialVersionUID = 8452107824029515678L;
-    private JTree tree;
+    private final JTree tree;
 
     /**
      * Constructs a new CheckBox tree.

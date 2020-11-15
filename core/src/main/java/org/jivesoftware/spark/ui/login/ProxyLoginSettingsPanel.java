@@ -20,13 +20,13 @@ class ProxyLoginSettingsPanel extends JPanel
 {
     private final static Insets DEFAULT_INSETS = new Insets( 5, 5, 5, 5 );
     private final LocalPreferences localPreferences;
-    private JCheckBox useProxyBox = new JCheckBox();
-    private JComboBox<String> protocolBox = new JComboBox<>();
-    private JTextField hostField = new JTextField();
-    private JTextField portField = new JTextField();
-    private JTextField usernameField = new JTextField();
-    private JPasswordField passwordField = new JPasswordField();
-    private JDialog optionsDialog;
+    private final JCheckBox useProxyBox = new JCheckBox();
+    private final JComboBox<String> protocolBox = new JComboBox<>();
+    private final JTextField hostField = new JTextField();
+    private final JTextField portField = new JTextField();
+    private final JTextField usernameField = new JTextField();
+    private final JPasswordField passwordField = new JPasswordField();
+    private final JDialog optionsDialog;
 
     public ProxyLoginSettingsPanel( LocalPreferences localPreferences, JDialog optionsDialog )
     {

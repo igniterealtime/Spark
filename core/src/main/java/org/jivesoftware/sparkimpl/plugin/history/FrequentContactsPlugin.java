@@ -66,7 +66,7 @@ public class FrequentContactsPlugin implements Plugin {
     private JList contacts;
     private Window window;
 
-    private Map<JLabel, String> jidMap = new HashMap<>();
+    private final Map<JLabel, String> jidMap = new HashMap<>();
 
     @Override
 	public void initialize() {
@@ -303,19 +303,7 @@ public class FrequentContactsPlugin implements Plugin {
         long int1 = item1.length();
         long int2 = item2.length();
 
-        if (int1 == int2) {
-            return 0;
-        }
-
-        if (int1 > int2) {
-            return -1;
-        }
-
-        if (int1 < int2) {
-            return 1;
-        }
-
-        return 0;
+        return Long.compare(int2, int1);
     };
 
 }

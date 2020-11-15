@@ -47,9 +47,9 @@ import org.jxmpp.jid.EntityBareJid;
 
 public class UserHistory extends JPanel {
 	private static final long serialVersionUID = -1067239194964815379L;
-	private DefaultListModel model = new DefaultListModel();
+	private final DefaultListModel model = new DefaultListModel();
     private JFrame userFrame;
-    private JList list;
+    private final JList list;
     private final EntityBareJid userID;
 
     private JFrame frame;
@@ -83,7 +83,7 @@ public class UserHistory extends JPanel {
     public void loadHistory() {
 
         SwingWorker transcriptThread = new SwingWorker() {
-            final List<TranscriptSummary> transcriptList = new ArrayList<TranscriptSummary>();
+            final List<TranscriptSummary> transcriptList = new ArrayList<>();
 
             public Object construct() {
                 try {
@@ -108,11 +108,7 @@ public class UserHistory extends JPanel {
 
     public void init(Collection<Transcripts.TranscriptSummary> transcriptList) {
         model.removeAllElements();
-        Iterator<Transcripts.TranscriptSummary> iter = transcriptList.iterator();
-        while (iter.hasNext()) {
-            Transcripts.TranscriptSummary summary = iter.next();
-
-
+        for (TranscriptSummary summary : transcriptList) {
             UserHistoryItem item = new UserHistoryItem(summary.getAgentDetails(), summary.getJoinTime(), summary.getLeftTime());
             item.setSessionID(summary.getSessionID());
             model.addElement(item);

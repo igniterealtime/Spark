@@ -53,11 +53,11 @@ public class PrivacyListTree extends JPanel implements SparkPrivacyListListener 
 
     private static final long serialVersionUID = 1885262127050966627L;
     private DefaultTreeModel _model;
-    private JTree _tree;
-    private PrivacyManager _pManager;
-    private PrivacyTreeNode _top = new PrivacyTreeNode(Res.getString("privacy.root.node"));
-    private JComponent _comp;
-    private JPanel treeandInfo = new JPanel(new GridBagLayout());
+    private final JTree _tree;
+    private final PrivacyManager _pManager;
+    private final PrivacyTreeNode _top = new PrivacyTreeNode(Res.getString("privacy.root.node"));
+    private final JComponent _comp;
+    private final JPanel treeandInfo = new JPanel(new GridBagLayout());
    
     private RolloverButton _actList;
     private RolloverButton _defList;

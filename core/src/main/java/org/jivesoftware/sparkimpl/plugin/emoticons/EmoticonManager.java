@@ -53,8 +53,8 @@ public class EmoticonManager {
 	private static final Object LOCK = new Object();
 
 	// Mapped by pack name, then by 'equivalent' key.
-	private Map<String, Map<String, Emoticon>> emoticonMap = new HashMap<>();
-	private Map<String, ImageIcon> imageMap = new HashMap<>();
+	private final Map<String, Map<String, Emoticon>> emoticonMap = new HashMap<>();
+	private final Map<String, ImageIcon> imageMap = new HashMap<>();
 
 	/**
 	 * The root emoticon directory.

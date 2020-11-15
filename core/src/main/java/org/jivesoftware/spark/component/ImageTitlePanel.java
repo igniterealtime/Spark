@@ -37,7 +37,7 @@ import java.awt.geom.AffineTransform;
  */
 public class ImageTitlePanel extends JPanel {
     private static final long serialVersionUID = -4942953711496567252L;
-    private Image backgroundImage;
+    private final Image backgroundImage;
     private final JLabel titleLabel = new JLabel();
     private final JLabel iconLabel = new JLabel();
     private final GridBagLayout gridBagLayout = new GridBagLayout();

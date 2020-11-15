@@ -28,7 +28,6 @@ import java.util.stream.Collectors;
 
 import javax.swing.UIManager;
 
-import org.jivesoftware.spark.util.Base64;
 import org.jivesoftware.spark.util.Encryptor;
 import org.jivesoftware.spark.util.log.Log;
 import org.jxmpp.jid.EntityBareJid;
@@ -40,7 +39,7 @@ import org.jxmpp.jid.parts.Resourcepart;
  */
 public class LocalPreferences {
 
-    	private Properties props;
+    	private final Properties props;
 
 	public LocalPreferences(Properties props) {
 		this.props = props;

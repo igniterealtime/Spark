@@ -33,8 +33,8 @@ import org.jivesoftware.spark.util.SwingWorker;
 public class ReconnectPanelIcon implements ConnectionListener {
 
     private static final long serialVersionUID = 437696141257704105L;
-    private JLabel _icon;
-    private JPanel _commandpanel;
+    private final JLabel _icon;
+    private final JPanel _commandpanel;
     private boolean _closedOnError;
 
     /**

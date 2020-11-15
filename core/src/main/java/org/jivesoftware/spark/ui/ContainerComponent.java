@@ -22,15 +22,15 @@ import javax.swing.JComponent;
  */
 public interface ContainerComponent {
 
-    public abstract String getTabTitle();
+    String getTabTitle();
 
-    public abstract String getFrameTitle();
+    String getFrameTitle();
 
-    public abstract ImageIcon getTabIcon();
+    ImageIcon getTabIcon();
 
-    public abstract JComponent getGUI();
+    JComponent getGUI();
 
-    public abstract String getToolTipDescription();
+    String getToolTipDescription();
 
-    public abstract boolean closing();
+    boolean closing();
 }

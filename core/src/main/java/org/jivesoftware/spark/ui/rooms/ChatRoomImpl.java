@@ -67,7 +67,7 @@ import java.util.List;
  */
 public class ChatRoomImpl extends ChatRoom {
     private static final long serialVersionUID = 6163762803773980872L;
-    private List<MessageEventListener> messageEventListeners = new ArrayList<>();
+    private final List<MessageEventListener> messageEventListeners = new ArrayList<>();
     private EntityBareJid roomname;
     private Icon tabIcon;
     private String roomTitle;
@@ -78,13 +78,13 @@ public class ChatRoomImpl extends ChatRoom {
      */
     private EntityJid participantJID;
 
-    private Resourcepart participantNickname;
+    private final Resourcepart participantNickname;
 
     private Presence presence;
 
     private boolean offlineSent;
 
-    private Roster roster;
+    private final Roster roster;
 
     private String threadID;
 
@@ -93,12 +93,12 @@ public class ChatRoomImpl extends ChatRoom {
     private boolean active;
 
     // True if this is a one-on-one with a participant of a multi-user chatroom.
-    private boolean privateChat;
+    private final boolean privateChat;
 
     // Information button
     private ChatRoomButton infoButton;
 
-    private ChatRoomButton addToRosterButton;
+    private final ChatRoomButton addToRosterButton;
     private VCardPanel vcardPanel;
     
     private JComponent chatStatePanel;    

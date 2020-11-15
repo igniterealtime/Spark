@@ -42,7 +42,7 @@ import java.util.Collection;
 
 public class ContactGroupTransferHandler extends TransferHandler {
 	private static final long serialVersionUID = -1229773343301542259L;
-	private static final DataFlavor flavors[] = {DataFlavor.imageFlavor, DataFlavor.javaFileListFlavor};
+	private static final DataFlavor[] flavors = {DataFlavor.imageFlavor, DataFlavor.javaFileListFlavor};
 
 
     @Override
@@ -52,7 +52,7 @@ public class ContactGroupTransferHandler extends TransferHandler {
 
 
     @Override
-	public boolean canImport(JComponent comp, DataFlavor flavor[]) {
+	public boolean canImport(JComponent comp, DataFlavor[] flavor) {
         if (!(comp instanceof JList)) {
             return false;
         }
@@ -67,9 +67,9 @@ public class ContactGroupTransferHandler extends TransferHandler {
             return false;
         }
 
-        for (int i = 0, n = flavor.length; i < n; i++) {
-            for (int j = 0, m = flavors.length; j < m; j++) {
-                if (flavor[i].equals(flavors[j])) {
+        for (DataFlavor dataFlavor : flavor) {
+            for (DataFlavor value : flavors) {
+                if (dataFlavor.equals(value)) {
                     return true;
                 }
             }
@@ -146,7 +146,7 @@ public class ContactGroupTransferHandler extends TransferHandler {
 
     public static class ContactItemTransferable implements Transferable {
 
-        private ContactItem item;
+        private final ContactItem item;
 
         public ContactItemTransferable(ContactItem item) {
             this.item = item;

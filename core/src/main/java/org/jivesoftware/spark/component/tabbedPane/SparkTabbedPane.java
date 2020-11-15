@@ -41,10 +41,10 @@ import java.util.List;
 public class SparkTabbedPane extends JPanel {
 	private static final long serialVersionUID = -9007068462231539973L;
 	private static final String NAME = "SparkTabbedPane";
-	private List<SparkTabbedPaneListener> listeners = new ArrayList<>();
-	private JTabbedPane pane;
-	private Icon closeInactiveButtonIcon;
-	private Icon closeActiveButtonIcon;
+	private final List<SparkTabbedPaneListener> listeners = new ArrayList<>();
+	private final JTabbedPane pane;
+	private final Icon closeInactiveButtonIcon;
+	private final Icon closeActiveButtonIcon;
 	private boolean closeEnabled = false;
 	private int dragTabIndex = -1;
 
@@ -362,8 +362,8 @@ public class SparkTabbedPane extends JPanel {
 	private final Font defaultFontPlain = new Font("Dialog", Font.PLAIN, 11);
 	private final Font defaultFontBold = new Font("Dialog", Font.BOLD, 11);
 	private JLabel iconLabel;
-	private JLabel titleLabel;
-	private JLabel tabCloseButton = new JLabel(closeInactiveButtonIcon);
+	private final JLabel titleLabel;
+	private final JLabel tabCloseButton = new JLabel(closeInactiveButtonIcon);
 
 	public TabPanel(final SparkTab sparktab, String title, Icon icon) {
 	    setOpaque(false);

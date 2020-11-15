@@ -32,7 +32,7 @@ import javax.swing.JComponent;
  */
 public class GroupChatPreference implements Preference {
 
-    private GroupChatPreferencePanel panel = new GroupChatPreferencePanel();
+    private final GroupChatPreferencePanel panel = new GroupChatPreferencePanel();
 
     /**
      * Define the Namespace used for this preference.

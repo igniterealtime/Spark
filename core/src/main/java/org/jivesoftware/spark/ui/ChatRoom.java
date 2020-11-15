@@ -62,7 +62,7 @@ import java.util.List;
 public abstract class ChatRoom extends BackgroundPanel implements ActionListener, StanzaListener, DocumentListener, ConnectionListener, FocusListener, ContextMenuListener, ChatFrameToFrontListener {
 	private final JPanel chatPanel;
     private final JSplitPane splitPane;
-    private JSplitPane verticalSplit;
+    private final JSplitPane verticalSplit;
 
     private final JLabel notificationLabel;
     private final TranscriptWindow transcriptWindow;
@@ -74,35 +74,35 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
     private final JPanel editorWrapperBar;
     private final JPanel editorBarRight;
     private final JPanel editorBarLeft;
-    private JPanel chatWindowPanel;
+    private final JPanel chatWindowPanel;
 
     private int unreadMessageCount;
 
     private boolean mousePressed;
 
-    private List<ChatRoomClosingListener> closingListeners = new ArrayList<>();
+    private final List<ChatRoomClosingListener> closingListeners = new ArrayList<>();
 
 
     private ChatRoomTransferHandler transferHandler;
 
     private final List<String> packetIDList;
     private final List<MessageListener> messageListeners;
-    private List<Message> transcript;
-    private List<FileDropListener> fileDropListeners;
+    private final List<Message> transcript;
+    private final List<FileDropListener> fileDropListeners;
 
-    private MouseAdapter transcriptWindowMouseListener;
+    private final MouseAdapter transcriptWindowMouseListener;
 
-    private KeyAdapter chatEditorKeyListener;
+    private final KeyAdapter chatEditorKeyListener;
     private ChatFrame _chatFrame;
-    private RolloverButton _alwaysOnTopItem;
+    private final RolloverButton _alwaysOnTopItem;
     private boolean _isAlwaysOnTopActive;
 
     // Chat state
     private TimerTask typingTimerTask;
     private long lastNotificationSentTime;
     private ChatState lastNotificationSent;
-    private long pauseTimePeriod = 2000;
-    private long inactiveTimePeriod = 120000;
+    private final long pauseTimePeriod = 2000;
+    private final long inactiveTimePeriod = 120000;
 
     /**
      * Initializes the base layout and base background color.
@@ -1026,7 +1026,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
      */
     public static class ChatToolBar extends JPanel {
 		private static final long serialVersionUID = 5926527530611601841L;
-		private JPanel buttonPanel;
+		private final JPanel buttonPanel;
 
 
         /**

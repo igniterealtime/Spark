@@ -50,8 +50,8 @@ public class PreferencesPanel extends JPanel implements ListSelectionListener {
      * flowpanel is the right panel, where the plugin specific UI is displayed
      */
     private final JPanel flowPanel = new JPanel(new BorderLayout());
-    private DefaultListModel listModel = new DefaultListModel();
-    private JList list = new JList(listModel);
+    private final DefaultListModel listModel = new DefaultListModel();
+    private final JList list = new JList(listModel);
     private Preference currentPreference;
     
     /**

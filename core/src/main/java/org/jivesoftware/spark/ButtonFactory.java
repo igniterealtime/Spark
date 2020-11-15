@@ -29,7 +29,7 @@ import org.jivesoftware.sparkimpl.plugin.emoticons.EmoticonManager;
 
 public class ButtonFactory {
 
-	private static ButtonFactory instance = new ButtonFactory();
+	private static final ButtonFactory instance = new ButtonFactory();
 
 	protected ButtonFactory() {
 		// nothing

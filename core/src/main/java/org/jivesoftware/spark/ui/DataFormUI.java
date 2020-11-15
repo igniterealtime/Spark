@@ -49,7 +49,7 @@ public class DataFormUI extends JPanel {
 	private static final long serialVersionUID = -6313707846021436765L;
 	private final Map<String,JComponent> valueMap = new HashMap<>();
     private int row = 5;
-    private Form searchForm;
+    private final Form searchForm;
 
     /**
      * Creates a new DataFormUI

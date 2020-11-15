@@ -21,7 +21,7 @@ import java.util.Set;
 
 public class ColorSettings {
 
-    private HashMap<String, String> _hashmap;
+    private final HashMap<String, String> _hashmap;
 
     public ColorSettings(HashMap<String, String> settingmap) {
 	_hashmap = settingmap;

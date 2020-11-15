@@ -32,7 +32,7 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jxmpp.jid.Jid;
 
 public class InvitationManager {
-    private static List<ChatRoom> inviteListeners = new ArrayList<ChatRoom>();
+    private static final List<ChatRoom> inviteListeners = new ArrayList<>();
 
     private InvitationManager() {
 

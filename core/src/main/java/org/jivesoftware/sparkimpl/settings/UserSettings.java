@@ -27,7 +27,7 @@ import java.util.Map;
 public class UserSettings {
     public static final String NAMESPACE = "jive:user:settings";
     public static final String ELEMENT_NAME = "personal_settings";
-    private PrivateDataManager privateDataManager;
+    private final PrivateDataManager privateDataManager;
     private SettingsData settingsData;
     private static UserSettings singleton;
     private static final Object LOCK = new Object();

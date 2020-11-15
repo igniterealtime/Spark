@@ -52,9 +52,9 @@ public class UriManager {
 	roster("roster"),
 	remove("remove");
 
-	private String _xml;
+	private final String _xml;
 
-	private uritypes(String s) {
+	uritypes(String s) {
 	    _xml = s;
 	}
 	public String getXML() {

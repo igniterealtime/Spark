@@ -25,8 +25,8 @@ import javax.swing.ImageIcon;
  * Preference object for file transfer settings. Used by Spark to show the associated UI and commit changes to preference settings.
  */
 public class TransferSettingsPreference implements Preference {
-    private TransferSettingsPanel gui = new TransferSettingsPanel();
-    private FileTransferSettings settings = new FileTransferSettings();
+    private final TransferSettingsPanel gui = new TransferSettingsPanel();
+    private final FileTransferSettings settings = new FileTransferSettings();
 
     /**
      * Called when preference settings should be persisted.

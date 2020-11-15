@@ -31,13 +31,13 @@ import javax.swing.JTextField;
 public class PersonalPanel extends JPanel {
 
     private static final long serialVersionUID = 8348926698365178921L;
-    private JTextField firstNameField;
-    private JTextField middleNameField;
-    private JTextField lastNameField;
-    private JTextField nicknameField;
-    private JTextField emailAddressField;
-    private JTextField jidField;
-    private JLabel jidLabel = new JLabel();
+    private final JTextField firstNameField;
+    private final JTextField middleNameField;
+    private final JTextField lastNameField;
+    private final JTextField nicknameField;
+    private final JTextField emailAddressField;
+    private final JTextField jidField;
+    private final JLabel jidLabel = new JLabel();
 
 
     public PersonalPanel() {
@@ -147,11 +147,9 @@ public class PersonalPanel extends JPanel {
     public void allowEditing(boolean allowEditing) {
         Component[] comps = getComponents();
         if (comps != null) {
-            final int no = comps.length;
-            for (int i = 0; i < no; i++) {
-                Component comp = comps[i];
+            for (Component comp : comps) {
                 if (comp instanceof JTextField) {
-                    ((JTextField)comp).setEditable(allowEditing);
+                    ((JTextField) comp).setEditable(allowEditing);
                 }
             }
         }
