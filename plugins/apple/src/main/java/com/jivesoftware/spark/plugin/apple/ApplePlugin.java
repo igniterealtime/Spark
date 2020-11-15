@@ -295,13 +295,11 @@ public class ApplePlugin implements Plugin, NativeHandler {
     }
 
     public boolean launchBrowser(String url) {
-	try {
-	    BrowserLauncher.openURL(url);
-	} catch (IOException e) {
-	    Log.error(e);
-	} catch (Exception e) {
-	    Log.error(e);
-	}
-	return true;
+        try {
+            BrowserLauncher.openURL(url);
+        } catch (Exception e) {
+            Log.error(e);
+        }
+        return true;
     }
 }

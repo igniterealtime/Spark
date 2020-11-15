@@ -249,9 +249,7 @@ public class SparkTransferManager {
                 filePath = filePath.replaceAll(" ", "%20");
                 URL url = new URL(filePath);
                 uri = url.toURI();
-            } catch (MalformedURLException ex) {
-                ex.printStackTrace();
-            } catch (URISyntaxException ex) {
+            } catch (MalformedURLException | URISyntaxException ex) {
                 ex.printStackTrace();
             }
         } else {
@@ -676,10 +674,7 @@ public class SparkTransferManager {
                 return (BufferedImage)t.getTransferData(DataFlavor.imageFlavor);
             }
         }
-        catch (UnsupportedFlavorException e) {
-            // Nothing to do
-        }
-        catch (IOException e) {
+        catch (UnsupportedFlavorException | IOException e) {
             // Nothing to do
         }
         return null;
