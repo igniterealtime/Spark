@@ -206,15 +206,13 @@ public class ChatSearch implements Searchable {
     /**
      * Sorts all SearchResults by Relevance.
      */
-    final Comparator dateComporator = new Comparator() {
-        public int compare(Object o1, Object o2) {
-            final ChatSearchResult item1 = (ChatSearchResult)o1;
-            final ChatSearchResult item2 = (ChatSearchResult)o2;
+    final Comparator dateComporator = (o1, o2) -> {
+        final ChatSearchResult item1 = (ChatSearchResult)o1;
+        final ChatSearchResult item2 = (ChatSearchResult)o2;
 
-            long int1 = item1.getStartDate().getTime();
-            long int2 = item2.getStartDate().getTime();
+        long int1 = item1.getStartDate().getTime();
+        long int2 = item2.getStartDate().getTime();
 
-            return Long.compare(int2, int1);
-        }
+        return Long.compare(int2, int1);
     };
 }

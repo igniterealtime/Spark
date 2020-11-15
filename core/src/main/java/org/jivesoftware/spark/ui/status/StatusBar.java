@@ -157,7 +157,7 @@ public class StatusBar extends JPanel implements VCardListener {
 		};
 
 		TaskEngine.getInstance().schedule(task, 3000);
-		changePresenceRunnable = () -> updatePresence();
+		changePresenceRunnable = this::updatePresence;
 
 
 	}

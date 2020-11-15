@@ -90,24 +90,9 @@ public class MacrosEditor extends JPanel {
         // add table
         add(pane, new GridBagConstraints(0, 3, 1, 1, 1.0, 0.5, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
 
-
-        newButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent actionEvent) {
-                createNewResponse();
-            }
-        });
-
-        saveButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent actionEvent) {
-                save();
-            }
-        });
-
-        deleteButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent actionEvent) {
-                deleteRow();
-            }
-        });
+        newButton.addActionListener(actionEvent -> createNewResponse());
+        saveButton.addActionListener(actionEvent -> save());
+        deleteButton.addActionListener(actionEvent -> deleteRow());
     }
 
     public void showEditor(Component parent) {

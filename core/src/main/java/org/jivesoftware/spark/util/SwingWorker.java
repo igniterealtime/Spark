@@ -144,7 +144,7 @@ public abstract class SwingWorker {
             finally {
                 threadVar.clear();
             }
-            SwingUtilities.invokeLater( () -> finished() );
+            SwingUtilities.invokeLater(this::finished);
 
         };
 

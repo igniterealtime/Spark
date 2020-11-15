@@ -89,7 +89,7 @@ public class RoarPreferencePanel extends JPanel {
         _enabledCheckbox = new JCheckBox(RoarResources.getString("roar.enabled"));
 
         _singleColorpicker = new ColorPick(false);
-        _singleColorpicker.addChangeListener( e -> stateChangedSingleColorPicker(e) );
+        _singleColorpicker.addChangeListener(this::stateChangedSingleColorPicker);
 
         DefaultListModel<ColorTypes> listModel = new DefaultListModel<>();
         listModel.addElement(ColorTypes.BACKGROUNDCOLOR);

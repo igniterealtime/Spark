@@ -1760,7 +1760,7 @@ public class ContactList extends JPanel implements ActionListener,
             }
         };
 
-        SwingUtilities.invokeLater(() -> loadContactList());
+        SwingUtilities.invokeLater(this::loadContactList);
         TaskEngine.getInstance().submit(sharedGroupLoader);
     }
 
@@ -2520,7 +2520,7 @@ public class ContactList extends JPanel implements ActionListener,
     /**
      * Sorts ContactItems.
      */
-    public final static Comparator<ContactItem> ContactItemComparator = (item1, item2) -> item1.getDisplayName().toLowerCase().compareTo(item2.getDisplayName().toLowerCase());
+    public final static Comparator<ContactItem> ContactItemComparator = Comparator.comparing(item -> item.getDisplayName().toLowerCase());
 
     public void showAddContact(String contact) {
         addContactMenu.doClick();

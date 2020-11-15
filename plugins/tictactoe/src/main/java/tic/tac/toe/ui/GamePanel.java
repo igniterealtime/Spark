@@ -86,58 +86,38 @@ public class GamePanel extends JPanel {
 
 	add(_gameboardpanel, BorderLayout.CENTER);
 	add(_playerdisplay, BorderLayout.SOUTH);
-	_connection.addAsyncStanzaListener(new StanzaListener() {
+        _connection.addAsyncStanzaListener(stanza -> {
 
-	    @Override
-	    public void processStanza(Stanza stanza) throws SmackException.NotConnectedException, InterruptedException
-		{
+            MovePacket move = stanza.getExtension(
+                MovePacket.ELEMENT_NAME, MovePacket.NAMESPACE);
 
-		MovePacket move = stanza.getExtension(
-			MovePacket.ELEMENT_NAME, MovePacket.NAMESPACE);
+            if (move.getGameID() == _gameID) {
+                if (_gameboard.isValidMove(getYourMark(), move.getPositionX(), move.getPositionY())) {
+                    _gameboardpanel.placeMark(getYourMark(), move.getPositionX(), move.getPositionY());
+                } else {
+                    InvalidMove inval = new InvalidMove();
+                    inval.setGameID(move.getGameID());
+                    inval.setPositionX(move.getPositionX());
+                    inval.setPositionY(move.getPositionY());
+                    Message message = new Message(_opponent);
+                    message.addExtension(inval);
+                    _connection.sendStanza(message);
 
-		if (move.getGameID() == _gameID) {
-		    
-		    if(_gameboard.isValidMove(getYourMark() ,move.getPositionX(), move.getPositionY()))
-		    {
-		    _gameboardpanel.placeMark(getYourMark(),
-			    move.getPositionX(), move.getPositionY());
-		    }
-		    else
-		    {
-			InvalidMove inval = new InvalidMove();
-			inval.setGameID(move.getGameID());
-			inval.setPositionX(move.getPositionX());
-			inval.setPositionY(move.getPositionY());
-			Message message =new Message(_opponent);
-			message.addExtension(inval);
-			_connection.sendStanza(message);
-			
-			ChatRoom cr = SparkManager.getChatManager().getChatRoom( _opponent.asEntityBareJid());
-			cr.getTranscriptWindow().insertCustomText(_opponent+"seems to be cheating\n"+
-				"He tried placing a wrong Move", true, false, Color.red);
-			
-		    }
-		}
+                    ChatRoom cr = SparkManager.getChatManager().getChatRoom(_opponent.asEntityBareJid());
+                    cr.getTranscriptWindow().insertCustomText(_opponent + "seems to be cheating\n" +
+                        "He tried placing a wrong Move", true, false, Color.red);
+                }
+            }
+        }, new StanzaExtensionFilter(MovePacket.ELEMENT_NAME, MovePacket.NAMESPACE));
 
-	    }
-	}, new StanzaExtensionFilter(MovePacket.ELEMENT_NAME,
-		MovePacket.NAMESPACE));
-	
-	_connection.addAsyncStanzaListener(new StanzaListener() {
-	    
-	    @Override
-	    public void processStanza(Stanza stanza) {
-		
-		//InvalidMove im = (InvalidMove)packet.getExtension(InvalidMove.ELEMENT_NAME, InvalidMove.NAMESPACE);
-		ChatRoom cr = SparkManager.getChatManager().getChatRoom(_opponent.asEntityBareJid());
-		cr.getTranscriptWindow().insertCustomText("You seem to be Cheating\n"+
-			"You placed a wrong Move", true, false, Color.red);
-		ShakeWindow sw = new ShakeWindow(_frame);
-		    sw.startRandomMovement(10);
-		
-	    }
-	}, new StanzaExtensionFilter(InvalidMove.ELEMENT_NAME,
-		InvalidMove.NAMESPACE));
+        _connection.addAsyncStanzaListener(stanza -> {
+            //InvalidMove im = (InvalidMove)packet.getExtension(InvalidMove.ELEMENT_NAME, InvalidMove.NAMESPACE);
+            ChatRoom cr = SparkManager.getChatManager().getChatRoom(_opponent.asEntityBareJid());
+            cr.getTranscriptWindow().insertCustomText("You seem to be Cheating\n" +
+                "You placed a wrong Move", true, false, Color.red);
+            ShakeWindow sw = new ShakeWindow(_frame);
+            sw.startRandomMovement(10);
+        }, new StanzaExtensionFilter(InvalidMove.ELEMENT_NAME, InvalidMove.NAMESPACE));
 
     }
 

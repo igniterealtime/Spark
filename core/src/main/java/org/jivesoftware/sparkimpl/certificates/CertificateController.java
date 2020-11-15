@@ -443,14 +443,10 @@ public class CertificateController extends CertManager {
 	@Override
     public void refreshCertTable() {
         createTableModel();
-        SwingUtilities.invokeLater(new Runnable() {
-
-            @Override
-            public void run() {
-                resizeColumnWidth(CertificatesManagerSettingsPanel.getCertTable());
-                CertificatesManagerSettingsPanel.getCertTable().setModel(tableModel);
-                tableModel.fireTableDataChanged();
-            }
+        SwingUtilities.invokeLater(() -> {
+            resizeColumnWidth(CertificatesManagerSettingsPanel.getCertTable());
+            CertificatesManagerSettingsPanel.getCertTable().setModel(tableModel);
+            tableModel.fireTableDataChanged();
         });
     }
     
@@ -459,17 +455,12 @@ public class CertificateController extends CertManager {
      * Resizes certificate table to preferred width.
      */
 	public void resizeColumnWidth(JTable table) {
-        
-        SwingUtilities.invokeLater(new Runnable() {
-            
-            @Override
-            public void run() {
-                final TableColumnModel columnModel = table.getColumnModel();
-                final int maxWidth = table.getParent().getWidth();
-                columnModel.getColumn(1).setPreferredWidth(80);
-                columnModel.getColumn(2).setPreferredWidth(60);
-                columnModel.getColumn(0).setPreferredWidth(maxWidth - 140);
-            }
+        SwingUtilities.invokeLater(() -> {
+            final TableColumnModel columnModel = table.getColumnModel();
+            final int maxWidth = table.getParent().getWidth();
+            columnModel.getColumn(1).setPreferredWidth(80);
+            columnModel.getColumn(2).setPreferredWidth(60);
+            columnModel.getColumn(0).setPreferredWidth(maxWidth - 140);
         });
     }
 

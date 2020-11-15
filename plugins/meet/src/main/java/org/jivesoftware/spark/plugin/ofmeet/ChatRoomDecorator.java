@@ -52,24 +52,20 @@ public class ChatRoomDecorator
             final String roomId = getNode(room.getBareJid().toString());
             final String sessionID = roomId + "-" + System.currentTimeMillis();
 
-            ofmeetButton.addActionListener( new ActionListener()
-            {
-                    public void actionPerformed(ActionEvent event)
-                    {
-                        String newUrl, newRoomId;
+            ofmeetButton.addActionListener(event -> {
+                String newUrl, newRoomId;
 
-                        if ("groupchat".equals(room.getChatType().toString()))
-                        {
-                            newRoomId = roomId + "-" + sessionID;
-                            newUrl = url + newRoomId;
-                            plugin.handleClick(newUrl, room, newUrl, Message.Type.groupchat);
+                if ("groupchat".equals(room.getChatType().toString()))
+                {
+                    newRoomId = roomId + "-" + sessionID;
+                    newUrl = url + newRoomId;
+                    plugin.handleClick(newUrl, room, newUrl, Message.Type.groupchat);
 
-                        } else {
-                            newRoomId = sessionID;
-                            newUrl = url + newRoomId;
-                            plugin.handleClick(newUrl, room, newUrl, Message.Type.chat);
-                        }
-                    }
+                } else {
+                    newRoomId = sessionID;
+                    newUrl = url + newRoomId;
+                    plugin.handleClick(newUrl, room, newUrl, Message.Type.chat);
+                }
             });
             room.getEditorBar().add(ofmeetButton);
 

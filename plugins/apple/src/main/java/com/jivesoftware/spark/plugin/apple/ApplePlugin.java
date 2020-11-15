@@ -202,13 +202,11 @@ public class ApplePlugin implements Plugin, NativeHandler {
 	    }
 	});
 
-	SparkManager.getSessionManager().addPresenceListener(new PresenceListener() {
-	    public void presenceChanged(Presence presence) {
-		if (presence.isAvailable() && !presence.isAway()) {
-		    lastActive = System.currentTimeMillis();
-		}
-	    }
-	});
+        SparkManager.getSessionManager().addPresenceListener(presence -> {
+            if (presence.isAvailable() && !presence.isAway()) {
+                lastActive = System.currentTimeMillis();
+            }
+        });
 
 	final Timer timer = new Timer();
 	timer.scheduleAtFixedRate(new TimerTask() {
