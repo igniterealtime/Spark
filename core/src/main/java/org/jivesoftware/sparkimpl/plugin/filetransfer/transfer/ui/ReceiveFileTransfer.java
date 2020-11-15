@@ -780,9 +780,7 @@ public class ReceiveFileTransfer extends JPanel {
                 filePath = filePath.replaceAll(" ", "%20");
                 URL url = new URL(filePath);
                 uri = url.toURI();
-            } catch (MalformedURLException ex) {
-                ex.printStackTrace();
-            } catch (URISyntaxException ex) {
+            } catch (MalformedURLException | URISyntaxException ex) {
                 ex.printStackTrace();
             }
         } else {

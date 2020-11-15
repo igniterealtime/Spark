@@ -155,8 +155,6 @@ public class ColorSettingManager {
 		_propertyHashMap.put(object, props.getProperty(object));
 	    }
 
-	} catch (FileNotFoundException e) {
-	    Log.error("Error saving settings.", e);
 	} catch (IOException e) {
 	    Log.error("Error saving settings.", e);
 	}
@@ -194,14 +192,11 @@ public class ColorSettingManager {
 
 	}
 
-	try {
-	    props.store(new FileOutputStream(getSettingsFile()),
-		    "Storing Spark Color Settings");
-	} catch (FileNotFoundException e) {
-	    Log.error("Error saving settings.", e);
-	} catch (IOException e) {
-	    Log.error("Error saving settings.", e);
-	}
+        try {
+            props.store(new FileOutputStream(getSettingsFile()),"Storing Spark Color Settings");
+        } catch (IOException e) {
+            Log.error("Error saving settings.", e);
+        }
 
     }
 

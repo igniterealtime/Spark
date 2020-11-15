@@ -114,9 +114,7 @@ public class ContactGroupTransferHandler extends TransferHandler {
                     addContactItem(group, item);
                     return true;
                 }
-                catch (UnsupportedFlavorException ignored) {
-                }
-                catch (IOException ignored) {
+                catch (UnsupportedFlavorException | IOException ignored) {
                 }
             }
             else if (t.isDataFlavorSupported(flavors[1])) {
@@ -133,10 +131,7 @@ public class ContactGroupTransferHandler extends TransferHandler {
                         SparkManager.getWorkspace().getContactList().fireFilesDropped(files, source);
                     }
                 }
-                catch (UnsupportedFlavorException e) {
-                    Log.error(e);
-                }
-                catch (IOException e) {
+                catch (UnsupportedFlavorException | IOException e) {
                     Log.error(e);
                 }
             }
