@@ -62,18 +62,13 @@ public class ChatRoomDecorator
             fileuploadButton = new RolloverButton(fileuploadIcon);
             fileuploadButton.setToolTipText(GraphicUtils.createToolTip("Http File Upload"));
 
-            fileuploadButton.addActionListener( new ActionListener()
-            {
-                    @Override
-                    public void actionPerformed(ActionEvent event)
-                    {
-                        if ("groupchat".equals(room.getChatType().toString()))
-                        {
-                            getUploadUrl(room, Message.Type.groupchat);
-                        } else {
-                            getUploadUrl(room, Message.Type.chat);
-                        }
-                    }
+            fileuploadButton.addActionListener(event -> {
+                if ("groupchat".equals(room.getChatType().toString()))
+                {
+                    getUploadUrl(room, Message.Type.groupchat);
+                } else {
+                    getUploadUrl(room, Message.Type.chat);
+                }
             });
             room.getEditorBar().add(fileuploadButton);
 

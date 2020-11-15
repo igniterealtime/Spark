@@ -94,24 +94,21 @@ public class ReversiPanel extends JPanel {
         reversi = new ReversiModel();
 
         if (connection != null) {
-            gameMoveListener = new StanzaListener() {
-                @Override
-                public void processStanza(Stanza stanza) {
-                    GameMove move = stanza.getExtension(GameMove.ELEMENT_NAME, GameMove.NAMESPACE);
-                    // If this is a move for the current game.
-                    if (move.getGameID() == gameID) {
-                        int position = move.getPosition();
-                        // Make sure that the other player is allowed to make the move right now.
-                        if (reversi.getCurrentPlayer() == otherPlayer && reversi.isValidMove(position)) {
-                            reversi.makeMove(position);
-                            // Redraw board.
-                            ReversiPanel.this.repaint();
-                        }
-                        // TODO: other user automatically forfeits!
-                        // else {
-                        // }
-                        // Execute move.
+            gameMoveListener = stanza -> {
+                GameMove move = stanza.getExtension(GameMove.ELEMENT_NAME, GameMove.NAMESPACE);
+                // If this is a move for the current game.
+                if (move.getGameID() == gameID) {
+                    int position = move.getPosition();
+                    // Make sure that the other player is allowed to make the move right now.
+                    if (reversi.getCurrentPlayer() == otherPlayer && reversi.isValidMove(position)) {
+                        reversi.makeMove(position);
+                        // Redraw board.
+                        ReversiPanel.this.repaint();
                     }
+                    // TODO: other user automatically forfeits!
+                    // else {
+                    // }
+                    // Execute move.
                 }
             };
 

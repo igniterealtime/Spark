@@ -172,10 +172,8 @@ public final class Spark {
         System.setProperty("sun.java2d.noddraw", "true");
         System.setProperty("file.encoding", "UTF-8");
 
-        SwingUtilities.invokeLater( () -> {
-            // Start Application
-            new Spark();
-        } );
+        // Start Application
+        SwingUtilities.invokeLater(Spark::new);
 
         installBaseUIProperties();
 

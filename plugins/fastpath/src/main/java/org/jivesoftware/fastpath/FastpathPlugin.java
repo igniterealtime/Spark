@@ -68,21 +68,16 @@ public class FastpathPlugin implements Plugin, ConnectionListener {
 
         new WorkgroupInitializer().initialize();
 
-        EventQueue.invokeLater(new Runnable() {
-
-			@Override
-			public void run() {
-				  container = new FastpathContainer();
-				  workgroupLabel = new JLabel(FpRes.getString("workgroup"));
-				  comboBox = new JComboBox<>();
-				  joinButton = new JButton(FpRes.getString("join"), null);
-				  logoutButton = new RolloverButton(FpRes.getString("logout"), null);
-		        // Initialize tab handler for Fastpath chats.
-		        fastpathTabHandler = new FastpathTabHandler();
-		        mainPanel = new BackgroundPane();
-			}
-   		 
-   	 });
+        EventQueue.invokeLater(() -> {
+            container = new FastpathContainer();
+            workgroupLabel = new JLabel(FpRes.getString("workgroup"));
+            comboBox = new JComboBox<>();
+            joinButton = new JButton(FpRes.getString("join"), null);
+            logoutButton = new RolloverButton(FpRes.getString("logout"), null);
+            // Initialize tab handler for Fastpath chats.
+            fastpathTabHandler = new FastpathTabHandler();
+            mainPanel = new BackgroundPane();
+        });
    	 
 
 
@@ -188,11 +183,7 @@ public class FastpathPlugin implements Plugin, ConnectionListener {
         joinButton.addActionListener(joinAction);
 
         // Load services immeditaly.
-        Thread loadServicesThread = new Thread(new Runnable() {
-            public void run() {
-                SparkManager.getChatManager().getDefaultConferenceService();
-            }
-        });
+        Thread loadServicesThread = new Thread(() -> SparkManager.getChatManager().getDefaultConferenceService());
 
         loadServicesThread.start();
     }
@@ -269,13 +260,11 @@ public class FastpathPlugin implements Plugin, ConnectionListener {
     }
 
     private void lostConnection() {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                if (agentSession != null) {
-                    resetWorkgroups();
-                    wasConnected = true;
-                    agentSession = null;
-                }
+        SwingUtilities.invokeLater(() -> {
+            if (agentSession != null) {
+                resetWorkgroups();
+                wasConnected = true;
+                agentSession = null;
             }
         });
 

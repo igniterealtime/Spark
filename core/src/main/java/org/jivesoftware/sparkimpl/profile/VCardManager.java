@@ -197,13 +197,11 @@ public class VCardManager {
 
         TaskEngine.getInstance().submit(queueListener);
 
-        StanzaFilter filter = new AndFilter(new StanzaFilter() {
-            @Override
-            public boolean accept(Stanza stanza) {
-                Jid from = stanza.getFrom();
-                return from != null;
-            }
+        StanzaFilter filter = new AndFilter(stanza -> {
+            Jid from = stanza.getFrom();
+            return from != null;
         }, new StanzaTypeFilter(VCard.class));
+
         StanzaListener myListener = stanza -> {
             if (stanza instanceof VCard)
             {
@@ -215,12 +213,10 @@ public class VCardManager {
                     addVCard(jid, VCardpacket);
                     persistVCard(jid, VCardpacket);
                 }
-
             }
         };
         	
 		SparkManager.getConnection().addAsyncStanzaListener(myListener, filter);
-
     }
 
     /**

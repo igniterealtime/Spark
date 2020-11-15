@@ -123,17 +123,12 @@ public class ChatViewer extends JPanel {
         this.setLayout(new GridBagLayout());
 
 
-        saveTranscriptButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                chatWindow.saveTranscript(transcript.getSessionID() + ".html", chatTranscript, null);
-            }
-        });
+        saveTranscriptButton.addActionListener(e ->
+            chatWindow.saveTranscript(transcript.getSessionID() + ".html", chatTranscript, null));
 
-        printChatButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                final ChatPrinter printer = new ChatPrinter();
-                printer.print(chatWindow);
-            }
+        printChatButton.addActionListener(e -> {
+            final ChatPrinter printer = new ChatPrinter();
+            printer.print(chatWindow);
         });
 
         chatWindow.setCaretPosition(0);
