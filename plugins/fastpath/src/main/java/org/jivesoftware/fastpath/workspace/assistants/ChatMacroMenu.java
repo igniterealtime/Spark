@@ -16,9 +16,6 @@
 package org.jivesoftware.fastpath.workspace.assistants;
 
 import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.JMenu;
