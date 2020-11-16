@@ -47,7 +47,7 @@ import sun.misc.BASE64Decoder;
 public class ChatRoomDecorator
 {
     public RolloverButton fileuploadButton;
-    public ChatRoom room;
+    public final ChatRoom room;
     private StanzaListener uploadResponseListener;
 
     public ChatRoomDecorator(final ChatRoom room, final SparkFileUploadPlugin plugin)

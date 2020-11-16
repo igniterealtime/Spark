@@ -31,7 +31,7 @@ public class ThemePreference implements Preference {
 
     private MainThemePanel panel;
 
-    public static String NAMESPACE = "themes";
+    public static final String NAMESPACE = "themes";
 
     public ThemePreference() {}
 

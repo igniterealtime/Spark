@@ -37,16 +37,12 @@ public class UserIdlePlugin extends TimerTask implements Plugin {
 
 	private final int CHECKTIME = 2;
 	private boolean hasChanged = false;
-	public static LocalPreferences pref = SettingsManager.getLocalPreferences();
-	public static Presence latestPresence;
+	private static final LocalPreferences pref = SettingsManager.getLocalPreferences();
+	private static Presence latestPresence;
 	private static String statustext;
 	private static boolean IsLocked;
 
-
-
-
 	public static boolean getDesktopLockStatus() {
-
 		return IsLocked;
 	}
 

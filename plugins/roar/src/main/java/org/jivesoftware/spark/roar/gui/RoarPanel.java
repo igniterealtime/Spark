@@ -31,8 +31,8 @@ import javax.swing.JWindow;
 import org.jivesoftware.spark.roar.displaytype.RoarDisplayType;
 
 public class RoarPanel {
-    public static int WIDTH = 300;
-    public static int HEIGHT = 80;
+    public static final int WIDTH = 300;
+    public static final int HEIGHT = 80;
 
     /**
      * Creates the WindowGui

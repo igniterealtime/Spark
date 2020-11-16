@@ -22,8 +22,8 @@ import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
  *
  */
 public abstract class GeneralTrustManager implements X509TrustManager {
-    protected LocalPreferences localPref = SettingsManager.getLocalPreferences();
-    protected CertificateController certControll = new CertificateController(localPref);
+    protected final LocalPreferences localPref = SettingsManager.getLocalPreferences();
+    protected final CertificateController certControll = new CertificateController(localPref);
     protected KeyStore allStore;
     protected abstract void loadKeyStores();
     /**

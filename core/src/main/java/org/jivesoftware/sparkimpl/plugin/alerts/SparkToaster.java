@@ -127,7 +127,7 @@ public class SparkToaster {
 
     // Flag that indicate if use alwaysOnTop or not.
     // method always on top start only SINCE JDK 5 !
-    boolean useAlwaysOnTop;
+    private final boolean useAlwaysOnTop;
 
     private String title;
 
@@ -264,7 +264,7 @@ public class SparkToaster {
      * Class that manage the animation
      */
     class Animation extends Thread {
-        SingleToaster toaster;
+        private final SingleToaster toaster;
 
         public Animation(SingleToaster toaster) {
             this.toaster = toaster;

@@ -338,7 +338,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
     }
 
     protected void setOfflineGroupNameFont(ContactItem item) {
-        item.getNicknameLabel().setFont(new Font("Dialog", Font.PLAIN, item.fontSize));
+        item.getNicknameLabel().setFont(new Font("Dialog", Font.PLAIN, item.getFontSize()));
         item.getNicknameLabel().setForeground(Color.GRAY);
     }
 
