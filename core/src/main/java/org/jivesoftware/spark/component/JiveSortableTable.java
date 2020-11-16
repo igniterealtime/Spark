@@ -244,10 +244,10 @@ public abstract class JiveSortableTable extends Table {
      * A swing renderer used to display labels within a table.
      */
     public static class JLabelRenderer extends JLabel implements TableCellRenderer {
-	private static final long serialVersionUID = 8670248883432881619L;
-	Border unselectedBorder;
-        Border selectedBorder;
-        boolean isBordered;
+        private static final long serialVersionUID = 8670248883432881619L;
+        private Border unselectedBorder;
+        private Border selectedBorder;
+        final boolean isBordered;
 
         /**
          * JLabelConstructor to build ui.
@@ -301,7 +301,7 @@ public abstract class JiveSortableTable extends Table {
      * A swing renderer to dispaly Textareas within a table.
      */
     public static class TextAreaCellRenderer extends JTextArea implements TableCellRenderer {
-	private static final long serialVersionUID = -1704445909682732833L;
+        private static final long serialVersionUID = -1704445909682732833L;
 
 	/**
          * Create new renderer with font.
@@ -332,10 +332,10 @@ public abstract class JiveSortableTable extends Table {
      * A swing renderer used to display Buttons within a table.
      */
     public static class JButtonRenderer extends JButton implements TableCellRenderer {
- 	private static final long serialVersionUID = -1847536957519732935L;
-	Border unselectedBorder;
-        Border selectedBorder;
-        boolean isBordered = true;
+        private static final long serialVersionUID = -1847536957519732935L;
+        private Border unselectedBorder;
+        private Border selectedBorder;
+        final boolean isBordered = true;
 
         /**
          * Empty Constructor.

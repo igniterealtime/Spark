@@ -67,12 +67,12 @@ public class ChatManager {
     private static final Object LOCK = new Object();
 
     // Define Default Colors
-    public static Color TO_COLOR = (Color)UIManager.get("User.foreground");
-    public static Color FROM_COLOR = (Color)UIManager.get("OtherUser.foreground");
-    public static Color NOTIFICATION_COLOR = (Color)UIManager.get("Notification.foreground");
-    public static Color ERROR_COLOR = (Color)UIManager.get("Error.foreground");
+    public static final Color TO_COLOR = (Color)UIManager.get("User.foreground");
+    public static final Color FROM_COLOR = (Color)UIManager.get("OtherUser.foreground");
+    public static final Color NOTIFICATION_COLOR = (Color)UIManager.get("Notification.foreground");
+    public static final Color ERROR_COLOR = (Color)UIManager.get("Error.foreground");
 
-	public static Color[] COLORS = { Color.blue, Color.gray, Color.magenta, Color.red, Color.PINK,
+	public static final Color[] COLORS = { Color.blue, Color.gray, Color.magenta, Color.red, Color.PINK,
 			new Color(238, 153, 247), new Color(181, 0, 0), new Color(237, 150, 122), new Color(204, 51, 153),
 			new Color(0, 139, 139), new Color(218, 14, 0), new Color(147, 112, 219), new Color(205, 133, 63),
 			new Color(72, 160, 237), new Color(255, 140, 0), new Color(106, 90, 205), new Color(224, 165, 32),

@@ -247,12 +247,11 @@ public class FastpathRes {
     public static final String CLOSE_DARK_X_IMAGE = "CLOSE_DARK_X_IMAGE";
     public static final String CLOSE_WHITE_X_IMAGE = "CLOSE_WHITE_X_IMAGE";
     public static final String CHAT_INVITE_IMAGE_24x24 = "CHAT_INVITE_IMAGE_24x24";
-      public static final String CHAT_TRANSFER_IMAGE_24x24 = "CHAT_TRANSFER_IMAGE_24x24";
-      public static final String CHAT_COBROWSE_IMAGE_24x24 = "CHAT_COBROWSE_IMAGE_24x24";
-      public static final String CHAT_ENDED_IMAGE_24x24 = "CHAT_ENDED_IMAGE_24x24";
+    public static final String CHAT_TRANSFER_IMAGE_24x24 = "CHAT_TRANSFER_IMAGE_24x24";
+    public static final String CHAT_COBROWSE_IMAGE_24x24 = "CHAT_COBROWSE_IMAGE_24x24";
+    public static final String CHAT_ENDED_IMAGE_24x24 = "CHAT_ENDED_IMAGE_24x24";
 
-
-    static ClassLoader cl = FastpathPlugin.class.getClassLoader();
+    private static final ClassLoader cl = FastpathPlugin.class.getClassLoader();
 
     static {
         prb = (PropertyResourceBundle)ResourceBundle.getBundle("fastpath");

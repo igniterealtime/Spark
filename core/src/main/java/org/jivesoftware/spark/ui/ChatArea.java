@@ -57,7 +57,7 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
 
     private final List<LinkInterceptor> interceptors = new ArrayList<>();
 
-    protected EmoticonManager emoticonManager;
+    protected final EmoticonManager emoticonManager;
 
     protected Boolean forceEmoticons = false;
     

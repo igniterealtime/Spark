@@ -32,7 +32,7 @@ import sun.misc.BASE64Decoder;
 public class ChatRoomDecorator
 {
     public RolloverButton ofmeetButton;
-    public ChatRoom room;
+    public final ChatRoom room;
 
 
     private final String url;

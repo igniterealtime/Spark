@@ -24,7 +24,7 @@ public class ReversiRes {
 
 	    }
 
-	    static ClassLoader cl = ReversiRes.class.getClassLoader();
+	    private static final ClassLoader cl = ReversiRes.class.getClassLoader();
 
 	    static {
 	    	ReversiRes.prb = (PropertyResourceBundle) ResourceBundle.getBundle("reversi");

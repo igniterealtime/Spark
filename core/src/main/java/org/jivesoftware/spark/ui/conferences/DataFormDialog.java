@@ -65,7 +65,7 @@ public class DataFormDialog extends JPanel {
     private static final long serialVersionUID = -1536217028590811636L;
     private final Map<String,JComponent> valueMap = new HashMap<>();
     private int row = 0;
-    JDialog dialog;
+    private final JDialog dialog;
 
     public DataFormDialog(JFrame parent, final MultiUserChat chat, final Form submitForm) {
         dialog = new JDialog(parent, true);

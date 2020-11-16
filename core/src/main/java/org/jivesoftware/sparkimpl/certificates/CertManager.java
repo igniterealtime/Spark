@@ -57,8 +57,8 @@ public abstract class CertManager {
     // contain all certificates, used for help in managing certificates, but isn't directly displayed on the certificate
     // table
     protected KeyStore blackListStore;
-    protected List<CertificateModel> allCertificates =          new LinkedList<>();
-    protected List<CertificateModel> blackListedCertificates =  new LinkedList<>(); //contain only revoked certificates
+    protected final List<CertificateModel> allCertificates =          new LinkedList<>();
+    protected final List<CertificateModel> blackListedCertificates =  new LinkedList<>(); //contain only revoked certificates
     protected DefaultTableModel tableModel;
     
     public abstract void deleteEntry(String alias) throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException;

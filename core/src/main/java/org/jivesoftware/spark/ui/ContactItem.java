@@ -65,27 +65,16 @@ public class ContactItem extends JPanel {
 
     private String nickname;
     private String alias;
-
-
     private final BareJid jid;
-
     private Icon icon;
-
     private String status;
     private String groupName;
-
-    boolean available;
-
+    private boolean available;
     private Presence presence;
-
     private String hash = "";
-
     private final File contactsDir;
-
-    int fontSize;
-
+    private final int fontSize;
     private final int iconSize;
-
     private final boolean avatarsShowing;
 
 	public ContactItem(String alias, String nickname, BareJid fullyQualifiedJID) {
@@ -404,6 +393,10 @@ public class ContactItem extends JPanel {
         }
 
         return SparkManager.getVCardManager().getAvatarURLIfAvailable(getJid());
+    }
+
+    public int getFontSize() {
+        return fontSize;
     }
 
     /**

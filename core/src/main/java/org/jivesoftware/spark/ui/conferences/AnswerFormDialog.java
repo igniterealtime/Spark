@@ -53,7 +53,7 @@ public class AnswerFormDialog {
     private final JDialog dialog;
     private final JPanel centerpanel;
 
-	HashMap<String, JComponent> _map = new HashMap<>();
+	private final HashMap<String, JComponent> _map = new HashMap<>();
 
     /**
      * Creates an Answer Form Dialog from the specified Form
