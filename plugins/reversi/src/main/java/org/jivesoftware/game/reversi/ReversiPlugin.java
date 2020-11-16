@@ -292,26 +292,22 @@ public class ReversiPlugin implements Plugin {
                     content.add(label, BorderLayout.CENTER);
                     JPanel buttonPanel = new JPanel();
                     final JButton cancelButton = new JButton("Cancel");
-                    cancelButton.addActionListener(new ActionListener() {
+                    cancelButton.addActionListener(e12 -> {
+                       GameOffer reply = new GameOffer();
+                       reply.setTo(((ChatRoomImpl) room).getJID());
+                       reply.setType(IQ.Type.error);
+                       reply.setError(StanzaError.getBuilder().setCondition(StanzaError.Condition.undefined_condition).setDescriptiveEnText("User cancelled the invitation."));
 
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                           GameOffer reply = new GameOffer();
-                           reply.setTo(((ChatRoomImpl) room).getJID());
-                           reply.setType(IQ.Type.error);
-                           reply.setError(StanzaError.getBuilder().setCondition(StanzaError.Condition.undefined_condition).setDescriptiveEnText("User cancelled the invitation."));
-
-                           try
-                           {
-                               SparkManager.getConnection().sendStanza(reply);
-                           }
-                           catch ( SmackException.NotConnectedException | InterruptedException e1 )
-                           {
-                               Log.warning( "Unable to send invitation cancellation to " + reply.getTo(), e1 );
-                           }
-                           cancelButton.setText("Canceled");
-                           cancelButton.setEnabled(false);
-                        }
+                       try
+                       {
+                           SparkManager.getConnection().sendStanza(reply);
+                       }
+                       catch ( SmackException.NotConnectedException | InterruptedException e1 )
+                       {
+                           Log.warning( "Unable to send invitation cancellation to " + reply.getTo(), e1 );
+                       }
+                       cancelButton.setText("Canceled");
+                       cancelButton.setEnabled(false);
                     });
                     buttonPanel.add(cancelButton, BorderLayout.SOUTH);
                     content.add(buttonPanel, BorderLayout.SOUTH);
@@ -322,35 +318,31 @@ public class ReversiPlugin implements Plugin {
                     offer.setTo(opponentJID);
 
                     // Add a listener for a reply to our offer.
-                    SparkManager.getConnection().addAsyncStanzaListener(new StanzaListener() {
-                        @Override
-                        public void processStanza(Stanza stanza) {
+                    SparkManager.getConnection().addAsyncStanzaListener(stanza -> {
+                        if (stanza.getError() != null) {
+                            cancelButton.setVisible(false);
+                            JPanel userDeclinedPanel = new JPanel(new BorderLayout());
+                            JLabel userDeclined = new JLabel("User declined...");
+                            userDeclinedPanel.add(userDeclined, BorderLayout.SOUTH);
+                            request.add(userDeclinedPanel, BorderLayout.SOUTH);
+                            return;
+                        }
 
-                            if (stanza.getError() != null) {
-                                cancelButton.setVisible(false);
-                                JPanel userDeclinedPanel = new JPanel(new BorderLayout());
-                                JLabel userDeclined = new JLabel("User declined...");
-                                userDeclinedPanel.add(userDeclined, BorderLayout.SOUTH);
-                                request.add(userDeclinedPanel, BorderLayout.SOUTH);
-                                return;
-                            }
+                        GameOffer offerReply = ((GameOffer) stanza);
 
-                            GameOffer offerReply = ((GameOffer) stanza);
-
-                            if (offerReply.getType() == IQ.Type.result) {
-                                // Remove the offer panel
-                                room.getTranscriptWindow().remove(request);
-                                content.remove(1);
-                                label.setText("Starting game...");
-                                // Show game board (using original offer!).
-                                showReversiBoard(offer.getGameID(), room, offer.isStartingPlayer(), offerReply.getFrom());
-                            } else if (offerReply.getType() == IQ.Type.error) {
-                                cancelButton.setVisible(false);
-                                JPanel userDeclinedPanel = new JPanel(new BorderLayout());
-                                JLabel userDeclined = new JLabel("User declined...");
-                                userDeclinedPanel.add(userDeclined, BorderLayout.SOUTH);
-                                request.add(userDeclinedPanel, BorderLayout.SOUTH);
-                            }
+                        if (offerReply.getType() == IQ.Type.result) {
+                            // Remove the offer panel
+                            room.getTranscriptWindow().remove(request);
+                            content.remove(1);
+                            label.setText("Starting game...");
+                            // Show game board (using original offer!).
+                            showReversiBoard(offer.getGameID(), room, offer.isStartingPlayer(), offerReply.getFrom());
+                        } else if (offerReply.getType() == IQ.Type.error) {
+                            cancelButton.setVisible(false);
+                            JPanel userDeclinedPanel = new JPanel(new BorderLayout());
+                            JLabel userDeclined = new JLabel("User declined...");
+                            userDeclinedPanel.add(userDeclined, BorderLayout.SOUTH);
+                            request.add(userDeclinedPanel, BorderLayout.SOUTH);
                         }
                     }, new StanzaIdFilter(offer.getStanzaId()));
 
