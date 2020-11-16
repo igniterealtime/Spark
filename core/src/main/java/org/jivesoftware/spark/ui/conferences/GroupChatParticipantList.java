@@ -414,11 +414,6 @@ public class GroupChatParticipantList extends JPanel {
 		chatManager.getChatContainer().activateChatRoom(chatRoom);
 	}
 
-	public void tabSelected() {
-		// To change body of implemented methods use File | Settings | File
-		// Templates.
-	}
-
 	public String getTabTitle() {
 		return Res.getString("title.room.information");
 	}

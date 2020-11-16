@@ -492,5 +492,4 @@ public abstract class Table extends JXTable {
      */
     public void enterPressed() {
     }
-
 }

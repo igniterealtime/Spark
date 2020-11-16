@@ -83,13 +83,6 @@ public class CheckTree extends JPanel {
         }
     }
 
-    /**
-     * Closes the CheckTree.
-     */
-    public void close() {
-    }
-
-
     static class ButtonActionListener implements ActionListener {
         private final CheckNode root;
         private final JTextArea textArea;

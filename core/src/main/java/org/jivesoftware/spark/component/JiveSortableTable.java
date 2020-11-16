@@ -457,12 +457,4 @@ public abstract class JiveSortableTable extends Table {
 	public Object getObject(int row) {
         return objectMap.get(row);
     }
-
-    /**
-     * Override to handle when enter is pressed.
-     */
-    @Override
-	public void enterPressed() {
-    }
-
 }
