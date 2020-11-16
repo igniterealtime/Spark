@@ -216,7 +216,7 @@ public class Notes extends JPanel {
      * @param newString the String that will replace all instances of oldString
      * @return a String will all instances of oldString replaced by newString
      */
-    public static final String replace(String string, String oldString, String newString) {
+    public static String replace(String string, String oldString, String newString) {
         if (string == null) {
             return null;
         }

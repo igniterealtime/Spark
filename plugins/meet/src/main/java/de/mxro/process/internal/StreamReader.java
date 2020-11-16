@@ -52,7 +52,7 @@ public class StreamReader {
 		/**
 		 * Wait longer and longer to not keep CPU busy.
 		 */
-		private final void waitForInput() {
+		private void waitForInput() {
 			try {
 				Thread.sleep(this.timeout);
 			} catch (final InterruptedException e) {

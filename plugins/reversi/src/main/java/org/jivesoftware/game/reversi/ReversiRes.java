@@ -30,11 +30,11 @@ public class ReversiRes {
 	    	ReversiRes.prb = (PropertyResourceBundle) ResourceBundle.getBundle("reversi");
 	    }
 	    
-	    public static final String getString(String propertyName) {
+	    public static String getString(String propertyName) {
 	        return ReversiRes.prb.getString(propertyName);
 	    }
 
-	    public static final ImageIcon getImageIcon(String imageName) {
+	    public static ImageIcon getImageIcon(String imageName) {
 	        try {
 	            final String iconURI = ReversiRes.getString(imageName);
 	            final URL imageURL = ReversiRes.cl.getResource(iconURI);
@@ -46,7 +46,7 @@ public class ReversiRes {
 	        return null;
 	    }
 
-	    public static final URL getURL(String propertyName) {
+	    public static URL getURL(String propertyName) {
 	        return ReversiRes.cl.getResource(ReversiRes.getString(propertyName));
 	    }
 	    
