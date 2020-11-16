@@ -59,11 +59,10 @@ public class WindowsFileSystemView extends FileSystemView {
      * createNewFolder
      *
      * @param value0 
-     * @throws IOException 
      * @return File
      */
     @Override
-	public File createNewFolder(File value0) throws IOException {
+	public File createNewFolder(File value0) {
         return null; // 
     } // createNewFolder()
 

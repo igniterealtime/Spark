@@ -65,7 +65,7 @@ public class StreamReader {
 
 		}
 
-		private void stopReader() throws IOException {
+		private void stopReader() {
 			//stream.close();
 			stopped = true;
 			listener.onClosed();

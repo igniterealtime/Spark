@@ -655,18 +655,16 @@ public final class GraphicUtils {
      * 
      * @param im
      * @return {@link BufferedImage}
-     * @throws InterruptedException
      * @throws {@link IOException}
      */
-    public static BufferedImage convert(Image im) throws InterruptedException,
-	    IOException {
-	//load(im);
-	BufferedImage bi = new BufferedImage(im.getWidth(null),
-		im.getHeight(null), BufferedImage.TYPE_INT_ARGB_PRE);
-	Graphics bg = bi.getGraphics();
-	bg.drawImage(im, 0, 0, null);
-	bg.dispose();
-	return bi;
+    public static BufferedImage convert(Image im) {
+        //load(im);
+        BufferedImage bi = new BufferedImage(im.getWidth(null),
+            im.getHeight(null), BufferedImage.TYPE_INT_ARGB_PRE);
+        Graphics bg = bi.getGraphics();
+        bg.drawImage(im, 0, 0, null);
+        bg.dispose();
+        return bi;
     }
 
     /**

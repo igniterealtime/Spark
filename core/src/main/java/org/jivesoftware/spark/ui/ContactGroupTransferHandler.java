@@ -162,7 +162,7 @@ public class ContactGroupTransferHandler extends TransferHandler {
         // Returns image
         @NotNull
         @Override
-		public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
+		public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException {
             if (!DataFlavor.imageFlavor.equals(flavor)) {
                 throw new UnsupportedFlavorException(flavor);
             }

@@ -227,7 +227,7 @@ public class JiveTreeNode extends DefaultMutableTreeNode implements Transferable
     @NotNull
     @Override
 	public Object getTransferData(DataFlavor flavor)
-            throws UnsupportedFlavorException, IOException {
+            throws UnsupportedFlavorException {
         if (this.isDataFlavorSupported(flavor)) {
             return this;
         }

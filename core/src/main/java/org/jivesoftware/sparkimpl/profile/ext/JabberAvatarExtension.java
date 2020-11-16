@@ -59,8 +59,7 @@ public class JabberAvatarExtension implements ExtensionElement {
         }
 
         @Override
-        public JabberAvatarExtension parse( XmlPullParser parser, int i ) throws XmlPullParserException, IOException, SmackException
-        {
+        public JabberAvatarExtension parse( XmlPullParser parser, int i ) throws XmlPullParserException, IOException {
             final JabberAvatarExtension result = new JabberAvatarExtension();
 
             while ( true )

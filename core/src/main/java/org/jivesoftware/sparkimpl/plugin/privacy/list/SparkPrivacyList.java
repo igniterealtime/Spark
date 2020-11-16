@@ -278,8 +278,7 @@ public class SparkPrivacyList {
     /**
      * @param item user was added into blockList
      */
-    private void fireItemAdded( PrivacyItem item ) throws SmackException.NotConnectedException
-    {
+    private void fireItemAdded( PrivacyItem item ) {
         for ( final SparkPrivacyItemListener listener : _listeners )
         {
             try
@@ -296,8 +295,7 @@ public class SparkPrivacyList {
     /**
      * @param item user removed from blackList
      */
-    private void fireItemRemoved( PrivacyItem item ) throws SmackException.NotConnectedException
-    {
+    private void fireItemRemoved( PrivacyItem item ) {
         for ( final SparkPrivacyItemListener listener : _listeners )
         {
             try

@@ -41,7 +41,7 @@ public class Installer implements InstallAction {
     }
 
     @Override
-	public boolean install(InstallerContext installerContext) throws UserCanceledException {
+	public boolean install(InstallerContext installerContext) {
         final String osName = System.getProperty("os.name").toLowerCase();
         boolean isWindows = osName.startsWith("windows");
 

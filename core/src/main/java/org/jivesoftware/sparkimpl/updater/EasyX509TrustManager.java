@@ -108,11 +108,11 @@ public class EasyX509TrustManager implements X509TrustManager {
     }
 
     @Override
-	public void checkClientTrusted(X509Certificate[] x509Certificates, String s) throws CertificateException {
+	public void checkClientTrusted(X509Certificate[] x509Certificates, String s) {
     }
 
     @Override
-	public void checkServerTrusted(X509Certificate[] x509Certificates, String s) throws CertificateException {
+	public void checkServerTrusted(X509Certificate[] x509Certificates, String s) {
     }
 
     /**

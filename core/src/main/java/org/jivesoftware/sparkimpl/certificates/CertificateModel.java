@@ -264,7 +264,7 @@ public class CertificateModel {
 		return value;
 	}
 
-	private String alternativeNameExtractor(Collection<List<?>> rootNames) throws CertificateParsingException {
+	private String alternativeNameExtractor(Collection<List<?>> rootNames) {
 		StringBuilder value = new StringBuilder();
 		if (rootNames != null) {
 			for (List<?> names : rootNames) {

@@ -106,7 +106,7 @@ public class FlashWindow {
 		}
 	}
 
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) {
 		final JFrame frame = new JFrame();
 		frame.setTitle("Test");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

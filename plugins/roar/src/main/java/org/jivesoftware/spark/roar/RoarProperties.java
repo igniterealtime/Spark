@@ -264,10 +264,9 @@ public class RoarProperties {
      * @param s
      * @return
      */
-    public static Color convertString(String s) throws Exception {
+    public static Color convertString(String s) {
         String[] arr = s.split(",");
         return new Color(Integer.parseInt(arr[0]), Integer.parseInt(arr[1]), Integer.parseInt(arr[2]));
-
     }
 
     /**

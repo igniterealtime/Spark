@@ -359,9 +359,8 @@ public class CheckUpdates {
      * Checks Spark Manager and/or Jive Software for the latest version of Spark.
      *
      * @param explicit true if the user explicitly asks for the latest version.
-     * @throws Exception if there is an error during check
      */
-    public void checkForUpdate(boolean explicit) throws Exception {
+    public void checkForUpdate(boolean explicit) {
         if (UPDATING) {
             return;
         }

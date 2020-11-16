@@ -159,7 +159,7 @@ public class FileDragLabel extends JLabel implements DropTargetListener, DragSou
         @NotNull
         @Override
 		public synchronized Object getTransferData(DataFlavor flavor)
-            throws UnsupportedFlavorException, IOException {
+            throws UnsupportedFlavorException {
             if (flavor.equals(flavors[FILE])) {
                 return this;
             }

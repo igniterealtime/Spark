@@ -73,7 +73,7 @@ public class SparkTrustManager extends GeneralTrustManager implements X509TrustM
     }
 
     @Override
-    public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+    public void checkClientTrusted(X509Certificate[] chain, String authType) {
         throw new UnsupportedOperationException("This implementation cannot be used to validate client-provided certificate chains.");
     }
 
@@ -145,8 +145,7 @@ public class SparkTrustManager extends GeneralTrustManager implements X509TrustM
                             throw new CertificateException("Certificate is revoked");
                         }
                     }
-                } catch (InvalidAlgorithmParameterException | NoSuchAlgorithmException | CertStoreException
-                        | CRLException | IOException e) {
+                } catch (InvalidAlgorithmParameterException | NoSuchAlgorithmException | CRLException | IOException e) {
                     Log.warning("Couldn't load CRL");
                 }
             } else {
@@ -404,7 +403,7 @@ public class SparkTrustManager extends GeneralTrustManager implements X509TrustM
 
     
     public Collection<X509CRL> loadCRL(X509Certificate[] chain) throws IOException, InvalidAlgorithmParameterException,
-            NoSuchAlgorithmException, CertStoreException, CRLException, CertificateException {
+            NoSuchAlgorithmException, CRLException {
 
         // for each certificate in chain
         for (X509Certificate cert : chain) {
