@@ -38,7 +38,7 @@ public class TTTRes {
 		.getBundle("i18n/tictactoe_i18n");
     }
 
-    public static final String getString(String propertyName) {
+    public static String getString(String propertyName) {
 	try {
 	    return prb.getString(propertyName);
 	} catch (Exception e) {
