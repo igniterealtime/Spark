@@ -148,34 +148,30 @@ public class Workpane {
         ResourceUtils.resButton(historyButton, FpRes.getString("button.history"));
         toolbar.add(historyButton);
         historyButton.setIcon(FastpathRes.getImageIcon(FastpathRes.HISTORY_16x16));
-        historyButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                final ChatHistory chatHistory = new ChatHistory();
-                chatHistory.showDialog();
-            }
+
+        historyButton.addActionListener(e -> {
+            final ChatHistory chatHistory = new ChatHistory();
+            chatHistory.showDialog();
         });
 
         workgroupGroupButton = new RolloverButton();
         ResourceUtils.resButton(workgroupGroupButton, FpRes.getString("button.conference"));
         workgroupGroupButton.setIcon(FastpathRes.getImageIcon(FastpathRes.CONFERENCE_IMAGE_16x16));
         toolbar.add(workgroupGroupButton);
-        workgroupGroupButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                final Workgroup workgroup = FastpathPlugin.getWorkgroup();
-                String serviceName = "conference." + SparkManager.getSessionManager().getServerAddress();
-                final EntityBareJid roomName = JidCreate.entityBareFromOrThrowUnchecked("workgroup-" + workgroup.getWorkgroupJID().getLocalpartOrThrow() + "@" + serviceName);
-                ConferenceUtils.joinConferenceOnSeperateThread("Workgroup Chat", roomName, null);
-            }
-        });
 
+        workgroupGroupButton.addActionListener(e -> {
+            final Workgroup workgroup = FastpathPlugin.getWorkgroup();
+            String serviceName = "conference." + SparkManager.getSessionManager().getServerAddress();
+            final EntityBareJid roomName = JidCreate.entityBareFromOrThrowUnchecked("workgroup-" + workgroup.getWorkgroupJID().getLocalpartOrThrow() + "@" + serviceName);
+            ConferenceUtils.joinConferenceOnSeperateThread("Workgroup Chat", roomName, null);
+        });
 
         macrosButton = new RolloverButton(FastpathRes.getImageIcon(FastpathRes.NOTEBOOK_IMAGE));
         ResourceUtils.resButton(macrosButton, FpRes.getString("button.macros"));
-        macrosButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                MacrosEditor editor = new MacrosEditor();
-                editor.showEditor(macrosButton);
-            }
+
+        macrosButton.addActionListener(e -> {
+            MacrosEditor editor = new MacrosEditor();
+            editor.showEditor(macrosButton);
         });
         toolbar.add(macrosButton);
 
@@ -308,25 +304,14 @@ public class Workpane {
         room.getToolBar().addChatRoomButton(cobrowseButton);
         room.getToolBar().addChatRoomButton(endButton);
 
-        inviteButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                inviteOrTransfer(room, utils.getWorkgroup(), sessionID, false);
-            }
+        inviteButton.addActionListener(e -> inviteOrTransfer(room, utils.getWorkgroup(), sessionID, false));
+
+        cobrowseButton.addActionListener(e -> {
+            CoBrowser browser = new CoBrowser(sessionID, room);
+            browser.showDialog();
         });
 
-        cobrowseButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                CoBrowser browser = new CoBrowser(sessionID, room);
-                browser.showDialog();
-            }
-        });
-
-
-        transferButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent actionEvent) {
-                inviteOrTransfer(room, utils.getWorkgroup(), sessionID, true);
-            }
-        });
+        transferButton.addActionListener(actionEvent -> inviteOrTransfer(room, utils.getWorkgroup(), sessionID, true));
 
         room.getEditorBar().add(cannedResponses);
         cannedResponses.addMouseListener(new MouseAdapter() {
@@ -336,11 +321,9 @@ public class Workpane {
             }
         });
 
-        endButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent actionEvent) {
-                final GroupChatRoom groupChatRoom = (GroupChatRoom)room;
-                groupChatRoom.leaveChatRoom();
-            }
+        endButton.addActionListener(actionEvent -> {
+            final GroupChatRoom groupChatRoom = (GroupChatRoom)room;
+            groupChatRoom.leaveChatRoom();
         });
 
         // Set Room is Active
@@ -498,11 +481,7 @@ public class Workpane {
         private SparkToaster toasterManager;
 
         public void offerReceived(final Offer offer) {
-            SwingUtilities.invokeLater(new Runnable() {
-                public void run() {
-                    handleOffer(offer);
-                }
-            });
+            SwingUtilities.invokeLater(() -> handleOffer(offer));
         }
 
         private void handleOffer(final Offer offer) {
@@ -534,47 +513,41 @@ public class Workpane {
             toasterManager.showToaster("Incoming Fastpath Request", pane);
             toasterManager.hideTitle();
 
-            chatQueue.getAcceptButton().addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    toasterManager.close();
-                    chatQueue.setVisible(false);
+            chatQueue.getAcceptButton().addActionListener(e -> {
+                toasterManager.close();
+                chatQueue.setVisible(false);
 
-                    offerMap.put(offer.getSessionID(), offer);
-                    try
-                    {
-                        offer.accept();
-                    }
-                    catch ( SmackException.NotConnectedException | InterruptedException e1 )
-                    {
-                        Log.warning( "Unable to accept offer from " + offer.getUserJID(), e1 );
-                    }
+                offerMap.put(offer.getSessionID(), offer);
+                try
+                {
+                    offer.accept();
+                }
+                catch ( SmackException.NotConnectedException | InterruptedException e1 )
+                {
+                    Log.warning( "Unable to accept offer from " + offer.getUserJID(), e1 );
                 }
             });
 
-            chatQueue.getDeclineButton().addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    toasterManager.close();
-                    chatQueue.setVisible(false);
-                    try
-                    {
-                        offer.reject();
-                    }
-                    catch ( SmackException.NotConnectedException | InterruptedException e1 )
-                    {
-                        Log.warning( "Unable to reject offer from " + offer.getUserJID(), e1 );
-                    }
-                    SparkManager.getWorkspace().remove(chatQueue);
-                    offerMap.remove(offer.getSessionID());
+            chatQueue.getDeclineButton().addActionListener(e -> {
+                toasterManager.close();
+                chatQueue.setVisible(false);
+                try
+                {
+                    offer.reject();
                 }
+                catch ( SmackException.NotConnectedException | InterruptedException e1 )
+                {
+                    Log.warning( "Unable to reject offer from " + offer.getUserJID(), e1 );
+                }
+                SparkManager.getWorkspace().remove(chatQueue);
+                offerMap.remove(offer.getSessionID());
             });
 
-            final Runnable soundThread = new Runnable() {
-                public void run() {
-                    URL url = SoundsRes.getURL(SoundsRes.INCOMING_USER);
-                    if (url != null) {
-                        final AudioClip clip = Applet.newAudioClip(url);
-                        SparkManager.getSoundManager().playClip(clip);
-                    }
+            final Runnable soundThread = () -> {
+                URL url = SoundsRes.getURL(SoundsRes.INCOMING_USER);
+                if (url != null) {
+                    final AudioClip clip = Applet.newAudioClip(url);
+                    SparkManager.getSoundManager().playClip(clip);
                 }
             };
 
@@ -582,24 +555,22 @@ public class Workpane {
         }
 
         public void offerRevoked(final RevokedOffer revokedOffer) {
-            SwingUtilities.invokeLater(new Runnable() {
-                public void run() {
-                    SparkManager.getNativeManager().stopFlashing(SparkManager.getMainWindow());
-                    if (toasterManager != null) {
-                        toasterManager.close();
-                    }
+            SwingUtilities.invokeLater(() -> {
+                SparkManager.getNativeManager().stopFlashing(SparkManager.getMainWindow());
+                if (toasterManager != null) {
+                    toasterManager.close();
+                }
 
-                    // If the ChatQueue is visible, dispose of it.
-                    if (chatQueue != null) {
-                        chatQueue.setVisible(false);
-                        return;
-                    }
+                // If the ChatQueue is visible, dispose of it.
+                if (chatQueue != null) {
+                    chatQueue.setVisible(false);
+                    return;
+                }
 
-                    UserInvitationPane pane = invitations.get(revokedOffer.getSessionID());
-                    if (pane != null) {
-                        pane.dispose();
-                        invitations.remove(revokedOffer.getSessionID());
-                    }
+                UserInvitationPane pane = invitations.get(revokedOffer.getSessionID());
+                if (pane != null) {
+                    pane.dispose();
+                    invitations.remove(revokedOffer.getSessionID());
                 }
             });
         }

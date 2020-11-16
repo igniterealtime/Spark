@@ -173,63 +173,59 @@ public class ReversiPlugin implements Plugin {
         final JButton acceptButton = new JButton("Accept");
         final JButton declineButton = new JButton("Decline");
 
-        acceptButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                // Accept the game offer by sending a positive reply packet.
-                GameOffer reply = new GameOffer();
-                reply.setTo(invitation.getFrom());
-                reply.setStanzaId(invitation.getStanzaId());
-                reply.setType(IQ.Type.result);
-                try
-                {
-                    SparkManager.getConnection().sendStanza(reply);
-                }
-                catch ( SmackException.NotConnectedException | InterruptedException e1 )
-                {
-                    Log.warning( "Unable to accept game offer from " + invitation.getFrom(), e1 );
-                }
-
-                // Hide the response panel. TODO: make this work.
-                room.getTranscriptWindow().remove(inviteAlert);
-                inviteAlert.remove(1);
-                inviteAlert.add(new JLabel("Starting game..."), BorderLayout.CENTER);
-                declineButton.setEnabled(false);
-                acceptButton.setEnabled(false);
-                // Remove the invitation from the map.
-                gameInvitations.remove(invitation.getFrom());
-                // Show the game board.
-                showReversiBoard(invitation.getGameID(), room, !invitation.isStartingPlayer(), invitation.getFrom());
+        acceptButton.addActionListener(e -> {
+            // Accept the game offer by sending a positive reply packet.
+            GameOffer reply = new GameOffer();
+            reply.setTo(invitation.getFrom());
+            reply.setStanzaId(invitation.getStanzaId());
+            reply.setType(IQ.Type.result);
+            try
+            {
+                SparkManager.getConnection().sendStanza(reply);
             }
+            catch ( SmackException.NotConnectedException | InterruptedException e1 )
+            {
+                Log.warning( "Unable to accept game offer from " + invitation.getFrom(), e1 );
+            }
+
+            // Hide the response panel. TODO: make this work.
+            room.getTranscriptWindow().remove(inviteAlert);
+            inviteAlert.remove(1);
+            inviteAlert.add(new JLabel("Starting game..."), BorderLayout.CENTER);
+            declineButton.setEnabled(false);
+            acceptButton.setEnabled(false);
+            // Remove the invitation from the map.
+            gameInvitations.remove(invitation.getFrom());
+            // Show the game board.
+            showReversiBoard(invitation.getGameID(), room, !invitation.isStartingPlayer(), invitation.getFrom());
         });
         buttonPanel.add(acceptButton);
 
         // The decline button. When clicked, reject the game offer.
 
-        declineButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                // Reject the game offer by sending an error packet.
-                GameOffer reply = new GameOffer();
-                reply.setTo(invitation.getFrom());
-                reply.setStanzaId(invitation.getStanzaId());
-                reply.setType(IQ.Type.error);
-                reply.setError(StanzaError.getBuilder().setCondition(StanzaError.Condition.undefined_condition).setDescriptiveEnText("User declined your request."));
-                try
-                {
-                    SparkManager.getConnection().sendStanza(reply);
-                }
-                catch ( SmackException.NotConnectedException | InterruptedException e1 )
-                {
-                    Log.warning( "Unable to decline game offer from " + invitation.getFrom(), e1 );
-                }
-
-                // Hide the response panel. TODO: make this work.
-                room.getTranscriptWindow().remove(inviteAlert);
-
-                declineButton.setVisible(false);
-                acceptButton.setVisible(false);
-                // Remove the invitation from the map.
-                gameInvitations.remove(invitation.getFrom());
+        declineButton.addActionListener(e -> {
+            // Reject the game offer by sending an error packet.
+            GameOffer reply = new GameOffer();
+            reply.setTo(invitation.getFrom());
+            reply.setStanzaId(invitation.getStanzaId());
+            reply.setType(IQ.Type.error);
+            reply.setError(StanzaError.getBuilder().setCondition(StanzaError.Condition.undefined_condition).setDescriptiveEnText("User declined your request."));
+            try
+            {
+                SparkManager.getConnection().sendStanza(reply);
             }
+            catch ( SmackException.NotConnectedException | InterruptedException e1 )
+            {
+                Log.warning( "Unable to decline game offer from " + invitation.getFrom(), e1 );
+            }
+
+            // Hide the response panel. TODO: make this work.
+            room.getTranscriptWindow().remove(inviteAlert);
+
+            declineButton.setVisible(false);
+            acceptButton.setVisible(false);
+            // Remove the invitation from the map.
+            gameInvitations.remove(invitation.getFrom());
         });
         buttonPanel.add(declineButton);
         content.add(buttonPanel, BorderLayout.SOUTH);
@@ -269,104 +265,102 @@ public class ReversiPlugin implements Plugin {
 
                 // Add a button listener that sends out a game invite on a user
                 // click.
-                button.addActionListener(new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        // Show "requesting a game panel"
-                        final JPanel request = new JPanel();
-                        request.setLayout(new BorderLayout());
-                        JPanel requestPanel = new JPanel() {
-                            private static final long serialVersionUID = 4490592207923738251L;
+                button.addActionListener(e -> {
+                    // Show "requesting a game panel"
+                    final JPanel request = new JPanel();
+                    request.setLayout(new BorderLayout());
+                    JPanel requestPanel = new JPanel() {
+                        private static final long serialVersionUID = 4490592207923738251L;
 
-                            protected void paintComponent(Graphics g) {
-                                g.drawImage(icon.getImage(), 0, 0, null);
-                            }
-                        };
-                        requestPanel.setPreferredSize(new Dimension(24, 24));
-                        request.add(requestPanel, BorderLayout.WEST);
-
-                        EntityFullJid opponentJID = ((ChatRoomImpl) room).getJID();
-                        String opponentName = "[" + opponentJID + "]"; // TODO:
-                                                                       // convert
-                                                                       // to
-                                                                       // more
-                                                                       // readable
-                                                                       // name.
-
-                        final JPanel content = new JPanel(new BorderLayout());
-                        final JLabel label = new JLabel("Requesting a Reversi game with " + opponentName + ", please wait..."); 
-                        content.add(label, BorderLayout.CENTER);
-                        JPanel buttonPanel = new JPanel();
-                        final JButton cancelButton = new JButton("Cancel");
-                        cancelButton.addActionListener(new ActionListener() {
-
-                            @Override
-                            public void actionPerformed(ActionEvent e) {
-                               GameOffer reply = new GameOffer();
-                               reply.setTo(((ChatRoomImpl) room).getJID());
-                               reply.setType(IQ.Type.error);
-                               reply.setError(StanzaError.getBuilder().setCondition(StanzaError.Condition.undefined_condition).setDescriptiveEnText("User cancelled the invitation."));
-
-                               try
-                               {
-                                   SparkManager.getConnection().sendStanza(reply);
-                               }
-                               catch ( SmackException.NotConnectedException | InterruptedException e1 )
-                               {
-                                   Log.warning( "Unable to send invitation cancellation to " + reply.getTo(), e1 );
-                               }
-                               cancelButton.setText("Canceled");
-                               cancelButton.setEnabled(false);
-                            }
-                        });
-                        buttonPanel.add(cancelButton, BorderLayout.SOUTH);
-                        content.add(buttonPanel, BorderLayout.SOUTH);
-                        request.add(content, BorderLayout.CENTER);
-                        room.getTranscriptWindow().addComponent(request);
-
-                        final GameOffer offer = new GameOffer();
-                        offer.setTo(opponentJID);
-
-                        // Add a listener for a reply to our offer.
-                        SparkManager.getConnection().addAsyncStanzaListener(new StanzaListener() {
-                            @Override
-                            public void processStanza(Stanza stanza) {
-
-                                if (stanza.getError() != null) {
-                                    cancelButton.setVisible(false);
-                                    JPanel userDeclinedPanel = new JPanel(new BorderLayout());
-                                    JLabel userDeclined = new JLabel("User declined...");
-                                    userDeclinedPanel.add(userDeclined, BorderLayout.SOUTH);
-                                    request.add(userDeclinedPanel, BorderLayout.SOUTH);
-                                    return;
-                                }
-
-                                GameOffer offerReply = ((GameOffer) stanza);
-
-                                if (offerReply.getType() == IQ.Type.result) {
-                                    // Remove the offer panel
-                                    room.getTranscriptWindow().remove(request);
-                                    content.remove(1);
-                                    label.setText("Starting game...");
-                                    // Show game board (using original offer!).
-                                    showReversiBoard(offer.getGameID(), room, offer.isStartingPlayer(), offerReply.getFrom());
-                                } else if (offerReply.getType() == IQ.Type.error) {
-                                    cancelButton.setVisible(false);
-                                    JPanel userDeclinedPanel = new JPanel(new BorderLayout());
-                                    JLabel userDeclined = new JLabel("User declined...");
-                                    userDeclinedPanel.add(userDeclined, BorderLayout.SOUTH);
-                                    request.add(userDeclinedPanel, BorderLayout.SOUTH);
-                                }
-                            }
-                        }, new StanzaIdFilter(offer.getStanzaId()));
-
-                        try
-                        {
-                            SparkManager.getConnection().sendStanza(offer);
+                        protected void paintComponent(Graphics g) {
+                            g.drawImage(icon.getImage(), 0, 0, null);
                         }
-                        catch ( SmackException.NotConnectedException | InterruptedException e1 )
-                        {
-                            Log.warning( "Unable to send invitation to " + offer.getTo(), e1 );
+                    };
+                    requestPanel.setPreferredSize(new Dimension(24, 24));
+                    request.add(requestPanel, BorderLayout.WEST);
+
+                    EntityFullJid opponentJID = ((ChatRoomImpl) room).getJID();
+                    String opponentName = "[" + opponentJID + "]"; // TODO:
+                                                                   // convert
+                                                                   // to
+                                                                   // more
+                                                                   // readable
+                                                                   // name.
+
+                    final JPanel content = new JPanel(new BorderLayout());
+                    final JLabel label = new JLabel("Requesting a Reversi game with " + opponentName + ", please wait...");
+                    content.add(label, BorderLayout.CENTER);
+                    JPanel buttonPanel = new JPanel();
+                    final JButton cancelButton = new JButton("Cancel");
+                    cancelButton.addActionListener(new ActionListener() {
+
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                           GameOffer reply = new GameOffer();
+                           reply.setTo(((ChatRoomImpl) room).getJID());
+                           reply.setType(IQ.Type.error);
+                           reply.setError(StanzaError.getBuilder().setCondition(StanzaError.Condition.undefined_condition).setDescriptiveEnText("User cancelled the invitation."));
+
+                           try
+                           {
+                               SparkManager.getConnection().sendStanza(reply);
+                           }
+                           catch ( SmackException.NotConnectedException | InterruptedException e1 )
+                           {
+                               Log.warning( "Unable to send invitation cancellation to " + reply.getTo(), e1 );
+                           }
+                           cancelButton.setText("Canceled");
+                           cancelButton.setEnabled(false);
                         }
+                    });
+                    buttonPanel.add(cancelButton, BorderLayout.SOUTH);
+                    content.add(buttonPanel, BorderLayout.SOUTH);
+                    request.add(content, BorderLayout.CENTER);
+                    room.getTranscriptWindow().addComponent(request);
+
+                    final GameOffer offer = new GameOffer();
+                    offer.setTo(opponentJID);
+
+                    // Add a listener for a reply to our offer.
+                    SparkManager.getConnection().addAsyncStanzaListener(new StanzaListener() {
+                        @Override
+                        public void processStanza(Stanza stanza) {
+
+                            if (stanza.getError() != null) {
+                                cancelButton.setVisible(false);
+                                JPanel userDeclinedPanel = new JPanel(new BorderLayout());
+                                JLabel userDeclined = new JLabel("User declined...");
+                                userDeclinedPanel.add(userDeclined, BorderLayout.SOUTH);
+                                request.add(userDeclinedPanel, BorderLayout.SOUTH);
+                                return;
+                            }
+
+                            GameOffer offerReply = ((GameOffer) stanza);
+
+                            if (offerReply.getType() == IQ.Type.result) {
+                                // Remove the offer panel
+                                room.getTranscriptWindow().remove(request);
+                                content.remove(1);
+                                label.setText("Starting game...");
+                                // Show game board (using original offer!).
+                                showReversiBoard(offer.getGameID(), room, offer.isStartingPlayer(), offerReply.getFrom());
+                            } else if (offerReply.getType() == IQ.Type.error) {
+                                cancelButton.setVisible(false);
+                                JPanel userDeclinedPanel = new JPanel(new BorderLayout());
+                                JLabel userDeclined = new JLabel("User declined...");
+                                userDeclinedPanel.add(userDeclined, BorderLayout.SOUTH);
+                                request.add(userDeclinedPanel, BorderLayout.SOUTH);
+                            }
+                        }
+                    }, new StanzaIdFilter(offer.getStanzaId()));
+
+                    try
+                    {
+                        SparkManager.getConnection().sendStanza(offer);
+                    }
+                    catch ( SmackException.NotConnectedException | InterruptedException e1 )
+                    {
+                        Log.warning( "Unable to send invitation to " + offer.getTo(), e1 );
                     }
                 });
 

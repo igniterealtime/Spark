@@ -249,9 +249,7 @@ public class SparkTransferManager {
                 filePath = filePath.replaceAll(" ", "%20");
                 URL url = new URL(filePath);
                 uri = url.toURI();
-            } catch (MalformedURLException ex) {
-                ex.printStackTrace();
-            } catch (URISyntaxException ex) {
+            } catch (MalformedURLException | URISyntaxException ex) {
                 ex.printStackTrace();
             }
         } else {
@@ -288,7 +286,7 @@ public class SparkTransferManager {
         final ReceiveFileTransfer receivingMessageUI = new ReceiveFileTransfer(chatRoom);
         receivingMessageUI.acceptFileTransfer(request);
 
-        chatRoom.addClosingListener( () -> receivingMessageUI.cancelTransfer() );
+        chatRoom.addClosingListener(receivingMessageUI::cancelTransfer);
         
         transcriptWindow.addComponent(receivingMessageUI);
 
@@ -676,10 +674,7 @@ public class SparkTransferManager {
                 return (BufferedImage)t.getTransferData(DataFlavor.imageFlavor);
             }
         }
-        catch (UnsupportedFlavorException e) {
-            // Nothing to do
-        }
-        catch (IOException e) {
+        catch (UnsupportedFlavorException | IOException e) {
             // Nothing to do
         }
         return null;

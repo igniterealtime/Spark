@@ -158,15 +158,11 @@ public class BroadcastHistoryFrame extends javax.swing.JFrame {
         
     }//GEN-LAST:event_SearchButtonMouseClicked
     public void run() {
-    java.awt.EventQueue.invokeLater(new Runnable() {
-            @Override
-			public void run() {
-               BroadcastHistoryFrame frame= new BroadcastHistoryFrame();
-               frame.setVisible(true);
-               frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-            }
-            
-        });
+    java.awt.EventQueue.invokeLater(() -> {
+       BroadcastHistoryFrame frame= new BroadcastHistoryFrame();
+       frame.setVisible(true);
+       frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+    });
 }
     /**
      * @param args the command line arguments

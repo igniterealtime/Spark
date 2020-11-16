@@ -146,24 +146,22 @@ public class WorkgroupInvitationDialog implements PropertyChangeListener {
         tree.setExpandsSelectedPaths(true);
 
 
-        tree.addTreeSelectionListener(new TreeSelectionListener() {
-            public void valueChanged(TreeSelectionEvent e) {
-                TreePath path = e.getNewLeadSelectionPath();
-                Object o = path.getLastPathComponent();
-                if (o instanceof JiveTreeNode) {
-                    JiveTreeNode node = (JiveTreeNode)o;
-                    JiveTreeNode parentNode = (JiveTreeNode)node.getParent();
-                    if (parentNode == workgroupsNode) {
-                        jidField.setText(node.getUserObject().toString() + "@" + workgroupService);
-                    }
-                    else if (parentNode == queueNode) {
-                        jidField.setText(FastpathPlugin.getWorkgroup().getWorkgroupJID() + "/" + node.getUserObject().toString());
-                    }
-                    else {
-                        EntityBareJid agent = getAgent();
-                        if (agent != null) {
-                            jidField.setText(agent.toString());
-                        }
+        tree.addTreeSelectionListener(e -> {
+            TreePath path = e.getNewLeadSelectionPath();
+            Object o = path.getLastPathComponent();
+            if (o instanceof JiveTreeNode) {
+                JiveTreeNode node = (JiveTreeNode)o;
+                JiveTreeNode parentNode = (JiveTreeNode)node.getParent();
+                if (parentNode == workgroupsNode) {
+                    jidField.setText(node.getUserObject().toString() + "@" + workgroupService);
+                }
+                else if (parentNode == queueNode) {
+                    jidField.setText(FastpathPlugin.getWorkgroup().getWorkgroupJID() + "/" + node.getUserObject().toString());
+                }
+                else {
+                    EntityBareJid agent = getAgent();
+                    if (agent != null) {
+                        jidField.setText(agent.toString());
                     }
                 }
             }

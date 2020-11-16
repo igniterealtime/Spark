@@ -199,9 +199,7 @@ public class LocalPreferences {
         final Set<String> propertyNames = findPropertyNamesForStoredPasswords();
 
         // Remove all of the properties that are a stored password.
-        propertyNames.forEach(
-            name -> props.remove(name)
-        );
+        propertyNames.forEach(props::remove);
 	}
 
     /**

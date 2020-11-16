@@ -202,13 +202,11 @@ public class ApplePlugin implements Plugin, NativeHandler {
 	    }
 	});
 
-	SparkManager.getSessionManager().addPresenceListener(new PresenceListener() {
-	    public void presenceChanged(Presence presence) {
-		if (presence.isAvailable() && !presence.isAway()) {
-		    lastActive = System.currentTimeMillis();
-		}
-	    }
-	});
+        SparkManager.getSessionManager().addPresenceListener(presence -> {
+            if (presence.isAvailable() && !presence.isAway()) {
+                lastActive = System.currentTimeMillis();
+            }
+        });
 
 	final Timer timer = new Timer();
 	timer.scheduleAtFixedRate(new TimerTask() {
@@ -295,13 +293,11 @@ public class ApplePlugin implements Plugin, NativeHandler {
     }
 
     public boolean launchBrowser(String url) {
-	try {
-	    BrowserLauncher.openURL(url);
-	} catch (IOException e) {
-	    Log.error(e);
-	} catch (Exception e) {
-	    Log.error(e);
-	}
-	return true;
+        try {
+            BrowserLauncher.openURL(url);
+        } catch (Exception e) {
+            Log.error(e);
+        }
+        return true;
     }
 }

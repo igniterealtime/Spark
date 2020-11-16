@@ -956,7 +956,7 @@ public class ContactList extends JPanel implements ActionListener,
     private void addContactGroup(ContactGroup group) {
         groupList.add(group);
 
-        Collections.sort(groupList, GROUP_COMPARATOR);
+        groupList.sort(GROUP_COMPARATOR);
 
         try {
             mainPanel.add(group, groupList.indexOf(group));
@@ -1073,7 +1073,7 @@ public class ContactList extends JPanel implements ActionListener,
 
         groupList.add(rootGroup);
 
-        Collections.sort(tempList, GROUP_COMPARATOR);
+        tempList.sort(GROUP_COMPARATOR);
 
         int loc = tempList.indexOf(rootGroup);
 
@@ -1760,7 +1760,7 @@ public class ContactList extends JPanel implements ActionListener,
             }
         };
 
-        SwingUtilities.invokeLater(() -> loadContactList());
+        SwingUtilities.invokeLater(this::loadContactList);
         TaskEngine.getInstance().submit(sharedGroupLoader);
     }
 
@@ -2046,7 +2046,7 @@ public class ContactList extends JPanel implements ActionListener,
 
     public List<ContactGroup> getContactGroups() {
         final List<ContactGroup> gList = new ArrayList<>(groupList);
-        Collections.sort(gList, GROUP_COMPARATOR);
+        gList.sort(GROUP_COMPARATOR);
         return gList;
     }
 
@@ -2520,7 +2520,7 @@ public class ContactList extends JPanel implements ActionListener,
     /**
      * Sorts ContactItems.
      */
-    public final static Comparator<ContactItem> ContactItemComparator = (item1, item2) -> item1.getDisplayName().toLowerCase().compareTo(item2.getDisplayName().toLowerCase());
+    public final static Comparator<ContactItem> ContactItemComparator = Comparator.comparing(item -> item.getDisplayName().toLowerCase());
 
     public void showAddContact(String contact) {
         addContactMenu.doClick();

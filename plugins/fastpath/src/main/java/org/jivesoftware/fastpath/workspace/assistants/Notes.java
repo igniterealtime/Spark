@@ -139,11 +139,9 @@ public class Notes extends JPanel {
         statusLabel = new JLabel();
         this.add(statusLabel, BorderLayout.SOUTH);
 
-        chatRoom.addClosingListener(new ChatRoomClosingListener() {
-            public void closing() {
-                if (updated) {
-                    saveNotes();
-                }
+        chatRoom.addClosingListener(() -> {
+            if (updated) {
+                saveNotes();
             }
         });
     }
