@@ -187,20 +187,17 @@ public class UserIdlePlugin extends TimerTask implements Plugin {
 	public static class LockListener {
 
 		public void intWinLockListener() {
-			new Thread(() -> {
-				new WinLockListener() {
-					@Override
-					protected void onMachineLocked(int sessionId) {
-						IsLocked = true;
-					}
+			new Thread(() -> new WinLockListener() {
+                @Override
+                protected void onMachineLocked(int sessionId) {
+                    IsLocked = true;
+                }
 
-					@Override
-					protected void onMachineUnlocked(int sessionId) {
-						IsLocked = false;
-					}
-				};
-
-			}).start();
+                @Override
+                protected void onMachineUnlocked(int sessionId) {
+                    IsLocked = false;
+                }
+            }).start();
 		}
 
 	}

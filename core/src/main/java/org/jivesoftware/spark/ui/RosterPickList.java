@@ -79,7 +79,7 @@ public class RosterPickList extends JPanel {
         }
 
         // Sort Users
-        Collections.sort(userList, itemComparator);
+        userList.sort(itemComparator);
 
         for (ContactItem item : userList) {
             model.addElement(item);

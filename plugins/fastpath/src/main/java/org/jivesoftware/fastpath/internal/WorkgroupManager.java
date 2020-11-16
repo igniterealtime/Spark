@@ -224,22 +224,18 @@ public class WorkgroupManager {
         formUI.add(titlePane, new GridBagConstraints(0, 0, 3, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
 
         final JButton submitButton = new JButton("Start Chat!");
-        submitButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                if (validateForm(workgroupDialog, workgroupForm, formUI.getFilledForm())) {
-                    enterQueue(contactItem.getJid().asEntityBareJidOrThrow(), formUI.getFilledForm());
-                    workgroupDialog.dispose();
-                }
+        submitButton.addActionListener(e -> {
+            if (validateForm(workgroupDialog, workgroupForm, formUI.getFilledForm())) {
+                enterQueue(contactItem.getJid().asEntityBareJidOrThrow(), formUI.getFilledForm());
+                workgroupDialog.dispose();
             }
         });
 
 
-        formUI.setEnterListener(new WorkgroupDataForm.EnterListener() {
-            public void enterPressed() {
-                if (validateForm(workgroupDialog, workgroupForm, formUI.getFilledForm())) {
-                    enterQueue(contactItem.getJid().asEntityBareJidOrThrow(), formUI.getFilledForm());
-                    workgroupDialog.dispose();
-                }
+        formUI.setEnterListener(() -> {
+            if (validateForm(workgroupDialog, workgroupForm, formUI.getFilledForm())) {
+                enterQueue(contactItem.getJid().asEntityBareJidOrThrow(), formUI.getFilledForm());
+                workgroupDialog.dispose();
             }
         });
 
@@ -327,16 +323,15 @@ public class WorkgroupManager {
 
         final JButton leaveQueueButton = new JButton("Leave Queue");
         mainPanel.add(queueWaitTime, new GridBagConstraints(0, 3, 4, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-        leaveQueueButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                if (workgroup.isInQueue()) {
-                    try {
-                        invites.add(workgroup.getWorkgroupJID());
-                        workgroup.departQueue();
-                    }
-                    catch (XMPPException | SmackException | InterruptedException e1) {
-                        Log.error(e1);
-                    }
+
+        leaveQueueButton.addActionListener(e -> {
+            if (workgroup.isInQueue()) {
+                try {
+                    invites.add(workgroup.getWorkgroupJID());
+                    workgroup.departQueue();
+                }
+                catch (XMPPException | SmackException | InterruptedException e1) {
+                    Log.error(e1);
                 }
             }
         });

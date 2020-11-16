@@ -189,34 +189,26 @@ public class UserInvitationPane {
         });
 
 
-        acceptButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent actionEvent) {
-
-                final TimerTask loadRoomTask = new SwingTimerTask() {
-                    public void doRun() {
-                        try
-                        {
-                            offer.accept();
-                        }
-                        catch ( SmackException.NotConnectedException | InterruptedException e1 )
-                        {
-                            Log.warning( "Unable to accept offer " + offer, e1 );
-                        }
-                        closeToaster();
-                        startFastpathChat(fullRoomJID, request.getUsername());
+        acceptButton.addActionListener(actionEvent -> {
+            final TimerTask loadRoomTask = new SwingTimerTask() {
+                public void doRun() {
+                    try
+                    {
+                        offer.accept();
                     }
-                };
-
-                TaskEngine.getInstance().schedule(loadRoomTask, 100);
-            }
+                    catch ( SmackException.NotConnectedException | InterruptedException e1 )
+                    {
+                        Log.warning( "Unable to accept offer " + offer, e1 );
+                    }
+                    closeToaster();
+                    startFastpathChat(fullRoomJID, request.getUsername());
+                }
+            };
+            TaskEngine.getInstance().schedule(loadRoomTask, 100);
         });
 
 
-        rejectButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent actionEvent) {
-                rejectOffer();
-            }
-        });
+        rejectButton.addActionListener(actionEvent -> rejectOffer());
 
         // Start progress bart
         final Date endTime = offer.getExpiresDate();
@@ -226,7 +218,6 @@ public class UserInvitationPane {
         int seconds = (int)(mill / 1000);
         progressBar.setMaximum(seconds);
         progressBar.setValue(seconds);
-
 
         SwingWorker worker = new SwingWorker() {
             public Object construct() {

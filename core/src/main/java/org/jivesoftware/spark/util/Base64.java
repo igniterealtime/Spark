@@ -18,6 +18,8 @@ package org.jivesoftware.spark.util;
 import org.jetbrains.annotations.NotNull;
 import org.jivesoftware.spark.util.log.Log;
 
+import java.io.IOException;
+
 /**
  * Used to encrypt and decrypt bytes -- string using Base64 encoding and decoding.
  */
@@ -694,16 +696,12 @@ public class Base64 {
                     bytes != null && // In case decoding returned null
                             bytes.length >= 4 && // Don't want to get ArrayIndexOutOfBounds exception
                             java.util.zip.GZIPInputStream.GZIP_MAGIC == head) {
-                java.io.ByteArrayInputStream bais = null;
-                java.util.zip.GZIPInputStream gzis = null;
-                java.io.ByteArrayOutputStream baos = null;
                 byte[] buffer = new byte[2048];
                 int length;
 
-                try {
-                    baos = new java.io.ByteArrayOutputStream();
-                    bais = new java.io.ByteArrayInputStream(bytes);
-                    gzis = new java.util.zip.GZIPInputStream(bais);
+                try (java.io.ByteArrayOutputStream baos = new java.io.ByteArrayOutputStream();
+                     java.io.ByteArrayInputStream bais = new java.io.ByteArrayInputStream(bytes);
+                     java.util.zip.GZIPInputStream gzis = new java.util.zip.GZIPInputStream(bais)) {
 
                     while ((length = gzis.read(buffer)) >= 0) {
                         baos.write(buffer, 0, length);
@@ -712,31 +710,9 @@ public class Base64 {
                     // No error? Get new bytes.
                     bytes = baos.toByteArray();
 
-                }   // end try
-                catch (java.io.IOException e) {
+                } catch (java.io.IOException e) {
                     // Just return originally-decoded bytes
-                }   // end catch
-                finally {
-                    try {
-                        baos.close();
-                    }
-                    catch (Exception e) {
-                        // Nothing to do
-                    }
-                    try {
-                        gzis.close();
-                    }
-                    catch (Exception e) {
-                        // Nothing to do
-                    }
-                    try {
-                        bais.close();
-                    }
-                    catch (Exception e) {
-                        // Nothing to do
-                    }
-                }   // end finally
-
+                }
             }   // end if: gzipped
         }   // end if: bytes.length >= 2
 
@@ -766,14 +742,11 @@ public class Base64 {
 
             obj = ois.readObject();
         }   // end try
-        catch (java.io.IOException e) {
+        catch (IOException | ClassNotFoundException e) {
             Log.error(e);
             obj = null;
         }   // end catch
-        catch (java.lang.ClassNotFoundException e) {
-            Log.error(e);
-            obj = null;
-        }   // end catch
+        // end catch
         finally {
             try {
                 if (bais != null)

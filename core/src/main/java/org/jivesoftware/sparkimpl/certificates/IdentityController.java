@@ -229,13 +229,9 @@ public class IdentityController extends CertManager {
     @Override
     public void refreshCertTable() {
         createTableModel();
-        SwingUtilities.invokeLater(new Runnable() {
-
-            @Override
-            public void run() {
-                MutualAuthenticationSettingsPanel.getIdTable().setModel(tableModel);
-                tableModel.fireTableDataChanged();
-            }
+        SwingUtilities.invokeLater(() -> {
+            MutualAuthenticationSettingsPanel.getIdTable().setModel(tableModel);
+            tableModel.fireTableDataChanged();
         });
     }
 

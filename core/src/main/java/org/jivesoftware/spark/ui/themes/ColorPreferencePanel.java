@@ -106,7 +106,7 @@ public class ColorPreferencePanel extends SparkTabbedPane {
     _errorlabel.setText("");
     } );
 	
-	savebutton.addActionListener( e -> savebuttonaction(e) );
+	savebutton.addActionListener(this::savebuttonaction);
 	
 	restoreDefaults.addActionListener( e -> {
     ColorSettingManager.restoreDefault();

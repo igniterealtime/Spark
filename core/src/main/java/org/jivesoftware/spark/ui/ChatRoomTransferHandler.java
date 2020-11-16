@@ -87,10 +87,7 @@ public class ChatRoomTransferHandler extends TransferHandler {
                     return true;
                 }
             }
-            catch (UnsupportedFlavorException e) {
-                Log.error(e);
-            }
-            catch (IOException e) {
+            catch (UnsupportedFlavorException | IOException e) {
                 Log.error(e);
             }
         }

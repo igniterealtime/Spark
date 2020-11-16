@@ -104,42 +104,29 @@ public class Engine {
 					}
 				});
 
-		new Thread() {
+		new Thread(errorStreamReader::read).start();
 
-			@Override
-			public void run() {
-				errorStreamReader.read();
-			}
+        new Thread(() -> {
+            try {
+                streamReader.read();
 
-		}.start();
+                final int returnValue = process.waitFor();
 
-		new Thread() {
+                //while (lastOutput.get() == 0 && new Date().getTime() - startTime < 500) {
+                //	Thread.sleep(10);
+                //}
 
-			@Override
-			public void run() {
-				try {
-					streamReader.read();
+                //while ( new Date().getTime() - lastOutput.get() < 1000) {
+                //	System.out.println("DELAY ... "+(new Date().getTime() - lastOutput.get()));
+                //	Thread.sleep(500);
+                //}
+                //System.out.println("processes finished with "+returnValue);
 
-					final int returnValue = process.waitFor();
-
-					//while (lastOutput.get() == 0 && new Date().getTime() - startTime < 500) {
-					//	Thread.sleep(10);
-					//}
-
-					//while ( new Date().getTime() - lastOutput.get() < 1000) {
-					//	System.out.println("DELAY ... "+(new Date().getTime() - lastOutput.get()));
-					//	Thread.sleep(500);
-					//}
-					//System.out.println("processes finished with "+returnValue);
-
-					listener.onProcessQuit(returnValue);
-				} catch (final InterruptedException e) {
-					listener.onError(e);
-                }
-
-			}
-
-		}.start();
+                listener.onProcessQuit(returnValue);
+            } catch (final InterruptedException e) {
+                listener.onError(e);
+            }
+        }).start();
 
 		return new XProcess() {
 

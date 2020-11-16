@@ -121,68 +121,60 @@ public class TicTacToePlugin implements Plugin {
 
 		final EntityFullJid opponentJID = ((ChatRoomImpl) room).getJID();
 
-		sendGameButton.addActionListener(new ActionListener() {
+            sendGameButton.addActionListener(e -> {
 
-		    @Override
-		    public void actionPerformed(ActionEvent e) {
-			
-			if(_currentInvitations.contains(opponentJID.asBareJid()))
-			{
-			    return;
-			}
-			
-			final GameOfferPacket offer = new GameOfferPacket();
-			offer.setTo(opponentJID);
-			offer.setType(IQ.Type.get );
-			
-			_currentInvitations.add(opponentJID.asEntityBareJid());
-			room.getTranscriptWindow().insertCustomText
-			    (TTTRes.getString("ttt.request.sent"), false, false, Color.BLUE);
-				try
-				{
-					SparkManager.getConnection().sendStanza(offer);
-				}
-				catch ( SmackException.NotConnectedException | InterruptedException e1 )
-				{
-					Log.warning( "Unable to send offer to " + opponentJID, e1 );
-				}
+                if (_currentInvitations.contains(opponentJID.asBareJid())) {
+                    return;
+                }
 
-				SparkManager.getConnection().addAsyncStanzaListener(
-				new StanzaListener() {
-				    @Override
-				    public void processStanza(Stanza stanza) {
+                final GameOfferPacket offer = new GameOfferPacket();
+                offer.setTo(opponentJID);
+                offer.setType(IQ.Type.get);
 
-                    if (stanza.getError() != null) {
-                        room.getTranscriptWindow().insertCustomText
-                            (TTTRes.getString("ttt.request.decline"), false, false, Color.RED);
-                        _currentInvitations.remove(opponentJID.asBareJid());
-                        return;
-                    }
+                _currentInvitations.add(opponentJID.asEntityBareJid());
+                room.getTranscriptWindow().insertCustomText
+                    (TTTRes.getString("ttt.request.sent"), false, false, Color.BLUE);
+                try {
+                    SparkManager.getConnection().sendStanza(offer);
+                } catch (SmackException.NotConnectedException | InterruptedException e1) {
+                    Log.warning("Unable to send offer to " + opponentJID, e1);
+                }
 
-					GameOfferPacket answer = (GameOfferPacket)stanza;
-					answer.setStartingPlayer(offer.isStartingPlayer());
-					answer.setGameID(offer.getGameID());
-					if (answer.getType() == IQ.Type.result) {
-					    // ACCEPT
-					    _currentInvitations.remove(opponentJID.asBareJid());
-					    
-					    room.getTranscriptWindow().insertCustomText
-					    (TTTRes.getString("ttt.request.accept"), false, false, Color.BLUE);
-					    
-					    createTTTWindow(answer, opponentJID);
-					} else {
-					    // DECLINE
-					    room.getTranscriptWindow().insertCustomText
-					    (TTTRes.getString("ttt.request.decline"), false, false, Color.RED);
-					    _currentInvitations.remove(opponentJID.asBareJid());
-					}
+                SparkManager.getConnection().addAsyncStanzaListener(
+                    new StanzaListener() {
+                        @Override
+                        public void processStanza(Stanza stanza) {
 
-				    }
-				},
-				// TODO: Just filtering by stanza id is insure, should use Smack's IQ send-response mechanisms.
-				new StanzaIdFilter(offer));
-		    }
-		});
+                            if (stanza.getError() != null) {
+                                room.getTranscriptWindow().insertCustomText
+                                    (TTTRes.getString("ttt.request.decline"), false, false, Color.RED);
+                                _currentInvitations.remove(opponentJID.asBareJid());
+                                return;
+                            }
+
+                            GameOfferPacket answer = (GameOfferPacket) stanza;
+                            answer.setStartingPlayer(offer.isStartingPlayer());
+                            answer.setGameID(offer.getGameID());
+                            if (answer.getType() == IQ.Type.result) {
+                                // ACCEPT
+                                _currentInvitations.remove(opponentJID.asBareJid());
+
+                                room.getTranscriptWindow().insertCustomText
+                                    (TTTRes.getString("ttt.request.accept"), false, false, Color.BLUE);
+
+                                createTTTWindow(answer, opponentJID);
+                            } else {
+                                // DECLINE
+                                room.getTranscriptWindow().insertCustomText
+                                    (TTTRes.getString("ttt.request.decline"), false, false, Color.RED);
+                                _currentInvitations.remove(opponentJID.asBareJid());
+                            }
+
+                        }
+                    },
+                    // TODO: Just filtering by stanza id is insure, should use Smack's IQ send-response mechanisms.
+                    new StanzaIdFilter(offer));
+            });
 
 	    }
 
@@ -224,75 +216,55 @@ public class TicTacToePlugin implements Plugin {
      * @param invitation
      */
     private void showInvitationAlert(final GameOfferPacket invitation) {
-	
-	
-	invitation.setType(IQ.Type.result);
-	invitation.setTo(invitation.getFrom());
-	
-	
-	final ChatRoom room = SparkManager.getChatManager().getChatRoom( invitation.getFrom().asEntityBareJidOrThrow());
-	
-	Localpart name = invitation.getFrom().getLocalpartOrThrow();
-	
-	final JPanel panel = new JPanel();
-	JLabel text = new JLabel(TTTRes.getString("ttt.game.request",name)); 
-	JLabel game = new JLabel(TTTRes.getString("ttt.game.name"));
-	game.setFont(new Font("Dialog", Font.BOLD, 24));
-	game.setForeground(Color.RED);
-	JButton accept = new JButton(Res.getString("button.accept").replace("&", ""));
-	JButton decline = new JButton(Res.getString("button.decline").replace("&", ""));
-	panel.add(text);
-	panel.add(game);
-	panel.add(accept);
-	panel.add(decline);
-	
-	room.getTranscriptWindow().addComponent(panel);
-	
-	accept.addActionListener(new ActionListener() {
-	    
-	    @Override
-	    public void actionPerformed(ActionEvent e) {
-		try
-		{
-			SparkManager.getConnection().sendStanza(invitation);
-		}
-		catch ( SmackException.NotConnectedException | InterruptedException e1 )
-		{
-			Log.warning( "Unable to send invitation accept to " + invitation.getTo(), e1 );
-		}
-		invitation.setStartingPlayer(!invitation.isStartingPlayer());
-		createTTTWindow(invitation, invitation.getTo().asEntityFullJidOrThrow());
-		panel.remove(3);
-		panel.remove(2);
-		panel.repaint();
-		panel.revalidate();
-	    }
-	});
-	
-	decline.addActionListener(new ActionListener() {
-	    
-	    @Override
-	    public void actionPerformed(ActionEvent e) {
-		invitation.setType(IQ.Type.error);
-		invitation.setError( StanzaError.getBuilder().setCondition(StanzaError.Condition.undefined_condition).setDescriptiveEnText("User declined your request."));
-		try
-		{
-			SparkManager.getConnection().sendStanza(invitation);
-		}
-		catch ( SmackException.NotConnectedException | InterruptedException e1 )
-		{
-			Log.warning( "Unable to send invitation decline to " + invitation.getTo(), e1 );
-		}
-		panel.remove(3);
-		panel.remove(2);
-		panel.repaint();
-		panel.revalidate();
-	    }
-	});
-	
-	
-    }
+        invitation.setType(IQ.Type.result);
+        invitation.setTo(invitation.getFrom());
 
+        final ChatRoom room = SparkManager.getChatManager().getChatRoom(invitation.getFrom().asEntityBareJidOrThrow());
+
+        Localpart name = invitation.getFrom().getLocalpartOrThrow();
+
+        final JPanel panel = new JPanel();
+        JLabel text = new JLabel(TTTRes.getString("ttt.game.request", name));
+        JLabel game = new JLabel(TTTRes.getString("ttt.game.name"));
+        game.setFont(new Font("Dialog", Font.BOLD, 24));
+        game.setForeground(Color.RED);
+        JButton accept = new JButton(Res.getString("button.accept").replace("&", ""));
+        JButton decline = new JButton(Res.getString("button.decline").replace("&", ""));
+        panel.add(text);
+        panel.add(game);
+        panel.add(accept);
+        panel.add(decline);
+
+        room.getTranscriptWindow().addComponent(panel);
+
+        accept.addActionListener(e -> {
+            try {
+                SparkManager.getConnection().sendStanza(invitation);
+            } catch (SmackException.NotConnectedException | InterruptedException e1) {
+                Log.warning("Unable to send invitation accept to " + invitation.getTo(), e1);
+            }
+            invitation.setStartingPlayer(!invitation.isStartingPlayer());
+            createTTTWindow(invitation, invitation.getTo().asEntityFullJidOrThrow());
+            panel.remove(3);
+            panel.remove(2);
+            panel.repaint();
+            panel.revalidate();
+        });
+
+        decline.addActionListener(e -> {
+            invitation.setType(IQ.Type.error);
+            invitation.setError(StanzaError.getBuilder().setCondition(StanzaError.Condition.undefined_condition).setDescriptiveEnText("User declined your request."));
+            try {
+                SparkManager.getConnection().sendStanza(invitation);
+            } catch (SmackException.NotConnectedException | InterruptedException e1) {
+                Log.warning("Unable to send invitation decline to " + invitation.getTo(), e1);
+            }
+            panel.remove(3);
+            panel.remove(2);
+            panel.repaint();
+            panel.revalidate();
+        });
+    }
 
     /**
      * Creates The TicTacToe Window and starts the Game

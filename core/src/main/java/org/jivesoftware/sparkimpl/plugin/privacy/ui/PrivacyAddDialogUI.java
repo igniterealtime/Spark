@@ -139,7 +139,7 @@ public class PrivacyAddDialogUI extends JPanel {
             }
         }
 
-        Collections.sort(_userList, itemComparator);
+        _userList.sort(itemComparator);
         model.clear();
         for (ContactItem item : _userList) {
 

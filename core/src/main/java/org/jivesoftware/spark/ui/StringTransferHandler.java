@@ -54,10 +54,7 @@ public abstract class StringTransferHandler extends TransferHandler {
                 importString(c, str);
                 return true;
             }
-            catch (UnsupportedFlavorException ufe) {
-                // Nothing to do
-            }
-            catch (IOException ioe) {
+            catch (UnsupportedFlavorException | IOException ufe) {
                 // Nothing to do
             }
         }

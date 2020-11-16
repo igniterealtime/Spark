@@ -785,7 +785,7 @@ public class GroupChatParticipantList extends JPanel {
 		    } else {
 			grantVoice(selectedUser);
 		    }
-		    Collections.sort(users, labelComp);
+		    users.sort(labelComp);
 
 		}
 	    };
@@ -833,7 +833,7 @@ public class GroupChatParticipantList extends JPanel {
 		    } else {
 			revokeMember(selectedUser);
 		    }
-		    Collections.sort(users, labelComp);
+		    users.sort(labelComp);
 	        }
 	    };
 	    memberAction.putValue(Action.SMALL_ICON,
@@ -860,7 +860,7 @@ public class GroupChatParticipantList extends JPanel {
 		    } else {
 			revokeModerator(selectedUser);
 		    }
-		    Collections.sort(users, labelComp);
+		    users.sort(labelComp);
 
 		}
 	    };
@@ -888,7 +888,7 @@ public class GroupChatParticipantList extends JPanel {
 		    } else {
 			revokeAdmin(selectedUser);
 		    }
-		    Collections.sort(users, labelComp);
+		    users.sort(labelComp);
 
 	        }
 	    };
@@ -918,7 +918,7 @@ public class GroupChatParticipantList extends JPanel {
 		    } else {
 			revokeOwner(selectedUser);
 		    }
-		    Collections.sort(users, labelComp);
+		    users.sort(labelComp);
 
 	        }
 	    };
@@ -1057,7 +1057,7 @@ public class GroupChatParticipantList extends JPanel {
 			users.add(user);
 
 			// Sort users alpha.
-			Collections.sort(users, labelComp);
+			users.sort(labelComp);
 
 			// Add to the correct position in the model.
 			final int index = users.indexOf(user);

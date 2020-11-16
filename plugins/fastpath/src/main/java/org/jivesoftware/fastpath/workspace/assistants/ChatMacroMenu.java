@@ -118,11 +118,9 @@ public class ChatMacroMenu {
         popup.addSeparator();
         popup.add(editMacros);
 
-        editMacros.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                MacrosEditor editor = new MacrosEditor();
-                editor.showEditor(editMacros);
-            }
+        editMacros.addActionListener(e -> {
+            MacrosEditor editor = new MacrosEditor();
+            editor.showEditor(editMacros);
         });
 
 
@@ -142,14 +140,12 @@ public class ChatMacroMenu {
         for (Macro newItem : macros) {
             final JMenuItem item = new JMenuItem(newItem.getTitle());
             menu.add(item);
-            item.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    String text = newItem.getResponse() + " ";
-                    try {
-                        chatRoom.getChatInputEditor().insertText(text);
-                    } catch (BadLocationException e1) {
-                        Log.error("Error inserting macro", e1);
-                    }
+            item.addActionListener(e -> {
+                String text = newItem.getResponse() + " ";
+                try {
+                    chatRoom.getChatInputEditor().insertText(text);
+                } catch (BadLocationException e1) {
+                    Log.error("Error inserting macro", e1);
                 }
             });
         }

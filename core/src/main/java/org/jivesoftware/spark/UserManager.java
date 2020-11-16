@@ -403,7 +403,7 @@ public class UserManager {
         }
 
         // Sort
-        Collections.sort(contacts, itemComparator);
+        contacts.sort(itemComparator);
 
         final JContactItemField contactField = new JContactItemField( new ArrayList<>( contacts ));
 
@@ -519,7 +519,7 @@ public class UserManager {
     /**
      * Sorts ContactItems.
      */
-    final Comparator<ContactItem> itemComparator = ( item1, item2 ) -> item1.getDisplayName().toLowerCase().compareTo(item2.getDisplayName().toLowerCase());
+    final Comparator<ContactItem> itemComparator = Comparator.comparing(item -> item.getDisplayName().toLowerCase());
 
 }
 

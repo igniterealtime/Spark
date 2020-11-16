@@ -339,18 +339,15 @@ public class CertificateDialog extends JDialog implements ActionListener {
 		add(scrollPane, new GridBagConstraints(0, 1, 4, 1, 1.0, 1.0, WEST, BOTH, DEFAULT_INSETS, 0, 0));
 		add(buttonPanel, new GridBagConstraints(0, 2, 1, 1, 1.0, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
 				 
-		SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-            	//scrolls scrollPane to top
-            	panel.scrollRectToVisible(versionField.getBounds());           
-        		
-                // info that certificate is distrusted
-                if ((      reason == CertificateDialogReason.ADD_CERTIFICATE
-                        || reason == CertificateDialogReason.ADD_ID_CERTIFICATE
-                        || reason == CertificateDialogReason.ADD_CERTIFICATE_FROM_CONNECTION) && !certModel.isValid()) {
-                    JOptionPane.showMessageDialog(null, Res.getString("dialog.certificate.is.distrusted"));
-                }
+		SwingUtilities.invokeLater(() -> {
+            //scrolls scrollPane to top
+            panel.scrollRectToVisible(versionField.getBounds());
+
+            // info that certificate is distrusted
+            if ((      reason == CertificateDialogReason.ADD_CERTIFICATE
+                    || reason == CertificateDialogReason.ADD_ID_CERTIFICATE
+                    || reason == CertificateDialogReason.ADD_CERTIFICATE_FROM_CONNECTION) && !certModel.isValid()) {
+                JOptionPane.showMessageDialog(null, Res.getString("dialog.certificate.is.distrusted"));
             }
         });
 		

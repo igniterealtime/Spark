@@ -145,33 +145,25 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
         final JButton acceptButton = new JButton("Accept");
         final JButton declineButton = new JButton("Decline");
 
-        acceptButton.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent e)
-            {
-                // Hide the response panel. TODO: make this work.
-                room.getTranscriptWindow().remove(inviteAlert);
-                inviteAlert.remove(1);
-                inviteAlert.add(new JLabel("Meeting at " + meetUrl), BorderLayout.CENTER);
-                declineButton.setEnabled(false);
-                acceptButton.setEnabled(false);
+        acceptButton.addActionListener(e -> {
+            // Hide the response panel. TODO: make this work.
+            room.getTranscriptWindow().remove(inviteAlert);
+            inviteAlert.remove(1);
+            inviteAlert.add(new JLabel("Meeting at " + meetUrl), BorderLayout.CENTER);
+            declineButton.setEnabled(false);
+            acceptButton.setEnabled(false);
 
-                openURL(meetUrl);
-            }
+            openURL(meetUrl);
         });
         buttonPanel.add(acceptButton);
 
         // The decline button. When clicked, reject the meet offer.
 
-        declineButton.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent e)
-            {
-                // Hide the response panel. TODO: make this work.
-                room.getTranscriptWindow().remove(inviteAlert);
-                declineButton.setVisible(false);
-                acceptButton.setVisible(false);
-            }
+        declineButton.addActionListener(e -> {
+            // Hide the response panel. TODO: make this work.
+            room.getTranscriptWindow().remove(inviteAlert);
+            declineButton.setVisible(false);
+            acceptButton.setVisible(false);
         });
         buttonPanel.add(declineButton);
         content.add(buttonPanel, BorderLayout.SOUTH);
