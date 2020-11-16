@@ -18,7 +18,6 @@
 package org.jivesoftware.spark.plugin.ofmeet;
 
 import java.awt.*;
-import java.awt.event.*;
 import javax.swing.*;
 import java.util.*;
 import java.util.zip.*;

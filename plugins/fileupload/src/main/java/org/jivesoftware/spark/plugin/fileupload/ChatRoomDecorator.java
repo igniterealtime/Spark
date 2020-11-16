@@ -19,8 +19,6 @@ package org.jivesoftware.spark.plugin.fileupload;
 import java.io.*;
 import java.net.*;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.*;
 import javax.swing.*;
 
