@@ -129,6 +129,7 @@ public class ConferenceServices implements InvitationListener {
     /**
      * Persists bookmarked data, if any.
      */
+    @SuppressWarnings("EmptyMethod")
     public void shutdown() {
     }
 

@@ -665,15 +665,6 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
 
 
     /**
-     * Process incoming packets.
-     *
-     * @param stanza - the packet to process
-     */
-    public void processPacket(Stanza stanza) {
-    }
-
-
-    /**
      * Returns the SendField component.
      *
      * @return the SendField ChatSendField.
