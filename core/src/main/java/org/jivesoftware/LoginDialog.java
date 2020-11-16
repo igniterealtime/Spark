@@ -1272,7 +1272,7 @@ public class LoginDialog {
         }
 
         @Override
-        public void handle(Callback[] callbacks) throws IOException {
+        public void handle(Callback[] callbacks) {
             for (Callback callback : callbacks) {
                 if (callback instanceof NameCallback) {
                     NameCallback ncb = (NameCallback) callback;
@@ -1363,9 +1363,8 @@ public class LoginDialog {
     /**
      * Updates System properties with Proxy configuration.
      *
-     * @throws Exception thrown if an exception occurs.
      */
-    private void updateProxyConfig() throws Exception {
+    private void updateProxyConfig() {
         if (ModelUtil.hasLength(Default.getString(Default.PROXY_PORT)) && ModelUtil.hasLength(Default.getString(Default.PROXY_HOST))) {
             String port = Default.getString(Default.PROXY_PORT);
             String host = Default.getString(Default.PROXY_HOST);

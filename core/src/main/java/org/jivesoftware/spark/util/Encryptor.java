@@ -61,13 +61,13 @@ public class Encryptor {
         try {
             return decryptOrThrow(string);
         }
-        catch (IllegalBlockSizeException | BadPaddingException | UnsupportedEncodingException e) {
+        catch (IllegalBlockSizeException | BadPaddingException e) {
             Log.error(e);
             return null;
         }
     }
 
-    public static String decryptOrThrow(String string) throws UnsupportedEncodingException, BadPaddingException, IllegalBlockSizeException {
+    public static String decryptOrThrow(String string) throws BadPaddingException, IllegalBlockSizeException {
         byte[] dec = Base64.decode( string );
 
         // Decrypt
@@ -77,7 +77,7 @@ public class Encryptor {
         return new String(utf8, StandardCharsets.UTF_8);
     }
 
-    private static SecretKey decodeKey() throws Exception {
+    private static SecretKey decodeKey() {
         String secretKey = "ugfpV1dMC5jyJtqwVAfTpHkxqJ0+E0ae";
         byte[] bytes = Base64.decode( secretKey );
         return new SecretKeySpec(bytes, "DESede");

@@ -126,7 +126,7 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
 	public void uninstall() {
     }
 
-    private void populateTransports() throws Exception {
+    private void populateTransports() {
         DiscoverItems discoItems = SparkManager.getSessionManager().getDiscoveredItems();
 
         for (DiscoverItems.Item item : discoItems.getItems() ) {

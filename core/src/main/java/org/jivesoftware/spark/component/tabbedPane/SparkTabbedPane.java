@@ -510,8 +510,7 @@ public class SparkTabbedPane extends JPanel {
 	    	private final DataFlavor FLAVOR = new DataFlavor(DataFlavor.javaJVMLocalObjectMimeType, NAME);
 			@NotNull
             @Override
-			public Object getTransferData(DataFlavor flavor)
-					throws UnsupportedFlavorException, IOException {
+			public Object getTransferData(DataFlavor flavor) {
 				return pane;
 			}
 

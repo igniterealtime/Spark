@@ -61,7 +61,7 @@ public abstract class CertManager {
     protected final List<CertificateModel> blackListedCertificates =  new LinkedList<>(); //contain only revoked certificates
     protected DefaultTableModel tableModel;
     
-    public abstract void deleteEntry(String alias) throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException;
+    public abstract void deleteEntry(String alias) throws KeyStoreException;
     public abstract void addOrRemoveFromExceptionList(boolean checked);
     public abstract boolean isOnExceptionList(CertificateModel cert);
 
@@ -69,8 +69,8 @@ public abstract class CertManager {
     protected abstract void refreshCertTable();
 
     public abstract void addEntryFileToKeyStore(File file)
-            throws IOException, KeyStoreException, CertificateException, NoSuchAlgorithmException, IOException, HeadlessException,
-            InvalidNameException, UnrecoverableKeyException, InvalidKeySpecException;
+            throws KeyStoreException, CertificateException, NoSuchAlgorithmException, IOException, HeadlessException,
+            InvalidNameException, InvalidKeySpecException;
 /**
  * Check if there is certificate entry in KeyStore with the same alias.
  * @param alias which is checked if it already exist in keystore
@@ -100,7 +100,7 @@ public abstract class CertManager {
      * @param addedCert the certificate for which it method look in the model list
      * @return true if KeyStore already have this certificate.
      */
-    protected boolean checkForSameCertificate(X509Certificate addedCert) throws KeyStoreException{
+    protected boolean checkForSameCertificate(X509Certificate addedCert) {
         // check if this certificate isn't already added to Truststore
         for(CertificateModel model :allCertificates){
             X509Certificate certificateCheck = model.getCertificate();
@@ -132,7 +132,7 @@ public abstract class CertManager {
                 }
             }
         } catch (CRLException | CertificateException | IOException | InvalidAlgorithmParameterException
-                | NoSuchAlgorithmException | CertStoreException e) {
+                | NoSuchAlgorithmException e) {
             Log.warning("Cannot check validity", e);
         }
         return revoked;
@@ -146,8 +146,8 @@ public abstract class CertManager {
      * @throws InvalidNameException
      * @throws HeadlessException
      */
-    public void addCertificateToBlackList(X509Certificate cert) throws KeyStoreException, NoSuchAlgorithmException,
-            CertificateException, IOException, HeadlessException, InvalidNameException {
+    public void addCertificateToBlackList(X509Certificate cert) throws KeyStoreException,
+        HeadlessException, InvalidNameException {
         blackListStore.setCertificateEntry(useCommonNameAsAlias(cert), cert);
         blackListedCertificates.add(new CertificateModel(cert));
     }

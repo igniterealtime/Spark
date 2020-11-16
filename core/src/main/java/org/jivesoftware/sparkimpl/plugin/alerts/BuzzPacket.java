@@ -57,8 +57,7 @@ public class BuzzPacket implements ExtensionElement
         }
 
         @Override
-        public BuzzPacket parse( XmlPullParser parser, int i ) throws XmlPullParserException, IOException, SmackException
-        {
+        public BuzzPacket parse( XmlPullParser parser, int i ) {
             return new BuzzPacket();
         }
     }

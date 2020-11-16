@@ -310,9 +310,8 @@ public class ContactList extends JPanel implements ActionListener,
      * Updates the users presence.
      *
      * @param presence the user to update.
-     * @throws Exception if there is a problem while updating the user's presence.
      */
-    private synchronized void updateUserPresence(Presence presence) throws Exception {
+    private synchronized void updateUserPresence(Presence presence) {
         if (presence.getError() != null) {
             // We ignore this.
             return;

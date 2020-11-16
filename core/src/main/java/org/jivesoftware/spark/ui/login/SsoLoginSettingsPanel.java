@@ -142,10 +142,8 @@ class SsoLoginSettingsPanel extends JPanel implements ActionListener
      * Returns the principal name if one exists.
      *
      * @return the name (ex. derek) of the principal.
-     * @throws Exception thrown if a Principal was not found.
      */
-    private String getPrincipalName() throws Exception
-    {
+    private String getPrincipalName() {
         if ( localPreferences.getDebug() )
         {
             System.setProperty( "java.security.krb5.debug", "true" );
