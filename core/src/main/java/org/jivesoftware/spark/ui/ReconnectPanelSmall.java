@@ -15,7 +15,6 @@
  */
 package org.jivesoftware.spark.ui;
 
-import java.awt.Component;
 import javax.swing.*;
 
 import org.jivesoftware.resource.Res;

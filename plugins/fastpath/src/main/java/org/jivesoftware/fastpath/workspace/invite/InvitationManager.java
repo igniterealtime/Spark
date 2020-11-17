@@ -15,9 +15,6 @@
  */
 package org.jivesoftware.fastpath.workspace.invite;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.jivesoftware.fastpath.FastpathPlugin;
 import org.jivesoftware.fastpath.FpRes;
 import org.jivesoftware.smack.SmackException;
