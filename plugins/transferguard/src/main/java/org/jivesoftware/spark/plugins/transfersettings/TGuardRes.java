@@ -16,9 +16,7 @@ public class TGuardRes {
     private TGuardRes() {
 
     }
-    
-    static ClassLoader cl = TGuardRes.class.getClassLoader();
-    
+
     static {
         prb = (PropertyResourceBundle) ResourceBundle
         		.getBundle("i18n/transferguard_i18n");

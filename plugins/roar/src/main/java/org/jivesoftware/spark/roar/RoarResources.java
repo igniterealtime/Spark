@@ -10,8 +10,6 @@ public class RoarResources {
 
     private static final PropertyResourceBundle prb;
 
-    static ClassLoader cl = RoarResources.class.getClassLoader();
-
     static {
 	prb = (PropertyResourceBundle) ResourceBundle.getBundle("i18n/roar_i18n");
     }

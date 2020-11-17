@@ -35,8 +35,6 @@ public class Res {
 
     }
 
-    static ClassLoader cl = Res.class.getClassLoader();
-
     static {
         prb = (PropertyResourceBundle)ResourceBundle.getBundle("i18n/spark_i18n");
     }

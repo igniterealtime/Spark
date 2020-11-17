@@ -31,11 +31,8 @@ public class TTTRes {
 
     private static final PropertyResourceBundle prb;
 
-    static ClassLoader cl = TTTRes.class.getClassLoader();
-
     static {
-	prb = (PropertyResourceBundle) ResourceBundle
-		.getBundle("i18n/tictactoe_i18n");
+        prb = (PropertyResourceBundle) ResourceBundle.getBundle("i18n/tictactoe_i18n");
     }
 
     public static String getString(String propertyName) {

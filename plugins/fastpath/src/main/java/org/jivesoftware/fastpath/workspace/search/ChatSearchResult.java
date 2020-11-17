@@ -31,7 +31,6 @@ public class ChatSearchResult {
     private final SimpleDateFormat UTC_FORMAT = new SimpleDateFormat("yyyyMMdd'T'HH:mm:ss");
     private final String sessionID;
     private Date creationDate;
-    private final int relevance;
 
     private final String question;
     private final String customerName;
@@ -60,11 +59,6 @@ public class ChatSearchResult {
             authors.append(agentJID);
             authors.append(" ");
         }
-
-        String rell = getFirstValue(row, "relevance");
-        double o = Double.parseDouble(rell);
-
-        relevance = ((int) (double) o * 100);
 
         question = getFirstValue(row, "question");
         customerName = getFirstValue(row, "username");

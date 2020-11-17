@@ -52,7 +52,8 @@ public class SparkTrustManager extends GeneralTrustManager implements X509TrustM
 
     private CertStore crlStore;
     private final X509TrustManager exceptionsTrustManager;
-    private KeyStore trustStore, blackStore,  displayedCaCerts;
+    private KeyStore trustStore;
+    private KeyStore displayedCaCerts;
     private final Collection<X509CRL> crlCollection = new ArrayList<>();
     
     public SparkTrustManager() {

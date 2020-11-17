@@ -31,13 +31,9 @@ public class ChatRoomDecorator
     public RolloverButton ofmeetButton;
     public final ChatRoom room;
 
-
-    private final String url;
-
     public ChatRoomDecorator(final ChatRoom room, final String url, final SparkMeetPlugin plugin)
     {
         this.room = room;
-        this.url = url;
 
         try {
             BASE64Decoder decoder = new BASE64Decoder();
