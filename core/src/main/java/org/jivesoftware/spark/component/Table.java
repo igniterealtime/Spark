@@ -274,9 +274,9 @@ public abstract class Table extends JXTable {
     public static class JLabelRenderer extends JLabel implements TableCellRenderer {
 
 	private static final long serialVersionUID = 4433780600297455731L;
-	Border unselectedBorder;
-        Border selectedBorder;
-        boolean isBordered;
+        private Border unselectedBorder;
+        private Border selectedBorder;
+        private final boolean isBordered;
 
         /**
          * JLabelConstructor to build ui.
@@ -364,9 +364,9 @@ public abstract class Table extends JXTable {
     public static class JButtonRenderer extends JButton implements TableCellRenderer {
 
 	private static final long serialVersionUID = 1268514163461994738L;
-	Border unselectedBorder;
-        Border selectedBorder;
-        boolean isBordered = true;
+        private Border unselectedBorder;
+        private Border selectedBorder;
+        private final boolean isBordered = true;
 
         /**
          * Empty Constructor.
@@ -492,5 +492,4 @@ public abstract class Table extends JXTable {
      */
     public void enterPressed() {
     }
-
 }

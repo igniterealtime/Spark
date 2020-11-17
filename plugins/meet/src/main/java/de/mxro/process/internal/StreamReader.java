@@ -1,7 +1,6 @@
 package de.mxro.process.internal;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
@@ -52,7 +51,7 @@ public class StreamReader {
 		/**
 		 * Wait longer and longer to not keep CPU busy.
 		 */
-		private final void waitForInput() {
+		private void waitForInput() {
 			try {
 				Thread.sleep(this.timeout);
 			} catch (final InterruptedException e) {
@@ -65,7 +64,7 @@ public class StreamReader {
 
 		}
 
-		private void stopReader() throws IOException {
+		private void stopReader() {
 			//stream.close();
 			stopped = true;
 			listener.onClosed();

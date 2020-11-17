@@ -28,7 +28,7 @@ import org.jivesoftware.spark.ui.ContactItem;
  *
  */
 public class JContactItemRenderer extends ContactItem implements ListCellRenderer {
-	JPanelRenderer basicPanelRenderer;
+	private final JPanelRenderer basicPanelRenderer;
 	
 	public JContactItemRenderer() {
 		super("", "", null);

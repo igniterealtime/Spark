@@ -7,7 +7,6 @@ import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -106,7 +105,7 @@ public abstract class AbstractHistoryFile {
 			entries.add(historyEntry.getValue());
 		}
 
-		Collections.sort(entries, ( o1, o2 ) -> o2.getDate().compareTo(o1.getDate()) );
+		entries.sort((o1, o2) -> o2.getDate().compareTo(o1.getDate()));
 
 		return entries;
 	}

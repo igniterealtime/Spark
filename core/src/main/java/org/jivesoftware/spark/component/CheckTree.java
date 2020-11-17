@@ -59,7 +59,7 @@ public class CheckTree extends JPanel {
 
 
     static class NodeSelectionListener extends MouseAdapter {
-        JTree tree;
+        private final JTree tree;
 
         NodeSelectionListener(JTree tree) {
             this.tree = tree;
@@ -83,16 +83,9 @@ public class CheckTree extends JPanel {
         }
     }
 
-    /**
-     * Closes the CheckTree.
-     */
-    public void close() {
-    }
-
-
     static class ButtonActionListener implements ActionListener {
-        CheckNode root;
-        JTextArea textArea;
+        private final CheckNode root;
+        private final JTextArea textArea;
 
         ButtonActionListener(CheckNode root, JTextArea textArea) {
             this.root = root;

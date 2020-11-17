@@ -46,7 +46,6 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.TimerTask;
 
 public class FastpathPlugin implements Plugin, ConnectionListener {

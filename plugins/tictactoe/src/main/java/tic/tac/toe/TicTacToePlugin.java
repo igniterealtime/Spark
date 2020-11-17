@@ -17,8 +17,6 @@ package tic.tac.toe;
 
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.HashSet;
 
 import javax.swing.ImageIcon;
@@ -29,12 +27,10 @@ import javax.swing.JPanel;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.SmackException;
-import org.jivesoftware.smack.StanzaListener;
 import org.jivesoftware.smack.filter.StanzaIdFilter;
 import org.jivesoftware.smack.iqrequest.AbstractIqRequestHandler;
 import org.jivesoftware.smack.iqrequest.IQRequestHandler;
 import org.jivesoftware.smack.packet.IQ;
-import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.packet.StanzaError;
 import org.jivesoftware.smack.provider.ProviderManager;
 import org.jivesoftware.spark.SparkManager;
@@ -122,7 +118,6 @@ public class TicTacToePlugin implements Plugin {
 		final EntityFullJid opponentJID = ((ChatRoomImpl) room).getJID();
 
             sendGameButton.addActionListener(e -> {
-
                 if (_currentInvitations.contains(opponentJID.asBareJid())) {
                     return;
                 }
@@ -141,41 +136,34 @@ public class TicTacToePlugin implements Plugin {
                 }
 
                 SparkManager.getConnection().addAsyncStanzaListener(
-                    new StanzaListener() {
-                        @Override
-                        public void processStanza(Stanza stanza) {
-
-                            if (stanza.getError() != null) {
-                                room.getTranscriptWindow().insertCustomText
-                                    (TTTRes.getString("ttt.request.decline"), false, false, Color.RED);
-                                _currentInvitations.remove(opponentJID.asBareJid());
-                                return;
-                            }
-
-                            GameOfferPacket answer = (GameOfferPacket) stanza;
-                            answer.setStartingPlayer(offer.isStartingPlayer());
-                            answer.setGameID(offer.getGameID());
-                            if (answer.getType() == IQ.Type.result) {
-                                // ACCEPT
-                                _currentInvitations.remove(opponentJID.asBareJid());
-
-                                room.getTranscriptWindow().insertCustomText
-                                    (TTTRes.getString("ttt.request.accept"), false, false, Color.BLUE);
-
-                                createTTTWindow(answer, opponentJID);
-                            } else {
-                                // DECLINE
-                                room.getTranscriptWindow().insertCustomText
-                                    (TTTRes.getString("ttt.request.decline"), false, false, Color.RED);
-                                _currentInvitations.remove(opponentJID.asBareJid());
-                            }
-
+                    stanza -> {
+                        if (stanza.getError() != null) {
+                            room.getTranscriptWindow().insertCustomText
+                                (TTTRes.getString("ttt.request.decline"), false, false, Color.RED);
+                            _currentInvitations.remove(opponentJID.asBareJid());
+                            return;
                         }
-                    },
-                    // TODO: Just filtering by stanza id is insure, should use Smack's IQ send-response mechanisms.
-                    new StanzaIdFilter(offer));
-            });
 
+                        GameOfferPacket answer = (GameOfferPacket) stanza;
+                        answer.setStartingPlayer(offer.isStartingPlayer());
+                        answer.setGameID(offer.getGameID());
+                        if (answer.getType() == IQ.Type.result) {
+                            // ACCEPT
+                            _currentInvitations.remove(opponentJID.asBareJid());
+
+                            room.getTranscriptWindow().insertCustomText
+                                (TTTRes.getString("ttt.request.accept"), false, false, Color.BLUE);
+
+                            createTTTWindow(answer, opponentJID);
+                        } else {
+                            // DECLINE
+                            room.getTranscriptWindow().insertCustomText
+                                (TTTRes.getString("ttt.request.decline"), false, false, Color.RED);
+                            _currentInvitations.remove(opponentJID.asBareJid());
+                        }
+                    }, new StanzaIdFilter(offer));
+                    // TODO: Just filtering by stanza id is insure, should use Smack's IQ send-response mechanisms.
+            });
 	    }
 
 	    @Override

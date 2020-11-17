@@ -45,7 +45,6 @@ import org.jivesoftware.smackx.workgroup.agent.AgentSession;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.ui.ChatRoom;
-import org.jivesoftware.spark.ui.ChatRoomClosingListener;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.SwingWorker;
@@ -216,7 +215,7 @@ public class Notes extends JPanel {
      * @param newString the String that will replace all instances of oldString
      * @return a String will all instances of oldString replaced by newString
      */
-    public static final String replace(String string, String oldString, String newString) {
+    public static String replace(String string, String oldString, String newString) {
         if (string == null) {
             return null;
         }

@@ -272,10 +272,6 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
 
     }
 
-    public void uninstall() {
-        // Do nothing.
-    }
-
     private void showStatusMessage(ContactItem item)
     {
    	 Frame = new JDialog();

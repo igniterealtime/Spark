@@ -92,10 +92,10 @@ public class ImageSelectionPanel extends JPanel {
 }
 
 class Selector extends MouseInputAdapter {
-    ImageSelectionPanel selectionPanel;
-    Point start;
-    boolean dragging,
-            isClipSet;
+    private final ImageSelectionPanel selectionPanel;
+    private Point start;
+    private boolean dragging;
+    private boolean isClipSet;
 
     public Selector(ImageSelectionPanel isp) {
         selectionPanel = isp;

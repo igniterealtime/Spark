@@ -82,10 +82,6 @@ public class PrivacyPlugin implements Plugin {
 
     }
 
-    protected void addPrivacyListsToPresenceChange() {
-
-    }
-
     // /**
     // * Adding block menu item to contact popup menu
     // */

@@ -34,7 +34,6 @@ import java.awt.dnd.DropTargetDropEvent;
 import java.awt.dnd.DropTargetEvent;
 import java.awt.dnd.DropTargetListener;
 import java.io.File;
-import java.io.IOException;
 import java.io.StringReader;
 import java.util.Vector;
 
@@ -130,7 +129,8 @@ public class FileDragLabel extends JLabel implements DropTargetListener, DragSou
 		private final static int FILE = 0;
 		private final static int STRING = 1;
 		private final static int PLAIN = 2;
-        DataFlavor[] flavors = {DataFlavor.javaFileListFlavor,
+        private final DataFlavor[] flavors = {
+            DataFlavor.javaFileListFlavor,
             DataFlavor.stringFlavor,
             DataFlavor.getTextPlainUnicodeFlavor()};
 
@@ -158,7 +158,7 @@ public class FileDragLabel extends JLabel implements DropTargetListener, DragSou
         @NotNull
         @Override
 		public synchronized Object getTransferData(DataFlavor flavor)
-            throws UnsupportedFlavorException, IOException {
+            throws UnsupportedFlavorException {
             if (flavor.equals(flavors[FILE])) {
                 return this;
             }

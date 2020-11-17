@@ -25,5 +25,6 @@ public interface CollapsiblePaneListener {
 
     void paneExpanded();
 
+    @SuppressWarnings("EmptyMethod")
     void paneCollapsed();
 }

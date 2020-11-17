@@ -347,9 +347,6 @@ public class ContactInfoWindow extends JPanel {
         return size;
     }
 
-    public void mouseEntered(MouseEvent e) {
-    }
-
     public void mouseExited(MouseEvent e) {
         Point point = e.getPoint();
 

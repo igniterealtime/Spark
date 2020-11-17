@@ -37,9 +37,6 @@ import java.nio.channels.FileChannel;
  */
 
 public class URLFileSystem {
-    public static void main(String[] args) {
-    }
-
     public static String getContents(URL url) {
         try {
             return getContents(url.openStream());

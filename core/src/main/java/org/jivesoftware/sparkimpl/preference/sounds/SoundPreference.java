@@ -56,7 +56,7 @@ public class SoundPreference implements Preference {
     private SoundPreferences preferences;
     private SoundPanel soundPanel;
 
-    public static String NAMESPACE = "Sounds";
+    public static final String NAMESPACE = "Sounds";
 
     public SoundPreference() {
 

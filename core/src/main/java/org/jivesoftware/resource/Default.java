@@ -150,7 +150,7 @@ public class Default {
     public static final String PLUGIN_REPOSITORY_USE_PROXY = "PLUGIN_REPOSITORY_USE_PROXY";
     public static final String PROXY_PROTOCOL = "PROXY_PROTOCOL";
 
-    static ClassLoader cl = SparkRes.class.getClassLoader();
+    private static final ClassLoader cl = SparkRes.class.getClassLoader();
 
     static {
         prb = new Properties();

@@ -32,7 +32,8 @@ public class ConfigurationRes {
 
     public static final String SPELLING_PROPERTIES = "SPELLING_PROPERTIES";
     public static final String PERSONAL_ELEMENT_NAME = "PERSONAL_ELEMENT_NAME";
-    static ClassLoader cl = ConfigurationRes.class.getClassLoader();
+
+    private static final ClassLoader cl = ConfigurationRes.class.getClassLoader();
 
     static {
         prb = new Properties();

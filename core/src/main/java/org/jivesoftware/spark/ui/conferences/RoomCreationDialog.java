@@ -72,7 +72,7 @@ public class RoomCreationDialog extends JPanel {
         }
     }
 
-    private void jbInit() throws Exception {
+    private void jbInit() {
         this.setLayout(gridBagLayout1);
         this.add(confirmPasswordField, new GridBagConstraints(1, 4, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
         this.add(passwordField, new GridBagConstraints(1, 3, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));

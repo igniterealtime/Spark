@@ -325,24 +325,15 @@ public class SparkTransferManager {
     private void addSendFileButton() {
         final ChatManager chatManager = SparkManager.getChatManager();
         chatManager.addChatRoomListener(new ChatRoomListenerAdapter() {
-
             @Override
 			public void chatRoomOpened(final ChatRoom room) {
                 if (!(room instanceof ChatRoomImpl)) {
                     return;
                 }
-
                 // Otherwise,
                 new ChatRoomTransferDecorator(room);
             }
-
-            @Override
-			public void chatRoomClosed(ChatRoom room) {
-
-            }
         });
-
-
     }
 
     public void sendScreenshot(final ChatRoomButton button, final ChatRoom room) {

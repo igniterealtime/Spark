@@ -110,8 +110,7 @@ public class Tasks implements PrivateData {
      * @author Derek DeMoro
      */
     public static class Provider implements PrivateDataProvider {
-
-        Tasks tasks = new Tasks();
+        private final Tasks tasks = new Tasks();
 
         /**
          * Empty Constructor for PrivateDataProvider.
@@ -139,7 +138,6 @@ public class Tasks implements PrivateData {
                     }
                 }
             }
-
 
             return tasks;
         }
@@ -178,7 +176,6 @@ public class Tasks implements PrivateData {
                 }
             }
         }
-
 
         return task;
     }

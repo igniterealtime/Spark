@@ -333,7 +333,7 @@ public class SparkRes {
     public static final String INVISIBLE = "INVISIBLE";
 
     
-    static ClassLoader cl = SparkRes.class.getClassLoader();
+    private static final ClassLoader cl = SparkRes.class.getClassLoader();
 
     static {
         prb = new Properties();

@@ -37,7 +37,7 @@ final public class FormUtils {
      * @param str - the string to check.
      * @return true if String has been assigned a value, false otherwise.
      */
-    final public static boolean isNotNull(String str) {
+    public static boolean isNotNull(String str) {
         return str != null && str.trim().length() > 0;
     }
 
@@ -49,7 +49,7 @@ final public class FormUtils {
      * @return true if the string is not null and the value is equal to true, false
      *         otherwise.
      */
-    final public static boolean isTrue(String str) {
+    public static boolean isTrue(String str) {
         return (str != null && str.equalsIgnoreCase("true"));
     }
 
@@ -80,7 +80,7 @@ final public class FormUtils {
      * @param newString the String that will replace all instances of oldString
      * @return a String will all instances of oldString replaced by newString
      */
-    public static final String replace(String string, String oldString, String newString) {
+    public static String replace(String string, String oldString, String newString) {
         if (string == null) {
             return null;
         }
