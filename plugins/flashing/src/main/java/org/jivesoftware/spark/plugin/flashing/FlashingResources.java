@@ -30,7 +30,7 @@ public class FlashingResources {
 		prb = (PropertyResourceBundle)ResourceBundle.getBundle("i18n/flashing_i18n");
 	}
 	
-    public static final String getString(String propertyName) {
+    public static String getString(String propertyName) {
         try {
             /* Revert to this code after Spark is moved to Java 11 or newer
             return prb.getString(propertyName);

@@ -28,8 +28,8 @@ import org.jivesoftware.spark.preference.Preference;
  */
 public class PrivacyPreferences implements Preference {
 
-    String _title = Res.getString("privacy.label.preferences");
-    String _toolTip = Res.getString("privacy.tooltip.preferences");
+    private final String _title = Res.getString("privacy.label.preferences");
+    private final String _toolTip = Res.getString("privacy.tooltip.preferences");
 
     public PrivacyPreferences() {
     }

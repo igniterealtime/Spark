@@ -16,7 +16,6 @@
 
 package org.jivesoftware.sparkimpl.profile.ext;
 
-import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.packet.ExtensionElement;
 import org.jivesoftware.smack.provider.ExtensionElementProvider;
 import org.xmlpull.v1.XmlPullParser;
@@ -65,8 +64,7 @@ public class VCardUpdateExtension implements ExtensionElement {
         }
 
         @Override
-        public VCardUpdateExtension parse( XmlPullParser parser, int i ) throws XmlPullParserException, IOException, SmackException
-        {
+        public VCardUpdateExtension parse( XmlPullParser parser, int i ) throws XmlPullParserException, IOException {
             final VCardUpdateExtension result = new VCardUpdateExtension();
 
             while ( true )

@@ -37,7 +37,7 @@ public class FpRes {
         prb = (PropertyResourceBundle)ResourceBundle.getBundle("i18n/fastpath_i18n");
     }
 
-    public static final String getString(String propertyName) {
+    public static String getString(String propertyName) {
         try {
             /* Revert to this code after Spark is moved to Java 11 or newer
             return prb.getString(propertyName);
@@ -51,7 +51,7 @@ public class FpRes {
 
     }
 
-    public static final String getString(String propertyName, Object... obj) {
+    public static String getString(String propertyName, Object... obj) {
         String str = prb.getString(propertyName);
         if (str == null) {
             return null;

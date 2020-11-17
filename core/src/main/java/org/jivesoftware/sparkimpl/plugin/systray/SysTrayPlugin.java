@@ -74,7 +74,7 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatStateListener {
     private TrayIcon trayIcon;
     private boolean newMessage = false;
 	private Presence presence;
-    ChatMessageHandlerImpl chatMessageHandler = new ChatMessageHandlerImpl();
+    private final ChatMessageHandlerImpl chatMessageHandler = new ChatMessageHandlerImpl();
 
     @Override
     public boolean canShutDown() {

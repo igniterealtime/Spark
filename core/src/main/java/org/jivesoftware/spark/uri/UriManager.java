@@ -101,10 +101,8 @@ public class UriManager {
      * 
      * @param uri
      *            the decoded uri
-     * @throws Exception
-     *             thrown if the conference cannot be joined.
      */
-    public void handleConference(URI uri) throws Exception {
+    public void handleConference(URI uri) {
 	Jid jid = retrieveJID(uri);
 	ConferenceUtils.joinConferenceOnSeperateThread(jid, jid.asEntityBareJidOrThrow(), null);
     }

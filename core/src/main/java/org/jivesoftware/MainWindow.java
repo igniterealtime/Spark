@@ -314,7 +314,7 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         }
     }
     
-    private File getLibDirectory() throws IOException {
+    private File getLibDirectory() {
         File jarFile;
         try{
             jarFile = new File(Startup.class.getProtectionDomain().getCodeSource().getLocation().toURI());

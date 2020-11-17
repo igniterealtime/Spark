@@ -399,10 +399,7 @@ public class CertificateController extends CertManager {
 	 * 
 	 * @param alias Alias of the certificate to delete
 	 * @throws KeyStoreException
-	 * @throws IOException
-	 * @throws NoSuchAlgorithmException
-	 * @throws CertificateException
-	 */
+     */
     @Override
     public void deleteEntry(String alias) throws KeyStoreException {
         int dialogButton = JOptionPane.YES_NO_OPTION;
@@ -603,10 +600,9 @@ public class CertificateController extends CertManager {
 	 * @param alias Alias of the certificate which is looked for in the model list
 	 * @return True if KeyStore contain the same alias.
 	 * @throws HeadlessException
-	 * @throws KeyStoreException
-	 */
+     */
 	@Override
-	protected boolean checkForSameAlias(String alias) throws HeadlessException, KeyStoreException {
+	protected boolean checkForSameAlias(String alias) throws HeadlessException {
 		for(CertificateModel model: allCertificates){
 			if(model.getAlias().equals(alias)){
 				return true;

@@ -21,7 +21,6 @@ import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.StanzaListener;
 import org.jivesoftware.smack.packet.Message;
-import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.roster.RosterEntry;
 import org.jivesoftware.smackx.chatstates.ChatState;
@@ -662,15 +661,6 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
      * the customer has left the chat room.
      */
     public abstract void leaveChatRoom();
-
-
-    /**
-     * Process incoming packets.
-     *
-     * @param stanza - the packet to process
-     */
-    public void processPacket(Stanza stanza) {
-    }
 
 
     /**

@@ -36,17 +36,17 @@ public class ReversiModel {
     /**
      * Blank.
      */
-    public static int BLANK = 0;
+    public static final int BLANK = 0;
 
     /**
      * White.
      */
-    public static int WHITE = 1;
+    public static final int WHITE = 1;
 
     /**
      * Black.
      */
-    public static int BLACK = 2;
+    public static final int BLACK = 2;
 
     private final int[] board;
     private int currentPlayer;

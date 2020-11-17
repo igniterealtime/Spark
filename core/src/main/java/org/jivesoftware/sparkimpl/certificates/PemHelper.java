@@ -127,7 +127,6 @@ public class PemHelper {
     public static void saveToPemFile(Object object, File file) throws FileNotFoundException, IOException{
         try (JcaPEMWriter pem = new JcaPEMWriter(new OutputStreamWriter(new FileOutputStream(file)))) {
             pem.writeObject(object);
-            pem.close();
         }
     }
     
@@ -143,12 +142,11 @@ public class PemHelper {
             buildList.add(object);
         }
 
-        public void saveToPemFile(File file) throws FileNotFoundException, IOException {
+        public void saveToPemFile(File file) throws IOException {
             try (JcaPEMWriter pem = new JcaPEMWriter(new OutputStreamWriter(new FileOutputStream(file)))) {
                 for (Object object : buildList) {
                     pem.writeObject(object);
                 }
-                pem.close();
             }
         }
     }

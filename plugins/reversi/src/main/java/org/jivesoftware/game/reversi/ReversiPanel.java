@@ -28,7 +28,6 @@ import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.StanzaListener;
 import org.jivesoftware.smack.filter.StanzaExtensionFilter;
 import org.jivesoftware.smack.packet.DefaultExtensionElement;
-import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.spark.util.log.Log;
 import org.jxmpp.jid.Jid;

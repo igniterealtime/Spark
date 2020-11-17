@@ -2,7 +2,6 @@ package org.jivesoftware.sparkimpl.certificates;
 
 import java.awt.HeadlessException;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.nio.file.Files;
@@ -147,11 +146,9 @@ public class IdentityController extends CertManager {
     /**
      * Creates Certificate Signing Request.
      * 
-     * @throws IOException
      * @throws OperatorCreationException
      */
-    public PKCS10CertificationRequest createCSR(KeyPair keyPair) throws IOException, OperatorCreationException {
-
+    public PKCS10CertificationRequest createCSR(KeyPair keyPair) throws OperatorCreationException {
         X500Principal principal = new X500Principal(createX500NameString());
         PKCS10CertificationRequestBuilder p10Builder = new JcaPKCS10CertificationRequestBuilder(principal, keyPair.getPublic());
        
@@ -243,7 +240,6 @@ public class IdentityController extends CertManager {
      * @throws KeyStoreException
      * @throws NoSuchAlgorithmException
      * @throws CertificateException
-     * @throws UnrecoverableKeyException
      * @throws InvalidKeySpecException
      * @throws HeadlessException
      * @throws InvalidNameException
@@ -296,7 +292,7 @@ public class IdentityController extends CertManager {
         return idStore.containsAlias(alias);
     }
 
-    public KeyPair createKeyPair() throws NoSuchAlgorithmException, NoSuchProviderException, FileNotFoundException, IOException {
+    public KeyPair createKeyPair() throws NoSuchAlgorithmException, NoSuchProviderException {
         KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA", "BC" );
         generator.initialize(2048, new SecureRandom());
         keyPair = generator.generateKeyPair();
@@ -304,7 +300,7 @@ public class IdentityController extends CertManager {
         return keyPair;
     }
 
-    public X509Certificate createSelfSignedCertificate(KeyPair keyPair) throws NoSuchAlgorithmException, NoSuchProviderException, CertIOException, OperatorCreationException, CertificateException {
+    public X509Certificate createSelfSignedCertificate(KeyPair keyPair) throws CertIOException, OperatorCreationException, CertificateException {
 
         long serial = System.currentTimeMillis();
         SubjectPublicKeyInfo keyInfo = SubjectPublicKeyInfo.getInstance(keyPair.getPublic().getEncoded());

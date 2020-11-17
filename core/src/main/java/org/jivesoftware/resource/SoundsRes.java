@@ -30,7 +30,7 @@ public class SoundsRes {
     public static final String CLOSING = "CLOSING";
 
 
-    static ClassLoader cl = SoundsRes.class.getClassLoader();
+    private static final ClassLoader cl = SoundsRes.class.getClassLoader();
 
     static {
         prb = new Properties();

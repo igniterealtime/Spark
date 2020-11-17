@@ -105,9 +105,6 @@ public final class WorkgroupRosterTree extends JPanel {
         final Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
 
         roster.addRosterListener(new RosterListener() {
-            public void rosterModified() {
-            }
-
             public void entriesAdded(Collection collection) {
 
             }

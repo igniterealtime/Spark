@@ -19,7 +19,6 @@ package org.jivesoftware.launcher;
 import com.install4j.api.actions.InstallAction;
 import com.install4j.api.context.Context;
 import com.install4j.api.context.InstallerContext;
-import com.install4j.api.context.UserCanceledException;
 import com.install4j.api.windows.RegistryRoot;
 import com.install4j.api.windows.WinRegistry;
 
@@ -41,7 +40,7 @@ public class Installer implements InstallAction {
     }
 
     @Override
-	public boolean install(InstallerContext installerContext) throws UserCanceledException {
+	public boolean install(InstallerContext installerContext) {
         final String osName = System.getProperty("os.name").toLowerCase();
         boolean isWindows = osName.startsWith("windows");
 

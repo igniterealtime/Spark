@@ -31,12 +31,12 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 public class ComponentTitledBorder implements Border, MouseListener, SwingConstants {
-    int offset = 5;
+    private final int offset = 5;
 
-    Component comp;
-    JComponent container;
-    Rectangle rect;
-    Border border;
+    private final Component comp;
+    private final JComponent container;
+    private final Border border;
+    private Rectangle rect;
 
     public ComponentTitledBorder(Component comp, JComponent container, Border border) {
         this.comp = comp;

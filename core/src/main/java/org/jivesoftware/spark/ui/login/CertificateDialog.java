@@ -15,10 +15,7 @@ import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
 import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.CertificateException;
 import java.util.HashMap;
 import java.util.List;
 
@@ -381,7 +378,7 @@ public class CertificateDialog extends JDialog implements ActionListener {
 			try {
 				certControll.deleteEntry(certModel.getAlias());
 				this.dispose();
-			} catch (KeyStoreException | NoSuchAlgorithmException | CertificateException | IOException ex) {
+			} catch (KeyStoreException ex) {
 				Log.error("Couldn't delete the certificate", ex);
             }
 
@@ -397,8 +394,8 @@ public class CertificateDialog extends JDialog implements ActionListener {
             certStatusArea.setText(certModel.getCertStatusAll());
             try {
                 certControll.addCertificateToBlackList(certModel.getCertificate());
-            } catch (HeadlessException | KeyStoreException | NoSuchAlgorithmException | CertificateException
-                    | InvalidNameException | IOException ex) {
+            } catch (HeadlessException | KeyStoreException
+                    | InvalidNameException ex) {
                 Log.warning("Couldn't add certificate to the blacklist", ex);
             }
             certStatusArea.updateUI();

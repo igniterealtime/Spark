@@ -29,7 +29,6 @@ import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.TimerTask;
 

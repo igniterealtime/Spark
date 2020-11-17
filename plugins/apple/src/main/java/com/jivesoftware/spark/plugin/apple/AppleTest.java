@@ -30,7 +30,7 @@ public class AppleTest implements ActionListener {
 	new AppleTest();
     }
 
-    public AppleTest() throws InterruptedException {
+    public AppleTest() {
 
 	for (LookAndFeelInfo laf : UIManager.getInstalledLookAndFeels()) {
 	    System.out.println(laf.getClassName() + " " + laf.getName());

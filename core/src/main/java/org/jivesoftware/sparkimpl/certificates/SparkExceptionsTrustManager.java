@@ -31,7 +31,7 @@ public class SparkExceptionsTrustManager extends GeneralTrustManager implements 
     }
 
     @Override
-    public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+    public void checkClientTrusted(X509Certificate[] chain, String authType) {
         throw new UnsupportedOperationException("This implementation cannot be used to validate client-provided certificate chains.");
     }
 
