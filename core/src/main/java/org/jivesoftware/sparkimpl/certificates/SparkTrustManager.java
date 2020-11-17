@@ -281,7 +281,7 @@ public class SparkTrustManager extends GeneralTrustManager implements X509TrustM
                     if (crl.isRevoked(cert)) {
                         try {
                             addToBlackList(cert);
-                        } catch (IOException | HeadlessException | InvalidNameException e1) {
+                        } catch (HeadlessException | InvalidNameException e1) {
                             Log.error("Couldn't move to the blacklist", e1);
                         }
                         break;
@@ -448,14 +448,11 @@ public class SparkTrustManager extends GeneralTrustManager implements X509TrustM
      * 
      * @param cert certificate which is meant to move into blacklist
      * @throws KeyStoreException
-     * @throws NoSuchAlgorithmException
-     * @throws CertificateException
-     * @throws IOException
      * @throws InvalidNameException
      * @throws HeadlessException
      */
-    private void addToBlackList(X509Certificate cert) throws KeyStoreException, NoSuchAlgorithmException,
-            CertificateException, IOException, HeadlessException, InvalidNameException {
+    private void addToBlackList(X509Certificate cert) throws KeyStoreException,
+        HeadlessException, InvalidNameException {
         certControll.addCertificateToBlackList(cert);
     }
 

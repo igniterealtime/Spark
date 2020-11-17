@@ -620,7 +620,7 @@ public class ContactList extends JPanel implements ActionListener,
 
     }
 
-    private void updateContactList(ContactGroup group) throws Exception {
+    private void updateContactList(ContactGroup group) {
         if (group != null) {
             for (ContactItem item : group.getContactItems()) {
                 updateUserPresence(PresenceManager.getPresence(item.getJid()));
