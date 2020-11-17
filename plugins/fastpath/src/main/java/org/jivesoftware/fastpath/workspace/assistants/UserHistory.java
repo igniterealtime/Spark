@@ -47,7 +47,6 @@ import org.jxmpp.jid.EntityBareJid;
 public class UserHistory extends JPanel {
 	private static final long serialVersionUID = -1067239194964815379L;
 	private final DefaultListModel model = new DefaultListModel();
-    private JFrame userFrame;
     private final JList list;
     private final EntityBareJid userID;
 

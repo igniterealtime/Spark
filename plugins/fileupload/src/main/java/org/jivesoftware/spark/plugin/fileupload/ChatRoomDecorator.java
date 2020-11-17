@@ -46,7 +46,6 @@ public class ChatRoomDecorator
 {
     public RolloverButton fileuploadButton;
     public final ChatRoom room;
-    private StanzaListener uploadResponseListener;
 
     public ChatRoomDecorator(final ChatRoom room, final SparkFileUploadPlugin plugin)
     {

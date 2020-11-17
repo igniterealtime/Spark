@@ -172,7 +172,6 @@ public class BroadcastHistoryFrame extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private final javax.swing.JTextArea  BroadcastHistoryArea;
     private javax.swing.JLabel SearchDate;
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JToggleButton SearchButton;
     // End of variables declaration//GEN-END:variables
 }

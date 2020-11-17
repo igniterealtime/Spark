@@ -31,8 +31,6 @@ public class FpRes {
 
     }
 
-    static ClassLoader cl = FpRes.class.getClassLoader();
-
     static {
         prb = (PropertyResourceBundle)ResourceBundle.getBundle("i18n/fastpath_i18n");
     }

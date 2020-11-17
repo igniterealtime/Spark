@@ -61,9 +61,7 @@ public class ReversiPanel extends JPanel {
     private final ReversiModel reversi;
 
     // All images used by the game.
-    
-     ImageIcon imageIcon = ReversiRes.getImageIcon(ReversiRes.REVERSI_ICON);
-    
+
     private final Image imageBackground = ReversiRes.getImageIcon(ReversiRes.REVERSI_BOARD).getImage();
     private final Image imageScoreWhite = ReversiRes.getImageIcon(ReversiRes.REVERSI_SCORE_WHITE).getImage();
     private final Image imageScoreBlack = ReversiRes.getImageIcon(ReversiRes.REVERSI_SCORE_BLACK).getImage();
