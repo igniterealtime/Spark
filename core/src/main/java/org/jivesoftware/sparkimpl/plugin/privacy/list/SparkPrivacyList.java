@@ -166,21 +166,18 @@ public class SparkPrivacyList {
     }
 
     
-    public void addItem (PrivacyItem item) throws SmackException.NotConnectedException
-    {
+    public void addItem (PrivacyItem item) {
         _privacyItems.add(item);
         fireItemAdded(item);
     }
 
     
-    public void removeItem(PrivacyItem item) throws SmackException.NotConnectedException
-    {
+    public void removeItem(PrivacyItem item) {
         _privacyItems.remove(item);
         fireItemRemoved(item);
     }
     
-    public void removeItem(String name) throws SmackException.NotConnectedException
-    {
+    public void removeItem(String name) {
         List<PrivacyItem> tempList = new ArrayList<>( _privacyItems );
         for (PrivacyItem item: tempList)
         {

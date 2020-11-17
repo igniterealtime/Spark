@@ -104,15 +104,8 @@ public class PrivacyPlugin implements Plugin {
                                 blockMenu = new JMenuItem(Res.getString("menuitem.unblock.contact"), SparkRes.getImageIcon(SparkRes.UNBLOCK_CONTACT_16x16));
                                 blockMenu.addActionListener( ae -> {
                                     if (item != null) {
-                                        try
-                                        {
-                                            activeList.removeItem( item.getJid().toString());
-                                            activeList.save();
-                                        }
-                                        catch ( SmackException.NotConnectedException e )
-                                        {
-                                            Log.warning( "Unable to remove item from block list: " + item, e );
-                                        }
+                                        activeList.removeItem( item.getJid().toString());
+                                        activeList.save();
                                     }
                                 } );
                             } else {
@@ -123,15 +116,8 @@ public class PrivacyPlugin implements Plugin {
                                         pItem.setFilterMessage(true);
                                         pItem.setFilterPresenceOut(true);
 
-                                        try
-                                        {
-                                            activeList.addItem(pItem);
-                                            activeList.save();
-                                        }
-                                        catch ( SmackException.NotConnectedException e )
-                                        {
-                                            Log.warning( "Unable to add item to block list: " + item, e );
-                                        }
+                                        activeList.addItem(pItem);
+                                        activeList.save();
                                     }
                                 } );
                             }

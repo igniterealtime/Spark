@@ -26,8 +26,8 @@ import org.jivesoftware.spark.PresenceManager;
 
 public class AppleTest implements ActionListener {
 
-    public static void main(String[] args) throws InterruptedException {
-	new AppleTest();
+    public static void main(String[] args) {
+        new AppleTest();
     }
 
     public AppleTest() {
