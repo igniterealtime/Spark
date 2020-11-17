@@ -62,9 +62,9 @@ public class ChatSearchResult {
         }
 
         String rell = getFirstValue(row, "relevance");
-        Double o = Double.valueOf(rell);
+        double o = Double.parseDouble(rell);
 
-        relevance = ((int)o.doubleValue() * 100);
+        relevance = ((int) (double) o * 100);
 
         question = getFirstValue(row, "question");
         customerName = getFirstValue(row, "username");

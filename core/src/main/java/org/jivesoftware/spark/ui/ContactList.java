@@ -2469,7 +2469,7 @@ public class ContactList extends JPanel implements ActionListener,
         offlineGroup.addContactItem(contactItem);
 
         BareJid jid = contactItem.getJid().asBareJid();
-        Boolean isFiled = false;
+        boolean isFiled = false;
 
         final Roster roster = Roster.getInstanceFor(SparkManager.getConnection());
         for (RosterGroup group : roster.getEntry(jid).getGroups()) {
