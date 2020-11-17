@@ -5,7 +5,6 @@ import java.awt.event.ComponentEvent;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.text.Format;
@@ -41,7 +40,7 @@ public class BroadcastHistoryFrame extends javax.swing.JFrame {
         initComponents();
     }
 
-    public void readFromFile(String date) throws FileNotFoundException, IOException {
+    public void readFromFile(String date) throws IOException {
         //String fileName = Spark.getSparkUserHome()+File.separator+"broadcast_history."+date+".txt";
         String fileLocation = Spark.getSparkUserHome() + File.separator + "user" + File.separator + SparkManager.getSessionManager().getUsername() + "@" + SparkManager.getSessionManager().getServerAddress() + File.separator + "transcripts" + File.separator + "broadcast_history." + date + ".txt";
         File myfile = new File(fileLocation);
@@ -172,7 +171,6 @@ public class BroadcastHistoryFrame extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private final javax.swing.JTextArea  BroadcastHistoryArea;
     private javax.swing.JLabel SearchDate;
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JToggleButton SearchButton;
     // End of variables declaration//GEN-END:variables
 }

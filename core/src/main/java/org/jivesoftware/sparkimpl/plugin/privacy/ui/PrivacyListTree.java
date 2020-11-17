@@ -38,10 +38,8 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smackx.privacy.packet.PrivacyItem;
 import org.jivesoftware.spark.component.RolloverButton;
-import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.privacy.PrivacyManager;
 import org.jivesoftware.sparkimpl.plugin.privacy.list.SparkPrivacyList;
 import org.jivesoftware.sparkimpl.plugin.privacy.list.SparkPrivacyListListener;
@@ -196,17 +194,10 @@ public class PrivacyListTree extends JPanel implements SparkPrivacyListListener 
                 PrivacyTreeNode parent1 = (PrivacyTreeNode) path.getPathComponent(1);
                 SparkPrivacyList list = parent1.getPrivacyList();
                 // Remove contact or group
-                try
-                {
-                    list.removeItem( node1.getPrivacyItem().getValue());
-                    //list.removePrivacyItem(node.getPrivacyItem().getType(), node.getPrivacyItem().getValue());
-                    list.save();
-                    _model.removeNodeFromParent( node1 );
-                }
-                catch ( SmackException.NotConnectedException e1 )
-                {
-                    Log.warning( "Unable to remove item for privacly list.", e1 );
-                }
+                list.removeItem( node1.getPrivacyItem().getValue());
+                //list.removePrivacyItem(node.getPrivacyItem().getType(), node.getPrivacyItem().getValue());
+                list.save();
+                _model.removeNodeFromParent( node1 );
             }
 
         } );
@@ -236,22 +227,13 @@ public class PrivacyListTree extends JPanel implements SparkPrivacyListListener 
         addContact.addActionListener( e -> {
             PrivacyAddDialogUI browser = new PrivacyAddDialogUI();
             Collection<PrivacyItem> col = browser.showRoster(_comp, !node.isContactGroup());
-            try
-            {
-                for (PrivacyItem pI : col) {
-                    final PrivacyItem clone = new PrivacyItem( pI.getType(), pI.getValue(), pI.isAllow(), list.getNewItemOrder() );
-                    list.addItem(clone);
-                    PrivacyTreeNode newChild = new PrivacyTreeNode(clone);
-                    _model.insertNodeInto(newChild, parent, 0);
-                }
-                list.save();
+            for (PrivacyItem pI : col) {
+                final PrivacyItem clone = new PrivacyItem( pI.getType(), pI.getValue(), pI.isAllow(), list.getNewItemOrder() );
+                list.addItem(clone);
+                PrivacyTreeNode newChild = new PrivacyTreeNode(clone);
+                _model.insertNodeInto(newChild, parent, 0);
             }
-            catch ( SmackException.NotConnectedException e1 )
-            {
-                Log.warning( "Unable to add item to privacy list.", e1 );
-            }
-
-
+            list.save();
         } );
 
         menu.add(addContact);

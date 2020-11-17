@@ -25,7 +25,6 @@ import javax.swing.JPopupMenu;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 
-import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smackx.privacy.packet.PrivacyItem;
 import org.jivesoftware.smackx.privacy.packet.PrivacyItem.Type;
 import org.jivesoftware.spark.SparkManager;
@@ -33,7 +32,6 @@ import org.jivesoftware.spark.plugin.ContextMenuListener;
 import org.jivesoftware.spark.plugin.Plugin;
 import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.util.TaskEngine;
-import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.privacy.list.SparkPrivacyList;
 
 /**
@@ -104,15 +102,8 @@ public class PrivacyPlugin implements Plugin {
                                 blockMenu = new JMenuItem(Res.getString("menuitem.unblock.contact"), SparkRes.getImageIcon(SparkRes.UNBLOCK_CONTACT_16x16));
                                 blockMenu.addActionListener( ae -> {
                                     if (item != null) {
-                                        try
-                                        {
-                                            activeList.removeItem( item.getJid().toString());
-                                            activeList.save();
-                                        }
-                                        catch ( SmackException.NotConnectedException e )
-                                        {
-                                            Log.warning( "Unable to remove item from block list: " + item, e );
-                                        }
+                                        activeList.removeItem( item.getJid().toString());
+                                        activeList.save();
                                     }
                                 } );
                             } else {
@@ -123,15 +114,8 @@ public class PrivacyPlugin implements Plugin {
                                         pItem.setFilterMessage(true);
                                         pItem.setFilterPresenceOut(true);
 
-                                        try
-                                        {
-                                            activeList.addItem(pItem);
-                                            activeList.save();
-                                        }
-                                        catch ( SmackException.NotConnectedException e )
-                                        {
-                                            Log.warning( "Unable to add item to block list: " + item, e );
-                                        }
+                                        activeList.addItem(pItem);
+                                        activeList.save();
                                     }
                                 } );
                             }

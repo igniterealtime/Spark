@@ -15,7 +15,6 @@
  */
 package org.jivesoftware.spark.ui;
 
-import java.awt.Component;
 import javax.swing.*;
 
 import org.jivesoftware.resource.Res;
@@ -37,8 +36,6 @@ public class ReconnectPanelSmall extends ContactGroup implements
     private final JLabel _reconnectionlabel = new JLabel(
 	    Res.getString("message.reconnect.attempting"),
 	    SparkRes.getImageIcon(SparkRes.BUSY_IMAGE), SwingConstants.CENTER);
-    private final Component thiscomp;
-    private boolean _closedOnError;
 
     /**
      * creates a new Panel
@@ -49,11 +46,6 @@ public class ReconnectPanelSmall extends ContactGroup implements
 	super(groupName);
 	this.add(_reconnectionlabel);
 	this.setIcon(SparkRes.getImageIcon(SparkRes.BUSY_IMAGE));
-	thiscomp = this;
-    }
-
-    public void setClosedOnError(boolean onError) {
-	_closedOnError = onError;
     }
 
     public void setReconnectText(String text) {

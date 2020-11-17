@@ -24,8 +24,6 @@ import org.jivesoftware.spark.util.log.Log;
 public class FlashingResources {
 	private static final PropertyResourceBundle prb;
 	
-	static ClassLoader cl = FlashingResources.class.getClassLoader();
-
 	static {
 		prb = (PropertyResourceBundle)ResourceBundle.getBundle("i18n/flashing_i18n");
 	}

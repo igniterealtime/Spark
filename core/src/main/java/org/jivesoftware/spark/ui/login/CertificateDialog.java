@@ -53,11 +53,9 @@ import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 public class CertificateDialog extends JDialog implements ActionListener {
 
 	private final static Insets DEFAULT_INSETS = new Insets(5, 5, 5, 5);
-	private final LocalPreferences localPreferences;
-	private final CertificateModel certModel;
+    private final CertificateModel certModel;
 	private final CertManager certControll;
-	private final CertificateDialogReason reason;
-	private boolean addCert = false;
+    private boolean addCert = false;
 
 	private final JScrollPane scrollPane;
 	private final JPanel panel = new JPanel();
@@ -116,13 +114,11 @@ public class CertificateDialog extends JDialog implements ActionListener {
 		}
 		
 		certControll = certificateController;
-		this.localPreferences = localPreferences;
-		this.certModel = certModel;
+        this.certModel = certModel;
 		this.certExtensions = certModel.getExtensions();
 		this.certUnsupportedCriticalExtensions = certModel.getUnsupportedCriticalExtensions();
 		this.certUnsupportedNonCriticalExtensions = certModel.getUnsupportedNonCriticalExtensions();
-		this.reason = reason;
-		setTitle(Res.getString("title.certificate"));
+        setTitle(Res.getString("title.certificate"));
 		setSize(500, 600);
 		setLayout(new GridBagLayout());
 		Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
