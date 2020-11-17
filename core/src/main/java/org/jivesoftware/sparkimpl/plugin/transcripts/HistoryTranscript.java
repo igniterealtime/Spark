@@ -382,9 +382,9 @@ public class HistoryTranscript extends SwingWorker {
 				// retrieve the first message
 
 				Date oldDate;
-                Integer iteratorValue;
-                Integer startValue;
-                Integer endValue;
+                int iteratorValue;
+                int startValue;
+                int endValue;
 
 				boolean sortDateAsc = pref.getChatHistoryAscending();
 
