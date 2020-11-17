@@ -49,10 +49,8 @@ public class CertificateModel {
 	private String subjectUniqueID;
 
 	private final boolean valid;
-	private boolean expired;
 	private boolean revoked;
-	private boolean notValidYet;
-	private Set<String> criticalExtensionSet;
+    private Set<String> criticalExtensionSet;
 	private Set<String> nonCriticalExtensionSet;
 	private final HashMap<String, String> extensions = new HashMap<>();
 	private final ArrayList<String> unsupportedCriticalExtensions = new ArrayList<>();
@@ -448,14 +446,6 @@ public class CertificateModel {
 	
 	public void setRevoked(boolean revoked) {
 	    this.revoked = revoked;
-	}
-
-	public boolean isNotValidYet() {
-		return notValidYet;
-	}
-
-	public boolean isExpired() {
-		return expired;
 	}
 
 	public String getIssuerCommonName() {

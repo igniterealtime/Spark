@@ -15,9 +15,6 @@
  */
 package org.jivesoftware.fastpath.workspace.invite;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.jivesoftware.fastpath.FastpathPlugin;
 import org.jivesoftware.fastpath.FpRes;
 import org.jivesoftware.smack.SmackException;
@@ -32,8 +29,6 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jxmpp.jid.Jid;
 
 public class InvitationManager {
-    private static final List<ChatRoom> inviteListeners = new ArrayList<>();
-
     private InvitationManager() {
 
     }

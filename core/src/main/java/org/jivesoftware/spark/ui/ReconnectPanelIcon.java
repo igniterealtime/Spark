@@ -35,7 +35,6 @@ public class ReconnectPanelIcon implements ConnectionListener {
     private static final long serialVersionUID = 437696141257704105L;
     private final JLabel _icon;
     private final JPanel _commandpanel;
-    private boolean _closedOnError;
 
     /**
      * creates a new Panel
@@ -54,11 +53,6 @@ public class ReconnectPanelIcon implements ConnectionListener {
 
     public JLabel getButton() {
 	return _icon;
-    }
-
-
-    public void setClosedOnError(boolean onError) {
-	_closedOnError = onError;
     }
 
     public void setReconnectText(String text) {

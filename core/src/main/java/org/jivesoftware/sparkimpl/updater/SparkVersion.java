@@ -134,7 +134,7 @@ public class SparkVersion extends IQ {
                             version.setVersion(parser.nextText());
                             break;
                         case "updatedTime":
-                            Long time = Long.valueOf(parser.nextText());
+                            long time = Long.parseLong(parser.nextText());
                             version.setUpdateTime(time);
                             break;
                         case "downloadURL":

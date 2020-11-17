@@ -201,7 +201,7 @@ public class NotificationAlertUI extends JPanel {
                                 
                                 int w = avatarIcon.getIconWidth();
                                 int h = avatarIcon.getIconHeight();
-                                Double ratio = (double)w / (double)h;
+                                double ratio = (double)w / (double)h;
                                 if ( w > 120 || h > 120)
                                 {
                                 	if ( w > h)

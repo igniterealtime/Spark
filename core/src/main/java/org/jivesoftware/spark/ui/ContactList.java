@@ -272,7 +272,6 @@ public class ContactList extends JPanel implements ActionListener,
             @Override
             public Object construct() {
                 mainPanel.add(_reconnectpanelsmall, 0);
-                _reconnectpanelsmall.setClosedOnError(onError);
                 final Collection<RosterEntry> roster = Roster.getInstanceFor(SparkManager.getConnection()).getEntries();
 
                 for (RosterEntry r : roster) {
@@ -294,7 +293,6 @@ public class ContactList extends JPanel implements ActionListener,
             public Object construct() {
                 _reconnectpanelicon.getPanel().add(_reconnectpanelicon.getButton(), 0);
                 _reconnectpanelicon.getPanel().revalidate();
-                _reconnectpanelicon.setClosedOnError(onError);
                 final Collection<RosterEntry> roster = Roster.getInstanceFor(SparkManager.getConnection()).getEntries();
                 for (RosterEntry r : roster) {
                     Presence p = new Presence(Presence.Type.unavailable);
@@ -620,7 +618,7 @@ public class ContactList extends JPanel implements ActionListener,
 
     }
 
-    private void updateContactList(ContactGroup group) throws Exception {
+    private void updateContactList(ContactGroup group) {
         if (group != null) {
             for (ContactItem item : group.getContactItems()) {
                 updateUserPresence(PresenceManager.getPresence(item.getJid()));
@@ -2265,7 +2263,6 @@ public class ContactList extends JPanel implements ActionListener,
 
         switch (localPreferences.getReconnectPanelType()) {
             case 0:
-                _reconnectPanel.setClosedOnError(false);
                 _reconnectPanel.setDisconnectReason(errorMessage);
                 removeAllUsers();
                 workspace.changeCardLayout(RETRY_PANEL);
@@ -2377,7 +2374,6 @@ public class ContactList extends JPanel implements ActionListener,
             case 0:
                 final String message = errorMessage;
                 SwingUtilities.invokeLater(() -> {
-                    _reconnectPanel.setClosedOnError(true);
                     reconnect(message);
                 });
                 break;
@@ -2469,7 +2465,7 @@ public class ContactList extends JPanel implements ActionListener,
         offlineGroup.addContactItem(contactItem);
 
         BareJid jid = contactItem.getJid().asBareJid();
-        Boolean isFiled = false;
+        boolean isFiled = false;
 
         final Roster roster = Roster.getInstanceFor(SparkManager.getConnection());
         for (RosterGroup group : roster.getEntry(jid).getGroups()) {

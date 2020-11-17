@@ -544,8 +544,7 @@ public class StringUtils {
      * @return a base64 encoded String.
      */
     public static String encodeBase64(String data) {
-	byte[] bytes = null;
-        bytes = data.getBytes(StandardCharsets.ISO_8859_1);
+	    byte[] bytes = data.getBytes(StandardCharsets.ISO_8859_1);
         return encodeBase64(bytes);
     }
 
@@ -598,8 +597,7 @@ public class StringUtils {
      */
 
     public static String decodeBase64(String data) {
-	byte[] bytes = null;
-        bytes = data.getBytes(StandardCharsets.ISO_8859_1);
+	    byte[] bytes = data.getBytes(StandardCharsets.ISO_8859_1);
         return decodeBase64(bytes);
     }
 
