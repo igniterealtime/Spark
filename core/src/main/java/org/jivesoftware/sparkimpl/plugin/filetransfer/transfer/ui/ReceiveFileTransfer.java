@@ -498,7 +498,7 @@ public class ReceiveFileTransfer extends JPanel {
             transferMessage = Res.getString("message.transfer.cancelled");
             saveEventToHistory(Res.getString("message.file.transfer.history.receive.canceled", fileName, nickname));
         } else if (transfer.getAmountWritten() >= request.getFileSize()) {
-            transferMessage = Res.getString("message.transfer.complete", transfer.getFileName());
+            transferMessage = Res.getString("message.transfer.complete", downloadedFile.getName()); // TODO this overwrites the message that was set by transferDone
             saveEventToHistory(Res.getString("message.file.transfer.history.receive.success", fileName, nickname));
         }
 
