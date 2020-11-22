@@ -74,7 +74,7 @@ public class GroupChatParticipantList extends JPanel {
 
 	private final UserManager userManager = SparkManager.getUserManager();
 
-	private final DefaultListModel model = new DefaultListModel();
+	private final DefaultListModel<JLabel> model = new DefaultListModel<>();
 
 	private final JXList participantsList;
 
@@ -371,7 +371,7 @@ public class GroupChatParticipantList extends JPanel {
 
 	protected boolean exists(CharSequence nickname) {
 		for (int i = 0; i < model.getSize(); i++) {
-			final JLabel userLabel = (JLabel) model.getElementAt(i);
+			final JLabel userLabel = model.getElementAt(i);
 			if (userLabel.getText().equals(nickname.toString())) {
 				return true;
 			}
@@ -573,7 +573,7 @@ public class GroupChatParticipantList extends JPanel {
 
 	if (index != -1) {
 	    participantsList.setSelectedIndex(index);
-	    final JLabel userLabel = (JLabel) model.getElementAt(index);
+	    final JLabel userLabel = model.getElementAt(index);
 	    final Resourcepart selectedUser = Resourcepart.fromOrThrowUnchecked(userLabel.getText());
 	    final EntityFullJid groupJID = userMap.get(selectedUser);
 	    final Resourcepart groupJIDNickname = groupJID.getResourcepart();
@@ -1001,7 +1001,7 @@ public class GroupChatParticipantList extends JPanel {
 
 	public int getIndex(CharSequence name) {
 		for (int i = 0; i < model.getSize(); i++) {
-			JLabel label = (JLabel) model.getElementAt(i);
+			JLabel label = model.getElementAt(i);
 			if (label.getText().equals(name.toString())) {
 				return i;
 			}
@@ -1026,7 +1026,7 @@ public class GroupChatParticipantList extends JPanel {
 			}
 
 			for (int i = 0; i < model.size(); i++) {
-				JLabel label = (JLabel) model.getElementAt(i);
+				JLabel label = model.getElementAt(i);
 				if (label.getText().equals(displayName.toString())) {
 					users.remove(label);
 					model.removeElement(label);
@@ -1161,7 +1161,7 @@ public class GroupChatParticipantList extends JPanel {
 	 *
 	 * @author Derek DeMoro
 	 */
-	public static class ParticipantRenderer extends JLabel implements ListCellRenderer {
+	public static class ParticipantRenderer extends JLabel implements ListCellRenderer<Object> {
 		private static final long serialVersionUID = -7509947975798079141L;
 
 		/**
@@ -1205,7 +1205,7 @@ public class GroupChatParticipantList extends JPanel {
         return userMap;
     }
 
-    protected DefaultListModel getModel() {
+    protected DefaultListModel<JLabel> getModel() {
         return model;
     }
 

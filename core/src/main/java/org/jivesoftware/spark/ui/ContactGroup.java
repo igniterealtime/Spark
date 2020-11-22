@@ -47,7 +47,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
     private final List<ContactItem> offlineContacts = new ArrayList<>();
 
     private String groupName;
-    private final DefaultListModel model;
+    private final DefaultListModel<ContactItem> model;
     private final JList<? extends ContactItem> contactItemList;
     private boolean sharedGroup;
     private final JPanel listPanel;
@@ -75,8 +75,8 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
      */
     public ContactGroup(String groupName) {
         // Initialize Model and UI
-        model = new DefaultListModel();
-        contactItemList = new JList(model);
+        model = new DefaultListModel<>();
+        contactItemList = new JList<>(model);
 
         preferences = SettingsManager.getLocalPreferences();
 
@@ -757,7 +757,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
      *
      * @return the JList.
      */
-    public JList getList() {
+    public JList<? extends ContactItem> getList() {
         return contactItemList;
     }
 
@@ -1057,15 +1057,15 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
     private boolean needToChangePopup(MouseEvent e) {
         ContactInfoWindow contact = UIComponentRegistry.getContactInfoWindow();
         int loc = getList().locationToIndex(e.getPoint());
-        ContactItem item = (ContactItem) getList().getModel().getElementAt(loc);
+        ContactItem item = getList().getModel().getElementAt(loc);
         return (item == null || contact == null || contact.getContactItem() == null) || !contact.getContactItem().getJid().equals(item.getJid());
     }
 
-    protected DefaultListModel getModel() {
+    protected DefaultListModel<ContactItem> getModel() {
         return model;
     }
 
-    protected JList getContactItemList() {
+    protected JList<? extends ContactItem> getContactItemList() {
         return contactItemList;
     }
 }

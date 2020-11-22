@@ -102,7 +102,7 @@ public class DataFormUI extends JPanel {
                 addField(label, new JPasswordField(), variable);
             }
             else if (type.equals(FormField.Type.list_single)) {
-                JComboBox box = new JComboBox();
+                JComboBox<FormField.Option> box = new JComboBox<>();
                 for ( final FormField.Option option : field.getOptions() ) {
                     box.addItem(option);
                 }
@@ -157,7 +157,7 @@ public class DataFormUI extends JPanel {
                 }
             }
             else if (o instanceof JComboBox) {
-                Object v = ((JComboBox)o).getSelectedItem();
+                Object v = ((JComboBox<?>)o).getSelectedItem();
                 String value;
                 if (v instanceof FormField.Option) {
                     value = ((FormField.Option)v).getValue();

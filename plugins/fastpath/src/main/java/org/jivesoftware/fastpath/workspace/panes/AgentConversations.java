@@ -75,8 +75,8 @@ import org.jxmpp.stringprep.XmppStringprepException;
 public final class AgentConversations extends JPanel implements ChangeListener {
 
 	private static final long serialVersionUID = 1L;
-	private final DefaultListModel model = new DefaultListModel();
-    private JList list;
+	private final DefaultListModel<AgentConversation> model = new DefaultListModel<>();
+    private JList<AgentConversation> list;
 
     private final Map<String, AgentConversation> sessionMap = new HashMap<>();
 
@@ -106,7 +106,7 @@ public final class AgentConversations extends JPanel implements ChangeListener {
     }
 
     private void init() {
-        list = new JList(model);
+        list = new JList<>(model);
 
         this.setLayout(new BorderLayout());
         this.setBackground(Color.white);
@@ -157,7 +157,7 @@ public final class AgentConversations extends JPanel implements ChangeListener {
 
             SwingWorker agentWorker = new SwingWorker() {
                 AgentRoster agentRoster;
-                Collection agentSet;
+                Collection<EntityBareJid> agentSet;
 
                 public Object construct() {
                     try
@@ -189,7 +189,7 @@ public final class AgentConversations extends JPanel implements ChangeListener {
                             AgentStatus agentStatus = presence.getExtension("agent-status", "http://jabber.org/protocol/workgroup");
 
                             if (agentStatus != null) {
-                                List list = agentStatus.getCurrentChats();
+                                List<AgentStatus.ChatInfo> list = agentStatus.getCurrentChats();
 
                                 removeOldChats(agentJID, list);
 
@@ -241,11 +241,10 @@ public final class AgentConversations extends JPanel implements ChangeListener {
         FastpathPlugin.getUI().setTitleForComponent(FpRes.getString("message.current.chats", counter), this);
     }
 
-    private boolean newListHasSession(String sessionID, List chatList) {
+    private boolean newListHasSession(String sessionID, List<AgentStatus.ChatInfo> chatList) {
         // Add new ones.
-        for (Object o : chatList) {
-            AgentStatus.ChatInfo chatInfo = (AgentStatus.ChatInfo) o;
-            String session = chatInfo.getSessionID();
+        for (AgentStatus.ChatInfo item : chatList) {
+            String session = item.getSessionID();
             if (session.equalsIgnoreCase(sessionID)) {
                 return true;
             }
@@ -253,7 +252,7 @@ public final class AgentConversations extends JPanel implements ChangeListener {
         return false;
     }
 
-    private void removeOldChats(EntityBareJid agentJID, List chatList) {
+    private void removeOldChats(EntityBareJid agentJID, List<AgentStatus.ChatInfo> chatList) {
         for (AgentConversation agent : sessionMap.values()) {
             if (agent.getAgentJID().equals(agentJID)) {
                 String sessionID = agent.getSessionID();
@@ -270,7 +269,7 @@ public final class AgentConversations extends JPanel implements ChangeListener {
         if (e.isPopupTrigger()) {
             // Check if monitor
             try {
-                AgentConversation item = (AgentConversation)list.getSelectedValue();
+                AgentConversation item = list.getSelectedValue();
                 boolean isMonitor = FastpathPlugin.getAgentSession().hasMonitorPrivileges(SparkManager.getConnection());
                 if (isMonitor) {
                     JPopupMenu menu = new JPopupMenu();
@@ -302,18 +301,18 @@ public final class AgentConversations extends JPanel implements ChangeListener {
 
                                 if (muc.isJoined()) {
                                     // Try and remove myself as an owner if I am one.
-                                    Collection owners;
+                                    Collection<Affiliate> owners;
                                     try {
                                         owners = muc.getOwners();
                                     }
                                     catch (XMPPException | SmackException e1) {
                                         return;
                                     }
-                                    Iterator iter = owners.iterator();
+                                    Iterator<Affiliate> iter = owners.iterator();
 
                                     List<Jid> list = new ArrayList<>();
                                     while (iter.hasNext()) {
-                                        Affiliate affilitate = (Affiliate)iter.next();
+                                        Affiliate affilitate = iter.next();
                                         Jid jid = affilitate.getJid();
                                         if (!jid.equals(SparkManager.getSessionManager().getUserBareAddress())) {
                                             list.add(jid);

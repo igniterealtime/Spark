@@ -114,7 +114,7 @@ public final class OnlineAgents extends JPanel {
 
             }
 
-            public void showPopup(MouseEvent e, Collection items) {
+            public void showPopup(MouseEvent e, Collection<ContactItem> items) {
 
             }
 

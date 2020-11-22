@@ -53,7 +53,7 @@ public final class WorkgroupRosterTree extends JPanel {
     private final Tree rosterTree;
     private final Map<JiveTreeNode, EntityBareJid> addressMap = new HashMap<>();
     private final boolean showUnavailableAgents;
-    private final List workgroupList;
+    private final List<String> workgroupList;
     private final Collection<? extends BareJid> exclusionList;
 
     /**
@@ -63,7 +63,7 @@ public final class WorkgroupRosterTree extends JPanel {
      * @param showAgents    true if agents should be visible.
      * @param workgroupList the list of workgroups.
      */
-    public WorkgroupRosterTree(Collection<? extends BareJid> exclusionJIDs, boolean showAgents, List workgroupList) {
+    public WorkgroupRosterTree(Collection<? extends BareJid> exclusionJIDs, boolean showAgents, List<String> workgroupList) {
         this.workgroupList = workgroupList;
         showUnavailableAgents = showAgents;
         exclusionList = exclusionJIDs;
