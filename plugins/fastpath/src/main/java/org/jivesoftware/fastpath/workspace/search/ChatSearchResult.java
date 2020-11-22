@@ -36,7 +36,7 @@ public class ChatSearchResult {
     private final String customerName;
     private final String email;
 
-    private final List fields = new ArrayList();
+    private final List<String> fields = new ArrayList<>();
 
     public ChatSearchResult(ReportedData.Row row, String query) {
         UTC_FORMAT.setTimeZone(TimeZone.getTimeZone("GMT+0"));
@@ -68,7 +68,7 @@ public class ChatSearchResult {
         fields.add(question);
         fields.add(email);
         fields.add(authors.toString());
-        fields.add(creationDate);
+        fields.add(creationDate.toString());
     }
 
 

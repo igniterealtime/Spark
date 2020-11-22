@@ -68,7 +68,7 @@ public class HistoryTranscript extends SwingWorker {
 	private final AtomicBoolean isInitialized = new AtomicBoolean(false);
 
 	private final LocalPreferences pref = SettingsManager.getLocalPreferences();
-	private final JComboBox periodChooser= new JComboBox() ;
+	private final JComboBox<String> periodChooser= new JComboBox<>();
 	private final JPanel filterPanel = new JPanel();
 	private final JPanel mainPanel = new BackgroundPanel();
 	private final JPanel searchPanel = new BackgroundPanel();

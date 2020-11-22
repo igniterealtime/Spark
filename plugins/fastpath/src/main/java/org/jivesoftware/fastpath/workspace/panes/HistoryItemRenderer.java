@@ -30,7 +30,7 @@ import javax.swing.BorderFactory;
  *
  * @author Derek DeMoro
  */
-public class HistoryItemRenderer extends JPanel implements ListCellRenderer {
+public class HistoryItemRenderer extends JPanel implements ListCellRenderer<Object> {
 	private static final long serialVersionUID = 5290058516051285328L;
 
 	/**

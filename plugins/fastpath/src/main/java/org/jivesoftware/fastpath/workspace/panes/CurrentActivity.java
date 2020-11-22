@@ -77,8 +77,8 @@ import org.jxmpp.jid.util.JidUtil;
 public final class CurrentActivity extends JPanel {
 
 	private static final long serialVersionUID = 1L;
-	private final DefaultListModel model = new DefaultListModel();
-    private final JList list = new JList(model);
+	private final DefaultListModel<ConversationItem> model = new DefaultListModel<>();
+    private final JList<ConversationItem> list = new JList<>(model);
     private JFrame mainFrame;
     private JLabel activeConversations;
     private int counter = 0;
@@ -142,7 +142,7 @@ public final class CurrentActivity extends JPanel {
     public void addCurrentChats() {
         SwingWorker agentWorker = new SwingWorker() {
             AgentRoster agentRoster;
-            Collection agentSet;
+            Collection<EntityBareJid> agentSet;
 
             public Object construct() {
                 try
@@ -227,7 +227,7 @@ public final class CurrentActivity extends JPanel {
 
                     int location = list.locationToIndex(e.getPoint());
                     list.setSelectedIndex(location);
-                    ConversationItem item = (ConversationItem)list.getSelectedValue();
+                    ConversationItem item = list.getSelectedValue();
                     final String sessionID = item.getSessionID();
 
 
@@ -254,19 +254,19 @@ public final class CurrentActivity extends JPanel {
 
                                 if (muc.isJoined()) {
                                     // Try and remove myself as an owner if I am one.
-                                    Collection owners;
+                                    Collection<Affiliate> owners;
                                     try {
                                         owners = muc.getOwners();
                                     }
                                     catch (XMPPException | SmackException e1) {
                                         return;
                                     }
-                                    Iterator iter = owners.iterator();
+                                    Iterator<Affiliate> iter = owners.iterator();
 
                                     List<Jid> list = new ArrayList<>();
                                     while (iter.hasNext()) {
-                                        Affiliate affilitate = (Affiliate)iter.next();
-                                        Jid jid = affilitate.getJid();
+                                        Affiliate affiliate = iter.next();
+                                        Jid jid = affiliate.getJid();
                                         if (!jid.equals(SparkManager.getSessionManager().getUserBareAddress())) {
                                             list.add(jid);
                                         }

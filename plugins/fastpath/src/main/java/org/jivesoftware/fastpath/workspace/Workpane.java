@@ -98,7 +98,7 @@ public class Workpane {
 
     private final JPanel toolbar;
 
-    private final java.util.List<FastpathListener> listeners = new ArrayList();
+    private final List<FastpathListener> listeners = new ArrayList<>();
 
     private final PresenceChangeListener presenceListener = new PresenceChangeListener();
 
