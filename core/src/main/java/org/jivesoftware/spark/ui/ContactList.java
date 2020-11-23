@@ -2373,9 +2373,7 @@ public class ContactList extends JPanel implements ActionListener,
         switch (localPreferences.getReconnectPanelType()) {
             case 0:
                 final String message = errorMessage;
-                SwingUtilities.invokeLater(() -> {
-                    reconnect(message);
-                });
+                SwingUtilities.invokeLater(() -> reconnect(message));
                 break;
             case 1:
                 switchAllUserOffline(true);

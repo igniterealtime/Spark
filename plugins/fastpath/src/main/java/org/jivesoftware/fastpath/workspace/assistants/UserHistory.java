@@ -46,8 +46,8 @@ import org.jxmpp.jid.EntityBareJid;
 
 public class UserHistory extends JPanel {
 	private static final long serialVersionUID = -1067239194964815379L;
-	private final DefaultListModel model = new DefaultListModel();
-    private final JList list;
+	private final DefaultListModel<UserHistoryItem> model = new DefaultListModel<>();
+    private final JList<UserHistoryItem> list;
     private final EntityBareJid userID;
 
     private JFrame frame;
@@ -55,7 +55,7 @@ public class UserHistory extends JPanel {
     public UserHistory(EntityBareJid userID) {
         this.userID = userID;
 
-        list = new JList(model);
+        list = new JList<>(model);
         list.setCellRenderer(new HistoryItemRenderer());
 
         final JPanel mainPanel = new JPanel();
@@ -69,7 +69,7 @@ public class UserHistory extends JPanel {
         list.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2) {
-                    UserHistoryItem historyItem = (UserHistoryItem)list.getSelectedValue();
+                    UserHistoryItem historyItem = list.getSelectedValue();
                     showTranscript(historyItem.getSessionID());
                 }
             }

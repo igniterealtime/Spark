@@ -381,7 +381,7 @@ public abstract class JiveSortableTable extends Table {
         }
     }
 
-    public static class ComboBoxRenderer extends JComboBox implements TableCellRenderer {
+    public static class ComboBoxRenderer extends JComboBox<String> implements TableCellRenderer {
 	private static final long serialVersionUID = 5892858463680797611L;
 
 	public ComboBoxRenderer() {
@@ -414,7 +414,7 @@ public abstract class JiveSortableTable extends Table {
 	private static final long serialVersionUID = 1003726653998005772L;
 
 	public MyComboBoxEditor(String[] items) {
-            super(new JComboBox(items));
+            super(new JComboBox<>(items));
         }
     }
 

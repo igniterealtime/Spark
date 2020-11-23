@@ -59,6 +59,7 @@ import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.log.Log;
+import org.jxmpp.jid.BareJid;
 import org.jxmpp.jid.DomainBareJid;
 import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.EntityFullJid;
@@ -85,7 +86,7 @@ public class WorkgroupInvitationDialog implements PropertyChangeListener {
     private JTextArea messageField;
     private final JTextField jidField = new JTextField();
 
-    private final List workgroups = new ArrayList();
+    private final List<String> workgroups = new ArrayList<>();
     private JLabel inviteLabel;
 
     /**
@@ -109,7 +110,7 @@ public class WorkgroupInvitationDialog implements PropertyChangeListener {
         final EntityFullJid jid = SparkManager.getSessionManager().getJID();
 
         EntityBareJid room = chatRoom.getBareJid();
-        Collection agents = null;
+        Collection<EntityBareJid> agents = null;
         try
         {
             agents = getAvailableAgents( FastpathPlugin.getAgentSession().getAgentRoster(), room);
@@ -193,10 +194,10 @@ public class WorkgroupInvitationDialog implements PropertyChangeListener {
         Localpart joinedWorkgroupName = FastpathPlugin.getWorkgroup().getWorkgroupJID().getLocalpartOrThrow();
         final JiveTreeNode workgroupNode = new JiveTreeNode(joinedWorkgroupName, true);
 
-        final Iterator agentIter = agents.iterator();
+        final Iterator<EntityBareJid> agentIter = agents.iterator();
         while (agentIter.hasNext()) {
             while (agentIter.hasNext()) {
-                String agentName = UserManager.unescapeJID((String)agentIter.next());
+                String agentName = UserManager.unescapeJID(agentIter.next().toString());
                 final JiveTreeNode agentNode = new JiveTreeNode(agentName, false, FastpathRes.getImageIcon(FastpathRes.GREEN_BALL));
                 workgroupNode.add(agentNode);
             }
@@ -206,7 +207,7 @@ public class WorkgroupInvitationDialog implements PropertyChangeListener {
         }
 
 
-        Collection workgroupAgents;
+        Collection<String> workgroupAgents;
         try {
             workgroupAgents = Agent.getWorkgroups(workgroupService, jid, SparkManager.getConnection());
         }
@@ -216,7 +217,7 @@ public class WorkgroupInvitationDialog implements PropertyChangeListener {
         }
         if (workgroupAgents.size() > 0) {
             // Add workgroups to combobox
-            for (String workgroup : (Iterable<String>) workgroupAgents) {
+            for (String workgroup : workgroupAgents) {
                 String workgroupName = XmppStringUtils.parseLocalpart(workgroup);
                 final JiveTreeNode wgNode = new JiveTreeNode(workgroupName, false, FastpathRes.getImageIcon(FastpathRes.FASTPATH_IMAGE_16x16));
                 workgroupsNode.add(wgNode);
@@ -225,9 +226,9 @@ public class WorkgroupInvitationDialog implements PropertyChangeListener {
         }
 
 
-        Iterator iter = FastpathPlugin.getAgentSession().getQueues();
+        Iterator<WorkgroupQueue> iter = FastpathPlugin.getAgentSession().getQueues();
         while (iter.hasNext()) {
-            final WorkgroupQueue queue = (WorkgroupQueue)iter.next();
+            final WorkgroupQueue queue = iter.next();
             if (queue.getStatus() == WorkgroupQueue.Status.OPEN) {
                 final JiveTreeNode qNode = new JiveTreeNode(queue.getName().toString(), false, FastpathRes.getImageIcon(FastpathRes.FASTPATH_IMAGE_16x16));
                 queueNode.add(qNode);
@@ -238,9 +239,9 @@ public class WorkgroupInvitationDialog implements PropertyChangeListener {
 
         // New Roster tree. Do not show agents at all.
         final UserManager userManager = SparkManager.getUserManager();
-        Collection jids = userManager.getUserJidsInRoom(room, false);
+        Collection<?> jids = userManager.getUserJidsInRoom(room, false);
 
-        roster = new WorkgroupRosterTree(jids, false, workgroups);
+        roster = new WorkgroupRosterTree((Collection<? extends BareJid>) jids, false, workgroups);
 
         try {
             rosterTree = roster.getRosterTree();

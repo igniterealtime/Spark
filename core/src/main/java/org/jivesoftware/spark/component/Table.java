@@ -412,7 +412,7 @@ public abstract class Table extends JXTable {
         }
     }
 
-    public static class ComboBoxRenderer extends JComboBox implements TableCellRenderer {
+    public static class ComboBoxRenderer extends JComboBox<String> implements TableCellRenderer {
 
 	private static final long serialVersionUID = -545496178928790522L;
 
@@ -447,7 +447,7 @@ public abstract class Table extends JXTable {
 	private static final long serialVersionUID = 6097118754932234992L;
 
 	public MyComboBoxEditor(String[] items) {
-            super(new JComboBox(items));
+            super(new JComboBox<>(items));
         }
     }
 

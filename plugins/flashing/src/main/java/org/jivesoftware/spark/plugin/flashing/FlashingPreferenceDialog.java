@@ -33,12 +33,12 @@ public class FlashingPreferenceDialog extends JPanel {
 	private static final long serialVersionUID = -5274539572483246530L;
 
 	private final JCheckBox flashingEnabled;
-	private final JComboBox flashingType;
+	private final JComboBox<String> flashingType;
 	
 	public FlashingPreferenceDialog() {
 		JPanel flashingPanel = new JPanel();
 		flashingEnabled = new JCheckBox();
-		flashingType = new JComboBox();
+		flashingType = new JComboBox<>();
 		JLabel lTyps = new JLabel();
 		flashingPanel.setLayout(new GridBagLayout());
 		

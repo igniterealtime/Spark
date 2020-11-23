@@ -141,7 +141,7 @@ public class DataFormDialog extends JPanel {
                     addField(label, new JPasswordField( value ), variable);
                 }
                 else if (type.equals(FormField.Type.list_single)) {
-                    JComboBox box = new JComboBox();
+                    JComboBox<String> box = new JComboBox<>();
                     for ( final FormField.Option option : field.getOptions() ) {
                         String value = option.getValue();
                         box.addItem(value);
@@ -230,7 +230,7 @@ public class DataFormDialog extends JPanel {
                     submitForm.setAnswer(answer, value);
                 }
             } else if (o instanceof JComboBox) {
-                String value = (String) ((JComboBox) o).getSelectedItem();
+                String value = (String) ((JComboBox<?>) o).getSelectedItem();
                 List<String> list = new ArrayList<>();
                 list.add(value);
                 if (list.size() > 0) {
@@ -243,7 +243,6 @@ public class DataFormDialog extends JPanel {
                 }
             }
         }
-
 
         try {
             chat.sendConfigurationForm(submitForm);

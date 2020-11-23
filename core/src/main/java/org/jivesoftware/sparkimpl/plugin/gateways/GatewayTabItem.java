@@ -43,7 +43,6 @@ public class GatewayTabItem extends CollapsiblePane implements GatewayItem {
     private boolean signedIn;
 
     private final Transport _transport;
-    private final DefaultListModel model = new DefaultListModel();
     private final JLabel _status = new JLabel();
     private final JPanel _listPanel = new JPanel(new GridBagLayout());
     private final JLabel _statusIcon = new JLabel();
@@ -68,8 +67,9 @@ public class GatewayTabItem extends CollapsiblePane implements GatewayItem {
 	getTitlePane().add(_status);
 	this.setTitle(transport.getName());
 
-	_listPanel.setBackground((Color)UIManager.get("ContactItem.background"));
-        JList _transportMenu = new JList( model );
+        _listPanel.setBackground((Color) UIManager.get("ContactItem.background"));
+        DefaultListModel<?> model = new DefaultListModel<>();
+        JList<?> _transportMenu = new JList<>(model);
         _transportMenu.setCellRenderer(new JPanelRenderer());
 
 	this.setContentPane(_listPanel);

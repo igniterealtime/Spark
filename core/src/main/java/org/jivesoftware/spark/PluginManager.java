@@ -276,7 +276,7 @@ public class PluginManager implements MainWindowListener
             saxReader.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
 
             final Document pluginXML = saxReader.read( pluginFile );
-            final List dependencies = pluginXML.selectNodes( "plugin/depends/plugin" );
+            final List<?> dependencies = pluginXML.selectNodes( "plugin/depends/plugin" );
             return dependencies != null && dependencies.size() > 0;
         }
         catch ( DocumentException | SAXException e )

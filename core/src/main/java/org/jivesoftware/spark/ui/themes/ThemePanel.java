@@ -630,7 +630,7 @@ public class ThemePanel extends JPanel
         return _lookandfeelLabel;
     }
 
-    protected JComboBox getLookandfeel()
+    protected JComboBox<String> getLookandfeel()
     {
         return _lookandfeel;
     }
@@ -655,7 +655,7 @@ public class ThemePanel extends JPanel
         return avatarSizeLabel;
     }
 
-    protected JComboBox getAvatarSizeField()
+    protected JComboBox<String> getAvatarSizeField()
     {
         return avatarSizeField;
     }
