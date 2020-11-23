@@ -247,7 +247,7 @@ public class InvitationPane {
     private void removeOwner(MultiUserChat muc) {
         if (muc.isJoined()) {
             // Try and remove myself as an owner if I am one.
-            Collection owners;
+            Collection<Affiliate> owners;
             try {
                 owners = muc.getOwners();
             }
@@ -259,12 +259,12 @@ public class InvitationPane {
                 return;
             }
 
-            Iterator iter = owners.iterator();
+            Iterator<Affiliate> iter = owners.iterator();
 
             List<Jid> list = new ArrayList<>();
             while (iter.hasNext()) {
-                Affiliate affilitate = (Affiliate)iter.next();
-                Jid jid = affilitate.getJid();
+                Affiliate affiliate = iter.next();
+                Jid jid = affiliate.getJid();
                 if (!jid.equals(SparkManager.getSessionManager().getUserBareAddress())) {
                     list.add(jid);
                 }

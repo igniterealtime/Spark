@@ -58,7 +58,7 @@ public class ContactGroupTransferHandler extends TransferHandler {
         }
 
 
-        JList list = (JList)comp;
+        JList<?> list = (JList<?>)comp;
         ContactGroup group = getContactGroup(list);
         if(group == null){
             return false;
@@ -86,7 +86,7 @@ public class ContactGroupTransferHandler extends TransferHandler {
 	public Transferable createTransferable(JComponent comp) {
 
         if (comp instanceof JList) {
-            JList list = (JList)comp;
+            JList<?> list = (JList<?>) comp;
             ContactItem source = (ContactItem)list.getSelectedValue();
             return new ContactItemTransferable(source);
         }
@@ -96,16 +96,16 @@ public class ContactGroupTransferHandler extends TransferHandler {
     @Override
 	public boolean importData(JComponent comp, Transferable t) {
         if (comp instanceof JList) {
-            JList list = (JList)comp;
+            JList<?> list = (JList<?>) comp;
             ContactGroup group = getContactGroup(list);
 
             if (t.isDataFlavorSupported(flavors[0])) {
                 try {
                     ContactItem item = (ContactItem)t.getTransferData(flavors[0]);
-                    DefaultListModel model = (DefaultListModel)list.getModel();
+                    DefaultListModel<?> model = (DefaultListModel<?>) list.getModel();
                     int size = model.getSize();
                     for (int i = 0; i < size; i++) {
-                        ContactItem it = (ContactItem)model.getElementAt(i);
+                        ContactItem it = (ContactItem) model.getElementAt(i);
                         if (it.getDisplayName().equals(item.getDisplayName())) {
                             return false;
                         }
@@ -170,7 +170,7 @@ public class ContactGroupTransferHandler extends TransferHandler {
         }
     }
 
-    private ContactGroup getContactGroup(JList list) {
+    private ContactGroup getContactGroup(JList<?> list) {
         ContactList contactList = SparkManager.getWorkspace().getContactList();
         for (ContactGroup group : contactList.getContactGroups()) {
             if (group.getList() == list) {
@@ -185,7 +185,7 @@ public class ContactGroupTransferHandler extends TransferHandler {
         return null;
     }
 
-    private ContactGroup getSubContactGroup(ContactGroup group, JList list) {
+    private ContactGroup getSubContactGroup(ContactGroup group, JList<?> list) {
         for (ContactGroup g : group.getContactGroups()) {
             if (g.getList() == list) {
                 return g;

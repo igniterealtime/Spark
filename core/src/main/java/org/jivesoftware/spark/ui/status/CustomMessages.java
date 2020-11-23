@@ -307,7 +307,7 @@ public class CustomMessages {
     private static class CustomStatus extends JPanel {
 		private static final long serialVersionUID = 1117350001209641469L;
 		private final JLabel typeLabel = new JLabel();
-        private final JComboBox typeBox = new JComboBox();
+        private final JComboBox<ImageIcon> typeBox = new JComboBox<>();
 
         private final JLabel statusLabel = new JLabel();
         private final JTextField statusField = new JTextField();
@@ -358,7 +358,7 @@ public class CustomMessages {
         }
 
         public String getType() {
-            ImageIcon icon = (ImageIcon)typeBox.getSelectedItem();
+            ImageIcon icon = (ImageIcon) typeBox.getSelectedItem();
             return icon.getDescription();
         }
 
@@ -399,7 +399,7 @@ public class CustomMessages {
             String type = item.getType();
             int count = typeBox.getItemCount();
             for (int i = 0; i < count; i++) {
-                ImageIcon icon = (ImageIcon)typeBox.getItemAt(i);
+                ImageIcon icon = typeBox.getItemAt(i);
                 if (icon.getDescription().equals(type)) {
                     typeBox.setSelectedIndex(i);
                     break;
@@ -484,7 +484,7 @@ public class CustomMessages {
             if (selectedType != null) {
                 int count = typeBox.getItemCount();
                 for (int i = 0; i < count; i++) {
-                    ImageIcon icon = (ImageIcon)typeBox.getItemAt(i);
+                    ImageIcon icon = typeBox.getItemAt(i);
                     if (icon.getDescription().equals(selectedType)) {
                         typeBox.setSelectedIndex(i);
                         break;

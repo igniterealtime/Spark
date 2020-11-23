@@ -49,10 +49,10 @@ import javax.swing.JTextField;
  */
 public class WorkgroupDataForm extends JPanel {
 	private static final long serialVersionUID = -2368907321868842234L;
-	private final Map valueMap = new HashMap<String, JComponent>();
+	private final Map<String, JComponent> valueMap = new HashMap<>();
     private int row = 5;
     private final Form searchForm;
-    private final Map presetVariables;
+    private final Map<String, String> presetVariables;
     private final List<String> requiredList = new ArrayList<>();
     private EnterListener listener;
 
@@ -62,7 +62,7 @@ public class WorkgroupDataForm extends JPanel {
      *
      * @param form the <code>DataForm</code> to build a UI with.
      */
-    public WorkgroupDataForm(Form form, Map presetVariables) {
+    public WorkgroupDataForm(Form form, Map<String, String> presetVariables) {
         this.presetVariables  = presetVariables;
         this.setLayout(new GridBagLayout());
         this.searchForm = form;
@@ -116,9 +116,8 @@ public class WorkgroupDataForm extends JPanel {
                 addField(label, new JPasswordField(), variable);
             }
             else if (type.equals(FormField.Type.list_single)) {
-                JComboBox box = new JComboBox();
+                JComboBox<FormField.Option> box = new JComboBox<>();
                 for ( final FormField.Option option : field.getOptions() ) {
-                    String value = option.getValue();
                     box.addItem(option);
                 }
                 if (valueList.size() > 0) {
@@ -172,7 +171,7 @@ public class WorkgroupDataForm extends JPanel {
                 }
             }
             else if (o instanceof JComboBox) {
-                Object v = ((JComboBox)o).getSelectedItem();
+                Object v = ((JComboBox<?>) o).getSelectedItem();
                 String value = (v instanceof FormField.Option) ? ((FormField.Option) v).getValue() : (String) v;
 
                 List<String> list = new ArrayList<>();
@@ -182,7 +181,7 @@ public class WorkgroupDataForm extends JPanel {
                 }
             }
             else if (o instanceof CheckBoxList) {
-                List list = ((CheckBoxList)o).getSelectedValues();
+                List<? extends CharSequence> list = ((CheckBoxList) o).getSelectedValues();
                 if (list.size() > 0) {
                     answerForm.setAnswer(answer, list);
                 }
@@ -191,7 +190,7 @@ public class WorkgroupDataForm extends JPanel {
 
         for (Object o : presetVariables.keySet()) {
             String variable = (String) o;
-            String value = (String) presetVariables.get(variable);
+            String value = presetVariables.get(variable);
             answerForm.setAnswer(variable, value);
         }
 
@@ -238,12 +237,12 @@ public class WorkgroupDataForm extends JPanel {
     }
 
     public Component getComponent(String label) {
-        return (Component)valueMap.get(label);
+        return valueMap.get(label);
     }
 
 
     private String getValue(String label) {
-        Component comp = (Component)valueMap.get(label);
+        Component comp = valueMap.get(label);
         if (comp instanceof JCheckBox) {
             return "" + ((JCheckBox)comp).isSelected();
         }

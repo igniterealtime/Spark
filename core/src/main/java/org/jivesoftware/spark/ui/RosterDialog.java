@@ -93,8 +93,8 @@ public class RosterDialog implements ActionListener {
     private final JTextField nicknameField;
     private final Vector<String> groupModel = new Vector<>();
 
-    private final JComboBox groupBox;
-    private final JComboBox accounts;
+    private final JComboBox<String> groupBox;
+    private final JComboBox<AccountItem> accounts;
     private JDialog dialog;
     private final ContactList contactList;
     private final JCheckBox publicBox;
@@ -115,12 +115,12 @@ public class RosterDialog implements ActionListener {
         JLabel nicknameLabel = new JLabel();
         nicknameField = new JTextField();
         JLabel groupLabel = new JLabel();
-        groupBox = new JComboBox(groupModel);
+        groupBox = new JComboBox<>(groupModel);
 
         JButton newGroupButton = new JButton();
 
         JLabel accountsLabel = new JLabel();
-        accounts = new JComboBox();
+        accounts = new JComboBox<>();
         publicBox = new JCheckBox(Res.getString("label.user.on.public.network"));
 
         ResourceUtils.resLabel(accountsLabel, publicBox, Res.getString("label.network"));

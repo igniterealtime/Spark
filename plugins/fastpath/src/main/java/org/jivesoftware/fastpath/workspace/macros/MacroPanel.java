@@ -42,7 +42,7 @@ public class MacroPanel extends JPanel {
     private final JLabel responseLabel;
 
     private final JTextField titleField;
-    private final JComboBox typeField;
+    private final JComboBox<String> typeField;
     private final JTextArea responseField;
 
     public MacroPanel() {
@@ -53,7 +53,7 @@ public class MacroPanel extends JPanel {
         titleField = new JTextField();
 
         String[] items = {"Text", "URL", "Image"};
-        typeField = new JComboBox(items);
+        typeField = new JComboBox<>(items);
 
         responseField = new JTextArea();
 

@@ -43,7 +43,7 @@ public final class OIDTranslator {
 		OIDtoDescriptionMap.put("2.5.29.31", Res.getString("2.5.29.31"));
 		OIDtoDescriptionMap.put("2.5.29.32", Res.getString("2.5.29.32"));
 		OIDtoDescriptionMap.put("2.5.29.33", Res.getString("2.5.29.33"));
-		OIDtoDescriptionMap.put("2.5.29.19", Res.getString("2.5.29.34"));
+		OIDtoDescriptionMap.put("2.5.29.34", Res.getString("2.5.29.34"));
 		OIDtoDescriptionMap.put("2.5.29.35", Res.getString("2.5.29.35"));
 		OIDtoDescriptionMap.put("2.5.29.36", Res.getString("2.5.29.36"));
 		OIDtoDescriptionMap.put("2.5.29.37", Res.getString("2.5.29.37"));

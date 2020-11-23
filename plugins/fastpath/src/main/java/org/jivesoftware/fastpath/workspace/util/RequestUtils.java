@@ -127,13 +127,13 @@ public class RequestUtils {
     private String getFirstValue(String key) {
         Object o = getMetadata().get(key);
         if (o instanceof List) {
-            final List list = (List)getMetadata().get(key);
+            final List<?> list = (List<?>) o;
             if (list.size() > 0) {
-                return (String)list.get(0);
+                return (String) list.get(0);
             }
         }
         else if (o instanceof String) {
-            return (String)o;
+            return (String) o;
         }
         return null;
     }

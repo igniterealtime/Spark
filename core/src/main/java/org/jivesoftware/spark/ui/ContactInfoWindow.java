@@ -174,7 +174,7 @@ public class ContactInfoWindow extends JPanel {
         int loc = group.getList().locationToIndex(e.getPoint());
 
 
-        ContactItem item = (ContactItem)group.getList().getModel().getElementAt(loc);
+        ContactItem item = group.getList().getModel().getElementAt(loc);
         if (item == null || item.getJid() == null) {
             return;
         }

@@ -44,8 +44,7 @@ public class SparkPrivacyList {
      */
 
 
-    public SparkPrivacyList(PrivacyList list) throws SmackException.NotConnectedException
-    {
+    public SparkPrivacyList(PrivacyList list) {
         _listName = list.getName();
         _myPrivacyList = list;
         _isActive = _myPrivacyList.isActiveList();
@@ -54,8 +53,7 @@ public class SparkPrivacyList {
     }
 
     
-    private void loadItems() throws SmackException.NotConnectedException
-    {
+    private void loadItems() {
        List<PrivacyItem> itemList = _myPrivacyList.getItems();
        
        for (PrivacyItem item: itemList)

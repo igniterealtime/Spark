@@ -53,8 +53,8 @@ public class ConversationHistoryPlugin implements Plugin {
     private File transcriptDir;
     private File conFile;
 
-    private final DefaultListModel model = new DefaultListModel();
-    private JList contacts;
+    private final DefaultListModel<JLabel> model = new DefaultListModel<>();
+    private JList<JLabel> contacts;
     private Window window;
 
     private final Map<JLabel, EntityBareJid> jidMap = new HashMap<>();
@@ -64,7 +64,7 @@ public class ConversationHistoryPlugin implements Plugin {
         transcriptDir = new File(SparkManager.getUserDirectory(), "transcripts");
         conFile = new File(transcriptDir, "conversations.xml");
 
-        contacts = new JList(model);
+        contacts = new JList<>(model);
         contacts.setCellRenderer(new InternalRenderer());
 
         window = new Window(SparkManager.getMainWindow());
@@ -98,7 +98,7 @@ public class ConversationHistoryPlugin implements Plugin {
 		}
 
 		if (e.getClickCount() == 2) {
-		    final JLabel label = (JLabel) contacts.getSelectedValue();
+		    final JLabel label = contacts.getSelectedValue();
 		    EntityBareJid user = jidMap.get(label);
 		    if (user != null) {
 			final String contactUsername = SparkManager
@@ -115,7 +115,7 @@ public class ConversationHistoryPlugin implements Plugin {
             @Override
 			public void keyReleased(KeyEvent e) {
                 if (e.getKeyChar() == KeyEvent.VK_ENTER) {
-                    final JLabel label = (JLabel) contacts.getSelectedValue();
+                    final JLabel label = contacts.getSelectedValue();
                     EntityBareJid user = jidMap.get(label);
                     if (user != null) {
                         final String contactUsername = SparkManager.getUserManager().getUserNicknameFromJID(user);
@@ -307,7 +307,7 @@ public class ConversationHistoryPlugin implements Plugin {
     /**
      * Internal handling of a Jlabel Renderer.
      */
-    public static class InternalRenderer extends JLabel implements ListCellRenderer {
+    public static class InternalRenderer extends JLabel implements ListCellRenderer<Object> {
 		private static final long serialVersionUID = 1812281106979897477L;
 
 		/**

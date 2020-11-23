@@ -62,7 +62,7 @@ import java.io.IOException;
  */
 public class UserSearchForm extends JPanel {
     private static final long	serialVersionUID	= -9192188543673595941L;
-    private JComboBox servicesBox;
+    private JComboBox<String> servicesBox;
     private final UserSearchManager searchManager;
 
     private final Collection<? extends CharSequence> searchServices;
@@ -103,7 +103,7 @@ public class UserSearchForm extends JPanel {
     
     private void addSearchServices() {
         // Populate with Search Services
-        servicesBox = new JComboBox();
+        servicesBox = new JComboBox<>();
     
         for (CharSequence searchService : searchServices) {
             String service = searchService.toString();
