@@ -10,7 +10,7 @@
     </parent>
 
     <artifactId>meet</artifactId>
-    <version>0.0.5</version>
+    <version>0.0.8</version>
 
     <name>Pade Meetings Plugin</name>
     <description>Adds support for Pade Meetings to the Spark IM client.</description>
@@ -24,4 +24,11 @@
         </contributor>
     </contributors>
 
+    <dependencies>
+        <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+            <version>2.3.0</version>
+        </dependency>
+    </dependencies>
 </project>
