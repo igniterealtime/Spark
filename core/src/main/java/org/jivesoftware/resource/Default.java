@@ -29,11 +29,11 @@ import java.util.*;
 import static org.jivesoftware.sparkimpl.plugin.manager.Enterprise.PLUGINS_BLACKLIST_NODE;
 
 public class Default {
-    private static Properties prb;
+    private static final Properties prb;
 
-    private static Map<String,Object> customMap = new HashMap<>();
+    private static final Map<String,Object> customMap = new HashMap<>();
 
-    private static Map<String,ImageIcon> cache = new HashMap<>();
+    private static final Map<String,ImageIcon> cache = new HashMap<>();
 
     public static final String MAIN_IMAGE = "MAIN_IMAGE";
     public static final String APPLICATION_NAME = "APPLICATION_NAME";
@@ -124,6 +124,7 @@ public class Default {
     public static final String PROXY_ENABLED = "PROXY_ENABLED";
     public static final String OLD_SSL_ENABLED = "OLD_SSL_ENABLED";
     public static final String FILE_TRANSFER_IBB_ONLY = "FILE_TRANSFER_IBB_ONLY";
+    public static final String FILE_TRANSFER_AUTO_ACCEPT_PRESENCE = "FILE_TRANSFER_AUTO_ACCEPT_PRESENCE";
     public static final String CHANGE_COLORS_DISABLED = "CHANGE_COLORS_DISABLED";
     public static final String ADD_CONTACT_GROUP_DISABLED = "ADD_CONTACT_GROUP_DISABLED";
     public static final String DISABLE_AVATAR_TAB = "DISABLE_AVATAR_TAB";
@@ -149,7 +150,7 @@ public class Default {
     public static final String PLUGIN_REPOSITORY_USE_PROXY = "PLUGIN_REPOSITORY_USE_PROXY";
     public static final String PROXY_PROTOCOL = "PROXY_PROTOCOL";
 
-    static ClassLoader cl = SparkRes.class.getClassLoader();
+    private static final ClassLoader cl = SparkRes.class.getClassLoader();
 
     static {
         prb = new Properties();

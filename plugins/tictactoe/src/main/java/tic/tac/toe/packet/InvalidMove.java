@@ -74,17 +74,17 @@ public class InvalidMove implements ExtensionElement {
                 {
                     if ( "gameID".equals( parser.getName() ) )
                     {
-                        final int gameID = Integer.valueOf( parser.nextText() );
+                        final int gameID = Integer.parseInt( parser.nextText() );
                         gameMove.setGameID( gameID );
                     }
                     if ( "positionX".equals( parser.getName() ) )
                     {
-                        final int position = Integer.valueOf( parser.nextText() );
+                        final int position = Integer.parseInt( parser.nextText() );
                         gameMove.setPositionX( position );
                     }
                     if ( "positionY".equals( parser.getName() ) )
                     {
-                        final int position = Integer.valueOf( parser.nextText() );
+                        final int position = Integer.parseInt( parser.nextText() );
                         gameMove.setPositionY( position );
                     }
                 }

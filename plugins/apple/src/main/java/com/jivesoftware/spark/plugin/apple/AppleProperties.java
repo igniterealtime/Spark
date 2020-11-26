@@ -30,7 +30,7 @@ import org.jivesoftware.Spark;
  * 
  */
 public class AppleProperties {
-    private Properties props;
+    private final Properties props;
     private File configFile;
 
     public static final String DOCKBOUNCE = "DOCKBOUNCE";

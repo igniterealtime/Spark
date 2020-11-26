@@ -28,7 +28,6 @@ import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.StanzaListener;
 import org.jivesoftware.smack.filter.StanzaExtensionFilter;
 import org.jivesoftware.smack.packet.DefaultExtensionElement;
-import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.spark.util.log.Log;
 import org.jxmpp.jid.Jid;
@@ -51,28 +50,26 @@ public class ReversiPanel extends JPanel {
 
     private static final int DISC_SIZE = (int)(BLOCK_SIZE*0.8); // 80% of block size
 
-    private XMPPConnection connection;
-    private int otherPlayer;
-    private int gameID;
-    private Jid opponentJID;
+    private final XMPPConnection connection;
+    private final int otherPlayer;
+    private final int gameID;
+    private final Jid opponentJID;
     private StanzaListener gameMoveListener;
 
-    private List<ReversiBlock> blocks = new ArrayList<ReversiBlock>();
+    private final List<ReversiBlock> blocks = new ArrayList<>();
     // Main game object
-    private ReversiModel reversi;
+    private final ReversiModel reversi;
 
     // All images used by the game.
-    
-     ImageIcon imageIcon = ReversiRes.getImageIcon(ReversiRes.REVERSI_ICON);
-    
-    private Image imageBackground = ReversiRes.getImageIcon(ReversiRes.REVERSI_BOARD).getImage();
-    private Image imageScoreWhite = ReversiRes.getImageIcon(ReversiRes.REVERSI_SCORE_WHITE).getImage();
-    private Image imageScoreBlack = ReversiRes.getImageIcon(ReversiRes.REVERSI_SCORE_BLACK).getImage();
-    private Image imageTurnBlack = ReversiRes.getImageIcon(ReversiRes.REVERSI_LABEL_BLACK).getImage();
-    private Image imageTurnWhite = ReversiRes.getImageIcon(ReversiRes.REVERSI_LABEL_WHITE).getImage();
-    private Image imageButtonResign = ReversiRes.getImageIcon(ReversiRes.REVERSI_RESIGN).getImage();
-    private Image imageYou = ReversiRes.getImageIcon(ReversiRes.REVERSI_YOU).getImage();
-    private Image imageThem = ReversiRes.getImageIcon(ReversiRes.REVERSI_THEM).getImage();
+
+    private final Image imageBackground = ReversiRes.getImageIcon(ReversiRes.REVERSI_BOARD).getImage();
+    private final Image imageScoreWhite = ReversiRes.getImageIcon(ReversiRes.REVERSI_SCORE_WHITE).getImage();
+    private final Image imageScoreBlack = ReversiRes.getImageIcon(ReversiRes.REVERSI_SCORE_BLACK).getImage();
+    private final Image imageTurnBlack = ReversiRes.getImageIcon(ReversiRes.REVERSI_LABEL_BLACK).getImage();
+    private final Image imageTurnWhite = ReversiRes.getImageIcon(ReversiRes.REVERSI_LABEL_WHITE).getImage();
+    private final Image imageButtonResign = ReversiRes.getImageIcon(ReversiRes.REVERSI_RESIGN).getImage();
+    private final Image imageYou = ReversiRes.getImageIcon(ReversiRes.REVERSI_YOU).getImage();
+    private final Image imageThem = ReversiRes.getImageIcon(ReversiRes.REVERSI_THEM).getImage();
 
     /**
      * Creates a new Reversi panel.
@@ -94,24 +91,21 @@ public class ReversiPanel extends JPanel {
         reversi = new ReversiModel();
 
         if (connection != null) {
-            gameMoveListener = new StanzaListener() {
-                @Override
-                public void processStanza(Stanza stanza) {
-                    GameMove move = stanza.getExtension(GameMove.ELEMENT_NAME, GameMove.NAMESPACE);
-                    // If this is a move for the current game.
-                    if (move.getGameID() == gameID) {
-                        int position = move.getPosition();
-                        // Make sure that the other player is allowed to make the move right now.
-                        if (reversi.getCurrentPlayer() == otherPlayer && reversi.isValidMove(position)) {
-                            reversi.makeMove(position);
-                            // Redraw board.
-                            ReversiPanel.this.repaint();
-                        }
-                        else {
-                            // TODO: other user automatically forfeits!
-                        }
-                        // Execute move.
+            gameMoveListener = stanza -> {
+                GameMove move = stanza.getExtension(GameMove.ELEMENT_NAME, GameMove.NAMESPACE);
+                // If this is a move for the current game.
+                if (move.getGameID() == gameID) {
+                    int position = move.getPosition();
+                    // Make sure that the other player is allowed to make the move right now.
+                    if (reversi.getCurrentPlayer() == otherPlayer && reversi.isValidMove(position)) {
+                        reversi.makeMove(position);
+                        // Redraw board.
+                        ReversiPanel.this.repaint();
                     }
+                    // TODO: other user automatically forfeits!
+                    // else {
+                    // }
+                    // Execute move.
                 }
             };
 
@@ -233,8 +227,8 @@ public class ReversiPanel extends JPanel {
     public class ReversiBlock extends JPanel {
 
 		private static final long serialVersionUID = -8504469339731900770L;
-		private ReversiPanel ui;
-        private int index;
+		private final ReversiPanel ui;
+        private final int index;
 
         public ReversiBlock(ReversiPanel ui, int index) {
             super();
@@ -300,7 +294,7 @@ public class ReversiPanel extends JPanel {
      */
     public class ReversiBlockMouseListener extends MouseAdapter {
 
-        private ReversiBlock block;
+        private final ReversiBlock block;
 
         public ReversiBlockMouseListener(ReversiBlock block) {
             this.block = block;

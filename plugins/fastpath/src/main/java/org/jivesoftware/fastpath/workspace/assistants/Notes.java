@@ -45,7 +45,6 @@ import org.jivesoftware.smackx.workgroup.agent.AgentSession;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.ui.ChatRoom;
-import org.jivesoftware.spark.ui.ChatRoomClosingListener;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.SwingWorker;
@@ -55,17 +54,17 @@ import org.jivesoftware.resource.Res;
 public class Notes extends JPanel {
 	private static final long serialVersionUID = -7789684145607565950L;
 	private JFrame notesFrame;
-    private JScrollPane scrollPane;
-    private JTextPane textPane;
+    private final JScrollPane scrollPane;
+    private final JTextPane textPane;
 
-    private JToolBar toolBar;
-    private RolloverButton saveButton;
+    private final JToolBar toolBar;
+    private final RolloverButton saveButton;
 
-    private String sessionID;
+    private final String sessionID;
     private boolean hasClickedInPane;
-    private JLabel statusLabel;
+    private final JLabel statusLabel;
 
-    private ChatRoom chatRoom;
+    private final ChatRoom chatRoom;
     private boolean updated;
 
     public Notes(CharSequence sessionID, ChatRoom room) {
@@ -139,11 +138,9 @@ public class Notes extends JPanel {
         statusLabel = new JLabel();
         this.add(statusLabel, BorderLayout.SOUTH);
 
-        chatRoom.addClosingListener(new ChatRoomClosingListener() {
-            public void closing() {
-                if (updated) {
-                    saveNotes();
-                }
+        chatRoom.addClosingListener(() -> {
+            if (updated) {
+                saveNotes();
             }
         });
     }
@@ -218,7 +215,7 @@ public class Notes extends JPanel {
      * @param newString the String that will replace all instances of oldString
      * @return a String will all instances of oldString replaced by newString
      */
-    public static final String replace(String string, String oldString, String newString) {
+    public static String replace(String string, String oldString, String newString) {
         if (string == null) {
             return null;
         }
@@ -234,7 +231,7 @@ public class Notes extends JPanel {
             char[] string2 = string.toCharArray();
             char[] newString2 = newString.toCharArray();
             int oLength = oldString.length();
-            StringBuffer buf = new StringBuffer(string2.length);
+            StringBuilder buf = new StringBuilder(string2.length);
             buf.append(string2, 0, i).append(newString2);
             i += oLength;
             int j = i;

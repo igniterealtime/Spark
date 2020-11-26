@@ -37,8 +37,8 @@ import javax.swing.tree.TreeCellRenderer;
  */
 public class CheckRenderer extends JPanel implements TreeCellRenderer {
     private static final long serialVersionUID = 687507314190933733L;
-    private JCheckBox check;
-    private TreeLabel label;
+    private final JCheckBox check;
+    private final TreeLabel label;
 
     /**
      * Create new CheckRenderer.

@@ -36,8 +36,8 @@ import org.jivesoftware.spark.util.ResourceUtils;
  */
 public class ChatAreaSendField extends JPanel {
 	private static final long serialVersionUID = 6226413259528399476L;
-	private ChatInputEditor textField;
-    private JButton button;
+	private final ChatInputEditor textField;
+    private final JButton button;
 
     /**
      * Creates a new IconTextField with Icon.

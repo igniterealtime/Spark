@@ -41,9 +41,9 @@ public class Spawn {
 
         final CountDownLatch latch = new CountDownLatch(2);
 
-        final List<Throwable> exceptions = Collections.synchronizedList(new LinkedList<Throwable>());
+        final List<Throwable> exceptions = Collections.synchronizedList(new LinkedList<>());
 
-        final List<String> output = Collections.synchronizedList(new LinkedList<String>());
+        final List<String> output = Collections.synchronizedList(new LinkedList<>());
 
         latch.countDown();
         final XProcess process = startProcess(command, folder, new ProcessListener() {
@@ -81,7 +81,7 @@ public class Spawn {
         }
 
         final StringBuilder sb = new StringBuilder();
-        for (final String line : new ArrayList<String>(output)) {
+        for (final String line : new ArrayList<>(output)) {
             sb.append(line).append("\n");
         }
 
@@ -90,7 +90,7 @@ public class Spawn {
     }
 
     public interface Callback<Type> {
-        public void onDone(Type t);
+        void onDone(Type t);
     }
 
     /**

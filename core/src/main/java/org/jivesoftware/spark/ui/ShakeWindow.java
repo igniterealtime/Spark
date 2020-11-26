@@ -33,7 +33,7 @@ public class ShakeWindow {
     public static final int SHAKE_DURATION = 1000;
     public static final int SHAKE_UPDATE = 5;
 
-    private Window window;
+    private final Window window;
     private Point naturalLocation;
     private long startTime;
     private Timer shakeTimer;

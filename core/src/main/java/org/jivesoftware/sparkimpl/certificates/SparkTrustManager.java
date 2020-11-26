@@ -42,18 +42,19 @@ public class SparkTrustManager extends GeneralTrustManager implements X509TrustM
 
     static X509Certificate[] lastFailedChain;
 
-    private boolean checkCRL;
-    private boolean checkOCSP;
-    private boolean acceptExpired;
-    private boolean acceptNotValidYet;
-    private boolean acceptRevoked;
-    private boolean acceptSelfSigned;
-    private boolean allowSoftFail;
+    private final boolean checkCRL;
+    private final boolean checkOCSP;
+    private final boolean acceptExpired;
+    private final boolean acceptNotValidYet;
+    private final boolean acceptRevoked;
+    private final boolean acceptSelfSigned;
+    private final boolean allowSoftFail;
 
     private CertStore crlStore;
-    private X509TrustManager exceptionsTrustManager;
-    private KeyStore trustStore, blackStore,  displayedCaCerts;
-    private Collection<X509CRL> crlCollection = new ArrayList<>();
+    private final X509TrustManager exceptionsTrustManager;
+    private KeyStore trustStore;
+    private KeyStore displayedCaCerts;
+    private final Collection<X509CRL> crlCollection = new ArrayList<>();
     
     public SparkTrustManager() {
         exceptionsTrustManager = new SparkExceptionsTrustManager();
@@ -73,7 +74,7 @@ public class SparkTrustManager extends GeneralTrustManager implements X509TrustM
     }
 
     @Override
-    public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+    public void checkClientTrusted(X509Certificate[] chain, String authType) {
         throw new UnsupportedOperationException("This implementation cannot be used to validate client-provided certificate chains.");
     }
 
@@ -145,8 +146,7 @@ public class SparkTrustManager extends GeneralTrustManager implements X509TrustM
                             throw new CertificateException("Certificate is revoked");
                         }
                     }
-                } catch (InvalidAlgorithmParameterException | NoSuchAlgorithmException | CertStoreException
-                        | CRLException | IOException e) {
+                } catch (InvalidAlgorithmParameterException | NoSuchAlgorithmException | CRLException | IOException e) {
                     Log.warning("Couldn't load CRL");
                 }
             } else {
@@ -282,7 +282,7 @@ public class SparkTrustManager extends GeneralTrustManager implements X509TrustM
                     if (crl.isRevoked(cert)) {
                         try {
                             addToBlackList(cert);
-                        } catch (IOException | HeadlessException | InvalidNameException e1) {
+                        } catch (HeadlessException | InvalidNameException e1) {
                             Log.error("Couldn't move to the blacklist", e1);
                         }
                         break;
@@ -404,7 +404,7 @@ public class SparkTrustManager extends GeneralTrustManager implements X509TrustM
 
     
     public Collection<X509CRL> loadCRL(X509Certificate[] chain) throws IOException, InvalidAlgorithmParameterException,
-            NoSuchAlgorithmException, CertStoreException, CRLException, CertificateException {
+            NoSuchAlgorithmException, CRLException {
 
         // for each certificate in chain
         for (X509Certificate cert : chain) {
@@ -449,14 +449,11 @@ public class SparkTrustManager extends GeneralTrustManager implements X509TrustM
      * 
      * @param cert certificate which is meant to move into blacklist
      * @throws KeyStoreException
-     * @throws NoSuchAlgorithmException
-     * @throws CertificateException
-     * @throws IOException
      * @throws InvalidNameException
      * @throws HeadlessException
      */
-    private void addToBlackList(X509Certificate cert) throws KeyStoreException, NoSuchAlgorithmException,
-            CertificateException, IOException, HeadlessException, InvalidNameException {
+    private void addToBlackList(X509Certificate cert) throws KeyStoreException,
+        HeadlessException, InvalidNameException {
         certControll.addCertificateToBlackList(cert);
     }
 

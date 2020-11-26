@@ -8,8 +8,7 @@ import static org.junit.Assert.assertEquals;
 public class JavaVersionTest
 {
     @Test
-    public void testJava7() throws Exception
-    {
+    public void testJava7() {
         // Setup fixture.
         final String value = "1.7.0";
 
@@ -22,8 +21,7 @@ public class JavaVersionTest
 
 
     @Test
-    public void testJava9() throws Exception
-    {
+    public void testJava9() {
         // Setup fixture.
         final String value = "9.0.0.15";
 
@@ -35,8 +33,7 @@ public class JavaVersionTest
     }
 
     @Test
-    public void testJava11() throws Exception
-    {
+    public void testJava11() {
         // Setup fixture.
         final String value = "11.0.1";
 

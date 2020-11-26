@@ -26,7 +26,7 @@ import org.xml.sax.SAXException;
 public class XMLHistoryFile extends AbstractHistoryFile {
 
 	private static final String MESSAGE_TAG = "message";
-	private InputStream roomFileStream;
+	private final InputStream roomFileStream;
 
 	/**
 	 * @param fileStream
@@ -105,13 +105,9 @@ public class XMLHistoryFile extends AbstractHistoryFile {
 			roomFileStream.close();
 			doc.getDocumentElement().normalize();
 			return doc;
-		} catch (ParserConfigurationException e) {
-			e.printStackTrace();
-		} catch (SAXException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
+		} catch (ParserConfigurationException | SAXException | IOException e) {
 			e.printStackTrace();
 		}
-		return null;
+        return null;
 	}
 }

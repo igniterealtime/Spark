@@ -52,9 +52,9 @@ public final class WorkgroupRosterTree extends JPanel {
 	private final JiveTreeNode rootNode = new JiveTreeNode(FpRes.getString("title.contact.list"));
     private final Tree rosterTree;
     private final Map<JiveTreeNode, EntityBareJid> addressMap = new HashMap<>();
-    private boolean showUnavailableAgents = true;
-    private final List workgroupList;
-    private Collection<? extends BareJid> exclusionList;
+    private final boolean showUnavailableAgents;
+    private final List<String> workgroupList;
+    private final Collection<? extends BareJid> exclusionList;
 
     /**
      * Creates a new Roster Tree.
@@ -63,7 +63,7 @@ public final class WorkgroupRosterTree extends JPanel {
      * @param showAgents    true if agents should be visible.
      * @param workgroupList the list of workgroups.
      */
-    public WorkgroupRosterTree(Collection<? extends BareJid> exclusionJIDs, boolean showAgents, List workgroupList) {
+    public WorkgroupRosterTree(Collection<? extends BareJid> exclusionJIDs, boolean showAgents, List<String> workgroupList) {
         this.workgroupList = workgroupList;
         showUnavailableAgents = showAgents;
         exclusionList = exclusionJIDs;
@@ -105,9 +105,6 @@ public final class WorkgroupRosterTree extends JPanel {
         final Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
 
         roster.addRosterListener(new RosterListener() {
-            public void rosterModified() {
-            }
-
             public void entriesAdded(Collection collection) {
 
             }

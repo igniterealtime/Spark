@@ -62,20 +62,20 @@ import java.io.IOException;
  */
 public class UserSearchForm extends JPanel {
     private static final long	serialVersionUID	= -9192188543673595941L;
-    private JComboBox servicesBox;
-    private UserSearchManager searchManager;
+    private JComboBox<String> servicesBox;
+    private final UserSearchManager searchManager;
 
-    private Collection<? extends CharSequence> searchServices;
+    private final Collection<? extends CharSequence> searchServices;
 
-    private CardLayout cardLayout = new CardLayout();
-    private JPanel cardPanel = new JPanel();
+    private final CardLayout cardLayout = new CardLayout();
+    private final JPanel cardPanel = new JPanel();
 
     private TitlePanel titlePanel;
 
-    private Map<String,SearchForm> serviceMap = new HashMap<>();
+    private final Map<String,SearchForm> serviceMap = new HashMap<>();
 
     
-    private static File pluginsettings = new File(Spark.getSparkUserHome() + File.separator + "search.properties"); //new
+    private static final File pluginsettings = new File(Spark.getSparkUserHome() + File.separator + "search.properties"); //new
     
     /**
      * Initializes the UserSearchForm with all available search services.
@@ -103,7 +103,7 @@ public class UserSearchForm extends JPanel {
     
     private void addSearchServices() {
         // Populate with Search Services
-        servicesBox = new JComboBox();
+        servicesBox = new JComboBox<>();
     
         for (CharSequence searchService : searchServices) {
             String service = searchService.toString();
@@ -139,16 +139,11 @@ public class UserSearchForm extends JPanel {
                 Log.error(ioe);
                 
                } 
-           } 
-           else { 
-	    // Log.error("Search-Searvice-Error: Properties-file does not exist= " + pluginsettings.getPath()); 
-           }        
-
+           }
 
            if (servicesBox.getItemCount() > 0) {
                servicesBox.setSelectedIndex(0);
            }
-           
         
         titlePanel = new TitlePanel("", "", SparkRes.getImageIcon(SparkRes.BLANK_IMAGE), true);
         add(titlePanel, new GridBagConstraints(0, 0, 3, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));

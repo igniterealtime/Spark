@@ -28,7 +28,7 @@ import java.util.Date;
 public class TimeTrackingLabel extends JLabel {
     private static final long serialVersionUID = 6640616146941699107L;
     private Date startTime;
-    private JComponent parentComponent;
+    private final JComponent parentComponent;
 
     private final String HOURS = "h";
     private final String MINUTES = "min";

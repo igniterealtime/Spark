@@ -36,7 +36,7 @@ import java.util.Properties;
 public class SettingsManager {
     private static LocalPreferences localPreferences;
 
-    private static List<PreferenceListener> listeners = new ArrayList<>();
+    private static final List<PreferenceListener> listeners = new ArrayList<>();
 
     private static boolean fileExists = false;
 

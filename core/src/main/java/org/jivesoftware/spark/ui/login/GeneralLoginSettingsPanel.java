@@ -24,16 +24,16 @@ class GeneralLoginSettingsPanel extends JPanel implements ActionListener
 {
     private final static Insets DEFAULT_INSETS = new Insets( 5, 5, 5, 5 );
     private final LocalPreferences localPreferences;
-    private JDialog optionsDialog;
-    private JCheckBox autoDiscoverBox = new JCheckBox();
-    private JTextField portField = new JTextField();
-    private JTextField xmppHostField = new JTextField();
-    private JTextField timeOutField = new JTextField();
-    private JTextField resourceField = new JTextField();
-    private JCheckBox useHostnameAsResourceBox = new JCheckBox();
-    private JCheckBox useVersionAsResourceBox = new JCheckBox();
-    private JCheckBox compressionBox = new JCheckBox();
-    private JCheckBox debuggerBox = new JCheckBox();
+    private final JDialog optionsDialog;
+    private final JCheckBox autoDiscoverBox = new JCheckBox();
+    private final JTextField portField = new JTextField();
+    private final JTextField xmppHostField = new JTextField();
+    private final JTextField timeOutField = new JTextField();
+    private final JTextField resourceField = new JTextField();
+    private final JCheckBox useHostnameAsResourceBox = new JCheckBox();
+    private final JCheckBox useVersionAsResourceBox = new JCheckBox();
+    private final JCheckBox compressionBox = new JCheckBox();
+    private final JCheckBox debuggerBox = new JCheckBox();
 
     public GeneralLoginSettingsPanel( LocalPreferences localPreferences, JDialog optionsDialog )
     {

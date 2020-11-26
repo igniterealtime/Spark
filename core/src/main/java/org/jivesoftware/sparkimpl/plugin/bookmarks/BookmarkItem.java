@@ -41,9 +41,9 @@ import org.jivesoftware.spark.util.log.Log;
 public class BookmarkItem extends JPanel {
 
 	private static final long serialVersionUID = -3120765894005887305L;
-	private JLabel imageLabel;
-    private JLabel nameLabel;
-    private JLabel descriptionLabel;
+	private final JLabel imageLabel;
+    private final JLabel nameLabel;
+    private final JLabel descriptionLabel;
 
     public Action action;
 

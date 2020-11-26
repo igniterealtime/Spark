@@ -9,10 +9,10 @@ import java.awt.Color;
  */
 public class PropertyBundle {
 
-    public Color backgroundColor;
-    public Color headerColor;
-    public Color textColor;
-    public int duration;
+    public final Color backgroundColor;
+    public final Color headerColor;
+    public final Color textColor;
+    public final int duration;
 
     public PropertyBundle(Color backgroundColor, Color headerColor, Color textColor, int duration) {
         this.backgroundColor = backgroundColor;
@@ -20,5 +20,4 @@ public class PropertyBundle {
         this.textColor = textColor;
         this.duration = duration;
     }
-
 }

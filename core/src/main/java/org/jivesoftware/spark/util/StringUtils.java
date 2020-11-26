@@ -23,6 +23,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.BreakIterator;
@@ -49,11 +50,11 @@ public class StringUtils {
     private static final char[] GT_ENCODE = "&gt;".toCharArray();
 
     // patterns for the email address checks
-    private static Pattern basicAddressPattern;
-    private static Pattern validUserPattern;
-    private static Pattern domainPattern;
-    private static Pattern ipDomainPattern;
-    private static Pattern tldPattern;
+    private static final Pattern basicAddressPattern;
+    private static final Pattern validUserPattern;
+    private static final Pattern domainPattern;
+    private static final Pattern ipDomainPattern;
+    private static final Pattern tldPattern;
 
     // prepare the patterns
     static {
@@ -281,52 +282,50 @@ public class StringUtils {
     /**
      * This method takes a string and strips out all tags while still leaving
      * the tag body intact.
-     * 
-     * @param in
-     *            the text to be converted.
-     * @param stripBRTag
-     *            Remove BR tags.
+     *
+     * @param in         the text to be converted.
+     * @param stripBRTag Remove BR tags.
      * @return the input string with all tags removed.
      */
     public static String stripTags(String in, boolean stripBRTag) {
-	if (in == null) {
-	    return null;
-	}
+        if (in == null) {
+            return null;
+        }
 
-	char ch;
-	int i = 0;
-	int last = 0;
-	char[] input = in.toCharArray();
-	int len = input.length;
-	StringBuilder out = new StringBuilder((int) (len * 1.3));
-	for (; i < len; i++) {
-	    ch = input[i];
-	    if (ch > '>') {
-		// Nothing to do
-	    } else if (ch == '<') {
-		if (!stripBRTag && i + 3 < len && input[i + 1] == 'b'
-			&& input[i + 2] == 'r' && input[i + 3] == '>') {
-		    i += 3;
-		    continue;
-		}
-		if (i > last) {
-		    if (last > 0) {
-			out.append(" ");
-		    }
-		    out.append(input, last, i - last);
-		}
-		last = i + 1;
-	    } else if (ch == '>') {
-		last = i + 1;
-	    }
-	}
-	if (last == 0) {
-	    return in;
-	}
-	if (i > last) {
-	    out.append(input, last, i - last);
-	}
-	return out.toString();
+        char ch;
+        int i = 0;
+        int last = 0;
+        char[] input = in.toCharArray();
+        int len = input.length;
+        StringBuilder out = new StringBuilder((int) (len * 1.3));
+        for (; i < len; i++) {
+            ch = input[i];
+            if (ch <= '>') {
+                if (ch == '<') {
+                    if (!stripBRTag && i + 3 < len && input[i + 1] == 'b'
+                        && input[i + 2] == 'r' && input[i + 3] == '>') {
+                        i += 3;
+                        continue;
+                    }
+                    if (i > last) {
+                        if (last > 0) {
+                            out.append(" ");
+                        }
+                        out.append(input, last, i - last);
+                    }
+                    last = i + 1;
+                } else if (ch == '>') {
+                    last = i + 1;
+                }
+            }
+        }
+        if (last == 0) {
+            return in;
+        }
+        if (i > last) {
+            out.append(input, last, i - last);
+        }
+        return out.toString();
     }
 
     /**
@@ -420,12 +419,8 @@ public class StringUtils {
 	    }
 	}
 	// Now, compute hash.
-	try {
-	    digest.update(data.getBytes("utf-8"));
-	} catch (UnsupportedEncodingException e) {
-	    // Nothing to do
-	}
-	return encodeHex(digest.digest());
+        digest.update(data.getBytes(StandardCharsets.UTF_8));
+        return encodeHex(digest.digest());
     }
 
     public synchronized static String hash(byte[] data) {
@@ -549,13 +544,8 @@ public class StringUtils {
      * @return a base64 encoded String.
      */
     public static String encodeBase64(String data) {
-	byte[] bytes = null;
-	try {
-	    bytes = data.getBytes("ISO-8859-1");
-	} catch (UnsupportedEncodingException uee) {
-	    // Nothing to do
-	}
-	return encodeBase64(bytes);
+	    byte[] bytes = data.getBytes(StandardCharsets.ISO_8859_1);
+        return encodeBase64(bytes);
     }
 
     /**
@@ -607,13 +597,8 @@ public class StringUtils {
      */
 
     public static String decodeBase64(String data) {
-	byte[] bytes = null;
-	try {
-	    bytes = data.getBytes("ISO-8859-1");
-	} catch (UnsupportedEncodingException uee) {
-	    // Nothing to do
-	}
-	return decodeBase64(bytes);
+	    byte[] bytes = data.getBytes(StandardCharsets.ISO_8859_1);
+        return decodeBase64(bytes);
     }
 
     /**
@@ -888,7 +873,7 @@ public class StringUtils {
      * Random class is not considered to be cryptographically secure, so only
      * use these random Strings for low to medium security applications.
      */
-    private static Random randGen = new Random();
+    private static final Random randGen = new Random();
 
     /**
      * Array of numbers and letters of mixed case. Numbers appear in the list
@@ -896,7 +881,7 @@ public class StringUtils {
      * We can use the array to get a random number or letter by picking a random
      * array index.
      */
-    private static char[] numbersAndLetters = ("0123456789abcdefghijklmnopqrstuvwxyz"
+    private static final char[] numbersAndLetters = ("0123456789abcdefghijklmnopqrstuvwxyz"
 	    + "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ").toCharArray();
 
     /**

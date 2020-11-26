@@ -102,17 +102,17 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
     private final RolloverButton showHiddenButtons = new RolloverButton(
 	    SparkRes.getImageIcon(SparkRes.PANE_UP_ARROW_IMAGE));
 
-    private JMenuItem joinRoomItem;
-    private JMenuItem addRoomItem;
-    private JMenuItem createItem;
-    private JMenuItem refreshItem;
+    private final JMenuItem joinRoomItem;
+    private final JMenuItem addRoomItem;
+    private final JMenuItem createItem;
+    private final JMenuItem refreshItem;
 
-    private ChatManager chatManager;
+    private final ChatManager chatManager;
 
     private JDialog dlg;
 
-    private BookmarksUI conferences;
-    private DomainBareJid serviceName;
+    private final BookmarksUI conferences;
+    private final DomainBareJid serviceName;
 
     private int allButtonWidth;
     private int threeButtonWidth;
@@ -121,7 +121,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
 
     private boolean partialDiscovery = false;
 
-    private JPopupMenu popup;
+    private final JPopupMenu popup;
 
     final TableRowSorter<TableModel> sorter;
 
@@ -344,27 +344,21 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
     }
 
     private RoomObject getRoomsAndInfo(final HostedRoom room) {
-        boolean stillSearchForOccupants = true;
         RoomObject result = null;
         try {
             try {
                 String roomName = room.getName();
                 EntityBareJid roomJID = room.getJid();
                 int numberOfOccupants = -1;
-                if (stillSearchForOccupants) {
                 RoomInfo roomInfo = null;
                 try {
-                    roomInfo = MultiUserChatManager.getInstanceFor( SparkManager.getConnection() ).getRoomInfo( roomJID );
+                    roomInfo = MultiUserChatManager.getInstanceFor(SparkManager.getConnection()).getRoomInfo(roomJID);
                 } catch (Exception e) {
                     // Nothing to do
                 }
 
                 if (roomInfo != null) {
                     numberOfOccupants = roomInfo.getOccupantsCount();
-                    if (numberOfOccupants == -1) {
-                    }
-                } else {
-                }
                 }
 
                 result = new RoomObject();

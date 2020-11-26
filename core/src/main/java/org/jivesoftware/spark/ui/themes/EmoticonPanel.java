@@ -33,7 +33,7 @@ public class EmoticonPanel extends JPanel {
     private static final long serialVersionUID = 4884193790861293275L;
     private int _spalte=0;
     private int _zeile=0;
-    private int _numberInRow;
+    private final int _numberInRow;
     
     /**
      * Creates a new EmotionPanel

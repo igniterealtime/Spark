@@ -35,7 +35,7 @@ import java.util.*;
  * @author Derek DeMoro
  */
 public class PreferenceManager {
-    private Map<String, Preference> map = new LinkedHashMap<>();
+    private final Map<String, Preference> map = new LinkedHashMap<>();
     private PreferenceDialog preferenceDialog;
 
     public PreferenceManager() {

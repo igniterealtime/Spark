@@ -27,7 +27,7 @@ import java.awt.Graphics;
  * @author Derek DeMoro
  */
 public class ProgressIcon implements Icon {
-    private int percent;
+    private final int percent;
 
     /**
      * Create new ProgressIcon.

@@ -26,7 +26,7 @@ import javax.swing.JFrame;
 import org.jivesoftware.spark.PluginManager;
 
 public class FlashWindow {
-	private HashMap<Window, Thread> flashings = new HashMap<>();
+	private final HashMap<Window, Thread> flashings = new HashMap<>();
 
 	static {
 	    
@@ -82,22 +82,18 @@ public class FlashWindow {
 
     public void startFlashing(final Window window) {
         if (flashings.get(window) == null) {
-            Thread t = new Thread() {
-                public void run() {
+            Thread t = new Thread(() -> {
+                while (true) {
                     try {
-                        while (true) {
-                            Thread.sleep(1500);
-                            // System.out.println("Flash Window");
-                            if (window instanceof JFrame)
-                                flash(((JFrame) window).getTitle(), true);
-                        }
+                        Thread.sleep(1500);
+                        if (window instanceof JFrame)
+                            flash(((JFrame) window).getTitle(), true);
                     } catch (Exception ex) {
                         flash(((JFrame) window).getTitle(), false);
-                        // System.out.println(ex.getMessage());
+                        break;
                     }
-
                 }
-            };
+            });
             t.start();
             flashings.put(window, t);
         }
@@ -110,7 +106,7 @@ public class FlashWindow {
 		}
 	}
 
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) {
 		final JFrame frame = new JFrame();
 		frame.setTitle("Test");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

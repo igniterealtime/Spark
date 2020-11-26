@@ -22,8 +22,6 @@ import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.*;
 
 import javax.swing.BorderFactory;
@@ -69,13 +67,11 @@ public class ChatViewer extends JPanel {
 
         final TranscriptWindow chatWindow = new TranscriptWindow();
         chatWindow.setBackground(Color.white);
-        final List<Message> chatTranscript = new ArrayList<Message>();
+        final List<Message> chatTranscript = new ArrayList<>();
 
-        Iterator<Stanza> iter = stanzas.iterator();
-        while (iter.hasNext()) {
-            Stanza stanza = iter.next();
+        for (Stanza stanza : stanzas) {
             if (stanza instanceof Message) {
-                Message message = (Message)stanza;
+                Message message = (Message) stanza;
                 String from = message.getFrom().getResourceOrThrow().toString();
                 DelayInformation delayInformation = message.getExtension("delay", "urn:xmpp:delay");
                 Date stamp = null;
@@ -85,18 +81,16 @@ public class ChatViewer extends JPanel {
                 message.removeExtension(delayInformation);
                 chatWindow.insertMessage(from, message, ChatManager.TO_COLOR);
                 final Map<String, Object> properties = new HashMap<>();
-                properties.put( "date", stamp );
-                message.addExtension( new JivePropertiesExtension( properties ) );
+                properties.put("date", stamp);
+                message.addExtension(new JivePropertiesExtension(properties));
                 message.setFrom(JidCreate.fromOrThrowUnchecked(from));
                 chatTranscript.add(message);
-            }
-            else {
-                Presence presence = (Presence)stanza;
+            } else {
+                Presence presence = (Presence) stanza;
                 String from = presence.getFrom().getResourceOrThrow().toString();
                 if (presence.getType() == Presence.Type.available) {
                     from = FpRes.getString("message.user.joined.room", from);
-                }
-                else {
+                } else {
                     from = FpRes.getString("message.user.left.room", from);
                 }
                 chatWindow.insertNotificationMessage(from, ChatManager.NOTIFICATION_COLOR);
@@ -127,17 +121,12 @@ public class ChatViewer extends JPanel {
         this.setLayout(new GridBagLayout());
 
 
-        saveTranscriptButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                chatWindow.saveTranscript(transcript.getSessionID() + ".html", chatTranscript, null);
-            }
-        });
+        saveTranscriptButton.addActionListener(e ->
+            chatWindow.saveTranscript(transcript.getSessionID() + ".html", chatTranscript, null));
 
-        printChatButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                final ChatPrinter printer = new ChatPrinter();
-                printer.print(chatWindow);
-            }
+        printChatButton.addActionListener(e -> {
+            final ChatPrinter printer = new ChatPrinter();
+            printer.print(chatWindow);
         });
 
         chatWindow.setCaretPosition(0);

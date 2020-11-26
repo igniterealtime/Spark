@@ -86,7 +86,7 @@ public final class MessageDialog
             titleLabel.setFont(new Font("dialog", Font.BOLD, 11 ) );
 
             final JLabel descriptionLabel = new JLabel(desc);
-            descriptionLabel.setFont(new Font("dialog", 0, 10 ) );
+            descriptionLabel.setFont(new Font("dialog", Font.PLAIN, 10 ) );
 
             // The stacktrace content.
             final JTextArea textPane = new JTextArea();

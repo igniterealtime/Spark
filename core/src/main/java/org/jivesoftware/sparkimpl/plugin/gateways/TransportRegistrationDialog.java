@@ -56,14 +56,14 @@ import java.awt.event.KeyListener;
  */
 public class TransportRegistrationDialog extends JPanel implements ActionListener, KeyListener {
 	private static final long serialVersionUID = -5766084489027807577L;
-	private JTextField usernameField = new JTextField();
-    private JPasswordField passwordField = new JPasswordField();
-    private JTextField nicknameField = new JTextField();
-    private RolloverButton registerButton = new RolloverButton("", null);
-    private RolloverButton cancelButton = new RolloverButton("", null);
+	private final JTextField usernameField = new JTextField();
+    private final JPasswordField passwordField = new JPasswordField();
+    private final JTextField nicknameField = new JTextField();
+    private final RolloverButton registerButton = new RolloverButton("", null);
+    private final RolloverButton cancelButton = new RolloverButton("", null);
     private JDialog dialog;
     private final DomainBareJid serviceName;
-    private Transport transport;
+    private final Transport transport;
 
     /**
      * Initiation Dialog with the tranport service name.

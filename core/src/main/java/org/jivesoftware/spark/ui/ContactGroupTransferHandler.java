@@ -15,6 +15,7 @@
  */ 
 package org.jivesoftware.spark.ui;
 
+import org.jetbrains.annotations.NotNull;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.roster.Roster;
@@ -41,7 +42,7 @@ import java.util.Collection;
 
 public class ContactGroupTransferHandler extends TransferHandler {
 	private static final long serialVersionUID = -1229773343301542259L;
-	private static final DataFlavor flavors[] = {DataFlavor.imageFlavor, DataFlavor.javaFileListFlavor};
+	private static final DataFlavor[] flavors = {DataFlavor.imageFlavor, DataFlavor.javaFileListFlavor};
 
 
     @Override
@@ -51,13 +52,13 @@ public class ContactGroupTransferHandler extends TransferHandler {
 
 
     @Override
-	public boolean canImport(JComponent comp, DataFlavor flavor[]) {
+	public boolean canImport(JComponent comp, DataFlavor[] flavor) {
         if (!(comp instanceof JList)) {
             return false;
         }
 
 
-        JList list = (JList)comp;
+        JList<?> list = (JList<?>)comp;
         ContactGroup group = getContactGroup(list);
         if(group == null){
             return false;
@@ -66,9 +67,9 @@ public class ContactGroupTransferHandler extends TransferHandler {
             return false;
         }
 
-        for (int i = 0, n = flavor.length; i < n; i++) {
-            for (int j = 0, m = flavors.length; j < m; j++) {
-                if (flavor[i].equals(flavors[j])) {
+        for (DataFlavor dataFlavor : flavor) {
+            for (DataFlavor value : flavors) {
+                if (dataFlavor.equals(value)) {
                     return true;
                 }
             }
@@ -85,7 +86,7 @@ public class ContactGroupTransferHandler extends TransferHandler {
 	public Transferable createTransferable(JComponent comp) {
 
         if (comp instanceof JList) {
-            JList list = (JList)comp;
+            JList<?> list = (JList<?>) comp;
             ContactItem source = (ContactItem)list.getSelectedValue();
             return new ContactItemTransferable(source);
         }
@@ -95,16 +96,16 @@ public class ContactGroupTransferHandler extends TransferHandler {
     @Override
 	public boolean importData(JComponent comp, Transferable t) {
         if (comp instanceof JList) {
-            JList list = (JList)comp;
+            JList<?> list = (JList<?>) comp;
             ContactGroup group = getContactGroup(list);
 
             if (t.isDataFlavorSupported(flavors[0])) {
                 try {
                     ContactItem item = (ContactItem)t.getTransferData(flavors[0]);
-                    DefaultListModel model = (DefaultListModel)list.getModel();
+                    DefaultListModel<?> model = (DefaultListModel<?>) list.getModel();
                     int size = model.getSize();
                     for (int i = 0; i < size; i++) {
-                        ContactItem it = (ContactItem)model.getElementAt(i);
+                        ContactItem it = (ContactItem) model.getElementAt(i);
                         if (it.getDisplayName().equals(item.getDisplayName())) {
                             return false;
                         }
@@ -113,9 +114,7 @@ public class ContactGroupTransferHandler extends TransferHandler {
                     addContactItem(group, item);
                     return true;
                 }
-                catch (UnsupportedFlavorException ignored) {
-                }
-                catch (IOException ignored) {
+                catch (UnsupportedFlavorException | IOException ignored) {
                 }
             }
             else if (t.isDataFlavorSupported(flavors[1])) {
@@ -132,10 +131,7 @@ public class ContactGroupTransferHandler extends TransferHandler {
                         SparkManager.getWorkspace().getContactList().fireFilesDropped(files, source);
                     }
                 }
-                catch (UnsupportedFlavorException e) {
-                    Log.error(e);
-                }
-                catch (IOException e) {
+                catch (UnsupportedFlavorException | IOException e) {
                     Log.error(e);
                 }
             }
@@ -145,7 +141,7 @@ public class ContactGroupTransferHandler extends TransferHandler {
 
     public static class ContactItemTransferable implements Transferable {
 
-        private ContactItem item;
+        private final ContactItem item;
 
         public ContactItemTransferable(ContactItem item) {
             this.item = item;
@@ -164,8 +160,9 @@ public class ContactGroupTransferHandler extends TransferHandler {
         }
 
         // Returns image
+        @NotNull
         @Override
-		public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
+		public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException {
             if (!DataFlavor.imageFlavor.equals(flavor)) {
                 throw new UnsupportedFlavorException(flavor);
             }
@@ -173,7 +170,7 @@ public class ContactGroupTransferHandler extends TransferHandler {
         }
     }
 
-    private ContactGroup getContactGroup(JList list) {
+    private ContactGroup getContactGroup(JList<?> list) {
         ContactList contactList = SparkManager.getWorkspace().getContactList();
         for (ContactGroup group : contactList.getContactGroups()) {
             if (group.getList() == list) {
@@ -188,7 +185,7 @@ public class ContactGroupTransferHandler extends TransferHandler {
         return null;
     }
 
-    private ContactGroup getSubContactGroup(ContactGroup group, JList list) {
+    private ContactGroup getSubContactGroup(ContactGroup group, JList<?> list) {
         for (ContactGroup g : group.getContactGroups()) {
             if (g.getList() == list) {
                 return g;

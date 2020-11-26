@@ -39,14 +39,14 @@ public class LoginSettingDialog implements PropertyChangeListener
     private JDialog optionsDialog;
     private JOptionPane optionPane;
 
-    private JTabbedPane tabbedPane = new JTabbedPane();
+    private final JTabbedPane tabbedPane = new JTabbedPane();
     
-    private GeneralLoginSettingsPanel generalPanel;
-    private SecurityLoginSettingsPanel securityPanel;
-    private ProxyLoginSettingsPanel proxyPanel;
-    private SsoLoginSettingsPanel ssoPanel;
-	private CertificatesManagerSettingsPanel certManagerPanel;
-	private MutualAuthenticationSettingsPanel mutAuthPanel;
+    private final GeneralLoginSettingsPanel generalPanel;
+    private final SecurityLoginSettingsPanel securityPanel;
+    private final ProxyLoginSettingsPanel proxyPanel;
+    private final SsoLoginSettingsPanel ssoPanel;
+	private final CertificatesManagerSettingsPanel certManagerPanel;
+	private final MutualAuthenticationSettingsPanel mutAuthPanel;
 
     /**
      * Empty Constructor.
@@ -164,7 +164,7 @@ public class LoginSettingDialog implements PropertyChangeListener
                 optionPane.setValue( JOptionPane.UNINITIALIZED_VALUE );
                 optionPane.addPropertyChangeListener( this );
             }
-        } else if (Res.getString("use.default") == value) {
+        } else if (Res.getString("use.default").equals(value)) {
             if (tabbedPane.getSelectedComponent().equals(generalPanel)) {
                 generalPanel.useDefault();
             } else if (tabbedPane.getSelectedComponent().equals(securityPanel)) {

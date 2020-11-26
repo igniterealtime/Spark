@@ -38,7 +38,7 @@ import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
  * to be used and showing dates and times of chat posts.
  */
 public class ChatPreference implements Preference {
-    private ChatPreferencePanel panel = new ChatPreferencePanel();
+    private final ChatPreferencePanel panel = new ChatPreferencePanel();
     private String errorMessage = "Error";
 
     /**

@@ -62,17 +62,17 @@ public class FrequentContactsPlugin implements Plugin {
 
     private File transcriptDir;
 
-    private final DefaultListModel model = new DefaultListModel();
-    private JList contacts;
+    private final DefaultListModel<JLabel> model = new DefaultListModel<>();
+    private JList<JLabel> contacts;
     private Window window;
 
-    private Map<JLabel, String> jidMap = new HashMap<>();
+    private final Map<JLabel, String> jidMap = new HashMap<>();
 
     @Override
 	public void initialize() {
         transcriptDir = new File(SparkManager.getUserDirectory(), "transcripts");
 
-        contacts = new JList(model);
+        contacts = new JList<>(model);
         contacts.setCellRenderer(new InternalRenderer());
 
         window = new Window(SparkManager.getMainWindow());
@@ -106,7 +106,7 @@ public class FrequentContactsPlugin implements Plugin {
 		}
 
 		if (e.getClickCount() == 2) {
-		    final JLabel label = (JLabel) contacts.getSelectedValue();
+		    final JLabel label = contacts.getSelectedValue();
 		    String user = jidMap.get(label);
 		    if (user != null) {
 			final String contactUsername = SparkManager
@@ -123,7 +123,7 @@ public class FrequentContactsPlugin implements Plugin {
             @Override
 			public void keyReleased(KeyEvent e) {
                 if (e.getKeyChar() == KeyEvent.VK_ENTER) {
-                    final JLabel label = (JLabel) contacts.getSelectedValue();
+                    final JLabel label = contacts.getSelectedValue();
                     String user = jidMap.get(label);
                     if (user != null) {
                         final String contactUsername = SparkManager.getUserManager().getUserNicknameFromJID(JidCreate.bareFromOrThrowUnchecked(user));
@@ -224,7 +224,7 @@ public class FrequentContactsPlugin implements Plugin {
         final File[] transcriptFiles = transcriptDir.listFiles( ( dir, name ) -> !name.contains("_current") && !name.equals("conversations.xml") );
         final List<File> files = Arrays.asList(transcriptFiles);
 
-        Collections.sort(files, sizeComparator);
+        files.sort(sizeComparator);
 
         int size = files.size();
         if (size > 10) {
@@ -264,7 +264,7 @@ public class FrequentContactsPlugin implements Plugin {
     /**
      * Internal handling of a JLabel Renderer.
      */
-    public static class InternalRenderer extends JLabel implements ListCellRenderer {
+    public static class InternalRenderer extends JLabel implements ListCellRenderer<Object> {
 		private static final long serialVersionUID = -2925096995694392323L;
 
 		/**
@@ -303,19 +303,7 @@ public class FrequentContactsPlugin implements Plugin {
         long int1 = item1.length();
         long int2 = item2.length();
 
-        if (int1 == int2) {
-            return 0;
-        }
-
-        if (int1 > int2) {
-            return -1;
-        }
-
-        if (int1 < int2) {
-            return 1;
-        }
-
-        return 0;
+        return Long.compare(int2, int1);
     };
 
 }

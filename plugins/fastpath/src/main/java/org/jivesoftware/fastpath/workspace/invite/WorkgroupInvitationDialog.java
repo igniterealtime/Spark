@@ -36,8 +36,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
@@ -61,6 +59,7 @@ import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.log.Log;
+import org.jxmpp.jid.BareJid;
 import org.jxmpp.jid.DomainBareJid;
 import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.EntityFullJid;
@@ -85,9 +84,9 @@ public class WorkgroupInvitationDialog implements PropertyChangeListener {
     private TitlePanel titlePanel;
 
     private JTextArea messageField;
-    private JTextField jidField = new JTextField();
+    private final JTextField jidField = new JTextField();
 
-    private List workgroups = new ArrayList();
+    private final List<String> workgroups = new ArrayList<>();
     private JLabel inviteLabel;
 
     /**
@@ -111,7 +110,7 @@ public class WorkgroupInvitationDialog implements PropertyChangeListener {
         final EntityFullJid jid = SparkManager.getSessionManager().getJID();
 
         EntityBareJid room = chatRoom.getBareJid();
-        Collection agents = null;
+        Collection<EntityBareJid> agents = null;
         try
         {
             agents = getAvailableAgents( FastpathPlugin.getAgentSession().getAgentRoster(), room);
@@ -146,24 +145,22 @@ public class WorkgroupInvitationDialog implements PropertyChangeListener {
         tree.setExpandsSelectedPaths(true);
 
 
-        tree.addTreeSelectionListener(new TreeSelectionListener() {
-            public void valueChanged(TreeSelectionEvent e) {
-                TreePath path = e.getNewLeadSelectionPath();
-                Object o = path.getLastPathComponent();
-                if (o instanceof JiveTreeNode) {
-                    JiveTreeNode node = (JiveTreeNode)o;
-                    JiveTreeNode parentNode = (JiveTreeNode)node.getParent();
-                    if (parentNode == workgroupsNode) {
-                        jidField.setText(node.getUserObject().toString() + "@" + workgroupService);
-                    }
-                    else if (parentNode == queueNode) {
-                        jidField.setText(FastpathPlugin.getWorkgroup().getWorkgroupJID() + "/" + node.getUserObject().toString());
-                    }
-                    else {
-                        EntityBareJid agent = getAgent();
-                        if (agent != null) {
-                            jidField.setText(agent.toString());
-                        }
+        tree.addTreeSelectionListener(e -> {
+            TreePath path = e.getNewLeadSelectionPath();
+            Object o = path.getLastPathComponent();
+            if (o instanceof JiveTreeNode) {
+                JiveTreeNode node = (JiveTreeNode)o;
+                JiveTreeNode parentNode = (JiveTreeNode)node.getParent();
+                if (parentNode == workgroupsNode) {
+                    jidField.setText(node.getUserObject().toString() + "@" + workgroupService);
+                }
+                else if (parentNode == queueNode) {
+                    jidField.setText(FastpathPlugin.getWorkgroup().getWorkgroupJID() + "/" + node.getUserObject().toString());
+                }
+                else {
+                    EntityBareJid agent = getAgent();
+                    if (agent != null) {
+                        jidField.setText(agent.toString());
                     }
                 }
             }
@@ -197,10 +194,10 @@ public class WorkgroupInvitationDialog implements PropertyChangeListener {
         Localpart joinedWorkgroupName = FastpathPlugin.getWorkgroup().getWorkgroupJID().getLocalpartOrThrow();
         final JiveTreeNode workgroupNode = new JiveTreeNode(joinedWorkgroupName, true);
 
-        final Iterator agentIter = agents.iterator();
+        final Iterator<EntityBareJid> agentIter = agents.iterator();
         while (agentIter.hasNext()) {
             while (agentIter.hasNext()) {
-                String agentName = UserManager.unescapeJID((String)agentIter.next());
+                String agentName = UserManager.unescapeJID(agentIter.next().toString());
                 final JiveTreeNode agentNode = new JiveTreeNode(agentName, false, FastpathRes.getImageIcon(FastpathRes.GREEN_BALL));
                 workgroupNode.add(agentNode);
             }
@@ -210,7 +207,7 @@ public class WorkgroupInvitationDialog implements PropertyChangeListener {
         }
 
 
-        Collection workgroupAgents;
+        Collection<String> workgroupAgents;
         try {
             workgroupAgents = Agent.getWorkgroups(workgroupService, jid, SparkManager.getConnection());
         }
@@ -220,10 +217,7 @@ public class WorkgroupInvitationDialog implements PropertyChangeListener {
         }
         if (workgroupAgents.size() > 0) {
             // Add workgroups to combobox
-            Iterator<String> workgroups = workgroupAgents.iterator();
-            while (workgroups.hasNext()) {
-                String workgroup = workgroups.next();
-
+            for (String workgroup : workgroupAgents) {
                 String workgroupName = XmppStringUtils.parseLocalpart(workgroup);
                 final JiveTreeNode wgNode = new JiveTreeNode(workgroupName, false, FastpathRes.getImageIcon(FastpathRes.FASTPATH_IMAGE_16x16));
                 workgroupsNode.add(wgNode);
@@ -232,9 +226,9 @@ public class WorkgroupInvitationDialog implements PropertyChangeListener {
         }
 
 
-        Iterator iter = FastpathPlugin.getAgentSession().getQueues();
+        Iterator<WorkgroupQueue> iter = FastpathPlugin.getAgentSession().getQueues();
         while (iter.hasNext()) {
-            final WorkgroupQueue queue = (WorkgroupQueue)iter.next();
+            final WorkgroupQueue queue = iter.next();
             if (queue.getStatus() == WorkgroupQueue.Status.OPEN) {
                 final JiveTreeNode qNode = new JiveTreeNode(queue.getName().toString(), false, FastpathRes.getImageIcon(FastpathRes.FASTPATH_IMAGE_16x16));
                 queueNode.add(qNode);
@@ -245,9 +239,9 @@ public class WorkgroupInvitationDialog implements PropertyChangeListener {
 
         // New Roster tree. Do not show agents at all.
         final UserManager userManager = SparkManager.getUserManager();
-        Collection jids = userManager.getUserJidsInRoom(room, false);
+        Collection<?> jids = userManager.getUserJidsInRoom(room, false);
 
-        roster = new WorkgroupRosterTree(jids, false, workgroups);
+        roster = new WorkgroupRosterTree((Collection<? extends BareJid>) jids, false, workgroups);
 
         try {
             rosterTree = roster.getRosterTree();
@@ -325,7 +319,7 @@ public class WorkgroupInvitationDialog implements PropertyChangeListener {
         }
         else if (FpRes.getString("invite").equals(value) || FpRes.getString("transfer").equals(value)) {
             String agent = jidField.getText();
-            boolean isValidJID = agent.indexOf("@") != -1;
+            boolean isValidJID = agent.contains("@");
 
             if (!ModelUtil.hasLength(agent)) {
                 JOptionPane.showMessageDialog(dlg, FpRes.getString("message.no.agent.selected.error"),
@@ -401,9 +395,7 @@ public class WorkgroupInvitationDialog implements PropertyChangeListener {
     private Collection<EntityBareJid> getAvailableAgents(AgentRoster roster, EntityBareJid roomName) {
         final Set<EntityBareJid> availableAgents = new HashSet<>();
 
-        final Iterator<EntityBareJid> agents = roster.getAgents().iterator();
-        while (agents.hasNext()) {
-            EntityBareJid agent = agents.next();
+        for (EntityBareJid agent : roster.getAgents()) {
             if (PresenceManager.isAvailable(agent)) {
                 final Iterator<String> agentsInRoom = SparkManager.getUserManager().getUserJidsInRoom(roomName, false).iterator();
                 boolean alreadyExists = false;
@@ -419,11 +411,8 @@ public class WorkgroupInvitationDialog implements PropertyChangeListener {
                 if (!alreadyExists) {
                     availableAgents.add(agent);
                 }
-
             }
         }
-
-
         return availableAgents;
     }
 }

@@ -45,10 +45,10 @@ import javax.swing.UIManager;
  */
 public class CollapsibleTitlePane extends BaseCollapsibleTitlePane {
 	private static final long serialVersionUID = 2528585101535037612L;
-	private JLabel titleLabel;
-    private JLabel iconLabel;
+	private final JLabel titleLabel;
+    private final JLabel iconLabel;
 
-    private JLabel preIconLabel;
+    private final JLabel preIconLabel;
 
     private boolean collapsed;
 

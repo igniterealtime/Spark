@@ -32,8 +32,8 @@ import org.jivesoftware.spark.preference.Preference;
  */
 public class ApplePreference implements Preference {
 
-    private AppleProperties _props;
-    private ApplePreferencePanel _prefpanel;
+    private final AppleProperties _props;
+    private final ApplePreferencePanel _prefpanel;
 
     public ApplePreference(AppleProperties props) {
 	_props = props;

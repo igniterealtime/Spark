@@ -66,14 +66,14 @@ public class PluginViewer extends JPanel implements Plugin
 
     private boolean loaded = false;
 
-    private String retrieveListURL = Default.getString( Default.PLUGIN_REPOSITORY );
+    private final String retrieveListURL = Default.getString( Default.PLUGIN_REPOSITORY );
 
     private JProgressBar progressBar;
 
     private JPanel installedPanel;
     private JPanel availablePanel;
     private JPanel deactivatedPanel;
-    private LocalPreferences _prefs;
+    private final LocalPreferences _prefs;
     private List<String> _deactivatedPlugins;
 
     public PluginViewer()

@@ -63,8 +63,8 @@ public class WinRegistryReader {
     }
 
     static class StreamReader extends Thread {
-        private InputStream is;
-        private StringWriter sw;
+        private final InputStream is;
+        private final StringWriter sw;
 
         StreamReader(InputStream is) {
             this.is = is;

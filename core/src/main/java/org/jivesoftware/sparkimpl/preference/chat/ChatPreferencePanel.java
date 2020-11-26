@@ -48,27 +48,27 @@ import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 public class ChatPreferencePanel extends JPanel implements ActionListener {
 
 	private static final long serialVersionUID = 8910938026549098719L;
-	private JCheckBox showTimeBox = new JCheckBox();
-    private ButtonGroup timeFormat = new ButtonGroup();
-    private JRadioButton format12 = new JRadioButton("12:00 PM", false);
-    private JRadioButton format24 = new JRadioButton("24:00", true);
-    private JRadioButton format12s = new JRadioButton("12:00:00 PM", false);
-    private JRadioButton format24s = new JRadioButton("24:00:00", false);
-    private JCheckBox groupChatNotificationBox = new JCheckBox();
-    private JPanel generalPanel = new JPanel();
-    private JPanel chatWindowPanel = new JPanel();
+	private final JCheckBox showTimeBox = new JCheckBox();
+    private final ButtonGroup timeFormat = new ButtonGroup();
+    private final JRadioButton format12 = new JRadioButton("12:00 PM", false);
+    private final JRadioButton format24 = new JRadioButton("24:00", true);
+    private final JRadioButton format12s = new JRadioButton("12:00:00 PM", false);
+    private final JRadioButton format24s = new JRadioButton("24:00:00", false);
+    private final JCheckBox groupChatNotificationBox = new JCheckBox();
+    private final JPanel generalPanel = new JPanel();
+    private final JPanel chatWindowPanel = new JPanel();
 
     // Password changing
-    private JPasswordField passwordField = new JPasswordField();
-    private JPasswordField confirmationPasswordField = new JPasswordField();
-    private JLabel passwordLabel = new JLabel();
-    private JLabel confirmationPasswordLabel = new JLabel();
-    private JCheckBox hideChatHistory = new JCheckBox();
-    private JCheckBox sortChatHistoryAscending = new JCheckBox();
-    private JCheckBox hidePrevChatHistory = new JCheckBox();
-    private JCheckBox tabsOnTopBox = new JCheckBox();
-    private JTextField chatTimeoutField = new JTextField();
-    private JCheckBox buzzBox = new JCheckBox();
+    private final JPasswordField passwordField = new JPasswordField();
+    private final JPasswordField confirmationPasswordField = new JPasswordField();
+    private final JLabel passwordLabel = new JLabel();
+    private final JLabel confirmationPasswordLabel = new JLabel();
+    private final JCheckBox hideChatHistory = new JCheckBox();
+    private final JCheckBox sortChatHistoryAscending = new JCheckBox();
+    private final JCheckBox hidePrevChatHistory = new JCheckBox();
+    private final JCheckBox tabsOnTopBox = new JCheckBox();
+    private final JTextField chatTimeoutField = new JTextField();
+    private final JCheckBox buzzBox = new JCheckBox();
 
     /**
      * Constructor invokes UI setup.
@@ -85,21 +85,19 @@ public class ChatPreferencePanel extends JPanel implements ActionListener {
         timeFormat.add(format12);
         timeFormat.add(format12s);
         final LocalPreferences pref = SettingsManager.getLocalPreferences();
-        if(pref.getTimeFormat().equals("HH:mm"))
-        {
-      	  format24.setSelected(true);
-        }
-        else if(pref.getTimeFormat().equals("HH:mm:ss"))
-        {
-      	  format24s.setSelected(true);
-        }
-        else if(pref.getTimeFormat().equals("h:mm a"))
-        {
-          format12.setSelected(true);
-        }
-        else
-        {
-          format12s.setSelected(true);
+        switch (pref.getTimeFormat()) {
+            case "HH:mm":
+                format24.setSelected(true);
+                break;
+            case "HH:mm:ss":
+                format24s.setSelected(true);
+                break;
+            case "h:mm a":
+                format12.setSelected(true);
+                break;
+            default:
+                format12s.setSelected(true);
+                break;
         }
         
         // Setup Mnemonics

@@ -20,7 +20,6 @@ import java.awt.Window;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.io.File;
-import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -35,7 +34,6 @@ import org.jivesoftware.spark.plugin.Plugin;
 import org.jivesoftware.spark.ui.ChatFrame;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ChatRoomListenerAdapter;
-import org.jivesoftware.spark.ui.PresenceListener;
 import org.jivesoftware.spark.ui.status.StatusItem;
 import org.jivesoftware.spark.util.BrowserLauncher;
 import org.jivesoftware.spark.util.log.Log;
@@ -202,13 +200,11 @@ public class ApplePlugin implements Plugin, NativeHandler {
 	    }
 	});
 
-	SparkManager.getSessionManager().addPresenceListener(new PresenceListener() {
-	    public void presenceChanged(Presence presence) {
-		if (presence.isAvailable() && !presence.isAway()) {
-		    lastActive = System.currentTimeMillis();
-		}
-	    }
-	});
+        SparkManager.getSessionManager().addPresenceListener(presence -> {
+            if (presence.isAvailable() && !presence.isAway()) {
+                lastActive = System.currentTimeMillis();
+            }
+        });
 
 	final Timer timer = new Timer();
 	timer.scheduleAtFixedRate(new TimerTask() {
@@ -295,13 +291,11 @@ public class ApplePlugin implements Plugin, NativeHandler {
     }
 
     public boolean launchBrowser(String url) {
-	try {
-	    BrowserLauncher.openURL(url);
-	} catch (IOException e) {
-	    Log.error(e);
-	} catch (Exception e) {
-	    Log.error(e);
-	}
-	return true;
+        try {
+            BrowserLauncher.openURL(url);
+        } catch (Exception e) {
+            Log.error(e);
+        }
+        return true;
     }
 }

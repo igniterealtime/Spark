@@ -1,5 +1,6 @@
 package org.jivesoftware.spark.plugins.transfersettings;
 
+import java.nio.charset.StandardCharsets;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 import org.jivesoftware.spark.util.log.Log;
@@ -10,25 +11,23 @@ import org.jivesoftware.spark.util.log.Log;
  * @author tim.jentz
  */
 public class TGuardRes {
-    private static PropertyResourceBundle prb;
+    private static final PropertyResourceBundle prb;
 	
     private TGuardRes() {
 
     }
-    
-    static ClassLoader cl = TGuardRes.class.getClassLoader();
-    
+
     static {
         prb = (PropertyResourceBundle) ResourceBundle
         		.getBundle("i18n/transferguard_i18n");
     }
     
-    public static final String getString(String propertyName) {
+    public static String getString(String propertyName) {
     try {
         /* Revert to this code after Spark is moved to Java 11 or newer
         return prb.getString(propertyName);
         */
-        return new String(prb.getString(propertyName).getBytes("ISO-8859-1"), "UTF-8");
+        return new String(prb.getString(propertyName).getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
     } catch (Exception e) {
 	    Log.error(e);
 	    return propertyName;

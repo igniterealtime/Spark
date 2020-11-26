@@ -70,7 +70,7 @@ public class ContactInfoWindow extends JPanel {
 
     private ContactItem contactItem;
 
-    private JWindow window = new JWindow();
+    private final JWindow window = new JWindow();
 
     private static ContactInfoWindow singleton;
     private static final Object LOCK = new Object();
@@ -174,7 +174,7 @@ public class ContactInfoWindow extends JPanel {
         int loc = group.getList().locationToIndex(e.getPoint());
 
 
-        ContactItem item = (ContactItem)group.getList().getModel().getElementAt(loc);
+        ContactItem item = group.getList().getModel().getElementAt(loc);
         if (item == null || item.getJid() == null) {
             return;
         }
@@ -239,14 +239,8 @@ public class ContactInfoWindow extends JPanel {
         	//If user is offline or away, try to see last activity
 
 	        try {
-				Jid client = null;
-				if (!status.equals(Res.getString("offline"))) {
-					//If user is away (not offline), last activity request is sent to client
-					client = contactItem.getPresence().getFrom();
-				} else {
-				    client = contactItem.getJid();
-				}
-
+                //If user is away (not offline), last activity request is sent to client
+				Jid client = status.equals(Res.getString("offline")) ? contactItem.getJid() : contactItem.getPresence().getFrom();
 	            LastActivity activity = LastActivityManager.getInstanceFor( SparkManager.getConnection() ).getLastActivity(client);
 	
 	            long idleTime = (activity.getIdleTime() * 1000);
@@ -351,9 +345,6 @@ public class ContactInfoWindow extends JPanel {
         size.width = 300;
         size.height = 125;
         return size;
-    }
-
-    public void mouseEntered(MouseEvent e) {
     }
 
     public void mouseExited(MouseEvent e) {

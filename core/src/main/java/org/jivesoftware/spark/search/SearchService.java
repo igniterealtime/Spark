@@ -47,7 +47,7 @@ import java.util.Collection;
 
 public class SearchService extends JPanel {
     private static final long serialVersionUID = 6407801290193187867L;
-    private IconTextField findField;
+    private final IconTextField findField;
     private Image backgroundImage;
     private boolean newSearch;
 

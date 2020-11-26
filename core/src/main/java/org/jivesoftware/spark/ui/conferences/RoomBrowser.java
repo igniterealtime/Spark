@@ -48,13 +48,13 @@ import java.beans.PropertyChangeListener;
 public class RoomBrowser extends JPanel {
     private static final long serialVersionUID = 8820670697089268423L;
 
-    private JLabel descriptionValue = new JLabel();
-    private JLabel subjectValue = new JLabel();
-    private JLabel occupantsValue = new JLabel();
-    private JLabel roomNameValue = new JLabel();
+    private final JLabel descriptionValue = new JLabel();
+    private final JLabel subjectValue = new JLabel();
+    private final JLabel occupantsValue = new JLabel();
+    private final JLabel roomNameValue = new JLabel();
 
-    private JiveTreeNode rootNode;
-    private Tree tree;
+    private final JiveTreeNode rootNode;
+    private final Tree tree;
 
     public RoomBrowser() {
         JLabel descriptionLabel = new JLabel();

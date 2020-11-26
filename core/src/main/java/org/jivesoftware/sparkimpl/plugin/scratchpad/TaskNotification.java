@@ -35,7 +35,7 @@ import java.util.TimerTask;
 /**
  */
 public class TaskNotification {
-    private SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yy");
+    private final SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yy");
 
 
     public TaskNotification() {

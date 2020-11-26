@@ -27,8 +27,8 @@ import org.jivesoftware.spark.ui.ContactItem;
  * extend JPanel here directly and customize here.
  *
  */
-public class JContactItemRenderer extends ContactItem implements ListCellRenderer {
-	JPanelRenderer basicPanelRenderer;
+public class JContactItemRenderer extends ContactItem implements ListCellRenderer<Object> {
+	private final JPanelRenderer basicPanelRenderer;
 	
 	public JContactItemRenderer() {
 		super("", "", null);

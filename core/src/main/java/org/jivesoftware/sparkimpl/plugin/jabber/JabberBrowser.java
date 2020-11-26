@@ -58,7 +58,7 @@ import javax.swing.KeyStroke;
 
 public class JabberBrowser implements Plugin {
     private JLabel addressLabel;
-    private JComboBox addressField;
+    private JComboBox<String> addressField;
     private XMPPConnection con;
     private JPanel browsePanel;
 
@@ -74,8 +74,8 @@ public class JabberBrowser implements Plugin {
         backButton.addActionListener( e -> {
             int selectedItem = addressField.getSelectedIndex();
             if (selectedItem > 0) {
-                Object historyItem = addressField.getItemAt(selectedItem - 1);
-                browse((String)historyItem);
+                String historyItem = addressField.getItemAt(selectedItem - 1);
+                browse(historyItem);
             }
         } );
 
@@ -87,7 +87,7 @@ public class JabberBrowser implements Plugin {
         JButton browseButton = new JButton("");
         ResourceUtils.resButton(browseButton, Res.getString("button.browse"));
         browseButton.addActionListener( e -> {
-            String serviceName = (String)addressField.getSelectedItem();
+            String serviceName = (String) addressField.getSelectedItem();
             if (!ModelUtil.hasLength(serviceName)) {
                 return;
             }
@@ -180,7 +180,7 @@ public class JabberBrowser implements Plugin {
 
     public class Entity extends RolloverButton {
 		private static final long serialVersionUID = 2084728014635239794L;
-		private DiscoverItems.Item item;
+		private final DiscoverItems.Item item;
 
         public Entity(final DiscoverItems.Item item) {
             this.item = item;
@@ -208,7 +208,7 @@ public class JabberBrowser implements Plugin {
     	this.con = SparkManager.getConnection();
     	EventQueue.invokeLater( () -> {
             addressLabel = new JLabel();
-            addressField = new JComboBox();
+            addressField = new JComboBox<>();
             addressField.setEditable(true);
             addressField.addItem(con.getHost());
         } );

@@ -27,11 +27,12 @@ import java.awt.font.TextAttribute;
 import java.awt.font.TextLayout;
 import java.text.AttributedCharacterIterator;
 import java.text.AttributedString;
+import java.util.Objects;
 
 public class JMultilineLabel extends JComponent {
     private static final long serialVersionUID = 3061233171993075054L;
     private String text;
-    private Insets margin = new Insets(1, 1, 1, 1);
+    private final Insets margin = new Insets(1, 1, 1, 1);
     private int maxWidth = Integer.MAX_VALUE;
     private boolean justify;
     private final FontRenderContext frc = new FontRenderContext(null, false, false);
@@ -49,7 +50,7 @@ public class JMultilineLabel extends JComponent {
         String old = this.text;
         this.text = text;
         firePropertyChange("text", old, this.text);
-        if ((old == null) ? text != null : !old.equals(text))
+        if (!Objects.equals(old, text))
             morph();
     }
 

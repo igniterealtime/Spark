@@ -50,8 +50,8 @@ public class PreferencesPanel extends JPanel implements ListSelectionListener {
      * flowpanel is the right panel, where the plugin specific UI is displayed
      */
     private final JPanel flowPanel = new JPanel(new BorderLayout());
-    private DefaultListModel listModel = new DefaultListModel();
-    private JList list = new JList(listModel);
+    private final DefaultListModel<PreferenceUI> listModel = new DefaultListModel<>();
+    private final JList<PreferenceUI> list = new JList<>(listModel);
     private Preference currentPreference;
     
     /**
@@ -68,7 +68,7 @@ public class PreferencesPanel extends JPanel implements ListSelectionListener {
         if ( displayPref != null || listModel.getSize() == 1){
             // iterate through all preference-ui items
             for (int i = 0; i < listModel.size(); i++){
-                PreferenceUI p = (PreferenceUI)listModel.get( i );
+                PreferenceUI p = listModel.get( i );
                 // check if the namespace is the namespace we search for
                 if ( Objects.equals( p.getPreference().getNamespace(), displayPref.getNamespace() ) ){
                     // if we've got our target, we can select this item and stop the search
@@ -111,7 +111,7 @@ public class PreferencesPanel extends JPanel implements ListSelectionListener {
     }
 
     private synchronized void selectionChanged(){
-        PreferenceUI o = (PreferenceUI)list.getSelectedValue();
+        PreferenceUI o = list.getSelectedValue();
         Preference pref = o.getPreference();
         pref.load();
 

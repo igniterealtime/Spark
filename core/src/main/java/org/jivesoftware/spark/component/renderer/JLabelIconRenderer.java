@@ -28,7 +28,7 @@ import java.awt.Component;
  *
  * @author Derek DeMoro
  */
-public class JLabelIconRenderer extends JLabel implements ListCellRenderer {
+public class JLabelIconRenderer extends JLabel implements ListCellRenderer<Object> {
     private static final long serialVersionUID = -694803906607554443L;
 
     /**

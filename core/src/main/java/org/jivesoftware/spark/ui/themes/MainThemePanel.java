@@ -34,8 +34,8 @@ public class MainThemePanel extends JPanel {
 
     private static final long serialVersionUID = 6014253744953992190L;
     
-    private ThemePanel _themepanel;
-    private ColorPreferencePanel _colorpanel;
+    private final ThemePanel _themepanel;
+    private final ColorPreferencePanel _colorpanel;
     
     public MainThemePanel()
     {

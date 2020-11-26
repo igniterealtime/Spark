@@ -78,7 +78,7 @@ public final class TitlePanel extends JPanel {
             setBackground(Color.white);
 
             titleLabel.setFont(new Font("dialog", Font.BOLD, 11));
-            descriptionLabel.setFont(new Font("dialog", 0, 10));
+            descriptionLabel.setFont(new Font("dialog", Font.PLAIN, 10));
         }
         else {
             final JPanel panel = new ImagePanel();
@@ -91,7 +91,7 @@ public final class TitlePanel extends JPanel {
             titleLabel.setVerticalTextPosition(JLabel.CENTER);
             titleLabel.setFont(new Font("dialog", Font.BOLD, 14));
             titleLabel.setForeground(Color.black);
-            descriptionLabel.setFont(new Font("dialog", 0, 10));
+            descriptionLabel.setFont(new Font("dialog", Font.PLAIN, 10));
             add(panel, new GridBagConstraints(0, 0, 1, 0, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 2, 2, 2), 0, 0));
         }
 

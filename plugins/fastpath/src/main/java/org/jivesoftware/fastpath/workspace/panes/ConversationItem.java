@@ -32,11 +32,11 @@ import java.util.Date;
 
 public class ConversationItem extends JPanel {
 	private static final long serialVersionUID = 3596381734502962203L;
-	private JLabel agentLabel = new JLabel();
-    private JLabel visitorLabel = new JLabel();
-    private JLabel emailLabel = new JLabel();
-    private JLabel dateLabel = new JLabel();
-    private JLabel questionLabel = new JLabel();
+	private final JLabel agentLabel = new JLabel();
+    private final JLabel visitorLabel = new JLabel();
+    private final JLabel emailLabel = new JLabel();
+    private final JLabel dateLabel = new JLabel();
+    private final JLabel questionLabel = new JLabel();
 
     private String sessionID;
 

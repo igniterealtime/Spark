@@ -19,7 +19,6 @@ package org.jivesoftware;
 
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
-import org.jivesoftware.spark.PluginManager;
 import org.jivesoftware.spark.ui.themes.ColorSettingManager;
 import org.jivesoftware.spark.ui.themes.ColorSettings;
 import org.jivesoftware.spark.ui.themes.LookAndFeelManager;
@@ -174,10 +173,8 @@ public final class Spark {
         System.setProperty("sun.java2d.noddraw", "true");
         System.setProperty("file.encoding", "UTF-8");
 
-        SwingUtilities.invokeLater( () -> {
-            // Start Application
-            new Spark();
-        } );
+        // Start Application
+        SwingUtilities.invokeLater(Spark::new);
 
         installBaseUIProperties();
 

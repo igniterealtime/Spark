@@ -16,9 +16,6 @@
 
 package org.jivesoftware.spark.plugin.ofmeet;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
 import javax.swing.ImageIcon;
 
 import org.jivesoftware.spark.component.RolloverButton;
@@ -32,15 +29,11 @@ import sun.misc.BASE64Decoder;
 public class ChatRoomDecorator
 {
     public RolloverButton ofmeetButton;
-    public ChatRoom room;
-
-
-    private final String url;
+    public final ChatRoom room;
 
     public ChatRoomDecorator(final ChatRoom room, final String url, final SparkMeetPlugin plugin)
     {
         this.room = room;
-        this.url = url;
 
         try {
             BASE64Decoder decoder = new BASE64Decoder();
@@ -52,24 +45,20 @@ public class ChatRoomDecorator
             final String roomId = getNode(room.getBareJid().toString());
             final String sessionID = roomId + "-" + System.currentTimeMillis();
 
-            ofmeetButton.addActionListener( new ActionListener()
-            {
-                    public void actionPerformed(ActionEvent event)
-                    {
-                        String newUrl, newRoomId;
+            ofmeetButton.addActionListener(event -> {
+                String newUrl, newRoomId;
 
-                        if ("groupchat".equals(room.getChatType().toString()))
-                        {
-                            newRoomId = roomId + "-" + sessionID;
-                            newUrl = url + newRoomId;
-                            plugin.handleClick(newUrl, room, newUrl, Message.Type.groupchat);
+                if ("groupchat".equals(room.getChatType().toString()))
+                {
+                    newRoomId = roomId + "-" + sessionID;
+                    newUrl = url + newRoomId;
+                    plugin.handleClick(newUrl, room, newUrl, Message.Type.groupchat);
 
-                        } else {
-                            newRoomId = sessionID;
-                            newUrl = url + newRoomId;
-                            plugin.handleClick(newUrl, room, newUrl, Message.Type.chat);
-                        }
-                    }
+                } else {
+                    newRoomId = sessionID;
+                    newUrl = url + newRoomId;
+                    plugin.handleClick(newUrl, room, newUrl, Message.Type.chat);
+                }
             });
             room.getEditorBar().add(ofmeetButton);
 

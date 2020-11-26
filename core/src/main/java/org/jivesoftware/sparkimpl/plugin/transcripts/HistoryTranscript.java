@@ -50,25 +50,25 @@ import org.jxmpp.util.XmppStringUtils;
  */
 public class HistoryTranscript extends SwingWorker {
 
-	private Semaphore token = new Semaphore(1);
+	private final Semaphore token = new Semaphore(1);
 	private int pageIndex = 0;
 	private int maxPages = 0;
 	private final String period_oneMonth = "message.search.period.month.one";
 	private final String period_oneYear = "message.search.period.year.one";
 	private final String period_noPeriod = "message.search.period.none";
 	private String searchPeriod = "";
-	private List<String> periods = new ArrayList<>();
+	private final List<String> periods = new ArrayList<>();
 	private final timerTranscript transcriptTask = new timerTranscript();
-	private JLabel pageCounter = new JLabel("0 / 0");
-	private JButton pageLeft = new JButton("<");
-	private JButton pageRight = new JButton(">");
+	private final JLabel pageCounter = new JLabel("0 / 0");
+	private final JButton pageLeft = new JButton("<");
+	private final JButton pageRight = new JButton(">");
 	private BareJid jid = null;
-	private SimpleDateFormat notificationDateFormatter = null;
-	private SimpleDateFormat messageDateFormatter = null;
+	private final SimpleDateFormat notificationDateFormatter;
+	private final SimpleDateFormat messageDateFormatter;
 	private final AtomicBoolean isInitialized = new AtomicBoolean(false);
 
-	private LocalPreferences pref = SettingsManager.getLocalPreferences();
-	private final JComboBox periodChooser= new JComboBox() ;
+	private final LocalPreferences pref = SettingsManager.getLocalPreferences();
+	private final JComboBox<String> periodChooser= new JComboBox<>();
 	private final JPanel filterPanel = new JPanel();
 	private final JPanel mainPanel = new BackgroundPanel();
 	private final JPanel searchPanel = new BackgroundPanel();
@@ -83,7 +83,7 @@ public class HistoryTranscript extends SwingWorker {
 	private final StringBuilder builder = new StringBuilder();
 	private List<ChatTranscript> searchFilteredList = new ArrayList<>();
 	private List<ChatTranscript> dateFilteredUnfilteredList = new ArrayList<>();
-    private AtomicBoolean isHistoryLoaded = new AtomicBoolean(false);
+    private final AtomicBoolean isHistoryLoaded = new AtomicBoolean(false);
     private final String SEPARATOR = System.getProperty("line.separator");
 	private final DefaultHighlighter.DefaultHighlightPainter highlighter = new DefaultHighlighter.DefaultHighlightPainter(Color.YELLOW);
 	private boolean focusFlag = false;
@@ -350,16 +350,20 @@ public class HistoryTranscript extends SwingWorker {
 			long yearOld = Math.round((double)cal.get(Calendar.YEAR));
 			long monthOld = Math.round((double)cal.get(Calendar.MONTH));
 
-			if (searchPeriod.equals(period_oneMonth)) { 
-				// for one month, we only check if the month and the year is equal
-				if ((monthOld == monthNew) && (yearOld == yearNew)) result = true;
-			}else if (searchPeriod.equals(period_oneYear)) {
-				// for one year, we only check if the year is the same
-				if ((yearOld == yearNew)) result = true;
-			}else if (searchPeriod.equals(period_noPeriod)) {
-				// for unfiltered list, we return true all the time
-				result = true;
-			}
+            switch (searchPeriod) {
+                case period_oneMonth:
+                    // for one month, we only check if the month and the year is equal
+                    if ((monthOld == monthNew) && (yearOld == yearNew)) result = true;
+                    break;
+                case period_oneYear:
+                    // for one year, we only check if the year is the same
+                    if ((yearOld == yearNew)) result = true;
+                    break;
+                case period_noPeriod:
+                    // for unfiltered list, we return true all the time
+                    result = true;
+                    break;
+            }
 			return result;
 		}
 
@@ -378,9 +382,9 @@ public class HistoryTranscript extends SwingWorker {
 				// retrieve the first message
 
 				Date oldDate;
-                Integer iteratorValue;
-                Integer startValue;
-                Integer endValue;
+                int iteratorValue;
+                int startValue;
+                int endValue;
 
 				boolean sortDateAsc = pref.getChatHistoryAscending();
 
@@ -400,7 +404,7 @@ public class HistoryTranscript extends SwingWorker {
 				cal.setTime(oldDate);
 				Date newDate;
 
-				ChatTranscript history = new ChatTranscript();
+				ChatTranscript history;
 				boolean handled = true;
 
 				for(int i = startValue; i != endValue; i += iteratorValue){
@@ -464,11 +468,11 @@ public class HistoryTranscript extends SwingWorker {
 			List<ChatTranscript> tmpList = new ArrayList<>();
 			ChatTranscript tmpTranscript;
 
-			for (int i = 0; i < dateFilteredUnfilteredList.size(); i++){
-				tmpTranscript = new ChatTranscript();
-				tmpTranscript.setList(dateFilteredUnfilteredList.get(i).getMessage(searchString));
-				if (tmpTranscript.size() > 0) tmpList.add(tmpTranscript);
-			}
+            for (ChatTranscript chatTranscript : dateFilteredUnfilteredList) {
+                tmpTranscript = new ChatTranscript();
+                tmpTranscript.setList(chatTranscript.getMessage(searchString));
+                if (tmpTranscript.size() > 0) tmpList.add(tmpTranscript);
+            }
 
 			try {
 				token.acquire();
@@ -594,7 +598,7 @@ public class HistoryTranscript extends SwingWorker {
                                         }
                                         try {
                                             //if the view contains line break char return forced break
-                                            if (getDocument().getText(p0, p1 - p0).indexOf(SEPARATOR) >= 0) {
+                                            if (getDocument().getText(p0, p1 - p0).contains(SEPARATOR)) {
                                                 return View.ForcedBreakWeight;
                                             }
                                         }

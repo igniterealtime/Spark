@@ -15,7 +15,6 @@
  */
 package org.jivesoftware.sparkimpl.plugin.emoticons;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.io.File;
 
@@ -28,8 +27,8 @@ public class Emoticon {
 
     private String imageName;
     private String emoticonName;
-    private File emoticonDirectory;
-    private List<String> equivalants = new ArrayList<>();
+    private final File emoticonDirectory;
+    private final List<String> equivalants;
 
 
     /**

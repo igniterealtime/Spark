@@ -21,8 +21,6 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.HashMap;
@@ -79,8 +77,8 @@ public class WorkgroupManager {
      * Stores the ChatSettings of each workgroup, and will be updated
      * when packet date of workgroup changes.
      */
-    private Map<EntityJid, ChatSettings> chatSettings = new HashMap<>();
-    private Set<Jid> invites = new HashSet<>();
+    private final Map<EntityJid, ChatSettings> chatSettings = new HashMap<>();
+    private final Set<Jid> invites = new HashSet<>();
 
 
     private static WorkgroupManager singleton;
@@ -172,7 +170,7 @@ public class WorkgroupManager {
     private void showWorkgroup(final ContactItem contactItem) throws Exception {
         VCard vcard = SparkManager.getVCardManager().getVCard();
 
-        final Map<String, String> variables = new HashMap<String, String>();
+        final Map<String, String> variables = new HashMap<>();
         String firstName = vcard.getFirstName();
         String lastName = vcard.getLastName();
 
@@ -224,22 +222,18 @@ public class WorkgroupManager {
         formUI.add(titlePane, new GridBagConstraints(0, 0, 3, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
 
         final JButton submitButton = new JButton("Start Chat!");
-        submitButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                if (validateForm(workgroupDialog, workgroupForm, formUI.getFilledForm())) {
-                    enterQueue(contactItem.getJid().asEntityBareJidOrThrow(), formUI.getFilledForm());
-                    workgroupDialog.dispose();
-                }
+        submitButton.addActionListener(e -> {
+            if (validateForm(workgroupDialog, workgroupForm, formUI.getFilledForm())) {
+                enterQueue(contactItem.getJid().asEntityBareJidOrThrow(), formUI.getFilledForm());
+                workgroupDialog.dispose();
             }
         });
 
 
-        formUI.setEnterListener(new WorkgroupDataForm.EnterListener() {
-            public void enterPressed() {
-                if (validateForm(workgroupDialog, workgroupForm, formUI.getFilledForm())) {
-                    enterQueue(contactItem.getJid().asEntityBareJidOrThrow(), formUI.getFilledForm());
-                    workgroupDialog.dispose();
-                }
+        formUI.setEnterListener(() -> {
+            if (validateForm(workgroupDialog, workgroupForm, formUI.getFilledForm())) {
+                enterQueue(contactItem.getJid().asEntityBareJidOrThrow(), formUI.getFilledForm());
+                workgroupDialog.dispose();
             }
         });
 
@@ -327,16 +321,15 @@ public class WorkgroupManager {
 
         final JButton leaveQueueButton = new JButton("Leave Queue");
         mainPanel.add(queueWaitTime, new GridBagConstraints(0, 3, 4, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-        leaveQueueButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                if (workgroup.isInQueue()) {
-                    try {
-                        invites.add(workgroup.getWorkgroupJID());
-                        workgroup.departQueue();
-                    }
-                    catch (XMPPException | SmackException | InterruptedException e1) {
-                        Log.error(e1);
-                    }
+
+        leaveQueueButton.addActionListener(e -> {
+            if (workgroup.isInQueue()) {
+                try {
+                    invites.add(workgroup.getWorkgroupJID());
+                    workgroup.departQueue();
+                }
+                catch (XMPPException | SmackException | InterruptedException e1) {
+                    Log.error(e1);
                 }
             }
         });

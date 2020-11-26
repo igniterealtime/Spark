@@ -51,7 +51,7 @@ import java.util.TimerTask;
  */
 public class NotificationPlugin implements Plugin, StanzaListener {
 
-    private Set<BareJid> onlineUsers = new HashSet<>();
+    private final Set<BareJid> onlineUsers = new HashSet<>();
     private LocalPreferences preferences;
 
 

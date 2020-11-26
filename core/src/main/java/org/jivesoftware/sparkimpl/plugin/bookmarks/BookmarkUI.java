@@ -34,8 +34,8 @@ import java.awt.event.MouseEvent;
  */
 public class BookmarkUI extends JPanel {
 	private static final long serialVersionUID = 2724141541874364121L;
-	private DefaultListModel model;
-    private JList list;
+	private final DefaultListModel<BookmarkItem> model;
+    private final JList<BookmarkItem> list;
 
 
     public BookmarkUI() {
@@ -43,8 +43,8 @@ public class BookmarkUI extends JPanel {
         CollapsiblePane pane = new CollapsiblePane();
         pane.setTitle(Res.getString("title.bookmarks"));
 
-        model = new DefaultListModel();
-        list = new JList(model);
+        model = new DefaultListModel<>();
+        list = new JList<>(model);
 
         add(pane, BorderLayout.CENTER);
         pane.setContentPane(list);
@@ -54,7 +54,7 @@ public class BookmarkUI extends JPanel {
             @Override
             public void mouseClicked(MouseEvent mouseEvent) {
                 if (mouseEvent.getClickCount() == 2) {
-                    BookmarkItem item = (BookmarkItem)list.getSelectedValue();
+                    BookmarkItem item = list.getSelectedValue();
                     item.invokeAction();
                 }
             }

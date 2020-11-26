@@ -63,23 +63,23 @@ import org.jxmpp.stringprep.XmppStringprepException;
 public class SendFileTransfer extends JPanel {
 
     private static final long serialVersionUID = -4403839897649365671L;
-    private FileDragLabel imageLabel = new FileDragLabel();
-    private JLabel titleLabel = new JLabel();
-    private JLabel fileLabel = new JLabel();
+    private final FileDragLabel imageLabel = new FileDragLabel();
+    private final JLabel titleLabel = new JLabel();
+    private final JLabel fileLabel = new JLabel();
 
-    private TransferButton cancelButton = new TransferButton();
-    private JProgressBar progressBar = new JProgressBar();
+    private final TransferButton cancelButton = new TransferButton();
+    private final JProgressBar progressBar = new JProgressBar();
     private File fileToSend;
     private OutgoingFileTransfer transfer;
 
-    private TransferButton retryButton = new TransferButton();
+    private final TransferButton retryButton = new TransferButton();
 
     private FileTransferManager transferManager;
     private EntityFullJid fullJID;
     private String nickname;
-    private JLabel progressLabel = new JLabel();
+    private final JLabel progressLabel = new JLabel();
     private long _startTime;
-    private ChatRoom chatRoom;
+    private final ChatRoom chatRoom;
 
     public SendFileTransfer(ChatRoom chatRoom) {
         this.chatRoom = chatRoom;
@@ -109,7 +109,7 @@ public class SendFileTransfer extends JPanel {
                 transfer = transferManager.createOutgoingFileTransfer(fullJID);
                 transfer.sendFile(file, "Sending");
             } catch (SmackException e1) {
-                Log.error(e1);
+                Log.error("An error occurred while creating an outgoing file transfer.", e1);
             }
             sendFile(transfer, transferManager, fullJID, nickname);
         });
@@ -272,7 +272,7 @@ public class SendFileTransfer extends JPanel {
         try {
             Desktop.getDesktop().open(downloadedFile);
         } catch (IOException e) {
-            Log.error(e);
+            Log.error("An error occurred while trying to open downloaded file: " + downloadedFile, e);
         }
     }
 
@@ -282,7 +282,7 @@ public class SendFileTransfer extends JPanel {
             titleLabel.setText(Res.getString("message.negotiation.file.transfer", nickname));
         } else if (status == Status.error) {
             if (transfer.getException() != null) {
-                Log.error("Error occured during file transfer.", transfer.getException());
+                Log.error("Error occurred during file transfer.", transfer.getException());
             }
             progressBar.setVisible(false);
             progressLabel.setVisible(false);
@@ -306,7 +306,7 @@ public class SendFileTransfer extends JPanel {
                     progressBar.setValue(Math.round(p));
                 });
             } catch (Exception e) {
-                Log.error(e);
+                Log.error("An error occurred while trying to update the file transfer progress bar.", e);
             }
 
             ByteFormat format = new ByteFormat();
@@ -317,7 +317,11 @@ public class SendFileTransfer extends JPanel {
         } else if (status == Status.complete) {
             progressBar.setVisible(false);
 
-            String fin = TransferUtils.convertSecondstoHHMMSS(Math.round(System.currentTimeMillis() - _startTime) / 1000);
+            if ( _startTime == 0 ) { // SPARK-2192: Sometimes, the startTime of the transfer hasn't been recorded yet when it already finished.
+                _startTime = System.currentTimeMillis();
+            }
+            String fin = TransferUtils.convertSecondstoHHMMSS(Math.round(Math.max(0, System.currentTimeMillis() - _startTime)) / 1000);
+            _startTime = 0;
             progressLabel.setText(Res.getString("label.time", fin));
             titleLabel.setText(Res.getString("message.you.have.sent", nickname));
             cancelButton.setVisible(false);

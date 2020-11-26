@@ -127,7 +127,7 @@ public class SparkToaster {
 
     // Flag that indicate if use alwaysOnTop or not.
     // method always on top start only SINCE JDK 5 !
-    boolean useAlwaysOnTop = true;
+    private final boolean useAlwaysOnTop;
 
     private String title;
 
@@ -138,7 +138,7 @@ public class SparkToaster {
 
     private Window window;
 
-    private JPanel mainPanel = new JPanel();
+    private final JPanel mainPanel = new JPanel();
 
     private TitleLabel titleLabel;
 
@@ -169,7 +169,7 @@ public class SparkToaster {
         // Label to store Icon
 
         // Text area for the message
-        private JTextArea message = new JTextArea();
+        private final JTextArea message = new JTextArea();
 
         /**
          * Simple costructor that initialized components...
@@ -264,7 +264,7 @@ public class SparkToaster {
      * Class that manage the animation
      */
     class Animation extends Thread {
-        SingleToaster toaster;
+        private final SingleToaster toaster;
 
         public Animation(SingleToaster toaster) {
             this.toaster = toaster;
@@ -644,8 +644,8 @@ public class SparkToaster {
 
     static class TitleLabel extends JPanel {
 		private static final long serialVersionUID = -5163519932953987400L;
-		private JLabel label;
-        private RolloverButton closeButton;
+		private final JLabel label;
+        private final RolloverButton closeButton;
 
         public TitleLabel(String text, final boolean showCloseIcon) {
             setLayout(new GridBagLayout());

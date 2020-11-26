@@ -25,6 +25,7 @@ import java.util.Collection;
 import javax.swing.JComponent;
 import javax.swing.TransferHandler;
 
+import org.jetbrains.annotations.NotNull;
 import org.jivesoftware.spark.util.log.Log;
 
 /**
@@ -32,9 +33,9 @@ import org.jivesoftware.spark.util.log.Log;
  */
 public class ChatRoomTransferHandler extends TransferHandler {
 	private static final long serialVersionUID = 6941570710627039031L;
-	private ChatRoom chatRoom;
+	private final ChatRoom chatRoom;
 
-    private static final DataFlavor flavors[] = {DataFlavor.javaFileListFlavor, DataFlavor.stringFlavor};
+    private static final DataFlavor[] flavors = {DataFlavor.javaFileListFlavor, DataFlavor.stringFlavor};
 
     public ChatRoomTransferHandler(ChatRoom chatRoom) {
         this.chatRoom = chatRoom;
@@ -47,10 +48,10 @@ public class ChatRoomTransferHandler extends TransferHandler {
 
 
     @Override
-	public boolean canImport(JComponent comp, DataFlavor flavor[]) {
-        for (int i = 0, n = flavor.length; i < n; i++) {
-            for (int j = 0, m = flavors.length; j < m; j++) {
-                if (flavor[i].equals(flavors[j])) {
+	public boolean canImport(JComponent comp, DataFlavor[] flavor) {
+        for (DataFlavor dataFlavor : flavor) {
+            for (DataFlavor value : flavors) {
+                if (dataFlavor.equals(value)) {
                     return true;
                 }
             }
@@ -86,10 +87,7 @@ public class ChatRoomTransferHandler extends TransferHandler {
                     return true;
                 }
             }
-            catch (UnsupportedFlavorException e) {
-                Log.error(e);
-            }
-            catch (IOException e) {
+            catch (UnsupportedFlavorException | IOException e) {
                 Log.error(e);
             }
         }
@@ -112,7 +110,7 @@ public class ChatRoomTransferHandler extends TransferHandler {
 
     public static class TranscriptWindowTransferable implements Transferable {
 
-        private TranscriptWindow item;
+        private final TranscriptWindow item;
 
         public TranscriptWindowTransferable(TranscriptWindow item) {
             this.item = item;
@@ -131,8 +129,9 @@ public class ChatRoomTransferHandler extends TransferHandler {
         }
 
         // Returns Selected Text
+        @NotNull
         @Override
-		public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
+		public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException {
             if (!DataFlavor.stringFlavor.equals(flavor)) {
                 throw new UnsupportedFlavorException(flavor);
             }

@@ -44,7 +44,7 @@ import org.jivesoftware.sparkimpl.plugin.gateways.transports.TransportUtils;
 public class GatewayButton extends JPanel implements GatewayItem {
 	private static final long serialVersionUID = -2692869826501622612L;
 	private final RolloverButton button = new RolloverButton();
-    private Transport transport;
+    private final Transport transport;
     private boolean signedIn;
 
     public GatewayButton(final Transport transport) {

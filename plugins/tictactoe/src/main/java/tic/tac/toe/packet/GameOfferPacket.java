@@ -112,12 +112,12 @@ public class GameOfferPacket extends IQ {
                 {
                     if ( parser.getName().equals( "gameID" ) )
                     {
-                        final int gameID = Integer.valueOf( parser.nextText() );
+                        final int gameID = Integer.parseInt( parser.nextText() );
                         gameOffer.setGameID( gameID );
                     }
                     else if ( parser.getName().equals( "startingPlayer" ) )
                     {
-                        boolean startingPlayer = Boolean.valueOf( parser.nextText() );
+                        boolean startingPlayer = Boolean.parseBoolean( parser.nextText() );
                         gameOffer.setStartingPlayer( startingPlayer );
                     }
                 }

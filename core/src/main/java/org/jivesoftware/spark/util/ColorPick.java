@@ -38,8 +38,8 @@ import org.jivesoftware.resource.Res;
 public class ColorPick extends JPanel implements ChangeListener {
     
     private static final long serialVersionUID = 2709297435120012839L;
-    private JSlider[] _sliderarray;
-    private JLabel _preview;
+    private final JSlider[] _sliderarray;
+    private final JLabel _preview;
 
 
     /**

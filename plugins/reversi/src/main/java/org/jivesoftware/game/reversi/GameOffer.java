@@ -35,7 +35,7 @@ public class GameOffer extends IQ
     public static final String ELEMENT_NAME = "reversi";
     public static final String NAMESPACE = "http://jivesoftware.org/protocol/game/reversi";
 
-    private static Random random = new Random();
+    private static final Random random = new Random();
     private int gameID;
 
     private boolean startingPlayer;
@@ -121,12 +121,12 @@ public class GameOffer extends IQ
                 {
                     if ( parser.getName().equals( "gameID" ) )
                     {
-                        final int gameID = Integer.valueOf( parser.nextText() );
+                        final int gameID = Integer.parseInt( parser.nextText() );
                         gameOffer.setGameID( gameID );
                     }
                     else if ( parser.getName().equals( "startingPlayer" ) )
                     {
-                        boolean startingPlayer = Boolean.valueOf( parser.nextText() );
+                        boolean startingPlayer = Boolean.parseBoolean( parser.nextText() );
                         gameOffer.setStartingPlayer( startingPlayer );
                     }
                 }

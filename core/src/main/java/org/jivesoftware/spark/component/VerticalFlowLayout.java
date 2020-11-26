@@ -50,10 +50,10 @@ public class VerticalFlowLayout extends FlowLayout {
      */
     public static final int BOTTOM = 2;
 
-    int hgap;
-    int vgap;
-    boolean hfill;
-    boolean vfill;
+    private final int hgap;
+    private final int vgap;
+    private boolean hfill;
+    private boolean vfill;
 
     /**
      * Construct a new VerticalFlowLayout with a middle alignment, and

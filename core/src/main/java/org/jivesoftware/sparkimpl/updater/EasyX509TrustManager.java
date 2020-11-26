@@ -50,7 +50,7 @@ import java.security.cert.X509Certificate;
  */
 
 public class EasyX509TrustManager implements X509TrustManager {
-    private X509TrustManager standardTrustManager = null;
+    private final X509TrustManager standardTrustManager;
 
     /**
      * Log object for this class.
@@ -108,11 +108,11 @@ public class EasyX509TrustManager implements X509TrustManager {
     }
 
     @Override
-	public void checkClientTrusted(X509Certificate[] x509Certificates, String s) throws CertificateException {
+	public void checkClientTrusted(X509Certificate[] x509Certificates, String s) {
     }
 
     @Override
-	public void checkServerTrusted(X509Certificate[] x509Certificates, String s) throws CertificateException {
+	public void checkServerTrusted(X509Certificate[] x509Certificates, String s) {
     }
 
     /**

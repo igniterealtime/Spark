@@ -40,10 +40,10 @@ import javax.swing.JTextField;
 
 final class JoinConferenceRoomDialog extends JPanel {
     private static final long serialVersionUID = -6400555509113588047L;
-    private JLabel passwordLabel = new JLabel();
-    private JPasswordField passwordField = new JPasswordField();
-    private JTextField nicknameField = new JTextField();
-    private JLabel roomNameDescription = new JLabel();
+    private final JLabel passwordLabel = new JLabel();
+    private final JPasswordField passwordField = new JPasswordField();
+    private final JTextField nicknameField = new JTextField();
+    private final JLabel roomNameDescription = new JLabel();
 
     public JoinConferenceRoomDialog() {
         GridBagLayout gridBagLayout1 = new GridBagLayout();

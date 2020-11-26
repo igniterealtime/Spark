@@ -42,17 +42,16 @@ public class GatewayTabItem extends CollapsiblePane implements GatewayItem {
 
     private boolean signedIn;
 
-    private Transport _transport;
-    private DefaultListModel model = new DefaultListModel();
-    private JLabel _status = new JLabel();
-    private JPanel _listPanel = new JPanel(new GridBagLayout());
-    private JLabel _statusIcon = new JLabel();
-    private RolloverButton _signInOut = new RolloverButton();
-    private RolloverButton _registerButton = new RolloverButton();
-    private JCheckBox _autoJoin = new JCheckBox();
-    private boolean _transportRegistered = false;
+    private final Transport _transport;
+    private final JLabel _status = new JLabel();
+    private final JPanel _listPanel = new JPanel(new GridBagLayout());
+    private final JLabel _statusIcon = new JLabel();
+    private final RolloverButton _signInOut = new RolloverButton();
+    private final RolloverButton _registerButton = new RolloverButton();
+    private final JCheckBox _autoJoin = new JCheckBox();
+    private boolean _transportRegistered;
 
-    private RolloverButton _autoJoinButton = new RolloverButton();
+    private final RolloverButton _autoJoinButton = new RolloverButton();
     
     public GatewayTabItem(final Transport transport) {
 	this._transport = transport;
@@ -68,8 +67,9 @@ public class GatewayTabItem extends CollapsiblePane implements GatewayItem {
 	getTitlePane().add(_status);
 	this.setTitle(transport.getName());
 
-	_listPanel.setBackground((Color)UIManager.get("ContactItem.background"));
-        JList _transportMenu = new JList( model );
+        _listPanel.setBackground((Color) UIManager.get("ContactItem.background"));
+        DefaultListModel<?> model = new DefaultListModel<>();
+        JList<?> _transportMenu = new JList<>(model);
         _transportMenu.setCellRenderer(new JPanelRenderer());
 
 	this.setContentPane(_listPanel);

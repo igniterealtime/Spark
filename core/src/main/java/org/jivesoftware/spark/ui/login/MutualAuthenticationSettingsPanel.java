@@ -53,37 +53,37 @@ import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 public class MutualAuthenticationSettingsPanel extends JPanel implements ActionListener, MouseListener {
     private final static Insets DEFAULT_INSETS = new Insets(5, 5, 5, 5);
 
-    private IdentityController idControll;
+    private final IdentityController idControll;
 
     private static JTable idTable;
     private static JScrollPane scrollPane;
 
-    private JFileChooser fileChooser = new JFileChooser();
-    private JButton addCertButton = new JButton();
-    private JButton showCert =      new JButton();
+    private final JFileChooser fileChooser = new JFileChooser();
+    private final JButton addCertButton = new JButton();
+    private final JButton showCert =      new JButton();
 
-    private JPanel uploadCertificatePanel = new JPanel();
-    private JPanel creationPanel =          new JPanel();
+    private final JPanel uploadCertificatePanel = new JPanel();
+    private final JPanel creationPanel =          new JPanel();
 
-    private JRadioButton selfSignedCertificate =     new JRadioButton();
-    private JRadioButton certificateSigningRequest = new JRadioButton();
-    private JCheckBox saveCertToFile = new JCheckBox();
-    private JButton createButton = new JButton();
+    private final JRadioButton selfSignedCertificate =     new JRadioButton();
+    private final JRadioButton certificateSigningRequest = new JRadioButton();
+    private final JCheckBox saveCertToFile = new JCheckBox();
+    private final JButton createButton = new JButton();
 
-    private JTextField commonNameField =        new JTextField();
-    private JTextField organizationUnitField =  new JTextField();
-    private JTextField organizationField =      new JTextField();
-    private JTextField countryField =           new JTextField();
-    private JTextField cityField =              new JTextField();
+    private final JTextField commonNameField =        new JTextField();
+    private final JTextField organizationUnitField =  new JTextField();
+    private final JTextField organizationField =      new JTextField();
+    private final JTextField countryField =           new JTextField();
+    private final JTextField cityField =              new JTextField();
 
-    private JLabel commonNameLabel =        new JLabel();
-    private JLabel organizationUnitLabel =  new JLabel();
-    private JLabel organizationLabel =      new JLabel();
-    private JLabel countryLabel =           new JLabel();
-    private JLabel cityLabel =              new JLabel();
-    private ButtonGroup radioGroup = new ButtonGroup();
+    private final JLabel commonNameLabel =        new JLabel();
+    private final JLabel organizationUnitLabel =  new JLabel();
+    private final JLabel organizationLabel =      new JLabel();
+    private final JLabel countryLabel =           new JLabel();
+    private final JLabel cityLabel =              new JLabel();
+    private final ButtonGroup radioGroup = new ButtonGroup();
     //current Spark version support only .pem format of RSA private key with certificate
-    private FileNameExtensionFilter certFilter = new FileNameExtensionFilter(Res.getString("menuitem.certificate.files.filter"),"pem");
+    private final FileNameExtensionFilter certFilter = new FileNameExtensionFilter(Res.getString("menuitem.certificate.files.filter"),"pem");
 
     public MutualAuthenticationSettingsPanel(LocalPreferences localPreferences, JDialog optionsDialog) {
         setLayout(new GridBagLayout());

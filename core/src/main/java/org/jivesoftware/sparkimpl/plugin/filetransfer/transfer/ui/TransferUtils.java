@@ -66,7 +66,7 @@ public class TransferUtils {
      */
     public static String calculateEstimate(long currentsize, long totalsize,
 	    long timestart, long timenow) {
-	long timediff = timenow - timestart;
+	long timediff = Math.max(0, timenow - timestart);
 	long sizeleft = totalsize - currentsize;
 
 	// currentsize = timediff

@@ -3,18 +3,11 @@ package org.jivesoftware.sparkimpl.certificates;
 import java.io.IOException;
 import java.security.cert.CertificateParsingException;
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.Date;
+import java.util.*;
 
 import javax.naming.InvalidNameException;
 import javax.naming.ldap.LdapName;
 import javax.naming.ldap.Rdn;
-
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
 
 import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.ASN1Primitive;
@@ -38,32 +31,30 @@ import org.jivesoftware.spark.util.log.Log;
  */
 public class CertificateModel {
 
-	private X509Certificate certificate;
+	private final X509Certificate certificate;
 	private String alias;
 	private String subjectCommonName;
 	private String issuerCommonName;
-	private int version;
-	private String serialNumber;
-	private String signatureValue;
-	private String signatureAlgorithm;
-	private String issuer;
-	private String subject;
-	private String notBefore;
-	private String notAfter;
-	private String publicKey;
-	private String publicKeyAlgorithm;
+	private final int version;
+	private final String serialNumber;
+	private final String signatureValue;
+	private final String signatureAlgorithm;
+	private final String issuer;
+	private final String subject;
+	private final String notBefore;
+	private final String notAfter;
+	private final String publicKey;
+	private final String publicKeyAlgorithm;
 	private String issuerUniqueID;
 	private String subjectUniqueID;
 
-	private boolean valid;
-	private boolean expired;
+	private final boolean valid;
 	private boolean revoked;
-	private boolean notValidYet;
-	private Set<String> criticalExtensionSet;
+    private Set<String> criticalExtensionSet;
 	private Set<String> nonCriticalExtensionSet;
-	private HashMap<String, String> extensions = new HashMap<String,String>();
-	private ArrayList<String> unsupportedCriticalExtensions = new ArrayList<String>();
-	private ArrayList<String> unsupportedNonCriticalExtensions = new ArrayList<String>();
+	private final HashMap<String, String> extensions = new HashMap<>();
+	private final ArrayList<String> unsupportedCriticalExtensions = new ArrayList<>();
+	private final ArrayList<String> unsupportedNonCriticalExtensions = new ArrayList<>();
 
 	public CertificateModel(X509Certificate certificate, String alias) {
 		this(certificate);
@@ -91,12 +82,12 @@ public class CertificateModel {
         if (version != 1 && ((certificate.getKeyUsage() != null && !certificate.getKeyUsage()[5])
                 || certificate.getBasicConstraints() == -1)) {
             try {
-                this.issuerUniqueID = certificate.getIssuerUniqueID().toString();
+                this.issuerUniqueID = Arrays.toString(certificate.getIssuerUniqueID());
             } catch (NullPointerException e) {
                 Log.warning("Certificate doesn't have issuerUniqueID: " + issuer, e);
             }
             try {
-                this.subjectUniqueID = certificate.getIssuerUniqueID().toString();
+                this.subjectUniqueID = Arrays.toString(certificate.getIssuerUniqueID());
             } catch (NullPointerException e) {
                 Log.warning("Certificate doesn't have subjectUniqueID: " + subject, e);
             }
@@ -271,7 +262,7 @@ public class CertificateModel {
 		return value;
 	}
 
-	private String alternativeNameExtractor(Collection<List<?>> rootNames) throws CertificateParsingException {
+	private String alternativeNameExtractor(Collection<List<?>> rootNames) {
 		StringBuilder value = new StringBuilder();
 		if (rootNames != null) {
 			for (List<?> names : rootNames) {
@@ -455,14 +446,6 @@ public class CertificateModel {
 	
 	public void setRevoked(boolean revoked) {
 	    this.revoked = revoked;
-	}
-
-	public boolean isNotValidYet() {
-		return notValidYet;
-	}
-
-	public boolean isExpired() {
-		return expired;
 	}
 
 	public String getIssuerCommonName() {

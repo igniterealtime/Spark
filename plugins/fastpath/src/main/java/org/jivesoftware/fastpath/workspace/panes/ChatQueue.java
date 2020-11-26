@@ -52,13 +52,13 @@ import org.jivesoftware.spark.util.log.Log;
 public class ChatQueue extends JPanel {
 
 	private static final long serialVersionUID = 1L;
-	private JLabel nameLabel = new JLabel();
-    private RolloverButton acceptButton;
-    private RolloverButton declineButton;
+	private final JLabel nameLabel = new JLabel();
+    private final RolloverButton acceptButton;
+    private final RolloverButton declineButton;
     private LinkLabel viewLabel;
 
     private Offer offer;
-    private JProgressBar progressBar;
+    private final JProgressBar progressBar;
 
     public ChatQueue() {
         setLayout(new GridBagLayout());

@@ -28,14 +28,14 @@ public class TopRight implements RoarDisplayType {
 
     private int _lastusedXpos;
     private int _lastusedYpos;
-    private Dimension _screensize;
+    private final Dimension _screensize;
 
     private int _amount;
 
     private final int WIDTH = RoarPanel.WIDTH;
     private final int HEIGHT = RoarPanel.HEIGHT;
 
-    private Action _customaction;
+    private final Action _customaction;
 
     public TopRight() {
         _screensize = Toolkit.getDefaultToolkit().getScreenSize();

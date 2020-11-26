@@ -61,8 +61,8 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
     public static final String GATEWAY = "gateway";
     private boolean useTab;
 
-    private Map<Transport, GatewayItem> uiMap = new HashMap<>();
-    private JPanel transferTab = new JPanel();
+    private final Map<Transport, GatewayItem> uiMap = new HashMap<>();
+    private final JPanel transferTab = new JPanel();
 
     @Override
 	public void initialize() {
@@ -126,7 +126,7 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
 	public void uninstall() {
     }
 
-    private void populateTransports() throws Exception {
+    private void populateTransports() {
         DiscoverItems discoItems = SparkManager.getSessionManager().getDiscoveredItems();
 
         for (DiscoverItems.Item item : discoItems.getItems() ) {

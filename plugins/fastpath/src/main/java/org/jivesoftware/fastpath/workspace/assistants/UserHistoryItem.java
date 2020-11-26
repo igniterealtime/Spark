@@ -38,9 +38,9 @@ import org.jivesoftware.spark.util.ModelUtil;
 
 public class UserHistoryItem extends JPanel {
 	private static final long serialVersionUID = -2251709231519173523L;
-	private WrappedLabel agentsLabel = new WrappedLabel();
-    private JLabel startTimeLabel = new JLabel();
-    private JLabel durationLabel = new JLabel();
+	private final WrappedLabel agentsLabel = new WrappedLabel();
+    private final JLabel startTimeLabel = new JLabel();
+    private final JLabel durationLabel = new JLabel();
 
     private String sessionID;
 
@@ -75,7 +75,7 @@ public class UserHistoryItem extends JPanel {
         add(startTimeLabel, new GridBagConstraints(1, 3, 2, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         startTimeLabel.setText(theDate);
 
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         Iterator<Transcripts.AgentDetail> agents = agentDetails.iterator();
         while (agents.hasNext()) {
             Transcripts.AgentDetail agentDetail = agents.next();

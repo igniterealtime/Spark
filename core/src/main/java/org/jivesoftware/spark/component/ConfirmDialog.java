@@ -38,10 +38,10 @@ import java.awt.event.WindowEvent;
  */
 public class ConfirmDialog extends BackgroundPanel {
     private static final long serialVersionUID = -441250586899776207L;
-    private JLabel message;
-    private JLabel iconLabel;
-    private JButton yesButton;
-    private JButton noButton;
+    private final JLabel message;
+    private final JLabel iconLabel;
+    private final JButton yesButton;
+    private final JButton noButton;
 
     private ConfirmListener listener = null;
     private JDialog dialog;

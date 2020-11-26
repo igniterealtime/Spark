@@ -15,7 +15,10 @@
  */
 package org.jivesoftware.spark.util;
 
+import org.jetbrains.annotations.NotNull;
 import org.jivesoftware.spark.util.log.Log;
+
+import java.io.IOException;
 
 /**
  * Used to encrypt and decrypt bytes -- string using Base64 encoding and decoding.
@@ -693,16 +696,12 @@ public class Base64 {
                     bytes != null && // In case decoding returned null
                             bytes.length >= 4 && // Don't want to get ArrayIndexOutOfBounds exception
                             java.util.zip.GZIPInputStream.GZIP_MAGIC == head) {
-                java.io.ByteArrayInputStream bais = null;
-                java.util.zip.GZIPInputStream gzis = null;
-                java.io.ByteArrayOutputStream baos = null;
                 byte[] buffer = new byte[2048];
                 int length;
 
-                try {
-                    baos = new java.io.ByteArrayOutputStream();
-                    bais = new java.io.ByteArrayInputStream(bytes);
-                    gzis = new java.util.zip.GZIPInputStream(bais);
+                try (java.io.ByteArrayOutputStream baos = new java.io.ByteArrayOutputStream();
+                     java.io.ByteArrayInputStream bais = new java.io.ByteArrayInputStream(bytes);
+                     java.util.zip.GZIPInputStream gzis = new java.util.zip.GZIPInputStream(bais)) {
 
                     while ((length = gzis.read(buffer)) >= 0) {
                         baos.write(buffer, 0, length);
@@ -711,31 +710,9 @@ public class Base64 {
                     // No error? Get new bytes.
                     bytes = baos.toByteArray();
 
-                }   // end try
-                catch (java.io.IOException e) {
+                } catch (java.io.IOException e) {
                     // Just return originally-decoded bytes
-                }   // end catch
-                finally {
-                    try {
-                        baos.close();
-                    }
-                    catch (Exception e) {
-                        // Nothing to do
-                    }
-                    try {
-                        gzis.close();
-                    }
-                    catch (Exception e) {
-                        // Nothing to do
-                    }
-                    try {
-                        bais.close();
-                    }
-                    catch (Exception e) {
-                        // Nothing to do
-                    }
-                }   // end finally
-
+                }
             }   // end if: gzipped
         }   // end if: bytes.length >= 2
 
@@ -757,7 +734,7 @@ public class Base64 {
 
         java.io.ByteArrayInputStream bais = null;
         java.io.ObjectInputStream ois = null;
-        Object obj = null;
+        Object obj;
 
         try {
             bais = new java.io.ByteArrayInputStream(objBytes);
@@ -765,14 +742,11 @@ public class Base64 {
 
             obj = ois.readObject();
         }   // end try
-        catch (java.io.IOException e) {
+        catch (IOException | ClassNotFoundException e) {
             Log.error(e);
             obj = null;
         }   // end catch
-        catch (java.lang.ClassNotFoundException e) {
-            Log.error(e);
-            obj = null;
-        }   // end catch
+        // end catch
         finally {
             try {
                 if (bais != null)
@@ -806,13 +780,13 @@ public class Base64 {
      * @since 1.3
      */
     public static class InputStream extends java.io.FilterInputStream {
-        private boolean encode;         // Encoding or decoding
+        private final boolean encode;         // Encoding or decoding
         private int position;       // Current position in the buffer
-        private byte[] buffer;         // Small buffer holding converted data
-        private int bufferLength;   // Length of buffer (3 or 4)
+        private final byte[] buffer;         // Small buffer holding converted data
+        private final int bufferLength;   // Length of buffer (3 or 4)
         private int numSigBytes;    // Number of meaningful bytes in the buffer
         private int lineLength;
-        private boolean breakLines;     // Break lines at less than 80 characters
+        private final boolean breakLines;     // Break lines at less than 80 characters
 
 
         /**
@@ -978,26 +952,20 @@ public class Base64 {
          * @since 1.3
          */
         @Override
-		public int read(byte[] dest, int off, int len) throws java.io.IOException {
+		public int read(@NotNull byte[] dest, int off, int len) throws java.io.IOException {
             int i;
-            int b;
             for (i = 0; i < len; i++) {
-                b = read();
-
-                //if( b < 0 && i == 0 )
-                //    return -1;
-
+                int b = read();
                 if (b >= 0)
-                    dest[off + i] = (byte)b;
+                    dest[off + i] = (byte) b;
                 else if (i == 0)
                     return -1;
                 else
-                    break; // Out of 'for' loop
-            }   // end for: each byte read
+                    break;
+            }
             return i;
-        }   // end read
-
-    }   // end inner class InputStream
+        }
+    }
 
     /* ********  I N N E R   C L A S S   O U T P U T S T R E A M  ******** */
 
@@ -1012,13 +980,13 @@ public class Base64 {
      * @since 1.3
      */
     public static class OutputStream extends java.io.FilterOutputStream {
-        private boolean encode;
+        private final boolean encode;
         private int position;
         private byte[] buffer;
-        private int bufferLength;
+        private final int bufferLength;
         private int lineLength;
-        private boolean breakLines;
-        private byte[] b4; // Scratch used in a few places
+        private final boolean breakLines;
+        private final byte[] b4; // Scratch used in a few places
         private boolean suspendEncoding;
 
         /**
@@ -1132,7 +1100,7 @@ public class Base64 {
          * @since 1.3
          */
         @Override
-		public void write(byte[] theBytes, int off, int len) throws java.io.IOException {
+		public void write(@NotNull byte[] theBytes, int off, int len) throws java.io.IOException {
             // Encoding suspended?
             if (suspendEncoding) {
                 super.out.write(theBytes, off, len);

@@ -70,28 +70,28 @@ import java.util.List;
 final class InvitationDialog extends JPanel {
     private static final long serialVersionUID = -8588678602429200581L;
     private JTextField textRoomsField;
-    private JComboBox comboRoomsField;
+    private JComboBox<ConferenceItem> comboRoomsField;
 
-    private JTextField messageField = new JTextField();
+    private final JTextField messageField = new JTextField();
 
 
-    private DefaultListModel invitedUsers = new DefaultListModel();
-    private JList invitedUserList = new JList(invitedUsers);
+    private final DefaultListModel<String> invitedUsers = new DefaultListModel<>();
+    private final JList<String> invitedUserList = new JList<>(invitedUsers);
 
     private JDialog dlg;
 
     public InvitationDialog(boolean adhoc) {
-        JComponent roomsField = new JTextField();
+        JComponent roomsField;
         if (adhoc) {
             roomsField = new JTextField();
             textRoomsField = (JTextField) roomsField;
         } else {
-            roomsField = new JComboBox();
-            comboRoomsField = (JComboBox) roomsField;
+            roomsField = new JComboBox<>();
+            comboRoomsField = (JComboBox<ConferenceItem>) roomsField;
             comboRoomsField.setEditable(true);
             comboRoomsField.addActionListener( e -> {
                 // get selected bookmark and persist it:
-                BookmarkedConference bookmarkedConf = null;
+                BookmarkedConference bookmarkedConf;
                 Object bookmarkedConfItem = comboRoomsField.getSelectedItem();
                 if (bookmarkedConfItem instanceof ConferenceItem) {
                     bookmarkedConf = ((ConferenceItem) bookmarkedConfItem).getBookmarkedConf();

@@ -32,7 +32,7 @@ import java.util.Enumeration;
 import java.util.Properties;
 
 public class SparkRes {
-    private static Properties prb;
+    private static final Properties prb;
 
     public static final String ACCEPT_CHAT = "ACCEPT_CHAT";
     public static final String ACCEPT_INVITE_IMAGE = "ACCEPT_INVITE_IMAGE";
@@ -333,7 +333,7 @@ public class SparkRes {
     public static final String INVISIBLE = "INVISIBLE";
 
     
-    static ClassLoader cl = SparkRes.class.getClassLoader();
+    private static final ClassLoader cl = SparkRes.class.getClassLoader();
 
     static {
         prb = new Properties();
@@ -370,7 +370,7 @@ public class SparkRes {
         return pluginUrl != null ? pluginUrl : cl.getResource(getString(propertyName));
     }
 
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         
         JFrame frame = new JFrame();
         frame.getContentPane().setLayout(new BorderLayout());

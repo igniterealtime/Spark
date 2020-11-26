@@ -23,11 +23,8 @@ import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.spark.PluginRes;
 import org.jivesoftware.spark.SparkManager;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Properties;
-import java.util.StringTokenizer;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import javax.swing.UIManager;
 
@@ -42,7 +39,7 @@ import org.jxmpp.jid.parts.Resourcepart;
  */
 public class LocalPreferences {
 
-    	private Properties props;
+    	private final Properties props;
 
 	public LocalPreferences(Properties props) {
 		this.props = props;
@@ -185,12 +182,58 @@ public class LocalPreferences {
 	    props.setProperty(user, pw);
 	}
 
-	// Clears saved password
-	public void clearPasswordForUser(String barejid) throws Exception
+    /**
+     * Checks if the preferences contain any stored/saved account passwords.
+     *
+     * @return true if at least one stored account passsword was found, otherwise null.
+     */
+	public boolean hasStoredPasswords() {
+        return !findPropertyNamesForStoredPasswords().isEmpty();
+    }
+
+    /**
+     * Remove all previously saved user-account passwords.
+     */
+	public void clearPasswordForAllUsers()
 	{
-		String pw = "password"+Encryptor.encrypt(barejid);
-		props.remove(pw);
+        final Set<String> propertyNames = findPropertyNamesForStoredPasswords();
+
+        // Remove all of the properties that are a stored password.
+        propertyNames.forEach(props::remove);
 	}
+
+    /**
+     * Find the name of all properties that store a password.
+     *
+     * @return A collection of property names (possibly empty)
+     */
+	private Set<String> findPropertyNamesForStoredPasswords() {
+        return props.stringPropertyNames().stream()
+            // The property name starts with 'password'.
+            .filter(name -> name.startsWith("password"))
+
+            // The value of the property is an encrypted value.
+            .filter( name -> {
+                try {
+                    final String value = props.getProperty(name);
+                    Encryptor.decrypt(value);
+                    return true;
+                } catch (Exception e) {
+                    return false;
+                }
+            })
+
+            // The remainder of the property name is an encrypted JID
+            .filter(name -> {
+                try {
+                    JidCreate.bareFrom(Encryptor.decryptOrThrow(name.substring("password".length())));
+                    return true;
+                } catch (Exception e) {
+                    return false;
+                }
+            })
+            .collect(Collectors.toSet());
+    }
 
 	/**
 	 * Return true if the IDLE feature is on. The IDLE feature allows to monitor
@@ -478,7 +521,7 @@ public class LocalPreferences {
 		File downloadedDir = null;
 		if (Spark.isLinux() || Spark.isMac()) {
 			downloadedDir = new File(System.getProperty("user.home") + "/Downloads/");
-            Log.error(downloadedDir.getAbsolutePath());
+            Log.debug("Absolute path for download directory: " + downloadedDir.getAbsolutePath());
 		} else if (Spark.isWindows()) {
 
 			String regpath = WinRegistryReader.getMyDocumentsFromWinRegistry();
@@ -1440,6 +1483,14 @@ public class LocalPreferences {
 
     public boolean isFileTransferIbbOnly() {
         return getBoolean("fileTransferIbbOnly", Default.getBoolean(Default.FILE_TRANSFER_IBB_ONLY));
+    }
+
+    public void setAutoAcceptFileTransferFromContacts(boolean enable) {
+        setBoolean("fileTransferAutoAcceptPresence", enable);
+    }
+
+    public boolean isAutoAcceptFileTransferFromContacts() {
+        return getBoolean("fileTransferAutoAcceptPresence", Default.getBoolean(Default.FILE_TRANSFER_AUTO_ACCEPT_PRESENCE));
     }
 
     public void setMaxCurrentHistorySize( int value ) {

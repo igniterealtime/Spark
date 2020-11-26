@@ -70,7 +70,7 @@ public final class GraphicUtils {
     };
     protected final static MediaTracker tracker = new MediaTracker(component);
 
-    private static Map<String, Image> imageCache = new HashMap<>();
+    private static final Map<String, Image> imageCache = new HashMap<>();
 
     /**
      * The default Hand cursor.
@@ -221,35 +221,33 @@ public final class GraphicUtils {
      *         coordinates
      */
     public static Point getPopupMenuShowPoint(JPopupMenu popup, int x, int y) {
-	Dimension sizeMenu = popup.getPreferredSize();
-	Point bottomRightMenu = new Point(x + sizeMenu.width, y
-		+ sizeMenu.height);
+        Dimension sizeMenu = popup.getPreferredSize();
+        Point bottomRightMenu = new Point(x + sizeMenu.width, y
+            + sizeMenu.height);
 
-	Rectangle[] screensBounds = getScreenBounds();
-	int n = screensBounds.length;
-	for (int i = 0; i < n; i++) {
-	    Rectangle screenBounds = screensBounds[i];
-	    if (screenBounds.x <= x
-		    && x <= (screenBounds.x + screenBounds.width)) {
-		Dimension sizeScreen = screenBounds.getSize();
-		sizeScreen.height -= 32; // Hack to help prevent menu being
-					 // clipped by Windows/Linux/Solaris
-					 // Taskbar.
+        Rectangle[] screensBounds = getScreenBounds();
+        for (Rectangle screenBounds : screensBounds) {
+            if (screenBounds.x <= x
+                && x <= (screenBounds.x + screenBounds.width)) {
+                Dimension sizeScreen = screenBounds.getSize();
+                sizeScreen.height -= 32; // Hack to help prevent menu being
+                // clipped by Windows/Linux/Solaris
+                // Taskbar.
 
-		int xOffset = 0;
-		if (bottomRightMenu.x > (screenBounds.x + sizeScreen.width))
-		    xOffset = -sizeMenu.width;
+                int xOffset = 0;
+                if (bottomRightMenu.x > (screenBounds.x + sizeScreen.width))
+                    xOffset = -sizeMenu.width;
 
-		int yOffset = 0;
-		if (bottomRightMenu.y > (screenBounds.y + sizeScreen.height))
-		    yOffset = sizeScreen.height - bottomRightMenu.y;
+                int yOffset = 0;
+                if (bottomRightMenu.y > (screenBounds.y + sizeScreen.height))
+                    yOffset = sizeScreen.height - bottomRightMenu.y;
 
-		return new Point(x + xOffset, y + yOffset);
-	    }
-	}
+                return new Point(x + xOffset, y + yOffset);
+            }
+        }
 
-	return new Point(x, y); // ? that would mean that the top left point was
-				// not on any screen.
+        return new Point(x, y); // ? that would mean that the top left point was
+        // not on any screen.
     }
 
     /**
@@ -657,18 +655,16 @@ public final class GraphicUtils {
      * 
      * @param im
      * @return {@link BufferedImage}
-     * @throws InterruptedException
      * @throws {@link IOException}
      */
-    public static BufferedImage convert(Image im) throws InterruptedException,
-	    IOException {
-	//load(im);
-	BufferedImage bi = new BufferedImage(im.getWidth(null),
-		im.getHeight(null), BufferedImage.TYPE_INT_ARGB_PRE);
-	Graphics bg = bi.getGraphics();
-	bg.drawImage(im, 0, 0, null);
-	bg.dispose();
-	return bi;
+    public static BufferedImage convert(Image im) {
+        //load(im);
+        BufferedImage bi = new BufferedImage(im.getWidth(null),
+            im.getHeight(null), BufferedImage.TYPE_INT_ARGB_PRE);
+        Graphics bg = bi.getGraphics();
+        bg.drawImage(im, 0, 0, null);
+        bg.dispose();
+        return bi;
     }
 
     /**

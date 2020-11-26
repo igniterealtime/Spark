@@ -24,7 +24,7 @@ import javax.swing.BorderFactory;
 import java.awt.Component;
 import java.awt.Color;
 
-public class FastpathPanelRenderer extends JPanel implements ListCellRenderer {
+public class FastpathPanelRenderer extends JPanel implements ListCellRenderer<Object> {
 	private static final long serialVersionUID = 1964407022568150717L;
 
 	/**

@@ -15,6 +15,7 @@
  */
 package org.jivesoftware.spark.component.tabbedPane;
 
+import org.jetbrains.annotations.NotNull;
 import org.jivesoftware.Spark;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.spark.SparkManager;
@@ -28,11 +29,9 @@ import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.dnd.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -40,10 +39,10 @@ import java.util.List;
 public class SparkTabbedPane extends JPanel {
 	private static final long serialVersionUID = -9007068462231539973L;
 	private static final String NAME = "SparkTabbedPane";
-	private List<SparkTabbedPaneListener> listeners = new ArrayList<>();
-	private JTabbedPane pane = null;
-	private Icon closeInactiveButtonIcon;
-	private Icon closeActiveButtonIcon;
+	private final List<SparkTabbedPaneListener> listeners = new ArrayList<>();
+	private final JTabbedPane pane;
+	private final Icon closeInactiveButtonIcon;
+	private final Icon closeActiveButtonIcon;
 	private boolean closeEnabled = false;
 	private int dragTabIndex = -1;
 
@@ -361,8 +360,8 @@ public class SparkTabbedPane extends JPanel {
 	private final Font defaultFontPlain = new Font("Dialog", Font.PLAIN, 11);
 	private final Font defaultFontBold = new Font("Dialog", Font.BOLD, 11);
 	private JLabel iconLabel;
-	private JLabel titleLabel;
-	private JLabel tabCloseButton = new JLabel(closeInactiveButtonIcon);
+	private final JLabel titleLabel;
+	private final JLabel tabCloseButton = new JLabel(closeInactiveButtonIcon);
 
 	public TabPanel(final SparkTab sparktab, String title, Icon icon) {
 	    setOpaque(false);
@@ -507,9 +506,9 @@ public class SparkTabbedPane extends JPanel {
 
 	    final Transferable t = new Transferable() {
 	    	private final DataFlavor FLAVOR = new DataFlavor(DataFlavor.javaJVMLocalObjectMimeType, NAME);
-			@Override
-			public Object getTransferData(DataFlavor flavor)
-					throws UnsupportedFlavorException, IOException {
+			@NotNull
+            @Override
+			public Object getTransferData(DataFlavor flavor) {
 				return pane;
 			}
 

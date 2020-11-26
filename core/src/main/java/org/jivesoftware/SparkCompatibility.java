@@ -79,12 +79,12 @@ public class SparkCompatibility {
                 dest.mkdir();
             }
             String[] children = src.list();
-            for (int i=0; i<children.length; i++) {
-            	// Skip any directories / files which may need to be skipped.
-            	if (!skipFiles.contains((new File(dest, children[i]).getAbsolutePath()))) {
-	            	copyDirectory(new File(src, children[i]),
-	                        new File(dest, children[i]), new HashSet<>());
-            	}
+            for (String child : children) {
+                // Skip any directories / files which may need to be skipped.
+                if (!skipFiles.contains((new File(dest, child).getAbsolutePath()))) {
+                    copyDirectory(new File(src, child),
+                        new File(dest, child), new HashSet<>());
+                }
             }
         } else {
         	InputStream in;

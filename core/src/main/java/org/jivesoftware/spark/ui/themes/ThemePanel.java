@@ -44,39 +44,39 @@ public class ThemePanel extends JPanel
 {
     private static final long serialVersionUID = 2943854311454590459L;
 
-    private JComboBox<String> messageStyleBox;
+    private final JComboBox<String> messageStyleBox;
 
-    private JComboBox<String> emoticonBox;
+    private final JComboBox<String> emoticonBox;
 
-    private JButton addEmoticonButton;
+    private final JButton addEmoticonButton;
 
-    private JTextField contactListFontField;
-    private JLabel contactListFontLabel;
+    private final JTextField contactListFontField;
+    private final JLabel contactListFontLabel;
 
-    private JTextField chatRoomFontField;
-    private JLabel chatRoomFontLabel;
+    private final JTextField chatRoomFontField;
+    private final JLabel chatRoomFontLabel;
 
-    private JCheckBox emoticonCheckBox;
+    private final JCheckBox emoticonCheckBox;
     private JFileChooser fc;
 
-    private JCheckBox showAvatarsBox;
-    private JCheckBox showVCards;
-    private JLabel avatarSizeLabel;
-    private JComboBox<String> avatarSizeField;
+    private final JCheckBox showAvatarsBox;
+    private final JCheckBox showVCards;
+    private final JLabel avatarSizeLabel;
+    private final JComboBox<String> avatarSizeField;
 
-    private JCheckBox disableGrayingIdleContacts;
+    private final JCheckBox disableGrayingIdleContacts;
 
-    private JLabel _lookandfeelLabel;
-    private JComboBox<String> _lookandfeel;
-    private JButton _lookandfeelpreview;
-    private JCheckBox _useTabsForTransports;
-    private JCheckBox _useTabsForConference;
+    private final JLabel _lookandfeelLabel;
+    private final JComboBox<String> _lookandfeel;
+    private final JButton _lookandfeelpreview;
+    private final JCheckBox _useTabsForTransports;
+    private final JCheckBox _useTabsForConference;
 
-    private JComboBox<String> _showReconnectBox;
+    private final JComboBox<String> _showReconnectBox;
 
-    private LocalPreferences pref = SettingsManager.getLocalPreferences();
+    private final LocalPreferences pref = SettingsManager.getLocalPreferences();
 
-    private JScrollPane emoticonscrollpane;
+    private final JScrollPane emoticonscrollpane;
 
     private JPanel emoticonspanel;
 
@@ -630,7 +630,7 @@ public class ThemePanel extends JPanel
         return _lookandfeelLabel;
     }
 
-    protected JComboBox getLookandfeel()
+    protected JComboBox<String> getLookandfeel()
     {
         return _lookandfeel;
     }
@@ -655,7 +655,7 @@ public class ThemePanel extends JPanel
         return avatarSizeLabel;
     }
 
-    protected JComboBox getAvatarSizeField()
+    protected JComboBox<String> getAvatarSizeField()
     {
         return avatarSizeField;
     }

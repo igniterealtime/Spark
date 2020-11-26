@@ -22,7 +22,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 public class SettingsData implements PrivateData {
-    private Map<String,String> settingsMap;
+    private final Map<String,String> settingsMap;
 
 
     public SettingsData(Map<String,String> map) {

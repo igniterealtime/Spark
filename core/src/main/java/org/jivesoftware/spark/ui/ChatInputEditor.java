@@ -17,6 +17,7 @@ package org.jivesoftware.spark.ui;
 
 import java.awt.Color;
 import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 
 import javax.swing.AbstractAction;
@@ -40,9 +41,9 @@ import org.jivesoftware.spark.SparkManager;
 public class ChatInputEditor extends ChatArea implements DocumentListener {
 	private static final long serialVersionUID = -3085035737908538581L;
 	private final UndoManager undoManager;
-	private KeyStroke undoKeyStroke;
-	private KeyStroke ctrlbackspaceKeyStroke;
-	private KeyStroke escapeKeyStroke;
+	private final KeyStroke undoKeyStroke;
+	private final KeyStroke ctrlbackspaceKeyStroke;
+	private final KeyStroke escapeKeyStroke;
 
     /**
      * Creates a new Default ChatSendField.
@@ -122,7 +123,7 @@ public class ChatInputEditor extends ChatArea implements DocumentListener {
 	    }
 	};
 
-        undoKeyStroke = KeyStroke.getKeyStroke('z', ActionEvent.CTRL_MASK);       
+        undoKeyStroke = KeyStroke.getKeyStroke('z', InputEvent.CTRL_MASK);
         ctrlbackspaceKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, KeyEvent.CTRL_MASK);
         escapeKeyStroke = KeyStroke.getKeyStroke("ESCAPE");
         

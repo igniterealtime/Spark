@@ -45,8 +45,8 @@ public class ScratchPadPlugin implements Plugin {
     public static boolean SHOW_ALL_TASKS = true;
 
     private static final String dateShortFormat = ((SimpleDateFormat)SimpleDateFormat.getDateInstance(SimpleDateFormat.SHORT)).toPattern();
-    private SimpleDateFormat formatter = new SimpleDateFormat(dateShortFormat);
-    private static List<TaskUI> taskList = new ArrayList<>();
+    private final SimpleDateFormat formatter = new SimpleDateFormat(dateShortFormat);
+    private static final List<TaskUI> taskList = new ArrayList<>();
     private static JPanel panel_events;
     private static JPanel mainPanel;
     private static JFrame frame;

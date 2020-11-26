@@ -37,9 +37,6 @@ import java.nio.channels.FileChannel;
  */
 
 public class URLFileSystem {
-    public static void main(String args[]) {
-    }
-
     public static String getContents(URL url) {
         try {
             return getContents(url.openStream());
@@ -81,27 +78,10 @@ public class URLFileSystem {
      * @throws IOException if there is an error during copy.
      */
     public static void copy(URL src, File dst) throws IOException {
-        InputStream in = null;
-        OutputStream out = null;
-        try {
-            in = src.openStream();
-            out = new FileOutputStream(dst);
+        try (InputStream in = src.openStream();
+             OutputStream out = new FileOutputStream(dst)) {
             dst.mkdirs();
             copy(in, out);
-        }
-        finally {
-            try {
-                if (in != null) in.close();
-            }
-            catch (IOException e) {
-                // Nothing to do
-            }
-            try {
-                if (out != null) out.close();
-            }
-            catch (IOException e) {
-                // Nothing to do
-            }
         }
     }
 

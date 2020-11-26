@@ -31,13 +31,13 @@ import java.awt.Insets;
  */
 public class PartialLineBorder extends AbstractBorder {
     private static final long serialVersionUID = -5125856347919451956L;
-    private Color color;
-    private int thickness;
+    private final Color color;
+    private final int thickness;
 
-    boolean top,
-            left,
-            bottom,
-            right;
+    final boolean top;
+    final boolean left;
+    final boolean bottom;
+    final boolean right;
 
     public PartialLineBorder(Color color, int thickness) {
         top = true;
@@ -47,8 +47,6 @@ public class PartialLineBorder extends AbstractBorder {
 
         this.color = color;
         this.thickness = thickness;
-
-
     }
 
     @Override
@@ -70,7 +68,6 @@ public class PartialLineBorder extends AbstractBorder {
         Graphics2D g2 = (Graphics2D)g;
         g2.setStroke(new BasicStroke(1.0f));
         g2.setColor(color);
-
 
         if (top) {
             g2.drawLine(x, y, x + width, y);

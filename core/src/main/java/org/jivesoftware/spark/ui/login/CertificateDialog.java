@@ -15,10 +15,7 @@ import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
 import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.CertificateException;
 import java.util.HashMap;
 import java.util.List;
 
@@ -56,60 +53,58 @@ import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 public class CertificateDialog extends JDialog implements ActionListener {
 
 	private final static Insets DEFAULT_INSETS = new Insets(5, 5, 5, 5);
-	private final LocalPreferences localPreferences;
-	private CertificateModel certModel;
-	private CertManager certControll;
-	private CertificateDialogReason reason;
-	private boolean addCert = false;
+    private final CertificateModel certModel;
+	private final CertManager certControll;
+    private boolean addCert = false;
 
-	private JScrollPane scrollPane;
-	private JPanel panel = new JPanel();
+	private final JScrollPane scrollPane;
+	private final JPanel panel = new JPanel();
 	public boolean isAddCert() {
         return addCert;
     }
 
-    private JPanel buttonPanel = new JPanel();
-	private JPanel certStatusPanel = new JPanel();
+    private final JPanel buttonPanel = new JPanel();
+	private final JPanel certStatusPanel = new JPanel();
 
-	private JTextArea versionField = new JTextArea();
-	private JTextArea serialNumberField = new JTextArea();
-	private JTextArea signatureValueField = new JTextArea();
-	private JTextArea signatureAlgorithmField = new JTextArea();
-	private JTextArea issuerField = new JTextArea();
-	private JTextArea subjectField = new JTextArea();
-	private JTextArea notBeforeField = new JTextArea();
-	private JTextArea notAfterField = new JTextArea();
-	private JTextArea publicKeyField = new JTextArea();
-	private JTextArea publicKeyAlgorithmField = new JTextArea();
-	private JTextArea issuerUniqueIDField = new JTextArea();
-	private JTextArea subjectUniqueIDField = new JTextArea();
-	private JTextArea unsupportedExtensionsArea = new JTextArea();
-	private JTextArea certStatusArea = new JTextArea();
+	private final JTextArea versionField = new JTextArea();
+	private final JTextArea serialNumberField = new JTextArea();
+	private final JTextArea signatureValueField = new JTextArea();
+	private final JTextArea signatureAlgorithmField = new JTextArea();
+	private final JTextArea issuerField = new JTextArea();
+	private final JTextArea subjectField = new JTextArea();
+	private final JTextArea notBeforeField = new JTextArea();
+	private final JTextArea notAfterField = new JTextArea();
+	private final JTextArea publicKeyField = new JTextArea();
+	private final JTextArea publicKeyAlgorithmField = new JTextArea();
+	private final JTextArea issuerUniqueIDField = new JTextArea();
+	private final JTextArea subjectUniqueIDField = new JTextArea();
+	private final JTextArea unsupportedExtensionsArea = new JTextArea();
+	private final JTextArea certStatusArea = new JTextArea();
 
-	private JLabel infoLabel = new JLabel();
-	private JLabel versionLabel = new JLabel();
-	private JLabel serialNumberLabel = new JLabel();
-	private JLabel signatureValueLabel = new JLabel();
-	private JLabel signatureAlgorithmLabel = new JLabel();
-	private JLabel issuerLabel = new JLabel();
-	private JLabel subjectLabel = new JLabel();
-	private JLabel notBeforeLabel = new JLabel();
-	private JLabel notAfterLabel = new JLabel();
-	private JLabel publicKeyLabel = new JLabel();
-	private JLabel publicKeyAlgorithmLabel = new JLabel();
-	private JLabel issuerUniqueIDLabel = new JLabel();
-	private JLabel subjectUniqueIDLabel = new JLabel();
-	private JLabel unsupportedExtensionsLabel = new JLabel();
-	private JLabel extensionsLabel = new JLabel();
+	private final JLabel infoLabel = new JLabel();
+	private final JLabel versionLabel = new JLabel();
+	private final JLabel serialNumberLabel = new JLabel();
+	private final JLabel signatureValueLabel = new JLabel();
+	private final JLabel signatureAlgorithmLabel = new JLabel();
+	private final JLabel issuerLabel = new JLabel();
+	private final JLabel subjectLabel = new JLabel();
+	private final JLabel notBeforeLabel = new JLabel();
+	private final JLabel notAfterLabel = new JLabel();
+	private final JLabel publicKeyLabel = new JLabel();
+	private final JLabel publicKeyAlgorithmLabel = new JLabel();
+	private final JLabel issuerUniqueIDLabel = new JLabel();
+	private final JLabel subjectUniqueIDLabel = new JLabel();
+	private final JLabel unsupportedExtensionsLabel = new JLabel();
+	private final JLabel extensionsLabel = new JLabel();
 	
-	private JCheckBox exceptionBox = new JCheckBox();
-	private JButton checkValidity = new JButton();
-	private JButton okButton = new JButton();
-	private JButton cancelButton = new JButton();
-	private List<String> certUnsupportedCriticalExtensions;
-	private List<String> certUnsupportedNonCriticalExtensions;
-	private HashMap<String,String> certExtensions;
-	private JButton deleteButton = new JButton();
+	private final JCheckBox exceptionBox = new JCheckBox();
+	private final JButton checkValidity = new JButton();
+	private final JButton okButton = new JButton();
+	private final JButton cancelButton = new JButton();
+	private final List<String> certUnsupportedCriticalExtensions;
+	private final List<String> certUnsupportedNonCriticalExtensions;
+	private final HashMap<String,String> certExtensions;
+	private final JButton deleteButton = new JButton();
 
 	
 	public CertificateDialog(LocalPreferences localPreferences, CertificateModel certModel,
@@ -119,13 +114,11 @@ public class CertificateDialog extends JDialog implements ActionListener {
 		}
 		
 		certControll = certificateController;
-		this.localPreferences = localPreferences;
-		this.certModel = certModel;
+        this.certModel = certModel;
 		this.certExtensions = certModel.getExtensions();
 		this.certUnsupportedCriticalExtensions = certModel.getUnsupportedCriticalExtensions();
 		this.certUnsupportedNonCriticalExtensions = certModel.getUnsupportedNonCriticalExtensions();
-		this.reason = reason;
-		setTitle(Res.getString("title.certificate"));
+        setTitle(Res.getString("title.certificate"));
 		setSize(500, 600);
 		setLayout(new GridBagLayout());
 		Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
@@ -339,18 +332,15 @@ public class CertificateDialog extends JDialog implements ActionListener {
 		add(scrollPane, new GridBagConstraints(0, 1, 4, 1, 1.0, 1.0, WEST, BOTH, DEFAULT_INSETS, 0, 0));
 		add(buttonPanel, new GridBagConstraints(0, 2, 1, 1, 1.0, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0));
 				 
-		SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-            	//scrolls scrollPane to top
-            	panel.scrollRectToVisible(versionField.getBounds());           
-        		
-                // info that certificate is distrusted
-                if ((      reason == CertificateDialogReason.ADD_CERTIFICATE
-                        || reason == CertificateDialogReason.ADD_ID_CERTIFICATE
-                        || reason == CertificateDialogReason.ADD_CERTIFICATE_FROM_CONNECTION) && !certModel.isValid()) {
-                    JOptionPane.showMessageDialog(null, Res.getString("dialog.certificate.is.distrusted"));
-                }
+		SwingUtilities.invokeLater(() -> {
+            //scrolls scrollPane to top
+            panel.scrollRectToVisible(versionField.getBounds());
+
+            // info that certificate is distrusted
+            if ((      reason == CertificateDialogReason.ADD_CERTIFICATE
+                    || reason == CertificateDialogReason.ADD_ID_CERTIFICATE
+                    || reason == CertificateDialogReason.ADD_CERTIFICATE_FROM_CONNECTION) && !certModel.isValid()) {
+                JOptionPane.showMessageDialog(null, Res.getString("dialog.certificate.is.distrusted"));
             }
         });
 		
@@ -384,7 +374,7 @@ public class CertificateDialog extends JDialog implements ActionListener {
 			try {
 				certControll.deleteEntry(certModel.getAlias());
 				this.dispose();
-			} catch (KeyStoreException | NoSuchAlgorithmException | CertificateException | IOException ex) {
+			} catch (KeyStoreException ex) {
 				Log.error("Couldn't delete the certificate", ex);
             }
 
@@ -400,8 +390,8 @@ public class CertificateDialog extends JDialog implements ActionListener {
             certStatusArea.setText(certModel.getCertStatusAll());
             try {
                 certControll.addCertificateToBlackList(certModel.getCertificate());
-            } catch (HeadlessException | KeyStoreException | NoSuchAlgorithmException | CertificateException
-                    | InvalidNameException | IOException ex) {
+            } catch (HeadlessException | KeyStoreException
+                    | InvalidNameException ex) {
                 Log.warning("Couldn't add certificate to the blacklist", ex);
             }
             certStatusArea.updateUI();

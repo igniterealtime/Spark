@@ -50,9 +50,9 @@ public class BannedUsers extends JPanel {
 
     private MultiUserChat chat;
 
-    private DefaultListModel listModel = new DefaultListModel();
-    private JList list = new JList(listModel);
-    private JMenuItem unBanMenuItem = new JMenuItem(Res.getString("menuitem.unban"));
+    private final DefaultListModel<ImageIcon> listModel = new DefaultListModel<>();
+    private final JList<ImageIcon> list = new JList<>(listModel);
+    private final JMenuItem unBanMenuItem = new JMenuItem(Res.getString("menuitem.unban"));
 
     /**
      * Construct UI
@@ -68,7 +68,7 @@ public class BannedUsers extends JPanel {
                 if (evt.isPopupTrigger()) {
                     int index = list.locationToIndex(evt.getPoint());
                     list.setSelectedIndex(index);
-                    ImageIcon icon = (ImageIcon)list.getModel().getElementAt(index);
+                    ImageIcon icon = list.getModel().getElementAt(index);
                     String jid = icon.getDescription();
                     showPopup(evt, jid);
                 }
@@ -79,7 +79,7 @@ public class BannedUsers extends JPanel {
                 if (evt.isPopupTrigger()) {
                     int index = list.locationToIndex(evt.getPoint());
                     list.setSelectedIndex(index);
-                    ImageIcon icon = (ImageIcon)list.getModel().getElementAt(index);
+                    ImageIcon icon = list.getModel().getElementAt(index);
                     String jid = icon.getDescription();
                     showPopup(evt, jid);
                 }
@@ -88,7 +88,7 @@ public class BannedUsers extends JPanel {
 
         unBanMenuItem.addActionListener( e -> {
             int index = list.getSelectedIndex();
-            ImageIcon icon = (ImageIcon)list.getModel().getElementAt(index);
+            ImageIcon icon = list.getModel().getElementAt(index);
             String jidString = icon.getDescription();
             try {
                 Jid jid = JidCreate.fromUnescaped(jidString);

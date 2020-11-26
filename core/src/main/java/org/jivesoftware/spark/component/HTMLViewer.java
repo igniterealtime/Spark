@@ -35,7 +35,7 @@ import java.awt.Insets;
  */
 public class HTMLViewer extends JPanel {
     private static final long serialVersionUID = 4938398130343609958L;
-    private JEditorPane browser;
+    private final JEditorPane browser;
 
 
     /**

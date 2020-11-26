@@ -30,10 +30,10 @@ import java.awt.Insets;
 
 public class TranscriptAlert extends JPanel {
 	private static final long serialVersionUID = -4882289773265904417L;
-	private JLabel imageLabel = new JLabel();
-    private JLabel titleLabel = new JLabel();
-    private RolloverButton yesButton = new RolloverButton();
-    private RolloverButton cancelButton = new RolloverButton();
+	private final JLabel imageLabel = new JLabel();
+    private final JLabel titleLabel = new JLabel();
+    private final RolloverButton yesButton = new RolloverButton();
+    private final RolloverButton cancelButton = new RolloverButton();
 
     public TranscriptAlert() {
         setLayout(new GridBagLayout());

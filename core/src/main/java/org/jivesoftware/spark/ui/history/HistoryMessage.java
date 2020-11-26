@@ -48,12 +48,12 @@ public class HistoryMessage {
 
 	public HistoryMessage(HistoryMessage orig) {
 		if (orig == null)
-			throw new IllegalArgumentException(
-					"Original message cannot be null");
+			throw new IllegalArgumentException("Original message cannot be null");
 		setTo(orig.getTo());
 		setFrom(orig.getFrom());
 		setBody(orig.getBody());
 		setDate(orig.getDate());
+		messageElement = orig.getXML();
 	}
 
 	/**

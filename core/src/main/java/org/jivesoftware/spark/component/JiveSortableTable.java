@@ -212,7 +212,7 @@ public abstract class JiveSortableTable extends Table {
      */
     public static class JiveTableModel extends DefaultTableModel {
 	private static final long serialVersionUID = -8112392992589859403L;
-	private boolean isEditable;
+	private final boolean isEditable;
 
         /**
          * Use the JiveTableModel in order to better handle the table. This allows
@@ -244,10 +244,10 @@ public abstract class JiveSortableTable extends Table {
      * A swing renderer used to display labels within a table.
      */
     public static class JLabelRenderer extends JLabel implements TableCellRenderer {
-	private static final long serialVersionUID = 8670248883432881619L;
-	Border unselectedBorder;
-        Border selectedBorder;
-        boolean isBordered = true;
+        private static final long serialVersionUID = 8670248883432881619L;
+        private Border unselectedBorder;
+        private Border selectedBorder;
+        final boolean isBordered;
 
         /**
          * JLabelConstructor to build ui.
@@ -275,9 +275,6 @@ public abstract class JiveSortableTable extends Table {
             else {
                 setForeground(Color.black);
                 setBackground(Color.white);
-                if (row % 2 == 0) {
-                    //setBackground( new Color( 156, 207, 255 ) );
-                }
             }
 
             if (isBordered) {
@@ -304,7 +301,7 @@ public abstract class JiveSortableTable extends Table {
      * A swing renderer to dispaly Textareas within a table.
      */
     public static class TextAreaCellRenderer extends JTextArea implements TableCellRenderer {
-	private static final long serialVersionUID = -1704445909682732833L;
+        private static final long serialVersionUID = -1704445909682732833L;
 
 	/**
          * Create new renderer with font.
@@ -335,10 +332,10 @@ public abstract class JiveSortableTable extends Table {
      * A swing renderer used to display Buttons within a table.
      */
     public static class JButtonRenderer extends JButton implements TableCellRenderer {
- 	private static final long serialVersionUID = -1847536957519732935L;
-	Border unselectedBorder;
-        Border selectedBorder;
-        boolean isBordered = true;
+        private static final long serialVersionUID = -1847536957519732935L;
+        private Border unselectedBorder;
+        private Border selectedBorder;
+        final boolean isBordered = true;
 
         /**
          * Empty Constructor.
@@ -362,9 +359,6 @@ public abstract class JiveSortableTable extends Table {
             else {
                 setForeground(Color.black);
                 setBackground(Color.white);
-                if (row % 2 == 0) {
-                    //setBackground( new Color( 156, 207, 255 ) );
-                }
             }
 
             if (isBordered) {
@@ -387,7 +381,7 @@ public abstract class JiveSortableTable extends Table {
         }
     }
 
-    public static class ComboBoxRenderer extends JComboBox implements TableCellRenderer {
+    public static class ComboBoxRenderer extends JComboBox<String> implements TableCellRenderer {
 	private static final long serialVersionUID = 5892858463680797611L;
 
 	public ComboBoxRenderer() {
@@ -420,7 +414,7 @@ public abstract class JiveSortableTable extends Table {
 	private static final long serialVersionUID = 1003726653998005772L;
 
 	public MyComboBoxEditor(String[] items) {
-            super(new JComboBox(items));
+            super(new JComboBox<>(items));
         }
     }
 
@@ -463,12 +457,4 @@ public abstract class JiveSortableTable extends Table {
 	public Object getObject(int row) {
         return objectMap.get(row);
     }
-
-    /**
-     * Override to handle when enter is pressed.
-     */
-    @Override
-	public void enterPressed() {
-    }
-
 }

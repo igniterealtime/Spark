@@ -8,8 +8,8 @@ import java.awt.*;
  */
 public class SubjectPanel extends JPanel
 {
-    private JLabel roomJIDLabel;
-    private JLabel subjectLabel;
+    private final JLabel roomJIDLabel;
+    private final JLabel subjectLabel;
 
     public SubjectPanel( GroupChatRoom groupChatRoom )
     {

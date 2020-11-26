@@ -54,7 +54,7 @@ import org.jxmpp.jid.Jid;
 public class PresenceChangePlugin implements Plugin {
 
     private final Set<BareJid> sparkContacts = new HashSet<>();
-    private LocalPreferences localPref = SettingsManager.getLocalPreferences();
+    private final LocalPreferences localPref = SettingsManager.getLocalPreferences();
 
     @Override
 	public void initialize() {

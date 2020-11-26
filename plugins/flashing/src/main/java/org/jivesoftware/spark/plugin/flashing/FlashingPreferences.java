@@ -27,7 +27,7 @@ public class FlashingPreferences {
 	public static final String TYPE_CONTINUOUS = "continuous";
 	public static final String TYPE_TEMPORARY = "temporary";
 
-	private Properties props;
+	private final Properties props;
 	private File configFile;
 
 	public FlashingPreferences() {
