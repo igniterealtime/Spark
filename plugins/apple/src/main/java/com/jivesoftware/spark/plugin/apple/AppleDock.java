@@ -49,7 +49,7 @@ public class AppleDock implements ActionListener {
 	frame.add(menu);
 
 	// set dock menu
-	Application app = new Application();
+	Application app = Application.getApplication();
 	app.setDockMenu(menu);
 
     }
