@@ -216,8 +216,8 @@ public class Workpane {
         SparkManager.getChatManager().addInvitationListener(roomInviteListener);
     }
 
-    public Map getMetadata(String sessionID) {
-        Map map = null;
+    public Map<String, List<String>> getMetadata(String sessionID) {
+        Map<String, List<String>> map = null;
         if (offerMap.get(sessionID) != null) {
             Offer offer = offerMap.get(sessionID);
             map = offer.getMetaData();
@@ -258,10 +258,9 @@ public class Workpane {
         }
     }
 
-    public void decorateRoom(ChatRoom room, Map metadata) {
+    public void decorateRoom(ChatRoom room, Map<String, List<String>> metadata) {
         EntityBareJid roomName = room.getBareJid();
         Localpart sessionID =roomName.getLocalpart();
-
 
         RequestUtils utils = new RequestUtils(metadata);
 
@@ -617,8 +616,10 @@ public class Workpane {
             else if (message != null) {
                 MetaData metaDataExt = message.getExtension(MetaData.ELEMENT_NAME, MetaData.NAMESPACE);
                 if (metaDataExt != null) {
-                    Map metadata = metaDataExt.getMetaData();
-                    metadata.put("sessionID", chat.getRoom().getLocalpart().toString());
+                    Map<String, List<String>> metadata = metaDataExt.getMetaData();
+                    List<String> values = new ArrayList<>();
+                    values.add(chat.getRoom().getLocalpart().toString());
+                    metadata.put("sessionID", values);
 
                     RequestUtils utils = new RequestUtils(metadata);
                     inviteMap.put(utils.getSessionID(), metadata);
@@ -637,9 +638,11 @@ public class Workpane {
      * @param offer the <code>Offer</code>
      */
     public void handleOfferInvite(final Offer offer) {
-        Map metadata = offer.getMetaData();
+        Map<String, List<String>> metadata = offer.getMetaData();
         String sessionID = offer.getSessionID();
-        metadata.put("sessionID", sessionID);
+        List<String> values = new ArrayList<>();
+        values.add(sessionID);
+        metadata.put("sessionID", values);
 
         RequestUtils utils = new RequestUtils(metadata);
         inviteMap.put(sessionID, metadata);
@@ -702,36 +705,6 @@ public class Workpane {
         catch (IOException e) {
             Log.error("Unable to save group properties.", e);
         }
-    }
-
-    private Message getMessage(String messageText, RequestUtils util, boolean transfer) {
-        Map metadata = new HashMap();
-        metadata.put("messageText", messageText);
-        metadata.put("username", util.getUsername());
-        metadata.put("userID", util.getUserID());
-        metadata.put("transfer", Boolean.toString(transfer));
-        metadata.put("question", util.getQuestion());
-        metadata.put("email", util.getEmailAddress());
-        metadata.put("workgroup", util.getWorkgroup());
-
-        if (ModelUtil.hasLength(util.getRequestLocation())) {
-            metadata.put("Location", util.getRequestLocation());
-        }
-
-        // Add Metadata as message extension
-        final MetaData data = new MetaData(metadata);
-        Message message = new Message();
-        message.addExtension(data);
-        return message;
-
-    }
-
-    private RequestUtils getRequestUtils(String sessionID) {
-        Map map = getMetadata(sessionID);
-        if (map != null) {
-            return new RequestUtils(map);
-        }
-        return null;
     }
 
     private void setupQueueViewer() {
