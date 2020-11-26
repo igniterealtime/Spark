@@ -25,6 +25,7 @@ import java.awt.Insets;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import javax.swing.JLabel;
@@ -88,7 +89,7 @@ public class ChatQueue extends JPanel {
             return;
         }
 
-        Map metadata = offer.getMetaData();
+        Map<String, List<String>> metadata = offer.getMetaData();
         RoomInformation roomInformation = new RoomInformation();
         roomInformation.showAllInformation(metadata);
         roomInformation.showRoomInformation();

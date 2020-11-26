@@ -26,6 +26,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.swing.Icon;
@@ -367,7 +368,7 @@ public class CoBrowser extends JPanel implements ActionListener, BrowserListener
     }
 
     private String getStartLocation() {
-        Map metadata = FastpathPlugin.getLitWorkspace().getMetadata(sessionID);
+        Map<String, List<String>> metadata = FastpathPlugin.getLitWorkspace().getMetadata(sessionID);
         RequestUtils utils = new RequestUtils(metadata);
         String location = utils.getRequestLocation();
         if (location == null) {
