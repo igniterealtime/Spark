@@ -29,7 +29,6 @@ import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.TimerTask;
 
@@ -77,16 +76,16 @@ import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 public class StatusBar extends JPanel implements VCardListener {
 	private static final long serialVersionUID = -4322806442034868526L;
 
-	private List<StatusItem> statusList = new ArrayList<>();
+	private final List<StatusItem> statusList = new ArrayList<>();
 
-	private JLabel imageLabel = new JLabel();
-	private JLabel descriptiveLabel = new JLabel();
-	private JLabel nicknameLabel = new JLabel();
-	private StatusPanel statusPanel = new StatusPanel();
+	private final JLabel imageLabel = new JLabel();
+	private final JLabel descriptiveLabel = new JLabel();
+	private final JLabel nicknameLabel = new JLabel();
+	private final StatusPanel statusPanel = new StatusPanel();
 
-	private CommandPanel commandPanel ;
+	private final CommandPanel commandPanel ;
 	private Image backgroundImage;
-	private Runnable changePresenceRunnable;
+	private final Runnable changePresenceRunnable;
 
 	private Presence currentPresence;
 
@@ -157,7 +156,7 @@ public class StatusBar extends JPanel implements VCardListener {
 		};
 
 		TaskEngine.getInstance().schedule(task, 3000);
-		changePresenceRunnable = () -> updatePresence();
+		changePresenceRunnable = this::updatePresence;
 
 
 	}
@@ -219,7 +218,7 @@ public class StatusBar extends JPanel implements VCardListener {
 		}
 
 		// Sort Custom Messages
-		Collections.sort( custom, ( a, b ) -> ( a.getStatus().compareToIgnoreCase( b.getStatus() ) ) );
+		custom.sort((a, b) -> (a.getStatus().compareToIgnoreCase(b.getStatus())));
 
 		// Build menu from StatusList
 		for (final StatusItem statusItem : statusList) {
@@ -436,7 +435,7 @@ public class StatusBar extends JPanel implements VCardListener {
 			custom = new ArrayList<>();
 
 		// Sort Custom Messages
-		Collections.sort( custom, ( a, b ) -> ( a.getStatus().compareToIgnoreCase( b.getStatus() ) ) );
+		custom.sort((a, b) -> (a.getStatus().compareToIgnoreCase(b.getStatus())));
 
 		return custom;
 	}
@@ -554,8 +553,8 @@ public class StatusBar extends JPanel implements VCardListener {
 
 	private class StatusPanel extends JPanel {
 		private static final long serialVersionUID = -5086334443225239032L;
-		private JLabel iconLabel;
-		private JLabel statusLabel;
+		private final JLabel iconLabel;
+		private final JLabel statusLabel;
 
 		public StatusPanel() {
 			super();

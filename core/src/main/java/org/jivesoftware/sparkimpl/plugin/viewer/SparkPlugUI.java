@@ -45,9 +45,9 @@ import org.jivesoftware.spark.util.log.Log;
 public class SparkPlugUI extends JPanel {
 
 	private static final long serialVersionUID = -4206533328807591854L;
-	private PublicPlugin _plugin;
+	private final PublicPlugin _plugin;
     private final JButton installButton = new JButton();
-    private JLabel imageIcon = new JLabel();
+    private final JLabel imageIcon = new JLabel();
 
     public SparkPlugUI(PublicPlugin plugin) {
         _plugin = plugin;

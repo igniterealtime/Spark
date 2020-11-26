@@ -45,9 +45,9 @@ import java.util.Collection;
  */
 public class ChatRoomTransferDecorator implements KeyListener, FileDropListener, ChatRoomClosingListener, ActionListener {
 
-    private ChatRoom chatRoom;
-    private ChatRoomButton sendFileButton;
-    private ChatRoomButton sendScreenShotButton;
+    private final ChatRoom chatRoom;
+    private final ChatRoomButton sendFileButton;
+    private final ChatRoomButton sendScreenShotButton;
 
     public ChatRoomTransferDecorator(final ChatRoom chatRoom) {
     	this.chatRoom = chatRoom;

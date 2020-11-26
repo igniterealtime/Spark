@@ -75,8 +75,9 @@ public class ContactList extends JPanel implements ActionListener,
     ContactGroupListener, Plugin, RosterListener, ConnectionListener, ReconnectionListener {
 
     private static final long serialVersionUID = -4391111935248627078L;
-    private JPanel mainPanel = new JPanel();
-    private JScrollPane contactListScrollPane;
+    private static final String GROUP_DELIMITER = "::";
+    private final JPanel mainPanel = new JPanel();
+    private final JScrollPane contactListScrollPane;
     private final List<ContactGroup> groupList = new ArrayList<>();
     private final RolloverButton addingGroupButton;
 
@@ -86,13 +87,13 @@ public class ContactList extends JPanel implements ActionListener,
 
 
     // Create Menus
-    private JMenuItem addContactMenu;
-    private JMenuItem addContactGroupMenu;
-    private JMenuItem removeContactFromGroupMenu;
-    private JMenuItem chatMenu;
-    private JMenuItem renameMenu;
+    private final JMenuItem addContactMenu;
+    private final JMenuItem addContactGroupMenu;
+    private final JMenuItem removeContactFromGroupMenu;
+    private final JMenuItem chatMenu;
+    private final JMenuItem renameMenu;
 
-    private ContactGroup offlineGroup;
+    private final ContactGroup offlineGroup;
     private final JCheckBoxMenuItem showHideMenu = new JCheckBoxMenuItem();
     private final JCheckBoxMenuItem showOfflineGroupMenu = new JCheckBoxMenuItem();
     private final JCheckBoxMenuItem showOfflineUsersMenu = new JCheckBoxMenuItem();
@@ -103,10 +104,10 @@ public class ContactList extends JPanel implements ActionListener,
 
     private final List<FileDropListener> dndListeners = new ArrayList<>();
     private final List<ContactListListener> contactListListeners = new ArrayList<>();
-    private Properties props;
-    private File propertiesFile;
+    private final Properties props;
+    private final File propertiesFile;
 
-    private LocalPreferences localPreferences;
+    private final LocalPreferences localPreferences;
 
     private ContactItem contactItem;
 
@@ -117,11 +118,11 @@ public class ContactList extends JPanel implements ActionListener,
     public static final String RETRY_PANEL = "RETRY_PANEL";
 
 
-    private ReconnectPanel _reconnectPanel;
-    private ReconnectPanelSmall _reconnectpanelsmall;
-    private ReconnectPanelIcon _reconnectpanelicon;
+    private final ReconnectPanel _reconnectPanel;
+    private final ReconnectPanelSmall _reconnectpanelsmall;
+    private final ReconnectPanelIcon _reconnectpanelicon;
 
-    private Workspace workspace;
+    private final Workspace workspace;
 
     public static KeyEvent activeKeyEvent;
 
@@ -271,7 +272,6 @@ public class ContactList extends JPanel implements ActionListener,
             @Override
             public Object construct() {
                 mainPanel.add(_reconnectpanelsmall, 0);
-                _reconnectpanelsmall.setClosedOnError(onError);
                 final Collection<RosterEntry> roster = Roster.getInstanceFor(SparkManager.getConnection()).getEntries();
 
                 for (RosterEntry r : roster) {
@@ -293,7 +293,6 @@ public class ContactList extends JPanel implements ActionListener,
             public Object construct() {
                 _reconnectpanelicon.getPanel().add(_reconnectpanelicon.getButton(), 0);
                 _reconnectpanelicon.getPanel().revalidate();
-                _reconnectpanelicon.setClosedOnError(onError);
                 final Collection<RosterEntry> roster = Roster.getInstanceFor(SparkManager.getConnection()).getEntries();
                 for (RosterEntry r : roster) {
                     Presence p = new Presence(Presence.Type.unavailable);
@@ -309,9 +308,8 @@ public class ContactList extends JPanel implements ActionListener,
      * Updates the users presence.
      *
      * @param presence the user to update.
-     * @throws Exception if there is a problem while updating the user's presence.
      */
-    private synchronized void updateUserPresence(Presence presence) throws Exception {
+    private synchronized void updateUserPresence(Presence presence) {
         if (presence.getError() != null) {
             // We ignore this.
             return;
@@ -620,7 +618,7 @@ public class ContactList extends JPanel implements ActionListener,
 
     }
 
-    private void updateContactList(ContactGroup group) throws Exception {
+    private void updateContactList(ContactGroup group) {
         if (group != null) {
             for (ContactItem item : group.getContactItems()) {
                 updateUserPresence(PresenceManager.getPresence(item.getJid()));
@@ -823,9 +821,7 @@ public class ContactList extends JPanel implements ActionListener,
 
                     ContactGroup unfiledGrp = getUnfiledGroup();
                     ContactItem unfiledItem = unfiledGrp.getContactItemByJID(jid.asBareJid());
-                    if (unfiledItem != null) {
-
-                    } else {
+                    if (unfiledItem == null) {
                         ContactItem offlineItem = offlineGroup.getContactItemByJID(jid.asBareJid());
                         if (offlineItem != null) {
                             if ((rosterEntry.getType() == RosterPacket.ItemType.none || rosterEntry.getType() == RosterPacket.ItemType.from)
@@ -957,7 +953,7 @@ public class ContactList extends JPanel implements ActionListener,
     private void addContactGroup(ContactGroup group) {
         groupList.add(group);
 
-        Collections.sort(groupList, GROUP_COMPARATOR);
+        groupList.sort(GROUP_COMPARATOR);
 
         try {
             mainPanel.add(group, groupList.indexOf(group));
@@ -972,7 +968,7 @@ public class ContactList extends JPanel implements ActionListener,
         // Check state
         String prop = props.getProperty(group.getGroupName());
         if (prop != null) {
-            boolean isCollapsed = Boolean.valueOf(prop);
+            boolean isCollapsed = Boolean.parseBoolean(prop);
             group.setCollapsed(isCollapsed);
         }
     }
@@ -984,7 +980,7 @@ public class ContactList extends JPanel implements ActionListener,
      * @return the newly created ContactGroup.
      */
     private ContactGroup addContactGroup(String groupName) {
-        StringTokenizer tkn = new StringTokenizer(groupName, "::");
+        StringTokenizer tkn = new StringTokenizer(groupName, GROUP_DELIMITER);
 
         ContactGroup rootGroup = null;
         ContactGroup lastGroup = null;
@@ -1049,7 +1045,7 @@ public class ContactList extends JPanel implements ActionListener,
 
             String prop = props.getProperty(newContactGroup.getGroupName());
             if (prop != null) {
-                boolean isCollapsed = Boolean.valueOf(prop);
+                boolean isCollapsed = Boolean.parseBoolean(prop);
                 newContactGroup.setCollapsed(isCollapsed);
             }
 
@@ -1074,7 +1070,7 @@ public class ContactList extends JPanel implements ActionListener,
 
         groupList.add(rootGroup);
 
-        Collections.sort(tempList, GROUP_COMPARATOR);
+        tempList.sort(GROUP_COMPARATOR);
 
         int loc = tempList.indexOf(rootGroup);
 
@@ -1199,7 +1195,7 @@ public class ContactList extends JPanel implements ActionListener,
      * @param visible   true to show, otherwise false.
      */
     public void toggleGroupVisibility(String groupName, boolean visible) {
-        StringTokenizer tkn = new StringTokenizer(groupName, "::");
+        StringTokenizer tkn = new StringTokenizer(groupName, GROUP_DELIMITER);
         while (tkn.hasMoreTokens()) {
             String group = tkn.nextToken();
             ContactGroup contactGroup = getContactGroup(group);
@@ -1761,7 +1757,7 @@ public class ContactList extends JPanel implements ActionListener,
             }
         };
 
-        SwingUtilities.invokeLater(() -> loadContactList());
+        SwingUtilities.invokeLater(this::loadContactList);
         TaskEngine.getInstance().submit(sharedGroupLoader);
     }
 
@@ -2047,7 +2043,7 @@ public class ContactList extends JPanel implements ActionListener,
 
     public List<ContactGroup> getContactGroups() {
         final List<ContactGroup> gList = new ArrayList<>(groupList);
-        Collections.sort(gList, GROUP_COMPARATOR);
+        gList.sort(GROUP_COMPARATOR);
         return gList;
     }
 
@@ -2267,7 +2263,6 @@ public class ContactList extends JPanel implements ActionListener,
 
         switch (localPreferences.getReconnectPanelType()) {
             case 0:
-                _reconnectPanel.setClosedOnError(false);
                 _reconnectPanel.setDisconnectReason(errorMessage);
                 removeAllUsers();
                 workspace.changeCardLayout(RETRY_PANEL);
@@ -2378,10 +2373,7 @@ public class ContactList extends JPanel implements ActionListener,
         switch (localPreferences.getReconnectPanelType()) {
             case 0:
                 final String message = errorMessage;
-                SwingUtilities.invokeLater(() -> {
-                    _reconnectPanel.setClosedOnError(true);
-                    reconnect(message);
-                });
+                SwingUtilities.invokeLater(() -> reconnect(message));
                 break;
             case 1:
                 switchAllUserOffline(true);
@@ -2471,7 +2463,7 @@ public class ContactList extends JPanel implements ActionListener,
         offlineGroup.addContactItem(contactItem);
 
         BareJid jid = contactItem.getJid().asBareJid();
-        Boolean isFiled = false;
+        boolean isFiled = false;
 
         final Roster roster = Roster.getInstanceFor(SparkManager.getConnection());
         for (RosterGroup group : roster.getEntry(jid).getGroups()) {
@@ -2521,7 +2513,7 @@ public class ContactList extends JPanel implements ActionListener,
     /**
      * Sorts ContactItems.
      */
-    public final static Comparator<ContactItem> ContactItemComparator = (item1, item2) -> item1.getDisplayName().toLowerCase().compareTo(item2.getDisplayName().toLowerCase());
+    public final static Comparator<ContactItem> ContactItemComparator = Comparator.comparing(item -> item.getDisplayName().toLowerCase());
 
     public void showAddContact(String contact) {
         addContactMenu.doClick();

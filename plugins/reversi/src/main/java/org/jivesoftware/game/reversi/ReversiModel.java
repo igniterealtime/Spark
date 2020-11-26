@@ -36,22 +36,22 @@ public class ReversiModel {
     /**
      * Blank.
      */
-    public static int BLANK = 0;
+    public static final int BLANK = 0;
 
     /**
      * White.
      */
-    public static int WHITE = 1;
+    public static final int WHITE = 1;
 
     /**
      * Black.
      */
-    public static int BLACK = 2;
+    public static final int BLACK = 2;
 
-    private int[] board;
+    private final int[] board;
     private int currentPlayer;
     private boolean gameFinished = false;
-    private int[] flipBuffer = new int[7];
+    private final int[] flipBuffer = new int[7];
     private int flipBufferSize = 0;
 
     /**
@@ -202,7 +202,7 @@ public class ReversiModel {
      * @return a String representation of the current game board.
      */
     public String printBoard() {
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         buf.append("+----------------+\n");
         for (int i=0; i<64; i++) {
             if (i%8 == 0) {

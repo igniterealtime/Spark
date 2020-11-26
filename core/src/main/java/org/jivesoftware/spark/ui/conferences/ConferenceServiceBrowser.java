@@ -71,8 +71,8 @@ public class ConferenceServiceBrowser {
         mainPanel.add(new JLabel("ex. jivesoftware.com"), new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0, 5, 0, 5), 0, 0));
 
         // Add Empty CheckBox List
-        final DefaultListModel model = new DefaultListModel();
-        final JList list = new JList(model);
+        final DefaultListModel<String> model = new DefaultListModel<>();
+        final JList<String> list = new JList<>(model);
         list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         JScrollPane scrollPane = new JScrollPane(list);
         scrollPane.setBorder(BorderFactory.createTitledBorder(Res.getString("group.conferences.found")));
@@ -138,7 +138,7 @@ public class ConferenceServiceBrowser {
         dlg.toFront();
 
 
-        return (String)list.getSelectedValue();
+        return list.getSelectedValue();
     }
 
     public Collection<String> getConferenceServices(String serverString) throws Exception {

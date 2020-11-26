@@ -29,16 +29,13 @@ import org.jivesoftware.spark.util.log.Log;
  */
 public class TTTRes {
 
-    private static PropertyResourceBundle prb;
-
-    static ClassLoader cl = TTTRes.class.getClassLoader();
+    private static final PropertyResourceBundle prb;
 
     static {
-	prb = (PropertyResourceBundle) ResourceBundle
-		.getBundle("i18n/tictactoe_i18n");
+        prb = (PropertyResourceBundle) ResourceBundle.getBundle("i18n/tictactoe_i18n");
     }
 
-    public static final String getString(String propertyName) {
+    public static String getString(String propertyName) {
 	try {
 	    return prb.getString(propertyName);
 	} catch (Exception e) {

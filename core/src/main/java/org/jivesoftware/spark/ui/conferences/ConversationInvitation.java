@@ -56,15 +56,15 @@ import javax.swing.JPanel;
 public class ConversationInvitation extends JPanel implements ContainerComponent, ActionListener {
     private static final long serialVersionUID = -5830187619047598274L;
 
-    private JButton joinButton;
+    private final JButton joinButton;
 
-    private EntityBareJid roomName;
-    private String password;
-    private EntityBareJid inviter;
+    private final EntityBareJid roomName;
+    private final String password;
+    private final EntityBareJid inviter;
 
-    private String tabTitle;
-    private String frameTitle;
-    private String descriptionText;
+    private final String tabTitle;
+    private final String frameTitle;
+    private final String descriptionText;
 
     /**
      * Builds a new Conference Invitation UI.
@@ -111,7 +111,7 @@ public class ConversationInvitation extends JPanel implements ContainerComponent
         add(dateLabelValue, new GridBagConstraints(1, 3, 3, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(2, 5, 2, 5), 0, 0));
 
         titleLabel.setFont(new Font("dialog", Font.BOLD, 12));
-        description.setFont(new Font("dialog", 0, 12));
+        description.setFont(new Font("dialog", Font.PLAIN, 12));
 
         titleLabel.setText(Res.getString("title.conference.invitation"));
         description.setText(nickname + " has invited you to chat in " + roomName + ". " + nickname + " writes \"" + reason + "\"");

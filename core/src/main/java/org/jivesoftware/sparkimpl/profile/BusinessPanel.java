@@ -34,21 +34,21 @@ public class BusinessPanel extends JPanel {
 
 	private static final long serialVersionUID = -6319059605447012843L;
 
-    private JTextField companyField = new JTextField();
-    private JTextField cityField = new JTextField();
-    private JTextField stateField = new JTextField();
-    private JTextField zipCodeField = new JTextField();
-    private JTextField countryField = new JTextField();
-    private JTextField streetField = new JTextField();
+    private final JTextField companyField = new JTextField();
+    private final JTextField cityField = new JTextField();
+    private final JTextField stateField = new JTextField();
+    private final JTextField zipCodeField = new JTextField();
+    private final JTextField countryField = new JTextField();
+    private final JTextField streetField = new JTextField();
 
 
-    private JTextField jobTitleField = new JTextField();
-    private JTextField departmentField = new JTextField();
-    private JTextField phoneField = new JTextField();
-    private JTextField faxField = new JTextField();
-    private JTextField pagerField = new JTextField();
-    private JTextField mobileField = new JTextField();
-    private JTextField webPageField = new JTextField();
+    private final JTextField jobTitleField = new JTextField();
+    private final JTextField departmentField = new JTextField();
+    private final JTextField phoneField = new JTextField();
+    private final JTextField faxField = new JTextField();
+    private final JTextField pagerField = new JTextField();
+    private final JTextField mobileField = new JTextField();
+    private final JTextField webPageField = new JTextField();
 
     public BusinessPanel() {
         this.setLayout(new GridBagLayout());
@@ -117,7 +117,7 @@ public class BusinessPanel extends JPanel {
         this.add(webPageField, new GridBagConstraints(3, 6, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 
 
-        final Component order[] = new Component[] {	
+        final Component[] order = new Component[] {
         											companyField, streetField,cityField,
         											stateField, zipCodeField,countryField,
         											jobTitleField,departmentField,phoneField,
@@ -237,11 +237,9 @@ public class BusinessPanel extends JPanel {
     public void allowEditing(boolean allowEditing) {
         Component[] comps = getComponents();
         if (comps != null) {
-            final int no = comps.length;
-            for (int i = 0; i < no; i++) {
-                Component comp = comps[i];
+            for (Component comp : comps) {
                 if (comp instanceof JTextField) {
-                    ((JTextField)comp).setEditable(allowEditing);
+                    ((JTextField) comp).setEditable(allowEditing);
                 }
             }
         }

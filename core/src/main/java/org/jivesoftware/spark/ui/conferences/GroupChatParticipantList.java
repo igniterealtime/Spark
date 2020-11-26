@@ -66,30 +66,30 @@ public class GroupChatParticipantList extends JPanel {
     	private static final long serialVersionUID = 3809155443119207342L;
 	private GroupChatRoom groupChatRoom;
 	private final ImageTitlePanel agentInfoPanel;
-	private ChatManager chatManager;
+	private final ChatManager chatManager;
 	private MultiUserChat chat;
-	private LocalPreferences _localPreferences = SettingsManager.getLocalPreferences();
+	private final LocalPreferences _localPreferences = SettingsManager.getLocalPreferences();
 
 	private final Map<CharSequence, EntityFullJid> userMap = new HashMap<>();
 
-	private UserManager userManager = SparkManager.getUserManager();
+	private final UserManager userManager = SparkManager.getUserManager();
 
-	private DefaultListModel model = new DefaultListModel();
+	private final DefaultListModel<JLabel> model = new DefaultListModel<>();
 
-	private JXList participantsList;
+	private final JXList participantsList;
 
 	private PresenceListener listener = null;
 
-	private Map<CharSequence, String> invitees = new HashMap<>();
+	private final Map<CharSequence, String> invitees = new HashMap<>();
 
 	private boolean allowNicknameChange = true;
 
 	private DiscoverInfo roomInformation;
 
-	private List<JLabel> users = new ArrayList<>();
+	private final List<JLabel> users = new ArrayList<>();
 
-	private Map<EntityFullJid, MUCRole> usersToRoles = new HashMap<>();
-	private Map<EntityFullJid, MUCAffiliation> usersToAffiliation = new HashMap<>();
+	private final Map<EntityFullJid, MUCRole> usersToRoles = new HashMap<>();
+	private final Map<EntityFullJid, MUCAffiliation> usersToAffiliation = new HashMap<>();
 
 	/**
 	 * Creates a new RoomInfo instance using the specified ChatRoom. The
@@ -303,7 +303,7 @@ public class GroupChatParticipantList extends JPanel {
 	    int index = getIndex(nickname);
 	    if (index != -1) {
 		final JLabel userLabel = new JLabel(nickname.toString(), icon,
-			JLabel.HORIZONTAL);
+            SwingConstants.CENTER);
 		model.setElementAt(userLabel, index);
 	    }
 	}
@@ -371,7 +371,7 @@ public class GroupChatParticipantList extends JPanel {
 
 	protected boolean exists(CharSequence nickname) {
 		for (int i = 0; i < model.getSize(); i++) {
-			final JLabel userLabel = (JLabel) model.getElementAt(i);
+			final JLabel userLabel = model.getElementAt(i);
 			if (userLabel.getText().equals(nickname.toString())) {
 				return true;
 			}
@@ -412,11 +412,6 @@ public class GroupChatParticipantList extends JPanel {
 		}
 
 		chatManager.getChatContainer().activateChatRoom(chatRoom);
-	}
-
-	public void tabSelected() {
-		// To change body of implemented methods use File | Settings | File
-		// Templates.
 	}
 
 	public String getTabTitle() {
@@ -578,7 +573,7 @@ public class GroupChatParticipantList extends JPanel {
 
 	if (index != -1) {
 	    participantsList.setSelectedIndex(index);
-	    final JLabel userLabel = (JLabel) model.getElementAt(index);
+	    final JLabel userLabel = model.getElementAt(index);
 	    final Resourcepart selectedUser = Resourcepart.fromOrThrowUnchecked(userLabel.getText());
 	    final EntityFullJid groupJID = userMap.get(selectedUser);
 	    final Resourcepart groupJIDNickname = groupJID.getResourcepart();
@@ -662,9 +657,6 @@ public class GroupChatParticipantList extends JPanel {
 			    while (true) {
 				newNickname = newNickname.trim();
 				String nick = chat.getNickname().toString();
-				if (newNickname.equals(nick)) {
-				    // return;
-				}
 				try {
 				    chat.changeNickname(Resourcepart.from(newNickname));
 				    break;
@@ -743,7 +735,7 @@ public class GroupChatParticipantList extends JPanel {
 			icon = SparkRes.getImageIcon(SparkRes.BRICKWALL_IMAGE);
 		    }
 
-		    JLabel label = new JLabel(user, icon, JLabel.HORIZONTAL);
+		    JLabel label = new JLabel(user, icon, SwingConstants.CENTER);
 		    model.setElementAt(label, index);
 		}
 	    };
@@ -788,7 +780,7 @@ public class GroupChatParticipantList extends JPanel {
 		    } else {
 			grantVoice(selectedUser);
 		    }
-		    Collections.sort(users, labelComp);
+		    users.sort(labelComp);
 
 		}
 	    };
@@ -836,7 +828,7 @@ public class GroupChatParticipantList extends JPanel {
 		    } else {
 			revokeMember(selectedUser);
 		    }
-		    Collections.sort(users, labelComp);
+		    users.sort(labelComp);
 	        }
 	    };
 	    memberAction.putValue(Action.SMALL_ICON,
@@ -863,7 +855,7 @@ public class GroupChatParticipantList extends JPanel {
 		    } else {
 			revokeModerator(selectedUser);
 		    }
-		    Collections.sort(users, labelComp);
+		    users.sort(labelComp);
 
 		}
 	    };
@@ -891,7 +883,7 @@ public class GroupChatParticipantList extends JPanel {
 		    } else {
 			revokeAdmin(selectedUser);
 		    }
-		    Collections.sort(users, labelComp);
+		    users.sort(labelComp);
 
 	        }
 	    };
@@ -921,7 +913,7 @@ public class GroupChatParticipantList extends JPanel {
 		    } else {
 			revokeOwner(selectedUser);
 		    }
-		    Collections.sort(users, labelComp);
+		    users.sort(labelComp);
 
 	        }
 	    };
@@ -1009,7 +1001,7 @@ public class GroupChatParticipantList extends JPanel {
 
 	public int getIndex(CharSequence name) {
 		for (int i = 0; i < model.getSize(); i++) {
-			JLabel label = (JLabel) model.getElementAt(i);
+			JLabel label = model.getElementAt(i);
 			if (label.getText().equals(name.toString())) {
 				return i;
 			}
@@ -1034,7 +1026,7 @@ public class GroupChatParticipantList extends JPanel {
 			}
 
 			for (int i = 0; i < model.size(); i++) {
-				JLabel label = (JLabel) model.getElementAt(i);
+				JLabel label = model.getElementAt(i);
 				if (label.getText().equals(displayName.toString())) {
 					users.remove(label);
 					model.removeElement(label);
@@ -1056,11 +1048,11 @@ public class GroupChatParticipantList extends JPanel {
 	public synchronized void addUser(Icon userIcon, CharSequence nickname) {
 		try {
 			final JLabel user = new JLabel(nickname.toString(), userIcon,
-					JLabel.HORIZONTAL);
+                SwingConstants.CENTER);
 			users.add(user);
 
 			// Sort users alpha.
-			Collections.sort(users, labelComp);
+			users.sort(labelComp);
 
 			// Add to the correct position in the model.
 			final int index = users.indexOf(user);
@@ -1169,7 +1161,7 @@ public class GroupChatParticipantList extends JPanel {
 	 *
 	 * @author Derek DeMoro
 	 */
-	public static class ParticipantRenderer extends JLabel implements ListCellRenderer {
+	public static class ParticipantRenderer extends JLabel implements ListCellRenderer<Object> {
 		private static final long serialVersionUID = -7509947975798079141L;
 
 		/**
@@ -1213,7 +1205,7 @@ public class GroupChatParticipantList extends JPanel {
         return userMap;
     }
 
-    protected DefaultListModel getModel() {
+    protected DefaultListModel<JLabel> getModel() {
         return model;
     }
 

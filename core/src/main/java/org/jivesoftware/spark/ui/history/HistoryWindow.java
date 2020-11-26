@@ -59,8 +59,8 @@ public class HistoryWindow extends JFrame {
 	private static final Font TEXT_FONT = new Font("Droid Sans", Font.PLAIN, 13);
 	private static final Dimension SIZE_FIND_FIELD = new Dimension(100, 25);
 
-	private String roomName;
-	private InputStream historyStream;
+	private final String roomName;
+	private final InputStream historyStream;
 	private JButton btnClose;
 	private JTextPane historyContentText;
 	private JScrollPane historyContentTextScrollPane;

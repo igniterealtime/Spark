@@ -24,7 +24,7 @@ public class LinuxIdleTime implements IdleTime {
     interface Xss extends Library {
         Xss INSTANCE = Native.loadLibrary("Xss", Xss.class);
 
-        public class XScreenSaverInfo extends Structure {
+        class XScreenSaverInfo extends Structure {
             public X11.Window window; /* screen saver window */
             public int state; /* ScreenSaver{Off,On,Disabled} */
             public int kind; /* ScreenSaver{Blanked,Internal,External} */
@@ -46,13 +46,13 @@ public class LinuxIdleTime implements IdleTime {
 
     @Override
 	public long getIdleTimeMillis() {
-        X11.Window win = null;
+        X11.Window win;
         Xss.XScreenSaverInfo info = null;
         X11.Display dpy = null;
         final X11 x11 = X11.INSTANCE;
         final Xss xss = Xss.INSTANCE;
 
-        long idlemillis = 0L;
+        long idlemillis;
         try {
             dpy = x11.XOpenDisplay(null);
             win = x11.XDefaultRootWindow(dpy);
@@ -61,13 +61,8 @@ public class LinuxIdleTime implements IdleTime {
 
             idlemillis = info.idle.longValue();
         } finally {
-            if (info != null)
-                x11.XFree(info.getPointer());
-            info = null;
-
-            if (dpy != null)
-                x11.XCloseDisplay(dpy);
-            dpy = null;
+            if (info != null) x11.XFree(info.getPointer());
+            if (dpy != null) x11.XCloseDisplay(dpy);
         }
         return idlemillis;
     }

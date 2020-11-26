@@ -32,11 +32,11 @@ public class SparkPrivacyList {
     /**
      * List name will be used to identify PrivacyList
      */
-    private String _listName   = "";
-    private boolean _isActive = false;
-    private boolean _isDefault = false;
-    private List<PrivacyItem> _privacyItems = new LinkedList<>();
-    private PrivacyList _myPrivacyList;
+    private final String _listName;
+    private boolean _isActive;
+    private boolean _isDefault;
+    private final List<PrivacyItem> _privacyItems = new LinkedList<>();
+    private final PrivacyList _myPrivacyList;
     private final Set<SparkPrivacyItemListener> _listeners = new HashSet<>();
     /**
      * Action associated with the items, it MUST be filled and will allow or deny
@@ -44,8 +44,7 @@ public class SparkPrivacyList {
      */
 
 
-    public SparkPrivacyList(PrivacyList list) throws SmackException.NotConnectedException
-    {
+    public SparkPrivacyList(PrivacyList list) {
         _listName = list.getName();
         _myPrivacyList = list;
         _isActive = _myPrivacyList.isActiveList();
@@ -54,8 +53,7 @@ public class SparkPrivacyList {
     }
 
     
-    private void loadItems() throws SmackException.NotConnectedException
-    {
+    private void loadItems() {
        List<PrivacyItem> itemList = _myPrivacyList.getItems();
        
        for (PrivacyItem item: itemList)
@@ -166,21 +164,18 @@ public class SparkPrivacyList {
     }
 
     
-    public void addItem (PrivacyItem item) throws SmackException.NotConnectedException
-    {
+    public void addItem (PrivacyItem item) {
         _privacyItems.add(item);
         fireItemAdded(item);
     }
 
     
-    public void removeItem(PrivacyItem item) throws SmackException.NotConnectedException
-    {
+    public void removeItem(PrivacyItem item) {
         _privacyItems.remove(item);
         fireItemRemoved(item);
     }
     
-    public void removeItem(String name) throws SmackException.NotConnectedException
-    {
+    public void removeItem(String name) {
         List<PrivacyItem> tempList = new ArrayList<>( _privacyItems );
         for (PrivacyItem item: tempList)
         {
@@ -278,8 +273,7 @@ public class SparkPrivacyList {
     /**
      * @param item user was added into blockList
      */
-    private void fireItemAdded( PrivacyItem item ) throws SmackException.NotConnectedException
-    {
+    private void fireItemAdded( PrivacyItem item ) {
         for ( final SparkPrivacyItemListener listener : _listeners )
         {
             try
@@ -296,8 +290,7 @@ public class SparkPrivacyList {
     /**
      * @param item user removed from blackList
      */
-    private void fireItemRemoved( PrivacyItem item ) throws SmackException.NotConnectedException
-    {
+    private void fireItemRemoved( PrivacyItem item ) {
         for ( final SparkPrivacyItemListener listener : _listeners )
         {
             try

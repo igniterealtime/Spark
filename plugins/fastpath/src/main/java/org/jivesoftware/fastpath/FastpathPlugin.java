@@ -46,7 +46,6 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.TimerTask;
 
 public class FastpathPlugin implements Plugin, ConnectionListener {
@@ -68,21 +67,16 @@ public class FastpathPlugin implements Plugin, ConnectionListener {
 
         new WorkgroupInitializer().initialize();
 
-        EventQueue.invokeLater(new Runnable() {
-
-			@Override
-			public void run() {
-				  container = new FastpathContainer();
-				  workgroupLabel = new JLabel(FpRes.getString("workgroup"));
-				  comboBox = new JComboBox<>();
-				  joinButton = new JButton(FpRes.getString("join"), null);
-				  logoutButton = new RolloverButton(FpRes.getString("logout"), null);
-		        // Initialize tab handler for Fastpath chats.
-		        fastpathTabHandler = new FastpathTabHandler();
-		        mainPanel = new BackgroundPane();
-			}
-   		 
-   	 });
+        EventQueue.invokeLater(() -> {
+            container = new FastpathContainer();
+            workgroupLabel = new JLabel(FpRes.getString("workgroup"));
+            comboBox = new JComboBox<>();
+            joinButton = new JButton(FpRes.getString("join"), null);
+            logoutButton = new RolloverButton(FpRes.getString("logout"), null);
+            // Initialize tab handler for Fastpath chats.
+            fastpathTabHandler = new FastpathTabHandler();
+            mainPanel = new BackgroundPane();
+        });
    	 
 
 
@@ -188,11 +182,7 @@ public class FastpathPlugin implements Plugin, ConnectionListener {
         joinButton.addActionListener(joinAction);
 
         // Load services immeditaly.
-        Thread loadServicesThread = new Thread(new Runnable() {
-            public void run() {
-                SparkManager.getChatManager().getDefaultConferenceService();
-            }
-        });
+        Thread loadServicesThread = new Thread(() -> SparkManager.getChatManager().getDefaultConferenceService());
 
         loadServicesThread.start();
     }
@@ -269,13 +259,11 @@ public class FastpathPlugin implements Plugin, ConnectionListener {
     }
 
     private void lostConnection() {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                if (agentSession != null) {
-                    resetWorkgroups();
-                    wasConnected = true;
-                    agentSession = null;
-                }
+        SwingUtilities.invokeLater(() -> {
+            if (agentSession != null) {
+                resetWorkgroups();
+                wasConnected = true;
+                agentSession = null;
             }
         });
 
@@ -369,9 +357,7 @@ public class FastpathPlugin implements Plugin, ConnectionListener {
         try {
             Collection<String> col = Agent.getWorkgroups(workgroupService, jid, SparkManager.getConnection());
             // Add workgroups to combobox
-            Iterator<String> workgroups = col.iterator();
-            while (workgroups.hasNext()) {
-                String workgroup = workgroups.next();
+            for (String workgroup : col) {
                 String componentAddress = XmppStringUtils.parseDomain(workgroup);
                 setComponentAddress(componentAddress);
                 comboBox.addItem(XmppStringUtils.parseLocalpart(workgroup));

@@ -29,8 +29,8 @@ import java.util.List;
  * find area of the bottom of Spark.
  */
 public class SearchManager {
-    private List<Searchable> searchServices = new ArrayList<>();
-    private SearchService ui;
+    private final List<Searchable> searchServices = new ArrayList<>();
+    private final SearchService ui;
     private Collection<DomainBareJid> _searchservicesHosts;
 
     private static SearchManager singleton;

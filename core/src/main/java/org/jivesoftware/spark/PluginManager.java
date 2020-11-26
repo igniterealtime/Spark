@@ -77,7 +77,7 @@ public class PluginManager implements MainWindowListener
     private Plugin pluginClass;
     private PluginClassLoader classLoader;
 
-    private Collection<String> _blacklistPlugins;
+    private final Collection<String> _blacklistPlugins;
 
     /**
      * Returns the singleton instance of PluginManager, creating it if necessary.
@@ -130,29 +130,20 @@ public class PluginManager implements MainWindowListener
         File[] files = PLUGINS_DIRECTORY.listFiles();
         if ( files != null )
         {
-            final int no = files.length;
-            for ( int i = 0; i < no; i++ )
-            {
-                File file = files[ i ];
-                if ( file.isFile() )
-                {
+            for (File file : files) {
+                if (file.isFile()) {
                     // Copy over
-                    File newFile = new File( newPlugins, file.getName() );
+                    File newFile = new File(newPlugins, file.getName());
 
-                    if ( newFile.lastModified() >= file.lastModified() )
-                    {
+                    if (newFile.lastModified() >= file.lastModified()) {
                         continue;
                     }
 
-                    try
-                    {
-                        URLFileSystem.copy( file.toURI().toURL(), newFile );
+                    try {
+                        URLFileSystem.copy(file.toURI().toURL(), newFile);
+                    } catch (IOException e) {
+                        Log.error(e);
                     }
-                    catch ( IOException e )
-                    {
-                        Log.error( e );
-                    }
-
                 }
             }
         }
@@ -285,7 +276,7 @@ public class PluginManager implements MainWindowListener
             saxReader.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
 
             final Document pluginXML = saxReader.read( pluginFile );
-            final List dependencies = pluginXML.selectNodes( "plugin/depends/plugin" );
+            final List<?> dependencies = pluginXML.selectNodes( "plugin/depends/plugin" );
             return dependencies != null && dependencies.size() > 0;
         }
         catch ( DocumentException | SAXException e )

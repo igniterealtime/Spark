@@ -26,11 +26,11 @@ import org.jivesoftware.spark.PresenceManager;
 
 public class AppleTest implements ActionListener {
 
-    public static void main(String[] args) throws InterruptedException {
-	new AppleTest();
+    public static void main(String[] args) {
+        new AppleTest();
     }
 
-    public AppleTest() throws InterruptedException {
+    public AppleTest() {
 
 	for (LookAndFeelInfo laf : UIManager.getInstalledLookAndFeels()) {
 	    System.out.println(laf.getClassName() + " " + laf.getName());

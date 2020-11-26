@@ -240,7 +240,7 @@ public abstract class Table extends JXTable {
     public static class JiveTableModel extends DefaultTableModel {
 
 	private static final long serialVersionUID = 2256144012470569949L;
-	private boolean isEditable;
+	private final boolean isEditable;
 
         /**
          * Use the JiveTableModel in order to better handle the table. This allows
@@ -274,9 +274,9 @@ public abstract class Table extends JXTable {
     public static class JLabelRenderer extends JLabel implements TableCellRenderer {
 
 	private static final long serialVersionUID = 4433780600297455731L;
-	Border unselectedBorder;
-        Border selectedBorder;
-        boolean isBordered = true;
+        private Border unselectedBorder;
+        private Border selectedBorder;
+        private final boolean isBordered;
 
         /**
          * JLabelConstructor to build ui.
@@ -304,9 +304,6 @@ public abstract class Table extends JXTable {
             else {
                 setForeground(Color.black);
                 setBackground(Color.white);
-                if (row % 2 == 0) {
-                    //setBackground( new Color( 156, 207, 255 ) );
-                }
             }
 
             if (isBordered) {
@@ -367,9 +364,9 @@ public abstract class Table extends JXTable {
     public static class JButtonRenderer extends JButton implements TableCellRenderer {
 
 	private static final long serialVersionUID = 1268514163461994738L;
-	Border unselectedBorder;
-        Border selectedBorder;
-        boolean isBordered = true;
+        private Border unselectedBorder;
+        private Border selectedBorder;
+        private final boolean isBordered = true;
 
         /**
          * Empty Constructor.
@@ -393,9 +390,6 @@ public abstract class Table extends JXTable {
             else {
                 setForeground(Color.black);
                 setBackground(Color.white);
-                if (row % 2 == 0) {
-                    //setBackground( new Color( 156, 207, 255 ) );
-                }
             }
 
             if (isBordered) {
@@ -418,7 +412,7 @@ public abstract class Table extends JXTable {
         }
     }
 
-    public static class ComboBoxRenderer extends JComboBox implements TableCellRenderer {
+    public static class ComboBoxRenderer extends JComboBox<String> implements TableCellRenderer {
 
 	private static final long serialVersionUID = -545496178928790522L;
 
@@ -453,7 +447,7 @@ public abstract class Table extends JXTable {
 	private static final long serialVersionUID = 6097118754932234992L;
 
 	public MyComboBoxEditor(String[] items) {
-            super(new JComboBox(items));
+            super(new JComboBox<>(items));
         }
     }
 
@@ -498,5 +492,4 @@ public abstract class Table extends JXTable {
      */
     public void enterPressed() {
     }
-
 }

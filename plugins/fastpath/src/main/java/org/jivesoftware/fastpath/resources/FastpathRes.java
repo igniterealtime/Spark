@@ -30,7 +30,7 @@ import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 
 public class FastpathRes {
-    private static PropertyResourceBundle prb;
+    private static final PropertyResourceBundle prb;
 
     public static final String NOTE_EDIT_16x16 = "NOTE_EDIT_16x16";
     public static final String MAGICIAN_IMAGE = "MAGICIAN_IMAGE";
@@ -247,22 +247,21 @@ public class FastpathRes {
     public static final String CLOSE_DARK_X_IMAGE = "CLOSE_DARK_X_IMAGE";
     public static final String CLOSE_WHITE_X_IMAGE = "CLOSE_WHITE_X_IMAGE";
     public static final String CHAT_INVITE_IMAGE_24x24 = "CHAT_INVITE_IMAGE_24x24";
-      public static final String CHAT_TRANSFER_IMAGE_24x24 = "CHAT_TRANSFER_IMAGE_24x24";
-      public static final String CHAT_COBROWSE_IMAGE_24x24 = "CHAT_COBROWSE_IMAGE_24x24";
-      public static final String CHAT_ENDED_IMAGE_24x24 = "CHAT_ENDED_IMAGE_24x24";
+    public static final String CHAT_TRANSFER_IMAGE_24x24 = "CHAT_TRANSFER_IMAGE_24x24";
+    public static final String CHAT_COBROWSE_IMAGE_24x24 = "CHAT_COBROWSE_IMAGE_24x24";
+    public static final String CHAT_ENDED_IMAGE_24x24 = "CHAT_ENDED_IMAGE_24x24";
 
-
-    static ClassLoader cl = FastpathPlugin.class.getClassLoader();
+    private static final ClassLoader cl = FastpathPlugin.class.getClassLoader();
 
     static {
         prb = (PropertyResourceBundle)ResourceBundle.getBundle("fastpath");
     }
 
-    public static final String getString(String propertyName) {
+    public static String getString(String propertyName) {
         return prb.getString(propertyName);
     }
 
-    public static final ImageIcon getImageIcon(String imageName) {
+    public static ImageIcon getImageIcon(String imageName) {
         try {
             final String iconURI = getString(imageName);
             final URL imageURL = cl.getResource(iconURI);
@@ -274,18 +273,18 @@ public class FastpathRes {
         return null;
     }
 
-    public static final URL getURL(String propertyName) {
+    public static URL getURL(String propertyName) {
         return cl.getResource(getString(propertyName));
     }
 
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         JFrame frame = new JFrame();
         frame.getContentPane().setLayout(new BorderLayout());
 
         JEditorPane pane = new JEditorPane();
         frame.getContentPane().add(new JScrollPane(pane));
 
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         Enumeration<String> enumeration = prb.getKeys();
         while (enumeration.hasMoreElements()) {
             String token = enumeration.nextElement();

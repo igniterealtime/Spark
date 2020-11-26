@@ -23,7 +23,7 @@ import java.net.URL;
 import java.util.Properties;
 
 public class ConfigurationRes {
-    private static Properties prb;
+    private static final Properties prb;
     public static final String GLOBAL_ELEMENT_NAME = "GLOBAL_ELEMENT_NAME";
     public static final String DELETE_IMAGE = "DELETE_IMAGE";
     public static final String PERSONAL_NAMESPACE = "PERSONAL_NAMESPACE";
@@ -32,7 +32,8 @@ public class ConfigurationRes {
 
     public static final String SPELLING_PROPERTIES = "SPELLING_PROPERTIES";
     public static final String PERSONAL_ELEMENT_NAME = "PERSONAL_ELEMENT_NAME";
-    static ClassLoader cl = ConfigurationRes.class.getClassLoader();
+
+    private static final ClassLoader cl = ConfigurationRes.class.getClassLoader();
 
     static {
         prb = new Properties();

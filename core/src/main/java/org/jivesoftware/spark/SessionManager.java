@@ -52,7 +52,7 @@ public final class SessionManager implements ConnectionListener {
 
     private EntityFullJid JID;
 
-    private List<PresenceListener> presenceListeners = new ArrayList<>();
+    private final List<PresenceListener> presenceListeners = new ArrayList<>();
 
     private EntityBareJid userBareAddress;
     private DiscoverItems discoverItems;

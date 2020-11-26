@@ -50,11 +50,11 @@ public class PrivacyManager {
     // with regard to roster groups and JIDs. Obviously list names could become rather complex, 
     // such as "visible-to-Group1 Group2 Group3".
     private static final String INVISIBLE_LIST_NAME = "invisible";
-    private List<SparkPrivacyList> _privacyLists = new ArrayList<>();
+    private final List<SparkPrivacyList> _privacyLists = new ArrayList<>();
     private PrivacyListManager privacyManager;
-    private PrivacyPresenceHandler _presenceHandler = new PrivacyPresenceHandler();
-    private Set<SparkPrivacyListListener> _listListeners = new HashSet<>();
-    private boolean _active = false;
+    private final PrivacyPresenceHandler _presenceHandler = new PrivacyPresenceHandler();
+    private final Set<SparkPrivacyListListener> _listListeners = new HashSet<>();
+    private final boolean _active;
     private SparkPrivacyList previousActiveList;
 
     /**

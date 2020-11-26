@@ -27,7 +27,6 @@ import org.jivesoftware.smack.filter.StanzaTypeFilter;
 import org.jivesoftware.smack.packet.ExtensionElement;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Presence;
-import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.packet.StanzaError;
 import org.jivesoftware.smack.provider.ProviderManager;
 import org.jivesoftware.smackx.vcardtemp.packet.VCard;
@@ -58,6 +57,7 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.*;
@@ -72,30 +72,30 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class VCardManager {
 
     private VCard personalVCard;
-    private transient byte[] personalVCardAvatar = null; // lazy loaded cache of avatar binary data.
-    private transient String personalVCardHash = null; // lazy loaded cache of avatar hash.
+    private transient byte[] personalVCardAvatar; // lazy loaded cache of avatar binary data.
+    private transient String personalVCardHash; // lazy loaded cache of avatar hash.
 
-    private Map<BareJid, VCard> vcards = Collections.synchronizedMap( new HashMap<>());
+    private final Map<BareJid, VCard> vcards = Collections.synchronizedMap( new HashMap<>());
 
-    private Set<BareJid> delayedContacts = Collections.synchronizedSet( new HashSet<>());
+    private final Set<BareJid> delayedContacts = Collections.synchronizedSet( new HashSet<>());
     
     private boolean vcardLoaded;
 
-    private File imageFile;
+    private final File imageFile;
 
     private final VCardEditor editor;
 
-    private File vcardStorageDirectory;
+    private final File vcardStorageDirectory;
 
     final MXParser parser;
 
-    private LinkedBlockingQueue<BareJid> queue = new LinkedBlockingQueue<>();
+    private final LinkedBlockingQueue<BareJid> queue = new LinkedBlockingQueue<>();
     
-    private File contactsDir;
+    private final File contactsDir;
 
-    private List<VCardListener> listeners = new ArrayList<>();
+    private final List<VCardListener> listeners = new ArrayList<>();
 
-	private List<BareJid> writingQueue = Collections.synchronizedList( new ArrayList<>());
+	private final List<BareJid> writingQueue = Collections.synchronizedList( new ArrayList<>());
 
     /**
      * Initialize VCardManager.
@@ -196,13 +196,11 @@ public class VCardManager {
 
         TaskEngine.getInstance().submit(queueListener);
 
-        StanzaFilter filter = new AndFilter(new StanzaFilter() {
-            @Override
-            public boolean accept(Stanza stanza) {
-                Jid from = stanza.getFrom();
-                return from != null;
-            }
+        StanzaFilter filter = new AndFilter(stanza -> {
+            Jid from = stanza.getFrom();
+            return from != null;
         }, new StanzaTypeFilter(VCard.class));
+
         StanzaListener myListener = stanza -> {
             if (stanza instanceof VCard)
             {
@@ -214,12 +212,10 @@ public class VCardManager {
                     addVCard(jid, VCardpacket);
                     persistVCard(jid, VCardpacket);
                 }
-
             }
         };
         	
 		SparkManager.getConnection().addAsyncStanzaListener(myListener, filter);
-
     }
 
     /**
@@ -460,10 +456,7 @@ public class VCardManager {
             // Create temp vcard.
             vcard = new VCard();
             vcard.setJabberId(jid.toString());
-        } else {
-        	//System.out.println(jid+"  HDD ---------->");
         }
-        
 
         return vcard;
     }
@@ -778,7 +771,7 @@ public class VCardManager {
 
         // write xml to file
         try {
-            BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(vcardFile), "UTF-8"));
+            BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(vcardFile), StandardCharsets.UTF_8));
             out.write(xml);
             out.close();
         }
@@ -818,7 +811,7 @@ public class VCardManager {
         }
 
         final VCard vcard;
-        try ( final BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(vcardFile), "UTF-8")) )
+        try ( final BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(vcardFile), StandardCharsets.UTF_8)) )
         {
             // Otherwise load from file system.
             VCardProvider provider = new VCardProvider();

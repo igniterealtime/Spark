@@ -47,7 +47,7 @@ public class ColorPreferencePanel extends SparkTabbedPane {
 
     private static final long serialVersionUID = -3594152276094474130L;
 
-	private JList _colorliste;
+	private JList<String> colorList;
     private ColorSettings _colorsettings;
 
     private JLabel _errorlabel;
@@ -88,17 +88,17 @@ public class ColorPreferencePanel extends SparkTabbedPane {
 
 	rightpanel.add(_errorlabel, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0 , GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
 
-	_colorliste = new JList(keys);
-		JScrollPane _jScrollPane = new JScrollPane( _colorliste );
+	colorList = new JList<>(keys);
+		JScrollPane _jScrollPane = new JScrollPane(colorList);
 	
 	setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 	add( _jScrollPane );
 	add(rightpanel);
 	
 	
-	_colorliste.addListSelectionListener( e -> {
+	colorList.addListSelectionListener(e -> {
 
-    String v = (String) _colorliste.getSelectedValue();
+    String v = colorList.getSelectedValue();
 
     Color c = _colorsettings.getColorFromProperty(v);
 
@@ -106,7 +106,7 @@ public class ColorPreferencePanel extends SparkTabbedPane {
     _errorlabel.setText("");
     } );
 	
-	savebutton.addActionListener( e -> savebuttonaction(e) );
+	savebutton.addActionListener(this::savebuttonaction);
 	
 	restoreDefaults.addActionListener( e -> {
     ColorSettingManager.restoreDefault();
@@ -125,9 +125,9 @@ public class ColorPreferencePanel extends SparkTabbedPane {
 	    Color c = _colorpick.getColor();
 
 	    _colorsettings.setColorForProperty(
-		    (String) _colorliste.getSelectedValue(), c);
+            colorList.getSelectedValue(), c);
 
-	    UIManager.put( _colorliste.getSelectedValue(), c);
+	    UIManager.put( colorList.getSelectedValue(), c);
 
 	    _errorlabel.setText(Res.getString("lookandfeel.color.saved"));
 

@@ -76,7 +76,7 @@ public final class MainWindow extends ChatFrame implements ActionListener {
 
     private boolean focused;
 
-    private JToolBar topToolbar = new JToolBar();
+    private final JToolBar topToolbar = new JToolBar();
 
     private JSplitPane splitPane;
 
@@ -314,7 +314,7 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         }
     }
     
-    private File getLibDirectory() throws IOException {
+    private File getLibDirectory() {
         File jarFile;
         try{
             jarFile = new File(Startup.class.getProtectionDomain().getCodeSource().getLocation().toURI());
@@ -391,7 +391,7 @@ public final class MainWindow extends ChatFrame implements ActionListener {
     public boolean restartApplicationWithJava() {
         String javaBin = System.getProperty("java.home") + File.separatorChar + "bin" + File.separatorChar + "java";
         try {
-            String toExec[] = new String[] {
+            String[] toExec = new String[] {
                     javaBin, "-cp", getClasspath(), "org.jivesoftware.launcher.Startup"};
             Runtime.getRuntime().exec(toExec);
         } catch (Exception e) {

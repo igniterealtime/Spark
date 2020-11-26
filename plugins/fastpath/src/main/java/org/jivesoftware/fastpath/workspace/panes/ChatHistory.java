@@ -26,7 +26,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Collection;
 import java.util.Date;
-import java.util.Iterator;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
@@ -55,14 +54,14 @@ import org.jxmpp.jid.parts.Localpart;
 public class ChatHistory extends JPanel {
 
 	private static final long serialVersionUID = 1L;
-	private DefaultListModel model = new DefaultListModel();
+	private final DefaultListModel<HistoryItem> model = new DefaultListModel<>();
     private AgentSession agentSession;
-    private JList list;
+    private final JList<HistoryItem> list;
     private JFrame mainFrame;
     private JFrame frame;
 
     public ChatHistory() {
-        list = new JList(model);
+        list = new JList<>(model);
 
         list.setCellRenderer(new HistoryItemRenderer());
 
@@ -100,7 +99,7 @@ public class ChatHistory extends JPanel {
         list.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2) {
-                    HistoryItem historyItem = (HistoryItem)list.getSelectedValue();
+                    HistoryItem historyItem = list.getSelectedValue();
                     showTranscript(historyItem.getSessionID());
                 }
             }
@@ -150,10 +149,9 @@ public class ChatHistory extends JPanel {
 
         try {
             model.removeAllElements();
-            Collection sessions = history.getAgentChatSessions();
-            Iterator iter = sessions.iterator();
-            while (iter.hasNext()) {
-                AgentChatSession chatSession = (AgentChatSession)iter.next();
+            Collection<AgentChatSession> sessions = history.getAgentChatSessions();
+            for (Object session : sessions) {
+                AgentChatSession chatSession = (AgentChatSession) session;
 
                 // Then were in a group chat
                 final String nickname = chatSession.getVisitorsName();

@@ -32,8 +32,8 @@ import org.jivesoftware.spark.component.tabbedPane.SparkTabbedPane;
  */
 public class FastpathContainer extends JPanel {
 	private static final long serialVersionUID = 1651363083075622414L;
-	private JPanel topPanel;
-    private SparkTabbedPane mainPanel;
+	private final JPanel topPanel;
+    private final SparkTabbedPane mainPanel;
 
     public FastpathContainer() {
 

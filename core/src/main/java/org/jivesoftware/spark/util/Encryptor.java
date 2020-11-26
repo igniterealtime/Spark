@@ -23,7 +23,7 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Encrypts and Decrypts text based on DESede keys.
@@ -49,7 +49,7 @@ public class Encryptor {
     }
 
     public static String encrypt(String string) throws Exception {
-        byte[] utf8 = string.getBytes("UTF8");
+        byte[] utf8 = string.getBytes(StandardCharsets.UTF_8);
 
         // Encrypt
         byte[] enc = ecipher.doFinal(utf8);
@@ -57,28 +57,26 @@ public class Encryptor {
     }
 
     public static String decrypt(String string) {
-        byte[] dec = Base64.decode( string );
-
         try {
-            // Decrypt
-            byte[] utf8 = dcipher.doFinal(dec);
-
-            // Decode using utf-8
-            return new String(utf8, "UTF8");
+            return decryptOrThrow(string);
         }
-        catch (IllegalBlockSizeException e) {
+        catch (IllegalBlockSizeException | BadPaddingException e) {
             Log.error(e);
+            return null;
         }
-        catch (BadPaddingException e) {
-            Log.error(e);
-        }
-        catch (UnsupportedEncodingException e) {
-            Log.error(e);
-        }
-        return null;
     }
 
-    private static SecretKey decodeKey() throws Exception {
+    public static String decryptOrThrow(String string) throws BadPaddingException, IllegalBlockSizeException {
+        byte[] dec = Base64.decode( string );
+
+        // Decrypt
+        byte[] utf8 = dcipher.doFinal(dec);
+
+        // Decode using utf-8
+        return new String(utf8, StandardCharsets.UTF_8);
+    }
+
+    private static SecretKey decodeKey() {
         String secretKey = "ugfpV1dMC5jyJtqwVAfTpHkxqJ0+E0ae";
         byte[] bytes = Base64.decode( secretKey );
         return new SecretKeySpec(bytes, "DESede");

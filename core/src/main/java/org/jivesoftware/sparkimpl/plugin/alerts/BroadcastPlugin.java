@@ -50,7 +50,6 @@ import javax.swing.JTextPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
 
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
@@ -101,7 +100,7 @@ import org.jivesoftware.spark.ui.BroadcastHistoryFrame;
  */
 public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaListener {
 
-    private Set<ChatRoom> broadcastRooms = new HashSet<>();
+    private final Set<ChatRoom> broadcastRooms = new HashSet<>();
    
     @Override
 	public void initialize() {
@@ -123,7 +122,7 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
         actionsMenu.add(broadcastMenu);
 	
         broadcastMenu.addActionListener( e -> broadcastToRoster() );
-	broadcastHistoryMenu.addActionListener(e -> {	new BroadcastHistoryFrame().run();   });
+	broadcastHistoryMenu.addActionListener(e -> new BroadcastHistoryFrame().run());
         // Register with action menu
         JMenuItem startConversationtMenu = new JMenuItem("", SparkRes.getImageIcon(SparkRes.SMALL_MESSAGE_IMAGE));
         ResourceUtils.resButton(startConversationtMenu, Res.getString("menuitem.start.a.chat"));
@@ -550,25 +549,21 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
         textPane.setBackground(new Color(0,0,0,0));
         textPane.setContentType("text/html");
         textPane.setText(mylink);
-        textPane.addHyperlinkListener(new HyperlinkListener() {
-            @Override
-            public void hyperlinkUpdate(HyperlinkEvent e) {
-               if(e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+
+        textPane.addHyperlinkListener(e -> {
+           if(e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+               try {
                    try {
-                       try {
-                           Log.error(e.getURL().toString());
-                           Desktop.getDesktop().browse(new URI(e.getURL().toString()));
-                       } catch (IOException ex) {
-                           Log.error(ex.getCause());
-                       }
-                   } catch (URISyntaxException ex) {
-                        Log.error(ex.getCause());
+                       Log.error(e.getURL().toString());
+                       Desktop.getDesktop().browse(new URI(e.getURL().toString()));
+                   } catch (IOException ex) {
+                       Log.error(ex.getCause());
                    }
-                
-                
-            }
-            }
-    });
+               } catch (URISyntaxException ex) {
+                    Log.error(ex.getCause());
+               }
+        }
+        });
         
 	alert.add(icon,new GridBagConstraints(0,0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0, 0));
 	alert.add(textPane, new GridBagConstraints(1,0, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5,5,5,5), 0, 0));

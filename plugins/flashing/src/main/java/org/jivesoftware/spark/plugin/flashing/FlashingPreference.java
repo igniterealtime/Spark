@@ -24,9 +24,10 @@ import org.jivesoftware.spark.preference.Preference;
 import org.jivesoftware.spark.util.log.Log;
 
 public class FlashingPreference implements Preference {
-	public static String NAMESPACE = "flashing";
+	public static final String NAMESPACE = "flashing";
+
 	private FlashingPreferenceDialog dialog;
-	private FlashingPreferences preferences;
+	private final FlashingPreferences preferences;
 
 	public FlashingPreference() {
 	   	preferences = new FlashingPreferences();

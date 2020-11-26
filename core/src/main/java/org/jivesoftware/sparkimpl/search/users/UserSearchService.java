@@ -131,9 +131,8 @@ public class UserSearchService implements Searchable {
      * Returns a collection of search services found on the server.
      *
      * @return a Collection of search services found on the server.
-     * @throws XMPPException thrown if a server error has occurred.
      */
-    private Collection<DomainBareJid> getServices() throws Exception {
+    private Collection<DomainBareJid> getServices() {
         final Set<DomainBareJid> searchServices = new HashSet<>();
         ServiceDiscoveryManager discoManager = ServiceDiscoveryManager.getInstanceFor(SparkManager.getConnection());
         DiscoverItems items = SparkManager.getSessionManager().getDiscoveredItems();

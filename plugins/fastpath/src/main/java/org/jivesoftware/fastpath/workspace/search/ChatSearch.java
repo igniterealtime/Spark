@@ -25,19 +25,11 @@ import java.awt.Insets;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 
-import javax.swing.BorderFactory;
-import javax.swing.DefaultListModel;
-import javax.swing.Icon;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JScrollPane;
+import javax.swing.*;
 
 import org.jivesoftware.fastpath.FastpathPlugin;
 import org.jivesoftware.fastpath.FpRes;
@@ -77,7 +69,7 @@ public class ChatSearch implements Searchable {
     }
 
     public void search(String query) {
-        final List<ChatSearchResult> results = new ArrayList<ChatSearchResult>();
+        final List<ChatSearchResult> results = new ArrayList<>();
         AgentSession agentSession = FastpathPlugin.getAgentSession();
         try {
             Form form = agentSession.getTranscriptSearchForm();
@@ -90,7 +82,7 @@ public class ChatSearch implements Searchable {
             List<String> workgroupStrings = JidUtil.toStringList(workgroups);
             filledForm.setAnswer("workgroups", workgroupStrings);
 
-            ReportedData reportedData = null;
+            ReportedData reportedData;
             try {
                 reportedData = agentSession.searchTranscripts(filledForm);
                 for ( final ReportedData.Row row : reportedData.getRows() ) {
@@ -103,14 +95,12 @@ public class ChatSearch implements Searchable {
             }
 
 
-            Collections.sort(results, dateComporator);
-            DefaultListModel model = new DefaultListModel();
-            final JList list = new JList(model);
+            results.sort(dateComparator);
+            DefaultListModel<SearchItem> model = new DefaultListModel<>();
+            final JList<SearchItem> list = new JList<>(model);
             list.setCellRenderer(new HistoryItemRenderer());
 
-            Iterator<ChatSearchResult> iter = results.iterator();
-            while (iter.hasNext()) {
-                ChatSearchResult result = iter.next();
+            for (ChatSearchResult result : results) {
                 String person = result.getUsername();
                 String question = result.getQuestion();
                 String sessionID = result.getSessionID();
@@ -124,7 +114,7 @@ public class ChatSearch implements Searchable {
             list.addMouseListener(new MouseAdapter() {
                 public void mouseClicked(MouseEvent e) {
                     if (e.getClickCount() == 2) {
-                        SearchItem item = (SearchItem)list.getSelectedValue();
+                        SearchItem item = list.getSelectedValue();
 
                         Transcript transcript = null;
                         try {
@@ -208,27 +198,11 @@ public class ChatSearch implements Searchable {
     /**
      * Sorts all SearchResults by Relevance.
      */
-    final Comparator dateComporator = new Comparator() {
-        public int compare(Object o1, Object o2) {
-            final ChatSearchResult item1 = (ChatSearchResult)o1;
-            final ChatSearchResult item2 = (ChatSearchResult)o2;
+    final Comparator<ChatSearchResult> dateComparator = (o1, o2) -> {
 
-            long int1 = item1.getStartDate().getTime();
-            long int2 = item2.getStartDate().getTime();
+        long int1 = o1.getStartDate().getTime();
+        long int2 = o2.getStartDate().getTime();
 
-            if (int1 == int2) {
-                return 0;
-            }
-
-            if (int1 > int2) {
-                return -1;
-            }
-
-            if (int1 < int2) {
-                return 1;
-            }
-
-            return 0;
-        }
+        return Long.compare(int2, int1);
     };
 }

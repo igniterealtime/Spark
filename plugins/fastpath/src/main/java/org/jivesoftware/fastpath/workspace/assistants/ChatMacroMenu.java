@@ -16,9 +16,6 @@
 package org.jivesoftware.fastpath.workspace.assistants;
 
 import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.JMenu;
@@ -118,46 +115,34 @@ public class ChatMacroMenu {
         popup.addSeparator();
         popup.add(editMacros);
 
-        editMacros.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                MacrosEditor editor = new MacrosEditor();
-                editor.showEditor(editMacros);
-            }
+        editMacros.addActionListener(e -> {
+            MacrosEditor editor = new MacrosEditor();
+            editor.showEditor(editMacros);
         });
 
 
     }
 
     private void addSubMenus(JMenu menu, List<MacroGroup> macroGroups) {
-        Iterator<MacroGroup> subFolders = macroGroups.iterator();
-        while (subFolders.hasNext()) {
-            MacroGroup folder = subFolders.next();
+        for (MacroGroup folder : macroGroups) {
             JMenu subMenu = new JMenu(folder.getTitle());
             menu.add(subMenu);
 
             addMenuItems(subMenu, folder.getMacros());
-
-
             addSubMenus(subMenu, folder.getMacroGroups());
-
         }
     }
 
     private void addMenuItems(JMenu menu, List<Macro> macros) {
-        Iterator<Macro> items = macros.iterator();
-        while (items.hasNext()) {
-            final Macro newItem = items.next();
+        for (Macro newItem : macros) {
             final JMenuItem item = new JMenuItem(newItem.getTitle());
             menu.add(item);
-            item.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    String text = newItem.getResponse() + " ";
-                    try {
-                        chatRoom.getChatInputEditor().insertText(text);
-                    }
-                    catch (BadLocationException e1) {
-                        Log.error("Error inserting macro", e1);
-                    }
+            item.addActionListener(e -> {
+                String text = newItem.getResponse() + " ";
+                try {
+                    chatRoom.getChatInputEditor().insertText(text);
+                } catch (BadLocationException e1) {
+                    Log.error("Error inserting macro", e1);
                 }
             });
         }

@@ -29,7 +29,7 @@ public final class AppleBounce {
 
     private boolean _flash;
     final Application _app;
-    private AppleProperties _props;
+    private final AppleProperties _props;
 
     @SuppressWarnings("deprecation")
     public AppleBounce(AppleProperties props) {

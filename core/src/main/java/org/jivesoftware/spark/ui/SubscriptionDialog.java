@@ -75,9 +75,9 @@ public class SubscriptionDialog {
 
     private final JTextField nicknameField = new JTextField();
 
-    private final JComboBox groupBox = new JComboBox();
+    private final JComboBox<String> groupBox = new JComboBox<>();
 
-    private JLabel usernameLabelValue = new JLabel();
+    private final JLabel usernameLabelValue = new JLabel();
 
     private JFrame dialog;
 

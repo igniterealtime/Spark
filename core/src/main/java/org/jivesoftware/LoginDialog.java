@@ -105,7 +105,7 @@ public class LoginDialog {
     private static final String BUTTON_PANEL = "buttonpanel"; // NOTRANS
     private static final String PROGRESS_BAR = "progressbar"; // NOTRANS
     private LocalPreferences localPref;
-    private ArrayList<String> _usernames = new ArrayList<>();
+    private final ArrayList<String> _usernames = new ArrayList<>();
     private String loginUsername;
     private String loginPassword;
     private String loginServer;
@@ -225,7 +225,7 @@ public class LoginDialog {
             String portString = loginServer.substring(checkForPort + 1);
             if (ModelUtil.hasLength(portString)) {
                 // Set new port.
-                port = Integer.valueOf(portString);
+                port = Integer.parseInt(portString);
             }
         }
 
@@ -399,13 +399,13 @@ public class LoginDialog {
         private final GridBagLayout GRIDBAGLAYOUT = new GridBagLayout();
         private AbstractXMPPConnection connection = null;
 
-        private JLabel headerLabel = new JLabel();
-        private JLabel accountLabel = new JLabel();
-        private JLabel accountNameLabel = new JLabel();
-        private JLabel serverNameLabel = new JLabel();
-        private JLabel ssoServerLabel = new JLabel();
+        private final JLabel headerLabel = new JLabel();
+        private final JLabel accountLabel = new JLabel();
+        private final JLabel accountNameLabel = new JLabel();
+        private final JLabel serverNameLabel = new JLabel();
+        private final JLabel ssoServerLabel = new JLabel();
 
-        private RolloverButton otherUsers = new RolloverButton(SparkRes.getImageIcon(SparkRes.PANE_UP_ARROW_IMAGE));
+        private final RolloverButton otherUsers = new RolloverButton(SparkRes.getImageIcon(SparkRes.PANE_UP_ARROW_IMAGE));
 
 
         LoginPanel() {
@@ -1256,7 +1256,7 @@ public class LoginDialog {
                 }
             } else {
                 try {
-                    localPref.clearPasswordForUser(getBareJid());
+                    localPref.clearPasswordForAllUsers();
                 } catch (Exception e) {
                     Log.debug("Unable to clear saved password..." + e);
                 }
@@ -1272,7 +1272,7 @@ public class LoginDialog {
         }
 
         @Override
-        public void handle(Callback[] callbacks) throws IOException {
+        public void handle(Callback[] callbacks) {
             for (Callback callback : callbacks) {
                 if (callback instanceof NameCallback) {
                     NameCallback ncb = (NameCallback) callback;
@@ -1363,9 +1363,8 @@ public class LoginDialog {
     /**
      * Updates System properties with Proxy configuration.
      *
-     * @throws Exception thrown if an exception occurs.
      */
-    private void updateProxyConfig() throws Exception {
+    private void updateProxyConfig() {
         if (ModelUtil.hasLength(Default.getString(Default.PROXY_PORT)) && ModelUtil.hasLength(Default.getString(Default.PROXY_HOST))) {
             String port = Default.getString(Default.PROXY_PORT);
             String host = Default.getString(Default.PROXY_HOST);

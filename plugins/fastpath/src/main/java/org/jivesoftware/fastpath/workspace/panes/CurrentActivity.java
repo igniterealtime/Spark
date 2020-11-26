@@ -77,8 +77,8 @@ import org.jxmpp.jid.util.JidUtil;
 public final class CurrentActivity extends JPanel {
 
 	private static final long serialVersionUID = 1L;
-	private DefaultListModel model = new DefaultListModel();
-    private JList list = new JList(model);
+	private final DefaultListModel<ConversationItem> model = new DefaultListModel<>();
+    private final JList<ConversationItem> list = new JList<>(model);
     private JFrame mainFrame;
     private JLabel activeConversations;
     private int counter = 0;
@@ -142,7 +142,7 @@ public final class CurrentActivity extends JPanel {
     public void addCurrentChats() {
         SwingWorker agentWorker = new SwingWorker() {
             AgentRoster agentRoster;
-            Collection agentSet;
+            Collection<EntityBareJid> agentSet;
 
             public Object construct() {
                 try
@@ -172,18 +172,11 @@ public final class CurrentActivity extends JPanel {
                         BareJid agentJID = presence.getFrom().asBareJid();
                         AgentStatus agentStatus = presence.getExtension("agent-status", "http://jabber.org/protocol/workgroup");
 
-                        String status = presence.getStatus();
-                        if (status == null) {
-                            status = "Available";
-                        }
-
                         if (agentStatus != null) {
                             List<ChatInfo> list = agentStatus.getCurrentChats();
 
                             // Add new ones.
-                            Iterator iter = list.iterator();
-                            while (iter.hasNext()) {
-                                AgentStatus.ChatInfo chatInfo = (AgentStatus.ChatInfo)iter.next();
+                            for (ChatInfo chatInfo : list) {
                                 Date startDate = chatInfo.getDate();
                                 String username = chatInfo.getUserID();
 
@@ -234,7 +227,7 @@ public final class CurrentActivity extends JPanel {
 
                     int location = list.locationToIndex(e.getPoint());
                     list.setSelectedIndex(location);
-                    ConversationItem item = (ConversationItem)list.getSelectedValue();
+                    ConversationItem item = list.getSelectedValue();
                     final String sessionID = item.getSessionID();
 
 
@@ -261,19 +254,19 @@ public final class CurrentActivity extends JPanel {
 
                                 if (muc.isJoined()) {
                                     // Try and remove myself as an owner if I am one.
-                                    Collection owners = null;
+                                    Collection<Affiliate> owners;
                                     try {
                                         owners = muc.getOwners();
                                     }
                                     catch (XMPPException | SmackException e1) {
                                         return;
                                     }
-                                    Iterator iter = owners.iterator();
+                                    Iterator<Affiliate> iter = owners.iterator();
 
                                     List<Jid> list = new ArrayList<>();
                                     while (iter.hasNext()) {
-                                        Affiliate affilitate = (Affiliate)iter.next();
-                                        Jid jid = affilitate.getJid();
+                                        Affiliate affiliate = iter.next();
+                                        Jid jid = affiliate.getJid();
                                         if (!jid.equals(SparkManager.getSessionManager().getUserBareAddress())) {
                                             list.add(jid);
                                         }

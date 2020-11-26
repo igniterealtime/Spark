@@ -20,8 +20,6 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -144,62 +142,60 @@ public class InvitationPane {
         });
 
 
-        acceptButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent actionEvent) {
-                SwingWorker waiter = new SwingWorker() {
-                    public Object construct() {
-                        try {
-                            Thread.sleep(50);
-                        }
-                        catch (InterruptedException e) {
-                            Log.error(e);
-                        }
-                        return true;
+        acceptButton.addActionListener(actionEvent -> {
+            SwingWorker waiter = new SwingWorker() {
+                public Object construct() {
+                    try {
+                        Thread.sleep(50);
                     }
+                    catch (InterruptedException e) {
+                        Log.error(e);
+                    }
+                    return true;
+                }
 
-                    public void finished() {
-                        String roomName = request.getUsername();
-                        chatRoom.getSplitPane().getRightComponent().setVisible(true);
-                        chatRoom.getBottomPanel().setVisible(true);
+                public void finished() {
+                    String roomName = request.getUsername();
+                    chatRoom.getSplitPane().getRightComponent().setVisible(true);
+                    chatRoom.getBottomPanel().setVisible(true);
 
-                        chatRoom.getScrollPaneForTranscriptWindow().setVisible(true);
+                    chatRoom.getScrollPaneForTranscriptWindow().setVisible(true);
+                    chatRoom.getEditorBar().setVisible(true);
+                    chatRoom.getChatInputEditor().setEnabled(true);
+                    chatRoom.getToolBar().setVisible(true);
+                    chatRoom.getVerticalSlipPane().setDividerLocation(0.8);
+                    chatRoom.getSplitPane().setDividerLocation(0.8);
+                    transcriptAlert.setVisible(false);
+
+                    String name = XmppStringUtils.parseLocalpart(roomName);
+
+                    try {
+                        chatRoom.setTabTitle(roomName);
+                        chatRoom.getConferenceRoomInfo().setNicknameChangeAllowed(false);
+
+                        chatRoom.getToolBar().setVisible(true);
                         chatRoom.getEditorBar().setVisible(true);
                         chatRoom.getChatInputEditor().setEnabled(true);
-                        chatRoom.getToolBar().setVisible(true);
-                        chatRoom.getVerticalSlipPane().setDividerLocation(0.8);
-                        chatRoom.getSplitPane().setDividerLocation(0.8);
-                        transcriptAlert.setVisible(false);
 
-                        String name = XmppStringUtils.parseLocalpart(roomName);
-
-                        try {
-                            chatRoom.setTabTitle(roomName);
-                            chatRoom.getConferenceRoomInfo().setNicknameChangeAllowed(false);
-
-                            chatRoom.getToolBar().setVisible(true);
-                            chatRoom.getEditorBar().setVisible(true);
-                            chatRoom.getChatInputEditor().setEnabled(true);
-
-                            ChatContainer chatContainer = SparkManager.getChatManager().getChatContainer();
-                            chatContainer.setChatRoomTitle(chatRoom, roomName);
-                            if (chatContainer.getActiveChatRoom() == chatRoom) {
-                                chatContainer.getChatFrame().setTitle(roomName);
-                            }
-
-                        }
-                        catch (Exception e) {
-                            Log.error(e);
+                        ChatContainer chatContainer = SparkManager.getChatManager().getChatContainer();
+                        chatContainer.setChatRoomTitle(chatRoom, roomName);
+                        if (chatContainer.getActiveChatRoom() == chatRoom) {
+                            chatContainer.getChatFrame().setTitle(roomName);
                         }
 
-                        ConferenceUtils.enterRoomOnSameThread(roomName, room, password);
-                        removeOwner(chatRoom.getMultiUserChat());
-
-                        FastpathPlugin.getLitWorkspace().checkForDecoration(chatRoom, request.getSessionID());
                     }
-                };
+                    catch (Exception e) {
+                        Log.error(e);
+                    }
 
-                waiter.start();
-            }
+                    ConferenceUtils.enterRoomOnSameThread(roomName, room, password);
+                    removeOwner(chatRoom.getMultiUserChat());
+
+                    FastpathPlugin.getLitWorkspace().checkForDecoration(chatRoom, request.getSessionID());
+                }
+            };
+
+            waiter.start();
         });
 
         // Add to Chat window
@@ -226,20 +222,18 @@ public class InvitationPane {
 
         FastpathPlugin.getLitWorkspace().addFastpathChatRoom(chatRoom, RoomState.invitationRequest);
 
-        rejectButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent actionEvent) {
-                // Add to Chat window
-                ChatManager chatManager = SparkManager.getChatManager();
-                chatManager.removeChat(chatRoom);
+        rejectButton.addActionListener(actionEvent -> {
+            // Add to Chat window
+            ChatManager chatManager1 = SparkManager.getChatManager();
+            chatManager1.removeChat(chatRoom);
 
-                try
-                {
-                    MultiUserChatManager.getInstanceFor( SparkManager.getConnection() ).decline( room, inviter, "No thank you" );
-                }
-                catch ( SmackException.NotConnectedException | InterruptedException e )
-                {
-                    Log.warning( "Unable to deline invatation from " + inviter + " to join room " + room, e );
-                }
+            try
+            {
+                MultiUserChatManager.getInstanceFor( SparkManager.getConnection() ).decline( room, inviter, "No thank you" );
+            }
+            catch ( SmackException.NotConnectedException | InterruptedException e )
+            {
+                Log.warning( "Unable to deline invatation from " + inviter + " to join room " + room, e );
             }
         });
 
@@ -253,7 +247,7 @@ public class InvitationPane {
     private void removeOwner(MultiUserChat muc) {
         if (muc.isJoined()) {
             // Try and remove myself as an owner if I am one.
-            Collection owners = null;
+            Collection<Affiliate> owners;
             try {
                 owners = muc.getOwners();
             }
@@ -265,12 +259,12 @@ public class InvitationPane {
                 return;
             }
 
-            Iterator iter = owners.iterator();
+            Iterator<Affiliate> iter = owners.iterator();
 
             List<Jid> list = new ArrayList<>();
             while (iter.hasNext()) {
-                Affiliate affilitate = (Affiliate)iter.next();
-                Jid jid = affilitate.getJid();
+                Affiliate affiliate = iter.next();
+                Jid jid = affiliate.getJid();
                 if (!jid.equals(SparkManager.getSessionManager().getUserBareAddress())) {
                     list.add(jid);
                 }

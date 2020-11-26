@@ -46,18 +46,18 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
      */
     public static final Cursor DEFAULT_CURSOR = new Cursor(Cursor.DEFAULT_CURSOR);
 
-    private List<ContextMenuListener> contextMenuListeners = new ArrayList<>();
+    private final List<ContextMenuListener> contextMenuListeners = new ArrayList<>();
 
     private JPopupMenu popup;
 
-    private JMenuItem cutMenu;
-    private JMenuItem copyMenu;
-    private JMenuItem pasteMenu;
-    private JMenuItem selectAll;
+    private final JMenuItem cutMenu;
+    private final JMenuItem copyMenu;
+    private final JMenuItem pasteMenu;
+    private final JMenuItem selectAll;
 
-    private List<LinkInterceptor> interceptors = new ArrayList<>();
+    private final List<LinkInterceptor> interceptors = new ArrayList<>();
 
-    protected EmoticonManager emoticonManager;
+    protected final EmoticonManager emoticonManager;
 
     protected Boolean forceEmoticons = false;
     

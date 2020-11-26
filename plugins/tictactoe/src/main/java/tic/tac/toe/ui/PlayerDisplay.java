@@ -42,7 +42,7 @@ public class PlayerDisplay extends JPanel {
 
     private static final long serialVersionUID = -8025502708415186558L;
 
-    private JLabel _currentplayer;
+    private final JLabel _currentplayer;
     private Mark _currentMark;
 
     public PlayerDisplay(Mark myself, EntityFullJid opponent) {

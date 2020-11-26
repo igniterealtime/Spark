@@ -40,9 +40,8 @@ import org.jivesoftware.spark.util.ModelUtil;
  */
 public class ReconnectPanel extends JPanel implements ConnectionListener, ReconnectionListener {
 	private static final long serialVersionUID = -7099075581561760774L;
-	private JEditorPane pane;
-    private JLabel _icon;
-    private boolean closedOnError;
+	private final JEditorPane pane;
+    private final JLabel _icon;
 
     /**
      * Construct the RetryPanel.
@@ -112,11 +111,6 @@ public class ReconnectPanel extends JPanel implements ConnectionListener, Reconn
     public void showConflict() {
         _icon.setVisible(false);
     }
-
-    public void setClosedOnError(boolean onError) {
-        closedOnError = onError;
-    }
-
 
     @Override
     public void connected( XMPPConnection xmppConnection )

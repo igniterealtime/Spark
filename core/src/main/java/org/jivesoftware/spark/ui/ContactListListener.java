@@ -35,6 +35,7 @@ public interface ContactListListener {
      *
      * @param item the ContactItem removed.
      */
+    @SuppressWarnings("EmptyMethod")
     void contactItemRemoved(ContactItem item);
 
     /**
@@ -42,6 +43,7 @@ public interface ContactListListener {
      *
      * @param group the ContactGroup.
      */
+    @SuppressWarnings("EmptyMethod")
     void contactGroupAdded(ContactGroup group);
 
     /**
@@ -49,6 +51,7 @@ public interface ContactListListener {
      *
      * @param group the ContactGroup.
      */
+    @SuppressWarnings("EmptyMethod")
     void contactGroupRemoved(ContactGroup group);
 
     /**

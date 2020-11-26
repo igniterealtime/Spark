@@ -52,9 +52,9 @@ public class UriManager {
 	roster("roster"),
 	remove("remove");
 
-	private String _xml;
+	private final String _xml;
 
-	private uritypes(String s) {
+	uritypes(String s) {
 	    _xml = s;
 	}
 	public String getXML() {
@@ -101,10 +101,8 @@ public class UriManager {
      * 
      * @param uri
      *            the decoded uri
-     * @throws Exception
-     *             thrown if the conference cannot be joined.
      */
-    public void handleConference(URI uri) throws Exception {
+    public void handleConference(URI uri) {
 	Jid jid = retrieveJID(uri);
 	ConferenceUtils.joinConferenceOnSeperateThread(jid, jid.asEntityBareJidOrThrow(), null);
     }
@@ -159,57 +157,53 @@ public class UriManager {
      * @throws Exception
      */
     public void handleRoster(URI uri) throws Exception {
-	// xmpp:romeo@montague.net?roster
-	// xmpp:romeo@montague.net?roster;name=Romeo%20Montague
-	// xmpp:romeo@montague.net?roster;group=Friends
-	// xmpp:romeo@montague.net?roster;name=Romeo%20Montague;group=Friends
-    BareJid jid;
-    try {
-        jid = JidCreate.bareFrom(retrieveJID(uri));
-    } catch (XmppStringprepException e) {
-        throw new IllegalStateException(e);
-    }
+        // xmpp:romeo@montague.net?roster
+        // xmpp:romeo@montague.net?roster;name=Romeo%20Montague
+        // xmpp:romeo@montague.net?roster;group=Friends
+        // xmpp:romeo@montague.net?roster;name=Romeo%20Montague;group=Friends
+        BareJid jid;
+        try {
+            jid = JidCreate.bareFrom(retrieveJID(uri));
+        } catch (XmppStringprepException e) {
+            throw new IllegalStateException(e);
+        }
 
-	String name = "";
-	String query = uri.getQuery();
-	if (query.contains("name=")) {
-	    StringBuilder buf = new StringBuilder();
-	    int x = query.indexOf("name=") + 5;
-	    while (x < query.length() && query.charAt(x) != ';') {
-		buf.append(query.charAt(x));
-		x++;
-	    }
-	}
-	String group = "";
-	if (query.contains("group=")) {
-	    StringBuilder buf = new StringBuilder();
-	    int x = query.indexOf("group=") + 6;
-	    while (x < query.length() && query.charAt(x) != ';') {
-		buf.append(query.charAt(x));
-		x++;
-	    }
-	}
+        String name = "";
+        String query = uri.getQuery();
+        if (query.contains("name=")) {
+            StringBuilder buf = new StringBuilder();
+            int x = query.indexOf("name=") + 5;
+            while (x < query.length() && query.charAt(x) != ';') {
+                buf.append(query.charAt(x));
+                x++;
+            }
+        }
+        String group = "";
+        if (query.contains("group=")) {
+            StringBuilder buf = new StringBuilder();
+            int x = query.indexOf("group=") + 6;
+            while (x < query.length() && query.charAt(x) != ';') {
+                buf.append(query.charAt(x));
+                x++;
+            }
+        }
 
-	Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
-	RosterEntry userEntry = roster.getEntry(jid);
+        Roster roster = Roster.getInstanceFor(SparkManager.getConnection());
+        RosterEntry userEntry = roster.getEntry(jid);
 
-	roster.createEntry(jid, name, new String[] { group });
+        roster.createEntry(jid, name, new String[]{group});
 
-	RosterGroup rosterGroup = roster.getGroup(group);
-	if (rosterGroup == null) {
-	    rosterGroup = roster.createGroup(group);
-	}
+        RosterGroup rosterGroup = roster.getGroup(group);
+        if (rosterGroup == null) {
+            rosterGroup = roster.createGroup(group);
+        }
 
-	if (userEntry == null) {
-	    roster.createEntry(jid, name, new String[] { group });
-	    userEntry = roster.getEntry(jid);
-	} else {
-	    userEntry.setName(name);
-	    rosterGroup.addEntry(userEntry);
-	}
-
-	userEntry = roster.getEntry(jid);
-
+        if (userEntry == null) {
+            roster.createEntry(jid, name, new String[]{group});
+        } else {
+            userEntry.setName(name);
+            rosterGroup.addEntry(userEntry);
+        }
     }
 
     /**

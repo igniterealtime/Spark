@@ -24,12 +24,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
+import java.util.*;
 import java.util.List;
-import java.util.Set;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -71,15 +67,15 @@ import org.jxmpp.jid.impl.JidCreate;
 public class BroadcastDialog extends JPanel {
 
     private static final long serialVersionUID = -8998994627855985137L;
-    private ChatInputEditor messageBox;
-    private JCheckBox OfflineUsers = new JCheckBox(Res.getString("checkbox.broadcast.hide.offline.user"));
-    private JRadioButton normalMessageButton;
+    private final ChatInputEditor messageBox;
+    private final JCheckBox OfflineUsers = new JCheckBox(Res.getString("checkbox.broadcast.hide.offline.user"));
+    private final JRadioButton normalMessageButton;
     
-    private ArrayList<ArrayList<Object>> NodesGroups = new ArrayList<>();
-    private List<CheckNode> nodes = new ArrayList<>();
-    private List<CheckNode> groupNodes = new ArrayList<>();
-    private CheckNode rosterNode; 
-    private CheckTree checkTree; 
+    private final ArrayList<ArrayList<Object>> NodesGroups = new ArrayList<>();
+    private final List<CheckNode> nodes = new ArrayList<>();
+    private final List<CheckNode> groupNodes = new ArrayList<>();
+    private final CheckNode rosterNode;
+    private final CheckTree checkTree;
     private Integer OfflineGroup;
     
     public BroadcastDialog() {
@@ -128,7 +124,7 @@ public class BroadcastDialog extends JPanel {
             }
 
             final List<ContactItem> offlineContacts = new ArrayList<>( group.getOfflineContacts() );
-            Collections.sort(offlineContacts, ContactList.ContactItemComparator);
+            offlineContacts.sort(ContactList.ContactItemComparator);
 
             for (ContactItem item : offlineContacts) {
                 CheckNode itemNode = new CheckNode(item.getDisplayName(), false, item.getIcon());
@@ -396,7 +392,7 @@ Log.warning( "Unable to broadcast.", e1 );
         try {
             addDataToFile(out);
         } catch (IOException ex) {
-            Log.error("Couldn't add data to file"+ex.getStackTrace());
+            Log.error("Couldn't add data to file"+ Arrays.toString(ex.getStackTrace()));
         }
         
        

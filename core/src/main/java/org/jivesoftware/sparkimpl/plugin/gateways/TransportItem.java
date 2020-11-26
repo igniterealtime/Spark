@@ -31,14 +31,14 @@ import javax.swing.JPanel;
  */
 public class TransportItem extends JPanel {
 	private static final long serialVersionUID = 6321253573105576262L;
-	private JLabel iconLabel;
-    private JLabel titleLabel;
-    private JLabel descriptionLabel;
-    private JLabel activeLabel;
+	private final JLabel iconLabel;
+    private final JLabel titleLabel;
+    private final JLabel descriptionLabel;
+    private final JLabel activeLabel;
 
     private String transportAddress;
 
-    private Transport transport;
+    private final Transport transport;
 
     public TransportItem(Transport transport, boolean active, String address) {
         setLayout(new GridBagLayout());

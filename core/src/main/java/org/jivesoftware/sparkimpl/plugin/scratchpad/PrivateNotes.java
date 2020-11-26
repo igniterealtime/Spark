@@ -103,8 +103,7 @@ public class PrivateNotes implements PrivateData {
      * @author Derek DeMoro
      */
     public static class Provider implements PrivateDataProvider {
-
-        PrivateNotes notes = new PrivateNotes();
+        private final PrivateNotes notes = new PrivateNotes();
 
         /**
          * Empty Constructor for PrivateDataProvider.

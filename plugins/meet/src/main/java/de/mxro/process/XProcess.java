@@ -14,11 +14,11 @@ public interface XProcess {
 	 * 
 	 * @param line
 	 */
-	public void sendLine(String line);
+    void sendLine(String line);
 
 	/**
 	 * Try to destroy the process
 	 */
-	public void destory();
+    void destory();
 
 }

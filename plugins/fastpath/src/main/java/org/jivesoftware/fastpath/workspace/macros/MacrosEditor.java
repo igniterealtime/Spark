@@ -21,8 +21,6 @@ import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.List;
 import java.util.Properties;
 
@@ -55,12 +53,12 @@ import org.jivesoftware.spark.util.log.Log;
 public class MacrosEditor extends JPanel {
 
 	private static final long serialVersionUID = 1L;
-	private JLabel initialResponseLabel = new JLabel();
-    private JTextArea initialResponseField = new JTextArea();
-    private RolloverButton newButton = new RolloverButton(FastpathRes.getImageIcon(FastpathRes.SMALL_ADD_IMAGE));
-    private RolloverButton deleteButton = new RolloverButton(FastpathRes.getImageIcon(FastpathRes.SMALL_DELETE));
-    private JButton saveButton = new JButton();
-    private MacroTable table;
+	private final JLabel initialResponseLabel = new JLabel();
+    private final JTextArea initialResponseField = new JTextArea();
+    private final RolloverButton newButton = new RolloverButton(FastpathRes.getImageIcon(FastpathRes.SMALL_ADD_IMAGE));
+    private final RolloverButton deleteButton = new RolloverButton(FastpathRes.getImageIcon(FastpathRes.SMALL_DELETE));
+    private final JButton saveButton = new JButton();
+    private final MacroTable table;
     private MacroGroup personalGroup = null;
     private JDialog dialog;
 
@@ -90,24 +88,9 @@ public class MacrosEditor extends JPanel {
         // add table
         add(pane, new GridBagConstraints(0, 3, 1, 1, 1.0, 0.5, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
 
-
-        newButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent actionEvent) {
-                createNewResponse();
-            }
-        });
-
-        saveButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent actionEvent) {
-                save();
-            }
-        });
-
-        deleteButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent actionEvent) {
-                deleteRow();
-            }
-        });
+        newButton.addActionListener(actionEvent -> createNewResponse());
+        saveButton.addActionListener(actionEvent -> save());
+        deleteButton.addActionListener(actionEvent -> deleteRow());
     }
 
     public void showEditor(Component parent) {

@@ -33,9 +33,9 @@ import java.awt.Component;
 public class PluginRenderer extends JLabel implements TableCellRenderer {
 
     private static final long serialVersionUID = -4013718080014723319L;
-    Border unselectedBorder;
-    Border selectedBorder;
-    boolean isBordered = true;
+    private Border unselectedBorder;
+    private Border selectedBorder;
+    private final boolean isBordered = true;
 
     /**
      * PluginRenderer
@@ -57,9 +57,6 @@ public class PluginRenderer extends JLabel implements TableCellRenderer {
         else {
             setForeground(Color.black);
             setBackground(Color.white);
-            if (row % 2 == 0) {
-                //setBackground( new Color( 156, 207, 255 ) );
-            }
         }
 
         if (isBordered) {

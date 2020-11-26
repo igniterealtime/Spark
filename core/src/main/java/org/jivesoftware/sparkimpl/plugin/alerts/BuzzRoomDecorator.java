@@ -45,8 +45,8 @@ import org.jxmpp.stringprep.XmppStringprepException;
  */
 public class BuzzRoomDecorator implements ActionListener {
 
-    private ChatRoom chatRoom;
-    private JButton buzzButton;
+    private final ChatRoom chatRoom;
+    private final JButton buzzButton;
 
 
     public BuzzRoomDecorator(ChatRoom chatRoom) {

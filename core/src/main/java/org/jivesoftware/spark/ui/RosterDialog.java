@@ -88,18 +88,18 @@ import org.jxmpp.util.XmppStringUtils;
  * The RosterDialog is used to add new users to the users XMPP Roster.
  */
 public class RosterDialog implements ActionListener {
-    private JPanel panel;
-    private JTextField jidField;
-    private JTextField nicknameField;
+    private final JPanel panel;
+    private final JTextField jidField;
+    private final JTextField nicknameField;
     private final Vector<String> groupModel = new Vector<>();
 
-    private JComboBox groupBox;
-    private JComboBox accounts;
+    private final JComboBox<String> groupBox;
+    private final JComboBox<AccountItem> accounts;
     private JDialog dialog;
-    private ContactList contactList;
-    private JCheckBox publicBox;
-    private JButton _searchForName ;
-    private Collection<DomainBareJid> _usersearchservice;
+    private final ContactList contactList;
+    private final JCheckBox publicBox;
+    private final JButton _searchForName ;
+    private final Collection<DomainBareJid> _usersearchservice;
 
     /**
      * Create a new instance of RosterDialog.
@@ -115,12 +115,12 @@ public class RosterDialog implements ActionListener {
         JLabel nicknameLabel = new JLabel();
         nicknameField = new JTextField();
         JLabel groupLabel = new JLabel();
-        groupBox = new JComboBox(groupModel);
+        groupBox = new JComboBox<>(groupModel);
 
         JButton newGroupButton = new JButton();
 
         JLabel accountsLabel = new JLabel();
-        accounts = new JComboBox();
+        accounts = new JComboBox<>();
         publicBox = new JCheckBox(Res.getString("label.user.on.public.network"));
 
         ResourceUtils.resLabel(accountsLabel, publicBox, Res.getString("label.network"));
@@ -307,7 +307,7 @@ public class RosterDialog implements ActionListener {
 
     @Override
 	public void actionPerformed(ActionEvent e) {
-        String group = JOptionPane.showInputDialog(dialog, Res.getString("label.enter.group.name") + ":", Res.getString("title.new.roster.group"), 3);
+        String group = JOptionPane.showInputDialog(dialog, Res.getString("label.enter.group.name") + ":", Res.getString("title.new.roster.group"), JOptionPane.QUESTION_MESSAGE);
         if (group != null && group.length() > 0 && !groupModel.contains(group)) {
             Roster.getInstanceFor( SparkManager.getConnection() ).createGroup(group);
             groupModel.add(group);
@@ -660,33 +660,30 @@ public class RosterDialog implements ActionListener {
 	    nicknameField.setText(nickname);
 	}
 
-	ContactGroup contactGroup = contactList.getContactGroup(group);
-	boolean isSharedGroup = contactGroup != null
-		&& contactGroup.isSharedGroup();
+        ContactGroup contactGroup = contactList.getContactGroup(group);
+        boolean isSharedGroup = contactGroup != null && contactGroup.isSharedGroup();
 
-	if (isSharedGroup) {
-	    errorMessage = Res
-		    .getString("message.cannot.add.contact.to.shared.group");
-	} else if (!ModelUtil.hasLength(contact)) {
-	    errorMessage = Res.getString("message.specify.contact.jid");
-	} else if (!XmppStringUtils.parseBareJid(contact).contains("@")) {
-	    errorMessage = Res.getString("message.invalid.jid.error");
-	} else if (!ModelUtil.hasLength(group)) {
-	    errorMessage = Res.getString("message.specify.group");
-	} else if (ModelUtil.hasLength(contact) && ModelUtil.hasLength(group)
-		&& !isSharedGroup) {
-	    addEntry();
-	    dialog.setVisible(false);
-    } else {
+        if (isSharedGroup) {
+            errorMessage = Res.getString("message.cannot.add.contact.to.shared.group");
+        } else if (!ModelUtil.hasLength(contact)) {
+            errorMessage = Res.getString("message.specify.contact.jid");
+        } else if (!XmppStringUtils.parseBareJid(contact).contains("@")) {
+            errorMessage = Res.getString("message.invalid.jid.error");
+        } else if (!ModelUtil.hasLength(group)) {
+            errorMessage = Res.getString("message.specify.group");
+        }
 
-	    JOptionPane.showMessageDialog(dialog, errorMessage,
-		    Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
-	}
+        if (ModelUtil.hasLength(contact) && ModelUtil.hasLength(group) && !isSharedGroup) {
+            addEntry();
+            dialog.setVisible(false);
+        } else {
+            JOptionPane.showMessageDialog(dialog, errorMessage,Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     static class AccountItem extends JPanel {
 		private static final long serialVersionUID = -7657731912529801653L;
-		private Transport transport;
+		private final Transport transport;
 
         public AccountItem(Icon icon, String name, Transport transport) {
             setLayout(new GridBagLayout());

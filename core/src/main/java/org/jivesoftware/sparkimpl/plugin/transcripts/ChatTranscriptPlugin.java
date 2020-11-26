@@ -21,7 +21,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.text.SimpleDateFormat;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -68,7 +67,7 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
 
     private final SimpleDateFormat notificationDateFormatter;
     private final SimpleDateFormat messageDateFormatter;
-    private HashMap<EntityBareJid, Message> lastMessage = new HashMap<>();
+    private final HashMap<EntityBareJid, Message> lastMessage = new HashMap<>();
     private JDialog Frame;
     private HistoryTranscript transcript = null;
     /**
@@ -272,10 +271,6 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
 
     }
 
-    public void uninstall() {
-        // Do nothing.
-    }
-
     private void showStatusMessage(ContactItem item)
     {
    	 Frame = new JDialog();
@@ -304,27 +299,7 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
    	 Frame.setVisible(true);
     }
 
-
-    /**
-     * Sort HistoryMessages by date.
-     */
-    final Comparator<HistoryMessage> dateComparator = ( messageOne, messageTwo ) -> {
-
-        long time1 = messageOne.getDate().getTime();
-        long time2 = messageTwo.getDate().getTime();
-
-        if (time1 < time2) {
-            return 1;
-        }
-        else if (time1 > time2) {
-            return -1;
-        }
-        return 0;
-
-    };
-
     private class ChatRoomDecorator implements ActionListener, ChatRoomClosingListener {
-
         private ChatRoom chatRoom;
         private ChatRoomButton chatHistoryButton;
         private final LocalPreferences localPreferences;

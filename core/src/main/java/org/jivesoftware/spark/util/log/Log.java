@@ -30,8 +30,8 @@ import java.util.logging.SimpleFormatter;
  * error handling within the Agent application.
  */
 public class Log {
-	private java.util.logging.Logger ERROR_LOGGER;
-	private Logger WARNING_LOGGER;
+	private final java.util.logging.Logger ERROR_LOGGER;
+	private final Logger WARNING_LOGGER;
 
 	private volatile static Log singleton = null;
 

@@ -23,7 +23,6 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.DefaultListModel;
@@ -47,9 +46,8 @@ import org.jxmpp.jid.EntityBareJid;
 
 public class UserHistory extends JPanel {
 	private static final long serialVersionUID = -1067239194964815379L;
-	private DefaultListModel model = new DefaultListModel();
-    private JFrame userFrame;
-    private JList list;
+	private final DefaultListModel<UserHistoryItem> model = new DefaultListModel<>();
+    private final JList<UserHistoryItem> list;
     private final EntityBareJid userID;
 
     private JFrame frame;
@@ -57,7 +55,7 @@ public class UserHistory extends JPanel {
     public UserHistory(EntityBareJid userID) {
         this.userID = userID;
 
-        list = new JList(model);
+        list = new JList<>(model);
         list.setCellRenderer(new HistoryItemRenderer());
 
         final JPanel mainPanel = new JPanel();
@@ -71,7 +69,7 @@ public class UserHistory extends JPanel {
         list.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2) {
-                    UserHistoryItem historyItem = (UserHistoryItem)list.getSelectedValue();
+                    UserHistoryItem historyItem = list.getSelectedValue();
                     showTranscript(historyItem.getSessionID());
                 }
             }
@@ -83,7 +81,7 @@ public class UserHistory extends JPanel {
     public void loadHistory() {
 
         SwingWorker transcriptThread = new SwingWorker() {
-            final List<TranscriptSummary> transcriptList = new ArrayList<TranscriptSummary>();
+            final List<TranscriptSummary> transcriptList = new ArrayList<>();
 
             public Object construct() {
                 try {
@@ -108,11 +106,7 @@ public class UserHistory extends JPanel {
 
     public void init(Collection<Transcripts.TranscriptSummary> transcriptList) {
         model.removeAllElements();
-        Iterator<Transcripts.TranscriptSummary> iter = transcriptList.iterator();
-        while (iter.hasNext()) {
-            Transcripts.TranscriptSummary summary = iter.next();
-
-
+        for (TranscriptSummary summary : transcriptList) {
             UserHistoryItem item = new UserHistoryItem(summary.getAgentDetails(), summary.getJoinTime(), summary.getLeftTime());
             item.setSessionID(summary.getSessionID());
             model.addElement(item);

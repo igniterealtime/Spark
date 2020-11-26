@@ -37,7 +37,7 @@ import javax.swing.tree.TreeSelectionModel;
  */
 public class CheckTree extends JPanel {
     private static final long serialVersionUID = 8452107824029515678L;
-    private JTree tree;
+    private final JTree tree;
 
     /**
      * Constructs a new CheckBox tree.
@@ -59,7 +59,7 @@ public class CheckTree extends JPanel {
 
 
     static class NodeSelectionListener extends MouseAdapter {
-        JTree tree;
+        private final JTree tree;
 
         NodeSelectionListener(JTree tree) {
             this.tree = tree;
@@ -75,34 +75,17 @@ public class CheckTree extends JPanel {
                 CheckNode node = (CheckNode)path.getLastPathComponent();
                 boolean isSelected = !node.isSelected();
                 node.setSelected(isSelected);
-                if (node.getSelectionMode() == CheckNode.DIG_IN_SELECTION) {
-                    if (isSelected) {
-                        //tree.expandPath(path);
-                    }
-                    else {
-                        //tree.collapsePath(path);
-                    }
-                }
                 ((DefaultTreeModel)tree.getModel()).nodeChanged(node);
                 // I need revalidate if node is root.  but why?
-
                 tree.revalidate();
                 tree.repaint();
-
             }
         }
     }
 
-    /**
-     * Closes the CheckTree.
-     */
-    public void close() {
-    }
-
-
     static class ButtonActionListener implements ActionListener {
-        CheckNode root;
-        JTextArea textArea;
+        private final CheckNode root;
+        private final JTextArea textArea;
 
         ButtonActionListener(CheckNode root, JTextArea textArea) {
             this.root = root;

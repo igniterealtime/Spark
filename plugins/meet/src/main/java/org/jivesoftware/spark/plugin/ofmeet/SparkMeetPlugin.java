@@ -18,7 +18,6 @@
 package org.jivesoftware.spark.plugin.ofmeet;
 
 import java.awt.*;
-import java.awt.event.*;
 import javax.swing.*;
 import java.util.*;
 import java.util.zip.*;
@@ -44,8 +43,8 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
     private org.jivesoftware.spark.ChatManager chatManager;
     private String url = null;
 
-    private static File pluginsettings = new File(System.getProperty("user.home") + System.getProperty("file.separator") + "Spark" + System.getProperty("file.separator") + "ofmeet.properties");
-    private Map<String, ChatRoomDecorator> decorators = new HashMap<String, ChatRoomDecorator>();
+    private static final File pluginsettings = new File(System.getProperty("user.home") + System.getProperty("file.separator") + "Spark" + System.getProperty("file.separator") + "ofmeet.properties");
+    private final Map<String, ChatRoomDecorator> decorators = new HashMap<>();
     private String electronExePath = null;
     private String electronHomePath = null;
     private XProcess electronThread = null;
@@ -145,33 +144,25 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
         final JButton acceptButton = new JButton("Accept");
         final JButton declineButton = new JButton("Decline");
 
-        acceptButton.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent e)
-            {
-                // Hide the response panel. TODO: make this work.
-                room.getTranscriptWindow().remove(inviteAlert);
-                inviteAlert.remove(1);
-                inviteAlert.add(new JLabel("Meeting at " + meetUrl), BorderLayout.CENTER);
-                declineButton.setEnabled(false);
-                acceptButton.setEnabled(false);
+        acceptButton.addActionListener(e -> {
+            // Hide the response panel. TODO: make this work.
+            room.getTranscriptWindow().remove(inviteAlert);
+            inviteAlert.remove(1);
+            inviteAlert.add(new JLabel("Meeting at " + meetUrl), BorderLayout.CENTER);
+            declineButton.setEnabled(false);
+            acceptButton.setEnabled(false);
 
-                openURL(meetUrl);
-            }
+            openURL(meetUrl);
         });
         buttonPanel.add(acceptButton);
 
         // The decline button. When clicked, reject the meet offer.
 
-        declineButton.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent e)
-            {
-                // Hide the response panel. TODO: make this work.
-                room.getTranscriptWindow().remove(inviteAlert);
-                declineButton.setVisible(false);
-                acceptButton.setVisible(false);
-            }
+        declineButton.addActionListener(e -> {
+            // Hide the response panel. TODO: make this work.
+            room.getTranscriptWindow().remove(inviteAlert);
+            declineButton.setVisible(false);
+            acceptButton.setVisible(false);
         });
         buttonPanel.add(declineButton);
         content.add(buttonPanel, BorderLayout.SOUTH);
@@ -265,7 +256,6 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
         {
             ChatRoomDecorator decorator = decorators.remove(roomId);
             decorator.finished();
-            decorator = null;
         }
 
         if (electronThread != null)
@@ -410,7 +400,7 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
     {
         BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(filePath));
         byte[] bytesIn = new byte[4096];
-        int read = 0;
+        int read;
 
         while ((read = zipIn.read(bytesIn)) != -1)
         {

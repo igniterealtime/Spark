@@ -46,15 +46,15 @@ import java.awt.image.BufferedImage;
 
 public class NotificationAlertUI extends JPanel {
     private static final long serialVersionUID = 3359608942567718697L;
-    private JLabel avatarLabel = new JLabel();
-    private JLabel titleLabel = new JLabel();
-    private JLabel emailAddressLabel = new JLabel();
-    private JLabel professionLabel = new JLabel();
+    private final JLabel avatarLabel = new JLabel();
+    private final JLabel titleLabel = new JLabel();
+    private final JLabel emailAddressLabel = new JLabel();
+    private final JLabel professionLabel = new JLabel();
 
-    private VCard vcard;
-    private BareJid jid;
+    private final VCard vcard;
+    private final BareJid jid;
 
-    private boolean available;
+    private final boolean available;
 
     final JLabel topLabel = new JLabel();
     
@@ -201,7 +201,7 @@ public class NotificationAlertUI extends JPanel {
                                 
                                 int w = avatarIcon.getIconWidth();
                                 int h = avatarIcon.getIconHeight();
-                                Double ratio = (double)w / (double)h;
+                                double ratio = (double)w / (double)h;
                                 if ( w > 120 || h > 120)
                                 {
                                 	if ( w > h)

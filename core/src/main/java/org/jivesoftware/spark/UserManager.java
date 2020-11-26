@@ -63,7 +63,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -76,7 +75,7 @@ import java.util.TimerTask;
  */
 public class UserManager {
 
-    private Map<JFrame,Component> parents = new HashMap<>();
+    private final Map<JFrame,Component> parents = new HashMap<>();
 
     public UserManager() {
     }
@@ -403,7 +402,7 @@ public class UserManager {
         }
 
         // Sort
-        Collections.sort(contacts, itemComparator);
+        contacts.sort(itemComparator);
 
         final JContactItemField contactField = new JContactItemField( new ArrayList<>( contacts ));
 
@@ -519,7 +518,7 @@ public class UserManager {
     /**
      * Sorts ContactItems.
      */
-    final Comparator<ContactItem> itemComparator = ( item1, item2 ) -> item1.getDisplayName().toLowerCase().compareTo(item2.getDisplayName().toLowerCase());
+    final Comparator<ContactItem> itemComparator = Comparator.comparing(item -> item.getDisplayName().toLowerCase());
 
 }
 

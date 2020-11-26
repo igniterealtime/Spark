@@ -572,7 +572,6 @@ public class GroupChatRoom extends ChatRoom
     @Override
     public void processStanza( final Stanza stanza )
     {
-        super.processPacket( stanza );
         if ( stanza instanceof Presence )
         {
             SwingUtilities.invokeLater( () -> handlePresencePacket( stanza ) );

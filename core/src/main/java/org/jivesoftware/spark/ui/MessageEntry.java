@@ -265,7 +265,7 @@ public class MessageEntry extends TimeStampedEntry
      */
     static class Block
     {
-        java.util.Deque<String> lines = new ArrayDeque<>();
+        final java.util.Deque<String> lines = new ArrayDeque<>();
 
         Block( String line )
         {

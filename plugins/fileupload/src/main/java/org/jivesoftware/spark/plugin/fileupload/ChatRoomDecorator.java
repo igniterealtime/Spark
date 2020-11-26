@@ -19,8 +19,6 @@ package org.jivesoftware.spark.plugin.fileupload;
 import java.io.*;
 import java.net.*;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.*;
 import javax.swing.*;
 
@@ -29,7 +27,6 @@ import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.util.*;
 import org.jivesoftware.spark.util.log.*;
-import org.jivesoftware.smack.*;
 import org.jivesoftware.smack.packet.*;
 import org.jxmpp.jid.EntityBareJid;
 
@@ -47,8 +44,7 @@ import sun.misc.BASE64Decoder;
 public class ChatRoomDecorator
 {
     public RolloverButton fileuploadButton;
-    public ChatRoom room;
-    private StanzaListener uploadResponseListener;
+    public final ChatRoom room;
 
     public ChatRoomDecorator(final ChatRoom room, final SparkFileUploadPlugin plugin)
     {
@@ -62,18 +58,13 @@ public class ChatRoomDecorator
             fileuploadButton = new RolloverButton(fileuploadIcon);
             fileuploadButton.setToolTipText(GraphicUtils.createToolTip("Http File Upload"));
 
-            fileuploadButton.addActionListener( new ActionListener()
-            {
-                    @Override
-                    public void actionPerformed(ActionEvent event)
-                    {
-                        if ("groupchat".equals(room.getChatType().toString()))
-                        {
-                            getUploadUrl(room, Message.Type.groupchat);
-                        } else {
-                            getUploadUrl(room, Message.Type.chat);
-                        }
-                    }
+            fileuploadButton.addActionListener(event -> {
+                if ("groupchat".equals(room.getChatType().toString()))
+                {
+                    getUploadUrl(room, Message.Type.groupchat);
+                } else {
+                    getUploadUrl(room, Message.Type.chat);
+                }
             });
             room.getEditorBar().add(fileuploadButton);
 
@@ -94,7 +85,7 @@ public class ChatRoomDecorator
         FileDialog fd = new FileDialog((Frame)null, "Choose a file to upload", FileDialog.LOAD);
         fd.setMultipleMode(true);
         fd.setVisible(true);
-        File files[] = fd.getFiles();
+        File[] files = fd.getFiles();
 
         for (File file : files)
         {

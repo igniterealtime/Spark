@@ -49,15 +49,15 @@ import java.util.List;
 public class JContactItemField extends JPanel {
 
     private static final long serialVersionUID = -8556694682789891531L;
-    private JTextField textField = new JTextField();
-    private DefaultListModel model = new DefaultListModel();
-    private JList list;
-    private JWindow popup;
+    private final JTextField textField = new JTextField();
+    private final DefaultListModel<ContactItem> model = new DefaultListModel<>();
+    private final JList<ContactItem> list;
+    private final JWindow popup;
     private List<ContactItem> items;
 
     public JContactItemField(List<ContactItem> items) {
         setLayout(new BorderLayout());
-        list = new JList(model) {
+        list = new JList<ContactItem>(model) {
 	    private static final long serialVersionUID = -9031169221430835595L;
 
 	    @Override
@@ -65,7 +65,7 @@ public class JContactItemField extends JPanel {
                 int row = locationToIndex(e.getPoint());
                 if (row >= 0)
                 {
-                    final ContactItem item = (ContactItem)getModel().getElementAt(row);
+                    final ContactItem item = getModel().getElementAt(row);
                     if (item != null) {
                         return item.getJid().toString();
                 }
@@ -90,7 +90,7 @@ public class JContactItemField extends JPanel {
                 if (keyEvent.getKeyCode() == KeyEvent.VK_ENTER) {
                     int index = list.getSelectedIndex();
                     if (index >= 0) {
-                        ContactItem selection = (ContactItem)list.getSelectedValue();
+                        ContactItem selection = list.getSelectedValue();
                         textField.setText(selection.getDisplayName());
                         popup.setVisible(false);
                     }
@@ -138,7 +138,7 @@ public class JContactItemField extends JPanel {
                 if (e.getClickCount() == 2) {
                     int index = list.getSelectedIndex();
                     if (index >= 0) {
-                        ContactItem selection = (ContactItem)list.getSelectedValue();
+                        ContactItem selection = list.getSelectedValue();
                         textField.setText(selection.getDisplayName());
                         popup.setVisible(false);
                     }
@@ -155,7 +155,7 @@ public class JContactItemField extends JPanel {
         this.items = list;
     }
 
-    public JList getList() {
+    public JList<ContactItem> getList() {
         return list;
     }
 
@@ -248,7 +248,7 @@ public class JContactItemField extends JPanel {
     }
 
     public ContactItem getSelectedContactItem() {
-        return (ContactItem)list.getSelectedValue();
+        return list.getSelectedValue();
     }
 
     public void setText(String text) {
@@ -267,7 +267,7 @@ public class JContactItemField extends JPanel {
         return popup;
     }
 
-    static class PopupRenderer extends JLabel implements ListCellRenderer {
+    static class PopupRenderer extends JLabel implements ListCellRenderer<Object> {
 	private static final long serialVersionUID = 239608430590852355L;
 
 	/**

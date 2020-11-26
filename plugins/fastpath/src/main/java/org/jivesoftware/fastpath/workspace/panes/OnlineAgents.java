@@ -67,7 +67,7 @@ public final class OnlineAgents extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 	private AgentRoster agentRoster;
-    private ContactGroup contactGroup;
+    private final ContactGroup contactGroup;
 
     public OnlineAgents() {
         setLayout(new BorderLayout());
@@ -114,7 +114,7 @@ public final class OnlineAgents extends JPanel {
 
             }
 
-            public void showPopup(MouseEvent e, Collection items) {
+            public void showPopup(MouseEvent e, Collection<ContactItem> items) {
 
             }
 

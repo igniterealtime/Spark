@@ -104,14 +104,14 @@ import org.jxmpp.jid.Jid;
  */
 public class SparkTransferManager {
 
-    private List<FileTransferListener> listeners = new ArrayList<>();
+    private final List<FileTransferListener> listeners = new ArrayList<>();
     private File defaultDirectory;
 
     private static SparkTransferManager singleton;
     private static final Object LOCK = new Object();
 
     private FileTransferManager transferManager;
-    private Map<EntityBareJid, ArrayList<File>> waitMap = new HashMap<>();
+    private final Map<EntityBareJid, ArrayList<File>> waitMap = new HashMap<>();
     private BufferedImage bufferedImage;
     private ImageSelectionPanel selectionPanel;
     private Robot robot;
@@ -249,9 +249,7 @@ public class SparkTransferManager {
                 filePath = filePath.replaceAll(" ", "%20");
                 URL url = new URL(filePath);
                 uri = url.toURI();
-            } catch (MalformedURLException ex) {
-                ex.printStackTrace();
-            } catch (URISyntaxException ex) {
+            } catch (MalformedURLException | URISyntaxException ex) {
                 ex.printStackTrace();
             }
         } else {
@@ -288,7 +286,7 @@ public class SparkTransferManager {
         final ReceiveFileTransfer receivingMessageUI = new ReceiveFileTransfer(chatRoom);
         receivingMessageUI.acceptFileTransfer(request);
 
-        chatRoom.addClosingListener( () -> receivingMessageUI.cancelTransfer() );
+        chatRoom.addClosingListener(receivingMessageUI::cancelTransfer);
         
         transcriptWindow.addComponent(receivingMessageUI);
 
@@ -327,24 +325,15 @@ public class SparkTransferManager {
     private void addSendFileButton() {
         final ChatManager chatManager = SparkManager.getChatManager();
         chatManager.addChatRoomListener(new ChatRoomListenerAdapter() {
-
             @Override
 			public void chatRoomOpened(final ChatRoom room) {
                 if (!(room instanceof ChatRoomImpl)) {
                     return;
                 }
-
                 // Otherwise,
                 new ChatRoomTransferDecorator(room);
             }
-
-            @Override
-			public void chatRoomClosed(ChatRoom room) {
-
-            }
         });
-
-
     }
 
     public void sendScreenshot(final ChatRoomButton button, final ChatRoom room) {
@@ -676,10 +665,7 @@ public class SparkTransferManager {
                 return (BufferedImage)t.getTransferData(DataFlavor.imageFlavor);
             }
         }
-        catch (UnsupportedFlavorException e) {
-            // Nothing to do
-        }
-        catch (IOException e) {
+        catch (UnsupportedFlavorException | IOException e) {
             // Nothing to do
         }
         return null;
