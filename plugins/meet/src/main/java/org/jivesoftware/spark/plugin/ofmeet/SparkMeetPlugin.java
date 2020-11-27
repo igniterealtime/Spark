@@ -202,8 +202,6 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
 
     public void openURL(String newUrl)
     {
-        checkNatives();
-
         try {
             String username = URLEncoder.encode(SparkManager.getSessionManager().getUsername(), "UTF-8");
             String password = URLEncoder.encode(SparkManager.getSessionManager().getPassword(), "UTF-8");
@@ -302,98 +300,104 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
     {
         Log.warning("checkNatives");
 
-        // Find the root path of the class that will be our plugin lib folder.
-        try
+        new Thread()
         {
-            String nativeLibsJarPath = Spark.getSparkUserHome() + File.separator + "plugins" + File.separator + "meet" + File.separator + "lib";
-            File nativeLibFolder = new File(nativeLibsJarPath, "native");
-
-            electronHomePath = nativeLibsJarPath + File.separator + "native";
-            electronExePath = electronHomePath + File.separator + "electron";
-
-            if(!nativeLibFolder.exists())
+            @Override public void run()
             {
-                nativeLibFolder.mkdir();
+                try
+                {
+                    String nativeLibsJarPath = Spark.getSparkUserHome() + File.separator + "plugins" + File.separator + "meet" + File.separator + "lib";
+                    File nativeLibFolder = new File(nativeLibsJarPath, "native");
 
-                String jarFileSuffix = null;
+                    electronHomePath = nativeLibsJarPath + File.separator + "native";
+                    electronExePath = electronHomePath + File.separator + "electron";
 
-                if(OSUtils.IS_LINUX32)
-                {
-                    jarFileSuffix = "-linux-ia32.zip";
-                }
-                else if(OSUtils.IS_LINUX64)
-                {
-                    jarFileSuffix = "-linux-x64.zip";
-                }
-                else if(OSUtils.IS_WINDOWS32)
-                {
-                    jarFileSuffix = "-win32-ia32.zip";
-                }
-                else if(OSUtils.IS_WINDOWS64)
-                {
-                    jarFileSuffix = "-win32-x64.zip";
-                }
-                else if(OSUtils.IS_MAC)
-                {
-                    jarFileSuffix = "-darwin-x64.zip";
-                }
-
-                InputStream inputStream = new URL("https://github.com/electron/electron/releases/download/v10.1.1/electron-v10.1.1" + jarFileSuffix).openStream();
-                ZipInputStream zipIn = new ZipInputStream(inputStream);
-                ZipEntry entry = zipIn.getNextEntry();
-
-                while (entry != null)
-                {
-                    try
+                    if(!nativeLibFolder.exists())
                     {
-                        String filePath = electronHomePath + File.separator + entry.getName();
+                        nativeLibFolder.mkdir();
 
-                        Log.warning("writing file..." + filePath);
+                        String jarFileSuffix = null;
 
-                        if (!entry.isDirectory())
+                        if(OSUtils.IS_LINUX32)
                         {
-                            File file = new File(filePath);
-                            file.setReadable(true, true);
-                            file.setWritable(true, true);
-                            file.setExecutable(true, true);
-
-                            new File(file.getParent()).mkdirs();
-
-                            extractFile(zipIn, filePath);
+                            jarFileSuffix = "-linux-ia32.zip";
                         }
-                        zipIn.closeEntry();
-                        entry = zipIn.getNextEntry();
+                        else if(OSUtils.IS_LINUX64)
+                        {
+                            jarFileSuffix = "-linux-x64.zip";
+                        }
+                        else if(OSUtils.IS_WINDOWS32)
+                        {
+                            jarFileSuffix = "-win32-ia32.zip";
+                        }
+                        else if(OSUtils.IS_WINDOWS64)
+                        {
+                            jarFileSuffix = "-win32-x64.zip";
+                        }
+                        else if(OSUtils.IS_MAC)
+                        {
+                            jarFileSuffix = "-darwin-x64.zip";
+                        }
+
+                        InputStream inputStream = new URL("https://github.com/electron/electron/releases/download/v10.1.1/electron-v10.1.1" + jarFileSuffix).openStream();
+                        ZipInputStream zipIn = new ZipInputStream(inputStream);
+                        ZipEntry entry = zipIn.getNextEntry();
+
+                        while (entry != null)
+                        {
+                            try
+                            {
+                                String filePath = electronHomePath + File.separator + entry.getName();
+
+                                Log.warning("writing file..." + filePath);
+
+                                if (!entry.isDirectory())
+                                {
+                                    File file = new File(filePath);
+                                    file.setReadable(true, true);
+                                    file.setWritable(true, true);
+                                    file.setExecutable(true, true);
+
+                                    new File(file.getParent()).mkdirs();
+
+                                    extractFile(zipIn, filePath);
+                                }
+                                zipIn.closeEntry();
+                                entry = zipIn.getNextEntry();
+                            }
+                            catch(Exception e) {
+                                Log.error("Error", e);
+                            }
+                        }
+                        zipIn.close();
+
+                        Log.warning("Native lib folder created and natives extracted");
                     }
-                    catch(Exception e) {
-                        Log.error("Error", e);
+                    else {
+                        Log.warning("Native lib folder already exist.");
+                    }
+
+
+                    String libPath = nativeLibFolder.getCanonicalPath();
+
+                    if (!System.getProperty("java.library.path").contains(libPath))
+                    {
+                        String newLibPath = libPath + File.pathSeparator + System.getProperty("java.library.path");
+                        System.setProperty("java.library.path", newLibPath);
+
+                        // this will reload the new setting
+                        Field fieldSysPath = ClassLoader.class.getDeclaredField("sys_paths");
+                        fieldSysPath.setAccessible(true);
+                        fieldSysPath.set(System.class.getClassLoader(), null);
                     }
                 }
-                zipIn.close();
-
-                Log.warning("Native lib folder created and natives extracted");
-            }
-            else {
-                Log.warning("Native lib folder already exist.");
+                catch (Exception e)
+                {
+                    Log.warning(e.getMessage(), e);
+                }
             }
 
-
-            String libPath = nativeLibFolder.getCanonicalPath();
-
-            if (!System.getProperty("java.library.path").contains(libPath))
-            {
-                String newLibPath = libPath + File.pathSeparator + System.getProperty("java.library.path");
-                System.setProperty("java.library.path", newLibPath);
-
-                // this will reload the new setting
-                Field fieldSysPath = ClassLoader.class.getDeclaredField("sys_paths");
-                fieldSysPath.setAccessible(true);
-                fieldSysPath.set(System.class.getClassLoader(), null);
-            }
-        }
-        catch (Exception e)
-        {
-            Log.warning(e.getMessage(), e);
-        }
+        }.start();
     }
 
     private void extractFile(ZipInputStream zipIn, String filePath) throws IOException
