@@ -39,7 +39,7 @@ import org.apache.commons.httpclient.protocol.Protocol;
 import org.jivesoftware.sparkimpl.updater.EasySSLProtocolSocketFactory;
 
 import org.jxmpp.jid.impl.JidCreate;
-import sun.misc.BASE64Decoder;
+import javax.xml.bind.DatatypeConverter;
 
 public class ChatRoomDecorator
 {
@@ -51,9 +51,8 @@ public class ChatRoomDecorator
         this.room = room;
 
         try {
-            BASE64Decoder decoder = new BASE64Decoder();
             String imageString = "iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAAHYYAAB2GAV2iE4EAAAETSURBVDhPtZMxioUwEIbHFdFCEQVB7BSs7EUQvICtp7CRB95DCytP4BW8hIWFF7ARL6CN5ulsYFlffMU+9mvyzwz5k0wSjhzAB3zR8c+8NcjzHHRdhyiKaIbBeQQWTdOQYzLqNE2J7/uor9z2oK5rGMcR4jiGIAjANE2YpolWf7g9AsdxIIoiJEkC27aBIAi08humwePxAFVVUWuaBjzPo2bBNCjLEhRFodF7/u8a933HHkiShPFNr9nXeKb7vieO46A+sSwLxyvMHdi2Deu6QlVVuLLneVAUBa1e+PZ5RZZl4rou7iDLMpp95fYhLcsCbduCYRgQhiHNMkCbC/M8k2EYUB+PiHRdR46mYnzlw+8M8ASnHRlMzJ472gAAAABJRU5ErkJggg==";
-            byte[] imageByte = decoder.decodeBuffer(imageString);
+            byte[] imageByte = DatatypeConverter.parseBase64Binary(imageString);
             ImageIcon fileuploadIcon = new ImageIcon(imageByte);
             fileuploadButton = new RolloverButton(fileuploadIcon);
             fileuploadButton.setToolTipText(GraphicUtils.createToolTip("Http File Upload"));
@@ -137,7 +136,7 @@ public class ChatRoomDecorator
             {
                 Protocol.registerProtocol( "https", new Protocol( "https", new EasySSLProtocolSocketFactory(), port ) );
             }
-            
+
             HttpClient client = new HttpClient();
             RequestEntity entity = new FileRequestEntity(file, "application/binary");
             put.setRequestEntity(entity);
