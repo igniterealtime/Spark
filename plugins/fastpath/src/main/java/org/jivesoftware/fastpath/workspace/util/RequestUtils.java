@@ -25,13 +25,13 @@ import org.jxmpp.jid.impl.JidCreate;
 
 
 public class RequestUtils {
-    private final Map metadata;
+    private final Map<String, List<String>> metadata;
 
-    public RequestUtils(Map requestData) {
+    public RequestUtils(Map<String, List<String>> requestData) {
         this.metadata = requestData;
     }
 
-    public Map getMetadata() {
+    public Map<String, List<String>> getMetadata() {
         return metadata;
     }
 
@@ -107,8 +107,8 @@ public class RequestUtils {
         return getMetadata() == null ? null : getFirstValue("sessionID");
     }
 
-    public Map getMap() {
-        final Map returnMap = new HashMap(metadata);
+    public Map<String, List<String>> getMap() {
+        final Map<String, List<String>> returnMap = new HashMap<>(metadata);
         returnMap.remove("sessionID");
         returnMap.remove("transfer");
         returnMap.remove("workgroup");
