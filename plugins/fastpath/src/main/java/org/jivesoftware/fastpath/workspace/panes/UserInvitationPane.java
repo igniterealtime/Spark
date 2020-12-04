@@ -73,7 +73,7 @@ import org.jxmpp.jid.util.JidUtil;
  */
 public class UserInvitationPane {
 
-    private Map metadata;
+    private Map<String, List<String>> metadata;
     private AcceptListener listener;
 
     private Offer offer;

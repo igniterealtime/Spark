@@ -15,7 +15,7 @@ import java.util.List;
  */
 public class Win32IdleTime implements IdleTime {
     public interface Kernel32 extends StdCallLibrary {
-        Kernel32 INSTANCE = Native.loadLibrary("kernel32", Kernel32.class);
+        Kernel32 INSTANCE = Native.load("kernel32", Kernel32.class);
 
         /**
          * Retrieves the number of milliseconds that have elapsed since the system was started.
@@ -26,7 +26,7 @@ public class Win32IdleTime implements IdleTime {
     }
 
     public interface User32 extends StdCallLibrary {
-        User32 INSTANCE = Native.loadLibrary("user32", User32.class);
+        User32 INSTANCE = Native.load("user32", User32.class);
         /**
          * Contains the time of the last input.
          * @see "http://msdn.microsoft.com/library/default.asp?url=/library/en-us/winui/winui/windowsuserinterface/userinput/keyboardinput/keyboardinputreference/keyboardinputstructures/lastinputinfo.asp"

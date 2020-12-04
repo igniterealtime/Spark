@@ -339,46 +339,46 @@ public class StringUtils {
      *         with their HTML escape sequences.
      */
     public static String escapeHTMLTags(String in) {
-	if (in == null) {
-	    return null;
-	}
-	char ch;
-	int i = 0;
-	int last = 0;
-	char[] input = in.toCharArray();
-	int len = input.length;
-	StringBuilder out = new StringBuilder((int) (len * 1.3));
-	for (; i < len; i++) {
-	    ch = input[i];
-	    if (ch > '>') {
-		// Nothing to do
-	    } else if (ch == '<') {
-		if (i > last) {
-		    out.append(input, last, i - last);
-		}
-		last = i + 1;
-		out.append(LT_ENCODE);
-	    } else if (ch == '>') {
-		if (i > last) {
-		    out.append(input, last, i - last);
-		}
-		last = i + 1;
-		out.append(GT_ENCODE);
-	    } else if (ch == '"') {
-		if (i > last) {
-		    out.append(input, last, i - last);
-		}
-		last = i + 1;
-		out.append(QUOTE_ENCODE);
-	    }
-	}
-	if (last == 0) {
-	    return in;
-	}
-	if (i > last) {
-	    out.append(input, last, i - last);
-	}
-	return out.toString();
+        if (in == null) {
+            return null;
+        }
+        char ch;
+        int i = 0;
+        int last = 0;
+        char[] input = in.toCharArray();
+        int len = input.length;
+        StringBuilder out = new StringBuilder((int) (len * 1.3));
+        for (; i < len; i++) {
+            ch = input[i];
+            if (ch <= '>') {
+                if (ch == '<') {
+                    if (i > last) {
+                        out.append(input, last, i - last);
+                    }
+                    last = i + 1;
+                    out.append(LT_ENCODE);
+                } else if (ch == '>') {
+                    if (i > last) {
+                        out.append(input, last, i - last);
+                    }
+                    last = i + 1;
+                    out.append(GT_ENCODE);
+                } else if (ch == '"') {
+                    if (i > last) {
+                        out.append(input, last, i - last);
+                    }
+                    last = i + 1;
+                    out.append(QUOTE_ENCODE);
+                }
+            }
+        }
+        if (last == 0) {
+            return in;
+        }
+        if (i > last) {
+            out.append(input, last, i - last);
+        }
+        return out.toString();
     }
 
     /**
@@ -1261,58 +1261,57 @@ public class StringUtils {
      * @return the string with appropriate characters escaped.
      */
     public static String escapeForXML(String string) {
-	if (string == null) {
-	    return null;
-	}
-	char ch;
-	int i = 0;
-	int last = 0;
-	char[] input = string.toCharArray();
-	int len = input.length;
-	StringBuilder out = new StringBuilder((int) (len * 1.3));
-	for (; i < len; i++) {
-	    ch = input[i];
-
-	    if (ch > '>') {
-		// Nothing to do
-	    } else if (ch == '<') {
-		if (i > last) {
-		    out.append(input, last, i - last);
-		}
-		last = i + 1;
-		out.append(LT_ENCODE);
-	    } else if (ch == '&') {
-		if (i > last) {
-		    out.append(input, last, i - last);
-		}
-		last = i + 1;
-		out.append(AMP_ENCODE);
-	    } else if (ch == '"') {
-		if (i > last) {
-		    out.append(input, last, i - last);
-		}
-		last = i + 1;
-		out.append(QUOTE_ENCODE);
-	    } else if (ch == 10 || ch == 13 || ch == 9) {
-		// Nothing to do
-	    } else if (ch < 32) {
-		// Disallow all ASCII control characters, except space,
-		// enter characters and tabs:
-		if (i > last) {
-		    out.append(input, last, i - last);
-		}
-		last = i + 1;
-	    }
-	}
-	if (last == 0) {
- 		// Return after escaping <![CDATA]]> end sequence "]]>"
- 	    return string.replace("]]>", "]]&amp;gt;");
-	}
-	if (i > last) {
-	    out.append(input, last, i - last);
-	}
- 	// Return after escaping <![CDATA]]> end sequence "]]>"
- 	return out.toString().replace("]]>", "]]&amp;gt;");
+        if (string == null) {
+            return null;
+        }
+        char ch;
+        int i = 0;
+        int last = 0;
+        char[] input = string.toCharArray();
+        int len = input.length;
+        StringBuilder out = new StringBuilder((int) (len * 1.3));
+        for (; i < len; i++) {
+            ch = input[i];
+            if (ch <= '>') {
+                if (ch == '<') {
+                    if (i > last) {
+                        out.append(input, last, i - last);
+                    }
+                    last = i + 1;
+                    out.append(LT_ENCODE);
+                } else if (ch == '&') {
+                    if (i > last) {
+                        out.append(input, last, i - last);
+                    }
+                    last = i + 1;
+                    out.append(AMP_ENCODE);
+                } else if (ch == '"') {
+                    if (i > last) {
+                        out.append(input, last, i - last);
+                    }
+                    last = i + 1;
+                    out.append(QUOTE_ENCODE);
+                } else if (ch != 10 && ch != 13 && ch != 9) {
+                    // Disallow all ASCII control characters, except space,
+                    // enter characters and tabs:
+                    if (ch < 32) {
+                        if (i > last) {
+                            out.append(input, last, i - last);
+                        }
+                        last = i + 1;
+                    }
+                }
+            }
+        }
+        if (last == 0) {
+            // Return after escaping <![CDATA]]> end sequence "]]>"
+            return string.replace("]]>", "]]&amp;gt;");
+        }
+        if (i > last) {
+            out.append(input, last, i - last);
+        }
+        // Return after escaping <![CDATA]]> end sequence "]]>"
+        return out.toString().replace("]]>", "]]&amp;gt;");
     }
 
     /**

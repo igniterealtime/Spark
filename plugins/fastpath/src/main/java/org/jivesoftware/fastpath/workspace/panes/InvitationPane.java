@@ -65,7 +65,7 @@ import org.jxmpp.util.XmppStringUtils;
 
 public class InvitationPane {
 
-    private Map metadata = null;
+    private Map<String, List<String>> metadata = null;
     private GroupChatRoom chatRoom;
 
     public InvitationPane(final RequestUtils request, final EntityBareJid room, final EntityBareJid inviter, String reason, final String password, final Message message) {

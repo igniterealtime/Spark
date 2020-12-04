@@ -36,6 +36,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import javax.swing.JFrame;
@@ -52,9 +53,9 @@ public class RoomInformation extends JPanel {
 
     }
 
-    public void showAllInformation(Map map) {
+    public void showAllInformation(Map<String, List<String>> map) {
         if (map == null) {
-            map = new HashMap();
+            map = new HashMap<>();
         }
 
         LiveTitlePane titlePanel = new LiveTitlePane(FpRes.getString("title.request.information"), FastpathRes.getImageIcon(FastpathRes.FASTPATH_IMAGE_24x24));
