@@ -469,7 +469,7 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         	connectMenu.add(exitMenuItem);
         }
 
-        JMenuItem updateMenu= new JMenuItem("", SparkRes.getImageIcon(SparkRes.DOWNLOAD_16x16));
+        JMenuItem updateMenu= new JMenuItem("", SparkRes.getImageIcon(SparkRes.CHECK_UPDATE));
         ResourceUtils.resButton(updateMenu, Res.getString("menuitem.check.for.updates"));
         updateMenu.addActionListener( e -> checkForUpdates(true) );
 

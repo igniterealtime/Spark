@@ -1,5 +1,6 @@
 package org.jivesoftware.spark.ui.themes;
 
+import com.formdev.flatlaf.FlatLaf;
 import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.spark.util.log.Log;
@@ -9,6 +10,8 @@ import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import javax.swing.*;
 import java.awt.*;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.jivesoftware.spark.ui.themes.lafs.SparkLightLaf;
 
 /**
@@ -95,8 +98,14 @@ public class LookAndFeelManager {
             } catch (InstantiationException | IllegalAccessException e) {
                 name = laf.getTypeName();
             }
-
-            UIManager.installLookAndFeel(name, laf.getName());
+            try {
+                UIManager.setLookAndFeel(new SparkLightLaf());
+                FlatLaf.updateUILater();
+                
+                // UIManager.installLookAndFeel(name, laf.getName());
+            } catch (UnsupportedLookAndFeelException ex) {
+                Logger.getLogger(LookAndFeelManager.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
 
