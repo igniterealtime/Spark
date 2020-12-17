@@ -32,6 +32,7 @@ import java.util.Enumeration;
 import java.util.Properties;
 
 public class SparkRes {
+
     private static final Properties prb;
 
     public static final String ACCEPT_CHAT = "ACCEPT_CHAT";
@@ -282,7 +283,7 @@ public class SparkRes {
     public static final String STAR_BLUE_IMAGE = "STAR_BLUE_IMAGE";
     public static final String STAR_GREEN_IMAGE = "STAR_GREEN_IMAGE";
     public static final String STAR_GREY_IMAGE = "STAR_GREY_IMAGE";
-    public static final String STAR_MODERATOR ="STAR_MODERATOR";
+    public static final String STAR_MODERATOR = "STAR_MODERATOR";
     public static final String STAR_OWNER = "STAR_OWNER";
     public static final String STAR_RED_IMAGE = "STAR_RED_IMAGE";
     public static final String STAR_YELLOW_IMAGE = "STAR_YELLOW_IMAGE";
@@ -302,7 +303,7 @@ public class SparkRes {
     public static final String TRAY_AWAY = "TRAY_AWAY";
     public static final String TRAY_AWAY_LINUX = "TRAY_AWAY_LINUX";
     public static final String TRAY_CONNECTING = "TRAY_CONNECTING";
-    public static final String TRAY_CONNECTING_LINUX = "TRAY_CONNECTING_LINUX";    
+    public static final String TRAY_CONNECTING_LINUX = "TRAY_CONNECTING_LINUX";
     public static final String TRAY_DND = "TRAY_DND";
     public static final String TRAY_DND_LINUX = "TRAY_DND_LINUX";
     public static final String TRAY_IMAGE = "TRAY_IMAGE";
@@ -331,26 +332,22 @@ public class SparkRes {
     public static final String YELLOW_FLAG_16x16 = "YELLOW_FLAG_16x16";
     public static final String EXECUTABLE_NAME = "EXECUTABLE_NAME";
     public static final String INVISIBLE = "INVISIBLE";
+    public static final String CHECK_UPDATE = "CHECK_UPDATE";
 
-    
     private static final ClassLoader cl = SparkRes.class.getClassLoader();
 
     static {
         prb = new Properties();
-        try
-        {
-            InputStream resourceAsStream = cl.getResourceAsStream( "spark.properties" );
-            prb.load( resourceAsStream );
-        }
-        catch ( IOException e )
-        {
+        try {
+            InputStream resourceAsStream = cl.getResourceAsStream("spark.properties");
+            prb.load(resourceAsStream);
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-
     public static String getString(String propertyName) {
-    	String pluginString = PluginRes.getSparkRes(propertyName);
+        String pluginString = PluginRes.getSparkRes(propertyName);
         return pluginString != null ? pluginString : prb.getProperty(propertyName);
     }
 
@@ -358,20 +355,19 @@ public class SparkRes {
         try {
             final URL imageURL = getURL(imageName);
             return new ImageIcon(imageURL);
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             Log.error(imageName + " not found.");
         }
         return null;
     }
 
     public static URL getURL(String propertyName) {
-    	URL pluginUrl = PluginRes.getSparkURL(propertyName);
+        URL pluginUrl = PluginRes.getSparkURL(propertyName);
         return pluginUrl != null ? pluginUrl : cl.getResource(getString(propertyName));
     }
 
     public static void main(String[] args) {
-        
+
         JFrame frame = new JFrame();
         frame.getContentPane().setLayout(new BorderLayout());
 
@@ -418,8 +414,7 @@ public class SparkRes {
                 if (!exists) {
                     Log.error(imageFile.getAbsolutePath() + " is not used.");
                 }
-            }
-            catch (NullPointerException e) {
+            } catch (NullPointerException e) {
                 // TODO: Should we worry about this?
             }
         }
@@ -427,10 +422,9 @@ public class SparkRes {
 
     public static URL getURLWithoutException(String propertyName) {
         // Otherwise, load and add to cache.
-        try {            
+        try {
             return getURL(propertyName);
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             Log.debug(propertyName + " not found.");
         }
         return null;

@@ -904,7 +904,6 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
 
     public abstract EntityJid getJid();
 
-    public abstract EntityJid getJid();
 
     /**
      * Get the title to use in the tab holding this ChatRoom.

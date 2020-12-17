@@ -1272,7 +1272,7 @@ public class LoginPanel extends javax.swing.JPanel implements KeyListener, Actio
             }
         } else {
             try {
-                localPref.clearPasswordForUser(getBareJid());
+                localPref.clearPasswordForAllUsers();//clearPasswordForUser(getBareJid());
             } catch (Exception e) {
                 Log.debug("Unable to clear saved password..." + e);
             }
