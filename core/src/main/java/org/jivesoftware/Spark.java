@@ -34,6 +34,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Locale;
+import org.jivesoftware.gui.LoginPanel;
 
 
 /**
@@ -183,7 +184,7 @@ public final class Spark {
 
         try {
 	        EventQueue.invokeAndWait( () -> {
-            final LoginDialog dialog = UIComponentRegistry.createLoginDialog();
+            final LoginPanel dialog = UIComponentRegistry.createLoginDialog();
                 dialog.invoke(new JFrame());
             } );
         }

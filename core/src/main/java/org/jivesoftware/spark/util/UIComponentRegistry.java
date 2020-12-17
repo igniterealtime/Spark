@@ -21,6 +21,7 @@ import java.util.Arrays;
 
 import org.apache.commons.lang3.reflect.ConstructorUtils;
 import org.jivesoftware.LoginDialog;
+import org.jivesoftware.gui.LoginPanel;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.spark.ButtonFactory;
 import org.jivesoftware.spark.component.tabbedPane.SparkTabbedPane;
@@ -59,7 +60,7 @@ public final class UIComponentRegistry {
     private static Class<? extends StatusBar> statusBarClass = StatusBar.class;
     private static Class<? extends CommandPanel> commandPanelClass = CommandPanel.class;
     private static Class<? extends SparkTabbedPane> workspaceTabPaneClass = SparkTabbedPane.class;
-    private static Class<? extends LoginDialog> loginDialogClass = LoginDialog.class;
+    private static Class<? extends LoginPanel> loginDialogClass = LoginPanel.class;
     private static Class<? extends ThemePanel> themePanelClass = ThemePanel.class;
     private static Class<? extends ConferenceServices> conferenceServicesClass = ConferenceServices.class;
     private static Class<? extends TranscriptWindow> transcriptWindowClass = TranscriptWindow.class;
@@ -80,7 +81,7 @@ public final class UIComponentRegistry {
      *
      * @param clazz
      */
-    public static void registerLoginDialog(Class<? extends LoginDialog> clazz) {
+    public static void registerLoginDialog(Class<? extends LoginPanel> clazz) {
         if (loginDialogClass != clazz) {
             Log.debug("Registering new contract item class: "
                     + clazz.getName());
@@ -383,7 +384,7 @@ public final class UIComponentRegistry {
      *
      * @return  A new instance of the class currently registered as login dialog
      */
-    public static LoginDialog createLoginDialog() {
+    public static LoginPanel createLoginDialog() {
         return instantiate(loginDialogClass);
     }
 
