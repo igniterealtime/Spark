@@ -126,12 +126,12 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         if ( mainWindowBounds == null || mainWindowBounds.width <= 0 || mainWindowBounds.height <= 0 )
         {
             // Use default settings.
-            setSize(300, 500);
+            setSize(460, 515);
             GraphicUtils.centerWindowOnScreen(this);
         }
         else
         {
-            setBounds( mainWindowBounds );
+            //setBounds( mainWindowBounds );
         }
 
         // Add menubar
@@ -469,7 +469,7 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         	connectMenu.add(exitMenuItem);
         }
 
-        JMenuItem updateMenu= new JMenuItem("", SparkRes.getImageIcon(SparkRes.DOWNLOAD_16x16));
+        JMenuItem updateMenu= new JMenuItem("", SparkRes.getImageIcon(SparkRes.CHECK_UPDATE));
         ResourceUtils.resButton(updateMenu, Res.getString("menuitem.check.for.updates"));
         updateMenu.addActionListener( e -> checkForUpdates(true) );
 

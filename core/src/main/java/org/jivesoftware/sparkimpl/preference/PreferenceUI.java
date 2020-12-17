@@ -49,8 +49,8 @@ public class PreferenceUI extends JLabel {
     public void decorate() {
         this.setOpaque(true);
 
-        this.setVerticalTextPosition(JButton.BOTTOM);
-        this.setHorizontalTextPosition(JButton.CENTER);
+        this.setVerticalTextPosition(JButton.CENTER);
+        this.setHorizontalTextPosition(JButton.LEADING);
     }
 
     public Preference getPreference() {
