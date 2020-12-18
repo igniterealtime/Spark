@@ -300,8 +300,8 @@ public class LoginPanel extends javax.swing.JPanel implements KeyListener, Actio
         }
 
         //reset ui
-        btnAdvanced.setUI(new BasicButtonUI());
-        btnCreateAccount.setUI(new BasicButtonUI());
+        //btnAdvanced.setUI(new BasicButtonUI());
+        //btnCreateAccount.setUI(new BasicButtonUI());
 
         tfDomain.putClientProperty("JTextField.placeholderText", "Enter Domain(e.g igniterealtime.org)");
         tfPassword.putClientProperty("JTextField.placeholderText", "Enter Password");
@@ -413,7 +413,7 @@ public class LoginPanel extends javax.swing.JPanel implements KeyListener, Actio
         btnLogin.setBackground(new java.awt.Color(241, 100, 34));
         btnLogin.setForeground(new java.awt.Color(255, 255, 255));
         btnLogin.setText("Login");
-        btnLogin.setPreferredSize(new java.awt.Dimension(200, 30));
+        btnLogin.setPreferredSize(new java.awt.Dimension(205, 30));
         btnLogin.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnLoginActionPerformed(evt);
@@ -422,20 +422,23 @@ public class LoginPanel extends javax.swing.JPanel implements KeyListener, Actio
         pnlCenter.add(btnLogin);
 
         jPanel3.setBackground(new java.awt.Color(255, 255, 255));
-        jPanel3.setPreferredSize(new java.awt.Dimension(200, 40));
+        jPanel3.setPreferredSize(new java.awt.Dimension(220, 40));
 
         btnCreateAccount.setBackground(new java.awt.Color(255, 255, 255));
-        btnCreateAccount.setText("<html><u>Create Account</u> </html>");
+        btnCreateAccount.setText("Create Account");
         btnCreateAccount.setToolTipText("");
         btnCreateAccount.setBorderPainted(false);
+        btnCreateAccount.setHorizontalTextPosition(javax.swing.SwingConstants.LEADING);
         btnCreateAccount.setOpaque(false);
-        btnCreateAccount.setPreferredSize(null);
+        btnCreateAccount.setPreferredSize(new java.awt.Dimension(110, 28));
         jPanel3.add(btnCreateAccount);
 
         btnAdvanced.setBackground(new java.awt.Color(255, 255, 255));
-        btnAdvanced.setText("<html><u>Advanced</u> </html>");
+        btnAdvanced.setText("Advanced");
         btnAdvanced.setBorderPainted(false);
+        btnAdvanced.setHorizontalTextPosition(javax.swing.SwingConstants.LEADING);
         btnAdvanced.setOpaque(false);
+        btnAdvanced.setPreferredSize(new java.awt.Dimension(90, 28));
         jPanel3.add(btnAdvanced);
 
         pnlCenter.add(jPanel3);
@@ -1351,7 +1354,7 @@ public class LoginPanel extends javax.swing.JPanel implements KeyListener, Actio
                 final Rectangle mainWindowBounds = settings.getMainWindowBounds();
                 if (mainWindowBounds == null || mainWindowBounds.width <= 0 || mainWindowBounds.height <= 0) {
                     // Use Default size
-                    mainWindow.setSize(460, 520);
+                    mainWindow.setSize(530, 520);
 
                     // Center Window on Screen
                     GraphicUtils.centerWindowOnScreen(mainWindow);

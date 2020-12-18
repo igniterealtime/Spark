@@ -126,7 +126,7 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         if ( mainWindowBounds == null || mainWindowBounds.width <= 0 || mainWindowBounds.height <= 0 )
         {
             // Use default settings.
-            setSize(460, 515);
+            setSize(530, 500);
             GraphicUtils.centerWindowOnScreen(this);
         }
         else
@@ -852,7 +852,7 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         } );
 
         frame.pack();
-        frame.setSize(600, 400);
+        frame.setSize(530, 500);
 
         GraphicUtils.centerWindowOnScreen(frame);
         frame.setVisible(true);
