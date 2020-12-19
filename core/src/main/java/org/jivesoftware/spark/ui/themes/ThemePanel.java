@@ -115,14 +115,14 @@ public class ThemePanel extends JPanel {
                 }
 
                 private void setNewLaF() {
-                    final String selectedName = (String) _lookandfeel.getSelectedItem();
-                    try {
-                        final String className = LookAndFeelManager.getClassName(selectedName);
-                       // UIManager.setLookAndFeel(className);
-                        // TODO setJTattooBar( _lookandfeelname.get( _lookandfeel.getSelectedIndex() ) );
-                    } catch (Exception e) {
-                        Log.error("An unexpected exception occurred while trying to update Look and Feel to '" + selectedName + "'.", e);
-                    }
+//                    final String selectedName = (String) _lookandfeel.getSelectedItem();
+//                    try {
+//                        final String className = LookAndFeelManager.getClassName(selectedName);
+//                       // UIManager.setLookAndFeel(className);
+//                        // TODO setJTattooBar( _lookandfeelname.get( _lookandfeel.getSelectedIndex() ) );
+//                    } catch (Exception e) {
+//                        Log.error("An unexpected exception occurred while trying to update Look and Feel to '" + selectedName + "'.", e);
+//                    }
                 }
 
                 private void updateAllComponentsLaF(final Window window) {
