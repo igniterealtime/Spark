@@ -10,8 +10,6 @@ import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import javax.swing.*;
 import java.awt.*;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.jivesoftware.spark.ui.themes.lafs.SparkLightLaf;
 
 /**
