@@ -334,6 +334,7 @@ public class SparkRes {
     public static final String INVISIBLE = "INVISIBLE";
     public static final String CHECK_UPDATE = "CHECK_UPDATE";
     public static final String NOTIFICATIONS = "NOTIFICATIONS";
+    public static final String UPLOAD_ICON = "UPLOAD_ICON";
 
     private static final ClassLoader cl = SparkRes.class.getClassLoader();
 
