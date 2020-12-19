@@ -70,7 +70,7 @@ public class TransferSettingsPreference implements Preference {
      * @return the {@link Icon} to show in the preferences ui.
      */
     public javax.swing.Icon getIcon() {
-        return new ImageIcon(getClass().getResource("/images/knight.png"));
+        return new ImageIcon(getClass().getResource("/images/guard.png"));
     }
 
     /**
