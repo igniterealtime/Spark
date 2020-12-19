@@ -71,7 +71,6 @@ import javax.swing.JPopupMenu;
 import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 import javax.swing.UIManager;
-import javax.swing.plaf.basic.BasicButtonUI;
 import javax.swing.text.JTextComponent;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
