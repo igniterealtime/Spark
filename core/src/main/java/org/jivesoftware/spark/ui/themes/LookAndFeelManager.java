@@ -10,8 +10,6 @@ import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import javax.swing.*;
 import java.awt.*;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.jivesoftware.spark.ui.themes.lafs.SparkLightLaf;
 
 /**
@@ -98,14 +96,8 @@ public class LookAndFeelManager {
             } catch (InstantiationException | IllegalAccessException e) {
                 name = laf.getTypeName();
             }
-            try {
-                UIManager.setLookAndFeel(new SparkLightLaf());
-                FlatLaf.updateUILater();
-                
-                // UIManager.installLookAndFeel(name, laf.getName());
-            } catch (UnsupportedLookAndFeelException ex) {
-                Logger.getLogger(LookAndFeelManager.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            UIManager.installLookAndFeel(name, laf.getName());
+
         }
     }
 
@@ -223,7 +215,10 @@ public class LookAndFeelManager {
                 JFrame.setDefaultLookAndFeelDecorated(true);
                 JDialog.setDefaultLookAndFeelDecorated(true);
             }
-            UIManager.setLookAndFeel(laf);
+            //UIManager.setLookAndFeel(laf);
+            //skip loading from preference and use flatlaf as default
+            UIManager.setLookAndFeel(new SparkLightLaf());
+            FlatLaf.updateUILater();
         } catch (Exception e) {
             Log.error("An exception occurred while trying to load the look and feel.", e);
         }

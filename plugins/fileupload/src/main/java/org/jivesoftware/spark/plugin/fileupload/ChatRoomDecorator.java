@@ -40,6 +40,7 @@ import org.jivesoftware.sparkimpl.updater.EasySSLProtocolSocketFactory;
 
 import org.jxmpp.jid.impl.JidCreate;
 import javax.xml.bind.DatatypeConverter;
+import org.jivesoftware.resource.SparkRes;
 
 public class ChatRoomDecorator
 {
@@ -54,7 +55,7 @@ public class ChatRoomDecorator
             String imageString = "iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAAHYYAAB2GAV2iE4EAAAETSURBVDhPtZMxioUwEIbHFdFCEQVB7BSs7EUQvICtp7CRB95DCytP4BW8hIWFF7ARL6CN5ulsYFlffMU+9mvyzwz5k0wSjhzAB3zR8c+8NcjzHHRdhyiKaIbBeQQWTdOQYzLqNE2J7/uor9z2oK5rGMcR4jiGIAjANE2YpolWf7g9AsdxIIoiJEkC27aBIAi08humwePxAFVVUWuaBjzPo2bBNCjLEhRFodF7/u8a933HHkiShPFNr9nXeKb7vieO46A+sSwLxyvMHdi2Deu6QlVVuLLneVAUBa1e+PZ5RZZl4rou7iDLMpp95fYhLcsCbduCYRgQhiHNMkCbC/M8k2EYUB+PiHRdR46mYnzlw+8M8ASnHRlMzJ472gAAAABJRU5ErkJggg==";
             byte[] imageByte = DatatypeConverter.parseBase64Binary(imageString);
             ImageIcon fileuploadIcon = new ImageIcon(imageByte);
-            fileuploadButton = new RolloverButton(fileuploadIcon);
+            fileuploadButton = new RolloverButton(SparkRes.getImageIcon("UPLOAD_ICON"));
             fileuploadButton.setToolTipText(GraphicUtils.createToolTip("Http File Upload"));
 
             fileuploadButton.addActionListener(event -> {

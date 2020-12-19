@@ -71,7 +71,6 @@ import javax.swing.JPopupMenu;
 import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 import javax.swing.UIManager;
-import javax.swing.plaf.basic.BasicButtonUI;
 import javax.swing.text.JTextComponent;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -100,6 +99,7 @@ import org.jivesoftware.smack.util.DNSUtil;
 import org.jivesoftware.smack.util.TLSUtils;
 import org.jivesoftware.smackx.carbons.CarbonManager;
 import org.jivesoftware.smackx.chatstates.ChatStateManager;
+import org.jivesoftware.spark.PluginManager;
 import org.jivesoftware.spark.SessionManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.Workspace;
@@ -136,7 +136,7 @@ import org.minidns.dnsname.DnsName;
  *
  * @author KeepToo
  */
-public class LoginPanel extends javax.swing.JPanel implements KeyListener, ActionListener, FocusListener, CallbackHandler {
+public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, ActionListener, FocusListener, CallbackHandler {
 
     private JFrame loginDialog;
     private static final String BUTTON_PANEL = "buttonpanel"; // NOTRANS
@@ -160,7 +160,7 @@ public class LoginPanel extends javax.swing.JPanel implements KeyListener, Actio
     /**
      * Creates new form LoginWindow
      */
-    public LoginPanel() {
+    public LoginUIPanel() {
         initComponents();
 
         localPref = SettingsManager.getLocalPreferences();
@@ -300,8 +300,8 @@ public class LoginPanel extends javax.swing.JPanel implements KeyListener, Actio
         }
 
         //reset ui
-        btnAdvanced.setUI(new BasicButtonUI());
-        btnCreateAccount.setUI(new BasicButtonUI());
+        //btnAdvanced.setUI(new BasicButtonUI());
+        //btnCreateAccount.setUI(new BasicButtonUI());
 
         tfDomain.putClientProperty("JTextField.placeholderText", "Enter Domain(e.g igniterealtime.org)");
         tfPassword.putClientProperty("JTextField.placeholderText", "Enter Password");
@@ -413,7 +413,7 @@ public class LoginPanel extends javax.swing.JPanel implements KeyListener, Actio
         btnLogin.setBackground(new java.awt.Color(241, 100, 34));
         btnLogin.setForeground(new java.awt.Color(255, 255, 255));
         btnLogin.setText("Login");
-        btnLogin.setPreferredSize(new java.awt.Dimension(200, 30));
+        btnLogin.setPreferredSize(new java.awt.Dimension(205, 30));
         btnLogin.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnLoginActionPerformed(evt);
@@ -422,20 +422,23 @@ public class LoginPanel extends javax.swing.JPanel implements KeyListener, Actio
         pnlCenter.add(btnLogin);
 
         jPanel3.setBackground(new java.awt.Color(255, 255, 255));
-        jPanel3.setPreferredSize(new java.awt.Dimension(200, 40));
+        jPanel3.setPreferredSize(new java.awt.Dimension(220, 40));
 
         btnCreateAccount.setBackground(new java.awt.Color(255, 255, 255));
-        btnCreateAccount.setText("<html><u>Create Account</u> </html>");
+        btnCreateAccount.setText("Create Account");
         btnCreateAccount.setToolTipText("");
         btnCreateAccount.setBorderPainted(false);
+        btnCreateAccount.setHorizontalTextPosition(javax.swing.SwingConstants.LEADING);
         btnCreateAccount.setOpaque(false);
-        btnCreateAccount.setPreferredSize(null);
+        btnCreateAccount.setPreferredSize(new java.awt.Dimension(110, 28));
         jPanel3.add(btnCreateAccount);
 
         btnAdvanced.setBackground(new java.awt.Color(255, 255, 255));
-        btnAdvanced.setText("<html><u>Advanced</u> </html>");
+        btnAdvanced.setText("Advanced");
         btnAdvanced.setBorderPainted(false);
+        btnAdvanced.setHorizontalTextPosition(javax.swing.SwingConstants.LEADING);
         btnAdvanced.setOpaque(false);
+        btnAdvanced.setPreferredSize(new java.awt.Dimension(90, 28));
         jPanel3.add(btnAdvanced);
 
         pnlCenter.add(jPanel3);
@@ -506,29 +509,7 @@ public class LoginPanel extends javax.swing.JPanel implements KeyListener, Actio
         EventQueue.invokeLater(() -> {
             loginDialog.setIconImage(SparkManager.getApplicationImage().getImage());
 
-            final JPanel mainPanel = new LoginBackgroundPanel();
-            final GridBagLayout mainLayout = new GridBagLayout();
-            mainPanel.setLayout(mainLayout);
-
-            final ImagePanel imagePanel = new ImagePanel();
-
-            final String showPoweredBy = Default.getString(Default.SHOW_POWERED_BY);
-            if (ModelUtil.hasLength(showPoweredBy) && "true".equals(showPoweredBy)) {
-                // Handle Powered By for custom clients.
-                final JLabel poweredBy = new JLabel(SparkRes.getImageIcon(SparkRes.POWERED_BY_IMAGE));
-                mainPanel.add(poweredBy,
-                        new GridBagConstraints(0, 1, 4, 1,
-                                1.0, 0.0, GridBagConstraints.NORTHEAST, GridBagConstraints.HORIZONTAL,
-                                new Insets(0, 0, 2, 0), 0, 0));
-
-            }
-
-            //setOpaque(false);
-            mainPanel.add(this,
-                    new GridBagConstraints(0, 2, 2, 1,
-                            1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH,
-                            new Insets(0, 0, 2, 0), 0, 20));
-
+           
             loginDialog.setContentPane(this);
             loginDialog.setLocationRelativeTo(parentFrame);
 
@@ -566,6 +547,10 @@ public class LoginPanel extends javax.swing.JPanel implements KeyListener, Actio
     protected void afterLogin() {
         // Make certain Enterprise features persist across future logins
         persistEnterprise();
+
+        // Load plugins before Workspace initialization to avoid any UI delays during plugin rendering, but after
+        // Enterprise initialization, which can pull in additional plugin configuration (eg: blacklist).
+        PluginManager.getInstance().loadPlugins();
 
         // Initialize and write default values from "Advanced Connection Preferences" to disk
         initAdvancedDefaults();
@@ -1189,43 +1174,15 @@ public class LoginPanel extends javax.swing.JPanel implements KeyListener, Actio
                     loginDialog.setVisible(true);
                 }
                 if (loginDialog.isVisible()) {
-                    if (xee.getMessage() != null && (xee.getMessage().contains("Certificate path validation failed") || xee.getMessage().contains("Certificate not in the TrustStore"))) {
-                        // Handle specific case: if path validation failed, show popup allowing the user to add the certificate.
-                        final X509Certificate[] lastFailedChain = SparkTrustManager.getLastFailedChain();
-                        if (lastFailedChain != null) {
+                       if (xee.getMessage() != null && xee.getMessage().contains("Self Signed certificate")) {
+                            // Handle specific case: if server certificate is self-signed, but self-signed certs are not allowed, show a popup allowing the user to override.
                             // Prompt user if they'd like to add the failed chain to the trust store.
-                            final CertificateModel certModel = new CertificateModel(lastFailedChain[0]);
                             final Object[] options = {
                                 Res.getString("yes"),
                                 Res.getString("no")
                             };
 
                             final int userChoice = JOptionPane.showOptionDialog(this,
-                                    new UnrecognizedServerCertificatePanel(certModel),
-                                    Res.getString("title.certificate"),
-                                    JOptionPane.YES_NO_OPTION,
-                                    JOptionPane.WARNING_MESSAGE,
-                                    null,
-                                    options,
-                                    options[1]);
-
-                            if (userChoice == JOptionPane.YES_OPTION) {
-                                // Add the certificate chain to the truststore.
-                                ((SparkTrustManager) SparkTrustManager.getTrustManagerList()[0]).addChain(lastFailedChain);
-
-                                // Attempt to login again.
-                                validateLogin();
-                            }
-                        }
-                    } else if (xee.getMessage() != null && xee.getMessage().contains("Self Signed certificate")) {
-                        // Handle specific case: if server certificate is self-signed, but self-signed certs are not allowed, show a popup allowing the user to override.
-                        // Prompt user if they'd like to add the failed chain to the trust store.
-                        final Object[] options = {
-                            Res.getString("yes"),
-                            Res.getString("no")
-                        };
-
-                        final int userChoice = JOptionPane.showOptionDialog(this,
                                 Res.getString("dialog.certificate.ask.allow.self-signed"),
                                 Res.getString("title.certificate"),
                                 JOptionPane.YES_NO_OPTION,
@@ -1234,20 +1191,48 @@ public class LoginPanel extends javax.swing.JPanel implements KeyListener, Actio
                                 options,
                                 options[1]);
 
-                        if (userChoice == JOptionPane.YES_OPTION) {
-                            // Toggle the preference.
-                            localPref.setAcceptSelfSigned(true);
-                            SettingsManager.saveSettings();
+                            if (userChoice == JOptionPane.YES_OPTION) {
+                                // Toggle the preference.
+                                localPref.setAcceptSelfSigned(true);
+                                SettingsManager.saveSettings();
 
-                            // Attempt to login again.
-                            validateLogin();
+                                // Attempt to login again.
+                                validateLogin();
+                            }
+                        } else {
+                            final X509Certificate[] lastFailedChain = SparkTrustManager.getLastFailedChain();
+                            final SparkTrustManager sparkTrustManager = (SparkTrustManager) SparkTrustManager.getTrustManagerList()[0];
+                            // Handle specific case: if path validation failed because of an unrecognized CA, show popup allowing the user to add the certificate.
+                            if (lastFailedChain != null && ((xee.getMessage() != null && xee.getMessage().contains("Certificate not in the TrustStore")) || !sparkTrustManager.containsTrustAnchorFor(lastFailedChain))) {
+                                // Prompt user if they'd like to add the failed chain to the trust store.
+                                final CertificateModel certModel = new CertificateModel(lastFailedChain[0]);
+                                final Object[] options = {
+                                    Res.getString("yes"),
+                                    Res.getString("no")
+                                };
+
+                                final int userChoice = JOptionPane.showOptionDialog(this,
+                                    new UnrecognizedServerCertificatePanel(certModel),
+                                    Res.getString("title.certificate"),
+                                    JOptionPane.YES_NO_OPTION,
+                                    JOptionPane.WARNING_MESSAGE,
+                                    null,
+                                    options,
+                                    options[1]);
+
+                                if (userChoice == JOptionPane.YES_OPTION) {
+                                    // Add the certificate chain to the truststore.
+                                    sparkTrustManager.addChain(lastFailedChain);
+
+                                    // Attempt to login again.
+                                    validateLogin();
+                                }
+                            } else {
+                                // For anything else, show a generic error dialog.
+                                MessageDialog.showErrorDialog(loginDialog, errorMessage, xee);
+                            }
                         }
-
-                    } else {
-                        // For anything else, show a generic error dialog.
-                        MessageDialog.showErrorDialog(loginDialog, errorMessage, xee);
                     }
-                }
             });
 
             setEnabled(true);
@@ -1351,7 +1336,7 @@ public class LoginPanel extends javax.swing.JPanel implements KeyListener, Actio
                 final Rectangle mainWindowBounds = settings.getMainWindowBounds();
                 if (mainWindowBounds == null || mainWindowBounds.width <= 0 || mainWindowBounds.height <= 0) {
                     // Use Default size
-                    mainWindow.setSize(460, 520);
+                    mainWindow.setSize(530, 520);
 
                     // Center Window on Screen
                     GraphicUtils.centerWindowOnScreen(mainWindow);
@@ -1420,65 +1405,7 @@ public class LoginPanel extends javax.swing.JPanel implements KeyListener, Actio
         }
     }
 
-    /**
-     * Defines the background to use with the Login panel.
-     */
-    public class LoginBackgroundPanel extends JPanel {
 
-        private static final long serialVersionUID = -2449309600851007447L;
-        final ImageIcon icons = Default.getImageIcon(Default.LOGIN_DIALOG_BACKGROUND_IMAGE);
-
-        /**
-         * Empty constructor.
-         */
-        public LoginBackgroundPanel() {
-        }
-
-        /**
-         * Uses an image to paint on background.
-         *
-         * @param g the graphics.
-         */
-        @Override
-        public void paintComponent(Graphics g) {
-            Image backgroundImage = icons.getImage();
-            double scaleX = getWidth() / (double) backgroundImage.getWidth(null);
-            double scaleY = getHeight() / (double) backgroundImage.getHeight(null);
-            AffineTransform xform = AffineTransform.getScaleInstance(scaleX, scaleY);
-            ((Graphics2D) g).drawImage(backgroundImage, xform, this);
-        }
-    }
-
-    /**
-     * The image panel to display the Spark Logo.
-     */
-    public class ImagePanel extends JPanel {
-
-        private static final long serialVersionUID = -1778389077647562606L;
-        private final ImageIcon icons = Default.getImageIcon(Default.MAIN_IMAGE);
-
-        /**
-         * Uses the Spark logo to paint as the background.
-         *
-         * @param g the graphics to use.
-         */
-        @Override
-        public void paintComponent(Graphics g) {
-            final Image backgroundImage = icons.getImage();
-            final double scaleX = getWidth() / (double) backgroundImage.getWidth(null);
-            final double scaleY = getHeight() / (double) backgroundImage.getHeight(null);
-            AffineTransform xform = AffineTransform.getScaleInstance(scaleX, scaleY);
-            ((Graphics2D) g).drawImage(backgroundImage, xform, this);
-        }
-
-        @Override
-        public Dimension getPreferredSize() {
-            final Dimension size = super.getPreferredSize();
-            size.width = icons.getIconWidth();
-            size.height = icons.getIconHeight();
-            return size;
-        }
-    }
 
     /**
      * Checks for historic Spark settings and upgrades the user.
