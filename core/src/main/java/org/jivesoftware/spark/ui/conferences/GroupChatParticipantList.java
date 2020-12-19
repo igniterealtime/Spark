@@ -692,7 +692,7 @@ public class GroupChatParticipantList extends JPanel {
 		changeNicknameAction.putValue(Action.NAME,
 			Res.getString("menuitem.change.nickname"));
 		changeNicknameAction.putValue(Action.SMALL_ICON,
-			SparkRes.getImageIcon(SparkRes.DESKTOP_IMAGE));
+			SparkRes.getImageIcon(SparkRes.TYPING_TRAY));
 
 		if (allowNicknameChange) {
 		    popup.add(changeNicknameAction);

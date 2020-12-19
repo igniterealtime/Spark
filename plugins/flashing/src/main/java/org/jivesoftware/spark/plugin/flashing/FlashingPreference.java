@@ -72,7 +72,7 @@ public class FlashingPreference implements Preference {
 	@Override
 	public Icon getIcon() {
 		ClassLoader cl = getClass().getClassLoader();
-		return new ImageIcon(cl.getResource("lightning16.png"));
+		return new ImageIcon(cl.getResource("lightning.png"));
 	}
 
 	@Override

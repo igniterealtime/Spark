@@ -60,7 +60,7 @@ public class RoarPreference implements Preference {
     @Override
     public Icon getIcon() {
         ClassLoader cl = getClass().getClassLoader();
-        return new ImageIcon(cl.getResource("roar-logo.png"));
+        return new ImageIcon(cl.getResource("roar.png"));
     }
 
     @Override
