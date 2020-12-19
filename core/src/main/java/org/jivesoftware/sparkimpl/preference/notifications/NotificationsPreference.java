@@ -56,7 +56,7 @@ public class NotificationsPreference implements Preference {
 
 	@Override
 	public Icon getIcon() {
-		return SparkRes.getImageIcon(SparkRes.PROFILE_ICON);
+		return SparkRes.getImageIcon(SparkRes.NOTIFICATIONS);
 	}
 
 	@Override

@@ -131,7 +131,7 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         }
         else
         {
-            //setBounds( mainWindowBounds );
+            setBounds( mainWindowBounds );
         }
 
         // Add menubar

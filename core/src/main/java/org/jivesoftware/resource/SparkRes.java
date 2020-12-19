@@ -333,6 +333,7 @@ public class SparkRes {
     public static final String EXECUTABLE_NAME = "EXECUTABLE_NAME";
     public static final String INVISIBLE = "INVISIBLE";
     public static final String CHECK_UPDATE = "CHECK_UPDATE";
+    public static final String NOTIFICATIONS = "NOTIFICATIONS";
 
     private static final ClassLoader cl = SparkRes.class.getClassLoader();
 
