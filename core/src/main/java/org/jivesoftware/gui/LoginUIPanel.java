@@ -70,6 +70,7 @@ import javax.swing.JPasswordField;
 import javax.swing.JPopupMenu;
 import javax.swing.JSplitPane;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.text.JTextComponent;
 import org.dom4j.Document;
@@ -302,7 +303,6 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
         //reset ui
         //btnAdvanced.setUI(new BasicButtonUI());
         //btnCreateAccount.setUI(new BasicButtonUI());
-
         tfDomain.putClientProperty("JTextField.placeholderText", "Enter Domain(e.g igniterealtime.org)");
         tfPassword.putClientProperty("JTextField.placeholderText", "Enter Password");
         tfUsername.putClientProperty("JTextField.placeholderText", "Enter Username");
@@ -376,6 +376,17 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
         pnlCenter.add(filler2);
 
         tfUsername.setPreferredSize(new java.awt.Dimension(200, 30));
+        tfUsername.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                tfUsernameMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                tfUsernameMouseExited(evt);
+            }
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                tfUsernameMousePressed(evt);
+            }
+        });
         pnlCenter.add(tfUsername);
 
         tfDomain.setPreferredSize(new java.awt.Dimension(200, 30));
@@ -450,6 +461,20 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
         // TODO add your handling code here:
     }//GEN-LAST:event_btnLoginActionPerformed
 
+    private void tfUsernameMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tfUsernameMousePressed
+        if (SwingUtilities.isRightMouseButton(evt)) {
+            getPopup().show(tfUsername, evt.getX(), evt.getY()); 
+        }
+    }//GEN-LAST:event_tfUsernameMousePressed
+
+    private void tfUsernameMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tfUsernameMouseEntered
+       // getPopup().show(tfUsername, evt.getX(), evt.getY());
+    }//GEN-LAST:event_tfUsernameMouseEntered
+
+    private void tfUsernameMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tfUsernameMouseExited
+      // getPopup().setVisible(false);
+    }//GEN-LAST:event_tfUsernameMouseExited
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAdvanced;
@@ -509,7 +534,6 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
         EventQueue.invokeLater(() -> {
             loginDialog.setIconImage(SparkManager.getApplicationImage().getImage());
 
-           
             loginDialog.setContentPane(this);
             loginDialog.setLocationRelativeTo(parentFrame);
 
@@ -1174,15 +1198,15 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
                     loginDialog.setVisible(true);
                 }
                 if (loginDialog.isVisible()) {
-                       if (xee.getMessage() != null && xee.getMessage().contains("Self Signed certificate")) {
-                            // Handle specific case: if server certificate is self-signed, but self-signed certs are not allowed, show a popup allowing the user to override.
-                            // Prompt user if they'd like to add the failed chain to the trust store.
-                            final Object[] options = {
-                                Res.getString("yes"),
-                                Res.getString("no")
-                            };
+                    if (xee.getMessage() != null && xee.getMessage().contains("Self Signed certificate")) {
+                        // Handle specific case: if server certificate is self-signed, but self-signed certs are not allowed, show a popup allowing the user to override.
+                        // Prompt user if they'd like to add the failed chain to the trust store.
+                        final Object[] options = {
+                            Res.getString("yes"),
+                            Res.getString("no")
+                        };
 
-                            final int userChoice = JOptionPane.showOptionDialog(this,
+                        final int userChoice = JOptionPane.showOptionDialog(this,
                                 Res.getString("dialog.certificate.ask.allow.self-signed"),
                                 Res.getString("title.certificate"),
                                 JOptionPane.YES_NO_OPTION,
@@ -1191,27 +1215,27 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
                                 options,
                                 options[1]);
 
-                            if (userChoice == JOptionPane.YES_OPTION) {
-                                // Toggle the preference.
-                                localPref.setAcceptSelfSigned(true);
-                                SettingsManager.saveSettings();
+                        if (userChoice == JOptionPane.YES_OPTION) {
+                            // Toggle the preference.
+                            localPref.setAcceptSelfSigned(true);
+                            SettingsManager.saveSettings();
 
-                                // Attempt to login again.
-                                validateLogin();
-                            }
-                        } else {
-                            final X509Certificate[] lastFailedChain = SparkTrustManager.getLastFailedChain();
-                            final SparkTrustManager sparkTrustManager = (SparkTrustManager) SparkTrustManager.getTrustManagerList()[0];
-                            // Handle specific case: if path validation failed because of an unrecognized CA, show popup allowing the user to add the certificate.
-                            if (lastFailedChain != null && ((xee.getMessage() != null && xee.getMessage().contains("Certificate not in the TrustStore")) || !sparkTrustManager.containsTrustAnchorFor(lastFailedChain))) {
-                                // Prompt user if they'd like to add the failed chain to the trust store.
-                                final CertificateModel certModel = new CertificateModel(lastFailedChain[0]);
-                                final Object[] options = {
-                                    Res.getString("yes"),
-                                    Res.getString("no")
-                                };
+                            // Attempt to login again.
+                            validateLogin();
+                        }
+                    } else {
+                        final X509Certificate[] lastFailedChain = SparkTrustManager.getLastFailedChain();
+                        final SparkTrustManager sparkTrustManager = (SparkTrustManager) SparkTrustManager.getTrustManagerList()[0];
+                        // Handle specific case: if path validation failed because of an unrecognized CA, show popup allowing the user to add the certificate.
+                        if (lastFailedChain != null && ((xee.getMessage() != null && xee.getMessage().contains("Certificate not in the TrustStore")) || !sparkTrustManager.containsTrustAnchorFor(lastFailedChain))) {
+                            // Prompt user if they'd like to add the failed chain to the trust store.
+                            final CertificateModel certModel = new CertificateModel(lastFailedChain[0]);
+                            final Object[] options = {
+                                Res.getString("yes"),
+                                Res.getString("no")
+                            };
 
-                                final int userChoice = JOptionPane.showOptionDialog(this,
+                            final int userChoice = JOptionPane.showOptionDialog(this,
                                     new UnrecognizedServerCertificatePanel(certModel),
                                     Res.getString("title.certificate"),
                                     JOptionPane.YES_NO_OPTION,
@@ -1220,19 +1244,19 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
                                     options,
                                     options[1]);
 
-                                if (userChoice == JOptionPane.YES_OPTION) {
-                                    // Add the certificate chain to the truststore.
-                                    sparkTrustManager.addChain(lastFailedChain);
+                            if (userChoice == JOptionPane.YES_OPTION) {
+                                // Add the certificate chain to the truststore.
+                                sparkTrustManager.addChain(lastFailedChain);
 
-                                    // Attempt to login again.
-                                    validateLogin();
-                                }
-                            } else {
-                                // For anything else, show a generic error dialog.
-                                MessageDialog.showErrorDialog(loginDialog, errorMessage, xee);
+                                // Attempt to login again.
+                                validateLogin();
                             }
+                        } else {
+                            // For anything else, show a generic error dialog.
+                            MessageDialog.showErrorDialog(loginDialog, errorMessage, xee);
                         }
                     }
+                }
             });
 
             setEnabled(true);
@@ -1404,8 +1428,6 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
             }
         }
     }
-
-
 
     /**
      * Checks for historic Spark settings and upgrades the user.

@@ -1606,7 +1606,7 @@ public class ContactList extends JPanel implements ActionListener,
         };
 
         lastActivityAction.putValue(Action.NAME, Res.getString("menuitem.view.last.activity"));
-        lastActivityAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.SMALL_USER1_STOPWATCH));
+        lastActivityAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.HISTORY_16x16));
 
         if (contactGroup == offlineGroup || item.getPresence().isAway() || (item.getPresence().getType() == Presence.Type.unavailable) || (item.getPresence().getType() == null)) {
             popup.add(lastActivityAction);
