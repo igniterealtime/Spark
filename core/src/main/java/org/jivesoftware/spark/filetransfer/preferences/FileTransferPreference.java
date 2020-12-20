@@ -50,7 +50,7 @@ public class FileTransferPreference implements Preference {
 
     @Override
 	public Icon getIcon() {
-        return SparkRes.getImageIcon(SparkRes.SEND_FILE_24x24);
+        return SparkRes.getImageIcon(SparkRes.SEND_FILE_ICON);
     }
 
     @Override

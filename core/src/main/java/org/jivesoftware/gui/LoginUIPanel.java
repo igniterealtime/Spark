@@ -1360,7 +1360,7 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
                 final Rectangle mainWindowBounds = settings.getMainWindowBounds();
                 if (mainWindowBounds == null || mainWindowBounds.width <= 0 || mainWindowBounds.height <= 0) {
                     // Use Default size
-                    mainWindow.setSize(530, 520);
+                    mainWindow.setSize(500, 520);
 
                     // Center Window on Screen
                     GraphicUtils.centerWindowOnScreen(mainWindow);
@@ -1370,7 +1370,6 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
 
                 if (loginDialog != null) {
                     if (loginDialog.isVisible()) {
-                        mainWindow.setSize(460, 520);
                         mainWindow.setVisible(true);
                     }
                     loginDialog.dispose();
