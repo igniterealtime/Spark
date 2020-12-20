@@ -115,14 +115,14 @@ public class ThemePanel extends JPanel {
                 }
 
                 private void setNewLaF() {
-//                    final String selectedName = (String) _lookandfeel.getSelectedItem();
-//                    try {
-//                        final String className = LookAndFeelManager.getClassName(selectedName);
-//                       // UIManager.setLookAndFeel(className);
-//                        // TODO setJTattooBar( _lookandfeelname.get( _lookandfeel.getSelectedIndex() ) );
-//                    } catch (Exception e) {
-//                        Log.error("An unexpected exception occurred while trying to update Look and Feel to '" + selectedName + "'.", e);
-//                    }
+                    final String selectedName = (String) _lookandfeel.getSelectedItem();
+                    try {
+                        final String className = LookAndFeelManager.getClassName(selectedName);
+                        UIManager.setLookAndFeel(className);
+                        // TODO setJTattooBar( _lookandfeelname.get( _lookandfeel.getSelectedIndex() ) );
+                    } catch (Exception e) {
+                        Log.error("An unexpected exception occurred while trying to update Look and Feel to '" + selectedName + "'.", e);
+                    }
                 }
 
                 private void updateAllComponentsLaF(final Window window) {
@@ -139,8 +139,8 @@ public class ThemePanel extends JPanel {
 
                     // substance is a PITA! If the current laf is substance, and the new laf is not, we need to
                     // refresh all components, but since substance is very stubborn, we must restart.
-                    final String currentName = UIManager.getLookAndFeel().getName().toLowerCase();
-                    final String selectedName = ((String) _lookandfeel.getSelectedItem());
+                    final String currentName = "SparkLighLaf".toLowerCase();//UIManager.getLookAndFeel().getName().toLowerCase();
+                    final String selectedName = "SparkLighLaf";//((String) _lookandfeel.getSelectedItem());
                     final String selectedClass = LookAndFeelManager.getClassName(selectedName);
                     if (currentName.contains("substance") && !selectedName.toLowerCase().contains("substance")) {
                         final int selectedOption = JOptionPane.showConfirmDialog(SparkManager.getPreferenceManager().getPreferenceDialog(),
@@ -240,7 +240,7 @@ public class ThemePanel extends JPanel {
     }
 
     public String getSelectedLookAndFeelName() {
-        return (String) this._lookandfeel.getSelectedItem();
+        return "SparkLightLaf"; //(String) this._lookandfeel.getSelectedItem();
     }
 
     public String getSelectedLookAndFeelClassName() {
@@ -314,7 +314,7 @@ public class ThemePanel extends JPanel {
 
         final String className = pref.getLookAndFeel();
         final String name = LookAndFeelManager.getName(className);
-        _lookandfeel.setSelectedItem(name);
+        _lookandfeel.setSelectedItem("SparkLighLaf");
 
         showVCards.setSelected(pref.areVCardsVisible());
 
