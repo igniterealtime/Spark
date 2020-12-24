@@ -123,14 +123,14 @@
         </dependency>
         <dependency>
             <groupId>org.igniterealtime.smack</groupId>
-            <artifactId>smack-java8</artifactId>
+            <artifactId>smack-java7</artifactId>
             <version>${dependency.smack.version}</version>
         </dependency>
-      <!--<dependency>
+        <dependency>
             <groupId>org.igniterealtime.smack</groupId>
             <artifactId>smack-compression-jzlib</artifactId>
             <version>${dependency.smack.version}</version>
-        </dependency>-->
+        </dependency>
         <dependency>
             <groupId>org.igniterealtime.spark</groupId>
             <artifactId>emoticons</artifactId>
