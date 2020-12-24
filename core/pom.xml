@@ -129,8 +129,8 @@
       <!--<dependency>
             <groupId>org.igniterealtime.smack</groupId>
             <artifactId>smack-compression-jzlib</artifactId>
-            <version>${dependency.smack.version}</version>-->
-        </dependency>
+            <version>${dependency.smack.version}</version>
+        </dependency>-->
         <dependency>
             <groupId>org.igniterealtime.spark</groupId>
             <artifactId>emoticons</artifactId>
