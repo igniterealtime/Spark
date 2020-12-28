@@ -357,7 +357,7 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
 	if (pref.getShowToasterPopup()) {
 	    SparkToaster toaster = new SparkToaster();
 	    toaster.setDisplayTime(30000);
-	    toaster.setBorder(BorderFactory.createBevelBorder(0));
+	    toaster.setBorder(BorderFactory.createLineBorder(Color.lightGray, 1, true));
 	    toaster.setTitle(nickname+ " - "+broadcasttype);
 	    toaster.showToaster(message.getBody());
 	}

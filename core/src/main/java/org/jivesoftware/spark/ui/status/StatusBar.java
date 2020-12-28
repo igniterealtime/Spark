@@ -15,6 +15,7 @@
  */
 package org.jivesoftware.spark.ui.status;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -597,7 +598,7 @@ public class StatusBar extends JPanel implements VCardListener {
 					public void mouseEntered(MouseEvent e) {
                         if (!isEnabled()) return;
 						setCursor(GraphicUtils.HAND_CURSOR);
-						setBorder(BorderFactory.createBevelBorder(0));
+						setBorder(BorderFactory.createLineBorder(Color.lightGray, 1, true));
 					}
 
 					@Override
@@ -609,7 +610,7 @@ public class StatusBar extends JPanel implements VCardListener {
 					@Override
 					public void mousePressed(MouseEvent e) {
                         if (!isEnabled()) return;
-						setBorder(BorderFactory.createBevelBorder(1));
+						setBorder(BorderFactory.createLineBorder(Color.lightGray, 1, true));
 					}
 
 				});
