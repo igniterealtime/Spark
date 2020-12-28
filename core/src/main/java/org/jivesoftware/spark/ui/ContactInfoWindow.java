@@ -297,7 +297,7 @@ public class ContactInfoWindow extends JPanel {
                 icon = SparkRes.getImageIcon(SparkRes.DEFAULT_AVATAR_64x64_IMAGE);
                 avatarLabel.setIcon(icon);
             }
-            avatarLabel.setBorder(BorderFactory.createBevelBorder(0, Color.white, Color.lightGray));
+            avatarLabel.setBorder(BorderFactory.createLineBorder(Color.lightGray, 1, true));
         }
         catch (MalformedURLException e) {
             Log.error(e);

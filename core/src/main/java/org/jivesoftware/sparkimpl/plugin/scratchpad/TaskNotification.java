@@ -122,7 +122,7 @@ public class TaskNotification {
 						toaster.setToasterHeight(175);
 						toaster.setToasterWidth(300);
 
-						toaster.setBorder(BorderFactory.createBevelBorder(0));
+						toaster.setBorder(BorderFactory.createLineBorder(Color.lightGray, 1, true));
 						JScrollPane pane = new JScrollPane(mainPanel);
 						pane.getViewport().setBackground(Color.white);
 						toaster.showToaster(Res.getString("title.task.notification"), pane);

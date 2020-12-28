@@ -521,7 +521,7 @@ public class ConferenceServices implements InvitationListener {
 		}
 	    });
 	    toaster.setDisplayTime(5000);
-	    toaster.setBorder(BorderFactory.createBevelBorder(0));
+	    toaster.setBorder(BorderFactory.createLineBorder(Color.lightGray, 1, true));
 	    toaster.setToasterHeight(150);
 	    toaster.setToasterWidth(200);
 	    toaster.setTitle(title);

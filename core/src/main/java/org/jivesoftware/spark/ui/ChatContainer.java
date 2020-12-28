@@ -1115,7 +1115,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             });
 
             toaster.setDisplayTime(5000);
-            toaster.setBorder(BorderFactory.createBevelBorder(0));
+            toaster.setBorder(BorderFactory.createLineBorder(Color.lightGray, 1, true));
             
             String nickname = room.getRoomTitle();
               
