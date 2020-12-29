@@ -710,7 +710,7 @@ public class SparkToaster {
     public static void main(String[] args) {
         SparkToaster toaster = new SparkToaster();
         toaster.setDisplayTime(30000);
-        toaster.setBorder(BorderFactory.createBevelBorder(0));
+        toaster.setBorder(BorderFactory.createLineBorder(Color.lightGray, 1, true));
         toaster.setTitle(Res.getString("title.notification"));
 
         JButton button = new JButton("DDD");

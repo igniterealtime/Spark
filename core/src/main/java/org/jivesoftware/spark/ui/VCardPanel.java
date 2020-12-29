@@ -114,7 +114,7 @@ public class VCardPanel extends JPanel {
 
         if (icon != null && icon.getIconWidth() > 0) {
             avatarImage.setIcon(icon);
-            avatarImage.setBorder(BorderFactory.createBevelBorder(0, Color.white, Color.lightGray));
+            avatarImage.setBorder(BorderFactory.createLineBorder(Color.lightGray, 1, true));
         }
 
         vcard.setJabberId(jid);

@@ -312,8 +312,7 @@ public class VCardEditor {
 
 	avatarLabel = new JLabel();
 	avatarLabel.setHorizontalAlignment(JButton.RIGHT);
-	avatarLabel.setBorder(BorderFactory.createBevelBorder(0, Color.white,
-		Color.lightGray));
+	avatarLabel.setBorder(BorderFactory.createLineBorder(Color.lightGray, 1, true));
 
 	// The user should only be able to close this dialog.
 	Object[] options = { Res.getString("button.view.profile"),

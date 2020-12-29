@@ -50,6 +50,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -413,7 +414,7 @@ public class UserManager {
         enterLabel.setFont(new Font("dialog", Font.BOLD, 10));
         layoutPanel.add(enterLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 0, 5), 0, 0));
         layoutPanel.add(contactField, new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 0));
-        layoutPanel.setBorder(BorderFactory.createBevelBorder(0));
+        layoutPanel.setBorder(BorderFactory.createLineBorder(Color.lightGray, 1, true));
         
         contactField.addKeyListener(new KeyAdapter() {
             @Override

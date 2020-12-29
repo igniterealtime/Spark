@@ -15,6 +15,7 @@
  */
 package org.jivesoftware.sparkimpl.plugin.chat;
 
+import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
@@ -156,7 +157,7 @@ if (localPref.getShowToasterPopup()) {
                             {
                                 SparkToaster toaster = new SparkToaster();
                                 toaster.setDisplayTime( 5000 );
-                                toaster.setBorder( BorderFactory.createBevelBorder( 0 ) );
+                                toaster.setBorder(BorderFactory.createLineBorder(Color.lightGray, 1, true));
 
                                 toaster.setToasterHeight( 150 );
                                 toaster.setToasterWidth( 200 );
