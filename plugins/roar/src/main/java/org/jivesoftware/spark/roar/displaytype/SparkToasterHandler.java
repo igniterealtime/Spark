@@ -1,5 +1,6 @@
 package org.jivesoftware.spark.roar.displaytype;
 
+import java.awt.Color;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 
@@ -31,7 +32,7 @@ public class SparkToasterHandler implements RoarDisplayType {
 
 	SparkToaster toaster = new SparkToaster();
 	toaster.setDisplayTime(property.duration);
-	toaster.setBorder(BorderFactory.createBevelBorder(0));
+	toaster.setBorder(BorderFactory.createLineBorder(Color.lightGray, 1, true));
 	toaster.setTitle(room.getTabTitle());
 
 	toaster.setCustomAction(new AbstractAction() {

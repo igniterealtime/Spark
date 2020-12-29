@@ -114,7 +114,7 @@ public class AvatarPanel extends JPanel implements ActionListener {
      * @param icon the icon.
      */
     public void setAvatar(ImageIcon icon) {
-        avatar.setBorder(BorderFactory.createBevelBorder(0, Color.white, Color.lightGray));
+        avatar.setBorder(BorderFactory.createLineBorder(Color.lightGray, 1, true));
         if (icon.getIconHeight() > 128 || icon.getIconWidth() > 128) {
             avatar.setIcon(new ImageIcon(icon.getImage().getScaledInstance(-1, 128, Image.SCALE_SMOOTH)));
         }

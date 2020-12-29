@@ -16,6 +16,7 @@
 
 package org.jivesoftware.sparkimpl.preference.notifications;
 
+import java.awt.Color;
 import org.jivesoftware.smack.StanzaListener;
 import org.jivesoftware.smack.filter.StanzaTypeFilter;
 import org.jivesoftware.smack.packet.Stanza;
@@ -151,7 +152,7 @@ public class NotificationPlugin implements Plugin, StanzaListener {
    		 EventQueue.invokeAndWait( () -> {
                 SparkToaster toaster = new SparkToaster();
                 toaster.setDisplayTime(preferences.getNotificationsDisplayTime());
-                toaster.setBorder(BorderFactory.createBevelBorder(0));
+                toaster.setBorder(BorderFactory.createLineBorder(Color.lightGray, 1, true));
                 toaster.setCustomAction(new ChatAction(jid));
                 NotificationAlertUI alertUI = new NotificationAlertUI(jid, true, presence);
 
@@ -185,7 +186,7 @@ public class NotificationPlugin implements Plugin, StanzaListener {
                 SparkToaster toaster = new SparkToaster();
                 toaster.setCustomAction(new ChatAction(jid));
                 toaster.setDisplayTime(preferences.getNotificationsDisplayTime());
-                toaster.setBorder(BorderFactory.createBevelBorder(0));
+                toaster.setBorder(BorderFactory.createLineBorder(Color.lightGray, 1, true));
 
                 NotificationAlertUI alertUI = new NotificationAlertUI(jid, false, presence);
 
