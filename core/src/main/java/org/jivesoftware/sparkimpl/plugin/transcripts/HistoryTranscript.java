@@ -2,6 +2,7 @@ package org.jivesoftware.sparkimpl.plugin.transcripts;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -25,7 +26,6 @@ import javax.swing.*;
 import javax.swing.text.*;
 import javax.swing.text.html.*;
 
-
 import org.jdesktop.swingx.calendar.DateUtils;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
@@ -45,549 +45,572 @@ import org.jxmpp.util.XmppStringUtils;
 
 /**
  * This class represents the history transcript
+ *
  * @author tim.jentz
  *
  */
 public class HistoryTranscript extends SwingWorker {
 
-	private final Semaphore token = new Semaphore(1);
-	private int pageIndex = 0;
-	private int maxPages = 0;
-	private final String period_oneMonth = "message.search.period.month.one";
-	private final String period_oneYear = "message.search.period.year.one";
-	private final String period_noPeriod = "message.search.period.none";
-	private String searchPeriod = "";
-	private final List<String> periods = new ArrayList<>();
-	private final timerTranscript transcriptTask = new timerTranscript();
-	private final JLabel pageCounter = new JLabel("0 / 0");
-	private final JButton pageLeft = new JButton("<");
-	private final JButton pageRight = new JButton(">");
-	private BareJid jid = null;
-	private final SimpleDateFormat notificationDateFormatter;
-	private final SimpleDateFormat messageDateFormatter;
-	private final AtomicBoolean isInitialized = new AtomicBoolean(false);
+    private final Semaphore token = new Semaphore(1);
+    private int pageIndex = 0;
+    private int maxPages = 0;
+    private final String period_oneMonth = "message.search.period.month.one";
+    private final String period_oneYear = "message.search.period.year.one";
+    private final String period_noPeriod = "message.search.period.none";
+    private String searchPeriod = "";
+    private final List<String> periods = new ArrayList<>();
+    private final timerTranscript transcriptTask = new timerTranscript();
+    private final JLabel pageCounter = new JLabel("0 / 0");
+    private final JButton pageLeft = new JButton("<");
+    private final JButton pageRight = new JButton(">");
+    private BareJid jid = null;
+    private final SimpleDateFormat notificationDateFormatter;
+    private final SimpleDateFormat messageDateFormatter;
+    private final AtomicBoolean isInitialized = new AtomicBoolean(false);
 
-	private final LocalPreferences pref = SettingsManager.getLocalPreferences();
-	private final JComboBox<String> periodChooser= new JComboBox<>();
-	private final JPanel filterPanel = new JPanel();
-	private final JPanel mainPanel = new BackgroundPanel();
-	private final JPanel searchPanel = new BackgroundPanel();
-	private final JPanel navigatorPanel = new JPanel();
-	private final JPanel overTheTopPanel = new BackgroundPanel();
-	private final JPanel controlPanel = new BackgroundPanel();
-	private VCardPanel vacardPanel = null;
-	private final JTextField searchField = new JTextField(25);
-	private final JEditorPane window = new JEditorPane();
-	private final JScrollPane pane = new JScrollPane(window);
-	private final JFrame frame = new JFrame(Res.getString("title.history.for", jid));
-	private final StringBuilder builder = new StringBuilder();
-	private List<ChatTranscript> searchFilteredList = new ArrayList<>();
-	private List<ChatTranscript> dateFilteredUnfilteredList = new ArrayList<>();
+    private final LocalPreferences pref = SettingsManager.getLocalPreferences();
+    private final JComboBox<String> periodChooser = new JComboBox<>();
+    private final JPanel filterPanel = new JPanel();
+    private final JPanel mainPanel = new BackgroundPanel();
+    private final JPanel searchPanel = new BackgroundPanel();
+    private final JPanel navigatorPanel = new JPanel();
+    private final JPanel overTheTopPanel = new BackgroundPanel();
+    private final JPanel controlPanel = new BackgroundPanel();
+    private VCardPanel vacardPanel = null;
+    private final JTextField searchField = new JTextField(25);
+    private final JEditorPane window = new JEditorPane();
+    private final JScrollPane pane = new JScrollPane(window);
+    private final JFrame frame = new JFrame(Res.getString("title.history.for", jid));
+    private final StringBuilder builder = new StringBuilder();
+    private List<ChatTranscript> searchFilteredList = new ArrayList<>();
+    private List<ChatTranscript> dateFilteredUnfilteredList = new ArrayList<>();
     private final AtomicBoolean isHistoryLoaded = new AtomicBoolean(false);
     private final String SEPARATOR = System.getProperty("line.separator");
-	private final DefaultHighlighter.DefaultHighlightPainter highlighter = new DefaultHighlighter.DefaultHighlightPainter(Color.YELLOW);
-	private boolean focusFlag = false;
-	private String searchQuery = Res.getString("message.search.for.history");
-
-	/**
-	 * Open the Transcript with the given formatter.
-	 * @param notificationDateFormatter the formatter for the notifications
-	 * @param messageDateFormatter the formatter for dates
-	 */
-	public HistoryTranscript(SimpleDateFormat notificationDateFormatter, SimpleDateFormat messageDateFormatter) {
-		this.notificationDateFormatter = notificationDateFormatter;
-		this.messageDateFormatter = messageDateFormatter;
-	}
-
-	/**
-	 * Show the History for the given Contact.
-	 * @param jid the JID of the current transcript
-	 */
-	public void showHistory(BareJid jid) {
-		vacardPanel = new VCardPanel(jid);
-		frame.setTitle(Res.getString("title.history.for", jid));
-		this.jid = jid;
-		this.start();
-	}
-
-	/**
-	 * Check if the period was changed an apply the filter
-	 * to the message history
-	 * @param change the choosen value for the period
-	 */
-	private synchronized void handlePeriodChange(String change){
-		try {
-			token.acquire();
-			if ( !Objects.equals( change, searchPeriod ) && isInitialized.get()){
-				searchPeriod = change;
-				pref.setSearchPeriod(searchPeriod);
-				isHistoryLoaded.set(false);
-				TaskEngine.getInstance().schedule(transcriptTask, 10);
-			}
-			token.release();
-		} catch (InterruptedException e) {
-			Log.error(e);
-			e.printStackTrace();
-		}
-	}
-
-	/**
-	 * Navigate one page left through the history.
-	 * Do nothing if at index 0.
-	 */
-	private synchronized void pageLeft() {
-		try {
-			AtomicBoolean changed = new AtomicBoolean();
-			changed.set(false);
-			token.acquire();
-			if (pageIndex > 1){
-				pageIndex--;
-				changed.set(true);	
-			}
-			token.release();
-			if (changed.get()) display();
-		}catch(InterruptedException e){
-			Log.error(e);
-			e.printStackTrace();
-		}
-	}
-
-	/**
-	 * Navigate one page right through the history.
-	 * Do nothing if at maximum index.
-	 */
-	private synchronized void pageRight() {
-		try {
-			AtomicBoolean changed = new AtomicBoolean();
-			changed.set(false);
-			token.acquire();
-			if (pageIndex < maxPages){
-				pageIndex++;
-				changed.set(true);
-			}
-			token.release();
-			if (changed.get()) display();
-		} catch (InterruptedException e) {
-			Log.error(e);
-			e.printStackTrace();
-		}
-	}
-
-	/**
-     * Builds html string with the stored messages
-     * @return String containing the messages as html 
-     */
-    public final String buildString(List<HistoryMessage> messages){
-    	StringBuilder builder = new StringBuilder();
-    	final String personalNickname = SparkManager.getUserManager().getNickname();
-		Date lastPost = null;
-		Jid broadcastnick = null;
-		boolean initialized = false;
-
-		for (HistoryMessage message : messages) {
-			String color = "blue";
-
-			Jid from = message.getFrom();
-			String nickname = SparkManager.getUserManager()
-					.getUserNicknameFromJID(message.getFrom().asBareJid());
-			String body = org.jivesoftware.spark.util.StringUtils
-					.escapeHTMLTags(message.getBody());
-			if (nickname.equals(message.getFrom().toString()) || nickname.equals(message.getFrom().asBareJid().toString())) {
-				BareJid otherJID = message
-						.getFrom().asBareJid();
-				EntityBareJid myJID = SparkManager.getSessionManager()
-						.getUserBareAddress();
-
-				if (otherJID.equals(myJID)) {
-					nickname = personalNickname;
-				} else {
-					nickname = XmppStringUtils.parseLocalpart(nickname);
-					broadcastnick = message.getFrom();
-				}
-			}
-
-			if (!from.asBareJid().equals(
-					SparkManager.getSessionManager().getUserBareAddress())) {
-				color = "red";
-			}
-
-			long lastPostTime = lastPost != null ? lastPost.getTime() : 0;
-
-			int diff;
-			if (DateUtils.getDaysDiff(lastPostTime, message.getDate()
-					.getTime()) != 0) {
-				diff = DateUtils.getDaysDiff(lastPostTime, message
-						.getDate().getTime());
-			} else {
-				diff = DateUtils.getDayOfWeek(lastPostTime)
-						- DateUtils.getDayOfWeek(message.getDate()
-								.getTime());
-			}
-
-			if (diff != 0) {
-				if (initialized) {
-					builder.append("<tr><td><br></td></tr>");
-				}
-				builder.append(
-						"<tr><td colspan=2><font face=dialog size=3 color=black><b><u>")
-						.append(notificationDateFormatter.format(message
-								.getDate()))
-						.append("</u></b></font></td></tr>");
-				initialized = true;
-			}
-
-			String value = "(" + messageDateFormatter.format(message.getDate()) + ") ";
-
-			builder.append("<tr valign=top><td colspan=2>");
-			builder.append("<font face=dialog size=3 color='").append(color).append("'>");
-			builder.append(value);
-			if (broadcastnick == null){
-				builder.append(nickname).append(": ");
-			} else {
-				builder.append(broadcastnick).append(": ");
-			}
-			builder.append("</font>");
-			builder.append("<font face=dialog size=3>");
-			builder.append(body);
-			builder.append("</font>");
-			builder.append("</td></tr><br>");
-
-			lastPost = message.getDate();
-			broadcastnick = null;
-		}
-		builder.append("</table></body></html>");
-
-		return builder.toString();
-	}
+    private final DefaultHighlighter.DefaultHighlightPainter highlighter = new DefaultHighlighter.DefaultHighlightPainter(Color.YELLOW);
+    private boolean focusFlag = false;
+    private String searchQuery = Res.getString("message.search.for.history");
 
     /**
-     * If a new page is loaded or the search is 
-     * changed, displays the current page again.
+     * Open the Transcript with the given formatter.
+     *
+     * @param notificationDateFormatter the formatter for the notifications
+     * @param messageDateFormatter the formatter for dates
      */
-	private synchronized void display() {
-		try {
-			token.acquire();
-			if ((searchFilteredList.size() > 0) && (pageIndex <= searchFilteredList.size())) {
-				builder.append("<html><body><table cellpadding=0 cellspacing=0>");
-				builder.append(buildString(searchFilteredList.get(pageIndex-1).getMessages()));
-			} else {
-				// Handle no history
-				builder.replace(0, builder.length(), "");
-				builder.append("<b>")
-						.append(Res.getString("message.no.history.found"))
-						.append("</b>");
-			}
-			window.setText(builder.toString());
+    public HistoryTranscript(SimpleDateFormat notificationDateFormatter, SimpleDateFormat messageDateFormatter) {
+        this.notificationDateFormatter = notificationDateFormatter;
+        this.messageDateFormatter = messageDateFormatter;
+    }
 
-			// highlighting searched text
-			try {
-				String text = searchQuery;
-				Document doc = window.getDocument();
-				String line;
-				if (text.length() > 0 && focusFlag) {
-					String str = doc.getText(1, doc.getLength());
-					BufferedReader buf = new BufferedReader(new StringReader(str));
-					int globalPos = 1;
-					while ((line = buf.readLine()) != null){
-						Matcher matcherTime = Pattern
-								.compile("\\(\\d\\d:\\d\\d:\\d\\d\\)\\s[a-zA-Z0-9]+:\\s")
-								.matcher(line);
-						if (matcherTime.find()) {
-							for (int i = matcherTime.end(); i + text.length() < line.length() + 1; i++) {
-								String match = line.substring(i, i + text.length());
-								if (text.equalsIgnoreCase(match)) {
-									window.getHighlighter().addHighlight(globalPos + i,
-											globalPos + i + text.length(), highlighter);
-								}
-							}
-						}
-						globalPos = globalPos + line.length() + 1;
-					}
-				}
-			} catch (BadLocationException | IOException ex) {
-				Log.error(ex);
-				ex.printStackTrace();
-			}
+    /**
+     * Show the History for the given Contact.
+     *
+     * @param jid the JID of the current transcript
+     */
+    public void showHistory(BareJid jid) {
+        vacardPanel = new VCardPanel(jid);
+        frame.setTitle(Res.getString("title.history.for", jid));
+        this.jid = jid;
+        this.start();
+    }
 
-			builder.replace(0, builder.length(), "");
-			if (window.getText().length() > 0) window.setCaretPosition(0);
-			pageCounter.setText(pageIndex + " / " + maxPages);
-			token.release();
-		} catch (InterruptedException e) {
-			Log.error(e);
-			e.printStackTrace();
-		}
-	}
+    /**
+     * Check if the period was changed an apply the filter to the message
+     * history
+     *
+     * @param change the choosen value for the period
+     */
+    private synchronized void handlePeriodChange(String change) {
+        try {
+            token.acquire();
+            if (!Objects.equals(change, searchPeriod) && isInitialized.get()) {
+                searchPeriod = change;
+                pref.setSearchPeriod(searchPeriod);
+                isHistoryLoaded.set(false);
+                TaskEngine.getInstance().schedule(transcriptTask, 10);
+            }
+            token.release();
+        } catch (InterruptedException e) {
+            Log.error(e);
+            e.printStackTrace();
+        }
+    }
 
-	/**
-	 * This class will run every time a search has startet on the messages, saved in the transcript
-	 * or the time period has been changed
-	 * @author tim.jentz
-	 *
-	 */
-	private class timerTranscript extends TimerTask {
+    /**
+     * Navigate one page left through the history. Do nothing if at index 0.
+     */
+    private synchronized void pageLeft() {
+        try {
+            AtomicBoolean changed = new AtomicBoolean();
+            changed.set(false);
+            token.acquire();
+            if (pageIndex > 1) {
+                pageIndex--;
+                changed.set(true);
+            }
+            token.release();
+            if (changed.get()) {
+                display();
+            }
+        } catch (InterruptedException e) {
+            Log.error(e);
+            e.printStackTrace();
+        }
+    }
 
-		/**
-		 * This function check if the date of the new message is in the same period as the date
-		 * of the old message.
-		 * 
-		 * At the moment, there are three different time periods:
-		 * - one week
-		 * - three weeks
-		 * - one month
-		 * @param newDate the date gained from new message
-		 * @param oldDate the date gained from new message
-		 * @return true if both dates in the same period, false if not
-		 */
-		private boolean dateInPeriod(Date newDate, Date oldDate){
-			boolean result = false;
-			Calendar cal = Calendar.getInstance();
-			cal.setTime(newDate);
-			long yearNew = Math.round((double)cal.get(Calendar.YEAR));
-			long monthNew = Math.round((double)cal.get(Calendar.MONTH));	
+    /**
+     * Navigate one page right through the history. Do nothing if at maximum
+     * index.
+     */
+    private synchronized void pageRight() {
+        try {
+            AtomicBoolean changed = new AtomicBoolean();
+            changed.set(false);
+            token.acquire();
+            if (pageIndex < maxPages) {
+                pageIndex++;
+                changed.set(true);
+            }
+            token.release();
+            if (changed.get()) {
+                display();
+            }
+        } catch (InterruptedException e) {
+            Log.error(e);
+            e.printStackTrace();
+        }
+    }
 
-			cal.setTime(oldDate);
-			long yearOld = Math.round((double)cal.get(Calendar.YEAR));
-			long monthOld = Math.round((double)cal.get(Calendar.MONTH));
+    /**
+     * Builds html string with the stored messages
+     *
+     * @return String containing the messages as html
+     */
+    public final String buildString(List<HistoryMessage> messages) {
+        StringBuilder builder = new StringBuilder();
+        final String personalNickname = SparkManager.getUserManager().getNickname();
+        Date lastPost = null;
+        Jid broadcastnick = null;
+        boolean initialized = false;
+
+        for (HistoryMessage message : messages) {
+            String color = "blue";
+
+            Jid from = message.getFrom();
+            String nickname = SparkManager.getUserManager()
+                    .getUserNicknameFromJID(message.getFrom().asBareJid());
+            String body = org.jivesoftware.spark.util.StringUtils
+                    .escapeHTMLTags(message.getBody());
+            if (nickname.equals(message.getFrom().toString()) || nickname.equals(message.getFrom().asBareJid().toString())) {
+                BareJid otherJID = message
+                        .getFrom().asBareJid();
+                EntityBareJid myJID = SparkManager.getSessionManager()
+                        .getUserBareAddress();
+
+                if (otherJID.equals(myJID)) {
+                    nickname = personalNickname;
+                } else {
+                    nickname = XmppStringUtils.parseLocalpart(nickname);
+                    broadcastnick = message.getFrom();
+                }
+            }
+
+            if (!from.asBareJid().equals(
+                    SparkManager.getSessionManager().getUserBareAddress())) {
+                color = "red";
+            }
+
+            long lastPostTime = lastPost != null ? lastPost.getTime() : 0;
+
+            int diff;
+            if (DateUtils.getDaysDiff(lastPostTime, message.getDate()
+                    .getTime()) != 0) {
+                diff = DateUtils.getDaysDiff(lastPostTime, message
+                        .getDate().getTime());
+            } else {
+                diff = DateUtils.getDayOfWeek(lastPostTime)
+                        - DateUtils.getDayOfWeek(message.getDate()
+                                .getTime());
+            }
+
+            if (diff != 0) {
+                if (initialized) {
+                    builder.append("<tr><td><br></td></tr>");
+                }
+                builder.append(
+                        "<tr><td colspan=2><font face=dialog size=4 color=black><b><u>")
+                        .append(notificationDateFormatter.format(message
+                                .getDate()))
+                        .append("</u></b></font></td></tr>");
+                initialized = true;
+            }
+
+            String value = "(" + messageDateFormatter.format(message.getDate()) + ") ";
+
+            builder.append("<tr valign=top><td colspan=2>");
+            builder.append("<font face=dialog size=4 color='").append(color).append("'>");
+            builder.append(value);
+            if (broadcastnick == null) {
+                builder.append(nickname).append(": ");
+            } else {
+                builder.append(broadcastnick).append(": ");
+            }
+            builder.append("</font>");
+            builder.append("<font face=dialog size=4>");
+            builder.append(body);
+            builder.append("</font>");
+            builder.append("</td></tr><br>");
+
+            lastPost = message.getDate();
+            broadcastnick = null;
+        }
+        builder.append("</table></body></html>");
+
+        return builder.toString();
+    }
+
+    /**
+     * If a new page is loaded or the search is changed, displays the current
+     * page again.
+     */
+    private synchronized void display() {
+        try {
+            token.acquire();
+            if ((searchFilteredList.size() > 0) && (pageIndex <= searchFilteredList.size())) {
+                builder.append("<html><body><table cellpadding=0 cellspacing=0>");
+                builder.append(buildString(searchFilteredList.get(pageIndex - 1).getMessages()));
+            } else {
+                // Handle no history
+                builder.replace(0, builder.length(), "");
+                builder.append("<b>")
+                        .append(Res.getString("message.no.history.found"))
+                        .append("</b>");
+            }
+            Font font = new Font(window.getFont().getFontName(), Font.PLAIN, 12);
+            window.setFont(font);
+            window.setText(builder.toString());
+
+            // highlighting searched text
+            try {
+                String text = searchQuery;
+                Document doc = window.getDocument();
+                String line;
+                if (text.length() > 0 && focusFlag) {
+                    String str = doc.getText(1, doc.getLength());
+                    BufferedReader buf = new BufferedReader(new StringReader(str));
+                    int globalPos = 1;
+                    while ((line = buf.readLine()) != null) {
+                        Matcher matcherTime = Pattern
+                                .compile("\\(\\d\\d:\\d\\d:\\d\\d\\)\\s[a-zA-Z0-9]+:\\s")
+                                .matcher(line);
+                        if (matcherTime.find()) {
+                            for (int i = matcherTime.end(); i + text.length() < line.length() + 1; i++) {
+                                String match = line.substring(i, i + text.length());
+                                if (text.equalsIgnoreCase(match)) {
+                                    window.getHighlighter().addHighlight(globalPos + i,
+                                            globalPos + i + text.length(), highlighter);
+                                }
+                            }
+                        }
+                        globalPos = globalPos + line.length() + 1;
+                    }
+                }
+            } catch (BadLocationException | IOException ex) {
+                Log.error(ex);
+                ex.printStackTrace();
+            }
+
+            builder.replace(0, builder.length(), "");
+            if (window.getText().length() > 0) {
+                window.setCaretPosition(0);
+            }
+            pageCounter.setText(pageIndex + " / " + maxPages);
+            token.release();
+        } catch (InterruptedException e) {
+            Log.error(e);
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * This class will run every time a search has startet on the messages,
+     * saved in the transcript or the time period has been changed
+     *
+     * @author tim.jentz
+     *
+     */
+    private class timerTranscript extends TimerTask {
+
+        /**
+         * This function check if the date of the new message is in the same
+         * period as the date of the old message.
+         *
+         * At the moment, there are three different time periods: - one week -
+         * three weeks - one month
+         *
+         * @param newDate the date gained from new message
+         * @param oldDate the date gained from new message
+         * @return true if both dates in the same period, false if not
+         */
+        private boolean dateInPeriod(Date newDate, Date oldDate) {
+            boolean result = false;
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(newDate);
+            long yearNew = Math.round((double) cal.get(Calendar.YEAR));
+            long monthNew = Math.round((double) cal.get(Calendar.MONTH));
+
+            cal.setTime(oldDate);
+            long yearOld = Math.round((double) cal.get(Calendar.YEAR));
+            long monthOld = Math.round((double) cal.get(Calendar.MONTH));
 
             switch (searchPeriod) {
                 case period_oneMonth:
                     // for one month, we only check if the month and the year is equal
-                    if ((monthOld == monthNew) && (yearOld == yearNew)) result = true;
+                    if ((monthOld == monthNew) && (yearOld == yearNew)) {
+                        result = true;
+                    }
                     break;
                 case period_oneYear:
                     // for one year, we only check if the year is the same
-                    if ((yearOld == yearNew)) result = true;
+                    if ((yearOld == yearNew)) {
+                        result = true;
+                    }
                     break;
                 case period_noPeriod:
                     // for unfiltered list, we return true all the time
                     result = true;
                     break;
             }
-			return result;
-		}
+            return result;
+        }
 
-		/**
-		 * Sort the messages by the choosen period of time
-		 * @param transcript the transcript to sort
-		 * @return List of transcript sorted by period. each transcript contains the messages of the giving period 
-		 */
-		private List<ChatTranscript> getDateSortedTranscript(ChatTranscript transcript){
-			List<ChatTranscript> tmpList = new ArrayList<>();
+        /**
+         * Sort the messages by the choosen period of time
+         *
+         * @param transcript the transcript to sort
+         * @return List of transcript sorted by period. each transcript contains
+         * the messages of the giving period
+         */
+        private List<ChatTranscript> getDateSortedTranscript(ChatTranscript transcript) {
+            List<ChatTranscript> tmpList = new ArrayList<>();
 
-			if (transcript.size() > 0){
-				ChatTranscript sortedTranscript = new ChatTranscript();
-				HistoryMessage msg;
+            if (transcript.size() > 0) {
+                ChatTranscript sortedTranscript = new ChatTranscript();
+                HistoryMessage msg;
 
-				// retrieve the first message
-
-				Date oldDate;
+                // retrieve the first message
+                Date oldDate;
                 int iteratorValue;
                 int startValue;
                 int endValue;
 
-				boolean sortDateAsc = pref.getChatHistoryAscending();
+                boolean sortDateAsc = pref.getChatHistoryAscending();
 
-				if ( sortDateAsc ){
-				    oldDate = transcript.getMessage(0).getDate();
-				    iteratorValue = 1;
-				    startValue = 0;
-				    endValue = transcript.size();
-				}else{
-				    oldDate = transcript.getMessage(transcript.size()-1).getDate();
+                if (sortDateAsc) {
+                    oldDate = transcript.getMessage(0).getDate();
+                    iteratorValue = 1;
+                    startValue = 0;
+                    endValue = transcript.size();
+                } else {
+                    oldDate = transcript.getMessage(transcript.size() - 1).getDate();
                     iteratorValue = -1;
-                    startValue = transcript.size()-1;
+                    startValue = transcript.size() - 1;
                     endValue = -1;
-				}
+                }
 
-				Calendar cal = Calendar.getInstance();
-				cal.setTime(oldDate);
-				Date newDate;
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(oldDate);
+                Date newDate;
 
-				ChatTranscript history;
-				boolean handled = true;
+                ChatTranscript history;
+                boolean handled = true;
 
-				for(int i = startValue; i != endValue; i += iteratorValue){
-				    msg = transcript.getMessage(i);
+                for (int i = startValue; i != endValue; i += iteratorValue) {
+                    msg = transcript.getMessage(i);
                     // get the date of the current message
                     newDate = msg.getDate();
- 
-                    if (! dateInPeriod(newDate, oldDate)){
+
+                    if (!dateInPeriod(newDate, oldDate)) {
                         history = new ChatTranscript();
-                        history.setList(sortedTranscript.getMessages());			    
+                        history.setList(sortedTranscript.getMessages());
 
                         // add the messages to the list
-                        if (history.getMessages().size() > 0) tmpList.add(history);
+                        if (history.getMessages().size() > 0) {
+                            tmpList.add(history);
+                        }
 
                         // we have handled this entry
-
-						oldDate = msg.getDate();
+                        oldDate = msg.getDate();
                         sortedTranscript = new ChatTranscript();
                     }
                     sortedTranscript.addHistoryMessage(msg);
                     // the latest entries not yet saved to the list
-                    handled = false;     
-				}
+                    handled = false;
+                }
 
-				// if the latest entries where not yet handled, do it now
-				if (!handled) {
-					history = new ChatTranscript();
-					history.setList(sortedTranscript.getMessages());
-					if (history.getMessages().size() > 0) tmpList.add(history);
-				}
-			}
+                // if the latest entries where not yet handled, do it now
+                if (!handled) {
+                    history = new ChatTranscript();
+                    history.setList(sortedTranscript.getMessages());
+                    if (history.getMessages().size() > 0) {
+                        tmpList.add(history);
+                    }
+                }
+            }
 
-			return tmpList;
-		}
+            return tmpList;
+        }
 
-		@Override
-		public void run() {
-			if (! isHistoryLoaded.get()){
-				// if we have to load the history
-				dateFilteredUnfilteredList = getDateSortedTranscript((ChatTranscript) get());
+        @Override
+        public void run() {
+            if (!isHistoryLoaded.get()) {
+                // if we have to load the history
+                dateFilteredUnfilteredList = getDateSortedTranscript((ChatTranscript) get());
 
-				try {
-					token.acquire();
-					// confirm that the history is loaded
-					isHistoryLoaded.set(true);
-					token.release();
-				} catch (InterruptedException e) {
-					Log.error(e);
-					e.printStackTrace();
-				}
-			}
+                try {
+                    token.acquire();
+                    // confirm that the history is loaded
+                    isHistoryLoaded.set(true);
+                    token.release();
+                } catch (InterruptedException e) {
+                    Log.error(e);
+                    e.printStackTrace();
+                }
+            }
 
+            String searchString = searchField.getText();
+            // if we searching for a string or not
+            if (Res.getString("message.search.for.history").equals(
+                    searchField.getText())
+                    || searchField.getText().equals("")) {
+                searchString = null;
+            }
 
-			String searchString = searchField.getText();
-			// if we searching for a string or not
-			if (Res.getString("message.search.for.history").equals(
-					searchField.getText())
-					|| searchField.getText().equals(""))
-				searchString = null;
-
-			List<ChatTranscript> tmpList = new ArrayList<>();
-			ChatTranscript tmpTranscript;
+            List<ChatTranscript> tmpList = new ArrayList<>();
+            ChatTranscript tmpTranscript;
 
             for (ChatTranscript chatTranscript : dateFilteredUnfilteredList) {
                 tmpTranscript = new ChatTranscript();
                 tmpTranscript.setList(chatTranscript.getMessage(searchString));
-                if (tmpTranscript.size() > 0) tmpList.add(tmpTranscript);
+                if (tmpTranscript.size() > 0) {
+                    tmpList.add(tmpTranscript);
+                }
             }
 
-			try {
-				token.acquire();
-				searchFilteredList = tmpList;
-				pageIndex = (searchFilteredList.size() > 0) ? 1 : 0;
-				maxPages = searchFilteredList.size();
-				token.release();
-			} catch (InterruptedException e) {
-				Log.error(e);
-				e.printStackTrace();
-			}
-			display();	
-		}	
-	}
+            try {
+                token.acquire();
+                searchFilteredList = tmpList;
+                pageIndex = (searchFilteredList.size() > 0) ? 1 : 0;
+                maxPages = searchFilteredList.size();
+                token.release();
+            } catch (InterruptedException e) {
+                Log.error(e);
+                e.printStackTrace();
+            }
+            display();
+        }
+    }
 
-	/**
-	 * Check if the given String represents a valid period
-	 * @param p the period, that have to be checked
-	 * @return true if valid, false if invalid
-	 */
-	private int getPeriodIndex(String p){
-		int result = 0;
-		for (int i = 0; i < periods.size(); i++){
-			if (p.equals(periods.get(i))) {
-				result = i;
-				break;
-			}
-		}
-		return result;
-	}
+    /**
+     * Check if the given String represents a valid period
+     *
+     * @param p the period, that have to be checked
+     * @return true if valid, false if invalid
+     */
+    private int getPeriodIndex(String p) {
+        int result = 0;
+        for (int i = 0; i < periods.size(); i++) {
+            if (p.equals(periods.get(i))) {
+                result = i;
+                break;
+            }
+        }
+        return result;
+    }
 
-	/**
-	 * Set the layout settings
-	 */
-	@Override
-	public void finished() {
-		pageLeft.addActionListener( arg0 -> pageLeft() );
-		pageRight.addActionListener( arg0 -> pageRight() );
-	    periodChooser.addActionListener( e -> handlePeriodChange (periods.get(periodChooser.getSelectedIndex())) );
+    /**
+     * Set the layout settings
+     */
+    @Override
+    public void finished() {
+        pageLeft.addActionListener(arg0 -> pageLeft());
+        pageRight.addActionListener(arg0 -> pageRight());
+        periodChooser.addActionListener(e -> handlePeriodChange(periods.get(periodChooser.getSelectedIndex())));
 
-		// add search text input
-		searchPanel.setLayout(new GridBagLayout());
-		navigatorPanel.setLayout(new GridBagLayout());
-		controlPanel.setLayout(new BorderLayout());
-		filterPanel.setLayout(new GridBagLayout());
-		mainPanel.setLayout(new BorderLayout());
+        // add search text input
+        searchPanel.setLayout(new GridBagLayout());
+        navigatorPanel.setLayout(new GridBagLayout());
+        controlPanel.setLayout(new BorderLayout());
+        filterPanel.setLayout(new GridBagLayout());
+        mainPanel.setLayout(new BorderLayout());
 
-		// the list of periods
+        // the list of periods
 //		periods.add(period_oneWeek);
 //		periods.add(period_threeWeeks);
-		periods.add(period_oneMonth);
-		periods.add(period_oneYear);
-		periods.add(period_noPeriod);
+        periods.add(period_oneMonth);
+        periods.add(period_oneYear);
+        periods.add(period_noPeriod);
 
-		// get the default preferences for the search period 
-		int index = getPeriodIndex(pref.getSearchPeriod(periods.get(0)));
+        // get the default preferences for the search period 
+        int index = getPeriodIndex(pref.getSearchPeriod(periods.get(0)));
 
-		for (String period : periods){
-			periodChooser.addItem(Res.getString(period));
+        for (String period : periods) {
+            periodChooser.addItem(Res.getString(period));
 
-		}
+        }
 
-		periodChooser.setToolTipText(Res.getString("message.search.page.timeperiod"));
-		pageCounter.setToolTipText(Res.getString("message.search.page.counter"));
-		pageRight.setToolTipText(Res.getString("message.search.page.right"));
-		pageLeft.setToolTipText(Res.getString("message.search.page.left"));
-		searchField.setText(Res.getString("message.search.for.history"));
-		searchField.setToolTipText(Res.getString("message.search.for.history"));
-		searchField.setForeground((Color) UIManager
-				.get("TextField.lightforeground"));
+        periodChooser.setToolTipText(Res.getString("message.search.page.timeperiod"));
+        pageCounter.setToolTipText(Res.getString("message.search.page.counter"));
+        pageRight.setToolTipText(Res.getString("message.search.page.right"));
+        pageLeft.setToolTipText(Res.getString("message.search.page.left"));
+        searchField.setText(Res.getString("message.search.for.history"));
+        searchField.setToolTipText(Res.getString("message.search.for.history"));
+        searchField.setForeground((Color) UIManager
+                .get("TextField.lightforeground"));
 
-		searchPanel.add(vacardPanel, new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0,
-				GridBagConstraints.NORTHWEST, GridBagConstraints.NONE,
-				new Insets(1, 5, 1, 1), 0, 0));
+        searchPanel.add(vacardPanel, new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0,
+                GridBagConstraints.NORTHWEST, GridBagConstraints.NONE,
+                new Insets(1, 5, 1, 1), 0, 0));
 
-		filterPanel.add(periodChooser,new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0,
-				GridBagConstraints.WEST, GridBagConstraints.NONE,
-				new Insets(1, 5, 1, 1), 0, 0));
+        filterPanel.add(periodChooser, new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0,
+                GridBagConstraints.WEST, GridBagConstraints.NONE,
+                new Insets(1, 5, 1, 1), 0, 0));
 
-		filterPanel.add(searchField, new GridBagConstraints(2, 0,
-				GridBagConstraints.REMAINDER, 1, 1.0, 1.0,
-				GridBagConstraints.EAST, GridBagConstraints.NONE,
-				new Insets(1, 1, 6, 1), 0, 0));
+        filterPanel.add(searchField, new GridBagConstraints(2, 0,
+                GridBagConstraints.REMAINDER, 1, 1.0, 1.0,
+                GridBagConstraints.EAST, GridBagConstraints.NONE,
+                new Insets(1, 1, 6, 1), 0, 0));
 
-		navigatorPanel.add(pageLeft, new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0,
-				GridBagConstraints.WEST, GridBagConstraints.NONE,
-				new Insets(1, 5, 1, 1), 0, 0));
-		navigatorPanel.add(pageCounter, new GridBagConstraints(1, 0, 1, 1, 1.0, 1.0,
-				GridBagConstraints.CENTER, GridBagConstraints.NONE,
-				new Insets(1, 5, 1, 1), 0, 0));
-		navigatorPanel.add(pageRight, new GridBagConstraints(2, 0,
-				GridBagConstraints.REMAINDER, 1, 1.0, 1.0,
-				GridBagConstraints.EAST, GridBagConstraints.NONE,
-				new Insets(1, 1, 6, 1), 0, 0));
+        navigatorPanel.add(pageLeft, new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0,
+                GridBagConstraints.WEST, GridBagConstraints.NONE,
+                new Insets(1, 5, 1, 1), 0, 0));
+        navigatorPanel.add(pageCounter, new GridBagConstraints(1, 0, 1, 1, 1.0, 1.0,
+                GridBagConstraints.CENTER, GridBagConstraints.NONE,
+                new Insets(1, 5, 1, 1), 0, 0));
+        navigatorPanel.add(pageRight, new GridBagConstraints(2, 0,
+                GridBagConstraints.REMAINDER, 1, 1.0, 1.0,
+                GridBagConstraints.EAST, GridBagConstraints.NONE,
+                new Insets(1, 1, 6, 1), 0, 0));
 
-		controlPanel.add(filterPanel, BorderLayout.NORTH);
-		controlPanel.add(navigatorPanel, BorderLayout.SOUTH);
+        controlPanel.add(filterPanel, BorderLayout.NORTH);
+        controlPanel.add(navigatorPanel, BorderLayout.SOUTH);
 
-		overTheTopPanel.setLayout(new BorderLayout());
-		overTheTopPanel.add(searchPanel,BorderLayout.NORTH);
-		overTheTopPanel.add(controlPanel,BorderLayout.SOUTH);
+        overTheTopPanel.setLayout(new BorderLayout());
+        overTheTopPanel.add(searchPanel, BorderLayout.NORTH);
+        overTheTopPanel.add(controlPanel, BorderLayout.SOUTH);
 
-		mainPanel.add(overTheTopPanel, BorderLayout.NORTH);
+        mainPanel.add(overTheTopPanel, BorderLayout.NORTH);
 
-		window.setEditorKit(new HTMLEditorKit(){
+        window.setEditorKit(new HTMLEditorKit() {
             @Override
-            public ViewFactory getViewFactory(){
-                return new HTMLFactory(){
+            public ViewFactory getViewFactory() {
+                return new HTMLFactory() {
                     @Override
-					public View create(Element e){
+                    public View create(Element e) {
                         View v = super.create(e);
-                        if(v instanceof InlineView){
-                            return new InlineView(e){
+                        if (v instanceof InlineView) {
+                            return new InlineView(e) {
                                 @Override
-								public int getBreakWeight(int axis, float pos, float len) {
+                                public int getBreakWeight(int axis, float pos, float len) {
                                     if (axis == View.X_AXIS) {
                                         checkPainter();
                                         int p0 = getStartOffset();
@@ -601,16 +624,16 @@ public class HistoryTranscript extends SwingWorker {
                                             if (getDocument().getText(p0, p1 - p0).contains(SEPARATOR)) {
                                                 return View.ForcedBreakWeight;
                                             }
-                                        }
-                                        catch (BadLocationException ex) {
+                                        } catch (BadLocationException ex) {
                                             //should never happen
                                         }
 
                                     }
                                     return super.getBreakWeight(axis, pos, len);
                                 }
+
                                 @Override
-								public View breakView(int axis, int p0, float pos, float len) {
+                                public View breakView(int axis, int p0, float pos, float len) {
                                     if (axis == View.X_AXIS) {
                                         checkPainter();
                                         int p1 = getGlyphPainter().getBoundedPosition(this, p0, pos, len);
@@ -620,8 +643,7 @@ public class HistoryTranscript extends SwingWorker {
                                             if (index >= 0) {
                                                 return createFragment(p0, p0 + index + 1);
                                             }
-                                        }
-                                        catch (BadLocationException ex) {
+                                        } catch (BadLocationException ex) {
                                             //should never happen
                                         }
 
@@ -629,17 +651,16 @@ public class HistoryTranscript extends SwingWorker {
                                     return super.breakView(axis, p0, pos, len);
                                 }
                             };
-                        }
-                        else if (v instanceof javax.swing.text.html.ParagraphView) {
+                        } else if (v instanceof javax.swing.text.html.ParagraphView) {
                             return new javax.swing.text.html.ParagraphView(e) {
                                 @Override
-								protected SizeRequirements calculateMinorAxisRequirements(int axis, SizeRequirements r) {
+                                protected SizeRequirements calculateMinorAxisRequirements(int axis, SizeRequirements r) {
                                     if (r == null) {
                                         r = new SizeRequirements();
                                     }
                                     float pref = layoutPool.getPreferredSpan(axis);
                                     float min = layoutPool.getMinimumSpan(axis);
-                                    r.minimum = (int)min;
+                                    r.minimum = (int) min;
                                     r.preferred = Math.max(r.minimum, (int) pref);
                                     r.maximum = Integer.MAX_VALUE;
                                     r.alignment = 0.5f;
@@ -653,87 +674,87 @@ public class HistoryTranscript extends SwingWorker {
                 };
             }
         });
-		window.setBackground(Color.white);
-		pane.getVerticalScrollBar().setBlockIncrement(200);
-		pane.getVerticalScrollBar().setUnitIncrement(20);
+        window.setBackground(Color.white);
+        pane.getVerticalScrollBar().setBlockIncrement(200);
+        pane.getVerticalScrollBar().setUnitIncrement(20);
 
-		mainPanel.add(pane, BorderLayout.CENTER);
+        mainPanel.add(pane, BorderLayout.CENTER);
 
-		frame.setIconImage(SparkRes.getImageIcon(SparkRes.HISTORY_16x16)
-				.getImage());
-		frame.getContentPane().setLayout(new BorderLayout());
-		frame.getContentPane().add(mainPanel, BorderLayout.CENTER);
-		frame.pack();
-		frame.setSize(600, 400);
-		window.setCaretPosition(0);
-		window.requestFocus();
-		GraphicUtils.centerWindowOnScreen(frame);
-		frame.setVisible(true);
-		window.setEditable(false);
+        frame.setIconImage(SparkRes.getImageIcon(SparkRes.HISTORY_16x16)
+                .getImage());
+        frame.getContentPane().setLayout(new BorderLayout());
+        frame.getContentPane().add(mainPanel, BorderLayout.CENTER);
+        frame.pack();
+        frame.setSize(600, 400);
+        window.setCaretPosition(0);
+        window.requestFocus();
+        GraphicUtils.centerWindowOnScreen(frame);
+        frame.setVisible(true);
+        window.setEditable(false);
 
-		searchField.addKeyListener(new KeyListener() {
-			@Override
-			public void keyTyped(KeyEvent e) {
-			}
+        searchField.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+            }
 
-			@Override
-			public void keyReleased(KeyEvent e) {
-				if (e.getKeyChar() == KeyEvent.VK_ENTER) {
-					searchQuery = searchField.getText();
-					TaskEngine.getInstance().schedule(transcriptTask, 10);
-					searchField.requestFocus();
-					focusFlag = true;
-				}
-			}
+            @Override
+            public void keyReleased(KeyEvent e) {
+                if (e.getKeyChar() == KeyEvent.VK_ENTER) {
+                    searchQuery = searchField.getText();
+                    TaskEngine.getInstance().schedule(transcriptTask, 10);
+                    searchField.requestFocus();
+                    focusFlag = true;
+                }
+            }
 
-			@Override
-			public void keyPressed(KeyEvent e) {
+            @Override
+            public void keyPressed(KeyEvent e) {
 
-			}
-		});
-		searchField.addFocusListener(new FocusListener() {
-			@Override
-			public void focusGained(FocusEvent e) {
-				if (searchField.getText().equals(Res.getString("message.search.for.history"))) {
-					searchField.setText("");
-				}
-				searchField.setForeground((Color) UIManager
-						.get("TextField.foreground"));
-			}
+            }
+        });
+        searchField.addFocusListener(new FocusListener() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                if (searchField.getText().equals(Res.getString("message.search.for.history"))) {
+                    searchField.setText("");
+                }
+                searchField.setForeground((Color) UIManager
+                        .get("TextField.foreground"));
+            }
 
-			@Override
-			public void focusLost(FocusEvent e) {
-				searchField.setForeground((Color) UIManager
-						.get("TextField.lightforeground"));
-				if (searchField.getText().length() <= 1) {
-					searchField.setText(Res.getString("message.search.for.history"));
-				}
-			}
-		});
+            @Override
+            public void focusLost(FocusEvent e) {
+                searchField.setForeground((Color) UIManager
+                        .get("TextField.lightforeground"));
+                if (searchField.getText().length() <= 1) {
+                    searchField.setText(Res.getString("message.search.for.history"));
+                }
+            }
+        });
 
-		// after initializing the period, we can load the history
-		isInitialized.set(true);
-		periodChooser.setSelectedIndex(index);
+        // after initializing the period, we can load the history
+        isInitialized.set(true);
+        periodChooser.setSelectedIndex(index);
 
-		frame.addWindowListener(new WindowAdapter() {
-			@Override
-			public void windowClosing(WindowEvent e) {
-				window.setText("");
-			}
+        frame.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                window.setText("");
+            }
 
-			@Override
-			public void windowClosed(WindowEvent e) {
-				frame.removeWindowListener(this);
-				frame.dispose();
-				transcriptTask.cancel();
-				searchPanel.remove(vacardPanel);
-			}
-		});
-	}
+            @Override
+            public void windowClosed(WindowEvent e) {
+                frame.removeWindowListener(this);
+                frame.dispose();
+                transcriptTask.cancel();
+                searchPanel.remove(vacardPanel);
+            }
+        });
+    }
 
-	@Override
-	public Object construct() {
-		return ChatTranscripts.getChatTranscript(jid);
-	}
+    @Override
+    public Object construct() {
+        return ChatTranscripts.getChatTranscript(jid);
+    }
 
 }
