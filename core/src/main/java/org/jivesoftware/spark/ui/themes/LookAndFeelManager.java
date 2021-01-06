@@ -217,6 +217,7 @@ public class LookAndFeelManager {
             }
             //UIManager.setLookAndFeel(laf);
             //skip loading from preference and use flatlaf as default
+            UIManager.put( "TabbedPane.tabLayoutPolicy", "scroll" );
             UIManager.setLookAndFeel(new SparkLightLaf());
             FlatLaf.updateUILater();
         } catch (Exception e) {
