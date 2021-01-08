@@ -336,6 +336,7 @@ public class SparkRes {
     public static final String NOTIFICATIONS = "NOTIFICATIONS";
     public static final String UPLOAD_ICON = "UPLOAD_ICON";
     public static final String PADE_ICON = "PADE_ICON";
+    public static final String NEW_MESSAGE = "NEW_MESSAGE";
 
     private static final ClassLoader cl = SparkRes.class.getClassLoader();
 

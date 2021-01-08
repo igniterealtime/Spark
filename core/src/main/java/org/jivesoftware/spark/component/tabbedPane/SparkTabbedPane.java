@@ -35,6 +35,7 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import javax.swing.event.AncestorListener;
 
 public class SparkTabbedPane extends JPanel {
 
@@ -85,6 +86,32 @@ public class SparkTabbedPane extends JPanel {
         closeInactiveButtonIcon = SparkRes.getImageIcon(SparkRes.CLOSE_WHITE_X_IMAGE);
         closeActiveButtonIcon = SparkRes.getImageIcon(SparkRes.CLOSE_DARK_X_IMAGE);
 
+    }
+
+    public void showUnreadMessageIndicator(JTabbedPane pane, boolean show, int unreadCount) {
+        JToolBar tb = new JToolBar();
+        tb.setFloatable(false);
+        tb.setBorder(null);
+        JLabel lbl = new JLabel("["+unreadCount+"] ", SparkRes.getImageIcon(SparkRes.NEW_MESSAGE), JLabel.TRAILING);
+        lbl.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                //todo: focus on tab
+                //pane.putClientProperty("JTabbedPane.trailingComponent", null);
+            }
+
+        });
+
+        lbl.setForeground(Color.red);
+        lbl.setVerticalAlignment(JLabel.CENTER);
+        lbl.setVerticalTextPosition(JLabel.CENTER);
+        tb.add(lbl);
+        if (show == true) {
+            pane.putClientProperty("JTabbedPane.trailingComponent", tb);
+        } else {
+            //todo: should not hide the icon when other tabs still have unread messages
+            pane.putClientProperty("JTabbedPane.trailingComponent", null);
+        }
     }
 
     public SparkTab getTabContainingComponent(Component component) {
@@ -600,7 +627,7 @@ public class SparkTabbedPane extends JPanel {
     }
 
     protected JTabbedPane buildTabbedPane(final int type) {
-		return new JTabbedPane(type);
+        return new JTabbedPane(type);
     }
 
     protected JTabbedPane getTabbedPane() {
