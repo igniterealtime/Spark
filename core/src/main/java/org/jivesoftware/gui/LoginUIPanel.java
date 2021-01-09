@@ -109,6 +109,7 @@ import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.sasl.SASLGSSAPIv3CompatMechanism;
 import org.jivesoftware.spark.ui.login.GSSAPIConfiguration;
 import org.jivesoftware.spark.ui.login.LoginSettingDialog;
+import org.jivesoftware.spark.util.BrowserLauncher;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.ResourceUtils;
@@ -181,12 +182,15 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
         ResourceUtils.resButton(btnCreateAccount, Res.getString("label.accounts"));
         ResourceUtils.resButton(cbLoginInvisible, Res.getString("checkbox.login.as.invisible"));
         ResourceUtils.resButton(cbAnonymous, Res.getString("checkbox.login.anonymously"));
+        ResourceUtils.resButton(btnReset, Res.getString("label.passwordreset"));
+        configureVisibility();
 
         lblProgress.setVisible(false);
         cbSavePassword.setOpaque(false);
         cbAutoLogin.setOpaque(false);
         cbLoginInvisible.setOpaque(false);
         cbAnonymous.setOpaque(false);
+        // btnReset.setVisible(false);
 
         // Add button but disable the login button initially
         cbSavePassword.addActionListener(this);
@@ -311,6 +315,42 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
 
     }
 
+    private void configureVisibility() {
+        int height = filler3.getPreferredSize().height;
+        if (!Default.getBoolean(Default.HIDE_SAVE_PASSWORD_AND_AUTO_LOGIN) && localPref.getPswdAutologin()) {
+
+            pnlCheckboxes.remove(cbAutoLogin);
+            pnlCheckboxes.remove(cbSavePassword);
+            height = height + 20;
+        }
+        // Add option to hide "Login as invisible" selection on the login screen
+        if (!Default.getBoolean(Default.HIDE_LOGIN_AS_INVISIBLE) && localPref.getInvisibleLogin()) {
+            pnlCheckboxes.remove(cbLoginInvisible);
+            height = height + 10;
+        }
+
+        // Add option to hide "Login anonymously" selection on the login screen
+        if (!Default.getBoolean(Default.HIDE_LOGIN_ANONYMOUSLY) && localPref.getAnonymousLogin()) {
+            pnlCheckboxes.remove(cbAnonymous);
+            height = height + 10;
+        }
+
+        if (Default.getBoolean(Default.ACCOUNT_DISABLED) && localPref.getAccountsReg()) {
+            pnlBtns.remove(btnCreateAccount);
+            height = height + 15;
+        }
+
+        if (!Default.getBoolean(Default.PASSWORD_RESET_ENABLED)) {
+            pnlBtns.remove(btnReset);
+        }
+
+        if (Default.getBoolean(Default.ADVANCED_DISABLED) && localPref.getAdvancedConfig()) {
+            pnlBtns.remove(btnAdvanced);
+            height = height + 15;
+        }
+        filler3.setPreferredSize(new Dimension(220, height));
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -326,19 +366,21 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         pnlCenter = new javax.swing.JPanel();
-        filler2 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 50), new java.awt.Dimension(200, 40), new java.awt.Dimension(32767, 50));
+        filler3 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(220, 20), new java.awt.Dimension(0, 32767));
+        pnlInputs = new javax.swing.JPanel();
         tfUsername = new javax.swing.JTextField();
         tfDomain = new javax.swing.JTextField();
         tfPassword = new javax.swing.JPasswordField();
-        jPanel1 = new javax.swing.JPanel();
+        pnlCheckboxes = new javax.swing.JPanel();
         cbSavePassword = new javax.swing.JCheckBox();
         cbAutoLogin = new javax.swing.JCheckBox();
         cbLoginInvisible = new javax.swing.JCheckBox();
         cbAnonymous = new javax.swing.JCheckBox();
+        pnlBtns = new javax.swing.JPanel();
         btnLogin = new javax.swing.JButton();
-        jPanel3 = new javax.swing.JPanel();
         btnCreateAccount = new javax.swing.JButton();
         btnAdvanced = new javax.swing.JButton();
+        btnReset = new javax.swing.JButton();
 
         setLayout(new java.awt.BorderLayout());
 
@@ -373,7 +415,13 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
         pnlCenter.setBackground(new java.awt.Color(255, 255, 255));
         pnlCenter.setMinimumSize(new java.awt.Dimension(0, 0));
         pnlCenter.setPreferredSize(new java.awt.Dimension(250, 0));
-        pnlCenter.add(filler2);
+        java.awt.FlowLayout flowLayout1 = new java.awt.FlowLayout();
+        flowLayout1.setAlignOnBaseline(true);
+        pnlCenter.setLayout(flowLayout1);
+        pnlCenter.add(filler3);
+
+        pnlInputs.setBackground(new java.awt.Color(255, 255, 255));
+        pnlInputs.setPreferredSize(new java.awt.Dimension(220, 110));
 
         tfUsername.setPreferredSize(new java.awt.Dimension(200, 30));
         tfUsername.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -387,39 +435,44 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
                 tfUsernameMousePressed(evt);
             }
         });
-        pnlCenter.add(tfUsername);
+        pnlInputs.add(tfUsername);
 
         tfDomain.setPreferredSize(new java.awt.Dimension(200, 30));
-        pnlCenter.add(tfDomain);
+        pnlInputs.add(tfDomain);
 
         tfPassword.setPreferredSize(new java.awt.Dimension(200, 30));
-        pnlCenter.add(tfPassword);
+        pnlInputs.add(tfPassword);
 
-        jPanel1.setBackground(new java.awt.Color(255, 255, 255));
-        jPanel1.setPreferredSize(new java.awt.Dimension(200, 100));
-        jPanel1.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 0, 5));
+        pnlCenter.add(pnlInputs);
+
+        pnlCheckboxes.setBackground(new java.awt.Color(255, 255, 255));
+        pnlCheckboxes.setPreferredSize(null);
+        pnlCheckboxes.setLayout(new javax.swing.BoxLayout(pnlCheckboxes, javax.swing.BoxLayout.Y_AXIS));
 
         cbSavePassword.setBackground(new java.awt.Color(255, 255, 255));
         cbSavePassword.setText("Save Password");
         cbSavePassword.setPreferredSize(new java.awt.Dimension(200, 20));
-        jPanel1.add(cbSavePassword);
+        pnlCheckboxes.add(cbSavePassword);
 
         cbAutoLogin.setBackground(new java.awt.Color(255, 255, 255));
         cbAutoLogin.setText("Auto login");
         cbAutoLogin.setPreferredSize(new java.awt.Dimension(200, 20));
-        jPanel1.add(cbAutoLogin);
+        pnlCheckboxes.add(cbAutoLogin);
 
         cbLoginInvisible.setBackground(new java.awt.Color(255, 255, 255));
         cbLoginInvisible.setText("Login as invisible");
         cbLoginInvisible.setPreferredSize(new java.awt.Dimension(200, 20));
-        jPanel1.add(cbLoginInvisible);
+        pnlCheckboxes.add(cbLoginInvisible);
 
         cbAnonymous.setBackground(new java.awt.Color(255, 255, 255));
         cbAnonymous.setText("Login anonymously");
         cbAnonymous.setPreferredSize(new java.awt.Dimension(200, 20));
-        jPanel1.add(cbAnonymous);
+        pnlCheckboxes.add(cbAnonymous);
 
-        pnlCenter.add(jPanel1);
+        pnlCenter.add(pnlCheckboxes);
+
+        pnlBtns.setBackground(new java.awt.Color(255, 255, 255));
+        pnlBtns.setPreferredSize(new java.awt.Dimension(220, 120));
 
         btnLogin.setBackground(new java.awt.Color(241, 100, 34));
         btnLogin.setForeground(new java.awt.Color(255, 255, 255));
@@ -430,19 +483,15 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
                 btnLoginActionPerformed(evt);
             }
         });
-        pnlCenter.add(btnLogin);
-
-        jPanel3.setBackground(new java.awt.Color(255, 255, 255));
-        jPanel3.setPreferredSize(new java.awt.Dimension(220, 40));
+        pnlBtns.add(btnLogin);
 
         btnCreateAccount.setBackground(new java.awt.Color(255, 255, 255));
         btnCreateAccount.setText("Create Account");
-        btnCreateAccount.setToolTipText("");
         btnCreateAccount.setBorderPainted(false);
         btnCreateAccount.setHorizontalTextPosition(javax.swing.SwingConstants.LEADING);
         btnCreateAccount.setOpaque(false);
         btnCreateAccount.setPreferredSize(new java.awt.Dimension(110, 28));
-        jPanel3.add(btnCreateAccount);
+        pnlBtns.add(btnCreateAccount);
 
         btnAdvanced.setBackground(new java.awt.Color(255, 255, 255));
         btnAdvanced.setText("Advanced");
@@ -450,9 +499,22 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
         btnAdvanced.setHorizontalTextPosition(javax.swing.SwingConstants.LEADING);
         btnAdvanced.setOpaque(false);
         btnAdvanced.setPreferredSize(new java.awt.Dimension(90, 28));
-        jPanel3.add(btnAdvanced);
+        pnlBtns.add(btnAdvanced);
 
-        pnlCenter.add(jPanel3);
+        btnReset.setBackground(new java.awt.Color(255, 255, 255));
+        btnReset.setText("Reset Password");
+        btnReset.setBorderPainted(false);
+        btnReset.setHorizontalTextPosition(javax.swing.SwingConstants.LEADING);
+        btnReset.setOpaque(false);
+        btnReset.setPreferredSize(new java.awt.Dimension(205, 28));
+        btnReset.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnResetActionPerformed(evt);
+            }
+        });
+        pnlBtns.add(btnReset);
+
+        pnlCenter.add(pnlBtns);
 
         add(pnlCenter, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
@@ -463,36 +525,48 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
 
     private void tfUsernameMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tfUsernameMousePressed
         if (SwingUtilities.isRightMouseButton(evt)) {
-            getPopup().show(tfUsername, evt.getX(), evt.getY()); 
+            getPopup().show(tfUsername, evt.getX(), evt.getY());
         }
     }//GEN-LAST:event_tfUsernameMousePressed
 
     private void tfUsernameMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tfUsernameMouseEntered
-       // getPopup().show(tfUsername, evt.getX(), evt.getY());
+        // getPopup().show(tfUsername, evt.getX(), evt.getY());
     }//GEN-LAST:event_tfUsernameMouseEntered
 
     private void tfUsernameMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tfUsernameMouseExited
-      // getPopup().setVisible(false);
+        // getPopup().setVisible(false);
     }//GEN-LAST:event_tfUsernameMouseExited
+
+    private void btnResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnResetActionPerformed
+        final String url = Default.getString(Default.PASSWORD_RESET_URL);
+        try {
+            BrowserLauncher.openURL(url);
+        } catch (Exception e) {
+            Log.error("Unable to load password "
+                    + "reset.", e);
+        }
+    }//GEN-LAST:event_btnResetActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAdvanced;
     private javax.swing.JButton btnCreateAccount;
     private javax.swing.JButton btnLogin;
+    private javax.swing.JButton btnReset;
     private javax.swing.JCheckBox cbAnonymous;
     private javax.swing.JCheckBox cbAutoLogin;
     private javax.swing.JCheckBox cbLoginInvisible;
     private javax.swing.JCheckBox cbSavePassword;
     private javax.swing.Box.Filler filler1;
-    private javax.swing.Box.Filler filler2;
+    private javax.swing.Box.Filler filler3;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel3;
     private javax.swing.JLabel lblLogo;
     public final javax.swing.JLabel lblProgress = new javax.swing.JLabel();
+    private javax.swing.JPanel pnlBtns;
     private javax.swing.JPanel pnlCenter;
+    private javax.swing.JPanel pnlCheckboxes;
+    private javax.swing.JPanel pnlInputs;
     private javax.swing.JPanel pnlLeft;
     private javax.swing.JTextField tfDomain;
     private javax.swing.JPasswordField tfPassword;
@@ -539,7 +613,7 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
 
             loginDialog.setResizable(false);
             loginDialog.pack();
-            loginDialog.setSize(550, 380);
+            loginDialog.setSize(550, 390);
             // Center dialog on screen
             GraphicUtils.centerWindowOnScreen(loginDialog);
 
