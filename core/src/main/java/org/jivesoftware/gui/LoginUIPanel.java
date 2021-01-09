@@ -446,7 +446,6 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
         pnlCenter.add(pnlInputs);
 
         pnlCheckboxes.setBackground(new java.awt.Color(255, 255, 255));
-        pnlCheckboxes.setPreferredSize(null);
         pnlCheckboxes.setLayout(new javax.swing.BoxLayout(pnlCheckboxes, javax.swing.BoxLayout.Y_AXIS));
 
         cbSavePassword.setBackground(new java.awt.Color(255, 255, 255));
@@ -477,7 +476,7 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
         btnLogin.setBackground(new java.awt.Color(241, 100, 34));
         btnLogin.setForeground(new java.awt.Color(255, 255, 255));
         btnLogin.setText("Login");
-        btnLogin.setPreferredSize(new java.awt.Dimension(205, 30));
+        btnLogin.setPreferredSize(new java.awt.Dimension(210, 30));
         btnLogin.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnLoginActionPerformed(evt);
@@ -486,11 +485,12 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
         pnlBtns.add(btnLogin);
 
         btnCreateAccount.setBackground(new java.awt.Color(255, 255, 255));
-        btnCreateAccount.setText("Create Account");
+        btnCreateAccount.setText("Account");
+        btnCreateAccount.setActionCommand("Account");
         btnCreateAccount.setBorderPainted(false);
         btnCreateAccount.setHorizontalTextPosition(javax.swing.SwingConstants.LEADING);
         btnCreateAccount.setOpaque(false);
-        btnCreateAccount.setPreferredSize(new java.awt.Dimension(110, 28));
+        btnCreateAccount.setPreferredSize(new java.awt.Dimension(95, 28));
         pnlBtns.add(btnCreateAccount);
 
         btnAdvanced.setBackground(new java.awt.Color(255, 255, 255));
@@ -498,7 +498,7 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
         btnAdvanced.setBorderPainted(false);
         btnAdvanced.setHorizontalTextPosition(javax.swing.SwingConstants.LEADING);
         btnAdvanced.setOpaque(false);
-        btnAdvanced.setPreferredSize(new java.awt.Dimension(90, 28));
+        btnAdvanced.setPreferredSize(new java.awt.Dimension(110, 28));
         pnlBtns.add(btnAdvanced);
 
         btnReset.setBackground(new java.awt.Color(255, 255, 255));
@@ -506,7 +506,7 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
         btnReset.setBorderPainted(false);
         btnReset.setHorizontalTextPosition(javax.swing.SwingConstants.LEADING);
         btnReset.setOpaque(false);
-        btnReset.setPreferredSize(new java.awt.Dimension(205, 28));
+        btnReset.setPreferredSize(new java.awt.Dimension(210, 28));
         btnReset.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnResetActionPerformed(evt);

@@ -170,9 +170,6 @@
             <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="ff" green="ff" red="ff" type="rgb"/>
             </Property>
-            <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-              <Dimension value="null"/>
-            </Property>
           </Properties>
 
           <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout">
@@ -247,7 +244,7 @@
                 </Property>
                 <Property name="text" type="java.lang.String" value="Login"/>
                 <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                  <Dimension value="[205, 30]"/>
+                  <Dimension value="[210, 30]"/>
                 </Property>
               </Properties>
               <Events>
@@ -259,12 +256,13 @@
                 <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                   <Color blue="ff" green="ff" red="ff" type="rgb"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="Create Account"/>
+                <Property name="text" type="java.lang.String" value="Account"/>
+                <Property name="actionCommand" type="java.lang.String" value="Account"/>
                 <Property name="borderPainted" type="boolean" value="false"/>
                 <Property name="horizontalTextPosition" type="int" value="10"/>
                 <Property name="opaque" type="boolean" value="false"/>
                 <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                  <Dimension value="[110, 28]"/>
+                  <Dimension value="[95, 28]"/>
                 </Property>
               </Properties>
             </Component>
@@ -278,7 +276,7 @@
                 <Property name="horizontalTextPosition" type="int" value="10"/>
                 <Property name="opaque" type="boolean" value="false"/>
                 <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                  <Dimension value="[90, 28]"/>
+                  <Dimension value="[110, 28]"/>
                 </Property>
               </Properties>
             </Component>
@@ -292,7 +290,7 @@
                 <Property name="horizontalTextPosition" type="int" value="10"/>
                 <Property name="opaque" type="boolean" value="false"/>
                 <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                  <Dimension value="[205, 28]"/>
+                  <Dimension value="[210, 28]"/>
                 </Property>
               </Properties>
               <Events>
