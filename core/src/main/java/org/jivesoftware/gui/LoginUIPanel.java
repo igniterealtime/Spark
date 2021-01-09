@@ -317,25 +317,25 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
 
     private void configureVisibility() {
         int height = filler3.getPreferredSize().height;
-        if (!Default.getBoolean(Default.HIDE_SAVE_PASSWORD_AND_AUTO_LOGIN) && localPref.getPswdAutologin()) {
+        if (Default.getBoolean(Default.HIDE_SAVE_PASSWORD_AND_AUTO_LOGIN) && !localPref.getPswdAutologin()) {
 
             pnlCheckboxes.remove(cbAutoLogin);
             pnlCheckboxes.remove(cbSavePassword);
             height = height + 20;
         }
         // Add option to hide "Login as invisible" selection on the login screen
-        if (!Default.getBoolean(Default.HIDE_LOGIN_AS_INVISIBLE) && localPref.getInvisibleLogin()) {
+        if (Default.getBoolean(Default.HIDE_LOGIN_AS_INVISIBLE) && !localPref.getInvisibleLogin()) {
             pnlCheckboxes.remove(cbLoginInvisible);
             height = height + 10;
         }
 
         // Add option to hide "Login anonymously" selection on the login screen
-        if (!Default.getBoolean(Default.HIDE_LOGIN_ANONYMOUSLY) && localPref.getAnonymousLogin()) {
+        if (Default.getBoolean(Default.HIDE_LOGIN_ANONYMOUSLY) && !localPref.getAnonymousLogin()) {
             pnlCheckboxes.remove(cbAnonymous);
             height = height + 10;
         }
 
-        if (Default.getBoolean(Default.ACCOUNT_DISABLED) && localPref.getAccountsReg()) {
+        if (Default.getBoolean(Default.ACCOUNT_DISABLED) && !localPref.getAccountsReg()) {
             pnlBtns.remove(btnCreateAccount);
             height = height + 15;
         }
@@ -344,7 +344,7 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
             pnlBtns.remove(btnReset);
         }
 
-        if (Default.getBoolean(Default.ADVANCED_DISABLED) && localPref.getAdvancedConfig()) {
+        if (Default.getBoolean(Default.ADVANCED_DISABLED) && !localPref.getAdvancedConfig()) {
             pnlBtns.remove(btnAdvanced);
             height = height + 15;
         }
