@@ -67,7 +67,7 @@ class SsoLoginSettingsPanel extends JPanel implements ActionListener
             wrappedLabel.setForeground( Color.RED );
             wrappedLabel.setText( Res.getString( "title.advanced.connection.sso.noprincipal" ) );
         }
-        wrappedLabel.setBackground( Color.white );
+        wrappedLabel.setBackground( Color.lightGray );
 
         final String method = localPreferences.getSSOMethod();
         if ( ModelUtil.hasLength( method ) )
