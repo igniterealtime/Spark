@@ -67,7 +67,7 @@ public class DefaultTabHandler extends SparkTabHandler {
             if (!chatFrameFocused || !isSelectedTab) {
                 if (room.getUnreadMessageCount() > 0) {
                     // Make tab red.
-                    tab.setShowUnreadMessageIcon(true, room.getUnreadMessageCount());
+                    //tab.setShowUnreadMessageIcon(true, room.getUnreadMessageCount());
                     tab.setTitleColor((Color) UIManager.get("Chat.unreadMessageColor"));
                     tab.setTabBold(true);
                 }
@@ -77,7 +77,7 @@ public class DefaultTabHandler extends SparkTabHandler {
                 String appendedMessage = "";
                 if (unreadMessageCount > 1) {
                     appendedMessage = " (" + unreadMessageCount + ")";
-                    tab.setShowUnreadMessageIcon(true, unreadMessageCount);
+                    //tab.setShowUnreadMessageIcon(true, unreadMessageCount);
                 }
 
                 tab.setTabTitle(room.getTabTitle() + appendedMessage);
@@ -97,7 +97,7 @@ public class DefaultTabHandler extends SparkTabHandler {
                 // Clear unread message count.
                 room.clearUnreadMessageCount();
                 //todo: should not hide the icon when other tabs still have unread messages
-                tab.setShowUnreadMessageIcon(false, 0);
+                //tab.setShowUnreadMessageIcon(true, room.getUnreadMessageCount());
             }
         } else {
             if (!chatFrameFocused || !isSelectedTab) {
