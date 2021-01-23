@@ -59,6 +59,10 @@ public class SparkTab extends JPanel {
     public void setTitleColor(Color color) {
         pane.setTitleColorAt(pane.getTabPosition(this), color);
     }
+    
+    public Color getTitleColor() {
+       return pane.getTitleColorAt(pane.getTabPosition(this));
+    }
 
     public void setTabBold(boolean bold) {
         pane.setTitleBoldAt(pane.getTabPosition(this), bold);
