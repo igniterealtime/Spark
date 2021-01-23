@@ -1089,6 +1089,13 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
     public void increaseUnreadMessageCount() {
         unreadMessageCount++;
     }
+    
+     /**
+     * Decreases the number of unread messages by 1.
+     */
+    public void decreaseUnreadMessageCount() {
+        unreadMessageCount--;
+    }
 
     /**
      * Resets the number of unread messages.

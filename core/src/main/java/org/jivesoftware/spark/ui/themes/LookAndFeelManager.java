@@ -217,7 +217,7 @@ public class LookAndFeelManager {
             }
             //UIManager.setLookAndFeel(laf);
             //skip loading from preference and use flatlaf as default
-            //UIManager.put( "TabbedPane.tabLayoutPolicy", "scroll" );
+            UIManager.put( "TabbedPane.tabLayoutPolicy", "scroll" );
             UIManager.put("TabbedPane.showTabSeparators", true);
             UIManager.put("TabbedPane.hasFullBorder", true);
             UIManager.put("TabbedPane.underlineColor", new Color(242, 159, 97));
