@@ -49,6 +49,8 @@ public class DefaultTabHandler extends SparkTabHandler {
 
             boolean isTyping = SparkManager.getChatManager().containsTypingNotification((ChatRoom) component);
 
+            int unreadCount = room.getUnreadMessageCount();
+
             // Check if is typing.
             if (isTyping) {
                 tab.setIcon(SparkRes.getImageIcon(SparkRes.SMALL_MESSAGE_EDIT_IMAGE));
@@ -62,25 +64,41 @@ public class DefaultTabHandler extends SparkTabHandler {
                 } else {
                     tab.setIcon(SparkRes.getImageIcon(SparkRes.CLEAR_BALL_ICON));
                 }
-            }
 
-            if (!chatFrameFocused || !isSelectedTab) {
-                if (room.getUnreadMessageCount() > 0) {
-                    // Make tab red.
-                    //tab.setShowUnreadMessageIcon(true, room.getUnreadMessageCount());
-                    tab.setTitleColor((Color) UIManager.get("Chat.unreadMessageColor"));
-                    tab.setTabBold(true);
-                }
+                if (!chatFrameFocused || !isSelectedTab) {
+                    if (unreadCount > 0) {
+                        // Make tab red.
+                        tab.setShowUnreadMessageIcon(true, unreadCount);
+                        tab.setTitleColor((Color) UIManager.get("Chat.unreadMessageColor"));
+                        tab.setTabBold(true);
+                    }
 
-                // Handle unread message count.
-                int unreadMessageCount = room.getUnreadMessageCount();
-                String appendedMessage = "";
-                if (unreadMessageCount > 1) {
-                    appendedMessage = " (" + unreadMessageCount + ")";
+                    // Handle unread message count.
+                    int unreadMessageCount = room.getUnreadMessageCount();
+                    String appendedMessage = "";
+                    if (unreadMessageCount > 1) {
+                        appendedMessage = " (" + unreadMessageCount + ")";
+                    }
+                    tab.setTabTitle(room.getTabTitle() + appendedMessage);
                     //tab.setShowUnreadMessageIcon(true, unreadMessageCount);
+                    //System.err.println("Not Selected " + unreadMessageCount);
                 }
 
-                tab.setTabTitle(room.getTabTitle() + appendedMessage);
+                if (chatFrameFocused && isSelectedTab) {
+                    //System.err.println("Selected But no the Tab " + unreadCount);
+                    if (tab.getTitleColor() == (Color) UIManager.get("Chat.unreadMessageColor")) {
+                        //System.err.println("Selected " + room.getUnreadMessageCount());
+                        tab.setTitleColor(Color.black);
+
+                        // tab.setTabFont(tab.getDefaultFont());
+                        tab.setTabTitle(room.getTabTitle());
+                        // Clear unread message count.
+                        room.clearUnreadMessageCount();
+                        tab.setShowUnreadMessageIcon(false, room.getUnreadMessageCount());
+                        //todo: should not hide the icon when other tabs still have unread messages
+                    }
+                }
+                // SparkManager.getChatManager().getChatContainer().getSelectedComponent()
 
             }
 
@@ -89,16 +107,7 @@ public class DefaultTabHandler extends SparkTabHandler {
                 decorateStaleTab(tab, (ChatRoom) component);
             } // Should only set the icon to default if the frame is in focus
             // and the tab is the selected component.
-            else if (isSelectedTab && chatFrameFocused) {
-                tab.setTitleColor(Color.black);
-                // tab.setTabFont(tab.getDefaultFont());
-                tab.setTabTitle(room.getTabTitle());
 
-                // Clear unread message count.
-                room.clearUnreadMessageCount();
-                //todo: should not hide the icon when other tabs still have unread messages
-                //tab.setShowUnreadMessageIcon(true, room.getUnreadMessageCount());
-            }
         } else {
             if (!chatFrameFocused || !isSelectedTab) {
                 // Make tab red.
@@ -110,6 +119,7 @@ public class DefaultTabHandler extends SparkTabHandler {
                 tab.setTabFont(tab.getDefaultFont());
             }
         }
+
         return true;
     }
 
