@@ -56,10 +56,12 @@ import java.util.*;
 import java.util.List;
 
 /**
- * The base implementation of all ChatRoom conversations. You would implement this class to have most types of Chat.
+ * The base implementation of all ChatRoom conversations. You would implement
+ * this class to have most types of Chat.
  */
 public abstract class ChatRoom extends BackgroundPanel implements ActionListener, StanzaListener, DocumentListener, ConnectionListener, FocusListener, ContextMenuListener, ChatFrameToFrontListener {
-	private final JPanel chatPanel;
+
+    private final JPanel chatPanel;
     private final JSplitPane splitPane;
     private final JSplitPane verticalSplit;
 
@@ -80,7 +82,6 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
     private boolean mousePressed;
 
     private final List<ChatRoomClosingListener> closingListeners = new ArrayList<>();
-
 
     private ChatRoomTransferHandler transferHandler;
 
@@ -127,15 +128,15 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
 
         transcriptWindowMouseListener = new MouseAdapter() {
             @Override
-			public void mouseClicked(MouseEvent e) {
+            public void mouseClicked(MouseEvent e) {
 
-        	if(e.getClickCount()!=2){
-                getChatInputEditor().requestFocus();
-        	}
+                if (e.getClickCount() != 2) {
+                    getChatInputEditor().requestFocus();
+                }
             }
 
             @Override
-			public void mouseReleased(MouseEvent e) {
+            public void mouseReleased(MouseEvent e) {
                 mousePressed = false;
                 if (transcriptWindow.getSelectedText() == null) {
                     getChatInputEditor().requestFocus();
@@ -143,7 +144,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
             }
 
             @Override
-			public void mousePressed(MouseEvent e) {
+            public void mousePressed(MouseEvent e) {
                 mousePressed = true;
             }
         };
@@ -156,8 +157,8 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         textScroller.getViewport().setBackground(Color.white);
         transcriptWindow.setBackground(Color.white);
 
-        getChatInputEditor().setSelectedTextColor((Color)UIManager.get("ChatInput.SelectedTextColor"));
-        getChatInputEditor().setSelectionColor((Color)UIManager.get("ChatInput.SelectionColor"));
+        getChatInputEditor().setSelectedTextColor((Color) UIManager.get("ChatInput.SelectedTextColor"));
+        getChatInputEditor().setSelectionColor((Color) UIManager.get("ChatInput.SelectionColor"));
 
         setLayout(new GridBagLayout());
 
@@ -218,7 +219,6 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
             }
         });
 
-
         // Speed up scrolling. It was way too slow.
         textScroller.getVerticalScrollBar().setBlockIncrement(200);
         textScroller.getVerticalScrollBar().setUnitIncrement(20);
@@ -238,7 +238,6 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         // Add edit buttons to Chat Room
         editorBarLeft.setOpaque(false);
         chatPanel.setOpaque(false);
-
 
         bottomPanel.setOpaque(false);
         splitPane.setOpaque(false);
@@ -265,7 +264,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         // Add Key Listener to Send Field
         chatEditorKeyListener = new KeyAdapter() {
             @Override
-			public void keyPressed(KeyEvent e) {
+            public void keyPressed(KeyEvent e) {
                 checkForEnter(e);
             }
         };
@@ -277,7 +276,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
             private static final long serialVersionUID = 1L;
 
             @Override
-			public void actionPerformed(ActionEvent evt) {
+            public void actionPerformed(ActionEvent evt) {
                 // Leave this chat.
                 closeChatRoom();
             }
@@ -288,7 +287,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
             private static final long serialVersionUID = 1L;
 
             @Override
-			public void actionPerformed(ActionEvent evt) {
+            public void actionPerformed(ActionEvent evt) {
                 // handle name completion.
                 try {
                     handleNickNameCompletion();
@@ -301,23 +300,20 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         _isAlwaysOnTopActive = SettingsManager.getLocalPreferences().isChatWindowAlwaysOnTop();
         _alwaysOnTopItem = UIComponentRegistry.getButtonFactory().createAlwaysOnTop(_isAlwaysOnTopActive);
 
-        _alwaysOnTopItem.addActionListener( actionEvent -> {
-            if (!_isAlwaysOnTopActive)
-            {
+        _alwaysOnTopItem.addActionListener(actionEvent -> {
+            if (!_isAlwaysOnTopActive) {
                 SettingsManager.getLocalPreferences().setChatWindowAlwaysOnTop(true);
                 _chatFrame.setWindowAlwaysOnTop(true);
                 _isAlwaysOnTopActive = true;
                 _alwaysOnTopItem.setIcon(SparkRes.getImageIcon("FRAME_ALWAYS_ON_TOP_ACTIVE"));
 
-            }
-            else
-            {
+            } else {
                 SettingsManager.getLocalPreferences().setChatWindowAlwaysOnTop(false);
                 _chatFrame.setWindowAlwaysOnTop(false);
                 _isAlwaysOnTopActive = false;
                 _alwaysOnTopItem.setIcon(SparkRes.getImageIcon("FRAME_ALWAYS_ON_TOP_DEACTIVE"));
             }
-        } );
+        });
 
         editorBarRight.add(_alwaysOnTopItem);
 
@@ -325,7 +321,6 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         getSplitPane().setRightComponent(null);
 
         notificationLabel.setIcon(SparkRes.getImageIcon(SparkRes.BLANK_IMAGE));
-
 
         getTranscriptWindow().addContextMenuListener(this);
 
@@ -342,7 +337,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         // Add Focus Listener
         addFocusListener(this);
 
-        setChatState( ChatState.active );
+        setChatState(ChatState.active);
         createChatStateTimerTask();
 
         scrollToBottom();
@@ -351,44 +346,44 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
     protected void createChatStateTimerTask() {
         typingTimerTask = new TimerTask() {
             @Override
-			public void run() {
+            public void run() {
                 final long lastUpdate = System.currentTimeMillis() - lastNotificationSentTime;
-                switch ( lastNotificationSent ) {
+                switch (lastNotificationSent) {
                     case paused:
                     case active:
-                        if ( lastUpdate > inactiveTimePeriod ) {
-                            setChatState( ChatState.inactive );
+                        if (lastUpdate > inactiveTimePeriod) {
+                            setChatState(ChatState.inactive);
                         }
                         break;
 
                     case composing:
-                        if ( lastUpdate > pauseTimePeriod ) {
-                            setChatState( ChatState.paused );
+                        if (lastUpdate > pauseTimePeriod) {
+                            setChatState(ChatState.paused);
                         }
                         break;
                 }
             }
         };
-        TaskEngine.getInstance().scheduleAtFixedRate(typingTimerTask, pauseTimePeriod /2, pauseTimePeriod / 2);
+        TaskEngine.getInstance().scheduleAtFixedRate(typingTimerTask, pauseTimePeriod / 2, pauseTimePeriod / 2);
     }
 
     /**
      * Sends a chat state to all peers.
      *
      * @param state the chat state.
-     * @throws InterruptedException 
+     * @throws InterruptedException
      */
-    protected abstract void sendChatState( ChatState state ) throws SmackException.NotConnectedException, InterruptedException;
+    protected abstract void sendChatState(ChatState state) throws SmackException.NotConnectedException, InterruptedException;
 
     /**
-     * Sets the chat state, causing an update to be sent to all peers if the new state warrants an update.
+     * Sets the chat state, causing an update to be sent to all peers if the new
+     * state warrants an update.
      *
      * @param state the chat state (never null).
      */
-    public final void setChatState(ChatState state)
-    {
-        if ( state == null ) {
-            throw new IllegalArgumentException( "Argument 'state' cannot be null." );
+    public final void setChatState(ChatState state) {
+        if (state == null) {
+            throw new IllegalArgumentException("Argument 'state' cannot be null.");
         }
 
         // Only sent out a chat state notification when it is different from the last one that was transmitted...
@@ -398,13 +393,11 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         final boolean isStillComposing = state == ChatState.composing && System.currentTimeMillis() - lastNotificationSentTime > 2000;
 
         final long now = System.currentTimeMillis();
-        if ( isDifferentState || isStillComposing )
-        {
-            try
-            {
-                sendChatState( state );
-            } catch ( SmackException.NotConnectedException | InterruptedException e ) {
-                Log.warning( "Unable to update the chat state to " + state, e );
+        if (isDifferentState || isStillComposing) {
+            try {
+                sendChatState(state);
+            } catch (SmackException.NotConnectedException | InterruptedException e) {
+                Log.warning("Unable to update the chat state to " + state, e);
             }
             lastNotificationSent = state;
             lastNotificationSentTime = now;
@@ -416,93 +409,74 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
      * it searches for matches in the current GroupchatList and also in the
      * Roster
      *
-     * @throws ChatRoomNotFoundException
-     *             when for some reason the GroupChatRoom cannot be found, this
-     *             should <u>not</u> happen, since we retrieve it from the
-     *             ActiveWindowTab and thus <u>can be ignored</u>
+     * @throws ChatRoomNotFoundException when for some reason the GroupChatRoom
+     * cannot be found, this should <u>not</u> happen, since we retrieve it from
+     * the ActiveWindowTab and thus <u>can be ignored</u>
      */
-    private void handleNickNameCompletion() throws ChatRoomNotFoundException
-    {
+    private void handleNickNameCompletion() throws ChatRoomNotFoundException {
         // Search for a name that starts with the same word as the last word in the chat input editor.
         final String text = getChatInputEditor().getText();
-        if ( text == null || text.isEmpty() )
-        {
+        if (text == null || text.isEmpty()) {
             return;
         }
 
-        final int lastSpaceCharacterIndex = text.lastIndexOf( ' ' ); // -1 when space does not occur.
-        final String needle = text.substring( lastSpaceCharacterIndex + 1 );
+        final int lastSpaceCharacterIndex = text.lastIndexOf(' '); // -1 when space does not occur.
+        final String needle = text.substring(lastSpaceCharacterIndex + 1);
 
-        final Set<String> matches = new TreeSet<>( String::compareToIgnoreCase );
+        final Set<String> matches = new TreeSet<>(String::compareToIgnoreCase);
 
-        if ( SparkManager.getChatManager().getChatContainer().getActiveChatRoom() instanceof GroupChatRoom )
-        {
+        if (SparkManager.getChatManager().getChatContainer().getActiveChatRoom() instanceof GroupChatRoom) {
             final GroupChatRoom activeChatRoom = (GroupChatRoom) SparkManager.getChatManager().getChatContainer().getActiveChatRoom();
-            for ( EntityFullJid participant : activeChatRoom.getParticipants() )
-            {
+            for (EntityFullJid participant : activeChatRoom.getParticipants()) {
                 final Resourcepart nickname = participant.getResourcepart();
-                if ( nickname.toString().toLowerCase().startsWith( needle.toLowerCase() ) )
-                {
-                    matches.add( nickname.toString() );
+                if (nickname.toString().toLowerCase().startsWith(needle.toLowerCase())) {
+                    matches.add(nickname.toString());
                 }
             }
-        }
-        else
-        {
-            for ( RosterEntry re : Roster.getInstanceFor( SparkManager.getConnection() ).getEntries() )
-            {
+        } else {
+            for (RosterEntry re : Roster.getInstanceFor(SparkManager.getConnection()).getEntries()) {
                 // Use the name if available, otherwise the localpart of the JID.
                 final String username;
-                if ( re.getName() != null )
-                {
+                if (re.getName() != null) {
                     username = re.getName();
-                }
-                else
-                {
-                    username = re.getJid().toString().substring( 0, re.getJid().toString().indexOf( '@' ) );
+                } else {
+                    username = re.getJid().toString().substring(0, re.getJid().toString().indexOf('@'));
                 }
 
-                if ( username.toLowerCase().startsWith( needle.toLowerCase() ) )
-                {
-                    matches.add( username );
+                if (username.toLowerCase().startsWith(needle.toLowerCase())) {
+                    matches.add(username);
                 }
             }
         }
 
-        if ( matches.size() == 1 )
-        {
+        if (matches.size() == 1) {
             // If we only have 1 match, that match can be used immediately.
-            getChatInputEditor().appendText( matches.iterator().next().substring( needle.length() ) );
-        }
-        else
-        {
+            getChatInputEditor().appendText(matches.iterator().next().substring(needle.length()));
+        } else {
             // More than one match: create Popupmenu and let the user select one.
             final JPopupMenu popup = new JPopupMenu();
-            for ( final String match : matches )
-            {
-                final JMenuItem menuItem = new JMenuItem( match );
-                popup.add( menuItem );
-                menuItem.addActionListener( new AbstractAction()
-                {
+            for (final String match : matches) {
+                final JMenuItem menuItem = new JMenuItem(match);
+                popup.add(menuItem);
+                menuItem.addActionListener(new AbstractAction() {
                     @Override
-                    public void actionPerformed( ActionEvent e )
-                    {
-                        getChatInputEditor().appendText( match.substring( needle.length() ) );
-                        popup.setVisible( false );
+                    public void actionPerformed(ActionEvent e) {
+                        getChatInputEditor().appendText(match.substring(needle.length()));
+                        popup.setVisible(false);
                     }
-                } );
+                });
             }
 
-            popup.show( SparkManager.getChatManager().getChatContainer(),
-                        getChatInputEditor().getCaret().getMagicCaretPosition().x,
-                        SparkManager.getChatManager().getChatContainer().getHeight() - 20 );
+            popup.show(SparkManager.getChatManager().getChatContainer(),
+                    getChatInputEditor().getCaret().getMagicCaretPosition().x,
+                    SparkManager.getChatManager().getChatContainer().getHeight() - 20);
         }
     }
 
     // I would normally use the command pattern, but
     // have no real use when dealing with just a couple options.
     @Override
-	public void actionPerformed(ActionEvent e) {
+    public void actionPerformed(ActionEvent e) {
         sendMessage();
 
         // Clear send field and disable send button
@@ -511,9 +485,8 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
     }
 
     /**
-     * Creates and sends a message object from the text in
-     * the Send Field, using the default nickname specified in your
-     * Chat Preferences.
+     * Creates and sends a message object from the text in the Send Field, using
+     * the default nickname specified in your Chat Preferences.
      */
     protected abstract void sendMessage();
 
@@ -543,11 +516,9 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         return pref.getNickname();
     }
 
-
     /**
-     * The main entry point when receiving any messages. This will
-     * either handle a message from a customer or delegate itself
-     * as an agent handler.
+     * The main entry point when receiving any messages. This will either handle
+     * a message from a customer or delegate itself as an agent handler.
      *
      * @param message - the message receieved.
      */
@@ -565,13 +536,12 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         SparkManager.getWorkspace().getTranscriptPlugin().persistChatRoom(this);
     }
 
-
     /**
      * Add a <code>ChatResponse</chat> to the current discussion chat area.
      *
-     * @param message    the message to add to the transcript list
+     * @param message the message to add to the transcript list
      * @param updateDate true if you wish the date label to be updated with the
-     *                   date and time the message was received.
+     * date and time the message was received.
      */
     public void addToTranscript(Message message, boolean updateDate) {
         // Create message to persist.
@@ -580,8 +550,8 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         newMessage.setFrom(message.getFrom());
         newMessage.setBody(message.getBody());
         final Map<String, Object> properties = new HashMap<>();
-        properties.put( "date", new Date() );
-        newMessage.addExtension( new JivePropertiesExtension( properties ) );
+        properties.put("date", new Date());
+        newMessage.addExtension(new JivePropertiesExtension(properties));
 
         transcript.add(newMessage);
 
@@ -598,7 +568,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
     /**
      * Adds a new message to the transcript history.
      *
-     * @param to   who the message is to.
+     * @param to who the message is to.
      * @param from who the message was from.
      * @param body the body of the message.
      * @param date when the message was received.
@@ -609,8 +579,8 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         newMessage.setFrom(JidCreate.fromOrThrowUnchecked(from));
         newMessage.setBody(body);
         final Map<String, Object> properties = new HashMap<>();
-        properties.put( "date", new Date() );
-        newMessage.addExtension( new JivePropertiesExtension( properties ) );
+        properties.put("date", new Date());
+        newMessage.addExtension(new JivePropertiesExtension(properties));
         transcript.add(newMessage);
     }
 
@@ -627,15 +597,12 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
 
         try {
             final JScrollBar scrollBar = textScroller.getVerticalScrollBar();
-            EventQueue.invokeLater( () -> scrollBar.setValue(scrollBar.getMaximum()) );
+            EventQueue.invokeLater(() -> scrollBar.setValue(scrollBar.getMaximum()));
 
-
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             Log.error(e);
         }
     }
-
 
     /**
      * Checks to see if the Send button should be enabled.
@@ -655,13 +622,11 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         chatAreaButton.getChatInputArea().requestFocusInWindow();
     }
 
-
     /**
-     * Disable the chat room. This is called when a chat has been either transfered over or
-     * the customer has left the chat room.
+     * Disable the chat room. This is called when a chat has been either
+     * transfered over or the customer has left the chat room.
      */
     public abstract void leaveChatRoom();
-
 
     /**
      * Returns the SendField component.
@@ -681,7 +646,6 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         return transcriptWindow;
     }
 
-
     /**
      * Checks to see if enter was pressed and validates room.
      *
@@ -689,23 +653,21 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
      */
     private void checkForEnter(KeyEvent e) {
         final KeyStroke keyStroke = KeyStroke.getKeyStroke(e.getKeyCode(), e.getModifiers());
-        if (!keyStroke.equals(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, KeyEvent.SHIFT_DOWN_MASK)) &&
-                e.getKeyChar() == KeyEvent.VK_ENTER) {
+        if (!keyStroke.equals(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, KeyEvent.SHIFT_DOWN_MASK))
+                && e.getKeyChar() == KeyEvent.VK_ENTER) {
             e.consume();
             sendMessage();
             getChatInputEditor().setText("");
             getChatInputEditor().setCaretPosition(0);
 
             SparkManager.getWorkspace().getTranscriptPlugin().persistChatRoom(this);
-        }
-        else if (keyStroke.equals(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, KeyEvent.SHIFT_DOWN_MASK))) {
+        } else if (keyStroke.equals(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, KeyEvent.SHIFT_DOWN_MASK))) {
             final Document document = getChatInputEditor().getDocument();
             try {
                 document.insertString(getChatInputEditor().getCaretPosition(), "\n", null);
                 getChatInputEditor().requestFocusInWindow();
                 chatAreaButton.getButton().setEnabled(true);
-            }
-            catch (BadLocationException badLoc) {
+            } catch (BadLocationException badLoc) {
                 Log.error("Error when checking for enter:", badLoc);
             }
         }
@@ -723,7 +685,8 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
     /**
      * Remove the specified {@link MessageListener } from the current ChatRoom.
      *
-     * @param listener - the MessageListener to remove from the current ChatRoom.
+     * @param listener - the MessageListener to remove from the current
+     * ChatRoom.
      */
     public void removeMessageListener(MessageListener listener) {
         messageListeners.remove(listener);
@@ -734,17 +697,12 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
      *
      * @param message the message received.
      */
-    private void fireMessageReceived( Message message )
-    {
-        for ( MessageListener listener : messageListeners )
-        {
-            try
-            {
-                listener.messageReceived( this, message );
-            }
-            catch ( Exception e )
-            {
-                Log.error( "A MessageListener (" + listener + ") threw an exception while processing a 'message received' event for message: " + message, e );
+    private void fireMessageReceived(Message message) {
+        for (MessageListener listener : messageListeners) {
+            try {
+                listener.messageReceived(this, message);
+            } catch (Exception e) {
+                Log.error("A MessageListener (" + listener + ") threw an exception while processing a 'message received' event for message: " + message, e);
             }
         }
     }
@@ -754,25 +712,20 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
      *
      * @param message the message sent.
      */
-    protected void fireMessageSent( Message message )
-    {
-        for ( MessageListener listener : messageListeners )
-        {
-            try
-            {
-                listener.messageSent( this, message );
-            }
-            catch ( Exception e )
-            {
-                Log.error( "A MessageListener (" + listener + ") threw an exception while processing a 'message sent' event for message: " + message, e );
+    protected void fireMessageSent(Message message) {
+        for (MessageListener listener : messageListeners) {
+            try {
+                listener.messageSent(this, message);
+            } catch (Exception e) {
+                Log.error("A MessageListener (" + listener + ") threw an exception while processing a 'message sent' event for message: " + message, e);
             }
         }
     }
 
     /**
      * Returns a map of the current Chat Transcript which is a list of all
-     * ChatResponses and their order. You should retrieve this map to get
-     * any current chat transcript state.
+     * ChatResponses and their order. You should retrieve this map to get any
+     * current chat transcript state.
      *
      * @return - the map of current chat responses.
      */
@@ -788,7 +741,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         for (int i = 0; i < count; i++) {
             final Object o = editorBarLeft.getComponent(i);
             if (o instanceof RolloverButton) {
-                final RolloverButton rb = (RolloverButton)o;
+                final RolloverButton rb = (RolloverButton) o;
                 rb.setEnabled(false);
             }
         }
@@ -802,12 +755,11 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         for (int i = 0; i < count; i++) {
             final Object o = editorBarLeft.getComponent(i);
             if (o instanceof RolloverButton) {
-                final RolloverButton rb = (RolloverButton)o;
+                final RolloverButton rb = (RolloverButton) o;
                 rb.setEnabled(true);
             }
         }
     }
-
 
     /**
      * Checks to see if the Send Button should be enabled depending on the
@@ -816,7 +768,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
      * @param event the DocumentEvent from the sendField.
      */
     @Override
-	public void removeUpdate(DocumentEvent event) {
+    public void removeUpdate(DocumentEvent event) {
         checkForText(event);
     }
 
@@ -826,7 +778,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
      * @param docEvent the document event.
      */
     @Override
-	public void changedUpdate(DocumentEvent docEvent) {
+    public void changedUpdate(DocumentEvent docEvent) {
         // Do nothing.
     }
 
@@ -888,8 +840,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
     }
 
     /**
-     * Get the <code>Icon</code> to be used in the tab holding
-     * this ChatRoom.
+     * Get the <code>Icon</code> to be used in the tab holding this ChatRoom.
      *
      * @return - <code>Icon</code> to use
      */
@@ -904,7 +855,6 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
 
     public abstract EntityJid getJid();
 
-
     /**
      * Get the title to use in the tab holding this ChatRoom.
      *
@@ -913,38 +863,33 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
     public abstract String getTabTitle();
 
     /**
-     * Returns the title of this room to use. The title
-     * will be used in the title bar of the ChatRoom.
+     * Returns the title of this room to use. The title will be used in the
+     * title bar of the ChatRoom.
      *
      * @return - the title of this ChatRoom.
      */
     public abstract String getRoomTitle();
 
     /**
-     * Returns the <code>Message.Type</code> specific to this
-     * chat room.
-     * GroupChat is Message.Type.groupchat
-     * Normal Chat is Message.TYPE.NORMAL
+     * Returns the <code>Message.Type</code> specific to this chat room.
+     * GroupChat is Message.Type.groupchat Normal Chat is Message.TYPE.NORMAL
      *
      * @return the ChatRooms Message.TYPE
      */
     public abstract Message.Type getChatType();
 
-
     /**
-     * Returns whether or not this ChatRoom is active. Note: carrying
-     * a conversation rather than being disabled, as it would be
-     * transcript mode.
+     * Returns whether or not this ChatRoom is active. Note: carrying a
+     * conversation rather than being disabled, as it would be transcript mode.
      *
      * @return true if the chat room is active.
      */
     public abstract boolean isActive();
 
-
     /**
-     * Returns the notification label. The notification label notifies the
-     * user of chat room activity, such as the date of the last message
-     * and typing notifications.
+     * Returns the notification label. The notification label notifies the user
+     * of chat room activity, such as the date of the last message and typing
+     * notifications.
      *
      * @return the notification label.
      */
@@ -953,8 +898,8 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
     }
 
     /**
-     * Adds a packetID to the packedIDList. The packetIDLlist
-     * keeps track of all messages coming into the chatroom.
+     * Adds a packetID to the packedIDList. The packetIDLlist keeps track of all
+     * messages coming into the chatroom.
      *
      * @param packetID the packetID to add.
      */
@@ -994,15 +939,13 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         add(toolbar, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
     }
 
-
     @Override
-	public void insertUpdate(DocumentEvent e) {
+    public void insertUpdate(DocumentEvent e) {
         // Meant to be overriden
         checkForText(e);
 
-        setChatState( ChatState.composing );
+        setChatState(ChatState.composing);
     }
-
 
     /**
      * Override to save transcript in preferred room style.
@@ -1011,14 +954,13 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         getTranscriptWindow().saveTranscript(getTabTitle() + ".html", getTranscripts(), null);
     }
 
-
     /**
      * Used for the top toolbar.
      */
     public static class ChatToolBar extends JPanel {
-		private static final long serialVersionUID = 5926527530611601841L;
-		private final JPanel buttonPanel;
 
+        private static final long serialVersionUID = 5926527530611601841L;
+        private final JPanel buttonPanel;
 
         /**
          * Default Constructor.
@@ -1042,7 +984,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
          */
         public void addChatRoomButton(ChatRoomButton button) {
             buttonPanel.add(button);
-            buttonPanel.setBorder(BorderFactory.createEmptyBorder(5,0,5,0));
+            buttonPanel.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
 
             // Make all JButtons the same size
             Component[] comps = buttonPanel.getComponents();
@@ -1055,8 +997,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
                     if (component instanceof JButton) {
                         buttons.add(component);
                     }
-                }
-                catch (NullPointerException e) {
+                } catch (NullPointerException e) {
                     Log.error(e);
                 }
             }
@@ -1089,13 +1030,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
     public void increaseUnreadMessageCount() {
         unreadMessageCount++;
     }
-    
-     /**
-     * Decreases the number of unread messages by 1.
-     */
-    public void decreaseUnreadMessageCount() {
-        unreadMessageCount--;
-    }
+  
 
     /**
      * Resets the number of unread messages.
@@ -1123,8 +1058,8 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
     }
 
     /**
-     * Adds a new <code>FileDropListener</code> to allow for Drag and Drop notifications
-     * of objects onto the ChatWindow.
+     * Adds a new <code>FileDropListener</code> to allow for Drag and Drop
+     * notifications of objects onto the ChatWindow.
      *
      * @param listener the listener.
      */
@@ -1142,27 +1077,24 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
     }
 
     /**
-     * Notify all users that a collection of files has been dropped onto the ChatRoom.
+     * Notify all users that a collection of files has been dropped onto the
+     * ChatRoom.
      *
      * @param files the files dropped.
      */
-    public void fireFileDropListeners( Collection<File> files )
-    {
-        for ( FileDropListener listener : fileDropListeners )
-        {
-            try
-            {
-                listener.filesDropped( files, this );
-            }
-            catch ( Exception e )
-            {
-                Log.error( "A FileDropListener (" + listener + ") threw an exception while processing a 'files dropped' event.", e );
+    public void fireFileDropListeners(Collection<File> files) {
+        for (FileDropListener listener : fileDropListeners) {
+            try {
+                listener.filesDropped(files, this);
+            } catch (Exception e) {
+                Log.error("A FileDropListener (" + listener + ") threw an exception while processing a 'files dropped' event.", e);
             }
         }
     }
 
     /**
-     * Returns the panel which contains the toolbar items, such as spell checker.
+     * Returns the panel which contains the toolbar items, such as spell
+     * checker.
      *
      * @return the panel which contains the lower toolbar items.
      */
@@ -1177,18 +1109,17 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
      * @return
      */
     public JPanel getRoomControllerBar() {
-	return editorBarRight;
+        return editorBarRight;
     }
 
     /**
-     * Adds a <code>ChatRoomClosingListener</code> to this ChatRoom. A ChatRoomClosingListener
-     * is notified whenever this room is closing.
+     * Adds a <code>ChatRoomClosingListener</code> to this ChatRoom. A
+     * ChatRoomClosingListener is notified whenever this room is closing.
      *
      * @param listener the ChatRoomClosingListener.
      */
-    public void addClosingListener(ChatRoomClosingListener listener)
-    {
-        closingListeners.add( listener );
+    public void addClosingListener(ChatRoomClosingListener listener) {
+        closingListeners.add(listener);
     }
 
     /**
@@ -1196,25 +1127,21 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
      *
      * @param listener the ChatRoomClosingListener.
      */
-    public void removeClosingListener(ChatRoomClosingListener listener)
-    {
-        closingListeners.remove( listener );
+    public void removeClosingListener(ChatRoomClosingListener listener) {
+        closingListeners.remove(listener);
     }
 
     /**
-     * Notifies all <code>ChatRoomClosingListener</code> that this ChatRoom is closing.
+     * Notifies all <code>ChatRoomClosingListener</code> that this ChatRoom is
+     * closing.
      */
-    private void fireClosingListeners()
-    {
-        for ( final ChatRoomClosingListener listener : new ArrayList<>( closingListeners ) ) // Listener can call #removeClosingListener. Prevent ConcurrentModificationException by using a clone.
+    private void fireClosingListeners() {
+        for (final ChatRoomClosingListener listener : new ArrayList<>(closingListeners)) // Listener can call #removeClosingListener. Prevent ConcurrentModificationException by using a clone.
         {
-            try
-            {
+            try {
                 listener.closing();
-            }
-            catch ( Exception e )
-            {
-                Log.error( "A ChatRoomClosingListener (" + listener + ") threw an exception while processing a 'closing' event.", e );
+            } catch (Exception e) {
+                Log.error("A ChatRoomClosingListener (" + listener + ") threw an exception while processing a 'closing' event.", e);
             }
         }
         closingListeners.clear();
@@ -1247,83 +1174,77 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         return verticalSplit;
     }
 
-
     @Override
-	public void focusGained(FocusEvent focusEvent) {
+    public void focusGained(FocusEvent focusEvent) {
         validate();
         invalidate();
         repaint();
 
-        if(focusEvent.getComponent().equals(getChatInputEditor())) {
-            setChatState( ChatState.active );
+        if (focusEvent.getComponent().equals(getChatInputEditor())) {
+            setChatState(ChatState.active);
         }
 
     }
 
     @Override
-	public void poppingUp(Object component, JPopupMenu popup) {
+    public void poppingUp(Object component, JPopupMenu popup) {
         Action saveAction = new AbstractAction() {
-			private static final long serialVersionUID = -3582301239832606653L;
+            private static final long serialVersionUID = -3582301239832606653L;
 
-			@Override
-			public void actionPerformed(ActionEvent actionEvent) {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
                 saveTranscript();
             }
         };
         saveAction.putValue(Action.NAME, Res.getString("action.save"));
         saveAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.SAVE_AS_16x16));
 
-
         popup.add(saveAction);
     }
 
     @Override
-	public void poppingDown(JPopupMenu popup) {
+    public void poppingDown(JPopupMenu popup) {
 
     }
 
     @Override
-	public boolean handleDefaultAction(MouseEvent e) {
+    public boolean handleDefaultAction(MouseEvent e) {
         return false;
     }
 
-
     @Override
-	public void focusLost(FocusEvent focusEvent) {
-        if(focusEvent.getComponent().equals(getChatInputEditor())) {
-            setChatState( ChatState.inactive );
+    public void focusLost(FocusEvent focusEvent) {
+        if (focusEvent.getComponent().equals(getChatInputEditor())) {
+            setChatState(ChatState.inactive);
         }
     }
-
 
     /**
      * Implementation of this method should return the last time this chat room
      * sent or recieved a message.
      *
-     * @return the last time (in system milliseconds) that the room last recieved a message.
+     * @return the last time (in system milliseconds) that the room last
+     * recieved a message.
      */
     public abstract long getLastActivity();
 
-
     @Override
-	public void connectionClosed() {
+    public void connectionClosed() {
     }
 
     @Override
-	public void connectionClosedOnError(Exception e) {
+    public void connectionClosedOnError(Exception e) {
     }
 
     @Override
-	public void updateStatus(boolean active)
-    {
-	_alwaysOnTopItem.setSelected(active);
+    public void updateStatus(boolean active) {
+        _alwaysOnTopItem.setSelected(active);
     }
 
     @Override
-	public void registeredToFrame(ChatFrame chatframe)
-    {
-	this._chatFrame = chatframe;
-	_chatFrame.addWindowToFronListener(this);
+    public void registeredToFrame(ChatFrame chatframe) {
+        this._chatFrame = chatframe;
+        _chatFrame.addWindowToFronListener(this);
     }
 
     protected JPanel getEditorWrapperBar() {
@@ -1388,7 +1309,5 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
 
     public void addControllerButton(RolloverButton button) {
         editorBarRight.add(button, 0);
-    }            
+    }
 }
-
-
