@@ -100,7 +100,7 @@ public class ChatManager {
     private final UriManager _uriManager = new UriManager();
     
     private final List<ChatMessageHandler> chatMessageHandlers = new ArrayList<>();
-
+    
     /**
      * The listener instance that we use to track chat states according to
      * XEP-0085;
