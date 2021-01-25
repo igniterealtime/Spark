@@ -68,7 +68,7 @@ public class DefaultTabHandler extends SparkTabHandler {
                 if (!chatFrameFocused || !isSelectedTab) {
                     if (unreadCount > 0) {
                         // Make tab red.
-                        tab.setShowUnreadMessageIcon(true, unreadCount);
+                        tab.setShowUnreadMessageIcon(true, SparkManager.getChatManager().getChatContainer().getAllUnreadMessages());
                         tab.setTitleColor((Color) UIManager.get("Chat.unreadMessageColor"));
                         tab.setTabBold(true);
                     }
@@ -80,22 +80,25 @@ public class DefaultTabHandler extends SparkTabHandler {
                         appendedMessage = " (" + unreadMessageCount + ")";
                     }
                     tab.setTabTitle(room.getTabTitle() + appendedMessage);
-                    //tab.setShowUnreadMessageIcon(true, unreadMessageCount);
-                    //System.err.println("Not Selected " + unreadMessageCount);
+                    tab.setShowUnreadMessageIcon(true, SparkManager.getChatManager().getChatContainer().getAllUnreadMessages());
+
                 }
 
                 if (chatFrameFocused && isSelectedTab) {
-                    //System.err.println("Selected But no the Tab " + unreadCount);
+                    //check tab
                     if (tab.getTitleColor() == (Color) UIManager.get("Chat.unreadMessageColor")) {
-                        //System.err.println("Selected " + room.getUnreadMessageCount());
                         tab.setTitleColor(Color.black);
 
                         // tab.setTabFont(tab.getDefaultFont());
                         tab.setTabTitle(room.getTabTitle());
                         // Clear unread message count.
                         room.clearUnreadMessageCount();
-                        tab.setShowUnreadMessageIcon(false, room.getUnreadMessageCount());
-                        //todo: should not hide the icon when other tabs still have unread messages
+                        //handle other tabs with unread messages, still show the icon unread
+                        if (SparkManager.getChatManager().getChatContainer().getAllUnreadMessages() == 0) {
+                            tab.setShowUnreadMessageIcon(false, SparkManager.getChatManager().getChatContainer().getAllUnreadMessages());
+                        } else {
+                            tab.setShowUnreadMessageIcon(true, SparkManager.getChatManager().getChatContainer().getAllUnreadMessages());
+                        }
                     }
                 }
                 // SparkManager.getChatManager().getChatContainer().getSelectedComponent()

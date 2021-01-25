@@ -9,12 +9,7 @@ import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Dimension;
 import java.awt.EventQueue;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Image;
-import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -26,7 +21,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.geom.AffineTransform;
 import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
@@ -58,7 +52,6 @@ import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.login.Configuration;
 import javax.security.auth.login.LoginContext;
 import javax.security.auth.login.LoginException;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
@@ -476,6 +469,7 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
         btnLogin.setBackground(new java.awt.Color(241, 100, 34));
         btnLogin.setForeground(new java.awt.Color(255, 255, 255));
         btnLogin.setText("Login");
+        btnLogin.setEnabled(false);
         btnLogin.setPreferredSize(new java.awt.Dimension(210, 30));
         btnLogin.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -486,7 +480,6 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
 
         btnCreateAccount.setBackground(new java.awt.Color(255, 255, 255));
         btnCreateAccount.setText("Account");
-        btnCreateAccount.setActionCommand("Account");
         btnCreateAccount.setBorderPainted(false);
         btnCreateAccount.setHorizontalTextPosition(javax.swing.SwingConstants.LEADING);
         btnCreateAccount.setOpaque(false);
@@ -983,6 +976,9 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
         cbAutoLogin.setEnabled(available);
         cbLoginInvisible.setEnabled(available);
         cbAnonymous.setEnabled(available);
+        btnLogin.setEnabled(available);
+        btnAdvanced.setEnabled(available);
+        btnCreateAccount.setEnabled(available);
 
         // Need to set both editable and enabled for best behavior.
         tfUsername.setEditable(available);
