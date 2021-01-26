@@ -80,7 +80,7 @@ public class DefaultTabHandler extends SparkTabHandler {
                         appendedMessage = " (" + unreadMessageCount + ")";
                     }
                     tab.setTabTitle(room.getTabTitle() + appendedMessage);
-                    tab.setShowUnreadMessageIcon(true, SparkManager.getChatManager().getChatContainer().getAllUnreadMessages());
+                    //tab.setShowUnreadMessageIcon(true, SparkManager.getChatManager().getChatContainer().getAllUnreadMessages());
 
                 }
 
