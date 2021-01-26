@@ -109,7 +109,7 @@ public class SparkTabbedPane extends JPanel {
             pane.putClientProperty("JTabbedPane.trailingComponent", tb);
         } else {
             //todo: should not hide the icon when other tabs still have unread messages //test 1
-            if (unreadCount==0) {
+            if (unreadCount == 0) {
                 pane.putClientProperty("JTabbedPane.trailingComponent", null);
             }
         }
@@ -433,6 +433,12 @@ public class SparkTabbedPane extends JPanel {
                             @Override
                             public void finished() {
                                 close(sparktab);
+                                //reset counter
+                                if (SparkManager.getChatManager().getChatContainer().getAllUnreadMessages() == 0) {
+                                    showUnreadMessageIndicator(SparkManager.getChatManager().getChatContainer().getTabbedPane(), false, SparkManager.getChatManager().getChatContainer().getAllUnreadMessages());
+                                } else {
+                                    showUnreadMessageIndicator(SparkManager.getChatManager().getChatContainer().getTabbedPane(), true, SparkManager.getChatManager().getChatContainer().getAllUnreadMessages());
+                                }
                             }
                         };
                         closeTimerThread.start();

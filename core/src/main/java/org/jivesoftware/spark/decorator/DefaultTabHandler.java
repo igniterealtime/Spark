@@ -86,22 +86,21 @@ public class DefaultTabHandler extends SparkTabHandler {
 
                 if (chatFrameFocused && isSelectedTab) {
                     //check tab
-                    if (tab.getTitleColor() == (Color) UIManager.get("Chat.unreadMessageColor")) {
-                        tab.setTitleColor(Color.black);
+                    //if (tab.getTitleColor() == (Color) UIManager.get("Chat.unreadMessageColor")) {
+                    tab.setTitleColor(Color.black);
 
-                        // tab.setTabFont(tab.getDefaultFont());
-                        tab.setTabTitle(room.getTabTitle());
-                        // Clear unread message count.
-                        room.clearUnreadMessageCount();
-                        //handle other tabs with unread messages, still show the icon unread
-                        if (SparkManager.getChatManager().getChatContainer().getAllUnreadMessages() == 0) {
-                            tab.setShowUnreadMessageIcon(false, SparkManager.getChatManager().getChatContainer().getAllUnreadMessages());
-                        } else {
-                            tab.setShowUnreadMessageIcon(true, SparkManager.getChatManager().getChatContainer().getAllUnreadMessages());
-                        }
+                    // tab.setTabFont(tab.getDefaultFont());
+                    tab.setTabTitle(room.getTabTitle());
+                    // Clear unread message count.
+                    room.clearUnreadMessageCount();
+                    //handle other tabs with unread messages, still show the icon unread
+                    if (SparkManager.getChatManager().getChatContainer().getAllUnreadMessages() == 0) {
+                        tab.setShowUnreadMessageIcon(false, SparkManager.getChatManager().getChatContainer().getAllUnreadMessages());
+                    } else {
+                        tab.setShowUnreadMessageIcon(true, SparkManager.getChatManager().getChatContainer().getAllUnreadMessages());
                     }
+                    //}
                 }
-                // SparkManager.getChatManager().getChatContainer().getSelectedComponent()
 
             }
 
