@@ -107,11 +107,10 @@ public class SparkTabbedPane extends JPanel {
 
         if (show == true) {
             pane.putClientProperty("JTabbedPane.trailingComponent", tb);
-        } else {
+        } else if (unreadCount == 0 || show == false) {
             //todo: should not hide the icon when other tabs still have unread messages //test 1
-            if (unreadCount == 0) {
-                pane.putClientProperty("JTabbedPane.trailingComponent", null);
-            }
+            pane.putClientProperty("JTabbedPane.trailingComponent", null);
+
         }
     }
 
