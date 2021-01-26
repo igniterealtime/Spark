@@ -135,7 +135,7 @@ public class SparkTabbedPane extends JPanel {
         final SparkTab sparktab = new SparkTab(this, component);
 
         TabPanel tabpanel = new TabPanel(sparktab, title, icon);
-        pane.addTab(null, null, sparktab, tip);
+        pane.addTab(title, null, sparktab, tip);
 
         pane.setTabComponentAt(pane.getTabCount() - 1, tabpanel);
         fireTabAdded(sparktab, component, getTabPosition(sparktab));
@@ -169,6 +169,8 @@ public class SparkTabbedPane extends JPanel {
             if (com instanceof TabPanel) {
                 TabPanel panel = (TabPanel) com;
                 panel.setTitle(title);
+                //to update scrollable tabs titles
+                pane.setTitleAt(index, title);
             }
         }
     }
@@ -433,10 +435,10 @@ public class SparkTabbedPane extends JPanel {
                             public void finished() {
                                 close(sparktab);
                                 //reset counter
-                                if (SparkManager.getChatManager().getChatContainer().getAllUnreadMessages() == 0) {
-                                    showUnreadMessageIndicator(SparkManager.getChatManager().getChatContainer().getTabbedPane(), false, SparkManager.getChatManager().getChatContainer().getAllUnreadMessages());
+                                if (SparkManager.getChatManager().getChatContainer().getTotalNumberOfUnreadMessages() == 0) {
+                                    showUnreadMessageIndicator(SparkManager.getChatManager().getChatContainer().getTabbedPane(), false, SparkManager.getChatManager().getChatContainer().getTotalNumberOfUnreadMessages());
                                 } else {
-                                    showUnreadMessageIndicator(SparkManager.getChatManager().getChatContainer().getTabbedPane(), true, SparkManager.getChatManager().getChatContainer().getAllUnreadMessages());
+                                    showUnreadMessageIndicator(SparkManager.getChatManager().getChatContainer().getTabbedPane(), true, SparkManager.getChatManager().getChatContainer().getTotalNumberOfUnreadMessages());
                                 }
                             }
                         };
