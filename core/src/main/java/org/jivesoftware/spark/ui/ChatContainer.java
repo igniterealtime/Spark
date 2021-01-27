@@ -545,19 +545,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
 
             closeTab(comp);
         }
-    }
-
-    /**
-     * Gets all sum of all rooms unread messages
-     * @return 
-     */
-    public int getAllUnreadMessages() {
-        int unread = 0;
-        for (ChatRoom chatRoom : new ArrayList<>(chatRoomList)) {
-            unread += chatRoom.getUnreadMessageCount();
-               }
-        return unread;
-    }
+    } 
 
     /**
      * Leaves a ChatRoom. Leaving a chat room does everything but close the room
