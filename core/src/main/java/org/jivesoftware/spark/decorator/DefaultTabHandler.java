@@ -108,8 +108,8 @@ public class DefaultTabHandler extends SparkTabHandler {
                 tab.setTabBold(true);
             }
             if (isSelectedTab && chatFrameFocused) {
-                tab.setTitleColor(Color.black);
-                tab.setTabFont(tab.getDefaultFont());
+                //tab.setTitleColor(Color.black);
+                //tab.setTabFont(tab.getDefaultFont());
             }
         }
 
