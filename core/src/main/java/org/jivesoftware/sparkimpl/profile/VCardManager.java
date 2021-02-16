@@ -275,7 +275,7 @@ public class VCardManager {
 
         JMenuItem viewProfileMenu = new JMenuItem("", SparkRes.getImageIcon(SparkRes.FIND_TEXT_IMAGE));
         ResourceUtils.resButton(viewProfileMenu, Res.getString("menuitem.lookup.profile"));
-        contactsMenu.insert(viewProfileMenu, size > 0 ? size - 1 : 0);
+        contactsMenu.insert(viewProfileMenu, size > 0 ? size - 3 : 0);
         viewProfileMenu.addActionListener( e -> {
             String jidToView = JOptionPane.showInputDialog(SparkManager.getMainWindow(), Res.getString("message.enter.jabber.id") + ":", Res.getString("title.lookup.profile"), JOptionPane.QUESTION_MESSAGE);
             if (ModelUtil.hasLength(jidToView) && jidToView.contains( "@" ) && ModelUtil.hasLength( XmppStringUtils.parseDomain(jidToView))) {
