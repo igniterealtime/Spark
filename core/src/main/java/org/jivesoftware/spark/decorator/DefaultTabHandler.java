@@ -29,7 +29,9 @@ import java.awt.Color;
 import java.awt.Component;
 
 import javax.swing.Icon;
+import javax.swing.JTabbedPane;
 import javax.swing.UIManager;
+import org.jivesoftware.spark.component.tabbedPane.SparkTabbedPane;
 
 /**
  */
@@ -73,35 +75,34 @@ public class DefaultTabHandler extends SparkTabHandler {
                     tab.setTitleColor((Color) UIManager.get("Chat.unreadMessageColor"));
                     tab.setTabBold(true);
                     tab.setShowUnreadMessageIcon(true, SparkManager.getChatManager().getChatContainer().getTotalNumberOfUnreadMessages());
-                    String appendedMessage = "";
-                    appendedMessage = " (" + unreadMessageCount + ")";
-                    tab.setTabTitle(room.getTabTitle() + appendedMessage);
-
+                    tab.setTabTitle(room.getTabTitle() + " (" + unreadMessageCount + ")");
                 }
+                
             }
 
-            if (chatFrameFocused && isSelectedTab) {
-                tab.setTitleColor(Color.black);
+                if (chatFrameFocused && isSelectedTab) {
+                    tab.setTitleColor(Color.black);
 
-                // tab.setTabFont(tab.getDefaultFont());
-                tab.setTabTitle(room.getTabTitle());
-                // Clear unread message count.
-                room.clearUnreadMessageCount();
-                //handle other tabs with unread messages, still show the icon unread
-                if (SparkManager.getChatManager().getChatContainer().getTotalNumberOfUnreadMessages() == 0) {
-                    tab.setShowUnreadMessageIcon(false, SparkManager.getChatManager().getChatContainer().getTotalNumberOfUnreadMessages());
-                } else {
-                    tab.setShowUnreadMessageIcon(true, SparkManager.getChatManager().getChatContainer().getTotalNumberOfUnreadMessages());
+                    // tab.setTabFont(tab.getDefaultFont());
+                    tab.setTabTitle(room.getTabTitle());
+                    // Clear unread message count.
+                    room.clearUnreadMessageCount();
+                    //handle other tabs with unread messages, still show the icon unread
+                    if (SparkManager.getChatManager().getChatContainer().getTotalNumberOfUnreadMessages() == 0) {
+                        tab.setShowUnreadMessageIcon(false, SparkManager.getChatManager().getChatContainer().getTotalNumberOfUnreadMessages());
+                    } else {
+                        tab.setShowUnreadMessageIcon(true, SparkManager.getChatManager().getChatContainer().getTotalNumberOfUnreadMessages());
+                    }
                 }
+
+                // Check if the room is stale.
+                if (isStaleRoom && component instanceof ChatRoomImpl) {
+                    decorateStaleTab(tab, (ChatRoom) component);
+                } // Should only set the icon to default if the frame is in focus
+                // and the tab is the selected component.
+
             }
-
-            // Check if the room is stale.
-            if (isStaleRoom && component instanceof ChatRoomImpl) {
-                decorateStaleTab(tab, (ChatRoom) component);
-            } // Should only set the icon to default if the frame is in focus
-            // and the tab is the selected component.
-
-        } else {
+         else {
             if (!chatFrameFocused || !isSelectedTab) {
                 // Make tab red.
                 tab.setTitleColor((Color) UIManager.get("Chat.unreadMessageColor"));
