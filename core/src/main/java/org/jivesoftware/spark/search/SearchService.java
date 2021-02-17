@@ -12,7 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */ 
+ */
 package org.jivesoftware.spark.search;
 
 import org.jivesoftware.Spark;
@@ -46,6 +46,7 @@ import java.awt.geom.AffineTransform;
 import java.util.Collection;
 
 public class SearchService extends JPanel {
+
     private static final long serialVersionUID = 6407801290193187867L;
     private final IconTextField findField;
     private Image backgroundImage;
@@ -64,43 +65,35 @@ public class SearchService extends JPanel {
         ResourceUtils.resLabel(findLabel, findField, Res.getString("label.find"));
 
         // add(findLabel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-
         boolean showPersonSearchField = (!Default.getBoolean(Default.HIDE_PERSON_SEARCH_FIELD) && Enterprise.containsFeature(Enterprise.PERSON_SEARCH_FEATURE));
 
         if (showPersonSearchField) {
-        	if (Spark.isMac()) {
-        		add(findField, new GridBagConstraints(1, 1, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 30), 0, 0));
-        	}
-        	else {
-        		add(findField, new GridBagConstraints(1, 1, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
-        	}
+            if (Spark.isMac()) {
+                add(findField, new GridBagConstraints(1, 1, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 30), 0, 0));
+            } else {
+                add(findField, new GridBagConstraints(1, 1, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+            }
         }
 
         // Add an icon that indicates if connection is secure.
         final String tooltip;
         final ImageIcon icon;
-        if (SparkManager.getConnection().isSecureConnection())
-        {
-            icon = SparkRes.getImageIcon( SparkRes.LOCK_16x16 );
-            tooltip = Res.getString( "message.spark.secure" );
-        }
-        else
-        {
-            icon = SparkRes.getImageIcon( SparkRes.LOCK_UNLOCK_16x16 );
+        if (SparkManager.getConnection().isSecureConnection()) {
+            icon = SparkRes.getImageIcon(SparkRes.LOCK_16x16);
+            tooltip = Res.getString("message.spark.secure");
+        } else {
+            icon = SparkRes.getImageIcon(SparkRes.LOCK_UNLOCK_16x16);
             tooltip = Res.getString("message.spark.insecure");
         }
 
         final JLabel lockLabel = new JLabel();
         lockLabel.setHorizontalTextPosition(JLabel.LEFT);
-        lockLabel.setIcon( icon );
-        lockLabel.setToolTipText( tooltip  );
+        lockLabel.setIcon(icon);
+        lockLabel.setToolTipText(tooltip);
 
-        if (Spark.isMac())
-        {
+        if (Spark.isMac()) {
             add(lockLabel, new GridBagConstraints(2, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 0, 5, 15), 0, 0));
-        }
-        else
-        {
+        } else {
             add(lockLabel, new GridBagConstraints(2, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 0, 5, 5), 0, 0));
         }
 
@@ -108,12 +101,12 @@ public class SearchService extends JPanel {
 
         findField.getTextComponent().addKeyListener(new KeyListener() {
             @Override
-			public void keyTyped(KeyEvent e) {
+            public void keyTyped(KeyEvent e) {
 
             }
 
             @Override
-			public void keyPressed(KeyEvent e) {
+            public void keyPressed(KeyEvent e) {
                 if (e.getKeyChar() == KeyEvent.VK_ENTER) {
                     final Icon previousIcon = findField.getIcon();
 
@@ -123,32 +116,31 @@ public class SearchService extends JPanel {
 
                     SwingWorker worker = new SwingWorker() {
                         @Override
-						public Object construct() {
+                        public Object construct() {
                             activeSearchable.search(findField.getText());
                             return true;
                         }
 
                         @Override
-						public void finished() {
+                        public void finished() {
                             findField.setIcon(previousIcon);
                             findField.setText("");
                         }
                     };
-
 
                     worker.start();
                 }
             }
 
             @Override
-			public void keyReleased(KeyEvent e) {
+            public void keyReleased(KeyEvent e) {
 
             }
         });
 
         findField.getTextComponent().addMouseListener(new MouseAdapter() {
             @Override
-			public void mouseClicked(MouseEvent e) {
+            public void mouseClicked(MouseEvent e) {
                 if (newSearch) {
                     findField.setText("");
                     findField.getTextComponent().setForeground((Color) UIManager.get("TextField.foreground"));
@@ -157,17 +149,15 @@ public class SearchService extends JPanel {
             }
         });
 
-
         Workspace workspace = SparkManager.getWorkspace();
         workspace.add(this, new GridBagConstraints(0, 7, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
         workspace.invalidate();
         workspace.validate();
         workspace.repaint();
 
-
         findField.getImageComponent().addMouseListener(new MouseAdapter() {
             @Override
-			public void mouseClicked(MouseEvent e) {
+            public void mouseClicked(MouseEvent e) {
                 Collection<Searchable> searchables = SparkManager.getSearchManager().getSearchServices();
                 if (searchables.size() <= 1) {
                     return;
@@ -177,10 +167,10 @@ public class SearchService extends JPanel {
                 final JPopupMenu popup = new JPopupMenu();
                 for (final Searchable searchable : searchables) {
                     Action action = new AbstractAction() {
-			private static final long serialVersionUID = 1289193809077193703L;
+                        private static final long serialVersionUID = 1289193809077193703L;
 
-			@Override
-			public void actionPerformed(ActionEvent e) {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
                             setActiveSearchService(searchable);
                         }
                     };
@@ -208,12 +198,12 @@ public class SearchService extends JPanel {
 
         findField.getTextComponent().addFocusListener(new FocusListener() {
             @Override
-			public void focusGained(FocusEvent e) {
+            public void focusGained(FocusEvent e) {
                 findField.setText("");
             }
 
             @Override
-			public void focusLost(FocusEvent e) {
+            public void focusLost(FocusEvent e) {
                 findField.getTextComponent().setForeground((Color) UIManager.get("TextField.lightforeground"));
                 findField.setText(searchable.getDefaultText());
             }
@@ -221,7 +211,7 @@ public class SearchService extends JPanel {
     }
 
     @Override
-	public void paintComponent(Graphics g) {
+    public void paintComponent(Graphics g) {
         double scaleX = getWidth() / (double) backgroundImage.getWidth(null);
         double scaleY = getHeight() / (double) backgroundImage.getHeight(null);
         AffineTransform xform = AffineTransform.getScaleInstance(scaleX, scaleY);
@@ -235,6 +225,5 @@ public class SearchService extends JPanel {
     public void setBackgroundImage(Image image) {
         this.backgroundImage = image;
     }
-
 
 }

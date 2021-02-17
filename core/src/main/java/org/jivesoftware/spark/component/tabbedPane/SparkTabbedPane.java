@@ -91,14 +91,6 @@ public class SparkTabbedPane extends JPanel {
         tb.setFloatable(false);
         tb.setBorder(null);
         JLabel lbl = new JLabel("[" + unreadCount + "] ", SparkRes.getImageIcon(SparkRes.NEW_MESSAGE), JLabel.TRAILING);
-        lbl.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                //todo: focus on tab //not necessary for now upon select tab
-                //pane.putClientProperty("JTabbedPane.trailingComponent", null);
-            }
-
-        });
 
         lbl.setForeground(Color.red);
         lbl.setVerticalAlignment(JLabel.CENTER);
@@ -108,7 +100,6 @@ public class SparkTabbedPane extends JPanel {
         if (show == true) {
             pane.putClientProperty("JTabbedPane.trailingComponent", tb);
         } else if (unreadCount == 0 || show == false) {
-            //todo: should not hide the icon when other tabs still have unread messages //test 1
             pane.putClientProperty("JTabbedPane.trailingComponent", null);
 
         }
@@ -164,15 +155,14 @@ public class SparkTabbedPane extends JPanel {
     }
 
     public void setTitleAt(int index, String title) {
-        if (index > 0) {
+        // k33ptoo commented out to allow first tab to show x number of unread messages
+        //if (index > 0) {
             Component com = pane.getTabComponentAt(index);
             if (com instanceof TabPanel) {
                 TabPanel panel = (TabPanel) com;
                 panel.setTitle(title);
-                //to update scrollable tabs titles
-                pane.setTitleAt(index, title);
             }
-        }
+        //}
     }
 
     public void setTitleColorAt(int index, Color color) {

@@ -300,9 +300,9 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
         //reset ui
         //btnAdvanced.setUI(new BasicButtonUI());
         //btnCreateAccount.setUI(new BasicButtonUI());
-        tfDomain.putClientProperty("JTextField.placeholderText", "Enter Domain(e.g igniterealtime.org)");
-        tfPassword.putClientProperty("JTextField.placeholderText", "Enter Password");
-        tfUsername.putClientProperty("JTextField.placeholderText", "Enter Username");
+        tfDomain.putClientProperty("JTextField.placeholderText", Res.getString("hint.login.domain"));
+        tfPassword.putClientProperty("JTextField.placeholderText", Res.getString("hint.login.password"));
+        tfUsername.putClientProperty("JTextField.placeholderText", Res.getString("hint.login.username"));
 
         setComponentsAvailable(true);
 
