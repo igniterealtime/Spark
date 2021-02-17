@@ -155,7 +155,8 @@ public class SparkTabbedPane extends JPanel {
     }
 
     public void setTitleAt(int index, String title) {
-        //if (index > -1) {
+        // k33ptoo commented out to allow first tab to show x number of unread messages
+        //if (index > 0) {
             Component com = pane.getTabComponentAt(index);
             if (com instanceof TabPanel) {
                 TabPanel panel = (TabPanel) com;
