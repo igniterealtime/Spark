@@ -28,6 +28,9 @@ import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import javax.swing.BorderFactory;
+import javax.swing.plaf.basic.BasicTextFieldUI;
+import javax.swing.plaf.basic.BasicTextUI;
 
 /**
  * Creates a Firefox Search type box that allows for icons inside of a textfield. This
@@ -49,7 +52,8 @@ public class IconTextField extends JPanel {
         setBackground((Color)UIManager.get("TextField.background"));
 
         textField = new JTextField();
-        textField.setBorder(null);
+        textField.setUI(new BasicTextFieldUI());
+        textField.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
         setBorder(new JTextField().getBorder());
 
         imageComponent = new JLabel(icon);
