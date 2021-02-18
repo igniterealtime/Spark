@@ -161,6 +161,7 @@ public class SparkTabbedPane extends JPanel {
             if (com instanceof TabPanel) {
                 TabPanel panel = (TabPanel) com;
                 panel.setTitle(title);
+                pane.setTitleAt(index, title);
             }
         //}
     }
