@@ -203,12 +203,6 @@
         </dependency>
 
         <dependency>
-            <groupId>com.jtattoo</groupId>
-            <artifactId>JTattoo</artifactId>
-            <version>1.6.13</version>
-        </dependency>
-
-        <dependency>
             <groupId>jaxen</groupId>
             <artifactId>jaxen</artifactId>
             <version>1.2.0</version>
@@ -218,18 +212,6 @@
             <groupId>org.lobobrowser</groupId>
             <artifactId>LoboBrowser</artifactId>
             <version>1.0.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.github.insubstantial</groupId>
-            <artifactId>substance-swingx</artifactId>
-            <version>7.3</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.github.freeseawind</groupId>
-            <artifactId>littleluck</artifactId>
-            <version>2.0.1</version>
         </dependency>
 
         <dependency>
