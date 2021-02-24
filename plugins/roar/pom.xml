@@ -12,7 +12,7 @@
     <artifactId>roar</artifactId>
     <version>0.6</version>
 
-    <name>Roar!!!</name>
+    <name>Roar</name>
     <description>Provides customizable popup/notification functionality.</description>
 
     <contributors>

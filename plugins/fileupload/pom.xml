@@ -12,7 +12,7 @@
     <artifactId>fileupload</artifactId>
     <version>0.0.3</version>
 
-    <name>Http File Upload Plugin</name>
+    <name>HttpFileUploadPlugin</name>
     <description>Adds support for Openfire httpfileupload plugin to Spark</description>
 
     <contributors>
