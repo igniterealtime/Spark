@@ -160,14 +160,6 @@
             <artifactId>emoticons</artifactId>
             <version>${project.version}</version>
             <scope>runtime</scope>
-            <classifier>OldSpark.adiumemoticonset.xml</classifier>
-            <type>zip</type>
-        </dependency>
-        <dependency>
-            <groupId>org.igniterealtime.spark</groupId>
-            <artifactId>emoticons</artifactId>
-            <version>${project.version}</version>
-            <scope>runtime</scope>
             <classifier>Default.adiumemoticonset</classifier>
             <type>zip</type>
         </dependency>
