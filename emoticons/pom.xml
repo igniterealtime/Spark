@@ -41,7 +41,6 @@
                         <descriptor>src/assembly/Default.adiumemoticonset.xml</descriptor>
                         <descriptor>src/assembly/GTalk.AdiumEmoticonset.xml</descriptor>
                         <descriptor>src/assembly/POPO.adiumemoticonset.xml</descriptor>
-                        <descriptor>src/assembly/OldSpark.adiumemoticonset.xml</descriptor>
                         <descriptor>src/assembly/sparkEmoticonSet.xml</descriptor>
                     </descriptors>
                 </configuration>
