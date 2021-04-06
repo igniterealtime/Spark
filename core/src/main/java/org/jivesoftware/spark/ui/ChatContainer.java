@@ -432,7 +432,6 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         if (chatFrame.isVisible() && (chatFrame.getState() == Frame.ICONIFIED || chatFrame.getInactiveTime() > 20000)) {
             int tabLocation = indexOfComponent(chatRoom);
             //setSelectedIndex(tabLocation);
-            System.err.println("Inactive for Long "+ tabLocation);
             groupChatMessageCheck(chatRoom, customMsg, customMsgText, customMsgTitle);
             return;
         }
