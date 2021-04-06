@@ -44,6 +44,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
 import java.util.Collection;
+import javax.swing.plaf.basic.BasicPanelUI;
 
 public class SearchService extends JPanel {
 
@@ -60,6 +61,7 @@ public class SearchService extends JPanel {
 
         backgroundImage = Default.getImageIcon(Default.TOP_BOTTOM_BACKGROUND_IMAGE).getImage();
 
+        this.setUI(new BasicPanelUI());        
         final JLabel findLabel = new JLabel();
 
         ResourceUtils.resLabel(findLabel, findField, Res.getString("label.find"));
