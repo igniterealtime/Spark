@@ -33,10 +33,11 @@ import javax.swing.plaf.basic.BasicTextFieldUI;
 import javax.swing.plaf.basic.BasicTextUI;
 
 /**
- * Creates a Firefox Search type box that allows for icons inside of a textfield. This
- * could be used to build out your own search objects.
+ * Creates a Firefox Search type box that allows for icons inside of a
+ * textfield. This could be used to build out your own search objects.
  */
 public class IconTextField extends JPanel {
+
     private static final long serialVersionUID = -7000758637988415370L;
     private final JTextField textField;
     private final JLabel imageComponent;
@@ -49,13 +50,13 @@ public class IconTextField extends JPanel {
      */
     public IconTextField(Icon icon) {
         setLayout(new GridBagLayout());
-        setBackground((Color)UIManager.get("TextField.background"));
+        setBackground((Color) UIManager.get("TextField.background"));
 
         textField = new JTextField();
         textField.setUI(new BasicTextFieldUI());
         textField.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
-        setBorder(new JTextField().getBorder());
-
+        //setBorder(new JTextField().getBorder());
+        this.setBorder(BorderFactory.createLineBorder(Color.lightGray));
         imageComponent = new JLabel(icon);
         downOption = new JLabel(SparkRes.getImageIcon(SparkRes.DOWN_OPTION_IMAGE));
 
@@ -124,9 +125,3 @@ public class IconTextField extends JPanel {
         return textField;
     }
 }
-
-
-
-
-
-
