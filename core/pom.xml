@@ -245,7 +245,7 @@
         <artifactId>flatlaf</artifactId>
         <version>0.45</version>
         <type>jar</type>
-    </dependency>
+        </dependency>
     </dependencies>
     
     <repositories>
