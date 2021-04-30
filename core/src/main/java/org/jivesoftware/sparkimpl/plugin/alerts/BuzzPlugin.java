@@ -16,9 +16,10 @@
 package org.jivesoftware.sparkimpl.plugin.alerts;
 
 import org.jivesoftware.resource.Res;
+import org.jivesoftware.smack.filter.AndFilter;
 import org.jivesoftware.smack.filter.StanzaTypeFilter;
 import org.jivesoftware.smack.packet.Message;
-import org.jivesoftware.smack.provider.ProviderManager;
+import org.jivesoftware.smackx.attention.packet.AttentionExtension;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.Plugin;
@@ -41,32 +42,14 @@ import javax.swing.SwingUtilities;
  */
 public class BuzzPlugin implements Plugin {
 
-    private static final String ELEMENTNAME = "attention";
-    private static final String NAMESPACE = "urn:xmpp:attention:0";
-
-    private static final String ELEMENTNAME_OLD = "buzz";
-    private static final String NAMESPACE_OLD = "http://www.jivesoftware.com/spark";
-
     @Override
     public void initialize() {
-        ProviderManager.addExtensionProvider(ELEMENTNAME,
-            NAMESPACE, new BuzzPacket.Provider());
 
-        ProviderManager.addExtensionProvider(ELEMENTNAME_OLD,
-            NAMESPACE_OLD, new BuzzPacket.Provider());
-
-        SparkManager.getConnection().addAsyncStanzaListener(stanza -> {
-            if (stanza instanceof Message) {
-                final Message message = (Message) stanza;
-
-                boolean buzz = message.getExtension(ELEMENTNAME_OLD,
-                    NAMESPACE_OLD) != null
-                    || message.getExtension(ELEMENTNAME, NAMESPACE) != null;
-                if (buzz) {
-                    SwingUtilities.invokeLater(() -> shakeWindow(message));
-                }
-            }
-        }, new StanzaTypeFilter(Message.class));
+        SparkManager.getConnection()
+            .addAsyncStanzaListener(
+                            stanza -> SwingUtilities.invokeLater(() -> shakeWindow((Message)stanza)),
+                            new AndFilter(StanzaTypeFilter.MESSAGE, s -> s.hasExtension(AttentionExtension.ELEMENT_NAME, AttentionExtension.NAMESPACE))
+                        );
 
         SparkManager.getChatManager().addChatRoomListener(
             new ChatRoomListener() {

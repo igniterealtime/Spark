@@ -18,11 +18,12 @@ package org.jivesoftware.sparkimpl.plugin.gateways;
 import org.jivesoftware.smack.*;
 import org.jivesoftware.smack.filter.StanzaIdFilter;
 import org.jivesoftware.smack.packet.IQ;
+import org.jivesoftware.smack.packet.XmlEnvironment;
 import org.jivesoftware.smack.provider.IQProvider;
+import org.jivesoftware.smack.xml.XmlPullParser;
+import org.jivesoftware.smack.xml.XmlPullParserException;
 import org.jivesoftware.spark.SparkManager;
 import org.jxmpp.jid.DomainBareJid;
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
 
@@ -87,14 +88,14 @@ public class Gateway extends IQ {
         }
 
         @Override
-		public Gateway parse(XmlPullParser parser, int i) throws IOException, XmlPullParserException
-        {
+        public Gateway parse(XmlPullParser parser, int i, XmlEnvironment xmlEnvironment)
+                throws IOException, XmlPullParserException {
             Gateway version = new Gateway();
 
             boolean done = false;
             while (!done) {
-                int eventType = parser.next();
-                if (eventType == XmlPullParser.START_TAG) {
+                XmlPullParser.Event eventType = parser.next();
+                if (eventType == XmlPullParser.Event.START_ELEMENT) {
                     if (parser.getName().equals("jid")) {
                         version.setJid(parser.nextText());
                     }
@@ -103,7 +104,7 @@ public class Gateway extends IQ {
                     }
                 }
 
-                else if (eventType == XmlPullParser.END_TAG) {
+                else if (eventType == XmlPullParser.Event.END_ELEMENT) {
                     if (parser.getName().equals(ELEMENT_NAME)) {
                         done = true;
                     }

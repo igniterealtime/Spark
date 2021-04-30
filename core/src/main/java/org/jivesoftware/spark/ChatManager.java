@@ -26,7 +26,6 @@ import org.jivesoftware.smackx.chatstates.ChatStateListener;
 import org.jivesoftware.smackx.chatstates.ChatStateManager;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.muc.MultiUserChatManager;
-import org.jivesoftware.smackx.xdata.Form;
 import org.jivesoftware.smackx.xdata.packet.DataForm;
 import org.jivesoftware.spark.component.tabbedPane.SparkTab;
 import org.jivesoftware.spark.decorator.DefaultTabHandler;
@@ -283,11 +282,7 @@ public class ChatManager {
         try {
             LocalPreferences pref = SettingsManager.getLocalPreferences();
             Resourcepart nickname = pref.getNickname();
-            chatRoom.create(nickname);
-
-            // Send an empty room configuration form which indicates that we want
-            // an instant room
-            chatRoom.sendConfigurationForm(new Form( DataForm.Type.submit ));
+            chatRoom.create(nickname).makeInstant();
         }
         catch (XMPPException | SmackException | InterruptedException e1) {
             Log.error("Unable to send conference room chat configuration form.", e1);

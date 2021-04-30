@@ -19,9 +19,10 @@ import java.io.IOException;
 import java.util.Random;
 
 import org.jivesoftware.smack.packet.IQ;
+import org.jivesoftware.smack.packet.XmlEnvironment;
 import org.jivesoftware.smack.provider.IQProvider;
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserException;
+import org.jivesoftware.smack.xml.XmlPullParser;
+import org.jivesoftware.smack.xml.XmlPullParserException;
 
 /**
  * The Game Offer Packet
@@ -100,15 +101,15 @@ public class GameOfferPacket extends IQ {
             super();
         }
 
-        public GameOfferPacket parse( XmlPullParser parser, int i ) throws XmlPullParserException, IOException
+        public GameOfferPacket parse(XmlPullParser parser, int i, XmlEnvironment xmlEnvironment) throws XmlPullParserException, IOException
         {
             final GameOfferPacket gameOffer = new GameOfferPacket();
 
             boolean done = false;
             while ( !done )
             {
-                int eventType = parser.next();
-                if ( eventType == XmlPullParser.START_TAG )
+                XmlPullParser.Event eventType = parser.next();
+                if ( eventType == XmlPullParser.Event.START_ELEMENT )
                 {
                     if ( parser.getName().equals( "gameID" ) )
                     {
@@ -122,7 +123,7 @@ public class GameOfferPacket extends IQ {
                     }
                 }
 
-                else if ( eventType == XmlPullParser.END_TAG )
+                else if ( eventType == XmlPullParser.Event.END_ELEMENT )
                 {
                     if ( parser.getName().equals( ELEMENT_NAME ) )
                     {

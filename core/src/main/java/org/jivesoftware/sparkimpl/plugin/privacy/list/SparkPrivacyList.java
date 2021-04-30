@@ -73,7 +73,7 @@ public class SparkPrivacyList {
      */
     private long getMaxItemOrder() {
         if(getLastItem() != null) {
-            return getLastItem().getOrder();
+            return getLastItem().getOrder().longValue();
         }
         return 1;
     }
@@ -96,8 +96,9 @@ public class SparkPrivacyList {
         long order = 0;
         PrivacyItem item = null;
         for (PrivacyItem privacyItem : _privacyItems) {
-            if ( order < privacyItem.getOrder() ) {
-                order = privacyItem.getOrder();
+            final long itemsOrder = privacyItem.getOrder().longValue();
+            if (order < itemsOrder) {
+                order = itemsOrder;
                 item = privacyItem;
             }
         }

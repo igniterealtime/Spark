@@ -30,6 +30,7 @@ import javax.swing.JTextArea;
 
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.packet.Stanza;
+import org.jivesoftware.smack.packet.XmlEnvironment;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.util.log.Log;
 
@@ -101,7 +102,7 @@ public class RawPacketSender implements ActionListener {
 	    Stanza stanza = new Stanza() {
 
 		@Override
-		public String toXML(String enclosingNamespace) {
+		public String toXML(XmlEnvironment xmlEnvironment) {
 		    return _inputarea.getText();
 		}
 
@@ -109,6 +110,11 @@ public class RawPacketSender implements ActionListener {
         public String toString() {
             return null;
         }
+
+		@Override
+		public String getElementName() {
+			return null;
+		}
 	    };
 
         try {
