@@ -133,9 +133,9 @@ public class CheckNode extends JiveTreeNode {
 
         if (selectionMode == DIG_IN_SELECTION
                 && children != null) {
-            Enumeration<CheckNode> nodeEnum = children.elements();
+            Enumeration<?> nodeEnum = children.elements();
             while (nodeEnum.hasMoreElements()) {
-                CheckNode node = nodeEnum.nextElement();
+                CheckNode node = (CheckNode) nodeEnum.nextElement();
                 node.setSelected(isSelected);
             }
         }
