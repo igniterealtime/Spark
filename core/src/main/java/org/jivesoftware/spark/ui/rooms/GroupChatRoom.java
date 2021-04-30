@@ -28,12 +28,13 @@ import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.packet.StanzaError;
 import org.jivesoftware.smackx.chatstates.ChatState;
 import org.jivesoftware.smackx.delay.packet.DelayInformation;
-import org.jivesoftware.smackx.muc.DefaultParticipantStatusListener;
-import org.jivesoftware.smackx.muc.DefaultUserStatusListener;
 import org.jivesoftware.smackx.muc.MultiUserChat;
+import org.jivesoftware.smackx.muc.ParticipantStatusListener;
+import org.jivesoftware.smackx.muc.UserStatusListener;
 import org.jivesoftware.smackx.muc.packet.Destroy;
 import org.jivesoftware.smackx.muc.packet.MUCUser;
-import org.jivesoftware.smackx.xdata.Form;
+import org.jivesoftware.smackx.xdata.form.FillableForm;
+import org.jivesoftware.smackx.xdata.form.Form;
 import org.jivesoftware.smackx.xevent.MessageEventManager;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
@@ -150,7 +151,7 @@ public class GroupChatRoom extends ChatRoom
                         try
                         {
                             ChatFrame chatFrame = SparkManager.getChatManager().getChatContainer().getChatFrame();
-                            Form form = chat.getConfigurationForm().createAnswerForm();
+                            FillableForm form = chat.getConfigurationForm().getFillableForm();
                             new DataFormDialog( chatFrame, chat, form );
                         }
                         catch ( XMPPException | SmackException | InterruptedException e )
@@ -277,7 +278,7 @@ public class GroupChatRoom extends ChatRoom
                 try
                 {
                     final ChatFrame chatFrame = SparkManager.getChatManager().getChatContainer().getChatFrame();
-                    final Form form = chat.getConfigurationForm().createAnswerForm();
+                    final FillableForm form = chat.getConfigurationForm().getFillableForm();
                     new DataFormDialog( chatFrame, chat, form );
                 }
                 catch ( XMPPException | SmackException | InterruptedException xmpe )
@@ -318,7 +319,7 @@ public class GroupChatRoom extends ChatRoom
                 final Form form = chat.getRegistrationForm();
                 final ChatFrame chatFrame = SparkManager.getChatManager().getChatContainer().getChatFrame();
 
-                new AnswerFormDialog( chatFrame, chat, form );
+                new AnswerFormDialog( chatFrame, chat, form.getDataForm() );
             }
             catch ( XMPPException | SmackException | InterruptedException xmpe )
             {
@@ -763,7 +764,7 @@ public class GroupChatRoom extends ChatRoom
      */
     private void setupListeners()
     {
-        chat.addParticipantStatusListener( new DefaultParticipantStatusListener()
+        chat.addParticipantStatusListener( new ParticipantStatusListener()
         {
             @Override
             public void kicked( EntityFullJid participant, Jid actor, String reason )
@@ -844,7 +845,7 @@ public class GroupChatRoom extends ChatRoom
             }
         } );
 
-        chat.addUserStatusListener( new DefaultUserStatusListener()
+        chat.addUserStatusListener( new UserStatusListener()
         {
             @Override
             public void kicked( Jid s, String reason )

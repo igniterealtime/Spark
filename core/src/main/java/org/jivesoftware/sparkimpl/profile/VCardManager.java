@@ -29,6 +29,8 @@ import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.packet.StanzaError;
 import org.jivesoftware.smack.provider.ProviderManager;
+import org.jivesoftware.smack.xml.SmackXmlParser;
+import org.jivesoftware.smack.xml.XmlPullParser;
 import org.jivesoftware.smackx.vcardtemp.packet.VCard;
 import org.jivesoftware.smackx.vcardtemp.provider.VCardProvider;
 import org.jivesoftware.spark.SparkManager;
@@ -46,9 +48,6 @@ import org.jxmpp.jid.Jid;
 import org.jxmpp.jid.impl.JidCreate;
 import org.jxmpp.stringprep.XmppStringprepException;
 import org.jxmpp.util.XmppStringUtils;
-import org.xmlpull.mxp1.MXParser;
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserException;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -87,8 +86,6 @@ public class VCardManager {
 
     private final File vcardStorageDirectory;
 
-    final MXParser parser;
-
     private final LinkedBlockingQueue<BareJid> queue = new LinkedBlockingQueue<>();
     
     private final File contactsDir;
@@ -105,16 +102,6 @@ public class VCardManager {
         // Register providers
         ProviderManager.addExtensionProvider( JabberAvatarExtension.ELEMENT_NAME, JabberAvatarExtension.NAMESPACE, new JabberAvatarExtension.Provider() );
         ProviderManager.addExtensionProvider( VCardUpdateExtension.ELEMENT_NAME, VCardUpdateExtension.NAMESPACE, new VCardUpdateExtension.Provider() );
-
-        // Initialize parser
-        parser = new MXParser();
-
-        try {
-            parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, true);
-        }
-        catch (XmlPullParserException e) {
-            Log.error(e);
-        }
 
         imageFile = new File(SparkManager.getUserDirectory(), "personal.png");
 
@@ -135,13 +122,13 @@ public class VCardManager {
 
         // Intercept all presence packets being sent and append vcard information.
         StanzaFilter presenceFilter = new StanzaTypeFilter(Presence.class);
-        SparkManager.getConnection().addStanzaInterceptor( stanza -> {
+        SparkManager.getConnection().addAsyncStanzaListener( stanza -> {
             Presence newPresence = (Presence)stanza;
             VCardUpdateExtension update = new VCardUpdateExtension();
             JabberAvatarExtension jax = new JabberAvatarExtension();
 
-            ExtensionElement updateExt = newPresence.getExtension(update.getElementName(), update.getNamespace());
-            ExtensionElement jabberExt = newPresence.getExtension(jax.getElementName(), jax.getNamespace());
+            ExtensionElement updateExt = newPresence.getExtensionElement(update.getElementName(), update.getNamespace());
+            ExtensionElement jabberExt = newPresence.getExtensionElement(jax.getElementName(), jax.getNamespace());
 
             if (updateExt != null) {
                 newPresence.removeExtension(updateExt);
@@ -765,7 +752,7 @@ public class VCardManager {
         // Set timestamp
         vcard.setField("timestamp", Long.toString(System.currentTimeMillis()));
 
-        final String xml = vcard.toXML(null).toString();
+        final String xml = vcard.toXML().toString();
 
         File vcardFile = new File(vcardStorageDirectory, fileName);
 
@@ -814,15 +801,15 @@ public class VCardManager {
         try ( final BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(vcardFile), StandardCharsets.UTF_8)) )
         {
             // Otherwise load from file system.
-            VCardProvider provider = new VCardProvider();
-            parser.setInput( in );
+            XmlPullParser parser = SmackXmlParser.newXmlParser(in);
 
             // Skip forward until we're at <vCard xmlns='vcard-temp'>
-            while ( !( parser.getEventType() == XmlPullParser.START_TAG && VCard.ELEMENT.equals( parser.getName() ) && VCard.NAMESPACE.equals( parser.getNamespace() ) ) )
+            while ( !( parser.getEventType() == XmlPullParser.Event.START_ELEMENT && VCard.ELEMENT.equals( parser.getName() ) && VCard.NAMESPACE.equals( parser.getNamespace() ) ) )
             {
                 parser.next();
             }
 
+            VCardProvider provider = new VCardProvider();
             vcard = provider.parse( parser );
         }
         catch (Exception e) {

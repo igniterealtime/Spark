@@ -25,7 +25,9 @@ import javax.swing.JLabel;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.SmackException;
+import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.packet.Message;
+import org.jivesoftware.smackx.attention.packet.AttentionExtension;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.ui.ChatRoom;
@@ -79,12 +81,17 @@ public class BuzzRoomDecorator implements ActionListener {
         } catch (XmppStringprepException exception) {
             throw new IllegalStateException(exception);
         }
-        Message message = new Message();
-        message.setTo(jid);
-        message.addExtension(new BuzzPacket());
+
+        XMPPConnection connection = SparkManager.getConnection();
+        Message message = connection.getStanzaFactory()
+            .buildMessageStanza()
+            .to(jid)
+            .addExtension(new AttentionExtension())
+            .build();
+
         try
         {
-            SparkManager.getConnection().sendStanza(message);
+            connection.sendStanza(message);
         }
         catch ( SmackException.NotConnectedException | InterruptedException e1 )
         {

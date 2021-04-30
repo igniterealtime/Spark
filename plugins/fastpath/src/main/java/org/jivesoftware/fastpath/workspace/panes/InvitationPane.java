@@ -42,7 +42,7 @@ import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smackx.muc.MultiUserChatManager;
-import org.jivesoftware.smackx.xdata.Form;
+import org.jivesoftware.smackx.xdata.form.FillableForm;
 import org.jivesoftware.smackx.muc.Affiliate;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.workgroup.MetaData;
@@ -271,7 +271,7 @@ public class InvitationPane {
             }
             if (list.size() > 0) {
                 try {
-                    Form form = muc.getConfigurationForm().createAnswerForm();
+                    FillableForm form = muc.getConfigurationForm().getFillableForm();
                     List<String> jidStrings = new ArrayList<>(list.size());
                     JidUtil.toStrings(list, jidStrings);
                     form.setAnswer("muc#roomconfig_roomowners", jidStrings);

@@ -37,7 +37,7 @@ import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.workgroup.MetaData;
 import org.jivesoftware.smackx.workgroup.agent.*;
 import org.jivesoftware.smackx.workgroup.user.Workgroup;
-import org.jivesoftware.smackx.xdata.Form;
+import org.jivesoftware.smackx.xdata.form.Form;
 import org.jivesoftware.spark.DataManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.RolloverButton;
