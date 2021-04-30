@@ -94,9 +94,9 @@ public class CheckTree extends JPanel {
 
         @Override
 		public void actionPerformed(ActionEvent e) {
-            Enumeration<CheckNode> nodeEnum = root.breadthFirstEnumeration();
+            Enumeration<?> nodeEnum = root.breadthFirstEnumeration();
             while (nodeEnum.hasMoreElements()) {
-                CheckNode node = nodeEnum.nextElement();
+                CheckNode node = (CheckNode) nodeEnum.nextElement();
                 if (node.isSelected()) {
                     TreeNode[] nodes = node.getPath();
                     textArea.append("\n" + nodes[0].toString());
