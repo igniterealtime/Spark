@@ -15,7 +15,7 @@
     <description>The essentials of Spark, including the user interface and startup scripts, excluding most optional components</description>
 
     <properties>
-        <bouncycastle.version>1.66</bouncycastle.version>
+        <bouncycastle.version>1.68</bouncycastle.version>
     </properties>
 
     <build>
@@ -193,7 +193,7 @@
         <dependency>
             <groupId>com.thoughtworks.xstream</groupId>
             <artifactId>xstream</artifactId>
-            <version>1.4.15</version>
+            <version>1.4.16</version>
         </dependency>
 
         <dependency>
