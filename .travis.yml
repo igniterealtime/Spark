@@ -1,5 +1,0 @@
-# Need to use trusty to get a JDK=8 option
-dist: trusty
-language: java
-jdk:
-  - oraclejdk8
