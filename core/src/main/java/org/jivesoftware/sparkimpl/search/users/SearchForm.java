@@ -16,6 +16,7 @@
 
 package org.jivesoftware.sparkimpl.search.users;
 
+import javax.swing.JTextField;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
@@ -133,6 +134,19 @@ public class SearchForm extends JPanel {
                 try {
                     Form answerForm = questionForm.getFilledForm();
                     data = searchManager.getSearchResults(answerForm, serviceName);
+                    JTextField searchField = ((JTextField) questionForm.getComponent("search"));
+                    String searchText = searchField.getText();
+                    if(searchText != null && searchText.contains(" "))
+                    {
+                         searchField.setText(searchText.replaceAll(" ", "%20"));
+                         answerForm = questionForm.getFilledForm();
+                         for(ReportedData.Row rowWithSpaces: (searchManager.getSearchResults(answerForm, serviceName)).getRows()){
+                             if(!data.getRows().contains(rowWithSpaces)) {
+                                 data.addRow(rowWithSpaces);
+                             }
+                      }
+                        searchField.setText(searchText.replaceAll("%20", " "));
+                    }	
                 }
                 catch (XMPPException | SmackException | InterruptedException e) {
                     Log.error("Unable to load search service.", e);
