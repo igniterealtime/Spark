@@ -143,6 +143,8 @@ public class SparkRes {
     public static final String IM_AVAILABLE_STALE_IMAGE = "IM_AVAILABLE_STALE_IMAGE";
     public static final String IM_AWAY = "IM_AWAY";
     public static final String IM_AWAY_STALE_IMAGE = "IM_AWAY_STALE_IMAGE";
+    public static final String IM_XA = "IM_XA";
+    public static final String IM_XA_STALE_IMAGE = "IM_XA_STALE_IMAGE";
     public static final String IM_DND = "IM_DND";
     public static final String IM_DND_STALE_IMAGE = "IM_AWAY_STALE_IMAGE";
     public static final String IM_FREE_CHAT_STALE_IMAGE = "IM_FREE_CHAT_STALE_IMAGE";
@@ -302,6 +304,8 @@ public class SparkRes {
     public static final String TRANSPORT_ICON = "TRANSPORT_ICON";
     public static final String TRAY_AWAY = "TRAY_AWAY";
     public static final String TRAY_AWAY_LINUX = "TRAY_AWAY_LINUX";
+	public static final String TRAY_XAWAY = "TRAY_XAWAY";
+    public static final String TRAY_XAWAY_LINUX = "TRAY_XAWAY_LINUX";
     public static final String TRAY_CONNECTING = "TRAY_CONNECTING";
     public static final String TRAY_CONNECTING_LINUX = "TRAY_CONNECTING_LINUX";
     public static final String TRAY_DND = "TRAY_DND";
