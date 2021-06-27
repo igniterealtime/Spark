@@ -146,7 +146,7 @@ public class SparkRes {
     public static final String IM_XA = "IM_XA";
     public static final String IM_XA_STALE_IMAGE = "IM_XA_STALE_IMAGE";
     public static final String IM_DND = "IM_DND";
-    public static final String IM_DND_STALE_IMAGE = "IM_AWAY_STALE_IMAGE";
+    public static final String IM_DND_STALE_IMAGE = "IM_DND_STALE_IMAGE";
     public static final String IM_FREE_CHAT_STALE_IMAGE = "IM_FREE_CHAT_STALE_IMAGE";
     public static final String IM_UNAVAILABLE_STALE_IMAGE = "IM_UNAVAILABLE_STALE_IMAGE";
     public static final String INFORMATION_ICO = "INFORMATION_ICO";
