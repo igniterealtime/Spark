@@ -188,7 +188,7 @@ public class PresenceManager {
             icon = SparkRes.getImageIcon(SparkRes.IM_DND);
         }
         else if (presenceMode.equals(Presence.Mode.xa)) {
-            icon = SparkRes.getImageIcon(SparkRes.IM_AWAY);
+            icon = SparkRes.getImageIcon(SparkRes.IM_XA);
         }
 
         // Check For ContactItem handlers
