@@ -58,8 +58,8 @@ public class PresenceManager {
         PRESENCES.add(freeToChatPresence);
         PRESENCES.add(availablePresence);
         PRESENCES.add(awayPresence);
-        PRESENCES.add(extendedAway);
         PRESENCES.add(phonePresence);
+        PRESENCES.add(extendedAway);
         PRESENCES.add(dndPresence);
 
         if (!Default.getBoolean(Default.HIDE_LOGIN_AS_INVISIBLE) && Enterprise.containsFeature(Enterprise.INVISIBLE_LOGIN_FEATURE)) PRESENCES.add(invisible);
