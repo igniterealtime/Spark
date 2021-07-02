@@ -149,10 +149,13 @@ public class MessageEntry extends TimeStampedEntry
             if ( block.isPreformattedCodeBlock() )
             {
                 final MutableAttributeSet style = applyMessageStyle( '`', messageStyle );
+              
                 for ( final String line : block.lines )
                 {
-                    doc.insertString( doc.getLength(), line + "\n", line.trim().startsWith( "```" ) ? directiveStyle : style );
+                    doc.insertString(doc.getLength(), line, line.trim().startsWith( "```" ) ? directiveStyle : style );
                 }
+
+                doc.insertString( doc.getLength(), "\n", messageStyle );
             }
             else
             {
@@ -201,10 +204,10 @@ public class MessageEntry extends TimeStampedEntry
                         insertFragment(chatArea, line.substring(from, to), messageStyle);
                     }
                     while (to < line.length());
+                }
                     doc.insertString( doc.getLength(), "\n", messageStyle );
                 }
             }
-        }
 
         chatArea.setCaretPosition( doc.getLength() );
     }
@@ -227,7 +230,7 @@ public class MessageEntry extends TimeStampedEntry
         final java.util.List<Block> result = new ArrayList<>();
 
         // Process the text line-by-line
-        final StringTokenizer tokenizer = new StringTokenizer( text, "\n", false );
+        final StringTokenizer tokenizer = new StringTokenizer(text, "\n", true);
         Block block = null;
         while ( tokenizer.hasMoreTokens() )
         {
@@ -240,7 +243,7 @@ public class MessageEntry extends TimeStampedEntry
             else if ( !block.tryAppend( line ) )
             {
                 // If this line does not belong to the block that's already being constructed, then that block is
-                // done. Add it to the resul    t, and create a new one.
+                // done. Add it to the result, and create a new one.
                 result.add( block );
                 block = new Block(line);
             }
