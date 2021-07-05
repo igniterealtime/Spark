@@ -446,7 +446,7 @@ public class ContactItem extends JPanel {
             }
             else if (mode == Presence.Mode.xa) {
                 status = Res.getString("status.extended.away");
-                statusIcon = SparkRes.getImageIcon(SparkRes.IM_AWAY);
+                statusIcon = SparkRes.getImageIcon(SparkRes.IM_XA);
             }
         }
 
