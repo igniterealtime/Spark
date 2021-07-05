@@ -64,7 +64,7 @@ public abstract class SparkTabHandler {
                 tab.setIcon(SparkRes.getImageIcon(SparkRes.IM_DND_STALE_IMAGE));
             }
             else if (mode == Presence.Mode.xa) {
-                tab.setIcon(SparkRes.getImageIcon(SparkRes.IM_DND_STALE_IMAGE));
+                tab.setIcon(SparkRes.getImageIcon(SparkRes.IM_XA_STALE_IMAGE));
             }
         }
 
