@@ -346,7 +346,7 @@ public class PluginManager implements MainWindowListener
                     if ( _blacklistPlugins.contains( lower ) || _blacklistPlugins.contains( clazz )
                         || SettingsManager.getLocalPreferences().getDeactivatedPlugins().contains( name ) )
                     {
-                        Log.warning( "Not loading plugin " + name + "as it is blacklisted." );
+                        Log.warning( "Not loading plugin " + name + " as it is blacklisted." );
                         return null;
                     }
                 }
