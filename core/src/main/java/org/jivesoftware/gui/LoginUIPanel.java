@@ -735,6 +735,7 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
                 SSLContext context = SparkSSLContextCreator.setUpContext(options);
                 builder.setSslContextFactory(() -> { return context; });
                 builder.setSecurityMode(securityMode);
+                builder.setCustomX509TrustManager(new SparkTrustManager());
             } catch (NoSuchAlgorithmException | KeyManagementException | UnrecoverableKeyException | KeyStoreException | NoSuchProviderException e) {
                 Log.warning("Couldnt establish secured connection", e);
             }
