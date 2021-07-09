@@ -2037,4 +2037,22 @@ public class StringUtils {
         }
         return Integer.parseInt(version);
     }
+
+    public static String replaceSpecialLetters(String text){
+        return text
+            .replaceAll("á|â|à|å|ã|ä", "a")
+            .replaceAll("Á|Â|À|Å|Ã|Ä", "A")
+            .replaceAll("é|ê|è|ë", "e")
+            .replaceAll("É|Ê|È|Ë", "E")
+            .replaceAll("í|î|ì", "i")
+            .replaceAll("Í|Î|Ì", "I")
+            .replaceAll("ó|ô|ò|õ|ö", "o")
+            .replaceAll("Ó|Ô|Ò|Õ|Ö", "O")
+            .replaceAll("ú|û|ù|ü", "u")
+            .replaceAll("Ú|Û|Ù|Ü", "U")
+            .replaceAll("ñ", "n")
+            .replaceAll("Ñ", "N")
+            .replaceAll("ý", "y")
+            .replaceAll("Ý", "Y");
+    }
 }
