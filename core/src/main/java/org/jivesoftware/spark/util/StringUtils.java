@@ -2044,8 +2044,8 @@ public class StringUtils {
             .replaceAll("Á|Â|À|Å|Ã|Ä", "A")
             .replaceAll("é|ê|è|ë", "e")
             .replaceAll("É|Ê|È|Ë", "E")
-            .replaceAll("í|î|ì", "i")
-            .replaceAll("Í|Î|Ì", "I")
+            .replaceAll("í|î|ì|і", "i")
+            .replaceAll("Í|Î|Ì|І", "I")
             .replaceAll("ó|ô|ò|õ|ö", "o")
             .replaceAll("Ó|Ô|Ò|Õ|Ö", "O")
             .replaceAll("ú|û|ù|ü", "u")
@@ -2053,6 +2053,8 @@ public class StringUtils {
             .replaceAll("ñ", "n")
             .replaceAll("Ñ", "N")
             .replaceAll("ý", "y")
-            .replaceAll("Ý", "Y");
+            .replaceAll("Ý", "Y")
+			.replaceAll("ё", "е")
+			.replaceAll("Ё", "Е");
     }
 }
