@@ -19,6 +19,7 @@ import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.util.ModelUtil;
+import static org.jivesoftware.spark.util.StringUtils.replaceSpecialLetters;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JLabel;
@@ -162,17 +163,17 @@ public class JContactItemField extends JPanel {
     private void showPopupMenu() {
         model.removeAllElements();
 
-        String typedItem = textField.getText();
+        String typedItem = replaceSpecialLetters(textField.getText());
 
-	final List<ContactItem> validItems = new ArrayList<>();
-	for (ContactItem contactItem : items) {
-	    String nickname = contactItem.getDisplayName().toLowerCase();
-	    if (nickname.startsWith(typedItem.toLowerCase())) {
-		validItems.add(contactItem);
-	    } else if (typedItem.length() > 2 && nickname.contains(typedItem.toLowerCase())) {
-		validItems.add(contactItem);
-	    }
-	}
+        final List<ContactItem> validItems = new ArrayList<>();
+        for (ContactItem contactItem : items) {
+            String nickname = replaceSpecialLetters(contactItem.getDisplayName().toLowerCase());
+            if (nickname.startsWith(typedItem.toLowerCase())) {
+            validItems.add(contactItem);
+            } else if (typedItem.length() > 2 && nickname.contains(typedItem.toLowerCase())) {
+            validItems.add(contactItem);
+            }
+        }
 
 
         if (validItems.size() > 0) {
