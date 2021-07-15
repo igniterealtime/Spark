@@ -47,9 +47,12 @@ import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.muc.MultiUserChatManager;
-import org.jivesoftware.smackx.xdata.Form;
 import org.jivesoftware.smackx.xdata.FormField;
 import org.jivesoftware.smackx.xdata.FormField.Option;
+import org.jivesoftware.smackx.xdata.ListMultiFormField;
+import org.jivesoftware.smackx.xdata.ListSingleFormField;
+import org.jivesoftware.smackx.xdata.form.FillableForm;
+import org.jivesoftware.smackx.xdata.form.Form;
 import org.jivesoftware.smackx.bookmarks.BookmarkManager;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.muc.RoomInfo;
@@ -67,7 +70,7 @@ public class DataFormDialog extends JPanel {
     private int row = 0;
     private final JDialog dialog;
 
-    public DataFormDialog(JFrame parent, final MultiUserChat chat, final Form submitForm) {
+    public DataFormDialog(JFrame parent, final MultiUserChat chat, final FillableForm submitForm) {
         dialog = new JDialog(parent, true);
         dialog.setTitle(Res.getString("title.configure.chat.room"));
 
@@ -86,12 +89,12 @@ public class DataFormDialog extends JPanel {
         // Create a new form to submit based on the original form
         try {
             // Add default answers to the form to submit
-            for ( final FormField field : form.getFields() ) {
-                String variable = field.getVariable();
+            for ( final FormField field : form.getDataForm().getFields() ) {
+                String variable = field.getFieldName();
                 String label = field.getLabel();
                 FormField.Type type = field.getType();
 
-                List<CharSequence> valueList = field.getValues();
+                List<? extends CharSequence> valueList = field.getValues();
 
                 if (type.equals(FormField.Type.bool)) {
                     boolean isSelected;
@@ -120,7 +123,7 @@ public class DataFormDialog extends JPanel {
                 else if (type.equals(FormField.Type.text_multi) ||
                         type.equals(FormField.Type.jid_multi)) {
                     StringBuilder buf = new StringBuilder();
-                    final Iterator<CharSequence> iter = valueList.iterator();
+                    final Iterator<? extends CharSequence> iter = valueList.iterator();
                     while (iter.hasNext()) {
                         buf.append( iter.next() );
 
@@ -141,9 +144,10 @@ public class DataFormDialog extends JPanel {
                     addField(label, new JPasswordField( value ), variable);
                 }
                 else if (type.equals(FormField.Type.list_single)) {
+                    ListSingleFormField listSingleFormField = field.ifPossibleAsOrThrow(ListSingleFormField.class);
                     JComboBox<String> box = new JComboBox<>();
-                    for ( final FormField.Option option : field.getOptions() ) {
-                        String value = option.getValue();
+                    for ( final FormField.Option option : listSingleFormField.getOptions() ) {
+                        String value = option.getValueString();
                         box.addItem(value);
                     }
                     if (valueList.size() > 0) {
@@ -154,11 +158,12 @@ public class DataFormDialog extends JPanel {
                     addField(label, box, variable);
                 }
                 else if (type.equals(FormField.Type.list_multi)) {
+                    ListMultiFormField listMultiFormField = field.ifPossibleAsOrThrow(ListMultiFormField.class);
                     CheckBoxList checkBoxList = new CheckBoxList();
-                    final List<CharSequence> values = field.getValues();
-                    for ( final Option option : field.getOptions() ) {
+                    final List<? extends CharSequence> values = field.getValues();
+                    for ( final Option option : listMultiFormField.getOptions() ) {
                         String optionLabel = option.getLabel();
-                        String optionValue = option.getValue();
+                        String optionValue = option.getValueString();
                         checkBoxList.addCheckBox(new JCheckBox(optionLabel, values.contains(optionValue)), optionValue);
                     }
                     submitForm.setAnswer( variable, valueList  );
@@ -168,6 +173,9 @@ public class DataFormDialog extends JPanel {
         }
         catch (NullPointerException e) {
             Log.error(e);
+            // TODO: Why do we continue here as nothing had happened? If there is an NPE somewhere in this block, then
+            // we should fix it, instead of masking it. Remove this try/catch block and see if it still appears, if so:
+            // fix it.
         }
 
 
@@ -207,7 +215,7 @@ public class DataFormDialog extends JPanel {
 
     }
 
-    private void updateRoomConfiguration(Form submitForm, MultiUserChat chat) {
+    private void updateRoomConfiguration(FillableForm submitForm, MultiUserChat chat) {
         for (Object o1 : valueMap.keySet()) {
             String answer = (String) o1;
             Object o = valueMap.get(answer);

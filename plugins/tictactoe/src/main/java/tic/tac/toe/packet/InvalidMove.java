@@ -1,9 +1,10 @@
 package tic.tac.toe.packet;
 
 import org.jivesoftware.smack.packet.ExtensionElement;
+import org.jivesoftware.smack.packet.XmlEnvironment;
 import org.jivesoftware.smack.provider.ExtensionElementProvider;
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserException;
+import org.jivesoftware.smack.xml.XmlPullParser;
+import org.jivesoftware.smack.xml.XmlPullParserException;
 
 import java.io.IOException;
 
@@ -51,7 +52,7 @@ public class InvalidMove implements ExtensionElement {
     }
 
     @Override
-    public String toXML(String enclosingNamespace) {
+    public String toXML(XmlEnvironment xmlEnvironment) {
 
         return "<" + ELEMENT_NAME + " xmlns=\"" + NAMESPACE + "\">"
             + "<gameID>" + _gameID + "</gameID>"
@@ -62,15 +63,15 @@ public class InvalidMove implements ExtensionElement {
 
     public static class Provider extends ExtensionElementProvider<InvalidMove>
     {
-        public InvalidMove parse( XmlPullParser parser, int initialDepth ) throws XmlPullParserException, IOException
+        public InvalidMove parse(XmlPullParser parser, int initialDepth, XmlEnvironment xmlEnvironment) throws XmlPullParserException, IOException
         {
             final InvalidMove gameMove = new InvalidMove();
             boolean done = false;
             while ( !done )
             {
-                final int eventType = parser.next();
+                final XmlPullParser.Event eventType = parser.next();
 
-                if ( eventType == XmlPullParser.START_TAG )
+                if ( eventType == XmlPullParser.Event.START_ELEMENT )
                 {
                     if ( "gameID".equals( parser.getName() ) )
                     {
@@ -88,7 +89,7 @@ public class InvalidMove implements ExtensionElement {
                         gameMove.setPositionY( position );
                     }
                 }
-                else if ( eventType == XmlPullParser.END_TAG )
+                else if ( eventType == XmlPullParser.Event.END_ELEMENT )
                 {
                     if ( ELEMENT_NAME.equals( parser.getName() ) )
                     {

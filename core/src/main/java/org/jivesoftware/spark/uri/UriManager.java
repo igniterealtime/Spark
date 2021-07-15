@@ -18,6 +18,7 @@ package org.jivesoftware.spark.uri;
 import java.net.URI;
 
 import org.jivesoftware.smack.SmackException;
+import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.roster.RosterEntry;
 import org.jivesoftware.smack.roster.RosterGroup;
@@ -119,9 +120,13 @@ public class UriManager {
 	// Send contact add request
 	Jid jid = retrieveJID(uri);
 
-	Presence response = new Presence(Presence.Type.subscribe);
-	response.setTo(jid);
-	SparkManager.getConnection().sendStanza(response);
+        XMPPConnection connection = SparkManager.getConnection();
+        Presence response = connection.getStanzaFactory()
+                .buildPresenceStanza()
+                .ofType(Presence.Type.subscribe)
+                .to(jid)
+                .build();
+        connection.sendStanza(response);
     }
 
     /**

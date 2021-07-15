@@ -17,8 +17,11 @@ package org.jivesoftware.fastpath.internal;
 
 import org.jivesoftware.spark.component.CheckBoxList;
 import org.jivesoftware.spark.util.ModelUtil;
-import org.jivesoftware.smackx.xdata.Form;
 import org.jivesoftware.smackx.xdata.FormField;
+import org.jivesoftware.smackx.xdata.FormFieldWithOptions;
+import org.jivesoftware.smackx.xdata.ListSingleFormField;
+import org.jivesoftware.smackx.xdata.form.FillableForm;
+import org.jivesoftware.smackx.xdata.form.Form;
 
 import java.awt.Component;
 import java.awt.GridBagConstraints;
@@ -75,8 +78,8 @@ public class WorkgroupDataForm extends JPanel {
 
     private void buildUI(Form form) {
         // Add default answers to the form to submit
-        for ( final FormField field : form.getFields() ) {
-            String variable = field.getVariable();
+        for ( final FormField field : form.getDataForm().getFields() ) {
+            String variable = field.getFieldName();
             if(field.isRequired()){
                 requiredList.add(variable);
             }
@@ -107,8 +110,11 @@ public class WorkgroupDataForm extends JPanel {
             else if (type.equals(FormField.Type.text_multi) ||
                 type.equals(FormField.Type.jid_multi)) {
                 StringBuilder buf = new StringBuilder();
-                for ( final FormField.Option option : field.getOptions() ) {
-                    buf.append(option);
+                if (field instanceof FormFieldWithOptions) {
+                    FormFieldWithOptions formFieldWithOptions = (FormFieldWithOptions) field;
+                    for ( final FormField.Option option : formFieldWithOptions.getOptions() ) {
+                        buf.append(option);
+                    }
                 }
                 addField(label, new JTextArea(buf.toString()), variable);
             }
@@ -116,8 +122,9 @@ public class WorkgroupDataForm extends JPanel {
                 addField(label, new JPasswordField(), variable);
             }
             else if (type.equals(FormField.Type.list_single)) {
+                ListSingleFormField listSingleFormField = field.ifPossibleAsOrThrow(ListSingleFormField.class);
                 JComboBox<FormField.Option> box = new JComboBox<>();
-                for ( final FormField.Option option : field.getOptions() ) {
+                for ( final FormField.Option option : listSingleFormField.getOptions() ) {
                     box.addItem(option);
                 }
                 if (valueList.size() > 0) {
@@ -142,10 +149,10 @@ public class WorkgroupDataForm extends JPanel {
      *
      * @return the answered DataForm.
      */
-    public Form getFilledForm() {
+    public FillableForm getFilledForm() {
         // Now submit all information
         Iterator<String> valueIter = valueMap.keySet().iterator();
-        Form answerForm = searchForm.createAnswerForm();
+        FillableForm answerForm = searchForm.getFillableForm();
         while (valueIter.hasNext()) {
             String answer = valueIter.next();
             Object o = valueMap.get(answer);
@@ -172,7 +179,7 @@ public class WorkgroupDataForm extends JPanel {
             }
             else if (o instanceof JComboBox) {
                 Object v = ((JComboBox<?>) o).getSelectedItem();
-                String value = (v instanceof FormField.Option) ? ((FormField.Option) v).getValue() : (String) v;
+                String value = (v instanceof FormField.Option) ? ((FormField.Option) v).getValue().toString() : (String) v;
 
                 List<String> list = new ArrayList<>();
                 list.add(value);
@@ -192,13 +199,6 @@ public class WorkgroupDataForm extends JPanel {
             String variable = (String) o;
             String value = presetVariables.get(variable);
             answerForm.setAnswer(variable, value);
-        }
-
-        for (String variable : requiredList) {
-            FormField field = answerForm.getField(variable);
-            if (field != null) {
-                field.setRequired(true);
-            }
         }
 
         return answerForm;

@@ -44,6 +44,7 @@ import javax.net.ssl.SSLContext;
 import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -358,7 +359,7 @@ public class AccountCreationWizard extends JPanel {
             // plain connections which is 5222.
             try {
                 SSLContext context = SparkSSLContextCreator.setUpContext(SparkSSLContextCreator.Options.ONLY_SERVER_SIDE);
-                builder.setCustomSSLContext(context);
+                builder.setSslContextFactory(() -> { return context; });
                 builder.setSecurityMode( securityMode );
             } catch (NoSuchAlgorithmException | KeyManagementException | UnrecoverableKeyException | KeyStoreException | NoSuchProviderException e) {
                 Log.warning("Couldnt establish secured connection", e);
@@ -372,7 +373,11 @@ public class AccountCreationWizard extends JPanel {
                 // Here, we force the host to be set (by doing a DNS lookup), and force the port to 5223 (which is the
                 // default 'old-style' SSL port).
                 DnsName serverNameDnsName = DnsName.from(serverName);
-                builder.setHost( DNSUtil.resolveXMPPServiceDomain( serverNameDnsName, null, DnssecMode.disabled ).get( 0 ).getFQDN() );
+                java.util.List<InetAddress> resolvedAddresses = DNSUtil.getDNSResolver().lookupHostAddress(serverNameDnsName, null, DnssecMode.disabled);
+                if (resolvedAddresses.isEmpty()) {
+                    throw new SmackException.SmackMessageException("Could not resolve " + serverNameDnsName);
+                }
+                builder.setHost( resolvedAddresses.get( 0 ).getHostName() );
                 builder.setPort( 5223 );
             }
             builder.setSocketFactory( new SparkSSLSocketFactory(SparkSSLContextCreator.Options.ONLY_SERVER_SIDE) );

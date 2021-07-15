@@ -22,13 +22,13 @@ import java.util.List;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.xml.XmlPullParser;
+import org.jivesoftware.smack.xml.XmlPullParserException;
 import org.jivesoftware.smackx.iqprivate.PrivateDataManager;
 import org.jivesoftware.smackx.iqprivate.packet.PrivateData;
 import org.jivesoftware.smackx.iqprivate.provider.PrivateDataProvider;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserException;
 
 /**
  * @author Derek DeMoro
@@ -123,16 +123,16 @@ public class Tasks implements PrivateData {
 		public PrivateData parsePrivateData(XmlPullParser parser) throws XmlPullParserException, IOException {
             boolean done = false;
             while (!done) {
-                int eventType = parser.next();
-                if (eventType == XmlPullParser.START_TAG && "tasks".equals(parser.getName())) {
+                XmlPullParser.Event eventType = parser.next();
+                if (eventType == XmlPullParser.Event.START_ELEMENT && "tasks".equals(parser.getName())) {
                     String showAll = parser.getAttributeValue("", "showAll");
                     ScratchPadPlugin.SHOW_ALL_TASKS = Boolean.parseBoolean(showAll);
                 }
 
-                if (eventType == XmlPullParser.START_TAG && "task".equals(parser.getName())) {
+                if (eventType == XmlPullParser.Event.START_ELEMENT && "task".equals(parser.getName())) {
                     tasks.addTask(getTask(parser));
                 }
-                else if (eventType == XmlPullParser.END_TAG) {
+                else if (eventType == XmlPullParser.Event.END_ELEMENT) {
                     if ("scratchpad".equals(parser.getName())) {
                         done = true;
                     }
@@ -148,29 +148,29 @@ public class Tasks implements PrivateData {
 
         boolean done = false;
         while (!done) {
-            int eventType = parser.next();
-            if (eventType == XmlPullParser.START_TAG && "title".equals(parser.getName())) {
+            XmlPullParser.Event eventType = parser.next();
+            if (eventType == XmlPullParser.Event.START_ELEMENT && "title".equals(parser.getName())) {
                 task.setTitle(parser.nextText());
             }
 
-            if (eventType == XmlPullParser.START_TAG && "dueDate".equals(parser.getName())) {
+            if (eventType == XmlPullParser.Event.START_ELEMENT && "dueDate".equals(parser.getName())) {
                 String dueDate = parser.nextText();
                 task.setDueDate(Long.parseLong(dueDate));
             }
 
-            if (eventType == XmlPullParser.START_TAG && "creationDate".equals(parser.getName())) {
+            if (eventType == XmlPullParser.Event.START_ELEMENT && "creationDate".equals(parser.getName())) {
                 String creationDate = parser.nextText();
                 task.setCreatedDate(Long.parseLong(creationDate));
             }
 
-            if (eventType == XmlPullParser.START_TAG && "completed".equals(parser.getName())) {
+            if (eventType == XmlPullParser.Event.START_ELEMENT && "completed".equals(parser.getName())) {
                 String completed = parser.nextText();
                 if (ModelUtil.hasLength(completed)) {
                     task.setCompleted(Boolean.parseBoolean(completed));
                 }
             }
 
-            else if (eventType == XmlPullParser.END_TAG) {
+            else if (eventType == XmlPullParser.Event.END_ELEMENT) {
                 if ("task".equals(parser.getName())) {
                     done = true;
                 }

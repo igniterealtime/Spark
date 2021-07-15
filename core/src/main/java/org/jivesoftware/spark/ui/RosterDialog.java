@@ -58,7 +58,8 @@ import org.jivesoftware.smack.roster.RosterEntry;
 import org.jivesoftware.smack.roster.RosterGroup;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.vcardtemp.VCardManager;
-import org.jivesoftware.smackx.xdata.Form;
+import org.jivesoftware.smackx.xdata.form.FillableForm;
+import org.jivesoftware.smackx.xdata.packet.DataForm;
 import org.jivesoftware.smackx.search.ReportedData;
 import org.jivesoftware.smackx.vcardtemp.packet.VCard;
 import org.jivesoftware.smackx.search.UserSearchManager;
@@ -492,15 +493,15 @@ public class RosterDialog implements ActionListener {
 		UserSearchManager usersearchManager = new UserSearchManager(
 			SparkManager.getConnection());
 
-		Form f = usersearchManager.getSearchForm(search);
+		DataForm f = usersearchManager.getSearchForm(search);
 
-		Form answer = f.createAnswerForm();
+		FillableForm answer = new FillableForm(f);
 		answer.setAnswer("Name", true);
 		answer.setAnswer("Email", true);
 		answer.setAnswer("Username", true);
 		answer.setAnswer("search", byname);
 
-		data = usersearchManager.getSearchResults(answer, search);
+		data = usersearchManager.getSearchResults(answer.getDataFormToSubmit(), search);
 
 		ArrayList<String> columnnames = new ArrayList<>();
 		for ( ReportedData.Column column : data.getColumns() ) {
@@ -562,7 +563,7 @@ public class RosterDialog implements ActionListener {
 
         if (isSubscribed) {
             try {
-                roster.createEntry(jid, nickname, new String[]{group});
+                roster.createItemAndRequestSubscription(jid, nickname, new String[]{group});
             }
             catch (XMPPException | SmackException | InterruptedException e) {
                 Log.error("Unable to add new entry " + jid, e);
@@ -578,7 +579,7 @@ public class RosterDialog implements ActionListener {
             }
 
             if (userEntry == null) {
-                roster.createEntry(jid, nickname, groups);
+                roster.createItemAndRequestSubscription(jid, nickname, groups);
                 userEntry = roster.getEntry(jid);
             }
             else {

@@ -18,6 +18,8 @@ package org.jivesoftware.sparkimpl.plugin.history;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.packet.Message;
+import org.jivesoftware.smack.xml.SmackXmlParser;
+import org.jivesoftware.smack.xml.XmlPullParser;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.Plugin;
 import org.jivesoftware.spark.ui.ChatRoom;
@@ -29,8 +31,6 @@ import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.log.Log;
 import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.impl.JidCreate;
-import org.xmlpull.mxp1.MXParser;
-import org.xmlpull.v1.XmlPullParser;
 
 import javax.swing.*;
 import java.awt.*;
@@ -246,18 +246,17 @@ public class ConversationHistoryPlugin implements Plugin {
 
         // Otherwise load it.
         try {
-            final MXParser parser = new MXParser();
-            parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, true);
             BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(conFile), StandardCharsets.UTF_8));
-            parser.setInput(in);
+            final XmlPullParser parser = SmackXmlParser.newXmlParser(in);
+
             boolean done = false;
             while (!done) {
-                int eventType = parser.next();
-                if (eventType == XmlPullParser.START_TAG && "user".equals(parser.getName())) {
+                XmlPullParser.Event eventType = parser.next();
+                if (eventType == XmlPullParser.Event.START_ELEMENT && "user".equals(parser.getName())) {
                     EntityBareJid jid = JidCreate.entityBareFromUnescapedOrThrowUnchecked(parser.nextText());
                     historyList.add(jid);
                 }
-                else if (eventType == XmlPullParser.END_TAG && "conversations".equals(parser.getName())) {
+                else if (eventType == XmlPullParser.Event.END_ELEMENT && "conversations".equals(parser.getName())) {
                     done = true;
                 }
             }

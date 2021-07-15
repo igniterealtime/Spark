@@ -16,9 +16,10 @@
 package org.jivesoftware.game.reversi;
 
 import org.jivesoftware.smack.packet.ExtensionElement;
+import org.jivesoftware.smack.packet.XmlEnvironment;
 import org.jivesoftware.smack.provider.ExtensionElementProvider;
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserException;
+import org.jivesoftware.smack.xml.XmlPullParser;
+import org.jivesoftware.smack.xml.XmlPullParserException;
 
 import java.io.IOException;
 
@@ -49,7 +50,7 @@ public class GameMove implements ExtensionElement {
     }
 
     @Override
-    public String toXML(String enclosingNamespace) {
+    public String toXML(XmlEnvironment xmlEnvironment) {
         return "<" + ELEMENT_NAME + " xmlns=\"" + NAMESPACE + "\">"
             + "<gameID>" + gameID + "</gameID>"
             + "<position>" + position + "</position>"
@@ -97,15 +98,15 @@ public class GameMove implements ExtensionElement {
 
     public static class Provider extends ExtensionElementProvider<GameMove>
     {
-        public GameMove parse( XmlPullParser parser, int initialDepth ) throws XmlPullParserException, IOException
+        public GameMove parse(XmlPullParser parser, int initialDepth, XmlEnvironment xmlEnvironment) throws XmlPullParserException, IOException
         {
             final GameMove gameMove = new GameMove();
             boolean done = false;
             while ( !done )
             {
-                final int eventType = parser.next();
+                final XmlPullParser.Event eventType = parser.next();
 
-                if ( eventType == XmlPullParser.START_TAG )
+                if ( eventType == XmlPullParser.Event.START_ELEMENT )
                 {
                     if ( "gameID".equals( parser.getName() ) )
                     {
@@ -118,7 +119,7 @@ public class GameMove implements ExtensionElement {
                         gameMove.setPosition( position );
                     }
                 }
-                else if ( eventType == XmlPullParser.END_TAG )
+                else if ( eventType == XmlPullParser.Event.END_ELEMENT )
                 {
                     if ( ELEMENT_NAME.equals( parser.getName() ) )
                     {

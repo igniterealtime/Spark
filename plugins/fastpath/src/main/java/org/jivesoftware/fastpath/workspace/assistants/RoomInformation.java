@@ -19,8 +19,8 @@ import org.jivesoftware.fastpath.FpRes;
 import org.jivesoftware.fastpath.internal.LiveTitlePane;
 import org.jivesoftware.fastpath.resources.FastpathRes;
 import org.jivesoftware.fastpath.workspace.util.RequestUtils;
-import org.jivesoftware.smackx.xdata.Form;
 import org.jivesoftware.smackx.xdata.FormField;
+import org.jivesoftware.smackx.xdata.form.Form;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.LinkLabel;
 import org.jivesoftware.spark.component.WrappedLabel;
@@ -97,8 +97,8 @@ public class RoomInformation extends JPanel {
         setBackground(Color.white);
 
         int count = 1;
-        for ( final FormField field : form.getFields() ) {
-            String variable = field.getVariable();
+        for ( final FormField field : form.getDataForm().getFields() ) {
+            String variable = field.getFieldName();
             String label = field.getLabel();
             if (label != null) {
                 final JLabel nameLabel = new JLabel(label);

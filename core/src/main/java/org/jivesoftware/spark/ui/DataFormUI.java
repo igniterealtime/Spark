@@ -15,8 +15,11 @@
  */ 
 package org.jivesoftware.spark.ui;
 
-import org.jivesoftware.smackx.xdata.Form;
 import org.jivesoftware.smackx.xdata.FormField;
+import org.jivesoftware.smackx.xdata.FormFieldWithOptions;
+import org.jivesoftware.smackx.xdata.ListSingleFormField;
+import org.jivesoftware.smackx.xdata.form.FillableForm;
+import org.jivesoftware.smackx.xdata.packet.DataForm;
 import org.jivesoftware.spark.component.CheckBoxList;
 import org.jivesoftware.spark.util.ModelUtil;
 
@@ -49,14 +52,14 @@ public class DataFormUI extends JPanel {
 	private static final long serialVersionUID = -6313707846021436765L;
 	private final Map<String,JComponent> valueMap = new HashMap<>();
     private int row = 5;
-    private final Form searchForm;
+    private final DataForm searchForm;
 
     /**
      * Creates a new DataFormUI
      *
      * @param form the <code>DataForm</code> to build a UI with.
      */
-    public DataFormUI(Form form) {
+    public DataFormUI(DataForm form) {
         this.setLayout(new GridBagLayout());
         this.searchForm = form;
 
@@ -66,15 +69,15 @@ public class DataFormUI extends JPanel {
     }
 
 
-    private void buildUI(Form form) {
+    private void buildUI(DataForm form) {
         // Add default answers to the form to submit
         for ( final FormField field : form.getFields() ) {
-            String variable = field.getVariable();
+            String variable = field.getFieldName();
             String label = field.getLabel();
             FormField.Type type = field.getType();
 
 
-            List<CharSequence> valueList = field.getValues();
+            List<? extends CharSequence> valueList = field.getValues();
 
             if (type.equals(FormField.Type.bool)) {
                 String o = valueList.get(0).toString();
@@ -93,8 +96,11 @@ public class DataFormUI extends JPanel {
             else if (type.equals(FormField.Type.text_multi) ||
                     type.equals(FormField.Type.jid_multi)) {
                 StringBuilder buf = new StringBuilder();
-                for ( FormField.Option option : field.getOptions() ) {
-                    buf.append(option);
+                if (field instanceof FormFieldWithOptions) {
+                    FormFieldWithOptions formFieldWithOptions = (FormFieldWithOptions) field;
+                    for ( FormField.Option option : formFieldWithOptions.getOptions() ) {
+                        buf.append(option);
+                    }
                 }
                 addField(label, new JTextArea(buf.toString()), variable);
             }
@@ -102,8 +108,9 @@ public class DataFormUI extends JPanel {
                 addField(label, new JPasswordField(), variable);
             }
             else if (type.equals(FormField.Type.list_single)) {
+                ListSingleFormField listSingleFormField = field.ifPossibleAsOrThrow(ListSingleFormField.class);
                 JComboBox<FormField.Option> box = new JComboBox<>();
-                for ( final FormField.Option option : field.getOptions() ) {
+                for ( final FormField.Option option : listSingleFormField.getOptions() ) {
                     box.addItem(option);
                 }
                 if (valueList.size() > 0) {
@@ -128,10 +135,10 @@ public class DataFormUI extends JPanel {
      *
      * @return the answered DataForm.
      */
-    public Form getFilledForm() {
+    public DataForm getFilledForm() {
         // Now submit all information
         Iterator<String> valueIter = valueMap.keySet().iterator();
-        Form answerForm = searchForm.createAnswerForm();
+        FillableForm answerForm = new FillableForm(searchForm);
         while (valueIter.hasNext()) {
             String answer = valueIter.next();
             Object o = valueMap.get(answer);
@@ -160,7 +167,7 @@ public class DataFormUI extends JPanel {
                 Object v = ((JComboBox<?>)o).getSelectedItem();
                 String value;
                 if (v instanceof FormField.Option) {
-                    value = ((FormField.Option)v).getValue();
+                    value = ((FormField.Option)v).getValueString();
                 }
                 else {
                     value = (String)v;
@@ -179,7 +186,7 @@ public class DataFormUI extends JPanel {
             }
         }
 
-        return answerForm;
+        return answerForm.getDataFormToSubmit();
     }
 
 

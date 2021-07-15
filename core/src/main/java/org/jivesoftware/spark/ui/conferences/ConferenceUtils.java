@@ -27,8 +27,8 @@ import org.jivesoftware.smackx.disco.packet.DiscoverInfo;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.muc.MultiUserChatManager;
 import org.jivesoftware.smackx.muc.RoomInfo;
-import org.jivesoftware.smackx.xdata.Form;
 import org.jivesoftware.smackx.xdata.FormField;
+import org.jivesoftware.smackx.xdata.form.FillableForm;
 import org.jivesoftware.smackx.xdata.packet.DataForm;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.PresenceManager;
@@ -89,7 +89,7 @@ public class ConferenceUtils {
 
         final DateFormat dateFormatter = new SimpleDateFormat("yyyyMMdd'T'HH:mm:ss");
         DiscoverInfo infoResult = discoManager.discoverInfo(roomJID);
-        DataForm dataForm = infoResult.getExtension("x", "jabber:x:data");
+        DataForm dataForm = infoResult.getExtension(DataForm.class);
         if (dataForm == null) {
             return "Not available";
         }
@@ -289,13 +289,14 @@ public class ConferenceUtils {
             // Attempt to create room.
             multiUserChat.create(pref.getNickname());
         }
-        catch (XMPPException | SmackException e) {
-            throw new SmackException(e);
+        catch (XMPPException e) {
+            // TODO: Simply let this method throw XMPPException, instead of wrapping it here.
+            throw new SmackException.SmackWrappedException(e);
         }
 
         try {
             // Since this is a private room, make the room not public and set user as owner of the room.
-            Form submitForm = multiUserChat.getConfigurationForm().createAnswerForm();
+            FillableForm submitForm = multiUserChat.getConfigurationForm().getFillableForm();
             submitForm.setAnswer("muc#roomconfig_publicroom", false);
             submitForm.setAnswer("muc#roomconfig_roomname", roomName);
 

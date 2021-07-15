@@ -17,10 +17,10 @@ package org.jivesoftware.sparkimpl.plugin.jabber;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPConnection;
-import org.jivesoftware.smack.filter.IQReplyFilter;
 import org.jivesoftware.smack.packet.IQ;
+import org.jivesoftware.smack.packet.IqData;
+import org.jivesoftware.smack.packet.StanzaFactory;
 import org.jivesoftware.smackx.time.packet.Time;
 import org.jivesoftware.smackx.iqversion.packet.Version;
 import org.jivesoftware.spark.SparkManager;
@@ -95,36 +95,45 @@ public class VersionViewer {
         cards.add(dataCard);
 
         final XMPPConnection connection = SparkManager.getConnection();
-        try
-        {
-            // Load Version
-            final Version versionRequest = new Version();
-            versionRequest.setType(IQ.Type.get);
-            versionRequest.setTo(jid);
 
-            connection.sendStanzaWithResponseCallback( versionRequest, new IQReplyFilter( versionRequest, connection ), stanza -> {
-                final Version versionResult = (Version) stanza;
+        StanzaFactory stanzaFactory = connection.getStanzaFactory();
+        IqData versionIqData = stanzaFactory.buildIqData().ofType(IQ.Type.get);
+        IqData timeIqData = stanzaFactory.buildIqData().ofType(IQ.Type.get);
+
+        // Load Version
+        final Version versionRequest = new Version();
+        versionRequest.setType(versionIqData.getType());
+        versionRequest.setStanzaId(versionIqData.getStanzaId());
+        versionRequest.setTo(jid);
+
+        connection.sendIqRequestAsync(versionRequest)
+            .onSuccess(iq -> {
+                final Version versionResult = (Version) iq;
                 softwareField.setText(versionResult.getName());
                 versionField.setText(versionResult.getVersion());
                 osField.setText(versionResult.getOs());
                 ((CardLayout)(cards.getLayout())).last( cards );
-            } );
-
-            // Time
-            final Time time = new Time();
-            time.setType(IQ.Type.get);
-            time.setTo(jid);
-
-            connection.sendStanzaWithResponseCallback( time, new IQReplyFilter( time, connection ), stanza -> {
-                timeField.setText( new SimpleDateFormat( ).format( ((Time)stanza).getTime()));
+            })
+            .onError(e -> {
+                Log.warning("Version request error: " + e, e);
                 ((CardLayout)(cards.getLayout())).last( cards );
-            } );
-        }
-        catch ( SmackException.NotConnectedException | InterruptedException e )
-        {
-            Log.warning( "Unable to query for version.", e );
-            ((CardLayout)(cards.getLayout())).last( cards );
-        }
+            });
+
+        // Time
+        final Time time = new Time();
+        time.setType(timeIqData.getType());
+        time.setStanzaId(timeIqData.getStanzaId());
+        time.setTo(jid);
+
+        connection.sendIqRequestAsync(time)
+            .onSuccess(iq -> {
+                timeField.setText( new SimpleDateFormat( ).format( ((Time)iq).getTime()));
+                ((CardLayout)(cards.getLayout())).last( cards );
+            })
+            .onError(e -> {
+                Log.warning("Time request error: " + e, e);
+                ((CardLayout)(cards.getLayout())).last( cards );
+            });
 
         MessageDialog.showComponent(Res.getString("title.version.and.time"), Res.getString("message.client.information", UserManager.unescapeJID(jidString)), SparkRes.getImageIcon(SparkRes.PROFILE_IMAGE_24x24), cards, SparkManager.getMainWindow(), 400, 300, false);
     }

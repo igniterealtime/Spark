@@ -46,7 +46,7 @@ import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smackx.muc.MultiUserChatManager;
-import org.jivesoftware.smackx.xdata.Form;
+import org.jivesoftware.smackx.xdata.form.FillableForm;
 import org.jivesoftware.smackx.muc.Affiliate;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.workgroup.agent.AgentRoster;
@@ -319,7 +319,7 @@ public final class AgentConversations extends JPanel implements ChangeListener {
                                         }
                                     }
                                     if (list.size() > 0) {
-                                        Form form = muc.getConfigurationForm().createAnswerForm();
+                                        FillableForm form = muc.getConfigurationForm().getFillableForm();
                                         List<String> listStrings = JidUtil.toStringList(list);
                                         form.setAnswer("muc#roomconfig_roomowners", listStrings);
 

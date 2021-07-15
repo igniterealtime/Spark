@@ -16,9 +16,10 @@
 package org.jivesoftware.spark.plugin.fileupload;
 
 import org.jivesoftware.smack.packet.IQ;
+import org.jivesoftware.smack.packet.XmlEnvironment;
 import org.jivesoftware.smack.provider.IQProvider;
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserException;
+import org.jivesoftware.smack.xml.XmlPullParser;
+import org.jivesoftware.smack.xml.XmlPullParserException;
 
 import java.io.IOException;
 
@@ -63,16 +64,16 @@ public class UploadRequest extends IQ
             super();
         }
 
-        public UploadRequest parse( XmlPullParser parser, int i ) throws XmlPullParserException, IOException
+        public UploadRequest parse(XmlPullParser parser, int i, XmlEnvironment xmlEnvironment) throws XmlPullParserException, IOException
         {
             final UploadRequest uploadRequest = new UploadRequest();
 
             boolean done = false;
             while ( !done )
             {
-                int eventType = parser.next();
+                XmlPullParser.Event eventType = parser.next();
 
-                if ( eventType == XmlPullParser.START_TAG )
+                if ( eventType == XmlPullParser.Event.START_ELEMENT )
                 {
                     if ( parser.getName().equals( "put" ) )
                     {
@@ -84,7 +85,7 @@ public class UploadRequest extends IQ
                     }
                 }
 
-                else if ( eventType == XmlPullParser.END_TAG )
+                else if ( eventType == XmlPullParser.Event.END_ELEMENT )
                 {
                     if ( parser.getName().equals( "slot" ) )
                     {

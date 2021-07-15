@@ -27,8 +27,9 @@ import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.StanzaListener;
 import org.jivesoftware.smack.filter.StanzaExtensionFilter;
-import org.jivesoftware.smack.packet.DefaultExtensionElement;
+import org.jivesoftware.smack.packet.ExtensionElement;
 import org.jivesoftware.smack.packet.Message;
+import org.jivesoftware.smack.packet.StandardExtensionElement;
 import org.jivesoftware.spark.util.log.Log;
 import org.jxmpp.jid.Jid;
 
@@ -143,17 +144,22 @@ public class ReversiPanel extends JPanel {
      */
     public void sendForfeit() throws SmackException.NotConnectedException
     {
-        DefaultExtensionElement forfeit = new DefaultExtensionElement(GameForfeit.ELEMENT_NAME, GameForfeit.NAMESPACE);
-        forfeit.setValue("gameID", Integer.toString(gameID));
-        Message message = new Message();
-        message.setTo(opponentJID);
-        message.addExtension(forfeit);
+        ExtensionElement forfeit = StandardExtensionElement.builder(GameForfeit.ELEMENT_NAME, GameForfeit.NAMESPACE)
+                .addElement("gameID", Integer.toString(gameID))
+                .build();
+        Message message = connection.getStanzaFactory()
+                .buildMessageStanza()
+                .to(opponentJID)
+                .addExtension(forfeit)
+                .build();
+
         try {
             connection.sendStanza(message);
         } catch (InterruptedException e) {
             throw new IllegalStateException(e);
+        } finally {
+            connection.removeAsyncStanzaListener(gameMoveListener);
         }
-        connection.removeAsyncStanzaListener(gameMoveListener);
     }
 
     public void paintComponent(Graphics g) {
