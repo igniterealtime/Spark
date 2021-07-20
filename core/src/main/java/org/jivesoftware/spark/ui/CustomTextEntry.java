@@ -72,6 +72,7 @@ public class CustomTextEntry extends TimeStampedEntry
         final Document doc = chatArea.getDocument();
 
         doc.insertString( doc.getLength(), getFormattedTimestamp() + message + "\n", getStyle() );
-        chatArea.setCaretPosition( doc.getLength() );
+        // Enabling the 'setCaretPosition' line below causes Spark to freeze (often, not always) when trying to print the subject of a chatroom that's just being loaded.
+        // chatArea.setCaretPosition( doc.getLength() );
     }
 }
