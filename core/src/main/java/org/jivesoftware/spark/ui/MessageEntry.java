@@ -209,7 +209,8 @@ public class MessageEntry extends TimeStampedEntry
                 }
             }
 
-        chatArea.setCaretPosition( doc.getLength() );
+        // Enabling the 'setCaretPosition' line below causes Spark to freeze (often, not always) when trying to print the subject of a chatroom that's just being loaded.
+        // chatArea.setCaretPosition( doc.getLength() );
     }
 
     protected void insertFragment(ChatArea chatArea, String fragment, MutableAttributeSet style) throws BadLocationException {
