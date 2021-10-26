@@ -304,7 +304,7 @@ public class ConferenceServices implements InvitationListener {
 
         DomainBareJid serviceName = getDefaultServiceName();
         if (serviceName != null) {
-            ConferenceUtils.inviteUsersToRoom(serviceName, roomName, jids, true);
+            ConferenceUtils.inviteUsersToConference(serviceName, roomName, jids, true);
         }
     }
 
