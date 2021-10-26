@@ -299,11 +299,9 @@ public class ConferenceServices implements InvitationListener {
             }
         }
 
-        String fullUserName = SparkManager.getSessionManager().getJID().asEntityBareJidString();
-        int indexName = fullUserName.indexOf("@");
-        String userName = fullUserName.substring(0,indexName);
+        String fullUserName = SparkManager.getSessionManager().getJID().toString();
+        String userName = fullUserName.substring(0,fullUserName.indexOf("@"));
         final Localpart roomName = Localpart.fromUnescapedOrThrowUnchecked( userName + "_" + StringUtils.randomString(3) );
-
         DomainBareJid serviceName = getDefaultServiceName();
         if (serviceName != null) {
             ConferenceUtils.inviteUsersToRoom(serviceName, roomName.toString(), jids, true);
