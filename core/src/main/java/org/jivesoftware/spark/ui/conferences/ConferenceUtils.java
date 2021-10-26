@@ -215,32 +215,10 @@ public class ConferenceUtils {
      * @param jids a collection of the users to invite.
      */
     public static void inviteUsersToRoom(MultiUserChat chat, Collection<Jid> jids, boolean randomName ) {
-        inviteUsersToRoom(chat.getRoom().asDomainBareJid(), chat.getRoom().getLocalpart(), jids, randomName );
+        inviteUsersToRoom(chat.getRoom().asDomainBareJid(), chat.getRoom().toString(), jids, randomName );
     }
 
-    /**
-     * Invites users to an existing room.
-     *
-     * @param serviceName the service name to use.
-     * @param roomName    the name of the room.
-     * @param jids        a collection of the users to invite.
-     */
-    public static void inviteUsersToRoom(DomainBareJid serviceName, Localpart roomName, Collection<Jid> jids, boolean randomName) {
-        final LocalPreferences pref = SettingsManager.getLocalPreferences();
-        boolean useTextField = pref.isUseAdHocRoom();
-        String fullRoomName = roomName.toString() + "@" + serviceName.toString();
-        Collection<BookmarkedConference> rooms = null;
-        if (!useTextField) {
-            try {
-                rooms = retrieveBookmarkedConferences();
-            } catch (Exception ex) {
-                Log.error(ex);
-            }
-            useTextField = !randomName || (rooms == null || rooms.size() == 0);
-        }
-        InvitationDialog inviteDialog = new InvitationDialog(useTextField);
-        inviteDialog.inviteUsersToRoom(serviceName, rooms, fullRoomName, jids);
-    }
+
     /**
      * Invites users to an conference room.
      *
@@ -249,7 +227,7 @@ public class ConferenceUtils {
      * @param jids        a collection of the users to invite.
      */
 
-    public static void inviteUsersToConference(DomainBareJid serviceName, Localpart roomName, Collection<Jid> jids, boolean randomName) {
+    public static void inviteUsersToRoom(DomainBareJid serviceName, String roomName, Collection<Jid> jids, boolean randomName) {
         final LocalPreferences pref = SettingsManager.getLocalPreferences();
         boolean useTextField = pref.isUseAdHocRoom();
         Collection<BookmarkedConference> rooms = null;
