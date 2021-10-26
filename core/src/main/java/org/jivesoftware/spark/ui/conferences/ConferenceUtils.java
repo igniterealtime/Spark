@@ -218,15 +218,13 @@ public class ConferenceUtils {
         inviteUsersToRoom(chat.getRoom().asDomainBareJid(), chat.getRoom().toString(), jids, randomName );
     }
 
-
     /**
-     * Invites users to an conference room.
+     * Invites users to an existing room.
      *
      * @param serviceName the service name to use.
      * @param roomName    the name of the room.
      * @param jids        a collection of the users to invite.
      */
-
     public static void inviteUsersToRoom(DomainBareJid serviceName, String roomName, Collection<Jid> jids, boolean randomName) {
         final LocalPreferences pref = SettingsManager.getLocalPreferences();
         boolean useTextField = pref.isUseAdHocRoom();
