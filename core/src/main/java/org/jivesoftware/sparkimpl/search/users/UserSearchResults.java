@@ -261,9 +261,13 @@ public class UserSearchResults extends JPanel {
             // Ignore e1
         }
 
+        String nameForTab = (String)resultsTable.getValueAt(row, 2);
+        if (nameForTab.isEmpty()) {
+            nameForTab = nickname.toString();
+        }
         ChatManager chatManager = SparkManager.getChatManager();
-        ChatRoom chatRoom = chatManager.createChatRoom(jid, nickname, nickname);
-
+        ChatRoom chatRoom = chatManager.createChatRoom(jid, nickname, nameForTab);
+        
         ChatContainer chatRooms = chatManager.getChatContainer();
         chatRooms.activateChatRoom(chatRoom);
     }
