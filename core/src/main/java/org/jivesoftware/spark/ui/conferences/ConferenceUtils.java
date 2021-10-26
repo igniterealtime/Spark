@@ -238,7 +238,7 @@ public class ConferenceUtils {
             useTextField = !randomName || (rooms == null || rooms.size() == 0);
         }
         InvitationDialog inviteDialog = new InvitationDialog(useTextField);
-        inviteDialog.inviteUsersToRoom(serviceName, rooms, roomName.toString(), jids);
+        inviteDialog.inviteUsersToRoom(serviceName, rooms, roomName, jids);
     }
 
     public static Collection<BookmarkedConference> retrieveBookmarkedConferences() throws XMPPException, SmackException, InterruptedException
