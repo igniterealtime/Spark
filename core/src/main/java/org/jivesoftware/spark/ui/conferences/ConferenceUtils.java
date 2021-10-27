@@ -215,7 +215,7 @@ public class ConferenceUtils {
      * @param jids a collection of the users to invite.
      */
     public static void inviteUsersToRoom(MultiUserChat chat, Collection<Jid> jids, boolean randomName ) {
-        inviteUsersToRoom(chat.getRoom().asDomainBareJid(), chat.getRoom().getLocalpart(), jids, randomName );
+        inviteUsersToRoom(chat.getRoom().asDomainBareJid(), chat.getRoom().toString(), jids, randomName );
     }
 
     /**
@@ -225,7 +225,7 @@ public class ConferenceUtils {
      * @param roomName    the name of the room.
      * @param jids        a collection of the users to invite.
      */
-    public static void inviteUsersToRoom(DomainBareJid serviceName, Localpart roomName, Collection<Jid> jids, boolean randomName) {
+    public static void inviteUsersToRoom(DomainBareJid serviceName, String roomName, Collection<Jid> jids, boolean randomName) {
         final LocalPreferences pref = SettingsManager.getLocalPreferences();
         boolean useTextField = pref.isUseAdHocRoom();
         Collection<BookmarkedConference> rooms = null;
@@ -238,7 +238,7 @@ public class ConferenceUtils {
             useTextField = !randomName || (rooms == null || rooms.size() == 0);
         }
         InvitationDialog inviteDialog = new InvitationDialog(useTextField);
-        inviteDialog.inviteUsersToRoom(serviceName, rooms, roomName.toString(), jids);
+        inviteDialog.inviteUsersToRoom(serviceName, rooms, roomName, jids);
     }
 
     public static Collection<BookmarkedConference> retrieveBookmarkedConferences() throws XMPPException, SmackException, InterruptedException
