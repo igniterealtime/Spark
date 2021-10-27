@@ -266,7 +266,7 @@ public class UserSearchResults extends JPanel {
             nameForTab = nickname.toString();
         }
         ChatManager chatManager = SparkManager.getChatManager();
-        ChatRoom chatRoom = chatManager.createChatRoom(jid, nickname, nameForTab);
+        ChatRoom chatRoom = chatManager.createChatRoom(jid, nameForTab, nameForTab);
         
         ChatContainer chatRooms = chatManager.getChatContainer();
         chatRooms.activateChatRoom(chatRoom);
