@@ -66,10 +66,11 @@ public class JabberAvatarExtension implements ExtensionElement {
             while ( true )
             {
                 parser.next();
-                String elementName = parser.getName();
+                String elementName;
                 switch ( parser.getEventType() )
                 {
                     case START_ELEMENT:
+                        elementName = parser.getName();
                         if ( "photo".equals( elementName ) )
                         {
                             result.setPhotoHash( parser.nextText() );
@@ -77,6 +78,7 @@ public class JabberAvatarExtension implements ExtensionElement {
                         break;
 
                     case END_ELEMENT:
+                        elementName = parser.getName();
                         if ( ELEMENT_NAME.equals( elementName ) )
                         {
                             return result;
