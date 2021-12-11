@@ -82,7 +82,7 @@
         <module>plugins/reversi</module>
         <module>plugins/roar</module>
         <module>plugins/tictactoe</module>
-        <!--<module>plugins/spelling</module>-->
+        <module>plugins/spelling</module>
         <!--<module>plugins/sip</module>-->
         <!--<module>plugins/systemtray</module>-->
         <module>plugins/transferguard</module>

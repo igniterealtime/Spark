@@ -1,4 +1,0 @@
-File			| Version	    	| License 	| URL
-----------------+-------------------+-----------+-------------------------------------------
-jmyspell-core 	| SVN-89	        | LGPL		| http://kenai.com/projects/jmyspell/
-jmyspell-swing 	| SVN-80 + [#1902]  | LGPL		| http://kenai.com/projects/jmyspell/

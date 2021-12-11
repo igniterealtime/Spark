@@ -24,4 +24,18 @@
             </roles>
         </contributor>
     </contributors>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.jitsi</groupId>
+            <artifactId>jmyspell-core</artifactId>
+            <version>1.0-jitsi-1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jitsi</groupId>
+            <artifactId>jmyspell-swing</artifactId>
+            <version>1.0-jitsi-1</version>
+        </dependency>
+    </dependencies>
+
 </project>
