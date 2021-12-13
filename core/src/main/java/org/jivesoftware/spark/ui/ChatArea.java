@@ -22,6 +22,8 @@ import org.jivesoftware.spark.util.BrowserLauncher;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.emoticons.EmoticonManager;
+import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
+import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
 import javax.swing.*;
 import javax.swing.text.*;
@@ -46,6 +48,10 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
      */
     public static final Cursor DEFAULT_CURSOR = new Cursor(Cursor.DEFAULT_CURSOR);
 
+    /**
+     * The currently selected Font Size to use.
+     */
+    private final int fontSize = SettingsManager.getLocalPreferences().getChatRoomFontSize();
     private final List<ContextMenuListener> contextMenuListeners = new ArrayList<>();
 
     private JPopupMenu popup;
@@ -89,7 +95,7 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
         selectAll.addActionListener(this);
 
         // Set Default Font
-        setFont(new Font("Dialog", Font.PLAIN, 12));
+        setFont(new Font("Dialog", Font.PLAIN, fontSize));
 
 
         getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("Ctrl x"), "cut");
