@@ -89,6 +89,10 @@ public class HistoryTranscript extends SwingWorker {
     private final DefaultHighlighter.DefaultHighlightPainter highlighter = new DefaultHighlighter.DefaultHighlightPainter(Color.YELLOW);
     private boolean focusFlag = false;
     private String searchQuery = Res.getString("message.search.for.history");
+    /**
+     * The currently selected Font Size to use.
+     */
+    private final int fontSize = SettingsManager.getLocalPreferences().getChatRoomFontSize();
 
     /**
      * Open the Transcript with the given formatter.
@@ -285,7 +289,7 @@ public class HistoryTranscript extends SwingWorker {
                         .append(Res.getString("message.no.history.found"))
                         .append("</b>");
             }
-            Font font = new Font(window.getFont().getFontName(), Font.PLAIN, 12);
+            Font font = new Font(window.getFont().getFontName(), Font.PLAIN, fontSize);
             window.setFont(font);
             window.setText(builder.toString());
 
