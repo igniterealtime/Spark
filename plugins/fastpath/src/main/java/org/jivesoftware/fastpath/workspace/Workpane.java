@@ -582,7 +582,7 @@ public class Workpane {
         public boolean handleInvitation(final XMPPConnection conn, final MultiUserChat chat, final EntityBareJid inviter, final String reason, final String password, final Message message) {
             if (offerMap.containsKey(reason)) {
                 RequestUtils utils = new RequestUtils(getMetadata(reason));
-                String roomName = utils.getUsername();
+                String roomName = utils.getUsername() != null ? utils.getUsername() : chat.getRoom().getLocalpart().asUnescapedString();
 
                 // Create the Group Chat Room
                 GroupChatRoom groupChatRoom = ConferenceUtils.enterRoomOnSameThread(roomName, chat.getRoom(), password);
