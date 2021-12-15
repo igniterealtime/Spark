@@ -18,6 +18,9 @@ package org.jivesoftware.sparkimpl.plugin.gateways.transports;
 import org.jivesoftware.smack.*;
 import org.jivesoftware.smack.filter.IQReplyFilter;
 import org.jivesoftware.smack.packet.IQ;
+import org.jivesoftware.smack.packet.XmlEnvironment;
+import org.jivesoftware.smack.util.ExceptionCallback;
+import org.jivesoftware.smack.util.SuccessCallback;
 import org.jivesoftware.smack.packet.ExtensionElement;
 import org.jivesoftware.smackx.iqregister.packet.Registration;
 import org.jivesoftware.smackx.iqprivate.PrivateDataManager;
@@ -159,8 +162,9 @@ public class TransportUtils {
      * @throws InterruptedException 
      * @throws XMPPException thrown if there was an issue registering with the gateway.
      */
-    public static void registerUser(XMPPConnection con, DomainBareJid gatewayDomain, String username, String password, String nickname, StanzaListener callback) throws SmackException.NotConnectedException, InterruptedException
-    {
+    public static void registerUser(XMPPConnection con, DomainBareJid gatewayDomain, String username, String password,
+            String nickname, SuccessCallback<IQ> callback, ExceptionCallback<Exception> exceptionCallback)
+            throws SmackException.NotConnectedException, InterruptedException {
         Map<String, String> attributes = new HashMap<>();
         if (username != null) {
             attributes.put("username", username);
@@ -176,7 +180,9 @@ public class TransportUtils {
         registration.setTo(gatewayDomain);
         registration.addExtension(new GatewayRegisterExtension());
 
-        con.sendStanzaWithResponseCallback( registration, new IQReplyFilter( registration, con ), callback);
+        con.sendIqRequestAsync(registration)
+            .onSuccess(callback)
+            .onError(exceptionCallback);
     }
 
     /**
@@ -193,12 +199,8 @@ public class TransportUtils {
         registration.setType(IQ.Type.set);
         registration.setTo(gatewayDomain);
 
-        con.sendStanzaWithResponseCallback( registration, new IQReplyFilter( registration, con ), stanza -> {
-            IQ response = (IQ) stanza;
-            if (response.getType() == IQ.Type.error ) {
-                Log.warning( "Unable to unregister from gateway: " + stanza );
-            }
-        } );
+        con.sendIqRequestAsync(registration)
+            .onError(e -> Log.warning( "Unable to unregister from gateway: " + e));
     }
 
 
@@ -215,7 +217,7 @@ public class TransportUtils {
         }
 
         @Override
-		public String toXML(String enclosingNamespace) {
+        public String toXML(XmlEnvironment xmlEnvironment) {
             return "<" + getElementName() + " xmlns=\"" + getNamespace() + "\"/>";
         }
     }

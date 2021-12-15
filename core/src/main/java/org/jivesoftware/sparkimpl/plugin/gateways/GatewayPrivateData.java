@@ -15,12 +15,12 @@
  */
 package org.jivesoftware.sparkimpl.plugin.gateways;
 
+import org.jivesoftware.smack.xml.XmlPullParser;
+import org.jivesoftware.smack.xml.XmlPullParserException;
 import org.jivesoftware.smackx.iqprivate.packet.PrivateData;
 import org.jivesoftware.smackx.iqprivate.provider.PrivateDataProvider;
 import org.jxmpp.jid.DomainBareJid;
 import org.jxmpp.jid.impl.JidCreate;
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -87,40 +87,39 @@ public class GatewayPrivateData implements PrivateData {
         }
 
         @Override
-		public PrivateData parsePrivateData(XmlPullParser parser) throws IOException, XmlPullParserException
-        {
+        public PrivateData parsePrivateData(XmlPullParser parser) throws IOException, XmlPullParserException {
             GatewayPrivateData data = new GatewayPrivateData();
 
             boolean done = false;
 
             boolean isInstalled = false;
             while (!done) {
-                int eventType = parser.next();
-                if (eventType == XmlPullParser.START_TAG && parser.getName().equals("gateways")) {
+                XmlPullParser.Event eventType = parser.next();
+                if (eventType == XmlPullParser.Event.START_ELEMENT && parser.getName().equals("gateways")) {
                     isInstalled = true;
                 }
 
-                if (eventType == XmlPullParser.START_TAG && parser.getName().equals("gateway")) {
+                if (eventType == XmlPullParser.Event.START_ELEMENT && parser.getName().equals("gateway")) {
                     boolean gatewayDone = false;
                     DomainBareJid serviceName = null;
                     String autoLogin = null;
                     while (!gatewayDone) {
-                        int eType = parser.next();
-                        if (eType == XmlPullParser.START_TAG && parser.getName().equals("serviceName")) {
+                        XmlPullParser.Event eType = parser.next();
+                        if (eType == XmlPullParser.Event.START_ELEMENT && parser.getName().equals("serviceName")) {
                             String serviceNameString = parser.nextText();
                             serviceName = JidCreate.domainBareFrom(serviceNameString);
                         }
-                        else if (eType == XmlPullParser.START_TAG && parser.getName().equals("autoLogin")) {
+                        else if (eType == XmlPullParser.Event.START_ELEMENT && parser.getName().equals("autoLogin")) {
                             autoLogin = parser.nextText();
                         }
-                        else if (eType == XmlPullParser.END_TAG && parser.getName().equals("gateway")) {
+                        else if (eType == XmlPullParser.Event.END_ELEMENT && parser.getName().equals("gateway")) {
                             data.addService(serviceName, Boolean.parseBoolean(autoLogin));
                             gatewayDone = true;
                         }
                     }
                 }
 
-                else if (eventType == XmlPullParser.END_TAG && parser.getName().equals("gateways")) {
+                else if (eventType == XmlPullParser.Event.END_ELEMENT && parser.getName().equals("gateways")) {
                     done = true;
                 }
                 else if (!isInstalled) {

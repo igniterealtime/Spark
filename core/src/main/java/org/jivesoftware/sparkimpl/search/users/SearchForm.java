@@ -19,7 +19,7 @@ package org.jivesoftware.sparkimpl.search.users;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smackx.xdata.Form;
+import org.jivesoftware.smackx.xdata.packet.DataForm;
 import org.jivesoftware.smackx.search.ReportedData;
 import org.jivesoftware.smackx.search.UserSearchManager;
 import org.jivesoftware.spark.SparkManager;
@@ -52,7 +52,7 @@ public class SearchForm extends JPanel {
     private DataFormUI questionForm;
     private UserSearchManager searchManager;
     private final DomainBareJid serviceName;
-    private Form searchForm;
+    private DataForm searchForm;
 
     // TODO: Constructor should use DomainBareJid type instead of String.
     public SearchForm(String serviceString) {
@@ -115,7 +115,7 @@ public class SearchForm extends JPanel {
         return questionForm;
     }
 
-    public Form getSearchForm() {
+    public DataForm getSearchForm() {
         return searchForm;
     }
 
@@ -131,7 +131,7 @@ public class SearchForm extends JPanel {
             @Override
 			public Object construct() {
                 try {
-                    Form answerForm = questionForm.getFilledForm();
+                    DataForm answerForm = questionForm.getFilledForm();
                     data = searchManager.getSearchResults(answerForm, serviceName);
                 }
                 catch (XMPPException | SmackException | InterruptedException e) {

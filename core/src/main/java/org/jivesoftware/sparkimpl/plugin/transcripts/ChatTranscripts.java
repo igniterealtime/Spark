@@ -16,6 +16,8 @@
 package org.jivesoftware.sparkimpl.plugin.transcripts;
 
 import org.jivesoftware.resource.Default;
+import org.jivesoftware.smack.xml.SmackXmlParser;
+import org.jivesoftware.smack.xml.XmlPullParser;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.util.StringUtils;
 import org.jivesoftware.spark.util.log.Log;
@@ -24,8 +26,6 @@ import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.Jid;
 import org.jxmpp.jid.impl.JidCreate;
-import org.xmlpull.mxp1.MXParser;
-import org.xmlpull.v1.XmlPullParser;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -194,17 +194,15 @@ public final class ChatTranscripts {
         }
 
         try {
-            final MXParser parser = new MXParser();
-            parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, true);
             BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(transcriptFile), StandardCharsets.UTF_8));
-            parser.setInput(in);
+            final XmlPullParser parser = SmackXmlParser.newXmlParser(in);
             boolean done = false;
             while (!done) {
-                int eventType = parser.next();
-                if (eventType == XmlPullParser.START_TAG && "message".equals(parser.getName())) {
+                XmlPullParser.Event eventType = parser.next();
+                if (eventType == XmlPullParser.Event.START_ELEMENT && "message".equals(parser.getName())) {
                     transcript.addHistoryMessage(getHistoryMessage(parser));
                 }
-                else if (eventType == XmlPullParser.END_TAG && "transcript".equals(parser.getName())) {
+                else if (eventType == XmlPullParser.Event.END_ELEMENT && "transcript".equals(parser.getName())) {
                     done = true;
                 }
             }
@@ -246,21 +244,21 @@ public final class ChatTranscripts {
         // Check for nickname
         boolean done = false;
         while (!done) {
-            int eventType = parser.next();
-            if (eventType == XmlPullParser.START_TAG && "to".equals(parser.getName())) {
+            XmlPullParser.Event eventType = parser.next();
+            if (eventType == XmlPullParser.Event.START_ELEMENT && "to".equals(parser.getName())) {
                 String jidString = parser.nextText();
                 Jid jid = JidCreate.from(jidString);
                 message.setTo(jid);
             }
-            else if (eventType == XmlPullParser.START_TAG && "from".equals(parser.getName())) {
+            else if (eventType == XmlPullParser.Event.START_ELEMENT && "from".equals(parser.getName())) {
                 String jidString = parser.nextText();
                 Jid jid = JidCreate.from(jidString);
                 message.setFrom(jid);
             }
-            else if (eventType == XmlPullParser.START_TAG && "body".equals(parser.getName())) {
+            else if (eventType == XmlPullParser.Event.START_ELEMENT && "body".equals(parser.getName())) {
                 message.setBody(StringUtils.unescapeFromXML(parser.nextText()));
             }
-            else if (eventType == XmlPullParser.START_TAG && "date".equals(parser.getName())) {
+            else if (eventType == XmlPullParser.Event.START_ELEMENT && "date".equals(parser.getName())) {
                 Date d;
                 try {
                     d = FORMATTER.parse(parser.nextText());
@@ -270,7 +268,7 @@ public final class ChatTranscripts {
                 }
                 message.setDate(d);
             }
-            else if (eventType == XmlPullParser.END_TAG && "message".equals(parser.getName())) {
+            else if (eventType == XmlPullParser.Event.END_ELEMENT && "message".equals(parser.getName())) {
                 done = true;
             }
         }

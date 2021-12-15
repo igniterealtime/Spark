@@ -39,8 +39,8 @@ import org.jivesoftware.fastpath.workspace.assistants.RoomInformation;
 import org.jivesoftware.fastpath.workspace.util.RequestUtils;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smackx.xdata.Form;
 import org.jivesoftware.smackx.xdata.FormField;
+import org.jivesoftware.smackx.xdata.form.Form;
 import org.jivesoftware.smackx.workgroup.agent.Offer;
 import org.jivesoftware.spark.component.LinkLabel;
 import org.jivesoftware.spark.component.RolloverButton;
@@ -115,8 +115,8 @@ public class ChatQueue extends JPanel {
         Color linkColor = new Color(69, 92, 137);
 
         int count = 1;
-        for ( final FormField field : form.getFields() ) {
-            String variable = field.getVariable();
+        for ( final FormField field : form.getDataForm().getFields() ) {
+            String variable = field.getFieldName();
             String label = field.getLabel();
             if (label != null) {
                 final JLabel nameLabel = new JLabel(label);

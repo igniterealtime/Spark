@@ -17,9 +17,10 @@
 package org.jivesoftware.sparkimpl.profile.ext;
 
 import org.jivesoftware.smack.packet.ExtensionElement;
+import org.jivesoftware.smack.packet.XmlEnvironment;
 import org.jivesoftware.smack.provider.ExtensionElementProvider;
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserException;
+import org.jivesoftware.smack.xml.XmlPullParser;
+import org.jivesoftware.smack.xml.XmlPullParserException;
 
 import java.io.IOException;
 
@@ -46,7 +47,7 @@ public class JabberAvatarExtension implements ExtensionElement {
     }
 
     @Override
-	public String toXML(String enclosingNamespace) {
+	public String toXML(XmlEnvironment xmlEnvironment) {
         return "<" + getElementName() + " xmlns=\"" + getNamespace() + "\">"
             + "<hash>" + photoHash + "</hash>"
             + "</" + getElementName() + ">";
@@ -58,23 +59,26 @@ public class JabberAvatarExtension implements ExtensionElement {
         }
 
         @Override
-        public JabberAvatarExtension parse( XmlPullParser parser, int i ) throws XmlPullParserException, IOException {
+        public JabberAvatarExtension parse(XmlPullParser parser, int i, XmlEnvironment xmlEnvironment)
+                throws XmlPullParserException, IOException {
             final JabberAvatarExtension result = new JabberAvatarExtension();
 
             while ( true )
             {
                 parser.next();
-                String elementName = parser.getName();
+                String elementName;
                 switch ( parser.getEventType() )
                 {
-                    case XmlPullParser.START_TAG:
+                    case START_ELEMENT:
+                        elementName = parser.getName();
                         if ( "photo".equals( elementName ) )
                         {
                             result.setPhotoHash( parser.nextText() );
                         }
                         break;
 
-                    case XmlPullParser.END_TAG:
+                    case END_ELEMENT:
+                        elementName = parser.getName();
                         if ( ELEMENT_NAME.equals( elementName ) )
                         {
                             return result;

@@ -21,8 +21,8 @@ import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smackx.xdata.Form;
 import org.jivesoftware.smackx.search.UserSearchManager;
+import org.jivesoftware.smackx.xdata.packet.DataForm;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.TitlePanel;
 import org.jivesoftware.spark.ui.DataFormUI;
@@ -162,7 +162,7 @@ public class UserSearchForm extends JPanel {
             if (ModelUtil.hasLength(serviceName)) {
 
                 SwingWorker findServiceThread = new SwingWorker() {
-                    Form newForm;
+                    DataForm newForm;
 
                     @Override
 					public Object construct() {
@@ -257,10 +257,14 @@ public class UserSearchForm extends JPanel {
         cardLayout.show(cardPanel, service);
 
         SearchForm searchForm = serviceMap.get(service);
-        Form form = searchForm.getSearchForm();
-        String description = form.getInstructions(); //XXX maybe add a Spark String instead
+        DataForm form = searchForm.getSearchForm();
+        StringBuilder description = new StringBuilder();
+        for (String instruction : form.getInstructions()) {
+            description.append(instruction).append('\n');
+        }
+
         titlePanel.setTitle(Res.getString("title.person.search"));
-        titlePanel.setDescription(description);
+        titlePanel.setDescription(description.toString());
     }
 
 

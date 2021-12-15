@@ -33,8 +33,9 @@ import javax.swing.JTextField;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smackx.xdata.Form;
 import org.jivesoftware.smackx.xdata.FormField;
+import org.jivesoftware.smackx.xdata.form.FillableForm;
+import org.jivesoftware.smackx.xdata.packet.DataForm;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
@@ -62,7 +63,7 @@ public class AnswerFormDialog {
      * @param form
      */
     public AnswerFormDialog(JFrame parent, final MultiUserChat chat,
-	    final Form form) {
+	    final DataForm form) {
 
 	centerpanel = new JPanel();
 		JPanel bottompanel = new JPanel();
@@ -85,7 +86,7 @@ public class AnswerFormDialog {
 	    }
 
 	    if (comp != null) {
-		addComponent(label, comp, row, formfield.getVariable());
+		addComponent(label, comp, row, formfield.getFieldName());
 		row++;
 	    }
 	}
@@ -94,7 +95,7 @@ public class AnswerFormDialog {
 	ResourceUtils.resButton(updatebutton, Res.getString("apply"));
 	updatebutton.addActionListener( e -> {
     dialog.dispose();
-    sendAnswerForm(form.createAnswerForm(), chat);
+    sendAnswerForm(new FillableForm(form), chat);
     } );
 
 	bottompanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
@@ -124,7 +125,7 @@ public class AnswerFormDialog {
      * @param answer <u>must be an answer-form</u>
      * @param chat
      */
-    private void sendAnswerForm(Form answer, MultiUserChat chat) {
+    private void sendAnswerForm(FillableForm answer, MultiUserChat chat) {
 	
 	ChatRoom room = SparkManager.getChatManager().getChatRoom(chat.getRoom());
 	

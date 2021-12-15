@@ -51,7 +51,7 @@ import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.muc.MultiUserChatManager;
-import org.jivesoftware.smackx.xdata.Form;
+import org.jivesoftware.smackx.xdata.form.FillableForm;
 import org.jivesoftware.smackx.bookmarks.BookmarkedConference;
 import org.jivesoftware.smackx.muc.HostedRoom;
 import org.jivesoftware.smackx.muc.MultiUserChat;
@@ -839,7 +839,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
 		chatManager.getChatContainer().activateChatRoom(room);
 
 		// Send Form
-		Form form = groupChat.getConfigurationForm().createAnswerForm();
+		FillableForm form = groupChat.getConfigurationForm().getFillableForm();
 		if (mucRoomDialog.isPasswordProtected()) {
 		    String password = mucRoomDialog.getPassword();
 		    room.setPassword(password);
