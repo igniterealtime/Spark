@@ -83,6 +83,7 @@ import org.jivesoftware.smack.SASLAuthentication;
 import org.jivesoftware.smack.SmackConfiguration;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.ConnectionConfiguration.DnssecMode;
 import org.jivesoftware.smack.parsing.ExceptionLoggingCallback;
 import org.jivesoftware.smack.proxy.ProxyInfo;
 import org.jivesoftware.smack.sasl.javax.SASLExternalMechanism;
@@ -732,8 +733,9 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
             }
             try {
                 SSLContext context = SparkSSLContextCreator.setUpContext(options);
-                builder.setCustomSSLContext(context);
+                builder.setSslContextFactory(() -> { return context; });
                 builder.setSecurityMode(securityMode);
+                builder.setCustomX509TrustManager(new SparkTrustManager());
             } catch (NoSuchAlgorithmException | KeyManagementException | UnrecoverableKeyException | KeyStoreException | NoSuchProviderException e) {
                 Log.warning("Couldnt establish secured connection", e);
             }
@@ -745,7 +747,11 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
                 // Here, we force the host to be set (by doing a DNS lookup), and force the port to 5223 (which is the
                 // default 'old-style' SSL port).
                 DnsName serverNameDnsName = DnsName.from(loginServer);
-                builder.setHost(DNSUtil.resolveXMPPServiceDomain(serverNameDnsName, null, ConnectionConfiguration.DnssecMode.disabled).get(0).getFQDN());
+                java.util.List<InetAddress> resolvedAddresses = DNSUtil.getDNSResolver().lookupHostAddress(serverNameDnsName, null, DnssecMode.disabled);
+                if (resolvedAddresses.isEmpty()) {
+                    throw new RuntimeException("Could not resolve " + serverNameDnsName);
+                }
+                builder.setHost(resolvedAddresses.get(0).getHostName());
                 builder.setPort(5223);
             }
             SparkSSLContextCreator.Options options;

@@ -44,8 +44,10 @@ import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.ExtensionElement;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smackx.muc.MultiUserChat;
-import org.jivesoftware.smackx.xdata.Form;
 import org.jivesoftware.smackx.xdata.FormField;
+import org.jivesoftware.smackx.xdata.form.FillableForm;
+import org.jivesoftware.smackx.xdata.form.FilledForm;
+import org.jivesoftware.smackx.xdata.form.Form;
 import org.jivesoftware.smackx.vcardtemp.packet.VCard;
 import org.jivesoftware.smackx.workgroup.settings.ChatSetting;
 import org.jivesoftware.smackx.workgroup.settings.ChatSettings;
@@ -223,16 +225,18 @@ public class WorkgroupManager {
 
         final JButton submitButton = new JButton("Start Chat!");
         submitButton.addActionListener(e -> {
-            if (validateForm(workgroupDialog, workgroupForm, formUI.getFilledForm())) {
-                enterQueue(contactItem.getJid().asEntityBareJidOrThrow(), formUI.getFilledForm());
+            FillableForm form = formUI.getFilledForm();
+            if (validateForm(workgroupDialog, workgroupForm, form)) {
+                enterQueue(contactItem.getJid().asEntityBareJidOrThrow(), form);
                 workgroupDialog.dispose();
             }
         });
 
 
         formUI.setEnterListener(() -> {
-            if (validateForm(workgroupDialog, workgroupForm, formUI.getFilledForm())) {
-                enterQueue(contactItem.getJid().asEntityBareJidOrThrow(), formUI.getFilledForm());
+            FillableForm form = formUI.getFilledForm();
+            if (validateForm(workgroupDialog, workgroupForm, form)) {
+                enterQueue(contactItem.getJid().asEntityBareJidOrThrow(), form);
                 workgroupDialog.dispose();
             }
         });
@@ -249,10 +253,10 @@ public class WorkgroupManager {
         workgroupDialog.setVisible(true);
     }
 
-    private static boolean validateForm(JDialog parent, Form workgroupForm, Form form) {
-        for ( final FormField field : form.getFields()) {
+    private static boolean validateForm(JDialog parent, Form workgroupForm, FilledForm form) {
+        for ( final FormField field : form.getDataForm().getFields()) {
             if (field.isRequired() && field.getValues().isEmpty()) {
-                String variable = field.getVariable();
+                String variable = field.getFieldName();
                 String elementName = workgroupForm.getField(variable).getLabel();
                 UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
                 JOptionPane.showMessageDialog(parent, variable + " is required to complete the form.", "Incomplete Form", JOptionPane.ERROR_MESSAGE);
@@ -282,7 +286,7 @@ public class WorkgroupManager {
         }
     }
 
-    private void enterQueue(EntityBareJid workgroupJID, Form form) {
+    private void enterQueue(EntityBareJid workgroupJID, FillableForm form) {
         Localpart workgroupName = workgroupJID.getLocalpart();
 
         final JDialog workgroupDialog = new JDialog(SparkManager.getMainWindow(), workgroupName + " Workgroup");

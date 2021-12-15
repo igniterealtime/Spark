@@ -20,13 +20,16 @@ import org.jivesoftware.smack.packet.ExtensionElement;
 import org.jivesoftware.smack.provider.ExtensionElementProvider;
 import org.jivesoftware.smack.provider.IQProvider;
 import org.jivesoftware.smack.provider.ProviderManager;
+import org.jivesoftware.smack.xml.SmackXmlParser;
+import org.jivesoftware.smack.xml.XmlPullParser;
 import org.jivesoftware.spark.util.URLFileSystem;
 import org.jivesoftware.spark.util.log.Log;
-import org.xmlpull.mxp1.MXParser;
-import org.xmlpull.v1.XmlPullParser;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -110,13 +113,12 @@ public class PluginClassLoader extends URLClassLoader {
 
         // Get an array of class loaders to try loading the providers files from.
 
+        Reader reader = new BufferedReader(new InputStreamReader(providerStream, "UTF-8"));
         try {
-            XmlPullParser parser = new MXParser();
-            parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, true);
-            parser.setInput(providerStream, "UTF-8");
-            int eventType = parser.getEventType();
+            final XmlPullParser parser = SmackXmlParser.newXmlParser(reader);
+            XmlPullParser.Event eventType = parser.getEventType();
             do {
-                if (eventType == XmlPullParser.START_TAG) {
+                if (eventType == XmlPullParser.Event.START_ELEMENT) {
                     if (parser.getName().equals("iqProvider")) {
                         parser.next();
                         parser.next();
@@ -185,7 +187,7 @@ public class PluginClassLoader extends URLClassLoader {
                 }
                 eventType = parser.next();
             }
-            while (eventType != XmlPullParser.END_DOCUMENT);
+            while (eventType != XmlPullParser.Event.END_DOCUMENT);
         }
         finally {
             try {

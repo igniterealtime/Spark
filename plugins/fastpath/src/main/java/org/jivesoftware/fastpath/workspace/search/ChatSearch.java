@@ -39,10 +39,11 @@ import org.jivesoftware.fastpath.workspace.panes.ChatViewer;
 import org.jivesoftware.fastpath.workspace.panes.HistoryItemRenderer;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smackx.xdata.Form;
 import org.jivesoftware.smackx.search.ReportedData;
 import org.jivesoftware.smackx.workgroup.agent.AgentSession;
 import org.jivesoftware.smackx.workgroup.packet.Transcript;
+import org.jivesoftware.smackx.xdata.form.FillableForm;
+import org.jivesoftware.smackx.xdata.form.Form;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.search.Searchable;
 import org.jivesoftware.spark.util.GraphicUtils;
@@ -73,7 +74,7 @@ public class ChatSearch implements Searchable {
         AgentSession agentSession = FastpathPlugin.getAgentSession();
         try {
             Form form = agentSession.getTranscriptSearchForm();
-            Form filledForm = form.createAnswerForm();
+            FillableForm filledForm = form.getFillableForm();
             filledForm.setAnswer("queryString", query);
 
             // Define Workgroups
