@@ -65,25 +65,24 @@ public class VCardUpdateExtension implements ExtensionElement {
         }
 
         @Override
-        public VCardUpdateExtension parse(XmlPullParser parser, int i, XmlEnvironment xmlEnvironment)
+        public VCardUpdateExtension parse(XmlPullParser parser, int initialDepth, XmlEnvironment xmlEnvironment)
                 throws XmlPullParserException, IOException {
             final VCardUpdateExtension result = new VCardUpdateExtension();
 
             while ( true )
             {
                 parser.next();
-                String elementName = parser.getName();
                 switch ( parser.getEventType() )
                 {
                     case START_ELEMENT:
-                        if ( "photo".equals( elementName ) )
+                        if ( "photo".equals( parser.getName() ) )
                         {
                             result.setPhotoHash( parser.nextText() );
                         }
                         break;
 
                     case END_ELEMENT:
-                        if ( ELEMENT_NAME.equals( elementName ) )
+                        if ( parser.getDepth() == initialDepth )
                         {
                             return result;
                         }
