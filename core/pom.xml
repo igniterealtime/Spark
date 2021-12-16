@@ -126,7 +126,6 @@
             <artifactId>smack-java8</artifactId>
             <version>${dependency.smack.version}</version>
         </dependency>
-        <!--
         <dependency>
             <groupId>org.igniterealtime.spark</groupId>
             <artifactId>emoticons</artifactId>
@@ -159,7 +158,6 @@
             <classifier>Default.adiumemoticonset</classifier>
             <type>zip</type>
         </dependency>
-        -->
         <dependency>
             <groupId>org.dom4j</groupId>
             <artifactId>dom4j</artifactId>
