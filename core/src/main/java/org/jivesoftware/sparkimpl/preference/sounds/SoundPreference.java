@@ -371,6 +371,7 @@ public class SoundPreference implements Preference {
     private XStream getXStream() {
         if (xstream == null) {
             xstream = new XStream();
+            xstream.allowTypes(new Class[]{SoundPreferences.class});
             xstream.alias("sounds", SoundPreferences.class);
         }
         return xstream;
