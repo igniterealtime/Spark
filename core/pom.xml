@@ -15,7 +15,7 @@
     <description>The essentials of Spark, including the user interface and startup scripts, excluding most optional components</description>
 
     <properties>
-        <bouncycastle.version>1.68</bouncycastle.version>
+        <bouncycastle.version>1.70</bouncycastle.version>
     </properties>
 
     <build>
