@@ -15,6 +15,7 @@
  */ 
 package org.jivesoftware.spark.ui;
 
+import org.jivesoftware.smackx.xdata.BooleanFormField;
 import org.jivesoftware.smackx.xdata.FormField;
 import org.jivesoftware.smackx.xdata.FormFieldWithOptions;
 import org.jivesoftware.smackx.xdata.ListSingleFormField;
@@ -80,8 +81,8 @@ public class DataFormUI extends JPanel {
             List<? extends CharSequence> valueList = field.getValues();
 
             if (type.equals(FormField.Type.bool)) {
-                String o = valueList.get(0).toString();
-                boolean isSelected = o.equals("1");
+                BooleanFormField booleanField = field.ifPossibleAsOrThrow(BooleanFormField.class);
+                boolean isSelected = booleanField.getValueAsBoolean();
                 JCheckBox box = new JCheckBox(label);
                 box.setSelected(isSelected);
                 addField(label, box, variable);
