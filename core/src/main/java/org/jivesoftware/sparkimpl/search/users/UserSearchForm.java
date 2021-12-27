@@ -65,7 +65,7 @@ public class UserSearchForm extends JPanel {
     private JComboBox<String> servicesBox;
     private final UserSearchManager searchManager;
 
-    private final Collection<? extends CharSequence> searchServices;
+    private final Collection<DomainBareJid> searchServices;
 
     private final CardLayout cardLayout = new CardLayout();
     private final JPanel cardPanel = new JPanel();
@@ -82,7 +82,7 @@ public class UserSearchForm extends JPanel {
      *
      * @param searchServices a Collection of all search services found.
      */
-    public UserSearchForm(Collection<? extends CharSequence> searchServices) {
+    public UserSearchForm(Collection<DomainBareJid> searchServices) {
         setLayout(new GridBagLayout());
 
         cardPanel.setLayout(cardLayout);
