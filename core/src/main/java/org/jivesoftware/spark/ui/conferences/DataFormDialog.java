@@ -47,6 +47,7 @@ import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.muc.MultiUserChatManager;
+import org.jivesoftware.smackx.xdata.BooleanFormField;
 import org.jivesoftware.smackx.xdata.FormField;
 import org.jivesoftware.smackx.xdata.FormField.Option;
 import org.jivesoftware.smackx.xdata.ListMultiFormField;
@@ -97,16 +98,13 @@ public class DataFormDialog extends JPanel {
                 List<? extends CharSequence> valueList = field.getValues();
 
                 if (type.equals(FormField.Type.bool)) {
-                    boolean isSelected;
-                    if ( valueList == null || valueList.isEmpty() )
+                    BooleanFormField booleanField = field.ifPossibleAsOrThrow(BooleanFormField.class);
+                    Boolean isSelected = booleanField.getValueAsBoolean();
+                    // TODO: Remove this logic once Spark uses Smack 4.4.5.
+                    if (isSelected == null)
                     {
                         // Bool's default value is 'false'.
                         isSelected = false;
-                    }
-                    else
-                    {
-                        String o = valueList.get( 0 ).toString();
-                        isSelected = o.equals( "1" );
                     }
 
                     JCheckBox box = new JCheckBox(label);
