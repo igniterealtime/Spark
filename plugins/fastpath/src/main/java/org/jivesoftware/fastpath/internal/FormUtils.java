@@ -164,7 +164,7 @@ final public class FormUtils {
         final String HOURS = Res.getString("time.hours");
         final String MINUTES = Res.getString("time.minutes");
         final String SECONDS = Res.getString("time.seconds");
-        final String LESS_THAT_ONE_MINUTE = Res.getString("time.less.than.one.minute");
+        final String LESS_THAN_ONE_MINUTE = Res.getString("time.less.than.one.minute");
 
         final long MS_IN_A_DAY = 1000 * 60 * 60 * 24;
         final long MS_IN_AN_HOUR = 1000 * 60 * 60;
@@ -193,7 +193,7 @@ final public class FormUtils {
         String result = buf.toString();
 
         if (numMinutes < 1) {
-            result = LESS_THAT_ONE_MINUTE;
+            result = LESS_THAN_ONE_MINUTE;
         }
 
         return result;
