@@ -15,6 +15,7 @@
  */
 package org.jivesoftware.fastpath.internal;
 
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.packet.Message;
 import org.jxmpp.jid.parts.Resourcepart;
 
@@ -159,9 +160,11 @@ final public class FormUtils {
      * @param seconds the number of seconds to calculate.
      */
     public static String getTimeFromLong(long seconds) {
-        final String HOURS = "h";
-        final String MINUTES = "min";
-        final String SECONDS = "sec";
+        final String DAYS = Res.getString("time.days");
+        final String HOURS = Res.getString("time.hours");
+        final String MINUTES = Res.getString("time.minutes");
+        final String SECONDS = Res.getString("time.seconds");
+        final String LESS_THAT_ONE_MINUTE = Res.getString("time.less.than.one.minute");
 
         final long MS_IN_A_DAY = 1000 * 60 * 60 * 24;
         final long MS_IN_AN_HOUR = 1000 * 60 * 60;
@@ -190,7 +193,7 @@ final public class FormUtils {
         String result = buf.toString();
 
         if (numMinutes < 1) {
-            result = "less than 1 minute";
+            result = LESS_THAT_ONE_MINUTE;
         }
 
         return result;
