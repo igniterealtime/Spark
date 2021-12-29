@@ -257,7 +257,7 @@ public class ContactInfoWindow extends JPanel {
 		                } else {
 		                    format = new SimpleDateFormat("EEE M/d/yy h:mm a");
 		                }
-	                	status += (" since " + format.format(l));
+	                	status += (" " + Res.getString("time.since")+ " " + format.format(l));
 	                } else if (contactItem.getPresence().isAway()) {
 	                    status += "\n";
 	                    String time = ModelUtil.getTimeFromLong(idleTime);

@@ -16,6 +16,8 @@
 package org.jivesoftware.spark.util;
 
 
+import org.jivesoftware.resource.Res;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -275,8 +277,11 @@ public final class ModelUtil {
      * @return the formatte String.
      */
     public static String getTimeFromLong(long diff) {
-        final String HOURS = "h";
-        final String MINUTES = "min";
+        final String DAYS = Res.getString("time.days");
+        final String HOURS = Res.getString("time.hours");
+        final String MINUTES = Res.getString("time.minutes");
+        final String SECONDS = Res.getString("time.seconds");
+        final String LESS_THAT_ONE_MINUTE = Res.getString("time.less.than.one.minute");
 
         final long MS_IN_A_DAY = 1000 * 60 * 60 * 24;
         final long MS_IN_AN_HOUR = 1000 * 60 * 60;
@@ -290,7 +295,7 @@ public final class ModelUtil {
         StringBuilder buf = new StringBuilder();
 
         if(numDays > 0){
-            buf.append(numDays).append(" d, ");
+            buf.append(numDays).append(" ").append(DAYS).append(", ");
         }
 
         if (numHours > 0) {
@@ -306,7 +311,7 @@ public final class ModelUtil {
         String result = buf.toString();
 
         if (numMinutes < 1) {
-            result = "< 1 min";
+            result = LESS_THAT_ONE_MINUTE;
         }
 
         return result;
