@@ -19,6 +19,7 @@ import java.text.MessageFormat;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 
+import org.jivesoftware.resource.UTF8Control;
 import org.jivesoftware.spark.util.log.Log;
 
 /**
@@ -32,7 +33,7 @@ public class TTTRes {
     private static final PropertyResourceBundle prb;
 
     static {
-        prb = (PropertyResourceBundle) ResourceBundle.getBundle("i18n/tictactoe_i18n");
+        prb = (PropertyResourceBundle) ResourceBundle.getBundle("i18n/tictactoe_i18n", new UTF8Control());
     }
 
     public static String getString(String propertyName) {
