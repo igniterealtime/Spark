@@ -16,9 +16,10 @@
 
 package org.jivesoftware.sparkimpl.settings.local;
 
+import com.sun.jna.platform.win32.Advapi32Util;
+import com.sun.jna.platform.win32.WinReg;
 import org.jivesoftware.Spark;
 import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.spark.util.WinRegistry;
 import org.jivesoftware.spark.util.log.Log;
 
 import java.io.File;
@@ -101,12 +102,11 @@ public class SettingsManager {
         			File file = new File(PROGDIR + "\\" + SparkRes.getString(SparkRes.EXECUTABLE_NAME));
         			if (file.exists())
         			{
-		        		WinRegistry.createKey(
-		        				WinRegistry.HKEY_CURRENT_USER, 
+                        Advapi32Util.registryCreateKey(WinReg.HKEY_CURRENT_USER,
 		        				"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run");
-        				WinRegistry.writeStringValue(
-        					WinRegistry.HKEY_CURRENT_USER, 
-        					"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", 
+                        Advapi32Util.registrySetStringValue(
+                            WinReg.HKEY_CURRENT_USER,
+                            "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run",
         					SparkRes.getString(SparkRes.APP_NAME), 
         					file.getAbsolutePath());
         			}
@@ -118,25 +118,20 @@ public class SettingsManager {
         }
         else
         {
+    		if (Spark.isWindows()) {
+                if (Advapi32Util.registryKeyExists(WinReg.HKEY_CURRENT_USER,
+                    "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run"+SparkRes.getString(SparkRes.APP_NAME))) {
+                    try	{
+                            Advapi32Util.registryDeleteValue(
+                                WinReg.HKEY_CURRENT_USER,
+                                "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run",
+                                SparkRes.getString(SparkRes.APP_NAME));
+                    }
+                    catch (Exception e) {
+                        Log.error("Can not delete registry entry",e);
+                    }
+                }
 
-    		if (Spark.isWindows())
-    		{
-            	try	{
-            		String run = WinRegistry.readString(
-            				WinRegistry.HKEY_CURRENT_USER, 
-            				"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", 
-            				SparkRes.getString(SparkRes.APP_NAME));
-            		if (run != null)
-            		{
-	            		WinRegistry.deleteValue(
-	            	          WinRegistry.HKEY_CURRENT_USER, 
-	            	          "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", 
-	            	          SparkRes.getString(SparkRes.APP_NAME));
-            		}
-            	}
-            	catch (Exception e) {
-            		Log.error("Can not delete registry entry",e);
-            	}
     		}
         }
     }
