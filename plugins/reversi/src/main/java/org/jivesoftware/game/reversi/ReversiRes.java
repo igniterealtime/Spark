@@ -1,5 +1,7 @@
 package org.jivesoftware.game.reversi;
 
+import org.jivesoftware.resource.UTF8Control;
+
 import java.net.URL;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
@@ -27,7 +29,7 @@ public class ReversiRes {
 	    private static final ClassLoader cl = ReversiRes.class.getClassLoader();
 
 	    static {
-	    	ReversiRes.prb = (PropertyResourceBundle) ResourceBundle.getBundle("reversi");
+	    	ReversiRes.prb = (PropertyResourceBundle) ResourceBundle.getBundle("reversi", new UTF8Control());
 	    }
 	    
 	    public static String getString(String propertyName) {
