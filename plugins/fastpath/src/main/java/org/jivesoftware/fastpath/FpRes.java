@@ -15,9 +15,9 @@
  */
 package org.jivesoftware.fastpath;
 
+import org.jivesoftware.resource.UTF8Control;
 import org.jivesoftware.spark.util.log.Log;
 
-import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
@@ -32,15 +32,12 @@ public class FpRes {
     }
 
     static {
-        prb = (PropertyResourceBundle)ResourceBundle.getBundle("i18n/fastpath_i18n");
+        prb = (PropertyResourceBundle)ResourceBundle.getBundle("i18n/fastpath_i18n", new UTF8Control());
     }
 
     public static String getString(String propertyName) {
         try {
-            /* Revert to this code after Spark is moved to Java 11 or newer
             return prb.getString(propertyName);
-            */
-            return new String(prb.getString(propertyName).getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
         }
         catch (Exception e) {
             Log.error(e);
