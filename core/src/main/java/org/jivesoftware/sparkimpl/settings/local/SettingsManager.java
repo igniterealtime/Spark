@@ -119,8 +119,9 @@ public class SettingsManager {
         else
         {
     		if (Spark.isWindows()) {
-                if (Advapi32Util.registryKeyExists(WinReg.HKEY_CURRENT_USER,
-                    "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run"+SparkRes.getString(SparkRes.APP_NAME))) {
+                if (Advapi32Util.registryValueExists(WinReg.HKEY_CURRENT_USER,
+                    "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run",
+                    SparkRes.getString(SparkRes.APP_NAME))) {
                     try	{
                             Advapi32Util.registryDeleteValue(
                                 WinReg.HKEY_CURRENT_USER,
