@@ -530,6 +530,7 @@ public class LocalPreferences {
                     downloadedDir.mkdir();
                 }
             } else {
+                // if for some Reason there is no "My Documents" Folder we should select the Desktop
                 downloadedDir = new File(System.getProperty("user.home") + "\\Desktop\\");
             }
         } else {
