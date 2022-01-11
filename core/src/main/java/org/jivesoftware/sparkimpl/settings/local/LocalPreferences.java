@@ -521,6 +521,9 @@ public class LocalPreferences {
         File downloadedDir = null;
         if (Spark.isLinux() || Spark.isMac()) {
             downloadedDir = new File(System.getProperty("user.home") + "/Downloads/");
+            if (!downloadedDir.exists()) {
+                downloadedDir.mkdir();
+            }
             Log.debug("Absolute path for download directory: " + downloadedDir.getAbsolutePath());
         } else if (Spark.isWindows()) {
             File docDir = new File(System.getProperty("user.home") + "\\Documents");
