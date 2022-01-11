@@ -532,8 +532,10 @@ public class LocalPreferences {
             } else {
                 downloadedDir = new File(System.getProperty("user.home") + "\\Desktop\\");
             }
+        } else {
+            downloadedDir = new File(System.getProperty("user.home"));
         }
-        return props.getProperty("downloadDirectory", downloadedDir != null ? downloadedDir.getAbsolutePath() : null);
+        return props.getProperty("downloadDirectory", downloadedDir.getAbsolutePath());
     }
 
 	public void setDownloadDir(String downloadDir) {
