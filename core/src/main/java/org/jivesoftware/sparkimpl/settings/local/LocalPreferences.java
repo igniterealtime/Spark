@@ -516,30 +516,28 @@ public class LocalPreferences {
 	 * Returns the Download Directory, doesnt return <code>null</code>
 	 * @return {@link String}
 	 */
-	public String getDownloadDir() {
+    public String getDownloadDir() {
 
-		File downloadedDir = null;
-		if (Spark.isLinux() || Spark.isMac()) {
-			downloadedDir = new File(System.getProperty("user.home") + "/Downloads/");
+        File downloadedDir = null;
+        if (Spark.isLinux() || Spark.isMac()) {
+            downloadedDir = new File(System.getProperty("user.home") + "/Downloads/");
             Log.debug("Absolute path for download directory: " + downloadedDir.getAbsolutePath());
-		} else if (Spark.isWindows()) {
-
-			String regpath = WinRegistryReader.getMyDocumentsFromWinRegistry();
-			if (regpath != null) {
-				downloadedDir = new File(regpath + "\\Downloads");
-				if (!downloadedDir.exists()) {
-					downloadedDir.mkdir();
-				}
-			}
-			else
-			{
-			    // if for some Reason there is no "My Documents" Folder we should select the Desktop
-				downloadedDir = new File(System.getProperty("user.home") + "\\Desktop\\");
-			}
-		}
-
-		return props.getProperty("downloadDirectory", downloadedDir.getAbsolutePath());
-	}
+        } else if (Spark.isWindows()) {
+            File docDir = new File(System.getProperty("user.home") + "\\Documents");
+            if (docDir.canWrite()) {
+                downloadedDir = new File(docDir + "\\Downloads");
+                if (!downloadedDir.exists()) {
+                    downloadedDir.mkdir();
+                }
+            } else {
+                // if for some Reason there is no "My Documents" Folder we should select the Desktop
+                downloadedDir = new File(System.getProperty("user.home") + "\\Desktop\\");
+            }
+        } else {
+            downloadedDir = new File(System.getProperty("user.home"));
+        }
+        return props.getProperty("downloadDirectory", downloadedDir.getAbsolutePath());
+    }
 
 	public void setDownloadDir(String downloadDir) {
 		props.setProperty("downloadDirectory", downloadDir);
