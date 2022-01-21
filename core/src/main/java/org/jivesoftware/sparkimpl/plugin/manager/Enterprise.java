@@ -70,6 +70,8 @@ public class Enterprise {
     public static final String HOSTNAME_AS_RESOURCE_FEATURE = "hostname-as-resource";
     public static final String VERSION_AS_RESOURCE_FEATURE = "version-as-resource";
     public static final String PLUGINS_BLACKLIST_NODE = "spark-plugins-blacklist";
+    public static final String IDLE_ON_LOCK_FEATURE = "idle-on-lock";
+    public static final String IDLE_TIME_LOCK_FEATURE = "idle-on-lock";
 
     private static DiscoverInfo featureInfo;
     private static final Map<String, DiscoverItems> nodeInfo = new HashMap<>();
