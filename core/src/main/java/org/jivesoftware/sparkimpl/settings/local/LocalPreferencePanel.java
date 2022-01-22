@@ -32,15 +32,12 @@ import org.jivesoftware.resource.Res;
 import org.jivesoftware.spark.component.VerticalFlowLayout;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.log.Log;
-import org.jivesoftware.sparkimpl.plugin.idle.IdleTime;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 
 /**
  * UI for editing Local Preferences.
  */
 public class LocalPreferencePanel extends JPanel {
-    private LocalPreferencePanel panel;
-    private LocalPreferences preferences;
     private static final long serialVersionUID = -1675058807882383560L;
 
 	private final JTextField _portField = new JTextField();
@@ -105,6 +102,7 @@ public class LocalPreferencePanel extends JPanel {
 	_idleBox.setSelected(preferences.isIdleOn());
 	_idleField.setText(Integer.toString(preferences.getIdleTime()));
 
+
 	final JPanel inputPanel = new JPanel();
 	inputPanel.setLayout(new GridBagLayout());
 	inputPanel.setBorder(BorderFactory.createTitledBorder(Res
@@ -155,12 +153,10 @@ public class LocalPreferencePanel extends JPanel {
 
     if(Default.getBoolean(Default.IDLE_TIME_LOCK) || !Enterprise.containsFeature(Enterprise.IDLE_TIME_LOCK_FEATURE)) {
         _idleField.setEnabled(false);
-        preferences.setIdleTime(Integer.parseInt(Default.getString(Default.IDLE_TIME)));
     }
 
     if(Default.getBoolean(Default.IDLE_ON_LOCK) || !Enterprise.containsFeature(Enterprise.IDLE_ON_LOCK_FEATURE)){
         _idleBox.setEnabled(false);
-        preferences.setIdleOn(true);
     }
     if(!Default.getBoolean(Default.HIDE_SAVE_PASSWORD_AND_AUTO_LOGIN) && SettingsManager.getLocalPreferences().getPswdAutologin()) {
 		if (!preferences.isSSOEnabled()) {

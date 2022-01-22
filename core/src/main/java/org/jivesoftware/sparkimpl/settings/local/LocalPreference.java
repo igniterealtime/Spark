@@ -16,9 +16,11 @@
 
 package org.jivesoftware.sparkimpl.settings.local;
 
+import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.spark.preference.Preference;
+import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
@@ -85,6 +87,13 @@ public class LocalPreference implements Preference {
         preferences.setIdleMessage(panel.getIdleMessage());
         preferences.setUsingSingleTrayClick(panel.useSingleClickInTray());
 
+        if(Default.getBoolean(Default.IDLE_TIME_LOCK) || !Enterprise.containsFeature(Enterprise.IDLE_TIME_LOCK_FEATURE)) {
+            preferences.setIdleTime(Integer.parseInt(Default.getString(Default.IDLE_TIME)));
+        }
+
+        if(Default.getBoolean(Default.IDLE_ON_LOCK) || !Enterprise.containsFeature(Enterprise.IDLE_ON_LOCK_FEATURE)){
+            preferences.setIdleOn(true);
+        }
         return preferences;
     }
 
