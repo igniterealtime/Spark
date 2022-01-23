@@ -21,6 +21,7 @@ import org.dom4j.Element;
 import org.dom4j.Node;
 import org.dom4j.io.SAXReader;
 import org.jivesoftware.Spark;
+import org.jivesoftware.spark.util.StringUtils;
 import org.jivesoftware.spark.util.URLFileSystem;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
@@ -35,6 +36,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -116,6 +122,7 @@ public class EmoticonManager {
 		File newEmoticonDir = new File(Spark.getLogDirectory().getParentFile(),
 				"xtra/emoticons").getAbsoluteFile();
 		newEmoticonDir.mkdirs();
+        deleteOldEmoticoms(newEmoticonDir);
 
 		File[] files = EMOTICON_DIRECTORY.listFiles();
 		for (File file : files) {
@@ -562,5 +569,90 @@ public class EmoticonManager {
 
 		return rootDirectory;
 	}
+    /**
+     * Deletes Emoticons in pathToSearch that have a different md5-hash than its correspondant in install\spark\xtra\emoticons
+     */
+    public void deleteOldEmoticoms( File pathToSearch )
+    {
+        final String installPath = Spark.getBinDirectory().getParentFile() + File.separator + "xtra" + File.separator +
+            "emoticons" + File.separator;
+        final File[] files = new File( installPath ).listFiles();
+        final List<File> installerFiles;
+        if ( files == null )
+        {
+            installerFiles = Collections.emptyList();
+        }
+        else
+        {
+            installerFiles = Arrays.asList( files );
+        }
+
+        final File[] installedEmoticons = pathToSearch.listFiles( File::isDirectory );
+        if ( installedEmoticons == null )
+        {
+            return;
+        }
+
+        for ( final File file : installedEmoticons )
+        {
+            final File zipFile = new File( pathToSearch, file.getName() + ".zip" );
+            if ( !zipFile.exists() )
+            {
+                uninstall( file );
+            }
+            else
+            {
+                try
+                {
+                    final File f = new File( installPath + zipFile.getName() );
+                    if ( installerFiles.contains( f ) )
+                    {
+                        final String oldfile = StringUtils.getMD5Checksum( zipFile.getAbsolutePath() );
+                        final String newfile = StringUtils.getMD5Checksum( f.getAbsolutePath() );
+
+                        Log.debug( f.getAbsolutePath() + "   " + zipFile.getAbsolutePath() );
+                        Log.debug( newfile + " " + oldfile + " equal:" + oldfile.equals( newfile ) );
+
+                        if ( !oldfile.equals( newfile ) )
+                        {
+                            Log.debug( "deleting: " + file.getAbsolutePath() + "," + zipFile.getAbsolutePath() );
+                            uninstall( file );
+                            zipFile.delete();
+                        }
+                    }
+                }
+                catch ( Exception e )
+                {
+                    Log.error( "No such file", e );
+                }
+            }
+        }
+    }
+    private void uninstall( File emoticonDir )
+    {
+        try
+        {
+            Files.walkFileTree( emoticonDir.toPath(), new SimpleFileVisitor<Path>()
+            {
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs ) throws IOException
+                {
+                    Files.delete( file );
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult postVisitDirectory( Path dir, IOException exc ) throws IOException
+                {
+                    Files.delete( dir );
+                    return FileVisitResult.CONTINUE;
+                }
+            } );
+        }
+        catch ( IOException e )
+        {
+            Log.error( "An unexpected exception occurred while trying to uninstall a emoticon from: " + emoticonDir, e );
+        }
+    }
 
 }
