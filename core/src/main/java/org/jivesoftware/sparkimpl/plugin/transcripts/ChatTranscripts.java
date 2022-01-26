@@ -165,7 +165,7 @@ public final class ChatTranscripts {
      * Retrieve the current chat history.
      *
      * @param jid the jid of the user whos history you wish to retrieve.
-     * @return the ChatTranscript (last 20 messages max).
+     * @return the ChatTranscript (default = last 20 messages max).
      */
     public static ChatTranscript getCurrentChatTranscript(Jid jid) {
         return getTranscript(getCurrentHistoryFile(jid));
@@ -228,7 +228,7 @@ public final class ChatTranscripts {
     }
 
     /**
-     * Returns the current transcript (20 messages) for a particular jid.
+     * Returns the current transcript (default = 20 messages) for a particular jid.
      *
      * @param jid the jid of the user.
      * @return the current transcript file.
