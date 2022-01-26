@@ -55,6 +55,9 @@ public class ThemePanel extends JPanel {
     private final JTextField chatRoomFontField;
     private final JLabel chatRoomFontLabel;
 
+    private final JTextField maxCurrentHistorySizeField;
+    private final JLabel maxCurrentHistorySizeLabel;
+
     private final JCheckBox emoticonCheckBox;
     private JFileChooser fc;
 
@@ -199,6 +202,10 @@ public class ThemePanel extends JPanel {
         chatRoomFontField = new JTextField();
         chatRoomFontLabel = new JLabel();
 
+        maxCurrentHistorySizeField = new JTextField();
+        maxCurrentHistorySizeLabel = new JLabel();
+
+
         String[] r = {
             Res.getString("checkbox.reconnect.panel.big"),
             Res.getString("checkbox.reconnect.panel.small"),
@@ -229,6 +236,7 @@ public class ThemePanel extends JPanel {
 
         ResourceUtils.resLabel(contactListFontLabel, contactListFontField, Res.getString("label.contactlist.fontsize"));
         ResourceUtils.resLabel(chatRoomFontLabel, chatRoomFontField, Res.getString("label.chatroom.fontsize"));
+        ResourceUtils.resLabel(maxCurrentHistorySizeLabel, maxCurrentHistorySizeField, Res.getString("label.chatroom.maxcurrenthistorysize"));
         ResourceUtils.resButton(showAvatarsBox, Res.getString("checkbox.show.avatars.in.contactlist"));
         ResourceUtils.resLabel(avatarSizeLabel, avatarSizeField, Res.getString("label.contactlist.avatarsize"));
         ResourceUtils.resButton(showVCards, Res.getString("title.appearance.showVCards"));
@@ -267,17 +275,19 @@ public class ThemePanel extends JPanel {
         add(chatRoomFontField, new GridBagConstraints(1, 5, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 50, 0));
         add(contactListFontLabel, new GridBagConstraints(0, 6, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         add(contactListFontField, new GridBagConstraints(1, 6, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 50, 0));
-        add(showAvatarsBox, new GridBagConstraints(0, 7, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-        add(avatarSizeLabel, new GridBagConstraints(0, 8, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-        add(avatarSizeField, new GridBagConstraints(1, 8, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 50, 0));
-        add(showVCards, new GridBagConstraints(0, 9, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 50, 0));
-        add(disableGrayingIdleContacts, new GridBagConstraints(0, 10, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 50, 0));
-        add(_useTabsForTransports, new GridBagConstraints(0, 11, 3, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 50, 0));
-        add(_useTabsForConference, new GridBagConstraints(0, 12, 3, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 50, 0));
+        add(maxCurrentHistorySizeLabel, new GridBagConstraints(0, 7, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        add(maxCurrentHistorySizeField, new GridBagConstraints(1, 7, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 50, 0));
+        add(showAvatarsBox, new GridBagConstraints(0, 8, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        add(avatarSizeLabel, new GridBagConstraints(0, 9, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        add(avatarSizeField, new GridBagConstraints(1, 9, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 50, 0));
+        add(showVCards, new GridBagConstraints(0, 10, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 50, 0));
+        add(disableGrayingIdleContacts, new GridBagConstraints(0, 11, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 50, 0));
+        add(_useTabsForTransports, new GridBagConstraints(0, 12, 3, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 50, 0));
+        add(_useTabsForConference, new GridBagConstraints(0, 13, 3, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 50, 0));
 
         JLabel reconnectionlabel = new JLabel(Res.getString("checkbox.reconnect.info"));
-        add(reconnectionlabel, new GridBagConstraints(0, 13, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 0));
-        add(_showReconnectBox, new GridBagConstraints(1, 13, 3, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 50, 0));
+        add(reconnectionlabel, new GridBagConstraints(0, 14, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 0));
+        add(_showReconnectBox, new GridBagConstraints(1, 14, 3, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 50, 0));
 
         // Activate live one.
         _useTabsForTransports.setSelected(pref.getShowTransportTab());
@@ -335,9 +345,11 @@ public class ThemePanel extends JPanel {
         try {
             int chatRoomFontSize = pref.getChatRoomFontSize();
             int contactListFontSize = pref.getContactListFontSize();
+            int maxCurrentHistorySize = pref.getMaxCurrentHistorySize();
 
             chatRoomFontField.setText(Integer.toString(chatRoomFontSize));
             contactListFontField.setText(Integer.toString(contactListFontSize));
+            maxCurrentHistorySizeField.setText(Integer.toString(maxCurrentHistorySize));
         } catch (Exception e) {
             Log.error(e);
         }
@@ -474,6 +486,10 @@ public class ThemePanel extends JPanel {
 
     public String getContactListFontSize() {
         return contactListFontField.getText();
+    }
+
+    public String getMaxCurrentHistorySize() {
+        return maxCurrentHistorySizeField.getText();
     }
 
     public int getContactListIconSize() {

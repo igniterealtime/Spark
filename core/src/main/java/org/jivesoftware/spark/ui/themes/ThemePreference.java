@@ -104,9 +104,11 @@ public class ThemePreference implements Preference {
         try {
             String chatRoomFontSize = panel.getThemePanel().getChatRoomFontSize();
             String contactListFontSize = panel.getThemePanel().getContactListFontSize();
+            String maxCurrentHistorySize = panel.getThemePanel().getMaxCurrentHistorySize();
 
             pref.setChatRoomFontSize(Integer.parseInt(chatRoomFontSize));
             pref.setContactListFontSize(Integer.parseInt(contactListFontSize));
+            pref.setMaxCurrentHistorySize(Integer.parseInt(maxCurrentHistorySize));
         }
         catch (NumberFormatException e) {
             Log.error(e);
