@@ -1652,7 +1652,7 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
         localPref.setProxyEnabled(localPref.isProxyEnabled());
         //  localPref.setProxyPassword("");
         //  localPref.setProxyUsername("");
-        localPref.setResource("Spark");
+        localPref.setResource(localPref.getResource());
         localPref.setSaslGssapiSmack3Compatible(localPref.isSaslGssapiSmack3Compatible());
         localPref.setSSL(localPref.isSSL());
         localPref.setSecurityMode(localPref.getSecurityMode());
