@@ -92,8 +92,6 @@ public class Default {
     public static final String USER_DIRECTORY_WINDOWS = "USER_DIRECTORY_WINDOWS";
     public static final String USER_DIRECTORY_LINUX = "USER_DIRECTORY_LINUX";
     public static final String USER_DIRECTORY_MAC = "USER_DIRECTORY_MAC";
-    public static final String HOSTNAME_AS_RESOURCE = "HOSTNAME_AS_RESOURCE";
-    public static final String VERSION_AS_RESOURCE = "VERSION_AS_RESOURCE";
     public static final String HISTORY_DISABLED = "HISTORY_DISABLED";
     public static final String HIDE_HISTORY_SETTINGS = "HIDE_HISTORY_SETTINGS";
     public static final String HIDE_SAVE_PASSWORD_AND_AUTO_LOGIN = "HIDE_SAVE_PASSWORD_AND_AUTO_LOGIN";
