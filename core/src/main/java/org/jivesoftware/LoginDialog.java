@@ -1119,16 +1119,16 @@ public class LoginDialog {
                     connection.login();
                 } else {
                     String resource = localPref.getResource();
-                    if (Default.getBoolean(Default.HOSTNAME_AS_RESOURCE) || localPref.isUseHostnameAsResource()) {
+                    if (Default.getBoolean(Default.USE_HOSTNAME_AS_RESOURCE) || localPref.isUseHostnameAsResource()) {
                         try {
                             resource = InetAddress.getLocalHost().getHostName();
                         } catch (UnknownHostException e) {
                             Log.warning("Cannot set hostname as resource - unable to retrieve hostname.", e);
                         }
-                    } else if (Default.getBoolean(Default.VERSION_AS_RESOURCE) || localPref.isUseVersionAsResource()) {
+                    } else if (Default.getBoolean(Default.USE_VERSION_AS_RESOURCE) || localPref.isUseVersionAsResource()) {
                         resource = JiveInfo.getName() + " " + JiveInfo.getVersion();
                     }
-
+                    
                     Resourcepart resourcepart = Resourcepart.from(modifyWildcards(resource).trim());
                     connection.login(getLoginUsername(), getLoginPassword(), resourcepart);
                 }
@@ -1597,8 +1597,10 @@ public class LoginDialog {
         localPref.setInvisibleLogin(Enterprise.containsFeature(Enterprise.INVISIBLE_LOGIN_FEATURE));
         localPref.setAnonymousLogin(Enterprise.containsFeature(Enterprise.ANONYMOUS_LOGIN_FEATURE));
         localPref.setPswdAutologin(Enterprise.containsFeature(Enterprise.SAVE_PASSWORD_FEATURE));
-        localPref.setUseHostnameAsResource(Enterprise.containsFeature(Enterprise.HOSTNAME_AS_RESOURCE_FEATURE));
-        localPref.setUseVersionAsResource(Enterprise.containsFeature(Enterprise.VERSION_AS_RESOURCE_FEATURE));
+        if (Enterprise.containsFeature(Enterprise.HOSTNAME_AS_RESOURCE_FEATURE) != Enterprise.containsFeature(Enterprise.VERSION_AS_RESOURCE_FEATURE)) {
+            localPref.setUseHostnameAsResource(Enterprise.containsFeature(Enterprise.HOSTNAME_AS_RESOURCE_FEATURE));
+            localPref.setUseVersionAsResource(Enterprise.containsFeature(Enterprise.VERSION_AS_RESOURCE_FEATURE));
+        }
     }
 
     private void initAdvancedDefaults() {
