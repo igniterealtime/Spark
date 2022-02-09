@@ -151,11 +151,9 @@ public class LocalPreferencePanel extends JPanel {
 	inputPanel.add(_idleStatusText, new GridBagConstraints(1, 4, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST,GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 0));
     inputPanel.add(_idleBox, new GridBagConstraints(0, 5, 2, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 0));
 
-    if(Default.getBoolean(Default.IDLE_TIME_LOCK) || !Enterprise.containsFeature(Enterprise.IDLE_TIME_LOCK_FEATURE)) {
+    if(Default.getBoolean(Default.IDLE_LOCK) || !Enterprise.containsFeature(Enterprise.IDLE_FEATURE)) {
         _idleField.setEnabled(false);
-    }
-
-    if(Default.getBoolean(Default.IDLE_ON_LOCK) || !Enterprise.containsFeature(Enterprise.IDLE_ON_LOCK_FEATURE)){
+        _idleStatusText.setEnabled(false);
         _idleBox.setEnabled(false);
     }
     if(!Default.getBoolean(Default.HIDE_SAVE_PASSWORD_AND_AUTO_LOGIN) && SettingsManager.getLocalPreferences().getPswdAutologin()) {

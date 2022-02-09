@@ -149,8 +149,7 @@ public class Default {
     public static final String PLUGIN_REPOSITORY = "PLUGIN_REPOSITORY";
     public static final String PLUGIN_REPOSITORY_USE_PROXY = "PLUGIN_REPOSITORY_USE_PROXY";
     public static final String PROXY_PROTOCOL = "PROXY_PROTOCOL";
-    public static final String IDLE_ON_LOCK = "IDLE_ON_LOCK";
-    public static final String IDLE_TIME_LOCK = "IDLE_TIME_LOCK";
+    public static final String IDLE_LOCK = "IDLE_LOCK";
     public static final String IDLE_TIME = "IDLE_TIME";
 
     private static final ClassLoader cl = SparkRes.class.getClassLoader();
