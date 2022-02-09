@@ -102,7 +102,6 @@ public class LocalPreferencePanel extends JPanel {
 	_idleBox.setSelected(preferences.isIdleOn());
 	_idleField.setText(Integer.toString(preferences.getIdleTime()));
 
-
 	final JPanel inputPanel = new JPanel();
 	inputPanel.setLayout(new GridBagLayout());
 	inputPanel.setBorder(BorderFactory.createTitledBorder(Res
@@ -156,6 +155,7 @@ public class LocalPreferencePanel extends JPanel {
         _idleStatusText.setEnabled(false);
         _idleBox.setEnabled(false);
     }
+    
     if(!Default.getBoolean(Default.HIDE_SAVE_PASSWORD_AND_AUTO_LOGIN) && SettingsManager.getLocalPreferences().getPswdAutologin()) {
 		if (!preferences.isSSOEnabled()) {
 			inputPanel.add(_savePasswordBox, new GridBagConstraints(0, 6, 2, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 0));

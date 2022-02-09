@@ -16,11 +16,9 @@
 
 package org.jivesoftware.sparkimpl.settings.local;
 
-import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.spark.preference.Preference;
-import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
