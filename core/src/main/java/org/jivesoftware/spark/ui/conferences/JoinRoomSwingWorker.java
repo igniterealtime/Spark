@@ -194,6 +194,7 @@ public class JoinRoomSwingWorker extends SwingWorker
         }
         else if ( groupChat.isJoined() && getValue() != null )
         {
+            Log.debug("Activating chat room that we just joined");
             final ChatRoom room = (ChatRoom) getValue();
             ConferenceUtils.changePresenceToAvailableIfInvisible();
             final ChatContainer container = SparkManager.getChatManager().getChatContainer();
@@ -202,9 +203,11 @@ public class JoinRoomSwingWorker extends SwingWorker
                 container.addChatRoom( room );
             }
             container.activateChatRoom( room );
+            Log.debug("Activated chat room that we just joined");
 
             if ( followUp != null )
             {
+                Log.debug("Starting chat room join follow-up");
                 followUp.start();
             }
         }

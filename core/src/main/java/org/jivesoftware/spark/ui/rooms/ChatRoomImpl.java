@@ -120,6 +120,7 @@ public class ChatRoomImpl extends ChatRoom {
      * @param title               the title of the room.
      */
     public ChatRoomImpl(final EntityJid participantJID, Resourcepart participantNickname, CharSequence title, boolean initUi) {
+        Log.debug("Loading chat room impl: " + title);
         this.active = true;
         //activateNotificationTime = System.currentTimeMillis();
         setParticipantJID(participantJID);
@@ -190,6 +191,7 @@ public class ChatRoomImpl extends ChatRoom {
         }
 
         lastActivity = System.currentTimeMillis();
+        Log.debug("Loaded chat room impl: " + title);
     }
 
     /**
