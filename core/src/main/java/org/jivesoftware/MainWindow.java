@@ -83,7 +83,6 @@ public final class MainWindow extends ChatFrame implements ActionListener {
     private JEditorPane aboutBoxPane;
 
     private static MainWindow singleton;
-    private static final Object LOCK = new Object();
 
     /**
      * Returns the singleton instance of <CODE>MainWindow</CODE>,
@@ -92,12 +91,9 @@ public final class MainWindow extends ChatFrame implements ActionListener {
      *
      * @return the singleton instance of <Code>MainWindow</CODE>
      */
-    public static MainWindow getInstance() {
-        // Synchronize on LOCK to ensure that we don't end up creating two singletons.
-        synchronized (LOCK) {
-            if (null == singleton) {
-                singleton = new MainWindow(Default.getString(Default.APPLICATION_NAME), SparkManager.getApplicationImage());
-            }
+    public static synchronized MainWindow getInstance() {
+        if (null == singleton) {
+            singleton = new MainWindow(Default.getString(Default.APPLICATION_NAME), SparkManager.getApplicationImage());
         }
         return singleton;
     }
