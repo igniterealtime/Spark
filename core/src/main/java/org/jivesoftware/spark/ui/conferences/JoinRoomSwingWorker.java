@@ -1,6 +1,7 @@
 package org.jivesoftware.spark.ui.conferences;
 
 import org.jivesoftware.resource.Res;
+import org.jivesoftware.smack.SmackConfiguration;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.StanzaError;
@@ -22,8 +23,12 @@ import org.jxmpp.jid.parts.Resourcepart;
 import org.jxmpp.stringprep.XmppStringprepException;
 
 import javax.swing.*;
+import java.awt.*;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * An executable that makes the user join a room.
@@ -84,25 +89,18 @@ public class JoinRoomSwingWorker extends SwingWorker
     @Override
     public Object construct()
     {
+        // A SwingWorker by definition is to be used to offload operations from the Event Dispatcher Thread.
+        if (SmackConfiguration.DEBUG && EventQueue.isDispatchThread()) {
+            throw new IllegalStateException("Must NOT be called on the Event Dispatcher Thread (but was)");
+        }
+
         try
         {
+            Log.debug("Joining chat room " + roomJID);
             groupChat = MultiUserChatManager.getInstanceFor( SparkManager.getConnection() ).getMultiUserChat( roomJID );
-
-            // Create a UI component, if one was not yet created. It is important that this happens before the MUC is
-            // joined server-side, as the UI component needs to be able to display data that is sent by the server upon
-            // joining the room.
-            ChatRoom room;
-            try
-            {
-                final EntityBareJid roomName = groupChat.getRoom();
-                room = SparkManager.getChatManager().getChatContainer().getChatRoom( roomName );
-            }
-            catch ( ChatRoomNotFoundException e )
-            {
-                room = UIComponentRegistry.createGroupChatRoom( groupChat );
-                ((GroupChatRoom) room).setPassword( password );
-                ((GroupChatRoom) room).setTabTitle( tabTitle );
-            }
+            Log.debug("... got groupchat for " + roomJID);
+            boolean passwordRequired = ConferenceUtils.isPasswordRequired( roomJID );
+            Log.debug("... password required for " + roomJID + ": " + passwordRequired);
 
             // Use the default nickname, if none has been provided.
             if ( nickname == null )
@@ -110,28 +108,53 @@ public class JoinRoomSwingWorker extends SwingWorker
                 nickname = SettingsManager.getRelodLocalPreferences().getNickname();
             }
 
-            // Join the MUC server-sided, if we're not already in.
-            if ( !groupChat.isJoined() )
-            {
-                if ( password == null && ConferenceUtils.isPasswordRequired( roomJID ) )
-                {
-                    JLabel label = new JLabel(Res.getString("message.enter.room.password"));
-                    JPasswordField passwordField = new JPasswordField();
-                    passwordField.addAncestorListener(new RequestFocusListener());
-                    JOptionPane.showConfirmDialog(null, new Object[]{label, passwordField}, Res.getString("title.password.required"), JOptionPane.OK_CANCEL_OPTION);
-                    password = new String(passwordField.getPassword());
+            AtomicReference<ChatRoom> roomUIObject = new AtomicReference<>();
+            EventQueue.invokeAndWait(() -> {
+                // Create a UI component, if one was not yet created. It is important that this happens before the MUC is
+                // joined server-side, as the UI component needs to be able to display data that is sent by the server upon
+                // joining the room.
+                ChatRoom room;
+                try {
+                    room = SparkManager.getChatManager().getChatContainer().getChatRoom(groupChat.getRoom());
+                } catch (ChatRoomNotFoundException e) {
+                    room = UIComponentRegistry.createGroupChatRoom(groupChat);
+                    ((GroupChatRoom) room).setPassword(password);
+                    ((GroupChatRoom) room).setTabTitle(tabTitle);
+                }
+                roomUIObject.set(room);
+            });
+            Log.debug("... created UI object for " + roomJID);
 
-                    if ( !ModelUtil.hasLength( password ) )
-                    {
+            if ( !groupChat.isJoined() ) {
+                // Join the MUC server-sided, if we're not already in.
+                if (password == null && passwordRequired) {
+
+                    EventQueue.invokeAndWait(() -> {
+                        JLabel label = new JLabel(Res.getString("message.enter.room.password"));
+                        JPasswordField passwordField = new JPasswordField();
+                        passwordField.addAncestorListener(new RequestFocusListener());
+                        JOptionPane.showConfirmDialog(null, new Object[]{label, passwordField}, Res.getString("title.password.required"), JOptionPane.OK_CANCEL_OPTION);
+                        password = new String(passwordField.getPassword());
+                    });
+
+                    if (!ModelUtil.hasLength(password)) {
                         return null;
                     }
                 }
 
-                if ( !ConferenceUtils.confirmToRevealVisibility() )
-                {
+                AtomicBoolean wontJoin = new AtomicBoolean(false);
+                EventQueue.invokeAndWait(() -> {
+                    if (!ConferenceUtils.confirmToRevealVisibility()) {
+                        wontJoin.set(true);
+                    }
+                });
+                if (wontJoin.get()) {
                     return null;
                 }
+            }
 
+            if ( !groupChat.isJoined() ) {
+                Log.debug("Start server-sided join of chat room " + roomJID);
                 if ( ModelUtil.hasLength( password ) )
                 {
                     groupChat.join( nickname, password );
@@ -140,39 +163,48 @@ public class JoinRoomSwingWorker extends SwingWorker
                 {
                     groupChat.join( nickname );
                 }
+                Log.debug("Joined chat room " + roomJID + " on the server.");
             }
-            return room;
+
+            return roomUIObject.get();
         }
-        catch ( XMPPException | SmackException | InterruptedException ex )
+        catch ( XMPPException | SmackException | InterruptedException | InvocationTargetException ex )
         {
             Log.error( "An exception occurred while trying to join room '" + roomJID + "'.", ex );
             StanzaError error = null;
             if ( ex instanceof XMPPException.XMPPErrorException )
             {
                 error = ( (XMPPException.XMPPErrorException) ex ).getStanzaError();
-
+                AtomicReference<Object> retryAttemptResult = new AtomicReference<>();
                 if ( StanzaError.Condition.conflict.equals( error.getCondition() ) )
                 {
-                    final Object userInput = JOptionPane.showInputDialog(
-                            SparkManager.getMainWindow(),
-                            Res.getString( "message.nickname.in.use" ),
-                            Res.getString( "title.change.nickname" ),
-                            JOptionPane.WARNING_MESSAGE,
-                            null,
-                            null, // null selection values implies text field.
-                            nickname
+                    try {
+                        EventQueue.invokeAndWait(() -> {
+                            final Object userInput = JOptionPane.showInputDialog(
+                                SparkManager.getMainWindow(),
+                                Res.getString( "message.nickname.in.use" ),
+                                Res.getString( "title.change.nickname" ),
+                                JOptionPane.WARNING_MESSAGE,
+                                null,
+                                null, // null selection values implies text field.
+                                nickname
                             );
 
-                    if ( userInput != null )
-                    {
-                        Log.debug( "Retry joining room '" + roomJID + "', using nickname: " + userInput );
-                        try {
-                            this.nickname = Resourcepart.from((String) userInput);
-                        } catch (XmppStringprepException e) {
-                            throw new IllegalStateException(e);
-                        }
-                        return construct();
+                            if ( userInput != null )
+                            {
+                                Log.debug( "Retry joining room '" + roomJID + "', using nickname: " + userInput );
+                                try {
+                                    this.nickname = Resourcepart.from((String) userInput);
+                                } catch (XmppStringprepException e) {
+                                    throw new IllegalStateException(e);
+                                }
+                                retryAttemptResult.set(construct());
+                            }
+                        });
+                    } catch (InterruptedException | InvocationTargetException e) {
+                        Log.error( "An exception occurred while trying to join room '" + roomJID + "' in the retry attempt. Giving up.", ex );
                     }
+                    return retryAttemptResult;
                 }
             }
 
