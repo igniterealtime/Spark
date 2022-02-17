@@ -223,7 +223,9 @@ public class Workspace extends JPanel implements StanzaListener {
      * Starts the Loading of all Spark Plugins.
      */
     public void loadPlugins() {
-    
+
+        Log.debug("Start loading plugins");
+
         // Send Available status
         SparkManager.getSessionManager().changePresence(statusBox.getPresence());
         
@@ -260,32 +262,44 @@ public class Workspace extends JPanel implements StanzaListener {
         SparkManager.getSessionManager().getConnection().addAsyncStanzaListener(workspacePresenceListener, new StanzaTypeFilter(Presence.class));
 
         // Until we have better plugin management, will init after presence updates.
+        Log.debug("Manual init of gateway plugin");
         gatewayPlugin = new GatewayPlugin();
         gatewayPlugin.initialize();
 
         // Load all non-presence related items.
+        Log.debug("Manual init of conference bookmarks");
         conferences.loadConferenceBookmarks();
         SearchManager.getInstance();
+        Log.debug("Manual init of chattranscriptplugin");
         transcriptPlugin = new ChatTranscriptPlugin();
 
         // Load Broadcast Plugin
+        Log.debug("Manual init of broadcastplugink");
         broadcastPlugin = new BroadcastPlugin();
         broadcastPlugin.initialize();
 
         // Load BookmarkPlugin
+        Log.debug("Manual init of Bookmarkplugin");
         bookmarkPlugin = new BookmarkPlugin();
         bookmarkPlugin.initialize();
+
+        Log.debug("Done with manual plugin inits");
 
         // Schedule loading of the plugins after two seconds.
         TaskEngine.getInstance().schedule(new TimerTask() {
             @Override
 			public void run() {
+                Log.debug("Initializing plugin manager");
                 final PluginManager pluginManager = PluginManager.getInstance();
 
+                Log.debug("Add main window listener");
                 SparkManager.getMainWindow().addMainWindowListener(pluginManager);
+
+                Log.debug("Initializing plugins");
                 pluginManager.initializePlugins();
 
                 // Subscriptions are always manual
+                Log.debug("Set roster mode");
                 Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
                 roster.setSubscriptionMode(Roster.SubscriptionMode.manual);
             }

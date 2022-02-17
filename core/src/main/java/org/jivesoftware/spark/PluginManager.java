@@ -44,6 +44,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -626,6 +628,7 @@ public class PluginManager implements MainWindowListener
     {
         try
         {
+            Log.debug("Start plugin dependency check");
             int j;
             boolean dependencyFound;
 
@@ -719,12 +722,13 @@ public class PluginManager implements MainWindowListener
                     }
                 }
             }
+            Log.debug("Completed plugin dependency check");
 
             EventQueue.invokeLater( () -> {
                 for ( Plugin plugin : plugins )
                 {
                     long start = System.currentTimeMillis();
-                    Log.debug( "Trying to initialize " + plugin );
+                    Log.debug( "Starting to initialize " + plugin );
                     try
                     {
                         plugin.initialize();
@@ -908,8 +912,12 @@ public class PluginManager implements MainWindowListener
 
     private void loadPlugin( PluginClassLoader classLoader, File file ) throws MalformedURLException
     {
+        System.out.println("Start loading plugin " + file.getAbsolutePath());
+        Instant start = Instant.now();
         classLoader.addPlugin( file );
         loadPublicPlugin( file );
+        Duration duration = Duration.between(start, Instant.now());
+        System.out.println("Took " + duration + " to finish loading plugin " + file.getAbsolutePath());
     }
 
     /**
@@ -935,6 +943,8 @@ public class PluginManager implements MainWindowListener
             EventQueue.invokeAndWait( () -> {
                 Log.debug( "Trying to initialize " + pluginClass );
                 pluginClass.initialize();
+                Log.debug( "Done initializing " + pluginClass );
+
             } );
         }
         catch ( Exception e )

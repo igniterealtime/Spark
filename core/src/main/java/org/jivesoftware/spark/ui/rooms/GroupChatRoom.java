@@ -89,6 +89,7 @@ public class GroupChatRoom extends ChatRoom
      */
     public GroupChatRoom( final MultiUserChat chat )
     {
+        Log.debug("Loading Group Chat Room for " + chat.getRoom());
         this.chat = chat;
 
         // Create the filter and register with the current connection making sure to filter by room
@@ -327,6 +328,7 @@ public class GroupChatRoom extends ChatRoom
                 scrollToBottom();
             }
         } );
+        Log.debug("Loaded Group Chat Room for " + chat.getRoom());
     }
 
     public Message getLastMessage()

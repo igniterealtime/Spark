@@ -17,6 +17,8 @@ package org.jivesoftware.spark.util;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Arrays;
 
 import org.apache.commons.lang3.reflect.ConstructorUtils;
@@ -485,7 +487,8 @@ public final class UIComponentRegistry {
     private static <T> T instantiate(Class<? extends T> currentClass, Object... args) {
         T instance = null;
 
-        Log.debug("Args: " + Arrays.toString(args));
+        Instant start = Instant.now();
+        Log.debug("Instantiate " + currentClass + " with args: " + Arrays.toString(args));
         Class<?>[] classes = new Class<?>[args.length];
         try {
             for (int i = 0; i < args.length; i++) {
@@ -493,6 +496,7 @@ public final class UIComponentRegistry {
             }
             final Constructor<? extends T> ctor = ConstructorUtils.getMatchingAccessibleConstructor(currentClass, classes);
             instance = ctor.newInstance(args);
+            Log.debug("Instantiated " + currentClass + " in " + Duration.between(start, Instant.now()));
         } catch (final Exception e) {
             // not pretty but we're catching several exceptions we can do little
             // about

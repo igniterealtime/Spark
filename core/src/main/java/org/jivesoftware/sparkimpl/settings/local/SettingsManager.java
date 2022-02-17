@@ -84,6 +84,7 @@ public class SettingsManager {
      * Persists the settings to the local file system.
      */
     public static void saveSettings() {
+        Log.debug("Saving settings...");
         final Properties props = localPreferences.getProperties();
 
         try {
