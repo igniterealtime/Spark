@@ -23,6 +23,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.security.KeyManagementException;
@@ -38,6 +39,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import javax.naming.NamingException;
 import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
@@ -82,7 +84,6 @@ import org.jivesoftware.smack.ReconnectionManager;
 import org.jivesoftware.smack.SASLAuthentication;
 import org.jivesoftware.smack.SmackConfiguration;
 import org.jivesoftware.smack.SmackException;
-import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.ConnectionConfiguration.DnssecMode;
 import org.jivesoftware.smack.parsing.ExceptionLoggingCallback;
 import org.jivesoftware.smack.proxy.ProxyInfo;
@@ -103,12 +104,10 @@ import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.sasl.SASLGSSAPIv3CompatMechanism;
 import org.jivesoftware.spark.ui.login.GSSAPIConfiguration;
 import org.jivesoftware.spark.ui.login.LoginSettingDialog;
-import org.jivesoftware.spark.util.BrowserLauncher;
-import org.jivesoftware.spark.util.GraphicUtils;
-import org.jivesoftware.spark.util.ModelUtil;
-import org.jivesoftware.spark.util.ResourceUtils;
+import org.jivesoftware.spark.util.*;
+
 import static org.jivesoftware.spark.util.StringUtils.modifyWildcards;
-import org.jivesoftware.spark.util.SwingWorker;
+
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.certificates.CertificateModel;
 import org.jivesoftware.sparkimpl.certificates.SparkSSLContextCreator;
@@ -127,6 +126,7 @@ import org.jxmpp.jid.parts.Resourcepart;
 import org.jxmpp.stringprep.XmppStringprepException;
 import org.jxmpp.util.XmppStringUtils;
 import org.minidns.dnsname.DnsName;
+import org.minidns.record.A;
 
 /**
  *
@@ -169,7 +169,12 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
         }
     }
 
+    // Should be called only from the Event Dispatcher Thread.
     private void init() {
+        // Most Swing components are not thread safe, and _must_ be executed on the Event Dispatcher Thread.
+        if (SmackConfiguration.DEBUG && !EventQueue.isDispatchThread()) {
+            throw new IllegalStateException("Must be called on the Event Dispatcher Thread (but was not)");
+        }
 
         ResourceUtils.resButton(cbSavePassword, Res.getString("checkbox.save.password"));
         ResourceUtils.resButton(cbAutoLogin, Res.getString("checkbox.auto.login"));
@@ -266,7 +271,7 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
         tfPassword.setEnabled(!cbAnonymous.isSelected());
         useSSO(localPref.isSSOEnabled());
         if (cbAutoLogin.isSelected()) {
-            validateLogin();
+            login();
             return;
         }
 
@@ -288,7 +293,7 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
         }
 
         if (username != null && server != null && password != null) {
-            validateLogin();
+            login();
         }
 
         btnCreateAccount.addActionListener(this);
@@ -309,7 +314,13 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
 
     }
 
+    // Should be called only from the Event Dispatcher Thread.
     private void configureVisibility() {
+        // Most Swing components are not thread safe, and _must_ be executed on the Event Dispatcher Thread.
+        if (SmackConfiguration.DEBUG && !EventQueue.isDispatchThread()) {
+            throw new IllegalStateException("Must be called on the Event Dispatcher Thread (but was not)");
+        }
+
         int height = filler3.getPreferredSize().height;
         if (Default.getBoolean(Default.HIDE_SAVE_PASSWORD_AND_AUTO_LOGIN) || !localPref.getPswdAutologin()) {
 
@@ -630,13 +641,14 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
 
     }
 
-    //This method can be overwritten by subclasses to provide additional validations
-    //(such as certificate download functionality when connecting)
-    protected boolean beforeLoginValidations() {
-        return true;
-    }
-
     protected void afterLogin() {
+        Log.debug("Performing post-login tasks");
+
+        // The Event Dispatcher Thread should only be used for fast tasks. The tasks in this method potentially are not.
+        if (SmackConfiguration.DEBUG && EventQueue.isDispatchThread()) {
+            throw new IllegalStateException("Must NOT be called on the Event Dispatcher Thread (but was)");
+        }
+
         // Make certain Enterprise features persist across future logins
         persistEnterprise();
 
@@ -646,6 +658,8 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
 
         // Initialize and write default values from "Advanced Connection Preferences" to disk
         initAdvancedDefaults();
+
+        Log.debug("Finished post-login tasks");
     }
 
     protected XMPPTCPConnectionConfiguration retrieveConnectionConfiguration() {
@@ -803,45 +817,75 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
     /**
      * Returns the username the user defined.
      *
+     * Should be called only from the Event Dispatcher Thread.
+     *
      * @return the username.
      */
     private String getUsername() {
+        // Most Swing components are not thread safe, and _must_ be executed on the Event Dispatcher Thread.
+        if (SmackConfiguration.DEBUG && !EventQueue.isDispatchThread()) {
+            throw new IllegalStateException("Must be called on the Event Dispatcher Thread (but was not)");
+        }
         return XmppStringUtils.escapeLocalpart(tfUsername.getText().trim());
     }
 
     /**
      * Returns the resulting bareJID from username and server
      *
-     * @return
+     * Should be called only from the Event Dispatcher Thread.
+     *
+     * @return the bare JID that's being logged in with.
      */
     private String getBareJid() {
+        // Most Swing components are not thread safe, and _must_ be executed on the Event Dispatcher Thread.
+        if (SmackConfiguration.DEBUG && !EventQueue.isDispatchThread()) {
+            throw new IllegalStateException("Must be called on the Event Dispatcher Thread (but was not)");
+        }
         return tfUsername.getText() + "@" + tfDomain.getText();
     }
 
     /**
      * Returns the password specified by the user.
      *
+     * Should be called only from the Event Dispatcher Thread.
+     *
      * @return the password.
      */
     private String getPassword() {
+        // Most Swing components are not thread safe, and _must_ be executed on the Event Dispatcher Thread.
+        if (SmackConfiguration.DEBUG && !EventQueue.isDispatchThread()) {
+            throw new IllegalStateException("Must be called on the Event Dispatcher Thread (but was not)");
+        }
         return new String(tfPassword.getPassword());
     }
 
     /**
      * Returns the server name specified by the user.
      *
+     * Should be called only from the Event Dispatcher Thread.
+     *
      * @return the server name.
      */
     private String getServerName() {
+        // Most Swing components are not thread safe, and _must_ be executed on the Event Dispatcher Thread.
+        if (SmackConfiguration.DEBUG && !EventQueue.isDispatchThread()) {
+            throw new IllegalStateException("Must be called on the Event Dispatcher Thread (but was not)");
+        }
         return tfDomain.getText().trim();
     }
 
     /**
      * Return whether user wants to login as invisible or not.
      *
+     * Should be called only from the Event Dispatcher Thread.
+     *
      * @return the true if user wants to login as invisible.
      */
     boolean isLoginAsInvisible() {
+        // Most Swing components are not thread safe, and _must_ be executed on the Event Dispatcher Thread.
+        if (SmackConfiguration.DEBUG && !EventQueue.isDispatchThread()) {
+            throw new IllegalStateException("Must be called on the Event Dispatcher Thread (but was not)");
+        }
         return cbLoginInvisible.isSelected();
     }
 
@@ -863,8 +907,7 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
                 btnLogin.setEnabled(true);
             }
         } else if (e.getSource() == btnLogin) {
-            validateLogin();
-
+            TaskEngine.getInstance().submit(this::login);
         } else if (e.getSource() == btnAdvanced) {
             final LoginSettingDialog loginSettingsDialog = new LoginSettingDialog();
             loginSettingsDialog.invoke(loginDialog);
@@ -941,8 +984,14 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
     /**
      * Checks the users input and enables/disables the login button depending on
      * state.
+     *
+     * Should be called only from the Event Dispatcher Thread.
      */
     private void validateDialog() {
+        // Most Swing components are not thread safe, and _must_ be executed on the Event Dispatcher Thread.
+        if (SmackConfiguration.DEBUG && !EventQueue.isDispatchThread()) {
+            throw new IllegalStateException("Must be called on the Event Dispatcher Thread (but was not)");
+        }
         btnLogin.setEnabled(cbAnonymous.isSelected()
                 || ModelUtil.hasLength(getUsername())
                 && (ModelUtil.hasLength(getPassword()) || localPref.isSSOEnabled())
@@ -956,7 +1005,7 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
      */
     private void validate(KeyEvent e) {
         if (btnLogin.isEnabled() && e.getKeyChar() == KeyEvent.VK_ENTER) {
-            validateLogin();
+            login();
         }
     }
 
@@ -975,9 +1024,17 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
     /**
      * Enables/Disables the editable components in the login screen.
      *
+     * Should be called only from the Event Dispatcher Thread.
+     *
      * @param available true to enable components, otherwise false to disable.
      */
-    private void setComponentsAvailable(boolean available) {
+    private void setComponentsAvailable(boolean available)
+    {
+        // Most Swing components are not thread safe, and _must_ be executed on the Event Dispatcher Thread.
+        if (SmackConfiguration.DEBUG && !EventQueue.isDispatchThread()) {
+            throw new IllegalStateException("Must be called on the Event Dispatcher Thread (but was not)");
+        }
+
         cbSavePassword.setEnabled(available);
         cbAutoLogin.setEnabled(available);
         cbLoginInvisible.setEnabled(available);
@@ -1010,53 +1067,17 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
     /**
      * Displays the progress bar.
      *
+     * Should be called only from the Event Dispatcher Thread.
+     *
      * @param visible true to display progress bar, false to hide it.
      */
     private void setProgressBarVisible(boolean visible) {
+        // Most Swing components are not thread safe, and _must_ be executed on the Event Dispatcher Thread.
+        if (SmackConfiguration.DEBUG && !EventQueue.isDispatchThread()) {
+            throw new IllegalStateException("Must be called on the Event Dispatcher Thread (but was not)");
+        }
+
         lblProgress.setVisible(visible);
-    }
-
-    /**
-     * Validates the users login information.
-     */
-    private void validateLogin() {
-        final SwingWorker loginValidationThread = new SwingWorker() {
-            @Override
-            public Object construct() {
-                setLoginUsername(getUsername());
-                setLoginPassword(getPassword());
-                setLoginServer(getServerName());
-                boolean loginSuccessfull = beforeLoginValidations() && login();
-                if (loginSuccessfull) {
-                    afterLogin();
-                    lblProgress.setText(Res.getString("message.connecting.please.wait"));
-
-                    // Startup Spark
-                    startSpark();
-
-                    // dispose login dialog
-                    loginDialog.dispose();
-                    // Show ChangeLog if we need to.
-                    // new ChangeLogDialog().showDialog();
-                } else {
-                    EventQueue.invokeLater(() -> {
-                        setComponentsAvailable(true);
-                        setProgressBarVisible(false);
-                    });
-
-                }
-                return loginSuccessfull;
-            }
-        };
-
-        // Start the login process in separate thread.
-        // Disable text fields
-        setComponentsAvailable(false);
-
-        // Show progressbar
-        setProgressBarVisible(true);
-
-        loginValidationThread.start();
     }
 
     @Override
@@ -1171,18 +1192,42 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
      * Login to the specified server using username, password, and workgroup.
      * Handles error representation as well as logging.
      *
-     * @return true if login was successful, false otherwise
+     * Should _not_ be called from the Event Dispatcher Thread.
      */
-    private boolean login() {
-        localPref = SettingsManager.getLocalPreferences();
-        localPref.setLoginAsInvisible(cbLoginInvisible.isSelected());
-        localPref.setLoginAnonymously(cbAnonymous.isSelected());
+    private void login() {
+        Log.debug("Start login");
 
         if (localPref.isDebuggerEnabled()) {
             SmackConfiguration.DEBUG = true;
         }
 
+        // The Event Dispatcher Thread should only be used for fast tasks. Network IO is not one of those.
+        if (SmackConfiguration.DEBUG && EventQueue.isDispatchThread()) {
+            throw new IllegalStateException("Must NOT be called on the Event Dispatcher Thread (but was)");
+        }
+
+        localPref = SettingsManager.getLocalPreferences();
         SmackConfiguration.setDefaultReplyTimeout(localPref.getTimeOut() * 1000);
+
+        AtomicBoolean savePasswordAfterSuccessfulLogin = new AtomicBoolean(false);
+        AtomicBoolean autoLogin = new AtomicBoolean(false);
+        try {
+            EventQueue.invokeAndWait(() -> {
+                setComponentsAvailable(false);
+                setProgressBarVisible(true);
+
+                setLoginUsername(getUsername());
+                setLoginPassword(getPassword());
+                setLoginServer(getServerName());
+
+                localPref.setLoginAsInvisible(cbLoginInvisible.isSelected());
+                localPref.setLoginAnonymously(cbAnonymous.isSelected());
+                savePasswordAfterSuccessfulLogin.set(cbSavePassword.isSelected());
+                autoLogin.set(cbAutoLogin.isSelected());
+            });
+        } catch (InterruptedException | InvocationTargetException e) {
+            throw new IllegalStateException("Exception while modifying UI components during login.", e);
+        }
 
         try {
             // TODO: SPARK-2140 - add support to Spark for stream management. Challenges expected around reconnection logic!
@@ -1191,23 +1236,7 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
             connection = new XMPPTCPConnection(retrieveConnectionConfiguration());
             connection.setParsingExceptionCallback(new ExceptionLoggingCallback());
 
-            // If we want to launch the Smack debugger, we have to check if we are on the dispatch thread, because Smack will create an UI.
-            if (localPref.isDebuggerEnabled() && !EventQueue.isDispatchThread()) {
-                // Exception handling should be no different from the regular flow.
-                final Exception[] exception = new Exception[1];
-                EventQueue.invokeAndWait(() -> {
-                    try {
-                        connection.connect();
-                    } catch (IOException | SmackException | XMPPException | InterruptedException e) {
-                        exception[0] = e;
-                    }
-                });
-                if (exception[0] != null) {
-                    throw exception[0];
-                }
-            } else {
-                connection.connect();
-            }
+            connection.connect();
 
             if (localPref.isLoginAnonymously() && !localPref.isSSOEnabled()) {
                 // ConnectionConfiguration.performSaslAnonymousAuthentication() used earlier in connection configuration builder,
@@ -1228,6 +1257,7 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
                 Resourcepart resourcepart = Resourcepart.from(modifyWildcards(resource).trim());
                 connection.login(getLoginUsername(), getLoginPassword(), resourcepart);
             }
+            Log.debug("Logged in!");
 
             final SessionManager sessionManager = SparkManager.getSessionManager();
             sessionManager.setServerAddress(connection.getXMPPServiceDomain());
@@ -1266,7 +1296,9 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
             }
 
             EventQueue.invokeLater(() -> {
-                lblProgress.setVisible(false);
+                setEnabled(true);
+                setComponentsAvailable(true);
+                setProgressBarVisible(false);
 
                 // Show error dialog
                 UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
@@ -1297,7 +1329,7 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
                             SettingsManager.saveSettings();
 
                             // Attempt to login again.
-                            validateLogin();
+                            TaskEngine.getInstance().submit(this::login);
                         }
                     } else {
                         final X509Certificate[] lastFailedChain = SparkTrustManager.getLastFailedChain();
@@ -1325,7 +1357,7 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
                                 sparkTrustManager.addChain(lastFailedChain);
 
                                 // Attempt to login again.
-                                validateLogin();
+                                TaskEngine.getInstance().submit(this::login);
                             }
                         } else {
                             // For anything else, show a generic error dialog.
@@ -1334,9 +1366,6 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
                     }
                 }
             });
-
-            setEnabled(true);
-            return false;
         }
 
         // Since the connection and workgroup are valid. Add a ConnectionListener
@@ -1349,27 +1378,39 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
         localPref.setLastUsername(getLoginUsername());
 
         // Check to see if the password should be saved or cleared from file.
-        if (cbSavePassword.isSelected()) {
+        if (savePasswordAfterSuccessfulLogin.get()) {
             try {
-                localPref.setPasswordForUser(getBareJid(), getPassword());
+                localPref.setPasswordForUser(getLoginUsername() + "@" + getLoginServer(), getLoginPassword());
             } catch (Exception e) {
-                Log.error("Error encrypting password.", e);
+                Log.error("Error storing encrypted password.", e);
             }
         } else {
             try {
-                localPref.clearPasswordForAllUsers();//clearPasswordForUser(getBareJid());
+                localPref.clearPasswordForAllUsers();
             } catch (Exception e) {
                 Log.debug("Unable to clear saved password..." + e);
             }
         }
 
-        localPref.setSavePassword(cbSavePassword.isSelected());
-        localPref.setAutoLogin(cbAutoLogin.isSelected());
-
-        localPref.setServer(tfDomain.getText());
+        localPref.setSavePassword(savePasswordAfterSuccessfulLogin.get());
+        localPref.setAutoLogin(autoLogin.get());
+        localPref.setServer(getLoginServer());
         SettingsManager.saveSettings();
 
-        return true;
+        afterLogin();
+
+        EventQueue.invokeLater(()-> {
+            lblProgress.setText(Res.getString("message.connecting.please.wait"));
+
+            // Startup Spark
+            startSpark();
+
+            // dispose login dialog
+            loginDialog.dispose();
+
+            // Show ChangeLog if we need to.
+            // new ChangeLogDialog().showDialog();
+        });
     }
 
     @Override
@@ -1395,68 +1436,73 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
     }
 
     /**
-     * Initializes Spark and initializes all plugins.
+     * Initializes Spark's main window.
+     *
+     * Should only be called from the Event Dispatcher Thread
      */
     private void startSpark() {
+        Log.debug("Starting Spark's main window.");
+        // Most Swing components are not thread safe, and _must_ be executed on the Event Dispatcher Thread.
+        if (SmackConfiguration.DEBUG && !EventQueue.isDispatchThread()) {
+            throw new IllegalStateException("Must be called on the Event Dispatcher Thread (but was not)");
+        }
         // Invoke the MainWindow.
         try {
-            EventQueue.invokeLater(() -> {
-                final MainWindow mainWindow = MainWindow.getInstance();
+            final MainWindow mainWindow = MainWindow.getInstance();
 
-                /*
+            /*
              if (tray != null) {
                  // Remove trayIcon
                  tray.removeTrayIcon(trayIcon);
              }
-                 */
-                // Creates the Spark  Workspace and add to MainWindow
-                Workspace workspace = Workspace.getInstance();
+             */
+            // Creates the Spark  Workspace and add to MainWindow
+            Workspace workspace = Workspace.getInstance();
 
-                LayoutSettings settings = LayoutSettingsManager.getLayoutSettings();
+            LayoutSettings settings = LayoutSettingsManager.getLayoutSettings();
 
-                LocalPreferences pref = SettingsManager.getLocalPreferences();
-                if (pref.isDockingEnabled()) {
-                    JSplitPane splitPane = mainWindow.getSplitPane();
-                    workspace.getCardPanel().setMinimumSize(null);
-                    splitPane.setLeftComponent(workspace.getCardPanel());
-                    SparkManager.getChatManager().getChatContainer().setMinimumSize(null);
-                    splitPane.setRightComponent(SparkManager.getChatManager().getChatContainer());
-                    int dividerLoc = settings.getSplitPaneDividerLocation();
-                    if (dividerLoc != -1) {
-                        mainWindow.getSplitPane().setDividerLocation(dividerLoc);
-                    } else {
-                        mainWindow.getSplitPane().setDividerLocation(240);
-                    }
-
-                    mainWindow.getContentPane().add(splitPane, BorderLayout.CENTER);
+            LocalPreferences pref = SettingsManager.getLocalPreferences();
+            if (pref.isDockingEnabled()) {
+                JSplitPane splitPane = mainWindow.getSplitPane();
+                workspace.getCardPanel().setMinimumSize(null);
+                splitPane.setLeftComponent(workspace.getCardPanel());
+                SparkManager.getChatManager().getChatContainer().setMinimumSize(null);
+                splitPane.setRightComponent(SparkManager.getChatManager().getChatContainer());
+                int dividerLoc = settings.getSplitPaneDividerLocation();
+                if (dividerLoc != -1) {
+                    mainWindow.getSplitPane().setDividerLocation(dividerLoc);
                 } else {
-                    mainWindow.getContentPane().add(workspace.getCardPanel(), BorderLayout.CENTER);
+                    mainWindow.getSplitPane().setDividerLocation(240);
                 }
 
-                final Rectangle mainWindowBounds = settings.getMainWindowBounds();
-                if (mainWindowBounds == null || mainWindowBounds.width <= 0 || mainWindowBounds.height <= 0) {
-                    // Use Default size
-                    mainWindow.setSize(500, 520);
+                mainWindow.getContentPane().add(splitPane, BorderLayout.CENTER);
+            } else {
+                mainWindow.getContentPane().add(workspace.getCardPanel(), BorderLayout.CENTER);
+            }
 
-                    // Center Window on Screen
-                    GraphicUtils.centerWindowOnScreen(mainWindow);
-                } else {
-                    mainWindow.setBounds(mainWindowBounds);
-                }
+            final Rectangle mainWindowBounds = settings.getMainWindowBounds();
+            if (mainWindowBounds == null || mainWindowBounds.width <= 0 || mainWindowBounds.height <= 0) {
+                // Use Default size
+                mainWindow.setSize(500, 520);
 
-                if (loginDialog != null) {
-                    if (loginDialog.isVisible()) {
-                        mainWindow.setVisible(true);
-                    }
-                    loginDialog.dispose();
+                // Center Window on Screen
+                GraphicUtils.centerWindowOnScreen(mainWindow);
+            } else {
+                mainWindow.setBounds(mainWindowBounds);
+            }
+
+            if (loginDialog != null) {
+                if (loginDialog.isVisible()) {
+                    mainWindow.setVisible(true);
                 }
-                // Build the layout in the workspace
-                workspace.buildLayout();
-            });
+                loginDialog.dispose();
+            }
+            // Build the layout in the workspace
+            workspace.buildLayout();
+            Log.debug("Finished starting Spark's main window.");
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.error("An exception occurred while trying to open Spark's main window.", e);
         }
-
     }
 
     /**
