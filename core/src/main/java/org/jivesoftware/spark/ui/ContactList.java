@@ -66,6 +66,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -539,17 +541,22 @@ public class ContactList extends JPanel implements ActionListener,
      * Called to build the initial ContactList.
      */
     private void buildContactList() {
+        Log.debug("Building contact list");
         final Roster roster = Roster.getInstanceFor(SparkManager.getConnection());
 
         roster.addRosterListener(this);
 
         // Add All Groups to List
+        Log.debug("... adding all groups to list");
         for (RosterGroup group : roster.getGroups()) {
+            Instant start = Instant.now();
             addContactGroup(group.getName());
+            Log.debug("... adding group " + group.getName() + " took " + Duration.between(start, Instant.now()));
         }
 
+        Log.debug("... iterating over all groups");
         for (RosterGroup group : roster.getGroups()) {
-
+            Instant start = Instant.now();
             if (group.getName() == null || Objects.equals(group.getName(), "")) {
                 for (RosterEntry entry : group.getEntries()) {
 
@@ -595,6 +602,8 @@ public class ContactList extends JPanel implements ActionListener,
                     }
                 }
             }
+
+            Log.debug("... iterating over group " + group.getName() + " took " + Duration.between(start, Instant.now()));
         }
 
         if (EventQueue.isDispatchThread()) {
@@ -615,7 +624,7 @@ public class ContactList extends JPanel implements ActionListener,
                 Log.error("moveToOffilne", e);
             }
         }
-
+        Log.debug("Done with contact list");
     }
 
     private void updateContactList(ContactGroup group) {
@@ -1733,6 +1742,7 @@ public class ContactList extends JPanel implements ActionListener,
 
     @Override
     public void initialize() {
+        Log.debug("Initializing contact list");
         this.setBorder(BorderFactory.createEmptyBorder());
 
         // Add Contact List
