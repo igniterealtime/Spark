@@ -866,6 +866,7 @@ public class ChatManager {
 	    return;
 	}
 
+	Log.debug("Handling URI mapping for: " + arguments);
 	URI uri;
 	try {
 	    uri = new URI(arguments);
