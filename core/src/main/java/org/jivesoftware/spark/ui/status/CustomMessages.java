@@ -68,6 +68,7 @@ public class CustomMessages {
     }
 
     static {
+        xstream.allowTypes(new Class[]{CustomStatusItem.class});
         xstream.alias("custom-items", List.class);
         xstream.alias("custom-status", CustomStatusItem.class);
     }
