@@ -83,10 +83,6 @@ public class DataFormUI extends JPanel {
             if (type.equals(FormField.Type.bool)) {
                 BooleanFormField booleanField = field.ifPossibleAsOrThrow(BooleanFormField.class);
                 Boolean isSelected = booleanField.getValueAsBoolean();
-                // TODO: Remove this logic once Spark uses Smack 4.4.5.
-                if (isSelected == null) {
-                    isSelected = false;
-                }
                 JCheckBox box = new JCheckBox(label);
                 box.setSelected(isSelected);
                 addField(label, box, variable);
