@@ -82,7 +82,7 @@ public class DataFormUI extends JPanel {
 
             if (type.equals(FormField.Type.bool)) {
                 BooleanFormField booleanField = field.ifPossibleAsOrThrow(BooleanFormField.class);
-                boolean isSelected = booleanField.getValueAsBoolean();
+                Boolean isSelected = booleanField.getValueAsBoolean();
                 JCheckBox box = new JCheckBox(label);
                 box.setSelected(isSelected);
                 addField(label, box, variable);
