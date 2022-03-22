@@ -76,6 +76,7 @@ import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jxmpp.jid.DomainBareJid;
 import org.jxmpp.jid.EntityBareJid;
+import org.jxmpp.jid.Jid;
 import org.jxmpp.jid.impl.JidCreate;
 import org.jxmpp.jid.parts.Resourcepart;
 import org.jxmpp.stringprep.XmppStringprepException;
@@ -439,13 +440,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
             roomsTable.getTableModel().setValueAt(new JLabel(SparkRes.getImageIcon(SparkRes.BLANK_IMAGE)), selectedRow, 0);
             addBookmarkUI(true);
 
-            String jidString = (String) node.getAssociatedObject();
-            EntityBareJid jid;
-            try {
-                jid = JidCreate.entityBareFrom(jidString);
-            } catch (XmppStringprepException e) {
-                throw new IllegalStateException(e);
-            }
+            EntityBareJid jid = ((Jid) node.getAssociatedObject()).asEntityBareJidOrThrow();
             conferences.removeBookmark(jid);
         }
     }
@@ -800,27 +795,27 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
     }
 
     private void enterRoom() {
-	int selectedRow = roomsTable.getSelectedRow();
-	UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
-	if (-1 == selectedRow) {
-	    JOptionPane.showMessageDialog(dlg,
-		    Res.getString("message.select.room.to.enter"),
-		    Res.getString("title.group.chat"),
-		    JOptionPane.INFORMATION_MESSAGE);
-	    return;
-	}
-	final String roomJIDString = roomsTable.getValueAt(selectedRow, 2) + "@"
-		+ serviceName;
-    EntityBareJid roomJID = JidCreate.entityBareFromUnescapedOrThrowUnchecked(roomJIDString);
-	final String roomDescription = (String) roomsTable.getValueAt(
-		selectedRow, 1);
+        int selectedRow = roomsTable.getSelectedRow();
+        UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
+        if (-1 == selectedRow) {
+            JOptionPane.showMessageDialog(dlg,
+                Res.getString("message.select.room.to.enter"),
+                Res.getString("title.group.chat"),
+                JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+        final String roomJIDString = roomsTable.getValueAt(selectedRow, 2) + "@"
+            + serviceName;
+        EntityBareJid roomJID = JidCreate.entityBareFromUnescapedOrThrowUnchecked(roomJIDString);
+        final String roomDescription = (String) roomsTable.getValueAt(
+            selectedRow, 1);
 
-	try {
-	    chatManager.getChatContainer().getChatRoom(roomJID);
-	} catch (ChatRoomNotFoundException e1) {
-	    ConferenceUtils.joinConferenceOnSeperateThread(roomDescription,
-		    roomJID, null);
-	}
+        try {
+            chatManager.getChatContainer().getChatRoom(roomJID);
+        } catch (ChatRoomNotFoundException e1) {
+            ConferenceUtils.joinConferenceOnSeperateThread(roomDescription,
+                roomJID, null, null);
+        }
     }
 
     /**

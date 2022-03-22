@@ -117,7 +117,7 @@ final class JoinConferenceRoomDialog extends JPanel {
             else if (Res.getString("join").equals(value)) {
                 pane.setValue(JOptionPane.UNINITIALIZED_VALUE);
                 dlg.dispose();
-                ConferenceUtils.joinConferenceOnSeperateThread(roomName, roomJID, null);
+                ConferenceUtils.joinConferenceOnSeperateThread(roomName, roomJID, null, null);
             }
         };
 

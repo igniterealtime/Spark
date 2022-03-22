@@ -406,7 +406,7 @@ public class ConferenceServices implements InvitationListener {
                                         Res.getString("message.please.join.in.conference"), roomName, jids);
                             } else {
                                 ConferenceUtils.joinConferenceOnSeperateThread(selectedBookmarkedConf.getName(),
-                                        selectedBookmarkedConf.getJid(), selectedBookmarkedConf.getPassword(),
+                                        selectedBookmarkedConf.getJid(), selectedBookmarkedConf.getNickname(), selectedBookmarkedConf.getPassword(),
                                         Res.getString("message.please.join.in.conference"), jids);
                             }
                         }
@@ -450,7 +450,7 @@ public class ConferenceServices implements InvitationListener {
     EntityBareJid bareJID = inviter.asEntityBareJid();
 
     if (_localPreferences.isAutoAcceptMucInvite()) {
-        ConferenceUtils.enterRoomOnSameThread(room.getRoom().getLocalpart().toString(), room.getRoom(), password);
+        ConferenceUtils.enterRoomOnSameThread(room.getRoom().getLocalpart().toString(), room.getRoom(), null, password);
         MultiUserChatManager manager = MultiUserChatManager.getInstanceFor( SparkManager.getConnection() );
         GroupChatRoom chat = UIComponentRegistry.createGroupChatRoom(manager.getMultiUserChat( room.getRoom() ));
 

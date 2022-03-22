@@ -104,8 +104,9 @@ public class UriManager {
      *            the decoded uri
      */
     public void handleConference(URI uri) {
-	Jid jid = retrieveJID(uri);
-	ConferenceUtils.joinConferenceOnSeperateThread(jid, jid.asEntityBareJidOrThrow(), null);
+        Jid jid = retrieveJID(uri);
+        String password = retrievePassword(uri);
+        ConferenceUtils.joinConferenceOnSeperateThread(jid, jid.asEntityBareJidOrThrow(), null, password);
     }
 
     /**
@@ -254,5 +255,20 @@ public class UriManager {
 	    sb.append(resource);
 	}
 	return JidCreate.fromOrThrowUnchecked(sb);
+    }
+
+    public static String retrievePassword(URI uri) {
+        int index = uri.toString().indexOf("password=");
+        if (index == -1) {
+            return null;
+        }
+        String result = uri.toString().substring(index+"password=".length());
+        if (result.indexOf('&') != -1) {
+            result = result.substring(0, result.indexOf('&'));
+        }
+        if (result.indexOf(';') != -1) {
+            result = result.substring(0, result.indexOf(';'));
+        }
+        return result.length() > 0 ? result : null;
     }
 }

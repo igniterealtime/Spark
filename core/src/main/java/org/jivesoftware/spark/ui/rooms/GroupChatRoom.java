@@ -1088,6 +1088,7 @@ public class GroupChatRoom extends ChatRoom
     {
         final EntityBareJid roomJID = chat.getRoom();
         final String roomName = tabTitle;
+        final Resourcepart nickname = chat.getNickname();
         final String password = this.password;
 
         try {
@@ -1100,7 +1101,7 @@ public class GroupChatRoom extends ChatRoom
         isActive = false;
         EventQueue.invokeLater( () -> {
             closeChatRoom();
-            ConferenceUtils.joinConferenceOnSeperateThread( roomName, roomJID, password );
+            ConferenceUtils.joinConferenceOnSeperateThread( roomName, roomJID, nickname, password );
         } );
     }
 
