@@ -111,7 +111,7 @@ public class BookmarkItem extends JPanel {
 
                     @Override
                     public void finished() {
-                        ConferenceUtils.joinConferenceOnSeperateThread(bookmark.getName(), bookmark.getJid(), bookmark.getPassword());
+                        ConferenceUtils.joinConferenceOnSeperateThread(bookmark.getName(), bookmark.getJid(), bookmark.getNickname(), bookmark.getPassword());
                     }
                 };
                 worker.start();

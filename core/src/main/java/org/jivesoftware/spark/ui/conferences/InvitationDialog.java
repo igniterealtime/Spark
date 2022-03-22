@@ -381,7 +381,8 @@ final class InvitationDialog extends JPanel {
                                 } else {
                                     ConferenceUtils.joinConferenceOnSeperateThread(
                                             selectedBookmarkedConf.getName(), selectedBookmarkedConf.getJid(),
-                                            selectedBookmarkedConf.getPassword(), messageText, jidList);
+                                            selectedBookmarkedConf.getNickname(), selectedBookmarkedConf.getPassword(),
+                                            messageText, jidList);
                                 }
                             }
                             catch (SmackException | InterruptedException ex) {

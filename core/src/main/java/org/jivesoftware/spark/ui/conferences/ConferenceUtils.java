@@ -49,6 +49,7 @@ import org.jxmpp.jid.parts.Localpart;
 import org.jxmpp.jid.parts.Resourcepart;
 import org.jxmpp.stringprep.XmppStringprepException;
 
+import javax.annotation.Nullable;
 import javax.swing.*;
 import java.awt.*;
 import java.text.DateFormat;
@@ -114,12 +115,13 @@ public class ConferenceUtils {
      *
      * @param roomName the name of the room.
      * @param roomJID  the rooms jid.
+     * @param nickname THe nickname that the user joining will be using (optional).
      * @param password the rooms password (if any).
      * @return the GroupChatRoom created.
      */
-    public static GroupChatRoom enterRoomOnSameThread(final CharSequence roomName, EntityBareJid roomJID, String password )
+    public static GroupChatRoom enterRoomOnSameThread(final CharSequence roomName, EntityBareJid roomJID, final Resourcepart nickname, String password )
     {
-        final JoinRoomSwingWorker worker = new JoinRoomSwingWorker( roomJID, password, roomName.toString() );
+        final JoinRoomSwingWorker worker = new JoinRoomSwingWorker( roomJID, nickname, password, roomName.toString() );
         worker.start();
         return (GroupChatRoom) worker.get(); // blocks until completed.
     }
@@ -131,8 +133,8 @@ public class ConferenceUtils {
         return (GroupChatRoom) worker.get(); // blocks until completed.
     }
 
-    public static void joinConferenceOnSeperateThread(final CharSequence roomName, EntityBareJid roomJID, String password) {
-        joinConferenceOnSeperateThread(roomName, roomJID, password, null, null);
+    public static void joinConferenceOnSeperateThread(final CharSequence roomName, EntityBareJid roomJID, final Resourcepart nickname, String password) {
+        joinConferenceOnSeperateThread(roomName, roomJID, nickname, password, null, null);
     }
 
     /**
@@ -140,11 +142,12 @@ public class ConferenceUtils {
      *
      * @param roomName the name of the room.
      * @param roomJID  the jid of the room.
+     * @param nickname THe nickname that the user joining will be using (optional).
      * @param password the rooms password if required.
      */
-    public static void joinConferenceOnSeperateThread(final CharSequence roomName, EntityBareJid roomJID, String password, final String inviteMessage, final Collection<EntityBareJid> invites ) {
+    public static void joinConferenceOnSeperateThread(final CharSequence roomName, EntityBareJid roomJID, final Resourcepart nickname, String password, final String inviteMessage, final Collection<EntityBareJid> invites) {
 
-        final JoinRoomSwingWorker worker = new JoinRoomSwingWorker( roomJID, password, roomName.toString() );
+        final JoinRoomSwingWorker worker = new JoinRoomSwingWorker( roomJID, nickname, password, roomName.toString() );
 
         if ( invites != null && !invites.isEmpty() )
         {

@@ -39,7 +39,9 @@ import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.util.log.Log;
 import org.jxmpp.jid.DomainBareJid;
 import org.jxmpp.jid.EntityBareJid;
+import org.jxmpp.jid.Jid;
 import org.jxmpp.jid.impl.JidCreate;
+import org.jxmpp.jid.parts.Resourcepart;
 import org.jxmpp.stringprep.XmppStringprepException;
 
 import javax.swing.*;
@@ -139,9 +141,9 @@ public class BookmarksUI extends JPanel {
                         browseRooms((String)node.getUserObject());
                     }
                     else if (node != null) {
-                        String roomJIDString = node.getAssociatedObject().toString();
-                        EntityBareJid roomJID = JidCreate.entityBareFromUnescapedOrThrowUnchecked(roomJIDString);
-                        ConferenceUtils.joinConferenceOnSeperateThread(node.getUserObject().toString(), roomJID, null);
+                        final String roomName = node.getUserObject().toString();
+                        final Jid roomJid = (Jid) node.getAssociatedObject(); // Has a resource part if a nickname is desired.
+                        ConferenceUtils.joinConferenceOnSeperateThread(roomName, roomJid.asEntityBareJidOrThrow(), roomJid.getResourceOrNull(), null);
                     }
                 }
             }
@@ -228,10 +230,9 @@ public class BookmarksUI extends JPanel {
 
                 @Override
 				public void actionPerformed(ActionEvent actionEvent) {
-                    String roomName = node.getUserObject().toString();
-                    String roomJIDString = node.getAssociatedObject().toString();
-                    EntityBareJid roomJID = JidCreate.entityBareFromUnescapedOrThrowUnchecked(roomJIDString);
-                    ConferenceUtils.joinConferenceOnSeperateThread(roomName, roomJID, null);
+                    final String roomName = node.getUserObject().toString();
+                    final Jid roomJid = (Jid) node.getAssociatedObject(); // Has a resource part if a nickname is desired.
+                    ConferenceUtils.joinConferenceOnSeperateThread(roomName, roomJid.asEntityBareJidOrThrow(), roomJid.getResourceOrNull(), null);
                 }
             };
 
@@ -245,16 +246,9 @@ public class BookmarksUI extends JPanel {
 				public void actionPerformed(ActionEvent actionEvent) {
                     DefaultTreeModel treeModel = (DefaultTreeModel)tree.getModel();
                     treeModel.removeNodeFromParent(node);
-                    String roomJIDString = node.getAssociatedObject().toString();
-                    EntityBareJid roomJID;
-                    try {
-                        roomJID = JidCreate.entityBareFrom(roomJIDString);
-                    } catch (XmppStringprepException e) {
-                        Log.error("Not a JID", e);
-                        return;
-                    }
-                    autoJoinRooms.remove(roomJID);
-                    removeBookmark(roomJID);
+                    final Jid roomJid = (Jid) node.getAssociatedObject();
+                    autoJoinRooms.remove(roomJid.asEntityBareJidOrThrow());
+                    removeBookmark(roomJid.asEntityBareJidOrThrow());
                 }
             };
             removeRoomAction.putValue(Action.NAME, Res.getString("menuitem.remove.bookmark"));
@@ -279,14 +273,7 @@ public class BookmarksUI extends JPanel {
 
                     @Override
 					public void actionPerformed(ActionEvent e) {
-                        String roomJIDString = node.getAssociatedObject().toString();
-                        EntityBareJid roomJID;
-                        try {
-                            roomJID = JidCreate.entityBareFrom(roomJIDString);
-                        } catch (XmppStringprepException e1) {
-                            Log.error("Not a JID", e1);
-                            return;
-                        }
+                        final EntityBareJid roomJID = ((Jid) node.getAssociatedObject()).asEntityBareJidOrThrow();
                         if (autoJoinRooms.contains(roomJID)) {
                             autoJoinRooms.remove(roomJID);
                         }
@@ -302,14 +289,7 @@ public class BookmarksUI extends JPanel {
                 autoJoin.putValue(Action.NAME, Res.getString("menuitem.join.on.startup"));
 
                 JCheckBoxMenuItem item = new JCheckBoxMenuItem(autoJoin);
-                String roomJIDString = node.getAssociatedObject().toString();
-                EntityBareJid roomJID;
-                try {
-                    roomJID = JidCreate.entityBareFrom(roomJIDString);
-                } catch (XmppStringprepException e1) {
-                    Log.error("Not a JID", e1);
-                    return;
-                }
+                EntityBareJid roomJID = ((Jid) node.getAssociatedObject()).asEntityBareJidOrThrow();
                 item.setSelected(autoJoinRooms.contains(roomJID));
                 popupMenu.add(item);
 
@@ -319,13 +299,7 @@ public class BookmarksUI extends JPanel {
 
                     @Override
 					public void actionPerformed(ActionEvent actionEvent) {
-                        String roomJIDString = node.getAssociatedObject().toString();
-                        EntityBareJid roomJID;
-                        try {
-                            roomJID = JidCreate.entityBareFrom(roomJIDString);
-                        } catch (XmppStringprepException e) {
-                            throw new IllegalStateException(e);
-                        }
+                        EntityBareJid roomJID = ((Jid) node.getAssociatedObject()).asEntityBareJidOrThrow();
                         RoomBrowser roomBrowser = new RoomBrowser();
                         roomBrowser.displayRoomInformation(roomJID);
                     }
@@ -415,10 +389,10 @@ public class BookmarksUI extends JPanel {
      *
      * @param serviceNode the service node.
      * @param roomName    the name of the room to bookmark.
-     * @param roomJID     the jid of the room.
+     * @param roomJID     the jid of the room. Optionally contains a nickname in the resource
      * @return the new bookmark created.
      */
-    public JiveTreeNode addBookmark(JiveTreeNode serviceNode, String roomName, String roomJID) {
+    public JiveTreeNode addBookmark(JiveTreeNode serviceNode, String roomName, Jid roomJID) {
         JiveTreeNode roomNode = new JiveTreeNode(roomName, false, SparkRes.getImageIcon(SparkRes.BOOKMARK_ICON));
         roomNode.setAssociatedObject(roomJID);
         serviceNode.add(roomNode);
@@ -607,10 +581,11 @@ public class BookmarksUI extends JPanel {
         for (BookmarkedConference bookmark : bookmarks) {
             DomainBareJid serviceName = bookmark.getJid().asDomainBareJid();
             EntityBareJid roomJID = bookmark.getJid();
+            Resourcepart nickname = bookmark.getNickname();
             String roomName = bookmark.getName() != null && !bookmark.getName().isEmpty() ? bookmark.getName() : roomJID.getLocalpart().asUnescapedString();
 
             if (bookmark.isAutoJoin()) {
-                ConferenceUtils.joinConferenceOnSeperateThread(roomName, bookmark.getJid(), bookmark.getPassword());
+                ConferenceUtils.joinConferenceOnSeperateThread(roomName, bookmark.getJid(), bookmark.getNickname(), bookmark.getPassword());
                 ConferenceUtils.addUnclosableChatRoom(roomJID);
                 autoJoinRooms.add(bookmark.getJid());
             }
@@ -626,7 +601,7 @@ public class BookmarksUI extends JPanel {
                 serviceNode = (JiveTreeNode)path.getLastPathComponent();
             }
 
-            addBookmark(serviceNode, roomName, roomJID.toString());
+            addBookmark(serviceNode, roomName, nickname != null ? JidCreate.fullFrom(roomJID, nickname) : roomJID);
 
             tree.expandPath(path);
         }

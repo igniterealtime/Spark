@@ -405,7 +405,7 @@ public class WorkgroupManager {
 
             if (message.getExtension("workgroup", "http://jabber.org/protocol/workgroup") != null) {
                 Localpart workgroupName = inviter.getLocalpart();
-                GroupChatRoom groupChatRoom = ConferenceUtils.enterRoomOnSameThread(workgroupName, room.getRoom(), password);
+                GroupChatRoom groupChatRoom = ConferenceUtils.enterRoomOnSameThread(workgroupName, room.getRoom(), null, password);
 
                 int tabLocation = SparkManager.getChatManager().getChatContainer().indexOfComponent(groupChatRoom);
                 groupChatRoom.setTabIcon(FastpathRes.getImageIcon(FastpathRes.FASTPATH_IMAGE_16x16));

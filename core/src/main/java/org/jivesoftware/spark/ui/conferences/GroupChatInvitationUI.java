@@ -151,7 +151,7 @@ public class GroupChatInvitationUI extends JPanel implements ActionListener {
     private void acceptInvitation() {
         setVisible(false);
         Localpart name = room.getLocalpart();
-        ConferenceUtils.enterRoomOnSameThread(name.toString(), room, password);
+        ConferenceUtils.enterRoomOnSameThread(name.toString(), room, null, password);
 
         final TimerTask removeUITask = new SwingTimerTask() {
             @Override
