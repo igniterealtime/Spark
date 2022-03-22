@@ -198,7 +198,7 @@ public class BookmarkPlugin implements Plugin {
                             }
                         };
 
-                        conferenceAction.putValue(Action.NAME, conferences.getName());
+                        conferenceAction.putValue(Action.NAME, conferences.getName() != null && !conferences.getName().isEmpty() ? conferences.getName() : conferences.getJid().getLocalpart().asUnescapedString());
                         conferenceAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.CONFERENCE_IMAGE_16x16));
                         bookmarkMenu.add(conferenceAction);
                     }

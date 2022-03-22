@@ -26,7 +26,7 @@ public class ConferenceItem {
 
    @Override
    public String toString() {
-       return bookmarkedConf.getName();
+       return bookmarkedConf.getName() != null && !bookmarkedConf.getName().isEmpty() ? bookmarkedConf.getName() : bookmarkedConf.getJid().getLocalpart().asUnescapedString();
    }
 
    public BookmarkedConference getBookmarkedConf() {
