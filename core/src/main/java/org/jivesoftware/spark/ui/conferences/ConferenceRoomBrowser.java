@@ -770,15 +770,20 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
 
                     for (BookmarkedConference bookmark :conferences.getBookmarks())
                     {
-                        if (roomName.equals(bookmark.getName()))
+                        String roomJIDString = roomsTable.getValueAt(selectedRow, 2) + "@" + serviceName;
+                        EntityBareJid roomJID;
+                        try {
+                            roomJID = JidCreate.entityBareFrom(roomJIDString);
+                        } catch (XmppStringprepException e2) {
+                            throw new IllegalStateException(e2);
+                        }
+
+                        if (roomJID.equals(bookmark.getJid()))
                         {
                             autoJoin.setSelected(bookmark.isAutoJoin());
                             popupMenu.add(autoJoin);
                         }
-
                     }
-
-
                 }
 
                 popupMenu.show(roomsTable, e.getX(), e.getY());
