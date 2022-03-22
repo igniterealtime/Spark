@@ -607,7 +607,7 @@ public class BookmarksUI extends JPanel {
         for (BookmarkedConference bookmark : bookmarks) {
             DomainBareJid serviceName = bookmark.getJid().asDomainBareJid();
             EntityBareJid roomJID = bookmark.getJid();
-            String roomName = bookmark.getName() != null && !bookmark.getName().isEmpty() ? bookmark.getName() : roomJID.getLocalpart().toString();
+            String roomName = bookmark.getName() != null && !bookmark.getName().isEmpty() ? bookmark.getName() : roomJID.getLocalpart().asUnescapedString();
 
             if (bookmark.isAutoJoin()) {
                 ConferenceUtils.joinConferenceOnSeperateThread(roomName, bookmark.getJid(), bookmark.getPassword());
