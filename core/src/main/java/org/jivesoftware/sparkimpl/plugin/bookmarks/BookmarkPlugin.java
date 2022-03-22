@@ -190,7 +190,7 @@ public class BookmarkPlugin implements Plugin {
 
                                     @Override
                                     public void doRun() {
-                                        ConferenceUtils.joinConferenceOnSeperateThread(conferences.getName(), conferences.getJid(), conferences.getPassword());
+                                        ConferenceUtils.joinConferenceOnSeperateThread(conferences.getName(), conferences.getJid(), conferences.getNickname(), conferences.getPassword());
                                     }
                                 };
 
