@@ -211,6 +211,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
 
     //build model for roomsTable, ignoring the 1st column              
     sorter = new TableRowSorter<>( roomsTable.getModel() );
+    sorter.setComparator(3, new NumericComparator());
     roomsTable.setRowSorter(sorter);
     
 	final JScrollPane pane = new JScrollPane(roomsTable);
@@ -1147,4 +1148,9 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
 		+ showHiddenButtons.getWidth();
     }
 
+    static class NumericComparator implements Comparator<String> {
+        public int compare(String a, String b) throws ClassCastException {
+            return Long.valueOf(a).compareTo(Long.valueOf(b));
+        }
+    }
 }
