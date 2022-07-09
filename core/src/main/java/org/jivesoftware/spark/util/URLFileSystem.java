@@ -15,15 +15,12 @@
  */
 package org.jivesoftware.spark.util;
 
-import org.jivesoftware.spark.util.log.Log;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -469,23 +466,6 @@ public class URLFileSystem {
         return url != null ? url.toString() : "";
     }
 
-    public static URL newFileURL(File file) {
-        String filePath = file.getPath();
-        if (filePath == null) {
-            return null;
-        }
-        final String path = sanitizePath(filePath);
-        return newURL("file", path);
-    }
-
-    public static URL newFileURL(String filePath) {
-        if (filePath == null) {
-            return null;
-        }
-        final String path = sanitizePath(filePath);
-        return newURL("file", path);
-    }
-
     /**
      * This "sanitizes" the specified string path by converting all
      * {@link File#separatorChar} characters to forward slash ('/').
@@ -503,100 +483,6 @@ public class URLFileSystem {
             path = "/" + path;
         }
         return path;
-    }
-
-    public static URL newURL(String protocol, String path) {
-        return newURL(protocol, null, null, -1, path, null, null);
-    }
-
-    //--------------------------------------------------------------------------
-    //  direct access factory methods...
-    //--------------------------------------------------------------------------
-
-    /**
-     * Creates a new {@link URL} whose parts have the exact values that
-     * are specified.  <EM>In general, you should avoid calling this
-     * method directly.</EM><P>
-     * <p/>
-     * This method is the ultimate place where all of the other
-     * <CODE>URLFactory</CODE> methods end up when creating an
-     * {@link URL}.
-     * <p/>
-     * Non-sanitizing.
-     *
-     * @param protocol Protocol portion of uri
-     * @param userinfo Username/Password portion of uri
-     * @param host Host portion of uri
-     * @param port Port portion of uri
-     * @param path Path portion of uri
-     * @param query Query portion of uri
-     * @param ref Ref portion of uri
-     * @return URL constructed from args
-     */
-    public static URL newURL(String protocol, String userinfo,
-                             String host, int port,
-                             String path, String query, String ref) {
-        try {
-            final URL seed = new URL(protocol, "", -1, "");
-            final String authority = port < 0 ? host : host + ":" + port;
-            final Object[] args = new Object[]
-                    {
-                            protocol, host, port,
-                            authority, userinfo,
-                            path, query, ref,
-                    };
-
-            //  IMPORTANT -- this *MUST* be the only place in URLFactory where
-            //  the URL.set(...) method is used.  --jdijamco
-            urlSet.invoke(seed, args);
-            return seed;
-        }
-        catch (Exception e) {
-            Log.error(e);
-            return null;
-        }
-    }
-
-    /**
-     * This {@link Method} is used to work-around a bug in Sun's
-     * <CODE>java.net.URL</CODE> implementation.  The {@link Method}
-     * allows us to set the parts of an {@link URL} directly.
-     */
-    private static final Method urlSet;
-
-    static {
-        final Class<String> str = String.class;
-        try {
-            urlSet = URL.class.getDeclaredMethod("set", str, str, int.class, str, str, str, str, str);
-
-            //  IMPORTANT:  This call to setAccessible effectively overrides
-            //  the "protected" visibility constraint on the URL.set(...)
-            //  method.  This is an intentional breaking of encapsulation to
-            //  work-around severe bugs in Sun's java.net.URL implementation
-            //  having to do with:
-            //    *  poor handling of special characters like #, ?, and ;
-            //    *  poor handling of whitespace
-            //    *  no go way to disambiguate UNC paths on Win32
-            //
-            //  The use of setAccessible is an implementation detail of the
-            //  URLFactory, and if Sun some day fixes their java.net.URL
-            //  implementation to address the problems above, we may be able
-            //  to change the internal mechanism to use the regular URL
-            //  constructors.  For the time being, after having weighed the
-            //  various other alternatives and even tried some of them (and
-            //  encountered other problems), our decision is to force our way
-            //  through to the URL.set(...) method, taking care to invoke
-            //  it method exactly once per URL object with the exactly the
-            //  right arguments.
-            //
-            //  --jdijamco  March 14, 2001
-            urlSet.setAccessible(true);
-        }
-        catch (NoSuchMethodException e) {
-            //!jdijamco -- Have some fallback option so that <clinit> doesn't
-            //!jdijamco -- just totally barf and prevent the IDE from starting?
-            throw new IllegalStateException();
-        }
     }
 
     public static File url2File(URL url) {
@@ -650,6 +536,4 @@ public class URLFileSystem {
         in.close();
         out.close();
     }
-
-
 }
