@@ -1626,6 +1626,12 @@ public class LoginDialog {
         //  localPref.setXmppHost("");
         localPref.setXmppPort(localPref.getXmppPort());
 
+        if(Default.getBoolean(Default.IDLE_LOCK) || !Enterprise.containsFeature(Enterprise.IDLE_FEATURE)) {
+            localPref.setIdleTime(Integer.parseInt(Default.getString(Default.IDLE_TIME)));
+            localPref.setIdleMessage(Res.getString("status.away"));
+            localPref.setIdleOn(true);
+        }
+
         SettingsManager.saveSettings();
     }
 }
