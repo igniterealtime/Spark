@@ -32,6 +32,7 @@ import org.jivesoftware.resource.Res;
 import org.jivesoftware.spark.component.VerticalFlowLayout;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 
 /**
  * UI for editing Local Preferences.
@@ -147,9 +148,15 @@ public class LocalPreferencePanel extends JPanel {
 	inputPanel.add(_idleField,    new GridBagConstraints(1, 3, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL,new Insets(5, 5, 5, 5), 50, 0));
 	inputPanel.add( _idleStatusLabel,new GridBagConstraints(0, 4, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST,GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 0));
 	inputPanel.add(_idleStatusText, new GridBagConstraints(1, 4, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST,GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 0));
-	inputPanel.add(_idleBox,        new GridBagConstraints(0, 5, 2, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL,new Insets(5, 5, 5, 5), 50, 0));
+    inputPanel.add(_idleBox, new GridBagConstraints(0, 5, 2, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 0));
 
-	if(!Default.getBoolean(Default.HIDE_SAVE_PASSWORD_AND_AUTO_LOGIN) && SettingsManager.getLocalPreferences().getPswdAutologin()) {
+    if(Default.getBoolean(Default.IDLE_LOCK) || !Enterprise.containsFeature(Enterprise.IDLE_FEATURE)) {
+        _idleField.setEnabled(false);
+        _idleStatusText.setEnabled(false);
+        _idleBox.setEnabled(false);
+    }
+    
+    if(!Default.getBoolean(Default.HIDE_SAVE_PASSWORD_AND_AUTO_LOGIN) && SettingsManager.getLocalPreferences().getPswdAutologin()) {
 		if (!preferences.isSSOEnabled()) {
 			inputPanel.add(_savePasswordBox, new GridBagConstraints(0, 6, 2, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 50, 0));
 		}

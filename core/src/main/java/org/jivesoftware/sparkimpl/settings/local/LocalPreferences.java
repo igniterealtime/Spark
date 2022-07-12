@@ -303,7 +303,7 @@ public class LocalPreferences {
 	 * @return the number of minutes before checking for IDLE computer.
 	 */
 	public int getIdleTime() {
-		return Integer.parseInt(props.getProperty("idleTime", "5"));
+		return Integer.parseInt(props.getProperty("idleTime", Default.getString(Default.IDLE_TIME)));
 	}
 
 	/**
