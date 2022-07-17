@@ -1,6 +1,5 @@
 package org.jivesoftware.spark.plugin;
 
-import org.jivesoftware.spark.plugin.PluginDependency;
 import org.junit.Test;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;

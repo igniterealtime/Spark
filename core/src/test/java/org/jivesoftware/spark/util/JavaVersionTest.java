@@ -1,6 +1,5 @@
 package org.jivesoftware.spark.util;
 
-import org.jivesoftware.spark.util.StringUtils;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
