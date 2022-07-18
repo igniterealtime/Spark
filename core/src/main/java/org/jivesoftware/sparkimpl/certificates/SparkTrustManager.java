@@ -291,11 +291,14 @@ public class SparkTrustManager extends GeneralTrustManager implements X509TrustM
             }
             throw new CertificateException("Certificate was revoked");
         } catch (CertPathValidatorException e) {
+            String no_OCSP_Responder_error = "Certificate does not specify OCSP responder";
             // Spark can be configured to disregard some of the issues that can pop up through validation.
             if ( e.getReason() == CertPathValidatorException.BasicReason.EXPIRED && acceptExpired ) {
                 Log.debug("Chain validation detected expiry, but Spark is configured to allow this. Not failing validation.");
             } else if ( e.getReason() == CertPathValidatorException.BasicReason.NOT_YET_VALID && acceptNotValidYet ) {
                 Log.debug("Chain validation detected not-yet-valid, but Spark is configured to allow this. Not failing validation.");
+            } else if (e.getReason() == CertPathValidatorException.BasicReason.UNSPECIFIED && e.getMessage().equals(no_OCSP_Responder_error)) {
+                Log.debug(no_OCSP_Responder_error);
             } else {
                 // When Spark is not configured to ignore the validation issue, rethrow the original exception.
                 throw e;
