@@ -35,7 +35,6 @@ import org.jivesoftware.smackx.vcardtemp.packet.VCard;
 import org.jivesoftware.smackx.vcardtemp.provider.VCardProvider;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.ui.ContactItem;
-import org.jivesoftware.spark.util.Base64;
 import org.jivesoftware.spark.util.*;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
@@ -709,7 +708,7 @@ public class VCardManager {
         }
         
         
-        String fileName = Base64.encodeBytes(jid.toString().getBytes());
+        String fileName = Base64.getEncoder().encodeToString(jid.toString().getBytes());
         // remove tab
         fileName   = fileName.replaceAll("\t", "");
         // remove new line (Unix)
@@ -783,7 +782,7 @@ public class VCardManager {
     	}
     	
         // Unescape JID
-        String fileName = Base64.encodeBytes(jid.toString().getBytes());
+        String fileName = Base64.getEncoder().encodeToString(jid.toString().getBytes());
 
         // remove tab
         fileName   = fileName.replaceAll("\t", "");

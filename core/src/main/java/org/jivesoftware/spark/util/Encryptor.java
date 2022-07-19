@@ -24,6 +24,7 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 
 /**
  * Encrypts and Decrypts text based on DESede keys.
@@ -53,7 +54,7 @@ public class Encryptor {
 
         // Encrypt
         byte[] enc = ecipher.doFinal(utf8);
-        return Base64.encodeBytes(enc);
+        return Base64.getEncoder().encodeToString(enc);
     }
 
     public static String decrypt(String string) {
@@ -67,7 +68,7 @@ public class Encryptor {
     }
 
     public static String decryptOrThrow(String string) throws BadPaddingException, IllegalBlockSizeException {
-        byte[] dec = Base64.decode( string );
+        byte[] dec = Base64.getDecoder().decode(string);
 
         // Decrypt
         byte[] utf8 = dcipher.doFinal(dec);
@@ -78,7 +79,7 @@ public class Encryptor {
 
     private static SecretKey decodeKey() {
         String secretKey = "ugfpV1dMC5jyJtqwVAfTpHkxqJ0+E0ae";
-        byte[] bytes = Base64.decode( secretKey );
+        byte[] bytes = Base64.getDecoder().decode(secretKey);
         return new SecretKeySpec(bytes, "DESede");
     }
 
