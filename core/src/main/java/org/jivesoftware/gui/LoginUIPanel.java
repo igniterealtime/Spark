@@ -271,7 +271,7 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
         tfPassword.setEnabled(!cbAnonymous.isSelected());
         useSSO(localPref.isSSOEnabled());
         if (cbAutoLogin.isSelected()) {
-            login();
+            TaskEngine.getInstance().submit(this::login);
             return;
         }
 
@@ -293,7 +293,7 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
         }
 
         if (username != null && server != null && password != null) {
-            login();
+            TaskEngine.getInstance().submit(this::login);
         }
 
         btnCreateAccount.addActionListener(this);
@@ -1005,7 +1005,7 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
      */
     private void validate(KeyEvent e) {
         if (btnLogin.isEnabled() && e.getKeyChar() == KeyEvent.VK_ENTER) {
-            login();
+            TaskEngine.getInstance().submit(this::login);
         }
     }
 
