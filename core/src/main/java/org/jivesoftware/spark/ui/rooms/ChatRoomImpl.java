@@ -536,15 +536,25 @@ public class ChatRoomImpl extends ChatRoom {
                         {
                             if ( carbon.getDirection() == CarbonExtension.Direction.received )
                             {
-                                // This is a stanza that we received from someone on one of our other clients.
-                                setParticipantJID(forwardedStanza.getFrom());
-                                insertMessage( forwardedStanza );
+                                if ((forwardedStanza.getFrom().equals(getJid()) && privateChat) || //private chat from MUC, match the full JID
+                                    (forwardedStanza.getFrom().asBareJid().equals(getJid().asBareJid()) && !privateChat)) //person to person chat, match bare jids
+                                {
+                                    // This is a stanza that we received from someone on one of our other clients.
+                                    setParticipantJID(forwardedStanza.getFrom());
+                                    insertMessage( forwardedStanza );
+                                }
+
                             }
                             else
                             {
-                                // This is a stanza that one of our own clients sent.
-                                setParticipantJID(forwardedStanza.getTo());
-                                displaySendMessage( forwardedStanza );
+                                if ((forwardedStanza.getTo().equals(getJid()) && privateChat) || //private chat from MUC, match full JID
+                                    (forwardedStanza.getTo().asBareJid().equals(getJid().asBareJid()) && !privateChat)) //person to person chat, match bare jids
+                                {
+                                    // This is a stanza that one of our own clients sent.
+                                    setParticipantJID(forwardedStanza.getTo());
+                                    displaySendMessage( forwardedStanza );
+                                }
+
                             }
                             showTyping( false );
                         }
