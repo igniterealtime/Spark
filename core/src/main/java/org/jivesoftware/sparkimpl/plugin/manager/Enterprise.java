@@ -72,10 +72,12 @@ public class Enterprise {
     public static final String PLUGINS_BLACKLIST_NODE = "spark-plugins-blacklist";
     public static final String IDLE_FEATURE = "idle";
 
+    public static final String IBB_FEATURE = "ibb-only";
+
     private static DiscoverInfo featureInfo;
     private static final Map<String, DiscoverItems> nodeInfo = new HashMap<>();
 
-    private boolean sparkManagerInstalled;
+    private static boolean sparkManagerInstalled;
 
     public Enterprise() {
         // Retrieve feature list.
@@ -87,7 +89,7 @@ public class Enterprise {
      *
      * @return true if Enterprise Spark Manager exists.
      */
-    public boolean isSparkManagerInstalled() {
+    public static boolean isSparkManagerInstalled() {
         return sparkManagerInstalled;
     }
 
