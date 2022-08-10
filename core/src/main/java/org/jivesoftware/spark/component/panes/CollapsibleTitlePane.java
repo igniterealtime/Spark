@@ -19,6 +19,8 @@ import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.spark.util.ColorUtil;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
+import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -61,11 +63,14 @@ public class CollapsibleTitlePane extends BaseCollapsibleTitlePane {
 
     private Image backgroundImage;
 
+    private final int fontSize;
+
     public CollapsibleTitlePane() {
         setLayout(new GridBagLayout());
 
         titleColor = new Color(33, 93, 198);
-        Font titleFont = new Font("Dialog", Font.BOLD, 11);
+        fontSize = SettingsManager.getLocalPreferences().getContactListFontSize();
+        Font titleFont = new Font("Dialog", Font.BOLD, fontSize);
 
         // Initialize color
         startColor = new Color(238,242,253);
