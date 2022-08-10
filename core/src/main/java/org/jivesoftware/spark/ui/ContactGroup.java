@@ -46,6 +46,8 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
     private final List<ContactGroupListener> listeners = new ArrayList<>();
     private final List<ContactItem> offlineContacts = new ArrayList<>();
 
+    private final int fontSize;
+
     private String groupName;
     private final DefaultListModel<ContactItem> model;
     private final JList<? extends ContactItem> contactItemList;
@@ -81,6 +83,8 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
         preferences = SettingsManager.getLocalPreferences();
 
         setTitle(getGroupTitle(groupName));
+
+        fontSize = preferences.getContactListFontSize();
 
         // Use JPanel Renderer
         contactItemList.setCellRenderer(new JContactItemRenderer());
@@ -150,7 +154,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
             }
         });
 
-        noContacts.getNicknameLabel().setFont(new Font("Dialog", Font.PLAIN, 11));
+        noContacts.getNicknameLabel().setFont(new Font("Dialog", Font.PLAIN, fontSize));
         noContacts.getNicknameLabel().setForeground(Color.GRAY);
         model.addElement(noContacts);
 
