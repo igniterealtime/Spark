@@ -1677,15 +1677,19 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
 
     private void persistEnterprise() {
         new Enterprise();
-        localPref.setAccountsReg(Enterprise.containsFeature(Enterprise.ACCOUNTS_REG_FEATURE));
-        localPref.setAdvancedConfig(Enterprise.containsFeature(Enterprise.ADVANCED_CONFIG_FEATURE));
-        localPref.setHostNameChange(Enterprise.containsFeature(Enterprise.HOST_NAME_FEATURE));
-        localPref.setInvisibleLogin(Enterprise.containsFeature(Enterprise.INVISIBLE_LOGIN_FEATURE));
-        localPref.setAnonymousLogin(Enterprise.containsFeature(Enterprise.ANONYMOUS_LOGIN_FEATURE));
-        localPref.setPswdAutologin(Enterprise.containsFeature(Enterprise.SAVE_PASSWORD_FEATURE));
-        if (Enterprise.containsFeature(Enterprise.HOSTNAME_AS_RESOURCE_FEATURE) != Enterprise.containsFeature(Enterprise.VERSION_AS_RESOURCE_FEATURE)) {
-            localPref.setUseHostnameAsResource(Enterprise.containsFeature(Enterprise.HOSTNAME_AS_RESOURCE_FEATURE));
-            localPref.setUseVersionAsResource(Enterprise.containsFeature(Enterprise.VERSION_AS_RESOURCE_FEATURE));
+        //Check that the ClientControl plugin Openfire is installed on the server.
+        if(Enterprise.isSparkManagerInstalled()){
+            localPref.setAccountsReg(Enterprise.containsFeature(Enterprise.ACCOUNTS_REG_FEATURE));
+            localPref.setAdvancedConfig(Enterprise.containsFeature(Enterprise.ADVANCED_CONFIG_FEATURE));
+            localPref.setHostNameChange(Enterprise.containsFeature(Enterprise.HOST_NAME_FEATURE));
+            localPref.setInvisibleLogin(Enterprise.containsFeature(Enterprise.INVISIBLE_LOGIN_FEATURE));
+            localPref.setAnonymousLogin(Enterprise.containsFeature(Enterprise.ANONYMOUS_LOGIN_FEATURE));
+            localPref.setPswdAutologin(Enterprise.containsFeature(Enterprise.SAVE_PASSWORD_FEATURE));
+            if (Enterprise.containsFeature(Enterprise.HOSTNAME_AS_RESOURCE_FEATURE) != Enterprise.containsFeature(Enterprise.VERSION_AS_RESOURCE_FEATURE)) {
+                localPref.setUseHostnameAsResource(Enterprise.containsFeature(Enterprise.HOSTNAME_AS_RESOURCE_FEATURE));
+                localPref.setUseVersionAsResource(Enterprise.containsFeature(Enterprise.VERSION_AS_RESOURCE_FEATURE));
+            }
+            localPref.setFileTransferIbbOnly(Enterprise.containsFeature(Enterprise.IBB_FEATURE));
         }
     }
 
