@@ -14,7 +14,7 @@ import com.formdev.flatlaf.FlatLightLaf;
  */
 public class SparkLightLaf extends FlatLightLaf {
 
-    public static boolean install() {
+    public static boolean setup() {
         return setup(new SparkLightLaf());
     }
 
