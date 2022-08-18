@@ -75,6 +75,7 @@ public class PluginManager implements MainWindowListener
      * The root Plugins Directory.
      */
     public static File PLUGINS_DIRECTORY = new File( Spark.getBinDirectory().getParent(), "plugins" ).getAbsoluteFile();
+    public static File PROFILE_PLUGINS_DIRECTORY = new File( Spark.getLogDirectory().getParentFile(), "plugins" ).getAbsoluteFile();
 
     private Plugin pluginClass;
     private PluginClassLoader classLoader;
@@ -125,9 +126,10 @@ public class PluginManager implements MainWindowListener
     private void movePlugins()
     {
         // Current Plugin directory
-        File newPlugins = new File( Spark.getLogDirectory().getParentFile(), "plugins" ).getAbsoluteFile();
+        File newPlugins = PROFILE_PLUGINS_DIRECTORY;
         newPlugins.mkdirs();
         deleteOldPlugins( newPlugins );
+        deleteDeprecatedPlugins( newPlugins );
 
         File[] files = PLUGINS_DIRECTORY.listFiles();
         if ( files != null )
@@ -210,6 +212,41 @@ public class PluginManager implements MainWindowListener
                 }
             }
         }
+    }
+
+    /**
+     * Deletes Plugins in pathToSearch which aren't in install\spark\plugins\
+     */
+    public void deleteDeprecatedPlugins(File pathToSearch)
+    {
+        final File[] files = new File( PLUGINS_DIRECTORY.toString() ).listFiles();
+        Set<String> installerFiles;
+        if ( files == null )
+        {
+            installerFiles = Collections.emptySet();
+        }
+        else
+        {
+            installerFiles = new TreeSet<>();
+            for (int i = 0; i < files.length; i++) {
+                installerFiles.add(files[i].getName());
+                installerFiles.add(files[i].getName().split("\\.")[0]);
+
+            }
+        }
+
+        final File[] installedPlugins = pathToSearch.listFiles();
+        if ( installedPlugins == null )
+        {
+            return;
+        }
+            for(File plugin : installedPlugins){
+                if(!installerFiles.contains(plugin.getName())){
+                    uninstall(plugin);
+            }
+        }
+
+
     }
 
     /**
