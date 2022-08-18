@@ -245,8 +245,6 @@ public class PluginManager implements MainWindowListener
                     uninstall(plugin);
             }
         }
-
-
     }
 
     /**
