@@ -269,6 +269,10 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
         cbAnonymous.setSelected(localPref.isLoginAnonymously());
         tfUsername.setEnabled(!cbAnonymous.isSelected());
         tfPassword.setEnabled(!cbAnonymous.isSelected());
+        //Add clear button for username,password and domain field
+        tfUsername.putClientProperty("JTextField.showClearButton",true);
+        tfDomain.putClientProperty("JTextField.showClearButton",true);
+        tfPassword.putClientProperty("JTextField.showClearButton",true);
         useSSO(localPref.isSSOEnabled());
         if (cbAutoLogin.isSelected()) {
             TaskEngine.getInstance().submit(this::login);
