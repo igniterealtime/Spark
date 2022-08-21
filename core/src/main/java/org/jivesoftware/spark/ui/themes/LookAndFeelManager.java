@@ -221,6 +221,9 @@ public class LookAndFeelManager {
             UIManager.put("TabbedPane.showTabSeparators", true);
             UIManager.put("TabbedPane.hasFullBorder", true);
             UIManager.put("TabbedPane.underlineColor", new Color(242, 159, 97));
+            UIManager.put("TitlePane.unifiedBackground",false);
+            // Add "eye" button to show password for all passwordField
+            UIManager.put("PasswordField.showRevealButton",true);
             
             UIManager.setLookAndFeel(new SparkLightLaf());
             FlatLaf.updateUILater();
