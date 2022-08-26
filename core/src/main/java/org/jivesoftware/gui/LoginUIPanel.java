@@ -151,7 +151,7 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
     final JPanel buttonPanel = new JPanel(new GridBagLayout());
     private AbstractXMPPConnection connection = null;
 
-    private RolloverButton otherUsers = new RolloverButton(SparkRes.getImageIcon(SparkRes.PANE_UP_ARROW_IMAGE));
+    private RolloverButton otherUsers = new RolloverButton(SparkRes.getImageIcon(SparkRes.PANE_DOWN_ARROW_IMAGE));
 
     /**
      * Creates new form LoginWindow
@@ -314,6 +314,11 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
         tfPassword.putClientProperty("JTextField.placeholderText", Res.getString("hint.login.password"));
         tfUsername.putClientProperty("JTextField.placeholderText", Res.getString("hint.login.username"));
 
+        //If users account > 1 then show account list button "otherUsers"
+        if(_usernames.size() > 1){
+            tfUsername.putClientProperty("JTextField.trailingComponent",otherUsers);
+        }
+        
         setComponentsAvailable(true);
 
     }
