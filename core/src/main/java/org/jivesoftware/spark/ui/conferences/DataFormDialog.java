@@ -97,6 +97,16 @@ public class DataFormDialog extends JPanel {
 
                 List<? extends CharSequence> valueList = field.getValues();
 
+                if (type.equals(FormField.Type.text_private)) {
+                    String value = null;
+                    if (valueList.size() > 0){
+                        value = valueList.get(0).toString();
+                        submitForm.setAnswer(variable, value);
+                    }
+
+                    addField(label, new JPasswordField(value), variable);
+                }
+
                 if (valueList.size() > 0) {
                     if (type.equals(FormField.Type.bool)) {
                         BooleanFormField booleanField = field.ifPossibleAsOrThrow(BooleanFormField.class);
@@ -123,10 +133,6 @@ public class DataFormDialog extends JPanel {
                         }
                         submitForm.setAnswer(variable, valueList);
                         addField(label, new JTextArea(buf.toString()), variable);
-                    } else if (type.equals(FormField.Type.text_private)) {
-                        String value = valueList.get(0).toString();
-                        submitForm.setAnswer(variable, value);
-                        addField(label, new JPasswordField(value), variable);
                     } else if (type.equals(FormField.Type.list_single)) {
                         ListSingleFormField listSingleFormField = field.ifPossibleAsOrThrow(ListSingleFormField.class);
                         JComboBox<String> box = new JComboBox<>();
@@ -222,9 +228,8 @@ public class DataFormDialog extends JPanel {
                 String value = (String) ((JComboBox<?>) o).getSelectedItem();
                 List<String> list = new ArrayList<>();
                 list.add(value);
-                if (list.size() > 0) {
-                    submitForm.setAnswer(answer, list);
-                }
+                submitForm.setAnswer(answer, list.stream().iterator().next());
+
             } else if (o instanceof CheckBoxList) {
                 List<String> list = ((CheckBoxList) o).getSelectedValues();
                 if (list.size() > 0) {
