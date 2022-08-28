@@ -16,15 +16,9 @@
 package org.jivesoftware.spark.ui;
 
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.Point;
-import java.awt.Toolkit;
+import java.awt.*;
 import java.awt.event.MouseEvent;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -42,7 +36,6 @@ import org.jivesoftware.smackx.vcardtemp.packet.VCard;
 import org.jivesoftware.smackx.iqlast.packet.LastActivity;
 import org.jivesoftware.smackx.iqlast.LastActivityManager;
 import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
@@ -215,6 +208,10 @@ public class ContactInfoWindow extends JPanel {
         // keep this away from bottom edge
         if (actualY + getHeight() > screenSize.height - 64) {
             actualY -= actualY + getHeight() - screenSize.height + 64;
+        }
+        // if width Spark Main Windows > width 0.9*screenSize we should put a window inside
+        if(SparkManager.getMainWindow().getWidth() > screenSize.getWidth()*0.9){
+            actualX = x-310;
         }
         window.setLocation(actualX, actualY);
     }
