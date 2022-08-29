@@ -70,7 +70,7 @@ public class SparkRes {
     public static final String CHAT_WORKSPACE = "CHAT_WORKSPACE";
     public static final String CIRCLE_CHECK_IMAGE = "CIRCLE_CHECK_IMAGE";
     public static final String CLEAR_BALL_ICON = "CLEAR_BALL_ICON";
-    public static final String CLOSE_DARK_X_IMAGE = "CLOSE_DARK_X_IMAGE";
+    public static final String CLOSE_RED_X_IMAGE = "CLOSE_RED_X_IMAGE";
     public static final String CLOSE_IMAGE = "CLOSE_IMAGE";
     public static final String CLOSE_WHITE_X_IMAGE = "CLOSE_WHITE_X_IMAGE";
     public static final String COLOR_ICON = "COLOR_ICON";
