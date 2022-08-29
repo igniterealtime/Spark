@@ -25,6 +25,7 @@ public class LookAndFeelManager {
     public static final Class<? extends LookAndFeel> lafs[] = new Class[]{
         //flatlaf
         org.jivesoftware.spark.ui.themes.lafs.SparkLightLaf.class,
+        org.jivesoftware.spark.ui.themes.lafs.SparkIntelliJLaf.class
 };
 
     static {
@@ -137,7 +138,6 @@ public class LookAndFeelManager {
                 JFrame.setDefaultLookAndFeelDecorated(true);
                 JDialog.setDefaultLookAndFeelDecorated(true);
             }
-            //UIManager.setLookAndFeel(laf);
             //skip loading from preference and use flatlaf as default
             UIManager.put( "TabbedPane.tabLayoutPolicy", "scroll" );
             UIManager.put("TabbedPane.showTabSeparators", true);
@@ -146,8 +146,11 @@ public class LookAndFeelManager {
             UIManager.put("TitlePane.unifiedBackground",false);
             // Add "eye" button to show password for all passwordField
             UIManager.put("PasswordField.showRevealButton",true);
-            
-            UIManager.setLookAndFeel(new SparkLightLaf());
+            if(!laf.contains("org.jivesoftware.spark.ui.themes.lafs.")){
+                UIManager.setLookAndFeel(Default.getString(Default.DEFAULT_LOOK_AND_FEEL));
+                SettingsManager.getLocalPreferences().setLookAndFeel(Default.getString(Default.DEFAULT_LOOK_AND_FEEL));
+            }
+            UIManager.setLookAndFeel(laf);
             FlatLaf.updateUILater();
         } catch (Exception e) {
             Log.error("An exception occurred while trying to load the look and feel.", e);
