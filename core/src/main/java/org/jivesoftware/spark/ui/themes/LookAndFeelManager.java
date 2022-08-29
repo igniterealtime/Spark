@@ -24,69 +24,9 @@ public class LookAndFeelManager {
      */
     public static final Class<? extends LookAndFeel> lafs[] = new Class[]{
         //flatlaf
-        org.jivesoftware.spark.ui.themes.lafs.SparkLightLaf.class,/*
-        // LittleLuck
-        freeseawind.lf.LittleLuckLookAndFeel.class,
-        // JTattoo
-        com.jtattoo.plaf.acryl.AcrylLookAndFeel.class,
-        com.jtattoo.plaf.aero.AeroLookAndFeel.class,
-        com.jtattoo.plaf.aluminium.AluminiumLookAndFeel.class,
-        com.jtattoo.plaf.bernstein.BernsteinLookAndFeel.class,
-        com.jtattoo.plaf.fast.FastLookAndFeel.class,
-        com.jtattoo.plaf.graphite.GraphiteLookAndFeel.class,
-        com.jtattoo.plaf.hifi.HiFiLookAndFeel.class,
-        com.jtattoo.plaf.luna.LunaLookAndFeel.class,
-        com.jtattoo.plaf.mcwin.McWinLookAndFeel.class,
-        com.jtattoo.plaf.mint.MintLookAndFeel.class,
-        com.jtattoo.plaf.noire.NoireLookAndFeel.class,
-        com.jtattoo.plaf.smart.SmartLookAndFeel.class,
-        com.jtattoo.plaf.texture.TextureLookAndFeel.class,
-        // Insubstance (Substance)
-        //org.pushingpixels.substance.api.skin.SubstanceAutumnLookAndFeel.class, // Disabled. Uses an internal 'Noise factory', which adds 2 seconds to Sparks boot time!
-        org.pushingpixels.substance.api.skin.SubstanceBusinessBlackSteelLookAndFeel.class,
-        org.pushingpixels.substance.api.skin.SubstanceBusinessBlueSteelLookAndFeel.class,
-        org.pushingpixels.substance.api.skin.SubstanceBusinessLookAndFeel.class,
-        org.pushingpixels.substance.api.skin.SubstanceCeruleanLookAndFeel.class,
-        org.pushingpixels.substance.api.skin.SubstanceChallengerDeepLookAndFeel.class,
-        org.pushingpixels.substance.api.skin.SubstanceCremeCoffeeLookAndFeel.class,
-        org.pushingpixels.substance.api.skin.SubstanceCremeLookAndFeel.class,
-        org.pushingpixels.substance.api.skin.SubstanceDustCoffeeLookAndFeel.class,
-        org.pushingpixels.substance.api.skin.SubstanceDustLookAndFeel.class,
-        org.pushingpixels.substance.api.skin.SubstanceEmeraldDuskLookAndFeel.class,
-        org.pushingpixels.substance.api.skin.SubstanceGeminiLookAndFeel.class,
-        org.pushingpixels.substance.api.skin.SubstanceGraphiteAquaLookAndFeel.class,
-        org.pushingpixels.substance.api.skin.SubstanceGraphiteGlassLookAndFeel.class,
-        org.pushingpixels.substance.api.skin.SubstanceGraphiteLookAndFeel.class,
-        org.pushingpixels.substance.api.skin.SubstanceMagellanLookAndFeel.class,
-        org.pushingpixels.substance.api.skin.SubstanceMarinerLookAndFeel.class,
-        org.pushingpixels.substance.api.skin.SubstanceMistAquaLookAndFeel.class,
-        org.pushingpixels.substance.api.skin.SubstanceMistSilverLookAndFeel.class,
-        org.pushingpixels.substance.api.skin.SubstanceModerateLookAndFeel.class,
-        //org.pushingpixels.substance.api.skin.SubstanceNebulaBrickWallLookAndFeel.class, // Disabled. Uses an internal 'Noise factory', which adds 2 seconds to Sparks boot time!
-        //org.pushingpixels.substance.api.skin.SubstanceNebulaLookAndFeel.class, // Disabled. Uses an internal 'Noise factory', which adds 2 seconds to Sparks boot time!
-        org.pushingpixels.substance.api.skin.SubstanceOfficeBlack2007LookAndFeel.class,
-        org.pushingpixels.substance.api.skin.SubstanceOfficeBlue2007LookAndFeel.class,
-        org.pushingpixels.substance.api.skin.SubstanceOfficeSilver2007LookAndFeel.class,
-        org.pushingpixels.substance.api.skin.SubstanceRavenLookAndFeel.class,
-        org.pushingpixels.substance.api.skin.SubstanceSaharaLookAndFeel.class,
-        org.pushingpixels.substance.api.skin.SubstanceTwilightLookAndFeel.class,
-     */};
+        org.jivesoftware.spark.ui.themes.lafs.SparkLightLaf.class,
+};
 
-    // Maybe Sometime well get a Synthetica License
-    //"de.javasoft.plaf.synthetica.SyntheticaStandardLookAndFeel", //commec
-    //"de.javasoft.plaf.synthetica.SyntheticaBlackEyeLookAndFeel", //commerc
-    //"de.javasoft.plaf.synthetica.SyntheticaBlackMoonLookAndFeel", //free
-    //"de.javasoft.plaf.synthetica.SyntheticaBlackStarLookAndFeel", //free
-    //"de.javasoft.plaf.synthetica.SyntheticaBlueIceLookAndFeel", //free
-    //"de.javasoft.plaf.synthetica.SyntheticaBlueMoonLookAndFeel", //free
-    //"de.javasoft.plaf.synthetica.SyntheticaBlueSteelLookAndFeel", //free
-    //"de.javasoft.plaf.synthetica.SyntheticaClassyLookAndFeel", //commerc
-    //"de.javasoft.plaf.synthetica.SyntheticaGreenDreamLookAndFeel", //free
-    //"de.javasoft.plaf.synthetica.SyntheticaOrangeMetallicLookAndFeel", //commerc
-    //"de.javasoft.plaf.synthetica.SyntheticaSilverMoonLookAndFeel",	//free
-    //"de.javasoft.plaf.synthetica.SyntheticaSimple2DLookAndFeel", //commerc
-    //"de.javasoft.plaf.synthetica.SyntheticaSkyMetallicLookAndFeel", //commerc
-    //"de.javasoft.plaf.synthetica.SyntheticaWhiteVisionLookAndFeel", //commerc
     static {
         // Add all additional look and feels to the UIManager.
         for (Class<? extends LookAndFeel> laf : lafs) {
@@ -189,24 +129,6 @@ public class LookAndFeelManager {
         } else {
             doSetLookAndFeel(laf);
         }
-
-//        if ( laf.contains( "jtattoo" ) )
-//        {
-//            Properties props = new Properties();
-//            String menubar = Default.getString( Default.MENUBAR_TEXT ) == null ? ""
-//                    : Default.getString( Default.MENUBAR_TEXT );
-//            props.put( "logoString", menubar );
-//            try
-//            {
-//                Class<?> c = Thread.currentThread().getContextClassLoader().loadClass( laf );
-//                Method m = c.getMethod( "setCurrentTheme", Properties.class );
-//                m.invoke( c.newInstance(), props );
-//            }
-//            catch ( Exception e )
-//            {
-//                Log.error( "Error Setting JTattoo ", e );
-//            }
-//        }
     }
 
     private static void doSetLookAndFeel(String laf) {
