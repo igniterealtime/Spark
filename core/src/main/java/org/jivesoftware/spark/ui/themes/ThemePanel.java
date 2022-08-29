@@ -122,7 +122,6 @@ public class ThemePanel extends JPanel {
                     try {
                         final String className = LookAndFeelManager.getClassName(selectedName);
                         UIManager.setLookAndFeel(className);
-                        // TODO setJTattooBar( _lookandfeelname.get( _lookandfeel.getSelectedIndex() ) );
                     } catch (Exception e) {
                         Log.error("An unexpected exception occurred while trying to update Look and Feel to '" + selectedName + "'.", e);
                     }
@@ -528,31 +527,6 @@ public class ThemePanel extends JPanel {
      */
     public void setShowReconnectPanel(int reconnect) {
         _showReconnectBox.setSelectedIndex(reconnect);
-    }
-
-    /**
-     * Tries to set the Menubar String for JTatto LaFs, doesnt work on Substance
-     *
-     * @param classname, the class of the LookandFeel
-     */
-    private void setJTattooBar(String classname) {
-
-        if (classname.contains("jtattoo")) {
-            try {
-                Properties props = new Properties();
-
-                final String menubar = Default.getString(Default.MENUBAR_TEXT) == null ? "" : Default.getString(Default.MENUBAR_TEXT);
-
-                props.put("logoString", menubar);
-
-                Class<?> c = ClassLoader.getSystemClassLoader().loadClass(classname);
-                Method m = c.getMethod("setCurrentTheme", Properties.class);
-
-                m.invoke(c.newInstance(), props);
-            } catch (Exception e) {
-                Log.error("Error Setting JTattoo ", e);
-            }
-        }
     }
 
     protected JLabel getLookandfeelLabel() {
