@@ -95,7 +95,10 @@ public class LookAndFeelManager {
 
             lookAndFeelClassByName = new TreeMap<>(String::compareToIgnoreCase);
             for (final UIManager.LookAndFeelInfo lafi : lafis) {
-                lookAndFeelClassByName.put(lafi.getName(), lafi.getClassName());
+                //Add only custom Laf, drop system Laf
+                if(lafi.getClassName().contains("org.jivesoftware.spark.ui.themes.lafs.")){
+                    lookAndFeelClassByName.put(lafi.getName(), lafi.getClassName());
+                }
             }
         }
         return lookAndFeelClassByName;
