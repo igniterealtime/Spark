@@ -1262,7 +1262,8 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
                 } else if (Default.getBoolean(Default.USE_VERSION_AS_RESOURCE) || localPref.isUseVersionAsResource()) {
                     resource = JiveInfo.getName() + " " + JiveInfo.getVersion();
                 }
-
+                
+                localPref.setResource(resource);
                 Resourcepart resourcepart = Resourcepart.from(modifyWildcards(resource).trim());
                 connection.login(getLoginUsername(), getLoginPassword(), resourcepart);
             }
