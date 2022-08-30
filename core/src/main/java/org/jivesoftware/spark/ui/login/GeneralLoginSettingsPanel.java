@@ -68,6 +68,8 @@ class GeneralLoginSettingsPanel extends JPanel implements ActionListener
         useVersionAsResourceBox.setSelected( localPreferences.isUseVersionAsResource() );
         updateResourceVersion();
 
+        resourceField.setEnabled(!(useHostnameAsResourceBox.isSelected() || useVersionAsResourceBox.isSelected()));
+
         autoDiscoverBox.addActionListener( this );
 
         autoDiscoverBox.setSelected( !localPreferences.isHostAndPortConfigured() );
@@ -92,7 +94,7 @@ class GeneralLoginSettingsPanel extends JPanel implements ActionListener
 
         add( connectionPanel, new GridBagConstraints( 0, 1, 3, 1, 1.0, 0.0, NORTHWEST, BOTH, DEFAULT_INSETS, 0, 0 ) );
 
-        if ( Default.getBoolean( Default.USE_VERSION_AS_RESOURCE ) == Default.getBoolean( Default.USE_VERSION_AS_RESOURCE ) )
+        if ( Default.getBoolean( Default.USE_HOSTNAME_AS_RESOURCE ) == Default.getBoolean( Default.USE_VERSION_AS_RESOURCE ) )
         {
             add( resourceLabel,            new GridBagConstraints( 0, 2, 1, 1, 0.0, 0.0, WEST, NONE, DEFAULT_INSETS, 0, 0 ) );
             add( resourceField,            new GridBagConstraints( 1, 2, 1, 1, 0.0, 0.0, WEST, NONE, DEFAULT_INSETS, 100, 0 ) );
