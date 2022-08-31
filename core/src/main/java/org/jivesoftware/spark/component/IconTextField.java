@@ -28,6 +28,8 @@ import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.util.HashSet;
+import java.util.Set;
 import javax.swing.BorderFactory;
 import javax.swing.plaf.basic.BasicTextFieldUI;
 import javax.swing.plaf.basic.BasicTextUI;
@@ -60,7 +62,7 @@ public class IconTextField extends JPanel {
         imageComponent = new JLabel(icon);
         downOption = new JLabel(SparkRes.getImageIcon(SparkRes.DOWN_OPTION_IMAGE));
 
-        add(downOption, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.SOUTHEAST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+        add(downOption, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
         add(imageComponent, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
         add(textField, new GridBagConstraints(2, 0, 1, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0, 5, 0, 0), 0, 0));
 
@@ -123,5 +125,9 @@ public class IconTextField extends JPanel {
      */
     public JTextField getTextComponent() {
         return textField;
+    }
+
+    public JLabel getDownOption() {
+        return downOption;
     }
 }
