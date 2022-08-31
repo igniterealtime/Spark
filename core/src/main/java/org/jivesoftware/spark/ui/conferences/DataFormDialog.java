@@ -90,80 +90,75 @@ public class DataFormDialog extends JPanel {
         // Create a new form to submit based on the original form
         try {
             // Add default answers to the form to submit
-            for ( final FormField field : form.getDataForm().getFields() ) {
+            for (final FormField field : form.getDataForm().getFields()) {
                 String variable = field.getFieldName();
                 String label = field.getLabel();
                 FormField.Type type = field.getType();
 
                 List<? extends CharSequence> valueList = field.getValues();
 
-                if (type.equals(FormField.Type.bool)) {
-                    BooleanFormField booleanField = field.ifPossibleAsOrThrow(BooleanFormField.class);
-                    Boolean isSelected = booleanField.getValueAsBoolean();
-
-                    JCheckBox box = new JCheckBox(label);
-                    box.setSelected(isSelected);
-                    submitForm.setAnswer( variable, isSelected );
-                    addField(label, box, variable);
-                }
-                else if (type.equals(FormField.Type.text_single) ||
-                        type.equals(FormField.Type.jid_single)) {
-                    String value = valueList.get(0).toString();
-                    submitForm.setAnswer( variable, value );
-                    addField(label, new JTextField(value), variable);
-                }
-                else if (type.equals(FormField.Type.text_multi) ||
-                        type.equals(FormField.Type.jid_multi)) {
-                    StringBuilder buf = new StringBuilder();
-                    final Iterator<? extends CharSequence> iter = valueList.iterator();
-                    while (iter.hasNext()) {
-                        buf.append( iter.next() );
-
-                        if (iter.hasNext()) {
-                            buf.append(",");
-                        }
-                    }
-                    submitForm.setAnswer( variable, valueList );
-                    addField(label, new JTextArea(buf.toString()), variable);
-                }
-                else if (type.equals(FormField.Type.text_private)) {
+                if (type.equals(FormField.Type.text_private)) {
                     String value = null;
-                    if ( !valueList.isEmpty() )
-                    {
-                        value = valueList.get( 0 ).toString();
-                        submitForm.setAnswer( variable, value );
+                    if (valueList.size() > 0){
+                        value = valueList.get(0).toString();
+                        submitForm.setAnswer(variable, value);
                     }
-                    addField(label, new JPasswordField( value ), variable);
+
+                    addField(label, new JPasswordField(value), variable);
                 }
-                else if (type.equals(FormField.Type.list_single)) {
-                    ListSingleFormField listSingleFormField = field.ifPossibleAsOrThrow(ListSingleFormField.class);
-                    JComboBox<String> box = new JComboBox<>();
-                    for ( final FormField.Option option : listSingleFormField.getOptions() ) {
-                        String value = option.getValueString();
-                        box.addItem(value);
-                    }
-                    if (valueList.size() > 0) {
+
+                if (valueList.size() > 0) {
+                    if (type.equals(FormField.Type.bool)) {
+                        BooleanFormField booleanField = field.ifPossibleAsOrThrow(BooleanFormField.class);
+                        boolean isSelected = booleanField.getValueAsBoolean();
+
+                        JCheckBox box = new JCheckBox(label);
+                        box.setSelected(isSelected);
+                        submitForm.setAnswer(variable, isSelected);
+                        addField(label, box, variable);
+                    } else if (type.equals(FormField.Type.text_single) ||
+                        type.equals(FormField.Type.jid_single)) {
+                        String value = valueList.get(0).toString();
+                        submitForm.setAnswer(variable, value);
+                        addField(label, new JTextField(value), variable);
+                    } else if (type.equals(FormField.Type.text_multi) ||
+                        type.equals(FormField.Type.jid_multi)) {
+                        StringBuilder buf = new StringBuilder();
+                        final Iterator<? extends CharSequence> iter = valueList.iterator();
+                        while (iter.hasNext()) {
+                            buf.append(iter.next());
+                            if (iter.hasNext()) {
+                                buf.append(",");
+                            }
+                        }
+                        submitForm.setAnswer(variable, valueList);
+                        addField(label, new JTextArea(buf.toString()), variable);
+                    } else if (type.equals(FormField.Type.list_single)) {
+                        ListSingleFormField listSingleFormField = field.ifPossibleAsOrThrow(ListSingleFormField.class);
+                        JComboBox<String> box = new JComboBox<>();
+                        for (final FormField.Option option : listSingleFormField.getOptions()) {
+                            String value = option.getValueString();
+                            box.addItem(value);
+                        }
                         String defaultValue = valueList.get(0).toString();
                         box.setSelectedItem(defaultValue);
-                        submitForm.setAnswer( variable, valueList );
+                        submitForm.setAnswer(variable, valueList.get(0));
+                        addField(label, box, variable);
+                    } else if (type.equals(FormField.Type.list_multi)) {
+                        ListMultiFormField listMultiFormField = field.ifPossibleAsOrThrow(ListMultiFormField.class);
+                        CheckBoxList checkBoxList = new CheckBoxList();
+                        final List<? extends CharSequence> values = field.getValues();
+                        for (final Option option : listMultiFormField.getOptions()) {
+                            String optionLabel = option.getLabel();
+                            String optionValue = option.getValueString();
+                            checkBoxList.addCheckBox(new JCheckBox(optionLabel, values.contains(optionValue)), optionValue);
+                        }
+                        submitForm.setAnswer(variable, valueList);
+                        addField(label, checkBoxList, variable);
                     }
-                    addField(label, box, variable);
-                }
-                else if (type.equals(FormField.Type.list_multi)) {
-                    ListMultiFormField listMultiFormField = field.ifPossibleAsOrThrow(ListMultiFormField.class);
-                    CheckBoxList checkBoxList = new CheckBoxList();
-                    final List<? extends CharSequence> values = field.getValues();
-                    for ( final Option option : listMultiFormField.getOptions() ) {
-                        String optionLabel = option.getLabel();
-                        String optionValue = option.getValueString();
-                        checkBoxList.addCheckBox(new JCheckBox(optionLabel, values.contains(optionValue)), optionValue);
-                    }
-                    submitForm.setAnswer( variable, valueList  );
-                    addField(label, checkBoxList, variable);
                 }
             }
-        }
-        catch (NullPointerException e) {
+        } catch (NullPointerException e) {
             Log.error(e);
             // TODO: Why do we continue here as nothing had happened? If there is an NPE somewhere in this block, then
             // we should fix it, instead of masking it. Remove this try/catch block and see if it still appears, if so:
@@ -233,9 +228,8 @@ public class DataFormDialog extends JPanel {
                 String value = (String) ((JComboBox<?>) o).getSelectedItem();
                 List<String> list = new ArrayList<>();
                 list.add(value);
-                if (list.size() > 0) {
-                    submitForm.setAnswer(answer, list);
-                }
+                submitForm.setAnswer(answer, list.stream().iterator().next());
+
             } else if (o instanceof CheckBoxList) {
                 List<String> list = ((CheckBoxList) o).getSelectedValues();
                 if (list.size() > 0) {

@@ -151,7 +151,7 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
     final JPanel buttonPanel = new JPanel(new GridBagLayout());
     private AbstractXMPPConnection connection = null;
 
-    private RolloverButton otherUsers = new RolloverButton(SparkRes.getImageIcon(SparkRes.PANE_UP_ARROW_IMAGE));
+    private RolloverButton otherUsers = new RolloverButton(SparkRes.getImageIcon(SparkRes.PANE_DOWN_ARROW_IMAGE));
 
     /**
      * Creates new form LoginWindow
@@ -269,6 +269,10 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
         cbAnonymous.setSelected(localPref.isLoginAnonymously());
         tfUsername.setEnabled(!cbAnonymous.isSelected());
         tfPassword.setEnabled(!cbAnonymous.isSelected());
+        //Add clear button for username,password and domain field
+        tfUsername.putClientProperty("JTextField.showClearButton",true);
+        tfDomain.putClientProperty("JTextField.showClearButton",true);
+        tfPassword.putClientProperty("JTextField.showClearButton",true);
         useSSO(localPref.isSSOEnabled());
         if (cbAutoLogin.isSelected()) {
             TaskEngine.getInstance().submit(this::login);
@@ -310,6 +314,11 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
         tfPassword.putClientProperty("JTextField.placeholderText", Res.getString("hint.login.password"));
         tfUsername.putClientProperty("JTextField.placeholderText", Res.getString("hint.login.username"));
 
+        //If users account > 1 then show account list button "otherUsers"
+        if(_usernames.size() > 1){
+            tfUsername.putClientProperty("JTextField.trailingComponent",otherUsers);
+        }
+        
         setComponentsAvailable(true);
 
     }
@@ -1253,7 +1262,8 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
                 } else if (Default.getBoolean(Default.USE_VERSION_AS_RESOURCE) || localPref.isUseVersionAsResource()) {
                     resource = JiveInfo.getName() + " " + JiveInfo.getVersion();
                 }
-
+                
+                localPref.setResource(resource);
                 Resourcepart resourcepart = Resourcepart.from(modifyWildcards(resource).trim());
                 connection.login(getLoginUsername(), getLoginPassword(), resourcepart);
             }

@@ -82,7 +82,7 @@ public class SparkTabbedPane extends JPanel {
         pane.addChangeListener(changeListener);
 
         closeInactiveButtonIcon = SparkRes.getImageIcon(SparkRes.CLOSE_WHITE_X_IMAGE);
-        closeActiveButtonIcon = SparkRes.getImageIcon(SparkRes.CLOSE_DARK_X_IMAGE);
+        closeActiveButtonIcon = SparkRes.getImageIcon(SparkRes.CLOSE_RED_X_IMAGE);
 
     }
 

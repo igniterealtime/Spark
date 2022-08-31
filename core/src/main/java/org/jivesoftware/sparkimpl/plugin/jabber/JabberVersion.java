@@ -32,11 +32,7 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.JiveInfo;
 import org.jivesoftware.resource.Res;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.JComponent;
-import javax.swing.JPopupMenu;
-import javax.swing.KeyStroke;
+import javax.swing.*;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
@@ -133,12 +129,22 @@ public class JabberVersion implements Plugin {
     }
 
     private void viewClient() {
+        final JTextField field = new JTextField();
         final ContactList contactList = SparkManager.getWorkspace().getContactList();
         Collection<ContactItem> selectedUsers = contactList.getSelectedUsers();
         if (selectedUsers.size() == 1) {
-            ContactItem item = (ContactItem)selectedUsers.toArray()[0];
-            Presence presence = item.getPresence();
-            final String jid = presence.getFrom().toString();
+            final ContactItem item = (ContactItem)selectedUsers.toArray()[0];
+            final Presence presence = item.getPresence();
+            final String jid;
+            try {
+                 jid = presence.getFrom().toString();
+            }catch (NullPointerException e){
+                JOptionPane.showMessageDialog(field,
+                    item.getAlias() + " " +Res.getString("user.has.signed.off"),
+                    Res.getString("title.notification"),
+                    JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
             SwingWorker worker = new SwingWorker() {
                 @Override
 				public Object construct() {
