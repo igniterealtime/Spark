@@ -158,7 +158,7 @@ public class PluginManager implements MainWindowListener
     /**
      * Deletes Plugins in pathToSearch that have a different md5-hash than its correspondant in install\spark\plugins\
      */
-    public void deleteOldPlugins( File pathToSearch )
+    private void deleteOldPlugins( File pathToSearch )
     {
         final String installPath = Spark.getBinDirectory().getParentFile() + File.separator + "plugins" + File.separator;
         final File[] files = new File( installPath ).listFiles();
