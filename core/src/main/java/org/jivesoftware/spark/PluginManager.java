@@ -129,7 +129,7 @@ public class PluginManager implements MainWindowListener
         File newPlugins = PROFILE_PLUGINS_DIRECTORY;
         newPlugins.mkdirs();
         deleteOldPlugins( newPlugins );
-        deleteDeprecatedPlugins( newPlugins );
+        deletePluginIfNotExistInInstallFolder( newPlugins );
 
         File[] files = PLUGINS_DIRECTORY.listFiles();
         if ( files != null )
@@ -215,9 +215,9 @@ public class PluginManager implements MainWindowListener
     }
 
     /**
-     * Deletes Plugins in pathToSearch which aren't in install\spark\plugins\
+     * Deletes Plugins in pathToSearch which doesn't exist in install\spark\plugins\
      */
-    public void deleteDeprecatedPlugins(File pathToSearch)
+    private void deletePluginIfNotExistInInstallFolder(File pathToSearch)
     {
         final File[] files = new File( PLUGINS_DIRECTORY.toString() ).listFiles();
         Set<String> installerFiles;
