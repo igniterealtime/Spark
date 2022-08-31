@@ -157,7 +157,7 @@ public class SearchService extends JPanel {
         workspace.validate();
         workspace.repaint();
 
-        findField.getImageComponent().addMouseListener(new MouseAdapter() {
+        findField.getDownOption().addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 Collection<Searchable> searchables = SparkManager.getSearchManager().getSearchServices();
