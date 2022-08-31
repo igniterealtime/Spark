@@ -122,7 +122,6 @@ public class ThemePanel extends JPanel {
                     try {
                         final String className = LookAndFeelManager.getClassName(selectedName);
                         UIManager.setLookAndFeel(className);
-                        // TODO setJTattooBar( _lookandfeelname.get( _lookandfeel.getSelectedIndex() ) );
                     } catch (Exception e) {
                         Log.error("An unexpected exception occurred while trying to update Look and Feel to '" + selectedName + "'.", e);
                     }
@@ -142,8 +141,8 @@ public class ThemePanel extends JPanel {
 
                     // substance is a PITA! If the current laf is substance, and the new laf is not, we need to
                     // refresh all components, but since substance is very stubborn, we must restart.
-                    final String currentName = "SparkLighLaf".toLowerCase();//UIManager.getLookAndFeel().getName().toLowerCase();
-                    final String selectedName = "SparkLighLaf";//((String) _lookandfeel.getSelectedItem());
+                    final String currentName = UIManager.getLookAndFeel().getName().toLowerCase();
+                    final String selectedName = ((String) _lookandfeel.getSelectedItem());
                     final String selectedClass = LookAndFeelManager.getClassName(selectedName);
                     if (currentName.contains("substance") && !selectedName.toLowerCase().contains("substance")) {
                         final int selectedOption = JOptionPane.showConfirmDialog(SparkManager.getPreferenceManager().getPreferenceDialog(),
@@ -248,7 +247,7 @@ public class ThemePanel extends JPanel {
     }
 
     public String getSelectedLookAndFeelName() {
-        return "SparkLightLaf"; //(String) this._lookandfeel.getSelectedItem();
+        return (String) this._lookandfeel.getSelectedItem();
     }
 
     public String getSelectedLookAndFeelClassName() {
@@ -267,10 +266,9 @@ public class ThemePanel extends JPanel {
         add(addEmoticonButton, new GridBagConstraints(2, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         add(emoticonCheckBox, new GridBagConstraints(0, 2, 3, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
 
-        // todo : k33ptoo: not necessary until dark LAF is completed
-//        add( _lookandfeelLabel, new GridBagConstraints( 0, 4, 3, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets( 5, 5, 5, 5 ), 50, 0 ) );
-//        add( _lookandfeel, new GridBagConstraints( 1, 4, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets( 5, 5, 5, 5 ), 50, 0 ) );
-//        add( _lookandfeelpreview, new GridBagConstraints( 2, 4, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets( 5, 5, 5, 5 ), 0, 0 ) );
+        add( _lookandfeelLabel, new GridBagConstraints( 0, 4, 3, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets( 5, 5, 5, 5 ), 50, 0 ) );
+        add( _lookandfeel, new GridBagConstraints( 1, 4, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets( 5, 5, 5, 5 ), 50, 0 ) );
+        add( _lookandfeelpreview, new GridBagConstraints( 2, 4, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets( 5, 5, 5, 5 ), 0, 0 ) );
         add(chatRoomFontLabel, new GridBagConstraints(0, 5, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         add(chatRoomFontField, new GridBagConstraints(1, 5, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 50, 0));
         add(contactListFontLabel, new GridBagConstraints(0, 6, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
@@ -324,7 +322,7 @@ public class ThemePanel extends JPanel {
 
         final String className = pref.getLookAndFeel();
         final String name = LookAndFeelManager.getName(className);
-        _lookandfeel.setSelectedItem("SparkLighLaf");
+        _lookandfeel.setSelectedItem(name);
 
         showVCards.setSelected(pref.areVCardsVisible());
 
@@ -528,31 +526,6 @@ public class ThemePanel extends JPanel {
      */
     public void setShowReconnectPanel(int reconnect) {
         _showReconnectBox.setSelectedIndex(reconnect);
-    }
-
-    /**
-     * Tries to set the Menubar String for JTatto LaFs, doesnt work on Substance
-     *
-     * @param classname, the class of the LookandFeel
-     */
-    private void setJTattooBar(String classname) {
-
-        if (classname.contains("jtattoo")) {
-            try {
-                Properties props = new Properties();
-
-                final String menubar = Default.getString(Default.MENUBAR_TEXT) == null ? "" : Default.getString(Default.MENUBAR_TEXT);
-
-                props.put("logoString", menubar);
-
-                Class<?> c = ClassLoader.getSystemClassLoader().loadClass(classname);
-                Method m = c.getMethod("setCurrentTheme", Properties.class);
-
-                m.invoke(c.newInstance(), props);
-            } catch (Exception e) {
-                Log.error("Error Setting JTattoo ", e);
-            }
-        }
     }
 
     protected JLabel getLookandfeelLabel() {

@@ -19,8 +19,6 @@ import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.packet.IQ;
-import org.jivesoftware.smack.packet.IqData;
-import org.jivesoftware.smack.packet.StanzaFactory;
 import org.jivesoftware.smackx.time.packet.Time;
 import org.jivesoftware.smackx.iqversion.packet.Version;
 import org.jivesoftware.spark.SparkManager;
@@ -95,15 +93,9 @@ public class VersionViewer {
         cards.add(dataCard);
 
         final XMPPConnection connection = SparkManager.getConnection();
-
-        StanzaFactory stanzaFactory = connection.getStanzaFactory();
-        IqData versionIqData = stanzaFactory.buildIqData().ofType(IQ.Type.get);
-        IqData timeIqData = stanzaFactory.buildIqData().ofType(IQ.Type.get);
-
         // Load Version
         final Version versionRequest = new Version();
-        versionRequest.setType(versionIqData.getType());
-        versionRequest.setStanzaId(versionIqData.getStanzaId());
+        versionRequest.setType(IQ.Type.get);
         versionRequest.setTo(jid);
 
         connection.sendIqRequestAsync(versionRequest)
@@ -121,8 +113,7 @@ public class VersionViewer {
 
         // Time
         final Time time = new Time();
-        time.setType(timeIqData.getType());
-        time.setStanzaId(timeIqData.getStanzaId());
+        time.setType(IQ.Type.get);
         time.setTo(jid);
 
         connection.sendIqRequestAsync(time)

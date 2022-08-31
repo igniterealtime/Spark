@@ -84,7 +84,6 @@ public class Default {
     public static final String MUTUAL_AUTH_DISABLED = "MUTUAL_AUTH_DISABLED";
     public static final String HELP_USER_GUIDE = "HELP_USER_GUIDE";
     public static final String BROADCAST_IN_CHAT_WINDOW = "BROADCAST_IN_CHAT_WINDOW";
-    public static final String MENUBAR_TEXT = "MENUBAR_TEXT";
     public static final String FILE_TRANSFER_WARNING_SIZE = "FILE_TRANSFER_WARNING_SIZE";
     public static final String FILE_TRANSFER_MAXIMUM_SIZE = "FILE_TRANSFER_MAXIMUM_SIZE";
     public static final String TABS_PLACEMENT_TOP = "TABS_PLACEMENT_TOP";
