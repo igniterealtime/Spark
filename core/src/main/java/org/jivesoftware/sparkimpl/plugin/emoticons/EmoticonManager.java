@@ -572,7 +572,7 @@ public class EmoticonManager {
     /**
      * Deletes Emoticons in pathToSearch that have a different md5-hash than its correspondant in install\spark\xtra\emoticons
      */
-    public void deleteOldEmoticons( File pathToSearch )
+    private void deleteOldEmoticons( File pathToSearch )
     {
         final String installPath = Spark.getBinDirectory().getParentFile() + File.separator + "xtra" + File.separator +
             "emoticons" + File.separator;
