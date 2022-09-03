@@ -17,11 +17,15 @@ package org.jivesoftware.spark.ui;
 
 import javax.swing.*;
 
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.util.SwingWorker;
+
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 /**
  * Used for silent reconnecting<br>
@@ -33,7 +37,7 @@ import org.jivesoftware.spark.util.SwingWorker;
 public class ReconnectPanelIcon implements ConnectionListener {
 
     private static final long serialVersionUID = 437696141257704105L;
-    private final JLabel _icon;
+    private final JButton _icon;
     private final JPanel _commandpanel;
 
     /**
@@ -43,7 +47,19 @@ public class ReconnectPanelIcon implements ConnectionListener {
 
 	_commandpanel = SparkManager.getWorkspace().getCommandPanel();
 
-	_icon = new JLabel(SparkRes.getImageIcon(SparkRes.BUSY_IMAGE));
+	_icon = new JButton(SparkRes.getImageIcon(SparkRes.BUSY_IMAGE));
+       _icon.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                final int selectedOption = JOptionPane.showConfirmDialog(null,
+                    Res.getString("message.restart.required"),
+                    Res.getString("title.alert"),
+                    JOptionPane.YES_NO_OPTION);
+                if (selectedOption == JOptionPane.YES_OPTION) {
+                    SparkManager.getMainWindow().logout(false);
+                }
+            }
+        });
 
 	}
 
@@ -51,7 +67,7 @@ public class ReconnectPanelIcon implements ConnectionListener {
 	return _commandpanel;
     }
 
-    public JLabel getButton() {
+    public JButton getButton() {
 	return _icon;
     }
 
