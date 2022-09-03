@@ -918,6 +918,14 @@ public class LocalPreferences {
 		return getBoolean("buzzEnabled", true);
 	}
 
+    public void setCloseUnreadMessageEnabled(boolean askBeforeCLosing) {
+        setBoolean("closeUnreadMessage", askBeforeCLosing);
+    }
+
+    public boolean isCloseUnreadMessage() {
+        return getBoolean("closeUnreadMessage", true);
+    }
+
 	public void setOfflineGroupVisible(boolean visible) {
 		setBoolean("offlineGroupVisible", visible);
 	}
