@@ -19,6 +19,8 @@ import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import javax.swing.*;
 import javax.swing.text.html.HTMLEditorKit;
@@ -43,6 +45,8 @@ public class ReconnectPanel extends JPanel implements ConnectionListener, Reconn
 	private final JEditorPane pane;
     private final JLabel _icon;
 
+    private final JButton _button;
+
     /**
      * Construct the RetryPanel.
      */
@@ -55,8 +59,20 @@ public class ReconnectPanel extends JPanel implements ConnectionListener, Reconn
         pane.setEditorKit(new HTMLEditorKit());
         pane.setEditable(false);
 
-        _icon = new JLabel(SparkRes.getImageIcon(SparkRes.SMALL_CHECK));
-
+        _icon = new JLabel(SparkRes.getImageIcon(SparkRes.BUSY_IMAGE));
+        _button = new JButton(Res.getString("button.reconnect2"));
+        _button.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                final int selectedOption = JOptionPane.showConfirmDialog(null,
+                    Res.getString("message.restart.required"),
+                    Res.getString("title.alert"),
+                    JOptionPane.YES_NO_OPTION);
+                if (selectedOption == JOptionPane.YES_OPTION) {
+                    SparkManager.getMainWindow().logout(false);
+                }
+            }
+        });
         layoutComponents();
 
         setBackground(Color.white);
@@ -90,8 +106,8 @@ public class ReconnectPanel extends JPanel implements ConnectionListener, Reconn
 
     private void layoutComponents() {
         add(pane, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
-
         add(_icon, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        add(_button, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
     }
 
     /**
