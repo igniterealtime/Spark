@@ -1211,8 +1211,20 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
 
             @Override
             public void windowClosing(WindowEvent windowEvent) {
-                SparkManager.getChatManager().getChatContainer()
+                if (SparkManager.getChatManager().getChatContainer().getTotalNumberOfUnreadMessages() > 0 &&
+                    SettingsManager.getLocalPreferences().isCloseUnreadMessage()) {
+                    final int selectedOption = JOptionPane.showConfirmDialog(null,
+                        Res.getString("message.close.unread.window"),
+                        Res.getString("title.alert"),
+                        JOptionPane.YES_NO_OPTION);
+                    if (selectedOption == JOptionPane.YES_OPTION) {
+                        SparkManager.getChatManager().getChatContainer()
+                            .closeAllChatRooms();
+                    }
+                } else {
+                    SparkManager.getChatManager().getChatContainer()
                         .closeAllChatRooms();
+                }
             }
         });
 
