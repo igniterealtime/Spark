@@ -1,4 +1,5 @@
 Spark
+![spark-64x64](https://user-images.githubusercontent.com/71222850/188323351-2b177f8b-6dbe-4ad5-b1ca-1fbaa8355798.png)
 =====
 
 [Spark] is an Open Source, cross-platform IM client optimized for businesses and organizations. 
@@ -57,3 +58,13 @@ of the biggest and most active Open Source communities.
 [Spark]:http://www.igniterealtime.org/projects/spark/index.jsp
 [Openfire]:http://www.igniterealtime.org/projects/openfire/index.jsp
 [Ignite Realtime]:http://www.igniterealtime.org
+
+Screenshots
+---------
+![Spark_Login](https://user-images.githubusercontent.com/71222850/188326816-a911aff6-34d5-4cac-b253-24901a1f3bc1.png)
+
+![Spark_menu](https://user-images.githubusercontent.com/71222850/188326850-907f871a-9dac-4669-bffa-0faad24c61e1.png)
+
+![Spark_MUC](https://user-images.githubusercontent.com/71222850/188327252-27a6aae4-6595-479a-8b44-da223bcae53d.png)
+
+
