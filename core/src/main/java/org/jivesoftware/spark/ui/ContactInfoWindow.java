@@ -168,7 +168,7 @@ public class ContactInfoWindow extends JPanel {
 
 
         ContactItem item = group.getList().getModel().getElementAt(loc);
-        if (item == null || item.getJid() == null) {
+        if (item == null || item.getJid() == null || item.getJid().toString().equals("dummy@dummy.example")) {
             return;
         }
 
