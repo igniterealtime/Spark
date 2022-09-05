@@ -675,6 +675,9 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
     }
 
     private void fireContactItemDoubleClicked(ContactItem item) {
+        if(item.getJid().equals("dummy@dummy.example")){
+            return;
+        }
         for (final ContactGroupListener listener : listeners) {
             try {
                 listener.contactItemDoubleClicked(item);
