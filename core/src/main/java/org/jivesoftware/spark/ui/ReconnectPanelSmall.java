@@ -21,6 +21,10 @@ import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.XMPPConnection;
+import org.jivesoftware.spark.SparkManager;
+
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 /**
  * Used for silent reconnecting <br>
@@ -33,9 +37,9 @@ public class ReconnectPanelSmall extends ContactGroup implements
 	ConnectionListener {
 
     private static final long serialVersionUID = 437696141257704105L;
-    private final JLabel _reconnectionlabel = new JLabel(
-	    Res.getString("message.reconnect.attempting"),
-	    SparkRes.getImageIcon(SparkRes.BUSY_IMAGE), SwingConstants.CENTER);
+    private final JButton _reconnectionlabel = new JButton(
+	    Res.getString("message.reconnect.attempting"));
+
 
     /**
      * creates a new Panel
@@ -46,6 +50,18 @@ public class ReconnectPanelSmall extends ContactGroup implements
 	super(groupName);
 	this.add(_reconnectionlabel);
 	this.setIcon(SparkRes.getImageIcon(SparkRes.BUSY_IMAGE));
+    _reconnectionlabel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                final int selectedOption = JOptionPane.showConfirmDialog(null,
+                    Res.getString("message.restart.required"),
+                    Res.getString("title.alert"),
+                    JOptionPane.YES_NO_OPTION);
+                if (selectedOption == JOptionPane.YES_OPTION) {
+                    SparkManager.getMainWindow().logout(false);
+                }
+            }
+    });
     }
 
     public void setReconnectText(String text) {
