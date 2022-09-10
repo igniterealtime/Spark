@@ -435,6 +435,9 @@ public class Workspace extends JPanel implements StanzaListener {
         room.getTranscriptWindow().insertMessage(nickname, message, ChatManager.FROM_COLOR);
         room.addToTranscript(message, true);
 
+        // Save message to history immediately.
+        SparkManager.getWorkspace().getTranscriptPlugin().persistChatRoom(room);
+
         // Send display and notified message back.
         SparkManager.getMessageEventManager().sendDeliveredNotification(message.getFrom(), message.getStanzaId());
         SparkManager.getMessageEventManager().sendDisplayedNotification(message.getFrom(), message.getStanzaId());
