@@ -15,6 +15,7 @@
  */
 package org.jivesoftware.sparkimpl.plugin.emoticons;
 
+import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Collection;
@@ -26,6 +27,7 @@ import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.plugin.Plugin;
+import org.jivesoftware.spark.ui.ChatContainer;
 import org.jivesoftware.spark.ui.ChatInputEditor;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ChatRoomListener;
@@ -108,7 +110,15 @@ public class EmoticonPlugin implements Plugin, ChatRoomListener {
                             } );
 
 					popup.add(emoticonUI);
-					popup.show(emoticonPicker, e.getX(), e.getY());
+                    int actualX = e.getX()+10;
+                    int actualY = e.getY();
+                    final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+                    final ChatContainer chat = SparkManager.getChatManager().getChatContainer();
+                    // if height Spark Chat Windows > height 0.9* screenSize we should put emoticon window above
+                    if(chat.getHeight() > screenSize.getHeight()*0.90){
+                        actualY = e.getY()-100;
+                    }
+					popup.show(emoticonPicker, actualX, actualY);
 				}
 			});
 
