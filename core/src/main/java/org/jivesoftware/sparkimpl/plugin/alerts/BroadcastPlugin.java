@@ -451,21 +451,14 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
      */
     private void broadcastInChat(Message message) {
         String from = message.getFrom() != null ? message.getFrom().toString() : "";
-        ChatManager chatManager = SparkManager.getChatManager();
-        ChatContainer container = chatManager.getChatContainer();
 
-        ChatRoomImpl chatRoom;
-        try {
-            chatRoom = (ChatRoomImpl) container.getChatRoom(from);
-        } catch (ChatRoomNotFoundException e) {
-            String windowtitle = message.getSubject() != null ? message.getSubject() : Res.getString("administrator");
-            EntityBareJid jid = JidCreate.entityBareFromOrThrowUnchecked("serveralert@" + from);
-            Resourcepart resourcepart = Resourcepart.fromOrThrowUnchecked(Res.getString("broadcast"));
-            chatRoom = new ChatRoomImpl(jid, resourcepart, windowtitle);
-            chatRoom.getBottomPanel().setVisible(false);
-            chatRoom.hideToolbar();
-            SparkManager.getChatManager().getChatContainer().addChatRoom(chatRoom);
-        }
+        String windowtitle = message.getSubject() != null ? message.getSubject() : Res.getString("administrator");
+        EntityBareJid jid = JidCreate.entityBareFromOrThrowUnchecked("serveralert@" + from);
+        Resourcepart resourcepart = Resourcepart.fromOrThrowUnchecked(Res.getString("broadcast"));
+        ChatRoomImpl chatRoom = new ChatRoomImpl(jid, resourcepart, windowtitle);
+        chatRoom.getBottomPanel().setVisible(false);
+        chatRoom.hideToolbar();
+        SparkManager.getChatManager().getChatContainer().addChatRoom(chatRoom);
 
         chatRoom.getTranscriptWindow().insertNotificationMessage(message.getBody(), ChatManager.NOTIFICATION_COLOR);
         broadcastRooms.add(chatRoom);
