@@ -15,15 +15,7 @@
  */
 package org.jivesoftware.sparkimpl.plugin.alerts;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Desktop;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.Toolkit;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.io.File;
@@ -517,15 +509,19 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
                 }
             }
         });
+        JScrollPane scrollPane = new JScrollPane(textPane);
+        scrollPane.setBorder(BorderFactory.createEmptyBorder());
+        textPane.setCaretPosition(0);
 
         alert.add(icon, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-        alert.add(textPane, new GridBagConstraints(1, 0, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
+        alert.add(scrollPane, new GridBagConstraints(1, 0, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
         alert.add(close, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
 
         alert.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         alert.setVisible(true);
 
         alert.setMinimumSize(new Dimension(340, 200));
+        alert.setPreferredSize(new Dimension(340,200));
         alert.pack();
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         int x = (dim.width - alert.getSize().width) / 2;
