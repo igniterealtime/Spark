@@ -38,7 +38,6 @@ import java.util.Set;
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
 
-import org.intellij.lang.annotations.RegExp;
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
@@ -453,6 +452,7 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
     }
 
     private String linkCreator(String message) {
+        message = message.replace("\n", "<br/>");
         String[] lines = message.split("\\s+");
         StringBuilder html = new StringBuilder();
         for (String line : lines) {
@@ -484,7 +484,6 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
         alert.setIconImage(SparkRes.getImageIcon(SparkRes.MAIN_IMAGE)
                 .getImage());
         String mylink = linkCreator(message.getBody());
-        mylink.replace("\n", "<br/>");
 
         JLabel icon = new JLabel(SparkRes.getImageIcon(SparkRes.ALERT));
 
