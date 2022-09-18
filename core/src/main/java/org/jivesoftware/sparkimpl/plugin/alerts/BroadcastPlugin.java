@@ -35,22 +35,10 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JTextPane;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
+import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
 
+import org.intellij.lang.annotations.RegExp;
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
@@ -464,15 +452,6 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
         broadcastRooms.add(chatRoom);
     }
 
-    public String testMethod(String line) {
-        if (line.startsWith("http://") && line.startsWith("https://")) {
-            System.out.println("ALEX");
-            line = "\"<a href='" + line + "\\>";
-
-        }
-        return line;
-    }
-
     private String linkCreator(String message) {
         String[] lines = message.split("\\s+");
         StringBuilder html = new StringBuilder();
@@ -520,9 +499,8 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
                 alert.dispose();
             }
         });
-        final JTextPane textPane = new JTextPane();
+        final JEditorPane textPane = new JEditorPane();
         textPane.setEditable(false);
-        textPane.setBackground(new Color(0, 0, 0, 0));
         textPane.setContentType("text/html");
         textPane.setText(mylink);
 
