@@ -15,15 +15,7 @@
  */
 package org.jivesoftware.sparkimpl.plugin.alerts;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Desktop;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.Toolkit;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.io.File;
@@ -35,20 +27,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JTextPane;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
+import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
 
 import org.jivesoftware.resource.Default;
@@ -464,16 +443,8 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
         broadcastRooms.add(chatRoom);
     }
 
-    public String testMethod(String line) {
-        if (line.startsWith("http://") && line.startsWith("https://")) {
-            System.out.println("ALEX");
-            line = "\"<a href='" + line + "\\>";
-
-        }
-        return line;
-    }
-
     private String linkCreator(String message) {
+        message = message.replace("\n", "<br/>");
         String[] lines = message.split("\\s+");
         StringBuilder html = new StringBuilder();
         for (String line : lines) {
@@ -505,7 +476,6 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
         alert.setIconImage(SparkRes.getImageIcon(SparkRes.MAIN_IMAGE)
                 .getImage());
         String mylink = linkCreator(message.getBody());
-        mylink.replace("\n", "<br/>");
 
         JLabel icon = new JLabel(SparkRes.getImageIcon(SparkRes.ALERT));
 
@@ -520,9 +490,8 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
                 alert.dispose();
             }
         });
-        final JTextPane textPane = new JTextPane();
+        final JEditorPane textPane = new JEditorPane();
         textPane.setEditable(false);
-        textPane.setBackground(new Color(0, 0, 0, 0));
         textPane.setContentType("text/html");
         textPane.setText(mylink);
 
@@ -540,15 +509,19 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
                 }
             }
         });
+        JScrollPane scrollPane = new JScrollPane(textPane);
+        scrollPane.setBorder(BorderFactory.createEmptyBorder());
+        textPane.setCaretPosition(0);
 
         alert.add(icon, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-        alert.add(textPane, new GridBagConstraints(1, 0, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
+        alert.add(scrollPane, new GridBagConstraints(1, 0, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
         alert.add(close, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
 
         alert.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         alert.setVisible(true);
 
         alert.setMinimumSize(new Dimension(340, 200));
+        alert.setPreferredSize(new Dimension(340,200));
         alert.pack();
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         int x = (dim.width - alert.getSize().width) / 2;
