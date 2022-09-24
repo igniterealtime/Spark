@@ -16,6 +16,7 @@
 
 package org.jivesoftware.sparkimpl.search.users;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.resource.Res;
@@ -34,7 +35,6 @@ import org.jivesoftware.sparkimpl.profile.VCardManager;
 import org.jxmpp.jid.BareJid;
 import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.impl.JidCreate;
-import org.jxmpp.jid.parts.Localpart;
 import org.jxmpp.util.XmppStringUtils;
 
 import javax.swing.AbstractAction;
@@ -246,7 +246,7 @@ public class UserSearchResults extends JPanel {
     private void openChatRoom(int row) {
         String jidString = (String)resultsTable.getValueAt(row, 0);
         EntityBareJid jid = JidCreate.entityBareFromOrThrowUnchecked(jidString);
-        Localpart nickname = jid.getLocalpart();
+        String nickname = jid.getLocalpart().toString();
 
         TableColumn column;
         try {
@@ -254,7 +254,7 @@ public class UserSearchResults extends JPanel {
             int col = column.getModelIndex();
             String nicknameString = (String)resultsTable.getValueAt(row, col);
             if (!ModelUtil.hasLength(nicknameString)) {
-                nickname = JidCreate.from(nicknameString).getLocalpartOrThrow();
+                nickname = JidCreate.from(nicknameString).getLocalpartOrThrow().toString();
             }
         }
         catch (Exception e1) {
@@ -263,7 +263,9 @@ public class UserSearchResults extends JPanel {
 
         String nameForTab = (String)resultsTable.getValueAt(row, 2);
         if(nameForTab != null){
-            nickname = Localpart.fromUnescapedOrThrowUnchecked(nameForTab);
+            if(!StringUtils.isBlank(nameForTab)){
+                nickname = nameForTab;
+            }
         }
         ChatManager chatManager = SparkManager.getChatManager();
         ChatRoom chatRoom = chatManager.createChatRoom(jid, nickname, nickname);
