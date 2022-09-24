@@ -314,11 +314,8 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
         m.setTo(message.getTo());
 
         String broadcasttype = type == Message.Type.normal ? Res.getString("broadcast") : Res.getString("message.alert.notify");
-        //m.setFrom(name +" "+broadcasttype);
-        // TODO: It is strange that we (try to) set 'from' here.
-        m.setFrom(JidCreate.fromOrThrowUnchecked(nickname + " - " + broadcasttype));
 
-        chatRoom.getTranscriptWindow().insertMessage(m.getFrom().toString(), message, ChatManager.FROM_COLOR);
+        chatRoom.getTranscriptWindow().insertMessage((nickname + " - " + broadcasttype), message, ChatManager.FROM_COLOR);
         chatRoom.addToTranscript(m, true);
         chatRoom.increaseUnreadMessageCount();
         broadcastRooms.add(chatRoom);
