@@ -35,7 +35,6 @@ import org.jivesoftware.sparkimpl.profile.VCardManager;
 import org.jxmpp.jid.BareJid;
 import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.impl.JidCreate;
-import org.jxmpp.jid.parts.Localpart;
 import org.jxmpp.util.XmppStringUtils;
 
 import javax.swing.AbstractAction;
