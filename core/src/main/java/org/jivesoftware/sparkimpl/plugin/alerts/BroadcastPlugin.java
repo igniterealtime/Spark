@@ -312,6 +312,7 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
         Message m = new Message();
         m.setBody(message.getBody());
         m.setTo(message.getTo());
+        m.setFrom(message.getFrom());
 
         String broadcasttype = type == Message.Type.normal ? Res.getString("broadcast") : Res.getString("message.alert.notify");
 
