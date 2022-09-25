@@ -28,10 +28,12 @@ import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.ui.ChatFrame;
 import org.jivesoftware.spark.ui.RawPacketSender;
+import org.jivesoftware.spark.ui.TranscriptWindow;
 import org.jivesoftware.spark.util.*;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.alerts.InputTextAreaDialog;
+import org.jivesoftware.sparkimpl.plugin.filetransfer.transfer.Downloads;
 import org.jivesoftware.sparkimpl.plugin.layout.LayoutSettingsManager;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 import org.jivesoftware.sparkimpl.settings.JiveInfo;
@@ -836,16 +838,45 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         pane.setFont(new Font("Dialog", Font.PLAIN, 12));
         pane.setEditable(false);
         pane.setText(errorLogs);
+        
+        final JButton copyButton = new JButton(Res.getString("button.copy.to.clipboard"));
+        copyButton.setIcon(SparkRes.getImageIcon(SparkRes.COPY_16x16));
+        final JButton openFolder = new JButton(Res.getString("open.folder"));
+        openFolder.setIcon(SparkRes.getImageIcon(SparkRes.FOLDER));
+
+        final JPanel panel = new JPanel();
+        panel.add(openFolder, BorderLayout.LINE_START);
+        panel.add(copyButton, BorderLayout.LINE_END);
 
         frame.add(new JScrollPane(pane), BorderLayout.CENTER);
+        frame.add(panel, BorderLayout.SOUTH);
 
-        final JButton copyButton = new JButton(Res.getString("button.copy.to.clipboard"));
-        frame.add(copyButton, BorderLayout.SOUTH);
 
         copyButton.addActionListener( e -> {
             SparkManager.setClipboard(errorLogs);
             copyButton.setEnabled(false);
         } );
+
+        openFolder.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                openFolder.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                openFolder.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+            }
+
+            @Override
+            public void mousePressed(MouseEvent event) {
+                try {
+                    Desktop.getDesktop().open(Spark.getLogDirectory());
+                } catch (IOException e) {
+                    Log.error("An error occurred while trying to open logs file: " + Spark.getLogDirectory(), e);
+                }
+            }
+        });
 
         frame.pack();
         frame.setSize(530, 500);
