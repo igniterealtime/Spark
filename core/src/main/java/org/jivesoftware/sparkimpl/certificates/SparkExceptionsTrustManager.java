@@ -39,12 +39,12 @@ public class SparkExceptionsTrustManager extends GeneralTrustManager implements 
     public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
         // if end entity certificate is on the exception list then pass checks
         try {
-            if (!isFirstCertExempted(chain) && !SparkTrustManager.isSelfSigned(chain)) {
+            if (!isFirstCertExempted(chain)) {
                 // else exempted certificate can be higher in chain, in this case certificate list have to be build
                 validatePath(chain);
             }
         } catch (NoSuchAlgorithmException | KeyStoreException | InvalidAlgorithmParameterException
-                | CertPathValidatorException e) {
+                | CertPathValidatorException |  IllegalArgumentException e) {
             Log.warning("Cannot build certificate chain", e);
             throw new CertificateException("Cannot build certificate chain");
         }
@@ -60,10 +60,11 @@ public class SparkExceptionsTrustManager extends GeneralTrustManager implements 
      * @throws InvalidAlgorithmParameterException
      * @throws CertPathValidatorException
      * @throws CertificateException
+     * @throws IllegalArgumentException
      */
     private void validatePath(X509Certificate[] chain)
             throws NoSuchAlgorithmException, KeyStoreException, InvalidAlgorithmParameterException,
-            CertPathValidatorException, CertificateException {
+            CertPathValidatorException, CertificateException,IllegalArgumentException {
 
         if (SparkTrustManager.isSelfSigned(chain)) {
             throw new IllegalArgumentException("Method cannot be used with self-signed certificate.");
