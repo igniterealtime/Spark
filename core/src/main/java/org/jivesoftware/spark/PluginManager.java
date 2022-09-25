@@ -1011,6 +1011,9 @@ public class PluginManager implements MainWindowListener
             {
                 JarEntry entry = (JarEntry) e.nextElement();
                 File entryFile = new File( dir, entry.getName() );
+         if (!entryFile.toPath().normalize().startsWith(dir.toPath().normalize())) {
+      throw new RuntimeException("Bad zip entry");
+         }
                 // Ignore any manifest.mf entries.
                 if ( entry.getName().toLowerCase().endsWith( "manifest.mf" ) )
                 {
