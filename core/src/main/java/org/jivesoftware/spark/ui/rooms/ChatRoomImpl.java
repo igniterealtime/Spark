@@ -802,15 +802,10 @@ public class ChatRoomImpl extends ChatRoom {
     					nickname = personalNickname;
     				}
     				else {
-    				    Resourcepart resourcepart = message.getFrom().getResourceOrNull();
-    				    if (resourcepart == null) {
-    				        Localpart localpart = message.getFrom().getLocalpartOrNull();
-    				        if (localpart != null) {
+                        Localpart localpart = message.getFrom().getLocalpartOrNull();
+                        if (localpart != null) {
     				            nickname = localpart.toString();
-    				        }
-    				    } else {
-    				        nickname = resourcepart.toString();
-    				    }
+                        }
     				}
     			}
 
