@@ -57,6 +57,8 @@ import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jxmpp.jid.BareJid;
 import org.jxmpp.jid.EntityBareJid;
+import org.jxmpp.jid.EntityJid;
+import org.jxmpp.jid.Jid;
 
 /**
  * The <code>ChatTranscriptPlugin</code> is responsible for transcript handling within Spark.
@@ -67,7 +69,7 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
 
     private final SimpleDateFormat notificationDateFormatter;
     private final SimpleDateFormat messageDateFormatter;
-    private final HashMap<EntityBareJid, Message> lastMessage = new HashMap<>();
+    private final HashMap<EntityJid, Message> lastMessage = new HashMap<>();
     private JDialog Frame;
     private HistoryTranscript transcript = null;
     /**
@@ -222,7 +224,17 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
             return;
         }
 
-        final EntityBareJid jid = room.getBareJid();
+        EntityJid jid = room.getJid();
+
+        //If this it a MUC then don't persist this chat.
+        if(jid.hasNoResource() && !jid.getDomain().toString().equals(pref.getServer())){
+            return;
+        }
+
+        //If this is a one-to-one chat( "user@domain.local" )
+        if(jid.hasResource() && jid.getDomain().toString().equals(pref.getServer())){
+            jid = room.getBareJid();
+        }
 
         final List<Message> transcripts = room.getTranscripts();
         ChatTranscript transcript = new ChatTranscript();
