@@ -109,20 +109,18 @@ public class JoinRoomSwingWorker extends SwingWorker
             }
 
             AtomicReference<ChatRoom> roomUIObject = new AtomicReference<>();
-            EventQueue.invokeAndWait(() -> {
-                // Create a UI component, if one was not yet created. It is important that this happens before the MUC is
-                // joined server-side, as the UI component needs to be able to display data that is sent by the server upon
-                // joining the room.
-                ChatRoom room;
-                try {
-                    room = SparkManager.getChatManager().getChatContainer().getChatRoom(groupChat.getRoom());
+            // Create a UI component, if one was not yet created. It is important that this happens before the MUC is
+            // joined server-side, as the UI component needs to be able to display data that is sent by the server upon
+            // joining the room.
+            ChatRoom room;
+            try {
+                room = SparkManager.getChatManager().getChatContainer().getChatRoom(groupChat.getRoom());
                 } catch (ChatRoomNotFoundException e) {
-                    room = UIComponentRegistry.createGroupChatRoom(groupChat);
-                    ((GroupChatRoom) room).setPassword(password);
-                    ((GroupChatRoom) room).setTabTitle(tabTitle);
+                room = UIComponentRegistry.createGroupChatRoom(groupChat);
+                ((GroupChatRoom) room).setPassword(password);
+                ((GroupChatRoom) room).setTabTitle(tabTitle);
                 }
-                roomUIObject.set(room);
-            });
+            roomUIObject.set(room);
             Log.debug("... created UI object for " + roomJID);
 
             if ( !groupChat.isJoined() ) {
@@ -143,7 +141,7 @@ public class JoinRoomSwingWorker extends SwingWorker
                 }
 
                 AtomicBoolean wontJoin = new AtomicBoolean(false);
-                EventQueue.invokeAndWait(() -> {
+                EventQueue.invokeLater(() -> {
                     if (!ConferenceUtils.confirmToRevealVisibility()) {
                         wontJoin.set(true);
                     }
