@@ -788,7 +788,7 @@ public class ChatRoomImpl extends ChatRoom {
     			return;
     		}
 
-    		final ChatTranscript chatTranscript = ChatTranscripts.getCurrentChatTranscript(getParticipantJID());
+            final ChatTranscript chatTranscript = ChatTranscripts.getCurrentChatTranscript(getJid());
     		final String personalNickname = SparkManager.getUserManager().getNickname();
 
     		for (HistoryMessage message : chatTranscript.getMessages()) {
@@ -803,13 +803,19 @@ public class ChatRoomImpl extends ChatRoom {
     				}
     				else {
     				    Resourcepart resourcepart = message.getFrom().getResourceOrNull();
+                        Localpart localpart = message.getFrom().getLocalpartOrNull();
     				    if (resourcepart == null) {
-    				        Localpart localpart = message.getFrom().getLocalpartOrNull();
     				        if (localpart != null) {
     				            nickname = localpart.toString();
     				        }
     				    } else {
-    				        nickname = resourcepart.toString();
+                            if(!message.getFrom().getDomain().toString().equals(localPreferences.getServer())){
+                                nickname = resourcepart.toString();
+                            } else {
+                                if(localpart != null){
+                                    nickname = localpart.toString();
+                                }
+                            }
     				    }
     				}
     			}

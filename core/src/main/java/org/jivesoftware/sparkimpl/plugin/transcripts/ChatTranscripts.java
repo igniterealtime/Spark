@@ -70,7 +70,7 @@ public final class ChatTranscripts {
      * @param jid        the jid of the user.
      * @param transcript the ChatTranscript.
      */
-    public static void appendToTranscript(EntityBareJid jid, ChatTranscript transcript) {
+    public static void appendToTranscript(Jid jid, ChatTranscript transcript) {
     	final File transcriptFile = getTranscriptFile(jid);
 
        	if (!Default.getBoolean(Default.HISTORY_DISABLED) && Enterprise.containsFeature(Enterprise.HISTORY_TRANSCRIPTS_FEATURE)) {
@@ -223,7 +223,6 @@ public final class ChatTranscripts {
      * @return the settings file.
      */
     public static File getTranscriptFile(Jid jid) {
-        //replace with Jid.asUrlEncodedString() when available
         return new File(SparkManager.getUserDirectory(), "transcripts/" + jid.asUnescapedString() + ".xml");
     }
 
@@ -234,7 +233,6 @@ public final class ChatTranscripts {
      * @return the current transcript file.
      */
     public static File getCurrentHistoryFile(Jid jid) {
-        //replace with Jid.asUrlEncodedString() when available
         return new File(SparkManager.getUserDirectory(), "transcripts/" + jid.asUnescapedString() + "_current.xml");
     }
 
