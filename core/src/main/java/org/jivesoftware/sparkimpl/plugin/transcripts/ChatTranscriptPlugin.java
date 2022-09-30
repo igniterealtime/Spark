@@ -42,6 +42,7 @@ import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smackx.jiveproperties.packet.JivePropertiesExtension;
+import org.jivesoftware.spark.SessionManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.ContextMenuListener;
 import org.jivesoftware.spark.ui.ChatRoom;
@@ -59,6 +60,7 @@ import org.jxmpp.jid.BareJid;
 import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.EntityJid;
 import org.jxmpp.jid.Jid;
+import org.jxmpp.jid.parts.Domainpart;
 
 /**
  * The <code>ChatTranscriptPlugin</code> is responsible for transcript handling within Spark.
@@ -220,6 +222,7 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
 
     public void persistChatRoom(final ChatRoom room) {
         LocalPreferences pref = SettingsManager.getLocalPreferences();
+        final Domainpart domainServer = SparkManager.getSessionManager().getServerAddress().getDomain();
         if (!pref.isChatHistoryEnabled()) {
             return;
         }
@@ -227,12 +230,12 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
         EntityJid jid = room.getJid();
 
         //If this it a MUC then don't persist this chat.
-        if(jid.hasNoResource() && !jid.getDomain().toString().equals(pref.getServer())){
+        if(jid.hasNoResource() && !jid.getDomain().equals(domainServer)){
             return;
         }
 
         //If this is a one-to-one chat( "user@domain.local" )
-        if(jid.hasResource() && jid.getDomain().toString().equals(pref.getServer())){
+        if(jid.hasResource() && jid.getDomain().equals(domainServer)){
             jid = room.getBareJid();
         }
 
