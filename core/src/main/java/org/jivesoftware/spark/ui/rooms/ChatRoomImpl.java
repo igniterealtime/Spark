@@ -36,6 +36,7 @@ import org.jivesoftware.smackx.xevent.MessageEventManager;
 import org.jivesoftware.smackx.xevent.packet.MessageEvent;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.PresenceManager;
+import org.jivesoftware.spark.SessionManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.ui.*;
 import org.jivesoftware.spark.util.ModelUtil;
@@ -48,6 +49,7 @@ import org.jivesoftware.sparkimpl.profile.VCardManager;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jxmpp.jid.*;
+import org.jxmpp.jid.parts.Domainpart;
 import org.jxmpp.jid.parts.Localpart;
 import org.jxmpp.jid.parts.Resourcepart;
 
@@ -790,6 +792,7 @@ public class ChatRoomImpl extends ChatRoom {
 
             final ChatTranscript chatTranscript = ChatTranscripts.getCurrentChatTranscript(getJid());
     		final String personalNickname = SparkManager.getUserManager().getNickname();
+            final Domainpart domainServer = SparkManager.getSessionManager().getServerAddress().getDomain();
 
     		for (HistoryMessage message : chatTranscript.getMessages()) {
     			String nickname = SparkManager.getUserManager().getUserNicknameFromJID(message.getFrom().asBareJid());
@@ -809,7 +812,7 @@ public class ChatRoomImpl extends ChatRoom {
     				            nickname = localpart.toString();
     				        }
     				    } else {
-                            if(!message.getFrom().getDomain().toString().equals(localPreferences.getServer())){
+                            if(!message.getFrom().getDomain().equals(domainServer)){
                                 nickname = resourcepart.toString();
                             } else {
                                 if(localpart != null){
