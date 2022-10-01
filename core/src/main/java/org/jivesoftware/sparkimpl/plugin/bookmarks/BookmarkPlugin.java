@@ -16,8 +16,10 @@
 package org.jivesoftware.sparkimpl.plugin.bookmarks;
 
 import java.awt.event.ActionEvent;
-import java.util.Collection;
+import java.util.Comparator;
+import java.util.List;
 import java.util.TimerTask;
+import java.util.stream.Collectors;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -151,11 +153,13 @@ public class BookmarkPlugin implements Plugin {
 
                 if (manager != null) {
 
-                    Collection<BookmarkedConference> bookmarkedConferences = manager.getBookmarkedConferences();
-                    final Collection<BookmarkedURL> bookmarkedLinks = manager.getBookmarkedURLs();
+                    final List<BookmarkedConference> bookmarkedConferences = manager.getBookmarkedConferences()
+                        .stream().sorted(Comparator.comparing(BookmarkedConference::getName)).collect(Collectors.toList());;
+                    final List<BookmarkedURL> bookmarkedLinks = manager.getBookmarkedURLs()
+                        .stream().sorted(Comparator.comparing(BookmarkedURL::getName)).collect(Collectors.toList());
 
-                    for (Object bookmarkedLink : bookmarkedLinks) {
-                        final BookmarkedURL link = (BookmarkedURL) bookmarkedLink;
+                    for (BookmarkedURL bookmarkedLink : bookmarkedLinks) {
+                        final BookmarkedURL link = bookmarkedLink;
 
                         Action urlAction = new AbstractAction() {
 
@@ -176,9 +180,9 @@ public class BookmarkPlugin implements Plugin {
                         bookmarkMenu.add(urlAction);
                     }
 
-
-                    for (Object bookmarkedConference : bookmarkedConferences) {
-                        final BookmarkedConference conferences = (BookmarkedConference) bookmarkedConference;
+                    bookmarkMenu.addSeparator();
+                    for (BookmarkedConference bookmarkedConference : bookmarkedConferences) {
+                        final BookmarkedConference conferences = bookmarkedConference;
 
                         Action conferenceAction = new AbstractAction() {
 
