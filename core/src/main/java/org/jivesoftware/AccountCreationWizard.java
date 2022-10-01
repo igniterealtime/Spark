@@ -231,7 +231,6 @@ public class AccountCreationWizard extends JPanel {
                 try {
                     Localpart localpart = Localpart.from(getUsername());
                     final AccountManager accountManager = AccountManager.getInstance(connection);
-                    accountManager.sensitiveOperationOverInsecureConnection(true);
                     accountManager.createAccount(localpart, getPassword());
                 }
                 catch (XMPPException | SmackException | InterruptedException | XmppStringprepException e) {
