@@ -218,6 +218,7 @@ public class AccountCreationWizard extends JPanel {
 
         final SwingWorker worker = new SwingWorker() {
             StanzaError.Condition condition = null;
+            String th;
 
 
             @Override
@@ -227,6 +228,7 @@ public class AccountCreationWizard extends JPanel {
                     connection = getConnection();
                 }
                 catch (SmackException | IOException | XMPPException e) {
+                    th = e.getCause().getMessage();
                     return e;
                 }
                 try {
@@ -254,7 +256,8 @@ public class AccountCreationWizard extends JPanel {
                     if (ui.isShowing()) {
                         createAccountButton.setEnabled(true);
                         UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
-                        JOptionPane.showMessageDialog(ui, Res.getString("message.connection.failed", getServer()), Res.getString("title.create.problem"), JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(ui, Res.getString("message.connection.failed", getServer())
+                            + "\n" + th, Res.getString("title.create.problem"), JOptionPane.ERROR_MESSAGE);
                         createAccountButton.setEnabled(true);
                     }
                     return;
