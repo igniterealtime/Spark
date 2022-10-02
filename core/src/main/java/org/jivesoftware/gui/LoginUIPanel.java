@@ -95,6 +95,7 @@ import org.jivesoftware.smack.util.DNSUtil;
 import org.jivesoftware.smack.util.TLSUtils;
 import org.jivesoftware.smackx.carbons.CarbonManager;
 import org.jivesoftware.smackx.chatstates.ChatStateManager;
+import org.jivesoftware.smackx.iqregister.AccountManager;
 import org.jivesoftware.spark.PluginManager;
 import org.jivesoftware.spark.SessionManager;
 import org.jivesoftware.spark.SparkManager;
@@ -160,6 +161,10 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
         initComponents();
 
         localPref = SettingsManager.getLocalPreferences();
+
+        //SPARK-2115 SPARK-2295 Allow account creation or password changes over an insecure (e.g. unencrypted) connections.
+        AccountManager.sensitiveOperationOverInsecureConnectionDefault(true);
+
         init();
         // Check if upgraded needed.
         try {
