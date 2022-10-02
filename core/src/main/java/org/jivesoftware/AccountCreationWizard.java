@@ -33,6 +33,7 @@ import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.certificates.SparkSSLSocketFactory;
 import org.jivesoftware.sparkimpl.certificates.SparkSSLContextCreator;
+import org.jivesoftware.sparkimpl.certificates.SparkTrustManager;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jxmpp.jid.parts.Localpart;
@@ -361,6 +362,7 @@ public class AccountCreationWizard extends JPanel {
                 SSLContext context = SparkSSLContextCreator.setUpContext(SparkSSLContextCreator.Options.ONLY_SERVER_SIDE);
                 builder.setSslContextFactory(() -> { return context; });
                 builder.setSecurityMode( securityMode );
+                builder.setCustomX509TrustManager(new SparkTrustManager());
             } catch (NoSuchAlgorithmException | KeyManagementException | UnrecoverableKeyException | KeyStoreException | NoSuchProviderException e) {
                 Log.warning("Couldnt establish secured connection", e);
             }
