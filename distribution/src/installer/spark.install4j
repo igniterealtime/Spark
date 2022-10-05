@@ -738,5 +738,20 @@ return console.askYesNo(message, true);
       </exclude>
       <jreBundle jreBundleSource="preCreated" includedJre="windows-x86-1.8.0_202" />
     </windows>
+    <windows name="Windows 64bit" id="190" mediaFileName="spark_${compiler:sys.version}-64bit" installDir="${compiler:sys.fullName}" overridePrincipalLanguage="true" architecture="64">
+      <exclude>
+        <entry location="bin/startup.bat" />
+        <entry location="lib/linux" />
+        <entry location="lib/linux64" />
+        <entry location="lib/mac" />
+        <entry location="plugins/apple.jar" />
+        <entry location="plugins/growl.jar" />
+      </exclude>
+      <jreBundle jreBundleSource="none" />
+    </windows>
   </mediaSets>
+  <buildIds buildAll="false">
+    <mediaSet refId="2" />
+    <mediaSet refId="190" />
+  </buildIds>
 </install4j>
