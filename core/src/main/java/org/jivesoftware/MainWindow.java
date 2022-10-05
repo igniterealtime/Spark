@@ -753,6 +753,7 @@ public final class MainWindow extends ChatFrame implements ActionListener {
             // Add Java JRE Version if is empty
             if ("".equals(JAVA_VERSION)) {
                 aboutBoxText.append("<br/>JRE Version: ").append(System.getProperty("java.version"));
+                aboutBoxText.append(" ").append(System.getProperty("sun.arch.data.model")).append("-bit");
             }
         }
 
