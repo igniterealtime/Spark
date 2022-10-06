@@ -105,6 +105,23 @@
           <screen id="15" beanClass="com.install4j.runtime.beans.screens.StartupScreen" rollbackBarrierExitCode="0">
             <actions>
               <action id="84" beanClass="com.install4j.runtime.beans.actions.misc.RequestPrivilegesAction" actionElevationType="none" />
+              <action id="195" beanClass="com.install4j.runtime.beans.actions.control.SetVariableAction" rollbackBarrierExitCode="0">
+                <serializedBean>
+                  <property name="script">
+                    <object class="com.install4j.api.beans.ScriptProperty">
+                      <property name="value" type="string">if (!context.isUpdateInstallation()) {
+    ApplicationRegistry.ApplicationInfo[] infos = 
+        ApplicationRegistry.getApplicationInfoById(context.getApplicationId());
+    if (infos.length &gt; 0) {
+        return infos[0].getInstallationDirectory().getPath();
+    }
+}
+return null;</property>
+                    </object>
+                  </property>
+                  <property name="variableName" type="string">previousDir</property>
+                </serializedBean>
+              </action>
             </actions>
           </screen>
         </startup>
@@ -242,7 +259,16 @@ return console.askOkCancel(message, true);
           </screen>
           <screen id="27" beanClass="com.install4j.runtime.beans.screens.InstallationScreen" rollbackBarrier="true">
             <actions>
-              <action id="187" beanClass="com.install4j.runtime.beans.actions.UninstallPreviousAction" actionElevationType="none" />
+              <action id="187" beanClass="com.install4j.runtime.beans.actions.UninstallPreviousAction" actionElevationType="none">
+                <serializedBean>
+                  <property name="installationDirectory">
+                    <object class="java.io.File">
+                      <string>${installer:previousDir}</string>
+                    </object>
+                  </property>
+                </serializedBean>
+                <condition>context.getVariable("previousDir") != null</condition>
+              </action>
               <action id="28" beanClass="com.install4j.runtime.beans.actions.InstallFilesAction" actionElevationType="elevated" failureStrategy="quit" errorMessage="${i18n:FileCorrupted}" />
               <action id="30" beanClass="com.install4j.runtime.beans.actions.desktop.RegisterAddRemoveAction" actionElevationType="elevated">
                 <serializedBean>
