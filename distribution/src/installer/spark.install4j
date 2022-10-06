@@ -669,7 +669,7 @@ return console.askYesNo(message, true);
       </exclude>
       <jreBundle jreBundleSource="none" />
     </unixArchive>
-    <macos name="Mac OS X Single Bundle" id="145" launcherId="4">
+    <macos name="Mac OS X Single Bundle" id="145" architecture="universal" launcherId="4">
       <exclude>
         <entry location="lib/linux64" />
         <entry location="lib/windows" />
@@ -716,7 +716,7 @@ return console.askYesNo(message, true);
       </exclude>
       <jreBundle jreBundleSource="none" />
     </linuxDeb>
-    <macos name="Mac OS X Single Bundle (with JRE)" id="183" mediaFileName="spark_${compiler:sys.version}-with-jre" launcherId="4">
+    <macos name="Mac OS X Single Bundle (with JRE)" id="183" mediaFileName="spark_${compiler:sys.version}-with-jre" architecture="universal" launcherId="4">
       <exclude>
         <entry location="lib/linux64" />
         <entry location="lib/windows" />
