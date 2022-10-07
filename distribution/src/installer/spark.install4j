@@ -1,7 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <install4j version="10.0.3" transformSequenceNumber="10">
   <directoryPresets config="../../target/distribution-base/lib" />
-  <application name="Spark" applicationId="3057-7228-2063-7466" mediaDir="../../target/" mediaFilePattern="spark_${compiler:sys.version}" compression="9" lzmaCompression="true" commonExternalFiles="true" shortName="Spark" publisher="Ignite Realtime" publisherWeb="http://www.igniterealtime.org" version="3.0.0" allPathsRelative="true" macVolumeId="ccfadd9e467a1ebd" javaMinVersion="1.8" jdkMode="runtimeJre" />
+  <application name="Spark" applicationId="3057-7228-2063-7466" mediaDir="../../target/" mediaFilePattern="spark_${compiler:sys.version}" compression="9" lzmaCompression="true" commonExternalFiles="true" shortName="Spark" publisher="Ignite Realtime" publisherWeb="http://www.igniterealtime.org" version="3.0.0" allPathsRelative="true" macVolumeId="ccfadd9e467a1ebd" javaMinVersion="1.8" jdkMode="runtimeJre">
+    <languages skipLanguageSelection="true">
+      <additionalLanguages>
+        <language id="zh_CN" />
+        <language id="zh_TW" />
+        <language id="cs" />
+        <language id="nl" />
+        <language id="fi" />
+        <language id="fr" />
+        <language id="de" />
+        <language id="it" />
+        <language id="ja" />
+        <language id="ko" />
+        <language id="no" />
+        <language id="pl" />
+        <language id="pt_BR" />
+        <language id="ru" />
+        <language id="es" />
+        <language id="sv" />
+        <language id="tr" />
+      </additionalLanguages>
+    </languages>
+  </application>
   <files>
     <mountPoints>
       <mountPoint id="1" />
@@ -674,38 +696,70 @@ return console.askYesNo(message, true);
   <mediaSets>
     <windows name="Windows" id="2" installDir="${compiler:sys.fullName}" overridePrincipalLanguage="true" architecture="32">
       <exclude>
-        <entry location="lib/linux64" />
+        <entry location="bin/startup.sh" />
         <entry location="lib/linux" />
+        <entry location="lib/linux64" />
         <entry location="lib/mac" />
         <entry location="plugins/apple.jar" />
         <entry location="plugins/growl.jar" />
-        <entry location="bin/startup.bat" />
       </exclude>
       <jreBundle jreBundleSource="none" />
     </windows>
-    <unixArchive name="Unix Archive" id="13" overridePrincipalLanguage="true">
+    <windows name="Windows (with JRE)" id="186" mediaFileName="spark_${compiler:sys.version}-with-jre" installDir="${compiler:sys.fullName}" overridePrincipalLanguage="true" msi="true" architecture="32">
       <exclude>
-        <entry location="lib/windows" />
-        <entry location="lib/windows64" />
+        <entry location="lib/linux64" />
+        <entry location="lib/linux" />
         <entry location="lib/mac" />
         <entry location="plugins/apple.jar" />
         <entry location="plugins/growl.jar" />
-        <entry location="plugins/flashing.jar" />
-        <entry location="bin/startup.bat" />
+        <entry location="bin/startup.sh" />
+      </exclude>
+      <jreBundle jreBundleSource="preCreated" includedJre="windows-x86-1.8.0_202" />
+    </windows>
+    <windows name="Windows 64bit" id="190" mediaFileName="spark_${compiler:sys.version}-64bit" installDir="${compiler:sys.fullName}" overridePrincipalLanguage="true" architecture="64">
+      <exclude>
+        <entry location="bin/startup.sh" />
+        <entry location="lib/linux" />
+        <entry location="lib/linux64" />
+        <entry location="lib/mac" />
+        <entry location="plugins/apple.jar" />
+        <entry location="plugins/growl.jar" />
       </exclude>
       <jreBundle jreBundleSource="none" />
-    </unixArchive>
-    <macos name="Mac OS X Single Bundle" id="145" launcherId="4">
+    </windows>
+    <windows name="Windows MSI" id="198" installDir="${compiler:sys.fullName}" overridePrincipalLanguage="true" msi="true" architecture="32">
+      <exclude>
+        <entry location="bin/startup.sh" />
+        <entry location="lib/linux" />
+        <entry location="lib/linux64" />
+        <entry location="lib/mac" />
+        <entry location="plugins/apple.jar" />
+        <entry location="plugins/growl.jar" />
+      </exclude>
+      <jreBundle jreBundleSource="none" />
+    </windows>
+    <windows name="Windows MSI (with JRE)" id="206" mediaFileName="spark_${compiler:sys.version}-with-jre" installDir="${compiler:sys.fullName}" overridePrincipalLanguage="true" msi="true" architecture="32">
       <exclude>
         <entry location="lib/linux64" />
-        <entry location="lib/windows" />
-        <entry location="lib/windows64" />
         <entry location="lib/linux" />
-        <entry location="plugins/flashing.jar" />
-        <entry location="bin/startup.bat" />
+        <entry location="lib/mac" />
+        <entry location="plugins/apple.jar" />
+        <entry location="plugins/growl.jar" />
+        <entry location="bin/startup.sh" />
+      </exclude>
+      <jreBundle jreBundleSource="preCreated" includedJre="windows-x86-1.8.0_202" />
+    </windows>
+    <windows name="Windows MSI 64bit" id="201" mediaFileName="spark_${compiler:sys.version}-64bit" installDir="${compiler:sys.fullName}" overridePrincipalLanguage="true" msi="true" architecture="64">
+      <exclude>
+        <entry location="bin/startup.sh" />
+        <entry location="lib/linux" />
+        <entry location="lib/linux64" />
+        <entry location="lib/mac" />
+        <entry location="plugins/apple.jar" />
+        <entry location="plugins/growl.jar" />
       </exclude>
       <jreBundle jreBundleSource="none" />
-    </macos>
+    </windows>
     <unixInstaller name="Unix Installer" id="149">
       <exclude>
         <entry location="lib/windows" />
@@ -718,6 +772,18 @@ return console.askYesNo(message, true);
       </exclude>
       <jreBundle jreBundleSource="none" />
     </unixInstaller>
+    <unixArchive name="Unix Archive" id="13" overridePrincipalLanguage="true">
+      <exclude>
+        <entry location="lib/windows" />
+        <entry location="lib/windows64" />
+        <entry location="lib/mac" />
+        <entry location="plugins/apple.jar" />
+        <entry location="plugins/growl.jar" />
+        <entry location="plugins/flashing.jar" />
+        <entry location="bin/startup.bat" />
+      </exclude>
+      <jreBundle jreBundleSource="none" />
+    </unixArchive>
     <linuxRPM name="Linux RPM" id="162">
       <exclude>
         <entry location="lib/windows" />
@@ -742,6 +808,17 @@ return console.askYesNo(message, true);
       </exclude>
       <jreBundle jreBundleSource="none" />
     </linuxDeb>
+    <macos name="Mac OS X Single Bundle" id="145" launcherId="4">
+      <exclude>
+        <entry location="lib/linux64" />
+        <entry location="lib/windows" />
+        <entry location="lib/windows64" />
+        <entry location="lib/linux" />
+        <entry location="plugins/flashing.jar" />
+        <entry location="bin/startup.bat" />
+      </exclude>
+      <jreBundle jreBundleSource="none" />
+    </macos>
     <macos name="Mac OS X Single Bundle (with JRE)" id="183" mediaFileName="spark_${compiler:sys.version}-with-jre" launcherId="4">
       <exclude>
         <entry location="lib/linux64" />
@@ -753,31 +830,8 @@ return console.askYesNo(message, true);
       </exclude>
       <jreBundle jreBundleSource="preCreated" includedJre="macosx-amd64-1.8.0_202" />
     </macos>
-    <windows name="Windows (with JRE)" id="186" mediaFileName="spark_${compiler:sys.version}-with-jre" installDir="${compiler:sys.fullName}" overridePrincipalLanguage="true" architecture="32">
-      <exclude>
-        <entry location="lib/linux64" />
-        <entry location="lib/linux" />
-        <entry location="lib/mac" />
-        <entry location="plugins/apple.jar" />
-        <entry location="plugins/growl.jar" />
-        <entry location="bin/startup.bat" />
-      </exclude>
-      <jreBundle jreBundleSource="preCreated" includedJre="windows-x86-1.8.0_202" />
-    </windows>
-    <windows name="Windows 64bit" id="190" mediaFileName="spark_${compiler:sys.version}-64bit" installDir="${compiler:sys.fullName}" overridePrincipalLanguage="true" architecture="64">
-      <exclude>
-        <entry location="bin/startup.bat" />
-        <entry location="lib/linux" />
-        <entry location="lib/linux64" />
-        <entry location="lib/mac" />
-        <entry location="plugins/apple.jar" />
-        <entry location="plugins/growl.jar" />
-      </exclude>
-      <jreBundle jreBundleSource="none" />
-    </windows>
   </mediaSets>
   <buildIds buildAll="false">
-    <mediaSet refId="2" />
-    <mediaSet refId="190" />
+    <mediaSet refId="198" />
   </buildIds>
 </install4j>
