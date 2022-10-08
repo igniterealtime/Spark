@@ -705,7 +705,7 @@ return console.askYesNo(message, true);
       </exclude>
       <jreBundle jreBundleSource="none" />
     </windows>
-    <windows name="Windows (with JRE)" id="186" mediaFileName="spark_${compiler:sys.version}-with-jre" installDir="${compiler:sys.fullName}" overridePrincipalLanguage="true" msi="true" architecture="32">
+    <windows name="Windows (with JRE)" id="186" mediaFileName="spark_${compiler:sys.version}-with-jre" installDir="${compiler:sys.fullName}" overridePrincipalLanguage="true" architecture="32">
       <exclude>
         <entry location="lib/linux64" />
         <entry location="lib/linux" />
