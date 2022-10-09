@@ -694,7 +694,7 @@ return console.askYesNo(message, true);
     </styles>
   </installerGui>
   <mediaSets>
-    <windows name="Windows" id="2" installDir="${compiler:sys.fullName}" overridePrincipalLanguage="true" architecture="32">
+    <windows name="Windows" id="2" installDir="${compiler:sys.fullName}" architecture="32">
       <exclude>
         <entry location="bin/startup.sh" />
         <entry location="lib/linux" />
@@ -705,7 +705,7 @@ return console.askYesNo(message, true);
       </exclude>
       <jreBundle jreBundleSource="none" />
     </windows>
-    <windows name="Windows (with JRE)" id="186" mediaFileName="spark_${compiler:sys.version}-with-jre" installDir="${compiler:sys.fullName}" overridePrincipalLanguage="true" architecture="32">
+    <windows name="Windows (with JRE)" id="186" mediaFileName="spark_${compiler:sys.version}-with-jre" installDir="${compiler:sys.fullName}" architecture="32">
       <exclude>
         <entry location="lib/linux64" />
         <entry location="lib/linux" />
@@ -716,7 +716,7 @@ return console.askYesNo(message, true);
       </exclude>
       <jreBundle jreBundleSource="preCreated" includedJre="windows-x86-1.8.0_202" />
     </windows>
-    <windows name="Windows 64bit" id="190" mediaFileName="spark_${compiler:sys.version}-64bit" installDir="${compiler:sys.fullName}" overridePrincipalLanguage="true" architecture="64">
+    <windows name="Windows 64bit" id="190" mediaFileName="spark_${compiler:sys.version}-64bit" installDir="${compiler:sys.fullName}" architecture="64">
       <exclude>
         <entry location="bin/startup.sh" />
         <entry location="lib/linux" />
@@ -727,7 +727,7 @@ return console.askYesNo(message, true);
       </exclude>
       <jreBundle jreBundleSource="none" />
     </windows>
-    <windows name="Windows MSI" id="198" installDir="${compiler:sys.fullName}" overridePrincipalLanguage="true" msi="true" architecture="32">
+    <windows name="Windows ARM" id="208" mediaFileName="spark_${compiler:sys.version}-arm" installDir="${compiler:sys.fullName}" architecture="arm64">
       <exclude>
         <entry location="bin/startup.sh" />
         <entry location="lib/linux" />
@@ -738,7 +738,18 @@ return console.askYesNo(message, true);
       </exclude>
       <jreBundle jreBundleSource="none" />
     </windows>
-    <windows name="Windows MSI (with JRE)" id="206" mediaFileName="spark_${compiler:sys.version}-with-jre" installDir="${compiler:sys.fullName}" overridePrincipalLanguage="true" msi="true" architecture="32">
+    <windows name="Windows MSI" id="198" installDir="${compiler:sys.fullName}" msi="true" architecture="32">
+      <exclude>
+        <entry location="bin/startup.sh" />
+        <entry location="lib/linux" />
+        <entry location="lib/linux64" />
+        <entry location="lib/mac" />
+        <entry location="plugins/apple.jar" />
+        <entry location="plugins/growl.jar" />
+      </exclude>
+      <jreBundle jreBundleSource="none" />
+    </windows>
+    <windows name="Windows MSI (with JRE)" id="206" mediaFileName="spark_${compiler:sys.version}-with-jre" installDir="${compiler:sys.fullName}" msi="true" architecture="32">
       <exclude>
         <entry location="lib/linux64" />
         <entry location="lib/linux" />
@@ -749,7 +760,7 @@ return console.askYesNo(message, true);
       </exclude>
       <jreBundle jreBundleSource="preCreated" includedJre="windows-x86-1.8.0_202" />
     </windows>
-    <windows name="Windows MSI 64bit" id="201" mediaFileName="spark_${compiler:sys.version}-64bit" installDir="${compiler:sys.fullName}" overridePrincipalLanguage="true" msi="true" architecture="64">
+    <windows name="Windows MSI 64bit" id="201" mediaFileName="spark_${compiler:sys.version}-64bit" installDir="${compiler:sys.fullName}" msi="true" architecture="64">
       <exclude>
         <entry location="bin/startup.sh" />
         <entry location="lib/linux" />
@@ -772,7 +783,7 @@ return console.askYesNo(message, true);
       </exclude>
       <jreBundle jreBundleSource="none" />
     </unixInstaller>
-    <unixArchive name="Unix Archive" id="13" overridePrincipalLanguage="true">
+    <unixArchive name="Unix Archive" id="13">
       <exclude>
         <entry location="lib/windows" />
         <entry location="lib/windows64" />
