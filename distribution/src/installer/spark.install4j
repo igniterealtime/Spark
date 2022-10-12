@@ -819,28 +819,28 @@ return console.askYesNo(message, true);
       </exclude>
       <jreBundle jreBundleSource="none" />
     </linuxDeb>
-    <macos name="Mac OS X Single Bundle" id="145" launcherId="4">
+    <macosArchive name="MacOS Single Bundle Archive" id="213" launcherId="4">
       <exclude>
+        <entry location="bin/startup.bat" />
+        <entry location="lib/linux" />
         <entry location="lib/linux64" />
         <entry location="lib/windows" />
         <entry location="lib/windows64" />
-        <entry location="lib/linux" />
         <entry location="plugins/flashing.jar" />
-        <entry location="bin/startup.bat" />
       </exclude>
       <jreBundle jreBundleSource="none" />
-    </macos>
-    <macos name="Mac OS X Single Bundle (with JRE)" id="183" mediaFileName="spark_${compiler:sys.version}-with-jre" launcherId="4">
+    </macosArchive>
+    <macosArchive name="MacOS Single Bundle Archive (with JRE)" id="217" mediaFileName="spark_${compiler:sys.version}-with-jre" launcherId="4">
       <exclude>
+        <entry location="bin/startup.bat" />
+        <entry location="lib/linux" />
         <entry location="lib/linux64" />
         <entry location="lib/windows" />
         <entry location="lib/windows64" />
-        <entry location="lib/linux" />
         <entry location="plugins/flashing.jar" />
-        <entry location="bin/startup.bat" />
       </exclude>
       <jreBundle jreBundleSource="preCreated" includedJre="macosx-amd64-1.8.0_202" />
-    </macos>
+    </macosArchive>
   </mediaSets>
   <buildIds buildAll="false">
     <mediaSet refId="198" />
