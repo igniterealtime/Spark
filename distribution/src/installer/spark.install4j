@@ -842,7 +842,4 @@ return console.askYesNo(message, true);
       <jreBundle jreBundleSource="preCreated" includedJre="macosx-amd64-1.8.0_202" />
     </macosArchive>
   </mediaSets>
-  <buildIds buildAll="false">
-    <mediaSet refId="198" />
-  </buildIds>
 </install4j>
