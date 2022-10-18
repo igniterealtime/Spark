@@ -31,14 +31,14 @@ public class ChatRoomDecorator
 {
     public RolloverButton ofmeetButton;
     public final ChatRoom room;
+	public static String ICON_STRING = "iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAKDSURBVDhPXVM7axVBFP5m7maN5gFyJTdNEEVDUt3C/yAIKkRSidjEUsTKRyrtLSyi/gArSRfFOiBqY5UqICaRYDCvm7177+7Ozj7G70wSSJzlmzk75/WdmTMqLwq3ubKCcGQEOgjgBgKoYACq0YBrKGh+rqrh6gKqqFGVBVCUKJMexqenoba2t937qSmcu3QRmk5aN7yz4tfQGrVzkOG4ermuUBPdzT+4v7wMHYYhMg3k1JkaSJktyQyigwPsdfYRRV0keY7EWpiyRFpWMGJbVQjPDCLQSiGJe9Bxn2lI0VUYao1jcmYGDTJJow6+v3mH860xlkSGcNBOI4oPyBGgv0bKmpIiR7+wPmP7ziyuP37EWi2utK/hdZKgZwyyNEWaW29r8hJK84w0p5yRLBWWNAVRt4vVL9+w+OIlXt27i6+LHzC78BbR7i5y6gUZfRTZ0531EDlrt5VDQWS5Qd9knmJIbP1cg7HG6wViK0lFHwiDHQqms8eZTGqHDg9tdH8XG/y/PDmJG/PP8XC8hR5Pv087cfxLaEq8KEbkT8lAHpTjuIuxdhvzH5dw8+kTzDWb2NneQR3oU3aHh8hFAuQ8WSugbEjxx6fPeHbrNhbmHqDb6bA3gkM9IbapBOCtkYA7OgPeLyHBMpvD8r4HKQtN9qDXHcPbUsd7lxKopGjJR8BGRZJkiPsxqhP7/0MS0R/K9mN3dXgUY7JxNKQMqXGIOGzk04P++E382lgnQ7avZK25e4yA/0JfgggLjxN6gfhI+Srd33PDzQtoycbR4NPwmY9XGbIyl88u2CKi1VWosq5db30N4dkh35q+tRRfI7tMwImJ6MpsruZKyMussgzhxAT+AQRKd557vsR7AAAAAElFTkSuQmCC";
 
-    public ChatRoomDecorator(final ChatRoom room, final String url, final SparkMeetPlugin plugin)
+    public ChatRoomDecorator(final ChatRoom room, final SparkMeetPlugin plugin)
     {
         this.room = room;
 
         try {
-            String imageString = "iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAKDSURBVDhPXVM7axVBFP5m7maN5gFyJTdNEEVDUt3C/yAIKkRSidjEUsTKRyrtLSyi/gArSRfFOiBqY5UqICaRYDCvm7177+7Ozj7G70wSSJzlmzk75/WdmTMqLwq3ubKCcGQEOgjgBgKoYACq0YBrKGh+rqrh6gKqqFGVBVCUKJMexqenoba2t937qSmcu3QRmk5aN7yz4tfQGrVzkOG4ermuUBPdzT+4v7wMHYYhMg3k1JkaSJktyQyigwPsdfYRRV0keY7EWpiyRFpWMGJbVQjPDCLQSiGJe9Bxn2lI0VUYao1jcmYGDTJJow6+v3mH860xlkSGcNBOI4oPyBGgv0bKmpIiR7+wPmP7ziyuP37EWi2utK/hdZKgZwyyNEWaW29r8hJK84w0p5yRLBWWNAVRt4vVL9+w+OIlXt27i6+LHzC78BbR7i5y6gUZfRTZ0531EDlrt5VDQWS5Qd9knmJIbP1cg7HG6wViK0lFHwiDHQqms8eZTGqHDg9tdH8XG/y/PDmJG/PP8XC8hR5Pv087cfxLaEq8KEbkT8lAHpTjuIuxdhvzH5dw8+kTzDWb2NneQR3oU3aHh8hFAuQ8WSugbEjxx6fPeHbrNhbmHqDb6bA3gkM9IbapBOCtkYA7OgPeLyHBMpvD8r4HKQtN9qDXHcPbUsd7lxKopGjJR8BGRZJkiPsxqhP7/0MS0R/K9mN3dXgUY7JxNKQMqXGIOGzk04P++E382lgnQ7avZK25e4yA/0JfgggLjxN6gfhI+Srd33PDzQtoycbR4NPwmY9XGbIyl88u2CKi1VWosq5db30N4dkh35q+tRRfI7tMwImJ6MpsruZKyMussgzhxAT+AQRKd557vsR7AAAAAElFTkSuQmCC";
-            byte[] imageByte = DatatypeConverter.parseBase64Binary(imageString);
+            byte[] imageByte = DatatypeConverter.parseBase64Binary(ICON_STRING);
             ImageIcon ofmeetIcon = new ImageIcon(imageByte);
             ofmeetButton = new RolloverButton(SparkRes.getImageIcon("PADE_ICON"));
             ofmeetButton.setToolTipText(GraphicUtils.createToolTip("Pade Meetings"));
@@ -51,12 +51,12 @@ public class ChatRoomDecorator
                 if ("groupchat".equals(room.getChatType().toString()))
                 {
                     newRoomId = roomId + "-" + sessionID;
-                    newUrl = url + newRoomId;
+                    newUrl = plugin.url + newRoomId;
                     plugin.handleClick(newUrl, room, newUrl, Message.Type.groupchat);
 
                 } else {
                     newRoomId = sessionID;
-                    newUrl = url + newRoomId;
+                    newUrl = plugin.url + newRoomId;
                     plugin.handleClick(newUrl, room, newUrl, Message.Type.chat);
                 }
             });
