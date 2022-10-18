@@ -7,6 +7,6 @@
     <email>support@igniterealtime.org</email>
     <class>org.jivesoftware.spark.plugin.ofmeet.SparkMeetPlugin</class>
     <minSparkVersion>2.0.0.0</minSparkVersion>
-    <os>Windows</os>
+    <os>Windows,Linux,Mac</os>
     <java>1.7.0</java>    
 </plugin>
