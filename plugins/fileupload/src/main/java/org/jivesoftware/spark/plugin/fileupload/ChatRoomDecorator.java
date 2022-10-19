@@ -22,6 +22,7 @@ import java.net.*;
 import java.awt.*;
 import javax.swing.*;
 
+import org.jivesoftware.resource.Res;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.ui.ChatRoom;
@@ -89,7 +90,7 @@ public class ChatRoomDecorator
 
         for (File file : files)
         {
-            handleUpload(file, room, type);
+            SwingUtilities.invokeLater( () -> new Thread(() -> handleUpload(file, room, type)).start());
         }
     }
 
@@ -121,14 +122,14 @@ public class ChatRoomDecorator
 
         } catch (Exception e) {
             Log.error("uploadFile error", e);
-            broadcastUploadUrl(room.getBareJid(), file.getName() + " upload failed", type);
+            UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
+            JOptionPane.showMessageDialog(room, "Upload failed: " + e.getMessage(),"Http File Upload Plugin", JOptionPane.ERROR_MESSAGE);
         }
     }
 
     private void uploadFile(File file, UploadRequest response, ChatRoom room, Message.Type type)
     {
         Log.warning("uploadFile request " + room.getBareJid() + " " + response.putUrl);
-        URLConnection urlconnection = null;
 
         try {
             PutMethod put = new PutMethod(response.putUrl);
@@ -156,6 +157,8 @@ public class ChatRoomDecorator
 
         } catch (Exception e) {
             Log.error("uploadFile error", e);
+            UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
+            JOptionPane.showMessageDialog(room, "Upload failed: " + e.getMessage(), "Http File Upload Plugin", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -167,6 +170,5 @@ public class ChatRoomDecorator
         message2.setBody(url);
         room.sendMessage(message2);
     }
-
 
 }

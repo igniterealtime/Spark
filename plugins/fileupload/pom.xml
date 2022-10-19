@@ -10,7 +10,7 @@
     </parent>
 
     <artifactId>fileupload</artifactId>
-    <version>0.0.3</version>
+    <version>0.0.4</version>
 
     <name>Http File Upload Plugin</name>
     <description>Adds support for Openfire httpfileupload plugin to Spark</description>
@@ -28,7 +28,7 @@
         <dependency>
             <groupId>javax.xml.bind</groupId>
             <artifactId>jaxb-api</artifactId>
-            <version>2.3.0</version>
+            <version>2.3.1</version>
         </dependency>
     </dependencies>
 </project>
