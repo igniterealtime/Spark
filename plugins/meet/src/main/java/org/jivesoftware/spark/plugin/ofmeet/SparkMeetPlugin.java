@@ -40,11 +40,13 @@ import org.jxmpp.jid.parts.*;
 
 public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageListener
 {
+	public Properties props = props = new Properties();
+    public String url = null;
+	
     private org.jivesoftware.spark.ChatManager chatManager;
-    private String url = null;
-
-    private static final File pluginsettings = new File(System.getProperty("user.home") + System.getProperty("file.separator") + "Spark" + System.getProperty("file.separator") + "ofmeet.properties");
-    private final Map<String, ChatRoomDecorator> decorators = new HashMap<>();
+    private final File pluginsettings = new File( Spark.getLogDirectory().getParentFile() + System.getProperty("file.separator") + "ofmeet.properties");
+ 
+ private final Map<String, ChatRoomDecorator> decorators = new HashMap<>();
     private String electronExePath = null;
     private String electronHomePath = null;
     private XProcess electronThread = null;
@@ -54,13 +56,11 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
     {
         checkNatives();
 
-        chatManager = SparkManager.getChatManager();
+        chatManager = SparkManager.getChatManager();		
 
         String server = SparkManager.getSessionManager().getServerAddress().toString();
         String port = "7443";
         url = "https://" + server + ":" + port + "/ofmeet/";
-
-        Properties props = new Properties();
 
         if (pluginsettings.exists())
         {
@@ -85,8 +85,23 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
 
         chatManager.addChatRoomListener(this);
         chatManager.addGlobalMessageListener(this);
+		
+		SparkMeetPreference preference = new SparkMeetPreference(this);
+		SparkManager.getPreferenceManager().addPreference(preference);		
     }
 
+	public void commit(String url) {
+		this.url = url;
+		props.setProperty("url", url);
+        
+		try {		
+			FileOutputStream outputStream = new FileOutputStream(pluginsettings);
+			props.store(outputStream, "Properties");
+			outputStream.close();
+		} catch (Exception e) {
+			 Log.warning("ofmeet-Error:", e);
+		}			
+	}
 
     public void shutdown()
     {
@@ -292,7 +307,7 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
 
         if (roomId.indexOf('/') == -1)
         {
-            decorators.put(roomId, new ChatRoomDecorator(room, url, this));
+            decorators.put(roomId, new ChatRoomDecorator(room, this));
         }
     }
 

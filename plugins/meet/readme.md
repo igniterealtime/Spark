@@ -7,3 +7,5 @@ It uses Electron instead of depending on Chrome installed and configured as the 
 It is a much better user experience than opening a Chrome browser window out of context somewhere else. 
 Screen sharing is not yet working. All Electron runtime platforms (windows, Linux & OSX) are supported. I have only tested it at home on my windows desktop. 
 Feeback will be appreciated from Linux and OSX users.
+
+![](https://user-images.githubusercontent.com/110731/196530400-a350cc2c-7f53-4148-b230-ebb7b8cc404a.png)
