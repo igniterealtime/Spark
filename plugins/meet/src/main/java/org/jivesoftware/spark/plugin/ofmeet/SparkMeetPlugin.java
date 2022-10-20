@@ -44,7 +44,7 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
     public String url = null;
 	
     private org.jivesoftware.spark.ChatManager chatManager;
-    private File pluginsettings = new File(System.getProperty("user.home") + System.getProperty("file.separator") + "Spark" + System.getProperty("file.separator") + "ofmeet.properties");
+    private final File pluginsettings = new File( Spark.getLogDirectory().getParentFile() + System.getProperty("file.separator") + "ofmeet.properties");
  
  private final Map<String, ChatRoomDecorator> decorators = new HashMap<>();
     private String electronExePath = null;
