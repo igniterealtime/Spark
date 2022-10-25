@@ -10,8 +10,9 @@ jobs:
     strategy:
       matrix:
         java:
+          - 8
           - 11
-          - 15
+          - 17
 
     steps:
       - name: Checkout
