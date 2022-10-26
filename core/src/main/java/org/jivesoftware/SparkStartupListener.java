@@ -29,6 +29,9 @@ public class SparkStartupListener implements com.install4j.api.launcher.StartupN
 	public void startupPerformed(String args) {
 		if (args != null && !args.trim().isEmpty()) {
 			SparkManager.getChatManager().handleURIMapping(args);
-		}
+		} else {
+            SparkManager.getMainWindow().setVisible(true);
+            SparkManager.getMainWindow().toFront();
+        }
 	}
 }
