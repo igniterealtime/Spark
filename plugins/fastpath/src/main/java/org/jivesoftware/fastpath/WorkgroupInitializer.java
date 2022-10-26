@@ -21,7 +21,7 @@ public class WorkgroupInitializer extends UrlInitializer
 
     @Override
     protected String getProvidersUri() {
-        return "classpath:org.jivesoftware.smack.legacy/workgroup.providers";
+        return "classpath:org.jivesoftware.smack.legacy/legacy.providers";
     }
 }
 
