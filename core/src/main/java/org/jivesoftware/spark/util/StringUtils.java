@@ -1923,6 +1923,13 @@ public class StringUtils {
         return Integer.parseInt(version);
     }
 
+    /**
+     * Returns the string with replaced special letter
+     * Allow to search contacts without special letters interfering
+     *
+     * @param text A input string
+     * @return String with replaced special letter
+     */
     public static String replaceSpecialLetters(String text){
         return text
             .replaceAll("á|â|à|å|ã|ä", "a")
