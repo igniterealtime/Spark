@@ -281,7 +281,8 @@ return console.askOkCancel(message, true);
           </screen>
           <screen id="27" beanClass="com.install4j.runtime.beans.screens.InstallationScreen" rollbackBarrier="true">
             <actions>
-              <action id="187" beanClass="com.install4j.runtime.beans.actions.UninstallPreviousAction" actionElevationType="none">
+              <action id="187" beanClass="com.install4j.runtime.beans.actions.UninstallPreviousAction" actionElevationType="none" />
+              <action name="Execute previous uninstaller 32/64bit" id="218" beanClass="com.install4j.runtime.beans.actions.UninstallPreviousAction" actionElevationType="none">
                 <serializedBean>
                   <property name="installationDirectory">
                     <object class="java.io.File">
