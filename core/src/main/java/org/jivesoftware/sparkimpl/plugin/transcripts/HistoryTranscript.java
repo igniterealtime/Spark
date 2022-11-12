@@ -54,6 +54,8 @@ public class HistoryTranscript extends SwingWorker {
     private final Semaphore token = new Semaphore(1);
     private int pageIndex = 0;
     private int maxPages = 0;
+    private final String period_oneDay = "message.search.period.day.one";
+    private final String period_oneWeek = "message.search.period.week.one";
     private final String period_oneMonth = "message.search.period.month.one";
     private final String period_oneYear = "message.search.period.year.one";
     private final String period_noPeriod = "message.search.period.none";
@@ -361,12 +363,26 @@ public class HistoryTranscript extends SwingWorker {
             cal.setTime(newDate);
             long yearNew = Math.round((double) cal.get(Calendar.YEAR));
             long monthNew = Math.round((double) cal.get(Calendar.MONTH));
+            long dayNew = Math.round((double) cal.get(Calendar.DAY_OF_MONTH));
+            long weekNew = Math.round((double) cal.get(Calendar.WEEK_OF_MONTH));
 
             cal.setTime(oldDate);
             long yearOld = Math.round((double) cal.get(Calendar.YEAR));
             long monthOld = Math.round((double) cal.get(Calendar.MONTH));
+            long dayOld = Math.round((double) cal.get(Calendar.DAY_OF_MONTH));
+            long weekOld = Math.round((double) cal.get(Calendar.WEEK_OF_MONTH));
 
             switch (searchPeriod) {
+                case period_oneDay:
+                    if((dayOld == dayNew) && (monthOld == monthNew) && (yearOld == yearNew)){
+                        result = true;
+                    }
+                    break;
+                case period_oneWeek:
+                    if((weekOld == weekNew) && (monthOld == monthNew) && (yearOld == yearNew)){
+                        result = true;
+                    }
+                    break;
                 case period_oneMonth:
                     // for one month, we only check if the month and the year is equal
                     if ((monthOld == monthNew) && (yearOld == yearNew)) {
@@ -548,8 +564,8 @@ public class HistoryTranscript extends SwingWorker {
         mainPanel.setLayout(new BorderLayout());
 
         // the list of periods
-//		periods.add(period_oneWeek);
-//		periods.add(period_threeWeeks);
+        periods.add(period_oneDay);
+		periods.add(period_oneWeek);
         periods.add(period_oneMonth);
         periods.add(period_oneYear);
         periods.add(period_noPeriod);
