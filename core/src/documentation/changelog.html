@@ -179,39 +179,127 @@ hr {
 
 <div id="pageBody">
 
-<h2>3.0.0 Beta    -- <span style="font-weight: normal;">April 26, 2021</span></h2>
-<h2>Bug</h2>
-<ul>
-	<li>[<a href='https://igniterealtime.atlassian.net/browse/SPARK-2222'>SPARK-2222</a>] Number of unread messages not being shown in the first tab title</li>
-
-	<li>[<a href='https://igniterealtime.atlassian.net/browse/SPARK-2207'>SPARK-2207</a>] Display the correct name for the transferred file</li>
-
-	<li>[<a href='https://igniterealtime.atlassian.net/browse/SPARK-2161'>SPARK-2161</a>] Spark locks up when downloading Pade Meetings libraries</li>
-</ul>
-
+<h2>3.0.0 -- <span style="font-weight: normal;">November 14, 2022</span></h2>
 <h2>Improvement</h2>
 <ul>
-	<li>[<a href='https://igniterealtime.atlassian.net/browse/SPARK-2221'>SPARK-2221</a>] Increase default Idle value to 5 instead of 3 minutes</li>
-
-	<li>[<a href='https://igniterealtime.atlassian.net/browse/SPARK-2217'>SPARK-2217</a>] Update Russian translation</li>
-
-	<li>[<a href='https://igniterealtime.atlassian.net/browse/SPARK-2216'>SPARK-2216</a>] IBB file transfer should not be enabled by default</li>
-
-	<li>[<a href='https://igniterealtime.atlassian.net/browse/SPARK-2214'>SPARK-2214</a>] Look and feel refresh</li>
-
-	<li>[<a href='https://igniterealtime.atlassian.net/browse/SPARK-2210'>SPARK-2210</a>] Replace deprecated Base64 Decoder</li>
-
-	<li>[<a href='https://igniterealtime.atlassian.net/browse/SPARK-2204'>SPARK-2204</a>] Code cleanup</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-1708">SPARK-1708</a>] - Update or change spellchecker library</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-2016">SPARK-2016</a>] - Add support for 64-bit Java</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-2063">SPARK-2063</a>] - Make font size in Conversation History window configurable</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-2076">SPARK-2076</a>] - Contact list font size setting should be applied to groups names</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-2077">SPARK-2077</a>] - List of available logins should be scrollable</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-2098">SPARK-2098</a>] - Show "Reconnect now" button while reconnect countdown is running</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-2120">SPARK-2120</a>] - Add an option to increase font size in message compose area</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-2121">SPARK-2121</a>] - Bring up roster window when shortcut is opened</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-2125">SPARK-2125</a>] - Bookmarks should be sorted alphabetically</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-2128">SPARK-2128</a>] - Remove translations encoding workaround for Java 8</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-2204">SPARK-2204</a>] - Code cleanup</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-2208">SPARK-2208</a>] - Use Name instead of Username when initiating chat from search results</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-2210">SPARK-2210</a>] - Replace deprecated Base64 Decoder</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-2212">SPARK-2212</a>] - Update Smack to 4.4</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-2214">SPARK-2214</a>] - Look and feel refresh</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-2217">SPARK-2217</a>] - Update Russian translation</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-2221">SPARK-2221</a>] - Increase default Idle value to 5 instead of 3 minutes</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-2233">SPARK-2233</a>] - Allow to search contacts without special letters interfering</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-2236">SPARK-2236</a>] - Create status icons for the new Spark design</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-2238">SPARK-2238</a>] - Fix potential NPE in FastPath invitation handler</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-2249">SPARK-2249</a>] - Add translation for hours, min to Awaytime</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-2257">SPARK-2257</a>] - Explicitly define calls on or off the Event Dispatch Thread</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-2264">SPARK-2264</a>] - Use nickname in bookmark if set</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-2267">SPARK-2267</a>] - Update XStream to 1.4.19 or later</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-2272">SPARK-2272</a>] - Remove URL hack</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-2275">SPARK-2275</a>] - Replace deprecated custom ulit class Base64</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-2276">SPARK-2276</a>] - Create x64 installer for Spark</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-2278">SPARK-2278</a>] - Spark should remove plugins in profile if they don't exist in installation folder</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-2280">SPARK-2280</a>] - Add clear button for Login text fields and eye button to show password</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-2282">SPARK-2282</a>] - Add "Other Users" button for Login text field</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-2291">SPARK-2291</a>] - Fix Zip Slip Vulnerability</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-2292">SPARK-2292</a>] - Improve the log window</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-2296">SPARK-2296</a>] - Add localizations in install4j installer</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-2297">SPARK-2297</a>] - Add Windows on ARM installer</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-2298">SPARK-2298</a>] - Update install4j runtime to 10.0.3</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-2299">SPARK-2299</a>] - MacOS replace deprecated installer</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-2301">SPARK-2301</a>] - Update HTTP File Upload Plugin to 0.4 version</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-2304">SPARK-2304</a>] - Add day and week periods for Transcript History</li>
 </ul>
-<h2>New Feature</h2>
-<ul>
-<li>[<a href='https://igniterealtime.atlassian.net/browse/SPARK-1828'>SPARK-1828</a>] Bundle Pade Meetings plugin</li>
-</ul>
+
 <h2>Task</h2>
 <ul>
-	<li>[<a href='https://igniterealtime.atlassian.net/browse/SPARK-2206'>SPARK-2206</a>] Update xstream to 1.4.15</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-1894">SPARK-1894</a>] - Add Spelling plugin back to the build</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-2205">SPARK-2205</a>] - Update install4j runtime to 8.0.7</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-2206">SPARK-2206</a>] - Update components</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-2229">SPARK-2229</a>] - Remove Pack200 from Spark</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-2239">SPARK-2239</a>] - Update FlatLaf to 1.6.5</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-2240">SPARK-2240</a>] - Update JUnit to 4.13.2</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-2242">SPARK-2242</a>] - Update Thumbnailator to 0.4.15</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-2244">SPARK-2244</a>] - Update Bouncy Castle to 1.70</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-2247">SPARK-2247</a>] - Update Smack to 4.4.5</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-2248">SPARK-2248</a>] - Update Java Native Access to 5.10.0</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-2271">SPARK-2271</a>] - Update Smack to 4.4.6</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-2279">SPARK-2279</a>] - Update FlatLaf to 2.4</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-2284">SPARK-2284</a>] - Drop JTattoo Look and Feel</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-2293">SPARK-2293</a>] - Update FlatLaf to 2.5</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-2300">SPARK-2300</a>] - Update FlatLaf to 2.6</li>
+</ul>
 
-	<li>[<a href='https://igniterealtime.atlassian.net/browse/SPARK-2205'>SPARK-2205</a>] Update install4j runtime library to 8.0.7</li>
+<h2>New Feature</h2>
+<ul>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-1585">SPARK-1585</a>] - Add support for XEP-0280 Message Carbons</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-1598">SPARK-1598</a>] - Add an option to ask for confirmation when closing conversation window with multiple chats</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-1795">SPARK-1795</a>] - Provide MSI installer for Windows</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-1828">SPARK-1828</a>] - Bundle Pade Meetings plugin</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-2116">SPARK-2116</a>] - Add an option to set how many previous messages should be shown in a chat window</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-2144">SPARK-2144</a>] - Add a button to restart Spark if network error happens</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-2256">SPARK-2256</a>] - Add control over Idle settings</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-2277">SPARK-2277</a>] - Add control over IBB file transfer via ClientControl</li>
+</ul>
+
+<h2>Bug</h2>
+<ul>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-1908">SPARK-1908</a>] - Offline message is not added to the history until chat window is closed</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-1918">SPARK-1918</a>] - Emoticons packs are not updated after the upgrade</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-1992">SPARK-1992</a>] - Fix the View logs menu</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-2073">SPARK-2073</a>] - Domain field is editable during Auto login when it is disabled in default.properties</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-2115">SPARK-2115</a>] - Show warning when password change failed</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-2160">SPARK-2160</a>] - Translations are garbled when using newer Java</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-2161">SPARK-2161</a>] - Spark locks up when downloading Pade Meetings libraries</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-2164">SPARK-2164</a>] - Message shown in a wrong tab when multiple resources are logged in</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-2182">SPARK-2182</a>] - Switches to using hostname as resource after a re-login</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-2195">SPARK-2195</a>] - Login window distorted by long domain name</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-2203">SPARK-2203</a>] - Downloads fail when username has non-latin characters</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-2207">SPARK-2207</a>] - Display the correct name for the transferred file</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-2209">SPARK-2209</a>] - File transfer using IBB fails after a reconnection</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-2211">SPARK-2211</a>] - Empty lines are removed in a message</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-2213">SPARK-2213</a>] - Failing to invite contact to a room</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-2218">SPARK-2218</a>] - MOTD broadcast message is not displayed on startup</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-2222">SPARK-2222</a>] - Number of unread messages not being shown in the first tab title</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-2223">SPARK-2223</a>] - Loads MUC history into private MUC chat</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-2227">SPARK-2227</a>] - Vcard popup not showing when contact window is maximized</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-2228">SPARK-2228</a>] - When chat window is maximized emoticons selection window goes beyond taskbar</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-2232">SPARK-2232</a>] - Can't log in with debugger enabled</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-2234">SPARK-2234</a>] - Spark often 'freezes' when a new chat window is opened</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-2237">SPARK-2237</a>] - Revive the 'spell checker' plugin \(using Jitsi-provided dependencies\)</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-2241">SPARK-2241</a>] - Exception related to XStream</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-2243">SPARK-2243</a>] - After upgrading Smack SSO authorization \(GSSAPI\) is broked.</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-2246">SPARK-2246</a>] - After upgrading Smack Search checkbox boolean is disabled</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-2250">SPARK-2250</a>] - Incorrect display of the name if the contact is not in the list of users.</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-2251">SPARK-2251</a>] - Fix NullPointerException in SettingManager for Windows</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-2252">SPARK-2252</a>] - Spark cannot find download folder due to non-English language in Linux</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-2253">SPARK-2253</a>] - Pade Meetings create incorrect path for Windows</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-2259">SPARK-2259</a>] - XStream ForbiddenClassException in CustomStatusItem Class</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-2263">SPARK-2263</a>] - Bookmarks sometimes seem to have no name</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-2265">SPARK-2265</a>] - Sorting MUC rooms by occupants should use numeric sorting</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-2266">SPARK-2266</a>] - Always accepts self-signed certificates</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-2269">SPARK-2269</a>] - Incorrect handling of carbons</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-2270">SPARK-2270</a>] - Unable to login with Java 16 or higher</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-2273">SPARK-2273</a>] - Login with the "Enter" button to the account does not work</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-2274">SPARK-2274</a>] - Login with option "Auto login" to the account does not work</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-2281">SPARK-2281</a>] - After upgrading Smack  "View client version" menu doesn't work</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-2283">SPARK-2283</a>] - Configure room button not working after Smack update</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-2285">SPARK-2285</a>] - User can open chat with dummy@dummy.example</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-2288">SPARK-2288</a>] - The BroadcastPane becomes very wide when a long message is received</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-2289">SPARK-2289</a>] - The name sender of the broadcast message in the chat in small letters</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-2294">SPARK-2294</a>] - UI freezes when accepting a room invite</li>
+    <li>[<a href="https://igniterealtime.atlassian.net/browse/SPARK-2295">SPARK-2295</a>] - Unable to create an account through Spark</li>
 </ul>
 
 <h2>2.9.4    -- <span style="font-weight: normal;">November 14, 2020</span></h2>
