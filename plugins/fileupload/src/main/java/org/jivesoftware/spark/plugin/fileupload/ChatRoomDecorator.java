@@ -70,15 +70,14 @@ public class ChatRoomDecorator
             room.getEditorBar().add(fileuploadButton);
 
         } catch (Exception e) {
-
-            Log.error("cannot create file upload icon", e);
+            Log.error("Cannot create file upload icon for the ChatRoomDecorator", e);
         }
 
     }
 
     public void finished()
     {
-        Log.warning("ChatRoomDecorator: finished " + room.getBareJid());
+        Log.debug("ChatRoomDecorator finished for room: " + room.getBareJid());
     }
 
     private void getUploadUrl(ChatRoom room, Message.Type type)
@@ -97,7 +96,7 @@ public class ChatRoomDecorator
 
     private void handleUpload(File file, ChatRoom room, Message.Type type)
     {
-        Log.warning("Uploading file: " + file.getAbsolutePath());
+        Log.debug("Uploading file: " + file.getAbsolutePath());
         String fileName = null;
         try {
             fileName = URLEncoder.encode(file.getName(), "UTF-8");
@@ -113,7 +112,7 @@ public class ChatRoomDecorator
 
             UploadRequest response = (UploadRequest) result;
 
-            Log.warning("handleUpload response " + response.putUrl + " " + response.getUrl);
+            Log.debug("handleUpload response: putUrl=" + response.putUrl + " getUrl=" + response.getUrl);
 
             if (response.putUrl != null)
             {
@@ -121,7 +120,7 @@ public class ChatRoomDecorator
             }
 
         } catch (Exception e) {
-            Log.error("uploadFile error", e);
+            Log.error("Error while attempting to uploading file", e);
             UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
             JOptionPane.showMessageDialog(room, "Upload failed: " + e.getMessage(),"Http File Upload Plugin", JOptionPane.ERROR_MESSAGE);
         }
@@ -129,7 +128,7 @@ public class ChatRoomDecorator
 
     private void uploadFile(File file, UploadRequest response, ChatRoom room, Message.Type type)
     {
-        Log.warning("uploadFile request " + room.getBareJid() + " " + response.putUrl);
+        Log.debug("About to upload file for room " + room.getBareJid() + " via HTTP PUT to URL " + response.putUrl);
 
         try {
             PutMethod put = new PutMethod(response.putUrl);
@@ -148,15 +147,16 @@ public class ChatRoomDecorator
             int statusCode = put.getStatusCode();
             String responseBody = put.getResponseBodyAsString();
 
-            Log.warning("uploadFile response " + statusCode + " " + responseBody);
-
             if ((statusCode >= 200) && (statusCode <= 202))
             {
+                Log.debug("Upload file success. HTTP response: " + statusCode + " " + responseBody);
                 broadcastUploadUrl(room.getBareJid(), response.getUrl, type);
+            } else {
+                Log.error("Failed to upload file. HTTP response: " + statusCode + " " + responseBody);
             }
 
         } catch (Exception e) {
-            Log.error("uploadFile error", e);
+            Log.error("Error encountered whilst uploading the file", e);
             UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
             JOptionPane.showMessageDialog(room, "Upload failed: " + e.getMessage(), "Http File Upload Plugin", JOptionPane.ERROR_MESSAGE);
         }
