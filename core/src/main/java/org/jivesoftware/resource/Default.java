@@ -73,7 +73,6 @@ public class Default {
     public static final String FRAME_IMAGE = "FRAME_IMAGE";
     public static final String LOOK_AND_FEEL_DISABLED = "LOOK_AND_FEEL_DISABLED";
     public static final String DEFAULT_LOOK_AND_FEEL = "DEFAULT_LOOK_AND_FEEL";
-    public static final String DEFAULT_LOOK_AND_FEEL_MAC = "DEFAULT_LOOK_AND_FEEL_MAC";
     public static final String INSTALL_PLUGINS_DISABLED = "INSTALL_PLUGINS_DISABLED";
     public static final String UNINSTALL_PLUGINS_DISABLED = "UNINSTALL_PLUGINS_DISABLED";
     public static final String ADVANCED_DISABLED = "ADVANCED_DISABLED";
