@@ -107,7 +107,7 @@ public class LookAndFeelManager {
     private static String getLookandFeel(LocalPreferences preferences) {
         String result;
 
-        String whereToLook = Spark.isMac() ? Default.DEFAULT_LOOK_AND_FEEL_MAC : Default.DEFAULT_LOOK_AND_FEEL;
+        String whereToLook = Default.DEFAULT_LOOK_AND_FEEL;
 
         if (!Default.getBoolean(Default.LOOK_AND_FEEL_DISABLED)) {
             result = preferences.getLookAndFeel();
