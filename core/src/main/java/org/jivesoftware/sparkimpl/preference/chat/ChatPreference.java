@@ -87,12 +87,14 @@ public class ChatPreference implements Preference {
                 boolean buzzAllowed = localPreferences.isBuzzEnabled();
                 boolean closeUnreadMessage = localPreferences.isCloseUnreadMessage();
                 boolean isChatHistoryAscending = localPreferences.getChatHistoryAscending();
+                boolean tabsScroll = localPreferences.isTabsScroll();
                 panel.setShowTime(showTime);
                 panel.setGroupChatNotificationsOn(notificationsOn);
                 panel.setChatHistoryHidden(chatHistoryHidden);
                 panel.setPrevChatHistoryHidden(prevChatHistoryHidden);
                 panel.setChatTimeoutTime(localPreferences.getChatLengthDefaultTimeout());
                 panel.setTabsOnTop(tabsOnTop);
+                panel.setTabsScrollBox(tabsScroll);
                 panel.setBuzzEnabled(buzzAllowed);
                 panel.setCloseUnreadMessageEnabled(closeUnreadMessage);
                 panel.setSortChatHistoryAscending(isChatHistoryAscending);
@@ -116,6 +118,7 @@ public class ChatPreference implements Preference {
         pref.setPrevChatHistoryEnabled(!panel.isPrevChatHistoryHidden());
         pref.setChatLengthDefaultTimeout(panel.getChatTimeoutTime());
         pref.setTabsOnTop(panel.isTabsOnTop());
+        pref.setTabsScroll(panel.isTabScroll());
         pref.setBuzzEnabled(panel.isBuzzEnabled());
         pref.setCloseUnreadMessageEnabled(panel.isCloseUnreadMessageEnabled());
         pref.setChatHistoryAscending(panel.isSortChatHistoryAscending());

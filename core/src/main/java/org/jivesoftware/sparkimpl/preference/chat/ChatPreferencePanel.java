@@ -70,6 +70,7 @@ public class ChatPreferencePanel extends JPanel implements ActionListener {
     private final JTextField chatTimeoutField = new JTextField();
     private final JCheckBox buzzBox = new JCheckBox();
     private final JCheckBox closeUnreadMessageBox = new JCheckBox();
+    private final JCheckBox tabsScrollBox = new JCheckBox();
 
     /**
      * Constructor invokes UI setup.
@@ -110,6 +111,7 @@ public class ChatPreferencePanel extends JPanel implements ActionListener {
         ResourceUtils.resButton(hidePrevChatHistory, Res.getString("checkbox.disable.prev.chat.history"));
         ResourceUtils.resButton(sortChatHistoryAscending, Res.getString("checkbox.sort.asc.history"));
         ResourceUtils.resButton(tabsOnTopBox, Res.getString("checkbox.tabs.on.top"));
+        ResourceUtils.resButton(tabsScrollBox, Res.getString("checkbox.tabs.scroll"));
         ResourceUtils.resButton(buzzBox, Res.getString("checkbox.allow.buzz"));
         ResourceUtils.resButton(closeUnreadMessageBox,Res.getString("checkbox.close.unread.message"));
 
@@ -139,13 +141,14 @@ public class ChatPreferencePanel extends JPanel implements ActionListener {
 
         chatWindowPanel.add(sortChatHistoryAscending, new GridBagConstraints(0, 5, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         chatWindowPanel.add(tabsOnTopBox, new GridBagConstraints(0, 6, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-        chatWindowPanel.add(buzzBox, new GridBagConstraints(0, 7, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-        chatWindowPanel.add(closeUnreadMessageBox, new GridBagConstraints(0, 8, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        chatWindowPanel.add(tabsScrollBox, new GridBagConstraints(0, 7, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        chatWindowPanel.add(buzzBox, new GridBagConstraints(0, 8, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        chatWindowPanel.add(closeUnreadMessageBox, new GridBagConstraints(0, 9, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
 
         JLabel chatTimeoutLabel = new JLabel();
         ResourceUtils.resLabel(chatTimeoutLabel, chatTimeoutField, Res.getString("label.minutes.before.stale.chat") + ":");
-        chatWindowPanel.add(chatTimeoutLabel, new GridBagConstraints(0, 9, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-        chatWindowPanel.add(chatTimeoutField, new GridBagConstraints(1, 9, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 50, 0));
+        chatWindowPanel.add(chatTimeoutLabel, new GridBagConstraints(0, 10, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        chatWindowPanel.add(chatTimeoutField, new GridBagConstraints(1, 10, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 50, 0));
 
 
         generalPanel.add(passwordLabel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
@@ -271,6 +274,10 @@ public class ChatPreferencePanel extends JPanel implements ActionListener {
 
     public boolean isTabsOnTop(){
         return tabsOnTopBox.isSelected();
+    }
+    public void setTabsScrollBox(boolean top){ tabsScrollBox.setSelected(top); }
+    public boolean isTabScroll(){
+        return tabsScrollBox.isSelected();
     }
 
     public void setBuzzEnabled(boolean allowBuzz){
