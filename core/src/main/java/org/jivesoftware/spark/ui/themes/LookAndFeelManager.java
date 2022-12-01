@@ -142,7 +142,12 @@ public class LookAndFeelManager {
                 JDialog.setDefaultLookAndFeelDecorated(true);
             }
             //skip loading from preference and use flatlaf as default
-            UIManager.put( "TabbedPane.tabLayoutPolicy", "scroll" );
+
+            if(SettingsManager.getLocalPreferences().isTabsScroll()){
+                UIManager.put( "TabbedPane.tabLayoutPolicy", "scroll" );
+            } else {
+                UIManager.put( "TabbedPane.tabLayoutPolicy", "wrap" );
+            }
             UIManager.put("TabbedPane.showTabSeparators", true);
             UIManager.put("TabbedPane.hasFullBorder", true);
             UIManager.put("TabbedPane.underlineColor", new Color(242, 159, 97));

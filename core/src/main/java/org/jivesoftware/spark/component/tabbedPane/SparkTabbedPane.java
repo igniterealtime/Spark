@@ -23,6 +23,7 @@ import org.jivesoftware.spark.ui.ChatRoomNotFoundException;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
 import javax.swing.*;
 import javax.swing.event.ChangeListener;
@@ -87,6 +88,10 @@ public class SparkTabbedPane extends JPanel {
     }
 
     public void showUnreadMessageIndicator(JTabbedPane pane, boolean show, int unreadCount) {
+        //if tab style = wrap
+        if(!SettingsManager.getLocalPreferences().isTabsScroll()){
+            return;
+        }
         JToolBar tb = new JToolBar();
         tb.setFloatable(false);
         tb.setBorder(null);
@@ -97,7 +102,7 @@ public class SparkTabbedPane extends JPanel {
         lbl.setVerticalTextPosition(JLabel.CENTER);
         tb.add(lbl);
 
-        if (show == true) {
+        if (show) {
             pane.putClientProperty("JTabbedPane.trailingComponent", tb);
         } else if (unreadCount == 0 || show == false) {
             pane.putClientProperty("JTabbedPane.trailingComponent", null);
