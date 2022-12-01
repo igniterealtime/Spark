@@ -910,6 +910,14 @@ public class LocalPreferences {
 		return getBoolean("tabsOnTop", true);
 	}
 
+    public void setTabsScroll(boolean tabsScroll) {
+        setBoolean("tabsScroll", tabsScroll);
+    }
+
+    public boolean isTabsScroll() {
+        return getBoolean("tabsScroll", true);
+    }
+
 	public void setBuzzEnabled(boolean enabled) {
 		setBoolean("buzzEnabled", enabled);
 	}
