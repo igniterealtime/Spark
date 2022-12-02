@@ -1,5 +1,7 @@
 package org.jivesoftware.spark.ui.history;
 
+import org.jivesoftware.resource.Res;
+
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -44,17 +46,13 @@ public class HistoryWindow extends JFrame {
 
 	private static final String CONTENT_TYPE = "text/html";
 	private static final String EMPTY = "";
-	private static final String LABEL_SIZE = "Size:";
-	private static final String BTN_FIND = "Find";
-	private static final String BTN_CLOSE = "Close";
 	private static final Dimension SIZE = new Dimension(700, 400);
 	private static final Point LOCATION = new Point(400, 150);
 	private static final MessageFormat TITLE_FORMAT = new MessageFormat("{0}");
 	private static final MessageFormat LABEL_FORMAT = new MessageFormat("{0}");
 	private static final MessageFormat HISTORY_FILE_FORMAT = new MessageFormat(
 			"transcripts/{0}.xml");
-	private static final Font LABEL_FONT = new Font("Droid Sans", Font.BOLD, 16);
-	private static final Font SIZE_TEXT_FONT = new Font("Droid Sans",
+	private static final Font LABEL_FONT = new Font("Droid Sans",
 			Font.PLAIN, 14);
 	private static final Font TEXT_FONT = new Font("Droid Sans", Font.PLAIN, 13);
 	private static final Dimension SIZE_FIND_FIELD = new Dimension(100, 25);
@@ -103,10 +101,10 @@ public class HistoryWindow extends JFrame {
 		historyFile = new XMLHistoryFile(historyStream);
 		sizeText = historyFile.getFormatSize();
 
-		btnClose = createJButton(BTN_CLOSE);
+		btnClose = createJButton(Res.getString("button.close"));
 		btnClose.setFont(TEXT_FONT);
 
-		btnFind = createJButton(BTN_FIND);
+		btnFind = createJButton(Res.getString("button.find"));
 		btnFind.setFont(TEXT_FONT);
 
 		HistoryTreeNode historyTreeTopNode = buildHistoryTree( historyFile, roomName );
@@ -178,14 +176,9 @@ public class HistoryWindow extends JFrame {
 
 	private Component getSizePanel() {
 		JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		JLabel label = createJLabel(LABEL_SIZE);
+		JLabel label = createJLabel(Res.getString("message.file.size",sizeText));
 		label.setFont(LABEL_FONT);
 		panel.add(label);
-
-		JLabel sizeTextLabel = createJLabel(EMPTY);
-		sizeTextLabel.setFont(SIZE_TEXT_FONT);
-		sizeTextLabel.setText(sizeText);
-		panel.add(sizeTextLabel);
 		return panel;
 	}
 
