@@ -525,27 +525,35 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener
                 }
             } );
         }
+        ChatRoom room = null;
+        try{
+            room = SparkManager.getChatManager().getChatContainer().getActiveChatRoom();
+        }catch (Exception e){
+            Log.error( "An exception occurred while trying to get active chat room " + room, e );
+        }
+
 
         // History window
         if (!Default.getBoolean(Default.HISTORY_DISABLED) && Enterprise.containsFeature(Enterprise.HISTORY_TRANSCRIPTS_FEATURE)) {
-        	popup.add( new AbstractAction( Res.getString( "action.viewlog" ) )
-        	{
-        		@Override
-        		public void actionPerformed( ActionEvent e )
-        		{
-        			ChatRoom room = null;
-        			try
-        			{
-        				room = SparkManager.getChatManager().getChatContainer().getActiveChatRoom();
-        				HistoryWindow hw = new HistoryWindow( SparkManager.getUserDirectory(), room.getBareJid().toString() );
-        				hw.showWindow();
-        			}
-        			catch ( Exception ex )
-        			{
-        				Log.error( "An exception occurred while trying to open history window for room " + room, ex );
-        			}
-        		}
-        	} );
+            if(room != null && room.getChatType() == Message.Type.chat){
+                ChatRoom finalRoom = room;
+                popup.add(new AbstractAction( Res.getString( "action.viewlog" ) )
+                {
+                    @Override
+                    public void actionPerformed( ActionEvent e )
+                    {
+                        try
+                        {
+                            HistoryWindow hw = new HistoryWindow( SparkManager.getUserDirectory(), finalRoom.getJid().toString() );
+                            hw.showWindow();
+                        }
+                        catch ( Exception ex )
+                        {
+                            Log.error( "An exception occurred while trying to open history window for room " + finalRoom, ex );
+                        }
+                    }
+                } );
+            }
         }
     }
 
