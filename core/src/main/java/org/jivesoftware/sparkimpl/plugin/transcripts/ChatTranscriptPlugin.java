@@ -226,13 +226,13 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
         if (!pref.isChatHistoryEnabled()) {
             return;
         }
+        //If this it a MUC then don't persist this chat.
+        if(room.getChatType() == Message.Type.groupchat){
+            return;
+        }
 
         EntityJid jid = room.getJid();
 
-        //If this it a MUC then don't persist this chat.
-        if(jid.hasNoResource() && !jid.getDomain().equals(domainServer)){
-            return;
-        }
 
         //If this is a one-to-one chat( "user@domain.local" )
         if(jid.hasResource() && jid.getDomain().equals(domainServer)){
