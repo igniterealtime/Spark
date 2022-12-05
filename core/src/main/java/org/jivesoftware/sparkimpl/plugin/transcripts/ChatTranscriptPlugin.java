@@ -39,10 +39,13 @@ import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.ConnectionListener;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPConnection;
+import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smackx.jiveproperties.packet.JivePropertiesExtension;
-import org.jivesoftware.spark.SessionManager;
+import org.jivesoftware.smackx.muc.MultiUserChatManager;
+
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.ContextMenuListener;
 import org.jivesoftware.spark.ui.ChatRoom;
@@ -53,14 +56,11 @@ import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.ui.ContactList;
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 import org.jivesoftware.spark.util.UIComponentRegistry;
+import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
-import org.jxmpp.jid.BareJid;
-import org.jxmpp.jid.EntityBareJid;
-import org.jxmpp.jid.EntityJid;
-import org.jxmpp.jid.Jid;
-import org.jxmpp.jid.parts.Domainpart;
+import org.jxmpp.jid.*;
 
 /**
  * The <code>ChatTranscriptPlugin</code> is responsible for transcript handling within Spark.
@@ -222,7 +222,6 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
 
     public void persistChatRoom(final ChatRoom room) {
         LocalPreferences pref = SettingsManager.getLocalPreferences();
-        final Domainpart domainServer = SparkManager.getSessionManager().getServerAddress().getDomain();
         if (!pref.isChatHistoryEnabled()) {
             return;
         }
@@ -231,12 +230,10 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
             return;
         }
 
-        EntityJid jid = room.getJid();
+        EntityJid jid = room.getBareJid();
 
-
-        //If this is a one-to-one chat( "user@domain.local" )
-        if(jid.hasResource() && jid.getDomain().equals(domainServer)){
-            jid = room.getBareJid();
+        if(isPrivateChatInMUC(jid)){
+            jid = room.getJid();
         }
 
         final List<Message> transcripts = room.getTranscripts();
@@ -312,6 +309,26 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
    	 Frame.setSize(350, 150);
    	 Frame.setResizable(false);
    	 Frame.setVisible(true);
+    }
+
+    private static boolean isPrivateChatInMUC(EntityJid jid){
+
+        List<DomainBareJid> domainMUC = null;
+
+        try {
+            domainMUC = MultiUserChatManager.getInstanceFor( SparkManager.getConnection() ).getMucServiceDomains();
+        }catch (XMPPException | SmackException | InterruptedException e) {
+            Log.error("Unable to load MUC Service Names.", e);
+        }
+
+        if(domainMUC != null){
+            for(DomainBareJid domain : domainMUC){
+                if(jid.getDomain().equals(domain.getDomain())){
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private class ChatRoomDecorator implements ActionListener, ChatRoomClosingListener {
