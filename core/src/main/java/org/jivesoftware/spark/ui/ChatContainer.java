@@ -283,7 +283,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
 
         String tooltip;
         if (room instanceof ChatRoomImpl) {
-            tooltip = ((ChatRoomImpl) room).getParticipantJID().toString();
+            tooltip = room.getJid().toString();
             String nickname = SparkManager.getUserManager().getUserNicknameFromJID(((ChatRoomImpl) room).getParticipantJID());
 
             tooltip = "<html><body><b>Contact:&nbsp;</b>" + nickname + "<br><b>JID:&nbsp;</b>" + tooltip;
