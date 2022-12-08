@@ -19,12 +19,15 @@ import org.jivesoftware.MainWindow;
 import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.StanzaListener;
+import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.filter.AndFilter;
 import org.jivesoftware.smack.filter.FromMatchesFilter;
 import org.jivesoftware.smack.filter.StanzaTypeFilter;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smackx.muc.MultiUserChatManager;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.tabbedPane.SparkTab;
@@ -40,6 +43,7 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.alerts.SparkToaster;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+import org.jxmpp.jid.DomainBareJid;
 import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.EntityJid;
 import org.jxmpp.jid.Jid;
@@ -279,7 +283,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
 
         String tooltip;
         if (room instanceof ChatRoomImpl) {
-            tooltip = ((ChatRoomImpl) room).getParticipantJID().toString();
+            tooltip = room.getJid().toString();
             String nickname = SparkManager.getUserManager().getUserNicknameFromJID(((ChatRoomImpl) room).getParticipantJID());
 
             tooltip = "<html><body><b>Contact:&nbsp;</b>" + nickname + "<br><b>JID:&nbsp;</b>" + tooltip;
@@ -593,7 +597,12 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             }
 
             if (jid instanceof EntityBareJid) {
-                if (room != null && room.getBareJid().equals(jid) && room.isActive()) {
+
+                if (room != null && room.getJid().equals(jid) && isMUC(jid) && room.isActive()) {
+                    return room;
+                }
+
+                if (room != null && room.getBareJid().equals(jid) && !isMUC(jid) && room.isActive()) {
                     return room;
                 }
             } else {
@@ -603,6 +612,27 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             }
         }
         throw new ChatRoomNotFoundException(jid + " not found.");
+    }
+
+
+    private static boolean isMUC(EntityJid jid){
+
+        List<DomainBareJid> domainMUC = null;
+
+        try {
+            domainMUC = MultiUserChatManager.getInstanceFor( SparkManager.getConnection() ).getMucServiceDomains();
+        }catch (XMPPException | SmackException | InterruptedException e) {
+            Log.error("Unable to load MUC Service Names.", e);
+        }
+
+        if(domainMUC != null && jid.hasNoResource()){
+            for(DomainBareJid domain : domainMUC){
+                if(jid.getDomain().equals(domain.getDomain())){
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**
