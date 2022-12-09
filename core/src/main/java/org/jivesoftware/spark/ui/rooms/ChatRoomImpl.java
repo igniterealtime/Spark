@@ -36,7 +36,6 @@ import org.jivesoftware.smackx.xevent.MessageEventManager;
 import org.jivesoftware.smackx.xevent.packet.MessageEvent;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.PresenceManager;
-import org.jivesoftware.spark.SessionManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.ui.*;
 import org.jivesoftware.spark.util.ModelUtil;
