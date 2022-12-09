@@ -791,7 +791,7 @@ public class ChatRoomImpl extends ChatRoom {
 
             final ChatTranscript chatTranscript = ChatTranscripts.getCurrentChatTranscript(getJid());
     		final String personalNickname = SparkManager.getUserManager().getNickname();
-            final Domainpart domainServer = SparkManager.getSessionManager().getServerAddress().getDomain();
+            final boolean privateChat = participantNickname.equals(participantJID.getResourceOrNull());
 
     		for (HistoryMessage message : chatTranscript.getMessages()) {
     			String nickname = SparkManager.getUserManager().getUserNicknameFromJID(message.getFrom().asBareJid());
@@ -811,7 +811,7 @@ public class ChatRoomImpl extends ChatRoom {
     				            nickname = localpart.toString();
     				        }
     				    } else {
-                            if(!message.getFrom().getDomain().equals(domainServer)){
+                            if(privateChat){
                                 nickname = resourcepart.toString();
                             } else {
                                 if(localpart != null){
