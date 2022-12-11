@@ -24,8 +24,8 @@ import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ChatRoomListener;
 import org.jivesoftware.spark.ui.GlobalMessageListener;
 import org.jivesoftware.spark.util.log.Log;
-import org.jxmpp.jid.EntityBareJid;
 import org.jivesoftware.smack.provider.ProviderManager;
+import org.jxmpp.jid.EntityJid;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -34,7 +34,7 @@ import java.util.Map;
 public class SparkFileUploadPlugin implements Plugin, ChatRoomListener, GlobalMessageListener
 {
     private org.jivesoftware.spark.ChatManager chatManager;
-    private final Map<EntityBareJid, ChatRoomDecorator> decorators = new HashMap<>();
+    private final Map<EntityJid, ChatRoomDecorator> decorators = new HashMap<>();
 
     public void initialize()
     {
@@ -102,7 +102,7 @@ public class SparkFileUploadPlugin implements Plugin, ChatRoomListener, GlobalMe
 
     public void chatRoomClosed(ChatRoom chatroom)
     {
-        EntityBareJid roomId = chatroom.getBareJid();
+        EntityJid roomId = chatroom.getJid();
 
         Log.debug("chatRoomClosed:  " + roomId);
 
@@ -115,34 +115,34 @@ public class SparkFileUploadPlugin implements Plugin, ChatRoomListener, GlobalMe
 
     public void chatRoomActivated(ChatRoom chatroom)
     {
-        EntityBareJid roomId = chatroom.getBareJid();
+        EntityJid roomId = chatroom.getJid();
 
         Log.debug("chatRoomActivated:  " + roomId);
     }
 
     public void userHasJoined(ChatRoom room, String s)
     {
-        EntityBareJid roomId = room.getBareJid();
+        EntityJid roomId = room.getJid();
 
         Log.debug("userHasJoined:  " + roomId + " " + s);
     }
 
     public void userHasLeft(ChatRoom room, String s)
     {
-        EntityBareJid roomId = room.getBareJid();
+        EntityJid roomId = room.getJid();
 
         Log.debug("userHasLeft:  " + roomId + " " + s);
     }
 
     public void chatRoomOpened(final ChatRoom room)
     {
-        EntityBareJid roomId = room.getBareJid();
+        EntityJid roomId = room.getJid();
 
         Log.debug("chatRoomOpened:  " + roomId);
 
         if (!decorators.containsKey(roomId))
         {
-            decorators.put(roomId, new ChatRoomDecorator(room, this));
+            decorators.put(roomId, new ChatRoomDecorator(room));
         }
     }
 
