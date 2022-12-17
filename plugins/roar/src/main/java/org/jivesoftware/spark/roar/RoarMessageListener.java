@@ -15,9 +15,7 @@
  */
 package org.jivesoftware.spark.roar;
 
-import java.util.HashMap;
-
-import javax.swing.JFrame;
+import java.awt.*;
 
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.spark.SparkManager;
@@ -29,7 +27,6 @@ import org.jivesoftware.spark.ui.GlobalMessageListener;
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 import org.jivesoftware.spark.ui.rooms.GroupChatRoom;
 import org.jivesoftware.spark.util.log.Log;
-import org.jxmpp.jid.EntityBareJid;
 
 /**
  * Message Listener<br>
@@ -41,8 +38,6 @@ public class RoarMessageListener implements GlobalMessageListener {
 
     private final RoarProperties _properties;
 
-    private final HashMap<EntityBareJid, Long> _rooms = new HashMap<>();
-
     public RoarMessageListener() {
         _properties = RoarProperties.getInstance();
     }
@@ -52,14 +47,10 @@ public class RoarMessageListener implements GlobalMessageListener {
 
         try {
             ChatRoom activeroom = SparkManager.getChatManager().getChatContainer().getActiveChatRoom();
-
-            int framestate = SparkManager.getChatManager().getChatContainer().getChatFrame().getState();
-
-            final boolean chatContainerHasFocus = SparkManager.getChatManager().getChatContainer().isFocusOwner();
+            final int framestate = SparkManager.getChatManager().getChatContainer().getChatFrame().getState();
 
             // If the message is for a chat that's currently active and showing, do not popup.
-            if (!chatContainerHasFocus && framestate == JFrame.NORMAL && activeroom.equals(room) && room.isShowing()
-                    && (isOldGroupChat(room) || isMessageFromRoom(room, message))) {
+            if (activeroom.equals(room) && framestate == Frame.NORMAL) {
                 Log.debug( "Surpressing popup: chat is currently active and showing.");
                 return;
             }
@@ -118,49 +109,10 @@ public class RoarMessageListener implements GlobalMessageListener {
                 _properties.getDuration("group.duration"));
     }
 
-    private boolean isOldGroupChat(ChatRoom room) {
-
-        boolean result = false;
-
-        if (room.getChatType() == Message.Type.groupchat) {
-
-            if (_rooms.containsKey(room.getBareJid()) && _rooms.get(room.getBareJid()) == -1L) {
-                return true;
-            }
-
-            if (!_rooms.containsKey(room.getBareJid())) {
-                _rooms.put(room.getBareJid(), System.currentTimeMillis());
-                return true;
-            } else {
-                long start = _rooms.get(room.getBareJid());
-                long now = System.currentTimeMillis();
-
-                result = (now - start) < 1500;
-                if (result) {
-                    _rooms.put(room.getBareJid(), -1L);
-                }
-
-            }
-        }
-
-        return result;
-    }
-
     @Override
     public void messageSent(ChatRoom room, Message message) {
         final RoarDisplayType displayType = RoarProperties.getInstance().getDisplayTypeClass();
         displayType.messageSent(room, message);
-    }
-
-    /**
-     * Check if the message comes directly from the room
-     * 
-     * @param room
-     * @param message
-     * @return boolean
-     */
-    private boolean isMessageFromRoom(ChatRoom room, Message message) {
-        return message.getFrom().equals(room.getBareJid());
     }
 
 }
