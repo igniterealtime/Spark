@@ -56,8 +56,10 @@ public class BottomRight implements RoarDisplayType {
             @Override
             public void actionPerformed(ActionEvent e) {
                 ChatFrame chatFrame = SparkManager.getChatManager().getChatContainer().getChatFrame();
-                chatFrame.setState(Frame.NORMAL);
-                chatFrame.setVisible(true);
+                if(chatFrame != null){
+                    chatFrame.setState(Frame.NORMAL);
+                    chatFrame.setVisible(true);
+                }
             }
         };
     }

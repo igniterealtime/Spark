@@ -54,8 +54,6 @@ public class RoarPreferencePanel extends JPanel {
 
     private static final long serialVersionUID = -5334936099931215962L;
 
-    // private Image _backgroundimage;
-
     private final JTextField _duration;
     private final JTextField _amount;
     private final JCheckBox _enabledCheckbox;
@@ -81,8 +79,6 @@ public class RoarPreferencePanel extends JPanel {
 
         this.setLayout(new BorderLayout());
 
-        // ClassLoader cl = getClass().getClassLoader();
-        // _backgroundimage = new ImageIcon(cl.getResource("background2.png")).getImage();
 
         _duration = new JTextField();
         _amount = new JTextField();
@@ -104,7 +100,30 @@ public class RoarPreferencePanel extends JPanel {
         }
             
         _typelist = new JComboBox<>( _typelistdata );
-        _typelist.addActionListener( e -> updateWarningLabel(getDisplayTypeClass().getWarningMessage()) );
+        _typelist.addActionListener( e -> {
+            updateWarningLabel(getDisplayTypeClass().getWarningMessage());
+            
+            switch (_typelist.getSelectedIndex()){
+                case 2:
+                    _amount.setEnabled(false);
+                    _singleColorlist.setEnabled(false);
+                    _singleColorpicker.setEnabled(false);
+                    _duration.setEnabled(true);
+                    break;
+                case 3:
+                    _amount.setEnabled(false);
+                    _singleColorlist.setEnabled(false);
+                    _singleColorpicker.setEnabled(false);
+                    _duration.setEnabled(false);
+                    break;
+                default:
+                    _amount.setEnabled(true);
+                    _singleColorlist.setEnabled(true);
+                    _singleColorpicker.setEnabled(true);
+                    _duration.setEnabled(true);
+                    break;
+            }
+        });
 
         add(makeGeneralSettingsPanel());
         _singleColorlist.addMouseListener(new MouseAdapter() {
@@ -138,9 +157,13 @@ public class RoarPreferencePanel extends JPanel {
         
         rowcount++;
         JLabel warningLabel = new JLabel("<html>placeholder :-)</html>");
-        //warningLabel.setForeground(Color.RED);
         generalPanel.add(warningLabel, 
                 new GridBagConstraints(1, rowcount, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, INSETS, 0, 0));
+        rowcount++;
+        generalPanel.add(_singleColorlist,
+            new GridBagConstraints(0, rowcount, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, INSETS, 0, 0));
+        generalPanel.add(_singleColorpicker,
+            new GridBagConstraints(1, rowcount, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, INSETS, 0, 0));
 
         
         _components.put("label.warning", warningLabel);
@@ -149,7 +172,6 @@ public class RoarPreferencePanel extends JPanel {
         panel.add(generalPanel);
         panel.add(makeSinglePanel());
         panel.add(makeGroupChatPanel());
-        panel.add(makeKeyWordPanel());
 
         return new JScrollPane(panel);
     }
@@ -162,12 +184,7 @@ public class RoarPreferencePanel extends JPanel {
 
         // row
         int rowcount = 0;
-        singlePanel.add(_singleColorlist,
-                new GridBagConstraints(0, rowcount, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, INSETS, 0, 0));
-        singlePanel.add(_singleColorpicker,
-                new GridBagConstraints(1, rowcount, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, INSETS, 0, 0));
 
-        rowcount++;
         singlePanel.add(new JLabel(RoarResources.getString("roar.duration")),
                 new GridBagConstraints(0, rowcount, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, INSETS, 0, 0));
         singlePanel.add(_duration,
@@ -213,39 +230,6 @@ public class RoarPreferencePanel extends JPanel {
         return groupPanel;
     }
 
-    private JPanel makeKeyWordPanel() {
-        JPanel panel = new JPanel();
-        panel.setLayout(new GridBagLayout());
-        panel.setBorder(BorderFactory.createTitledBorder(RoarResources.getString("roar.keyword")));
-
-        final JCheckBox differentKeyword = new JCheckBox(RoarResources.getString("roar.keyword.different"));
-        differentKeyword.addActionListener( e -> toggleDifferentSettingsForKeyword(differentKeyword.isSelected()) );
-
-        JTextField durationKeyword = new JTextField();
-        JTextField keywords = new JTextField();
-
-        int rowcount = 0;
-        panel.add(differentKeyword,
-                new GridBagConstraints(0, rowcount, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, INSETS, 0, 0));
-
-        rowcount++;
-        panel.add(new JLabel(RoarResources.getString("roar.duration")),
-                new GridBagConstraints(0, rowcount, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, INSETS, 0, 0));
-        panel.add(durationKeyword,
-                new GridBagConstraints(1, rowcount, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, INSETS, 0, 0));
-
-        rowcount++;
-        panel.add(new JLabel(RoarResources.getString("roar.keyword.keyword")),
-                new GridBagConstraints(0, rowcount, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, INSETS, 0, 0));
-        panel.add(keywords, new GridBagConstraints(1, rowcount, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, INSETS, 0, 0));
-
-        _components.put("keyword.different.enabled", differentKeyword);
-        _components.put("keyword.duration", durationKeyword);
-        _components.put("keywords", keywords);
-
-        return panel;
-    }
-
     public void initializeValues() {
         RoarProperties props = RoarProperties.getInstance();
 
@@ -255,29 +239,20 @@ public class RoarPreferencePanel extends JPanel {
 
         setColor(ColorTypes.BACKGROUNDCOLOR, props.getBackgroundColor());
         setColor(ColorTypes.BACKGROUNDCOLOR_GROUP, props.getColor(RoarProperties.BACKGROUNDCOLOR_GROUP, props.getBackgroundColor()));
-        setColor(ColorTypes.BACKGROUNDCOLOR_KEYWORD, props.getColor(RoarProperties.BACKGROUNDCOLOR_KEYWORD, props.getBackgroundColor()));
         setColor(ColorTypes.HEADERCOLOR, props.getHeaderColor());
         setColor(ColorTypes.HEADERCOLOR_GROUP, props.getColor(RoarProperties.HEADERCOLOR_GROUP, props.getHeaderColor()));
-        setColor(ColorTypes.HEADERCOLOR_KEYWORD, props.getColor(RoarProperties.HEADERCOLOR_KEYWORD, props.getHeaderColor()));
         setColor(ColorTypes.TEXTCOLOR, props.getTextColor());
         setColor(ColorTypes.TEXTCOLOR_GROUP, props.getColor(RoarProperties.TEXTCOLOR_GROUP, props.getTextColor()));
-        setColor(ColorTypes.TEXTCOLOR_KEYWORD, props.getColor(RoarProperties.TEXTCOLOR_KEYWORD, props.getTextColor()));
 
         retrieveComponent("roar.disable.single", JCheckBox.class).setSelected(props.getBoolean("roar.disable.single", false));
         _duration.setText("" + props.getDuration());
-        retrieveComponent("keyword.duration", JTextField.class).setText("" + props.getInt("keyword.duration"));
-        retrieveComponent("group.duration", JTextField.class).setText("" + props.getInt("group.duration"));
-        retrieveComponent("keywords", JTextField.class).setText(props.getProperty("keywords"));
+        retrieveComponent("group.duration", JTextField.class).setText("" + props.getDuration("group.duration"));
 
         retrieveComponent("group.disable", JCheckBox.class).setSelected(props.getBoolean("group.disable", false));
 
         boolean group_different_enabled = props.getBoolean("group.different.enabled", false);
         retrieveComponent("group.different.enabled", JCheckBox.class).setSelected(group_different_enabled);
         toggleDifferentSettingsForGroup(group_different_enabled);
-
-        boolean keyword_different_enabled = props.getBoolean("keyword.different.enabled", false);
-        retrieveComponent("keyword.different.enabled", JCheckBox.class).setSelected(keyword_different_enabled);
-        toggleDifferentSettingsForKeyword(keyword_different_enabled);
     }
 
     public void storeValues() {
@@ -287,24 +262,17 @@ public class RoarPreferencePanel extends JPanel {
         props.setMaximumPopups(this.getAmount());
 
         props.setDuration(this.getDuration());
-        props.setInt("group.duration", getIntFromTextField("group.duration"));
-        props.setInt("keyword.duration", getIntFromTextField("keyword.duration"));
-
-        props.setKeywords(retrieveComponent("keywords", JTextField.class).getText());
+        props.setDuration("group.duration", getIntFromTextField("group.duration"));
 
         props.setBackgroundColor(getColor(ColorTypes.BACKGROUNDCOLOR));
         props.setColor(RoarProperties.BACKGROUNDCOLOR_GROUP, getColor(ColorTypes.BACKGROUNDCOLOR_GROUP));
-        props.setColor(RoarProperties.BACKGROUNDCOLOR_KEYWORD, getColor(ColorTypes.BACKGROUNDCOLOR_KEYWORD));
         props.setTextColor(getColor(ColorTypes.TEXTCOLOR));
         props.setColor(RoarProperties.TEXTCOLOR_GROUP, getColor(ColorTypes.TEXTCOLOR_GROUP));
-        props.setColor(RoarProperties.TEXTCOLOR_KEYWORD, getColor(ColorTypes.TEXTCOLOR_KEYWORD));
         props.setHeaderColor(getColor(ColorTypes.HEADERCOLOR));
         props.setColor(RoarProperties.HEADERCOLOR_GROUP, getColor(ColorTypes.HEADERCOLOR_GROUP));
-        props.setColor(RoarProperties.HEADERCOLOR_KEYWORD, getColor(ColorTypes.HEADERCOLOR_KEYWORD));
 
         props.setBoolean("roar.disable.single", retrieveComponent("roar.disable.single", JCheckBox.class).isSelected());
         props.setBoolean("group.different.enabled", retrieveComponent("group.different.enabled", JCheckBox.class).isSelected());
-        props.setBoolean("keyword.different.enabled", retrieveComponent("keyword.different.enabled", JCheckBox.class).isSelected());
         props.setBoolean("group.disable", retrieveComponent("group.disable", JCheckBox.class).isSelected());
 
         props.save();
@@ -394,27 +362,6 @@ public class RoarPreferencePanel extends JPanel {
         return getDisplayTypeClass().getName();
     }
 
-    private void toggleDifferentSettingsForKeyword(boolean isSelected) {
-
-        DefaultListModel<ColorTypes> model = (DefaultListModel<ColorTypes>) _singleColorlist.getModel();
-        JTextField duration = retrieveComponent("keyword.duration", JTextField.class);
-
-        if (isSelected) {
-            if (!model.contains(ColorTypes.BACKGROUNDCOLOR_KEYWORD)) {
-                model.addElement(ColorTypes.BACKGROUNDCOLOR_KEYWORD);
-                model.addElement(ColorTypes.HEADERCOLOR_KEYWORD);
-                model.addElement(ColorTypes.TEXTCOLOR_KEYWORD);
-            }
-            duration.setEnabled(true);
-        } else {
-            model.removeElement(ColorTypes.BACKGROUNDCOLOR_KEYWORD);
-            model.removeElement(ColorTypes.HEADERCOLOR_KEYWORD);
-            model.removeElement(ColorTypes.TEXTCOLOR_KEYWORD);
-            duration.setEnabled(false);
-            duration.setText(_duration.getText());
-        }
-    }
-
     private void toggleDifferentSettingsForGroup(boolean isSelected) {
 
         DefaultListModel<ColorTypes> model = (DefaultListModel<ColorTypes>) _singleColorlist.getModel();
@@ -442,30 +389,6 @@ public class RoarPreferencePanel extends JPanel {
         }
     }
 
-    // ============================================================================================================
-    // ============================================================================================================
-    // ============================================================================================================
-    // public void paintComponent(Graphics g) {
-    // CENTER LOGO
-    // int imgwi = _backgroundimage.getWidth(null);
-    // int imghe = _backgroundimage.getHeight(null);
-    // int x = this.getSize().width;
-    // x = (x/2)-(imgwi/2) < 0 ? 0 : (x/2)-(imgwi/2) ;
-    //
-    // int y = this.getSize().height;
-    // y = (y/2) -(imghe/2)< 0 ? 0 : y/2-(imghe/2) ;
-    //
-    // LOGO in bottom right corner
-    //
-    // int x = this.getSize().width - _backgroundimage.getWidth(null);
-    // int y = this.getSize().height - _backgroundimage.getHeight(null);
-    //
-    // super.paintComponent(g);
-    // g.drawImage(_backgroundimage, x, y, this);
-    // }
-    // ============================================================================================================
-    // ============================================================================================================
-    // ============================================================================================================
     public enum ColorTypes {
         BACKGROUNDCOLOR(RoarResources.getString("roar.background")), 
         HEADERCOLOR(RoarResources.getString("roar.header")), 
@@ -473,11 +396,8 @@ public class RoarPreferencePanel extends JPanel {
         
         BACKGROUNDCOLOR_GROUP(RoarResources.getString("roar.background.group")), 
         HEADERCOLOR_GROUP(RoarResources.getString("roar.header.group")), 
-        TEXTCOLOR_GROUP(RoarResources.getString("roar.text.group")), 
-        
-        BACKGROUNDCOLOR_KEYWORD(RoarResources.getString("roar.background.keyword")), 
-        HEADERCOLOR_KEYWORD(RoarResources.getString("roar.header.keyword")), 
-        TEXTCOLOR_KEYWORD(RoarResources.getString("roar.text.keyword"));
+        TEXTCOLOR_GROUP(RoarResources.getString("roar.text.group"));
+
 
         private final String string;
 

@@ -57,15 +57,8 @@ public class RoarProperties {
     public static final String TEXTCOLOR_GROUP = "textcolor.group";
     public static final String DURATION_GROUP = "duration.group";
 
-    public static final String BACKGROUNDCOLOR_KEYWORD = "backgroundcolor.keyword";
-    public static final String HEADERCOLOR_KEYWORD = "headercolor.keyword";
-    public static final String TEXTCOLOR_KEYWORD = "textcolor.keyword";
-    public static final String DURATION_KEYWORD = "duration.keyword";
-
     private static final Object LOCK = new Object();
     private static RoarProperties instance = null;
-    
-    private List<String> keywords = null;
     
     private final RoarDisplayType[] displayTypes = new RoarDisplayType[]{new TopRight(), new BottomRight(), new SparkToasterHandler(), new SystemNotification()};
     
@@ -123,7 +116,7 @@ public class RoarProperties {
     }
 
     public Color getBackgroundColor() {
-        return getColor(BACKGROUNDCOLOR, Color.BLACK);
+        return getColor(BACKGROUNDCOLOR, Color.WHITE);
     }
 
     public void setBackgroundColor(Color c) {
@@ -131,7 +124,7 @@ public class RoarProperties {
     }
 
     public Color getHeaderColor() {
-        return getColor(HEADERCOLOR, Color.RED);
+        return getColor(HEADERCOLOR, new Color(255,85,0));
     }
 
     public void setHeaderColor(Color c) {
@@ -139,7 +132,7 @@ public class RoarProperties {
     }
 
     public Color getTextColor() {
-        return getColor(TEXTCOLOR, Color.WHITE);
+        return getColor(TEXTCOLOR, Color.BLACK);
     }
 
     public void setTextColor(Color c) {
@@ -147,20 +140,20 @@ public class RoarProperties {
     }
 
     public int getDuration() {
-        int dur = getInt(DURATION);
-        return dur < 0 ? 3000 : getInt(DURATION);
+        int dur = getDuration(DURATION);
+        return dur < 0 ? 3000 : getDuration(DURATION);
     }
 
     public void setDuration(int dur) {
-        setInt(DURATION, dur);
+        setDuration(DURATION, dur);
     }
 
     public int getMaximumPopups() {
-        return getInt(AMOUNT);
+        return getAmount(AMOUNT);
     }
 
     public void setMaximumPopups(int amount) {
-        setInt(AMOUNT, amount);
+        setAmount(AMOUNT, amount);
     }
 
     public void setDisplayType(String classstring) {
@@ -170,40 +163,6 @@ public class RoarProperties {
 
     public String getDisplayType() {
         return props.getProperty(ROARDISPLAYTYPE, displayTypes[0].getName()); // TopRight is default
-    }
-    
-    public void setKeywords(String commaseparated) {
-        props.setProperty("keywords", commaseparated);
-
-        String[] pkeys = props.getProperty("keywords").split(",");
-        if (pkeys.length > 0) {
-            keywords = Arrays.asList(pkeys);
-        } else {
-            keywords = Collections.emptyList();
-        }
-    }
-
-    /**
-     * Returns a cached version of the keywords, loads them from properties if it hasn't before.
-     */
-    public List<String> getKeywords() {
-        if (keywords == null) {
-            final String propertyValue = props.getProperty("keywords");
-            if ( propertyValue != null )
-            {
-                String[] pkeys = propertyValue.split( "," );
-                if ( pkeys.length > 0 )
-                {
-                    keywords = Arrays.asList( pkeys );
-                }
-            }
-
-            if ( keywords == null ) {
-                keywords = Collections.emptyList();
-            }
-        }
-
-        return Collections.unmodifiableList(keywords);
     }
 
     public RoarDisplayType getDisplayTypeClass() {
@@ -228,11 +187,19 @@ public class RoarProperties {
         props.setProperty(property, Boolean.toString(value));
     }
 
-    public int getInt(String property) {
-        return Integer.parseInt(props.getProperty(property, "0"));
+    public int getDuration(String property) {
+        return Integer.parseInt(props.getProperty(property, "3000"));
     }
 
-    public void setInt(String property, int integer) {
+    public void setDuration(String property, int integer) {
+        props.setProperty(property, "" + integer);
+    }
+
+    public int getAmount(String property) {
+        return Integer.parseInt(props.getProperty(property, "4"));
+    }
+
+    public void setAmount(String property, int integer) {
         props.setProperty(property, "" + integer);
     }
 

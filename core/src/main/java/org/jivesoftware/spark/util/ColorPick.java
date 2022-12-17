@@ -182,4 +182,10 @@ public class ColorPick extends JPanel implements ChangeListener {
 	}
     }
 
+    @Override
+    public void setEnabled(boolean enabled) {
+        for(JSlider s : _sliderarray){
+            s.setEnabled(enabled);
+        }
+    }
 }
