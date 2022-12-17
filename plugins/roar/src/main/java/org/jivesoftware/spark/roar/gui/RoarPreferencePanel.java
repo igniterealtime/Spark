@@ -100,7 +100,30 @@ public class RoarPreferencePanel extends JPanel {
         }
             
         _typelist = new JComboBox<>( _typelistdata );
-        _typelist.addActionListener( e -> updateWarningLabel(getDisplayTypeClass().getWarningMessage()) );
+        _typelist.addActionListener( e -> {
+            updateWarningLabel(getDisplayTypeClass().getWarningMessage());
+            
+            switch (_typelist.getSelectedIndex()){
+                case 2:
+                    _amount.setEnabled(false);
+                    _singleColorlist.setEnabled(false);
+                    _singleColorpicker.setEnabled(false);
+                    _duration.setEnabled(true);
+                    break;
+                case 3:
+                    _amount.setEnabled(false);
+                    _singleColorlist.setEnabled(false);
+                    _singleColorpicker.setEnabled(false);
+                    _duration.setEnabled(false);
+                    break;
+                default:
+                    _amount.setEnabled(true);
+                    _singleColorlist.setEnabled(true);
+                    _singleColorpicker.setEnabled(true);
+                    _duration.setEnabled(true);
+                    break;
+            }
+        });
 
         add(makeGeneralSettingsPanel());
         _singleColorlist.addMouseListener(new MouseAdapter() {
@@ -136,6 +159,11 @@ public class RoarPreferencePanel extends JPanel {
         JLabel warningLabel = new JLabel("<html>placeholder :-)</html>");
         generalPanel.add(warningLabel, 
                 new GridBagConstraints(1, rowcount, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, INSETS, 0, 0));
+        rowcount++;
+        generalPanel.add(_singleColorlist,
+            new GridBagConstraints(0, rowcount, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, INSETS, 0, 0));
+        generalPanel.add(_singleColorpicker,
+            new GridBagConstraints(1, rowcount, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, INSETS, 0, 0));
 
         
         _components.put("label.warning", warningLabel);
@@ -156,12 +184,7 @@ public class RoarPreferencePanel extends JPanel {
 
         // row
         int rowcount = 0;
-        singlePanel.add(_singleColorlist,
-                new GridBagConstraints(0, rowcount, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, INSETS, 0, 0));
-        singlePanel.add(_singleColorpicker,
-                new GridBagConstraints(1, rowcount, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, INSETS, 0, 0));
 
-        rowcount++;
         singlePanel.add(new JLabel(RoarResources.getString("roar.duration")),
                 new GridBagConstraints(0, rowcount, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, INSETS, 0, 0));
         singlePanel.add(_duration,
