@@ -9,7 +9,7 @@ public class WindowsNotification {
 
         TrayIcon[] trayIcon = SystemTray.getSystemTray().getTrayIcons();
         if (trayIcon.length == 1) {
-            trayIcon[0].displayMessage(title, bodyText, TrayIcon.MessageType.INFO);
+            trayIcon[0].displayMessage(title, bodyText, TrayIcon.MessageType.NONE);
         }
 
     }
