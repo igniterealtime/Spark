@@ -82,23 +82,13 @@ public class RoarMessageListener implements GlobalMessageListener {
     
     private void decideForRoomAndMessage(ChatRoom room, Message message) {
         final RoarDisplayType displayType = RoarProperties.getInstance().getDisplayTypeClass();
-        if (doesMessageMatchKeywords(message)) {
-            displayType.messageReceived(room, message, isKeyWordDifferent() ? getKeywordBundle() : getSingleBundle());
-        } else if (room instanceof ChatRoomImpl && !isSingleRoomDisabled()) {
+        if (room instanceof ChatRoomImpl && !isSingleRoomDisabled()) {
             displayType.messageReceived(room, message, getSingleBundle());
         } else if (room instanceof GroupChatRoom && !isMutliRoomDisabled()) {
             displayType.messageReceived(room, message, isMultiRoomDifferent() ? getMultiBundle() : getSingleBundle());
         }
     }
 
-    private boolean doesMessageMatchKeywords(Message message) {
-        for (String keyword : _properties.getKeywords()) {
-            if (message.getBody().contains(keyword)) {
-                return true;
-            }
-        }
-        return false;
-    }
     
     private boolean isSingleRoomDisabled()
     {
@@ -109,12 +99,7 @@ public class RoarMessageListener implements GlobalMessageListener {
     {
         return _properties.getBoolean("group.disable", false);
     }
-    
-    private boolean isKeyWordDifferent() 
-    {
-        return _properties.getBoolean("keyword.different.enabled", false);
-    }
-    
+
     private boolean isMultiRoomDifferent()
     {
         return _properties.getBoolean("group.different.enabled", false);
@@ -131,13 +116,6 @@ public class RoarMessageListener implements GlobalMessageListener {
                 _properties.getColor(RoarProperties.HEADERCOLOR_GROUP, _properties.getHeaderColor()),
                 _properties.getColor(RoarProperties.TEXTCOLOR_GROUP, _properties.getTextColor()),
                 _properties.getDuration("group.duration"));
-    }
-    private PropertyBundle getKeywordBundle() {
-        return new PropertyBundle(
-                _properties.getColor(RoarProperties.BACKGROUNDCOLOR_KEYWORD, _properties.getBackgroundColor()),
-                _properties.getColor(RoarProperties.HEADERCOLOR_KEYWORD, _properties.getHeaderColor()),
-                _properties.getColor(RoarProperties.TEXTCOLOR_KEYWORD, _properties.getTextColor()),
-                _properties.getDuration("keyword.duration"));
     }
 
     private boolean isOldGroupChat(ChatRoom room) {

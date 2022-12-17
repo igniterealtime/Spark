@@ -57,15 +57,8 @@ public class RoarProperties {
     public static final String TEXTCOLOR_GROUP = "textcolor.group";
     public static final String DURATION_GROUP = "duration.group";
 
-    public static final String BACKGROUNDCOLOR_KEYWORD = "backgroundcolor.keyword";
-    public static final String HEADERCOLOR_KEYWORD = "headercolor.keyword";
-    public static final String TEXTCOLOR_KEYWORD = "textcolor.keyword";
-    public static final String DURATION_KEYWORD = "duration.keyword";
-
     private static final Object LOCK = new Object();
     private static RoarProperties instance = null;
-    
-    private List<String> keywords = null;
     
     private final RoarDisplayType[] displayTypes = new RoarDisplayType[]{new TopRight(), new BottomRight(), new SparkToasterHandler(), new SystemNotification()};
     
@@ -170,40 +163,6 @@ public class RoarProperties {
 
     public String getDisplayType() {
         return props.getProperty(ROARDISPLAYTYPE, displayTypes[0].getName()); // TopRight is default
-    }
-    
-    public void setKeywords(String commaseparated) {
-        props.setProperty("keywords", commaseparated);
-
-        String[] pkeys = props.getProperty("keywords").split(",");
-        if (pkeys.length > 0) {
-            keywords = Arrays.asList(pkeys);
-        } else {
-            keywords = Collections.emptyList();
-        }
-    }
-
-    /**
-     * Returns a cached version of the keywords, loads them from properties if it hasn't before.
-     */
-    public List<String> getKeywords() {
-        if (keywords == null) {
-            final String propertyValue = props.getProperty("keywords");
-            if ( propertyValue != null )
-            {
-                String[] pkeys = propertyValue.split( "," );
-                if ( pkeys.length > 0 )
-                {
-                    keywords = Arrays.asList( pkeys );
-                }
-            }
-
-            if ( keywords == null ) {
-                keywords = Collections.emptyList();
-            }
-        }
-
-        return Collections.unmodifiableList(keywords);
     }
 
     public RoarDisplayType getDisplayTypeClass() {
