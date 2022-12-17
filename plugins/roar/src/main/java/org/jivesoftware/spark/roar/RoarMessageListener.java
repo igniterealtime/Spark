@@ -130,14 +130,14 @@ public class RoarMessageListener implements GlobalMessageListener {
                 _properties.getColor(RoarProperties.BACKGROUNDCOLOR_GROUP, _properties.getBackgroundColor()),
                 _properties.getColor(RoarProperties.HEADERCOLOR_GROUP, _properties.getHeaderColor()),
                 _properties.getColor(RoarProperties.TEXTCOLOR_GROUP, _properties.getTextColor()),
-                _properties.getInt("group.duration"));
+                _properties.getDuration("group.duration"));
     }
     private PropertyBundle getKeywordBundle() {
         return new PropertyBundle(
                 _properties.getColor(RoarProperties.BACKGROUNDCOLOR_KEYWORD, _properties.getBackgroundColor()),
                 _properties.getColor(RoarProperties.HEADERCOLOR_KEYWORD, _properties.getHeaderColor()),
                 _properties.getColor(RoarProperties.TEXTCOLOR_KEYWORD, _properties.getTextColor()),
-                _properties.getInt("keyword.duration"));
+                _properties.getDuration("keyword.duration"));
     }
 
     private boolean isOldGroupChat(ChatRoom room) {

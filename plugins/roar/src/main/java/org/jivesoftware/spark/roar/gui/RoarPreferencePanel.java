@@ -265,8 +265,8 @@ public class RoarPreferencePanel extends JPanel {
 
         retrieveComponent("roar.disable.single", JCheckBox.class).setSelected(props.getBoolean("roar.disable.single", false));
         _duration.setText("" + props.getDuration());
-        retrieveComponent("keyword.duration", JTextField.class).setText("" + props.getInt("keyword.duration"));
-        retrieveComponent("group.duration", JTextField.class).setText("" + props.getInt("group.duration"));
+        retrieveComponent("keyword.duration", JTextField.class).setText("" + props.getDuration("keyword.duration"));
+        retrieveComponent("group.duration", JTextField.class).setText("" + props.getDuration("group.duration"));
         retrieveComponent("keywords", JTextField.class).setText(props.getProperty("keywords"));
 
         retrieveComponent("group.disable", JCheckBox.class).setSelected(props.getBoolean("group.disable", false));
@@ -287,8 +287,8 @@ public class RoarPreferencePanel extends JPanel {
         props.setMaximumPopups(this.getAmount());
 
         props.setDuration(this.getDuration());
-        props.setInt("group.duration", getIntFromTextField("group.duration"));
-        props.setInt("keyword.duration", getIntFromTextField("keyword.duration"));
+        props.setDuration("group.duration", getIntFromTextField("group.duration"));
+        props.setDuration("keyword.duration", getIntFromTextField("keyword.duration"));
 
         props.setKeywords(retrieveComponent("keywords", JTextField.class).getText());
 
