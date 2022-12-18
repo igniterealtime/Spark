@@ -1395,7 +1395,7 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
         // Check to see if the password should be saved or cleared from file.
         if (savePasswordAfterSuccessfulLogin.get()) {
             try {
-                localPref.setPasswordForUser(getLoginUsername() + "@" + getLoginServer(), getLoginPassword());
+                localPref.setPasswordForUser(getBareJid(), getLoginPassword());
             } catch (Exception e) {
                 Log.error("Error storing encrypted password.", e);
             }

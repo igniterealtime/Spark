@@ -29,6 +29,7 @@ import javax.swing.JTextField;
 import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
+import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.VerticalFlowLayout;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.log.Log;
@@ -78,7 +79,16 @@ public class LocalPreferencePanel extends JPanel {
 	} else {
 		_savePasswordBox.addActionListener(e -> {
 			_autoLoginBox.setEnabled(_savePasswordBox.isSelected());
-			if (!_savePasswordBox.isSelected()) {
+            if (_savePasswordBox.isSelected()) {
+                String user = SparkManager.getSessionManager().getUserBareAddress().toString();
+                String password = SparkManager.getSessionManager().getPassword();
+                try {
+                    preferences.setPasswordForUser(user,password);
+                } catch (Exception ex) {
+                    Log.error("Error storing encrypted password.", ex);
+                }
+            }
+            if (!_savePasswordBox.isSelected()) {
 				_autoLoginBox.setSelected(false);
 				try {
 					preferences.clearPasswordForAllUsers();
