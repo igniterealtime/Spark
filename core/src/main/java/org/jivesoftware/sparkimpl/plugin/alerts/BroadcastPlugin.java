@@ -268,6 +268,11 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
         int linebreaks = org.jivesoftware.spark.util.StringUtils.
                 countNumberOfOccurences(s, '\n');
 
+        //If the message is blank, then it should not be displayed.
+        if(org.apache.commons.lang3.StringUtils.isBlank(s)){
+            return;
+        }
+
         // Currently Serverbroadcasts dont contain Subjects, so this might be a MOTD message
         boolean mightbeMOTD = message.getSubject() != null;
 
