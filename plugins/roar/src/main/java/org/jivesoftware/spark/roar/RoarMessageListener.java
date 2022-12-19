@@ -48,9 +48,10 @@ public class RoarMessageListener implements GlobalMessageListener {
         try {
             ChatRoom activeroom = SparkManager.getChatManager().getChatContainer().getActiveChatRoom();
             final int framestate = SparkManager.getChatManager().getChatContainer().getChatFrame().getState();
+            final boolean frameisactive = SparkManager.getChatManager().getChatContainer().getChatFrame().isActive();
 
             // If the message is for a chat that's currently active and showing, do not popup.
-            if (activeroom.equals(room) && framestate == Frame.NORMAL) {
+            if (activeroom.equals(room) && framestate == Frame.NORMAL && frameisactive) {
                 Log.debug( "Surpressing popup: chat is currently active and showing.");
                 return;
             }
