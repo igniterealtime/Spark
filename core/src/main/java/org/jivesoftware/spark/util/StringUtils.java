@@ -1949,4 +1949,15 @@ public class StringUtils {
 			.replaceAll("ё", "е")
 			.replaceAll("Ё", "Е");
     }
+
+
+    public static boolean hasOnlyNewLine(String text){
+       String[] strings =  text.split("\n");
+       for(String s : strings){
+           if (!org.apache.commons.lang3.StringUtils.isBlank(s)){
+               return false;
+           }
+       }
+        return true;
+    }
 }

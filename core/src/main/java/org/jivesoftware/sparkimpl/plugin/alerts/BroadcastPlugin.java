@@ -60,6 +60,7 @@ import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 import org.jivesoftware.spark.ui.status.StatusBar;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.ResourceUtils;
+import org.jivesoftware.spark.util.StringUtils;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 import org.jivesoftware.sparkimpl.preference.sounds.SoundPreference;
@@ -267,6 +268,11 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
         s = s.replace("<br>", "\n");
         int linebreaks = org.jivesoftware.spark.util.StringUtils.
                 countNumberOfOccurences(s, '\n');
+
+        //If the message is empty, then it should not be displayed.
+        if(StringUtils.hasOnlyNewLine(s)){
+            return;
+        }
 
         // Currently Serverbroadcasts dont contain Subjects, so this might be a MOTD message
         boolean mightbeMOTD = message.getSubject() != null;
