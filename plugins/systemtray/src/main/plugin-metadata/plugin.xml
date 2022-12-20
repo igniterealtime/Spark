@@ -7,7 +7,7 @@
     <homePage>http://www.jivesoftware.com</homePage>
     <email>derek@jivesoftware.com</email>
     <class>org.jivesoftware.spark.plugins.SystemTrayPlugin</class>
-    <minSparkVersion>2.7.0</minSparkVersion>
-    <java>1.7.0</java>
+    <minSparkVersion>3.0.0</minSparkVersion>
+    <java>1.8.0</java>
 </plugin>
 
