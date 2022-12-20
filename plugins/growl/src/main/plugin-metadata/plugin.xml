@@ -6,7 +6,7 @@
     <homePage>http://www.jivesoftware.com</homePage>
     <email>9posdorf@informatik.uni-hamburg.de</email>
     <class>com.jivesoftware.spark.plugin.growl.GrowlPlugin</class>
-    <minSparkVersion>2.7.0</minSparkVersion>
+    <minSparkVersion>3.0.0</minSparkVersion>
     <os>Mac,Windows</os>
-    <java>1.7.0</java>
+    <java>1.8.0</java>
 </plugin>
