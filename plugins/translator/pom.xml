@@ -26,16 +26,23 @@
 
     <dependencies>
         <dependency>
-            <groupId>httpunit</groupId>
-            <artifactId>httpunit</artifactId>
-            <version>1.7</version>
-        </dependency>
-        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.13.2</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>net.clojars.suuft</groupId>
+            <artifactId>libretranslate-java</artifactId>
+            <version>1.0.4</version>
+        </dependency>
     </dependencies>
+
+    <repositories>
+        <repository>
+            <id>clojars.org</id>
+            <url>https://repo.clojars.org</url>
+        </repository>
+    </repositories>
 
 </project>

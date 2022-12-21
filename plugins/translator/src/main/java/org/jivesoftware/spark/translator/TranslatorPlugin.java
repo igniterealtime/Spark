@@ -19,6 +19,7 @@ import java.awt.Color;
 
 import javax.swing.JComboBox;
 
+import net.suuft.libretranslate.Language;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
@@ -51,7 +52,7 @@ public class TranslatorPlugin implements Plugin {
                     final ChatRoomImpl roomImpl = (ChatRoomImpl)room;
 
                     // Create a new ChatRoomButton.
-                    final JComboBox<TranslatorUtil.TranslationType> translatorBox = new JComboBox<>(TranslatorUtil.TranslationType.getTypes());
+                    final JComboBox<Object> translatorBox = new JComboBox<>(TranslatorUtil.getLanguage());
 
                     translatorBox.addActionListener( e -> {
                         // Set the focus back to the message box.
@@ -64,14 +65,12 @@ public class TranslatorPlugin implements Plugin {
                     final MessageEventListener messageListener = new MessageEventListener() {
                         public void sendingMessage(Message message) {
                             String currentBody = message.getBody();
-                            String oldBody = message.getBody();
-                            TranslatorUtil.TranslationType type =
-                                    (TranslatorUtil.TranslationType)translatorBox.getSelectedItem();
-                            if (type != null && type != TranslatorUtil.TranslationType.None) {
+                            Language lang = (Language) translatorBox.getSelectedItem();
+                            if (lang != null && lang != Language.NONE) {
                             	message.setBody(null);
-                            	currentBody = TranslatorUtil.translate(currentBody, type);
+                            	currentBody = TranslatorUtil.translate(currentBody, lang);
                                 TranscriptWindow transcriptWindow = chatManager.getChatRoom( message.getTo().asEntityBareJidOrThrow() ).getTranscriptWindow();
-                                if(oldBody.equals(currentBody.substring(0,currentBody.length()-1)))
+                                if(currentBody.equals("Falled translate!"))
                                 {
                                 	transcriptWindow.insertNotificationMessage("Could not translate: "+currentBody, ChatManager.ERROR_COLOR);
                                 }
