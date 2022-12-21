@@ -15,20 +15,20 @@
  */
 package org.jivesoftware.spark.plugin.ofmeet;
 
-import java.util.*;
 import javax.swing.*;
 import java.awt.*;
 import javax.swing.border.*;
 import javax.xml.bind.DatatypeConverter;
 
+import org.jivesoftware.spark.component.VerticalFlowLayout;
 import org.jivesoftware.spark.preference.Preference;
-import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.spark.util.ResourceUtils;
 
 public class SparkMeetPreference implements Preference {
 	public static final String NAMESPACE = "ofmeet";
 	
 	private SparkMeetPlugin plugin;
-	private final UrlPanel panel = new UrlPanel();
+	private final PadePanel panel = new PadePanel();
 
 	public SparkMeetPreference(SparkMeetPlugin plugin) {
 		this.plugin = plugin;
@@ -63,7 +63,7 @@ public class SparkMeetPreference implements Preference {
 
 	@Override
 	public String getListName() {
-		return "Pade Meetings";
+		return SparkMeetResource.getString("name");
 	}
 
 	@Override
@@ -73,12 +73,12 @@ public class SparkMeetPreference implements Preference {
 
 	@Override
 	public String getTitle() {
-		return "Pade Meetings Settings";
+		return SparkMeetResource.getString("name");
 	}
 
 	@Override
 	public String getTooltip() {
-		return "Set URL for Pade Meetingst";
+		return SparkMeetResource.getString("name");
 	}
 
 	@Override
@@ -88,7 +88,6 @@ public class SparkMeetPreference implements Preference {
 
 	@Override
 	public void load() {
-
 	}
 
 	@Override
@@ -96,15 +95,18 @@ public class SparkMeetPreference implements Preference {
 
 	}
 	
-    private static class UrlPanel extends JPanel {
+    private static class PadePanel extends JPanel {
  	private static final long serialVersionUID = -5992704440953686499L;
-	private final JTextArea txtMessage = new JTextArea(2, 0);
+	private final JTextArea txtMessage = new JTextArea();
+    private JLabel url = new JLabel(SparkMeetResource.getString("preference.url"));
 
-        UrlPanel() {
+        PadePanel() {
             txtMessage.setBorder(UIManager.getLookAndFeelDefaults().getBorder("TextField.border"));
-            setLayout(new BorderLayout());
-            setBorder(BorderFactory.createCompoundBorder(new TitledBorder("Jitsi Meet URL"), new EmptyBorder(2,4,4,4)));
-            add(txtMessage, BorderLayout.CENTER);
+            txtMessage.setLineWrap(true);
+            setLayout(new VerticalFlowLayout());
+            setBorder(BorderFactory.createTitledBorder(SparkMeetResource.getString("preference.title")));
+            add(url, new GridBagConstraints(0, 0, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+            add(txtMessage, new GridBagConstraints(0, 1, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         }
 
         public void setUrl(String message) {

@@ -40,7 +40,7 @@ import org.jxmpp.jid.parts.*;
 
 public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageListener
 {
-	public Properties props = props = new Properties();
+	public Properties props = new Properties();
     public String url = null;
 	
     private org.jivesoftware.spark.ChatManager chatManager;
