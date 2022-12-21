@@ -41,7 +41,7 @@ public class ChatRoomDecorator
             byte[] imageByte = DatatypeConverter.parseBase64Binary(ICON_STRING);
             ImageIcon ofmeetIcon = new ImageIcon(imageByte);
             ofmeetButton = new RolloverButton(SparkRes.getImageIcon("PADE_ICON"));
-            ofmeetButton.setToolTipText(GraphicUtils.createToolTip("Pade Meetings"));
+            ofmeetButton.setToolTipText(GraphicUtils.createToolTip(SparkMeetResource.getString("name")));
             final String roomId = getNode(room.getBareJid().toString());
             final String sessionID = roomId + "-" + System.currentTimeMillis();
 
