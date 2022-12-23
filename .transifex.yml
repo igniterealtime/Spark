@@ -3,5 +3,5 @@ git:
   - filter_type: file
     source_file: core/src/main/resources/i18n/spark_i18n.properties
     file_format: UNICODEPROPERTIES
-    source_language: en
     translation_files_expression: 'core/src/main/resources/i18n/spark_i18n_<lang>.properties'
+    source_language: en
