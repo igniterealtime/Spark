@@ -1,0 +1,8 @@
+git:
+  filters:
+  - filter_type: dir
+    file_format: Properties
+    source_file_extension: properties
+    source_language: en
+    source_file_dir: core/src/main/resources/i18n
+    translation_files_expression: 'spark_i18n_<lang>'
