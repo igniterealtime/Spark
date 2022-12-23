@@ -1,8 +1,7 @@
 git:
   filters:
-  - filter_type: dir
+  - filter_type: file
+    source_file: core/src/main/resources/i18n/spark_i18n.properties
     file_format: UNICODEPROPERTIES
-    source_file_extension: properties
     source_language: en
-    source_file_dir: core/src/main/resources/i18n
-    translation_files_expression: 'spark_i18n_<lang>'
+    translation_files_expression: 'core/src/main/resources/i18n/spark_i18n_<lang>.properties'
