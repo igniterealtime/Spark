@@ -1,7 +1,7 @@
 git:
   filters:
   - filter_type: dir
-    file_format: Properties
+    file_format: UNICODEPROPERTIES
     source_file_extension: properties
     source_language: en
     source_file_dir: core/src/main/resources/i18n
