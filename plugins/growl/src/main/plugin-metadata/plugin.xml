@@ -7,6 +7,6 @@
     <email>9posdorf@informatik.uni-hamburg.de</email>
     <class>com.jivesoftware.spark.plugin.growl.GrowlPlugin</class>
     <minSparkVersion>3.0.0</minSparkVersion>
-    <os>Mac,Windows</os>
+    <os>Mac</os>
     <java>1.8.0</java>
 </plugin>
