@@ -20,6 +20,8 @@ import java.awt.Color;
 import javax.swing.JComboBox;
 
 import net.suuft.libretranslate.Language;
+import net.suuft.libretranslate.Translator;
+import org.apache.commons.lang3.StringUtils;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
@@ -41,6 +43,10 @@ public class TranslatorPlugin implements Plugin {
      * Called after Spark is loaded to initialize the new plugin.
      */
     public void initialize() {
+
+        TranslatorPreference pref = new TranslatorPreference();
+        SparkManager.getPreferenceManager().addPreference(pref);
+
         // Retrieve ChatManager from the SparkManager
         final ChatManager chatManager = SparkManager.getChatManager();
 
@@ -48,8 +54,15 @@ public class TranslatorPlugin implements Plugin {
         chatManager.addChatRoomListener(new ChatRoomListenerAdapter() {
             public void chatRoomOpened(ChatRoom room) {
                 // only do the translation for single chat
-                if (room instanceof ChatRoomImpl) {
+                if (room instanceof ChatRoomImpl && TranslatorProperties.getInstance().getEnabledTranslator()) {
                     final ChatRoomImpl roomImpl = (ChatRoomImpl)room;
+
+                    //Set server LibreTranslate API
+                    if(TranslatorProperties.getInstance().getUseCustomUrl() && !StringUtils.isBlank(TranslatorProperties.getInstance().getUrl())){
+                        Translator.setUrlApi(TranslatorProperties.getInstance().getUrl());
+                    } else {
+                        Translator.setUrlApi(TranslatorUtil.getDefaultUrl());
+                    }
 
                     // Create a new ChatRoomButton.
                     final JComboBox<Object> translatorBox = new JComboBox<>(TranslatorUtil.getLanguage());
@@ -70,9 +83,9 @@ public class TranslatorPlugin implements Plugin {
                             	message.setBody(null);
                             	currentBody = TranslatorUtil.translate(currentBody, lang);
                                 TranscriptWindow transcriptWindow = chatManager.getChatRoom( message.getTo().asEntityBareJidOrThrow() ).getTranscriptWindow();
-                                if(currentBody.equals("Falled translate!"))
+                                if(currentBody.equals("Falled translate!") || StringUtils.isBlank(currentBody))
                                 {
-                                	transcriptWindow.insertNotificationMessage("Could not translate: "+currentBody, ChatManager.ERROR_COLOR);
+                                	transcriptWindow.insertNotificationMessage(TranslatorResource.getString("translator.error"), ChatManager.ERROR_COLOR);
                                 }
                                 else
                                 {

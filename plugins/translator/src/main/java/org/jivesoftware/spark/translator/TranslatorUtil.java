@@ -19,9 +19,7 @@ import net.suuft.libretranslate.Language;
 import net.suuft.libretranslate.Translator;
 import org.apache.commons.lang3.ArrayUtils;
 
-import javax.swing.*;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * A utility class that uses google's translation service to translate text to various languages.
@@ -35,14 +33,16 @@ public class TranslatorUtil {
         if (language == Language.NONE) {
             return text;
         }
-
         return Translator.translate(language,text);
     }
 
     public static Object[] getLanguage(){
-        Object[] none = Arrays.stream(Language.values()).filter( x -> x.equals(Language.NONE)).toArray();
         Object[] languageList = Arrays.stream(Language.values()).filter( x -> !x.equals(Language.NONE)).sorted(Comparator.comparing(Language::name)).toArray();
-       return ArrayUtils.addAll(none,languageList);
+       return ArrayUtils.addAll(new Object[]{Language.NONE},languageList);
+    }
+
+    public static String getDefaultUrl(){
+        return "https://translate.fedilab.app/translate";
     }
 
 }
