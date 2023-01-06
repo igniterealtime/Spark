@@ -29,6 +29,7 @@ import org.jivesoftware.smack.filter.StanzaIdFilter;
 import org.jivesoftware.smack.iqrequest.AbstractIqRequestHandler;
 import org.jivesoftware.smack.iqrequest.IQRequestHandler;
 import org.jivesoftware.smack.packet.IQ;
+import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.packet.StanzaError;
 import org.jivesoftware.smack.provider.ProviderManager;
 import org.jivesoftware.spark.ChatManager;
@@ -262,6 +263,12 @@ public class ReversiPlugin implements Plugin {
                 // Add a button listener that sends out a game invite on a user
                 // click.
                 button.addActionListener(e -> {
+
+                    //If the opponent is offline, then you should not start the game
+                    if(((ChatRoomImpl) room).getPresence().getType().equals(Presence.Type.unavailable)){
+                        return;
+                    }
+
                     // Show "requesting a game panel"
                     final JPanel request = new JPanel();
                     request.setLayout(new BorderLayout());
