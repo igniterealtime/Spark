@@ -31,6 +31,7 @@ import org.jivesoftware.smack.filter.StanzaIdFilter;
 import org.jivesoftware.smack.iqrequest.AbstractIqRequestHandler;
 import org.jivesoftware.smack.iqrequest.IQRequestHandler;
 import org.jivesoftware.smack.packet.IQ;
+import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.packet.StanzaError;
 import org.jivesoftware.smack.provider.ProviderManager;
 import org.jivesoftware.spark.SparkManager;
@@ -115,9 +116,14 @@ public class TicTacToePlugin implements Plugin {
 		final ChatRoomButton sendGameButton = new ChatRoomButton(buttonimg);
 		room.getToolBar().addChatRoomButton(sendGameButton);
 
-		final EntityFullJid opponentJID = ((ChatRoomImpl) room).getJID();
 
             sendGameButton.addActionListener(e -> {
+                
+                //If the opponent is offline, then you should not start the game
+                if(((ChatRoomImpl) room).getPresence().getType().equals(Presence.Type.unavailable)){
+                    return;
+                }
+                final EntityFullJid opponentJID = ((ChatRoomImpl) room).getJID();
                 if (_currentInvitations.contains(opponentJID.asBareJid())) {
                     return;
                 }
