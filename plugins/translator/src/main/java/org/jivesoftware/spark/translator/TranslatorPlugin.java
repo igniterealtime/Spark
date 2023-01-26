@@ -81,16 +81,13 @@ public class TranslatorPlugin implements Plugin {
                             Language lang = (Language) translatorBox.getSelectedItem();
                             if (lang != null && lang != Language.NONE) {
                             	message.setBody(null);
-                            	currentBody = TranslatorUtil.translate(currentBody, lang);
                                 TranscriptWindow transcriptWindow = chatManager.getChatRoom( message.getTo().asEntityBareJidOrThrow() ).getTranscriptWindow();
-                                if(currentBody.equals("Falled translate!") || StringUtils.isBlank(currentBody))
-                                {
-                                	transcriptWindow.insertNotificationMessage(TranslatorResource.getString("translator.error"), ChatManager.ERROR_COLOR);
-                                }
-                                else
-                                {
+                                try {
+                                    currentBody = TranslatorUtil.translate(currentBody, lang);
                                     transcriptWindow.insertNotificationMessage("-> "+currentBody, Color.gray);
-                                	message.setBody(currentBody); 
+                                    message.setBody(currentBody);
+                                } catch (Exception e){
+                                    transcriptWindow.insertNotificationMessage(TranslatorResource.getString("translator.error"), ChatManager.ERROR_COLOR);
                                 }
                             }
                         }
