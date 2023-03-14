@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2004-2010 Jive Software. All rights reserved.
+ * Copyright (C) 2004-2010 Jive Software. 2023 Ignite Realtime Foundation. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,32 +16,30 @@
 
 package org.jivesoftware.spark.plugin.fileupload;
 
-import java.io.*;
-import java.net.*;
-
-import java.awt.*;
-import javax.swing.*;
-
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.core5.http.ClassicHttpRequest;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.io.entity.FileEntity;
+import org.apache.hc.core5.http.io.support.ClassicRequestBuilder;
 import org.jivesoftware.resource.Res;
+import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.smack.packet.IQ;
+import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.ui.ChatRoom;
-import org.jivesoftware.spark.util.*;
-import org.jivesoftware.spark.util.log.*;
-import org.jivesoftware.smack.packet.*;
+import org.jivesoftware.spark.util.GraphicUtils;
+import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkimpl.updater.AcceptAllCertsConnectionManager;
 import org.jxmpp.jid.EntityBareJid;
-
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.methods.FileRequestEntity;
-import org.apache.commons.httpclient.methods.PutMethod;
-import org.apache.commons.httpclient.methods.RequestEntity;
-import org.apache.commons.httpclient.protocol.Protocol;
-
-import org.jivesoftware.sparkimpl.updater.EasySSLProtocolSocketFactory;
-
 import org.jxmpp.jid.impl.JidCreate;
-import javax.xml.bind.DatatypeConverter;
-import org.jivesoftware.resource.SparkRes;
+
+import javax.swing.*;
+import java.awt.*;
+import java.io.File;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 public class ChatRoomDecorator
 {
@@ -127,31 +125,33 @@ public class ChatRoomDecorator
     {
         Log.debug("About to upload file for room " + room.getBareJid() + " via HTTP PUT to URL " + response.putUrl);
 
-        try {
-            PutMethod put = new PutMethod(response.putUrl);
-            int port = put.getURI().getPort();
-            if (port > 0)
-            {
-                Protocol.registerProtocol( "https", new Protocol( "https", new EasySSLProtocolSocketFactory(), port ) );
-            }
+        try (final CloseableHttpClient httpClient =
+                 HttpClients.custom()
+                    .setConnectionManager(AcceptAllCertsConnectionManager.getInstance())
+                    .build()
+        ) {
+            final ClassicHttpRequest request = ClassicRequestBuilder.put(response.putUrl)
+                .setEntity(new FileEntity(file, ContentType.create("application/binary")))
+                .setHeader("User-Agent", "Spark HttpFileUpload")
+                .build();
 
-            HttpClient client = new HttpClient();
-            RequestEntity entity = new FileRequestEntity(file, "application/binary");
-            put.setRequestEntity(entity);
-            put.setRequestHeader("User-Agent", "Spark HttpFileUpload");
-            client.executeMethod(put);
-
-            int statusCode = put.getStatusCode();
-            String responseBody = put.getResponseBodyAsString();
-
-            if ((statusCode >= 200) && (statusCode <= 202))
-            {
-                Log.debug("Upload file success. HTTP response: " + statusCode + " " + responseBody);
-                broadcastUploadUrl(room.getBareJid(), response.getUrl, type);
-            } else {
-                Log.error("Failed to upload file. HTTP response: " + statusCode + " " + responseBody);
-            }
-
+            httpClient.execute(request, httpResponse -> {
+                try {
+                    final int statusCode = httpResponse.getCode();
+                    final String reasonPhrase = httpResponse.getReasonPhrase();
+                    if ((statusCode >= 200) && (statusCode <= 202)) {
+                        Log.debug("Upload file success. HTTP response: " + statusCode + " " + reasonPhrase);
+                        broadcastUploadUrl(room.getBareJid(), response.getUrl, type);
+                    } else {
+                        throw new IllegalStateException("Server responded to upload request with: " + statusCode + ": " + reasonPhrase);
+                    }
+                } catch (Exception e) {
+                    Log.error("Error encountered whilst uploading the file", e);
+                    UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
+                    JOptionPane.showMessageDialog(room, "Upload failed: " + e.getMessage(), "Http File Upload Plugin", JOptionPane.ERROR_MESSAGE);
+                }
+                return null;
+            });
         } catch (Exception e) {
             Log.error("Error encountered whilst uploading the file", e);
             UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
