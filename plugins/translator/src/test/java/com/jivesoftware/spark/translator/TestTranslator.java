@@ -15,8 +15,8 @@
  */
 package com.jivesoftware.spark.translator;
 
+import net.suuft.libretranslate.Language;
 import org.jivesoftware.spark.translator.TranslatorUtil;
-import org.jivesoftware.spark.translator.TranslatorUtil.TranslationType;
 import org.junit.Test;
 
 import java.io.BufferedReader;
@@ -35,7 +35,7 @@ public class TestTranslator {
     }
 
     public static void main(String[] args) {
-        Map<Integer, TranslationType> translationMap = initalizeTranslationMap();
+        Map<Integer, Language> translationMap = initalizeTranslationMap();
 
         boolean again = true;
         while (again) {
@@ -55,8 +55,8 @@ public class TestTranslator {
 
             System.out.println("Great, now enter the translation id. Below are the following choices:");
 
-            for (Map.Entry<Integer, TranslationType> o : translationMap.entrySet()) {
-                System.out.println(o.getKey() + " - " + o.getValue().getName());
+            for (Map.Entry<Integer, Language> o : translationMap.entrySet()) {
+                System.out.println(o.getKey() + " - " + o.getValue());
             }
 
             String translationID = "";
@@ -67,7 +67,7 @@ public class TestTranslator {
             }
 
             Integer id = Integer.valueOf(translationID);
-            TranslatorUtil.TranslationType type = translationMap.get(id);
+            Language type = translationMap.get(id);
 
             if (type == null) {
                 System.out.println("Not a valid translation type.");
@@ -77,7 +77,7 @@ public class TestTranslator {
             String result = TranslatorUtil.translate(text, type);
 
             System.out.println("Your original text:\n" + text);
-            System.out.println("Has been translated from: " + type.getName());
+            System.out.println("Has been translated from: " + type);
             System.out.println("The result is:\n" + result);
 
             System.out.println("Do you want to continue testing?");
@@ -91,14 +91,21 @@ public class TestTranslator {
         }
     }
 
-    private static Map<Integer, TranslationType> initalizeTranslationMap() {
-        TranslatorUtil.TranslationType[] types = TranslatorUtil.TranslationType.getTypes();
-        Map<Integer,TranslatorUtil.TranslationType> map = new TreeMap<>(Integer::compareTo);
+    private static Map<Integer, Language> initalizeTranslationMap() {
+        Language[] types = Language.values();
+        Map<Integer,Language> map = new TreeMap<>(Integer::compareTo);
 
         for (int i = 1; i < types.length; i++) {
             map.put(i, types[i]);
         }
 
         return map;
+    }
+
+
+    @Test public void testSort(){
+        for (int i = 0; i < TranslatorUtil.getLanguage().length-1; i++) {
+            System.out.println(TranslatorUtil.getLanguage()[i]);
+        }
     }
 }
