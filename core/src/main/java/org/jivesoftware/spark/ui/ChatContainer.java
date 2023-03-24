@@ -77,6 +77,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
     private static final String WELCOME_TITLE = SparkRes.getString(SparkRes.WELCOME);
     private ChatFrame chatFrame;
     private final TimerTask focusTask;
+    private static List<DomainBareJid> domainMUC;
 
     /**
      * Creates the ChatContainer to hold all ChatRooms.
@@ -617,12 +618,12 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
 
     private static boolean isMUC(EntityJid jid){
 
-        List<DomainBareJid> domainMUC = null;
-
-        try {
-            domainMUC = MultiUserChatManager.getInstanceFor( SparkManager.getConnection() ).getMucServiceDomains();
-        }catch (XMPPException | SmackException | InterruptedException e) {
-            Log.error("Unable to load MUC Service Names.", e);
+        if(domainMUC == null){
+            try {
+                domainMUC = MultiUserChatManager.getInstanceFor( SparkManager.getConnection() ).getMucServiceDomains();
+            }catch (XMPPException | SmackException | InterruptedException e) {
+                Log.error("Unable to load MUC Service Names.", e);
+            }
         }
 
         if(domainMUC != null && jid.hasNoResource()){
