@@ -236,6 +236,9 @@ public class SipPreference implements Preference {
     private XStream getXStream() {
         if (xstream == null) {
             xstream = new XStream();
+            xstream.allowTypes(new Class[] {
+                SipPreferences.class,
+            });
             xstream.alias("sip", SipPreferences.class);
         }
         return xstream;
