@@ -84,6 +84,9 @@ public class CheckUpdates {
         ProviderManager.addIQProvider("query", "jabber:iq:spark", new SparkVersion.Provider());
 
         // For simplicity, use an alias for the root xml tag
+        xstream.allowTypes(new Class[] {
+            SparkVersion.class,
+        });
         xstream.alias("Version", SparkVersion.class);
 
         // Specify the main update url for JiveSoftware
