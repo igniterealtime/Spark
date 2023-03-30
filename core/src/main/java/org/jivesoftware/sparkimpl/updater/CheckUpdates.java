@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2004-2011 Jive Software. All rights reserved.
+ * Copyright (C) 2004-2011 Jive Software, 2023 Ignite Realtime Foundation. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,14 +17,21 @@
 package org.jivesoftware.sparkimpl.updater;
 
 import com.thoughtworks.xstream.XStream;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.commons.httpclient.methods.PostMethod;
-import org.apache.commons.httpclient.protocol.Protocol;
+import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.core5.http.ClassicHttpRequest;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.HttpHost;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
+import org.apache.hc.core5.http.io.support.ClassicRequestBuilder;
 import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.smack.*;
+import org.jivesoftware.smack.SmackException;
+import org.jivesoftware.smack.StanzaCollector;
+import org.jivesoftware.smack.XMPPConnection;
+import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.filter.IQReplyFilter;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.provider.ProviderManager;
@@ -33,36 +40,20 @@ import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.ConfirmDialog;
 import org.jivesoftware.spark.component.ConfirmDialog.ConfirmListener;
 import org.jivesoftware.spark.component.TitlePanel;
-import org.jivesoftware.spark.util.BrowserLauncher;
-import org.jivesoftware.spark.util.ByteFormat;
-import org.jivesoftware.spark.util.GraphicUtils;
-import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.SwingWorker;
+import org.jivesoftware.spark.util.*;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.JiveInfo;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jxmpp.jid.impl.JidCreate;
 
-import javax.swing.JEditorPane;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JProgressBar;
-import javax.swing.JScrollPane;
+import javax.swing.*;
 import javax.swing.text.html.HTMLEditorKit;
-import javax.swing.UIManager;
-
-import java.awt.Color;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimerTask;
@@ -123,54 +114,61 @@ public class CheckUpdates {
      * @return true if there is a new build available for download.
      */
     public SparkVersion isNewBuildAvailableFromJivesoftware() {
-        PostMethod post = new PostMethod(mainUpdateURL);
+
+        HttpHost proxy = null;
+        String proxyHost = System.getProperty( "http.proxyHost" );
+        String proxyPort = System.getProperty( "http.proxyPort" );
+        if ( ModelUtil.hasLength( proxyHost ) && ModelUtil.hasLength(proxyPort) ) {
+            try{
+                proxy = new HttpHost(proxyHost, Integer.parseInt(proxyPort));
+            } catch ( NumberFormatException e ) {
+                Log.error( e );
+            }
+        }
+
+        final String os;
         if (Spark.isWindows()) {
-            post.addParameter("os", "windows");
+            os = "windows";
         }
         else if (Spark.isMac()) {
-            post.addParameter("os", "mac");
+            os = "mac";
         }
         else {
-            post.addParameter("os", "linux");
+            os = "linux";
         }
 
-//        Properties isBetaCheckingEnabled is now used to indicate if updates are allowed
-//        // Check to see if the beta should be included.
-//        LocalPreferences pref = SettingsManager.getLocalPreferences();
-//        boolean isBetaCheckingEnabled = pref.isBetaCheckingEnabled();
-//        if (isBetaCheckingEnabled) {
-//            post.addParameter("beta", "true");
-//        }
+        //        Properties isBetaCheckingEnabled is now used to indicate if updates are allowed
+        //        // Check to see if the beta should be included.
+        //        LocalPreferences pref = SettingsManager.getLocalPreferences();
+        //        boolean isBetaCheckingEnabled = pref.isBetaCheckingEnabled();
+        //        if (isBetaCheckingEnabled) {
+        //            post.addParameter("beta", "true");
+        //        }
+        try (final CloseableHttpClient httpClient =
+                 HttpClients.custom()
+                     .setConnectionManager(AcceptAllCertsConnectionManager.getInstance())
+                     .setProxy(proxy)
+                     .build()
+        ) {
+            final ClassicHttpRequest request = ClassicRequestBuilder.post(mainUpdateURL)
+                .addParameter("os", os)
+                .setHeader("User-Agent", "Spark HttpFileUpload")
+                .build();
 
+            return httpClient.execute(request, httpResponse -> {
+                final int statusCode = httpResponse.getCode();
+                if ((statusCode >= 200) && (statusCode <= 202)) {
+                    String xml = EntityUtils.toString(httpResponse.getEntity());
 
-        Protocol.registerProtocol("https", new Protocol("https", new EasySSLProtocolSocketFactory(), 443));
-        HttpClient httpclient = new HttpClient();
-        String proxyHost = System.getProperty("http.proxyHost");
-        String proxyPort = System.getProperty("http.proxyPort");
-        if (ModelUtil.hasLength(proxyHost) && ModelUtil.hasLength(proxyPort)) {
-            try {
-                httpclient.getHostConfiguration().setProxy(proxyHost, Integer.parseInt(proxyPort));
-            }
-            catch (NumberFormatException e) {
-                Log.error(e);
-            }
-        }
-        try {
-            int result = httpclient.executeMethod(post);
-            if (result != 200) {
+                    // Server Version
+                    SparkVersion serverVersion = (SparkVersion)xstream.fromXML(xml);
+                    if (isGreater(serverVersion.getVersion(), JiveInfo.getVersion())) {
+                        return serverVersion;
+                    }
+                }
                 return null;
-            }
-
-
-            String xml = post.getResponseBodyAsString();
-
-            // Server Version
-            SparkVersion serverVersion = (SparkVersion)xstream.fromXML(xml);
-            if (isGreater(serverVersion.getVersion(), JiveInfo.getVersion())) {
-                return serverVersion;
-            }
-        }
-        catch (IOException e) {
+            });
+        } catch (Exception e) {
             Log.error(e);
         }
         return null;
@@ -180,154 +178,152 @@ public class CheckUpdates {
     public void downloadUpdate(final File downloadedFile, final SparkVersion version) {
         final java.util.Timer timer = new java.util.Timer();
 
-        // Prepare HTTP post
-        final GetMethod post = new GetMethod(version.getDownloadURL());
+        final HttpGet request = new HttpGet(version.getDownloadURL());
 
-        // Get HTTP client
-        Protocol.registerProtocol("https", new Protocol("https", new EasySSLProtocolSocketFactory(), 443));
-        final HttpClient httpclient = new HttpClient();
-        String proxyHost = System.getProperty("http.proxyHost");
-        String proxyPort = System.getProperty("http.proxyPort");
-        if (ModelUtil.hasLength(proxyHost) && ModelUtil.hasLength(proxyPort)) {
-            try {
-                httpclient.getHostConfiguration().setProxy(proxyHost, Integer.parseInt(proxyPort));
-            }
-            catch (NumberFormatException e) {
-                Log.error(e);
+        HttpHost proxy = null;
+        String proxyHost = System.getProperty( "http.proxyHost" );
+        String proxyPort = System.getProperty( "http.proxyPort" );
+        if ( ModelUtil.hasLength( proxyHost ) && ModelUtil.hasLength(proxyPort) ) {
+            try{
+                proxy = new HttpHost(proxyHost, Integer.parseInt(proxyPort));
+            } catch ( NumberFormatException e ) {
+                Log.error( e );
             }
         }
 
-        // Execute request
+        try (final CloseableHttpClient httpClient =
+                 HttpClients.custom()
+                     .setConnectionManager(AcceptAllCertsConnectionManager.getInstance())
+                     .setProxy(proxy)
+                     .build();
+        ) {
+            httpClient.execute(request, response -> {
+                if (response.getCode() != 200) {
+                    return null;
+                }
+                final HttpEntity entity = response.getEntity();
+                int contentLength = (int) entity.getContentLength();
 
-        try {
-            int result = httpclient.executeMethod(post);
-            if (result != 200) {
-                return;
-            }
+                bar = new JProgressBar(0, contentLength);
 
-            long length = post.getResponseContentLength();
-            int contentLength = (int)length;
+                final JFrame frame = new JFrame(Res.getString("title.downloading.im.client"));
 
-            bar = new JProgressBar(0, contentLength);
-        }
-        catch (IOException e) {
-            Log.error(e);
-        }
+                frame.setIconImage(SparkRes.getImageIcon(SparkRes.SMALL_MESSAGE_IMAGE).getImage());
 
-        final JFrame frame = new JFrame(Res.getString("title.downloading.im.client"));
+                titlePanel = new TitlePanel(Res.getString("title.upgrading.client"), Res.getString("message.version", version.getVersion()), SparkRes.getImageIcon(SparkRes.SEND_FILE_24x24), true);
 
-        frame.setIconImage(SparkRes.getImageIcon(SparkRes.SMALL_MESSAGE_IMAGE).getImage());
-
-        titlePanel = new TitlePanel(Res.getString("title.upgrading.client"), Res.getString("message.version", version.getVersion()), SparkRes.getImageIcon(SparkRes.SEND_FILE_24x24), true);
-
-        final Thread thread = new Thread( () -> {
-            try {
-                InputStream stream = post.getResponseBodyAsStream();
-                long size = post.getResponseContentLength();
-                ByteFormat formater = new ByteFormat();
-                sizeText = formater.format(size);
-                titlePanel.setDescription(Res.getString("message.version", version.getVersion()) + " \n" + Res.getString("message.file.size", sizeText));
+                final Thread thread = new Thread( () -> {
+                    try {
+                        InputStream stream = entity.getContent();
+                        long size = entity.getContentLength();
+                        ByteFormat formater = new ByteFormat();
+                        sizeText = formater.format(size);
+                        titlePanel.setDescription(Res.getString("message.version", version.getVersion()) + " \n" + Res.getString("message.file.size", sizeText));
 
 
-                downloadedFile.getParentFile().mkdirs();
+                        downloadedFile.getParentFile().mkdirs();
 
-                FileOutputStream out = new FileOutputStream(downloadedFile);
-                copy(stream, out);
-                out.close();
+                        FileOutputStream out = new FileOutputStream(downloadedFile);
+                        copy(stream, out);
+                        out.close();
 
-                if (!cancel) {
-                    downloadComplete = true;
-                    promptForInstallation(downloadedFile, Res.getString("title.download.complete"), Res.getString("message.restart.spark"));
+                        if (!cancel) {
+                            downloadComplete = true;
+                            promptForInstallation(downloadedFile, Res.getString("title.download.complete"), Res.getString("message.restart.spark"));
+                        }
+                        else {
+                            out.close();
+                            downloadedFile.delete();
+                        }
+
+
+                        UPDATING = false;
+                        frame.dispose();
+                    }
+                    catch (Exception ex) {
+                        // Nothing to do
+                    }
+                    finally {
+                        timer.cancel();
+                        // Release current connection to the connection pool once you are done
+                    }
+                } );
+
+
+                frame.getContentPane().setLayout(new GridBagLayout());
+                frame.getContentPane().add(titlePanel, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+                frame.getContentPane().add(bar, new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+
+                JEditorPane pane = new JEditorPane();
+                boolean displayContentPane = version.getChangeLogURL() != null || version.getDisplayMessage() != null;
+
+                try {
+                    pane.setEditable(false);
+                    if (version.getChangeLogURL() != null) {
+                        pane.setEditorKit(new HTMLEditorKit());
+                        pane.setPage(version.getChangeLogURL());
+                    }
+                    else if (version.getDisplayMessage() != null) {
+                        pane.setText(version.getDisplayMessage());
+                    }
+
+                    if (displayContentPane) {
+                        frame.getContentPane().add(new JScrollPane(pane), new GridBagConstraints(0, 2, 1, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
+                    }
+                }
+                catch (IOException e) {
+                    Log.error(e);
+                }
+
+                frame.getContentPane().setBackground(Color.WHITE);
+                frame.pack();
+                if (displayContentPane) {
+                    frame.setSize(600, 400);
                 }
                 else {
-                    out.close();
-                    downloadedFile.delete();
+                    frame.setSize(400, 100);
                 }
+                frame.setLocationRelativeTo(SparkManager.getMainWindow());
+                GraphicUtils.centerWindowOnScreen(frame);
+                frame.addWindowListener(new WindowAdapter() {
+                    @Override
+                    public void windowClosing(WindowEvent windowEvent) {
+                        thread.interrupt();
+                        cancel = true;
+
+                        UPDATING = false;
+
+                        if (!downloadComplete) {
+                            UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
+                            JOptionPane.showMessageDialog(SparkManager.getMainWindow(), Res.getString("message.updating.cancelled"), Res.getString("title.cancelled"), JOptionPane.ERROR_MESSAGE);
+                        }
+
+                    }
+                });
+                frame.setVisible(true);
+                thread.start();
 
 
-                UPDATING = false;
-                frame.dispose();
-            }
-            catch (Exception ex) {
-                // Nothing to do
-            }
-            finally {
-                timer.cancel();
-                // Release current connection to the connection pool once you are done
-                post.releaseConnection();
-            }
-        } );
+                timer.scheduleAtFixedRate(new TimerTask() {
+                    int seconds = 1;
 
+                    @Override
+                    public void run() {
+                        ByteFormat formatter = new ByteFormat();
+                        long value = bar.getValue();
+                        long average = value / seconds;
+                        String text = formatter.format(average) + "/Sec";
 
-        frame.getContentPane().setLayout(new GridBagLayout());
-        frame.getContentPane().add(titlePanel, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
-        frame.getContentPane().add(bar, new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
-
-        JEditorPane pane = new JEditorPane();
-        boolean displayContentPane = version.getChangeLogURL() != null || version.getDisplayMessage() != null;
-
-        try {
-            pane.setEditable(false);
-            if (version.getChangeLogURL() != null) {
-                pane.setEditorKit(new HTMLEditorKit());
-                pane.setPage(version.getChangeLogURL());
-            }
-            else if (version.getDisplayMessage() != null) {
-                pane.setText(version.getDisplayMessage());
-            }
-
-            if (displayContentPane) {
-                frame.getContentPane().add(new JScrollPane(pane), new GridBagConstraints(0, 2, 1, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
-            }
-        }
-        catch (IOException e) {
+                        String total = formatter.format(value);
+                        titlePanel.setDescription(Res.getString("message.version", version.getVersion()) + " \n" + Res.getString("message.file.size", sizeText) + "\n" + Res.getString("message.transfer.rate") + ": " + text + "\n" + Res.getString("message.total.downloaded") + ": " + total);
+                        seconds++;
+                    }
+                }, 1000, 1000);
+                return null;
+            });
+        } catch (Exception e) {
             Log.error(e);
         }
-
-        frame.getContentPane().setBackground(Color.WHITE);
-        frame.pack();
-        if (displayContentPane) {
-            frame.setSize(600, 400);
-        }
-        else {
-            frame.setSize(400, 100);
-        }
-        frame.setLocationRelativeTo(SparkManager.getMainWindow());
-        GraphicUtils.centerWindowOnScreen(frame);
-        frame.addWindowListener(new WindowAdapter() {
-            @Override
-			public void windowClosing(WindowEvent windowEvent) {
-                thread.interrupt();
-                cancel = true;
-
-                UPDATING = false;
-
-                if (!downloadComplete) {
-                	UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
-                    JOptionPane.showMessageDialog(SparkManager.getMainWindow(), Res.getString("message.updating.cancelled"), Res.getString("title.cancelled"), JOptionPane.ERROR_MESSAGE);
-                }
-
-            }
-        });
-        frame.setVisible(true);
-        thread.start();
-
-
-        timer.scheduleAtFixedRate(new TimerTask() {
-            int seconds = 1;
-
-            @Override
-			public void run() {
-                ByteFormat formatter = new ByteFormat();
-                long value = bar.getValue();
-                long average = value / seconds;
-                String text = formatter.format(average) + "/Sec";
-
-                String total = formatter.format(value);
-                titlePanel.setDescription(Res.getString("message.version", version.getVersion()) + " \n" + Res.getString("message.file.size", sizeText) + "\n" + Res.getString("message.transfer.rate") + ": " + text + "\n" + Res.getString("message.total.downloaded") + ": " + total);
-                seconds++;
-            }
-        }, 1000, 1000);
     }
 
     /**
