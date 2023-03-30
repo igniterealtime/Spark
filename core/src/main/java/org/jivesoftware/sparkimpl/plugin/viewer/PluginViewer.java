@@ -15,9 +15,12 @@
  */
 package org.jivesoftware.sparkimpl.plugin.viewer;
 
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.commons.httpclient.protocol.Protocol;
+import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.HttpHost;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
@@ -42,7 +45,7 @@ import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 import org.jivesoftware.sparkimpl.settings.JiveInfo;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
-import org.jivesoftware.sparkimpl.updater.EasySSLProtocolSocketFactory;
+import org.jivesoftware.sparkimpl.updater.AcceptAllCertsConnectionManager;
 import org.xml.sax.SAXException;
 
 import javax.swing.*;
@@ -300,47 +303,41 @@ public class PluginViewer extends JPanel implements Plugin
             @Override
 			public Object construct()
             {
-                // Prepare HTTP post
-                final GetMethod post = new GetMethod( retrieveListURL );
+                final HttpGet request = new HttpGet(retrieveListURL);
 
-                // Get HTTP client
-                Protocol.registerProtocol( "https", new Protocol( "https", new EasySSLProtocolSocketFactory(), 443 ) );
-                final HttpClient httpclient = new HttpClient();
-
+                HttpHost proxy = null;
                 if ( Default.getBoolean( Default.PLUGIN_REPOSITORY_USE_PROXY ) )
                 {
                     String proxyHost = System.getProperty( "http.proxyHost" );
                     String proxyPort = System.getProperty( "http.proxyPort" );
-                    if ( ModelUtil.hasLength( proxyHost ) && ModelUtil.hasLength( proxyPort ) )
-                    {
-                        try
-                        {
-                            httpclient.getHostConfiguration().setProxy( proxyHost, Integer.parseInt( proxyPort ) );
-                        }
-                        catch ( NumberFormatException e )
-                        {
+                    if ( ModelUtil.hasLength( proxyHost ) && ModelUtil.hasLength(proxyPort) ) {
+                        try{
+                            proxy = new HttpHost(proxyHost, Integer.parseInt(proxyPort));
+                        } catch ( NumberFormatException e ) {
                             Log.error( e );
                         }
                     }
                 }
 
-                // Execute request
-
-                try
-                {
-                    int result = httpclient.executeMethod( post );
-                    if ( result != 200 )
-                    {
-                        return null;
-                    }
-
-                    pluginList = getPluginList( post.getResponseBodyAsStream() );
+                try (final CloseableHttpClient httpClient =
+                         HttpClients.custom()
+                             .setConnectionManager(AcceptAllCertsConnectionManager.getInstance())
+                             .setProxy(proxy)
+                             .build();
+                ) {
+                    return httpClient.execute(request, response -> {
+                        if (response.getCode() != 200) {
+                            return null;
+                        }
+                        final HttpEntity entity = response.getEntity();
+                        pluginList = getPluginList( entity.getContent() );
+                        EntityUtils.consume(entity);
+                        return "ok";
+                    });
+                } catch (Exception e) {
+                    Log.error(e);
+                    return e.getMessage();
                 }
-                catch ( Exception ex )
-                {
-                    // Nothing to do
-                }
-                return "ok";
             }
 
             @Override
@@ -383,126 +380,107 @@ public class PluginViewer extends JPanel implements Plugin
 
     private void downloadPlugin( final PublicPlugin plugin )
     {
-        // Prepare HTTP post
-        final GetMethod post = new GetMethod( plugin.getDownloadURL() );
+        final HttpGet request = new HttpGet(plugin.getDownloadURL());
 
-        // Get HTTP client
-        Protocol.registerProtocol( "https", new Protocol( "https", new EasySSLProtocolSocketFactory(), 443 ) );
-        final HttpClient httpclient = new HttpClient();
-        String proxyHost = System.getProperty( "http.proxyHost" );
-        String proxyPort = System.getProperty( "http.proxyPort" );
-
+        HttpHost proxy = null;
         if ( Default.getBoolean( Default.PLUGIN_REPOSITORY_USE_PROXY ) )
         {
-            if ( ModelUtil.hasLength( proxyHost )
-                    && ModelUtil.hasLength( proxyPort ) )
-            {
-                try
-                {
-                    httpclient.getHostConfiguration().setProxy( proxyHost,
-                                                                Integer.parseInt( proxyPort ) );
-                }
-                catch ( NumberFormatException e )
-                {
+            String proxyHost = System.getProperty( "http.proxyHost" );
+            String proxyPort = System.getProperty( "http.proxyPort" );
+            if ( ModelUtil.hasLength( proxyHost ) && ModelUtil.hasLength(proxyPort) ) {
+                try{
+                    proxy = new HttpHost(proxyHost, Integer.parseInt(proxyPort));
+                } catch ( NumberFormatException e ) {
                     Log.error( e );
                 }
             }
         }
-        // Execute request
+
+        try (final CloseableHttpClient httpClient =
+                 HttpClients.custom()
+                     .setConnectionManager(AcceptAllCertsConnectionManager.getInstance())
+                     .setProxy(proxy)
+                     .build();
+        ) {
+            httpClient.execute(request, response -> {
+                if (response.getCode() != 200) {
+                    return null;
+                }
+
+                final HttpEntity entity = response.getEntity();
+
+                progressBar = new JProgressBar( 0, (int) entity.getContentLength());
+
+                final JFrame frame = new JFrame( Res.getString( "message.downloading", plugin.getName() ) );
+
+                frame.setIconImage( SparkRes.getImageIcon( SparkRes.SMALL_MESSAGE_IMAGE ).getImage() );
+
+                try
+                {
+                    Thread.sleep( 2000 );
+                    InputStream stream = entity.getContent();
+
+                    URL url = new URL( plugin.getDownloadURL() );
+                    String name1 = URLFileSystem.getFileName( url );
+                    String directoryName = URLFileSystem.getName( url );
+
+                    File pluginDownload = new File( PluginManager.PLUGINS_DIRECTORY, name1 );
+
+                    FileOutputStream out = new FileOutputStream( pluginDownload );
+                    copy( stream, out );
+                    out.close();
+
+                    frame.dispose();
+
+                    // Remove SparkPlugUI
+                    // Clear all selections
+                    Component[] comps = availablePanel.getComponents();
+                    for ( Component comp : comps )
+                    {
+                        if ( comp instanceof SparkPlugUI )
+                        {
+                            SparkPlugUI sparkPlug = (SparkPlugUI) comp;
+                            if ( sparkPlug.getPlugin().getDownloadURL().equals( plugin.getDownloadURL() ) )
+                            {
+                                availablePanel.remove( sparkPlug );
+
+                                _deactivatedPlugins.remove( sparkPlug.getPlugin().getName() );
+                                _prefs.setDeactivatedPlugins( _deactivatedPlugins );
+
+                                PluginManager.getInstance().addPlugin( sparkPlug.getPlugin() );
+
+                                sparkPlug.showOperationButton();
+                                installedPanel.add( sparkPlug );
+                                sparkPlug.getPlugin().setPluginDir( new File( PluginManager.PLUGINS_DIRECTORY, directoryName ) );
+                                installedPanel.invalidate();
+                                installedPanel.repaint();
+                                availablePanel.invalidate();
+                                availablePanel.invalidate();
+                                availablePanel.validate();
+                                availablePanel.repaint();
+                            }
+                        }
+                    }
+                }
+                catch ( Exception ex )
+                {
+                    // Nothing to do
+                    Log.error(ex);
+                }
+
+                frame.getContentPane().setLayout( new GridBagLayout() );
+                frame.getContentPane().add( new JLabel( Res.getString( "message.downloading.spark.plug" ) ), new GridBagConstraints( 0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets( 5, 5, 5, 5 ), 0, 0 ) );
+                frame.getContentPane().add( progressBar, new GridBagConstraints( 0, 1, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets( 5, 5, 5, 5 ), 0, 0 ) );
+                frame.pack();
+                frame.setSize( 400, 100 );
+                GraphicUtils.centerWindowOnComponent( frame, this );
 
 
-        try
-        {
-            int result = httpclient.executeMethod( post );
-            if ( result != 200 )
-            {
-                return;
-            }
+                frame.setVisible( true );
 
-            long length = post.getResponseContentLength();
-            int contentLength = (int) length;
-
-            progressBar = new JProgressBar( 0, contentLength );
-
-            final JFrame frame = new JFrame( Res.getString( "message.downloading", plugin.getName() ) );
-
-            frame.setIconImage( SparkRes.getImageIcon( SparkRes.SMALL_MESSAGE_IMAGE ).getImage() );
-
-            final Thread thread = new Thread( () ->
-                                              {
-                                                  try
-                                                  {
-                                                      Thread.sleep( 2000 );
-                                                      InputStream stream = post.getResponseBodyAsStream();
-
-                                                      URL url = new URL( plugin.getDownloadURL() );
-                                                      String name1 = URLFileSystem.getFileName( url );
-                                                      String directoryName = URLFileSystem.getName( url );
-
-                                                      File pluginDownload = new File( PluginManager.PLUGINS_DIRECTORY, name1 );
-
-                                                      FileOutputStream out = new FileOutputStream( pluginDownload );
-                                                      copy( stream, out );
-                                                      out.close();
-
-                                                      frame.dispose();
-
-                                                      // Remove SparkPlugUI
-                                                      // Clear all selections
-                                                      Component[] comps = availablePanel.getComponents();
-                                                      for ( Component comp : comps )
-                                                      {
-                                                          if ( comp instanceof SparkPlugUI )
-                                                          {
-                                                              SparkPlugUI sparkPlug = (SparkPlugUI) comp;
-                                                              if ( sparkPlug.getPlugin().getDownloadURL().equals( plugin.getDownloadURL() ) )
-                                                              {
-                                                                  availablePanel.remove( sparkPlug );
-
-                                                                  _deactivatedPlugins.remove( sparkPlug.getPlugin().getName() );
-                                                                  _prefs.setDeactivatedPlugins( _deactivatedPlugins );
-
-                                                                  PluginManager.getInstance().addPlugin( sparkPlug.getPlugin() );
-
-                                                                  sparkPlug.showOperationButton();
-                                                                  installedPanel.add( sparkPlug );
-                                                                  sparkPlug.getPlugin().setPluginDir( new File( PluginManager.PLUGINS_DIRECTORY, directoryName ) );
-                                                                  installedPanel.invalidate();
-                                                                  installedPanel.repaint();
-                                                                  availablePanel.invalidate();
-                                                                  availablePanel.invalidate();
-                                                                  availablePanel.validate();
-                                                                  availablePanel.repaint();
-                                                              }
-                                                          }
-                                                      }
-                                                  }
-                                                  catch ( Exception ex )
-                                                  {
-                                                      // Nothing to do
-                                                  }
-                                                  finally
-                                                  {
-                                                      // Release current connection to the connection pool once you are done
-                                                      post.releaseConnection();
-                                                  }
-                                              } );
-
-
-            frame.getContentPane().setLayout( new GridBagLayout() );
-            frame.getContentPane().add( new JLabel( Res.getString( "message.downloading.spark.plug" ) ), new GridBagConstraints( 0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets( 5, 5, 5, 5 ), 0, 0 ) );
-            frame.getContentPane().add( progressBar, new GridBagConstraints( 0, 1, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets( 5, 5, 5, 5 ), 0, 0 ) );
-            frame.pack();
-            frame.setSize( 400, 100 );
-            GraphicUtils.centerWindowOnComponent( frame, this );
-
-
-            frame.setVisible( true );
-            thread.start();
-
-        }
-        catch ( IOException e )
-        {
+                return null;
+            });
+        } catch (Exception e) {
             Log.error( e );
         }
     }
