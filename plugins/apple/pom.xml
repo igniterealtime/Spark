@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.igniterealtime.spark.plugins</groupId>
         <artifactId>plugin</artifactId>
-        <version>3.0.2-SNAPSHOT</version>
+        <version>3.0.2</version>
         <relativePath>../plugin/pom.xml</relativePath>
     </parent>
 
