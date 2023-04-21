@@ -431,7 +431,6 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
 
         add(pnlLeft, java.awt.BorderLayout.WEST);
 
-        pnlCenter.setBackground(new java.awt.Color(255, 255, 255));
         pnlCenter.setMinimumSize(new java.awt.Dimension(0, 0));
         pnlCenter.setPreferredSize(new java.awt.Dimension(250, 0));
         java.awt.FlowLayout flowLayout1 = new java.awt.FlowLayout();
@@ -439,7 +438,6 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
         pnlCenter.setLayout(flowLayout1);
         pnlCenter.add(filler3);
 
-        pnlInputs.setBackground(new java.awt.Color(255, 255, 255));
         pnlInputs.setPreferredSize(new java.awt.Dimension(220, 110));
 
         tfUsername.setPreferredSize(new java.awt.Dimension(200, 30));
@@ -464,36 +462,29 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
 
         pnlCenter.add(pnlInputs);
 
-        pnlCheckboxes.setBackground(new java.awt.Color(255, 255, 255));
         pnlCheckboxes.setLayout(new javax.swing.BoxLayout(pnlCheckboxes, javax.swing.BoxLayout.Y_AXIS));
 
-        cbSavePassword.setBackground(new java.awt.Color(255, 255, 255));
         cbSavePassword.setText("Save Password");
         cbSavePassword.setPreferredSize(new java.awt.Dimension(200, 20));
         pnlCheckboxes.add(cbSavePassword);
 
-        cbAutoLogin.setBackground(new java.awt.Color(255, 255, 255));
         cbAutoLogin.setText("Auto login");
         cbAutoLogin.setPreferredSize(new java.awt.Dimension(200, 20));
         pnlCheckboxes.add(cbAutoLogin);
 
-        cbLoginInvisible.setBackground(new java.awt.Color(255, 255, 255));
         cbLoginInvisible.setText("Login as invisible");
         cbLoginInvisible.setPreferredSize(new java.awt.Dimension(200, 20));
         pnlCheckboxes.add(cbLoginInvisible);
 
-        cbAnonymous.setBackground(new java.awt.Color(255, 255, 255));
         cbAnonymous.setText("Login anonymously");
         cbAnonymous.setPreferredSize(new java.awt.Dimension(200, 20));
         pnlCheckboxes.add(cbAnonymous);
 
         pnlCenter.add(pnlCheckboxes);
 
-        pnlBtns.setBackground(new java.awt.Color(255, 255, 255));
         pnlBtns.setPreferredSize(new java.awt.Dimension(220, 120));
 
         btnLogin.setBackground(new java.awt.Color(241, 100, 34));
-        btnLogin.setForeground(new java.awt.Color(255, 255, 255));
         btnLogin.setText("Login");
         btnLogin.setEnabled(false);
         btnLogin.setPreferredSize(new java.awt.Dimension(210, 30));
@@ -504,7 +495,6 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
         });
         pnlBtns.add(btnLogin);
 
-        btnCreateAccount.setBackground(new java.awt.Color(255, 255, 255));
         btnCreateAccount.setText("Account");
         btnCreateAccount.setBorderPainted(false);
         btnCreateAccount.setHorizontalTextPosition(javax.swing.SwingConstants.LEADING);
@@ -512,7 +502,6 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
         btnCreateAccount.setPreferredSize(new java.awt.Dimension(95, 28));
         pnlBtns.add(btnCreateAccount);
 
-        btnAdvanced.setBackground(new java.awt.Color(255, 255, 255));
         btnAdvanced.setText("Advanced");
         btnAdvanced.setBorderPainted(false);
         btnAdvanced.setHorizontalTextPosition(javax.swing.SwingConstants.LEADING);
@@ -520,7 +509,6 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
         btnAdvanced.setPreferredSize(new java.awt.Dimension(110, 28));
         pnlBtns.add(btnAdvanced);
 
-        btnReset.setBackground(new java.awt.Color(255, 255, 255));
         btnReset.setText("Reset Password");
         btnReset.setBorderPainted(false);
         btnReset.setHorizontalTextPosition(javax.swing.SwingConstants.LEADING);
