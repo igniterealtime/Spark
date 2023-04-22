@@ -18,7 +18,7 @@ public class SparkResTest extends TestCase {
         Properties prb = new SparkRes().getPrb();
         HashMap<String,String> map = new HashMap<>();
         Enumeration<String> enumeration = (Enumeration<String>) prb.propertyNames();
-        
+
         while (enumeration.hasMoreElements()) {
             String token = enumeration.nextElement();
             String value = prb.getProperty(token).toLowerCase();
