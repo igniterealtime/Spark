@@ -437,4 +437,8 @@ public class SparkRes {
         }
         return null;
     }
+
+    public Properties getPrb(){
+        return prb;
+    }
 }
