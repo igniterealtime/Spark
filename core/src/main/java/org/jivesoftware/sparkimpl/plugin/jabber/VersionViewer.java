@@ -44,7 +44,7 @@ public class VersionViewer {
         final Jid jid = JidCreate.fromOrThrowUnchecked(jidString);
 
         final JPanel loadingCard = new JPanel();
-        final ImageIcon icon = new ImageIcon( VersionViewer.class.getClassLoader().getResource( "images/ajax-loader.gif"));
+        final ImageIcon icon = SparkRes.getImageIcon((SparkRes.PROGRESS_ICON));
         loadingCard.add(new JLabel("loading... ", icon, JLabel.CENTER));
         loadingCard.setVisible(true);
 

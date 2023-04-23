@@ -310,6 +310,7 @@ public class SparkRes {
     public static final String PADE_ICON = "PADE_ICON";
     public static final String NEW_MESSAGE = "NEW_MESSAGE";
     public static final String PRIVACY_ICON = "PRIVACY_ICON";
+    public static final String PROGRESS_ICON = "PROGRESS_ICON";
 
     private static final ClassLoader cl = SparkRes.class.getClassLoader();
 

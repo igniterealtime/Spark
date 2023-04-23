@@ -3,7 +3,6 @@ package org.jivesoftware.resource;
 import junit.framework.TestCase;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
@@ -43,7 +42,7 @@ public class SparkResTest extends TestCase {
 
     @Test
     public void testCheckIfTokenNotRepeated() {
-        StringBuilder sb = new StringBuilder("\n");
+        StringBuilder sb = new StringBuilder();
         Map<String,Long> values =  getMapWithProperty().values().stream().collect(Collectors.groupingBy(Function.identity(),Collectors.counting()));
         int numberOfLines = 0;
 
@@ -61,7 +60,7 @@ public class SparkResTest extends TestCase {
 
     @Test
     public void testCheckIfImageIsNotUsed(){
-        StringBuilder sb = new StringBuilder("\n");
+        StringBuilder sb = new StringBuilder();
         final int[] numberOfLines = {0};
 
         getListPathProperty().stream().filter(x -> !x.contains("emoticons")).forEach(x -> {
@@ -78,7 +77,7 @@ public class SparkResTest extends TestCase {
 
     @Test
     public void testCheckIfOldPictureUsedInProperty(){
-        StringBuilder sb = new StringBuilder("\n");
+        StringBuilder sb = new StringBuilder();
         int numberOfLines = 0;
         List<String> listOldFiles = new ArrayList<>();
         Arrays.asList((new File(path).listFiles())).stream().forEach(x -> listOldFiles.add(x.toString().split("resources+\\\\")[1].replace("\\","/")));

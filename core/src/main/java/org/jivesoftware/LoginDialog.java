@@ -561,7 +561,7 @@ public class LoginDialog {
             cardPanel.setOpaque(false);
             buttonPanel.setOpaque(false);
 
-            ImageIcon icon = new ImageIcon(getClass().getClassLoader().getResource("images/ajax-loader.gif"));
+            ImageIcon icon = SparkRes.getImageIcon(SparkRes.PROGRESS_ICON);
             progressBar.setIcon(icon);
             cardPanel.add(progressBar, PROGRESS_BAR);
 

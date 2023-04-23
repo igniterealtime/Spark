@@ -407,7 +407,7 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
         pnlLeft.add(filler1);
 
         lblLogo.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lblLogo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/spark-64x64.png"))); // NOI18N
+        lblLogo.setIcon(SparkRes.getImageIcon(SparkRes.MAIN_IMAGE));
         lblLogo.setPreferredSize(new java.awt.Dimension(250, 80));
         lblLogo.setRequestFocusEnabled(false);
         pnlLeft.add(lblLogo);
@@ -422,7 +422,7 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
         pnlLeft.add(jLabel2);
 
         lblProgress.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lblProgress.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/ripple.gif"))); // NOI18N
+        lblProgress.setIcon(SparkRes.getImageIcon(SparkRes.PROGRESS_ICON));
         lblProgress.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         lblProgress.setPreferredSize(new java.awt.Dimension(250, 90));
         lblProgress.setRequestFocusEnabled(false);
