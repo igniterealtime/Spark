@@ -21,7 +21,7 @@ public class SparkResTest extends TestCase {
     final String path = System.getProperty("user.dir") + "/src/main/resources/images";
 
     @Test
-    public void testCheckifVariableIsExist() {
+    public void testCheckifPathIsExist() {
         ClassLoader cl = getClass().getClassLoader();
         StringBuilder sb = new StringBuilder();
         int numberOfLines = 0;

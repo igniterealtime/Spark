@@ -51,7 +51,6 @@ public class SparkRes {
     public static final String APP_NAME = "APP_NAME";
     public static final String AVAILABLE_USER = "AVAILABLE_USER";
     public static final String AWAY_USER = "AWAY_USER";
-    public static final String BACKGROUND_IMAGE = "BACKGROUND_IMAGE";
     public static final String BLANK_24x24 = "BLANK_24x24";
     public static final String BLANK_IMAGE = "BLANK_IMAGE";
     public static final String BLOCK_CONTACT_16x16 = "BLOCK_CONTACT_16x16";
@@ -113,7 +112,6 @@ public class SparkRes {
     public static final String FAQ_TAB_TITLE = "FAQ_TAB_TITLE";
     public static final String FASTPATH_IMAGE_16x16 = "FASTPATH_IMAGE_16x16";
     public static final String FASTPATH_IMAGE_24x24 = "FASTPATH_IMAGE_24x24";
-    public static final String FASTPATH_IMAGE_32x32 = "FASTPATH_IMAGE_32x32";
     public static final String FASTPATH_IMAGE_64x64 = "FASTPATH_IMAGE_64x64";
     public static final String FASTPATH_OFFLINE_IMAGE_16x16 = "FASTPATH_OFFLINE_IMAGE_16x16";
     public static final String FASTPATH_OFFLINE_IMAGE_24x24 = "FASTPATH_OFFLINE_IMAGE_24x24";
@@ -280,7 +278,6 @@ public class SparkRes {
     public static final String SPARK_IMAGE = "SPARK_IMAGE";
     public static final String SPARK_IMAGE_32x32 = "SPARK_IMAGE_32x32";
     public static final String SPARK_LOGOUT_IMAGE = "SPARK_LOGOUT_IMAGE";
-    public static final String SPELL_CHECK_IMAGE = "SPELL_CHECK_IMAGE";
     public static final String STAR_ADMIN = "STAR_ADMIN";
     public static final String STAR_BLUE_IMAGE = "STAR_BLUE_IMAGE";
     public static final String STAR_GREEN_IMAGE = "STAR_GREEN_IMAGE";

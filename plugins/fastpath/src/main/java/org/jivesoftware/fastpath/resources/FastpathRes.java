@@ -178,7 +178,6 @@ public class FastpathRes {
     public static final String SEND_FILE_ICON = "SEND_FILE_ICON";
     public static final String LOGIN_KEY_IMAGE = "LOGIN_KEY_IMAGE";
     public static final String CREATE_FAQ_ENTRY = "CREATE_FAQ_ENTRY";
-    public static final String SPELL_CHECK_IMAGE = "SPELL_CHECK_IMAGE";
     public static final String GREEN_BALL = "GREEN_BALL";
     public static final String SMALL_BUSINESS_MAN_VIEW = "SMALL_BUSINESS_MAN_VIEW";
     public static final String BLANK_24x24 = "BLANK_24x24";
@@ -219,7 +218,6 @@ public class FastpathRes {
     public static final String SMALL_ENTRY = "SMALL_ENTRY";
     public static final String CLEAR_BALL_ICON = "CLEAR_BALL_ICON";
     public static final String CONFERENCE_IMAGE_24x24 = "CONFERENCE_IMAGE_24x24";
-    public static final String BACKGROUND_IMAGE = "BACKGROUND_IMAGE";
     public static final String FREE_TO_CHAT_IMAGE = "FREE_TO_CHAT_IMAGE";
     public static final String SOUND_PREFERENCES_IMAGE = "SOUND_PREFERENCES_IMAGE";
     public static final String SPARK_LOGOUT_IMAGE = "SPARK_LOGOUT_IMAGE";
@@ -231,7 +229,6 @@ public class FastpathRes {
     public static final String DOWN_OPTION_IMAGE = "DOWN_OPTION_IMAGE";
     public static final String FASTPATH_IMAGE_16x16 = "FASTPATH_IMAGE_16x16";
     public static final String FASTPATH_IMAGE_24x24 = "FASTPATH_IMAGE_24x24";
-    public static final String FASTPATH_IMAGE_32x32 = "FASTPATH_IMAGE_32x32";
     public static final String FASTPATH_IMAGE_64x64 = "FASTPATH_IMAGE_64x64";
     public static final String CIRCLE_CHECK_IMAGE = "CIRCLE_CHECK_IMAGE";
     public static final String TRANSFER_IMAGE_24x24 = "TRANSFER_IMAGE_24x24";
