@@ -211,7 +211,7 @@ public class UserSearchResults extends JPanel {
         menu.add(chatMenu);
 
         final JMenuItem viewProfileMenu = new JMenuItem(profileAction);
-        profileAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.SMALL_PROFILE_IMAGE));
+        profileAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.PROFILE_ICON));
         profileAction.putValue(Action.NAME, Res.getString("menuitem.view.profile"));
         menu.add(viewProfileMenu);
 

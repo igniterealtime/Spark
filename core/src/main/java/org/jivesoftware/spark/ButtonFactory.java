@@ -80,13 +80,13 @@ public class ButtonFactory {
     }
 
     public RolloverButton createTemaButton() {
-        RolloverButton thema = new RolloverButton(SparkRes.getImageIcon(SparkRes.TYPING_TRAY));
+        RolloverButton thema = new RolloverButton(SparkRes.getImageIcon(SparkRes.SMALL_MESSAGE_EDIT_IMAGE));
         thema.setToolTipText(Res.getString("menuitem.change.subject"));
         return thema;
     }
 
     public RolloverButton createRegisterButton() {
-        RolloverButton register = new RolloverButton(SparkRes.getImageIcon(SparkRes.PEOPLE_IMAGE));
+        RolloverButton register = new RolloverButton(SparkRes.getImageIcon(SparkRes.ADD_CONTACT_IMAGE));
         register.setToolTipText(Res.getString("button.register").replace("&", ""));
         return register;
     }

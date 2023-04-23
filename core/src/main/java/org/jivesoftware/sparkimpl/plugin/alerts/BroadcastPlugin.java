@@ -401,7 +401,7 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
             ChatRoom chatroom = (ChatRoom) component;
             if (broadcastRooms.contains(chatroom)) {
                 final ChatRoomImpl room = (ChatRoomImpl) component;
-                tab.setIcon(SparkRes.getImageIcon(SparkRes.INFORMATION_IMAGE));
+                tab.setIcon(SparkRes.getImageIcon(SparkRes.SMALL_ABOUT_IMAGE));
                 String nickname = room.getTabTitle();
                 nickname = Res.getString("message.broadcast.from", nickname);
                 tab.setTabTitle(nickname);

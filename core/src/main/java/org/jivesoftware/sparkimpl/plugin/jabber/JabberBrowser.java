@@ -187,7 +187,7 @@ public class JabberBrowser implements Plugin {
             setVerticalTextPosition(JLabel.BOTTOM);
             setHorizontalTextPosition(JLabel.CENTER);
             setText(item.getName());
-            setIcon(SparkRes.getImageIcon(SparkRes.USER1_MESSAGE_24x24));
+            setIcon(SparkRes.getImageIcon(SparkRes.SMALL_USER1_MESSAGE));
 
             addActionListener( e -> browseItem(item) );
 

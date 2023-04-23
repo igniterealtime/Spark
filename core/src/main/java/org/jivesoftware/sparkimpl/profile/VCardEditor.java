@@ -325,7 +325,7 @@ public class VCardEditor {
 	// GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 5,
 	// 5, 5), 0, 0));
 
-	dlg.setIconImage(SparkRes.getImageIcon(SparkRes.PROFILE_IMAGE_16x16)
+	dlg.setIconImage(SparkRes.getImageIcon(SparkRes.PROFILE_ICON)
 		.getImage());
 
 	dlg.pack();

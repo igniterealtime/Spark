@@ -151,7 +151,7 @@ public class CollapsibleTitlePane extends BaseCollapsibleTitlePane {
         if (!isSubPane()) {
 
             if (!collapsed) {
-                preIconLabel.setIcon(SparkRes.getImageIcon(SparkRes.PANE_DOWN_ARROW_IMAGE));
+                preIconLabel.setIcon(SparkRes.getImageIcon(SparkRes.DOWN_OPTION_IMAGE));
             }
             else {
                 preIconLabel.setIcon(SparkRes.getImageIcon(SparkRes.PANE_UP_ARROW_IMAGE));

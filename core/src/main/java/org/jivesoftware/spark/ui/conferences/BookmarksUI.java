@@ -207,7 +207,7 @@ public class BookmarksUI extends JPanel {
                 }
             };
             browseAction.putValue(Action.NAME, Res.getString("menuitem.browse.service"));
-            browseAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.SMALL_DATA_FIND_IMAGE));
+            browseAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.SEARCH_USER_16x16));
 
             Action removeServiceAction = new AbstractAction() {
 				private static final long serialVersionUID = -5276754429117462223L;
@@ -237,7 +237,7 @@ public class BookmarksUI extends JPanel {
             };
 
             joinRoomAction.putValue(Action.NAME, Res.getString("menuitem.join.room"));
-            joinRoomAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.SMALL_USER_ENTER));
+            joinRoomAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.JOIN_GROUPCHAT_IMAGE));
 
             Action removeRoomAction = new AbstractAction() {
 				private static final long serialVersionUID = -7560090091884746914L;
@@ -252,7 +252,7 @@ public class BookmarksUI extends JPanel {
                 }
             };
             removeRoomAction.putValue(Action.NAME, Res.getString("menuitem.remove.bookmark"));
-            removeRoomAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.DELETE_BOOKMARK_ICON));
+            removeRoomAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.SMALL_DELETE));
 
 
             JMenuItem joinRoomMenu = new JMenuItem(joinRoomAction);
@@ -306,7 +306,7 @@ public class BookmarksUI extends JPanel {
                 };
 
                 roomInfoAction.putValue(Action.NAME, Res.getString("menuitem.view.room.info"));
-                roomInfoAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.SMALL_DATA_FIND_IMAGE));
+                roomInfoAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.SEARCH_USER_16x16));
                 popupMenu.add(roomInfoAction);
             }
 

@@ -63,7 +63,7 @@ public class RawPacketSender implements ActionListener {
 	_inputarea = new JTextArea();
 	_textscroller = new JScrollPane(_textarea);
 	_sendButton = new JButton("Send",
-		SparkRes.getImageIcon(SparkRes.SMALL_CHECK));
+		SparkRes.getImageIcon(SparkRes.ACCEPT_INVITE_IMAGE));
 	_clear = new JButton("Clear",
 		SparkRes.getImageIcon(SparkRes.SMALL_DELETE));
 

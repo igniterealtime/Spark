@@ -140,7 +140,7 @@ public class ContactList extends JPanel implements ActionListener,
 
         JToolBar toolbar = new JToolBar();
         toolbar.setFloatable(false);
-        addContactMenu = new JMenuItem(Res.getString("menuitem.add.contact"), SparkRes.getImageIcon(SparkRes.USER1_ADD_16x16));
+        addContactMenu = new JMenuItem(Res.getString("menuitem.add.contact"), SparkRes.getImageIcon(SparkRes.ADD_CONTACT_IMAGE));
         addContactGroupMenu = new JMenuItem(Res.getString("menuitem.add.contact.group"), SparkRes.getImageIcon(SparkRes.SMALL_ADD_IMAGE));
 
         removeContactFromGroupMenu = new JMenuItem(Res.getString("menuitem.remove.from.group"), SparkRes.getImageIcon(SparkRes.SMALL_DELETE));
@@ -1546,7 +1546,7 @@ public class ContactList extends JPanel implements ActionListener,
         };
 
         removeAction.putValue(Action.NAME, Res.getString("menuitem.remove.from.roster"));
-        removeAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.SMALL_CIRCLE_DELETE));
+        removeAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.CLOSE_IMAGE));
 
         // Check if user is in shared group.
         boolean isInSharedGroup = false;
@@ -1578,7 +1578,7 @@ public class ContactList extends JPanel implements ActionListener,
                 vcardSupport.viewProfile(jid, SparkManager.getWorkspace());
             }
         };
-        viewProfile.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.PROFILE_IMAGE_16x16));
+        viewProfile.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.PROFILE_ICON));
         viewProfile.putValue(Action.NAME, Res.getString("menuitem.view.profile"));
 
         popup.add(viewProfile);
@@ -1912,7 +1912,7 @@ public class ContactList extends JPanel implements ActionListener,
         workspace.getWorkspacePane().addTab(Res.getString("tab.contacts"), SparkRes.getImageIcon(SparkRes.SMALL_ALL_CHATS_IMAGE), this);
         // Add To Contacts Menu
         final JMenu contactsMenu = SparkManager.getMainWindow().getMenuByName(Res.getString("menuitem.contacts"));
-        JMenuItem addContactsMenu = new JMenuItem("", SparkRes.getImageIcon(SparkRes.USER1_ADD_16x16));
+        JMenuItem addContactsMenu = new JMenuItem("", SparkRes.getImageIcon(SparkRes.ADD_CONTACT_IMAGE));
         ResourceUtils.resButton(addContactsMenu, Res.getString("menuitem.add.contact"));
         ResourceUtils.resButton(addContactGroupMenu, Res.getString("menuitem.add.contact.group"));
 

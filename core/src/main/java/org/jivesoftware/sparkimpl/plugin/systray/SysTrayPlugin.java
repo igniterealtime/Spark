@@ -103,11 +103,11 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatStateListener {
 	    if (Spark.isLinux()) {
 		newMessageIcon = SparkRes
 			.getImageIcon(SparkRes.MESSAGE_NEW_TRAY_LINUX);
-		typingIcon = SparkRes.getImageIcon(SparkRes.TYPING_TRAY_LINUX);
+		typingIcon = SparkRes.getImageIcon(SparkRes.SMALL_MESSAGE_EDIT_IMAGE);
 	    } else {
 		newMessageIcon = SparkRes
 			.getImageIcon(SparkRes.MESSAGE_NEW_TRAY);
-		typingIcon = SparkRes.getImageIcon(SparkRes.TYPING_TRAY);
+		typingIcon = SparkRes.getImageIcon(SparkRes.SMALL_MESSAGE_EDIT_IMAGE);
 	    }
 
 	    availableIcon = Default.getImageIcon(Default.TRAY_IMAGE);

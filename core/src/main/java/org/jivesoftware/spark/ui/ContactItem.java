@@ -464,7 +464,7 @@ public class ContactItem extends JPanel {
             if (entry != null && (entry.getType() == RosterPacket.ItemType.none || entry.getType() == RosterPacket.ItemType.from)
                     && entry.isSubscriptionPending()) {
                 // Do not move out of group.
-                setIcon(SparkRes.getImageIcon(SparkRes.SMALL_QUESTION));
+                setIcon(SparkRes.getImageIcon(SparkRes.HELP2_24x24));
                 getNicknameLabel().setFont(new Font("Dialog", Font.PLAIN, fontSize));
                 setStatusText(Res.getString("status.pending"));
             }

@@ -84,8 +84,8 @@ public final class SparkSystemTray implements ActionListener, MainWindowListener
             availableIcon = SparkRes.getImageIcon(SparkRes.TRAY_IMAGE);
         }
 
-        awayIcon = SparkRes.getImageIcon(SparkRes.MESSAGE_AWAY);
-        dndIcon = SparkRes.getImageIcon(SparkRes.MESSAGE_DND);
+        awayIcon = SparkRes.getImageIcon(SparkRes.TRAY_AWAY);
+        dndIcon = SparkRes.getImageIcon(SparkRes.TRAY_DND);
 
         trayIcon = new TrayIcon(new ImageIcon(availableIcon.getImage()));
         trayIcon.setIconAutoSize(true);

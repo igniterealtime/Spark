@@ -105,7 +105,7 @@ public class UserSearchService implements Searchable {
         }
 
         JFrame frame = new JFrame();
-        frame.setIconImage(SparkRes.getImageIcon(SparkRes.VIEW_IMAGE).getImage());
+        frame.setIconImage(SparkRes.getImageIcon(SparkRes.SEARCH_USER_16x16).getImage());
         final JDialog dialog = new JDialog(frame, Res.getString("title.person.search"), false);
         dialog.getContentPane().add(searchForm);
         dialog.pack();

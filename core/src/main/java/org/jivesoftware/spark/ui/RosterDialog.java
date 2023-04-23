@@ -127,7 +127,7 @@ public class RosterDialog implements ActionListener {
         ResourceUtils.resLabel(accountsLabel, publicBox, Res.getString("label.network"));
         
         _searchForName = new JButton();
-        _searchForName.setIcon(SparkRes.getImageIcon(SparkRes.TRANSFER_IMAGE_24x24));
+        _searchForName.setIcon(SparkRes.getImageIcon(SparkRes.ADD_CONTACT_IMAGE));
 
 	_searchForName.addMouseListener(new MouseListener() {
 	    @Override

@@ -52,7 +52,7 @@ public class JiveTreeNode extends DefaultMutableTreeNode implements Transferable
     */
     public JiveTreeNode(TreeFolder folder) {
         super(folder.getDisplayName(), true);
-        closedImage = SparkRes.getImageIcon(SparkRes.FOLDER_CLOSED);
+        closedImage = SparkRes.getImageIcon(SparkRes.FOLDER);
         openImage = SparkRes.getImageIcon(SparkRes.FOLDER);
         associatedObject = folder;
     }
@@ -66,7 +66,7 @@ public class JiveTreeNode extends DefaultMutableTreeNode implements Transferable
     public JiveTreeNode(String name, boolean allowsChildren) {
         super(name, allowsChildren);
         if (allowsChildren) {
-            closedImage = SparkRes.getImageIcon(SparkRes.FOLDER_CLOSED);
+            closedImage = SparkRes.getImageIcon(SparkRes.FOLDER);
             openImage = SparkRes.getImageIcon(SparkRes.FOLDER);
         }
     }

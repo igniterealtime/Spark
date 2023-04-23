@@ -692,7 +692,7 @@ public class GroupChatParticipantList extends JPanel {
 		changeNicknameAction.putValue(Action.NAME,
 			Res.getString("menuitem.change.nickname"));
 		changeNicknameAction.putValue(Action.SMALL_ICON,
-			SparkRes.getImageIcon(SparkRes.TYPING_TRAY));
+			SparkRes.getImageIcon(SparkRes.SMALL_MESSAGE_EDIT_IMAGE));
 
 		if (allowNicknameChange) {
 		    popup.add(changeNicknameAction);
@@ -732,7 +732,7 @@ public class GroupChatParticipantList extends JPanel {
 			icon = getImageIcon(groupJID);
 		    } else {
 			groupChatRoom.addBlockedUser(groupJID);
-			icon = SparkRes.getImageIcon(SparkRes.BRICKWALL_IMAGE);
+			icon = SparkRes.getImageIcon(SparkRes.BLOCK_CONTACT_16x16);
 		    }
 
 		    JLabel label = new JLabel(user, icon, SwingConstants.CENTER);
@@ -743,7 +743,7 @@ public class GroupChatParticipantList extends JPanel {
 	    blockAction.putValue(Action.NAME,
 		    Res.getString("menuitem.block.user"));
 	    blockAction.putValue(Action.SMALL_ICON,
-		    SparkRes.getImageIcon(SparkRes.BRICKWALL_IMAGE));
+		    SparkRes.getImageIcon(SparkRes.BLOCK_CONTACT_16x16));
 	    if (!selectedMyself) {
 		if (groupChatRoom.isBlocked(groupJID)) {
 		    blockAction.putValue(Action.NAME,

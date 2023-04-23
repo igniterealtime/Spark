@@ -42,7 +42,7 @@ public class PrivacyPreferences implements Preference {
     @Override
     public Icon getIcon() {
 
-        return SparkRes.getImageIcon("PRIVACY_ICON");
+        return SparkRes.getImageIcon(SparkRes.PRIVACY_ICON);
     }
 
     @Override

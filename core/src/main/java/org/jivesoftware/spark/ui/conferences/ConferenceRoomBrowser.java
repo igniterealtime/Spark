@@ -94,11 +94,11 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
     private final RolloverButton createButton = new RolloverButton("",
 	    SparkRes.getImageIcon(SparkRes.SMALL_USER1_NEW));
     private final RolloverButton joinRoomButton = new RolloverButton("",
-	    SparkRes.getImageIcon(SparkRes.DOOR_IMAGE));
+	    SparkRes.getImageIcon(SparkRes.JOIN_GROUPCHAT_IMAGE));
     private final RolloverButton refreshButton = new RolloverButton("",
 	    SparkRes.getImageIcon(SparkRes.REFRESH_IMAGE));
     private final RolloverButton addRoomButton = new RolloverButton("",
-	    SparkRes.getImageIcon(SparkRes.ADD_BOOKMARK_ICON));
+	    SparkRes.getImageIcon(SparkRes.BOOKMARK_ICON));
 
     private final RolloverButton showHiddenButtons = new RolloverButton(
 	    SparkRes.getImageIcon(SparkRes.PANE_UP_ARROW_IMAGE));
@@ -150,8 +150,8 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
 	createItem = new JMenuItem(Res.getString("menuitem.create.room"));
 	refreshItem = new JMenuItem(Res.getString("menuitem.refresh"));
 
-	joinRoomItem.setIcon(SparkRes.getImageIcon(SparkRes.DOOR_IMAGE));
-	addRoomItem.setIcon(SparkRes.getImageIcon(SparkRes.ADD_BOOKMARK_ICON));
+	joinRoomItem.setIcon(SparkRes.getImageIcon(SparkRes.JOIN_GROUPCHAT_IMAGE));
+	addRoomItem.setIcon(SparkRes.getImageIcon(SparkRes.BOOKMARK_ICON));
 	createItem.setIcon(SparkRes.getImageIcon(SparkRes.SMALL_USER1_NEW));
 	refreshItem.setIcon(SparkRes.getImageIcon(SparkRes.REFRESH_IMAGE));
 
@@ -743,7 +743,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
                 };
 
                 roomInfoAction.putValue(Action.NAME, Res.getString("menuitem.view.room.info"));
-                roomInfoAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.SMALL_DATA_FIND_IMAGE));
+                roomInfoAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.SEARCH_USER_16x16));
 
                 final int selectedRow = roomsTable.getSelectedRow();
                 final String roomName = roomsTable.getValueAt(selectedRow, 1).toString();
@@ -988,12 +988,12 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
 	if (!addBookmark) {
 	    addRoomButton.setText(Res.getString("button.remove.bookmark"));
 	    addRoomButton.setIcon(SparkRes
-		    .getImageIcon(SparkRes.DELETE_BOOKMARK_ICON));
+		    .getImageIcon(SparkRes.SMALL_DELETE));
 	} else {
 	    ResourceUtils.resButton(addRoomButton,
 		    Res.getString("button.bookmark.room"));
 	    addRoomButton.setIcon(SparkRes
-		    .getImageIcon(SparkRes.ADD_BOOKMARK_ICON));
+		    .getImageIcon(SparkRes.BOOKMARK_ICON));
 	}
     }
 

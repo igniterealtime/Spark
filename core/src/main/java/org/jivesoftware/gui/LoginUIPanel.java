@@ -152,7 +152,7 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
     final JPanel buttonPanel = new JPanel(new GridBagLayout());
     private AbstractXMPPConnection connection = null;
 
-    private RolloverButton otherUsers = new RolloverButton(SparkRes.getImageIcon(SparkRes.PANE_DOWN_ARROW_IMAGE));
+    private RolloverButton otherUsers = new RolloverButton(SparkRes.getImageIcon(SparkRes.DOWN_OPTION_IMAGE));
 
     /**
      * Creates new form LoginWindow

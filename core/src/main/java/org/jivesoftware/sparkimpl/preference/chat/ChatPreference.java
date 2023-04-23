@@ -63,7 +63,7 @@ public class ChatPreference implements Preference {
 
     @Override
 	public Icon getIcon() {
-        return SparkRes.getImageIcon(SparkRes.USER1_MESSAGE_24x24);
+        return SparkRes.getImageIcon(SparkRes.SMALL_USER1_MESSAGE);
     }
 
     @Override

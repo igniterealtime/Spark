@@ -144,7 +144,7 @@ public class OTRConnectionPanel {
             _conPanel.setVisible(true);
             _succesfull = true;
             _waiting = false;
-            _icon.setImage(SparkRes.getImageIcon(SparkRes.SMALL_CHECK).getImage());
+            _icon.setImage(SparkRes.getImageIcon(SparkRes.ACCEPT_INVITE_IMAGE).getImage());
             _label.setText(OTRResources.getString("otr.successfull"));
         }
     }

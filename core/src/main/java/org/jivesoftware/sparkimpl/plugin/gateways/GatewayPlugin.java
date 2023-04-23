@@ -247,7 +247,7 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
                     if (transport != null) {
                         String title = "Alert from " + transport.getName();
                         // Show error
-                        MessageDialog.showAlert(body, title, "Information", SparkRes.getImageIcon(SparkRes.INFORMATION_IMAGE));
+                        MessageDialog.showAlert(body, title, "Information", SparkRes.getImageIcon(SparkRes.SMALL_ABOUT_IMAGE));
                     }
                 }
             }

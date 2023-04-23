@@ -71,7 +71,7 @@ public final class MainWindow extends ChatFrame implements ActionListener {
     private JMenuItem preferenceMenuItem;
     private JCheckBoxMenuItem alwaysOnTopItem;
 
-    private final JMenuItem menuAbout = new JMenuItem(SparkRes.getImageIcon(SparkRes.INFORMATION_IMAGE));
+    private final JMenuItem menuAbout = new JMenuItem(SparkRes.getImageIcon(SparkRes.SMALL_ABOUT_IMAGE));
     private final JMenuItem sparkforumItem = new JMenuItem();
 
     private final JMenuBar mainWindowBar = new JMenuBar();
@@ -263,7 +263,7 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         if (con.isConnected() && sendStatus) {
             final InputTextAreaDialog inputTextDialog = new InputTextAreaDialog();
             status = inputTextDialog.getInput(Res.getString("title.status.message"), Res.getString("message.current.status"),
-                SparkRes.getImageIcon(SparkRes.USER1_MESSAGE_24x24), this);
+                SparkRes.getImageIcon(SparkRes.SMALL_USER1_MESSAGE), this);
         }
 
         if (status != null || !sendStatus)
@@ -512,7 +512,7 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         	viewHelpGuideAction.putValue(Action.NAME,
         			Res.getString("menuitem.user.guide"));
         	viewHelpGuideAction.putValue(Action.SMALL_ICON,
-        			SparkRes.getImageIcon(SparkRes.SMALL_QUESTION));
+        			SparkRes.getImageIcon(SparkRes.HELP2_24x24));
         	helpMenu.add(viewHelpGuideAction);
         }
 
