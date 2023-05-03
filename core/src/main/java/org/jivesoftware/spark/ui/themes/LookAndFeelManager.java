@@ -10,7 +10,6 @@ import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import javax.swing.*;
 import java.awt.*;
 import java.util.*;
-import org.jivesoftware.spark.ui.themes.lafs.SparkLightLaf;
 
 /**
  * Manages the Look and Feel instances that can be used by Spark.
@@ -25,7 +24,8 @@ public class LookAndFeelManager {
     public static final Class<? extends LookAndFeel> lafs[] = new Class[]{
         //flatlaf
         org.jivesoftware.spark.ui.themes.lafs.SparkLightLaf.class,
-        org.jivesoftware.spark.ui.themes.lafs.SparkIntelliJLaf.class
+        org.jivesoftware.spark.ui.themes.lafs.SparkIntelliJLaf.class,
+        org.jivesoftware.spark.ui.themes.lafs.SparkMacLightLaf.class
 };
 
     static {
