@@ -349,6 +349,7 @@ public class ConferenceUtils {
                 return Res.getString("message.error.nickname.in.use");
             case forbidden:
                 return Res.getString("message.you.have.been.banned");
+            case remote_server_not_found:
             case item_not_found:
                 return Res.getString("message.error.room.not.exist");
             case not_acceptable:
@@ -360,7 +361,8 @@ public class ConferenceUtils {
             case registration_required:
                 return Res.getString("message.error.not.member");
             default:
-                return Res.getString("message.default.error") + ": " + error.getConditionText();
+                String reason = error.getConditionText() == null ? error.getCondition().toString() : error.getConditionText();
+                return Res.getString("message.default.error") + ": " + reason;
         }
 
     }
