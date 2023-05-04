@@ -359,6 +359,7 @@ public class MessageEntry extends TimeStampedEntry
             link.startsWith("ftp://") ||
             link.startsWith("https://") ||
             link.startsWith("www.") ||
+            (link.startsWith("xmpp:") && link.contains("?join")) ||
             link.startsWith("file:/")) && link.indexOf(".") > 1) {
 
             // Create a new style, based on the style used for generic text, for the link.
