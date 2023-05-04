@@ -144,6 +144,17 @@ public class GroupChatRoom extends ChatRoom
 
                 popup.add( inviteAction );
 
+                Action copyURIgroupChat = new AbstractAction() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        SparkManager.setClipboard("xmpp:"+chat.getRoom()+"?join");
+                    }
+                };
+
+                copyURIgroupChat.putValue(Action.NAME, Res.getString("button.copy.to.clipboard"));
+                copyURIgroupChat.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.COPY_16x16));
+                popup.add(copyURIgroupChat);
+
                 Action configureAction = new AbstractAction()
                 {
                     @Override

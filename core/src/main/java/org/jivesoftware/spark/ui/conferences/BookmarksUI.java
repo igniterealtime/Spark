@@ -308,6 +308,19 @@ public class BookmarksUI extends JPanel {
                 roomInfoAction.putValue(Action.NAME, Res.getString("menuitem.view.room.info"));
                 roomInfoAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.SMALL_DATA_FIND_IMAGE));
                 popupMenu.add(roomInfoAction);
+
+                Action copyURIgroupChat = new AbstractAction() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        final String roomName = node.getAssociatedObject().toString();
+                        SparkManager.setClipboard("xmpp:"+roomName+"?join");
+                    }
+                };
+
+                copyURIgroupChat.putValue(Action.NAME, Res.getString("button.copy.to.clipboard"));
+                copyURIgroupChat.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.COPY_16x16));
+                popupMenu.add(copyURIgroupChat);
+
             }
 
             // Fire menu listeners

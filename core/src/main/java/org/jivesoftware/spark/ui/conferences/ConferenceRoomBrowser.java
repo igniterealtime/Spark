@@ -760,6 +760,17 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
                     conferences.removeBookmark(roomJID);
                     conferences.addBookmark(roomName, roomJID, autoJoin.isSelected());
                 } );
+                Action copyURIgroupChat = new AbstractAction() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        String roomJIDString = roomsTable.getValueAt(selectedRow, 2) + "@" + serviceName;
+                        SparkManager.setClipboard("xmpp:"+roomJIDString+"?join");
+                    }
+                };
+
+                copyURIgroupChat.putValue(Action.NAME, Res.getString("button.copy.to.clipboard"));
+                copyURIgroupChat.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.COPY_16x16));
+                popupMenu.add(copyURIgroupChat);
 
 
                 if (selectedRow != -1) {
