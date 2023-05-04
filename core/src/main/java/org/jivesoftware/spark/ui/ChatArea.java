@@ -18,17 +18,22 @@ package org.jivesoftware.spark.ui;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.ContextMenuListener;
+import org.jivesoftware.spark.ui.conferences.ConferenceUtils;
 import org.jivesoftware.spark.util.BrowserLauncher;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.emoticons.EmoticonManager;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+import org.jxmpp.jid.EntityBareJid;
+import org.jxmpp.jid.impl.JidCreate;
+import org.jxmpp.jid.util.JidUtil;
 
 import javax.swing.*;
 import javax.swing.text.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.net.URI;
 import java.util.*;
 import java.util.List;
 
@@ -190,8 +195,29 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
                         final String url = (String)o;
                         boolean handled = fireLinkInterceptors(e, url);
                         if (!handled) {
-                            if(e.getButton() == MouseEvent.BUTTON1)
-                        	BrowserLauncher.openURL(url);
+                            if(e.getButton() == MouseEvent.BUTTON1) {
+                                if (url.startsWith("xmpp:") && url.contains("?join")) {
+                                    // eg: xmpp:open_chat@conference.igniterealtime.org?join;password=somesecret
+                                    final String schemeSpecificPart = new URI(url).getSchemeSpecificPart();
+                                    final String roomAddress = schemeSpecificPart.substring(0, schemeSpecificPart.indexOf('?'));
+                                    final String password;
+                                    final int passwordKeyIndex = schemeSpecificPart.indexOf(";password=");
+                                    if (passwordKeyIndex > schemeSpecificPart.indexOf('?')) {
+                                        final int start = passwordKeyIndex + ";password=".length();
+                                        if (start == schemeSpecificPart.length()) {
+                                            password = null;
+                                        } else {
+                                            password = schemeSpecificPart.substring(start);
+                                        }
+                                    } else {
+                                        password = null;
+                                    }
+                                    final EntityBareJid roomJid = JidCreate.entityBareFrom(roomAddress);
+                                    ConferenceUtils.joinConferenceOnSeperateThread(roomJid.getLocalpart().toString(), roomJid, null, password);
+                                } else {
+                                    BrowserLauncher.openURL(url);
+                                }
+                            }
 			    else if (e.getButton() == MouseEvent.BUTTON3) {
 				JPopupMenu popupmenu = new JPopupMenu();
 				JMenuItem linkcopy = new JMenuItem(
