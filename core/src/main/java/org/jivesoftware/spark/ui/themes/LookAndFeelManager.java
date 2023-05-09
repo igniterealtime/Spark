@@ -155,8 +155,8 @@ public class LookAndFeelManager {
             // Add "eye" button to show password for all passwordField
             UIManager.put("PasswordField.showRevealButton",true);
             if(!laf.contains("org.jivesoftware.spark.ui.themes.lafs.")){
-                UIManager.setLookAndFeel(Default.getString(Default.DEFAULT_LOOK_AND_FEEL));
-                SettingsManager.getLocalPreferences().setLookAndFeel(Default.getString(Default.DEFAULT_LOOK_AND_FEEL));
+                laf = Default.getString(Spark.isMac() ? Default.DEFAULT_LOOK_AND_FEEL_MAC : Default.DEFAULT_LOOK_AND_FEEL);
+                SettingsManager.getLocalPreferences().setLookAndFeel(laf);
             }
             UIManager.setLookAndFeel(laf);
             FlatLaf.updateUILater();
