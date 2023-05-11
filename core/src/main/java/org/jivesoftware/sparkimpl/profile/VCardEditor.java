@@ -481,11 +481,13 @@ public class VCardEditor {
         }
         
 	try {
-	    final VCardManager vcardManager = SparkManager.getVCardManager();
-	    vcardManager.setPersonalVCard(vcard);
-
+        // Save vcard on server
         org.jivesoftware.smackx.vcardtemp.VCardManager smackVCardManager = org.jivesoftware.smackx.vcardtemp.VCardManager.getInstanceFor( SparkManager.getConnection() );
         smackVCardManager.saveVCard( vcard );
+
+        // Save vcard on client
+        final VCardManager vcardManager = SparkManager.getVCardManager();
+        vcardManager.setPersonalVCard(vcard);
 
 	    // Notify users.
 	    if (avatarBytes != null) {
@@ -498,7 +500,7 @@ public class VCardEditor {
 		// Change my own presence
 		SparkManager.getSessionManager().changePresence(newPresence);
 
-		// Chnage avatar in status bar.
+		// Change avatar in status bar.
 		StatusBar statusBar = SparkManager.getWorkspace()
 			.getStatusBar();
 		statusBar.setAvatar(new ImageIcon(vcard.getAvatar()));
