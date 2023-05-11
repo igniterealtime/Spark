@@ -228,7 +228,7 @@ public class AccountCreationWizard extends JPanel {
                     connection = getConnection();
                 }
                 catch (SmackException | IOException | XMPPException e) {
-                    th = e.getCause().getMessage();
+                    th = e.getCause() == null ? e.getMessage() : e.getCause().getMessage();
                     return e;
                 }
                 try {
