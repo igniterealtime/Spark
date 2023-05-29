@@ -203,7 +203,9 @@ public class ConferenceUtils {
                     error = ( (XMPPException.XMPPErrorException) ex ).getStanzaError();
                 }
 
-                final String errorText = ConferenceUtils.getReason( error );
+                String errorText = Res.getString("title.join.conference.room");
+                if (groupChat.getRoom() != null) { errorText += " " + groupChat.getRoom();  }
+                errorText += ": " + ConferenceUtils.getReason( error );
                 errors.add( errorText );
             }
         }
