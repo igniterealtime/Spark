@@ -206,7 +206,10 @@ public class JoinRoomSwingWorker extends SwingWorker
                 }
             }
 
-            final String errorText = ConferenceUtils.getReason( error );
+            String errorText = Res.getString("title.join.conference.room");
+            errorText += " " + roomJID;
+            errorText += ": " + ConferenceUtils.getReason( error );
+
             errors.add( errorText );
             return null;
         }
