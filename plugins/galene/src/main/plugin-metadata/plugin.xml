@@ -1,0 +1,12 @@
+<plugin>
+    <name>${project.name}</name>
+    <version>${project.version}</version>
+    <description>${project.description}</description>
+    <author>Dele Olajide</author>
+    <homePage>http://igniterealtime.org</homePage>
+    <email>support@igniterealtime.org</email>
+    <class>org.jivesoftware.spark.plugin.galene.SparkGalenePlugin</class>
+    <minSparkVersion>3.0.0</minSparkVersion>
+    <os>Windows,Linux,Mac</os>
+    <java>1.8.0</java>
+</plugin>
