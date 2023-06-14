@@ -62,8 +62,7 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
         String port = "7443";
         url = "https://" + server + ":" + port + "/ofmeet/";
 
-        if (pluginsettings.exists())
-        {
+        if (pluginsettings.exists()) {
             Log.warning("ofmeet-info: Properties-file does exist= " + pluginsettings.getPath());
 
             try {
@@ -81,6 +80,7 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
 
         } else {
             Log.warning("ofmeet-Error: Properties-file does not exist= " + pluginsettings.getPath() + ", using default " + url);
+			props.setProperty("url", url);				
         }
 
         chatManager.addChatRoomListener(this);
@@ -105,8 +105,7 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
 
     public void shutdown()
     {
-        try
-        {
+        try {
             Log.warning("shutdown");
             chatManager.removeChatRoomListener(this);
 

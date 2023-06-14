@@ -40,7 +40,7 @@ public class ChatRoomDecorator
         try {
             byte[] imageByte = DatatypeConverter.parseBase64Binary(ICON_STRING);
             ImageIcon ofmeetIcon = new ImageIcon(imageByte);
-            ofmeetButton = new RolloverButton(SparkRes.getImageIcon("PADE_ICON"));
+            ofmeetButton = new RolloverButton(ofmeetIcon);
             ofmeetButton.setToolTipText(GraphicUtils.createToolTip(SparkMeetResource.getString("name")));
             final String roomId = getNode(room.getBareJid().toString());
             final String sessionID = roomId + "-" + System.currentTimeMillis();
@@ -48,9 +48,8 @@ public class ChatRoomDecorator
             ofmeetButton.addActionListener(event -> {
                 String newUrl, newRoomId;
 
-                if ("groupchat".equals(room.getChatType().toString()))
-                {
-                    newRoomId = roomId + "-" + sessionID;
+                if ("groupchat".equals(room.getChatType().toString())) {
+                    newRoomId = sessionID;
                     newUrl = plugin.url + newRoomId;
                     plugin.handleClick(newUrl, room, newUrl, Message.Type.groupchat);
 
