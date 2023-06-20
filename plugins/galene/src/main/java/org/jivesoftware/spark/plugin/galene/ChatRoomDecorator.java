@@ -43,19 +43,19 @@ public class ChatRoomDecorator
             galeneButton = new RolloverButton(galeneIcon);
             galeneButton.setToolTipText(GraphicUtils.createToolTip(SparkGaleneResource.getString("name")));
             final String roomId = getNode(room.getBareJid().toString());
-            final String sessionID = roomId + "-" + System.currentTimeMillis();
+            final String sessionID = roomId + "/" + System.currentTimeMillis();
 
             galeneButton.addActionListener(event -> {
                 String newUrl, newRoomId;
 
                 if ("groupchat".equals(room.getChatType().toString())) {
                     newRoomId = sessionID;
-                    newUrl = plugin.url + "?group=" + newRoomId;
+                    newUrl = plugin.url + "?room=" + newRoomId;
                     plugin.handleClick(newUrl, room, newUrl, Message.Type.groupchat);
 
                 } else {
                     newRoomId = sessionID;
-                    newUrl = plugin.url + "?group=" + newRoomId;
+                    newUrl = plugin.url + "?room=" + newRoomId;
                     plugin.handleClick(newUrl, room, newUrl, Message.Type.chat);
                 }
             });

@@ -136,7 +136,7 @@ public class SparkGalenePlugin implements Plugin, ChatRoomListener, GlobalMessag
             String body = message.getBody();
             int pos = body.indexOf("https://");
 
-            if ( pos > -1 && (body.contains("group=" + roomId + "-") || body.contains("/galene/")) ) {
+            if ( pos > -1 && (body.contains("room=" + roomId + "/") || body.contains("/galene/")) ) {
                 showInvitationAlert(message.getBody().substring(pos), room, roomId);
             }
 
@@ -230,7 +230,7 @@ public class SparkGalenePlugin implements Plugin, ChatRoomListener, GlobalMessag
             String username = URLEncoder.encode(SparkManager.getSessionManager().getUsername(), "UTF-8");
             String password = URLEncoder.encode(SparkManager.getSessionManager().getPassword(), "UTF-8");
 
-            electronThread = Spawn.startProcess(electronExePath + " --ignore-certificate-errors " + newUrl + "&username=" + username, new File(electronHomePath), new ProcessListener() {
+            electronThread = Spawn.startProcess(electronExePath + " --ignore-certificate-errors " + newUrl + "&username=" + username + "&password=" + password, new File(electronHomePath), new ProcessListener() {
 
                 public void onOutputLine(final String line) {
                     System.out.println(line);
