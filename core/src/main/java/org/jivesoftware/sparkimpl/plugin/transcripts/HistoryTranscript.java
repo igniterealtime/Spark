@@ -705,7 +705,8 @@ public class HistoryTranscript extends SwingWorker {
         frame.getContentPane().setLayout(new BorderLayout());
         frame.getContentPane().add(mainPanel, BorderLayout.CENTER);
         frame.pack();
-        frame.setSize(600, 400);
+        //frame.setSize(600, 400);
+        frame.setSize(800, 600);
         window.setCaretPosition(0);
         window.requestFocus();
         GraphicUtils.centerWindowOnScreen(frame);
