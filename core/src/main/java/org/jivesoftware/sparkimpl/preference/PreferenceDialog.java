@@ -111,12 +111,14 @@ public class PreferenceDialog implements PropertyChangeListener
             public void componentResized( ComponentEvent e )
             {
                 LayoutSettingsManager.getLayoutSettings().setPreferencesBounds( preferenceDialog.getBounds() );
+                LayoutSettingsManager.saveLayoutSettings();
             }
 
             @Override
             public void componentMoved( ComponentEvent e )
             {
                 LayoutSettingsManager.getLayoutSettings().setPreferencesBounds( preferenceDialog.getBounds() );
+                LayoutSettingsManager.saveLayoutSettings();
             }
         } );
     }
