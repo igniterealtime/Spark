@@ -81,14 +81,20 @@ public class VCardEditor {
 
 	// Initialize Panels
 	personalPanel = new PersonalPanel();
+    //if (Default.getBoolean(Default.EDIT_AVATAR_ONLY) && Enterprise.containsFeature(Enterprise.EDIT_AVATAR_FEATURE)) personalPanel.allowEditing(false);
+    if (Default.getBoolean(Default.EDIT_AVATAR_ONLY)) personalPanel.allowEditing(false);
 	personalPanel.showJID(false);
 
 	tabbedPane.addTab(Res.getString("tab.personal"), personalPanel);
 
 	businessPanel = new BusinessPanel();
+    //if (Default.getBoolean(Default.EDIT_AVATAR_ONLY) && Enterprise.containsFeature(Enterprise.EDIT_AVATAR_FEATURE)) businessPanel.allowEditing(false);
+    if (Default.getBoolean(Default.EDIT_AVATAR_ONLY)) businessPanel.allowEditing(false);
 	tabbedPane.addTab(Res.getString("tab.business"), businessPanel);
 
 	homePanel = new HomePanel();
+    //if (Default.getBoolean(Default.EDIT_AVATAR_ONLY) && Enterprise.containsFeature(Enterprise.EDIT_AVATAR_FEATURE)) homePanel.allowEditing(false);
+    if (Default.getBoolean(Default.EDIT_AVATAR_ONLY)) homePanel.allowEditing(false);
 	tabbedPane.addTab(Res.getString("tab.home"), homePanel);
 
 	// See if we should remove the Avatar tab in profile dialog
@@ -527,9 +533,19 @@ public class VCardEditor {
 	} catch (XMPPException | SmackException | InterruptedException e) {
 	    Log.error(e);
 	    UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
-	    JOptionPane.showMessageDialog(SparkManager.getMainWindow(),
-		    Res.getString("message.vcard.not.supported"),
-		    Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
+	    //JOptionPane.showMessageDialog(SparkManager.getMainWindow(),
+		//    Res.getString("message.vcard.not.supported"),
+		//    Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
+        //if (!Default.getBoolean(Default.EDIT_AVATAR_ONLY) && Enterprise.containsFeature(Enterprise.EDIT_AVATAR_FEATURE)) {
+        //                JOptionPane.showMessageDialog(SparkManager.getMainWindow(),
+        //                        Res.getString("message.vcard.not.supported"),
+        //                        Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
+        //            }
+        if (!Default.getBoolean(Default.EDIT_AVATAR_ONLY)) {
+            JOptionPane.showMessageDialog(SparkManager.getMainWindow(),
+                                          Res.getString("message.vcard.not.supported"),
+                                          Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
+        }
 	}
     }
 
