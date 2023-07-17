@@ -195,7 +195,8 @@ public class DataFormDialog extends JPanel {
         dialog.getContentPane().add(bottomPanel, BorderLayout.SOUTH);
 
         dialog.pack();
-        dialog.setSize(600, 400);
+        //dialog.setSize(600, 400);
+        dialog.setSize(710, 470);
         GraphicUtils.centerWindowOnScreen(dialog);
         dialog.setVisible(true);
 
