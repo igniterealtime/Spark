@@ -152,12 +152,14 @@ public class VCardEditor {
 		public void componentResized( ComponentEvent e )
 		{
 			LayoutSettingsManager.getLayoutSettings().setVCardEditorBounds( dlg.getBounds() );
+            LayoutSettingsManager.saveLayoutSettings();
 		}
 
 		@Override
 		public void componentMoved( ComponentEvent e )
 		{
 			LayoutSettingsManager.getLayoutSettings().setVCardEditorBounds( dlg.getBounds() );
+            LayoutSettingsManager.saveLayoutSettings();
 		}
 	} );
 
