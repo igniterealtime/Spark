@@ -260,7 +260,8 @@ public class VCardEditor {
 	dlg.setSize(600, 400);
 	dlg.setResizable(true);
 	dlg.setContentPane(mainPanel);
-	dlg.setLocationRelativeTo(parent);
+	//dlg.setLocationRelativeTo(parent);
+    dlg.setLocationRelativeTo(null);
 	PropertyChangeListener changeListener = new PropertyChangeListener() {
 	    @Override
 		public void propertyChange(PropertyChangeEvent e) {
