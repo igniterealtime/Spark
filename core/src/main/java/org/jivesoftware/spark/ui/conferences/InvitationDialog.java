@@ -295,7 +295,8 @@ final class InvitationDialog extends JPanel {
         dlg.setSize(500, 450);
         dlg.setResizable(true);
         dlg.setContentPane(mainPanel);
-        dlg.setLocationRelativeTo(parent);
+        //dlg.setLocationRelativeTo(parent);
+        dlg.setLocationRelativeTo(null);
 
 
         PropertyChangeListener changeListener = e -> {
