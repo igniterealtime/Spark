@@ -170,47 +170,6 @@ public class ConferenceUtils {
         changePresenceToAvailableIfInvisible();
     }
 
-
-    /**
-     * Joins a chat room without using the UI.
-     *
-     * @param groupChat the <code>MultiUserChat</code>
-     * @param nickname  the nickname of the user.
-     * @param password  the password to join the room with.
-     * @return a List of errors, if any.
-     */
-    public static List<String> joinRoom(MultiUserChat groupChat, Resourcepart nickname, String password) {
-        final List<String> errors = new ArrayList<>();
-        if ( !groupChat.isJoined() )
-        {
-            try
-            {
-                if ( ModelUtil.hasLength( password ) )
-                {
-                    groupChat.join( nickname, password );
-                }
-                else
-                {
-                    groupChat.join( nickname );
-                }
-                changePresenceToAvailableIfInvisible();
-            }
-            catch ( XMPPException | SmackException | InterruptedException ex )
-            {
-                StanzaError error = null;
-                if ( ex instanceof XMPPException.XMPPErrorException )
-                {
-                    error = ( (XMPPException.XMPPErrorException) ex ).getStanzaError();
-                }
-
-                final String errorText = ConferenceUtils.getReason( error );
-                errors.add( errorText );
-            }
-        }
-
-        return errors;
-    }
-
     /**
      * Invites users to an existing room.
      *
