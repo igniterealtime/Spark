@@ -4,7 +4,12 @@ import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.SmackConfiguration;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smack.packet.PresenceBuilder;
+import org.jivesoftware.smack.packet.StandardExtensionElement;
 import org.jivesoftware.smack.packet.StanzaError;
+import org.jivesoftware.smack.util.Consumer;
+import org.jivesoftware.smackx.muc.MucEnterConfiguration;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.muc.MultiUserChatManager;
 import org.jivesoftware.spark.SparkManager;
@@ -17,6 +22,7 @@ import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.UIComponentRegistry;
 import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkimpl.profile.VCardManager;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.parts.Resourcepart;
@@ -153,14 +159,7 @@ public class JoinRoomSwingWorker extends SwingWorker
 
             if ( !groupChat.isJoined() ) {
                 Log.debug("Start server-sided join of chat room " + roomJID);
-                if ( ModelUtil.hasLength( password ) )
-                {
-                    groupChat.join( nickname, password );
-                }
-                else
-                {
-                    groupChat.join( nickname );
-                }
+                groupChat.join(getMucEnterConfiguration(groupChat, nickname, password));
                 Log.debug("Joined chat room " + roomJID + " on the server.");
             }
 
@@ -210,6 +209,36 @@ public class JoinRoomSwingWorker extends SwingWorker
             errors.add( errorText );
             return null;
         }
+    }
+
+    public static MucEnterConfiguration getMucEnterConfiguration(final MultiUserChat groupChat, final Resourcepart nickname) {
+        return getMucEnterConfiguration(groupChat, nickname, null);
+    }
+
+    public static MucEnterConfiguration getMucEnterConfiguration(final MultiUserChat groupChat, final Resourcepart nickname, final String password)
+    {
+        final MucEnterConfiguration.Builder builder = groupChat.getEnterConfigurationBuilder(nickname);
+        if ( ModelUtil.hasLength( password ) )
+        {
+            builder.withPassword(password);
+        }
+
+        if (SparkManager.getVCardManager().getVCard() != null && SparkManager.getVCardManager().getVCard().getAvatarHash() != null) {
+            final String hash = SparkManager.getVCardManager().getVCard().getAvatarHash();
+            builder.withPresence( presenceBuilder -> presenceBuilder
+                .addExtension(
+                    StandardExtensionElement.builder("x", "vcard-temp:x:update")
+                        .addElement("photo", hash)
+                        .build()
+                )
+                .addExtension(
+                    StandardExtensionElement.builder("x", "jabber:x:avatar")
+                        .addElement("hash", hash)
+                        .build()
+                )
+            );
+        }
+        return builder.build();
     }
 
     @Override
