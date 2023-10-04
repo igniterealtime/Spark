@@ -19,6 +19,7 @@ bin/
 *.iws
 *.iml
 out/
+!.idea/icon.svg
 
 # Netbeans ignores
 nbproject/
