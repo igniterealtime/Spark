@@ -78,6 +78,7 @@
         <module>plugins/growl</module>
         <!--<module>plugins/jingle</module>-->
         <module>plugins/meet</module>
+        <module>plugins/galene</module>		
         <!--<module>plugins/otr</module>-->
         <module>plugins/reversi</module>
         <module>plugins/roar</module>
