@@ -29,6 +29,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JWindow;
 
+import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.packet.Presence;
@@ -39,6 +40,7 @@ import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.Transport;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.TransportUtils;
 import org.jxmpp.jid.Jid;
@@ -270,10 +272,30 @@ public class ContactInfoWindow extends JPanel {
         Transport transport = TransportUtils.getTransport(contactItem.getJid().asDomainBareJid());
         if (transport != null) {
             fullJIDLabel.setIcon(transport.getIcon());
-            fullJIDLabel.setText(transport.getName() + " - " + contactItem.getJid().getLocalpartOrThrow().asUnescapedString());
+            //fullJIDLabel.setText(transport.getName() + " - " + contactItem.getJid().getLocalpartOrThrow().asUnescapedString());
+            //if (Default.getBoolean(Default.SHOW_FULL_JID_ADDRESS) && Enterprise.containsFeature(Enterprise.SHOW_FULL_JID_ADDRESS_FEATURE)) {
+            //                fullJIDLabel.setText(transport.getName() + " - " + contactItem.getJid().asUnescapedString());
+            //            } else {
+            //                fullJIDLabel.setText(transport.getName() + " - " + contactItem.getJid().getLocalpartOrThrow().asUnescapedString());
+            //            }
+            if (Default.getBoolean(Default.SHOW_FULL_JID_ADDRESS)) {
+                fullJIDLabel.setText(transport.getName() + " - " + contactItem.getJid().asUnescapedString());
+            } else {
+                fullJIDLabel.setText(transport.getName() + " - " + contactItem.getJid().getLocalpartOrThrow().asUnescapedString());
+            }
         }
         else {
-            fullJIDLabel.setText(contactItem.getJid().getLocalpartOrThrow().asUnescapedString());
+            //fullJIDLabel.setText(contactItem.getJid().getLocalpartOrThrow().asUnescapedString());
+            //if (Default.getBoolean(Default.SHOW_FULL_JID_ADDRESS) && Enterprise.containsFeature(Enterprise.SHOW_FULL_JID_ADDRESS_FEATURE)) {
+            //                fullJIDLabel.setText(contactItem.getJid().asUnescapedString());
+            //            } else {
+            //                fullJIDLabel.setText(contactItem.getJid().getLocalpartOrThrow().asUnescapedString());
+            //            }
+            if (Default.getBoolean(Default.SHOW_FULL_JID_ADDRESS)) {
+                fullJIDLabel.setText(contactItem.getJid().asUnescapedString());
+            } else {
+                fullJIDLabel.setText(contactItem.getJid().getLocalpartOrThrow().asUnescapedString());
+            }
             fullJIDLabel.setIcon(null);
         }
 

@@ -118,7 +118,8 @@ public class RoomCreationDialog extends JPanel {
         dlg.pack();
         dlg.setSize(400, 350);
         dlg.setContentPane(mainPanel);
-        dlg.setLocationRelativeTo(parent);
+        //dlg.setLocationRelativeTo(parent);
+        dlg.setLocationRelativeTo(null);
 
 
         PropertyChangeListener changeListener = new PropertyChangeListener() {

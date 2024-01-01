@@ -649,12 +649,14 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
             public void componentResized( ComponentEvent e )
             {
                 LayoutSettingsManager.getLayoutSettings().setConferenceRoomBrowserBounds( dlg.getBounds() );
+                LayoutSettingsManager.saveLayoutSettings();
             }
 
             @Override
             public void componentMoved( ComponentEvent e )
             {
                 LayoutSettingsManager.getLayoutSettings().setConferenceRoomBrowserBounds( dlg.getBounds() );
+                LayoutSettingsManager.saveLayoutSettings();
             }
         } );
 

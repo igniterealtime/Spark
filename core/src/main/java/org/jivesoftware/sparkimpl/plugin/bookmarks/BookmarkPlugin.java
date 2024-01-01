@@ -80,6 +80,9 @@ public class BookmarkPlugin implements Plugin {
                 
                 if (bookmarkMenu.getMenuComponentCount() > 0) {
                     SparkManager.getMainWindow().getMenu().add(bookmarkMenu, 3);
+                    bookmarkMenu.setVisible(false);
+                    int numberOfBookmark =  bookmarkMenu.getItemCount();
+                    if (numberOfBookmark > 1 ) bookmarkMenu.setVisible(true);
                 }
 
                 BookmarksUI bookmarksUi = ConferenceServices.getBookmarkedConferences();
@@ -123,6 +126,9 @@ public class BookmarkPlugin implements Plugin {
                     SparkManager.getMainWindow().getMenu().invalidate();
                     SparkManager.getMainWindow().getMenu().validate();
                     SparkManager.getMainWindow().getMenu().repaint();
+                    bookmarkMenu.setVisible(false);
+                    int numberOfBookmark =  bookmarkMenu.getItemCount();
+                    if (numberOfBookmark > 1 ) bookmarkMenu.setVisible(true);
                 } catch (XMPPException | SmackException | InterruptedException ex) {
                     Log.error(ex);
                 }

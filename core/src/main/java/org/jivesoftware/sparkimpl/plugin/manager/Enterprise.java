@@ -71,6 +71,13 @@ public class Enterprise {
     public static final String VERSION_AS_RESOURCE_FEATURE = "version-as-resource";
     public static final String PLUGINS_BLACKLIST_NODE = "spark-plugins-blacklist";
     public static final String IDLE_FEATURE = "idle";
+    public static final String UNFILEDGROUP_FEATURE = "unfiledGroup";
+    public static final String ALLOW_NICKNAME_CHANGE_FEATURE = "nickname-change";
+    public static final String CONFERENCE_BUTTON_SETTINGS_FEATURE = "conference-settings-button";
+    public static final String CONFERENCE_BUTTON_REGISTER_FEATURE = "conference-register-button";
+    public static final String SHOW_FULL_JID_ADDRESS_FEATURE = "full-jid-address";
+    public static final String EDIT_AVATAR_FEATURE = "edit-avatar-only";
+    public static final String DISABLE_LOOKUP_PROFILE_FEATURE = "disable-lookup-profile";
 
     public static final String IBB_FEATURE = "ibb-only";
 

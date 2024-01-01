@@ -16,6 +16,7 @@
 package org.jivesoftware.spark.ui.conferences;
 
 import org.jdesktop.swingx.JXList;
+import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.PresenceListener;
@@ -39,6 +40,7 @@ import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 import org.jivesoftware.spark.ui.rooms.GroupChatRoom;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jxmpp.jid.BareJid;
@@ -695,7 +697,9 @@ public class GroupChatParticipantList extends JPanel {
 			SparkRes.getImageIcon(SparkRes.TYPING_TRAY));
 
 		if (allowNicknameChange) {
-		    popup.add(changeNicknameAction);
+		    //popup.add(changeNicknameAction);
+            //if (!Default.getBoolean(Default.ALLOW_NICKNAME_CHANGE_DISABLED) && Enterprise.containsFeature(Enterprise.ALLOW_NICKNAME_CHANGE_FEATURE)) popup.add(changeNicknameAction);
+            if (!Default.getBoolean(Default.ALLOW_NICKNAME_CHANGE_DISABLED)) popup.add(changeNicknameAction);
 		}
 	    }
 
@@ -988,7 +992,9 @@ public class GroupChatParticipantList extends JPanel {
 		SparkRes.getImageIcon(SparkRes.CONFERENCE_IMAGE_16x16));
 
 	if (index != -1) {
-	    popup.addSeparator();
+	    //popup.addSeparator();
+        //if (!Default.getBoolean(Default.ALLOW_NICKNAME_CHANGE_DISABLED) && Enterprise.containsFeature(Enterprise.ALLOW_NICKNAME_CHANGE_FEATURE)) popup.addSeparator();
+        if (!Default.getBoolean(Default.ALLOW_NICKNAME_CHANGE_DISABLED)) popup.addSeparator();
 	}
 	popup.add(inviteAction);
 

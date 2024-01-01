@@ -101,6 +101,7 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
                 if ( e.getComponent().getClass().getSimpleName().equalsIgnoreCase( "ChatFrame" ) )
                 {
                     LayoutSettingsManager.getLayoutSettings().setChatFrameBounds( getBounds() );
+                    LayoutSettingsManager.saveLayoutSettings();
                 }
             }
 
@@ -111,6 +112,7 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
                 if ( e.getComponent().getClass().getSimpleName().equalsIgnoreCase( "ChatFrame" ) )
                 {
                     LayoutSettingsManager.getLayoutSettings().setChatFrameBounds( getBounds() );
+                    LayoutSettingsManager.saveLayoutSettings();
                 }
             }
         } );

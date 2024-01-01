@@ -306,7 +306,8 @@ public class ScratchPadPlugin implements Plugin {
         frame.getContentPane().setLayout(new BorderLayout());
         frame.getContentPane().add(pane, BorderLayout.CENTER);
         frame.pack();
-        frame.setSize(400, 400);
+        //frame.setSize(400, 400);
+        frame.setSize(600, 400);
 
         final Action saveAction = new AbstractAction() {
 	    private static final long serialVersionUID = -4287799161421970177L;
@@ -465,7 +466,8 @@ public class ScratchPadPlugin implements Plugin {
         mainPanel.add(cancelButton, new GridBagConstraints(2, 2, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 
         frame.pack();
-        frame.setSize(400, 400);
+        //frame.setSize(400, 400);
+        frame.setSize(600, 400);
 
 
         GraphicUtils.centerWindowOnComponent(frame, SparkManager.getMainWindow());
