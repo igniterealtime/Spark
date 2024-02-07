@@ -215,9 +215,9 @@ public class MutualAuthenticationSettingsPanel extends JPanel implements ActionL
                         Res.getString("dialog.self.signed.certificate.has.been.created") + IdentityController.SECURITY_DIRECTORY.toString());
             } else {
                 try {
-                    idControll.addEntryToKeyStore(cert, keyPair.getPrivate());
+                    idControll.addEntryToKeyStore(cert, keyPair.getPrivate(), null);
                 } catch (HeadlessException | InvalidNameException | KeyStoreException e) {
-                        Log.error("Couldn't save entry to IdentityStore", e);
+                    Log.error("Couldn't save entry to IdentityStore", e);
                 }
             }
 	} catch (NoSuchAlgorithmException | NoSuchProviderException | IOException | OperatorCreationException | CertificateException e1) {
@@ -274,8 +274,7 @@ public class MutualAuthenticationSettingsPanel extends JPanel implements ActionL
             } catch (CertificateException e) {
                 JOptionPane.showMessageDialog(null, Res.getString("dialog.cannot.upload.certificate.might.be.ill.formatted"));
                 Log.error("Cannot upload certificate file", e);
-            } catch (InvalidKeySpecException | NoSuchAlgorithmException | KeyStoreException | InvalidNameException
-                    | IOException e) {
+            } catch (KeyStoreException | InvalidNameException | IOException e) {
                 JOptionPane.showMessageDialog(null, Res.getString("dialog.cannot.upload.certificate"));
                 Log.error("Cannot upload certificate file", e);
             }
