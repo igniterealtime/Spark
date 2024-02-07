@@ -2,9 +2,9 @@ package org.jivesoftware.sparkimpl.certificates;
 
 import java.awt.HeadlessException;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.math.BigInteger;
-import java.nio.file.Files;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.KeyStore;
@@ -17,8 +17,9 @@ import java.security.Security;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.security.spec.InvalidKeySpecException;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 
 import javax.naming.InvalidNameException;
 import javax.net.ssl.KeyManagerFactory;
@@ -39,7 +40,9 @@ import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.X509v3CertificateBuilder;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.openssl.PEMException;
+import org.bouncycastle.openssl.PEMKeyPair;
+import org.bouncycastle.openssl.PEMParser;
+import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
 import org.bouncycastle.operator.ContentSigner;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
@@ -238,39 +241,49 @@ public class IdentityController extends CertManager {
      * @param file with certificate that is added and private key entry
      * @throws IOException
      * @throws KeyStoreException
-     * @throws NoSuchAlgorithmException
      * @throws CertificateException
-     * @throws InvalidKeySpecException
      * @throws HeadlessException
      * @throws InvalidNameException
      */
     @Override
-    public void addEntryFileToKeyStore(File file)
-            throws IOException, CertificateException, InvalidKeySpecException, NoSuchAlgorithmException, KeyStoreException, InvalidNameException {
+    public void addEntryFileToKeyStore(File file) throws IOException, CertificateException, InvalidNameException, KeyStoreException {
 
-        byte[] certAndKey = Files.readAllBytes(file.toPath());
+        JcaPEMKeyConverter converterKey = new JcaPEMKeyConverter().setProvider("BC");
+        JcaX509CertificateConverter converterCert = new JcaX509CertificateConverter().setProvider("BC");
 
-        X509Certificate addedCert = parseCertificate(certAndKey);
-        PrivateKey key = parseKey(certAndKey);
+        PrivateKey key = null;
+        X509Certificate cert = null;
+        List<X509Certificate> certChain = new LinkedList<>();
 
-        addEntryToKeyStore(addedCert, key);
+        FileReader pemReader = new FileReader(file);
+        PEMParser pemParser = new PEMParser(pemReader);
+
+        Object obj;
+        while ((obj = pemParser.readObject()) != null) {
+
+            if (obj instanceof PEMKeyPair) {
+                key = converterKey.getKeyPair((PEMKeyPair) obj).getPrivate();
+            } else if (obj instanceof X509CertificateHolder) {
+                X509Certificate certificate = converterCert.getCertificate((X509CertificateHolder) obj);
+                if (certificate.getBasicConstraints() == -1) {
+                    // -1 indicates leaf certificate
+                    cert = certificate;
+                } else {
+                    certChain.add(certificate);
+                }
+            } else {
+                throw new CertificateException("Import of " + obj.getClass() + " is not supported");
+            }
+        }
+
+        if (key == null || cert == null){
+            throw new CertificateException("Incomplete certificate in file to import");
+        }
+
+        addEntryToKeyStore(cert, key, certChain.toArray(new X509Certificate[0]));
     }
-   
-    public PrivateKey parseKey(byte[] certAndKey) throws PEMException, InvalidKeySpecException, NoSuchAlgorithmException {
-        byte[] keyBytes = PemHelper.parseDERFromPEM(certAndKey, PemHelper.knowDelimeter(certAndKey, PemHelper.typeOfDelimeter.KEY_BEGIN),
-                PemHelper.knowDelimeter(certAndKey, PemHelper.typeOfDelimeter.KEY_END));
 
-        return PemHelper.generatePrivateKeyFromDER(keyBytes);
-    }
-    
-    public X509Certificate parseCertificate(byte[] certAndKey) throws PEMException, CertificateException {
-        byte[] certBytes = PemHelper.parseDERFromPEM(certAndKey, PemHelper.knowDelimeter(certAndKey, PemHelper.typeOfDelimeter.CERT_BEGIN),
-                PemHelper.knowDelimeter(certAndKey, PemHelper.typeOfDelimeter.CERT_END));
-
-        return PemHelper.generateCertificateFromDER(certBytes);
-    }
-
-    public void addEntryToKeyStore(X509Certificate addedCert, PrivateKey key) throws HeadlessException, InvalidNameException, KeyStoreException {
+    public void addEntryToKeyStore(X509Certificate addedCert, PrivateKey key, X509Certificate[] chain) throws HeadlessException, InvalidNameException, KeyStoreException {
         CertificateModel certModel = new CertificateModel(addedCert);
         CertificateDialog certDialog = null;
         if (!checkForSameCertificate(addedCert)) {
@@ -278,8 +291,10 @@ public class IdentityController extends CertManager {
         }
         if (certDialog != null && certDialog.isAddCert()) {
             String alias = useCommonNameAsAlias(addedCert);
-            X509Certificate[] chain = {addedCert};
-            
+            if(chain == null || chain.length == 0){
+                chain = new X509Certificate[]{addedCert};
+            }
+
             idStore.setKeyEntry(alias, key, passwd, chain);
             allCertificates.add(new CertificateModel(addedCert));
             refreshCertTable();
