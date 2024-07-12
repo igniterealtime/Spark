@@ -145,12 +145,14 @@ public final class MainWindow extends ChatFrame implements ActionListener {
             public void componentResized( ComponentEvent e )
             {
                 LayoutSettingsManager.getLayoutSettings().setMainWindowBounds( getBounds() );
+                LayoutSettingsManager.saveLayoutSettings();
             }
 
             @Override
             public void componentMoved( ComponentEvent e )
             {
                 LayoutSettingsManager.getLayoutSettings().setMainWindowBounds( getBounds() );
+                LayoutSettingsManager.saveLayoutSettings();
             }
         } );
 

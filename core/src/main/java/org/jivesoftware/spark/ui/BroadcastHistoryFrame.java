@@ -133,12 +133,14 @@ public class BroadcastHistoryFrame extends javax.swing.JFrame {
             public void componentResized( ComponentEvent e )
             {
                 LayoutSettingsManager.getLayoutSettings().setBroadcastHistoryBounds( getBounds() );
+                LayoutSettingsManager.saveLayoutSettings();
             }
 
             @Override
             public void componentMoved( ComponentEvent e )
             {
                 LayoutSettingsManager.getLayoutSettings().setBroadcastHistoryBounds( getBounds() );
+                LayoutSettingsManager.saveLayoutSettings();
             }
         } );
     }

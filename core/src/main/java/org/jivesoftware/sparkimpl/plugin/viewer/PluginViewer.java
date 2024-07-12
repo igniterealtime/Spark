@@ -259,12 +259,14 @@ public class PluginViewer extends JPanel implements Plugin
             public void componentResized( ComponentEvent e )
             {
                 LayoutSettingsManager.getLayoutSettings().setPluginViewerBounds( dialog.getBounds() );
+                LayoutSettingsManager.saveLayoutSettings();
             }
 
             @Override
             public void componentMoved( ComponentEvent e )
             {
                 LayoutSettingsManager.getLayoutSettings().setPluginViewerBounds( dialog.getBounds() );
+                LayoutSettingsManager.saveLayoutSettings();
             }
         } );
 
