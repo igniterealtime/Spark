@@ -232,7 +232,12 @@ public abstract class CertManager {
                 try (InputStream inputStream = new FileInputStream(file)) {
                     keyStore.load(inputStream, passwd);
                 } catch (IOException | NoSuchAlgorithmException | CertificateException e) {
-                    Log.error("Unable to access KeyStore", e);
+                    // try to open without a password
+                    try (InputStream inputStream = new FileInputStream(file)) {
+                        keyStore.load(inputStream, "".toCharArray());
+                    } catch (IOException | NoSuchAlgorithmException | CertificateException e2) {
+                        Log.error("Unable to access KeyStore " + file, e2);
+                    }
                 }
             } else {
                 keyStore.load(null, passwd); // if cannot open KeyStore then new empty one will be created
