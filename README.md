@@ -42,10 +42,11 @@ Please search for your issues in the bug tracker before reporting.
 Resources
 ---------
 
-- Documentation: http://www.igniterealtime.org/projects/spark/documentation.jsp
+- Translation: https://explore.transifex.com/igniterealtime/spark/
+- Documentation: https://www.igniterealtime.org/projects/spark/documentation.jsp
 - Community: https://discourse.igniterealtime.org/c/spark
 - Bug Tracker: https://igniterealtime.atlassian.net/browse/SPARK
-- Nightly Builds: http://www.igniterealtime.org/downloads/nightly_spark.jsp
+- Nightly Builds: https://www.igniterealtime.org/downloads/nightly_spark.jsp
 
 Ignite Realtime
 ===============
@@ -55,9 +56,9 @@ are interested in applying innovative, open-standards-based Real Time Collaborat
 We're aimed at disrupting proprietary, non-open standards-based systems and invite you to participate in what's already one 
 of the biggest and most active Open Source communities.
 
-[Spark]:http://www.igniterealtime.org/projects/spark/index.jsp
-[Openfire]:http://www.igniterealtime.org/projects/openfire/index.jsp
-[Ignite Realtime]:http://www.igniterealtime.org
+[Spark]:https://www.igniterealtime.org/projects/spark/index.jsp
+[Openfire]:https://www.igniterealtime.org/projects/openfire/index.jsp
+[Ignite Realtime]:https://www.igniterealtime.org
 
 Screenshots
 ---------
