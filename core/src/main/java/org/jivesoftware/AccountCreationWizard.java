@@ -281,11 +281,15 @@ public class AccountCreationWizard extends JPanel {
      * @param condition the error code.
      */
     private void accountCreationFailed( StanzaError.Condition condition ) {
-        String message = Res.getString("message.create.account");
+        String message;
         if (condition == StanzaError.Condition.conflict) {
             message = Res.getString("message.already.exists");
             usernameField.setText("");
             usernameField.requestFocus();
+        } else if (condition == StanzaError.Condition.not_allowed || condition == StanzaError.Condition.forbidden) {
+            message = Res.getString("message.create.account.not.allowed");
+        } else {
+            message = Res.getString("message.create.account");
         }
         UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
         JOptionPane.showMessageDialog(this, message, Res.getString("title.create.problem"), JOptionPane.ERROR_MESSAGE);
@@ -293,7 +297,7 @@ public class AccountCreationWizard extends JPanel {
     }
 
     /**
-     * Called if the account was created succesfully.
+     * Called if the account was created successfully.
      */
     private void accountCreationSuccessful() {
         registered = true;
