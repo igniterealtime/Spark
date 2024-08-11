@@ -78,6 +78,7 @@ import org.jxmpp.jid.DomainBareJid;
 import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.Jid;
 import org.jxmpp.jid.impl.JidCreate;
+import org.jxmpp.jid.parts.Localpart;
 import org.jxmpp.jid.parts.Resourcepart;
 import org.jxmpp.stringprep.XmppStringprepException;
 
@@ -834,56 +835,54 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
      * Create a new room based on room table selection.
      */
     private void createRoom() {
-	RoomCreationDialog mucRoomDialog = new RoomCreationDialog();
-	final MultiUserChat groupChat = mucRoomDialog.createGroupChat(
-		SparkManager.getMainWindow(), serviceName);
-	LocalPreferences pref = SettingsManager.getLocalPreferences();
+        RoomCreationDialog mucRoomDialog = new RoomCreationDialog();
+        final MultiUserChat groupChat = mucRoomDialog.createGroupChat(SparkManager.getMainWindow(), serviceName);
+        LocalPreferences pref = SettingsManager.getLocalPreferences();
 
-	if (null != groupChat) {
+        if (groupChat == null) {
+            return;
+        }
+        // Join Room
+        try {
+            GroupChatRoom room = UIComponentRegistry.createGroupChatRoom(groupChat);
 
-	    // Join Room
-	    try {
-		GroupChatRoom room = UIComponentRegistry.createGroupChatRoom(groupChat);
+            Resourcepart nickname = pref.getNickname();
+            groupChat.create(nickname);
+            chatManager.getChatContainer().addChatRoom(room);
+            chatManager.getChatContainer().activateChatRoom(room);
 
-		Resourcepart nickname = pref.getNickname();
-		groupChat.create(nickname);
-		chatManager.getChatContainer().addChatRoom(room);
-		chatManager.getChatContainer().activateChatRoom(room);
+            // Send Form
+            FillableForm form = groupChat.getConfigurationForm().getFillableForm();
+            if (mucRoomDialog.isPasswordProtected()) {
+                String password = mucRoomDialog.getPassword();
+                room.setPassword(password);
+                form.setAnswer("muc#roomconfig_passwordprotectedroom", true);
+                form.setAnswer("muc#roomconfig_roomsecret", password);
+            }
+            form.setAnswer("muc#roomconfig_roomname", mucRoomDialog.getRoomName());
+            form.setAnswer("muc#roomconfig_roomdesc", mucRoomDialog.getRoomTopic());
 
-		// Send Form
-		FillableForm form = groupChat.getConfigurationForm().getFillableForm();
-		if (mucRoomDialog.isPasswordProtected()) {
-		    String password = mucRoomDialog.getPassword();
-		    room.setPassword(password);
-		    form.setAnswer("muc#roomconfig_passwordprotectedroom", true);
-		    form.setAnswer("muc#roomconfig_roomsecret", password);
-		}
-		form.setAnswer("muc#roomconfig_roomname",
-			mucRoomDialog.getRoomName());
-		form.setAnswer("muc#roomconfig_roomdesc",
-			mucRoomDialog.getRoomTopic());
+            if (mucRoomDialog.isPermanent()) {
+                form.setAnswer("muc#roomconfig_persistentroom", true);
+            }
 
-		if (mucRoomDialog.isPermanent()) {
-		    form.setAnswer("muc#roomconfig_persistentroom", true);
-		}
+            List<String> owners = new ArrayList<>(1);
+            owners.add(SparkManager.getSessionManager().getUserBareAddress().toString());
+            form.setAnswer("muc#roomconfig_roomowners", owners);
 
-		List<String> owners = new ArrayList<>();
-		owners.add(SparkManager.getSessionManager().getUserBareAddress().toString());
-		form.setAnswer("muc#roomconfig_roomowners", owners);
-
-		// new DataFormDialog(groupChat, form);
-		groupChat.sendConfigurationForm(form);
-        addRoomToTable(groupChat.getRoom(), groupChat.getRoom().getLocalpart(), 1);
-	    } catch (XMPPException | SmackException | InterruptedException e1) {
-		Log.error("Error creating new room.", e1);
-		UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
-		JOptionPane
-			.showMessageDialog(this,
-				Res.getString("message.room.creation.error"),
-				Res.getString("title.error"),
-				JOptionPane.ERROR_MESSAGE);
-	    }
-	}
+            // new DataFormDialog(groupChat, form);
+            groupChat.sendConfigurationForm(form);
+            EntityBareJid groupChatRoom = groupChat.getRoom();
+            Localpart roomName = groupChatRoom.getLocalpart();
+            addRoomToTable(groupChatRoom, roomName, 1);
+        } catch (XMPPException | SmackException | InterruptedException e1) {
+            Log.error("Error creating new room.", e1);
+            UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
+            JOptionPane.showMessageDialog(this,
+                Res.getString("message.room.creation.error"),
+                Res.getString("title.error"),
+                JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     /**
