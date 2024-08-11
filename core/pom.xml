@@ -239,7 +239,7 @@
         <dependency>
             <groupId>com.install4j</groupId>
             <artifactId>install4j-runtime</artifactId>
-            <version>10.0.4</version>
+            <version>10.0.8</version>
         </dependency>
 
         <dependency>
@@ -294,10 +294,6 @@
     </dependencies>
     
     <repositories>
-        <repository>
-            <id>maven-snapshots-repo</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </repository>
         <repository>
             <id>ej-technologies</id>
             <url>https://maven.ej-technologies.com/repository/</url>
