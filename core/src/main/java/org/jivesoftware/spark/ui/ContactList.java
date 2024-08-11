@@ -1133,7 +1133,7 @@ public class ContactList extends JPanel implements ActionListener,
         ContactGroup cGroup = null;
 
         for (ContactGroup contactGroup : groupList) {
-            if (contactGroup.getGroupName().equals(groupName)) {
+            if (contactGroup.getGroupName().equalsIgnoreCase(groupName)) {
                 cGroup = contactGroup;
                 break;
             } else {
@@ -1181,7 +1181,7 @@ public class ContactList extends JPanel implements ActionListener,
         ContactGroup grp = null;
 
         for (ContactGroup contactGroup : group.getContactGroups()) {
-            if (contactGroup.getGroupName().equals(groupName)) {
+            if (contactGroup.getGroupName().equalsIgnoreCase(groupName)) {
                 grp = contactGroup;
                 break;
             } else if (!contactGroup.getContactGroups().isEmpty()) {
