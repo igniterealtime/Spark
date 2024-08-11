@@ -1187,15 +1187,13 @@ public class ContactList extends JPanel implements ActionListener,
      * @return the nested ContactGroup. If not found, null will be returned.
      */
     private ContactGroup getSubContactGroup(ContactGroup group, String groupName) {
-        final Iterator<ContactGroup> contactGroups = group.getContactGroups().iterator();
         ContactGroup grp = null;
 
-        while (contactGroups.hasNext()) {
-            ContactGroup contactGroup = contactGroups.next();
+        for (ContactGroup contactGroup : group.getContactGroups()) {
             if (contactGroup.getGroupName().equals(groupName)) {
                 grp = contactGroup;
                 break;
-            } else if (contactGroup.getContactGroups().size() > 0) {
+            } else if (!contactGroup.getContactGroups().isEmpty()) {
                 grp = getSubContactGroup(contactGroup, groupName);
                 if (grp != null) {
                     break;
