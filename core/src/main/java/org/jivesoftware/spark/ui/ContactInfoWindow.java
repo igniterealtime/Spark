@@ -31,7 +31,9 @@ import javax.swing.JWindow;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smack.packet.StanzaError.Condition;
 import org.jivesoftware.smackx.vcardtemp.packet.VCard;
 import org.jivesoftware.smackx.iqlast.packet.LastActivity;
 import org.jivesoftware.smackx.iqlast.LastActivityManager;
@@ -261,9 +263,14 @@ public class ContactInfoWindow extends JPanel {
 	                    status += Res.getString("message.idle.for", time);
 	                }
 	            }
-	        } catch (Exception e1) {
-	            Log.warning( "Unable to get Last Activity from: " + contactItem.toString(), e1 );
-	        }
+            } catch (XMPPException.XMPPErrorException e) {
+                Condition condition = e.getStanzaError().getCondition();
+                if (condition != Condition.feature_not_implemented) {
+                    Log.warning("Unable to get Last Activity from: " + contactItem, e);
+                }
+            } catch (Exception e) {
+                Log.warning("Unable to get Last Activity from: " + contactItem, e);
+            }
         }
         statusLabel.setText(status);
 
