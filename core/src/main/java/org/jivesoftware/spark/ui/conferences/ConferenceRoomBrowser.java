@@ -50,6 +50,7 @@ import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.packet.StanzaError;
 import org.jivesoftware.smackx.muc.MultiUserChatManager;
 import org.jivesoftware.smackx.xdata.form.FillableForm;
 import org.jivesoftware.smackx.bookmarks.BookmarkedConference;
@@ -549,8 +550,13 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
                             Log.error("Error setting up GroupChatTable", e);
                         }
                     }
+                } catch (XMPPException.XMPPErrorException e) {
+                    StanzaError.Condition condition = e.getStanzaError().getCondition();
+                    if (condition != StanzaError.Condition.feature_not_implemented && condition != StanzaError.Condition.service_unavailable) {
+                        Log.error("Unable to retrieve list of rooms from " + serviceName, e);
+                    }
                 } catch (Exception e) {
-                    Log.error("Unable to retrieve list of rooms.", e);
+                    Log.error("Unable to retrieve list of rooms from " + serviceName, e);
                 }
                 stopLoadingImg();
             }
