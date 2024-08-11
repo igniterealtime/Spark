@@ -873,8 +873,8 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
             // new DataFormDialog(groupChat, form);
             groupChat.sendConfigurationForm(form);
             EntityBareJid groupChatRoom = groupChat.getRoom();
-            Localpart roomName = groupChatRoom.getLocalpart();
-            addRoomToTable(groupChatRoom, roomName, 1);
+            Localpart localpart = groupChatRoom.getLocalpart();
+            addRoomToTable(groupChatRoom, localpart.toString(), 1);
         } catch (XMPPException | SmackException | InterruptedException e1) {
             Log.error("Error creating new room.", e1);
             UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
@@ -896,7 +896,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
      *            the number of occupants in the conference room. If -1 is
      *            specified, the the occupant count will show as n/a.
      */
-    private void addRoomToTable(final EntityBareJid jid, final CharSequence roomName,
+    private void addRoomToTable(final EntityBareJid jid, final String roomName,
 	    final int numberOfOccupants) {
         SwingWorker addRoomThread = new SwingWorker() {
 
@@ -938,7 +938,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
                     occupants = "n/a";
                 }
 
-                return new Object[] { iconLabel, roomName.toString(), jid.getLocalpart().toString(), occupants };
+                return new Object[] { iconLabel, roomName, jid.getLocalpart().toString(), occupants };
             }
             
             @Override
