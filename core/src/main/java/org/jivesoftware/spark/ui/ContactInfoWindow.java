@@ -265,7 +265,7 @@ public class ContactInfoWindow extends JPanel {
 	            }
             } catch (XMPPException.XMPPErrorException e) {
                 Condition condition = e.getStanzaError().getCondition();
-                if (condition != Condition.feature_not_implemented) {
+                if (condition != Condition.feature_not_implemented && condition != Condition.service_unavailable) {
                     Log.warning("Unable to get Last Activity from: " + contactItem, e);
                 }
             } catch (Exception e) {
