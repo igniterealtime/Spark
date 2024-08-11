@@ -50,6 +50,7 @@ import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.packet.StanzaError;
 import org.jivesoftware.smackx.muc.MultiUserChatManager;
 import org.jivesoftware.smackx.xdata.form.FillableForm;
 import org.jivesoftware.smackx.bookmarks.BookmarkedConference;
@@ -502,19 +503,9 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
 
             @Override
             public void run() {
+                String errorMsg = null;
                 try {
                     rooms = MultiUserChatManager.getInstanceFor(SparkManager.getConnection()).getRoomsHostedBy(serviceName);
-
-                    if (rooms == null) {
-                    	UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
-                        JOptionPane.showMessageDialog(conferences,
-                            Res.getString("message.conference.info.error"),
-                            Res.getString("title.error"),
-                            JOptionPane.ERROR_MESSAGE);
-                        if (dlg != null) {
-                        dlg.dispose();
-                        }
-                    }else{
                         try {
                             for (Map.Entry<EntityBareJid, HostedRoom> room : rooms.entrySet()) {
 
@@ -548,11 +539,30 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
                         } catch (Exception e) {
                             Log.error("Error setting up GroupChatTable", e);
                         }
+                } catch (XMPPException.XMPPErrorException e) {
+                    StanzaError.Condition condition = e.getStanzaError().getCondition();
+                    if (condition != StanzaError.Condition.feature_not_implemented && condition != StanzaError.Condition.service_unavailable) {
+                        Log.error("Unable to retrieve list of rooms from " + serviceName + ": " + e);
+                        errorMsg = e.getMessage();
+                    } else {
+                        errorMsg = Res.getString("message.conference.rooms.unsupported");
                     }
                 } catch (Exception e) {
-                    Log.error("Unable to retrieve list of rooms.", e);
+                    Log.error("Unable to retrieve list of rooms from " + serviceName, e);
+                    errorMsg = e.getMessage();
                 }
                 stopLoadingImg();
+                // if there was an error show it to a user
+                if (errorMsg != null) {
+                    UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
+                    JOptionPane.showMessageDialog(conferences,
+                        Res.getString("message.conference.info.error") + "\n" + errorMsg,
+                        Res.getString("title.error"),
+                        JOptionPane.ERROR_MESSAGE);
+                    if (dlg != null) {
+                        dlg.dispose();
+                    }
+                }
             }
         };
 
