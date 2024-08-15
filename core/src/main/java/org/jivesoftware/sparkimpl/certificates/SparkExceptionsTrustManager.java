@@ -17,15 +17,16 @@ import javax.net.ssl.X509TrustManager;
 import org.jivesoftware.spark.util.log.Log;
 
 /**
- * This TrustManager serves for purpose of accepting certificates from exceptions lists. The only check it does is check
- * if certification path can be builded. It doesn't do any checks against time of expiration or revocation.
+ * This TrustManager serves for purpose of accepting certificates from exceptions lists.
+ * The only check it does is check if certification path can be built.
+ * It doesn't do any checks against time of expiration or revocation.
  * 
  * @author Pawel Scibiorski
- *
  */
 public class SparkExceptionsTrustManager extends GeneralTrustManager implements X509TrustManager {
 
     KeyStore exceptionsStore, cacertsExceptionsStore;
+
     public SparkExceptionsTrustManager() {
         loadKeyStores();
     }
@@ -51,9 +52,10 @@ public class SparkExceptionsTrustManager extends GeneralTrustManager implements 
     }
 
     /**
-     * Validate certificate path. As it is exception, no checks against revocation or time validity are done but path
-     * still have to be validated in order to find connection between certificate presented by server and root CA in
-     * KeyStore
+     * Validate certificate path.
+     * As it is exception, no checks against revocation or time validity are done.
+     * But the path still have to be validated in order to find connection between
+     * certificate presented by server and root CA in KeyStore
      * 
      * @throws NoSuchAlgorithmException
      * @throws KeyStoreException
@@ -70,8 +72,8 @@ public class SparkExceptionsTrustManager extends GeneralTrustManager implements 
             throw new IllegalArgumentException("Method cannot be used with self-signed certificate.");
         }
 
-        // The certificate representing the {@link TrustAnchor TrustAnchor} should not be included in the certification
-        // path. If it does, certain validation (like OCSP) might give unexpected results/fail. SPARK-2188
+        // The certificate representing the {@link TrustAnchor} should not be included in the certification path.
+        // If it does, certain validation (like OCSP) might give unexpected results/fail. SPARK-2188
         final List<X509Certificate> certificates = Arrays.stream(chain)
             .filter( cert -> !SparkTrustManager.isRootCACertificate(cert))
             .collect(Collectors.toList());
@@ -101,7 +103,6 @@ public class SparkExceptionsTrustManager extends GeneralTrustManager implements 
             PKIXCertPathValidatorResult validationResult = (PKIXCertPathValidatorResult) certPathValidator
                 .validate(certPath, parameters);
             X509Certificate trustAnchor = validationResult.getTrustAnchor().getTrustedCert();
-
             if (trustAnchor == null) {
                 throw new CertificateException("certificate path failed: Trusted CA is NULL");
             }
@@ -130,7 +131,6 @@ public class SparkExceptionsTrustManager extends GeneralTrustManager implements 
         } else {
             return exceptionsStore.getCertificateAlias(chain[chain.length - 1]) != null;
         }
-        
     }
     
     /**
@@ -140,12 +140,8 @@ public class SparkExceptionsTrustManager extends GeneralTrustManager implements 
     protected void loadKeyStores() {
         exceptionsStore = certControll.openKeyStore(CertificateController.EXCEPTIONS);
         cacertsExceptionsStore = certControll.openKeyStore(CertificateController.CACERTS_EXCEPTIONS);
-        try {
-            loadAllStore();
-        } catch (KeyStoreException | NoSuchAlgorithmException | CertificateException | IOException | HeadlessException e) {
-            Log.error("Cannot create allStore KeyStore");
-        }
-        
+        loadAllStore();
+
         try {
             addKeyStoreContentToAllStore(exceptionsStore);
         } catch (HeadlessException | KeyStoreException | InvalidNameException e) {
@@ -156,7 +152,6 @@ public class SparkExceptionsTrustManager extends GeneralTrustManager implements 
         } catch (HeadlessException | KeyStoreException | InvalidNameException e) {
            Log.error("Cannot add cacertsExceptionsStore to allStore", e);
         }
-
     }
 
 }
