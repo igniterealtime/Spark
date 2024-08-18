@@ -104,40 +104,6 @@ public class URLFileSystem {
         out.flush();
     }
 
-    /**
-     * If a dot ('.') occurs in the path portion of the {@link URL}, then
-     * all of the text starting at the last dot is returned, including
-     * the dot.  If the last dot is also the last character in the path,
-     * then the dot by itself is returned.  If there is no dot in the
-     * path, then the empty string is returned.
-     *
-     * @param url the URL.
-     * @return suffix of url path
-     */
-    public static String getSuffix(URL url) {
-        final String path = url.getPath();
-        int lastDot = path.lastIndexOf('.');
-
-        return (lastDot >= 0) ? path.substring(lastDot) : "";
-    }
-
-    /**
-     * If a dot ('.') occurs in the path portion of the {@link File}, then
-     * all of the text starting at the last dot is returned, including
-     * the dot.  If the last dot is also the last character in the path,
-     * then the dot by itself is returned.  If there is no dot in the
-     * path, then the empty string is returned.
-     *
-     * @param file the File.
-     * @return suffix of filename
-     */
-    public static String getSuffix(File file) {
-        final String path = file.getAbsolutePath();
-        int lastDot = path.lastIndexOf('.');
-
-        return (lastDot >= 0) ? path.substring(lastDot) : "";
-    }
-
     //--------------------------------------------------------------------------
     //  URLFileSystemHelper public API...
     //--------------------------------------------------------------------------

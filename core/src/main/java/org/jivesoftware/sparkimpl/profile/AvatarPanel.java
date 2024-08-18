@@ -19,7 +19,6 @@ import org.jivesoftware.resource.Res;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.SwingWorker;
-import org.jivesoftware.spark.util.URLFileSystem;
 import org.jivesoftware.spark.util.log.Log;
 
 import net.coobird.thumbnailator.Thumbnails;
@@ -47,8 +46,9 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
+
+import static org.apache.commons.lang3.StringUtils.endsWithAny;
 
 /**
  * UI to view/edit avatar.
@@ -101,7 +101,7 @@ public class AvatarPanel extends JPanel implements ActionListener {
     /**
      * Sets if the Avatar can be edited.
      *
-     * @param editable true if edtiable.
+     * @param editable true if editable.
      */
     public void setEditable(boolean editable) {
         browseButton.setVisible(editable);
@@ -109,7 +109,7 @@ public class AvatarPanel extends JPanel implements ActionListener {
     }
 
     /**
-     * Sets the displayable icon with the users avatar.
+     * Sets the displayable icon with the user's avatar.
      *
      * @param icon the icon.
      */
@@ -167,22 +167,13 @@ public class AvatarPanel extends JPanel implements ActionListener {
 
         fileChooser.setVisible(true);
 
-        if (fileChooser.getDirectory() != null && fileChooser.getFile() != null) {
-            File file = new File(fileChooser.getDirectory(), fileChooser.getFile());
-            String suffix = URLFileSystem.getSuffix(file);
-            if (suffix.toLowerCase().equals(".jpeg") ||
-                    suffix.toLowerCase().equals(".gif") ||
-                    suffix.toLowerCase().equals(".jpg") ||
-                    suffix.toLowerCase().equals(".png")) {
-                changeAvatar(file, this);
-            }
-            else {
-                UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
-                JOptionPane.showMessageDialog(this, "Please choose a valid image file.", Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
-            }
-
-
+        final File[] files = fileChooser.getFiles();
+        if (files.length == 0) {
+            // no selection
+            return;
         }
+        File file = files[0]; // Single-file selection is used. Using the first array item is safe.
+        changeAvatar(file, this);
     }
 
     private void changeAvatar(final File selectedFile, final Component parent) {
@@ -195,6 +186,10 @@ public class AvatarPanel extends JPanel implements ActionListener {
             @Override
 			public void finished() {
                 BufferedImage avatarImage = (BufferedImage)get();
+                if (avatarImage == null) {
+                    UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
+                    JOptionPane.showMessageDialog(parent, "Please choose a valid image file.", Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
+                }
                 String message = "";
                 int finalImageWidth = avatarImage.getWidth();
                 int finalImageHeight = avatarImage.getHeight();
@@ -239,47 +234,6 @@ public class AvatarPanel extends JPanel implements ActionListener {
         worker.start();
     }
 
-    public static class ImageFilter implements FilenameFilter {
-        public final String jpeg = "jpeg";
-        public final String jpg = "jpg";
-        public final String gif = "gif";
-        public final String png = "png";
-
-        //Accept all directories and all gif, jpg, tiff, or png files.
-        @Override
-		public boolean accept(File f, String string) {
-            if (f.isDirectory()) {
-                return true;
-            }
-
-            String extension = getExtension(f);
-            if (extension != null) {
-                return extension.equals(gif) || extension.equals(jpeg) || extension.equals(jpg) || extension.equals(png);
-            }
-
-            return false;
-        }
-
-        /*
-        * Get the extension of a file.
-        */
-        public String getExtension(File f) {
-            String ext = null;
-            String s = f.getName();
-            int i = s.lastIndexOf('.');
-
-            if (i > 0 && i < s.length() - 1) {
-                ext = s.substring(i + 1).toLowerCase();
-            }
-            return ext;
-        }
-
-        //The description of this filter
-        public String getDescription() {
-            return "*.JPEG, *.GIF, *.PNG";
-        }
-    }
-
     public void allowEditing(boolean allowEditing) {
         Component[] comps = getComponents();
         if (comps != null) {
@@ -294,7 +248,7 @@ public class AvatarPanel extends JPanel implements ActionListener {
     public void initFileChooser() {
         if (fileChooser == null) {
             fileChooser = new FileDialog(dlg, "Choose Avatar", FileDialog.LOAD);
-            fileChooser.setFilenameFilter(new ImageFilter());
+            fileChooser.setFilenameFilter((dir, name) -> endsWithAny(name.toLowerCase(), ".jpeg", ".jpg", ".gif", ".png"));
         }
     }
 
@@ -313,7 +267,7 @@ public class AvatarPanel extends JPanel implements ActionListener {
         try {
             BufferedImage avatarImageBuffered = ImageIO.read(selectedFile);
             int currentImageWidth = avatarImageBuffered.getWidth(null);
-            int currentImageHeight = avatarImageBuffered.getHeight(null);            
+            int currentImageHeight = avatarImageBuffered.getHeight(null);
             if (currentImageHeight <= 96 && currentImageWidth <= 96) {
                 // no need to resize
                 resizedImage = avatarImageBuffered;
