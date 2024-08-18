@@ -21,6 +21,8 @@ import org.jivesoftware.resource.Res;
 import java.util.Iterator;
 import java.util.ListIterator;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
 /**
  * Utility methods frequently used by data classes and design-time
  * classes.
@@ -41,7 +43,7 @@ public final class ModelUtil {
      * @return True if string is null or empty
      */
     public static boolean hasLength(CharSequence s) {
-        return (s != null && !s.toString().trim().isEmpty());
+        return isNotBlank(s);
     }
 
 
