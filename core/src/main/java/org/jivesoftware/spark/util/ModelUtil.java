@@ -67,24 +67,19 @@ public final class ModelUtil {
         long numHours = diff / MS_IN_AN_HOUR;
         diff = diff % MS_IN_AN_HOUR;
         long numMinutes = diff / MS_IN_A_MINUTE;
-        if (numMinutes == 0) {
+        if (numDays == 0 && numHours == 0 && numMinutes == 0) {
             return LESS_THAN_ONE_MINUTE;
         }
 
-        StringBuilder buf = new StringBuilder();
-
+        StringBuilder buf = new StringBuilder(40);
         if(numDays > 0){
-            buf.append(numDays).append(" ").append(DAYS).append(", ");
+            buf.append(numDays).append(' ').append(DAYS).append(", ");
         }
-
         if (numHours > 0) {
-            buf.append(numHours).append(" ").append(HOURS).append(", ");
+            buf.append(numHours).append(' ').append(HOURS).append(", ");
         }
-
-        buf.append(numMinutes).append(" ").append(MINUTES);
-
-        String result = buf.toString();
-        return result;
+        buf.append(numMinutes).append(' ').append(MINUTES);
+        return buf.toString();
     }
 
 
