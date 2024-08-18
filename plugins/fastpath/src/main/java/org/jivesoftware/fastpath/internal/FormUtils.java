@@ -155,49 +155,4 @@ final public class FormUtils {
         return message.getFrom().getResourceOrThrow();
     }
 
-    /**
-     * Returns better looking time String.
-     * @param seconds the number of seconds to calculate.
-     */
-    public static String getTimeFromLong(long seconds) {
-        final String DAYS = Res.getString("time.days");
-        final String HOURS = Res.getString("time.hours");
-        final String MINUTES = Res.getString("time.minutes");
-        final String SECONDS = Res.getString("time.seconds");
-        final String LESS_THAN_ONE_MINUTE = Res.getString("time.less.than.one.minute");
-
-        final long MS_IN_A_DAY = 1000 * 60 * 60 * 24;
-        final long MS_IN_AN_HOUR = 1000 * 60 * 60;
-        final long MS_IN_A_MINUTE = 1000 * 60;
-        final long MS_IN_A_SECOND = 1000;
-        Date currentTime = new Date();
-        long numDays = seconds / MS_IN_A_DAY;
-        seconds = seconds % MS_IN_A_DAY;
-        long numHours = seconds / MS_IN_AN_HOUR;
-        seconds = seconds % MS_IN_AN_HOUR;
-        long numMinutes = seconds / MS_IN_A_MINUTE;
-        seconds = seconds % MS_IN_A_MINUTE;
-        long numSeconds = seconds / MS_IN_A_SECOND;
-        seconds = seconds % MS_IN_A_SECOND;
-        long numMilliseconds = seconds;
-
-        StringBuilder buf = new StringBuilder();
-        if (numHours > 0) {
-            buf.append(numHours).append(" ").append(HOURS).append(", ");
-        }
-
-        if (numMinutes > 0) {
-            buf.append(numMinutes).append(" ").append(MINUTES);
-        }
-
-        String result = buf.toString();
-
-        if (numMinutes < 1) {
-            result = LESS_THAN_ONE_MINUTE;
-        }
-
-        return result;
-    }
-
-
 }
