@@ -51,13 +51,12 @@ public final class ModelUtil {
      * Returns a formatted String from time.
      *
      * @param diff the amount of elapsed time.
-     * @return the formatte String.
+     * @return the formatted String.
      */
     public static String getTimeFromLong(long diff) {
         final String DAYS = Res.getString("time.days");
         final String HOURS = Res.getString("time.hours");
         final String MINUTES = Res.getString("time.minutes");
-        final String SECONDS = Res.getString("time.seconds");
         final String LESS_THAN_ONE_MINUTE = Res.getString("time.less.than.one.minute");
 
         final long MS_IN_A_DAY = 1000 * 60 * 60 * 24;
@@ -68,6 +67,9 @@ public final class ModelUtil {
         long numHours = diff / MS_IN_AN_HOUR;
         diff = diff % MS_IN_AN_HOUR;
         long numMinutes = diff / MS_IN_A_MINUTE;
+        if (numMinutes == 0) {
+            return LESS_THAN_ONE_MINUTE;
+        }
 
         StringBuilder buf = new StringBuilder();
 
@@ -79,18 +81,9 @@ public final class ModelUtil {
             buf.append(numHours).append(" ").append(HOURS).append(", ");
         }
 
-        if (numMinutes > 0) {
-            buf.append(numMinutes).append(" ").append(MINUTES);
-        }
-
-        //buf.append(numSeconds + " " + SECONDS);
+        buf.append(numMinutes).append(" ").append(MINUTES);
 
         String result = buf.toString();
-
-        if (numMinutes < 1) {
-            result = LESS_THAN_ONE_MINUTE;
-        }
-
         return result;
     }
 
