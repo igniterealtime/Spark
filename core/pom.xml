@@ -132,6 +132,21 @@
             <version>${dependency.smack.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.igniterealtime.smack</groupId>
+            <artifactId>smack-sasl-javax</artifactId>
+            <version>${dependency.smack.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.igniterealtime.smack</groupId>
+            <artifactId>smack-xmlparser</artifactId>
+            <version>${dependency.smack.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.igniterealtime.smack</groupId>
+            <artifactId>smack-core</artifactId>
+            <version>${dependency.smack.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.igniterealtime.spark</groupId>
             <artifactId>emoticons</artifactId>
             <version>${project.version}</version>
@@ -164,6 +179,21 @@
             <type>zip</type>
         </dependency>
         <dependency>
+            <groupId>org.minidns</groupId>
+            <artifactId>minidns-core</artifactId>
+            <version>1.0.5</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jxmpp</groupId>
+            <artifactId>jxmpp-core</artifactId>
+            <version>1.0.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jxmpp</groupId>
+            <artifactId>jxmpp-jid</artifactId>
+            <version>1.0.3</version>
+        </dependency>
+        <dependency>
             <groupId>org.dom4j</groupId>
             <artifactId>dom4j</artifactId>
             <version>2.1.4</version>
@@ -172,6 +202,11 @@
             <groupId>org.apache.httpcomponents.client5</groupId>
             <artifactId>httpclient5</artifactId>
             <version>5.2.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents.core5</groupId>
+            <artifactId>httpcore5</artifactId>
+            <version>5.2.4</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -189,6 +224,11 @@
             <artifactId>jna-platform</artifactId>
             <version>5.12.1</version>
         </dependency>
+        <dependency>
+            <groupId>net.java.dev.jna</groupId>
+            <artifactId>jna</artifactId>
+            <version>5.12.1</version>
+        </dependency>
 
         <dependency>
             <groupId>com.thoughtworks.xstream</groupId>
@@ -199,7 +239,7 @@
         <dependency>
             <groupId>com.install4j</groupId>
             <artifactId>install4j-runtime</artifactId>
-            <version>10.0.4</version>
+            <version>10.0.8</version>
         </dependency>
 
         <dependency>
@@ -254,10 +294,6 @@
     </dependencies>
     
     <repositories>
-        <repository>
-            <id>maven-snapshots-repo</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </repository>
         <repository>
             <id>ej-technologies</id>
             <url>https://maven.ej-technologies.com/repository/</url>
