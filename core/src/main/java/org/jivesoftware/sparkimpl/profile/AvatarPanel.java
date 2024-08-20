@@ -256,31 +256,15 @@ public class AvatarPanel extends JPanel implements ActionListener {
         this.dlg = dialog;
     }
     /*
-     * Resize images larger than 96 pixels
-     * without changing aspect ratio.
+     * Resize images larger than 96 pixels without changing aspect ratio.
      * Returns modified image as BufferedImage.
      */
     private BufferedImage resizeImage(File selectedFile) {
-
-        int targetImagePixels = 64;
         BufferedImage resizedImage = null;
         try {
-            BufferedImage avatarImageBuffered = ImageIO.read(selectedFile);
-            int currentImageWidth = avatarImageBuffered.getWidth(null);
-            int currentImageHeight = avatarImageBuffered.getHeight(null);
-            if (currentImageHeight <= 96 && currentImageWidth <= 96) {
-                // no need to resize
-                resizedImage = avatarImageBuffered;
-            } else {
-                double scaleFactor;
-                if (currentImageHeight > currentImageWidth) {
-                    scaleFactor = (double) targetImagePixels / (double) currentImageHeight;
-                } else {
-                    scaleFactor = (double) targetImagePixels / (double) currentImageWidth;
-                }
-                // resize image
-                resizedImage = Thumbnails.of(avatarImageBuffered).scale(scaleFactor).asBufferedImage();
-            }
+            resizedImage = Thumbnails.of(selectedFile)
+                .size(96, 96)
+                .asBufferedImage();
         } catch (IOException ex) {
             Log.error(ex);
         }
