@@ -185,7 +185,7 @@ public class LocalPreferences {
     /**
      * Checks if the preferences contain any stored/saved account passwords.
      *
-     * @return true if at least one stored account passsword was found, otherwise null.
+     * @return true if at least one stored account password was found, otherwise null.
      */
 	public boolean hasStoredPasswords() {
         return !findPropertyNamesForStoredPasswords().isEmpty();
@@ -210,7 +210,7 @@ public class LocalPreferences {
 	private Set<String> findPropertyNamesForStoredPasswords() {
         return props.stringPropertyNames().stream()
             // The property name starts with 'password'.
-            .filter(name -> name.startsWith("password"))
+            .filter(name -> name.startsWith("password") && !name.equals("passwordSaved"))
 
             // The value of the property is an encrypted value.
             .filter( name -> {
