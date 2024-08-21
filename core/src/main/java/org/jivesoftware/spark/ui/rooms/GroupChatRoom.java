@@ -16,6 +16,7 @@
  */
 package org.jivesoftware.spark.ui.rooms;
 
+import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.SmackException;
@@ -48,6 +49,7 @@ import org.jivesoftware.spark.ui.conferences.GroupChatParticipantList;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.UIComponentRegistry;
 import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jxmpp.jid.*;
@@ -278,9 +280,13 @@ public class GroupChatRoom extends ChatRoom
         final RolloverButton thema = UIComponentRegistry.getButtonFactory().createTemaButton();
         final RolloverButton register = UIComponentRegistry.getButtonFactory().createRegisterButton();
 
-        addControllerButton( settings );
+        //addControllerButton( settings );
+        //if (!Default.getBoolean(Default.CONFERENCE_BUTTON_SETTINGS_DISABLED) && Enterprise.containsFeature(Enterprise.CONFERENCE_BUTTON_SETTINGS_FEATURE)) addControllerButton( settings );
+        if (!Default.getBoolean(Default.CONFERENCE_BUTTON_SETTINGS_DISABLED)) addControllerButton( settings );
         addControllerButton( thema );
-        addControllerButton( register );
+        //addControllerButton( register );
+        //if (!Default.getBoolean(Default.CONFERENCE_BUTTON_REGISTER_DISABLED) && Enterprise.containsFeature(Enterprise.CONFERENCE_BUTTON_REGISTER_FEATURE)) addControllerButton( register );
+        if (!Default.getBoolean(Default.CONFERENCE_BUTTON_REGISTER_DISABLED)) addControllerButton( register );
 
         settings.addActionListener( new AbstractAction()
         {

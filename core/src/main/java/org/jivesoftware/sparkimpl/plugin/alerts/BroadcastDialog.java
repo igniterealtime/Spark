@@ -238,12 +238,14 @@ public class BroadcastDialog extends JPanel {
             public void componentResized( ComponentEvent e )
             {
                 LayoutSettingsManager.getLayoutSettings().setBroadcastMessageBounds( dlg.getBounds() );
+                LayoutSettingsManager.saveLayoutSettings();
             }
 
             @Override
             public void componentMoved( ComponentEvent e )
             {
                 LayoutSettingsManager.getLayoutSettings().setBroadcastMessageBounds( dlg.getBounds() );
+                LayoutSettingsManager.saveLayoutSettings();
             }
         } );
 

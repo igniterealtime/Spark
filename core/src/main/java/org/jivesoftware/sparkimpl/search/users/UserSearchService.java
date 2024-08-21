@@ -109,7 +109,8 @@ public class UserSearchService implements Searchable {
         final JDialog dialog = new JDialog(frame, Res.getString("title.person.search"), false);
         dialog.getContentPane().add(searchForm);
         dialog.pack();
-        dialog.setSize(500, 500);
+        //dialog.setSize(500, 500);
+        dialog.setSize(700, 500);
 
         GraphicUtils.centerWindowOnScreen(dialog);
         dialog.setVisible(true);

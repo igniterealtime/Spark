@@ -148,6 +148,13 @@ public class Default {
     public static final String PROXY_PROTOCOL = "PROXY_PROTOCOL";
     public static final String IDLE_LOCK = "IDLE_LOCK";
     public static final String IDLE_TIME = "IDLE_TIME";
+    public static final String UNFILEDGROUP_DISABLED = "UNFILEDGROUP_DISABLED";
+    public static final String ALLOW_NICKNAME_CHANGE_DISABLED = "ALLOW_NICKNAME_CHANGE_DISABLED";
+    public static final String CONFERENCE_BUTTON_SETTINGS_DISABLED = "CONFERENCE_BUTTON_SETTINGS_DISABLED";
+    public static final String CONFERENCE_BUTTON_REGISTER_DISABLED = "CONFERENCE_BUTTON_REGISTER_DISABLED";
+    public static final String SHOW_FULL_JID_ADDRESS = "SHOW_FULL_JID_ADDRESS";
+    public static final String EDIT_AVATAR_ONLY = "EDIT_AVATAR_ONLY";
+    public static final String DISABLE_LOOKUP_PROFILE = "DISABLE_LOOKUP_PROFILE";
 
     private static final ClassLoader cl = SparkRes.class.getClassLoader();
 

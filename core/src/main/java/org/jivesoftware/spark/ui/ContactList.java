@@ -197,7 +197,9 @@ public class ContactList extends JPanel implements ActionListener,
         }
 
         // Add ActionListener(s) to menus
-        addContactGroup(unfiledGroup);
+        //addContactGroup(unfiledGroup);
+        //if (!Default.getBoolean(Default.UNFILEDGROUP_DISABLED) && Enterprise.containsFeature(Enterprise.UNFILEDGROUP_FEATURE)) addContactGroup(unfiledGroup);
+        if (!Default.getBoolean(Default.UNFILEDGROUP_DISABLED)) addContactGroup(unfiledGroup);
         addContactGroup(offlineGroup);
 
         showHideMenu.setSelected(false);
