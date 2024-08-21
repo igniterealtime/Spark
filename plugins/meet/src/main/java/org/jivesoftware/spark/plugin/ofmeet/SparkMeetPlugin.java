@@ -401,14 +401,19 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
                         System.setProperty("java.library.path", newLibPath);
 
                         // this will reload the new setting
-                        Field fieldSysPath = ClassLoader.class.getDeclaredField("sys_paths");
-                        fieldSysPath.setAccessible(true);
-                        fieldSysPath.set(System.class.getClassLoader(), null);
+                        try {
+                            @SuppressWarnings("JavaReflectionMemberAccess")
+                            Field fieldSysPath = ClassLoader.class.getDeclaredField("sys_paths");
+                            fieldSysPath.setAccessible(true);
+                            fieldSysPath.set(System.class.getClassLoader(), null);
+                        } catch (NoSuchFieldException ignored) {
+                            // Happens on non Oracle JDK but has no influence since there is no cached field that needs a reset
+                        }
                     }
                 }
                 catch (Exception e)
                 {
-                    Log.warning(e.getMessage(), e);
+                    Log.warning("Error during loading of Pade Meetings plugin", e);
                 }
             }
 
