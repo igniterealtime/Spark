@@ -211,7 +211,7 @@ public class RoomCreationDialog extends JPanel {
                 return false;
             }
 
-            if (!ModelUtil.areEqual(password, confirmPassword)) {
+            if (!password.equals(confirmPassword)) {
                 showError(Res.getString("message.passwords.no.match"));
                 passwordField.requestFocus();
                 return false;
