@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 import javax.naming.InvalidNameException;
 import javax.net.ssl.X509TrustManager;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.x509.CRLDistPoint;
 import org.bouncycastle.asn1.x509.DistributionPoint;
@@ -30,13 +31,12 @@ import org.bouncycastle.cert.jcajce.JcaX509ExtensionUtils;
 import org.jivesoftware.spark.util.log.Log;
 
 /**
- * This trust manager wrap around SparkExceptionsTrustManager. In case when SparkExceptionsTrustManager fail then this
+ * This trust manager wrap around SparkExceptionsTrustManager.
+ * In case when SparkExceptionsTrustManager fail then this
  * TrustManager will provide certificates from TRUSTED KeyStore which are checked against data validity, revocation,
  * acceptance of self-signed certificates and basic constraints.
- * 
- * 
- * @author Pawel Scibiorsk
  *
+ * @author Pawel Scibiorsk
  */
 public class SparkTrustManager extends GeneralTrustManager implements X509TrustManager {
 
@@ -101,13 +101,13 @@ public class SparkTrustManager extends GeneralTrustManager implements X509TrustM
     /**
      * Do chain validity checks
      * @param chain with certificates from server
-     * @param authType
+     * @param authType "RSA" etc.
      * @throws CertificateException
      * @throws CertPathValidatorException 
      */
     private void doTheChecks(X509Certificate[] chain, String authType) throws CertificateException, CertPathValidatorException {
         try {
-            // first check if certificate is accepted as as certificate from exceptions list, exceptionsTrustManager
+            // first check if certificate is accepted as a certificate from exceptions list, exceptionsTrustManager
             // will make use of chain provided by exceptions KeyStore
             exceptionsTrustManager.checkServerTrusted(chain, authType);
         } catch (CertificateException ex) {
@@ -121,22 +121,18 @@ public class SparkTrustManager extends GeneralTrustManager implements X509TrustM
                 // validate certificate path
                 try {
                     validatePath(chain);
-
                 } catch (NoSuchAlgorithmException | KeyStoreException | InvalidAlgorithmParameterException | CertPathValidatorException e) {
                     Log.error("Validating path failed", e);
                     throw new CertPathValidatorException("Certificate path validation failed", e);
-
                 }
             } else if (isSelfSigned(chain) && !acceptSelfSigned) {
                 // Self Signed certificate while it isn't accepted
                 throw new CertificateException("Self Signed certificate");
-
             } else if (isSelfSigned(chain) && acceptSelfSigned) {
                 // check if certificate is in Keystore and check CRL, but do not validate path as certificate is Self
                 // Signed important reminder: hostname validation must be also turned off to accept self signed
                 // certificate
-                List<X509Certificate> certList = new ArrayList<>(Arrays.asList(getAcceptedIssuers()));
-                if (!certList.contains(chain[0])) {
+                if (!ArrayUtils.contains(getAcceptedIssuers(), chain[0])) {
                     throw new CertPathValidatorException("Certificate not in the TrustStore");
                 }
                 try {
@@ -239,7 +235,6 @@ public class SparkTrustManager extends GeneralTrustManager implements X509TrustM
         // if revoked certificates aren't accepted, but no revocation checks then only
         // certificates from blacklist will be rejected
         if (!acceptRevoked) {
-            
             // OCSP checking is done according to Java PKI Programmer's Guide, PKIXRevocationChecker was added in Java 8:
             // https://docs.oracle.com/javase/8/docs/technotes/guides/security/certpath/CertPathProgGuide.html#PKIXRevocationChecker
             PKIXRevocationChecker checker = (PKIXRevocationChecker) certPathBuilder.getRevocationChecker();
@@ -262,14 +257,12 @@ public class SparkTrustManager extends GeneralTrustManager implements X509TrustM
                 checker.setOptions(checkerOptions);
                 parameters.addCertPathChecker(checker);
             }
-                        
         }
         
         try {
             PKIXCertPathValidatorResult validationResult = (PKIXCertPathValidatorResult) certPathValidator
                     .validate(certPath, parameters);
             X509Certificate trustAnchor = validationResult.getTrustAnchor().getTrustedCert();
-
             if (trustAnchor == null) {
                 throw new CertificateException("certificate path failed: Trusted CA is NULL");
             }
@@ -312,7 +305,6 @@ public class SparkTrustManager extends GeneralTrustManager implements X509TrustM
      * @throws CertificateException
      */
     private void checkDateValidity(X509Certificate[] chain) throws CertificateException {
-
         for (X509Certificate cert : chain) {
             // expiration check
             try {
@@ -328,7 +320,6 @@ public class SparkTrustManager extends GeneralTrustManager implements X509TrustM
                     throw new CertificateException("Certificate is not valid yet");
                 }
             }
-
         }
     }
 
@@ -377,7 +368,7 @@ public class SparkTrustManager extends GeneralTrustManager implements X509TrustM
     }
 
     /**
-     * loads truststores and potentially (depending on settings) blacklist
+     * loads trust stores and potentially (depending on settings) blacklist
      */
     @Override
     protected void loadKeyStores() {
@@ -385,12 +376,7 @@ public class SparkTrustManager extends GeneralTrustManager implements X509TrustM
         trustStore = certControll.openKeyStore(CertificateController.TRUSTED);
         displayedCaCerts = certControll.openCacertsKeyStore();
 
-        try {
-            loadAllStore();
-        } catch (KeyStoreException | NoSuchAlgorithmException | CertificateException | IOException
-                | HeadlessException e) {
-            Log.error("Cannot create allStore KeyStore");
-        }
+        loadAllStore();
 
         try {
             addKeyStoreContentToAllStore(trustStore);
@@ -402,7 +388,6 @@ public class SparkTrustManager extends GeneralTrustManager implements X509TrustM
         } catch (HeadlessException | KeyStoreException | InvalidNameException e) {
             Log.error("Cannot add displayedCaCerts to the allStore", e);
         }
-
     }
 
     
@@ -469,7 +454,6 @@ public class SparkTrustManager extends GeneralTrustManager implements X509TrustM
      * @throws CRLException
      */
     private X509CRL downloadCRL(URL url) throws IOException, CertificateException, CRLException {
-
         try (InputStream crlStream = url.openStream()) {
             CertificateFactory cf = CertificateFactory.getInstance("X.509");
             return (X509CRL) cf.generateCRL(crlStream);

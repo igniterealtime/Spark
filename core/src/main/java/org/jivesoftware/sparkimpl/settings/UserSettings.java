@@ -81,10 +81,6 @@ public class UserSettings {
         return getSettings().get(name);
     }
 
-    public String getEmptyPropertyIfNull(String name) {
-        return ModelUtil.nullifyIfEmpty(getSettings().get(name));
-    }
-
     public void save() {
         try {
             privateDataManager.setPrivateData(settingsData);
