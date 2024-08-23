@@ -712,32 +712,24 @@ public final class GraphicUtils {
     }
 
     /**
-     * Returns a scaled down image if the height or width is smaller than the
-     * image size.
-     * 
-     * @param icon
-     *            the image icon.
-     * @param newHeight
-     *            the preferred height.
-     * @param newWidth
-     *            the preferred width.
+     * Returns a scaled down image if the height or width is smaller than the image size.
+     *
+     * @param icon      the image icon.
+     * @param newHeight the preferred height.
+     * @param newWidth  the preferred width.
      * @return the icon.
      */
-    public static ImageIcon scaleImageIcon(ImageIcon icon, int newHeight,
-	    int newWidth) {
-	Image img = icon.getImage();
-	int height = icon.getIconHeight();
-	int width = icon.getIconWidth();
-
-	if (height > newHeight) {
-	    height = newHeight;
-	}
-
-	if (width > newWidth) {
-	    width = newWidth;
-	}
-	img = img.getScaledInstance(width, height, Image.SCALE_SMOOTH);
-	return new ImageIcon(img);
+    public static ImageIcon scaleImageIcon(ImageIcon icon, int newHeight, int newWidth) {
+        int height = icon.getIconHeight();
+        int width = icon.getIconWidth();
+        if (height > newHeight) {
+            height = newHeight;
+        }
+        if (width > newWidth) {
+            width = newWidth;
+        }
+        Image img = icon.getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH);
+        return new ImageIcon(img);
     }
 
     /**
