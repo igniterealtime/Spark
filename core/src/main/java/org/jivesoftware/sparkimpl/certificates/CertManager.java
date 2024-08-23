@@ -7,6 +7,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -39,68 +40,84 @@ import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
  * This class contain some methods and fields that are common for CertificateController and IdentityController classes.
  * According to MVC it stands as Controller behind CertificatesManagerSettingsPanel and
  * MutualAuthenticationSettingsPanel which are Views.
- * 
- * @author Paweł Ścibiorski
  *
+ * @author Paweł Ścibiorski
  */
 public abstract class CertManager {
 
     protected LocalPreferences localPreferences;
-    public final static char[] passwd = "changeit".toCharArray();       
+    public final static char[] passwd = "changeit".toCharArray();
     protected boolean addToKeystore;
-    // BLACKLIST is KeyStore with certificates revoked certificates, it isn't directly displayed but when other
-    // KeyStores content is added then it is compared with this list and information about revocation is added to
-    // certificate status
-    public final static File BLACKLIST = new File( Spark.getSparkUserHome() + File.separator + "security" + File.separator + "blacklist");
-    // contain all certificates, used for help in managing certificates, but isn't directly displayed on the certificate
-    // table
+
+    /**
+     * BLACKLIST is KeyStore with certificates revoked certificates, it isn't directly displayed but when other
+     * KeyStores content is added then it is compared with this list and information about revocation
+     * is added to certificate status
+     */
+    public final static File BLACKLIST = new File(Spark.getSparkUserHome() + File.separator + "security" + File.separator + "blacklist");
+
+    /**
+     * Contain all certificates, used for help in managing certificates, but isn't directly displayed on the certificate table
+     */
     protected KeyStore blackListStore;
-    protected final List<CertificateModel> allCertificates =          new LinkedList<>();
-    protected final List<CertificateModel> blackListedCertificates =  new LinkedList<>(); //contain only revoked certificates
+
+    protected final List<CertificateModel> allCertificates = new LinkedList<>();
+
+    /**
+     * Contains only revoked certificates
+     */
+    protected final List<CertificateModel> blackListedCertificates = new LinkedList<>();
+
     protected DefaultTableModel tableModel;
-    
+
     public abstract void deleteEntry(String alias) throws KeyStoreException;
+
     public abstract void addOrRemoveFromExceptionList(boolean checked);
+
     public abstract boolean isOnExceptionList(CertificateModel cert);
 
     public abstract void createTableModel();
+
     protected abstract void refreshCertTable();
 
     public abstract void addEntryFileToKeyStore(File file)
-            throws KeyStoreException, CertificateException, NoSuchAlgorithmException, IOException, HeadlessException,
-            InvalidNameException, InvalidKeySpecException;
-/**
- * Check if there is certificate entry in KeyStore with the same alias.
- * @param alias which is checked if it already exist in keystore
- * @return
- * @throws HeadlessException
- * @throws KeyStoreException
- */
+        throws KeyStoreException, CertificateException, NoSuchAlgorithmException, IOException, HeadlessException,
+        InvalidNameException, InvalidKeySpecException;
+
+    /**
+     * Check if there is certificate entry in KeyStore with the same alias.
+     *
+     * @param alias which is checked if it already exist in keystore
+     * @return
+     * @throws HeadlessException
+     * @throws KeyStoreException
+     */
     protected abstract boolean checkForSameAlias(String alias) throws HeadlessException, KeyStoreException;
 
     /**
      * Save the KeyStores.
      */
     public abstract void loadKeyStores();
+
     public abstract void overWriteKeyStores();
 
     public void setAddToKeystore(boolean addToKeystore) {
         this.addToKeystore = addToKeystore;
     }
-    
+
     public boolean isAddToKeystore() {
         return addToKeystore;
     }
-    
+
     /**
      * Check if this certificate already exist in Truststore.
-     * 
+     *
      * @param addedCert the certificate for which it method look in the model list
      * @return true if KeyStore already have this certificate.
      */
     protected boolean checkForSameCertificate(X509Certificate addedCert) {
         // check if this certificate isn't already added to Truststore
-        for(CertificateModel model :allCertificates){
+        for (CertificateModel model : allCertificates) {
             X509Certificate certificateCheck = model.getCertificate();
             String signature = Base64.getEncoder().encodeToString(certificateCheck.getSignature());
             String addedSignature = Base64.getEncoder().encodeToString(addedCert.getSignature());
@@ -114,6 +131,7 @@ public abstract class CertManager {
 
     /**
      * Check if given certificate is revoked looking on it's CRL (if exist).
+     *
      * @param cert which is validated
      * @return true if certificate is revoked, false if it isn't or CRL cannot be accessed (because it might not exist).
      */
@@ -121,7 +139,7 @@ public abstract class CertManager {
         boolean revoked = false;
         try {
             SparkTrustManager man = new SparkTrustManager();
-            Collection<X509CRL> crls = man.loadCRL(new X509Certificate[] { cert });
+            Collection<X509CRL> crls = man.loadCRL(new X509Certificate[]{cert});
             CertificateFactory cf = CertificateFactory.getInstance("X.509");
             for (X509CRL crl : crls) {
                 if (crl.isRevoked(cert)) {
@@ -130,7 +148,7 @@ public abstract class CertManager {
                 }
             }
         } catch (CRLException | CertificateException | IOException | InvalidAlgorithmParameterException
-                | NoSuchAlgorithmException e) {
+                 | NoSuchAlgorithmException e) {
             Log.warning("Cannot check validity", e);
         }
         return revoked;
@@ -138,7 +156,7 @@ public abstract class CertManager {
 
     /**
      * This method adds certificate to blackList
-     * 
+     *
      * @param cert the certificate to be added to blacklist
      * @throws KeyStoreException
      * @throws InvalidNameException
@@ -150,12 +168,12 @@ public abstract class CertManager {
         blackListedCertificates.add(new CertificateModel(cert));
     }
 
-    
+
     /**
      * Extract from certificate common name ("CN") and returns it to use as certificate name.
-     * This method also assure that it will not add second same alias to Truststore by adding number to alias. 
+     * This method also assure that it will not add second same alias to Truststore by adding number to alias.
      * In case when common name cannot be extracted method will return "cert{number}".
-     * 
+     *
      * @param cert Certificate which Common Name is meant to use
      * @return String Common Name of the certificate
      * @throws InvalidNameException
@@ -188,24 +206,24 @@ public abstract class CertManager {
         }
         return alias;
     }
+
     /**
      * Open dialog with certificate.
-     * 
      */
     public abstract void showCertificate();
-    
+
     /**
      * Open dialog with certificate.
-     * 
+     *
      * @param certModel Model of the certificate which details are meant to be shown.
-     * @param reason The reason for Certificate dialog to be shown.
+     * @param reason    The reason for Certificate dialog to be shown.
      */
     public CertificateDialog showCertificate(CertificateModel certModel, CertificateDialogReason reason) {
 
         return new CertificateDialog(localPreferences, certModel, this, reason);
     }
-    
-    protected KeyStore openKeyStore(File file){
+
+    protected KeyStore openKeyStore(File file) {
         KeyStore keyStore = null;
         try {
             keyStore = KeyStore.getInstance("JKS");
@@ -214,7 +232,7 @@ public abstract class CertManager {
                 try (InputStream inputStream = new FileInputStream(file)) {
                     keyStore.load(inputStream, passwd);
                 } catch (IOException | NoSuchAlgorithmException | CertificateException e) {
-                    Log.error("Error at accesing exceptions KeyStore", e);
+                    Log.error("Unable to access KeyStore", e);
                 }
             } else {
                 keyStore.load(null, passwd); // if cannot open KeyStore then new empty one will be created
@@ -224,20 +242,18 @@ public abstract class CertManager {
         }
         return keyStore;
     }
-    
+
     /**
      * Add certificates from keyStore to list. Useful for displaying in certificate table.
-     * 
+     *
      * @param keyStore source keystore.
-     * @param list list which will be filled with certificate models.
+     * @param list     list which will be filled with certificate models.
      */
 
     protected List<CertificateModel> fillTableListWithKeyStoreContent(KeyStore keyStore, List<CertificateModel> list) {
         if (keyStore != null) {
-            Enumeration<String> store;
             try {
-                store = keyStore.aliases();
-
+                Enumeration<String> store = keyStore.aliases();
                 while (store.hasMoreElements()) {
                     String alias = store.nextElement();
                     X509Certificate certificate = (X509Certificate) keyStore.getCertificate(alias);
@@ -254,17 +270,17 @@ public abstract class CertManager {
         }
         return list;
     }
-    
-    protected void saveKeyStore(KeyStore keyStore, File file){
-        try (OutputStream outputStream = new FileOutputStream(file)) {
+
+    protected void saveKeyStore(KeyStore keyStore, File file) {
+        try (OutputStream outputStream = Files.newOutputStream(file.toPath())) {
             if (keyStore != null) {
                 keyStore.store(outputStream, passwd);
             }
         } catch (IOException | KeyStoreException | NoSuchAlgorithmException | CertificateException e) {
-            Log.error("Couldn't save KeyStore" , e);
+            Log.error("Couldn't save KeyStore", e);
         }
     }
-    
+
     public DefaultTableModel getTableModel() {
         return tableModel;
     }

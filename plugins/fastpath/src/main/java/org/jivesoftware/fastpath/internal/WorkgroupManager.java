@@ -365,7 +365,7 @@ public class WorkgroupManager {
                 while (true) {
                     if (workgroup.isInQueue()) {
                         queuePostionLabel.setText("Current Position in Queue: " + workgroup.getQueuePosition());
-                        queueWaitTime.setText("It is estimated your wait time to now be " + FormUtils.getTimeFromLong(workgroup.getQueueRemainingTime()));
+                        queueWaitTime.setText("It is estimated your wait time to now be " + ModelUtil.getTimeFromLong(workgroup.getQueueRemainingTime()));
                     }
                     else {
                         return true;

@@ -154,8 +154,8 @@ public class LoginDialog {
                     1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH,
                     new Insets(0, 0, 0, 0), 0, 0));
 
-            final String showPoweredBy = Default.getString(Default.SHOW_POWERED_BY);
-            if (ModelUtil.hasLength(showPoweredBy) && "true".equals(showPoweredBy)) {
+            final boolean showPoweredBy = Default.getBoolean(Default.SHOW_POWERED_BY);
+            if (showPoweredBy) {
                 // Handle Powered By for custom clients.
                 final JLabel poweredBy = new JLabel(SparkRes.getImageIcon(SparkRes.POWERED_BY_IMAGE));
                 mainPanel.add(poweredBy,
