@@ -722,11 +722,17 @@ public final class GraphicUtils {
     public static ImageIcon scaleImageIcon(ImageIcon icon, int newHeight, int newWidth) {
         int height = icon.getIconHeight();
         int width = icon.getIconWidth();
+        boolean resize = false;
         if (height > newHeight) {
             height = newHeight;
+            resize = true;
         }
         if (width > newWidth) {
             width = newWidth;
+            resize = true;
+        }
+        if (!resize) {
+            return icon;
         }
         Image img = icon.getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH);
         return new ImageIcon(img);
