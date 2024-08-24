@@ -107,7 +107,7 @@ public class SecurityLoginSettingsPanel extends JPanel
         modeRequiredRadio.setSelected( localPreferences.getSecurityMode() == ConnectionConfiguration.SecurityMode.required );
         modeIfPossibleRadio.setSelected( localPreferences.getSecurityMode() == ConnectionConfiguration.SecurityMode.ifpossible );
         modeDisabledRadio.setSelected( localPreferences.getSecurityMode() == ConnectionConfiguration.SecurityMode.disabled );
-        useDirectTlsBox.setSelected( localPreferences.isSSL() );
+        useDirectTlsBox.setSelected( localPreferences.isDirectTls() );
         disableHostnameVerificationBox.setSelected( localPreferences.isDisableHostnameVerification() );
         allowClientSideAuthentication.setSelected(true);
 
@@ -161,7 +161,7 @@ public class SecurityLoginSettingsPanel extends JPanel
         {
             localPreferences.setSecurityMode( ConnectionConfiguration.SecurityMode.disabled );
         }
-        localPreferences.setSSL( useDirectTlsBox.isSelected() );
+        localPreferences.setDirectTls( useDirectTlsBox.isSelected() );
         localPreferences.setDisableHostnameVerification( disableHostnameVerificationBox.isSelected() );
         localPreferences.setAllowClientSideAuthentication( allowClientSideAuthentication.isSelected() );
         SettingsManager.saveSettings();
