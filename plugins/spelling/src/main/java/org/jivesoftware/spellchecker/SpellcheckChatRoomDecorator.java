@@ -43,7 +43,7 @@ public class SpellcheckChatRoomDecorator implements ActionListener,
     private JTextComponentSpellChecker _sc;
     private RolloverButton _spellingButton;
     private ChatRoom _room;
-    private JComboBox _languageSelection = new JComboBox();
+    private JComboBox<String> _languageSelection = new JComboBox<>();
     private Map<String, String> _languages;
 
     public SpellcheckChatRoomDecorator(ChatRoom room) {
@@ -141,26 +141,22 @@ public class SpellcheckChatRoomDecorator implements ActionListener,
     private void languagestoLocales()
     {
         String spellLanguage = SpellcheckManager.getInstance().getSpellcheckerPreference().getPreferences().getSpellLanguage();
-        _languages = new HashMap<String, String>();
+        _languages = new HashMap<>();
         Locale[] locales = Locale.getAvailableLocales();
         ArrayList<String> languages = SpellcheckManager.getInstance().getSupportedLanguages();
-        for (int i = 0; i < languages.size(); i++) {
+        for (String language : languages) {
             for (final Locale locale : locales) {
-                if (locale.toString().equals(languages.get(i))) {
-                    String label = locale.getDisplayLanguage(Locale
-                            .getDefault());
-                    if (locale.getDisplayCountry(locale) != null
-                            && locale.getDisplayCountry(locale).trim().length() > 0) {
-                        label = label + "-"
-                                + locale.getDisplayCountry(locale).trim();
+                if (locale.toString().equals(language)) {
+                    String label = locale.getDisplayLanguage(Locale.getDefault());
+                    if (!locale.getDisplayCountry(locale).isEmpty()) {
+                        label = label + "-" + locale.getDisplayCountry(locale);
                     }
-                    _languages.put(label, languages.get(i));
+                    _languages.put(label, language);
                     _languageSelection.addItem(label);
-                    if (languages.get(i).equals(spellLanguage))
-                    {
+                    if (language.equals(spellLanguage)) {
                         _languageSelection.setSelectedItem(label);
                     }
-                    
+
                 }
             }
         }

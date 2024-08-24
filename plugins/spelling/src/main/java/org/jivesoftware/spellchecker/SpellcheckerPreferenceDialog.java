@@ -38,7 +38,7 @@ public class SpellcheckerPreferenceDialog extends JPanel implements
 
     private JCheckBox spellcheckingEnabled;
     private JCheckBox autospellcheckingEnabled;
-    private JComboBox spellLanguages;
+    private JComboBox<String> spellLanguages;
     private JCheckBox ignoreCase;
     private JCheckBox showLanguages; 
     private JPanel spellPanel;
@@ -52,7 +52,7 @@ public class SpellcheckerPreferenceDialog extends JPanel implements
 	spellPanel = new JPanel();
 	spellcheckingEnabled = new JCheckBox();
 	autospellcheckingEnabled = new JCheckBox();
-	spellLanguages = new JComboBox();
+	spellLanguages = new JComboBox<>();
 	showLanguages = new JCheckBox();
 	spellPanel.setLayout(new GridBagLayout());
 	
@@ -72,20 +72,17 @@ public class SpellcheckerPreferenceDialog extends JPanel implements
 
 	// autospellcheckingEnabled.setText(SpellcheckerResource.getString("preference.autoSpellcheckingEnabled"));
 
-	for (int i = 0; i < languages.size(); i++) {
-	    for (final Locale locale : locales) {
-		if (locale.toString().equals(languages.get(i))) {
-		    String label = locale.getDisplayLanguage(Locale
-			    .getDefault());
-		    if (locale.getDisplayCountry(locale) != null
-			    && locale.getDisplayCountry(locale).trim().length() > 0) {
-			label = label + "-"
-				+ locale.getDisplayCountry(locale).trim();
-		    }
-		    spellLanguages.addItem(label);
-		}
-	    }
-	}
+        for (String language : languages) {
+            for (final Locale locale : locales) {
+                if (locale.toString().equals(language)) {
+                    String label = locale.getDisplayLanguage(Locale.getDefault());
+                    if (!locale.getDisplayCountry(locale).isEmpty()) {
+                        label = label + "-" + locale.getDisplayCountry(locale);
+                    }
+                    spellLanguages.addItem(label);
+                }
+            }
+        }
 
 	spellPanel.add(spellcheckingEnabled, new GridBagConstraints(0, 0, 2, 1,	1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
 	spellPanel.add(autospellcheckingEnabled, new GridBagConstraints(0, 1, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));

@@ -164,12 +164,9 @@ public final class InputDialog implements PropertyChangeListener {
             dialog.setVisible(false);
         }
         else if (Res.getString("ok").equals(value)) {
-            stringValue = textArea.getText();
-            if (stringValue.trim().length() == 0) {
+            stringValue = textArea.getText().trim();
+            if (stringValue.isEmpty()) {
                 stringValue = null;
-            }
-            else {
-                stringValue = stringValue.trim();
             }
             dialog.setVisible(false);
         }

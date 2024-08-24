@@ -189,7 +189,7 @@ public class LoginDialog {
                     quitLogin();
                 }
             });
-            if (loginPanel.getUsername().trim().length() > 0) {
+            if (ModelUtil.hasLength(loginPanel.getUsername())) {
                 loginPanel.getPasswordField().requestFocus();
             }
 
