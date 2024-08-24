@@ -183,7 +183,7 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
 
         ResourceUtils.resButton(cbSavePassword, Res.getString("checkbox.save.password"));
         ResourceUtils.resButton(cbAutoLogin, Res.getString("checkbox.auto.login"));
-        ResourceUtils.resButton(btnCreateAccount, Res.getString("label.accounts"));
+        ResourceUtils.resButton(btnSignUp, Res.getString("label.accounts"));
         ResourceUtils.resButton(cbLoginInvisible, Res.getString("checkbox.login.as.invisible"));
         ResourceUtils.resButton(cbAnonymous, Res.getString("checkbox.login.anonymously"));
         ResourceUtils.resButton(btnReset, Res.getString("label.passwordreset"));
@@ -305,7 +305,7 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
             TaskEngine.getInstance().submit(this::login);
         }
 
-        btnCreateAccount.addActionListener(this);
+        btnSignUp.addActionListener(this);
 
         final String lockedDownURL = Default.getString(Default.HOST_NAME);
         if (ModelUtil.hasLength(lockedDownURL)) {
@@ -314,7 +314,7 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
 
         //reset ui
         //btnAdvanced.setUI(new BasicButtonUI());
-        //btnCreateAccount.setUI(new BasicButtonUI());
+        //btnSignUp.setUI(new BasicButtonUI());
         tfDomain.putClientProperty("JTextField.placeholderText", Res.getString("hint.login.domain"));
         tfPassword.putClientProperty("JTextField.placeholderText", Res.getString("hint.login.password"));
         tfUsername.putClientProperty("JTextField.placeholderText", Res.getString("hint.login.username"));
@@ -355,7 +355,7 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
         }
 
         if (Default.getBoolean(Default.ACCOUNT_DISABLED) || !localPref.getAccountsReg()) {
-            pnlBtns.remove(btnCreateAccount);
+            pnlBtns.remove(btnSignUp);
             height = height + 15;
         }
 
@@ -397,7 +397,7 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
         cbAnonymous = new javax.swing.JCheckBox();
         pnlBtns = new javax.swing.JPanel();
         btnLogin = new javax.swing.JButton();
-        btnCreateAccount = new javax.swing.JButton();
+        btnSignUp = new javax.swing.JButton();
         btnAdvanced = new javax.swing.JButton();
         btnReset = new javax.swing.JButton();
 
@@ -504,13 +504,13 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
         });
         pnlBtns.add(btnLogin);
 
-        btnCreateAccount.setBackground(new java.awt.Color(255, 255, 255));
-        btnCreateAccount.setText("Account");
-        btnCreateAccount.setBorderPainted(false);
-        btnCreateAccount.setHorizontalTextPosition(javax.swing.SwingConstants.LEADING);
-        btnCreateAccount.setOpaque(false);
-        btnCreateAccount.setPreferredSize(new java.awt.Dimension(95, 28));
-        pnlBtns.add(btnCreateAccount);
+        btnSignUp.setBackground(new java.awt.Color(255, 255, 255));
+        btnSignUp.setText("Account");
+        btnSignUp.setBorderPainted(false);
+        btnSignUp.setHorizontalTextPosition(javax.swing.SwingConstants.LEADING);
+        btnSignUp.setOpaque(false);
+        btnSignUp.setPreferredSize(new java.awt.Dimension(95, 28));
+        pnlBtns.add(btnSignUp);
 
         btnAdvanced.setBackground(new java.awt.Color(255, 255, 255));
         btnAdvanced.setText("Advanced");
@@ -569,7 +569,7 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAdvanced;
-    private javax.swing.JButton btnCreateAccount;
+    private javax.swing.JButton btnSignUp;
     private javax.swing.JButton btnLogin;
     private javax.swing.JButton btnReset;
     private javax.swing.JCheckBox cbAnonymous;
@@ -910,7 +910,7 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
      */
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == btnCreateAccount) {
+        if (e.getSource() == btnSignUp) {
             AccountCreationWizard createAccountPanel = new AccountCreationWizard();
             createAccountPanel.invoke(loginDialog);
 
@@ -1055,7 +1055,7 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
         cbAnonymous.setEnabled(available);
         btnLogin.setEnabled(available);
         btnAdvanced.setEnabled(available);
-        btnCreateAccount.setEnabled(available);
+        btnSignUp.setEnabled(available);
 
         // Need to set both editable and enabled for best behavior.
         tfUsername.setEditable(available);
