@@ -84,9 +84,8 @@ public class LanguagePlugin implements Plugin {
             }
         };
         String label = locale.getDisplayLanguage(locale);
-        if (locale.getDisplayCountry(locale) != null &&
-            locale.getDisplayCountry(locale).trim().length() > 0) {
-            label = label + "-" + locale.getDisplayCountry(locale).trim();
+        if (!locale.getDisplayCountry(locale).isEmpty()) {
+            label = label + "-" + locale.getDisplayCountry(locale);
         }
         action.putValue(Action.NAME, label);
         languageMenu.add(action);
