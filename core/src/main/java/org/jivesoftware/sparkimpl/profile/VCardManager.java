@@ -56,6 +56,7 @@ import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.*;
@@ -759,9 +760,7 @@ public class VCardManager {
 
         // write xml to file
         try {
-            BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(vcardFile), StandardCharsets.UTF_8));
-            out.write(xml);
-            out.close();
+            Files.write(vcardFile.toPath(), xml.getBytes(StandardCharsets.UTF_8));
         }
         catch (IOException e) {
             Log.error(e);

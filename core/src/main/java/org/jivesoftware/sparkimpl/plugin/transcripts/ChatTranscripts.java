@@ -28,15 +28,13 @@ import org.jxmpp.jid.Jid;
 import org.jxmpp.jid.impl.JidCreate;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.io.RandomAccessFile;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -122,9 +120,7 @@ public final class ChatTranscripts {
             // Write out new File
             try {
                 transcriptFile.getParentFile().mkdirs();
-                BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(transcriptFile), StandardCharsets.UTF_8));
-                out.write(builder.toString());
-                out.close();
+                Files.write(transcriptFile.toPath(), builder.toString().getBytes(StandardCharsets.UTF_8));
             }
             catch (IOException e) {
                 Log.error(e);
