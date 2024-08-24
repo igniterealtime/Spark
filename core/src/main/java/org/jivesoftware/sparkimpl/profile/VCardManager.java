@@ -430,8 +430,9 @@ public class VCardManager {
 	 */
     public VCard getVCardFromMemory(BareJid jid) {
         // Check in memory first.
-        if (vcards.containsKey(jid)) {
-            return vcards.get(jid);
+        VCard currentVcard = vcards.get(jid);
+        if (currentVcard != null) {
+            return currentVcard;
         }
 
         // if not in memory
@@ -540,7 +541,8 @@ public class VCardManager {
         if (vcard == null)
         	return; 
         vcard.setJabberId(jid.toString());
-        if (vcards.containsKey(jid) && vcards.get(jid).getError() == null && vcard.getError()!= null)
+        VCard currentVcard = vcards.get(jid);
+        if (currentVcard != null && currentVcard.getError() == null && vcard.getError()!= null)
         {
         	return;
         	
