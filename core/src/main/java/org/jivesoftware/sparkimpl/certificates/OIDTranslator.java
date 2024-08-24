@@ -104,8 +104,9 @@ public final class OIDTranslator {
 	}
 
 	public static String getDescription(String oid) {
-		if (OIDtoDescriptionMap.containsKey(oid)) {
-			return OIDtoDescriptionMap.get(oid);
+		String description = OIDtoDescriptionMap.get(oid);
+		if (description != null) {
+			return description;
 		} else {
 			Log.warning("Unknown description for  Object ID (OID: " + oid + ")");
 			return Res.getString("cert.unknown.oid");

@@ -1719,9 +1719,8 @@ public class ContactList extends JPanel implements ActionListener,
             properties.put("broadcast", true);
             message.addExtension(new JivePropertiesExtension(properties));
             message.setBody(messageText);
-            if (!broadcastMessages.containsKey(item.getJid().toString())) {
+            if (broadcastMessages.putIfAbsent(item.getJid().toString(), message) == null) {
                 buf.append(item.getDisplayName()).append('\n');
-                broadcastMessages.put(item.getJid().toString(), message);
             }
         }
 

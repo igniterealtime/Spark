@@ -395,9 +395,8 @@ public class UserManager {
         for (ContactGroup contactGroup : contactList.getContactGroups()) {
             contactGroup.clearSelection();
             for (ContactItem contactItem : contactGroup.getContactItems()) {
-                if (!contactMap.containsKey(contactItem.getJid().toString())) {
+                if (contactMap.putIfAbsent(contactItem.getJid().toString(), contactItem) == null) {
                     contacts.add(contactItem);
-                    contactMap.put(contactItem.getJid().toString(), contactItem);
                 }
             }
         }
