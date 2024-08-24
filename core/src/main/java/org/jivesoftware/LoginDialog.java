@@ -278,9 +278,6 @@ public class LoginDialog {
             .setCompressionEnabled(localPref.isCompressionEnabled())
             .setSecurityMode(securityMode);
 
-        if (securityMode != ConnectionConfiguration.SecurityMode.disabled && localPref.isDisableHostnameVerification()) {
-            TLSUtils.disableHostnameVerificationForTlsCertificates(builder);
-        }
         if (localPref.isDebuggerEnabled()) {
             builder.enableDefaultDebugger();
         }
@@ -294,6 +291,9 @@ public class LoginDialog {
         }
 
         if (securityMode != ConnectionConfiguration.SecurityMode.disabled) {
+            if (localPref.isDisableHostnameVerification()) {
+                TLSUtils.disableHostnameVerificationForTlsCertificates(builder);
+            }
             if (!useDirectTls) {
                 // This use STARTTLS which starts initially plain connection to upgrade it to TLS, it use the same port as
                 // plain connections which is 5222.
@@ -326,9 +326,6 @@ public class LoginDialog {
                 // 'if-possible' setting.
                 builder.setSecurityMode(ConnectionConfiguration.SecurityMode.ifpossible);
             }
-        }
-
-        if (securityMode != ConnectionConfiguration.SecurityMode.disabled) {
             SASLAuthentication.registerSASLMechanism(new SASLExternalMechanism());
         }
 
