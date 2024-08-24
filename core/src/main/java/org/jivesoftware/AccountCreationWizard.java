@@ -52,6 +52,8 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.UnrecoverableKeyException;
 
+import static org.jivesoftware.sparkimpl.certificates.SparkSSLContextCreator.Options.ONLY_SERVER_SIDE;
+
 /**
  * Allows the creation of accounts on an XMPP server.
  */
@@ -365,13 +367,14 @@ public class AccountCreationWizard extends JPanel {
         if (securityMode != ConnectionConfiguration.SecurityMode.disabled && !useDirectTls) {
             // This use STARTTLS which starts initially plain connection to upgrade it to TLS, it use the same port as
             // plain connections which is 5222.
+            SparkSSLContextCreator.Options options = ONLY_SERVER_SIDE;
             try {
-                SSLContext context = SparkSSLContextCreator.setUpContext(SparkSSLContextCreator.Options.ONLY_SERVER_SIDE);
-                builder.setSslContextFactory(() -> { return context; });
+                SSLContext context = SparkSSLContextCreator.setUpContext(options);
+                builder.setSslContextFactory(() -> context);
                 builder.setSecurityMode( securityMode );
                 builder.setCustomX509TrustManager(new SparkTrustManager());
             } catch (NoSuchAlgorithmException | KeyManagementException | UnrecoverableKeyException | KeyStoreException | NoSuchProviderException e) {
-                Log.warning("Couldnt establish secured connection", e);
+                Log.warning("Could not establish secured connection", e);
             }
         }
         
@@ -389,7 +392,8 @@ public class AccountCreationWizard extends JPanel {
                 builder.setHost( resolvedAddresses.get( 0 ).getHostName() );
                 builder.setPort( 5223 );
             }
-            builder.setSocketFactory( new SparkSSLSocketFactory(SparkSSLContextCreator.Options.ONLY_SERVER_SIDE) );
+            SparkSSLContextCreator.Options options = ONLY_SERVER_SIDE;
+            builder.setSocketFactory( new SparkSSLSocketFactory(options) );
             // SMACK 4.1.9  does not recognize an 'old-style' SSL socket as being secure, which will cause a failure when
             // the 'required' Security Mode is defined. Here, we work around this by replacing that security mode with an
             // 'if-possible' setting.
