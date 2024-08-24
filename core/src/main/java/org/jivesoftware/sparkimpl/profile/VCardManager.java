@@ -449,9 +449,9 @@ public class VCardManager {
     }
 
 	/**
-	 * Returns the VCard. You should always use useChachedVCards. VCardManager
-	 * will keep the VCards up to date. If you wan't to force a network reload
-	 * of the VCard you can set useChachedVCards to false. That means that you
+	 * Returns the VCard. You should always use useCachedVCards. VCardManager
+	 * will keep the VCards up to date. If you want to force a network reload
+	 * of the VCard you can set useCachedVCards to false. That means that you
 	 * have to wait for the vcard response. The method will block until the
 	 * result is available or a timeout occurs (like reloadVCard(String jid)).
 	 * If there is no response from server this method a dummy vcard with an
