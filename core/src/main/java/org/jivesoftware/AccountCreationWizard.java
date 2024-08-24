@@ -60,7 +60,7 @@ import static org.jivesoftware.sparkimpl.certificates.SparkSSLContextCreator.Opt
 public class AccountCreationWizard extends JPanel {
 	private static final long serialVersionUID = -7808507939643878212L;
 
-    private final JTextField serverField = new JTextField();
+    private final JComboBox<String> serverField = new JComboBox<>();
 
     private final JTextField usernameField = new JTextField();
 
@@ -81,6 +81,9 @@ public class AccountCreationWizard extends JPanel {
      */
     public AccountCreationWizard() {
         // Associate Mnemonics
+        serverField.setEditable(true);
+        serverField.setModel(XmppProviders.getXmppProvidersModel());
+
         JLabel serverLabel = new JLabel();
         ResourceUtils.resLabel( serverLabel, serverField, Res.getString("label.server") + ":");
         JLabel usernameLabel = new JLabel();
@@ -166,7 +169,8 @@ public class AccountCreationWizard extends JPanel {
      * @return the server to use.
      */
     public String getServer() {
-        return serverField.getText();
+        String selectedServer = (String) serverField.getSelectedItem();
+        return selectedServer != null ? selectedServer.trim() : "";
     }
 
     /**
@@ -185,6 +189,7 @@ public class AccountCreationWizard extends JPanel {
         boolean errors = false;
         String errorMessage = "";
 
+        String server = getServer();
         if (!ModelUtil.hasLength(getUsername())) {
             errors = true;
             usernameField.requestFocus();
@@ -198,7 +203,7 @@ public class AccountCreationWizard extends JPanel {
             errors = true;
             errorMessage = Res.getString("message.confirmation.password.error");
         }
-        else if (!ModelUtil.hasLength(getServer())) {
+        else if (!ModelUtil.hasLength(server)) {
             errors = true;
             errorMessage = Res.getString("message.account.error");
         }
@@ -216,7 +221,7 @@ public class AccountCreationWizard extends JPanel {
         final Component ui = this;
         progressBar.setIndeterminate(true);
         progressBar.setStringPainted(true);
-        progressBar.setString(Res.getString("message.registering", getServer()));
+        progressBar.setString(Res.getString("message.registering", server));
         progressBar.setVisible(true);
 
         final SwingWorker worker = new SwingWorker() {
@@ -259,7 +264,7 @@ public class AccountCreationWizard extends JPanel {
                     if (ui.isShowing()) {
                         createAccountButton.setEnabled(true);
                         UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
-                        JOptionPane.showMessageDialog(ui, Res.getString("message.connection.failed", getServer())
+                        JOptionPane.showMessageDialog(ui, Res.getString("message.connection.failed", server)
                             + "\n" + th, Res.getString("title.create.problem"), JOptionPane.ERROR_MESSAGE);
                         createAccountButton.setEnabled(true);
                     }
