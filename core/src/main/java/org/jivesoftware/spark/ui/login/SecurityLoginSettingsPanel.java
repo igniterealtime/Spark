@@ -45,8 +45,8 @@ public class SecurityLoginSettingsPanel extends JPanel
     private final JRadioButton modeIfPossibleRadio;
     private final JRadioButton modeDisabledRadio;
 
-    // Checkbox that toggles between 'old' style SSL (socket encryption, typically on port 5223), or STARTTLS. A check indicates 'old' behavior.
-    private final JCheckBox useSSLBox;
+    // Checkbox that toggles between 'old' style Direct TLS (socket encryption, typically on port 5223), or STARTTLS. A check indicates 'old' behavior.
+    private final JCheckBox useDirectTlsBox;
 
     private final JCheckBox disableHostnameVerificationBox;
     private final JCheckBox allowClientSideAuthentication;
@@ -73,7 +73,7 @@ public class SecurityLoginSettingsPanel extends JPanel
         modeDisabledRadio = new JRadioButton();
         modeDisabledRadio.setToolTipText( Res.getString( "tooltip.encryptionmode.disabled" ) );
 
-        useSSLBox = new JCheckBox();
+        useDirectTlsBox = new JCheckBox();
         disableHostnameVerificationBox = new JCheckBox();
         allowClientSideAuthentication  = new JCheckBox();
 
@@ -84,7 +84,7 @@ public class SecurityLoginSettingsPanel extends JPanel
         ResourceUtils.resButton( modeRequiredRadio,              Res.getString( "radio.encryptionmode.required" ) );
         ResourceUtils.resButton( modeIfPossibleRadio,            Res.getString( "radio.encryptionmode.ifpossible" ) );
         ResourceUtils.resButton( modeDisabledRadio,              Res.getString( "radio.encryptionmode.disabled" ) );
-        ResourceUtils.resButton( useSSLBox,                      Res.getString( "label.old.ssl" ) );
+        ResourceUtils.resButton( useDirectTlsBox,                Res.getString( "label.old.ssl" ) );
         ResourceUtils.resButton( disableHostnameVerificationBox, Res.getString( "checkbox.disable.hostname.verification" ) );
         ResourceUtils.resButton( allowClientSideAuthentication,  Res.getString( "checkbox.allow.client.side.authentication" ) );
         ResourceUtils.resButton( deleteSavedPasswords,           Res.getString( "button.delete.saved.passwords" ) );
@@ -98,7 +98,7 @@ public class SecurityLoginSettingsPanel extends JPanel
         // ... add event handler that disables the UI of encryption-related config, when encryption itself is disabled.
         modeDisabledRadio.addChangeListener( e -> {
             final boolean encryptionPossible = !modeDisabledRadio.isSelected();
-            useSSLBox.setEnabled( encryptionPossible );
+            useDirectTlsBox.setEnabled( encryptionPossible );
             disableHostnameVerificationBox.setEnabled( encryptionPossible );
             allowClientSideAuthentication.setEnabled( encryptionPossible );
         } );
@@ -107,7 +107,7 @@ public class SecurityLoginSettingsPanel extends JPanel
         modeRequiredRadio.setSelected( localPreferences.getSecurityMode() == ConnectionConfiguration.SecurityMode.required );
         modeIfPossibleRadio.setSelected( localPreferences.getSecurityMode() == ConnectionConfiguration.SecurityMode.ifpossible );
         modeDisabledRadio.setSelected( localPreferences.getSecurityMode() == ConnectionConfiguration.SecurityMode.disabled );
-        useSSLBox.setSelected( localPreferences.isSSL() );
+        useDirectTlsBox.setSelected( localPreferences.isDirectTls() );
         disableHostnameVerificationBox.setSelected( localPreferences.isDisableHostnameVerification() );
         allowClientSideAuthentication.setSelected(true);
 
@@ -122,7 +122,7 @@ public class SecurityLoginSettingsPanel extends JPanel
         encryptionModePanel.add( modeRequiredRadio,   new GridBagConstraints( 0, 0, 1, 1, 1.0, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0 ) );
         encryptionModePanel.add( modeIfPossibleRadio, new GridBagConstraints( 0, 1, 1, 1, 1.0, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0 ) );
         encryptionModePanel.add( modeDisabledRadio,   new GridBagConstraints( 0, 2, 1, 1, 1.0, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0 ) );
-        encryptionModePanel.add( useSSLBox,           new GridBagConstraints( 0, 3, 2, 1, 1.0, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0 ) );
+        encryptionModePanel.add( useDirectTlsBox,     new GridBagConstraints( 0, 3, 2, 1, 1.0, 0.0, WEST, HORIZONTAL, DEFAULT_INSETS, 0, 0 ) );
 
         // ... place the titled-border panel on the global panel.
         add( encryptionModePanel,            new GridBagConstraints( 0, 0, 1, 1, 1.0, 0.0, NORTHWEST, HORIZONTAL, DEFAULT_INSETS, 0, 0 ) );
@@ -144,7 +144,7 @@ public class SecurityLoginSettingsPanel extends JPanel
         modeDisabledRadio.setSelected(Default.getString(Default.SECURITY_MODE).equals("disabled"));
         disableHostnameVerificationBox.setSelected(Default.getBoolean(Default.DISABLE_HOSTNAME_VERIFICATION));
         allowClientSideAuthentication.setSelected(Default.getBoolean(Default.ALLOW_CLIENT_SIDE_AUTH));
-        useSSLBox.setSelected(Default.getBoolean(Default.OLD_SSL_ENABLED));
+        useDirectTlsBox.setSelected(Default.getBoolean(Default.OLD_SSL_ENABLED));
     }
     
     public void saveSettings()
@@ -161,7 +161,7 @@ public class SecurityLoginSettingsPanel extends JPanel
         {
             localPreferences.setSecurityMode( ConnectionConfiguration.SecurityMode.disabled );
         }
-        localPreferences.setSSL( useSSLBox.isSelected() );
+        localPreferences.setDirectTls( useDirectTlsBox.isSelected() );
         localPreferences.setDisableHostnameVerification( disableHostnameVerificationBox.isSelected() );
         localPreferences.setAllowClientSideAuthentication( allowClientSideAuthentication.isSelected() );
         SettingsManager.saveSettings();

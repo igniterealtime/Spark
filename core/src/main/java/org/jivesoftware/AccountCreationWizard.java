@@ -52,6 +52,8 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.UnrecoverableKeyException;
 
+import static org.jivesoftware.sparkimpl.certificates.SparkSSLContextCreator.Options.ONLY_SERVER_SIDE;
+
 /**
  * Allows the creation of accounts on an XMPP server.
  */
@@ -347,7 +349,7 @@ public class AccountCreationWizard extends JPanel {
         }
 
         ConnectionConfiguration.SecurityMode securityMode = localPreferences.getSecurityMode();
-        boolean useOldSSL = localPreferences.isSSL();
+        boolean useDirectTls = localPreferences.isDirectTls();
         boolean hostPortConfigured = localPreferences.isHostAndPortConfigured();
 
         final XMPPTCPConnectionConfiguration.Builder builder = XMPPTCPConnectionConfiguration.builder()
@@ -361,40 +363,7 @@ public class AccountCreationWizard extends JPanel {
         {
             builder.setHost( localPreferences.getXmppHost() );
         }
-        
-        if (securityMode != ConnectionConfiguration.SecurityMode.disabled && !useOldSSL) {
-            // This use STARTTLS which starts initially plain connection to upgrade it to TLS, it use the same port as
-            // plain connections which is 5222.
-            try {
-                SSLContext context = SparkSSLContextCreator.setUpContext(SparkSSLContextCreator.Options.ONLY_SERVER_SIDE);
-                builder.setSslContextFactory(() -> { return context; });
-                builder.setSecurityMode( securityMode );
-                builder.setCustomX509TrustManager(new SparkTrustManager());
-            } catch (NoSuchAlgorithmException | KeyManagementException | UnrecoverableKeyException | KeyStoreException | NoSuchProviderException e) {
-                Log.warning("Couldnt establish secured connection", e);
-            }
-        }
-        
-        if ( securityMode != ConnectionConfiguration.SecurityMode.disabled && useOldSSL )
-        {
-            if (!hostPortConfigured) {
-                // SMACK 4.1.9 does not support XEP-0368, and does not apply a port change, if the host is not changed too.
-                // Here, we force the host to be set (by doing a DNS lookup), and force the port to 5223 (which is the
-                // default 'old-style' SSL port).
-                DnsName serverNameDnsName = DnsName.from(serverName);
-                java.util.List<InetAddress> resolvedAddresses = DNSUtil.getDNSResolver().lookupHostAddress(serverNameDnsName, null, DnssecMode.disabled);
-                if (resolvedAddresses.isEmpty()) {
-                    throw new SmackException.SmackMessageException("Could not resolve " + serverNameDnsName);
-                }
-                builder.setHost( resolvedAddresses.get( 0 ).getHostName() );
-                builder.setPort( 5223 );
-            }
-            builder.setSocketFactory( new SparkSSLSocketFactory(SparkSSLContextCreator.Options.ONLY_SERVER_SIDE) );
-            // SMACK 4.1.9  does not recognize an 'old-style' SSL socket as being secure, which will cause a failure when
-            // the 'required' Security Mode is defined. Here, we work around this by replacing that security mode with an
-            // 'if-possible' setting.
-            builder.setSecurityMode( ConnectionConfiguration.SecurityMode.ifpossible );
-        }
+        configureConnectionTls(builder, securityMode, useDirectTls, hostPortConfigured, serverName);
 
         final XMPPTCPConnectionConfiguration configuration = builder.build();
 
@@ -407,6 +376,43 @@ public class AccountCreationWizard extends JPanel {
         }
 
         return connection;
+    }
+
+    private void configureConnectionTls(XMPPTCPConnectionConfiguration.Builder builder, ConnectionConfiguration.SecurityMode securityMode, boolean useDirectTls, boolean hostPortConfigured, String serverName) throws SmackException.SmackMessageException {
+        if (securityMode != ConnectionConfiguration.SecurityMode.disabled) {
+            if (!useDirectTls) {
+                // This use STARTTLS which starts initially plain connection to upgrade it to TLS, it use the same port as
+                // plain connections which is 5222.
+                SparkSSLContextCreator.Options options = ONLY_SERVER_SIDE;
+                try {
+                    SSLContext context = SparkSSLContextCreator.setUpContext(options);
+                    builder.setSslContextFactory(() -> context);
+                    builder.setSecurityMode(securityMode);
+                    builder.setCustomX509TrustManager(new SparkTrustManager());
+                } catch (NoSuchAlgorithmException | KeyManagementException | UnrecoverableKeyException | KeyStoreException | NoSuchProviderException e) {
+                    Log.warning("Could not establish secured connection", e);
+                }
+            } else { // useDirectTls
+                if (!hostPortConfigured) {
+                    // SMACK 4.1.9 does not support XEP-0368, and does not apply a port change, if the host is not changed too.
+                    // Here, we force the host to be set (by doing a DNS lookup), and force the port to 5223 (which is the
+                    // default 'old-style' SSL port).
+                    DnsName serverNameDnsName = DnsName.from(serverName);
+                    java.util.List<InetAddress> resolvedAddresses = DNSUtil.getDNSResolver().lookupHostAddress(serverNameDnsName, null, DnssecMode.disabled);
+                    if (resolvedAddresses.isEmpty()) {
+                        throw new SmackException.SmackMessageException("Could not resolve " + serverNameDnsName);
+                    }
+                    builder.setHost( resolvedAddresses.get( 0 ).getHostName() );
+                    builder.setPort( 5223 );
+                }
+                SparkSSLContextCreator.Options options = ONLY_SERVER_SIDE;
+                builder.setSocketFactory( new SparkSSLSocketFactory(options) );
+                // SMACK 4.1.9  does not recognize an 'old-style' SSL socket as being secure, which will cause a failure when
+                // the 'required' Security Mode is defined. Here, we work around this by replacing that security mode with an
+                // 'if-possible' setting.
+                builder.setSecurityMode( ConnectionConfiguration.SecurityMode.ifpossible );
+            }
+        }
     }
 
     /**
