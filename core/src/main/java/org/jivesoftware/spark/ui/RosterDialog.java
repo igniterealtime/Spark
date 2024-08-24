@@ -209,7 +209,7 @@ public class RosterDialog implements ActionListener {
 
         groupBox.setEditable(true);
 
-        if (groupModel.size() == 0) {
+        if (groupModel.isEmpty()) {
             groupBox.addItem("Friends");
         }
 
@@ -235,7 +235,7 @@ public class RosterDialog implements ActionListener {
                         fullJID = fullJID + "@" + SparkManager.getConnection().getXMPPServiceDomain();
                     }
 
-                    if ( !fullJID.isEmpty() && !fullJID.startsWith( "@" ))
+                    if (!fullJID.startsWith( "@" ))
                     {
                         BareJid bareJid = JidCreate.bareFromOrThrowUnchecked(fullJID);
                         vcardNickname = SparkManager.getUserManager().getNickname( bareJid );
@@ -259,7 +259,7 @@ public class RosterDialog implements ActionListener {
             accounts.addItem(item);
         }
 
-        if (accountCol.size() > 0) {
+        if (!accountCol.isEmpty()) {
             accountsLabel.setVisible(true);
             accounts.setVisible(true);
             publicBox.setVisible(true);
@@ -281,7 +281,7 @@ public class RosterDialog implements ActionListener {
         if (groupModel.contains(groupName)) {
             groupBox.setSelectedItem(groupName);
         }
-        else if (groupModel.size() > 0) {
+        else if (!groupModel.isEmpty()) {
             groupBox.addItem(groupName);
             groupBox.setSelectedItem(groupName);
         }
@@ -309,7 +309,7 @@ public class RosterDialog implements ActionListener {
     @Override
 	public void actionPerformed(ActionEvent e) {
         String group = JOptionPane.showInputDialog(dialog, Res.getString("label.enter.group.name") + ":", Res.getString("title.new.roster.group"), JOptionPane.QUESTION_MESSAGE);
-        if (group != null && group.length() > 0 && !groupModel.contains(group)) {
+        if (group != null && !group.isEmpty() && !groupModel.contains(group)) {
             Roster.getInstanceFor( SparkManager.getConnection() ).createGroup(group);
             groupModel.add(group);
             int size = groupModel.size();
@@ -341,18 +341,18 @@ public class RosterDialog implements ActionListener {
         mainPanel.add(titlePanel, BorderLayout.NORTH);
         mainPanel.add(panel, BorderLayout.CENTER);
        
-        JButton addbutton = new JButton(Res.getString("add"));
+        JButton buttonAdd = new JButton(Res.getString("add"));
         
-        addbutton.addActionListener( e -> addContactButton() );
+        buttonAdd.addActionListener( e -> addContactButton() );
         
-        JButton cancelbutton = new JButton(Res.getString("cancel"));
-        cancelbutton.addActionListener( e -> dialog.dispose() );
+        JButton buttonCancel = new JButton(Res.getString("cancel"));
+        buttonCancel.addActionListener( e -> dialog.dispose() );
         
         
-        JPanel buttonpanel = new JPanel(new FlowLayout());
-        buttonpanel.add(addbutton);
-        buttonpanel.add(cancelbutton);
-        mainPanel.add(buttonpanel, BorderLayout.SOUTH);
+        JPanel panelButtons = new JPanel(new FlowLayout());
+        panelButtons.add(buttonAdd);
+        panelButtons.add(buttonCancel);
+        mainPanel.add(panelButtons, BorderLayout.SOUTH);
         
         dialog = new JDialog(parent, Res.getString("title.add.contact"), false);
         dialog.setContentPane(mainPanel);
@@ -450,17 +450,14 @@ public class RosterDialog implements ActionListener {
 
         rosterEntryThread.start();
     }
-    
+
     /**
-     * Creates a Popupdialog above the Search Button displaying matching
-     * Contacts
-     * 
-     * @param byname
-     *            , the Searchname, atleast 5 Chars long
-     * @param event
-     *            , the MouseEvent which triggered it
+     * Creates a PopupDialog above the Search Button displaying matching Contacts
+     *
+     * @param byname the Search name, at least 5 chars long
+     * @param event  the MouseEvent which triggered it
      * @throws XMPPException
-     * @throws InterruptedException 
+     * @throws InterruptedException
      */
     public void searchForContact(String byname, MouseEvent event)
             throws XMPPException, SmackException.NotConnectedException, SmackException.NoResponseException, InterruptedException
@@ -558,7 +555,7 @@ public class RosterDialog implements ActionListener {
 
         boolean isSubscribed = true;
         if (userEntry != null) {
-            isSubscribed = userEntry.getGroups().size() == 0;
+            isSubscribed = userEntry.getGroups().isEmpty();
         }
 
         if (isSubscribed) {
@@ -617,8 +614,7 @@ public class RosterDialog implements ActionListener {
 	
 	UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
 	
-	if(jid.length()==0)
-	{
+	if (jid.isEmpty()) {
 	    JOptionPane.showMessageDialog(dialog, Res.getString("message.invalid.jid.error"),
 			Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
 		return;
