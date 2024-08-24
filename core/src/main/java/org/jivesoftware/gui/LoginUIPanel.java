@@ -643,7 +643,7 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
                     quitLogin();
                 }
             });
-            if (getUsernameField().getText().trim().length() > 0) {
+            if (ModelUtil.hasLength(getUsernameField().getText())) {
                 getPasswordField().requestFocus();
             }
 
