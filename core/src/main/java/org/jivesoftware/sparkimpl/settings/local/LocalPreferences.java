@@ -726,7 +726,7 @@ public class LocalPreferences {
 	}
 
 	public boolean isOfflineUsersShown() {
-		return getBoolean("showOfflineUsers", false);
+		return getBoolean("showOfflineUsers", true);
 	}
 
 	public void setOfflineUsersShown(boolean shown) {
