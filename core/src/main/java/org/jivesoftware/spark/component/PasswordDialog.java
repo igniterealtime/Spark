@@ -217,12 +217,9 @@ public final class PasswordDialog implements PropertyChangeListener {
             dialog.setVisible(false);
         }
         else if (Res.getString("ok").equals(value)) {
-            stringValue = String.valueOf(passwordField.getPassword());
-            if (stringValue.trim().length() == 0) {
+            stringValue = String.valueOf(passwordField.getPassword()).trim();
+            if (stringValue.isEmpty()) {
                 stringValue = null;
-            }
-            else {
-                stringValue = stringValue.trim();
             }
             dialog.setVisible(false);
         }
