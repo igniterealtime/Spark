@@ -363,7 +363,22 @@ public class AccountCreationWizard extends JPanel {
         {
             builder.setHost( localPreferences.getXmppHost() );
         }
-        
+        configureConnectionTls(builder, securityMode, useDirectTls, hostPortConfigured, serverName);
+
+        final XMPPTCPConnectionConfiguration configuration = builder.build();
+
+        final AbstractXMPPConnection connection = new XMPPTCPConnection( configuration );
+        connection.setParsingExceptionCallback( new ExceptionLoggingCallback() );
+        try {
+            connection.connect();
+        } catch (InterruptedException e) {
+            throw new IllegalStateException(e);
+        }
+
+        return connection;
+    }
+
+    private void configureConnectionTls(XMPPTCPConnectionConfiguration.Builder builder, ConnectionConfiguration.SecurityMode securityMode, boolean useDirectTls, boolean hostPortConfigured, String serverName) throws SmackException.SmackMessageException {
         if (securityMode != ConnectionConfiguration.SecurityMode.disabled) {
             if (!useDirectTls) {
                 // This use STARTTLS which starts initially plain connection to upgrade it to TLS, it use the same port as
@@ -398,18 +413,6 @@ public class AccountCreationWizard extends JPanel {
                 builder.setSecurityMode( ConnectionConfiguration.SecurityMode.ifpossible );
             }
         }
-
-        final XMPPTCPConnectionConfiguration configuration = builder.build();
-
-        final AbstractXMPPConnection connection = new XMPPTCPConnection( configuration );
-        connection.setParsingExceptionCallback( new ExceptionLoggingCallback() );
-        try {
-            connection.connect();
-        } catch (InterruptedException e) {
-            throw new IllegalStateException(e);
-        }
-
-        return connection;
     }
 
     /**
