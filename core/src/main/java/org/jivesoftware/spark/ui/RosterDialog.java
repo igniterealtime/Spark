@@ -212,10 +212,7 @@ public class RosterDialog implements ActionListener {
         if (groupModel.isEmpty()) {
             groupBox.addItem("Friends");
         }
-
-        if (groupModel.size() > 0) {
-            groupBox.setSelectedIndex(0);
-        }
+        groupBox.setSelectedIndex(0);
 
         jidField.addFocusListener(new FocusListener() {
             @Override
@@ -281,7 +278,7 @@ public class RosterDialog implements ActionListener {
         if (groupModel.contains(groupName)) {
             groupBox.setSelectedItem(groupName);
         }
-        else if (!groupModel.isEmpty()) {
+        else {
             groupBox.addItem(groupName);
             groupBox.setSelectedItem(groupName);
         }
