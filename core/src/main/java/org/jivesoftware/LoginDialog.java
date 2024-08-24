@@ -230,7 +230,7 @@ public class LoginDialog {
         }
 
         ConnectionConfiguration.SecurityMode securityMode = localPref.getSecurityMode();
-        boolean useOldSSL = localPref.isSSL();
+        boolean useDirectTls = localPref.isDirectTls();
         boolean hostPortConfigured = localPref.isHostAndPortConfigured();
 
         ProxyInfo proxyInfo = null;
@@ -291,7 +291,7 @@ public class LoginDialog {
             builder.setProxyInfo(proxyInfo);
         }
 
-        if (securityMode != ConnectionConfiguration.SecurityMode.disabled && !useOldSSL) {
+        if (securityMode != ConnectionConfiguration.SecurityMode.disabled && !useDirectTls) {
             // This use STARTTLS which starts initially plain connection to upgrade it to TLS, it use the same port as
             // plain connections which is 5222.
             SparkSSLContextCreator.Options options;
@@ -310,7 +310,7 @@ public class LoginDialog {
             }
         }
 
-        if (securityMode != ConnectionConfiguration.SecurityMode.disabled && useOldSSL) {
+        if (securityMode != ConnectionConfiguration.SecurityMode.disabled && useDirectTls) {
             if (!hostPortConfigured) {
                 // SMACK 4.1.9 does not support XEP-0368, and does not apply a port change, if the host is not changed too.
                 // Here, we force the host to be set (by doing a DNS lookup), and force the port to 5223 (which is the
@@ -1619,7 +1619,7 @@ public class LoginDialog {
         //  localPref.setProxyUsername("");
         localPref.setResource(localPref.getResource());
         localPref.setSaslGssapiSmack3Compatible(localPref.isSaslGssapiSmack3Compatible());
-        localPref.setSSL(localPref.isSSL());
+        localPref.setDirectTls(localPref.isDirectTls());
         localPref.setSecurityMode(localPref.getSecurityMode());
         localPref.setSSOEnabled(localPref.isSSOEnabled());
         localPref.setSSOMethod("file");

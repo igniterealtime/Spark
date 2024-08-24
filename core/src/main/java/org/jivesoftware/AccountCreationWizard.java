@@ -347,7 +347,7 @@ public class AccountCreationWizard extends JPanel {
         }
 
         ConnectionConfiguration.SecurityMode securityMode = localPreferences.getSecurityMode();
-        boolean useOldSSL = localPreferences.isSSL();
+        boolean useDirectTls = localPreferences.isDirectTls();
         boolean hostPortConfigured = localPreferences.isHostAndPortConfigured();
 
         final XMPPTCPConnectionConfiguration.Builder builder = XMPPTCPConnectionConfiguration.builder()
@@ -362,7 +362,7 @@ public class AccountCreationWizard extends JPanel {
             builder.setHost( localPreferences.getXmppHost() );
         }
         
-        if (securityMode != ConnectionConfiguration.SecurityMode.disabled && !useOldSSL) {
+        if (securityMode != ConnectionConfiguration.SecurityMode.disabled && !useDirectTls) {
             // This use STARTTLS which starts initially plain connection to upgrade it to TLS, it use the same port as
             // plain connections which is 5222.
             try {
@@ -375,7 +375,7 @@ public class AccountCreationWizard extends JPanel {
             }
         }
         
-        if ( securityMode != ConnectionConfiguration.SecurityMode.disabled && useOldSSL )
+        if ( securityMode != ConnectionConfiguration.SecurityMode.disabled && useDirectTls )
         {
             if (!hostPortConfigured) {
                 // SMACK 4.1.9 does not support XEP-0368, and does not apply a port change, if the host is not changed too.

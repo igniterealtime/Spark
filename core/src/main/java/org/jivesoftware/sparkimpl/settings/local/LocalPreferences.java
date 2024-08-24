@@ -485,31 +485,30 @@ public class LocalPreferences {
         props.setProperty( "securityMode", securityMode.toString() );
     }
 
-	/**
-	 * Returns true to use 'old style' SSL.
+    /**
+     * Returns true to use 'old style' Direct TLS.
+     * <p>
+     * This type of encryption typically occurs on port 5223, and causes the socket to be TLS-encrypted immediately.
+     * <p>
+     * When this option is <em>disabled</em>, but encryption is still to be used, STARTTLS will be used instead.
      *
-     * This type of encryption typically occurs on port 5223, and causes the socket to be SSL-encrypted immediately.
-     *
-     * When this options is <em>disabled</em>, but encryption is still to be used, STARTTLS will be used instead.
-	 *
-	 * @return true if we should connect via 'old-style' SSL (otherwise, STARTTLS might be used).
-	 */
-	public boolean isSSL() {
+     * @return true if we should connect via 'old-style' Direct TLS (otherwise, STARTTLS might be used).
+     */
+	public boolean isDirectTls() {
 		return getBoolean("sslEnabled", Default.getBoolean(Default.OLD_SSL_ENABLED));
 	}
 
-	/**
-	 * Sets if the agent should use 'old style' SSL for connecting.
-	 *
+    /**
+     * Sets if the agent should use 'old style' Direct TLS for connecting.
+     * <p>
      * This type of encryption typically occurs on port 5223, and causes the socket to be SSL-encrypted immediately.
+     * <p>
+     * When this option is <em>disabled</em>, but encryption is still to be used, STARTTLS will be used instead.
      *
-     * When this options is <em>disabled</em>, but encryption is still to be used, STARTTLS will be used instead.
-     *
-	 * @param ssl
-	 *            true if we should be using SSL, false if STARTTLS is to be used for encryption.
-	 */
-	public void setSSL(boolean ssl) {
-		props.setProperty("sslEnabled", Boolean.toString(ssl));
+     * @param directTls true if we should be using Direct TLS, false if STARTTLS is to be used for encryption.
+     */
+	public void setDirectTls(boolean directTls) {
+		props.setProperty("sslEnabled", Boolean.toString(directTls));
 	}
 
 	/**
