@@ -33,6 +33,7 @@ import org.jivesoftware.spark.component.VerticalFlowLayout;
 
 import org.jivesoftware.spark.plugin.Plugin;
 import org.jivesoftware.spark.ui.*;
+import org.jivesoftware.spark.util.StringUtils;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.*;
@@ -130,22 +131,7 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
         DiscoverItems discoItems = SparkManager.getSessionManager().getDiscoveredItems();
         for (DiscoverItems.Item item : discoItems.getItems()) {
             String entityName = item.getEntityID().toString();
-            if (entityName.startsWith("aim.")) {
-                AIMTransport aim = new AIMTransport(item.getEntityID().asDomainBareJid());
-                TransportUtils.addTransport(item.getEntityID().asDomainBareJid(), aim);
-            } else if (entityName.startsWith("msn.")) {
-                MSNTransport msn = new MSNTransport(item.getEntityID().asDomainBareJid());
-                TransportUtils.addTransport(item.getEntityID().asDomainBareJid(), msn);
-            } else if (entityName.startsWith("yahoo.")) {
-                YahooTransport yahoo = new YahooTransport(item.getEntityID().asDomainBareJid());
-                TransportUtils.addTransport(item.getEntityID().asDomainBareJid(), yahoo);
-            } else if (entityName.startsWith("icq.")) {
-                ICQTransport icq = new ICQTransport(item.getEntityID().asDomainBareJid());
-                TransportUtils.addTransport(item.getEntityID().asDomainBareJid(), icq);
-            } else if (entityName.startsWith("gtalk.")) {
-                GTalkTransport gtalk = new GTalkTransport(item.getEntityID().asDomainBareJid());
-                TransportUtils.addTransport(item.getEntityID().asDomainBareJid(), gtalk);
-            } else if (entityName.startsWith("xmpp.")) {
+            if (entityName.startsWith("xmpp.")) {
                 XMPPTransport xmppTransport = new XMPPTransport(item.getEntityID().asDomainBareJid());
                 TransportUtils.addTransport(item.getEntityID().asDomainBareJid(), xmppTransport);
             } else if (entityName.startsWith("irc.")) {
