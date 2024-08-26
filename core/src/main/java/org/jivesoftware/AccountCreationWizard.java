@@ -20,13 +20,18 @@ package org.jivesoftware;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.*;
 import org.jivesoftware.smack.ConnectionConfiguration.DnssecMode;
+import org.jivesoftware.smack.filter.StanzaIdFilter;
 import org.jivesoftware.smack.packet.StanzaError;
 import org.jivesoftware.smack.parsing.ExceptionLoggingCallback;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
 import org.jivesoftware.smack.util.DNSUtil;
 import org.jivesoftware.smackx.iqregister.AccountManager;
+import org.jivesoftware.smackx.iqregister.packet.Registration;
+import org.jivesoftware.smackx.xdata.FormField;
+import org.jivesoftware.smackx.xdata.packet.DataForm;
 import org.jivesoftware.spark.component.TitlePanel;
+import org.jivesoftware.spark.ui.DataFormUI;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.SwingWorker;
@@ -51,6 +56,9 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.UnrecoverableKeyException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static org.jivesoftware.sparkimpl.certificates.SparkSSLContextCreator.Options.ONLY_SERVER_SIDE;
 
@@ -68,9 +76,13 @@ public class AccountCreationWizard extends JPanel {
 
     private final FormPanel formPanel = new FormPanel();
 
+    private final JPanel formPanelFields = new JPanel();
+
     private final JButton createAccountButton = new JButton();
 
     private JDialog dialog;
+
+    private DataFormUI registrationForm;
 
     private boolean registered;
     private XMPPConnection connection = null;
@@ -116,6 +128,7 @@ public class AccountCreationWizard extends JPanel {
         startRegistrationButton.addActionListener( actionEvent -> startRegistration() );
 
         formPanel.setVisible(false);
+        formPanelFields.setVisible(false);
 
         JLabel serverLabel = new JLabel();
         ResourceUtils.resLabel( serverLabel, serverField, Res.getString("label.server") + ":");
@@ -140,6 +153,8 @@ public class AccountCreationWizard extends JPanel {
         add(instructionsLabel, new GridBagConstraints(0, 2, 4, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
 
         add(formPanel, new GridBagConstraints(0, 3, 4, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
+
+        add(formPanelFields, new GridBagConstraints(0, 4, 4, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
 
         add(progressBar, new GridBagConstraints(1, 6, 4, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 
@@ -222,6 +237,11 @@ public class AccountCreationWizard extends JPanel {
                 createAccountButton.setEnabled(true);
                 String instructions = accountManager.getAccountInstructions();
                 instructionsLabel.setText(instructions);
+                registrationForm = getRegistrationForm();
+                if (registrationForm != null) {
+                    formPanelFields.add(registrationForm);
+                    formPanelFields.setVisible(true);
+                }
             } else {
                 String message = Res.getString("message.create.account.not.allowed");
                 JOptionPane.showMessageDialog(this, message, Res.getString("title.create.problem"), JOptionPane.ERROR_MESSAGE);
@@ -235,6 +255,37 @@ public class AccountCreationWizard extends JPanel {
                 condition = StanzaError.Condition.internal_server_error;
             }
             accountCreationFailed(condition);
+        }
+    }
+
+    private DataFormUI getRegistrationForm() {
+        Registration info = getRegistrationInfo();
+        if (info == null) {
+            return null;
+        }
+        DataForm regFields = info.getExtension(DataForm.class);
+        if (regFields == null) {
+            return null;
+        }
+        // TODO Show regFields.getTitle() and regFields.getInstructions()
+        // Create a new form without username and password that we will render ourself
+        DataForm extRegFields = regFields.asBuilder()
+            .removeField("username")
+            .removeField("password")
+            .build();
+        DataFormUI dataFormUI = new DataFormUI(extRegFields);
+        return dataFormUI;
+    }
+
+    // TODO This method should be provided by the Smack https://github.com/igniterealtime/Smack/pull/618
+    private Registration getRegistrationInfo() {
+        Registration reg = new Registration();
+        reg.setTo(connection.getXMPPServiceDomain());
+        try {
+            return connection.createStanzaCollectorAndSend(new StanzaIdFilter(reg.getStanzaId()), reg).nextResultOrThrow();
+        } catch (Exception e) {
+            Log.error("Unable to get registration form", e);
+            return null;
         }
     }
 
@@ -296,9 +347,10 @@ public class AccountCreationWizard extends JPanel {
                     return e;
                 }
                 try {
+                    Map<String, String> attrs = getRegistrationAttributes();
                     Localpart localpart = Localpart.from(getUsername());
                     final AccountManager accountManager = AccountManager.getInstance(connection);
-                    accountManager.createAccount(localpart, getPassword());
+                    accountManager.createAccount(localpart, getPassword(), attrs);
                 }
                 catch (XMPPException | SmackException | InterruptedException | XmppStringprepException e) {
 
@@ -337,6 +389,17 @@ public class AccountCreationWizard extends JPanel {
         };
 
         worker.start();
+    }
+
+    private Map<String, String> getRegistrationAttributes() {
+        Map<String, String> attrs = new HashMap<>();
+        if (registrationForm != null) {
+            List<FormField> fields = registrationForm.getFilledForm().getFields();
+            for (FormField f : fields) {
+                attrs.put(f.getFieldName(), f.getFirstValue());
+            }
+        }
+        return attrs;
     }
 
     /**
@@ -383,7 +446,7 @@ public class AccountCreationWizard extends JPanel {
         dialog.getContentPane().add(titlePanel, BorderLayout.NORTH);
         dialog.getContentPane().add(this, BorderLayout.CENTER);
         dialog.pack();
-        dialog.setSize(400, 300);
+        dialog.setSize(400, 400);
         dialog.setLocationRelativeTo(parent);
         dialog.setVisible(true);
     }
