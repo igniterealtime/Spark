@@ -33,6 +33,7 @@ import org.jivesoftware.spark.component.VerticalFlowLayout;
 
 import org.jivesoftware.spark.plugin.Plugin;
 import org.jivesoftware.spark.ui.*;
+import org.jivesoftware.spark.util.StringUtils;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.*;
@@ -128,66 +129,50 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
 
     private void populateTransports() {
         DiscoverItems discoItems = SparkManager.getSessionManager().getDiscoveredItems();
-
-        for (DiscoverItems.Item item : discoItems.getItems() ) {
-
+        for (DiscoverItems.Item item : discoItems.getItems()) {
             String entityName = item.getEntityID().toString();
-            if (entityName != null) {
-        	if (entityName.startsWith("aim.")) {
-                    AIMTransport aim = new AIMTransport(item.getEntityID().asDomainBareJid());
-                    TransportUtils.addTransport(item.getEntityID().asDomainBareJid(), aim);
-                }
-                else if (entityName.startsWith("msn.")) {
-                    MSNTransport msn = new MSNTransport(item.getEntityID().asDomainBareJid());
-                    TransportUtils.addTransport(item.getEntityID().asDomainBareJid(), msn);
-                }
-                else if (entityName.startsWith("yahoo.")) {
-                    YahooTransport yahoo = new YahooTransport(item.getEntityID().asDomainBareJid());
-                    TransportUtils.addTransport(item.getEntityID().asDomainBareJid(), yahoo);
-                }
-                else if (entityName.startsWith("icq.")) {
-                    ICQTransport icq = new ICQTransport(item.getEntityID().asDomainBareJid());
-                    TransportUtils.addTransport(item.getEntityID().asDomainBareJid(), icq);
-                }
-                else if (entityName.startsWith("gtalk.")) {
-                    GTalkTransport gtalk = new GTalkTransport(item.getEntityID().asDomainBareJid());
-                    TransportUtils.addTransport(item.getEntityID().asDomainBareJid(), gtalk);
-                }
-                else if (entityName.startsWith("xmpp.")) {
+            int dotPos = entityName.indexOf('.');
+            if (dotPos == -1) {
+                continue;
+            }
+            String transportPrefix = entityName.substring(0, dotPos);
+            switch (transportPrefix) {
+                case "xmpp":
                     XMPPTransport xmppTransport = new XMPPTransport(item.getEntityID().asDomainBareJid());
                     TransportUtils.addTransport(item.getEntityID().asDomainBareJid(), xmppTransport);
-                }
-                else if (entityName.startsWith("irc.")) {
+                    break;
+                case "irc":
                     IRCTransport ircTransport = new IRCTransport(item.getEntityID().asDomainBareJid());
                     TransportUtils.addTransport(item.getEntityID().asDomainBareJid(), ircTransport);
-                }
-                else if (entityName.startsWith("sip.") || entityName.startsWith("simple.")) {
+                    break;
+                case "sip":
+                case "simple":
                     SimpleTransport simpleTransport = new SimpleTransport(item.getEntityID().asDomainBareJid());
                     TransportUtils.addTransport(item.getEntityID().asDomainBareJid(), simpleTransport);
-                }
-                else if (entityName.startsWith("gadugadu.")) {
+                    break;
+                case "gadugadu":
                     GaduGaduTransport gadugaduTransport = new GaduGaduTransport(item.getEntityID().asDomainBareJid());
                     TransportUtils.addTransport(item.getEntityID().asDomainBareJid(), gadugaduTransport);
-                }
-                else if (entityName.startsWith("qq.")) {
+                    break;
+                case "qq":
                     QQTransport qqTransport = new QQTransport(item.getEntityID().asDomainBareJid());
                     TransportUtils.addTransport(item.getEntityID().asDomainBareJid(), qqTransport);
-                }
-                else if (entityName.startsWith("sametime.")) {
-                	SametimeTransport sametimeTransport = new SametimeTransport(item.getEntityID().asDomainBareJid());
+                    break;
+                case "sametime":
+                    SametimeTransport sametimeTransport = new SametimeTransport(item.getEntityID().asDomainBareJid());
                     TransportUtils.addTransport(item.getEntityID().asDomainBareJid(), sametimeTransport);
-                }
-                else if (entityName.startsWith("facebook.")) {
-                	FacebookTransport facebookTransport = new FacebookTransport(item.getEntityID().asDomainBareJid());
+                    break;
+                case "facebook":
+                    FacebookTransport facebookTransport = new FacebookTransport(item.getEntityID().asDomainBareJid());
                     TransportUtils.addTransport(item.getEntityID().asDomainBareJid(), facebookTransport);
-                }
-                else if (entityName.startsWith("myspace.") || entityName.startsWith("myspaceim.")) {
-                	MySpaceTransport myspaceTransport = new MySpaceTransport(item.getEntityID().asDomainBareJid());
+                    break;
+                case "myspace":
+                case "myspaceim":
+                    MySpaceTransport myspaceTransport = new MySpaceTransport(item.getEntityID().asDomainBareJid());
                     TransportUtils.addTransport(item.getEntityID().asDomainBareJid(), myspaceTransport);
-                }                
+                    break;
             }
         }
-
     }
 
     private void addTransport(final Transport transport) {

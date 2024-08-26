@@ -127,7 +127,7 @@ public class TransportRegistrationDialog extends JPanel implements ActionListene
         dialog = new JDialog(SparkManager.getMainWindow(), transport.getTitle(), false);
         dialog.add(this);
         dialog.pack();
-        dialog.setSize(400, 200);
+        dialog.setSize(400, 250);
         dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
 
         GraphicUtils.centerWindowOnComponent(dialog, SparkManager.getMainWindow());
