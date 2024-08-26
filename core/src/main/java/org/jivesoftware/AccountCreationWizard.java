@@ -93,9 +93,16 @@ public class AccountCreationWizard extends JPanel {
         JLabel confirmPasswordLabel = new JLabel();
         ResourceUtils.resLabel( confirmPasswordLabel, confirmPasswordField, Res.getString("label.confirm.password") + ":");
         ResourceUtils.resButton(createAccountButton, Res.getString("button.create.account"));
+        createAccountButton.addActionListener( actionEvent -> createAccount() );
+
+        progressBar = new JProgressBar();
+        progressBar.setVisible(false);
+
+        JButton closeButton = new JButton();
+        ResourceUtils.resButton( closeButton, Res.getString("button.close"));
+        closeButton.addActionListener( actionEvent -> dialog.dispose() );
 
         setLayout(new GridBagLayout());
-
         // Add component to UI
         add( serverLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         add(serverField, new GridBagConstraints(1, 0, 3, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
@@ -109,22 +116,10 @@ public class AccountCreationWizard extends JPanel {
         add( confirmPasswordLabel, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         add(confirmPasswordField, new GridBagConstraints(1, 3, 3, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 
-        progressBar = new JProgressBar();
-
-
-        add(progressBar, new GridBagConstraints(1, 4, 3, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
-        progressBar.setVisible(false);
+        add(progressBar, new GridBagConstraints(1, 5, 4, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
         add(createAccountButton, new GridBagConstraints(2, 5, 1, 1, 1.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
 
-
-        JButton closeButton = new JButton();
-        ResourceUtils.resButton( closeButton, Res.getString("button.close"));
         add( closeButton, new GridBagConstraints(3, 5, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-
-
-        createAccountButton.addActionListener( actionEvent -> createAccount() );
-
-        closeButton.addActionListener( actionEvent -> dialog.dispose() );
     }
 
     /**
