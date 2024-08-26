@@ -300,7 +300,7 @@ public class AccountCreationWizard extends JPanel {
             message = Res.getString("message.already.exists");
             formPanel.usernameField.setText("");
             formPanel.usernameField.requestFocus();
-        } else if (condition == StanzaError.Condition.not_allowed || condition == StanzaError.Condition.forbidden) {
+        } else if (condition == StanzaError.Condition.not_allowed || condition == StanzaError.Condition.forbidden || condition == StanzaError.Condition.service_unavailable) {
             message = Res.getString("message.create.account.not.allowed");
         } else {
             message = Res.getString("message.create.account");
