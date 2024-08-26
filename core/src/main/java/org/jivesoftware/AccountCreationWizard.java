@@ -62,9 +62,13 @@ public class AccountCreationWizard extends JPanel {
 
     private final JComboBox<String> serverField = new JComboBox<>();
 
-    private final JButton createAccountButton = new JButton();
+    private final JButton startRegistrationButton = new JButton();
+
+    private final JLabel instructionsLabel = new JLabel();
 
     private final FormPanel formPanel = new FormPanel();
+
+    private final JButton createAccountButton = new JButton();
 
     private JDialog dialog;
 
@@ -108,9 +112,15 @@ public class AccountCreationWizard extends JPanel {
         serverField.setEditable(true);
         serverField.setModel(XmppProviders.getXmppProvidersModel());
 
+        ResourceUtils.resButton(startRegistrationButton, Res.getString("button.start.registration"));
+        startRegistrationButton.addActionListener( actionEvent -> startRegistration() );
+
+        formPanel.setVisible(false);
+
         JLabel serverLabel = new JLabel();
         ResourceUtils.resLabel( serverLabel, serverField, Res.getString("label.server") + ":");
         ResourceUtils.resButton(createAccountButton, Res.getString("button.create.account"));
+        createAccountButton.setEnabled(false);
         createAccountButton.addActionListener( actionEvent -> createAccount() );
 
         progressBar = new JProgressBar();
@@ -124,13 +134,16 @@ public class AccountCreationWizard extends JPanel {
         // Add component to UI
         add( serverLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         add(serverField, new GridBagConstraints(1, 0, 3, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+        add(startRegistrationButton, new GridBagConstraints(1, 1, 3, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 
-        add(formPanel, new GridBagConstraints(0, 2, 4, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
+        add(instructionsLabel, new GridBagConstraints(0, 2, 4, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
 
-        add(progressBar, new GridBagConstraints(1, 3, 4, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
-        add(createAccountButton, new GridBagConstraints(2, 4, 1, 1, 1.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        add(formPanel, new GridBagConstraints(0, 3, 4, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
 
-        add( closeButton, new GridBagConstraints(3, 4, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        add(progressBar, new GridBagConstraints(1, 4, 4, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+
+        add(createAccountButton, new GridBagConstraints(2, 5, 1, 1, 1.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        add( closeButton, new GridBagConstraints(3, 5, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
     }
 
     /**
@@ -186,6 +199,42 @@ public class AccountCreationWizard extends JPanel {
      */
     public boolean isPasswordValid() {
         return getPassword().equals(getConfirmPassword());
+    }
+
+    /**
+     * Start registration and fetch signup form.
+     */
+    private void startRegistration() {
+        final Component ui = this;
+        try {
+            connection = getConnection();
+        } catch (SmackException | IOException | XMPPException e) {
+            String th = e.getCause() == null ? e.getMessage() : e.getCause().getMessage();
+            JOptionPane.showMessageDialog(ui, Res.getString("message.connection.failed", getServer())
+                + "\n" + th, Res.getString("title.create.problem"), JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        try {
+            final AccountManager accountManager = AccountManager.getInstance(connection);
+            if (accountManager.supportsAccountCreation()) {
+                formPanel.setVisible(true);
+                createAccountButton.setEnabled(true);
+                String instructions = accountManager.getAccountInstructions();
+                instructionsLabel.setText(instructions);
+            } else {
+                String message = Res.getString("message.create.account.not.allowed");
+                JOptionPane.showMessageDialog(this, message, Res.getString("title.create.problem"), JOptionPane.ERROR_MESSAGE);
+            }
+        } catch (XMPPException | SmackException | InterruptedException e) {
+            StanzaError.Condition condition = null;
+            if (e instanceof XMPPException.XMPPErrorException) {
+                condition = ((XMPPException.XMPPErrorException) e).getStanzaError().getCondition();
+            }
+            if (condition == null) {
+                condition = StanzaError.Condition.internal_server_error;
+            }
+            accountCreationFailed(condition);
+        }
     }
 
     /**
