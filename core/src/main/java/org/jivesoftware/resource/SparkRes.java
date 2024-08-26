@@ -44,8 +44,6 @@ public class SparkRes {
     public static final String ADD_LINK_TO_CHAT = "ADD_LINK_TO_CHAT";
     public static final String ADD_TO_CHAT = "ADD_TO_CHAT";
     public static final String ADD_TO_KB = "ADD_TO_KB";
-    public static final String AIM_TRANSPORT_ACTIVE_IMAGE = "AIM_TRANSPORT_ACTIVE_IMAGE";
-    public static final String AIM_TRANSPORT_INACTIVE_IMAGE = "AIM_TRANSPORT_INACTIVE_IMAGE";
     public static final String ALERT = "ALERT";
     public static final String ALL_CHATS = "ALL_CHATS";
     public static final String APP_NAME = "APP_NAME";
@@ -131,14 +129,10 @@ public class SparkRes {
     public static final String GO = "GO";
     public static final String GREEN_BALL = "GREEN_BALL";
     public static final String GREEN_FLAG_16x16 = "GREEN_FLAG_16x16";
-    public static final String GTALK_TRANSPORT_ACTIVE_IMAGE = "GTALK_TRANSPORT_ACTIVE_IMAGE";
-    public static final String GTALK_TRANSPORT_INACTIVE_IMAGE = "GTALK_TRANSPORT_INACTIVE_IMAGE";
     public static final String HEADSET_IMAGE = "HEADSET_IMAGE";
     public static final String HELP2_24x24 = "HELP2_24x24";
     public static final String HISTORY_16x16 = "HISTORY_16x16";
     public static final String HISTORY_24x24_IMAGE = "HISTORY_24x24";
-    public static final String ICQ_TRANSPORT_ACTIVE_IMAGE = "ICQ_TRANSPORT_ACTIVE_IMAGE";
-    public static final String ICQ_TRANSPORT_INACTIVE_IMAGE = "ICQ_TRANSPORT_INACTIVE_IMAGE";
     public static final String ID_CARD_48x48 = "ID_CARD_48x48";
     public static final String IM_AVAILABLE_STALE_IMAGE = "IM_AVAILABLE_STALE_IMAGE";
     public static final String IM_AWAY = "IM_AWAY";
@@ -189,8 +183,6 @@ public class SparkRes {
     public static final String MINUS_SIGN = "MINUS_SIGN";
     public static final String MOBILE_PHONE_IMAGE = "MOBILE_PHONE_IMAGE";
     public static final String MODERATOR_IMAGE = "MODERATOR_IMAGE";
-    public static final String MSN_TRANSPORT_ACTIVE_IMAGE = "MSN_TRANSPORT_ACTIVE_IMAGE";
-    public static final String MSN_TRANSPORT_INACTIVE_IMAGE = "MSN_TRANSPORT_INACTIVE_IMAGE";
     public static final String MYSPACE_TRANSPORT_ACTIVE_IMAGE = "MYSPACE_TRANSPORT_ACTIVE_IMAGE";
     public static final String MYSPACE_TRANSPORT_INACTIVE_IMAGE = "MYSPACE_TRANSPORT_INACTIVE_IMAGE";
     public static final String NOTEBOOK_IMAGE = "NOTEBOOK_IMAGE";
@@ -330,8 +322,6 @@ public class SparkRes {
     public static final String WORKGROUP_QUEUE = "WORKGROUP_QUEUE";
     public static final String XMPP_TRANSPORT_ACTIVE_IMAGE = "XMPP_TRANSPORT_ACTIVE_IMAGE";
     public static final String XMPP_TRANSPORT_INACTIVE_IMAGE = "XMPP_TRANSPORT_INACTIVE_IMAGE";
-    public static final String YAHOO_TRANSPORT_ACTIVE_IMAGE = "YAHOO_TRANSPORT_ACTIVE_IMAGE";
-    public static final String YAHOO_TRANSPORT_INACTIVE_IMAGE = "YAHOO_TRANSPORT_INACTIVE_IMAGE";
     public static final String YELLOW_BALL = "YELLOW_BALL";
     public static final String YELLOW_FLAG_16x16 = "YELLOW_FLAG_16x16";
     public static final String EXECUTABLE_NAME = "EXECUTABLE_NAME";
