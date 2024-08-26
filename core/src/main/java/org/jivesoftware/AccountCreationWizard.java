@@ -62,19 +62,43 @@ public class AccountCreationWizard extends JPanel {
 
     private final JComboBox<String> serverField = new JComboBox<>();
 
-    private final JTextField usernameField = new JTextField();
-
-    private final JPasswordField passwordField = new JPasswordField();
-
-    private final JPasswordField confirmPasswordField = new JPasswordField();
-
     private final JButton createAccountButton = new JButton();
+
+    private final FormPanel formPanel = new FormPanel();
 
     private JDialog dialog;
 
     private boolean registered;
     private XMPPConnection connection = null;
     private final JProgressBar progressBar;
+
+    static class FormPanel extends JPanel {
+        private final JTextField usernameField = new JTextField();
+
+        private final JPasswordField passwordField = new JPasswordField();
+
+        private final JPasswordField confirmPasswordField = new JPasswordField();
+
+        public FormPanel() {
+            super();
+            JLabel usernameLabel = new JLabel();
+            ResourceUtils.resLabel( usernameLabel, usernameField, Res.getString("label.username") + ":");
+            JLabel passwordLabel = new JLabel();
+            ResourceUtils.resLabel( passwordLabel, passwordField, Res.getString("label.password") + ":");
+            JLabel confirmPasswordLabel = new JLabel();
+            ResourceUtils.resLabel( confirmPasswordLabel, confirmPasswordField, Res.getString("label.confirm.password") + ":");
+
+            setLayout(new GridBagLayout());
+            add( usernameLabel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+            add(usernameField, new GridBagConstraints(1, 1, 3, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 150, 0));
+
+            add( passwordLabel, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+            add(passwordField, new GridBagConstraints(1, 2, 3, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+
+            add( confirmPasswordLabel, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+            add(confirmPasswordField, new GridBagConstraints(1, 3, 3, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+        }
+    }
 
     /**
      * Construct the AccountCreationWizard UI.
@@ -86,12 +110,6 @@ public class AccountCreationWizard extends JPanel {
 
         JLabel serverLabel = new JLabel();
         ResourceUtils.resLabel( serverLabel, serverField, Res.getString("label.server") + ":");
-        JLabel usernameLabel = new JLabel();
-        ResourceUtils.resLabel( usernameLabel, usernameField, Res.getString("label.username") + ":");
-        JLabel passwordLabel = new JLabel();
-        ResourceUtils.resLabel( passwordLabel, passwordField, Res.getString("label.password") + ":");
-        JLabel confirmPasswordLabel = new JLabel();
-        ResourceUtils.resLabel( confirmPasswordLabel, confirmPasswordField, Res.getString("label.confirm.password") + ":");
         ResourceUtils.resButton(createAccountButton, Res.getString("button.create.account"));
         createAccountButton.addActionListener( actionEvent -> createAccount() );
 
@@ -107,19 +125,12 @@ public class AccountCreationWizard extends JPanel {
         add( serverLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         add(serverField, new GridBagConstraints(1, 0, 3, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 
-        add( usernameLabel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-        add(usernameField, new GridBagConstraints(1, 1, 3, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 150, 0));
+        add(formPanel, new GridBagConstraints(0, 2, 4, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
 
-        add( passwordLabel, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-        add(passwordField, new GridBagConstraints(1, 2, 3, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+        add(progressBar, new GridBagConstraints(1, 3, 4, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+        add(createAccountButton, new GridBagConstraints(2, 4, 1, 1, 1.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
 
-        add( confirmPasswordLabel, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-        add(confirmPasswordField, new GridBagConstraints(1, 3, 3, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
-
-        add(progressBar, new GridBagConstraints(1, 5, 4, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
-        add(createAccountButton, new GridBagConstraints(2, 5, 1, 1, 1.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-
-        add( closeButton, new GridBagConstraints(3, 5, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        add( closeButton, new GridBagConstraints(3, 4, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
     }
 
     /**
@@ -128,7 +139,7 @@ public class AccountCreationWizard extends JPanel {
      * @return the username.
      */
     public String getUsername() {
-        return XmppStringUtils.escapeLocalpart(usernameField.getText().toLowerCase());
+        return XmppStringUtils.escapeLocalpart(formPanel.usernameField.getText().toLowerCase());
     }
 
     /**
@@ -137,7 +148,7 @@ public class AccountCreationWizard extends JPanel {
      * @return the username.
      */
     public String getUsernameWithoutEscape() {
-        return usernameField.getText();
+        return formPanel.usernameField.getText();
     }
     
     /**
@@ -146,7 +157,7 @@ public class AccountCreationWizard extends JPanel {
      * @return the password to use for the new account.
      */
     public String getPassword() {
-        return new String(passwordField.getPassword());
+        return new String(formPanel.passwordField.getPassword());
     }
 
     /**
@@ -155,7 +166,7 @@ public class AccountCreationWizard extends JPanel {
      * @return the password to use for the new account.
      */
     public String getConfirmPassword() {
-        return new String(confirmPasswordField.getPassword());
+        return new String(formPanel.confirmPasswordField.getPassword());
     }
 
     /**
@@ -187,7 +198,7 @@ public class AccountCreationWizard extends JPanel {
         String server = getServer();
         if (!ModelUtil.hasLength(getUsername())) {
             errors = true;
-            usernameField.requestFocus();
+            formPanel.usernameField.requestFocus();
             errorMessage = Res.getString("message.username.error");
         }
         else if (!ModelUtil.hasLength(getPassword())) {
@@ -287,8 +298,8 @@ public class AccountCreationWizard extends JPanel {
         String message;
         if (condition == StanzaError.Condition.conflict) {
             message = Res.getString("message.already.exists");
-            usernameField.setText("");
-            usernameField.requestFocus();
+            formPanel.usernameField.setText("");
+            formPanel.usernameField.requestFocus();
         } else if (condition == StanzaError.Condition.not_allowed || condition == StanzaError.Condition.forbidden) {
             message = Res.getString("message.create.account.not.allowed");
         } else {
