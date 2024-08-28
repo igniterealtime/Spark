@@ -237,8 +237,17 @@ public class AccountCreationWizard extends JPanel {
             if (accountManager.supportsAccountCreation()) {
                 formPanel.setVisible(true);
                 createAccountButton.setEnabled(true);
-                String instructions = accountManager.getAccountInstructions();
-                registrationForm = getRegistrationForm();
+                String instructions = null;
+                Registration info = getRegistrationInfo();
+                if (info != null) {
+                    DataForm regFields = info.getExtension(DataForm.class);
+                    if (regFields != null) {
+                        registrationForm = getRegistrationForm(regFields);
+                        instructions = String.join("\n", regFields.getInstructions());
+                    } else {
+                        instructions = info.getInstructions();
+                    }
+                }
                 if (registrationForm != null) {
                     formPanelFields.add(registrationForm);
                     formPanelFields.setVisible(true);
@@ -263,16 +272,7 @@ public class AccountCreationWizard extends JPanel {
         }
     }
 
-    private DataFormUI getRegistrationForm() {
-        Registration info = getRegistrationInfo();
-        if (info == null) {
-            return null;
-        }
-        DataForm regFields = info.getExtension(DataForm.class);
-        if (regFields == null) {
-            return null;
-        }
-        // TODO Show regFields.getTitle() and regFields.getInstructions()
+    private DataFormUI getRegistrationForm(DataForm regFields) {
         // Create a new form without username and password that we will render ourself
         DataForm extRegFields = regFields.asBuilder()
             .removeField("username")
