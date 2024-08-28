@@ -127,6 +127,8 @@ public class AccountCreationWizard extends JPanel {
         ResourceUtils.resButton(startRegistrationButton, Res.getString("button.start.registration"));
         startRegistrationButton.addActionListener( actionEvent -> startRegistration() );
 
+        instructionsLabel.setVisible(false);
+
         formPanel.setVisible(false);
         formPanelFields.setVisible(false);
 
@@ -236,11 +238,14 @@ public class AccountCreationWizard extends JPanel {
                 formPanel.setVisible(true);
                 createAccountButton.setEnabled(true);
                 String instructions = accountManager.getAccountInstructions();
-                instructionsLabel.setText(instructions);
                 registrationForm = getRegistrationForm();
                 if (registrationForm != null) {
                     formPanelFields.add(registrationForm);
                     formPanelFields.setVisible(true);
+                }
+                if (instructions != null) {
+                    instructionsLabel.setText(instructions);
+                    instructionsLabel.setVisible(true);
                 }
             } else {
                 String message = Res.getString("message.create.account.not.allowed");
