@@ -135,9 +135,8 @@ public class PluginViewer extends JPanel implements Plugin
     {
         PluginManager pluginManager = PluginManager.getInstance();
         List<PublicPlugin> plugins = pluginManager.getPublicPlugins();
-        for ( Object plugin1 : plugins )
+        for ( PublicPlugin plugin : plugins )
         {
-            PublicPlugin plugin = (PublicPlugin) plugin1;
             final SparkPlugUI ui = new SparkPlugUI( plugin );
             ui.useLocalIcon();
             installedPanel.add( ui );
