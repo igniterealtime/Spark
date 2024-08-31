@@ -512,9 +512,6 @@ public class PluginViewer extends JPanel implements Plugin
         List<? extends Node> plugins = pluginXML.selectNodes( "/plugins/plugin" );
         for ( Node plugin1 : plugins )
         {
-            PublicPlugin publicPlugin = new PublicPlugin();
-
-            String clazz;
             try
             {
                 Element plugin = (Element) plugin1;
@@ -527,7 +524,8 @@ public class PluginViewer extends JPanel implements Plugin
                     continue;
                 }
 
-                clazz = plugin.selectSingleNode( "class" ).getText();
+                String clazz = plugin.selectSingleNode("class").getText();
+                PublicPlugin publicPlugin = new PublicPlugin();
                 publicPlugin.setPluginClass( clazz );
                 publicPlugin.setName( name );
 
