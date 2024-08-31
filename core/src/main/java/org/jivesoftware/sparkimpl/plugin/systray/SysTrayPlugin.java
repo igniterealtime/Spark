@@ -52,6 +52,7 @@ import org.jivesoftware.spark.ui.status.StatusBar;
 import org.jivesoftware.spark.ui.status.StatusItem;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
+import org.jivesoftware.sparkimpl.settings.JiveInfo;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jivesoftware.smackx.chatstates.ChatStateListener;
@@ -253,7 +254,7 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatStateListener {
 		
 		
 		trayIcon = new TrayIcon(availableIcon.getImage(),
-			Default.getString(Default.APPLICATION_NAME), null);
+            JiveInfo.getName(), null);
 		trayIcon.setImageAutoSize(true);
 
 		trayIcon.addMouseListener(new MouseListener() {
