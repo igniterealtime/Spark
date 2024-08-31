@@ -508,6 +508,7 @@ public class PluginViewer extends JPanel implements Plugin
             return Collections.emptyList();
         }
 
+        String sparkVersion = JiveInfo.getVersion();
         List<? extends Node> plugins = pluginXML.selectNodes( "/plugins/plugin" );
         for ( Node plugin1 : plugins )
         {
@@ -521,8 +522,8 @@ public class PluginViewer extends JPanel implements Plugin
 
                 try
                 {
-                    String version = plugin.selectSingleNode( "minSparkVersion" ).getText();
-                    if ( !isGreaterOrEqual( JiveInfo.getVersion(), version ) )
+                    String minSparkVersion = plugin.selectSingleNode( "minSparkVersion" ).getText();
+                    if ( !isGreaterOrEqual( sparkVersion, minSparkVersion ) )
                     {
                         Log.error( "Unable to load plugin " + name + " due to min version incompatibility." );
                         continue;
