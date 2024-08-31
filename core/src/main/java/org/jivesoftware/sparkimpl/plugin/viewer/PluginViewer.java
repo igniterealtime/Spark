@@ -306,8 +306,6 @@ public class PluginViewer extends JPanel implements Plugin
                 final HttpGet request = new HttpGet(retrieveListURL);
 
                 HttpHost proxy = null;
-                if ( Default.getBoolean( Default.PLUGIN_REPOSITORY_USE_PROXY ) )
-                {
                     String proxyHost = System.getProperty( "http.proxyHost" );
                     String proxyPort = System.getProperty( "http.proxyPort" );
                     if ( ModelUtil.hasLength( proxyHost ) && ModelUtil.hasLength(proxyPort) ) {
@@ -317,7 +315,6 @@ public class PluginViewer extends JPanel implements Plugin
                             Log.error( e );
                         }
                     }
-                }
 
                 try (final CloseableHttpClient httpClient =
                          HttpClients.custom()
@@ -383,8 +380,6 @@ public class PluginViewer extends JPanel implements Plugin
         final HttpGet request = new HttpGet(plugin.getDownloadURL());
 
         HttpHost proxy = null;
-        if ( Default.getBoolean( Default.PLUGIN_REPOSITORY_USE_PROXY ) )
-        {
             String proxyHost = System.getProperty( "http.proxyHost" );
             String proxyPort = System.getProperty( "http.proxyPort" );
             if ( ModelUtil.hasLength( proxyHost ) && ModelUtil.hasLength(proxyPort) ) {
@@ -394,7 +389,6 @@ public class PluginViewer extends JPanel implements Plugin
                     Log.error( e );
                 }
             }
-        }
 
         try (final CloseableHttpClient httpClient =
                  HttpClients.custom()
