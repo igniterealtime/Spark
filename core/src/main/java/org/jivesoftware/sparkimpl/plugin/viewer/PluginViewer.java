@@ -520,18 +520,10 @@ public class PluginViewer extends JPanel implements Plugin
                 Element plugin = (Element) plugin1;
 
                 String name = plugin.selectSingleNode("name").getText();
-                try
+                String minSparkVersion = plugin.selectSingleNode( "minSparkVersion" ).getText();
+                if ( !isGreaterOrEqual( sparkVersion, minSparkVersion ) )
                 {
-                    String minSparkVersion = plugin.selectSingleNode( "minSparkVersion" ).getText();
-                    if ( !isGreaterOrEqual( sparkVersion, minSparkVersion ) )
-                    {
-                        Log.error( "Unable to load plugin " + name + " due to min version incompatibility." );
-                        continue;
-                    }
-                }
-                catch ( Exception e )
-                {
-                    Log.error( "Unable to load plugin " + name + " due to no minSparkVersion." );
+                    Log.error( "Unable to load plugin " + name + " due to min version incompatibility." );
                     continue;
                 }
 
@@ -608,8 +600,6 @@ public class PluginViewer extends JPanel implements Plugin
             {
                 Log.error(ex);
             }
-
-
         }
         return pluginList;
     }
