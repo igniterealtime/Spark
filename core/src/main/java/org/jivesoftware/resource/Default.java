@@ -36,7 +36,6 @@ public class Default {
     private static final Map<String,ImageIcon> cache = new HashMap<>();
 
     public static final String MAIN_IMAGE = "MAIN_IMAGE";
-    public static final String APPLICATION_NAME = "APPLICATION_NAME";
     public static final String APPLICATION_INFO1 = "APPLICATION_INFO1";
     public static final String APPLICATION_INFO2 = "APPLICATION_INFO2";
     public static final String APPLICATION_INFO3 = "APPLICATION_INFO3";
