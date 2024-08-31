@@ -55,6 +55,7 @@ import java.io.*;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -504,10 +505,10 @@ public class PluginViewer extends JPanel implements Plugin
         catch ( DocumentException | SAXException e )
         {
             Log.error( e );
+            return Collections.emptyList();
         }
 
         List<? extends Node> plugins = pluginXML.selectNodes( "/plugins/plugin" );
-
         for ( Node plugin1 : plugins )
         {
             PublicPlugin publicPlugin = new PublicPlugin();
@@ -605,7 +606,7 @@ public class PluginViewer extends JPanel implements Plugin
             }
             catch ( Exception ex )
             {
-                ex.printStackTrace();
+                Log.error(ex);
             }
 
 
