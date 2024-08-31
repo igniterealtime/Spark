@@ -515,11 +515,11 @@ public class PluginViewer extends JPanel implements Plugin
             PublicPlugin publicPlugin = new PublicPlugin();
 
             String clazz;
-            String name = null;
             try
             {
                 Element plugin = (Element) plugin1;
 
+                String name = plugin.selectSingleNode("name").getText();
                 try
                 {
                     String minSparkVersion = plugin.selectSingleNode( "minSparkVersion" ).getText();
@@ -535,7 +535,6 @@ public class PluginViewer extends JPanel implements Plugin
                     continue;
                 }
 
-                name = plugin.selectSingleNode( "name" ).getText();
                 clazz = plugin.selectSingleNode( "class" ).getText();
                 publicPlugin.setPluginClass( clazz );
                 publicPlugin.setName( name );
