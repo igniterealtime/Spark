@@ -19,8 +19,8 @@ package org.jivesoftware;
 
 import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
-import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.core5.http.ClassicHttpResponse;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.jivesoftware.spark.util.log.Log;
 
@@ -78,14 +78,15 @@ public class XmppProviders {
         Log.debug("Download providers");
         try (CloseableHttpClient httpClient = HttpClients.createSystem()) {
             HttpGet request = new HttpGet("https://data.xmpp.net/providers/v2/providers-As.json");
-            CloseableHttpResponse httpResponse = httpClient.execute(request);
-            final int statusCode = httpResponse.getCode();
-            if (statusCode == 200) {
-                String json = EntityUtils.toString(httpResponse.getEntity(), StandardCharsets.UTF_8);
-                return parseProvidersJson(json);
+            try (ClassicHttpResponse httpResponse = httpClient.executeOpen(null, request, null)) {
+                final int statusCode = httpResponse.getCode();
+                if (statusCode == 200) {
+                    String json = EntityUtils.toString(httpResponse.getEntity(), StandardCharsets.UTF_8);
+                    return parseProvidersJson(json);
+                }
+                Log.error("Download providers: bad status " + statusCode);
+                return null;
             }
-            Log.error("Download providers: bad status " + statusCode);
-            return null;
         } catch (Exception e) {
             Log.error("Download providers: error", e);
             return null;
