@@ -24,12 +24,9 @@ import org.apache.hc.core5.http.ClassicHttpResponse;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.jivesoftware.spark.util.log.Log;
 
-import javax.swing.*;
-
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import static java.util.Arrays.asList;
 
@@ -58,20 +55,14 @@ public class XmppProviders {
         "yax.im",
     };
 
-    public static ComboBoxModel<String> getXmppProvidersModel() {
-        DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>();
+    public static List<String> getXmppProvidersModel() {
         List<String> providersList = downloadProvidersList();
-        if (providersList == null) {
-            // fallback to static list
-            providersList = asList(providers);
+        if (providersList != null) {
+            return providersList;
         }
-        for (String provider : providersList) {
-            model.addElement(provider);
-        }
-        // Randomly pre-select a provider
-        int randomProviderIdx = new Random().nextInt(providersList.size());
-        model.setSelectedItem(providersList.get(randomProviderIdx));
-        return model;
+        // fallback to static list
+        providersList = asList(providers);
+        return providersList;
     }
 
     static List<String> downloadProvidersList() {
