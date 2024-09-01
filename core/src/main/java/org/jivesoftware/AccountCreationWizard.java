@@ -59,6 +59,7 @@ import java.security.UnrecoverableKeyException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import static org.jivesoftware.sparkimpl.certificates.SparkSSLContextCreator.Options.ONLY_SERVER_SIDE;
 
@@ -122,7 +123,13 @@ public class AccountCreationWizard extends JPanel {
     public AccountCreationWizard() {
         // Associate Mnemonics
         serverField.setEditable(true);
-        serverField.setModel(XmppProviders.getXmppProvidersModel());
+        List<String> providers = XmppProviders.getXmppProvidersModel();
+        for (String provider : providers) {
+            serverField.addItem(provider);
+        }
+        // Randomly pre-select a provider
+        int randomProviderIdx = new Random().nextInt(providers.size());
+        serverField.setSelectedIndex(randomProviderIdx);
 
         ResourceUtils.resButton(startRegistrationButton, Res.getString("button.start.registration"));
         startRegistrationButton.addActionListener( actionEvent -> startRegistration() );
