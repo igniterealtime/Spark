@@ -26,6 +26,7 @@ import org.jivesoftware.smack.parsing.ExceptionLoggingCallback;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
 import org.jivesoftware.smack.util.DNSUtil;
+import org.jivesoftware.smackx.bob.element.BoBDataExtension;
 import org.jivesoftware.smackx.iqregister.AccountManager;
 import org.jivesoftware.smackx.iqregister.packet.Registration;
 import org.jivesoftware.smackx.xdata.FormField;
@@ -78,6 +79,8 @@ public class AccountCreationWizard extends JPanel {
     private final FormPanel formPanel = new FormPanel();
 
     private final JPanel formPanelFields = new JPanel();
+
+    private final JLabel captcha = new JLabel();
 
     private final JButton createAccountButton = new JButton();
 
@@ -139,6 +142,11 @@ public class AccountCreationWizard extends JPanel {
         formPanel.setVisible(false);
         formPanelFields.setVisible(false);
 
+        captcha.setPreferredSize(new java.awt.Dimension(250, 80));
+        captcha.setRequestFocusEnabled(false);
+        captcha.setHorizontalAlignment(SwingConstants.CENTER);
+        instructionsLabel.setVisible(false);
+
         JLabel serverLabel = new JLabel();
         ResourceUtils.resLabel( serverLabel, serverField, Res.getString("label.server") + ":");
         ResourceUtils.resButton(createAccountButton, Res.getString("button.create.account"));
@@ -165,10 +173,12 @@ public class AccountCreationWizard extends JPanel {
 
         add(formPanelFields, new GridBagConstraints(0, 4, 4, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
 
+        add(captcha, new GridBagConstraints(0, 5, 4, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
+
         add(progressBar, new GridBagConstraints(1, 6, 4, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 
-        add(createAccountButton, new GridBagConstraints(2, 6, 1, 1, 1.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-        add( closeButton, new GridBagConstraints(3, 6, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        add(createAccountButton, new GridBagConstraints(2, 7, 1, 1, 1.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        add( closeButton, new GridBagConstraints(3, 7, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
     }
 
     /**
@@ -245,11 +255,19 @@ public class AccountCreationWizard extends JPanel {
                 formPanel.setVisible(true);
                 createAccountButton.setEnabled(true);
                 String instructions = null;
+                Icon captchaIcon = null;
                 Registration info = getRegistrationInfo();
                 if (info != null) {
+                    // try to get the CAPTCHA image from <data>
+                    //  <data type="image/png" max-age="0" cid="sha1+HASH_HERE@bob.xmpp.org" xmlns="urn:xmpp:bob">BASE64_OF_PNG_HERE</data>
+                    BoBDataExtension captchaBob = info.getExtension(BoBDataExtension.class);
+                    if (captchaBob != null && "image/png".equals(captchaBob.getBobData().getType())) {
+                        byte[] imageData = captchaBob.getBobData().getContent();
+                        captchaIcon = new ImageIcon(imageData);
+                    }
                     DataForm regFields = info.getExtension(DataForm.class);
                     if (regFields != null) {
-                        registrationForm = getRegistrationForm(regFields);
+                        registrationForm = getRegistrationForm(regFields, captchaIcon != null);
                         instructions = String.join("\n", regFields.getInstructions());
                     } else {
                         instructions = info.getInstructions();
@@ -261,6 +279,10 @@ public class AccountCreationWizard extends JPanel {
                 }
                 if (instructions != null) {
                     instructionsLabel.setText(instructions);
+                    instructionsLabel.setVisible(true);
+                }
+                if (captchaIcon != null) {
+                    captcha.setIcon(captchaIcon);
                     instructionsLabel.setVisible(true);
                 }
             } else {
@@ -279,13 +301,16 @@ public class AccountCreationWizard extends JPanel {
         }
     }
 
-    private DataFormUI getRegistrationForm(DataForm regFields) {
-        // Create a new form without username and password that we will render ourself
-        DataForm extRegFields = regFields.asBuilder()
+    private DataFormUI getRegistrationForm(DataForm regFields, boolean noCaptcha) {
+        // Create a new form without username and password that we will render ourselves
+        DataForm.Builder extRegFields = regFields.asBuilder()
             .removeField("username")
-            .removeField("password")
-            .build();
-        DataFormUI dataFormUI = new DataFormUI(extRegFields);
+            .removeField("password");
+        if (noCaptcha) {
+            extRegFields.removeField("captcha-fallback-url");
+            extRegFields.removeField("captcha-fallback-text");
+        }
+        DataFormUI dataFormUI = new DataFormUI(extRegFields.build());
         return dataFormUI;
     }
 
@@ -458,7 +483,7 @@ public class AccountCreationWizard extends JPanel {
         dialog.getContentPane().add(titlePanel, BorderLayout.NORTH);
         dialog.getContentPane().add(this, BorderLayout.CENTER);
         dialog.pack();
-        dialog.setSize(400, 400);
+        dialog.setSize(400, 580);
         dialog.setLocationRelativeTo(parent);
         dialog.setVisible(true);
     }
