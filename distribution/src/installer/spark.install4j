@@ -834,7 +834,7 @@ return console.askYesNo(message, true);
       </exclude>
       <jreBundle jreBundleSource="none" />
     </linuxRPM>
-    <linuxDeb name="Linux Deb Archive" id="166">
+    <linuxDeb name="Linux Deb Archive" id="166" dependencies="default-jre">
       <exclude>
         <entry location="bin/startup.bat" />
         <entry location="documentation" />
