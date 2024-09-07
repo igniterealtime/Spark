@@ -239,7 +239,7 @@
         <dependency>
             <groupId>com.install4j</groupId>
             <artifactId>install4j-runtime</artifactId>
-            <version>10.0.8</version>
+            <version>10.0.9</version>
         </dependency>
 
         <dependency>
