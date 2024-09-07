@@ -37,6 +37,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -285,9 +286,7 @@ public class ConversationHistoryPlugin implements Plugin {
         // Write out new File
         try {
             File conFile = new File(transcriptDir, "conversations.xml");
-            BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(conFile), StandardCharsets.UTF_8));
-            out.write(builder.toString());
-            out.close();
+            Files.write(conFile.toPath(), builder.toString().getBytes(StandardCharsets.UTF_8));
         }
         catch (IOException e) {
             Log.error(e);

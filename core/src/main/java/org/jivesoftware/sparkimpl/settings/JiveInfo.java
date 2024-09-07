@@ -42,7 +42,7 @@ public class JiveInfo {
             return version.trim();
         }
 
-        return null;
+        return "3.0.3"; // avoid null and return at least some current version
     }
 
     public static String getOS() {

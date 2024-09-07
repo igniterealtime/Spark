@@ -55,6 +55,7 @@ import java.io.*;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -134,9 +135,8 @@ public class PluginViewer extends JPanel implements Plugin
     {
         PluginManager pluginManager = PluginManager.getInstance();
         List<PublicPlugin> plugins = pluginManager.getPublicPlugins();
-        for ( Object plugin1 : plugins )
+        for ( PublicPlugin plugin : plugins )
         {
-            PublicPlugin plugin = (PublicPlugin) plugin1;
             final SparkPlugUI ui = new SparkPlugUI( plugin );
             ui.useLocalIcon();
             installedPanel.add( ui );
@@ -504,37 +504,27 @@ public class PluginViewer extends JPanel implements Plugin
         catch ( DocumentException | SAXException e )
         {
             Log.error( e );
+            return Collections.emptyList();
         }
 
+        String sparkVersion = JiveInfo.getVersion();
         List<? extends Node> plugins = pluginXML.selectNodes( "/plugins/plugin" );
-
         for ( Node plugin1 : plugins )
         {
-            PublicPlugin publicPlugin = new PublicPlugin();
-
-            String clazz;
-            String name = null;
             try
             {
                 Element plugin = (Element) plugin1;
 
-                try
+                String name = plugin.selectSingleNode("name").getText();
+                String minSparkVersion = plugin.selectSingleNode( "minSparkVersion" ).getText();
+                if ( !isGreaterOrEqual( sparkVersion, minSparkVersion ) )
                 {
-                    String version = plugin.selectSingleNode( "minSparkVersion" ).getText();
-                    if ( !isGreaterOrEqual( JiveInfo.getVersion(), version ) )
-                    {
-                        Log.error( "Unable to load plugin " + name + " due to min version incompatibility." );
-                        continue;
-                    }
-                }
-                catch ( Exception e )
-                {
-                    Log.error( "Unable to load plugin " + name + " due to no minSparkVersion." );
+                    Log.error( "Unable to load plugin " + name + " due to min version incompatibility." );
                     continue;
                 }
 
-                name = plugin.selectSingleNode( "name" ).getText();
-                clazz = plugin.selectSingleNode( "class" ).getText();
+                String clazz = plugin.selectSingleNode("class").getText();
+                PublicPlugin publicPlugin = new PublicPlugin();
                 publicPlugin.setPluginClass( clazz );
                 publicPlugin.setName( name );
 
@@ -605,10 +595,8 @@ public class PluginViewer extends JPanel implements Plugin
             }
             catch ( Exception ex )
             {
-                ex.printStackTrace();
+                Log.error(ex);
             }
-
-
         }
         return pluginList;
     }

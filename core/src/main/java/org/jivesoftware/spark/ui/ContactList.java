@@ -1705,37 +1705,34 @@ public class ContactList extends JPanel implements ActionListener,
 
 
     private void sendMessages(Collection<ContactItem> items) {
-        StringBuilder buf = new StringBuilder();
         InputDialog dialog = new InputDialog();
         final String messageText = dialog.getInput(Res.getString("title.broadcast.message"), Res.getString("message.enter.broadcast.message"), SparkRes.getImageIcon(SparkRes.BLANK_IMAGE), SparkManager.getMainWindow());
-        if (ModelUtil.hasLength(messageText)) {
-
-            final Map<String, Message> broadcastMessages = new HashMap<>();
-            for (ContactItem item : items) {
-                final Message message = new Message();
-                message.setTo(item.getJid());
-                final Map<String, Object> properties = new HashMap<>();
-                properties.put("broadcast", true);
-                message.addExtension(new JivePropertiesExtension(properties));
-                message.setBody(messageText);
-                if (!broadcastMessages.containsKey(item.getJid().toString())) {
-                    buf.append(item.getDisplayName()).append("\n");
-                    broadcastMessages.put(item.getJid().toString(), message);
-                }
+        if (!ModelUtil.hasLength(messageText)) {
+            return;
+        }
+        StringBuilder buf = new StringBuilder();
+        final Map<String, Message> broadcastMessages = new HashMap<>();
+        for (ContactItem item : items) {
+            final Message message = new Message();
+            message.setTo(item.getJid());
+            final Map<String, Object> properties = new HashMap<>();
+            properties.put("broadcast", true);
+            message.addExtension(new JivePropertiesExtension(properties));
+            message.setBody(messageText);
+            if (broadcastMessages.putIfAbsent(item.getJid().toString(), message) == null) {
+                buf.append(item.getDisplayName()).append('\n');
             }
-
-            for (Message message : broadcastMessages.values()) {
-                try {
-                    SparkManager.getConnection().sendStanza(message);
-                } catch (SmackException.NotConnectedException | InterruptedException e) {
-                    Log.warning("Unable to send broadcast to " + message.getTo(), e);
-                }
-            }
-            UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
-            JOptionPane.showMessageDialog(SparkManager.getMainWindow(), Res.getString("message.hasbeenbroadcast.to", buf.toString()), Res.getString("title.notification"), JOptionPane.INFORMATION_MESSAGE);
         }
 
-
+        for (Message message : broadcastMessages.values()) {
+            try {
+                SparkManager.getConnection().sendStanza(message);
+            } catch (SmackException.NotConnectedException | InterruptedException e) {
+                Log.warning("Unable to send broadcast to " + message.getTo(), e);
+            }
+        }
+        UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
+        JOptionPane.showMessageDialog(SparkManager.getMainWindow(), Res.getString("message.hasbeenbroadcast.to", buf.toString()), Res.getString("title.notification"), JOptionPane.INFORMATION_MESSAGE);
     }
 
     // For plugin use only

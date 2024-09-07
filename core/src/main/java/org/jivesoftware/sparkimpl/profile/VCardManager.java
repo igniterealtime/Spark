@@ -56,6 +56,7 @@ import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.*;
@@ -430,8 +431,9 @@ public class VCardManager {
 	 */
     public VCard getVCardFromMemory(BareJid jid) {
         // Check in memory first.
-        if (vcards.containsKey(jid)) {
-            return vcards.get(jid);
+        VCard currentVcard = vcards.get(jid);
+        if (currentVcard != null) {
+            return currentVcard;
         }
 
         // if not in memory
@@ -448,9 +450,9 @@ public class VCardManager {
     }
 
 	/**
-	 * Returns the VCard. You should always use useChachedVCards. VCardManager
-	 * will keep the VCards up to date. If you wan't to force a network reload
-	 * of the VCard you can set useChachedVCards to false. That means that you
+	 * Returns the VCard. You should always use useCachedVCards. VCardManager
+	 * will keep the VCards up to date. If you want to force a network reload
+	 * of the VCard you can set useCachedVCards to false. That means that you
 	 * have to wait for the vcard response. The method will block until the
 	 * result is available or a timeout occurs (like reloadVCard(String jid)).
 	 * If there is no response from server this method a dummy vcard with an
@@ -540,7 +542,8 @@ public class VCardManager {
         if (vcard == null)
         	return; 
         vcard.setJabberId(jid.toString());
-        if (vcards.containsKey(jid) && vcards.get(jid).getError() == null && vcard.getError()!= null)
+        VCard currentVcard = vcards.get(jid);
+        if (currentVcard != null && currentVcard.getError() == null && vcard.getError()!= null)
         {
         	return;
         	
@@ -757,9 +760,7 @@ public class VCardManager {
 
         // write xml to file
         try {
-            BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(vcardFile), StandardCharsets.UTF_8));
-            out.write(xml);
-            out.close();
+            Files.write(vcardFile.toPath(), xml.getBytes(StandardCharsets.UTF_8));
         }
         catch (IOException e) {
             Log.error(e);
