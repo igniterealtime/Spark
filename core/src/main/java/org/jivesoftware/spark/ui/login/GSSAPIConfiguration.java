@@ -67,9 +67,9 @@ public class GSSAPIConfiguration extends Configuration
 	public AppConfigurationEntry[] getAppConfigurationEntry( String name )
     {
         AppConfigurationEntry[] a = new AppConfigurationEntry[ 1 ];
-        if ( configs.containsKey( name ) )
+        Vector<AppConfigurationEntry> v = configs.get( name );
+        if ( v != null )
         {
-            Vector<AppConfigurationEntry> v = configs.get( name );
             a = v.toArray( a );
             return a;
         }
@@ -81,16 +81,7 @@ public class GSSAPIConfiguration extends Configuration
 
     public boolean putAppConfigurationEntry( String name, String module, AppConfigurationEntry.LoginModuleControlFlag controlFlag, Map<String, String> options )
     {
-        Vector<AppConfigurationEntry> v;
-        if ( configs.containsKey( name ) )
-        {
-            v = configs.get( name );
-        }
-        else
-        {
-            v = new Vector<>();
-            configs.put( name, v );
-        }
+        Vector<AppConfigurationEntry> v = configs.computeIfAbsent(name, k -> new Vector<>());
 
         return v.add( new AppConfigurationEntry( module, controlFlag, options ) );
     }

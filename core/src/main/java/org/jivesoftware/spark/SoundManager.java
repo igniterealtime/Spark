@@ -49,15 +49,16 @@ public class SoundManager {
      * @return the AudioClip found. If no audio clip was found, returns null.
      */
     public AudioClip getClip(String clip) {
-        if (!clipMap.containsKey(clip)) {
+        AudioClip audioClip = clipMap.get(clip);
+        if (audioClip == null) {
             // Add new clip
-            final AudioClip newClip = loadClipForURL(clip);
-            if (newClip != null) {
-                clipMap.put(clip, newClip);
+            audioClip = loadClipForURL(clip);
+            if (audioClip != null) {
+                clipMap.put(clip, audioClip);
             }
         }
 
-        return clipMap.get(clip);
+        return audioClip;
     }
 
     /**

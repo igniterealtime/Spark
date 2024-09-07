@@ -54,8 +54,7 @@ public class AutoCompleteDocument extends PlainDocument {
     }
 
     public String autoComplete(String text) {
-        for (Object aDictionary : dictionary) {
-            String word = (String) aDictionary;
+        for (String word : dictionary) {
             if (word.startsWith(text)) {
                 return word.substring(text.length());
             }
