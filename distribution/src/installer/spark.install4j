@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<install4j version="10.0.3" transformSequenceNumber="10">
+<install4j version="10.0.9" transformSequenceNumber="10">
   <directoryPresets config="../../target/distribution-base/lib" />
   <application name="Spark" applicationId="3057-7228-2063-7466" mediaDir="../../target/" mediaFilePattern="spark_${compiler:sys.version}" compression="9" lzmaCompression="true" commonExternalFiles="true" shortName="Spark" publisher="Ignite Realtime" publisherWeb="http://www.igniterealtime.org" version="3.0.0" allPathsRelative="true" macVolumeId="ccfadd9e467a1ebd" javaMinVersion="1.8" jdkMode="runtimeJre">
     <languages skipLanguageSelection="true">
@@ -34,7 +34,7 @@
   </files>
   <launchers>
     <launcher name="Spark" id="4" icnsFile="images/message.icns">
-      <executable name="Spark" iconSet="true" iconFile="images/spark.ico" executableDir="." executableMode="gui" singleInstance="true" serviceDescription="communicator" dpiAware="false">
+      <executable name="Spark" iconSet="true" iconFile="images/spark.ico" executableDir="." redirectStderr="false" executableMode="gui" singleInstance="true" serviceDescription="communicator" dpiAware="false">
         <versionInfo include="true" fileDescription="${compiler:sys.shortName}" legalCopyright="${compiler:sys.publisher}" internalName="${compiler:sys.shortName}" />
       </executable>
       <java mainClass="org.jivesoftware.launcher.Startup" vmParameters="&quot;-Dappdir=${launcher:sys.launcherDirectory}&quot; -Dsun.java2d.noddraw=true &quot;-Djava.library.path=${launcher:sys.launcherDirectory}\lib\windows&quot;" preferredVM="client">
