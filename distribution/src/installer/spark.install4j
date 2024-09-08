@@ -34,7 +34,7 @@
   </files>
   <launchers>
     <launcher name="Spark" id="4" icnsFile="images/message.icns">
-      <executable name="Spark" iconSet="true" iconFile="images/spark.ico" executableDir="." stderrFile="logs/error.log" redirectStdout="true" stdoutFile="logs/output.log" executableMode="gui" singleInstance="true" serviceDescription="communicator" dpiAware="false">
+      <executable name="Spark" iconSet="true" iconFile="images/spark.ico" executableDir="." executableMode="gui" singleInstance="true" serviceDescription="communicator" dpiAware="false">
         <versionInfo include="true" fileDescription="${compiler:sys.shortName}" legalCopyright="${compiler:sys.publisher}" internalName="${compiler:sys.shortName}" />
       </executable>
       <java mainClass="org.jivesoftware.launcher.Startup" vmParameters="&quot;-Dappdir=${launcher:sys.launcherDirectory}&quot; -Dsun.java2d.noddraw=true &quot;-Djava.library.path=${launcher:sys.launcherDirectory}\lib\windows&quot;" preferredVM="client">
