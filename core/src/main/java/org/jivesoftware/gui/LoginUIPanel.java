@@ -621,7 +621,7 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
         } catch (Exception e) {
             Log.error(e);
         }
-        loginDialog = new JFrame(Default.getString(Default.APPLICATION_NAME));
+        loginDialog = new JFrame(JiveInfo.getName());
 
         // Construct Dialog
         EventQueue.invokeLater(() -> {

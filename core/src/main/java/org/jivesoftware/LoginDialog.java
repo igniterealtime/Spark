@@ -142,7 +142,7 @@ public class LoginDialog {
 
         // Construct Dialog
         EventQueue.invokeLater(() -> {
-            loginDialog = new JFrame(Default.getString(Default.APPLICATION_NAME));
+            loginDialog = new JFrame(JiveInfo.getName());
             loginDialog.setIconImage(SparkManager.getApplicationImage().getImage());
             LoginPanel loginPanel = new LoginPanel();
             final JPanel mainPanel = new LoginBackgroundPanel();

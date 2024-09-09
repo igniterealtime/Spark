@@ -95,7 +95,7 @@ public final class MainWindow extends ChatFrame implements ActionListener {
      */
     public static synchronized MainWindow getInstance() {
         if (null == singleton) {
-            singleton = new MainWindow(Default.getString(Default.APPLICATION_NAME), SparkManager.getApplicationImage());
+            singleton = new MainWindow(JiveInfo.getName(), SparkManager.getApplicationImage());
         }
         return singleton;
     }
@@ -713,7 +713,7 @@ public final class MainWindow extends ChatFrame implements ActionListener {
 
         // Construct About Box text
         StringBuilder aboutBoxText = new StringBuilder();
-        aboutBoxText.append(Default.getString(Default.APPLICATION_NAME)).append(" ").append(JiveInfo.getVersion());
+        aboutBoxText.append(JiveInfo.getName()).append(" ").append(JiveInfo.getVersion());
 
         // Add APPLICATION_INFO1 if not empty
         if (!("".equals(APPLICATION_INFO1))) {
