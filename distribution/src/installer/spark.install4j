@@ -827,7 +827,7 @@ return console.askYesNo(message, true);
       </exclude>
       <jreBundle jreBundleSource="none" />
     </unixArchive>
-    <linuxRPM name="Linux RPM" id="162">
+    <linuxRPM name="Linux RPM" id="162" dependencies="java &gt;= 1.8">
       <exclude>
         <entry location="bin/startup.bat" />
         <entry location="documentation" />
