@@ -383,7 +383,7 @@ public class LoginDialog {
         private final JCheckBox loginAsInvisibleBox = new JCheckBox();
         private final JCheckBox loginAnonymouslyBox = new JCheckBox();
 
-        private final RolloverButton createAccountButton = new RolloverButton();
+        private final RolloverButton signUpButton = new RolloverButton();
         private final RolloverButton passwordResetButton = new RolloverButton();
 
         private final JLabel progressBar = new JLabel();
@@ -410,7 +410,7 @@ public class LoginDialog {
             ResourceUtils.resButton(savePasswordBox, Res.getString("checkbox.save.password"));
             ResourceUtils.resButton(autoLoginBox, Res.getString("checkbox.auto.login"));
             ResourceUtils.resLabel(serverLabel, serverField, Res.getString("label.server"));
-            ResourceUtils.resButton(createAccountButton, Res.getString("label.accounts"));
+            ResourceUtils.resButton(signUpButton, Res.getString("label.accounts"));
             ResourceUtils.resButton(passwordResetButton, Res.getString("label.passwordreset"));
             ResourceUtils.resButton(loginAsInvisibleBox, Res.getString("checkbox.login.as.invisible"));
             ResourceUtils.resButton(loginAnonymouslyBox, Res.getString("checkbox.login.anonymously"));
@@ -515,7 +515,7 @@ public class LoginDialog {
             loginAnonymouslyBox.addActionListener(this);
 
             if (!Default.getBoolean(Default.ACCOUNT_DISABLED) && localPref.getAccountsReg()) {
-                buttonPanel.add(createAccountButton,
+                buttonPanel.add(signUpButton,
                     new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0,
                         GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5, 5, 0, 5), 0, 0));
             }
@@ -665,7 +665,7 @@ public class LoginDialog {
                 validateLogin();
             }
 
-            createAccountButton.addActionListener(this);
+            signUpButton.addActionListener(this);
 
             final String lockedDownURL = Default.getString(Default.HOST_NAME);
             if (ModelUtil.hasLength(lockedDownURL)) {
@@ -728,7 +728,7 @@ public class LoginDialog {
         public void actionPerformed(ActionEvent e) {
             if (e.getSource() == quitButton) {
                 quitLogin();
-            } else if (e.getSource() == createAccountButton) {
+            } else if (e.getSource() == signUpButton) {
                 AccountCreationWizard createAccountPanel = new AccountCreationWizard();
                 createAccountPanel.invoke(loginDialog);
 

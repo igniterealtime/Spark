@@ -20,13 +20,19 @@ package org.jivesoftware;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.*;
 import org.jivesoftware.smack.ConnectionConfiguration.DnssecMode;
+import org.jivesoftware.smack.filter.StanzaIdFilter;
 import org.jivesoftware.smack.packet.StanzaError;
 import org.jivesoftware.smack.parsing.ExceptionLoggingCallback;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
 import org.jivesoftware.smack.util.DNSUtil;
+import org.jivesoftware.smackx.bob.element.BoBDataExtension;
 import org.jivesoftware.smackx.iqregister.AccountManager;
+import org.jivesoftware.smackx.iqregister.packet.Registration;
+import org.jivesoftware.smackx.xdata.FormField;
+import org.jivesoftware.smackx.xdata.packet.DataForm;
 import org.jivesoftware.spark.component.TitlePanel;
+import org.jivesoftware.spark.ui.DataFormUI;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.SwingWorker;
@@ -51,6 +57,10 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.UnrecoverableKeyException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
 import static org.jivesoftware.sparkimpl.certificates.SparkSSLContextCreator.Options.ONLY_SERVER_SIDE;
 
@@ -59,68 +69,116 @@ import static org.jivesoftware.sparkimpl.certificates.SparkSSLContextCreator.Opt
  */
 public class AccountCreationWizard extends JPanel {
 	private static final long serialVersionUID = -7808507939643878212L;
-    private final JTextField usernameField = new JTextField();
 
-    private final JPasswordField passwordField = new JPasswordField();
+    private final JComboBox<String> serverField = new JComboBox<>();
 
-    private final JPasswordField confirmPasswordField = new JPasswordField();
+    private final JButton startRegistrationButton = new JButton();
 
-    private final JTextField serverField = new JTextField();
+    private final JLabel instructionsLabel = new JLabel();
+
+    private final FormPanel formPanel = new FormPanel();
+
+    private final JPanel formPanelFields = new JPanel();
+
+    private final JLabel captcha = new JLabel();
 
     private final JButton createAccountButton = new JButton();
 
     private JDialog dialog;
 
+    private DataFormUI registrationForm;
+
     private boolean registered;
     private XMPPConnection connection = null;
     private final JProgressBar progressBar;
+
+    static class FormPanel extends JPanel {
+        private final JTextField usernameField = new JTextField();
+
+        private final JPasswordField passwordField = new JPasswordField();
+
+        private final JPasswordField confirmPasswordField = new JPasswordField();
+
+        public FormPanel() {
+            super();
+            JLabel usernameLabel = new JLabel();
+            ResourceUtils.resLabel( usernameLabel, usernameField, Res.getString("label.username") + ":");
+            JLabel passwordLabel = new JLabel();
+            ResourceUtils.resLabel( passwordLabel, passwordField, Res.getString("label.password") + ":");
+            JLabel confirmPasswordLabel = new JLabel();
+            ResourceUtils.resLabel( confirmPasswordLabel, confirmPasswordField, Res.getString("label.confirm.password") + ":");
+
+            setLayout(new GridBagLayout());
+            add( usernameLabel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+            add(usernameField, new GridBagConstraints(1, 1, 3, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 150, 0));
+
+            add( passwordLabel, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+            add(passwordField, new GridBagConstraints(1, 2, 3, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+
+            add( confirmPasswordLabel, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+            add(confirmPasswordField, new GridBagConstraints(1, 3, 3, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+        }
+    }
 
     /**
      * Construct the AccountCreationWizard UI.
      */
     public AccountCreationWizard() {
         // Associate Mnemonics
-        JLabel usernameLabel = new JLabel();
-        ResourceUtils.resLabel( usernameLabel, usernameField, Res.getString("label.username") + ":");
-        JLabel passwordLabel = new JLabel();
-        ResourceUtils.resLabel( passwordLabel, passwordField, Res.getString("label.password") + ":");
-        JLabel confirmPasswordLabel = new JLabel();
-        ResourceUtils.resLabel( confirmPasswordLabel, confirmPasswordField, Res.getString("label.confirm.password") + ":");
+        serverField.setEditable(true);
+        List<String> providers = XmppProviders.getXmppProvidersModel();
+        for (String provider : providers) {
+            serverField.addItem(provider);
+        }
+        // Randomly pre-select a provider
+        int randomProviderIdx = new Random().nextInt(providers.size());
+        serverField.setSelectedIndex(randomProviderIdx);
+
+        ResourceUtils.resButton(startRegistrationButton, Res.getString("button.start.registration"));
+        startRegistrationButton.addActionListener( actionEvent -> startRegistration() );
+
+        instructionsLabel.setVisible(false);
+
+        formPanel.setVisible(false);
+        formPanelFields.setVisible(false);
+
+        captcha.setPreferredSize(new java.awt.Dimension(250, 80));
+        captcha.setRequestFocusEnabled(false);
+        captcha.setHorizontalAlignment(SwingConstants.CENTER);
+        instructionsLabel.setVisible(false);
+
         JLabel serverLabel = new JLabel();
         ResourceUtils.resLabel( serverLabel, serverField, Res.getString("label.server") + ":");
         ResourceUtils.resButton(createAccountButton, Res.getString("button.create.account"));
-
-        setLayout(new GridBagLayout());
-
-        // Add component to UI
-        add( usernameLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-        add(usernameField, new GridBagConstraints(1, 0, 3, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 150, 0));
-
-        add( passwordLabel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-        add(passwordField, new GridBagConstraints(1, 1, 3, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
-
-        add( confirmPasswordLabel, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-        add(confirmPasswordField, new GridBagConstraints(1, 2, 3, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
-
-        add( serverLabel, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-        add(serverField, new GridBagConstraints(1, 3, 3, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+        createAccountButton.setEnabled(false);
+        createAccountButton.addActionListener( actionEvent -> createAccount() );
 
         progressBar = new JProgressBar();
-
-
-        add(progressBar, new GridBagConstraints(1, 4, 3, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
         progressBar.setVisible(false);
-        add(createAccountButton, new GridBagConstraints(2, 5, 1, 1, 1.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-
 
         JButton closeButton = new JButton();
         ResourceUtils.resButton( closeButton, Res.getString("button.close"));
-        add( closeButton, new GridBagConstraints(3, 5, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-
-
-        createAccountButton.addActionListener( actionEvent -> createAccount() );
-
         closeButton.addActionListener( actionEvent -> dialog.dispose() );
+
+        setLayout(new GridBagLayout());
+        // Add component to UI
+        add( serverLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        add(serverField, new GridBagConstraints(1, 0, 3, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+
+        add(startRegistrationButton, new GridBagConstraints(1, 1, 3, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+
+        add(instructionsLabel, new GridBagConstraints(0, 2, 4, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
+
+        add(formPanel, new GridBagConstraints(0, 3, 4, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
+
+        add(formPanelFields, new GridBagConstraints(0, 4, 4, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
+
+        add(captcha, new GridBagConstraints(0, 5, 4, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
+
+        add(progressBar, new GridBagConstraints(1, 6, 4, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+
+        add(createAccountButton, new GridBagConstraints(2, 7, 1, 1, 1.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        add( closeButton, new GridBagConstraints(3, 7, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
     }
 
     /**
@@ -129,7 +187,7 @@ public class AccountCreationWizard extends JPanel {
      * @return the username.
      */
     public String getUsername() {
-        return XmppStringUtils.escapeLocalpart(usernameField.getText().toLowerCase());
+        return XmppStringUtils.escapeLocalpart(formPanel.usernameField.getText().toLowerCase());
     }
 
     /**
@@ -138,7 +196,7 @@ public class AccountCreationWizard extends JPanel {
      * @return the username.
      */
     public String getUsernameWithoutEscape() {
-        return usernameField.getText();
+        return formPanel.usernameField.getText();
     }
     
     /**
@@ -147,7 +205,7 @@ public class AccountCreationWizard extends JPanel {
      * @return the password to use for the new account.
      */
     public String getPassword() {
-        return new String(passwordField.getPassword());
+        return new String(formPanel.passwordField.getPassword());
     }
 
     /**
@@ -156,7 +214,7 @@ public class AccountCreationWizard extends JPanel {
      * @return the password to use for the new account.
      */
     public String getConfirmPassword() {
-        return new String(confirmPasswordField.getPassword());
+        return new String(formPanel.confirmPasswordField.getPassword());
     }
 
     /**
@@ -165,7 +223,8 @@ public class AccountCreationWizard extends JPanel {
      * @return the server to use.
      */
     public String getServer() {
-        return serverField.getText();
+        String selectedServer = (String) serverField.getSelectedItem();
+        return selectedServer != null ? selectedServer.trim() : "";
     }
 
     /**
@@ -178,15 +237,106 @@ public class AccountCreationWizard extends JPanel {
     }
 
     /**
+     * Start registration and fetch signup form.
+     */
+    private void startRegistration() {
+        final Component ui = this;
+        try {
+            connection = getConnection();
+        } catch (SmackException | IOException | XMPPException e) {
+            String th = e.getCause() == null ? e.getMessage() : e.getCause().getMessage();
+            JOptionPane.showMessageDialog(ui, Res.getString("message.connection.failed", getServer())
+                + "\n" + th, Res.getString("title.create.problem"), JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        try {
+            final AccountManager accountManager = AccountManager.getInstance(connection);
+            if (accountManager.supportsAccountCreation()) {
+                formPanel.setVisible(true);
+                createAccountButton.setEnabled(true);
+                String instructions = null;
+                Icon captchaIcon = null;
+                Registration info = getRegistrationInfo();
+                if (info != null) {
+                    // try to get the CAPTCHA image from <data>
+                    //  <data type="image/png" max-age="0" cid="sha1+HASH_HERE@bob.xmpp.org" xmlns="urn:xmpp:bob">BASE64_OF_PNG_HERE</data>
+                    BoBDataExtension captchaBob = info.getExtension(BoBDataExtension.class);
+                    if (captchaBob != null && "image/png".equals(captchaBob.getBobData().getType())) {
+                        byte[] imageData = captchaBob.getBobData().getContent();
+                        captchaIcon = new ImageIcon(imageData);
+                    }
+                    DataForm regFields = info.getExtension(DataForm.class);
+                    if (regFields != null) {
+                        registrationForm = getRegistrationForm(regFields, captchaIcon != null);
+                        instructions = String.join("\n", regFields.getInstructions());
+                    } else {
+                        instructions = info.getInstructions();
+                    }
+                }
+                if (registrationForm != null) {
+                    formPanelFields.add(registrationForm);
+                    formPanelFields.setVisible(true);
+                }
+                if (instructions != null) {
+                    instructionsLabel.setText(instructions);
+                    instructionsLabel.setVisible(true);
+                }
+                if (captchaIcon != null) {
+                    captcha.setIcon(captchaIcon);
+                    instructionsLabel.setVisible(true);
+                }
+            } else {
+                String message = Res.getString("message.create.account.not.allowed");
+                JOptionPane.showMessageDialog(this, message, Res.getString("title.create.problem"), JOptionPane.ERROR_MESSAGE);
+            }
+        } catch (XMPPException | SmackException | InterruptedException e) {
+            StanzaError.Condition condition = null;
+            if (e instanceof XMPPException.XMPPErrorException) {
+                condition = ((XMPPException.XMPPErrorException) e).getStanzaError().getCondition();
+            }
+            if (condition == null) {
+                condition = StanzaError.Condition.internal_server_error;
+            }
+            accountCreationFailed(condition);
+        }
+    }
+
+    private DataFormUI getRegistrationForm(DataForm regFields, boolean noCaptcha) {
+        // Create a new form without username and password that we will render ourselves
+        DataForm.Builder extRegFields = regFields.asBuilder()
+            .removeField("username")
+            .removeField("password");
+        if (noCaptcha) {
+            extRegFields.removeField("captcha-fallback-url");
+            extRegFields.removeField("captcha-fallback-text");
+        }
+        DataFormUI dataFormUI = new DataFormUI(extRegFields.build());
+        return dataFormUI;
+    }
+
+    // TODO This method should be provided by the Smack https://github.com/igniterealtime/Smack/pull/618
+    private Registration getRegistrationInfo() {
+        Registration reg = new Registration();
+        reg.setTo(connection.getXMPPServiceDomain());
+        try {
+            return connection.createStanzaCollectorAndSend(new StanzaIdFilter(reg.getStanzaId()), reg).nextResultOrThrow();
+        } catch (Exception e) {
+            Log.error("Unable to get registration form", e);
+            return null;
+        }
+    }
+
+    /**
      * Creates the new account using the supplied information.
      */
     private void createAccount() {
         boolean errors = false;
         String errorMessage = "";
 
+        String server = getServer();
         if (!ModelUtil.hasLength(getUsername())) {
             errors = true;
-            usernameField.requestFocus();
+            formPanel.usernameField.requestFocus();
             errorMessage = Res.getString("message.username.error");
         }
         else if (!ModelUtil.hasLength(getPassword())) {
@@ -197,7 +347,7 @@ public class AccountCreationWizard extends JPanel {
             errors = true;
             errorMessage = Res.getString("message.confirmation.password.error");
         }
-        else if (!ModelUtil.hasLength(getServer())) {
+        else if (!ModelUtil.hasLength(server)) {
             errors = true;
             errorMessage = Res.getString("message.account.error");
         }
@@ -215,7 +365,7 @@ public class AccountCreationWizard extends JPanel {
         final Component ui = this;
         progressBar.setIndeterminate(true);
         progressBar.setStringPainted(true);
-        progressBar.setString(Res.getString("message.registering", getServer()));
+        progressBar.setString(Res.getString("message.registering", server));
         progressBar.setVisible(true);
 
         final SwingWorker worker = new SwingWorker() {
@@ -234,9 +384,10 @@ public class AccountCreationWizard extends JPanel {
                     return e;
                 }
                 try {
+                    Map<String, String> attrs = getRegistrationAttributes();
                     Localpart localpart = Localpart.from(getUsername());
                     final AccountManager accountManager = AccountManager.getInstance(connection);
-                    accountManager.createAccount(localpart, getPassword());
+                    accountManager.createAccount(localpart, getPassword(), attrs);
                 }
                 catch (XMPPException | SmackException | InterruptedException | XmppStringprepException e) {
 
@@ -258,7 +409,7 @@ public class AccountCreationWizard extends JPanel {
                     if (ui.isShowing()) {
                         createAccountButton.setEnabled(true);
                         UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
-                        JOptionPane.showMessageDialog(ui, Res.getString("message.connection.failed", getServer())
+                        JOptionPane.showMessageDialog(ui, Res.getString("message.connection.failed", server)
                             + "\n" + th, Res.getString("title.create.problem"), JOptionPane.ERROR_MESSAGE);
                         createAccountButton.setEnabled(true);
                     }
@@ -277,6 +428,17 @@ public class AccountCreationWizard extends JPanel {
         worker.start();
     }
 
+    private Map<String, String> getRegistrationAttributes() {
+        Map<String, String> attrs = new HashMap<>();
+        if (registrationForm != null) {
+            List<FormField> fields = registrationForm.getFilledForm().getFields();
+            for (FormField f : fields) {
+                attrs.put(f.getFieldName(), f.getFirstValue());
+            }
+        }
+        return attrs;
+    }
+
     /**
      * Called if the account creation failed.
      *
@@ -286,9 +448,9 @@ public class AccountCreationWizard extends JPanel {
         String message;
         if (condition == StanzaError.Condition.conflict) {
             message = Res.getString("message.already.exists");
-            usernameField.setText("");
-            usernameField.requestFocus();
-        } else if (condition == StanzaError.Condition.not_allowed || condition == StanzaError.Condition.forbidden) {
+            formPanel.usernameField.setText("");
+            formPanel.usernameField.requestFocus();
+        } else if (condition == StanzaError.Condition.not_allowed || condition == StanzaError.Condition.forbidden || condition == StanzaError.Condition.service_unavailable) {
             message = Res.getString("message.create.account.not.allowed");
         } else {
             message = Res.getString("message.create.account");
@@ -321,7 +483,7 @@ public class AccountCreationWizard extends JPanel {
         dialog.getContentPane().add(titlePanel, BorderLayout.NORTH);
         dialog.getContentPane().add(this, BorderLayout.CENTER);
         dialog.pack();
-        dialog.setSize(400, 300);
+        dialog.setSize(400, 580);
         dialog.setLocationRelativeTo(parent);
         dialog.setVisible(true);
     }
