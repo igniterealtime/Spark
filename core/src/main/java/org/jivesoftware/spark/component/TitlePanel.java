@@ -15,25 +15,16 @@
  */
 package org.jivesoftware.spark.component;
 
-import org.jivesoftware.resource.Default;
-
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Image;
 import java.awt.Insets;
-import java.awt.LayoutManager;
-import java.awt.geom.AffineTransform;
 
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
 
 /**
  * <code>TitlePanel</code> class is the top panel displayed in this application.
@@ -128,28 +119,5 @@ public final class TitlePanel extends JPanel {
         }
         descriptionLabel.setText(desc);
     }
-    
-    public static class ImagePanel extends JPanel {
 
-        private static final long serialVersionUID = 5155908601530113727L;
-        final ImageIcon icons = Default.getImageIcon(Default.SECONDARY_BACKGROUND_IMAGE);
-        
-        public ImagePanel() {
-            
-        }
-        
-        public ImagePanel(LayoutManager layout) {
-            super(layout);
-        }
-        
-        @Override
-        public void paintComponent(Graphics g) {
-            Image backgroundImage = icons.getImage();
-            double scaleX = getWidth() / (double) backgroundImage.getWidth(null);
-            double scaleY = getHeight() / (double) backgroundImage.getHeight(null);
-            AffineTransform xform = AffineTransform.getScaleInstance(scaleX, scaleY);
-            ((Graphics2D) g).drawImage(backgroundImage, xform, this);
-        }
-    }
-    
 }
