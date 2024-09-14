@@ -22,7 +22,6 @@ import java.time.Instant;
 import java.util.Arrays;
 
 import org.apache.commons.lang3.reflect.ConstructorUtils;
-import org.jivesoftware.LoginDialog;
 import org.jivesoftware.gui.LoginUIPanel;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.spark.ButtonFactory;
