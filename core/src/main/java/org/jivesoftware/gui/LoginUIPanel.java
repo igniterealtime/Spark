@@ -572,8 +572,7 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
         try {
             BrowserLauncher.openURL(url);
         } catch (Exception e) {
-            Log.error("Unable to load password "
-                    + "reset.", e);
+            Log.error("Unable to load password reset.", e);
         }
     }//GEN-LAST:event_btnResetActionPerformed
 
@@ -692,11 +691,13 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
 
         int checkForPort = loginServer.indexOf(":");
         if (checkForPort != -1) {
-            String portString = loginServer.substring(checkForPort + 1);
-            if (ModelUtil.hasLength(portString)) {
+            if (checkForPort != loginServer.length() - 2) { // : at end of string, so no port
+                String portString = loginServer.substring(checkForPort + 1);
                 // Set new port.
-                port = Integer.valueOf(portString);
+                port = Integer.parseInt(portString);
             }
+            // strip the port from loginServer hostname
+            loginServer = loginServer.substring(0, checkForPort);
         }
 
         ConnectionConfiguration.SecurityMode securityMode = localPref.getSecurityMode();
