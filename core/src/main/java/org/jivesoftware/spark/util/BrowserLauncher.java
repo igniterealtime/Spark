@@ -32,7 +32,8 @@ public class BrowserLauncher {
             try {
                 Desktop.getDesktop().browse(new URI(url));
             } catch (Exception ex) {
-                Runtime.getRuntime().exec("xdg-open  " + url);
+                // fallback on Linux
+                Runtime.getRuntime().exec("xdg-open " + url);
             }
         } else {
             File f = new File(url);
@@ -40,7 +41,7 @@ public class BrowserLauncher {
                 try {
                     Desktop.getDesktop().open(f);
                 } catch (Exception ex) {
-                    if (!url.toLowerCase().startsWith("//")) {
+                    if (!url.startsWith("//")) {
                         url = "//" + url;
                     }
                     Desktop.getDesktop().browse(new URI("http:" + url));
