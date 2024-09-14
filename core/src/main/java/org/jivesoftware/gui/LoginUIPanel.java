@@ -118,6 +118,8 @@ import org.jivesoftware.spark.ui.login.LoginSettingDialog;
 import org.jivesoftware.spark.util.*;
 
 import static org.jivesoftware.spark.util.StringUtils.modifyWildcards;
+import static org.jivesoftware.sparkimpl.certificates.SparkSSLContextCreator.Options.BOTH;
+import static org.jivesoftware.sparkimpl.certificates.SparkSSLContextCreator.Options.ONLY_SERVER_SIDE;
 
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.certificates.CertificateModel;
@@ -747,9 +749,6 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
                 .setCompressionEnabled(localPref.isCompressionEnabled())
                 .setSecurityMode(securityMode);
 
-        if (securityMode != ConnectionConfiguration.SecurityMode.disabled && localPref.isDisableHostnameVerification()) {
-            TLSUtils.disableHostnameVerificationForTlsCertificates(builder);
-        }
         if (localPref.isDebuggerEnabled()) {
             builder.enableDefaultDebugger();
         }
@@ -761,55 +760,7 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
         if (localPref.isProxyEnabled()) {
             builder.setProxyInfo(proxyInfo);
         }
-
-        if (securityMode != ConnectionConfiguration.SecurityMode.disabled && !useDirectTls) {
-            // This use STARTTLS which starts initially plain connection to upgrade it to TLS, it use the same port as
-            // plain connections which is 5222.
-            SparkSSLContextCreator.Options options;
-            if (localPref.isAllowClientSideAuthentication()) {
-                options = SparkSSLContextCreator.Options.BOTH;
-            } else {
-                options = SparkSSLContextCreator.Options.ONLY_SERVER_SIDE;
-            }
-            try {
-                SSLContext context = SparkSSLContextCreator.setUpContext(options);
-                builder.setSslContextFactory(() -> { return context; });
-                builder.setSecurityMode(securityMode);
-                builder.setCustomX509TrustManager(new SparkTrustManager());
-            } catch (NoSuchAlgorithmException | KeyManagementException | UnrecoverableKeyException | KeyStoreException | NoSuchProviderException e) {
-                Log.warning("Couldnt establish secured connection", e);
-            }
-        }
-
-        if (securityMode != ConnectionConfiguration.SecurityMode.disabled && useDirectTls) {
-            if (!hostPortConfigured) {
-                // SMACK 4.1.9 does not support XEP-0368, and does not apply a port change, if the host is not changed too.
-                // Here, we force the host to be set (by doing a DNS lookup), and force the port to 5223 (which is the
-                // default 'old-style' SSL port).
-                DnsName serverNameDnsName = DnsName.from(loginServer);
-                java.util.List<InetAddress> resolvedAddresses = DNSUtil.getDNSResolver().lookupHostAddress(serverNameDnsName, null, DnssecMode.disabled);
-                if (resolvedAddresses.isEmpty()) {
-                    throw new RuntimeException("Could not resolve " + serverNameDnsName);
-                }
-                builder.setHost(resolvedAddresses.get(0).getHostName());
-                builder.setPort(5223);
-            }
-            SparkSSLContextCreator.Options options;
-            if (localPref.isAllowClientSideAuthentication()) {
-                options = SparkSSLContextCreator.Options.BOTH;
-            } else {
-                options = SparkSSLContextCreator.Options.ONLY_SERVER_SIDE;
-            }
-            builder.setSocketFactory(new SparkSSLSocketFactory(options));
-            // SMACK 4.1.9  does not recognize an 'old-style' SSL socket as being secure, which will cause a failure when
-            // the 'required' Security Mode is defined. Here, we work around this by replacing that security mode with an
-            // 'if-possible' setting.
-            builder.setSecurityMode(ConnectionConfiguration.SecurityMode.ifpossible);
-        }
-
-        if (securityMode != ConnectionConfiguration.SecurityMode.disabled) {
-            SASLAuthentication.registerSASLMechanism(new SASLExternalMechanism());
-        }
+        configureConnectionTls(builder, securityMode, useDirectTls, hostPortConfigured, loginServer);
 
         // SPARK-1747: Don't use the GSS-API SASL mechanism when SSO is disabled.
         SASLAuthentication.unregisterSASLMechanism(SASLGSSAPIMechanism.class.getName());
@@ -838,6 +789,47 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
 //        	config.setTruststorePassword(localPref.getTrustStorePassword());
 //        }
         return builder.build();
+    }
+
+    private void configureConnectionTls(XMPPTCPConnectionConfiguration.Builder builder, ConnectionConfiguration.SecurityMode securityMode, boolean useDirectTls, boolean hostPortConfigured, String serverName) {
+        if (securityMode != ConnectionConfiguration.SecurityMode.disabled) {
+            if (localPref.isDisableHostnameVerification()) {
+                TLSUtils.disableHostnameVerificationForTlsCertificates(builder);
+            }
+            if (!useDirectTls) {
+                // This use STARTTLS which starts initially plain connection to upgrade it to TLS.
+                // It will use the same port as plain connections which is 5222.
+                SparkSSLContextCreator.Options options = localPref.isAllowClientSideAuthentication() ? BOTH : ONLY_SERVER_SIDE;
+                try {
+                    SSLContext context = SparkSSLContextCreator.setUpContext(options);
+                    builder.setSslContextFactory(() -> context);
+                    builder.setSecurityMode(securityMode);
+                    builder.setCustomX509TrustManager(new SparkTrustManager());
+                } catch (NoSuchAlgorithmException | KeyManagementException | UnrecoverableKeyException | KeyStoreException | NoSuchProviderException e) {
+                    Log.warning("Could not establish secured connection", e);
+                }
+            } else { // useDirectTls
+                if (!hostPortConfigured) {
+                    // SMACK 4.1.9 does not support XEP-0368, and does not apply a port change, if the host is not changed too.
+                    // Here, we force the host to be set (by doing a DNS lookup), and force the port to 5223 (which is the
+                    // default 'old-style' SSL port).
+                    DnsName serverNameDnsName = DnsName.from(serverName);
+                    List<InetAddress> resolvedAddresses = DNSUtil.getDNSResolver().lookupHostAddress(serverNameDnsName, null, DnssecMode.disabled);
+                    if (resolvedAddresses.isEmpty()) {
+                        throw new RuntimeException("Could not resolve " + serverNameDnsName);
+                    }
+                    builder.setHost(resolvedAddresses.get(0).getHostName());
+                    builder.setPort(5223);
+                }
+                SparkSSLContextCreator.Options options = localPref.isAllowClientSideAuthentication() ? BOTH : ONLY_SERVER_SIDE;
+                builder.setSocketFactory(new SparkSSLSocketFactory(options));
+                // SMACK 4.1.9  does not recognize an 'old-style' SSL socket as being secure, which will cause a failure when
+                // the 'required' Security Mode is defined. Here, we work around this by replacing that security mode with an
+                // 'if-possible' setting.
+                builder.setSecurityMode(ConnectionConfiguration.SecurityMode.ifpossible);
+            }
+            SASLAuthentication.registerSASLMechanism(new SASLExternalMechanism());
+        }
     }
 
     /**
