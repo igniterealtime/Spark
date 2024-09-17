@@ -15,7 +15,7 @@
  */
 
 
-package org.jivesoftware.spark.plugin.ofmeet;
+package org.jivesoftware.spark.plugin.galene;
 
 import java.awt.*;
 import javax.swing.*;
@@ -38,13 +38,14 @@ import de.mxro.process.*;
 import org.jxmpp.jid.parts.*;
 
 
-public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageListener
+public class SparkGalenePlugin implements Plugin, ChatRoomListener, GlobalMessageListener
 {
 	public Properties props = new Properties();
     public String url = null;
+    public String hostname = null;	
 	
     private org.jivesoftware.spark.ChatManager chatManager;
-    private final File pluginsettings = new File( Spark.getLogDirectory().getParentFile() + System.getProperty("file.separator") + "ofmeet.properties");
+    private final File pluginsettings = new File( Spark.getLogDirectory().getParentFile() + System.getProperty("file.separator") + "galene.properties");
  
  private final Map<String, ChatRoomDecorator> decorators = new HashMap<>();
     private String electronExePath = null;
@@ -60,46 +61,55 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
 
         String server = SparkManager.getSessionManager().getServerAddress().toString();
         String port = "7443";
-        url = "https://" + server + ":" + port + "/ofmeet/";
+        url = "https://" + server + ":" + port + "/galene/";
+		hostname = server;
 
         if (pluginsettings.exists()) {
-            Log.warning("ofmeet-info: Properties-file does exist= " + pluginsettings.getPath());
+            Log.warning("galene-info: Properties-file does exist= " + pluginsettings.getPath());
 
             try {
                 props.load(new FileInputStream(pluginsettings));
 
-                if (props.getProperty("url") != null)
-                {
+                if (props.getProperty("url") != null) {
                     url = props.getProperty("url");
-                    Log.warning("ofmeet-info: ofmeet url from properties-file is= " + url);
+                    Log.warning("galene-info: galene url from properties-file is= " + url);
                 }
+				
+                if (props.getProperty("hostname") != null) {
+                    hostname = props.getProperty("hostname");
+                    Log.warning("galene-info: galene hostname from properties-file is= " + hostname);
+                }				
 
             } catch (IOException ioe) {
-                 Log.warning("ofmeet-Error:", ioe);
+                 Log.warning("galene-Error:", ioe);
             }
 
         } else {
-            Log.warning("ofmeet-Error: Properties-file does not exist= " + pluginsettings.getPath() + ", using default " + url);
-			props.setProperty("url", url);				
+            Log.warning("galene-Error: Properties-file does not exist= " + pluginsettings.getPath() + ", using default " + url + " " + hostname);
+			props.setProperty("url", url);	
+			props.setProperty("hostname", hostname);			
         }
 
         chatManager.addChatRoomListener(this);
         chatManager.addGlobalMessageListener(this);
 		
-		SparkMeetPreference preference = new SparkMeetPreference(this);
+		SparkGalenePreference preference = new SparkGalenePreference(this);
 		SparkManager.getPreferenceManager().addPreference(preference);		
     }
 
-	public void commit(String url) {
+	public void commit(String url, String hostname) {
 		this.url = url;
 		props.setProperty("url", url);
+
+		this.hostname = hostname;
+		props.setProperty("hostname", hostname);		
         
 		try {		
 			FileOutputStream outputStream = new FileOutputStream(pluginsettings);
 			props.store(outputStream, "Properties");
 			outputStream.close();
 		} catch (Exception e) {
-			 Log.warning("ofmeet-Error:", e);
+			 Log.warning("galene-Error:", e);
 		}			
 	}
 
@@ -126,7 +136,7 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
             String body = message.getBody();
             int pos = body.indexOf("https://");
 
-            if ( pos > -1 && (body.contains("/" + roomId + "-") || body.contains("meeting")) ) {
+            if ( pos > -1 && (body.contains("group=" + roomId + "-") || body.contains("/galene/")) ) {
                 showInvitationAlert(message.getBody().substring(pos), room, roomId);
             }
 
@@ -151,7 +161,7 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
         inviteAlert.add(invitePanel, BorderLayout.WEST);
         JPanel content = new JPanel(new BorderLayout());
 
-        content.add(new JLabel("Join audio/conference conference ..."), BorderLayout.CENTER);
+        content.add(new JLabel("Join audio/video webinar ..."), BorderLayout.CENTER);
         JPanel buttonPanel = new JPanel();
 
         // The accept button. When clicked, accept the meet offer.
@@ -162,7 +172,7 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
             // Hide the response panel. TODO: make this work.
             room.getTranscriptWindow().remove(inviteAlert);
             inviteAlert.remove(1);
-            inviteAlert.add(new JLabel("Meeting at " + meetUrl), BorderLayout.CENTER);
+            inviteAlert.add(new JLabel("Webinar at " + meetUrl), BorderLayout.CENTER);
             declineButton.setEnabled(false);
             acceptButton.setEnabled(false);
 
@@ -220,7 +230,7 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
             String username = URLEncoder.encode(SparkManager.getSessionManager().getUsername(), "UTF-8");
             String password = URLEncoder.encode(SparkManager.getSessionManager().getPassword(), "UTF-8");
 
-            electronThread = Spawn.startProcess(electronExePath + " --ignore-certificate-errors " + newUrl, new File(electronHomePath), new ProcessListener() {
+            electronThread = Spawn.startProcess(electronExePath + " --ignore-certificate-errors " + newUrl + "&username=" + username, new File(electronHomePath), new ProcessListener() {
 
                 public void onOutputLine(final String line) {
                     System.out.println(line);
@@ -400,19 +410,14 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
                         System.setProperty("java.library.path", newLibPath);
 
                         // this will reload the new setting
-                        try {
-                            @SuppressWarnings("JavaReflectionMemberAccess")
-                            Field fieldSysPath = ClassLoader.class.getDeclaredField("sys_paths");
-                            fieldSysPath.setAccessible(true);
-                            fieldSysPath.set(System.class.getClassLoader(), null);
-                        } catch (NoSuchFieldException ignored) {
-                            // Happens on non Oracle JDK but has no influence since there is no cached field that needs a reset
-                        }
+                        Field fieldSysPath = ClassLoader.class.getDeclaredField("sys_paths");
+                        fieldSysPath.setAccessible(true);
+                        fieldSysPath.set(System.class.getClassLoader(), null);
                     }
                 }
                 catch (Exception e)
                 {
-                    Log.warning("Error during loading of Pade Meetings plugin", e);
+                    Log.warning(e.getMessage(), e);
                 }
             }
 
