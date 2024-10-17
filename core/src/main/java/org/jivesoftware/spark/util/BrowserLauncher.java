@@ -21,35 +21,32 @@ import java.net.URI;
 
 public class BrowserLauncher {
 
-	public static void openURL(String url) throws Exception {
-		if (url.startsWith("http") || url.startsWith("ftp") || url.startsWith("file") || url.startsWith("www")) {
-
-			if (url.startsWith("file") && url.contains(" ")) {
-				url = url.replace(" ", "%20");
-			}
-			if (url.startsWith("www")) {
-				url = "http://" + url;
-			}
-                        try
-                        {
-			  Desktop.getDesktop().browse(new URI(url));
-                        }
-                        catch(Exception ex)
-                        {
-                           Runtime.getRuntime().exec("xdg-open  " + url);
-                           
-                        }
-                       
-		} else {
-			File f = new File(url);
-			if (f.exists() && Desktop.isDesktopSupported()){
-				try {
-					Desktop.getDesktop().open(f);
-				} catch (Exception ex){
-					if (!url.toLowerCase().startsWith("//")) url = "//" + url;
-					Desktop.getDesktop().browse(new URI("http:" + url));
-				}
-			}
-		}
-	}
+    public static void openURL(String url) throws Exception {
+        if (url.startsWith("http") || url.startsWith("ftp") || url.startsWith("file") || url.startsWith("www")) {
+            if (url.startsWith("file") && url.contains(" ")) {
+                url = url.replace(" ", "%20");
+            }
+            if (url.startsWith("www")) {
+                url = "http://" + url;
+            }
+            try {
+                Desktop.getDesktop().browse(new URI(url));
+            } catch (Exception ex) {
+                // fallback on Linux
+                Runtime.getRuntime().exec("xdg-open " + url);
+            }
+        } else {
+            File f = new File(url);
+            if (f.exists() && Desktop.isDesktopSupported()) {
+                try {
+                    Desktop.getDesktop().open(f);
+                } catch (Exception ex) {
+                    if (!url.startsWith("//")) {
+                        url = "//" + url;
+                    }
+                    Desktop.getDesktop().browse(new URI("http:" + url));
+                }
+            }
+        }
+    }
 }
