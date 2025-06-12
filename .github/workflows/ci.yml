@@ -6,7 +6,7 @@ jobs:
   build:
     name: Build Spark
 
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         java:
