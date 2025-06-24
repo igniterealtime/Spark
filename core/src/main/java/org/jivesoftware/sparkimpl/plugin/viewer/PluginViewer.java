@@ -45,7 +45,6 @@ import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 import org.jivesoftware.sparkimpl.settings.JiveInfo;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
-import org.jivesoftware.sparkimpl.updater.AcceptAllCertsConnectionManager;
 import org.xml.sax.SAXException;
 
 import javax.swing.*;
@@ -304,27 +303,7 @@ public class PluginViewer extends JPanel implements Plugin
 			public Object construct()
             {
                 final HttpGet request = new HttpGet(retrieveListURL);
-
-                HttpHost proxy = null;
-                if ( Default.getBoolean( Default.PLUGIN_REPOSITORY_USE_PROXY ) )
-                {
-                    String proxyHost = System.getProperty( "http.proxyHost" );
-                    String proxyPort = System.getProperty( "http.proxyPort" );
-                    if ( ModelUtil.hasLength( proxyHost ) && ModelUtil.hasLength(proxyPort) ) {
-                        try{
-                            proxy = new HttpHost(proxyHost, Integer.parseInt(proxyPort));
-                        } catch ( NumberFormatException e ) {
-                            Log.error( e );
-                        }
-                    }
-                }
-
-                try (final CloseableHttpClient httpClient =
-                         HttpClients.custom()
-                             .setConnectionManager(AcceptAllCertsConnectionManager.getInstance())
-                             .setProxy(proxy)
-                             .build();
-                ) {
+                try (final CloseableHttpClient httpClient = HttpClients.createSystem()) {
                     return httpClient.execute(request, response -> {
                         if (response.getCode() != 200) {
                             return null;
@@ -383,8 +362,6 @@ public class PluginViewer extends JPanel implements Plugin
         final HttpGet request = new HttpGet(plugin.getDownloadURL());
 
         HttpHost proxy = null;
-        if ( Default.getBoolean( Default.PLUGIN_REPOSITORY_USE_PROXY ) )
-        {
             String proxyHost = System.getProperty( "http.proxyHost" );
             String proxyPort = System.getProperty( "http.proxyPort" );
             if ( ModelUtil.hasLength( proxyHost ) && ModelUtil.hasLength(proxyPort) ) {
@@ -394,14 +371,8 @@ public class PluginViewer extends JPanel implements Plugin
                     Log.error( e );
                 }
             }
-        }
 
-        try (final CloseableHttpClient httpClient =
-                 HttpClients.custom()
-                     .setConnectionManager(AcceptAllCertsConnectionManager.getInstance())
-                     .setProxy(proxy)
-                     .build();
-        ) {
+        try (final CloseableHttpClient httpClient = HttpClients.createSystem()) {
             httpClient.execute(request, response -> {
                 if (response.getCode() != 200) {
                     return null;
