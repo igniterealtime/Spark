@@ -10,10 +10,10 @@
     </parent>
 
     <artifactId>meet</artifactId>
-    <version>0.0.9</version>
+    <version>0.1.0</version>
 
-    <name>Pade Meetings Plugin</name>
-    <description>Adds support for Pade Meetings to the Spark IM client.</description>
+    <name>Online Meetings Plugin</name>
+    <description>Adds support for Online Meetings to the Spark IM client.</description>
 
     <contributors>
         <contributor>

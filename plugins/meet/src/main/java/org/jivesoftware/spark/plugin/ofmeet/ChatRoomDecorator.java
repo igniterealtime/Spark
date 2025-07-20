@@ -43,19 +43,17 @@ public class ChatRoomDecorator
             ofmeetButton = new RolloverButton(SparkRes.getImageIcon("PADE_ICON"));
             ofmeetButton.setToolTipText(GraphicUtils.createToolTip(SparkMeetResource.getString("name")));
             final String roomId = getNode(room.getBareJid().toString());
-            final String sessionID = roomId + "-" + System.currentTimeMillis();
+            final String sessionID = String.valueOf(System.currentTimeMillis());
 
             ofmeetButton.addActionListener(event -> {
-                String newUrl, newRoomId;
+                String newUrl, newRoomId = roomId + "-" + sessionID;
 
                 if ("groupchat".equals(room.getChatType().toString()))
                 {
-                    newRoomId = roomId + "-" + sessionID;
                     newUrl = plugin.url + newRoomId;
                     plugin.handleClick(newUrl, room, newUrl, Message.Type.groupchat);
 
                 } else {
-                    newRoomId = sessionID;
                     newUrl = plugin.url + newRoomId;
                     plugin.handleClick(newUrl, room, newUrl, Message.Type.chat);
                 }
