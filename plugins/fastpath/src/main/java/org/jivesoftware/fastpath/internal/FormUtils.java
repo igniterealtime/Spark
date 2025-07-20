@@ -51,7 +51,7 @@ final public class FormUtils {
      *         otherwise.
      */
     public static boolean isTrue(String str) {
-        return (str != null && str.equalsIgnoreCase("true"));
+        return Boolean.parseBoolean(str);
     }
 
 
