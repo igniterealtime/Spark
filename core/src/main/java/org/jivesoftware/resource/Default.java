@@ -181,7 +181,8 @@ public class Default {
     }
 
     public static boolean getBoolean(String propertyName) {
-	return getString(propertyName).replace(" ","").equals("true");
+        String prop = getString(propertyName);
+        return prop != null && prop.trim().equals("true");
     }
 
     public static ImageIcon getImageIcon(String imageName) {
