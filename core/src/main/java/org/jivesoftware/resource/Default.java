@@ -182,7 +182,7 @@ public class Default {
 
     public static boolean getBoolean(String propertyName) {
         String prop = getString(propertyName);
-        return prop != null && prop.trim().equals("true");
+        return prop != null && Boolean.parseBoolean(prop.trim());
     }
 
     public static ImageIcon getImageIcon(String imageName) {
