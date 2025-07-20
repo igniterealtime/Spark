@@ -37,7 +37,9 @@ public class SoundsRes {
         try
         {
             InputStream resourceAsStream = cl.getResourceAsStream( "sounds.properties" );
-            prb.load( resourceAsStream );
+            if (resourceAsStream != null) {
+                prb.load( resourceAsStream );
+            }
         }
         catch ( IOException e )
         {
