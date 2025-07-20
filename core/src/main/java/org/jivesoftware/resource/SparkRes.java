@@ -338,7 +338,9 @@ public class SparkRes {
         prb = new Properties();
         try {
             InputStream resourceAsStream = cl.getResourceAsStream("spark.properties");
-            prb.load(resourceAsStream);
+            if (resourceAsStream != null) {
+                prb.load(resourceAsStream);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }

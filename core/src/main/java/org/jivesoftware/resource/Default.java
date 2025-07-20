@@ -155,7 +155,9 @@ public class Default {
         try
         {
             InputStream resourceAsStream = cl.getResourceAsStream( "default.properties" );
-            prb.load( resourceAsStream );
+            if (resourceAsStream != null) {
+                prb.load( resourceAsStream );
+            }
         }
         catch ( IOException e )
         {
