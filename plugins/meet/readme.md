@@ -1,4 +1,4 @@
-This is a plugin for Spark that allows users to join audio and video conferences hosted by [Pade Meetings](https://github.com/igniterealtime/openfire-pade-plugin/releases). 
+This is a plugin for Spark that allows users to join audio and video conferences hosted by [Online Meetings](https://github.com/igniterealtime/openfire-ofmeet-plugin/releases). 
 See the documentation for more details. It provides a button from a Multi User Chat (MUC) room or chat window within the Spark client, to open a Chrome window using the URL for the Jitsi Meet web client. 
 It uses Electron instead of depending on Chrome installed and configured as the default browser.
 
