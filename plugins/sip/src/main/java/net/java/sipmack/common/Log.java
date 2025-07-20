@@ -19,18 +19,9 @@ package net.java.sipmack.common;
 /**
  * Creates and writes out messages.
  */
-
 public class Log {
 
-    private static boolean debugger = false;
-
-    static {
-
-        if (System.getProperty("debugger") != null
-                && System.getProperty("debugger").equals("true"))
-            debugger = true;
-
-    }
+    private static boolean debugger = Boolean.parseBoolean(System.getProperty("debugger"));
 
     public static void debug(String message) {
         if (debugger)
