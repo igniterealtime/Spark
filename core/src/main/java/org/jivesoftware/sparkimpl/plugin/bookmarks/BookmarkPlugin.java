@@ -154,9 +154,11 @@ public class BookmarkPlugin implements Plugin {
                 if (manager != null) {
 
                     final List<BookmarkedConference> bookmarkedConferences = manager.getBookmarkedConferences()
-                        .stream().sorted(Comparator.comparing(BookmarkedConference::getName)).collect(Collectors.toList());;
+                        .stream().sorted(Comparator.comparing(BookmarkedConference::getName, Comparator.nullsFirst(Comparator.naturalOrder())))
+                        .collect(Collectors.toList());
                     final List<BookmarkedURL> bookmarkedLinks = manager.getBookmarkedURLs()
-                        .stream().sorted(Comparator.comparing(BookmarkedURL::getName)).collect(Collectors.toList());
+                        .stream().sorted(Comparator.comparing(BookmarkedURL::getName, Comparator.nullsFirst(Comparator.naturalOrder())))
+                        .collect(Collectors.toList());
 
                     for (BookmarkedURL bookmarkedLink : bookmarkedLinks) {
                         final BookmarkedURL link = bookmarkedLink;
