@@ -24,7 +24,8 @@ import org.jivesoftware.smack.xml.XmlPullParserException;
 import java.io.IOException;
 
 /**
- * An IQ packet that's a request for an upload slot
+ * An IQ packet that's a request for an online meeting URL
+ * according to XEP-0483.
  */
 public class QueryRequest extends IQ
 {
