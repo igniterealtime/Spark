@@ -469,9 +469,7 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
                         System.setProperty("java.library.path", newLibPath);
 
                         // this will reload the new setting
-                        Field fieldSysPath = ClassLoader.class.getDeclaredField("sys_paths");
-                        fieldSysPath.setAccessible(true);
-                        fieldSysPath.set(System.class.getClassLoader(), null);
+                        Log.warning("Unable to modify 'java.library.path' dynamically. Please ensure the library path includes: " + libPath);
                     }
                 }
                 catch (Exception e)
