@@ -28,7 +28,14 @@ import java.lang.reflect.*;
 
 import org.jivesoftware.Spark;
 import org.jivesoftware.spark.*;
+
 import org.jivesoftware.smack.packet.Message;
+import org.jivesoftware.smack.provider.ProviderManager;
+import org.jivesoftware.smack.packet.IQ;
+
+import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
+import org.jivesoftware.smackx.disco.packet.DiscoverInfo;
+
 import org.jivesoftware.spark.plugin.*;
 import org.jivesoftware.spark.ui.*;
 import org.jivesoftware.spark.util.log.*;
@@ -36,7 +43,7 @@ import org.jivesoftware.spark.util.log.*;
 import org.jitsi.util.OSUtils;
 import de.mxro.process.*;
 import org.jxmpp.jid.parts.*;
-
+import org.jxmpp.jid.impl.JidCreate;
 
 public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageListener
 {
@@ -54,6 +61,7 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
 
     public void initialize()
     {
+        ProviderManager.addIQProvider("query", QueryRequest.NAMESPACE, new QueryRequest.Provider());		
         checkNatives();
 
         chatManager = SparkManager.getChatManager();		
@@ -87,8 +95,67 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
         chatManager.addGlobalMessageListener(this);
 		
 		SparkMeetPreference preference = new SparkMeetPreference(this);
-		SparkManager.getPreferenceManager().addPreference(preference);		
+		SparkManager.getPreferenceManager().addPreference(preference);	
+		
+		ServiceDiscoveryManager discoManager = ServiceDiscoveryManager.getInstanceFor(SparkManager.getConnection());
+
+		DiscoverInfo discoverInfo = null;
+		String serverJid = SparkManager.getSessionManager().getServerAddress().toString();
+		
+		try {
+			discoverInfo = discoManager.discoverInfo(JidCreate.domainBareFrom(serverJid));
+		}
+		catch (Exception e) {
+			Log.debug("Unable to disco " + serverJid);
+		}
+		
+		boolean jitsiAvailable = false;
+		boolean galeneAvailable = false;		
+		boolean ohunAvailable = false;	
+		
+        if (discoverInfo != null) {	
+			jitsiAvailable = discoverInfo.containsFeature("urn:xmpp:http:online-meetings#jitsi");
+			galeneAvailable = discoverInfo.containsFeature("urn:xmpp:http:online-meetings#galene");
+			ohunAvailable = discoverInfo.containsFeature("urn:xmpp:http:online-meetings#ohun");
+		}		
+
+		String sUrl = null;
+		
+		if (jitsiAvailable) {
+			sUrl = getServerUrl("jitsi");
+		}
+        else
+	
+		if (galeneAvailable) {
+			sUrl = getServerUrl("galene");
+		}
+		else
+	
+		if (ohunAvailable) {
+			sUrl = getServerUrl("ohun");
+		}
+				
+		if (sUrl != null) url = sUrl;
     }
+	
+	private String getServerUrl(String app) {
+		String serverUrl = null;
+		
+        try {		
+            QueryRequest request = new QueryRequest(app);
+            request.setTo(JidCreate.fromOrThrowUnchecked(SparkManager.getSessionManager().getServerAddress()));
+            request.setType(IQ.Type.get);
+            IQ result = SparkManager.getConnection().createStanzaCollectorAndSend(request).nextResultOrThrow();
+            QueryRequest response = (QueryRequest) result;
+
+            Log.debug("SparkMeet response: url=" + response.url);
+            if (response.url != null) serverUrl = response.url + "/";	
+			
+        } catch (Exception e) {
+            Log.warning("Unable to get meet url from server for app type " + app);
+        }	
+		return serverUrl;		
+	}
 
 	public void commit(String url) {
 		this.url = url;
@@ -109,6 +176,7 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
         {
             Log.warning("shutdown");
             chatManager.removeChatRoomListener(this);
+            ProviderManager.removeIQProvider("query", QueryRequest.NAMESPACE);			
 
             if (electronThread != null) electronThread.destory();
             electronThread = null;
@@ -354,7 +422,7 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
                             jarFileSuffix = "-darwin-x64.zip";
                         }
 
-                        InputStream inputStream = new URL("https://github.com/electron/electron/releases/download/v10.1.1/electron-v10.1.1" + jarFileSuffix).openStream();
+                        InputStream inputStream = new URL("https://github.com/electron/electron/releases/download/v37.2.3/electron-v37.2.3" + jarFileSuffix).openStream();
                         ZipInputStream zipIn = new ZipInputStream(inputStream);
                         ZipEntry entry = zipIn.getNextEntry();
 
@@ -401,19 +469,12 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
                         System.setProperty("java.library.path", newLibPath);
 
                         // this will reload the new setting
-                        try {
-                            @SuppressWarnings("JavaReflectionMemberAccess")
-                            Field fieldSysPath = ClassLoader.class.getDeclaredField("sys_paths");
-                            fieldSysPath.setAccessible(true);
-                            fieldSysPath.set(System.class.getClassLoader(), null);
-                        } catch (NoSuchFieldException ignored) {
-                            // Happens on non Oracle JDK but has no influence since there is no cached field that needs a reset
-                        }
+                        Log.warning("Unable to modify 'java.library.path' dynamically. Please ensure the library path includes: " + libPath);
                     }
                 }
                 catch (Exception e)
                 {
-                    Log.warning("Error during loading of Pade Meetings plugin", e);
+                    Log.warning(e.getMessage(), e);
                 }
             }
 

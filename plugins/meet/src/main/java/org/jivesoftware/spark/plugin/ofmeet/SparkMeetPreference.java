@@ -28,7 +28,7 @@ public class SparkMeetPreference implements Preference {
 	public static final String NAMESPACE = "ofmeet";
 	
 	private SparkMeetPlugin plugin;
-	private final PadePanel panel = new PadePanel();
+	private final MeetingPanel panel = new MeetingPanel();
 
 	public SparkMeetPreference(SparkMeetPlugin plugin) {
 		this.plugin = plugin;
@@ -95,12 +95,12 @@ public class SparkMeetPreference implements Preference {
 
 	}
 	
-    private static class PadePanel extends JPanel {
+    private static class MeetingPanel extends JPanel {
  	private static final long serialVersionUID = -5992704440953686499L;
 	private final JTextArea txtMessage = new JTextArea();
     private JLabel url = new JLabel(SparkMeetResource.getString("preference.url"));
 
-        PadePanel() {
+        MeetingPanel() {
             txtMessage.setBorder(UIManager.getLookAndFeelDefaults().getBorder("TextField.border"));
             txtMessage.setLineWrap(true);
             setLayout(new VerticalFlowLayout());
