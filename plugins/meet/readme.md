@@ -1,5 +1,5 @@
-This is a plugin for Spark that allows users to join audio and video conferences hosted by [Online Meetings](https://github.com/igniterealtime/openfire-ofmeet-plugin/releases). 
-See the documentation for more details. It provides a button from a Multi User Chat (MUC) room or chat window within the Spark client, to open a Chrome window using the URL for the Jitsi Meet web client. 
+This is a plugin for Spark that allows users to join audio and video conferences supported by [XEP-0483: HTTP Online Meetings](https://xmpp.org/extensions/xep-0483.html)
+See the documentation for more details. It provides a button from a Multi User Chat (MUC) room or chat window within the Spark client, to open a Chrome window using the URL provided. 
 It uses Electron instead of depending on Chrome installed and configured as the default browser.
 
  ![](https://user-images.githubusercontent.com/110731/91915397-5d304600-ecb2-11ea-93b1-d822f13f1509.png)
