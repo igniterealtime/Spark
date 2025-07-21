@@ -124,7 +124,7 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
 		if (jitsiAvailable) {
 			sUrl = getServerUrl("jitsi");
 		}
-		else
+        else
 	
 		if (galeneAvailable) {
 			sUrl = getServerUrl("galene");
