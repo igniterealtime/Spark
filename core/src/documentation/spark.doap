@@ -37,6 +37,13 @@
                 <browse rdf:resource="https://github.com/igniterealtime/Spark"/>
             </GitRepository>
         </repository>
+		
+        <implements>
+            <xmpp:SupportedXep>
+                <xmpp:xep rdf:resource="https://xmpp.org/extensions/xep-0483.html"/>
+                <xmpp:note xml:lang='en'>Provided by the 'Online Meetings' plugin</xmpp:note>
+            </xmpp:SupportedXep>
+        </implements>		
 
     </Project>
 </rdf:RDF>
