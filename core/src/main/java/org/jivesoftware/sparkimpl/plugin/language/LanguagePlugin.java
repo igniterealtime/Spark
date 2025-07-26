@@ -33,38 +33,41 @@ import java.util.Locale;
  */
 public class LanguagePlugin implements Plugin {
 
-    private Locale[] locales;
-    private JMenu languageMenu;
-
     @Override
 	public void initialize() {
         // Register with action menu
         final JMenu actionsMenu = SparkManager.getMainWindow().getMenuByName(Res.getString("menuitem.actions"));
 
-        languageMenu = new JMenu(Res.getString("menuitem.languages"));
+        String languageMenuLabel = Res.getString("menuitem.languages");
+        // For non-English locales append "Language" for those who accidentally changed language
+        if (!Locale.getDefault().getLanguage().equals("en")) {
+            languageMenuLabel += " (Language)";
+        }
+        JMenu languageMenu = new JMenu(languageMenuLabel);
         languageMenu.setIcon(SparkRes.getImageIcon("LANGUAGE_ICON"));
 
-        locales = Locale.getAvailableLocales();
+        Locale[] locales = Locale.getAvailableLocales();
 
         // Load files
         for (final Locale locale : locales) {
+            String code = locale.toString();
             final String targetI18nFileName;
-            if (locale.toString().equals("en")) {
+            if (code.equals("en")) {
                 targetI18nFileName = "/i18n/spark_i18n.properties";
             } else {
-                targetI18nFileName = "/i18n/spark_i18n_" + locale.toString() + ".properties";
+                targetI18nFileName = "/i18n/spark_i18n_" + code + ".properties";
             }
 
             // If we can find an translation file for this locale, we can support the language!
             if (getClass().getResource( targetI18nFileName ) != null) {
-                addLanguage(locale);
+                addLanguage(locale, languageMenu);
             }
         }
 
         actionsMenu.add(languageMenu);
     }
 
-    private void addLanguage(Locale locale) {
+    private void addLanguage(Locale locale, JMenu languageMenu) {
         Action action = new AbstractAction() {
             private static final long serialVersionUID = -7093236616888591766L;
 
@@ -83,10 +86,7 @@ public class LanguagePlugin implements Plugin {
                 }
             }
         };
-        String label = locale.getDisplayLanguage(locale);
-        if (!locale.getDisplayCountry(locale).isEmpty()) {
-            label = label + "-" + locale.getDisplayCountry(locale);
-        }
+        String label = locale + "  " + locale.getDisplayName(locale);
         action.putValue(Action.NAME, label);
         languageMenu.add(action);
     }
