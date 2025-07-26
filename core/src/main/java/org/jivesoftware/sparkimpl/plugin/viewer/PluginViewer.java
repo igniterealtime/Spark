@@ -15,6 +15,7 @@
  */
 package org.jivesoftware.sparkimpl.plugin.viewer;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
@@ -380,6 +381,10 @@ public class PluginViewer extends JPanel implements Plugin
 
     private void downloadPlugin( final PublicPlugin plugin )
     {
+        if (StringUtils.isEmpty(plugin.getDownloadURL())) {
+            Log.error("Unable to download plugin: no download URL");
+            return;
+        }
         final HttpGet request = new HttpGet(plugin.getDownloadURL());
 
         HttpHost proxy = null;
@@ -481,7 +486,7 @@ public class PluginViewer extends JPanel implements Plugin
                 return null;
             });
         } catch (Exception e) {
-            Log.error( e );
+            Log.error("Unable to download plugin:", e );
         }
     }
 
