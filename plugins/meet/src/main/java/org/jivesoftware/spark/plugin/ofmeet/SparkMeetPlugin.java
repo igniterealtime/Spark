@@ -80,11 +80,11 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
                 if (props.getProperty("url") != null)
                 {
                     url = props.getProperty("url");
-                    Log.warning("ofmeet-info: ofmeet url from properties-file is= " + url);
+                    Log.debug("ofmeet-info: ofmeet url from properties-file is= " + url);
                 }
 
             } catch (IOException ioe) {
-                 Log.warning("ofmeet-Error:", ioe);
+                 Log.error("ofmeet-Error:", ioe);
             }
 
         } else {
@@ -95,53 +95,48 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
         chatManager.addGlobalMessageListener(this);
 		
 		SparkMeetPreference preference = new SparkMeetPreference(this);
-		SparkManager.getPreferenceManager().addPreference(preference);	
-		
-		ServiceDiscoveryManager discoManager = ServiceDiscoveryManager.getInstanceFor(SparkManager.getConnection());
+		SparkManager.getPreferenceManager().addPreference(preference);
 
-		DiscoverInfo discoverInfo = null;
-		String serverJid = SparkManager.getSessionManager().getServerAddress().toString();
-		
-		try {
-			discoverInfo = discoManager.discoverInfo(JidCreate.domainBareFrom(serverJid));
-		}
-		catch (Exception e) {
-			Log.debug("Unable to disco " + serverJid);
-		}
-		
-		boolean jitsiAvailable = false;
-		boolean galeneAvailable = false;		
-		boolean ohunAvailable = false;	
-		
-        if (discoverInfo != null) {	
-			jitsiAvailable = discoverInfo.containsFeature("urn:xmpp:http:online-meetings#jitsi");
-			galeneAvailable = discoverInfo.containsFeature("urn:xmpp:http:online-meetings#galene");
-			ohunAvailable = discoverInfo.containsFeature("urn:xmpp:http:online-meetings#ohun");
-		}		
-
-		String sUrl = null;
-		
-		if (jitsiAvailable) {
-			sUrl = getServerUrl("jitsi");
-		}
-        else
-	
-		if (galeneAvailable) {
-			sUrl = getServerUrl("galene");
-		}
-		else
-	
-		if (ohunAvailable) {
-			sUrl = getServerUrl("ohun");
-		}
-				
-		if (sUrl != null) url = sUrl;
+        initializeOnlineMeetings();
     }
-	
-	private String getServerUrl(String app) {
+
+    private void initializeOnlineMeetings() {
+        ServiceDiscoveryManager discoManager = ServiceDiscoveryManager.getInstanceFor(SparkManager.getConnection());
+
+        DiscoverInfo discoverInfo;
+        String serverJid = SparkManager.getSessionManager().getServerAddress().toString();
+
+        try {
+            discoverInfo = discoManager.discoverInfo(JidCreate.domainBareFrom(serverJid));
+        } catch (Exception e) {
+            Log.debug("Unable to disco " + serverJid);
+            return;
+        }
+        if (discoverInfo == null) {
+            return;
+        }
+
+        boolean jitsiAvailable = discoverInfo.containsFeature("urn:xmpp:http:online-meetings#jitsi");
+        boolean galeneAvailable = discoverInfo.containsFeature("urn:xmpp:http:online-meetings#galene");
+        boolean ohunAvailable = discoverInfo.containsFeature("urn:xmpp:http:online-meetings#ohun");
+
+        String sUrl = null;
+        if (jitsiAvailable) {
+            sUrl = getServerUrl("jitsi");
+        } else if (galeneAvailable) {
+            sUrl = getServerUrl("galene");
+        } else if (ohunAvailable) {
+            sUrl = getServerUrl("ohun");
+        }
+
+        if (sUrl != null) {
+            url = sUrl;
+        }
+    }
+
+    private String getServerUrl(String app) {
 		String serverUrl = null;
-		
-        try {		
+        try {
             QueryRequest request = new QueryRequest(app);
             request.setTo(JidCreate.fromOrThrowUnchecked(SparkManager.getSessionManager().getServerAddress()));
             request.setType(IQ.Type.get);
@@ -152,7 +147,7 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
             if (response.url != null) serverUrl = response.url + "/";	
 			
         } catch (Exception e) {
-            Log.warning("Unable to get meet url from server for app type " + app);
+            Log.error("Unable to get meet url from server for app type " + app);
         }	
 		return serverUrl;		
 	}
@@ -160,13 +155,12 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
 	public void commit(String url) {
 		this.url = url;
 		props.setProperty("url", url);
-        
-		try {		
+		try {
 			FileOutputStream outputStream = new FileOutputStream(pluginsettings);
 			props.store(outputStream, "Properties");
 			outputStream.close();
 		} catch (Exception e) {
-			 Log.warning("ofmeet-Error:", e);
+			 Log.error("ofmeet-Error:", e);
 		}			
 	}
 
@@ -174,7 +168,7 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
     {
         try
         {
-            Log.warning("shutdown");
+            Log.debug("shutdown");
             chatManager.removeChatRoomListener(this);
             ProviderManager.removeIQProvider("query", QueryRequest.NAMESPACE);			
 
@@ -183,27 +177,21 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
         }
         catch(Exception e)
         {
-            Log.warning("shutdown ", e);
+            Log.error("shutdown ", e);
         }
     }
 
     @Override
     public void messageReceived(ChatRoom room, Message message) {
-
         try {
             Localpart roomId = room.getJid().getLocalpart();
             String body = message.getBody();
             int pos = body.indexOf("https://");
-
-            if ( pos > -1 && (body.contains("/" + roomId + "-") || body.contains("meeting")) ) {
+            if (pos > -1 && (body.contains("/" + roomId + "-") || body.contains("meeting"))) {
                 showInvitationAlert(message.getBody().substring(pos), room, roomId);
             }
-
-
-        } catch (Exception e) {
-            // i don't care
+        } catch (Exception ignored) {
         }
-
     }
 
     private void showInvitationAlert(final String meetUrl, final ChatRoom room, final CharSequence roomId)
@@ -317,8 +305,7 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
             });
 
         } catch (Exception t) {
-
-            Log.warning("Error opening url " + newUrl, t);
+            Log.error("Error opening url " + newUrl, t);
         }
     }
 
@@ -330,8 +317,7 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
     public void chatRoomClosed(ChatRoom chatroom)
     {
         String roomId = chatroom.getBareJid().toString();
-
-        Log.warning("chatRoomClosed:  " + roomId);
+        Log.debug("chatRoomClosed:  " + roomId);
 
         if (decorators.containsKey(roomId))
         {
@@ -349,29 +335,25 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
     public void chatRoomActivated(ChatRoom chatroom)
     {
         String roomId = chatroom.getBareJid().toString();
-
-        Log.warning("chatRoomActivated:  " + roomId);
+        Log.debug("chatRoomActivated:  " + roomId);
     }
 
     public void userHasJoined(ChatRoom room, String s)
     {
         String roomId = room.getBareJid().toString();
-
-        Log.warning("userHasJoined:  " + roomId + " " + s);
+        Log.debug("userHasJoined:  " + roomId + " " + s);
     }
 
     public void userHasLeft(ChatRoom room, String s)
     {
         String roomId = room.getBareJid().toString();
-
-        Log.warning("userHasLeft:  " + roomId + " " + s);
+        Log.debug("userHasLeft:  " + roomId + " " + s);
     }
 
     public void chatRoomOpened(final ChatRoom room)
     {
         String roomId = room.getBareJid().toString();
-
-        Log.warning("chatRoomOpened:  " + roomId);
+        Log.debug("chatRoomOpened:  " + roomId);
 
         if (roomId.indexOf('/') == -1)
         {
@@ -381,7 +363,7 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
 
     private void checkNatives()
     {
-        Log.warning("checkNatives");
+        Log.debug("checkNatives");
 
         new Thread()
         {
@@ -432,7 +414,7 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
                             {
                                 String filePath = electronHomePath + File.separator + entry.getName();
 
-                                Log.warning("writing file..." + filePath);
+                                Log.debug("writing file..." + filePath);
 
                                 if (!entry.isDirectory())
                                 {
@@ -454,7 +436,7 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
                         }
                         zipIn.close();
 
-                        Log.warning("Native lib folder created and natives extracted");
+                        Log.debug("Native lib folder created and natives extracted");
                     }
                     else {
                         Log.warning("Native lib folder already exist.");
@@ -474,7 +456,7 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
                 }
                 catch (Exception e)
                 {
-                    Log.warning(e.getMessage(), e);
+                    Log.error(e.getMessage(), e);
                 }
             }
 
