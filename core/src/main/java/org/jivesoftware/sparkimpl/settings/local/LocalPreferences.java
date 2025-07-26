@@ -963,17 +963,11 @@ public class LocalPreferences {
 	}
 
     public String getLookAndFeel() {
-	String defaultstring;
-	try {
-	    defaultstring = Spark.isMac() ? Default.getString(Default.DEFAULT_LOOK_AND_FEEL_MAC)
-		    : Default.getString(Default.DEFAULT_LOOK_AND_FEEL);
-	} catch (Exception e) {
-	    defaultstring = UIManager.getSystemLookAndFeelClassName();
-	}
-	if (defaultstring.length() < 1) {
-	    defaultstring = UIManager.getSystemLookAndFeelClassName();
-	}
-	return getString("LookAndFeel", defaultstring);
+        String defaultstring = Default.getString(Spark.isMac() ? Default.DEFAULT_LOOK_AND_FEEL_MAC : Default.DEFAULT_LOOK_AND_FEEL);
+        if (defaultstring == null || defaultstring.isEmpty()) {
+            defaultstring = UIManager.getSystemLookAndFeelClassName();
+        }
+        return getString("LookAndFeel", defaultstring);
     }
 
 	public void setCheckForBeta(boolean checkForBeta) {
