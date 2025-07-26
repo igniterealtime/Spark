@@ -1329,17 +1329,8 @@ public class LocalPreferences {
 
     public List<String> getDeactivatedPlugins()
     {
-	String plugs = getString("deactivatedPlugins", "");
-	ArrayList<String> liste = new ArrayList<>();
-
-	StringTokenizer tokenz = new StringTokenizer(plugs, ",");
-
-	while(tokenz.hasMoreTokens())
-	{
-	    String x = tokenz.nextToken();
-	    liste.add(x);
-	}
-	return liste;
+        String plugs = getString("deactivatedPlugins", "");
+        return Arrays.asList(plugs.split(","));
     }
 
     public void setDeactivatedPlugins(List<String> list) {
