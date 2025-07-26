@@ -45,11 +45,12 @@ public class LanguagePlugin implements Plugin {
 
         // Load files
         for (final Locale locale : locales) {
+            String code = locale.toString();
             final String targetI18nFileName;
-            if (locale.toString().equals("en")) {
+            if (code.equals("en")) {
                 targetI18nFileName = "/i18n/spark_i18n.properties";
             } else {
-                targetI18nFileName = "/i18n/spark_i18n_" + locale.toString() + ".properties";
+                targetI18nFileName = "/i18n/spark_i18n_" + code + ".properties";
             }
 
             // If we can find an translation file for this locale, we can support the language!
@@ -80,10 +81,7 @@ public class LanguagePlugin implements Plugin {
                 }
             }
         };
-        String label = locale.getDisplayLanguage(locale);
-        if (!locale.getDisplayCountry(locale).isEmpty()) {
-            label = label + "-" + locale.getDisplayCountry(locale);
-        }
+        String label = locale.getDisplayName(locale);
         action.putValue(Action.NAME, label);
         languageMenu.add(action);
     }
