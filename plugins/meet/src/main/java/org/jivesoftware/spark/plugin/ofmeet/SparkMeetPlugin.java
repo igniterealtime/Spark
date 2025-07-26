@@ -95,50 +95,48 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
         chatManager.addGlobalMessageListener(this);
 		
 		SparkMeetPreference preference = new SparkMeetPreference(this);
-		SparkManager.getPreferenceManager().addPreference(preference);	
-		
-		ServiceDiscoveryManager discoManager = ServiceDiscoveryManager.getInstanceFor(SparkManager.getConnection());
+		SparkManager.getPreferenceManager().addPreference(preference);
 
-		DiscoverInfo discoverInfo = null;
-		String serverJid = SparkManager.getSessionManager().getServerAddress().toString();
-		
-		try {
-			discoverInfo = discoManager.discoverInfo(JidCreate.domainBareFrom(serverJid));
-		}
-		catch (Exception e) {
-			Log.debug("Unable to disco " + serverJid);
-		}
-		
-		boolean jitsiAvailable = false;
-		boolean galeneAvailable = false;		
-		boolean ohunAvailable = false;	
-		
-        if (discoverInfo != null) {	
-			jitsiAvailable = discoverInfo.containsFeature("urn:xmpp:http:online-meetings#jitsi");
-			galeneAvailable = discoverInfo.containsFeature("urn:xmpp:http:online-meetings#galene");
-			ohunAvailable = discoverInfo.containsFeature("urn:xmpp:http:online-meetings#ohun");
-		}		
-
-		String sUrl = null;
-		
-		if (jitsiAvailable) {
-			sUrl = getServerUrl("jitsi");
-		}
-        else
-	
-		if (galeneAvailable) {
-			sUrl = getServerUrl("galene");
-		}
-		else
-	
-		if (ohunAvailable) {
-			sUrl = getServerUrl("ohun");
-		}
-				
-		if (sUrl != null) url = sUrl;
+        initializeOnlineMeetings();
     }
-	
-	private String getServerUrl(String app) {
+
+    private void initializeOnlineMeetings() {
+        ServiceDiscoveryManager discoManager = ServiceDiscoveryManager.getInstanceFor(SparkManager.getConnection());
+
+        DiscoverInfo discoverInfo = null;
+        String serverJid = SparkManager.getSessionManager().getServerAddress().toString();
+
+        try {
+            discoverInfo = discoManager.discoverInfo(JidCreate.domainBareFrom(serverJid));
+        } catch (Exception e) {
+            Log.debug("Unable to disco " + serverJid);
+        }
+
+        boolean jitsiAvailable = false;
+        boolean galeneAvailable = false;
+        boolean ohunAvailable = false;
+        if (discoverInfo != null) {
+            jitsiAvailable = discoverInfo.containsFeature("urn:xmpp:http:online-meetings#jitsi");
+            galeneAvailable = discoverInfo.containsFeature("urn:xmpp:http:online-meetings#galene");
+            ohunAvailable = discoverInfo.containsFeature("urn:xmpp:http:online-meetings#ohun");
+        }
+
+        String sUrl = null;
+
+        if (jitsiAvailable) {
+            sUrl = getServerUrl("jitsi");
+        } else if (galeneAvailable) {
+            sUrl = getServerUrl("galene");
+        } else if (ohunAvailable) {
+            sUrl = getServerUrl("ohun");
+        }
+
+        if (sUrl != null) {
+            url = sUrl;
+        }
+    }
+
+    private String getServerUrl(String app) {
 		String serverUrl = null;
 		
         try {		
