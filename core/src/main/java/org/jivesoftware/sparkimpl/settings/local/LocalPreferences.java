@@ -963,17 +963,11 @@ public class LocalPreferences {
 	}
 
     public String getLookAndFeel() {
-	String defaultstring;
-	try {
-	    defaultstring = Spark.isMac() ? Default.getString(Default.DEFAULT_LOOK_AND_FEEL_MAC)
-		    : Default.getString(Default.DEFAULT_LOOK_AND_FEEL);
-	} catch (Exception e) {
-	    defaultstring = UIManager.getSystemLookAndFeelClassName();
-	}
-	if (defaultstring.length() < 1) {
-	    defaultstring = UIManager.getSystemLookAndFeelClassName();
-	}
-	return getString("LookAndFeel", defaultstring);
+        String defaultstring = Default.getString(Spark.isMac() ? Default.DEFAULT_LOOK_AND_FEEL_MAC : Default.DEFAULT_LOOK_AND_FEEL);
+        if (defaultstring == null || defaultstring.isEmpty()) {
+            defaultstring = UIManager.getSystemLookAndFeelClassName();
+        }
+        return getString("LookAndFeel", defaultstring);
     }
 
 	public void setCheckForBeta(boolean checkForBeta) {
@@ -1009,7 +1003,7 @@ public class LocalPreferences {
 	}
 
 	public boolean isShowJoinLeaveMessagesEnabled() {
-	    return getBoolean("isShowJoinLeaveMessagesOn", true);
+        return getBoolean("isShowJoinLeaveMessagesOn", false);
 	}
 
 	public void setShowJoinLeaveMessagesEnabled(boolean enabled) {
@@ -1335,17 +1329,8 @@ public class LocalPreferences {
 
     public List<String> getDeactivatedPlugins()
     {
-	String plugs = getString("deactivatedPlugins", "");
-	ArrayList<String> liste = new ArrayList<>();
-
-	StringTokenizer tokenz = new StringTokenizer(plugs, ",");
-
-	while(tokenz.hasMoreTokens())
-	{
-	    String x = tokenz.nextToken();
-	    liste.add(x);
-	}
-	return liste;
+        String plugs = getString("deactivatedPlugins", "");
+        return Arrays.asList(plugs.split(","));
     }
 
     public void setDeactivatedPlugins(List<String> list) {
