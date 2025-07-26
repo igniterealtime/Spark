@@ -1009,7 +1009,7 @@ public class LocalPreferences {
 	}
 
 	public boolean isShowJoinLeaveMessagesEnabled() {
-	    return getBoolean("isShowJoinLeaveMessagesOn", true);
+        return getBoolean("isShowJoinLeaveMessagesOn", false);
 	}
 
 	public void setShowJoinLeaveMessagesEnabled(boolean enabled) {
