@@ -66,7 +66,7 @@ public class ChatRoomDecorator
 
     public void finished()
     {
-        Log.warning("ChatRoomDecorator: finished " + room.getBareJid());
+        Log.debug("ChatRoomDecorator: finished " + room.getBareJid());
     }
 
 }
