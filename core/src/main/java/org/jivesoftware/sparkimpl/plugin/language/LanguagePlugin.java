@@ -81,7 +81,7 @@ public class LanguagePlugin implements Plugin {
                 }
             }
         };
-        String label = locale.getDisplayName(locale);
+        String label = locale + "  " + locale.getDisplayName(locale);
         action.putValue(Action.NAME, label);
         languageMenu.add(action);
     }
