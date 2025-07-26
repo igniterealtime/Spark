@@ -103,26 +103,24 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
     private void initializeOnlineMeetings() {
         ServiceDiscoveryManager discoManager = ServiceDiscoveryManager.getInstanceFor(SparkManager.getConnection());
 
-        DiscoverInfo discoverInfo = null;
+        DiscoverInfo discoverInfo;
         String serverJid = SparkManager.getSessionManager().getServerAddress().toString();
 
         try {
             discoverInfo = discoManager.discoverInfo(JidCreate.domainBareFrom(serverJid));
         } catch (Exception e) {
             Log.debug("Unable to disco " + serverJid);
+            return;
+        }
+        if (discoverInfo == null) {
+            return;
         }
 
-        boolean jitsiAvailable = false;
-        boolean galeneAvailable = false;
-        boolean ohunAvailable = false;
-        if (discoverInfo != null) {
-            jitsiAvailable = discoverInfo.containsFeature("urn:xmpp:http:online-meetings#jitsi");
-            galeneAvailable = discoverInfo.containsFeature("urn:xmpp:http:online-meetings#galene");
-            ohunAvailable = discoverInfo.containsFeature("urn:xmpp:http:online-meetings#ohun");
-        }
+        boolean jitsiAvailable = discoverInfo.containsFeature("urn:xmpp:http:online-meetings#jitsi");
+        boolean galeneAvailable = discoverInfo.containsFeature("urn:xmpp:http:online-meetings#galene");
+        boolean ohunAvailable = discoverInfo.containsFeature("urn:xmpp:http:online-meetings#ohun");
 
         String sUrl = null;
-
         if (jitsiAvailable) {
             sUrl = getServerUrl("jitsi");
         } else if (galeneAvailable) {
