@@ -348,27 +348,35 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         return classpath.toString();
     }
 
-    private String getCommandPath() throws IOException{        
-        return getLibDirectory().getParentFile().getCanonicalPath();
+    private String getCommandPath() throws IOException{
+        File libDir = getLibDirectory();
+        if (libDir == null) {
+            return null;
+        }
+        return libDir.getParentFile().getCanonicalPath();
     }
     
     public boolean restartApplicationWithScript() {
         String command = null;
         try {
+            String commandPath = getCommandPath();
+            if (commandPath == null) {
+                return false;
+            }
             if (Spark.isWindows()) {
-                String sparkExe = getCommandPath() + File.separator + Default.getString(Default.SHORT_NAME) + ".exe";
+                String sparkExe = commandPath + File.separator + Default.getString(Default.SHORT_NAME) + ".exe";
                 if (!new File(sparkExe).exists()) {
                     Log.warning("Client EXE file does not exist");
                     return false;
                 }
-                String starterExe = getCommandPath() + File.separator + "starter.exe";
+                String starterExe = commandPath + File.separator + "starter.exe";
                 if (!new File(starterExe).exists()) {
                     Log.warning("Starter EXE file does not exist");
                     return false;
                 }
-                command = starterExe + " \"" + sparkExe + "\""; 
+                command = starterExe + " \"" + sparkExe + "\"";
             } else if (Spark.isLinux()) {
-                command = getCommandPath() + File.separator + Default.getString(Default.SHORT_NAME);
+                command = commandPath + File.separator + Default.getString(Default.SHORT_NAME);
                 if (!new File(command).exists()) {
                     Log.warning("Client startup script does not exist");
                     return false;
