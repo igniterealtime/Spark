@@ -38,7 +38,12 @@ public class LanguagePlugin implements Plugin {
         // Register with action menu
         final JMenu actionsMenu = SparkManager.getMainWindow().getMenuByName(Res.getString("menuitem.actions"));
 
-        JMenu languageMenu = new JMenu(Res.getString("menuitem.languages"));
+        String languageMenuLabel = Res.getString("menuitem.languages");
+        // For non-English locales append "Language" for those who accidentally changed language
+        if (!Locale.getDefault().getLanguage().equals("en")) {
+            languageMenuLabel += " (Language)";
+        }
+        JMenu languageMenu = new JMenu(languageMenuLabel);
         languageMenu.setIcon(SparkRes.getImageIcon("LANGUAGE_ICON"));
 
         Locale[] locales = Locale.getAvailableLocales();
