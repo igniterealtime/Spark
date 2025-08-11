@@ -42,7 +42,7 @@ public class ChatRoomDecorator
             ImageIcon ofmeetIcon = new ImageIcon(imageByte);
             ofmeetButton = new RolloverButton(SparkRes.getImageIcon("PADE_ICON"));
             ofmeetButton.setToolTipText(GraphicUtils.createToolTip(SparkMeetResource.getString("name")));
-            final String roomId = getNode(room.getBareJid().toString());
+            final String roomId = room.getBareJid().getLocalpart().toString();
             final String sessionID = String.valueOf(System.currentTimeMillis());
 
             ofmeetButton.addActionListener(event -> {
@@ -52,7 +52,6 @@ public class ChatRoomDecorator
                 {
                     newUrl = plugin.url + newRoomId;
                     plugin.handleClick(newUrl, room, newUrl, Message.Type.groupchat);
-
                 } else {
                     newUrl = plugin.url + newRoomId;
                     plugin.handleClick(newUrl, room, newUrl, Message.Type.chat);
@@ -61,25 +60,13 @@ public class ChatRoomDecorator
             room.getEditorBar().add(ofmeetButton);
 
         } catch (Exception e) {
-
             Log.error("cannot create pade meetings icon", e);
         }
-
     }
 
     public void finished()
     {
-        Log.warning("ChatRoomDecorator: finished " + room.getBareJid());
+        Log.debug("ChatRoomDecorator: finished " + room.getBareJid());
     }
 
-    private String getNode(String jid)
-    {
-        String node = jid;
-        int pos = node.indexOf("@");
-
-        if (pos > -1)
-            node = jid.substring(0, pos);
-
-        return node;
-    }
 }
