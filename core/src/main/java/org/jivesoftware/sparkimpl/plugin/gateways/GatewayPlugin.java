@@ -41,6 +41,7 @@ import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jxmpp.jid.BareJid;
 import org.jxmpp.jid.DomainBareJid;
+import org.jxmpp.jid.Jid;
 
 import javax.swing.*;
 
@@ -285,7 +286,11 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
     @Override
 	public boolean handlePresence(ContactItem item, Presence presence) {
         if (presence.isAvailable()) {
-            DomainBareJid domain = presence.getFrom().asDomainBareJid();
+            Jid from = presence.getFrom();
+            if (from == null) {
+                return false;
+            }
+            DomainBareJid domain = from.asDomainBareJid();
             Transport transport = TransportUtils.getTransport(domain);
             if (transport != null) {
                 if (presence.getType() == Presence.Type.available) {

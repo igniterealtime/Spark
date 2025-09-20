@@ -316,6 +316,9 @@ public class ContactList extends JPanel implements ActionListener,
             // We ignore this.
             return;
         }
+        if (presence.getFrom() == null) {
+            return;
+        }
 
         final Roster roster = Roster.getInstanceFor(SparkManager.getConnection());
 
