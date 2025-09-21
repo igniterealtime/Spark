@@ -50,6 +50,7 @@ import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.packet.StanzaError;
 import org.jivesoftware.smackx.muc.MultiUserChatManager;
 import org.jivesoftware.smackx.xdata.form.FillableForm;
 import org.jivesoftware.smackx.bookmarks.BookmarkedConference;
@@ -78,6 +79,7 @@ import org.jxmpp.jid.DomainBareJid;
 import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.Jid;
 import org.jxmpp.jid.impl.JidCreate;
+import org.jxmpp.jid.parts.Localpart;
 import org.jxmpp.jid.parts.Resourcepart;
 import org.jxmpp.stringprep.XmppStringprepException;
 
@@ -548,8 +550,13 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
                             Log.error("Error setting up GroupChatTable", e);
                         }
                     }
+                } catch (XMPPException.XMPPErrorException e) {
+                    StanzaError.Condition condition = e.getStanzaError().getCondition();
+                    if (condition != StanzaError.Condition.feature_not_implemented && condition != StanzaError.Condition.service_unavailable) {
+                        Log.error("Unable to retrieve list of rooms from " + serviceName, e);
+                    }
                 } catch (Exception e) {
-                    Log.error("Unable to retrieve list of rooms.", e);
+                    Log.error("Unable to retrieve list of rooms from " + serviceName, e);
                 }
                 stopLoadingImg();
             }
@@ -834,56 +841,54 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
      * Create a new room based on room table selection.
      */
     private void createRoom() {
-	RoomCreationDialog mucRoomDialog = new RoomCreationDialog();
-	final MultiUserChat groupChat = mucRoomDialog.createGroupChat(
-		SparkManager.getMainWindow(), serviceName);
-	LocalPreferences pref = SettingsManager.getLocalPreferences();
+        RoomCreationDialog mucRoomDialog = new RoomCreationDialog();
+        final MultiUserChat groupChat = mucRoomDialog.createGroupChat(SparkManager.getMainWindow(), serviceName);
+        LocalPreferences pref = SettingsManager.getLocalPreferences();
 
-	if (null != groupChat) {
+        if (groupChat == null) {
+            return;
+        }
+        // Join Room
+        try {
+            GroupChatRoom room = UIComponentRegistry.createGroupChatRoom(groupChat);
 
-	    // Join Room
-	    try {
-		GroupChatRoom room = UIComponentRegistry.createGroupChatRoom(groupChat);
+            Resourcepart nickname = pref.getNickname();
+            groupChat.create(nickname);
+            chatManager.getChatContainer().addChatRoom(room);
+            chatManager.getChatContainer().activateChatRoom(room);
 
-		Resourcepart nickname = pref.getNickname();
-		groupChat.create(nickname);
-		chatManager.getChatContainer().addChatRoom(room);
-		chatManager.getChatContainer().activateChatRoom(room);
+            // Send Form
+            FillableForm form = groupChat.getConfigurationForm().getFillableForm();
+            if (mucRoomDialog.isPasswordProtected()) {
+                String password = mucRoomDialog.getPassword();
+                room.setPassword(password);
+                form.setAnswer("muc#roomconfig_passwordprotectedroom", true);
+                form.setAnswer("muc#roomconfig_roomsecret", password);
+            }
+            form.setAnswer("muc#roomconfig_roomname", mucRoomDialog.getRoomName());
+            form.setAnswer("muc#roomconfig_roomdesc", mucRoomDialog.getRoomTopic());
 
-		// Send Form
-		FillableForm form = groupChat.getConfigurationForm().getFillableForm();
-		if (mucRoomDialog.isPasswordProtected()) {
-		    String password = mucRoomDialog.getPassword();
-		    room.setPassword(password);
-		    form.setAnswer("muc#roomconfig_passwordprotectedroom", true);
-		    form.setAnswer("muc#roomconfig_roomsecret", password);
-		}
-		form.setAnswer("muc#roomconfig_roomname",
-			mucRoomDialog.getRoomName());
-		form.setAnswer("muc#roomconfig_roomdesc",
-			mucRoomDialog.getRoomTopic());
+            if (mucRoomDialog.isPermanent()) {
+                form.setAnswer("muc#roomconfig_persistentroom", true);
+            }
 
-		if (mucRoomDialog.isPermanent()) {
-		    form.setAnswer("muc#roomconfig_persistentroom", true);
-		}
+            List<String> owners = new ArrayList<>(1);
+            owners.add(SparkManager.getSessionManager().getUserBareAddress().toString());
+            form.setAnswer("muc#roomconfig_roomowners", owners);
 
-		List<String> owners = new ArrayList<>();
-		owners.add(SparkManager.getSessionManager().getUserBareAddress().toString());
-		form.setAnswer("muc#roomconfig_roomowners", owners);
-
-		// new DataFormDialog(groupChat, form);
-		groupChat.sendConfigurationForm(form);
-        addRoomToTable(groupChat.getRoom(), groupChat.getRoom().getLocalpart(), 1);
-	    } catch (XMPPException | SmackException | InterruptedException e1) {
-		Log.error("Error creating new room.", e1);
-		UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
-		JOptionPane
-			.showMessageDialog(this,
-				Res.getString("message.room.creation.error"),
-				Res.getString("title.error"),
-				JOptionPane.ERROR_MESSAGE);
-	    }
-	}
+            // new DataFormDialog(groupChat, form);
+            groupChat.sendConfigurationForm(form);
+            EntityBareJid groupChatRoom = groupChat.getRoom();
+            Localpart localpart = groupChatRoom.getLocalpart();
+            addRoomToTable(groupChatRoom, localpart.toString(), 1);
+        } catch (XMPPException | SmackException | InterruptedException e1) {
+            Log.error("Error creating new room.", e1);
+            UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
+            JOptionPane.showMessageDialog(this,
+                Res.getString("message.room.creation.error"),
+                Res.getString("title.error"),
+                JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     /**
@@ -897,7 +902,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
      *            the number of occupants in the conference room. If -1 is
      *            specified, the the occupant count will show as n/a.
      */
-    private void addRoomToTable(final EntityBareJid jid, final CharSequence roomName,
+    private void addRoomToTable(final EntityBareJid jid, final String roomName,
 	    final int numberOfOccupants) {
         SwingWorker addRoomThread = new SwingWorker() {
 
@@ -939,7 +944,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
                     occupants = "n/a";
                 }
 
-                return new Object[] { iconLabel, roomName.toString(), jid.getLocalpart().toString(), occupants };
+                return new Object[] { iconLabel, roomName, jid.getLocalpart().toString(), occupants };
             }
             
             @Override
