@@ -239,7 +239,7 @@
         <dependency>
             <groupId>com.install4j</groupId>
             <artifactId>install4j-runtime</artifactId>
-            <version>10.0.9</version>
+            <version>11.0.4</version>
         </dependency>
 
         <dependency>
@@ -293,13 +293,6 @@
         </dependency>
     </dependencies>
     
-    <repositories>
-        <repository>
-            <id>ej-technologies</id>
-            <url>https://maven.ej-technologies.com/repository/</url>
-        </repository>
-    </repositories>
-
     <profiles>
         <profile>
             <id>owasp-check</id>
