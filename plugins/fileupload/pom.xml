@@ -13,7 +13,7 @@
     <version>0.0.4</version>
 
     <name>Http File Upload Plugin</name>
-    <description>Adds support for Openfire httpfileupload plugin to Spark</description>
+    <description>Allows users to share files by uploading to a server (via XEP-0363).</description>
 
     <contributors>
         <contributor>
