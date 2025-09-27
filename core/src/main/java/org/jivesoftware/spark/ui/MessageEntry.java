@@ -34,6 +34,8 @@ import static javax.swing.text.StyleConstants.Foreground;
  * An entry is displayed in this format: <tt>(timestamp) prefix: message</tt>,
  * for example: <tt>(10:03) Guus: Hello everyone!</tt>
  *
+ * Messages are formatted according to <a href="https://xmpp.org/extensions/xep-0393.html">XEP-0393: Message Styling</a>
+ *
  * @author Guus der Kinderen, guus.der.kinderen@gmail.com
  */
 public class MessageEntry extends TimeStampedEntry
