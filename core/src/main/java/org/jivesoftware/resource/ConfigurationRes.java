@@ -40,7 +40,9 @@ public class ConfigurationRes {
         try
         {
             InputStream resourceAsStream = cl.getResourceAsStream( "configuration.properties" );
-            prb.load( resourceAsStream );
+            if (resourceAsStream != null) {
+                prb.load( resourceAsStream );
+            }
         }
         catch ( IOException e )
         {

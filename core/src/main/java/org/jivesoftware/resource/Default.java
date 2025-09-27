@@ -155,7 +155,9 @@ public class Default {
         try
         {
             InputStream resourceAsStream = cl.getResourceAsStream( "default.properties" );
-            prb.load( resourceAsStream );
+            if (resourceAsStream != null) {
+                prb.load( resourceAsStream );
+            }
         }
         catch ( IOException e )
         {
@@ -181,7 +183,8 @@ public class Default {
     }
 
     public static boolean getBoolean(String propertyName) {
-	return getString(propertyName).replace(" ","").equals("true");
+        String prop = getString(propertyName);
+        return prop != null && Boolean.parseBoolean(prop.trim());
     }
 
     public static ImageIcon getImageIcon(String imageName) {
