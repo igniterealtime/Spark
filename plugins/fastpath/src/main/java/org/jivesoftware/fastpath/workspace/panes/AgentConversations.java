@@ -186,7 +186,7 @@ public final class AgentConversations extends JPanel implements ChangeListener {
                         @Override
                         public void presenceChanged(Presence presence) {
                             EntityBareJid agentJID = presence.getFrom().asEntityBareJidOrThrow();
-                            AgentStatus agentStatus = presence.getExtension("agent-status", "http://jabber.org/protocol/workgroup");
+                            AgentStatus agentStatus = presence.getExtension(AgentStatus.class);
 
                             if (agentStatus != null) {
                                 List<AgentStatus.ChatInfo> list = agentStatus.getCurrentChats();
@@ -231,7 +231,7 @@ public final class AgentConversations extends JPanel implements ChangeListener {
         for (EntityBareJid agent : agentRoster.getAgents()) {
             Presence presence = agentRoster.getPresence(agent);
             if (presence.isAvailable()) {
-                AgentStatus agentStatus = presence.getExtension("agent-status", "http://jabber.org/protocol/workgroup");
+                AgentStatus agentStatus = presence.getExtension(AgentStatus.class);
                 if (agentStatus != null) {
                     counter += agentStatus.getCurrentChats().size();
                 }
