@@ -21,6 +21,7 @@ import org.jivesoftware.smack.provider.ExtensionElementProvider;
 import org.jivesoftware.smack.xml.XmlPullParser;
 import org.jivesoftware.smack.xml.XmlPullParserException;
 
+import javax.xml.namespace.QName;
 import java.io.IOException;
 
 /**
@@ -37,6 +38,7 @@ public class GameMove implements ExtensionElement {
 
     public static final String ELEMENT_NAME = "reversi-move";
     public static final String NAMESPACE = "http://jivesoftware.org/protocol/game/reversi";
+    public static final QName QNAME = new QName(NAMESPACE, ELEMENT_NAME);
 
     private int gameID;
     private int position;

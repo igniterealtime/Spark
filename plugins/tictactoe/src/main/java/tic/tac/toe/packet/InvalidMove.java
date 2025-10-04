@@ -6,12 +6,14 @@ import org.jivesoftware.smack.provider.ExtensionElementProvider;
 import org.jivesoftware.smack.xml.XmlPullParser;
 import org.jivesoftware.smack.xml.XmlPullParserException;
 
+import javax.xml.namespace.QName;
 import java.io.IOException;
 
 public class InvalidMove implements ExtensionElement {
 
     public static final String ELEMENT_NAME = "ttt-invalid";
     public static final String NAMESPACE = "tictactoe";
+    public static final QName QNAME = new QName(NAMESPACE, ELEMENT_NAME);
 
     private int _gameID;
     private int _posx;

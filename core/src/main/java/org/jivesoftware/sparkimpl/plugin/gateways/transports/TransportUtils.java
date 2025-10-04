@@ -35,6 +35,7 @@ import org.jxmpp.jid.Jid;
 import org.jxmpp.jid.impl.JidCreate;
 import org.jxmpp.stringprep.XmppStringprepException;
 
+import javax.xml.namespace.QName;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -205,15 +206,18 @@ public class TransportUtils {
 
 
     static class GatewayRegisterExtension implements ExtensionElement {
+        public static final String ELEMENT_NAME = "x";
+        public static final String NAMESPACE = "jabber:iq:gateway:register";
+        public static final QName QNAME = new QName(NAMESPACE, ELEMENT_NAME);
 
         @Override
 		public String getElementName() {
-            return "x";
+            return ELEMENT_NAME;
         }
 
         @Override
 		public String getNamespace() {
-            return "jabber:iq:gateway:register";
+            return NAMESPACE;
         }
 
         @Override
