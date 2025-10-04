@@ -347,7 +347,7 @@ public class Workspace extends JPanel implements StanzaListener {
             boolean isGroupChat = message.getType() == Message.Type.groupchat;
 
             // Check if Conference invite. If so, do not handle here.
-            if (message.getExtension("x", "jabber:x:conference") != null) {
+            if (message.hasExtension("x", "jabber:x:conference")) {
                 return;
             }
 
