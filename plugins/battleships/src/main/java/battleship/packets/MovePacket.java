@@ -27,6 +27,7 @@ public class MovePacket implements ExtensionElement {
 
     public static final String ELEMENT_NAME = "bs-move";
     public static final String NAMESPACE = "battleship";
+    public static final QName QNAME = new QName(NAMESPACE, ELEMENT_NAME);
 
     private int posx;
     private int posy;

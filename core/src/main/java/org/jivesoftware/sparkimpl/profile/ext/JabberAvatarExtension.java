@@ -22,13 +22,20 @@ import org.jivesoftware.smack.provider.ExtensionElementProvider;
 import org.jivesoftware.smack.xml.XmlPullParser;
 import org.jivesoftware.smack.xml.XmlPullParserException;
 
+import javax.xml.namespace.QName;
 import java.io.IOException;
 
+/**
+ * XEP-0008: IQ-Based Avatars
+ * TODO Should be replaced with XEP-0084: User Avatar
+ */
 public class JabberAvatarExtension implements ExtensionElement {
 
     public static final String ELEMENT_NAME = "x";
 
     public static final String NAMESPACE = "jabber:x:avatar";
+
+    public static final QName QNAME = new QName(NAMESPACE, ELEMENT_NAME);
 
     private String photoHash;
 
