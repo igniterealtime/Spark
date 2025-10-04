@@ -270,10 +270,11 @@ public class WorkgroupManager {
     public void handleContactItem(final ContactItem contactItem) {
         Presence presence = contactItem.getPresence();
 
-        ExtensionElement workgroup = presence.getExtension("workgroup", "http://jivesoftware.com/protocol/workgroup");
-        ExtensionElement notifyQueue = presence.getExtension("notify-queue", "http://jabber.org/protocol/workgroup");
+        // TODO It probably can be WorkgroupInformation.class but it has namespace http://jabber.org/protocol/workgroup
+        boolean hasWorkgroup = presence.hasExtension("workgroup", "http://jivesoftware.com/protocol/workgroup");
+        boolean hasNotifyQueue = presence.hasExtension("notify-queue", "http://jabber.org/protocol/workgroup");
 
-        if (workgroup == null && notifyQueue == null) {
+        if (!hasWorkgroup && !hasNotifyQueue) {
             return;
         }
 
@@ -403,7 +404,7 @@ public class WorkgroupManager {
         public boolean handleInvitation(final XMPPConnection conn, final MultiUserChat room, final EntityBareJid inviter, final String reason, final String password, final Message message) {
             invites.add(inviter);
 
-            if (message.getExtension("workgroup", "http://jabber.org/protocol/workgroup") != null) {
+            if (message.hasExtension("workgroup", "http://jabber.org/protocol/workgroup")) {
                 Localpart workgroupName = inviter.getLocalpart();
                 GroupChatRoom groupChatRoom = ConferenceUtils.enterRoomOnSameThread(workgroupName, room.getRoom(), null, password);
 

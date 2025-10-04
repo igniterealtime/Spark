@@ -521,8 +521,7 @@ public class ChatRoomImpl extends ChatRoom {
                     }
 
                     // Do not Handle offline messages. Offline messages are handling by Workspace.
-                    DelayInformation offlineInformation = message.getExtension("delay", "urn:xmpp:delay");
-                    if (offlineInformation != null &&
+                    if (message.hasExtension("delay", "urn:xmpp:delay") &&
                         (message.getType() == Message.Type.chat ||
                         message.getType() == Message.Type.normal)) {
                         return;
