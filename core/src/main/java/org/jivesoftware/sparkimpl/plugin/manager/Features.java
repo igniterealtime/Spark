@@ -21,6 +21,7 @@ import org.jivesoftware.smack.provider.ExtensionElementProvider;
 import org.jivesoftware.smack.xml.XmlPullParser;
 import org.jivesoftware.smack.xml.XmlPullParserException;
 
+import javax.xml.namespace.QName;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -48,6 +49,8 @@ public class Features implements ExtensionElement {
      * Namespace of the packet extension.
      */
     public static final String NAMESPACE = "http://jabber.org/protocol/disco#info";
+
+    public static final QName QNAME = new QName(NAMESPACE, ELEMENT_NAME);
 
 
     @Override
