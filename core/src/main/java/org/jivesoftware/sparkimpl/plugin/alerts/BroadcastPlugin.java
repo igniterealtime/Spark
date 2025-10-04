@@ -201,10 +201,8 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
         SwingUtilities.invokeLater(() -> {
             try {
                 final Message message = (Message) stanza;
-
                 // Do not handle errors or offline messages
-                final DelayInformation offlineInformation = message.getExtension("delay", "urn:xmpp:delay");
-                if (offlineInformation != null || message.getError() != null) {
+                if (message.hasExtension(DelayInformation.class) || message.getError() != null) {
                     return;
                 }
 
@@ -337,8 +335,7 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
 
         SparkManager.getChatManager().fireGlobalMessageReceievedListeners(chatRoom, message);
 
-        DelayInformation inf = message.getExtension("delay", "urn:xmpp:delay");
-        if (inf == null) {
+        if (message.hasExtension(DelayInformation.class)) {
             SoundPreference soundPreference = (SoundPreference) SparkManager.getPreferenceManager().getPreference(new SoundPreference().getNamespace());
             SoundPreferences preferences = soundPreference.getPreferences();
             if (preferences.isPlayIncomingSound()) {

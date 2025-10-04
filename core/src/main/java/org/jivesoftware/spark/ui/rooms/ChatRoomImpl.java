@@ -521,8 +521,7 @@ public class ChatRoomImpl extends ChatRoom {
                     }
 
                     // Do not Handle offline messages. Offline messages are handling by Workspace.
-                    DelayInformation offlineInformation = message.getExtension("delay", "urn:xmpp:delay");
-                    if (offlineInformation != null &&
+                    if (message.hasExtension(DelayInformation.class) &&
                         (message.getType() == Message.Type.chat ||
                         message.getType() == Message.Type.normal)) {
                         return;
@@ -602,7 +601,7 @@ public class ChatRoomImpl extends ChatRoom {
 	public void insertMessage(Message message) {
         // Debug info
         super.insertMessage(message);
-        MessageEvent messageEvent = message.getExtension("x", "jabber:x:event");
+        MessageEvent messageEvent = message.getExtension(MessageEvent.class);
         if (messageEvent != null) {
             checkEvents(message.getFrom(), message.getStanzaId(), messageEvent);
         }

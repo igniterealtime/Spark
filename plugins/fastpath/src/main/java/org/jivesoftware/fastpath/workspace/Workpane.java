@@ -614,7 +614,7 @@ public class Workpane {
                 return true;
             }
             else if (message != null) {
-                MetaData metaDataExt = message.getExtension(MetaData.ELEMENT_NAME, MetaData.NAMESPACE);
+                MetaData metaDataExt = message.getExtension(MetaData.class);
                 if (metaDataExt != null) {
                     Map<String, List<String>> metadata = metaDataExt.getMetaData();
                     List<String> values = new ArrayList<>();

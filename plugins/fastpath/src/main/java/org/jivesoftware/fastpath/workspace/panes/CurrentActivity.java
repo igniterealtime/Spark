@@ -170,8 +170,7 @@ public final class CurrentActivity extends JPanel {
                     @Override
                     public void presenceChanged(Presence presence) {
                         BareJid agentJID = presence.getFrom().asBareJid();
-                        AgentStatus agentStatus = presence.getExtension("agent-status", "http://jabber.org/protocol/workgroup");
-
+                        AgentStatus agentStatus = presence.getExtension(AgentStatus.class);
                         if (agentStatus != null) {
                             List<ChatInfo> list = agentStatus.getCurrentChats();
 

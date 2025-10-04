@@ -614,7 +614,7 @@ public class GroupChatRoom extends ChatRoom
         lastMessage = message;
         if ( message.getType() == Message.Type.groupchat )
         {
-            final DelayInformation inf = message.getExtension( "delay", "urn:xmpp:delay" );
+            final DelayInformation inf = message.getExtension(DelayInformation.class);
             final Date sentDate = inf != null ? inf.getStamp() : new Date();
 
             // Do not accept Administrative messages.
@@ -725,7 +725,7 @@ public class GroupChatRoom extends ChatRoom
 
         final Resourcepart nickname = from.getResourcepart();
 
-        final MUCUser mucUser = stanza.getExtension( "x", "http://jabber.org/protocol/muc#user" );
+        final MUCUser mucUser = stanza.getExtension(MUCUser.class);
         final Set<MUCUser.Status> status = new HashSet<>();
         if ( mucUser != null )
         {

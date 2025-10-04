@@ -247,7 +247,7 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener
         String body = message.getBody();
 
         // Verify the timestamp of this message. Determine if it is a 'live' message, or one that was sent earlier.
-        final DelayInformation inf = message.getExtension( "delay", "urn:xmpp:delay" );
+        final DelayInformation inf = message.getExtension(DelayInformation.class);
         final ZonedDateTime sentDate;
         final boolean isDelayed;
         if ( inf != null )

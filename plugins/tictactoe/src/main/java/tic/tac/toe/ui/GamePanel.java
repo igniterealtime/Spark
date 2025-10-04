@@ -86,9 +86,7 @@ public class GamePanel extends JPanel {
 	add(_playerdisplay, BorderLayout.SOUTH);
         _connection.addAsyncStanzaListener(stanza -> {
 
-            MovePacket move = stanza.getExtension(
-                MovePacket.ELEMENT_NAME, MovePacket.NAMESPACE);
-
+            MovePacket move = stanza.getExtension(MovePacket.class);
             if (move.getGameID() == _gameID) {
                 if (_gameboard.isValidMove(getYourMark(), move.getPositionX(), move.getPositionY())) {
                     _gameboardpanel.placeMark(getYourMark(), move.getPositionX(), move.getPositionY());
@@ -109,7 +107,7 @@ public class GamePanel extends JPanel {
         }, new StanzaExtensionFilter(MovePacket.ELEMENT_NAME, MovePacket.NAMESPACE));
 
         _connection.addAsyncStanzaListener(stanza -> {
-            //InvalidMove im = (InvalidMove)packet.getExtension(InvalidMove.ELEMENT_NAME, InvalidMove.NAMESPACE);
+            //InvalidMove im = packet.getExtension(InvalidMove.class);
             ChatRoom cr = SparkManager.getChatManager().getChatRoom(_opponent.asEntityBareJid());
             cr.getTranscriptWindow().insertCustomText("You seem to be Cheating\n" +
                 "You placed a wrong Move", true, false, Color.red);

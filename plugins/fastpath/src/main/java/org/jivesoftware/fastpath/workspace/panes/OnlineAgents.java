@@ -209,7 +209,7 @@ public final class OnlineAgents extends JPanel {
             return FpRes.getString("message.user.not.logged.in");
         }
 
-        AgentStatus agentStatus = presence.getExtension("agent-status", "http://jabber.org/protocol/workgroup");
+        AgentStatus agentStatus = presence.getExtension(AgentStatus.class);
         List<AgentStatus.ChatInfo> list = agentStatus.getCurrentChats();
 
         // Add new ones.

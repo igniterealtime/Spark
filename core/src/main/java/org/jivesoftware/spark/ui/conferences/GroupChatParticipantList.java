@@ -194,7 +194,7 @@ public class GroupChatParticipantList extends JPanel {
 
         // When joining a room, check if the current user is an owner/admin. If so, the UI should allow the current
         // user to change settings of this MUC.
-        final MUCUser mucUserEx = p.getExtension(MUCUser.ELEMENT, MUCUser.NAMESPACE);
+        final MUCUser mucUserEx = p.getExtension(MUCUser.class);
         if ( mucUserEx != null && mucUserEx.getStatus().contains(MUCUser.Status.create(110)) ) // 110 = Inform user that presence refers to itself
         {
             final MUCItem item = mucUserEx.getItem();
@@ -270,7 +270,7 @@ public class GroupChatParticipantList extends JPanel {
 
 	MUCAffiliation affiliation = null;
 	MUCRole role = null;
-	final MUCUser extension = (MUCUser) presence.getExtension( MUCUser.NAMESPACE );
+	final MUCUser extension = presence.getExtension(MUCUser.class);
 	if ( extension != null && extension.getItem() != null )
 	{
 		affiliation = extension.getItem().getAffiliation();

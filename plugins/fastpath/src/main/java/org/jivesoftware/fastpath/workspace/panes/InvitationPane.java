@@ -124,7 +124,7 @@ public class InvitationPane {
         transcriptAlert.add(new JLabel(), new GridBagConstraints(2, 5, 1, 1, 0.0, 1.0, GridBagConstraints.SOUTH, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0));
 
 
-        MetaData metaDataExt = message.getExtension(MetaData.ELEMENT_NAME, MetaData.NAMESPACE);
+        MetaData metaDataExt = message.getExtension(MetaData.class);
         if (metaDataExt != null) {
             metadata = metaDataExt.getMetaData();
         }

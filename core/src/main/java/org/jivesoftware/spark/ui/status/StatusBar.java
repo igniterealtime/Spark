@@ -76,6 +76,7 @@ import org.jivesoftware.sparkimpl.plugin.privacy.list.SparkPrivacyList;
 import org.jivesoftware.sparkimpl.profile.VCardEditor;
 import org.jivesoftware.sparkimpl.profile.VCardListener;
 import org.jivesoftware.sparkimpl.profile.VCardManager;
+import org.jivesoftware.sparkimpl.profile.ext.VCardUpdateExtension;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
 //TODO: I need to remove the presence logic from this class.
@@ -391,8 +392,7 @@ public class StatusBar extends JPanel implements VCardListener {
         }
 
         if ((presence.getMode() == currentPresence.getMode()) && (presence.getType() == currentPresence.getType()) && (presence.getStatus().equals(currentPresence.getStatus()))) {
-            ExtensionElement pe = presence.getExtension("x", "vcard-temp:x:update");
-            if (pe != null) {
+            if (presence.hasExtension(VCardUpdateExtension.class)) {
                 // Update VCard
                 loadVCard();
             }
