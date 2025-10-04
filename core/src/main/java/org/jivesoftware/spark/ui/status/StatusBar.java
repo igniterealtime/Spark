@@ -391,8 +391,7 @@ public class StatusBar extends JPanel implements VCardListener {
         }
 
         if ((presence.getMode() == currentPresence.getMode()) && (presence.getType() == currentPresence.getType()) && (presence.getStatus().equals(currentPresence.getStatus()))) {
-            ExtensionElement pe = presence.getExtension("x", "vcard-temp:x:update");
-            if (pe != null) {
+            if (presence.hasExtension("x", "vcard-temp:x:update")) {
                 // Update VCard
                 loadVCard();
             }
