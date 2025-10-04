@@ -73,7 +73,7 @@ public class ChatViewer extends JPanel {
             if (stanza instanceof Message) {
                 Message message = (Message) stanza;
                 String from = message.getFrom().getResourceOrThrow().toString();
-                DelayInformation delayInformation = message.getExtension("delay", "urn:xmpp:delay");
+                DelayInformation delayInformation = message.getExtension(DelayInformation.class);
                 Date stamp = null;
                 if (delayInformation != null) {
                     stamp = delayInformation.getStamp();

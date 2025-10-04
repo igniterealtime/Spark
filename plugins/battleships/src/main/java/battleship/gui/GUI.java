@@ -81,8 +81,7 @@ public class GUI extends JPanel implements Observer{
 	    @Override
 	    public void processPacket(Stanza stanza) {
 
-		MovePacket move = (MovePacket) stanza.getExtension(
-			MovePacket.ELEMENT_NAME, MovePacket.NAMESPACE);
+		MovePacket move = stanza.getExtension(MovePacket.class);
 
 		if (move.getGameID() == _gameID) {
 		    boolean opponentMadeHit = _gameboard.placeBomb(move.getPositionX(), move.getPositionY());
