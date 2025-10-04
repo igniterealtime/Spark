@@ -74,7 +74,7 @@ public class SoundPlugin implements Plugin, MessageListener, ChatRoomListener {
     @Override
 	public void messageReceived(ChatRoom room, Message message) {
         // Do not play sounds on history updates.
-        if (message.hasExtension("delay", "urn:xmpp:delay")) {
+        if (message.hasExtension(DelayInformation.class)) {
             return;
         }
 

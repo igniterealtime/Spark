@@ -341,25 +341,19 @@ public class ContactItem extends JPanel {
      * @param presence the presence.
      */
     public void setPresence(Presence presence) {
-
         this.presence = presence;
-
-        final VCardUpdateExtension extension = presence.getExtension("x", "vcard-temp:x:update");
-
+        final VCardUpdateExtension extension = presence.getExtension(VCardUpdateExtension.class);
         // Handle vCard update packet.
         if (extension != null) {
             String hash = extension.getPhotoHash();
             if (hash != null) {
                 this.hash = hash;
-
                 if (!hashExists(hash)) {
                     updateAvatar();
                     updateAvatarInSideIcon();
                 }
             }
         }
-
-        
         updatePresenceIcon(presence);
     }
 

@@ -93,7 +93,7 @@ public class ReversiPanel extends JPanel {
 
         if (connection != null) {
             gameMoveListener = stanza -> {
-                GameMove move = stanza.getExtension(GameMove.ELEMENT_NAME, GameMove.NAMESPACE);
+                GameMove move = stanza.getExtension(GameMove.class);
                 // If this is a move for the current game.
                 if (move.getGameID() == gameID) {
                     int position = move.getPosition();

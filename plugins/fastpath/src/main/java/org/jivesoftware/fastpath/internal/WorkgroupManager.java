@@ -41,9 +41,10 @@ import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Message;
-import org.jivesoftware.smack.packet.ExtensionElement;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smackx.muc.MultiUserChat;
+import org.jivesoftware.smackx.workgroup.packet.QueueOverview;
+import org.jivesoftware.smackx.workgroup.packet.WorkgroupInformation;
 import org.jivesoftware.smackx.xdata.FormField;
 import org.jivesoftware.smackx.xdata.form.FillableForm;
 import org.jivesoftware.smackx.xdata.form.FilledForm;
@@ -269,11 +270,9 @@ public class WorkgroupManager {
 
     public void handleContactItem(final ContactItem contactItem) {
         Presence presence = contactItem.getPresence();
-
         // TODO It probably can be WorkgroupInformation.class but it has namespace http://jabber.org/protocol/workgroup
         boolean hasWorkgroup = presence.hasExtension("workgroup", "http://jivesoftware.com/protocol/workgroup");
-        boolean hasNotifyQueue = presence.hasExtension("notify-queue", "http://jabber.org/protocol/workgroup");
-
+        boolean hasNotifyQueue = presence.hasExtension(QueueOverview.class);
         if (!hasWorkgroup && !hasNotifyQueue) {
             return;
         }
@@ -404,7 +403,7 @@ public class WorkgroupManager {
         public boolean handleInvitation(final XMPPConnection conn, final MultiUserChat room, final EntityBareJid inviter, final String reason, final String password, final Message message) {
             invites.add(inviter);
 
-            if (message.hasExtension("workgroup", "http://jabber.org/protocol/workgroup")) {
+            if (message.hasExtension(WorkgroupInformation.class)) {
                 Localpart workgroupName = inviter.getLocalpart();
                 GroupChatRoom groupChatRoom = ConferenceUtils.enterRoomOnSameThread(workgroupName, room.getRoom(), null, password);
 

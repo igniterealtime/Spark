@@ -46,6 +46,7 @@ import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smackx.debugger.EnhancedDebuggerWindow;
 import org.jivesoftware.smackx.delay.packet.DelayInformation;
 import org.jivesoftware.smackx.jiveproperties.packet.JivePropertiesExtension;
+import org.jivesoftware.smackx.muc.packet.GroupChatInvitation;
 import org.jivesoftware.smackx.vcardtemp.packet.VCard;
 import org.jivesoftware.spark.component.tabbedPane.SparkTabbedPane;
 import org.jivesoftware.spark.filetransfer.SparkTransferManager;
@@ -347,7 +348,7 @@ public class Workspace extends JPanel implements StanzaListener {
             boolean isGroupChat = message.getType() == Message.Type.groupchat;
 
             // Check if Conference invite. If so, do not handle here.
-            if (message.hasExtension("x", "jabber:x:conference")) {
+            if (message.hasExtension(GroupChatInvitation.class)) {
                 return;
             }
 
@@ -356,7 +357,7 @@ public class Workspace extends JPanel implements StanzaListener {
             final boolean broadcast = extension != null && extension.getProperty( "broadcast" ) != null;
 
             // Handle offline message.
-            DelayInformation offlineInformation = message.getExtension("delay", "urn:xmpp:delay");
+            DelayInformation offlineInformation = message.getExtension(DelayInformation.class);
             if (offlineInformation != null && (Message.Type.chat == message.getType() ||
                 Message.Type.normal == message.getType())) {
                 handleOfflineMessage(message);
