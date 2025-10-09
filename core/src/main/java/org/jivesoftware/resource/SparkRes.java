@@ -387,7 +387,7 @@ public class SparkRes {
         while (enumeration.hasMoreElements()) {
             String token = enumeration.nextElement();
             String value = prb.getProperty(token).toLowerCase();
-            if (value.endsWith(".gif") || value.endsWith(".png") || value.endsWith(".jpg") || value.endsWith("jpeg")) {
+            if (value.endsWith(".gif") || value.endsWith(".png") || value.endsWith(".jpg") || value.endsWith(".jpeg")) {
                 SparkRes.getImageIcon(token);
             }
             String str = "public static final String " + token + " = \"" + token + "\";\n";
