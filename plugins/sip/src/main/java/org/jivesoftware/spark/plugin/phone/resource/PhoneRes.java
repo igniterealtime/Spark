@@ -58,8 +58,8 @@ public class PhoneRes {
             final URL imageURL = cl.getResource(iconURI);
             return new ImageIcon(imageURL);
         }
-        catch (Exception ex) {
-            System.out.println(imageName + " not found.");
+        catch (Throwable t) {
+            Log.warn(imageName + " not found.", t);
         }
         return null;
     }

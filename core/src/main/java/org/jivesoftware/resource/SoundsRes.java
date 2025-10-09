@@ -15,6 +15,8 @@
  */
 package org.jivesoftware.resource;
 
+import org.jivesoftware.spark.util.log.Log;
+
 import javax.swing.ImageIcon;
 
 import java.io.IOException;
@@ -52,9 +54,14 @@ public class SoundsRes {
     }
 
     public static ImageIcon getImageIcon(String imageName) {
-        final String iconURI = getString(imageName);
-        final URL imageURL = cl.getResource(iconURI);
-        return new ImageIcon(imageURL);
+        try {
+            final String iconURI = getString(imageName);
+            final URL imageURL = cl.getResource(iconURI);
+            return new ImageIcon(imageURL);
+        } catch (Throwable t) {
+            Log.warning(imageName + " not found.", t);
+        }
+        return null;
     }
 
     public static URL getURL(String propertyName) {

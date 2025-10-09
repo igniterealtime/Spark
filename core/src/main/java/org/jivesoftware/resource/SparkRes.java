@@ -355,8 +355,8 @@ public class SparkRes {
         try {
             final URL imageURL = getURL(imageName);
             return new ImageIcon(imageURL);
-        } catch (Exception ex) {
-            Log.error(imageName + " not found.");
+        } catch (Throwable t) {
+            Log.warning(imageName + " not found.", t);
         }
         return null;
     }
