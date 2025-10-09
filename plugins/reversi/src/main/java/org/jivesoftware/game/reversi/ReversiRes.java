@@ -1,6 +1,7 @@
 package org.jivesoftware.game.reversi;
 
 import org.jivesoftware.resource.UTF8Control;
+import org.jivesoftware.spark.util.log.Log;
 
 import java.net.URL;
 import java.util.PropertyResourceBundle;
@@ -42,9 +43,9 @@ public class ReversiRes {
 	            final URL imageURL = ReversiRes.cl.getResource(iconURI);
 	            return new ImageIcon(imageURL);
 	        }
-	        catch (Exception ex) {
-	            System.out.println(imageName + " not found.");
-	        }
+	        catch (Throwable t) {
+                Log.warning(imageName + " not found.", t);
+            }
 	        return null;
 	    }
 

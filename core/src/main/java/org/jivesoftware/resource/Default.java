@@ -206,8 +206,8 @@ public class Default {
             cache.put(imageName, icon);
             return icon;
         }
-        catch (Exception ex) {
-            Log.debug(imageName + " not found.");
+        catch (Throwable t) {
+            Log.warning(imageName + " not found.", t);
         }
         return null;
     }

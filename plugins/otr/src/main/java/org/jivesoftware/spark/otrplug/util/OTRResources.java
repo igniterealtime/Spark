@@ -45,9 +45,14 @@ public class OTRResources {
      * @return
      */
     public static ImageIcon getIcon(String fileName) {
-        final ClassLoader cl = OTRResources.class.getClassLoader();
-        ImageIcon icon = new ImageIcon(cl.getResource(fileName));
-        return icon;
+        try {
+            final ClassLoader cl = OTRResources.class.getClassLoader();
+            ImageIcon icon = new ImageIcon(cl.getResource(fileName));
+            return icon;
+        } catch (Throwable t) {
+            Log.warning(fileName + " not found.", t);
+        }
+        return null;
     }
 
     /**

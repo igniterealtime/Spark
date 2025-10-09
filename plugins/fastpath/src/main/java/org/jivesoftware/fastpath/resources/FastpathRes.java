@@ -16,6 +16,7 @@
 package org.jivesoftware.fastpath.resources;
 
 import org.jivesoftware.fastpath.FastpathPlugin;
+import org.jivesoftware.spark.util.log.Log;
 
 import javax.swing.ImageIcon;
 import javax.swing.JEditorPane;
@@ -267,8 +268,8 @@ public class FastpathRes {
             final URL imageURL = cl.getResource(iconURI);
             return new ImageIcon(imageURL);
         }
-        catch (Exception ex) {
-            System.out.println(imageName + " not found.");
+        catch (Throwable t) {
+            Log.warning(imageName + " not found.", t);
         }
         return null;
     }
