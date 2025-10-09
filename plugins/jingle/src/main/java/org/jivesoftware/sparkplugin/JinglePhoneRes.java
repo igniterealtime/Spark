@@ -20,6 +20,8 @@ import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 import java.net.URL;
 
+import org.jivesoftware.spark.util.log.Log;
+
 /**
  * Use for Phone Res Internationalization.
  *
@@ -48,8 +50,8 @@ public class JinglePhoneRes {
             final URL imageURL = JinglePhoneRes.cl.getResource(iconURI);
             return new ImageIcon(imageURL);
         }
-        catch (Exception ex) {
-            System.out.println(imageName + " not found.");
+        catch (Throwable t) {
+            Log.warning(imageName + " not found.", t);
         }
         return null;
     }
