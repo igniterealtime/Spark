@@ -206,9 +206,8 @@ public class IncomingCallUI extends JPanel {
                 avatarLabel.validate();
                 avatarLabel.repaint();
             }
-            catch (Throwable t) {
-                // no issue
-                Log.warning("Unable to generate image from avatar", t);
+            catch (Exception e) {
+                Log.warning("Unable to generate image from avatar", e);
             }
         }
 

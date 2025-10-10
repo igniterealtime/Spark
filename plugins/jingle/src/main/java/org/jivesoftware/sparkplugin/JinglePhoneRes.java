@@ -48,10 +48,14 @@ public class JinglePhoneRes {
         try {
             final String iconURI = JinglePhoneRes.getString(imageName);
             final URL imageURL = JinglePhoneRes.cl.getResource(iconURI);
-            return new ImageIcon(imageURL);
+            if (imageURL != null) {
+                return new ImageIcon(imageURL);
+            } else {
+                Log.warning(imageName + " not found.");
+            }
         }
-        catch (Throwable t) {
-            Log.warning(imageName + " not found.", t);
+        catch (Exception e) {
+            Log.warning("Unable to load image " + imageName, e);
         }
         return null;
     }
@@ -59,6 +63,4 @@ public class JinglePhoneRes {
     public static final URL getURL(String propertyName) {
         return JinglePhoneRes.cl.getResource(JinglePhoneRes.getString(propertyName));
     }
-
-
 }
