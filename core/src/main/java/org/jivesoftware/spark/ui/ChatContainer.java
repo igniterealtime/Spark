@@ -956,7 +956,9 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
                 -> {
             for (final ChatRoomListener listener : chatRoomListeners) {
                 try {
-                    listener.userHasJoined(room, userid.toString());
+                    if (userid != null) {
+                        listener.userHasJoined(room, userid.toString());
+                    }
                 } catch (Exception e) {
                     Log.error("A ChatRoomListener (" + listener + ") threw an exception while processing a 'user joined' event for user '" + userid + "' in room: " + room, e);
                 }
