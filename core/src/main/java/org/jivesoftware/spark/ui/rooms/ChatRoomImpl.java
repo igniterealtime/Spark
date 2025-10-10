@@ -128,7 +128,7 @@ public class ChatRoomImpl extends ChatRoom {
         this.participantNickname = participantNickname;
 
         // Loads the current history for this user.
-        loadHistory();
+        SwingUtilities.invokeLater(this::loadHistory);
 
         // Register StanzaListeners
         final StanzaFilter directFilter = new AndFilter(
