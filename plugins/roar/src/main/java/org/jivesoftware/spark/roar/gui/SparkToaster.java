@@ -643,13 +643,17 @@ public class SparkToaster {
 	}
 
 	public void setIcon(Icon icon) {
-	    if (icon.getIconHeight() > 64 || icon.getIconWidth() > 64) {
-		Image image = ImageCombiner.iconToImage(icon);
-		label.setIcon(new ImageIcon(image.getScaledInstance(-1, 64,
-			Image.SCALE_SMOOTH)));
-	    } else {
-		label.setIcon(icon);
-	    }
+        try {
+            if (icon.getIconHeight() > 64 || icon.getIconWidth() > 64) {
+                Image image = ImageCombiner.iconToImage(icon);
+                label.setIcon(new ImageIcon(image.getScaledInstance(-1, 64,
+                    Image.SCALE_SMOOTH)));
+            } else{
+                label.setIcon(icon);
+            }
+        } catch (Exception e) {
+            Log.warning("Unable to set icon in toaster", e);
+        }
 	}
 
 	public RolloverButton getCloseButton() {

@@ -345,12 +345,16 @@ public class CustomMessages {
             // Add Types
             for (StatusItem statusItem : statusBar.getStatusList()) {
                 if (!PresenceManager.isOnPhone(statusItem.getPresence())) {
-                    ImageIcon icon = (ImageIcon) statusItem.getIcon();
+                    try {
+                        ImageIcon icon = (ImageIcon) statusItem.getIcon();
 
-                    ImageIcon newIcon = new ImageIcon(icon.getImage());
-                    newIcon.setDescription(statusItem.getText());
+                        ImageIcon newIcon = new ImageIcon(icon.getImage());
+                        newIcon.setDescription(statusItem.getText());
 
-                    typeBox.addItem(newIcon);
+                        typeBox.addItem(newIcon);
+                    } catch (Exception e) {
+                        Log.warning("Unable to update icon on custom status bar", e);
+                    }
                 }
             }
 

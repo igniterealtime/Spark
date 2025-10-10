@@ -692,50 +692,48 @@ public final class GraphicUtils {
      * @return byte[]
      */
     public static byte[] getBytesFromImage(File file) {
-        FileInputStream fileInputStream = null;
-        try {
-            fileInputStream = new FileInputStream(file);
+        try (FileInputStream fileInputStream = new FileInputStream(file)) {
             byte[] data = new byte[(int) file.length()];
             fileInputStream.read(data);
-            fileInputStream.close();
             return data;
-        } catch (IOException e) {
-            if (fileInputStream != null) {
-                try {
-                    fileInputStream.close();
-                } catch (IOException e1) {
-                    Log.error(e1);
-                }
-            }
+        } catch (Exception e) {
+            Log.warning("Unable to read image", e);
             return null;
         }
     }
 
     /**
-     * Returns a scaled down image if the height or width is smaller than the image size.
+     * Returns a scaled down image if the height or width is smaller than the
+     * image size.
      *
-     * @param icon      the image icon.
-     * @param newHeight the preferred height.
-     * @param newWidth  the preferred width.
+     * @param icon
+     *            the image icon.
+     * @param newHeight
+     *            the preferred height.
+     * @param newWidth
+     *            the preferred width.
      * @return the icon.
      */
-    public static ImageIcon scaleImageIcon(ImageIcon icon, int newHeight, int newWidth) {
-        int height = icon.getIconHeight();
-        int width = icon.getIconWidth();
-        boolean resize = false;
-        if (height > newHeight) {
-            height = newHeight;
-            resize = true;
+    public static ImageIcon scaleImageIcon(ImageIcon icon, int newHeight, int newWidth)
+    {
+        try {
+            Image img = icon.getImage();
+            int height = icon.getIconHeight();
+            int width = icon.getIconWidth();
+
+            if (height > newHeight) {
+                height = newHeight;
+            }
+
+            if (width > newWidth) {
+                width = newWidth;
+            }
+            img = img.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+            return new ImageIcon(img);
+        } catch (Exception e) {
+            Log.warning("Unable to scale image", e);
+            return null;
         }
-        if (width > newWidth) {
-            width = newWidth;
-            resize = true;
-        }
-        if (!resize) {
-            return icon;
-        }
-        Image img = icon.getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH);
-        return new ImageIcon(img);
     }
 
     /**
@@ -750,38 +748,44 @@ public final class GraphicUtils {
      *            the preferred width.
      * @return the icon.
      */
-    public static ImageIcon scale(ImageIcon icon, int newHeight, int newWidth) {
-	Image img = icon.getImage();
-	int height = icon.getIconHeight();
-	int width = icon.getIconWidth();
-	boolean scaleHeight = height * newWidth > width * newHeight;
-	if (height > newHeight) {
-	    // Too tall
-	    if (width <= newWidth || scaleHeight) {
-		// Width is okay or height is limiting factor due to aspect
-		// ratio
-		height = newHeight;
-		width = -1;
-	    } else {
-		// Width is limiting factor due to aspect ratio
-		height = -1;
-		width = newWidth;
-	    }
-	} else if (width > newWidth) {
-	    // Too wide and height is okay
-	    height = -1;
-	    width = newWidth;
-	} else if (scaleHeight) {
-	    // Height is limiting factor due to aspect ratio
-	    height = newHeight;
-	    width = -1;
-	} else {
-	    // Width is limiting factor due to aspect ratio
-	    height = -1;
-	    width = newWidth;
-	}
-	img = img.getScaledInstance(width, height, Image.SCALE_SMOOTH);
-	return new ImageIcon(img);
+    public static ImageIcon scale(ImageIcon icon, int newHeight, int newWidth)
+    {
+        try {
+            Image img = icon.getImage();
+            int height = icon.getIconHeight();
+            int width = icon.getIconWidth();
+            boolean scaleHeight = height * newWidth > width * newHeight;
+            if (height > newHeight) {
+                // Too tall
+                if (width <= newWidth || scaleHeight) {
+                    // Width is okay or height is limiting factor due to aspect
+                    // ratio
+                    height = newHeight;
+                    width = -1;
+                } else {
+                    // Width is limiting factor due to aspect ratio
+                    height = -1;
+                    width = newWidth;
+                }
+            } else if (width > newWidth) {
+                // Too wide and height is okay
+                height = -1;
+                width = newWidth;
+            } else if (scaleHeight) {
+                // Height is limiting factor due to aspect ratio
+                height = newHeight;
+                width = -1;
+            } else {
+                // Width is limiting factor due to aspect ratio
+                height = -1;
+                width = newWidth;
+            }
+            img = img.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+            return new ImageIcon(img);
+        } catch (Exception e) {
+            Log.warning("Unable to scale image", e);
+            return null;
+        }
     }
 
     /**
@@ -796,7 +800,7 @@ public final class GraphicUtils {
         try {
             return new JFileChooser().getIcon(file);
         } catch (Exception e) {
-            Log.debug("unable to get icon");
+            Log.warning("unable to get icon", e);
         }
 
 	return SparkRes.getImageIcon(SparkRes.DOCUMENT_INFO_32x32);
@@ -833,27 +837,32 @@ public final class GraphicUtils {
 	 * @return
 	 */
 	public static ImageIcon fitToSquare(ImageIcon icon, int newSize) {
-		if (newSize <= 0) {
-			return icon;
-		}
+        try {
+            if (newSize <= 0) {
+                return icon;
+            }
 
-		final int oldWidth = icon.getIconWidth();
-		final int oldHeight = icon.getIconHeight();
-		int newWidth;
-		int newHeight;
+            final int oldWidth = icon.getIconWidth();
+            final int oldHeight = icon.getIconHeight();
+            int newWidth;
+            int newHeight;
 
-		if (oldHeight >= oldWidth) {
-			newWidth = (int) ((float) oldWidth * newSize / oldHeight);
-			newHeight = newSize;
-		} else {
-			newWidth = newSize;
-			newHeight = (int) ((float) oldHeight * newSize / oldWidth);
-		}
+            if (oldHeight >= oldWidth) {
+                newWidth = (int) ((float) oldWidth * newSize / oldHeight);
+                newHeight = newSize;
+            } else {
+                newWidth = newSize;
+                newHeight = (int) ((float) oldHeight * newSize / oldWidth);
+            }
 
-		final Image img = icon.getImage().getScaledInstance(newWidth,
-				newHeight, Image.SCALE_SMOOTH);
+            final Image img = icon.getImage().getScaledInstance(newWidth,
+                newHeight, Image.SCALE_SMOOTH);
 
-		return new ImageIcon(img);
+            return new ImageIcon(img);
+        } catch (Exception e) {
+            Log.warning("Unable to fit image to square", e);
+            return null;
+        }
 	}
 
     // public static void centerWindowOnScreen(Runnable runnable) {

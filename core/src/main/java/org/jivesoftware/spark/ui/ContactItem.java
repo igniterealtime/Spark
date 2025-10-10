@@ -601,8 +601,8 @@ public class ContactItem extends JPanel {
 					setSideIcon(icon);
 				}
 			}
-		} catch (MalformedURLException e) {
-			Log.error(e);
+		} catch (Exception e) {
+			Log.warning("Unable to update avatar in side icon", e);
 		}
 	}
 

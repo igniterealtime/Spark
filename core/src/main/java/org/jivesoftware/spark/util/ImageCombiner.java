@@ -15,6 +15,8 @@
  */
 package org.jivesoftware.spark.util;
 
+import org.jivesoftware.spark.util.log.Log;
+
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
@@ -33,7 +35,6 @@ import javax.swing.JComponent;
  * @author wolf.posdorfer
  */
 public class ImageCombiner {
-    
     
     /**
      * Combines two images into one
@@ -59,30 +60,34 @@ public class ImageCombiner {
      * @return combined Image
      */
     public static Image combine(ImageIcon image1, ImageIcon image2) {
+        try {
+            ImageObserver comp = new JComponent()
+            {
+                private static final long serialVersionUID = 1L;
+            };
 
-	ImageObserver comp = new JComponent() {
-	    private static final long serialVersionUID = 1L;
-	};
+            int w = image1.getIconWidth() + image2.getIconWidth();
+            int h = Math.max(image1.getIconHeight(), image2.getIconHeight());
 
-	int w = image1.getIconWidth() + image2.getIconWidth();
-	int h = Math.max(image1.getIconHeight(), image2.getIconHeight());
+            BufferedImage image = new BufferedImage(w, h,
+                BufferedImage.TYPE_INT_ARGB);
 
-	BufferedImage image = new BufferedImage(w, h,
-		BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g2 = image.createGraphics();
 
-	Graphics2D g2 = image.createGraphics();
+            g2.drawImage(image1.getImage(), 0, 0, comp);
+            g2.drawImage(image2.getImage(), image1.getIconWidth(), 0, comp);
+            g2.dispose();
 
-	g2.drawImage(image1.getImage(), 0, 0, comp);
-	g2.drawImage(image2.getImage(), image1.getIconWidth(), 0, comp);
-	g2.dispose();
-
-	return image;
+            return image;
+        } catch (Exception e) {
+            Log.warning("Unable to combine two images", e);
+            return null;
+        }
     }
 
     public static Image returnTransparentImage(int w, int h) {
         return new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
     }
-    
  
     /**
      * Creates an Image from the specified Icon
@@ -107,5 +112,4 @@ public class ImageCombiner {
             return image;
         }
     }
-    
 }

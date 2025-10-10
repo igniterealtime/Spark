@@ -165,19 +165,23 @@ public class StatusBar extends JPanel implements VCardListener {
     }
 
     public void setAvatar(Icon icon) {
-        if (icon == null) {
-            imageLabel.setIcon(null);
-        } else {
-            Image image = ImageCombiner.iconToImage(icon);
-            if (icon.getIconHeight() > 64 || icon.getIconWidth() > 64) {
-                imageLabel.setIcon(new ImageIcon(image.getScaledInstance(-1, 64, Image.SCALE_SMOOTH)));
+        try {
+            if (icon == null) {
+                imageLabel.setIcon(null);
             } else {
-                imageLabel.setIcon(icon);
+                Image image = ImageCombiner.iconToImage(icon);
+                if (icon.getIconHeight() > 64 || icon.getIconWidth() > 64) {
+                    imageLabel.setIcon(new ImageIcon(image.getScaledInstance(-1, 64, Image.SCALE_SMOOTH)));
+                } else {
+                    imageLabel.setIcon(icon);
+                }
             }
+            imageLabel.setBorder(null);
+            revalidate();
+            allowProfileEditing();
+        } catch (Exception e) {
+            Log.warning("Unable to set avatar", e);
         }
-        imageLabel.setBorder(null);
-        revalidate();
-        allowProfileEditing();
     }
 
     public CommandPanel getCommandPanel() {
@@ -506,7 +510,7 @@ public class StatusBar extends JPanel implements VCardListener {
                     imageLabel.validate();
                     imageLabel.repaint();
                 } catch (Exception e) {
-                    // no issue
+                    Log.warning("Unable to update vcard viewer with avatar data", e);
                 }
             } else {
                 imageLabel.setIcon(null);

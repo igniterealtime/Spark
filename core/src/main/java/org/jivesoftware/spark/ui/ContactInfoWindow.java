@@ -303,8 +303,8 @@ public class ContactInfoWindow extends JPanel {
             }
             avatarLabel.setBorder(BorderFactory.createLineBorder(Color.lightGray, 1, true));
         }
-        catch (MalformedURLException e) {
-            Log.error(e);
+        catch (Exception e) {
+            Log.warning("Unable to update avatar in contact info window", e);
         }
 
         // Get VCard from memory (if available)

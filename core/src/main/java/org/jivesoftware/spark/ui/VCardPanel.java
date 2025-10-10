@@ -77,12 +77,15 @@ public class VCardPanel extends JPanel {
         add(avatarImage, new GridBagConstraints(0, 0, 1, 3, 0.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 0, 5, 0), 0, 0));
         buildAvatarHover();
 
-        Image aImage = SparkRes.getImageIcon(SparkRes.BLANK_24x24).getImage();
-        aImage = aImage.getScaledInstance(-1, 64, Image.SCALE_SMOOTH);
-        ImageIcon ico = new ImageIcon(aImage);
+        try {
+            Image aImage = SparkRes.getImageIcon(SparkRes.BLANK_24x24).getImage();
+            aImage = aImage.getScaledInstance(-1, 64, Image.SCALE_SMOOTH);
+            ImageIcon ico = new ImageIcon(aImage);
 
-        avatarImage.setIcon(ico);
-
+            avatarImage.setIcon(ico);
+        } catch (Exception e) {
+            Log.error("Unable to process image in vcard!", e);
+        }
 
         VCard vcard = SparkManager.getVCardManager().getVCard(jid);
 
@@ -105,7 +108,7 @@ public class VCardPanel extends JPanel {
                 icon = new ImageIcon(newImage);
             }
             catch (Exception e) {
-                Log.error(e);
+                Log.error("Unable to fetch image in vcard!", e);
             }
         }
         else {
@@ -153,7 +156,7 @@ public class VCardPanel extends JPanel {
                     icon = new ImageIcon(newImage);
 
                 } catch (Exception e1) {
-                    Log.error(e1);
+                    Log.error("Unable to process vcard avatar", e1);
                 }
 
             } else {
