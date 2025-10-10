@@ -47,10 +47,15 @@ public class OTRResources {
     public static ImageIcon getIcon(String fileName) {
         try {
             final ClassLoader cl = OTRResources.class.getClassLoader();
-            ImageIcon icon = new ImageIcon(cl.getResource(fileName));
-            return icon;
-        } catch (Throwable t) {
-            Log.warning(fileName + " not found.", t);
+            final URL imageURL = cl.getResource(fileName);
+            if (imageURL != null) {
+                return new ImageIcon(imageURL);
+            } else {
+                Log.warning(imageName + " not found.");
+            }
+        }
+        catch (Exception e) {
+            Log.warning("Unable to load image " + imageName, e);
         }
         return null;
     }
