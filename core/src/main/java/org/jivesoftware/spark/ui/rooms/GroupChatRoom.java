@@ -735,7 +735,7 @@ public class GroupChatRoom extends ChatRoom
             {
                 UIManager.put( "OptionPane.okButtonText", Res.getString( "ok" ) );
                 JOptionPane.showMessageDialog( this,
-                        Res.getString( "message.room.destroyed", destroy.getReason() ),
+                        (destroy.getReason() != null ? Res.getString( "message.room.destroyed", destroy.getReason() ) : Res.getString( "message.room.destroyed.no.reason" )),
                         Res.getString( "title.room.destroyed" ),
                         JOptionPane.INFORMATION_MESSAGE );
                 leaveChatRoom();
@@ -782,7 +782,11 @@ public class GroupChatRoom extends ChatRoom
             @Override
             public void kicked( EntityFullJid participant, Jid actor, String reason )
             {
-                insertText( Res.getString( "message.user.kicked.from.room", participant.getResourcepart(), actor, reason ) );
+                if (reason == null || reason.isEmpty()) {
+                    insertText(Res.getString("message.user.kicked.from.room.no.reason", participant.getResourcepart(), actor));
+                } else {
+                    insertText(Res.getString("message.user.kicked.from.room", participant.getResourcepart(), actor, reason));
+                }
             }
 
             @Override
@@ -800,7 +804,11 @@ public class GroupChatRoom extends ChatRoom
             @Override
             public void banned( EntityFullJid participant, Jid actor, String reason )
             {
-                insertText( Res.getString( "message.user.banned", participant.getResourcepart(), reason ) );
+                if (reason == null || reason.isEmpty()) {
+                    insertText(Res.getString("message.user.banned.no.reason", participant.getResourcepart()));
+                } else {
+                    insertText(Res.getString("message.user.banned", participant.getResourcepart(), reason));
+                }
             }
 
             @Override
