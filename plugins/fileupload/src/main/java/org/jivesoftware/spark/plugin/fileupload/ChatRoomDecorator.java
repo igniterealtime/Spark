@@ -26,6 +26,7 @@ import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Message;
+import org.jivesoftware.smack.packet.StandardExtensionElement;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.ui.ChatRoom;
@@ -99,7 +100,7 @@ public class ChatRoomDecorator
             // Can be safely ignored because UTF-8 is always supported
         }
         try {
-            UploadRequest request = new UploadRequest(fileName, file.length());
+            UploadRequest request = new UploadRequest(fileName, file.length(), UploadRequest.guessContentType(file));
             request.setTo(JidCreate.fromOrThrowUnchecked("httpfileupload." + SparkManager.getSessionManager().getServerAddress()));
             request.setType(IQ.Type.get);
 
@@ -124,14 +125,22 @@ public class ChatRoomDecorator
     private void uploadFile(File file, UploadRequest response, ChatRoom room, Message.Type type)
     {
         Log.debug("About to upload file for room " + room.getBareJid() + " via HTTP PUT to URL " + response.putUrl);
-
+        ContentType contentType = ContentType.create("application/binary");
+        try {
+            final String contentTypeName = UploadRequest.guessContentType(file);
+            if (contentTypeName != null) {
+                contentType = ContentType.create(contentTypeName);
+            }
+        } catch (Throwable t) {
+            Log.warning("Unable to deduce content type of file " + file, t);
+        }
         try (final CloseableHttpClient httpClient =
                  HttpClients.custom()
                     .setConnectionManager(AcceptAllCertsConnectionManager.getInstance())
                     .build()
         ) {
             final ClassicHttpRequest request = ClassicRequestBuilder.put(response.putUrl)
-                .setEntity(new FileEntity(file, ContentType.create("application/binary")))
+                .setEntity(new FileEntity(file, contentType))
                 .setHeader("User-Agent", "Spark HttpFileUpload")
                 .build();
 
@@ -165,6 +174,11 @@ public class ChatRoomDecorator
         message2.setTo(jid);
         message2.setType(type);
         message2.setBody(url);
+        message2.addExtension(
+            StandardExtensionElement.builder("x", "jabber:x:oob")
+                .addElement("url", url)
+                .build()
+        );
         room.sendMessage(message2);
     }
 

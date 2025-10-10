@@ -21,7 +21,9 @@ import org.jivesoftware.smack.provider.IQProvider;
 import org.jivesoftware.smack.xml.XmlPullParser;
 import org.jivesoftware.smack.xml.XmlPullParserException;
 
-import java.io.IOException;
+import java.io.*;
+import java.net.URLConnection;
+import java.nio.file.Files;
 
 /**
  * An IQ packet that's a request for an upload slot
@@ -32,6 +34,7 @@ public class UploadRequest extends IQ
 
     private String filename;
     private long filesize;
+    private String contentType;
 
     public String getUrl = null;
     public String putUrl = null;
@@ -48,12 +51,23 @@ public class UploadRequest extends IQ
         this.filesize = filesize;
     }
 
+    public UploadRequest(String filename, long filesize, String contentType)
+    {
+        super( "request", NAMESPACE );
+        this.filename = filename;
+        this.filesize = filesize;
+        this.contentType = contentType;
+    }
+
     @Override
     protected IQChildElementXmlStringBuilder getIQChildElementBuilder( IQChildElementXmlStringBuilder buf )
     {
         buf.rightAngleBracket();
         buf.element("size", Long.toString( filesize ));
         buf.element("filename", filename);
+        if (contentType != null && !contentType.isEmpty()) {
+            buf.element("content-type", contentType);
+        }
         return buf;
     }
 
@@ -95,6 +109,31 @@ public class UploadRequest extends IQ
             }
 
             return uploadRequest;
+        }
+    }
+
+    public static String guessContentType(final File file)
+    {
+        try
+        {
+            String result;
+            try ( final InputStream is = new BufferedInputStream( new FileInputStream( file ) ) ) {
+                result = URLConnection.guessContentTypeFromStream( is );
+            }
+
+            if ( result == null || result.isEmpty() ) {
+                result = Files.probeContentType( file.toPath() );
+            }
+
+            if ( result == null || result.isEmpty() ) {
+                result = URLConnection.guessContentTypeFromName(file.getName() );
+            }
+
+            return result;
+        }
+        catch ( IOException e )
+        {
+            return null;
         }
     }
 }
