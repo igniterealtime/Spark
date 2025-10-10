@@ -46,6 +46,7 @@ import org.jivesoftware.spark.ui.conferences.ConferenceUtils;
 import org.jivesoftware.spark.ui.conferences.DataFormDialog;
 import org.jivesoftware.spark.ui.conferences.GroupChatParticipantList;
 import org.jivesoftware.spark.util.ModelUtil;
+import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.UIComponentRegistry;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
@@ -543,14 +544,13 @@ public class GroupChatRoom extends ChatRoom
         // Update Room Notice To Inform Agent that he has left the chat.
         getTranscriptWindow().insertNotificationMessage( Res.getString( "message.user.left.room", getNickname() ), ChatManager.NOTIFICATION_COLOR );
 
-        try
-        {
-            chat.leave();
-        }
-        catch ( Exception e )
-        {
-            Log.error( "Closing Group Chat Room error.", e );
-        }
+        SwingUtilities.invokeLater(() -> {
+            try {
+                chat.leave();
+            } catch ( Exception e ) {
+                Log.error( "Closing Group Chat Room error.", e );
+            }
+        });
 
         // Set window as greyed out.
         getTranscriptWindow().showWindowDisabled();
