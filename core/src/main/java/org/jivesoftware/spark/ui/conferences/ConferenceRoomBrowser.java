@@ -920,18 +920,29 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
                 }
 
                 if (isbookmark && ispassword) {
-                    Image img = ImageCombiner.combine(bookmarkicon, passwordicon);
-                    iconLabel.setIcon(new ImageIcon(img));
+                    try {
+                        Image img = ImageCombiner.combine(bookmarkicon, passwordicon);
+                        if (img != null) {
+                            iconLabel.setIcon(new ImageIcon(img));
+                        }
+                    } catch (Exception e) {
+                        Log.warning("Unable to set icon for bookmarked & password-protected room " + jid, e);
+                    }
                 } else if (isbookmark) {
                     iconLabel.setIcon(bookmarkicon);
                 } else if (ispassword) {
-                    Image img = ImageCombiner.returnTransparentImage(
-                        passwordicon.getIconWidth(), passwordicon.getIconHeight());
-
-                    Image combined = ImageCombiner.combine(new ImageIcon(img),
-                        passwordicon);
-
-                    iconLabel.setIcon(new ImageIcon(combined));
+                    try {
+                        if (passwordicon != null) {
+                            Image img = ImageCombiner.returnTransparentImage(
+                                passwordicon.getIconWidth(), passwordicon.getIconHeight());
+                            Image combined = ImageCombiner.combine(new ImageIcon(img), passwordicon);
+                            if (combined != null) {
+                                iconLabel.setIcon(new ImageIcon(combined));
+                            }
+                        }
+                    } catch (Exception e) {
+                        Log.warning("Unable to set icon for password-protected room " + jid, e);
+                    }
                 }
 
                 String occupants = Integer.toString(numberOfOccupants);
@@ -939,7 +950,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
                     occupants = "n/a";
                 }
 
-                return new Object[] { iconLabel, roomName.toString(), jid.getLocalpart().toString(), occupants };
+                return new Object[] { iconLabel, roomName == null ? jid.getLocalpart().toString() : roomName.toString(), jid.getLocalpart().toString(), occupants };
             }
             
             @Override
