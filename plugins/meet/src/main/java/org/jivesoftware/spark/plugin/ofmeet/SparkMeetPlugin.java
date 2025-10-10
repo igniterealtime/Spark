@@ -52,8 +52,8 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
 	
     private org.jivesoftware.spark.ChatManager chatManager;
     private final File pluginsettings = new File( Spark.getLogDirectory().getParentFile() + System.getProperty("file.separator") + "ofmeet.properties");
- 
- private final Map<String, ChatRoomDecorator> decorators = new HashMap<>();
+
+    private final Map<String, ChatRoomDecorator> decorators = new HashMap<>();
     private String electronExePath = null;
     private String electronHomePath = null;
     private XProcess electronThread = null;
@@ -61,7 +61,7 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
 
     public void initialize()
     {
-        ProviderManager.addIQProvider("query", QueryRequest.NAMESPACE, new QueryRequest.Provider());		
+        ProviderManager.addIQProvider("query", QueryRequest.NAMESPACE, new QueryRequest.Provider());
         checkNatives();
 
         chatManager = SparkManager.getChatManager();		
@@ -72,7 +72,7 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
 
         if (pluginsettings.exists())
         {
-            Log.warning("ofmeet-info: Properties-file does exist= " + pluginsettings.getPath());
+            Log.debug("ofmeet-info: Properties-file does exist= " + pluginsettings.getPath());
 
             try {
                 props.load(new FileInputStream(pluginsettings));
@@ -144,12 +144,12 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
             QueryRequest response = (QueryRequest) result;
 
             Log.debug("SparkMeet response: url=" + response.url);
-            if (response.url != null) serverUrl = response.url + "/";	
-			
+            if (response.url != null) serverUrl = response.url + "/";
+
         } catch (Exception e) {
             Log.error("Unable to get meet url from server for app type " + app);
-        }	
-		return serverUrl;		
+        }
+		return serverUrl;
 	}
 
 	public void commit(String url) {
@@ -170,7 +170,7 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
         {
             Log.debug("shutdown");
             chatManager.removeChatRoomListener(this);
-            ProviderManager.removeIQProvider("query", QueryRequest.NAMESPACE);			
+            ProviderManager.removeIQProvider("query", QueryRequest.NAMESPACE);
 
             if (electronThread != null) electronThread.destory();
             electronThread = null;
@@ -439,7 +439,7 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
                         Log.debug("Native lib folder created and natives extracted");
                     }
                     else {
-                        Log.warning("Native lib folder already exist.");
+                        Log.debug("Native lib folder already exist.");
                     }
 
 

@@ -75,58 +75,61 @@ public class VCardViewer extends JPanel {
         avatarImage = new JLabel();
         add(avatarImage, new GridBagConstraints(0, 0, 1, 3, 0.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 0, 5, 0), 0, 0));
 
+        try {
+            Image aImage = SparkRes.getImageIcon(SparkRes.BLANK_24x24).getImage();
+            aImage = aImage.getScaledInstance(-1, 64, Image.SCALE_SMOOTH);
+            ImageIcon ico = new ImageIcon(aImage);
 
-        Image aImage = SparkRes.getImageIcon(SparkRes.BLANK_24x24).getImage();
-        aImage = aImage.getScaledInstance(-1, 64, Image.SCALE_SMOOTH);
-        ImageIcon ico = new ImageIcon(aImage);
+            avatarImage.setIcon(ico);
 
-        avatarImage.setIcon(ico);
+            final SwingWorker vcardLoader = new SwingWorker()
+            {
+                VCard vcard = null;
 
-        final SwingWorker vcardLoader = new SwingWorker() {
-            VCard vcard = null;
-
-            @Override
-			public Object construct() {
-                vcard = SparkManager.getVCardManager().getVCard(jid);
-                return vcard;
-            }
-
-            @Override
-			public void finished() {
-                if (vcard == null) {
-                    // Do nothing.
-                    return;
+                @Override
+                public Object construct()
+                {
+                    vcard = SparkManager.getVCardManager().getVCard(jid);
+                    return vcard;
                 }
 
-                ImageIcon icon = null;
-
-                byte[] bytes = vcard.getAvatar();
-                if (bytes != null && bytes.length > 0) {
-                    try {
-                        icon = new ImageIcon(bytes);
-                        Image aImage = icon.getImage();
-                        aImage = aImage.getScaledInstance(-1, 48, Image.SCALE_SMOOTH);
-                        icon = new ImageIcon(aImage);
+                @Override
+                public void finished()
+                {
+                    if (vcard == null) {
+                        // Do nothing.
+                        return;
                     }
-                    catch (Exception e) {
-                        Log.error(e);
+
+                    ImageIcon icon = null;
+
+                    byte[] bytes = vcard.getAvatar();
+                    if (bytes != null && bytes.length > 0) {
+                        try {
+                            icon = new ImageIcon(bytes);
+                            Image aImage = icon.getImage();
+                            aImage = aImage.getScaledInstance(-1, 48, Image.SCALE_SMOOTH);
+                            icon = new ImageIcon(aImage);
+                        } catch (Exception e) {
+                            Log.warning("Unable to get scaled avatar from vcard.", e);
+                        }
+                    } else {
+                        icon = SparkRes.getImageIcon(SparkRes.DEFAULT_AVATAR_32x32_IMAGE);
                     }
-                }
-                else {
-                    icon = SparkRes.getImageIcon(SparkRes.DEFAULT_AVATAR_32x32_IMAGE);
-                }
 
-                if (icon != null && icon.getIconWidth() > 0) {
-                    avatarImage.setIcon(icon);
-                    avatarImage.setBorder(BorderFactory.createLineBorder(Color.lightGray, 1, true));
+                    if (icon != null && icon.getIconWidth() > 0) {
+                        avatarImage.setIcon(icon);
+                        avatarImage.setBorder(BorderFactory.createLineBorder(Color.lightGray, 1, true));
+                    }
+
+                    vcard.setJabberId(jid);
+                    buildUI(vcard);
                 }
-
-                vcard.setJabberId(jid);
-                buildUI(vcard);
-            }
-        };
-
-        vcardLoader.start();
+            };
+            vcardLoader.start();
+        } catch (Exception e) {
+            Log.warning("Unable to get avatar from vcard.", e);
+        }
     }
 
     private void buildUI(final VCard vcard) {

@@ -136,16 +136,15 @@ public abstract class SwingWorker {
 
         Runnable doConstruct = () -> {
             try {
-                        setValue(construct());
+                setValue(construct());
             }
-            catch ( Exception e ) {
-                Log.error( e );
+            catch (Exception e) {
+                Log.error("SwingWorker exception while async constructing value", e);
             }
             finally {
                 threadVar.clear();
             }
             SwingUtilities.invokeLater(this::finished);
-
         };
 
         Thread t = new Thread(doConstruct);
