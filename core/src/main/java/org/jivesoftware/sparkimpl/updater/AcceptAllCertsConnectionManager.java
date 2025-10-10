@@ -15,6 +15,7 @@
  */
 package org.jivesoftware.sparkimpl.updater;
 
+import org.apache.hc.client5.http.config.ConnectionConfig;
 import org.apache.hc.client5.http.impl.io.BasicHttpClientConnectionManager;
 import org.apache.hc.client5.http.socket.ConnectionSocketFactory;
 import org.apache.hc.client5.http.socket.PlainConnectionSocketFactory;
@@ -22,13 +23,16 @@ import org.apache.hc.client5.http.ssl.NoopHostnameVerifier;
 import org.apache.hc.client5.http.ssl.SSLConnectionSocketFactory;
 import org.apache.hc.core5.http.config.Registry;
 import org.apache.hc.core5.http.config.RegistryBuilder;
+import org.apache.hc.core5.http.io.SocketConfig;
 import org.apache.hc.core5.ssl.SSLContexts;
 import org.apache.hc.core5.ssl.TrustStrategy;
+import org.jivesoftware.smack.SmackConfiguration;
 
 import javax.net.ssl.SSLContext;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.util.concurrent.TimeUnit;
 
 /**
  * A HTTP Client connection manager that knowingly by-passes all verification of TLS certificates.
@@ -68,6 +72,9 @@ public class AcceptAllCertsConnectionManager extends BasicHttpClientConnectionMa
                 .register("http", new PlainConnectionSocketFactory())
                 .build();
 
-        return new BasicHttpClientConnectionManager(socketFactoryRegistry);
+        final BasicHttpClientConnectionManager result = new BasicHttpClientConnectionManager(socketFactoryRegistry);
+        result.setSocketConfig(SocketConfig.custom().setSoTimeout(SmackConfiguration.getDefaultReplyTimeout(), TimeUnit.MILLISECONDS).build());
+        result.setConnectionConfig(ConnectionConfig.custom().setConnectTimeout(SmackConfiguration.getDefaultReplyTimeout(), TimeUnit.MILLISECONDS).build());
+        return result;
     }
 }
