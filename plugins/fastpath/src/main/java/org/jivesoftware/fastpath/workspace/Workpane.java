@@ -496,8 +496,11 @@ public class Workpane {
             toasterManager = new SparkToaster();
             toasterManager.setHidable(false);
 
-
-            toasterManager.setToasterHeight((int)chatQueue.getPreferredSize().getHeight() + 40);
+            int height = (int)chatQueue.getPreferredSize().getHeight() + 40;
+            if (height < 400) {
+                height = 400;
+            }
+            toasterManager.setToasterHeight(height);
 
             int width = (int)chatQueue.getPreferredSize().getWidth() + 40;
             if (width < 300) {
