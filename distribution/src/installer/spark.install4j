@@ -57,6 +57,9 @@
         <file path="images/spark-60x60.png" />
         <file path="images/spark-64x64.png" />
       </iconImageFiles>
+      <macStaticAssociations>
+        <urlHandler scheme="xmpp" role="editor" />
+      </macStaticAssociations>
     </launcher>
     <launcher name="starter" id="21">
       <executable name="starter" executableDir="." executableMode="gui" dpiAware="false" />
@@ -315,6 +318,12 @@ return console.askOkCancel(message, true);
                   <property name="uninstallerMenuName" type="string">${i18n:UninstallerMenuEntry(${compiler:sys.fullName})}</property>
                 </serializedBean>
                 <condition>!context.getBooleanVariable("sys.programGroupDisabled")</condition>
+              </action>
+              <action id="219" beanClass="com.install4j.runtime.beans.actions.desktop.UrlHandlerAction" actionElevationType="elevated" rollbackBarrierExitCode="0">
+                <serializedBean>
+                  <property name="launcherId" type="string">4</property>
+                  <property name="scheme" type="string">xmpp</property>
+                </serializedBean>
               </action>
             </actions>
             <formComponents>
