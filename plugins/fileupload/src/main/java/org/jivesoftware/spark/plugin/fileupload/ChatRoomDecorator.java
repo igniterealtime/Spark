@@ -31,7 +31,6 @@ import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.log.Log;
-import org.jivesoftware.sparkimpl.updater.AcceptAllCertsConnectionManager;
 import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.impl.JidCreate;
 
@@ -124,12 +123,7 @@ public class ChatRoomDecorator
     private void uploadFile(File file, UploadRequest response, ChatRoom room, Message.Type type)
     {
         Log.debug("About to upload file for room " + room.getBareJid() + " via HTTP PUT to URL " + response.putUrl);
-
-        try (final CloseableHttpClient httpClient =
-                 HttpClients.custom()
-                    .setConnectionManager(AcceptAllCertsConnectionManager.getInstance())
-                    .build()
-        ) {
+        try (final CloseableHttpClient httpClient = HttpClients.createSystem()) {
             final ClassicHttpRequest request = ClassicRequestBuilder.put(response.putUrl)
                 .setEntity(new FileEntity(file, ContentType.create("application/binary")))
                 .setHeader("User-Agent", "Spark HttpFileUpload")
