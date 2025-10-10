@@ -69,14 +69,18 @@ public class PhoneRes {
     }
 
     public static final Image getImage(String imageName) {
-       try {
-           final String iconURI = getString(imageName);
-           final URL imageURL = cl.getResource(iconURI);
-           return new ImageIcon(imageURL).getImage();
-       }
-       catch (Exception ex) {
-           Log.error(imageName + " not found.");
-       }
-       return null;
-   }
+        try {
+            final String iconURI = getString(imageName);
+            final URL imageURL = cl.getResource(iconURI);
+            if (imageURL != null) {
+                return new ImageIcon(imageURL);
+            } else {
+                Log.warning(imageName + " not found.");
+            }
+        }
+        catch (Exception e) {
+            Log.warning("Unable to load image " + imageName, e);
+        }
+        return null;
+    }
 }
