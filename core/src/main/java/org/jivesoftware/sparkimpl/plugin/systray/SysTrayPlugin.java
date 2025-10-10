@@ -16,7 +16,7 @@
 package org.jivesoftware.sparkimpl.plugin.systray;
 
 import java.awt.MouseInfo;
-import java.awt.SystemTray;
+import dorkbox.systemTray.*;
 import java.awt.TrayIcon;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
@@ -86,8 +86,8 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatStateListener {
     @Override
     public void initialize() {
 
-	if (SystemTray.isSupported()) {
-
+    SystemTray tray = SystemTray.get("Spark");
+	if (tray != null) {
 		JMenuItem openMenu = new JMenuItem( Res.getString( "menuitem.open" ) );
 		JMenuItem minimizeMenu = new JMenuItem( Res.getString( "menuitem.hide" ) );
 		JMenuItem exitMenu = new JMenuItem( Res.getString( "menuitem.exit" ) );
@@ -95,7 +95,6 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatStateListener {
 		JMenuItem logoutMenu = new JMenuItem(
 				Res.getString( "menuitem.logout.no.status" ) );
 
-	    SystemTray tray = SystemTray.getSystemTray();
 	    SparkManager.getNativeManager().addNativeHandler(this);
 	    ChatManager.getInstance().addChatMessageHandler(chatMessageHandler);
 	    //XEP-0085 support (replaces the obsolete XEP-0022)
@@ -339,7 +338,7 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatStateListener {
 
 		});
 
-		tray.add(trayIcon);
+		tray.setImage(trayIcon.getImage());
 	    } catch (Exception e) {
 		// Not Supported
 	    }
@@ -435,10 +434,10 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatStateListener {
 
     @Override
     public void shutdown() {
-    	if (SystemTray.isSupported()) {
-    		SystemTray tray = SystemTray.getSystemTray();
-    		tray.remove(trayIcon);
-    	}
+        SystemTray tray = SystemTray.get("Spark");
+        if (tray != null) {
+            tray.shutdown();
+        }
     	ChatManager.getInstance().removeChatMessageHandler(chatMessageHandler);
     }
 
