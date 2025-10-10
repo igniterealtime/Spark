@@ -297,6 +297,11 @@
             <artifactId>SystemTray</artifactId>
             <version>4.4</version>
         </dependency>
+        <dependency> <!-- Required by Dorkbox SystemTray 4.4 (see https://github.com/dorkbox/SystemTray/issues/229 ) -->
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-reflect</artifactId>
+            <version>1.8.0</version>
+        </dependency>
 
     </dependencies>
     
