@@ -27,6 +27,7 @@ import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.ContextMenuListener;
 import org.jivesoftware.spark.ui.history.HistoryWindow;
 import org.jivesoftware.spark.util.ModelUtil;
+import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 import org.jivesoftware.sparkimpl.plugin.emoticons.EmoticonManager;
@@ -105,37 +106,50 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener
 
     }
 
+    // Guarded by 'this'
+    boolean isReordingScheduled = false;
+
+    private synchronized void reOrder() {
+        // Clear and refill the UI component.
+        try
+        {
+            entries.sort( Comparator.comparing(TranscriptWindowEntry::isDelayed).thenComparing( TranscriptWindowEntry::getTimestamp ) );
+            clear();
+            for ( TranscriptWindowEntry e : entries )
+            {
+                e.addTo( this );
+            }
+        }
+        catch ( BadLocationException ex )
+        {
+            Log.error( "An exception prevented chat content to be redrawn in the user interface!", ex );
+        }
+        finally
+        {
+            isReordingScheduled = false;
+        }
+    }
+
     protected synchronized void add( TranscriptWindowEntry entry )
     {
-        final TranscriptWindow transcriptWindow = this;
-        //boolean reorderEverything = false;
         if ( !entries.isEmpty() )
         {
             if ( entry.getTimestamp().isBefore( entries.getLast().getTimestamp() ) && !(entries.getLast() instanceof CustomTextEntry) )
             {
-                Log.warning( "A chat entry appears to have been delivered out of order. The transcript window must be reordered!" );
-                //reorderEverything = true;
+                Log.debug( "A chat entry appears to have been delivered out of order. The transcript window must be reordered!" );
+                if (!isReordingScheduled) {
+                    Log.warning( "Scheduling new re-ordering of entries in the transcript window." );
+                    isReordingScheduled = true;
+                    TaskEngine.getInstance().schedule(new TimerTask()
+                    {
+                        @Override
 
-                // This is an alternative approach to the 'reorderEverything boolean + routine. The idea behind using the
-                // SwingUtilities is to schedule redrawing after all currently queued messages (loads of which are
-                // probably also out of order), are processed, which should reduce the amount of redraws.
-                SwingUtilities.invokeLater( () ->
-                                            {
-                                                // Clear and refill the UI component.
-                                                try
-                                                {
-                                                    entries.sort( Comparator.comparing(TranscriptWindowEntry::isDelayed).thenComparing( TranscriptWindowEntry::getTimestamp ) );
-                                                    clear();
-                                                    for ( TranscriptWindowEntry e : entries )
-                                                    {
-                                                        e.addTo( transcriptWindow );
-                                                    }
-                                                }
-                                                catch ( BadLocationException ex )
-                                                {
-                                                    Log.error( "An exception prevented chat content to be redrawn in the user interface!", ex );
-                                                }
-                                            } );
+                        public void run()
+                        {
+                            SwingUtilities.invokeLater(() -> reOrder());
+                        }
+                    }, 250);
+                }
             }
             if ( !entry.getTimestamp().withZoneSameInstant( ZoneId.systemDefault() ).toLocalDate().isEqual( entries.getLast().getTimestamp().withZoneSameInstant( ZoneId.systemDefault() ).toLocalDate() ) )
             {
@@ -153,20 +167,7 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener
 
         try
         {
-//            if ( reorderEverything )
-//            {
-//                // Clear and refill the UI component.
-//                entries.sort( Comparator.comparing( TranscriptWindowEntry::getTimestamp ) );
-//                clear();
-//                for ( TranscriptWindowEntry e : entries )
-//                {
-//                    e.addTo( this );
-//                }
-//            }
-//            else
-            {
-                entry.addTo( this );
-            }
+            entry.addTo( this );
         }
         catch ( BadLocationException ex )
         {
