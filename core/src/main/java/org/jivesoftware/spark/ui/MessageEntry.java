@@ -15,16 +15,27 @@
  */
 package org.jivesoftware.spark.ui;
 
+import org.apache.hc.client5.http.config.RequestConfig;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.core5.http.ClassicHttpRequest;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.io.support.ClassicRequestBuilder;
+import org.jivesoftware.smack.SmackConfiguration;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.emoticons.EmoticonManager;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+import org.jivesoftware.sparkimpl.updater.AcceptAllCertsConnectionManager;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.text.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.time.ZonedDateTime;
-import java.util.*;
 import java.util.List;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 import static javax.swing.text.StyleConstants.Foreground;
 
@@ -41,11 +52,11 @@ import static javax.swing.text.StyleConstants.Foreground;
 public class MessageEntry extends TimeStampedEntry
 {
     public static final List<Character> DIRECTIVE_CHARS = Arrays.asList( '*', '_', '~', '`' );
-    private final String prefix;
-    private final Color prefixColor;
-    private final String message;
-    private final Color messageColor;
-    private final Color backgroundColor;
+    protected final String prefix;
+    protected final Color prefixColor;
+    protected final String message;
+    protected final Color messageColor;
+    protected final Color backgroundColor;
 
     /**
      * Creates a new entry using the default background color (white/transparent).
@@ -216,9 +227,10 @@ public class MessageEntry extends TimeStampedEntry
     }
 
     protected void insertFragment(ChatArea chatArea, String fragment, MutableAttributeSet style) throws BadLocationException {
+        if (insertPicture(chatArea, fragment, style)) return;
         if (insertLink(chatArea.getDocument(), fragment, style)) return;
         if (insertAddress(chatArea.getDocument(), fragment, style)) return;
-        if (insertImage(chatArea, fragment)) return;
+        if (insertEmoticon(chatArea, fragment)) return;
         chatArea.getDocument().insertString(chatArea.getDocument().getLength(), fragment, style);
     }
 
@@ -350,6 +362,108 @@ public class MessageEntry extends TimeStampedEntry
     }
 
     /**
+     * Inserts a picture into the current document.
+     *
+     * @param url - the link to the content to insert( ex. http://example.org/hello.gif )
+     * @throws BadLocationException if the location is not available for insertion.
+     */
+    public boolean insertPicture(ChatArea chatArea, String url, MutableAttributeSet messageStyle) throws BadLocationException
+    {
+        // FIXME: this is unsafe. Do not blindly accept anything that looks like an URL (check if it is a valid URL).
+        // TODO: instead of operating on message text content, operate on message stanza metadata.
+        // TODO: do not download each time. Cache downloaded data.
+        // TODO: make resized image clickable (open in unresized size).
+        if (url.startsWith("http://") ||
+            url.startsWith("https://")) {
+
+            try (final CloseableHttpClient httpClient =
+                     HttpClients.custom()
+                         .setConnectionManager(AcceptAllCertsConnectionManager.getInstance()) // FIXME: do not use acceptallcdertsconnectionmanager! It is unsafe. Only use trusted certificates!
+                         .setDefaultRequestConfig(RequestConfig.custom().setResponseTimeout(SmackConfiguration.getDefaultReplyTimeout()/10, TimeUnit.MILLISECONDS).build())
+                         .build()
+            ) {
+                final ClassicHttpRequest request = ClassicRequestBuilder.get(url)
+                    .setHeader("content-type", "image/*")
+                    .setHeader("User-Agent", "Spark HttpFileUpload")
+                    .build();
+
+                BufferedImage img = httpClient.execute(request, httpResponse -> {
+                    HttpEntity entity = httpResponse.getEntity();
+                    try {
+                        return ImageIO.read(entity.getContent());
+                    } catch (Throwable t) {
+                        Log.warning("Unable to load picture from " + url, t);
+                        return null;
+                    }
+                });
+
+                if (img != null) {
+                    SimpleAttributeSet center = new SimpleAttributeSet();
+                    StyleConstants.setAlignment(center, StyleConstants.ALIGN_CENTER);
+                    SimpleAttributeSet left = new SimpleAttributeSet();
+                    StyleConstants.setAlignment(left, StyleConstants.ALIGN_LEFT);
+
+                    final StyledDocument doc = (StyledDocument) chatArea.getDocument();
+
+                    doc.insertString( doc.getLength(), "\n", messageStyle );
+
+                    final int width = Math.max(60, Math.round(chatArea.getParent().getWidth()*0.70f));
+                    final int height = Math.max(60, Math.round(chatArea.getParent().getHeight()*0.40f));
+                    ImageIcon image = scaleImage(new ImageIcon(img), width, height);
+
+                    int start = doc.getLength();
+
+                    MutableAttributeSet inputAttributes = chatArea.getInputAttributes();
+                    inputAttributes.removeAttributes(inputAttributes);
+                    StyleConstants.setIcon(inputAttributes, image);
+                    chatArea.getDocument().insertString(doc.getLength(), " ", chatArea.getInputAttributes());
+                    inputAttributes.removeAttributes(inputAttributes);
+                    doc.insertString(doc.getLength(), "\n", messageStyle);
+
+                    final MutableAttributeSet linkStyle = new SimpleAttributeSet( messageStyle.copyAttributes() );
+                    insertLink(doc, url, linkStyle);
+                    int end = doc.getLength();
+                    final int length = end-start+1;
+                    doc.setParagraphAttributes(start, length, center, false);
+
+                    // No longer center.
+                    //System.out.println("text: " + doc.getText(start, length));
+                    doc.setParagraphAttributes(doc.getLength()+2, 0, left,false);
+                    return true;
+                }
+            } catch (Throwable e) {
+                Log.warning( "Unable to download content from " + url, e );
+                return false;
+            }
+        }
+
+        return false;
+    }
+
+    public static ImageIcon scaleImage(ImageIcon icon, int w, int h)
+    {
+        try {
+            int nw = icon.getIconWidth();
+            int nh = icon.getIconHeight();
+
+            if (icon.getIconWidth() > w) {
+                nw = w;
+                nh = (nw * icon.getIconHeight()) / icon.getIconWidth();
+            }
+
+            if (nh > h) {
+                nh = h;
+                nw = (icon.getIconWidth() * nh) / icon.getIconHeight();
+            }
+
+            return new ImageIcon(icon.getImage().getScaledInstance(nw, nh, Image.SCALE_DEFAULT));
+        } catch (Exception e) {
+            Log.warning("Unable to scale an image", e);
+            return null;
+        }
+    }
+
+    /**
      * Inserts a link into the current document.
      *
      * @param link - the link to insert( ex. http://www.javasoft.com )
@@ -403,7 +517,7 @@ public class MessageEntry extends TimeStampedEntry
      * @param imageKey - the smiley representation of the image.( ex. :) )
      * @return true if the image was found, otherwise false.
      */
-    public boolean insertImage( ChatArea chatArea, String imageKey )
+    public boolean insertEmoticon(ChatArea chatArea, String imageKey )
     {
         if ( !chatArea.getForceEmoticons() && !SettingsManager.getLocalPreferences().areEmoticonsEnabled() || !chatArea.emoticonsAvailable )
         {
