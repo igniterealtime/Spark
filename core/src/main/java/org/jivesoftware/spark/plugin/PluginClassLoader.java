@@ -18,7 +18,7 @@ package org.jivesoftware.spark.plugin;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.ExtensionElement;
 import org.jivesoftware.smack.provider.ExtensionElementProvider;
-import org.jivesoftware.smack.provider.IQProvider;
+import org.jivesoftware.smack.provider.IqProvider;
 import org.jivesoftware.smack.provider.ProviderManager;
 import org.jivesoftware.smack.xml.SmackXmlParser;
 import org.jivesoftware.smack.xml.XmlPullParser;
@@ -139,7 +139,7 @@ public class PluginClassLoader extends URLClassLoader {
                         try {
                             // Add the provider to the map.
                             Class<?> provider = this.loadClass(className);
-                            if (IQProvider.class.isAssignableFrom(provider)) {
+                            if (IqProvider.class.isAssignableFrom(provider)) {
                                 ProviderManager.addIQProvider(elementName, namespace, provider.newInstance());
                             }
                             else if (IQ.class.isAssignableFrom(provider)) {

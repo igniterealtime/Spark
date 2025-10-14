@@ -484,10 +484,10 @@ public class RosterDialog implements ActionListener {
 	    for (DomainBareJid search : _usersearchservice) {
 
 		ReportedData data;
-		UserSearchManager usersearchManager = new UserSearchManager(
+		UserSearchManager usersearchManager = UserSearchManager.getInstanceFor(
 			SparkManager.getConnection());
 
-		DataForm f = usersearchManager.getSearchForm(search);
+		DataForm f = usersearchManager.getSearchForm(search).getDataForm();
 
 		FillableForm answer = new FillableForm(f);
 		answer.setAnswer("Name", true);

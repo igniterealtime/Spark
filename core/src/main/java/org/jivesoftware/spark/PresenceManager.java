@@ -19,6 +19,7 @@ import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.packet.ExtensionElement;
+import org.jivesoftware.smack.packet.XmlElement;
 import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smackx.muc.packet.MUCUser;
@@ -135,8 +136,8 @@ public class PresenceManager {
     }
 
 	public static String getJidFromMUCPresence(Presence presence) {		
-		Collection<ExtensionElement> extensions = presence.getExtensions();
-		for (ExtensionElement extension : extensions) {
+		Collection<XmlElement> extensions = presence.getExtensions();
+		for (XmlElement extension : extensions) {
 			if (extension instanceof MUCUser) {
 				final MUCUser mucUser = (MUCUser) extension;
 				Jid fullJid = mucUser.getItem().getJid();

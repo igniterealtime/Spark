@@ -16,10 +16,12 @@
 package org.jivesoftware.spark.plugin.ofmeet;
 
 import org.jivesoftware.smack.packet.IQ;
+import org.jivesoftware.smack.packet.IqData;
 import org.jivesoftware.smack.packet.XmlEnvironment;
-import org.jivesoftware.smack.provider.IQProvider;
+import org.jivesoftware.smack.provider.IqProvider;
 import org.jivesoftware.smack.xml.XmlPullParser;
 import org.jivesoftware.smack.xml.XmlPullParserException;
+import org.jxmpp.JxmppContext;
 
 import java.io.IOException;
 
@@ -55,14 +57,15 @@ public class QueryRequest extends IQ
         return buf;
     }
 
-    public static class Provider extends IQProvider<QueryRequest>
+    public static class Provider extends IqProvider<QueryRequest>
     {
         public Provider()
         {
             super();
         }
 
-        public QueryRequest parse(XmlPullParser parser, int i, XmlEnvironment xmlEnvironment) throws XmlPullParserException, IOException
+        @Override
+        public QueryRequest parse(XmlPullParser parser, int i, IqData iqData, XmlEnvironment xmlEnvironment, JxmppContext jxmppContext) throws XmlPullParserException, IOException
         {
             final QueryRequest queryRequest = new QueryRequest();
 

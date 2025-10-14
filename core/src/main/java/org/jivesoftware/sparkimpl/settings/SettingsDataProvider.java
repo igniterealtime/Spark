@@ -20,6 +20,7 @@ import org.jivesoftware.smack.xml.XmlPullParser;
 import org.jivesoftware.smack.xml.XmlPullParserException;
 import org.jivesoftware.smackx.iqprivate.packet.PrivateData;
 import org.jivesoftware.smackx.iqprivate.provider.PrivateDataProvider;
+import org.jxmpp.JxmppContext;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -31,7 +32,7 @@ public class SettingsDataProvider implements PrivateDataProvider {
     }
 
     @Override
-	public PrivateData parsePrivateData(XmlPullParser parser) throws XmlPullParserException, IOException
+	public PrivateData parsePrivateData(XmlPullParser parser, JxmppContext jxmppContext) throws XmlPullParserException, IOException
     {
         Map<String,String> map = new HashMap<>();
         parser.getEventType();

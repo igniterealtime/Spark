@@ -89,7 +89,7 @@ public class UserSearchForm extends JPanel {
 
         this.searchServices = searchServices;
 
-        searchManager = new UserSearchManager(SparkManager.getConnection());
+        searchManager = UserSearchManager.getInstanceFor(SparkManager.getConnection());
 
         addSearchServices();
 
@@ -168,7 +168,7 @@ public class UserSearchForm extends JPanel {
 					public Object construct() {
                         try {
                             DomainBareJid serviceJid = JidCreate.domainBareFrom(serviceName);
-                            newForm = searchManager.getSearchForm(serviceJid);
+                            newForm = searchManager.getSearchForm(serviceJid).getDataForm();
                         }
                         catch (XMPPException | SmackException | XmppStringprepException | InterruptedException e) {
                             // Nothing to do
