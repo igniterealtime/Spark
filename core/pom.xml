@@ -135,7 +135,7 @@
         </dependency>
         <dependency>
             <groupId>org.igniterealtime.smack</groupId>
-            <artifactId>smack-java8</artifactId>
+            <artifactId>smack-java11</artifactId>
             <version>${dependency.smack.version}</version>
         </dependency>
         <dependency>
