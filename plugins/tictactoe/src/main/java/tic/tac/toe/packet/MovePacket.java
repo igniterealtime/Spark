@@ -20,6 +20,7 @@ import org.jivesoftware.smack.packet.XmlEnvironment;
 import org.jivesoftware.smack.provider.ExtensionElementProvider;
 import org.jivesoftware.smack.xml.XmlPullParser;
 import org.jivesoftware.smack.xml.XmlPullParserException;
+import org.jxmpp.JxmppContext;
 
 import javax.xml.namespace.QName;
 import java.io.IOException;
@@ -85,7 +86,8 @@ public class MovePacket implements ExtensionElement {
 
     public static class Provider extends ExtensionElementProvider<MovePacket>
     {
-        public MovePacket parse(XmlPullParser parser, int initialDepth, XmlEnvironment xmlEnvironment) throws XmlPullParserException, IOException
+        @Override
+        public MovePacket parse(XmlPullParser parser, int initialDepth, XmlEnvironment xmlEnvironment, JxmppContext jxmppContext) throws XmlPullParserException, IOException
         {
             final MovePacket gameMove = new MovePacket();
             boolean done = false;

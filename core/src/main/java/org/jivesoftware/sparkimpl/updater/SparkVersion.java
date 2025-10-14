@@ -18,12 +18,16 @@ package org.jivesoftware.sparkimpl.updater;
 
 import org.jivesoftware.Spark;
 import org.jivesoftware.smack.packet.IQ;
+import org.jivesoftware.smack.packet.IqData;
 import org.jivesoftware.smack.packet.XmlEnvironment;
-import org.jivesoftware.smack.provider.IQProvider;
+import org.jivesoftware.smack.parsing.SmackParsingException;
+import org.jivesoftware.smack.provider.IqProvider;
 import org.jivesoftware.smack.xml.XmlPullParser;
 import org.jivesoftware.smack.xml.XmlPullParserException;
+import org.jxmpp.JxmppContext;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.Date;
 
 public class SparkVersion extends IQ {
@@ -116,14 +120,14 @@ public class SparkVersion extends IQ {
      *
      * @author Derek DeMoro
      */
-    public static class Provider extends IQProvider<SparkVersion> {
+    public static class Provider extends IqProvider<SparkVersion> {
 
         public Provider() {
             super();
         }
 
         @Override
-		public SparkVersion parse(XmlPullParser parser, int i, XmlEnvironment xmlEnvironment) throws XmlPullParserException, IOException{
+		public SparkVersion parse(XmlPullParser parser, int i, IqData iqData, XmlEnvironment xmlEnvironment, JxmppContext jxmppContext) throws XmlPullParserException, IOException{
             SparkVersion version = new SparkVersion();
 
             boolean done = false;

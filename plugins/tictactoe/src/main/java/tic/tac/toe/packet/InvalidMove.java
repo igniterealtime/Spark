@@ -5,6 +5,7 @@ import org.jivesoftware.smack.packet.XmlEnvironment;
 import org.jivesoftware.smack.provider.ExtensionElementProvider;
 import org.jivesoftware.smack.xml.XmlPullParser;
 import org.jivesoftware.smack.xml.XmlPullParserException;
+import org.jxmpp.JxmppContext;
 
 import javax.xml.namespace.QName;
 import java.io.IOException;
@@ -65,7 +66,8 @@ public class InvalidMove implements ExtensionElement {
 
     public static class Provider extends ExtensionElementProvider<InvalidMove>
     {
-        public InvalidMove parse(XmlPullParser parser, int initialDepth, XmlEnvironment xmlEnvironment) throws XmlPullParserException, IOException
+        @Override
+        public InvalidMove parse(XmlPullParser parser, int initialDepth, XmlEnvironment xmlEnvironment, JxmppContext jxmppContext) throws XmlPullParserException, IOException
         {
             final InvalidMove gameMove = new InvalidMove();
             boolean done = false;
