@@ -18,12 +18,15 @@ package org.jivesoftware.sparkimpl.profile.ext;
 
 import org.jivesoftware.smack.packet.ExtensionElement;
 import org.jivesoftware.smack.packet.XmlEnvironment;
+import org.jivesoftware.smack.parsing.SmackParsingException;
 import org.jivesoftware.smack.provider.ExtensionElementProvider;
 import org.jivesoftware.smack.xml.XmlPullParser;
 import org.jivesoftware.smack.xml.XmlPullParserException;
+import org.jxmpp.JxmppContext;
 
 import javax.xml.namespace.QName;
 import java.io.IOException;
+import java.text.ParseException;
 
 /**
  * XEP-0008: IQ-Based Avatars
@@ -66,7 +69,7 @@ public class JabberAvatarExtension implements ExtensionElement {
         }
 
         @Override
-        public JabberAvatarExtension parse(XmlPullParser parser, int i, XmlEnvironment xmlEnvironment)
+        public JabberAvatarExtension parse(XmlPullParser parser, int i, XmlEnvironment xmlEnvironment, JxmppContext jxmppContext)
                 throws XmlPullParserException, IOException {
             final JabberAvatarExtension result = new JabberAvatarExtension();
 

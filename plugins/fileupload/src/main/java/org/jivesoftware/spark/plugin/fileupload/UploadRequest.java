@@ -16,10 +16,12 @@
 package org.jivesoftware.spark.plugin.fileupload;
 
 import org.jivesoftware.smack.packet.IQ;
+import org.jivesoftware.smack.packet.IqData;
 import org.jivesoftware.smack.packet.XmlEnvironment;
-import org.jivesoftware.smack.provider.IQProvider;
+import org.jivesoftware.smack.provider.IqProvider;
 import org.jivesoftware.smack.xml.XmlPullParser;
 import org.jivesoftware.smack.xml.XmlPullParserException;
+import org.jxmpp.JxmppContext;
 
 import java.io.IOException;
 
@@ -57,14 +59,15 @@ public class UploadRequest extends IQ
         return buf;
     }
 
-    public static class Provider extends IQProvider<UploadRequest>
+    public static class Provider extends IqProvider<UploadRequest>
     {
         public Provider()
         {
             super();
         }
 
-        public UploadRequest parse(XmlPullParser parser, int i, XmlEnvironment xmlEnvironment) throws XmlPullParserException, IOException
+        @Override
+        public UploadRequest parse(XmlPullParser parser, int i, IqData iqData, XmlEnvironment xmlEnvironment, JxmppContext jxmppContext) throws XmlPullParserException, IOException
         {
             final UploadRequest uploadRequest = new UploadRequest();
 

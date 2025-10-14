@@ -24,6 +24,7 @@ import org.jivesoftware.smackx.iqprivate.packet.PrivateData;
 import org.jivesoftware.smackx.iqprivate.provider.PrivateDataProvider;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.util.log.Log;
+import org.jxmpp.JxmppContext;
 
 import java.io.IOException;
 
@@ -113,7 +114,7 @@ public class PrivateNotes implements PrivateData {
         }
 
         @Override
-		public PrivateData parsePrivateData(XmlPullParser parser) throws XmlPullParserException, IOException {
+		public PrivateData parsePrivateData(XmlPullParser parser, JxmppContext jxmppContext) throws XmlPullParserException, IOException {
             boolean done = false;
             while (!done) {
                 XmlPullParser.Event eventType = parser.next();
