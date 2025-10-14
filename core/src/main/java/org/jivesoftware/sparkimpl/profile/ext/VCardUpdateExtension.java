@@ -21,6 +21,7 @@ import org.jivesoftware.smack.packet.XmlEnvironment;
 import org.jivesoftware.smack.provider.ExtensionElementProvider;
 import org.jivesoftware.smack.xml.XmlPullParser;
 import org.jivesoftware.smack.xml.XmlPullParserException;
+import org.jxmpp.JxmppContext;
 
 import javax.xml.namespace.QName;
 import java.io.IOException;
@@ -68,7 +69,7 @@ public class VCardUpdateExtension implements ExtensionElement {
         }
 
         @Override
-        public VCardUpdateExtension parse(XmlPullParser parser, int initialDepth, XmlEnvironment xmlEnvironment)
+        public VCardUpdateExtension parse(XmlPullParser parser, int initialDepth, XmlEnvironment xmlEnvironment, JxmppContext jxmppContext)
                 throws XmlPullParserException, IOException {
             final VCardUpdateExtension result = new VCardUpdateExtension();
 
