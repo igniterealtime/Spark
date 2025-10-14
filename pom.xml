@@ -92,7 +92,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <dependency.smack.version>4.4.8</dependency.smack.version>
+        <dependency.smack.version>4.5.0-beta9</dependency.smack.version>
     </properties>
 
     <build>
