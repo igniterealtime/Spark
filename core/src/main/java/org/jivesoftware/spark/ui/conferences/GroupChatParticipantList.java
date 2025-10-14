@@ -457,7 +457,7 @@ public class GroupChatParticipantList extends JPanel {
 
 	protected void unbanUser(String jidString) {
 		try {
-		    Jid jid = JidCreate.from(jidString);
+		    BareJid jid = JidCreate.bareFrom(jidString);
 			chat.grantMembership(jid);
 		} catch (XMPPException | SmackException | XmppStringprepException | InterruptedException e) {
 		    groupChatRoom.getTranscriptWindow().
