@@ -17,6 +17,7 @@ package org.jivesoftware.spark.ui;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smack.packet.StanzaBuilder;
 import org.jivesoftware.spark.PresenceManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.Workspace;
@@ -179,7 +180,9 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
             final ContactItem offlineItem = UIComponentRegistry.createContactItem(alias, nickname, jid);
             offlineItem.setGroupName(getGroupName());
 
-            final Presence offlinePresence = new Presence(Presence.Type.unavailable);
+            final Presence offlinePresence = StanzaBuilder.buildPresence()
+                .ofType(Presence.Type.unavailable)
+                .build();
             offlineItem.setPresence(offlinePresence);
 
             // set offline icon
@@ -201,7 +204,9 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
                     final ContactItem offlineItem = UIComponentRegistry.createContactItem(alias, nickname, jid);
                     offlineItem.setGroupName(getGroupName());
 
-                    final Presence offlinePresence = new Presence(Presence.Type.unavailable);
+                    final Presence offlinePresence = StanzaBuilder.buildPresence()
+                        .ofType(Presence.Type.unavailable)
+                        .build();
                     offlineItem.setPresence(offlinePresence);
 
                     // set offline icon

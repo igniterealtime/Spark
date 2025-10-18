@@ -25,6 +25,7 @@ import org.jivesoftware.smack.SmackConfiguration;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smack.packet.StanzaBuilder;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.ui.ChatFrame;
 import org.jivesoftware.spark.ui.RawPacketSender;
@@ -291,7 +292,11 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         final AbstractXMPPConnection con = SparkManager.getConnection();
         if (con.isConnected()) {
             if (reason != null) {
-                Presence byePresence = new Presence(Presence.Type.unavailable, reason, -1, null);
+                Presence byePresence = StanzaBuilder.buildPresence()
+                    .ofType(Presence.Type.unavailable)
+                    .setStatus(reason)
+                    .setPriority(-1)
+                    .build();
                 try
                 {
                     con.disconnect(byePresence);
