@@ -129,15 +129,15 @@ public class VCardManager {
             VCardUpdateExtension update = new VCardUpdateExtension();
             JabberAvatarExtension jax = new JabberAvatarExtension();
 
-            ExtensionElement updateExt = newPresence.getExtensionElement(update.getElementName(), update.getNamespace());
-            ExtensionElement jabberExt = newPresence.getExtensionElement(jax.getElementName(), jax.getNamespace());
+            XmlElement updateExt = newPresence.getExtensionElement(update.getElementName(), update.getNamespace());
+            XmlElement jabberExt = newPresence.getExtensionElement(jax.getElementName(), jax.getNamespace());
 
             if (updateExt != null) {
-                newPresence.removeExtension(updateExt);
+                newPresence.removeExtension(updateExt.getElementName(), updateExt.getNamespace());
             }
 
             if (jabberExt != null) {
-                newPresence.removeExtension(jabberExt);
+                newPresence.removeExtension(jabberExt.getElementName(), jabberExt.getNamespace());
             }
 
             if (personalVCard != null) {
