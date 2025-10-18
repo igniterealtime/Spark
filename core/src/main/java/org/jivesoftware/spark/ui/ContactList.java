@@ -25,6 +25,7 @@ import org.jivesoftware.smack.XMPPException.XMPPErrorException;
 import org.jivesoftware.smack.filter.StanzaTypeFilter;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smack.packet.StanzaBuilder;
 import org.jivesoftware.smack.packet.StanzaError;
 import org.jivesoftware.smack.packet.StanzaError.Condition;
 import org.jivesoftware.smack.roster.Roster;
@@ -277,7 +278,9 @@ public class ContactList extends JPanel implements ActionListener,
                 final Collection<RosterEntry> roster = Roster.getInstanceFor(SparkManager.getConnection()).getEntries();
 
                 for (RosterEntry r : roster) {
-                    Presence p = new Presence(Presence.Type.unavailable);
+                    Presence p = StanzaBuilder.buildPresence()
+                        .ofType(Presence.Type.unavailable)
+                        .build();
                     moveToOfflineGroup(p, r.getJid());
                 }
                 return true;
@@ -297,7 +300,9 @@ public class ContactList extends JPanel implements ActionListener,
                 _reconnectpanelicon.getPanel().revalidate();
                 final Collection<RosterEntry> roster = Roster.getInstanceFor(SparkManager.getConnection()).getEntries();
                 for (RosterEntry r : roster) {
-                    Presence p = new Presence(Presence.Type.unavailable);
+                    Presence p = StanzaBuilder.buildPresence()
+                        .ofType(Presence.Type.unavailable)
+                        .build();
                     moveToOfflineGroup(p, r.getJid());
                 }
                 return true;
@@ -592,7 +597,10 @@ public class ContactList extends JPanel implements ActionListener,
                     if (contactItem == null)
                         continue;
 
-                    contactItem.setPresence(new Presence(Presence.Type.unavailable));
+                    Presence p = StanzaBuilder.buildPresence()
+                        .ofType(Presence.Type.unavailable)
+                        .build();
+                    contactItem.setPresence(p);
                     if ((entry.getType() == RosterPacket.ItemType.none || entry.getType() == RosterPacket.ItemType.from)
                         && entry.isSubscriptionPending()) {
                         // Add to contact group.
@@ -1630,7 +1638,9 @@ public class ContactList extends JPanel implements ActionListener,
             @Override
             public void actionPerformed(ActionEvent e) {
                 BareJid jid = item.getJid();
-                Presence response = new Presence(Presence.Type.subscribe);
+                Presence response = StanzaBuilder.buildPresence()
+                    .ofType(Presence.Type.subscribe)
+                    .build();
                 response.setTo(jid);
 
                 try {
@@ -1825,7 +1835,9 @@ public class ContactList extends JPanel implements ActionListener,
                             removeContactItem(presence.getFrom().asBareJid());
                             roster.removeEntry(entry);
                         } catch (XMPPException | SmackException e) {
-                            Presence unsub = new Presence(Presence.Type.unsubscribed);
+                            Presence unsub = StanzaBuilder.buildPresence()
+                                .ofType(Presence.Type.unsubscribed)
+                                .build();
                             unsub.setTo(presence.getFrom());
                             try {
                                 SparkManager.getConnection().sendStanza(unsub);
