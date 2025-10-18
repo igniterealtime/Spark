@@ -384,7 +384,7 @@ public class VCardManager {
 		}
 		catch (Exception e) {
             StanzaError.Builder errorBuilder = StanzaError.getBuilder(StanzaError.Condition.conflict);
-			personalVCard.setError(errorBuilder);
+			personalVCard.setError(errorBuilder.build());
             personalVCardAvatar = null;
             personalVCardHash = null;
 			Log.error(e);
@@ -517,7 +517,7 @@ public class VCardManager {
         catch (XMPPException | SmackException | InterruptedException e) {
         	////System.out.println(jid+" Fehler in reloadVCard ----> null");
             StanzaError.Builder errorBuilder = StanzaError.getBuilder(StanzaError.Condition.resource_constraint);
-        	vcard.setError(errorBuilder);
+        	vcard.setError(errorBuilder.build());
         	vcard.setJabberId(jid.toString());
             delayedContacts.add(jid);
         	return vcard;
