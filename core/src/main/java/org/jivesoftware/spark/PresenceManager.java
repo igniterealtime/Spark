@@ -19,6 +19,7 @@ import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.packet.ExtensionElement;
+import org.jivesoftware.smack.packet.StanzaBuilder;
 import org.jivesoftware.smack.packet.XmlElement;
 import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.packet.Presence;
@@ -48,13 +49,54 @@ public class PresenceManager {
 
     static {
         // Add Available Presence
-        final Presence availablePresence = new Presence(Presence.Type.available, Res.getString("status.online"), 1, Presence.Mode.available);
-        final Presence freeToChatPresence = new Presence(Presence.Type.available, Res.getString("status.free.to.chat"), 1, Presence.Mode.chat);
-        final Presence awayPresence = new Presence(Presence.Type.available, Res.getString("status.away"), 0, Presence.Mode.away);
-        final Presence phonePresence = new Presence(Presence.Type.available, Res.getString("status.on.phone"), 0, Presence.Mode.away);
-        final Presence dndPresence = new Presence(Presence.Type.available, Res.getString("status.do.not.disturb"), 0, Presence.Mode.dnd);
-        final Presence extendedAway = new Presence(Presence.Type.available, Res.getString("status.extended.away"), 0, Presence.Mode.xa);
-        final Presence invisible = new Presence(Presence.Type.unavailable, Res.getString("status.invisible"), 0, Presence.Mode.available);
+        final Presence availablePresence = StanzaBuilder.buildPresence()
+            .ofType(Presence.Type.available)
+            .setStatus(Res.getString("status.online"))
+            .setPriority(1)
+            .setMode(Presence.Mode.available)
+            .build();
+
+        final Presence freeToChatPresence = StanzaBuilder.buildPresence()
+            .ofType(Presence.Type.available)
+            .setStatus(Res.getString("status.free.to.chat"))
+            .setPriority(1)
+            .setMode(Presence.Mode.chat)
+            .build();
+
+        final Presence awayPresence = StanzaBuilder.buildPresence()
+            .ofType(Presence.Type.available)
+            .setStatus(Res.getString("status.away"))
+            .setPriority(0)
+            .setMode(Presence.Mode.away)
+            .build();
+
+        final Presence phonePresence = StanzaBuilder.buildPresence()
+            .ofType(Presence.Type.available)
+            .setStatus(Res.getString("status.on.phone"))
+            .setPriority(0)
+            .setMode(Presence.Mode.away)
+            .build();
+
+        final Presence dndPresence = StanzaBuilder.buildPresence()
+            .ofType(Presence.Type.available)
+            .setStatus(Res.getString("status.do.not.disturb"))
+            .setPriority(0)
+            .setMode(Presence.Mode.dnd)
+            .build();
+
+        final Presence extendedAway = StanzaBuilder.buildPresence()
+            .ofType(Presence.Type.available)
+            .setStatus(Res.getString("status.extended.away"))
+            .setPriority(0)
+            .setMode(Presence.Mode.xa)
+            .build();
+
+        final Presence invisible = StanzaBuilder.buildPresence()
+            .ofType(Presence.Type.unavailable)
+            .setStatus(Res.getString("status.invisible"))
+            .setPriority(0)
+            .setMode(Presence.Mode.available)
+            .build();
 
         PRESENCES.add(freeToChatPresence);
         PRESENCES.add(availablePresence);
@@ -247,13 +289,4 @@ public class PresenceManager {
                && p1.getStatus().equals(p2.getStatus());
     }
 
-    public static Presence copy(Presence presence) {
-	if (presence == null)
-		return null;
-	Presence copy = new Presence(presence.getType());
-	copy.setMode(presence.getMode());
-	copy.setStatus(presence.getStatus());
-	copy.setPriority(presence.getPriority());
-	return copy;
-    }
 }

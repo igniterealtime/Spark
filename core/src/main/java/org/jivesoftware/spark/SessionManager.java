@@ -18,6 +18,7 @@ package org.jivesoftware.spark;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.*;
 import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smack.packet.StanzaBuilder;
 import org.jivesoftware.smack.provider.ProviderManager;
 import org.jivesoftware.smackx.iqprivate.PrivateDataManager;
 import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
@@ -149,8 +150,10 @@ public final class SessionManager implements ConnectionListener {
 	public void connectionClosedOnError(final Exception ex) {
         SwingUtilities.invokeLater( () -> {
             preError = Workspace.getInstance().getStatusBar().getPresence();
-            final Presence presence = new Presence(Presence.Type.unavailable);
-            presence.setStatus(Res.getString("status.offline"));
+            final Presence presence = StanzaBuilder.buildPresence()
+                .ofType(Presence.Type.unavailable)
+                .setStatus(Res.getString("status.offline"))
+                .build();
             changePresence(presence);
 
             Workspace.getInstance().getStatusBar().setStatusPanelEnabled(false);

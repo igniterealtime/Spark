@@ -57,6 +57,7 @@ import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.packet.ExtensionElement;
 import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smack.packet.StanzaBuilder;
 import org.jivesoftware.smackx.vcardtemp.packet.VCard;
 import org.jivesoftware.spark.PresenceManager;
 import org.jivesoftware.spark.SparkManager;
@@ -135,8 +136,13 @@ public class StatusBar extends JPanel implements VCardListener {
 
         //setBorder(BorderFactory.createLineBorder(new Color(197, 213, 230), 1));
         SparkManager.getSessionManager().addPresenceListener(presence -> {
-            presence.setStatus(StringUtils.modifyWildcards(presence.getStatus()));
-            changeAvailability(presence);
+            Presence statusPresence = StanzaBuilder.buildPresence()
+                .ofType(presence.getType())
+                .setStatus(StringUtils.modifyWildcards(presence.getStatus()))
+                .setPriority(presence.getPriority())
+                .setMode(presence.getMode())
+                .build();
+            changeAvailability(statusPresence);
 
             // SPARK-1524:
             // after reconnected if we had the 'invisible' presence
@@ -297,9 +303,12 @@ public class StatusBar extends JPanel implements VCardListener {
                                 SwingWorker worker = new SwingWorker() {
                                     @Override
                                     public Object construct() {
-                                        Presence presence = PresenceManager.copy(si.getPresence());
-                                        presence.setStatus(customStatus);
-                                        presence.setPriority(customItem.getPriority());
+                                        Presence presence = StanzaBuilder.buildPresence()
+                                            .ofType(si.getPresence().getType())
+                                            .setStatus(customStatus)
+                                            .setPriority(customItem.getPriority())
+                                            .setMode(si.getPresence().getMode())
+                                            .build();
                                         return changePresence(presence);
                                     }
 
@@ -417,9 +426,12 @@ public class StatusBar extends JPanel implements VCardListener {
             statusList.add(item);
         }
 
-        final Icon availableIcon = PresenceManager.getIconFromPresence(new Presence(Presence.Type.available));
+        final Presence availablePresence = StanzaBuilder.buildPresence()
+            .ofType(Presence.Type.available)
+            .build();
+        final Icon availableIcon = PresenceManager.getIconFromPresence(availablePresence);
 
-        // Set default presence icon (Avaialble)
+        // Set default presence icon (Available)
         statusPanel.setIcon(availableIcon);
     }
 
@@ -521,10 +533,6 @@ public class StatusBar extends JPanel implements VCardListener {
             }
         });
 
-    }
-
-    public static Presence copyPresence(Presence presence) {
-        return new Presence(presence.getType(), presence.getStatus(), presence.getPriority(), presence.getMode());
     }
 
     /**
@@ -672,10 +680,12 @@ public class StatusBar extends JPanel implements VCardListener {
             JOptionPane.showMessageDialog(null, Res.getString("dialog.invisible.privacy.lists.not.supported"));
         }
 
-        Presence copyPresence = copyPresence(presence);
-        if (isNewPresenceInvisible) {
-            copyPresence.setStatus(null);
-        }
+        Presence copyPresence = StanzaBuilder.buildPresence()
+            .ofType(presence.getType())
+            .setStatus(isNewPresenceInvisible ? null : presence.getStatus())
+            .setPriority(presence.getPriority())
+            .setMode(presence.getMode())
+            .build();
         if (PresenceManager.areEqual(getCurrentPresence(), copyPresence)) {
             return presence.getStatus();
         }

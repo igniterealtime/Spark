@@ -47,6 +47,7 @@ import javax.swing.tree.TreePath;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smack.packet.StanzaBuilder;
 import org.jivesoftware.spark.PresenceManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.JiveTreeCellRenderer;
@@ -519,9 +520,12 @@ public class CustomMessages {
                         StatusItem item = statusBar.getStatusItem(getType());
                         Presence oldPresence = item.getPresence();
 
-                        Presence presence = StatusBar.copyPresence(oldPresence);
-                        presence.setStatus(getStatus());
-                        presence.setPriority(getPriority());
+                        Presence presence = StanzaBuilder.buildPresence()
+                            .ofType(oldPresence.getType())
+                            .setStatus(getStatus())
+                            .setPriority(getPriority())
+                            .setMode(oldPresence.getMode())
+                            .build();
 
                         SparkManager.getSessionManager().changePresence(presence);
                         statusBar.setStatus(getStatus());
@@ -557,9 +561,12 @@ public class CustomMessages {
                         // Update current status.
                         StatusItem item = statusBar.getStatusItem(getType());
                         Presence oldPresence = item.getPresence();
-                        Presence presence = StatusBar.copyPresence(oldPresence);
-                        presence.setStatus(getStatus());
-                        presence.setPriority(getPriority());
+                        Presence presence = StanzaBuilder.buildPresence()
+                            .ofType(oldPresence.getType())
+                            .setStatus(getStatus())
+                            .setPriority(getPriority())
+                            .setMode(oldPresence.getMode())
+                            .build();
 
                         SparkManager.getSessionManager().changePresence(presence);
                         statusBar.setStatus(getStatus());
