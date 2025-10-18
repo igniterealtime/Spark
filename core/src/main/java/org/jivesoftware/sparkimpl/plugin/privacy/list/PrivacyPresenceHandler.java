@@ -7,6 +7,7 @@ import java.util.Collection;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smack.packet.StanzaBuilder;
 import org.jivesoftware.smackx.privacy.packet.PrivacyItem;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.ui.ContactGroup;
@@ -30,7 +31,9 @@ public class PrivacyPresenceHandler implements SparkPrivacyItemListener {
      */
     public void sendUnavailableTo(Jid jid) throws SmackException.NotConnectedException
     {
-        Presence pack = new Presence(Presence.Type.unavailable);                                                  
+        Presence pack = StanzaBuilder.buildPresence()
+            .ofType(Presence.Type.unavailable)
+            .build();
         pack.setTo(jid);
         try {
             SparkManager.getConnection().sendStanza(pack);
@@ -48,7 +51,12 @@ public class PrivacyPresenceHandler implements SparkPrivacyItemListener {
     public void sendRealPresenceTo(Jid jid) throws SmackException.NotConnectedException
     {
         Presence presence = SparkManager.getWorkspace().getStatusBar().getPresence(); 
-        Presence pack = new Presence(presence.getType(), presence.getStatus(), 1, presence.getMode());
+        Presence pack = StanzaBuilder.buildPresence()
+            .ofType(presence.getType())
+            .setStatus(presence.getStatus())
+            .setPriority(1)
+            .setMode(presence.getMode())
+            .build();
         pack.setTo(jid);
         try {
             SparkManager.getConnection().sendStanza(pack);

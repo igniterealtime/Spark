@@ -23,6 +23,7 @@ import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smack.packet.StanzaBuilder;
 import org.jivesoftware.smackx.disco.packet.DiscoverItems;
 import org.jivesoftware.smackx.workgroup.agent.Agent;
 import org.jivesoftware.smackx.workgroup.agent.AgentSession;
@@ -318,7 +319,12 @@ public class FastpathPlugin implements Plugin, ConnectionListener {
 
                 // Send actual presence to workgroup.
                 final Presence actualPresence = SparkManager.getWorkspace().getStatusBar().getPresence();
-                Presence toWorkgroupPresence = new Presence(actualPresence.getType(), actualPresence.getStatus(), actualPresence.getPriority(), actualPresence.getMode());
+                Presence toWorkgroupPresence = StanzaBuilder.buildPresence()
+                    .ofType(actualPresence.getType())
+                    .setStatus(actualPresence.getStatus())
+                    .setPriority(actualPresence.getPriority())
+                    .setMode(actualPresence.getMode())
+                    .build();
                 toWorkgroupPresence.setTo(workgroup);
 
                 try {

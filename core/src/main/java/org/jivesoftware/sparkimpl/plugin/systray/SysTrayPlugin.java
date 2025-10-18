@@ -41,6 +41,7 @@ import org.jivesoftware.smack.chat2.Chat;
 import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smack.packet.StanzaBuilder;
 import org.jivesoftware.smackx.chatstates.ChatState;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.NativeHandler;
@@ -409,10 +410,12 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatStateListener {
 					.getWorkspace().getStatusBar();
 
 				Presence oldPresence = statusItem.getPresence();
-				Presence presence = StatusBar
-					.copyPresence(oldPresence);
-				presence.setStatus(customItem.getStatus());
-				presence.setPriority(customItem.getPriority());
+                    Presence presence = StanzaBuilder.buildPresence()
+                        .ofType(oldPresence.getType())
+                        .setStatus(customItem.getStatus())
+                        .setPriority(customItem.getPriority())
+                        .setMode(oldPresence.getMode())
+                        .build();
 				SparkManager.getSessionManager()
 					.changePresence(presence);
 

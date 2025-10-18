@@ -767,7 +767,9 @@ public class ChatRoomImpl extends ChatRoom {
     }
 
     private void handleDisconnect() {
-        presence = new Presence(Presence.Type.unavailable);
+        presence = StanzaBuilder.buildPresence()
+            .ofType(Presence.Type.unavailable)
+            .build();
         getChatInputEditor().setEnabled(false);
         getSendButton().setEnabled(false);
         SparkManager.getChatManager().getChatContainer().fireChatRoomStateUpdated(this);

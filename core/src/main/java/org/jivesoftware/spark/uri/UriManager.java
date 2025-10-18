@@ -19,6 +19,7 @@ import java.net.URI;
 
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPConnection;
+import org.jivesoftware.smack.packet.StanzaBuilder;
 import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.roster.RosterEntry;
 import org.jivesoftware.smack.roster.RosterGroup;
@@ -145,7 +146,9 @@ public class UriManager {
         throw new IllegalStateException(e);
     }
 
-	Presence response = new Presence(Presence.Type.unsubscribe);
+        Presence response = StanzaBuilder.buildPresence()
+            .ofType(Presence.Type.unsubscribe)
+            .build();
 	response.setTo(jid);
 	try {
         SparkManager.getConnection().sendStanza(response);

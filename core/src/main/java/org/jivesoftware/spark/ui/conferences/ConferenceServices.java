@@ -22,6 +22,7 @@ import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smack.packet.StanzaBuilder;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.bookmarks.BookmarkManager;
 import org.jivesoftware.smackx.bookmarks.BookmarkedConference;
@@ -97,8 +98,12 @@ public class ConferenceServices implements InvitationListener {
                         int priority = presence.getPriority();
                         //Sometimes priority is not set in the presence packet received. Make sure priority is in valid range
                         priority = (priority < -128 || priority > 128) ? 1 : priority;
-                        final Presence p = new Presence(presence.getType(), presence.getStatus(), priority, presence.getMode());
-
+                        final Presence p = StanzaBuilder.buildPresence()
+                            .ofType(presence.getType())
+                            .setStatus(presence.getStatus())
+                            .setPriority(priority)
+                            .setMode(presence.getMode())
+                            .build();
                         GroupChatRoom groupChatRoom = (GroupChatRoom)room;
                         EntityBareJid jid = groupChatRoom.getMultiUserChat().getRoom();
 

@@ -18,6 +18,7 @@ package org.jivesoftware.spark.ui;
 import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.SmackException;
+import org.jivesoftware.smack.packet.StanzaBuilder;
 import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.roster.RosterEntry;
 import org.jivesoftware.smack.roster.RosterGroup;
@@ -167,7 +168,9 @@ public class SubscriptionDialog {
         // If User is already in roster, do not show.
         RosterEntry entry = roster.getEntry(jid);
         if (entry != null && entry.getType() == RosterPacket.ItemType.to) {
-            Presence response = new Presence(Presence.Type.subscribed);
+            Presence response = StanzaBuilder.buildPresence()
+                .ofType(Presence.Type.subscribed)
+                .build();
             response.setTo(jid);
 
             SparkManager.getConnection().sendStanza(response);
@@ -195,7 +198,9 @@ public class SubscriptionDialog {
 
         acceptButton.addActionListener( e -> {
             if (!rosterBox.isSelected()) {
-                Presence response = new Presence(Presence.Type.subscribed);
+                Presence response = StanzaBuilder.buildPresence()
+                    .ofType(Presence.Type.subscribed)
+                    .build();
                 response.setTo(jid);
                 try
                 {
@@ -211,7 +216,9 @@ public class SubscriptionDialog {
 
             boolean addEntry = addEntry();
             if (addEntry) {
-                Presence response = new Presence(Presence.Type.subscribed);
+                Presence response = StanzaBuilder.buildPresence()
+                    .ofType(Presence.Type.subscribed)
+                    .build();
                 response.setTo(jid);
                 try
                 {
@@ -279,7 +286,9 @@ public class SubscriptionDialog {
 
     private void unsubscribeAndClose()
     {
-        Presence response = new Presence(Presence.Type.unsubscribe);
+        Presence response = StanzaBuilder.buildPresence()
+            .ofType(Presence.Type.unsubscribe)
+            .build();
         response.setTo(jid);
         try
         {

@@ -40,6 +40,7 @@ import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smack.packet.StanzaBuilder;
 import org.jivesoftware.smackx.vcardtemp.packet.VCard;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.TitlePanel;
@@ -47,6 +48,7 @@ import org.jivesoftware.spark.ui.VCardViewer;
 import org.jivesoftware.spark.ui.status.StatusBar;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.ModelUtil;
+import org.jivesoftware.spark.util.StringUtils;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.layout.LayoutSettingsManager;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
@@ -493,9 +495,12 @@ public class VCardEditor {
 	    if (avatarBytes != null) {
 		Presence presence = SparkManager.getWorkspace().getStatusBar()
 			.getPresence();
-		Presence newPresence = new Presence(presence.getType(),
-			presence.getStatus(), presence.getPriority(),
-			presence.getMode());
+            Presence newPresence = StanzaBuilder.buildPresence()
+                .ofType(presence.getType())
+                .setStatus(presence.getStatus())
+                .setPriority(presence.getPriority())
+                .setMode(presence.getMode())
+                .build();
 
 		// Change my own presence
 		SparkManager.getSessionManager().changePresence(newPresence);

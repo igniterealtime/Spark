@@ -30,6 +30,7 @@ import javax.swing.UIManager;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smack.packet.StanzaBuilder;
 import org.jivesoftware.spark.PresenceManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.RolloverButton;
@@ -81,7 +82,12 @@ public class GatewayButton extends JPanel implements GatewayItem {
                 boolean autoJoin = TransportUtils.autoJoinService(transport.getXMPPServiceDomain());
                 if (autoJoin) {
                     Presence oldPresence = statusBar.getPresence();
-                    Presence presence = new Presence(oldPresence.getType(), oldPresence.getStatus(), oldPresence.getPriority(), oldPresence.getMode());
+                    Presence presence = StanzaBuilder.buildPresence()
+                        .ofType(oldPresence.getType())
+                        .setStatus(oldPresence.getStatus())
+                        .setPriority(oldPresence.getPriority())
+                        .setMode(oldPresence.getMode())
+                        .build();
                     presence.setTo(transport.getXMPPServiceDomain());
                     try
                     {
@@ -109,7 +115,9 @@ public class GatewayButton extends JPanel implements GatewayItem {
         // Create action to sign off of transport.
         final JMenuItem signOutMenu = new JMenuItem(Res.getString("menuitem.sign.out"));
         signOutMenu.addActionListener( actionEvent -> {
-            final Presence offlinePresence = new Presence(Presence.Type.unavailable);
+            final Presence offlinePresence = StanzaBuilder.buildPresence()
+                .ofType(Presence.Type.unavailable)
+                .build();
             offlinePresence.setTo(transport.getXMPPServiceDomain());
 
             try
@@ -125,7 +133,9 @@ public class GatewayButton extends JPanel implements GatewayItem {
         // Create menu to sign in.
         final JMenuItem signInMenu = new JMenuItem(Res.getString("menuitem.sign.in"));
         signInMenu.addActionListener( actionEvent -> {
-            final Presence onlinePresence = new Presence(Presence.Type.available);
+            final Presence onlinePresence = StanzaBuilder.buildPresence()
+                .ofType(Presence.Type.available)
+                .build();
             onlinePresence.setTo(transport.getXMPPServiceDomain());
             try
             {
