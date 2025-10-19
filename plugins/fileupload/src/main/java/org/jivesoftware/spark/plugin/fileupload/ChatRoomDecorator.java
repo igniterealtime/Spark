@@ -26,13 +26,14 @@ import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Message;
+import org.jivesoftware.smack.packet.MessageBuilder;
+import org.jivesoftware.smack.packet.StanzaBuilder;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.updater.AcceptAllCertsConnectionManager;
-import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.impl.JidCreate;
 
 import javax.swing.*;
@@ -161,10 +162,10 @@ public class ChatRoomDecorator
 
     private void broadcastUploadUrl(String url, Message.Type type)
     {
-        Message message2 = new Message();
-        message2.setType(type);
-        message2.setBody(url);
-        room.sendMessage(message2);
+        MessageBuilder messageBuilder = StanzaBuilder.buildMessage()
+            .ofType(type)
+            .setBody(url);
+        room.sendMessage(messageBuilder);
     }
 
 }

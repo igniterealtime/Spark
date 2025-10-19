@@ -63,8 +63,9 @@ import org.jivesoftware.smack.*;
 import org.jivesoftware.smack.filter.AndFilter;
 import org.jivesoftware.smack.filter.FromMatchesFilter;
 import org.jivesoftware.smack.filter.StanzaTypeFilter;
-import org.jivesoftware.smack.packet.Message;
+import org.jivesoftware.smack.packet.MessageBuilder;
 import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smack.packet.StanzaBuilder;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.bytestreams.ibb.InBandBytestreamManager;
 import org.jivesoftware.smackx.filetransfer.FileTransferManager;
@@ -481,9 +482,9 @@ public class SparkTransferManager {
                     }
 
                     if (room != null) {
-                        Message message = new Message();
-                        message.setBody(Res.getString("message.sent.offline.files"));
-                        room.sendMessage(message);
+                        MessageBuilder messageBuilder = StanzaBuilder.buildMessage()
+                            .setBody(Res.getString("message.sent.offline.files"));
+                        room.sendMessage(messageBuilder);
                     }
                 }
 

@@ -27,6 +27,7 @@ import org.jivesoftware.smack.filter.FromMatchesFilter;
 import org.jivesoftware.smack.filter.StanzaTypeFilter;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smack.packet.StanzaBuilder;
 import org.jivesoftware.smackx.muc.MultiUserChatManager;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
@@ -1140,7 +1141,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
                     fromNickName = mucNickName[1];
                 }
             } else {
-                lastChatMessage = new Message();
+                lastChatMessage = StanzaBuilder.buildMessage().build();
             }
             String myNickName = chatRoom.getNickname().toString();
             if (!myNickName.equals(fromNickName)) {

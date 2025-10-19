@@ -32,7 +32,9 @@ import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Message;
+import org.jivesoftware.smack.packet.MessageBuilder;
 import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smack.packet.StanzaBuilder;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.workgroup.MetaData;
 import org.jivesoftware.smackx.workgroup.agent.*;
@@ -275,10 +277,10 @@ public class Workpane {
         Properties props = FastpathPlugin.getLitWorkspace().getWorkgroupProperties();
         String initialResponse = props.getProperty(INITIAL_RESPONSE_PROPERTY);
         if (ModelUtil.hasLength(initialResponse)) {
-            Message message = new Message();
-            message.setBody(initialResponse);
+            MessageBuilder messageBuilder = StanzaBuilder.buildMessage()
+                .setBody(initialResponse);
             GroupChatRoom groupChatRoom = (GroupChatRoom)room;
-            groupChatRoom.sendMessage(message);
+            groupChatRoom.sendMessage(messageBuilder);
         }
     }
 
