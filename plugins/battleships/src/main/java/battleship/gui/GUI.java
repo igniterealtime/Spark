@@ -25,6 +25,7 @@ import org.jivesoftware.smack.StanzaListener;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.filter.PacketExtensionFilter;
 import org.jivesoftware.smack.packet.Message;
+import org.jivesoftware.smack.packet.StanzaBuilder;
 import org.jivesoftware.smack.packet.Stanza;
 
 import battleship.listener.ShipPlacementListener;
@@ -108,7 +109,7 @@ public class GUI extends JPanel implements Observer{
     
     private Message createAnswer(MovePacket incoming, String from)
     {
-	Message answer = new Message();
+        Message answer = StanzaBuilder.buildMessage().build();
 	answer.setTo(from);
 	
 	MoveAnswerPacket map = new MoveAnswerPacket();

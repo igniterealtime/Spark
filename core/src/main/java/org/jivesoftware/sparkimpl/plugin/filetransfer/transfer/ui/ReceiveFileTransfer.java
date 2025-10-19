@@ -53,6 +53,8 @@ import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.packet.Message;
+import org.jivesoftware.smack.packet.MessageBuilder;
+import org.jivesoftware.smack.packet.StanzaBuilder;
 import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smackx.filetransfer.FileTransfer;
 import org.jivesoftware.smackx.filetransfer.FileTransferNegotiator;
@@ -629,8 +631,9 @@ public class ReceiveFileTransfer extends JPanel {
      * @param eventText Contains file transfer event text
      */
     private void saveEventToHistory(BareJid bareJID, String eventText) {
-        Message message = new Message();
-        message.setBody(eventText);
+        MessageBuilder messageBuilder = StanzaBuilder.buildMessage()
+            .setBody(eventText);
+        Message message = messageBuilder.build();
         message.setTo(bareJID);
         message.setFrom(SparkManager.getSessionManager().getJID());
         chatRoom.addToTranscript(message, false);
