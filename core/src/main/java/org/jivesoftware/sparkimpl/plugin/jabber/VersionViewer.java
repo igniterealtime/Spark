@@ -33,6 +33,7 @@ import javax.swing.*;
 
 import java.awt.*;
 import java.text.SimpleDateFormat;
+import java.time.ZonedDateTime;
 
 public class VersionViewer {
 
@@ -94,8 +95,9 @@ public class VersionViewer {
 
         final XMPPConnection connection = SparkManager.getConnection();
         // Load Version
-        final Version versionRequest = new Version();
-        versionRequest.setType(IQ.Type.get);
+        final Version versionRequest = Version.builder(connection)
+            .ofType(IQ.Type.get)
+            .build();
         versionRequest.setTo(jid);
 
         connection.sendIqRequestAsync(versionRequest)
@@ -112,8 +114,10 @@ public class VersionViewer {
             });
 
         // Time
-        final Time time = new Time();
-        time.setType(IQ.Type.get);
+        final Time time = Time.builder(connection)
+            .ofType(IQ.Type.get)
+            .set(ZonedDateTime.now())
+            .build();
         time.setTo(jid);
 
         connection.sendIqRequestAsync(time)
