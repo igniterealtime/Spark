@@ -145,7 +145,7 @@ public class ReversiPanel extends JPanel {
      */
     public void sendForfeit() throws SmackException.NotConnectedException
     {
-        ExtensionElement forfeit = StandardExtensionElement.builder(GameForfeit.ELEMENT_NAME, GameForfeit.NAMESPACE)
+        StandardExtensionElement forfeit = StandardExtensionElement.builder(GameForfeit.ELEMENT_NAME, GameForfeit.NAMESPACE)
                 .addElement("gameID", Integer.toString(gameID))
                 .build();
         Message message = connection.getStanzaFactory()
