@@ -23,6 +23,7 @@ import net.suuft.libretranslate.Language;
 import net.suuft.libretranslate.Translator;
 import org.apache.commons.lang3.StringUtils;
 import org.jivesoftware.smack.packet.Message;
+import org.jivesoftware.smack.packet.MessageBuilder;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.Plugin;
@@ -77,14 +78,14 @@ public class TranslatorPlugin implements Plugin {
                     // do the translation for outgoing messages.
                     final MessageFilter messageFilter = new MessageFilter() {
                         @Override
-                        public void filterOutgoing(ChatRoom room, Message message) {
-                            String currentBody = message.getBody();
+                        public void filterOutgoing(ChatRoom room, MessageBuilder messageBuilder) {
+                            String currentBody = messageBuilder.getBody();
                             Language lang = (Language) translatorBox.getSelectedItem();
                             if (lang != null && lang != Language.NONE) {
                                 try {
                                     currentBody = TranslatorUtil.translate(currentBody, lang);
                                     transcriptWindow.insertNotificationMessage("-> "+currentBody, Color.gray);
-                                    message.setBody(currentBody);
+                                    messageBuilder.setBody(currentBody);
                                 } catch (Exception e){
                                     transcriptWindow.insertNotificationMessage(TranslatorResource.getString("translator.error"), ChatManager.ERROR_COLOR);
                                 }
