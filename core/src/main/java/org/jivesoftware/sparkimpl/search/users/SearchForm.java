@@ -130,8 +130,7 @@ public class SearchForm extends JPanel {
             @Override
 			public Object construct() {
                 try {
-                    DataForm answerForm = questionForm.getFilledForm();
-                    data = searchManager.getSearchResults(answerForm, serviceName);
+                    data = searchManager.sendSimpleSearchForm(questionForm.getFilledForm(), serviceName);
                 }
                 catch (XMPPException | SmackException | InterruptedException e) {
                     Log.error("Unable to load search service.", e);
