@@ -24,6 +24,7 @@ import org.jivesoftware.smack.*;
 import org.jivesoftware.smack.XMPPException.XMPPErrorException;
 import org.jivesoftware.smack.filter.StanzaTypeFilter;
 import org.jivesoftware.smack.packet.Message;
+import org.jivesoftware.smack.packet.MessageBuilder;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.packet.StanzaBuilder;
 import org.jivesoftware.smack.packet.StanzaError;
@@ -1723,12 +1724,14 @@ public class ContactList extends JPanel implements ActionListener,
         StringBuilder buf = new StringBuilder();
         final Map<String, Message> broadcastMessages = new HashMap<>();
         for (ContactItem item : items) {
-            final Message message = new Message();
-            message.setTo(item.getJid());
+            MessageBuilder messageBuilder = StanzaBuilder.buildMessage();
             final Map<String, Object> properties = new HashMap<>();
             properties.put("broadcast", true);
-            message.addExtension(new JivePropertiesExtension(properties));
-            message.setBody(messageText);
+            messageBuilder.addExtension(new JivePropertiesExtension(properties));
+            messageBuilder.setBody(messageText);
+
+            Message message = messageBuilder.build();
+            message.setTo(item.getJid());
             if (broadcastMessages.putIfAbsent(item.getJid().toString(), message) == null) {
                 buf.append(item.getDisplayName()).append('\n');
             }

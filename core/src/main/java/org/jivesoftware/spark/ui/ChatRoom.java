@@ -21,6 +21,8 @@ import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.StanzaListener;
 import org.jivesoftware.smack.packet.Message;
+import org.jivesoftware.smack.packet.MessageBuilder;
+import org.jivesoftware.smack.packet.StanzaBuilder;
 import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.roster.RosterEntry;
 import org.jivesoftware.smackx.chatstates.ChatState;
@@ -502,9 +504,9 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
     /**
      * Sends the current message.
      *
-     * @param message - the message to send.
+     * @param messageBuilder - the message to send.
      */
-    public abstract void sendMessage(Message message);
+    public abstract void sendMessage(MessageBuilder messageBuilder);
 
     /**
      * Returns the nickname of the current agent as specified in Chat
@@ -547,11 +549,11 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
      */
     public void addToTranscript(Message message, boolean updateDate) {
         // Create message to persist.
-        final Message newMessage = new Message(message);
         final Map<String, Object> properties = new HashMap<>();
         properties.put("date", new Date());
-        newMessage.addExtension(new JivePropertiesExtension(properties));
-
+        Message newMessage = StanzaBuilder.buildMessage()
+            .addExtension(new JivePropertiesExtension(properties))
+            .build();
         transcript.add(newMessage);
 
         // Add current date if this is the current agent
