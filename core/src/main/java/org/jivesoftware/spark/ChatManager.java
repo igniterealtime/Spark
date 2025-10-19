@@ -20,6 +20,7 @@ import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.chat2.Chat;
 import org.jivesoftware.smack.packet.Message;
+import org.jivesoftware.smack.packet.MessageBuilder;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smackx.chatstates.ChatState;
 import org.jivesoftware.smackx.chatstates.ChatStateListener;
@@ -470,19 +471,19 @@ public class ChatManager {
      * Notifies all <code>MessageFilter</code>s about a new outgoing message.
      *
      * @param room    the <code>ChatRoom</code> the message belongs too.
-     * @param message the <code>Message</code> being sent.
+     * @param messageBuilder the <code>Message</code> being sent.
      */
-    public void filterOutgoingMessage( ChatRoom room, Message message )
+    public void filterOutgoingMessage(ChatRoom room, MessageBuilder messageBuilder )
     {
         for ( final MessageFilter filter : messageFilters )
         {
             try
             {
-                filter.filterOutgoing( room, message );
+                filter.filterOutgoing( room, messageBuilder );
             }
             catch ( Exception e )
             {
-                Log.error( "A MessageFilter ('" + filter + "') threw an exception while processing an outgoing chat message (from '" + message.getFrom() + "') in a chat room ('" + room + "').", e );
+                Log.error( "A MessageFilter ('" + filter + "') threw an exception while processing an outgoing chat message (from '" + messageBuilder.getFrom() + "') in a chat room ('" + room + "').", e );
             }
         }
     }
