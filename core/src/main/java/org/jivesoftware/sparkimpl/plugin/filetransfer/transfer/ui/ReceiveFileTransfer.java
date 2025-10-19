@@ -185,7 +185,7 @@ public class ReceiveFileTransfer extends JPanel {
         ContactItem contactItem = contactList.getContactItemByJID(bareJID);
         nickname = contactItem.getDisplayName();
 
-        saveEventToHistory(Res.getString("message.file.transfer.history.request.received", fileName, fileSizeString, nickname));
+        saveEventToHistory(bareJID, Res.getString("message.file.transfer.history.request.received", fileName, fileSizeString, nickname));
         titleLabel.setText(Res.getString("message.user.is.sending.you.a.file", nickname));
 
         File tempFile = new File(Spark.getSparkUserHome(), "/tmp");
@@ -230,13 +230,15 @@ public class ReceiveFileTransfer extends JPanel {
     }
 
     private void doAccept(FileTransferRequest request) {
-        saveEventToHistory(Res.getString("message.file.transfer.history.you.accepted", fileName, nickname));
+        Jid requestor = request.getRequestor();
+        BareJid bareJID = requestor.asBareJid();
+        saveEventToHistory(bareJID, Res.getString("message.file.transfer.history.you.accepted", fileName, nickname));
         try {
             Downloads.checkDownloadDirectory();
             acceptRequest(request);
         } catch (Exception ex) {
             // this means there is a problem with the download directory
-            saveEventToHistory(Res.getString("message.file.transfer.history.receive.failed", fileName, nickname));
+            saveEventToHistory(bareJID, Res.getString("message.file.transfer.history.receive.failed", fileName, nickname));
             try {
                 request.reject();
             } catch (SmackException.NotConnectedException | InterruptedException e1) {
@@ -276,7 +278,9 @@ public class ReceiveFileTransfer extends JPanel {
     }
 
     private void doReject(FileTransferRequest request) {
-        saveEventToHistory(Res.getString("message.file.transfer.history.you.rejected", fileName, nickname));
+        Jid requestor = request.getRequestor();
+        BareJid bareJID = requestor.asBareJid();
+        saveEventToHistory(bareJID, Res.getString("message.file.transfer.history.you.rejected", fileName, nickname));
         rejectRequest(request);
     }
 
@@ -428,8 +432,10 @@ public class ReceiveFileTransfer extends JPanel {
 
     private void updateOnFinished(final FileTransferRequest request,
                                   final File downloadedFile) {
+        Jid requestor = request.getRequestor();
+        BareJid bareJID = requestor.asBareJid();
         if (transfer.getAmountWritten() >= request.getFileSize()) {
-            transferDone(request.getRequestor().asBareJid(), downloadedFile);
+            transferDone(bareJID, downloadedFile);
 
             imageLabel.setFile(downloadedFile);
             imageLabel.setToolTipText(Res.getString("message.click.to.open"));
@@ -490,16 +496,16 @@ public class ReceiveFileTransfer extends JPanel {
                 Log.error("There was an error during file transfer.", transfer.getException());
             }
             transferMessage = Res.getString("message.error.during.file.transfer");
-            saveEventToHistory(Res.getString("message.file.transfer.history.receive.failed", fileName, nickname));
+            saveEventToHistory(bareJID, Res.getString("message.file.transfer.history.receive.failed", fileName, nickname));
         } else if (transfer.getStatus() == FileTransfer.Status.refused) {
             transferMessage = Res.getString("message.transfer.refused");
         } else if (transfer.getStatus() == FileTransfer.Status.cancelled ||
             transfer.getAmountWritten() < request.getFileSize()) {
             transferMessage = Res.getString("message.transfer.cancelled");
-            saveEventToHistory(Res.getString("message.file.transfer.history.receive.canceled", fileName, nickname));
+            saveEventToHistory(bareJID, Res.getString("message.file.transfer.history.receive.canceled", fileName, nickname));
         } else if (transfer.getAmountWritten() >= request.getFileSize()) {
             transferMessage = Res.getString("message.transfer.complete", downloadedFile.getName()); // TODO this overwrites the message that was set by transferDone
-            saveEventToHistory(Res.getString("message.file.transfer.history.receive.success", fileName, nickname));
+            saveEventToHistory(bareJID, Res.getString("message.file.transfer.history.receive.success", fileName, nickname));
         }
 
         setFinishedText(transferMessage);
@@ -619,19 +625,16 @@ public class ReceiveFileTransfer extends JPanel {
 
     /***
      * Adds an event text as a message to transcript and saves it to history
+     * @param bareJID requestor JID
      * @param eventText Contains file transfer event text
      */
-    private void saveEventToHistory(String eventText) {
-        try {
-            Message message = new Message();
-            message.setBody(eventText);
-            message.setTo(nickname);
-            message.setFrom(SparkManager.getSessionManager().getJID());
-            chatRoom.addToTranscript(message, false);
-            SparkManager.getWorkspace().getTranscriptPlugin().persistChatRoom(chatRoom);
-        } catch (XmppStringprepException e) {
-            e.printStackTrace();
-        }
+    private void saveEventToHistory(BareJid bareJID, String eventText) {
+        Message message = new Message();
+        message.setBody(eventText);
+        message.setTo(bareJID);
+        message.setFrom(SparkManager.getSessionManager().getJID());
+        chatRoom.addToTranscript(message, false);
+        SparkManager.getWorkspace().getTranscriptPlugin().persistChatRoom(chatRoom);
     }
 
     private static class TransferButton extends JButton {
