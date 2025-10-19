@@ -57,6 +57,7 @@ import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+import org.jxmpp.jid.BareJid;
 import org.jxmpp.jid.EntityFullJid;
 import org.jxmpp.stringprep.XmppStringprepException;
 
@@ -135,6 +136,7 @@ public class SendFileTransfer extends JPanel {
         retryButton.setVisible(false);
         this.fullJID = jid;
         this.nickname = nickname;
+        final BareJid bareJid = jid.asBareJid();
 
         this.transfer = transfer;
         String fileName = transfer.getFileName();
@@ -151,7 +153,7 @@ public class SendFileTransfer extends JPanel {
         ContactList contactList = SparkManager.getWorkspace().getContactList();
         ContactItem contactItem = contactList.getContactItemByJID(jid);
 
-        saveEventToHistory(Res.getString("message.file.transfer.history.request.sent", filePath, fileSizeString, nickname));
+        saveEventToHistory(bareJid, Res.getString("message.file.transfer.history.request.sent", filePath, fileSizeString, nickname));
         titleLabel.setText(Res.getString("message.transfer.waiting.on.user", contactItem.getDisplayName()));
 
         if (isImage(fileName)) {
@@ -208,16 +210,16 @@ public class SendFileTransfer extends JPanel {
                         Thread.sleep(500);
                         FileTransfer.Status status = transfer.getStatus();
                         if (status == Status.complete) {
-                            saveEventToHistory(Res.getString("message.file.transfer.history.send.complete", filePath, nickname));
+                            saveEventToHistory(bareJid, Res.getString("message.file.transfer.history.send.complete", filePath, nickname));
                             break;
                         } else if (status == Status.error) {
-                            saveEventToHistory(Res.getString("message.file.transfer.history.send.error", filePath, nickname));
+                            saveEventToHistory(bareJid, Res.getString("message.file.transfer.history.send.error", filePath, nickname));
                             break;
                         } else if (status == Status.cancelled) {
-                            saveEventToHistory(Res.getString("message.file.transfer.history.send.canceled", filePath, nickname));
+                            saveEventToHistory(bareJid, Res.getString("message.file.transfer.history.send.canceled", filePath, nickname));
                             break;
                         } else if (status == Status.refused) {
-                            saveEventToHistory(Res.getString("message.file.transfer.history.contact.rejected", filePath, nickname));
+                            saveEventToHistory(bareJid, Res.getString("message.file.transfer.history.contact.rejected", filePath, nickname));
                             break;
                         }
                         long endTime = System.currentTimeMillis();
@@ -345,19 +347,16 @@ public class SendFileTransfer extends JPanel {
 
     /***
      * Adds an event text as a message to transcript and saves it to history
+     * @param bareJid receiver JID
      * @param eventText Contains file transfer event text
      */
-    private void saveEventToHistory(String eventText) {
-        try {
-            Message message = new Message();
-            message.setBody(eventText);
-            message.setTo(nickname);
-            message.setFrom(SparkManager.getSessionManager().getJID());
-            chatRoom.addToTranscript(message, false);
-            SparkManager.getWorkspace().getTranscriptPlugin().persistChatRoom(chatRoom);
-        } catch (XmppStringprepException e) {
-            e.printStackTrace();
-        }
+    private void saveEventToHistory(BareJid bareJid, String eventText) {
+        Message message = new Message();
+        message.setBody(eventText);
+        message.setTo(bareJid);
+        message.setFrom(SparkManager.getSessionManager().getJID());
+        chatRoom.addToTranscript(message, false);
+        SparkManager.getWorkspace().getTranscriptPlugin().persistChatRoom(chatRoom);
     }
 
     private static class TransferButton extends JButton {
