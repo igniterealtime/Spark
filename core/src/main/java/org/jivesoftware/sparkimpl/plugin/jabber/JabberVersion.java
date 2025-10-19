@@ -36,6 +36,7 @@ import javax.swing.*;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
+import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.Date;
 
@@ -60,12 +61,11 @@ public class JabberVersion implements Plugin {
             try
             {
                 if (iq instanceof Time && iq.getType() == IQ.Type.get) {
-                    Time time = new Time();
-                    time.setStanzaId(iq.getStanzaId());
+                    Time time = Time.builder(iq.getStanzaId())
+                        .ofType(IQ.Type.result)
+                        .set(ZonedDateTime.now()).build();
                     time.setFrom(iq.getTo());
                     time.setTo(iq.getFrom());
-                    time.setTime(new Date());
-                    time.setType(IQ.Type.result);
 
                     // Send Time
                     SparkManager.getConnection().sendStanza(time);
