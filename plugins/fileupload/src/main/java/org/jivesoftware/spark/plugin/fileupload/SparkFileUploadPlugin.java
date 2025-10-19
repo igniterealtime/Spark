@@ -55,7 +55,6 @@ public class SparkFileUploadPlugin implements Plugin, ChatRoomListener, GlobalMe
 
     @Override
     public void messageSent(ChatRoom room, Message message) {
-
     }
 
     public void shutdown()
@@ -63,12 +62,10 @@ public class SparkFileUploadPlugin implements Plugin, ChatRoomListener, GlobalMe
         try
         {
             Log.debug("shutdown");
-
             chatManager.removeChatRoomListener(this);
             chatManager.removeGlobalMessageListener(this);
 
             ProviderManager.removeIQProvider("slot", UploadRequest.NAMESPACE);
-
         }
         catch(Exception e)
         {
@@ -83,20 +80,16 @@ public class SparkFileUploadPlugin implements Plugin, ChatRoomListener, GlobalMe
 
     public void uninstall()
     {
-
     }
 
     public void chatRoomLeft(ChatRoom chatroom)
     {
-
     }
 
     public void chatRoomClosed(ChatRoom chatroom)
     {
         EntityJid roomId = chatroom.getJid();
-
         Log.debug("chatRoomClosed:  " + roomId);
-
         if (decorators.containsKey(roomId))
         {
             ChatRoomDecorator decorator = decorators.remove(roomId);
@@ -107,30 +100,25 @@ public class SparkFileUploadPlugin implements Plugin, ChatRoomListener, GlobalMe
     public void chatRoomActivated(ChatRoom chatroom)
     {
         EntityJid roomId = chatroom.getJid();
-
         Log.debug("chatRoomActivated:  " + roomId);
     }
 
     public void userHasJoined(ChatRoom room, String s)
     {
         EntityJid roomId = room.getJid();
-
         Log.debug("userHasJoined:  " + roomId + " " + s);
     }
 
     public void userHasLeft(ChatRoom room, String s)
     {
         EntityJid roomId = room.getJid();
-
         Log.debug("userHasLeft:  " + roomId + " " + s);
     }
 
     public void chatRoomOpened(final ChatRoom room)
     {
         EntityJid roomId = room.getJid();
-
         Log.debug("chatRoomOpened:  " + roomId);
-
         if (!decorators.containsKey(roomId))
         {
             decorators.put(roomId, new ChatRoomDecorator(room));
