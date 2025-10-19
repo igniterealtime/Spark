@@ -545,10 +545,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
      */
     public void addToTranscript(Message message, boolean updateDate) {
         // Create message to persist.
-        final Message newMessage = new Message();
-        newMessage.setTo(message.getTo());
-        newMessage.setFrom(message.getFrom());
-        newMessage.setBody(message.getBody());
+        final Message newMessage = new Message(message);
         final Map<String, Object> properties = new HashMap<>();
         properties.put("date", new Date());
         newMessage.addExtension(new JivePropertiesExtension(properties));
