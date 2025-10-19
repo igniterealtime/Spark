@@ -27,6 +27,7 @@ import org.jivesoftware.MainWindow;
 import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smack.packet.StanzaBuilder;
 import org.jivesoftware.spark.NativeHandler;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.Workspace;
@@ -244,13 +245,16 @@ public class ApplePlugin implements Plugin, NativeHandler {
 		    unavailable = true;
 		    StatusItem away = workspace.getStatusBar().getStatusItem("Away");
 		    Presence p = away.getPresence();
-		    p.setStatus(Res.getString("message.away.idle"));
-
 		    previousPriority = presence.getPriority();
 
-		    p.setPriority(0);
+            Presence newPresence = StanzaBuilder.buildPresence()
+                .ofType(p.getType())
+                .setStatus(Res.getString("message.away.idle"))
+                .setPriority(0)
+                .setMode(p.getMode())
+                .build();
 
-		    SparkManager.getSessionManager().changePresence(p);
+		    SparkManager.getSessionManager().changePresence(newPresence);
 		}
 	    }
 	} catch (Exception e) {
@@ -272,11 +276,15 @@ public class ApplePlugin implements Plugin, NativeHandler {
 	if (workspace != null) {
 	    Presence presence = workspace.getStatusBar().getStatusItem(Res.getString("available"))
 		    .getPresence();
-	    if (previousPriority != -1) {
-		presence.setPriority(previousPriority);
-	    }
 
-	    SparkManager.getSessionManager().changePresence(presence);
+        Presence newPresence = StanzaBuilder.buildPresence()
+            .ofType(presence.getType())
+            .setStatus(presence.getStatus())
+            .setPriority(previousPriority != -1 ? previousPriority : presence.getPriority())
+            .setMode(presence.getMode())
+            .build();
+
+        SparkManager.getSessionManager().changePresence(newPresence);
 	    unavailable = false;
 	    lastActive = System.currentTimeMillis();
 	}
