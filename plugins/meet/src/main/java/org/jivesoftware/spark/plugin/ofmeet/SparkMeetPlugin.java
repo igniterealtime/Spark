@@ -479,7 +479,6 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
     private void sendInvite(ChatRoom room, String url, Message.Type type)
     {
         Message message2 = new Message();
-        message2.setTo(room.getBareJid());
         message2.setType(type);
         message2.setBody(url);
         room.sendMessage(message2);
