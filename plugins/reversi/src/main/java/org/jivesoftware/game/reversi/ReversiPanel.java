@@ -30,6 +30,7 @@ import org.jivesoftware.smack.filter.StanzaExtensionFilter;
 import org.jivesoftware.smack.packet.ExtensionElement;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.StandardExtensionElement;
+import org.jivesoftware.smack.packet.StanzaBuilder;
 import org.jivesoftware.spark.util.log.Log;
 import org.jxmpp.jid.Jid;
 
@@ -339,11 +340,13 @@ public class ReversiPanel extends JPanel {
                 reversi.makeMove(block.getIndex());
 
                 // Send the move to the other player.
-                Message message = new Message(opponentJID);
                 GameMove move = new GameMove();
                 move.setGameID(gameID);
                 move.setPosition(block.getIndex());
-                message.addExtension(move);
+                Message message = StanzaBuilder.buildMessage()
+                    .addExtension(move)
+                    .build();
+                message.setTo(opponentJID);
                 try
                 {
                     connection.sendStanza(message);

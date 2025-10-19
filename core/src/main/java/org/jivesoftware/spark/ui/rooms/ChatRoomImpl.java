@@ -254,23 +254,23 @@ public class ChatRoomImpl extends ChatRoom {
 
     @Override
 	public void sendMessage(String text) {
-        final Message message = new Message();
+        MessageBuilder messageBuilder = StanzaBuilder.buildMessage();
 
         if (threadID == null) {
             threadID = StringUtils.randomString(6);
         }
-        message.setThread(threadID);
+        messageBuilder.setThread(threadID);
 
         if ( privateChat )
         {
             // XEP-0045: 7.5 Sending a Private Message
-            message.addExtension( new MUCUser() );
+            messageBuilder.addExtension( new MUCUser() );
         }
 
         // Set the body of the message using typedMessage and remove control
         // characters
         text = text.replaceAll("[\\u0001-\\u0008\\u000B-\\u001F]", "");
-        message.setBody(text);
+        messageBuilder.setBody(text);
         
         // IF there is no body, just return and do nothing
         if (!ModelUtil.hasLength(text)) {
@@ -278,25 +278,29 @@ public class ChatRoomImpl extends ChatRoom {
         }
 
         // Fire Message Filters
-        SparkManager.getChatManager().filterOutgoingMessage(this, message);
+        SparkManager.getChatManager().filterOutgoingMessage(this, messageBuilder);
 
         // Fire Global Filters
+        Message message = messageBuilder.build();
         SparkManager.getChatManager().fireGlobalMessageSentListeners(this, message);
 
-        sendMessage(message);          	    	
+        sendMessage(messageBuilder);
     }
 
     /**
      * Sends a message to the appropriate jid. The message is automatically added to the transcript.
      *
-     * @param message the message to send.
+     * @param messageBuilder the message to send.
      */
     @Override
-	public void sendMessage(Message message) {
+	public void sendMessage(MessageBuilder messageBuilder) {
         //Before sending message, let's add our full jid for full verification
         //Set message attributes before insertMessage is called - this is useful when transcript window is extended
         //more information will be available to be displayed for the chat area Document
-        message.setType(Message.Type.chat);
+        messageBuilder.ofType(Message.Type.chat);
+        // Set chat state to 'active'
+        messageBuilder.addExtension( new ChatStateExtension( ChatState.active ) );
+        Message message = messageBuilder.build();
         message.setTo(participantJID);
         message.setFrom(SparkManager.getSessionManager().getJID());
 
@@ -305,9 +309,6 @@ public class ChatRoomImpl extends ChatRoom {
         // No need to request displayed or delivered as we aren't doing anything with this
         // information.
         MessageEventManager.addNotificationsRequests(message, true, false, false, true);
-
-        // Set chat state to 'active'
-        message.addExtension( new ChatStateExtension( ChatState.active ) );
 
         // Send the message that contains the notifications request
         try {
@@ -615,7 +616,7 @@ public class ChatRoomImpl extends ChatRoom {
     private void checkEvents(Jid from, String packetID, MessageEvent messageEvent) {
         if (messageEvent.isDelivered() || messageEvent.isDisplayed()) {
             // Create the message to send
-            Message msg = new Message(from);
+            MessageBuilder messageBuilder = StanzaBuilder.buildMessage();
             // Create a MessageEvent Package and add it to the message
             MessageEvent event = new MessageEvent();
             if (messageEvent.isDelivered()) {
@@ -625,7 +626,10 @@ public class ChatRoomImpl extends ChatRoom {
                 event.setDisplayed(true);
             }
             event.setStanzaId(packetID);
-            msg.addExtension(event);
+            messageBuilder.addExtension(event);
+
+            Message msg = messageBuilder.build();
+            msg.setFrom(from);
             // Send the packet
             try
             {
@@ -881,17 +885,18 @@ public class ChatRoomImpl extends ChatRoom {
             return;
         }
 
-        final Message message = new Message();
-        message.setType( Message.Type.chat );
-        message.setTo( participantJID );
-        message.setFrom( SparkManager.getSessionManager().getJID());
+        MessageBuilder messageBuilder = StanzaBuilder.buildMessage()
+            .ofType( Message.Type.chat );
 
         if (threadID == null) {
             threadID = StringUtils.randomString(6);
         }
-        message.setThread(threadID);
-        message.addExtension( new ChatStateExtension( state ) );
+        messageBuilder.setThread(threadID);
+        messageBuilder.addExtension( new ChatStateExtension( state ) );
 
+        Message message = messageBuilder.build();
+        message.setTo( participantJID );
+        message.setFrom( SparkManager.getSessionManager().getJID());
         SparkManager.getConnection().sendStanza( message );
     }
 }

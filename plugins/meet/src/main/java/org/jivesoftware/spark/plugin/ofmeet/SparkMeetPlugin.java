@@ -27,6 +27,8 @@ import java.lang.reflect.*;
 
 
 import org.jivesoftware.Spark;
+import org.jivesoftware.smack.packet.MessageBuilder;
+import org.jivesoftware.smack.packet.StanzaBuilder;
 import org.jivesoftware.spark.*;
 
 import org.jivesoftware.smack.packet.Message;
@@ -478,9 +480,9 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
 
     private void sendInvite(ChatRoom room, String url, Message.Type type)
     {
-        Message message2 = new Message();
-        message2.setType(type);
-        message2.setBody(url);
-        room.sendMessage(message2);
+        MessageBuilder messageBuilder = StanzaBuilder.buildMessage()
+            .ofType(type)
+            .setBody(url);
+        room.sendMessage(messageBuilder);
     }
 }

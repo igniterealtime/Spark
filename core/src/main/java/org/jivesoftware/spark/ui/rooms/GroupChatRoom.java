@@ -23,8 +23,10 @@ import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.filter.*;
 import org.jivesoftware.smack.packet.Message;
+import org.jivesoftware.smack.packet.MessageBuilder;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.packet.Stanza;
+import org.jivesoftware.smack.packet.StanzaBuilder;
 import org.jivesoftware.smack.packet.StanzaError;
 import org.jivesoftware.smackx.chatstates.ChatState;
 import org.jivesoftware.smackx.delay.packet.DelayInformation;
@@ -401,22 +403,23 @@ public class GroupChatRoom extends ChatRoom
     /**
      * Sends a message.
      *
-     * @param message - the message to send.
+     * @param messageBuilder - the message to send.
      */
     @Override
-    public void sendMessage( Message message )
+    public void sendMessage( MessageBuilder messageBuilder )
     {
+        messageBuilder.ofType( Message.Type.groupchat );
+        Message message = messageBuilder.build();
         message.setTo( chat.getRoom() );
-        message.setType( Message.Type.groupchat );
         try
         {
             MessageEventManager.addNotificationsRequests( message, true, true, true, true );
             addPacketID( message.getStanzaId() );
 
-            SparkManager.getChatManager().filterOutgoingMessage( this, message );
+            SparkManager.getChatManager().filterOutgoingMessage( this, messageBuilder );
             SparkManager.getChatManager().fireGlobalMessageSentListeners( this, message );
 
-            chat.sendMessage( message );
+            chat.sendMessage( messageBuilder );
         }
         catch ( SmackException | InterruptedException ex )
         {
@@ -1019,10 +1022,10 @@ public class GroupChatRoom extends ChatRoom
         // Set the body of the message using typedMessage and remove control characters
         text = text.replaceAll("[\\u0001-\\u0008\\u000B-\\u001F]", "");
         // Set the body of the message using typedMessage and remove control characters
-        final Message message = new Message();
-        message.setBody( text );
+        MessageBuilder messageBuilder = StanzaBuilder.buildMessage()
+            .setBody( text );
 
-        sendMessage( message );
+        sendMessage( messageBuilder );
     }
 
     /**

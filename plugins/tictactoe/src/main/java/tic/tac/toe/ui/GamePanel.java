@@ -24,6 +24,8 @@ import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.filter.StanzaExtensionFilter;
 import org.jivesoftware.smack.packet.Message;
+import org.jivesoftware.smack.packet.StanzaBuilder;
+import org.jivesoftware.smackx.jiveproperties.packet.JivePropertiesExtension;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ShakeWindow;
@@ -95,8 +97,10 @@ public class GamePanel extends JPanel {
                     inval.setGameID(move.getGameID());
                     inval.setPositionX(move.getPositionX());
                     inval.setPositionY(move.getPositionY());
-                    Message message = new Message(_opponent);
-                    message.addExtension(inval);
+                    Message message = StanzaBuilder.buildMessage()
+                        .addExtension(inval)
+                        .build();
+                    message.setTo(_opponent);
                     _connection.sendStanza(message);
 
                     ChatRoom cr = SparkManager.getChatManager().getChatRoom(_opponent.asEntityBareJid());
@@ -145,9 +149,10 @@ public class GamePanel extends JPanel {
 	    move.setPositionX(x);
 	    move.setPositionY(y);
 
-	    Message message = new Message(_opponent);
-	    message.addExtension(move);
-
+        Message message = StanzaBuilder.buildMessage()
+            .addExtension(move)
+            .build();
+        message.setTo(_opponent);
 		try
 		{
 			_connection.sendStanza(message);

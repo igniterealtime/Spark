@@ -17,6 +17,7 @@ package org.jivesoftware.spark.plugins.transfersettings;
 
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.packet.Message;
+import org.jivesoftware.smack.packet.StanzaBuilder;
 import org.jivesoftware.smackx.filetransfer.FileTransferRequest;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.filetransfer.FileTransferListener;
@@ -118,9 +119,10 @@ public class FileTransferSettingsPlugin implements Plugin {
                     String responseMessage = settings.getCannedRejectionMessage();
                     if ( responseMessage != null && responseMessage.length() > 0 )
                     {
-                        Message message = new Message();
+                        Message message = StanzaBuilder.buildMessage()
+                            .setBody( responseMessage )
+                            .build();
                         message.setTo( request.getRequestor() );
-                        message.setBody( responseMessage );
                         SparkManager.getConnection().sendStanza( message );
                     }
                     return true;

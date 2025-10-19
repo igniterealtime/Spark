@@ -38,7 +38,9 @@ import org.jivesoftware.smack.filter.StanzaFilter;
 import org.jivesoftware.smack.filter.StanzaTypeFilter;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Message.Type;
+import org.jivesoftware.smack.packet.MessageBuilder;
 import org.jivesoftware.smack.packet.Stanza;
+import org.jivesoftware.smack.packet.StanzaBuilder;
 import org.jivesoftware.smackx.delay.packet.DelayInformation;
 import org.jivesoftware.smackx.jiveproperties.packet.JivePropertiesExtension;
 import org.jivesoftware.spark.ChatManager;
@@ -312,8 +314,9 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
             SparkManager.getChatManager().getChatContainer().addChatRoom(chatRoom);
         }
 
-        Message m = new Message();
-        m.setBody(message.getBody());
+        MessageBuilder messageBuilder = StanzaBuilder.buildMessage()
+            .setBody(message.getBody());
+        Message m = messageBuilder.build();
         m.setTo(message.getTo());
         m.setFrom(message.getFrom());
 
