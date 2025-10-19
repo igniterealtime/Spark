@@ -141,7 +141,7 @@ public class ChatRoomDecorator
                     final String reasonPhrase = httpResponse.getReasonPhrase();
                     if ((statusCode >= 200) && (statusCode <= 202)) {
                         Log.debug("Upload file success. HTTP response: " + statusCode + " " + reasonPhrase);
-                        broadcastUploadUrl(room.getBareJid(), response.getUrl, type);
+                        broadcastUploadUrl(response.getUrl, type);
                     } else {
                         throw new IllegalStateException("Server responded to upload request with: " + statusCode + ": " + reasonPhrase);
                     }
@@ -159,10 +159,9 @@ public class ChatRoomDecorator
         }
     }
 
-    private void broadcastUploadUrl(EntityBareJid jid, String url, Message.Type type)
+    private void broadcastUploadUrl(String url, Message.Type type)
     {
         Message message2 = new Message();
-        message2.setTo(jid);
         message2.setType(type);
         message2.setBody(url);
         room.sendMessage(message2);
