@@ -25,7 +25,7 @@ import org.jivesoftware.spark.component.renderer.ListIconRenderer;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.rooms.GroupChatRoom;
 import org.jivesoftware.spark.util.log.Log;
-import org.jxmpp.jid.Jid;
+import org.jxmpp.jid.BareJid;
 import org.jxmpp.jid.impl.JidCreate;
 import org.jxmpp.stringprep.XmppStringprepException;
 
@@ -91,7 +91,7 @@ public class BannedUsers extends JPanel {
             ImageIcon icon = list.getModel().getElementAt(index);
             String jidString = icon.getDescription();
             try {
-                Jid jid = JidCreate.fromUnescaped(jidString);
+                BareJid jid = JidCreate.fromUnescaped(jidString).asBareJid();
                 chat.grantMembership(jid);
             }
             catch (XMPPException | SmackException | XmppStringprepException | InterruptedException memEx) {
