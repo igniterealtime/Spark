@@ -495,7 +495,7 @@ public class RosterDialog implements ActionListener {
 		answer.setAnswer("Username", true);
 		answer.setAnswer("search", byname);
 
-		data = usersearchManager.getSearchResults(answer.getDataFormToSubmit(), search);
+		data = usersearchManager.sendSimpleSearchForm(answer.getDataFormToSubmit(), search);
 
 		ArrayList<String> columnnames = new ArrayList<>();
 		for ( ReportedData.Column column : data.getColumns() ) {
