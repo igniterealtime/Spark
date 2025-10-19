@@ -200,7 +200,7 @@ public class UriManager {
         Roster roster = Roster.getInstanceFor(SparkManager.getConnection());
         RosterEntry userEntry = roster.getEntry(jid);
 
-        roster.createEntry(jid, name, new String[]{group});
+        roster.preApproveAndCreateEntry(jid, name, new String[]{group});
 
         RosterGroup rosterGroup = roster.getGroup(group);
         if (rosterGroup == null) {
@@ -208,7 +208,7 @@ public class UriManager {
         }
 
         if (userEntry == null) {
-            roster.createEntry(jid, name, new String[]{group});
+            roster.preApproveAndCreateEntry(jid, name, new String[]{group});
         } else {
             userEntry.setName(name);
             rosterGroup.addEntry(userEntry);

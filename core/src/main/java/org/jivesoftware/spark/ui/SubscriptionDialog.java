@@ -351,7 +351,7 @@ public class SubscriptionDialog {
 
         if (isSubscribed) {
             try {
-                roster.createEntry(jid, nickname, new String[]{group});
+                roster.preApproveAndCreateEntry(jid, nickname, new String[]{group});
             }
             catch (XMPPException | SmackException | InterruptedException e) {
                 Log.error("Unable to add new entry " + jid, e);
@@ -367,7 +367,7 @@ public class SubscriptionDialog {
             }
 
             if (userEntry == null) {
-                roster.createEntry(jid, nickname, groups);
+                roster.preApproveAndCreateEntry(jid, nickname, groups);
                 userEntry = roster.getEntry(jid);
             }
             else {
