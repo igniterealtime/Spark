@@ -402,10 +402,10 @@ public class GroupChatRoom extends ChatRoom
     @Override
     public void sendMessage( Message message )
     {
+        message.setTo( chat.getRoom() );
+        message.setType( Message.Type.groupchat );
         try
         {
-            message.setTo( chat.getRoom() );
-            message.setType( Message.Type.groupchat );
             MessageEventManager.addNotificationsRequests( message, true, true, true, true );
             addPacketID( message.getStanzaId() );
 
