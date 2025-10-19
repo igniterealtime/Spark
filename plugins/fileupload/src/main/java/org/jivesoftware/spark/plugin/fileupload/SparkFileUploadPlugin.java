@@ -47,19 +47,10 @@ public class SparkFileUploadPlugin implements Plugin, ChatRoomListener, GlobalMe
 
     @Override
     public void messageReceived(ChatRoom room, Message message) {
-
-        try {
-            String body = message.getBody();
-
-            if ( (body.startsWith("https://") || body.startsWith("http://")) && body.contains("/httpfileupload/") )
-            {
-                Log.warning("http file upload get url " + message.getBody());
-            }
-
-        } catch (Exception e) {
-            // i don't care
+        String body = message.getBody();
+        if (body != null && (body.startsWith("https://") || body.startsWith("http://")) && body.contains("/httpfileupload/")) {
+            Log.warning("http file upload get url " + message.getBody());
         }
-
     }
 
     @Override
