@@ -566,25 +566,6 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
     }
 
     /**
-     * Adds a new message to the transcript history.
-     *
-     * @param to who the message is to.
-     * @param from who the message was from.
-     * @param body the body of the message.
-     * @param date when the message was received.
-     */
-    public void addToTranscript(String to, String from, String body, Date date) {
-        final Message newMessage = new Message();
-        newMessage.setTo(JidCreate.fromOrThrowUnchecked(to));
-        newMessage.setFrom(JidCreate.fromOrThrowUnchecked(from));
-        newMessage.setBody(body);
-        final Map<String, Object> properties = new HashMap<>();
-        properties.put("date", new Date());
-        newMessage.addExtension(new JivePropertiesExtension(properties));
-        transcript.add(newMessage);
-    }
-
-    /**
      * Scrolls the chat window to the bottom.
      */
     public void scrollToBottom() {
