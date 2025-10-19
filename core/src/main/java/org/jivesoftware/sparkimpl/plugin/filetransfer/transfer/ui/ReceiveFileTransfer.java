@@ -623,7 +623,9 @@ public class ReceiveFileTransfer extends JPanel {
      */
     private void saveEventToHistory(String eventText) {
         try {
-            Message message = new Message(nickname, eventText);
+            Message message = new Message();
+            message.setBody(eventText);
+            message.setTo(nickname);
             message.setFrom(SparkManager.getSessionManager().getJID());
             chatRoom.addToTranscript(message, false);
             SparkManager.getWorkspace().getTranscriptPlugin().persistChatRoom(chatRoom);
