@@ -1125,7 +1125,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         if (isGroupChat) {
             // is a group chat, perform some functions
             String fromNickName = "";
-            Message lastChatMessage = new Message();
+            Message lastChatMessage;
             Jid mucNickNameT;
             String finalRoomName = "";
             if (size > 0) {
@@ -1138,6 +1138,8 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
                 } else {
                     fromNickName = mucNickName[1];
                 }
+            } else {
+                lastChatMessage = new Message();
             }
             String myNickName = chatRoom.getNickname().toString();
             if (!myNickName.equals(fromNickName)) {
