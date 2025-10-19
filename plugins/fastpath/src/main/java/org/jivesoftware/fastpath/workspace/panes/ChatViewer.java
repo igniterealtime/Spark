@@ -79,7 +79,7 @@ public class ChatViewer extends JPanel {
                 if (delayInformation != null) {
                     stamp = delayInformation.getStamp();
                 }
-                message.removeExtension(delayInformation);
+                message.removeExtension(delayInformation.getElementName(), delayInformation.getNamespace());
                 chatWindow.insertMessage(from, message, ChatManager.TO_COLOR);
                 final Map<String, Object> properties = new HashMap<>();
                 properties.put("date", stamp);
