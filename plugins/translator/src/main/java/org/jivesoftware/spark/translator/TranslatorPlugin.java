@@ -28,7 +28,7 @@ import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.Plugin;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ChatRoomListenerAdapter;
-import org.jivesoftware.spark.ui.MessageEventListener;
+import org.jivesoftware.spark.ui.MessageFilter;
 import org.jivesoftware.spark.ui.TranscriptWindow;
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 
@@ -75,13 +75,13 @@ public class TranslatorPlugin implements Plugin {
                     roomImpl.addChatRoomComponent(translatorBox);
 
                     // do the translation for outgoing messages.
-                    final MessageEventListener messageListener = new MessageEventListener() {
+                    final MessageFilter messageFilter = new MessageFilter() {
                         @Override
-                        public void sendingMessage(Message message) {
+                        public void filterOutgoing(ChatRoom room, Message message) {
                             String currentBody = message.getBody();
                             Language lang = (Language) translatorBox.getSelectedItem();
                             if (lang != null && lang != Language.NONE) {
-                            	message.setBody(null);
+                                message.setBody(null);
                                 try {
                                     currentBody = TranslatorUtil.translate(currentBody, lang);
                                     transcriptWindow.insertNotificationMessage("-> "+currentBody, Color.gray);
@@ -93,11 +93,11 @@ public class TranslatorPlugin implements Plugin {
                         }
 
                         @Override
-                        public void receivingMessage(Message message) {
+                        public void filterIncoming(ChatRoom room, Message message) {
                             // do nothing
                         }
                     };
-                    roomImpl.addMessageEventListener(messageListener);
+                    chatManager.addMessageFilter(messageFilter);
                 }
             }
         });
