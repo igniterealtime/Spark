@@ -81,7 +81,6 @@ public class TranslatorPlugin implements Plugin {
                             String currentBody = message.getBody();
                             Language lang = (Language) translatorBox.getSelectedItem();
                             if (lang != null && lang != Language.NONE) {
-                                message.setBody(null);
                                 try {
                                     currentBody = TranslatorUtil.translate(currentBody, lang);
                                     transcriptWindow.insertNotificationMessage("-> "+currentBody, Color.gray);
