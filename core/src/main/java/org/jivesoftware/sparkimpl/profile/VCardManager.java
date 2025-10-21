@@ -812,7 +812,7 @@ public class VCardManager {
             }
 
             VCardProvider provider = new VCardProvider();
-            vcard = provider.parse( parser );
+            vcard = provider.parse( parser, null );
         }
         catch (Exception e) {
             Log.warning("Unable to load vCard for " + jid, e);
