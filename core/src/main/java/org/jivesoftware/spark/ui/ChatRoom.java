@@ -520,9 +520,10 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
      * The main entry point when receiving any messages. This will either handle
      * a message from a customer or delegate itself as an agent handler.
      *
-     * @param message - the message receieved.
+     * @param message - the message received.
      */
     public void insertMessage(Message message) {
+        Objects.requireNonNull(message);
         // Fire Message Filters
 
         SparkManager.getChatManager().filterIncomingMessage(this, message);
