@@ -203,20 +203,29 @@ public class Default {
         // Otherwise, load and add to cache.
         try {
             final URL imageURL = getURL(imageName);
+            if (imageURL == null) {
+                Log.debug(imageName + " not found.");
+                return null;
+            }
 
             final ImageIcon icon = new ImageIcon(imageURL);
             cache.put(imageName, icon);
             return icon;
         }
         catch (Exception e) {
-            Log.warning(imageName + " not found.", e);
+            Log.warning("Unable to load " + imageName, e);
         }
         return null;
     }
 
     public static URL getURL(String propertyName) {
     	URL pluginUrl = PluginRes.getDefaultURL(propertyName);
-        return pluginUrl != null ? pluginUrl : cl.getResource(getString(propertyName));
+        if (pluginUrl != null) return pluginUrl;
+        String resourceName = getString(propertyName);
+        if (resourceName == null) {
+            return null;
+        }
+        return cl.getResource(resourceName);
     }
 
 
