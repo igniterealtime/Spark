@@ -68,6 +68,10 @@ import java.util.regex.Pattern;
  */
 public class GroupChatRoom extends ChatRoom
 {
+    private static final Color COLOR_HIGHLIGHT_MINE_BG = new Color(244, 248, 255);
+    private static final Color COLOR_HIGHLIGHT_MENTION_BG = new Color(255, 255, 153);
+    private static final Color COLOR_ALPHA = new Color(0, 0, 0, 0);
+
     private final LocalPreferences pref = SettingsManager.getLocalPreferences();
     private final MultiUserChat chat;
     private final SubjectPanel subjectPanel;
@@ -382,15 +386,15 @@ public class GroupChatRoom extends ChatRoom
         // Should we even highlight this packet?
         if ( pref.isMucHighNameEnabled() && myNickName.equals( nickname ) )
         {
-            return new Color( 244, 248, 255 );
+            return COLOR_HIGHLIGHT_MINE_BG;
         }
         else if ( pref.isMucHighTextEnabled() && ( usernameMatch.matcher( body ).find() || nicknameMatch.matcher( body ).find() ) )
         {
-            return new Color( 255, 255, 153 );
+            return COLOR_HIGHLIGHT_MENTION_BG;
         }
         else
         {
-            return new Color( 0, 0, 0, 0 );
+            return COLOR_ALPHA;
         }
     }
 
