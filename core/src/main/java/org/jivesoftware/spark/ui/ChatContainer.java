@@ -502,7 +502,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
      *
      * @param room the room to remove.
      */
-    private void cleanupChatRoom(ChatRoom room) {
+    private synchronized void cleanupChatRoom(ChatRoom room) {
         if (room.isActive()) {
             room.leaveChatRoom();
             room.closeChatRoom();
