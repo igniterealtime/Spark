@@ -537,7 +537,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             return;
         }
 
-        for (ChatRoom chatRoom : new ArrayList<>(chatRoomList)) {
+        for (ChatRoom chatRoom : chatRoomList) {
             closeTab(chatRoom);
             chatRoom.closeChatRoom();
         }
@@ -1473,7 +1473,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
     }
 
     public void closeAllGroupChatRooms() {
-        for (ChatRoom chatRoom : new ArrayList<>(chatRoomList)) {
+        for (ChatRoom chatRoom : chatRoomList) {
             boolean isGroup = chatRoom.getChatType() == Message.Type.groupchat;
             if (isGroup) {
                 closeTab(chatRoom);
@@ -1483,7 +1483,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
     }
 
     public boolean hasGroupChatRooms() {
-        for (ChatRoom chatRoom : new ArrayList<>(chatRoomList)) {
+        for (ChatRoom chatRoom : chatRoomList) {
             boolean isGroup = chatRoom.getChatType() == Message.Type.groupchat;
             if (isGroup) {
                 return true;
