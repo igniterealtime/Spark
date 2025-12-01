@@ -37,6 +37,7 @@ import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.StanzaListener;
+import org.jivesoftware.smack.packet.StanzaBuilder;
 import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.filter.StanzaFilter;
 import org.jivesoftware.smack.filter.StanzaTypeFilter;
@@ -244,9 +245,15 @@ public class Workspace extends JPanel implements StanzaListener {
             JivePropertiesExtension extension = (JivePropertiesExtension) presence.getExtension( JivePropertiesExtension.NAMESPACE );
             if (extension != null && extension.getProperty("anonymous") != null) {
                 boolean isAvailable = statusBox.getPresence().getMode() == Presence.Mode.available;
-                Presence reply = new Presence(Presence.Type.available);
-                if (!isAvailable) {
-                    reply.setType(Presence.Type.unavailable);
+                Presence reply;
+                if (isAvailable) {
+                    reply = StanzaBuilder.buildPresence()
+                        .ofType(Presence.Type.available)
+                        .build();
+                } else {
+                    reply = StanzaBuilder.buildPresence()
+                        .ofType(Presence.Type.unavailable)
+                        .build();
                 }
                 reply.setTo(presence.getFrom());
                 try

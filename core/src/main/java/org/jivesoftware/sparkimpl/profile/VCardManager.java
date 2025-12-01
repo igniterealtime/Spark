@@ -28,6 +28,7 @@ import org.jivesoftware.smack.packet.ExtensionElement;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.packet.StanzaError;
+import org.jivesoftware.smack.packet.XmlElement;
 import org.jivesoftware.smack.provider.ProviderManager;
 import org.jivesoftware.smack.xml.SmackXmlParser;
 import org.jivesoftware.smack.xml.XmlPullParser;
@@ -127,15 +128,15 @@ public class VCardManager {
             VCardUpdateExtension update = new VCardUpdateExtension();
             JabberAvatarExtension jax = new JabberAvatarExtension();
 
-            ExtensionElement updateExt = newPresence.getExtensionElement(update.getElementName(), update.getNamespace());
-            ExtensionElement jabberExt = newPresence.getExtensionElement(jax.getElementName(), jax.getNamespace());
+            XmlElement updateExt = newPresence.getExtensionElement(update.getElementName(), update.getNamespace());
+            XmlElement jabberExt = newPresence.getExtensionElement(jax.getElementName(), jax.getNamespace());
 
             if (updateExt != null) {
-                newPresence.removeExtension(updateExt);
+                newPresence.removeExtension(updateExt.getElementName(), updateExt.getNamespace());
             }
 
             if (jabberExt != null) {
-                newPresence.removeExtension(jabberExt);
+                newPresence.removeExtension(jabberExt.getElementName(), jabberExt.getNamespace());
             }
 
             if (personalVCard != null) {
@@ -383,7 +384,7 @@ public class VCardManager {
 		}
 		catch (Exception e) {
             StanzaError.Builder errorBuilder = StanzaError.getBuilder(StanzaError.Condition.conflict);
-			personalVCard.setError(errorBuilder);
+			personalVCard.setError(errorBuilder.build());
             personalVCardAvatar = null;
             personalVCardHash = null;
 			Log.error(e);
@@ -516,7 +517,7 @@ public class VCardManager {
         catch (XMPPException | SmackException | InterruptedException e) {
         	////System.out.println(jid+" Fehler in reloadVCard ----> null");
             StanzaError.Builder errorBuilder = StanzaError.getBuilder(StanzaError.Condition.resource_constraint);
-        	vcard.setError(errorBuilder);
+        	vcard.setError(errorBuilder.build());
         	vcard.setJabberId(jid.toString());
             delayedContacts.add(jid);
         	return vcard;
@@ -810,7 +811,7 @@ public class VCardManager {
             }
 
             VCardProvider provider = new VCardProvider();
-            vcard = provider.parse( parser );
+            vcard = provider.parse( parser, null );
         }
         catch (Exception e) {
             Log.warning("Unable to load vCard for " + jid, e);

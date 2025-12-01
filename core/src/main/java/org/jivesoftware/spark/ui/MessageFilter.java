@@ -16,6 +16,7 @@
 package org.jivesoftware.spark.ui;
 
 import org.jivesoftware.smack.packet.Message;
+import org.jivesoftware.smack.packet.MessageBuilder;
 
 /**
  * The <code>MessageFilter</code> interface is one of the interfaces extension
@@ -34,12 +35,13 @@ public interface MessageFilter {
      * Update the body of an outgoing message.
      *
      * @param room Room the message is attached to.
-     * @param message the message to update.
+     * @param messageBuilder the message to update.
      */
-    void filterOutgoing(ChatRoom room, Message message);
+    void filterOutgoing(ChatRoom room, MessageBuilder messageBuilder);
 
     /**
      * Updates the body of an incoming message.
+     * TODO change message to MessageBuilder
      *
      * @param room Room the message is attached to.
      * @param message the message to update.

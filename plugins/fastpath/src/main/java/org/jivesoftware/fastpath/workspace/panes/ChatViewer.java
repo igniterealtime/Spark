@@ -37,6 +37,7 @@ import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smack.packet.StanzaBuilder;
 import org.jivesoftware.smackx.delay.packet.DelayInformation;
 import org.jivesoftware.smackx.jiveproperties.packet.JivePropertiesExtension;
 import org.jivesoftware.smackx.workgroup.agent.AgentSession;
@@ -78,7 +79,7 @@ public class ChatViewer extends JPanel {
                 if (delayInformation != null) {
                     stamp = delayInformation.getStamp();
                 }
-                message.removeExtension(delayInformation);
+                message.removeExtension(delayInformation.getElementName(), delayInformation.getNamespace());
                 chatWindow.insertMessage(from, message, ChatManager.TO_COLOR);
                 final Map<String, Object> properties = new HashMap<>();
                 properties.put("date", stamp);
@@ -94,8 +95,9 @@ public class ChatViewer extends JPanel {
                     from = FpRes.getString("message.user.left.room", from);
                 }
                 chatWindow.insertNotificationMessage(from, ChatManager.NOTIFICATION_COLOR);
-                Message message = new Message();
-                message.setBody(from);
+                Message message = StanzaBuilder.buildMessage()
+                    .setBody(from)
+                    .build();
                 chatTranscript.add(message);
             }
         }

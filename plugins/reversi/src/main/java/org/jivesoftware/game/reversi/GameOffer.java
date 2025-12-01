@@ -16,10 +16,12 @@
 package org.jivesoftware.game.reversi;
 
 import org.jivesoftware.smack.packet.IQ;
+import org.jivesoftware.smack.packet.IqData;
 import org.jivesoftware.smack.packet.XmlEnvironment;
-import org.jivesoftware.smack.provider.IQProvider;
+import org.jivesoftware.smack.provider.IqProvider;
 import org.jivesoftware.smack.xml.XmlPullParser;
 import org.jivesoftware.smack.xml.XmlPullParserException;
+import org.jxmpp.JxmppContext;
 
 import java.io.IOException;
 import java.util.Random;
@@ -103,14 +105,15 @@ public class GameOffer extends IQ
         return buf;
     }
 
-    public static class Provider extends IQProvider<GameOffer>
+    public static class Provider extends IqProvider<GameOffer>
     {
         public Provider()
         {
             super();
         }
 
-        public GameOffer parse(XmlPullParser parser, int i, XmlEnvironment xmlEnvironment) throws XmlPullParserException, IOException
+        @Override
+        public GameOffer parse(XmlPullParser parser, int i, IqData iqData, XmlEnvironment xmlEnvironment, JxmppContext jxmppContext) throws XmlPullParserException, IOException
         {
             final GameOffer gameOffer = new GameOffer();
 

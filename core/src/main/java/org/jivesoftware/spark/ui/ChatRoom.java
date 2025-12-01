@@ -21,6 +21,8 @@ import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.StanzaListener;
 import org.jivesoftware.smack.packet.Message;
+import org.jivesoftware.smack.packet.MessageBuilder;
+import org.jivesoftware.smack.packet.StanzaBuilder;
 import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.roster.RosterEntry;
 import org.jivesoftware.smackx.chatstates.ChatState;
@@ -501,9 +503,9 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
     /**
      * Sends the current message.
      *
-     * @param message - the message to send.
+     * @param messageBuilder - the message to send.
      */
-    public abstract void sendMessage(Message message);
+    public abstract void sendMessage(MessageBuilder messageBuilder);
 
     /**
      * Returns the nickname of the current agent as specified in Chat
@@ -520,9 +522,10 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
      * The main entry point when receiving any messages. This will either handle
      * a message from a customer or delegate itself as an agent handler.
      *
-     * @param message - the message receieved.
+     * @param message - the message received.
      */
     public void insertMessage(Message message) {
+        Objects.requireNonNull(message);
         // Fire Message Filters
 
         SparkManager.getChatManager().filterIncomingMessage(this, message);
@@ -545,14 +548,11 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
      */
     public void addToTranscript(Message message, boolean updateDate) {
         // Create message to persist.
-        final Message newMessage = new Message();
-        newMessage.setTo(message.getTo());
-        newMessage.setFrom(message.getFrom());
-        newMessage.setBody(message.getBody());
         final Map<String, Object> properties = new HashMap<>();
         properties.put("date", new Date());
-        newMessage.addExtension(new JivePropertiesExtension(properties));
-
+        Message newMessage = StanzaBuilder.buildMessage()
+            .addExtension(new JivePropertiesExtension(properties))
+            .build();
         transcript.add(newMessage);
 
         // Add current date if this is the current agent
@@ -563,25 +563,6 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         }
 
         scrollToBottom();
-    }
-
-    /**
-     * Adds a new message to the transcript history.
-     *
-     * @param to who the message is to.
-     * @param from who the message was from.
-     * @param body the body of the message.
-     * @param date when the message was received.
-     */
-    public void addToTranscript(String to, String from, String body, Date date) {
-        final Message newMessage = new Message();
-        newMessage.setTo(JidCreate.fromOrThrowUnchecked(to));
-        newMessage.setFrom(JidCreate.fromOrThrowUnchecked(from));
-        newMessage.setBody(body);
-        final Map<String, Object> properties = new HashMap<>();
-        properties.put("date", new Date());
-        newMessage.addExtension(new JivePropertiesExtension(properties));
-        transcript.add(newMessage);
     }
 
     /**

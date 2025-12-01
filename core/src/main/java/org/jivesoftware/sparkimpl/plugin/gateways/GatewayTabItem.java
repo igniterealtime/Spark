@@ -21,6 +21,7 @@ import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smack.packet.StanzaBuilder;
 import org.jivesoftware.spark.PresenceManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.RolloverButton;
@@ -111,10 +112,12 @@ public class GatewayTabItem extends CollapsiblePane implements GatewayItem {
             .getXMPPServiceDomain());
         if (autoJoin) {
         Presence oldPresence = statusBar.getPresence();
-        Presence presence = new Presence(oldPresence.getType(),
-            oldPresence.getStatus(),
-            oldPresence.getPriority(),
-            oldPresence.getMode());
+            Presence presence = StanzaBuilder.buildPresence()
+                .ofType(oldPresence.getType())
+                .setStatus(oldPresence.getStatus())
+                .setPriority(oldPresence.getPriority())
+                .setMode(oldPresence.getMode())
+                .build();
         presence.setTo(transport.getXMPPServiceDomain());
             try
             {
@@ -137,8 +140,9 @@ public class GatewayTabItem extends CollapsiblePane implements GatewayItem {
 	_signInOut.addActionListener( e -> {
     if (signedIn) {
 
-        final Presence offlinePresence = new Presence(
-            Presence.Type.unavailable);
+        final Presence offlinePresence = StanzaBuilder.buildPresence()
+            .ofType(Presence.Type.unavailable)
+            .build();
         offlinePresence.setTo(_transport.getXMPPServiceDomain());
         try
         {
@@ -152,8 +156,9 @@ public class GatewayTabItem extends CollapsiblePane implements GatewayItem {
         }
 
     } else {
-        final Presence onlinePresence = new Presence(
-            Presence.Type.available);
+        final Presence onlinePresence = StanzaBuilder.buildPresence()
+            .ofType(Presence.Type.available)
+            .build();
         onlinePresence.setTo(_transport.getXMPPServiceDomain());
         try
         {

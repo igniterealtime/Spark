@@ -18,6 +18,7 @@ package org.jivesoftware.sparkimpl.plugin.idle;
 import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smack.packet.StanzaBuilder;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.Plugin;
 import org.jivesoftware.spark.util.StringUtils;
@@ -97,7 +98,12 @@ public class UserIdlePlugin extends TimerTask implements Plugin {
 		if (latestPresence.isAway()) {
 			Log.debug("UserIdlePlugin: Presence is already set to away");
 		} else {
-			Presence statusPresence = new Presence(Presence.Type.available, StringUtils.modifyWildcards(statustext), 0, Presence.Mode.away);
+            Presence statusPresence = StanzaBuilder.buildPresence()
+                .ofType(Presence.Type.available)
+                .setStatus(StringUtils.modifyWildcards(statustext))
+                .setPriority(0)
+                .setMode(Presence.Mode.away)
+                .build();
 			SparkManager.getSessionManager().changePresence(statusPresence);
 			Log.debug("UserIdlePlugin: Setting idle presence");
 		}
@@ -119,7 +125,12 @@ public class UserIdlePlugin extends TimerTask implements Plugin {
 
 		} else if (((latestPresence.getStatus().contains("On the phone")) && (PhonePlugin.offPhonePresence != null)
 				&& (PhonePlugin.offPhonePresence.getStatus().contentEquals(statustext)))) {
-			Presence presence = new Presence(Presence.Type.available, PhonePlugin.offPhonePresence.getStatus(), 1, Presence.Mode.available);
+            Presence presence = StanzaBuilder.buildPresence()
+                .ofType(Presence.Type.available)
+                .setStatus(PhonePlugin.offPhonePresence.getStatus())
+                .setPriority(1)
+                .setMode(Presence.Mode.available)
+                .build();
 			SparkManager.getSessionManager().changePresence(presence);
 			Log.debug("UserIdlePlugin: Setting presence from PhonePlugin ....");
 

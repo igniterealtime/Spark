@@ -22,6 +22,7 @@ import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smack.packet.StanzaBuilder;
 import org.jivesoftware.smack.provider.ProviderManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.phone.PhoneManager;
@@ -203,7 +204,12 @@ public class PhonePlugin implements Plugin {
 
 
             // Send "on the phone" presence
-            onPhonePresence = new Presence(Presence.Type.available, "On the phone", 1, Presence.Mode.away);
+            onPhonePresence = StanzaBuilder.buildPresence()
+                .ofType(Presence.Type.available)
+                .setStatus("On the phone")
+                .setPriority(1)
+                .setMode(Presence.Mode.away)
+                .build();
             SparkManager.getSessionManager().changePresence(onPhonePresence);
         }
 
@@ -223,12 +229,22 @@ public class PhonePlugin implements Plugin {
 
                 } else if ((UserIdlePlugin.getDesktopLockStatus()) && ((offPhonePresence.getStatus().equals("Online"))
                         || (offPhonePresence.getStatus().equals("Free to chat")))) {
-                    Presence presence = new Presence(Presence.Type.available, UserIdlePlugin.pref.getIdleMessage(), 1, Presence.Mode.away);
+                    Presence presence = StanzaBuilder.buildPresence()
+                        .ofType(Presence.Type.available)
+                        .setStatus(UserIdlePlugin.pref.getIdleMessage())
+                        .setPriority(1)
+                        .setMode(Presence.Mode.away)
+                        .build();
                     SparkManager.getSessionManager().changePresence(presence);
                     Log.debug("PhonePlugin: Desktop is Locked - Setting presence from pref.idle message");
 
                 } else if (UserIdlePlugin.getDesktopLockStatus() && (!offPhonePresence.isAway())) {
-                    Presence presence = new Presence(Presence.Type.available, offPhonePresence.getStatus(), 1, Presence.Mode.away);
+                    Presence presence = StanzaBuilder.buildPresence()
+                        .ofType(Presence.Type.available)
+                        .setStatus(offPhonePresence.getStatus())
+                        .setPriority(1)
+                        .setMode(Presence.Mode.away)
+                        .build();
                     SparkManager.getSessionManager().changePresence(presence);
                     Log.debug("PhonePlugin: Desktop is Locked - Setting presence from user defined presence");
 
@@ -241,7 +257,12 @@ public class PhonePlugin implements Plugin {
 
             } else {
                 // If no previous state available, set status to Available
-                Presence availablePresence = new Presence(Presence.Type.available, "Online", 1, Presence.Mode.available);
+                Presence availablePresence = StanzaBuilder.buildPresence()
+                    .ofType(Presence.Type.available)
+                    .setStatus("Online")
+                    .setPriority(1)
+                    .setMode(Presence.Mode.available)
+                    .build();
 
                 SparkManager.getSessionManager().changePresence(availablePresence);
                 Log.debug("no previous state available from Phone Plugin..setting to Online");
