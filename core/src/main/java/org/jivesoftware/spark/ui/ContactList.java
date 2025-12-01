@@ -1136,7 +1136,7 @@ public class ContactList extends JPanel implements ActionListener,
         ContactGroup cGroup = null;
 
         for (ContactGroup contactGroup : groupList) {
-            if (contactGroup.getGroupName().equals(groupName)) {
+            if (contactGroup.getGroupName().equalsIgnoreCase(groupName)) {
                 cGroup = contactGroup;
                 break;
             } else {
@@ -1181,15 +1181,13 @@ public class ContactList extends JPanel implements ActionListener,
      * @return the nested ContactGroup. If not found, null will be returned.
      */
     private ContactGroup getSubContactGroup(ContactGroup group, String groupName) {
-        final Iterator<ContactGroup> contactGroups = group.getContactGroups().iterator();
         ContactGroup grp = null;
 
-        while (contactGroups.hasNext()) {
-            ContactGroup contactGroup = contactGroups.next();
-            if (contactGroup.getGroupName().equals(groupName)) {
+        for (ContactGroup contactGroup : group.getContactGroups()) {
+            if (contactGroup.getGroupName().equalsIgnoreCase(groupName)) {
                 grp = contactGroup;
                 break;
-            } else if (contactGroup.getContactGroups().size() > 0) {
+            } else if (!contactGroup.getContactGroups().isEmpty()) {
                 grp = getSubContactGroup(contactGroup, groupName);
                 if (grp != null) {
                     break;
@@ -1521,9 +1519,12 @@ public class ContactList extends JPanel implements ActionListener,
 
         String groupName = item.getGroupName();
         ContactGroup contactGroup = getContactGroup(groupName);
+        if (contactGroup == null) {
+            Log.error("Unable to get contact group for " + groupName);
+        }
 
         // Only show "Remove Contact From Group" if the user belongs to more than one group.
-        if (!contactGroup.isSharedGroup() && !contactGroup.isOfflineGroup() && contactGroup != getUnfiledGroup()) {
+        if (contactGroup != null && !contactGroup.isSharedGroup() && !contactGroup.isOfflineGroup() && contactGroup != getUnfiledGroup()) {
             Roster roster = Roster.getInstanceFor(SparkManager.getConnection());
             RosterEntry entry = roster.getEntry(item.getJid().asBareJid());
             if (entry != null) {
@@ -1564,7 +1565,9 @@ public class ContactList extends JPanel implements ActionListener,
 
         // See if we should disable the option to remove a contact
         if (!Default.getBoolean(Default.DISABLE_REMOVALS) && Enterprise.containsFeature(Enterprise.REMOVALS_FEATURE)) {
-            if (!contactGroup.isSharedGroup() && !isInSharedGroup) popup.add(removeAction);
+            if (contactGroup != null && !contactGroup.isSharedGroup() && !isInSharedGroup) {
+                popup.add(removeAction);
+            }
         }
 
         // See if we should disable the option to rename a contact
