@@ -33,15 +33,14 @@ import java.awt.datatransfer.Transferable;
 import java.awt.dnd.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class SparkTabbedPane extends JPanel {
 
     private static final long serialVersionUID = -9007068462231539973L;
     private static final String NAME = "SparkTabbedPane";
-    private final List<SparkTabbedPaneListener> listeners = new ArrayList<>();
+    private final CopyOnWriteArrayList<SparkTabbedPaneListener> listeners = new CopyOnWriteArrayList<>();
     private final JTabbedPane pane;
     private final Icon closeInactiveButtonIcon;
     private final Icon closeActiveButtonIcon;
@@ -301,7 +300,7 @@ public class SparkTabbedPane extends JPanel {
     }
 
     public void addSparkTabbedPaneListener(SparkTabbedPaneListener listener) {
-        listeners.add(listener);
+        listeners.addIfAbsent(listener);
     }
 
     public void removeSparkTabbedPaneListener(SparkTabbedPaneListener listener) {

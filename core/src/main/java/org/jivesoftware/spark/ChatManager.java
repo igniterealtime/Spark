@@ -77,28 +77,28 @@ public class ChatManager {
 			new Color(72, 160, 237), new Color(255, 140, 0), new Color(106, 90, 205), new Color(224, 165, 32),
 			new Color(255, 69, 0), new Color(255, 99, 72), new Color(109, 130, 180), new Color(233, 0, 0),
 			new Color(255, 127, 80), new Color(140, 105, 225), new Color(173, 205, 50) };
-    private final List<MessageFilter> messageFilters = new ArrayList<>();
+    private final CopyOnWriteArrayList<MessageFilter> messageFilters = new CopyOnWriteArrayList<>();
 
-    private final List<GlobalMessageListener> globalMessageListeners = new ArrayList<>();
+    private final CopyOnWriteArrayList<GlobalMessageListener> globalMessageListeners = new CopyOnWriteArrayList<>();
 
-    private final List<RoomInvitationListener> invitationListeners = new ArrayList<>();
+    private final CopyOnWriteArrayList<RoomInvitationListener> invitationListeners = new CopyOnWriteArrayList<>();
 
-    private final List<TranscriptWindowInterceptor> interceptors = new ArrayList<>();
+    private final CopyOnWriteArrayList<TranscriptWindowInterceptor> interceptors = new CopyOnWriteArrayList<>();
 
-    private final List<SparkTabHandler> sparkTabHandlers = new CopyOnWriteArrayList<>();
+    private final CopyOnWriteArrayList<SparkTabHandler> sparkTabHandlers = new CopyOnWriteArrayList<>();
 
 
     private final ChatContainer chatContainer;
 
     private String conferenceService;
 
-    private final List<ContactItemHandler> contactItemHandlers = new ArrayList<>();
+    private final CopyOnWriteArrayList<ContactItemHandler> contactItemHandlers = new CopyOnWriteArrayList<>();
 
     private final Set<ChatRoom> typingNotificationList = new HashSet<>();
 
     private final UriManager _uriManager = new UriManager();
     
-    private final List<ChatMessageHandler> chatMessageHandlers = new ArrayList<>();
+    private final CopyOnWriteArrayList<ChatMessageHandler> chatMessageHandlers = new CopyOnWriteArrayList<>();
     
     /**
      * The listener instance that we use to track chat states according to
@@ -363,7 +363,7 @@ public class ChatManager {
      * @param filter the MessageFilter.
      */
     public void addMessageFilter(MessageFilter filter) {
-        messageFilters.add(filter);
+        messageFilters.addIfAbsent(filter);
     }
 
     /**
@@ -381,7 +381,7 @@ public class ChatManager {
      * @param listener the listener.
      */
     public void addGlobalMessageListener(GlobalMessageListener listener) {
-        globalMessageListeners.add(listener);
+        globalMessageListeners.addIfAbsent(listener);
     }
 
     /**
@@ -493,7 +493,7 @@ public class ChatManager {
      * @param listener the listener.
      */
     public void addInvitationListener(RoomInvitationListener listener) {
-        invitationListeners.add(listener);
+        invitationListeners.addIfAbsent(listener);
     }
 
     /**
@@ -542,11 +542,11 @@ public class ChatManager {
      * @param handler the ContactItemHandler to add.
      */
     public void addContactItemHandler(ContactItemHandler handler) {
-        contactItemHandlers.add(handler);
+        contactItemHandlers.addIfAbsent(handler);
     }
     
     public void addChatMessageHandler(ChatMessageHandler handler) {
-    	chatMessageHandlers.add(handler);
+    	chatMessageHandlers.addIfAbsent(handler);
     }
     
     public void removeChatMessageHandler(ChatMessageHandler handler) {
@@ -773,7 +773,7 @@ public class ChatManager {
      * @param interceptor the interceptor.
      */
     public void addTranscriptWindowInterceptor(TranscriptWindowInterceptor interceptor) {
-        interceptors.add(interceptor);
+        interceptors.addIfAbsent(interceptor);
     }
 
     /**

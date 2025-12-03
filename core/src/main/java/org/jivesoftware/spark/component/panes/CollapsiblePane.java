@@ -22,9 +22,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * CollapsiblePane provides a component which can collapse or expand its content area
@@ -41,7 +40,7 @@ public class CollapsiblePane extends JPanel {
 	private BaseCollapsibleTitlePane titlePane;
     private final JPanel mainPanel;
 
-    private final List<CollapsiblePaneListener> listeners = new ArrayList<>();
+    private final CopyOnWriteArrayList<CollapsiblePaneListener> listeners = new CopyOnWriteArrayList<>();
 
     private boolean subPane;
 
@@ -107,7 +106,7 @@ public class CollapsiblePane extends JPanel {
     }
 
     public void addCollapsiblePaneListener(CollapsiblePaneListener listener) {
-        listeners.add(listener);
+        listeners.addIfAbsent(listener);
     }
 
     public void removeCollapsiblePaneListener(CollapsiblePaneListener listener) {

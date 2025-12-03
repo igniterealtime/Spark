@@ -54,6 +54,7 @@ import java.awt.event.*;
 import java.io.File;
 import java.util.*;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * The base implementation of all ChatRoom conversations. You would implement
@@ -81,14 +82,14 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
 
     private boolean mousePressed;
 
-    private final List<ChatRoomClosingListener> closingListeners = new ArrayList<>();
+    private final CopyOnWriteArrayList<ChatRoomClosingListener> closingListeners = new CopyOnWriteArrayList<>();
 
     private ChatRoomTransferHandler transferHandler;
 
     private final List<String> packetIDList;
-    private final List<MessageListener> messageListeners;
+    private final CopyOnWriteArrayList<MessageListener> messageListeners;
     private final List<Message> transcript;
-    private final List<FileDropListener> fileDropListeners;
+    private final CopyOnWriteArrayList<FileDropListener> fileDropListeners;
 
     private final MouseAdapter transcriptWindowMouseListener;
 
@@ -116,7 +117,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         toolbar = new ChatToolBar();
         bottomPanel = new JPanel();
 
-        messageListeners = new ArrayList<>();
+        messageListeners = new CopyOnWriteArrayList<>();
         transcript = new ArrayList<>();
 
         editorWrapperBar = new JPanel(new BorderLayout());
@@ -124,7 +125,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         editorBarRight = new JPanel(new FlowLayout(FlowLayout.RIGHT, 1, 1));
         editorWrapperBar.add(editorBarLeft, BorderLayout.WEST);
         editorWrapperBar.add(editorBarRight, BorderLayout.EAST);
-        fileDropListeners = new ArrayList<>();
+        fileDropListeners = new CopyOnWriteArrayList<>();
 
         transcriptWindowMouseListener = new MouseAdapter() {
             @Override
@@ -658,7 +659,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
      * @param listener - the MessageListener to add to the current ChatRoom.
      */
     public void addMessageListener(MessageListener listener) {
-        messageListeners.add(listener);
+        messageListeners.addIfAbsent(listener);
     }
 
     /**
@@ -1043,7 +1044,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
      * @param listener the listener.
      */
     public void addFileDropListener(FileDropListener listener) {
-        fileDropListeners.add(listener);
+        fileDropListeners.addIfAbsent(listener);
     }
 
     /**
@@ -1098,7 +1099,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
      * @param listener the ChatRoomClosingListener.
      */
     public void addClosingListener(ChatRoomClosingListener listener) {
-        closingListeners.add(listener);
+        closingListeners.addIfAbsent(listener);
     }
 
     /**
@@ -1115,7 +1116,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
      * closing.
      */
     private void fireClosingListeners() {
-        for (final ChatRoomClosingListener listener : new ArrayList<>(closingListeners)) // Listener can call #removeClosingListener. Prevent ConcurrentModificationException by using a clone.
+        for (final ChatRoomClosingListener listener : closingListeners)
         {
             try {
                 listener.closing();

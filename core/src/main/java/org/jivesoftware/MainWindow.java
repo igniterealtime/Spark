@@ -47,9 +47,8 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.TimerTask;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * The <code>MainWindow</code> class acts as both the DockableHolder and the proxy
@@ -60,7 +59,7 @@ import java.util.TimerTask;
 public final class MainWindow extends ChatFrame implements ActionListener {
 	private static final long serialVersionUID = -6062104959613603510L;
 
-	private final Set<MainWindowListener> listeners = new HashSet<>();
+	private final CopyOnWriteArrayList<MainWindowListener> listeners = new CopyOnWriteArrayList<>();
 
     private final JMenu connectMenu = new JMenu();
     private final JMenu contactsMenu = new JMenu();
@@ -183,7 +182,7 @@ public final class MainWindow extends ChatFrame implements ActionListener {
      * @param listener the <code>MainWindowListener</code> to register
      */
     public void addMainWindowListener(MainWindowListener listener) {
-        listeners.add(listener);
+        listeners.addIfAbsent(listener);
     }
 
     /**

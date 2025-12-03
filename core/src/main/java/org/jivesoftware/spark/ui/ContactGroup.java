@@ -35,6 +35,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Container representing a RosterGroup within the Contact List.
@@ -43,7 +44,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
     private static final long serialVersionUID = 6578057848913010799L;
     private final List<ContactItem> contactItems = new ArrayList<>();
     private final List<ContactGroup> contactGroups = new ArrayList<>();
-    private final List<ContactGroupListener> listeners = new ArrayList<>();
+    private final CopyOnWriteArrayList<ContactGroupListener> listeners = new CopyOnWriteArrayList<>();
     private final List<ContactItem> offlineContacts = new ArrayList<>();
 
     private final int fontSize;
@@ -652,7 +653,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
      * @param listener the ContactGroupListener.
      */
     public void addContactGroupListener(ContactGroupListener listener) {
-        listeners.add(listener);
+        listeners.addIfAbsent(listener);
     }
 
     /**
