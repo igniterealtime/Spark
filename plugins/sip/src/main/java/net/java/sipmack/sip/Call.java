@@ -99,7 +99,7 @@ public class Call implements ReceiveStreamListener {
     private String callState = "";
 
     // Event Management
-    List<CallListener> listeners = new CopyOnWriteArrayList<CallListener>();
+    private final CopyOnWriteArrayList<CallListener> listeners = new CopyOnWriteArrayList<CallListener>();
     
     public SessionDescription getLocalSdpDescription() {
         return localSdpDescription;
@@ -316,7 +316,7 @@ public class Call implements ReceiveStreamListener {
     // ====================== EVENTS ===========================
     public void addStateChangeListener(CallListener listener) {
         Log.debug(listener.getClass().getCanonicalName());
-        listeners.add(listener);
+        listeners.addIfAbsent(listener);
     }
 
     public void fireCallStatusChangedEvent(String oldStatus) {
