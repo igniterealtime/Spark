@@ -32,8 +32,7 @@ import org.jxmpp.util.XmppStringUtils;
 
 import javax.swing.SwingUtilities;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * This manager is responsible for the handling of the XMPPConnection used within Spark. This is used
@@ -52,7 +51,7 @@ public final class SessionManager implements ConnectionListener {
 
     private EntityFullJid JID;
 
-    private final List<PresenceListener> presenceListeners = new ArrayList<>();
+    private final CopyOnWriteArrayList<PresenceListener> presenceListeners = new CopyOnWriteArrayList<>();
 
     private EntityBareJid userBareAddress;
     private DiscoverItems discoverItems;
@@ -203,7 +202,7 @@ public final class SessionManager implements ConnectionListener {
      */
     public void changePresence(Presence presence) {
         // Fire Presence Listeners
-        for (PresenceListener listener : new ArrayList<>( this.presenceListeners )) {
+        for (PresenceListener listener : this.presenceListeners) {
             listener.presenceChanged(presence);
         }
 
@@ -246,7 +245,7 @@ public final class SessionManager implements ConnectionListener {
      * @param listener the listener.
      */
     public void addPresenceListener(PresenceListener listener) {
-        presenceListeners.add(listener);
+        presenceListeners.addIfAbsent(listener);
     }
 
     /**

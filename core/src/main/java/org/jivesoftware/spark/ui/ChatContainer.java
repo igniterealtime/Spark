@@ -57,6 +57,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.regex.Pattern;
 
 /**
@@ -71,7 +72,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
     /**
      * List of all ChatRoom Listeners.
      */
-    private final List<ChatRoomListener> chatRoomListeners = new ArrayList<>();
+    private final CopyOnWriteArrayList<ChatRoomListener> chatRoomListeners = new CopyOnWriteArrayList<>();
     private final List<ChatRoom> chatRoomList = new ArrayList<>();
     private final Map<EntityJid, StanzaListener> presenceMap = new HashMap<>();
     private static final String WELCOME_TITLE = SparkRes.getString(SparkRes.WELCOME);
@@ -871,9 +872,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
      * @param listener the <code>ChatRoomListener</code> to register
      */
     public void addChatRoomListener(ChatRoomListener listener) {
-        if (!chatRoomListeners.contains(listener)) {
-            chatRoomListeners.add(listener);
-        }
+        chatRoomListeners.addIfAbsent(listener);
     }
 
     /**

@@ -61,6 +61,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.*;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
@@ -90,7 +91,7 @@ public class VCardManager {
     
     private final File contactsDir;
 
-    private final List<VCardListener> listeners = new ArrayList<>();
+    private final CopyOnWriteArrayList<VCardListener> listeners = new CopyOnWriteArrayList<>();
 
 	private final List<BareJid> writingQueue = Collections.synchronizedList( new ArrayList<>());
 
@@ -841,7 +842,7 @@ public class VCardManager {
      * @param listener the listener to add.
      */
     public void addVCardListener(VCardListener listener) {
-        listeners.add(listener); 
+        listeners.addIfAbsent(listener);
     }
 
     /**

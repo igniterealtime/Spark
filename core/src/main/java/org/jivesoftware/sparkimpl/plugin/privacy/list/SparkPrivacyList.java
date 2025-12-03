@@ -23,6 +23,7 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.privacy.PrivacyManager;
 
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * @author Zolotarev Konstantin, Bergunde Holger
@@ -37,7 +38,7 @@ public class SparkPrivacyList {
     private boolean _isDefault;
     private final List<PrivacyItem> _privacyItems = new LinkedList<>();
     private final PrivacyList _myPrivacyList;
-    private final Set<SparkPrivacyItemListener> _listeners = new HashSet<>();
+    private final CopyOnWriteArrayList<SparkPrivacyItemListener> _listeners = new CopyOnWriteArrayList<>();
     /**
      * Action associated with the items, it MUST be filled and will allow or deny
      * the communication by default
@@ -308,7 +309,7 @@ public class SparkPrivacyList {
     
     public void addSparkPrivacyListener(SparkPrivacyItemListener listener)
     {
-        _listeners.add(listener);
+        _listeners.addIfAbsent(listener);
     }
     
     public void removeSparkPrivacyListener(SparkPrivacyItemListener listener)

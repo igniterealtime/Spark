@@ -71,6 +71,7 @@ import java.time.Instant;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 
 public class ContactList extends JPanel implements ActionListener,
@@ -102,10 +103,10 @@ public class ContactList extends JPanel implements ActionListener,
 
     private List<String> sharedGroups = new ArrayList<>();
 
-    private final List<ContextMenuListener> contextListeners = new ArrayList<>();
+    private final CopyOnWriteArrayList<ContextMenuListener> contextListeners = new CopyOnWriteArrayList<>();
 
-    private final List<FileDropListener> dndListeners = new ArrayList<>();
-    private final List<ContactListListener> contactListListeners = new ArrayList<>();
+    private final CopyOnWriteArrayList<FileDropListener> dndListeners = new CopyOnWriteArrayList<>();
+    private final CopyOnWriteArrayList<ContactListListener> contactListListeners = new CopyOnWriteArrayList<>();
     private final Properties props;
     private final File propertiesFile;
 
@@ -2063,7 +2064,7 @@ public class ContactList extends JPanel implements ActionListener,
     }
 
     public void addContextMenuListener(ContextMenuListener listener) {
-        contextListeners.add(listener);
+        contextListeners.addIfAbsent(listener);
     }
 
     public void removeContextMenuListener(ContextMenuListener listener) {
@@ -2126,7 +2127,7 @@ public class ContactList extends JPanel implements ActionListener,
     }
 
     public void addFileDropListener(FileDropListener listener) {
-        dndListeners.add(listener);
+        dndListeners.addIfAbsent(listener);
     }
 
     public void removeFileDropListener(FileDropListener listener) {
@@ -2158,7 +2159,7 @@ public class ContactList extends JPanel implements ActionListener,
     */
 
     public void addContactListListener(ContactListListener listener) {
-        contactListListeners.add(listener);
+        contactListListeners.addIfAbsent(listener);
     }
 
     public void removeContactListListener(ContactListListener listener) {

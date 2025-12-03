@@ -45,6 +45,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.imageio.ImageIO;
 import javax.swing.JMenu;
@@ -104,7 +105,7 @@ import org.jxmpp.jid.Jid;
  */
 public class SparkTransferManager {
 
-    private final List<FileTransferListener> listeners = new ArrayList<>();
+    private final CopyOnWriteArrayList<FileTransferListener> listeners = new CopyOnWriteArrayList<>();
     private File defaultDirectory;
 
     private static SparkTransferManager singleton;
@@ -679,7 +680,7 @@ public class SparkTransferManager {
      * @param listener the listener
      */
     public void addTransferListener(FileTransferListener listener) {
-        listeners.add(listener);
+        listeners.addIfAbsent(listener);
     }
 
     /**
@@ -692,7 +693,7 @@ public class SparkTransferManager {
     }
 
     private boolean fireTransferListeners(FileTransferRequest request) {
-        for (FileTransferListener listener : new ArrayList<>( listeners )) {
+        for (FileTransferListener listener : listeners) {
             boolean accepted = listener.handleTransfer(request);
             if (accepted) {
                 return true;
