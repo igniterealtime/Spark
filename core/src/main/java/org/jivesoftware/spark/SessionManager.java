@@ -36,7 +36,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * This manager is responsible for the handling of the XMPPConnection used within Spark. This is used
- * for the changing of the users presence, the handling of connection errors and the ability to add
+ * for the changing of the user's presence, the handling of connection errors and the ability to add
  * presence listeners and retrieve the connection used in Spark.
  *
  * @author Derek DeMoro
@@ -66,8 +66,8 @@ public final class SessionManager implements ConnectionListener {
      * Initializes session.
      *
      * @param connection the XMPPConnection used in this session.
-     * @param username   the agents username.
-     * @param password   the agents password.
+     * @param username   the agent's username.
+     * @param password   the agent's password.
      */
     public void initializeSession( AbstractXMPPConnection connection, String username, String password) {
         this.connection = connection;
@@ -75,7 +75,7 @@ public final class SessionManager implements ConnectionListener {
         this.password = password;
         this.userBareAddress = connection.getUser().asEntityBareJid();
 
-        // create workgroup session
+        // create a workgroup session
         personalDataManager = PrivateDataManager.getInstanceFor( getConnection() );
 
         // Discover items
@@ -171,7 +171,7 @@ public final class SessionManager implements ConnectionListener {
     }
 
     /**
-     * Notify agent that the connection has been closed.
+     * Notify the agent that the connection has been closed.
      */
     @Override
 	public void connectionClosed() {
@@ -189,7 +189,7 @@ public final class SessionManager implements ConnectionListener {
     /**
      * Return the password associated with this session.
      *
-     * @return the password assoicated with this session.
+     * @return the password associated with this session.
      */
     public String getPassword() {
         return password;
@@ -206,7 +206,7 @@ public final class SessionManager implements ConnectionListener {
             listener.presenceChanged(presence);
         }
 
-        // Do NOT  send presence if disconnected.
+        // Do NOT send presence if disconnected.
         if (SparkManager.getConnection().isConnected()) {
             // Send Presence Packet
             try
