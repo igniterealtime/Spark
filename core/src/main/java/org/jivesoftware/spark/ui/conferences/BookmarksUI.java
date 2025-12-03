@@ -51,6 +51,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * BookmarkedConferences is used to display the UI for all bookmarked conference rooms.
@@ -66,12 +67,12 @@ public class BookmarksUI extends JPanel {
 
     private final Set<EntityBareJid> autoJoinRooms = new HashSet<>();
 
-    private final List<ContextMenuListener> listeners = new ArrayList<>();
+    private final CopyOnWriteArrayList<ContextMenuListener> listeners = new CopyOnWriteArrayList<>();
 
     /**
      * Bookmarks listeners
      */
-    private final List<BookmarksListener> bookmarkListeners = new ArrayList<>();
+    private final CopyOnWriteArrayList<BookmarksListener> bookmarkListeners = new CopyOnWriteArrayList<>();
 
     private BookmarkManager manager;
 
@@ -635,7 +636,7 @@ public class BookmarksUI extends JPanel {
      * @param listener the listener.
      */
     public void addContextMenuListener(ContextMenuListener listener) {
-        listeners.add(listener);
+        listeners.addIfAbsent(listener);
     }
 
     /**
@@ -668,7 +669,7 @@ public class BookmarksUI extends JPanel {
      * @param bookmarkListener the bookmarkListener.
      */
     public void addBookmarksListener(BookmarksListener bookmarkListener) {
-        bookmarkListeners.add(bookmarkListener);
+        bookmarkListeners.addIfAbsent(bookmarkListener);
     }
 
     /**

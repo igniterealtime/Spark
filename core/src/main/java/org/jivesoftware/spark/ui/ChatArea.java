@@ -36,6 +36,7 @@ import java.awt.event.*;
 import java.net.URI;
 import java.util.*;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * The ChatArea class handles proper chat text formatting such as url handling. Use ChatArea for proper
@@ -57,7 +58,7 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
      * The currently selected Font Size to use.
      */
     private final int fontSize = SettingsManager.getLocalPreferences().getChatRoomFontSize();
-    private final List<ContextMenuListener> contextMenuListeners = new ArrayList<>();
+    private final CopyOnWriteArrayList<ContextMenuListener> contextMenuListeners = new CopyOnWriteArrayList<>();
 
     private JPopupMenu popup;
 
@@ -66,7 +67,7 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
     private final JMenuItem pasteMenu;
     private final JMenuItem selectAll;
 
-    private final List<LinkInterceptor> interceptors = new ArrayList<>();
+    private final CopyOnWriteArrayList<LinkInterceptor> interceptors = new CopyOnWriteArrayList<>();
 
     protected final EmoticonManager emoticonManager;
 
@@ -339,7 +340,7 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
      * @param listener the ContextMenuListener.
      */
     public void addContextMenuListener(ContextMenuListener listener) {
-        contextMenuListeners.add(listener);
+        contextMenuListeners.addIfAbsent(listener);
     }
 
     /**
@@ -367,7 +368,7 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
     }
 
     public void addLinkInterceptor(LinkInterceptor interceptor) {
-        interceptors.add(interceptor);
+        interceptors.addIfAbsent(interceptor);
     }
 
     public void removeLinkInterceptor(LinkInterceptor interceptor) {

@@ -18,15 +18,14 @@ package org.jivesoftware.spark;
 import org.jivesoftware.spark.plugin.MetadataListener;
 import org.jivesoftware.spark.ui.ChatRoom;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Allows a mechanism to associated data with chat rooms.
  */
 public class DataManager {
-    private final List<MetadataListener> metadataListeners = new ArrayList<>();
+    private final CopyOnWriteArrayList<MetadataListener> metadataListeners = new CopyOnWriteArrayList<>();
 
     private static DataManager singleton;
     private static final Object LOCK = new Object();
@@ -62,7 +61,7 @@ public class DataManager {
 
     // Allows for more associated data to individual chat rooms.
     public void addMetadataListener(MetadataListener listener) {
-        metadataListeners.add(listener);
+        metadataListeners.addIfAbsent(listener);
     }
 
     public void removeMetadataListener(MetadataListener listener) {
