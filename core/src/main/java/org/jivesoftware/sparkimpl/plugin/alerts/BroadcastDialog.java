@@ -368,18 +368,14 @@ Log.warning( "Unable to broadcast.", e1 );
        
         
         for (String jid : jids) {
-            final Message message = new Message();
             String nickname = SparkManager.getUserManager().getUserNicknameFromJID(JidCreate.bareFromOrThrowUnchecked(jid));
             recipients.add(nickname);
-            message.setTo(JidCreate.fromOrThrowUnchecked(jid));
+
+            final Message message = new Message();
+            message.setType(normalMessageButton.isSelected() ? Message.Type.normal : Message.Type.headline);
             message.setBody(text);
-            
-            if (normalMessageButton.isSelected()) {
-                message.setType(Message.Type.normal);
-            }
-            else {
-                message.setType(Message.Type.headline);
-            }
+            message.setTo(JidCreate.fromOrThrowUnchecked(jid));
+
             try {
                 SparkManager.getConnection().sendStanza(message);
             } catch (InterruptedException e) {

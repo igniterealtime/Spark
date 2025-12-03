@@ -28,7 +28,7 @@ import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.Plugin;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ChatRoomListenerAdapter;
-import org.jivesoftware.spark.ui.MessageEventListener;
+import org.jivesoftware.spark.ui.MessageFilter;
 import org.jivesoftware.spark.ui.TranscriptWindow;
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 
@@ -42,20 +42,20 @@ public class TranslatorPlugin implements Plugin {
     /**
      * Called after Spark is loaded to initialize the new plugin.
      */
+    @Override
     public void initialize() {
-
         TranslatorPreference pref = new TranslatorPreference();
         SparkManager.getPreferenceManager().addPreference(pref);
 
         // Retrieve ChatManager from the SparkManager
         final ChatManager chatManager = SparkManager.getChatManager();
-
         // Add to a new ChatRoom when the ChatRoom opens.
         chatManager.addChatRoomListener(new ChatRoomListenerAdapter() {
             public void chatRoomOpened(ChatRoom room) {
                 // only do the translation for single chat
                 if (room instanceof ChatRoomImpl && TranslatorProperties.getInstance().getEnabledTranslator()) {
                     final ChatRoomImpl roomImpl = (ChatRoomImpl)room;
+                    final TranscriptWindow transcriptWindow = roomImpl.getTranscriptWindow();
 
                     //Set server LibreTranslate API
                     if(TranslatorProperties.getInstance().getUseCustomUrl() && !StringUtils.isBlank(TranslatorProperties.getInstance().getUrl())){
@@ -75,13 +75,12 @@ public class TranslatorPlugin implements Plugin {
                     roomImpl.addChatRoomComponent(translatorBox);
 
                     // do the translation for outgoing messages.
-                    final MessageEventListener messageListener = new MessageEventListener() {
-                        public void sendingMessage(Message message) {
+                    final MessageFilter messageFilter = new MessageFilter() {
+                        @Override
+                        public void filterOutgoing(ChatRoom room, Message message) {
                             String currentBody = message.getBody();
                             Language lang = (Language) translatorBox.getSelectedItem();
                             if (lang != null && lang != Language.NONE) {
-                            	message.setBody(null);
-                                TranscriptWindow transcriptWindow = chatManager.getChatRoom( message.getTo().asEntityBareJidOrThrow() ).getTranscriptWindow();
                                 try {
                                     currentBody = TranslatorUtil.translate(currentBody, lang);
                                     transcriptWindow.insertNotificationMessage("-> "+currentBody, Color.gray);
@@ -91,13 +90,13 @@ public class TranslatorPlugin implements Plugin {
                                 }
                             }
                         }
-                        
 
-                        public void receivingMessage(Message message) {
+                        @Override
+                        public void filterIncoming(ChatRoom room, Message message) {
                             // do nothing
                         }
                     };
-                    roomImpl.addMessageEventListener(messageListener);
+                    chatManager.addMessageFilter(messageFilter);
                 }
             }
         });
@@ -107,6 +106,7 @@ public class TranslatorPlugin implements Plugin {
      * Called when Spark is shutting down to allow for persistence of information
      * or releasing of resources.
      */
+    @Override
     public void shutdown() {
 
     }
@@ -116,6 +116,7 @@ public class TranslatorPlugin implements Plugin {
      *
      * @return true if Spark can shutdown on users request.
      */
+    @Override
     public boolean canShutDown() {
         return true;
     }
@@ -125,6 +126,7 @@ public class TranslatorPlugin implements Plugin {
      * The plugin owner is responsible to clean up any resources and
      * remove any components install in Spark.
      */
+    @Override
     public void uninstall() {
         // Remove all resources belonging to this plugin.
     }

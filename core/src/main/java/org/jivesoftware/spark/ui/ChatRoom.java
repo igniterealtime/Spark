@@ -520,9 +520,10 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
      * The main entry point when receiving any messages. This will either handle
      * a message from a customer or delegate itself as an agent handler.
      *
-     * @param message - the message receieved.
+     * @param message - the message received.
      */
     public void insertMessage(Message message) {
+        Objects.requireNonNull(message);
         // Fire Message Filters
 
         SparkManager.getChatManager().filterIncomingMessage(this, message);
@@ -545,10 +546,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
      */
     public void addToTranscript(Message message, boolean updateDate) {
         // Create message to persist.
-        final Message newMessage = new Message();
-        newMessage.setTo(message.getTo());
-        newMessage.setFrom(message.getFrom());
-        newMessage.setBody(message.getBody());
+        final Message newMessage = new Message(message);
         final Map<String, Object> properties = new HashMap<>();
         properties.put("date", new Date());
         newMessage.addExtension(new JivePropertiesExtension(properties));
@@ -563,25 +561,6 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         }
 
         scrollToBottom();
-    }
-
-    /**
-     * Adds a new message to the transcript history.
-     *
-     * @param to who the message is to.
-     * @param from who the message was from.
-     * @param body the body of the message.
-     * @param date when the message was received.
-     */
-    public void addToTranscript(String to, String from, String body, Date date) {
-        final Message newMessage = new Message();
-        newMessage.setTo(JidCreate.fromOrThrowUnchecked(to));
-        newMessage.setFrom(JidCreate.fromOrThrowUnchecked(from));
-        newMessage.setBody(body);
-        final Map<String, Object> properties = new HashMap<>();
-        properties.put("date", new Date());
-        newMessage.addExtension(new JivePropertiesExtension(properties));
-        transcript.add(newMessage);
     }
 
     /**
