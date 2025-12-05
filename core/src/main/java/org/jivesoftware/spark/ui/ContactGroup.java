@@ -809,13 +809,15 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
     }
 
     public Collection<ContactItem> getOfflineContacts() {
-        return new ArrayList<>(offlineContacts);
+        final List<ContactItem> list = new ArrayList<>(offlineContacts);
+        list.sort(itemComparator);
+        return list;
     }
 
     /**
      * Sorts ContactItems.
      */
-    final protected Comparator<ContactItem> itemComparator = Comparator.comparing(item -> item.getDisplayName().toLowerCase());
+    private final static Comparator<ContactItem> itemComparator = Comparator.comparing(item -> item.getDisplayName().toLowerCase());
 
     /**
      * Returns true if this ContactGroup is the Offline Group.
