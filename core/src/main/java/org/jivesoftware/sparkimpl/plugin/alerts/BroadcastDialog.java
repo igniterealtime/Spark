@@ -123,10 +123,7 @@ public class BroadcastDialog extends JPanel {
                 nodes.add(itemNode);
             }
 
-            final List<ContactItem> offlineContacts = new ArrayList<>( group.getOfflineContacts() );
-            offlineContacts.sort(ContactList.ContactItemComparator);
-
-            for (ContactItem item : offlineContacts) {
+            for (ContactItem item : group.getOfflineContacts()) {
                 CheckNode itemNode = new CheckNode(item.getDisplayName(), false, item.getIcon());
                 itemNode.setAssociatedObject(item.getJid().toString());
                 groupNode.add(itemNode);
