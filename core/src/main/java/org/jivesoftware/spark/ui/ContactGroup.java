@@ -35,6 +35,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Container representing a RosterGroup within the Contact List.
@@ -43,7 +44,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
     private static final long serialVersionUID = 6578057848913010799L;
     private final List<ContactItem> contactItems = new ArrayList<>();
     private final List<ContactGroup> contactGroups = new ArrayList<>();
-    private final List<ContactGroupListener> listeners = new ArrayList<>();
+    private final CopyOnWriteArrayList<ContactGroupListener> listeners = new CopyOnWriteArrayList<>();
     private final List<ContactItem> offlineContacts = new ArrayList<>();
 
     private final int fontSize;
@@ -316,11 +317,6 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
         contactItems.add(item);
 
         List<ContactItem> tempItems = getContactItems();
-
-
-        tempItems.sort(itemComparator);
-
-
         int index = tempItems.indexOf(item);
 
 
@@ -652,7 +648,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
      * @param listener the ContactGroupListener.
      */
     public void addContactGroupListener(ContactGroupListener listener) {
-        listeners.add(listener);
+        listeners.addIfAbsent(listener);
     }
 
     /**
@@ -744,8 +740,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
         }
 
         int count = 0;
-        List<ContactItem> list = new ArrayList<>(getContactItems());
-        for (ContactItem it : list) {
+        for (ContactItem it : getContactItems()) {
             if (it.isAvailable()) {
                 count++;
             }
@@ -777,7 +772,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
 
     public void removeAllContacts() {
         // Remove all users from online group.
-        for (ContactItem item : new ArrayList<>(getContactItems())) {
+        for (ContactItem item : getContactItems()) {
             removeContactItem(item);
         }
 
@@ -808,13 +803,15 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
     }
 
     public Collection<ContactItem> getOfflineContacts() {
-        return new ArrayList<>(offlineContacts);
+        final List<ContactItem> list = new ArrayList<>(offlineContacts);
+        list.sort(itemComparator);
+        return list;
     }
 
     /**
      * Sorts ContactItems.
      */
-    final protected Comparator<ContactItem> itemComparator = Comparator.comparing(item -> item.getDisplayName().toLowerCase());
+    private final static Comparator<ContactItem> itemComparator = Comparator.comparing(item -> item.getDisplayName().toLowerCase());
 
     /**
      * Returns true if this ContactGroup is the Offline Group.

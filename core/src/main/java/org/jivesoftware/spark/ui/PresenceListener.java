@@ -19,6 +19,7 @@ import org.jivesoftware.smack.packet.Presence;
 
 /**
  * The <code>PresenceListener</code> is used to listen for Personal Presence changes within the system.
+ * It allows other parts of the application to react to presence updates (e.g., updating UI elements like status icons).
  * <p/>
  * Presence listeners can be registered using the {@link org.jivesoftware.spark.SessionManager}
  */

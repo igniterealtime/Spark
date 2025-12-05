@@ -18,8 +18,7 @@ package org.jivesoftware.spark.component.browser;
 import org.jivesoftware.spark.util.log.Log;
 
 import javax.swing.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Abstract class describing a particular type of component capable of rendering html.
@@ -28,7 +27,7 @@ import java.util.List;
  */
 public abstract class BrowserViewer extends JPanel {
 	private static final long serialVersionUID = -5389246902135069702L;
-	private final List<BrowserListener> listeners = new ArrayList<>();
+	private final CopyOnWriteArrayList<BrowserListener> listeners = new CopyOnWriteArrayList<>();
 
     /**
      * Add a BrowserListener.
@@ -36,7 +35,7 @@ public abstract class BrowserViewer extends JPanel {
      * @param listener the listener.
      */
     public void addBrowserListener(BrowserListener listener) {
-        listeners.add(listener);
+        listeners.addIfAbsent(listener);
     }
 
     /**

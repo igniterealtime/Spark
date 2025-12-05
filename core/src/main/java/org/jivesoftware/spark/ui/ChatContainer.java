@@ -57,6 +57,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.regex.Pattern;
 
 /**
@@ -71,7 +72,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
     /**
      * List of all ChatRoom Listeners.
      */
-    private final List<ChatRoomListener> chatRoomListeners = new ArrayList<>();
+    private final CopyOnWriteArrayList<ChatRoomListener> chatRoomListeners = new CopyOnWriteArrayList<>();
     private final List<ChatRoom> chatRoomList = new ArrayList<>();
     private final Map<EntityJid, StanzaListener> presenceMap = new HashMap<>();
     private static final String WELCOME_TITLE = SparkRes.getString(SparkRes.WELCOME);
@@ -174,9 +175,9 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         String leftStrokeString = org.jivesoftware.spark.util.StringUtils.keyStroke2String(leftStroke);
 
         // Handle Left Arrow
-        this.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke("alt " + leftStrokeString + ""), "navigateLeft");
-        this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("alt " + leftStrokeString + ""), "navigateLeft");
-        this.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke("alt " + leftStrokeString + ""), "navigateLeft");
+        this.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke("alt " + leftStrokeString), "navigateLeft");
+        this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("alt " + leftStrokeString), "navigateLeft");
+        this.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke("alt " + leftStrokeString), "navigateLeft");
         this.getActionMap().put("navigateLeft", new AbstractAction("navigateLeft") {
             private static final long serialVersionUID = -8677467560602512074L;
 
@@ -190,9 +191,9 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         String rightStrokeString = org.jivesoftware.spark.util.StringUtils.keyStroke2String(rightStroke);
 
         // Handle Right Arrow
-        this.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke("alt " + rightStrokeString + ""), "navigateRight");
-        this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("alt " + rightStrokeString + ""), "navigateRight");
-        this.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke("alt " + rightStrokeString + ""), "navigateRight");
+        this.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke("alt " + rightStrokeString), "navigateRight");
+        this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("alt " + rightStrokeString), "navigateRight");
+        this.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke("alt " + rightStrokeString), "navigateRight");
 
         this.getActionMap().put("navigateRight", new AbstractAction("navigateRight") {
             private static final long serialVersionUID = -7676330627598261416L;
@@ -502,7 +503,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
      *
      * @param room the room to remove.
      */
-    private void cleanupChatRoom(ChatRoom room) {
+    private synchronized void cleanupChatRoom(ChatRoom room) {
         if (room.isActive()) {
             room.leaveChatRoom();
             room.closeChatRoom();
@@ -537,7 +538,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             return;
         }
 
-        for (ChatRoom chatRoom : new ArrayList<>(chatRoomList)) {
+        for (ChatRoom chatRoom : chatRoomList) {
             closeTab(chatRoom);
             chatRoom.closeChatRoom();
         }
@@ -871,9 +872,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
      * @param listener the <code>ChatRoomListener</code> to register
      */
     public void addChatRoomListener(ChatRoomListener listener) {
-        if (!chatRoomListeners.contains(listener)) {
-            chatRoomListeners.add(listener);
-        }
+        chatRoomListeners.addIfAbsent(listener);
     }
 
     /**
@@ -1473,7 +1472,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
     }
 
     public void closeAllGroupChatRooms() {
-        for (ChatRoom chatRoom : new ArrayList<>(chatRoomList)) {
+        for (ChatRoom chatRoom : chatRoomList) {
             boolean isGroup = chatRoom.getChatType() == Message.Type.groupchat;
             if (isGroup) {
                 closeTab(chatRoom);
@@ -1483,7 +1482,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
     }
 
     public boolean hasGroupChatRooms() {
-        for (ChatRoom chatRoom : new ArrayList<>(chatRoomList)) {
+        for (ChatRoom chatRoom : chatRoomList) {
             boolean isGroup = chatRoom.getChatType() == Message.Type.groupchat;
             if (isGroup) {
                 return true;

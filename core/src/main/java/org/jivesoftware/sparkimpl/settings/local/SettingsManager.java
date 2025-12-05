@@ -26,9 +26,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Properties;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 
 /**
@@ -37,7 +36,7 @@ import java.util.Properties;
 public class SettingsManager {
     private static LocalPreferences localPreferences;
 
-    private static final List<PreferenceListener> listeners = new ArrayList<>();
+    private static final CopyOnWriteArrayList<PreferenceListener> listeners = new CopyOnWriteArrayList<>();
 
     private static boolean fileExists = false;
 
@@ -185,7 +184,7 @@ public class SettingsManager {
     }
 
     public static void addPreferenceListener(PreferenceListener listener) {
-        listeners.add(listener);
+        listeners.addIfAbsent(listener);
     }
 
     public static void removePreferenceListener(PreferenceListener listener) {
