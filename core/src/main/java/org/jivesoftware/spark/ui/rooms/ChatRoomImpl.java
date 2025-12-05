@@ -61,6 +61,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * This is the Person to Person implementation of <code>ChatRoom</code>
@@ -68,7 +69,7 @@ import java.util.List;
  */
 public class ChatRoomImpl extends ChatRoom {
     private static final long serialVersionUID = 6163762803773980872L;
-    private final List<MessageEventListener> messageEventListeners = new ArrayList<>();
+    private final CopyOnWriteArrayList<MessageEventListener> messageEventListeners = new CopyOnWriteArrayList<>();
     private EntityBareJid roomname;
     private Icon tabIcon;
     private String roomTitle;
@@ -639,7 +640,7 @@ public class ChatRoomImpl extends ChatRoom {
     }
 
     public void addMessageEventListener(MessageEventListener listener) {
-        messageEventListeners.add(listener);
+        messageEventListeners.addIfAbsent(listener);
     }
 
     public void removeMessageEventListener(MessageEventListener listener) {
