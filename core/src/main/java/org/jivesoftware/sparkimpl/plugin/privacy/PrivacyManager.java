@@ -32,6 +32,7 @@ import org.jivesoftware.sparkimpl.plugin.privacy.list.SparkPrivacyList;
 import org.jivesoftware.sparkimpl.plugin.privacy.list.SparkPrivacyListListener;
 
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 
 /**
@@ -53,7 +54,7 @@ public class PrivacyManager {
     private final List<SparkPrivacyList> _privacyLists = new ArrayList<>();
     private PrivacyListManager privacyManager;
     private final PrivacyPresenceHandler _presenceHandler = new PrivacyPresenceHandler();
-    private final Set<SparkPrivacyListListener> _listListeners = new HashSet<>();
+    private final CopyOnWriteArrayList<SparkPrivacyListListener> _listListeners = new CopyOnWriteArrayList<>();
     private final boolean _active;
     private SparkPrivacyList previousActiveList;
 
@@ -342,7 +343,7 @@ public class PrivacyManager {
     
     public void addListListener (SparkPrivacyListListener listener)
     {
-        _listListeners.add(listener);
+        _listListeners.addIfAbsent(listener);
     }
     
     public void deleteListListener (SparkPrivacyListListener listener)
