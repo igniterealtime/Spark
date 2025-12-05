@@ -2517,11 +2517,6 @@ public class ContactList extends JPanel implements ActionListener,
         return unfiledGroup;
     }
 
-    /**
-     * Sorts ContactItems.
-     */
-    public final static Comparator<ContactItem> ContactItemComparator = Comparator.comparing(item -> item.getDisplayName().toLowerCase());
-
     public void showAddContact(String contact) {
         addContactMenu.doClick();
     }
