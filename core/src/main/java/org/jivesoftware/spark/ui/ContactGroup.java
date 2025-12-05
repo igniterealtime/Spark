@@ -317,11 +317,6 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
         contactItems.add(item);
 
         List<ContactItem> tempItems = getContactItems();
-
-
-        tempItems.sort(itemComparator);
-
-
         int index = tempItems.indexOf(item);
 
 
@@ -745,8 +740,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
         }
 
         int count = 0;
-        List<ContactItem> list = new ArrayList<>(getContactItems());
-        for (ContactItem it : list) {
+        for (ContactItem it : getContactItems()) {
             if (it.isAvailable()) {
                 count++;
             }
@@ -778,7 +772,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
 
     public void removeAllContacts() {
         // Remove all users from online group.
-        for (ContactItem item : new ArrayList<>(getContactItems())) {
+        for (ContactItem item : getContactItems()) {
             removeContactItem(item);
         }
 
