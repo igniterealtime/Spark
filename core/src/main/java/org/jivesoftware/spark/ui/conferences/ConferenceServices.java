@@ -426,9 +426,7 @@ public class ConferenceServices implements InvitationListener {
 	    final String password, final Message message, MUCUser.Invite invitation) {
         EntityBareJid inviter = inviterEntity.asEntityBareJid(); 
 	SwingUtilities.invokeLater( () -> {
-    Collection<RoomInvitationListener> listeners = new ArrayList<>( SparkManager
-            .getChatManager().getInvitationListeners() );
-    for (RoomInvitationListener listener : listeners) {
+        for (RoomInvitationListener listener : SparkManager.getChatManager().getInvitationListeners()) {
         boolean handle = listener.handleInvitation(conn, room, inviter, reason, password, message);
         if (handle) {
         return;

@@ -27,8 +27,7 @@ import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * The Window used to display the ChatRoom container.
@@ -40,7 +39,7 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
     private boolean focused;
     private final JCheckBox alwaysOnTopItem;
     private final ChatFrame chatFrame = this;
-    private final Collection<ChatFrameToFrontListener> _windowToFrontListeners = new ArrayList<>();
+    private final CopyOnWriteArrayList<ChatFrameToFrontListener> _windowToFrontListeners = new CopyOnWriteArrayList<>();
    
     /**
      * Creates default ChatFrame.
@@ -282,7 +281,7 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
      * @param chatRoom
      */
     public void addWindowToFronListener(ChatRoom chatRoom) {
-	_windowToFrontListeners.add(chatRoom);	
+	_windowToFrontListeners.addIfAbsent(chatRoom);
 	fireWindowOnTopListeners(chatFrame.isAlwaysOnTop());
     }
 

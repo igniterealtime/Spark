@@ -32,12 +32,11 @@ import org.jxmpp.util.XmppStringUtils;
 
 import javax.swing.SwingUtilities;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * This manager is responsible for the handling of the XMPPConnection used within Spark. This is used
- * for the changing of the users presence, the handling of connection errors and the ability to add
+ * for the changing of the user's presence, the handling of connection errors and the ability to add
  * presence listeners and retrieve the connection used in Spark.
  *
  * @author Derek DeMoro
@@ -52,7 +51,7 @@ public final class SessionManager implements ConnectionListener {
 
     private EntityFullJid JID;
 
-    private final List<PresenceListener> presenceListeners = new ArrayList<>();
+    private final CopyOnWriteArrayList<PresenceListener> presenceListeners = new CopyOnWriteArrayList<>();
 
     private EntityBareJid userBareAddress;
     private DiscoverItems discoverItems;
@@ -67,8 +66,8 @@ public final class SessionManager implements ConnectionListener {
      * Initializes session.
      *
      * @param connection the XMPPConnection used in this session.
-     * @param username   the agents username.
-     * @param password   the agents password.
+     * @param username   the agent's username.
+     * @param password   the agent's password.
      */
     public void initializeSession( AbstractXMPPConnection connection, String username, String password) {
         this.connection = connection;
@@ -76,14 +75,13 @@ public final class SessionManager implements ConnectionListener {
         this.password = password;
         this.userBareAddress = connection.getUser().asEntityBareJid();
 
-        // create workgroup session
+        // create a workgroup session
         personalDataManager = PrivateDataManager.getInstanceFor( getConnection() );
 
         // Discover items
         discoverItems();
 
-
-        ProviderManager.addExtensionProvider("event", "http://jabber.org/protocol/disco#info", new Features.Provider());
+        ProviderManager.addExtensionProvider(Features.ELEMENT_NAME, Features.NAMESPACE, new Features.Provider());
     }
 
     /**
@@ -172,7 +170,7 @@ public final class SessionManager implements ConnectionListener {
     }
 
     /**
-     * Notify agent that the connection has been closed.
+     * Notify the agent that the connection has been closed.
      */
     @Override
 	public void connectionClosed() {
@@ -190,7 +188,7 @@ public final class SessionManager implements ConnectionListener {
     /**
      * Return the password associated with this session.
      *
-     * @return the password assoicated with this session.
+     * @return the password associated with this session.
      */
     public String getPassword() {
         return password;
@@ -203,11 +201,11 @@ public final class SessionManager implements ConnectionListener {
      */
     public void changePresence(Presence presence) {
         // Fire Presence Listeners
-        for (PresenceListener listener : new ArrayList<>( this.presenceListeners )) {
+        for (PresenceListener listener : this.presenceListeners) {
             listener.presenceChanged(presence);
         }
 
-        // Do NOT  send presence if disconnected.
+        // Do NOT send presence if disconnected.
         if (SparkManager.getConnection().isConnected()) {
             // Send Presence Packet
             try
@@ -246,7 +244,7 @@ public final class SessionManager implements ConnectionListener {
      * @param listener the listener.
      */
     public void addPresenceListener(PresenceListener listener) {
-        presenceListeners.add(listener);
+        presenceListeners.addIfAbsent(listener);
     }
 
     /**
