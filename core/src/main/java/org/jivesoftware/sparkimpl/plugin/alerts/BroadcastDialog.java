@@ -45,7 +45,9 @@ import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.packet.Message;
+import org.jivesoftware.smack.packet.MessageBuilder;
 import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smack.packet.StanzaBuilder;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.CheckNode;
 import org.jivesoftware.spark.component.CheckTree;
@@ -368,18 +370,15 @@ Log.warning( "Unable to broadcast.", e1 );
        
         
         for (String jid : jids) {
-            final Message message = new Message();
             String nickname = SparkManager.getUserManager().getUserNicknameFromJID(JidCreate.bareFromOrThrowUnchecked(jid));
             recipients.add(nickname);
+
+            MessageBuilder messageBuilder = StanzaBuilder.buildMessage()
+                .ofType(normalMessageButton.isSelected() ? Message.Type.normal : Message.Type.headline)
+                .setBody(text);
+            Message message = messageBuilder.build();
             message.setTo(JidCreate.fromOrThrowUnchecked(jid));
-            message.setBody(text);
-            
-            if (normalMessageButton.isSelected()) {
-                message.setType(Message.Type.normal);
-            }
-            else {
-                message.setType(Message.Type.headline);
-            }
+
             try {
                 SparkManager.getConnection().sendStanza(message);
             } catch (InterruptedException e) {

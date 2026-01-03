@@ -15,14 +15,16 @@
  */
 package tic.tac.toe.packet;
 
-import java.io.IOException;
-import java.util.Random;
-
 import org.jivesoftware.smack.packet.IQ;
+import org.jivesoftware.smack.packet.IqData;
 import org.jivesoftware.smack.packet.XmlEnvironment;
-import org.jivesoftware.smack.provider.IQProvider;
+import org.jivesoftware.smack.provider.IqProvider;
 import org.jivesoftware.smack.xml.XmlPullParser;
 import org.jivesoftware.smack.xml.XmlPullParserException;
+import org.jxmpp.JxmppContext;
+
+import java.io.IOException;
+import java.util.Random;
 
 /**
  * The Game Offer Packet
@@ -94,14 +96,15 @@ public class GameOfferPacket extends IQ {
         buf.append( "</" + ELEMENT_NAME + ">" );
         return buf;
     }
-    public static class Provider extends IQProvider<GameOfferPacket>
+    public static class Provider extends IqProvider<GameOfferPacket>
     {
         public Provider()
         {
             super();
         }
 
-        public GameOfferPacket parse(XmlPullParser parser, int i, XmlEnvironment xmlEnvironment) throws XmlPullParserException, IOException
+        @Override
+        public GameOfferPacket parse(XmlPullParser parser, int i, IqData iqData, XmlEnvironment xmlEnvironment, JxmppContext jxmppContext) throws XmlPullParserException, IOException
         {
             final GameOfferPacket gameOffer = new GameOfferPacket();
 

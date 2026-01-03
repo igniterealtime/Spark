@@ -19,10 +19,11 @@ import java.net.URI;
 
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPConnection;
+import org.jivesoftware.smack.packet.MessageBuilder;
+import org.jivesoftware.smack.packet.StanzaBuilder;
 import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.roster.RosterEntry;
 import org.jivesoftware.smack.roster.RosterGroup;
-import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
@@ -89,9 +90,9 @@ public class UriManager {
 	ChatManager chatManager = SparkManager.getChatManager();
 	ChatRoom chatRoom = chatManager.createChatRoom(jid.asEntityJidOrThrow(), nickname, nickname);
 	if (body != null) {
-	    Message message = new Message();
-	    message.setBody(body);
-	    chatRoom.sendMessage(message);
+        MessageBuilder messageBuilder = StanzaBuilder.buildMessage()
+            .setBody(body);
+	    chatRoom.sendMessage(messageBuilder);
 	}
 
 	chatManager.getChatContainer().activateChatRoom(chatRoom);
@@ -145,7 +146,9 @@ public class UriManager {
         throw new IllegalStateException(e);
     }
 
-	Presence response = new Presence(Presence.Type.unsubscribe);
+        Presence response = StanzaBuilder.buildPresence()
+            .ofType(Presence.Type.unsubscribe)
+            .build();
 	response.setTo(jid);
 	try {
         SparkManager.getConnection().sendStanza(response);
@@ -197,7 +200,7 @@ public class UriManager {
         Roster roster = Roster.getInstanceFor(SparkManager.getConnection());
         RosterEntry userEntry = roster.getEntry(jid);
 
-        roster.createEntry(jid, name, new String[]{group});
+        roster.preApproveAndCreateEntry(jid, name, new String[]{group});
 
         RosterGroup rosterGroup = roster.getGroup(group);
         if (rosterGroup == null) {
@@ -205,7 +208,7 @@ public class UriManager {
         }
 
         if (userEntry == null) {
-            roster.createEntry(jid, name, new String[]{group});
+            roster.preApproveAndCreateEntry(jid, name, new String[]{group});
         } else {
             userEntry.setName(name);
             rosterGroup.addEntry(userEntry);

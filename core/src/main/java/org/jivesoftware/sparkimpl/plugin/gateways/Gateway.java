@@ -18,14 +18,18 @@ package org.jivesoftware.sparkimpl.plugin.gateways;
 import org.jivesoftware.smack.*;
 import org.jivesoftware.smack.filter.StanzaIdFilter;
 import org.jivesoftware.smack.packet.IQ;
+import org.jivesoftware.smack.packet.IqData;
 import org.jivesoftware.smack.packet.XmlEnvironment;
-import org.jivesoftware.smack.provider.IQProvider;
+import org.jivesoftware.smack.parsing.SmackParsingException;
+import org.jivesoftware.smack.provider.IqProvider;
 import org.jivesoftware.smack.xml.XmlPullParser;
 import org.jivesoftware.smack.xml.XmlPullParserException;
 import org.jivesoftware.spark.SparkManager;
+import org.jxmpp.JxmppContext;
 import org.jxmpp.jid.DomainBareJid;
 
 import java.io.IOException;
+import java.text.ParseException;
 
 /**
  */
@@ -81,14 +85,14 @@ public class Gateway extends IQ {
      *
      * @author Derek DeMoro
      */
-    public static class Provider extends IQProvider<Gateway> {
+    public static class Provider extends IqProvider<Gateway> {
 
         public Provider() {
             super();
         }
 
         @Override
-        public Gateway parse(XmlPullParser parser, int i, XmlEnvironment xmlEnvironment)
+        public Gateway parse(XmlPullParser parser, int i, IqData iqData, XmlEnvironment xmlEnvironment, JxmppContext jxmppContext)
                 throws IOException, XmlPullParserException {
             Gateway version = new Gateway();
 

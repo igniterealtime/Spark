@@ -206,7 +206,7 @@ public class ReversiPlugin implements Plugin {
             reply.setTo(invitation.getFrom());
             reply.setStanzaId(invitation.getStanzaId());
             reply.setType(IQ.Type.error);
-            reply.setError(StanzaError.getBuilder().setCondition(StanzaError.Condition.undefined_condition).setDescriptiveEnText("User declined your request."));
+            reply.setError(StanzaError.getBuilder().setCondition(StanzaError.Condition.undefined_condition).setDescriptiveEnText("User declined your request.").build());
             try
             {
                 SparkManager.getConnection().sendStanza(reply);
@@ -299,7 +299,7 @@ public class ReversiPlugin implements Plugin {
                        GameOffer reply = new GameOffer();
                        reply.setTo(((ChatRoomImpl) room).getJID());
                        reply.setType(IQ.Type.error);
-                       reply.setError(StanzaError.getBuilder().setCondition(StanzaError.Condition.undefined_condition).setDescriptiveEnText("User cancelled the invitation."));
+                       reply.setError(StanzaError.getBuilder().setCondition(StanzaError.Condition.undefined_condition).setDescriptiveEnText("User cancelled the invitation.").build());
 
                        try
                        {

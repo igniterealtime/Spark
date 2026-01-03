@@ -33,6 +33,7 @@ import javax.swing.UIManager;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.smack.packet.StanzaBuilder;
 import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.roster.RosterEntry;
 import org.jivesoftware.smack.packet.Presence;
@@ -98,7 +99,9 @@ public class ContactItem extends JPanel {
         avatarsShowing = pref.areAvatarsVisible();
 
         // Set default presence
-        presence = new Presence(Presence.Type.unavailable);
+        presence = StanzaBuilder.buildPresence()
+            .ofType(Presence.Type.unavailable)
+            .build();
 
         contactsDir = new File(SparkManager.getUserDirectory(), "contacts");
 

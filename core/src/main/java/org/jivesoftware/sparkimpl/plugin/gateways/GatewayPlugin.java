@@ -23,6 +23,7 @@ import org.jivesoftware.smack.filter.StanzaFilter;
 import org.jivesoftware.smack.filter.StanzaTypeFilter;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smack.packet.StanzaBuilder;
 import org.jivesoftware.smack.provider.ProviderManager;
 import org.jivesoftware.smackx.disco.packet.DiscoverItems;
 import org.jivesoftware.spark.ChatManager;
@@ -267,7 +268,13 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
                         return;
                     }
                     // Create new presence
-                    Presence p = new Presence(presence.getType(), presence.getStatus(), presence.getPriority(), presence.getMode());
+                    Presence p = StanzaBuilder.buildPresence()
+                        .ofType(presence.getType())
+                        .setStatus(presence.getStatus())
+                        .setPriority(presence.getPriority())
+                        .setMode(presence.getMode())
+                        .build();
+
                     p.setTo(transport.getXMPPServiceDomain());
                     try
                     {

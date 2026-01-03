@@ -45,6 +45,8 @@ import org.jivesoftware.fastpath.workspace.panes.BackgroundPane;
 import org.jivesoftware.fastpath.workspace.util.RequestUtils;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.packet.Message;
+import org.jivesoftware.smack.packet.MessageBuilder;
+import org.jivesoftware.smack.packet.StanzaBuilder;
 import org.jivesoftware.smackx.jiveproperties.packet.JivePropertiesExtension;
 import org.jivesoftware.smackx.xevent.MessageEventManager;
 import org.jivesoftware.spark.ChatManager;
@@ -209,7 +211,7 @@ public class CoBrowser extends JPanel implements ActionListener, BrowserListener
         // If the disable box is not selected, update customer with
         // page push.
         /*
-        final Message mes = new Message();
+        MessageBuilder mes = StanzaBuilder.buildMessage();
         mes.setProperty("PUSH_URL", link);
         mes.setBody("Start a Co-Browsing session with [b]" + link + "[/b]");
 
@@ -228,7 +230,7 @@ public class CoBrowser extends JPanel implements ActionListener, BrowserListener
 
         // If the disable box is not selected, update customer with
         // page push.
-        final Message mes = new Message();
+        MessageBuilder mes = StanzaBuilder.buildMessage();
         final Map<String, Object> properties = new HashMap<>();
         properties.put( "PUSH_URL", link );
         mes.addExtension( new JivePropertiesExtension( properties ) );
@@ -260,7 +262,7 @@ public class CoBrowser extends JPanel implements ActionListener, BrowserListener
 
     private void navigateUser(String href) {
         if (followMeButton.isSelected() && hasLoaded) {
-            final Message mes = new Message();
+            MessageBuilder mes = StanzaBuilder.buildMessage();
             final Map<String, Object> properties = new HashMap<>();
             properties.put( "PUSH_URL", href );
             mes.addExtension( new JivePropertiesExtension( properties ) );
@@ -377,15 +379,17 @@ public class CoBrowser extends JPanel implements ActionListener, BrowserListener
         return location;
     }
 
-    private void send(Message message) {
+    private void send(MessageBuilder messageBuilder) {
         GroupChatRoom groupChatRoom = (GroupChatRoom)chatRoom;
         try {
+            messageBuilder.ofType(Message.Type.groupchat);
+
+            Message message = messageBuilder.build();
             message.setTo(groupChatRoom.getBareJid());
-            message.setType(Message.Type.groupchat);
             MessageEventManager.addNotificationsRequests(message, true, true, true, true);
 
 
-            groupChatRoom.getMultiUserChat().sendMessage(message);
+            groupChatRoom.getMultiUserChat().sendMessage(messageBuilder);
         }
         catch (SmackException | InterruptedException ex) {
             Log.error("Unable to send message in conference chat.", ex);

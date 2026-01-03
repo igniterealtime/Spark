@@ -484,10 +484,10 @@ public class RosterDialog implements ActionListener {
 	    for (DomainBareJid search : _usersearchservice) {
 
 		ReportedData data;
-		UserSearchManager usersearchManager = new UserSearchManager(
+		UserSearchManager usersearchManager = UserSearchManager.getInstanceFor(
 			SparkManager.getConnection());
 
-		DataForm f = usersearchManager.getSearchForm(search);
+		DataForm f = usersearchManager.getSearchForm(search).getDataForm();
 
 		FillableForm answer = new FillableForm(f);
 		answer.setAnswer("Name", true);
@@ -495,7 +495,7 @@ public class RosterDialog implements ActionListener {
 		answer.setAnswer("Username", true);
 		answer.setAnswer("search", byname);
 
-		data = usersearchManager.getSearchResults(answer.getDataFormToSubmit(), search);
+		data = usersearchManager.sendSimpleSearchForm(answer.getDataFormToSubmit(), search);
 
 		ArrayList<String> columnnames = new ArrayList<>();
 		for ( ReportedData.Column column : data.getColumns() ) {

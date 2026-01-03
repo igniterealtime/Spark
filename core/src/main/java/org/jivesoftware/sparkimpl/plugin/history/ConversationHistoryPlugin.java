@@ -18,6 +18,7 @@ package org.jivesoftware.sparkimpl.plugin.history;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.packet.Message;
+import org.jivesoftware.smack.packet.MessageBuilder;
 import org.jivesoftware.smack.xml.SmackXmlParser;
 import org.jivesoftware.smack.xml.XmlPullParser;
 import org.jivesoftware.spark.SparkManager;
@@ -162,7 +163,7 @@ public class ConversationHistoryPlugin implements Plugin {
         // Persist order of conversations.
         SparkManager.getChatManager().addMessageFilter(new MessageFilter() {
             @Override
-			public void filterOutgoing(ChatRoom room, Message message) {
+			public void filterOutgoing(ChatRoom room, MessageBuilder message) {
                 addUserToHistory(room);
             }
 

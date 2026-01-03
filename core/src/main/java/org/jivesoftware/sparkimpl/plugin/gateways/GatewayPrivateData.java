@@ -19,6 +19,7 @@ import org.jivesoftware.smack.xml.XmlPullParser;
 import org.jivesoftware.smack.xml.XmlPullParserException;
 import org.jivesoftware.smackx.iqprivate.packet.PrivateData;
 import org.jivesoftware.smackx.iqprivate.provider.PrivateDataProvider;
+import org.jxmpp.JxmppContext;
 import org.jxmpp.jid.DomainBareJid;
 import org.jxmpp.jid.impl.JidCreate;
 
@@ -87,7 +88,7 @@ public class GatewayPrivateData implements PrivateData {
         }
 
         @Override
-        public PrivateData parsePrivateData(XmlPullParser parser) throws IOException, XmlPullParserException {
+        public PrivateData parsePrivateData(XmlPullParser parser, JxmppContext jxmppContext) throws XmlPullParserException, IOException {
             GatewayPrivateData data = new GatewayPrivateData();
 
             boolean done = false;

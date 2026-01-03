@@ -62,13 +62,13 @@ public class SearchForm extends JPanel {
             throw new IllegalStateException(e);
         }
 
-        searchManager = new UserSearchManager(SparkManager.getConnection());
+        searchManager = UserSearchManager.getInstanceFor(SparkManager.getConnection());
         setLayout(new GridBagLayout());
 
         // Load searchForm
 
         try {
-            searchForm = searchManager.getSearchForm(serviceName);
+            searchForm = searchManager.getSearchForm(serviceName).getDataForm();
         }
         catch (XMPPException | SmackException | InterruptedException e) {
             Log.error("Unable to load search services.", e);
@@ -77,7 +77,6 @@ public class SearchForm extends JPanel {
             return;
         }
 
-        searchManager = new UserSearchManager(SparkManager.getConnection());
         questionForm = new DataFormUI(searchForm);
         questionForm.setBorder(BorderFactory.createTitledBorder(Res.getString("group.search.form")));
 
@@ -131,8 +130,7 @@ public class SearchForm extends JPanel {
             @Override
 			public Object construct() {
                 try {
-                    DataForm answerForm = questionForm.getFilledForm();
-                    data = searchManager.getSearchResults(answerForm, serviceName);
+                    data = searchManager.sendSimpleSearchForm(questionForm.getFilledForm(), serviceName);
                 }
                 catch (XMPPException | SmackException | InterruptedException e) {
                     Log.error("Unable to load search service.", e);

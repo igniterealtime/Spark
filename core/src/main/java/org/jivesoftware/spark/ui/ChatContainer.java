@@ -27,6 +27,7 @@ import org.jivesoftware.smack.filter.FromMatchesFilter;
 import org.jivesoftware.smack.filter.StanzaTypeFilter;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smack.packet.StanzaBuilder;
 import org.jivesoftware.smackx.muc.MultiUserChatManager;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
@@ -1127,7 +1128,7 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         if (isGroupChat) {
             // is a group chat, perform some functions
             String fromNickName = "";
-            Message lastChatMessage = new Message();
+            Message lastChatMessage;
             Jid mucNickNameT;
             String finalRoomName = "";
             if (size > 0) {
@@ -1140,6 +1141,8 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
                 } else {
                     fromNickName = mucNickName[1];
                 }
+            } else {
+                lastChatMessage = StanzaBuilder.buildMessage().build();
             }
             String myNickName = chatRoom.getNickname().toString();
             if (!myNickName.equals(fromNickName)) {
