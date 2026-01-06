@@ -275,9 +275,7 @@ public class TransferGroupUI extends JPanel {
      */
     final Comparator<RosterEntry> entryComparator = new Comparator<RosterEntry>() {
         public int compare(RosterEntry one, RosterEntry two) {
-            final RosterEntry entryOne = one;
-            final RosterEntry entryTwo = two;
-            return entryOne.getName().toLowerCase().compareTo(entryTwo.getName().toLowerCase());
+            return one.getName().compareToIgnoreCase(two.getName());
 
         }
     };

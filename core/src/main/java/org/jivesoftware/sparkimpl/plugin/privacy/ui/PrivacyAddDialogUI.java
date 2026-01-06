@@ -244,7 +244,6 @@ public class PrivacyAddDialogUI extends JPanel {
             return 0;
         }
 
-        return nickname1.toLowerCase().compareTo(nickname2.toLowerCase());
-
+        return nickname1.compareToIgnoreCase(nickname2);
     };
 }
