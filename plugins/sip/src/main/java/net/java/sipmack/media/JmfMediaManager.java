@@ -725,8 +725,7 @@ public class JmfMediaManager {
    	 
    	 for(String codec: codecs) {
    		 for(String format : formate) {
-   			 if(format != null 
-   				 && format.toLowerCase().equals(codec.toLowerCase()))
+             if (format != null && format.equalsIgnoreCase(codec))
    				 return new AudioFormat(format);
    		 }
    	 }
@@ -742,7 +741,7 @@ public class JmfMediaManager {
    	 String[] codecs = localPreferences.getSelectedCodecs().split("\\^");
    	 for(AudioFormat form : all) {
    		 for(String codec: codecs) {
-	   		 if(form.getEncoding().toLowerCase().equals(codec.toLowerCase())){
+             if (form.getEncoding().equalsIgnoreCase(codec)) {
 	   			 format.add(form);
 	   		 }
    		 }

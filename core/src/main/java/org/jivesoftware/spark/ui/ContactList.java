@@ -2056,7 +2056,7 @@ public class ContactList extends JPanel implements ActionListener,
             return -1;
         }
 
-        return group1.getGroupName().trim().toLowerCase().compareTo(group2.getGroupName().trim().toLowerCase());
+        return group1.getGroupName().trim().compareToIgnoreCase(group2.getGroupName().trim());
     };
 
     public JPanel getMainPanel() {
