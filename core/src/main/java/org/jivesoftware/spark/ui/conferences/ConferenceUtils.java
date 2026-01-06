@@ -320,7 +320,7 @@ public class ConferenceUtils {
             case registration_required:
                 return Res.getString("message.error.not.member");
             default:
-                String reason = error.getConditionText() == null ? error.getCondition().toString() : error.getConditionText();
+                String reason = error.getDescriptiveText() == null ? error.getCondition().toString() : error.getDescriptiveText();
                 return Res.getString("message.default.error") + ": " + reason;
         }
 

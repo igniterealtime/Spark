@@ -249,7 +249,9 @@ public class JoinRoomSwingWorker extends SwingWorker
         if ( errors.size() > 0 )
         {
             String error = errors.get( 0 );
-            JOptionPane.showMessageDialog( SparkManager.getMainWindow(), error, Res.getString("message.error.unable.join.room"), JOptionPane.ERROR_MESSAGE );
+            final String style = "width: 300px;";
+            String body = "<html><body><p style='"+style+"'>"+ roomJID + ": " + Res.getString("message.error.unable.join.room") +"</p><p></p><p style='"+style+"'>" + error + "</p></body></html>";
+            JOptionPane.showMessageDialog( SparkManager.getMainWindow(), body, Res.getString("message.error.unable.join.room"), JOptionPane.ERROR_MESSAGE );
         }
         else if ( groupChat.isJoined() && getValue() != null )
         {
