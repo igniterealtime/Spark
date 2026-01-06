@@ -1131,39 +1131,44 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             Jid mucNickNameT;
             String finalRoomName = "";
             if (size > 0) {
+                finalRoomName = chatRoom.getRoomTitle();
                 lastChatMessage = chatRoom.getTranscripts().get(size - 1);
                 mucNickNameT = lastChatMessage.getFrom();
-                String[] mucNickName = mucNickNameT.toString().split("/");
-                finalRoomName = chatRoom.getRoomTitle();
-                if (mucNickName.length < 2) { // We have no name after "/" in mucNickNameT (must be like: test@conference.jabber.kg/kos)
-                    fromNickName = finalRoomName; //Res.getString("label.message");
+                if (mucNickNameT == null) {
+                    fromNickName = finalRoomName;
                 } else {
-                    fromNickName = mucNickName[1];
+                    String[] mucNickName = mucNickNameT.toString().split("/");
+                    if (mucNickName.length < 2) { // We have no name after "/" in mucNickNameT (must be like: test@conference.jabber.kg/kos)
+                        fromNickName = finalRoomName; //Res.getString("label.message");
+                    } else {
+                        fromNickName = mucNickName[1];
+                    }
                 }
             } else {
                 lastChatMessage = StanzaBuilder.buildMessage().build();
             }
             String myNickName = chatRoom.getNickname().toString();
             if (!myNickName.equals(fromNickName)) {
-                if (localPref.isMucHighToastEnabled()) {
+                final String lastMessageBody = lastChatMessage.getBody();
+                if (lastMessageBody != null && !lastMessageBody.isEmpty() && localPref.isMucHighToastEnabled()) {
                     // allowed to check for new messages containing name
                     String myUserName = SparkManager.getSessionManager().getUsername();
                     Pattern usernameMatch = Pattern.compile(myUserName, Pattern.CASE_INSENSITIVE);
                     Pattern nicknameMatch = Pattern.compile(myNickName, Pattern.CASE_INSENSITIVE);
 
-                    if (usernameMatch.matcher(lastChatMessage.getBody()).find() || nicknameMatch.matcher(lastChatMessage.getBody()).find()) {
+                    if (usernameMatch.matcher(lastMessageBody).find() || nicknameMatch.matcher(lastMessageBody).find()) {
                         // match, send new message
-                        String customMsgTextS = Res.getString("group.chat.name.match") + " " + finalRoomName + " by " + fromNickName + " (" + lastChatMessage.getBody() + ")";
+                        String customMsgTextS = Res.getString("group.chat.name.match") + " " + finalRoomName + " by " + fromNickName + " (" + lastMessageBody + ")";
                         String customMsgTitleS = Res.getString("group.chat.name.notification");
                         startFlashing(chatRoom, true, customMsgTextS, customMsgTitleS);
                     } else {
                         // regular group message
-                        String customMsgTextS = fromNickName + " says: " + lastChatMessage.getBody();
+                        String customMsgTextS = fromNickName + " says: " + lastMessageBody;
                         startFlashing(chatRoom, true, customMsgTextS, finalRoomName);
                     }
                 } else {
                     // regular group message
-                    String customMsgTextS = fromNickName + " says: " + lastChatMessage.getBody();
+                    String customMsgTextS = fromNickName + " says: " + lastMessageBody;
                     startFlashing(chatRoom, true, customMsgTextS, finalRoomName);
                 }
             }
