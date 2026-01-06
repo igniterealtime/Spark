@@ -1089,7 +1089,7 @@ public class GroupChatParticipantList extends JPanel {
 	}
 
 	private int compareWithoutRole(String s1, String s2) {
-	    return (s1.toLowerCase().compareTo(s2.toLowerCase()));
+        return s1.compareToIgnoreCase(s2);
 	}
 
 	/**
