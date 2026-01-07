@@ -159,7 +159,7 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatStateListener {
             }
         });
 
-        // See if we should disable ability to change presence status
+        // See if we should disable the ability to change presence status
         if (!Default.getBoolean(Default.DISABLE_PRESENCE_STATUS_CHANGE) && Enterprise.containsFeature(Enterprise.PRESENCE_STATUS_FEATURE)) {
             popupMenu.addSeparator();
             addStatusMessages();
@@ -232,8 +232,6 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatStateListener {
 
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    StatusBar statusBar = SparkManager.getWorkspace().getStatusBar();
-
                     SparkManager.getSessionManager().changePresence(statusItem.getPresence());
                     statusBar.setStatus(statusItem.getText());
                 }
@@ -242,7 +240,7 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatStateListener {
             action.putValue(Action.SMALL_ICON, statusItem.getIcon());
 
             boolean hasChildren = false;
-            for (CustomStatusItem cItem : SparkManager.getWorkspace().getStatusBar().getCustomStatusList()) {
+            for (CustomStatusItem cItem : statusBar.getCustomStatusList()) {
                 String type = cItem.getType();
                 if (type.equals(statusItem.getText())) {
                     hasChildren = true;
@@ -265,7 +263,7 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatStateListener {
                     }
                 });
 
-                for (CustomStatusItem customItem : SparkManager.getWorkspace().getStatusBar().getCustomStatusList()) {
+                for (CustomStatusItem customItem : statusBar.getCustomStatusList()) {
                     String type = customItem.getType();
                     if (type.equals(statusItem.getText())) {
                         AbstractAction customAction = new AbstractAction() {
