@@ -38,6 +38,8 @@ import java.util.*;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import static org.jivesoftware.spark.ui.ContactItem.CONTACT_ITEM_COMPARATOR;
+
 /**
  * Container representing a RosterGroup within the Contact List.
  */
@@ -238,7 +240,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
         }
 
         if (!preferences.isOfflineGroupVisible()) {
-            offlineContacts.sort(itemComparator);
+            offlineContacts.sort(CONTACT_ITEM_COMPARATOR);
             int index = offlineContacts.indexOf(offlineItem);
 
             int totalListSize = contactItems.size();
@@ -543,7 +545,7 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
      */
     public List<ContactItem> getContactItems() {
         final List<ContactItem> list = new ArrayList<>(contactItems);
-        list.sort(itemComparator);
+        list.sort(CONTACT_ITEM_COMPARATOR);
         return list;
     }
 
@@ -809,14 +811,9 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
 
     public Collection<ContactItem> getOfflineContacts() {
         final List<ContactItem> list = new ArrayList<>(offlineContacts);
-        list.sort(itemComparator);
+        list.sort(CONTACT_ITEM_COMPARATOR);
         return list;
     }
-
-    /**
-     * Sorts ContactItems.
-     */
-    private final static Comparator<ContactItem> itemComparator = Comparator.comparing(item -> item.getDisplayName().toLowerCase());
 
     /**
      * Returns true if this ContactGroup is the Offline Group.
