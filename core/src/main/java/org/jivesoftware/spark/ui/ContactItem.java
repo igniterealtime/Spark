@@ -24,6 +24,7 @@ import java.awt.Insets;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Comparator;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -58,6 +59,9 @@ import org.jxmpp.util.XmppStringUtils;
 public class ContactItem extends JPanel {
 
 	private static final long serialVersionUID = 1514044406550293152L;
+
+    public final static Comparator<ContactItem> CONTACT_ITEM_COMPARATOR = Comparator.comparing(ContactItem::getDisplayName, String.CASE_INSENSITIVE_ORDER);
+
 	private final JLabel imageLabel;
     private final JLabel displayNameLabel;
     private final JLabel descriptionLabel;

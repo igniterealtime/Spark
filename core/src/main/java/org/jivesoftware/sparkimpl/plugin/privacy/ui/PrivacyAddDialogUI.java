@@ -23,7 +23,6 @@ import java.awt.Insets;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Comparator;
 
 import java.util.List;
 
@@ -50,6 +49,8 @@ import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.TitlePanel;
 import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.util.log.Log;
+
+import static org.jivesoftware.spark.ui.ContactItem.CONTACT_ITEM_COMPARATOR;
 
 /**
  * @author Bergunde Holger
@@ -138,7 +139,7 @@ public class PrivacyAddDialogUI extends JPanel {
             }
         }
 
-        _userList.sort(itemComparator);
+        _userList.sort(CONTACT_ITEM_COMPARATOR);
         model.clear();
         for (ContactItem item : _userList) {
 
@@ -234,16 +235,5 @@ public class PrivacyAddDialogUI extends JPanel {
 
         return selectedContacts;
     }
-    /**
-     * Sorts ContactItems.
-     */
-    final Comparator<ContactItem> itemComparator = ( item1, item2 ) -> {
-        String nickname1 = item1.getDisplayName();
-        String nickname2 = item2.getDisplayName();
-        if (nickname1 == null || nickname2 == null) {
-            return 0;
-        }
 
-        return nickname1.compareToIgnoreCase(nickname2);
-    };
 }
