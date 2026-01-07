@@ -162,23 +162,21 @@ public class ContactItem extends JPanel {
 	 * @return a name suitable to be displayed
 	 */
     public String getDisplayName() {
-    	String displayName = null;
-		if (alias != null && !alias.trim().isEmpty()) {
-			displayName = alias.trim();
-		} else if (nickname != null && !nickname.trim().isEmpty()) {
-			displayName = nickname.trim();
-		} else {
-		    BareJid bareJid = getJid();
-		    if (bareJid != null) {
-		        displayName = bareJid.toString();
-		    }
-		}
-
-		if (displayName != null) {
-			return displayName;
-		} else {
-			return ""; // weird, but happens.
-		}
+        String displayName = null;
+        if (alias != null && !alias.trim().isEmpty()) {
+            return alias.trim();
+        }
+        if (nickname != null && !nickname.trim().isEmpty()) {
+            return nickname.trim();
+        }
+        BareJid bareJid = getJid();
+        if (bareJid != null) {
+            displayName = bareJid.toString();
+        }
+        if (displayName != null) {
+            return displayName;
+        }
+        return ""; // weird, but happens.
 	}
 
     /**
@@ -199,7 +197,7 @@ public class ContactItem extends JPanel {
     public void setNickname(String nickname) {
         this.nickname = nickname;
         if (alias == null) {
-        	setDisplayName();
+            setDisplayName();
         }
     }
 
@@ -219,8 +217,8 @@ public class ContactItem extends JPanel {
      * @param alias the contact alias.
      */
     public void setAlias(String alias) {
-    	this.alias = alias;
-    	setDisplayName();
+        this.alias = alias;
+        setDisplayName();
     }
 
     /**
