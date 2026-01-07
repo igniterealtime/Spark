@@ -90,237 +90,137 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatStateListener {
 
     @Override
     public void initialize() {
-        if (SystemTray.isSupported()) {
-            JMenuItem openMenu = new JMenuItem(Res.getString("menuitem.open"));
-            JMenuItem minimizeMenu = new JMenuItem(Res.getString("menuitem.hide"));
-            JMenuItem exitMenu = new JMenuItem(Res.getString("menuitem.exit"));
-            statusMenu = new JMenu(Res.getString("menuitem.status"));
-            JMenuItem logoutMenu = new JMenuItem(Res.getString("menuitem.logout.no.status"));
-
-            SystemTray tray = SystemTray.getSystemTray();
-            SparkManager.getNativeManager().addNativeHandler(this);
-            ChatManager.getInstance().addChatMessageHandler(chatMessageHandler);
-            //XEP-0085 support (replaces the obsolete XEP-0022)
-            ChatStateManager.getInstance(SparkManager.getConnection()).addChatStateListener(this);
-
-            if (Spark.isLinux()) {
-                newMessageIcon = SparkRes.getImageIcon(SparkRes.MESSAGE_NEW_TRAY_LINUX);
-                typingIcon = SparkRes.getImageIcon(SparkRes.TYPING_TRAY_LINUX);
-            } else {
-                newMessageIcon = SparkRes.getImageIcon(SparkRes.MESSAGE_NEW_TRAY);
-                typingIcon = SparkRes.getImageIcon(SparkRes.TYPING_TRAY);
-            }
-
-            availableIcon = Default.getImageIcon(Default.TRAY_IMAGE);
-            if (Spark.isLinux()) {
-                if (availableIcon == null) {
-                    availableIcon = SparkRes.getImageIcon(SparkRes.TRAY_IMAGE_LINUX);
-                }
-                awayIcon = SparkRes.getImageIcon(SparkRes.TRAY_AWAY_LINUX);
-                xawayIcon = SparkRes.getImageIcon(SparkRes.TRAY_XAWAY_LINUX);
-                dndIcon = SparkRes.getImageIcon(SparkRes.TRAY_DND_LINUX);
-                offlineIcon = SparkRes.getImageIcon(SparkRes.TRAY_OFFLINE_LINUX);
-                connectingIcon = SparkRes.getImageIcon(SparkRes.TRAY_CONNECTING_LINUX);
-            } else {
-                if (availableIcon == null) {
-                    availableIcon = SparkRes.getImageIcon(SparkRes.TRAY_IMAGE);
-                }
-                awayIcon = SparkRes.getImageIcon(SparkRes.TRAY_AWAY);
-                xawayIcon = SparkRes.getImageIcon(SparkRes.TRAY_XAWAY);
-                dndIcon = SparkRes.getImageIcon(SparkRes.TRAY_DND);
-                offlineIcon = SparkRes.getImageIcon(SparkRes.TRAY_OFFLINE);
-                connectingIcon = SparkRes.getImageIcon(SparkRes.TRAY_CONNECTING);
-            }
-
-            popupMenu.add(openMenu);
-
-            openMenu.addActionListener(new AbstractAction() {
-
-                private static final long serialVersionUID = 1L;
-
-                @Override
-                public void actionPerformed(ActionEvent event) {
-                    SparkManager.getMainWindow().setVisible(true);
-                    SparkManager.getMainWindow().toFront();
-                }
-
-            });
-
-            popupMenu.add(minimizeMenu);
-
-            minimizeMenu.addActionListener(new AbstractAction() {
-                private static final long serialVersionUID = 1L;
-
-                @Override
-                public void actionPerformed(ActionEvent event) {
-                    SparkManager.getMainWindow().setVisible(false);
-                }
-            });
-
-            // See if we should disable ability to change presence status
-            if (!Default.getBoolean(Default.DISABLE_PRESENCE_STATUS_CHANGE) && Enterprise.containsFeature(Enterprise.PRESENCE_STATUS_FEATURE)) {
-                popupMenu.addSeparator();
-                addStatusMessages();
-                popupMenu.add(statusMenu);
-            }
-
-            statusMenu.addActionListener(new AbstractAction() {
-                private static final long serialVersionUID = 1L;
-
-                @Override
-                public void actionPerformed(ActionEvent event) {
-
-                }
-            });
-
-            // Logout Menu
-            if (Spark.isWindows()) {
-                if (!Default.getBoolean(Default.DISABLE_EXIT) && Enterprise.containsFeature(Enterprise.LOGOUT_EXIT_FEATURE)) {
-                    if (!Default.getBoolean(Default.HIDE_SAVE_PASSWORD_AND_AUTO_LOGIN) && SettingsManager.getLocalPreferences().getPswdAutologin()) {
-                        logoutMenu.addActionListener(new AbstractAction() {
-                            private static final long serialVersionUID = 1L;
-
-                            @Override
-                            public void actionPerformed(ActionEvent e) {
-                                SparkManager.getMainWindow().logout(false);
-                            }
-                        });
-                        popupMenu.add(logoutMenu);
-                    }
-                }
-            }
-
-            // Exit Menu
-            exitMenu.addActionListener(new AbstractAction() {
-                private static final long serialVersionUID = 1L;
-
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    SparkManager.getMainWindow().shutdown();
-                }
-            });
-
-            if (!Default.getBoolean(Default.DISABLE_EXIT) && Enterprise.containsFeature(Enterprise.LOGOUT_EXIT_FEATURE))
-                popupMenu.add(exitMenu);
-
-            /*
-              If connection closed set offline tray image
-             */
-            SparkManager.getConnection().addConnectionListener(
-                new ConnectionListener() {
-
-                    @Override
-                    public void connected(XMPPConnection xmppConnection) {
-                        trayIcon.setImage(availableIcon.getImage());
-                    }
-
-                    @Override
-                    public void authenticated(XMPPConnection xmppConnection, boolean b) {
-                        trayIcon.setImage(availableIcon.getImage());
-                    }
-
-                    @Override
-                    public void connectionClosed() {
-                        trayIcon.setImage(offlineIcon.getImage());
-                    }
-
-                    @Override
-                    public void connectionClosedOnError(Exception arg0) {
-                        trayIcon.setImage(offlineIcon.getImage());
-                    }
-                });
-
-            SparkManager.getSessionManager().addPresenceListener(
-                presence -> {
-                    setIconByPresence(presence, availableIcon);
-                });
-
-            try {
-                trayIcon = new TrayIcon(availableIcon.getImage(), JiveInfo.getName(), null);
-                trayIcon.setImageAutoSize(true);
-
-                trayIcon.addMouseListener(new MouseListener() {
-
-                    @Override
-                    public void mouseClicked(MouseEvent event) {
-                        // if we are using double click on tray icon
-                        if ((!pref.isUsingSingleTrayClick()
-                            && event.getButton() == MouseEvent.BUTTON1
-                            && event.getClickCount() % 2 == 0)
-                            ||
-                            // if we're using single click on tray icon
-                            (pref.isUsingSingleTrayClick()
-                                && event.getButton() == MouseEvent.BUTTON1
-                                && event.getClickCount() == 1)) {
-
-                            // bring the mainwindow to front
-                            if ((SparkManager.getMainWindow().isVisible())
-                                && (SparkManager.getMainWindow().getState() == java.awt.Frame.NORMAL)) {
-                                SparkManager.getMainWindow().setVisible(false);
-                            } else {
-                                SparkManager.getMainWindow().setVisible(true);
-                                SparkManager.getMainWindow().setState(java.awt.Frame.NORMAL);
-                                SparkManager.getMainWindow().toFront();
-                            }
-
-                        } else if (event.getButton() == MouseEvent.BUTTON1) {
-                            SparkManager.getMainWindow().toFront();
-                            // SparkManager.getMainWindow().requestFocus();
-                        } else if (event.getButton() == MouseEvent.BUTTON3) {
-                            if (popupMenu.isVisible()) {
-                                popupMenu.setVisible(false);
-                            } else {
-                                double x = MouseInfo.getPointerInfo().getLocation().getX();
-                                double y = MouseInfo.getPointerInfo().getLocation().getY();
-
-                                if (Spark.isMac()) {
-                                    popupMenu.setLocation((int) x, (int) y);
-                                } else {
-                                    popupMenu.setLocation(event.getX(), event.getY());
-                                }
-
-                                popupMenu.setInvoker(popupMenu);
-                                popupMenu.setVisible(true);
-                            }
-                        }
-                    }
-
-                    @Override
-                    public void mouseEntered(MouseEvent event) {
-
-                    }
-
-                    @Override
-                    public void mouseExited(MouseEvent event) {
-
-                    }
-
-                    @Override
-                    public void mousePressed(MouseEvent event) {
-                        // on Mac I would want the window to show when I left-click the Icon
-                        if (Spark.isMac() && event.getButton() != MouseEvent.BUTTON3) {
-                            SparkManager.getMainWindow().setVisible(false);
-                            SparkManager.getMainWindow().setVisible(true);
-                            SparkManager.getMainWindow().requestFocusInWindow();
-                            SparkManager.getMainWindow().bringFrameIntoFocus();
-                            SparkManager.getMainWindow().toFront();
-                            SparkManager.getMainWindow().requestFocus();
-                        }
-                    }
-
-                    @Override
-                    public void mouseReleased(MouseEvent event) {
-
-                    }
-
-                });
-
-                tray.add(trayIcon);
-            } catch (Exception e) {
-                Log.error("Unable to render tray icon", e);
-            }
-        } else {
+        if (!SystemTray.isSupported()) {
             Log.error("Tray don't supports on this platform.");
+            return;
+        }
+        JMenuItem openMenu = new JMenuItem(Res.getString("menuitem.open"));
+        JMenuItem minimizeMenu = new JMenuItem(Res.getString("menuitem.hide"));
+        JMenuItem exitMenu = new JMenuItem(Res.getString("menuitem.exit"));
+        statusMenu = new JMenu(Res.getString("menuitem.status"));
+        JMenuItem logoutMenu = new JMenuItem(Res.getString("menuitem.logout.no.status"));
+
+        SystemTray tray = SystemTray.getSystemTray();
+        SparkManager.getNativeManager().addNativeHandler(this);
+        ChatManager.getInstance().addChatMessageHandler(chatMessageHandler);
+        //XEP-0085 support (replaces the obsolete XEP-0022)
+        ChatStateManager.getInstance(SparkManager.getConnection()).addChatStateListener(this);
+
+        if (Spark.isLinux()) {
+            newMessageIcon = SparkRes.getImageIcon(SparkRes.MESSAGE_NEW_TRAY_LINUX);
+            typingIcon = SparkRes.getImageIcon(SparkRes.TYPING_TRAY_LINUX);
+        } else {
+            newMessageIcon = SparkRes.getImageIcon(SparkRes.MESSAGE_NEW_TRAY);
+            typingIcon = SparkRes.getImageIcon(SparkRes.TYPING_TRAY);
+        }
+
+        availableIcon = Default.getImageIcon(Default.TRAY_IMAGE);
+        if (Spark.isLinux()) {
+            if (availableIcon == null) {
+                availableIcon = SparkRes.getImageIcon(SparkRes.TRAY_IMAGE_LINUX);
+            }
+            awayIcon = SparkRes.getImageIcon(SparkRes.TRAY_AWAY_LINUX);
+            xawayIcon = SparkRes.getImageIcon(SparkRes.TRAY_XAWAY_LINUX);
+            dndIcon = SparkRes.getImageIcon(SparkRes.TRAY_DND_LINUX);
+            offlineIcon = SparkRes.getImageIcon(SparkRes.TRAY_OFFLINE_LINUX);
+            connectingIcon = SparkRes.getImageIcon(SparkRes.TRAY_CONNECTING_LINUX);
+        } else {
+            if (availableIcon == null) {
+                availableIcon = SparkRes.getImageIcon(SparkRes.TRAY_IMAGE);
+            }
+            awayIcon = SparkRes.getImageIcon(SparkRes.TRAY_AWAY);
+            xawayIcon = SparkRes.getImageIcon(SparkRes.TRAY_XAWAY);
+            dndIcon = SparkRes.getImageIcon(SparkRes.TRAY_DND);
+            offlineIcon = SparkRes.getImageIcon(SparkRes.TRAY_OFFLINE);
+            connectingIcon = SparkRes.getImageIcon(SparkRes.TRAY_CONNECTING);
+        }
+
+        popupMenu.add(openMenu);
+
+        openMenu.addActionListener(new AbstractAction() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void actionPerformed(ActionEvent event) {
+                SparkManager.getMainWindow().setVisible(true);
+                SparkManager.getMainWindow().toFront();
+            }
+
+        });
+
+        popupMenu.add(minimizeMenu);
+
+        minimizeMenu.addActionListener(new AbstractAction() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void actionPerformed(ActionEvent event) {
+                SparkManager.getMainWindow().setVisible(false);
+            }
+        });
+
+        // See if we should disable ability to change presence status
+        if (!Default.getBoolean(Default.DISABLE_PRESENCE_STATUS_CHANGE) && Enterprise.containsFeature(Enterprise.PRESENCE_STATUS_FEATURE)) {
+            popupMenu.addSeparator();
+            addStatusMessages();
+            popupMenu.add(statusMenu);
+        }
+
+        statusMenu.addActionListener(new AbstractAction() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void actionPerformed(ActionEvent event) {
+
+            }
+        });
+
+        // Logout Menu
+        if (Spark.isWindows()) {
+            if (!Default.getBoolean(Default.DISABLE_EXIT) && Enterprise.containsFeature(Enterprise.LOGOUT_EXIT_FEATURE)) {
+                if (!Default.getBoolean(Default.HIDE_SAVE_PASSWORD_AND_AUTO_LOGIN) && SettingsManager.getLocalPreferences().getPswdAutologin()) {
+                    logoutMenu.addActionListener(new AbstractAction() {
+                        private static final long serialVersionUID = 1L;
+
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            SparkManager.getMainWindow().logout(false);
+                        }
+                    });
+                    popupMenu.add(logoutMenu);
+                }
+            }
+        }
+
+        // Exit Menu
+        exitMenu.addActionListener(new AbstractAction() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                SparkManager.getMainWindow().shutdown();
+            }
+        });
+
+        if (!Default.getBoolean(Default.DISABLE_EXIT) && Enterprise.containsFeature(Enterprise.LOGOUT_EXIT_FEATURE))
+            popupMenu.add(exitMenu);
+
+        // If connection closed set offline tray image
+        SparkManager.getConnection().addConnectionListener(new TrayConnectionListener());
+
+        SparkManager.getSessionManager().addPresenceListener(
+            presence -> {
+                setIconByPresence(presence, availableIcon);
+            });
+
+        try {
+            trayIcon = new TrayIcon(availableIcon.getImage(), JiveInfo.getName(), null);
+            trayIcon.setImageAutoSize(true);
+            trayIcon.addMouseListener(new TrayMouseListener());
+
+            tray.add(trayIcon);
+        } catch (Exception e) {
+            Log.error("Unable to render tray icon", e);
         }
     }
 
@@ -483,4 +383,101 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatStateListener {
         }
     }
 
+    private class TrayMouseListener implements MouseListener {
+
+        @Override
+        public void mouseClicked(MouseEvent event) {
+            // if we are using double click on tray icon
+            if ((!pref.isUsingSingleTrayClick()
+                && event.getButton() == MouseEvent.BUTTON1
+                && event.getClickCount() % 2 == 0)
+                ||
+                // if we're using single click on tray icon
+                (pref.isUsingSingleTrayClick()
+                    && event.getButton() == MouseEvent.BUTTON1
+                    && event.getClickCount() == 1)) {
+
+                // bring the mainwindow to front
+                if ((SparkManager.getMainWindow().isVisible())
+                    && (SparkManager.getMainWindow().getState() == java.awt.Frame.NORMAL)) {
+                    SparkManager.getMainWindow().setVisible(false);
+                } else {
+                    SparkManager.getMainWindow().setVisible(true);
+                    SparkManager.getMainWindow().setState(java.awt.Frame.NORMAL);
+                    SparkManager.getMainWindow().toFront();
+                }
+
+            } else if (event.getButton() == MouseEvent.BUTTON1) {
+                SparkManager.getMainWindow().toFront();
+                // SparkManager.getMainWindow().requestFocus();
+            } else if (event.getButton() == MouseEvent.BUTTON3) {
+                if (popupMenu.isVisible()) {
+                    popupMenu.setVisible(false);
+                } else {
+                    double x = MouseInfo.getPointerInfo().getLocation().getX();
+                    double y = MouseInfo.getPointerInfo().getLocation().getY();
+
+                    if (Spark.isMac()) {
+                        popupMenu.setLocation((int) x, (int) y);
+                    } else {
+                        popupMenu.setLocation(event.getX(), event.getY());
+                    }
+
+                    popupMenu.setInvoker(popupMenu);
+                    popupMenu.setVisible(true);
+                }
+            }
+        }
+
+        @Override
+        public void mouseEntered(MouseEvent event) {
+
+        }
+
+        @Override
+        public void mouseExited(MouseEvent event) {
+
+        }
+
+        @Override
+        public void mousePressed(MouseEvent event) {
+            // on Mac I would want the window to show when I left-click the Icon
+            if (Spark.isMac() && event.getButton() != MouseEvent.BUTTON3) {
+                SparkManager.getMainWindow().setVisible(false);
+                SparkManager.getMainWindow().setVisible(true);
+                SparkManager.getMainWindow().requestFocusInWindow();
+                SparkManager.getMainWindow().bringFrameIntoFocus();
+                SparkManager.getMainWindow().toFront();
+                SparkManager.getMainWindow().requestFocus();
+            }
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent event) {
+
+        }
+
+    }
+
+    private class TrayConnectionListener implements ConnectionListener {
+        @Override
+        public void connected(XMPPConnection xmppConnection) {
+            trayIcon.setImage(availableIcon.getImage());
+        }
+
+        @Override
+        public void authenticated(XMPPConnection xmppConnection, boolean b) {
+            trayIcon.setImage(availableIcon.getImage());
+        }
+
+        @Override
+        public void connectionClosed() {
+            trayIcon.setImage(offlineIcon.getImage());
+        }
+
+        @Override
+        public void connectionClosedOnError(Exception arg0) {
+            trayIcon.setImage(offlineIcon.getImage());
+        }
+    }
 }
