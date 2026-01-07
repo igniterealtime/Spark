@@ -232,17 +232,7 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatStateListener {
 
             SparkManager.getSessionManager().addPresenceListener(
                 presence -> {
-                    if (presence.getMode() == Presence.Mode.available) {
-                        trayIcon.setImage(availableIcon.getImage());
-                    } else if (presence.getMode() == Presence.Mode.away) {
-                        trayIcon.setImage(awayIcon.getImage());
-                    } else if (presence.getMode() == Presence.Mode.xa) {
-                        trayIcon.setImage(xawayIcon.getImage());
-                    } else if (presence.getMode() == Presence.Mode.dnd) {
-                        trayIcon.setImage(dndIcon.getImage());
-                    } else {
-                        trayIcon.setImage(availableIcon.getImage());
-                    }
+                    setIconByPresence(presence, availableIcon);
                 });
 
             try {
@@ -443,17 +433,7 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatStateListener {
     @Override
     public void flashWindowStopWhenFocused(Window window) {
         presence = Workspace.getInstance().getStatusBar().getPresence();
-        if (presence.getMode() == Presence.Mode.available) {
-            trayIcon.setImage(availableIcon.getImage());
-        } else if (presence.getMode() == Presence.Mode.away) {
-            trayIcon.setImage(awayIcon.getImage());
-        } else if (presence.getMode() == Presence.Mode.xa) {
-            trayIcon.setImage(xawayIcon.getImage());
-        } else if (presence.getMode() == Presence.Mode.dnd) {
-            trayIcon.setImage(dndIcon.getImage());
-        } else {
-            trayIcon.setImage(availableIcon.getImage());
-        }
+        setIconByPresence(presence, availableIcon);
         newMessage = false;
         chatMessageHandler.clearUnreadMessages();
     }
@@ -466,17 +446,7 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatStateListener {
     @Override
     public void stopFlashing(Window window) {
         presence = Workspace.getInstance().getStatusBar().getPresence();
-        if (presence.getMode() == Presence.Mode.available) {
-            trayIcon.setImage(availableIcon.getImage());
-        } else if (presence.getMode() == Presence.Mode.away) {
-            trayIcon.setImage(awayIcon.getImage());
-        } else if (presence.getMode() == Presence.Mode.xa) {
-            trayIcon.setImage(xawayIcon.getImage());
-        } else if (presence.getMode() == Presence.Mode.dnd) {
-            trayIcon.setImage(dndIcon.getImage());
-        } else {
-            trayIcon.setImage(availableIcon.getImage());
-        }
+        setIconByPresence(presence, availableIcon);
         newMessage = false;
         chatMessageHandler.clearUnreadMessages();
     }
@@ -488,18 +458,22 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatStateListener {
             changeSysTrayIcon();
         } else {
             if (!newMessage) {
-                if (presence.getMode() == Presence.Mode.available) {
-                    trayIcon.setImage(availableIcon.getImage());
-                } else if (presence.getMode() == Presence.Mode.away) {
-                    trayIcon.setImage(awayIcon.getImage());
-                } else if (presence.getMode() == Presence.Mode.xa) {
-                    trayIcon.setImage(xawayIcon.getImage());
-                } else if (presence.getMode() == Presence.Mode.dnd) {
-                    trayIcon.setImage(dndIcon.getImage());
-                } else {
-                    trayIcon.setImage(newMessageIcon.getImage());
-                }
+                setIconByPresence(presence, newMessageIcon);
             }
+        }
+    }
+
+    private void setIconByPresence(Presence presence, ImageIcon newTrayIcon) {
+        if (presence.getMode() == Presence.Mode.available) {
+            trayIcon.setImage(newTrayIcon.getImage());
+        } else if (presence.getMode() == Presence.Mode.away) {
+            trayIcon.setImage(awayIcon.getImage());
+        } else if (presence.getMode() == Presence.Mode.xa) {
+            trayIcon.setImage(xawayIcon.getImage());
+        } else if (presence.getMode() == Presence.Mode.dnd) {
+            trayIcon.setImage(dndIcon.getImage());
+        } else {
+            trayIcon.setImage(newTrayIcon.getImage());
         }
     }
 
