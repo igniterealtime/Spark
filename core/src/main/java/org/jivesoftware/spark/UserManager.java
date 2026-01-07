@@ -70,6 +70,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.TimerTask;
 
+import static org.jivesoftware.spark.ui.ContactItem.CONTACT_ITEM_COMPARATOR;
+
 /**
  * Handles all users in the agent application. Each user or chatting user can be referenced from the User
  * Manager. You would use the UserManager to get visitors in a chat room or secondary agents.
@@ -402,7 +404,7 @@ public class UserManager {
         }
 
         // Sort
-        contacts.sort(itemComparator);
+        contacts.sort(CONTACT_ITEM_COMPARATOR);
 
         final JContactItemField contactField = new JContactItemField( new ArrayList<>( contacts ));
 
@@ -514,11 +516,6 @@ public class UserManager {
             }
         });
     }
-
-    /**
-     * Sorts ContactItems.
-     */
-    final Comparator<ContactItem> itemComparator = Comparator.comparing(item -> item.getDisplayName().toLowerCase());
 
 }
 

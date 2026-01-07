@@ -79,7 +79,7 @@ public class RosterPickList extends JPanel {
         }
 
         // Sort Users
-        userList.sort(itemComparator);
+        userList.sort(ContactItem.CONTACT_ITEM_COMPARATOR);
 
         for (ContactItem item : userList) {
             model.addElement(item);
@@ -147,19 +147,5 @@ public class RosterPickList extends JPanel {
         }
         return selectedContacts;
     }
-
-
-    /**
-     * Sorts ContactItems.
-     */
-    final Comparator<ContactItem> itemComparator = ( item1, item2 ) -> {
-        String nickname1 = item1.getDisplayName();
-        String nickname2 = item2.getDisplayName();
-        if (nickname1 == null || nickname2 == null) {
-            return 0;
-        }
-
-        return nickname1.compareToIgnoreCase(nickname2);
-    };
 
 }
