@@ -53,6 +53,8 @@ import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jxmpp.jid.BareJid;
 import org.jxmpp.util.XmppStringUtils;
 
+import static org.apache.commons.lang3.StringUtils.trimToEmpty;
+
 /**
  * Represent a single contact within the <code>ContactList</code>.
  */
@@ -109,8 +111,8 @@ public class ContactItem extends JPanel {
 
         contactsDir = new File(SparkManager.getUserDirectory(), "contacts");
 
-        this.alias = alias;
-        this.nickname = nickname;
+        this.alias = trimToEmpty(alias);
+        this.nickname = trimToEmpty(nickname);
         this.jid = jid;
 
         if (initUi) {
@@ -163,11 +165,11 @@ public class ContactItem extends JPanel {
 	 */
     public String getDisplayName() {
         String displayName = null;
-        if (alias != null && !alias.trim().isEmpty()) {
-            return alias.trim();
+        if (!alias.isEmpty()) {
+            return alias;
         }
-        if (nickname != null && !nickname.trim().isEmpty()) {
-            return nickname.trim();
+        if (!nickname.isEmpty()) {
+            return nickname;
         }
         BareJid bareJid = getJid();
         if (bareJid != null) {
@@ -195,8 +197,8 @@ public class ContactItem extends JPanel {
      * @param nickname the contact nickname.
      */
     public void setNickname(String nickname) {
-        this.nickname = nickname;
-        if (alias == null) {
+        this.nickname = trimToEmpty(nickname);
+        if (alias.isEmpty()) {
             setDisplayName();
         }
     }
@@ -217,7 +219,7 @@ public class ContactItem extends JPanel {
      * @param alias the contact alias.
      */
     public void setAlias(String alias) {
-        this.alias = alias;
+        this.alias = trimToEmpty(alias);
         setDisplayName();
     }
 
