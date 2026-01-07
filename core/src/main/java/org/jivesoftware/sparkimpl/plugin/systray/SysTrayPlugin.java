@@ -67,8 +67,6 @@ import org.jivesoftware.smackx.chatstates.ChatStateManager;
 public class SysTrayPlugin implements Plugin, NativeHandler, ChatStateListener {
     private final JPopupMenu popupMenu = new JPopupMenu();
 
-    private JMenu statusMenu;
-
     private final LocalPreferences pref = SettingsManager.getLocalPreferences();
     private ImageIcon availableIcon;
     private ImageIcon dndIcon;
@@ -97,7 +95,6 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatStateListener {
         JMenuItem openMenu = new JMenuItem(Res.getString("menuitem.open"));
         JMenuItem minimizeMenu = new JMenuItem(Res.getString("menuitem.hide"));
         JMenuItem exitMenu = new JMenuItem(Res.getString("menuitem.exit"));
-        statusMenu = new JMenu(Res.getString("menuitem.status"));
         JMenuItem logoutMenu = new JMenuItem(Res.getString("menuitem.logout.no.status"));
 
         SystemTray tray = SystemTray.getSystemTray();
@@ -163,17 +160,8 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatStateListener {
         if (!Default.getBoolean(Default.DISABLE_PRESENCE_STATUS_CHANGE) && Enterprise.containsFeature(Enterprise.PRESENCE_STATUS_FEATURE)) {
             popupMenu.addSeparator();
             addStatusMessages();
-            popupMenu.add(statusMenu);
+            popupMenu.addSeparator();
         }
-
-        statusMenu.addActionListener(new AbstractAction() {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public void actionPerformed(ActionEvent event) {
-
-            }
-        });
 
         // Logout Menu
         if (Spark.isWindows()) {
@@ -250,10 +238,10 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatStateListener {
 
             if (!hasChildren) {
                 JMenuItem status = new JMenuItem(action);
-                statusMenu.add(status);
+                popupMenu.add(status);
             } else {
                 final JMenu status = new JMenu(action);
-                statusMenu.add(status);
+                popupMenu.add(status);
 
                 status.addMouseListener(new MouseAdapter() {
                     @Override
