@@ -21,7 +21,7 @@ public class HttpDownloader {
     public static byte[] downloadContent(URI uri) {
         Log.debug("Start downloading " + uri.toString());
         try (final CloseableHttpClient httpClient =
-                 HttpClients.custom()
+                 HttpClients.custom().useSystemProperties()
                      .setConnectionManager(AcceptAllCertsConnectionManager.getInstance()) // FIXME: do not use acceptallcdertsconnectionmanager! It is unsafe. Only use trusted certificates!
                      .setDefaultRequestConfig(RequestConfig.custom().setResponseTimeout(SmackConfiguration.getDefaultReplyTimeout() / 10, TimeUnit.MILLISECONDS).build())
                      .build()
