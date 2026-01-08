@@ -375,6 +375,10 @@ public class MessageEntry extends TimeStampedEntry
         // TODO: do not download each time. Cache downloaded data.
         // TODO: make resized image clickable (open in unresized size).
         if (url.startsWith("https://") || url.startsWith("http://")) {
+            // url with #anchor is definitely not an image
+            if (url.contains("#")) {
+                return false;
+            }
             URI uri;
             try {
                 uri = URI.create(url);
