@@ -364,7 +364,7 @@ public class MessageEntry extends TimeStampedEntry
     /**
      * Inserts a picture into the current document.
      *
-     * @param url - the link to the content to insert( ex. http://example.org/hello.gif )
+     * @param url - the link to the content to insert e.g., https://example.org/hello.gif
      * @throws BadLocationException if the location is not available for insertion.
      */
     public boolean insertPicture(ChatArea chatArea, String url, MutableAttributeSet messageStyle) throws BadLocationException
@@ -373,8 +373,7 @@ public class MessageEntry extends TimeStampedEntry
         // TODO: instead of operating on message text content, operate on message stanza metadata.
         // TODO: do not download each time. Cache downloaded data.
         // TODO: make resized image clickable (open in unresized size).
-        if (url.startsWith("http://") ||
-            url.startsWith("https://")) {
+        if (url.startsWith("https://") || url.startsWith("http://")) {
 
             try (final CloseableHttpClient httpClient =
                      HttpClients.custom()
@@ -466,17 +465,17 @@ public class MessageEntry extends TimeStampedEntry
     /**
      * Inserts a link into the current document.
      *
-     * @param link - the link to insert( ex. http://www.javasoft.com )
+     * @param link - the link to insert e.g., https://example.org/
      * @throws BadLocationException if the location is not available for insertion.
      */
     public boolean insertLink(Document doc, String link, MutableAttributeSet style) throws BadLocationException
     {
-        if ((link.startsWith("http://") ||
+        if ((link.startsWith("https://") || link.startsWith("http://") ||
             link.startsWith("ftp://") ||
-            link.startsWith("https://") ||
             link.startsWith("www.") ||
             (link.startsWith("xmpp:") && link.contains("?join")) ||
-            link.startsWith("file:/")) && link.indexOf(".") > 1) {
+            link.startsWith("file:/"))
+            && link.indexOf(".") > 1) {
 
             // Create a new style, based on the style used for generic text, for the link.
             final MutableAttributeSet linkStyle = new SimpleAttributeSet(style.copyAttributes());
