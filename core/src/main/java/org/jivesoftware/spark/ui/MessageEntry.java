@@ -15,32 +15,21 @@
  */
 package org.jivesoftware.spark.ui;
 
-import org.apache.hc.client5.http.config.RequestConfig;
-import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
-import org.apache.hc.client5.http.impl.classic.HttpClients;
-import org.apache.hc.core5.http.ClassicHttpRequest;
-import org.apache.hc.core5.http.HttpEntity;
-import org.apache.hc.core5.http.io.entity.EntityUtils;
-import org.apache.hc.core5.http.io.support.ClassicRequestBuilder;
-import org.jivesoftware.smack.SmackConfiguration;
+import org.jivesoftware.spark.filetransfer.HttpDownloader;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.emoticons.EmoticonManager;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
-import org.jivesoftware.sparkimpl.updater.AcceptAllCertsConnectionManager;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.text.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 import java.net.URLConnection;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 import static javax.swing.text.StyleConstants.Foreground;
 
@@ -400,40 +389,18 @@ public class MessageEntry extends TimeStampedEntry
                 return false;
             }
 
-            try (final CloseableHttpClient httpClient =
-                     HttpClients.custom().useSystemProperties()
-                         .setConnectionManager(AcceptAllCertsConnectionManager.getInstance()) // FIXME: do not use acceptallcdertsconnectionmanager! It is unsafe. Only use trusted certificates!
-                         .setDefaultRequestConfig(RequestConfig.custom().setResponseTimeout(SmackConfiguration.getDefaultReplyTimeout()/10, TimeUnit.MILLISECONDS).build())
-                         .build()
-            ) {
-                final ClassicHttpRequest request = ClassicRequestBuilder.get(uri)
-                    .setHeader("Accept", "image/*")
-                    .setHeader("User-Agent", "Spark HttpFileUpload")
-                    .build();
-
-                BufferedImage img = httpClient.execute(request, httpResponse -> {
-                    if (httpResponse.getCode() != 200 || httpResponse.getEntity() == null) {
-                        return null;
-                    }
-                    byte[] content;
-                    try {
-                        // First, read the content fully to avoid broken images
-                        content = EntityUtils.toByteArray(httpResponse.getEntity());
-                    } catch (IOException e) {
-                        Log.warning("Network error while loading picture from " + uri, e);
-                        return null;
-                    } finally {
-                        // if the connection is "prematurely closed," clean up the local resources
-                        EntityUtils.consumeQuietly(httpResponse.getEntity());
-                    }
-                    try {
-                        return ImageIO.read(new java.io.ByteArrayInputStream(content));
-                    } catch (Throwable t) {
-                        Log.warning("Unable to load picture from " + url, t);
-                        return null;
-                    }
-                });
-
+            byte[] content = HttpDownloader.downloadContent(uri);
+            if (content == null) {
+                return false;
+            }
+            BufferedImage img;
+            try {
+                img = ImageIO.read(new java.io.ByteArrayInputStream(content));
+            } catch (Exception e) {
+                Log.warning("Unable to load picture from " + url, e);
+                return false;
+            }
+            try {
                 if (img != null) {
                     SimpleAttributeSet center = new SimpleAttributeSet();
                     StyleConstants.setAlignment(center, StyleConstants.ALIGN_CENTER);
