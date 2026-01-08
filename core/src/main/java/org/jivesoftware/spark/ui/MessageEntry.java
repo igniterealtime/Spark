@@ -32,6 +32,7 @@ import javax.swing.*;
 import javax.swing.text.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.net.URI;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.*;
@@ -369,11 +370,22 @@ public class MessageEntry extends TimeStampedEntry
      */
     public boolean insertPicture(ChatArea chatArea, String url, MutableAttributeSet messageStyle) throws BadLocationException
     {
-        // FIXME: this is unsafe. Do not blindly accept anything that looks like an URL (check if it is a valid URL).
         // TODO: instead of operating on message text content, operate on message stanza metadata.
         // TODO: do not download each time. Cache downloaded data.
         // TODO: make resized image clickable (open in unresized size).
         if (url.startsWith("https://") || url.startsWith("http://")) {
+            URI uri;
+            try {
+                uri = URI.create(url);
+            } catch (IllegalArgumentException ignored) {
+                Log.debug("Bad url " + url);
+                return false;
+            }
+            // check if this is a file
+            String path = uri.getPath();
+            if (path == null || path.isEmpty()) {
+                return false;
+            }
 
             try (final CloseableHttpClient httpClient =
                      HttpClients.custom()
@@ -381,7 +393,7 @@ public class MessageEntry extends TimeStampedEntry
                          .setDefaultRequestConfig(RequestConfig.custom().setResponseTimeout(SmackConfiguration.getDefaultReplyTimeout()/10, TimeUnit.MILLISECONDS).build())
                          .build()
             ) {
-                final ClassicHttpRequest request = ClassicRequestBuilder.get(url)
+                final ClassicHttpRequest request = ClassicRequestBuilder.get(uri)
                     .setHeader("Accept", "image/*")
                     .setHeader("User-Agent", "Spark HttpFileUpload")
                     .build();
