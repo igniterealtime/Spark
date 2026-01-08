@@ -34,6 +34,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 import java.lang.reflect.Method;
+import java.util.Objects;
 import java.util.Properties;
 
 /**
@@ -192,7 +193,7 @@ public class ThemePanel extends JPanel {
 
         showAvatarsBox = new JCheckBox();
         avatarSizeLabel = new JLabel();
-        String[] sizeChoices = {"16x16", "24x24", "32x32"};
+        String[] sizeChoices = {"16", "24", "32", "48", "96", "120"};
         avatarSizeField = new JComboBox<>(sizeChoices);
 
         contactListFontField = new JTextField();
@@ -330,14 +331,12 @@ public class ThemePanel extends JPanel {
 
         disableGrayingIdleContacts.setSelected(pref.isGrayingOutEnabled());
 
-        if (pref.getContactListIconSize() == 16) {
-            avatarSizeField.setSelectedIndex(0);
-        } else if (pref.getContactListIconSize() == 24) {
-            avatarSizeField.setSelectedIndex(1);
-        } else if (pref.getContactListIconSize() == 32) {
-            avatarSizeField.setSelectedIndex(2);
-        } else {
-            avatarSizeField.setSelectedIndex(1);
+        String contactListIconSizeItem = String.valueOf(pref.getContactListIconSize());
+        avatarSizeField.setSelectedItem(contactListIconSizeItem);
+        // if there wasn't such size then add and select it
+        if (!Objects.equals(avatarSizeField.getSelectedItem(), contactListIconSizeItem)) {
+            avatarSizeField.addItem(contactListIconSizeItem);
+            avatarSizeField.setSelectedItem(contactListIconSizeItem);
         }
 
         try {
@@ -491,15 +490,11 @@ public class ThemePanel extends JPanel {
     }
 
     public int getContactListIconSize() {
-        if (avatarSizeField.getSelectedIndex() == 0) {
-            return 16;
-        } else if (avatarSizeField.getSelectedIndex() == 1) {
-            return 24;
-        } else if (avatarSizeField.getSelectedIndex() == 2) {
+        String selectedSize = (String) avatarSizeField.getSelectedItem();
+        if (selectedSize == null) {
             return 32;
-        } else {
-            return 24;
         }
+        return Integer.parseInt(selectedSize);
     }
 
     public boolean areAvatarsVisible() {
