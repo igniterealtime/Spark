@@ -33,6 +33,7 @@ import javax.swing.text.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.net.URI;
+import java.net.URLConnection;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.*;
@@ -384,6 +385,11 @@ public class MessageEntry extends TimeStampedEntry
             // check if this is a file
             String path = uri.getPath();
             if (path == null || path.isEmpty()) {
+                return false;
+            }
+            // Check if the file extension is a known image type
+            String mimeType = URLConnection.getFileNameMap().getContentTypeFor(path);
+            if (mimeType == null || !mimeType.startsWith("image/")) {
                 return false;
             }
 
