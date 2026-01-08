@@ -20,6 +20,7 @@ import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.ClassicHttpRequest;
 import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.io.support.ClassicRequestBuilder;
 import org.jivesoftware.smack.SmackConfiguration;
 import org.jivesoftware.spark.util.log.Log;
@@ -32,6 +33,8 @@ import javax.swing.*;
 import javax.swing.text.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URLConnection;
 import java.time.ZonedDateTime;
@@ -409,9 +412,22 @@ public class MessageEntry extends TimeStampedEntry
                     .build();
 
                 BufferedImage img = httpClient.execute(request, httpResponse -> {
-                    HttpEntity entity = httpResponse.getEntity();
+                    if (httpResponse.getCode() != 200 || httpResponse.getEntity() == null) {
+                        return null;
+                    }
+                    byte[] content;
                     try {
-                        return ImageIO.read(entity.getContent());
+                        // First, read the content fully to avoid broken images
+                        content = EntityUtils.toByteArray(httpResponse.getEntity());
+                    } catch (IOException e) {
+                        Log.warning("Network error while loading picture from " + uri, e);
+                        return null;
+                    } finally {
+                        // if the connection is "prematurely closed," clean up the local resources
+                        EntityUtils.consumeQuietly(httpResponse.getEntity());
+                    }
+                    try {
+                        return ImageIO.read(new java.io.ByteArrayInputStream(content));
                     } catch (Throwable t) {
                         Log.warning("Unable to load picture from " + url, t);
                         return null;
