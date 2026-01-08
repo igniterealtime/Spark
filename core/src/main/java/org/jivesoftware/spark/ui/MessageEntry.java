@@ -382,7 +382,7 @@ public class MessageEntry extends TimeStampedEntry
                          .build()
             ) {
                 final ClassicHttpRequest request = ClassicRequestBuilder.get(url)
-                    .setHeader("Content-Type", "image/*")
+                    .setHeader("Accept", "image/*")
                     .setHeader("User-Agent", "Spark HttpFileUpload")
                     .build();
 
