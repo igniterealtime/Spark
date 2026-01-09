@@ -746,6 +746,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
                 roomInfoAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.SMALL_DATA_FIND_IMAGE));
 
                 final int selectedRow = roomsTable.getSelectedRow();
+                if (selectedRow != -1) {
                 final String roomName = roomsTable.getValueAt(selectedRow, 1).toString();
                 popupMenu.add(roomInfoAction);
                 final JCheckBoxMenuItem autoJoin = new JCheckBoxMenuItem(Res.getString("menuitem.join.on.startup"));
@@ -771,9 +772,6 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
                 copyURIgroupChat.putValue(Action.NAME, Res.getString("button.copy.to.clipboard"));
                 copyURIgroupChat.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.COPY_16x16));
                 popupMenu.add(copyURIgroupChat);
-
-
-                if (selectedRow != -1) {
 
                     for (BookmarkedConference bookmark :conferences.getBookmarks())
                     {
