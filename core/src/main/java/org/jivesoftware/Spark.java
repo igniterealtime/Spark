@@ -92,9 +92,7 @@ public final class Spark {
         System.setProperty("apple.laf.useScreenMenuBar", "true");
 
         // Update Library Path
-        StringBuilder buf = new StringBuilder();
-        buf.append(current);
-        buf.append(";");
+        String javaLibraryPath = current + ";";
 
         SparkCompatibility sparkCompat = new SparkCompatibility();
         try {
@@ -141,7 +139,7 @@ public final class Spark {
             LOG_DIRECTORY = new File(USER_SPARK_HOME, "logs").getAbsoluteFile();
             LOG_DIRECTORY.mkdirs();
             try {
-                buf.append(RESOURCE_DIRECTORY.getCanonicalPath()).append(";");
+                javaLibraryPath += RESOURCE_DIRECTORY.getCanonicalPath() + ";";
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -153,11 +151,10 @@ public final class Spark {
         // Loads the LookandFeel
         LookAndFeelManager.loadPreferredLookAndFeel();
 
-        buf.append(classPath);
-        buf.append(";").append(RESOURCE_DIRECTORY.getAbsolutePath());
+        javaLibraryPath += classPath + ";" + RESOURCE_DIRECTORY.getAbsolutePath();
 
         // Update System Properties
-        System.setProperty("java.library.path", buf.toString());
+        System.setProperty("java.library.path", javaLibraryPath);
         System.setProperty("sun.java2d.noddraw", "true");
         System.setProperty("file.encoding", "UTF-8");
 
