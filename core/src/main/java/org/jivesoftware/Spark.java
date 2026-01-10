@@ -393,24 +393,11 @@ public final class Spark {
         return Default.getBoolean(Default.DISABLE_UPDATES);
     }
 
-    public static synchronized void setApplicationFont(Font f) {
-        UIDefaults defaults = UIManager.getLookAndFeelDefaults();
-        for (Object ui_property : defaults.keySet()) {
-            if (ui_property.toString().endsWith(".font")) {
-                UIManager.put(ui_property, f);
-            }
-        }
-    }
-
     /**
      * Sets Spark specific colors
      */
     public static void installBaseUIProperties() {
-        setApplicationFont(new Font("Dialog", Font.PLAIN, 11));
         UIManager.put("ContactItem.border", BorderFactory.createLineBorder(Color.white));
-        //UIManager.put("TextField.font", new Font("Dialog", Font.PLAIN, 11));
-        //UIManager.put("Label.font", new Font("Dialog", Font.PLAIN, 11));
-
         ColorSettings colorsettings = ColorSettingManager.getColorSettings();
         for (String property : colorsettings.getKeys()) {
             Color c = colorsettings.getColorFromProperty(property);
