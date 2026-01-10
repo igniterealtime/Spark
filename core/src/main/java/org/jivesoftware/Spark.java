@@ -32,10 +32,11 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Locale;
 
 import org.jivesoftware.gui.LoginUIPanel;
+
+import static java.util.Arrays.asList;
 
 
 /**
@@ -97,11 +98,11 @@ public final class Spark {
         SparkCompatibility sparkCompat = new SparkCompatibility();
         try {
             // Absolute paths to a collection of files or directories to skip
-            Collection<String> skipFiles = new HashSet<>();
-            skipFiles.add(new File(USER_SPARK_HOME, "plugins").getAbsolutePath());
+            Collection<String> skipFiles = asList(
+                new File(USER_SPARK_HOME, "plugins").getAbsolutePath()
+            );
             sparkCompat.transferConfig(USER_SPARK_HOME, skipFiles);
-        } catch (IOException e) {
-            // Do nothing
+        } catch (IOException ignored) {
         }
 
         RESOURCE_DIRECTORY = initializeDirectory("resources");
@@ -145,7 +146,7 @@ public final class Spark {
             }
         }
 
-        // Set default language set by the user.
+        // Set the default language set by the user
         loadLanguage();
 
         // Loads the LookandFeel
@@ -181,9 +182,9 @@ public final class Spark {
     }
 
     /**
-     * Return if we are running on windows.
+     * Return if we are running on Windows.
      *
-     * @return true if we are running on windows, false otherwise.
+     * @return true if we are running on Windows, false otherwise.
      */
     public static boolean isWindows() {
         final String osName = System.getProperty("os.name").toLowerCase();
@@ -214,15 +215,14 @@ public final class Spark {
     /**
      * Returns the value associated with a passed in argument. Spark
      * accepts HTTP style attributes to allow for name-value pairing.
-     * ex. username=foo&password=pwd.
-     * To retrieve the value of username, you would do the following:
+     * e.g. username=foo&password=pwd.
+     * To retrieve the value of a username, you would do the following:
      * <pre>
      * String value = Spark.getArgumentValue("username");
      * </pre>
      *
      * @param argumentName the name of the argument to retrieve.
-     * @return the value of the argument. If no argument was found, null
-     *         will be returned.
+     * @return the value of the argument. If no argument was found, null will be returned.
      */
     public static String getArgumentValue(String argumentName) {
         if (ARGUMENTS == null) {
@@ -276,7 +276,7 @@ public final class Spark {
     }
 
     /**
-     * Returns the plugins directory of the Spark install. THe plugins-dir contains all the third-party plugins.
+     * Returns the plugins directory of the Spark installation. THe plugins-dir contains all the third-party plugins.
      *
      * @return the plugins directory
      */
