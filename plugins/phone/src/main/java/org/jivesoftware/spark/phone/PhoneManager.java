@@ -89,7 +89,7 @@ public class PhoneManager implements ChatRoomListener, ContextMenuListener {
 
     private PhoneManager() {
         JMFInit.start(false);
-        if (Spark.isVista() || Spark.isLinux()) {
+        if (Spark.isWindows() || Spark.isLinux()) {
             setUseStaticLocator(true);
         }
     }

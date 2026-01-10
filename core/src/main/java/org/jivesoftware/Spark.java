@@ -192,16 +192,6 @@ public final class Spark {
     }
 
     /**
-     * Returns true if Spark is running on vista.
-     *
-     * @return true if running on Vista.
-     */
-    public static boolean isVista() {
-        final String osName = System.getProperty("os.name").toLowerCase();
-        return osName.contains("vista");
-    }
-
-    /**
      * Return if we are running on a mac.
      *
      * @return true if we are running on a mac, false otherwise.
