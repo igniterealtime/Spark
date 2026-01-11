@@ -31,7 +31,7 @@ import org.jivesoftware.spark.util.log.Log;
 
 public class ColorSettingManager {
 
-    private static HashMap<String, String> _propertyHashMap = new HashMap<>();
+    private static Map<String, String> colorSettings = new HashMap<>(0);
 
     private ColorSettingManager() {
     }
@@ -66,7 +66,7 @@ public class ColorSettingManager {
      */
     public static void saveColorSettings() {
         final Properties props = new Properties();
-        props.putAll(_propertyHashMap);
+        props.putAll(colorSettings);
         try {
             props.store(Files.newOutputStream(getSettingsFile().toPath()), null);
         } catch (Exception e) {
@@ -82,15 +82,15 @@ public class ColorSettingManager {
         Map<String, String> defaultColors = getDefaultColors();
 
         // Loads defaults if empty; reconciles against defaults otherwise
-        if (_propertyHashMap.isEmpty()) {
-            _propertyHashMap.putAll(defaultColors);
+        if (colorSettings.isEmpty()) {
+            colorSettings = defaultColors;
             saveColorSettings();
-        } else if (_propertyHashMap.size() != defaultColors.size()) {
+        } else if (colorSettings.size() != defaultColors.size()) {
             // add missing settings from defaults
-            defaultColors.forEach(_propertyHashMap::putIfAbsent);
+            defaultColors.forEach(colorSettings::putIfAbsent);
             saveColorSettings();
         }
-        return new ColorSettings(_propertyHashMap);
+        return new ColorSettings(colorSettings);
     }
 
     /**
@@ -107,11 +107,14 @@ public class ColorSettingManager {
         Enumeration<Object> enume = props.keys();
         while (enume.hasMoreElements()) {
             String propName = (String) enume.nextElement();
-            _propertyHashMap.put(propName, props.getProperty(propName));
+            colorSettings.put(propName, props.getProperty(propName));
         }
     }
 
-    public static HashMap<String, String> getDefaultColors() {
+    /**
+     * Gets colors from default.properties
+     */
+    private static HashMap<String, String> getDefaultColors() {
         Matcher colorPatternMatcher = Pattern.compile("[0-9]*,[0-9]*,[0-9]*,[0-9]*").matcher("");
         HashMap<String, String> hashmap = new HashMap<>(40);
         Enumeration<String> enu = Default.getAllKeys();
@@ -130,7 +133,7 @@ public class ColorSettingManager {
      * Restores the Default Settings
      */
     public static void restoreDefault() {
-        _propertyHashMap = getDefaultColors();
+        colorSettings = getDefaultColors();
         saveColorSettings();
     }
 }
