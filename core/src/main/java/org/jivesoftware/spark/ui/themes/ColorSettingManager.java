@@ -23,6 +23,8 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Default;
@@ -112,13 +114,15 @@ public class ColorSettingManager {
     }
 
     public static HashMap<String, String> getDefaultColors() {
+        Matcher colorPatternMatcher = Pattern.compile("[0-9]*,[0-9]*,[0-9]*,[0-9]*").matcher("");
         HashMap<String, String> hashmap = new HashMap<>();
         Enumeration<String> enu = Default.getAllKeys();
         while (enu.hasMoreElements()) {
             String s = enu.nextElement();
-            if (Default.getString(s).replace(" ", "")
-                .matches("[0-9]*,[0-9]*,[0-9]*,[0-9]*")) {
-                hashmap.put(s, Default.getString(s));
+            String propValue = Default.getString(s).replace(" ", "");
+            colorPatternMatcher.reset(propValue);
+            if (colorPatternMatcher.matches()) {
+                hashmap.put(s, propValue);
             }
         }
         return hashmap;
