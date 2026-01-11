@@ -23,44 +23,35 @@ public class ColorSettings {
 
     private final HashMap<String, String> _hashmap;
 
-    public ColorSettings(HashMap<String, String> settingmap) {
-	_hashmap = settingmap;
-    }
-    
-    public void setColorForProperty(String propertyname, Color color)
-    {
-	int r = color.getRed();
-	int g = color.getGreen();
-	int b = color.getBlue();
-	int a = color.getAlpha();
-	String c = r + "," + g + "," + b + "," + a;	
-	_hashmap.put(propertyname, c );
-	
+    public ColorSettings(HashMap<String, String> settingMap) {
+        _hashmap = settingMap;
     }
 
-    public Color getColorFromProperty(String propertyname) {
+    public void setColorForProperty(String propertyName, Color color) {
+        int r = color.getRed();
+        int g = color.getGreen();
+        int b = color.getBlue();
+        int a = color.getAlpha();
+        String c = r + "," + g + "," + b + "," + a;
+        _hashmap.put(propertyName, c);
+    }
 
-        String s = _hashmap.get(propertyname).replaceAll(" ", "");
-        s = s.replaceAll("[a-zA-Z]", "");
-
-        String[] items = s.split(",");
-
+    public Color getColorFromProperty(String propertyName) {
+        String colorValue = _hashmap.get(propertyName).replaceAll(" ", "");
+        colorValue = colorValue.replaceAll("[a-zA-Z]", "");
+        String[] items = colorValue.split(",");
         return new Color(
             Integer.parseInt(items[0]),
             Integer.parseInt(items[1]),
             Integer.parseInt(items[2]),
             Integer.parseInt(items[3]));
     }
-    
+
     /**
      * Returns all the PropertyNames
-     * @return
      */
-    public Set<String> getKeys()
-    {
-	
-	return _hashmap.keySet();
-	
+    public Set<String> getKeys() {
+        return _hashmap.keySet();
     }
 }
 
