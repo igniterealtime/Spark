@@ -83,14 +83,8 @@ public class ColorSettingManager {
 
         // Loads defaults if empty; reconciles against defaults otherwise
         if (_propertyHashMap.isEmpty()) {
-            Properties p = new Properties();
-            try {
-                p.load(new FileInputStream(getSettingsFile()));
-                initialLoad(p);
-                loadSettingsToMap(file);
-            } catch (IOException e) {
-                Log.error("Error saving settings.", e);
-            }
+            _propertyHashMap.putAll(defaultColors);
+            saveColorSettings();
         } else if (_propertyHashMap.size() != defaultColors.size()) {
             // add missing settings from defaults
             defaultColors.forEach(_propertyHashMap::putIfAbsent);
@@ -128,19 +122,6 @@ public class ColorSettingManager {
             }
         }
         return hashmap;
-    }
-
-    /**
-     * Used to set the Default values
-     */
-    private static void initialLoad(Properties props) {
-        HashMap<String, String> map = getDefaultColors();
-        props.putAll(map);
-        try {
-            props.store(new FileOutputStream(getSettingsFile()), "Storing Spark Color Settings");
-        } catch (IOException e) {
-            Log.error("Error saving settings.", e);
-        }
     }
 
     /**
