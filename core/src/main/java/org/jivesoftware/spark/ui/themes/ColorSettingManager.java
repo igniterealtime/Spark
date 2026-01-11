@@ -79,6 +79,7 @@ public class ColorSettingManager {
      */
     private static ColorSettings loadSettings(File file) {
         loadSettingsToMap(file);
+        Map<String, String> defaultColors = getDefaultColors();
 
         // Loads defaults if empty; reconciles against defaults otherwise
         if (_propertyHashMap.isEmpty()) {
@@ -90,26 +91,12 @@ public class ColorSettingManager {
             } catch (IOException e) {
                 Log.error("Error saving settings.", e);
             }
-        } else {
-            Map<String, String> defaultColors = getDefaultColors();
-            if (_propertyHashMap.size() != defaultColors.size()) {
-                boolean changesMade = compareSettings(_propertyHashMap, defaultColors);
-                if (changesMade) {
-                    saveColorSettings();
-                }
-            }
+        } else if (_propertyHashMap.size() != defaultColors.size()) {
+            // add missing settings from defaults
+            defaultColors.forEach(_propertyHashMap::putIfAbsent);
+            saveColorSettings();
         }
         return new ColorSettings(_propertyHashMap);
-    }
-
-    /**
-     * Compares two maps, if defaultSettings has keys that are not within currentSettings
-     */
-    private static boolean compareSettings(Map<String, String> currentSettings, Map<String, String> defaultSettings) {
-        int initialSize = currentSettings.size();
-        defaultSettings.forEach(currentSettings::putIfAbsent);
-        boolean changesMade = currentSettings.size() > initialSize;
-        return changesMade;
     }
 
     /**
