@@ -16,14 +16,14 @@
 package org.jivesoftware.spark.ui.themes;
 
 import java.awt.Color;
-import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 public class ColorSettings {
 
-    private final HashMap<String, String> _hashmap;
+    private final Map<String, String> _hashmap;
 
-    public ColorSettings(HashMap<String, String> settingMap) {
+    public ColorSettings(Map<String, String> settingMap) {
         _hashmap = settingMap;
     }
 
