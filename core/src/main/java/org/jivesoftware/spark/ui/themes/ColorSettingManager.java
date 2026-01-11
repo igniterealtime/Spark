@@ -21,6 +21,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import org.jivesoftware.Spark;
@@ -31,7 +32,7 @@ public class ColorSettingManager {
 
     private static HashMap<String, String> _propertyHashMap = new HashMap<>();
 
-    public ColorSettingManager() {
+    private ColorSettingManager() {
     }
 
     /**
@@ -39,10 +40,6 @@ public class ColorSettingManager {
      */
     public static ColorSettings getColorSettings() {
         return loadSettings(getSettingsFile());
-    }
-
-    public static boolean exists() {
-	return getSettingsFile().exists();
     }
 
     /**
@@ -68,10 +65,7 @@ public class ColorSettingManager {
      */
     public static void saveColorSettings() {
         final Properties props = new Properties();
-        for (String key : _propertyHashMap.keySet()) {
-            String value = _propertyHashMap.get(key);
-            props.setProperty(key, value);
-        }
+        props.putAll(_propertyHashMap);
         try {
             props.store(new FileOutputStream(getSettingsFile()),
                 "Storing Spark Color Settings");
@@ -84,7 +78,6 @@ public class ColorSettingManager {
      * load the Settings file
      */
     private static ColorSettings loadSettings(File file) {
-        // load from the file
         loadSettingsToMap(file);
 
         // Loads defaults if empty; reconciles against defaults otherwise
@@ -97,27 +90,26 @@ public class ColorSettingManager {
             } catch (IOException e) {
                 Log.error("Error saving settings.", e);
             }
-        } else if (_propertyHashMap.size() != getDefaultColors().size()) {
-            compareSettings(_propertyHashMap, getDefaultColors());
+        } else {
+            Map<String, String> defaultColors = getDefaultColors();
+            if (_propertyHashMap.size() != defaultColors.size()) {
+                boolean changesMade = compareSettings(_propertyHashMap, defaultColors);
+                if (changesMade) {
+                    saveColorSettings();
+                }
+            }
         }
         return new ColorSettings(_propertyHashMap);
     }
 
     /**
-     * Compares two Hashmaps, if defaultmap has keys that are not within mymap
+     * Compares two maps, if defaultSettings has keys that are not within currentSettings
      */
-    private static void compareSettings(HashMap<String, String> mymap,
-                                        HashMap<String, String> defaultmap) {
-        boolean changesmade = false;
-        for (String key : defaultmap.keySet()) {
-            if (mymap.get(key) == null) { // key doesn't exist in mymap
-                mymap.put(key, defaultmap.get(key));
-                changesmade = true;
-            }
-        }
-        if (changesmade) {
-            saveColorSettings();
-        }
+    private static boolean compareSettings(Map<String, String> currentSettings, Map<String, String> defaultSettings) {
+        int initialSize = currentSettings.size();
+        defaultSettings.forEach(currentSettings::putIfAbsent);
+        boolean changesMade = currentSettings.size() > initialSize;
+        return changesMade;
     }
 
     /**
@@ -127,13 +119,14 @@ public class ColorSettingManager {
         Properties props = new Properties();
         try {
             props.load(new FileInputStream(file));
-            Enumeration<Object> enume = props.keys();
-            while (enume.hasMoreElements()) {
-                String object = (String) enume.nextElement();
-                _propertyHashMap.put(object, props.getProperty(object));
-            }
         } catch (IOException e) {
-            Log.error("Error saving settings.", e);
+            Log.error("Error loading color settings.", e);
+            return;
+        }
+        Enumeration<Object> enume = props.keys();
+        while (enume.hasMoreElements()) {
+            String propName = (String) enume.nextElement();
+            _propertyHashMap.put(propName, props.getProperty(propName));
         }
     }
 
@@ -155,10 +148,7 @@ public class ColorSettingManager {
      */
     private static void initialLoad(Properties props) {
         HashMap<String, String> map = getDefaultColors();
-        for (String key : map.keySet()) {
-            props.setProperty(key, map.get(key));
-
-        }
+        props.putAll(map);
         try {
             props.store(new FileOutputStream(getSettingsFile()), "Storing Spark Color Settings");
         } catch (IOException e) {
