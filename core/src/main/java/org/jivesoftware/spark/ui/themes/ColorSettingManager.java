@@ -59,10 +59,23 @@ public class ColorSettingManager {
      * Save all settings
      */
     public static void saveColorSettings() {
+        // Safe only those settings that are different from a default
+        Map<String, String> defaultColors = getDefaultColors();
         final Properties props = new Properties();
-        props.putAll(colorSettings);
+        for (Map.Entry<String, String> setting : colorSettings.entrySet()) {
+            String defaultSettingVal = defaultColors.get(setting.getKey());
+            if (defaultSettingVal == null || !defaultSettingVal.equals(setting.getValue())) {
+                props.put(setting.getKey(), setting.getValue());
+            }
+        }
+        // if there are no properties left, and they are all default, delete the settings file
+        File settingsFile = getSettingsFile();
+        if (props.isEmpty() && settingsFile.exists()) {
+            settingsFile.delete();
+            return;
+        }
         try {
-            props.store(Files.newOutputStream(getSettingsFile().toPath()), null);
+            props.store(Files.newOutputStream(settingsFile.toPath()), null);
         } catch (Exception e) {
             Log.error("Error saving settings.", e);
         }
