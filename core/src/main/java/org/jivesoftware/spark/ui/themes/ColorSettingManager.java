@@ -16,9 +16,8 @@
 package org.jivesoftware.spark.ui.themes;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
@@ -69,8 +68,7 @@ public class ColorSettingManager {
         final Properties props = new Properties();
         props.putAll(_propertyHashMap);
         try {
-            props.store(new FileOutputStream(getSettingsFile()),
-                "Storing Spark Color Settings");
+            props.store(Files.newOutputStream(getSettingsFile().toPath()), null);
         } catch (Exception e) {
             Log.error("Error saving settings.", e);
         }
@@ -101,7 +99,7 @@ public class ColorSettingManager {
     private static void loadSettingsToMap(File file) {
         Properties props = new Properties();
         try {
-            props.load(new FileInputStream(file));
+            props.load(Files.newInputStream(file.toPath()));
         } catch (IOException e) {
             Log.error("Error loading color settings.", e);
             return;
@@ -115,7 +113,7 @@ public class ColorSettingManager {
 
     public static HashMap<String, String> getDefaultColors() {
         Matcher colorPatternMatcher = Pattern.compile("[0-9]*,[0-9]*,[0-9]*,[0-9]*").matcher("");
-        HashMap<String, String> hashmap = new HashMap<>();
+        HashMap<String, String> hashmap = new HashMap<>(40);
         Enumeration<String> enu = Default.getAllKeys();
         while (enu.hasMoreElements()) {
             String s = enu.nextElement();
