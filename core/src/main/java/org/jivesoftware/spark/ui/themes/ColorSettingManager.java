@@ -46,18 +46,12 @@ public class ColorSettingManager {
     /**
      * Returns the file or creates it
      */
-    public static File getSettingsFile() {
+    private static File getSettingsFile() {
         File path = new File(Spark.getSparkUserHome());
         if (!path.exists()) {
             path.mkdirs();
         }
         File f = new File(path, "color.settings");
-        if (!f.exists())
-            try {
-                f.createNewFile();
-            } catch (IOException e) {
-                Log.error("Error saving settings.", e);
-            }
         return f;
     }
 
@@ -84,11 +78,9 @@ public class ColorSettingManager {
         // Loads defaults if empty; reconciles against defaults otherwise
         if (colorSettings.isEmpty()) {
             colorSettings = defaultColors;
-            saveColorSettings();
         } else if (colorSettings.size() != defaultColors.size()) {
             // add missing settings from defaults
             defaultColors.forEach(colorSettings::putIfAbsent);
-            saveColorSettings();
         }
         return new ColorSettings(colorSettings);
     }
@@ -97,6 +89,9 @@ public class ColorSettingManager {
      * loads all Properties into a HashMap from the File specified
      */
     private static void loadSettingsToMap(File file) {
+        if (!file.exists()) {
+            return;
+        }
         Properties props = new Properties();
         try {
             props.load(Files.newInputStream(file.toPath()));
