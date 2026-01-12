@@ -23,9 +23,8 @@ import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.spark.util.log.Log;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Properties;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -83,7 +82,7 @@ public class SettingsManager {
         Log.debug("Saving settings...");
         final Properties props = localPreferences.getProperties();
         try {
-            props.store(new FileOutputStream(getSettingsFile()), "Spark Settings");
+            props.store(Files.newOutputStream(getSettingsFile().toPath()), "Spark Settings");
         } catch (Exception e) {
             Log.error("Error saving settings.", e);
         }
@@ -125,7 +124,7 @@ public class SettingsManager {
     private static LocalPreferences load() {
         final Properties props = new Properties();
         try {
-            props.load(new FileInputStream(getSettingsFile()));
+            props.load(Files.newInputStream(getSettingsFile().toPath()));
         } catch (IOException e) {
             Log.error(e);
             return new LocalPreferences();
@@ -135,7 +134,7 @@ public class SettingsManager {
         File globalSettingsFile = new File("spark.properties");
         if (globalSettingsFile.exists()) {
             try {
-                props.load(new FileInputStream(globalSettingsFile));
+                props.load(Files.newInputStream(globalSettingsFile.toPath()));
             } catch (IOException e) {
                 Log.error(e);
             }
