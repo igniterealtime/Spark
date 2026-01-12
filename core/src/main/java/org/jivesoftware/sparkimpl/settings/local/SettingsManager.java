@@ -27,6 +27,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Properties;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -36,6 +39,10 @@ public class SettingsManager {
     private static LocalPreferences localPreferences;
 
     private static final CopyOnWriteArrayList<PreferenceListener> listeners = new CopyOnWriteArrayList<>();
+
+    private static final ScheduledExecutorService saveScheduler = Executors.newSingleThreadScheduledExecutor();
+
+    private static volatile boolean saveScheduled = false;
 
     private SettingsManager() {
     }
@@ -63,6 +70,22 @@ public class SettingsManager {
      */
     public static void saveSettings() {
         Log.debug("Saving settings...");
+        //FIXME during start we have a dozen savings in a short period.
+        // This should be fixed to avoid slowness, meanwhile here we'll make only one saving in 10 sec.
+        if (saveScheduled) {
+            return;
+        }
+        saveScheduled = true;
+        saveScheduler.schedule(() -> {
+            try {
+                save();
+            } finally {
+                saveScheduled = false;
+            }
+        }, 10, TimeUnit.SECONDS);
+    }
+
+    private static void save() {
         final Properties props = localPreferences.getProperties();
         try {
             props.store(Files.newOutputStream(getSettingsFile().toPath()), "Spark Settings");
@@ -79,6 +102,7 @@ public class SettingsManager {
                 removeFromAutostartWindows();
             }
         }
+        Log.debug("Settings saved");
     }
 
     /**
