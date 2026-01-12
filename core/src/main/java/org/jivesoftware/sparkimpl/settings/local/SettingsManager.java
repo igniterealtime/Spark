@@ -42,22 +42,19 @@ public class SettingsManager {
 
     private SettingsManager() {
     }
-    
+
     //should probably not be read in a separate call
-    public static LocalPreferences getRelodLocalPreferences()
-    {
-    	getSettingsFile();
-    	localPreferences = load();
-    	return localPreferences;
+    public static LocalPreferences getRelodLocalPreferences() {
+        getSettingsFile();
+        localPreferences = load();
+        return localPreferences;
     }
 
     /**
      * Returns the LocalPreferences for this user.
-     *
-     * @return the LocalPreferences for this user.
      */
     public synchronized static LocalPreferences getLocalPreferences() {
-        if(localPreferences != null){
+        if (localPreferences != null) {
             return localPreferences;
         }
 
@@ -85,55 +82,20 @@ public class SettingsManager {
     public static void saveSettings() {
         Log.debug("Saving settings...");
         final Properties props = localPreferences.getProperties();
-
         try {
             props.store(new FileOutputStream(getSettingsFile()), "Spark Settings");
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             Log.error("Error saving settings.", e);
         }
-        
-        if (localPreferences.getStartOnStartup())
-        {
-        	try	{
-        		if (Spark.isWindows())
-        		{
-        			String PROGDIR = Spark.getBinDirectory().getParent();
-        			File file = new File(PROGDIR + "\\" + SparkRes.getString(SparkRes.EXECUTABLE_NAME));
-        			if (file.exists())
-        			{
-                        Advapi32Util.registryCreateKey(WinReg.HKEY_CURRENT_USER,
-		        				"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run");
-                        Advapi32Util.registrySetStringValue(
-                            WinReg.HKEY_CURRENT_USER,
-                            "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run",
-        					SparkRes.getString(SparkRes.APP_NAME), 
-        					file.getAbsolutePath());
-        			}
-        		}        	
-        	} 
-        	catch (Exception e) {
-        		e.printStackTrace();
-        	}
-        }
-        else
-        {
-    		if (Spark.isWindows()) {
-                if (Advapi32Util.registryValueExists(WinReg.HKEY_CURRENT_USER,
-                    "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run",
-                    SparkRes.getString(SparkRes.APP_NAME))) {
-                    try	{
-                            Advapi32Util.registryDeleteValue(
-                                WinReg.HKEY_CURRENT_USER,
-                                "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run",
-                                SparkRes.getString(SparkRes.APP_NAME));
-                    }
-                    catch (Exception e) {
-                        Log.error("Can not delete registry entry",e);
-                    }
-                }
 
-    		}
+        if (localPreferences.getStartOnStartup()) {
+            if (Spark.isWindows()) {
+                addToAutostartWindows();
+            }
+        } else {
+            if (Spark.isWindows()) {
+                removeFromAutostartWindows();
+            }
         }
     }
 
@@ -164,8 +126,7 @@ public class SettingsManager {
         final Properties props = new Properties();
         try {
             props.load(new FileInputStream(getSettingsFile()));
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             Log.error(e);
             return new LocalPreferences();
         }
@@ -191,18 +152,48 @@ public class SettingsManager {
         listeners.remove(listener);
     }
 
-    public static void fireListeners()
-    {
-        for ( PreferenceListener listener : listeners )
-        {
-            try
-            {
-                listener.preferencesChanged( localPreferences );
+    public static void fireListeners() {
+        for (PreferenceListener listener : listeners) {
+            try {
+                listener.preferencesChanged(localPreferences);
+            } catch (Exception e) {
+                Log.error("A PreferenceListener (" + listener + ") threw an exception while processing a 'referencesChanged' event.", e);
             }
-            catch ( Exception e )
-            {
-                Log.error( "A PreferenceListener (" + listener + ") threw an exception while processing a 'referencesChanged' event.", e );
+        }
+    }
+
+    private static void addToAutostartWindows() {
+        try {
+            // Persists autostart via Windows registry, if executable exists
+            String PROGDIR = Spark.getBinDirectory().getParent();
+            File exeFile = new File(PROGDIR + "\\" + SparkRes.getString(SparkRes.EXECUTABLE_NAME));
+            if (exeFile.exists()) {
+                Advapi32Util.registryCreateKey(WinReg.HKEY_CURRENT_USER,
+                    "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run");
+                Advapi32Util.registrySetStringValue(
+                    WinReg.HKEY_CURRENT_USER,
+                    "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run",
+                    SparkRes.getString(SparkRes.APP_NAME),
+                    exeFile.getAbsolutePath());
             }
+        } catch (Exception e) {
+            Log.error("Error enabling start on reboot", e);
+        }
+    }
+
+    private static void removeFromAutostartWindows() {
+        if (!Advapi32Util.registryValueExists(WinReg.HKEY_CURRENT_USER,
+            "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run",
+            SparkRes.getString(SparkRes.APP_NAME))) {
+            return;
+        }
+        try {
+            Advapi32Util.registryDeleteValue(
+                WinReg.HKEY_CURRENT_USER,
+                "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run",
+                SparkRes.getString(SparkRes.APP_NAME));
+        } catch (Exception e) {
+            Log.error("Can not delete registry entry", e);
         }
     }
 }
