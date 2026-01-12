@@ -92,16 +92,7 @@ public class SettingsManager {
         } catch (Exception e) {
             Log.error("Error saving settings.", e);
         }
-
-        if (localPreferences.getStartOnStartup()) {
-            if (Spark.isWindows()) {
-                addToAutostartWindows();
-            }
-        } else {
-            if (Spark.isWindows()) {
-                removeFromAutostartWindows();
-            }
-        }
+        setUpAutostart(localPreferences.getStartOnStartup());
         Log.debug("Settings saved");
     }
 
@@ -158,6 +149,19 @@ public class SettingsManager {
                 listener.preferencesChanged(localPreferences);
             } catch (Exception e) {
                 Log.error("A PreferenceListener (" + listener + ") threw an exception while processing a 'referencesChanged' event.", e);
+            }
+        }
+    }
+
+
+    private static void setUpAutostart(boolean startOnStartup) {
+        if (localPreferences.getStartOnStartup()) {
+            if (Spark.isWindows()) {
+                addToAutostartWindows();
+            }
+        } else {
+            if (Spark.isWindows()) {
+                removeFromAutostartWindows();
             }
         }
     }
