@@ -44,11 +44,9 @@ public class NotificationsUI extends JPanel {
     private final JSpinner notificationDelay;
 
     public NotificationsUI() {
-
-    	Integer[] spinnerDelay = {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20};
-    	SpinnerListModel delayModel = new SpinnerListModel(spinnerDelay);
+        SpinnerNumberModel delayModel = new SpinnerNumberModel(5, 1, 20, 2);
     	notificationDelay = new JSpinner(delayModel);
-    	notificationDelay.setPreferredSize(new Dimension(40,20));
+    	notificationDelay.setPreferredSize(new Dimension(80, 35));
     	        
     	setLayout(new FlowLayout(FlowLayout.LEFT));
     	        
@@ -60,7 +58,7 @@ public class NotificationsUI extends JPanel {
     	pn_spinner.add(new JLabel(Res.getString("label.display.time")));
     	pn_spinner.add(notificationDelay);
     	pn_spinner.add(new JLabel(Res.getString("label.seconds")));
-    	pn_spinner.setPreferredSize(new Dimension(190,25));
+    	pn_spinner.setPreferredSize(new Dimension(190,45));
     	 
     	JPanel pn_OnOffNotifications = new JPanel();
     	pn_OnOffNotifications.setLayout(new GridBagLayout());
