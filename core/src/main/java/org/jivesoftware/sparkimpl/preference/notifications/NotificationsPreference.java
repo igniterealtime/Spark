@@ -92,7 +92,7 @@ public class NotificationsPreference implements Preference {
 				panel.setOfflineNotification(offlineNotification);
 				panel.setOnlineNotification(onlineNotification);
 				panel.setCheckForBeta(betaChecking);
-				panel.setNotificationsDisplayTime(DisplayTime/1000);
+				panel.setNotificationsDisplayTime(DisplayTime);
 				panel.setTypingNotification(typingNotification);
 				panel.setSystemTrayNotification(systemTrayNotification);
 				

@@ -154,14 +154,16 @@ public class NotificationsUI extends JPanel {
         return windowFocusBox.isSelected();
     }
     
-    public void setNotificationsDisplayTime(int DisplayTime)
-    {
+    public void setNotificationsDisplayTime(int DisplayTime) {
+        if (DisplayTime <= 0 || DisplayTime > 20) {
+            DisplayTime = 3; // Default to 3 seconds if the value is out of bounds
+        }
         notificationDelay.setValue(DisplayTime);
     }
        
     public Integer getNotificationsDisplayTime()
     {
-        return Integer.parseInt(notificationDelay.getValue().toString())*1000;
+        return Integer.parseInt(notificationDelay.getValue().toString());
     }   
 
     public void setOfflineNotification(boolean notify) {
