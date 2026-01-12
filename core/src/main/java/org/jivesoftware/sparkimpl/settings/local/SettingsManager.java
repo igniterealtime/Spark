@@ -37,14 +37,11 @@ public class SettingsManager {
 
     private static final CopyOnWriteArrayList<PreferenceListener> listeners = new CopyOnWriteArrayList<>();
 
-    private static boolean fileExists = false;
-
     private SettingsManager() {
     }
 
     //should probably not be read in a separate call
     public static LocalPreferences getRelodLocalPreferences() {
-        getSettingsFile();
         localPreferences = load();
         return localPreferences;
     }
@@ -56,19 +53,8 @@ public class SettingsManager {
         if (localPreferences != null) {
             return localPreferences;
         }
-
-        if (!fileExists) {
-            fileExists = exists();
-        }
-
-        if (!fileExists) {
-            localPreferences = new LocalPreferences();
-            saveSettings();
-        }
-
         // Do Initial Load from FileSystem.
         localPreferences = load();
-
         return localPreferences;
     }
 
@@ -96,15 +82,6 @@ public class SettingsManager {
     }
 
     /**
-     * Return true if the settings file exists.
-     *
-     * @return true if the settings file exists.('spark.properties')
-     */
-    public static boolean exists() {
-        return getSettingsFile().exists();
-    }
-
-    /**
      * Returns the settings file.
      *
      * @return the settings file.
@@ -120,11 +97,14 @@ public class SettingsManager {
 
     private static LocalPreferences load() {
         final Properties props = new Properties();
-        try {
-            props.load(Files.newInputStream(getSettingsFile().toPath()));
-        } catch (IOException e) {
-            Log.error(e);
-            return new LocalPreferences();
+        File settingsFile = getSettingsFile();
+        if (settingsFile.exists()) {
+            try {
+                props.load(Files.newInputStream(settingsFile.toPath()));
+            } catch (IOException e) {
+                Log.error(e);
+                return new LocalPreferences();
+            }
         }
 
         // Override with global settings file
