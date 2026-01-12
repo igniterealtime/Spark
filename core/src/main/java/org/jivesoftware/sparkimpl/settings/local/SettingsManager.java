@@ -61,16 +61,13 @@ public class SettingsManager {
             fileExists = exists();
         }
 
-        if (!fileExists && localPreferences == null) {
+        if (!fileExists) {
             localPreferences = new LocalPreferences();
             saveSettings();
         }
 
-        if (localPreferences == null) {
-            // Do Initial Load from FileSystem.
-            getSettingsFile();
-            localPreferences = load();
-        }
+        // Do Initial Load from FileSystem.
+        localPreferences = load();
 
         return localPreferences;
     }
