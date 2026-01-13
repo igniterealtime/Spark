@@ -29,8 +29,8 @@ import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.nio.file.Files;
 import java.util.Properties;
 
 import javax.swing.AbstractAction;
@@ -42,6 +42,7 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JLabel;
 import javax.swing.JCheckBox;
+
 import org.jivesoftware.Spark;
 import org.jivesoftware.spark.util.Encryptor;
 import org.jivesoftware.spark.util.ResourceUtils;
@@ -65,37 +66,37 @@ public final class PasswordDialog implements PropertyChangeListener {
     private int width = 400;
     private int height = 200;
     private String password;
-    public void setPasswordField(String password)
-    {
-        this.password=password;
+
+    public void setPasswordField(String password) {
+        this.password = password;
     }
-    public boolean isCheckboxSelected()
-    {
+
+    public boolean isCheckboxSelected() {
         return _savePasswordBox.isSelected();
     }
-    public  void savePassword(String roomName, String password)  
-    {
+
+    public void savePassword(String roomName, String password) {
         File sparkProperties = new File(Spark.getSparkUserHome().concat(File.separator).concat(SettingsManager.getSettingsFile().getName()));
         Properties props = new Properties();
         try {
-        	props.load(new FileInputStream(sparkProperties));
-        	} catch (Exception e) {
-        		Log.error("error with file"+ e.getCause());
-        	}
-        LocalPreferences preferences  = new LocalPreferences(props);
+            props.load(Files.newInputStream(sparkProperties.toPath()));
+        } catch (Exception e) {
+            Log.error("error with file" + e.getCause());
+        }
+        LocalPreferences preferences = new LocalPreferences(props);
         try {
-        	preferences.setGroupChatPassword(roomName,Encryptor.encrypt(password));
+            preferences.setGroupChatPassword(roomName, Encryptor.encrypt(password));
         } catch (Exception ex) {
-        	Log.error(ex.getCause());
+            Log.error(ex.getCause());
         }
         FileOutputStream fileOut;
         try {
-        	fileOut = new FileOutputStream(sparkProperties);
-        	props.store(fileOut, "added room");
-        	} catch (Exception ex) {
-        		Log.error(ex.getCause());
-        	}                    
-		}
+            fileOut = new FileOutputStream(sparkProperties);
+            props.store(fileOut, "added room");
+        } catch (Exception ex) {
+            Log.error(ex.getCause());
+        }
+    }
 
     /**
      * Empty Constructor.
@@ -135,7 +136,7 @@ public final class PasswordDialog implements PropertyChangeListener {
 
         TitlePanel titlePanel = new TitlePanel(title, description, icon, true);
 
-        // Construct main panel w/ layout.
+        // Construct main panel with layout.
         final JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BorderLayout());
         mainPanel.add(titlePanel, BorderLayout.NORTH);
@@ -145,17 +146,17 @@ public final class PasswordDialog implements PropertyChangeListener {
         passwordPanel.add(passwordLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         passwordPanel.add(passwordField, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 
-        //user should be able to close this dialog (with an option to save room's password)
+        // User should be able to close this dialog (with an option to save room's password)
         passwordPanel.add(_savePasswordBox, new GridBagConstraints(1, 1, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
         ResourceUtils.resButton(_savePasswordBox, Res.getString("checkbox.save.password"));
-        final Object[] options = {Res.getString("ok"), Res.getString("cancel") , };
+        final Object[] options = {Res.getString("ok"), Res.getString("cancel"),};
         optionPane = new JOptionPane(passwordPanel, JOptionPane.PLAIN_MESSAGE,
             JOptionPane.OK_CANCEL_OPTION, null, options, options[0]);
 
         mainPanel.add(optionPane, BorderLayout.CENTER);
 
-        // Lets make sure that the dialog is modal. Cannot risk people
-        // losing this dialog.
+        // Let's make sure that the dialog is modal.
+        // Cannot risk people losing this dialog.
         JOptionPane p = new JOptionPane();
         dialog = p.createDialog(parent, title);
         dialog.setModal(true);
@@ -168,18 +169,16 @@ public final class PasswordDialog implements PropertyChangeListener {
         // Add Key Listener to Send Field
         passwordField.addKeyListener(new KeyAdapter() {
             @Override
-			public void keyPressed(KeyEvent e) {
+            public void keyPressed(KeyEvent e) {
                 if (e.getKeyChar() == KeyEvent.VK_TAB) {
                     optionPane.requestFocus();
-                }
-                else if (e.getKeyChar() == KeyEvent.VK_ESCAPE) {
+                } else if (e.getKeyChar() == KeyEvent.VK_ESCAPE) {
                     dialog.dispose();
                 }
             }
         });
 
         passwordField.requestFocus();
-
 
         dialog.setVisible(true);
         return stringValue;
@@ -189,11 +188,11 @@ public final class PasswordDialog implements PropertyChangeListener {
      * Move to focus forward action.
      */
     public Action nextFocusAction = new AbstractAction(Res.getString("label.move.focus.forwards")) {
-		private static final long serialVersionUID = 6465350147231073505L;
+        private static final long serialVersionUID = 6465350147231073505L;
 
-		@Override
-		public void actionPerformed(ActionEvent evt) {
-            ((Component)evt.getSource()).transferFocus();
+        @Override
+        public void actionPerformed(ActionEvent evt) {
+            ((Component) evt.getSource()).transferFocus();
         }
     };
 
@@ -201,22 +200,22 @@ public final class PasswordDialog implements PropertyChangeListener {
      * Moves the focus backwards in the dialog.
      */
     public Action prevFocusAction = new AbstractAction(Res.getString("label.move.focus.backwards")) {
-		private static final long serialVersionUID = -91177056113094990L;
+        private static final long serialVersionUID = -91177056113094990L;
 
-		@Override
-		public void actionPerformed(ActionEvent evt) {
-            ((Component)evt.getSource()).transferFocusBackward();
+        @Override
+        public void actionPerformed(ActionEvent evt) {
+            ((Component) evt.getSource()).transferFocusBackward();
         }
     };
 
     @Override
-	public void propertyChange(PropertyChangeEvent e) {
-        String value = (String)optionPane.getValue();
+    public void propertyChange(PropertyChangeEvent e) {
+        String value = (String) optionPane.getValue();
+        // Sets password and closes the dialog based on input
         if (Res.getString("cancel").equals(value)) {
             stringValue = null;
             dialog.setVisible(false);
-        }
-        else if (Res.getString("ok").equals(value)) {
+        } else if (Res.getString("ok").equals(value)) {
             stringValue = String.valueOf(passwordField.getPassword()).trim();
             if (stringValue.isEmpty()) {
                 stringValue = null;
