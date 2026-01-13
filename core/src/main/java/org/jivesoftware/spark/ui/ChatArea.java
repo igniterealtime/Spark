@@ -104,7 +104,7 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
         setFont(new Font("Dialog", Font.PLAIN, fontSize));
 
 
-        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("Ctrl x"), "cut");
+        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ctrl x"), "cut");
 
         getActionMap().put("cut", new AbstractAction("cut") {
 			private static final long serialVersionUID = 9117190151545566922L;
@@ -115,7 +115,7 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
             }
         });
 
-        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("Ctrl c"), "copy");
+        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ctrl c"), "copy");
 
         getActionMap().put("copy", new AbstractAction("copy") {
 			private static final long serialVersionUID = 4949716854440264528L;
@@ -126,7 +126,7 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
             }
         });
 
-        getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke("Ctrl v"), "paste");
+        getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke("ctrl v"), "paste");
 
         getActionMap().put("paste", new AbstractAction("paste") {
 			private static final long serialVersionUID = -8767763580660683678L;
