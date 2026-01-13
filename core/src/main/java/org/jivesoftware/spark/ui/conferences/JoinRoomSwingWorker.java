@@ -111,7 +111,7 @@ public class JoinRoomSwingWorker extends SwingWorker
             // Use the default nickname, if none has been provided.
             if ( nickname == null )
             {
-                nickname = SettingsManager.getRelodLocalPreferences().getNickname();
+                nickname = SettingsManager.getLocalPreferences().getNickname();
             }
 
             AtomicReference<ChatRoom> roomUIObject = new AtomicReference<>();
