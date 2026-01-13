@@ -123,9 +123,9 @@ public class ConferenceUtils {
         return (GroupChatRoom) worker.get(); // blocks until completed.
     }
 
-    public static GroupChatRoom enterRoom(final MultiUserChat groupChat, EntityBareJid roomJID)
+    public static GroupChatRoom enterRoom(EntityBareJid roomJID)
     {
-        final JoinRoomSwingWorker worker = new JoinRoomSwingWorker( groupChat.getRoom(), null, null, roomJID.toString() );
+        final JoinRoomSwingWorker worker = new JoinRoomSwingWorker(roomJID, null, null, roomJID.toString() );
         worker.start();
         return (GroupChatRoom) worker.get(); // blocks until completed.
     }
