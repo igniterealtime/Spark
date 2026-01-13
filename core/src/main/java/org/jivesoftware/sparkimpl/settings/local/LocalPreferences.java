@@ -78,9 +78,9 @@ public class LocalPreferences {
 	 * @param password
 	 *            sets encrypted password for a room.
 	 */
-	public void setGroupChatPassword(String roomName,String password)
-	{
-		props.setProperty(roomName, password);
+    public void setGroupChatPassword(String roomName, String password) throws Exception {
+        String pw = Encryptor.encrypt(password);
+        props.setProperty(roomName, pw);
 	}
 	
 	/**
