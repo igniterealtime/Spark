@@ -349,10 +349,8 @@ final class InvitationDialog extends JPanel {
                 catch (ChatNotFoundException e1) {
                     dlg.setVisible(false);
                     final List<EntityBareJid> jidList = new ArrayList<>();
-                    Object[] jids1 = invitedUserList.getSelectedValuesList().toArray();
-                    for (Object o : jids1) {
+                    for (String entityBareJidString : invitedUserList.getSelectedValuesList()) {
                         try {
-                            String entityBareJidString = (String) o;
                             EntityBareJid entityBareJid = JidCreate.entityBareFromUnescaped(entityBareJidString);
                             jidList.add(entityBareJid);
                         } catch (NullPointerException | XmppStringprepException ee) {
