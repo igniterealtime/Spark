@@ -35,7 +35,6 @@ import org.jivesoftware.spark.PresenceManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.ui.ChatRoomNotFoundException;
 import org.jivesoftware.spark.ui.rooms.GroupChatRoom;
-import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.UIComponentRegistry;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.privacy.PrivacyManager;
@@ -45,11 +44,9 @@ import org.jxmpp.jid.DomainBareJid;
 import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.Jid;
 import org.jxmpp.jid.impl.JidCreate;
-import org.jxmpp.jid.parts.Localpart;
 import org.jxmpp.jid.parts.Resourcepart;
 import org.jxmpp.stringprep.XmppStringprepException;
 
-import javax.annotation.Nullable;
 import javax.swing.*;
 import java.awt.*;
 import java.text.DateFormat;
@@ -114,21 +111,20 @@ public class ConferenceUtils {
      * Enters a GroupChatRoom on the event thread.
      *
      * @param roomName the name of the room.
-     * @param roomJID  the rooms jid.
-     * @param nickname THe nickname that the user joining will be using (optional).
+     * @param roomJID  the jid of the room.
      * @param password the rooms password (if any).
      * @return the GroupChatRoom created.
      */
-    public static GroupChatRoom enterRoomOnSameThread(final CharSequence roomName, EntityBareJid roomJID, final Resourcepart nickname, String password )
+    public static GroupChatRoom enterRoomOnSameThread(final CharSequence roomName, EntityBareJid roomJID, String password )
     {
-        final JoinRoomSwingWorker worker = new JoinRoomSwingWorker( roomJID, nickname, password, roomName.toString() );
+        final JoinRoomSwingWorker worker = new JoinRoomSwingWorker( roomJID, null, password, roomName.toString() );
         worker.start();
         return (GroupChatRoom) worker.get(); // blocks until completed.
     }
 
-    public static GroupChatRoom enterRoom(final MultiUserChat groupChat, CharSequence tabTitle, final Resourcepart nickname, final String password)
+    public static GroupChatRoom enterRoom(final MultiUserChat groupChat, CharSequence tabTitle)
     {
-        final JoinRoomSwingWorker worker = new JoinRoomSwingWorker( groupChat.getRoom(), nickname, password, tabTitle.toString() );
+        final JoinRoomSwingWorker worker = new JoinRoomSwingWorker( groupChat.getRoom(), null, null, tabTitle.toString() );
         worker.start();
         return (GroupChatRoom) worker.get(); // blocks until completed.
     }

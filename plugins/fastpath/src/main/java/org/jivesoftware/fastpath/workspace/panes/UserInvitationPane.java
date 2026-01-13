@@ -443,7 +443,7 @@ public class UserInvitationPane {
             Log.error(e);
         }
 
-        ConferenceUtils.enterRoomOnSameThread(roomName, fullRoomJID, null,null);
+        ConferenceUtils.enterRoomOnSameThread(roomName, fullRoomJID, null);
         removeOwner(chatRoom.getMultiUserChat());
 
         FastpathPlugin.getLitWorkspace().checkForDecoration(chatRoom, offer.getSessionID());

@@ -188,7 +188,7 @@ public class InvitationPane {
                         Log.error(e);
                     }
 
-                    ConferenceUtils.enterRoomOnSameThread(roomName, room, null, password);
+                    ConferenceUtils.enterRoomOnSameThread(roomName, room, password);
                     removeOwner(chatRoom.getMultiUserChat());
 
                     FastpathPlugin.getLitWorkspace().checkForDecoration(chatRoom, request.getSessionID());

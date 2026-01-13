@@ -163,7 +163,7 @@ public class ConversationInvitation extends JPanel implements ContainerComponent
         final Object obj = actionEvent.getSource();
         if (obj == joinButton) {
             Localpart name = roomName.getLocalpart();
-            ConferenceUtils.enterRoomOnSameThread(name.toString(), roomName, null, password);
+            ConferenceUtils.enterRoomOnSameThread(name.toString(), roomName, password);
         }
         else {
             try
