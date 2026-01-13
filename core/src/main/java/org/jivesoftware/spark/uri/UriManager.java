@@ -35,72 +35,68 @@ import org.jxmpp.jid.Jid;
 import org.jxmpp.jid.impl.JidCreate;
 import org.jxmpp.stringprep.XmppStringprepException;
 
+import static org.jivesoftware.spark.util.StringUtils.unescapeFromXML;
+
 /**
  * Class to handle URI-Mappings defined by <br>
- * 
- * <a href="http://xmpp.org/extensions/xep-0147.html">XEP-0147: XMPP URI Scheme
- * Query Components</a>
- * 
+ * <a href="http://xmpp.org/extensions/xep-0147.html">XEP-0147: XMPP URI Scheme Query Components</a>
+ *
  * @author wolf.posdorfer
- * 
  */
 public class UriManager {
 
     public enum uritypes {
-	message("message"),
-	join("join"),
-	unsubscribe("unsubscribe"),
-	subscribe("subscribe"),
-	roster("roster"),
-	remove("remove");
+        message("message"),
+        join("join"),
+        unsubscribe("unsubscribe"),
+        subscribe("subscribe"),
+        roster("roster"),
+        remove("remove");
 
-	private final String _xml;
+        private final String _xml;
 
-	uritypes(String s) {
-	    _xml = s;
-	}
-	public String getXML() {
-	    return _xml;
-	}
+        uritypes(String s) {
+            _xml = s;
+        }
+
+        public String getXML() {
+            return _xml;
+        }
     }
 
     /**
      * handles the ?message URI
-     * 
+     *
      * @param uri
      *            the decoded uri
      */
     public void handleMessage(URI uri) {
+        String query = uri.getQuery();
+        int bodyIndex = query.indexOf("body=");
+        Jid jid = retrieveJID(uri);
+        String body = null;
+        // Find body
+        if (bodyIndex != -1) {
+            body = query.substring(bodyIndex + 5);
+        }
+        body = unescapeFromXML(body);
 
-	String query = uri.getQuery();
-	int bodyIndex = query.indexOf("body=");
+        UserManager userManager = SparkManager.getUserManager();
+        String nickname = userManager.getUserNicknameFromJID(jid.asBareJid());
+        ChatManager chatManager = SparkManager.getChatManager();
+        ChatRoom chatRoom = chatManager.createChatRoom(jid.asEntityJidOrThrow(), nickname, nickname);
+        if (body != null) {
+            MessageBuilder messageBuilder = StanzaBuilder.buildMessage()
+                .setBody(body);
+            chatRoom.sendMessage(messageBuilder);
+        }
 
-	Jid jid = retrieveJID(uri);
-	String body = null;
-
-	// Find body
-	if (bodyIndex != -1) {
-	    body = query.substring(bodyIndex + 5);
-	}
-
-	body = org.jivesoftware.spark.util.StringUtils.unescapeFromXML(body);
-
-	UserManager userManager = SparkManager.getUserManager();
-	String nickname = userManager.getUserNicknameFromJID(jid.asBareJid());
-	ChatManager chatManager = SparkManager.getChatManager();
-	ChatRoom chatRoom = chatManager.createChatRoom(jid.asEntityJidOrThrow(), nickname, nickname);
-	if (body != null) {
-        MessageBuilder messageBuilder = StanzaBuilder.buildMessage()
-            .setBody(body);
-	    chatRoom.sendMessage(messageBuilder);
-	}
-
-	chatManager.getChatContainer().activateChatRoom(chatRoom);
+        chatManager.getChatContainer().activateChatRoom(chatRoom);
     }
 
     /**
      * Handles the ?join URI
-     * 
+     *
      * @param uri
      *            the decoded uri
      */
@@ -112,55 +108,53 @@ public class UriManager {
 
     /**
      * Handles the ?subscribe URI
-     * 
+     *
      * @param uri
      *            the decoded uri
      * @throws Exception
      */
     public void handleSubscribe(URI uri) throws Exception {
-	// xmpp:romeo@montague.net?subscribe
-	// Send contact add request
-	Jid jid = retrieveJID(uri);
-
+        // xmpp:romeo@montague.net?subscribe
+        // Send contact add request
+        Jid jid = retrieveJID(uri);
         XMPPConnection connection = SparkManager.getConnection();
         Presence response = connection.getStanzaFactory()
-                .buildPresenceStanza()
-                .ofType(Presence.Type.subscribe)
-                .to(jid)
-                .build();
+            .buildPresenceStanza()
+            .ofType(Presence.Type.subscribe)
+            .to(jid)
+            .build();
         connection.sendStanza(response);
     }
 
     /**
      * Handles the ?unsubscribe URI
-     * 
+     *
      * @param uri
      *            the decoded uri
      */
-    public void handleUnsubscribe(URI uri) throws SmackException.NotConnectedException
-	{
-	Jid jid;
-    try {
-        jid = JidCreate.from(retrieveJID(uri));
-    } catch (XmppStringprepException e) {
-        throw new IllegalStateException(e);
-    }
+    public void handleUnsubscribe(URI uri) throws SmackException.NotConnectedException {
+        Jid jid;
+        try {
+            jid = JidCreate.from(retrieveJID(uri));
+        } catch (XmppStringprepException e) {
+            throw new IllegalStateException(e);
+        }
 
         Presence response = StanzaBuilder.buildPresence()
             .ofType(Presence.Type.unsubscribe)
             .build();
-	response.setTo(jid);
-	try {
-        SparkManager.getConnection().sendStanza(response);
-    } catch (InterruptedException e) {
-        throw new IllegalStateException(e);
-    }
+        response.setTo(jid);
+        try {
+            SparkManager.getConnection().sendStanza(response);
+        } catch (InterruptedException e) {
+            throw new IllegalStateException(e);
+        }
     }
 
     /***
      * Handles the ?roster URI<br>
      * with name= and group=
-     * 
+     *
      * @param uri
      *            the decoded uri
      * @throws Exception
@@ -217,61 +211,59 @@ public class UriManager {
 
     /**
      * Handles the ?remove URI
-     * 
+     *
      * @param uri
      *            the decoded uri
      * @throws Exception
      */
     public void handleRemove(URI uri) throws Exception {
-	// xmpp:romeo@montague.net?remove
+        // xmpp:romeo@montague.net?remove
+        BareJid jid;
+        try {
+            jid = JidCreate.bareFrom(retrieveJID(uri));
+        } catch (XmppStringprepException e) {
+            throw new IllegalStateException(e);
+        }
 
-    BareJid jid;
-    try {
-        jid = JidCreate.bareFrom(retrieveJID(uri));
-    } catch (XmppStringprepException e) {
-        throw new IllegalStateException(e);
-    }
-
-    Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
-	RosterEntry entry = roster.getEntry(jid);
-	roster.removeEntry(entry);
+        Roster roster = Roster.getInstanceFor(SparkManager.getConnection());
+        RosterEntry entry = roster.getEntry(jid);
+        roster.removeEntry(entry);
     }
 
     /**
-     * Gets JID from URI. Returns the full jid including resource
-     * 
-     * @param uri
-     *            the URI
-     * @return romeo@montague.net
+     * Gets JID from URI. Returns the full jid including resource romeo@montague.net/balcony
      */
     public Jid retrieveJID(URI uri) {
-	StringBuilder sb = new StringBuilder(32);
-	String user = uri.getUserInfo();
-	if (user != null) {
-	    sb.append(user);
-	    sb.append('@');
-	}
-	sb.append(uri.getHost());
-	// Resource contains the leading /
-	String resource = uri.getPath();
-	if (resource != null && resource.length() > 0 && !resource.equals("/")) {
-	    sb.append(resource);
-	}
-	return JidCreate.fromOrThrowUnchecked(sb);
+        String jidString = "";
+        String user = uri.getUserInfo();
+        if (user != null) {
+            jidString += user;
+            jidString += '@';
+        }
+        jidString += uri.getHost();
+        // Resource contains the leading /
+        String resource = uri.getPath();
+        if (resource != null && !resource.isEmpty() && !resource.equals("/")) {
+            jidString += resource;
+        }
+        return JidCreate.fromOrThrowUnchecked(jidString);
     }
 
+    /**
+     * Extracts password from URI if present
+     */
     public static String retrievePassword(URI uri) {
         int index = uri.toString().indexOf("password=");
         if (index == -1) {
             return null;
         }
-        String result = uri.toString().substring(index+"password=".length());
+        String result = uri.toString().substring(index + "password=".length());
         if (result.indexOf('&') != -1) {
             result = result.substring(0, result.indexOf('&'));
         }
         if (result.indexOf(';') != -1) {
             result = result.substring(0, result.indexOf(';'));
         }
-        return result.length() > 0 ? result : null;
+        return !result.isEmpty() ? result : null;
     }
 }
