@@ -28,10 +28,6 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.nio.file.Files;
-import java.util.Properties;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -43,11 +39,8 @@ import javax.swing.JPasswordField;
 import javax.swing.JLabel;
 import javax.swing.JCheckBox;
 
-import org.jivesoftware.Spark;
-import org.jivesoftware.spark.util.Encryptor;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.log.Log;
-import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
 
@@ -76,13 +69,12 @@ public final class PasswordDialog implements PropertyChangeListener {
     }
 
     public void savePassword(String roomName, String password) {
-        LocalPreferences preferences = SettingsManager.getLocalPreferences();
         try {
-            preferences.setGroupChatPassword(roomName, Encryptor.encrypt(password));
-        } catch (Exception ex) {
-            Log.error(ex.getCause());
+            SettingsManager.getLocalPreferences().setGroupChatPassword(roomName, password);
+            SettingsManager.saveSettings();
+        } catch (Exception e) {
+            Log.error("Error storing encrypted password.", e);
         }
-        SettingsManager.saveSettings();
     }
 
     /**
