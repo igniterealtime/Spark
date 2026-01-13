@@ -90,7 +90,7 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener
         addContextMenuListener( this );
 
         // Make sure ctrl-c works
-        getInputMap( JComponent.WHEN_IN_FOCUSED_WINDOW ).put( KeyStroke.getKeyStroke( "Ctrl c" ), "copy" );
+        getInputMap( JComponent.WHEN_IN_FOCUSED_WINDOW ).put( KeyStroke.getKeyStroke( "ctrl c" ), "copy" );
 
         getActionMap().put( "copy", new AbstractAction( "copy" )
         {

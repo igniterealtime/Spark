@@ -130,7 +130,7 @@ public class ChatInputEditor extends ChatArea implements DocumentListener {
         getInputMap().put(ctrlbackspaceKeyStroke, "ctrlbackspace");
         getInputMap().put(undoKeyStroke, "undo");
         getInputMap().put(escapeKeyStroke, "escape");
-        getInputMap().put(KeyStroke.getKeyStroke("Ctrl W"), "escape");
+        getInputMap().put(KeyStroke.getKeyStroke("ctrl W"), "escape");
         
         registerKeyboardAction(undo, KeyStroke.getKeyStroke(KeyEvent.VK_Z, KeyEvent.CTRL_MASK), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         registerKeyboardAction(ctrlbackspace, KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, KeyEvent.CTRL_MASK), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
@@ -172,7 +172,7 @@ public class ChatInputEditor extends ChatArea implements DocumentListener {
         getInputMap().remove(undoKeyStroke);
         getInputMap().remove(ctrlbackspaceKeyStroke);
         getInputMap().remove(escapeKeyStroke);
-        getInputMap().remove(KeyStroke.getKeyStroke("Ctrl W"));
+        getInputMap().remove(KeyStroke.getKeyStroke("ctrl W"));
     }
 
     /**
