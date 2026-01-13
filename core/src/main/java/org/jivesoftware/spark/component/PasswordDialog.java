@@ -76,26 +76,13 @@ public final class PasswordDialog implements PropertyChangeListener {
     }
 
     public void savePassword(String roomName, String password) {
-        File sparkProperties = new File(Spark.getSparkUserHome().concat(File.separator).concat(SettingsManager.getSettingsFile().getName()));
-        Properties props = new Properties();
-        try {
-            props.load(Files.newInputStream(sparkProperties.toPath()));
-        } catch (Exception e) {
-            Log.error("error with file" + e.getCause());
-        }
-        LocalPreferences preferences = new LocalPreferences(props);
+        LocalPreferences preferences = SettingsManager.getLocalPreferences();
         try {
             preferences.setGroupChatPassword(roomName, Encryptor.encrypt(password));
         } catch (Exception ex) {
             Log.error(ex.getCause());
         }
-        FileOutputStream fileOut;
-        try {
-            fileOut = new FileOutputStream(sparkProperties);
-            props.store(fileOut, "added room");
-        } catch (Exception ex) {
-            Log.error(ex.getCause());
-        }
+        SettingsManager.saveSettings();
     }
 
     /**
