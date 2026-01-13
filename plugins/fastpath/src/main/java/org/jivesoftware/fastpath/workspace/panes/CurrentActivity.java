@@ -244,7 +244,7 @@ public final class CurrentActivity extends JPanel {
 
                                 MultiUserChat muc = multiUserChatManager.getMultiUserChat(roomName);
 
-                                ConferenceUtils.enterRoom(muc, roomName);
+                                ConferenceUtils.enterRoom(roomName);
 
                                 if (muc.isJoined()) {
                                     // Try and remove myself as an owner if I am one.
@@ -304,7 +304,7 @@ public final class CurrentActivity extends JPanel {
 
                                 MultiUserChat muc = manager.getMultiUserChat( roomName );
 
-                                ConferenceUtils.enterRoom(muc, roomName);
+                                ConferenceUtils.enterRoom(roomName);
                             }
                             catch (XMPPException | SmackException | InterruptedException e1) {
                                 Log.error(e1);
