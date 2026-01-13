@@ -122,9 +122,9 @@ public class ConferenceUtils {
         return (GroupChatRoom) worker.get(); // blocks until completed.
     }
 
-    public static GroupChatRoom enterRoom(final MultiUserChat groupChat, CharSequence tabTitle)
+    public static GroupChatRoom enterRoom(final MultiUserChat groupChat, EntityBareJid roomJID)
     {
-        final JoinRoomSwingWorker worker = new JoinRoomSwingWorker( groupChat.getRoom(), null, null, tabTitle.toString() );
+        final JoinRoomSwingWorker worker = new JoinRoomSwingWorker( groupChat.getRoom(), null, null, roomJID.toString() );
         worker.start();
         return (GroupChatRoom) worker.get(); // blocks until completed.
     }
