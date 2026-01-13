@@ -61,14 +61,11 @@ import org.jivesoftware.spark.ui.conferences.ConferenceUtils;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
-import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
-import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jxmpp.jid.BareJid;
 import org.jxmpp.jid.DomainBareJid;
 import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.Jid;
 import org.jxmpp.jid.impl.JidCreate;
-import org.jxmpp.jid.parts.Resourcepart;
 import org.jxmpp.jid.util.JidUtil;
 
 /**
@@ -245,11 +242,9 @@ public final class CurrentActivity extends JPanel {
                                 DomainBareJid serviceName = col.iterator().next();
                                 EntityBareJid roomName = JidCreate.entityBareFromOrThrowUnchecked(sessionID + "@" + serviceName);
 
-                                final LocalPreferences pref = SettingsManager.getLocalPreferences();
-                                final Resourcepart nickname = pref.getNickname();
                                 MultiUserChat muc = multiUserChatManager.getMultiUserChat(roomName);
 
-                                ConferenceUtils.enterRoom(muc, roomName, nickname, null);
+                                ConferenceUtils.enterRoom(muc, roomName);
 
                                 if (muc.isJoined()) {
                                     // Try and remove myself as an owner if I am one.
@@ -307,11 +302,9 @@ public final class CurrentActivity extends JPanel {
                                 DomainBareJid serviceName = col.iterator().next();
                                 EntityBareJid roomName = JidCreate.entityBareFromOrThrowUnchecked(sessionID + "@" + serviceName);
 
-                                LocalPreferences pref = SettingsManager.getLocalPreferences();
-                                final Resourcepart nickname = pref.getNickname();
                                 MultiUserChat muc = manager.getMultiUserChat( roomName );
 
-                                ConferenceUtils.enterRoom(muc, roomName, nickname, null);
+                                ConferenceUtils.enterRoom(muc, roomName);
                             }
                             catch (XMPPException | SmackException | InterruptedException e1) {
                                 Log.error(e1);
