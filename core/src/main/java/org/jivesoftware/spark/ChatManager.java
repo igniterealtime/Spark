@@ -866,6 +866,9 @@ public class ChatManager {
 	if (arguments == null) {
 	    return;
 	}
+        if (!arguments.startsWith("xmpp")) {
+            return;
+        }
 
 	Log.debug("Handling URI mapping for: " + arguments);
 	URI uri;
@@ -873,9 +876,6 @@ public class ChatManager {
 	    uri = new URI(arguments);
 	} catch (URISyntaxException e) {
 	    Log.error("error parsing uri: "+arguments,e);
-	    return;
-	}
-	if (!"xmpp".equalsIgnoreCase(uri.getScheme())) {
 	    return;
 	}
 
