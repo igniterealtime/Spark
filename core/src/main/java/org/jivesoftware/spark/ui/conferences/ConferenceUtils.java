@@ -147,7 +147,7 @@ public class ConferenceUtils {
 
         if ( invites != null && !invites.isEmpty() )
         {
-            final InviteSwingWorker inviteSwingWorker = new InviteSwingWorker( roomJID, new HashSet<>( invites ), inviteMessage );
+            final InviteSwingWorker inviteSwingWorker = new InviteSwingWorker( roomJID, invites, inviteMessage );
             worker.setFollowUp( inviteSwingWorker );
         }
 

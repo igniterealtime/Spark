@@ -13,6 +13,7 @@ import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 import org.jxmpp.jid.EntityBareJid;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -25,10 +26,10 @@ import java.util.Set;
 public class InviteSwingWorker extends SwingWorker
 {
     private final EntityBareJid roomJID;
-    private final Set<EntityBareJid> invitees;
+    private final Collection<EntityBareJid> invitees;
     private final String invitation;
 
-    public InviteSwingWorker( EntityBareJid roomJID, Set<EntityBareJid> invitees, String invitation )
+    public InviteSwingWorker( EntityBareJid roomJID, Collection<EntityBareJid> invitees, String invitation )
     {
         this.roomJID = roomJID;
         this.invitees = ( invitees == null ? Collections.emptySet() : invitees);
@@ -38,24 +39,22 @@ public class InviteSwingWorker extends SwingWorker
     @Override
     public Object construct()
     {
-        final Set<EntityBareJid> invitedJIDs = new HashSet<>();
-
+        final Set<EntityBareJid> invitedJIDs = new HashSet<>(invitees.size());
         final MultiUserChat groupChat = MultiUserChatManager.getInstanceFor( SparkManager.getConnection() ).getMultiUserChat( roomJID );
-
         // Send invitations
         for ( final EntityBareJid jid : invitees)
         {
             try
             {
-                groupChat.invite(jid, invitation);
-                invitedJIDs.add( jid );
+                if (invitedJIDs.add(jid)) {
+                    groupChat.invite(jid, invitation);
+                }
             }
             catch ( SmackException.NotConnectedException | InterruptedException e )
             {
                 Log.warning( "Unable to invite " + jid + " to " + roomJID, e );
             }
         }
-
         return invitedJIDs;
     }
 
