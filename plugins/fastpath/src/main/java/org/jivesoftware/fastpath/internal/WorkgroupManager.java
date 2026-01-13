@@ -405,7 +405,7 @@ public class WorkgroupManager {
 
             if (message.hasExtension(WorkgroupInformation.class)) {
                 Localpart workgroupName = inviter.getLocalpart();
-                GroupChatRoom groupChatRoom = ConferenceUtils.enterRoomOnSameThread(workgroupName, room.getRoom(), null, password);
+                GroupChatRoom groupChatRoom = ConferenceUtils.enterRoomOnSameThread(workgroupName, room.getRoom(), password);
 
                 int tabLocation = SparkManager.getChatManager().getChatContainer().indexOfComponent(groupChatRoom);
                 groupChatRoom.setTabIcon(FastpathRes.getImageIcon(FastpathRes.FASTPATH_IMAGE_16x16));

@@ -453,7 +453,7 @@ public class ConferenceServices implements InvitationListener {
     EntityBareJid bareJID = inviter.asEntityBareJid();
 
     if (_localPreferences.isAutoAcceptMucInvite()) {
-        ConferenceUtils.enterRoomOnSameThread(room.getRoom().getLocalpart().toString(), room.getRoom(), null, password);
+        ConferenceUtils.enterRoomOnSameThread(room.getRoom().getLocalpart().toString(), room.getRoom(), password);
         MultiUserChatManager manager = MultiUserChatManager.getInstanceFor( SparkManager.getConnection() );
         GroupChatRoom chat = UIComponentRegistry.createGroupChatRoom(manager.getMultiUserChat( room.getRoom() ));
 

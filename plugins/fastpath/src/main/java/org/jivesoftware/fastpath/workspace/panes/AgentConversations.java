@@ -59,13 +59,10 @@ import org.jivesoftware.spark.ui.conferences.ConferenceUtils;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
-import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
-import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jxmpp.jid.DomainBareJid;
 import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.Jid;
 import org.jxmpp.jid.impl.JidCreate;
-import org.jxmpp.jid.parts.Resourcepart;
 import org.jxmpp.jid.util.JidUtil;
 import org.jxmpp.stringprep.XmppStringprepException;
 
@@ -292,12 +289,9 @@ public final class AgentConversations extends JPanel implements ChangeListener {
                                 DomainBareJid serviceName = col.iterator().next();
                                 EntityBareJid roomName = JidCreate.entityBareFrom(sessionID + "@" + serviceName);
 
-                                LocalPreferences pref = SettingsManager.getLocalPreferences();
-
-                                final Resourcepart nickname = pref.getNickname();
                                 MultiUserChat muc = multiUserChatManager.getMultiUserChat( roomName );
 
-                                ConferenceUtils.enterRoom(muc, roomName, nickname, null);
+                                ConferenceUtils.enterRoom(muc, roomName);
 
                                 if (muc.isJoined()) {
                                     // Try and remove myself as an owner if I am one.
@@ -355,11 +349,9 @@ public final class AgentConversations extends JPanel implements ChangeListener {
                                 DomainBareJid serviceName = col.iterator().next();
                                 EntityBareJid roomName = JidCreate.entityBareFrom(sessionID + "@" + serviceName);
 
-                                LocalPreferences pref = SettingsManager.getLocalPreferences();
-                                final Resourcepart nickname = pref.getNickname();
                                 MultiUserChat muc = multiUserChatManager.getMultiUserChat( roomName);
 
-                                ConferenceUtils.enterRoom(muc, roomName, nickname, null);
+                                ConferenceUtils.enterRoom(muc, roomName);
 
                             }
                             catch (XMPPException | SmackException | InterruptedException | XmppStringprepException e1) {
