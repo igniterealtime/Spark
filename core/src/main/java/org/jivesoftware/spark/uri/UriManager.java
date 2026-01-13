@@ -16,6 +16,8 @@
 package org.jivesoftware.spark.uri;
 
 import java.net.URI;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPConnection;
@@ -250,20 +252,26 @@ public class UriManager {
     }
 
     /**
-     * Extracts password from URI if present
+     * Extracts password from URI if present e.g., xmpp:open_chat@conference.igniterealtime.org?join;password=somesecret
      */
     public static String retrievePassword(URI uri) {
-        int index = uri.toString().indexOf("password=");
+        String query = uri.getRawSchemeSpecificPart();
+        int index = query.indexOf(";password=");
         if (index == -1) {
             return null;
         }
-        String result = uri.toString().substring(index + "password=".length());
-        if (result.indexOf('&') != -1) {
-            result = result.substring(0, result.indexOf('&'));
+        int passwordParamStart = index + ";password=".length();
+        int passwordEndPos = query.indexOf('&', passwordParamStart);
+        if (passwordEndPos == -1) {
+            passwordEndPos = query.indexOf(';', passwordParamStart);
+            if (passwordEndPos == -1) {
+                passwordEndPos = query.length();
+            }
         }
-        if (result.indexOf(';') != -1) {
-            result = result.substring(0, result.indexOf(';'));
+        String result = query.substring(passwordParamStart, passwordEndPos);
+        if (result.isEmpty()) {
+            return null;
         }
-        return !result.isEmpty() ? result : null;
+        return URLDecoder.decode(result, StandardCharsets.UTF_8);
     }
 }
