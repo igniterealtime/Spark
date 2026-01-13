@@ -19,6 +19,7 @@ import org.jivesoftware.resource.Res;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.ContextMenuListener;
 import org.jivesoftware.spark.ui.conferences.ConferenceUtils;
+import org.jivesoftware.spark.uri.UriManager;
 import org.jivesoftware.spark.util.BrowserLauncher;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
@@ -189,30 +190,19 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
 
             if (element != null) {
                 final AttributeSet as = element.getAttributes();
-                final Object o = as.getAttribute("link");
+                final String url = (String) as.getAttribute("link");
 
-                if (o != null) {
+                if (url != null) {
                     try {
-                        final String url = (String)o;
                         boolean handled = fireLinkInterceptors(e, url);
                         if (!handled) {
                             if(e.getButton() == MouseEvent.BUTTON1) {
                                 if (url.startsWith("xmpp:") && url.contains("?join")) {
                                     // eg: xmpp:open_chat@conference.igniterealtime.org?join;password=somesecret
-                                    final String schemeSpecificPart = new URI(url).getSchemeSpecificPart();
+                                    URI uri = new URI(url);
+                                    final String schemeSpecificPart = uri.getSchemeSpecificPart();
                                     final String roomAddress = schemeSpecificPart.substring(0, schemeSpecificPart.indexOf('?'));
-                                    final String password;
-                                    final int passwordKeyIndex = schemeSpecificPart.indexOf(";password=");
-                                    if (passwordKeyIndex > schemeSpecificPart.indexOf('?')) {
-                                        final int start = passwordKeyIndex + ";password=".length();
-                                        if (start == schemeSpecificPart.length()) {
-                                            password = null;
-                                        } else {
-                                            password = schemeSpecificPart.substring(start);
-                                        }
-                                    } else {
-                                        password = null;
-                                    }
+                                    final String password = UriManager.retrievePassword(uri);
                                     final EntityBareJid roomJid = JidCreate.entityBareFrom(roomAddress);
                                     ConferenceUtils.joinConferenceOnSeperateThread(roomJid.getLocalpart().toString(), roomJid, null, password);
                                 } else {
