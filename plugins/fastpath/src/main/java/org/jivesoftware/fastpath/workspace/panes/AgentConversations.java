@@ -291,7 +291,7 @@ public final class AgentConversations extends JPanel implements ChangeListener {
 
                                 MultiUserChat muc = multiUserChatManager.getMultiUserChat( roomName );
 
-                                ConferenceUtils.enterRoom(roomName);
+                                ConferenceUtils.enterRoomOnSameThread(roomName, roomName, null);
 
                                 if (muc.isJoined()) {
                                     // Try and remove myself as an owner if I am one.
@@ -351,7 +351,7 @@ public final class AgentConversations extends JPanel implements ChangeListener {
 
                                 MultiUserChat muc = multiUserChatManager.getMultiUserChat( roomName);
 
-                                ConferenceUtils.enterRoom(roomName);
+                                ConferenceUtils.enterRoomOnSameThread(roomName, roomName, null);
 
                             }
                             catch (XMPPException | SmackException | InterruptedException | XmppStringprepException e1) {

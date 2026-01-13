@@ -122,13 +122,6 @@ public class ConferenceUtils {
         return (GroupChatRoom) worker.get(); // blocks until completed.
     }
 
-    public static GroupChatRoom enterRoom(EntityBareJid roomJID)
-    {
-        final JoinRoomSwingWorker worker = new JoinRoomSwingWorker(roomJID, null, null, roomJID.toString() );
-        worker.start();
-        return (GroupChatRoom) worker.get(); // blocks until completed.
-    }
-
     public static void joinConferenceOnSeperateThread(final CharSequence roomName, EntityBareJid roomJID, final Resourcepart nickname, String password) {
         joinConferenceOnSeperateThread(roomName, roomJID, nickname, password, null, null);
     }
