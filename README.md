@@ -17,21 +17,23 @@ Combined with the [Openfire] server, [Spark] is the easiest and best alternative
 
 [![Build Status](https://travis-ci.org/igniterealtime/Spark.svg?branch=master)](https://travis-ci.org/igniterealtime/Spark)
 
-Run from sources
-----------------
+Resources
+---------
 
-```bash
-$ git clone https://github.com/igniterealtime/Spark.git
-$ cd Spark/core
-$ mvn exec:java
-```
+- Translation: https://explore.transifex.com/igniterealtime/spark/
+- Documentation: https://www.igniterealtime.org/projects/spark/documentation.jsp
+- Community: https://discourse.igniterealtime.org/c/spark
+- Bug Tracker: https://igniterealtime.atlassian.net/browse/SPARK
+- Nightly Builds: https://www.igniterealtime.org/downloads/nightly_spark.jsp
 
-* Setup IDE with the source:
-  * [Intellij](https://download.igniterealtime.org/spark/docs/latest/documentation/ide-intellij-setup.html),
-  * [Eclipse](https://download.igniterealtime.org/spark/docs/latest/documentation/ide-eclipse-setup.html),
-  * [Visual Studio Code](https://download.igniterealtime.org/spark/docs/latest/documentation/ide-vscode-setup.html).
-* [Plugins development guide](https://download.igniterealtime.org/sparkplug_kit/docs/latest/sparkplug_dev_guide.html)
-* [Spark Development Forum](https://discourse.igniterealtime.org/c/spark/spark-dev)
+Screenshots
+---------
+![Spark_Login](https://user-images.githubusercontent.com/71222850/188326816-a911aff6-34d5-4cac-b253-24901a1f3bc1.png)
+
+![Spark_menu](https://user-images.githubusercontent.com/71222850/188326850-907f871a-9dac-4669-bffa-0faad24c61e1.png)
+
+![Spark_MUC](https://user-images.githubusercontent.com/71222850/188327252-27a6aae4-6595-479a-8b44-da223bcae53d.png)
+
 
 Bug Reporting
 -------------
@@ -46,33 +48,31 @@ users should:
 
 Please search for your issues in the bug tracker before reporting.
 
-Resources
----------
+Run from sources
+----------------
 
-- Translation: https://explore.transifex.com/igniterealtime/spark/
-- Documentation: https://www.igniterealtime.org/projects/spark/documentation.jsp
-- Community: https://discourse.igniterealtime.org/c/spark
-- Bug Tracker: https://igniterealtime.atlassian.net/browse/SPARK
-- Nightly Builds: https://www.igniterealtime.org/downloads/nightly_spark.jsp
+```bash
+$ git clone https://github.com/igniterealtime/Spark.git
+$ cd Spark/core
+$ mvn exec:java
+```
+
+* Setup IDE with the source:
+    * [Intellij](https://download.igniterealtime.org/spark/docs/latest/documentation/ide-intellij-setup.html),
+    * [Eclipse](https://download.igniterealtime.org/spark/docs/latest/documentation/ide-eclipse-setup.html),
+    * [Visual Studio Code](https://download.igniterealtime.org/spark/docs/latest/documentation/ide-vscode-setup.html).
+* [Plugins development guide](https://download.igniterealtime.org/sparkplug_kit/docs/latest/sparkplug_dev_guide.html)
+* [Spark Development Forum](https://discourse.igniterealtime.org/c/spark/spark-dev)
+
 
 Ignite Realtime
 ===============
 
-[Ignite Realtime] is an Open Source community composed of end-users and developers around the world who 
-are interested in applying innovative, open-standards-based Real Time Collaboration to their businesses and organizations. 
-We're aimed at disrupting proprietary, non-open standards-based systems and invite you to participate in what's already one 
+[Ignite Realtime] is an Open Source community composed of end-users and developers around the world who
+are interested in applying innovative, open-standards-based Real Time Collaboration to their businesses and organizations.
+We're aimed at disrupting proprietary, non-open standards-based systems and invite you to participate in what's already one
 of the biggest and most active Open Source communities.
 
 [Spark]:https://www.igniterealtime.org/projects/spark/index.jsp
 [Openfire]:https://www.igniterealtime.org/projects/openfire/index.jsp
 [Ignite Realtime]:https://www.igniterealtime.org
-
-Screenshots
----------
-![Spark_Login](https://user-images.githubusercontent.com/71222850/188326816-a911aff6-34d5-4cac-b253-24901a1f3bc1.png)
-
-![Spark_menu](https://user-images.githubusercontent.com/71222850/188326850-907f871a-9dac-4669-bffa-0faad24c61e1.png)
-
-![Spark_MUC](https://user-images.githubusercontent.com/71222850/188327252-27a6aae4-6595-479a-8b44-da223bcae53d.png)
-
-
