@@ -858,6 +858,8 @@ public class ChatManager {
 
     /**
      * Handles XMPP URI Mappings.
+     * E.g.: xmpp:open_chat@conference.igniterealtime.org?join;password=somesecret
+     * See <a href="https://xmpp.org/registrar/querytypes.html">XMPP URI/IRI Querytypes</a>
      *
      * @param arguments
      *            the arguments passed into Spark.
@@ -873,7 +875,16 @@ public class ChatManager {
 	Log.debug("Handling URI mapping for: " + arguments);
 	URI uri;
 	try {
-	    uri = new URI(arguments);
+            /*
+            Java's URI class distinguishes between two types of URIs:
+            * Hierarchical URIs: Like http://example.com/path?query. These have a / after the scheme and colon.
+            * Opaque URIs: Like mailto:user@example.com or xmpp:user@domain. These do not have a / immediately following the scheme.
+            For opaque URIs, the URI class does not automatically parse the string into components like host, path, or query.
+            Instead, it treats everything after the colon as the Scheme Specific Part.
+            To reuse Java's built-in query parsing, we'll use the "Fake Hierarchical" Trick:
+            We temporarily transform the xmpp: URI into a hierarchical one (i.e. http:) just for parsing.
+            */
+            uri = new URI(arguments.replaceFirst("xmpp:", "http://"));
 	} catch (URISyntaxException e) {
 	    Log.error("error parsing uri: "+arguments,e);
 	    return;
