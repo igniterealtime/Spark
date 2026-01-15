@@ -62,16 +62,6 @@ public class JoinRoomSwingWorker extends SwingWorker
 
     private SwingWorker followUp;
 
-    public JoinRoomSwingWorker( EntityBareJid roomJID )
-    {
-        this( roomJID, null, null, roomJID.getLocalpart().toString() );
-    }
-
-    public JoinRoomSwingWorker( EntityBareJid roomJID, String password, String tabTitle )
-    {
-        this( roomJID, null, password, tabTitle );
-    }
-
     public JoinRoomSwingWorker( EntityBareJid roomJID, Resourcepart nickname, String password, String tabTitle )
     {
         this.roomJID = roomJID;
