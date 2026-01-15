@@ -26,6 +26,13 @@ $ cd Spark/core
 $ mvn exec:java
 ```
 
+* Setup IDE with the source:
+  * [Intellij](https://download.igniterealtime.org/spark/docs/latest/documentation/ide-intellij-setup.html),
+  * [Eclipse](https://download.igniterealtime.org/spark/docs/latest/documentation/ide-eclipse-setup.html),
+  * [Visual Studio Code](https://download.igniterealtime.org/spark/docs/latest/documentation/ide-vscode-setup.html).
+* [Plugins development guide](https://download.igniterealtime.org/sparkplug_kit/docs/latest/sparkplug_dev_guide.html)
+* [Spark Development Forum](https://discourse.igniterealtime.org/c/spark/spark-dev)
+
 Bug Reporting
 -------------
 
