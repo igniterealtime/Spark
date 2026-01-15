@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
-	"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
-<book id="spark" revision="1">
-	<title>Spark</title>
-	<xi:include  href="installation.sgml"   xmlns:xi="http://www.w3.org/2001/XInclude"/>
-	<xi:include  href="user.sgml"  			xmlns:xi="http://www.w3.org/2001/XInclude"/>
-	<xi:include  href="developer.sgml"  	xmlns:xi="http://www.w3.org/2001/XInclude"/>
-</book>
