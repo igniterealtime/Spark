@@ -34,7 +34,6 @@ import org.jivesoftware.spark.ui.*;
 import org.jivesoftware.spark.ui.conferences.RoomInvitationListener;
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 import org.jivesoftware.spark.ui.rooms.GroupChatRoom;
-import org.jivesoftware.spark.uri.UriManager;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.UIComponentRegistry;
 import org.jivesoftware.spark.util.log.Log;
@@ -97,8 +96,6 @@ public class ChatManager {
 
     private final Set<ChatRoom> typingNotificationList = new HashSet<>();
 
-    private final UriManager _uriManager = new UriManager();
-    
     private final CopyOnWriteArrayList<ChatMessageHandler> chatMessageHandlers = new CopyOnWriteArrayList<>();
     
     /**
@@ -854,111 +851,6 @@ public class ChatManager {
     public Collection<ContactItem> getSelectedContactItems() {
         final ContactList contactList = SparkManager.getWorkspace().getContactList();
         return contactList.getSelectedUsers();
-    }
-
-    /**
-     * Handles XMPP URI Mappings.
-     * E.g.: xmpp:open_chat@conference.igniterealtime.org?join;password=somesecret
-     * See <a href="https://xmpp.org/registrar/querytypes.html">XMPP URI/IRI Querytypes</a>
-     *
-     * @param arguments
-     *            the arguments passed into Spark.
-     */
-    public void handleURIMapping(String arguments) {
-        if (arguments == null) {
-            return;
-        }
-        if (!arguments.startsWith("xmpp")) {
-            return;
-        }
-
-        Log.debug("Handling URI mapping for: " + arguments);
-        URI uri;
-        try {
-            /*
-            Java's URI class distinguishes between two types of URIs:
-            * Hierarchical URIs: Like http://example.com/path?query. These have a / after the scheme and colon.
-            * Opaque URIs: Like mailto:user@example.com or xmpp:user@domain. These do not have a / immediately following the scheme.
-            For opaque URIs, the URI class does not automatically parse the string into components like host, path, or query.
-            Instead, it treats everything after the colon as the Scheme Specific Part.
-            To reuse Java's built-in query parsing, we'll use the "Fake Hierarchical" Trick:
-            We temporarily transform the xmpp: URI into a hierarchical one (i.e. http:) just for parsing.
-            */
-            uri = new URI(arguments.replaceFirst("xmpp:", "http://"));
-        } catch (URISyntaxException e) {
-            Log.error("error parsing uri: " + arguments, e);
-            return;
-        }
-
-        String query = uri.getQuery();
-        if (query == null) {
-            // No query string, so assume the URI is xmpp:JID
-            EntityBareJid jid = _uriManager.retrieveJID(uri).asEntityBareJidOrThrow();
-            UserManager userManager = SparkManager.getUserManager();
-            String nickname = userManager.getUserNicknameFromJID(jid);
-            ChatManager chatManager = SparkManager.getChatManager();
-            ChatRoom chatRoom = chatManager.createChatRoom(jid, nickname, nickname);
-            chatManager.getChatContainer().activateChatRoom(chatRoom);
-        } else {
-            // extract the command from the query string i.e. "join" from "?join;password=somesecret"
-            String command = query;
-            int cmdEndPos = query.indexOf(';');
-            if (cmdEndPos > 0) {
-                command = query.substring(0, cmdEndPos);
-            }
-            UriManager.uritypes commandUriType;
-            try {
-                commandUriType = UriManager.uritypes.valueOf(command.toLowerCase());
-            } catch (IllegalArgumentException e) {
-                Log.error("Unknown XMPP URI command " + arguments);
-                return;
-            }
-            // Route URI to handler based on command
-            switch (commandUriType) {
-                case message:
-                    try {
-                        _uriManager.handleMessage(uri);
-                    } catch (Exception e) {
-                        Log.error("error with ?message URI", e);
-                    }
-                    break;
-                case join:
-                    try {
-                        _uriManager.handleConference(uri);
-                    } catch (Exception e) {
-                        Log.error("error with ?join URI", e);
-                    }
-                    break;
-                case subscribe:
-                    try {
-                        _uriManager.handleSubscribe(uri);
-                    } catch (Exception e) {
-                        Log.error("error with ?subscribe URI", e);
-                    }
-                    break;
-                case unsubscribe:
-                    try {
-                        _uriManager.handleUnsubscribe(uri);
-                    } catch (Exception e) {
-                        Log.error("error with ?unsubscribe URI", e);
-                    }
-                    break;
-                case roster:
-                    try {
-                        _uriManager.handleRoster(uri);
-                    } catch (Exception e) {
-                        Log.error("error with ?roster URI", e);
-                    }
-                    break;
-                case remove:
-                    try {
-                        _uriManager.handleRemove(uri);
-                    } catch (Exception e) {
-                        Log.error("error with ?remove URI", e);
-                    }
-                    break;
-            }
-        }
     }
 
     /**
