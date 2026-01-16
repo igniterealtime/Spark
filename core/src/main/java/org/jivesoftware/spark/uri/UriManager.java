@@ -78,16 +78,7 @@ public class UriManager {
         Log.debug("Handling URI mapping for: " + xmppUri);
         URI uri;
         try {
-            /*
-            Java's URI class distinguishes between two types of URIs:
-            * Hierarchical URIs: Like http://example.com/path?query. These have a / after the scheme and colon.
-            * Opaque URIs: Like mailto:user@example.com or xmpp:user@domain. These do not have a / immediately following the scheme.
-            For opaque URIs, the URI class does not automatically parse the string into components like host, path, or query.
-            Instead, it treats everything after the colon as the Scheme Specific Part.
-            To reuse Java's built-in query parsing, we'll use the "Fake Hierarchical" Trick:
-            We temporarily transform the xmpp: URI into a hierarchical one (i.e. http:) just for parsing.
-            */
-            uri = new URI(xmppUri.replaceFirst("xmpp:", "http://"));
+            uri = parseXmppUri(xmppUri);
         } catch (URISyntaxException e) {
             Log.error("error parsing uri: " + xmppUri, e);
             return;
@@ -169,6 +160,21 @@ public class UriManager {
         }
     }
 
+    URI parseXmppUri(String xmppUri) throws URISyntaxException {
+        URI uri;
+        /*
+        Java's URI class distinguishes between two types of URIs:
+        * Hierarchical URIs: Like http://example.com/path?query. These have a / after the scheme and colon.
+        * Opaque URIs: Like mailto:user@example.com or xmpp:user@domain. These do not have a / immediately following the scheme.
+        For opaque URIs, the URI class does not automatically parse the string into components like host, path, or query.
+        Instead, it treats everything after the colon as the Scheme Specific Part.
+        To reuse Java's built-in query parsing, we'll use the "Fake Hierarchical" Trick:
+        We temporarily transform the xmpp: URI into a hierarchical one (i.e. http:) just for parsing.
+        */
+        uri = new URI(xmppUri.replaceFirst("xmpp:", "http://"));
+        return uri;
+    }
+
     /**
      * handles the ?message URI
      *
@@ -176,21 +182,16 @@ public class UriManager {
      *            the decoded uri
      */
     public void handleMessage(URI uri) {
-        String query = uri.getQuery();
-        int bodyIndex = query.indexOf("body=");
         Jid jid = retrieveJID(uri);
-        String body = null;
         // Find body
-        if (bodyIndex != -1) {
-            body = query.substring(bodyIndex + 5);
-        }
+        String body = retrieveParam(uri, "body");
         body = unescapeFromXML(body);
 
         UserManager userManager = SparkManager.getUserManager();
         String nickname = userManager.getUserNicknameFromJID(jid.asBareJid());
         ChatManager chatManager = SparkManager.getChatManager();
         ChatRoom chatRoom = chatManager.createChatRoom(jid.asEntityJidOrThrow(), nickname, nickname);
-        if (body != null) {
+        if (body != null && !body.isEmpty()) {
             MessageBuilder messageBuilder = StanzaBuilder.buildMessage()
                 .setBody(body);
             chatRoom.sendMessage(messageBuilder);
@@ -207,7 +208,7 @@ public class UriManager {
      */
     public void handleConference(URI uri) {
         Jid jid = retrieveJID(uri);
-        String password = retrievePassword(uri);
+        String password = retrieveParam(uri, "password");
         ConferenceUtils.joinConferenceOnSeperateThread(jid, jid.asEntityBareJidOrThrow(), null, password);
     }
 
@@ -276,25 +277,8 @@ public class UriManager {
             throw new IllegalStateException(e);
         }
 
-        String name = "";
-        String query = uri.getQuery();
-        if (query.contains("name=")) {
-            StringBuilder buf = new StringBuilder();
-            int x = query.indexOf("name=") + 5;
-            while (x < query.length() && query.charAt(x) != ';') {
-                buf.append(query.charAt(x));
-                x++;
-            }
-        }
-        String group = "";
-        if (query.contains("group=")) {
-            StringBuilder buf = new StringBuilder();
-            int x = query.indexOf("group=") + 6;
-            while (x < query.length() && query.charAt(x) != ';') {
-                buf.append(query.charAt(x));
-                x++;
-            }
-        }
+        String name = retrieveParam(uri, "name");
+        String group = retrieveParam(uri, "group");
 
         Roster roster = Roster.getInstanceFor(SparkManager.getConnection());
         RosterEntry userEntry = roster.getEntry(jid);
@@ -357,21 +341,21 @@ public class UriManager {
     /**
      * Extracts password from URI if present e.g., xmpp:open_chat@conference.igniterealtime.org?join;password=somesecret
      */
-    public static String retrievePassword(URI uri) {
+    public String retrieveParam(URI uri, String param) {
         String query = uri.getRawSchemeSpecificPart();
-        int index = query.indexOf(";password=");
+        int index = query.indexOf(";" + param + "=");
         if (index == -1) {
             return null;
         }
-        int passwordParamStart = index + ";password=".length();
-        int passwordEndPos = query.indexOf('&', passwordParamStart);
-        if (passwordEndPos == -1) {
-            passwordEndPos = query.indexOf(';', passwordParamStart);
-            if (passwordEndPos == -1) {
-                passwordEndPos = query.length();
+        int paramStart = index + (";" + param + "=").length();
+        int paramEndPos = query.indexOf('&', paramStart);
+        if (paramEndPos == -1) {
+            paramEndPos = query.indexOf(';', paramStart);
+            if (paramEndPos == -1) {
+                paramEndPos = query.length();
             }
         }
-        String result = query.substring(passwordParamStart, passwordEndPos);
+        String result = query.substring(paramStart, paramEndPos);
         if (result.isEmpty()) {
             return null;
         }
