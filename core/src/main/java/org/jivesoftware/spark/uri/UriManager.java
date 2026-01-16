@@ -48,22 +48,12 @@ import static org.jivesoftware.spark.util.StringUtils.unescapeFromXML;
 public class UriManager {
 
     public enum uritypes {
-        message("message"),
-        join("join"),
-        unsubscribe("unsubscribe"),
-        subscribe("subscribe"),
-        roster("roster"),
-        remove("remove");
-
-        private final String _xml;
-
-        uritypes(String s) {
-            _xml = s;
-        }
-
-        public String getXML() {
-            return _xml;
-        }
+        message,
+        join,
+        unsubscribe,
+        subscribe,
+        roster,
+        remove;
     }
 
     /**
