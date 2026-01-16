@@ -314,7 +314,7 @@ public class Workspace extends JPanel implements StanzaListener {
         }, 2000);
 
         // Check URI Mappings
-        SparkManager.getChatManager().handleURIMapping(Spark.ARGUMENTS);
+        SparkManager.getUriManager().handleURIMapping(Spark.ARGUMENTS);
     }
 
 

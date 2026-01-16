@@ -30,6 +30,7 @@ import org.jivesoftware.spark.ui.ChatPrinter;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ContactList;
 import org.jivesoftware.spark.ui.TranscriptWindow;
+import org.jivesoftware.spark.uri.UriManager;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.profile.VCardManager;
 
@@ -95,6 +96,7 @@ public final class SparkManager {
     private static MessageEventManager messageEventManager;
     private static UserManager userManager;
     private static ChatManager chatManager;
+    private static UriManager uriManager;
     private static VCardManager vcardManager;
     private static NativeManager nativeManager;
 
@@ -199,6 +201,16 @@ public final class SparkManager {
             chatManager = ChatManager.getInstance();
         }
         return chatManager;
+    }
+
+    /**
+     * Returns the UriManager. The UriManager is responsible for handling of XMPP URI.
+     */
+    public static UriManager getUriManager() {
+        if (uriManager == null) {
+            uriManager = new UriManager();
+        }
+        return uriManager;
     }
 
     /**
