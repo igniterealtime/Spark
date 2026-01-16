@@ -133,6 +133,7 @@ import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 import org.jivesoftware.sparkimpl.settings.JiveInfo;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+import org.jxmpp.jid.BareJid;
 import org.jxmpp.jid.DomainBareJid;
 import org.jxmpp.jid.impl.JidCreate;
 import org.jxmpp.jid.parts.Resourcepart;
@@ -953,8 +954,12 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
 
             JMenuItem menu = new JMenuItem(key);
 
-            final String username = key.split("@")[0];
-            final String host = key.split("@")[1];
+            BareJid jid = JidCreate.bareFromOrNull(key);
+            if (jid == null) {
+                continue;
+            }
+            final String username = jid.getLocalpartOrNull().toString();
+            final String host = jid.getDomain().toString();
             menu.addActionListener(e -> {
                 tfUsername.setText(username);
                 tfDomain.setText(host);
