@@ -87,11 +87,15 @@ public class UriManager {
         String query = uri.getQuery();
         if (query == null) {
             // No query string, so assume the URI is xmpp:JID
-            EntityBareJid jid = retrieveJID(uri).asEntityBareJidOrThrow();
+            Jid jid = retrieveJID(uri);
+            if (jid == null) {
+                return;
+            }
+            EntityBareJid bareJid = jid.asEntityBareJidOrThrow();
             UserManager userManager = SparkManager.getUserManager();
-            String nickname = userManager.getUserNicknameFromJID(jid);
+            String nickname = userManager.getUserNicknameFromJID(bareJid);
             ChatManager chatManager = SparkManager.getChatManager();
-            ChatRoom chatRoom = chatManager.createChatRoom(jid, nickname, nickname);
+            ChatRoom chatRoom = chatManager.createChatRoom(bareJid, nickname, nickname);
             chatManager.getChatContainer().activateChatRoom(chatRoom);
         } else {
             // extract the command from the query string i.e. "join" from "?join;password=somesecret"
@@ -183,6 +187,9 @@ public class UriManager {
      */
     public void handleMessage(URI uri) {
         Jid jid = retrieveJID(uri);
+        if (jid == null) {
+            return;
+        }
         // Find body
         String body = retrieveParam(uri, "body");
         body = unescapeFromXML(body);
@@ -208,6 +215,9 @@ public class UriManager {
      */
     public void handleConference(URI uri) {
         Jid jid = retrieveJID(uri);
+        if (jid == null) {
+            return;
+        }
         String password = retrieveParam(uri, "password");
         ConferenceUtils.joinConferenceOnSeperateThread(jid, jid.asEntityBareJidOrThrow(), null, password);
     }
@@ -223,6 +233,9 @@ public class UriManager {
         // xmpp:romeo@montague.net?subscribe
         // Send contact add request
         Jid jid = retrieveJID(uri);
+        if (jid == null) {
+            return;
+        }
         XMPPConnection connection = SparkManager.getConnection();
         Presence response = connection.getStanzaFactory()
             .buildPresenceStanza()
@@ -239,11 +252,9 @@ public class UriManager {
      *            the decoded uri
      */
     public void handleUnsubscribe(URI uri) throws SmackException.NotConnectedException {
-        Jid jid;
-        try {
-            jid = JidCreate.from(retrieveJID(uri));
-        } catch (XmppStringprepException e) {
-            throw new IllegalStateException(e);
+        Jid jid = retrieveJID(uri);
+        if (jid == null) {
+            return;
         }
 
         Presence response = StanzaBuilder.buildPresence()
@@ -270,20 +281,19 @@ public class UriManager {
         // xmpp:romeo@montague.net?roster;name=Romeo%20Montague
         // xmpp:romeo@montague.net?roster;group=Friends
         // xmpp:romeo@montague.net?roster;name=Romeo%20Montague;group=Friends
-        BareJid jid;
-        try {
-            jid = JidCreate.bareFrom(retrieveJID(uri));
-        } catch (XmppStringprepException e) {
-            throw new IllegalStateException(e);
+        Jid jid = retrieveJID(uri);
+        if (jid == null) {
+            return;
         }
+        BareJid bareJid = jid.asBareJid();
 
         String name = retrieveParam(uri, "name");
         String group = retrieveParam(uri, "group");
 
         Roster roster = Roster.getInstanceFor(SparkManager.getConnection());
-        RosterEntry userEntry = roster.getEntry(jid);
+        RosterEntry userEntry = roster.getEntry(bareJid);
 
-        roster.preApproveAndCreateEntry(jid, name, new String[]{group});
+        roster.preApproveAndCreateEntry(bareJid, name, new String[]{group});
 
         RosterGroup rosterGroup = roster.getGroup(group);
         if (rosterGroup == null) {
@@ -291,7 +301,7 @@ public class UriManager {
         }
 
         if (userEntry == null) {
-            roster.preApproveAndCreateEntry(jid, name, new String[]{group});
+            roster.preApproveAndCreateEntry(bareJid, name, new String[]{group});
         } else {
             userEntry.setName(name);
             rosterGroup.addEntry(userEntry);
@@ -307,15 +317,14 @@ public class UriManager {
      */
     public void handleRemove(URI uri) throws Exception {
         // xmpp:romeo@montague.net?remove
-        BareJid jid;
-        try {
-            jid = JidCreate.bareFrom(retrieveJID(uri));
-        } catch (XmppStringprepException e) {
-            throw new IllegalStateException(e);
+        Jid jid = retrieveJID(uri);
+        if (jid == null) {
+            return;
         }
+        BareJid bareJid = jid.asBareJid();
 
         Roster roster = Roster.getInstanceFor(SparkManager.getConnection());
-        RosterEntry entry = roster.getEntry(jid);
+        RosterEntry entry = roster.getEntry(bareJid);
         roster.removeEntry(entry);
     }
 
@@ -323,10 +332,12 @@ public class UriManager {
      * Gets JID from URI. Returns the full jid including resource romeo@montague.net/balcony
      */
     public Jid retrieveJID(URI uri) {
+        if (uri.getHost() == null || uri.getUserInfo() == null) {
+            return null;
+        }
         String jidString = "";
-        String user = uri.getUserInfo();
-        if (user != null) {
-            jidString += user;
+        if (uri.getUserInfo() != null) {
+            jidString += uri.getUserInfo();
             jidString += '@';
         }
         jidString += uri.getHost();
@@ -335,7 +346,7 @@ public class UriManager {
         if (resource != null && !resource.isEmpty() && !resource.equals("/")) {
             jidString += resource;
         }
-        return JidCreate.fromOrThrowUnchecked(jidString);
+        return JidCreate.fromOrNull(jidString);
     }
 
     /**

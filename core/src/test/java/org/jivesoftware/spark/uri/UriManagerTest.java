@@ -43,4 +43,28 @@ public class UriManagerTest {
         password = uriManager.retrieveParam(testUri, "password");
         assertNull(password);
     }
+
+    @Test
+    public void testRetrieveJID() throws URISyntaxException {
+        UriManager uriManager = new UriManager();
+        // Case with a user and host
+        URI testUri = uriManager.parseXmppUri("xmpp:user@domain.com");
+        assertEquals("user@domain.com", uriManager.retrieveJID(testUri).toString());
+
+        // Case with a user, host, and a resource
+        testUri = uriManager.parseXmppUri("xmpp:user@domain.com/resource");
+        assertEquals("user@domain.com/resource", uriManager.retrieveJID(testUri).toString());
+
+        // Case with only a host
+        testUri = uriManager.parseXmppUri("xmpp:domain.com");
+        assertNull(uriManager.retrieveJID(testUri));
+
+        // Case with a host and a resource
+        testUri = uriManager.parseXmppUri("xmpp:domain.com/resource");
+        assertNull(uriManager.retrieveJID(testUri));
+
+        // Case with a malformed URI
+        testUri = uriManager.parseXmppUri("xmpp://@");
+        assertNull(uriManager.retrieveJID(testUri));
+    }
 }
