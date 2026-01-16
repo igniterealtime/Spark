@@ -900,37 +900,43 @@ public class ChatManager {
             ChatRoom chatRoom = chatManager.createChatRoom(jid, nickname, nickname);
             chatManager.getChatContainer().activateChatRoom(chatRoom);
         } else {
-            if (query.startsWith(UriManager.uritypes.message.getXML())) {
+            // extract the command from the query string i.e. "join" from "?join;password=somesecret"
+            String command = query;
+            int cmdEndPos = query.indexOf(';');
+            if (cmdEndPos > 0) {
+                command = query.substring(0, cmdEndPos);
+            }
+            if (command.equals(UriManager.uritypes.message.getXML())) {
                 try {
                     _uriManager.handleMessage(uri);
                 } catch (Exception e) {
                     Log.error("error with ?message URI", e);
                 }
-            } else if (query.startsWith(UriManager.uritypes.join.getXML())) {
+            } else if (command.equals(UriManager.uritypes.join.getXML())) {
                 try {
                     _uriManager.handleConference(uri);
                 } catch (Exception e) {
                     Log.error("error with ?join URI", e);
                 }
-            } else if (query.startsWith(UriManager.uritypes.subscribe.getXML())) {
+            } else if (command.equals(UriManager.uritypes.subscribe.getXML())) {
                 try {
                     _uriManager.handleSubscribe(uri);
                 } catch (Exception e) {
                     Log.error("error with ?subscribe URI", e);
                 }
-            } else if (query.startsWith(UriManager.uritypes.unsubscribe.getXML())) {
+            } else if (command.equals(UriManager.uritypes.unsubscribe.getXML())) {
                 try {
                     _uriManager.handleUnsubscribe(uri);
                 } catch (Exception e) {
                     Log.error("error with ?unsubscribe URI", e);
                 }
-            } else if (query.startsWith(UriManager.uritypes.roster.getXML())) {
+            } else if (command.equals(UriManager.uritypes.roster.getXML())) {
                 try {
                     _uriManager.handleRoster(uri);
                 } catch (Exception e) {
                     Log.error("error with ?roster URI", e);
                 }
-            } else if (query.startsWith(UriManager.uritypes.remove.getXML())) {
+            } else if (command.equals(UriManager.uritypes.remove.getXML())) {
                 try {
                     _uriManager.handleRemove(uri);
                 } catch (Exception e) {
