@@ -960,13 +960,14 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
                 tfDomain.setText(host);
 
                 try {
-                    tfPassword.setText(localPref.getPasswordForUser(getBareJid()));
-                    if (tfPassword.getPassword().length < 1) {
-                        btnLogin.setEnabled(cbAnonymous.isSelected());
-                    } else {
-                        btnLogin.setEnabled(true);
-                    }
-                } catch (Exception e1) {
+                    String passwordForUser = localPref.getPasswordForUser(getBareJid());
+                    tfPassword.setText(passwordForUser);
+                } catch (Exception ignored) {
+                }
+                if (tfPassword.getPassword().length < 1) {
+                    btnLogin.setEnabled(cbAnonymous.isSelected());
+                } else {
+                    btnLogin.setEnabled(true);
                 }
 
             });
