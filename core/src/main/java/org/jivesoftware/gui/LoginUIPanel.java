@@ -964,12 +964,7 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
                     tfPassword.setText(passwordForUser);
                 } catch (Exception ignored) {
                 }
-                if (tfPassword.getPassword().length < 1) {
-                    btnLogin.setEnabled(cbAnonymous.isSelected());
-                } else {
-                    btnLogin.setEnabled(true);
-                }
-
+                validateDialog();
             });
 
             popup.add(menu);
