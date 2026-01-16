@@ -906,42 +906,57 @@ public class ChatManager {
             if (cmdEndPos > 0) {
                 command = query.substring(0, cmdEndPos);
             }
-            if (command.equals(UriManager.uritypes.message.getXML())) {
-                try {
-                    _uriManager.handleMessage(uri);
-                } catch (Exception e) {
-                    Log.error("error with ?message URI", e);
-                }
-            } else if (command.equals(UriManager.uritypes.join.getXML())) {
-                try {
-                    _uriManager.handleConference(uri);
-                } catch (Exception e) {
-                    Log.error("error with ?join URI", e);
-                }
-            } else if (command.equals(UriManager.uritypes.subscribe.getXML())) {
-                try {
-                    _uriManager.handleSubscribe(uri);
-                } catch (Exception e) {
-                    Log.error("error with ?subscribe URI", e);
-                }
-            } else if (command.equals(UriManager.uritypes.unsubscribe.getXML())) {
-                try {
-                    _uriManager.handleUnsubscribe(uri);
-                } catch (Exception e) {
-                    Log.error("error with ?unsubscribe URI", e);
-                }
-            } else if (command.equals(UriManager.uritypes.roster.getXML())) {
-                try {
-                    _uriManager.handleRoster(uri);
-                } catch (Exception e) {
-                    Log.error("error with ?roster URI", e);
-                }
-            } else if (command.equals(UriManager.uritypes.remove.getXML())) {
-                try {
-                    _uriManager.handleRemove(uri);
-                } catch (Exception e) {
-                    Log.error("error with ?remove URI", e);
-                }
+            UriManager.uritypes commandUriType;
+            try {
+                commandUriType = UriManager.uritypes.valueOf(command.toLowerCase());
+            } catch (IllegalArgumentException e) {
+                Log.error("Unknown XMPP URI command " + arguments);
+                return;
+            }
+            // Route URI to handler based on command
+            switch (commandUriType) {
+                case message:
+                    try {
+                        _uriManager.handleMessage(uri);
+                    } catch (Exception e) {
+                        Log.error("error with ?message URI", e);
+                    }
+                    break;
+                case join:
+                    try {
+                        _uriManager.handleConference(uri);
+                    } catch (Exception e) {
+                        Log.error("error with ?join URI", e);
+                    }
+                    break;
+                case subscribe:
+                    try {
+                        _uriManager.handleSubscribe(uri);
+                    } catch (Exception e) {
+                        Log.error("error with ?subscribe URI", e);
+                    }
+                    break;
+                case unsubscribe:
+                    try {
+                        _uriManager.handleUnsubscribe(uri);
+                    } catch (Exception e) {
+                        Log.error("error with ?unsubscribe URI", e);
+                    }
+                    break;
+                case roster:
+                    try {
+                        _uriManager.handleRoster(uri);
+                    } catch (Exception e) {
+                        Log.error("error with ?roster URI", e);
+                    }
+                    break;
+                case remove:
+                    try {
+                        _uriManager.handleRemove(uri);
+                    } catch (Exception e) {
+                        Log.error("error with ?remove URI", e);
+                    }
+                    break;
             }
         }
     }
