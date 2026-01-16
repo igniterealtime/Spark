@@ -28,7 +28,7 @@ public class SparkStartupListener implements com.install4j.api.launcher.StartupN
 	@Override
 	public void startupPerformed(String args) {
 		if (args != null && !args.trim().isEmpty()) {
-			SparkManager.getUriManager().handleURIMapping(args);
+			SparkManager.getUriManager().handleURIMapping(args, true);
 		} else {
             SparkManager.getMainWindow().setVisible(true);
             SparkManager.getMainWindow().toFront();

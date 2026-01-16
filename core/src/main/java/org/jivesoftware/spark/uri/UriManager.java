@@ -65,8 +65,9 @@ public class UriManager {
      * See <a href="https://xmpp.org/registrar/querytypes.html">XMPP URI/IRI Querytypes</a>
      *
      * @param xmppUri the XMPP URI passed into Spark or received in a chat message.
+     * @param isCommand the XMPP URI passed into Spark or received in a chat message.
      */
-    public void handleURIMapping(String xmppUri) {
+    public void handleURIMapping(String xmppUri, boolean isCommand) {
         if (xmppUri == null) {
             return;
         }
@@ -113,6 +114,10 @@ public class UriManager {
                 commandUriType = UriManager.uritypes.valueOf(command.toLowerCase());
             } catch (IllegalArgumentException e) {
                 Log.error("Unknown XMPP URI command " + xmppUri);
+                return;
+            }
+            // For URI received in a chat it's allowed only the ?join command
+            if (!isCommand && commandUriType != uritypes.join) {
                 return;
             }
 
