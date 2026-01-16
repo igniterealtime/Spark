@@ -16,30 +16,31 @@ import static org.junit.Assert.assertNull;
 public class UriManagerTest {
 
     @Test
-    public void testRetrievePasswordWithPassword() throws URISyntaxException {
+    public void testRetrieveParam() throws URISyntaxException {
+        UriManager uriManager = new UriManager();
         // URI with a password present as a semicolon-delimited param
-        URI testUri = new URI("xmpp:conference@example.com?join;password=secret123%20%40%23%24%25%5E%26");
-        String password = UriManager.retrievePassword(testUri);
+        URI testUri = uriManager.parseXmppUri("xmpp:conference@example.com?join;password=secret123%20%40%23%24%25%5E%26");
+        String password = uriManager.retrieveParam(testUri, "password");
         assertEquals("secret123 @#$%^&", password);
 
         // URI with a password and additional parameters
-        testUri = new URI("xmpp:conference@example.com?join;password=secret123&name=john");
-        password = UriManager.retrievePassword(testUri);
+        testUri = uriManager.parseXmppUri("xmpp:conference@example.com?join;password=secret123&name=john");
+        password = uriManager.retrieveParam(testUri, "password");
         assertEquals("secret123", password);
 
         // URI with an empty password parameter
-        testUri = new URI("xmpp:conference@example.com?join;password=");
-        password = UriManager.retrievePassword(testUri);
+        testUri = uriManager.parseXmppUri("xmpp:conference@example.com?join;password=");
+        password = uriManager.retrieveParam(testUri, "password");
         assertNull(password);
 
         // URI without a password parameter
-        testUri = new URI("xmpp:conference@example.com?join;");
-        password = UriManager.retrievePassword(testUri);
+        testUri = uriManager.parseXmppUri("xmpp:conference@example.com?join;");
+        password = uriManager.retrieveParam(testUri, "password");
         assertNull(password);
 
         // URI with no query string
-        testUri = new URI("xmpp:conference@example.com");
-        password = UriManager.retrievePassword(testUri);
+        testUri = uriManager.parseXmppUri("xmpp:conference@example.com");
+        password = uriManager.retrieveParam(testUri, "password");
         assertNull(password);
     }
 }
