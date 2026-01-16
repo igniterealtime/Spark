@@ -197,14 +197,9 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
                         boolean handled = fireLinkInterceptors(e, url);
                         if (!handled) {
                             if(e.getButton() == MouseEvent.BUTTON1) {
-                                if (url.startsWith("xmpp:") && url.contains("?join")) {
+                                if (url.startsWith("xmpp:")) {
                                     // eg: xmpp:open_chat@conference.igniterealtime.org?join;password=somesecret
-                                    URI uri = new URI(url);
-                                    final String schemeSpecificPart = uri.getSchemeSpecificPart();
-                                    final String roomAddress = schemeSpecificPart.substring(0, schemeSpecificPart.indexOf('?'));
-                                    final String password = UriManager.retrievePassword(uri);
-                                    final EntityBareJid roomJid = JidCreate.entityBareFrom(roomAddress);
-                                    ConferenceUtils.joinConferenceOnSeperateThread(roomJid.getLocalpart().toString(), roomJid, null, password);
+                                    SparkManager.getUriManager().handleURIMapping(url, false);
                                 } else {
                                     BrowserLauncher.openURL(url);
                                 }
