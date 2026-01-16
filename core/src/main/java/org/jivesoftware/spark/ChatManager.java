@@ -865,16 +865,16 @@ public class ChatManager {
      *            the arguments passed into Spark.
      */
     public void handleURIMapping(String arguments) {
-	if (arguments == null) {
-	    return;
-	}
+        if (arguments == null) {
+            return;
+        }
         if (!arguments.startsWith("xmpp")) {
             return;
         }
 
-	Log.debug("Handling URI mapping for: " + arguments);
-	URI uri;
-	try {
+        Log.debug("Handling URI mapping for: " + arguments);
+        URI uri;
+        try {
             /*
             Java's URI class distinguishes between two types of URIs:
             * Hierarchical URIs: Like http://example.com/path?query. These have a / after the scheme and colon.
@@ -885,58 +885,59 @@ public class ChatManager {
             We temporarily transform the xmpp: URI into a hierarchical one (i.e. http:) just for parsing.
             */
             uri = new URI(arguments.replaceFirst("xmpp:", "http://"));
-	} catch (URISyntaxException e) {
-	    Log.error("error parsing uri: "+arguments,e);
-	    return;
-	}
+        } catch (URISyntaxException e) {
+            Log.error("error parsing uri: " + arguments, e);
+            return;
+        }
 
-	String query = uri.getQuery();
-	if (query == null) {
-	    // No query string, so assume the URI is xmpp:JID
-	    EntityBareJid jid = _uriManager.retrieveJID(uri).asEntityBareJidOrThrow();
-
-	    UserManager userManager = SparkManager.getUserManager();
-	    String nickname = userManager.getUserNicknameFromJID(jid);
-	    ChatManager chatManager = SparkManager.getChatManager();
-	    ChatRoom chatRoom = chatManager.createChatRoom(jid, nickname, nickname);
-	    chatManager.getChatContainer().activateChatRoom(chatRoom);
-	} else if (query.startsWith(UriManager.uritypes.message.getXML())) {
-	    try {
-		_uriManager.handleMessage(uri);
-	    } catch (Exception e) {
-		Log.error("error with ?message URI", e);
-	    }
-	} else if (query.startsWith(UriManager.uritypes.join.getXML())) {
-	    try {
-		_uriManager.handleConference(uri);
-	    } catch (Exception e) {
-		Log.error("error with ?join URI", e);
-	    }
-	} else if (query.startsWith(UriManager.uritypes.subscribe.getXML())) {
-	    try {
-		_uriManager.handleSubscribe(uri);
-	    } catch (Exception e) {
-		Log.error("error with ?subscribe URI", e);
-	    }
-	} else if (query.startsWith(UriManager.uritypes.unsubscribe.getXML())) {
-	    try {
-		_uriManager.handleUnsubscribe(uri);
-	    } catch (Exception e) {
-		Log.error("error with ?unsubscribe URI", e);
-	    }
-	} else if (query.startsWith(UriManager.uritypes.roster.getXML())) {
-	    try {
-		_uriManager.handleRoster(uri);
-	    } catch (Exception e) {
-		Log.error("error with ?roster URI", e);
-	    }
-	} else if (query.startsWith(UriManager.uritypes.remove.getXML())) {
-	    try {
-		_uriManager.handleRemove(uri);
-	    } catch (Exception e) {
-		Log.error("error with ?remove URI", e);
-	    }
-	}
+        String query = uri.getQuery();
+        if (query == null) {
+            // No query string, so assume the URI is xmpp:JID
+            EntityBareJid jid = _uriManager.retrieveJID(uri).asEntityBareJidOrThrow();
+            UserManager userManager = SparkManager.getUserManager();
+            String nickname = userManager.getUserNicknameFromJID(jid);
+            ChatManager chatManager = SparkManager.getChatManager();
+            ChatRoom chatRoom = chatManager.createChatRoom(jid, nickname, nickname);
+            chatManager.getChatContainer().activateChatRoom(chatRoom);
+        } else {
+            if (query.startsWith(UriManager.uritypes.message.getXML())) {
+                try {
+                    _uriManager.handleMessage(uri);
+                } catch (Exception e) {
+                    Log.error("error with ?message URI", e);
+                }
+            } else if (query.startsWith(UriManager.uritypes.join.getXML())) {
+                try {
+                    _uriManager.handleConference(uri);
+                } catch (Exception e) {
+                    Log.error("error with ?join URI", e);
+                }
+            } else if (query.startsWith(UriManager.uritypes.subscribe.getXML())) {
+                try {
+                    _uriManager.handleSubscribe(uri);
+                } catch (Exception e) {
+                    Log.error("error with ?subscribe URI", e);
+                }
+            } else if (query.startsWith(UriManager.uritypes.unsubscribe.getXML())) {
+                try {
+                    _uriManager.handleUnsubscribe(uri);
+                } catch (Exception e) {
+                    Log.error("error with ?unsubscribe URI", e);
+                }
+            } else if (query.startsWith(UriManager.uritypes.roster.getXML())) {
+                try {
+                    _uriManager.handleRoster(uri);
+                } catch (Exception e) {
+                    Log.error("error with ?roster URI", e);
+                }
+            } else if (query.startsWith(UriManager.uritypes.remove.getXML())) {
+                try {
+                    _uriManager.handleRemove(uri);
+                } catch (Exception e) {
+                    Log.error("error with ?remove URI", e);
+                }
+            }
+        }
     }
 
     /**
