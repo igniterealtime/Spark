@@ -1,4 +1,4 @@
-package org.jivesoftware.spark.otrplug.util;
+package org.jivesoftware.spark.plugin.otr.util;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -6,24 +6,21 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
 import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.spark.util.log.Log;
 
 /**
  * OTRProperties file stuff
  * 
  * @author Bergunde Holger
- * 
  */
 public class OTRProperties {
-    private Properties props;
-    private File configFile;
+    private final Properties props;
 
     private static final Object LOCK = new Object();
     private static OTRProperties instance = null;
 
     /**
      * returns the Instance of this Properties file
-     * 
-     * @return
      */
     public static OTRProperties getInstance() {
         synchronized (LOCK) {
@@ -36,27 +33,21 @@ public class OTRProperties {
 
     private OTRProperties() {
         this.props = new Properties();
-
         try {
             props.load(new FileInputStream(getConfigFile()));
-        } catch (IOException e) {
-            // Can't load ConfigFile
+        } catch (IOException ignored) {
         }
-
     }
 
     private File getConfigFile() {
-        if (configFile == null)
-            configFile = new File(SparkManager.getUserDirectory(), "otr.properties");
-
-        return configFile;
+        return new File(SparkManager.getUserDirectory(), "otr.properties");
     }
 
     public void save() {
         try {
-            props.store(new FileOutputStream(getConfigFile()), "Storing OTRPlugin properties");
+            props.store(new FileOutputStream(getConfigFile()), null);
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.error(e);
         }
     }
 
@@ -84,9 +75,6 @@ public class OTRProperties {
         setBoolean("OTRCloseOnChatClose", enabled);
     }
 
-    // ===============================================================================
-    // ===============================================================================
-    // ===============================================================================
     private boolean getBoolean(String property, boolean defaultValue) {
         return Boolean.parseBoolean(props.getProperty(property, Boolean.toString(defaultValue)));
     }
