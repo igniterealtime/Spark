@@ -1,10 +1,10 @@
-package org.jivesoftware.spark.otrplug.pref;
+package org.jivesoftware.spark.plugin.otr.pref;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
 
-import org.jivesoftware.spark.otrplug.util.OTRProperties;
-import org.jivesoftware.spark.otrplug.util.OTRResources;
+import org.jivesoftware.spark.plugin.otr.util.OTRProperties;
+import org.jivesoftware.spark.plugin.otr.util.OTRResources;
 import org.jivesoftware.spark.preference.Preference;
 
 /**
@@ -23,7 +23,7 @@ public class OTRPreferences implements Preference {
 
     @Override
     public Icon getIcon() {
-        return OTRResources.getIcon("otr_pref.png");
+        return OTRResources.PLUGIN_ICON;
     }
 
     @Override
@@ -33,13 +33,11 @@ public class OTRPreferences implements Preference {
 
     @Override
     public String getListName() {
-
         return OTRResources.getString("otr.list.entry");
     }
 
     @Override
     public String getNamespace() {
-        // TODO Auto-generated method stub
         return null;
     }
 
@@ -51,8 +49,6 @@ public class OTRPreferences implements Preference {
 
     @Override
     public void load() {
-        // TODO Auto-generated method stub
-
     }
 
     @Override
@@ -61,31 +57,25 @@ public class OTRPreferences implements Preference {
         OTRProperties.getInstance().setOTRCloseOnChatClose(pref.isCloseOnChatClose());
         OTRProperties.getInstance().setOTRCloseOnDisc(pref.isCloseOnDisc());
         OTRProperties.getInstance().save();
-
     }
 
     @Override
     public boolean isDataValid() {
-        // TODO Auto-generated method stub
         return true;
     }
 
     @Override
     public String getErrorMessage() {
-        // TODO Auto-generated method stub
         return null;
     }
 
     @Override
     public Object getData() {
-        // TODO Auto-generated method stub
         return null;
     }
 
     @Override
     public void shutdown() {
-        // TODO Auto-generated method stub
-
     }
 
 }
