@@ -1908,16 +1908,20 @@ public class StringUtils {
      */
     public static int getJavaMajorVersion( String version ) {
         if (version.startsWith("1.")) {
-            int dot = version.indexOf(".", 2);
+            int dot = version.indexOf('.', 2);
             if ( dot == -1 ) {
                 version = version.substring( 2 );
             } else {
                 version = version.substring( 2, dot );
             }
         } else {
-            int dot = version.indexOf(".");
+            int dot = version.indexOf('.');
             if (dot != -1) {
                 version = version.substring(0, dot);
+            }
+            int hyphen = version.indexOf('-');
+            if (hyphen != -1) {
+                version = version.substring(0, hyphen);
             }
         }
         return Integer.parseInt(version);
