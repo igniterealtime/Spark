@@ -30,6 +30,8 @@ import org.jivesoftware.smack.packet.StanzaBuilder;
 import org.jivesoftware.smack.packet.StanzaError;
 import org.jivesoftware.smackx.chatstates.ChatState;
 import org.jivesoftware.smackx.delay.packet.DelayInformation;
+import org.jivesoftware.smackx.mam.MamManager;
+import org.jivesoftware.smackx.mam.element.MamElements;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.muc.ParticipantStatusListener;
 import org.jivesoftware.smackx.muc.UserStatusListener;
@@ -61,9 +63,12 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.List;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * GroupChatRoom is the conference chat room UI used to have Multi-User Chats.
@@ -87,6 +92,7 @@ public class GroupChatRoom extends ChatRoom
     private boolean isActive = true;
     private long lastActivity;
     private Message lastMessage;
+    private String oldestUid;
     private boolean chatStatEnabled;
 
     /**
@@ -150,6 +156,51 @@ public class GroupChatRoom extends ChatRoom
                 inviteAction.putValue( Action.SMALL_ICON, SparkRes.getImageIcon( SparkRes.SMALL_MESSAGE_IMAGE ) );
 
                 popup.add( inviteAction );
+
+                Action history = new AbstractAction()
+                {
+                    @Override
+                    public void actionPerformed(ActionEvent e)
+                    {
+                        final MamManager.MamQueryArgs.Builder builder = MamManager.MamQueryArgs.builder()
+                            .setResultPageSize(20)
+                            .queryLastPage();
+                        builder.beforeUid(oldestUid);
+                        try {
+                            final MamManager.MamQuery mamQuery = MamManager.getInstanceFor(chat).queryArchive(builder.build());
+                            final List<Message> messages = new LinkedList<>();
+                            do {
+
+                                final List<Message> messagePage = mamQuery.getMamResultExtensions()
+                                    .stream().map(r -> {
+                                    final Message m = r.getForwarded().getForwardedStanza();
+                                    m.addExtension(r.getForwarded().getDelayInformation());
+                                    return m;
+                                }).collect(Collectors.toList());
+                                messages.addAll(messagePage);
+                                if (!mamQuery.isComplete()) {
+                                    mamQuery.pageNext(messagePage.size());
+                                } else {
+                                    break;
+                                }
+                            } while (true);
+                            oldestUid = messages.get(0).getStanzaId();
+                            messages.forEach(GroupChatRoom.this::handleMessagePacket);
+                        } catch (SmackException.NoResponseException | XMPPException.XMPPErrorException |
+                                 SmackException.NotConnectedException | SmackException.NotLoggedInException |
+                                 InterruptedException ex) {
+                            throw new RuntimeException(ex);
+                        }
+                    }
+                };
+
+                try {
+                    history.setEnabled(MamManager.getInstanceFor(chat).isSupported());
+                } catch (Throwable t) {
+                    Log.warning("Unable to determine MAM support for chat " + chat.getRoom(), t);
+                }
+                history.putValue( Action.NAME, "Get more history" );
+                popup.add( history );
 
                 Action copyURIgroupChat = new AbstractAction() {
                     @Override
@@ -623,6 +674,7 @@ public class GroupChatRoom extends ChatRoom
         {
             final DelayInformation inf = message.getExtension(DelayInformation.class);
             final Date sentDate = inf != null ? inf.getStamp() : new Date();
+            final MamElements.MamResultExtension mamResult = MamElements.MamResultExtension.from(message);
 
             // Do not accept Administrative messages.
             final DomainBareJid host = SparkManager.getSessionManager().getServerAddress();
@@ -641,6 +693,10 @@ public class GroupChatRoom extends ChatRoom
 
                     // Add to the UI component that shows the chat.
                     getTranscriptWindow().insertHistoryMessage( from.toString(), message.getBody(), sentDate );
+                }
+                else if (mamResult != null) {
+                    // This is also history (from MAM)
+                    getTranscriptWindow().insertHistoryMessage( from.toString(), mamResult.getForwarded().getForwardedStanza().getBody(), mamResult.getForwarded().getDelayInformation().getStamp() );
                 }
                 else
                 {
