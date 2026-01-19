@@ -415,8 +415,9 @@ public class PluginManager implements MainWindowListener
                 // Check for minimum Java version
                 try
                 {
-                    final String pluginMinVersion = plugin.selectSingleNode( "java" ) != null ? plugin.selectSingleNode( "java" ).getText().trim() : "";
-                    final int jv = StringUtils.getJavaMajorVersion( pluginMinVersion == null || pluginMinVersion.trim().isEmpty() ? "0" : pluginMinVersion.trim() );
+                    Node nodeJavaVersion = plugin.selectSingleNode("java");
+                    final String pluginMinVersion = nodeJavaVersion != null ? nodeJavaVersion.getText().trim() : "";
+                    final int jv = !pluginMinVersion.isEmpty() ? StringUtils.getJavaMajorVersion(pluginMinVersion) : 11;
                     final int mv = StringUtils.getJavaMajorVersion( System.getProperty( "java.version" ) );
 
                     boolean ok = ( mv >= jv );

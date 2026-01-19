@@ -42,4 +42,16 @@ public class JavaVersionTest
         // Verify results.
         assertEquals( 11, result );
     }
+
+    @Test
+    public void testJava26ea() {
+        // Setup fixture.
+        final String value = "26-ea";
+
+        // Execute system under test.
+        final int result = StringUtils.getJavaMajorVersion( value );
+
+        // Verify results.
+        assertEquals( 26, result );
+    }
 }
