@@ -137,7 +137,6 @@ public class Workspace extends JPanel implements StanzaListener {
      */
     private Workspace() {
         final MainWindow mainWindow = SparkManager.getMainWindow();
-
 	        // Add MainWindow listener
 	        mainWindow.addMainWindowListener(new MainWindowListener() {
 	            @Override
@@ -148,7 +147,6 @@ public class Workspace extends JPanel implements StanzaListener {
 	                    // Leave ChatRoom
 	                    container.leaveChatRoom(chatRoom);
 	                }
-
 	                conferences.shutdown();
 	                gatewayPlugin.shutdown();
 	                bookmarkPlugin.shutdown();
@@ -157,15 +155,13 @@ public class Workspace extends JPanel implements StanzaListener {
 
 	            @Override
 				public void mainWindowActivated() {
-
 	            }
 
 	            @Override
 				public void mainWindowDeactivated() {
-
 	            }
-	        });
-
+	        }
+        );
 
         // Initialize workspace pane, defaulting the tabs to the bottom.
 	    boolean top = Default.getBoolean(Default.TABS_PLACEMENT_TOP);
@@ -206,17 +202,13 @@ public class Workspace extends JPanel implements StanzaListener {
     public void buildLayout() {
     	// Moved this to LoginDialog class
     	// new Enterprise();
-
         // Initialize Contact List
         contactList = UIComponentRegistry.createContactList();
         conferences = UIComponentRegistry.createConferenceServices();
-
         // Init contact list.
         contactList.initialize();
-
         // Load VCard information for status box
         statusBox.loadVCard();
-
         // Initialise TransferManager
         SparkTransferManager.getInstance();
     }
@@ -225,37 +217,25 @@ public class Workspace extends JPanel implements StanzaListener {
      * Starts the Loading of all Spark Plugins.
      */
     public void loadPlugins() {
-
         Log.debug("Start loading plugins");
-
         // Send Available status
         SparkManager.getSessionManager().changePresence(statusBox.getPresence());
-        
         // Add presence and message listeners
         // we listen for these to force open a 1-1 peer chat window from other operators if
         // one isn't already open
         StanzaFilter workspaceMessageFilter = new StanzaTypeFilter(Message.class);
-
         // Add the packetListener to this instance
         SparkManager.getSessionManager().getConnection().addAsyncStanzaListener(this, workspaceMessageFilter);
-
         // Make presence available to anonymous requests, if from anonymous user in the system.
         StanzaListener workspacePresenceListener = stanza -> {
             Presence presence = (Presence)stanza;
             JivePropertiesExtension extension = (JivePropertiesExtension) presence.getExtension( JivePropertiesExtension.NAMESPACE );
             if (extension != null && extension.getProperty("anonymous") != null) {
                 boolean isAvailable = statusBox.getPresence().getMode() == Presence.Mode.available;
-                Presence reply;
-                if (isAvailable) {
-                    reply = StanzaBuilder.buildPresence()
-                        .ofType(Presence.Type.available)
-                        .build();
-                } else {
-                    reply = StanzaBuilder.buildPresence()
-                        .ofType(Presence.Type.unavailable)
-                        .build();
-                }
-                reply.setTo(presence.getFrom());
+                Presence reply = StanzaBuilder.buildPresence()
+                    .ofType(isAvailable ? Presence.Type.available : Presence.Type.unavailable)
+                    .to(presence.getFrom())
+                    .build();
                 try
                 {
                     SparkManager.getSessionManager().getConnection().sendStanza(reply);
@@ -278,16 +258,16 @@ public class Workspace extends JPanel implements StanzaListener {
         Log.debug("Manual init of conference bookmarks");
         conferences.loadConferenceBookmarks();
         SearchManager.getInstance();
-        Log.debug("Manual init of chattranscriptplugin");
+        Log.debug("Manual init of ChatTranscriptPlugin");
         transcriptPlugin = new ChatTranscriptPlugin();
 
         // Load Broadcast Plugin
-        Log.debug("Manual init of broadcastplugink");
+        Log.debug("Manual init of BroadcastPlugin");
         broadcastPlugin = new BroadcastPlugin();
         broadcastPlugin.initialize();
 
         // Load BookmarkPlugin
-        Log.debug("Manual init of Bookmarkplugin");
+        Log.debug("Manual init of BookmarkPlugin");
         bookmarkPlugin = new BookmarkPlugin();
         bookmarkPlugin.initialize();
 
@@ -299,13 +279,10 @@ public class Workspace extends JPanel implements StanzaListener {
 			public void run() {
                 Log.debug("Initializing plugin manager");
                 final PluginManager pluginManager = PluginManager.getInstance();
-
                 Log.debug("Add main window listener");
                 SparkManager.getMainWindow().addMainWindowListener(pluginManager);
-
                 Log.debug("Initializing plugins");
                 pluginManager.initializePlugins();
-
                 // Subscriptions are always manual
                 Log.debug("Set roster mode");
                 Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
@@ -353,7 +330,6 @@ public class Workspace extends JPanel implements StanzaListener {
         if (stanza instanceof Message) {
             final Message message = (Message)stanza;
             boolean isGroupChat = message.getType() == Message.Type.groupchat;
-
             // Check if Conference invite. If so, do not handle here.
             if (message.hasExtension(GroupChatInvitation.class)) {
                 return;
@@ -378,26 +354,21 @@ public class Workspace extends JPanel implements StanzaListener {
                 message.getType() == Message.Type.error) {
                 return;
             }
-
             // Create new chat room for Agent Invite.
             final Jid from = stanza.getFrom();
             final DomainBareJid host = SparkManager.getSessionManager().getServerAddress();
-
             // Don't allow workgroup notifications to come through here.
             final BareJid bareJID = from.asBareJid();
             if (host.equals(from)) {
                 return;
             }
 
-
             ChatRoom room = null;
             try {
                 room = SparkManager.getChatManager().getChatContainer().getChatRoom(bareJID);
             }
-            catch (ChatRoomNotFoundException e) {
-                // Ignore
+            catch (ChatRoomNotFoundException ignored) {
             }
-
             // Check for non-existent rooms.
             if (room == null) {
                 EntityBareJid entityBareJid = bareJID.asEntityBareJidIfPossible();
@@ -412,7 +383,6 @@ public class Workspace extends JPanel implements StanzaListener {
      * Creates a new room if necessary and inserts an offline message.
      *
      * @param message The Offline message.
-     * @throws InterruptedException 
      */
     private void handleOfflineMessage(Message message) throws SmackException.NotConnectedException, InterruptedException
     {
@@ -432,20 +402,16 @@ public class Workspace extends JPanel implements StanzaListener {
         } else {
             nickname = bareJID.getLocalpartOrNull() == null ? null : bareJID.getLocalpartOrNull().toString();
         }
-
         // Create the room if it does not exist.;
         ChatRoom room = SparkManager.getChatManager().createChatRoom(bareJID, nickname, nickname);
         if (!SparkManager.getChatManager().getChatContainer().getChatFrame().isVisible()) {
             SparkManager.getChatManager().getChatContainer().getChatFrame().setVisible(true);
         }
-
         // Insert offline message
         room.getTranscriptWindow().insertMessage(nickname, message, ChatManager.FROM_COLOR);
         room.addToTranscript(message, true);
-
         // Save message to history immediately.
         SparkManager.getWorkspace().getTranscriptPlugin().persistChatRoom(room);
-
         // Send display and notified message back.
         SparkManager.getMessageEventManager().sendDeliveredNotification(message.getFrom(), message.getStanzaId());
         SparkManager.getMessageEventManager().sendDisplayedNotification(message.getFrom(), message.getStanzaId());
