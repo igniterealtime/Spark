@@ -310,8 +310,10 @@ public class ChatRoomImpl extends ChatRoom {
 
         // Send the message that contains the notifications request
         try {
-            fireOutgoingMessageSending(message);
-            SparkManager.getConnection().sendStanza(message);
+            fireOutgoingMessageSending(messageBuilder);
+            // rebuild message after all alterations
+            Message msgToSend = messageBuilder.build();
+            SparkManager.getConnection().sendStanza(msgToSend);
         }
         catch (Exception ex) {
             Log.error("Error sending message", ex);
@@ -463,8 +465,9 @@ public class ChatRoomImpl extends ChatRoom {
 
 
                     // Do something with the incoming packet here.
-                    final Message message = (Message) stanza;
-                    fireReceivingIncomingMessage( message );
+                    MessageBuilder msgBuilder = MessageBuilder.buildMessageFrom((Message) stanza, stanza.getStanzaId());
+                    fireReceivingIncomingMessage(msgBuilder);
+                    Message message = msgBuilder.build();
                     if ( message.getError() != null )
                     {
                         if ( message.getError().getCondition() == StanzaError.Condition.item_not_found )
@@ -651,7 +654,7 @@ public class ChatRoomImpl extends ChatRoom {
         return messageEventListeners;
     }
 
-    public void fireOutgoingMessageSending( Message message )
+    public void fireOutgoingMessageSending(MessageBuilder message)
     {
         for ( final MessageEventListener listener : messageEventListeners )
         {
@@ -666,7 +669,7 @@ public class ChatRoomImpl extends ChatRoom {
         }
     }
 
-    public void fireReceivingIncomingMessage( Message message )
+    public void fireReceivingIncomingMessage(MessageBuilder message)
     {
         for ( final MessageEventListener listener : messageEventListeners )
         {
