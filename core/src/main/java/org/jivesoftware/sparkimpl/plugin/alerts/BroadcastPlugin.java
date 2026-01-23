@@ -315,10 +315,10 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
         }
 
         MessageBuilder messageBuilder = StanzaBuilder.buildMessage()
-            .setBody(message.getBody());
+            .setBody(message.getBody())
+            .to(message.getTo())
+            .from(message.getFrom());
         Message m = messageBuilder.build();
-        m.setTo(message.getTo());
-        m.setFrom(message.getFrom());
 
         String broadcasttype = type == Message.Type.normal ? Res.getString("broadcast") : Res.getString("message.alert.notify");
 
