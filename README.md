@@ -26,6 +26,16 @@ Resources
 - Bug Tracker: https://igniterealtime.atlassian.net/browse/SPARK
 - Nightly Builds: https://www.igniterealtime.org/downloads/nightly_spark.jsp
 
+Install
+-------
+
+Download last release from [GitHub releases page](https://github.com/igniterealtime/Spark/releases/latest)
+or [nightly build](https://igniterealtime.org/downloads/nightly_spark.jsp) with latest changes.
+For Windows, if you are not sure, if it's recommended to download the `spark_*-64bit.msi`.
+If you don't have Java JRE then download and install `.msi` file the JRE 17 or newer from 
+[Zulu]https://www.azul.com/downloads/?os=windows&architecture=x86-64-bit&package=jre#zulu)
+or [Oracle](https://www.oracle.com/java/technologies/downloads/#jdk25-windows).
+
 Screenshots
 ---------
 ![Spark_Login](https://user-images.githubusercontent.com/71222850/188326816-a911aff6-34d5-4cac-b253-24901a1f3bc1.png)
