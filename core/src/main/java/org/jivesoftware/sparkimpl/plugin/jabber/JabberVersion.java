@@ -63,9 +63,10 @@ public class JabberVersion implements Plugin {
                 if (iq instanceof Time && iq.getType() == IQ.Type.get) {
                     Time time = Time.builder(iq.getStanzaId())
                         .ofType(IQ.Type.result)
-                        .set(ZonedDateTime.now()).build();
-                    time.setFrom(iq.getTo());
-                    time.setTo(iq.getFrom());
+                        .set(ZonedDateTime.now())
+                        .from(iq.getTo())
+                        .to(iq.getFrom())
+                        .build();
 
                     // Send Time
                     SparkManager.getConnection().sendStanza(time);

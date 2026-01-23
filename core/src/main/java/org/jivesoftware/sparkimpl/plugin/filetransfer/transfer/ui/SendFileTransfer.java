@@ -353,11 +353,11 @@ public class SendFileTransfer extends JPanel {
      * @param eventText Contains file transfer event text
      */
     private void saveEventToHistory(BareJid bareJid, String eventText) {
-        MessageBuilder messageBuilder = StanzaBuilder.buildMessage().
-            setBody(eventText);
+        MessageBuilder messageBuilder = StanzaBuilder.buildMessage()
+            .setBody(eventText)
+            .to(bareJid)
+            .from(SparkManager.getSessionManager().getJID());
         Message message = messageBuilder.build();
-        message.setTo(bareJid);
-        message.setFrom(SparkManager.getSessionManager().getJID());
         chatRoom.addToTranscript(message, false);
         SparkManager.getWorkspace().getTranscriptPlugin().persistChatRoom(chatRoom);
     }
