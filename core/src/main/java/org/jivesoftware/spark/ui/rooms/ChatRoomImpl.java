@@ -301,9 +301,9 @@ public class ChatRoomImpl extends ChatRoom {
         messageBuilder.ofType(Message.Type.chat);
         // Set chat state to 'active'
         messageBuilder.addExtension( new ChatStateExtension( ChatState.active ) );
+        messageBuilder.to(participantJID);
+        messageBuilder.from(SparkManager.getSessionManager().getJID());
         Message message = messageBuilder.build();
-        message.setTo(participantJID);
-        message.setFrom(SparkManager.getSessionManager().getJID());
 
         displaySendMessage( message );
 
@@ -628,9 +628,8 @@ public class ChatRoomImpl extends ChatRoom {
             }
             event.setStanzaId(packetID);
             messageBuilder.addExtension(event);
-
+            messageBuilder.from(from);
             Message msg = messageBuilder.build();
-            msg.setFrom(from);
             // Send the packet
             try
             {
@@ -894,10 +893,10 @@ public class ChatRoomImpl extends ChatRoom {
         }
         messageBuilder.setThread(threadID);
         messageBuilder.addExtension( new ChatStateExtension( state ) );
+        messageBuilder.to(participantJID);
+        messageBuilder.from(SparkManager.getSessionManager().getJID());
 
         Message message = messageBuilder.build();
-        message.setTo( participantJID );
-        message.setFrom( SparkManager.getSessionManager().getJID());
         SparkManager.getConnection().sendStanza( message );
     }
 }

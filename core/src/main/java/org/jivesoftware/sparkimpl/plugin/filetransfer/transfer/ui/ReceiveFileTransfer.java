@@ -632,10 +632,10 @@ public class ReceiveFileTransfer extends JPanel {
      */
     private void saveEventToHistory(BareJid bareJID, String eventText) {
         MessageBuilder messageBuilder = StanzaBuilder.buildMessage()
-            .setBody(eventText);
+            .setBody(eventText)
+            .to(bareJID)
+            .from(SparkManager.getSessionManager().getJID());
         Message message = messageBuilder.build();
-        message.setTo(bareJID);
-        message.setFrom(SparkManager.getSessionManager().getJID());
         chatRoom.addToTranscript(message, false);
         SparkManager.getWorkspace().getTranscriptPlugin().persistChatRoom(chatRoom);
     }
