@@ -16,6 +16,10 @@
 
 package org.jivesoftware.sparkimpl.preference.sounds;
 
+import static java.awt.GridBagConstraints.HORIZONTAL;
+import static java.awt.GridBagConstraints.NONE;
+import static java.awt.GridBagConstraints.NORTHWEST;
+
 import java.awt.EventQueue;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -219,25 +223,26 @@ public class SoundPreference implements Preference {
             ResourceUtils.resButton(userOfflineCheckbox, Res.getString("checkbox.play.sound.when.offline"));
             ResourceUtils.resButton(incomingInvitationBox, Res.getString("checkbox.play.sound.on.invitation"));
 
+            Insets padding = new Insets(5, 5, 5, 5);
             // Handle incoming sounds
-            add(incomingMessageBox, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-            add(incomingMessageSound, new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
-            add(incomingBrowseButton, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+            add(incomingMessageBox, new GridBagConstraints(0, 0, 1, 1, 0, 0, NORTHWEST, NONE, padding, 0, 0));
+            add(incomingMessageSound, new GridBagConstraints(0, 1, 1, 1, 1, 0, NORTHWEST, HORIZONTAL, padding, 0, 0));
+            add(incomingBrowseButton, new GridBagConstraints(1, 1, 1, 1, 0, 0, NORTHWEST, NONE, padding, 0, 0));
 
             // Handle sending sounds
-            add(outgoingMessageBox, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-            add(outgoingMessageSound, new GridBagConstraints(0, 3, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
-            add(outgoingBrowseButton, new GridBagConstraints(1, 3, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+            add(outgoingMessageBox, new GridBagConstraints(0, 2, 1, 1, 0, 0, NORTHWEST, NONE, padding, 0, 0));
+            add(outgoingMessageSound, new GridBagConstraints(0, 3, 1, 1, 1, 0, NORTHWEST, HORIZONTAL, padding, 0, 0));
+            add(outgoingBrowseButton, new GridBagConstraints(1, 3, 1, 1, 0, 0, NORTHWEST, NONE, padding, 0, 0));
 
             // Handle User Online Sound
-            add(userOfflineCheckbox, new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-            add(userOfflineField, new GridBagConstraints(0, 5, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
-            add(offlineBrowseButton, new GridBagConstraints(1, 5, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+            add(userOfflineCheckbox, new GridBagConstraints(0, 4, 1, 1, 0, 0, NORTHWEST, NONE, padding, 0, 0));
+            add(userOfflineField, new GridBagConstraints(0, 5, 1, 1, 1, 0, NORTHWEST, HORIZONTAL, padding, 0, 0));
+            add(offlineBrowseButton, new GridBagConstraints(1, 5, 1, 1, 0, 0, NORTHWEST, NONE, padding, 0, 0));
 
             // Handle Invitation Sound
-            add(incomingInvitationBox, new GridBagConstraints(0, 6, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-            add(incomingInvitationField, new GridBagConstraints(0, 7, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
-            add(incomingInvitationBrowseButton, new GridBagConstraints(1, 7, 1, 1, 0.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+            add(incomingInvitationBox, new GridBagConstraints(0, 6, 1, 1, 0, 0, NORTHWEST, NONE, padding, 0, 0));
+            add(incomingInvitationField, new GridBagConstraints(0, 7, 1, 1, 1, 0, NORTHWEST, HORIZONTAL, padding, 0, 0));
+            add(incomingInvitationBrowseButton, new GridBagConstraints(1, 7, 1, 1, 0, 1, NORTHWEST, NONE, padding, 0, 0));
 
             incomingBrowseButton.addActionListener( e -> pickFile(Res.getString("title.choose.incoming.sound"), incomingMessageSound) );
 
