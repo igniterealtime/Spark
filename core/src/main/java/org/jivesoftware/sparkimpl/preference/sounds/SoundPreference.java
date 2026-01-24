@@ -155,6 +155,9 @@ public class SoundPreference implements Preference {
 
                 soundPanel.setInvitationSound(preferences.getIncomingInvitationSoundFile());
                 soundPanel.setPlayInvitationSound(preferences.playIncomingInvitationSound());
+
+                soundPanel.setChatRequestSound(preferences.getChatRequestSound());
+                soundPanel.setPlayChatRequestSound(preferences.isPlayChatRequestSound());
             }
         };
         worker.start();
@@ -173,6 +176,9 @@ public class SoundPreference implements Preference {
 
         preferences.setIncomingInvitationSoundFile(soundPanel.getInvitationSound());
         preferences.setPlayIncomingInvitationSound(soundPanel.playInvitationSound());
+
+        preferences.setChatRequestSound(soundPanel.getChatRequestSound());
+        preferences.setPlayChatRequestSound(soundPanel.isPlayChatRequestSound());
 
         saveSoundsFile();
     }
@@ -210,6 +216,11 @@ public class SoundPreference implements Preference {
 	private final JCheckBox incomingInvitationBox = new JCheckBox();
 	private final JTextField incomingInvitationField = new JTextField();
 	private final JButton incomingInvitationBrowseButton = new JButton("..");
+
+        private final JCheckBox chatRequestBox = new JCheckBox();
+        private final JTextField chatRequestSound = new JTextField();
+        private final JButton chatRequestBrowseButton = new JButton("..");
+
         private JFileChooser fc;
 
 
@@ -222,6 +233,7 @@ public class SoundPreference implements Preference {
             ResourceUtils.resButton(outgoingMessageBox, Res.getString("checkbox.play.sound.on.outgoing.message"));
             ResourceUtils.resButton(userOfflineCheckbox, Res.getString("checkbox.play.sound.when.offline"));
             ResourceUtils.resButton(incomingInvitationBox, Res.getString("checkbox.play.sound.on.invitation"));
+            ResourceUtils.resButton(chatRequestBox, Res.getString("checkbox.play.sound.chat_request"));
 
             Insets padding = new Insets(5, 5, 5, 5);
             // Handle incoming sounds
@@ -242,7 +254,11 @@ public class SoundPreference implements Preference {
             // Handle Invitation Sound
             add(incomingInvitationBox, new GridBagConstraints(0, 6, 1, 1, 0, 0, NORTHWEST, NONE, padding, 0, 0));
             add(incomingInvitationField, new GridBagConstraints(0, 7, 1, 1, 1, 0, NORTHWEST, HORIZONTAL, padding, 0, 0));
-            add(incomingInvitationBrowseButton, new GridBagConstraints(1, 7, 1, 1, 0, 1, NORTHWEST, NONE, padding, 0, 0));
+            add(incomingInvitationBrowseButton, new GridBagConstraints(1, 7, 1, 1, 0, 0, NORTHWEST, NONE, padding, 0, 0));
+            // Handle Chat Request Sound
+            add(chatRequestBox, new GridBagConstraints(0, 8, 1, 1, 0, 0, NORTHWEST, NONE, padding, 0, 0));
+            add(chatRequestSound, new GridBagConstraints(0, 9, 1, 1, 1, 0, NORTHWEST, HORIZONTAL, padding, 0, 0));
+            add(chatRequestBrowseButton, new GridBagConstraints(1, 9, 1, 1, 0, 1, NORTHWEST, NONE, padding, 0, 0));
 
             incomingBrowseButton.addActionListener( e -> pickFile(Res.getString("title.choose.incoming.sound"), incomingMessageSound) );
 
@@ -253,6 +269,7 @@ public class SoundPreference implements Preference {
 
             incomingInvitationBrowseButton.addActionListener( e -> pickFile(Res.getString("title.choose.incoming.sound"), incomingInvitationField) );
 
+            chatRequestBrowseButton.addActionListener( e -> pickFile(Res.getString("title.choose.chat_request.sound"), chatRequestSound) );
 
         }
 
@@ -319,6 +336,22 @@ public class SoundPreference implements Preference {
 
         public boolean playInvitationSound() {
             return incomingInvitationBox.isSelected();
+        }
+
+        public String getChatRequestSound() {
+            return chatRequestSound.getText();
+        }
+
+        public void setChatRequestSound(String sound) {
+            chatRequestSound.setText(sound);
+        }
+
+        public boolean isPlayChatRequestSound() {
+            return chatRequestBox.isSelected();
+        }
+
+        public void setPlayChatRequestSound(boolean play) {
+            chatRequestBox.setSelected(play);
         }
 
         private void pickFile(String title, JTextField field) {
