@@ -28,11 +28,13 @@ public class SoundPreferences {
     private String incomingSound;
     private String offlineSound;
     private String incomingInvitationSound;
+    private String chatRequestSound;
 
     private boolean playOutgoingSound = false;
     private boolean playIncomingSound = false;
     private boolean playOfflineSound = false;
     private boolean playIncomingInvitationSound = false;
+    private boolean playChatRequestSound = false;
 
     public SoundPreferences() {
         // Set initial sounds
@@ -41,6 +43,7 @@ public class SoundPreferences {
             incomingSound = new File(Spark.getResourceDirectory(), "sounds/incoming.wav").getCanonicalPath();
             incomingInvitationSound = new File(Spark.getResourceDirectory(), "sounds/incoming.wav").getCanonicalPath();
             offlineSound = new File(Spark.getResourceDirectory(), "sounds/presence_changed.wav").getCanonicalPath();
+            chatRequestSound = new File(Spark.getResourceDirectory(), "sounds/chat_request.wav").getCanonicalPath();
         }
         catch (IOException e) {
             Log.error(e);
@@ -111,5 +114,21 @@ public class SoundPreferences {
 
     public void setPlayIncomingInvitationSound(boolean play) {
         this.playIncomingInvitationSound = play;
+    }
+
+    public String getChatRequestSound() {
+        return chatRequestSound;
+    }
+
+    public void setChatRequestSound(String chatRequestSound) {
+        this.chatRequestSound = chatRequestSound;
+    }
+
+    public boolean isPlayChatRequestSound() {
+        return playChatRequestSound;
+    }
+
+    public void setPlayChatRequestSound(boolean playChatRequestSound) {
+        this.playChatRequestSound = playChatRequestSound;
     }
 }
