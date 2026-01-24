@@ -27,7 +27,6 @@ import org.jivesoftware.fastpath.workspace.macros.MacrosEditor;
 import org.jivesoftware.fastpath.workspace.panes.*;
 import org.jivesoftware.fastpath.workspace.search.ChatSearch;
 import org.jivesoftware.fastpath.workspace.util.RequestUtils;
-import org.jivesoftware.resource.SoundsRes;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
@@ -51,9 +50,10 @@ import org.jivesoftware.spark.ui.conferences.RoomInvitationListener;
 import org.jivesoftware.spark.ui.rooms.GroupChatRoom;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.ResourceUtils;
-import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.alerts.SparkToaster;
+import org.jivesoftware.sparkimpl.preference.sounds.SoundPreference;
+import org.jivesoftware.sparkimpl.preference.sounds.SoundPreferences;
 import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.Jid;
 import org.jxmpp.jid.impl.JidCreate;
@@ -62,15 +62,13 @@ import org.jxmpp.jid.parts.Localpart;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import java.applet.Applet;
-import java.applet.AudioClip;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.URL;
 import java.util.*;
 import java.util.List;
 
@@ -544,15 +542,12 @@ public class Workpane {
                 offerMap.remove(offer.getSessionID());
             });
 
-            final Runnable soundThread = () -> {
-                URL url = SoundsRes.getURL(SoundsRes.INCOMING_USER);
-                if (url != null) {
-                    final AudioClip clip = Applet.newAudioClip(url);
-                    SparkManager.getSoundManager().playClip(clip);
-                }
-            };
-
-            TaskEngine.getInstance().submit(soundThread);
+            SoundPreference soundPreference = (SoundPreference) SparkManager.getPreferenceManager().getPreference(new SoundPreference().getNamespace());
+            SoundPreferences preferences = soundPreference.getPreferences();
+            if (preferences.isPlayChatRequestSound()) {
+                File soundFile = new File(preferences.getChatRequestSound());
+                SparkManager.getSoundManager().playClip(soundFile);
+            }
         }
 
         public void offerRevoked(final RevokedOffer revokedOffer) {
