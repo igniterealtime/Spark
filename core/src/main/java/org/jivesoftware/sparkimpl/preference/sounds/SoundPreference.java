@@ -37,6 +37,7 @@ import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Res;
@@ -221,9 +222,6 @@ public class SoundPreference implements Preference {
         private final JTextField chatRequestSound = new JTextField();
         private final JButton chatRequestBrowseButton = new JButton("..");
 
-        private JFileChooser fc;
-
-
         public SoundPanel() {
             setLayout(new GridBagLayout());
 
@@ -355,16 +353,17 @@ public class SoundPreference implements Preference {
         }
 
         private void pickFile(String title, JTextField field) {
-            if (fc == null) {
-                fc = new JFileChooser();
-                if (Spark.isWindows()) {
-                    fc.setFileSystemView(new WindowsFileSystemView());
-                }
+            JFileChooser fc = new JFileChooser();
+            fc.setFileFilter(new FileNameExtensionFilter(Res.getString("file.type.sound"), "wav"));
+            if (Spark.isWindows()) {
+                fc.setFileSystemView(new WindowsFileSystemView());
             }
             fc.setDialogTitle(title);
-            int returnVal = fc.showOpenDialog(this);
+            if (!field.getText().isEmpty()) {
+                fc.setSelectedFile(new File(field.getText()));
+            }
 
-            if (returnVal == JFileChooser.APPROVE_OPTION) {
+            if (fc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
                 File file = fc.getSelectedFile();
                 try {
                     field.setText(file.getCanonicalPath());
