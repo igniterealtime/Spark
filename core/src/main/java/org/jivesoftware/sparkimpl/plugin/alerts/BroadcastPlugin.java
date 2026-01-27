@@ -18,7 +18,6 @@ package org.jivesoftware.sparkimpl.plugin.alerts;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
-import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -64,8 +63,6 @@ import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
-import org.jivesoftware.sparkimpl.preference.sounds.SoundPreference;
-import org.jivesoftware.sparkimpl.preference.sounds.SoundPreferences;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jxmpp.jid.DomainBareJid;
@@ -75,6 +72,8 @@ import org.jxmpp.jid.impl.JidCreate;
 import org.jxmpp.jid.parts.Resourcepart;
 import org.jxmpp.util.XmppStringUtils;
 import org.jivesoftware.spark.ui.BroadcastHistoryFrame;
+
+import static org.jivesoftware.spark.Event.MSG_INCOMING;
 
 /**
  * Handles broadcasts from server and allows for roster wide broadcasts.
@@ -339,12 +338,7 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
         SparkManager.getChatManager().fireGlobalMessageReceievedListeners(chatRoom, message);
 
         if (message.hasExtension(DelayInformation.class)) {
-            SoundPreference soundPreference = (SoundPreference) SparkManager.getPreferenceManager().getPreference(new SoundPreference().getNamespace());
-            SoundPreferences preferences = soundPreference.getPreferences();
-            if (preferences.isPlayIncomingSound()) {
-                File incomingFile = new File(preferences.getIncomingSound());
-                SparkManager.getSoundManager().playClip(incomingFile);
-            }
+            SparkManager.getSoundManager().playClip(MSG_INCOMING);
         }
 
         chatRoom.addMessageListener(new MessageListener() {

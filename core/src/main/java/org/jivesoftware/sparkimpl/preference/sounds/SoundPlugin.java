@@ -16,8 +16,6 @@
 
 package org.jivesoftware.sparkimpl.preference.sounds;
 
-import java.io.File;
-
 import org.jivesoftware.smack.filter.StanzaTypeFilter;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Presence;
@@ -30,6 +28,8 @@ import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ChatRoomListener;
 import org.jivesoftware.spark.ui.MessageListener;
 import org.jivesoftware.spark.util.TaskEngine;
+
+import static org.jivesoftware.spark.Event.*;
 
 public class SoundPlugin implements Plugin, MessageListener, ChatRoomListener {
     SoundPreference soundPreference;
@@ -44,13 +44,8 @@ public class SoundPlugin implements Plugin, MessageListener, ChatRoomListener {
         SparkManager.getConnection().addAsyncStanzaListener( stanza -> {
             Presence presence = (Presence)stanza;
             if (!presence.isAvailable()) {
-                SoundPreferences preferences = soundPreference.getPreferences();
-                if (preferences != null && preferences.isPlayOfflineSound()) {
-                    if (!PresenceManager.isOnline(presence.getFrom().asBareJid())) {
-                        String offline = preferences.getOfflineSound();
-                        File offlineFile = new File(offline);
-                        SparkManager.getSoundManager().playClip(offlineFile);
-                    }
+                if (!PresenceManager.isOnline(presence.getFrom().asBareJid())) {
+                    SparkManager.getSoundManager().playClip(STATUS_OFFLINE);
                 }
             }
         }, new StanzaTypeFilter(Presence.class));
@@ -61,12 +56,7 @@ public class SoundPlugin implements Plugin, MessageListener, ChatRoomListener {
         TaskEngine.getInstance().submit(soundLoader);
 
         MultiUserChatManager.getInstanceFor(SparkManager.getConnection()).addInvitationListener( ( xmppConnection, muc, inviter, reason, password, message, invitation ) -> {
-            SoundPreferences preferences = soundPreference.getPreferences();
-            if (preferences != null && preferences.playIncomingInvitationSound()) {
-                String incomingSoundFile = preferences.getIncomingInvitationSoundFile();
-                File offlineFile = new File(incomingSoundFile);
-                SparkManager.getSoundManager().playClip(offlineFile);
-            }
+            SparkManager.getSoundManager().playClip(INCOMING_INVITATION);
         } );
 
     }
@@ -77,21 +67,12 @@ public class SoundPlugin implements Plugin, MessageListener, ChatRoomListener {
         if (message.hasExtension(DelayInformation.class)) {
             return;
         }
-
-        SoundPreferences preferences = soundPreference.getPreferences();
-        if (preferences.isPlayIncomingSound()) {
-            File incomingFile = new File(preferences.getIncomingSound());
-            SparkManager.getSoundManager().playClip(incomingFile);
-        }
+        SparkManager.getSoundManager().playClip(MSG_INCOMING);
     }
 
     @Override
 	public void messageSent(ChatRoom room, Message message) {
-        SoundPreferences preferences = soundPreference.getPreferences();
-        if (preferences.isPlayOutgoingSound()) {
-            File outgoingFile = new File(preferences.getOutgoingSound());
-            SparkManager.getSoundManager().playClip(outgoingFile);
-        }
+        SparkManager.getSoundManager().playClip(MSG_OUTCOMING);
     }
 
     @Override
