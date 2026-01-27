@@ -451,13 +451,14 @@ public class ContactItem extends JPanel {
             }
         }
 
-        if (presence.isAvailable() && (presence.getMode() == Presence.Mode.dnd || presence.getMode() == Presence.Mode.away || presence.getMode() == Presence.Mode.xa)) {
+        // Sets status icon and text based on presence
+        if (presence.isAway()) {
             statusIcon = SparkRes.getImageIcon(SparkRes.IM_AWAY);
         }
         else if (presence.isAvailable()) {
             isAvailable = true;
         }
-        else if (!presence.isAvailable()) {
+        else {
             getNicknameLabel().setFont(new Font("Dialog", Font.PLAIN, fontSize));
             getNicknameLabel().setForeground((Color)UIManager.get("ContactItemOffline.color"));
 
