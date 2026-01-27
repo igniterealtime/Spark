@@ -63,7 +63,7 @@ public class PreferencesPanel extends JPanel implements ListSelectionListener {
      * @param preferences the preference list
      * @param displayPref the preference you want to select
      */
-    public PreferencesPanel (Iterator<Preference> preferences, Preference displayPref){
+    public PreferencesPanel (Iterable<Preference> preferences, Preference displayPref){
         this(preferences);
         if ( displayPref != null || listModel.getSize() == 1){
             // iterate through all preference-ui items
@@ -81,7 +81,7 @@ public class PreferencesPanel extends JPanel implements ListSelectionListener {
         }
     }
     
-    public PreferencesPanel(Iterator<Preference> preferences) {
+    public PreferencesPanel(Iterable<Preference> preferences) {
         this.setLayout(new GridBagLayout());
 
         JLabel titleLabel = new JLabel();
@@ -102,8 +102,7 @@ public class PreferencesPanel extends JPanel implements ListSelectionListener {
         list.setCellRenderer(new JLabelIconRenderer());
         list.addListSelectionListener(this);
         // Populate with current preferences
-        while (preferences.hasNext()) {
-            Preference preference = preferences.next();
+        for (Preference preference : preferences) {
             listModel.addElement(new PreferenceUI(preference));
         }
 

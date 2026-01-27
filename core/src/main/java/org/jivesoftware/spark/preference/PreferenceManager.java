@@ -60,8 +60,6 @@ public class PreferenceManager {
         addPreference(localPreferences);
         localPreferences.load();
 
-        getPreferences();
-
         SparkManager.getMainWindow().addMainWindowListener(new MainWindowListener() {
             @Override
 			public void shutdown() {
@@ -115,13 +113,8 @@ public class PreferenceManager {
         return getPreference(namespace).getData();
     }
 
-    public Iterator<Preference> getPreferences() {
-        final List<Preference> returnList = new ArrayList<>();
-        for (String namespace : map.keySet()) {
-            returnList.add(map.get(namespace));
-        }
-        return returnList.iterator();
-
+    public Collection<Preference> getPreferences() {
+        return map.values();
     }
 
     private void fireShutdown()
