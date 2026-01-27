@@ -20,9 +20,7 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.preference.sounds.SoundPreference;
 import org.jivesoftware.sparkimpl.preference.sounds.SoundPreferences;
 
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.Clip;
+import javax.sound.sampled.*;
 import java.io.File;
 import java.util.WeakHashMap;
 
@@ -33,6 +31,13 @@ import java.util.WeakHashMap;
 public class SoundManager {
 
     private final WeakHashMap<String, Clip> clipCache = new WeakHashMap<>();
+
+    /**
+     * When the runtime has no usable audio device/mixer, attempting to play sounds will repeatedly throw.
+     * We detect that scenario once and disable sound playback to avoid log spam and wasted work.
+     */
+    private boolean soundSystemUnavailable;
+    private boolean soundSystemUnavailableLogged;
 
     public void playClip(Event e) {
         SoundPreference soundPreference = (SoundPreference) SparkManager.getPreferenceManager().getPreference(new SoundPreference().getNamespace());
@@ -83,20 +88,30 @@ public class SoundManager {
      * @param soundFile the File object representing the wav file.
      */
     public void playClip(final File soundFile) {
+        if (soundSystemUnavailable) {
+            return;
+        }
+
         final Runnable playThread = () -> {
             Clip ac = clipCache.get(soundFile.toString());
             if (ac == null) {
                 // Add new clip
-                try (AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(soundFile)) {
-                    ac = AudioSystem.getClip();
-                    ac.open(audioInputStream);
-                    clipCache.put(soundFile.toString(), ac);
+                try (AudioInputStream originalStream = AudioSystem.getAudioInputStream(soundFile)) {
+                    ac = tryOpenClipWithFallbacks(originalStream);
+                    if (ac != null) {
+                        clipCache.put(soundFile.toString(), ac);
+                    }
                 } catch (Exception e) {
                     Log.warning("Unable to load sound: " + soundFile, e);
                 }
             }
+            // Starts cached or newly loaded audio clip
             if (ac != null) {
                 try {
+                    if (ac.isRunning()) {
+                        ac.stop();
+                    }
+                    ac.setFramePosition(0);
                     ac.start();
                 } catch (Exception e) {
                     Log.error("Unable to play sound: " + soundFile + "\n\t: " + e);
@@ -107,4 +122,85 @@ public class SoundManager {
         TaskEngine.getInstance().submit(playThread);
     }
 
+    private Clip tryOpenClipWithFallbacks(AudioInputStream originalStream) {
+        // 1) Try original format first (fast path)
+        Clip clip = tryOpenClip(originalStream);
+        if (clip != null) {
+            return clip;
+        }
+
+        // ... existing code ...
+        // 2) Try decoding to a very common PCM format (16-bit LE, same sample rate/channels as source)
+        try {
+            final AudioFormat src = originalStream.getFormat();
+            final float sampleRate = src.getSampleRate() > 0 ? src.getSampleRate() : 44100.0f;
+            final int channels = src.getChannels() > 0 ? src.getChannels() : 2;
+
+            final AudioFormat pcm = new AudioFormat(
+                AudioFormat.Encoding.PCM_SIGNED,
+                sampleRate,
+                16,
+                channels,
+                channels * 2,
+                sampleRate,
+                false
+            );
+
+            try (AudioInputStream pcmStream = AudioSystem.getAudioInputStream(pcm, originalStream)) {
+                clip = tryOpenClip(pcmStream);
+                if (clip != null) {
+                    return clip;
+                }
+            }
+        } catch (Exception ignored) {
+            // fall through to more aggressive fallbacks
+        }
+
+        // 3) Fallback: mono 22.05kHz PCM (last resort for constrained devices/backends)
+        try {
+            final AudioFormat monoLow = new AudioFormat(
+                AudioFormat.Encoding.PCM_SIGNED,
+                22050.0f,
+                16,
+                1,
+                2,
+                22050.0f,
+                false
+            );
+
+            try (AudioInputStream monoLowStream = AudioSystem.getAudioInputStream(monoLow, originalStream)) {
+                clip = tryOpenClip(monoLowStream);
+                if (clip != null) {
+                    return clip;
+                }
+            }
+        } catch (Exception ignored) {
+            // fall through
+        }
+
+        return null;
+    }
+
+    private Clip tryOpenClip(AudioInputStream stream) {
+        try {
+            final AudioFormat format = stream.getFormat();
+            final DataLine.Info info = new DataLine.Info(Clip.class, format);
+            if (!AudioSystem.isLineSupported(info)) {
+                return null;
+            }
+            final Clip clip = (Clip) AudioSystem.getLine(info);
+            clip.open(stream);
+            return clip;
+        } catch (LineUnavailableException e) {
+            // This often indicates: no audio device/mixer, or the backend cannot provide a Clip line.
+            soundSystemUnavailable = true;
+            if (!soundSystemUnavailableLogged) {
+                soundSystemUnavailableLogged = true;
+                Log.warning("Sound playback disabled: no supported audio line is available in this environment.", e);
+            }
+            return null;
+        } catch (Exception e) {
+            return null;
+        }
+    }
 }
