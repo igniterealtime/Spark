@@ -41,13 +41,9 @@ public class UserIdlePlugin extends TimerTask implements Plugin {
 	private static final LocalPreferences pref = SettingsManager.getLocalPreferences();
 	private static Presence latestPresence;
 	private static String statustext;
-	private static boolean IsLocked;
+	private static boolean isLocked;
 
-	public static boolean getDesktopLockStatus() {
-		return IsLocked;
-	}
-
-	@Override
+    @Override
 	public boolean canShutDown() {
 		return false;
 	}
@@ -59,9 +55,8 @@ public class UserIdlePlugin extends TimerTask implements Plugin {
 		timer.schedule(this, (1000 * 10), (1000 * CHECKTIME));
 
 		if (Spark.isWindows()) {
-			LockListener isLocked;
-			isLocked = new LockListener();
-			isLocked.intWinLockListener();
+            LockListener lockListener = new LockListener();
+            lockListener.intWinLockListener();
 		}
 	}
 	private long getIdleTime() {
@@ -152,7 +147,6 @@ public class UserIdlePlugin extends TimerTask implements Plugin {
             return;
         }
 
-        boolean isLocked = IsLocked;
         if (isLocked) {
             if (!hasChanged) {
                 setIdle();
@@ -161,10 +155,10 @@ public class UserIdlePlugin extends TimerTask implements Plugin {
         } else {
             // Set idle/online status based on duration
             long idleDuration = getIdleTime() / 1000;
-            if (idleDuration > pref.getIdleTime() * 60 && !hasChanged) {
+            if (!hasChanged && idleDuration > pref.getIdleTime() * 60) {
                 setIdle();
                 hasChanged = true;
-            } else if (idleDuration < 10 && hasChanged) {
+            } else if (hasChanged && idleDuration < 10) {
                 setOnline();
                 hasChanged = false;
             }
@@ -178,12 +172,12 @@ public class UserIdlePlugin extends TimerTask implements Plugin {
 			new Thread(() -> new WinLockListener() {
                 @Override
                 protected void onMachineLocked(int sessionId) {
-                    IsLocked = true;
+                    isLocked = true;
                 }
 
                 @Override
                 protected void onMachineUnlocked(int sessionId) {
-                    IsLocked = false;
+                    isLocked = false;
                 }
             }).start();
 		}
