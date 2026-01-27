@@ -56,7 +56,7 @@ public class ChatRoomDecorator
             fileuploadButton.setToolTipText(GraphicUtils.createToolTip("Http File Upload"));
 
             fileuploadButton.addActionListener(event -> {
-                if ("groupchat".equals(room.getChatType().toString()))
+                if (room.getChatType() == Message.Type.groupchat)
                 {
                     getUploadUrl(room, Message.Type.groupchat);
                 } else {

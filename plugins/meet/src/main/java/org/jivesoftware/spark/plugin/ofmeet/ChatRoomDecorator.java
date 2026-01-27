@@ -48,7 +48,7 @@ public class ChatRoomDecorator
             ofmeetButton.addActionListener(event -> {
                 String newUrl, newRoomId = roomId + "-" + sessionID;
 
-                if ("groupchat".equals(room.getChatType().toString()))
+                if (room.getChatType() == Message.Type.groupchat)
                 {
                     newUrl = plugin.url + newRoomId;
                     plugin.handleClick(newUrl, room, newUrl, Message.Type.groupchat);
