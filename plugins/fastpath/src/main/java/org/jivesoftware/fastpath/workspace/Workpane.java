@@ -52,8 +52,6 @@ import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.alerts.SparkToaster;
-import org.jivesoftware.sparkimpl.preference.sounds.SoundPreference;
-import org.jivesoftware.sparkimpl.preference.sounds.SoundPreferences;
 import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.Jid;
 import org.jxmpp.jid.impl.JidCreate;
@@ -71,6 +69,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.*;
 import java.util.List;
+
+import static org.jivesoftware.spark.Event.CHAT_REQUEST;
 
 public class Workpane {
     // Tracks all the offers coming into the client.
@@ -542,12 +542,7 @@ public class Workpane {
                 offerMap.remove(offer.getSessionID());
             });
 
-            SoundPreference soundPreference = (SoundPreference) SparkManager.getPreferenceManager().getPreference(new SoundPreference().getNamespace());
-            SoundPreferences preferences = soundPreference.getPreferences();
-            if (preferences.isPlayChatRequestSound()) {
-                File soundFile = new File(preferences.getChatRequestSound());
-                SparkManager.getSoundManager().playClip(soundFile);
-            }
+            SparkManager.getSoundManager().playClip(CHAT_REQUEST);
         }
 
         public void offerRevoked(final RevokedOffer revokedOffer) {

@@ -17,6 +17,8 @@ package org.jivesoftware.spark;
 
 import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkimpl.preference.sounds.SoundPreference;
+import org.jivesoftware.sparkimpl.preference.sounds.SoundPreferences;
 
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -31,6 +33,49 @@ import java.util.WeakHashMap;
 public class SoundManager {
 
     private final WeakHashMap<String, Clip> clipCache = new WeakHashMap<>();
+
+    public void playClip(Event e) {
+        SoundPreference soundPreference = (SoundPreference) SparkManager.getPreferenceManager().getPreference(new SoundPreference().getNamespace());
+        SoundPreferences preferences = soundPreference.getPreferences();
+        if (preferences == null) {
+            return;
+        }
+        String soundFile = "";
+        // Determines sound file based on event and preferences
+        switch (e) {
+            case MSG_INCOMING:
+                if (preferences.isPlayIncomingSound()) {
+                    soundFile = preferences.getIncomingSound();
+                }
+                break;
+            case MSG_OUTCOMING:
+                if (preferences.isPlayOutgoingSound()) {
+                    soundFile = preferences.getOutgoingSound();
+                }
+                break;
+            case CHAT_REQUEST:
+                if (preferences.isPlayChatRequestSound()) {
+                    soundFile = preferences.getChatRequestSound();
+                }
+                break;
+            case INCOMING_INVITATION:
+                if (preferences.playIncomingInvitationSound()) {
+                    soundFile = preferences.getIncomingInvitationSoundFile();
+                }
+                break;
+            case STATUS_OFFLINE:
+                if (preferences.isPlayOfflineSound()) {
+                    soundFile = preferences.getOfflineSound();
+                }
+                break;
+            default:
+                return;
+        }
+        if (soundFile == null || soundFile.isEmpty()) {
+            return;
+        }
+        SparkManager.getSoundManager().playClip(new File(soundFile));
+    }
 
     /**
      * Plays a sound file.
