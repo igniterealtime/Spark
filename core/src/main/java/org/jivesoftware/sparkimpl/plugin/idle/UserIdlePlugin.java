@@ -147,9 +147,10 @@ public class UserIdlePlugin extends TimerTask implements Plugin {
 
 	@Override
 	public void run() {
-		if (pref.isIdleOn()) {
-
-		    if (!SparkManager.getConnection().isConnected()) return;
+        if (!SparkManager.getConnection().isConnected()) return;
+		if (!pref.isIdleOn()) {
+            return;
+        }
 
 				if (IsLocked && !hasChanged) {
 					setIdle();
@@ -161,7 +162,6 @@ public class UserIdlePlugin extends TimerTask implements Plugin {
 					setOnline();
 					hasChanged = false;
 				}
-		}
 	}
 
 
