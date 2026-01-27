@@ -50,8 +50,8 @@ public class UserIdlePlugin extends TimerTask implements Plugin {
 	@Override
 	public void initialize() {
 		Timer timer = new Timer();
-		// Check all 5 seconds
-		timer.schedule(this, (1000 * 10), (1000 * CHECKTIME));
+		// Since 10 minutes after boot start checking every 2 minutes
+		timer.schedule(this, (60 * 1000 * 10), (60 * 1000 * CHECKTIME));
         idleTimeDetector = new IdleTimeDetectorFactory().newIdleTimeDetector();
 
 		if (Spark.isWindows()) {
