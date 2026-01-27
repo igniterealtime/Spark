@@ -86,10 +86,8 @@ public class UserIdlePlugin extends TimerTask implements Plugin {
 	}
 
 	private void setIdle() {
-
 		latestPresence = SparkManager.getWorkspace().getStatusBar().getPresence();
-
-		if (latestPresence.getStatus().equals(Res.getString("status.online")) || latestPresence.getStatus().equals(Res.getString("status.free.to.chat"))) {
+		if (!latestPresence.isAway()) {
 			statustext = pref.getIdleMessage();
 		} else {
 			statustext = latestPresence.getStatus();
