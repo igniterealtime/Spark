@@ -22,6 +22,7 @@ import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.disco.packet.DiscoverInfo;
 import org.jivesoftware.smackx.disco.packet.DiscoverItems;
+import org.jivesoftware.smackx.muc.MultiUserChatConstants;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.component.TitlePanel;
@@ -153,7 +154,7 @@ public class ConferenceServiceBrowser {
             else {
                 try {
                     DiscoverInfo info = discoManager.discoverInfo(item.getEntityID());
-                    if (info.containsFeature("http://jabber.org/protocol/muc")) {
+                    if (info.containsFeature(MultiUserChatConstants.NAMESPACE)) {
                         answer.add(item.getEntityID().toString());
                     }
                 }
