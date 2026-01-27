@@ -152,16 +152,19 @@ public class UserIdlePlugin extends TimerTask implements Plugin {
             return;
         }
 
-        if (IsLocked && !hasChanged) {
-            setIdle();
-            hasChanged = true;
+        boolean isLocked = IsLocked;
+        if (isLocked) {
+            if (!hasChanged) {
+                setIdle();
+                hasChanged = true;
+            }
         } else {
             // Set idle/online status based on duration
             long idleDuration = getIdleTime() / 1000;
-            if (idleDuration > pref.getIdleTime() * 60 && !hasChanged && !IsLocked) {
+            if (idleDuration > pref.getIdleTime() * 60 && !hasChanged) {
                 setIdle();
                 hasChanged = true;
-            } else if (idleDuration < 10 && hasChanged && !IsLocked) {
+            } else if (idleDuration < 10 && hasChanged) {
                 setOnline();
                 hasChanged = false;
             }
