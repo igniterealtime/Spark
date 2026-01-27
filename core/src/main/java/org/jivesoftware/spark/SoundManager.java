@@ -18,12 +18,14 @@ package org.jivesoftware.spark;
 import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.util.log.Log;
 
-import java.applet.Applet;
-import java.applet.AudioClip;
 import java.io.File;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
 
 /**
  * This manager is responsible for the playing, stopping and caching of sounds within Spark.  You would
@@ -31,7 +33,7 @@ import java.util.Map;
  */
 public class SoundManager {
 
-    private final Map<URL,AudioClip> fileMap = new HashMap<>();
+    private final Map<URL, Clip> fileMap = new HashMap<>();
 
     /**
      * Default constructor
@@ -48,13 +50,15 @@ public class SoundManager {
         final Runnable playThread = () -> {
             try {
                 final URL url = soundFile.toURI().toURL();
-                AudioClip ac = fileMap.get(url);
+                Clip ac = fileMap.get(url);
                 if (ac == null) {
                     // Add new clip
-                    ac = Applet.newAudioClip(url);
+                    AudioInputStream ais = AudioSystem.getAudioInputStream(soundFile);
+                    ac = AudioSystem.getClip();
+                    ac.open(ais);
                     fileMap.put(url, ac);
                 }
-                ac.play();
+                ac.start();
             }
             catch (Exception e) {
                 Log.error("Unable to load sound: " + soundFile + "\n\t: " + e);
