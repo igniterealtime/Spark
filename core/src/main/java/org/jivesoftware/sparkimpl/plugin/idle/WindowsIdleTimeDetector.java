@@ -1,9 +1,8 @@
-package org.jivesoftware.sparkimpl.plugin.idle.windows;
+package org.jivesoftware.sparkimpl.plugin.idle;
 
 import com.sun.jna.Native;
 import com.sun.jna.Structure;
 import com.sun.jna.win32.StdCallLibrary;
-import org.jivesoftware.sparkimpl.plugin.idle.IdleTime;
 
 import java.util.Arrays;
 import java.util.List;
@@ -13,7 +12,8 @@ import java.util.List;
  * JNA shall be present in your classpath for this to work (and compile).
  * @author ochafik
  */
-public class Win32IdleTime implements IdleTime {
+class WindowsIdleTimeDetector implements IdleTimeDetector {
+
     public interface Kernel32 extends StdCallLibrary {
         Kernel32 INSTANCE = Native.load("kernel32", Kernel32.class);
 
@@ -25,24 +25,25 @@ public class Win32IdleTime implements IdleTime {
         int GetTickCount();
     }
 
+    /**
+     * Contains the time of the last input.
+     * @see "http://msdn.microsoft.com/library/default.asp?url=/library/en-us/winui/winui/windowsuserinterface/userinput/keyboardinput/keyboardinputreference/keyboardinputstructures/lastinputinfo.asp"
+     */
+    class LASTINPUTINFO extends Structure {
+        public int cbSize = 8;
+
+        /** Tick count of when the last input event was received. */
+        public int dwTime;
+
+        @SuppressWarnings("rawtypes")
+        @Override
+        protected List getFieldOrder() {
+            return Arrays.asList("cbSize", "dwTime");
+        }
+    }
+
     public interface User32 extends StdCallLibrary {
         User32 INSTANCE = Native.load("user32", User32.class);
-        /**
-         * Contains the time of the last input.
-         * @see "http://msdn.microsoft.com/library/default.asp?url=/library/en-us/winui/winui/windowsuserinterface/userinput/keyboardinput/keyboardinputreference/keyboardinputstructures/lastinputinfo.asp"
-         */
-        class LASTINPUTINFO extends Structure {
-            public int cbSize = 8;
-
-            /// Tick count of when the last input event was received.
-            public int dwTime;
-
-            @SuppressWarnings("rawtypes")
-            @Override
-            protected List getFieldOrder() {
-                return Arrays.asList("cbSize", "dwTime");
-            }
-        }
         /**
          * Retrieves the time of the last input event.
          * @see "http://msdn.microsoft.com/library/default.asp?url=/library/en-us/winui/winui/windowsuserinterface/userinput/keyboardinput/keyboardinputreference/keyboardinputfunctions/getlastinputinfo.asp"
@@ -58,7 +59,7 @@ public class Win32IdleTime implements IdleTime {
      */
     @Override
 	public long getIdleTimeMillis() {
-        User32.LASTINPUTINFO lastInputInfo = new User32.LASTINPUTINFO();
+        LASTINPUTINFO lastInputInfo = new LASTINPUTINFO();
         User32.INSTANCE.GetLastInputInfo(lastInputInfo);
         return Kernel32.INSTANCE.GetTickCount() - lastInputInfo.dwTime;
     }
