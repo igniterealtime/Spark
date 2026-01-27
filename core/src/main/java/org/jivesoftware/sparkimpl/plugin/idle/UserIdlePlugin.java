@@ -16,17 +16,12 @@
 package org.jivesoftware.sparkimpl.plugin.idle;
 
 import org.jivesoftware.Spark;
-import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.packet.StanzaBuilder;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.Plugin;
 import org.jivesoftware.spark.util.StringUtils;
 import org.jivesoftware.spark.util.log.Log;
-import org.jivesoftware.sparkimpl.plugin.idle.linux.LinuxIdleTime;
-import org.jivesoftware.sparkimpl.plugin.idle.mac.MacIdleTime;
-import org.jivesoftware.sparkimpl.plugin.idle.windows.Win32IdleTime;
-import org.jivesoftware.sparkimpl.plugin.idle.windows.WinLockListener;
 //import org.jivesoftware.sparkimpl.plugin.phone.PhonePlugin;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
@@ -34,6 +29,9 @@ import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import java.util.Timer;
 import java.util.TimerTask;
 
+/**
+ * Sets idle or online status based on activity
+ */
 public class UserIdlePlugin extends TimerTask implements Plugin {
 
 	private final int CHECKTIME = 2;
@@ -42,6 +40,7 @@ public class UserIdlePlugin extends TimerTask implements Plugin {
 	private static Presence latestPresence;
 	private static String statustext;
 	private static boolean isLocked;
+    private IdleTimeDetector idleTimeDetector;
 
     @Override
 	public boolean canShutDown() {
@@ -53,23 +52,12 @@ public class UserIdlePlugin extends TimerTask implements Plugin {
 		Timer timer = new Timer();
 		// Check all 5 seconds
 		timer.schedule(this, (1000 * 10), (1000 * CHECKTIME));
+        idleTimeDetector = new IdleTimeDetectorFactory().newIdleTimeDetector();
 
 		if (Spark.isWindows()) {
             LockListener lockListener = new LockListener();
             lockListener.intWinLockListener();
 		}
-	}
-	private long getIdleTime() {
-		IdleTime idleTime;
-		if (Spark.isWindows()) {
-			idleTime = new Win32IdleTime();
-		} else if (Spark.isMac()) {
-			idleTime = new MacIdleTime();
-		} else {
-			// assume/try linux
-			idleTime = new LinuxIdleTime();
-		}
-		return idleTime.getIdleTimeMillis();
 	}
 
 	@Override
@@ -142,6 +130,9 @@ public class UserIdlePlugin extends TimerTask implements Plugin {
 
     @Override
     public void run() {
+        if (idleTimeDetector == null) {
+            return;
+        }
         if (!SparkManager.getConnection().isConnected()) return;
         if (!pref.isIdleOn()) {
             return;
@@ -154,7 +145,7 @@ public class UserIdlePlugin extends TimerTask implements Plugin {
             }
         } else {
             // Set idle/online status based on duration
-            long idleDuration = getIdleTime() / 1000;
+            long idleDuration = idleTimeDetector.getIdleTimeMillis() / 1000;
             if (!hasChanged && idleDuration > pref.getIdleTime() * 60) {
                 setIdle();
                 hasChanged = true;
