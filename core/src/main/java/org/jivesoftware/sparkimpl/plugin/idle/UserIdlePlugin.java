@@ -145,24 +145,28 @@ public class UserIdlePlugin extends TimerTask implements Plugin {
 
 	}
 
-	@Override
-	public void run() {
+    @Override
+    public void run() {
         if (!SparkManager.getConnection().isConnected()) return;
-		if (!pref.isIdleOn()) {
+        if (!pref.isIdleOn()) {
             return;
         }
 
-				if (IsLocked && !hasChanged) {
-					setIdle();
-					hasChanged = true;
-				} else if ((getIdleTime() / 1000 > (pref.getIdleTime() * 60)) && !hasChanged && !IsLocked) {
-					setIdle();
-					hasChanged = true;
-				} else if ((getIdleTime() / 1000 < 10) && hasChanged && !IsLocked) {
-					setOnline();
-					hasChanged = false;
-				}
-	}
+        if (IsLocked && !hasChanged) {
+            setIdle();
+            hasChanged = true;
+        } else {
+            // Set idle/online status based on duration
+            long idleDuration = getIdleTime() / 1000;
+            if (idleDuration > pref.getIdleTime() * 60 && !hasChanged && !IsLocked) {
+                setIdle();
+                hasChanged = true;
+            } else if (idleDuration < 10 && hasChanged && !IsLocked) {
+                setOnline();
+                hasChanged = false;
+            }
+        }
+    }
 
 
 	public static class LockListener {
