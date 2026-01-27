@@ -232,7 +232,7 @@ public class GroupChatParticipantList extends JPanel {
 				ChatManager.NOTIFICATION_COLOR);
 
 		if (roomInformation != null
-				&& !roomInformation.containsFeature("muc_nonanonymous")) {
+				&& !roomInformation.containsFeature(MucFeature.NonAnonymous.getName())) {
 			return;
 		}
 

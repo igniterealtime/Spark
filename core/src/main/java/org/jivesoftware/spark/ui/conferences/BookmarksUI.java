@@ -25,6 +25,7 @@ import org.jivesoftware.smackx.bookmarks.BookmarkedConference;
 import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.disco.packet.DiscoverInfo;
 import org.jivesoftware.smackx.disco.packet.DiscoverItems;
+import org.jivesoftware.smackx.muc.MultiUserChatConstants;
 import org.jivesoftware.smackx.muc.MultiUserChatManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.JiveTreeCellRenderer;
@@ -559,7 +560,7 @@ public class BookmarksUI extends JPanel {
             else {
                 try {
                     DiscoverInfo info = discoManager.discoverInfo(item.getEntityID());
-                    if (info.containsFeature("http://jabber.org/protocol/muc")) {
+                    if (info.containsFeature(MultiUserChatConstants.NAMESPACE)) {
                         answer.add(entityID);
                     }
                 }
