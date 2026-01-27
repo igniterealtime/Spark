@@ -151,8 +151,6 @@ public class UserIdlePlugin extends TimerTask implements Plugin {
 
 		    if (!SparkManager.getConnection().isConnected()) return;
 
-			// Windows Desktop Lock
-			if (Spark.isWindows()) {
 				if (IsLocked && !hasChanged) {
 					setIdle();
 					hasChanged = true;
@@ -163,28 +161,6 @@ public class UserIdlePlugin extends TimerTask implements Plugin {
 					setOnline();
 					hasChanged = false;
 				}
-
-			}
-			if (Spark.isMac()) {
-				if ((getIdleTime() / 1000 > (pref.getIdleTime() * 60)) && !hasChanged) {
-					setIdle();
-					hasChanged = true;
-				} else if ((getIdleTime() / 1000 < 10) && hasChanged) {
-					setOnline();
-					hasChanged = false;
-				}
-			}
-
-			if (Spark.isLinux()) {
-				if ((getIdleTime() / 1000 > (pref.getIdleTime() * 60)) && !hasChanged) {
-					setIdle();
-					hasChanged = true;
-				} else if ((getIdleTime() / 1000 < 10) && hasChanged) {
-					setOnline();
-					hasChanged = false;
-				}
-			}
-
 		}
 	}
 
