@@ -42,31 +42,31 @@ public class CertificateController extends CertManager {
     /**
      * TRUSTED contains user's trusted certificates
      */
-    public final static File TRUSTED = new File(Spark.getSparkUserHome() + File.separator + "security" + File.separator + "truststore");
+    public final static File TRUSTED = new File(SECURITY_DIRECTORY, "truststore");
 
     /**
-     * EXCEPTIONS contains user's certificates that are added to exceptions (their's validity isn't checked)
+     * EXCEPTIONS contains user's certificates that are added to exceptions (their validity isn't checked)
      */
-    public final static File EXCEPTIONS = new File(Spark.getSparkUserHome() + File.separator + "security" + File.separator + "exceptions");
+    public final static File EXCEPTIONS = new File(SECURITY_DIRECTORY, "exceptions");
 
     /**
-     * DISTRUSTED_CACERTS when user remove JRE certificate then really copy of this is created in this KeyStore
+     * DISTRUSTED_CACERTS when a user removes JRE certificate then really copy of this is created in this KeyStore
      */
-    public final static File DISTRUSTED_CACERTS = new File(Spark.getSparkUserHome() + File.separator + "security" + File.separator + "distrusted_cacerts");
+    public final static File DISTRUSTED_CACERTS = new File(SECURITY_DIRECTORY, "distrusted_cacerts");
 
     /**
-     * CACERTS_EXCEPTIONS used for JRE certificates that are added to exceptions (their's validity isn't checked)
+     * CACERTS_EXCEPTIONS used for JRE certificates that are added to exceptions (their validity isn't checked)
      */
-    public final static File CACERTS_EXCEPTIONS = new File(Spark.getSparkUserHome() + File.separator + "security" + File.separator + "cacerts_exceptions");
+    public final static File CACERTS_EXCEPTIONS = new File(SECURITY_DIRECTORY, "cacerts_exceptions");
 
     /**
      * DISPLAYED_CACERTS isn't used de facto as a file as it is never saved, but this object helps in keystore management.
      * It contains CACERTS - (DISTRUSTED_CACERTS + CACERTSEXCEPTIONS)
      */
-    public final static File DISPLAYED_CACERTS = new File(Spark.getSparkUserHome() + File.separator + "security" + File.separator + "displayed_cacerts");
+    public final static File DISPLAYED_CACERTS = new File(SECURITY_DIRECTORY, "displayed_cacerts");
 
     /**
-     * CACERTS contain only JRE default certificates, data is only read from it, never saved to this file
+     * CACERTS contain only JRE default certificates, data is only read from it, never saved to this file.
      * CACERTS should be used only for read.
      */
     public final static File CACERTS = new File(System.getProperty("java.home") + File.separator + "lib" + File.separator + "security" + File.separator + "cacerts");
