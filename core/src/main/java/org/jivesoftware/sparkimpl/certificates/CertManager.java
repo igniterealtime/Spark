@@ -46,12 +46,14 @@ public abstract class CertManager {
     public final static char[] passwd = "changeit".toCharArray();
     protected boolean addToKeystore;
 
+    public final static File SECURITY_DIRECTORY = new File(Spark.getSparkUserHome() + File.separator + "security");
+
     /**
      * BLACKLIST is a KeyStore with revoked certificates. It isn't directly displayed, but when other
      * KeyStores content is added, then it is compared with this list and information about revocation
      * is added to certificate status
      */
-    public final static File BLACKLIST = new File(Spark.getSparkUserHome() + File.separator + "security" + File.separator + "blacklist");
+    public final static File BLACKLIST = new File(SECURITY_DIRECTORY, "blacklist");
 
     /**
      * Contain all certificates, used for help in managing certificates, but isn't directly displayed on the certificate table
