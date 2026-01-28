@@ -52,21 +52,21 @@ import org.jivesoftware.spark.ui.login.CertificateDialog;
 import org.jivesoftware.spark.ui.login.MutualAuthenticationSettingsPanel;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 
+/**
+ * This class is used for creating certificate signing request and self-signed certificates.
+ */
 public class IdentityController extends CertManager {
-    /**
-     * This class is used for creating certificate signing request and self signed certificates.
-     */
+    private static String commonName, organizationUnit, organization, city, country;
 
-    private static String commonName, organizationUnit, organization,city, country;
-    public final static File IDENTITY =           new File( Spark.getSparkUserHome() + File.separator + "security" + File.separator + "identitystore");
-    public final static File SECURITY_DIRECTORY = new File( Spark.getSparkUserHome() + File.separator + "security"); 
-    public static File CSR_FILE =                 new File( Spark.getSparkUserHome() + File.separator + "security" + File.separator + commonName + "_csr.pem");
-    public static File KEY_FILE =                 new File( Spark.getSparkUserHome() + File.separator + "security" + File.separator + commonName + "_key.pem");
-    public static File CERT_FILE =                new File (Spark.getSparkUserHome() + File.separator + "security" + File.separator + commonName + "_cert.pem");
+    public final static File IDENTITY = new File(Spark.getSparkUserHome() + File.separator + "security" + File.separator + "identitystore");
+    public final static File SECURITY_DIRECTORY = new File(Spark.getSparkUserHome() + File.separator + "security");
+    public static File CSR_FILE = new File(Spark.getSparkUserHome() + File.separator + "security" + File.separator + commonName + "_csr.pem");
+    public static File KEY_FILE = new File(Spark.getSparkUserHome() + File.separator + "security" + File.separator + commonName + "_key.pem");
+    public static File CERT_FILE = new File(Spark.getSparkUserHome() + File.separator + "security" + File.separator + commonName + "_cert.pem");
 
     private KeyStore idStore;
 
-    private final static String[] COLUMN_NAMES = { "Identity certificates" };
+    private final static String[] COLUMN_NAMES = {"Identity certificates"};
     private final static int NUMBER_OF_COLUMNS = COLUMN_NAMES.length;
     KeyPair keyPair;
 
@@ -77,20 +77,14 @@ public class IdentityController extends CertManager {
             throw new IllegalArgumentException("localPreferences cannot be null");
         }
         this.localPreferences = localPreferences;
-
-
         createTableModel();
-
     }
 
     @Override
-	public void loadKeyStores() {
-
+    public void loadKeyStores() {
         idStore = openKeyStore(IDENTITY);
         blackListStore = openKeyStore(BLACKLIST);
-        
         fillTableListWithKeyStoreContent(idStore, null);
-           
     }
 
     @Override
@@ -99,30 +93,27 @@ public class IdentityController extends CertManager {
     }
 
     public KeyManagerFactory initKeyManagerFactory()
-            throws KeyStoreException, NoSuchAlgorithmException, UnrecoverableKeyException, NoSuchProviderException {
+        throws KeyStoreException, NoSuchAlgorithmException, UnrecoverableKeyException, NoSuchProviderException {
         loadKeyStores();
         KeyManagerFactory keyManFact = KeyManagerFactory.getInstance("SunX509", "SunJSSE");
         keyManFact.init(idStore, IdentityController.passwd);
-
         return keyManFact;
     }
 
     public void setUpData(String commonName, String organizationUnit, String organization, String country,
-            String city) {
+                          String city) {
         IdentityController.commonName = commonName;
         IdentityController.organizationUnit = organizationUnit;
         IdentityController.organization = organization;
         IdentityController.country = country;
         IdentityController.city = city;
-        CSR_FILE =  new File( Spark.getSparkUserHome() + File.separator + "security" + File.separator + commonName + "_csr.pem");
-        KEY_FILE =  new File( Spark.getSparkUserHome() + File.separator + "security" + File.separator + commonName + "_key.pem");
-        CERT_FILE = new File (Spark.getSparkUserHome() + File.separator + "security" + File.separator + commonName + "_cert.pem");
-
+        CSR_FILE = new File(Spark.getSparkUserHome() + File.separator + "security" + File.separator + commonName + "_csr.pem");
+        KEY_FILE = new File(Spark.getSparkUserHome() + File.separator + "security" + File.separator + commonName + "_key.pem");
+        CERT_FILE = new File(Spark.getSparkUserHome() + File.separator + "security" + File.separator + commonName + "_cert.pem");
     }
 
     @Override
-	public void createTableModel() {
-
+    public void createTableModel() {
         tableModel = new DefaultTableModel();
         tableModel.setColumnIdentifiers(COLUMN_NAMES);
         Object[] certEntry = new Object[NUMBER_OF_COLUMNS];
@@ -139,56 +130,48 @@ public class IdentityController extends CertManager {
     @Override
     public void showCertificate() {
         new CertificateDialog(localPreferences,
-                allCertificates.get(MutualAuthenticationSettingsPanel.getIdTable().getSelectedRow()), this,
-                CertificateDialogReason.SHOW_ID_CERTIFICATE);
+            allCertificates.get(MutualAuthenticationSettingsPanel.getIdTable().getSelectedRow()), this,
+            CertificateDialogReason.SHOW_ID_CERTIFICATE);
     }
 
     /**
      * Creates Certificate Signing Request.
-     * 
-     * @throws OperatorCreationException
      */
     public PKCS10CertificationRequest createCSR(KeyPair keyPair) throws OperatorCreationException {
         X500Principal principal = new X500Principal(createX500NameString());
         PKCS10CertificationRequestBuilder p10Builder = new JcaPKCS10CertificationRequestBuilder(principal, keyPair.getPublic());
-       
         JcaContentSignerBuilder csBuilder = new JcaContentSignerBuilder("SHA256withRSA");
-            ContentSigner signer = csBuilder.build(keyPair.getPrivate());
-
+        ContentSigner signer = csBuilder.build(keyPair.getPrivate());
         return p10Builder.build(signer);
     }
-    
+
     /**
      * Create string representation of the X500Principal name with fields as Common Name, Organization Unit, Organization, Location and Country.
+     *
      * @return String X500Name
      */
     private String createX500NameString() {
-        StringBuilder sb = new StringBuilder();
         if (commonName == null || commonName.isEmpty()) {
             throw new IllegalArgumentException("Common Name cannot be empty");
-        } else {
-            sb.append("CN=").append(commonName);
         }
+        String sb = "CN=" + commonName;
         if (organizationUnit != null && !organizationUnit.isEmpty()) {
-            sb.append(", OU=").append(organizationUnit);
+            sb += ", OU=" + organizationUnit;
         }
         if (organization != null && !organization.isEmpty()) {
-            sb.append(", O=").append(organization);
+            sb += ", O=" + organization;
         }
         if (city != null && !city.isEmpty()) {
-            sb.append(", L=").append(city);
+            sb += ", L=" + city;
         }
         if (country != null && !country.isEmpty()) {
-            sb.append(", C=").append(country);
+            sb += ", C=" + country;
         }
-        
-        return sb.toString();
+        return sb;
     }
 
     /**
-     * This method add certificate from file (*.pem) to Identity Store.
-     * 
-     * @throws KeyStoreException
+     * This method adds certificate from file (*.pem) to Identity Store.
      */
     @Override
     public void deleteEntry(String alias) throws KeyStoreException {
@@ -201,6 +184,7 @@ public class IdentityController extends CertManager {
             for (CertificateModel certModel : allCertificates) {
                 if (certModel.getAlias().equals(alias)) {
                     model = certModel;
+                    break;
                 }
             }
             allCertificates.remove(model);
@@ -210,18 +194,15 @@ public class IdentityController extends CertManager {
 
     @Override
     public void addOrRemoveFromExceptionList(boolean checked) {
-        // TODO Auto-generated method stub
-
     }
 
     @Override
     public boolean isOnExceptionList(CertificateModel cert) {
-        // TODO Auto-generated method stub
         return false;
     }
 
     /**
-     * Refresh certificate table to make visible changes in it's model
+     * Refresh the certificate table to make visible changes in its model
      */
     @Override
     public void refreshCertTable() {
@@ -233,40 +214,31 @@ public class IdentityController extends CertManager {
     }
 
     /**
-     * This method extract key and certificate from file (*.pem) and add it to the Identity Store.
-     * 
-     * @param file with certificate that is added and private key entry
-     * @throws IOException
-     * @throws KeyStoreException
-     * @throws NoSuchAlgorithmException
-     * @throws CertificateException
-     * @throws InvalidKeySpecException
-     * @throws HeadlessException
-     * @throws InvalidNameException
+     * This method extracts a key and certificate from the file (*.pem) and adds it to the Identity Store.
+     *
+     * @param file with a certificate that is added and private key entry
      */
     @Override
     public void addEntryFileToKeyStore(File file)
-            throws IOException, CertificateException, InvalidKeySpecException, NoSuchAlgorithmException, KeyStoreException, InvalidNameException {
+        throws IOException, CertificateException, InvalidKeySpecException, NoSuchAlgorithmException, KeyStoreException, InvalidNameException {
 
         byte[] certAndKey = Files.readAllBytes(file.toPath());
-
         X509Certificate addedCert = parseCertificate(certAndKey);
         PrivateKey key = parseKey(certAndKey);
-
         addEntryToKeyStore(addedCert, key);
     }
-   
-    public PrivateKey parseKey(byte[] certAndKey) throws PEMException, InvalidKeySpecException, NoSuchAlgorithmException {
-        byte[] keyBytes = PemHelper.parseDERFromPEM(certAndKey, PemHelper.knowDelimeter(certAndKey, PemHelper.typeOfDelimeter.KEY_BEGIN),
-                PemHelper.knowDelimeter(certAndKey, PemHelper.typeOfDelimeter.KEY_END));
 
+    public PrivateKey parseKey(byte[] certAndKey) throws PEMException, InvalidKeySpecException, NoSuchAlgorithmException {
+        String beginDelimiter = PemHelper.knowDelimeter(certAndKey, PemHelper.typeOfDelimeter.KEY_BEGIN);
+        String endDelimiter = PemHelper.knowDelimeter(certAndKey, PemHelper.typeOfDelimeter.KEY_END);
+        byte[] keyBytes = PemHelper.parseDERFromPEM(certAndKey, beginDelimiter, endDelimiter);
         return PemHelper.generatePrivateKeyFromDER(keyBytes);
     }
-    
-    public X509Certificate parseCertificate(byte[] certAndKey) throws PEMException, CertificateException {
-        byte[] certBytes = PemHelper.parseDERFromPEM(certAndKey, PemHelper.knowDelimeter(certAndKey, PemHelper.typeOfDelimeter.CERT_BEGIN),
-                PemHelper.knowDelimeter(certAndKey, PemHelper.typeOfDelimeter.CERT_END));
 
+    public X509Certificate parseCertificate(byte[] certAndKey) throws PEMException, CertificateException {
+        String beginDelimiter = PemHelper.knowDelimeter(certAndKey, PemHelper.typeOfDelimeter.CERT_BEGIN);
+        String endDelimiter = PemHelper.knowDelimeter(certAndKey, PemHelper.typeOfDelimeter.CERT_END);
+        byte[] certBytes = PemHelper.parseDERFromPEM(certAndKey, beginDelimiter, endDelimiter);
         return PemHelper.generateCertificateFromDER(certBytes);
     }
 
@@ -276,27 +248,26 @@ public class IdentityController extends CertManager {
         if (!checkForSameCertificate(addedCert)) {
             certDialog = showCertificate(certModel, CertificateDialogReason.ADD_ID_CERTIFICATE);
         }
+        // Adds certificate to keystore if user approves
         if (certDialog != null && certDialog.isAddCert()) {
             String alias = useCommonNameAsAlias(addedCert);
             X509Certificate[] chain = {addedCert};
-            
             idStore.setKeyEntry(alias, key, passwd, chain);
             allCertificates.add(new CertificateModel(addedCert));
             refreshCertTable();
             JOptionPane.showMessageDialog(null, Res.getString("dialog.certificate.has.been.added.to.identity.store"));
         }
     }
-    
+
     @Override
     protected boolean checkForSameAlias(String alias) throws HeadlessException, KeyStoreException {
         return idStore.containsAlias(alias);
     }
 
     public KeyPair createKeyPair() throws NoSuchAlgorithmException, NoSuchProviderException {
-        KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA", "BC" );
+        KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA", "BC");
         generator.initialize(2048, new SecureRandom());
         keyPair = generator.generateKeyPair();
-                    
         return keyPair;
     }
 
@@ -305,17 +276,17 @@ public class IdentityController extends CertManager {
         long serial = System.currentTimeMillis();
         SubjectPublicKeyInfo keyInfo = SubjectPublicKeyInfo.getInstance(keyPair.getPublic().getEncoded());
         X500Name name = new X500Name(createX500NameString());
-        X509v3CertificateBuilder certBuilder = new X509v3CertificateBuilder(name, 
-                                                                            BigInteger.valueOf(serial), 
-                                                                            new Date(System.currentTimeMillis() - 1000000000), 
-                                                                            new Date(System.currentTimeMillis() + 1000000000),
-                                                                            name, 
-                                                                            keyInfo
-                                                                            );
-        certBuilder.addExtension(Extension.basicConstraints, true, new BasicConstraints(true)); 
-        certBuilder.addExtension(Extension.keyUsage,         true, new KeyUsage(KeyUsage.digitalSignature | KeyUsage.keyEncipherment));
+        X509v3CertificateBuilder certBuilder = new X509v3CertificateBuilder(name,
+            BigInteger.valueOf(serial),
+            new Date(System.currentTimeMillis() - 1000000000),
+            new Date(System.currentTimeMillis() + 1000000000),
+            name,
+            keyInfo
+        );
+        certBuilder.addExtension(Extension.basicConstraints, true, new BasicConstraints(true));
+        certBuilder.addExtension(Extension.keyUsage, true, new KeyUsage(KeyUsage.digitalSignature | KeyUsage.keyEncipherment));
         certBuilder.addExtension(Extension.extendedKeyUsage, true, new ExtendedKeyUsage(KeyPurposeId.id_kp_clientAuth));
-    
+
         JcaContentSignerBuilder csBuilder = new JcaContentSignerBuilder("SHA256withRSA");
         ContentSigner signer = csBuilder.build(keyPair.getPrivate());
         X509CertificateHolder certHolder = certBuilder.build(signer);
