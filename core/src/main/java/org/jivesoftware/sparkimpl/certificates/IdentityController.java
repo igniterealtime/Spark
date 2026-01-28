@@ -58,11 +58,10 @@ import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 public class IdentityController extends CertManager {
     private static String commonName, organizationUnit, organization, city, country;
 
-    public final static File IDENTITY = new File(Spark.getSparkUserHome() + File.separator + "security" + File.separator + "identitystore");
-    public final static File SECURITY_DIRECTORY = new File(Spark.getSparkUserHome() + File.separator + "security");
-    public static File CSR_FILE = new File(Spark.getSparkUserHome() + File.separator + "security" + File.separator + commonName + "_csr.pem");
-    public static File KEY_FILE = new File(Spark.getSparkUserHome() + File.separator + "security" + File.separator + commonName + "_key.pem");
-    public static File CERT_FILE = new File(Spark.getSparkUserHome() + File.separator + "security" + File.separator + commonName + "_cert.pem");
+    public final static File IDENTITY = new File(SECURITY_DIRECTORY, "identitystore");
+    public static File CSR_FILE = new File(SECURITY_DIRECTORY, commonName + "_csr.pem");
+    public static File KEY_FILE = new File(SECURITY_DIRECTORY, commonName + "_key.pem");
+    public static File CERT_FILE = new File(SECURITY_DIRECTORY, commonName + "_cert.pem");
 
     private KeyStore idStore;
 
@@ -107,9 +106,9 @@ public class IdentityController extends CertManager {
         IdentityController.organization = organization;
         IdentityController.country = country;
         IdentityController.city = city;
-        CSR_FILE = new File(Spark.getSparkUserHome() + File.separator + "security" + File.separator + commonName + "_csr.pem");
-        KEY_FILE = new File(Spark.getSparkUserHome() + File.separator + "security" + File.separator + commonName + "_key.pem");
-        CERT_FILE = new File(Spark.getSparkUserHome() + File.separator + "security" + File.separator + commonName + "_cert.pem");
+        CSR_FILE = new File(SECURITY_DIRECTORY, commonName + "_csr.pem");
+        KEY_FILE = new File(SECURITY_DIRECTORY, commonName + "_key.pem");
+        CERT_FILE = new File(SECURITY_DIRECTORY, commonName + "_cert.pem");
     }
 
     @Override
