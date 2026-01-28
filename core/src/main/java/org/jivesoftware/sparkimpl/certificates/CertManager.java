@@ -264,11 +264,22 @@ public abstract class CertManager {
     }
 
     protected void saveKeyStore(KeyStore keyStore, File file) {
+        if (keyStore == null) {
+            return;
+        }
+        boolean isEmpty;
+        try {
+            isEmpty = keyStore.size() == 0;
+        } catch (KeyStoreException ignored) {
+            return;
+        }
+        if (isEmpty) {
+            file.delete();
+            return;
+        }
         try (OutputStream outputStream = Files.newOutputStream(file.toPath())) {
-            if (keyStore != null) {
-                keyStore.store(outputStream, passwd);
-            }
-        } catch (IOException | KeyStoreException | NoSuchAlgorithmException | CertificateException e) {
+            keyStore.store(outputStream, passwd);
+        } catch (Exception e) {
             Log.error("Couldn't save KeyStore", e);
         }
     }
