@@ -63,6 +63,8 @@ import org.jxmpp.jid.Jid;
 import org.jxmpp.jid.util.JidUtil;
 import org.jxmpp.util.XmppStringUtils;
 
+import static org.jivesoftware.smackx.muc.MucConfigFormManager.MUC_ROOMCONFIG_ROOMOWNERS;
+
 public class InvitationPane {
 
     private Map<String, List<String>> metadata = null;
@@ -274,7 +276,7 @@ public class InvitationPane {
                     FillableForm form = muc.getConfigurationForm().getFillableForm();
                     List<String> jidStrings = new ArrayList<>(list.size());
                     JidUtil.toStrings(list, jidStrings);
-                    form.setAnswer("muc#roomconfig_roomowners", jidStrings);
+                    form.setAnswer(MUC_ROOMCONFIG_ROOMOWNERS, jidStrings);
 
                     // new DataFormDialog(groupChat, form);
                     muc.sendConfigurationForm(form);
