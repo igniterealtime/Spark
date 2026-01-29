@@ -506,6 +506,31 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
                 String errorMsg = null;
                 try {
                     rooms = MultiUserChatManager.getInstanceFor(SparkManager.getConnection()).getRoomsHostedBy(serviceName);
+                } catch (XMPPException.XMPPErrorException e) {
+                    StanzaError.Condition condition = e.getStanzaError().getCondition();
+                    if (condition == StanzaError.Condition.feature_not_implemented || condition == StanzaError.Condition.service_unavailable) {
+                        errorMsg = Res.getString("message.conference.rooms.unsupported");
+                    } else {
+                        Log.error("Unable to retrieve list of rooms from " + serviceName + ": " + e);
+                        errorMsg = e.getMessage();
+                    }
+                } catch (Exception e) {
+                    Log.error("Unable to retrieve list of rooms from " + serviceName, e);
+                    errorMsg = e.getMessage();
+                }
+                // if there was an error show it to a user
+                if (errorMsg != null) {
+                    UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
+                    JOptionPane.showMessageDialog(conferences,
+                        Res.getString("message.conference.info.error") + "\n" + errorMsg,
+                        Res.getString("title.error"),
+                        JOptionPane.ERROR_MESSAGE);
+                    if (dlg != null) {
+                        dlg.dispose();
+                    }
+                    stopLoadingImg();
+                    return;
+                }
                         try {
                             for (Map.Entry<EntityBareJid, HostedRoom> room : rooms.entrySet()) {
 
@@ -522,8 +547,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
                                 RoomInfo roomInfo = null;
                                 try {
                                 roomInfo = MultiUserChatManager.getInstanceFor( SparkManager.getConnection() ).getRoomInfo( roomJID );
-                                } catch (Exception e) {
-                                // Nothing to do
+                                } catch (Exception ignored) {
                                 }
 
                                 if (roomInfo != null) {
@@ -539,30 +563,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
                         } catch (Exception e) {
                             Log.error("Error setting up GroupChatTable", e);
                         }
-                } catch (XMPPException.XMPPErrorException e) {
-                    StanzaError.Condition condition = e.getStanzaError().getCondition();
-                    if (condition != StanzaError.Condition.feature_not_implemented && condition != StanzaError.Condition.service_unavailable) {
-                        Log.error("Unable to retrieve list of rooms from " + serviceName + ": " + e);
-                        errorMsg = e.getMessage();
-                    } else {
-                        errorMsg = Res.getString("message.conference.rooms.unsupported");
-                    }
-                } catch (Exception e) {
-                    Log.error("Unable to retrieve list of rooms from " + serviceName, e);
-                    errorMsg = e.getMessage();
-                }
                 stopLoadingImg();
-                // if there was an error show it to a user
-                if (errorMsg != null) {
-                    UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
-                    JOptionPane.showMessageDialog(conferences,
-                        Res.getString("message.conference.info.error") + "\n" + errorMsg,
-                        Res.getString("title.error"),
-                        JOptionPane.ERROR_MESSAGE);
-                    if (dlg != null) {
-                        dlg.dispose();
-                    }
-                }
             }
         };
 
