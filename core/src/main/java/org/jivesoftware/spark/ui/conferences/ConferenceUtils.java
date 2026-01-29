@@ -55,6 +55,8 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
 
+import static org.jivesoftware.smackx.muc.MucConfigFormManager.*;
+
 /**
  * ConferenceUtils allow for basic joining and inviting of users.
  */
@@ -249,12 +251,12 @@ public class ConferenceUtils {
         try {
             // Since this is a private room, make the room not public and set user as owner of the room.
             FillableForm submitForm = multiUserChat.getConfigurationForm().getFillableForm();
-            submitForm.setAnswer("muc#roomconfig_publicroom", false);
-            submitForm.setAnswer("muc#roomconfig_roomname", roomName);
+            submitForm.setAnswer(MUC_ROOMCONFIG_PUBLICLYSEARCHABLEROOM, false);
+            submitForm.setAnswer(MUC_ROOMCONFIG_ROOMNAME, roomName);
 
-            final List<String> owners = new ArrayList<>();
+            final List<String> owners = new ArrayList<>(1);
             owners.add(SparkManager.getSessionManager().getUserBareAddress().toString());
-            submitForm.setAnswer("muc#roomconfig_roomowners", owners);
+            submitForm.setAnswer(MUC_ROOMCONFIG_ROOMOWNERS, owners);
 
             multiUserChat.sendConfigurationForm(submitForm);
         }

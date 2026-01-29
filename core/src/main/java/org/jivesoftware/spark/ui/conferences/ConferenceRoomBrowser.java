@@ -83,6 +83,8 @@ import org.jxmpp.jid.parts.Localpart;
 import org.jxmpp.jid.parts.Resourcepart;
 import org.jxmpp.stringprep.XmppStringprepException;
 
+import static org.jivesoftware.smackx.muc.MucConfigFormManager.*;
+
 /**
  * A UI that handles all Group Rooms contained in an XMPP Messenger server. This
  * handles creation and joining of rooms for group chat discussions as well as
@@ -865,10 +867,10 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
             if (mucRoomDialog.isPasswordProtected()) {
                 String password = mucRoomDialog.getPassword();
                 room.setPassword(password);
-                form.setAnswer("muc#roomconfig_passwordprotectedroom", true);
-                form.setAnswer("muc#roomconfig_roomsecret", password);
+                form.setAnswer(MUC_ROOMCONFIG_PASSWORDPROTECTEDROOM, true);
+                form.setAnswer(MUC_ROOMCONFIG_ROOMSECRET, password);
             }
-            form.setAnswer("muc#roomconfig_roomname", mucRoomDialog.getRoomName());
+            form.setAnswer(MUC_ROOMCONFIG_ROOMNAME, mucRoomDialog.getRoomName());
             form.setAnswer("muc#roomconfig_roomdesc", mucRoomDialog.getRoomTopic());
 
             if (mucRoomDialog.isPermanent()) {
@@ -877,7 +879,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
 
             List<String> owners = new ArrayList<>(1);
             owners.add(SparkManager.getSessionManager().getUserBareAddress().toString());
-            form.setAnswer("muc#roomconfig_roomowners", owners);
+            form.setAnswer(MUC_ROOMCONFIG_ROOMOWNERS, owners);
 
             // new DataFormDialog(groupChat, form);
             groupChat.sendConfigurationForm(form);
