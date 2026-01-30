@@ -37,6 +37,8 @@ import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 /**
  * A simple classloader to extend the classpath to
  * include all jars in a lib directory.<p>
@@ -113,7 +115,7 @@ public class PluginClassLoader extends URLClassLoader {
 
         // Get an array of class loaders to try loading the providers files from.
 
-        Reader reader = new BufferedReader(new InputStreamReader(providerStream, "UTF-8"));
+        Reader reader = new BufferedReader(new InputStreamReader(providerStream, UTF_8));
         try {
             final XmlPullParser parser = SmackXmlParser.newXmlParser(reader);
             XmlPullParser.Event eventType = parser.getEventType();
