@@ -204,7 +204,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener, Com
 
         //build model for roomsTable, ignoring the 1st column
         sorter = new TableRowSorter<>(roomsTable.getModel());
-        sorter.setComparator(3, Comparator.comparing((String o) -> Long.valueOf(o)));
+        sorter.setComparator(3, Comparator.comparing((String o) -> !o.isEmpty() ? Long.parseLong(o) : 0));
         roomsTable.setRowSorter(sorter);
 
         final JScrollPane pane = new JScrollPane(roomsTable);
@@ -895,7 +895,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener, Com
                     }
                 }
 
-                String occupants = numberOfOccupants != -1 ? Integer.toString(numberOfOccupants) : "n/a";
+                String occupants = numberOfOccupants != -1 ? Integer.toString(numberOfOccupants) : "";
                 String roomAddress = jid.getLocalpart().toString();
                 String roomTitle = roomName != null ? roomName : roomAddress;
                 return new Object[]{iconLabel, roomTitle, roomAddress, occupants};
