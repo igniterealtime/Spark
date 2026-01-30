@@ -876,11 +876,6 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
             if (mucRoomDialog.isPermanent()) {
                 form.setAnswer("muc#roomconfig_persistentroom", true);
             }
-
-            List<String> owners = new ArrayList<>(1);
-            owners.add(SparkManager.getSessionManager().getUserBareAddress().toString());
-            form.setAnswer(MUC_ROOMCONFIG_ROOMOWNERS, owners);
-
             // new DataFormDialog(groupChat, form);
             groupChat.sendConfigurationForm(form);
             EntityBareJid groupChatRoom = groupChat.getRoom();

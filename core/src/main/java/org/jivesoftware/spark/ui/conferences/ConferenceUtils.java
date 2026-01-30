@@ -254,10 +254,6 @@ public class ConferenceUtils {
             submitForm.setAnswer(MUC_ROOMCONFIG_PUBLICLYSEARCHABLEROOM, false);
             submitForm.setAnswer(MUC_ROOMCONFIG_ROOMNAME, roomName);
 
-            final List<String> owners = new ArrayList<>(1);
-            owners.add(SparkManager.getSessionManager().getUserBareAddress().toString());
-            submitForm.setAnswer(MUC_ROOMCONFIG_ROOMOWNERS, owners);
-
             multiUserChat.sendConfigurationForm(submitForm);
         }
         catch (XMPPException | SmackException e1) {
