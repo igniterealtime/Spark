@@ -16,9 +16,12 @@ import javax.swing.JOptionPane;
 import net.java.sipmack.common.Log;
 
 import org.jivesoftware.Spark;
+import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.spark.plugin.phone.resource.PhoneRes;
 import org.xmlpull.mxp1.MXParser;
 import org.xmlpull.v1.XmlPullParser;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class PhonebookManager implements BookManager
 {
@@ -110,7 +113,7 @@ public class PhonebookManager implements BookManager
        try {
            final MXParser parser = new MXParser();
            parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, true);
-           BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(bookFile), "UTF-8"));
+           BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(bookFile), UTF_8));
            parser.setInput(in);
            boolean done = false;
            while (!done) {
@@ -177,12 +180,12 @@ public class PhonebookManager implements BookManager
       // Write out new File
       try {
           getPhonebookFile().getParentFile().mkdirs();
-          BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(getPhonebookFile()), "UTF-8"));
+          BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(getPhonebookFile()), UTF_8));
           out.write(builder.toString());
           out.close();
       }
       catch (IOException e) {
-          org.jivesoftware.spark.util.log.Log.error(e);
+          Log.error(e);
       }
   }
    

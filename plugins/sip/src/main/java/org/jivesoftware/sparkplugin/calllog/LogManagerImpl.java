@@ -39,6 +39,8 @@ import java.io.*;
 import java.text.DateFormat;
 import java.util.*;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 /**
  * Title: SIPark
  * Description:JAIN-SIP Audio/Video phone application
@@ -188,7 +190,7 @@ public class LogManagerImpl implements SoftPhoneListener, LogManager {
         // Write out new File
         try {
             getHistoryFile().getParentFile().mkdirs();
-            BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(getHistoryFile()), "UTF-8"));
+            BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(getHistoryFile()), UTF_8));
             out.write(builder.toString());
             out.close();
         }
@@ -215,7 +217,7 @@ public class LogManagerImpl implements SoftPhoneListener, LogManager {
         try {
             final MXParser parser = new MXParser();
             parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, true);
-            BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(historyFile), "UTF-8"));
+            BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(historyFile), UTF_8));
             parser.setInput(in);
             boolean done = false;
             while (!done) {
