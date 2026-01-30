@@ -6,7 +6,7 @@
     <homePage>http://www.jivesoftware.org</homePage>
     <email>derek@jivesoftware.com</email>
     <class>org.jivesoftware.sparkplugin.JinglePlugin</class>
-    <minSparkVersion>3.0.0</minSparkVersion>
+    <minSparkVersion>3.1.0</minSparkVersion>
     <os>Windows,mac,linux</os>
-    <java>1.8.0</java>
+    <java>11</java>
 </plugin>

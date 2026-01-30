@@ -7,7 +7,7 @@
     <homePage>http://www.jivesoftware.org</homePage>
     <email>pete@jivesoftware.com</email>
     <class>org.jivesoftware.spark.plugins.transfersettings.FileTransferSettingsPlugin</class>
-    <minSparkVersion>3.0.0</minSparkVersion>
-    <java>1.8.0</java>
+    <minSparkVersion>3.1.0</minSparkVersion>
+    <java>11</java>
 </plugin>
 

@@ -6,8 +6,8 @@
     <author>Holger Bergunde</author>
     <homePage>http://www.stytrix.de</homePage>
     <email>holger@bergunde.de</email>
-    <minSparkVersion>3.0.0</minSparkVersion>
-    <java>1.8.0</java>
+    <minSparkVersion>3.1.0</minSparkVersion>
+    <java>11</java>
     <class>org.jivesoftware.spark.otrplug.OTRPlugin</class>
     <os>Windows,Linux,Mac</os>
 </plugin>
