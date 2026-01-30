@@ -12,7 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */ 
+ */
 package org.jivesoftware.spark.ui.conferences;
 
 import org.jivesoftware.resource.SparkRes;
@@ -48,6 +48,8 @@ import java.awt.Insets;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
+import static java.awt.GridBagConstraints.*;
+
 public class RoomCreationDialog extends JPanel {
     private static final long serialVersionUID = -8391698290385575601L;
     private final JLabel nameLabel = new JLabel();
@@ -66,24 +68,24 @@ public class RoomCreationDialog extends JPanel {
     public RoomCreationDialog() {
         try {
             jbInit();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             Log.error(e);
         }
     }
 
     private void jbInit() {
         this.setLayout(gridBagLayout1);
-        this.add(confirmPasswordField, new GridBagConstraints(1, 4, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
-        this.add(passwordField, new GridBagConstraints(1, 3, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
-        this.add(topicField, new GridBagConstraints(1, 1, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
-        this.add(nameField, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
-        this.add(privateCheckbox, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-        this.add(permanentCheckBox, new GridBagConstraints(0, 5, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-        this.add(confirmPasswordLabel, new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-        this.add(passwordLabel, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-        this.add(topicLabel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 5, 0));
-        this.add(nameLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        Insets insets = new Insets(5, 5, 5, 5);
+        this.add(confirmPasswordField, new GridBagConstraints(1, 4, 1, 1, 1.0, 0.0, WEST, HORIZONTAL, insets, 0, 0));
+        this.add(passwordField, new GridBagConstraints(1, 3, 1, 1, 1.0, 0.0, WEST, HORIZONTAL, insets, 0, 0));
+        this.add(topicField, new GridBagConstraints(1, 1, 1, 1, 1.0, 0.0, WEST, HORIZONTAL, insets, 0, 0));
+        this.add(nameField, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, WEST, HORIZONTAL, insets, 0, 0));
+        this.add(privateCheckbox, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, WEST, NONE, insets, 0, 0));
+        this.add(permanentCheckBox, new GridBagConstraints(0, 5, 1, 1, 0.0, 0.0, WEST, NONE, insets, 0, 0));
+        this.add(confirmPasswordLabel, new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0, WEST, NONE, insets, 0, 0));
+        this.add(passwordLabel, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, WEST, NONE, insets, 0, 0));
+        this.add(topicLabel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, WEST, NONE, insets, 5, 0));
+        this.add(nameLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, WEST, NONE, insets, 0, 0));
 
         ResourceUtils.resLabel(nameLabel, nameField, Res.getString("label.room.name"));
         ResourceUtils.resLabel(topicLabel, topicField, Res.getString("label.room.topic") + ":");
@@ -123,18 +125,18 @@ public class RoomCreationDialog extends JPanel {
 
         PropertyChangeListener changeListener = new PropertyChangeListener() {
             @Override
-			public void propertyChange(PropertyChangeEvent e) {
+            public void propertyChange(PropertyChangeEvent e) {
                 Object o = pane.getValue();
                 if (o instanceof Integer) {
                     dlg.setVisible(false);
                     return;
                 }
 
-                String value = (String)pane.getValue();
+                String value = (String) pane.getValue();
+                // Closes dialog or creates group chat based on input
                 if (Res.getString("close").equals(value)) {
                     dlg.setVisible(false);
-                }
-                else if (Res.getString("create").equals(value)) {
+                } else if (Res.getString("create").equals(value)) {
                     boolean isValid = validatePanel();
                     if (isValid) {
                         String roomJidString = nameField.getText().replaceAll(" ", "_") + "@" + serviceName;
@@ -145,30 +147,25 @@ public class RoomCreationDialog extends JPanel {
                             throw new IllegalStateException(ex);
                         }
                         try {
-                            MultiUserChatManager.getInstanceFor( SparkManager.getConnection() ).getRoomInfo( room );
+                            MultiUserChatManager.getInstanceFor(SparkManager.getConnection()).getRoomInfo(room);
                             //JOptionPane.showMessageDialog(dlg, "Room already exists. Please specify a unique room name.", "Room Exists", JOptionPane.ERROR_MESSAGE);
                             //pane.setValue(JOptionPane.UNINITIALIZED_VALUE);
                             pane.removePropertyChangeListener(this);
                             dlg.setVisible(false);
                             ConferenceUtils.joinConferenceRoom(room.toString(), room);
                             return;
-                        }
-                        catch (XMPPException | SmackException | InterruptedException e1) {
-                            // Nothing to do
+                        } catch (XMPPException | SmackException | InterruptedException ignored) {
                         }
 
                         groupChat = createGroupChat(nameField.getText(), serviceName);
                         if (groupChat == null) {
                             showError("Could not join chat " + nameField.getText());
                             pane.setValue(JOptionPane.UNINITIALIZED_VALUE);
-
-                        }
-                        else {
+                        } else {
                             pane.removePropertyChangeListener(this);
                             dlg.setVisible(false);
                         }
-                    }
-                    else {
+                    } else {
                         pane.setValue(JOptionPane.UNINITIALIZED_VALUE);
                     }
                 }
@@ -204,34 +201,29 @@ public class RoomCreationDialog extends JPanel {
                 passwordField.requestFocus();
                 return false;
             }
-
             if (!ModelUtil.hasLength(confirmPassword)) {
                 showError(Res.getString("message.confirmation.password.error"));
                 confirmPasswordField.requestFocus();
                 return false;
             }
-
             if (!password.equals(confirmPassword)) {
                 showError(Res.getString("message.passwords.no.match"));
                 passwordField.requestFocus();
                 return false;
             }
         }
-
         return true;
     }
 
     private MultiUserChat createGroupChat(String roomName, DomainBareJid serviceName) {
         String roomString = roomName.replaceAll(" ", "_") + "@" + serviceName;
         EntityBareJid room = JidCreate.entityBareFromOrThrowUnchecked(roomString);
-
         // Create a group chat with valid information
-        return MultiUserChatManager.getInstanceFor( SparkManager.getConnection() ).getMultiUserChat( room );
+        return MultiUserChatManager.getInstanceFor(SparkManager.getConnection()).getMultiUserChat(room);
     }
 
-
     private void showError(String errorMessage) {
-    	UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
+        UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
         JOptionPane.showMessageDialog(this, errorMessage, Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
     }
 
@@ -244,8 +236,7 @@ public class RoomCreationDialog extends JPanel {
     }
 
     public boolean isPasswordProtected() {
-        String password = new String(passwordField.getPassword());
-        return password.length() > 0;
+        return passwordField.getPassword().length > 0;
     }
 
     public String getPassword() {
@@ -254,15 +245,13 @@ public class RoomCreationDialog extends JPanel {
 
     /**
      * Returns the Room name of the RoomCreationDialog
-     *
-     * @return The Room name
      */
     public String getRoomName() {
         return nameField.getText();
     }
+
     /**
-     * Returns the Topic of the RoomCreationDialog
-     * @return The Rooms Topic
+     * Returns the Rooms Topic of the RoomCreationDialog
      */
     public String getRoomTopic() {
         return topicField.getText();
