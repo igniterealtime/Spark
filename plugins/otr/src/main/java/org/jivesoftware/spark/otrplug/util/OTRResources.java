@@ -5,6 +5,7 @@ package org.jivesoftware.spark.otrplug.util;
  * 
  * @author Bergunde Holger
  */
+import java.net.URL;
 import java.text.MessageFormat;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
@@ -17,19 +18,14 @@ public class OTRResources {
 
     private static PropertyResourceBundle prb;
 
-    static ClassLoader cl = OTRResources.class.getClassLoader();
-
     static {
         prb = (PropertyResourceBundle) ResourceBundle.getBundle("i18n/otrplugin_i18n");
     }
 
     /**
      * Returns a string from the language file
-     * 
-     * @param propertyName
-     * @return
      */
-    public static final String getString(String propertyName) {
+    public static String getString(String propertyName) {
         try {
             return prb.getString(propertyName);
         } catch (Exception e) {
@@ -40,9 +36,6 @@ public class OTRResources {
 
     /**
      * Returns an ImageIcon from OTR resources folder
-     * 
-     * @param fileName
-     * @return
      */
     public static ImageIcon getIcon(String fileName) {
         try {
@@ -51,28 +44,26 @@ public class OTRResources {
             if (imageURL != null) {
                 return new ImageIcon(imageURL);
             } else {
-                Log.warning(imageName + " not found.");
+                Log.warning(fileName + " not found.");
             }
         }
         catch (Exception e) {
-            Log.warning("Unable to load image " + imageName, e);
+            Log.warning("Unable to load image " + fileName, e);
         }
         return null;
     }
 
     /**
      * Returns a string with wildcards
-     * 
-     * @param propertyName
-     * @param obj
      */
     public static String getString(String propertyName, Object... obj) {
-        String str = prb.getString(propertyName);
-        if (str == null) {
+        try {
+            String str = prb.getString(propertyName);
+            return MessageFormat.format(str, obj);
+        } catch (Exception e) {
+            Log.error(e);
             return propertyName;
         }
-
-        return MessageFormat.format(str, obj);
     }
 
 }

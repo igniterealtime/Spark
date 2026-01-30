@@ -11,7 +11,6 @@ import org.jivesoftware.spark.SparkManager;
  * OTRProperties file stuff
  * 
  * @author Bergunde Holger
- * 
  */
 public class OTRProperties {
     private Properties props;
@@ -22,8 +21,6 @@ public class OTRProperties {
 
     /**
      * returns the Instance of this Properties file
-     * 
-     * @return
      */
     public static OTRProperties getInstance() {
         synchronized (LOCK) {
@@ -36,19 +33,16 @@ public class OTRProperties {
 
     private OTRProperties() {
         this.props = new Properties();
-
         try {
             props.load(new FileInputStream(getConfigFile()));
         } catch (IOException e) {
             // Can't load ConfigFile
         }
-
     }
 
     private File getConfigFile() {
         if (configFile == null)
             configFile = new File(SparkManager.getUserDirectory(), "otr.properties");
-
         return configFile;
     }
 
@@ -84,8 +78,6 @@ public class OTRProperties {
         setBoolean("OTRCloseOnChatClose", enabled);
     }
 
-    // ===============================================================================
-    // ===============================================================================
     // ===============================================================================
     private boolean getBoolean(String property, boolean defaultValue) {
         return Boolean.parseBoolean(props.getProperty(property, Boolean.toString(defaultValue)));
