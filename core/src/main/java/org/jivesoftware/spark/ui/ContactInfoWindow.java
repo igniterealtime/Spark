@@ -34,6 +34,8 @@ import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.packet.StanzaError.Condition;
+import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
+import org.jivesoftware.smackx.disco.packet.DiscoverInfo;
 import org.jivesoftware.smackx.vcardtemp.packet.VCard;
 import org.jivesoftware.smackx.iqlast.packet.LastActivity;
 import org.jivesoftware.smackx.iqlast.LastActivityManager;
@@ -239,30 +241,35 @@ public class ContactInfoWindow extends JPanel {
 
 	        try {
                 //If user is away (not offline), last activity request is sent to client
-				Jid client = status.equals(Res.getString("offline")) ? contactItem.getJid() : contactItem.getPresence().getFrom();
-	            LastActivity activity = LastActivityManager.getInstanceFor( SparkManager.getConnection() ).getLastActivity(client);
-	
-	            long idleTime = (activity.getIdleTime() * 1000);
-	
-	            if (idleTime > 0) {
-	                if (status.equals(Res.getString("offline"))) {
-		                SimpleDateFormat format = new SimpleDateFormat("M/d/yy");
-		                Date l = new Date();
-		                String curDay = format.format(l);
-		                l.setTime(l.getTime() - idleTime);
-		                //If idleTime is within today show the time, otherwise, show the day, date, and time
-		                if (curDay.equals(format.format(l))) {
-		                    format = new SimpleDateFormat("h:mm a");
-		                } else {
-		                    format = new SimpleDateFormat("EEE M/d/yy h:mm a");
-		                }
-	                	status += (" " + Res.getString("time.since")+ " " + format.format(l));
-	                } else if (contactItem.getPresence().isAway()) {
-	                    status += "\n";
-	                    String time = ModelUtil.getTimeFromLong(idleTime);
-	                    status += Res.getString("message.idle.for", time);
-	                }
-	            }
+                final DiscoverInfo discoveredInfo = ServiceDiscoveryManager.getInstanceFor(SparkManager.getConnection()).discoverInfo(contactItem.getJid());
+                if (discoveredInfo.containsFeature(LastActivity.NAMESPACE)) {
+                    // The 'Movim' client, only when queried on its _full_ JID, sends back an invalid IQ error stanza (without a child element) causing Smack's parser to disconnect. Querying the bare JID doesn't cause this issue.
+                    final boolean isMovim = discoveredInfo.getIdentities("client", "web").stream().anyMatch(identity -> "movim".equalsIgnoreCase(identity.getName()));
+                    Jid client = isMovim || status.equals(Res.getString("offline")) ? contactItem.getJid() : contactItem.getPresence().getFrom();
+                    LastActivity activity = LastActivityManager.getInstanceFor(SparkManager.getConnection()).getLastActivity(client);
+
+                    long idleTime = (activity.getIdleTime() * 1000);
+
+                    if (idleTime > 0) {
+                        if (status.equals(Res.getString("offline"))) {
+                            SimpleDateFormat format = new SimpleDateFormat("M/d/yy");
+                            Date l = new Date();
+                            String curDay = format.format(l);
+                            l.setTime(l.getTime() - idleTime);
+                            //If idleTime is within today show the time, otherwise, show the day, date, and time
+                            if (curDay.equals(format.format(l))) {
+                                format = new SimpleDateFormat("h:mm a");
+                            } else {
+                                format = new SimpleDateFormat("EEE M/d/yy h:mm a");
+                            }
+                            status += (" " + Res.getString("time.since") + " " + format.format(l));
+                        } else if (contactItem.getPresence().isAway()) {
+                            status += "\n";
+                            String time = ModelUtil.getTimeFromLong(idleTime);
+                            status += Res.getString("message.idle.for", time);
+                        }
+                    }
+                }
             } catch (XMPPException.XMPPErrorException e) {
                 Condition condition = e.getStanzaError().getCondition();
                 if (condition != Condition.feature_not_implemented && condition != Condition.service_unavailable) {
