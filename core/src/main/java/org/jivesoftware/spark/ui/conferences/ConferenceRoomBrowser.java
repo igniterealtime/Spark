@@ -79,10 +79,10 @@ import org.jxmpp.jid.DomainBareJid;
 import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.Jid;
 import org.jxmpp.jid.impl.JidCreate;
-import org.jxmpp.jid.parts.Localpart;
 import org.jxmpp.jid.parts.Resourcepart;
 import org.jxmpp.stringprep.XmppStringprepException;
 
+import static java.awt.BorderLayout.*;
 import static org.jivesoftware.smackx.muc.MucConfigFormManager.*;
 
 /**
@@ -91,21 +91,20 @@ import static org.jivesoftware.smackx.muc.MucConfigFormManager.*;
  * the listing of the creation times, number of occupants in a room, and the
  * room name itself.
  */
-public class ConferenceRoomBrowser extends JPanel implements ActionListener,
-	ComponentListener {
+public class ConferenceRoomBrowser extends JPanel implements ActionListener, ComponentListener {
     private static final long serialVersionUID = -4483998189117467048L;
     private final RoomList roomsTable;
     private final RolloverButton createButton = new RolloverButton("",
-	    SparkRes.getImageIcon(SparkRes.SMALL_USER1_NEW));
+        SparkRes.getImageIcon(SparkRes.SMALL_USER1_NEW));
     private final RolloverButton joinRoomButton = new RolloverButton("",
-	    SparkRes.getImageIcon(SparkRes.DOOR_IMAGE));
+        SparkRes.getImageIcon(SparkRes.DOOR_IMAGE));
     private final RolloverButton refreshButton = new RolloverButton("",
-	    SparkRes.getImageIcon(SparkRes.REFRESH_IMAGE));
+        SparkRes.getImageIcon(SparkRes.REFRESH_IMAGE));
     private final RolloverButton addRoomButton = new RolloverButton("",
-	    SparkRes.getImageIcon(SparkRes.ADD_BOOKMARK_ICON));
+        SparkRes.getImageIcon(SparkRes.ADD_BOOKMARK_ICON));
 
     private final RolloverButton showHiddenButtons = new RolloverButton(
-	    SparkRes.getImageIcon(SparkRes.PANE_UP_ARROW_IMAGE));
+        SparkRes.getImageIcon(SparkRes.PANE_UP_ARROW_IMAGE));
 
     private final JMenuItem joinRoomItem;
     private final JMenuItem addRoomItem;
@@ -133,192 +132,177 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
     /**
      * Creates a new instance of ConferenceRooms.
      *
-     * @param conferences
-     *            the conference ui.
-     * @param serviceName
-     *            the name of the conference service.
-     *
+     * @param conferences the conference ui.
+     * @param serviceName the name of the conference service.
      */
-    public ConferenceRoomBrowser(BookmarksUI conferences,
-            final DomainBareJid serviceName) {
+    public ConferenceRoomBrowser(BookmarksUI conferences, DomainBareJid serviceName) {
+        this.setLayout(new BorderLayout());
 
-	this.setLayout(new BorderLayout());
+        this.conferences = conferences;
+        this.serviceName = serviceName;
 
-	this.conferences = conferences;
-	this.serviceName = serviceName;
+        popup = new JPopupMenu();
 
-	popup = new JPopupMenu();
+        joinRoomItem = new JMenuItem(Res.getString("menuitem.join.room"));
+        addRoomItem = new JMenuItem(Res.getString("menuitem.bookmark.room"));
+        createItem = new JMenuItem(Res.getString("menuitem.create.room"));
+        refreshItem = new JMenuItem(Res.getString("menuitem.refresh"));
 
-	joinRoomItem = new JMenuItem(Res.getString("menuitem.join.room"));
-	addRoomItem = new JMenuItem(Res.getString("menuitem.bookmark.room"));
-	createItem = new JMenuItem(Res.getString("menuitem.create.room"));
-	refreshItem = new JMenuItem(Res.getString("menuitem.refresh"));
+        joinRoomItem.setIcon(SparkRes.getImageIcon(SparkRes.DOOR_IMAGE));
+        addRoomItem.setIcon(SparkRes.getImageIcon(SparkRes.ADD_BOOKMARK_ICON));
+        createItem.setIcon(SparkRes.getImageIcon(SparkRes.SMALL_USER1_NEW));
+        refreshItem.setIcon(SparkRes.getImageIcon(SparkRes.REFRESH_IMAGE));
 
-	joinRoomItem.setIcon(SparkRes.getImageIcon(SparkRes.DOOR_IMAGE));
-	addRoomItem.setIcon(SparkRes.getImageIcon(SparkRes.ADD_BOOKMARK_ICON));
-	createItem.setIcon(SparkRes.getImageIcon(SparkRes.SMALL_USER1_NEW));
-	refreshItem.setIcon(SparkRes.getImageIcon(SparkRes.REFRESH_IMAGE));
+        popup.add(joinRoomItem);
+        popup.add(addRoomItem);
+        popup.add(createItem);
+        popup.add(refreshItem);
 
-	popup.add(joinRoomItem);
-	popup.add(addRoomItem);
-	popup.add(createItem);
-	popup.add(refreshItem);
+        // Add Toolbar
+        final JPanel mainPanel = new JPanel(new BorderLayout());
+        JPanel toolbar = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JPanel pane_hiddenButtons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        toolbar.add(joinRoomButton);
+        toolbar.add(addRoomButton);
+        toolbar.add(createButton);
+        toolbar.add(refreshButton);
+        pane_hiddenButtons.add(showHiddenButtons);
 
-	// Add Toolbar
-	final JPanel Hauptpanel = new JPanel(new BorderLayout());
-	JPanel toolbar = new JPanel(new FlowLayout(FlowLayout.LEFT));
-	JPanel pane_hiddenButtons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-	toolbar.add(joinRoomButton);
-	toolbar.add(addRoomButton);
-	toolbar.add(createButton);
-	toolbar.add(refreshButton);
-	pane_hiddenButtons.add(showHiddenButtons);
+        mainPanel.add(toolbar, WEST);
+        mainPanel.add(pane_hiddenButtons, EAST);
+        this.add(mainPanel, NORTH);
 
-	Hauptpanel.add(toolbar, BorderLayout.WEST);
-	Hauptpanel.add(pane_hiddenButtons, BorderLayout.EAST);
-	this.add(Hauptpanel, BorderLayout.NORTH);
+        JLabel labelFilter = new JLabel(Res.getString("label.search"));
+        JTextField txtFilter = new JTextField(20);
+        txtFilter.setMinimumSize(new Dimension(50, 20));
 
-        JLabel labelFilter = new JLabel( Res.getString( "label.search" ) );
-        JTextField txtFilter = new JTextField( 20 );
-    txtFilter.setMinimumSize(new Dimension(50,20));
-        
-    //add fields for filter
-    final JPanel Filterpanel = new JPanel(new BorderLayout());
-	JPanel toolbarFilter = new JPanel(new FlowLayout(FlowLayout.LEFT));
-	toolbarFilter.add( labelFilter );
-	toolbarFilter.add( txtFilter );
+        //add fields for filter
+        final JPanel filterPanel = new JPanel(new BorderLayout());
+        JPanel toolbarFilter = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        toolbarFilter.add(labelFilter);
+        toolbarFilter.add(txtFilter);
 
-	Filterpanel.add(toolbarFilter);
-	this.add(Filterpanel,BorderLayout.SOUTH);
-        
+        filterPanel.add(toolbarFilter);
+        this.add(filterPanel, SOUTH);
 
-	createButton.addActionListener(this);
-	createItem.addActionListener(this);
-	joinRoomButton.addActionListener(this);
-	refreshButton.addActionListener(this);
+        createButton.addActionListener(this);
+        createItem.addActionListener(this);
+        joinRoomButton.addActionListener(this);
+        refreshButton.addActionListener(this);
 
-	ResourceUtils.resButton(createButton,
-		Res.getString("button.create.room"));
-	ResourceUtils.resButton(joinRoomButton,
-		Res.getString("button.join.room"));
-	ResourceUtils.resButton(refreshButton, Res.getString("button.refresh"));
-	ResourceUtils.resButton(addRoomButton,
-		Res.getString("button.bookmark.room"));
+        ResourceUtils.resButton(createButton, Res.getString("button.create.room"));
+        ResourceUtils.resButton(joinRoomButton, Res.getString("button.join.room"));
+        ResourceUtils.resButton(refreshButton, Res.getString("button.refresh"));
+        ResourceUtils.resButton(addRoomButton, Res.getString("button.bookmark.room"));
 
-	refreshButton.setToolTipText(Res.getString("message.update.room.list"));
-	joinRoomButton.setToolTipText(Res
-		.getString("message.join.conference.room"));
-	createButton.setToolTipText(Res
-		.getString("message.create.or.join.room"));
+        refreshButton.setToolTipText(Res.getString("message.update.room.list"));
+        joinRoomButton.setToolTipText(Res.getString("message.join.conference.room"));
+        createButton.setToolTipText(Res.getString("message.create.or.join.room"));
 
-	// Add Group Chat Table
-	roomsTable = new RoomList();
+        // Add Group Chat Table
+        roomsTable = new RoomList();
 
-    //build model for roomsTable, ignoring the 1st column              
-    sorter = new TableRowSorter<>( roomsTable.getModel() );
-    sorter.setComparator(3, new NumericComparator());
-    roomsTable.setRowSorter(sorter);
-    
-	final JScrollPane pane = new JScrollPane(roomsTable);
-	pane.setBackground(Color.white);
-	pane.setForeground(Color.white);
-	this.setBackground(Color.white);
-	this.setForeground(Color.white);
-	pane.getViewport().setBackground(Color.white);
-	this.add(pane, BorderLayout.CENTER);
+        //build model for roomsTable, ignoring the 1st column
+        sorter = new TableRowSorter<>(roomsTable.getModel());
+        sorter.setComparator(3, Comparator.comparing((String o) -> Long.valueOf(o)));
+        roomsTable.setRowSorter(sorter);
 
-	chatManager = SparkManager.getChatManager();
+        final JScrollPane pane = new JScrollPane(roomsTable);
+        pane.setBackground(Color.white);
+        pane.setForeground(Color.white);
+        this.setBackground(Color.white);
+        this.setForeground(Color.white);
+        pane.getViewport().setBackground(Color.white);
+        this.add(pane, CENTER);
 
-        
-    txtFilter.addKeyListener( new KeyAdapter() {
-        @Override
-        public void keyReleased(KeyEvent e) {
-            JTextField textField = (JTextField)e.getSource();
-            String text = textField.getText();
-            List<RowFilter<Object,Object>> filters = new ArrayList<>();
-            filters.add(RowFilter.regexFilter(text, 1));
-            filters.add(RowFilter.regexFilter(text, 2));
-            filters.add(RowFilter.regexFilter(text, 3));
-            RowFilter<Object,Object> af = RowFilter.orFilter(filters);
-            sorter.setRowFilter(af);
-        }
-    });                   
-	joinRoomButton.addActionListener( actionEvent -> joinSelectedRoom() );
-	addRoomButton.addActionListener( actionEvent -> bookmarkRoom(serviceName) );
+        chatManager = SparkManager.getChatManager();
 
-	refreshButton.addActionListener( actionEvent -> refreshRoomList(serviceName) );
+        txtFilter.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent e) {
+                JTextField textField = (JTextField) e.getSource();
+                String text = textField.getText();
+                List<RowFilter<Object, Object>> filters = new ArrayList<>(3);
+                filters.add(RowFilter.regexFilter(text, 1));
+                filters.add(RowFilter.regexFilter(text, 2));
+                filters.add(RowFilter.regexFilter(text, 3));
+                RowFilter<Object, Object> af = RowFilter.orFilter(filters);
+                sorter.setRowFilter(af);
+            }
+        });
+        joinRoomButton.addActionListener(actionEvent -> joinSelectedRoom());
+        addRoomButton.addActionListener(actionEvent -> bookmarkRoom(serviceName));
+        refreshButton.addActionListener(actionEvent -> refreshRoomList(serviceName));
+        joinRoomItem.addActionListener(actionEvent -> joinSelectedRoom());
+        addRoomItem.addActionListener(actionEvent -> bookmarkRoom(serviceName));
+        refreshItem.addActionListener(actionEvent -> refreshRoomList(serviceName));
+        showHiddenButtons.addActionListener(actionEvent -> popup.show(showHiddenButtons, 0, showHiddenButtons.getHeight()));
 
-	joinRoomItem.addActionListener( actionEvent -> joinSelectedRoom() );
+        joinRoomButton.setEnabled(false);
+        addRoomButton.setEnabled(false);
+        joinRoomItem.setEnabled(false);
+        addRoomItem.setEnabled(false);
 
-	addRoomItem.addActionListener( actionEvent -> bookmarkRoom(serviceName) );
-
-	refreshItem.addActionListener( actionEvent -> refreshRoomList(serviceName) );
-
-	showHiddenButtons.addActionListener( actionEvent -> popup.show(showHiddenButtons, 0, showHiddenButtons.getHeight()) );
-
-	joinRoomButton.setEnabled(false);
-	addRoomButton.setEnabled(false);
-	joinRoomItem.setEnabled(false);
-	addRoomItem.setEnabled(false);
-
-	addTableListener();
+        addTableListener();
     }
 
-   private void startLoadingImg(){
-       SwingWorker startLoading = new SwingWorker() {
+    private void startLoadingImg() {
+        SwingWorker startLoading = new SwingWorker() {
 
-           @Override
-           public Object construct() {
-               return null;
-           }
-           
-           @Override
-        public void finished() {
-               refreshButton.setIcon(SparkRes.getImageIcon(SparkRes.BUSY_IMAGE));
-               refreshButton.validate();
-               refreshButton.repaint();
-               refreshItem.setIcon(SparkRes.getImageIcon(SparkRes.BUSY_IMAGE));
-               refreshItem.validate();
-               refreshItem.repaint();
-        }
-       };   
-       startLoading.start();
-   }
+            @Override
+            public Object construct() {
+                return null;
+            }
 
-   private void stopLoadingImg(){
-       SwingWorker stopLoading = new SwingWorker() {
+            @Override
+            public void finished() {
+                refreshButton.setIcon(SparkRes.getImageIcon(SparkRes.BUSY_IMAGE));
+                refreshButton.validate();
+                refreshButton.repaint();
+                refreshItem.setIcon(SparkRes.getImageIcon(SparkRes.BUSY_IMAGE));
+                refreshItem.validate();
+                refreshItem.repaint();
+            }
+        };
+        startLoading.start();
+    }
 
-           @Override
-           public Object construct() {
-               return null;
-           }
-           @Override
-		public void finished() {
-               refreshButton.setIcon(SparkRes.getImageIcon(SparkRes.REFRESH_IMAGE));
-               refreshButton.validate();
-               refreshButton.repaint();
-               refreshItem.setIcon(SparkRes.getImageIcon(SparkRes.REFRESH_IMAGE));
-               refreshItem.validate();
-               refreshItem.repaint();
-        }
-       };
-       stopLoading.start();
-   }
+    private void stopLoadingImg() {
+        SwingWorker stopLoading = new SwingWorker() {
 
-   private void clearTable(){
-       SwingWorker clearTable = new SwingWorker() {
-           
-           @Override
-           public Object construct() {
-               return null;
-           }
-           @Override
-           public void finished() {
-               roomsTable.clearTable();
-           }
-       };
-       clearTable.start();
-   }
+            @Override
+            public Object construct() {
+                return null;
+            }
+
+            @Override
+            public void finished() {
+                refreshButton.setIcon(SparkRes.getImageIcon(SparkRes.REFRESH_IMAGE));
+                refreshButton.validate();
+                refreshButton.repaint();
+                refreshItem.setIcon(SparkRes.getImageIcon(SparkRes.REFRESH_IMAGE));
+                refreshItem.validate();
+                refreshItem.repaint();
+            }
+        };
+        stopLoading.start();
+    }
+
+    private void clearTable() {
+        SwingWorker clearTable = new SwingWorker() {
+
+            @Override
+            public Object construct() {
+                return null;
+            }
+
+            @Override
+            public void finished() {
+                roomsTable.clearTable();
+            }
+        };
+        clearTable.start();
+    }
 
     private void refreshRoomList(final DomainBareJid serviceName) {
         startLoadingImg();
@@ -331,17 +315,16 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
             public void run() {
                 try {
                     rooms = MultiUserChatManager.getInstanceFor(SparkManager.getConnection()).getRoomsHostedBy(serviceName);
-                    try { 
+                    try {
                         for (Map.Entry<EntityBareJid, HostedRoom> entry : rooms.entrySet()) {
                             RoomObject room = getRoomsAndInfo(entry.getValue());
-                            addRoomToTable(room.getRoomJID(), room.getRoomName(),
-                            room.getNumberOfOccupants());
+                            addRoomToTable(room.getRoomJID(), room.getRoomName(), room.getNumberOfOccupants());
                         }
                         stopLoadingImg();
                     } catch (Exception e) {
                         Log.error("Unable to retrieve room list and info.", e);
                     }
-                } catch ( Exception e1 ) {
+                } catch (Exception e1) {
                     Log.error(e1);
                 }
             }
@@ -359,10 +342,8 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
                 RoomInfo roomInfo = null;
                 try {
                     roomInfo = MultiUserChatManager.getInstanceFor(SparkManager.getConnection()).getRoomInfo(roomJID);
-                } catch (Exception e) {
-                    // Nothing to do
+                } catch (Exception ignored) {
                 }
-
                 if (roomInfo != null) {
                     numberOfOccupants = roomInfo.getOccupantsCount();
                 }
@@ -382,10 +363,8 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
 
     private void bookmarkRoom(DomainBareJid serviceName) {
         int selectedRow = roomsTable.getSelectedRow();
-        
         UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
-        
-        if (-1 == selectedRow) {
+        if (selectedRow == -1) {
             JOptionPane.showMessageDialog(dlg, Res.getString("message.select.add.room.to.add"), Res.getString("title.group.chat"), JOptionPane.INFORMATION_MESSAGE);
             return;
         }
@@ -398,32 +377,28 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
             throw new IllegalStateException(e1);
         }
         final String roomName = roomsTable.getValueAt(selectedRow, 1).toString();
-
         // Check to see what type of room this is.
         boolean persistent = false;
         try {
-            final RoomInfo roomInfo = MultiUserChatManager.getInstanceFor( SparkManager.getConnection() ).getRoomInfo( roomJID );
+            final RoomInfo roomInfo = MultiUserChatManager.getInstanceFor(SparkManager.getConnection()).getRoomInfo(roomJID);
             persistent = roomInfo.isPersistent();
         } catch (Exception e) {
             // Do not return
             Log.error("This room does not exist. Probably this room was temporary and was closed");
         }
         if (!persistent) {
-             JOptionPane.showMessageDialog(dlg, Res.getString("message.bookmark.temporary.room.error"), Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
-             return;
+            JOptionPane.showMessageDialog(dlg, Res.getString("message.bookmark.temporary.room.error"), Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
+            return;
         }
 
         Tree serviceTree = conferences.getTree();
         JiveTreeNode rootNode = (JiveTreeNode) serviceTree.getModel().getRoot();
-
-        TreePath rootPath = serviceTree.findByName(serviceTree, new String[] { rootNode.toString(), serviceName.toString() });
-
+        TreePath rootPath = serviceTree.findByName(serviceTree, new String[]{rootNode.toString(), serviceName.toString()});
         boolean isBookmarked = isBookmarked(roomJID);
-
         if (!isBookmarked) {
             JiveTreeNode node = (JiveTreeNode) serviceTree.getLastSelectedPathComponent();
             if (node == null) {
-                TreePath path = serviceTree.findByName(serviceTree, new String[] { rootNode.toString(), ConferenceServices.getDefaultServiceName().toString() });
+                TreePath path = serviceTree.findByName(serviceTree, new String[]{rootNode.toString(), ConferenceServices.getDefaultServiceName().toString()});
                 node = (JiveTreeNode) path.getLastPathComponent();
             }
             JiveTreeNode roomNode = new JiveTreeNode(roomName, false, SparkRes.getImageIcon(SparkRes.BOOKMARK_ICON));
@@ -438,7 +413,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
             conferences.addBookmark(roomName, roomJID, false);
         } else {
             // Remove bookmark
-            TreePath path = serviceTree.findByName(serviceTree, new String[] { rootNode.toString(), serviceName.toString(), roomName });
+            TreePath path = serviceTree.findByName(serviceTree, new String[]{rootNode.toString(), serviceName.toString(), roomName});
             JiveTreeNode node = (JiveTreeNode) path.getLastPathComponent();
             final DefaultTreeModel model = (DefaultTreeModel) serviceTree.getModel();
             model.removeNodeFromParent(node);
@@ -451,48 +426,48 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
     }
 
     private void joinSelectedRoom() {
-	int selectedRow = roomsTable.getSelectedRow();
-	UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
-	if (-1 == selectedRow) {
-	    JOptionPane.showMessageDialog(dlg,
-		    Res.getString("message.select.room.to.join"),
-		    Res.getString("title.group.chat"),
-		    JOptionPane.INFORMATION_MESSAGE);
-	    return;
-	}
-	enterRoom();
+        int selectedRow = roomsTable.getSelectedRow();
+        UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(dlg,
+                Res.getString("message.select.room.to.join"),
+                Res.getString("title.group.chat"),
+                JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+        enterRoom();
     }
 
     private void addTableListener() {
-	roomsTable.getSelectionModel().addListSelectionListener(
+        roomsTable.getSelectionModel().addListSelectionListener(
             e -> {
-            if (e.getValueIsAdjusting())
-                return;
-
-            int selectedRow = roomsTable.getSelectedRow();
-            if (selectedRow != -1) {
-                joinRoomButton.setEnabled(true);
-                joinRoomItem.setEnabled(true);
-                String roomJIDString = roomsTable.getValueAt(selectedRow,
-                    2) + "@" + serviceName;
-                EntityBareJid roomJID;
-                try {
-                    roomJID = JidCreate.entityBareFrom(roomJIDString);
-                } catch (XmppStringprepException ex) {
-                    Log.error("Not a JID", ex);
+                if (e.getValueIsAdjusting()) {
                     return;
                 }
-                addRoomButton.setEnabled(true);
-                addRoomItem.setEnabled(true);
-                addBookmarkUI(!isBookmarked(roomJID));
-            } else {
-                joinRoomButton.setEnabled(false);
-                addRoomButton.setEnabled(false);
-                joinRoomItem.setEnabled(false);
-                addRoomItem.setEnabled(false);
-                addBookmarkUI(true);
-            }
-            } );
+
+                int selectedRow = roomsTable.getSelectedRow();
+                if (selectedRow != -1) {
+                    joinRoomButton.setEnabled(true);
+                    joinRoomItem.setEnabled(true);
+                    String roomJIDString = roomsTable.getValueAt(selectedRow, 2) + "@" + serviceName;
+                    EntityBareJid roomJID;
+                    try {
+                        roomJID = JidCreate.entityBareFrom(roomJIDString);
+                    } catch (XmppStringprepException ex) {
+                        Log.error("Not a JID", ex);
+                        return;
+                    }
+                    addRoomButton.setEnabled(true);
+                    addRoomItem.setEnabled(true);
+                    addBookmarkUI(!isBookmarked(roomJID));
+                } else {
+                    joinRoomButton.setEnabled(false);
+                    addRoomButton.setEnabled(false);
+                    joinRoomItem.setEnabled(false);
+                    addRoomItem.setEnabled(false);
+                    addBookmarkUI(true);
+                }
+            });
     }
 
     /**
@@ -533,38 +508,35 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
                     stopLoadingImg();
                     return;
                 }
-                        try {
-                            for (Map.Entry<EntityBareJid, HostedRoom> room : rooms.entrySet()) {
+                try {
+                    for (Map.Entry<EntityBareJid, HostedRoom> room : rooms.entrySet()) {
+                        String roomName = room.getValue().getName();
+                        EntityBareJid roomJID = room.getValue().getJid();
+                        int numberOfOccupants = -1;
 
-                            String roomName = room.getValue().getName();
-                            EntityBareJid roomJID = room.getValue().getJid();
+                        // Need to handle the case where the room info does not
+                        // contain the number of occupants. If that is the case,
+                        // we should not continue to request this info from the
+                        // service.
+                        if (!partialDiscovery) {
+                            RoomInfo roomInfo = null;
+                            try {
+                                roomInfo = MultiUserChatManager.getInstanceFor(SparkManager.getConnection()).getRoomInfo(roomJID);
+                            } catch (Exception ignored) {
+                            }
 
-                            int numberOfOccupants = -1;
-
-                            // Need to handle the case where the room info does not
-                            // contain the number of occupants. If that is the case,
-                            // we should not continue to request this info from the
-                            // service.
-                            if (!partialDiscovery) {
-                                RoomInfo roomInfo = null;
-                                try {
-                                roomInfo = MultiUserChatManager.getInstanceFor( SparkManager.getConnection() ).getRoomInfo( roomJID );
-                                } catch (Exception ignored) {
-                                }
-
-                                if (roomInfo != null) {
-                                numberOfOccupants = roomInfo
-                                    .getOccupantsCount();
-                                }
-                                if (roomInfo == null || numberOfOccupants == -1) {
+                            if (roomInfo != null) {
+                                numberOfOccupants = roomInfo.getOccupantsCount();
+                            }
+                            if (roomInfo == null || numberOfOccupants == -1) {
                                 partialDiscovery = true;
-                                }
                             }
-                            addRoomToTable(roomJID, roomName, numberOfOccupants);
-                            }
-                        } catch (Exception e) {
-                            Log.error("Error setting up GroupChatTable", e);
                         }
+                        addRoomToTable(roomJID, roomName, numberOfOccupants);
+                    }
+                } catch (Exception e) {
+                    Log.error("Error setting up GroupChatTable", e);
+                }
                 stopLoadingImg();
             }
         };
@@ -582,15 +554,13 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
         // Construct main panel w/ layout.
         final JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BorderLayout());
-        mainPanel.add(titlePanel, BorderLayout.NORTH);
+        mainPanel.add(titlePanel, NORTH);
 
         // The user should only be able to close this dialog.
-        Object[] options = { Res.getString("close") };
+        Object[] options = {Res.getString("close")};
         pane = new JOptionPane(this, JOptionPane.PLAIN_MESSAGE,
             JOptionPane.OK_CANCEL_OPTION, null, options, options[0]);
-
-        mainPanel.add(pane, BorderLayout.CENTER);
-
+        mainPanel.add(pane, CENTER);
         final JOptionPane p = new JOptionPane();
 
         dlg = p.createDialog(SparkManager.getMainWindow(),
@@ -604,14 +574,14 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
 
         PropertyChangeListener changeListener = new PropertyChangeListener() {
             @Override
-			public void propertyChange(PropertyChangeEvent e) {
-            String value = (String) pane.getValue();
-            if (Res.getString("close").equals(value)) {
-                pane.removePropertyChangeListener(this);
-                dlg.dispose();
-            } else if (Res.getString("close").equals(value)) {
-                pane.setValue(JOptionPane.UNINITIALIZED_VALUE);
-            }
+            public void propertyChange(PropertyChangeEvent e) {
+                String value = (String) pane.getValue();
+                if (Res.getString("close").equals(value)) {
+                    pane.removePropertyChangeListener(this);
+                    dlg.dispose();
+                } else if (Res.getString("close").equals(value)) {
+                    pane.setValue(JOptionPane.UNINITIALIZED_VALUE);
+                }
             }
         };
 
@@ -619,22 +589,21 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
 
         dlg.addKeyListener(new KeyAdapter() {
             @Override
-			public void keyPressed(KeyEvent e) {
-            if (e.getKeyChar() == KeyEvent.VK_ESCAPE) {
-                dlg.dispose();
-            }
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyChar() == KeyEvent.VK_ESCAPE) {
+                    dlg.dispose();
+                }
             }
         });
 
-        // will need that, when the window is smaller then the buttons width...
+        // will need that when the window is smaller then the buttons width...
         setButtonsWidth();
 
         showHiddenButtons.setVisible(false);
         dlg.pack();
 
         final Rectangle bounds = LayoutSettingsManager.getLayoutSettings().getConferenceRoomBrowserBounds();
-        if ( bounds == null || bounds.width <= 0 || bounds.height <= 0 )
-        {
+        if (bounds == null || bounds.width <= 0 || bounds.height <= 0) {
             // Use default settings.
 
             /*
@@ -643,104 +612,96 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
              * not saved in the properties file and so the method only returns an
              * empty String)
              */
-                if (Res.getBundle().getLocale().toString().equals("de"))
-                {
-                    dlg.setSize( 700, 400 );
-                }
-                else
-                {
-                    dlg.setSize( 500, 400 );
-                }
-        }
-        else
-        {
-            dlg.setBounds( bounds );
+            if (Res.getBundle().getLocale().toString().equals("de")) {
+                dlg.setSize(700, 400);
+            } else {
+                dlg.setSize(500, 400);
+            }
+        } else {
+            dlg.setBounds(bounds);
         }
 
-        dlg.addComponentListener( new ComponentAdapter()
-        {
+        dlg.addComponentListener(new ComponentAdapter() {
             @Override
-            public void componentResized( ComponentEvent e )
-            {
-                LayoutSettingsManager.getLayoutSettings().setConferenceRoomBrowserBounds( dlg.getBounds() );
+            public void componentResized(ComponentEvent e) {
+                LayoutSettingsManager.getLayoutSettings().setConferenceRoomBrowserBounds(dlg.getBounds());
             }
 
             @Override
-            public void componentMoved( ComponentEvent e )
-            {
-                LayoutSettingsManager.getLayoutSettings().setConferenceRoomBrowserBounds( dlg.getBounds() );
+            public void componentMoved(ComponentEvent e) {
+                LayoutSettingsManager.getLayoutSettings().setConferenceRoomBrowserBounds(dlg.getBounds());
             }
-        } );
+        });
 
         dlg.setVisible(true);
         dlg.toFront();
-        dlg.requestFocus();  
+        dlg.requestFocus();
         TaskEngine.getInstance().submit(invokeThread);
     }
 
     private final class RoomList extends Table {
-	private static final long serialVersionUID = -731280190627042419L;
+        private static final long serialVersionUID = -731280190627042419L;
 
-	public RoomList() {
-	    super(new String[] { " ", Res.getString("title.name"),
-		    Res.getString("title.address"),
-		    Res.getString("title.occupants") });
-	    getColumnModel().setColumnMargin(0);
-	    getColumnModel().getColumn(0).setMaxWidth(30);
-	    getColumnModel().getColumn(3).setMaxWidth(80);
+        public RoomList() {
+            super(new String[]{
+                " ",
+                Res.getString("title.name"),
+                Res.getString("title.address"),
+                Res.getString("title.occupants")
+            });
+            getColumnModel().setColumnMargin(0);
+            getColumnModel().getColumn(0).setMaxWidth(30);
+            getColumnModel().getColumn(3).setMaxWidth(80);
 
-	    setSelectionBackground(Table.SELECTION_COLOR);
-	    setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-	    setRowSelectionAllowed(true);
-	    // setSortable(true);
+            setSelectionBackground(Table.SELECTION_COLOR);
+            setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+            setRowSelectionAllowed(true);
+            // setSortable(true);
 
-	    addMouseListener(new MouseAdapter() {
-		@Override
-		public void mouseClicked(MouseEvent e) {
-		    if (e.getClickCount() == 2) {
-			enterRoom();
-		    }
-		}
+            addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    if (e.getClickCount() == 2) {
+                        enterRoom();
+                    }
+                }
 
-		@Override
-		public void mouseReleased(MouseEvent e) {
-		    checkPopup(e);
-		}
+                @Override
+                public void mouseReleased(MouseEvent e) {
+                    checkPopup(e);
+                }
 
-		@Override
-		public void mousePressed(MouseEvent e) {
-		    checkPopup(e);
-		}
-	    });
+                @Override
+                public void mousePressed(MouseEvent e) {
+                    checkPopup(e);
+                }
+            });
 
-	}
+        }
 
-	// Handle image rendering correctly
-	@Override
-	public TableCellRenderer getCellRenderer(int row, int column) {
-	    Object o = getValueAt(row, column);
-	    if (o != null) {
-		if (o instanceof JLabel) {
-		    return new JLabelRenderer(false);
-		}
-	    }
-
-	    if (column == 3) {
-		return new CenterRenderer();
-	    }
-
-	    return super.getCellRenderer(row, column);
-	}
+        // Handle image rendering correctly
+        @Override
+        public TableCellRenderer getCellRenderer(int row, int column) {
+            Object o = getValueAt(row, column);
+            if (o != null) {
+                if (o instanceof JLabel) {
+                    return new JLabelRenderer(false);
+                }
+            }
+            if (column == 3) {
+                return new CenterRenderer();
+            }
+            return super.getCellRenderer(row, column);
+        }
 
         private void checkPopup(MouseEvent e) {
             if (e.isPopupTrigger()) {
                 final JPopupMenu popupMenu = new JPopupMenu();
-
                 Action roomInfoAction = new AbstractAction() {
                     private static final long serialVersionUID = 5142016247851363420L;
 
                     @Override
-					public void actionPerformed(ActionEvent actionEvent) {
+                    public void actionPerformed(ActionEvent actionEvent) {
                         int selectedRow = roomsTable.getSelectedRow();
                         if (selectedRow != -1) {
                             String roomJIDString = roomsTable.getValueAt(selectedRow, 2) + "@" + serviceName;
@@ -761,34 +722,10 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
 
                 final int selectedRow = roomsTable.getSelectedRow();
                 if (selectedRow != -1) {
-                final String roomName = roomsTable.getValueAt(selectedRow, 1).toString();
-                popupMenu.add(roomInfoAction);
-                final JCheckBoxMenuItem autoJoin = new JCheckBoxMenuItem(Res.getString("menuitem.join.on.startup"));
-                autoJoin.addActionListener( e1 -> {
-                    String roomJIDString = roomsTable.getValueAt(selectedRow, 2) + "@" + serviceName;
-                    EntityBareJid roomJID;
-                    try {
-                        roomJID = JidCreate.entityBareFrom(roomJIDString);
-                    } catch (XmppStringprepException e2) {
-                        throw new IllegalStateException(e2);
-                    }
-                    conferences.removeBookmark(roomJID);
-                    conferences.addBookmark(roomName, roomJID, autoJoin.isSelected());
-                } );
-                Action copyURIgroupChat = new AbstractAction() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        String roomJIDString = roomsTable.getValueAt(selectedRow, 2) + "@" + serviceName;
-                        SparkManager.setClipboard("xmpp:"+roomJIDString+"?join");
-                    }
-                };
-
-                copyURIgroupChat.putValue(Action.NAME, Res.getString("button.copy.to.clipboard"));
-                copyURIgroupChat.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.COPY_16x16));
-                popupMenu.add(copyURIgroupChat);
-
-                    for (BookmarkedConference bookmark :conferences.getBookmarks())
-                    {
+                    final String roomName = roomsTable.getValueAt(selectedRow, 1).toString();
+                    popupMenu.add(roomInfoAction);
+                    final JCheckBoxMenuItem autoJoin = new JCheckBoxMenuItem(Res.getString("menuitem.join.on.startup"));
+                    autoJoin.addActionListener(e1 -> {
                         String roomJIDString = roomsTable.getValueAt(selectedRow, 2) + "@" + serviceName;
                         EntityBareJid roomJID;
                         try {
@@ -796,43 +733,60 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
                         } catch (XmppStringprepException e2) {
                             throw new IllegalStateException(e2);
                         }
+                        conferences.removeBookmark(roomJID);
+                        conferences.addBookmark(roomName, roomJID, autoJoin.isSelected());
+                    });
+                    Action copyUriGroupChat = new AbstractAction() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            String roomJIDString = roomsTable.getValueAt(selectedRow, 2) + "@" + serviceName;
+                            SparkManager.setClipboard("xmpp:" + roomJIDString + "?join");
+                        }
+                    };
 
-                        if (roomJID.equals(bookmark.getJid()))
-                        {
+                    copyUriGroupChat.putValue(Action.NAME, Res.getString("button.copy.to.clipboard"));
+                    copyUriGroupChat.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.COPY_16x16));
+                    popupMenu.add(copyUriGroupChat);
+
+                    for (BookmarkedConference bookmark : conferences.getBookmarks()) {
+                        String roomJIDString = roomsTable.getValueAt(selectedRow, 2) + "@" + serviceName;
+                        EntityBareJid roomJID;
+                        try {
+                            roomJID = JidCreate.entityBareFrom(roomJIDString);
+                        } catch (XmppStringprepException e2) {
+                            throw new IllegalStateException(e2);
+                        }
+                        if (roomJID.equals(bookmark.getJid())) {
                             autoJoin.setSelected(bookmark.isAutoJoin());
                             popupMenu.add(autoJoin);
                         }
                     }
                 }
-
                 popupMenu.show(roomsTable, e.getX(), e.getY());
             }
         }
-
     }
 
     @Override
-	public void actionPerformed(ActionEvent e) {
-	if (e.getSource() == createButton || e.getSource() == createItem) {
-	    createRoom();
-	}
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == createButton || e.getSource() == createItem) {
+            createRoom();
+        }
     }
 
     private void enterRoom() {
         int selectedRow = roomsTable.getSelectedRow();
         UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
-        if (-1 == selectedRow) {
+        if (selectedRow == -1) {
             JOptionPane.showMessageDialog(dlg,
                 Res.getString("message.select.room.to.enter"),
                 Res.getString("title.group.chat"),
                 JOptionPane.INFORMATION_MESSAGE);
             return;
         }
-        final String roomJIDString = roomsTable.getValueAt(selectedRow, 2) + "@"
-            + serviceName;
+        final String roomJIDString = roomsTable.getValueAt(selectedRow, 2) + "@" + serviceName;
         EntityBareJid roomJID = JidCreate.entityBareFromUnescapedOrThrowUnchecked(roomJIDString);
-        final String roomDescription = (String) roomsTable.getValueAt(
-            selectedRow, 1);
+        final String roomDescription = (String) roomsTable.getValueAt(selectedRow, 1);
 
         try {
             chatManager.getChatContainer().getChatRoom(roomJID);
@@ -856,7 +810,6 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
         // Join Room
         try {
             GroupChatRoom room = UIComponentRegistry.createGroupChatRoom(groupChat);
-
             Resourcepart nickname = pref.getNickname();
             groupChat.create(nickname);
             chatManager.getChatContainer().addChatRoom(room);
@@ -899,53 +852,51 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
     /**
      * Adds a room to the room table.
      *
-     * @param jid
-     *            the jid of the conference room.
-     * @param roomName
-     *            the name of the conference room from bookmark.
-     * @param numberOfOccupants
-     *            the number of occupants in the conference room. If -1 is
-     *            specified, the the occupant count will show as n/a.
+     * @param jid               the jid of the conference room.
+     * @param roomName          the name of the conference room from bookmark.
+     * @param numberOfOccupants the number of occupants in the conference room. If -1 is
+     *                          specified, the occupant count will show as n/a.
      */
     private void addRoomToTable(final EntityBareJid jid, final String roomName,
-	    final int numberOfOccupants) {
+                                final int numberOfOccupants) {
         SwingWorker addRoomThread = new SwingWorker() {
 
             @Override
             public Object construct() {
                 JLabel iconLabel = new JLabel();
                 iconLabel.setAlignmentX(JLabel.RIGHT_ALIGNMENT);
-                boolean isbookmark = false;
-                boolean ispassword = false;
+                boolean isBookmark = false;
+                boolean isPassword = false;
 
-                ImageIcon bookmarkicon = SparkRes.getImageIcon(SparkRes.BOOKMARK_ICON);
-                ImageIcon passwordicon = SparkRes.getImageIcon(SparkRes.LOCK_16x16);
+                ImageIcon bookmarkIcon = SparkRes.getImageIcon(SparkRes.BOOKMARK_ICON);
+                ImageIcon passwordIcon = SparkRes.getImageIcon(SparkRes.LOCK_16x16);
 
                 if (isBookmarked(jid)) {
-                    isbookmark = true;
+                    isBookmark = true;
                     iconLabel.setIcon(SparkRes.getImageIcon(SparkRes.BOOKMARK_ICON));
                 }
                 if (isPasswordProtected(jid)) {
-                    ispassword = true;
+                    isPassword = true;
                 }
 
-                if (isbookmark && ispassword) {
+                // Set icon based on bookmark and password status
+                if (isBookmark && isPassword) {
                     try {
-                        Image img = ImageCombiner.combine(bookmarkicon, passwordicon);
+                        Image img = ImageCombiner.combine(bookmarkIcon, passwordIcon);
                         if (img != null) {
                             iconLabel.setIcon(new ImageIcon(img));
                         }
                     } catch (Exception e) {
                         Log.warning("Unable to set icon for bookmarked & password-protected room " + jid, e);
                     }
-                } else if (isbookmark) {
-                    iconLabel.setIcon(bookmarkicon);
-                } else if (ispassword) {
+                } else if (isBookmark) {
+                    iconLabel.setIcon(bookmarkIcon);
+                } else if (isPassword) {
                     try {
-                        if (passwordicon != null) {
+                        if (passwordIcon != null) {
                             Image img = ImageCombiner.returnTransparentImage(
-                                passwordicon.getIconWidth(), passwordicon.getIconHeight());
-                            Image combined = ImageCombiner.combine(new ImageIcon(img), passwordicon);
+                                passwordIcon.getIconWidth(), passwordIcon.getIconHeight());
+                            Image combined = ImageCombiner.combine(new ImageIcon(img), passwordIcon);
                             if (combined != null) {
                                 iconLabel.setIcon(new ImageIcon(combined));
                             }
@@ -955,19 +906,15 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
                     }
                 }
 
-                String occupants = Integer.toString(numberOfOccupants);
-                if (numberOfOccupants == -1) {
-                    occupants = "n/a";
-                }
-
+                String occupants = numberOfOccupants != -1 ? Integer.toString(numberOfOccupants) : "n/a";
                 String roomAddress = jid.getLocalpart().toString();
                 String roomTitle = roomName != null ? roomName : roomAddress;
-                return new Object[] { iconLabel, roomTitle, roomAddress, occupants };
+                return new Object[]{iconLabel, roomTitle, roomAddress, occupants};
             }
-            
+
             @Override
             public void finished() {
-                Object[] insertRoom = (Object[])get();
+                Object[] insertRoom = (Object[]) get();
                 roomsTable.getTableModel().addRow(insertRoom);
             }
         };
@@ -977,214 +924,185 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
     /**
      * Returns true if the room specified is bookmarked.
      *
-     * @param roomJID
-     *            the jid of the room to check.
+     * @param roomJID the jid of the room to check.
      * @return true if the room is bookmarked.
      */
     private boolean isBookmarked(EntityBareJid roomJID) {
-	for (Object o : conferences.getBookmarks()) {
-	    BookmarkedConference bk = (BookmarkedConference) o;
-	    EntityBareJid jid = bk.getJid();
-	    if (jid != null && roomJID.equals(jid)) {
-		return true;
-	    }
-	}
-
-	return false;
-
+        for (BookmarkedConference bk : conferences.getBookmarks()) {
+            if (roomJID.equals(bk.getJid())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
-     * Returns true if the room is password protected or Members only
-     *
-     * @param roomjid
-     * @return
+     * Returns true if the room is password-protected or Members only
      */
-    private boolean isPasswordProtected(EntityBareJid roomjid) {
+    private boolean isPasswordProtected(EntityBareJid roomJid) {
         boolean result = false;
         try {
-            RoomInfo rif = MultiUserChatManager.getInstanceFor(SparkManager.getConnection()).getRoomInfo(roomjid);
+            RoomInfo rif = MultiUserChatManager.getInstanceFor(SparkManager.getConnection()).getRoomInfo(roomJid);
             result = rif.isMembersOnly() || rif.isPasswordProtected();
         } catch (XMPPException | SmackException | NumberFormatException | InterruptedException e) {
             Log.error(e);
         }
-
         return result;
     }
 
     /**
      * Toggles the bookmark room button depending on it's state.
      *
-     * @param addBookmark
-     *            true if the button should display itself as bookmarkable :)
+     * @param addBookmark true if the button should display itself as bookmarkable :)
      */
     private void addBookmarkUI(boolean addBookmark) {
-	if (!addBookmark) {
-	    addRoomButton.setText(Res.getString("button.remove.bookmark"));
-	    addRoomButton.setIcon(SparkRes
-		    .getImageIcon(SparkRes.DELETE_BOOKMARK_ICON));
-	} else {
-	    ResourceUtils.resButton(addRoomButton,
-		    Res.getString("button.bookmark.room"));
-	    addRoomButton.setIcon(SparkRes
-		    .getImageIcon(SparkRes.ADD_BOOKMARK_ICON));
-	}
+        if (!addBookmark) {
+            addRoomButton.setText(Res.getString("button.remove.bookmark"));
+            addRoomButton.setIcon(SparkRes.getImageIcon(SparkRes.DELETE_BOOKMARK_ICON));
+        } else {
+            ResourceUtils.resButton(addRoomButton, Res.getString("button.bookmark.room"));
+            addRoomButton.setIcon(SparkRes.getImageIcon(SparkRes.ADD_BOOKMARK_ICON));
+        }
     }
 
-    /*
-     * * Center the text
+    /**
+     * Center the text
      */
     static class CenterRenderer extends DefaultTableCellRenderer {
-	private static final long serialVersionUID = 105809683882744641L;
+        private static final long serialVersionUID = 105809683882744641L;
 
-	public CenterRenderer() {
-	    setHorizontalAlignment(CENTER);
-	}
+        public CenterRenderer() {
+            setHorizontalAlignment(CENTER);
+        }
 
-	@Override
-	public Component getTableCellRendererComponent(JTable table,
-		Object value, boolean isSelected, boolean hasFocus, int row,
-		int column) {
-	    super.getTableCellRendererComponent(table, value, isSelected,
-		    hasFocus, row, column);
-	    return this;
-	}
+        @Override
+        public Component getTableCellRendererComponent(JTable table,
+                                                       Object value, boolean isSelected, boolean hasFocus, int row,
+                                                       int column) {
+            super.getTableCellRendererComponent(table, value, isSelected,
+                hasFocus, row, column);
+            return this;
+        }
     }
 
     private static class RoomObject {
-	private String roomName;
-	private EntityBareJid roomJID;
+        private String roomName;
+        private EntityBareJid roomJID;
 
-	int numberOfOccupants;
+        private int numberOfOccupants;
 
-	public String getRoomName() {
-	    return roomName;
-	}
+        public String getRoomName() {
+            return roomName;
+        }
 
-	public void setRoomName(String roomName) {
-	    this.roomName = roomName;
-	}
+        public void setRoomName(String roomName) {
+            this.roomName = roomName;
+        }
 
-	public EntityBareJid getRoomJID() {
-	    return roomJID;
-	}
+        public EntityBareJid getRoomJID() {
+            return roomJID;
+        }
 
-	public void setRoomJID(EntityBareJid roomJID) {
-	    this.roomJID = roomJID;
-	}
+        public void setRoomJID(EntityBareJid roomJID) {
+            this.roomJID = roomJID;
+        }
 
-	public int getNumberOfOccupants() {
-	    return numberOfOccupants;
-	}
+        public int getNumberOfOccupants() {
+            return numberOfOccupants;
+        }
 
-	public void setNumberOfOccupants(int numberOfOccupants) {
-	    this.numberOfOccupants = numberOfOccupants;
-	}
+        public void setNumberOfOccupants(int numberOfOccupants) {
+            this.numberOfOccupants = numberOfOccupants;
+        }
     }
 
     @Override
-	public void componentHidden(ComponentEvent e) {
-
+    public void componentHidden(ComponentEvent e) {
     }
 
     @Override
-	public void componentMoved(ComponentEvent e) {
-
+    public void componentMoved(ComponentEvent e) {
     }
 
     @Override
-	public void componentResized(ComponentEvent e) {
-	if (this.getWidth() <= (oneButtonWidth + 19)) {
-	    joinRoomButton.setVisible(false);
-	    addRoomButton.setVisible(false);
-	    createButton.setVisible(false);
-	    refreshButton.setVisible(false);
+    public void componentResized(ComponentEvent e) {
+        if (this.getWidth() <= (oneButtonWidth + 19)) {
+            joinRoomButton.setVisible(false);
+            addRoomButton.setVisible(false);
+            createButton.setVisible(false);
+            refreshButton.setVisible(false);
 
-	    joinRoomItem.setVisible(true);
-	    addRoomItem.setVisible(true);
-	    createItem.setVisible(true);
-	    refreshItem.setVisible(true);
+            joinRoomItem.setVisible(true);
+            addRoomItem.setVisible(true);
+            createItem.setVisible(true);
+            refreshItem.setVisible(true);
 
-	    showHiddenButtons.setVisible(true);
-	}
+            showHiddenButtons.setVisible(true);
+        } else if (this.getWidth() <= (twoButtonWidth + 19)) {
+            joinRoomButton.setVisible(true);
+            addRoomButton.setVisible(false);
+            createButton.setVisible(false);
+            refreshButton.setVisible(false);
 
-	else if (this.getWidth() <= (twoButtonWidth + 19)) {
-	    joinRoomButton.setVisible(true);
-	    addRoomButton.setVisible(false);
-	    createButton.setVisible(false);
-	    refreshButton.setVisible(false);
+            joinRoomItem.setVisible(false);
+            addRoomItem.setVisible(true);
+            createItem.setVisible(true);
+            refreshItem.setVisible(true);
 
-	    joinRoomItem.setVisible(false);
-	    addRoomItem.setVisible(true);
-	    createItem.setVisible(true);
-	    refreshItem.setVisible(true);
+            showHiddenButtons.setVisible(true);
+        } else if (this.getWidth() <= (threeButtonWidth + 19)) {
+            joinRoomButton.setVisible(true);
+            addRoomButton.setVisible(true);
+            createButton.setVisible(false);
+            refreshButton.setVisible(false);
 
-	    showHiddenButtons.setVisible(true);
-	}
+            joinRoomItem.setVisible(false);
+            addRoomItem.setVisible(false);
+            createItem.setVisible(true);
+            refreshItem.setVisible(true);
 
-	else if (this.getWidth() <= (threeButtonWidth + 19)) {
-	    joinRoomButton.setVisible(true);
-	    addRoomButton.setVisible(true);
-	    createButton.setVisible(false);
-	    refreshButton.setVisible(false);
+            showHiddenButtons.setVisible(true);
+        } else if (this.getWidth() <= (allButtonWidth + 19)) {
+            joinRoomButton.setVisible(true);
+            addRoomButton.setVisible(true);
+            createButton.setVisible(true);
+            refreshButton.setVisible(false);
 
-	    joinRoomItem.setVisible(false);
-	    addRoomItem.setVisible(false);
-	    createItem.setVisible(true);
-	    refreshItem.setVisible(true);
+            joinRoomItem.setVisible(false);
+            addRoomItem.setVisible(false);
+            createItem.setVisible(false);
+            refreshItem.setVisible(true);
 
-	    showHiddenButtons.setVisible(true);
-	}
+            showHiddenButtons.setVisible(true);
+        } else if (this.getWidth() > (allButtonWidth + 19)) {
+            joinRoomButton.setVisible(true);
+            addRoomButton.setVisible(true);
+            createButton.setVisible(true);
+            refreshButton.setVisible(true);
 
-	else if (this.getWidth() <= (allButtonWidth + 19)) {
-	    joinRoomButton.setVisible(true);
-	    addRoomButton.setVisible(true);
-	    createButton.setVisible(true);
-	    refreshButton.setVisible(false);
+            joinRoomItem.setVisible(false);
+            addRoomItem.setVisible(false);
+            createItem.setVisible(false);
+            refreshItem.setVisible(false);
 
-	    joinRoomItem.setVisible(false);
-	    addRoomItem.setVisible(false);
-	    createItem.setVisible(false);
-	    refreshItem.setVisible(true);
-
-	    showHiddenButtons.setVisible(true);
-	}
-
-	else if (this.getWidth() > (allButtonWidth + 19)) {
-	    joinRoomButton.setVisible(true);
-	    addRoomButton.setVisible(true);
-	    createButton.setVisible(true);
-	    refreshButton.setVisible(true);
-
-	    joinRoomItem.setVisible(false);
-	    addRoomItem.setVisible(false);
-	    createItem.setVisible(false);
-	    refreshItem.setVisible(false);
-
-	    showHiddenButtons.setVisible(false);
-	}
+            showHiddenButtons.setVisible(false);
+        }
     }
 
     @Override
-	public void componentShown(ComponentEvent e) {
-
+    public void componentShown(ComponentEvent e) {
     }
 
     // will need that, when the window is smaller than the buttons width...
     private void setButtonsWidth() {
-	allButtonWidth = createButton.getWidth() + refreshButton.getWidth()
-		+ addRoomButton.getWidth() + joinRoomButton.getWidth();
-	threeButtonWidth = createButton.getWidth() + addRoomButton.getWidth()
-		+ joinRoomButton.getWidth() + showHiddenButtons.getWidth();
-	twoButtonWidth = addRoomButton.getWidth() + joinRoomButton.getWidth()
-		+ showHiddenButtons.getWidth();
-	oneButtonWidth = joinRoomButton.getWidth()
-		+ showHiddenButtons.getWidth();
+        allButtonWidth = createButton.getWidth() + refreshButton.getWidth()
+            + addRoomButton.getWidth() + joinRoomButton.getWidth();
+        threeButtonWidth = createButton.getWidth() + addRoomButton.getWidth()
+            + joinRoomButton.getWidth() + showHiddenButtons.getWidth();
+        twoButtonWidth = addRoomButton.getWidth() + joinRoomButton.getWidth()
+            + showHiddenButtons.getWidth();
+        oneButtonWidth = joinRoomButton.getWidth()
+            + showHiddenButtons.getWidth();
     }
 
-    static class NumericComparator implements Comparator<String> {
-        public int compare(String a, String b) throws ClassCastException {
-            return Long.valueOf(a).compareTo(Long.valueOf(b));
-        }
-    }
 }
