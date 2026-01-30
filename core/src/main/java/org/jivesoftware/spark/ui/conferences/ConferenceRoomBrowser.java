@@ -605,18 +605,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener, Com
         final Rectangle bounds = LayoutSettingsManager.getLayoutSettings().getConferenceRoomBrowserBounds();
         if (bounds == null || bounds.width <= 0 || bounds.height <= 0) {
             // Use default settings.
-
-            /*
-             * looking up which bundle is used to set the size of the Window (not
-             * using Localpreferences getLanguage() because sometimes language is
-             * not saved in the properties file and so the method only returns an
-             * empty String)
-             */
-            if (Res.getBundle().getLocale().toString().equals("de")) {
-                dlg.setSize(700, 400);
-            } else {
-                dlg.setSize(500, 400);
-            }
+            dlg.setSize(700, 400);
         } else {
             dlg.setBounds(bounds);
         }
