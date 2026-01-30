@@ -58,6 +58,7 @@ public class RoomCreationDialog extends JPanel {
     private final JLabel topicLabel = new JLabel();
     private final JTextField topicField = new JTextField();
     private final JCheckBox permanentCheckBox = new JCheckBox();
+    private final JCheckBox isPublicCheckBox = new JCheckBox();
     private final JCheckBox hasPasswordCheckbox = new JCheckBox();
     private final JLabel passwordLabel = new JLabel();
     private final JPasswordField passwordField = new JPasswordField();
@@ -81,18 +82,24 @@ public class RoomCreationDialog extends JPanel {
         this.add(topicLabel, new GridBagConstraints(0, 1, 1, 1, 0, 0, WEST, NONE, insets, 5, 0));
         this.add(topicField, new GridBagConstraints(1, 1, 1, 1, 1, 0, WEST, HORIZONTAL, insets, 0, 0));
         this.add(permanentCheckBox, new GridBagConstraints(0, 2, 1, 1, 0, 0, WEST, NONE, insets, 0, 0));
-        this.add(hasPasswordCheckbox, new GridBagConstraints(0, 3, 1, 1, 0, 1, NORTHWEST, NONE, insets, 0, 0));
-        this.add(passwordLabel, new GridBagConstraints(0, 4, 1, 1, 0, 0, WEST, NONE, insets, 0, 0));
-        this.add(passwordField, new GridBagConstraints(1, 4, 1, 1, 1, 0, WEST, HORIZONTAL, insets, 0, 0));
-        this.add(confirmPasswordLabel, new GridBagConstraints(0, 5, 1, 1, 0, 0, WEST, NONE, insets, 0, 0));
-        this.add(confirmPasswordField, new GridBagConstraints(1, 5, 1, 1, 1, 1, WEST, HORIZONTAL, insets, 0, 0));
+        this.add(isPublicCheckBox, new GridBagConstraints(0, 3, 1, 1, 0, 0, WEST, NONE, insets, 0, 0));
+        this.add(hasPasswordCheckbox, new GridBagConstraints(0, 4, 1, 1, 0, 1, NORTHWEST, NONE, insets, 0, 0));
+        this.add(passwordLabel, new GridBagConstraints(0, 5, 1, 1, 0, 0, WEST, NONE, insets, 0, 0));
+        this.add(passwordField, new GridBagConstraints(1, 5, 1, 1, 1, 0, WEST, HORIZONTAL, insets, 0, 0));
+        this.add(confirmPasswordLabel, new GridBagConstraints(0, 6, 1, 1, 0, 0, WEST, NONE, insets, 0, 0));
+        this.add(confirmPasswordField, new GridBagConstraints(1, 6, 1, 1, 1, 1, WEST, HORIZONTAL, insets, 0, 0));
 
         ResourceUtils.resLabel(nameLabel, nameField, Res.getString("label.room.name"));
         ResourceUtils.resLabel(topicLabel, topicField, Res.getString("label.room.topic") + ":");
         ResourceUtils.resButton(permanentCheckBox, Res.getString("checkbox.permanent"));
+        ResourceUtils.resButton(isPublicCheckBox, Res.getString("room.config.public"));
+        isPublicCheckBox.setToolTipText(Res.getString("room.config.public.hint"));
         ResourceUtils.resButton(hasPasswordCheckbox, Res.getString("checkbox.private.room"));
         ResourceUtils.resLabel(passwordLabel, passwordField, Res.getString("label.password") + ":");
         ResourceUtils.resLabel(confirmPasswordLabel, confirmPasswordField, Res.getString("label.confirm.password") + ":");
+
+        isPublicCheckBox.setSelected(true);
+        permanentCheckBox.setSelected(true);
 
         passwordLabel.setVisible(false);
         passwordField.setVisible(false);
@@ -131,7 +138,7 @@ public class RoomCreationDialog extends JPanel {
         JOptionPane p = new JOptionPane();
         dlg = p.createDialog(parent, Res.getString("title.conference.rooms"));
         dlg.pack();
-        dlg.setSize(400, 350);
+        dlg.setSize(500, 400);
         dlg.setContentPane(mainPanel);
         dlg.setLocationRelativeTo(parent);
 
@@ -240,8 +247,8 @@ public class RoomCreationDialog extends JPanel {
         JOptionPane.showMessageDialog(this, errorMessage, Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
     }
 
-    public boolean hasPassword() {
-        return hasPasswordCheckbox.isSelected();
+    public boolean isPublicRoom() {
+        return isPublicCheckBox.isSelected();
     }
 
     public boolean isPermanent() {

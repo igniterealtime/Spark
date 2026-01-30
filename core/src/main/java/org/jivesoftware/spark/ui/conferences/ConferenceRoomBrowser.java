@@ -873,10 +873,14 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
             form.setAnswer(MUC_ROOMCONFIG_ROOMNAME, mucRoomDialog.getRoomName());
             form.setAnswer("muc#roomconfig_roomdesc", mucRoomDialog.getRoomTopic());
 
+            if (mucRoomDialog.isPublicRoom()) {
+                if (form.hasField(MUC_ROOMCONFIG_PUBLICLYSEARCHABLEROOM)) {
+                    form.setAnswer(MUC_ROOMCONFIG_PUBLICLYSEARCHABLEROOM, true);
+                }
+            }
             if (mucRoomDialog.isPermanent()) {
                 form.setAnswer("muc#roomconfig_persistentroom", true);
             }
-            // new DataFormDialog(groupChat, form);
             groupChat.sendConfigurationForm(form);
             EntityBareJid groupChatRoom = groupChat.getRoom();
             addRoomToTable(groupChatRoom, null, 1);
