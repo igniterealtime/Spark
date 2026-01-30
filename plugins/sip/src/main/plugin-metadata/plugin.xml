@@ -7,8 +7,8 @@
     <homePage>http://www.jivesoftware.org</homePage>
     <email>thiago@jivesoftware.com</email>
     <class>org.jivesoftware.sparkplugin.SoftPhonePlugin</class>
-    <minSparkVersion>3.0.0</minSparkVersion>
+    <minSparkVersion>3.1.0</minSparkVersion>
     <os>Windows,Mac,Linux</os>
-    <java>1.8.0</java>
+    <java>11</java>
 </plugin>
 

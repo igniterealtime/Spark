@@ -7,6 +7,6 @@
     <author>Jive Software</author>
     <homePage>http://www.jivesoftware.com</homePage>
     <email>spark@jivesoftware.com</email>
-    <minSparkVersion>3.0.0</minSparkVersion>
-    <java>1.8.0</java>
+    <minSparkVersion>3.1.0</minSparkVersion>
+    <java>11</java>
 </plugin>

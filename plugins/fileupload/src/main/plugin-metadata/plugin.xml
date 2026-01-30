@@ -6,7 +6,7 @@
     <homePage>http://igniterealtime.org</homePage>
     <email>support@igniterealtime.org</email>
     <class>org.jivesoftware.spark.plugin.fileupload.SparkFileUploadPlugin</class>
-    <minSparkVersion>3.0.0</minSparkVersion>
+    <minSparkVersion>3.1.0</minSparkVersion>
     <os>Windows,Linux,Mac</os>
-    <java>1.8.0</java>
+    <java>11</java>
 </plugin>
