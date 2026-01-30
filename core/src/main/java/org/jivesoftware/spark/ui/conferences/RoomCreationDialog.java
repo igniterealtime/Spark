@@ -58,7 +58,7 @@ public class RoomCreationDialog extends JPanel {
     private final JLabel topicLabel = new JLabel();
     private final JTextField topicField = new JTextField();
     private final JCheckBox permanentCheckBox = new JCheckBox();
-    private final JCheckBox privateCheckbox = new JCheckBox();
+    private final JCheckBox hasPasswordCheckbox = new JCheckBox();
     private final JLabel passwordLabel = new JLabel();
     private final JPasswordField passwordField = new JPasswordField();
     private final JLabel confirmPasswordLabel = new JLabel();
@@ -81,18 +81,31 @@ public class RoomCreationDialog extends JPanel {
         this.add(topicLabel, new GridBagConstraints(0, 1, 1, 1, 0, 0, WEST, NONE, insets, 5, 0));
         this.add(topicField, new GridBagConstraints(1, 1, 1, 1, 1, 0, WEST, HORIZONTAL, insets, 0, 0));
         this.add(permanentCheckBox, new GridBagConstraints(0, 2, 1, 1, 0, 0, WEST, NONE, insets, 0, 0));
-        this.add(privateCheckbox, new GridBagConstraints(0, 3, 1, 1, 0, 0, WEST, NONE, insets, 0, 0));
+        this.add(hasPasswordCheckbox, new GridBagConstraints(0, 3, 1, 1, 0, 1, NORTHWEST, NONE, insets, 0, 0));
         this.add(passwordLabel, new GridBagConstraints(0, 4, 1, 1, 0, 0, WEST, NONE, insets, 0, 0));
         this.add(passwordField, new GridBagConstraints(1, 4, 1, 1, 1, 0, WEST, HORIZONTAL, insets, 0, 0));
         this.add(confirmPasswordLabel, new GridBagConstraints(0, 5, 1, 1, 0, 0, WEST, NONE, insets, 0, 0));
-        this.add(confirmPasswordField, new GridBagConstraints(1, 5, 1, 1, 1, 0, WEST, HORIZONTAL, insets, 0, 0));
+        this.add(confirmPasswordField, new GridBagConstraints(1, 5, 1, 1, 1, 1, WEST, HORIZONTAL, insets, 0, 0));
 
         ResourceUtils.resLabel(nameLabel, nameField, Res.getString("label.room.name"));
         ResourceUtils.resLabel(topicLabel, topicField, Res.getString("label.room.topic") + ":");
         ResourceUtils.resButton(permanentCheckBox, Res.getString("checkbox.permanent"));
-        ResourceUtils.resButton(privateCheckbox, Res.getString("checkbox.private.room"));
+        ResourceUtils.resButton(hasPasswordCheckbox, Res.getString("checkbox.private.room"));
         ResourceUtils.resLabel(passwordLabel, passwordField, Res.getString("label.password") + ":");
         ResourceUtils.resLabel(confirmPasswordLabel, confirmPasswordField, Res.getString("label.confirm.password") + ":");
+
+        passwordLabel.setVisible(false);
+        passwordField.setVisible(false);
+        confirmPasswordLabel.setVisible(false);
+        confirmPasswordField.setVisible(false);
+
+        hasPasswordCheckbox.addActionListener(changeEvent -> {
+            boolean hasPassword = hasPasswordCheckbox.isSelected();
+            passwordLabel.setVisible(hasPassword);
+            passwordField.setVisible(hasPassword);
+            confirmPasswordLabel.setVisible(hasPassword);
+            confirmPasswordField.setVisible(hasPassword);
+        });
     }
 
     public MultiUserChat createGroupChat(Component parent, final DomainBareJid serviceName) {
@@ -186,7 +199,7 @@ public class RoomCreationDialog extends JPanel {
         String roomName = nameField.getText();
         String password = new String(passwordField.getPassword());
         String confirmPassword = new String(confirmPasswordField.getPassword());
-        boolean isPrivate = privateCheckbox.isSelected();
+        boolean hasPassword = hasPasswordCheckbox.isSelected();
 
         // Check for valid information
         if (!ModelUtil.hasLength(roomName)) {
@@ -195,7 +208,7 @@ public class RoomCreationDialog extends JPanel {
             return false;
         }
 
-        if (isPrivate) {
+        if (hasPassword) {
             if (!ModelUtil.hasLength(password)) {
                 showError(Res.getString("message.password.private.room.error"));
                 passwordField.requestFocus();
@@ -227,8 +240,8 @@ public class RoomCreationDialog extends JPanel {
         JOptionPane.showMessageDialog(this, errorMessage, Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
     }
 
-    public boolean isPrivate() {
-        return privateCheckbox.isSelected();
+    public boolean hasPassword() {
+        return hasPasswordCheckbox.isSelected();
     }
 
     public boolean isPermanent() {
