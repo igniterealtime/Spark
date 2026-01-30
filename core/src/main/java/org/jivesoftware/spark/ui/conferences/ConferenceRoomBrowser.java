@@ -867,7 +867,9 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener,
             if (mucRoomDialog.isPasswordProtected()) {
                 String password = mucRoomDialog.getPassword();
                 room.setPassword(password);
-                form.setAnswer(MUC_ROOMCONFIG_PASSWORDPROTECTEDROOM, true);
+                if (form.hasField(MUC_ROOMCONFIG_PASSWORDPROTECTEDROOM)) {
+                    form.setAnswer(MUC_ROOMCONFIG_PASSWORDPROTECTEDROOM, true);
+                }
                 form.setAnswer(MUC_ROOMCONFIG_ROOMSECRET, password);
             }
             form.setAnswer(MUC_ROOMCONFIG_ROOMNAME, mucRoomDialog.getRoomName());
