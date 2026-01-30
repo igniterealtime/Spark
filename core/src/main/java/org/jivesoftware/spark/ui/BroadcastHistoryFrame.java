@@ -18,11 +18,6 @@ import org.jivesoftware.resource.Res;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.sparkimpl.plugin.layout.LayoutSettingsManager;
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 
 /**
  * @author ps
@@ -41,11 +36,12 @@ public class BroadcastHistoryFrame extends javax.swing.JFrame {
     }
 
     public void readFromFile(String date) throws IOException {
-        //String fileName = Spark.getSparkUserHome()+File.separator+"broadcast_history."+date+".txt";
         String fileLocation = Spark.getSparkUserHome() + File.separator + "user" + File.separator + SparkManager.getSessionManager().getUsername() + "@" + SparkManager.getSessionManager().getServerAddress() + File.separator + "transcripts" + File.separator + "broadcast_history." + date + ".txt";
         File myfile = new File(fileLocation);
+        if (!myfile.exists()) {
+            return;
+        }
         FileInputStream fis = new FileInputStream(myfile);
-
         BufferedReader br = new BufferedReader(new InputStreamReader(fis));
 
         String line;
@@ -71,7 +67,7 @@ public class BroadcastHistoryFrame extends javax.swing.JFrame {
         try {
             readFromFile(myDate);
         } catch (IOException ex) {
-            Log.error("Couldn't read from file"+ex.getMessage()+ Arrays.toString(ex.getStackTrace()));
+            Log.error("Couldn't read from file", ex);
         }
        
         SearchButton.setText((Res.getString("button.search")));
@@ -145,17 +141,14 @@ public class BroadcastHistoryFrame extends javax.swing.JFrame {
 
 
     private void SearchButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_SearchButtonMouseClicked
-        // TODO add your handling code here:
         BroadcastHistoryArea.setText("");
-       
         try {
             readFromFile(DateField.getText());
         } catch (IOException ex) {
-            Log.error("Couldn't read from file"+ex.getCause()+ Arrays.toString(ex.getStackTrace()));
+            Log.error("Couldn't read from file", ex);
         }
-       
-        
     }//GEN-LAST:event_SearchButtonMouseClicked
+
     public void run() {
     java.awt.EventQueue.invokeLater(() -> {
        BroadcastHistoryFrame frame= new BroadcastHistoryFrame();
@@ -163,9 +156,6 @@ public class BroadcastHistoryFrame extends javax.swing.JFrame {
        frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
     });
 }
-    /**
-     * @param args the command line arguments
-     */
 
    private javax.swing.JFormattedTextField DateField;
     // Variables declaration - do not modify//GEN-BEGIN:variables
