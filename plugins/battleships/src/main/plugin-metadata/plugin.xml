@@ -6,7 +6,7 @@
     <author>Wolf Posdorfer</author>
     <homePage>http://www.jivesoftware.com</homePage>
     <email>9posdorf@informatik.uni-hamburg.de</email>
-    <minSparkVersion>3.0.0</minSparkVersion>
+    <minSparkVersion>3.1.0</minSparkVersion>
     <os>Windows,Linux,Mac</os>
-    <java>1.8.0</java>
+    <java>11</java>
 </plugin>

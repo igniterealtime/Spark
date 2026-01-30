@@ -6,8 +6,8 @@
     <homePage>http://www.jivesoftware.com</homePage>
     <email>9posdorf@informatik.uni-hamburg.de</email>
     <class>com.jivesoftware.spark.plugin.apple.ApplePlugin</class>
-    <minSparkVersion>3.0.0</minSparkVersion>
+    <minSparkVersion>3.1.0</minSparkVersion>
 	<os>Mac</os>
-	<java>1.8.0</java>
+	<java>11</java>
 </plugin>
 

@@ -7,7 +7,7 @@
     <homePage>http://www.jivesoftware.org</homePage>
     <email>plugins@jivesoftware.org</email>
     <class>org.jivesoftware.game.reversi.ReversiPlugin</class>
-    <minSparkVersion>3.0.0</minSparkVersion>
-    <java>1.8.0</java>
+    <minSparkVersion>3.1.0</minSparkVersion>
+    <java>11</java>
 </plugin>
 

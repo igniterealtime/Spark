@@ -6,6 +6,6 @@
     <email>spark@jivesoftware.com</email>
     <homePage>http://www.jivesoftware.com</homePage>
     <class>org.jivesoftware.fastpath.FastpathPlugin</class>
-    <minSparkVersion>3.0.0</minSparkVersion>
-    <java>1.8.0</java>
+    <minSparkVersion>3.1.0</minSparkVersion>
+    <java>11</java>
 </plugin>
