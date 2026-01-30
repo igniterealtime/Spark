@@ -52,17 +52,17 @@ import static java.awt.GridBagConstraints.*;
 
 public class RoomCreationDialog extends JPanel {
     private static final long serialVersionUID = -8391698290385575601L;
+    private final GridBagLayout gridBagLayout1 = new GridBagLayout();
     private final JLabel nameLabel = new JLabel();
+    private final JTextField nameField = new JTextField();
     private final JLabel topicLabel = new JLabel();
-    private final JLabel passwordLabel = new JLabel();
-    private final JLabel confirmPasswordLabel = new JLabel();
+    private final JTextField topicField = new JTextField();
     private final JCheckBox permanentCheckBox = new JCheckBox();
     private final JCheckBox privateCheckbox = new JCheckBox();
-    private final JTextField nameField = new JTextField();
-    private final JTextField topicField = new JTextField();
+    private final JLabel passwordLabel = new JLabel();
     private final JPasswordField passwordField = new JPasswordField();
+    private final JLabel confirmPasswordLabel = new JLabel();
     private final JPasswordField confirmPasswordField = new JPasswordField();
-    private final GridBagLayout gridBagLayout1 = new GridBagLayout();
     private MultiUserChat groupChat = null;
 
     public RoomCreationDialog() {
@@ -76,23 +76,23 @@ public class RoomCreationDialog extends JPanel {
     private void jbInit() {
         this.setLayout(gridBagLayout1);
         Insets insets = new Insets(5, 5, 5, 5);
-        this.add(confirmPasswordField, new GridBagConstraints(1, 4, 1, 1, 1.0, 0.0, WEST, HORIZONTAL, insets, 0, 0));
-        this.add(passwordField, new GridBagConstraints(1, 3, 1, 1, 1.0, 0.0, WEST, HORIZONTAL, insets, 0, 0));
-        this.add(topicField, new GridBagConstraints(1, 1, 1, 1, 1.0, 0.0, WEST, HORIZONTAL, insets, 0, 0));
-        this.add(nameField, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, WEST, HORIZONTAL, insets, 0, 0));
-        this.add(privateCheckbox, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, WEST, NONE, insets, 0, 0));
-        this.add(permanentCheckBox, new GridBagConstraints(0, 5, 1, 1, 0.0, 0.0, WEST, NONE, insets, 0, 0));
-        this.add(confirmPasswordLabel, new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0, WEST, NONE, insets, 0, 0));
-        this.add(passwordLabel, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, WEST, NONE, insets, 0, 0));
-        this.add(topicLabel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, WEST, NONE, insets, 5, 0));
-        this.add(nameLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, WEST, NONE, insets, 0, 0));
+        this.add(nameLabel, new GridBagConstraints(0, 0, 1, 1, 0, 0, WEST, NONE, insets, 0, 0));
+        this.add(nameField, new GridBagConstraints(1, 0, 1, 1, 1, 0, WEST, HORIZONTAL, insets, 0, 0));
+        this.add(topicLabel, new GridBagConstraints(0, 1, 1, 1, 0, 0, WEST, NONE, insets, 5, 0));
+        this.add(topicField, new GridBagConstraints(1, 1, 1, 1, 1, 0, WEST, HORIZONTAL, insets, 0, 0));
+        this.add(permanentCheckBox, new GridBagConstraints(0, 2, 1, 1, 0, 0, WEST, NONE, insets, 0, 0));
+        this.add(privateCheckbox, new GridBagConstraints(0, 3, 1, 1, 0, 0, WEST, NONE, insets, 0, 0));
+        this.add(passwordLabel, new GridBagConstraints(0, 4, 1, 1, 0, 0, WEST, NONE, insets, 0, 0));
+        this.add(passwordField, new GridBagConstraints(1, 4, 1, 1, 1, 0, WEST, HORIZONTAL, insets, 0, 0));
+        this.add(confirmPasswordLabel, new GridBagConstraints(0, 5, 1, 1, 0, 0, WEST, NONE, insets, 0, 0));
+        this.add(confirmPasswordField, new GridBagConstraints(1, 5, 1, 1, 1, 0, WEST, HORIZONTAL, insets, 0, 0));
 
         ResourceUtils.resLabel(nameLabel, nameField, Res.getString("label.room.name"));
         ResourceUtils.resLabel(topicLabel, topicField, Res.getString("label.room.topic") + ":");
-        ResourceUtils.resLabel(passwordLabel, passwordField, Res.getString("label.password") + ":");
-        ResourceUtils.resLabel(confirmPasswordLabel, confirmPasswordField, Res.getString("label.confirm.password") + ":");
         ResourceUtils.resButton(permanentCheckBox, Res.getString("checkbox.permanent"));
         ResourceUtils.resButton(privateCheckbox, Res.getString("checkbox.private.room"));
+        ResourceUtils.resLabel(passwordLabel, passwordField, Res.getString("label.password") + ":");
+        ResourceUtils.resLabel(confirmPasswordLabel, confirmPasswordField, Res.getString("label.confirm.password") + ":");
     }
 
     public MultiUserChat createGroupChat(Component parent, final DomainBareJid serviceName) {
