@@ -32,8 +32,8 @@ import org.jxmpp.jid.impl.JidCreate;
 import javax.swing.*;
 
 import java.awt.*;
-import java.text.SimpleDateFormat;
-import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 
 public class VersionViewer {
 
@@ -100,34 +100,39 @@ public class VersionViewer {
             .build();
         versionRequest.setTo(jid);
 
+        CardLayout cardLayout = (CardLayout) cards.getLayout();
         connection.sendIqRequestAsync(versionRequest)
             .onSuccess(iq -> {
                 final Version versionResult = (Version) iq;
                 softwareField.setText(versionResult.getName());
                 versionField.setText(versionResult.getVersion());
                 osField.setText(versionResult.getOs());
-                ((CardLayout)(cards.getLayout())).last( cards );
+                cardLayout.last(cards);
             })
             .onError(e -> {
-                Log.warning("Version request error: " + e, e);
-                ((CardLayout)(cards.getLayout())).last( cards );
+                Log.warning("Version request error: " + e);
+                softwareField.setText("");
+                versionField.setText("");
+                osField.setText("");
+                cardLayout.last(cards);
             });
 
         // Time
         final Time time = Time.builder(connection)
             .ofType(IQ.Type.get)
-            .set(ZonedDateTime.now())
             .build();
         time.setTo(jid);
 
         connection.sendIqRequestAsync(time)
             .onSuccess(iq -> {
-                timeField.setText( new SimpleDateFormat( ).format( ((Time)iq).getTime()));
-                ((CardLayout)(cards.getLayout())).last( cards );
+                DateTimeFormatter f = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.FULL);
+                timeField.setText(f.format(((Time) iq).getZonedDateTime()));
+                cardLayout.last(cards);
             })
             .onError(e -> {
-                Log.warning("Time request error: " + e, e);
-                ((CardLayout)(cards.getLayout())).last( cards );
+                Log.warning("Time request error: " + e);
+                timeField.setText("");
+                cardLayout.last(cards);
             });
 
         MessageDialog.showComponent(Res.getString("title.version.and.time"), Res.getString("message.client.information", UserManager.unescapeJID(jidString)), SparkRes.getImageIcon(SparkRes.PROFILE_IMAGE_24x24), cards, SparkManager.getMainWindow(), 400, 300, false);
