@@ -114,18 +114,6 @@ public class CheckUpdates {
      * @return true if there is a new build available for download.
      */
     public SparkVersion isNewBuildAvailableFromJivesoftware() {
-
-        HttpHost proxy = null;
-        String proxyHost = System.getProperty( "http.proxyHost" );
-        String proxyPort = System.getProperty( "http.proxyPort" );
-        if ( ModelUtil.hasLength( proxyHost ) && ModelUtil.hasLength(proxyPort) ) {
-            try{
-                proxy = new HttpHost(proxyHost, Integer.parseInt(proxyPort));
-            } catch ( NumberFormatException e ) {
-                Log.error( e );
-            }
-        }
-
         final String os;
         if (Spark.isWindows()) {
             os = "windows";
@@ -145,9 +133,8 @@ public class CheckUpdates {
         //            post.addParameter("beta", "true");
         //        }
         try (final CloseableHttpClient httpClient =
-                 HttpClients.custom()
+                 HttpClients.custom().useSystemProperties()
                      .setConnectionManager(AcceptAllCertsConnectionManager.getInstance())
-                     .setProxy(proxy)
                      .build()
         ) {
             final ClassicHttpRequest request = ClassicRequestBuilder.post(mainUpdateURL)
@@ -179,23 +166,10 @@ public class CheckUpdates {
         final java.util.Timer timer = new java.util.Timer();
 
         final HttpGet request = new HttpGet(version.getDownloadURL());
-
-        HttpHost proxy = null;
-        String proxyHost = System.getProperty( "http.proxyHost" );
-        String proxyPort = System.getProperty( "http.proxyPort" );
-        if ( ModelUtil.hasLength( proxyHost ) && ModelUtil.hasLength(proxyPort) ) {
-            try{
-                proxy = new HttpHost(proxyHost, Integer.parseInt(proxyPort));
-            } catch ( NumberFormatException e ) {
-                Log.error( e );
-            }
-        }
-
         try (final CloseableHttpClient httpClient =
-                 HttpClients.custom()
+                 HttpClients.custom().useSystemProperties()
                      .setConnectionManager(AcceptAllCertsConnectionManager.getInstance())
-                     .setProxy(proxy)
-                     .build();
+                     .build()
         ) {
             httpClient.execute(request, response -> {
                 if (response.getCode() != 200) {

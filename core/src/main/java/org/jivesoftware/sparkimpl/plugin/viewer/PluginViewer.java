@@ -304,23 +304,10 @@ public class PluginViewer extends JPanel implements Plugin
 			public Object construct()
             {
                 final HttpGet request = new HttpGet(retrieveListURL);
-
-                HttpHost proxy = null;
-                    String proxyHost = System.getProperty( "http.proxyHost" );
-                    String proxyPort = System.getProperty( "http.proxyPort" );
-                    if ( ModelUtil.hasLength( proxyHost ) && ModelUtil.hasLength(proxyPort) ) {
-                        try{
-                            proxy = new HttpHost(proxyHost, Integer.parseInt(proxyPort));
-                        } catch ( NumberFormatException e ) {
-                            Log.error( e );
-                        }
-                    }
-
                 try (final CloseableHttpClient httpClient =
-                         HttpClients.custom()
+                         HttpClients.custom().useSystemProperties()
                              .setConnectionManager(AcceptAllCertsConnectionManager.getInstance())
-                             .setProxy(proxy)
-                             .build();
+                             .build()
                 ) {
                     return httpClient.execute(request, response -> {
                         if (response.getCode() != 200) {
@@ -378,23 +365,10 @@ public class PluginViewer extends JPanel implements Plugin
     private void downloadPlugin( final PublicPlugin plugin )
     {
         final HttpGet request = new HttpGet(plugin.getDownloadURL());
-
-        HttpHost proxy = null;
-            String proxyHost = System.getProperty( "http.proxyHost" );
-            String proxyPort = System.getProperty( "http.proxyPort" );
-            if ( ModelUtil.hasLength( proxyHost ) && ModelUtil.hasLength(proxyPort) ) {
-                try{
-                    proxy = new HttpHost(proxyHost, Integer.parseInt(proxyPort));
-                } catch ( NumberFormatException e ) {
-                    Log.error( e );
-                }
-            }
-
         try (final CloseableHttpClient httpClient =
-                 HttpClients.custom()
+                 HttpClients.custom().useSystemProperties()
                      .setConnectionManager(AcceptAllCertsConnectionManager.getInstance())
-                     .setProxy(proxy)
-                     .build();
+                     .build()
         ) {
             httpClient.execute(request, response -> {
                 if (response.getCode() != 200) {

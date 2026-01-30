@@ -121,11 +121,10 @@ public class ChatRoomDecorator
     private void uploadFile(File file, UploadRequest response, ChatRoom room, Message.Type type)
     {
         Log.debug("About to upload file for room " + room.getBareJid() + " via HTTP PUT to URL " + response.putUrl);
-
         try (final CloseableHttpClient httpClient =
-                 HttpClients.custom()
-                    .setConnectionManager(AcceptAllCertsConnectionManager.getInstance())
-                    .build()
+                 HttpClients.custom().useSystemProperties()
+                     .setConnectionManager(AcceptAllCertsConnectionManager.getInstance())
+                     .build()
         ) {
             final ClassicHttpRequest request = ClassicRequestBuilder.put(response.putUrl)
                 .setEntity(new FileEntity(file, ContentType.create("application/binary")))
