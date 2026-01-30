@@ -39,8 +39,9 @@ import org.jxmpp.jid.impl.JidCreate;
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class ChatRoomDecorator
 {
@@ -93,12 +94,7 @@ public class ChatRoomDecorator
     private void handleUpload(File file, ChatRoom room, Message.Type type)
     {
         Log.debug("Uploading file: " + file.getAbsolutePath());
-        String fileName = null;
-        try {
-            fileName = URLEncoder.encode(file.getName(), "UTF-8");
-        } catch (UnsupportedEncodingException ignored) {
-            // Can be safely ignored because UTF-8 is always supported
-        }
+        String fileName = URLEncoder.encode(file.getName(), UTF_8);
         try {
             UploadRequest request = new UploadRequest(fileName, file.length());
             request.setTo(JidCreate.fromOrThrowUnchecked("httpfileupload." + SparkManager.getSessionManager().getServerAddress()));

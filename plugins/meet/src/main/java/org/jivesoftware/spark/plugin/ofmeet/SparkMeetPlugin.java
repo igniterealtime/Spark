@@ -19,6 +19,7 @@ package org.jivesoftware.spark.plugin.ofmeet;
 
 import java.awt.*;
 import javax.swing.*;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.zip.*;
 import java.io.*;
@@ -46,6 +47,8 @@ import org.jitsi.util.OSUtils;
 import de.mxro.process.*;
 import org.jxmpp.jid.parts.*;
 import org.jxmpp.jid.impl.JidCreate;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageListener
 {
@@ -276,8 +279,8 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
     public void openURL(String newUrl)
     {
         try {
-            String username = URLEncoder.encode(SparkManager.getSessionManager().getUsername(), "UTF-8");
-            String password = URLEncoder.encode(SparkManager.getSessionManager().getPassword(), "UTF-8");
+            String username = URLEncoder.encode(SparkManager.getSessionManager().getUsername(), UTF_8);
+            String password = URLEncoder.encode(SparkManager.getSessionManager().getPassword(), UTF_8);
 
             electronThread = Spawn.startProcess(electronExePath + " --ignore-certificate-errors " + newUrl, new File(electronHomePath), new ProcessListener() {
 
@@ -305,7 +308,6 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
                     Log.warning("Electron error", t);
                 }
             });
-
         } catch (Exception t) {
             Log.error("Error opening url " + newUrl, t);
         }
