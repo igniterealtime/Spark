@@ -388,10 +388,8 @@ Log.warning( "Unable to broadcast.", e1 );
         try {
             addDataToFile(out);
         } catch (IOException ex) {
-            Log.error("Couldn't add data to file"+ Arrays.toString(ex.getStackTrace()));
+            Log.error("Couldn't add data to file", ex);
         }
-        
-       
         return true;
     }
     private  void addDataToFile(String data) throws IOException
