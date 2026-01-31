@@ -35,7 +35,7 @@
   </files>
   <launchers>
     <launcher name="Spark" id="4" icnsFile="images/message.icns">
-      <executable name="Spark" iconSet="true" iconFile="images/spark.ico" executableDir="." redirectStderr="false" executableMode="gui" singleInstance="true" serviceDescription="communicator" dpiAware="false">
+      <executable name="Spark" iconSet="true" iconFile="images/spark.ico" executableDir="." redirectStderr="false" executableMode="gui" singleInstance="true" serviceDescription="communicator" checkConsoleParameter="true">
         <versionInfo include="true" fileDescription="${compiler:sys.shortName}" legalCopyright="${compiler:sys.publisher}" internalName="${compiler:sys.shortName}" />
       </executable>
       <java mainClass="org.jivesoftware.launcher.Startup" vmParameters="&quot;-Dappdir=${launcher:sys.launcherDirectory}&quot; -Dsun.java2d.noddraw=true &quot;-Djava.library.path=${launcher:sys.launcherDirectory}\lib\windows&quot;" preferredVM="client">
@@ -49,6 +49,119 @@
         </nativeLibraryDirectories>
       </java>
       <vmOptionsFile mode="none" />
+      <desktopFile>[Desktop Entry]
+MimeType=x-scheme-handler/xmpp
+X-MessagingMenu-UsesChatSection=true
+GenericName=XMPP Messenger
+GenericName[af]=XMPP boodskapper
+GenericName[ar]=مرسال إنترنت
+GenericName[as]=ইন্টাৰনেট মেসেঞ্জাৰ
+GenericName[ast]=Mensaxeru d'XMPP
+GenericName[be]=XMPP беседник
+GenericName[bg]=XMPP бързи съобщения
+GenericName[bn]=ইন্টারনেট বার্তাবাহক
+GenericName[bn_IN]=ইন্টারনেট মেসেঞ্জার
+GenericName[br]=Postelerezh Kenrouedad
+GenericName[brx]=इन्टारनेट मेसेनजार
+GenericName[ca]=Missatger d'XMPP
+GenericName[ca@valencia]=Missatger d'XMPP
+GenericName[cs]=XMPP Messenger
+GenericName[da]=XMPP Beskeder
+GenericName[de]=Sofortnachrichtendienst
+GenericName[dz]=ཨིན་ཊར་ནེཊི་འཕྲིན་སྐྱེལ་པ།
+GenericName[el]=Αποστολέας μηνυμάτων διαδικτύου
+GenericName[eo]=XMPP Mesaĝilo
+GenericName[es]=Cliente de mensajería de XMPP
+GenericName[es_AR]=Mensajero de XMPP
+GenericName[et]=XMPP sõnumivahetus
+GenericName[eu]=XMPP-Mezularia
+GenericName[fa]=پیغام‌رسان اینترنتی
+GenericName[fi]=Pikaviestin
+GenericName[fr]=Messagerie XMPP
+GenericName[ga]=Teachtaire Idirlín
+GenericName[gl]=Mensaxería na XMPP
+GenericName[gu]=XMPP Messenger
+GenericName[he]=למסרים באינטרנט
+GenericName[hi]=इंटरनेट मेसेंजर
+GenericName[hr]=XMPP pismonoša
+GenericName[hu]=Azonnali üzenetküldés
+GenericName[id]=Pengirim Pesan XMPP
+GenericName[it]=XMPP Messenger
+GenericName[ja]=インターネット・メッセンジャー
+GenericName[km]=កម្មវិធី​ផ្ញើសារ​អ៊ីនធឺណិត
+GenericName[kn]=ಇಂಟರ್ನೆಟ್ ಮೆಸ್ಸೆಂಜರ್
+GenericName[ko]=인터넷 메신저
+GenericName[ku]=Peyamnêra XMPP
+GenericName[lt]=Pokalbiai XMPP
+GenericName[lv]=XMPP ziņnesis
+GenericName[mai]=इंटरनेट मेसेंजर
+GenericName[mhr]=XMPP Писе каласымаш алмаш
+GenericName[mk]=XMPP пораки
+GenericName[ml]=ഇന്റര്‍നെറ്റ് മെസഞ്ചര്‍
+GenericName[mn]=XMPP Мессенжер
+GenericName[mr]=इंटरनेट मेसेंजर
+GenericName[ms_MY]=Pemesej XMPP
+GenericName[my_MM]=အင်တာနက် မစ်ဆင်းဂျာ -
+GenericName[nb]=Lynmeldingsklient
+GenericName[nl]=XMPP Messenger
+GenericName[nn]=XMPP Lynmeldingsklient
+GenericName[oc]=XMPP Messatjariá
+GenericName[or]=ଇଣ୍ଟରନେଟ ସଂଦେଶବାହାକ
+GenericName[pa]=ਇੰਟਰਨੈਟ ਮੈਸੰਜ਼ਰ
+GenericName[pl]=XMPP Komunikator
+GenericName[ps]=د انترنت زری
+GenericName[pt]=XMPP Mensageiro
+GenericName[pt_BR]=XMPP Mensageiro
+GenericName[ro]=XMPP Mesagerie
+GenericName[ru]=XMPP беседник
+GenericName[si]=අන්තර්ජාල පණිවිඩකරු
+GenericName[sk]=XMPP komunikátor
+GenericName[sl]=Spletni sel
+GenericName[sq]=Lajmsjellës
+GenericName[sr]=XMPP писмоноша
+GenericName[sr@latin]=XMPP pismonoša
+GenericName[sv]=XMPP Meddelandeklient
+GenericName[ta]=இணையதள தூதுவர்
+GenericName[te]=ఇంటర్నెట్ మెసెంజర్
+GenericName[th]=โปรแกรมข้อความด่วน
+GenericName[tr]=XMPP Mesajlaşma Aracı
+GenericName[uk]=XMPP бесєдник
+GenericName[ur]=ا نٹرنیٹ میسینجر
+GenericName[vi]=Tin Nhắn
+GenericName[zh_CN]=XMPP 聊天客户端
+GenericName[zh_TW]=網路即時通
+Comment=A fully-featured XMPP chat client
+Comment[ar]=عميل ميفاق الحضور والمراسلة القابل للتوسعة (XMPP) متكامل المزايا
+Comment[cs]=Plně funkční XMPP chat client
+Comment[de]=Ein vollwertiger XMPP-Chatclient
+Comment[es]=Un cliente de chat XMPP con todas las características
+Comment[fr]=Un client de chat XMPP complet
+Comment[hu]=Egy funkciógazdag XMPP üzenetküldő
+Comment[it]=Un client di messaggistica XMPP completo
+Comment[ja]=機能満載の XMPP チャットクライアント
+Comment[kk]=Толық мүмкіндіктері бар XMPP чат клиенті
+Comment[nl]=Een volledig uitgeruste XMPP-chatclient
+Comment[pl]=Wpełni funkcjonalny klient rozmów XMPP
+Comment[pt]=Um cliente de bate-papo XMPP com uma gama completa de recursos
+Comment[pt_BR]=Um cliente de bate-papo XMPP completo
+Comment[ro]=Un client de chat XMPP cu funcționalități complete
+Comment[ru]=Полноценный клиент XMPP-чата
+Comment[sv]=En fullfjädrad XMPP-chattklient
+Comment[uk]=Повноцінний клієнт XMPP-чату
+Comment[zh_CN]=功能齐全的 XMPP 聊天客户端
+Comment[zh_TW]=功能齊全的 XMPP 聊天客戶端
+Keywords=chat;messaging;im;xmpp;voip;
+Keywords[ar]=دردشة;مراسلة;رسائل;إكس إم بي بي;اكس ام بي بي;إكس ام بي بي;إكس ام بي بي;ميفاق الحضور والمراسلة القابل للتوسعة;بروتوكول الحضور والمراسلة القابل للتوسعة;جابر;
+Keywords[cs]=konverzace;zprávy;besednik;
+Keywords[hu]=csevegés;üzenetküldés;azonnali üzenetküldő;
+Keywords[kk]=чат;хабарласу;лезде хабарламалар;
+Keywords[pl]=czat;rozmowy;wiadomości;besednik;komunikator;
+Keywords[pt]=bate-papo;mensagens;mensageiro-instantâneo;
+Keywords[pt_BR]=conversa;mensagens;
+Keywords[ro]=mesagerie;
+Keywords[ru]=чат;общение;разговоры;беседник;месенджер;звонки;звонилка;коммуникатор;
+Keywords[zh_CN]=聊天;消息;即时通讯;通话;
+</desktopFile>
       <iconImageFiles>
         <file path="images/spark-16x16.png" />
         <file path="images/spark-24x24.png" />
@@ -60,7 +173,7 @@
         <urlHandler scheme="xmpp" role="editor" />
       </macStaticAssociations>
     </launcher>
-    <launcher name="starter" id="21">
+    <launcher name="starter" id="21" excludeFromMenu="true">
       <executable name="starter" executableDir="." executableMode="gui" dpiAware="false" />
       <java mainClass="org.jivesoftware.Restarter">
         <classPath>
@@ -317,12 +430,13 @@ return console.askOkCancel(message, true);
               </action>
               <action id="29" beanClass="com.install4j.runtime.beans.actions.desktop.CreateDefaultStartMenuEntriesAction" actionElevationType="elevated">
                 <serializedBean>
+                  <property name="categories" type="string">Network;InstantMessaging;Chat;</property>
                   <property name="folderName" type="string">${installer:sys.programGroupName}</property>
                   <property name="linkDirectory" type="string">${installer:sys.symlinkDir}</property>
                 </serializedBean>
                 <condition>!context.getBooleanVariable("sys.programGroupDisabled")</condition>
               </action>
-              <action id="219" beanClass="com.install4j.runtime.beans.actions.desktop.UrlHandlerAction" actionElevationType="elevated" rollbackBarrierExitCode="0">
+              <action id="223" beanClass="com.install4j.runtime.beans.actions.desktop.UrlHandlerAction" actionElevationType="elevated" rollbackBarrierExitCode="0">
                 <serializedBean>
                   <property name="launcherId" type="string">4</property>
                   <property name="scheme" type="string">xmpp</property>
