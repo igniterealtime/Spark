@@ -4,23 +4,23 @@
   <application name="Spark" applicationId="3057-7228-2063-7466" mediaDir="../../target/" mediaFilePattern="spark_${compiler:sys.version}" compression="9" lzmaCompression="true" commonExternalFiles="true" shortName="Spark" publisher="Ignite Realtime" publisherWeb="http://www.igniterealtime.org" version="3.0.0" allPathsRelative="true" macVolumeId="ccfadd9e467a1ebd" javaMinVersion="11" jdkMode="runtimeJre">
     <languages skipLanguageSelection="true">
       <additionalLanguages>
-        <language id="zh_CN" />
-        <language id="zh_TW" />
         <language id="cs" />
-        <language id="nl" />
+        <language id="de" />
+        <language id="es" />
         <language id="fi" />
         <language id="fr" />
-        <language id="de" />
         <language id="it" />
         <language id="ja" />
         <language id="ko" />
+        <language id="nl" />
         <language id="no" />
         <language id="pl" />
         <language id="pt_BR" />
         <language id="ru" />
-        <language id="es" />
         <language id="sv" />
         <language id="tr" />
+        <language id="zh_CN" />
+        <language id="zh_TW" />
       </additionalLanguages>
     </languages>
   </application>
