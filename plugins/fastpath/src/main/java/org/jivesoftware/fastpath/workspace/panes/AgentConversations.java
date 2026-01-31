@@ -66,6 +66,8 @@ import org.jxmpp.jid.impl.JidCreate;
 import org.jxmpp.jid.util.JidUtil;
 import org.jxmpp.stringprep.XmppStringprepException;
 
+import static org.jivesoftware.smackx.muc.MucConfigFormManager.MUC_ROOMCONFIG_ROOMOWNERS;
+
 /**
  * UI to show all chats occuring.
  */
@@ -315,7 +317,7 @@ public final class AgentConversations extends JPanel implements ChangeListener {
                                     if (list.size() > 0) {
                                         FillableForm form = muc.getConfigurationForm().getFillableForm();
                                         List<String> listStrings = JidUtil.toStringList(list);
-                                        form.setAnswer("muc#roomconfig_roomowners", listStrings);
+                                        form.setAnswer(MUC_ROOMCONFIG_ROOMOWNERS, listStrings);
 
                                         // new DataFormDialog(groupChat, form);
                                         muc.sendConfigurationForm(form);

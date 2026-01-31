@@ -68,6 +68,8 @@ import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.Jid;
 import org.jxmpp.jid.util.JidUtil;
 
+import static org.jivesoftware.smackx.muc.MucConfigFormManager.MUC_ROOMCONFIG_ROOMOWNERS;
+
 /**
  * Handles invitations and transfers of Fastpath Requests.
  */
@@ -331,7 +333,7 @@ public class UserInvitationPane {
                 try {
                     FillableForm form = muc.getConfigurationForm().getFillableForm();
                     List<String> jidStrings = JidUtil.toStringList(list);
-                    form.setAnswer("muc#roomconfig_roomowners", jidStrings);
+                    form.setAnswer(MUC_ROOMCONFIG_ROOMOWNERS, jidStrings);
 
                     // new DataFormDialog(groupChat, form);
                     muc.sendConfigurationForm(form);
