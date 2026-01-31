@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <install4j version="11.0.4" transformSequenceNumber="11">
   <directoryPresets config="../../target/distribution-base/lib" />
-  <application name="Spark" applicationId="3057-7228-2063-7466" mediaDir="../../target/" mediaFilePattern="spark_${compiler:sys.version}" compression="9" lzmaCompression="true" commonExternalFiles="true" shortName="Spark" publisher="Ignite Realtime" publisherWeb="http://www.igniterealtime.org" version="3.0.0" allPathsRelative="true" macVolumeId="ccfadd9e467a1ebd" javaMinVersion="1.8" jdkMode="runtimeJre">
+  <application name="Spark" applicationId="3057-7228-2063-7466" mediaDir="../../target/" mediaFilePattern="spark_${compiler:sys.version}" compression="9" lzmaCompression="true" commonExternalFiles="true" shortName="Spark" publisher="Ignite Realtime" publisherWeb="http://www.igniterealtime.org" version="3.0.0" allPathsRelative="true" macVolumeId="ccfadd9e467a1ebd" javaMinVersion="11" jdkMode="runtimeJre">
     <languages skipLanguageSelection="true">
       <additionalLanguages>
         <language id="zh_CN" />
@@ -823,7 +823,7 @@ return console.askYesNo(message, true);
       </exclude>
       <jreBundle jreBundleSource="none" />
     </unixArchive>
-    <linuxRPM name="Linux RPM" id="162" dependencies="java &gt;= 1.8">
+    <linuxRPM name="Linux RPM" id="162" dependencies="java &gt;= 11">
       <exclude>
         <entry location="bin/startup.bat" />
         <entry location="documentation" />
@@ -838,7 +838,7 @@ return console.askYesNo(message, true);
       </exclude>
       <jreBundle jreBundleSource="none" />
     </linuxRPM>
-    <linuxDeb name="Linux Deb Archive" id="166" dependencies="default-jre | java-runtime (&gt;= 8)">
+    <linuxDeb name="Linux Deb Archive" id="166" dependencies="default-jre | java-runtime (&gt;= 11)">
       <exclude>
         <entry location="bin/startup.bat" />
         <entry location="documentation" />
