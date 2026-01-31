@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<install4j version="11.0.4" transformSequenceNumber="11">
+<install4j version="12.0.2" transformSequenceNumber="11">
   <directoryPresets config="../../target/distribution-base/lib" />
   <application name="Spark" applicationId="3057-7228-2063-7466" mediaDir="../../target/" mediaFilePattern="spark_${compiler:sys.version}" compression="9" lzmaCompression="true" commonExternalFiles="true" shortName="Spark" publisher="Ignite Realtime" publisherWeb="http://www.igniterealtime.org" version="3.0.0" allPathsRelative="true" macVolumeId="ccfadd9e467a1ebd" javaMinVersion="11" jdkMode="runtimeJre">
     <languages skipLanguageSelection="true">
