@@ -695,34 +695,6 @@ return console.askYesNo(message, true);
     </styles>
   </installerGui>
   <mediaSets>
-    <windows name="Windows" id="2" installDir="${compiler:sys.fullName}" architecture="32">
-      <exclude>
-        <entry location="bin/startup.sh" />
-        <entry location="documentation" />
-        <entry location="lib/linux" />
-        <entry location="lib/linux64" />
-        <entry location="lib/mac" />
-        <entry location="plugins/apple.jar" />
-        <entry location="plugins/growl.jar" />
-        <entry location="resources/Info.plist" />
-        <entry location="resources/startup.sh" />
-      </exclude>
-      <jreBundle jreBundleSource="none" />
-    </windows>
-    <windows name="Windows (with JRE)" id="186" mediaFileName="spark_${compiler:sys.version}-with-jre" installDir="${compiler:sys.fullName}" architecture="32">
-      <exclude>
-        <entry location="bin/startup.sh" />
-        <entry location="documentation" />
-        <entry location="lib/linux" />
-        <entry location="lib/linux64" />
-        <entry location="lib/mac" />
-        <entry location="plugins/apple.jar" />
-        <entry location="plugins/growl.jar" />
-        <entry location="resources/Info.plist" />
-        <entry location="resources/startup.sh" />
-      </exclude>
-      <jreBundle jreBundleSource="preCreated" includedJre="windows-x86-1.8.0_202" />
-    </windows>
     <windows name="Windows 64bit" id="190" mediaFileName="spark_${compiler:sys.version}-64bit" installDir="${compiler:sys.fullName}" architecture="64">
       <exclude>
         <entry location="bin/startup.sh" />
@@ -750,34 +722,6 @@ return console.askYesNo(message, true);
         <entry location="resources/startup.sh" />
       </exclude>
       <jreBundle jreBundleSource="none" />
-    </windows>
-    <windows name="Windows MSI" id="198" installDir="${compiler:sys.fullName}" msi="true" architecture="32">
-      <exclude>
-        <entry location="bin/startup.sh" />
-        <entry location="documentation" />
-        <entry location="lib/linux" />
-        <entry location="lib/linux64" />
-        <entry location="lib/mac" />
-        <entry location="plugins/apple.jar" />
-        <entry location="plugins/growl.jar" />
-        <entry location="resources/Info.plist" />
-        <entry location="resources/startup.sh" />
-      </exclude>
-      <jreBundle jreBundleSource="none" />
-    </windows>
-    <windows name="Windows MSI (with JRE)" id="206" mediaFileName="spark_${compiler:sys.version}-with-jre" installDir="${compiler:sys.fullName}" msi="true" architecture="32">
-      <exclude>
-        <entry location="bin/startup.sh" />
-        <entry location="documentation" />
-        <entry location="lib/linux" />
-        <entry location="lib/linux64" />
-        <entry location="lib/mac" />
-        <entry location="plugins/apple.jar" />
-        <entry location="plugins/growl.jar" />
-        <entry location="resources/Info.plist" />
-        <entry location="resources/startup.sh" />
-      </exclude>
-      <jreBundle jreBundleSource="preCreated" includedJre="windows-x86-1.8.0_202" />
     </windows>
     <windows name="Windows MSI 64bit" id="201" mediaFileName="spark_${compiler:sys.version}-64bit" installDir="${compiler:sys.fullName}" msi="true" architecture="64">
       <exclude>
