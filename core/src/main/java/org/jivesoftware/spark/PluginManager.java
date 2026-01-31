@@ -190,14 +190,11 @@ public class PluginManager implements MainWindowListener
                 try
                 {
                     final File f = new File( installPath + jarFile.getName() );
+                    // Compare old and new files by checksums
                     if ( installerFiles.contains( f ) )
                     {
                         final String oldfile = StringUtils.getMD5Checksum( jarFile.getAbsolutePath() );
                         final String newfile = StringUtils.getMD5Checksum( f.getAbsolutePath() );
-
-                        Log.debug( f.getAbsolutePath() + "   " + jarFile.getAbsolutePath() );
-                        Log.debug( newfile + " " + oldfile + " equal:" + oldfile.equals( newfile ) );
-
                         if ( !oldfile.equals( newfile ) )
                         {
                             Log.debug( "deleting: " + file.getAbsolutePath() + "," + jarFile.getAbsolutePath() );
