@@ -805,7 +805,6 @@ return console.askYesNo(message, true);
         <entry location="plugins/growl.jar" />
         <entry location="resources/Info.plist" />
         <entry location="resources/startup.bat" />
-        <entry location="resources/systeminfo.dll" />
       </exclude>
       <jreBundle jreBundleSource="none" />
     </unixInstaller>
@@ -821,7 +820,6 @@ return console.askYesNo(message, true);
         <entry location="plugins/growl.jar" />
         <entry location="resources/Info.plist" />
         <entry location="resources/startup.bat" />
-        <entry location="resources/systeminfo.dll" />
       </exclude>
       <jreBundle jreBundleSource="none" />
     </unixArchive>
@@ -837,7 +835,6 @@ return console.askYesNo(message, true);
         <entry location="plugins/growl.jar" />
         <entry location="resources/Info.plist" />
         <entry location="resources/startup.bat" />
-        <entry location="resources/systeminfo.dll" />
       </exclude>
       <jreBundle jreBundleSource="none" />
     </linuxRPM>
@@ -853,7 +850,6 @@ return console.askYesNo(message, true);
         <entry location="plugins/growl.jar" />
         <entry location="resources/Info.plist" />
         <entry location="resources/startup.bat" />
-        <entry location="resources/systeminfo.dll" />
       </exclude>
       <jreBundle jreBundleSource="none" />
     </linuxDeb>
@@ -867,7 +863,6 @@ return console.askYesNo(message, true);
         <entry location="lib/windows64" />
         <entry location="plugins/flashing.jar" />
         <entry location="resources/startup.bat" />
-        <entry location="resources/systeminfo.dll" />
       </exclude>
       <jreBundle jreBundleSource="none" />
     </macosArchive>
@@ -881,7 +876,6 @@ return console.askYesNo(message, true);
         <entry location="lib/windows64" />
         <entry location="plugins/flashing.jar" />
         <entry location="resources/startup.bat" />
-        <entry location="resources/systeminfo.dll" />
       </exclude>
       <jreBundle jreBundleSource="preCreated" includedJre="macosx-amd64-1.8.0_202" />
     </macosArchive>
