@@ -611,14 +611,11 @@ public class EmoticonManager {
                 try
                 {
                     final File f = new File( installPath + zipFile.getName() );
+                    // Compare old and new files by checksums
                     if ( installerFiles.contains( f ) )
                     {
                         final String oldfile = StringUtils.getMD5Checksum( zipFile.getAbsolutePath() );
                         final String newfile = StringUtils.getMD5Checksum( f.getAbsolutePath() );
-
-                        Log.debug( f.getAbsolutePath() + "   " + zipFile.getAbsolutePath() );
-                        Log.debug( newfile + " " + oldfile + " equal:" + oldfile.equals( newfile ) );
-
                         if ( !oldfile.equals( newfile ) )
                         {
                             Log.debug( "deleting: " + file.getAbsolutePath() + "," + zipFile.getAbsolutePath() );
