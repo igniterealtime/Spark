@@ -76,9 +76,5 @@
             <source>${project.basedir}/src/main/resources/startup.sh</source>
             <outputDirectory>resources</outputDirectory>
         </file>
-        <file>
-            <source>${project.basedir}/src/main/resources/systeminfo.dll</source>
-            <outputDirectory>resources</outputDirectory>
-        </file>
     </files>
 </assembly>
