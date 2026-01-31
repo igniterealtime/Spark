@@ -41,9 +41,7 @@
         <classPath>
           <scanDirectory location="lib" />
           <directory location="resources" failOnError="false" />
-          <scanDirectory location="lib/windows" failOnError="false" />
           <envVar name="macSystem" failOnError="false" />
-          <scanDirectory location="lib/linux" failOnError="false" />
         </classPath>
         <nativeLibraryDirectories>
           <directory name="resources" />
