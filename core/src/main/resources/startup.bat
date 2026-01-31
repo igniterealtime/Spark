@@ -16,6 +16,6 @@ javaw -Dappdir=.. -cp ../lib/*;../lib/windows%SPARK64%/jdic.jar;../resources;../
 goto end
 
 :debug
-start "Spark" "%JAVA_HOME%\bin\java" -Ddebugger=true -Ddebug.mode=true -XX:+HeapDumpOnOutOfMemoryError -Xdebug -Xint -server -Xnoagent -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8000 -Dappdir=.. -cp ../lib/*;../lib/windows%SPARK64%/jdic.jar;../resources;../lib/windows%SPARK64%/; org.jivesoftware.launcher.Startup
+start "Spark" "%JAVA_HOME%\bin\java" -Ddebugger=true -Ddebug.mode=true -XX:+HeapDumpOnOutOfMemoryError -Xint -server -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8000 -Dappdir=.. -cp ../lib/*;../lib/windows%SPARK64%/jdic.jar;../resources;../lib/windows%SPARK64%/; org.jivesoftware.launcher.Startup
 goto end
 :end

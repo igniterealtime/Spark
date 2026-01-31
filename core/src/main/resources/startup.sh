@@ -26,10 +26,8 @@ if [ "${1}" = "-debug" ]; then
   java -Ddebugger=true \
     -Ddebug.mode=true \
     -XX:+HeapDumpOnOutOfMemoryError \
-    -Xdebug \
     -Xint \
     -server \
-    -Xnoagent \
     -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8000 \
     -Dappdir=${wd} \
     ${javalibrarypath} \
