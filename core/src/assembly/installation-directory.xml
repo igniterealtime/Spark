@@ -69,14 +69,6 @@
             <outputDirectory>resources</outputDirectory>
         </file>
         <file>
-            <source>${project.basedir}/src/main/resources/jniwrap.dll</source>
-            <outputDirectory>resources</outputDirectory>
-        </file>
-        <file>
-            <source>${project.basedir}/src/main/resources/jniwrap.lic</source>
-            <outputDirectory>resources</outputDirectory>
-        </file>
-        <file>
             <source>${project.basedir}/src/main/resources/startup.bat</source>
             <outputDirectory>resources</outputDirectory>
         </file>

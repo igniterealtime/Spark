@@ -804,7 +804,6 @@ return console.askYesNo(message, true);
         <entry location="plugins/flashing.jar" />
         <entry location="plugins/growl.jar" />
         <entry location="resources/Info.plist" />
-        <entry location="resources/jniwrap.dll" />
         <entry location="resources/startup.bat" />
         <entry location="resources/systeminfo.dll" />
       </exclude>
@@ -821,7 +820,6 @@ return console.askYesNo(message, true);
         <entry location="plugins/flashing.jar" />
         <entry location="plugins/growl.jar" />
         <entry location="resources/Info.plist" />
-        <entry location="resources/jniwrap.dll" />
         <entry location="resources/startup.bat" />
         <entry location="resources/systeminfo.dll" />
       </exclude>
@@ -838,7 +836,6 @@ return console.askYesNo(message, true);
         <entry location="plugins/flashing.jar" />
         <entry location="plugins/growl.jar" />
         <entry location="resources/Info.plist" />
-        <entry location="resources/jniwrap.dll" />
         <entry location="resources/startup.bat" />
         <entry location="resources/systeminfo.dll" />
       </exclude>
@@ -855,7 +852,6 @@ return console.askYesNo(message, true);
         <entry location="plugins/flashing.jar" />
         <entry location="plugins/growl.jar" />
         <entry location="resources/Info.plist" />
-        <entry location="resources/jniwrap.dll" />
         <entry location="resources/startup.bat" />
         <entry location="resources/systeminfo.dll" />
       </exclude>
@@ -870,7 +866,6 @@ return console.askYesNo(message, true);
         <entry location="lib/windows" />
         <entry location="lib/windows64" />
         <entry location="plugins/flashing.jar" />
-        <entry location="resources/jniwrap.dll" />
         <entry location="resources/startup.bat" />
         <entry location="resources/systeminfo.dll" />
       </exclude>
@@ -885,7 +880,6 @@ return console.askYesNo(message, true);
         <entry location="lib/windows" />
         <entry location="lib/windows64" />
         <entry location="plugins/flashing.jar" />
-        <entry location="resources/jniwrap.dll" />
         <entry location="resources/startup.bat" />
         <entry location="resources/systeminfo.dll" />
       </exclude>
