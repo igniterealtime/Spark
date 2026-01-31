@@ -699,7 +699,6 @@ return console.askYesNo(message, true);
       <exclude>
         <entry location="bin/startup.sh" />
         <entry location="documentation" />
-        <entry location="lib/linux" />
         <entry location="lib/linux64" />
         <entry location="lib/mac" />
         <entry location="plugins/apple.jar" />
@@ -713,7 +712,6 @@ return console.askYesNo(message, true);
       <exclude>
         <entry location="bin/startup.sh" />
         <entry location="documentation" />
-        <entry location="lib/linux" />
         <entry location="lib/linux64" />
         <entry location="lib/mac" />
         <entry location="plugins/apple.jar" />
@@ -727,7 +725,6 @@ return console.askYesNo(message, true);
       <exclude>
         <entry location="bin/startup.sh" />
         <entry location="documentation" />
-        <entry location="lib/linux" />
         <entry location="lib/linux64" />
         <entry location="lib/mac" />
         <entry location="plugins/apple.jar" />
@@ -742,7 +739,6 @@ return console.askYesNo(message, true);
         <entry location="bin/startup.bat" />
         <entry location="documentation" />
         <entry location="lib/mac" />
-        <entry location="lib/windows" />
         <entry location="lib/windows64" />
         <entry location="plugins/apple.jar" />
         <entry location="plugins/flashing.jar" />
@@ -757,7 +753,6 @@ return console.askYesNo(message, true);
         <entry location="bin/startup.bat" />
         <entry location="documentation" />
         <entry location="lib/mac" />
-        <entry location="lib/windows" />
         <entry location="lib/windows64" />
         <entry location="plugins/apple.jar" />
         <entry location="plugins/flashing.jar" />
@@ -772,7 +767,6 @@ return console.askYesNo(message, true);
         <entry location="bin/startup.bat" />
         <entry location="documentation" />
         <entry location="lib/mac" />
-        <entry location="lib/windows" />
         <entry location="lib/windows64" />
         <entry location="plugins/apple.jar" />
         <entry location="plugins/flashing.jar" />
@@ -787,7 +781,6 @@ return console.askYesNo(message, true);
         <entry location="bin/startup.bat" />
         <entry location="documentation" />
         <entry location="lib/mac" />
-        <entry location="lib/windows" />
         <entry location="lib/windows64" />
         <entry location="plugins/apple.jar" />
         <entry location="plugins/flashing.jar" />
@@ -801,9 +794,7 @@ return console.askYesNo(message, true);
       <exclude>
         <entry location="bin/startup.bat" />
         <entry location="documentation" />
-        <entry location="lib/linux" />
         <entry location="lib/linux64" />
-        <entry location="lib/windows" />
         <entry location="lib/windows64" />
         <entry location="plugins/flashing.jar" />
         <entry location="resources/startup.bat" />
@@ -814,9 +805,7 @@ return console.askYesNo(message, true);
       <exclude>
         <entry location="bin/startup.bat" />
         <entry location="documentation" />
-        <entry location="lib/linux" />
         <entry location="lib/linux64" />
-        <entry location="lib/windows" />
         <entry location="lib/windows64" />
         <entry location="plugins/flashing.jar" />
         <entry location="resources/startup.bat" />
