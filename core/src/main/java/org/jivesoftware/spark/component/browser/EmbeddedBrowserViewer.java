@@ -23,14 +23,15 @@ import javax.swing.LookAndFeel;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
-import org.lobobrowser.gui.ContentEvent;
-import org.lobobrowser.gui.ContentListener;
-import org.lobobrowser.gui.FramePanel;
+//import org.lobobrowser.gui.ContentEvent;
+//import org.lobobrowser.gui.ContentListener;
+//import org.lobobrowser.gui.FramePanel;
 
-public class EmbeddedBrowserViewer extends BrowserViewer implements ContentListener {
+//FIXME SPARK-2388 The LoboBrowser doesn't work anymore and should be replaced
+public class EmbeddedBrowserViewer extends BrowserViewer {
 
     private static final long serialVersionUID = -8055149462713514766L;
-    private final FramePanel browser;
+    //    private final FramePanel browser;
 
     /**
      * Constructs a new LobobrowserViewer
@@ -38,7 +39,7 @@ public class EmbeddedBrowserViewer extends BrowserViewer implements ContentListe
     public EmbeddedBrowserViewer() {
         LookAndFeel laf = UIManager.getLookAndFeel();
 
-        browser = new FramePanel();
+//        browser = new FramePanel();
         //substance look and feel
         try {
             UIManager.setLookAndFeel(laf);
@@ -46,14 +47,14 @@ public class EmbeddedBrowserViewer extends BrowserViewer implements ContentListe
         catch (UnsupportedLookAndFeelException e) {
             e.printStackTrace();
         }
-        browser.addContentListener(this);
+//        browser.addContentListener(this);
     }
 
     /**
      * Implementation of "Back"-button
      */
     public void goBack() {
-        browser.back();
+//        browser.back();
     }
 
     /**
@@ -61,30 +62,30 @@ public class EmbeddedBrowserViewer extends BrowserViewer implements ContentListe
      */
     public void initializeBrowser() {
         this.setLayout(new BorderLayout());
-        this.add(browser, BorderLayout.CENTER);
+//        this.add(browser, BorderLayout.CENTER);
     }
 
     /**
      * Load the given URL
      */
     public void loadURL(String url) {
-        try {
-            browser.navigate(url);
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            browser.navigate(url);
+//        } catch (MalformedURLException e) {
+//            e.printStackTrace();
+//        }
     }
 
     /**
      * React to an event by updating the address bar
      */
-    public void contentSet(ContentEvent event) {
-        if (browser == null || browser.getCurrentNavigationEntry() == null) {
-            return;
-        }
-        String url = browser.getCurrentNavigationEntry().getUrl().toExternalForm();
-        documentLoaded(url);
-    }
+//    public void contentSet(ContentEvent event) {
+//        if (browser == null || browser.getCurrentNavigationEntry() == null) {
+//            return;
+//        }
+//        String url = browser.getCurrentNavigationEntry().getUrl().toExternalForm();
+//        documentLoaded(url);
+//    }
 
     public static void main(String[] args) {
         EmbeddedBrowserViewer  viewer = new EmbeddedBrowserViewer();
