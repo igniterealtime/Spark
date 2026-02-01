@@ -1,12 +1,12 @@
 /**
  * Copyright (C) 2004-2011 Jive Software. All rights reserved.
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -101,7 +101,7 @@ public class ReversiModel {
     public int getBoardValue(int position) {
         if (position < 0 || position > 63) {
             throw new IllegalArgumentException("Invalid position: " + position + ". Valid board " +
-                    "positions are 0 through 63");
+                "positions are 0 through 63");
         }
         return board[position];
     }
@@ -164,9 +164,9 @@ public class ReversiModel {
         getFlipCount(position, currentPlayer, true);
 
         // See if other user has a valid move. If so, switch to other player.
-        int otherPlayer = currentPlayer==WHITE ? BLACK: WHITE;
+        int otherPlayer = currentPlayer == WHITE ? BLACK : WHITE;
         boolean hasMove = false;
-        for (int i=0; i<board.length; i++) {
+        for (int i = 0; i < board.length; i++) {
             if (isValidMove(i, otherPlayer)) {
                 hasMove = true;
                 break;
@@ -181,7 +181,7 @@ public class ReversiModel {
         else {
             // Make sure the current player has a valid move. Otherwise, the game must be over.
             hasMove = false;
-            for (int i=0; i<board.length; i++) {
+            for (int i = 0; i < board.length; i++) {
                 if (isValidMove(i, currentPlayer)) {
                     hasMove = true;
                     break;
@@ -204,20 +204,18 @@ public class ReversiModel {
     public String printBoard() {
         StringBuilder buf = new StringBuilder();
         buf.append("+----------------+\n");
-        for (int i=0; i<64; i++) {
-            if (i%8 == 0) {
+        for (int i = 0; i < 64; i++) {
+            if (i % 8 == 0) {
                 buf.append("|");
             }
             if (board[i] == BLANK) {
                 buf.append("  ");
-            }
-            else if (board[i] == WHITE) {
+            } else if (board[i] == WHITE) {
                 buf.append(" w");
-            }
-            else {
+            } else {
                 buf.append(" b");
             }
-            if (i%8 == 7) {
+            if (i % 8 == 7) {
                 buf.append("|\n");
             }
         }
@@ -239,8 +237,7 @@ public class ReversiModel {
         }
         if (board[position] != BLANK) {
             return false;
-        }
-        else {
+        } else {
             return getFlipCount(position, player, false) > 0;
         }
     }
@@ -262,17 +259,16 @@ public class ReversiModel {
 
         // Going left horizontally.
 
-  			boolean edge;
-  			
-        if (position%8 > 1) {
-    				edge = false;
-            for (int i=position-1; !edge; i--) {
-            		if (i % 8 == 0) edge = true;
+        boolean edge;
+
+        if (position % 8 > 1) {
+            edge = false;
+            for (int i = position - 1; !edge; i--) {
+                if (i % 8 == 0) edge = true;
                 if (board[i] == BLANK) {
                     break;
-                }
-                else if (board[i] == player) {
-                    for (int j=0; j<flipBufferSize; j++) {
+                } else if (board[i] == player) {
+                    for (int j = 0; j < flipBufferSize; j++) {
                         flipCount++;
                         if (doFlips) {
                             board[flipBuffer[j]] = player;
@@ -286,15 +282,14 @@ public class ReversiModel {
             flipBufferSize = 0;
         }
         // Going right horizontally.
-        if (position%8 < 6) {
-        		edge = false;
-            for (int i=position+1; !edge; i++) {
-            		if (i % 8 == 7) edge = true;
+        if (position % 8 < 6) {
+            edge = false;
+            for (int i = position + 1; !edge; i++) {
+                if (i % 8 == 7) edge = true;
                 if (board[i] == BLANK) {
                     break;
-                }
-                else if (board[i] == player) {
-                    for (int j=0; j<flipBufferSize; j++) {
+                } else if (board[i] == player) {
+                    for (int j = 0; j < flipBufferSize; j++) {
                         flipCount++;
                         if (doFlips) {
                             board[flipBuffer[j]] = player;
@@ -309,12 +304,11 @@ public class ReversiModel {
         }
         // Going up vertically.
         if (position > 15) {
-            for (int i=position-8; i >= 0; i-=8) {
+            for (int i = position - 8; i >= 0; i -= 8) {
                 if (board[i] == BLANK) {
                     break;
-                }
-                else if (board[i] == player) {
-                    for (int j=0; j<flipBufferSize; j++) {
+                } else if (board[i] == player) {
+                    for (int j = 0; j < flipBufferSize; j++) {
                         flipCount++;
                         if (doFlips) {
                             board[flipBuffer[j]] = player;
@@ -329,12 +323,11 @@ public class ReversiModel {
         }
         // Going down vertically.
         if (position < 48) {
-            for (int i=position+8; i <= 64; i+=8) {
+            for (int i = position + 8; i <= 64; i += 8) {
                 if (board[i] == BLANK) {
                     break;
-                }
-                else if (board[i] == player) {
-                    for (int j=0; j<flipBufferSize; j++) {
+                } else if (board[i] == player) {
+                    for (int j = 0; j < flipBufferSize; j++) {
                         flipCount++;
                         if (doFlips) {
                             board[flipBuffer[j]] = player;
@@ -348,15 +341,14 @@ public class ReversiModel {
             flipBufferSize = 0;
         }
         // Diagonal up-left
-        if (position > 15 && position%8 > 1)  {
-        		edge = false;
-            for (int i=position-9; !edge; i-=9) {
-            		if (i < 8 || i%8==0) edge = true;
+        if (position > 15 && position % 8 > 1) {
+            edge = false;
+            for (int i = position - 9; !edge; i -= 9) {
+                if (i < 8 || i % 8 == 0) edge = true;
                 if (board[i] == BLANK) {
                     break;
-                }
-                else if (board[i] == player) {
-                    for (int j=0; j<flipBufferSize; j++) {
+                } else if (board[i] == player) {
+                    for (int j = 0; j < flipBufferSize; j++) {
                         flipCount++;
                         if (doFlips) {
                             board[flipBuffer[j]] = player;
@@ -370,15 +362,14 @@ public class ReversiModel {
             flipBufferSize = 0;
         }
         // Diagonal up-right
-        if (position > 15 && position%8 < 6)  {
-        		edge = false;
-            for (int i=position-7; !edge; i-=7) {
-            		if (i < 8 || i%8==7) edge = true;
+        if (position > 15 && position % 8 < 6) {
+            edge = false;
+            for (int i = position - 7; !edge; i -= 7) {
+                if (i < 8 || i % 8 == 7) edge = true;
                 if (board[i] == BLANK) {
                     break;
-                }
-                else if (board[i] == player) {
-                    for (int j=0; j<flipBufferSize; j++) {
+                } else if (board[i] == player) {
+                    for (int j = 0; j < flipBufferSize; j++) {
                         flipCount++;
                         if (doFlips) {
                             board[flipBuffer[j]] = player;
@@ -392,15 +383,14 @@ public class ReversiModel {
             flipBufferSize = 0;
         }
         // Diagonal down-left
-        if (position < 48 && position%8 > 1)  {
-          edge = false;
-          for (int i=position+7; !edge; i+=7) {
-            		if (i > 55 || i%8==0) edge = true;
+        if (position < 48 && position % 8 > 1) {
+            edge = false;
+            for (int i = position + 7; !edge; i += 7) {
+                if (i > 55 || i % 8 == 0) edge = true;
                 if (board[i] == BLANK) {
                     break;
-                }
-                else if (board[i] == player) {
-                    for (int j=0; j<flipBufferSize; j++) {
+                } else if (board[i] == player) {
+                    for (int j = 0; j < flipBufferSize; j++) {
                         flipCount++;
                         if (doFlips) {
                             board[flipBuffer[j]] = player;
@@ -414,15 +404,14 @@ public class ReversiModel {
             flipBufferSize = 0;
         }
         // Diagonal down-right
-        if (position < 48 && position%8 < 6)  {
-        		edge = false;
-            for (int i=position+9; !edge; i+=9) {
-            		if (i > 55 || i%8==7) edge=true;
+        if (position < 48 && position % 8 < 6) {
+            edge = false;
+            for (int i = position + 9; !edge; i += 9) {
+                if (i > 55 || i % 8 == 7) edge = true;
                 if (board[i] == BLANK) {
                     break;
-                }
-                else if (board[i] == player) {
-                    for (int j=0; j<flipBufferSize; j++) {
+                } else if (board[i] == player) {
+                    for (int j = 0; j < flipBufferSize; j++) {
                         flipCount++;
                         if (doFlips) {
                             board[flipBuffer[j]] = player;

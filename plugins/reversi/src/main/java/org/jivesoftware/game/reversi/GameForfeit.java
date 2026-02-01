@@ -1,12 +1,12 @@
 /**
  * Copyright (C) 2004-2011 Jive Software. All rights reserved.
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -29,17 +29,18 @@ import java.io.IOException;
  * A packet extension sent to indicate that the player forfeits the game.
  */
 public class GameForfeit implements ExtensionElement {
-
     public static final String ELEMENT_NAME = "reversi-forfeit";
     public static final String NAMESPACE = "http://jivesoftware.org/protocol/game/reversi";
     public static final QName QNAME = new QName(NAMESPACE, ELEMENT_NAME);
 
     private int gameID;
 
+    @Override
     public String getElementName() {
         return ELEMENT_NAME;
     }
 
+    @Override
     public String getNamespace() {
         return NAMESPACE;
     }
@@ -47,8 +48,7 @@ public class GameForfeit implements ExtensionElement {
     @Override
     public String toXML(XmlEnvironment xmlEnvironment) {
         return "<" + ELEMENT_NAME + " xmlns=\"" + NAMESPACE + "\">"
-            + "<gameID>" + gameID
-            + "</gameID>"
+            + "<gameID>" + gameID + "</gameID>"
             + "</" + ELEMENT_NAME + ">";
     }
 
@@ -71,34 +71,24 @@ public class GameForfeit implements ExtensionElement {
     }
 
 
-    public static class Provider extends ExtensionElementProvider<GameForfeit>
-    {
+    public static class Provider extends ExtensionElementProvider<GameForfeit> {
         @Override
-        public GameForfeit parse(XmlPullParser parser, int initialDepth, XmlEnvironment xmlEnvironment, JxmppContext jxmppContext) throws XmlPullParserException, IOException
-        {
+        public GameForfeit parse(XmlPullParser parser, int initialDepth, XmlEnvironment xmlEnvironment, JxmppContext jxmppContext) throws XmlPullParserException, IOException {
             final GameForfeit gameForfeit = new GameForfeit();
             boolean done = false;
-            while ( !done )
-            {
+            while (!done) {
                 final XmlPullParser.Event eventType = parser.next();
-
-                if ( eventType == XmlPullParser.Event.START_ELEMENT )
-                {
-                    if ( "gameID".equals( parser.getName() ) )
-                    {
-                        final int gameID = Integer.parseInt( parser.nextText() );
-                        gameForfeit.setGameID( gameID );
+                if (eventType == XmlPullParser.Event.START_ELEMENT) {
+                    if ("gameID".equals(parser.getName())) {
+                        final int gameID = Integer.parseInt(parser.nextText());
+                        gameForfeit.setGameID(gameID);
                     }
-                }
-                else if ( eventType == XmlPullParser.Event.END_ELEMENT )
-                {
-                    if ( ELEMENT_NAME.equals( parser.getName() ) )
-                    {
+                } else if (eventType == XmlPullParser.Event.END_ELEMENT) {
+                    if (ELEMENT_NAME.equals(parser.getName())) {
                         done = true;
                     }
                 }
             }
-
             return gameForfeit;
         }
     }
