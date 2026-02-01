@@ -118,7 +118,7 @@ public class PluginManager implements MainWindowListener
         {
             PLUGINS_DIRECTORY.mkdirs();
         }
-        System.out.println( "Loading plugins from: " + PLUGINS_DIRECTORY.getAbsolutePath() );
+        Log.debug("Loading plugins from: " + PLUGINS_DIRECTORY.getAbsolutePath());
 
         _blacklistPlugins = Default.getPluginBlacklist();
     }
@@ -400,6 +400,7 @@ public class PluginManager implements MainWindowListener
 
                     if ( !ok )
                     {
+                        Log.warning( "Not loading plugin " + name + " as it is not supported by Spark version." );
                         return null;
                     }
                 }
@@ -945,12 +946,9 @@ public class PluginManager implements MainWindowListener
 
     private void loadPlugin( PluginClassLoader classLoader, File file ) throws MalformedURLException
     {
-        System.out.println("Start loading plugin " + file.getAbsolutePath());
-        Instant start = Instant.now();
+        Log.debug("Start loading plugin " + file.getAbsolutePath());
         classLoader.addPlugin( file );
         loadPublicPlugin( file );
-        Duration duration = Duration.between(start, Instant.now());
-        System.out.println("Took " + duration + " to finish loading plugin " + file.getAbsolutePath());
     }
 
     /**
