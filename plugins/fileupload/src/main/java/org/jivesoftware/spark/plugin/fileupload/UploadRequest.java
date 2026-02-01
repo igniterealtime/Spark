@@ -34,6 +34,7 @@ public class UploadRequest extends IQ
 
     private String filename;
     private long filesize;
+    private String contentType;
 
     public String getUrl = null;
     public String putUrl = null;
@@ -43,11 +44,12 @@ public class UploadRequest extends IQ
         super( "request", NAMESPACE );
     }
 
-    public UploadRequest(String filename, long filesize)
+    public UploadRequest(String filename, long filesize, String contentType)
     {
         super( "request", NAMESPACE );
         this.filename = filename;
         this.filesize = filesize;
+        this.contentType = contentType;
     }
 
     @Override
@@ -56,6 +58,9 @@ public class UploadRequest extends IQ
         buf.rightAngleBracket();
         buf.element("size", Long.toString( filesize ));
         buf.element("filename", filename);
+        if (contentType != null && !contentType.isEmpty()) {
+            buf.element("content-type", contentType);
+        }
         return buf;
     }
 

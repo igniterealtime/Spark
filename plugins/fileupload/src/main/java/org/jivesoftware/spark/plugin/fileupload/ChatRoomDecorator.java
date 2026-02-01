@@ -28,6 +28,7 @@ import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.MessageBuilder;
 import org.jivesoftware.smack.packet.StanzaBuilder;
+import org.jivesoftware.smack.packet.StandardExtensionElement;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.ui.ChatRoom;
@@ -38,10 +39,13 @@ import org.jxmpp.jid.impl.JidCreate;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.File;
+import java.io.*;
+import java.net.URLConnection;
 import java.net.URLEncoder;
+import java.nio.file.Files;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.apache.hc.core5.http.ContentType.APPLICATION_OCTET_STREAM;
 
 public class ChatRoomDecorator
 {
@@ -72,6 +76,25 @@ public class ChatRoomDecorator
 
     }
 
+    private static String guessContentType(final File file) {
+        String result = URLConnection.guessContentTypeFromName(file.getName());
+        if (result != null && !result.isEmpty()) {
+            return result;
+        }
+        try {
+            result = Files.probeContentType(file.toPath());
+            if (result != null && !result.isEmpty()) {
+                return result;
+            }
+            try (final InputStream is = new BufferedInputStream(new FileInputStream(file))) {
+                result = URLConnection.guessContentTypeFromStream(is);
+            }
+            return result;
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
     public void finished()
     {
         Log.debug("ChatRoomDecorator finished for room: " + room.getBareJid());
@@ -95,8 +118,9 @@ public class ChatRoomDecorator
     {
         Log.debug("Uploading file: " + file.getAbsolutePath());
         String fileName = URLEncoder.encode(file.getName(), UTF_8);
+        String mimeType = guessContentType(file);
         try {
-            UploadRequest request = new UploadRequest(fileName, file.length());
+            UploadRequest request = new UploadRequest(fileName, file.length(), mimeType);
             request.setTo(JidCreate.fromOrThrowUnchecked("httpfileupload." + SparkManager.getSessionManager().getServerAddress()));
             request.setType(IQ.Type.get);
 
@@ -108,9 +132,8 @@ public class ChatRoomDecorator
 
             if (response.putUrl != null)
             {
-                uploadFile(file, response, room, type);
+                uploadFile(file, mimeType, response, room, type);
             }
-
         } catch (Exception e) {
             Log.error("Error while attempting to uploading file", e);
             UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
@@ -118,16 +141,17 @@ public class ChatRoomDecorator
         }
     }
 
-    private void uploadFile(File file, UploadRequest response, ChatRoom room, Message.Type type)
+    private void uploadFile(File file, String mimeType, UploadRequest response, ChatRoom room, Message.Type type)
     {
         Log.debug("About to upload file for room " + room.getBareJid() + " via HTTP PUT to URL " + response.putUrl);
+        ContentType contentType = mimeType != null ? ContentType.create(mimeType) : APPLICATION_OCTET_STREAM;
         try (final CloseableHttpClient httpClient =
                  HttpClients.custom().useSystemProperties()
                      .setConnectionManager(AcceptAllCertsConnectionManager.getInstance())
                      .build()
         ) {
             final ClassicHttpRequest request = ClassicRequestBuilder.put(response.putUrl)
-                .setEntity(new FileEntity(file, ContentType.create("application/binary")))
+                .setEntity(new FileEntity(file, contentType))
                 .setHeader("User-Agent", "Spark HttpFileUpload")
                 .build();
 
@@ -159,7 +183,12 @@ public class ChatRoomDecorator
     {
         MessageBuilder messageBuilder = StanzaBuilder.buildMessage()
             .ofType(type)
-            .setBody(url);
+            .setBody(url)
+            .addExtension(
+                StandardExtensionElement.builder("x", "jabber:x:oob")
+                    .addElement("url", url)
+                    .build()
+            );
         room.sendMessage(messageBuilder);
     }
 
