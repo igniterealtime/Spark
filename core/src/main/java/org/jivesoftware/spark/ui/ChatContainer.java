@@ -539,17 +539,18 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             return;
         }
 
-        for (ChatRoom chatRoom : chatRoomList) {
-            closeTab(chatRoom);
+        // copy room list to avoid concurrent modification during iterations and removing
+        List<ChatRoom> allChatRooms = new ArrayList<>(chatRoomList);
+        for (ChatRoom chatRoom : allChatRooms) {
             chatRoom.closeChatRoom();
         }
 
-        for (int i = 0; i < getTabCount(); i++) {
+        // close in reverse order
+        for (int i = getTabCount() - 1; i >= 0; i--) {
             Component comp = getComponentAt(i);
             if (comp instanceof ContainerComponent) {
                 ((ContainerComponent) comp).closing();
             }
-
             closeTab(comp);
         }
     } 
