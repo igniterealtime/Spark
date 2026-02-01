@@ -1,12 +1,12 @@
 /**
  * Copyright (C) 2004-2011 Jive Software. All rights reserved.
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -99,40 +99,29 @@ public class GameMove implements ExtensionElement {
         this.position = position;
     }
 
-    public static class Provider extends ExtensionElementProvider<GameMove>
-    {
+    public static class Provider extends ExtensionElementProvider<GameMove> {
 
         @Override
-        public GameMove parse(XmlPullParser parser, int initialDepth, XmlEnvironment xmlEnvironment, JxmppContext jxmppContext) throws XmlPullParserException, IOException
-        {
+        public GameMove parse(XmlPullParser parser, int initialDepth, XmlEnvironment xmlEnvironment, JxmppContext jxmppContext) throws XmlPullParserException, IOException {
             final GameMove gameMove = new GameMove();
             boolean done = false;
-            while ( !done )
-            {
+            while (!done) {
                 final XmlPullParser.Event eventType = parser.next();
-
-                if ( eventType == XmlPullParser.Event.START_ELEMENT )
-                {
-                    if ( "gameID".equals( parser.getName() ) )
-                    {
-                        final int gameID = Integer.parseInt( parser.nextText() );
-                        gameMove.setGameID( gameID );
+                if (eventType == XmlPullParser.Event.START_ELEMENT) {
+                    if ("gameID".equals(parser.getName())) {
+                        final int gameID = Integer.parseInt(parser.nextText());
+                        gameMove.setGameID(gameID);
                     }
-                    if ( "position".equals( parser.getName() ) )
-                    {
-                        final int position = Integer.parseInt( parser.nextText() );
-                        gameMove.setPosition( position );
+                    if ("position".equals(parser.getName())) {
+                        final int position = Integer.parseInt(parser.nextText());
+                        gameMove.setPosition(position);
                     }
-                }
-                else if ( eventType == XmlPullParser.Event.END_ELEMENT )
-                {
-                    if ( ELEMENT_NAME.equals( parser.getName() ) )
-                    {
+                } else if (eventType == XmlPullParser.Event.END_ELEMENT) {
+                    if (ELEMENT_NAME.equals(parser.getName())) {
                         done = true;
                     }
                 }
             }
-
             return gameMove;
         }
     }

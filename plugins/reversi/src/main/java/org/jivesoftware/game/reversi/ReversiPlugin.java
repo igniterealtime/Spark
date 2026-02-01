@@ -1,12 +1,12 @@
 /**
  * Copyright (C) 2004-2011 Jive Software. All rights reserved.
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -48,7 +48,7 @@ import org.jxmpp.jid.Jid;
 /**
  * Reversi plugin. Reversi is a two-player, turn-based game. See
  * {@link ReversiModel} for more details on how the game works.
- * 
+ *
  * @author Matt Tucker
  * @author Bill Lynch
  */
@@ -59,36 +59,35 @@ public class ReversiPlugin implements Plugin {
 
     private ConcurrentHashMap<String, JPanel> gameOffers;
     private ConcurrentHashMap<Jid, JPanel> gameInvitations;
-    
+
     private JPanel inviteAlert;
 
+    @Override
     public void initialize() {
         // Offers and invitations hold all pending game offers we've sent to
-        // other users or incoming
-        // invitations. The map key is always the opponent's JID. The map value
-        // is a transcript alert
-        // UI component.
-        gameOffers = new ConcurrentHashMap<>();
-        gameInvitations = new ConcurrentHashMap<>();
+        // other users or incoming invitations.
+        // The map key is always the opponent's JID.
+        // The map value is a transcript alert UI component.
+        gameOffers = new ConcurrentHashMap<>(0);
+        gameInvitations = new ConcurrentHashMap<>(0);
 
-        // Add Reversi item to chat toolbar.
+        // Add Reversi item to the chat toolbar.
         addToolbarButton();
 
-        // Add Smack providers. The plugin uses custom XMPP extensions to
-        // communicate game offers
-        // and current game state. Adding the Smack providers lets us use the
-        // custom protocol.
+        // Add Smack providers.
+        // The plugin uses custom XMPP extensions to communicate game offers and current game state.
+        // Adding the Smack providers lets us use the custom protocol.
         ProviderManager.addIQProvider(GameOffer.ELEMENT_NAME, GameOffer.NAMESPACE, new GameOffer.Provider());
         ProviderManager.addExtensionProvider(GameMove.ELEMENT_NAME, GameMove.NAMESPACE, new GameMove.Provider());
         ProviderManager.addExtensionProvider(GameForfeit.ELEMENT_NAME, GameForfeit.NAMESPACE, new GameForfeit.Provider());
 
-        // Add IQ listener to listen for incoming game invitations.
+        // Add the IQ listener to listen for incoming game invitations.
         gameOfferHandler = new AbstractIqRequestHandler(
             GameOffer.ELEMENT_NAME,
             GameOffer.NAMESPACE,
             IQ.Type.get,
-            IQRequestHandler.Mode.async)
-        {
+            IQRequestHandler.Mode.async) {
+            @Override
             public IQ handleIQRequest(IQ request) {
                 showInvitationAlert((GameOffer) request);
                 return null;
@@ -98,22 +97,17 @@ public class ReversiPlugin implements Plugin {
         SparkManager.getConnection().registerIQRequestHandler(gameOfferHandler);
     }
 
+    @Override
     public void shutdown() {
         // Remove Reversi button from chat toolbar.
         removeToolbarButton();
         // Remove IQ listener
         SparkManager.getConnection().unregisterIQRequestHandler(gameOfferHandler);
-//
-//        // See if there are any pending offers or invitations. If so, cancel
-//        // them.
-//        for (Iterator<String> i = gameOffers.keySet().iterator(); i.hasNext();i.next()) {
-//          System.out.println("gameoffer");
-//
-//        }
-//        System.out.println(gameInvitations.size());
-//        for (Iterator<String> i = gameInvitations.keySet().iterator(); i.hasNext(); i.next()) {
-//          
-//        }
+//        // See if there are any pending offers or invitations. If so, cancel them.
+//        gameOffers.forEach((k, v) -> {
+//            System.out.println("gameoffer " + k);
+//        });
+//        System.out.println(gameInvitations.keySet());
         gameOffers.clear();
         gameInvitations.clear();
 
@@ -123,11 +117,13 @@ public class ReversiPlugin implements Plugin {
         ProviderManager.removeExtensionProvider(GameForfeit.ELEMENT_NAME, GameForfeit.NAMESPACE);
     }
 
+    @Override
     public boolean canShutDown() {
         // The plugin is able to fully clean itself up, so return true.
         return true;
     }
 
+    @Override
     public void uninstall() {
         // Do nothing. Reversi has no permanent resources so shutdown can
         // already do a full cleanup.
@@ -136,15 +132,14 @@ public class ReversiPlugin implements Plugin {
     /**
      * Display an alert that allows the user to accept or reject a game
      * invitation.
-     * 
-     * @param invitation
-     *            the game invitation.
+     *
+     * @param invitation the game invitation.
      */
     private void showInvitationAlert(final GameOffer invitation) {
         // Got an offer to start a new game. So, make sure that a chat is
         // started with the other
         // user and show an invite panel.
-        final ChatRoom room = SparkManager.getChatManager().getChatRoom( invitation.getFrom().asEntityBareJidOrThrow() );
+        final ChatRoom room = SparkManager.getChatManager().getChatRoom(invitation.getFrom().asEntityBareJidOrThrow());
 
         inviteAlert = new JPanel();
         inviteAlert.setLayout(new BorderLayout());
@@ -152,6 +147,7 @@ public class ReversiPlugin implements Plugin {
         JPanel invitePanel = new JPanel() {
             private static final long serialVersionUID = 5942001917654498678L;
 
+            @Override
             protected void paintComponent(Graphics g) {
                 ImageIcon imageIcon = ReversiRes.getImageIcon(ReversiRes.REVERSI_ICON);
                 Image image = imageIcon.getImage();
@@ -162,7 +158,7 @@ public class ReversiPlugin implements Plugin {
         inviteAlert.add(invitePanel, BorderLayout.WEST);
         JPanel content = new JPanel(new BorderLayout());
         Jid opponentName = invitation.getFrom(); // TODO: convert to more
-                                                    // readable name.
+        // readable name.
         content.add(new JLabel(opponentName + " is requesting a Reversi game ..."), BorderLayout.CENTER);
         JPanel buttonPanel = new JPanel();
 
@@ -176,13 +172,10 @@ public class ReversiPlugin implements Plugin {
             reply.setTo(invitation.getFrom());
             reply.setStanzaId(invitation.getStanzaId());
             reply.setType(IQ.Type.result);
-            try
-            {
+            try {
                 SparkManager.getConnection().sendStanza(reply);
-            }
-            catch ( SmackException.NotConnectedException | InterruptedException e1 )
-            {
-                Log.warning( "Unable to accept game offer from " + invitation.getFrom(), e1 );
+            } catch (SmackException.NotConnectedException | InterruptedException e1) {
+                Log.warning("Unable to accept game offer from " + invitation.getFrom(), e1);
             }
 
             // Hide the response panel. TODO: make this work.
@@ -207,13 +200,10 @@ public class ReversiPlugin implements Plugin {
             reply.setStanzaId(invitation.getStanzaId());
             reply.setType(IQ.Type.error);
             reply.setError(StanzaError.getBuilder().setCondition(StanzaError.Condition.undefined_condition).setDescriptiveEnText("User declined your request.").build());
-            try
-            {
+            try {
                 SparkManager.getConnection().sendStanza(reply);
-            }
-            catch ( SmackException.NotConnectedException | InterruptedException e1 )
-            {
-                Log.warning( "Unable to decline game offer from " + invitation.getFrom(), e1 );
+            } catch (SmackException.NotConnectedException | InterruptedException e1) {
+                Log.warning("Unable to decline game offer from " + invitation.getFrom(), e1);
             }
 
             // Hide the response panel. TODO: make this work.
@@ -247,15 +237,14 @@ public class ReversiPlugin implements Plugin {
     private void addToolbarButton() {
         ChatManager manager = SparkManager.getChatManager();
         chatRoomListener = new ChatRoomListenerAdapter() {
-
             final ImageIcon icon = ReversiRes.getImageIcon(ReversiRes.REVERSI_ICON);
 
+            @Override
             public void chatRoomOpened(final ChatRoom room) {
-        	if(!(room instanceof ChatRoomImpl))
-		{
-		    // Don't do anything if this is not a 1on1-Chat
-		    return;
-		}
+                if (!(room instanceof ChatRoomImpl)) {
+                    // Don't do anything if this is not a 1on1-Chat
+                    return;
+                }
                 ChatRoomButton button = new ChatRoomButton(icon);
                 button.setToolTipText("Reversi");
                 room.getToolBar().addChatRoomButton(button);
@@ -265,7 +254,7 @@ public class ReversiPlugin implements Plugin {
                 button.addActionListener(e -> {
 
                     //If the opponent is offline, then you should not start the game
-                    if(((ChatRoomImpl) room).getPresence().getType().equals(Presence.Type.unavailable)){
+                    if (((ChatRoomImpl) room).getPresence().getType().equals(Presence.Type.unavailable)) {
                         return;
                     }
 
@@ -275,6 +264,7 @@ public class ReversiPlugin implements Plugin {
                     JPanel requestPanel = new JPanel() {
                         private static final long serialVersionUID = 4490592207923738251L;
 
+                        @Override
                         protected void paintComponent(Graphics g) {
                             g.drawImage(icon.getImage(), 0, 0, null);
                         }
@@ -284,33 +274,25 @@ public class ReversiPlugin implements Plugin {
 
                     EntityFullJid opponentJID = ((ChatRoomImpl) room).getJID();
                     String opponentName = "[" + opponentJID + "]"; // TODO:
-                                                                   // convert
-                                                                   // to
-                                                                   // more
-                                                                   // readable
-                                                                   // name.
-
+                    // convert to more readable name.
                     final JPanel content = new JPanel(new BorderLayout());
                     final JLabel label = new JLabel("Requesting a Reversi game with " + opponentName + ", please wait...");
                     content.add(label, BorderLayout.CENTER);
                     JPanel buttonPanel = new JPanel();
                     final JButton cancelButton = new JButton("Cancel");
                     cancelButton.addActionListener(e12 -> {
-                       GameOffer reply = new GameOffer();
-                       reply.setTo(((ChatRoomImpl) room).getJID());
-                       reply.setType(IQ.Type.error);
-                       reply.setError(StanzaError.getBuilder().setCondition(StanzaError.Condition.undefined_condition).setDescriptiveEnText("User cancelled the invitation.").build());
+                        GameOffer reply = new GameOffer();
+                        reply.setTo(((ChatRoomImpl) room).getJID());
+                        reply.setType(IQ.Type.error);
+                        reply.setError(StanzaError.getBuilder().setCondition(StanzaError.Condition.undefined_condition).setDescriptiveEnText("User cancelled the invitation.").build());
 
-                       try
-                       {
-                           SparkManager.getConnection().sendStanza(reply);
-                       }
-                       catch ( SmackException.NotConnectedException | InterruptedException e1 )
-                       {
-                           Log.warning( "Unable to send invitation cancellation to " + reply.getTo(), e1 );
-                       }
-                       cancelButton.setText("Canceled");
-                       cancelButton.setEnabled(false);
+                        try {
+                            SparkManager.getConnection().sendStanza(reply);
+                        } catch (SmackException.NotConnectedException | InterruptedException e1) {
+                            Log.warning("Unable to send invitation cancellation to " + reply.getTo(), e1);
+                        }
+                        cancelButton.setText("Canceled");
+                        cancelButton.setEnabled(false);
                     });
                     buttonPanel.add(cancelButton, BorderLayout.SOUTH);
                     content.add(buttonPanel, BorderLayout.SOUTH);
@@ -332,7 +314,6 @@ public class ReversiPlugin implements Plugin {
                         }
 
                         GameOffer offerReply = ((GameOffer) stanza);
-
                         if (offerReply.getType() == IQ.Type.result) {
                             // Remove the offer panel
                             room.getTranscriptWindow().remove(request);
@@ -349,18 +330,15 @@ public class ReversiPlugin implements Plugin {
                         }
                     }, new StanzaIdFilter(offer.getStanzaId()));
 
-                    try
-                    {
+                    try {
                         SparkManager.getConnection().sendStanza(offer);
-                    }
-                    catch ( SmackException.NotConnectedException | InterruptedException e1 )
-                    {
-                        Log.warning( "Unable to send invitation to " + offer.getTo(), e1 );
+                    } catch (SmackException.NotConnectedException | InterruptedException e1) {
+                        Log.warning("Unable to send invitation to " + offer.getTo(), e1);
                     }
                 });
-
             }
 
+            @Override
             public void chatRoomClosed(ChatRoom room) {
                 super.chatRoomClosed(room);
                 // TODO: if game is in progress, close it down. What we need is
@@ -374,15 +352,11 @@ public class ReversiPlugin implements Plugin {
     /**
      * Displays the game board. This is called after an offer has been accepted
      * or after accepting an invitation.
-     * 
-     * @param gameID
-     *            the game ID.
-     * @param room
-     *            the chat room to display the game board in.
-     * @param startingPlayer
-     *            true if this player is the starting player (black).
-     * @param opponentJID
-     *            the opponent's JID.
+     *
+     * @param gameID         the game ID.
+     * @param room           the chat room to display the game board in.
+     * @param startingPlayer true if this player is the starting player (black).
+     * @param opponentJID    the opponent's JID.
      */
     private void showReversiBoard(int gameID, ChatRoom room, boolean startingPlayer, Jid opponentJID) {
         JSplitPane pane = room.getSplitPane();

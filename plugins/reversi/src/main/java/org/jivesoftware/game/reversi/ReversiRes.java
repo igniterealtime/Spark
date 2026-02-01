@@ -12,14 +12,14 @@ import javax.swing.ImageIcon;
 public class ReversiRes {
     private static PropertyResourceBundle prb;
     public static final String REVERSI_ICON = "REVERSI_ICON";
-    public static final String REVERSI_BOARD="REVERSI_BOARD";
-    public static final String REVERSI_SCORE_WHITE="REVERSI_SCORE_WHITE";
-    public static final String REVERSI_SCORE_BLACK="REVERSI_SCORE_BLACK";
-    public static final String REVERSI_LABEL_BLACK="REVERSI_LABEL_BLACK";
-    public static final String REVERSI_LABEL_WHITE="REVERSI_LABEL_WHITE";
-    public static final String REVERSI_RESIGN="REVERSI_RESIGN";
-    public static final String REVERSI_YOU="REVERSI_YOU";
-    public static final String REVERSI_THEM="REVERSI_THEM";
+    public static final String REVERSI_BOARD = "REVERSI_BOARD";
+    public static final String REVERSI_SCORE_WHITE = "REVERSI_SCORE_WHITE";
+    public static final String REVERSI_SCORE_BLACK = "REVERSI_SCORE_BLACK";
+    public static final String REVERSI_LABEL_BLACK = "REVERSI_LABEL_BLACK";
+    public static final String REVERSI_LABEL_WHITE = "REVERSI_LABEL_WHITE";
+    public static final String REVERSI_RESIGN = "REVERSI_RESIGN";
+    public static final String REVERSI_YOU = "REVERSI_YOU";
+    public static final String REVERSI_THEM = "REVERSI_THEM";
 
     private ReversiRes() {
 
@@ -44,8 +44,7 @@ public class ReversiRes {
             } else {
                 Log.warning(imageName + " not found.");
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             Log.warning("Unable to load image " + imageName, e);
         }
         return null;

@@ -1,12 +1,12 @@
 /**
  * Copyright (C) 2004-2011 Jive Software. All rights reserved.
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * <p>
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -33,8 +33,7 @@ import java.util.Random;
  *
  * @author Matt Tucker
  */
-public class GameOffer extends IQ
-{
+public class GameOffer extends IQ {
     public static final String ELEMENT_NAME = "reversi";
     public static final String NAMESPACE = "http://jivesoftware.org/protocol/game/reversi";
 
@@ -46,12 +45,11 @@ public class GameOffer extends IQ
     /**
      * Constructs a new game offer with a random game ID and random value for the starting player.
      */
-    public GameOffer()
-    {
-        super( ELEMENT_NAME, NAMESPACE );
+    public GameOffer() {
+        super(ELEMENT_NAME, NAMESPACE);
         // Randomly choose if the user making the game offer will be the starting player (black).
         startingPlayer = random.nextBoolean();
-        gameID = Math.abs( random.nextInt() );
+        gameID = Math.abs(random.nextInt());
     }
 
     /**
@@ -59,8 +57,7 @@ public class GameOffer extends IQ
      *
      * @return the game ID.
      */
-    public int getGameID()
-    {
+    public int getGameID() {
         return gameID;
     }
 
@@ -69,8 +66,7 @@ public class GameOffer extends IQ
      *
      * @param gameID the game ID.
      */
-    public void setGameID( int gameID )
-    {
+    public void setGameID(int gameID) {
         this.gameID = gameID;
     }
 
@@ -79,8 +75,7 @@ public class GameOffer extends IQ
      *
      * @return true if the user making the game invite is the starting player.
      */
-    public boolean isStartingPlayer()
-    {
+    public boolean isStartingPlayer() {
         return startingPlayer;
     }
 
@@ -89,61 +84,46 @@ public class GameOffer extends IQ
      *
      * @param startingPlayer true if the user making the game invite is the starting player.
      */
-    public void setStartingPlayer( boolean startingPlayer )
-    {
+    public void setStartingPlayer(boolean startingPlayer) {
         this.startingPlayer = startingPlayer;
     }
 
     @Override
-    protected IQChildElementXmlStringBuilder getIQChildElementBuilder( IQChildElementXmlStringBuilder buf )
-    {
+    protected IQChildElementXmlStringBuilder getIQChildElementBuilder(IQChildElementXmlStringBuilder buf) {
         buf.rightAngleBracket();
-        buf.append( "<" + ELEMENT_NAME + " xmlns=\"" + NAMESPACE + "\">" );
-        buf.element( "gameID", Integer.toString( gameID ) );
-        buf.element( "startingPlayer", Boolean.toString( startingPlayer ) );
-        buf.append( "</" + ELEMENT_NAME + ">" );
+        buf.append("<" + ELEMENT_NAME + " xmlns=\"" + NAMESPACE + "\">");
+        buf.element("gameID", String.valueOf(gameID));
+        buf.element("startingPlayer", String.valueOf(startingPlayer));
+        buf.append("</" + ELEMENT_NAME + ">");
         return buf;
     }
 
-    public static class Provider extends IqProvider<GameOffer>
-    {
-        public Provider()
-        {
+    public static class Provider extends IqProvider<GameOffer> {
+        public Provider() {
             super();
         }
 
         @Override
-        public GameOffer parse(XmlPullParser parser, int i, IqData iqData, XmlEnvironment xmlEnvironment, JxmppContext jxmppContext) throws XmlPullParserException, IOException
-        {
+        public GameOffer parse(XmlPullParser parser, int i, IqData iqData, XmlEnvironment xmlEnvironment, JxmppContext jxmppContext) throws XmlPullParserException, IOException {
             final GameOffer gameOffer = new GameOffer();
 
             boolean done = false;
-            while ( !done )
-            {
+            while (!done) {
                 XmlPullParser.Event eventType = parser.next();
-                if ( eventType == XmlPullParser.Event.START_ELEMENT )
-                {
-                    if ( parser.getName().equals( "gameID" ) )
-                    {
-                        final int gameID = Integer.parseInt( parser.nextText() );
-                        gameOffer.setGameID( gameID );
+                if (eventType == XmlPullParser.Event.START_ELEMENT) {
+                    if (parser.getName().equals("gameID")) {
+                        final int gameID = Integer.parseInt(parser.nextText());
+                        gameOffer.setGameID(gameID);
+                    } else if (parser.getName().equals("startingPlayer")) {
+                        boolean startingPlayer = Boolean.parseBoolean(parser.nextText());
+                        gameOffer.setStartingPlayer(startingPlayer);
                     }
-                    else if ( parser.getName().equals( "startingPlayer" ) )
-                    {
-                        boolean startingPlayer = Boolean.parseBoolean( parser.nextText() );
-                        gameOffer.setStartingPlayer( startingPlayer );
-                    }
-                }
-
-                else if ( eventType == XmlPullParser.Event.END_ELEMENT )
-                {
-                    if ( parser.getName().equals( ELEMENT_NAME ) )
-                    {
+                } else if (eventType == XmlPullParser.Event.END_ELEMENT) {
+                    if (parser.getName().equals(ELEMENT_NAME)) {
                         done = true;
                     }
                 }
             }
-
             return gameOffer;
         }
 
