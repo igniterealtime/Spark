@@ -2,7 +2,7 @@
     <name>${project.name}</name>
     <version>${project.version}</version>
     <description>${project.description}</description>
-    <class>battleship.BattleshipPlugin</class>
+    <class>org.jivesoftware.spark.plugin.battleship.battleship.BattleshipPlugin</class>
     <author>Wolf Posdorfer</author>
     <homePage>http://www.jivesoftware.com</homePage>
     <email>9posdorf@informatik.uni-hamburg.de</email>
