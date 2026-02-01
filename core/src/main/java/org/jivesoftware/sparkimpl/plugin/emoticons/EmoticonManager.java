@@ -362,14 +362,6 @@ public class EmoticonManager {
     }
 
     /**
-     * @return first extracted Emotion from Map and set it as default
-     */
-    public Emoticon getFirstEmotion(String packName) {
-        final Map<String, Emoticon> emoticons = emoticonMap.get(packName);
-        return (Emoticon) emoticons.values().toArray()[0];
-    }
-
-    /**
      * Returns the <code>Emoticon</code> associated with the given key. Note:
      * This gets the emoticon from the active emoticon pack.
      *
