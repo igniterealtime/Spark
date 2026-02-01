@@ -15,7 +15,6 @@
  */ 
 package org.jivesoftware.spark.ui;
 
-import org.jetbrains.annotations.NotNull;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.roster.Roster;
@@ -160,7 +159,6 @@ public class ContactGroupTransferHandler extends TransferHandler {
         }
 
         // Returns image
-        @NotNull
         @Override
 		public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException {
             if (!DataFlavor.imageFlavor.equals(flavor)) {

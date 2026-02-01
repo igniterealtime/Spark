@@ -15,7 +15,6 @@
  */
 package org.jivesoftware.spark.component;
 
-import org.jetbrains.annotations.NotNull;
 import org.jivesoftware.resource.SparkRes;
 
 import javax.swing.Icon;
@@ -223,7 +222,6 @@ public class JiveTreeNode extends DefaultMutableTreeNode implements Transferable
 
     }
 
-    @NotNull
     @Override
 	public Object getTransferData(DataFlavor flavor)
             throws UnsupportedFlavorException {

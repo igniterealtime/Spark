@@ -15,8 +15,6 @@
  */
 package org.jivesoftware.spark.util;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.text.DecimalFormat;
 import java.text.FieldPosition;
 import java.text.Format;
@@ -62,7 +60,7 @@ public class ByteFormat extends Format {
      * @return A formatted string representing the given bytes in more human-readable form.
      */
     @Override
-	public StringBuffer format(Object obj, @NotNull StringBuffer buf, @NotNull FieldPosition pos) {
+    public StringBuffer format(Object obj, StringBuffer buf, FieldPosition pos) {
         if (obj instanceof Long) {
             long numBytes = (Long) obj;
             if (numBytes < 1024) {
@@ -93,7 +91,7 @@ public class ByteFormat extends Format {
      * @return returns null in this implementation.
      */
     @Override
-	public Object parseObject(String source, @NotNull ParsePosition pos) {
+    public Object parseObject(String source, ParsePosition pos) {
         return null;
     }
 }
