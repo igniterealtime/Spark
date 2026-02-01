@@ -12,8 +12,6 @@
 				<array>
 					<string>X-(</string>
 					<string>X(</string>
-
-
 				</array>
 				<key>Name</key>
 				<string>Angry Face</string>
@@ -26,7 +24,6 @@
 					<string>:-o</string>
 					<string>:O</string>
 					<string>:o</string>
-					<string></string>
 				</array>
 				<key>Name</key>
 				<string>Shock</string>
@@ -63,8 +60,6 @@
 				</array>
 				<key>Name</key>
 				<string>Smile</string>
-
-
 			</dict>
 			<key>rockout.gif</key>
 			<dict>
@@ -84,10 +79,10 @@
 					<string>:'D</string>
 					<string>='D</string>
 					<string>&#x1f604;</string>
-					<string>&#x1f603;</string> 			
-					<string>&#x1f602;</string> 			
-					<string>&#x1f601;</string> 			
-					<string>&#x1f600;</string> 
+					<string>&#x1f603;</string>
+					<string>&#x1f602;</string>
+					<string>&#x1f601;</string>
+					<string>&#x1f600;</string>
 					<string>&#x1f605;</string>
 					<string>&#x1f606;</string>
 				</array>
@@ -149,7 +144,6 @@
 				<array>
 					<string>:-/</string>
 					<string>:/</string>
-
 				</array>
 				<key>Name</key>
 				<string>Slant</string>
@@ -163,8 +157,6 @@
 				</array>
 				<key>Name</key>
 				<string>Monkey</string>
-
-
 			</dict>
 			<key>Heart.gif</key>
 			<dict>
@@ -174,8 +166,6 @@
 				</array>
 				<key>Name</key>
 				<string>Heart</string>
-
-
 			</dict>
 		</dict>
 	</dict>

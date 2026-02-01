@@ -1,251 +1,242 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
-<dict>
-<key>SparkSetVersion</key>
-<integer>1</integer>
-<key>Emoticons</key>
-<dict>
-<key>angry.png</key>
-<dict>
-    <key>Equivalents</key>
-    <array>
-        <string>&gt;:o</string>
-        <string>&gt;:-o</string>
-        <string>&gt;:O</string>
-        <string>&gt;:-O</string>
-        <string></string>
-    </array>
-    <key>Name</key>
-    <string>Angry</string>
-</dict>
-<key>blush.png</key>
-<dict>
-    <key>Equivalents</key>
-    <array>
-        <string>:-[</string>
-    </array>
-    <key>Name</key>
-    <string>Blush</string>
-</dict>
-<key>confused.png</key>
-<dict>
-    <key>Equivalents</key>
-    <array>
-        <string>?:|</string>
-    </array>
-    <key>Name</key>
-    <string>Confused</string>
-</dict>
-<key>cool.png</key>
-<dict>
-    <key>Equivalents</key>
-    <array>
-        <string>B-)</string>
-	<string>&#x1f60e;</string>
-    </array>
-    <key>Name</key>
-    <string>Cool</string>
-</dict>
-<key>cry.png</key>
-<dict>
-    <key>Equivalents</key>
-    <array>
-        <string>:'(</string>
-        <string></string>
-    </array>
-    <key>Name</key>
-    <string>Cry</string>
-</dict>
-<key>devil.png</key>
-<dict>
-    <key>Equivalents</key>
-    <array>
-        <string>]:)</string>
-    </array>
-    <key>Name</key>
-    <string>Devil</string>
-</dict>
-<key>grin.png</key>
-<dict>
-    <key>Equivalents</key>
-    <array>
-        <string>:-D</string>
-        <string>:D</string>
-	<string>&#x1f604;</string>
-	<string>&#x1f603;</string>
-	<string>&#x1f602;</string>
-	<string>&#x1f601;</string>
-	<string>&#x1f600;</string>
-        <string></string>
-    </array>
-    <key>Name</key>
-    <string>Grin</string>
-</dict>
-<key>happy.png</key>
-<dict>
-    <key>Equivalents</key>
-    <array>
-        <string>:-)</string>
-    </array>
-    <key>Name</key>
-    <string>Happy</string>
-</dict>
-<key>laugh.png</key>
-<dict>
-    <key>Equivalents</key>
-    <array>
-        <string>:^0</string>
-	<string>&#x1f605;</string>
-	<string>&#x1f606;</string>
-    </array>
-    <key>Name</key>
-    <string>Laugh</string>
-</dict>
-<key>love.png</key>
-<dict>
-    <key>Equivalents</key>
-    <array>
-        <string>:x</string>
-	<string>&#x1f60d;</string>
-	<string>&#x1f618;</string>
-    </array>
-    <key>Name</key>
-    <string>Love</string>
-</dict>
-<key>mischief.png</key>
-<dict>
-    <key>Equivalents</key>
-    <array>
-        <string>;\</string>
-    </array>
-    <key>Name</key>
-    <string>Mischief</string>
-</dict>
-<key>sad.png</key>
-<dict>
-    <key>Equivalents</key>
-    <array>
-        <string>:-(</string>
-        <string>:(</string>
-	<string>&#x2639;</string>
-        <string></string>
-    </array>
-    <key>Name</key>
-    <string>Sad</string>
-</dict>
-<key>happy.png</key>
-<dict>
-    <key>Equivalents</key>
-    <array>
-        <string>:-)</string>
-        <string>:)</string>
-	<string>&#x1f60a;</string>
-	<string>&#x1f642;</string>
-        <string>&#x263a;</string>
-        <string></string>
-    </array>
-    <key>Name</key>
-    <string>Smile</string>
-</dict>
-<key>plain.png</key>
-<dict>
-    <key>Equivalents</key>
-    <array>
-        <string>:|</string>
-        <string></string>
-    </array>
-    <key>Name</key>
-    <string>Plain</string>
-</dict>
-<key>shocked.png</key>
-<dict>
-    <key>Equivalents</key>
-    <array>
-        <string>:0</string>
-        <string></string>
-    </array>
-    <key>Name</key>
-    <string>Shocked</string>
-</dict>
-<key>silly.png</key>
-<dict>
-    <key>Equivalents</key>
-    <array>
-        <string>:-p</string>
-        <string>:-P</string>
-        <string>:P</string>
-        <string>:p</string>
-	<string>&#x1f60b;</string>
-	<string>&#x1f61c;</string>
-	<string>&#x1f61d;</string>
-        <string></string>
-    </array>
-    <key>Name</key>
-    <string>Tongue</string>
-</dict>
-<key>wink.png</key>
-<dict>
-    <key>Equivalents</key>
-    <array>
-        <string>;-)</string>
-        <string>;)</string>
-	<string>&#x1f609;</string>
-        <string></string>
-    </array>
-    <key>Name</key>
-    <string>Wink</string>
-</dict>
-<key>alert.png</key>
-<dict>
-    <key>Equivalents</key>
-    <array>
-        <string>(!)</string>
-    </array>
-    <key>Name</key>
-    <string>Alert</string>
-</dict>
+	<dict>
+		<key>SparkSetVersion</key>
+		<integer>1</integer>
+		<key>Emoticons</key>
+		<dict>
+			<key>angry.png</key>
+			<dict>
+				<key>Equivalents</key>
+				<array>
+					<string>&gt;:o</string>
+					<string>&gt;:-o</string>
+					<string>&gt;:O</string>
+					<string>&gt;:-O</string>
+				</array>
+				<key>Name</key>
+				<string>Angry</string>
+			</dict>
+			<key>blush.png</key>
+			<dict>
+				<key>Equivalents</key>
+				<array>
+					<string>:-[</string>
+				</array>
+				<key>Name</key>
+				<string>Blush</string>
+			</dict>
+			<key>confused.png</key>
+			<dict>
+				<key>Equivalents</key>
+				<array>
+					<string>?:|</string>
+				</array>
+				<key>Name</key>
+				<string>Confused</string>
+			</dict>
+			<key>cool.png</key>
+			<dict>
+				<key>Equivalents</key>
+				<array>
+					<string>B-)</string>
+					<string>&#x1f60e;</string>
+				</array>
+				<key>Name</key>
+				<string>Cool</string>
+			</dict>
+			<key>cry.png</key>
+			<dict>
+				<key>Equivalents</key>
+				<array>
+					<string>:'(</string>
+				</array>
+				<key>Name</key>
+				<string>Cry</string>
+			</dict>
+			<key>devil.png</key>
+			<dict>
+				<key>Equivalents</key>
+				<array>
+					<string>]:)</string>
+				</array>
+				<key>Name</key>
+				<string>Devil</string>
+			</dict>
+			<key>grin.png</key>
+			<dict>
+				<key>Equivalents</key>
+				<array>
+					<string>:-D</string>
+					<string>:D</string>
+					<string>&#x1f604;</string>
+					<string>&#x1f603;</string>
+					<string>&#x1f602;</string>
+					<string>&#x1f601;</string>
+					<string>&#x1f600;</string>
+				</array>
+				<key>Name</key>
+				<string>Grin</string>
+			</dict>
+			<key>happy.png</key>
+			<dict>
+				<key>Equivalents</key>
+				<array>
+					<string>:-)</string>
+				</array>
+				<key>Name</key>
+				<string>Happy</string>
+			</dict>
+			<key>laugh.png</key>
+			<dict>
+				<key>Equivalents</key>
+				<array>
+					<string>:^0</string>
+					<string>&#x1f605;</string>
+					<string>&#x1f606;</string>
+				</array>
+				<key>Name</key>
+				<string>Laugh</string>
+			</dict>
+			<key>love.png</key>
+			<dict>
+				<key>Equivalents</key>
+				<array>
+					<string>:x</string>
+					<string>&#x1f60d;</string>
+					<string>&#x1f618;</string>
+				</array>
+				<key>Name</key>
+				<string>Love</string>
+			</dict>
+			<key>mischief.png</key>
+			<dict>
+				<key>Equivalents</key>
+				<array>
+					<string>;\</string>
+				</array>
+				<key>Name</key>
+				<string>Mischief</string>
+			</dict>
+			<key>sad.png</key>
+			<dict>
+				<key>Equivalents</key>
+				<array>
+					<string>:-(</string>
+					<string>:(</string>
+					<string>&#x2639;</string>
+				</array>
+				<key>Name</key>
+				<string>Sad</string>
+			</dict>
+			<key>happy.png</key>
+			<dict>
+				<key>Equivalents</key>
+				<array>
+					<string>:-)</string>
+					<string>:)</string>
+					<string>&#x1f60a;</string>
+					<string>&#x1f642;</string>
+					<string>&#x263a;</string>
+				</array>
+				<key>Name</key>
+				<string>Smile</string>
+			</dict>
+			<key>plain.png</key>
+			<dict>
+				<key>Equivalents</key>
+				<array>
+					<string>:|</string>
+				</array>
+				<key>Name</key>
+				<string>Plain</string>
+			</dict>
+			<key>shocked.png</key>
+			<dict>
+				<key>Equivalents</key>
+				<array>
+					<string>:0</string>
+				</array>
+				<key>Name</key>
+				<string>Shocked</string>
+			</dict>
+			<key>silly.png</key>
+			<dict>
+				<key>Equivalents</key>
+				<array>
+					<string>:-p</string>
+					<string>:-P</string>
+					<string>:P</string>
+					<string>:p</string>
+					<string>&#x1f60b;</string>
+					<string>&#x1f61c;</string>
+					<string>&#x1f61d;</string>
+				</array>
+				<key>Name</key>
+				<string>Tongue</string>
+			</dict>
+			<key>wink.png</key>
+			<dict>
+				<key>Equivalents</key>
+				<array>
+					<string>;-)</string>
+					<string>;)</string>
+					<string>&#x1f609;</string>
+				</array>
+				<key>Name</key>
+				<string>Wink</string>
+			</dict>
+			<key>alert.png</key>
+			<dict>
+				<key>Equivalents</key>
+				<array>
+					<string>(!)</string>
+				</array>
+				<key>Name</key>
+				<string>Alert</string>
+			</dict>
 
 
-<key>info.png</key>
-<dict>
-    <key>Equivalents</key>
-    <array>
-        <string>(i)</string>
-    </array>
-    <key>Name</key>
-    <string>Info</string>
-</dict>
+			<key>info.png</key>
+			<dict>
+				<key>Equivalents</key>
+				<array>
+					<string>(i)</string>
+				</array>
+				<key>Name</key>
+				<string>Info</string>
+			</dict>
 
-<key>minus.png</key>
-<dict>
-    <key>Equivalents</key>
-    <array>
-        <string>(-)</string>
-    </array>
-    <key>Name</key>
-    <string>Minus</string>
-</dict>
+			<key>minus.png</key>
+			<dict>
+				<key>Equivalents</key>
+				<array>
+					<string>(-)</string>
+				</array>
+				<key>Name</key>
+				<string>Minus</string>
+			</dict>
 
-<key>plus.png</key>
-<dict>
-    <key>Equivalents</key>
-    <array>
-        <string>(+)</string>
-    </array>
-    <key>Name</key>
-    <string>Plus</string>
-</dict>
+			<key>plus.png</key>
+			<dict>
+				<key>Equivalents</key>
+				<array>
+					<string>(+)</string>
+				</array>
+				<key>Name</key>
+				<string>Plus</string>
+			</dict>
 
-<key>heart.png</key>
-<dict>
-    <key>Equivalents</key>
-    <array>
-        <string>(heart)</string>
-    </array>
-    <key>Name</key>
-    <string>Heart</string>
-</dict>
-</dict>
-</dict>
+			<key>heart.png</key>
+			<dict>
+				<key>Equivalents</key>
+				<array>
+					<string>(heart)</string>
+				</array>
+				<key>Name</key>
+				<string>Heart</string>
+			</dict>
+		</dict>
+	</dict>
 </plist>
