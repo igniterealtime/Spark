@@ -37,14 +37,13 @@ import java.util.Locale;
 import org.jivesoftware.gui.LoginUIPanel;
 
 import static java.util.Arrays.asList;
+import static org.apache.commons.lang3.SystemUtils.*;
 
 
 /**
  * In many cases, you will need to know the structure of the Spark installation, such as the directory structures, what
  * type of system Spark is running on, and also the arguments which were passed into Spark on startup. The <code>Spark</code>
  * class provides some simple static calls to retrieve this information.
- *
- * @version 1.0, 11/17/2005
  */
 public final class Spark {
     private static String USER_SPARK_HOME;
@@ -181,26 +180,17 @@ public final class Spark {
         com.install4j.api.launcher.StartupNotification.registerStartupListener(new SparkStartupListener());
     }
 
-    /**
-     * Return if we are running on Windows.
-     *
-     * @return true if we are running on Windows, false otherwise.
-     */
     public static boolean isWindows() {
-        final String osName = System.getProperty("os.name").toLowerCase();
-        return osName.startsWith("windows");
+        return IS_OS_WINDOWS;
     }
 
-    /**
-     * Return if we are running on a mac.
-     *
-     * @return true if we are running on a mac, false otherwise.
-     */
     public static boolean isMac() {
-        String lcOSName = System.getProperty("os.name").toLowerCase();
-        return lcOSName.contains("mac");
+        return IS_OS_MAC;
     }
 
+    public static boolean isLinux() {
+        return IS_OS_LINUX;
+    }
 
     /**
      * Returns the value associated with a passed in argument. Spark
@@ -287,17 +277,6 @@ public final class Spark {
             LOG_DIRECTORY = initializeDirectory("logs");
         }
         return LOG_DIRECTORY;
-    }
-
-    /**
-     * Return if we are running on Linux.
-     *
-     * @return true if we are running on Linux, false otherwise.
-     */
-
-    public static boolean isLinux() {
-        final String osName = System.getProperty("os.name").toLowerCase();
-        return osName.startsWith("linux");
     }
 
     /**
