@@ -31,9 +31,7 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jxmpp.jid.DomainBareJid;
 
 import javax.swing.*;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 public class UserSearchService implements Searchable {
     private Collection<DomainBareJid> searchServices;
@@ -133,7 +131,7 @@ public class UserSearchService implements Searchable {
      * @return a Collection of search services found on the server.
      */
     private Collection<DomainBareJid> getServices() {
-        final Set<DomainBareJid> searchServices = new HashSet<>();
+        List<DomainBareJid> searchServices = new ArrayList<>(2);
         ServiceDiscoveryManager discoManager = ServiceDiscoveryManager.getInstanceFor(SparkManager.getConnection());
         DiscoverItems items = SparkManager.getSessionManager().getDiscoveredItems();
         for (DiscoverItems.Item item : items.getItems() ) {
