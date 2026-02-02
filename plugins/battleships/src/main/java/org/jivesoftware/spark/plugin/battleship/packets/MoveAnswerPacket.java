@@ -17,8 +17,13 @@ package org.jivesoftware.spark.plugin.battleship.packets;
 
 import org.jivesoftware.smack.packet.ExtensionElement;
 import org.jivesoftware.smack.packet.XmlEnvironment;
+import org.jivesoftware.smack.provider.ExtensionElementProvider;
+import org.jivesoftware.smack.xml.XmlPullParser;
+import org.jivesoftware.smack.xml.XmlPullParserException;
+import org.jxmpp.JxmppContext;
 
 import javax.xml.namespace.QName;
+import java.io.IOException;
 
 /**
  * The MoveAnswer Packet Extension
@@ -99,4 +104,55 @@ public class MoveAnswerPacket implements ExtensionElement {
         return buf;
     }
 
+    public static class Provider extends ExtensionElementProvider<MoveAnswerPacket>
+    {
+        @Override
+        public MoveAnswerPacket parse(XmlPullParser parser, int initialDepth, XmlEnvironment xmlEnvironment, JxmppContext jxmppContext) throws XmlPullParserException, IOException
+        {
+            final MoveAnswerPacket gameMove = new MoveAnswerPacket();
+            boolean done = false;
+            while ( !done )
+            {
+                final XmlPullParser.Event eventType = parser.next();
+
+                if ( eventType == XmlPullParser.Event.START_ELEMENT )
+                {
+                    if ( "gameID".equals( parser.getName() ) )
+                    {
+                        final int gameID = Integer.parseInt( parser.nextText() );
+                        gameMove.setGameID( gameID );
+                    }
+                    if ( "positionX".equals( parser.getName() ) )
+                    {
+                        final int position = Integer.parseInt( parser.nextText() );
+                        gameMove.setPositionX( position );
+                    }
+                    if ( "positionY".equals( parser.getName() ) )
+                    {
+                        final int position = Integer.parseInt( parser.nextText() );
+                        gameMove.setPositionY( position );
+                    }
+                    if ( "hit".equals( parser.getName() ) )
+                    {
+                        final int hit = Integer.parseInt( parser.nextText() );
+                        gameMove.setHit( hit );
+                    }
+                    if ( "shiptype".equals( parser.getName() ) )
+                    {
+                        final int shipType = Integer.parseInt( parser.nextText() );
+                        gameMove.setShipType( shipType );
+                    }
+                }
+                else if ( eventType == XmlPullParser.Event.END_ELEMENT )
+                {
+                    if ( ELEMENT_NAME.equals( parser.getName() ) )
+                    {
+                        done = true;
+                    }
+                }
+            }
+
+            return gameMove;
+        }
+    }
 }

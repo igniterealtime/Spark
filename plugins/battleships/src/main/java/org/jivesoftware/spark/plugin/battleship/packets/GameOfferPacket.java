@@ -15,9 +15,18 @@
  */
 package org.jivesoftware.spark.plugin.battleship.packets;
 
+import java.io.IOException;
+import java.text.ParseException;
 import java.util.Random;
 
 import org.jivesoftware.smack.packet.IQ;
+import org.jivesoftware.smack.packet.IqData;
+import org.jivesoftware.smack.packet.XmlEnvironment;
+import org.jivesoftware.smack.parsing.SmackParsingException;
+import org.jivesoftware.smack.provider.IqProvider;
+import org.jivesoftware.smack.xml.XmlPullParser;
+import org.jivesoftware.smack.xml.XmlPullParserException;
+import org.jxmpp.JxmppContext;
 
 /**
  * The Game Offer Packet
@@ -80,4 +89,34 @@ public class GameOfferPacket extends IQ {
         return buf;
     }
 
+    public static class Provider extends IqProvider<GameOfferPacket> {
+        public Provider() {
+            super();
+        }
+
+        @Override
+        public GameOfferPacket parse(XmlPullParser parser, int initialDepth, IqData iqData, XmlEnvironment xmlEnvironment, JxmppContext jxmppContext) throws XmlPullParserException, IOException, SmackParsingException, ParseException {
+            final GameOfferPacket gameOffer = new GameOfferPacket();
+
+            boolean done = false;
+            while (!done) {
+                XmlPullParser.Event eventType = parser.next();
+                if (eventType == XmlPullParser.Event.START_ELEMENT) {
+                    if (parser.getName().equals("gameID")) {
+                        final int gameID = Integer.parseInt(parser.nextText());
+                        gameOffer.setGameID(gameID);
+                    } else if (parser.getName().equals("startingPlayer")) {
+                        boolean startingPlayer = Boolean.parseBoolean(parser.nextText());
+                        gameOffer.setStartingPlayer(startingPlayer);
+                    }
+                } else if (eventType == XmlPullParser.Event.END_ELEMENT) {
+                    if (parser.getName().equals(ELEMENT_NAME)) {
+                        done = true;
+                    }
+                }
+            }
+
+            return gameOffer;
+        }
+    }
 }
