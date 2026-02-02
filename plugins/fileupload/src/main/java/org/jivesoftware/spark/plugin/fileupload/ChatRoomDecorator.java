@@ -29,6 +29,7 @@ import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.MessageBuilder;
 import org.jivesoftware.smack.packet.StanzaBuilder;
 import org.jivesoftware.smack.packet.StandardExtensionElement;
+import org.jivesoftware.spark.SessionManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.ui.ChatRoom;
@@ -46,34 +47,26 @@ import java.nio.file.Files;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.hc.core5.http.ContentType.APPLICATION_OCTET_STREAM;
+import static org.jivesoftware.smack.packet.Message.Type.groupchat;
+import static org.jivesoftware.smack.packet.Message.Type.chat;
 
-public class ChatRoomDecorator
-{
-    public RolloverButton fileuploadButton;
-    public final ChatRoom room;
+public class ChatRoomDecorator {
+    private final  RolloverButton fileuploadButton;
+    private final ChatRoom room;
 
-    public ChatRoomDecorator(final ChatRoom room)
-    {
+    public ChatRoomDecorator(final ChatRoom room) {
         this.room = room;
-
+        // Adds file upload button to chat room
+        fileuploadButton = new RolloverButton(SparkRes.getImageIcon("UPLOAD_ICON"));
         try {
-            fileuploadButton = new RolloverButton(SparkRes.getImageIcon("UPLOAD_ICON"));
             fileuploadButton.setToolTipText(GraphicUtils.createToolTip("Http File Upload"));
-
             fileuploadButton.addActionListener(event -> {
-                if (room.getChatType() == Message.Type.groupchat)
-                {
-                    getUploadUrl(room, Message.Type.groupchat);
-                } else {
-                    getUploadUrl(room, Message.Type.chat);
-                }
+                getUploadUrl(room, room.getChatType() == groupchat ? groupchat : chat);
             });
             room.getEditorBar().add(fileuploadButton);
-
         } catch (Exception e) {
             Log.error("Cannot create file upload icon for the ChatRoomDecorator", e);
         }
-
     }
 
     private static String guessContentType(final File file) {
@@ -86,7 +79,7 @@ public class ChatRoomDecorator
             if (result != null && !result.isEmpty()) {
                 return result;
             }
-            try (final InputStream is = new BufferedInputStream(new FileInputStream(file))) {
+            try (final InputStream is = new BufferedInputStream(Files.newInputStream(file.toPath()))) {
                 result = URLConnection.guessContentTypeFromStream(is);
             }
             return result;
@@ -95,64 +88,60 @@ public class ChatRoomDecorator
         }
     }
 
-    public void finished()
-    {
+    public void finished() {
         Log.debug("ChatRoomDecorator finished for room: " + room.getBareJid());
     }
 
-    private void getUploadUrl(ChatRoom room, Message.Type type)
-    {
-        FileDialog fd = new FileDialog((Frame)null, "Choose a file to upload", FileDialog.LOAD);
+    private void getUploadUrl(ChatRoom room, Message.Type type) {
+        FileDialog fd = new FileDialog((Frame) null, "Choose a file to upload", FileDialog.LOAD);
         fd.setMultipleMode(true);
         fd.setVisible(true);
         File[] files = fd.getFiles();
 
-        for (File file : files)
-        {
-            SwingUtilities.invokeLater( () -> new Thread(() -> handleUpload(file, room, type)).start());
+        for (File file : files) {
+            SwingUtilities.invokeLater(() -> handleUpload(file, room, type));
         }
     }
 
-
-    private void handleUpload(File file, ChatRoom room, Message.Type type)
-    {
+    private void handleUpload(File file, ChatRoom room, Message.Type type) {
         Log.debug("Uploading file: " + file.getAbsolutePath());
         String fileName = URLEncoder.encode(file.getName(), UTF_8);
         String mimeType = guessContentType(file);
         try {
             UploadRequest request = new UploadRequest(fileName, file.length(), mimeType);
-            request.setTo(JidCreate.fromOrThrowUnchecked("httpfileupload." + SparkManager.getSessionManager().getServerAddress()));
+            SessionManager sessionManager = SparkManager.getSessionManager();
+            sessionManager.getDiscoveredItems().getItems();
+            String uploadEndpoint = "httpfileupload." + sessionManager.getServerAddress();
+            request.setTo(JidCreate.fromOrThrowUnchecked(uploadEndpoint));
             request.setType(IQ.Type.get);
 
             IQ result = SparkManager.getConnection().createStanzaCollectorAndSend(request).nextResultOrThrow();
-
             UploadRequest response = (UploadRequest) result;
-
             Log.debug("handleUpload response: putUrl=" + response.putUrl + " getUrl=" + response.getUrl);
-
-            if (response.putUrl != null)
-            {
+            if (response.putUrl != null) {
                 uploadFile(file, mimeType, response, room, type);
             }
         } catch (Exception e) {
             Log.error("Error while attempting to uploading file", e);
             UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
-            JOptionPane.showMessageDialog(room, "Upload failed: " + e.getMessage(),"Http File Upload Plugin", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(room,
+                "Upload failed: " + e.getMessage(),
+                "Http File Upload Plugin",
+                JOptionPane.ERROR_MESSAGE);
         }
     }
 
-    private void uploadFile(File file, String mimeType, UploadRequest response, ChatRoom room, Message.Type type)
-    {
+    private void uploadFile(File file, String mimeType, UploadRequest response, ChatRoom room, Message.Type type) {
         Log.debug("About to upload file for room " + room.getBareJid() + " via HTTP PUT to URL " + response.putUrl);
         ContentType contentType = mimeType != null ? ContentType.create(mimeType) : APPLICATION_OCTET_STREAM;
         try (final CloseableHttpClient httpClient =
                  HttpClients.custom().useSystemProperties()
                      .setConnectionManager(AcceptAllCertsConnectionManager.getInstance())
+                     .setUserAgent("Spark HttpFileUpload")
                      .build()
         ) {
             final ClassicHttpRequest request = ClassicRequestBuilder.put(response.putUrl)
                 .setEntity(new FileEntity(file, contentType))
-                .setHeader("User-Agent", "Spark HttpFileUpload")
                 .build();
 
             httpClient.execute(request, httpResponse -> {
@@ -179,8 +168,7 @@ public class ChatRoomDecorator
         }
     }
 
-    private void broadcastUploadUrl(String url, Message.Type type)
-    {
+    private void broadcastUploadUrl(String url, Message.Type type) {
         MessageBuilder messageBuilder = StanzaBuilder.buildMessage()
             .ofType(type)
             .setBody(url)
