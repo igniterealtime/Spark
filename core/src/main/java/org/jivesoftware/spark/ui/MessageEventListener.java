@@ -15,7 +15,7 @@
  */ 
 package org.jivesoftware.spark.ui;
 
-import org.jivesoftware.smack.packet.Message;
+import org.jivesoftware.smack.packet.MessageBuilder;
 
 /**
  * Listen for the sending and receiving of messages.
@@ -24,7 +24,7 @@ import org.jivesoftware.smack.packet.Message;
  */
 public interface MessageEventListener {
 
-    void sendingMessage(Message message);
+    void sendingMessage(MessageBuilder msgBuilder);
 
-    void receivingMessage(Message message);
+    void receivingMessage(MessageBuilder msgBuilder);
 }

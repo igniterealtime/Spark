@@ -78,13 +78,12 @@
         <module>plugins/growl</module>
         <!--<module>plugins/jingle</module>-->
         <module>plugins/meet</module>
-        <!--<module>plugins/otr</module>-->
+        <module>plugins/otr</module>
         <module>plugins/reversi</module>
         <module>plugins/roar</module>
         <module>plugins/tictactoe</module>
         <module>plugins/spelling</module>
         <!--<module>plugins/sip</module>-->
-        <!--<module>plugins/systemtray</module>-->
         <module>plugins/transferguard</module>
         <module>plugins/translator</module>
         <module>distribution</module>
