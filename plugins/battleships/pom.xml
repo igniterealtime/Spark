@@ -10,7 +10,7 @@
     </parent>
 
     <artifactId>battleships</artifactId>
-    <version>0.3</version>
+    <version>0.4</version>
 
     <name>Battleships</name>
     <description>An implementation of the classic Battleships guessing game.</description>

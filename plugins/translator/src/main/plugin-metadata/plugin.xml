@@ -4,9 +4,8 @@
     <version>${project.version}</version>
     <description>${project.description}</description>
     <class>org.jivesoftware.spark.translator.TranslatorPlugin</class>
-    <author>Jive Software</author>
-    <homePage>http://www.jivesoftware.com</homePage>
-    <email>spark@jivesoftware.com</email>
+    <homePage>https://IgniteRealtime.org</homePage>
+    <email>support@IgniteRealtime.org</email>
     <minSparkVersion>3.1.0</minSparkVersion>
     <java>11</java>
 </plugin>

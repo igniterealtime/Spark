@@ -10,7 +10,7 @@
     </parent>
 
     <artifactId>meet</artifactId>
-    <version>0.2.0</version>
+    <version>0.3.0</version>
 
     <name>Online Meetings Plugin</name>
     <description>Adds support for XEP-0483: HTTP Online Meetings to the Spark IM client.</description>

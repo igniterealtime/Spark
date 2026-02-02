@@ -4,8 +4,8 @@
     <version>${project.version}</version>
     <description>${project.description}</description>
     <author>Holger Bergunde</author>
-    <homePage>http://www.stytrix.de</homePage>
-    <email>holger@bergunde.de</email>
+    <homePage>https://IgniteRealtime.org</homePage>
+    <email>support@IgniteRealtime.org</email>
     <minSparkVersion>3.1.0</minSparkVersion>
     <java>11</java>
     <class>org.jivesoftware.spark.otrplug.OTRPlugin</class>

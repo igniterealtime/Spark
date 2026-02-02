@@ -4,8 +4,8 @@
     <description>${project.description}</description>
     <class>tic.tac.toe.TicTacToePlugin</class>
     <author>Wolf Posdorfer</author>
-    <homePage>http://www.jivesoftware.com</homePage>
-    <email>9posdorf@informatik.uni-hamburg.de</email>
+    <homePage>https://IgniteRealtime.org</homePage>
+    <email>support@IgniteRealtime.org</email>
     <minSparkVersion>3.1.0</minSparkVersion>
     <os>Windows,Linux,Mac</os>
     <java>11</java>

@@ -4,8 +4,8 @@
     <version>${project.version}</version>
     <description>${project.description}</description>
     <author>Michael Will</author>
-    <homePage>http://www.igniterealtime.org</homePage>
-    <email>michael-will@gmx.net</email>
+    <homePage>https://IgniteRealtime.org</homePage>
+    <email>support@IgniteRealtime.org</email>
     <class>org.jivesoftware.spark.plugin.flashing.FlashingPlugin</class>
     <minSparkVersion>3.1.0</minSparkVersion>
     <os>Windows</os>
