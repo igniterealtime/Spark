@@ -27,9 +27,9 @@ public class BattleshipPlugin implements Plugin {
 
     @Override
     public void initialize() {
-        ProviderManager.addIQProvider(GameOfferPacket.ELEMENT_NAME, GameOfferPacket.NAMESPACE, GameOfferPacket.class);
-        ProviderManager.addExtensionProvider(MovePacket.ELEMENT_NAME, MovePacket.NAMESPACE, MovePacket.class);
-        ProviderManager.addExtensionProvider(MoveAnswerPacket.ELEMENT_NAME, MoveAnswerPacket.NAMESPACE, MoveAnswerPacket.class);
+        ProviderManager.addIQProvider(GameOfferPacket.ELEMENT_NAME, GameOfferPacket.NAMESPACE, new GameOfferPacket.Provider());
+        ProviderManager.addExtensionProvider(MovePacket.ELEMENT_NAME, MovePacket.NAMESPACE, new MovePacket.Provider());
+        ProviderManager.addExtensionProvider(MoveAnswerPacket.ELEMENT_NAME, MoveAnswerPacket.NAMESPACE, new MoveAnswerPacket.Provider());
 
         StanzaListener _gameOfferListener = stanza -> {
             GameOfferPacket invitation = (GameOfferPacket) stanza;

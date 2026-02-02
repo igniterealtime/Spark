@@ -118,13 +118,12 @@ public class TicTacToePlugin implements Plugin {
 
 
             sendGameButton.addActionListener(e -> {
-                
-                //If the opponent is offline, then you should not start the game
-                if(((ChatRoomImpl) room).getPresence().getType().equals(Presence.Type.unavailable)){
+                final EntityFullJid opponentJID = ((ChatRoomImpl) room).getJidOnline();
+                // If the opponent is offline, then you should not start the game
+                if (opponentJID == null) {
                     return;
                 }
-                final EntityFullJid opponentJID = ((ChatRoomImpl) room).getJID();
-                if (_currentInvitations.contains(opponentJID.asBareJid())) {
+                if (_currentInvitations.contains(opponentJID.asEntityBareJid())) {
                     return;
                 }
 

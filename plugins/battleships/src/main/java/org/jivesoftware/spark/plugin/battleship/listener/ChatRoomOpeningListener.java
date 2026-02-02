@@ -7,6 +7,7 @@ import javax.swing.JFrame;
 
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.filter.StanzaIdFilter;
+import org.jivesoftware.smack.packet.ErrorIQ;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.ui.ChatRoom;
@@ -32,9 +33,12 @@ public class ChatRoomOpeningListener extends ChatRoomListenerAdapter {
 
         final ChatRoomButton sendGameButton = new ChatRoomButton("BS");
         room.getToolBar().addChatRoomButton(sendGameButton);
-        final Jid opponentJID = ((ChatRoomImpl) room).getJID();
 
         sendGameButton.addActionListener(e -> {
+            final Jid opponentJID = ((ChatRoomImpl) room).getJidOnline();
+            if (opponentJID == null) {
+                return;
+            }
             final GameOfferPacket offer = new GameOfferPacket();
             offer.setTo(opponentJID);
             offer.setType(IQ.Type.get);
@@ -49,6 +53,12 @@ public class ChatRoomOpeningListener extends ChatRoomListenerAdapter {
             }
 
             SparkManager.getConnection().addAsyncStanzaListener(stanza -> {
+                if (stanza.getError() != null) {
+                    room.getTranscriptWindow().insertCustomText(
+                        BsRes.getString("request.error") + stanza.getError().getDescriptiveText(),
+                        false, false, Color.RED);
+                    return;
+                }
                 GameOfferPacket answer = (GameOfferPacket) stanza;
                 answer.setStartingPlayer(offer.isStartingPlayer());
                 answer.setGameID(offer.getGameID());
