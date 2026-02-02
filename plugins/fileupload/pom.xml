@@ -10,7 +10,7 @@
     </parent>
 
     <artifactId>fileupload</artifactId>
-    <version>0.0.4</version>
+    <version>0.1</version>
 
     <name>Http File Upload Plugin</name>
     <description>Allows users to share files by uploading to a server (via XEP-0363).</description>
@@ -23,12 +23,4 @@
             </roles>
         </contributor>
     </contributors>
-
-    <dependencies>
-        <dependency>
-            <groupId>javax.xml.bind</groupId>
-            <artifactId>jaxb-api</artifactId>
-            <version>2.3.1</version>
-        </dependency>
-    </dependencies>
 </project>

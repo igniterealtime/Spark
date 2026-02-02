@@ -10,7 +10,7 @@
     </parent>
 
     <artifactId>sip</artifactId>
-    <version>1.3.0</version>
+    <version>1.4.0</version>
 
     <name>Phone Client</name>
     <description>Adds SIP Softphone functionality to Spark.</description>

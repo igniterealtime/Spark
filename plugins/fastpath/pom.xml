@@ -10,7 +10,7 @@
     </parent>
 
     <artifactId>fastpath</artifactId>
-    <version>3.5.1</version>
+    <version>3.6.0</version>
 
     <name>Fastpath</name>
     <description>Provides FastPath Agent functionality.</description>

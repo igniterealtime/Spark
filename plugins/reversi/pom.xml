@@ -10,7 +10,7 @@
     </parent>
 
     <artifactId>reversi</artifactId>
-    <version>1.6</version>
+    <version>1.7</version>
 
     <name>Reversi</name>
     <description>Multiplayer game of Reversi.</description>

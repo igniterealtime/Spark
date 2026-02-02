@@ -10,7 +10,7 @@
     </parent>
 
     <artifactId>tictactoe</artifactId>
-    <version>0.3</version>
+    <version>0.4</version>
 
     <name>TicTacToe</name>
     <description>The most sophisticated TicTacToe Game ever created.</description>

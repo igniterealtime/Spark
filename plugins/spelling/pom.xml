@@ -10,7 +10,7 @@
     </parent>
 
     <artifactId>spelling</artifactId>
-    <version>0.8</version>
+    <version>0.9</version>
 
     <name>Spellchecker Plugin</name>
     <description>Provides spellchecker functionality.</description>

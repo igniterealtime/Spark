@@ -10,7 +10,7 @@
     </parent>
 
     <artifactId>transferguard</artifactId>
-    <version>1.2</version>
+    <version>1.3</version>
 
     <name>Transfer Guard</name>
     <description>Adds the ability to automatically reject file transfers based on preference configuration.</description>

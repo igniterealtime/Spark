@@ -4,8 +4,8 @@
     <version>${project.version}</version>
     <description>${project.description}</description>
     <author>Pete Matern, Tim Jentz</author>
-    <homePage>http://www.jivesoftware.org</homePage>
-    <email>pete@jivesoftware.com</email>
+    <homePage>https://IgniteRealtime.org</homePage>
+    <email>support@IgniteRealtime.org</email>
     <class>org.jivesoftware.spark.plugins.transfersettings.FileTransferSettingsPlugin</class>
     <minSparkVersion>3.1.0</minSparkVersion>
     <java>11</java>

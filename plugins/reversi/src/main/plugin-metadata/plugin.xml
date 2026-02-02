@@ -4,8 +4,8 @@
     <version>${project.version}</version>
     <description>${project.description}</description>
     <author>Matt Tucker, Bill Lynch, Holger Bergunde</author>
-    <homePage>http://www.jivesoftware.org</homePage>
-    <email>plugins@jivesoftware.org</email>
+    <homePage>https://IgniteRealtime.org</homePage>
+    <email>support@IgniteRealtime.org</email>
     <class>org.jivesoftware.game.reversi.ReversiPlugin</class>
     <minSparkVersion>3.1.0</minSparkVersion>
     <java>11</java>
