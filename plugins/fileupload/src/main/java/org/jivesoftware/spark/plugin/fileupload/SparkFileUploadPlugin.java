@@ -17,60 +17,43 @@
 
 package org.jivesoftware.spark.plugin.fileupload;
 
-import org.jivesoftware.smack.packet.Message;
+import org.jivesoftware.smackx.httpfileupload.HttpFileUploadManager;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.Plugin;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ChatRoomListener;
-import org.jivesoftware.spark.ui.GlobalMessageListener;
 import org.jivesoftware.spark.util.log.Log;
-import org.jivesoftware.smack.provider.ProviderManager;
 import org.jxmpp.jid.EntityJid;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 
-public class SparkFileUploadPlugin implements Plugin, ChatRoomListener, GlobalMessageListener {
-    private ChatManager chatManager;
+public class SparkFileUploadPlugin implements Plugin, ChatRoomListener  {
+    private HttpFileUploadManager httpFileUploadManager;
     private final Map<EntityJid, ChatRoomDecorator> decorators = new HashMap<>();
 
     @Override
     public void initialize() {
-        ProviderManager.addIQProvider("slot", UploadRequest.NAMESPACE, new UploadRequest.Provider());
-        chatManager = SparkManager.getChatManager();
-        chatManager.addChatRoomListener(this);
-        chatManager.addGlobalMessageListener(this);
-    }
-
-    @Override
-    public void messageReceived(ChatRoom room, Message message) {
-        String body = message.getBody();
-        if (body != null && (body.startsWith("https://") || body.startsWith("http://")) && body.contains("/httpfileupload/")) {
-            Log.warning("http file upload get url " + message.getBody());
+        //TODO Use our cert manager httpFileUploadManager.setTlsContext()
+        httpFileUploadManager = HttpFileUploadManager.getInstanceFor(SparkManager.getConnection());
+        if (!httpFileUploadManager.isUploadServiceDiscovered()) {
+            Log.warning("HTTP File Upload service not discovered.");
+            httpFileUploadManager = null;
+            return;
         }
-    }
-
-    @Override
-    public void messageSent(ChatRoom room, Message message) {
+        ChatManager chatManager = SparkManager.getChatManager();
+        chatManager.addChatRoomListener(this);
     }
 
     @Override
     public void shutdown() {
-        try {
-            Log.debug("shutdown");
-            chatManager.removeChatRoomListener(this);
-            chatManager.removeGlobalMessageListener(this);
-            chatManager = null;
-            ProviderManager.removeIQProvider("slot", UploadRequest.NAMESPACE);
-        } catch (Exception e) {
-            Log.warning("shutdown ", e);
-        }
     }
 
     @Override
     public boolean canShutDown() {
-        return true;
+        return false;
     }
 
     @Override
@@ -79,20 +62,24 @@ public class SparkFileUploadPlugin implements Plugin, ChatRoomListener, GlobalMe
 
     @Override
     public void chatRoomClosed(ChatRoom chatroom) {
+        if (httpFileUploadManager == null) {
+            return;
+        }
         EntityJid roomId = chatroom.getJid();
-        Log.debug("chatRoomClosed:  " + roomId);
-        if (decorators.containsKey(roomId)) {
-            ChatRoomDecorator decorator = decorators.remove(roomId);
+        ChatRoomDecorator decorator = decorators.remove(roomId);
+        if (decorator != null) {
             decorator.finished();
         }
     }
 
     @Override
     public void chatRoomOpened(final ChatRoom room) {
+        if (httpFileUploadManager == null) {
+            return;
+        }
         EntityJid roomId = room.getJid();
-        Log.debug("chatRoomOpened:  " + roomId);
         if (!decorators.containsKey(roomId)) {
-            decorators.put(roomId, new ChatRoomDecorator(room));
+            decorators.put(roomId, new ChatRoomDecorator(httpFileUploadManager, room));
         }
     }
 
