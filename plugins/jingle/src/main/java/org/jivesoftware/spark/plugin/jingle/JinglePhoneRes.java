@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jivesoftware.sparkplugin;
+package org.jivesoftware.spark.plugin.jingle;
 
 import javax.swing.*;
 import java.util.PropertyResourceBundle;
@@ -37,7 +37,7 @@ public class JinglePhoneRes {
     static ClassLoader cl = JinglePhoneRes.class.getClassLoader();
 
     static {
-        JinglePhoneRes.prb = (PropertyResourceBundle) ResourceBundle.getBundle("org/jivesoftware/sparkplugin/jingle");
+        JinglePhoneRes.prb = (PropertyResourceBundle) ResourceBundle.getBundle("org/jivesoftware/spark/plugin/jingle/jingle");
     }
 
     public static final String getString(String propertyName) {
