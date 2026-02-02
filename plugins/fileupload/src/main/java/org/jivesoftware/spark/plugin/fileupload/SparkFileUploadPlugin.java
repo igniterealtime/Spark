@@ -18,6 +18,7 @@
 package org.jivesoftware.spark.plugin.fileupload;
 
 import org.jivesoftware.smack.packet.Message;
+import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.Plugin;
 import org.jivesoftware.spark.ui.ChatRoom;
@@ -27,19 +28,16 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.smack.provider.ProviderManager;
 import org.jxmpp.jid.EntityJid;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 
-public class SparkFileUploadPlugin implements Plugin, ChatRoomListener, GlobalMessageListener
-{
-    private org.jivesoftware.spark.ChatManager chatManager;
+public class SparkFileUploadPlugin implements Plugin, ChatRoomListener, GlobalMessageListener {
+    private ChatManager chatManager;
     private final Map<EntityJid, ChatRoomDecorator> decorators = new HashMap<>();
 
-    public void initialize()
-    {
+    @Override
+    public void initialize() {
         ProviderManager.addIQProvider("slot", UploadRequest.NAMESPACE, new UploadRequest.Provider());
-
         chatManager = SparkManager.getChatManager();
         chatManager.addChatRoomListener(this);
         chatManager.addGlobalMessageListener(this);
@@ -57,70 +55,59 @@ public class SparkFileUploadPlugin implements Plugin, ChatRoomListener, GlobalMe
     public void messageSent(ChatRoom room, Message message) {
     }
 
-    public void shutdown()
-    {
-        try
-        {
+    @Override
+    public void shutdown() {
+        try {
             Log.debug("shutdown");
             chatManager.removeChatRoomListener(this);
             chatManager.removeGlobalMessageListener(this);
-
+            chatManager = null;
             ProviderManager.removeIQProvider("slot", UploadRequest.NAMESPACE);
-        }
-        catch(Exception e)
-        {
+        } catch (Exception e) {
             Log.warning("shutdown ", e);
         }
     }
 
-    public boolean canShutDown()
-    {
+    @Override
+    public boolean canShutDown() {
         return true;
     }
 
-    public void uninstall()
-    {
+    @Override
+    public void uninstall() {
     }
 
-    public void chatRoomLeft(ChatRoom chatroom)
-    {
+    @Override
+    public void chatRoomLeft(ChatRoom chatroom) {
     }
 
-    public void chatRoomClosed(ChatRoom chatroom)
-    {
+    @Override
+    public void chatRoomClosed(ChatRoom chatroom) {
         EntityJid roomId = chatroom.getJid();
         Log.debug("chatRoomClosed:  " + roomId);
-        if (decorators.containsKey(roomId))
-        {
+        if (decorators.containsKey(roomId)) {
             ChatRoomDecorator decorator = decorators.remove(roomId);
             decorator.finished();
         }
     }
 
-    public void chatRoomActivated(ChatRoom chatroom)
-    {
-        EntityJid roomId = chatroom.getJid();
-        Log.debug("chatRoomActivated:  " + roomId);
+    @Override
+    public void chatRoomActivated(ChatRoom chatroom) {
     }
 
-    public void userHasJoined(ChatRoom room, String s)
-    {
-        EntityJid roomId = room.getJid();
-        Log.debug("userHasJoined:  " + roomId + " " + s);
+    @Override
+    public void userHasJoined(ChatRoom room, String s) {
     }
 
-    public void userHasLeft(ChatRoom room, String s)
-    {
-        EntityJid roomId = room.getJid();
-        Log.debug("userHasLeft:  " + roomId + " " + s);
+    @Override
+    public void userHasLeft(ChatRoom room, String s) {
     }
 
-    public void chatRoomOpened(final ChatRoom room)
-    {
+    @Override
+    public void chatRoomOpened(final ChatRoom room) {
         EntityJid roomId = room.getJid();
         Log.debug("chatRoomOpened:  " + roomId);
-        if (!decorators.containsKey(roomId))
-        {
+        if (!decorators.containsKey(roomId)) {
             decorators.put(roomId, new ChatRoomDecorator(room));
         }
     }
