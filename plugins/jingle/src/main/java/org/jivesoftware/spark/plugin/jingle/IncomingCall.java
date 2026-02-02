@@ -1,12 +1,12 @@
 /**
  * Copyright (C) 2004-2011 Jive Software. All rights reserved.
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,6 @@
 package org.jivesoftware.spark.plugin.jingle;
 
 import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.jingleold.JingleSession;
 import org.jivesoftware.smackx.jingleold.JingleSessionRequest;
@@ -31,11 +30,8 @@ import org.jivesoftware.spark.util.SwingTimerTask;
 import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.alerts.SparkToaster;
-import org.jxmpp.util.XmppStringUtils;
 
 import javax.swing.*;
-import java.applet.Applet;
-import java.applet.AudioClip;
 import java.awt.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -43,30 +39,22 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.TimerTask;
 
+import static org.jivesoftware.spark.plugin.jingle.Ringing.*;
+
 /**
  * Incoming call handles a single incoming Jingle call.
  */
 public class IncomingCall implements JingleSessionListener, ChatRoomClosingListener {
 
-    private SparkToaster toasterManager;
-
-    private AudioClip ringing;
-
-    private ChatRoom chatRoom;
-
-    private Map<ChatRoom, JingleRoom> callMap = new HashMap<>();
-
-    private GenericNotification notificationUI;
-
-    private JingleSession session;
-
-    private boolean established = false;
-
-    private boolean mediaReceived = false;
-
-    private TimerTask mediaReceivedTask;
-
     private static final long WAIT_FOR_MEDIA_DELAY = 20000;
+    private SparkToaster toasterManager;
+    private ChatRoom chatRoom;
+    private final Map<ChatRoom, JingleRoom> callMap = new HashMap<>();
+    private final GenericNotification notificationUI;
+    private JingleSession session;
+    private boolean established = false;
+    private boolean mediaReceived = false;
+    private TimerTask mediaReceivedTask;
 
     /**
      * Initializes a new IncomingCall with the required JingleSession.
@@ -74,46 +62,33 @@ public class IncomingCall implements JingleSessionListener, ChatRoomClosingListe
      * @param request the <code>JingleSessionRequest</code>
      */
     public IncomingCall(final JingleSessionRequest request) {
-
-        try {
-            ringing = Applet.newAudioClip(JinglePhoneRes.getURL("RINGING"));
-        }
-        catch (Exception e) {
-            Log.error(e);
-        }
-
         notificationUI = new GenericNotification(JingleResources.getString("label.establishing.call"), SparkRes.getImageIcon(SparkRes.BUSY_IMAGE));
-
         // Accept the request
         try {
             session = request.accept();
-        }
-        catch (XMPPException | SmackException e) {
+        } catch (Exception e) {
             Log.error(e);
+            return;
         }
-
         session.addListener(this);
-
         showIncomingCall(request);
     }
-
 
     /**
      * Appends the JingleRoom to the ChatRoom.
      */
     private void showCallAnsweredState() {
-        SwingUtilities.invokeLater( () -> {
+        SwingUtilities.invokeLater(() -> {
             final SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy h:mm a");
             notificationUI.setTitle("Voice chat started on " + formatter.format(new Date()));
             notificationUI.showAlert(false);
             notificationUI.setIcon(null);
 
-            if (ringing != null) {
-                ringing.stop();
-            }
+            stopRinging();
 
             final JingleRoom roomUI = new JingleRoom(session, chatRoom);
-            chatRoom.getChatPanel().add(roomUI, new GridBagConstraints(1, 1, 1, 1, 0.05, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
+            Insets insets = new Insets(5, 5, 5, 5);
+            chatRoom.getChatPanel().add(roomUI, new GridBagConstraints(1, 1, 1, 1, 0.05, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, insets, 0, 0));
             chatRoom.getChatPanel().invalidate();
             chatRoom.getChatPanel().validate();
             chatRoom.getChatPanel().repaint();
@@ -124,23 +99,21 @@ public class IncomingCall implements JingleSessionListener, ChatRoomClosingListe
 
             // Notify state change
             SparkManager.getChatManager().notifySparkTabHandlers(chatRoom);
-        } );
+        });
     }
 
     /**
      * Removes the JingleRoom from the ChatRoom.
      */
     private void showCallEndedState(final String reason) {
-        SwingUtilities.invokeLater( () -> {
-            if (ringing != null) {
-                ringing.stop();
-            }
+        SwingUtilities.invokeLater(() -> {
+            stopRinging();
 
             notificationUI.setTitle(reason);
             notificationUI.setIcon(null);
             notificationUI.showAlert(false);
 
-
+            // Remove JingleRoom from ChatRoom if present
             if (chatRoom != null) {
                 JingleRoom room = callMap.get(chatRoom);
                 if (room != null) {
@@ -152,13 +125,11 @@ public class IncomingCall implements JingleSessionListener, ChatRoomClosingListe
                 chatRoom.getChatPanel().validate();
                 chatRoom.getChatPanel().repaint();
             }
-
             // Add state
             JingleStateManager.getInstance().removeJingleSession(chatRoom);
-
             // Notify state change
             SparkManager.getChatManager().notifySparkTabHandlers(chatRoom);
-        } );
+        });
     }
 
     /**
@@ -174,15 +145,12 @@ public class IncomingCall implements JingleSessionListener, ChatRoomClosingListe
             try {
                 session.terminate();
                 session = null;
-            }
-            catch (XMPPException | SmackException e) {
+            } catch (Exception e) {
                 Log.error(e);
             }
         }
 
-        if (ringing != null) {
-            ringing.stop();
-        }
+        stopRinging();
     }
 
     /**
@@ -217,17 +185,15 @@ public class IncomingCall implements JingleSessionListener, ChatRoomClosingListe
         toasterManager.showToaster("Incoming Voice Chat", incomingCall);
         toasterManager.hideTitle();
 
-        incomingCall.getAcceptButton().addActionListener( e -> acceptSession(request) );
+        incomingCall.getAcceptButton().addActionListener(e -> acceptSession(request));
 
-        incomingCall.getRejectButton().addActionListener( e -> rejectIncomingCall() );
+        incomingCall.getRejectButton().addActionListener(e -> rejectIncomingCall());
 
-        // Start the ringing.
-        final Runnable ringer = () -> ringing.loop();
-
-        TaskEngine.getInstance().submit(ringer);
+        startRinging();
 
         // End after 30 seconds max.
         TimerTask endTask = new SwingTimerTask() {
+            @Override
             public void doRun() {
                 if (!session.isFullyEstablished()) {
                     rejectIncomingCall();
@@ -246,38 +212,38 @@ public class IncomingCall implements JingleSessionListener, ChatRoomClosingListe
     private void acceptSession(JingleSessionRequest request) {
         toasterManager.close();
 
-        if (ringing != null) {
-            ringing.stop();
-        }
+        stopRinging();
 
         // Start the call
         session.startIncoming();
 
         if (chatRoom == null) {
-            chatRoom = SparkManager.getChatManager().getChatRoom( XmppStringUtils.parseBareJid(request.getFrom()) );
+            chatRoom = SparkManager.getChatManager().getChatRoom(request.getFrom().asEntityBareJidOrThrow());
             SparkManager.getChatManager().getChatContainer().activateChatRoom(chatRoom);
             SparkManager.getChatManager().getChatContainer().getChatFrame().toFront();
             notifyRoom();
         }
     }
 
+    @Override
     public void sessionMediaReceived(JingleSession jingleSession, String participant) {
         mediaReceived = true;
         TaskEngine.getInstance().cancelScheduledTask(mediaReceivedTask);
         showCallAnsweredState();
     }
 
+    @Override
     public void sessionEstablished(PayloadType payloadType, TransportCandidate transportCandidate, TransportCandidate transportCandidate1, JingleSession jingleSession) {
 
         established = true;
         mediaReceivedTask = new SwingTimerTask() {
+            @Override
             public void doRun() {
                 if (!mediaReceived) {
                     if (session != null) {
                         try {
                             session.terminate("No Media Received. This may be caused by firewall configuration problems.");
-                        }
-                        catch (XMPPException | SmackException e) {
+                        } catch (Exception e) {
                             Log.error(e);
                         }
                     }
@@ -287,13 +253,16 @@ public class IncomingCall implements JingleSessionListener, ChatRoomClosingListe
         TaskEngine.getInstance().schedule(mediaReceivedTask, WAIT_FOR_MEDIA_DELAY, WAIT_FOR_MEDIA_DELAY);
     }
 
+    @Override
     public void sessionDeclined(String string, JingleSession jingleSession) {
         showCallEndedState("Voice chat was rejected");
     }
 
+    @Override
     public void sessionRedirected(String string, JingleSession jingleSession) {
     }
 
+    @Override
     public void sessionClosed(String string, JingleSession jingleSession) {
         if (established && mediaReceived) {
             final SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy h:mm a");
@@ -301,28 +270,28 @@ public class IncomingCall implements JingleSessionListener, ChatRoomClosingListe
         } else {
             showCallEndedState("Voice chat ended: " + string);
         }
-        if(PhoneManager.isUseStaticLocator()&&PhoneManager.isUsingMediaLocator()){
+        if (PhoneManager.isUseStaticLocator() && PhoneManager.isUsingMediaLocator()) {
             PhoneManager.setUsingMediaLocator(false);
         }
     }
 
+    @Override
     public void sessionClosedOnError(XMPPException xmppException, JingleSession jingleSession) {
         showCallEndedState("Voice chat ended due an error: " + xmppException.getMessage());
-        if(PhoneManager.isUseStaticLocator()&&PhoneManager.isUsingMediaLocator()){
+        if (PhoneManager.isUseStaticLocator() && PhoneManager.isUsingMediaLocator()) {
             PhoneManager.setUsingMediaLocator(false);
         }
     }
 
+    @Override
     public void closing() {
         if (session != null) {
             try {
                 session.terminate();
-            }
-            catch (XMPPException | SmackException e) {
+            } catch (Exception e) {
                 Log.error(e);
             }
         }
-
         JingleStateManager.getInstance().removeJingleSession(chatRoom);
     }
 }

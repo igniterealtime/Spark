@@ -1,12 +1,12 @@
 /**
  * Copyright (C) 2004-2011 Jive Software. All rights reserved.
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 package org.jivesoftware.spark.plugin.jingle;
+
+import org.jivesoftware.spark.util.log.Log;
 
 import javax.sound.sampled.*;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -41,7 +43,9 @@ public class JavaMixer {
 
     public JavaMixer() {
         List<Mixer> portMixers = getPortMixers();
-        if (portMixers.size() == 0) System.err.println("No Mixers Found.");
+        if (portMixers.isEmpty()) {
+            Log.warning("No Mixers Found.");
+        }
         for (Mixer mixer : portMixers) {
             JavaMixer.MixerNode mixerNode = new JavaMixer.MixerNode(mixer);
             createMixerChildren(mixerNode);
@@ -49,20 +53,61 @@ public class JavaMixer {
         }
     }
 
+    /**
+     * Returns whether the type of a FloatControl is BALANCE or PAN.
+     *
+     * @param control FloatControl control
+     * @return boolean is Balance or Pan
+     */
+    private static boolean isBalanceOrPan(FloatControl control) {
+        Control.Type type = control.getType();
+        return type.equals(FloatControl.Type.PAN) || type.equals(FloatControl.Type.BALANCE);
+    }
+
+    public static void main(String[] args) {
+        final JavaMixer sm = new JavaMixer();
+        final JFrame jf = new JFrame("Mixer Test");
+        final JPanel jp = new JPanel();
+        jf.add(jp);
+        jp.add(sm.getTree());
+        jf.setSize(600, 500);
+        jf.setVisible(true);
+        jf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        sm.getTree().addTreeSelectionListener(e -> {
+            TreePath path = e.getPath();
+            if (path.getLastPathComponent() instanceof ControlNode) {
+                ControlNode controlNode = (ControlNode) path.getLastPathComponent();
+                if (!(controlNode.getControl() instanceof CompoundControl)) {
+                    if (jp.getComponentCount() > 1) {
+                        jp.remove(1);
+                    }
+                    jp.add(controlNode.getComponent(), 1);
+                    jp.repaint();
+                }
+            }
+        });
+        jp.add(sm.getPreferredMasterVolume());
+        jp.add(sm.getPreferredMasterVolume());
+        jp.add(sm.getPrefferedInputVolume());
+        jp.repaint();
+        sm.setMicrophoneInput();
+        sm.setMuteForMicrophoneOutput();
+    }
+
     public JTree getTree() {
         return tree;
     }
 
-    public Component getPrefferedMasterVolume() {
+    public Component getPreferredMasterVolume() {
         TreePath path = findByName(new TreePath(root), new String[]{"SPEAKER", "Volume"});
-
         if (path == null) {
             path = findByName(new TreePath(root), new String[]{"Master target", "Master", "Mute"});
         }
-
         if (path != null) {
-            if (path.getLastPathComponent() instanceof JavaMixer.ControlNode)
-                return ((JavaMixer.ControlNode) path.getLastPathComponent()).getComponent();
+            if (path.getLastPathComponent() instanceof JavaMixer.ControlNode) {
+                return ((ControlNode) path.getLastPathComponent()).getComponent();
+            }
         }
         return null;
     }
@@ -83,11 +128,9 @@ public class JavaMixer {
 
     public void setMicrophoneInput() {
         TreePath path = findByName(new TreePath(root), new String[]{"MICROPHONE", "Select"});
-
         if (path == null) {
             path = findByName(new TreePath(root), new String[]{"Capture source", "Capture", "Mute"});
         }
-
         if (path != null) {
             if (path.getLastPathComponent() instanceof JavaMixer.ControlNode) {
                 BooleanControl bControl = (BooleanControl) (((JavaMixer.ControlNode) path.getLastPathComponent()).getControl());
@@ -98,7 +141,6 @@ public class JavaMixer {
 
     public void setMuteForMicrophoneOutput() {
         TreePath path = findByName(new TreePath(root), new String[]{"SPEAKER", "Microfone", "Mute"});
-
         if (path == null) {
             path = findByName(new TreePath(root), new String[]{"MIC target", "mic", "Mute"});
         }
@@ -130,8 +172,7 @@ public class JavaMixer {
     }
 
     private boolean arePortsSupported(Mixer mixer) {
-        Line.Info[] infos;
-        infos = mixer.getSourceLineInfo();
+        Line.Info[] infos = mixer.getSourceLineInfo();
         for (Line.Info info : infos) {
             if (info instanceof Port.Info) {
                 return true;
@@ -165,19 +206,16 @@ public class JavaMixer {
                         if (anInfosToCheck instanceof Port.Info) {
                             port = (Port) mixer.getLine(anInfosToCheck);
                             port.open();
-                        }
-                        else if (anInfosToCheck instanceof DataLine.Info) {
+                        } else if (anInfosToCheck instanceof DataLine.Info) {
                             dLine = (DataLine) mixer.getLine(anInfosToCheck);
                             if (!dLine.isOpen()) {
                                 dLine.open();
                             }
                         }
-                    }
-                    catch (LineUnavailableException e) {
-                        e.printStackTrace();
-                    }
-                    catch (Exception e) {
-                        // Do Nothing
+                    } catch (LineUnavailableException e) {
+                        Log.warning("Audio line unavailable: " + e.getMessage());
+                    } catch (Exception e) {
+                        Log.error("Audio line: ", e);
                     }
                 }
                 if (port != null) {
@@ -199,13 +237,13 @@ public class JavaMixer {
         infos = mixer.getSourceLineInfo();
         for (Line.Info info : infos) {
             if (info instanceof Port.Info || info instanceof DataLine.Info) {
-                portInfoList.add( info );
+                portInfoList.add(info);
             }
         }
         infos = mixer.getTargetLineInfo();
         for (Line.Info info1 : infos) {
             if (info1 instanceof Port.Info || info1 instanceof DataLine.Info) {
-                portInfoList.add( info1 );
+                portInfoList.add(info1);
             }
         }
         return portInfoList.toArray(EMPTY_PORT_INFO_ARRAY);
@@ -232,21 +270,51 @@ public class JavaMixer {
         }
     }
 
-    /**
-     * Returns whether the type of a FloatControl is BALANCE or PAN.
-     *
-     * @param control FloatControl control
-     * @return boolean is Balance or Pan
-     */
-    private static boolean isBalanceOrPan(FloatControl control) {
-        Control.Type type = control.getType();
-        return type.equals(FloatControl.Type.PAN) || type.equals(FloatControl.Type.BALANCE);
+    public TreePath find(TreePath path, Object[] nodes) {
+        return find2(path, nodes, 0, false);
+    }
+
+    public TreePath findByName(TreePath path, String[] names) {
+        return find2(path, names, 0, true);
+    }
+
+    private TreePath find2(TreePath parent, Object[] nodes, int depth, boolean byName) {
+        TreeNode node = (TreeNode) parent.getLastPathComponent();
+        if (depth > nodes.length - 1) {
+            return parent;
+        }
+
+        if (node.getChildCount() >= 0) {
+            for (Enumeration<TreeNode> e = (Enumeration<TreeNode>) node.children(); e.hasMoreElements(); ) {
+                TreeNode n = e.nextElement();
+                TreePath path = parent.pathByAddingChild(n);
+                boolean find;
+                if (byName) {
+                    find = n.toString().toUpperCase().contains(nodes[depth].toString().toUpperCase());
+                } else {
+                    find = n.equals(nodes[depth]);
+                }
+
+                if (find) {
+                    TreePath result = find2(path, nodes, depth + 1, byName);
+                    if (result != null) {
+                        return result;
+                    }
+                } else {
+                    TreePath result = find2(path, nodes, depth, byName);
+                    if (result != null) {
+                        return result;
+                    }
+                }
+            }
+        }
+
+        return null;
     }
 
     public class MixerNode extends DefaultMutableTreeNode {
-
-		private static final long serialVersionUID = -987278469391244202L;
-		private Mixer mixer;
+        private static final long serialVersionUID = -987278469391244202L;
+        private final Mixer mixer;
 
         public MixerNode(Mixer mixer) {
             super(mixer.getMixerInfo(), true);
@@ -261,8 +329,8 @@ public class JavaMixer {
 
     public class PortNode extends DefaultMutableTreeNode {
 
-		private static final long serialVersionUID = -7774055649714159518L;
-		private Line port;
+        private static final long serialVersionUID = -7774055649714159518L;
+        private final Line port;
 
         public PortNode(Line port) {
             super(port.getLineInfo(), true);
@@ -277,9 +345,9 @@ public class JavaMixer {
 
     public class ControlNode extends DefaultMutableTreeNode {
 
-		private static final long serialVersionUID = 2014062750235264630L;
-		private Control control;
-		private Component component;
+        private static final long serialVersionUID = 2014062750235264630L;
+        private final Control control;
+        private final Component component;
 
         public ControlNode(Control control) {
             super(control.getType(), true);
@@ -333,27 +401,29 @@ public class JavaMixer {
     }
 
     public class BooleanControlButtonModel extends DefaultButtonModel {
-		private static final long serialVersionUID = -4667054823378068382L;
-		private BooleanControl control;
+        private static final long serialVersionUID = -4667054823378068382L;
+        private final BooleanControl control;
 
         public BooleanControlButtonModel(BooleanControl control) {
             this.control = control;
-            this.addActionListener( e -> setSelected(!isSelected()) );
+            this.addActionListener(e -> setSelected(!isSelected()));
         }
 
-        public void setSelected(boolean bSelected) {
-            control.setValue(bSelected);
-        }
-
+        @Override
         public boolean isSelected() {
             return control.getValue();
+        }
+
+        @Override
+        public void setSelected(boolean bSelected) {
+            control.setValue(bSelected);
         }
     }
 
     public class FloatControlBoundedRangeModel extends DefaultBoundedRangeModel {
-		private static final long serialVersionUID = 4469386606588434901L;
-		private FloatControl control;
-        private float factor;
+        private static final long serialVersionUID = 4469386606588434901L;
+        private final FloatControl control;
+        private final float factor;
 
         public FloatControlBoundedRangeModel(FloatControl control) {
             this.control = control;
@@ -370,87 +440,16 @@ public class JavaMixer {
             return factor;
         }
 
+        @Override
+        public int getValue() {
+            return (int) (control.getValue() * getScaleFactor());
+        }
+
+        @Override
         public void setValue(int nValue) {
             super.setValue(nValue);
             control.setValue((float) nValue / getScaleFactor());
         }
 
-        public int getValue() {
-            return (int) (control.getValue() * getScaleFactor());
-        }
-
-    }
-
-    public static void main(String[] args) {
-        final JavaMixer sm = new JavaMixer();
-        final JFrame jf = new JFrame("Mixer Test");
-        final JPanel jp = new JPanel();
-        jf.add(jp);
-        jp.add(sm.getTree());
-        jf.setSize(600, 500);
-        jf.setVisible(true);
-        jf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-        sm.getTree().addTreeSelectionListener( e -> {
-            TreePath path = e.getPath();
-            if (path.getLastPathComponent() instanceof ControlNode) {
-                ControlNode controlNode = (ControlNode) path.getLastPathComponent();
-                if (!(controlNode.getControl() instanceof CompoundControl)) {
-                    if (jp.getComponentCount() > 1)
-                        jp.remove(1);
-                    jp.add(controlNode.getComponent(), 1);
-                    jp.repaint();
-                }
-            }
-        } );
-        jp.add(sm.getPrefferedMasterVolume());
-        jp.add(sm.getPrefferedMasterVolume());
-        jp.add(sm.getPrefferedInputVolume());
-        jp.repaint();
-        sm.setMicrophoneInput();
-        sm.setMuteForMicrophoneOutput();
-    }
-
-    public TreePath find(TreePath path, Object[] nodes) {
-        return find2(path, nodes, 0, false);
-    }
-
-    public TreePath findByName(TreePath path, String[] names) {
-        return find2(path, names, 0, true);
-    }
-
-    private TreePath find2(TreePath parent, Object[] nodes, int depth, boolean byName) {
-        TreeNode node = (TreeNode) parent.getLastPathComponent();
-        if (depth > nodes.length - 1) {
-            return parent;
-        }
-
-        if (node.getChildCount() >= 0) {
-            for (Enumeration<TreeNode> e = node.children(); e.hasMoreElements();) {
-                TreeNode n = e.nextElement();
-                TreePath path = parent.pathByAddingChild(n);
-                boolean find;
-
-                if (byName) {
-                    find = n.toString().toUpperCase().contains( nodes[ depth ].toString().toUpperCase() );
-                } else {
-                    find = n.equals(nodes[depth]);
-                }
-
-                if (find) {
-                    TreePath result = find2(path, nodes, depth + 1, byName);
-                    if (result != null) {
-                        return result;
-                    }
-                } else {
-                    TreePath result = find2(path, nodes, depth, byName);
-                    if (result != null) {
-                        return result;
-                    }
-                }
-            }
-        }
-
-        return null;
     }
 }

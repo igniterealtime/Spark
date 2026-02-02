@@ -1,12 +1,12 @@
 /**
  * Copyright (C) 2004-2011 Jive Software. All rights reserved.
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -26,80 +26,80 @@ import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
 public class MediaPreference implements Preference {
 
-	private MediaPreferencePanel panel = new MediaPreferencePanel();
-	public static final String NAMESPACE = "http://www.jivesoftware.org/spark/media";
-	
-	@Override
-	public Object getData() {
-		return null;
-	}
+    public static final String NAMESPACE = "http://www.jivesoftware.org/spark/media";
+    private final MediaPreferencePanel panel = new MediaPreferencePanel();
 
-	@Override
-	public String getErrorMessage() {
-		return null;
-	}
+    @Override
+    public Object getData() {
+        return null;
+    }
 
-	@Override
-	public JComponent getGUI() {
-		return panel;
-	}
+    @Override
+    public String getErrorMessage() {
+        return null;
+    }
 
-	@Override
-	public Icon getIcon() {
-		return SparkRes.getImageIcon(SparkRes.HEADSET_IMAGE);
-	}
+    @Override
+    public JComponent getGUI() {
+        return panel;
+    }
 
-	@Override
-	public String getListName() {
-		return Res.getString("title.general.media");
-	}
+    @Override
+    public Icon getIcon() {
+        return SparkRes.getImageIcon(SparkRes.HEADSET_IMAGE);
+    }
 
-	@Override
-	public String getNamespace() {
-		return NAMESPACE;
-	}
+    @Override
+    public String getListName() {
+        return Res.getString("title.general.media");
+    }
 
-	@Override
-	public String getTitle() {
-		return Res.getString("title.general.media");
-	}
+    @Override
+    public String getNamespace() {
+        return NAMESPACE;
+    }
 
-	@Override
-	public String getTooltip() {
-		return Res.getString("title.general.media");
-	}
+    @Override
+    public String getTitle() {
+        return Res.getString("title.general.media");
+    }
 
-	@Override
-	public boolean isDataValid() {
-		return true;
-	}
+    @Override
+    public String getTooltip() {
+        return Res.getString("title.general.media");
+    }
 
-	@Override
-	public void load() {
-		 LocalPreferences localPreferences = SettingsManager.getLocalPreferences();
-		 panel.setAudioSystem(localPreferences.getAudioSystem());
-		 panel.setVideoDevice(localPreferences.getVideoDevice());
-		 panel.setAudioDevice(localPreferences.getAudioDevice());
-		 panel.setStunServer(localPreferences.getStunFallbackHost());
-		 panel.setStunPort(localPreferences.getStunFallbackPort());
-		 panel.setPlaybackDevice(localPreferences.getPlaybackDevice());
-	}
+    @Override
+    public boolean isDataValid() {
+        return true;
+    }
 
-	@Override
-	public void commit() {
-		LocalPreferences pref = SettingsManager.getLocalPreferences();
-		pref.setAudioSystem(panel.getAudioSystem());
-		pref.setAudioDevice(panel.getAudioDevice());
-		pref.setVideoDevice(panel.getVideoDevice());
-		pref.setStunFallbackHost(panel.getStunServer());
-		pref.setStunFallbackPort(panel.getStunPort());
-		pref.setPlaybackDevice(panel.getPlaybackDevice());
-		SettingsManager.saveSettings();
-	}
-	
-	@Override
-	public void shutdown() {
-		commit();
-	}
+    @Override
+    public void load() {
+        LocalPreferences localPreferences = SettingsManager.getLocalPreferences();
+        panel.setAudioSystem(localPreferences.getAudioSystem());
+        panel.setVideoDevice(localPreferences.getVideoDevice());
+        panel.setAudioDevice(localPreferences.getAudioDevice());
+        panel.setStunServer(localPreferences.getStunFallbackHost());
+        panel.setStunPort(localPreferences.getStunFallbackPort());
+        panel.setPlaybackDevice(localPreferences.getPlaybackDevice());
+    }
+
+    @Override
+    public void commit() {
+        LocalPreferences pref = SettingsManager.getLocalPreferences();
+        pref.setAudioSystem(panel.getAudioSystem());
+        pref.setAudioDevice(panel.getAudioDevice());
+        pref.setVideoDevice(panel.getVideoDevice());
+        pref.setStunFallbackHost(panel.getStunServer());
+        pref.setStunFallbackPort(panel.getStunPort());
+        pref.setPlaybackDevice(panel.getPlaybackDevice());
+        SettingsManager.saveSettings();
+    }
+
+    @Override
+    public void shutdown() {
+        commit();
+    }
 
 }

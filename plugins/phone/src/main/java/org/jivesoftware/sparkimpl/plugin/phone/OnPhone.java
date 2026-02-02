@@ -1,12 +1,12 @@
 /**
  * Copyright (C) 2004-2011 Jive Software. All rights reserved.
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -30,18 +30,19 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.util.Date;
 
+/**
+ * UI showing icon and tracking time
+ */
 public class OnPhone extends JPanel {
-	private static final long serialVersionUID = -7344123390643812061L;
-	private JLabel iconLabel;
-    private TimeTrackingLabel timeLabel;
+    private static final long serialVersionUID = -7344123390643812061L;
+    private final JLabel iconLabel;
+    private final TimeTrackingLabel timeLabel;
 
     public OnPhone() {
         setLayout(new BorderLayout());
 
         final JPanel imagePanel = new JPanel();
         imagePanel.setLayout(new GridBagLayout());
-
-
         imagePanel.setBackground(Color.white);
 
         // Handle Icon Label
@@ -61,10 +62,8 @@ public class OnPhone extends JPanel {
 
         // Add Icon Label
         imagePanel.add(iconLabel, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.7, GridBagConstraints.SOUTH, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
-
         // Add Time Label
         imagePanel.add(timeLabel, new GridBagConstraints(0, 1, 1, 1, 1.0, 0.3, GridBagConstraints.NORTH, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
-
         add(imagePanel, BorderLayout.CENTER);
     }
 
