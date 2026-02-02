@@ -48,7 +48,6 @@ import org.jivesoftware.sparkimpl.profile.VCardManager;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jxmpp.jid.*;
-import org.jxmpp.jid.parts.Domainpart;
 import org.jxmpp.jid.parts.Localpart;
 import org.jxmpp.jid.parts.Resourcepart;
 
@@ -57,10 +56,8 @@ import javax.swing.event.DocumentEvent;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.text.DateFormat;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -413,13 +410,13 @@ public class ChatRoomImpl extends ChatRoom {
     }
 
     /**
-     * Returns the users full jid (ex. macbeth@jivesoftware.com/spark).
+     * Returns the users full jid (ex. macbeth@jivesoftware.com/spark) or null if user is offline.
      *
      * @return the users Full JID.
      */
-    public EntityFullJid getJID() {
+    public EntityFullJid getJidOnline() {
         presence = PresenceManager.getPresence(getParticipantJID());
-        return presence.getFrom().asEntityFullJidOrThrow();
+        return presence.getFrom().asEntityFullJidIfPossible();
     }
 
     @Override

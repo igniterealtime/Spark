@@ -252,9 +252,9 @@ public class ReversiPlugin implements Plugin {
                 // Add a button listener that sends out a game invite on a user
                 // click.
                 button.addActionListener(e -> {
-
+                    EntityFullJid opponentJID = ((ChatRoomImpl) room).getJidOnline();
                     //If the opponent is offline, then you should not start the game
-                    if (((ChatRoomImpl) room).getPresence().getType().equals(Presence.Type.unavailable)) {
+                    if (opponentJID == null) {
                         return;
                     }
 
@@ -272,7 +272,6 @@ public class ReversiPlugin implements Plugin {
                     requestPanel.setPreferredSize(new Dimension(24, 24));
                     request.add(requestPanel, BorderLayout.WEST);
 
-                    EntityFullJid opponentJID = ((ChatRoomImpl) room).getJID();
                     String opponentName = "[" + opponentJID + "]"; // TODO:
                     // convert to more readable name.
                     final JPanel content = new JPanel(new BorderLayout());
@@ -282,7 +281,7 @@ public class ReversiPlugin implements Plugin {
                     final JButton cancelButton = new JButton("Cancel");
                     cancelButton.addActionListener(e12 -> {
                         GameOffer reply = new GameOffer();
-                        reply.setTo(((ChatRoomImpl) room).getJID());
+                        reply.setTo(opponentJID);
                         reply.setType(IQ.Type.error);
                         reply.setError(StanzaError.getBuilder().setCondition(StanzaError.Condition.undefined_condition).setDescriptiveEnText("User cancelled the invitation.").build());
 
