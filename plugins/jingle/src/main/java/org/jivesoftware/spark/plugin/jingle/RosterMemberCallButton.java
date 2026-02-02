@@ -13,8 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jivesoftware.sparkplugin;
-
+package org.jivesoftware.spark.plugin.jingle;
 
 import java.awt.Color;
 import java.awt.Cursor;
@@ -30,9 +29,9 @@ import javax.swing.JButton;
 
 /**
  */
-public class CallPanelButton extends JButton implements MouseListener {
+public class RosterMemberCallButton extends JButton implements MouseListener {
 
-	private static final long serialVersionUID = -2299269454442767625L;
+	private static final long serialVersionUID = 8056708231977922612L;
 	private Icon normalIcon;
     private Icon hoverIcon;
     private Icon downIcon;
@@ -41,14 +40,14 @@ public class CallPanelButton extends JButton implements MouseListener {
 
     private boolean selected;
 
-    public CallPanelButton(Image image, String text) {
+    public RosterMemberCallButton(Image image, String text) {
         super();
 
         this.text = text;
 
-        normalIcon = JinglePhoneRes.getImageIcon("CALLPANEL_BIG_BUTTON");
-        hoverIcon = JinglePhoneRes.getImageIcon("CALLPANEL_BIG_BUTTON_HOVER");
-        downIcon = JinglePhoneRes.getImageIcon("CALLPANEL_BIG_BUTTON_DOWN");
+        normalIcon = JinglePhoneRes.getImageIcon("ROSTERPANEL_BUTTON");
+        hoverIcon = JinglePhoneRes.getImageIcon("ROSTERPANEL_BUTTON_HOVER");
+        downIcon = JinglePhoneRes.getImageIcon("ROSTERPANEL_BUTTON_DOWN");
         backgroundImage = image;
 
         setIcon(normalIcon);
@@ -56,8 +55,6 @@ public class CallPanelButton extends JButton implements MouseListener {
         decorate();
 
         addMouseListener(this);
-
-        setDisabledIcon(normalIcon);
     }
 
     /**
@@ -118,33 +115,18 @@ public class CallPanelButton extends JButton implements MouseListener {
 
         int x = (width - backgroundImage.getWidth(null)) / 2;
         int y = (height - backgroundImage.getHeight(null)) / 2;
-        g.drawImage(backgroundImage, x, y - 5, null);
+        g.drawImage(backgroundImage, 5, y, null);
 
-        if (isEnabled()) {
-            g.setColor(Color.black);
-        }
-        else {
-            g.setColor(Color.lightGray);
-        }
+        g.setColor(Color.black);
         g.setFont(new Font("Dialog", Font.PLAIN, 11));
 
 
         int stringWidth = g.getFontMetrics().stringWidth(text);
 
         x = (width - stringWidth) / 2;
-        y = height - 12;
+        y = (height + 11) / 2;
         g.drawString(text, x, y);
 
     }
 
-    public void setEnabled(boolean enabled) {
-        super.setEnabled(enabled);
-        if (!enabled) {
-            removeMouseListener(this);
-        }
-        else {
-            addMouseListener(this);
-        }
-    }
 }
-

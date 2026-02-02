@@ -5,7 +5,7 @@
     <author>Derek DeMoro</author>
     <homePage>https://IgniteRealtime.org</homePage>
     <email>support@IgniteRealtime.org</email>
-    <class>org.jivesoftware.sparkplugin.JinglePlugin</class>
+    <class>org.jivesoftware.spark.plugin.jingle.JinglePlugin</class>
     <minSparkVersion>3.1.0</minSparkVersion>
     <os>Windows,mac,linux</os>
     <java>11</java>

@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jivesoftware.sparkplugin;
+package org.jivesoftware.spark.plugin.jingle;
 
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.tabbedPane.SparkTab;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.SparkTabHandler;
-import org.jivesoftware.sparkplugin.JingleStateManager.JingleRoomState;
+import org.jivesoftware.spark.plugin.jingle.JingleStateManager.JingleRoomState;
 
 import java.awt.Color;
 import java.awt.Component;
