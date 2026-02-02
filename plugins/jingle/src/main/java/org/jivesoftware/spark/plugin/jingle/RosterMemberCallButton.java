@@ -1,12 +1,12 @@
 /**
  * Copyright (C) 2004-2011 Jive Software. All rights reserved.
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -27,33 +27,27 @@ import java.awt.event.MouseListener;
 import javax.swing.Icon;
 import javax.swing.JButton;
 
-/**
- */
 public class RosterMemberCallButton extends JButton implements MouseListener {
 
-	private static final long serialVersionUID = 8056708231977922612L;
-	private Icon normalIcon;
-    private Icon hoverIcon;
-    private Icon downIcon;
-    private Image backgroundImage;
-    private String text;
+    private static final long serialVersionUID = 8056708231977922612L;
+    private final Icon normalIcon;
+    private final Icon hoverIcon;
+    private final Icon downIcon;
+    private final Image backgroundImage;
+    private final String text;
 
     private boolean selected;
 
     public RosterMemberCallButton(Image image, String text) {
         super();
-
         this.text = text;
-
         normalIcon = JinglePhoneRes.getImageIcon("ROSTERPANEL_BUTTON");
         hoverIcon = JinglePhoneRes.getImageIcon("ROSTERPANEL_BUTTON_HOVER");
         downIcon = JinglePhoneRes.getImageIcon("ROSTERPANEL_BUTTON_DOWN");
         backgroundImage = image;
 
         setIcon(normalIcon);
-
         decorate();
-
         addMouseListener(this);
     }
 
@@ -69,20 +63,23 @@ public class RosterMemberCallButton extends JButton implements MouseListener {
     }
 
 
+    @Override
     public void mouseClicked(MouseEvent e) {
     }
 
+    @Override
     public void mousePressed(MouseEvent e) {
         setIcon(downIcon);
     }
 
+    @Override
     public void mouseReleased(MouseEvent e) {
         if (!selected) {
             setIcon(normalIcon);
         }
-
     }
 
+    @Override
     public void mouseEntered(MouseEvent e) {
         if (!selected) {
             setIcon(hoverIcon);
@@ -90,6 +87,7 @@ public class RosterMemberCallButton extends JButton implements MouseListener {
         setCursor(new Cursor(Cursor.HAND_CURSOR));
     }
 
+    @Override
     public void mouseExited(MouseEvent e) {
         if (!selected) {
             setIcon(normalIcon);
@@ -101,13 +99,13 @@ public class RosterMemberCallButton extends JButton implements MouseListener {
         this.selected = selected;
         if (selected) {
             setIcon(downIcon);
-        }
-        else {
+        } else {
             setIcon(normalIcon);
         }
     }
 
 
+    @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         int width = getWidth();
@@ -120,13 +118,10 @@ public class RosterMemberCallButton extends JButton implements MouseListener {
         g.setColor(Color.black);
         g.setFont(new Font("Dialog", Font.PLAIN, 11));
 
-
         int stringWidth = g.getFontMetrics().stringWidth(text);
-
         x = (width - stringWidth) / 2;
         y = (height + 11) / 2;
         g.drawString(text, x, y);
-
     }
 
 }

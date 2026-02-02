@@ -1,12 +1,12 @@
 /**
  * Copyright (C) 2004-2011 Jive Software. All rights reserved.
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -27,24 +27,20 @@ import org.jivesoftware.spark.util.log.Log;
  *
  * @author Derek DeMoro
  */
-public class JinglePhoneRes {
-    private static PropertyResourceBundle prb;
-
-    private JinglePhoneRes() {
-
-    }
-
+public enum JinglePhoneRes {
+    ;
     static ClassLoader cl = JinglePhoneRes.class.getClassLoader();
+    private static PropertyResourceBundle prb;
 
     static {
         JinglePhoneRes.prb = (PropertyResourceBundle) ResourceBundle.getBundle("org/jivesoftware/spark/plugin/jingle/jingle");
     }
 
-    public static final String getString(String propertyName) {
+    public static String getString(String propertyName) {
         return JinglePhoneRes.prb.getString(propertyName);
     }
 
-    public static final ImageIcon getImageIcon(String imageName) {
+    public static ImageIcon getImageIcon(String imageName) {
         try {
             final String iconURI = JinglePhoneRes.getString(imageName);
             final URL imageURL = JinglePhoneRes.cl.getResource(iconURI);
@@ -53,14 +49,13 @@ public class JinglePhoneRes {
             } else {
                 Log.warning(imageName + " not found.");
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             Log.warning("Unable to load image " + imageName, e);
         }
         return null;
     }
 
-    public static final URL getURL(String propertyName) {
+    public static URL getURL(String propertyName) {
         return JinglePhoneRes.cl.getResource(JinglePhoneRes.getString(propertyName));
     }
 }

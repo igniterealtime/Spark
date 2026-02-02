@@ -1,12 +1,12 @@
 /**
  * Copyright (C) 2004-2011 Jive Software. All rights reserved.
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -32,27 +32,24 @@ import java.awt.Component;
  */
 public class JingleTabHandler extends SparkTabHandler {
 
-    private JingleStateManager manager;
+    private final JingleStateManager manager;
 
     public JingleTabHandler() {
         manager = JingleStateManager.getInstance();
     }
 
-
+    @Override
     public boolean isTabHandled(SparkTab tab, Component component, boolean isSelectedTab, boolean chatFrameFocused) {
         if (component instanceof ChatRoom) {
-            JingleRoomState roomState = manager.getJingleRoomState((ChatRoom)component);
+            JingleRoomState roomState = manager.getJingleRoomState((ChatRoom) component);
             if (roomState == null) {
                 // This is not a jingle room.
                 return false;
             }
-
             // This is a room with a jingle session.
-            handleJingleRoom(roomState, tab, (ChatRoom)component, isSelectedTab, chatFrameFocused);
+            handleJingleRoom(roomState, tab, (ChatRoom) component, isSelectedTab, chatFrameFocused);
             return true;
         }
-
-
         return false;
     }
 
@@ -67,21 +64,16 @@ public class JingleTabHandler extends SparkTabHandler {
      */
     private void handleJingleRoom(JingleRoomState state, SparkTab tab, ChatRoom room, boolean isSelectedTab, boolean chatFrameFocused) {
         boolean isTyping = SparkManager.getChatManager().containsTypingNotification(room);
-
         // Check if is typing.
         if (isTyping) {
             tab.setIcon(SparkRes.getImageIcon(SparkRes.SMALL_MESSAGE_EDIT_IMAGE));
-        }
-        else if (JingleRoomState.ringing == state) {
+        } else if (JingleRoomState.ringing == state) {
             tab.setIcon(JinglePhoneRes.getImageIcon("ANSWER_PHONE_IMAGE"));
-        }
-        else if (JingleRoomState.inJingleCall == state) {
+        } else if (JingleRoomState.inJingleCall == state) {
             tab.setIcon(SparkRes.getImageIcon(SparkRes.HEADSET_IMAGE));
-        }
-        else if (JingleRoomState.callWasEnded == state) {
+        } else if (JingleRoomState.callWasEnded == state) {
             tab.setIcon(JinglePhoneRes.getImageIcon("HANG_UP_PHONE_16x16_IMAGE"));
         }
-
 
         if (!chatFrameFocused || !isSelectedTab) {
             if (room.getUnreadMessageCount() > 0 || JingleRoomState.ringing == state) {
@@ -96,9 +88,7 @@ public class JingleTabHandler extends SparkTabHandler {
             if (unreadMessageCount > 1) {
                 appendedMessage = " (" + unreadMessageCount + ")";
             }
-
             tab.setTabTitle(room.getTabTitle() + appendedMessage);
-
         }
 
         // Should only set the icon to default if the frame is in focus
@@ -111,6 +101,5 @@ public class JingleTabHandler extends SparkTabHandler {
             // Clear unread message count.
             room.clearUnreadMessageCount();
         }
-
     }
 }

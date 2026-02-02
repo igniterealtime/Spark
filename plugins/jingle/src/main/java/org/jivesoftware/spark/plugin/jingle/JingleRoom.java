@@ -1,12 +1,12 @@
 /**
  * Copyright (C) 2004-2011 Jive Software. All rights reserved.
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -47,7 +47,6 @@ import org.jivesoftware.spark.component.tabbedPane.SparkTab;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.util.log.Log;
 
-
 /**
  * The UI for calls with Roster members.
  *
@@ -55,51 +54,41 @@ import org.jivesoftware.spark.util.log.Log;
  */
 public class JingleRoom extends JPanel {
 
-	private static final long serialVersionUID = 2910998210426650565L;
-	private JLabel connectedLabel;
-    private String phoneNumber;
-    private PreviousConversationPanel historyPanel;
-
-    private boolean transmitting;
-
-    private CallPanelButton muteButton;
-
-    private RolloverButton hangUpButton;
-
-    private static String CONNECTED = "Connected";
-
+    private static final long serialVersionUID = 2910998210426650565L;
+    private static final String CONNECTED = "Connected";
     protected final Color greenColor = new Color(91, 175, 41);
     protected final Color orangeColor = new Color(229, 139, 11);
     protected final Color blueColor = new Color(64, 103, 162);
     protected final Color redColor = new Color(211, 0, 0);
-
+    private JLabel connectedLabel;
+    private String phoneNumber;
+    private final PreviousConversationPanel historyPanel;
+    private boolean transmitting;
+    private CallPanelButton muteButton;
+    private RolloverButton hangUpButton;
     private boolean callWasTransferred;
 
-    private ChatRoom chatRoom;
+    private final ChatRoom chatRoom;
 
-    private JingleSession session;
+    private final JingleSession session;
 
-    private JavaMixer mixer = new JavaMixer();
+    private final JavaMixer mixer = new JavaMixer();
 
     public JingleRoom(JingleSession session, ChatRoom chatRoom) {
         this.session = session;
         this.chatRoom = chatRoom;
         setLayout(new GridBagLayout());
         setBorder(BorderFactory.createLineBorder(Color.lightGray));
-
         // Build Top Layer
         final JPanel topPanel = buildTopPanel();
         add(topPanel, new GridBagConstraints(1, 5, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(2, 2, 2, 2), 0, 0));
-
         // Build Control Panel
         final JPanel controlPanel = buildControlPanel();
         add(controlPanel, new GridBagConstraints(1, 6, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(2, 2, 2, 2), 0, 0));
-
         // Add Previous Conversation
         historyPanel = new PreviousConversationPanel();
         historyPanel.addPreviousConversations("");
         //  add(historyPanel, new GridBagConstraints(1, 8, 1, 1, 0.0, 1.0, GridBagConstraints.SOUTH, GridBagConstraints.BOTH, new Insets(2, 2, 2, 2), 0, 100));
-
         // Setup default settings
         setupDefaults();
     }
@@ -113,12 +102,11 @@ public class JingleRoom extends JPanel {
     private JPanel buildTopPanel() {
         final JPanel panel = new JPanel(new GridBagLayout());
         panel.setOpaque(false);
-
         // Add phone label
         JLabel phoneLabel = new JLabel();
         phoneLabel.setFont(new Font("Arial", Font.BOLD, 13));
         phoneLabel.setForeground(new Color(64, 103, 162));
-        panel.add( phoneLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0, 2, 2, 2), 0, 0));
+        panel.add(phoneLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0, 2, 2, 2), 0, 0));
 
         // Add Connected Label
         connectedLabel = new JLabel(CONNECTED);
@@ -150,23 +138,21 @@ public class JingleRoom extends JPanel {
                 inputPanel.add(inputIcon, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0));
                 mainPanel.add(inputPanel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.2, GridBagConstraints.NORTHWEST, GridBagConstraints.VERTICAL, new Insets(2, 1, 2, 1), 0, 50));
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             Log.error(e);
         }
 
         // Add master volume control.
         try {
             final ControlPanel outputPanel = new ControlPanel(new GridBagLayout());
-            Component outputControl = mixer.getPrefferedMasterVolume();
-            if (outputControl!=null) {
+            Component outputControl = mixer.getPreferredMasterVolume();
+            if (outputControl != null) {
                 final JLabel outputIcon = new JLabel(JinglePhoneRes.getImageIcon("SPEAKER_IMAGE"));
                 outputPanel.add(outputControl, new GridBagConstraints(0, 0, 1, 1, 0.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.VERTICAL, new Insets(2, 2, 2, 2), 0, 0));
                 outputPanel.add(outputIcon, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0));
                 mainPanel.add(outputPanel, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.2, GridBagConstraints.NORTHWEST, GridBagConstraints.VERTICAL, new Insets(2, 1, 2, 1), 0, 50));
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             Log.error(e);
         }
 
@@ -186,31 +172,27 @@ public class JingleRoom extends JPanel {
         hangUpButton.setMargin(new Insets(0, 0, 0, 0));
         mainPanel.add(hangUpButton, new GridBagConstraints(0, 1, 3, 1, 0.0, 0.8, GridBagConstraints.SOUTH, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0));
 
-
         return mainPanel;
     }
 
 
     public void setupDefaults() {
         muteButton.addMouseListener(new MouseAdapter() {
+            @Override
             public void mousePressed(MouseEvent mouseEvent) {
                 toggleMute();
             }
 
         });
-
-
-        hangUpButton.addActionListener( actionEvent -> {
+        hangUpButton.addActionListener(actionEvent -> {
             hangUpButton.setEnabled(false);
             try {
                 session.terminate();
+            } catch (Exception e) {
+                Log.error(e);
             }
-            catch (XMPPException | SmackException e) {
-                e.printStackTrace();
-            }
-        } );
+        });
     }
-
 
     /**
      * Called when a new call is established.
@@ -226,11 +208,10 @@ public class JingleRoom extends JPanel {
         muteButton.setEnabled(true);
         setStatus(CONNECTED, false);
 
-        // Add notification to ChatRoom if one exists.
+        // Add a notification to ChatRoom if one exists.
         if (chatRoom != null) {
             final SimpleDateFormat formatter = new SimpleDateFormat("h:mm a");
             String time = formatter.format(new Date());
-
             chatRoom.getTranscriptWindow().insertNotificationMessage("Call started at " + time, ChatManager.NOTIFICATION_COLOR);
         }
     }
@@ -252,7 +233,7 @@ public class JingleRoom extends JPanel {
 
         setStatus("Call Ended", redColor);
 
-        // Add notification to ChatRoom if one exists.
+        // Add a notification to ChatRoom if one exists.
         if (chatRoom != null) {
             final SimpleDateFormat formatter = new SimpleDateFormat("h:mm a");
             String time = formatter.format(new Date());
@@ -296,7 +277,7 @@ public class JingleRoom extends JPanel {
         }
 
         for (JingleMediaManager mediaManager : session.getMediaManagers()) {
-            session.getMediaSession(mediaManager.getName()).setTrasmit(!transmitting);
+            session.getMediaSession(mediaManager.getName()).setTransmit(!transmitting);
         }
 
         muteButton.invalidate();
@@ -309,24 +290,22 @@ public class JingleRoom extends JPanel {
 
 
     public void actionPerformed(ActionEvent e) {
-
     }
 
 
+    @Override
     public void paintComponent(Graphics g) {
         BufferedImage cache = new BufferedImage(2, getHeight(), BufferedImage.TYPE_INT_RGB);
         Graphics2D g2d = cache.createGraphics();
-
         GradientPaint paint = new GradientPaint(0, 0, new Color(241, 245, 250), 0, getHeight(), new Color(244, 250, 255), true);
-
         g2d.setPaint(paint);
         g2d.fillRect(0, 0, getWidth(), getHeight());
         g2d.dispose();
-
         g.drawImage(cache, 0, 0, getWidth(), getHeight(), null);
     }
 
 
+    @Override
     public Dimension getPreferredSize() {
         Dimension dim = super.getPreferredSize();
         dim.width = 200;
@@ -337,6 +316,4 @@ public class JingleRoom extends JPanel {
         int index = SparkManager.getChatManager().getChatContainer().indexOfComponent(chatRoom);
         return SparkManager.getChatManager().getChatContainer().getTabAt(index);
     }
-
-
 }

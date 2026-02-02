@@ -1,12 +1,12 @@
 /**
  * Copyright (C) 2004-2011 Jive Software. All rights reserved.
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -28,14 +28,17 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 
+import static java.awt.GridBagConstraints.NONE;
+import static java.awt.GridBagConstraints.NORTHWEST;
+
 /**
  * UI for simple chat room notifications with Jingle.
  */
 public class GenericNotification extends JPanel {
 
-	private static final long serialVersionUID = -90291335105747619L;
-	private FileDragLabel imageLabel = new FileDragLabel();
-    private JLabel titleLabel = new JLabel();
+    private static final long serialVersionUID = -90291335105747619L;
+    private final FileDragLabel imageLabel = new FileDragLabel();
+    private final JLabel titleLabel = new JLabel();
 
     /**
      * Creates a generic notification panel.
@@ -45,11 +48,10 @@ public class GenericNotification extends JPanel {
      */
     public GenericNotification(String title, Icon icon) {
         setLayout(new GridBagLayout());
-
         setBackground(new Color(250, 249, 242));
-        add(imageLabel, new GridBagConstraints(0, 0, 1, 3, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-
-        add(titleLabel, new GridBagConstraints(1, 0, 2, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        Insets insets = new Insets(5, 5, 5, 5);
+        add(imageLabel, new GridBagConstraints(0, 0, 1, 3, 0, 0, NORTHWEST, NONE, insets, 0, 0));
+        add(titleLabel, new GridBagConstraints(1, 0, 2, 1, 1, 0, NORTHWEST, NONE, insets, 0, 0));
         titleLabel.setFont(new Font("Dialog", Font.BOLD, 11));
         titleLabel.setForeground(new Color(211, 174, 102));
 
@@ -79,8 +81,8 @@ public class GenericNotification extends JPanel {
 
 
     /**
-     * Changes the background color. If alert is true, the background will reflect that the ui
-     * needs attention.
+     * Changes the background color. If the alert is true,
+     * the background will reflect that the UI needs attention.
      *
      * @param alert true to notify users that their attention is needed.
      */
@@ -88,12 +90,10 @@ public class GenericNotification extends JPanel {
         if (alert) {
             titleLabel.setForeground(new Color(211, 174, 102));
             setBackground(new Color(250, 249, 242));
-        }
-        else {
+        } else {
             setBackground(new Color(239, 245, 250));
             titleLabel.setForeground(new Color(65, 139, 179));
         }
     }
-
 
 }

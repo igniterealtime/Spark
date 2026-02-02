@@ -10,10 +10,10 @@
     </parent>
 
     <artifactId>jingle</artifactId>
-    <version>1.2</version>
+    <version>2.0.0</version>
 
     <name>Jingle Client</name>
-    <description>Allows for PC to PC calling.</description>
+    <description>Support of audio calls.</description>
 
     <contributors>
         <contributor>
@@ -30,7 +30,21 @@
             <groupId>org.igniterealtime.smack</groupId>
             <artifactId>smack-jingle-old</artifactId>
             <version>${dependency.smack.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.igniterealtime.smack</groupId>
+                    <artifactId>smack-extensions</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.igniterealtime.smack</groupId>
+                    <artifactId>smack-core</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.igniterealtime.spark</groupId>
+            <artifactId>phone</artifactId>
+            <version>2.0.0</version>
         </dependency>
     </dependencies>
-
 </project>

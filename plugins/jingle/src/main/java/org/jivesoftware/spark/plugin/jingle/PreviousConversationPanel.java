@@ -1,12 +1,12 @@
 /**
  * Copyright (C) 2004-2011 Jive Software. All rights reserved.
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -28,27 +28,18 @@ import java.awt.Font;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-/**
- */
 public class PreviousConversationPanel extends JPanel {
 
-	private static final long serialVersionUID = -8392478440078855765L;
-
-	private final Color greenColor = new Color(91, 175, 41);
-
+    private static final long serialVersionUID = -8392478440078855765L;
+    final JLabel previousLabel = new JLabel("Previous Conversations:");
+    private final Color greenColor = new Color(91, 175, 41);
     private final JLabel currentCallLabel = new JLabel();
     private final JPanel timePanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 2, 0));
-
     private final JLabel today = new JLabel();
     private final JLabel statusLabel = new JLabel();
-
-    final JLabel previousLabel = new JLabel("Previous Conversations:");
     private final JLabel oldConversation = new JLabel();
-
     private final SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy, h:mm a");
-
-
-    private TimeTrackingLabel durationLabel;
+    private final TimeTrackingLabel durationLabel;
 
     private Date startTime;
 
@@ -88,7 +79,6 @@ public class PreviousConversationPanel extends JPanel {
 
         oldConversation.setForeground(new Color(211, 0, 0));
         oldConversation.setFont(new Font("Dialog", Font.BOLD, 12));
-
     }
 
     /**
@@ -113,9 +103,7 @@ public class PreviousConversationPanel extends JPanel {
 
         // Give some space.
         add(new JLabel());
-
         add(previousLabel);
-
         add(oldConversation);
 
 
@@ -176,6 +164,9 @@ public class PreviousConversationPanel extends JPanel {
         statusLabel.setVisible(true);
     }
 
+    /**
+     * Update labels to reflect call transfer to user
+     */
     public void transfer(String user) {
         durationLabel.stopTimer();
         statusLabel.setVisible(false);
@@ -184,16 +175,13 @@ public class PreviousConversationPanel extends JPanel {
         currentCallLabel.setText(JingleResources.getString("label.call.ended"));
 
         today.setText("Time: ");
-        currentCallLabel.setText(JingleResources.getString("label.call.transfer",user));
+        currentCallLabel.setText(JingleResources.getString("label.call.transfer", user));
 
         Date now = new Date();
         final SimpleDateFormat timeFormatter = new SimpleDateFormat("h:mm");
 
-
         String end = timeFormatter.format(now);
-
         oldConversation.setText(formatter.format(startTime) + " - " + end + " (" + durationLabel.getText() + ")");
     }
-
 
 }
