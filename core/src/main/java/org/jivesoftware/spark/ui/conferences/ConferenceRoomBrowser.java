@@ -22,28 +22,13 @@ import java.beans.PropertyChangeListener;
 import java.util.*;
 import java.util.List;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.ImageIcon;
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.ListSelectionModel;
-import javax.swing.RowFilter;
+import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
-import javax.swing.UIManager;
 
 
 import org.jivesoftware.resource.Res;
@@ -122,8 +107,6 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener, Com
     private int threeButtonWidth;
     private int twoButtonWidth;
     private int oneButtonWidth;
-
-    private boolean partialDiscovery = false;
 
     private final JPopupMenu popup;
 
@@ -305,58 +288,64 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener, Com
     }
 
     private void refreshRoomList(final DomainBareJid serviceName) {
-        startLoadingImg();
-        clearTable();
-
         TimerTask refreshTask = new TimerTask() {
-            Map<EntityBareJid, HostedRoom> rooms;
 
             @Override
             public void run() {
+                clearTable();
+                startLoadingImg();
+                String errorMsg = null;
                 try {
-                    rooms = MultiUserChatManager.getInstanceFor(SparkManager.getConnection()).getRoomsHostedBy(serviceName);
-                    try {
-                        for (Map.Entry<EntityBareJid, HostedRoom> entry : rooms.entrySet()) {
-                            RoomObject room = getRoomsAndInfo(entry.getValue());
-                            addRoomToTable(room.getRoomJID(), room.getRoomName(), room.getNumberOfOccupants());
-                        }
-                        stopLoadingImg();
-                    } catch (Exception e) {
-                        Log.error("Unable to retrieve room list and info.", e);
+                    MultiUserChatManager mucManager = MultiUserChatManager.getInstanceFor(SparkManager.getConnection());
+                    Map<EntityBareJid, HostedRoom> rooms = mucManager.getRoomsHostedBy(serviceName);
+                    for (Map.Entry<EntityBareJid, HostedRoom> entry : rooms.entrySet()) {
+                        RoomObject room = getRoomsAndInfo(mucManager, entry.getValue());
+                        addRoomToTable(room);
                     }
-                } catch (Exception e1) {
-                    Log.error(e1);
+                } catch (XMPPException.XMPPErrorException e) {
+                    StanzaError.Condition condition = e.getStanzaError().getCondition();
+                    if (condition == StanzaError.Condition.feature_not_implemented || condition == StanzaError.Condition.service_unavailable) {
+                        errorMsg = Res.getString("message.conference.rooms.unsupported");
+                    } else {
+                        Log.error("Unable to retrieve list of rooms from " + serviceName + ": " + e);
+                        errorMsg = e.getMessage();
+                    }
+                } catch (Exception e) {
+                    Log.error("Unable to retrieve list of rooms from " + serviceName, e);
+                    errorMsg = e.getMessage();
+                } finally {
+                    stopLoadingImg();
                 }
+                // if there was an error show it to a user
+                if (errorMsg != null) {
+                    UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
+                    JOptionPane.showMessageDialog(conferences,
+                        Res.getString("message.conference.info.error") + "\n" + errorMsg,
+                        Res.getString("title.error"),
+                        JOptionPane.ERROR_MESSAGE);
+                    if (dlg != null) {
+                        dlg.dispose();
+                    }
+                    return;
+                }
+                roomsTable.setSortable(true);
             }
         };
         TaskEngine.getInstance().submit(refreshTask);
     }
 
-    private RoomObject getRoomsAndInfo(final HostedRoom room) {
-        RoomObject result = null;
+    private RoomObject getRoomsAndInfo(MultiUserChatManager mucManager, HostedRoom room) {
+        RoomObject result = new RoomObject();
+        result.setRoomJID(room.getJid());
+        result.setRoomName(room.getName());
         try {
-            try {
-                String roomName = room.getName();
-                EntityBareJid roomJID = room.getJid();
-                int numberOfOccupants = -1;
-                RoomInfo roomInfo = null;
-                try {
-                    roomInfo = MultiUserChatManager.getInstanceFor(SparkManager.getConnection()).getRoomInfo(roomJID);
-                } catch (Exception ignored) {
-                }
-                if (roomInfo != null) {
-                    numberOfOccupants = roomInfo.getOccupantsCount();
-                }
-
-                result = new RoomObject();
-                result.setRoomJID(roomJID);
-                result.setRoomName(roomName);
-                result.setNumberOfOccupants(numberOfOccupants);
-            } catch (Exception e) {
-                Log.error("Error setting up GroupChatTable", e);
-            }
+            RoomInfo roomInfo = mucManager.getRoomInfo(room.getJid());
+            result.setNumberOfOccupants(roomInfo.getOccupantsCount());
+            result.setMembersOnly(roomInfo.isMembersOnly());
+            result.setPasswordProtected(roomInfo.isPasswordProtected());
+            result.setLanguage(roomInfo.getLang());
         } catch (Exception e) {
-            Log.error(e);
+            Log.warning("Unable to get room info " + room.getName() + ": " + e.getMessage());
         }
         return result;
     }
@@ -474,73 +463,6 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener, Com
      * Displays the ConferenceRoomBrowser.
      */
     public void invoke() {
-        startLoadingImg();
-        TimerTask invokeThread = new TimerTask() {
-            Map<EntityBareJid, HostedRoom> rooms;
-
-            @Override
-            public void run() {
-                String errorMsg = null;
-                try {
-                    rooms = MultiUserChatManager.getInstanceFor(SparkManager.getConnection()).getRoomsHostedBy(serviceName);
-                } catch (XMPPException.XMPPErrorException e) {
-                    StanzaError.Condition condition = e.getStanzaError().getCondition();
-                    if (condition == StanzaError.Condition.feature_not_implemented || condition == StanzaError.Condition.service_unavailable) {
-                        errorMsg = Res.getString("message.conference.rooms.unsupported");
-                    } else {
-                        Log.error("Unable to retrieve list of rooms from " + serviceName + ": " + e);
-                        errorMsg = e.getMessage();
-                    }
-                } catch (Exception e) {
-                    Log.error("Unable to retrieve list of rooms from " + serviceName, e);
-                    errorMsg = e.getMessage();
-                }
-                // if there was an error show it to a user
-                if (errorMsg != null) {
-                    UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
-                    JOptionPane.showMessageDialog(conferences,
-                        Res.getString("message.conference.info.error") + "\n" + errorMsg,
-                        Res.getString("title.error"),
-                        JOptionPane.ERROR_MESSAGE);
-                    if (dlg != null) {
-                        dlg.dispose();
-                    }
-                    stopLoadingImg();
-                    return;
-                }
-                try {
-                    for (Map.Entry<EntityBareJid, HostedRoom> room : rooms.entrySet()) {
-                        String roomName = room.getValue().getName();
-                        EntityBareJid roomJID = room.getValue().getJid();
-                        int numberOfOccupants = -1;
-
-                        // Need to handle the case where the room info does not
-                        // contain the number of occupants. If that is the case,
-                        // we should not continue to request this info from the
-                        // service.
-                        if (!partialDiscovery) {
-                            RoomInfo roomInfo = null;
-                            try {
-                                roomInfo = MultiUserChatManager.getInstanceFor(SparkManager.getConnection()).getRoomInfo(roomJID);
-                            } catch (Exception ignored) {
-                            }
-
-                            if (roomInfo != null) {
-                                numberOfOccupants = roomInfo.getOccupantsCount();
-                            }
-                            if (roomInfo == null || numberOfOccupants == -1) {
-                                partialDiscovery = true;
-                            }
-                        }
-                        addRoomToTable(roomJID, roomName, numberOfOccupants);
-                    }
-                } catch (Exception e) {
-                    Log.error("Error setting up GroupChatTable", e);
-                }
-                stopLoadingImg();
-            }
-        };
-
         final JOptionPane pane;
 
         TitlePanel titlePanel;
@@ -625,7 +547,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener, Com
         dlg.setVisible(true);
         dlg.toFront();
         dlg.requestFocus();
-        TaskEngine.getInstance().submit(invokeThread);
+        refreshRoomList(serviceName);
     }
 
     private final class RoomList extends Table {
@@ -636,11 +558,13 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener, Com
                 " ",
                 Res.getString("title.name"),
                 Res.getString("title.address"),
-                Res.getString("title.occupants")
+                Res.getString("title.occupants"),
+                Res.getString("menuitem.languages")
             });
             getColumnModel().setColumnMargin(0);
             getColumnModel().getColumn(0).setMaxWidth(30);
             getColumnModel().getColumn(3).setMaxWidth(80);
+            getColumnModel().getColumn(4).setMaxWidth(120);
 
             setSelectionBackground(Table.SELECTION_COLOR);
             setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -665,7 +589,6 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener, Com
                     checkPopup(e);
                 }
             });
-
         }
 
         // Handle image rendering correctly
@@ -826,8 +749,10 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener, Com
                 form.setAnswer("muc#roomconfig_persistentroom", true);
             }
             groupChat.sendConfigurationForm(form);
-            EntityBareJid groupChatRoom = groupChat.getRoom();
-            addRoomToTable(groupChatRoom, null, 1);
+            RoomObject roomInfo = new RoomObject();
+            roomInfo.setRoomJID(groupChat.getRoom());
+            roomInfo.setNumberOfOccupants(1); // only myself
+            addRoomToTable(roomInfo);
         } catch (XMPPException | SmackException | InterruptedException e1) {
             Log.error("Error creating new room.", e1);
             UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
@@ -840,14 +765,8 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener, Com
 
     /**
      * Adds a room to the room table.
-     *
-     * @param jid               the jid of the conference room.
-     * @param roomName          the name of the conference room from bookmark.
-     * @param numberOfOccupants the number of occupants in the conference room. If -1 is
-     *                          specified, the occupant count will show as n/a.
      */
-    private void addRoomToTable(final EntityBareJid jid, final String roomName,
-                                final int numberOfOccupants) {
+    private void addRoomToTable(RoomObject room) {
         SwingWorker addRoomThread = new SwingWorker() {
 
             @Override
@@ -860,11 +779,11 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener, Com
                 ImageIcon bookmarkIcon = SparkRes.getImageIcon(SparkRes.BOOKMARK_ICON);
                 ImageIcon passwordIcon = SparkRes.getImageIcon(SparkRes.LOCK_16x16);
 
-                if (isBookmarked(jid)) {
+                if (isBookmarked(room.getRoomJID())) {
                     isBookmark = true;
                     iconLabel.setIcon(SparkRes.getImageIcon(SparkRes.BOOKMARK_ICON));
                 }
-                if (isPasswordProtected(jid)) {
+                if (room.isPasswordProtected() || room.isMembersOnly()) {
                     isPassword = true;
                 }
 
@@ -876,7 +795,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener, Com
                             iconLabel.setIcon(new ImageIcon(img));
                         }
                     } catch (Exception e) {
-                        Log.warning("Unable to set icon for bookmarked & password-protected room " + jid, e);
+                        Log.warning("Unable to set icon for bookmarked & password-protected room " + room.getRoomJID(), e);
                     }
                 } else if (isBookmark) {
                     iconLabel.setIcon(bookmarkIcon);
@@ -891,14 +810,14 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener, Com
                             }
                         }
                     } catch (Exception e) {
-                        Log.warning("Unable to set icon for password-protected room " + jid, e);
+                        Log.warning("Unable to set icon for password-protected room " + room.getRoomJID(), e);
                     }
                 }
 
-                String occupants = numberOfOccupants != -1 ? Integer.toString(numberOfOccupants) : "";
-                String roomAddress = jid.getLocalpart().toString();
-                String roomTitle = roomName != null ? roomName : roomAddress;
-                return new Object[]{iconLabel, roomTitle, roomAddress, occupants};
+                String occupants = room.getNumberOfOccupants() != -1 ? String.valueOf(room.getNumberOfOccupants()) : "";
+                String roomAddress = room.getRoomJID().getLocalpart().toString();
+                String roomTitle = room.getRoomName() != null ? room.getRoomName() : roomAddress;
+                return new Object[]{iconLabel, roomTitle, roomAddress, occupants, room.getLanguage()};
             }
 
             @Override
@@ -923,20 +842,6 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener, Com
             }
         }
         return false;
-    }
-
-    /**
-     * Returns true if the room is password-protected or Members only
-     */
-    private boolean isPasswordProtected(EntityBareJid roomJid) {
-        boolean result = false;
-        try {
-            RoomInfo rif = MultiUserChatManager.getInstanceFor(SparkManager.getConnection()).getRoomInfo(roomJid);
-            result = rif.isMembersOnly() || rif.isPasswordProtected();
-        } catch (XMPPException | SmackException | NumberFormatException | InterruptedException e) {
-            Log.error(e);
-        }
-        return result;
     }
 
     /**
@@ -975,10 +880,25 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener, Com
     }
 
     private static class RoomObject {
+        /**
+         * The name of the conference room from bookmark.
+         */
         private String roomName;
+
+        /**
+         * The jid of the conference room.
+         */
         private EntityBareJid roomJID;
 
+        /**
+         * The number of occupants in the conference room.
+         * If -1 is specified, the occupant count will show as empty string.
+         */
         private int numberOfOccupants;
+
+        private boolean membersOnly;
+        private boolean passwordProtected;
+        private String language;
 
         public String getRoomName() {
             return roomName;
@@ -1002,6 +922,30 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener, Com
 
         public void setNumberOfOccupants(int numberOfOccupants) {
             this.numberOfOccupants = numberOfOccupants;
+        }
+
+        public void setMembersOnly(boolean membersOnly) {
+            this.membersOnly = membersOnly;
+        }
+
+        public boolean isMembersOnly() {
+            return membersOnly;
+        }
+
+        public void setPasswordProtected(boolean passwordProtected) {
+            this.passwordProtected = passwordProtected;
+        }
+
+        public boolean isPasswordProtected() {
+            return passwordProtected;
+        }
+
+        public void setLanguage(String language) {
+            this.language = language;
+        }
+
+        public String getLanguage() {
+            return language;
         }
     }
 
