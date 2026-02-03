@@ -23,6 +23,8 @@ import java.util.*;
 import java.util.List;
 
 import javax.swing.*;
+import javax.swing.event.PopupMenuEvent;
+import javax.swing.event.PopupMenuListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
@@ -189,6 +191,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener, Com
         sorter = new TableRowSorter<>(roomsTable.getModel());
         sorter.setComparator(3, Comparator.comparing((String o) -> !o.isEmpty() ? Long.parseLong(o) : 0));
         roomsTable.setRowSorter(sorter);
+        roomsTable.setComponentPopupMenu(roomEntryPopupMenu());
 
         final JScrollPane pane = new JScrollPane(roomsTable);
         pane.setBackground(Color.white);
@@ -227,6 +230,72 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener, Com
         addRoomItem.setEnabled(false);
 
         addTableListener();
+    }
+
+    private RoomObject selectedRoomInfo() {
+        final int selectedRow = roomsTable.getSelectedRow();
+        if (selectedRow == -1) {
+            return null;
+        }
+        String roomJIDString = roomsTable.getValueAt(selectedRow, 2) + "@" + serviceName;
+        EntityBareJid roomJID = JidCreate.entityBareFromOrNull(roomJIDString);
+        RoomObject roomInfo = new RoomObject();
+        roomInfo.setRoomJID(roomJID);
+        roomInfo.setRoomName(roomsTable.getValueAt(selectedRow, 1).toString());
+        return roomInfo;
+    }
+
+    private JPopupMenu roomEntryPopupMenu() {
+        JPopupMenu popupMenu = new JPopupMenu();
+
+        JMenuItem itemRoomInfo = new JMenuItem(Res.getString("menuitem.view.room.info"));
+        itemRoomInfo.setIcon(SparkRes.getImageIcon(SparkRes.SMALL_DATA_FIND_IMAGE));
+        itemRoomInfo.addActionListener(e -> {
+            RoomObject roomInfo = selectedRoomInfo();
+            if (roomInfo == null) {
+                return;
+            }
+            RoomBrowser roomBrowser = new RoomBrowser();
+            roomBrowser.displayRoomInformation(roomInfo.getRoomJID());
+        });
+        popupMenu.add(itemRoomInfo);
+
+        JMenuItem itemCopyUri = new JMenuItem(Res.getString("button.copy.to.clipboard"));
+        itemCopyUri.setIcon(SparkRes.getImageIcon(SparkRes.COPY_16x16));
+        itemCopyUri.addActionListener(e -> {
+            RoomObject roomInfo = selectedRoomInfo();
+            if (roomInfo == null) {
+                return;
+            }
+            String roomJIDString = roomInfo.getRoomJID().toString();
+            SparkManager.setClipboard("xmpp:" + roomJIDString + "?join");
+        });
+        popupMenu.add(itemCopyUri);
+
+        // Select the row where the use made ther right-clicked
+        popupMenu.addPopupMenuListener(new PopupMenuListener() {
+            @Override
+            public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
+                SwingUtilities.invokeLater(() -> {
+                    Point point = SwingUtilities.convertPoint(popupMenu, new Point(0, 0), roomsTable);
+                    int rowAtPoint = roomsTable.rowAtPoint(point);
+                    if (rowAtPoint <= -1) {
+                        return;
+                    }
+                    roomsTable.setRowSelectionInterval(rowAtPoint, rowAtPoint);
+                });
+            }
+
+            @Override
+            public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
+            }
+
+            @Override
+            public void popupMenuCanceled(PopupMenuEvent e) {
+            }
+        });
+
+        return popupMenu;
     }
 
     private void startLoadingImg() {
@@ -581,12 +650,10 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener, Com
 
                 @Override
                 public void mouseReleased(MouseEvent e) {
-                    checkPopup(e);
                 }
 
                 @Override
                 public void mousePressed(MouseEvent e) {
-                    checkPopup(e);
                 }
             });
         }
@@ -604,52 +671,6 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener, Com
                 return new CenterRenderer();
             }
             return super.getCellRenderer(row, column);
-        }
-
-        private void checkPopup(MouseEvent e) {
-            if (e.isPopupTrigger()) {
-                final JPopupMenu popupMenu = new JPopupMenu();
-                Action roomInfoAction = new AbstractAction() {
-                    private static final long serialVersionUID = 5142016247851363420L;
-
-                    @Override
-                    public void actionPerformed(ActionEvent actionEvent) {
-                        int selectedRow = roomsTable.getSelectedRow();
-                        if (selectedRow != -1) {
-                            String roomJIDString = roomsTable.getValueAt(selectedRow, 2) + "@" + serviceName;
-                            EntityBareJid roomJID;
-                            try {
-                                roomJID = JidCreate.entityBareFrom(roomJIDString);
-                            } catch (XmppStringprepException e) {
-                                throw new IllegalStateException(e);
-                            }
-                            RoomBrowser roomBrowser = new RoomBrowser();
-                            roomBrowser.displayRoomInformation(roomJID);
-                        }
-                    }
-                };
-
-                roomInfoAction.putValue(Action.NAME, Res.getString("menuitem.view.room.info"));
-                roomInfoAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.SMALL_DATA_FIND_IMAGE));
-
-                final int selectedRow = roomsTable.getSelectedRow();
-                if (selectedRow != -1) {
-                    final String roomName = roomsTable.getValueAt(selectedRow, 1).toString();
-                    popupMenu.add(roomInfoAction);
-                    Action copyUriGroupChat = new AbstractAction() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            String roomJIDString = roomsTable.getValueAt(selectedRow, 2) + "@" + serviceName;
-                            SparkManager.setClipboard("xmpp:" + roomJIDString + "?join");
-                        }
-                    };
-
-                    copyUriGroupChat.putValue(Action.NAME, Res.getString("button.copy.to.clipboard"));
-                    copyUriGroupChat.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.COPY_16x16));
-                    popupMenu.add(copyUriGroupChat);
-                }
-                popupMenu.show(roomsTable, e.getX(), e.getY());
-            }
         }
     }
 
