@@ -636,18 +636,6 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener, Com
                 if (selectedRow != -1) {
                     final String roomName = roomsTable.getValueAt(selectedRow, 1).toString();
                     popupMenu.add(roomInfoAction);
-                    final JCheckBoxMenuItem autoJoin = new JCheckBoxMenuItem(Res.getString("menuitem.join.on.startup"));
-                    autoJoin.addActionListener(e1 -> {
-                        String roomJIDString = roomsTable.getValueAt(selectedRow, 2) + "@" + serviceName;
-                        EntityBareJid roomJID;
-                        try {
-                            roomJID = JidCreate.entityBareFrom(roomJIDString);
-                        } catch (XmppStringprepException e2) {
-                            throw new IllegalStateException(e2);
-                        }
-                        conferences.removeBookmark(roomJID);
-                        conferences.addBookmark(roomName, roomJID, autoJoin.isSelected());
-                    });
                     Action copyUriGroupChat = new AbstractAction() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
@@ -659,20 +647,6 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener, Com
                     copyUriGroupChat.putValue(Action.NAME, Res.getString("button.copy.to.clipboard"));
                     copyUriGroupChat.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.COPY_16x16));
                     popupMenu.add(copyUriGroupChat);
-
-                    for (BookmarkedConference bookmark : conferences.getBookmarks()) {
-                        String roomJIDString = roomsTable.getValueAt(selectedRow, 2) + "@" + serviceName;
-                        EntityBareJid roomJID;
-                        try {
-                            roomJID = JidCreate.entityBareFrom(roomJIDString);
-                        } catch (XmppStringprepException e2) {
-                            throw new IllegalStateException(e2);
-                        }
-                        if (roomJID.equals(bookmark.getJid())) {
-                            autoJoin.setSelected(bookmark.isAutoJoin());
-                            popupMenu.add(autoJoin);
-                        }
-                    }
                 }
                 popupMenu.show(roomsTable, e.getX(), e.getY());
             }
