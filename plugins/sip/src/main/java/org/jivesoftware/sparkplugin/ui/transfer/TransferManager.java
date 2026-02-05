@@ -65,7 +65,7 @@ public class TransferManager extends JPanel implements TransferListener {
         setLayout(new GridBagLayout());
         setBackground(Color.white);
 
-        Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
+        Roster roster = SparkManager.getRoster();
 
         callField = new TelephoneTextField();
 

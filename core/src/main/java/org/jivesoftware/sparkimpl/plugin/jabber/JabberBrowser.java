@@ -126,7 +126,7 @@ public class JabberBrowser implements Plugin {
 
         browsePanel.removeAll();
 
-        ServiceDiscoveryManager discoManager = ServiceDiscoveryManager.getInstanceFor(con);
+        ServiceDiscoveryManager discoManager = SparkManager.getDiscoManager();
         DiscoverItems result;
         try {
             result = discoManager.discoverItems(serviceName);
@@ -152,7 +152,7 @@ public class JabberBrowser implements Plugin {
     private void browseItem(DiscoverItems.Item discoveredItem) {
         addAddress(discoveredItem.getEntityID().toString());
         browsePanel.removeAll();
-        ServiceDiscoveryManager discoManager = ServiceDiscoveryManager.getInstanceFor(con);
+        ServiceDiscoveryManager discoManager = SparkManager.getDiscoManager();
         DiscoverItems result;
         try {
             result = discoManager.discoverItems(discoveredItem.getEntityID());

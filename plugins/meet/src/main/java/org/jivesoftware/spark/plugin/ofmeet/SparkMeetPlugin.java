@@ -19,12 +19,10 @@ package org.jivesoftware.spark.plugin.ofmeet;
 
 import java.awt.*;
 import javax.swing.*;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.zip.*;
 import java.io.*;
 import java.net.*;
-import java.lang.reflect.*;
 
 
 import org.jivesoftware.Spark;
@@ -106,7 +104,7 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
     }
 
     private void initializeOnlineMeetings() {
-        ServiceDiscoveryManager discoManager = ServiceDiscoveryManager.getInstanceFor(SparkManager.getConnection());
+        ServiceDiscoveryManager discoManager = SparkManager.getDiscoManager();
 
         DiscoverInfo discoverInfo;
         String serverJid = SparkManager.getSessionManager().getServerAddress().toString();

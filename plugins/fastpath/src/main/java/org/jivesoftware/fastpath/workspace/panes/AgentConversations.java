@@ -282,13 +282,13 @@ public final class AgentConversations extends JPanel implements ChangeListener {
 						public void actionPerformed(ActionEvent actionEvent) {
                             // Get Conference
                             try {
-                                final MultiUserChatManager multiUserChatManager = MultiUserChatManager.getInstanceFor( SparkManager.getConnection() );
+                                final MultiUserChatManager multiUserChatManager = SparkManager.getMucManager();
                                 List<DomainBareJid> col = multiUserChatManager.getMucServiceDomains();
                                 if (col.size() == 0) {
                                     return;
                                 }
 
-                                DomainBareJid serviceName = col.iterator().next();
+                                DomainBareJid serviceName = col.get(0);
                                 EntityBareJid roomName = JidCreate.entityBareFrom(sessionID + "@" + serviceName);
 
                                 MultiUserChat muc = multiUserChatManager.getMultiUserChat( roomName );
@@ -342,9 +342,9 @@ public final class AgentConversations extends JPanel implements ChangeListener {
                             try {
                                 FastpathPlugin.getAgentSession().makeRoomOwner(SparkManager.getConnection(), sessionID);
 
-                                final MultiUserChatManager multiUserChatManager = MultiUserChatManager.getInstanceFor( SparkManager.getConnection() );
+                                final MultiUserChatManager multiUserChatManager = SparkManager.getMucManager();
                                 List<DomainBareJid> col = multiUserChatManager.getMucServiceDomains();
-                                if (col.size() == 0) {
+                                if (col.isEmpty()) {
                                     return;
                                 }
 

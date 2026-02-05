@@ -65,7 +65,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * This room only allows for 1 to 1 conversations.
  */
 public class ChatRoomImpl extends ChatRoom {
-    private static final long serialVersionUID = 6163762803773980872L;
     private final CopyOnWriteArrayList<MessageEventListener> messageEventListeners = new CopyOnWriteArrayList<>();
     private EntityBareJid roomname;
     private Icon tabIcon;
@@ -82,8 +81,6 @@ public class ChatRoomImpl extends ChatRoom {
     private Presence presence;
 
     private boolean offlineSent;
-
-    private final Roster roster;
 
     private String threadID;
 
@@ -159,7 +156,7 @@ public class ChatRoomImpl extends ChatRoom {
 
         presence = PresenceManager.getPresence(participantJID.asBareJid());
 
-        roster = Roster.getInstanceFor( SparkManager.getConnection() );
+        Roster roster = SparkManager.getRoster();
 
         RosterEntry entry = roster.getEntry(participantJID.asBareJid());
 
@@ -469,6 +466,7 @@ public class ChatRoomImpl extends ChatRoom {
                     {
                         if ( message.getError().getCondition() == StanzaError.Condition.item_not_found )
                         {
+                            Roster roster = SparkManager.getRoster();
                             // Check to see if the user is online to recieve this message.
                             RosterEntry entry = roster.getEntry( participantJID.asBareJid() );
                             if ( !presence.isAvailable() && !offlineSent && entry != null )
@@ -486,6 +484,7 @@ public class ChatRoomImpl extends ChatRoom {
                     }
 
                     // Check to see if the user is online to recieve this message.
+                    Roster roster = SparkManager.getRoster();
                     RosterEntry entry = roster.getEntry( participantJID.asBareJid() );
                     if ( !presence.isAvailable() && !offlineSent && entry != null )
                     {
@@ -502,7 +501,7 @@ public class ChatRoomImpl extends ChatRoom {
                         }
                     }
 
-                    final JivePropertiesExtension extension = ( (JivePropertiesExtension) message.getExtension( JivePropertiesExtension.NAMESPACE ) );
+                    final JivePropertiesExtension extension = message.getExtension(JivePropertiesExtension.class);
                     final boolean broadcast = extension != null && extension.getProperty( "broadcast" ) != null;
 
                     // If this is a group chat message, discard
@@ -526,11 +525,12 @@ public class ChatRoomImpl extends ChatRoom {
                         return;
                     }
 
-                    final CarbonExtension carbon = (CarbonExtension) message.getExtension( CarbonExtension.NAMESPACE );
+//                    final CarbonExtension carbon = message.getExtension(CarbonExtension.class); // FIXME CarbonExtension must extend ExtensionElement
+                    final CarbonExtension carbon = null;
                     if ( carbon != null )
                     {
-                        // Is the a carbon copy?
-                        final Message forwardedStanza = (Message) carbon.getForwarded().getForwardedStanza();
+                        // Is this a carbon copy?
+                        final Message forwardedStanza = carbon.getForwarded().getForwardedStanza();
                         if ( forwardedStanza.getBody() != null )
                         {
                             if ( carbon.getDirection() == CarbonExtension.Direction.received )
@@ -839,6 +839,7 @@ public class ChatRoomImpl extends ChatRoom {
     }
 
     private boolean isOnline() {
+        Roster roster = SparkManager.getRoster();
         Presence presence = roster.getPresence(participantJID.asBareJid());
         return presence.isAvailable();
     }

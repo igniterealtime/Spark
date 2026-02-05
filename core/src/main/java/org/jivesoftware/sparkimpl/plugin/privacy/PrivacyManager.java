@@ -96,10 +96,10 @@ public class PrivacyManager {
 
     
     private boolean checkIfPrivacyIsSupported(XMPPConnection conn) {
-    	ServiceDiscoveryManager servDisc = ServiceDiscoveryManager.getInstanceFor(conn);
+        ServiceDiscoveryManager discoManager = SparkManager.getDiscoManager();
         DiscoverInfo info = null;
     	try {
-    		info = servDisc.discoverInfo(conn.getXMPPServiceDomain());
+            info = discoManager.discoverInfo(conn.getXMPPServiceDomain());
         } catch (XMPPException | SmackException | InterruptedException e) {
             	// We could not query the server
         }

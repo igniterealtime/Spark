@@ -127,16 +127,15 @@ public class Enterprise {
     }
 
     private void populateFeatureSet() {
-        final ServiceDiscoveryManager disco = ServiceDiscoveryManager.getInstanceFor(SparkManager.getConnection());
+        ServiceDiscoveryManager discoManager = SparkManager.getDiscoManager();
         final DiscoverItems items = SparkManager.getSessionManager().getDiscoveredItems();
         for (DiscoverItems.Item item : items.getItems() ) {
             String entity = item.getEntityID().toString();
             if (entity.startsWith("manager.")) {
                 sparkManagerInstalled = true;
-
                 // Populate with feature sets.
                 try {
-                    featureInfo = disco.discoverInfo(item.getEntityID());
+                    featureInfo = discoManager.discoverInfo(item.getEntityID());
                 }
                 catch (XMPPException | SmackException | InterruptedException e) {
                     Log.error("Error while retrieving feature list for SparkManager.", e);
@@ -144,13 +143,13 @@ public class Enterprise {
 
                 // Check for nodes.
                 try {
-                    final DiscoverItems discoveredItems = disco.discoverItems(item.getEntityID());
+                    final DiscoverItems discoveredItems = discoManager.discoverItems(item.getEntityID());
                     for (DiscoverItems.Item discoveredItem : discoveredItems.getItems()) {
                         final String node = discoveredItem.getNode();
                         if (node != null) {
                             try {
                                 // We're expecting Openfire to return unique JID/Node combinations.
-                                final DiscoverItems nodeItems = disco.discoverItems(discoveredItem.getEntityID(), node);
+                                final DiscoverItems nodeItems = discoManager.discoverItems(discoveredItem.getEntityID(), node);
                                 nodeInfo.put(node, nodeItems);
                             }
                             catch (XMPPException | SmackException | InterruptedException e) {
