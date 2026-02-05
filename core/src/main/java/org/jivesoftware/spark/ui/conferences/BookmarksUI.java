@@ -26,7 +26,6 @@ import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.disco.packet.DiscoverInfo;
 import org.jivesoftware.smackx.disco.packet.DiscoverItems;
 import org.jivesoftware.smackx.muc.MultiUserChatConstants;
-import org.jivesoftware.smackx.muc.MultiUserChatManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.JiveTreeCellRenderer;
 import org.jivesoftware.spark.component.JiveTreeNode;
@@ -42,7 +41,6 @@ import org.jxmpp.jid.DomainBareJid;
 import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.Jid;
 import org.jxmpp.jid.impl.JidCreate;
-import org.jxmpp.jid.parts.Resourcepart;
 import org.jxmpp.stringprep.XmppStringprepException;
 
 import javax.swing.*;
@@ -530,10 +528,6 @@ public class BookmarksUI extends JPanel {
         return path != null;
     }
 
-    public Tree getTree() {
-        return tree;
-    }
-
     /**
      * Sets the current bookmarks used with this account.
      */
@@ -645,4 +639,31 @@ public class BookmarksUI extends JPanel {
         return List.of();
     }
 
+    void addOrRemoveNode(DomainBareJid serviceName, boolean isBookmarked, String roomName, EntityBareJid roomJID) {
+        JiveTreeNode rootNode = (JiveTreeNode) tree.getModel().getRoot();
+        TreePath rootPath = tree.findByName(tree, new String[]{rootNode.toString(), serviceName.toString()});
+        if (!isBookmarked) {
+            JiveTreeNode node = (JiveTreeNode) tree.getLastSelectedPathComponent();
+            if (node == null) {
+                String defaultServiceName = ConferenceServices.getDefaultServiceName().toString();
+                TreePath path = tree.findByName(tree, new String[]{rootNode.toString(), defaultServiceName});
+                node = (JiveTreeNode) path.getLastPathComponent();
+            }
+            JiveTreeNode roomNode = new JiveTreeNode(roomName, false, SparkRes.getImageIcon(SparkRes.BOOKMARK_ICON));
+            roomNode.setAssociatedObject(roomJID);
+            node.add(roomNode);
+            DefaultTreeModel model = (DefaultTreeModel) tree.getModel();
+            model.nodeStructureChanged(node);
+            tree.expandPath(rootPath);
+            addBookmark(roomName, roomJID, false);
+        } else {
+            // Remove bookmark
+            TreePath path = tree.findByName(tree, new String[]{rootNode.toString(), serviceName.toString(), roomName});
+            JiveTreeNode node = (JiveTreeNode) path.getLastPathComponent();
+            DefaultTreeModel model = (DefaultTreeModel) tree.getModel();
+            model.removeNodeFromParent(node);
+            EntityBareJid jid = ((Jid) node.getAssociatedObject()).asEntityBareJidOrThrow();
+            removeBookmark(jid);
+        }
+    }
 }
