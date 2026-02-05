@@ -548,10 +548,10 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
      * date and time the message was received.
      */
     public void addToTranscript(Message message, boolean updateDate) {
-        // Create message to persist.
-        final Map<String, Object> properties = new HashMap<>();
+        // Create a message to persist.
+        final Map<String, Object> properties = new HashMap<>(1);
         properties.put("date", new Date());
-        Message newMessage = StanzaBuilder.buildMessage()
+        Message newMessage = StanzaBuilder.buildMessageFrom(message, message.getStanzaId())
             .addExtension(new JivePropertiesExtension(properties))
             .build();
         transcript.add(newMessage);
