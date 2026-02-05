@@ -58,6 +58,8 @@ import java.util.*;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import static org.apache.commons.lang3.StringUtils.startsWithIgnoreCase;
+
 /**
  * The base implementation of all ChatRoom conversations. You would implement
  * this class to have most types of Chat.
@@ -431,9 +433,9 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         if (SparkManager.getChatManager().getChatContainer().getActiveChatRoom() instanceof GroupChatRoom) {
             final GroupChatRoom activeChatRoom = (GroupChatRoom) SparkManager.getChatManager().getChatContainer().getActiveChatRoom();
             for (EntityFullJid participant : activeChatRoom.getParticipants()) {
-                final Resourcepart nickname = participant.getResourcepart();
-                if (nickname.toString().toLowerCase().startsWith(needle.toLowerCase())) {
-                    matches.add(nickname.toString());
+                String nickname = participant.getResourcepart().toString();
+                if (startsWithIgnoreCase(nickname, needle)) {
+                    matches.add(nickname);
                 }
             }
         } else {
@@ -446,7 +448,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
                     username = re.getJid().toString().substring(0, re.getJid().toString().indexOf('@'));
                 }
 
-                if (username.toLowerCase().startsWith(needle.toLowerCase())) {
+                if (startsWithIgnoreCase(username, needle)) {
                     matches.add(username);
                 }
             }
