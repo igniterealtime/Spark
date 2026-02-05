@@ -29,8 +29,6 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreePath;
 
 
 import org.jivesoftware.resource.Res;
@@ -46,11 +44,9 @@ import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.muc.RoomInfo;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.component.JiveTreeNode;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.component.Table;
 import org.jivesoftware.spark.component.TitlePanel;
-import org.jivesoftware.spark.component.Tree;
 import org.jivesoftware.spark.ui.ChatRoomNotFoundException;
 import org.jivesoftware.spark.ui.rooms.GroupChatRoom;
 import org.jivesoftware.spark.util.ImageCombiner;
@@ -64,7 +60,6 @@ import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jxmpp.jid.DomainBareJid;
 import org.jxmpp.jid.EntityBareJid;
-import org.jxmpp.jid.Jid;
 import org.jxmpp.jid.impl.JidCreate;
 import org.jxmpp.jid.parts.Resourcepart;
 import org.jxmpp.stringprep.XmppStringprepException;
@@ -273,7 +268,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener, Com
         });
         popupMenu.add(itemCopyUri);
 
-        // Select the row where the use made ther right-clicked
+        // Select the row where the use made their right-clicked
         popupMenu.addPopupMenuListener(new PopupMenuListener() {
             @Override
             public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
@@ -386,7 +381,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener, Com
                 } finally {
                     stopLoadingImg();
                 }
-                // if there was an error show it to a user
+                // If there was an error, show it to a user
                 if (errorMsg != null) {
                     UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
                     JOptionPane.showMessageDialog(conferences,
@@ -428,6 +423,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener, Com
             return;
         }
 
+        RoomObject roomInfo1 = selectedRoomInfo();
         final String roomJIDString = roomsTable.getValueAt(selectedRow, 2) + "@" + serviceName;
         EntityBareJid roomJID;
         try {
@@ -451,40 +447,17 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener, Com
             return;
         }
 
-        Tree serviceTree = conferences.getTree();
-        JiveTreeNode rootNode = (JiveTreeNode) serviceTree.getModel().getRoot();
-        TreePath rootPath = serviceTree.findByName(serviceTree, new String[]{rootNode.toString(), serviceName.toString()});
         boolean isBookmarked = isBookmarked(roomJID);
+        conferences.addOrRemoveNode(serviceName, isBookmarked, roomName, roomJID);
         if (!isBookmarked) {
-            JiveTreeNode node = (JiveTreeNode) serviceTree.getLastSelectedPathComponent();
-            if (node == null) {
-                String defaultServiceName = ConferenceServices.getDefaultServiceName().toString();
-                TreePath path = serviceTree.findByName(serviceTree, new String[]{rootNode.toString(), defaultServiceName});
-                node = (JiveTreeNode) path.getLastPathComponent();
-            }
-            JiveTreeNode roomNode = new JiveTreeNode(roomName, false, SparkRes.getImageIcon(SparkRes.BOOKMARK_ICON));
-            roomNode.setAssociatedObject(roomJID);
-            node.add(roomNode);
-            final DefaultTreeModel model = (DefaultTreeModel) serviceTree.getModel();
-            model.nodeStructureChanged(node);
-            serviceTree.expandPath(rootPath);
-            roomsTable.getTableModel().setValueAt(new JLabel(SparkRes.getImageIcon(SparkRes.BOOKMARK_ICON)), selectedRow, 0);
-            addBookmarkUI(false);
-
-            conferences.addBookmark(roomName, roomJID, false);
-        } else {
-            // Remove bookmark
-            TreePath path = serviceTree.findByName(serviceTree, new String[]{rootNode.toString(), serviceName.toString(), roomName});
-            JiveTreeNode node = (JiveTreeNode) path.getLastPathComponent();
-            final DefaultTreeModel model = (DefaultTreeModel) serviceTree.getModel();
-            model.removeNodeFromParent(node);
-            roomsTable.getTableModel().setValueAt(new JLabel(SparkRes.getImageIcon(SparkRes.BLANK_IMAGE)), selectedRow, 0);
             addBookmarkUI(true);
-
-            EntityBareJid jid = ((Jid) node.getAssociatedObject()).asEntityBareJidOrThrow();
-            conferences.removeBookmark(jid);
+            roomsTable.getTableModel().setValueAt(new JLabel(SparkRes.getImageIcon(SparkRes.BOOKMARK_ICON)), selectedRow, 0);
+        } else {
+            addBookmarkUI(false);
+            roomsTable.getTableModel().setValueAt(new JLabel(SparkRes.getImageIcon(SparkRes.BLANK_IMAGE)), selectedRow, 0);
         }
     }
+
 
     private void joinSelectedRoom() {
         int selectedRow = roomsTable.getSelectedRow();
@@ -577,7 +550,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener, Com
             }
         });
 
-        // will need that when the window is smaller then the buttons width...
+        // will need that when the window is smaller than the buttons width...
         setButtonsWidth();
 
         showHiddenButtons.setVisible(false);
@@ -616,7 +589,8 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener, Com
                 Res.getString("title.name"),
                 Res.getString("title.address"),
                 Res.getString("title.occupants"),
-                Res.getString("menuitem.languages")
+                Res.getString("menuitem.languages"),
+                Res.getString("description"),
             });
             getColumnModel().setColumnMargin(0);
             getColumnModel().getColumn(0).setMaxWidth(30);
@@ -634,14 +608,6 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener, Com
                     if (e.getClickCount() == 2) {
                         enterRoom();
                     }
-                }
-
-                @Override
-                public void mouseReleased(MouseEvent e) {
-                }
-
-                @Override
-                public void mousePressed(MouseEvent e) {
                 }
             });
         }
