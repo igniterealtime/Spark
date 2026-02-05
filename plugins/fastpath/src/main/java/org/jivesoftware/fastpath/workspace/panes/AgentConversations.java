@@ -66,6 +66,8 @@ import org.jxmpp.jid.impl.JidCreate;
 import org.jxmpp.jid.util.JidUtil;
 import org.jxmpp.stringprep.XmppStringprepException;
 
+import static org.jivesoftware.smackx.muc.MucConfigFormManager.MUC_ROOMCONFIG_ROOMOWNERS;
+
 /**
  * UI to show all chats occuring.
  */
@@ -280,13 +282,13 @@ public final class AgentConversations extends JPanel implements ChangeListener {
 						public void actionPerformed(ActionEvent actionEvent) {
                             // Get Conference
                             try {
-                                final MultiUserChatManager multiUserChatManager = MultiUserChatManager.getInstanceFor( SparkManager.getConnection() );
+                                final MultiUserChatManager multiUserChatManager = SparkManager.getMucManager();
                                 List<DomainBareJid> col = multiUserChatManager.getMucServiceDomains();
                                 if (col.size() == 0) {
                                     return;
                                 }
 
-                                DomainBareJid serviceName = col.iterator().next();
+                                DomainBareJid serviceName = col.get(0);
                                 EntityBareJid roomName = JidCreate.entityBareFrom(sessionID + "@" + serviceName);
 
                                 MultiUserChat muc = multiUserChatManager.getMultiUserChat( roomName );
@@ -315,7 +317,7 @@ public final class AgentConversations extends JPanel implements ChangeListener {
                                     if (list.size() > 0) {
                                         FillableForm form = muc.getConfigurationForm().getFillableForm();
                                         List<String> listStrings = JidUtil.toStringList(list);
-                                        form.setAnswer("muc#roomconfig_roomowners", listStrings);
+                                        form.setAnswer(MUC_ROOMCONFIG_ROOMOWNERS, listStrings);
 
                                         // new DataFormDialog(groupChat, form);
                                         muc.sendConfigurationForm(form);
@@ -340,9 +342,9 @@ public final class AgentConversations extends JPanel implements ChangeListener {
                             try {
                                 FastpathPlugin.getAgentSession().makeRoomOwner(SparkManager.getConnection(), sessionID);
 
-                                final MultiUserChatManager multiUserChatManager = MultiUserChatManager.getInstanceFor( SparkManager.getConnection() );
+                                final MultiUserChatManager multiUserChatManager = SparkManager.getMucManager();
                                 List<DomainBareJid> col = multiUserChatManager.getMucServiceDomains();
-                                if (col.size() == 0) {
+                                if (col.isEmpty()) {
                                     return;
                                 }
 

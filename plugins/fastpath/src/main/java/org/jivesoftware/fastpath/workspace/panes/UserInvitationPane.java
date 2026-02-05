@@ -68,26 +68,22 @@ import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.Jid;
 import org.jxmpp.jid.util.JidUtil;
 
+import static org.jivesoftware.smackx.muc.MucConfigFormManager.MUC_ROOMCONFIG_ROOMOWNERS;
+
 /**
  * Handles invitations and transfers of Fastpath Requests.
  */
 public class UserInvitationPane {
-
     private Map<String, List<String>> metadata;
     private AcceptListener listener;
 
     private Offer offer;
-
     private JProgressBar progressBar;
-
     private SparkToaster toasterManager;
-
 
     public UserInvitationPane(final Offer offer, final RequestUtils request, final EntityBareJid fullRoomJID, final EntityBareJid inviter, String reason) {
         // Add to Chat window
         ChatManager chatManager = SparkManager.getChatManager();
-
-
         try {
             GroupChatRoom chatRoom = chatManager.getGroupChat(fullRoomJID);
             if (chatRoom.isActive()) {
@@ -100,7 +96,6 @@ public class UserInvitationPane {
             Log.warning( "Unable to reject offer " + offer, e );
         }
 
-
         final JPanel transcriptAlert = new JPanel();
         transcriptAlert.setBackground(Color.white);
         transcriptAlert.setLayout(new GridBagLayout());
@@ -110,11 +105,9 @@ public class UserInvitationPane {
         progressBar = new JProgressBar();
         progressBar.setFont(new Font("Dialog", Font.BOLD, 11));
 
-
         final JPanel topPanel = new JPanel();
         topPanel.setBackground(Color.white);
         topPanel.setLayout(new GridBagLayout());
-
 
         JLabel userImage = new JLabel(FastpathRes.getImageIcon(FastpathRes.FASTPATH_IMAGE_16x16));
         userImage.setHorizontalAlignment(JLabel.LEFT);
@@ -122,7 +115,6 @@ public class UserInvitationPane {
         if (offer.getContent() instanceof TransferRequest) {
             title = FpRes.getString("title.fastpath.transfer");
         }
-
 
         userImage.setText(title);
         topPanel.add(userImage, new GridBagConstraints(0, 0, 4, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(2, 2, 2, 2), 0, 0));
@@ -171,9 +163,7 @@ public class UserInvitationPane {
         transcriptAlert.add(infoButton, new GridBagConstraints(0, 5, 1, 1, 0.0, 1.0, GridBagConstraints.SOUTH, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0));
         transcriptAlert.add(acceptButton, new GridBagConstraints(1, 5, 1, 1, 1.0, 1.0, GridBagConstraints.SOUTH, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0));
         transcriptAlert.add(rejectButton, new GridBagConstraints(2, 5, 1, 1, 0.0, 1.0, GridBagConstraints.SOUTH, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0));
-
         metadata = offer.getMetaData();
-
 
         infoButton.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
@@ -182,10 +172,8 @@ public class UserInvitationPane {
                     roomInformation.showAllInformation(metadata);
                     roomInformation.showRoomInformation();
                 }
-
             }
         });
-
 
         acceptButton.addActionListener(actionEvent -> {
             final TimerTask loadRoomTask = new SwingTimerTask() {
@@ -204,10 +192,7 @@ public class UserInvitationPane {
             };
             TaskEngine.getInstance().schedule(loadRoomTask, 100);
         });
-
-
         rejectButton.addActionListener(actionEvent -> rejectOffer());
-
         // Start progress bart
         final Date endTime = offer.getExpiresDate();
         Date now = new Date();
@@ -231,11 +216,8 @@ public class UserInvitationPane {
                     catch (InterruptedException e) {
                         Log.error(e);
                     }
-
                     progressBar.setValue(progressBar.getValue() - 1);
                     progressBar.setStringPainted(true);
-
-
                     int seconds = (int)(endTime.getTime() - now.getTime()) / 1000;
                     if (seconds <= 60) {
                         String timeString = seconds + " " + FpRes.getString("seconds");
@@ -244,7 +226,6 @@ public class UserInvitationPane {
                     else {
                         long difference = endTime.getTime() - now.getTime();
                         String timeString = ModelUtil.getTimeFromLong(difference);
-
                         progressBar.setString(timeString);
                     }
                 }
@@ -321,8 +302,8 @@ public class UserInvitationPane {
 
             List<Jid> list = new ArrayList<>();
             while (iter.hasNext()) {
-                Affiliate affilitate = iter.next();
-                Jid jid = affilitate.getJid();
+                Affiliate affiliate = iter.next();
+                Jid jid = affiliate.getJid();
                 if (!jid.equals(SparkManager.getSessionManager().getUserBareAddress())) {
                     list.add(jid);
                 }
@@ -331,7 +312,7 @@ public class UserInvitationPane {
                 try {
                     FillableForm form = muc.getConfigurationForm().getFillableForm();
                     List<String> jidStrings = JidUtil.toStringList(list);
-                    form.setAnswer("muc#roomconfig_roomowners", jidStrings);
+                    form.setAnswer(MUC_ROOMCONFIG_ROOMOWNERS, jidStrings);
 
                     // new DataFormDialog(groupChat, form);
                     muc.sendConfigurationForm(form);
@@ -383,7 +364,8 @@ public class UserInvitationPane {
             if (!chatRoom.isActive()) {
                 // Remove old room, add new room.
                 chatManager.removeChat(chatRoom);
-                MultiUserChat chat = MultiUserChatManager.getInstanceFor( SparkManager.getConnection() ).getMultiUserChat( fullRoomJID );
+                MultiUserChatManager mucManager = SparkManager.getMucManager();
+                MultiUserChat chat = mucManager.getMultiUserChat(fullRoomJID);
                 chatRoom = new GroupChatRoom(chat);
             }
             else {
@@ -398,15 +380,14 @@ public class UserInvitationPane {
                 }
                 return;
             }
-
         }
         catch (ChatNotFoundException e) {
-            MultiUserChat chat = MultiUserChatManager.getInstanceFor( SparkManager.getConnection() ).getMultiUserChat( fullRoomJID );
+            MultiUserChatManager mucManager = SparkManager.getMucManager();
+            MultiUserChat chat = mucManager.getMultiUserChat(fullRoomJID);
             chatRoom = new GroupChatRoom(chat);
         }
 
         chatRoom.getSplitPane().setDividerSize(5);
-
         chatRoom.getSplitPane().getRightComponent().setVisible(true);
         chatRoom.getBottomPanel().setVisible(true);
 
@@ -414,7 +395,6 @@ public class UserInvitationPane {
         chatRoom.getEditorBar().setVisible(true);
         chatRoom.getChatInputEditor().setEnabled(true);
         chatRoom.getToolBar().setVisible(true);
-
 
         chatRoom.getVerticalSlipPane().setDividerLocation(0.8);
         chatRoom.getSplitPane().setDividerLocation(0.6);
@@ -431,13 +411,10 @@ public class UserInvitationPane {
             chatContainer.addChatRoom(chatRoom);
 
             FastpathPlugin.getLitWorkspace().addFastpathChatRoom(chatRoom, Workpane.RoomState.activeRoom);
-
             chatContainer.setChatRoomTitle(chatRoom, roomName);
-
             if (chatContainer.getActiveChatRoom() == chatRoom) {
                 chatContainer.getChatFrame().setTitle(roomName);
             }
-
         }
         catch (Exception e) {
             Log.error(e);
@@ -447,14 +424,10 @@ public class UserInvitationPane {
         removeOwner(chatRoom.getMultiUserChat());
 
         FastpathPlugin.getLitWorkspace().checkForDecoration(chatRoom, offer.getSessionID());
-
         if (listener != null) {
             listener.yesOption();
             listener = null;
         }
     }
 
-
 }
-
-

@@ -43,7 +43,6 @@ import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.EntityFullJid;
 import org.jxmpp.jid.EntityJid;
-import org.jxmpp.jid.impl.JidCreate;
 import org.jxmpp.jid.parts.Resourcepart;
 
 import javax.swing.*;
@@ -58,11 +57,14 @@ import java.util.*;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import static org.apache.commons.lang3.StringUtils.startsWithIgnoreCase;
+
 /**
  * The base implementation of all ChatRoom conversations. You would implement
  * this class to have most types of Chat.
  */
 public abstract class ChatRoom extends BackgroundPanel implements ActionListener, StanzaListener, DocumentListener, ConnectionListener, FocusListener, ContextMenuListener, ChatFrameToFrontListener {
+    private final LocalPreferences pref = SettingsManager.getLocalPreferences();
 
     private final JPanel chatPanel;
     private final JSplitPane splitPane;
@@ -276,8 +278,6 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
 
         getChatInputEditor().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ctrl F4"), "closeTheRoom");
         getChatInputEditor().getActionMap().put("closeTheRoom", new AbstractAction("closeTheRoom") {
-            private static final long serialVersionUID = 1L;
-
             @Override
             public void actionPerformed(ActionEvent evt) {
                 // Leave this chat.
@@ -287,8 +287,6 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
 
         getChatInputEditor().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ctrl SPACE"), "handleCompletion");
         getChatInputEditor().getActionMap().put("handleCompletion", new AbstractAction("handleCompletion") {
-            private static final long serialVersionUID = 1L;
-
             @Override
             public void actionPerformed(ActionEvent evt) {
                 // handle name completion.
@@ -300,18 +298,18 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
             }
         });
 
-        _isAlwaysOnTopActive = SettingsManager.getLocalPreferences().isChatWindowAlwaysOnTop();
+        _isAlwaysOnTopActive = pref.isChatWindowAlwaysOnTop();
         _alwaysOnTopItem = UIComponentRegistry.getButtonFactory().createAlwaysOnTop(_isAlwaysOnTopActive);
 
         _alwaysOnTopItem.addActionListener(actionEvent -> {
             if (!_isAlwaysOnTopActive) {
-                SettingsManager.getLocalPreferences().setChatWindowAlwaysOnTop(true);
+                pref.setChatWindowAlwaysOnTop(true);
                 _chatFrame.setWindowAlwaysOnTop(true);
                 _isAlwaysOnTopActive = true;
                 _alwaysOnTopItem.setIcon(SparkRes.getImageIcon("FRAME_ALWAYS_ON_TOP_ACTIVE"));
 
             } else {
-                SettingsManager.getLocalPreferences().setChatWindowAlwaysOnTop(false);
+                pref.setChatWindowAlwaysOnTop(false);
                 _chatFrame.setWindowAlwaysOnTop(false);
                 _isAlwaysOnTopActive = false;
                 _alwaysOnTopItem.setIcon(SparkRes.getImageIcon("FRAME_ALWAYS_ON_TOP_DEACTIVE"));
@@ -431,22 +429,24 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         if (SparkManager.getChatManager().getChatContainer().getActiveChatRoom() instanceof GroupChatRoom) {
             final GroupChatRoom activeChatRoom = (GroupChatRoom) SparkManager.getChatManager().getChatContainer().getActiveChatRoom();
             for (EntityFullJid participant : activeChatRoom.getParticipants()) {
-                final Resourcepart nickname = participant.getResourcepart();
-                if (nickname.toString().toLowerCase().startsWith(needle.toLowerCase())) {
-                    matches.add(nickname.toString());
+                String nickname = participant.getResourcepart().toString();
+                if (startsWithIgnoreCase(nickname, needle)) {
+                    matches.add(nickname);
                 }
             }
         } else {
-            for (RosterEntry re : Roster.getInstanceFor(SparkManager.getConnection()).getEntries()) {
+            Roster roster = SparkManager.getRoster();
+            for (RosterEntry re : roster.getEntries()) {
                 // Use the name if available, otherwise the localpart of the JID.
                 final String username;
                 if (re.getName() != null) {
                     username = re.getName();
                 } else {
                     username = re.getJid().toString().substring(0, re.getJid().toString().indexOf('@'));
+//TODO                    username = re.getJid().getLocalpartOrNull().asUnescapedString();
                 }
 
-                if (username.toLowerCase().startsWith(needle.toLowerCase())) {
+                if (startsWithIgnoreCase(username, needle)) {
                     matches.add(username);
                 }
             }
@@ -481,7 +481,6 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
     @Override
     public void actionPerformed(ActionEvent e) {
         sendMessage();
-
         // Clear send field and disable send button
         getChatInputEditor().clear();
         chatAreaButton.getButton().setEnabled(false);
@@ -509,13 +508,9 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
     public abstract void sendMessage(MessageBuilder messageBuilder);
 
     /**
-     * Returns the nickname of the current agent as specified in Chat
-     * Preferences.
-     *
-     * @return the nickname of the agent.
+     * Returns the nickname of the current agent as specified in Chat Preferences.
      */
     public Resourcepart getNickname() {
-        LocalPreferences pref = SettingsManager.getLocalPreferences();
         return pref.getNickname();
     }
 
@@ -528,15 +523,11 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
     public void insertMessage(Message message) {
         Objects.requireNonNull(message);
         // Fire Message Filters
-
         SparkManager.getChatManager().filterIncomingMessage(this, message);
-
         SparkManager.getChatManager().fireGlobalMessageReceievedListeners(this, message);
 
         addToTranscript(message, true);
-
         fireMessageReceived(message);
-
         SparkManager.getWorkspace().getTranscriptPlugin().persistChatRoom(this);
     }
 
@@ -548,21 +539,19 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
      * date and time the message was received.
      */
     public void addToTranscript(Message message, boolean updateDate) {
-        // Create message to persist.
-        final Map<String, Object> properties = new HashMap<>();
+        // Create a message to persist.
+        final Map<String, Object> properties = new HashMap<>(1);
         properties.put("date", new Date());
-        Message newMessage = StanzaBuilder.buildMessage()
+        Message newMessage = StanzaBuilder.buildMessageFrom(message, message.getStanzaId())
             .addExtension(new JivePropertiesExtension(properties))
             .build();
         transcript.add(newMessage);
-
         // Add current date if this is the current agent
         if (updateDate && transcriptWindow.getLastUpdated() != null) {
             // Set new label date
             notificationLabel.setIcon(SparkRes.getImageIcon(SparkRes.SMALL_ABOUT_IMAGE));
             notificationLabel.setText(Res.getString("message.last.message.received", SparkManager.DATE_SECOND_FORMATTER.format(transcriptWindow.getLastUpdated())));
         }
-
         scrollToBottom();
     }
 
@@ -941,7 +930,6 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
      */
     public static class ChatToolBar extends JPanel {
 
-        private static final long serialVersionUID = 5926527530611601841L;
         private final JPanel buttonPanel;
 
         /**
@@ -1171,8 +1159,6 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
     @Override
     public void poppingUp(Object component, JPopupMenu popup) {
         Action saveAction = new AbstractAction() {
-            private static final long serialVersionUID = -3582301239832606653L;
-
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 saveTranscript();

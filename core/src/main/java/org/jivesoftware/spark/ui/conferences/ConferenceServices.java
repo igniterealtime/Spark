@@ -29,6 +29,7 @@ import org.jivesoftware.smackx.bookmarks.BookmarkedConference;
 import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.muc.InvitationListener;
 import org.jivesoftware.smackx.muc.MultiUserChat;
+import org.jivesoftware.smackx.muc.MultiUserChatConstants;
 import org.jivesoftware.smackx.muc.MultiUserChatManager;
 import org.jivesoftware.smackx.muc.packet.MUCUser;
 import org.jivesoftware.spark.ChatManager;
@@ -49,6 +50,7 @@ import org.jxmpp.jid.DomainBareJid;
 import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.EntityJid;
 import org.jxmpp.jid.Jid;
+import org.jxmpp.jid.impl.JidCreate;
 import org.jxmpp.jid.parts.Localpart;
 
 import javax.swing.*;
@@ -62,73 +64,64 @@ import java.util.List;
 import java.util.TimerTask;
 
 /**
- * Conference plugin is reponsible for the initial loading of MultiUser Chat support. To disable plugin,
- * you can remove from the plugins.xml file located in the classpath of Communicator.
+ * Conference plugin is responsible for the initial loading of Multi User Chat support.
  */
 public class ConferenceServices implements InvitationListener {
-    private static final BookmarksUI bookmarksUI = new BookmarksUI(); //This variable shouldn't be null.
+    private static final BookmarksUI bookmarksUI = new BookmarksUI();
+    private final LocalPreferences pref = SettingsManager.getLocalPreferences();
 
-    private static final LocalPreferences _localPreferences = SettingsManager.getLocalPreferences();
     public ConferenceServices() {
-        ServiceDiscoveryManager manager = ServiceDiscoveryManager.getInstanceFor(SparkManager.getConnection());
-        boolean mucSupported = manager.includesFeature("http://jabber.org/protocol/muc");
+        ServiceDiscoveryManager discoManager = SparkManager.getDiscoManager();
+        boolean mucSupported = discoManager.includesFeature(MultiUserChatConstants.NAMESPACE);
+        if (!mucSupported) {
+            Log.warning("Multi User Chat is not supported by this server.");
+            return;
+        }
+        addInvitationListener();
+        addChatRoomListener();
+        addPopupListeners();
 
-        if (mucSupported) {
-            // Add an invitation listener.
-            addInvitationListener();
+        // Add Join Conference Button to ActionMenu
+        final JMenu actionsMenu = SparkManager.getMainWindow().getMenuByName(Res.getString("menuitem.actions"));
+        JMenuItem actionMenuItem = new JMenuItem(Res.getString("message.join.conference.room"), SparkRes.getImageIcon(SparkRes.CONFERENCE_IMAGE_16x16));
+        actionsMenu.add(actionMenuItem, 1);
+        actionMenuItem.addActionListener(e -> {
+            ConferenceRoomBrowser rooms = new ConferenceRoomBrowser(bookmarksUI, getDefaultServiceName());
+            rooms.invoke();
+        });
 
-            addChatRoomListener();
-
-            addPopupListeners();
-
-            // Add Join Conference Button to ActionMenu
-
-              final JMenu actionsMenu = SparkManager.getMainWindow().getMenuByName(Res.getString("menuitem.actions"));
-            JMenuItem actionMenuItem = new JMenuItem(Res.getString("message.join.conference.room"), SparkRes.getImageIcon(SparkRes.CONFERENCE_IMAGE_16x16));
-            actionsMenu.add(actionMenuItem,1);
-            actionMenuItem.addActionListener( e -> {
-                ConferenceRoomBrowser rooms = new ConferenceRoomBrowser(bookmarksUI, getDefaultServiceName());
-                rooms.invoke();
-            } );
-
-            // Add Presence Listener to send directed presence to Group Chat Rooms.
-            PresenceListener presenceListener = presence -> SwingUtilities.invokeLater( () -> {
-                for (ChatRoom room : SparkManager.getChatManager().getChatContainer().getChatRooms()) {
-                    if (room instanceof GroupChatRoom) {
-                        int priority = presence.getPriority();
-                        //Sometimes priority is not set in the presence packet received. Make sure priority is in valid range
-                        priority = (priority < -128 || priority > 128) ? 1 : priority;
-                        final Presence p = StanzaBuilder.buildPresence()
-                            .ofType(presence.getType())
-                            .setStatus(presence.getStatus())
-                            .setPriority(priority)
-                            .setMode(presence.getMode())
-                            .build();
-                        GroupChatRoom groupChatRoom = (GroupChatRoom)room;
-                        EntityBareJid jid = groupChatRoom.getMultiUserChat().getRoom();
-
-                        p.setTo(jid);
-                        try
-                        {
-                            SparkManager.getConnection().sendStanza(p);
-                        }
-                        catch ( SmackException.NotConnectedException | InterruptedException e )
-                        {
-                            Log.warning( "Unable to send stanza to " + p.getTo(), e );
-                        }
+        // Add Presence Listener to send directed presence to Group Chat Rooms.
+        PresenceListener presenceListener = presence -> SwingUtilities.invokeLater(() -> {
+            for (ChatRoom room : SparkManager.getChatManager().getChatContainer().getChatRooms()) {
+                if (room instanceof GroupChatRoom) {
+                    GroupChatRoom groupChatRoom = (GroupChatRoom) room;
+                    EntityBareJid jid = groupChatRoom.getMultiUserChat().getRoom();
+                    int priority = presence.getPriority();
+                    //Sometimes priority is not set in the presence packet received. Make sure priority is in valid range
+                    priority = (priority < -128 || priority > 128) ? 1 : priority;
+                    final Presence p = StanzaBuilder.buildPresence()
+                        .ofType(presence.getType())
+                        .setStatus(presence.getStatus())
+                        .setPriority(priority)
+                        .setMode(presence.getMode())
+                        .to(jid)
+                        .build();
+                    try {
+                        SparkManager.getConnection().sendStanza(p);
+                    } catch (SmackException.NotConnectedException | InterruptedException e) {
+                        Log.warning("Unable to send stanza to " + p.getTo(), e);
                     }
                 }
-            } );
-
-            SparkManager.getSessionManager().addPresenceListener(presenceListener);
-        }
+            }
+        });
+        SparkManager.getSessionManager().addPresenceListener(presenceListener);
     }
 
     /**
      * Adds an invitation listener to check for any MUC invites.
      */
     private void addInvitationListener() {
-        MultiUserChatManager.getInstanceFor( SparkManager.getConnection() ).addInvitationListener( this );
+        SparkManager.getMucManager().addInvitationListener(this);
     }
 
     /**
@@ -142,12 +135,10 @@ public class ConferenceServices implements InvitationListener {
      * Load all bookmarked data.
      */
     public void loadConferenceBookmarks() {
-    	final TimerTask bookmarkLoader = new TimerTask(){
-
-			@Override
-			public void run() {
-				Collection<BookmarkedConference> bc = null;
-
+        final TimerTask bookmarkLoader = new TimerTask() {
+            @Override
+            public void run() {
+                Collection<BookmarkedConference> bc = null;
                 try {
                     while (bc == null) {
                         BookmarkManager manager = BookmarkManager.getBookmarkManager(SparkManager.getConnection());
@@ -158,20 +149,20 @@ public class ConferenceServices implements InvitationListener {
                 }
                 bookmarksUI.loadUI();
                 addBookmarksUI();
-			}
-    		
-    	};
-    	TaskEngine.getInstance().schedule(bookmarkLoader, 500);
+            }
+
+        };
+        TaskEngine.getInstance().schedule(bookmarkLoader, 500);
     }
 
     protected void addBookmarksUI() {
         EventQueue.invokeLater(() -> {
             final Workspace workspace = SparkManager.getWorkspace();
-            final boolean useTab = _localPreferences.isShowConferenceTab();
-
+            final boolean useTab = pref.isShowConferenceTab();
             if (useTab) {
-                workspace.getWorkspacePane().addTab(Res.getString("tab.conferences"),
-                        SparkRes.getImageIcon(SparkRes.CONFERENCE_IMAGE_16x16), bookmarksUI);
+                String title = Res.getString("tab.conferences");
+                ImageIcon icon = SparkRes.getImageIcon(SparkRes.CONFERENCE_IMAGE_16x16);
+                workspace.getWorkspacePane().addTab(title, icon, bookmarksUI);
             }
         });
     }
@@ -180,7 +171,7 @@ public class ConferenceServices implements InvitationListener {
         ChatManager chatManager = SparkManager.getChatManager();
         chatManager.addChatRoomListener(new ChatRoomListener() {
             @Override
-			public void chatRoomOpened(final ChatRoom room) {
+            public void chatRoomOpened(final ChatRoom room) {
                 if (room instanceof ChatRoomImpl) {
                     final ChatRoomDecorator decorator = new ChatRoomDecorator(room);
                     decorator.decorate();
@@ -188,28 +179,23 @@ public class ConferenceServices implements InvitationListener {
             }
 
             @Override
-			public void chatRoomLeft(ChatRoom room) {
-
+            public void chatRoomLeft(ChatRoom room) {
             }
 
             @Override
-			public void chatRoomClosed(ChatRoom room) {
-
+            public void chatRoomClosed(ChatRoom room) {
             }
 
             @Override
-			public void chatRoomActivated(ChatRoom room) {
-
+            public void chatRoomActivated(ChatRoom room) {
             }
 
             @Override
-			public void userHasJoined(ChatRoom room, String userid) {
-
+            public void userHasJoined(ChatRoom room, String userid) {
             }
 
             @Override
-			public void userHasLeft(ChatRoom room, String userid) {
-
+            public void userHasLeft(ChatRoom room, String userid) {
             }
         });
     }
@@ -220,15 +206,7 @@ public class ConferenceServices implements InvitationListener {
     }
 
     public static DomainBareJid getDefaultServiceName() {
-        DomainBareJid serviceName = null;
-        Collection<DomainBareJid> services = bookmarksUI.getMucServices();
-        if (services != null) {
-            for (DomainBareJid service : services) {
-                serviceName = service;
-                break;
-            }
-        }
-        return serviceName;
+        return bookmarksUI.getMucServices() != null ? bookmarksUI.getMucServices().get(0) : null;
     }
 
     private void addPopupListeners() {
@@ -236,25 +214,18 @@ public class ConferenceServices implements InvitationListener {
 
         // Add ContactList items.
         final Action inviteAllAction = new AbstractAction() {
-	    private static final long serialVersionUID = -7486282521151183678L;
-
-	    @Override
-		public void actionPerformed(ActionEvent actionEvent) {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
                 Collection<ContactItem> contacts = contactList.getActiveGroup().getContactItems();
                 startConference(contacts);
-
             }
         };
 
         inviteAllAction.putValue(Action.NAME, Res.getString("menuitem.invite.group.to.conference"));
         inviteAllAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.CONFERENCE_IMAGE_16x16));
-
-
         final Action conferenceAction = new AbstractAction() {
-	    private static final long serialVersionUID = 4724119680969496581L;
-
-	    @Override
-		public void actionPerformed(ActionEvent actionEvent) {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
                 Collection<ContactItem> contacts = contactList.getSelectedUsers();
                 startConference(contacts);
             }
@@ -266,23 +237,21 @@ public class ConferenceServices implements InvitationListener {
 
         contactList.addContextMenuListener(new ContextMenuListener() {
             @Override
-			public void poppingUp(Object component, JPopupMenu popup) {
+            public void poppingUp(Object component, JPopupMenu popup) {
                 Collection<ContactItem> col = contactList.getSelectedUsers();
                 if (component instanceof ContactGroup) {
                     popup.add(inviteAllAction);
-                }
-                else if (component instanceof Collection<?> && col.size() > 0) {
+                } else if (component instanceof Collection<?> && !col.isEmpty()) {
                     popup.add(conferenceAction);
                 }
             }
 
             @Override
-			public void poppingDown(JPopupMenu popup) {
-
+            public void poppingDown(JPopupMenu popup) {
             }
 
             @Override
-			public boolean handleDefaultAction(MouseEvent e) {
+            public boolean handleDefaultAction(MouseEvent e) {
                 return false;
             }
         });
@@ -293,32 +262,31 @@ public class ConferenceServices implements InvitationListener {
     }
 
     private void startConference(Collection<ContactItem> items) {
+        DomainBareJid serviceName = getDefaultServiceName();
+        if (serviceName == null) {
+            return;
+        }
         final ContactList contactList = SparkManager.getWorkspace().getContactList();
-        List<Jid> jids = new ArrayList<>();
+        List<Jid> jids = new ArrayList<>(items.size());
         for (ContactItem item : items) {
             ContactGroup contactGroup = contactList.getContactGroup(item.getGroupName());
             contactGroup.clearSelection();
-
             if (item.isAvailable()) {
                 jids.add(item.getJid());
             }
         }
-
         String userName = SparkManager.getSessionManager().getJID().getLocalpart().toString();
-        final Localpart roomName = Localpart.fromUnescapedOrThrowUnchecked( userName + "_" + StringUtils.randomString(3) );
-        DomainBareJid serviceName = getDefaultServiceName();
-        if (serviceName != null) {
-            ConferenceUtils.inviteUsersToRoom(serviceName, roomName.toString(), jids, true);
-        }
+        final Localpart roomName = Localpart.fromUnescapedOrThrowUnchecked(userName + "_" + StringUtils.randomString(3));
+        EntityBareJid room = JidCreate.entityBareFrom(roomName, serviceName);
+        ConferenceUtils.inviteUsersToRoom(serviceName, room, jids, true);
     }
 
     protected BookmarkedConference getDefaultBookmark() {
         BookmarkedConference bookmarkedConference = null;
         try {
-            Collection<BookmarkedConference> bookmarkedConfs = ConferenceUtils.retrieveBookmarkedConferences();
-            EntityBareJid implicitBookmarkedJID = SettingsManager.getLocalPreferences().getDefaultBookmarkedConf();
+            List<BookmarkedConference> bookmarkedConfs = ConferenceUtils.retrieveBookmarkedConferences();
+            EntityBareJid implicitBookmarkedJID = pref.getDefaultBookmarkedConf();
             if (bookmarkedConfs != null && !bookmarkedConfs.isEmpty()) {
-
                 // check if the "default" bookmarked conference is still in the bookmarks list:
                 if (implicitBookmarkedJID != null) {
                     for (BookmarkedConference bc : bookmarkedConfs) {
@@ -328,25 +296,20 @@ public class ConferenceServices implements InvitationListener {
                         }
                     }
                 }
-                // if no match was found, or no "default" bookmark could be retrieved-use the
-                // first bookmark:
+                // If no match was found, or no "default" bookmark could be retrieved-use the first bookmark:
                 if (bookmarkedConference == null) {
                     bookmarkedConference = bookmarkedConfs.iterator().next();
                 }
             }
             return bookmarkedConference;
         } catch (XMPPException | SmackException | InterruptedException ex) {
-            Log.warning("No default bookmark");
-            // no bookmark can be retrieved;
+            Log.warning("No default bookmark can be retrieved");
         }
         return null;
-
     }
 
     /**
      * Returns the UI for the addition and removal of Conference bookmarks.
-     *
-     * @return the BookedMarkedConferences UI.
      */
     public static BookmarksUI getBookmarkedConferences() {
         return bookmarksUI;
@@ -362,173 +325,146 @@ public class ConferenceServices implements InvitationListener {
         }
 
         public void decorate() {
-
             // Add Conference Invite Button.
             inviteButton = UIComponentRegistry.getButtonFactory().createInviteConferenceButton();
             inviteButton.setToolTipText(Res.getString("title.invite.to.conference"));
-
             chatRoom.addChatRoomButton(inviteButton);
-
             inviteButton.addActionListener(this);
         }
 
-
         @Override
-		public void closing() {
+        public void closing() {
             inviteButton.removeActionListener(this);
             chatRoom.removeClosingListener(this);
         }
 
         @Override
-		public void actionPerformed(ActionEvent e) {
+        public void actionPerformed(ActionEvent e) {
             Localpart userName = SparkManager.getSessionManager().getJID().getLocalpart();
             final String roomName = userName + "_" + StringUtils.randomString(3);
-
-
             final List<EntityBareJid> jids = new ArrayList<>();
-            jids.add(((ChatRoomImpl)chatRoom).getParticipantJID());
-
+            jids.add(((ChatRoomImpl) chatRoom).getParticipantJID());
             final DomainBareJid serviceName = getDefaultServiceName();
-            if (serviceName != null) {
-                SwingWorker worker = new SwingWorker() {
-                    @Override
-					public Object construct() {
-                        try {
-                            Thread.sleep(25);
-                        }
-                        catch (InterruptedException e1) {
-                            Log.error(e1);
-                        }
-                        return "ok";
-                    }
-
-                    @Override
-					public void finished() {
-                        try {
-                            BookmarkedConference selectedBookmarkedConf = _localPreferences.isUseAdHocRoom() ? null : getDefaultBookmark();
-                            if (selectedBookmarkedConf == null) {
-                                ConferenceUtils.createPrivateConference(serviceName,
-                                        Res.getString("message.please.join.in.conference"), roomName, jids);
-                            } else {
-                                ConferenceUtils.joinConferenceOnSeperateThread(selectedBookmarkedConf.getName(),
-                                        selectedBookmarkedConf.getJid(), selectedBookmarkedConf.getNickname(), selectedBookmarkedConf.getPassword(),
-                                        Res.getString("message.please.join.in.conference"), jids);
-                            }
-                        }
-                        catch (SmackException | InterruptedException ex) {
-                        	UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
-                            JOptionPane.showMessageDialog(chatRoom, "An error occurred.", Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
-                        }
-                    }
-                };
-                worker.start();
+            if (serviceName == null) {
+                return;
             }
+            // Creates private conference in background thread
+            SwingWorker worker = new SwingWorker() {
+                @Override
+                public Object construct() {
+                    try {
+                        Thread.sleep(25);
+                    } catch (InterruptedException e1) {
+                        Log.error(e1);
+                    }
+                    return "ok";
+                }
+
+                @Override
+                public void finished() {
+                    try {
+                        BookmarkedConference selectedBookmarkedConf = pref.isUseAdHocRoom() ? null : getDefaultBookmark();
+                        if (selectedBookmarkedConf == null) {
+                            ConferenceUtils.createPrivateConference(serviceName,
+                                Res.getString("message.please.join.in.conference"), roomName, jids);
+                        } else {
+                            ConferenceUtils.joinConferenceOnSeparateThread(selectedBookmarkedConf.getName(),
+                                selectedBookmarkedConf.getJid(), selectedBookmarkedConf.getNickname(), selectedBookmarkedConf.getPassword(),
+                                Res.getString("message.please.join.in.conference"), jids);
+                        }
+                    } catch (SmackException | InterruptedException ex) {
+                        UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
+                        JOptionPane.showMessageDialog(chatRoom, "An error occurred.", Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            };
+            worker.start();
         }
     }
 
     @Override
     public void invitationReceived(final XMPPConnection conn, final MultiUserChat room, final EntityJid inviterEntity, final String reason,
-	    final String password, final Message message, MUCUser.Invite invitation) {
-        EntityBareJid inviter = inviterEntity.asEntityBareJid(); 
-	SwingUtilities.invokeLater( () -> {
-        for (RoomInvitationListener listener : SparkManager.getChatManager().getInvitationListeners()) {
-        boolean handle = listener.handleInvitation(conn, room, inviter, reason, password, message);
-        if (handle) {
-        return;
-        }
-    }
+                                   final String password, final Message message, MUCUser.Invite invitation) {
+        EntityBareJid inviter = inviterEntity.asEntityBareJid();
+        SwingUtilities.invokeLater(() -> {
+            for (RoomInvitationListener listener : SparkManager.getChatManager().getInvitationListeners()) {
+                boolean handle = listener.handleInvitation(conn, room, inviter, reason, password, message);
+                if (handle) {
+                    return;
+                }
+            }
+            // Make sure the user is not already in the room.
+            ChatContainer chatContainer = SparkManager.getChatManager().getChatContainer();
+            try {
+                chatContainer.getChatRoom(room.getRoom());
+                return;
+            } catch (ChatRoomNotFoundException ignored) {
+            }
 
-    // Make sure the user is not already in the
-    // room.
-    try {
-        SparkManager.getChatManager().getChatContainer().getChatRoom(room.getRoom());
-        return;
-    } catch (ChatRoomNotFoundException e) {
-        // Ignore :)
-    }
+            final GroupChatInvitationUI invitationUI = new GroupChatInvitationUI(room.getRoom(), inviter, password, reason);
+            String message1 = Res.getString("message.invite.to.groupchat", inviter);
+            String title = Res.getString("title.group.chat");
+            EntityBareJid bareJID = inviter.asEntityBareJid();
 
-    final GroupChatInvitationUI invitationUI = new GroupChatInvitationUI(room.getRoom(), inviter, password, reason);
-    String message1 = Res.getString("message.invite.to.groupchat", inviter);
-    String title = Res.getString("title.group.chat");
-    EntityBareJid bareJID = inviter.asEntityBareJid();
+            if (pref.isAutoAcceptMucInvite()) {
+                ConferenceUtils.enterRoomOnSameThread(room.getRoom().getLocalpart().toString(), room.getRoom(), password);
+                MultiUserChatManager mucManager = SparkManager.getMucManager();
+                GroupChatRoom chat = UIComponentRegistry.createGroupChatRoom(mucManager.getMultiUserChat(room.getRoom()));
+                showToaster(message1, title, chat);
+                return;
+                // Nothing to do here, we want to join the room, and stuff
+            }
+            try {
+                ChatRoom chatRoom = chatContainer.getChatRoom(bareJID);
+                // If the ChatRoom exists, add an invitationUI.
+                chatRoom.getTranscriptWindow().addComponent(invitationUI);
+                // Notify user of incoming invitation.
+                chatRoom.increaseUnreadMessageCount();
+                chatRoom.scrollToBottom();
+                chatContainer.fireNotifyOnMessage(chatRoom, true, message1, title);
+            } catch (ChatRoomNotFoundException e) {
+                // If it doesn't exist, create a new Group Chat Room
+                final MultiUserChatManager mucManager = SparkManager.getMucManager();
+                final GroupChatRoom groupChatRoom = UIComponentRegistry.createGroupChatRoom(mucManager.getMultiUserChat(room.getRoom()));
+                showToaster(message1, title, groupChatRoom);
 
-    if (_localPreferences.isAutoAcceptMucInvite()) {
-        ConferenceUtils.enterRoomOnSameThread(room.getRoom().getLocalpart().toString(), room.getRoom(), password);
-        MultiUserChatManager manager = MultiUserChatManager.getInstanceFor( SparkManager.getConnection() );
-        GroupChatRoom chat = UIComponentRegistry.createGroupChatRoom(manager.getMultiUserChat( room.getRoom() ));
-
-        showToaster( message1, title, chat);
-        return;
-        // Nothing to do here, we want to join the
-        // room, and stuff
-    }
-    try {
-        ChatRoom chatRoom = SparkManager.getChatManager().getChatContainer().getChatRoom(bareJID);
-
-        // If the ChatRoom exists, add an invitationUI.
-        chatRoom.getTranscriptWindow().addComponent(invitationUI);
-
-        // Notify user of incoming invitation.
-        chatRoom.increaseUnreadMessageCount();
-
-        chatRoom.scrollToBottom();
-
-        SparkManager.getChatManager().getChatContainer()
-            .fireNotifyOnMessage(chatRoom, true, message1, title);
-    } catch (ChatRoomNotFoundException e) {
-        // If it doesn't exists. Create a new Group
-        // Chat Room
-        // Create the Group Chat Room
-        final MultiUserChatManager manager = MultiUserChatManager.getInstanceFor( SparkManager.getConnection() );
-        final GroupChatRoom groupChatRoom = UIComponentRegistry.createGroupChatRoom(manager.getMultiUserChat( room.getRoom() ));
-
-        showToaster( message1, title, groupChatRoom);
-
-        groupChatRoom.getSplitPane().setDividerSize(5);
-        groupChatRoom.getVerticalSlipPane().setDividerLocation(0.6);
-        groupChatRoom.getSplitPane().setDividerLocation(0.6);
-        Localpart roomName = room.getRoom().getLocalpart();
-        groupChatRoom.setTabTitle(roomName);
-        groupChatRoom.getToolBar().setVisible(true);
-        SparkManager.getChatManager().getChatContainer().addChatRoom(groupChatRoom);
-        groupChatRoom.getTranscriptWindow().addComponent(invitationUI);
-        // Notify user of incoming invitation.
-        groupChatRoom.increaseUnreadMessageCount();
-        groupChatRoom.scrollToBottom();
-        SparkManager.getChatManager().getChatContainer().fireNotifyOnMessage(groupChatRoom, true, message1,
-            title);
-
-    }
-    // If no listeners handled the invitation,
-    // default to generic invite.
-    // new ConversationInvitation(conn, room,
-    // inviter, reason, password, message);
-    } );
-
+                groupChatRoom.getSplitPane().setDividerSize(5);
+                groupChatRoom.getVerticalSlipPane().setDividerLocation(0.6);
+                groupChatRoom.getSplitPane().setDividerLocation(0.6);
+                Localpart roomName = room.getRoom().getLocalpart();
+                groupChatRoom.setTabTitle(roomName);
+                groupChatRoom.getToolBar().setVisible(true);
+                chatContainer.addChatRoom(groupChatRoom);
+                groupChatRoom.getTranscriptWindow().addComponent(invitationUI);
+                // Notify user of incoming invitation.
+                groupChatRoom.increaseUnreadMessageCount();
+                groupChatRoom.scrollToBottom();
+                chatContainer.fireNotifyOnMessage(groupChatRoom, true, message1, title);
+            }
+            // If no listeners handled the invitation default to generic invite.
+            // new ConversationInvitation(conn, room, inviter, reason, password, message);
+        });
     }
 
     private void showToaster(String message, String title, GroupChatRoom groupChatRoom) {
-	if (_localPreferences.getShowToasterPopup()) {
-	    SparkToaster toaster = new SparkToaster();
-
-	    toaster.setCustomAction(new AbstractAction() {
-		private static final long serialVersionUID = -4546475740161533555L;
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-		    ChatFrame chatFrame = SparkManager.getChatManager().getChatContainer().getChatFrame();
-		    chatFrame.setState(Frame.NORMAL);
-		    chatFrame.setVisible(true);
-
-		}
-	    });
-	    toaster.setDisplayTime(5000);
-	    toaster.setBorder(BorderFactory.createLineBorder(Color.lightGray, 1, true));
-	    toaster.setToasterHeight(150);
-	    toaster.setToasterWidth(200);
-	    toaster.setTitle(title);
-	    toaster.showToaster(groupChatRoom.getTabIcon(), message);
-	}
+        if (!pref.getShowToasterPopup()) {
+            return;
+        }
+        SparkToaster toaster = new SparkToaster();
+        toaster.setCustomAction(new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ChatFrame chatFrame = SparkManager.getChatManager().getChatContainer().getChatFrame();
+                chatFrame.setState(Frame.NORMAL);
+                chatFrame.setVisible(true);
+            }
+        });
+        toaster.setDisplayTime(5000);
+        toaster.setBorder(BorderFactory.createLineBorder(Color.lightGray, 1, true));
+        toaster.setToasterHeight(150);
+        toaster.setToasterWidth(200);
+        toaster.setTitle(title);
+        toaster.showToaster(groupChatRoom.getTabIcon(), message);
     }
 
 }

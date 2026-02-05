@@ -48,7 +48,6 @@ import java.util.Map;
 
 
 public final class WorkgroupRosterTree extends JPanel {
-	private static final long serialVersionUID = -1159008318665938338L;
 	private final JiveTreeNode rootNode = new JiveTreeNode(FpRes.getString("title.contact.list"));
     private final Tree rosterTree;
     private final Map<JiveTreeNode, EntityBareJid> addressMap = new HashMap<>();
@@ -102,19 +101,16 @@ public final class WorkgroupRosterTree extends JPanel {
     }
 
     private void buildFromRoster() {
-        final Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
+        Roster roster = SparkManager.getRoster();
 
         roster.addRosterListener(new RosterListener() {
             public void entriesAdded(Collection collection) {
-
             }
 
             public void entriesUpdated(Collection collection) {
-
             }
 
             public void entriesDeleted(Collection collection) {
-
             }
 
             public void presenceChanged(Presence presence) {
@@ -163,8 +159,6 @@ public final class WorkgroupRosterTree extends JPanel {
 
     /**
      * Returns the Tree representation of the Roster Tree.
-     *
-     * @return the tree representation of the Roster Tree.
      */
     public Tree getRosterTree() {
         return rosterTree;

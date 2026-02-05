@@ -77,7 +77,7 @@ public final class SessionManager implements ConnectionListener {
         this.userBareAddress = connection.getUser().asEntityBareJid();
 
         // create a workgroup session
-        personalDataManager = PrivateDataManager.getInstanceFor( getConnection() );
+        personalDataManager = PrivateDataManager.getInstanceFor( connection );
 
         // Discover items
         discoverItems();
@@ -89,9 +89,9 @@ public final class SessionManager implements ConnectionListener {
      * Does the initial service discovery.
      */
     private void discoverItems() {
-        ServiceDiscoveryManager disco = ServiceDiscoveryManager.getInstanceFor(SparkManager.getConnection());
+        ServiceDiscoveryManager discoManager = SparkManager.getDiscoManager();
         try {
-            discoverItems = disco.discoverItems(SparkManager.getConnection().getXMPPServiceDomain());
+            discoverItems = discoManager.discoverItems(connection.getXMPPServiceDomain());
         }
         catch (XMPPException | SmackException | InterruptedException e) {
             Log.error(e);
@@ -101,8 +101,6 @@ public final class SessionManager implements ConnectionListener {
 
     /**
      * Returns the XMPPConnection used for this session.
-     *
-     * @return the XMPPConnection used for this session.
      */
     public AbstractXMPPConnection getConnection() {
         return connection;
@@ -112,19 +110,13 @@ public final class SessionManager implements ConnectionListener {
     /**
      * Returns the PrivateDataManager responsible for handling all private data for individual
      * agents.
-     *
-     * @return the PrivateDataManager responsible for handling all private data for individual
-     *         agents.
      */
     public PrivateDataManager getPersonalDataManager() {
         return personalDataManager;
     }
 
-
     /**
      * Returns the host for this connection.
-     *
-     * @return the connection host.
      */
     public DomainBareJid getServerAddress() {
         return serverAddress;
@@ -155,7 +147,6 @@ public final class SessionManager implements ConnectionListener {
             changePresence(presence);
 
             Workspace.getInstance().getStatusBar().setStatusPanelEnabled(false);
-
             Log.debug("Connection closed on error.: " + ex.getMessage());
         } );
     }
@@ -181,8 +172,6 @@ public final class SessionManager implements ConnectionListener {
 
     /**
      * Return the username associated with this session.
-     *
-     * @return the username associated with this session.
      */
     public String getUsername() {
         return XmppStringUtils.unescapeLocalpart(username);
@@ -190,8 +179,6 @@ public final class SessionManager implements ConnectionListener {
 
     /**
      * Return the password associated with this session.
-     *
-     * @return the password associated with this session.
      */
     public String getPassword() {
         return password;
@@ -209,11 +196,11 @@ public final class SessionManager implements ConnectionListener {
         }
 
         // Do NOT send presence if disconnected.
-        if (SparkManager.getConnection().isConnected()) {
+        if (connection.isConnected()) {
             // Send Presence Packet
             try
             {
-                SparkManager.getConnection().sendStanza(presence);
+                connection.sendStanza(presence);
             }
             catch ( SmackException.NotConnectedException | InterruptedException e )
             {
@@ -270,9 +257,7 @@ public final class SessionManager implements ConnectionListener {
     }
 
     /**
-     * Returns the Discovered Items.
-     *
-     * @return the discovered items found on startup.
+     * Returns the Discovered Items found on startup.
      */
     public DiscoverItems getDiscoveredItems() {
         return discoverItems;

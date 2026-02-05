@@ -68,7 +68,7 @@ public class RosterPickList extends JPanel {
         final List<ContactItem> userList = new ArrayList<>();
 
         // Populate Invite Panel with Available users.
-        final Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
+        final Roster roster = SparkManager.getRoster();
         for (RosterEntry entry : roster.getEntries()) {
             Presence presence = PresenceManager.getPresence(entry.getJid());
             if (presence.isAvailable()) {

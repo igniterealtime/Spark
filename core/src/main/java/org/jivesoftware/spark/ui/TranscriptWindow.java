@@ -94,8 +94,6 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener
 
         getActionMap().put( "copy", new AbstractAction( "copy" )
         {
-            private static final long serialVersionUID = 1797491846835591379L;
-
             @Override
 			public void actionPerformed( ActionEvent evt )
             {
@@ -421,7 +419,7 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener
 
                     final String body = message.getBody();
 
-                    final JivePropertiesExtension extension = ( (JivePropertiesExtension) message.getExtension( JivePropertiesExtension.NAMESPACE ) );
+                    final JivePropertiesExtension extension = message.getExtension(JivePropertiesExtension.class);
                     Date insertionDate = null;
                     if ( extension != null )
                     {

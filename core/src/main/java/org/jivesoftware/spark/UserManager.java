@@ -73,8 +73,9 @@ import java.util.TimerTask;
 import static org.jivesoftware.spark.ui.ContactItem.CONTACT_ITEM_COMPARATOR;
 
 /**
- * Handles all users in the agent application. Each user or chatting user can be referenced from the User
- * Manager. You would use the UserManager to get visitors in a chat room or secondary agents.
+ * Handles all users in the agent application.
+ * Each user or chatting user can be referenced from the User Manager.
+ * You would use the UserManager to get visitors in a chat room or secondary agents.
  */
 public class UserManager {
 
@@ -169,8 +170,6 @@ public class UserManager {
     /**
      * Checks if the Occupant is a Member in this Room<br>
      * <b>admins and owners are also members!!!</b>
-     * @param occupant
-     * @return true if member, else false
      */
     public boolean isMember(Occupant occupant)
     {
@@ -284,6 +283,9 @@ public class UserManager {
         return new ArrayList<>();
     }
 
+    /**
+     * Resolves display name from contact list or JID
+     */
     public String getUserNicknameFromJID(BareJid jid) {
         ContactList contactList = SparkManager.getWorkspace().getContactList();
         ContactItem item = contactList.getContactItemByJID(jid);
@@ -300,7 +302,7 @@ public class UserManager {
 
     /**
      * Escapes a complete JID by examing the Node itself and escaping
-     * when neccessary.
+     * when necessary.
      *
      * @param jid the users JID
      * @return the escaped JID.
@@ -381,6 +383,7 @@ public class UserManager {
 
 
     public void searchContacts(String contact, final JFrame parent) {
+        // Caches parent glass pane for later restoration
         if (parents.get(parent) == null && parent.getGlassPane() !=null) {
         	parents.put(parent, parent.getGlassPane());
         }

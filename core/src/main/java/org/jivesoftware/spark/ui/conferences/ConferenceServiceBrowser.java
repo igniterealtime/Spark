@@ -145,7 +145,7 @@ public class ConferenceServiceBrowser {
     public Collection<String> getConferenceServices(String serverString) throws Exception {
         Jid server = JidCreate.from(serverString);
         List<String> answer = new ArrayList<>();
-        ServiceDiscoveryManager discoManager = ServiceDiscoveryManager.getInstanceFor(SparkManager.getConnection());
+        ServiceDiscoveryManager discoManager = SparkManager.getDiscoManager();
         DiscoverItems items = discoManager.discoverItems(server);
         for (DiscoverItems.Item item : items.getItems() ) {
             if (item.getEntityID().toString().startsWith("conference") || item.getEntityID().toString().startsWith("private")) {

@@ -63,6 +63,8 @@ import org.jxmpp.jid.Jid;
 import org.jxmpp.jid.util.JidUtil;
 import org.jxmpp.util.XmppStringUtils;
 
+import static org.jivesoftware.smackx.muc.MucConfigFormManager.MUC_ROOMCONFIG_ROOMOWNERS;
+
 public class InvitationPane {
 
     private Map<String, List<String>> metadata = null;
@@ -205,7 +207,8 @@ public class InvitationPane {
             chatRoom = chatManager.getGroupChat(room);
         }
         catch (ChatNotFoundException e) {
-            MultiUserChat chat = MultiUserChatManager.getInstanceFor( SparkManager.getConnection() ).getMultiUserChat( room );
+            MultiUserChatManager mucManager = SparkManager.getMucManager();
+            MultiUserChat chat = mucManager.getMultiUserChat(room);
             chatRoom = new GroupChatRoom(chat);
         }
 
@@ -229,11 +232,12 @@ public class InvitationPane {
 
             try
             {
-                MultiUserChatManager.getInstanceFor( SparkManager.getConnection() ).decline( room, inviter, "No thank you" );
+                MultiUserChatManager mucManager = SparkManager.getMucManager();
+                mucManager.decline( room, inviter, "No thank you" );
             }
             catch ( SmackException.NotConnectedException | InterruptedException e )
             {
-                Log.warning( "Unable to deline invatation from " + inviter + " to join room " + room, e );
+                Log.warning( "Unable to decline invitation from " + inviter + " to join room " + room, e );
             }
         });
 
@@ -274,7 +278,7 @@ public class InvitationPane {
                     FillableForm form = muc.getConfigurationForm().getFillableForm();
                     List<String> jidStrings = new ArrayList<>(list.size());
                     JidUtil.toStrings(list, jidStrings);
-                    form.setAnswer("muc#roomconfig_roomowners", jidStrings);
+                    form.setAnswer(MUC_ROOMCONFIG_ROOMOWNERS, jidStrings);
 
                     // new DataFormDialog(groupChat, form);
                     muc.sendConfigurationForm(form);

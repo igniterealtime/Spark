@@ -121,8 +121,9 @@ public class OTRPrefPanel extends JPanel {
     }
 
     private void loadRemoteKeys() {
+        Roster roster = SparkManager.getRoster();
 
-        for (RosterEntry entry : Roster.getInstanceFor( SparkManager.getConnection() ).getEntries()) {
+        for (RosterEntry entry : roster.getEntries()) {
             SessionID curSession = new SessionID(SparkManager.getConnection().getUser(), entry.getUser(), "Scytale");
             String remoteKey = _keyManager.getRemoteFingerprint(curSession);
             if (remoteKey != null) {

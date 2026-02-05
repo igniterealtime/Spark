@@ -28,7 +28,7 @@ public final class RoarPopupHelper {
             nickname = message.getFrom().getResourceOrEmpty().toString();
         }
 
-        final JivePropertiesExtension extension = ((JivePropertiesExtension) message.getExtension( JivePropertiesExtension.NAMESPACE ));
+        final JivePropertiesExtension extension = message.getExtension(JivePropertiesExtension.class);
         final boolean broadcast = extension != null && extension.getProperty( "broadcast" ) != null;
 
         if ((broadcast || message.getType() == Message.Type.normal || message.getType() == Message.Type.headline)

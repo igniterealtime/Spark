@@ -69,20 +69,20 @@ public class JinglePlugin implements Plugin, Phone, ConnectionListener {
     private boolean readyToConnect = false;
     private final Map<String, Boolean> jingleFeature = new HashMap<>();
     private boolean fallbackStunEnabled = false;
+    private final LocalPreferences pref = SettingsManager.getLocalPreferences();
 
     @Override
     public void initialize() {
         // Add Jingle to a discovered items list.
         SparkManager.addFeature(JINGLE_NAMESPACE);
-        final LocalPreferences localPref = SettingsManager.getLocalPreferences();
 
         //If there is a server entered in spark.properties use it as fallback
-        if (!localPref.getStunFallbackHost().isEmpty()) {
+        if (!pref.getStunFallbackHost().isEmpty()) {
             fallbackStunEnabled = true;
         }
 
         // Get the default port
-        stunPort = localPref.getStunFallbackPort();
+        stunPort = pref.getStunFallbackPort();
 
         // Set Jingle Enabled
         JingleManager.setJingleServiceEnabled();
@@ -98,7 +98,7 @@ public class JinglePlugin implements Plugin, Phone, ConnectionListener {
             @Override
             public Object construct() {
                 if (fallbackStunEnabled) {
-                    stunServer = localPref.getStunFallbackHost();
+                    stunServer = pref.getStunFallbackHost();
                     readyToConnect = true;
                 }
 
@@ -179,7 +179,7 @@ public class JinglePlugin implements Plugin, Phone, ConnectionListener {
         if (supportsJingle == null) {
             // Disco for event.
             // Obtain the ServiceDiscoveryManager associated with my XMPPConnection
-            ServiceDiscoveryManager discoManager = ServiceDiscoveryManager.getInstanceFor(SparkManager.getConnection());
+            ServiceDiscoveryManager discoManager = SparkManager.getDiscoManager();
 
             EntityFullJid fullJID = PresenceManager.getFullyQualifiedJID(jid);
 
