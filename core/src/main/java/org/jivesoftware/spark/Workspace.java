@@ -183,8 +183,6 @@ public class Workspace extends JPanel implements StanzaListener {
 
         this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("F12"), "showDebugger");
         this.getActionMap().put("showDebugger", new AbstractAction("showDebugger") {
-			private static final long serialVersionUID = 4066886679016416923L;
-
 			@Override
 			public void actionPerformed(ActionEvent evt) {
                 EnhancedDebuggerWindow window = EnhancedDebuggerWindow.getInstance();
@@ -229,7 +227,7 @@ public class Workspace extends JPanel implements StanzaListener {
         // Make presence available to anonymous requests, if from anonymous user in the system.
         StanzaListener workspacePresenceListener = stanza -> {
             Presence presence = (Presence)stanza;
-            JivePropertiesExtension extension = (JivePropertiesExtension) presence.getExtension( JivePropertiesExtension.NAMESPACE );
+            JivePropertiesExtension extension = presence.getExtension(JivePropertiesExtension.class);
             if (extension != null && extension.getProperty("anonymous") != null) {
                 boolean isAvailable = statusBox.getPresence().getMode() == Presence.Mode.available;
                 Presence reply = StanzaBuilder.buildPresence()
@@ -285,7 +283,7 @@ public class Workspace extends JPanel implements StanzaListener {
                 pluginManager.initializePlugins();
                 // Subscriptions are always manual
                 Log.debug("Set roster mode");
-                Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
+                Roster roster = SparkManager.getRoster();
                 roster.setSubscriptionMode(Roster.SubscriptionMode.manual);
             }
         }, 2000);
@@ -336,7 +334,7 @@ public class Workspace extends JPanel implements StanzaListener {
             }
 
             final String body = message.getBody();
-            final JivePropertiesExtension extension = ((JivePropertiesExtension) message.getExtension( JivePropertiesExtension.NAMESPACE ));
+            final JivePropertiesExtension extension = message.getExtension( JivePropertiesExtension.class );
             final boolean broadcast = extension != null && extension.getProperty( "broadcast" ) != null;
 
             // Handle offline message.

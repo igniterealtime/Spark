@@ -27,6 +27,7 @@ import org.jivesoftware.smack.xml.XmlPullParserException;
 import org.jivesoftware.smackx.iqprivate.PrivateDataManager;
 import org.jivesoftware.smackx.iqprivate.packet.PrivateData;
 import org.jivesoftware.smackx.iqprivate.provider.PrivateDataProvider;
+import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
 import org.jxmpp.JxmppContext;
@@ -38,12 +39,8 @@ public class Tasks implements PrivateData {
 
     private List<Task> tasks = new ArrayList<>();
 
-    /**
-     * Required Empty Constructor to use Tasks.
-     */
     public Tasks() {
     }
-
 
     public List<Task> getTasks() {
         return tasks;
@@ -52,38 +49,32 @@ public class Tasks implements PrivateData {
     public void setTasks(List<Task> tasks) {
         this.tasks = tasks;
     }
-    
+
     public void addTask(Task task) {
         tasks.add(task);
     }
 
     /**
      * Returns the root element name.
-     *
-     * @return the element name.
      */
     @Override
-	public String getElementName() {
+    public String getElementName() {
         return "scratchpad";
     }
-    
+
     /**
      * Returns the root element XML namespace.
-     *
-     * @return the namespace.
      */
     @Override
-	public String getNamespace() {
+    public String getNamespace() {
         return "scratchpad:tasks";
     }
 
     /**
-     * Returns the XML reppresentation of the PrivateData.
-     *
-     * @return the private data as XML.
+     * Returns the XML representation of the PrivateData.
      */
     @Override
-	public String toXML() {
+    public String toXML() {
         StringBuilder buf = new StringBuilder();
         buf.append("<scratchpad xmlns=\"scratchpad:tasks\">");
         buf.append("<tasks showAll=\"").append(ScratchPadPlugin.SHOW_ALL_TASKS).append("\">");
@@ -107,21 +98,16 @@ public class Tasks implements PrivateData {
 
     /**
      * The IQ Provider for Tasks
-     *
-     * @author Derek DeMoro
      */
     public static class Provider implements PrivateDataProvider {
         private final Tasks tasks = new Tasks();
 
-        /**
-         * Empty Constructor for PrivateDataProvider.
-         */
         public Provider() {
             super();
         }
 
         @Override
-		public PrivateData parsePrivateData(XmlPullParser parser, JxmppContext jxmppContext) throws XmlPullParserException, IOException {
+        public PrivateData parsePrivateData(XmlPullParser parser, JxmppContext jxmppContext) throws XmlPullParserException, IOException {
             boolean done = false;
             while (!done) {
                 XmlPullParser.Event eventType = parser.next();
@@ -132,8 +118,7 @@ public class Tasks implements PrivateData {
 
                 if (eventType == XmlPullParser.Event.START_ELEMENT && "task".equals(parser.getName())) {
                     tasks.addTask(getTask(parser));
-                }
-                else if (eventType == XmlPullParser.Event.END_ELEMENT) {
+                } else if (eventType == XmlPullParser.Event.END_ELEMENT) {
                     if ("scratchpad".equals(parser.getName())) {
                         done = true;
                     }
@@ -169,9 +154,7 @@ public class Tasks implements PrivateData {
                 if (ModelUtil.hasLength(completed)) {
                     task.setCompleted(Boolean.parseBoolean(completed));
                 }
-            }
-
-            else if (eventType == XmlPullParser.Event.END_ELEMENT) {
+            } else if (eventType == XmlPullParser.Event.END_ELEMENT) {
                 if ("task".equals(parser.getName())) {
                     done = true;
                 }
@@ -183,13 +166,12 @@ public class Tasks implements PrivateData {
 
 
     public static void saveTasks(Tasks tasks, XMPPConnection con) {
-        PrivateDataManager manager = PrivateDataManager.getInstanceFor( con );
+        PrivateDataManager manager = SparkManager.getSessionManager().getPersonalDataManager();
 
         PrivateDataManager.addPrivateDataProvider("scratchpad", "scratchpad:tasks", new Tasks.Provider());
         try {
             manager.setPrivateData(tasks);
-        }
-        catch (XMPPException | SmackException | InterruptedException e) {
+        } catch (XMPPException | SmackException | InterruptedException e) {
             Log.error(e);
         }
     }
@@ -198,45 +180,40 @@ public class Tasks implements PrivateData {
         PrivateDataManager.addPrivateDataProvider("scratchpad", "scratchpad:tasks", new Tasks.Provider());
     }
 
-    public static Tasks getTaskList(XMPPConnection con) {
-        PrivateDataManager manager = PrivateDataManager.getInstanceFor( con );
+    public static Tasks getTaskList() {
+        PrivateDataManager manager = SparkManager.getSessionManager().getPersonalDataManager();
 
         Tasks tasks = null;
         try {
-            tasks = (Tasks)manager.getPrivateData("scratchpad", "scratchpad:tasks");
-        }
-        catch (XMPPException | SmackException | InterruptedException e) {
+            tasks = (Tasks) manager.getPrivateData("scratchpad", "scratchpad:tasks");
+        } catch (XMPPException | SmackException | InterruptedException e) {
             Log.error(e);
         }
 
         return tasks;
     }
-    
+
     /**
      * Delete task
-     * 
-     * @param task : task to delete
      */
     public static void deleteTask(Task task) {
-    	
-    	List<TaskUI> taskList = ScratchPadPlugin.getTaskList();
-    	
-    	// find and delete task in list
-    	for ( int i = 0; i < taskList.size(); i++ ) {
+        List<TaskUI> taskList = ScratchPadPlugin.getTaskList();
+        // find and delete task in list
+        for (int i = 0; i < taskList.size(); i++) {
             Task t = taskList.get(i).getTask();
-            if ( t == task ) {
-            	taskList.remove(i);
-            	break;
+            if (t == task) {
+                taskList.remove(i);
+                break;
             }
         }
-    	
-    	// save Tasks
-    	Tasks tasks = new Tasks();
+
+        // save Tasks
+        Tasks tasks = new Tasks();
         for (TaskUI ui : taskList) {
-            Task nTask = ui.getTask();            
+            Task nTask = ui.getTask();
             tasks.addTask(nTask);
         }
-        
+
         // update GUI
         ScratchPadPlugin.updateTaskUI(tasks);
     }

@@ -163,7 +163,7 @@ public class SubscriptionDialog {
     {
         this.jid = jid;
 
-        final Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
+        final Roster roster = SparkManager.getRoster();
 
         // If User is already in roster, do not show.
         RosterEntry entry = roster.getEntry(jid);
@@ -341,7 +341,7 @@ public class SubscriptionDialog {
     public RosterEntry addEntry(BareJid jid, String nickname, String group) {
         String[] groups = {group};
 
-        Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
+        Roster roster = SparkManager.getRoster();
         RosterEntry userEntry = roster.getEntry(jid);
 
         boolean isSubscribed = true;

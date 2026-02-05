@@ -235,9 +235,9 @@ public final class CurrentActivity extends JPanel {
 						public void actionPerformed(ActionEvent actionEvent) {
                             // Get Conference
                             try {
-                                final MultiUserChatManager multiUserChatManager = MultiUserChatManager.getInstanceFor( SparkManager.getConnection() );
+                                final MultiUserChatManager multiUserChatManager = SparkManager.getMucManager();
                                 List<DomainBareJid> col = multiUserChatManager.getMucServiceDomains();
-                                if (col.size() == 0) {
+                                if (col.isEmpty()) {
                                     return;
                                 }
 
@@ -295,16 +295,16 @@ public final class CurrentActivity extends JPanel {
                             // Make user an owner.
                             try {
                                 FastpathPlugin.getAgentSession().makeRoomOwner(SparkManager.getConnection(), sessionID);
-                                MultiUserChatManager manager = MultiUserChatManager.getInstanceFor( SparkManager.getConnection() );
-                                List<DomainBareJid> col = manager.getMucServiceDomains();
-                                if (col.size() == 0) {
+                                MultiUserChatManager mucManager = SparkManager.getMucManager();
+                                List<DomainBareJid> col = mucManager.getMucServiceDomains();
+                                if (col.isEmpty()) {
                                     return;
                                 }
 
                                 DomainBareJid serviceName = col.iterator().next();
                                 EntityBareJid roomName = JidCreate.entityBareFromOrThrowUnchecked(sessionID + "@" + serviceName);
 
-                                MultiUserChat muc = manager.getMultiUserChat( roomName );
+                                MultiUserChat muc = mucManager.getMultiUserChat( roomName );
 
                                 ConferenceUtils.enterRoomOnSameThread(roomName, roomName, null);
                             }

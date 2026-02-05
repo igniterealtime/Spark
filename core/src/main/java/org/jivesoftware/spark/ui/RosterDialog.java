@@ -307,7 +307,7 @@ public class RosterDialog implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
         String group = JOptionPane.showInputDialog(dialog, Res.getString("label.enter.group.name") + ":", Res.getString("title.new.roster.group"), JOptionPane.QUESTION_MESSAGE);
         if (group != null && !group.isEmpty() && !groupModel.contains(group)) {
-            Roster.getInstanceFor( SparkManager.getConnection() ).createGroup(group);
+            SparkManager.getRoster().createGroup(group);
             groupModel.add(group);
             int size = groupModel.size();
             groupBox.setSelectedIndex(size - 1);
@@ -547,7 +547,7 @@ public class RosterDialog implements ActionListener {
     public RosterEntry addEntry(BareJid jid, String nickname, String group) {
         String[] groups = {group};
 
-        Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
+        Roster roster = SparkManager.getRoster();
         RosterEntry userEntry = roster.getEntry(jid);
 
         boolean isSubscribed = true;

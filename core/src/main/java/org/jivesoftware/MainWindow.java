@@ -54,13 +54,10 @@ import java.util.concurrent.CopyOnWriteArrayList;
 /**
  * The <code>MainWindow</code> class acts as both the DockableHolder and the proxy
  * to the Workspace in Spark.
- *
- * @version 1.0, 03/12/14
  */
 public final class MainWindow extends ChatFrame implements ActionListener {
-	private static final long serialVersionUID = -6062104959613603510L;
-
 	private final CopyOnWriteArrayList<MainWindowListener> listeners = new CopyOnWriteArrayList<>();
+    private final LocalPreferences pref = SettingsManager.getLocalPreferences();
 
     private final JMenu connectMenu = new JMenu();
     private final JMenu contactsMenu = new JMenu();
@@ -77,13 +74,9 @@ public final class MainWindow extends ChatFrame implements ActionListener {
     private final JMenuBar mainWindowBar = new JMenuBar();
 
     private boolean focused;
-
     private final JToolBar topToolbar = new JToolBar();
-
     private JSplitPane splitPane;
-
     private JEditorPane aboutBoxPane;
-
     private static MainWindow singleton;
 
     /**
@@ -271,7 +264,7 @@ public final class MainWindow extends ChatFrame implements ActionListener {
 	        // Notify all MainWindowListeners
 	        try {
 	            // Set auto-login to false;
-	            SettingsManager.getLocalPreferences().setAutoLogin(false);
+	            pref.setAutoLogin(false);
 	            SettingsManager.saveSettings();
 
 	            fireWindowShutdown();
@@ -451,19 +444,19 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         alwaysOnTopItem = new JCheckBoxMenuItem();
         ResourceUtils.resButton(alwaysOnTopItem, Res.getString("menuitem.always.on.top"));
         alwaysOnTopItem.addActionListener( actionEvent -> {
-        	SettingsManager.getLocalPreferences().setMainWindowAlwaysOnTop(alwaysOnTopItem.isSelected());
+        	pref.setMainWindowAlwaysOnTop(alwaysOnTopItem.isSelected());
         	MainWindow.getInstance().setAlwaysOnTop(alwaysOnTopItem.isSelected());
         } );
 
-        alwaysOnTopItem.setSelected(SettingsManager.getLocalPreferences().isMainWindowAlwaysOnTop());
-        this.setAlwaysOnTop(SettingsManager.getLocalPreferences().isMainWindowAlwaysOnTop());
+        alwaysOnTopItem.setSelected(pref.isMainWindowAlwaysOnTop());
+        this.setAlwaysOnTop(pref.isMainWindowAlwaysOnTop());
 
         connectMenu.add(alwaysOnTopItem);
 
         // Set up the Logout and Exit menus...
         if (!Default.getBoolean(Default.DISABLE_EXIT) && Enterprise.containsFeature(Enterprise.LOGOUT_EXIT_FEATURE)) {
         	connectMenu.addSeparator();
-        	if(!Default.getBoolean(Default.HIDE_SAVE_PASSWORD_AND_AUTO_LOGIN) && SettingsManager.getLocalPreferences().getPswdAutologin()) {
+        	if(!Default.getBoolean(Default.HIDE_SAVE_PASSWORD_AND_AUTO_LOGIN) && pref.getPswdAutologin()) {
         		JMenuItem logoutMenuItem = new JMenuItem();
         		ResourceUtils.resButton(logoutMenuItem, Res.getString("menuitem.logout.no.status"));
         		logoutMenuItem.addActionListener( e -> logout(false) );
@@ -542,7 +535,7 @@ public final class MainWindow extends ChatFrame implements ActionListener {
 	ResourceUtils.resButton(helpMenu, Res.getString("menuitem.help"));
 	ResourceUtils.resButton(menuAbout, Res.getString("menuitem.about"));
 
-	if (Default.getString(Default.HELP_FORUM_TEXT).length() > 0) {
+	if (!Default.getString(Default.HELP_FORUM_TEXT).isEmpty()) {
 	    ResourceUtils.resButton(sparkforumItem, Default.getString(Default.HELP_FORUM_TEXT));
 	} else {
 	    ResourceUtils.resButton(sparkforumItem, Res.getString("menuitem.online.help"));
@@ -594,7 +587,7 @@ public final class MainWindow extends ChatFrame implements ActionListener {
 		TaskEngine.getInstance().schedule(task, 60000);
 	}
 
-	if(SettingsManager.getLocalPreferences().isDebuggerEnabled())
+	if(pref.isDebuggerEnabled())
 	{
 	    JMenuItem rawPackets = new JMenuItem(SparkRes.getImageIcon(SparkRes.TRAY_IMAGE));
 	    rawPackets.setText("Send Packets");
@@ -904,8 +897,7 @@ public final class MainWindow extends ChatFrame implements ActionListener {
      * @return true if the window is docked.
      */
     public boolean isDocked() {
-        LocalPreferences preferences = SettingsManager.getLocalPreferences();
-        return preferences.isDockingEnabled();
+        return pref.isDockingEnabled();
     }
 
     /**

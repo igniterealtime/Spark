@@ -122,7 +122,7 @@ public class PresenceManager {
      * @return true if online.
      */
     public static boolean isOnline(BareJid jid) {
-        final Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
+        Roster roster = SparkManager.getRoster();
         Presence presence = roster.getPresence(jid);
         return presence.isAvailable();
     }
@@ -134,7 +134,7 @@ public class PresenceManager {
      * @return true if the user is online and available.
      */
     public static boolean isAvailable(BareJid jid) {
-        final Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
+        Roster roster = SparkManager.getRoster();
         Presence presence = roster.getPresence(jid);
         return presence.isAvailable() && !presence.isAway();
     }
@@ -159,7 +159,7 @@ public class PresenceManager {
         if (jid.equals(SparkManager.getSessionManager().getUserBareAddress())) {
             return SparkManager.getWorkspace().getStatusBar().getPresence();
         } else {
-            final Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
+            Roster roster = SparkManager.getRoster();
             return roster.getPresence(jid);
         }
     }
@@ -171,7 +171,7 @@ public class PresenceManager {
      * @return the fully qualified JID of a user (ex. derek@jivesoftware.com --> derek@jivesoftware.com/spark) or {@code null}.
      */
     public static EntityFullJid getFullyQualifiedJID(BareJid jid) {
-        final Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
+        Roster roster = SparkManager.getRoster();
         Presence presence = roster.getPresence(jid);
         Jid result = presence.getFrom();
         return result.asEntityFullJidIfPossible();

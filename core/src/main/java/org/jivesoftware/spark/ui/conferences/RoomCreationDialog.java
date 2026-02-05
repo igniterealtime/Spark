@@ -21,6 +21,7 @@ import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.muc.MultiUserChatManager;
+import org.jivesoftware.smackx.muc.RoomInfo;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.TitlePanel;
 import org.jivesoftware.spark.util.ModelUtil;
@@ -29,7 +30,6 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jxmpp.jid.DomainBareJid;
 import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.impl.JidCreate;
-import org.jxmpp.stringprep.XmppStringprepException;
 
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
@@ -51,7 +51,6 @@ import java.beans.PropertyChangeListener;
 import static java.awt.GridBagConstraints.*;
 
 public class RoomCreationDialog extends JPanel {
-    private static final long serialVersionUID = -8391698290385575601L;
     private final GridBagLayout gridBagLayout1 = new GridBagLayout();
     private final JLabel nameLabel = new JLabel();
     private final JTextField nameField = new JTextField();
@@ -157,27 +156,25 @@ public class RoomCreationDialog extends JPanel {
                 if (Res.getString("close").equals(value)) {
                     dlg.setVisible(false);
                 } else if (Res.getString("create").equals(value)) {
+                    MultiUserChatManager mucManager = SparkManager.getMucManager();
                     boolean isValid = validatePanel();
                     if (isValid) {
                         String roomJidString = nameField.getText().replaceAll(" ", "_") + "@" + serviceName;
-                        EntityBareJid room;
+//                        EntityBareJid newRoomJid = JidCreate.entityBareFromUnescapedOrNull(roomJidString);
+                        EntityBareJid newRoomJid = JidCreate.entityBareFromOrThrowUnchecked(roomJidString);
                         try {
-                            room = JidCreate.entityBareFrom(roomJidString);
-                        } catch (XmppStringprepException ex) {
-                            throw new IllegalStateException(ex);
-                        }
-                        try {
-                            MultiUserChatManager.getInstanceFor(SparkManager.getConnection()).getRoomInfo(room);
+                            RoomInfo roomInfo = mucManager.getRoomInfo(newRoomJid);
                             //JOptionPane.showMessageDialog(dlg, "Room already exists. Please specify a unique room name.", "Room Exists", JOptionPane.ERROR_MESSAGE);
                             //pane.setValue(JOptionPane.UNINITIALIZED_VALUE);
                             pane.removePropertyChangeListener(this);
                             dlg.setVisible(false);
-                            ConferenceUtils.joinConferenceRoom(room.toString(), room);
+                            ConferenceUtils.joinConferenceRoom(roomInfo, newRoomJid);
                             return;
                         } catch (XMPPException | SmackException | InterruptedException ignored) {
                         }
 
-                        groupChat = createGroupChat(nameField.getText(), serviceName);
+                        // Create a group chat with valid information
+                        groupChat = mucManager.getMultiUserChat(newRoomJid);
                         if (groupChat == null) {
                             showError("Could not join chat " + nameField.getText());
                             pane.setValue(JOptionPane.UNINITIALIZED_VALUE);
@@ -233,13 +230,6 @@ public class RoomCreationDialog extends JPanel {
             }
         }
         return true;
-    }
-
-    private MultiUserChat createGroupChat(String roomName, DomainBareJid serviceName) {
-        String roomString = roomName.replaceAll(" ", "_") + "@" + serviceName;
-        EntityBareJid room = JidCreate.entityBareFromOrThrowUnchecked(roomString);
-        // Create a group chat with valid information
-        return MultiUserChatManager.getInstanceFor(SparkManager.getConnection()).getMultiUserChat(room);
     }
 
     private void showError(String errorMessage) {

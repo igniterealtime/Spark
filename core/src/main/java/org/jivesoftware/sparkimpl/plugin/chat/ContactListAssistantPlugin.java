@@ -287,7 +287,7 @@ public class ContactListAssistantPlugin implements Plugin {
         SwingWorker worker = new SwingWorker() {
             @Override
             public Object construct() {
-                Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
+                Roster roster = SparkManager.getRoster();
                 RosterEntry entry = roster.getEntry(item.getJid().asBareJid());
 
                 RosterGroup groupFound = null;
@@ -358,7 +358,7 @@ public class ContactListAssistantPlugin implements Plugin {
         }
 
         // Remove entry from Roster Group
-        Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
+        Roster roster = SparkManager.getRoster();
         RosterEntry entry = roster.getEntry(item.getJid().asBareJid());
 
         RosterGroup rosterGroup = null;

@@ -21,65 +21,63 @@ import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ChatRoomListener;
 import org.jivesoftware.spark.ui.rooms.GroupChatRoom;
 import org.jxmpp.jid.Jid;
+
 /**
- * This listener is notified for every group chat room. The affected chat room
- * is sent as parameter in every method. Keeping such listener tied to a group chat room instance
+ * This listener is notified for every group chat room.
+ * The affected chat room is sent as parameter in every method.
+ * Keeping such listener tied to a group chat room instance
  * is wrong because all listeners will be notified when someone joins a particular chat room for example
  */
 public class GroupChatRoomListener implements ChatRoomListener {
     @Override
-	public void chatRoomOpened(ChatRoom room) {
-		if (!(room instanceof GroupChatRoom)) {
-			return;
-		}
-		GroupChatRoom groupChatRoom = (GroupChatRoom)room;
-		MultiUserChat chat = groupChatRoom.getMultiUserChat();
-		chat.addUserStatusListener(new UserStatusListener() {
-		});
-	}
+    public void chatRoomOpened(ChatRoom room) {
+        if (!(room instanceof GroupChatRoom)) {
+            return;
+        }
+        GroupChatRoom groupChatRoom = (GroupChatRoom) room;
+        MultiUserChat chat = groupChatRoom.getMultiUserChat();
+        chat.addUserStatusListener(new UserStatusListener() {
+        });
+    }
 
     @Override
-	public void chatRoomLeft(ChatRoom room) {
-		if (!(room instanceof GroupChatRoom)) {
-			return;
-		}
-		GroupChatRoom groupChatRoom = (GroupChatRoom)room;
-		groupChatRoom.getConferenceRoomInfo().getAgentInfoPanel().setVisible(false);		
-	}
+    public void chatRoomLeft(ChatRoom room) {
+        if (!(room instanceof GroupChatRoom)) {
+            return;
+        }
+        GroupChatRoom groupChatRoom = (GroupChatRoom) room;
+        groupChatRoom.getConferenceRoomInfo().getAgentInfoPanel().setVisible(false);
+    }
 
     @Override
-	public void chatRoomClosed(ChatRoom room) {
-		if (!(room instanceof GroupChatRoom)) {
-			return;
-		}
-		GroupChatRoom groupChatRoom = (GroupChatRoom)room;
-		MultiUserChat chat = groupChatRoom.getMultiUserChat();		
-		chat.removeParticipantListener(groupChatRoom.getConferenceRoomInfo().getListener());		
-	}
-
-	@Override
-	public void chatRoomActivated(ChatRoom room) {
-		
-	}
-
-	@Override
-	public void userHasJoined(ChatRoom room, String userid) {
-		
-	}
+    public void chatRoomClosed(ChatRoom room) {
+        if (!(room instanceof GroupChatRoom)) {
+            return;
+        }
+        GroupChatRoom groupChatRoom = (GroupChatRoom) room;
+        MultiUserChat chat = groupChatRoom.getMultiUserChat();
+        chat.removeParticipantListener(groupChatRoom.getConferenceRoomInfo().getListener());
+    }
 
     @Override
-	public void userHasLeft(ChatRoom room, String userid) {
-		if (!(room instanceof GroupChatRoom)) {
-			return;
-		}
-		GroupChatRoom groupChatRoom = (GroupChatRoom)room;
+    public void chatRoomActivated(ChatRoom room) {
+    }
 
-		int index = groupChatRoom.getConferenceRoomInfo().getIndex(userid);
+    @Override
+    public void userHasJoined(ChatRoom room, String userid) {
+    }
 
-		if (index != -1) {
-			groupChatRoom.getConferenceRoomInfo().removeUser(userid);
-			groupChatRoom.getConferenceRoomInfo().getUserMap().remove(userid);
-		}
-	}
+    @Override
+    public void userHasLeft(ChatRoom room, String userid) {
+        if (!(room instanceof GroupChatRoom)) {
+            return;
+        }
+        GroupChatRoom groupChatRoom = (GroupChatRoom) room;
+        int index = groupChatRoom.getConferenceRoomInfo().getIndex(userid);
+        if (index != -1) {
+            groupChatRoom.getConferenceRoomInfo().removeUser(userid);
+            groupChatRoom.getConferenceRoomInfo().getUserMap().remove(userid);
+        }
+    }
 
 }

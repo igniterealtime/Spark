@@ -22,6 +22,7 @@ import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.layout.LayoutSettingsManager;
+import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
 import javax.swing.*;
@@ -51,20 +52,21 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
 	
 	alwaysOnTopItem = new JCheckBox();
 	alwaysOnTopItem.setToolTipText(Res.getString("menuitem.always.on.top"));
-        alwaysOnTopItem.addActionListener( actionEvent -> {
+        LocalPreferences pref = SettingsManager.getLocalPreferences();
+        alwaysOnTopItem.addActionListener(actionEvent -> {
             if (alwaysOnTopItem.isSelected())
             {
-                SettingsManager.getLocalPreferences().setChatWindowAlwaysOnTop(true);
+                pref.setChatWindowAlwaysOnTop(true);
                 chatFrame.setAlwaysOnTop(true);
             }
             else
             {
-                SettingsManager.getLocalPreferences().setChatWindowAlwaysOnTop(false);
+                pref.setChatWindowAlwaysOnTop(false);
                 chatFrame.setAlwaysOnTop(false);
             }
         } );
         
-        if (SettingsManager.getLocalPreferences().isChatWindowAlwaysOnTop())
+        if (pref.isChatWindowAlwaysOnTop())
         {
         	alwaysOnTopItem.setSelected(true);
         	chatFrame.setAlwaysOnTop(true);

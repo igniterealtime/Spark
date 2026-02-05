@@ -12,7 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */ 
+ */
 package org.jivesoftware.spark.ui.conferences;
 
 import org.jivesoftware.resource.SparkRes;
@@ -46,17 +46,12 @@ import java.util.Iterator;
  * Handles unbanning banned users in Chat Rooms.
  */
 public class BannedUsers extends JPanel {
-    private static final long serialVersionUID = 6422162361752646645L;
-
     private MultiUserChat chat;
 
     private final DefaultListModel<ImageIcon> listModel = new DefaultListModel<>();
     private final JList<ImageIcon> list = new JList<>(listModel);
     private final JMenuItem unBanMenuItem = new JMenuItem(Res.getString("menuitem.unban"));
 
-    /**
-     * Construct UI
-     */
     public BannedUsers() {
         setLayout(new BorderLayout());
         list.setCellRenderer(new ListIconRenderer());
@@ -64,7 +59,7 @@ public class BannedUsers extends JPanel {
         // Respond to Double-Click in Agent List to start a chat
         list.addMouseListener(new MouseAdapter() {
             @Override
-			public void mousePressed(MouseEvent evt) {
+            public void mousePressed(MouseEvent evt) {
                 if (evt.isPopupTrigger()) {
                     int index = list.locationToIndex(evt.getPoint());
                     list.setSelectedIndex(index);
@@ -75,7 +70,7 @@ public class BannedUsers extends JPanel {
             }
 
             @Override
-			public void mouseReleased(MouseEvent evt) {
+            public void mouseReleased(MouseEvent evt) {
                 if (evt.isPopupTrigger()) {
                     int index = list.locationToIndex(evt.getPoint());
                     list.setSelectedIndex(index);
@@ -86,20 +81,19 @@ public class BannedUsers extends JPanel {
             }
         });
 
-        unBanMenuItem.addActionListener( e -> {
+        unBanMenuItem.addActionListener(e -> {
             int index = list.getSelectedIndex();
             ImageIcon icon = list.getModel().getElementAt(index);
             String jidString = icon.getDescription();
             try {
                 BareJid jid = JidCreate.fromUnescaped(jidString).asBareJid();
                 chat.grantMembership(jid);
-            }
-            catch (XMPPException | SmackException | XmppStringprepException | InterruptedException memEx) {
+            } catch (XMPPException | SmackException | XmppStringprepException | InterruptedException memEx) {
                 Log.error("Error granting membership", memEx);
             }
             listModel.removeElementAt(index);
 
-        } );
+        });
     }
 
     /**
@@ -122,8 +116,7 @@ public class BannedUsers extends JPanel {
         Iterator<Affiliate> bannedUsers = null;
         try {
             bannedUsers = chat.getOutcasts().iterator();
-        }
-        catch (XMPPException | SmackException | InterruptedException e) {
+        } catch (XMPPException | SmackException | InterruptedException e) {
             Log.error("Error loading all banned users", e);
         }
 

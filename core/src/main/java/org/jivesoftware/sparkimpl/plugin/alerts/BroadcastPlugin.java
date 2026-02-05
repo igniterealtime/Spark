@@ -73,10 +73,12 @@ import org.jxmpp.jid.parts.Resourcepart;
 import org.jxmpp.util.XmppStringUtils;
 import org.jivesoftware.spark.ui.BroadcastHistoryFrame;
 
+import static org.apache.commons.lang3.StringUtils.*;
 import static org.jivesoftware.spark.Event.MSG_INCOMING;
+import static org.jivesoftware.spark.util.StringUtils.*;
 
 /**
- * Handles broadcasts from server and allows for roster wide broadcasts.
+ * Handles broadcasts from a server and allows for roster wide broadcasts.
  */
 public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaListener {
 
@@ -89,7 +91,7 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
             return;
         }
 
-        // Add as ContainerDecoratr
+        // Add as ContainerDecorator
         SparkManager.getChatManager().addSparkTabHandler(this);
 
         StanzaFilter serverFilter = new StanzaTypeFilter(Message.class);
@@ -106,12 +108,13 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
         broadcastMenu.addActionListener(e -> broadcastToRoster());
         broadcastHistoryMenu.addActionListener(e -> new BroadcastHistoryFrame().run());
         // Register with action menu
-        JMenuItem startConversationtMenu = new JMenuItem("", SparkRes.getImageIcon(SparkRes.SMALL_MESSAGE_IMAGE));
-        ResourceUtils.resButton(startConversationtMenu, Res.getString("menuitem.start.a.chat"));
+        JMenuItem startConversationMenu = new JMenuItem("", SparkRes.getImageIcon(SparkRes.SMALL_MESSAGE_IMAGE));
+        ResourceUtils.resButton(startConversationMenu, Res.getString("menuitem.start.a.chat"));
         if (!Default.getBoolean(Default.HIDE_START_A_CHAT) && Enterprise.containsFeature(Enterprise.START_A_CHAT_FEATURE)) {
-            actionsMenu.add(startConversationtMenu, 0);
+            actionsMenu.add(startConversationMenu, 0);
         }
-        startConversationtMenu.addActionListener(e -> {
+        // Start chat with user entered in dialog
+        startConversationMenu.addActionListener(e -> {
             ContactList contactList = SparkManager.getWorkspace().getContactList();
             Collection<ContactItem> selectedUsers = contactList.getSelectedUsers();
             String selectedUser = "";
@@ -130,17 +133,14 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
                     // Append server address
                     jid = jid + "@" + SparkManager.getConnection().getXMPPServiceDomain();
                 }
-
                 EntityBareJid entityBareJid = JidCreate.entityBareFromUnescapedOrThrowUnchecked(jid);
-
                 String nickname = SparkManager.getUserManager().getUserNicknameFromJID(entityBareJid);
-
                 ChatRoom chatRoom = SparkManager.getChatManager().createChatRoom(entityBareJid, nickname, nickname);
                 SparkManager.getChatManager().getChatContainer().activateChatRoom(chatRoom);
             }
         });
 
-        // Add send to selected users.
+        // Add Send to selected users.
         final ContactList contactList = SparkManager.getWorkspace().getContactList();
         contactList.addContextMenuListener(new ContextMenuListener() {
             @Override
@@ -148,8 +148,6 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
                 if (component instanceof ContactGroup) {
                     final ContactGroup group = (ContactGroup) component;
                     Action broadcastMessageAction = new AbstractAction() {
-                        private static final long serialVersionUID = -6411248110270296726L;
-
                         @Override
                         public void actionPerformed(ActionEvent e) {
                             broadcastToGroup(group);
@@ -165,7 +163,6 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
 
             @Override
             public void poppingDown(JPopupMenu popup) {
-
             }
 
             @Override
@@ -174,7 +171,7 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
             }
         });
 
-        // Add Broadcast to roster
+        // Add Broadcast to roaster
         StatusBar statusBar = SparkManager.getWorkspace().getStatusBar();
 
         RolloverButton broadcastToRosterButton = new RolloverButton(SparkRes.getImageIcon(SparkRes.MEGAPHONE_16x16));
@@ -189,7 +186,6 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
 
     @Override
     public void shutdown() {
-
     }
 
     @Override
@@ -207,11 +203,11 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
                     return;
                 }
 
-                final JivePropertiesExtension extension = ((JivePropertiesExtension) message.getExtension(JivePropertiesExtension.NAMESPACE));
+                final JivePropertiesExtension extension = message.getExtension(JivePropertiesExtension.class);
                 final boolean broadcast = extension != null && extension.getProperty("broadcast") != null;
-
+                // Shows alert if broadcast or normal/headline message
                 if ((broadcast || message.getType() == Type.normal
-                        || message.getType() == Type.headline) && message.getBody() != null) {
+                    || message.getType() == Type.headline) && message.getBody() != null) {
                     showAlert((Message) stanza);
                 } else {
                     DomainBareJid host = SparkManager.getSessionManager().getServerAddress();
@@ -224,7 +220,6 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
                 Log.error(e);
             }
         });
-
     }
 
     /**
@@ -247,7 +242,6 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
             buf.append(Res.getString("subject")).append(": ").append(subject);
             buf.append("\n\n");
         }
-
         buf.append(body);
 
         Jid from = message.getFrom();
@@ -264,29 +258,26 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
         String s = message.getBody();
         s = s.replace("<br/>", "\n");
         s = s.replace("<br>", "\n");
-        int linebreaks = org.jivesoftware.spark.util.StringUtils.
-                countNumberOfOccurences(s, '\n');
+        int linebreaks = countNumberOfOccurences(s, '\n');
 
-        //If the message is blank, then it should not be displayed.
-        if(org.apache.commons.lang3.StringUtils.isBlank(s)){
+        // If the message is blank, then it should not be displayed.
+        if (isBlank(s)) {
             return;
         }
 
-        // Currently Serverbroadcasts dont contain Subjects, so this might be a MOTD message
+        // Currently Server Broadcasts don't contain Subjects, so this might be a MOTD message
         boolean mightbeMOTD = message.getSubject() != null;
 
         if (!from.hasLocalpart()) {
-            // if theres no "@" it means the message came from the server
+            // if there's no "@" it means the message came from the server
             if (Default.getBoolean(Default.BROADCAST_IN_CHAT_WINDOW)
-                    || linebreaks > 20 || message.getBody().length() > 1000 || mightbeMOTD) {
-                // if we have more than 20 linebreaks or the message is longer
-                // than 1000characters we should broadcast
-                // in a normal chatwindow
+                || linebreaks > 20 || message.getBody().length() > 1000 || mightbeMOTD) {
+                // If the message has more than 20 linebreaks or is longer than 1000 characters
+                // we should broadcast in a normal chat window.
                 broadcastInChat(message);
             } else {
                 broadcastWithPanel(message);
             }
-
         } else if (message.getFrom() != null) {
             userToUserBroadcast(message, type, from);
         }
@@ -313,27 +304,20 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
             SparkManager.getChatManager().getChatContainer().addChatRoom(chatRoom);
         }
 
-        MessageBuilder messageBuilder = StanzaBuilder.buildMessage()
+        Message m = StanzaBuilder.buildMessage()
             .setBody(message.getBody())
             .to(message.getTo())
-            .from(message.getFrom());
-        Message m = messageBuilder.build();
+            .from(message.getFrom())
+            .build();
 
-        String broadcasttype = type == Message.Type.normal ? Res.getString("broadcast") : Res.getString("message.alert.notify");
+        String broadcastType = type == Message.Type.normal ? Res.getString("broadcast") : Res.getString("message.alert.notify");
 
-        chatRoom.getTranscriptWindow().insertMessage((nickname + " - " + broadcasttype), message, ChatManager.FROM_COLOR);
+        chatRoom.getTranscriptWindow().insertMessage((nickname + " - " + broadcastType), message, ChatManager.FROM_COLOR);
         chatRoom.addToTranscript(m, true);
         chatRoom.increaseUnreadMessageCount();
         broadcastRooms.add(chatRoom);
 
-        LocalPreferences pref = SettingsManager.getLocalPreferences();
-        if (pref.getShowToasterPopup()) {
-            SparkToaster toaster = new SparkToaster();
-            toaster.setDisplayTime(30000);
-            toaster.setBorder(BorderFactory.createLineBorder(Color.lightGray, 1, true));
-            toaster.setTitle(nickname + " - " + broadcasttype);
-            toaster.showToaster(message.getBody());
-        }
+        showToaster(message, nickname, broadcastType);
 
         SparkManager.getChatManager().fireGlobalMessageReceievedListeners(chatRoom, message);
 
@@ -357,13 +341,23 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
             private void removeAsBroadcast(ChatRoom room) {
                 if (waiting) {
                     broadcastRooms.remove(room);
-
                     // Notify decorators
                     SparkManager.getChatManager().notifySparkTabHandlers(room);
                     waiting = false;
                 }
             }
         });
+    }
+
+    private static void showToaster(Message message, Resourcepart nickname, String broadcastType) {
+        LocalPreferences pref = SettingsManager.getLocalPreferences();
+        if (pref.getShowToasterPopup()) {
+            SparkToaster toaster = new SparkToaster();
+            toaster.setDisplayTime(30000);
+            toaster.setBorder(BorderFactory.createLineBorder(Color.lightGray, 1, true));
+            toaster.setTitle(nickname + " - " + broadcastType);
+            toaster.showToaster(message.getBody());
+        }
     }
 
     /**
@@ -386,7 +380,6 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
 
     @Override
     public void uninstall() {
-        // Do nothing.
     }
 
     @Override
@@ -400,30 +393,24 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
                 nickname = Res.getString("message.broadcast.from", nickname);
                 tab.setTabTitle(nickname);
 
-
                 if ((!chatFrameFocused || !isSelectedTab) && room.getUnreadMessageCount() > 0) {
                     // Make tab red.
                     tab.setTitleColor(Color.red);
                     tab.setTabBold(true);
-                }
-                else {
+                } else {
                     tab.setTitleColor(Color.black);
                     tab.setTabFont(tab.getDefaultFont());
                     room.clearUnreadMessageCount();
                 }
-
                 return true;
             }
         }
-
         return false;
     }
 
     /**
      * Displays the Serverbroadcast like all other messages in its on
-     * chatcontainer with transcript history
-     *
-     * @param message
+     * chat container with transcript history
      */
     private void broadcastInChat(Message message) {
         String from = message.getFrom() != null ? message.getFrom().toString() : "";
@@ -458,29 +445,22 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
     }
 
     /**
-     * Displays a Serverbroadcast within a JFrame<br>
+     * Displays a Server Broadcast within a JFrame<br>
      * Messages can contain html-tags
-     *
-     * @param message
      */
     private void broadcastWithPanel(Message message) {
 
         String title = Res.getString("message.broadcast.from",
-                Res.getString("administrator"));
+            Res.getString("administrator"));
         final JFrame alert = new JFrame(title);
 
         alert.setLayout(new GridBagLayout());
-        alert.setIconImage(SparkRes.getImageIcon(SparkRes.MAIN_IMAGE)
-                .getImage());
+        alert.setIconImage(SparkRes.getImageIcon(SparkRes.MAIN_IMAGE).getImage());
         String mylink = linkCreator(message.getBody());
-
         JLabel icon = new JLabel(SparkRes.getImageIcon(SparkRes.ALERT));
-
         JButton close = new JButton(Res.getString("close"));
 
         close.addActionListener(new AbstractAction() {
-            private static final long serialVersionUID = -3822361866008590946L;
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 alert.setVisible(false);
@@ -495,13 +475,9 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
         textPane.addHyperlinkListener(e -> {
             if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
                 try {
-                    try {
-                        Log.error(e.getURL().toString());
-                        Desktop.getDesktop().browse(new URI(e.getURL().toString()));
-                    } catch (IOException ex) {
-                        Log.error(ex.getCause());
-                    }
-                } catch (URISyntaxException ex) {
+                    Log.warning("Open the URL in default browser" + e.getURL());
+                    Desktop.getDesktop().browse(e.getURL().toURI());
+                } catch (IOException | URISyntaxException ex) {
                     Log.error(ex.getCause());
                 }
             }
@@ -518,7 +494,7 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
         alert.setVisible(true);
 
         alert.setMinimumSize(new Dimension(340, 200));
-        alert.setPreferredSize(new Dimension(340,200));
+        alert.setPreferredSize(new Dimension(340, 200));
         alert.pack();
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         int x = (dim.width - alert.getSize().width) / 2;

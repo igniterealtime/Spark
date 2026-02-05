@@ -225,8 +225,7 @@ public class SipAccountPacket extends IQ {
             return false;
         }
 
-        ServiceDiscoveryManager disco = ServiceDiscoveryManager
-                .getInstanceFor(con);
+        ServiceDiscoveryManager disco = ServiceDiscoveryManager.getInstanceFor(con);
         try {
             DiscoverItems items = disco.discoverItems(con.getXMPPServiceDomain());
             for ( DiscoverItems.Item item : items.getItems() ) {

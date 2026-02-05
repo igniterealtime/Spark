@@ -38,7 +38,6 @@ import org.jxmpp.jid.BareJid;
 import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.Jid;
 import org.jxmpp.jid.impl.JidCreate;
-import org.jxmpp.stringprep.XmppStringprepException;
 
 import static org.jivesoftware.spark.util.StringUtils.unescapeFromXML;
 
@@ -219,7 +218,7 @@ public class UriManager {
             return;
         }
         String password = retrieveParam(uri, "password");
-        ConferenceUtils.joinConferenceOnSeperateThread(jid, jid.asEntityBareJidOrThrow(), null, password);
+        ConferenceUtils.joinConferenceOnSeparateThread(jid, jid.asEntityBareJidOrThrow(), null, password);
     }
 
     /**
@@ -290,7 +289,7 @@ public class UriManager {
         String name = retrieveParam(uri, "name");
         String group = retrieveParam(uri, "group");
 
-        Roster roster = Roster.getInstanceFor(SparkManager.getConnection());
+        Roster roster = SparkManager.getRoster();
         RosterEntry userEntry = roster.getEntry(bareJid);
 
         roster.preApproveAndCreateEntry(bareJid, name, new String[]{group});
@@ -323,7 +322,7 @@ public class UriManager {
         }
         BareJid bareJid = jid.asBareJid();
 
-        Roster roster = Roster.getInstanceFor(SparkManager.getConnection());
+        Roster roster = SparkManager.getRoster();
         RosterEntry entry = roster.getEntry(bareJid);
         roster.removeEntry(entry);
     }

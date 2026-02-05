@@ -16,7 +16,6 @@
 package org.jivesoftware.sparkimpl.plugin.scratchpad;
 
 import org.jivesoftware.resource.Res;
-import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.VerticalFlowLayout;
 import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.sparkimpl.plugin.alerts.SparkToaster;
@@ -62,7 +61,7 @@ public class TaskNotification {
 					mainPanel.setBackground(Color.white);
 
 					long now = System.currentTimeMillis();
-					Tasks tasks = Tasks.getTaskList(SparkManager.getConnection());
+					Tasks tasks = Tasks.getTaskList();
 					if (tasks == null) {
 						return;
 					}

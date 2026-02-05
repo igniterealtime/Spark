@@ -56,7 +56,6 @@ import static java.util.Arrays.asList;
  * @author Derek DeMoro
  */
 public class EmoticonManager {
-
     private static EmoticonManager singleton;
     private static final Object LOCK = new Object();
 
@@ -68,6 +67,8 @@ public class EmoticonManager {
      * The root emoticon directory.
      */
     public static File EMOTICON_DIRECTORY;
+
+    private final LocalPreferences pref = SettingsManager.getLocalPreferences();
 
     /**
      * Returns the singleton instance of <code>EmoticonManager</code>.
@@ -100,7 +101,6 @@ public class EmoticonManager {
         if (files != null) {
             // Copy over to allow for non-admins to extract.
             copyFiles();
-            final LocalPreferences pref = SettingsManager.getLocalPreferences();
             String emoticonPack = pref.getEmoticonPack();
             try {
                 addEmoticonPack(emoticonPack);
@@ -194,7 +194,6 @@ public class EmoticonManager {
      * Returns the active emoticon set within Spark.
      */
     public Collection<Emoticon> getActiveEmoticonSet() {
-        final LocalPreferences pref = SettingsManager.getLocalPreferences();
         String emoticonPack = pref.getEmoticonPack();
         // If EmoticonPack is set
         //When no emoticon set is available, return an empty list
@@ -210,7 +209,6 @@ public class EmoticonManager {
      * Returns the name of the active emoticon set.
      */
     public String getActiveEmoticonSetName() {
-        final LocalPreferences pref = SettingsManager.getLocalPreferences();
         return pref.getEmoticonPack();
     }
 
@@ -220,7 +218,6 @@ public class EmoticonManager {
      * @param pack the archive containing the emoticon pack.
      */
     public void setActivePack(String pack) {
-        final LocalPreferences pref = SettingsManager.getLocalPreferences();
         pref.setEmoticonPack(pack);
         SettingsManager.saveSettings();
         imageMap.clear();

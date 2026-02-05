@@ -12,7 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */ 
+ */
 package org.jivesoftware.spark.ui.conferences;
 
 import org.jivesoftware.resource.Res;
@@ -54,8 +54,6 @@ import javax.swing.JPanel;
  * @author Derek DeMoro
  */
 public class ConversationInvitation extends JPanel implements ContainerComponent, ActionListener {
-    private static final long serialVersionUID = -5830187619047598274L;
-
     private final JButton joinButton;
 
     private final EntityBareJid roomName;
@@ -74,18 +72,10 @@ public class ConversationInvitation extends JPanel implements ContainerComponent
      * @param reason   the reason they want to talk.
      * @param password the password of the room if any.
      */
-    public ConversationInvitation( final String roomName, final String inviter, String reason, final String password ) {
-		try {
-			this.roomName = JidCreate.entityBareFrom(roomName);
-		} catch (XmppStringprepException e) {
-			throw new IllegalStateException(e);
-		}
+    public ConversationInvitation(EntityBareJid roomName, EntityBareJid inviter, String reason, final String password) {
+        this.roomName = roomName;
         this.password = password;
-		try {
-			this.inviter = JidCreate.entityBareFrom(inviter);
-		} catch (XmppStringprepException e) {
-			throw new IllegalStateException(e);
-		}
+        this.inviter = inviter;
 
         // Set Layout
         setLayout(new GridBagLayout());
@@ -98,15 +88,9 @@ public class ConversationInvitation extends JPanel implements ContainerComponent
         final JLabel dateLabel = new JLabel();
         final JLabel dateLabelValue = new JLabel();
 
-
         String nickname = SparkManager.getUserManager().getUserNicknameFromJID(this.inviter);
-
-
         add(titleLabel, new GridBagConstraints(0, 0, 4, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(2, 5, 2, 5), 0, 0));
-
         add(description, new GridBagConstraints(0, 1, 4, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 9, 2, 5), 0, 0));
-
-
         add(dateLabel, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(2, 5, 2, 5), 0, 0));
         add(dateLabelValue, new GridBagConstraints(1, 3, 3, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(2, 5, 2, 5), 0, 0));
 
@@ -123,8 +107,8 @@ public class ConversationInvitation extends JPanel implements ContainerComponent
         // Set Date Label
         dateLabel.setFont(new Font("dialog", Font.BOLD, 12));
         dateLabel.setText(Res.getString("date") + ":");
-        String invitationDateFormat = ( (SimpleDateFormat) SimpleDateFormat.getTimeInstance( SimpleDateFormat.MEDIUM ) ).toPattern();
-        final SimpleDateFormat formatter = new SimpleDateFormat( invitationDateFormat );
+        String invitationDateFormat = ((SimpleDateFormat) SimpleDateFormat.getTimeInstance(SimpleDateFormat.MEDIUM)).toPattern();
+        final SimpleDateFormat formatter = new SimpleDateFormat(invitationDateFormat);
         final String date = formatter.format(new Date());
         dateLabelValue.setText(date);
         dateLabelValue.setFont(new Font("dialog", Font.PLAIN, 12));
@@ -159,20 +143,17 @@ public class ConversationInvitation extends JPanel implements ContainerComponent
 
 
     @Override
-	public void actionPerformed(ActionEvent actionEvent) {
+    public void actionPerformed(ActionEvent actionEvent) {
         final Object obj = actionEvent.getSource();
         if (obj == joinButton) {
             Localpart name = roomName.getLocalpart();
             ConferenceUtils.enterRoomOnSameThread(name.toString(), roomName, password);
-        }
-        else {
-            try
-            {
-                MultiUserChatManager.getInstanceFor( SparkManager.getConnection() ).decline( roomName, inviter, "No thank you");
-            }
-            catch ( SmackException.NotConnectedException | InterruptedException e )
-            {
-                Log.warning( "unable to decline invatation from " + inviter + " to join room " + roomName, e );
+        } else {
+            try {
+                MultiUserChatManager mucManager = SparkManager.getMucManager();
+                mucManager.decline(roomName, inviter, "No thank you");
+            } catch (SmackException.NotConnectedException | InterruptedException e) {
+                Log.warning("unable to decline invitation from " + inviter + " to join room " + roomName, e);
             }
         }
 
@@ -183,32 +164,32 @@ public class ConversationInvitation extends JPanel implements ContainerComponent
 
 
     @Override
-	public String getTabTitle() {
+    public String getTabTitle() {
         return tabTitle;
     }
 
     @Override
-	public String getFrameTitle() {
+    public String getFrameTitle() {
         return frameTitle;
     }
 
     @Override
-	public ImageIcon getTabIcon() {
+    public ImageIcon getTabIcon() {
         return SparkRes.getImageIcon(SparkRes.CONFERENCE_IMAGE_16x16);
     }
 
     @Override
-	public JComponent getGUI() {
+    public JComponent getGUI() {
         return this;
     }
 
     @Override
-	public String getToolTipDescription() {
+    public String getToolTipDescription() {
         return descriptionText;
     }
 
     @Override
-	public boolean closing() {
+    public boolean closing() {
         return true;
     }
 }

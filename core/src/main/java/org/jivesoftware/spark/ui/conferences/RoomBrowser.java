@@ -12,7 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */ 
+ */
 package org.jivesoftware.spark.ui.conferences;
 
 import org.jivesoftware.resource.Res;
@@ -46,8 +46,6 @@ import java.awt.Insets;
 import java.beans.PropertyChangeListener;
 
 public class RoomBrowser extends JPanel {
-    private static final long serialVersionUID = 8820670697089268423L;
-
     private final JLabel descriptionValue = new JLabel();
     private final JLabel subjectValue = new JLabel();
     private final JLabel occupantsValue = new JLabel();
@@ -68,16 +66,16 @@ public class RoomBrowser extends JPanel {
 
         // Add labels to UI
         setLayout(new GridBagLayout());
-        add( descriptionLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        add(descriptionLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         add(descriptionValue, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 
-        add( subjectLabel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        add(subjectLabel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         add(subjectValue, new GridBagConstraints(1, 1, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 
-        add( occupantsLabel, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        add(occupantsLabel, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         add(occupantsValue, new GridBagConstraints(1, 2, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 
-        add( roomNameLabel, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        add(roomNameLabel, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         add(roomNameValue, new GridBagConstraints(1, 3, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 
 
@@ -97,22 +95,20 @@ public class RoomBrowser extends JPanel {
             DiscoverItems items = null;
 
             @Override
-			public Object construct() {
+            public Object construct() {
                 try {
-                    roomInfo = MultiUserChatManager.getInstanceFor( SparkManager.getConnection() ).getRoomInfo( roomJID );
-
-
-                    ServiceDiscoveryManager manager = ServiceDiscoveryManager.getInstanceFor(SparkManager.getConnection());
-                    items = manager.discoverItems(roomJID);
-                }
-                catch (XMPPException | SmackException | InterruptedException e) {
+                    MultiUserChatManager mucManager = SparkManager.getMucManager();
+                    roomInfo = mucManager.getRoomInfo(roomJID);
+                    ServiceDiscoveryManager discoManager = SparkManager.getDiscoManager();
+                    items = discoManager.discoverItems(roomJID);
+                } catch (XMPPException | SmackException | InterruptedException e) {
                     Log.error(e);
                 }
                 return "ok";
             }
 
             @Override
-			public void finished() {
+            public void finished() {
                 setupRoomInformationUI(roomJID, roomInfo, items);
             }
         };
@@ -123,27 +119,25 @@ public class RoomBrowser extends JPanel {
     private void setupRoomInformationUI(EntityBareJid roomJID, final RoomInfo roomInfo, final DiscoverItems items) {
         descriptionValue.setText(Res.getString("message.no.description.available"));
         subjectValue.setText(Res.getString("message.no.subject.available"));
-        occupantsValue.setText("n/a");
-        roomNameValue.setText("n/a");
+        occupantsValue.setText("");
+        roomNameValue.setText("");
         try {
             descriptionValue.setText(roomInfo.getDescription());
             subjectValue.setText(roomInfo.getSubject());
 
             if (roomInfo.getOccupantsCount() == -1) {
-                occupantsValue.setText("n/a");
-            }
-            else {
+                occupantsValue.setText("");
+            } else {
                 occupantsValue.setText(Integer.toString(roomInfo.getOccupantsCount()));
             }
             roomNameValue.setText(roomInfo.getRoom().toString());
 
-            for (DiscoverItems.Item item : items.getItems() ) {
+            for (DiscoverItems.Item item : items.getItems()) {
                 Jid jid = item.getEntityID();
                 rootNode.add(new JiveTreeNode(jid.toString(), false, SparkRes.getImageIcon(SparkRes.SMALL_USER1_INFORMATION)));
             }
             tree.expandRow(0);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             Log.error(e);
         }
 
@@ -175,7 +169,7 @@ public class RoomBrowser extends JPanel {
         dlg.setLocationRelativeTo(SparkManager.getMainWindow());
 
         PropertyChangeListener changeListener = e -> {
-            String value = (String)pane.getValue();
+            String value = (String) pane.getValue();
             if (Res.getString("close").equals(value)) {
                 pane.setValue(JOptionPane.UNINITIALIZED_VALUE);
                 dlg.dispose();

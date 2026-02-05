@@ -140,10 +140,10 @@ public class TransportUtils {
             return false;
         }
 
-        ServiceDiscoveryManager discoveryManager = ServiceDiscoveryManager.getInstanceFor(con);
+        ServiceDiscoveryManager discoManager = SparkManager.getDiscoManager();
         try {
             Jid jid = JidCreate.from(transport.getXMPPServiceDomain());
-            DiscoverInfo info = discoveryManager.discoverInfo(jid);
+            DiscoverInfo info = discoManager.discoverInfo(jid);
             return info.containsFeature("jabber:iq:registered");
         }
         catch (XMPPException | SmackException | XmppStringprepException | InterruptedException e) {

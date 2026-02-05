@@ -21,6 +21,8 @@ import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.AbstractXMPPConnection;
 import org.jivesoftware.smack.XMPPConnection;
+import org.jivesoftware.smack.roster.Roster;
+import org.jivesoftware.smackx.muc.MultiUserChatManager;
 import org.jivesoftware.smackx.xevent.MessageEventManager;
 import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
 import org.jivesoftware.spark.filetransfer.SparkTransferManager;
@@ -47,7 +49,7 @@ import javax.swing.ImageIcon;
 
 /**
  * Used as the System Manager for the Spark IM client. The SparkManager is responsible for
- * the loading of other system managers on an as needed basis to prevent too much upfront loading
+ * the loading of other system managers on an as-needed basis to prevent too much upfront loading
  * of resources. Some of the Managers and components you can access from here are:
  * <p/>
  * <p/>
@@ -74,14 +76,11 @@ import javax.swing.ImageIcon;
  * <br/>
  * Workspace - The inner pane of the Spark client. Use for adding or removing tabs to the main Spark panel.
  * <br/>
- * Notifications - Use to display tray icon notifications (system specific), such as toaster popups or changing
+ * Notifications - Use to display tray icon notifications (system-specific), such as toaster popups or changing
  * the icon of the system tray.
  *
  * @author Derek DeMoro
- * @version 1.0, 03/12/14
  */
-
-
 public final class SparkManager {
 
     /**
@@ -94,6 +93,8 @@ public final class SparkManager {
     private static SoundManager soundManager;
     private static PreferenceManager preferenceManager;
     private static MessageEventManager messageEventManager;
+    private static MultiUserChatManager mucManager;
+    private static ServiceDiscoveryManager discoManager;
     private static UserManager userManager;
     private static ChatManager chatManager;
     private static UriManager uriManager;
@@ -101,6 +102,7 @@ public final class SparkManager {
     private static NativeManager nativeManager;
 
     private static Component focusedComponent;
+    private static Roster roster;
 
 
     private SparkManager() {
@@ -176,6 +178,27 @@ public final class SparkManager {
         return sessionManager.getConnection();
     }
 
+    public static MultiUserChatManager getMucManager() {
+        if (mucManager == null) {
+            mucManager = MultiUserChatManager.getInstanceFor(getConnection());
+        }
+        return mucManager;
+    }
+
+    public static ServiceDiscoveryManager getDiscoManager() {
+        if (discoManager == null) {
+            discoManager = ServiceDiscoveryManager.getInstanceFor(SparkManager.getConnection());
+        }
+        return discoManager;
+    }
+
+    public static Roster getRoster() {
+        if (roster == null) {
+            roster = Roster.getInstanceFor(SparkManager.getConnection());
+        }
+        return roster;
+    }
+
     /**
      * Returns the <code>UserManager</code> for LiveAssistant. The UserManager
      * keeps track of all users in current chats.
@@ -231,7 +254,6 @@ public final class SparkManager {
      * @return Workspace the spark manager is associated with.
      */
     public static Workspace getWorkspace() {
-   	 
         return Workspace.getInstance();
     }
 
@@ -392,7 +414,7 @@ public final class SparkManager {
      */
     public static void addFeature(String namespace) {
         // Obtain the ServiceDiscoveryManager associated with my XMPPConnection
-        ServiceDiscoveryManager discoManager = ServiceDiscoveryManager.getInstanceFor(getConnection());
+        ServiceDiscoveryManager discoManager = getDiscoManager();
 
         // Register that a new feature is supported by this XMPP entity
         discoManager.addFeature(namespace);
@@ -405,7 +427,7 @@ public final class SparkManager {
      */
     public static void removeFeature(String namespace) {
         // Obtain the ServiceDiscoveryManager associated with my XMPPConnection
-        ServiceDiscoveryManager discoManager = ServiceDiscoveryManager.getInstanceFor(getConnection());
+        ServiceDiscoveryManager discoManager = getDiscoManager();
 
         // Register that a new feature is supported by this XMPP entity
         discoManager.removeFeature(namespace);

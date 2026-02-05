@@ -23,6 +23,7 @@ import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.UIComponentRegistry;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.profile.VCardManager;
+import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.parts.Resourcepart;
@@ -57,10 +58,9 @@ public class JoinRoomSwingWorker extends SwingWorker
     private Resourcepart nickname;
     private String password;
     private final String tabTitle;
-
     private MultiUserChat groupChat;
-
     private SwingWorker followUp;
+    private final LocalPreferences pref = SettingsManager.getLocalPreferences();
 
     public JoinRoomSwingWorker( EntityBareJid roomJID, Resourcepart nickname, String password, String tabTitle )
     {
@@ -93,7 +93,8 @@ public class JoinRoomSwingWorker extends SwingWorker
         try
         {
             Log.debug("Joining chat room " + roomJID);
-            groupChat = MultiUserChatManager.getInstanceFor( SparkManager.getConnection() ).getMultiUserChat( roomJID );
+            MultiUserChatManager mucManager = SparkManager.getMucManager();
+            groupChat = mucManager.getMultiUserChat( roomJID );
             Log.debug("... got groupchat for " + roomJID);
             boolean passwordRequired = ConferenceUtils.isPasswordRequired( roomJID );
             Log.debug("... password required for " + roomJID + ": " + passwordRequired);
@@ -101,7 +102,7 @@ public class JoinRoomSwingWorker extends SwingWorker
             // Use the default nickname, if none has been provided.
             if ( nickname == null )
             {
-                nickname = SettingsManager.getLocalPreferences().getNickname();
+                nickname = pref.getNickname();
             }
 
             AtomicReference<ChatRoom> roomUIObject = new AtomicReference<>();

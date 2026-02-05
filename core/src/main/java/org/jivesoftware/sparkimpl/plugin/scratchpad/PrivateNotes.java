@@ -35,58 +35,46 @@ public class PrivateNotes implements PrivateData {
 
     private String notes;
 
-    /**
-     * Required Empty Constructor to use Bookmarks.
-     */
     public PrivateNotes() {
     }
-
 
     public String getNotes() {
         return notes;
     }
 
     public void setNotes(String notes) {
-    	if(notes!=null)
-    		{	
-    			this.notes=notes.replaceAll("&","&amp;");
-    		} else {
-    			this.notes=notes;
-    	}
+        if (notes != null) {
+            this.notes = notes.replaceAll("&", "&amp;");
+        } else {
+            this.notes = notes;
+        }
     }
 
     public void setMyNotes(String notes) {
-    this.notes=notes;
-    
+        this.notes = notes;
     }
 
     /**
      * Returns the root element name.
-     *
-     * @return the element name.
      */
     @Override
-	public String getElementName() {
+    public String getElementName() {
         return "scratchpad";
     }
 
     /**
      * Returns the root element XML namespace.
-     *
-     * @return the namespace.
      */
     @Override
-	public String getNamespace() {
+    public String getNamespace() {
         return "scratchpad:notes";
     }
 
     /**
-     * Returns the XML reppresentation of the PrivateData.
-     *
-     * @return the private data as XML.
+     * Returns the XML representation of the PrivateData.
      */
     @Override
-	public String toXML() {
+    public String toXML() {
         StringBuilder buf = new StringBuilder();
         buf.append("<scratchpad xmlns=\"scratchpad:notes\">");
 
@@ -100,71 +88,58 @@ public class PrivateNotes implements PrivateData {
 
     /**
      * The IQ Provider for BookmarkStorage.
-     *
-     * @author Derek DeMoro
      */
     public static class Provider implements PrivateDataProvider {
         private final PrivateNotes notes = new PrivateNotes();
 
-        /**
-         * Empty Constructor for PrivateDataProvider.
-         */
         public Provider() {
             super();
         }
 
         @Override
-		public PrivateData parsePrivateData(XmlPullParser parser, JxmppContext jxmppContext) throws XmlPullParserException, IOException {
+        public PrivateData parsePrivateData(XmlPullParser parser, JxmppContext jxmppContext) throws XmlPullParserException, IOException {
             boolean done = false;
             while (!done) {
                 XmlPullParser.Event eventType = parser.next();
                 if (eventType == XmlPullParser.Event.START_ELEMENT && "text".equals(parser.getName())) {
                     notes.setNotes(parser.nextText());
-                }
-                else if (eventType == XmlPullParser.Event.END_ELEMENT) {
+                } else if (eventType == XmlPullParser.Event.END_ELEMENT) {
                     if ("scratchpad".equals(parser.getName())) {
                         done = true;
                     }
                 }
             }
-
-
             return notes;
         }
     }
 
     public static void savePrivateNotes(PrivateNotes notes) {
-        PrivateDataManager manager = PrivateDataManager.getInstanceFor(SparkManager.getConnection());
+        PrivateDataManager manager = SparkManager.getSessionManager().getPersonalDataManager();
 
         PrivateDataManager.addPrivateDataProvider("scratchpad", "scratchpad:notes", new PrivateNotes.Provider());
         try {
             manager.setPrivateData(notes);
-        }
-        catch (XMPPException | SmackException | InterruptedException e) {
+        } catch (XMPPException | SmackException | InterruptedException e) {
             Log.error(e);
         }
     }
 
     public static PrivateNotes getPrivateNotes() {
-        PrivateDataManager manager = PrivateDataManager.getInstanceFor(SparkManager.getConnection());
-
+        PrivateDataManager manager = SparkManager.getSessionManager().getPersonalDataManager();
         PrivateDataManager.addPrivateDataProvider("scratchpad", "scratchpad:notes", new PrivateNotes.Provider());
 
         PrivateNotes notes = null;
-
         try {
-            notes = (PrivateNotes)manager.getPrivateData("scratchpad", "scratchpad:notes");
-        }
-        catch (XMPPException | SmackException | InterruptedException e) {
+            notes = (PrivateNotes) manager.getPrivateData("scratchpad", "scratchpad:notes");
+        } catch (XMPPException | SmackException | InterruptedException e) {
             Log.error(e);
         }
 
-        if(notes.getNotes() != null )
-        	{
-        		String note=notes.getNotes().replaceAll("&amp;","&");
-        		notes.setMyNotes(note);
-        	}
-        
+        if (notes.getNotes() != null) {
+            String note = notes.getNotes().replaceAll("&amp;", "&");
+            notes.setMyNotes(note);
+        }
+
         return notes;
     }
 }

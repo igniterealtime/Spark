@@ -12,15 +12,15 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */ 
+ */
 package org.jivesoftware.spark.ui.conferences;
 
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.resource.Res;
+import org.jivesoftware.smackx.muc.RoomInfo;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.TitlePanel;
 import org.jivesoftware.spark.util.ResourceUtils;
-import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jxmpp.jid.EntityBareJid;
@@ -39,52 +39,43 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
 final class JoinConferenceRoomDialog extends JPanel {
-    private static final long serialVersionUID = -6400555509113588047L;
     private final JLabel passwordLabel = new JLabel();
     private final JPasswordField passwordField = new JPasswordField();
     private final JTextField nicknameField = new JTextField();
     private final JLabel roomNameDescription = new JLabel();
+    private final LocalPreferences pref = SettingsManager.getLocalPreferences();
 
     public JoinConferenceRoomDialog() {
         GridBagLayout gridBagLayout1 = new GridBagLayout();
-        setLayout( gridBagLayout1 );
+        setLayout(gridBagLayout1);
         add(nicknameField, new GridBagConstraints(1, 1, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
         add(passwordField, new GridBagConstraints(1, 2, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
         add(passwordLabel, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         JLabel nicknameLabel = new JLabel();
-        add( nicknameLabel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        add(nicknameLabel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         JLabel roomNameLabel = new JLabel();
-        add( roomNameLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        add(roomNameLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         add(roomNameDescription, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
         add(new JLabel(), new GridBagConstraints(0, 3, 2, 1, 0.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.VERTICAL, new Insets(5, 5, 5, 5), 0, 0));
 
         // Add Resource Utils
-        ResourceUtils.resLabel( nicknameLabel, nicknameField, Res.getString("label.nickname") + ":");
+        ResourceUtils.resLabel(nicknameLabel, nicknameField, Res.getString("label.nickname") + ":");
         ResourceUtils.resLabel(passwordLabel, passwordField, Res.getString("label.password") + ":");
 
-        roomNameLabel.setText(Res.getString("room.name") +":");
+        roomNameLabel.setText(Res.getString("room.name") + ":");
     }
 
-    public void joinRoom(final EntityBareJid roomJID, final String roomName) {
-        final LocalPreferences pref = SettingsManager.getLocalPreferences();
-
+    public void joinRoom(EntityBareJid roomJID, RoomInfo roomInfo) {
         // Set default nickname
         nicknameField.setText(pref.getNickname().toString());
-
-        // Enable password field if a password is required
-        passwordField.setVisible(false);
-        passwordLabel.setVisible(false);
-
-
-        roomNameDescription.setText(roomName);
-
-        final JOptionPane pane;
-
-
-        TitlePanel titlePanel;
+        // Enable the password field if a password is required
+        boolean requiresPassword = ConferenceUtils.isPasswordRequired(roomJID);
+        passwordField.setVisible(requiresPassword);
+        passwordLabel.setVisible(requiresPassword);
+        roomNameDescription.setText(roomInfo.getName());
 
         // Create the title panel for this dialog
-        titlePanel = new TitlePanel(Res.getString("title.join.conference.room"), Res.getString("message.specify.information.for.conference"), SparkRes.getImageIcon(SparkRes.BLANK_IMAGE), true);
+        TitlePanel titlePanel = new TitlePanel(Res.getString("title.join.conference.room"), Res.getString("message.specify.information.for.conference"), SparkRes.getImageIcon(SparkRes.BLANK_IMAGE), true);
 
         // Construct main panel w/ layout.
         final JPanel mainPanel = new JPanel();
@@ -93,10 +84,8 @@ final class JoinConferenceRoomDialog extends JPanel {
 
         // The user should only be able to close this dialog.
         Object[] options = {Res.getString("join"), Res.getString("cancel")};
-        pane = new JOptionPane(this, JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION, null, options, options[0]);
-
+        final JOptionPane pane = new JOptionPane(this, JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION, null, options, options[0]);
         mainPanel.add(pane, BorderLayout.CENTER);
-
         final JOptionPane p = new JOptionPane();
 
         final JDialog dlg = p.createDialog(SparkManager.getMainWindow(), Res.getString("title.conference.rooms"));
@@ -109,39 +98,20 @@ final class JoinConferenceRoomDialog extends JPanel {
         dlg.setLocationRelativeTo(SparkManager.getMainWindow());
 
         PropertyChangeListener changeListener = e -> {
-            String value = (String)pane.getValue();
+            String value = (String) pane.getValue();
             if (Res.getString("cancel").equals(value)) {
                 pane.setValue(JOptionPane.UNINITIALIZED_VALUE);
                 dlg.dispose();
-            }
-            else if (Res.getString("join").equals(value)) {
+            } else if (Res.getString("join").equals(value)) {
                 pane.setValue(JOptionPane.UNINITIALIZED_VALUE);
                 dlg.dispose();
-                ConferenceUtils.joinConferenceOnSeperateThread(roomName, roomJID, null, null);
+                ConferenceUtils.joinConferenceOnSeparateThread(roomInfo.getName(), roomJID, null, null);
             }
         };
-
         pane.addPropertyChangeListener(changeListener);
 
         dlg.setVisible(true);
         dlg.toFront();
         dlg.requestFocus();
-
-        SwingWorker worker = new SwingWorker() {
-            boolean requiresPassword;
-
-            @Override
-			public Object construct() {
-                requiresPassword = ConferenceUtils.isPasswordRequired(roomJID);
-                return requiresPassword;
-            }
-
-            @Override
-			public void finished() {
-                passwordField.setVisible(requiresPassword);
-                passwordLabel.setVisible(requiresPassword);
-            }
-        };
-        worker.start();
     }
 }

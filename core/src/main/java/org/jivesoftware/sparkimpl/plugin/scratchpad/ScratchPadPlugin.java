@@ -285,7 +285,7 @@ public class ScratchPadPlugin implements Plugin {
 
         addButton.addActionListener(addAction);
 
-        Tasks tasks = Tasks.getTaskList(SparkManager.getConnection());
+        Tasks tasks = Tasks.getTaskList();
         updateTaskUI(tasks);
 
         if (SHOW_ALL_TASKS) {

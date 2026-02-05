@@ -41,7 +41,7 @@ public class ChatArgumentsPlugin implements Plugin {
         }
 
         if (start_chat_muc != null) {
-            ConferenceUtils.joinConferenceOnSeperateThread(start_chat_muc, start_chat_muc, null, null);
+            ConferenceUtils.joinConferenceOnSeparateThread(start_chat_muc, start_chat_muc, null, null);
         }
     }
 

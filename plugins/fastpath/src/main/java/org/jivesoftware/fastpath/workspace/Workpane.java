@@ -163,7 +163,7 @@ public class Workpane {
             final Workgroup workgroup = FastpathPlugin.getWorkgroup();
             String serviceName = "conference." + SparkManager.getSessionManager().getServerAddress();
             final EntityBareJid roomName = JidCreate.entityBareFromOrThrowUnchecked("workgroup-" + workgroup.getWorkgroupJID().getLocalpartOrThrow() + "@" + serviceName);
-            ConferenceUtils.joinConferenceOnSeperateThread("Workgroup Chat", roomName, null, null);
+            ConferenceUtils.joinConferenceOnSeparateThread("Workgroup Chat", roomName, null, null);
         });
 
         macrosButton = new RolloverButton(FastpathRes.getImageIcon(FastpathRes.NOTEBOOK_IMAGE));

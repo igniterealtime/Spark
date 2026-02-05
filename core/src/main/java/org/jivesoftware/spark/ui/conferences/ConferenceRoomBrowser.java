@@ -79,7 +79,6 @@ import static org.jivesoftware.smackx.muc.MucConfigFormManager.*;
  * room name itself.
  */
 public class ConferenceRoomBrowser extends JPanel implements ActionListener, ComponentListener {
-    private static final long serialVersionUID = -4483998189117467048L;
     private final RoomList roomsTable;
     private final RolloverButton createButton = new RolloverButton("",
         SparkRes.getImageIcon(SparkRes.SMALL_USER1_NEW));
@@ -113,6 +112,8 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener, Com
     private final JPopupMenu popup;
 
     final TableRowSorter<TableModel> sorter;
+
+    private final LocalPreferences pref = SettingsManager.getLocalPreferences();
 
     /**
      * Creates a new instance of ConferenceRooms.
@@ -365,7 +366,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener, Com
                 startLoadingImg();
                 String errorMsg = null;
                 try {
-                    MultiUserChatManager mucManager = MultiUserChatManager.getInstanceFor(SparkManager.getConnection());
+                    MultiUserChatManager mucManager = SparkManager.getMucManager();
                     Map<EntityBareJid, HostedRoom> rooms = mucManager.getRoomsHostedBy(serviceName);
                     for (Map.Entry<EntityBareJid, HostedRoom> entry : rooms.entrySet()) {
                         RoomObject room = getRoomsAndInfo(mucManager, entry.getValue());
@@ -438,7 +439,8 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener, Com
         // Check to see what type of room this is.
         boolean persistent = false;
         try {
-            final RoomInfo roomInfo = MultiUserChatManager.getInstanceFor(SparkManager.getConnection()).getRoomInfo(roomJID);
+            MultiUserChatManager mucManager = SparkManager.getMucManager();
+            final RoomInfo roomInfo = mucManager.getRoomInfo(roomJID);
             persistent = roomInfo.isPersistent();
         } catch (Exception e) {
             // Do not return
@@ -456,7 +458,8 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener, Com
         if (!isBookmarked) {
             JiveTreeNode node = (JiveTreeNode) serviceTree.getLastSelectedPathComponent();
             if (node == null) {
-                TreePath path = serviceTree.findByName(serviceTree, new String[]{rootNode.toString(), ConferenceServices.getDefaultServiceName().toString()});
+                String defaultServiceName = ConferenceServices.getDefaultServiceName().toString();
+                TreePath path = serviceTree.findByName(serviceTree, new String[]{rootNode.toString(), defaultServiceName});
                 node = (JiveTreeNode) path.getLastPathComponent();
             }
             JiveTreeNode roomNode = new JiveTreeNode(roomName, false, SparkRes.getImageIcon(SparkRes.BOOKMARK_ICON));
@@ -502,22 +505,13 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener, Com
                 if (e.getValueIsAdjusting()) {
                     return;
                 }
-
-                int selectedRow = roomsTable.getSelectedRow();
-                if (selectedRow != -1) {
+                RoomObject roomInfo = selectedRoomInfo();
+                if (roomInfo != null) {
                     joinRoomButton.setEnabled(true);
                     joinRoomItem.setEnabled(true);
-                    String roomJIDString = roomsTable.getValueAt(selectedRow, 2) + "@" + serviceName;
-                    EntityBareJid roomJID;
-                    try {
-                        roomJID = JidCreate.entityBareFrom(roomJIDString);
-                    } catch (XmppStringprepException ex) {
-                        Log.error("Not a JID", ex);
-                        return;
-                    }
                     addRoomButton.setEnabled(true);
                     addRoomItem.setEnabled(true);
-                    addBookmarkUI(!isBookmarked(roomJID));
+                    addBookmarkUI(!isBookmarked(roomInfo.getRoomJID()));
                 } else {
                     joinRoomButton.setEnabled(false);
                     addRoomButton.setEnabled(false);
@@ -532,12 +526,8 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener, Com
      * Displays the ConferenceRoomBrowser.
      */
     public void invoke() {
-        final JOptionPane pane;
-
-        TitlePanel titlePanel;
-
         // Create the title panel for this dialog
-        titlePanel = new TitlePanel(
+        TitlePanel titlePanel = new TitlePanel(
             Res.getString("title.create.or.bookmark.room"),
             Res.getString("message.add.favorite.room"),
             SparkRes.getImageIcon(SparkRes.BLANK_IMAGE), true);
@@ -549,7 +539,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener, Com
 
         // The user should only be able to close this dialog.
         Object[] options = {Res.getString("close")};
-        pane = new JOptionPane(this, JOptionPane.PLAIN_MESSAGE,
+        final JOptionPane pane = new JOptionPane(this, JOptionPane.PLAIN_MESSAGE,
             JOptionPane.OK_CANCEL_OPTION, null, options, options[0]);
         mainPanel.add(pane, CENTER);
         final JOptionPane p = new JOptionPane();
@@ -620,8 +610,6 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener, Com
     }
 
     private final class RoomList extends Table {
-        private static final long serialVersionUID = -731280190627042419L;
-
         public RoomList() {
             super(new String[]{
                 " ",
@@ -698,7 +686,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener, Com
         try {
             chatManager.getChatContainer().getChatRoom(roomJID);
         } catch (ChatRoomNotFoundException e1) {
-            ConferenceUtils.joinConferenceOnSeperateThread(roomDescription,
+            ConferenceUtils.joinConferenceOnSeparateThread(roomDescription,
                 roomJID, null, null);
         }
     }
@@ -709,8 +697,6 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener, Com
     private void createRoom() {
         RoomCreationDialog mucRoomDialog = new RoomCreationDialog();
         final MultiUserChat groupChat = mucRoomDialog.createGroupChat(SparkManager.getMainWindow(), serviceName);
-        LocalPreferences pref = SettingsManager.getLocalPreferences();
-
         if (groupChat == null) {
             return;
         }
@@ -858,7 +844,6 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener, Com
      * Center the text
      */
     static class CenterRenderer extends DefaultTableCellRenderer {
-        private static final long serialVersionUID = 105809683882744641L;
 
         public CenterRenderer() {
             setHorizontalAlignment(CENTER);

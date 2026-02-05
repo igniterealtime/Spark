@@ -273,7 +273,7 @@ public class ChatManager {
      */
     public ChatRoom createConferenceRoom(Localpart roomName, DomainBareJid serviceName) {
         EntityBareJid roomAddress = JidCreate.entityBareFrom(roomName, serviceName);
-        final MultiUserChat chatRoom = MultiUserChatManager.getInstanceFor( SparkManager.getConnection()).getMultiUserChat( roomAddress);
+        final MultiUserChat chatRoom = SparkManager.getMucManager().getMultiUserChat( roomAddress);
 
         final GroupChatRoom room = UIComponentRegistry.createGroupChatRoom(chatRoom);
 
@@ -520,7 +520,7 @@ public class ChatManager {
     public String getDefaultConferenceService() {
         if (conferenceService == null) {
             try {
-                final MultiUserChatManager multiUserChatManager = MultiUserChatManager.getInstanceFor( SparkManager.getConnection() );
+                final MultiUserChatManager multiUserChatManager = SparkManager.getMucManager();
                 List<DomainBareJid> col = multiUserChatManager.getMucServiceDomains();
                 if (col.size() > 0) {
                     conferenceService = col.iterator().next().toString();

@@ -27,7 +27,6 @@ import java.util.Map;
 public class UserSettings {
     public static final String NAMESPACE = "jive:user:settings";
     public static final String ELEMENT_NAME = "personal_settings";
-    private final PrivateDataManager privateDataManager;
     private SettingsData settingsData;
     private static UserSettings singleton;
     private static final Object LOCK = new Object();
@@ -44,7 +43,7 @@ public class UserSettings {
     }
 
     private UserSettings() {
-        privateDataManager = PrivateDataManager.getInstanceFor(SparkManager.getConnection());
+        PrivateDataManager privateDataManager = SparkManager.getSessionManager().getPersonalDataManager();
         PrivateDataManager.addPrivateDataProvider("personal_settings", "jive:user:settings", new SettingsDataProvider());
 
         try {
@@ -83,6 +82,7 @@ public class UserSettings {
 
     public void save() {
         try {
+            PrivateDataManager privateDataManager = SparkManager.getSessionManager().getPersonalDataManager();
             privateDataManager.setPrivateData(settingsData);
         }
         catch (XMPPException | SmackException | InterruptedException e) {
