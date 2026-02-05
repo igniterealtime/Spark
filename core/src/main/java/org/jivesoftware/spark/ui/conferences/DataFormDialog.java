@@ -66,8 +66,7 @@ import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.log.Log;
 
 public class DataFormDialog extends JPanel {
-    private static final long serialVersionUID = -1536217028590811636L;
-    private final Map<String,JComponent> valueMap = new HashMap<>();
+    private final Map<String, JComponent> valueMap = new HashMap<>();
     private int row = 0;
     private final JDialog dialog;
 
@@ -80,8 +79,7 @@ public class DataFormDialog extends JPanel {
         // Create the room
         try {
             form = chat.getConfigurationForm();
-        }
-        catch (XMPPException | SmackException | InterruptedException e) {
+        } catch (XMPPException | SmackException | InterruptedException e) {
             // TODO: Just logging the exception wont do it and actually just cause an NPE below, we need to handle it
             // better.
             Log.error(e);
@@ -97,64 +95,65 @@ public class DataFormDialog extends JPanel {
 
                 List<? extends CharSequence> valueList = field.getValues();
 
-                if (type.equals(FormField.Type.text_private)) {
+                if (type == FormField.Type.text_private) {
                     String value = null;
-                    if (valueList.size() > 0){
+                    if (!valueList.isEmpty()) {
                         value = valueList.get(0).toString();
                         submitForm.setAnswer(variable, value);
                     }
-
                     addField(label, new JPasswordField(value), variable);
                 }
 
-                if (valueList.size() > 0) {
-                    if (type.equals(FormField.Type.bool)) {
-                        BooleanFormField booleanField = field.ifPossibleAsOrThrow(BooleanFormField.class);
-                        boolean isSelected = booleanField.getValueAsBoolean();
-
-                        JCheckBox box = new JCheckBox(label);
-                        box.setSelected(isSelected);
-                        submitForm.setAnswer(variable, isSelected);
-                        addField(label, box, variable);
-                    } else if (type.equals(FormField.Type.text_single) ||
-                        type.equals(FormField.Type.jid_single)) {
-                        String value = valueList.get(0).toString();
-                        submitForm.setAnswer(variable, value);
-                        addField(label, new JTextField(value), variable);
-                    } else if (type.equals(FormField.Type.text_multi) ||
-                        type.equals(FormField.Type.jid_multi)) {
-                        StringBuilder buf = new StringBuilder();
-                        final Iterator<? extends CharSequence> iter = valueList.iterator();
-                        while (iter.hasNext()) {
-                            buf.append(iter.next());
-                            if (iter.hasNext()) {
-                                buf.append(",");
+                if (!valueList.isEmpty()) {
+                    switch (type) {
+                        case bool: {
+                            BooleanFormField booleanField = field.ifPossibleAsOrThrow(BooleanFormField.class);
+                            boolean isSelected = booleanField.getValueAsBoolean();
+                            JCheckBox box = new JCheckBox(label);
+                            box.setSelected(isSelected);
+                            submitForm.setAnswer(variable, isSelected);
+                            addField(label, box, variable);
+                            break;
+                        }
+                        case text_single:
+                        case jid_single: {
+                            String value = valueList.get(0).toString();
+                            submitForm.setAnswer(variable, value);
+                            addField(label, new JTextField(value), variable);
+                            break;
+                        }
+                        case text_multi:
+                        case jid_multi: {
+                            String text = String.join(",", valueList);
+                            submitForm.setAnswer(variable, valueList);
+                            addField(label, new JTextArea(text), variable);
+                            break;
+                        }
+                        case list_single: {
+                            ListSingleFormField listSingleFormField = field.ifPossibleAsOrThrow(ListSingleFormField.class);
+                            JComboBox<String> box = new JComboBox<>();
+                            for (Option option : listSingleFormField.getOptions()) {
+                                box.addItem(option.getValueString());
                             }
+                            String defaultValue = valueList.get(0).toString();
+                            box.setSelectedItem(defaultValue);
+                            submitForm.setAnswer(variable, valueList.get(0));
+                            addField(label, box, variable);
+                            break;
                         }
-                        submitForm.setAnswer(variable, valueList);
-                        addField(label, new JTextArea(buf.toString()), variable);
-                    } else if (type.equals(FormField.Type.list_single)) {
-                        ListSingleFormField listSingleFormField = field.ifPossibleAsOrThrow(ListSingleFormField.class);
-                        JComboBox<String> box = new JComboBox<>();
-                        for (final FormField.Option option : listSingleFormField.getOptions()) {
-                            String value = option.getValueString();
-                            box.addItem(value);
+                        case list_multi: {
+                            ListMultiFormField listMultiFormField = field.ifPossibleAsOrThrow(ListMultiFormField.class);
+                            CheckBoxList checkBoxList = new CheckBoxList();
+                            final List<? extends CharSequence> values = field.getValues();
+                            for (Option option : listMultiFormField.getOptions()) {
+                                String optionLabel = option.getLabel();
+                                String optionValue = option.getValueString();
+                                checkBoxList.addCheckBox(new JCheckBox(optionLabel, values.contains(optionValue)), optionValue);
+                            }
+                            submitForm.setAnswer(variable, valueList);
+                            addField(label, checkBoxList, variable);
+                            break;
                         }
-                        String defaultValue = valueList.get(0).toString();
-                        box.setSelectedItem(defaultValue);
-                        submitForm.setAnswer(variable, valueList.get(0));
-                        addField(label, box, variable);
-                    } else if (type.equals(FormField.Type.list_multi)) {
-                        ListMultiFormField listMultiFormField = field.ifPossibleAsOrThrow(ListMultiFormField.class);
-                        CheckBoxList checkBoxList = new CheckBoxList();
-                        final List<? extends CharSequence> values = field.getValues();
-                        for (final Option option : listMultiFormField.getOptions()) {
-                            String optionLabel = option.getLabel();
-                            String optionValue = option.getValueString();
-                            checkBoxList.addCheckBox(new JCheckBox(optionLabel, values.contains(optionValue)), optionValue);
-                        }
-                        submitForm.setAnswer(variable, valueList);
-                        addField(label, checkBoxList, variable);
                     }
                 }
             }
@@ -168,18 +167,17 @@ public class DataFormDialog extends JPanel {
 
         JButton button = new JButton();
         ResourceUtils.resButton(button, Res.getString("button.update"));
-        button.addActionListener( e -> {
+        button.addActionListener(e -> {
             dialog.dispose();
             // Now submit all information
             updateRoomConfiguration(submitForm, chat);
-        } );
+        });
 
         final JScrollPane pane = new JScrollPane(this);
         pane.getVerticalScrollBar().setBlockIncrement(200);
         pane.getVerticalScrollBar().setUnitIncrement(20);
 
         dialog.getContentPane().setLayout(new BorderLayout());
-
         dialog.getContentPane().add(pane, BorderLayout.CENTER);
 
         JPanel bottomPanel = new JPanel();
@@ -188,7 +186,7 @@ public class DataFormDialog extends JPanel {
 
         JButton cancelButton = new JButton();
         ResourceUtils.resButton(cancelButton, Res.getString("button.cancel"));
-        cancelButton.addActionListener( actionEvent -> dialog.dispose() );
+        cancelButton.addActionListener(actionEvent -> dialog.dispose());
 
         bottomPanel.add(cancelButton);
 
@@ -198,14 +196,13 @@ public class DataFormDialog extends JPanel {
         dialog.setSize(600, 400);
         GraphicUtils.centerWindowOnScreen(dialog);
         dialog.setVisible(true);
-
-
     }
 
     private void updateRoomConfiguration(FillableForm submitForm, MultiUserChat chat) {
-        for (Object o1 : valueMap.keySet()) {
-            String answer = (String) o1;
-            Object o = valueMap.get(answer);
+        for (Map.Entry<String, JComponent> answerComp : valueMap.entrySet()) {
+            String answer = answerComp.getKey();
+            JComponent o = answerComp.getValue();
+            // Extract form values from components; populates submit form
             if (o instanceof JCheckBox) {
                 boolean isSelected = ((JCheckBox) o).isSelected();
                 submitForm.setAnswer(answer, isSelected);
@@ -216,7 +213,7 @@ public class DataFormDialog extends JPanel {
                 while (tokenizer.hasMoreTokens()) {
                     list.add(tokenizer.nextToken());
                 }
-                if (list.size() > 0) {
+                if (!list.isEmpty()) {
                     submitForm.setAnswer(answer, list);
                 }
             } else if (o instanceof JTextField) {
@@ -226,13 +223,12 @@ public class DataFormDialog extends JPanel {
                 }
             } else if (o instanceof JComboBox) {
                 String value = (String) ((JComboBox<?>) o).getSelectedItem();
-                List<String> list = new ArrayList<>();
+                List<String> list = new ArrayList<>(1);
                 list.add(value);
                 submitForm.setAnswer(answer, list.stream().iterator().next());
-
             } else if (o instanceof CheckBoxList) {
                 List<String> list = ((CheckBoxList) o).getSelectedValues();
-                if (list.size() > 0) {
+                if (!list.isEmpty()) {
                     submitForm.setAnswer(answer, list);
                 }
             }
@@ -240,20 +236,19 @@ public class DataFormDialog extends JPanel {
 
         try {
             chat.sendConfigurationForm(submitForm);
-            RoomInfo info = MultiUserChatManager.getInstanceFor( SparkManager.getConnection() ).getRoomInfo( chat.getRoom() );
-            //remove bookmark if any for non persistent room
+            MultiUserChatManager mucManager = SparkManager.getMucManager();
+            RoomInfo info = mucManager.getRoomInfo(chat.getRoom());
+            // Remove bookmark if any for non-persistent room
             if (!info.isPersistent()) {
                 BookmarkManager.getBookmarkManager(SparkManager.getConnection()).removeBookmarkedConference(info.getRoom());
             }
-        }
-        catch (XMPPException | SmackException | InterruptedException e) {
+        } catch (XMPPException | SmackException | InterruptedException e) {
             Log.error(e);
-            MessageDialog.showErrorDialog( Res.getString( "group.send_config.error" ), e);
+            MessageDialog.showErrorDialog(Res.getString("group.send_config.error"), e);
         }
     }
 
     private void addField(String label, JComponent comp, String variable) {
-
         if (!(comp instanceof JCheckBox)) {
             JLabel formLabel = new JLabel(label);
             formLabel.setFont(new Font("dialog", Font.BOLD, 10));
@@ -263,14 +258,11 @@ public class DataFormDialog extends JPanel {
             JScrollPane pane = new JScrollPane(comp);
             pane.setBorder(BorderFactory.createTitledBorder(Res.getString("group.comma.delimited")));
             this.add(pane, new GridBagConstraints(1, row, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 75, 50));
-        }
-        else if (comp instanceof JCheckBox) {
+        } else if (comp instanceof JCheckBox) {
             this.add(comp, new GridBagConstraints(0, row, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
-        }
-        else if (comp instanceof CheckBoxList) {
+        } else if (comp instanceof CheckBoxList) {
             this.add(comp, new GridBagConstraints(1, row, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 75, 50));
-        }
-        else {
+        } else {
             this.add(comp, new GridBagConstraints(1, row, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 75, 0));
 
         }
@@ -282,11 +274,11 @@ public class DataFormDialog extends JPanel {
     public String getValue(String label) {
         Component comp = valueMap.get(label);
         if (comp instanceof JCheckBox) {
-            return "" + ((JCheckBox)comp).isSelected();
+            return "" + ((JCheckBox) comp).isSelected();
         }
 
         if (comp instanceof JTextField) {
-            return ((JTextField)comp).getText();
+            return ((JTextField) comp).getText();
         }
         return null;
     }

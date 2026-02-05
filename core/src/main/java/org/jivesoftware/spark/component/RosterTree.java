@@ -86,7 +86,7 @@ public final class RosterTree extends JPanel {
     }
 
     private void buildFromRoster() {
-        final Roster roster = Roster.getInstanceFor( SparkManager.getConnection() );
+        final Roster roster = SparkManager.getRoster();
 
         roster.addRosterListener(new RosterListener() {
             @Override

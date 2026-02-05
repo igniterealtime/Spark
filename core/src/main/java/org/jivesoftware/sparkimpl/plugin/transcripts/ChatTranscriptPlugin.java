@@ -39,7 +39,6 @@ import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.ConnectionListener;
-import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smackx.jiveproperties.packet.JivePropertiesExtension;
 
@@ -60,6 +59,7 @@ import org.jxmpp.jid.*;
 
 /**
  * The <code>ChatTranscriptPlugin</code> is responsible for transcript handling within Spark.
+ * It registers the listeners for transcript persistence.
  *
  * @author Derek DeMoro
  */
@@ -70,24 +70,20 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
     private final HashMap<EntityJid, Message> lastMessage = new HashMap<>();
     private JDialog Frame;
     private HistoryTranscript transcript = null;
-    /**
-     * Register the listeners for transcript persistence.
-     */
+    private final LocalPreferences pref = SettingsManager.getLocalPreferences();
+
     public ChatTranscriptPlugin() {
         SparkManager.getChatManager().addChatRoomListener(this);
-
-        String dateFormat = ( (SimpleDateFormat) SimpleDateFormat.getDateInstance( SimpleDateFormat.FULL ) ).toPattern();
-        notificationDateFormatter = new SimpleDateFormat( dateFormat );
+        String dateFormat = ((SimpleDateFormat) SimpleDateFormat.getDateInstance(SimpleDateFormat.FULL)).toPattern();
+        notificationDateFormatter = new SimpleDateFormat(dateFormat);
         String timeFormat = "HH:mm:ss";
-        messageDateFormatter = new SimpleDateFormat( timeFormat );
+        messageDateFormatter = new SimpleDateFormat(timeFormat);
 
         final ContactList contactList = SparkManager.getWorkspace().getContactList();
 
         final Action viewHistoryAction = new AbstractAction() {
-			private static final long serialVersionUID = -6498776252446416099L;
-
-			@Override
-			public void actionPerformed(ActionEvent actionEvent) {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
                 ContactItem item = contactList.getSelectedUsers().iterator().next();
                 final BareJid jid = item.getJid();
                 transcript = new HistoryTranscript(notificationDateFormatter, messageDateFormatter);
@@ -100,68 +96,52 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
         viewHistoryAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.HISTORY_16x16));
 
         final Action showStatusMessageAction = new AbstractAction() {
-			private static final long serialVersionUID = -5000370836304286019L;
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                ContactItem item = contactList.getSelectedUsers().iterator().next();
+                showStatusMessage(item);
+            }
+        };
 
-			@Override
-			public void actionPerformed(ActionEvent actionEvent) {
-				ContactItem item = contactList.getSelectedUsers().iterator().next();
-				showStatusMessage(item);
-			}
-       };
-
-       showStatusMessageAction.putValue(Action.NAME, Res.getString("menuitem.show.contact.statusmessage"));
+        showStatusMessageAction.putValue(Action.NAME, Res.getString("menuitem.show.contact.statusmessage"));
 
         contactList.addContextMenuListener(new ContextMenuListener() {
             @Override
-			public void poppingUp(Object object, JPopupMenu popup) {
+            public void poppingUp(Object object, JPopupMenu popup) {
                 if (object instanceof ContactItem) {
-                	if (!Default.getBoolean(Default.HISTORY_DISABLED) && Enterprise.containsFeature(Enterprise.HISTORY_TRANSCRIPTS_FEATURE)) popup.add(viewHistoryAction);
-               	 	popup.add(showStatusMessageAction);
+                    if (!Default.getBoolean(Default.HISTORY_DISABLED) && Enterprise.containsFeature(Enterprise.HISTORY_TRANSCRIPTS_FEATURE)) {
+                        popup.add(viewHistoryAction);
+                    }
+                    popup.add(showStatusMessageAction);
                 }
             }
 
             @Override
-			public void poppingDown(JPopupMenu popup) {
-
+            public void poppingDown(JPopupMenu popup) {
             }
 
             @Override
-			public boolean handleDefaultAction(MouseEvent e) {
+            public boolean handleDefaultAction(MouseEvent e) {
                 return false;
             }
         });
 
         SparkManager.getMainWindow().addMainWindowListener(new MainWindowListener() {
             @Override
-			public void shutdown() {
+            public void shutdown() {
                 persistConversations();
             }
 
             @Override
-			public void mainWindowActivated() {
-
+            public void mainWindowActivated() {
             }
 
             @Override
-			public void mainWindowDeactivated() {
-
+            public void mainWindowDeactivated() {
             }
         });
 
-
         SparkManager.getConnection().addConnectionListener(new ConnectionListener() {
-            @Override
-            public void connected( XMPPConnection xmppConnection ) {
-            }
-
-            @Override
-            public void authenticated( XMPPConnection xmppConnection, boolean b ) {
-            }
-
-            @Override
-            public void connectionClosed() {
-            }
-
             @Override
             public void connectionClosedOnError(Exception e) {
                 persistConversations();
@@ -172,7 +152,7 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
     public void persistConversations() {
         for (ChatRoom room : SparkManager.getChatManager().getChatContainer().getChatRooms()) {
             if (room instanceof ChatRoomImpl) {
-                ChatRoomImpl roomImpl = (ChatRoomImpl)room;
+                ChatRoomImpl roomImpl = (ChatRoomImpl) room;
                 if (roomImpl.isActive()) {
                     persistChatRoom(roomImpl);
                 }
@@ -185,31 +165,26 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
     }
 
     @Override
-	public void chatRoomOpened(final ChatRoom room) {
-        LocalPreferences pref = SettingsManager.getLocalPreferences();
+    public void chatRoomOpened(final ChatRoom room) {
         if (!pref.isChatHistoryEnabled()) {
             return;
         }
-
         final EntityBareJid jid = room.getBareJid();
-
         File transcriptFile = ChatTranscripts.getTranscriptFile(jid);
         if (!transcriptFile.exists()) {
             return;
         }
-
         if (room instanceof ChatRoomImpl) {
             new ChatRoomDecorator(room);
         }
     }
 
     @Override
-	public void chatRoomLeft(ChatRoom room) {
-
+    public void chatRoomLeft(ChatRoom room) {
     }
 
     @Override
-	public void chatRoomClosed(final ChatRoom room) {
+    public void chatRoomClosed(final ChatRoom room) {
         // Persist only agent to agent chat rooms.
         if (room.getChatType() == Message.Type.chat) {
             persistChatRoom(room);
@@ -217,19 +192,17 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
     }
 
     public void persistChatRoom(final ChatRoom room) {
-        LocalPreferences pref = SettingsManager.getLocalPreferences();
         if (!pref.isChatHistoryEnabled()) {
             return;
         }
-        //If this it a MUC then don't persist this chat.
-        if(room.getChatType() == Message.Type.groupchat){
+        // If this is a MUC then don't persist this chat.
+        if (room.getChatType() == Message.Type.groupchat) {
             return;
         }
 
         EntityJid jid = room.getBareJid();
-
         //If private chat in MUC then use EntityJid
-        if(((ChatRoomImpl)room).isPrivateChat()){
+        if (((ChatRoomImpl) room).isPrivateChat()) {
             jid = room.getJid();
         }
 
@@ -237,94 +210,86 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
         ChatTranscript transcript = new ChatTranscript();
         int count = 0;
         int i = 0;
-    	if (lastMessage.get(jid) != null)
-    	{
-    		count = transcripts.indexOf(lastMessage.get(jid)) + 1;
-    	}
+        if (lastMessage.get(jid) != null) {
+            count = transcripts.indexOf(lastMessage.get(jid)) + 1;
+        }
         for (Message message : transcripts) {
-        	if (i < count)
-        	{
-            	i++;
-        		continue;
-        	}
-      	  	lastMessage.put(jid,message);
+            if (i < count) {
+                i++;
+                continue;
+            }
+            lastMessage.put(jid, message);
             HistoryMessage history = new HistoryMessage();
             history.setTo(message.getTo());
             history.setFrom(message.getFrom());
             history.setBody(message.getBody());
-            final JivePropertiesExtension extension = ((JivePropertiesExtension) message.getExtension( JivePropertiesExtension.NAMESPACE ));
+            final JivePropertiesExtension extension = message.getExtension(JivePropertiesExtension.class);
             Date date = null;
-            if ( extension != null ) {
-                date = (Date) extension.getProperty( "date" );
+            if (extension != null) {
+                date = (Date) extension.getProperty("date");
             }
-            history.setDate( date == null ? new Date() : date );
+            history.setDate(date == null ? new Date() : date);
             transcript.addHistoryMessage(history);
         }
-
         ChatTranscripts.appendToTranscript(jid, transcript);
-
     }
 
     @Override
-	public void chatRoomActivated(ChatRoom room) {
-
+    public void chatRoomActivated(ChatRoom room) {
     }
 
     @Override
-	public void userHasJoined(ChatRoom room, String userid) {
-
+    public void userHasJoined(ChatRoom room, String userid) {
     }
 
     @Override
-	public void userHasLeft(ChatRoom room, String userid) {
-
+    public void userHasLeft(ChatRoom room, String userid) {
     }
 
-    private void showStatusMessage(ContactItem item)
-    {
-   	 Frame = new JDialog();
-   	 Frame.setTitle(item.getDisplayName() + " - Status");
-   	 JPanel pane = new JPanel();
-   	 JTextArea textArea = new JTextArea(5, 30);
-   	 JButton btn_close = new JButton(Res.getString("button.close"));
+    private void showStatusMessage(ContactItem item) {
+        Frame = new JDialog();
+        Frame.setTitle(item.getDisplayName() + " - Status");
+        JPanel pane = new JPanel();
+        JTextArea textArea = new JTextArea(5, 30);
+        JButton btn_close = new JButton(Res.getString("button.close"));
 
-   	 btn_close.addActionListener( e -> Frame.setVisible(false) );
+        btn_close.addActionListener(e -> Frame.setVisible(false));
 
-   	 textArea.setLineWrap(true);
-   	 textArea.setWrapStyleWord(true);
+        textArea.setLineWrap(true);
+        textArea.setWrapStyleWord(true);
 
-   	 pane.add(new JScrollPane(textArea));
-   	 Frame.setLayout(new BorderLayout());
-   	 Frame.add(pane, BorderLayout.CENTER);
-   	 Frame.add(btn_close, BorderLayout.SOUTH);
+        pane.add(new JScrollPane(textArea));
+        Frame.setLayout(new BorderLayout());
+        Frame.add(pane, BorderLayout.CENTER);
+        Frame.add(btn_close, BorderLayout.SOUTH);
 
-   	 textArea.setEditable(false);
-   	 textArea.setText(item.getStatus());
+        textArea.setEditable(false);
+        textArea.setText(item.getStatus());
 
-   	 Frame.setLocationRelativeTo(SparkManager.getMainWindow());
-   	 Frame.setBounds(Frame.getX() - 175, Frame.getY() - 75, 350, 150);
-   	 Frame.setSize(350, 150);
-   	 Frame.setResizable(false);
-   	 Frame.setVisible(true);
+        Frame.setLocationRelativeTo(SparkManager.getMainWindow());
+        Frame.setBounds(Frame.getX() - 175, Frame.getY() - 75, 350, 150);
+        Frame.setSize(350, 150);
+        Frame.setResizable(false);
+        Frame.setVisible(true);
     }
 
     private class ChatRoomDecorator implements ActionListener, ChatRoomClosingListener {
         private ChatRoom chatRoom;
         private ChatRoomButton chatHistoryButton;
-        private final LocalPreferences localPreferences;
 
         public ChatRoomDecorator(ChatRoom chatRoom) {
             this.chatRoom = chatRoom;
             chatRoom.addClosingListener(this);
 
             // Add History Button
-            localPreferences = SettingsManager.getLocalPreferences();
-            if (!localPreferences.isChatHistoryEnabled()) {
+            if (!pref.isChatHistoryEnabled()) {
                 return;
             }
             chatHistoryButton = UIComponentRegistry.getButtonFactory().createChatTranscriptButton();
 
-            if (!Default.getBoolean(Default.HISTORY_DISABLED) && Enterprise.containsFeature(Enterprise.HISTORY_TRANSCRIPTS_FEATURE)) chatRoom.addChatRoomButton(chatHistoryButton);
+            if (!Default.getBoolean(Default.HISTORY_DISABLED) && Enterprise.containsFeature(Enterprise.HISTORY_TRANSCRIPTS_FEATURE)) {
+                chatRoom.addChatRoomButton(chatHistoryButton);
+            }
 
             chatHistoryButton.setToolTipText(Res.getString("tooltip.view.history"));
             chatHistoryButton.addActionListener(this);
@@ -332,9 +297,9 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
 
 
         @Override
-		public void closing() {
-        	if (localPreferences.isChatHistoryEnabled()) {
-        		chatHistoryButton.removeActionListener(this);
+        public void closing() {
+            if (pref.isChatHistoryEnabled()) {
+                chatHistoryButton.removeActionListener(this);
             }
             chatRoom.removeClosingListener(this);
             chatRoom = null;
@@ -342,13 +307,12 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
         }
 
         @Override
-		public void actionPerformed(ActionEvent e) {
-        	ChatRoomImpl roomImpl = (ChatRoomImpl)chatRoom;
-        	transcript = new HistoryTranscript(notificationDateFormatter, messageDateFormatter);
-        	transcript.showHistory(roomImpl.getParticipantJID());
+        public void actionPerformed(ActionEvent e) {
+            ChatRoomImpl roomImpl = (ChatRoomImpl) chatRoom;
+            transcript = new HistoryTranscript(notificationDateFormatter, messageDateFormatter);
+            transcript.showHistory(roomImpl.getParticipantJID());
         }
     }
-
 
 }
 

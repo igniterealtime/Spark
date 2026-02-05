@@ -40,7 +40,8 @@ public class InviteSwingWorker extends SwingWorker
     public Object construct()
     {
         final Set<EntityBareJid> invitedJIDs = new HashSet<>(invitees.size());
-        final MultiUserChat groupChat = MultiUserChatManager.getInstanceFor( SparkManager.getConnection() ).getMultiUserChat( roomJID );
+        MultiUserChatManager mucManager = SparkManager.getMucManager();
+        MultiUserChat groupChat = mucManager.getMultiUserChat(roomJID);
         // Send invitations
         for ( final EntityBareJid jid : invitees)
         {

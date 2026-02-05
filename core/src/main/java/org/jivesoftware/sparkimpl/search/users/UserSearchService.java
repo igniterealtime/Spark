@@ -132,7 +132,7 @@ public class UserSearchService implements Searchable {
      */
     private Collection<DomainBareJid> getServices() {
         List<DomainBareJid> searchServices = new ArrayList<>(2);
-        ServiceDiscoveryManager discoManager = ServiceDiscoveryManager.getInstanceFor(SparkManager.getConnection());
+        ServiceDiscoveryManager discoManager = SparkManager.getDiscoManager();
         DiscoverItems items = SparkManager.getSessionManager().getDiscoveredItems();
         for (DiscoverItems.Item item : items.getItems() ) {
             try {

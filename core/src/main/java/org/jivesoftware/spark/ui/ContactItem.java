@@ -462,7 +462,8 @@ public class ContactItem extends JPanel {
             getNicknameLabel().setFont(new Font("Dialog", Font.PLAIN, fontSize));
             getNicknameLabel().setForeground((Color)UIManager.get("ContactItemOffline.color"));
 
-            RosterEntry entry = Roster.getInstanceFor( SparkManager.getConnection() ).getEntry(getJid());
+            Roster roster = SparkManager.getRoster();
+            RosterEntry entry = roster.getEntry(getJid());
             if (entry != null && (entry.getType() == RosterPacket.ItemType.none || entry.getType() == RosterPacket.ItemType.from)
                     && entry.isSubscriptionPending()) {
                 // Do not move out of group.

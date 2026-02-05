@@ -12,7 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */ 
+ */
 package org.jivesoftware.spark.ui.conferences;
 
 import org.jivesoftware.resource.Res;
@@ -57,41 +57,27 @@ import java.util.TimerTask;
  * @author Derek DeMoro
  */
 public class GroupChatInvitationUI extends JPanel implements ActionListener {
-
-    private static final long serialVersionUID = 6066796370413837508L;
-
     private final RolloverButton acceptButton;
 
     private final EntityBareJid room;
     private final EntityBareJid inviter;
     private final String password;
 
-    public GroupChatInvitationUI(String room, String inviter, String password, String reason) throws XmppStringprepException {
-        this(JidCreate.entityBareFrom(room), JidCreate.entityBareFrom(inviter), password, reason);
-    }
-
     public GroupChatInvitationUI(EntityBareJid room, EntityBareJid inviter, String password, String reason) {
         setLayout(new GridBagLayout());
-
         setBackground(new Color(230, 239, 249));
 
-        try {
-			this.room = JidCreate.entityBareFrom(room);
-	        this.inviter = JidCreate.entityBareFrom(inviter);
-		} catch (XmppStringprepException e) {
-			throw new IllegalStateException(e);
-		}
+        this.room = room;
+        this.inviter = inviter;
         this.password = password;
 
         // Build invitation time label.
         final Date now = new Date();
-        String invitationDateFormat = ( (SimpleDateFormat) SimpleDateFormat.getTimeInstance( SimpleDateFormat.MEDIUM ) ).toPattern();
-        final SimpleDateFormat dateFormatter = new SimpleDateFormat( invitationDateFormat );
+        String invitationDateFormat = ((SimpleDateFormat) SimpleDateFormat.getTimeInstance(SimpleDateFormat.MEDIUM)).toPattern();
+        final SimpleDateFormat dateFormatter = new SimpleDateFormat(invitationDateFormat);
         final String invitationTime = dateFormatter.format(now);
-
         // Get users nickname, if there is one.
         String nickname = SparkManager.getUserManager().getUserNicknameFromJID(inviter);
-
 
         JLabel iconLabel = new JLabel(SparkRes.getImageIcon(SparkRes.CONFERENCE_IMAGE_48x48));
 
@@ -100,14 +86,13 @@ public class GroupChatInvitationUI extends JPanel implements ActionListener {
         titleLabel.setEditable(false);
         titleLabel.setBackground(new Color(230, 239, 249));
 
-        acceptButton = new RolloverButton(Res.getString("button.accept").replace("&",""), SparkRes.getImageIcon(SparkRes.ACCEPT_INVITE_IMAGE));
+        acceptButton = new RolloverButton(Res.getString("button.accept").replace("&", ""), SparkRes.getImageIcon(SparkRes.ACCEPT_INVITE_IMAGE));
         acceptButton.setForeground(new Color(63, 158, 61));
 
         RolloverButton rejectButton = new RolloverButton(Res.getString("button.reject"), SparkRes.getImageIcon(SparkRes.REJECT_INVITE_IMAGE));
         rejectButton.setForeground(new Color(185, 33, 33));
 
         add(iconLabel, new GridBagConstraints(0, 0, 1, 2, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0));
-
         add(titleLabel, new GridBagConstraints(1, 0, 3, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(2, 2, 2, 2), 0, 0));
 
         add(acceptButton, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0, 2, 2, 2), 0, 0));
@@ -119,15 +104,14 @@ public class GroupChatInvitationUI extends JPanel implements ActionListener {
         Document document = titleLabel.getDocument();
         try {
             document.insertString(0, "[" + invitationTime + "] ", styles);
-            StyleConstants.setBold(styles, true);            
-            document.insertString(document.getLength(), Res.getString("message.invite.to.groupchat",nickname) , styles);
+            StyleConstants.setBold(styles, true);
+            document.insertString(document.getLength(), Res.getString("message.invite.to.groupchat", nickname), styles);
 
             if (ModelUtil.hasLength(reason)) {
                 StyleConstants.setBold(styles, false);
                 document.insertString(document.getLength(), "\nMessage: " + reason, styles);
             }
-        }
-        catch (BadLocationException e) {
+        } catch (BadLocationException e) {
             Log.error(e);
         }
 
@@ -136,11 +120,10 @@ public class GroupChatInvitationUI extends JPanel implements ActionListener {
     }
 
     @Override
-	public void actionPerformed(ActionEvent event) {
+    public void actionPerformed(ActionEvent event) {
         if (event.getSource() == acceptButton) {
             acceptInvitation();
-        }
-        else {
+        } else {
             rejectInvitation();
         }
     }
@@ -152,25 +135,21 @@ public class GroupChatInvitationUI extends JPanel implements ActionListener {
         setVisible(false);
         Localpart name = room.getLocalpart();
         ConferenceUtils.enterRoomOnSameThread(name.toString(), room, password);
-
         final TimerTask removeUITask = new SwingTimerTask() {
             @Override
-			public void doRun() {
+            public void doRun() {
                 removeUI();
             }
         };
-
         TaskEngine.getInstance().schedule(removeUITask, 2000);
     }
-
 
     /**
      * Action taking when a user clicks on the reject button.
      */
-    private void rejectInvitation()
-    {
+    private void rejectInvitation() {
         removeUI();
-
+        // Close unjoined room
         try {
             GroupChatRoom chatRoom = SparkManager.getChatManager().getGroupChat(room);
             if (chatRoom != null) {
@@ -178,23 +157,19 @@ public class GroupChatInvitationUI extends JPanel implements ActionListener {
                     chatRoom.closeChatRoom();
                 }
             }
-        }
-        catch (ChatNotFoundException e) {
-            // Ignore
+        } catch (ChatNotFoundException ignored) {
         }
 
-        try
-        {
-            MultiUserChatManager.getInstanceFor( SparkManager.getConnection() ).decline( room, inviter, "No thank you");
-        }
-        catch ( SmackException.NotConnectedException | InterruptedException e )
-        {
-            Log.warning( "Unable to decline inviation from " + inviter + " to join room " + room, e );
+        try {
+            MultiUserChatManager mucManager = SparkManager.getMucManager();
+            mucManager.decline(room, inviter, "No thank you");
+        } catch (SmackException.NotConnectedException | InterruptedException e) {
+            Log.warning("Unable to decline invitation from " + inviter + " to join room " + room, e);
         }
     }
 
     /**
-     * Removes this interface from it's parent.
+     * Removes this interface from its parent.
      */
     private void removeUI() {
         final Container par = getParent();
@@ -204,6 +179,5 @@ public class GroupChatInvitationUI extends JPanel implements ActionListener {
             par.validate();
             par.repaint();
         }
-
     }
 }

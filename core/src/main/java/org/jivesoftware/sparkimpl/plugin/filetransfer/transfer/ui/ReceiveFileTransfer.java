@@ -210,7 +210,7 @@ public class ReceiveFileTransfer extends JPanel {
         }
 
         if (SettingsManager.getLocalPreferences().isAutoAcceptFileTransferFromContacts()) {
-            final Roster roster = Roster.getInstanceFor(SparkManager.getConnection());
+            final Roster roster = SparkManager.getRoster();
             if (roster.isSubscribedToMyPresence(requestor)) {
                 doAccept(request);
                 return;
