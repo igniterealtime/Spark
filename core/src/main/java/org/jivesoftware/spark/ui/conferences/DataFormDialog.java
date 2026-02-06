@@ -59,109 +59,45 @@ import org.jivesoftware.smackx.muc.RoomInfo;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.CheckBoxList;
 import org.jivesoftware.spark.component.MessageDialog;
+import org.jivesoftware.spark.ui.ChatFrame;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.log.Log;
 
+import static java.awt.GridBagConstraints.HORIZONTAL;
+import static java.awt.GridBagConstraints.WEST;
+
+/**
+ * Configure chat room
+ */
 public class DataFormDialog extends JPanel {
     private final Map<String, JComponent> valueMap = new HashMap<>();
     private int row = 0;
     private final JDialog dialog;
 
-    public DataFormDialog(JFrame parent, final MultiUserChat chat, final FillableForm submitForm) {
-        dialog = new JDialog(parent, true);
-        dialog.setTitle(Res.getString("title.configure.chat.room"));
-
-        this.setLayout(new GridBagLayout());
-        Form form = null;
+    public static void openDataFormDialog(MultiUserChat chat) {
+        ChatFrame chatFrame = SparkManager.getChatManager().getChatContainer().getChatFrame();
+        Form form;
         // Create the room
         try {
             form = chat.getConfigurationForm();
         } catch (XMPPException | SmackException | InterruptedException e) {
-            // TODO: Just logging the exception wont do it and actually just cause an NPE below, we need to handle it
-            // better.
             Log.error(e);
+            MessageDialog.showErrorDialog(Res.getString("group.send_config.error"), e);
+            return;
         }
+        new DataFormDialog(chatFrame, chat, form);
+    }
+
+    public DataFormDialog(JFrame parent, MultiUserChat chat, Form form) {
+        dialog = new JDialog(parent, true);
+        dialog.setTitle(Res.getString("title.configure.chat.room"));
+
+        this.setLayout(new GridBagLayout());
+        FillableForm submitForm = form.getFillableForm();
 
         // Create a new form to submit based on the original form
-        try {
-            // Add default answers to the form to submit
-            for (final FormField field : form.getDataForm().getFields()) {
-                String variable = field.getFieldName();
-                String label = field.getLabel();
-                FormField.Type type = field.getType();
-
-                List<? extends CharSequence> valueList = field.getValues();
-
-                if (type == FormField.Type.text_private) {
-                    String value = null;
-                    if (!valueList.isEmpty()) {
-                        value = valueList.get(0).toString();
-                        submitForm.setAnswer(variable, value);
-                    }
-                    addField(label, new JPasswordField(value), variable);
-                }
-
-                if (!valueList.isEmpty()) {
-                    switch (type) {
-                        case bool: {
-                            BooleanFormField booleanField = field.ifPossibleAsOrThrow(BooleanFormField.class);
-                            boolean isSelected = booleanField.getValueAsBoolean();
-                            JCheckBox box = new JCheckBox(label);
-                            box.setSelected(isSelected);
-                            submitForm.setAnswer(variable, isSelected);
-                            addField(label, box, variable);
-                            break;
-                        }
-                        case text_single:
-                        case jid_single: {
-                            String value = valueList.get(0).toString();
-                            submitForm.setAnswer(variable, value);
-                            addField(label, new JTextField(value), variable);
-                            break;
-                        }
-                        case text_multi:
-                        case jid_multi: {
-                            String text = String.join(",", valueList);
-                            submitForm.setAnswer(variable, valueList);
-                            addField(label, new JTextArea(text), variable);
-                            break;
-                        }
-                        case list_single: {
-                            ListSingleFormField listSingleFormField = field.ifPossibleAsOrThrow(ListSingleFormField.class);
-                            JComboBox<String> box = new JComboBox<>();
-                            for (Option option : listSingleFormField.getOptions()) {
-                                box.addItem(option.getValueString());
-                            }
-                            String defaultValue = valueList.get(0).toString();
-                            box.setSelectedItem(defaultValue);
-                            submitForm.setAnswer(variable, valueList.get(0));
-                            addField(label, box, variable);
-                            break;
-                        }
-                        case list_multi: {
-                            ListMultiFormField listMultiFormField = field.ifPossibleAsOrThrow(ListMultiFormField.class);
-                            CheckBoxList checkBoxList = new CheckBoxList();
-                            final List<? extends CharSequence> values = field.getValues();
-                            for (Option option : listMultiFormField.getOptions()) {
-                                String optionLabel = option.getLabel();
-                                String optionValue = option.getValueString();
-                                checkBoxList.addCheckBox(new JCheckBox(optionLabel, values.contains(optionValue)), optionValue);
-                            }
-                            submitForm.setAnswer(variable, valueList);
-                            addField(label, checkBoxList, variable);
-                            break;
-                        }
-                    }
-                }
-            }
-        } catch (NullPointerException e) {
-            Log.error(e);
-            // TODO: Why do we continue here as nothing had happened? If there is an NPE somewhere in this block, then
-            // we should fix it, instead of masking it. Remove this try/catch block and see if it still appears, if so:
-            // fix it.
-        }
-
+        addDefaultAnswersToSubmitForm(submitForm, form);
 
         JButton button = new JButton();
         ResourceUtils.resButton(button, Res.getString("button.update"));
@@ -191,9 +127,80 @@ public class DataFormDialog extends JPanel {
         dialog.getContentPane().add(bottomPanel, BorderLayout.SOUTH);
 
         dialog.pack();
-        dialog.setSize(600, 400);
+        dialog.setSize(800, 600);
         GraphicUtils.centerWindowOnScreen(dialog);
         dialog.setVisible(true);
+    }
+
+    private void addDefaultAnswersToSubmitForm(FillableForm submitForm, Form form) {
+        // Add default answers to the form to submit
+        for (final FormField field : form.getDataForm().getFields()) {
+            String variable = field.getFieldName();
+            String label = field.getLabel();
+            FormField.Type type = field.getType();
+            List<? extends CharSequence> valueList = field.getValues();
+            if (type == FormField.Type.text_private) {
+                String value = null;
+                if (!valueList.isEmpty()) {
+                    value = valueList.get(0).toString();
+                    submitForm.setAnswer(variable, value);
+                }
+                addField(label, new JPasswordField(value), variable);
+            }
+
+            if (!valueList.isEmpty()) {
+                switch (type) {
+                    case bool: {
+                        BooleanFormField booleanField = field.ifPossibleAsOrThrow(BooleanFormField.class);
+                        boolean isSelected = booleanField.getValueAsBoolean();
+                        JCheckBox box = new JCheckBox(label);
+                        box.setSelected(isSelected);
+                        submitForm.setAnswer(variable, isSelected);
+                        addField(label, box, variable);
+                        break;
+                    }
+                    case text_single:
+                    case jid_single: {
+                        String value = valueList.get(0).toString();
+                        submitForm.setAnswer(variable, value);
+                        addField(label, new JTextField(value), variable);
+                        break;
+                    }
+                    case text_multi:
+                    case jid_multi: {
+                        String text = String.join(",", valueList);
+                        submitForm.setAnswer(variable, valueList);
+                        addField(label, new JTextArea(text), variable);
+                        break;
+                    }
+                    case list_single: {
+                        ListSingleFormField listSingleFormField = field.ifPossibleAsOrThrow(ListSingleFormField.class);
+                        JComboBox<String> box = new JComboBox<>();
+                        for (Option option : listSingleFormField.getOptions()) {
+                            box.addItem(option.getValueString());
+                        }
+                        String defaultValue = valueList.get(0).toString();
+                        box.setSelectedItem(defaultValue);
+                        submitForm.setAnswer(variable, defaultValue);
+                        addField(label, box, variable);
+                        break;
+                    }
+                    case list_multi: {
+                        ListMultiFormField listMultiFormField = field.ifPossibleAsOrThrow(ListMultiFormField.class);
+                        CheckBoxList checkBoxList = new CheckBoxList();
+                        final List<? extends CharSequence> values = field.getValues();
+                        for (Option option : listMultiFormField.getOptions()) {
+                            String optionLabel = option.getLabel();
+                            String optionValue = option.getValueString();
+                            checkBoxList.addCheckBox(new JCheckBox(optionLabel, values.contains(optionValue)), optionValue);
+                        }
+                        submitForm.setAnswer(variable, valueList);
+                        addField(label, checkBoxList, variable);
+                        break;
+                    }
+                }
+            }
+        }
     }
 
     private void updateRoomConfiguration(FillableForm submitForm, MultiUserChat chat) {
@@ -232,35 +239,41 @@ public class DataFormDialog extends JPanel {
 
         try {
             chat.sendConfigurationForm(submitForm);
+            // Now recheck the new settings and update bookmark
             MultiUserChatManager mucManager = SparkManager.getMucManager();
             RoomInfo info = mucManager.getRoomInfo(chat.getRoom());
             // Remove bookmark if any for a non-persistent room
             if (!info.isPersistent()) {
                 BookmarkManager.getBookmarkManager(SparkManager.getConnection()).removeBookmarkedConference(info.getRoom());
             }
+            //TODO update bookmark password if if was set
         } catch (XMPPException | SmackException | InterruptedException e) {
             Log.error(e);
             MessageDialog.showErrorDialog(Res.getString("group.send_config.error"), e);
         }
     }
 
+    /**
+     * Add labeled component to form and map variable to the component
+     */
     private void addField(String label, JComponent comp, String variable) {
+        Insets insets = new Insets(5, 5, 5, 5);
         if (!(comp instanceof JCheckBox)) {
+            // add label for all components except of checkbox
             JLabel formLabel = new JLabel(label);
-            formLabel.setFont(new Font("dialog", Font.BOLD, 10));
-            this.add(formLabel, new GridBagConstraints(0, row, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+            formLabel.setFont(new Font("dialog", Font.BOLD, 12));
+            this.add(formLabel, new GridBagConstraints(0, row, 1, 1, 1, 0, WEST, HORIZONTAL, insets, 0, 0));
         }
         if (comp instanceof JTextArea) {
             JScrollPane pane = new JScrollPane(comp);
             pane.setBorder(BorderFactory.createTitledBorder(Res.getString("group.comma.delimited")));
-            this.add(pane, new GridBagConstraints(1, row, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 75, 50));
+            this.add(pane, new GridBagConstraints(1, row, 1, 1, 1, 0, WEST, HORIZONTAL, insets, 75, 50));
         } else if (comp instanceof JCheckBox) {
-            this.add(comp, new GridBagConstraints(0, row, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+            this.add(comp, new GridBagConstraints(0, row, 1, 1, 0, 0, WEST, HORIZONTAL, insets, 0, 0));
         } else if (comp instanceof CheckBoxList) {
-            this.add(comp, new GridBagConstraints(1, row, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 75, 50));
+            this.add(comp, new GridBagConstraints(1, row, 1, 1, 0, 0, WEST, HORIZONTAL, insets, 75, 50));
         } else {
-            this.add(comp, new GridBagConstraints(1, row, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 75, 0));
-
+            this.add(comp, new GridBagConstraints(1, row, 1, 1, 1, 0, WEST, HORIZONTAL, insets, 75, 0));
         }
         valueMap.put(variable, comp);
         row++;

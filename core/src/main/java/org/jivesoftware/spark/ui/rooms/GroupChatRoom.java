@@ -35,7 +35,6 @@ import org.jivesoftware.smackx.muc.ParticipantStatusListener;
 import org.jivesoftware.smackx.muc.UserStatusListener;
 import org.jivesoftware.smackx.muc.packet.Destroy;
 import org.jivesoftware.smackx.muc.packet.MUCUser;
-import org.jivesoftware.smackx.xdata.form.FillableForm;
 import org.jivesoftware.smackx.xdata.form.Form;
 import org.jivesoftware.smackx.xevent.MessageEventManager;
 import org.jivesoftware.spark.ChatManager;
@@ -54,7 +53,6 @@ import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jxmpp.jid.*;
 import org.jxmpp.jid.parts.Resourcepart;
-import org.jxmpp.util.XmppStringUtils;
 
 import javax.swing.*;
 import java.awt.*;
@@ -150,13 +148,7 @@ public class GroupChatRoom extends ChatRoom {
                 Action configureAction = new AbstractAction() {
                     @Override
                     public void actionPerformed(ActionEvent actionEvent) {
-                        try {
-                            ChatFrame chatFrame = SparkManager.getChatManager().getChatContainer().getChatFrame();
-                            FillableForm form = chat.getConfigurationForm().getFillableForm();
-                            new DataFormDialog(chatFrame, chat, form);
-                        } catch (XMPPException | SmackException | InterruptedException e) {
-                            Log.error("Error configuring room.", e);
-                        }
+                        DataFormDialog.openDataFormDialog(chat);
                     }
                 };
 
@@ -255,14 +247,7 @@ public class GroupChatRoom extends ChatRoom {
         settings.addActionListener(new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent event) {
-                try {
-                    final ChatFrame chatFrame = SparkManager.getChatManager().getChatContainer().getChatFrame();
-                    final FillableForm form = chat.getConfigurationForm().getFillableForm();
-                    new DataFormDialog(chatFrame, chat, form);
-                } catch (XMPPException | SmackException | InterruptedException xmpe) {
-                    getTranscriptWindow().insertNotificationMessage(xmpe.getMessage(), ChatManager.ERROR_COLOR);
-                    scrollToBottom();
-                }
+                DataFormDialog.openDataFormDialog(chat);
             }
         });
 
