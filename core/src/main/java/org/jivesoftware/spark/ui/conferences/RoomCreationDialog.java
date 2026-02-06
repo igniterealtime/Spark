@@ -64,6 +64,7 @@ public class RoomCreationDialog extends JPanel {
     private final JLabel confirmPasswordLabel = new JLabel();
     private final JPasswordField confirmPasswordField = new JPasswordField();
     private MultiUserChat groupChat = null;
+    private JOptionPane pane;
 
     public RoomCreationDialog() {
         try {
@@ -115,13 +116,12 @@ public class RoomCreationDialog extends JPanel {
     }
 
     public MultiUserChat createGroupChat(Component parent, final DomainBareJid serviceName) {
-        final JOptionPane pane;
-        final JDialog dlg;
-
-        TitlePanel titlePanel;
-
         // Create the title panel for this dialog
-        titlePanel = new TitlePanel(Res.getString("title.create.room"), Res.getString("message.create.or.join.room"), SparkRes.getImageIcon(SparkRes.BLANK_24x24), true);
+        TitlePanel titlePanel = new TitlePanel(
+            Res.getString("title.create.room"),
+            Res.getString("message.create.or.join.room"),
+            SparkRes.getImageIcon(SparkRes.BLANK_24x24),
+            true);
 
         // Construct main panel w/ layout.
         final JPanel mainPanel = new JPanel();
@@ -135,7 +135,7 @@ public class RoomCreationDialog extends JPanel {
         mainPanel.add(pane, BorderLayout.CENTER);
 
         JOptionPane p = new JOptionPane();
-        dlg = p.createDialog(parent, Res.getString("title.conference.rooms"));
+        final JDialog dlg = p.createDialog(parent, Res.getString("title.conference.rooms"));
         dlg.pack();
         dlg.setSize(500, 400);
         dlg.setContentPane(mainPanel);
@@ -156,35 +156,39 @@ public class RoomCreationDialog extends JPanel {
                 if (Res.getString("close").equals(value)) {
                     dlg.setVisible(false);
                 } else if (Res.getString("create").equals(value)) {
-                    MultiUserChatManager mucManager = SparkManager.getMucManager();
-                    boolean isValid = validatePanel();
-                    if (isValid) {
-                        String roomJidString = nameField.getText().replaceAll(" ", "_") + "@" + serviceName;
-//                        EntityBareJid newRoomJid = JidCreate.entityBareFromUnescapedOrNull(roomJidString);
-                        EntityBareJid newRoomJid = JidCreate.entityBareFromOrThrowUnchecked(roomJidString);
-                        try {
-                            RoomInfo roomInfo = mucManager.getRoomInfo(newRoomJid);
-                            //JOptionPane.showMessageDialog(dlg, "Room already exists. Please specify a unique room name.", "Room Exists", JOptionPane.ERROR_MESSAGE);
-                            //pane.setValue(JOptionPane.UNINITIALIZED_VALUE);
-                            pane.removePropertyChangeListener(this);
-                            dlg.setVisible(false);
-                            ConferenceUtils.joinConferenceRoom(roomInfo, newRoomJid);
-                            return;
-                        } catch (XMPPException | SmackException | InterruptedException ignored) {
-                        }
+                    createRoom();
+                }
+            }
 
-                        // Create a group chat with valid information
-                        groupChat = mucManager.getMultiUserChat(newRoomJid);
-                        if (groupChat == null) {
-                            showError("Could not join chat " + nameField.getText());
-                            pane.setValue(JOptionPane.UNINITIALIZED_VALUE);
-                        } else {
-                            pane.removePropertyChangeListener(this);
-                            dlg.setVisible(false);
-                        }
-                    } else {
-                        pane.setValue(JOptionPane.UNINITIALIZED_VALUE);
+            private void createRoom() {
+                MultiUserChatManager mucManager = SparkManager.getMucManager();
+                boolean isValid = validatePanel();
+                if (isValid) {
+                    String roomJidString = nameField.getText().replaceAll(" ", "_") + "@" + serviceName;
+//                        EntityBareJid newRoomJid = JidCreate.entityBareFromUnescapedOrNull(roomJidString);
+                    EntityBareJid newRoomJid = JidCreate.entityBareFromOrThrowUnchecked(roomJidString);
+                    try {
+                        RoomInfo roomInfo = mucManager.getRoomInfo(newRoomJid);
+                        //JOptionPane.showMessageDialog(dlg, "Room already exists. Please specify a unique room name.", "Room Exists", JOptionPane.ERROR_MESSAGE);
+                        //pane.setValue(JOptionPane.UNINITIALIZED_VALUE);
+                        pane.removePropertyChangeListener(this);
+                        dlg.setVisible(false);
+                        ConferenceUtils.joinConferenceRoom(roomInfo, newRoomJid);
+                        return;
+                    } catch (XMPPException | SmackException | InterruptedException ignored) {
                     }
+
+                    // Create a group chat with valid information
+                    groupChat = mucManager.getMultiUserChat(newRoomJid);
+                    if (groupChat == null) {
+                        showError("Could not join chat " + nameField.getText());
+                        pane.setValue(JOptionPane.UNINITIALIZED_VALUE);
+                    } else {
+                        pane.removePropertyChangeListener(this);
+                        dlg.setVisible(false);
+                    }
+                } else {
+                    pane.setValue(JOptionPane.UNINITIALIZED_VALUE);
                 }
             }
         };

@@ -112,18 +112,16 @@ public class JoinRoomSwingWorker extends SwingWorker
             ChatRoom room;
             try {
                 room = SparkManager.getChatManager().getChatContainer().getChatRoom(groupChat.getRoom());
-                } catch (ChatRoomNotFoundException e) {
+            } catch (ChatRoomNotFoundException e) {
                 room = UIComponentRegistry.createGroupChatRoom(groupChat);
                 ((GroupChatRoom) room).setPassword(password);
                 ((GroupChatRoom) room).setTabTitle(tabTitle);
-                }
+            }
             roomUIObject.set(room);
             Log.debug("... created UI object for " + roomJID);
-
             if ( !groupChat.isJoined() ) {
                 // Join the MUC server-sided, if we're not already in.
                 if (password == null && passwordRequired) {
-
                     EventQueue.invokeAndWait(() -> {
                         JLabel label = new JLabel(Res.getString("message.enter.room.password"));
                         JPasswordField passwordField = new JPasswordField();
@@ -136,7 +134,6 @@ public class JoinRoomSwingWorker extends SwingWorker
                         return null;
                     }
                 }
-
                 AtomicBoolean wontJoin = new AtomicBoolean(false);
                 EventQueue.invokeLater(() -> {
                     if (!ConferenceUtils.confirmToRevealVisibility()) {
@@ -147,13 +144,11 @@ public class JoinRoomSwingWorker extends SwingWorker
                     return null;
                 }
             }
-
             if ( !groupChat.isJoined() ) {
                 Log.debug("Start server-sided join of chat room " + roomJID);
                 groupChat.join(getMucEnterConfiguration(groupChat, nickname, password));
                 Log.debug("Joined chat room " + roomJID + " on the server.");
             }
-
             return roomUIObject.get();
         }
         catch ( XMPPException | SmackException | InterruptedException | InvocationTargetException ex )
@@ -164,7 +159,7 @@ public class JoinRoomSwingWorker extends SwingWorker
             {
                 error = ( (XMPPException.XMPPErrorException) ex ).getStanzaError();
                 AtomicReference<Object> retryAttemptResult = new AtomicReference<>();
-                if ( StanzaError.Condition.conflict.equals( error.getCondition() ) )
+                if (StanzaError.Condition.conflict == error.getCondition())
                 {
                     try {
                         EventQueue.invokeAndWait(() -> {
@@ -202,10 +197,6 @@ public class JoinRoomSwingWorker extends SwingWorker
         }
     }
 
-    public static MucEnterConfiguration getMucEnterConfiguration(final MultiUserChat groupChat, final Resourcepart nickname) {
-        return getMucEnterConfiguration(groupChat, nickname, null);
-    }
-
     public static MucEnterConfiguration getMucEnterConfiguration(final MultiUserChat groupChat, final Resourcepart nickname, final String password)
     {
         final MucEnterConfiguration.Builder builder = groupChat.getEnterConfigurationBuilder(nickname);
@@ -236,8 +227,7 @@ public class JoinRoomSwingWorker extends SwingWorker
     public void finished()
     {
         UIManager.put( "OptionPane.okButtonText", Res.getString( "ok" ) );
-
-        if ( errors.size() > 0 )
+        if (!errors.isEmpty())
         {
             String error = errors.get( 0 );
             final String style = "width: 300px;";

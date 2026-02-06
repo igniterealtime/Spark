@@ -138,23 +138,22 @@ public class ConferenceServices implements InvitationListener {
         final TimerTask bookmarkLoader = new TimerTask() {
             @Override
             public void run() {
-                Collection<BookmarkedConference> bc = null;
                 try {
-                    while (bc == null) {
-                        BookmarkManager manager = BookmarkManager.getBookmarkManager(SparkManager.getConnection());
-                        bc = manager.getBookmarkedConferences();
-                    }
+                    BookmarkManager manager = BookmarkManager.getBookmarkManager(SparkManager.getConnection());
+                    manager.getBookmarkedConferences();
                 } catch (XMPPException | SmackException | InterruptedException error) {
                     Log.error(error);
                 }
                 bookmarksUI.loadUI();
                 addBookmarksUI();
             }
-
         };
         TaskEngine.getInstance().schedule(bookmarkLoader, 500);
     }
 
+    /**
+     * Add Bookmarks UI Tab "Conferences" to the workspace
+     */
     protected void addBookmarksUI() {
         EventQueue.invokeLater(() -> {
             final Workspace workspace = SparkManager.getWorkspace();
