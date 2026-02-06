@@ -79,7 +79,6 @@ public class BookmarksUI extends JPanel {
         EventQueue.invokeLater(() -> {
             setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
             setLayout(new GridBagLayout());
-
             add(getServicePanel(), new GridBagConstraints(0, 0, 2, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 
             rootNode = new JiveTreeNode("Conference Services");
@@ -154,11 +153,8 @@ public class BookmarksUI extends JPanel {
             final TimerTask bookmarkTask = new TimerTask() {
                 @Override
                 public void run() {
-                    Collection<BookmarkedConference> bc = null;
                     try {
-                        while (bc == null) {
-                            bc = manager.getBookmarkedConferences();
-                        }
+                        Collection<BookmarkedConference> bc = manager.getBookmarkedConferences();
                         setBookmarks(bc);
                     } catch (XMPPException | SmackException | InterruptedException error) {
                         Log.error(error);
@@ -279,17 +275,17 @@ public class BookmarksUI extends JPanel {
                 roomInfoAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.SMALL_DATA_FIND_IMAGE));
                 popupMenu.add(roomInfoAction);
 
-                Action copyURIgroupChat = new AbstractAction() {
+                Action copyUriGroupChat = new AbstractAction() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        final String roomName = node.getAssociatedObject().toString();
-                        SparkManager.setClipboard("xmpp:" + roomName + "?join");
+                        final String rooJid = node.getAssociatedObject().toString();
+                        SparkManager.setClipboard("xmpp:" + rooJid + "?join");
                     }
                 };
 
-                copyURIgroupChat.putValue(Action.NAME, Res.getString("button.copy.to.clipboard"));
-                copyURIgroupChat.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.COPY_16x16));
-                popupMenu.add(copyURIgroupChat);
+                copyUriGroupChat.putValue(Action.NAME, Res.getString("button.copy.to.clipboard"));
+                copyUriGroupChat.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.COPY_16x16));
+                popupMenu.add(copyUriGroupChat);
 
             }
             // Fire menu listeners
@@ -441,7 +437,6 @@ public class BookmarksUI extends JPanel {
 
                         @Override
                         public Object construct() {
-                            XMPPConnection connection = SparkManager.getConnection();
                             ServiceDiscoveryManager discoManager = SparkManager.getDiscoManager();
                             try {
                                 DomainBareJid conferenceServiceJid = JidCreate.domainBareFrom(conferenceService);

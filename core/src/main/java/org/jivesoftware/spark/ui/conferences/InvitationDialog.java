@@ -68,6 +68,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * Invite To conference dialog
+ */
 final class InvitationDialog extends JPanel {
     private JTextField textRoomsField;
     private JComboBox<ConferenceItem> comboRoomsField;
@@ -90,10 +93,9 @@ final class InvitationDialog extends JPanel {
             comboRoomsField.setEditable(true);
             comboRoomsField.addActionListener(e -> {
                 // get selected bookmark and persist it:
-                BookmarkedConference bookmarkedConf;
-                Object bookmarkedConfItem = comboRoomsField.getSelectedItem();
-                if (bookmarkedConfItem instanceof ConferenceItem) {
-                    bookmarkedConf = ((ConferenceItem) bookmarkedConfItem).getBookmarkedConf();
+                ConferenceItem bookmarkedConfItem = (ConferenceItem) comboRoomsField.getSelectedItem();
+                if (bookmarkedConfItem != null) {
+                    BookmarkedConference bookmarkedConf = bookmarkedConfItem.getBookmarkedConf();
                     pref.setDefaultBookmarkedConf(bookmarkedConf.getJid());
                     SettingsManager.saveSettings();
                 }
@@ -195,9 +197,7 @@ final class InvitationDialog extends JPanel {
         removeAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.SMALL_DELETE));
 
         popup.add(removeAction);
-
         popup.show(invitedUserList, e.getX(), e.getY());
-
     }
 
     private void fillRoomsUI(List<BookmarkedConference> rooms, EntityBareJid adHocRoomName) {
@@ -238,14 +238,13 @@ final class InvitationDialog extends JPanel {
     }
 
     private BookmarkedConference getSelectedBookmarkedConference() {
-        BookmarkedConference bookmarkedConf = null;
         if (comboRoomsField != null) {
-            Object bookmarkedConfItem = comboRoomsField.getSelectedItem();
-            if (bookmarkedConfItem instanceof ConferenceItem) {
-                bookmarkedConf = ((ConferenceItem) bookmarkedConfItem).getBookmarkedConf();
+            ConferenceItem bookmarkedConfItem = (ConferenceItem) comboRoomsField.getSelectedItem();
+            if (bookmarkedConfItem != null) {
+                return bookmarkedConfItem.getBookmarkedConf();
             }
         }
-        return bookmarkedConf;
+        return null;
     }
 
     public void inviteUsersToRoom(final DomainBareJid serviceName, List<BookmarkedConference> rooms, EntityBareJid adHocRoomName, Collection<Jid> jids) {
@@ -262,10 +261,8 @@ final class InvitationDialog extends JPanel {
             }
         }
 
-        final JOptionPane pane;
-        TitlePanel titlePanel;
         // Create the title panel for this dialog
-        titlePanel = new TitlePanel(Res.getString("title.invite.to.conference"), Res.getString("message.invite.users.to.conference"), SparkRes.getImageIcon(SparkRes.BLANK_IMAGE), true);
+        TitlePanel titlePanel = new TitlePanel(Res.getString("title.invite.to.conference"), Res.getString("message.invite.users.to.conference"), SparkRes.getImageIcon(SparkRes.BLANK_IMAGE), true);
 
         // Construct main panel w/ layout.
         final JPanel mainPanel = new JPanel();
@@ -274,7 +271,7 @@ final class InvitationDialog extends JPanel {
 
         // The user should only be able to close this dialog.
         Object[] options = {Res.getString("invite"), Res.getString("cancel")};
-        pane = new JOptionPane(this, JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION, null, options, options[0]);
+        final JOptionPane pane = new JOptionPane(this, JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION, null, options, options[0]);
         mainPanel.add(pane, BorderLayout.CENTER);
 
         final JOptionPane p = new JOptionPane();

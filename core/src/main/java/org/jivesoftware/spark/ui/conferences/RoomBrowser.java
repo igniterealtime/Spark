@@ -45,6 +45,9 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.beans.PropertyChangeListener;
 
+/**
+ * View room information dialog
+ */
 public class RoomBrowser extends JPanel {
     private final JLabel descriptionValue = new JLabel();
     private final JLabel subjectValue = new JLabel();
@@ -78,15 +81,12 @@ public class RoomBrowser extends JPanel {
         add(roomNameLabel, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         add(roomNameValue, new GridBagConstraints(1, 3, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 
-
         rootNode = new JiveTreeNode(Res.getString("tree.users.in.room"), true);
         tree = new Tree(rootNode);
 
         add(tree, new GridBagConstraints(0, 4, 2, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
         setBackground(Color.white);
         tree.setCellRenderer(new JiveTreeCellRenderer());
-
-
     }
 
     public void displayRoomInformation(final EntityBareJid roomJID) {
@@ -141,8 +141,6 @@ public class RoomBrowser extends JPanel {
             Log.error(e);
         }
 
-        final JOptionPane pane;
-
         // Create the title panel for this dialog
         TitlePanel titlePanel = new TitlePanel(Res.getString("title.view.room.information"), Res.getString("message.room.information.for", roomJID), SparkRes.getImageIcon(SparkRes.BLANK_IMAGE), true);
 
@@ -153,12 +151,9 @@ public class RoomBrowser extends JPanel {
 
         // The user should only be able to close this dialog.
         Object[] options = {Res.getString("close")};
-        pane = new JOptionPane(this, JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION, null, options, options[0]);
-
+        final JOptionPane pane = new JOptionPane(this, JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION, null, options, options[0]);
         mainPanel.add(pane, BorderLayout.CENTER);
-
         final JOptionPane p = new JOptionPane();
-
         final JDialog dlg = p.createDialog(SparkManager.getMainWindow(), Res.getString("title.view.room.information"));
         dlg.setModal(false);
 
@@ -182,6 +177,5 @@ public class RoomBrowser extends JPanel {
         dlg.toFront();
         dlg.requestFocus();
     }
-
 
 }

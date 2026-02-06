@@ -38,7 +38,6 @@ import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ChatRoomNotFoundException;
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 import org.jivesoftware.spark.ui.rooms.GroupChatRoom;
-import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
@@ -58,6 +57,10 @@ import java.awt.event.MouseEvent;
 import java.util.List;
 import java.util.*;
 
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.jivesoftware.spark.ChatManager.ERROR_COLOR;
+import static org.jivesoftware.spark.ChatManager.NOTIFICATION_COLOR;
+
 /**
  * Display a room information, such as agents and room information.
  */
@@ -68,6 +71,9 @@ public class GroupChatParticipantList extends JPanel {
     private MultiUserChat chat;
     private final LocalPreferences pref = SettingsManager.getLocalPreferences();
 
+    /**
+     * Map of participants displayName and JID
+     */
     private final Map<CharSequence, EntityFullJid> userMap = new HashMap<>();
 
     private final UserManager userManager = SparkManager.getUserManager();
@@ -93,8 +99,7 @@ public class GroupChatParticipantList extends JPanel {
         setLayout(new GridBagLayout());
         chatManager = SparkManager.getChatManager();
 
-        agentInfoPanel = new ImageTitlePanel(Res
-            .getString("message.participants.in.room"));
+        agentInfoPanel = new ImageTitlePanel(Res.getString("message.participants.in.room"));
         participantsList = new JXList(model);
         participantsList.setCellRenderer(new ParticipantRenderer());
 
@@ -148,11 +153,11 @@ public class GroupChatParticipantList extends JPanel {
         this.groupChatRoom = (GroupChatRoom) chatRoom;
         chat = groupChatRoom.getMultiUserChat();
         chat.addInvitationRejectionListener((jid1, reason, message, rejection) -> {
-            String nickname = userManager.getUserNicknameFromJID(jid1);
-            userHasLeft(nickname);
+            String displayName = userManager.getUserNicknameFromJID(jid1);
+            userHasLeft(displayName);
             chatRoom.getTranscriptWindow().insertNotificationMessage(
-                nickname + " has rejected the invitation.",
-                ChatManager.NOTIFICATION_COLOR);
+                displayName + " has rejected the invitation." + " " + reason,
+                NOTIFICATION_COLOR);
         });
 
         listener = p -> SwingUtilities.invokeLater(() -> {
@@ -204,7 +209,7 @@ public class GroupChatParticipantList extends JPanel {
 
         groupChatRoom.getTranscriptWindow().insertNotificationMessage(
             displayName + " has been invited to join this room.",
-            ChatManager.NOTIFICATION_COLOR);
+            NOTIFICATION_COLOR);
         if (roomInformation != null
             && !roomInformation.containsFeature(MucFeature.NonAnonymous.getName())) {
             return;
@@ -311,11 +316,11 @@ public class GroupChatParticipantList extends JPanel {
         }
     }
 
-    public void userHasLeft(CharSequence userid) {
-        int index = getIndex(userid);
+    public void userHasLeft(CharSequence displayName) {
+        int index = getIndex(displayName);
         if (index != -1) {
-            removeUser(userid);
-            userMap.remove(userid);
+            removeUser(displayName);
+            userMap.remove(displayName);
         }
     }
 
@@ -394,7 +399,7 @@ public class GroupChatParticipantList extends JPanel {
             }
         } catch (XMPPException | SmackException | InterruptedException | IllegalStateException e) {
             groupChatRoom.getTranscriptWindow().
-                insertNotificationMessage("No can do " + e.getMessage(), ChatManager.ERROR_COLOR);
+                insertNotificationMessage("No can do " + e.getMessage(), ERROR_COLOR);
         }
     }
 
@@ -404,7 +409,7 @@ public class GroupChatParticipantList extends JPanel {
             chat.grantMembership(jid);
         } catch (XMPPException | SmackException | XmppStringprepException | InterruptedException e) {
             groupChatRoom.getTranscriptWindow().
-                insertNotificationMessage("No can do " + e.getMessage(), ChatManager.ERROR_COLOR);
+                insertNotificationMessage("No can do " + e.getMessage(), ERROR_COLOR);
         }
     }
 
@@ -413,34 +418,34 @@ public class GroupChatParticipantList extends JPanel {
             chat.grantVoice(nickname);
         } catch (XMPPException | SmackException | InterruptedException e) {
             groupChatRoom.getTranscriptWindow().
-                insertNotificationMessage("No can do " + e.getMessage(), ChatManager.ERROR_COLOR);
+                insertNotificationMessage("No can do " + e.getMessage(), ERROR_COLOR);
         }
     }
 
     protected void revokeVoice(Resourcepart nickname) {
         try {
-            chat.revokeVoice(List.of(nickname));
+            chat.revokeVoice(nickname);
         } catch (XMPPException | SmackException | InterruptedException e) {
             groupChatRoom.getTranscriptWindow().
-                insertNotificationMessage("No can do " + e.getMessage(), ChatManager.ERROR_COLOR);
+                insertNotificationMessage("No can do " + e.getMessage(), ERROR_COLOR);
         }
     }
 
     protected void grantModerator(Resourcepart nickname) {
         try {
-            chat.grantModerator(List.of(nickname));
+            chat.grantModerator(nickname);
         } catch (XMPPException | SmackException | InterruptedException e) {
             groupChatRoom.getTranscriptWindow().insertNotificationMessage(
-                "No can do " + e.getMessage(), ChatManager.ERROR_COLOR);
+                "No can do " + e.getMessage(), ERROR_COLOR);
         }
     }
 
     protected void revokeModerator(Resourcepart nickname) {
         try {
-            chat.revokeModerator(List.of(nickname));
+            chat.revokeModerator(nickname);
         } catch (XMPPException | SmackException | InterruptedException e) {
             groupChatRoom.getTranscriptWindow().insertNotificationMessage(
-                "No can do " + e.getMessage(), ChatManager.ERROR_COLOR);
+                "No can do " + e.getMessage(), ERROR_COLOR);
         }
     }
 
@@ -448,10 +453,10 @@ public class GroupChatParticipantList extends JPanel {
         try {
             Occupant o = userManager.getOccupant(groupChatRoom, nickname);
             BareJid bareJid = o.getJid().asBareJid();
-            chat.grantMembership(List.of(bareJid));
+            chat.grantMembership(bareJid);
         } catch (XMPPException | SmackException | InterruptedException e) {
             groupChatRoom.getTranscriptWindow().insertNotificationMessage(
-                "No can do " + e.getMessage(), ChatManager.ERROR_COLOR);
+                "No can do " + e.getMessage(), ERROR_COLOR);
         }
     }
 
@@ -459,10 +464,10 @@ public class GroupChatParticipantList extends JPanel {
         try {
             Occupant o = userManager.getOccupant(groupChatRoom, nickname);
             BareJid bareJid = o.getJid().asBareJid();
-            chat.revokeMembership(List.of(bareJid));
+            chat.revokeMembership(bareJid);
         } catch (XMPPException | SmackException | InterruptedException e) {
             groupChatRoom.getTranscriptWindow().insertNotificationMessage(
-                "No can do " + e.getMessage(), ChatManager.ERROR_COLOR);
+                "No can do " + e.getMessage(), ERROR_COLOR);
         }
     }
 
@@ -470,10 +475,10 @@ public class GroupChatParticipantList extends JPanel {
         try {
             Occupant o = userManager.getOccupant(groupChatRoom, nickname);
             BareJid bareJid = o.getJid().asBareJid();
-            chat.grantAdmin(List.of(bareJid));
+            chat.grantAdmin(bareJid);
         } catch (XMPPException | SmackException | InterruptedException e) {
             groupChatRoom.getTranscriptWindow().insertNotificationMessage(
-                "No can do " + e.getMessage(), ChatManager.ERROR_COLOR);
+                "No can do " + e.getMessage(), ERROR_COLOR);
         }
     }
 
@@ -481,10 +486,10 @@ public class GroupChatParticipantList extends JPanel {
         try {
             Occupant o = userManager.getOccupant(groupChatRoom, nickname);
             BareJid bareJid = o.getJid().asBareJid();
-            chat.revokeAdmin(List.of(bareJid));
+            chat.revokeAdmin(bareJid);
         } catch (XMPPException | SmackException | InterruptedException e) {
             groupChatRoom.getTranscriptWindow().insertNotificationMessage(
-                "No can do " + e.getMessage(), ChatManager.ERROR_COLOR);
+                "No can do " + e.getMessage(), ERROR_COLOR);
         }
     }
 
@@ -492,10 +497,10 @@ public class GroupChatParticipantList extends JPanel {
         try {
             Occupant o = userManager.getOccupant(groupChatRoom, nickname);
             BareJid bareJid = o.getJid().asBareJid();
-            chat.grantOwnership(List.of(bareJid));
+            chat.grantOwnership(bareJid);
         } catch (XMPPException | SmackException | InterruptedException e) {
             groupChatRoom.getTranscriptWindow().insertNotificationMessage(
-                "No can do " + e.getMessage(), ChatManager.ERROR_COLOR);
+                "No can do " + e.getMessage(), ERROR_COLOR);
         }
     }
 
@@ -503,10 +508,10 @@ public class GroupChatParticipantList extends JPanel {
         try {
             Occupant o = userManager.getOccupant(groupChatRoom, nickname);
             BareJid bareJid = o.getJid().asBareJid();
-            chat.revokeOwnership(List.of(bareJid));
+            chat.revokeOwnership(bareJid);
         } catch (XMPPException | SmackException | InterruptedException e) {
             groupChatRoom.getTranscriptWindow().insertNotificationMessage(
-                "No can do " + e.getMessage(), ChatManager.ERROR_COLOR);
+                "No can do " + e.getMessage(), ERROR_COLOR);
         }
     }
 
@@ -567,53 +572,9 @@ public class GroupChatParticipantList extends JPanel {
             }
 
             if (selectedMyself) {
-                Action changeNicknameAction = new AbstractAction() {
-                    @Override
-                    public void actionPerformed(ActionEvent actionEvent) {
-                        String newNickname = JOptionPane.showInputDialog(
-                            groupChatRoom,
-                            Res.getString("label.new.nickname") + ":",
-                            Res.getString("title.change.nickname"),
-                            JOptionPane.QUESTION_MESSAGE);
-                        if (ModelUtil.hasLength(newNickname)) {
-                            while (true) {
-                                newNickname = newNickname.trim();
-                                String nick = chat.getNickname().toString();
-                                try {
-                                    chat.changeNickname(Resourcepart.from(newNickname));
-                                    break;
-                                } catch (XMPPException | SmackException | XmppStringprepException |
-                                         InterruptedException e1) {
-                                    if (e1 instanceof XMPPException.XMPPErrorException && ((XMPPException.XMPPErrorException) e1).getStanzaError().getCondition() == StanzaError.Condition.not_acceptable) {
-                                        // handle deny changing nick.
-                                        UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
-                                        JOptionPane
-                                            .showMessageDialog(
-                                                groupChatRoom,
-                                                Res.getString("message.nickname.not.acceptable"),
-                                                Res.getString("title.change.nickname"),
-                                                JOptionPane.ERROR_MESSAGE);
-                                        break;
-                                    }
-                                    newNickname = JOptionPane.showInputDialog(
-                                        groupChatRoom,
-                                        Res.getString("message.nickname.in.use") + ":",
-                                        Res.getString("title.change.nickname"),
-                                        JOptionPane.QUESTION_MESSAGE);
-                                    if (!ModelUtil.hasLength(newNickname)) {
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                };
-
-                changeNicknameAction.putValue(Action.NAME,
-                    Res.getString("menuitem.change.nickname"));
-                changeNicknameAction.putValue(Action.SMALL_ICON,
-                    SparkRes.getImageIcon(SparkRes.TYPING_TRAY));
-
+                Action changeNicknameAction = new ChangeNicknameAction();
+                changeNicknameAction.putValue(Action.NAME, Res.getString("menuitem.change.nickname"));
+                changeNicknameAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.TYPING_TRAY));
                 if (allowNicknameChange) {
                     popup.add(changeNicknameAction);
                 }
@@ -630,10 +591,8 @@ public class GroupChatParticipantList extends JPanel {
                 }
             };
 
-            chatAction.putValue(Action.NAME,
-                Res.getString("menuitem.start.a.chat"));
-            chatAction.putValue(Action.SMALL_ICON,
-                SparkRes.getImageIcon(SparkRes.SMALL_MESSAGE_IMAGE));
+            chatAction.putValue(Action.NAME, Res.getString("menuitem.start.a.chat"));
+            chatAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.SMALL_MESSAGE_IMAGE));
             if (!selectedMyself) {
                 popup.add(chatAction);
             }
@@ -656,14 +615,11 @@ public class GroupChatParticipantList extends JPanel {
                 }
             };
 
-            blockAction.putValue(Action.NAME,
-                Res.getString("menuitem.block.user"));
-            blockAction.putValue(Action.SMALL_ICON,
-                SparkRes.getImageIcon(SparkRes.BRICKWALL_IMAGE));
+            blockAction.putValue(Action.NAME, Res.getString("menuitem.block.user"));
+            blockAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.BRICKWALL_IMAGE));
             if (!selectedMyself) {
                 if (groupChatRoom.isBlocked(groupJID)) {
-                    blockAction.putValue(Action.NAME,
-                        Res.getString("menuitem.unblock.user"));
+                    blockAction.putValue(Action.NAME, Res.getString("menuitem.unblock.user"));
                 }
                 popup.add(blockAction);
             }
@@ -676,7 +632,7 @@ public class GroupChatParticipantList extends JPanel {
             };
 
             kickAction.putValue(Action.NAME, Res.getString("menuitem.kick.user"));
-            kickAction.putValue(Action.SMALL_ICON,                SparkRes.getImageIcon(SparkRes.SMALL_DELETE));
+            kickAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.SMALL_DELETE));
             if (iamModerator && !userIsAdmin && !selectedMyself) {
                 popup.add(kickAction);
             }
@@ -695,15 +651,12 @@ public class GroupChatParticipantList extends JPanel {
             };
 
             voiceAction.putValue(Action.NAME, Res.getString("menuitem.voice"));
-            voiceAction.putValue(Action.SMALL_ICON,
-                SparkRes.getImageIcon(SparkRes.MEGAPHONE_16x16));
+            voiceAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.MEGAPHONE_16x16));
             if (iamModerator && !userIsModerator && !selectedMyself) {
                 if (userManager.hasVoice(groupChatRoom, selectedUser)) {
-                    voiceAction.putValue(Action.NAME,
-                        Res.getString("menuitem.revoke.voice"));
+                    voiceAction.putValue(Action.NAME, Res.getString("menuitem.revoke.voice"));
                 } else {
-                    voiceAction.putValue(Action.NAME,
-                        Res.getString("menuitem.grant.voice"));
+                    voiceAction.putValue(Action.NAME, Res.getString("menuitem.grant.voice"));
                 }
                 popup.add(voiceAction);
             }
@@ -734,8 +687,7 @@ public class GroupChatParticipantList extends JPanel {
                     users.sort(labelComp);
                 }
             };
-            memberAction.putValue(Action.SMALL_ICON,
-                SparkRes.getImageIcon(SparkRes.STAR_YELLOW_IMAGE));
+            memberAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.STAR_YELLOW_IMAGE));
             if (iamAdminOrOwner && !userIsMember) {
                 memberAction.putValue(Action.NAME, Res.getString("menuitem.grant.member"));
                 affiliationMenu.add(memberAction);
@@ -763,7 +715,7 @@ public class GroupChatParticipantList extends JPanel {
                 moderatorAction.putValue(Action.NAME, Res.getString("menuitem.grant.moderator"));
                 affiliationMenu.add(moderatorAction);
             } else if (iamAdminOrOwner && userIsModerator && !selectedMyself) {
-                moderatorAction.putValue(Action.NAME,                    Res.getString("menuitem.revoke.moderator"));
+                moderatorAction.putValue(Action.NAME, Res.getString("menuitem.revoke.moderator"));
                 affiliationMenu.add(moderatorAction);
             }
 
@@ -778,12 +730,12 @@ public class GroupChatParticipantList extends JPanel {
                     users.sort(labelComp);
                 }
             };
-            adminAction.putValue(Action.SMALL_ICON,                SparkRes.getImageIcon(SparkRes.STAR_ADMIN));
+            adminAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.STAR_ADMIN));
             if (iamAdminOrOwner && !userIsAdmin && !userIsOwner) {
-                adminAction.putValue(Action.NAME,                    Res.getString("menuitem.grant.admin"));
+                adminAction.putValue(Action.NAME, Res.getString("menuitem.grant.admin"));
                 affiliationMenu.add(adminAction);
             } else if (iamAdminOrOwner && !selectedMyself) {
-                adminAction.putValue(Action.NAME,                    Res.getString("menuitem.revoke.admin"));
+                adminAction.putValue(Action.NAME, Res.getString("menuitem.revoke.admin"));
                 affiliationMenu.add(adminAction);
             }
 
@@ -799,16 +751,13 @@ public class GroupChatParticipantList extends JPanel {
                     users.sort(labelComp);
                 }
             };
-            ownerAction.putValue(Action.SMALL_ICON,
-                SparkRes.getImageIcon(SparkRes.STAR_OWNER));
+            ownerAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.STAR_OWNER));
 
             if (iamOwner && !userIsOwner) {
-                ownerAction.putValue(Action.NAME,
-                    Res.getString("menuitem.grant.owner"));
+                ownerAction.putValue(Action.NAME, Res.getString("menuitem.grant.owner"));
                 affiliationMenu.add(ownerAction);
             } else if (iamOwner && !selectedMyself) {
-                ownerAction.putValue(Action.NAME,
-                    Res.getString("menuitem.revoke.owner"));
+                ownerAction.putValue(Action.NAME, Res.getString("menuitem.revoke.owner"));
                 affiliationMenu.add(ownerAction);
             }
 
@@ -827,22 +776,19 @@ public class GroupChatParticipantList extends JPanel {
 
             if (iamAdmin || iamOwner) {
                 JMenu unbanMenu = new JMenu(Res.getString("menuitem.unban"));
-                Iterator<Affiliate> bannedUsers = null;
+                List<Affiliate> bannedUsers = List.of();
                 try {
-                    bannedUsers = chat.getOutcasts().iterator();
+                    bannedUsers = chat.getOutcasts();
                 } catch (XMPPException | SmackException | InterruptedException e) {
                     Log.error("Error loading all banned users", e);
                 }
 
-                while (bannedUsers != null && bannedUsers.hasNext()) {
-                    Affiliate bannedUser = bannedUsers.next();
+                for (Affiliate bannedUser : bannedUsers) {
                     ImageIcon icon = SparkRes.getImageIcon(SparkRes.RED_BALL);
-                    JMenuItem bannedItem = new JMenuItem(bannedUser.getJid().toString(),
-                        icon);
+                    JMenuItem bannedItem = new JMenuItem(bannedUser.getJid().toString(), icon);
                     unbanMenu.add(bannedItem);
                     bannedItem.addActionListener(unbanAction);
                 }
-
                 if (unbanMenu.getMenuComponentCount() > 0) {
                     popup.add(unbanMenu);
                 }
@@ -856,26 +802,24 @@ public class GroupChatParticipantList extends JPanel {
             }
         };
 
-        inviteAction.putValue(Action.NAME,
-            Res.getString("menuitem.invite.users"));
-        inviteAction.putValue(Action.SMALL_ICON,
-            SparkRes.getImageIcon(SparkRes.CONFERENCE_IMAGE_16x16));
+        inviteAction.putValue(Action.NAME, Res.getString("menuitem.invite.users"));
+        inviteAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.CONFERENCE_IMAGE_16x16));
 
         if (index != -1) {
             popup.addSeparator();
         }
         popup.add(inviteAction);
 
-        Action copyURIgroupChat = new AbstractAction() {
+        Action copyUriGroupChat = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 SparkManager.setClipboard("xmpp:" + chat.getRoom() + "?join");
             }
         };
 
-        copyURIgroupChat.putValue(Action.NAME, Res.getString("button.copy.to.clipboard"));
-        copyURIgroupChat.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.COPY_16x16));
-        popup.add(copyURIgroupChat);
+        copyUriGroupChat.putValue(Action.NAME, Res.getString("button.copy.to.clipboard"));
+        copyUriGroupChat.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.COPY_16x16));
+        popup.add(copyUriGroupChat);
 
         popup.show(participantsList, evt.getX(), evt.getY());
     }
@@ -1099,5 +1043,42 @@ public class GroupChatParticipantList extends JPanel {
     protected Comparator<JLabel> getLabelComp() {
         return labelComp;
     }
-}
 
+    private class ChangeNicknameAction extends AbstractAction {
+        @Override
+        public void actionPerformed(ActionEvent actionEvent) {
+            String newNickname = JOptionPane.showInputDialog(groupChatRoom,
+                Res.getString("label.new.nickname") + ":",
+                Res.getString("title.change.nickname"),
+                JOptionPane.QUESTION_MESSAGE);
+            if (isBlank(newNickname)) {
+                return;
+            }
+            while (true) {
+                newNickname = newNickname.trim();
+                String nick = chat.getNickname().toString();
+                try {
+                    chat.changeNickname(Resourcepart.from(newNickname));
+                    break;
+                } catch (XMPPException | SmackException | XmppStringprepException | InterruptedException e1) {
+                    if (e1 instanceof XMPPException.XMPPErrorException && ((XMPPException.XMPPErrorException) e1).getStanzaError().getCondition() == StanzaError.Condition.not_acceptable) {
+                        // handle deny changing nick.
+                        UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
+                        JOptionPane.showMessageDialog(groupChatRoom,
+                            Res.getString("message.nickname.not.acceptable"),
+                            Res.getString("title.change.nickname"),
+                            JOptionPane.ERROR_MESSAGE);
+                        break;
+                    }
+                    newNickname = JOptionPane.showInputDialog(groupChatRoom,
+                        Res.getString("message.nickname.in.use") + ":",
+                        Res.getString("title.change.nickname"),
+                        JOptionPane.QUESTION_MESSAGE);
+                    if (isBlank(newNickname)) {
+                        break;
+                    }
+                }
+            }
+        }
+    }
+}

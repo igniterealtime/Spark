@@ -24,7 +24,6 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
@@ -61,7 +60,6 @@ import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.CheckBoxList;
 import org.jivesoftware.spark.component.MessageDialog;
 import org.jivesoftware.spark.util.GraphicUtils;
-import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.log.Log;
 
@@ -213,21 +211,19 @@ public class DataFormDialog extends JPanel {
                 while (tokenizer.hasMoreTokens()) {
                     list.add(tokenizer.nextToken());
                 }
+                // an empty list is not allowed
                 if (!list.isEmpty()) {
                     submitForm.setAnswer(answer, list);
                 }
             } else if (o instanceof JTextField) {
                 String value = ((JTextField) o).getText();
-                if (ModelUtil.hasLength(value)) {
-                    submitForm.setAnswer(answer, value);
-                }
+                submitForm.setAnswer(answer, value);
             } else if (o instanceof JComboBox) {
                 String value = (String) ((JComboBox<?>) o).getSelectedItem();
-                List<String> list = new ArrayList<>(1);
-                list.add(value);
-                submitForm.setAnswer(answer, list.stream().iterator().next());
+                submitForm.setAnswer(answer, value);
             } else if (o instanceof CheckBoxList) {
                 List<String> list = ((CheckBoxList) o).getSelectedValues();
+                // an empty list is not allowed
                 if (!list.isEmpty()) {
                     submitForm.setAnswer(answer, list);
                 }
@@ -238,7 +234,7 @@ public class DataFormDialog extends JPanel {
             chat.sendConfigurationForm(submitForm);
             MultiUserChatManager mucManager = SparkManager.getMucManager();
             RoomInfo info = mucManager.getRoomInfo(chat.getRoom());
-            // Remove bookmark if any for non-persistent room
+            // Remove bookmark if any for a non-persistent room
             if (!info.isPersistent()) {
                 BookmarkManager.getBookmarkManager(SparkManager.getConnection()).removeBookmarkedConference(info.getRoom());
             }
