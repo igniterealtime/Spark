@@ -82,47 +82,61 @@ public class DataFormUI extends JPanel {
             FormField.Type type = field.getType();
 
             List<? extends CharSequence> valueList = field.getValues();
-            if (type == bool) {
-                BooleanFormField booleanField = field.ifPossibleAsOrThrow(BooleanFormField.class);
-                boolean isSelected = booleanField.getValueAsBoolean();
-                JCheckBox box = new JCheckBox(label);
-                box.setSelected(isSelected);
-                addField(label, box, variable);
-            } else if (type == text_single || type == jid_single) {
-                String v = "";
-                if (!valueList.isEmpty()) {
-                    v = valueList.get(0).toString();
+            switch (type) {
+                case bool: {
+                    BooleanFormField booleanField = field.ifPossibleAsOrThrow(BooleanFormField.class);
+                    boolean isSelected = booleanField.getValueAsBoolean();
+                    JCheckBox box = new JCheckBox(label);
+                    box.setSelected(isSelected);
+                    addField(label, box, variable);
+                    break;
                 }
-                addField(label, new JTextField(v), variable);
-            } else if (type == text_multi ||
-                type == jid_multi) {
-                StringBuilder buf = new StringBuilder();
-                if (field instanceof FormFieldWithOptions) {
-                    FormFieldWithOptions formFieldWithOptions = (FormFieldWithOptions) field;
-                    for (FormField.Option option : formFieldWithOptions.getOptions()) {
-                        buf.append(option);
+                case text_single:
+                case jid_single: {
+                    String v = "";
+                    if (!valueList.isEmpty()) {
+                        v = valueList.get(0).toString();
                     }
+                    addField(label, new JTextField(v), variable);
+                    break;
                 }
-                addField(label, new JTextArea(buf.toString()), variable);
-            } else if (type == text_private) {
-                addField(label, new JPasswordField(), variable);
-            } else if (type == list_single) {
-                ListSingleFormField listSingleFormField = field.ifPossibleAsOrThrow(ListSingleFormField.class);
-                JComboBox<FormField.Option> box = new JComboBox<>();
-                for (final FormField.Option option : listSingleFormField.getOptions()) {
-                    box.addItem(option);
+                case text_multi:
+                case jid_multi: {
+                    StringBuilder buf = new StringBuilder();
+                    if (field instanceof FormFieldWithOptions) {
+                        FormFieldWithOptions formFieldWithOptions = (FormFieldWithOptions) field;
+                        for (FormField.Option option : formFieldWithOptions.getOptions()) {
+                            buf.append(option);
+                        }
+                    }
+                    addField(label, new JTextArea(buf.toString()), variable);
+                    break;
                 }
-                if (!valueList.isEmpty()) {
-                    String defaultValue = valueList.get(0).toString();
-                    box.setSelectedItem(defaultValue);
+                case text_private: {
+                    addField(label, new JPasswordField(), variable);
+                    break;
                 }
-                addField(label, box, variable);
-            } else if (type == list_multi) {
-                CheckBoxList checkBoxList = new CheckBoxList();
-                for (CharSequence value : field.getValues()) {
-                    checkBoxList.addCheckBox(new JCheckBox(value.toString()), value.toString());
+                case list_single: {
+                    ListSingleFormField listSingleFormField = field.ifPossibleAsOrThrow(ListSingleFormField.class);
+                    JComboBox<FormField.Option> box = new JComboBox<>();
+                    for (final FormField.Option option : listSingleFormField.getOptions()) {
+                        box.addItem(option);
+                    }
+                    if (!valueList.isEmpty()) {
+                        String defaultValue = valueList.get(0).toString();
+                        box.setSelectedItem(defaultValue);
+                    }
+                    addField(label, box, variable);
+                    break;
                 }
-                addField(label, checkBoxList, variable);
+                case list_multi: {
+                    CheckBoxList checkBoxList = new CheckBoxList();
+                    for (CharSequence value : field.getValues()) {
+                        checkBoxList.addCheckBox(new JCheckBox(value.toString()), value.toString());
+                    }
+                    addField(label, checkBoxList, variable);
+                    break;
+                }
             }
         }
     }
