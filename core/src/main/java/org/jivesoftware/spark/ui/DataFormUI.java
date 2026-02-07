@@ -12,7 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */ 
+ */
 package org.jivesoftware.spark.ui;
 
 import org.jivesoftware.smackx.xdata.BooleanFormField;
@@ -45,15 +45,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 
+import static java.awt.GridBagConstraints.*;
+import static java.awt.GridBagConstraints.NONE;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.jivesoftware.smackx.xdata.FormField.Type.*;
+
 /**
  * Builds the UI for any DataForm (JEP-0004: Data Forms), and allow for creation
- * of an answer form to send back the the server.
+ * of an answer form to send back the server.
  */
 public class DataFormUI extends JPanel {
-	private static final long serialVersionUID = -6313707846021436765L;
-	private final Map<String,JComponent> valueMap = new HashMap<>();
-    private int row = 5;
+    private static final long serialVersionUID = -6313707846021436765L;
+    private final Map<String, JComponent> valueMap = new HashMap<>();
     private final DataForm searchForm;
+    private int row = 5;
 
     /**
      * Creates a new DataFormUI
@@ -63,67 +68,58 @@ public class DataFormUI extends JPanel {
     public DataFormUI(DataForm form) {
         this.setLayout(new GridBagLayout());
         this.searchForm = form;
-
         buildUI(form);
-
-        this.add(new JLabel(), new GridBagConstraints(0, row, 3, 1, 0.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+        Insets insets = new Insets(0, 0, 0, 0);
+        this.add(new JLabel(), new GridBagConstraints(0, row, 3, 1, 0, 1, CENTER, NONE, insets, 0, 0));
     }
 
 
     private void buildUI(DataForm form) {
         // Add default answers to the form to submit
-        for ( final FormField field : form.getFields() ) {
+        for (final FormField field : form.getFields()) {
             String variable = field.getFieldName();
             String label = field.getLabel();
             FormField.Type type = field.getType();
 
-
             List<? extends CharSequence> valueList = field.getValues();
-
-            if (type.equals(FormField.Type.bool)) {
+            if (type == bool) {
                 BooleanFormField booleanField = field.ifPossibleAsOrThrow(BooleanFormField.class);
-                Boolean isSelected = booleanField.getValueAsBoolean();
+                boolean isSelected = booleanField.getValueAsBoolean();
                 JCheckBox box = new JCheckBox(label);
                 box.setSelected(isSelected);
                 addField(label, box, variable);
-            }
-            else if (type.equals(FormField.Type.text_single) || type.equals(FormField.Type.jid_single)) {
+            } else if (type == text_single || type == jid_single) {
                 String v = "";
-                if (valueList.size() > 0) {
+                if (!valueList.isEmpty()) {
                     v = valueList.get(0).toString();
                 }
                 addField(label, new JTextField(v), variable);
-            }
-            else if (type.equals(FormField.Type.text_multi) ||
-                    type.equals(FormField.Type.jid_multi)) {
+            } else if (type == text_multi ||
+                type == jid_multi) {
                 StringBuilder buf = new StringBuilder();
                 if (field instanceof FormFieldWithOptions) {
                     FormFieldWithOptions formFieldWithOptions = (FormFieldWithOptions) field;
-                    for ( FormField.Option option : formFieldWithOptions.getOptions() ) {
+                    for (FormField.Option option : formFieldWithOptions.getOptions()) {
                         buf.append(option);
                     }
                 }
                 addField(label, new JTextArea(buf.toString()), variable);
-            }
-            else if (type.equals(FormField.Type.text_private)) {
+            } else if (type == text_private) {
                 addField(label, new JPasswordField(), variable);
-            }
-            else if (type.equals(FormField.Type.list_single)) {
+            } else if (type == list_single) {
                 ListSingleFormField listSingleFormField = field.ifPossibleAsOrThrow(ListSingleFormField.class);
                 JComboBox<FormField.Option> box = new JComboBox<>();
-                for ( final FormField.Option option : listSingleFormField.getOptions() ) {
+                for (final FormField.Option option : listSingleFormField.getOptions()) {
                     box.addItem(option);
                 }
-                if (valueList.size() > 0) {
+                if (!valueList.isEmpty()) {
                     String defaultValue = valueList.get(0).toString();
                     box.setSelectedItem(defaultValue);
                 }
-
                 addField(label, box, variable);
-            }
-            else if (type.equals(FormField.Type.list_multi)) {
+            } else if (type == list_multi) {
                 CheckBoxList checkBoxList = new CheckBoxList();
-                for (CharSequence value : field.getValues() ) {
+                for (CharSequence value : field.getValues()) {
                     checkBoxList.addCheckBox(new JCheckBox(value.toString()), value.toString());
                 }
                 addField(label, checkBoxList, variable);
@@ -133,55 +129,47 @@ public class DataFormUI extends JPanel {
 
     /**
      * Returns the answered DataForm.
-     *
-     * @return the answered DataForm.
      */
     public DataForm getFilledForm() {
         // Now submit all information
-        Iterator<String> valueIter = valueMap.keySet().iterator();
         FillableForm answerForm = new FillableForm(searchForm);
-        while (valueIter.hasNext()) {
-            String answer = valueIter.next();
-            Object o = valueMap.get(answer);
+        for (Map.Entry<String, JComponent> entry : valueMap.entrySet()) {
+            String answer = entry.getKey();
+            JComponent o = entry.getValue();
             if (o instanceof JCheckBox) {
-                boolean isSelected = ((JCheckBox)o).isSelected();
+                boolean isSelected = ((JCheckBox) o).isSelected();
                 answerForm.setAnswer(answer, isSelected);
-            }
-            else if (o instanceof JTextArea) {
+            } else if (o instanceof JTextArea) {
                 List<String> list = new ArrayList<>();
-                String value = ((JTextArea)o).getText();
+                String value = ((JTextArea) o).getText();
                 StringTokenizer tokenizer = new StringTokenizer(value, ", ", false);
                 while (tokenizer.hasMoreTokens()) {
                     list.add(tokenizer.nextToken());
                 }
-                if (list.size() > 0) {
+                if (!list.isEmpty()) {
                     answerForm.setAnswer(answer, list);
                 }
-            }
-            else if (o instanceof JTextField) {
-                String value = ((JTextField)o).getText();
-                if (ModelUtil.hasLength(value)) {
+            } else if (o instanceof JTextField) {
+                String value = ((JTextField) o).getText();
+                if (!isBlank(value)) {
                     answerForm.setAnswer(answer, value);
                 }
-            }
-            else if (o instanceof JComboBox) {
-                Object v = ((JComboBox<?>)o).getSelectedItem();
+            } else if (o instanceof JComboBox) {
+                Object v = ((JComboBox<?>) o).getSelectedItem();
                 String value;
                 if (v instanceof FormField.Option) {
-                    value = ((FormField.Option)v).getValueString();
-                }
-                else {
-                    value = (String)v;
+                    value = ((FormField.Option) v).getValueString();
+                } else {
+                    value = (String) v;
                 }
                 List<String> list = new ArrayList<>();
                 list.add(value);
-                if (list.size() > 0) {
+                if (!list.isEmpty()) {
                     answerForm.setAnswer(answer, list);
                 }
-            }
-            else if (o instanceof CheckBoxList) {
-                List<String> list = ((CheckBoxList)o).getSelectedValues();
-                if (list.size() > 0) {
+            } else if (o instanceof CheckBoxList) {
+                List<String> list = ((CheckBoxList) o).getSelectedValues();
+                if (!list.isEmpty()) {
                     answerForm.setAnswer(answer, list);
                 }
             }
@@ -192,21 +180,18 @@ public class DataFormUI extends JPanel {
 
 
     private void addField(String label, JComponent comp, String variable) {
+        Insets insets = new Insets(5, 5, 5, 5);
         if (!(comp instanceof JCheckBox)) {
-            this.add(new JLabel(label), new GridBagConstraints(0, row, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+            this.add(new JLabel(label), new GridBagConstraints(0, row, 1, 1, 1, 0, WEST, HORIZONTAL, insets, 0, 0));
         }
         if (comp instanceof JTextArea) {
-            this.add(new JScrollPane(comp), new GridBagConstraints(1, row, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 100, 50));
-        }
-        else if (comp instanceof JCheckBox) {
-            this.add(comp, new GridBagConstraints(0, row, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
-        }
-        else if (comp instanceof CheckBoxList) {
-            this.add(comp, new GridBagConstraints(1, row, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 50));
-        }
-        else {
-            this.add(comp, new GridBagConstraints(1, row, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
-
+            this.add(new JScrollPane(comp), new GridBagConstraints(1, row, 1, 1, 1, 0, WEST, HORIZONTAL, insets, 100, 50));
+        } else if (comp instanceof JCheckBox) {
+            this.add(comp, new GridBagConstraints(0, row, 1, 1, 0, 0, WEST, HORIZONTAL, insets, 0, 0));
+        } else if (comp instanceof CheckBoxList) {
+            this.add(comp, new GridBagConstraints(1, row, 1, 1, 0, 0, WEST, HORIZONTAL, insets, 0, 50));
+        } else {
+            this.add(comp, new GridBagConstraints(1, row, 1, 1, 1, 0, WEST, HORIZONTAL, insets, 0, 0));
         }
         valueMap.put(variable, comp);
         row++;
