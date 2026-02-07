@@ -15,14 +15,10 @@
  */
 package org.jivesoftware.spark.ui;
 
-import org.jivesoftware.smackx.xdata.BooleanFormField;
-import org.jivesoftware.smackx.xdata.FormField;
-import org.jivesoftware.smackx.xdata.FormFieldWithOptions;
-import org.jivesoftware.smackx.xdata.ListSingleFormField;
+import org.jivesoftware.smackx.xdata.*;
 import org.jivesoftware.smackx.xdata.form.FillableForm;
 import org.jivesoftware.smackx.xdata.packet.DataForm;
 import org.jivesoftware.spark.component.CheckBoxList;
-import org.jivesoftware.spark.util.ModelUtil;
 
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -34,21 +30,17 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
-import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 
 import static java.awt.GridBagConstraints.*;
 import static java.awt.GridBagConstraints.NONE;
-import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.jivesoftware.smackx.xdata.FormField.Type.*;
 
 /**
  * Builds the UI for any DataForm (JEP-0004: Data Forms), and allow for creation
@@ -57,7 +49,7 @@ import static org.jivesoftware.smackx.xdata.FormField.Type.*;
 public class DataFormUI extends JPanel {
     private static final long serialVersionUID = -6313707846021436765L;
     private final Map<String, JComponent> valueMap = new HashMap<>();
-    private final DataForm searchForm;
+    private final DataForm form;
     private int row = 5;
 
     /**
@@ -67,20 +59,19 @@ public class DataFormUI extends JPanel {
      */
     public DataFormUI(DataForm form) {
         this.setLayout(new GridBagLayout());
-        this.searchForm = form;
-        buildUI(form);
+        this.form = form;
+        buildUI();
         Insets insets = new Insets(0, 0, 0, 0);
         this.add(new JLabel(), new GridBagConstraints(0, row, 3, 1, 0, 1, CENTER, NONE, insets, 0, 0));
     }
 
 
-    private void buildUI(DataForm form) {
+    private void buildUI() {
         // Add default answers to the form to submit
         for (final FormField field : form.getFields()) {
             String variable = field.getFieldName();
             String label = field.getLabel();
             FormField.Type type = field.getType();
-
             List<? extends CharSequence> valueList = field.getValues();
             switch (type) {
                 case bool: {
@@ -102,25 +93,23 @@ public class DataFormUI extends JPanel {
                 }
                 case text_multi:
                 case jid_multi: {
-                    StringBuilder buf = new StringBuilder();
-                    if (field instanceof FormFieldWithOptions) {
-                        FormFieldWithOptions formFieldWithOptions = (FormFieldWithOptions) field;
-                        for (FormField.Option option : formFieldWithOptions.getOptions()) {
-                            buf.append(option);
-                        }
-                    }
-                    addField(label, new JTextArea(buf.toString()), variable);
+                    String text = String.join(",", valueList);
+                    addField(label, new JTextArea(text), variable);
                     break;
                 }
                 case text_private: {
-                    addField(label, new JPasswordField(), variable);
+                    String v = "";
+                    if (!valueList.isEmpty()) {
+                        v = valueList.get(0).toString();
+                    }
+                    addField(label, new JPasswordField(v), variable);
                     break;
                 }
                 case list_single: {
                     ListSingleFormField listSingleFormField = field.ifPossibleAsOrThrow(ListSingleFormField.class);
-                    JComboBox<FormField.Option> box = new JComboBox<>();
-                    for (final FormField.Option option : listSingleFormField.getOptions()) {
-                        box.addItem(option);
+                    JComboBox<String> box = new JComboBox<>();
+                    for (FormField.Option option : listSingleFormField.getOptions()) {
+                        box.addItem(option.getValueString());
                     }
                     if (!valueList.isEmpty()) {
                         String defaultValue = valueList.get(0).toString();
@@ -130,11 +119,26 @@ public class DataFormUI extends JPanel {
                     break;
                 }
                 case list_multi: {
+                    ListMultiFormField listMultiFormField = field.ifPossibleAsOrThrow(ListMultiFormField.class);
                     CheckBoxList checkBoxList = new CheckBoxList();
-                    for (CharSequence value : field.getValues()) {
-                        checkBoxList.addCheckBox(new JCheckBox(value.toString()), value.toString());
+                    for (FormField.Option option : listMultiFormField.getOptions()) {
+                        String optionLabel = option.getLabel();
+                        String optionValue = option.getValueString();
+                        boolean isSelected = valueList.contains(optionValue);
+                        checkBoxList.addCheckBox(new JCheckBox(optionLabel, isSelected), optionValue);
                     }
                     addField(label, checkBoxList, variable);
+                    break;
+                }
+                case fixed: {
+                    if (!valueList.isEmpty()) {
+                        String v = valueList.get(0).toString();
+                        addField(label, new JLabel(v), variable);
+                    }
+                    break;
+                }
+                case hidden: {
+                    // nothing to render
                     break;
                 }
             }
@@ -144,55 +148,49 @@ public class DataFormUI extends JPanel {
     /**
      * Returns the answered DataForm.
      */
-    public DataForm getFilledForm() {
+    public FillableForm getFilledForm() {
         // Now submit all information
-        FillableForm answerForm = new FillableForm(searchForm);
+        FillableForm answerForm = new FillableForm(form);
         for (Map.Entry<String, JComponent> entry : valueMap.entrySet()) {
             String answer = entry.getKey();
             JComponent o = entry.getValue();
+            // Extract form values from components; populates submit form
             if (o instanceof JCheckBox) {
                 boolean isSelected = ((JCheckBox) o).isSelected();
                 answerForm.setAnswer(answer, isSelected);
             } else if (o instanceof JTextArea) {
                 List<String> list = new ArrayList<>();
                 String value = ((JTextArea) o).getText();
-                StringTokenizer tokenizer = new StringTokenizer(value, ", ", false);
+                StringTokenizer tokenizer = new StringTokenizer(value, ",", false);
                 while (tokenizer.hasMoreTokens()) {
-                    list.add(tokenizer.nextToken());
+                    list.add(tokenizer.nextToken().trim());
                 }
+                // an empty list is not allowed
                 if (!list.isEmpty()) {
                     answerForm.setAnswer(answer, list);
                 }
             } else if (o instanceof JTextField) {
                 String value = ((JTextField) o).getText();
-                if (!isBlank(value)) {
-                    answerForm.setAnswer(answer, value);
-                }
+                answerForm.setAnswer(answer, value);
             } else if (o instanceof JComboBox) {
-                Object v = ((JComboBox<?>) o).getSelectedItem();
-                String value;
-                if (v instanceof FormField.Option) {
-                    value = ((FormField.Option) v).getValueString();
-                } else {
-                    value = (String) v;
-                }
-                List<String> list = new ArrayList<>();
-                list.add(value);
-                if (!list.isEmpty()) {
-                    answerForm.setAnswer(answer, list);
-                }
+                String value = (String) ((JComboBox<?>) o).getSelectedItem();
+                answerForm.setAnswer(answer, value);
             } else if (o instanceof CheckBoxList) {
                 List<String> list = ((CheckBoxList) o).getSelectedValues();
+                // an empty list is not allowed
                 if (!list.isEmpty()) {
                     answerForm.setAnswer(answer, list);
                 }
             }
         }
 
-        return answerForm.getDataFormToSubmit();
+        return answerForm;
     }
 
 
+    /**
+     * Add labeled component to form and map variable to the component
+     */
     private void addField(String label, JComponent comp, String variable) {
         Insets insets = new Insets(5, 5, 5, 5);
         if (!(comp instanceof JCheckBox)) {
@@ -211,8 +209,8 @@ public class DataFormUI extends JPanel {
         row++;
     }
 
-    public Component getComponent(String label) {
-        return valueMap.get(label);
+    public JComponent getComponent(String variable) {
+        return valueMap.get(variable);
     }
 }
 

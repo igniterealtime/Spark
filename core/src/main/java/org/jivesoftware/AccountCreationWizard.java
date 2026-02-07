@@ -29,6 +29,7 @@ import org.jivesoftware.smackx.bob.element.BoBDataExtension;
 import org.jivesoftware.smackx.iqregister.AccountManager;
 import org.jivesoftware.smackx.iqregister.packet.Registration;
 import org.jivesoftware.smackx.xdata.FormField;
+import org.jivesoftware.smackx.xdata.form.FillableForm;
 import org.jivesoftware.smackx.xdata.packet.DataForm;
 import org.jivesoftware.spark.component.TitlePanel;
 import org.jivesoftware.spark.ui.DataFormUI;
@@ -397,7 +398,8 @@ public class AccountCreationWizard extends JPanel {
         if (registrationForm == null) {
             return Map.of();
         }
-        List<FormField> fields = registrationForm.getFilledForm().getFields();
+        FillableForm filledForm = registrationForm.getFilledForm();
+        List<FormField> fields = filledForm.getDataFormToSubmit().getFields();
         Map<String, String> attrs = new HashMap<>(fields.size());
         for (FormField f : fields) {
             attrs.put(f.getFieldName(), f.getFirstValue());

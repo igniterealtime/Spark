@@ -19,6 +19,7 @@ package org.jivesoftware.sparkimpl.search.users;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smackx.xdata.form.FillableForm;
 import org.jivesoftware.smackx.xdata.packet.DataForm;
 import org.jivesoftware.smackx.search.ReportedData;
 import org.jivesoftware.smackx.search.UserSearchManager;
@@ -130,7 +131,8 @@ public class SearchForm extends JPanel {
             @Override
 			public Object construct() {
                 try {
-                    data = searchManager.sendSimpleSearchForm(questionForm.getFilledForm(), serviceName);
+                    FillableForm filledForm = questionForm.getFilledForm();
+                    data = searchManager.sendSimpleSearchForm(filledForm.getDataFormToSubmit(), serviceName);
                 }
                 catch (XMPPException | SmackException | InterruptedException e) {
                     Log.error("Unable to load search service.", e);
