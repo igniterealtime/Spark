@@ -8,10 +8,10 @@ import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.packet.PresenceBuilder;
 import org.jivesoftware.smack.packet.StandardExtensionElement;
 import org.jivesoftware.smack.packet.StanzaError;
-import org.jivesoftware.smack.util.Consumer;
 import org.jivesoftware.smackx.muc.MucEnterConfiguration;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.muc.MultiUserChatManager;
+import org.jivesoftware.smackx.muc.RoomInfo;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.ui.ChatContainer;
 import org.jivesoftware.spark.ui.ChatRoom;
@@ -95,8 +95,9 @@ public class JoinRoomSwingWorker extends SwingWorker
             Log.debug("Joining chat room " + roomJID);
             MultiUserChatManager mucManager = SparkManager.getMucManager();
             groupChat = mucManager.getMultiUserChat( roomJID );
+            RoomInfo roomInfo = mucManager.getRoomInfo(roomJID);
             Log.debug("... got groupchat for " + roomJID);
-            boolean passwordRequired = ConferenceUtils.isPasswordRequired( roomJID );
+            boolean passwordRequired = roomInfo.isPasswordProtected();
             Log.debug("... password required for " + roomJID + ": " + passwordRequired);
 
             // Use the default nickname, if none has been provided.

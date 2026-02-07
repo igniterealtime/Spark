@@ -69,7 +69,7 @@ final class JoinConferenceRoomDialog extends JPanel {
         // Set default nickname
         nicknameField.setText(pref.getNickname().toString());
         // Enable the password field if a password is required
-        boolean requiresPassword = ConferenceUtils.isPasswordRequired(roomJID);
+        boolean requiresPassword = roomInfo.isPasswordProtected();
         passwordField.setVisible(requiresPassword);
         passwordLabel.setVisible(requiresPassword);
         roomNameDescription.setText(roomInfo.getName());

@@ -22,9 +22,6 @@ import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.packet.StanzaError;
 import org.jivesoftware.smackx.bookmarks.BookmarkManager;
 import org.jivesoftware.smackx.bookmarks.BookmarkedConference;
-import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
-import org.jivesoftware.smackx.disco.packet.DiscoverInfo;
-import org.jivesoftware.smackx.muc.MucFeature;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.muc.MultiUserChatManager;
 import org.jivesoftware.smackx.muc.RoomInfo;
@@ -146,25 +143,6 @@ public class ConferenceUtils {
     {
         BookmarkManager manager = BookmarkManager.getBookmarkManager(SparkManager.getConnection());
         return manager.getBookmarkedConferences();
-    }
-
-    /**
-     * Returns true if the room requires a password.
-     *
-     * @param roomJID the JID of the room.
-     * @return true if the room requires a password.
-     */
-    public static boolean isPasswordRequired(EntityBareJid roomJID) {
-        // Check to see if the room is password protected
-        ServiceDiscoveryManager discoManager = SparkManager.getDiscoManager();
-        try {
-            DiscoverInfo info = discoManager.discoverInfo(roomJID);
-            return info.containsFeature(MucFeature.PasswordProtected.getName());
-        }
-        catch (XMPPException | SmackException | InterruptedException e) {
-            Log.error(e);
-        }
-        return false;
     }
 
     /**
