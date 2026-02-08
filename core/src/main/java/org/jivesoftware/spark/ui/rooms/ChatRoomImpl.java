@@ -525,8 +525,7 @@ public class ChatRoomImpl extends ChatRoom {
                         return;
                     }
 
-//                    final CarbonExtension carbon = message.getExtension(CarbonExtension.class); // FIXME CarbonExtension must extend ExtensionElement
-                    final CarbonExtension carbon = null;
+                    final CarbonExtension carbon = getCarbonExtension(message);
                     if ( carbon != null )
                     {
                         // Is this a carbon copy?
@@ -574,6 +573,22 @@ public class ChatRoomImpl extends ChatRoom {
             }
         };
         SwingUtilities.invokeLater(runnable);
+    }
+
+    private static CarbonExtension getCarbonExtension(Message message) {
+        // FIXME SPARK-2381 CarbonExtension must extend ExtensionElement
+//      CarbonExtension carbon = message.getExtension(CarbonExtension.class);
+        CarbonExtension carbon = null;
+        try {
+            XmlElement carbonExt = message.getExtension(CarbonExtension.NAMESPACE);
+            // For some reason it may return StandardExtensionElement so we need to cast carefully
+            if (carbonExt instanceof CarbonExtension) {
+                carbon = (CarbonExtension) carbonExt;
+            }
+        } catch (Exception e) {
+            Log.error("Error getting carbon extension", e);
+        }
+        return carbon;
     }
 
     /**
