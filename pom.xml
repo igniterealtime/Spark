@@ -70,14 +70,14 @@
         <module>core</module>
         <module>emoticons</module>
         <module>plugins/assembly-descriptor</module>
-        <module>plugins/battleships</module>
+<!--        <module>plugins/battleships</module>-->
         <module>plugins/apple</module>
         <module>plugins/fastpath</module>
         <module>plugins/fileupload</module>         
         <module>plugins/flashing</module>
         <module>plugins/growl</module>
-        <module>plugins/phone</module>
-        <module>plugins/jingle</module>
+<!--        <module>plugins/phone</module>-->
+<!--        <module>plugins/jingle</module>-->
         <module>plugins/meet</module>
         <!--<module>plugins/otr</module>-->
         <module>plugins/reversi</module>
