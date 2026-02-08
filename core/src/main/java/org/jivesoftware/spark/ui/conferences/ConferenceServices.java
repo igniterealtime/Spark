@@ -71,12 +71,6 @@ public class ConferenceServices implements InvitationListener {
     private final LocalPreferences pref = SettingsManager.getLocalPreferences();
 
     public ConferenceServices() {
-        ServiceDiscoveryManager discoManager = SparkManager.getDiscoManager();
-        boolean mucSupported = discoManager.includesFeature(MultiUserChatConstants.NAMESPACE);
-        if (!mucSupported) {
-            Log.warning("Multi User Chat is not supported by this server.");
-            return;
-        }
         addInvitationListener();
         addChatRoomListener();
         addPopupListeners();
