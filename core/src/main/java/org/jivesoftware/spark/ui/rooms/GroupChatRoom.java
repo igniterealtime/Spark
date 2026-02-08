@@ -272,9 +272,12 @@ public class GroupChatRoom extends ChatRoom {
         register.addActionListener(event -> {
             try {
                 final Form form = chat.getRegistrationForm();
-                final ChatFrame chatFrame = SparkManager.getChatManager().getChatContainer().getChatFrame();
-
-                new AnswerFormDialog(chatFrame, chat, form.getDataForm());
+                if (form != null) {
+                    final ChatFrame chatFrame = SparkManager.getChatManager().getChatContainer().getChatFrame();
+                    new AnswerFormDialog(chatFrame, chat, form.getDataForm());
+                } else {
+                    getTranscriptWindow().insertNotificationMessage("Registration is not needed", ChatManager.ERROR_COLOR);
+                }
             } catch (XMPPException | SmackException | InterruptedException xmpe) {
                 getTranscriptWindow().insertNotificationMessage(xmpe.getMessage(), ChatManager.ERROR_COLOR);
                 scrollToBottom();
