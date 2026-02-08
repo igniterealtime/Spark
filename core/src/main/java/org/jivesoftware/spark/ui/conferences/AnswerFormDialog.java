@@ -29,9 +29,12 @@ import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.DataFormUI;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.ResourceUtils;
+import org.jxmpp.jid.parts.Resourcepart;
 
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.jivesoftware.spark.ChatManager.ERROR_COLOR;
 import static org.jivesoftware.spark.ChatManager.NOTIFICATION_COLOR;
+import static org.jivesoftware.sparkimpl.settings.local.SettingsManager.getLocalPreferences;
 
 /**
  * Answer Form Dialog.
@@ -45,6 +48,7 @@ public class AnswerFormDialog {
 
     public AnswerFormDialog(JFrame parent, final MultiUserChat chat, final DataForm form) {
         this.dataFormUI = new DataFormUI(form);
+        preFillForm();
         dialog = new JDialog(parent, true);
         dialog.setTitle(Res.getString("button.register").replace("&", ""));
         dialog.setLayout(new GridBagLayout());
@@ -73,6 +77,22 @@ public class AnswerFormDialog {
 //        dialog.setSize(600, 400);
         GraphicUtils.centerWindowOnScreen(dialog);
         dialog.setVisible(true);
+    }
+
+    private void preFillForm() {
+        Resourcepart defaultNickname = getLocalPreferences().getNickname();
+        JComponent nicknameField = dataFormUI.getComponent("muc#register_roomnick");
+        if (nicknameField instanceof JTextField && isBlank(((JTextField)nicknameField).getText())) {
+            ((JTextField)nicknameField).setText(defaultNickname.toString());
+        }
+        JComponent firstNameField = dataFormUI.getComponent("muc#register_first");
+        if (firstNameField instanceof JTextField && isBlank(((JTextField)firstNameField).getText())) {
+            ((JTextField)firstNameField).setText(defaultNickname.toString()); //TODO get First Name
+        }
+        JComponent lastNameField = dataFormUI.getComponent("muc#register_last");
+        if (lastNameField instanceof JTextField && isBlank(((JTextField)lastNameField).getText())) {
+            ((JTextField)lastNameField).setText(defaultNickname.toString()); //TODO get Last Name
+        }
     }
 
     /**
