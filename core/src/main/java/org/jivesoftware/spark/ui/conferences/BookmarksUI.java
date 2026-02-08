@@ -76,7 +76,6 @@ public class BookmarksUI extends JPanel {
      * Initialize Conference UI.
      */
     public void loadUI() {
-        EventQueue.invokeLater(() -> {
             setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
             setLayout(new GridBagLayout());
             add(getServicePanel(), new GridBagConstraints(0, 0, 2, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
@@ -149,21 +148,6 @@ public class BookmarksUI extends JPanel {
             setBackground(Color.white);
 
             manager = BookmarkManager.getBookmarkManager(SparkManager.getConnection());
-
-            final TimerTask bookmarkTask = new TimerTask() {
-                @Override
-                public void run() {
-                    try {
-                        Collection<BookmarkedConference> bc = manager.getBookmarkedConferences();
-                        setBookmarks(bc);
-                    } catch (XMPPException | SmackException | InterruptedException error) {
-                        Log.error(error);
-                    }
-                }
-            };
-
-            TaskEngine.getInstance().schedule(bookmarkTask, 5000);
-        });
     }
 
     private void checkPopup(MouseEvent mouseEvent) {
@@ -521,6 +505,15 @@ public class BookmarksUI extends JPanel {
     private boolean hasService(CharSequence service) {
         TreePath path = tree.findByName(tree, new String[]{rootNode.getUserObject().toString(), service.toString()});
         return path != null;
+    }
+
+    public void loadBookmarks() {
+        try {
+            List<BookmarkedConference> bc = manager.getBookmarkedConferences();
+            setBookmarks(bc);
+        } catch (XMPPException | SmackException | InterruptedException error) {
+            Log.error(error);
+        }
     }
 
     /**

@@ -133,13 +133,12 @@ public class ConferenceServices implements InvitationListener {
             @Override
             public void run() {
                 try {
-                    BookmarkManager manager = BookmarkManager.getBookmarkManager(SparkManager.getConnection());
-                    manager.getBookmarkedConferences();
-                } catch (XMPPException | SmackException | InterruptedException error) {
-                    Log.error(error);
+                    bookmarksUI.loadUI();
+                    bookmarksUI.loadBookmarks();
+                    addBookmarksUI();
+                } catch (Exception e) {
+                    Log.error(e);
                 }
-                bookmarksUI.loadUI();
-                addBookmarksUI();
             }
         };
         TaskEngine.getInstance().schedule(bookmarkLoader, 500);
