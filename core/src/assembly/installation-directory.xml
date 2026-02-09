@@ -45,11 +45,6 @@
             <outputDirectory>resources/sounds</outputDirectory>
         </fileSet>
 
-        <fileSet>
-            <directory>${project.basedir}/src/documentation/</directory>
-            <outputDirectory>documentation</outputDirectory>
-        </fileSet>
-
     </fileSets>
 
 
