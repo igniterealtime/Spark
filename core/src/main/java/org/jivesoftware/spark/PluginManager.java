@@ -761,13 +761,10 @@ public class PluginManager implements MainWindowListener
             EventQueue.invokeLater( () -> {
                 for ( Plugin plugin : plugins )
                 {
-                    long start = System.currentTimeMillis();
-                    Log.debug( "Starting to initialize " + plugin );
                     try
                     {
                         plugin.initialize();
-                        long end = System.currentTimeMillis();
-                        Log.debug( "Took " + ( end - start ) + " ms. to load " + plugin );
+                        Log.debug( "Initialized " + plugin );
                     }
                     catch ( Throwable e )
                     {
