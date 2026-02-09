@@ -26,7 +26,7 @@
 
     <fileSets>
         <fileSet>
-            <directory>${project.basedir}/src/main/native/</directory>
+            <directory>${project.basedir}/src/dist/native/</directory>
             <outputDirectory>lib</outputDirectory>
         </fileSet>
 
@@ -41,7 +41,7 @@
         </fileSet>
 
         <fileSet>
-            <directory>${project.basedir}/src/main/resources/sounds/</directory>
+            <directory>${project.basedir}/src/dist/sounds/</directory>
             <outputDirectory>resources/sounds</outputDirectory>
         </fileSet>
 
@@ -50,17 +50,17 @@
 
     <files>
         <file>
-            <source>${project.basedir}/src/main/resources/startup.bat</source>
+            <source>${project.basedir}/src/dist/startup.bat</source>
             <outputDirectory>bin</outputDirectory>
             <fileMode>0755</fileMode>
         </file>
         <file>
-            <source>${project.basedir}/src/main/resources/startup.sh</source>
+            <source>${project.basedir}/src/dist/startup.sh</source>
             <outputDirectory>bin</outputDirectory>
             <fileMode>0755</fileMode>
         </file>
         <file>
-            <source>${project.basedir}/src/main/resources/Info.plist</source>
+            <source>${project.basedir}/src/dist/Info.plist</source>
             <outputDirectory>resources</outputDirectory>
         </file>
     </files>
