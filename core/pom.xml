@@ -37,12 +37,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <excludes>
-                        <exclude>**/org/jivesoftware/sparkimpl/preference/media/*</exclude>
-                        <exclude>**/org/jivesoftware/sparkimpl/plugin/phone/JMFInit.*</exclude>
-                    </excludes>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -53,13 +47,6 @@
                         <manifest>
                             <mainClass>org.jivesoftware.launcher.Startup</mainClass>
                         </manifest>
-                        <manifestEntries>
-                            <Implementation-Title>Spark</Implementation-Title>
-                            <Implementation-Version>${project.version}</Implementation-Version>
-                            <Implementation-Vendor-Id>${project.groupId}</Implementation-Vendor-Id>
-                            <Implementation-Vendor>${project.organization.name}</Implementation-Vendor>
-                            <Implementation-URL>https://www.igniterealtime.org/projects/spark/</Implementation-URL>
-                        </manifestEntries>
                     </archive>
                 </configuration>
             </plugin>
