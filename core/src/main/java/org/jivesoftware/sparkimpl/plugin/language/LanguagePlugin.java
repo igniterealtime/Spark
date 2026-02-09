@@ -24,7 +24,14 @@ import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
+
+import static java.util.Locale.ENGLISH;
 
 /**
  * Allows for changing of default languages within Spark.
@@ -46,22 +53,12 @@ public class LanguagePlugin implements Plugin {
         JMenu languageMenu = new JMenu(languageMenuLabel);
         languageMenu.setIcon(SparkRes.getImageIcon("LANGUAGE_ICON"));
 
-        Locale[] locales = Locale.getAvailableLocales();
-
-        // Load files
-        for (final Locale locale : locales) {
-            String code = locale.toString();
-            final String targetI18nFileName;
-            if (code.equals("en")) {
-                targetI18nFileName = "/i18n/spark_i18n.properties";
-            } else {
-                targetI18nFileName = "/i18n/spark_i18n_" + code + ".properties";
-            }
-
-            // If we can find an translation file for this locale, we can support the language!
-            if (getClass().getResource( targetI18nFileName ) != null) {
-                addLanguage(locale, languageMenu);
-            }
+        addLanguage(ENGLISH, languageMenu);
+        // If we have a translation file for this locale, we can support the language!
+        List<String> i18nResources = getAllFilesFromResource("/i18n/");
+        for (String localeFile : i18nResources) {
+            Locale locale = Locale.forLanguageTag(localeFile.replace("_", "-"));
+            addLanguage(locale, languageMenu);
         }
 
         actionsMenu.add(languageMenu);
@@ -103,5 +100,24 @@ public class LanguagePlugin implements Plugin {
 
     @Override
 	public void uninstall() {
+    }
+
+    private List<String> getAllFilesFromResource(String folder) {
+        // dun walk the root path, we will walk all the classes
+        URL resource = getClass().getResource(folder);
+        if (resource == null) {
+            return List.of();
+        }
+        try {
+            List<String> collect = Files.list(Paths.get(resource.toURI()))
+                .map(path -> path.getFileName().toString())
+                .filter(name -> name.startsWith("spark_i18n_"))
+                .map(name -> name.substring("spark_i18n_".length(), name.lastIndexOf(".")))
+                .sorted()
+                .collect(Collectors.toList());
+            return collect;
+        } catch (Exception e) {
+            return List.of();
+        }
     }
 }
