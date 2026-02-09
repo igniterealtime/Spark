@@ -33,12 +33,14 @@ import java.util.Base64;
  */
 public class Encryptor {
 
+    // In Base 64: ugfpV1dMC5jyJtqwVAfTpHkxqJ0+E0ae
+    private static final byte[] secretKey = new byte[]{-70, 7, -23, 87, 87, 76, 11, -104, -14, 38, -38, -80, 84, 7, -45, -92, 121, 49, -88, -99, 62, 19, 70, -98};
     private static Cipher ecipher;
     private static Cipher dcipher;
 
     static {
         try {
-            SecretKey key = decodeKey();
+            SecretKey key = new SecretKeySpec(secretKey, "DESede");
             ecipher = Cipher.getInstance("DESede");
             dcipher = Cipher.getInstance("DESede");
             ecipher.init(Cipher.ENCRYPT_MODE, key);
@@ -75,16 +77,5 @@ public class Encryptor {
 
         // Decode using utf-8
         return new String(utf8, StandardCharsets.UTF_8);
-    }
-
-    private static SecretKey decodeKey() {
-        String secretKey = "ugfpV1dMC5jyJtqwVAfTpHkxqJ0+E0ae";
-        byte[] bytes = Base64.getDecoder().decode(secretKey);
-        return new SecretKeySpec(bytes, "DESede");
-    }
-
-    public static void main(String[] args) throws Exception {
-        String encoded = encrypt("How are you today");
-        System.out.println(decrypt(encoded));
     }
 }
