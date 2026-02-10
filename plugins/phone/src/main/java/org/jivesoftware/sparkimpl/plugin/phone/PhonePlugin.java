@@ -41,6 +41,11 @@ import javax.swing.*;
 import java.awt.event.*;
 import java.util.TimerTask;
 
+/**
+ * Adds phone-pbx capabilities within Spark.
+ * Users can make calls, take incoming calls and be notified of presence changes
+ * @author Derek DeMoro
+ */
 public class PhonePlugin implements Plugin {
     public static PhoneClient phoneClient;
     public static Presence offPhonePresence;

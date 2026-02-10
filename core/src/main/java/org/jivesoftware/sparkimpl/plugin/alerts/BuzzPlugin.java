@@ -39,6 +39,7 @@ import java.util.TimerTask;
 import javax.swing.SwingUtilities;
 
 /**
+ * Allows users to shake a users frame.
  */
 public class BuzzPlugin implements Plugin {
 

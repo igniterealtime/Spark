@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.TimerTask;
 
 /**
+ * Allows users to have scratch paper within Spark.
  */
 public class ScratchPadPlugin implements Plugin {
 

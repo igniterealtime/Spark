@@ -56,12 +56,21 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
 
+/**
+ * Jabber Browser.
+ * Discovering items on an XMPP server
+ *
+ * @author Derek DeMoro
+ */
 public class JabberBrowser implements Plugin {
     private JLabel addressLabel;
     private JComboBox<String> addressField;
     private XMPPConnection con;
     private JPanel browsePanel;
 
+    /**
+     * Displays Jabber browser in the modal dialog
+     */
     public void display() {
         final JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new GridBagLayout());

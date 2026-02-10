@@ -31,8 +31,14 @@ import org.jivesoftware.spark.util.TaskEngine;
 
 import static org.jivesoftware.spark.Event.*;
 
+/**
+ * Sounds Plugin.
+ * Adds sound preferences for Spark.
+ *
+ * @author Derek DeMoro
+ */
 public class SoundPlugin implements Plugin, MessageListener, ChatRoomListener {
-    SoundPreference soundPreference;
+    private SoundPreference soundPreference;
 
     @Override
 	public void initialize() {

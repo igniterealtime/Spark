@@ -55,8 +55,8 @@ import javax.swing.ListCellRenderer;
 import javax.swing.SwingUtilities;
 
 /**
- * Adds a simple feature to list your most "Popular" contacts. Popular contacts is basically who
- * you talk with the most.
+ * Adds a simple feature to list your most "Popular" contacts.
+ * Popular contacts is basically who you talk with the most.
  */
 public class FrequentContactsPlugin implements Plugin {
 

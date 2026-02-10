@@ -35,7 +35,7 @@ import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.sparkimpl.plugin.privacy.list.SparkPrivacyList;
 
 /**
- * This is Privacy plugin for Spark.
+ * Privacy lists.
  * 
  * This plugin built using specification: XEP-0016: Privacy Lists
  * {@see http://xmpp.org/extensions/xep-0016.html}

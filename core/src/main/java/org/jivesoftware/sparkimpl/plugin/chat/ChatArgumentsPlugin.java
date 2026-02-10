@@ -25,6 +25,12 @@ import org.jxmpp.jid.parts.Localpart;
 
 import java.util.Objects;
 
+/**
+ * Chat Post Loader.
+ * Allows users to specify command-line arguments to control Spark on startup.
+ *
+ * @author Derek DeMoro
+ */
 public class ChatArgumentsPlugin implements Plugin {
 
     @Override

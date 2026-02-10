@@ -40,7 +40,7 @@ import static java.util.Locale.ENGLISH;
 import static java.util.stream.Collectors.toList;
 
 /**
- * Allows for changing of default languages within Spark.
+ * Allows users to explicitly set their language.
  *
  * @author Derek DeMoro
  */

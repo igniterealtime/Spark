@@ -51,7 +51,8 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Adds extra functionallity to the <code>ContactList</code>. This includes copying and moving of <code>ContactItem</code>.
+ * Adds extra functionallity to the <code>ContactList</code>.
+ * This includes copying and moving of <code>ContactItem</code>.
  */
 public class ContactListAssistantPlugin implements Plugin {
 
