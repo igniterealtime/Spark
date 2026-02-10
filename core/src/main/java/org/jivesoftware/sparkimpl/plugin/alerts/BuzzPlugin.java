@@ -43,6 +43,8 @@ public class BuzzPlugin implements Plugin {
 
     @Override
     public void initialize() {
+        // Add Attention to a discovered items list.
+        SparkManager.addFeature(AttentionExtension.NAMESPACE);
         SparkManager.getConnection()
             .addAsyncStanzaListener(
                 stanza -> SwingUtilities.invokeLater(() -> shakeWindow((Message) stanza)),
