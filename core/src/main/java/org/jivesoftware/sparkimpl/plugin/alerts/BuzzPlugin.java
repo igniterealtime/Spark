@@ -20,14 +20,9 @@ import org.jivesoftware.smack.filter.AndFilter;
 import org.jivesoftware.smack.filter.StanzaTypeFilter;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smackx.attention.packet.AttentionExtension;
-import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.Plugin;
-import org.jivesoftware.spark.ui.ChatFrame;
-import org.jivesoftware.spark.ui.ChatRoom;
-import org.jivesoftware.spark.ui.ChatRoomListener;
-import org.jivesoftware.spark.ui.ChatRoomNotFoundException;
-import org.jivesoftware.spark.ui.ContactItem;
+import org.jivesoftware.spark.ui.*;
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 import org.jivesoftware.spark.util.SwingTimerTask;
 import org.jivesoftware.spark.util.TaskEngine;
@@ -38,19 +33,21 @@ import java.util.TimerTask;
 
 import javax.swing.SwingUtilities;
 
+import static org.jivesoftware.spark.ChatManager.NOTIFICATION_COLOR;
+
 /**
  * Allows users to shake a users frame.
+ * XEP-0224 Attention
  */
 public class BuzzPlugin implements Plugin {
 
     @Override
     public void initialize() {
-
         SparkManager.getConnection()
             .addAsyncStanzaListener(
-                            stanza -> SwingUtilities.invokeLater(() -> shakeWindow((Message)stanza)),
-                            new AndFilter(StanzaTypeFilter.MESSAGE, s -> s.hasExtension(AttentionExtension.ELEMENT_NAME, AttentionExtension.NAMESPACE))
-                        );
+                stanza -> SwingUtilities.invokeLater(() -> shakeWindow((Message) stanza)),
+                new AndFilter(StanzaTypeFilter.MESSAGE, s -> s.hasExtension(AttentionExtension.ELEMENT_NAME, AttentionExtension.NAMESPACE))
+            );
 
         SparkManager.getChatManager().addChatRoomListener(
             new ChatRoomListener() {
@@ -104,35 +101,32 @@ public class BuzzPlugin implements Plugin {
         ContactItem contact = SparkManager.getWorkspace().getContactList().getContactItemByJID(bareJID);
         if (contact != null) {
             nickname = contact.getDisplayName();
-        }
-        else {
+        } else {
             nickname = bareJID.getLocalpart().asUnescapedString();
         }
 
+        ChatContainer chatContainer = SparkManager.getChatManager().getChatContainer();
         ChatRoom room;
         try {
-            room = SparkManager.getChatManager().getChatContainer()
-                .getChatRoom(bareJID);
+            room = chatContainer.getChatRoom(bareJID);
         } catch (ChatRoomNotFoundException e) {
             // Create the room if it does not exist.
             room = SparkManager.getChatManager().createChatRoom(bareJID,
                 nickname, nickname);
         }
 
-        ChatFrame chatFrame = SparkManager.getChatManager().getChatContainer()
-            .getChatFrame();
+        ChatFrame chatFrame = chatContainer.getChatFrame();
         if (chatFrame != null) {
             if (SettingsManager.getLocalPreferences().isBuzzEnabled()) {
                 chatFrame.buzz();
-                SparkManager.getChatManager().getChatContainer()
-                    .activateChatRoom(room);
+                chatContainer.activateChatRoom(room);
             }
         }
 
         // Insert offline message
         room.getTranscriptWindow().insertNotificationMessage(
             Res.getString("message.buzz.message", nickname),
-            ChatManager.NOTIFICATION_COLOR);
+            NOTIFICATION_COLOR);
         room.scrollToBottom();
     }
 
