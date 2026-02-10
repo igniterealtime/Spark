@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <install4j version="12.0.2" transformSequenceNumber="12">
   <directoryPresets config="../../target/distribution-base/lib" />
-  <application name="Spark XMPP Instant Messenger" applicationId="3057-7228-2063-7466" mediaDir="../../target/" mediaFilePattern="spark_${compiler:sys.version}" compression="9" lzmaCompression="true" commonExternalFiles="true" shortName="Spark" publisher="Ignite Realtime" publisherWeb="https://IgniteRealtime.org" version="3.0.0" allPathsRelative="true" macVolumeId="ccfadd9e467a1ebd" javaMinVersion="11" jdkMode="runtimeJre">
+    <application name="Spark" applicationId="3057-7228-2063-7466" mediaDir="../../target/" mediaFilePattern="spark_${compiler:sys.version}" compression="9" lzmaCompression="true" commonExternalFiles="true" shortName="Spark" publisher="Ignite Realtime" publisherWeb="https://IgniteRealtime.org" version="3.1.0" allPathsRelative="true" macVolumeId="ccfadd9e467a1ebd" javaMinVersion="11" jdkMode="runtimeJre">
     <languages skipLanguageSelection="true">
       <additionalLanguages>
         <language id="cs" />
