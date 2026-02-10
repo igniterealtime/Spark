@@ -60,20 +60,18 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * Class to handle the viewing of installed and downloadable Plugins
+ * Plugin Viewer Plugin.
+ * Class to handle the viewing of installed and downloadable Plugins.
+ * Allows users to download, install, and uninstall 3rd party plugins.
+ *
+ * @author Derek DeMoro
  */
 public class PluginViewer extends JPanel implements Plugin
 {
-    private static final long serialVersionUID = -4249017716988031394L;
-
     private JTabbedPane tabbedPane;
-
     private boolean loaded = false;
-
     private final String retrieveListURL = Default.getString( Default.PLUGIN_REPOSITORY );
-
     private JProgressBar progressBar;
-
     private JPanel installedPanel;
     private JPanel availablePanel;
     private JPanel deactivatedPanel;

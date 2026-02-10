@@ -20,6 +20,12 @@ import org.jivesoftware.MainWindowListener;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.Plugin;
 
+/**
+ * Layout Plugin.
+ * Persists users layouts on subsequent loads.
+ *
+ * @author Derek DeMoro
+ */
 public class LayoutPlugin implements Plugin
 {
 
@@ -48,13 +54,11 @@ public class LayoutPlugin implements Plugin
             @Override
 			public void mainWindowActivated()
             {
-
             }
 
             @Override
 			public void mainWindowDeactivated()
             {
-
             }
         } );
     }
@@ -62,7 +66,6 @@ public class LayoutPlugin implements Plugin
     @Override
 	public void shutdown()
     {
-
     }
 
     @Override
@@ -74,6 +77,5 @@ public class LayoutPlugin implements Plugin
     @Override
 	public void uninstall()
     {
-        // Do nothing.
     }
 }

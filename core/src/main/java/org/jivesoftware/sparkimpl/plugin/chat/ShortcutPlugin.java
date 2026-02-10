@@ -25,7 +25,7 @@ import org.jivesoftware.spark.util.ModelUtil;
 import java.awt.Color;
 
 /**
- * The ShortcutPlugin is used to handle IRC-style shortcuts.
+ * Adds simple IRC style shortcuts.
  */
 public class ShortcutPlugin implements Plugin, TranscriptWindowInterceptor {
 

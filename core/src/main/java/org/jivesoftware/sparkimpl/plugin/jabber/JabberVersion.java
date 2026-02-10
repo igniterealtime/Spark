@@ -40,12 +40,16 @@ import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.Date;
 
-
+/**
+ * Jabber Version.
+ * Displays which version of Spark users are running.
+ *
+ * @author Derek DeMoro
+ */
 public class JabberVersion implements Plugin {
 
     @Override
 	public void initialize() {
-
         // Populate Smack's Version Manager with Sparks version information.
         VersionManager.getInstanceFor( SparkManager.getConnection() ).setVersion(
             JiveInfo.getName(),

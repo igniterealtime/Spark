@@ -37,7 +37,11 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
 /**
+ * Emoticon Plugin.
  * Adds an EmoticonPickList to each ChatRoom.
+ * Allows users to use a pick list for Emoticons.
+ *
+ * @author Derek DeMoro
  */
 public class EmoticonPlugin implements Plugin, ChatRoomListener {
 

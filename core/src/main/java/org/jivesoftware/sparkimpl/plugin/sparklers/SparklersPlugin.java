@@ -19,6 +19,9 @@ import org.jivesoftware.spark.plugin.Plugin;
 import org.jivesoftware.spark.ui.Sparkler;
 import org.jivesoftware.spark.ui.SparklerDecorator;
 
+/**
+ * Allows users set Active Sparklers within a Chat Conversation.
+ */
 public class SparklersPlugin implements Plugin {
 
     @Override

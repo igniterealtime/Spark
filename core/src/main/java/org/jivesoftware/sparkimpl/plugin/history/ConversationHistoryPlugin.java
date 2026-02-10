@@ -45,7 +45,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Allows users to see the last 10 people they have talked with.
+ * Adds a simple shortcut to see the last 10 conversations.
  *
  * @author Derek DeMoro
  */
