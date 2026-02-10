@@ -22,7 +22,6 @@ import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.ClassicHttpRequest;
 import org.apache.hc.core5.http.HttpEntity;
-import org.apache.hc.core5.http.HttpHost;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.io.support.ClassicRequestBuilder;
 import org.jivesoftware.Spark;
@@ -357,7 +356,6 @@ public class CheckUpdates {
             lastChecked = new Date();
             // This is the first invocation of Communicator
             localPreferences.setLastCheckForUpdates(lastChecked);
-            SettingsManager.saveSettings();
         }
 
         // Check to see if it has been a CheckForUpdates (default 7) days
@@ -379,8 +377,6 @@ public class CheckUpdates {
             // Check version on server.
             lastChecked = new Date();
             localPreferences.setLastCheckForUpdates(lastChecked);
-            SettingsManager.saveSettings();
-            
             final SparkVersion serverVersion = newBuildAvailable();
             if (serverVersion == null) {
                 UPDATING = false;

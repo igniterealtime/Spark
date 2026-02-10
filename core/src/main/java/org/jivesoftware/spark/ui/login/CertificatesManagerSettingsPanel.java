@@ -317,6 +317,5 @@ public class CertificatesManagerSettingsPanel extends JPanel implements ActionLi
         localPreferences.setCheckOCSP(checkOCSP.isSelected());
         localPreferences.setAllowSoftFail(allowSoftFail.isSelected());
         certControll.overWriteKeyStores();
-        SettingsManager.saveSettings();
     }
 }

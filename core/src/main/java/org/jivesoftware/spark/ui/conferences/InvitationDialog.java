@@ -97,7 +97,6 @@ final class InvitationDialog extends JPanel {
                 if (bookmarkedConfItem != null) {
                     BookmarkedConference bookmarkedConf = bookmarkedConfItem.getBookmarkedConf();
                     pref.setDefaultBookmarkedConf(bookmarkedConf.getJid());
-                    SettingsManager.saveSettings();
                 }
             });
         }

@@ -7,7 +7,6 @@ import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
-import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
 import javax.security.auth.Subject;
 import javax.security.auth.login.Configuration;
@@ -263,6 +262,5 @@ class SsoLoginSettingsPanel extends JPanel implements ActionListener
             localPreferences.setSSOMethod( "file" );
         }
         localPreferences.setSaslGssapiSmack3Compatible( useSaslGssapiSmack3compatBox.isSelected() );
-        SettingsManager.saveSettings();
     }
 }

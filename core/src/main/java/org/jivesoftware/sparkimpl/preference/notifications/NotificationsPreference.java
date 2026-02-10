@@ -130,7 +130,6 @@ public class NotificationsPreference implements Preference {
 		pref.setCheckForBeta(panel.isBetaCheckingEnabled());
 		pref.setTypingNotificationOn(panel.isTypingNotification());
 		pref.setSystemTrayNotificationEnabled(panel.isSystemTrayNotificationEnabled());
-		SettingsManager.saveSettings();
 	}
 
 	@Override

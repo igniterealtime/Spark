@@ -114,7 +114,6 @@ public class SecurityLoginSettingsPanel extends JPanel
         // ... register click-handler that deletes stored passwords.
         deleteSavedPasswords.addActionListener(actionEvent -> {
             SettingsManager.getLocalPreferences().clearPasswordForAllUsers();
-            SettingsManager.saveSettings();
             deleteSavedPasswords.setEnabled(false);
         });
 
@@ -164,6 +163,5 @@ public class SecurityLoginSettingsPanel extends JPanel
         localPreferences.setDirectTls( useDirectTlsBox.isSelected() );
         localPreferences.setDisableHostnameVerification( disableHostnameVerificationBox.isSelected() );
         localPreferences.setAllowClientSideAuthentication( allowClientSideAuthentication.isSelected() );
-        SettingsManager.saveSettings();
     }
 }

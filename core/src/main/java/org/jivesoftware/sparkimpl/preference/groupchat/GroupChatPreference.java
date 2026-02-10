@@ -108,7 +108,6 @@ public class GroupChatPreference implements Preference {
         pref.setAutoAcceptMucInvite(panel.isAutoAcceptMuc());
         pref.setMucRandomColors(panel.isRandomColors());
         pref.setUseAdHocRoom(!panel.isInviteToBookmark());
-        SettingsManager.saveSettings();
     }
 
     @Override

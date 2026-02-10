@@ -5,7 +5,6 @@ import org.jivesoftware.resource.Res;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
-import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -310,6 +309,5 @@ class ProxyLoginSettingsPanel extends JPanel
                 localPreferences.setProxyEnabled( false );
             }
         }
-        SettingsManager.saveSettings();
     }
 }
