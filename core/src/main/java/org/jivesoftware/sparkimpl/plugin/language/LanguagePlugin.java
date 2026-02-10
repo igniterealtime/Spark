@@ -19,19 +19,25 @@ import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.Plugin;
+import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
+import java.net.JarURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Locale;
-import java.util.stream.Collectors;
+import java.util.jar.JarFile;
+import java.util.zip.ZipEntry;
 
 import static java.util.Locale.ENGLISH;
+import static java.util.stream.Collectors.toList;
 
 /**
  * Allows for changing of default languages within Spark.
@@ -55,7 +61,7 @@ public class LanguagePlugin implements Plugin {
 
         addLanguage(ENGLISH, languageMenu);
         // If we have a translation file for this locale, we can support the language!
-        List<String> i18nResources = getAllFilesFromResource("/i18n/");
+        List<String> i18nResources = getI18nLangCodesFromResourceFiles();
         for (String localeFile : i18nResources) {
             Locale locale = Locale.forLanguageTag(localeFile.replace("_", "-"));
             addLanguage(locale, languageMenu);
@@ -102,21 +108,46 @@ public class LanguagePlugin implements Plugin {
 	public void uninstall() {
     }
 
-    private List<String> getAllFilesFromResource(String folder) {
-        // dun walk the root path, we will walk all the classes
+    private List<String> getI18nLangCodesFromResourceFiles() {
+        String folder = "/i18n/";
         URL resource = getClass().getResource(folder);
         if (resource == null) {
+            Log.error("list resources from /i18n/ no folder");
             return List.of();
         }
         try {
-            List<String> collect = Files.list(Paths.get(resource.toURI()))
-                .map(path -> path.getFileName().toString())
-                .filter(name -> name.startsWith("spark_i18n_"))
-                .map(name -> name.substring("spark_i18n_".length(), name.lastIndexOf(".")))
-                .sorted()
-                .collect(Collectors.toList());
-            return collect;
+            if ("jar".equals(resource.getProtocol())) {
+                // Lists resource files from jar
+                String folderInJar = folder.substring(1); // drop leading '/'
+                String i18nFilePrefix = folderInJar + "spark_i18n_";
+                JarURLConnection connection = (JarURLConnection) resource.openConnection();
+                try (JarFile jarFile = connection.getJarFile()) {
+                    return jarFile.stream()
+                        .filter(entry -> !entry.isDirectory() && entry.getName().startsWith(i18nFilePrefix))
+                        .map(ZipEntry::getName)
+                        .map(name -> name.substring(i18nFilePrefix.length(), name.length() - ".properties".length()))
+                        .sorted()
+                        .collect(toList());
+                }
+            } else if ("file".equals(resource.getProtocol())) {
+                // Lists resource files from a file system when running from IDE
+                final URI uri = resource.toURI();
+                final Path dir = Paths.get(uri);
+                try (var paths = Files.list(dir)) {
+                    return paths
+                        .filter(Files::isRegularFile)
+                        .map(path -> path.getFileName().toString())
+                        .filter(name -> name.startsWith("spark_i18n_"))
+                        .map(name -> name.substring("spark_i18n_".length(), name.lastIndexOf(".")))
+                        .sorted()
+                        .collect(toList());
+                }
+            } else {
+                // Unknown protocol. Never happens
+                return List.of();
+            }
         } catch (Exception e) {
+            Log.error("Failed to list resources from /i18n/", e);
             return List.of();
         }
     }
