@@ -155,7 +155,6 @@ public class LoginSettingDialog implements PropertyChangeListener
                 ssoPanel.saveSettings();
                 certManagerPanel.saveSettings();
                 mutAuthPanel.saveSettings();
-                SettingsManager.saveSettings();
                 optionsDialog.setVisible( false );
             }
             else

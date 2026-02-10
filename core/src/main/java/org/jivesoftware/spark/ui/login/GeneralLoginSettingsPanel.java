@@ -116,7 +116,6 @@ class GeneralLoginSettingsPanel extends JPanel implements ActionListener
         xmppHostField.setEnabled( !isSelected );
         portField.setEnabled( !isSelected );
         localPreferences.setHostAndPortConfigured( !isSelected );
-        SettingsManager.saveSettings();
     }
 
     /**
@@ -144,7 +143,6 @@ class GeneralLoginSettingsPanel extends JPanel implements ActionListener
                             JOptionPane.ERROR_MESSAGE );
         }
         //localPreferences.setHostAndPortConfigured(!isSelected);
-        SettingsManager.saveSettings();
     }
 
     private void updateResourceVersion()
@@ -158,7 +156,6 @@ class GeneralLoginSettingsPanel extends JPanel implements ActionListener
         }
         resourceField.setEnabled( !isSelected );
         //localPreferences.setHostAndPortConfigured(!isSelected);
-        SettingsManager.saveSettings();
     }
 
     @Override
@@ -249,6 +246,5 @@ class GeneralLoginSettingsPanel extends JPanel implements ActionListener
         localPreferences.setResource( resourceField.getText() );
         localPreferences.setUseHostnameAsResource( useHostnameAsResourceBox.isSelected() );
         localPreferences.setUseVersionAsResource( useVersionAsResourceBox.isSelected() );
-        SettingsManager.saveSettings();
     }
 }

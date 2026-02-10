@@ -2000,7 +2000,6 @@ public class ContactList extends JPanel implements ActionListener,
 
         localPreferences.setEmptyGroupsShown(show);
         showHideMenu.setSelected(show);
-        SettingsManager.saveSettings();
     }
 
     private void showOfflineUsers(boolean show) {
@@ -2022,7 +2021,6 @@ public class ContactList extends JPanel implements ActionListener,
             }
         }
         localPreferences.setOfflineUsersShown(show);
-        SettingsManager.saveSettings();
     }
 
     /**
@@ -2033,8 +2031,6 @@ public class ContactList extends JPanel implements ActionListener,
     private void showOfflineGroup(boolean show) {
         // Save in preferences
         localPreferences.setOfflineGroupVisible(show);
-        SettingsManager.saveSettings();
-
         // Toggle Visibility of Offline Group.
         offlineGroup.setVisible(show);
 

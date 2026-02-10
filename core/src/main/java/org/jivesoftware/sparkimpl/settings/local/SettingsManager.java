@@ -40,11 +40,12 @@ public class SettingsManager {
 
     private static final CopyOnWriteArrayList<PreferenceListener> listeners = new CopyOnWriteArrayList<>();
 
-    private static final ScheduledExecutorService saveScheduler = Executors.newSingleThreadScheduledExecutor();
-
-    private static volatile boolean saveScheduled = false;
-
     private SettingsManager() {
+    }
+
+    static {
+        // always save settings on shutdown
+        Runtime.getRuntime().addShutdownHook(new Thread(SettingsManager::saveSettings));
     }
 
     /**
@@ -63,23 +64,10 @@ public class SettingsManager {
      * Persists the settings to the local file system.
      */
     public static void saveSettings() {
-        Log.debug("Saving settings...");
-        //FIXME during start we have a dozen savings in a short period.
-        // This should be fixed to avoid slowness, meanwhile here we'll make only one saving in 10 sec.
-        if (saveScheduled) {
+        if (localPreferences == null) {
             return;
         }
-        saveScheduled = true;
-        saveScheduler.schedule(() -> {
-            try {
-                save();
-            } finally {
-                saveScheduled = false;
-            }
-        }, 10, TimeUnit.SECONDS);
-    }
-
-    private static void save() {
+        Log.debug("Saving settings...");
         final Properties props = localPreferences.getProperties();
         try {
             props.store(Files.newOutputStream(getSettingsFile().toPath()), "Spark Settings");

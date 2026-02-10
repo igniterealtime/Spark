@@ -78,7 +78,6 @@ public class LanguagePlugin implements Plugin {
             public void actionPerformed(ActionEvent e) {
                 final LocalPreferences preferences = SettingsManager.getLocalPreferences();
                 preferences.setLanguage(locale.toString());
-                SettingsManager.saveSettings();
 
                 UIManager.put("OptionPane.yesButtonText", Res.getString("yes"));
                 UIManager.put("OptionPane.noButtonText", Res.getString("no"));

@@ -123,8 +123,6 @@ public class ChatPreference implements Preference {
         pref.setCloseUnreadMessageEnabled(panel.isCloseUnreadMessageEnabled());
         pref.setChatHistoryAscending(panel.isSortChatHistoryAscending());
 
-        SettingsManager.saveSettings();
-
         // Do not commit if not changed.
         if (ModelUtil.hasLength(panel.getPassword()) && ModelUtil.hasLength(panel.getConfirmationPassword())) {
             try {

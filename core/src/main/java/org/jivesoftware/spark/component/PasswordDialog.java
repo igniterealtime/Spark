@@ -71,7 +71,6 @@ public final class PasswordDialog implements PropertyChangeListener {
     public void savePassword(String roomName, String password) {
         try {
             SettingsManager.getLocalPreferences().setGroupChatPassword(roomName, password);
-            SettingsManager.saveSettings();
         } catch (Exception e) {
             Log.error("Error storing encrypted password.", e);
         }

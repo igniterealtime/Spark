@@ -66,8 +66,6 @@ public class LocalPreference implements Preference {
     @Override
 	public void commit() {
         getData();
-
-        SettingsManager.saveSettings();
     }
 
     @Override
@@ -132,7 +130,6 @@ public class LocalPreference implements Preference {
     @Override
 	public void shutdown() {
         // Commit to file.
-        SettingsManager.saveSettings();
     }
 
 }

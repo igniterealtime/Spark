@@ -116,7 +116,6 @@ public class ThemePreference implements Preference {
         
         
         ColorSettingManager.saveColorSettings();
-        SettingsManager.saveSettings();
     }
 
     @Override

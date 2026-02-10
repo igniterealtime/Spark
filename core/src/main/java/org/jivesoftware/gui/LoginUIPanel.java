@@ -1346,8 +1346,6 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
                         if (userChoice == JOptionPane.YES_OPTION) {
                             // Toggle the preference.
                             localPref.setAcceptSelfSigned(true);
-                            SettingsManager.saveSettings();
-
                             // Attempt to login again.
                             TaskEngine.getInstance().submit(this::login);
                         }
@@ -1415,8 +1413,6 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
         localPref.setSavePassword(savePasswordAfterSuccessfulLogin.get());
         localPref.setAutoLogin(autoLogin.get());
         localPref.setServer(getLoginServer());
-        SettingsManager.saveSettings();
-
         afterLogin();
 
         EventQueue.invokeLater(()-> {
@@ -1611,8 +1607,6 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
 
                 String password = plugin.selectSingleNode("password").getText();
                 localPref.setPasswordForUser(username + "@" + server, password);
-
-                SettingsManager.saveSettings();
             }
 
             // Delete settings File
@@ -1741,8 +1735,6 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Act
             localPref.setIdleMessage(Res.getString("status.away"));
             localPref.setIdleOn(true);
         }
-
-        SettingsManager.saveSettings();
     }
 
 }

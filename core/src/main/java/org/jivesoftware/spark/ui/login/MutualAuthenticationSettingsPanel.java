@@ -284,6 +284,5 @@ public class MutualAuthenticationSettingsPanel extends JPanel implements ActionL
 
     public void saveSettings() {
         idControll.overWriteKeyStores();
-        SettingsManager.saveSettings();
     }
 }

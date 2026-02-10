@@ -17,7 +17,6 @@ package org.jivesoftware.sparkimpl.plugin.emoticons;
 
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
-import org.dom4j.Element;
 import org.dom4j.Node;
 import org.dom4j.io.SAXReader;
 import org.jivesoftware.Spark;
@@ -219,7 +218,6 @@ public class EmoticonManager {
      */
     public void setActivePack(String pack) {
         pref.setEmoticonPack(pack);
-        SettingsManager.saveSettings();
         imageMap.clear();
     }
 
