@@ -186,7 +186,7 @@ public class JabberBrowser implements Plugin {
             this.item = item;
             setVerticalTextPosition(JLabel.BOTTOM);
             setHorizontalTextPosition(JLabel.CENTER);
-            setText(item.getName());
+            setText(item.getName() != null ? item.getName() : item.getEntityID().toString());
             setIcon(SparkRes.getImageIcon(SparkRes.USER1_MESSAGE_24x24));
 
             addActionListener(e -> browseItem(item));
@@ -219,6 +219,17 @@ public class JabberBrowser implements Plugin {
             }
         };
         SparkManager.getWorkspace().getActionMap().put("showBrowser", actionShowXmppBrowser);
+        addMainMenuItem(actionShowXmppBrowser);
+    }
+
+    private void addMainMenuItem(AbstractAction actionShowXmppBrowser) {
+        JMenu actionsMenu = SparkManager.getMainWindow().getMenuByName(Res.getString("menuitem.actions"));
+        if (actionsMenu == null) {
+            return;
+        }
+        JMenuItem menuShowXmppBrowser = new JMenuItem(Res.getString("title.jabber.browser"), SparkRes.getImageIcon(SparkRes.FIND_IMAGE));
+        menuShowXmppBrowser.addActionListener(actionShowXmppBrowser);
+        actionsMenu.add(menuShowXmppBrowser);
     }
 
     @Override
