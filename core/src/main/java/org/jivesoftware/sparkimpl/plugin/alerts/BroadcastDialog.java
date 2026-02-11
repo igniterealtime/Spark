@@ -360,11 +360,8 @@ Log.warning( "Unable to broadcast.", e1 );
             JOptionPane.showMessageDialog(dlg, Res.getString("message.broadcast.no.text"), Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
             return false;
         }
-        List<String> recipients=new ArrayList<>();
+        List<String> recipients = new ArrayList<>(jids.size());
         for (BareJid jid : jids) {
-            String nickname = SparkManager.getUserManager().getUserNicknameFromJID(jid);
-            recipients.add(nickname);
-
             MessageBuilder messageBuilder = StanzaBuilder.buildMessage()
                 .ofType(normalMessageButton.isSelected() ? Message.Type.normal : Message.Type.headline)
                 .to(jid)
@@ -374,8 +371,11 @@ Log.warning( "Unable to broadcast.", e1 );
             try {
                 SparkManager.getConnection().sendStanza(message);
             } catch (InterruptedException e) {
+                Log.error("Error sending broadcast message to " + jid, e);
                 break;
             }
+            String nickname = SparkManager.getUserManager().getUserNicknameFromJID(jid);
+            recipients.add(nickname);
         }
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd"+" - "+"HH:mm");
         Date date = new Date();
