@@ -37,8 +37,8 @@ import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.util.UIComponentRegistry;
 import org.jivesoftware.spark.util.log.Log;
 import org.jxmpp.jid.Jid;
-import org.jxmpp.jid.impl.JidCreate;
-import org.jxmpp.stringprep.XmppStringprepException;
+
+import static org.jivesoftware.spark.ChatManager.NOTIFICATION_COLOR;
 
 /**
  * Adds a simple buzz operation button the each newly created ChatRoom.
@@ -75,16 +75,12 @@ public class BuzzRoomDecorator implements ActionListener {
 
     @Override
 	public void actionPerformed(ActionEvent e) {
-        Jid jid;
-        try {
-            jid = JidCreate.from(((ChatRoomImpl)chatRoom).getParticipantJID());
-        } catch (XmppStringprepException exception) {
-            throw new IllegalStateException(exception);
-        }
+        Jid jid = ((ChatRoomImpl) chatRoom).getParticipantJID();
 
         XMPPConnection connection = SparkManager.getConnection();
         Message message = connection.getStanzaFactory()
             .buildMessageStanza()
+            .ofType(Message.Type.headline) // avoid offline storage
             .to(jid)
             .addExtension(new AttentionExtension())
             .build();
@@ -98,7 +94,7 @@ public class BuzzRoomDecorator implements ActionListener {
             Log.warning( "Unable to send stanza to " + jid, e1 );
         }
 
-        chatRoom.getTranscriptWindow().insertNotificationMessage(Res.getString("message.buzz.sent"), ChatManager.NOTIFICATION_COLOR);
+        chatRoom.getTranscriptWindow().insertNotificationMessage(Res.getString("message.buzz.sent"), NOTIFICATION_COLOR);
         buzzButton.setEnabled(false);
 
         // Enable the button after 30 seconds to prevent abuse.
@@ -108,7 +104,6 @@ public class BuzzRoomDecorator implements ActionListener {
                 buzzButton.setEnabled(true);
             }
         };
-
-        TaskEngine.getInstance().schedule(enableTask, 30000);
+        TaskEngine.getInstance().schedule(enableTask, 30_000);
     }
 }
