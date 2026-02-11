@@ -224,23 +224,14 @@ public class SipAccountPacket extends IQ {
         if (!con.isConnected()) {
             return false;
         }
-
-        ServiceDiscoveryManager disco = ServiceDiscoveryManager.getInstanceFor(con);
-        try {
-            DiscoverItems items = disco.discoverItems(con.getXMPPServiceDomain());
+            DiscoverItems items = SparkManager.getSessionManager().getDiscoveredItems();
             for ( DiscoverItems.Item item : items.getItems() ) {
                 if ("SIP Controller".equals(item.getName())) {
                     Log.debug("SIP Controller Found");
                     return true;
                 }
             }
-        }
-        catch (XMPPException | SmackException e) {
-            Log.error("isSparkPluginInstalled", e);
-        }
-
         return false;
-
     }
 
     public SipAccount getSipAccount() {
