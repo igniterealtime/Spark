@@ -59,6 +59,7 @@ import org.jivesoftware.spark.ui.ContactList;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.layout.LayoutSettingsManager;
+import org.jxmpp.jid.BareJid;
 import org.jxmpp.jid.impl.JidCreate;
 
 /**
@@ -338,21 +339,18 @@ Log.warning( "Unable to broadcast.", e1 );
     
     /**
      * Sends a broadcast message to all users selected.
-     * @param dlg 
      */
     private boolean sendBroadcasts(JDialog dlg) throws SmackException.NotConnectedException
     {
-        final Set<String> jids = new HashSet<>();
-        
+        Set<BareJid> jids = new HashSet<>();
         UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
-        
         for (CheckNode node : nodes) {
             if (node.isSelected()) {
                 String jid = (String)node.getAssociatedObject();
-                jids.add(jid);
+                jids.add(JidCreate.bareFromOrThrowUnchecked(jid));
             }
         }
-        if(jids.size() == 0)
+        if (jids.isEmpty())
         {
             JOptionPane.showMessageDialog(dlg, Res.getString("message.broadcast.no.user.selected"), Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
             return false;
@@ -362,24 +360,21 @@ Log.warning( "Unable to broadcast.", e1 );
             JOptionPane.showMessageDialog(dlg, Res.getString("message.broadcast.no.text"), Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
             return false;
         }
-       
         List<String> recipients=new ArrayList<>();
-       
-        
-        for (String jid : jids) {
-            String nickname = SparkManager.getUserManager().getUserNicknameFromJID(JidCreate.bareFromOrThrowUnchecked(jid));
+        for (BareJid jid : jids) {
+            String nickname = SparkManager.getUserManager().getUserNicknameFromJID(jid);
             recipients.add(nickname);
 
             MessageBuilder messageBuilder = StanzaBuilder.buildMessage()
                 .ofType(normalMessageButton.isSelected() ? Message.Type.normal : Message.Type.headline)
+                .to(jid)
                 .setBody(text);
             Message message = messageBuilder.build();
-            message.setTo(JidCreate.fromOrThrowUnchecked(jid));
 
             try {
                 SparkManager.getConnection().sendStanza(message);
             } catch (InterruptedException e) {
-                throw new IllegalStateException(e);
+                break;
             }
         }
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd"+" - "+"HH:mm");
@@ -392,6 +387,7 @@ Log.warning( "Unable to broadcast.", e1 );
         }
         return true;
     }
+
     private  void addDataToFile(String data) throws IOException
     {
          DateFormat dateFormat = new SimpleDateFormat("yyyy-MM");
