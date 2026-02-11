@@ -31,6 +31,7 @@ import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.JiveInfo;
 import org.jivesoftware.resource.Res;
+import org.jxmpp.jid.Jid;
 
 import javax.swing.*;
 
@@ -140,16 +141,14 @@ public class JabberVersion implements Plugin {
         if (selectedUsers.size() == 1) {
             final ContactItem item = (ContactItem)selectedUsers.toArray()[0];
             final Presence presence = item.getPresence();
-            final String jid;
-            try {
-                 jid = presence.getFrom().toString();
-            }catch (NullPointerException e){
+            if (presence == null || presence.getFrom() == null) {
                 JOptionPane.showMessageDialog(field,
                     item.getAlias() + " " +Res.getString("user.has.signed.off"),
                     Res.getString("title.notification"),
                     JOptionPane.INFORMATION_MESSAGE);
                 return;
             }
+            final Jid jid = presence.getFrom();
             SwingWorker worker = new SwingWorker() {
                 @Override
 				public Object construct() {
