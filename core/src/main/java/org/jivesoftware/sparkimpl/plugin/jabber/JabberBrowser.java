@@ -45,16 +45,7 @@ import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.AbstractAction;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.KeyStroke;
+import javax.swing.*;
 
 /**
  * Jabber Browser.
@@ -80,13 +71,13 @@ public class JabberBrowser implements Plugin {
 
         RolloverButton backButton = new RolloverButton();
         backButton.setIcon(SparkRes.getImageIcon(SparkRes.LEFT_ARROW_IMAGE));
-        backButton.addActionListener( e -> {
+        backButton.addActionListener(e -> {
             int selectedItem = addressField.getSelectedIndex();
             if (selectedItem > 0) {
                 String historyItem = addressField.getItemAt(selectedItem - 1);
                 browse(historyItem);
             }
-        } );
+        });
 
         mainPanel.add(backButton, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         mainPanel.add(addressLabel, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
@@ -95,13 +86,13 @@ public class JabberBrowser implements Plugin {
 
         JButton browseButton = new JButton("");
         ResourceUtils.resButton(browseButton, Res.getString("button.browse"));
-        browseButton.addActionListener( e -> {
+        browseButton.addActionListener(e -> {
             String serviceName = (String) addressField.getSelectedItem();
             if (!ModelUtil.hasLength(serviceName)) {
                 return;
             }
             browse(serviceName);
-        } );
+        });
         mainPanel.add(addressField, new GridBagConstraints(2, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
         mainPanel.add(browseButton, new GridBagConstraints(3, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
 
@@ -139,16 +130,14 @@ public class JabberBrowser implements Plugin {
         DiscoverItems result;
         try {
             result = discoManager.discoverItems(serviceName);
-        }
-        catch (XMPPException | SmackException | InterruptedException e) {
+        } catch (XMPPException | SmackException | InterruptedException e) {
             Log.error(e);
             return;
         }
 
         addAddress(serviceName.toString());
 
-
-        for (DiscoverItems.Item item : result.getItems() ) {
+        for (DiscoverItems.Item item : result.getItems()) {
             Entity entity = new Entity(item);
             browsePanel.add(entity);
         }
@@ -158,6 +147,9 @@ public class JabberBrowser implements Plugin {
         browsePanel.repaint();
     }
 
+    /**
+     * Add address; discover items; updates the browser panel
+     */
     private void browseItem(DiscoverItems.Item discoveredItem) {
         addAddress(discoveredItem.getEntityID().toString());
         browsePanel.removeAll();
@@ -165,16 +157,16 @@ public class JabberBrowser implements Plugin {
         DiscoverItems result;
         try {
             result = discoManager.discoverItems(discoveredItem.getEntityID());
-        }
-        catch (XMPPException | SmackException | InterruptedException e) {
+        } catch (XMPPException | SmackException | InterruptedException e) {
             browsePanel.invalidate();
             browsePanel.validate();
             browsePanel.repaint();
             return;
         }
 
+        List<DiscoverItems.Item> resultItems = result.getItems();
         List<Entity> list = new ArrayList<>();
-        for (DiscoverItems.Item item : result.getItems() ) {
+        for (DiscoverItems.Item item : resultItems) {
             Entity entity = new Entity(item);
             browsePanel.add(entity);
             list.add(entity);
@@ -188,8 +180,7 @@ public class JabberBrowser implements Plugin {
     }
 
     public class Entity extends RolloverButton {
-		private static final long serialVersionUID = 2084728014635239794L;
-		private final DiscoverItems.Item item;
+        private final DiscoverItems.Item item;
 
         public Entity(final DiscoverItems.Item item) {
             this.item = item;
@@ -198,8 +189,7 @@ public class JabberBrowser implements Plugin {
             setText(item.getName());
             setIcon(SparkRes.getImageIcon(SparkRes.USER1_MESSAGE_24x24));
 
-            addActionListener( e -> browseItem(item) );
-
+            addActionListener(e -> browseItem(item));
         }
 
         public DiscoverItems.Item getItem() {
@@ -213,39 +203,35 @@ public class JabberBrowser implements Plugin {
     }
 
     @Override
-	public void initialize() {
-    	this.con = SparkManager.getConnection();
-    	EventQueue.invokeLater( () -> {
+    public void initialize() {
+        this.con = SparkManager.getConnection();
+        EventQueue.invokeLater(() -> {
             addressLabel = new JLabel();
             addressField = new JComboBox<>();
             addressField.setEditable(true);
             addressField.addItem(con.getHost());
-        } );
+        });
         SparkManager.getWorkspace().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("F8"), "showBrowser");
-        SparkManager.getWorkspace().getActionMap().put("showBrowser", new AbstractAction("showBrowser") {
-			private static final long serialVersionUID = 341826581565007606L;
-
-			@Override
-			public void actionPerformed(ActionEvent evt) {
+        AbstractAction actionShowXmppBrowser = new AbstractAction("showBrowser") {
+            @Override
+            public void actionPerformed(ActionEvent evt) {
                 display();
             }
-        });
+        };
+        SparkManager.getWorkspace().getActionMap().put("showBrowser", actionShowXmppBrowser);
     }
 
     @Override
-	public void shutdown() {
-
+    public void shutdown() {
     }
 
     @Override
-	public boolean canShutDown() {
+    public boolean canShutDown() {
         return false;
     }
 
     @Override
-	public void uninstall() {
-        // Do nothing.
+    public void uninstall() {
     }
-
 
 }
