@@ -43,8 +43,8 @@ import org.jivesoftware.spark.util.log.*;
 
 import org.jitsi.util.OSUtils;
 import de.mxro.process.*;
+import org.jxmpp.jid.DomainBareJid;
 import org.jxmpp.jid.parts.*;
-import org.jxmpp.jid.impl.JidCreate;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -107,10 +107,9 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
         ServiceDiscoveryManager discoManager = SparkManager.getDiscoManager();
 
         DiscoverInfo discoverInfo;
-        String serverJid = SparkManager.getSessionManager().getServerAddress().toString();
-
+        DomainBareJid serverJid = SparkManager.getSessionManager().getServerAddress();
         try {
-            discoverInfo = discoManager.discoverInfo(JidCreate.domainBareFrom(serverJid));
+            discoverInfo = discoManager.discoverInfo(serverJid);
         } catch (Exception e) {
             Log.debug("Unable to disco " + serverJid);
             return;
@@ -141,7 +140,7 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
 		String serverUrl = null;
         try {
             QueryRequest request = new QueryRequest(app);
-            request.setTo(JidCreate.fromOrThrowUnchecked(SparkManager.getSessionManager().getServerAddress()));
+            request.setTo(SparkManager.getSessionManager().getServerAddress());
             request.setType(IQ.Type.get);
             IQ result = SparkManager.getConnection().createStanzaCollectorAndSend(request).nextResultOrThrow();
             QueryRequest response = (QueryRequest) result;

@@ -30,6 +30,7 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jxmpp.jid.DomainBareJid;
 import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.impl.JidCreate;
+import org.jxmpp.jid.parts.Localpart;
 
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
@@ -164,9 +165,9 @@ public class RoomCreationDialog extends JPanel {
                 MultiUserChatManager mucManager = SparkManager.getMucManager();
                 boolean isValid = validatePanel();
                 if (isValid) {
-                    String roomJidString = nameField.getText().replaceAll(" ", "_") + "@" + serviceName;
-//                        EntityBareJid newRoomJid = JidCreate.entityBareFromUnescapedOrNull(roomJidString);
-                    EntityBareJid newRoomJid = JidCreate.entityBareFromOrThrowUnchecked(roomJidString);
+                    String newRoomName = nameField.getText().replaceAll(" ", "_");
+                    Localpart newRoomNamePart = Localpart.fromOrThrowUnchecked(newRoomName);
+                    EntityBareJid newRoomJid = JidCreate.entityBareFrom(newRoomNamePart, serviceName);
                     try {
                         RoomInfo roomInfo = mucManager.getRoomInfo(newRoomJid);
                         //JOptionPane.showMessageDialog(dlg, "Room already exists. Please specify a unique room name.", "Room Exists", JOptionPane.ERROR_MESSAGE);

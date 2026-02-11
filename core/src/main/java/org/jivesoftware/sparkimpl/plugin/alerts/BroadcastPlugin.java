@@ -69,6 +69,7 @@ import org.jxmpp.jid.DomainBareJid;
 import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.Jid;
 import org.jxmpp.jid.impl.JidCreate;
+import org.jxmpp.jid.parts.Localpart;
 import org.jxmpp.jid.parts.Resourcepart;
 import org.jxmpp.util.XmppStringUtils;
 import org.jivesoftware.spark.ui.BroadcastHistoryFrame;
@@ -413,10 +414,9 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
      * chat container with transcript history
      */
     private void broadcastInChat(Message message) {
-        String from = message.getFrom() != null ? message.getFrom().toString() : "";
-
         String windowtitle = message.getSubject() != null ? message.getSubject() : Res.getString("administrator");
-        EntityBareJid jid = JidCreate.entityBareFromOrThrowUnchecked("serveralert@" + from);
+        Localpart serverAlertPart = Localpart.fromOrThrowUnchecked("serveralert");
+        EntityBareJid jid = JidCreate.entityBareFrom(serverAlertPart, message.getFrom().asDomainBareJid());
         Resourcepart resourcepart = Resourcepart.fromOrThrowUnchecked(Res.getString("broadcast"));
         ChatRoomImpl chatRoom = new ChatRoomImpl(jid, resourcepart, windowtitle);
         chatRoom.getBottomPanel().setVisible(false);

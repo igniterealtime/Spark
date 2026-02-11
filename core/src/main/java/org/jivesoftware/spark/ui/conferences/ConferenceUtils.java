@@ -40,6 +40,7 @@ import org.jxmpp.jid.DomainBareJid;
 import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.Jid;
 import org.jxmpp.jid.impl.JidCreate;
+import org.jxmpp.jid.parts.Localpart;
 import org.jxmpp.jid.parts.Resourcepart;
 
 import javax.swing.*;
@@ -157,7 +158,8 @@ public class ConferenceUtils {
      */
     public static void createPrivateConference(DomainBareJid serviceName, String message, String roomName, Collection<EntityBareJid> jids) throws SmackException, InterruptedException
     {
-        final EntityBareJid roomJID = JidCreate.entityBareFromUnescapedOrThrowUnchecked(roomName + "@" + serviceName);
+        Localpart roomNamePart = Localpart.fromUnescapedOrThrowUnchecked(roomName);
+        EntityBareJid roomJID = JidCreate.entityBareFrom(roomNamePart, serviceName);
         MultiUserChatManager mucManager = SparkManager.getMucManager();
         MultiUserChat multiUserChat = mucManager.getMultiUserChat(roomJID);
         final GroupChatRoom room = UIComponentRegistry.createGroupChatRoom(multiUserChat);

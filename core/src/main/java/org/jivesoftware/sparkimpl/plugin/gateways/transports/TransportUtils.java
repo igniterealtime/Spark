@@ -142,11 +142,10 @@ public class TransportUtils {
 
         ServiceDiscoveryManager discoManager = SparkManager.getDiscoManager();
         try {
-            Jid jid = JidCreate.from(transport.getXMPPServiceDomain());
-            DiscoverInfo info = discoManager.discoverInfo(jid);
+            DiscoverInfo info = discoManager.discoverInfo(transport.getXMPPServiceDomain());
             return info.containsFeature("jabber:iq:registered");
         }
-        catch (XMPPException | SmackException | XmppStringprepException | InterruptedException e) {
+        catch (XMPPException | SmackException | InterruptedException e) {
             Log.error(e);
         }
         return false;

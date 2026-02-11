@@ -59,6 +59,7 @@ import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jxmpp.jid.DomainBareJid;
 import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.impl.JidCreate;
+import org.jxmpp.jid.parts.Localpart;
 import org.jxmpp.jid.parts.Resourcepart;
 
 import static java.awt.BorderLayout.*;
@@ -238,8 +239,8 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener, Com
         if (selectedRow == -1) {
             return null;
         }
-        String roomJIDString = roomsTable.getValueAt(selectedRow, 2) + "@" + serviceName;
-        EntityBareJid roomJID = JidCreate.entityBareFromOrNull(roomJIDString);
+        Localpart roomNamePart = Localpart.formUnescapedOrNull(roomsTable.getValueAt(selectedRow, 2).toString());
+        EntityBareJid roomJID = JidCreate.entityBareFrom(roomNamePart, serviceName);
         RoomInfo roomInfo = roomInfos.get(roomJID);
         return roomInfo;
     }
