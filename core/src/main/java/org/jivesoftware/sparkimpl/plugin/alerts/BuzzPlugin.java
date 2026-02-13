@@ -99,12 +99,14 @@ public class BuzzPlugin implements Plugin {
 
     private void addBuzzFeatureToChatRoom(final ChatRoom room) {
         if (room instanceof ChatRoomImpl) {
-            boolean hasAttentionSupport = clientOfContactSupportsAttentions(room);
-            if (!hasAttentionSupport) {
-                return;
-            }
-            // Add the button to the toolbar
-            new BuzzRoomDecorator(room);
+            SwingUtilities.invokeLater(() -> {
+                boolean hasAttentionSupport = clientOfContactSupportsAttentions(room);
+                if (!hasAttentionSupport) {
+                    return;
+                }
+                // Add the button to the toolbar
+                new BuzzRoomDecorator(room);
+            });
         }
     }
 
