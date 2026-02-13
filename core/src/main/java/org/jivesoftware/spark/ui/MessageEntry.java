@@ -44,57 +44,16 @@ import static org.jivesoftware.spark.ui.preview.NetworkAddressPreview.insertAddr
 public class MessageEntry extends TimeStampedEntry
 {
     public static final List<Character> DIRECTIVE_CHARS = Arrays.asList( '*', '_', '~', '`' );
+    /**
+     * Default background color (white/transparent)
+     */
+    private static final Color COLOR_MSG_BG = new Color(255, 255, 255, 0);
     protected final String prefix;
     protected final Color prefixColor;
     protected final String message;
     protected final Color messageColor;
     protected final Color backgroundColor;
 
-    /**
-     * Creates a new entry using the default background color (white/transparent).
-     *
-     * @param timestamp The timestamp of the entry (cannot be null).
-     * @param prefix The prefix of the message (typically, the name of the author of the message.
-     * @param prefixColor The color to be used for the timestamp and prefix text.
-     * @param message The message text itself.
-     * @param messageColor The color to be used for the message text.
-     */
-    public MessageEntry( ZonedDateTime timestamp, String prefix, Color prefixColor, String message, Color messageColor )
-    {
-        this( timestamp, false, prefix, prefixColor, message, messageColor, null );
-    }
-    
-    /**
-     * Creates a new entry using the default background color (white/transparent).
-     *
-     * @param timestamp The timestamp of the entry (cannot be null).
-     * @param isDelayed Set true if entry contain delayed delivery, historic timestamp.
-     * @param prefix The prefix of the message (typically, the name of the author of the message.
-     * @param prefixColor The color to be used for the timestamp and prefix text.
-     * @param message The message text itself.
-     * @param messageColor The color to be used for the message text.
-     */
-    public MessageEntry( ZonedDateTime timestamp, boolean isDelayed, String prefix, Color prefixColor, String message, Color messageColor )
-    {
-        this( timestamp, isDelayed, prefix, prefixColor, message, messageColor, null );
-    }
-
-    /**
-     * Creates a new entry using the default background color (white/transparent).
-     *
-     * @param timestamp The timestamp of the entry (cannot be null).
-     * @param prefix The prefix of the message (typically, the name of the author of the message.
-     * @param prefixColor The color to be used for the timestamp and prefix text.
-     * @param message The message text itself.
-     * @param messageColor The color to be used for the message text.
-     * @param backgroundColor The color to be used for the entire entry (prefix as well ass message text).
-     */
-    public MessageEntry( ZonedDateTime timestamp, String prefix, Color prefixColor, String message, Color messageColor, Color backgroundColor )
-    {
-        this( timestamp, false, prefix, prefixColor, message, messageColor,backgroundColor );
-
-    }
-    
     /**
      * Creates a new entry using the default background color (white/transparent).
      *
@@ -113,7 +72,7 @@ public class MessageEntry extends TimeStampedEntry
         this.prefixColor = prefixColor;
         this.message = message;
         this.messageColor = messageColor;
-        this.backgroundColor = backgroundColor != null ? backgroundColor : new Color( 255, 255, 255, 0);
+        this.backgroundColor = backgroundColor != null ? backgroundColor : COLOR_MSG_BG;
     }
 
     protected MutableAttributeSet getPrefixStyle()
