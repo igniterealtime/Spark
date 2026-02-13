@@ -19,121 +19,117 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
+import javax.swing.*;
 
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.packet.XmlEnvironment;
 import org.jivesoftware.spark.SparkManager;
-import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.spark.component.MessageDialog;
 
 /**
  * Class to Send Raw packets useful when debugging
- * 
+ *
  * @author wolf.posdorfer
- * 
  */
-public class RawPacketSender implements ActionListener {
+public class RawPacketSender {
 
-    private final JFrame _mainframe;
-    private final JPanel _mainpanel;
+    private final JFrame _mainFrame;
+    private final JPanel _mainPanel;
 
-    private final JScrollPane _textscroller;
+    private final JScrollPane _textScroller;
 
-    private final JTextArea _textarea;
-    private final JTextArea _inputarea;
-    private final JButton _sendButton;
-    private final JButton _clear;
+    private final JTextArea _textAreaLog;
+    private final JTextArea _inputArea;
+    private final JButton _btnSend;
+    private final JButton _btnClearLog;
 
     public RawPacketSender() {
+        _mainFrame = new JFrame("Send Raw Packets");
+        _mainFrame.setIconImage(SparkRes.getImageIcon(SparkRes.MAIN_IMAGE).getImage());
+        _mainPanel = new JPanel();
+        _mainPanel.setLayout(new GridLayout(2, 1));
+        _textAreaLog = new JTextArea();
+        _inputArea = new JTextArea();
+        _textScroller = new JScrollPane(_textAreaLog);
+        _btnSend = new JButton("Send", SparkRes.getImageIcon(SparkRes.SMALL_CHECK));
+        _btnSend.addActionListener(e -> onBtnSendClick());
+        _btnClearLog = new JButton("Clear", SparkRes.getImageIcon(SparkRes.SMALL_DELETE));
+        _btnClearLog.addActionListener(e -> onBtnClearLogClick());
 
-	_mainframe = new JFrame("Send Raw Packets");
-	_mainframe.setIconImage(SparkRes.getImageIcon(SparkRes.MAIN_IMAGE)
-		.getImage());
-	_mainpanel = new JPanel();
-	_mainpanel.setLayout(new GridLayout(2, 1));
-	_textarea = new JTextArea();
-	_inputarea = new JTextArea();
-	_textscroller = new JScrollPane(_textarea);
-	_sendButton = new JButton("Send",
-		SparkRes.getImageIcon(SparkRes.SMALL_CHECK));
-	_clear = new JButton("Clear",
-		SparkRes.getImageIcon(SparkRes.SMALL_DELETE));
+        JPanel southPanel = new JPanel(new BorderLayout());
+        southPanel.add(_inputArea, BorderLayout.CENTER);
 
-	createGUI();
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        buttonPanel.add(_btnClearLog);
+        buttonPanel.add(_btnSend);
+        southPanel.add(buttonPanel, BorderLayout.SOUTH);
 
+        _textAreaLog.setBackground(Color.LIGHT_GRAY);
+        _mainPanel.add(_textScroller);
+        _mainPanel.add(southPanel);
+
+        _mainFrame.add(_mainPanel);
+        _mainFrame.setSize(500, 500);
+        _mainFrame.setLocationRelativeTo(null);
+        _mainFrame.setVisible(true);
     }
 
-    private void createGUI() {
-
-	JPanel southpanel = new JPanel(new BorderLayout());
-	southpanel.add(_inputarea, BorderLayout.CENTER);
-
-	JPanel buttonpanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-	buttonpanel.add(_clear);
-	buttonpanel.add(_sendButton);
-	southpanel.add(buttonpanel, BorderLayout.SOUTH);
-
-	_sendButton.addActionListener(this);
-	_clear.addActionListener(this);
-
-	_textarea.setBackground(Color.LIGHT_GRAY);
-	_mainpanel.add(_textscroller);
-	_mainpanel.add(southpanel);
-
-	_mainframe.add(_mainpanel);
-	_mainframe.setSize(500, 500);
-	_mainframe.setLocationRelativeTo(null);
-	_mainframe.setVisible(true);
-
+    private void onBtnSendClick() {
+        String reqText = _inputArea.getText();
+        if (reqText.isBlank()) {
+            return;
+        }
+        String rawXml = reqText;
+        AdHocPacket packetToSend = new AdHocPacket(rawXml);
+        try {
+            SparkManager.getConnection().sendStanza(packetToSend);
+            _textAreaLog.append("\n" + rawXml);
+        } catch (Exception exc) {
+            MessageDialog.showErrorDialog(_mainFrame, exc);
+        }
     }
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
+    private void onBtnClearLogClick() {
+        _textAreaLog.setText("");
+    }
 
-	if (e.getSource().equals(_sendButton)) {
-	    Stanza stanza = new Stanza() {
+    /**
+     * An ad-hoc stanza is like any regular stanza but with the exception that it's intention is
+     * to be used only <b>to send packets</b>.<p>
+     * <p/>
+     * The whole text to send must be passed to the constructor. This implies that the client of
+     * this class is responsible for sending a valid text to the constructor.
+     */
+    private static final class AdHocPacket extends Stanza {
 
-		@Override
-		public String toXML(XmlEnvironment xmlEnvironment) {
-		    return _inputarea.getText();
-		}
+        private final String text;
+
+        /**
+         * Create a new AdHocPacket with the text to send. The passed text must be a valid text to
+         * send to the server, no validation will be done on the passed text.
+         *
+         * @param text the whole text of the stanza to send
+         */
+        private AdHocPacket(String text) {
+            this.text = text;
+        }
+
+        @Override
+        public String toXML(XmlEnvironment enclosingNamespace) {
+            return text;
+        }
 
         @Override
         public String toString() {
+            return toXML((XmlEnvironment) null);
+        }
+
+        @Override
+        public String getElementName() {
             return null;
         }
-
-		@Override
-		public String getElementName() {
-			return null;
-		}
-	    };
-
-        try {
-            SparkManager.getConnection().sendStanza(stanza);
-            _textarea.append("\n" + _inputarea.getText());
-        } catch (Exception exc) {
-            Log.error(exc);
-        }
-	}
-	else if (e.getSource().equals(_clear)) {
-	    _textarea.setText("");
-	}
-
     }
-    
-//    <message to="manfred.mustermann@test">
-//    <body>BUUUUUZ and Attention</body>
-//    <buzz xmlns="http://www.jivesoftware.com/spark"/>
-//    <attention xmlns='urn:xmpp:attention:0'/>
-//    </message>
 
 }
