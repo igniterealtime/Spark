@@ -339,7 +339,7 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener
         final ZonedDateTime sentDate = date.toInstant().atZone( ZoneOffset.UTC );
         final Color historyColor = (Color) UIManager.get( "History.foreground" );
 
-        add( new MessageEntry( sentDate, true, userid, historyColor, message, historyColor ) );
+        add(new MessageEntry(sentDate, true, userid, historyColor, message, historyColor, null));
     }
 
     public void insertHorizontalLine()
