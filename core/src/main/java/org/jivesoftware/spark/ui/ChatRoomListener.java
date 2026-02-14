@@ -19,9 +19,21 @@ package org.jivesoftware.spark.ui;
  * The <code>ChatRoomListener</code> interface is one of the interfaces extension
  * writers use to add functionality to Spark.
  * <p/>
+ * Chat Room events let you track when a room is opened, closed, joined, left and activated.
+ * <p/>
+ * The methods in this class are empty. This class exists as
+ * a convenience for creating listener objects.
  * In general, you implement this interface in order to listen
  * for ChatRoom activity, such as a ChatRoom opening, closing, or being
  * activated.
+ * <p/>
+ * This abstract class defines null methods for them
+ * all, so you can only have to define methods for events you care about.)
+ * <p/>
+ * Create a listener object using the interface and then register it with
+ * the <code>ChatManager</code>'s <code>addChatRoomListener</code> method.
+ *
+ * @author Derek DeMoro
  */
 public interface ChatRoomListener {
 
@@ -31,7 +43,8 @@ public interface ChatRoomListener {
      * @param room - the <code>ChatRoom</code> that has been opened.
      * @see ChatContainer
      */
-    void chatRoomOpened(ChatRoom room);
+    default void chatRoomOpened(ChatRoom room) {
+    }
 
     /**
      * Invoked by <code>ChatRooms</code> when a ChatRoom has been left, but not
@@ -40,14 +53,16 @@ public interface ChatRoomListener {
      * @param room - the <code>ChatRoom</code> that has been left.
      * @see ChatContainer
      */
-    void chatRoomLeft(ChatRoom room);
+    default void chatRoomLeft(ChatRoom room) {
+    }
 
     /**
      * Invoke by <code>ChatRooms</code> when a ChatRoom has been closed.
      *
      * @param room - the <code>ChatRoom</code> that has been closed.
      */
-    void chatRoomClosed(ChatRoom room);
+    default void chatRoomClosed(ChatRoom room) {
+    }
 
     /**
      * Invoked by <code>ChatRooms</code> when a ChatRoom has been activated.
@@ -56,7 +71,8 @@ public interface ChatRoomListener {
      *
      * @param room - the <code>ChatRoom</code> that has been selected.
      */
-    void chatRoomActivated(ChatRoom room);
+    default void chatRoomActivated(ChatRoom room) {
+    }
 
     /**
      * Invoked by <code>ChatRooms</code> when a person has joined a chat room.
@@ -64,7 +80,8 @@ public interface ChatRoomListener {
      * @param room   - the chat room the person has joined
      * @param userid - the userid of the person who has joined
      */
-    void userHasJoined(ChatRoom room, String userid);
+    default void userHasJoined(ChatRoom room, String userid) {
+    }
 
     /**
      * Invoked by <code>ChatRooms</code> when a person has left a chat room.
@@ -72,7 +89,7 @@ public interface ChatRoomListener {
      * @param room   - the chat room the person has left
      * @param userid - the userid of the person who has left
      */
-    void userHasLeft(ChatRoom room, String userid);
-
+    default void userHasLeft(ChatRoom room, String userid) {
+    }
 
 }

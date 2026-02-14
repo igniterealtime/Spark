@@ -27,10 +27,7 @@ import org.jivesoftware.smack.packet.MessageBuilder;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.Plugin;
-import org.jivesoftware.spark.ui.ChatRoom;
-import org.jivesoftware.spark.ui.ChatRoomListenerAdapter;
-import org.jivesoftware.spark.ui.MessageFilter;
-import org.jivesoftware.spark.ui.TranscriptWindow;
+import org.jivesoftware.spark.ui.*;
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 
 /**
@@ -51,7 +48,7 @@ public class TranslatorPlugin implements Plugin {
         // Retrieve ChatManager from the SparkManager
         final ChatManager chatManager = SparkManager.getChatManager();
         // Add to a new ChatRoom when the ChatRoom opens.
-        chatManager.addChatRoomListener(new ChatRoomListenerAdapter() {
+        chatManager.addChatRoomListener(new ChatRoomListener() {
             public void chatRoomOpened(ChatRoom room) {
                 // only do the translation for single chat
                 if (room instanceof ChatRoomImpl && TranslatorProperties.getInstance().getEnabledTranslator()) {

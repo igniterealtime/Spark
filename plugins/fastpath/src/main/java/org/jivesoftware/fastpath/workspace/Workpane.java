@@ -229,7 +229,7 @@ public class Workpane {
     }
 
     private void handleRoomOpenings() {
-        SparkManager.getChatManager().addChatRoomListener(new ChatRoomListenerAdapter() {
+        SparkManager.getChatManager().addChatRoomListener(new ChatRoomListener() {
             public void chatRoomOpened(ChatRoom room) {
                 if (!(room instanceof GroupChatRoom)) {
                     return;

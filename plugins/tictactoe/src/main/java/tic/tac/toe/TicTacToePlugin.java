@@ -39,7 +39,6 @@ import org.jivesoftware.spark.plugin.Plugin;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ChatRoomButton;
 import org.jivesoftware.spark.ui.ChatRoomListener;
-import org.jivesoftware.spark.ui.ChatRoomListenerAdapter;
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 import org.jivesoftware.spark.util.log.Log;
 import org.jxmpp.jid.EntityBareJid;
@@ -101,9 +100,9 @@ public class TicTacToePlugin implements Plugin {
      * and create Listeners for it
      */
     private void addButtonToToolBar() {
-	
 
-	_chatRoomListener = new ChatRoomListenerAdapter() {
+
+        _chatRoomListener = new ChatRoomListener() {
 	    @Override
 	    public void chatRoomOpened(final ChatRoom room) {
 		
