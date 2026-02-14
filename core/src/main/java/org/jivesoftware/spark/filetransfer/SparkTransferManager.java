@@ -76,14 +76,7 @@ import org.jivesoftware.spark.PresenceManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.filetransfer.preferences.FileTransferPreference;
 import org.jivesoftware.spark.preference.PreferenceManager;
-import org.jivesoftware.spark.ui.ChatFrame;
-import org.jivesoftware.spark.ui.ChatRoom;
-import org.jivesoftware.spark.ui.ChatRoomButton;
-import org.jivesoftware.spark.ui.ChatRoomListenerAdapter;
-import org.jivesoftware.spark.ui.ContactItem;
-import org.jivesoftware.spark.ui.ContactList;
-import org.jivesoftware.spark.ui.ImageSelectionPanel;
-import org.jivesoftware.spark.ui.TranscriptWindow;
+import org.jivesoftware.spark.ui.*;
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.SwingWorker;
@@ -326,7 +319,7 @@ public class SparkTransferManager {
 
     private void addSendFileButton() {
         final ChatManager chatManager = SparkManager.getChatManager();
-        chatManager.addChatRoomListener(new ChatRoomListenerAdapter() {
+        chatManager.addChatRoomListener(new ChatRoomListener() {
             @Override
 			public void chatRoomOpened(final ChatRoom room) {
                 if (!(room instanceof ChatRoomImpl)) {

@@ -39,7 +39,6 @@ import org.jivesoftware.spark.plugin.Plugin;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ChatRoomButton;
 import org.jivesoftware.spark.ui.ChatRoomListener;
-import org.jivesoftware.spark.ui.ChatRoomListenerAdapter;
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 import org.jivesoftware.spark.util.log.Log;
 import org.jxmpp.jid.EntityFullJid;
@@ -236,7 +235,7 @@ public class ReversiPlugin implements Plugin {
      */
     private void addToolbarButton() {
         ChatManager manager = SparkManager.getChatManager();
-        chatRoomListener = new ChatRoomListenerAdapter() {
+        chatRoomListener = new ChatRoomListener() {
             final ImageIcon icon = ReversiRes.getImageIcon(ReversiRes.REVERSI_ICON);
 
             @Override
@@ -339,7 +338,6 @@ public class ReversiPlugin implements Plugin {
 
             @Override
             public void chatRoomClosed(ChatRoom room) {
-                super.chatRoomClosed(room);
                 // TODO: if game is in progress, close it down. What we need is
                 // an API that lets us see
                 // TODO: if there's a transcript alert currently there.

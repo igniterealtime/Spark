@@ -34,7 +34,7 @@ import org.jivesoftware.spark.Workspace;
 import org.jivesoftware.spark.plugin.Plugin;
 import org.jivesoftware.spark.ui.ChatFrame;
 import org.jivesoftware.spark.ui.ChatRoom;
-import org.jivesoftware.spark.ui.ChatRoomListenerAdapter;
+import org.jivesoftware.spark.ui.ChatRoomListener;
 import org.jivesoftware.spark.ui.status.StatusItem;
 import org.jivesoftware.spark.util.BrowserLauncher;
 import org.jivesoftware.spark.util.log.Log;
@@ -167,7 +167,7 @@ public class ApplePlugin implements Plugin, NativeHandler {
 	    }
 	});
 
-	SparkManager.getChatManager().addChatRoomListener(new ChatRoomListenerAdapter() {
+	SparkManager.getChatManager().addChatRoomListener(new ChatRoomListener() {
 	    public void chatRoomOpened(ChatRoom room) {
 		if (!addedFrameListener) {
 		    chatFrame = SparkManager.getChatManager().getChatContainer().getChatFrame();
