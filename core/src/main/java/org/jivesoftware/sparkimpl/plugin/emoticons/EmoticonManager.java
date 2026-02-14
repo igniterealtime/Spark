@@ -274,7 +274,7 @@ public class EmoticonManager {
 
         // Create SaxReader and set to non-validating parser.
         // This will allow for non-http problems to not break spark :)
-        final SAXReader saxParser = new SAXReader();
+        final SAXReader saxParser = SAXReader.createDefault();
         saxParser.setValidation(false);
         try {
             saxParser.setFeature("http://xml.org/sax/features/validation", false);
@@ -285,11 +285,6 @@ public class EmoticonManager {
             saxParser.setFeature("http://apache.org/xml/features/allow-java-encodings", true);
             saxParser.setFeature("http://apache.org/xml/features/continue-after-fatal-error", true);
             saxParser.setFeature("http://apache.org/xml/features/nonvalidating/load-dtd-grammar", false);
-
-            // SPARK-2147: Disable certain features for security purposes (CVE-2020-10683)
-            saxParser.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
-            saxParser.setFeature("http://xml.org/sax/features/external-general-entities", false);
-            saxParser.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
         } catch (SAXException e) {
             Log.error(e);
             return;

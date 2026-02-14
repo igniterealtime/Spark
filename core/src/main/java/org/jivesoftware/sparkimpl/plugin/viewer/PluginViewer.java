@@ -455,19 +455,14 @@ public class PluginViewer extends JPanel implements Plugin
     public Collection<PublicPlugin> getPluginList( InputStream response )
     {
         final List<PublicPlugin> pluginList = new ArrayList<>();
-        SAXReader saxReader = new SAXReader();
-        Document pluginXML = null;
+        SAXReader saxReader = SAXReader.createDefault();
+        Document pluginXML;
 
         try
         {
-            // SPARK-2147: Disable certain features for security purposes (CVE-2020-10683)
-            saxReader.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
-            saxReader.setFeature("http://xml.org/sax/features/external-general-entities", false);
-            saxReader.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
-
             pluginXML = saxReader.read( response );
         }
-        catch ( DocumentException | SAXException e )
+        catch ( DocumentException e )
         {
             Log.error( e );
             return Collections.emptyList();
