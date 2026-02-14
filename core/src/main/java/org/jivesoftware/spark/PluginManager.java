@@ -33,7 +33,6 @@ import org.jivesoftware.spark.util.URLFileSystem;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.JiveInfo;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
-import org.xml.sax.SAXException;
 
 import java.awt.*;
 import java.io.*;
@@ -44,8 +43,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.time.Duration;
-import java.time.Instant;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -53,6 +50,8 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+
+import static org.jivesoftware.sparkimpl.plugin.InternalPlugins.getInternalPlugins;
 
 /**
  * This manager is responsible for the loading of all Plugins and Workspaces within the Spark environment.
@@ -488,51 +487,17 @@ public class PluginManager implements MainWindowListener
      * Loads an internal plugin.
      */
     private void loadInternalPlugins() {
-        // At the moment, the plug list is hardcode internally until I begin using external property files. All depends on deployment.
-        final URL url = getClass().getClassLoader().getResource( "META-INF/plugins.xml" );
-        try ( final InputStreamReader reader = new InputStreamReader( url.openStream() ) )
-        {
-            loadInternalPlugins( reader );
-        }
-        catch ( IOException e )
-        {
-            Log.error( "Could not load plugins.xml file." );
-        }
-    }
-
-    private void loadInternalPlugins( InputStreamReader reader )
-    {
-        SAXReader saxReader = SAXReader.createDefault();
-        Document pluginXML;
-        try
-        {
-            pluginXML = saxReader.read( reader );
-        }
-        catch ( DocumentException e )
-        {
-            Log.error( e );
-            return;
-        }
-        List<Node> plugins = pluginXML.selectNodes( "/plugins/plugin" );
-        for ( final Node plugin : plugins )
-        {
-            EventQueue.invokeLater( () -> {
-                String clazz = null;
-                String name;
-                try
-                {
-                    name = plugin.selectSingleNode( "name" ).getText();
-                    clazz = plugin.selectSingleNode( "class" ).getText();
-                    Class<? extends Plugin> pluginType = Class.forName(clazz).asSubclass(Plugin.class);
+        for (PublicPlugin plugin : getInternalPlugins()) {
+            EventQueue.invokeLater(() -> {
+                try {
+                    Class<? extends Plugin> pluginType = Class.forName(plugin.getPluginClass()).asSubclass(Plugin.class);
                     Plugin pluginInstance = pluginType.getDeclaredConstructor().newInstance();
-                    Log.debug( name + " has been loaded. Internal plugin." );
-                    registerPlugin( pluginInstance );
+                    Log.debug(plugin.getName() + " has been loaded. Internal plugin.");
+                    registerPlugin(pluginInstance);
+                } catch (Throwable ex) {
+                    Log.error("Unable to load plugin " + plugin.getPluginClass(), ex);
                 }
-                catch ( Throwable ex )
-                {
-                    Log.error( "Unable to load plugin " + clazz + ".", ex );
-                }
-            } );
+            });
         }
     }
 

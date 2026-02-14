@@ -35,7 +35,16 @@ public class PublicPlugin {
     private String minVersion;
     private File pluginDir;
     private final List<PluginDependency> dependencies = new ArrayList<>();
-    
+
+    public PublicPlugin() {
+    }
+
+    public PublicPlugin(String name, String pluginClass, String version) {
+        this.name = name;
+        this.pluginClass = pluginClass;
+        this.version = version;
+    }
+
     public String getName() {
         return name;
     }
