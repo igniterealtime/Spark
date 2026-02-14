@@ -55,16 +55,15 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 /**
- * This manager is responsible for the loading of all Plugins and Workspaces within Spark environment.
+ * This manager is responsible for the loading of all Plugins and Workspaces within the Spark environment.
  *
  * @author Derek DeMoro
  */
 public class PluginManager implements MainWindowListener
 {
-    public static final Map<String, String> INCOMPATIBLE_PLUGINS = new HashMap<>();
-    static {
-        INCOMPATIBLE_PLUGINS.put( normalizePluginName( "OTR Plugin" ), "0.4 Beta" );
-    }
+    public static final Map<String, String> INCOMPATIBLE_PLUGINS = Map.of(
+        normalizePluginName("OTR Plugin"), "0.4 Beta"
+    );
 
     private final List<Plugin> plugins = new ArrayList<>();
 
@@ -77,7 +76,6 @@ public class PluginManager implements MainWindowListener
     public static File PLUGINS_DIRECTORY = new File( Spark.getBinDirectory().getParent(), "plugins" ).getAbsoluteFile();
     public static File PROFILE_PLUGINS_DIRECTORY = new File( Spark.getLogDirectory().getParentFile(), "plugins" ).getAbsoluteFile();
 
-    private Plugin pluginClass;
     private PluginClassLoader classLoader;
 
     private final Collection<String> _blacklistPlugins;
@@ -193,9 +191,9 @@ public class PluginManager implements MainWindowListener
                     // Compare old and new files by checksums
                     if ( installerFiles.contains( f ) )
                     {
-                        final String oldfile = StringUtils.getMD5Checksum( jarFile.getAbsolutePath() );
-                        final String newfile = StringUtils.getMD5Checksum( f.getAbsolutePath() );
-                        if ( !oldfile.equals( newfile ) )
+                        final String oldFile = StringUtils.getMD5Checksum( jarFile.getAbsolutePath() );
+                        final String newFile = StringUtils.getMD5Checksum( f.getAbsolutePath() );
+                        if ( !oldFile.equals( newFile ) )
                         {
                             Log.debug( "deleting: " + file.getAbsolutePath() + "," + jarFile.getAbsolutePath() );
                             uninstall( file );
@@ -225,10 +223,9 @@ public class PluginManager implements MainWindowListener
         else
         {
             installerFiles = new TreeSet<>();
-            for (int i = 0; i < files.length; i++) {
-                installerFiles.add(files[i].getName());
-                installerFiles.add(files[i].getName().split("\\.")[0]);
-
+            for (File file : files) {
+                installerFiles.add(file.getName());
+                installerFiles.add(file.getName().split("\\.")[0]);
             }
         }
 
@@ -269,16 +266,7 @@ public class PluginManager implements MainWindowListener
 
         updateClasspath();
 
-        // At the moment, the plug list is hardcode internally until I begin using external property files. All depends on deployment.
-        final URL url = getClass().getClassLoader().getResource( "META-INF/plugins.xml" );
-        try ( final InputStreamReader reader = new InputStreamReader( url.openStream() ) )
-        {
-            loadInternalPlugins( reader );
-        }
-        catch ( IOException e )
-        {
-            Log.error( "Could not load plugins.xml file." );
-        }
+        loadInternalPlugins();
 
         // Load extension plugins
         loadPublicPlugins();
@@ -306,7 +294,7 @@ public class PluginManager implements MainWindowListener
         {
             final Document pluginXML = saxReader.read( pluginFile );
             final List<?> dependencies = pluginXML.selectNodes( "plugin/depends/plugin" );
-            return dependencies != null && dependencies.size() > 0;
+            return dependencies != null && !dependencies.isEmpty();
         }
         catch ( DocumentException e )
         {
@@ -341,8 +329,6 @@ public class PluginManager implements MainWindowListener
             return null;
         }
 
-        Plugin pluginClass = null;
-
         List<? extends Node> plugins = pluginXML.selectNodes( "/plugin" );
         for ( Node plugin : plugins )
         {
@@ -367,7 +353,7 @@ public class PluginManager implements MainWindowListener
                         Log.warning( "Not loading plugin " + name + " (version " + version + ") as it is incompatible with this version of Spark." );
                         return null;
                     }
-                    // Don't load the plugin if its on the Blacklist
+                    // Don't load the plugin if it's on the Blacklist
                     if ( _blacklistPlugins.contains( lower ) || _blacklistPlugins.contains( clazz )
                         || SettingsManager.getLocalPreferences().getDeactivatedPlugins().contains( name ) )
                     {
@@ -381,7 +367,7 @@ public class PluginManager implements MainWindowListener
                     return null;
                 }
 
-                // Check for minimum Spark version
+                // Check for a minimum version of Spark
                 try
                 {
                     minVersion = plugin.selectSingleNode( "minSparkVersion" ) != null ? plugin.selectSingleNode( "minSparkVersion" ).getText().trim() : "";
@@ -476,12 +462,14 @@ public class PluginManager implements MainWindowListener
 
                 try
                 {
-                    pluginClass = (Plugin) getParentClassLoader().loadClass( clazz ).newInstance();
+                    Class<? extends Plugin> pluginType = getParentClassLoader().loadClass( clazz ).asSubclass(Plugin.class);
+                    Plugin pluginInstance = pluginType.getDeclaredConstructor().newInstance();
                     Log.debug( name + " has been loaded." );
                     publicPlugin.setPluginDir( pluginDir );
                     publicPlugins.add( publicPlugin );
 
-                    registerPlugin( pluginClass );
+                    registerPlugin(pluginInstance);
+                    return pluginInstance;
                 }
                 catch ( Throwable e )
                 {
@@ -493,15 +481,25 @@ public class PluginManager implements MainWindowListener
                 Log.error( "Unable to load plugin " + clazz + ".", ex );
             }
         }
-
-        return pluginClass;
+        return null;
     }
 
     /**
      * Loads an internal plugin.
-     *
-     * @param reader the inputstreamreader for an internal plugin.
      */
+    private void loadInternalPlugins() {
+        // At the moment, the plug list is hardcode internally until I begin using external property files. All depends on deployment.
+        final URL url = getClass().getClassLoader().getResource( "META-INF/plugins.xml" );
+        try ( final InputStreamReader reader = new InputStreamReader( url.openStream() ) )
+        {
+            loadInternalPlugins( reader );
+        }
+        catch ( IOException e )
+        {
+            Log.error( "Could not load plugins.xml file." );
+        }
+    }
+
     private void loadInternalPlugins( InputStreamReader reader )
     {
         SAXReader saxReader = SAXReader.createDefault();
@@ -525,10 +523,10 @@ public class PluginManager implements MainWindowListener
                 {
                     name = plugin.selectSingleNode( "name" ).getText();
                     clazz = plugin.selectSingleNode( "class" ).getText();
-                    Plugin pluginClass1 = (Plugin) Class.forName( clazz ).newInstance();
+                    Class<? extends Plugin> pluginType = Class.forName(clazz).asSubclass(Plugin.class);
+                    Plugin pluginInstance = pluginType.getDeclaredConstructor().newInstance();
                     Log.debug( name + " has been loaded. Internal plugin." );
-
-                    registerPlugin( pluginClass1 );
+                    registerPlugin( pluginInstance );
                 }
                 catch ( Throwable ex )
                 {
@@ -570,7 +568,7 @@ public class PluginManager implements MainWindowListener
 
     /**
      * Loads property resources from spark.properties, default.properties, spark_i18n.properties (properly localized)
-     * located in plugin jar, if any In case the plugin contains preferences.properties, plugin specific defaults will
+     * located in a plugin's jar, if any In case the plugin contains preferences.properties, plugin specific defaults will
      * be loaded instead of spark defaults for preferences This method is called right after all plugins are loaded,
      * specifically after plugins class loader is initialized and plugins jars are loaded in classpath
      */
@@ -614,8 +612,6 @@ public class PluginManager implements MainWindowListener
 
     /**
      * Returns a Collection of Plugins.
-     *
-     * @return a Collection of Plugins.
      */
     public Collection<Plugin> getPlugins()
     {
@@ -626,7 +622,6 @@ public class PluginManager implements MainWindowListener
      * Returns the instance of the plugin class initialized during startup.
      *
      * @param communicatorPlugin the plugin to find.
-     * @return the instance of the plugin.
      */
     public Plugin getPlugin( Class<? extends Plugin> communicatorPlugin )
     {
@@ -641,7 +636,7 @@ public class PluginManager implements MainWindowListener
     }
 
     /**
-     * Loads and initalizes all Plugins.
+     * Loads and initializes all Plugins.
      *
      * @see Plugin
      */
@@ -657,11 +652,12 @@ public class PluginManager implements MainWindowListener
             for ( int i = 0; i < publicPlugins.size(); i++ )
             {
                 // if dependencies are available, check these
-                if ( ( publicPlugins.get( i ) ).getDependency().size() > 0 )
+                PublicPlugin publicPlugin = publicPlugins.get(i);
+                if (!publicPlugin.getDependency().isEmpty())
                 {
-                    List<PluginDependency> dependencies = ( publicPlugins.get( i ) ).getDependency();
+                    List<PluginDependency> dependencies = publicPlugin.getDependency();
 
-                    // go trough all dependencies
+                    // go through all dependencies
                     for ( PluginDependency dependency : dependencies )
                     {
                         j = 0;
@@ -677,7 +673,7 @@ public class PluginManager implements MainWindowListener
                                 {
                                     dependencyFound = true;
 
-                                    // when depended Plugin hadn't been installed yet
+                                    // when the depended Plugin hadn't been installed yet
                                     if ( j > i )
                                     {
                                         // find the position of plugins-List because it has more entries
@@ -690,7 +686,7 @@ public class PluginManager implements MainWindowListener
                                                 x = counter;
                                             }
                                             // find the change-position
-                                            else if ( plug.getClass().toString().substring( 6 ).equals( publicPlugins.get( i ).getPluginClass() ) )
+                                            else if ( plug.getClass().toString().substring( 6 ).equals( publicPlugin.getPluginClass() ) )
                                             {
                                                 z = counter;
                                             }
@@ -721,14 +717,14 @@ public class PluginManager implements MainWindowListener
                         // If the depended Plugin wasn't found, then show error.
                         if ( !dependencyFound )
                         {
-                            Log.error( "Depended Plugin " + dependency.getName() + " is missing for the Plugin " + ( publicPlugins.get( i ) ).getName() );
+                            Log.error( "Depended Plugin " + dependency.getName() + " is missing for the Plugin " + publicPlugin.getName() );
 
-                            // find the posiion of plugins-List because it has more entries
+                            // find the position of plugins-List because it has more entries
                             int counter = 0;
                             for ( Plugin plug : plugins )
                             {
                                 // find the delete-position
-                                if ( plug.getClass().toString().substring( 6 ).equals( publicPlugins.get( i ).getPluginClass() ) )
+                                if ( plug.getClass().toString().substring( 6 ).equals( publicPlugin.getPluginClass() ) )
                                 {
                                     break;
                                 }
@@ -751,11 +747,11 @@ public class PluginManager implements MainWindowListener
                     try
                     {
                         plugin.initialize();
-                        Log.debug( "Initialized " + plugin );
+                        Log.debug("Initialized " + plugin.getClass().getSimpleName());
                     }
                     catch ( Throwable e )
                     {
-                        Log.error( "An exception occurred while initializing plugin " + plugin, e );
+                        Log.error( "An exception occurred while initializing plugin " + plugin.getClass().getSimpleName(), e );
                     }
                 }
             } );
@@ -866,7 +862,6 @@ public class PluginManager implements MainWindowListener
                         }
                         continue;
                     }
-
                     uninstall( directory );
                 }
                 else
@@ -882,16 +877,14 @@ public class PluginManager implements MainWindowListener
     {
         // First, expand all plugins that have yet to be expanded.
         expandNewPlugins();
-
         File[] files = PLUGINS_DIRECTORY.listFiles( ( dir, name ) -> dir.isDirectory() );
-
         // Do nothing if no jar or zip files were found
         if ( files == null )
         {
             return;
         }
         //Make sure to load first the plugins with no dependencies
-        //If a plugin with dependencies gets loaded before one of dependencies,
+        // If a plugin with dependencies gets loaded before one of the dependencies,
         //class not found exception may be thrown if a dependency class is used during plugin creation
         List<File> dependencies = new ArrayList<>();
         List<File> nodependencies = new ArrayList<>();
@@ -951,14 +944,17 @@ public class PluginManager implements MainWindowListener
 
         ( (PluginClassLoader) getParentClassLoader() ).addPlugin( pluginDownload );
 
-        pluginClass = loadPublicPlugin( pluginDownload );
+        Plugin pluginInstance = loadPublicPlugin(pluginDownload);
+        if (pluginInstance == null) {
+            return;
+        }
 
         try
         {
             EventQueue.invokeAndWait( () -> {
-                Log.debug( "Trying to initialize " + pluginClass );
-                pluginClass.initialize();
-                Log.debug( "Done initializing " + pluginClass );
+                Log.debug( "Trying to initialize " + pluginInstance );
+                pluginInstance.initialize();
+                Log.debug( "Done initializing " + pluginInstance );
 
             } );
         }
@@ -997,8 +993,8 @@ public class PluginManager implements MainWindowListener
                     throw new RuntimeException("Bad zip entry");
                 }
                 
-                // Ignore any manifest.mf entries.
-                if ( entry.getName().toLowerCase().endsWith( "manifest.mf" ) )
+                // Ignore any MANIFEST.MF entries.
+                if (entry.getName().toUpperCase().endsWith("MANIFEST.MF"))
                 {
                     continue;
                 }
@@ -1100,7 +1096,7 @@ public class PluginManager implements MainWindowListener
     }
 
     /**
-     * Checks the plugin for required operating system.
+     * Checks the plugin for the required operating system.
      *
      * @param plugin the Plugin element to check.
      * @return true if the operating system is ok for the plugin to run on.
@@ -1113,12 +1109,9 @@ public class PluginManager implements MainWindowListener
             if ( osElement != null )
             {
                 String operatingSystem = osElement.getText();
-
                 boolean ok = false;
-
                 final String currentOS = JiveInfo.getOS().toLowerCase();
-
-                // Iterate through comma delimited string
+                // Iterate through comma-delimited string
                 StringTokenizer tkn = new StringTokenizer( operatingSystem, "," );
                 while ( tkn.hasMoreTokens() )
                 {
@@ -1138,7 +1131,7 @@ public class PluginManager implements MainWindowListener
         }
         catch ( Exception e )
         {
-            Log.error( "An exception occured while trying to determine operating system compatibility of plugin '"+plugin+"'", e );
+            Log.error("An exception occurred while trying to determine operating system compatibility of plugin '" + plugin + "'", e);
         }
 
         return true;
