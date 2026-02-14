@@ -301,19 +301,14 @@ public class PluginManager implements MainWindowListener
 
     private boolean hasDependencies( File pluginFile )
     {
-        SAXReader saxReader = new SAXReader();
+        SAXReader saxReader = SAXReader.createDefault();
         try
         {
-            // SPARK-2147: Disable certain features for security purposes (CVE-2020-10683)
-            saxReader.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
-            saxReader.setFeature("http://xml.org/sax/features/external-general-entities", false);
-            saxReader.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
-
             final Document pluginXML = saxReader.read( pluginFile );
             final List<?> dependencies = pluginXML.selectNodes( "plugin/depends/plugin" );
             return dependencies != null && dependencies.size() > 0;
         }
-        catch ( DocumentException | SAXException e )
+        catch ( DocumentException e )
         {
             Log.error( "Unable to read plugin dependencies from " + pluginFile, e );
             return false;
@@ -334,20 +329,16 @@ public class PluginManager implements MainWindowListener
     private Plugin loadPublicPlugin( File pluginDir )
     {
         File pluginFile = new File( pluginDir, "plugin.xml" );
-        SAXReader saxReader = new SAXReader();
+        SAXReader saxReader = SAXReader.createDefault();
         Document pluginXML = null;
         try
         {
-            // SPARK-2147: Disable certain features for security purposes (CVE-2020-10683)
-            saxReader.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
-            saxReader.setFeature("http://xml.org/sax/features/external-general-entities", false);
-            saxReader.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
-
             pluginXML = saxReader.read( pluginFile );
         }
-        catch ( DocumentException | SAXException e )
+        catch ( DocumentException e )
         {
             Log.error( "Unable to read plugin XML file from " + pluginDir, e );
+            return null;
         }
 
         Plugin pluginClass = null;
@@ -513,20 +504,16 @@ public class PluginManager implements MainWindowListener
      */
     private void loadInternalPlugins( InputStreamReader reader )
     {
-        SAXReader saxReader = new SAXReader();
-        Document pluginXML = null;
+        SAXReader saxReader = SAXReader.createDefault();
+        Document pluginXML;
         try
         {
-            // SPARK-2147: Disable certain features for security purposes (CVE-2020-10683)
-            saxReader.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
-            saxReader.setFeature("http://xml.org/sax/features/external-general-entities", false);
-            saxReader.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
-
             pluginXML = saxReader.read( reader );
         }
-        catch ( DocumentException | SAXException e )
+        catch ( DocumentException e )
         {
             Log.error( e );
+            return;
         }
         List<Node> plugins = pluginXML.selectNodes( "/plugins/plugin" );
         for ( final Node plugin : plugins )
