@@ -22,13 +22,13 @@ import org.jivesoftware.spark.util.log.Log;
 import javax.swing.SwingUtilities;
 
 /**
- * Improvement version of the javax SwingWorker class to avoid deadlocks. This gives user
- * multi-threaded abilities within their swing apps.
+ * Improvement version of the {@link javax.swing.SwingWorker} class to avoid deadlocks.
+ * This gives the user multithreaded abilities within their swing apps.
  *
  * @author Derek DeMoro
  */
 public abstract class SwingWorker {
-    private Object value;  // see getValue(), setValue()
+    private volatile Object value;  // see getValue(), setValue()
 
     /**
      * Class to maintain reference to current worker thread
@@ -58,7 +58,7 @@ public abstract class SwingWorker {
      *
      * @return Object produced by worker thread.
      */
-    protected synchronized Object getValue() {
+    protected Object getValue() {
         return value;
     }
 
@@ -67,7 +67,7 @@ public abstract class SwingWorker {
      *
      * @param x Sets value for worker thread.
      */
-    private synchronized void setValue(Object x) {
+    private void setValue(Object x) {
         value = x;
     }
 
@@ -127,13 +127,6 @@ public abstract class SwingWorker {
      * and then exit.
      */
     public SwingWorker() {
-        new Runnable() {
-            @Override
-			public void run() {
-                finished();
-            }
-        };
-
         Runnable doConstruct = () -> {
             try {
                 setValue(construct());
