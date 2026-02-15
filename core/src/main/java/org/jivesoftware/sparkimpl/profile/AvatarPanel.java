@@ -22,6 +22,7 @@ import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 
 import net.coobird.thumbnailator.Thumbnails;
+
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
@@ -48,29 +49,23 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 
+import static net.coobird.thumbnailator.geometry.Positions.CENTER;
 import static org.apache.commons.lang3.StringUtils.endsWithAny;
 
 /**
  * UI to view/edit avatar.
  */
 public class AvatarPanel extends JPanel implements ActionListener {
-    private static final long serialVersionUID = -5526978906063691519L;
     private final JLabel avatar;
     private byte[] bytes;
-    private File avatarFile;
     final JButton browseButton = new JButton();
     final JButton clearButton = new JButton();
     private FileDialog fileChooser;
 
     private Dialog dlg;
 
-    /**
-     * Default Constructor
-     */
     public AvatarPanel() {
         setLayout(new GridBagLayout());
-
-
         final JLabel photo = new JLabel(Res.getString("label.avatar"));
 
         avatar = new JLabel();
@@ -86,12 +81,11 @@ public class AvatarPanel extends JPanel implements ActionListener {
         ResourceUtils.resButton(browseButton, Res.getString("button.browse"));
         ResourceUtils.resButton(clearButton, Res.getString("button.clear"));
 
-        clearButton.addActionListener( actionEvent -> {
+        clearButton.addActionListener(actionEvent -> {
             avatar.setIcon(null);
             bytes = null;
-            avatarFile = null;
             avatar.setBorder(null);
-        } );
+        });
 
         avatar.setText(Res.getString("message.no.avatar.found"));
 
@@ -100,8 +94,6 @@ public class AvatarPanel extends JPanel implements ActionListener {
 
     /**
      * Sets if the Avatar can be edited.
-     *
-     * @param editable true if editable.
      */
     public void setEditable(boolean editable) {
         browseButton.setVisible(editable);
@@ -110,15 +102,12 @@ public class AvatarPanel extends JPanel implements ActionListener {
 
     /**
      * Sets the displayable icon with the user's avatar.
-     *
-     * @param icon the icon.
      */
     public void setAvatar(ImageIcon icon) {
         avatar.setBorder(BorderFactory.createLineBorder(Color.lightGray, 1, true));
         if (icon.getIconHeight() > 128 || icon.getIconWidth() > 128) {
             avatar.setIcon(new ImageIcon(icon.getImage().getScaledInstance(-1, 128, Image.SCALE_SMOOTH)));
-        }
-        else {
+        } else {
             avatar.setIcon(icon);
         }
         avatar.setText("");
@@ -126,8 +115,6 @@ public class AvatarPanel extends JPanel implements ActionListener {
 
     /**
      * Sets the avatar bytes.
-     *
-     * @param bytes the bytes.
      */
     public void setAvatarBytes(byte[] bytes) {
         this.bytes = bytes;
@@ -135,8 +122,6 @@ public class AvatarPanel extends JPanel implements ActionListener {
 
     /**
      * Returns the avatars bytes.
-     *
-     * @return the bytes.
      */
     public byte[] getAvatarBytes() {
         return bytes;
@@ -144,27 +129,15 @@ public class AvatarPanel extends JPanel implements ActionListener {
 
     /**
      * Returns the Icon representation of the Avatar.
-     *
-     * @return Icon of avatar.
      */
     public Icon getAvatar() {
         return avatar.getIcon();
     }
 
-    /**
-     * Returns the image file to use as the avatar.
-     *
-     * @return File of avatar.
-     */
-    public File getAvatarFile() {
-        return avatarFile;
-    }
-
     @Override
-	public void actionPerformed(ActionEvent e) {
+    public void actionPerformed(ActionEvent e) {
         // init file chooser (if not already done)
         initFileChooser();
-
         fileChooser.setVisible(true);
 
         final File[] files = fileChooser.getFiles();
@@ -179,16 +152,17 @@ public class AvatarPanel extends JPanel implements ActionListener {
     private void changeAvatar(final File selectedFile, final Component parent) {
         SwingWorker worker = new SwingWorker() {
             @Override
-			public Object construct() {
+            public Object construct() {
                 return resizeImage(selectedFile);
             }
 
             @Override
-			public void finished() {
-                BufferedImage avatarImage = (BufferedImage)get();
+            public void finished() {
+                BufferedImage avatarImage = (BufferedImage) get();
                 if (avatarImage == null) {
                     UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
                     JOptionPane.showMessageDialog(parent, "Please choose a valid image file.", Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
+                    return;
                 }
                 String message = "";
                 int finalImageWidth = avatarImage.getWidth();
@@ -221,17 +195,20 @@ public class AvatarPanel extends JPanel implements ActionListener {
                 }
                 */
                 //convert BufferedImage to bytes
-                try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-                    ImageIO.write(avatarImage, "png", baos);
-                    setAvatar(new ImageIcon(avatarImage));
-                    setAvatarBytes(baos.toByteArray());
-                } catch (IOException ex) {
-                    Log.error(ex);
-                }
+                setAvatarBytes(imageToPng(avatarImage));
+                setAvatar(new ImageIcon(avatarImage));
             }
         };
-
         worker.start();
+    }
+
+    private byte[] imageToPng(BufferedImage avatarImage) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try {
+            ImageIO.write(avatarImage, "png", baos);
+        } catch (IOException ignored) {
+        }
+        return baos.toByteArray();
     }
 
     public void allowEditing(boolean allowEditing) {
@@ -255,9 +232,10 @@ public class AvatarPanel extends JPanel implements ActionListener {
     public void setParentDialog(Dialog dialog) {
         this.dlg = dialog;
     }
-    /*
-     * Resize images larger than 96 pixels without changing aspect ratio.
-     * Returns modified image as BufferedImage.
+
+    /**
+     * Resize images larger than 96 pixels (see XEP‑0153).
+     * Returns a modified image as BufferedImage.
      */
     private BufferedImage resizeImage(File selectedFile) {
         BufferedImage resizedImage = null;

@@ -72,341 +72,317 @@ public class VCardEditor {
 
     /**
      * Displays the VCard for an individual.
-     * 
-     * @param vCard
-     *            the users vcard.
-     * @param parent
-     *            the parent component, used for location.
+     *
+     * @param vCard  the users vcard.
+     * @param parent the parent component, used for location.
      */
     public void editProfile(final VCard vCard, JComponent parent) {
-	final JTabbedPane tabbedPane = new JTabbedPane();
+        JTabbedPane tabbedPane = new JTabbedPane();
+        // Initialize Panels
+        personalPanel = new PersonalPanel();
+        personalPanel.showJID(false);
 
-	// Initialize Panels
-	personalPanel = new PersonalPanel();
-	personalPanel.showJID(false);
+        tabbedPane.addTab(Res.getString("tab.personal"), personalPanel);
 
-	tabbedPane.addTab(Res.getString("tab.personal"), personalPanel);
+        businessPanel = new BusinessPanel();
+        tabbedPane.addTab(Res.getString("tab.business"), businessPanel);
 
-	businessPanel = new BusinessPanel();
-	tabbedPane.addTab(Res.getString("tab.business"), businessPanel);
+        homePanel = new HomePanel();
+        tabbedPane.addTab(Res.getString("tab.home"), homePanel);
 
-	homePanel = new HomePanel();
-	tabbedPane.addTab(Res.getString("tab.home"), homePanel);
+        // See if we should remove the Avatar tab in profile dialog
+        if (!Default.getBoolean(Default.DISABLE_AVATAR_TAB) && Enterprise.containsFeature(Enterprise.AVATAR_TAB_FEATURE)) {
+            avatarPanel = new AvatarPanel();
+            tabbedPane.addTab(Res.getString("tab.avatar"), avatarPanel);
+        }
 
-	// See if we should remove the Avatar tab in profile dialog
-	if (!Default.getBoolean(Default.DISABLE_AVATAR_TAB) && Enterprise.containsFeature(Enterprise.AVATAR_TAB_FEATURE)) {
-		avatarPanel = new AvatarPanel();
-		tabbedPane.addTab(Res.getString("tab.avatar"), avatarPanel);
-	}
+        // Build the UI
+        buildUI(vCard);
 
-	// Build the UI
-	buildUI(vCard);
+        ImageIcon icon = VCardManager.getAvatarIcon(vCard);
+        if (icon == null) {
+            icon = SparkRes.getImageIcon(SparkRes.BLANK_24x24);
+        }
 
-	final JOptionPane pane;
-	final JDialog dlg;
+        // Create the title panel for this dialog
+        TitlePanel titlePanel = new TitlePanel(Res.getString("title.edit.profile"),
+            Res.getString("message.save.profile"), icon, true);
 
-	TitlePanel titlePanel;
+        // Construct main panel w/ layout.
+        JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new BorderLayout());
+        mainPanel.add(titlePanel, BorderLayout.NORTH);
 
-	ImageIcon icon = VCardManager.getAvatarIcon(vCard);
-	if (icon == null) {
-	    icon = SparkRes.getImageIcon(SparkRes.BLANK_24x24);
-	}
+        // The user should only be able to close this dialog.
+        Object[] options = {
+            Res.getString("save"),
+            Res.getString("cancel")
+        };
+        JOptionPane pane = new JOptionPane(tabbedPane, JOptionPane.PLAIN_MESSAGE,
+            JOptionPane.OK_CANCEL_OPTION, null, options, options[0]);
 
-	// Create the title panel for this dialog
-	titlePanel = new TitlePanel(Res.getString("title.edit.profile"),
-		Res.getString("message.save.profile"), icon, true);
+        mainPanel.add(pane, BorderLayout.CENTER);
 
-	// Construct main panel w/ layout.
-	final JPanel mainPanel = new JPanel();
-	mainPanel.setLayout(new BorderLayout());
-	mainPanel.add(titlePanel, BorderLayout.NORTH);
+        JOptionPane p = new JOptionPane();
+        JDialog dlg = p.createDialog(parent, Res.getString("title.profile.information"));
+        dlg.setModal(false);
 
-	// The user should only be able to close this dialog.
-	Object[] options = { Res.getString("save"), Res.getString("cancel") };
-	pane = new JOptionPane(tabbedPane, JOptionPane.PLAIN_MESSAGE,
-		JOptionPane.OK_CANCEL_OPTION, null, options, options[0]);
+        dlg.pack();
+        dlg.setResizable(true);
+        dlg.setContentPane(mainPanel);
 
-	mainPanel.add(pane, BorderLayout.CENTER);
+        Rectangle bounds = LayoutSettingsManager.getLayoutSettings().getVCardEditorBounds();
+        if (bounds == null || bounds.width <= 0 || bounds.height <= 0) {
+            // Use default settings.
+            dlg.setLocationRelativeTo(parent);
+            dlg.setSize(600, 400);
+        } else {
+            dlg.setBounds(bounds);
+        }
 
-	JOptionPane p = new JOptionPane();
-	dlg = p.createDialog(parent, Res.getString("title.profile.information"));
-	dlg.setModal(false);
+        dlg.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                LayoutSettingsManager.getLayoutSettings().setVCardEditorBounds(dlg.getBounds());
+            }
 
-	dlg.pack();
-	dlg.setResizable(true);
-	dlg.setContentPane(mainPanel);
+            @Override
+            public void componentMoved(ComponentEvent e) {
+                LayoutSettingsManager.getLayoutSettings().setVCardEditorBounds(dlg.getBounds());
+            }
+        });
 
-	final Rectangle bounds = LayoutSettingsManager.getLayoutSettings().getVCardEditorBounds();
-	if ( bounds == null || bounds.width <= 0 || bounds.height <= 0 )
-	{
-		// Use default settings.
-		dlg.setLocationRelativeTo( parent );
-		dlg.setSize( 600, 400 );
-	}
-	else
-	{
-		dlg.setBounds( bounds );
-	}
+        PropertyChangeListener changeListener = new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent e) {
+                String value = (String) pane.getValue();
+                if (Res.getString("cancel").equals(value)) {
+                    pane.removePropertyChangeListener(this);
+                    dlg.dispose();
+                } else if (Res.getString("save").equals(value)) {
+                    pane.removePropertyChangeListener(this);
+                    dlg.dispose();
+                    saveVCard();
+                }
+            }
+        };
 
-	dlg.addComponentListener( new ComponentAdapter()
-	{
-		@Override
-		public void componentResized( ComponentEvent e )
-		{
-			LayoutSettingsManager.getLayoutSettings().setVCardEditorBounds( dlg.getBounds() );
-		}
+        pane.addPropertyChangeListener(changeListener);
 
-		@Override
-		public void componentMoved( ComponentEvent e )
-		{
-			LayoutSettingsManager.getLayoutSettings().setVCardEditorBounds( dlg.getBounds() );
-		}
-	} );
+        // See if we should remove the Avatar tab in the profile dialog
+        if (!Default.getBoolean(Default.DISABLE_AVATAR_TAB) && Enterprise.containsFeature(Enterprise.AVATAR_TAB_FEATURE)) {
+            avatarPanel.setParentDialog(dlg);
+        }
 
-	PropertyChangeListener changeListener = new PropertyChangeListener() {
-	    @Override
-		public void propertyChange(PropertyChangeEvent e) {
-		String value = (String) pane.getValue();
-		if (Res.getString("cancel").equals(value)) {
-		    pane.removePropertyChangeListener(this);
-		    dlg.dispose();
-		} else if (Res.getString("save").equals(value)) {
-		    pane.removePropertyChangeListener(this);
-		    dlg.dispose();
-		    saveVCard();
-		}
-	    }
-	};
+        dlg.setVisible(true);
+        dlg.toFront();
+        dlg.requestFocus();
 
-	pane.addPropertyChangeListener(changeListener);
-	
-	// See if we should remove the Avatar tab in profile dialog	
-	if (!Default.getBoolean(Default.DISABLE_AVATAR_TAB) && Enterprise.containsFeature(Enterprise.AVATAR_TAB_FEATURE)) avatarPanel.setParentDialog(dlg);
-	
-	dlg.setVisible(true);
-	dlg.toFront();
-	dlg.requestFocus();
-
-	personalPanel.focus();
+        personalPanel.focus();
     }
 
     /**
      * Displays the VCard for an individual.
-     * 
-     * @param vCard
-     *            the users vcard.
-     * @param parent
-     *            the parent component, used for location.
+     *
+     * @param vCard  the users vcard.
+     * @param parent the parent component, used for location.
      */
     public void viewFullProfile(final VCard vCard, JComponent parent) {
-	final JTabbedPane tabbedPane = new JTabbedPane();
+        JTabbedPane tabbedPane = new JTabbedPane();
 
-	// Initialize Panels
-	personalPanel = new PersonalPanel();
-	personalPanel.allowEditing(false);
-	personalPanel.showJID(false);
+        // Initialize Panels
+        personalPanel = new PersonalPanel();
+        personalPanel.allowEditing(false);
+        personalPanel.showJID(false);
 
-	tabbedPane.addTab(Res.getString("tab.personal"), personalPanel);
+        tabbedPane.addTab(Res.getString("tab.personal"), personalPanel);
 
-	businessPanel = new BusinessPanel();
-	businessPanel.allowEditing(false);
-	tabbedPane.addTab(Res.getString("tab.business"), businessPanel);
+        businessPanel = new BusinessPanel();
+        businessPanel.allowEditing(false);
+        tabbedPane.addTab(Res.getString("tab.business"), businessPanel);
 
-	homePanel = new HomePanel();
-	homePanel.allowEditing(false);
-	tabbedPane.addTab(Res.getString("tab.home"), homePanel);
+        homePanel = new HomePanel();
+        homePanel.allowEditing(false);
+        tabbedPane.addTab(Res.getString("tab.home"), homePanel);
 
-	// See if we should remove the Avatar tab in profile dialog
-	if (!Default.getBoolean(Default.DISABLE_AVATAR_TAB) && Enterprise.containsFeature(Enterprise.AVATAR_TAB_FEATURE)) {
-		avatarPanel = new AvatarPanel();
-		avatarPanel.allowEditing(false);
-		tabbedPane.addTab(Res.getString("tab.avatar"), avatarPanel);
-	}
-	
-	// Build the UI
-	buildUI(vCard);
-	
-	final JOptionPane pane;
-	final JDialog dlg;
+        // See if we should remove the Avatar tab in profile dialog
+        if (!Default.getBoolean(Default.DISABLE_AVATAR_TAB) && Enterprise.containsFeature(Enterprise.AVATAR_TAB_FEATURE)) {
+            avatarPanel = new AvatarPanel();
+            avatarPanel.allowEditing(false);
+            tabbedPane.addTab(Res.getString("tab.avatar"), avatarPanel);
+        }
 
-	TitlePanel titlePanel;
+        // Build the UI
+        buildUI(vCard);
 
-	ImageIcon icon = VCardManager.getAvatarIcon(vCard);
-	if (icon == null) {
-	    icon = SparkRes.getImageIcon(SparkRes.BLANK_24x24);
-	}
+        ImageIcon icon = VCardManager.getAvatarIcon(vCard);
+        if (icon == null) {
+            icon = SparkRes.getImageIcon(SparkRes.BLANK_24x24);
+        }
 
-	// Create the title panel for this dialog
-	titlePanel = new TitlePanel(Res.getString("title.profile.information"),
-		"", icon, true);
+        // Create the title panel for this dialog
+        TitlePanel titlePanel = new TitlePanel(Res.getString("title.profile.information"),
+            "", icon, true);
 
-	// Construct main panel w/ layout.
-	final JPanel mainPanel = new JPanel();
-	mainPanel.setLayout(new BorderLayout());
-	mainPanel.add(titlePanel, BorderLayout.NORTH);
+        // Construct main panel w/ layout.
+        JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new BorderLayout());
+        mainPanel.add(titlePanel, BorderLayout.NORTH);
 
-	// The user should only be able to close this dialog.
-	Object[] options = { Res.getString("close"), Res.getString("refresh") };
-	pane = new JOptionPane(tabbedPane, JOptionPane.PLAIN_MESSAGE,
-		JOptionPane.OK_CANCEL_OPTION, null, options, options[0]);
+        // The user should only be able to close this dialog.
+        Object[] options = {
+            Res.getString("close"),
+            Res.getString("refresh")
+        };
+        JOptionPane pane = new JOptionPane(tabbedPane, JOptionPane.PLAIN_MESSAGE,
+            JOptionPane.OK_CANCEL_OPTION, null, options, options[0]);
 
-	mainPanel.add(pane, BorderLayout.CENTER);
+        mainPanel.add(pane, BorderLayout.CENTER);
 
-	JOptionPane p = new JOptionPane();
-	dlg = p.createDialog(parent, Res.getString("title.profile.information"));
-	dlg.setModal(false);
+        JOptionPane p = new JOptionPane();
+        JDialog dlg = p.createDialog(parent, Res.getString("title.profile.information"));
+        dlg.setModal(false);
 
-	dlg.pack();
-	dlg.setSize(600, 400);
-	dlg.setResizable(true);
-	dlg.setContentPane(mainPanel);
-	dlg.setLocationRelativeTo(parent);
-	PropertyChangeListener changeListener = new PropertyChangeListener() {
-	    @Override
-		public void propertyChange(PropertyChangeEvent e) {
-		Object o = pane.getValue();
-		if (o instanceof Integer) {
-		    pane.removePropertyChangeListener(this);
-		    dlg.dispose();
-		    return;
-		}
+        dlg.pack();
+        dlg.setSize(600, 400);
+        dlg.setResizable(true);
+        dlg.setContentPane(mainPanel);
+        dlg.setLocationRelativeTo(parent);
+        PropertyChangeListener changeListener = new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent e) {
+                Object o = pane.getValue();
+                if (o instanceof Integer) {
+                    pane.removePropertyChangeListener(this);
+                    dlg.dispose();
+                    return;
+                }
 
-		String value = (String) pane.getValue();
-		if (Res.getString("close").equals(value)) {
-		    pane.removePropertyChangeListener(this);
-		    dlg.dispose();
-		}
-		
-		if (Res.getString("refresh").equals(value)) {
+                String value = (String) pane.getValue();
+                if (Res.getString("close").equals(value)) {
+                    pane.removePropertyChangeListener(this);
+                    dlg.dispose();
+                }
+
+                if (Res.getString("refresh").equals(value)) {
                     VCardManager manager = SparkManager.getVCardManager();
                     BareJid bareJid = JidCreate.bareFromOrThrowUnchecked(vCard.getJabberId());
                     VCard card = manager.reloadVCard(bareJid);
                     fillUI(card);
                 }
-		
-	    }
-	};
 
-	pane.addPropertyChangeListener(changeListener);
+            }
+        };
 
-	dlg.setVisible(true);
-	dlg.toFront();
-	dlg.requestFocus();
+        pane.addPropertyChangeListener(changeListener);
 
-	personalPanel.focus();
+        dlg.setVisible(true);
+        dlg.toFront();
+        dlg.requestFocus();
+
+        personalPanel.focus();
     }
 
     /**
      * Displays a users profile.
-     * 
-     * @param jid
-     *            the jid of the user.
-     * @param vcard
-     *            the users vcard.
-     * @param parent
-     *            the parent component, used for location handling.
+     *
+     * @param jid    the jid of the user.
+     * @param vcard  the users vcard.
+     * @param parent the parent component, used for location handling.
      */
     public void displayProfile(final BareJid jid, VCard vcard, JComponent parent) {
-	VCardViewer viewer = new VCardViewer(jid);
+        VCardViewer viewer = new VCardViewer(jid);
+        JFrame dlg = new JFrame(Res.getString("title.view.profile.for", jid));
 
-	final JFrame dlg = new JFrame(Res.getString("title.view.profile.for",
-		jid));
+        avatarLabel = new JLabel();
+        avatarLabel.setHorizontalAlignment(JButton.RIGHT);
+        avatarLabel.setBorder(BorderFactory.createLineBorder(Color.lightGray, 1, true));
 
-	avatarLabel = new JLabel();
-	avatarLabel.setHorizontalAlignment(JButton.RIGHT);
-	avatarLabel.setBorder(BorderFactory.createLineBorder(Color.lightGray, 1, true));
+        // The user should only be able to close this dialog.
+        Object[] options = {
+            Res.getString("button.view.profile"),
+            Res.getString("close")
+        };
+        JOptionPane pane = new JOptionPane(viewer,
+            JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION, null,
+            options, options[0]);
 
-	// The user should only be able to close this dialog.
-	Object[] options = { Res.getString("button.view.profile"),
-		Res.getString("close") };
-	final JOptionPane pane = new JOptionPane(viewer,
-		JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION, null,
-		options, options[0]);
+        // mainPanel.add(pane, new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0,
+        // GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 5, 5, 5), 0, 0));
 
-	// mainPanel.add(pane, new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0,
-	// GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 5,
-	// 5, 5), 0, 0));
+        dlg.setIconImage(SparkRes.getImageIcon(SparkRes.PROFILE_IMAGE_16x16).getImage());
 
-	dlg.setIconImage(SparkRes.getImageIcon(SparkRes.PROFILE_IMAGE_16x16)
-		.getImage());
+        dlg.pack();
+        dlg.setSize(350, 250);
+        dlg.setResizable(true);
+        dlg.setContentPane(pane);
+        dlg.setLocationRelativeTo(parent);
 
-	dlg.pack();
-	dlg.setSize(350, 250);
-	dlg.setResizable(true);
-	dlg.setContentPane(pane);
-	dlg.setLocationRelativeTo(parent);
+        PropertyChangeListener changeListener = new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent e) {
+                if (pane.getValue() instanceof Integer) {
+                    pane.removePropertyChangeListener(this);
+                    dlg.dispose();
+                    return;
+                }
+                String value = (String) pane.getValue();
+                if (Res.getString("close").equals(value)) {
+                    pane.removePropertyChangeListener(this);
+                    dlg.dispose();
+                } else if (Res.getString("button.view.profile").equals(value)) {
+                    pane.setValue(JOptionPane.UNINITIALIZED_VALUE);
+                    SparkManager.getVCardManager().viewFullProfile(jid, pane);
+                }
+            }
+        };
 
-	PropertyChangeListener changeListener = new PropertyChangeListener() {
-	    @Override
-		public void propertyChange(PropertyChangeEvent e) {
-		if (pane.getValue() instanceof Integer) {
-		    pane.removePropertyChangeListener(this);
-		    dlg.dispose();
-		    return;
-		}
-		String value = (String) pane.getValue();
-		if (Res.getString("close").equals(value)) {
-		    pane.removePropertyChangeListener(this);
-		    dlg.dispose();
-		} else if (Res.getString("button.view.profile").equals(value)) {
-		    pane.setValue(JOptionPane.UNINITIALIZED_VALUE);
-		    SparkManager.getVCardManager().viewFullProfile(jid, pane);
-		}
-	    }
-	};
+        pane.addPropertyChangeListener(changeListener);
 
-	pane.addPropertyChangeListener(changeListener);
+        dlg.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent keyEvent) {
+                if (keyEvent.getKeyChar() == KeyEvent.VK_ESCAPE) {
+                    dlg.dispose();
+                }
+            }
+        });
 
-	dlg.addKeyListener(new KeyAdapter() {
-	    @Override
-		public void keyPressed(KeyEvent keyEvent) {
-		if (keyEvent.getKeyChar() == KeyEvent.VK_ESCAPE) {
-		    dlg.dispose();
-		}
-	    }
-	});
-
-	dlg.setVisible(true);
-	dlg.toFront();
-	dlg.requestFocus();
+        dlg.setVisible(true);
+        dlg.toFront();
+        dlg.requestFocus();
     }
 
     /**
      * Builds the UI based on a VCard.
-     * 
-     * @param vcard
-     *            the vcard used to build the UI.
      */
     private void buildUI(VCard vcard) {
-
         fillUI(vcard);
-        
         // Set Avatar
         byte[] bytes = vcard.getAvatar();
         if (bytes != null && bytes.length > 0) {
-        	ImageIcon icon = new ImageIcon(bytes);
-	    
-        	// See if we should remove the Avatar tab in profile dialog	    
-        	if (!Default.getBoolean(Default.DISABLE_AVATAR_TAB) && Enterprise.containsFeature(Enterprise.AVATAR_TAB_FEATURE)) {
-        		avatarPanel.setAvatar(icon);
-        		avatarPanel.setAvatarBytes(bytes);
-        	}	    
-	    
-        	if (avatarLabel != null) {
-        		icon = GraphicUtils.scaleImageIcon(icon, 48, 48);
-        		avatarLabel.setIcon(icon);
-        	}
+            ImageIcon icon = new ImageIcon(bytes);
+            // See if we should remove the Avatar tab in the profile dialog
+            if (!Default.getBoolean(Default.DISABLE_AVATAR_TAB) && Enterprise.containsFeature(Enterprise.AVATAR_TAB_FEATURE)) {
+                avatarPanel.setAvatar(icon);
+                avatarPanel.setAvatarBytes(bytes);
+            }
+
+            if (avatarLabel != null) {
+                icon = GraphicUtils.scaleImageIcon(icon, 48, 48);
+                avatarLabel.setIcon(icon);
+            }
         }
     }
 
-    private void fillUI(VCard vcard){
+    private void fillUI(VCard vcard) {
         personalPanel.setFirstName(vcard.getFirstName());
         personalPanel.setMiddleName(vcard.getMiddleName());
         personalPanel.setLastName(vcard.getLastName());
         personalPanel.setEmailAddress(vcard.getEmailHome());
         personalPanel.setNickname(vcard.getNickName());
         personalPanel.setJID(vcard.getJabberId());
-
+        // Load business info
         businessPanel.setCompany(vcard.getOrganization());
         businessPanel.setDepartment(vcard.getOrganizationUnit());
         businessPanel.setStreetAddress(vcard.getAddressFieldWork("STREET"));
@@ -420,7 +396,6 @@ public class VCardEditor {
         businessPanel.setPager(vcard.getPhoneWork("PAGER"));
         businessPanel.setMobile(vcard.getPhoneWork("CELL"));
         businessPanel.setWebPage(vcard.getField("URL"));
-
         // Load Home Info
         homePanel.setStreetAddress(vcard.getAddressFieldHome("STREET"));
         homePanel.setCity(vcard.getAddressFieldHome("LOCALITY"));
@@ -432,107 +407,97 @@ public class VCardEditor {
         homePanel.setPager(vcard.getPhoneHome("PAGER"));
         homePanel.setMobile(vcard.getPhoneHome("CELL"));
     }
+
     /**
      * Saves the VCard.
      */
     private void saveVCard() {
-	final VCard vcard = new VCard();
+        VCard vcard = new VCard();
+        // Save personal info
+        vcard.setFirstName(personalPanel.getFirstName());
+        vcard.setLastName(personalPanel.getLastName());
+        vcard.setMiddleName(personalPanel.getMiddleName());
+        vcard.setEmailHome(personalPanel.getEmailAddress());
+        vcard.setNickName(personalPanel.getNickname());
+        // Save business info
+        vcard.setOrganization(businessPanel.getCompany());
+        vcard.setAddressFieldWork("STREET", businessPanel.getStreetAddress());
+        vcard.setAddressFieldWork("LOCALITY", businessPanel.getCity());
+        vcard.setAddressFieldWork("REGION", businessPanel.getState());
+        vcard.setAddressFieldWork("PCODE", businessPanel.getZipCode());
+        vcard.setAddressFieldWork("CTRY", businessPanel.getCountry());
+        vcard.setField("TITLE", businessPanel.getJobTitle());
+        vcard.setOrganizationUnit(businessPanel.getDepartment());
+        vcard.setPhoneWork("VOICE", businessPanel.getPhone());
+        vcard.setPhoneWork("FAX", businessPanel.getFax());
+        vcard.setPhoneWork("PAGER", businessPanel.getPager());
+        vcard.setPhoneWork("CELL", businessPanel.getMobile());
+        vcard.setField("URL", businessPanel.getWebPage());
+        // Save Home Info
+        vcard.setAddressFieldHome("STREET", homePanel.getStreetAddress());
+        vcard.setAddressFieldHome("LOCALITY", homePanel.getCity());
+        vcard.setAddressFieldHome("REGION", homePanel.getState());
+        vcard.setAddressFieldHome("PCODE", homePanel.getZipCode());
+        vcard.setAddressFieldHome("CTRY", homePanel.getCountry());
+        vcard.setPhoneHome("VOICE", homePanel.getPhone());
+        vcard.setPhoneHome("FAX", homePanel.getFax());
+        vcard.setPhoneHome("PAGER", homePanel.getPager());
+        vcard.setPhoneHome("CELL", homePanel.getMobile());
 
-	// Save personal info
-	vcard.setFirstName(personalPanel.getFirstName());
-	vcard.setLastName(personalPanel.getLastName());
-	vcard.setMiddleName(personalPanel.getMiddleName());
-	vcard.setEmailHome(personalPanel.getEmailAddress());
-	vcard.setNickName(personalPanel.getNickname());
-
-	// Save business info
-	vcard.setOrganization(businessPanel.getCompany());
-	vcard.setAddressFieldWork("STREET", businessPanel.getStreetAddress());
-	vcard.setAddressFieldWork("LOCALITY", businessPanel.getCity());
-	vcard.setAddressFieldWork("REGION", businessPanel.getState());
-	vcard.setAddressFieldWork("PCODE", businessPanel.getZipCode());
-	vcard.setAddressFieldWork("CTRY", businessPanel.getCountry());
-	vcard.setField("TITLE", businessPanel.getJobTitle());
-	vcard.setOrganizationUnit(businessPanel.getDepartment());
-	vcard.setPhoneWork("VOICE", businessPanel.getPhone());
-	vcard.setPhoneWork("FAX", businessPanel.getFax());
-	vcard.setPhoneWork("PAGER", businessPanel.getPager());
-	vcard.setPhoneWork("CELL", businessPanel.getMobile());
-	vcard.setField("URL", businessPanel.getWebPage());
-
-	// Save Home Info
-	vcard.setAddressFieldHome("STREET", homePanel.getStreetAddress());
-	vcard.setAddressFieldHome("LOCALITY", homePanel.getCity());
-	vcard.setAddressFieldHome("REGION", homePanel.getState());
-	vcard.setAddressFieldHome("PCODE", homePanel.getZipCode());
-	vcard.setAddressFieldHome("CTRY", homePanel.getCountry());
-	vcard.setPhoneHome("VOICE", homePanel.getPhone());
-	vcard.setPhoneHome("FAX", homePanel.getFax());
-	vcard.setPhoneHome("PAGER", homePanel.getPager());
-	vcard.setPhoneHome("CELL", homePanel.getMobile());
-
-	// Save Avatar
+        // Save Avatar
         byte[] avatarBytes = null;
-        if(avatarPanel!=null)
-        {
-	    avatarBytes = avatarPanel.getAvatarBytes();
-            // If avatar bytes, persist as vcard.
+        if (avatarPanel != null) {
+            avatarBytes = avatarPanel.getAvatarBytes();
+            // If avatar was set, persist it in the vcard.
             if (avatarBytes != null) {
                 vcard.setAvatar(avatarBytes);
             }
         }
-        
-	try {
-        // Save vcard on server
-        org.jivesoftware.smackx.vcardtemp.VCardManager smackVCardManager = org.jivesoftware.smackx.vcardtemp.VCardManager.getInstanceFor( SparkManager.getConnection() );
-        smackVCardManager.saveVCard( vcard );
 
-        // Save vcard on client
-        final VCardManager vcardManager = SparkManager.getVCardManager();
-        vcardManager.setPersonalVCard(vcard);
+        try {
+            // Save vcard on server
+            org.jivesoftware.smackx.vcardtemp.VCardManager smackVCardManager = org.jivesoftware.smackx.vcardtemp.VCardManager.getInstanceFor(SparkManager.getConnection());
+            smackVCardManager.saveVCard(vcard);
+            // Save vcard on a client
+            VCardManager vcardManager = SparkManager.getVCardManager();
+            vcardManager.setPersonalVCard(vcard);
+            // Notify users on avatar change
+            if (avatarBytes != null) {
+                Presence presence = SparkManager.getWorkspace().getStatusBar().getPresence();
+                Presence newPresence = StanzaBuilder.buildPresence()
+                    .ofType(presence.getType())
+                    .setStatus(presence.getStatus())
+                    .setPriority(presence.getPriority())
+                    .setMode(presence.getMode())
+                    .build();
 
-	    // Notify users.
-	    if (avatarBytes != null) {
-		Presence presence = SparkManager.getWorkspace().getStatusBar()
-			.getPresence();
-            Presence newPresence = StanzaBuilder.buildPresence()
-                .ofType(presence.getType())
-                .setStatus(presence.getStatus())
-                .setPriority(presence.getPriority())
-                .setMode(presence.getMode())
-                .build();
+                // Change my own presence
+                SparkManager.getSessionManager().changePresence(newPresence);
+                // Change avatar in the status bar.
+                StatusBar statusBar = SparkManager.getWorkspace().getStatusBar();
+                statusBar.setAvatar(new ImageIcon(vcard.getAvatar()));
+            } else {
+                String firstName = vcard.getFirstName();
+                String lastName = vcard.getLastName();
+                StatusBar statusBar = SparkManager.getWorkspace().getStatusBar();
+                if (ModelUtil.hasLength(firstName) && ModelUtil.hasLength(lastName)) {
+                    statusBar.setNickname(firstName + " " + lastName);
+                } else if (ModelUtil.hasLength(firstName)) {
+                    statusBar.setNickname(firstName);
+                }
 
-		// Change my own presence
-		SparkManager.getSessionManager().changePresence(newPresence);
+                statusBar.setAvatar(null);
+            }
 
-		// Change avatar in status bar.
-		StatusBar statusBar = SparkManager.getWorkspace()
-			.getStatusBar();
-		statusBar.setAvatar(new ImageIcon(vcard.getAvatar()));
-	    } else {
-		String firstName = vcard.getFirstName();
-		String lastName = vcard.getLastName();
-		StatusBar statusBar = SparkManager.getWorkspace()
-			.getStatusBar();
-		if (ModelUtil.hasLength(firstName)
-			&& ModelUtil.hasLength(lastName)) {
-		    statusBar.setNickname(firstName + " " + lastName);
-		} else if (ModelUtil.hasLength(firstName)) {
-		    statusBar.setNickname(firstName);
-		}
-
-		statusBar.setAvatar(null);
-	    }
-
-	    // Notify listenres
-	    SparkManager.getVCardManager().notifyVCardListeners();
-	} catch (XMPPException | SmackException | InterruptedException e) {
-	    Log.error(e);
-	    UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
-	    JOptionPane.showMessageDialog(SparkManager.getMainWindow(),
-		    Res.getString("message.vcard.not.supported"),
-		    Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
-	}
+            // Notify listeners
+            SparkManager.getVCardManager().notifyVCardListeners();
+        } catch (XMPPException | SmackException | InterruptedException e) {
+            Log.error(e);
+            UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
+            JOptionPane.showMessageDialog(SparkManager.getMainWindow(),
+                Res.getString("message.vcard.not.supported"),
+                Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
+        }
     }
 
 }
