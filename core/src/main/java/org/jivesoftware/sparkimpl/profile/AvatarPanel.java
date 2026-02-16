@@ -177,23 +177,8 @@ public class AvatarPanel extends JPanel implements ActionListener {
                     showWarning = true;
                 }
                 if (showWarning) {
-                    message += Res.getString("message.image.suggestion");
                     JOptionPane.showMessageDialog(parent, message, Res.getString("title.warning"), JOptionPane.WARNING_MESSAGE);
                 }
-                /*
-                // Check size.
-                long length = GraphicUtils.getBytesFromImage(avatarImage).length * 8;
-
-                long k = 8192;
-
-                long actualSize = (length / k) + 1;
-
-                if (actualSize > 16) {
-                    // Do not allow
-                    JOptionPane.showMessageDialog(parent, Res.getString("message.image.too.large"));
-                    return;
-                }
-                */
                 //convert BufferedImage to bytes
                 setAvatarBytes(imageToPng(avatarImage));
                 setAvatar(new ImageIcon(avatarImage));
