@@ -24,15 +24,7 @@ import org.jivesoftware.spark.util.log.Log;
 import net.coobird.thumbnailator.Thumbnails;
 
 import javax.imageio.ImageIO;
-import javax.swing.BorderFactory;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.UIManager;
+import javax.swing.*;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -49,7 +41,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 
-import static net.coobird.thumbnailator.geometry.Positions.CENTER;
 import static org.apache.commons.lang3.StringUtils.endsWithAny;
 
 /**
@@ -153,15 +144,17 @@ public class AvatarPanel extends JPanel implements ActionListener {
         SwingWorker worker = new SwingWorker() {
             @Override
             public Object construct() {
-                return resizeImage(selectedFile);
+                BufferedImage avatarSquare = ImageCropDialog.selectSquareFromPhoto(selectedFile, dlg);
+                if (avatarSquare == null) {
+                    return null;
+                }
+                return resizeImage(avatarSquare);
             }
 
             @Override
             public void finished() {
                 BufferedImage avatarImage = (BufferedImage) get();
                 if (avatarImage == null) {
-                    UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
-                    JOptionPane.showMessageDialog(parent, "Please choose a valid image file.", Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
                     return;
                 }
                 String message = "";
@@ -222,7 +215,7 @@ public class AvatarPanel extends JPanel implements ActionListener {
      * Resize images larger than 96 pixels (see XEP‑0153).
      * Returns a modified image as BufferedImage.
      */
-    private BufferedImage resizeImage(File selectedFile) {
+    private BufferedImage resizeImage(BufferedImage selectedFile) {
         BufferedImage resizedImage = null;
         try {
             resizedImage = Thumbnails.of(selectedFile)
