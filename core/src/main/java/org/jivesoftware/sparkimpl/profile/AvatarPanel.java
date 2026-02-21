@@ -161,10 +161,6 @@ public class AvatarPanel extends JPanel implements ActionListener {
                 int finalImageWidth = avatarImage.getWidth();
                 int finalImageHeight = avatarImage.getHeight();
                 boolean showWarning = false;
-                if (finalImageWidth != finalImageHeight) {
-                    message += "\u2022 " + Res.getString("message.image.not.square") + "\n";
-                    showWarning = true;
-                }
                 if (finalImageWidth < 32 && finalImageHeight < 32) {
                     message += "\u2022 " + Res.getString("message.image.small.resolution") + "\n";
                     showWarning = true;
