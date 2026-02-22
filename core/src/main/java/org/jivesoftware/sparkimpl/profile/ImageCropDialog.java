@@ -25,7 +25,7 @@ public class ImageCropDialog {
             return null;
         }
         BufferedImage[] croppedImage = {null};
-        JDialog cropDialog = new JDialog(parent, "Crop Image", true);
+        JDialog cropDialog = new JDialog(parent, Res.getString("title.avatar.crop"), true);
         cropDialog.setLayout(new BorderLayout());
 
         // Calculate a scaling factor to fit the image in the dialog
