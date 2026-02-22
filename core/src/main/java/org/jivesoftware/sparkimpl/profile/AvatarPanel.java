@@ -22,6 +22,7 @@ import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 
 import net.coobird.thumbnailator.Thumbnails;
+import org.jivesoftware.sparkimpl.settings.Sizes;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -96,8 +97,8 @@ public class AvatarPanel extends JPanel implements ActionListener {
      */
     public void setAvatar(ImageIcon icon) {
         avatar.setBorder(BorderFactory.createLineBorder(Color.lightGray, 1, true));
-        if (icon.getIconHeight() > 128 || icon.getIconWidth() > 128) {
-            avatar.setIcon(new ImageIcon(icon.getImage().getScaledInstance(-1, 128, Image.SCALE_SMOOTH)));
+        if (icon.getIconHeight() > Sizes.Avatar.HOVER_BIG || icon.getIconWidth() > Sizes.Avatar.HOVER_BIG) {
+            avatar.setIcon(new ImageIcon(icon.getImage().getScaledInstance(-1, Sizes.Avatar.HOVER_BIG, Image.SCALE_SMOOTH)));
         } else {
             avatar.setIcon(icon);
         }
@@ -161,7 +162,7 @@ public class AvatarPanel extends JPanel implements ActionListener {
                 int finalImageWidth = avatarImage.getWidth();
                 int finalImageHeight = avatarImage.getHeight();
                 boolean showWarning = false;
-                if (finalImageWidth < 32 && finalImageHeight < 32) {
+                if (finalImageWidth < Sizes.Avatar.PROFILE_MIN && finalImageHeight < Sizes.Avatar.PROFILE_MIN) {
                     message += "\u2022 " + Res.getString("message.image.small.resolution") + "\n";
                     showWarning = true;
                 }
@@ -215,7 +216,7 @@ public class AvatarPanel extends JPanel implements ActionListener {
         BufferedImage resizedImage = null;
         try {
             resizedImage = Thumbnails.of(selectedFile)
-                .size(96, 96)
+                .size(Sizes.Avatar.PROFILE, Sizes.Avatar.PROFILE)
                 .asBufferedImage();
         } catch (IOException ex) {
             Log.error(ex);

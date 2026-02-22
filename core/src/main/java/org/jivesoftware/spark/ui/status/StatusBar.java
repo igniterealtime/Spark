@@ -78,6 +78,7 @@ import org.jivesoftware.sparkimpl.profile.VCardEditor;
 import org.jivesoftware.sparkimpl.profile.VCardListener;
 import org.jivesoftware.sparkimpl.profile.VCardManager;
 import org.jivesoftware.sparkimpl.profile.ext.VCardUpdateExtension;
+import org.jivesoftware.sparkimpl.settings.Sizes;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
 //TODO: I need to remove the presence logic from this class.
@@ -177,8 +178,8 @@ public class StatusBar extends JPanel implements VCardListener {
                 imageLabel.setIcon(null);
             } else {
                 Image image = ImageCombiner.iconToImage(icon);
-                if (icon.getIconHeight() > 64 || icon.getIconWidth() > 64) {
-                    imageLabel.setIcon(new ImageIcon(image.getScaledInstance(-1, 64, Image.SCALE_SMOOTH)));
+                if (icon.getIconHeight() > Sizes.Avatar.STATUS || icon.getIconWidth() > Sizes.Avatar.STATUS) {
+                    imageLabel.setIcon(new ImageIcon(image.getScaledInstance(-1, Sizes.Avatar.STATUS, Image.SCALE_SMOOTH)));
                 } else {
                     imageLabel.setIcon(icon);
                 }

@@ -58,6 +58,7 @@ import org.jivesoftware.spark.util.ByteFormat;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkimpl.settings.Sizes;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jxmpp.jid.BareJid;
 import org.jxmpp.jid.EntityFullJid;
@@ -162,7 +163,7 @@ public class SendFileTransfer extends JPanel {
             try {
                 URL imageURL = new File(transfer.getFilePath()).toURI().toURL();
                 ImageIcon image = new ImageIcon(imageURL);
-                image = GraphicUtils.scaleImageIcon(image, 64, 64);
+                image = GraphicUtils.scaleImageIcon(image, Sizes.Transfer.THUMBNAIL, Sizes.Transfer.THUMBNAIL);
                 imageLabel.setIcon(image);
             } catch (MalformedURLException e) {
                 Log.error("Could not locate image.", e);

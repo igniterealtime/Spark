@@ -30,6 +30,7 @@ import javax.swing.UIManager;
 
 import org.jivesoftware.spark.util.Encryptor;
 import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkimpl.settings.Sizes;
 import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.impl.JidCreate;
 import org.jxmpp.jid.parts.Resourcepart;
@@ -1094,7 +1095,7 @@ public class LocalPreferences {
 	}
 
 	public int getContactListIconSize() {
-		return getInt("contactListIconSize", 32);
+		return getInt("contactListIconSize", Sizes.Avatar.CONTACT_LIST);
 	}
 
 	public void setChatRoomFontSize(int fontSize) {

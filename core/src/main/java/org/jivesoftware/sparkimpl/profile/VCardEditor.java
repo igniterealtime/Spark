@@ -52,6 +52,7 @@ import org.jivesoftware.spark.util.StringUtils;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.layout.LayoutSettingsManager;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
+import org.jivesoftware.sparkimpl.settings.Sizes;
 import org.jxmpp.jid.BareJid;
 import org.jxmpp.jid.impl.JidCreate;
 import org.jivesoftware.resource.Default;
@@ -369,7 +370,7 @@ public class VCardEditor {
             }
 
             if (avatarLabel != null) {
-                icon = GraphicUtils.scaleImageIcon(icon, 48, 48);
+                icon = GraphicUtils.scaleImageIcon(icon, Sizes.Avatar.VCARD, Sizes.Avatar.VCARD);
                 avatarLabel.setIcon(icon);
             }
         }

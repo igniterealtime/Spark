@@ -49,6 +49,7 @@ import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.util.ImageCombiner;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkimpl.settings.Sizes;
 
 /**
  * Class to show tosters in multiplatform
@@ -644,10 +645,9 @@ public class SparkToaster {
 
 	public void setIcon(Icon icon) {
         try {
-            if (icon.getIconHeight() > 64 || icon.getIconWidth() > 64) {
+            if (icon.getIconHeight() > Sizes.Toaster.ICON || icon.getIconWidth() > Sizes.Toaster.ICON) {
                 Image image = ImageCombiner.iconToImage(icon);
-                label.setIcon(new ImageIcon(image.getScaledInstance(-1, 64,
-                    Image.SCALE_SMOOTH)));
+                label.setIcon(new ImageIcon(image.getScaledInstance(-1, Sizes.Toaster.ICON, Image.SCALE_SMOOTH)));
             } else{
                 label.setIcon(icon);
             }

@@ -74,6 +74,7 @@ import org.jivesoftware.spark.util.URLFileSystem;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.filetransfer.transfer.Downloads;
 
+import org.jivesoftware.sparkimpl.settings.Sizes;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jxmpp.jid.BareJid;
 import org.jxmpp.jid.Jid;
@@ -612,7 +613,7 @@ public class ReceiveFileTransfer extends JPanel {
             try {
                 URL imageURL = downloadedFile.toURI().toURL();
                 ImageIcon image = new ImageIcon(imageURL);
-                image = GraphicUtils.scaleImageIcon(image, 64, 64);
+                image = GraphicUtils.scaleImageIcon(image, Sizes.Transfer.THUMBNAIL, Sizes.Transfer.THUMBNAIL);
                 imageLabel.setIcon(image);
             } catch (MalformedURLException e) {
                 Log.error("Could not locate image.", e);

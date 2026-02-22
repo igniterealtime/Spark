@@ -43,6 +43,7 @@ import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.Transport;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.TransportUtils;
+import org.jivesoftware.sparkimpl.settings.Sizes;
 import org.jxmpp.jid.Jid;
 
 import java.text.SimpleDateFormat;
@@ -294,7 +295,7 @@ public class ContactInfoWindow extends JPanel {
             }
 
             if (icon != null && icon.getIconHeight() > 1) {
-                icon = GraphicUtils.scaleImageIcon(icon, 96, 96);
+                icon = GraphicUtils.scaleImageIcon(icon, Sizes.Avatar.PROFILE, Sizes.Avatar.PROFILE);
                 avatarLabel.setIcon(icon);
             }
             else {

@@ -43,6 +43,7 @@ import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkimpl.settings.Sizes;
 import org.jxmpp.jid.BareJid;
 import org.jxmpp.jid.impl.JidCreate;
 
@@ -102,8 +103,8 @@ public class VCardPanel extends JPanel {
             try {
                 icon = new ImageIcon(bytes);
                 Image newImage = icon.getImage();
-                if (icon.getIconHeight() > 48 || icon.getIconWidth() > 48) {
-                newImage = newImage.getScaledInstance(-1, 48, Image.SCALE_SMOOTH);
+                if (icon.getIconHeight() > Sizes.Avatar.VCARD || icon.getIconWidth() > Sizes.Avatar.VCARD) {
+                newImage = newImage.getScaledInstance(-1, Sizes.Avatar.VCARD, Image.SCALE_SMOOTH);
                 }
                 icon = new ImageIcon(newImage);
             }
@@ -150,8 +151,8 @@ public class VCardPanel extends JPanel {
                 try {
                     icon = new ImageIcon(bytes);
                     newImage = icon.getImage();
-                    if (icon.getIconHeight() > 128 || icon.getIconWidth() > 128) {
-                    newImage = newImage.getScaledInstance(-1, 128, Image.SCALE_SMOOTH);
+                    if (icon.getIconHeight() > Sizes.Avatar.HOVER_BIG || icon.getIconWidth() > Sizes.Avatar.HOVER_BIG) {
+                        newImage = newImage.getScaledInstance(-1, Sizes.Avatar.HOVER_BIG, Image.SCALE_SMOOTH);
                     }
                     icon = new ImageIcon(newImage);
 

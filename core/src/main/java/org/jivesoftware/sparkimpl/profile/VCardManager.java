@@ -42,6 +42,7 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 import org.jivesoftware.sparkimpl.profile.ext.JabberAvatarExtension;
 import org.jivesoftware.sparkimpl.profile.ext.VCardUpdateExtension;
+import org.jivesoftware.sparkimpl.settings.Sizes;
 import org.jxmpp.jid.BareJid;
 import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.Jid;
@@ -403,7 +404,7 @@ public class VCardManager {
         byte[] bytes = vcard.getAvatar();
         if (bytes != null && bytes.length > 0) {
             ImageIcon icon = new ImageIcon(bytes);
-            return GraphicUtils.scaleImageIcon(icon, 40, 40);
+            return GraphicUtils.scaleImageIcon(icon, Sizes.Avatar.SMALL, Sizes.Avatar.SMALL);
         }
         return null;
     }
@@ -561,8 +562,8 @@ public class VCardManager {
      */
     public static ImageIcon scale(ImageIcon icon) {
         Image avatarImage = icon.getImage();
-        if (icon.getIconHeight() > 64 || icon.getIconWidth() > 64) {
-            avatarImage = avatarImage.getScaledInstance(-1, 64, Image.SCALE_SMOOTH);
+        if (icon.getIconHeight() > Sizes.Avatar.VCARD_VIEW || icon.getIconWidth() > Sizes.Avatar.VCARD_VIEW) {
+            avatarImage = avatarImage.getScaledInstance(-1, Sizes.Avatar.VCARD_VIEW, Image.SCALE_SMOOTH);
         }
 
         return new ImageIcon(avatarImage);

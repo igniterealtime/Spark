@@ -23,6 +23,7 @@ import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkimpl.settings.Sizes;
 import org.jxmpp.jid.BareJid;
 
 import javax.swing.BorderFactory;
@@ -58,8 +59,8 @@ public class NotificationAlertUI extends JPanel {
 
     final JLabel topLabel = new JLabel();
     
-    private static final int AVATAR_HEIGHT = 64;
-    private static final int AVATAR_WIDTH = 64;
+    private static final int AVATAR_HEIGHT = Sizes.Avatar.NOTIFICATION;
+    private static final int AVATAR_WIDTH = Sizes.Avatar.NOTIFICATION;
 
     public NotificationAlertUI(BareJid jid, boolean available, Presence presence) {
         setLayout(new GridBagLayout());

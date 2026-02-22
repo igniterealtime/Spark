@@ -44,6 +44,7 @@ import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
+import org.jivesoftware.sparkimpl.settings.Sizes;
 import org.jxmpp.jid.BareJid;
 
 /**
@@ -77,7 +78,7 @@ public class VCardViewer extends JPanel {
 
         try {
             Image aImage = SparkRes.getImageIcon(SparkRes.BLANK_24x24).getImage();
-            aImage = aImage.getScaledInstance(-1, 64, Image.SCALE_SMOOTH);
+            aImage = aImage.getScaledInstance(-1, Sizes.Avatar.VCARD_VIEW, Image.SCALE_SMOOTH);
             ImageIcon ico = new ImageIcon(aImage);
 
             avatarImage.setIcon(ico);
@@ -108,7 +109,7 @@ public class VCardViewer extends JPanel {
                         try {
                             icon = new ImageIcon(bytes);
                             Image aImage = icon.getImage();
-                            aImage = aImage.getScaledInstance(-1, 48, Image.SCALE_SMOOTH);
+                            aImage = aImage.getScaledInstance(-1, Sizes.Avatar.VCARD, Image.SCALE_SMOOTH);
                             icon = new ImageIcon(aImage);
                         } catch (Exception e) {
                             Log.warning("Unable to get scaled avatar from vcard.", e);
