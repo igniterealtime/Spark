@@ -17,7 +17,9 @@
 
 package org.jivesoftware.spark.plugin.fileupload;
 
+import org.jivesoftware.smack.AbstractXMPPConnection;
 import org.jivesoftware.smack.packet.Message;
+import org.jivesoftware.smackx.httpfileupload.HttpFileUploadManager;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.Plugin;
@@ -25,19 +27,26 @@ import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ChatRoomListener;
 import org.jivesoftware.spark.ui.GlobalMessageListener;
 import org.jivesoftware.spark.util.log.Log;
-import org.jivesoftware.smack.provider.ProviderManager;
 import org.jxmpp.jid.EntityJid;
 
 import java.util.*;
 
 
 public class SparkFileUploadPlugin implements Plugin, ChatRoomListener, GlobalMessageListener {
+    private HttpFileUploadManager httpFileUploadManager;
     private ChatManager chatManager;
     private final Map<EntityJid, ChatRoomDecorator> decorators = new HashMap<>();
 
     @Override
     public void initialize() {
-        ProviderManager.addIQProvider("slot", UploadRequest.NAMESPACE, new UploadRequest.Provider());
+        //TODO Use our cert manager httpFileUploadManager.setTlsContext()
+        AbstractXMPPConnection connection = SparkManager.getConnection();
+        httpFileUploadManager = HttpFileUploadManager.getInstanceFor(connection);
+        if (!httpFileUploadManager.isUploadServiceDiscovered()) {
+            Log.warning("HTTP File Upload service not discovered.");
+            httpFileUploadManager = null;
+            return;
+        }
         chatManager = SparkManager.getChatManager();
         chatManager.addChatRoomListener(this);
         chatManager.addGlobalMessageListener(this);
@@ -45,10 +54,6 @@ public class SparkFileUploadPlugin implements Plugin, ChatRoomListener, GlobalMe
 
     @Override
     public void messageReceived(ChatRoom room, Message message) {
-        String body = message.getBody();
-        if (body != null && (body.startsWith("https://") || body.startsWith("http://")) && body.contains("/httpfileupload/")) {
-            Log.warning("http file upload get url " + message.getBody());
-        }
     }
 
     @Override
@@ -57,12 +62,14 @@ public class SparkFileUploadPlugin implements Plugin, ChatRoomListener, GlobalMe
 
     @Override
     public void shutdown() {
+        if (httpFileUploadManager == null) {
+            return;
+        }
         try {
-            Log.debug("shutdown");
             chatManager.removeChatRoomListener(this);
             chatManager.removeGlobalMessageListener(this);
             chatManager = null;
-            ProviderManager.removeIQProvider("slot", UploadRequest.NAMESPACE);
+            httpFileUploadManager = null;
         } catch (Exception e) {
             Log.warning("shutdown ", e);
         }
@@ -83,6 +90,9 @@ public class SparkFileUploadPlugin implements Plugin, ChatRoomListener, GlobalMe
 
     @Override
     public void chatRoomClosed(ChatRoom chatroom) {
+        if (httpFileUploadManager == null) {
+            return;
+        }
         EntityJid roomId = chatroom.getJid();
         Log.debug("chatRoomClosed:  " + roomId);
         if (decorators.containsKey(roomId)) {
@@ -105,10 +115,13 @@ public class SparkFileUploadPlugin implements Plugin, ChatRoomListener, GlobalMe
 
     @Override
     public void chatRoomOpened(final ChatRoom room) {
+        if (httpFileUploadManager == null) {
+            return;
+        }
         EntityJid roomId = room.getJid();
         Log.debug("chatRoomOpened:  " + roomId);
         if (!decorators.containsKey(roomId)) {
-            decorators.put(roomId, new ChatRoomDecorator(room));
+            decorators.put(roomId, new ChatRoomDecorator(httpFileUploadManager, room));
         }
     }
 

@@ -16,45 +16,35 @@
 
 package org.jivesoftware.spark.plugin.fileupload;
 
-import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
-import org.apache.hc.client5.http.impl.classic.HttpClients;
-import org.apache.hc.core5.http.ClassicHttpRequest;
-import org.apache.hc.core5.http.ContentType;
-import org.apache.hc.core5.http.io.entity.FileEntity;
-import org.apache.hc.core5.http.io.support.ClassicRequestBuilder;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.MessageBuilder;
 import org.jivesoftware.smack.packet.StanzaBuilder;
 import org.jivesoftware.smack.packet.StandardExtensionElement;
-import org.jivesoftware.spark.SessionManager;
-import org.jivesoftware.spark.SparkManager;
+import org.jivesoftware.smackx.httpfileupload.HttpFileUploadManager;
 import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.log.Log;
-import org.jivesoftware.sparkimpl.updater.AcceptAllCertsConnectionManager;
-import org.jxmpp.jid.impl.JidCreate;
 
 import javax.swing.*;
 import java.awt.*;
 import java.io.*;
+import java.net.URL;
 import java.net.URLConnection;
-import java.net.URLEncoder;
 import java.nio.file.Files;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.apache.hc.core5.http.ContentType.APPLICATION_OCTET_STREAM;
 import static org.jivesoftware.smack.packet.Message.Type.groupchat;
 import static org.jivesoftware.smack.packet.Message.Type.chat;
 
 public class ChatRoomDecorator {
-    private final  RolloverButton fileuploadButton;
+    private final HttpFileUploadManager httpFileUploadManager;
+    private final RolloverButton fileuploadButton;
     private final ChatRoom room;
 
-    public ChatRoomDecorator(final ChatRoom room) {
+    public ChatRoomDecorator(HttpFileUploadManager httpFileUploadManager, final ChatRoom room) {
+        this.httpFileUploadManager = httpFileUploadManager;
         this.room = room;
         // Adds file upload button to chat room
         fileuploadButton = new RolloverButton(SparkRes.getImageIcon("UPLOAD_ICON"));
@@ -105,22 +95,9 @@ public class ChatRoomDecorator {
 
     private void handleUpload(File file, ChatRoom room, Message.Type type) {
         Log.debug("Uploading file: " + file.getAbsolutePath());
-        String fileName = URLEncoder.encode(file.getName(), UTF_8);
-        String mimeType = guessContentType(file);
         try {
-            UploadRequest request = new UploadRequest(fileName, file.length(), mimeType);
-            SessionManager sessionManager = SparkManager.getSessionManager();
-            sessionManager.getDiscoveredItems().getItems();
-            String uploadEndpoint = "httpfileupload." + sessionManager.getServerAddress();
-            request.setTo(JidCreate.fromOrThrowUnchecked(uploadEndpoint));
-            request.setType(IQ.Type.get);
-
-            IQ result = SparkManager.getConnection().createStanzaCollectorAndSend(request).nextResultOrThrow();
-            UploadRequest response = (UploadRequest) result;
-            Log.debug("handleUpload response: putUrl=" + response.putUrl + " getUrl=" + response.getUrl);
-            if (response.putUrl != null) {
-                uploadFile(file, mimeType, response, room, type);
-            }
+            URL uploadedFile = httpFileUploadManager.uploadFile(file);
+            broadcastUploadUrl(uploadedFile.toString(), type);
         } catch (Exception e) {
             Log.error("Error while attempting to uploading file", e);
             UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
@@ -128,43 +105,6 @@ public class ChatRoomDecorator {
                 "Upload failed: " + e.getMessage(),
                 "Http File Upload Plugin",
                 JOptionPane.ERROR_MESSAGE);
-        }
-    }
-
-    private void uploadFile(File file, String mimeType, UploadRequest response, ChatRoom room, Message.Type type) {
-        Log.debug("About to upload file for room " + room.getBareJid() + " via HTTP PUT to URL " + response.putUrl);
-        ContentType contentType = mimeType != null ? ContentType.create(mimeType) : APPLICATION_OCTET_STREAM;
-        try (final CloseableHttpClient httpClient =
-                 HttpClients.custom().useSystemProperties()
-                     .setConnectionManager(AcceptAllCertsConnectionManager.getInstance())
-                     .setUserAgent("Spark HttpFileUpload")
-                     .build()
-        ) {
-            final ClassicHttpRequest request = ClassicRequestBuilder.put(response.putUrl)
-                .setEntity(new FileEntity(file, contentType))
-                .build();
-
-            httpClient.execute(request, httpResponse -> {
-                try {
-                    final int statusCode = httpResponse.getCode();
-                    final String reasonPhrase = httpResponse.getReasonPhrase();
-                    if ((statusCode >= 200) && (statusCode <= 202)) {
-                        Log.debug("Upload file success. HTTP response: " + statusCode + " " + reasonPhrase);
-                        broadcastUploadUrl(response.getUrl, type);
-                    } else {
-                        throw new IllegalStateException("Server responded to upload request with: " + statusCode + ": " + reasonPhrase);
-                    }
-                } catch (Exception e) {
-                    Log.error("Error encountered whilst uploading the file", e);
-                    UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
-                    JOptionPane.showMessageDialog(room, "Upload failed: " + e.getMessage(), "Http File Upload Plugin", JOptionPane.ERROR_MESSAGE);
-                }
-                return null;
-            });
-        } catch (Exception e) {
-            Log.error("Error encountered whilst uploading the file", e);
-            UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
-            JOptionPane.showMessageDialog(room, "Upload failed: " + e.getMessage(), "Http File Upload Plugin", JOptionPane.ERROR_MESSAGE);
         }
     }
 
