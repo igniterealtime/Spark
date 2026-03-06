@@ -15,7 +15,7 @@
     <description>The essentials of Spark, including the user interface and startup scripts, excluding most optional components</description>
 
     <properties>
-        <bouncycastle.version>1.78.1</bouncycastle.version>
+        <bouncycastle.version>1.79</bouncycastle.version>
     </properties>
 
     <build>
@@ -175,17 +175,17 @@
         <dependency>
             <groupId>org.minidns</groupId>
             <artifactId>minidns-core</artifactId>
-            <version>1.0.5</version>
+            <version>1.1.1</version>
         </dependency>
         <dependency>
             <groupId>org.jxmpp</groupId>
             <artifactId>jxmpp-core</artifactId>
-            <version>1.0.3</version>
+            <version>1.1.0</version>
         </dependency>
         <dependency>
             <groupId>org.jxmpp</groupId>
             <artifactId>jxmpp-jid</artifactId>
-            <version>1.0.3</version>
+            <version>1.1.0</version>
         </dependency>
         <dependency>
             <groupId>org.dom4j</groupId>
@@ -205,7 +205,7 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-            <version>3.15.0</version>
+            <version>3.19.0</version>
         </dependency>
         <dependency>
             <groupId>org.swinglabs.swingx</groupId>
@@ -227,7 +227,7 @@
         <dependency>
             <groupId>com.thoughtworks.xstream</groupId>
             <artifactId>xstream</artifactId>
-            <version>1.4.20</version>
+            <version>1.4.21</version>
         </dependency>
 
         <dependency>
