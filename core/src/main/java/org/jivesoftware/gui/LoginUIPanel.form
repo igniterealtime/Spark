@@ -186,6 +186,9 @@
                   <Dimension value="[200, 20]"/>
                 </Property>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cbSavePasswordActionPerformed"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JCheckBox" name="cbAutoLogin">
               <Properties>
@@ -197,6 +200,9 @@
                   <Dimension value="[200, 20]"/>
                 </Property>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cbAutoLoginActionPerformed"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JCheckBox" name="cbLoginInvisible">
               <Properties>
@@ -219,6 +225,9 @@
                   <Dimension value="[200, 20]"/>
                 </Property>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cbAnonymousActionPerformed"/>
+              </Events>
             </Component>
           </SubComponents>
         </Container>
@@ -265,6 +274,9 @@
                   <Dimension value="[95, 28]"/>
                 </Property>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnCreateAccountActionPerformed"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JButton" name="btnAdvanced">
               <Properties>
@@ -279,6 +291,9 @@
                   <Dimension value="[110, 28]"/>
                 </Property>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnAdvancedActionPerformed"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JButton" name="btnReset">
               <Properties>
