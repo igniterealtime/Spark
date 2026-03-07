@@ -28,6 +28,7 @@ import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ChatRoomListener;
 import org.jivesoftware.spark.ui.MessageListener;
 import org.jivesoftware.spark.util.TaskEngine;
+import org.jxmpp.jid.BareJid;
 
 import static org.jivesoftware.spark.Event.*;
 
@@ -49,8 +50,14 @@ public class SoundPlugin implements Plugin, MessageListener, ChatRoomListener {
 
         SparkManager.getConnection().addAsyncStanzaListener( stanza -> {
             Presence presence = (Presence)stanza;
+            BareJid presenceBareJid = presence.getFrom().asBareJid();
+            // Ignore own presence updates
+            if (presenceBareJid.equals(SparkManager.getSessionManager().getUserBareAddress())) {
+                return;
+            }
+
             if (!presence.isAvailable()) {
-                if (!PresenceManager.isOnline(presence.getFrom().asBareJid())) {
+                if (!PresenceManager.isOnline(presenceBareJid)) {
                     SparkManager.getSoundManager().playClip(STATUS_OFFLINE);
                 }
             }
@@ -70,6 +77,10 @@ public class SoundPlugin implements Plugin, MessageListener, ChatRoomListener {
 	public void messageReceived(ChatRoom room, Message message) {
         // Do not play sounds on history updates.
         if (message.hasExtension(DelayInformation.class)) {
+            return;
+        }
+        // Ignore own messages
+        if (message.getFrom() == null || message.getFrom().asBareJid().equals(SparkManager.getSessionManager().getUserBareAddress())) {
             return;
         }
         SparkManager.getSoundManager().playClip(MSG_INCOMING);
