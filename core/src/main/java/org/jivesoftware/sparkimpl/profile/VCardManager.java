@@ -577,7 +577,7 @@ public class VCardManager {
      */
     public URL getAvatar(BareJid jid) {
         // Handle own avatar file.
-        if (jid != null && SparkManager.getSessionManager().getJID().asBareJid().equals(jid)) {
+        if (jid != null && SparkManager.getSessionManager().getUserBareAddress().equals(jid)) {
             if (imageFile.exists()) {
                 try {
                     return imageFile.toURI().toURL();
