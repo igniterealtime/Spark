@@ -628,6 +628,9 @@ public class BookmarksUI extends JPanel {
     }
 
     void addOrRemoveNode(DomainBareJid serviceName, boolean isBookmarked, String roomName, EntityBareJid roomJID) {
+        if (roomName == null) {
+            roomName = roomJID.getLocalpart().asUnescapedString();
+        }
         JiveTreeNode rootNode = (JiveTreeNode) tree.getModel().getRoot();
         TreePath rootPath = tree.findByName(tree, new String[]{rootNode.toString(), serviceName.toString()});
         if (!isBookmarked) {

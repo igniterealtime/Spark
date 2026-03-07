@@ -72,7 +72,8 @@ final class JoinConferenceRoomDialog extends JPanel {
         boolean requiresPassword = roomInfo.isPasswordProtected();
         passwordField.setVisible(requiresPassword);
         passwordLabel.setVisible(requiresPassword);
-        roomNameDescription.setText(roomInfo.getName());
+        String roomName = roomInfo.getName() != null ? roomInfo.getName() : roomJID.getLocalpart().asUnescapedString();
+        roomNameDescription.setText(roomName);
 
         // Create the title panel for this dialog
         TitlePanel titlePanel = new TitlePanel(Res.getString("title.join.conference.room"), Res.getString("message.specify.information.for.conference"), SparkRes.getImageIcon(SparkRes.BLANK_IMAGE), true);
@@ -105,7 +106,7 @@ final class JoinConferenceRoomDialog extends JPanel {
             } else if (Res.getString("join").equals(value)) {
                 pane.setValue(JOptionPane.UNINITIALIZED_VALUE);
                 dlg.dispose();
-                ConferenceUtils.joinConferenceOnSeparateThread(roomInfo.getName(), roomJID, null, null);
+                ConferenceUtils.joinConferenceOnSeparateThread(roomName, roomJID, null, null);
             }
         };
         pane.addPropertyChangeListener(changeListener);

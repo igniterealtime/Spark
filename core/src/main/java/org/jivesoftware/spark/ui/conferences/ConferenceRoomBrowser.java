@@ -424,7 +424,8 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener, Com
         }
 
         boolean isBookmarked = isBookmarked(roomInfo.getRoom());
-        conferences.addOrRemoveNode(serviceName, isBookmarked, roomInfo.getName(), roomInfo.getRoom());
+        String roomName = roomInfo.getName() != null ? roomInfo.getName() : roomInfo.getRoom().getLocalpart().toString();
+        conferences.addOrRemoveNode(serviceName, isBookmarked, roomName, roomInfo.getRoom());
         int selectedRow = roomsTable.getSelectedRow();
         ImageIcon bookmarkIcon = isBookmarked ? SparkRes.getImageIcon(SparkRes.BLANK_IMAGE) : SparkRes.getImageIcon(SparkRes.BOOKMARK_ICON);
         roomsTable.getTableModel().setValueAt(new JLabel(bookmarkIcon), selectedRow, 0);
@@ -686,8 +687,9 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener, Com
                 }
 
                 String occupants = room.getOccupantsCount() != -1 ? String.valueOf(room.getOccupantsCount()) : "";
-                String roomAddress = room.getRoom().getLocalpart().toString();
-                String roomTitle = room.getName() != null ? room.getName() : roomAddress;
+                Localpart roomLocalpart = room.getRoom().getLocalpart();
+                String roomAddress = roomLocalpart.toString();
+                String roomTitle = room.getName() != null ? room.getName() : roomLocalpart.asUnescapedString();
                 return new Object[]{iconLabel, roomTitle, roomAddress, occupants, room.getLang(), room.getDescription()};
             }
 
