@@ -87,7 +87,8 @@ public class ConferenceUtils {
      * @param password the rooms password if required.
      */
     public static void joinConferenceOnSeparateThread(final CharSequence roomName, EntityBareJid roomJID, final Resourcepart nickname, String password, final String inviteMessage, final Collection<EntityBareJid> invites) {
-        final JoinRoomSwingWorker worker = new JoinRoomSwingWorker( roomJID, nickname, password, roomName.toString() );
+        String tabTitle = roomName != null ? roomName.toString() : roomJID.getLocalpart().asUnescapedString();
+        final JoinRoomSwingWorker worker = new JoinRoomSwingWorker( roomJID, nickname, password, tabTitle);
         if ( invites != null && !invites.isEmpty() )
         {
             final InviteSwingWorker inviteSwingWorker = new InviteSwingWorker( roomJID, invites, inviteMessage );
