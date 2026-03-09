@@ -29,6 +29,7 @@ import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.packet.StanzaBuilder;
 import org.jivesoftware.smack.packet.StanzaError;
 import org.jivesoftware.smackx.chatstates.ChatState;
+import org.jivesoftware.smackx.colors.ConsistentColor;
 import org.jivesoftware.smackx.delay.packet.DelayInformation;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.muc.ParticipantStatusListener;
@@ -77,6 +78,7 @@ public class GroupChatRoom extends ChatRoom {
     private final MultiUserChat chat;
     private final SubjectPanel subjectPanel;
     private final List<EntityFullJid> currentUserList = new ArrayList<>();
+    private final Map<Resourcepart, Color> participantColors = new HashMap<>();
     private final List<EntityFullJid> blockedUsers = new ArrayList<>();
     private final GroupChatParticipantList roomInfo;
     private final RolloverButton settings;
@@ -594,6 +596,9 @@ public class GroupChatRoom extends ChatRoom {
                     scrollToBottom();
                 }
                 currentUserList.remove(from);
+                synchronized (participantColors) {
+                    participantColors.remove(from.getResourcepart());
+                }
             }
         } else {
             if (!currentUserList.contains(from)) {
@@ -941,16 +946,24 @@ public class GroupChatRoom extends ChatRoom {
         if (nickname.equals(this.getNickname())) {
             return ChatManager.TO_COLOR;
         } else {
-            if (pref.isMucRandomColors()) {
-                int index = 0;
-                for (int i = 0; i < nickname.length(); i++) {
-                    index += nickname.charAt(i) * i;
-                }
+            return getUserColor(nickname);
+        }
+    }
 
-                return ChatManager.COLORS[index % ChatManager.COLORS.length];
-            } else {
-                return ChatManager.FROM_COLOR;
-            }
+    public Color getUserColor(Resourcepart nickname) {
+        if (!pref.isMucRandomColors()) {
+            return ChatManager.FROM_COLOR;
+        }
+        synchronized (participantColors) {
+            Color userColor = participantColors.computeIfAbsent(nickname, (userNickname) -> {
+                float[] rgb = ConsistentColor.RGBFrom(userNickname);
+                // avoid negative values
+                rgb[0] = Math.max(0, rgb[0]);
+                rgb[1] = Math.max(0, rgb[1]);
+                rgb[2] = Math.max(0, rgb[2]);
+                return new Color(rgb[0], rgb[1], rgb[2]);
+            });
+            return userColor;
         }
     }
 

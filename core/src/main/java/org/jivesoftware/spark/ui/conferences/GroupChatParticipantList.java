@@ -215,7 +215,7 @@ public class GroupChatParticipantList extends JPanel {
             return;
         }
         final ImageIcon inviteIcon = SparkRes.getImageIcon(SparkRes.USER1_BACK_16x16);
-        addUser(inviteIcon, displayName);
+        addUser(inviteIcon, Resourcepart.fromOrThrowUnchecked(displayName));
         invitees.put(displayName, message);
     }
 
@@ -274,6 +274,7 @@ public class GroupChatParticipantList extends JPanel {
             int index = getIndex(nickname);
             if (index != -1) {
                 final JLabel userLabel = new JLabel(nickname.toString(), icon, SwingConstants.CENTER);
+                userLabel.setForeground(groupChatRoom.getUserColor(nickname));
                 model.setElementAt(userLabel, index);
             }
         }
@@ -871,9 +872,10 @@ public class GroupChatParticipantList extends JPanel {
      * @param userIcon the icon to use initially.
      * @param nickname the users nickname.
      */
-    public synchronized void addUser(Icon userIcon, CharSequence nickname) {
+    public synchronized void addUser(Icon userIcon, Resourcepart nickname) {
         try {
             final JLabel user = new JLabel(nickname.toString(), userIcon, SwingConstants.CENTER);
+            user.setForeground(groupChatRoom.getUserColor(nickname));
             users.add(user);
             // Sort users alpha.
             users.sort(labelComp);
@@ -982,14 +984,14 @@ public class GroupChatParticipantList extends JPanel {
         @Override
         public Component getListCellRendererComponent(JList list, Object value,
                                                       int index, boolean isSelected, boolean cellHasFocus) {
+            JLabel label = (JLabel) value;
             if (isSelected) {
                 setBackground(list.getSelectionBackground());
                 setForeground(list.getSelectionForeground());
             } else {
-                setBackground(list.getBackground());
-                setForeground(list.getForeground());
+                setBackground(label.getBackground());
+                setForeground(label.getForeground());
             }
-            JLabel label = (JLabel) value;
             setText(label.getText());
             setIcon(label.getIcon());
             return this;
