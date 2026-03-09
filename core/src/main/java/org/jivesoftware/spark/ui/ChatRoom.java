@@ -53,6 +53,7 @@ import javax.swing.text.Document;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
+import java.time.Instant;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -547,10 +548,13 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
             .build();
         transcript.add(newMessage);
         // Add current date if this is the current agent
-        if (updateDate && transcriptWindow.getLastUpdated() != null) {
-            // Set new label date
-            notificationLabel.setIcon(SparkRes.getImageIcon(SparkRes.SMALL_ABOUT_IMAGE));
-            notificationLabel.setText(Res.getString("message.last.message.received", SparkManager.DATE_SECOND_FORMATTER.format(transcriptWindow.getLastUpdated())));
+        if (updateDate) {
+            Instant lastMessageDate = transcriptWindow.getLastUpdated();
+            if (lastMessageDate != null) {
+                // Set new label date
+                notificationLabel.setIcon(SparkRes.getImageIcon(SparkRes.SMALL_ABOUT_IMAGE));
+                notificationLabel.setText(Res.getString("message.last.message.received", SparkManager.DATE_SECOND_FORMATTER.format(Date.from(lastMessageDate))));
+            }
         }
         scrollToBottom();
     }

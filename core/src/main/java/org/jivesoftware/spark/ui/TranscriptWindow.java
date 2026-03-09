@@ -45,6 +45,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -313,17 +314,17 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener
     /**
      * Return the timestamp of the last entry that was added to this transcript window.
      *
-     * If there is no entries in this window, the 'epoch' date, January 1, 1970, 00:00:00 GMT, is returned.
+     * If there is no entries in this window, the null is returned.
      *
-     * @return the timestamp of the last entry in this window, or 'epoch' when there are no entries.
+     * @return the timestamp of the last entry in this window, or null when there are no entries.
      */
-    public Date getLastUpdated()
+    public Instant getLastUpdated()
     {
         if ( entries.isEmpty() )
         {
-            return new Date( 0 );
+            return null;
         }
-        return Date.from( entries.getLast().getTimestamp().toInstant() );
+        return entries.getLast().getTimestamp().toInstant();
     }
 
     /**
