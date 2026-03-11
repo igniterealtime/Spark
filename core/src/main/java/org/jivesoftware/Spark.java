@@ -168,7 +168,7 @@ public final class Spark {
         try {
             EventQueue.invokeAndWait(() -> {
                 final LoginUIPanel dialog = UIComponentRegistry.createLoginDialog();
-                dialog.invoke(new JFrame());
+                dialog.invoke();
             });
         } catch (Exception ex) {
             ex.printStackTrace();

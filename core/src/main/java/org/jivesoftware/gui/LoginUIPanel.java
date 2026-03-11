@@ -313,8 +313,6 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
         }
 
         //reset ui
-        //btnAdvanced.setUI(new BasicButtonUI());
-        //btnSignUp.setUI(new BasicButtonUI());
         tfDomain.putClientProperty("JTextField.placeholderText", Res.getString("hint.login.domain"));
         tfPassword.putClientProperty("JTextField.placeholderText", Res.getString("hint.login.password"));
         tfUsername.putClientProperty("JTextField.placeholderText", Res.getString("hint.login.username"));
@@ -643,11 +641,8 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
 
     /**
      * Invokes the LoginDialog to be visible.
-     *
-     * @param parentFrame the parentFrame of the Login Dialog. This is used for
-     * correct parenting.
      */
-    public void invoke(final JFrame parentFrame) {
+    public void invoke() {
         // Before creating any connections. Update proxy if needed.
         try {
             updateProxyConfig();
@@ -659,10 +654,7 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
         // Construct Dialog
         EventQueue.invokeLater(() -> {
             loginDialog.setIconImage(SparkManager.getApplicationImage().getImage());
-
             loginDialog.setContentPane(this);
-            loginDialog.setLocationRelativeTo(parentFrame);
-
             loginDialog.setResizable(false);
             loginDialog.pack();
             loginDialog.setSize(550, 390);
@@ -685,7 +677,6 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
                 loginDialog.setVisible(true);
             }
         });
-
     }
 
     protected void afterLogin() {
