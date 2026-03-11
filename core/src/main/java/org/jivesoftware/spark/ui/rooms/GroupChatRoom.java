@@ -598,25 +598,29 @@ public class GroupChatRoom extends ChatRoom {
         }
 
         if (presence.getType() == Presence.Type.unavailable && !status.contains(MUCUser.Status.NEW_NICKNAME_303)) {
-            if (currentUserList.contains(from)) {
-                if (pref.isShowJoinLeaveMessagesEnabled()) {
-                    getTranscriptWindow().insertNotificationMessage(Res.getString("message.user.left.room", nickname), ChatManager.NOTIFICATION_COLOR);
-                    scrollToBottom();
-                }
-                currentUserList.remove(from);
-                synchronized (participantColors) {
-                    participantColors.remove(from.getResourcepart());
+            synchronized (currentUserList) {
+                if (currentUserList.contains(from)) {
+                    if (pref.isShowJoinLeaveMessagesEnabled()) {
+                        getTranscriptWindow().insertNotificationMessage(Res.getString("message.user.left.room", nickname), ChatManager.NOTIFICATION_COLOR);
+                        scrollToBottom();
+                    }
+                    currentUserList.remove(from);
+                    synchronized (participantColors) {
+                        participantColors.remove(from.getResourcepart());
+                    }
                 }
             }
         } else {
-            if (!currentUserList.contains(from)) {
-                currentUserList.add(from);
-                getChatInputEditor().setEnabled(true);
-                if (pref.isShowJoinLeaveMessagesEnabled()) {
-                    getTranscriptWindow().insertNotificationMessage(
-                        Res.getString("message.user.joined.room", nickname),
-                        ChatManager.NOTIFICATION_COLOR);
-                    scrollToBottom();
+            synchronized (currentUserList) {
+                if (!currentUserList.contains(from)) {
+                    currentUserList.add(from);
+                    getChatInputEditor().setEnabled(true);
+                    if (pref.isShowJoinLeaveMessagesEnabled()) {
+                        getTranscriptWindow().insertNotificationMessage(
+                            Res.getString("message.user.joined.room", nickname),
+                            ChatManager.NOTIFICATION_COLOR);
+                        scrollToBottom();
+                    }
                 }
             }
         }
@@ -807,7 +811,9 @@ public class GroupChatRoom extends ChatRoom {
      * Returns the user format (e.g. darkcave@macbeth.shakespeare.lit/thirdwitch) of each user in the room.
      */
     public Collection<EntityFullJid> getParticipants() {
-        return currentUserList;
+        synchronized (currentUserList) {
+            return new ArrayList<>(currentUserList);
+        }
     }
 
     /**
