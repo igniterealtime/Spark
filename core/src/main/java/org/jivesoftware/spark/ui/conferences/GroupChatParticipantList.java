@@ -1049,36 +1049,49 @@ public class GroupChatParticipantList extends JPanel {
     private class ChangeNicknameAction extends AbstractAction {
         @Override
         public void actionPerformed(ActionEvent actionEvent) {
-            String newNickname = JOptionPane.showInputDialog(groupChatRoom,
-                Res.getString("label.new.nickname") + ":",
-                Res.getString("title.change.nickname"),
-                JOptionPane.QUESTION_MESSAGE);
-            if (isBlank(newNickname)) {
-                return;
-            }
+            // retry to change nickname
             while (true) {
+                String newNickname = JOptionPane.showInputDialog(groupChatRoom,
+                    Res.getString("label.new.nickname") + ":",
+                    Res.getString("title.change.nickname"),
+                    JOptionPane.QUESTION_MESSAGE);
+                if (isBlank(newNickname)) {
+                    return;
+                }
                 newNickname = newNickname.trim();
+                Resourcepart newNicknameResourcepart = Resourcepart.fromOrNull(newNickname);
+                if (newNicknameResourcepart == null) {
+                    // retry
+                    continue;
+                }
                 String nick = chat.getNickname().toString();
                 try {
-                    chat.changeNickname(Resourcepart.from(newNickname));
-                    break;
-                } catch (XMPPException | SmackException | XmppStringprepException | InterruptedException e1) {
-                    if (e1 instanceof XMPPException.XMPPErrorException && ((XMPPException.XMPPErrorException) e1).getStanzaError().getCondition() == StanzaError.Condition.not_acceptable) {
-                        // handle deny changing nick.
-                        UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
-                        JOptionPane.showMessageDialog(groupChatRoom,
-                            Res.getString("message.nickname.not.acceptable"),
-                            Res.getString("title.change.nickname"),
-                            JOptionPane.ERROR_MESSAGE);
-                        break;
+                    chat.changeNickname(newNicknameResourcepart);
+                    return;
+                } catch (XMPPException.XMPPErrorException xmppError) {
+                    switch (xmppError.getStanzaError().getCondition()) {
+                        case not_acceptable:
+                            // handle deny changing nick.
+                            UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
+                            JOptionPane.showMessageDialog(groupChatRoom,
+                                Res.getString("message.nickname.not.acceptable"),
+                                Res.getString("title.change.nickname"),
+                                JOptionPane.ERROR_MESSAGE);
+                            return;
+                        case conflict:
+                            UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
+                            JOptionPane.showMessageDialog(groupChatRoom,
+                                Res.getString("message.nickname.in.use"),
+                                Res.getString("title.change.nickname"),
+                                JOptionPane.ERROR_MESSAGE);
+                            break;
+                        default:
+                            Log.error("Error changing nickname", xmppError);
+                            return;
                     }
-                    newNickname = JOptionPane.showInputDialog(groupChatRoom,
-                        Res.getString("message.nickname.in.use") + ":",
-                        Res.getString("title.change.nickname"),
-                        JOptionPane.QUESTION_MESSAGE);
-                    if (isBlank(newNickname)) {
-                        break;
-                    }
+                } catch (SmackException | InterruptedException e1) {
+                    Log.error("Error changing nickname", e1);
+                    return;
                 }
             }
         }
