@@ -65,6 +65,7 @@ import java.util.regex.Pattern;
 
 import static java.awt.GridBagConstraints.HORIZONTAL;
 import static java.awt.GridBagConstraints.NORTHWEST;
+import static java.util.regex.Pattern.CASE_INSENSITIVE;
 
 /**
  * GroupChatRoom is the conference chat room UI used to have Multi-User Chats.
@@ -82,6 +83,8 @@ public class GroupChatRoom extends ChatRoom {
     private final List<EntityFullJid> blockedUsers = new ArrayList<>();
     private final GroupChatParticipantList roomInfo;
     private final RolloverButton settings;
+    /** compiled regexp by Nick and JID for {@link #getMessageBackground} */
+    private Pattern myNicknameMatch;
     private Icon tabIcon = SparkRes.getImageIcon(SparkRes.CONFERENCE_IMAGE_16x16);
     private String password = null;
     private String tabTitle;
@@ -288,6 +291,11 @@ public class GroupChatRoom extends ChatRoom {
         Log.debug("Loaded Group Chat Room for " + chat.getRoom());
     }
 
+    private Pattern compileMyNicknameMatch() {
+        String myUserName = SparkManager.getSessionManager().getUsername();
+        return Pattern.compile(Pattern.quote(myUserName) + "|" + Pattern.quote(getNickname().toString()), CASE_INSENSITIVE);
+    }
+
     public Message getLastMessage() {
         return lastMessage;
     }
@@ -315,14 +323,14 @@ public class GroupChatRoom extends ChatRoom {
      */
     private Color getMessageBackground(Resourcepart nickname, String body) {
         final Resourcepart myNickName = chat.getNickname();
-        final String myUserName = SparkManager.getSessionManager().getUsername();
-        final Pattern usernameMatch = Pattern.compile(myUserName, Pattern.CASE_INSENSITIVE);
-        final Pattern nicknameMatch = Pattern.compile(myNickName.toString(), Pattern.CASE_INSENSITIVE);
-
+        if (myNicknameMatch == null) {
+            // TODO recalculate on nick change
+            myNicknameMatch = compileMyNicknameMatch();
+        }
         // Should we even highlight this packet?
         if (pref.isMucHighNameEnabled() && myNickName.equals(nickname)) {
             return COLOR_HIGHLIGHT_MINE_BG;
-        } else if (pref.isMucHighTextEnabled() && (usernameMatch.matcher(body).find() || nicknameMatch.matcher(body).find())) {
+        } else if (pref.isMucHighTextEnabled() && myNicknameMatch.matcher(body).find()) {
             return COLOR_HIGHLIGHT_MENTION_BG;
         } else {
             return COLOR_ALPHA;
