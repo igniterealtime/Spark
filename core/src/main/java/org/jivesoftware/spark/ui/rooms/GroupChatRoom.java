@@ -582,9 +582,9 @@ public class GroupChatRoom extends ChatRoom {
 
         final Resourcepart nickname = from.getResourcepart();
         final MUCUser mucUser = stanza.getExtension(MUCUser.class);
-        final Set<MUCUser.Status> status = new HashSet<>();
+        Set<MUCUser.Status> status = null;
         if (mucUser != null) {
-            status.addAll(mucUser.getStatus());
+            status = mucUser.getStatus();
             final Destroy destroy = mucUser.getDestroy();
             if (destroy != null) {
                 UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
@@ -597,7 +597,7 @@ public class GroupChatRoom extends ChatRoom {
             }
         }
 
-        if (presence.getType() == Presence.Type.unavailable && !status.contains(MUCUser.Status.NEW_NICKNAME_303)) {
+        if (presence.getType() == Presence.Type.unavailable && status != null && !status.contains(MUCUser.Status.NEW_NICKNAME_303)) {
             synchronized (currentUserList) {
                 if (currentUserList.contains(from)) {
                     if (pref.isShowJoinLeaveMessagesEnabled()) {
