@@ -546,6 +546,7 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
             tfPassword.setText(createAccountPanel.getPassword());
             tfDomain.setText(createAccountPanel.getServer());
             btnLogin.setEnabled(true);
+            btnLoginActionPerformed(null);
         }
     }//GEN-LAST:event_btnCreateAccountActionPerformed
 
