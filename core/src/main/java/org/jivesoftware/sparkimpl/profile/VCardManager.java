@@ -787,14 +787,6 @@ public class VCardManager {
     	
         // Unescape JID
         String fileName = Base64.getEncoder().encodeToString(jid.toString().getBytes());
-
-        // remove tab
-        fileName   = fileName.replaceAll("\t", "");
-        // remove new line (Unix)
-        fileName          = fileName.replaceAll("\n", "");
-        // remove new line (Windows)
-        fileName          = fileName.replaceAll("\r", "");
-        
         final File vcardFile = new File(vcardStorageDirectory, fileName);
         if (!vcardFile.exists()) {
             return null;
