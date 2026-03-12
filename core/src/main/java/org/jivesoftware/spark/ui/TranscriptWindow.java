@@ -259,8 +259,22 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener
             sentDate = ZonedDateTime.now();
             isDelayed = false;
         }
-        String body = message.getBody();
+
+        String body = getMessageBodyByLang(message);
+        if (body == null) {
+            return;
+        }
         add( new MessageEntry( sentDate, isDelayed, nicknameStr, foreground, body, (Color) UIManager.get( "Message.foreground" ), background ) );
+    }
+
+    private static String getMessageBodyByLang(Message message) {
+        String preferredLocale = Locale.getDefault().getLanguage();
+        String body = message.getBody(preferredLocale);
+        if (body == null) {
+            // return default body (no language)
+            body = message.getBody();
+        }
+        return body;
     }
 
 
