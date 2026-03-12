@@ -159,7 +159,7 @@ public class GroupChatRoom extends ChatRoom {
 
                 configureAction.putValue(Action.NAME, Res.getString("title.configure.room"));
                 configureAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.SETTINGS_IMAGE_16x16));
-                if (SparkManager.getUserManager().isOwner((GroupChatRoom) getChatRoom(), chat.getNickname())) {
+                if (SparkManager.getUserManager().isOwner((GroupChatRoom) getChatRoom(), getNickname())) {
                     popup.add(configureAction);
                 }
 
@@ -322,7 +322,7 @@ public class GroupChatRoom extends ChatRoom {
      * @return Color of message background.
      */
     private Color getMessageBackground(Resourcepart nickname, String body) {
-        final Resourcepart myNickName = chat.getNickname();
+        final Resourcepart myNickName = getNickname();
         if (myNicknameMatch == null) {
             // TODO recalculate on nick change
             myNicknameMatch = compileMyNicknameMatch();
@@ -908,7 +908,7 @@ public class GroupChatRoom extends ChatRoom {
     public void authenticated(XMPPConnection xmppConnection, boolean b) {
         final EntityBareJid roomJID = chat.getRoom();
         final String roomName = tabTitle;
-        final Resourcepart nickname = chat.getNickname();
+        final Resourcepart nickname = getNickname();
         final String password = this.password;
         try {
             chat.leave();
@@ -982,7 +982,7 @@ public class GroupChatRoom extends ChatRoom {
     }
 
     public void notifySettingsAccessRight() {
-        if (SparkManager.getUserManager().isOwner((GroupChatRoom) getChatRoom(), chat.getNickname())) {
+        if (SparkManager.getUserManager().isOwner((GroupChatRoom) getChatRoom(), getNickname())) {
             settings.setVisible(true);
         }
     }
@@ -1006,9 +1006,10 @@ public class GroupChatRoom extends ChatRoom {
             return;
         }
 
+        final Resourcepart myNickname = getNickname();
+        // Send composing notifications to all other occupants
         for (final EntityFullJid occupant : chat.getOccupants()) {
             final Resourcepart occupantNickname = occupant.getResourcepart();
-            final Resourcepart myNickname = chat.getNickname();
             if (occupantNickname != null && !occupantNickname.equals(myNickname)) {
                 SparkManager.getMessageEventManager().sendComposingNotification(occupant, "djn");
             }
