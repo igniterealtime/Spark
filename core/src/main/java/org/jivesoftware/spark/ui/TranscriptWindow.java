@@ -227,11 +227,12 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener
      */
     public void insertMessage( CharSequence nickname, Message message, Color foreground, Color background )
     {
+        String nicknameStr = nickname.toString();
         for ( TranscriptWindowInterceptor interceptor : SparkManager.getChatManager().getTranscriptWindowInterceptors() )
         {
             try
             {
-                boolean handled = interceptor.isMessageIntercepted( this, nickname.toString(), message );
+                boolean handled = interceptor.isMessageIntercepted( this, nicknameStr, message );
                 if ( handled )
                 {
                     // Do nothing.
@@ -261,7 +262,7 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener
             sentDate = ZonedDateTime.now();
             isDelayed = false;
         }
-        add( new MessageEntry( sentDate, isDelayed, nickname.toString(), foreground, body, (Color) UIManager.get( "Message.foreground" ), background ) );
+        add( new MessageEntry( sentDate, isDelayed, nicknameStr, foreground, body, (Color) UIManager.get( "Message.foreground" ), background ) );
     }
 
 
