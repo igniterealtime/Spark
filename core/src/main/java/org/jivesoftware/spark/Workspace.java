@@ -75,18 +75,17 @@ import org.jxmpp.jid.Jid;
 import org.jxmpp.jid.parts.Localpart;
 
 /**
- * The inner Container for Spark. The Workspace is the container for all plugins into the Spark
- * install. Plugins would use this for the following:
+ * The inner Container for Spark.
+ * The Workspace is the container for all plugins into the Spark installation.
+ * Plugins would use this for the following:
  * <p/>
  * <ul>
- * <li>Add own tab to the main tabbed pane. ex.
- * <p/>
- * <p/>
+ * <li>Add own tab to the main tabbed pane. e.g.
+ * <pre>
  * Workspace workspace = SparkManager.getWorkspace();
  * JButton button = new JButton("HELLO SPARK USERS");
  * workspace.getWorkspacePane().addTab("MyPlugin", button);
- * </p>
- * <p/>
+ * </pre>
  * <li>Retrieve the ContactList.
  */
 public class Workspace extends JPanel implements StanzaListener {
@@ -112,15 +111,10 @@ public class Workspace extends JPanel implements StanzaListener {
 
 
     /**
-     * Returns the singleton instance of <CODE>Workspace</CODE>,
-     * creating it if necessary.
-     * <p/>
-     *
-     * @return the singleton instance of <Code>Workspace</CODE>
+     * Returns the singleton instance of <CODE>Workspace</CODE>, creating it if necessary.
      */
     public static Workspace getInstance() {
-        // Synchronize on LOCK to ensure that we don't end up creating
-        // two singletons.
+        // Synchronize on LOCK to ensure that we don't end up creating two singletons.
         synchronized (LOCK) {
             if (null == singleton) {
                 Workspace controller = new Workspace();
@@ -144,7 +138,7 @@ public class Workspace extends JPanel implements StanzaListener {
 	                final ChatContainer container = SparkManager.getChatManager().getChatContainer();
 	                // Close all Chats.
 	                for (ChatRoom chatRoom : container.getChatRooms()) {
-	                    // Leave ChatRoom
+	                    // Leave the ChatRoom
 	                    container.leaveChatRoom(chatRoom);
 	                }
 	                conferences.shutdown();
@@ -163,7 +157,7 @@ public class Workspace extends JPanel implements StanzaListener {
 	        }
         );
 
-        // Initialize workspace pane, defaulting the tabs to the bottom.
+        // Initialize the workspace pane, defaulting the tabs to the bottom.
 	    boolean top = Default.getBoolean(Default.TABS_PLACEMENT_TOP);
         workspacePane = UIComponentRegistry.createWorkspaceTabPanel(top ? JTabbedPane.TOP : JTabbedPane.BOTTOM);
         workspacePane.setBorder(BorderFactory.createEmptyBorder());
@@ -218,9 +212,8 @@ public class Workspace extends JPanel implements StanzaListener {
         Log.debug("Start loading plugins");
         // Send Available status
         SparkManager.getSessionManager().changePresence(statusBox.getPresence());
-        // Add presence and message listeners
-        // we listen for these to force open a 1-1 peer chat window from other operators if
-        // one isn't already open
+        // Add presence and message listeners.
+        // We listen for these to force to open a 1-1 peer chat window from other operators if one isn't already open
         StanzaFilter workspaceMessageFilter = new StanzaTypeFilter(Message.class);
         // Add the packetListener to this instance
         SparkManager.getSessionManager().getConnection().addAsyncStanzaListener(this, workspaceMessageFilter);
@@ -271,7 +264,7 @@ public class Workspace extends JPanel implements StanzaListener {
 
         Log.debug("Done with manual plugin inits");
 
-        // Schedule loading of the plugins after two seconds.
+        // Schedule the loading of the plugins after two seconds.
         TaskEngine.getInstance().schedule(new TimerTask() {
             @Override
 			public void run() {
@@ -295,15 +288,13 @@ public class Workspace extends JPanel implements StanzaListener {
 
     /**
      * Returns the status box for the User.
-     *
-     * @return the status box for the user.
      */
     public StatusBar getStatusBar() {
         return statusBox;
     }
 
     /**
-     * This is to handle agent to agent conversations.
+     * This is to handle agent-to-agent conversations.
      *
      * @param stanza the smack packet to process.
      */
@@ -352,7 +343,7 @@ public class Workspace extends JPanel implements StanzaListener {
                 message.getType() == Message.Type.error) {
                 return;
             }
-            // Create new chat room for Agent Invite.
+            // Create a new chat room for Agent Invite.
             final Jid from = stanza.getFrom();
             final DomainBareJid host = SparkManager.getSessionManager().getServerAddress();
             // Don't allow workgroup notifications to come through here.
@@ -408,7 +399,7 @@ public class Workspace extends JPanel implements StanzaListener {
         // Insert offline message
         room.getTranscriptWindow().insertMessage(nickname, message, ChatManager.FROM_COLOR);
         room.addToTranscript(message, true);
-        // Save message to history immediately.
+        // Save the message to history immediately.
         SparkManager.getWorkspace().getTranscriptPlugin().persistChatRoom(room);
         // Send display and notified message back.
         SparkManager.getMessageEventManager().sendDeliveredNotification(message.getFrom(), message.getStanzaId());
@@ -418,7 +409,7 @@ public class Workspace extends JPanel implements StanzaListener {
     /**
      * Creates a new room based on an anonymous user.
      *
-     * @param bareJID the bareJID of the anonymous user.
+     * @param bareJID the bare JID of the anonymous user.
      * @param message the message from the anonymous user.
      */
     private void createOneToOneRoom(EntityBareJid bareJID, Message message) {
@@ -471,19 +462,14 @@ public class Workspace extends JPanel implements StanzaListener {
 
     /**
      * Returns the Workspace TabbedPane. If you wish to add your
-     * component, simply use addTab( name, icon, component ) call.
-     *
-     * @return the workspace JideTabbedPane
+     * component, simply use addTab(name, icon, component) call.
      */
     public SparkTabbedPane getWorkspacePane() {
         return workspacePane;
     }
 
-
     /**
      * Returns the <code>ContactList</code> associated with this workspace.
-     *
-     * @return the ContactList associated with this workspace.
      */
     public ContactList getContactList() {
         return contactList;
@@ -499,8 +485,6 @@ public class Workspace extends JPanel implements StanzaListener {
 
     /**
      * Returns the <code>CommandPanel</code> of this Workspace.
-     *
-     * @return the CommandPanel.
      */
     public CommandPanel getCommandPanel() {
         return statusBox.getCommandPanel();
