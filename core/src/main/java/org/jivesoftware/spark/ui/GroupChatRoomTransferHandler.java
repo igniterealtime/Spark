@@ -61,11 +61,6 @@ public class GroupChatRoomTransferHandler extends TransferHandler {
     }
 
     @Override
-	protected void exportDone(JComponent c, Transferable data, int action) {
-    }
-
-
-    @Override
 	public Transferable createTransferable(JComponent comp) {
         return null;
     }

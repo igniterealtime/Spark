@@ -59,12 +59,6 @@ public class ChatRoomTransferHandler extends TransferHandler {
     }
 
     @Override
-	protected void exportDone(JComponent c, Transferable data, int action) {
-
-    }
-
-
-    @Override
 	public Transferable createTransferable(JComponent comp) {
         if (comp instanceof TranscriptWindow) {
             return new TranscriptWindowTransferable((TranscriptWindow) comp);

@@ -180,10 +180,6 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
     }
 
     @Override
-    public void chatRoomLeft(ChatRoom room) {
-    }
-
-    @Override
     public void chatRoomClosed(final ChatRoom room) {
         // Persist only agent to agent chat rooms.
         if (room.getChatType() == Message.Type.chat) {
@@ -232,18 +228,6 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
             transcript.addHistoryMessage(history);
         }
         ChatTranscripts.appendToTranscript(jid, transcript);
-    }
-
-    @Override
-    public void chatRoomActivated(ChatRoom room) {
-    }
-
-    @Override
-    public void userHasJoined(ChatRoom room, String userid) {
-    }
-
-    @Override
-    public void userHasLeft(ChatRoom room, String userid) {
     }
 
     private void showStatusMessage(ContactItem item) {

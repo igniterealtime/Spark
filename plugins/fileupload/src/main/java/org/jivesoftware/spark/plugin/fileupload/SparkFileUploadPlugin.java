@@ -78,10 +78,6 @@ public class SparkFileUploadPlugin implements Plugin, ChatRoomListener, GlobalMe
     }
 
     @Override
-    public void chatRoomLeft(ChatRoom chatroom) {
-    }
-
-    @Override
     public void chatRoomClosed(ChatRoom chatroom) {
         EntityJid roomId = chatroom.getJid();
         Log.debug("chatRoomClosed:  " + roomId);
@@ -89,18 +85,6 @@ public class SparkFileUploadPlugin implements Plugin, ChatRoomListener, GlobalMe
             ChatRoomDecorator decorator = decorators.remove(roomId);
             decorator.finished();
         }
-    }
-
-    @Override
-    public void chatRoomActivated(ChatRoom chatroom) {
-    }
-
-    @Override
-    public void userHasJoined(ChatRoom room, String s) {
-    }
-
-    @Override
-    public void userHasLeft(ChatRoom room, String s) {
     }
 
     @Override

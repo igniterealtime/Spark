@@ -86,8 +86,4 @@ public class GSSAPIConfiguration extends Configuration
         return v.add( new AppConfigurationEntry( module, controlFlag, options ) );
     }
 
-    @Override
-	public void refresh()
-    {
-    }
 }
