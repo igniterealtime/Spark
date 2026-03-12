@@ -245,8 +245,6 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener
             }
         }
 
-        String body = message.getBody();
-
         // Verify the timestamp of this message. Determine if it is a 'live' message, or one that was sent earlier.
         final DelayInformation inf = message.getExtension(DelayInformation.class);
         final ZonedDateTime sentDate;
@@ -254,7 +252,6 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener
         if ( inf != null )
         {
             sentDate = inf.getStamp().toInstant().atZone( ZoneOffset.UTC );
-            body = "(" + Res.getString( "offline" ) + ") " + body;
             isDelayed = true;
         }
         else
@@ -262,6 +259,7 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener
             sentDate = ZonedDateTime.now();
             isDelayed = false;
         }
+        String body = message.getBody();
         add( new MessageEntry( sentDate, isDelayed, nicknameStr, foreground, body, (Color) UIManager.get( "Message.foreground" ), background ) );
     }
 
