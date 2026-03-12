@@ -15,34 +15,27 @@
  */
 package org.jivesoftware.spark.translator;
 
-import net.suuft.libretranslate.Language;
-import net.suuft.libretranslate.Translator;
-import org.apache.commons.lang3.ArrayUtils;
-
-import java.util.*;
+import space.dynomake.libretranslate.ApiProviders;
+import space.dynomake.libretranslate.Language;
+import space.dynomake.libretranslate.Translator;
 
 /**
- * A utility class that uses google's translation service to translate text to various languages.
+ * A utility class that uses external translation service API to translate text to various languages.
  */
 public class TranslatorUtil {
     private TranslatorUtil() {
-
     }
 
     public static String translate(String text, Language language) {
-        if (language == Language.NONE) {
-            return text;
-        }
         return Translator.translate(language,text);
     }
 
-    public static Object[] getLanguage(){
-        Object[] languageList = Arrays.stream(Language.values()).filter( x -> !x.equals(Language.NONE)).sorted(Comparator.comparing(Language::name)).toArray();
-       return ArrayUtils.addAll(new Object[]{Language.NONE},languageList);
+    public static Language[] getLanguage(){
+        return Language.values();
     }
 
     public static String getDefaultUrl(){
-        return "https://translate.fedilab.app/translate";
+        return ApiProviders.API_URL_FEDILAB;
     }
 
 }

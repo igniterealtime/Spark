@@ -15,7 +15,7 @@
  */
 package com.jivesoftware.spark.translator;
 
-import net.suuft.libretranslate.Language;
+import space.dynomake.libretranslate.Language;
 import org.jivesoftware.spark.translator.TranslatorUtil;
 import org.junit.Test;
 
@@ -100,12 +100,5 @@ public class TestTranslator {
         }
 
         return map;
-    }
-
-
-    @Test public void testSort(){
-        for (int i = 0; i < TranslatorUtil.getLanguage().length-1; i++) {
-            System.out.println(TranslatorUtil.getLanguage()[i]);
-        }
     }
 }

@@ -1,6 +1,7 @@
 package org.jivesoftware.spark.translator;
 
 import org.jivesoftware.Spark;
+import org.jivesoftware.spark.util.log.Log;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -9,25 +10,12 @@ import java.io.IOException;
 import java.util.Properties;
 
 public class TranslatorProperties {
-
     private final Properties props;
-
-    private File configFile;
-
-    public static final String ACTIVE = "active";
-
-    public static final String USE_CUSTOM_URL = "useCustomUrl";
-
-    public static final String URL = "url";
-
     private static final Object LOCK = new Object();
-
     private static TranslatorProperties instance = null;
 
     /**
      * returns the Instance of this Properties file
-     *
-     * @return
      */
     public static TranslatorProperties getInstance() {
         synchronized (LOCK) {
@@ -47,10 +35,9 @@ public class TranslatorProperties {
             // Can't load ConfigFile
         }
     }
-    private File getConfigFile() {
-        if (configFile == null)
-            configFile = new File(Spark.getSparkUserHome(), "translator.properties");
 
+    private File getConfigFile() {
+        File configFile = new File(Spark.getSparkUserHome(), "translator.properties");
         return configFile;
     }
 
@@ -58,35 +45,51 @@ public class TranslatorProperties {
         try {
             props.store(new FileOutputStream(getConfigFile()), "Storing Translator properties");
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.error(e);
         }
     }
 
-    public boolean getEnabledTranslator(){
-        return getBoolean(ACTIVE,false);
-    }
-    public void setEnabledTranslator(boolean enable){
-        setBoolean(ACTIVE,enable);
+    public boolean getEnabledTranslator() {
+        return getBoolean("active", false);
     }
 
-    public boolean getUseCustomUrl(){
-        return getBoolean(USE_CUSTOM_URL, false);
+    public void setEnabledTranslator(boolean enable) {
+        setBoolean("active", enable);
     }
 
-    public void setUseCustomUrl(boolean enable){
-        setBoolean(USE_CUSTOM_URL,enable);
+    public boolean getUseCustomUrl() {
+        return getBoolean("useCustomUrl", false);
     }
 
-    public String getUrl(){
-        return props.getProperty(URL);
+    public void setUseCustomUrl(boolean enable) {
+        setBoolean("useCustomUrl", enable);
     }
 
-    public void setUrl(String url){
-        props.setProperty(URL,url);
+    public String getUrl() {
+        return props.getProperty("url");
     }
 
+    public void setUrl(String url) {
+        props.setProperty("url", url);
+    }
 
-    public boolean getBoolean(String property, boolean defaultValue) {
+    public String getApiKey() {
+        return props.getProperty("apiKey");
+    }
+
+    public void setApiKey(String apiKey) {
+        props.setProperty("apiKey", apiKey);
+    }
+
+    public String getMyLanguage() {
+        return props.getProperty("myLanguage");
+    }
+
+    public void setMyLanguage(String language) {
+        props.setProperty("myLanguage", language);
+    }
+
+    private boolean getBoolean(String property, boolean defaultValue) {
         return Boolean.parseBoolean(props.getProperty(property, Boolean.toString(defaultValue)));
     }
 
