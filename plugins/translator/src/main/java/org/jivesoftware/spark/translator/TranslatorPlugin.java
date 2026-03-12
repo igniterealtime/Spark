@@ -90,7 +90,7 @@ public class TranslatorPlugin implements Plugin {
                         }
 
                         @Override
-                        public void filterIncoming(ChatRoom room, Message message) {
+                        public void filterIncoming(ChatRoom room, MessageBuilder messageBuilder) {
                             // do nothing
                         }
                     };
