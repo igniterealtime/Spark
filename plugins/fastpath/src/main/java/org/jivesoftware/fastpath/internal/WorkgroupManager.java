@@ -174,17 +174,9 @@ public class WorkgroupManager {
         VCard vcard = SparkManager.getVCardManager().getVCard();
 
         final Map<String, String> variables = new HashMap<>();
-        String firstName = vcard.getFirstName();
-        String lastName = vcard.getLastName();
-
-        if (ModelUtil.hasLength(firstName) && ModelUtil.hasLength(lastName)) {
-            variables.put("username", firstName + " " + lastName);
-        }
-        else if (ModelUtil.hasLength(firstName)) {
-            variables.put("username", firstName);
-        }
-        else if (ModelUtil.hasLength(lastName)) {
-            variables.put("username", lastName);
+        String fullName = vcard.getField("FN");
+        if (ModelUtil.hasLength(fullName)) {
+            variables.put("username", fullName);
         }
 
         String email = vcard.getEmailHome();

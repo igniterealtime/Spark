@@ -204,24 +204,15 @@ public class VCardPanel extends JPanel {
 
         });
 
-        String firstName = vcard.getFirstName();
-        if (firstName == null) {
-            firstName = "";
-        }
-
-        String lastName = vcard.getLastName();
-        if (lastName == null) {
-            lastName = "";
-        }
-
+        String fullName = vcard.getField("FN");
 
         final JLabel usernameLabel = new JLabel();
         usernameLabel.setHorizontalTextPosition(JLabel.LEFT);
         usernameLabel.setFont(new Font("Dialog", Font.BOLD, 15));
 
         usernameLabel.setForeground(Color.GRAY);
-        if (ModelUtil.hasLength(firstName) && ModelUtil.hasLength(lastName)) {
-            usernameLabel.setText(firstName + " " + lastName);
+        if (ModelUtil.hasLength(fullName)) {
+            usernameLabel.setText(fullName);
         }
         else {
             String nickname = SparkManager.getUserManager().getUserNicknameFromJID(jid);

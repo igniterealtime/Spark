@@ -431,17 +431,13 @@ public class Workspace extends JPanel implements StanzaListener {
             // Attempt to load VCard from users who we are not subscribed to.
             VCard vCard = SparkManager.getVCardManager().getVCard(bareJID);
             if (vCard != null && vCard.getError() == null) {
-                String firstName = vCard.getFirstName();
-                String lastName = vCard.getLastName();
+                String fullName = vCard.getField("FN");
                 String userNickname = vCard.getNickName();
                 if (ModelUtil.hasLength(userNickname)) {
                     nickname = userNickname;
                 }
-                else if (ModelUtil.hasLength(firstName) && ModelUtil.hasLength(lastName)) {
-                    nickname = firstName + " " + lastName;
-                }
-                else if (ModelUtil.hasLength(firstName)) {
-                    nickname = firstName;
+                else if (ModelUtil.hasLength(fullName)) {
+                    nickname = fullName;
                 }
             }
         }
