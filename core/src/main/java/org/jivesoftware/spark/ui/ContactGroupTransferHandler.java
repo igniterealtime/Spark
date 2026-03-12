@@ -77,11 +77,6 @@ public class ContactGroupTransferHandler extends TransferHandler {
     }
 
     @Override
-	protected void exportDone(JComponent c, Transferable data, int action) {
-    }
-
-
-    @Override
 	public Transferable createTransferable(JComponent comp) {
 
         if (comp instanceof JList) {

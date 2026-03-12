@@ -60,14 +60,6 @@ public class GroupChatRoomListener implements ChatRoomListener {
     }
 
     @Override
-    public void chatRoomActivated(ChatRoom room) {
-    }
-
-    @Override
-    public void userHasJoined(ChatRoom room, String userid) {
-    }
-
-    @Override
     public void userHasLeft(ChatRoom room, String userid) {
         if (!(room instanceof GroupChatRoom)) {
             return;

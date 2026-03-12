@@ -310,11 +310,6 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
         }
     }
 
-
-    public void chatRoomLeft(ChatRoom chatroom)
-    {
-    }
-
     public void chatRoomClosed(ChatRoom chatroom)
     {
         String roomId = chatroom.getBareJid().toString();

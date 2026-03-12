@@ -1207,10 +1207,6 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             }
 
             @Override
-            public void windowDeactivated(WindowEvent windowEvent) {
-            }
-
-            @Override
             public void windowClosing(WindowEvent windowEvent) {
                 ChatContainer chatContainer = SparkManager.getChatManager().getChatContainer();
                 if (chatContainer.getTotalNumberOfUnreadMessages() > 0 &&

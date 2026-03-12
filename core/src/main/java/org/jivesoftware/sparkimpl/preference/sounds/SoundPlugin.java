@@ -107,28 +107,8 @@ public class SoundPlugin implements Plugin, MessageListener, ChatRoomListener {
     }
 
     @Override
-	public void chatRoomLeft(ChatRoom room) {
-
-    }
-
-    @Override
 	public void chatRoomClosed(ChatRoom room) {
         room.removeMessageListener(this);
-    }
-
-    @Override
-	public void chatRoomActivated(ChatRoom room) {
-
-    }
-
-    @Override
-	public void userHasJoined(ChatRoom room, String userid) {
-
-    }
-
-    @Override
-	public void userHasLeft(ChatRoom room, String userid) {
-
     }
 
     @Override

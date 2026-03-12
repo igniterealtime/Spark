@@ -74,26 +74,6 @@ public class BuzzPlugin implements Plugin {
 
                     TaskEngine.getInstance().schedule(task, 100);
                 }
-
-                @Override
-                public void chatRoomLeft(ChatRoom room) {
-                }
-
-                @Override
-                public void chatRoomClosed(ChatRoom room) {
-                }
-
-                @Override
-                public void chatRoomActivated(ChatRoom room) {
-                }
-
-                @Override
-                public void userHasJoined(ChatRoom room, String userid) {
-                }
-
-                @Override
-                public void userHasLeft(ChatRoom room, String userid) {
-                }
             });
     }
 
