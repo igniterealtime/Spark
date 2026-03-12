@@ -163,12 +163,12 @@ public class ConversationHistoryPlugin implements Plugin {
         // Persist order of conversations.
         SparkManager.getChatManager().addMessageFilter(new MessageFilter() {
             @Override
-			public void filterOutgoing(ChatRoom room, MessageBuilder message) {
+			public void filterOutgoing(ChatRoom room, MessageBuilder messageBuilder) {
                 addUserToHistory(room);
             }
 
             @Override
-			public void filterIncoming(ChatRoom room, Message message) {
+			public void filterIncoming(ChatRoom room, MessageBuilder messageBuilder) {
                 addUserToHistory(room);
             }
         });

@@ -431,14 +431,14 @@ public class ChatManager {
      * Filters all incoming messages.
      *
      * @param room    the room the message belongs to.
-     * @param message the message to filter.
+     * @param messageBuilder the message to filter.
      */
-    public void filterIncomingMessage( ChatRoom room, Message message )
+    public void filterIncomingMessage( ChatRoom room, MessageBuilder messageBuilder )
     {
         try
         {
             // TODO This probably does not belong here (but in a filter?)
-            cancelledNotification( message.getFrom(), ChatState.paused );
+            cancelledNotification( messageBuilder.getFrom(), ChatState.paused );
         }
         catch ( Exception e )
         {
@@ -449,11 +449,11 @@ public class ChatManager {
         {
             try
             {
-                filter.filterIncoming( room, message );
+                filter.filterIncoming( room, messageBuilder );
             }
             catch ( Exception e )
             {
-                Log.error( "A MessageFilter ('" + filter + "') threw an exception while processing an incoming chat message (from '" + message.getFrom() + "') in a chat room ('" + room + "').", e );
+                Log.error( "A MessageFilter ('" + filter + "') threw an exception while processing an incoming chat message (from '" + messageBuilder.getFrom() + "') in a chat room ('" + room + "').", e );
             }
         }
     }

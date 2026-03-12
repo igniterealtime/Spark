@@ -41,12 +41,11 @@ public interface MessageFilter {
 
     /**
      * Updates the body of an incoming message.
-     * TODO change message to MessageBuilder
      *
      * @param room Room the message is attached to.
-     * @param message the message to update.
+     * @param messageBuilder the message to update.
      */
-    void filterIncoming(ChatRoom room, Message message);
+    void filterIncoming(ChatRoom room, MessageBuilder messageBuilder);
 
 
 }
