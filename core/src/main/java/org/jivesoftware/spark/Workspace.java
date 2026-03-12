@@ -316,54 +316,55 @@ public class Workspace extends JPanel implements StanzaListener {
     private void handleIncomingPacket(Stanza stanza) throws SmackException.NotConnectedException, InterruptedException
     {
         // We only handle message packets here.
-        if (stanza instanceof Message) {
-            final Message message = (Message)stanza;
-            boolean isGroupChat = message.getType() == Message.Type.groupchat;
-            // Check if Conference invite. If so, do not handle here.
-            if (message.hasExtension(GroupChatInvitation.class)) {
-                return;
-            }
+        if (!(stanza instanceof Message)) {
+            return;
+        }
+        final Message message = (Message)stanza;
+        boolean isGroupChat = message.getType() == Message.Type.groupchat;
+        // Check if Conference invite. If so, do not handle here.
+        if (message.hasExtension(GroupChatInvitation.class)) {
+            return;
+        }
 
-            final String body = message.getBody();
-            final JivePropertiesExtension extension = message.getExtension( JivePropertiesExtension.class );
-            final boolean broadcast = extension != null && extension.getProperty( "broadcast" ) != null;
+        final String body = message.getBody();
+        final JivePropertiesExtension extension = message.getExtension( JivePropertiesExtension.class );
+        final boolean broadcast = extension != null && extension.getProperty( "broadcast" ) != null;
 
-            // Handle offline message.
-            DelayInformation offlineInformation = message.getExtension(DelayInformation.class);
-            if (offlineInformation != null && (Message.Type.chat == message.getType() ||
-                Message.Type.normal == message.getType())) {
-                handleOfflineMessage(message);
-            }
+        // Handle offline message.
+        DelayInformation offlineInformation = message.getExtension(DelayInformation.class);
+        if (offlineInformation != null && (Message.Type.chat == message.getType() ||
+            Message.Type.normal == message.getType())) {
+            handleOfflineMessage(message);
+        }
 
-            if (body == null ||
-                isGroupChat ||
-                broadcast ||
-                message.getType() == Message.Type.normal ||
-                message.getType() == Message.Type.headline ||
-                message.getType() == Message.Type.error) {
-                return;
-            }
-            // Create a new chat room for Agent Invite.
-            final Jid from = stanza.getFrom();
-            final DomainBareJid host = SparkManager.getSessionManager().getServerAddress();
-            // Don't allow workgroup notifications to come through here.
-            final BareJid bareJID = from.asBareJid();
-            if (host.equals(from)) {
-                return;
-            }
+        if (body == null ||
+            isGroupChat ||
+            broadcast ||
+            message.getType() == Message.Type.normal ||
+            message.getType() == Message.Type.headline ||
+            message.getType() == Message.Type.error) {
+            return;
+        }
+        // Create a new chat room for Agent Invite.
+        final Jid from = stanza.getFrom();
+        final DomainBareJid host = SparkManager.getSessionManager().getServerAddress();
+        // Don't allow workgroup notifications to come through here.
+        final BareJid bareJID = from.asBareJid();
+        if (host.equals(from)) {
+            return;
+        }
 
-            ChatRoom room = null;
-            try {
-                room = SparkManager.getChatManager().getChatContainer().getChatRoom(bareJID);
-            }
-            catch (ChatRoomNotFoundException ignored) {
-            }
-            // Check for non-existent rooms.
-            if (room == null) {
-                EntityBareJid entityBareJid = bareJID.asEntityBareJidIfPossible();
-                if (entityBareJid != null) {
-                    createOneToOneRoom(entityBareJid, message);
-                }
+        ChatRoom room = null;
+        try {
+            room = SparkManager.getChatManager().getChatContainer().getChatRoom(bareJID);
+        }
+        catch (ChatRoomNotFoundException ignored) {
+        }
+        // Check for non-existent rooms.
+        if (room == null) {
+            EntityBareJid entityBareJid = bareJID.asEntityBareJidIfPossible();
+            if (entityBareJid != null) {
+                createOneToOneRoom(entityBareJid, message);
             }
         }
     }
@@ -384,12 +385,15 @@ public class Workspace extends JPanel implements StanzaListener {
             return;
         }
 
-        String nickname;
+        String nickname = null;
         ContactItem contact = contactList.getContactItemByJID(bareJID);
         if (contact != null) {
             nickname = contact.getDisplayName();
         } else {
-            nickname = bareJID.getLocalpartOrNull() == null ? null : bareJID.getLocalpartOrNull().toString();
+            Localpart localpart = bareJID.getLocalpartOrNull();
+            if (localpart != null) {
+                nickname = localpart.toString();
+            }
         }
         // Create the room if it does not exist.;
         ChatRoom room = SparkManager.getChatManager().createChatRoom(bareJID, nickname, nickname);
@@ -413,16 +417,17 @@ public class Workspace extends JPanel implements StanzaListener {
      * @param message the message from the anonymous user.
      */
     private void createOneToOneRoom(EntityBareJid bareJID, Message message) {
-        ContactItem contact = contactList.getContactItemByJID(bareJID);
-        Localpart localpart = bareJID.getLocalpartOrNull();
         String nickname = null;
-        if (localpart != null) {
-            nickname = localpart.toString();
-        }
+        ContactItem contact = contactList.getContactItemByJID(bareJID);
         if (contact != null) {
             nickname = contact.getDisplayName();
+        } else {
+            Localpart localpart = bareJID.getLocalpartOrNull();
+            if (localpart != null) {
+                nickname = localpart.toString();
+            }
         }
-        else {
+        if (nickname == null) {
             // Attempt to load VCard from users who we are not subscribed to.
             VCard vCard = SparkManager.getVCardManager().getVCard(bareJID);
             if (vCard != null && vCard.getError() == null) {
