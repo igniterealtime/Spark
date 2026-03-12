@@ -15,12 +15,15 @@
  */
 package org.jivesoftware.spark.translator;
 
-import java.awt.Color;
+import java.awt.*;
+import java.util.Locale;
 
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 
-import net.suuft.libretranslate.Language;
-import net.suuft.libretranslate.Translator;
+import org.jivesoftware.spark.util.log.Log;
+import space.dynomake.libretranslate.Language;
+import space.dynomake.libretranslate.Translator;
 import org.apache.commons.lang3.StringUtils;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.MessageBuilder;
@@ -28,14 +31,15 @@ import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.Plugin;
 import org.jivesoftware.spark.ui.*;
-import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
 
 /**
- * A plugin that uses google's translation service to translate instant messages between two users.
+ * A plugin that uses external translation service API to translate instant messages between two users.
  *
  * @author Jive Software
  */
 public class TranslatorPlugin implements Plugin {
+    private MessageFilter translationMessageFilter;
+    private TranslationChatRoomListener translationChatRoomListener;
 
     /**
      * Called after Spark is loaded to initialize the new plugin.
@@ -48,56 +52,10 @@ public class TranslatorPlugin implements Plugin {
         // Retrieve ChatManager from the SparkManager
         final ChatManager chatManager = SparkManager.getChatManager();
         // Add to a new ChatRoom when the ChatRoom opens.
-        chatManager.addChatRoomListener(new ChatRoomListener() {
-            public void chatRoomOpened(ChatRoom room) {
-                // only do the translation for single chat
-                if (room instanceof ChatRoomImpl && TranslatorProperties.getInstance().getEnabledTranslator()) {
-                    final ChatRoomImpl roomImpl = (ChatRoomImpl)room;
-                    final TranscriptWindow transcriptWindow = roomImpl.getTranscriptWindow();
-
-                    //Set server LibreTranslate API
-                    if(TranslatorProperties.getInstance().getUseCustomUrl() && !StringUtils.isBlank(TranslatorProperties.getInstance().getUrl())){
-                        Translator.setUrlApi(TranslatorProperties.getInstance().getUrl());
-                    } else {
-                        Translator.setUrlApi(TranslatorUtil.getDefaultUrl());
-                    }
-
-                    // Create a new ChatRoomButton.
-                    final JComboBox<Object> translatorBox = new JComboBox<>(TranslatorUtil.getLanguage());
-
-                    translatorBox.addActionListener( e -> {
-                        // Set the focus back to the message box.
-                        roomImpl.getChatInputEditor().requestFocusInWindow();
-                    } );
-
-                    roomImpl.addChatRoomComponent(translatorBox);
-
-                    // do the translation for outgoing messages.
-                    final MessageFilter messageFilter = new MessageFilter() {
-                        @Override
-                        public void filterOutgoing(ChatRoom room, MessageBuilder messageBuilder) {
-                            String currentBody = messageBuilder.getBody();
-                            Language lang = (Language) translatorBox.getSelectedItem();
-                            if (lang != null && lang != Language.NONE) {
-                                try {
-                                    currentBody = TranslatorUtil.translate(currentBody, lang);
-                                    transcriptWindow.insertNotificationMessage("-> "+currentBody, Color.gray);
-                                    messageBuilder.setBody(currentBody);
-                                } catch (Exception e){
-                                    transcriptWindow.insertNotificationMessage(TranslatorResource.getString("translator.error"), ChatManager.ERROR_COLOR);
-                                }
-                            }
-                        }
-
-                        @Override
-                        public void filterIncoming(ChatRoom room, MessageBuilder messageBuilder) {
-                            // do nothing
-                        }
-                    };
-                    chatManager.addMessageFilter(messageFilter);
-                }
-            }
-        });
+        translationChatRoomListener = new TranslationChatRoomListener();
+        translationMessageFilter = new TranslationMessageFilter();
+        chatManager.addChatRoomListener(translationChatRoomListener);
+        chatManager.addMessageFilter(translationMessageFilter);
     }
 
     /**
@@ -106,7 +64,11 @@ public class TranslatorPlugin implements Plugin {
      */
     @Override
     public void shutdown() {
-
+        final ChatManager chatManager = SparkManager.getChatManager();
+        chatManager.removeChatRoomListener(translationChatRoomListener);
+        chatManager.removeMessageFilter(translationMessageFilter);
+        translationChatRoomListener = null;
+        translationMessageFilter = null;
     }
 
     /**
@@ -127,5 +89,114 @@ public class TranslatorPlugin implements Plugin {
     @Override
     public void uninstall() {
         // Remove all resources belonging to this plugin.
+    }
+
+    private static class TranslationChatRoomListener implements org.jivesoftware.spark.ui.ChatRoomListener {
+        @Override
+        public void chatRoomOpened(ChatRoom room) {
+            TranslatorProperties properties = TranslatorProperties.getInstance();
+            if (!properties.getEnabledTranslator()) {
+                return;
+            }
+            // Set server LibreTranslate API
+            if (properties.getUseCustomUrl() && !StringUtils.isBlank(properties.getUrl())) {
+                Translator.setUrlApi(properties.getUrl());
+            } else {
+                Translator.setUrlApi(TranslatorUtil.getDefaultUrl());
+            }
+
+            // Create a new ChatRoomButton.
+            final JComboBox<Language> translatorBox = new JComboBox<>(TranslatorUtil.getLanguage());
+            translatorBox.setName("translatorBox");
+            translatorBox.setToolTipText(TranslatorResource.getString("translator.translateOutcomingLang") +
+                " " +TranslatorResource.getString("translator.externalServiceWarning"));
+
+            translatorBox.addActionListener(e -> {
+                // Set the focus back to the message box.
+                room.getChatInputEditor().requestFocusInWindow();
+            });
+
+            room.addChatRoomComponent(translatorBox);
+
+            final JCheckBox translatorIncoming = new JCheckBox(TranslatorResource.getString("translator.translateIncoming"));
+            translatorIncoming.setName("translatorIncoming");
+            translatorIncoming.setToolTipText(TranslatorResource.getString("translator.translateIncoming") +
+                    " " +TranslatorResource.getString("translator.externalServiceWarning"));
+            translatorIncoming.addActionListener(e -> {
+                // Set the focus back to the message box.
+                room.getChatInputEditor().requestFocusInWindow();
+            });
+            room.addChatRoomComponent(translatorIncoming);
+        }
+    }
+
+    private static class TranslationMessageFilter implements MessageFilter {
+        @Override
+        public void filterOutgoing(ChatRoom room, MessageBuilder messageBuilder) {
+            if (!TranslatorProperties.getInstance().getEnabledTranslator()) {
+                return;
+            }
+            @SuppressWarnings("unchecked")
+            JComboBox<Language> translatorBox = (JComboBox<Language>) findTranslatorComponent(room, "translatorBox");
+            if (translatorBox == null) {
+                return;
+            }
+            Language lang = (Language) translatorBox.getSelectedItem();
+            if (lang == null || lang == Language.NONE) {
+                return;
+            }
+            // do the translation for outgoing messages.
+            TranscriptWindow transcriptWindow = room.getTranscriptWindow();
+            try {
+                String currentBody = messageBuilder.getBody();
+                currentBody = TranslatorUtil.translate(currentBody, lang);
+                transcriptWindow.insertNotificationMessage("-> " + currentBody, Color.gray);
+                // Manually remove the existing body to add a new one.
+                messageBuilder.removeExtension(Message.Body.ELEMENT, Message.Body.NAMESPACE);
+                messageBuilder.addBody(lang.getCode(), currentBody);
+            } catch (Exception e) {
+                Log.warning(e.getMessage());
+                transcriptWindow.insertNotificationMessage(TranslatorResource.getString("translator.error"), ChatManager.ERROR_COLOR);
+            }
+        }
+
+        private Component findTranslatorComponent(ChatRoom room, String compName) {
+            Component[] comps = room.getEditorBar().getComponents();
+            for (Component component : comps) {
+                if (compName.equals(component.getName())) {
+                    return component;
+                }
+            }
+            return null;
+        }
+
+        @Override
+        public void filterIncoming(ChatRoom room, MessageBuilder messageBuilder) {
+            if (!TranslatorProperties.getInstance().getEnabledTranslator()) {
+                return;
+            }
+            JCheckBox translatorIncoming = (JCheckBox) findTranslatorComponent(room, "translatorIncoming");
+            if (translatorIncoming == null) {
+                return;
+            }
+            if (!translatorIncoming.isSelected()) {
+                return;
+            }
+            Language myLanguage = Language.fromCode(Locale.getDefault().getLanguage());
+            if (myLanguage == null) {
+                return;
+            }
+            TranscriptWindow transcriptWindow = room.getTranscriptWindow();
+            try {
+                String currentBody = messageBuilder.getBody();
+                currentBody = TranslatorUtil.translate(currentBody, myLanguage);
+                // Manually remove the existing body to add a new one.
+                messageBuilder.removeExtension(Message.Body.ELEMENT, Message.Body.NAMESPACE);
+                messageBuilder.addBody(myLanguage.getCode(), currentBody);
+            } catch (Exception e) {
+                Log.warning(e.getMessage());
+                transcriptWindow.insertNotificationMessage(TranslatorResource.getString("translator.error"), ChatManager.ERROR_COLOR);
+            }
+        }
     }
 }

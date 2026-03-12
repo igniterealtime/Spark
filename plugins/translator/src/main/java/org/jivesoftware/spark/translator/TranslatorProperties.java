@@ -86,7 +86,7 @@ public class TranslatorProperties {
     }
 
 
-    public boolean getBoolean(String property, boolean defaultValue) {
+    private boolean getBoolean(String property, boolean defaultValue) {
         return Boolean.parseBoolean(props.getProperty(property, Boolean.toString(defaultValue)));
     }
 
