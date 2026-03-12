@@ -488,13 +488,10 @@ public class StatusBar extends JPanel implements VCardListener {
     protected void updateVCardInformation(final VCard vCard) {
         SwingUtilities.invokeLater(() -> {
             if (vCard.getError() == null) {
-                String firstName = vCard.getFirstName();
-                String lastName = vCard.getLastName();
+                String fullName = vCard.getField("FN");
                 String nickname = vCard.getNickName();
-                if (ModelUtil.hasLength(firstName) && ModelUtil.hasLength(lastName)) {
-                    setNickname(firstName + " " + lastName);
-                } else if (ModelUtil.hasLength(firstName)) {
-                    setNickname(firstName);
+                if (ModelUtil.hasLength(fullName)) {
+                    setNickname(fullName);
                 } else if (ModelUtil.hasLength(nickname)) {
                     setNickname(nickname);
                 } else {

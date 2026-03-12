@@ -142,13 +142,9 @@ public class NotificationAlertUI extends JPanel {
         // Nickname label should show presence and nickname.
         String nickname = SparkManager.getUserManager().getUserNicknameFromJID(jid);
 
-        String firstName = vcard.getFirstName();
-        String lastName = vcard.getLastName();
-        if (ModelUtil.hasLength(firstName) && ModelUtil.hasLength(lastName)) {
-            titleLabel.setText(firstName + " " + lastName);
-        }
-        else if (ModelUtil.hasLength(firstName)) {
-            titleLabel.setText(firstName);
+        String fullName = vcard.getFirstName();
+        if (ModelUtil.hasLength(fullName)) {
+            titleLabel.setText(fullName);
         }
         else {
             titleLabel.setText(nickname);
