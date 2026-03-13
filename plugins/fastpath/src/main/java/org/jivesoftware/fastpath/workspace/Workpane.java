@@ -78,7 +78,6 @@ public class Workpane {
     private final Map<String, Map<String, List<String>>> inviteMap = new HashMap<>();
     private final Map<String, UserInvitationPane> invitations = new HashMap<>();
 
-
     private final Map<ChatRoom, RoomState> fastpathRooms = new HashMap<>();
 
     private final OnlineAgents onlineAgentsPane;
@@ -93,13 +92,10 @@ public class Workpane {
     private final RolloverButton workgroupGroupButton;
     private final RolloverButton macrosButton;
 
-
     public static final String INITIAL_RESPONSE_PROPERTY = "initialResponse";
 
     private final JPanel toolbar;
-
     private final List<FastpathListener> listeners = new ArrayList<>();
-
     private final PresenceChangeListener presenceListener = new PresenceChangeListener();
 
     /**
@@ -111,7 +107,7 @@ public class Workpane {
          */
         incomingRequest,
         /**
-         * The rooms contains an invitation from another agent.
+         * The room contains an invitation from another agent.
          */
         invitationRequest,
         /**
@@ -131,8 +127,6 @@ public class Workpane {
         handleRoomOpenings();
 
         FastpathPlugin.getUI().getMainPanel().addTab(FpRes.getString("tab.current.chats"), null, agentCons);
-
-
         SearchManager.getInstance().addSearchService(chatSearch);
 
         // Add Queue Activity Menu
@@ -176,34 +170,25 @@ public class Workpane {
         toolbar.add(macrosButton);
 
         FastpathPlugin.getMainPanel().add(toolbar, new GridBagConstraints(0, 2, 3, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 2, 2, 2), 0, 0));
-
     }
 
 
     public void unload() {
         FastpathPlugin.getUI().getMainPanel().removeComponent(onlineAgentsPane);
-
         // Remove offer listener
         FastpathPlugin.getAgentSession().removeOfferListener(offerListener);
-
         // Add own invitation listener
         SparkManager.getChatManager().removeInvitationListener(roomInviteListener);
-
         // Remove Chat Search
         SearchManager.getInstance().removeSearchService(chatSearch);
-
         // Remove Queue Listener
         queueActivity.removeListener();
         FastpathPlugin.getUI().getMainPanel().removeComponent(queueActivity);
-
         FastpathPlugin.getUI().getMainPanel().removeComponent(agentCons);
         agentCons = null;
-
         FastpathPlugin.getMainPanel().remove(toolbar);
-
         SparkManager.getSessionManager().removePresenceListener(presenceListener);
     }
-
 
     private void addOnlineAgents() {
         FastpathPlugin.getUI().getMainPanel().addTab(FpRes.getString("tab.online.agents"), null, onlineAgentsPane);
@@ -211,38 +196,43 @@ public class Workpane {
 
     public void listenForOffers() {
         FastpathPlugin.getAgentSession().addOfferListener(offerListener);
-
         // Add own invitation listener
         SparkManager.getChatManager().addInvitationListener(roomInviteListener);
     }
 
     public Map<String, List<String>> getMetadata(String sessionID) {
         Map<String, List<String>> map = null;
-        if (offerMap.get(sessionID) != null) {
-            Offer offer = offerMap.get(sessionID);
+        Offer offer = offerMap.get(sessionID);
+        if (offer != null) {
             map = offer.getMetaData();
         }
-        else if (inviteMap.get(sessionID) != null) {
-            map = inviteMap.get(sessionID);
+        else {
+            Map<String, List<String>> metadata = inviteMap.get(sessionID);
+            if (metadata != null) {
+                map = metadata;
+            }
         }
         return map;
     }
 
     private void handleRoomOpenings() {
         SparkManager.getChatManager().addChatRoomListener(new ChatRoomListener() {
+            @Override
             public void chatRoomOpened(ChatRoom room) {
                 if (!(room instanceof GroupChatRoom)) {
                     return;
                 }
+                GroupChatRoom groupChatRoom = (GroupChatRoom) room;
                 EntityBareJid roomName = room.getBareJid();
                 Localpart sessionID = roomName.getLocalpart();
-                if (offerMap.get(sessionID.toString()) != null) {
-                    Offer offer = offerMap.get(sessionID.toString());
+                Offer offer = offerMap.get(sessionID.toString());
+                if (offer != null) {
                     Map<String, List<String>> metadata = offer.getMetaData();
-                    decorateRoom(room, metadata);
+                    decorateRoom(groupChatRoom, metadata);
                 }
             }
 
+            @Override
             public void chatRoomClosed(ChatRoom room) {
                 EntityBareJid roomName = room.getBareJid();
                 Localpart sessionID = roomName.getLocalpart();
@@ -251,34 +241,28 @@ public class Workpane {
         });
     }
 
-    public void checkForDecoration(ChatRoom chatRoom, String sessionID) {
-        if (inviteMap.get(sessionID) != null) {
-            Map<String, List<String>> metadata = inviteMap.get(sessionID);
+    public void checkForDecoration(GroupChatRoom chatRoom, String sessionID) {
+        Map<String, List<String>> metadata = inviteMap.get(sessionID);
+        if (metadata != null) {
             decorateRoom(chatRoom, metadata);
         }
     }
 
-    public void decorateRoom(ChatRoom room, Map<String, List<String>> metadata) {
+    public void decorateRoom(GroupChatRoom room, Map<String, List<String>> metadata) {
         EntityBareJid roomName = room.getBareJid();
         Localpart sessionID =roomName.getLocalpart();
-
         RequestUtils utils = new RequestUtils(metadata);
-
         addRoomInfo(sessionID, utils, room);
-
         addButtons(sessionID.toString(), utils, room);
-
         // Specify to use Typing notifications.
-        GroupChatRoom groupChat = (GroupChatRoom)room;
-        groupChat.setChatStatEnabled(true);
+        room.setChatStatEnabled(true);
 
         Properties props = FastpathPlugin.getLitWorkspace().getWorkgroupProperties();
         String initialResponse = props.getProperty(INITIAL_RESPONSE_PROPERTY);
         if (ModelUtil.hasLength(initialResponse)) {
             MessageBuilder messageBuilder = StanzaBuilder.buildMessage()
                 .setBody(initialResponse);
-            GroupChatRoom groupChatRoom = (GroupChatRoom)room;
-            groupChatRoom.sendMessage(messageBuilder);
+            room.sendMessage(messageBuilder);
         }
     }
 
@@ -314,6 +298,7 @@ public class Workpane {
 
         room.getEditorBar().add(cannedResponses);
         cannedResponses.addMouseListener(new MouseAdapter() {
+            @Override
             public void mouseClicked(MouseEvent e) {
                 final ChatMacroMenu chatMacroMenu = new ChatMacroMenu(room);
                 chatMacroMenu.show(cannedResponses, e.getX(), e.getY());
@@ -328,7 +313,6 @@ public class Workpane {
         // Set Room is Active
         addFastpathChatRoom(room, RoomState.activeRoom);
     }
-
 
     /**
      * Invite or transfer this conversation to another agent, queue or workgroup.
@@ -346,10 +330,8 @@ public class Workpane {
             Jid jid = JidCreate.fromUnescapedOrThrowUnchecked(jidString);
 
             String message = dialog.getMessage();
-
             // Determine who to send to.
             if (jid.hasResource()) {
-                // Queueu
                 InvitationManager.transferOrInviteToQueue(room, workgroup, sessionID, jid, message, transfer);
             }
             else if (jid.getDomain().toString().startsWith("workgroup")) {
@@ -361,12 +343,10 @@ public class Workpane {
         }
     }
 
-
-    private void addRoomInfo(final CharSequence sessionID, final RequestUtils utils, final ChatRoom room) {
+    private void addRoomInfo(final CharSequence sessionID, final RequestUtils utils, final GroupChatRoom room) {
         final JTabbedPane tabbedPane = new JTabbedPane();
 
-        GroupChatParticipantList participantList = ((GroupChatRoom)room).getConferenceRoomInfo();
-
+        GroupChatParticipantList participantList = room.getConferenceRoomInfo();
         room.getSplitPane().setRightComponent(tabbedPane);
 
         Form form;
@@ -379,6 +359,7 @@ public class Workpane {
         }
 
         final BackgroundPane transcriptAlert = new BackgroundPane() {
+            @Override
             public Dimension getPreferredSize() {
                 final Dimension size = super.getPreferredSize();
                 size.width = 0;
@@ -415,6 +396,7 @@ public class Workpane {
         tabbedPane.addChangeListener(new ChangeListener() {
             boolean loaded;
 
+            @Override
             public void stateChanged(ChangeEvent e) {
                 if (!loaded) {
                     if (tabbedPane.getSelectedComponent() == historyScroll) {
@@ -425,8 +407,6 @@ public class Workpane {
             }
         });
 
-
-        final GroupChatRoom groupRoom = (GroupChatRoom)room;
         room.getTranscriptWindow().clear();
 
         final ChatFrame frame = SparkManager.getChatManager().getChatContainer().getChatFrame();
@@ -454,15 +434,16 @@ public class Workpane {
         final MainWindow mainWindow = SparkManager.getMainWindow();
 
         if (!mainWindow.isFocused()) {
-            // Set to new tab.
+            // Set to a new tab.
             if (Spark.isWindows()) {
                 mainWindow.addWindowListener(new WindowAdapter() {
+                    @Override
                     public void windowActivated(WindowEvent e) {
                         SparkManager.getNativeManager().stopFlashing(mainWindow);
                     }
                 });
 
-
+                // Flash the window or restore it from a minimized state if unfocused and visible
                 if (!mainWindow.isFocused() && mainWindow.isVisible()) {
                     SparkManager.getNativeManager().flashWindow(mainWindow);
                 }
@@ -479,6 +460,7 @@ public class Workpane {
         ChatQueue chatQueue;
         private SparkToaster toasterManager;
 
+        @Override
         public void offerReceived(final Offer offer) {
             SwingUtilities.invokeLater(() -> handleOffer(offer));
         }
@@ -489,14 +471,11 @@ public class Workpane {
                 return;
             }
 
-
             chatQueue = new ChatQueue();
             chatQueue.offerRecieved(offer);
 
             toasterManager = new SparkToaster();
             toasterManager.setHidable(false);
-
-
             toasterManager.setToasterHeight((int)chatQueue.getPreferredSize().getHeight() + 40);
 
             int width = (int)chatQueue.getPreferredSize().getWidth() + 40;
@@ -505,7 +484,6 @@ public class Workpane {
             }
             toasterManager.setToasterWidth(width);
             toasterManager.setDisplayTime(500000000);
-
 
             final JScrollPane pane = new JScrollPane(chatQueue, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
             pane.setBorder(BorderFactory.createEmptyBorder());
@@ -545,19 +523,18 @@ public class Workpane {
             SparkManager.getSoundManager().playClip(CHAT_REQUEST);
         }
 
+        @Override
         public void offerRevoked(final RevokedOffer revokedOffer) {
             SwingUtilities.invokeLater(() -> {
                 SparkManager.getNativeManager().stopFlashing(SparkManager.getMainWindow());
                 if (toasterManager != null) {
                     toasterManager.close();
                 }
-
                 // If the ChatQueue is visible, dispose of it.
                 if (chatQueue != null) {
                     chatQueue.setVisible(false);
                     return;
                 }
-
                 UserInvitationPane pane = invitations.get(revokedOffer.getSessionID());
                 if (pane != null) {
                     pane.dispose();
@@ -566,7 +543,6 @@ public class Workpane {
             });
         }
     }
-
 
     private class InviteListener implements RoomInvitationListener {
         // Add own invitation listener
@@ -600,9 +576,8 @@ public class Workpane {
 
                 SparkManager.getChatManager().notifySparkTabHandlers(groupChatRoom);
 
-                // Change subject line.
+                // Change the subject line.
                 groupChatRoom.setRoomLabel("<html><body><b>Fastpath Conversation with " + roomName + "</b></body></html>");
-
                 return true;
             }
             else if (message != null) {
@@ -655,11 +630,13 @@ public class Workpane {
         }
 
         invitationPane.setAcceptListener(new UserInvitationPane.AcceptListener() {
+            @Override
             public void yesOption() {
                 // Remove
                 invitations.remove(offer.getSessionID());
             }
 
+            @Override
             public void noOption() {
                 invitations.remove(offer.getSessionID());
             }
@@ -671,7 +648,6 @@ public class Workpane {
 
     public Properties getWorkgroupProperties() {
         Localpart workgroupName = FastpathPlugin.getWorkgroup().getWorkgroupJID().getLocalpartOrThrow();
-
         File workgroupDir = new File(Spark.getSparkUserHome(), "workgroups/" + workgroupName);
         workgroupDir.mkdirs();
 
@@ -688,9 +664,7 @@ public class Workpane {
 
     public void saveProperties(Properties props) {
         Localpart workgroupName = FastpathPlugin.getWorkgroup().getWorkgroupJID().getLocalpartOrThrow();
-
         File propertiesFile = new File(new File(Spark.getSparkUserHome(), "workgroups/" + workgroupName), "workgroup.properties");
-
         try {
             props.store(new FileOutputStream(propertiesFile), "Workgroup Properties");
         }
@@ -727,8 +701,8 @@ public class Workpane {
         }
     }
 
-
     private static class PresenceChangeListener implements PresenceListener {
+        @Override
         public void presenceChanged(Presence presence) {
             String status = presence.getStatus();
             if (status == null) {
@@ -757,6 +731,4 @@ public class Workpane {
     public RoomState getRoomState(ChatRoom chatRoom) {
         return fastpathRooms.get(chatRoom);
     }
-
-
 }
