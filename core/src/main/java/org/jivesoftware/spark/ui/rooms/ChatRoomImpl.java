@@ -249,7 +249,14 @@ public class ChatRoomImpl extends ChatRoom {
 
     @Override
 	public void sendMessage(String text) {
-        MessageBuilder messageBuilder = StanzaBuilder.buildMessage();
+        // Remove control characters
+        text = text.replaceAll("[\\u0001-\\u0008\\u000B-\\u001F]", "");
+        // If the body is empty, just return and do nothing
+        if (!ModelUtil.hasLength(text)) {
+            return;
+        }
+        MessageBuilder messageBuilder = StanzaBuilder.buildMessage()
+            .setBody(text);
 
         if (threadID == null) {
             threadID = StringUtils.randomString(6);
@@ -260,16 +267,6 @@ public class ChatRoomImpl extends ChatRoom {
         {
             // XEP-0045: 7.5 Sending a Private Message
             messageBuilder.addExtension( new MUCUser() );
-        }
-
-        // Set the body of the message using typedMessage and remove control
-        // characters
-        text = text.replaceAll("[\\u0001-\\u0008\\u000B-\\u001F]", "");
-        messageBuilder.setBody(text);
-        
-        // IF there is no body, just return and do nothing
-        if (!ModelUtil.hasLength(text)) {
-            return;
         }
 
         // Fire Message Filters
@@ -534,22 +531,24 @@ public class ChatRoomImpl extends ChatRoom {
                         {
                             if ( carbon.getDirection() == CarbonExtension.Direction.received )
                             {
-                                if ((forwardedStanza.getFrom().equals(getJid()) && privateChat) || //private chat from MUC, match the full JID
-                                    (forwardedStanza.getFrom().asBareJid().equals(getJid().asBareJid()) && !privateChat)) //person to person chat, match bare jids
+                                Jid forwardedStanzaJid = forwardedStanza.getFrom();
+                                if ((privateChat && forwardedStanzaJid.equals(getJid())) || //private chat from MUC, match the full JID
+                                    (!privateChat && forwardedStanzaJid.asBareJid().equals(getJid().asBareJid()))) // person-to-person chat, match bare jids
                                 {
                                     // This is a stanza that we received from someone on one of our other clients.
-                                    setParticipantJID(forwardedStanza.getFrom());
+                                    setParticipantJID(forwardedStanzaJid);
                                     insertMessage( forwardedStanza );
                                 }
 
                             }
                             else
                             {
-                                if ((forwardedStanza.getTo().equals(getJid()) && privateChat) || //private chat from MUC, match full JID
-                                    (forwardedStanza.getTo().asBareJid().equals(getJid().asBareJid()) && !privateChat)) //person to person chat, match bare jids
+                                Jid forwardedStanzaJid = forwardedStanza.getTo();
+                                if ((privateChat && forwardedStanzaJid.equals(getJid())) || //private chat from MUC, match full JID
+                                    (!privateChat && forwardedStanzaJid.asBareJid().equals(getJid().asBareJid()))) // person-to-person chat, match bare jids
                                 {
                                     // This is a stanza that one of our own clients sent.
-                                    setParticipantJID(forwardedStanza.getTo());
+                                    setParticipantJID(forwardedStanzaJid);
                                     displaySendMessage( forwardedStanza );
                                 }
 
@@ -597,7 +596,6 @@ public class ChatRoomImpl extends ChatRoom {
 
     @Override
 	public void insertMessage(Message message) {
-        // Debug info
         super.insertMessage(message);
         MessageEvent messageEvent = message.getExtension(MessageEvent.class);
         if (messageEvent != null) {
