@@ -77,28 +77,6 @@ public class SearchService extends JPanel {
             }
         }
 
-        // Add an icon that indicates if connection is secure.
-        final String tooltip;
-        final ImageIcon icon;
-        if (SparkManager.getConnection().isSecureConnection()) {
-            icon = SparkRes.getImageIcon(SparkRes.LOCK_16x16);
-            tooltip = Res.getString("message.spark.secure");
-        } else {
-            icon = SparkRes.getImageIcon(SparkRes.LOCK_UNLOCK_16x16);
-            tooltip = Res.getString("message.spark.insecure");
-        }
-
-        final JLabel lockLabel = new JLabel();
-        lockLabel.setHorizontalTextPosition(JLabel.LEFT);
-        lockLabel.setIcon(icon);
-        lockLabel.setToolTipText(tooltip);
-
-        if (Spark.isMac()) {
-            add(lockLabel, new GridBagConstraints(2, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 0, 5, 15), 0, 0));
-        } else {
-            add(lockLabel, new GridBagConstraints(2, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 0, 5, 5), 0, 0));
-        }
-
         findField.setToolTipText(Res.getString("message.search.for.contacts"));
 
         findField.getTextComponent().addKeyListener(new KeyListener() {
