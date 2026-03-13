@@ -15,6 +15,7 @@
  */
 package org.jivesoftware.sparkimpl.plugin.viewer;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
@@ -218,10 +219,10 @@ public class PluginViewer extends JPanel implements Plugin
             // pluginJAR.delete();
             // mainpluginJar.delete();
 
-            List<String> deact = _prefs.getDeactivatedPlugins();
+            List<String> deact = new ArrayList<>(_prefs.getDeactivatedPlugins());
             deact.add( plugin.getName() );
-            _prefs.setDeactivatedPlugins( deact );
             _deactivatedPlugins = deact;
+            _prefs.setDeactivatedPlugins( _deactivatedPlugins );
 
             final SparkPlugUI ui = new SparkPlugUI( plugin );
             deactivatedPanel.add( ui );
@@ -362,6 +363,10 @@ public class PluginViewer extends JPanel implements Plugin
 
     private void downloadPlugin( final PublicPlugin plugin )
     {
+        if (StringUtils.isEmpty(plugin.getDownloadURL())) {
+            Log.warning( "Unable to download plugin " + plugin.getName() + " due to missing download URL.");
+            return;
+        }
         final HttpGet request = new HttpGet(plugin.getDownloadURL());
         try (final CloseableHttpClient httpClient =
                  HttpClients.custom().useSystemProperties()
@@ -679,7 +684,6 @@ public class PluginViewer extends JPanel implements Plugin
             @Override
             public void mouseClicked( MouseEvent e )
             {
-
                 for ( Component c : deactivatedPanel.getComponents() )
                 {
                     if ( c instanceof SparkPlugUI )
@@ -691,14 +695,18 @@ public class PluginViewer extends JPanel implements Plugin
             }
         } );
 
-        ui.getInstallButton().addActionListener( e ->
-                                                 {
-                                                     deactivatedPanel.remove( ui );
-                                                     _deactivatedPlugins.remove( ui.getPlugin().getName() );
-                                                     _prefs.setDeactivatedPlugins( _deactivatedPlugins );
-                                                     deactivatedPanel.repaint();
-                                                     deactivatedPanel.revalidate();
-                                                 } );
+        ui.getInstallButton().addActionListener(e -> {
+            deactivatedPanel.remove(ui);
+
+            List<String> deact = new ArrayList<>(_deactivatedPlugins);
+            deact.remove(ui.getPlugin().getName());
+            _deactivatedPlugins = deact;
+            _prefs.setDeactivatedPlugins(_deactivatedPlugins);
+
+            deactivatedPanel.repaint();
+            deactivatedPanel.revalidate();
+            JOptionPane.showMessageDialog( this, Res.getString( "message.restart.spark.changes" ), Res.getString( "title.reminder" ), JOptionPane.INFORMATION_MESSAGE );
+        });
     }
 
     @Override
