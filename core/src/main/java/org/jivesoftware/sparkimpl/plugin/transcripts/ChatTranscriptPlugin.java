@@ -203,18 +203,18 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
         }
 
         final List<Message> transcripts = room.getTranscripts();
-        ChatTranscript transcript = new ChatTranscript();
         int count = 0;
-        int i = 0;
-        if (lastMessage.get(jid) != null) {
-            count = transcripts.indexOf(lastMessage.get(jid)) + 1;
+        Message lastKnownMessage = lastMessage.get(jid);
+        if (lastKnownMessage != null) {
+            count = transcripts.indexOf(lastKnownMessage) + 1;
         }
-        for (Message message : transcripts) {
-            if (i < count) {
-                i++;
-                continue;
-            }
-            lastMessage.put(jid, message);
+        if (count == transcripts.size()) {
+            return;
+        }
+        // Build transcript from messages after the last known message
+        ChatTranscript transcript = new ChatTranscript();
+        for (int j = count; j < transcripts.size(); j++) {
+            Message message = transcripts.get(j);
             HistoryMessage history = new HistoryMessage();
             history.setTo(message.getTo());
             history.setFrom(message.getFrom());
@@ -227,6 +227,8 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
             history.setDate(date == null ? new Date() : date);
             transcript.addHistoryMessage(history);
         }
+        Message newLastKnownMessage = transcripts.get(transcripts.size() - 1);
+        lastMessage.put(jid, newLastKnownMessage);
         ChatTranscripts.appendToTranscript(jid, transcript);
     }
 
