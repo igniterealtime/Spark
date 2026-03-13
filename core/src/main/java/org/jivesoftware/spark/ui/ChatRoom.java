@@ -28,6 +28,7 @@ import org.jivesoftware.smack.roster.RosterEntry;
 import org.jivesoftware.smackx.chatstates.ChatState;
 import org.jivesoftware.smackx.jiveproperties.packet.JivePropertiesExtension;
 import org.jivesoftware.spark.ChatAreaSendField;
+import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.BackgroundPanel;
 import org.jivesoftware.spark.component.RolloverButton;
@@ -520,8 +521,9 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
      * a message from a customer or delegate itself as an agent handler.
      *
      * @param message - the message received.
+     * @return message modified by {@link ChatManager#filterIncomingMessage}
      */
-    public void insertMessage(Message message) {
+    public Message insertMessage(Message message) {
         Objects.requireNonNull(message);
         // Fire Message
         MessageBuilder messageBuilder = MessageBuilder.buildMessageFrom(message, message.getStanzaId());
@@ -532,6 +534,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         addToTranscript(message, true);
         fireMessageReceived(message);
         SparkManager.getWorkspace().getTranscriptPlugin().persistChatRoom(this);
+        return message;
     }
 
     /**
