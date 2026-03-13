@@ -23,7 +23,6 @@ import javax.swing.*;
 import javax.swing.text.*;
 import java.awt.*;
 import java.time.ZonedDateTime;
-import java.util.List;
 import java.util.*;
 
 import static javax.swing.text.StyleConstants.Foreground;
@@ -43,7 +42,7 @@ import static org.jivesoftware.spark.ui.preview.NetworkAddressPreview.insertAddr
  */
 public class MessageEntry extends TimeStampedEntry
 {
-    public static final List<Character> DIRECTIVE_CHARS = Arrays.asList( '*', '_', '~', '`' );
+    public static final String DIRECTIVE_CHARS = "*_~`";
     /**
      * Default background color (white/transparent)
      */
@@ -116,7 +115,8 @@ public class MessageEntry extends TimeStampedEntry
               
                 for ( final String line : block.lines )
                 {
-                    doc.insertString(doc.getLength(), line, line.trim().startsWith( "```" ) ? directiveStyle : style );
+                    boolean codeBlockLine = line.trim().startsWith("```");
+                    doc.insertString(doc.getLength(), line, codeBlockLine ? directiveStyle : style );
                 }
 
                 doc.insertString( doc.getLength(), "\n", messageStyle );
@@ -126,6 +126,9 @@ public class MessageEntry extends TimeStampedEntry
                 // for now, we'll not visually differentiate between quotes and non-quotes.
                 for ( final String line : block.lines)
                 {
+                    if (line.isEmpty()) {
+                        continue;
+                    }
                     int to = 0;
                     do
                     {
@@ -141,18 +144,20 @@ public class MessageEntry extends TimeStampedEntry
                         }
 
                         // Handle directives
-                        if (DIRECTIVE_CHARS.contains(line.charAt(from))) {
-                            char directive = line.charAt(from);
-                            to = line.indexOf(directive, from + 1);
+                        char charAtFrom = line.charAt(from);
+                        if (DIRECTIVE_CHARS.indexOf(charAtFrom) != -1) {
+                            char directive = charAtFrom;
+                            to = line.indexOf(directive, from + 1); // directive closing
                             if (to != -1 && !Character.isWhitespace(line.charAt(to - 1)) && (to - from) > 1) {
-                                insertFragment(chatArea, line.substring(from + 1, to++), applyMessageStyle(directive, messageStyle));
+                                String fragment = line.substring(from + 1, to++);
+                                insertFragment(chatArea, fragment, applyMessageStyle(directive, messageStyle));
                                 continue;
                             }
                         }
 
                         // Handle quoted text ("", not >)
-                        if (line.charAt(from) == '\"') {
-                            to = line.indexOf('\"', from + 1);
+                        if (charAtFrom == '\"') {
+                            to = line.indexOf('\"', from + 1); // quote closing
                             if (to != -1) {
                                 doc.insertString(doc.getLength(), "\"", messageStyle);
                                 insertFragment(chatArea, line.substring(from + 1, to++), messageStyle);
