@@ -19,7 +19,6 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.HashSet;
@@ -37,7 +36,6 @@ import org.jivesoftware.smack.filter.StanzaFilter;
 import org.jivesoftware.smack.filter.StanzaTypeFilter;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Message.Type;
-import org.jivesoftware.smack.packet.MessageBuilder;
 import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.packet.StanzaBuilder;
 import org.jivesoftware.smackx.delay.packet.DelayInformation;
@@ -320,7 +318,7 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
 
         showToaster(message, nickname, broadcastType);
 
-        SparkManager.getChatManager().fireGlobalMessageReceievedListeners(chatRoom, message);
+        SparkManager.getChatManager().fireGlobalMessageReceivedListeners(chatRoom, message);
 
         if (message.hasExtension(DelayInformation.class)) {
             SparkManager.getSoundManager().playClip(MSG_INCOMING);

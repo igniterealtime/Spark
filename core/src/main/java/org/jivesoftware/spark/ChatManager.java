@@ -27,7 +27,6 @@ import org.jivesoftware.smackx.chatstates.ChatStateListener;
 import org.jivesoftware.smackx.chatstates.ChatStateManager;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.muc.MultiUserChatManager;
-import org.jivesoftware.smackx.xdata.packet.DataForm;
 import org.jivesoftware.spark.component.tabbedPane.SparkTab;
 import org.jivesoftware.spark.decorator.DefaultTabHandler;
 import org.jivesoftware.spark.ui.*;
@@ -50,8 +49,6 @@ import org.jxmpp.jid.parts.Resourcepart;
 
 import javax.swing.*;
 import java.awt.*;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -365,7 +362,7 @@ public class ChatManager {
      * @param chatRoom the <code>ChatRoom</code> where the message was sent to.
      * @param message  the <code>Message</code>
      */
-    public void fireGlobalMessageReceievedListeners( ChatRoom chatRoom, Message message )
+    public void fireGlobalMessageReceivedListeners(ChatRoom chatRoom, Message message )
     {
         for ( GlobalMessageListener listener : globalMessageListeners )
         {

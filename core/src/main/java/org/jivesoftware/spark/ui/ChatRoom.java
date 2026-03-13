@@ -527,7 +527,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         MessageBuilder messageBuilder = MessageBuilder.buildMessageFrom(message, message.getStanzaId());
         SparkManager.getChatManager().filterIncomingMessage(this, messageBuilder);
         message = messageBuilder.build();
-        SparkManager.getChatManager().fireGlobalMessageReceievedListeners(this, message);
+        SparkManager.getChatManager().fireGlobalMessageReceivedListeners(this, message);
 
         addToTranscript(message, true);
         fireMessageReceived(message);
