@@ -1069,8 +1069,8 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
             } else {
                 toaster.setTitle(nickname);
                 if (size > 0) {
-                    Message message = room.getTranscripts().get(size - 1);
-                    toaster.showToaster(room.getTabIcon(), message.getBody());
+                    Message lastChatMessage = room.getTranscripts().get(size - 1);
+                    toaster.showToaster(room.getTabIcon(), lastChatMessage.getBody());
                 }
             }
         }
@@ -1083,8 +1083,6 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
      * this is a custom message customMsgText if any custom message should
      * appear in the popup customMsgTitle whether or not the toaster should have
      * any popup
-     *
-     *
      */
     private void groupChatMessageCheck(ChatRoom chatRoom, boolean customMsg, String customMsgText, String customMsgTitle) {
         // predefine if this is a group chat message or not

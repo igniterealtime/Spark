@@ -918,14 +918,13 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
 
     @Override
     public void insertUpdate(DocumentEvent e) {
-        // Meant to be overriden
+        // Meant to be overridden
         checkForText(e);
-
         setChatState(ChatState.composing);
     }
 
     /**
-     * Override to save transcript in preferred room style.
+     * Override to save the transcript in the preferred room style.
      */
     public void saveTranscript() {
         getTranscriptWindow().saveTranscript(getTabTitle() + ".html", getTranscripts(), null);
