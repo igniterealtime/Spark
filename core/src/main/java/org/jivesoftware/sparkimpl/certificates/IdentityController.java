@@ -19,6 +19,7 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.security.spec.InvalidKeySpecException;
 import java.util.Date;
+import java.util.Objects;
 
 import javax.naming.InvalidNameException;
 import javax.net.ssl.KeyManagerFactory;
@@ -72,9 +73,7 @@ public class IdentityController extends CertManager {
     public IdentityController(LocalPreferences localPreferences) {
         Security.addProvider(new BouncyCastleProvider());
         loadKeyStores();
-        if (localPreferences == null) {
-            throw new IllegalArgumentException("localPreferences cannot be null");
-        }
+        Objects.requireNonNull(localPreferences);
         this.localPreferences = localPreferences;
         createTableModel();
     }

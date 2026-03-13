@@ -4,6 +4,7 @@ import org.jivesoftware.resource.Res;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Objects;
 
 import static java.awt.GridBagConstraints.LINE_END;
 import static java.awt.GridBagConstraints.LINE_START;
@@ -14,9 +15,7 @@ public class UnrecognizedServerCertificatePanel extends JPanel {
     private final CertificateModel certModel;
 
     public UnrecognizedServerCertificatePanel( CertificateModel certModel) {
-        if (certModel == null) {
-            throw new IllegalArgumentException("Certificate Model cannot be null");
-        }
+        Objects.requireNonNull(certModel);
         this.certModel = certModel;
 
         setLayout(new GridBagLayout());

@@ -385,9 +385,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
      * @param state the chat state (never null).
      */
     public final void setChatState(ChatState state) {
-        if (state == null) {
-            throw new IllegalArgumentException("Argument 'state' cannot be null.");
-        }
+        Objects.requireNonNull(state);
 
         // Only sent out a chat state notification when it is different from the last one that was transmitted...
         final boolean isDifferentState = lastNotificationSent != state;
