@@ -566,11 +566,12 @@ public class GroupChatRoom extends ChatRoom {
     }
 
     @Override
-    public void insertMessage(Message message) {
-        super.insertMessage(message);
+    public Message insertMessage(Message message) {
+        message = super.insertMessage(message);
         final Resourcepart from = message.getFrom().getResourceOrThrow();
         // Add to the UI component that shows the chat.
         getTranscriptWindow().insertMessage(from, message, getColor(from), getMessageBackground(from, message.getBody()));
+        return message;
     }
 
     /**

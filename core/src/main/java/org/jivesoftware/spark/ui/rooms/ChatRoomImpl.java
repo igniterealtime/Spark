@@ -595,8 +595,8 @@ public class ChatRoomImpl extends ChatRoom {
     }
 
     @Override
-	public void insertMessage(Message message) {
-        super.insertMessage(message);
+	public Message insertMessage(Message message) {
+        message = super.insertMessage(message);
         MessageEvent messageEvent = message.getExtension(MessageEvent.class);
         if (messageEvent != null) {
             checkEvents(message.getFrom(), message.getStanzaId(), messageEvent);
@@ -606,6 +606,7 @@ public class ChatRoomImpl extends ChatRoom {
 
         // Set the participant jid to their full JID.
         setParticipantJID(message.getFrom());
+        return message;
     }
 
     private void checkEvents(Jid from, String packetID, MessageEvent messageEvent) {
