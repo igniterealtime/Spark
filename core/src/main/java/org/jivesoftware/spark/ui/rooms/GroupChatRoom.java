@@ -345,8 +345,8 @@ public class GroupChatRoom extends ChatRoom {
     @Override
     public void sendMessage(MessageBuilder messageBuilder) {
         messageBuilder.ofType(Message.Type.groupchat);
+        messageBuilder.to(chat.getRoom());
         Message message = messageBuilder.build();
-        message.setTo(chat.getRoom());
         try {
             MessageEventManager.addNotificationsRequests(message, true, true, true, true);
             addPacketID(message.getStanzaId());
@@ -355,7 +355,7 @@ public class GroupChatRoom extends ChatRoom {
             SparkManager.getChatManager().fireGlobalMessageSentListeners(this, message);
 
             chat.sendMessage(messageBuilder);
-        } catch (SmackException | InterruptedException ex) {
+        } catch (Exception ex) {
             Log.error("Unable to send message in conference chat.", ex);
         }
 
@@ -533,9 +533,7 @@ public class GroupChatRoom extends ChatRoom {
                         return;
                     }
                     // Update transcript
-                    super.insertMessage(message);
-                    // Add to the UI component that shows the chat.
-                    getTranscriptWindow().insertMessage(from, message, getColor(from), getMessageBackground(from, message.getBody()));
+                    insertMessage(message);
                 }
             }
         } else if (message.getType() == Message.Type.chat) {
@@ -565,6 +563,14 @@ public class GroupChatRoom extends ChatRoom {
         }
         // Scroll To bottom every time a message is received
         scrollToBottom();
+    }
+
+    @Override
+    public void insertMessage(Message message) {
+        super.insertMessage(message);
+        final Resourcepart from = message.getFrom().getResourceOrThrow();
+        // Add to the UI component that shows the chat.
+        getTranscriptWindow().insertMessage(from, message, getColor(from), getMessageBackground(from, message.getBody()));
     }
 
     /**
@@ -826,14 +832,13 @@ public class GroupChatRoom extends ChatRoom {
 
     @Override
     public void sendMessage(String text) {
-        // IF there is no body, just return and do nothing
+        // Remove control characters
+        text = text.replaceAll("[\\u0001-\\u0008\\u000B-\\u001F]", "");
+        // If the body is empty, just return and do nothing
         if (!ModelUtil.hasLength(text)) {
             return;
         }
 
-        // Set the body of the message using typedMessage and remove control characters
-        text = text.replaceAll("[\\u0001-\\u0008\\u000B-\\u001F]", "");
-        // Set the body of the message using typedMessage and remove control characters
         MessageBuilder messageBuilder = StanzaBuilder.buildMessage()
             .setBody(text);
 
