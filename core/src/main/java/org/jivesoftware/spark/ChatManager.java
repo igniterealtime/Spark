@@ -57,8 +57,8 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
- * Handles the Chat Management of each individual <code>Workspace</code>. The ChatManager is responsible
- * for creation and removal of chat rooms, transcripts, and transfers and room invitations.
+ * Handles the Chat Management of each individual <code>Workspace</code>.
+ * The ChatManager is responsible for the creation and removal of chat rooms, transcripts, transfers, and room invitations.
  */
 public class ChatManager {
 
@@ -93,21 +93,14 @@ public class ChatManager {
     private final CopyOnWriteArrayList<ChatMessageHandler> chatMessageHandlers = new CopyOnWriteArrayList<>();
     
     /**
-     * The listener instance that we use to track chat states according to
-     * XEP-0085;
+     * The listener instance that we use to track chat states according to XEP-0085
      */
     private final SmackChatStateListener smackChatStateListener = new SmackChatStateListener();
 
     /**
-     * Returns the singleton instance of <CODE>ChatManager</CODE>,
-     * creating it if necessary.
-     * <p/>
-     *
-     * @return the singleton instance of <Code>ChatManager</CODE>
+     * Returns the singleton instance of <CODE>ChatManager</CODE>.
      */
     public static ChatManager getInstance() {
-        // Synchronize on LOCK to ensure that we don't end up creating
-        // two singletons.
         synchronized (LOCK) {
             if (null == singleton) {
                 ChatManager controller = new ChatManager();
@@ -124,7 +117,6 @@ public class ChatManager {
      */
     private ChatManager() {
         chatContainer = UIComponentRegistry.createChatContainer();        
-
         // Add Default Chat Room Decorator
         addSparkTabHandler(new DefaultTabHandler());
         // Add a Message Handler
@@ -134,8 +126,7 @@ public class ChatManager {
 
 
     /**
-     * Used to listen for rooms opening, closing or being
-     * activated( already opened, but tabbed to )
+     * Used to listen for rooms opening, closing or being activated (already opened, but tabbed to)
      *
      * @param listener the ChatRoomListener to add
      */
@@ -144,9 +135,7 @@ public class ChatManager {
     }
 
     /**
-     * Simplace facade for chatroom. Removes a listener
-     *
-     * @param listener the ChatRoomListener to remove
+     * Removes a listener
      */
     public void removeChatRoomListener(ChatRoomListener listener) {
         getChatContainer().removeChatRoomListener(listener);
@@ -155,8 +144,6 @@ public class ChatManager {
 
     /**
      * Removes the personal 1 to 1 chat from the ChatFrame.
-     *
-     * @param chatRoom the ChatRoom to remove.
      */
     public void removeChat(ChatRoom chatRoom) {
         chatContainer.closeTab(chatRoom);
@@ -165,8 +152,6 @@ public class ChatManager {
 
     /**
      * Returns all ChatRooms currently active.
-     *
-     * @return all ChatRooms.
      */
     public ChatContainer getChatContainer() {
         return chatContainer;
@@ -180,10 +165,10 @@ public class ChatManager {
 	}
 
     /**
-     * Returns the MultiUserChat associated with the specified roomname.
+     * Returns the MultiUserChat associated with the specified roomName.
      *
      * @param roomName the name of the chat room.
-     * @return the MultiUserChat found for that room.
+     * @return the MultiUserChat found for the roomName.
      * @throws ChatNotFoundException thrown if no ChatRoom is found.
      */
     public GroupChatRoom getGroupChat(String roomName) throws ChatNotFoundException {
@@ -194,12 +179,9 @@ public class ChatManager {
                     return groupChat;
                 }
             }
-
         }
-
         throw new ChatNotFoundException("Could not locate Group Chat Room - " + roomName);
     }
-
 
     /**
      * Creates and/or opens a chat room with the specified user.
@@ -219,7 +201,6 @@ public class ChatManager {
             chatRoom = UIComponentRegistry.createChatRoom(jid, nickname, title);
             getChatContainer().addChatRoom(chatRoom);
         }
-
         return chatRoom;
     }
 
@@ -250,8 +231,6 @@ public class ChatManager {
                 Resourcepart nickname = Resourcepart.EMPTY;
                 chatRoom = UIComponentRegistry.createChatRoom(jid, nickname, jid);
             }
-
-
             getChatContainer().addChatRoom(chatRoom);
         }
 
@@ -263,7 +242,7 @@ public class ChatManager {
      *
      * @param roomName    the name of the room.
      * @param serviceName the service name to use (ex.conference.jivesoftware.com)
-     * @return the new ChatRoom created. If an error occured, null will be returned.
+     * @return the new ChatRoom created. If an error occurred, null will be returned.
      */
     public ChatRoom createConferenceRoom(Localpart roomName, DomainBareJid serviceName) {
         EntityBareJid roomAddress = JidCreate.entityBareFrom(roomName, serviceName);
@@ -309,7 +288,6 @@ public class ChatManager {
                 }
 
                 ChatContainer chatRooms = chatManager.getChatContainer();
-
                 try {
                     chatRoom = chatRooms.getChatRoom(jid);
                 }
@@ -360,8 +338,6 @@ public class ChatManager {
 
     /**
      * Removes a <code>MessageFilter</code>.
-     *
-     * @param filter the MessageFilter.
      */
     public void removeMessageFilter(MessageFilter filter) {
         messageFilters.remove(filter);
@@ -369,8 +345,6 @@ public class ChatManager {
 
     /**
      * Adds a new <code>GlobalMessageListener</code>.
-     *
-     * @param listener the listener.
      */
     public void addGlobalMessageListener(GlobalMessageListener listener) {
         globalMessageListeners.addIfAbsent(listener);
@@ -481,8 +455,6 @@ public class ChatManager {
 
     /**
      * Adds a <code>RoomInvitationListener</code>. A RoomInvitationListener is
-     *
-     * @param listener the listener.
      */
     public void addInvitationListener(RoomInvitationListener listener) {
         invitationListeners.addIfAbsent(listener);
@@ -490,8 +462,6 @@ public class ChatManager {
 
     /**
      * Removes a <code>RoomInvitationListener</code>.
-     *
-     * @param listener the listener to remove.
      */
     public void removeInvitationListener(RoomInvitationListener listener) {
         invitationListeners.remove(listener);
@@ -499,8 +469,6 @@ public class ChatManager {
 
     /**
      * Returns all registered <code>RoomInvitationListener</code>s.
-     *
-     * @return the Collection of listeners.
      */
     public Collection<RoomInvitationListener> getInvitationListeners() {
         return Collections.unmodifiableCollection(invitationListeners);
@@ -524,14 +492,11 @@ public class ChatManager {
                 Log.error(e);
             }
         }
-
         return conferenceService;
     }
 
     /**
      * Adds a new <code>ContactItemHandler</code>.
-     *
-     * @param handler the ContactItemHandler to add.
      */
     public void addContactItemHandler(ContactItemHandler handler) {
         contactItemHandlers.addIfAbsent(handler);
@@ -547,8 +512,6 @@ public class ChatManager {
 
     /**
      * Removes a <code>ContactItemHandler</code>.
-     *
-     * @param handler the ContactItemHandler to remove.
      */
     public void removeContactItemHandler(ContactItemHandler handler) {
         contactItemHandlers.remove(handler);
@@ -592,14 +555,13 @@ public class ChatManager {
                 Log.error( "A ContactItemHandler ('" + handler + "') threw an exception while processing a presence change (ContactItem: '" + item + "', presence: [" + presence + "])", e );
             }
         }
-
         return false;
     }
 
     /**
      * Notifies all <code>ContactItemHandlers</code> that a <code>ContactItem</code> was double-clicked.
      *
-     * @param item the ContactItem that was double clicked.
+     * @param item the ContactItem that was double-clicked.
      * @return true if the event was intercepted and handled.
      */
     public boolean fireContactItemDoubleClicked( ContactItem item )
@@ -618,7 +580,6 @@ public class ChatManager {
                 Log.error( "A ContactItemHandler ('" + handler + "') threw an exception while processing a double click on ContactItem: '" + item + "'.", e );
             }
         }
-
         return false;
     }
 
@@ -626,7 +587,6 @@ public class ChatManager {
      * Returns the icon from a <code>ContactItemHandler</code>.
      *
      * @param jid the jid.
-     * @return the icon of the handler.
      */
     public Icon getIconForContactHandler( String jid )
     {
@@ -654,7 +614,6 @@ public class ChatManager {
      * Returns the icon to use in the tab.
      *
      * @param presence the presence.
-     * @return the icon.
      */
     public Icon getTabIconForContactHandler( Presence presence )
     {
@@ -673,7 +632,6 @@ public class ChatManager {
                 Log.error( "A ContactItemHandler ('" + handler + "') threw an exception while processing a tab icon request for: '" + presence + "'.", e );
             }
         }
-
         return null;
     }
 
@@ -741,7 +699,6 @@ public class ChatManager {
      * Returns true if the <code>ChatRoom</code> state is in typing mode.
      *
      * @param chatRoom the ChatRoom to check.
-     * @return true if in typing mode.
      */
     public boolean containsTypingNotification(ChatRoom chatRoom) {
         return typingNotificationList.contains(chatRoom);
@@ -752,10 +709,9 @@ public class ChatManager {
      * not been active for a specific amount of time.
      *
      * @param chatRoom the ChatRoom.
-     * @return true if the room is stale.
      */
     public boolean isStaleRoom(ChatRoom chatRoom) {
-        // Check if room is stale
+        // Check if the room is stale
         return chatContainer.getStaleChatRooms().contains(chatRoom);
     }
 
@@ -779,8 +735,6 @@ public class ChatManager {
 
     /**
      * Returns the list of <code>TranscriptWindowInterceptors</code>.
-     *
-     * @return the list of interceptors.
      */
     public Collection<TranscriptWindowInterceptor> getTranscriptWindowInterceptors() {
         return interceptors;
@@ -848,8 +802,7 @@ public class ChatManager {
     }
 
     /**
-     * The listener that we use to track chat state notifications according
-     * to XEP-0085.
+     * The listener that we use to track chat state notifications according to XEP-0085.
      */
     private class SmackChatStateListener implements ChatStateListener {
         /**
@@ -866,7 +819,6 @@ public class ChatManager {
             } else {
             	cancelledNotification(participant, state);
             }
-            
         }
     }
 }
