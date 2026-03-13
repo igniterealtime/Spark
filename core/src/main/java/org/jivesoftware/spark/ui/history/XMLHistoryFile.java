@@ -2,11 +2,7 @@ package org.jivesoftware.spark.ui.history;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -32,10 +28,7 @@ public class XMLHistoryFile extends AbstractHistoryFile {
 	 * @param fileStream
 	 */
 	public XMLHistoryFile(InputStream fileStream) {
-
-		if (fileStream == null)
-			throw new IllegalArgumentException("History Stream cannot be null");
-
+        Objects.requireNonNull(fileStream);
 		roomFileStream = fileStream;
 	}
 
@@ -43,8 +36,7 @@ public class XMLHistoryFile extends AbstractHistoryFile {
 	protected long getSize() {
 		try {
 			return roomFileStream.available() / SIZE_MULTIPLICATOR;
-		} catch (IOException e) {
-			e.printStackTrace();
+		} catch (IOException ignored) {
 		}
 		return 0;
 	}

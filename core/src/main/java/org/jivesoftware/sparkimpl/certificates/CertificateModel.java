@@ -62,9 +62,7 @@ public class CertificateModel {
 	}
 
 	public CertificateModel(X509Certificate certificate) {
-	    if(certificate == null){
-	        throw new IllegalArgumentException("Certificate cannot be null");
-	    }
+        Objects.requireNonNull(certificate);
 		this.certificate = certificate;
 		this.version = certificate.getVersion();
 		this.serialNumber = certificate.getSerialNumber().toString();

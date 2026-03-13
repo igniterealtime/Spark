@@ -4,6 +4,7 @@ import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Objects;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -47,8 +48,7 @@ public class HistoryMessage {
 	}
 
 	public HistoryMessage(HistoryMessage orig) {
-		if (orig == null)
-			throw new IllegalArgumentException("Original message cannot be null");
+        Objects.requireNonNull(orig);
 		setTo(orig.getTo());
 		setFrom(orig.getFrom());
 		setBody(orig.getBody());

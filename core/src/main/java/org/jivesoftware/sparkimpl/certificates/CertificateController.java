@@ -16,6 +16,7 @@ import java.security.cert.X509Certificate;
 import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 import javax.naming.InvalidNameException;
 import javax.swing.JOptionPane;
@@ -108,9 +109,7 @@ public class CertificateController extends CertManager {
 
 
     public CertificateController(LocalPreferences localPreferences) {
-        if (localPreferences == null) {
-            throw new IllegalArgumentException("localPreferences cannot be null");
-        }
+        Objects.requireNonNull(localPreferences);
         this.localPreferences = localPreferences;
     }
 
@@ -471,9 +470,7 @@ public class CertificateController extends CertManager {
     }
 
     public void addEntryToKeyStore(X509Certificate cert, boolean exempted) throws HeadlessException, InvalidNameException, KeyStoreException {
-        if (cert == null) {
-            throw new IllegalArgumentException("Cert cannot be null");
-        }
+        Objects.requireNonNull(cert);
         addEntryToKeyStoreImpl(new CertificateModel(cert), exempted);
     }
 
@@ -483,9 +480,7 @@ public class CertificateController extends CertManager {
      * @param cert Certificate which is added.
      */
     public void addEntryToKeyStore(X509Certificate cert, CertificateDialogReason reason) throws HeadlessException, InvalidNameException, KeyStoreException {
-        if (cert == null) {
-            throw new IllegalArgumentException("Cert cannot be null");
-        }
+        Objects.requireNonNull(cert);
         if (reason != null) {
             addEntryToKeyStoreImpl(cert, reason);
         } else {
@@ -501,15 +496,13 @@ public class CertificateController extends CertManager {
     @Override
     public void addEntryFileToKeyStore(File file) throws IOException, CertificateException,
         KeyStoreException, HeadlessException, InvalidNameException {
-        if (file == null) {
-            throw new IllegalArgumentException("File cannot be null");
-        }
+        Objects.requireNonNull(file);
         X509Certificate addedCert = certificateFromFile(file);
         addEntryToKeyStoreImpl(addedCert, CertificateDialogReason.ADD_CERTIFICATE);
     }
 
     /**
-     * Opens new dialog which will ask to add certificates from chain
+     * Opens a new dialog which will ask to add certificates from a chain
      */
     public void addChain(X509Certificate[] chain) {
         try {

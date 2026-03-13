@@ -18,6 +18,7 @@ import java.awt.event.ActionListener;
 import java.security.KeyStoreException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 import javax.naming.InvalidNameException;
 import javax.swing.BorderFactory;
@@ -109,10 +110,9 @@ public class CertificateDialog extends JDialog implements ActionListener {
 	
 	public CertificateDialog(LocalPreferences localPreferences, CertificateModel certModel,
 			CertManager certificateController, CertificateDialogReason reason) {
-		if (localPreferences == null || certModel == null) {
-			throw new IllegalArgumentException();
-		}
-		
+        Objects.requireNonNull(localPreferences);
+        Objects.requireNonNull(certModel);
+
 		certControll = certificateController;
         this.certModel = certModel;
 		this.certExtensions = certModel.getExtensions();

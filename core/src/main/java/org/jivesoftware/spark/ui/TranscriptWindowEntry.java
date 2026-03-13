@@ -17,6 +17,7 @@ package org.jivesoftware.spark.ui;
 
 import javax.swing.text.BadLocationException;
 import java.time.ZonedDateTime;
+import java.util.Objects;
 
 /**
  * One entry in a transcript window (typically a line of text).
@@ -53,10 +54,7 @@ public abstract class TranscriptWindowEntry
      */
     protected TranscriptWindowEntry( ZonedDateTime timestamp, boolean isDelayed )
     {
-        if ( timestamp == null )
-        {
-            throw new IllegalArgumentException( "Argument 'timestamp' cannot be null." );
-        }
+        Objects.requireNonNull(timestamp);
         this.timestamp = timestamp;
         this.isDelayed = isDelayed;
     }

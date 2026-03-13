@@ -25,6 +25,7 @@ import org.jxmpp.jid.Jid;
 import org.jxmpp.jid.parts.Localpart;
 
 import javax.swing.*;
+import java.util.Objects;
 
 /**
  * {@link GrowlMessageListener} implements the {@link GlobalMessageListener} and
@@ -38,11 +39,7 @@ public class GrowlMessageListener implements GlobalMessageListener
 
     public GrowlMessageListener( GrowlTalker talker )
     {
-        if ( talker == null )
-        {
-            throw new IllegalArgumentException( "Argument 'talker' cannot be null." );
-        }
-        this.talker = talker;
+        this.talker = Objects.requireNonNull(talker);
     }
 
     public void messageReceived( final ChatRoom chatRoom, final Message message )

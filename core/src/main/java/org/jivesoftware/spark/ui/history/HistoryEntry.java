@@ -3,6 +3,7 @@ package org.jivesoftware.spark.ui.history;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author Vyacheslav Durin (nixspirit@gmail.com)
@@ -21,8 +22,7 @@ public class HistoryEntry {
 	}
 
 	public HistoryEntry(HistoryEntry orig) {
-		if (orig == null)
-			throw new IllegalArgumentException("Orig cannot be null");
+        Objects.requireNonNull(orig);
 		date = orig.getDate();
 		name = orig.getName();
 		entries = new ArrayList<>(orig.getEntries());
