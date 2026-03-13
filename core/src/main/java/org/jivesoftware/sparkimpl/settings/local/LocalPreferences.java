@@ -16,6 +16,7 @@
 
 package org.jivesoftware.sparkimpl.settings.local;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
@@ -1331,7 +1332,7 @@ public class LocalPreferences {
     public List<String> getDeactivatedPlugins()
     {
         String plugs = getString("deactivatedPlugins", "");
-        return Arrays.asList(plugs.split(","));
+        return List.of(StringUtils.split(plugs, ","));
     }
 
     public void setDeactivatedPlugins(List<String> list) {
