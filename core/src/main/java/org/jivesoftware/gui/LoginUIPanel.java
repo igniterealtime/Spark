@@ -537,7 +537,14 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
     }//GEN-LAST:event_btnLoginActionPerformed
 
     private void btnCreateAccountActionPerformed(ActionEvent evt) {//GEN-FIRST:event_btnCreateAccountActionPerformed
+        // pre-fill the user domain from the login page i.e. if it already tried to login
+        DomainBareJid xmppDomain = JidCreate.domainBareFromOrNull(tfDomain.getText().trim());
+        startAccountRegistrationWizard(xmppDomain);
+    }//GEN-LAST:event_btnCreateAccountActionPerformed
+
+    public void startAccountRegistrationWizard(DomainBareJid xmppDomain) {
         AccountCreationWizard createAccountPanel = new AccountCreationWizard();
+        createAccountPanel.setServer(xmppDomain);
         createAccountPanel.invoke(loginDialog);
         if (createAccountPanel.isRegistered()) {
             tfUsername.setText(createAccountPanel.getUsernameWithoutEscape());
