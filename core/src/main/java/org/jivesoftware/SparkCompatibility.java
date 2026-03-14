@@ -16,6 +16,9 @@
 
 package org.jivesoftware;
 
+import org.apache.commons.lang3.SystemUtils;
+import org.jivesoftware.spark.util.log.Log;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -25,55 +28,49 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Collection;
 import java.util.HashSet;
-
+import java.util.List;
 
 
 public class SparkCompatibility {
 
     /**
-     * Old Spark settings directory
+     * Copies the old USER_SPARK_HOME to the new directory if it does not exist
      */
-    private final String OLD_USER_SPARK_HOME = System.getProperties().getProperty("user.home") + "/" + getUserConf();
-    
-    private final String OLD_USER_SPARK_HOME_MAC = System.getProperties().getProperty("user.home") + "/Spark";
-    public SparkCompatibility() {
+    public static void transferConfig(File newSparkHomeDir) {
+        if (newSparkHomeDir.exists()) {
+            return;
+        }
+        // Old Spark settings directory
+        final String OLD_USER_SPARK_HOME = System.getProperties().getProperty("user.home") + "/" + Spark.getUserConf();
+        final String OLD_USER_SPARK_HOME_MAC = System.getProperties().getProperty("user.home") + "/Spark";
+        File oldSparkHomeDir;
+        if (SystemUtils.IS_OS_MAC) {
+            oldSparkHomeDir = new File(OLD_USER_SPARK_HOME_MAC);
+        } else {
+            oldSparkHomeDir = new File(OLD_USER_SPARK_HOME);
+        }
+
+        if (oldSparkHomeDir.exists()) {
+            // Absolute paths to a collection of files or directories to skip
+            Collection<String> skipFiles = List.of(
+                new File(newSparkHomeDir, "plugins").getAbsolutePath()
+            );
+            try {
+                copyDirectory(oldSparkHomeDir, newSparkHomeDir, skipFiles);
+            } catch (IOException e) {
+               Log.error("Unable to copy old Spark home directory", e);
+            }
+        }
     }
-    
 
     /**
-     * Copies the old USER_SPARK_HOME to the new directory if it does not exist 
-     * @param userSparkHome
-     * 	The previous directory to copy from
-     * @param skipFiles
-     * 	The files to skip
-     * @throws IOException
+     * Copies the directories / files recursively
+     *
+     * @param src       The source dir/file to copy
+     * @param dest      The destination dir/file to copy
+     * @param skipFiles A collection of files to skip
      */
-    public void transferConfig(String userSparkHome, Collection<String> skipFiles)
-	    throws IOException {
-	File newSparkHomeDir = new File(userSparkHome);
-	File oldSparkHomeDir;
-	if (System.getProperty("os.name").toLowerCase().contains("mac")) {
-	    oldSparkHomeDir = new File(OLD_USER_SPARK_HOME_MAC);
-	} else {
-	    oldSparkHomeDir = new File(OLD_USER_SPARK_HOME);
-
-	}
-
-	if (!newSparkHomeDir.exists() && oldSparkHomeDir.exists()) {
-	    copyDirectory(oldSparkHomeDir, newSparkHomeDir, skipFiles);
-	}
-    }
-    /**
-     * Copies the directories / files recursively 
-     * @param src
-     * The source dir/file to copy
-     * @param dest
-     * The destination dir/file to copy
-     * @param skipFiles
-     * A colleciton of files to skip
-     * @throws IOException
-     */
-    private void copyDirectory(File src , File dest, Collection<String> skipFiles) throws IOException {
+    private static void copyDirectory(File src, File dest, Collection<String> skipFiles) throws IOException {
         if (src.isDirectory()) {
             if (!dest.exists()) {
                 dest.mkdir();
@@ -82,55 +79,44 @@ public class SparkCompatibility {
             for (String child : children) {
                 // Skip any directories / files which may need to be skipped.
                 if (!skipFiles.contains((new File(dest, child).getAbsolutePath()))) {
-                    copyDirectory(new File(src, child),
-                        new File(dest, child), new HashSet<>());
+                    copyDirectory(new File(src, child), new File(dest, child), new HashSet<>());
                 }
             }
         } else {
-        	InputStream in;
-        	OutputStream out;
-        	
-        	try { 
-        		in = new FileInputStream(src);
-        		out = new FileOutputStream(dest);
-        	} catch (FileNotFoundException e) {
-        		IOException wrapper = new IOException("copyDirectory: Unable to open handle on file: "
+            InputStream in;
+            OutputStream out;
+
+            try {
+                in = new FileInputStream(src);
+                out = new FileOutputStream(dest);
+            } catch (FileNotFoundException e) {
+                IOException wrapper = new IOException("copyDirectory: Unable to open handle on file: "
                     + src.getAbsolutePath() + "and" + dest.getAbsolutePath() + ".", e);
                 wrapper.setStackTrace(e.getStackTrace());
                 throw wrapper;
-        	} catch (SecurityException e) {
-        		IOException wrapper = new IOException("copyDirectory: access denied to copy file: "
+            } catch (SecurityException e) {
+                IOException wrapper = new IOException("copyDirectory: access denied to copy file: "
                     + src.getAbsolutePath() + "and" + dest.getAbsolutePath() + ".", e);
                 wrapper.setStackTrace(e.getStackTrace());
-				throw wrapper;
-        	}
-        	try { 
-	            // Copy the bits from instream to outstream
-	            byte[] buf = new byte[1024];
-	            int len;
-	            while ((len = in.read(buf)) > 0) {
-	                out.write(buf, 0, len);
-	            }
-        	} catch (IOException e) {
-        		IOException wrapper = new IOException("copyDirectory: Unable to copy file: "
+                throw wrapper;
+            }
+            try {
+                // Copy the bits from instream to outstream
+                byte[] buf = new byte[1024];
+                int len;
+                while ((len = in.read(buf)) > 0) {
+                    out.write(buf, 0, len);
+                }
+            } catch (IOException e) {
+                IOException wrapper = new IOException("copyDirectory: Unable to copy file: "
                     + src.getAbsolutePath() + "to" + dest.getAbsolutePath() + ".", e);
                 wrapper.setStackTrace(e.getStackTrace());
-        		throw wrapper;
-        	} finally {
-        		in.close();
-        		out.close();
-        	}
+                throw wrapper;
+            } finally {
+                in.close();
+                out.close();
+            }
         }
     }
 
-    
-    
-    /**
-     * Keep track of the users configuration directory.
-     *
-     * @return Directory name depending on Operating System.
-     */
-    private static String getUserConf() {
-	return Spark.getUserConf();
-    }
 }

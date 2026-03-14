@@ -47,7 +47,7 @@ public class ColorSettingManager {
      * Returns the file or creates it
      */
     private static File getSettingsFile() {
-        File path = new File(Spark.getSparkUserHome());
+        File path = Spark.getSparkUserHome();
         if (!path.exists()) {
             path.mkdirs();
         }

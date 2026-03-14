@@ -392,7 +392,7 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener
         {
             SimpleDateFormat formatter;
 
-            File defaultSaveFile = new File( Spark.getSparkUserHome() + "/" + fileName );
+            File defaultSaveFile = new File(Spark.getSparkUserHome(), fileName);
             final JFileChooser fileChooser = new JFileChooser( defaultSaveFile );
             fileChooser.setSelectedFile( defaultSaveFile );
 

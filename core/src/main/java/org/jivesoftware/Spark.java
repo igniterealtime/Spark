@@ -31,12 +31,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-import java.util.Collection;
 import java.util.Locale;
 
 import org.jivesoftware.gui.LoginUIPanel;
 
-import static java.util.Arrays.asList;
 import static org.apache.commons.lang3.SystemUtils.*;
 
 
@@ -46,7 +44,7 @@ import static org.apache.commons.lang3.SystemUtils.*;
  * class provides some simple static calls to retrieve this information.
  */
 public final class Spark {
-    private static String USER_SPARK_HOME;
+    private static File USER_SPARK_HOME;
     public static String ARGUMENTS;
     private static File RESOURCE_DIRECTORY;
     private static File BIN_DIRECTORY;
@@ -70,8 +68,8 @@ public final class Spark {
         return targetDir;
     }
 
-    private static synchronized File initializeDirectory(String directoryName) {
-        return initializeDirectory(new File(USER_SPARK_HOME), directoryName);
+    private static File initializeDirectory(String directoryName) {
+        return initializeDirectory(USER_SPARK_HOME , directoryName);
     }
 
     /**
@@ -80,9 +78,9 @@ public final class Spark {
     public void startup() {
         // Sets user home based on environment or properties
         if (System.getenv("APPDATA") != null && !System.getenv("APPDATA").isEmpty()) {
-            USER_SPARK_HOME = System.getenv("APPDATA") + "/" + getUserConf();
+            USER_SPARK_HOME = new File(System.getenv("APPDATA") + "/" + getUserConf());
         } else {
-            USER_SPARK_HOME = System.getProperties().getProperty("user.home") + "/" + getUserConf();
+            USER_SPARK_HOME = new File(System.getProperties().getProperty("user.home") + "/" + getUserConf());
         }
 
         String current = System.getProperty("java.library.path");
@@ -94,15 +92,7 @@ public final class Spark {
         // Update Library Path
         String javaLibraryPath = current + ";";
 
-        SparkCompatibility sparkCompat = new SparkCompatibility();
-        try {
-            // Absolute paths to a collection of files or directories to skip
-            Collection<String> skipFiles = asList(
-                new File(USER_SPARK_HOME, "plugins").getAbsolutePath()
-            );
-            sparkCompat.transferConfig(USER_SPARK_HOME, skipFiles);
-        } catch (IOException ignored) {
-        }
+        SparkCompatibility.transferConfig(USER_SPARK_HOME);
 
         RESOURCE_DIRECTORY = initializeDirectory("resources");
         BIN_DIRECTORY = initializeDirectory("bin");
@@ -301,7 +291,7 @@ public final class Spark {
      *
      * @return the user home / Spark;
      */
-    public static String getSparkUserHome() {
+    public static File getSparkUserHome() {
         return USER_SPARK_HOME;
     }
 
