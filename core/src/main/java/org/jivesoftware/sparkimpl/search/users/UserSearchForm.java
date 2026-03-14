@@ -75,7 +75,7 @@ public class UserSearchForm extends JPanel {
     private final Map<String,SearchForm> serviceMap = new HashMap<>();
 
     
-    private static final File pluginsettings = new File(Spark.getSparkUserHome() + File.separator + "search.properties"); //new
+    private static final File pluginsettings = new File(Spark.getSparkUserHome(), "search.properties"); //new
     
     /**
      * Initializes the UserSearchForm with all available search services.

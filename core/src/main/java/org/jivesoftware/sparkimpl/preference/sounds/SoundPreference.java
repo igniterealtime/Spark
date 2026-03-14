@@ -369,7 +369,7 @@ public class SoundPreference implements Preference {
     }
 
     private File getSoundSettingsFile() {
-        File file = new File(Spark.getSparkUserHome());
+        File file = Spark.getSparkUserHome();
         if (!file.exists()) {
             file.mkdirs();
         }

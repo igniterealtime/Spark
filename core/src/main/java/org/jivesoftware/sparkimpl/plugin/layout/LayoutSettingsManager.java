@@ -164,7 +164,7 @@ public class LayoutSettingsManager
      */
     public static File getSettingsFile()
     {
-        File file = new File( Spark.getSparkUserHome() );
+        File file = Spark.getSparkUserHome();
         if ( !file.exists() )
         {
             file.mkdirs();

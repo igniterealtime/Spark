@@ -192,7 +192,7 @@ public class ContactList extends JPanel implements ActionListener,
         // Load Properties file
         props = new Properties();
         // Save to a properties file.
-        propertiesFile = new File(Spark.getSparkUserHome() + "/groups.properties");
+        propertiesFile = new File(Spark.getSparkUserHome(), "/groups.properties");
         try {
             props.load(new FileInputStream(propertiesFile));
         } catch (IOException e) {
