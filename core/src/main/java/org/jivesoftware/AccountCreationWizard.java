@@ -421,7 +421,7 @@ public class AccountCreationWizard extends JPanel {
         } else if (condition == StanzaError.Condition.not_allowed || condition == StanzaError.Condition.forbidden || condition == StanzaError.Condition.service_unavailable) {
             message = Res.getString("message.create.account.not.allowed");
         } else {
-            message = Res.getString("message.create.account");
+            message = Res.getString("message.create.account") + " " + condition;
         }
         UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
         JOptionPane.showMessageDialog(this, message, Res.getString("title.create.problem"), JOptionPane.ERROR_MESSAGE);
@@ -481,6 +481,7 @@ public class AccountCreationWizard extends JPanel {
                 .setUsernameAndPassword( "username", "password" )
                 .setXmppDomain( serverName )
                 .setPort( port )
+            .setHostAddress(InetAddress.getByName("127.0.0.1"))
                 .setCompressionEnabled( localPreferences.isCompressionEnabled() )
                 .setSecurityMode( securityMode );
 
