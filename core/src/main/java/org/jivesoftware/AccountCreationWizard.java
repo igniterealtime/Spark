@@ -42,6 +42,7 @@ import org.jivesoftware.sparkimpl.certificates.SparkSSLContextCreator;
 import org.jivesoftware.sparkimpl.certificates.SparkTrustManager;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+import org.jxmpp.jid.DomainBareJid;
 import org.jxmpp.jid.parts.Localpart;
 import org.jxmpp.stringprep.XmppStringprepException;
 import org.jxmpp.util.XmppStringUtils;
@@ -207,6 +208,13 @@ public class AccountCreationWizard extends JPanel {
     public String getServer() {
         String selectedServer = (String) serverField.getSelectedItem();
         return selectedServer != null ? selectedServer.trim() : "";
+    }
+
+    public void setServer(DomainBareJid xmppDomain) {
+        if (xmppDomain == null) {
+            return;
+        }
+        serverField.setSelectedItem(xmppDomain.toString());
     }
 
     /**
