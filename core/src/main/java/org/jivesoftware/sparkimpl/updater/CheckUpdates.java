@@ -28,10 +28,8 @@ import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.SmackException;
-import org.jivesoftware.smack.StanzaCollector;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smack.filter.IQReplyFilter;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.provider.ProviderManager;
 import org.jivesoftware.smackx.disco.packet.DiscoverItems;
@@ -535,24 +533,9 @@ public class CheckUpdates {
         SparkVersion request = new SparkVersion();
         request.setType(IQ.Type.get);
         request.setTo(JidCreate.fromOrThrowUnchecked("updater." + connection.getXMPPServiceDomain()));
-
-        // TODO: This should not use stanza collectors but simply createStanzaCollectorAndSend(IQ).nextResultOrThrow();
-        StanzaCollector collector = connection.createStanzaCollector(new IQReplyFilter( request, connection ));
+        IQ result = connection.sendIqRequestAndWaitForResponse(request);
         connection.sendStanza(request);
-
-        SparkVersion response;
-        try {
-            response = collector.nextResult();
-        } finally {
-            // Cancel the collector.
-            collector.cancel();
-        }
-
-        if (response == null) {
-            throw SmackException.NoResponseException.newWith(connection, collector.getStanzaFilter());
-        }
-        XMPPException.XMPPErrorException.ifHasErrorThenThrow( response );
-
+        SparkVersion response = (SparkVersion) result;
         return response;
     }
 
