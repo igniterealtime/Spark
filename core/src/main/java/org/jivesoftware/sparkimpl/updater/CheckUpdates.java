@@ -27,10 +27,10 @@ import org.apache.hc.core5.http.io.support.ClassicRequestBuilder;
 import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.IQ;
+import org.jivesoftware.smack.packet.StanzaError;
 import org.jivesoftware.smack.provider.ProviderManager;
 import org.jivesoftware.smackx.disco.packet.DiscoverItems;
 import org.jivesoftware.spark.SparkManager;
@@ -80,7 +80,7 @@ public class CheckUpdates {
         // Specify the main update url for JiveSoftware
         this.mainUpdateURL = "http://www.igniterealtime.org/updater/updater";
 
-        sparkPluginInstalled = isSparkPluginInstalled(SparkManager.getConnection());
+        sparkPluginInstalled = isSparkPluginInstalled();
     }
 
     public SparkVersion newBuildAvailable() {
@@ -89,26 +89,17 @@ public class CheckUpdates {
             return isNewBuildAvailableFromJivesoftware();
         }
         else if (sparkPluginInstalled) {
-            try {
-                SparkVersion serverVersion = getLatestVersion(SparkManager.getConnection());
-                if (isGreater(serverVersion.getVersion(), JiveInfo.getVersion())) {
-                    return serverVersion;
-                }
+            SparkVersion serverVersion = getLatestVersion(SparkManager.getConnection());
+            if (serverVersion != null && isGreater(serverVersion.getVersion(), JiveInfo.getVersion())) {
+                return serverVersion;
             }
-            catch (SmackException | XMPPException.XMPPErrorException | InterruptedException e) {
-                Log.warning( "Unable the check fo new build.", e );
-            }
-
         }
-
         return null;
     }
 
 
     /**
      * Returns true if there is a new build available for download.
-     *
-     * @return true if there is a new build available for download.
      */
     public SparkVersion isNewBuildAvailableFromJivesoftware() {
         final String os;
@@ -515,9 +506,7 @@ public class CheckUpdates {
         if (lastIndexOf != -1) {
             return version.substring(0, lastIndexOf);
         }
-
         return version;
-
     }
 
     /**
@@ -528,29 +517,39 @@ public class CheckUpdates {
      * @throws InterruptedException 
      * @throws XMPPException If unable to retrieve latest version.
      */
-    public static SparkVersion getLatestVersion(XMPPConnection connection) throws SmackException, XMPPException.XMPPErrorException, InterruptedException
+    public static SparkVersion getLatestVersion(XMPPConnection connection)
     {
         SparkVersion request = new SparkVersion();
         request.setType(IQ.Type.get);
         request.setTo(JidCreate.fromOrThrowUnchecked("updater." + connection.getXMPPServiceDomain()));
-        IQ result = connection.sendIqRequestAndWaitForResponse(request);
-        connection.sendStanza(request);
-        SparkVersion response = (SparkVersion) result;
-        return response;
+        try {
+            IQ result = connection.sendIqRequestAndWaitForResponse(request);
+            connection.sendStanza(request);
+            SparkVersion response = (SparkVersion) result;
+            return response;
+        } catch (XMPPException.XMPPErrorException e) {
+            if (e.getStanzaError().getCondition() == StanzaError.Condition.service_unavailable) {
+                // no new version available
+                return null;
+            }
+            Log.warning("Unable the check fo new build.", e);
+            return null;
+        }  catch (Exception e) {
+            Log.error("Unable the check fo new build.", e);
+            return null;
+        }
     }
 
     /**
-     * Does a service discvery on the server to see if a Spark Manager
-     * is enabled.
+     * Does a service discovery on the server to see if a Client Control plugin is enabled.
      *
-     * @param con the XMPPConnection to use.
      * @return true if Spark Manager is available.
      */
-    public static boolean isSparkPluginInstalled(XMPPConnection con) {
+    public static boolean isSparkPluginInstalled() {
+        XMPPConnection con = SparkManager.getConnection();
         if (!con.isConnected()) {
             return false;
         }
-
 
         try {
             DiscoverItems items = SparkManager.getSessionManager().getDiscoveredItems();
@@ -563,9 +562,7 @@ public class CheckUpdates {
         catch (Exception e) {
             Log.error(e);
         }
-
         return false;
-
     }
 
     /**
