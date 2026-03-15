@@ -30,6 +30,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.Properties;
+import java.util.WeakHashMap;
 
 public class SparkRes {
 
@@ -332,6 +333,8 @@ public class SparkRes {
     public static final String PADE_ICON = "PADE_ICON";
     public static final String NEW_MESSAGE = "NEW_MESSAGE";
 
+    private static final WeakHashMap<String, ImageIcon> iconsCache = new WeakHashMap<>();
+
     private static final ClassLoader cl = SparkRes.class.getClassLoader();
 
     static {
@@ -352,11 +355,17 @@ public class SparkRes {
     }
 
     public static ImageIcon getImageIcon(String imageName) {
+        ImageIcon cachedImageIcon = iconsCache.get(imageName);
+        if (cachedImageIcon != null) {
+            return cachedImageIcon;
+        }
         try {
             final String iconURI = getString(imageName);
             final URL imageURL = cl.getResource(iconURI);
             if (imageURL != null) {
-                return new ImageIcon(imageURL);
+                ImageIcon imageIcon = new ImageIcon(imageURL);
+                iconsCache.put(imageName, imageIcon);
+                return imageIcon;
             } else {
                 Log.warning(imageName + " not found.");
             }
