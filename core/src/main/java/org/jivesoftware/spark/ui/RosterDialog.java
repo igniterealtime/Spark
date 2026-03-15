@@ -387,14 +387,7 @@ public class RosterDialog implements ActionListener {
             String group = (String)groupBox.getSelectedItem();
 
             jid = UserManager.escapeJID(jid);
-
-			BareJid bareJid;
-			try {
-				bareJid = JidCreate.bareFrom(jid);
-			} catch (XmppStringprepException e) {
-				throw new IllegalStateException(e);
-			}
-
+            BareJid bareJid = JidCreate.bareFromOrThrowUnchecked(jid);
             // Add as a new entry
             addRosterEntry(bareJid, nickname, group);
         }
