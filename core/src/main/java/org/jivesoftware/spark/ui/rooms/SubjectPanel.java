@@ -1,5 +1,9 @@
 package org.jivesoftware.spark.ui.rooms;
 
+import org.jivesoftware.spark.util.XEP0392Utils;
+import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
+import org.jxmpp.jid.EntityBareJid;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -14,8 +18,13 @@ public class SubjectPanel extends JPanel
     public SubjectPanel( GroupChatRoom groupChatRoom )
     {
         setLayout( new GridBagLayout() );
+        EntityBareJid roomJid = groupChatRoom.getBareJid();
+        roomJIDLabel = new JLabel( "<" + roomJid + ">" );
+        roomJIDLabel.setFont( roomJIDLabel.getFont().deriveFont( Font.BOLD ) );
+        if (SettingsManager.getLocalPreferences().isMucRandomColors()) {
+            roomJIDLabel.setForeground(XEP0392Utils.colorOfMuc(roomJid));
+        }
 
-        roomJIDLabel = new JLabel( "<" + groupChatRoom.getMultiUserChat().getRoom() + ">" );
         subjectLabel = new JLabel( groupChatRoom.getMultiUserChat().getSubject() );
 
         add( roomJIDLabel,

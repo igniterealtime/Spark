@@ -29,7 +29,6 @@ import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.packet.StanzaBuilder;
 import org.jivesoftware.smack.packet.StanzaError;
 import org.jivesoftware.smackx.chatstates.ChatState;
-import org.jivesoftware.smackx.colors.ConsistentColor;
 import org.jivesoftware.smackx.delay.packet.DelayInformation;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.muc.ParticipantStatusListener;
@@ -49,6 +48,7 @@ import org.jivesoftware.spark.ui.conferences.DataFormDialog;
 import org.jivesoftware.spark.ui.conferences.GroupChatParticipantList;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.UIComponentRegistry;
+import org.jivesoftware.spark.util.XEP0392Utils;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
@@ -894,12 +894,12 @@ public class GroupChatRoom extends ChatRoom {
             getMultiUserChat().invite(jid, message);
             roomInfo.addInvitee(jid, message);
         } catch (SmackException.NotConnectedException | InterruptedException e) {
-            Log.warning("Unable to invite " + jid + " to room " + roomInfo.getName(), e);
+            Log.warning("Unable to invite " + jid + " to room " + getBareJid(), e);
         }
     }
 
     /**
-     * Returns the GroupChatParticipantList which displays all users within a conference room.
+     * Returns the {@link GroupChatParticipantList} which displays all users within a conference room.
      */
     public GroupChatParticipantList getConferenceRoomInfo() {
         return roomInfo;
@@ -975,14 +975,7 @@ public class GroupChatRoom extends ChatRoom {
             return ChatManager.FROM_COLOR;
         }
         synchronized (participantColors) {
-            Color userColor = participantColors.computeIfAbsent(nickname, (userNickname) -> {
-                float[] rgb = ConsistentColor.RGBFrom(userNickname);
-                // avoid negative values
-                rgb[0] = Math.max(0, rgb[0]);
-                rgb[1] = Math.max(0, rgb[1]);
-                rgb[2] = Math.max(0, rgb[2]);
-                return new Color(rgb[0], rgb[1], rgb[2]);
-            });
+            Color userColor = participantColors.computeIfAbsent(nickname, XEP0392Utils::colorOfMucParticipant);
             return userColor;
         }
     }
