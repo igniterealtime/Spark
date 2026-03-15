@@ -317,12 +317,7 @@ public class UserManager {
     }
 
     public static String unescapeJID(CharSequence jid) {
-        BareJid bareJid;
-        try {
-            bareJid = JidCreate.bareFrom(jid);
-        } catch (XmppStringprepException e) {
-            throw new IllegalStateException(e);
-        }
+        BareJid bareJid = JidCreate.bareFromOrThrowUnchecked(jid);
         return unescapeJID(bareJid);
     }
 
