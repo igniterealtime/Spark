@@ -142,7 +142,7 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
             QueryRequest request = new QueryRequest(app);
             request.setTo(SparkManager.getSessionManager().getServerAddress());
             request.setType(IQ.Type.get);
-            IQ result = SparkManager.getConnection().createStanzaCollectorAndSend(request).nextResultOrThrow();
+            IQ result = SparkManager.getConnection().sendIqRequestAndWaitForResponse(request);
             QueryRequest response = (QueryRequest) result;
 
             Log.debug("SparkMeet response: url=" + response.url);

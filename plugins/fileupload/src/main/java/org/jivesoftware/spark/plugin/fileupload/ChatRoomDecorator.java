@@ -115,7 +115,7 @@ public class ChatRoomDecorator {
             request.setTo(JidCreate.fromOrThrowUnchecked(uploadEndpoint));
             request.setType(IQ.Type.get);
 
-            IQ result = SparkManager.getConnection().createStanzaCollectorAndSend(request).nextResultOrThrow();
+            IQ result = SparkManager.getConnection().sendIqRequestAndWaitForResponse(request);
             UploadRequest response = (UploadRequest) result;
             Log.debug("handleUpload response: putUrl=" + response.putUrl + " getUrl=" + response.getUrl);
             if (response.putUrl != null) {
