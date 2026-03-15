@@ -524,7 +524,6 @@ public class CheckUpdates {
         request.setTo(JidCreate.fromOrThrowUnchecked("updater." + connection.getXMPPServiceDomain()));
         try {
             IQ result = connection.sendIqRequestAndWaitForResponse(request);
-            connection.sendStanza(request);
             SparkVersion response = (SparkVersion) result;
             return response;
         } catch (XMPPException.XMPPErrorException e) {
