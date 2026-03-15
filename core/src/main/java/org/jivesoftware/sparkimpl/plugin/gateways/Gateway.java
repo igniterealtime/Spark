@@ -74,9 +74,7 @@ public class Gateway extends IQ {
     protected IQChildElementXmlStringBuilder getIQChildElementBuilder( IQChildElementXmlStringBuilder buf )
     {
         buf.rightAngleBracket();
-        buf.append("<query xmlns=\"").append(NAMESPACE).append("\">");
         buf.append("<prompt>").append(username).append("</prompt>");
-        buf.append("</query>");
         return buf;
     }
 
@@ -125,29 +123,18 @@ public class Gateway extends IQ {
      * @param serviceName the service the user belongs to.
      * @param username    the name of the user.
      * @return the JID.
-     * @throws InterruptedException 
      */
-    public static String getJID(DomainBareJid serviceName, String username) throws SmackException.NotConnectedException, InterruptedException
-    {
+    public static String getJID(DomainBareJid serviceName, String username) throws Exception {
         Gateway registration = new Gateway();
         registration.setType(IQ.Type.set);
         registration.setTo(serviceName);
         registration.setUsername(username);
 
-        XMPPConnection con = SparkManager.getConnection();
-        StanzaCollector collector = con.createStanzaCollector(new StanzaIdFilter(registration.getStanzaId()));
-        try
-        {
-            con.sendStanza( registration );
-
-            Gateway response = collector.nextResult();
-            return response.getJid();
-        }
-        finally
-        {
-            collector.cancel();
-        }
-    }
+        XMPPConnection connection = SparkManager.getConnection();
+        IQ result = connection.sendIqRequestAndWaitForResponse(registration);
+        Gateway response = (Gateway) result;
+        return response.getJid();
+     }
 
 
 }

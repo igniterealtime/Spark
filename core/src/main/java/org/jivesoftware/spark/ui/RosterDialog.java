@@ -403,18 +403,13 @@ public class RosterDialog implements ActionListener {
             try {
                 jid = Gateway.getJID(transport.getXMPPServiceDomain(), jid);
             }
-            catch (SmackException | InterruptedException e) {
+            catch (Exception e) {
                 Log.error(e);
             }
 
             String nickname = nicknameField.getText();
             String group = (String)groupBox.getSelectedItem();
-			BareJid bareJid;
-			try {
-				bareJid = JidCreate.bareFrom(jid);
-			} catch (XmppStringprepException e) {
-				throw new IllegalStateException(e);
-			}
+            BareJid bareJid = JidCreate.bareFromOrThrowUnchecked(jid);
             addRosterEntry(bareJid, nickname, group);
         }
     }
