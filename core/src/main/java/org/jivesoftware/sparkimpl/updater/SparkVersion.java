@@ -20,20 +20,18 @@ import org.jivesoftware.Spark;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.IqData;
 import org.jivesoftware.smack.packet.XmlEnvironment;
-import org.jivesoftware.smack.parsing.SmackParsingException;
 import org.jivesoftware.smack.provider.IqProvider;
 import org.jivesoftware.smack.xml.XmlPullParser;
 import org.jivesoftware.smack.xml.XmlPullParserException;
 import org.jxmpp.JxmppContext;
 
 import java.io.IOException;
-import java.text.ParseException;
-import java.util.Date;
+import java.time.Instant;
 
 public class SparkVersion extends IQ {
 
     private String version;
-    private long updateTime;
+    private Instant updateTime;
     private String downloadURL;
     private String displayMessage;
     private String changeLogURL;
@@ -46,11 +44,11 @@ public class SparkVersion extends IQ {
         this.version = version;
     }
 
-    public Date getUpdateTime() {
-        return new Date(updateTime);
+    public Instant getUpdateTime() {
+        return updateTime;
     }
 
-    public void setUpdateTime(long updateTime) {
+    public void setUpdateTime(Instant updateTime) {
         this.updateTime = updateTime;
     }
 
@@ -97,10 +95,7 @@ public class SparkVersion extends IQ {
     protected IQChildElementXmlStringBuilder getIQChildElementBuilder( IQChildElementXmlStringBuilder buf)
     {
         buf.rightAngleBracket();
-        buf.append("<query xmlns=\"jabber:iq:spark\">");
-
         // Add os specific information
-
         if (Spark.isWindows()) {
             buf.append("<os>windows</os>");
         }
@@ -110,8 +105,6 @@ public class SparkVersion extends IQ {
         else {
             buf.append("<os>linux</os>");
         }
-
-        buf.append("</query>");
         return buf;
     }
 
@@ -140,7 +133,7 @@ public class SparkVersion extends IQ {
                             break;
                         case "updatedTime":
                             long time = Long.parseLong(parser.nextText());
-                            version.setUpdateTime(time);
+                            version.setUpdateTime(Instant.ofEpochMilli(time));
                             break;
                         case "downloadURL":
                             version.setDownloadURL(parser.nextText());
@@ -150,7 +143,6 @@ public class SparkVersion extends IQ {
                             break;
                     }
                 }
-
                 else if (eventType == XmlPullParser.Event.END_ELEMENT) {
                     if (parser.getName().equals(ELEMENT_NAME)) {
                         done = true;
