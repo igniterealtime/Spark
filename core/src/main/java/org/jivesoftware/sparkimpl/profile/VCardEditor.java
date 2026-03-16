@@ -477,13 +477,10 @@ public class VCardEditor {
                 StatusBar statusBar = SparkManager.getWorkspace().getStatusBar();
                 statusBar.setAvatar(new ImageIcon(vcard.getAvatar()));
             } else {
-                String firstName = vcard.getFirstName();
-                String lastName = vcard.getLastName();
+                String fullName = vcard.getField("FN");
                 StatusBar statusBar = SparkManager.getWorkspace().getStatusBar();
-                if (ModelUtil.hasLength(firstName) && ModelUtil.hasLength(lastName)) {
-                    statusBar.setNickname(firstName + " " + lastName);
-                } else if (ModelUtil.hasLength(firstName)) {
-                    statusBar.setNickname(firstName);
+                if (ModelUtil.hasLength(fullName)) {
+                    statusBar.setNickname(fullName);
                 }
 
                 statusBar.setAvatar(null);
