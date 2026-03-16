@@ -24,12 +24,13 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
 
-import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import tic.tac.toe.Mark;
 import tic.tac.toe.Pair;
+
+import static tic.tac.toe.TTTRes.ICON_BOARD;
 
 /**
  * The Gui to the Logical Board
@@ -38,97 +39,67 @@ import tic.tac.toe.Pair;
  * @version 16.06.2011
  */
 public class GameBoardPanel extends JPanel {
-
-    private static final long serialVersionUID = -178497456422566485L;
-
-    private final Image _backgroundimage;
-
+    private final Image _backgroundimage = ICON_BOARD.getImage();
     private final JLabel[][] _labels;
-
     private final GamePanel _owner;
 
     public GameBoardPanel(GamePanel gamepanel) {
+        _owner = gamepanel;
+        setLayout(new GridLayout(3, 3));
+        _labels = new JLabel[3][3];
+        for (int x = 0; x < 3; x++) {
+            for (int y = 0; y < 3; y++) {
+                JLabel toadd = new JLabel(Mark.BLANK.getImage());
+                toadd.setOpaque(false);
+                final int xx = x;
+                final int yy = y;
+                toadd.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        if (_owner.myTurn() && _owner.isFree(xx, yy)) {
+                            placeMark(_owner.getMyMark(), xx, yy);
+                        }
+                    }
 
-	_owner = gamepanel;
+                });
+                _labels[x][y] = toadd;
+                add(_labels[x][y]);
+            }
+        }
 
-	setLayout(new GridLayout(3, 3));
-
-	_labels = new JLabel[3][3];
-
-	for (int x = 0; x < 3; x++) {
-	    for (int y = 0; y < 3; y++) {
-		JLabel toadd = new JLabel(Mark.BLANK.getImage());
-		toadd.setOpaque(false);
-
-		final int xx = x;
-		final int yy = y;
-
-		toadd.addMouseListener(new MouseAdapter() {
-		    @Override
-		    public void mouseClicked(MouseEvent e) {
-			if (_owner.myTurn() && _owner.isFree(xx, yy)) {
-			    placeMark(_owner.getMyMark(), xx, yy);
-			}
-		    }
-
-		});
-
-		_labels[x][y] = toadd;
-
-		add(_labels[x][y]);
-	    }
-	}
-
-	ClassLoader cl = getClass().getClassLoader();
-	_backgroundimage = new ImageIcon(cl.getResource("board.png"))
-		.getImage();
-
-	setPreferredSize(new Dimension(500, 500));
-
+        setPreferredSize(new Dimension(500, 500));
     }
 
     /**
-     * Places the Mark, and tells the Owner to place the mark on the logical
-     * board
-     * 
-     * @param m
-     * @param x
-     * @param y
+     * Places the Mark, and tells the Owner to place the mark on the logical board
      */
     public void placeMark(Mark m, int x, int y) {
-
-	_labels[x][y].setIcon(m.getImage());
-
-	// Notify the Owner about Change
-	_owner.onGameBoardPlaceMark(m, x, y);
-
-	this.invalidate();
-	this.repaint();
-	this.revalidate();
-    }
-    
-    public void colorizeWinners(Pair[] pairs)
-    {
-	if(pairs!=null)
-	{
-	    for(Pair p : pairs)
-	    {
-		_labels[p.getX()][p.getY()].setIcon(p.getMark().getRedImage());
-	    }
-	}
-	this.repaint();
-	this.revalidate();
-	
+        _labels[x][y].setIcon(m.getImage());
+        // Notify the Owner about Change
+        _owner.onGameBoardPlaceMark(m, x, y);
+        this.invalidate();
+        this.repaint();
+        this.revalidate();
     }
 
+    public void colorizeWinners(Pair[] pairs) {
+        if (pairs != null) {
+            for (Pair p : pairs) {
+                _labels[p.getX()][p.getY()].setIcon(p.getMark().getRedImage());
+            }
+        }
+        this.repaint();
+        this.revalidate();
+    }
+
+    @Override
     public void paintComponent(Graphics g) {
-	super.paintComponent(g);
-	final Image backgroundImage = _backgroundimage;
-	double scaleX = getWidth() / (double) backgroundImage.getWidth(null);
-	double scaleY = getHeight() / (double) backgroundImage.getHeight(null);
-	AffineTransform xform = AffineTransform
-		.getScaleInstance(scaleX, scaleY);
-	((Graphics2D) g).drawImage(backgroundImage, xform, this);
+        super.paintComponent(g);
+	    Image backgroundImage = _backgroundimage;
+        double scaleX = getWidth() / (double) backgroundImage.getWidth(null);
+        double scaleY = getHeight() / (double) backgroundImage.getHeight(null);
+        AffineTransform xform = AffineTransform.getScaleInstance(scaleX, scaleY);
+        ((Graphics2D) g).drawImage(backgroundImage, xform, this);
     }
 
 }

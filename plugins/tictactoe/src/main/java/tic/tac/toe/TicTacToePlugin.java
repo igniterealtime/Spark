@@ -19,7 +19,6 @@ import java.awt.Color;
 import java.awt.Font;
 import java.util.HashSet;
 
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -31,7 +30,6 @@ import org.jivesoftware.smack.filter.StanzaIdFilter;
 import org.jivesoftware.smack.iqrequest.AbstractIqRequestHandler;
 import org.jivesoftware.smack.iqrequest.IQRequestHandler;
 import org.jivesoftware.smack.packet.IQ;
-import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.packet.StanzaError;
 import org.jivesoftware.smack.provider.ProviderManager;
 import org.jivesoftware.spark.SparkManager;
@@ -49,13 +47,14 @@ import tic.tac.toe.packet.InvalidMove;
 import tic.tac.toe.packet.MovePacket;
 import tic.tac.toe.ui.GamePanel;
 
+import static tic.tac.toe.TTTRes.ICON_BUTTON;
+
 
 /**
  * Tic Tac Toe plugin for Spark
  * 
  * @author wolf.posdorfer
  * @version 16.06.2011
- * 
  */
 public class TicTacToePlugin implements Plugin {
 
@@ -63,15 +62,9 @@ public class TicTacToePlugin implements Plugin {
     private IQRequestHandler _gameOfferHandler;
     
     private HashSet<EntityBareJid> _currentInvitations;
-       
-    private ImageIcon buttonimg;
-    
-    
 
     @Override
     public void initialize() {
-	ClassLoader cl = getClass().getClassLoader();
-	buttonimg = new ImageIcon(cl.getResource("ttt.button.png"));
 	_currentInvitations = new HashSet<>();
 
 	ProviderManager.addIQProvider(GameOfferPacket.ELEMENT_NAME, GameOfferPacket.NAMESPACE, new GameOfferPacket.Provider() );
@@ -111,11 +104,8 @@ public class TicTacToePlugin implements Plugin {
 		    // Don't do anything if this is not a 1on1-Chat
 		    return;
 		}
-		
-		final ChatRoomButton sendGameButton = new ChatRoomButton(buttonimg);
+            final ChatRoomButton sendGameButton = new ChatRoomButton(ICON_BUTTON);
 		room.getToolBar().addChatRoomButton(sendGameButton);
-
-
             sendGameButton.addActionListener(e -> {
                 final EntityFullJid opponentJID = ((ChatRoomImpl) room).getJidOnline();
                 // If the opponent is offline, then you should not start the game
@@ -269,8 +259,7 @@ public class TicTacToePlugin implements Plugin {
 	
 	// tictactoe versus ${name}
 	JFrame f = new JFrame(TTTRes.getString("ttt.window.title", TTTRes.getString("ttt.game.name"),name.toString() ));
-	
-	f.setIconImage(buttonimg.getImage());
+        f.setIconImage(ICON_BUTTON.getImage());
 	GamePanel gp = new GamePanel(SparkManager.getConnection(),
 		gop.getGameID(), gop.isStartingPlayer(), opponentJID,f);
 	f.add(gp);
