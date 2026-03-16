@@ -27,21 +27,25 @@ import javax.swing.Icon;
 public interface ContactItemHandler {
 
     /**
-     * The users presence has been changed.
+     * The user's presence has been changed.
      *
      * @param item     the contact item.
-     * @param presence the users new presence.
+     * @param presence the user's new presence.
      * @return true if the presence was handled.
      */
-    boolean handlePresence(ContactItem item, Presence presence);
+    default boolean handlePresence(ContactItem item, Presence presence) {
+        return false;
+    }
 
     /**
-     * Return the icon used for particular presence.
+     * Return the icon used for the particular presence.
      *
      * @param jid the users jid.
      * @return the icon, if any. null may be returned.
      */
-    Icon getIcon(BareJid jid);
+    default Icon getIcon(BareJid jid) {
+        return null;
+    }
 
     /**
      * Return the icon to use on the chat room tab.
@@ -49,8 +53,9 @@ public interface ContactItemHandler {
      * @param presence the presence of the user.
      * @return the icon to use.
      */
-    Icon getTabIcon(Presence presence);
-
+    default Icon getTabIcon(Presence presence) {
+        return null;
+    }
 
     /**
      * The <code>ContactItem</code> has been double-clicked by the user.
@@ -58,5 +63,7 @@ public interface ContactItemHandler {
      * @param item the ContactItem to handle.
      * @return true if you wish to handle the double-click event.
      */
-    boolean handleDoubleClick(ContactItem item);
+    default boolean handleDoubleClick(ContactItem item) {
+        return false;
+    }
 }
