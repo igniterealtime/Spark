@@ -57,7 +57,7 @@ public class SearchService extends JPanel {
 
     public SearchService() {
         setLayout(new GridBagLayout());
-        findField = new IconTextField(SparkRes.getImageIcon(SparkRes.SEARCH_USER_16x16));
+        findField = new IconTextField(SparkRes.getImageIcon(SparkRes.Icon.SEARCH_USER_16x16));
 
         backgroundImage = Default.getImageIcon(Default.TOP_BOTTOM_BACKGROUND_IMAGE).getImage();
 
@@ -90,7 +90,7 @@ public class SearchService extends JPanel {
                 if (e.getKeyChar() == KeyEvent.VK_ENTER) {
                     final Icon previousIcon = findField.getIcon();
 
-                    findField.setIcon(SparkRes.getImageIcon(SparkRes.BUSY_IMAGE));
+                    findField.setIcon(SparkRes.getImageIcon(SparkRes.Icon.BUSY_IMAGE));
                     findField.validate();
                     findField.repaint();
 

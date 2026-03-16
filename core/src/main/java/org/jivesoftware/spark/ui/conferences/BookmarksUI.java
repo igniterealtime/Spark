@@ -18,7 +18,6 @@ package org.jivesoftware.spark.ui.conferences;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.SmackException;
-import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.bookmarks.BookmarkManager;
 import org.jivesoftware.smackx.bookmarks.BookmarkedConference;
@@ -35,7 +34,6 @@ import org.jivesoftware.spark.plugin.ContextMenuListener;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.SwingWorker;
-import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.util.log.Log;
 import org.jxmpp.jid.DomainBareJid;
 import org.jxmpp.jid.EntityBareJid;
@@ -169,7 +167,7 @@ public class BookmarksUI extends JPanel {
                 }
             };
             browseAction.putValue(Action.NAME, Res.getString("menuitem.browse.service"));
-            browseAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.SMALL_DATA_FIND_IMAGE));
+            browseAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.Icon.SMALL_DATA_FIND_IMAGE));
 
             Action removeServiceAction = new AbstractAction() {
                 @Override
@@ -179,7 +177,7 @@ public class BookmarksUI extends JPanel {
                 }
             };
             removeServiceAction.putValue(Action.NAME, Res.getString("menuitem.remove.service"));
-            removeServiceAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.SMALL_DELETE));
+            removeServiceAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.Icon.SMALL_DELETE));
 
             JMenuItem browseServiceMenu = new JMenuItem(browseAction);
             JMenuItem removeServiceMenu = new JMenuItem(removeServiceAction);
@@ -195,7 +193,7 @@ public class BookmarksUI extends JPanel {
             };
 
             joinRoomAction.putValue(Action.NAME, Res.getString("menuitem.join.room"));
-            joinRoomAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.SMALL_USER_ENTER));
+            joinRoomAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.Icon.SMALL_USER_ENTER));
 
             Action removeRoomAction = new AbstractAction() {
                 @Override
@@ -208,7 +206,7 @@ public class BookmarksUI extends JPanel {
                 }
             };
             removeRoomAction.putValue(Action.NAME, Res.getString("menuitem.remove.bookmark"));
-            removeRoomAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.DELETE_BOOKMARK_ICON));
+            removeRoomAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.Icon.DELETE_BOOKMARK_ICON));
 
 
             JMenuItem joinRoomMenu = new JMenuItem(joinRoomAction);
@@ -256,7 +254,7 @@ public class BookmarksUI extends JPanel {
                 };
 
                 roomInfoAction.putValue(Action.NAME, Res.getString("menuitem.view.room.info"));
-                roomInfoAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.SMALL_DATA_FIND_IMAGE));
+                roomInfoAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.Icon.SMALL_DATA_FIND_IMAGE));
                 popupMenu.add(roomInfoAction);
 
                 Action copyUriGroupChat = new AbstractAction() {
@@ -268,7 +266,7 @@ public class BookmarksUI extends JPanel {
                 };
 
                 copyUriGroupChat.putValue(Action.NAME, Res.getString("button.copy.to.clipboard"));
-                copyUriGroupChat.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.COPY_16x16));
+                copyUriGroupChat.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.Icon.COPY_16x16));
                 popupMenu.add(copyUriGroupChat);
 
             }
@@ -332,7 +330,7 @@ public class BookmarksUI extends JPanel {
      * @return the new service node created.
      */
     public JiveTreeNode addServiceToList(DomainBareJid service) {
-        final JiveTreeNode serviceNode = new JiveTreeNode(service.toString(), true, SparkRes.getImageIcon(SparkRes.SERVER_ICON));
+        final JiveTreeNode serviceNode = new JiveTreeNode(service.toString(), true, SparkRes.getImageIcon(SparkRes.Icon.SERVER_ICON));
         rootNode.add(serviceNode);
         final DefaultTreeModel model = (DefaultTreeModel) tree.getModel();
         model.nodeStructureChanged(rootNode);
@@ -352,7 +350,7 @@ public class BookmarksUI extends JPanel {
      * @return the new bookmark created.
      */
     private JiveTreeNode addBookmark(JiveTreeNode serviceNode, String roomName, Jid roomJidNick) {
-        JiveTreeNode roomNode = new JiveTreeNode(roomName, false, SparkRes.getImageIcon(SparkRes.BOOKMARK_ICON));
+        JiveTreeNode roomNode = new JiveTreeNode(roomName, false, SparkRes.getImageIcon(SparkRes.Icon.BOOKMARK_ICON));
         roomNode.setAssociatedObject(roomJidNick);
         serviceNode.add(roomNode);
         final DefaultTreeModel model = (DefaultTreeModel) tree.getModel();
@@ -392,7 +390,7 @@ public class BookmarksUI extends JPanel {
         servicePanel.setLayout(new GridBagLayout());
 
         final JLabel serviceLabel = new JLabel();
-        final RolloverButton addButton = new RolloverButton(SparkRes.getImageIcon(SparkRes.SMALL_ADD_IMAGE));
+        final RolloverButton addButton = new RolloverButton(SparkRes.getImageIcon(SparkRes.Icon.SMALL_ADD_IMAGE));
         addButton.setToolTipText(Res.getString("message.add.conference.service"));
 
         final JTextField serviceField = new JTextField();
@@ -640,7 +638,7 @@ public class BookmarksUI extends JPanel {
                 TreePath path = tree.findByName(tree, new String[]{rootNode.toString(), defaultServiceName});
                 node = (JiveTreeNode) path.getLastPathComponent();
             }
-            JiveTreeNode roomNode = new JiveTreeNode(roomName, false, SparkRes.getImageIcon(SparkRes.BOOKMARK_ICON));
+            JiveTreeNode roomNode = new JiveTreeNode(roomName, false, SparkRes.getImageIcon(SparkRes.Icon.BOOKMARK_ICON));
             roomNode.setAssociatedObject(roomJID);
             node.add(roomNode);
             DefaultTreeModel model = (DefaultTreeModel) tree.getModel();

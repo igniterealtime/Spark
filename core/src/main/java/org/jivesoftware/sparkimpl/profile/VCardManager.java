@@ -24,7 +24,6 @@ import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.filter.AndFilter;
 import org.jivesoftware.smack.filter.StanzaFilter;
 import org.jivesoftware.smack.filter.StanzaTypeFilter;
-import org.jivesoftware.smack.packet.ExtensionElement;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.packet.StanzaError;
@@ -232,7 +231,7 @@ public class VCardManager {
         final JMenu contactsMenu = SparkManager.getMainWindow().getMenuByName(Res.getString("menuitem.contacts"));
         final JMenu communicatorMenu = SparkManager.getMainWindow().getJMenuBar().getMenu(0);
 
-        JMenuItem editProfileMenu = new JMenuItem(SparkRes.getImageIcon(SparkRes.SMALL_BUSINESS_MAN_VIEW));
+        JMenuItem editProfileMenu = new JMenuItem(SparkRes.getImageIcon(SparkRes.Icon.SMALL_BUSINESS_MAN_VIEW));
         ResourceUtils.resButton(editProfileMenu, Res.getString("menuitem.edit.my.profile"));
 
         int size = contactsMenu.getMenuComponentCount();
@@ -263,7 +262,7 @@ public class VCardManager {
             vcardLoaderWorker.start();
         } );
 
-        JMenuItem viewProfileMenu = new JMenuItem("", SparkRes.getImageIcon(SparkRes.FIND_TEXT_IMAGE));
+        JMenuItem viewProfileMenu = new JMenuItem("", SparkRes.getImageIcon(SparkRes.Icon.FIND_TEXT_IMAGE));
         ResourceUtils.resButton(viewProfileMenu, Res.getString("menuitem.lookup.profile"));
         contactsMenu.insert(viewProfileMenu, size > 0 ? size - 3 : 0);
         viewProfileMenu.addActionListener( e -> {

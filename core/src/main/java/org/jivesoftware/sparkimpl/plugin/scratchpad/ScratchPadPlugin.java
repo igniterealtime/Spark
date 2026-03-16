@@ -104,10 +104,10 @@ public class ScratchPadPlugin implements Plugin {
 
 
             JMenuItem taskMenu = new JMenuItem(Res.getString("button.view.tasklist"),
-                    SparkRes.getImageIcon(SparkRes.DESKTOP_IMAGE));
+                    SparkRes.getImageIcon(SparkRes.Icon.DESKTOP_IMAGE));
 
             JMenuItem notesMenu = new JMenuItem(Res.getString("button.view.notes"),
-                    SparkRes.getImageIcon(SparkRes.DOCUMENT_16x16));
+                    SparkRes.getImageIcon(SparkRes.Icon.DOCUMENT_16x16));
 
             taskMenu.addActionListener(e -> showTaskList());
 

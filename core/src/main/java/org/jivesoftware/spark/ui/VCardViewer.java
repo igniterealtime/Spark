@@ -29,11 +29,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import javax.swing.BorderFactory;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
+import javax.swing.*;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
@@ -77,7 +73,7 @@ public class VCardViewer extends JPanel {
         add(avatarImage, new GridBagConstraints(0, 0, 1, 3, 0.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 0, 5, 0), 0, 0));
 
         try {
-            Image aImage = SparkRes.getImageIcon(SparkRes.BLANK_24x24).getImage();
+            Image aImage = SparkRes.getImageIcon(SparkRes.Icon.BLANK_24x24).getImage();
             aImage = aImage.getScaledInstance(-1, Sizes.Avatar.VCARD_VIEW, Image.SCALE_SMOOTH);
             ImageIcon ico = new ImageIcon(aImage);
 
@@ -115,7 +111,7 @@ public class VCardViewer extends JPanel {
                             Log.warning("Unable to get scaled avatar from vcard.", e);
                         }
                     } else {
-                        icon = SparkRes.getImageIcon(SparkRes.DEFAULT_AVATAR_32x32_IMAGE);
+                        icon = SparkRes.getImageIcon(SparkRes.Icon.DEFAULT_AVATAR_32x32_IMAGE);
                     }
 
                     if (icon != null && icon.getIconWidth() > 0) {

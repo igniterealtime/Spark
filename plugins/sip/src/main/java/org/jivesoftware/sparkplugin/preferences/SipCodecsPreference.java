@@ -40,7 +40,7 @@ public class SipCodecsPreference implements Preference {
 
     @Override
     public Icon getIcon() {
-	return SparkRes.getImageIcon(SparkRes.DIAL_PHONE_IMAGE_24x24);
+	return SparkRes.getImageIcon(SparkRes.Icons.DIAL_PHONE_IMAGE_24x24);
     }
 
     @Override

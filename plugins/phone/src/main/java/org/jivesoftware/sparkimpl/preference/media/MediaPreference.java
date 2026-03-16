@@ -46,7 +46,7 @@ public class MediaPreference implements Preference {
 
     @Override
     public Icon getIcon() {
-        return SparkRes.getImageIcon(SparkRes.HEADSET_IMAGE);
+        return SparkRes.getImageIcon(SparkRes.Icons.HEADSET_IMAGE);
     }
 
     @Override

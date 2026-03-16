@@ -649,7 +649,7 @@ public class ChatManager {
             catch (ChatRoomNotFoundException e) {
                 // Do nothing
             }
-            contactList.setIconFor(from, SparkRes.getImageIcon(SparkRes.SMALL_MESSAGE_EDIT_IMAGE));
+            contactList.setIconFor(from, SparkRes.getImageIcon(SparkRes.Icon.SMALL_MESSAGE_EDIT_IMAGE));
         } );
     }
 

@@ -28,7 +28,6 @@ import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smackx.attention.packet.AttentionExtension;
-import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.rooms.ChatRoomImpl;
@@ -68,7 +67,7 @@ public class BuzzRoomDecorator implements ActionListener {
 
     public void addBuzzButton(BuzzRoomDecorator buzzer)
     {
-    	final JLabel dividerLabel = new JLabel(SparkRes.getImageIcon("DIVIDER_IMAGE"));
+        final JLabel dividerLabel = new JLabel(SparkRes.getImageIcon(SparkRes.Icon.DIVIDER_IMAGE));
     	chatRoom.addEditorComponent(dividerLabel);
     	chatRoom.addEditorComponent(buzzer.buzzButton);
     }

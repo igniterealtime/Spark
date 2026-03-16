@@ -93,10 +93,10 @@ public class PrivacyListTree extends JPanel implements SparkPrivacyListListener 
         JPanel info = new JPanel(new GridBagLayout());
         JLabel infolabel = new JLabel(Res.getString("privacy.label.information"));
         info.setBorder(BorderFactory.createTitledBorder(Res.getString("privacy.border.information")));
-        JLabel iq = new JLabel(Res.getString("privacy.label.iq.desc"), SparkRes.getImageIcon("PRIVACY_QUERY_ALLOW"), SwingConstants.LEFT);
-        JLabel msg = new JLabel(Res.getString("privacy.label.msg.desc"), SparkRes.getImageIcon("PRIVACY_MSG_ALLOW"), SwingConstants.LEFT);
-        JLabel pin = new JLabel(Res.getString("privacy.label.pin.desc"), SparkRes.getImageIcon("PRIVACY_PIN_ALLOW"), SwingConstants.LEFT);
-        JLabel pout = new JLabel(Res.getString("privacy.label.pout.desc"), SparkRes.getImageIcon("PRIVACY_POUT_ALLOW"), SwingConstants.LEFT);
+        JLabel iq = new JLabel(Res.getString("privacy.label.iq.desc"), SparkRes.getImageIcon(SparkRes.Icon.PRIVACY_QUERY_ALLOW), SwingConstants.LEFT);
+        JLabel msg = new JLabel(Res.getString("privacy.label.msg.desc"), SparkRes.getImageIcon(SparkRes.Icon.PRIVACY_MSG_ALLOW), SwingConstants.LEFT);
+        JLabel pin = new JLabel(Res.getString("privacy.label.pin.desc"), SparkRes.getImageIcon(SparkRes.Icon.PRIVACY_PIN_ALLOW), SwingConstants.LEFT);
+        JLabel pout = new JLabel(Res.getString("privacy.label.pout.desc"), SparkRes.getImageIcon(SparkRes.Icon.PRIVACY_POUT_ALLOW), SwingConstants.LEFT);
         info.add(infolabel, new GridBagConstraints(0, 0, 4, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 10, 10, 0), 0, 0));
         info.add(iq, new GridBagConstraints(0, 1, 1, 1, 0.0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 0, 0), 0, 0));
         info.add(msg, new GridBagConstraints(1, 1, 1, 1, 0.0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 0, 0), 0, 0));
@@ -117,9 +117,9 @@ public class PrivacyListTree extends JPanel implements SparkPrivacyListListener 
         _actList.setHorizontalTextPosition(SwingConstants.LEFT);
         _defList.setHorizontalTextPosition(SwingConstants.LEFT);
         if (_pManager.hasActiveList()) {
-            _actList.setIcon(SparkRes.getImageIcon("PRIVACY_DEACTIVATE_LIST"));
+            _actList.setIcon(SparkRes.getImageIcon(SparkRes.Icon.PRIVACY_DEACTIVATE_LIST));
             _actList.setText(_pManager.getActiveList().getListName());
-            _actList.setIcon(SparkRes.getImageIcon("PRIVACY_DEACTIVATE_LIST"));
+            _actList.setIcon(SparkRes.getImageIcon(SparkRes.Icon.PRIVACY_DEACTIVATE_LIST));
 
         } else {
             _actList.setText(Res.getString("privacy.button.no.list.selected"));
@@ -130,7 +130,7 @@ public class PrivacyListTree extends JPanel implements SparkPrivacyListListener 
         if (_pManager.hasDefaultList()) {
             _defList.setText(_pManager.getDefaultList().getListName());
             _defList.setEnabled(true);
-            _defList.setIcon(SparkRes.getImageIcon("PRIVACY_DEACTIVATE_LIST"));
+            _defList.setIcon(SparkRes.getImageIcon(SparkRes.Icon.PRIVACY_DEACTIVATE_LIST));
 
         } else {
             _defList.setText(Res.getString("privacy.button.no.list.selected"));
@@ -183,7 +183,7 @@ public class PrivacyListTree extends JPanel implements SparkPrivacyListListener 
         } else {
             remUser = new JMenuItem(Res.getString("privacy.menu.remove") + node.getPrivacyItem().getValue());
         }
-        remUser.setIcon(SparkRes.getImageIcon(SparkRes.SMALL_DELETE));
+        remUser.setIcon(SparkRes.getImageIcon(SparkRes.Icon.SMALL_DELETE));
         menu.add(remUser);
         remUser.addActionListener( e -> {
 
@@ -223,7 +223,7 @@ public class PrivacyListTree extends JPanel implements SparkPrivacyListListener 
         final SparkPrivacyList list = listnode.getPrivacyList();
         final PrivacyTreeNode parent = (PrivacyTreeNode) _tree.getSelectionPath().getPathComponent(2);
         JMenuItem addContact = new JMenuItem(showStringforAdd);
-        addContact.setIcon(SparkRes.getImageIcon(SparkRes.SMALL_ADD_IMAGE));
+        addContact.setIcon(SparkRes.getImageIcon(SparkRes.Icon.SMALL_ADD_IMAGE));
         addContact.addActionListener( e -> {
             PrivacyAddDialogUI browser = new PrivacyAddDialogUI();
             Collection<PrivacyItem> col = browser.showRoster(_comp, !node.isContactGroup());
@@ -250,12 +250,12 @@ public class PrivacyListTree extends JPanel implements SparkPrivacyListListener 
      */
     private void addMenuForListNodes(JPopupMenu menu, final PrivacyTreeNode node) {
         JMenuItem addList = new JMenuItem(Res.getString("privacy.menu.add.list"));
-        addList.setIcon(SparkRes.getImageIcon(SparkRes.SMALL_ADD_IMAGE));
+        addList.setIcon(SparkRes.getImageIcon(SparkRes.Icon.SMALL_ADD_IMAGE));
         JMenuItem rem = new JMenuItem(Res.getString("privacy.menu.remove.list"));
         JMenuItem act = new JMenuItem(Res.getString("privacy.menu.activate.list"));
-        act.setIcon(SparkRes.getImageIcon("PRIVACY_LIGHTNING"));
+        act.setIcon(SparkRes.getImageIcon(SparkRes.Icon.PRIVACY_LIGHTNING));
         JMenuItem def = new JMenuItem(Res.getString("privacy.menu.default.list"));
-        def.setIcon(SparkRes.getImageIcon("PRIVACY_CHECK"));
+        def.setIcon(SparkRes.getImageIcon(SparkRes.Icon.PRIVACY_CHECK));
         act.addActionListener( e -> node.setListAsActive() );
 
         def.addActionListener( e -> node.setListAsDefault() );
@@ -283,7 +283,7 @@ public class PrivacyListTree extends JPanel implements SparkPrivacyListListener 
                 _model.removeNodeFromParent(node);
             }
         } );
-        rem.setIcon(SparkRes.getImageIcon(SparkRes.SMALL_DELETE));
+        rem.setIcon(SparkRes.getImageIcon(SparkRes.Icon.SMALL_DELETE));
 
         menu.add(addList);
         if (!node.equals(_top)) {
@@ -410,7 +410,7 @@ public class PrivacyListTree extends JPanel implements SparkPrivacyListListener 
     public void listActivated(String listname) {
         _actList.setText(listname);       
         _actList.setEnabled(true);
-        _actList.setIcon(SparkRes.getImageIcon("PRIVACY_DEACTIVATE_LIST"));
+        _actList.setIcon(SparkRes.getImageIcon(SparkRes.Icon.PRIVACY_DEACTIVATE_LIST));
     }
 
     @Override
@@ -426,7 +426,7 @@ public class PrivacyListTree extends JPanel implements SparkPrivacyListListener 
     @Override
     public void listSetAsDefault(String listname) {
        _defList.setText(listname);
-       _defList.setIcon(SparkRes.getImageIcon("PRIVACY_DEACTIVATE_LIST"));
+       _defList.setIcon(SparkRes.getImageIcon(SparkRes.Icon.PRIVACY_DEACTIVATE_LIST));
        _defList.setEnabled(true);
     }
 

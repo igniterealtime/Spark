@@ -17,10 +17,7 @@ package org.jivesoftware.sparkimpl.plugin.viewer;
 
 import org.jivesoftware.resource.SparkRes;
 
-import javax.swing.BorderFactory;
-import javax.swing.Icon;
-import javax.swing.JLabel;
-import javax.swing.JTable;
+import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.table.TableCellRenderer;
 
@@ -47,7 +44,7 @@ public class PluginRenderer extends JLabel implements TableCellRenderer {
     @Override
 	public Component getTableCellRendererComponent(JTable table, Object color, boolean isSelected, boolean hasFocus, int row, int column) {
 
-        final Icon icon = SparkRes.getImageIcon(SparkRes.PLUGIN_IMAGE);
+        final Icon icon = SparkRes.getImageIcon(SparkRes.Icon.PLUGIN_IMAGE);
         setIcon(icon);
 
         if (isSelected) {

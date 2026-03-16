@@ -22,12 +22,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 
-import javax.swing.Icon;
-
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-
-import javax.swing.JTree;
+import javax.swing.*;
 
 import javax.swing.tree.DefaultTreeCellRenderer;
 
@@ -54,10 +49,10 @@ public class PrivacyTreeCellRenderer extends DefaultTreeCellRenderer {
                 myPanel.setBackground(Color.LIGHT_GRAY);
             }
 
-            Icon iq = node.getPrivacyItem().isFilterIQ() ? SparkRes.getImageIcon("PRIVACY_QUERY_DENY") : SparkRes.getImageIcon("PRIVACY_QUERY_ALLOW");
-            Icon in = node.getPrivacyItem().isFilterPresenceIn() ? SparkRes.getImageIcon("PRIVACY_PIN_DENY") : SparkRes.getImageIcon("PRIVACY_PIN_ALLOW");
-            Icon out = node.getPrivacyItem().isFilterPresenceOut() ? SparkRes.getImageIcon("PRIVACY_POUT_DENY") : SparkRes.getImageIcon("PRIVACY_POUT_ALLOW");
-            Icon msg = node.getPrivacyItem().isFilterMessage() ? SparkRes.getImageIcon("PRIVACY_MSG_DENY") : SparkRes.getImageIcon("PRIVACY_MSG_ALLOW");
+            Icon iq = node.getPrivacyItem().isFilterIQ() ? SparkRes.getImageIcon(SparkRes.Icon.PRIVACY_QUERY_DENY) : SparkRes.getImageIcon(SparkRes.Icon.PRIVACY_QUERY_ALLOW);
+            Icon in = node.getPrivacyItem().isFilterPresenceIn() ? SparkRes.getImageIcon(SparkRes.Icon.PRIVACY_PIN_DENY) : SparkRes.getImageIcon(SparkRes.Icon.PRIVACY_PIN_ALLOW);
+            Icon out = node.getPrivacyItem().isFilterPresenceOut() ? SparkRes.getImageIcon(SparkRes.Icon.PRIVACY_POUT_DENY) : SparkRes.getImageIcon(SparkRes.Icon.PRIVACY_POUT_ALLOW);
+            Icon msg = node.getPrivacyItem().isFilterMessage() ? SparkRes.getImageIcon(SparkRes.Icon.PRIVACY_MSG_DENY) : SparkRes.getImageIcon(SparkRes.Icon.PRIVACY_MSG_ALLOW);
 
             myPanel.add(new JLabel(node.getPrivacyItem().getValue()), new GridBagConstraints(4, 0, 1, 1, 0, 0, GridBagConstraints.FIRST_LINE_START, GridBagConstraints.HORIZONTAL,
                     new Insets(0, 10, 0, 0), 0, 0));
@@ -69,15 +64,15 @@ public class PrivacyTreeCellRenderer extends DefaultTreeCellRenderer {
         } else {
 
             if (node.isRoot()) {
-                setIcon(SparkRes.getImageIcon("CLIPBOARD"));
+                setIcon(SparkRes.getImageIcon(SparkRes.Icon.CLIPBOARD));
             }
 
             if (node.isGroupNode()) {
 
-                setIcon(SparkRes.getImageIcon(SparkRes.SMALL_CURRENT_AGENTS));
+                setIcon(SparkRes.getImageIcon(SparkRes.Icon.SMALL_CURRENT_AGENTS));
 
             } else if (node.isContactGroup()) {
-                setIcon(SparkRes.getImageIcon(SparkRes.AVAILABLE_USER));
+                setIcon(SparkRes.getImageIcon(SparkRes.Icon.AVAILABLE_USER));
 
             }
 
@@ -90,7 +85,7 @@ public class PrivacyTreeCellRenderer extends DefaultTreeCellRenderer {
 //                    listName += " [" + Res.getString("privacy.label.list.is.default") + "]";
 //                }
                 setText(listName);
-                setIcon(SparkRes.getImageIcon(SparkRes.SMALL_ENTRY));
+                setIcon(SparkRes.getImageIcon(SparkRes.Icon.SMALL_ENTRY));
 
             }
 

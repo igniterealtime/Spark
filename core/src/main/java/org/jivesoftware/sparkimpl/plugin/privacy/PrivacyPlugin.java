@@ -99,7 +99,7 @@ public class PrivacyPlugin implements Plugin {
                             JMenuItem blockMenu;
 
                             if (activeList.isBlockedItem(item.getJid().toString())) {
-                                blockMenu = new JMenuItem(Res.getString("menuitem.unblock.contact"), SparkRes.getImageIcon(SparkRes.UNBLOCK_CONTACT_16x16));
+                                blockMenu = new JMenuItem(Res.getString("menuitem.unblock.contact"), SparkRes.getImageIcon(SparkRes.Icon.UNBLOCK_CONTACT_16x16));
                                 blockMenu.addActionListener( ae -> {
                                     if (item != null) {
                                         activeList.removeItem( item.getJid().toString());
@@ -107,7 +107,7 @@ public class PrivacyPlugin implements Plugin {
                                     }
                                 } );
                             } else {
-                                blockMenu = new JMenuItem(Res.getString("menuitem.block.contact"), SparkRes.getImageIcon(SparkRes.BLOCK_CONTACT_16x16));
+                                blockMenu = new JMenuItem(Res.getString("menuitem.block.contact"), SparkRes.getImageIcon(SparkRes.Icon.BLOCK_CONTACT_16x16));
                                 blockMenu.addActionListener( ae -> {
                                     if (item != null) {
                                         PrivacyItem pItem = new PrivacyItem(Type.jid, item.getJid().toString(), false, activeList.getNewItemOrder());

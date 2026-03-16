@@ -26,11 +26,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Comparator;
 
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.UIManager;
+import javax.swing.*;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
@@ -426,7 +422,7 @@ public class ContactItem extends JPanel {
         }
 
         String status = presence.getStatus();
-        Icon statusIcon = SparkRes.getImageIcon(SparkRes.GREEN_BALL);
+        Icon statusIcon = SparkRes.getImageIcon(SparkRes.Icon.GREEN_BALL);
         boolean isAvailable = false;
         if (status == null && presence.isAvailable()) {
             Presence.Mode mode = presence.getMode();
@@ -436,24 +432,24 @@ public class ContactItem extends JPanel {
             }
             else if (mode == Presence.Mode.away) {
                 status = Res.getString("status.away");
-                statusIcon = SparkRes.getImageIcon(SparkRes.IM_AWAY);
+                statusIcon = SparkRes.getImageIcon(SparkRes.Icon.IM_AWAY);
             }
             else if (mode == Presence.Mode.chat) {
                 status = Res.getString("status.free.to.chat");
             }
             else if (mode == Presence.Mode.dnd) {
                 status = Res.getString("status.do.not.disturb");
-                statusIcon = SparkRes.getImageIcon(SparkRes.IM_AWAY);
+                statusIcon = SparkRes.getImageIcon(SparkRes.Icon.IM_AWAY);
             }
             else if (mode == Presence.Mode.xa) {
                 status = Res.getString("status.extended.away");
-                statusIcon = SparkRes.getImageIcon(SparkRes.IM_XA);
+                statusIcon = SparkRes.getImageIcon(SparkRes.Icon.IM_XA);
             }
         }
 
         // Sets status icon and text based on presence
         if (presence.isAway()) {
-            statusIcon = SparkRes.getImageIcon(SparkRes.IM_AWAY);
+            statusIcon = SparkRes.getImageIcon(SparkRes.Icon.IM_AWAY);
         }
         else if (presence.isAvailable()) {
             isAvailable = true;
@@ -467,13 +463,13 @@ public class ContactItem extends JPanel {
             if (entry != null && (entry.getType() == RosterPacket.ItemType.none || entry.getType() == RosterPacket.ItemType.from)
                     && entry.isSubscriptionPending()) {
                 // Do not move out of group.
-                setIcon(SparkRes.getImageIcon(SparkRes.SMALL_QUESTION));
+                setIcon(SparkRes.getImageIcon(SparkRes.Icon.SMALL_QUESTION));
                 getNicknameLabel().setFont(new Font("Dialog", Font.PLAIN, fontSize));
                 setStatusText(Res.getString("status.pending"));
             }
             else {
             	//We should keep the offline bullet (not available) instead of putting icon null.
-            	setIcon(SparkRes.getImageIcon(SparkRes.CLEAR_BALL_ICON));
+            	setIcon(SparkRes.getImageIcon(SparkRes.Icon.CLEAR_BALL_ICON));
                 setFont(new Font("Dialog", Font.PLAIN, fontSize));
                 getNicknameLabel().setFont(new Font("Dialog", Font.PLAIN, fontSize));
                 setAvailable(false);
@@ -502,7 +498,7 @@ public class ContactItem extends JPanel {
         }
 
         if (PresenceManager.isOnPhone(presence)) {
-            statusIcon = SparkRes.getImageIcon(SparkRes.ON_PHONE_IMAGE);
+            statusIcon = SparkRes.getImageIcon(SparkRes.Icon.ON_PHONE_IMAGE);
             setIcon(statusIcon);
         }
 

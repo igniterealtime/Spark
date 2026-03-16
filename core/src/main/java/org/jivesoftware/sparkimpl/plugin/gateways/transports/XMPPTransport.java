@@ -19,7 +19,7 @@ import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jxmpp.jid.DomainBareJid;
 
-import javax.swing.Icon;
+import javax.swing.*;
 
 /**
  */
@@ -43,12 +43,12 @@ public class XMPPTransport implements Transport {
 
     @Override
 	public Icon getIcon() {
-        return SparkRes.getImageIcon(SparkRes.XMPP_TRANSPORT_ACTIVE_IMAGE);
+        return SparkRes.getImageIcon(SparkRes.Icon.XMPP_TRANSPORT_ACTIVE_IMAGE);
     }
 
     @Override
 	public Icon getInactiveIcon() {
-        return SparkRes.getImageIcon(SparkRes.XMPP_TRANSPORT_INACTIVE_IMAGE);
+        return SparkRes.getImageIcon(SparkRes.Icon.XMPP_TRANSPORT_INACTIVE_IMAGE);
     }
 
     @Override

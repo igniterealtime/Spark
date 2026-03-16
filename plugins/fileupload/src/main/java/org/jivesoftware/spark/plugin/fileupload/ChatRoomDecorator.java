@@ -57,7 +57,7 @@ public class ChatRoomDecorator {
     public ChatRoomDecorator(final ChatRoom room) {
         this.room = room;
         // Adds file upload button to chat room
-        fileuploadButton = new RolloverButton(SparkRes.getImageIcon("UPLOAD_ICON"));
+        fileuploadButton = new RolloverButton(SparkRes.getImageIcon(SparkRes.Icon.UPLOAD_ICON));
         try {
             fileuploadButton.setToolTipText(GraphicUtils.createToolTip("Http File Upload"));
             fileuploadButton.addActionListener(event -> {

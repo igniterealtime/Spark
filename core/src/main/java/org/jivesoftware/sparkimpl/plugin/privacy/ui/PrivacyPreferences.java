@@ -15,9 +15,7 @@
  */
 package org.jivesoftware.sparkimpl.plugin.privacy.ui;
 
-import javax.swing.Icon;
-
-import javax.swing.JComponent;
+import javax.swing.*;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
@@ -41,8 +39,7 @@ public class PrivacyPreferences implements Preference {
 
     @Override
     public Icon getIcon() {
-
-        return SparkRes.getImageIcon("PRIVACY_ICON");
+        return SparkRes.getImageIcon(SparkRes.Icon.PRIVACY_ICON);
     }
 
     @Override

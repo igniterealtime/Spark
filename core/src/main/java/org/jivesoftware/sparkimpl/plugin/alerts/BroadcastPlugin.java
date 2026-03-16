@@ -98,8 +98,8 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
 
         // Register with action menu
         final JMenu actionsMenu = SparkManager.getMainWindow().getMenuByName(Res.getString("menuitem.actions"));
-        JMenuItem broadcastHistoryMenu = new JMenuItem(Res.getString("title.broadcast.history"), SparkRes.getImageIcon(SparkRes.HISTORY_16x16));
-        JMenuItem broadcastMenu = new JMenuItem(Res.getString("title.broadcast.message"), SparkRes.getImageIcon(SparkRes.MEGAPHONE_16x16));
+        JMenuItem broadcastHistoryMenu = new JMenuItem(Res.getString("title.broadcast.history"), SparkRes.getImageIcon(SparkRes.Icon.HISTORY_16x16));
+        JMenuItem broadcastMenu = new JMenuItem(Res.getString("title.broadcast.message"), SparkRes.getImageIcon(SparkRes.Icon.MEGAPHONE_16x16));
         ResourceUtils.resButton(broadcastMenu, Res.getString("title.broadcast.message"));
         actionsMenu.add(broadcastHistoryMenu);
         actionsMenu.add(broadcastMenu);
@@ -107,7 +107,7 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
         broadcastMenu.addActionListener(e -> broadcastToRoster());
         broadcastHistoryMenu.addActionListener(e -> new BroadcastHistoryFrame().run());
         // Register with action menu
-        JMenuItem startConversationMenu = new JMenuItem("", SparkRes.getImageIcon(SparkRes.SMALL_MESSAGE_IMAGE));
+        JMenuItem startConversationMenu = new JMenuItem("", SparkRes.getImageIcon(SparkRes.Icon.SMALL_MESSAGE_IMAGE));
         ResourceUtils.resButton(startConversationMenu, Res.getString("menuitem.start.a.chat"));
         if (!Default.getBoolean(Default.HIDE_START_A_CHAT) && Enterprise.containsFeature(Enterprise.START_A_CHAT_FEATURE)) {
             actionsMenu.add(startConversationMenu, 0);
@@ -154,7 +154,7 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
                     };
 
                     broadcastMessageAction.putValue(Action.NAME, Res.getString("menuitem.broadcast.to.group"));
-                    broadcastMessageAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.MEGAPHONE_16x16));
+                    broadcastMessageAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.Icon.MEGAPHONE_16x16));
 
                     popup.add(broadcastMessageAction);
                 }
@@ -173,7 +173,7 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
         // Add Broadcast to roaster
         StatusBar statusBar = SparkManager.getWorkspace().getStatusBar();
 
-        RolloverButton broadcastToRosterButton = new RolloverButton(SparkRes.getImageIcon(SparkRes.MEGAPHONE_16x16));
+        RolloverButton broadcastToRosterButton = new RolloverButton(SparkRes.getImageIcon(SparkRes.Icon.MEGAPHONE_16x16));
         broadcastToRosterButton.setToolTipText(Res.getString("message.send.a.broadcast"));
 
         statusBar.invalidate();
@@ -387,7 +387,7 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
             ChatRoom chatroom = (ChatRoom) component;
             if (broadcastRooms.contains(chatroom)) {
                 final ChatRoomImpl room = (ChatRoomImpl) component;
-                tab.setIcon(SparkRes.getImageIcon(SparkRes.INFORMATION_IMAGE));
+                tab.setIcon(SparkRes.getImageIcon(SparkRes.Icon.INFORMATION_IMAGE));
                 String nickname = room.getTabTitle();
                 nickname = Res.getString("message.broadcast.from", nickname);
                 tab.setTabTitle(nickname);
@@ -453,9 +453,9 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
         final JFrame alert = new JFrame(title);
 
         alert.setLayout(new GridBagLayout());
-        alert.setIconImage(SparkRes.getImageIcon(SparkRes.MAIN_IMAGE).getImage());
+        alert.setIconImage(SparkRes.getImageIcon(SparkRes.Icon.MAIN_IMAGE).getImage());
         String mylink = linkCreator(message.getBody());
-        JLabel icon = new JLabel(SparkRes.getImageIcon(SparkRes.ALERT));
+        JLabel icon = new JLabel(SparkRes.getImageIcon(SparkRes.Icon.ALERT));
         JButton close = new JButton(Res.getString("close"));
 
         close.addActionListener(new AbstractAction() {

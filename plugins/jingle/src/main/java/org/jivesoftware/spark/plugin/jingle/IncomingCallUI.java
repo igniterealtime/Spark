@@ -146,7 +146,7 @@ public class IncomingCallUI extends JPanel {
         titleLabel.setText(title);
         titleLabel.setIcon(icon);
 
-        avatarLabel.setIcon(SparkRes.getImageIcon(SparkRes.DEFAULT_AVATAR_64x64_IMAGE));
+        avatarLabel.setIcon(SparkRes.getImageIcon(SparkRes.Icons.DEFAULT_AVATAR_64x64_IMAGE));
         avatarLabel.invalidate();
         avatarLabel.validate();
         avatarLabel.repaint();

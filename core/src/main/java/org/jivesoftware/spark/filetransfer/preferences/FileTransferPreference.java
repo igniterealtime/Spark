@@ -22,8 +22,8 @@ import org.jivesoftware.spark.preference.Preference;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
-import javax.swing.Icon;
-import javax.swing.JComponent;
+
+import javax.swing.*;
 
 /**
  */
@@ -50,7 +50,7 @@ public class FileTransferPreference implements Preference {
 
     @Override
 	public Icon getIcon() {
-        return SparkRes.getImageIcon(SparkRes.SEND_FILE_ICON);
+        return SparkRes.getImageIcon(SparkRes.Icon.SEND_FILE_ICON);
     }
 
     @Override

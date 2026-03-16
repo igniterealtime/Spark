@@ -15,11 +15,11 @@
  */
 package org.jivesoftware.sparkimpl.plugin.gateways.transports;
 
-import javax.swing.Icon;
-
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jxmpp.jid.DomainBareJid;
+
+import javax.swing.*;
 
 public class FacebookTransport implements Transport {
 	
@@ -41,12 +41,12 @@ public class FacebookTransport implements Transport {
 
     @Override
 	public Icon getIcon() {
-        return SparkRes.getImageIcon(SparkRes.FACEBOOK_TRANSPORT_ACTIVE_IMAGE);
+        return SparkRes.getImageIcon(SparkRes.Icon.FACEBOOK_TRANSPORT_ACTIVE_IMAGE);
     }
 
     @Override
 	public Icon getInactiveIcon() {
-        return SparkRes.getImageIcon(SparkRes.FACEBOOK_TRANSPORT_INACTIVE_IMAGE);
+        return SparkRes.getImageIcon(SparkRes.Icon.FACEBOOK_TRANSPORT_INACTIVE_IMAGE);
     }
 
     @Override

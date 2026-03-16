@@ -143,12 +143,12 @@ public class ContactList extends JPanel implements ActionListener,
 
         JToolBar toolbar = new JToolBar();
         toolbar.setFloatable(false);
-        addContactMenu = new JMenuItem(Res.getString("menuitem.add.contact"), SparkRes.getImageIcon(SparkRes.USER1_ADD_16x16));
-        addContactGroupMenu = new JMenuItem(Res.getString("menuitem.add.contact.group"), SparkRes.getImageIcon(SparkRes.SMALL_ADD_IMAGE));
+        addContactMenu = new JMenuItem(Res.getString("menuitem.add.contact"), SparkRes.getImageIcon(SparkRes.Icon.USER1_ADD_16x16));
+        addContactGroupMenu = new JMenuItem(Res.getString("menuitem.add.contact.group"), SparkRes.getImageIcon(SparkRes.Icon.SMALL_ADD_IMAGE));
 
-        removeContactFromGroupMenu = new JMenuItem(Res.getString("menuitem.remove.from.group"), SparkRes.getImageIcon(SparkRes.SMALL_DELETE));
-        chatMenu = new JMenuItem(Res.getString("menuitem.start.a.chat"), SparkRes.getImageIcon(SparkRes.SMALL_MESSAGE_IMAGE));
-        renameMenu = new JMenuItem(Res.getString("menuitem.rename"), SparkRes.getImageIcon(SparkRes.DESKTOP_IMAGE));
+        removeContactFromGroupMenu = new JMenuItem(Res.getString("menuitem.remove.from.group"), SparkRes.getImageIcon(SparkRes.Icon.SMALL_DELETE));
+        chatMenu = new JMenuItem(Res.getString("menuitem.start.a.chat"), SparkRes.getImageIcon(SparkRes.Icon.SMALL_MESSAGE_IMAGE));
+        renameMenu = new JMenuItem(Res.getString("menuitem.rename"), SparkRes.getImageIcon(SparkRes.Icon.DESKTOP_IMAGE));
 
         addContactMenu.addActionListener(this);
         removeContactFromGroupMenu.addActionListener(this);
@@ -158,9 +158,9 @@ public class ContactList extends JPanel implements ActionListener,
 
         setLayout(new BorderLayout());
 
-        addingGroupButton = new RolloverButton(SparkRes.getImageIcon(SparkRes.ADD_CONTACT_IMAGE));
+        addingGroupButton = new RolloverButton(SparkRes.getImageIcon(SparkRes.Icon.ADD_CONTACT_IMAGE));
 
-        RolloverButton groupChatButton = new RolloverButton(SparkRes.getImageIcon(SparkRes.JOIN_GROUPCHAT_IMAGE));
+        RolloverButton groupChatButton = new RolloverButton(SparkRes.getImageIcon(SparkRes.Icon.JOIN_GROUPCHAT_IMAGE));
         toolbar.add(addingGroupButton);
         toolbar.add(groupChatButton);
 
@@ -255,7 +255,7 @@ public class ContactList extends JPanel implements ActionListener,
 //        final JPanel commandPanel = SparkManager.getWorkspace().getCommandPanel(); 
 //
 //
-//        final RolloverButton addContactButton = new RolloverButton(SparkRes.getImageIcon(SparkRes.USER1_ADD_16x16));
+//        final RolloverButton addContactButton = new RolloverButton(SparkRes.getImageIcon(SparkRes.Icons.USER1_ADD_16x16));
 //        if (!Default.getBoolean(Default.ADD_CONTACT_DISABLED)) {
 //        	commandPanel.add(addContactButton);
 //        }
@@ -393,7 +393,7 @@ public class ContactList extends JPanel implements ActionListener,
                 // Only run through if the user's presence was online before.
                 if (item.getPresence().isAvailable()) {
                     item.showUserGoingOfflineOnline();
-                    item.setIcon(SparkRes.getImageIcon(SparkRes.CLEAR_BALL_ICON));
+                    item.setIcon(SparkRes.getImageIcon(SparkRes.Icon.CLEAR_BALL_ICON));
                     group.fireContactGroupUpdated();
 
                     TaskEngine.getInstance().schedule(new SwingTimerTask() {
@@ -1518,7 +1518,7 @@ public class ContactList extends JPanel implements ActionListener,
 
         // See if we should disable the option to transfer files and images
         if (!Default.getBoolean(Default.DISABLE_FILE_TRANSFER) && Enterprise.containsFeature(Enterprise.FILE_TRANSFER_FEATURE)) {
-            sendAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.DOCUMENT_16x16));
+            sendAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.Icon.DOCUMENT_16x16));
             sendAction.putValue(Action.NAME, Res.getString("menuitem.send.a.file"));
             if (item.getPresence() != null) popup.add(sendAction);
         }
@@ -1558,7 +1558,7 @@ public class ContactList extends JPanel implements ActionListener,
         };
 
         removeAction.putValue(Action.NAME, Res.getString("menuitem.remove.from.roster"));
-        removeAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.SMALL_CIRCLE_DELETE));
+        removeAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.Icon.SMALL_CIRCLE_DELETE));
 
         // Check if a user is in a shared group.
         boolean isInSharedGroup = false;
@@ -1592,7 +1592,7 @@ public class ContactList extends JPanel implements ActionListener,
                 vcardSupport.viewProfile(jid, SparkManager.getWorkspace());
             }
         };
-        viewProfile.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.PROFILE_IMAGE_16x16));
+        viewProfile.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.Icon.PROFILE_IMAGE_16x16));
         viewProfile.putValue(Action.NAME, Res.getString("menuitem.view.profile"));
 
         popup.add(viewProfile);
@@ -1629,7 +1629,7 @@ public class ContactList extends JPanel implements ActionListener,
         };
 
         lastActivityAction.putValue(Action.NAME, Res.getString("menuitem.view.last.activity"));
-        lastActivityAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.HISTORY_16x16));
+        lastActivityAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.Icon.HISTORY_16x16));
 
         if (contactGroup == offlineGroup || item.getPresence().isAway() || (item.getPresence().getType() == Presence.Type.unavailable) || (item.getPresence().getType() == null)) {
             popup.add(lastActivityAction);
@@ -1654,7 +1654,7 @@ public class ContactList extends JPanel implements ActionListener,
             }
         };
 
-        subscribeAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.SMALL_USER1_INFORMATION));
+        subscribeAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.Icon.SMALL_USER1_INFORMATION));
         subscribeAction.putValue(Action.NAME, Res.getString("menuitem.subscribe.to"));
 
         Roster roster = SparkManager.getRoster();
@@ -1687,7 +1687,7 @@ public class ContactList extends JPanel implements ActionListener,
 
 
         final JPopupMenu popup = new JPopupMenu();
-        final JMenuItem sendMessagesMenu = new JMenuItem(Res.getString("menuitem.send.a.message"), SparkRes.getImageIcon(SparkRes.SMALL_MESSAGE_IMAGE));
+        final JMenuItem sendMessagesMenu = new JMenuItem(Res.getString("menuitem.send.a.message"), SparkRes.getImageIcon(SparkRes.Icon.SMALL_MESSAGE_IMAGE));
 
         fireContextMenuListenerPopup(popup, items);
 
@@ -1722,7 +1722,7 @@ public class ContactList extends JPanel implements ActionListener,
 
     private void sendMessages(Collection<ContactItem> items) {
         InputDialog dialog = new InputDialog();
-        final String messageText = dialog.getInput(Res.getString("title.broadcast.message"), Res.getString("message.enter.broadcast.message"), SparkRes.getImageIcon(SparkRes.BLANK_IMAGE), SparkManager.getMainWindow());
+        final String messageText = dialog.getInput(Res.getString("title.broadcast.message"), Res.getString("message.enter.broadcast.message"), SparkRes.getImageIcon(SparkRes.Icon.BLANK_IMAGE), SparkManager.getMainWindow());
         if (!ModelUtil.hasLength(messageText)) {
             return;
         }
@@ -1926,10 +1926,10 @@ public class ContactList extends JPanel implements ActionListener,
 
     private void addContactListToWorkspace() {
         Workspace workspace = SparkManager.getWorkspace();
-        workspace.getWorkspacePane().addTab(Res.getString("tab.contacts"), SparkRes.getImageIcon(SparkRes.SMALL_ALL_CHATS_IMAGE), this);
+        workspace.getWorkspacePane().addTab(Res.getString("tab.contacts"), SparkRes.getImageIcon(SparkRes.Icon.SMALL_ALL_CHATS_IMAGE), this);
         // Add To Contacts Menu
         final JMenu contactsMenu = SparkManager.getMainWindow().getMenuByName(Res.getString("menuitem.contacts"));
-        JMenuItem addContactsMenu = new JMenuItem("", SparkRes.getImageIcon(SparkRes.USER1_ADD_16x16));
+        JMenuItem addContactsMenu = new JMenuItem("", SparkRes.getImageIcon(SparkRes.Icon.USER1_ADD_16x16));
         ResourceUtils.resButton(addContactsMenu, Res.getString("menuitem.add.contact"));
         ResourceUtils.resButton(addContactGroupMenu, Res.getString("menuitem.add.contact.group"));
 

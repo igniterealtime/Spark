@@ -34,7 +34,6 @@ import org.jivesoftware.spark.component.VerticalFlowLayout;
 
 import org.jivesoftware.spark.plugin.Plugin;
 import org.jivesoftware.spark.ui.*;
-import org.jivesoftware.spark.util.StringUtils;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.*;
@@ -101,7 +100,7 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
                 
                 
                 if (TransportUtils.getTransports().size() > 0  && useTab) {
-                   SparkManager.getWorkspace().getWorkspacePane().addTab(Res.getString("title.transports"), SparkRes.getImageIcon(SparkRes.TRANSPORT_ICON), transferTab); 
+                   SparkManager.getWorkspace().getWorkspacePane().addTab(Res.getString("title.transports"), SparkRes.getImageIcon(SparkRes.Icon.TRANSPORT_ICON), transferTab);
                 }
 
                 for (final Transport transport : TransportUtils.getTransports()) {
@@ -234,7 +233,7 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
                     if (transport != null) {
                         String title = "Alert from " + transport.getName();
                         // Show error
-                        MessageDialog.showAlert(body, title, "Information", SparkRes.getImageIcon(SparkRes.INFORMATION_IMAGE));
+                        MessageDialog.showAlert(body, title, "Information", SparkRes.getImageIcon(SparkRes.Icon.INFORMATION_IMAGE));
                     }
                 }
             }

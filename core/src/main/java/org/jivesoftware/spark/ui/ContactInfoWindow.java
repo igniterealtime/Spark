@@ -19,7 +19,6 @@ package org.jivesoftware.spark.ui;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 
 import javax.swing.BorderFactory;
@@ -299,7 +298,7 @@ public class ContactInfoWindow extends JPanel {
                 avatarLabel.setIcon(icon);
             }
             else {
-                icon = SparkRes.getImageIcon(SparkRes.DEFAULT_AVATAR_64x64_IMAGE);
+                icon = SparkRes.getImageIcon(SparkRes.Icon.DEFAULT_AVATAR_64x64_IMAGE);
                 avatarLabel.setIcon(icon);
             }
             avatarLabel.setBorder(BorderFactory.createLineBorder(Color.lightGray, 1, true));

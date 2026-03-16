@@ -49,7 +49,7 @@ public class ReconnectPanelSmall extends ContactGroup implements
     public ReconnectPanelSmall(String groupName) {
 	super(groupName);
 	this.add(_reconnectionlabel);
-	this.setIcon(SparkRes.getImageIcon(SparkRes.BUSY_IMAGE));
+	this.setIcon(SparkRes.getImageIcon(SparkRes.Icon.BUSY_IMAGE));
     _reconnectionlabel.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {

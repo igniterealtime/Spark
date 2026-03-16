@@ -69,7 +69,7 @@ public class OTRConnectionPanel {
     public void tryToStart() {
         if (!_succesfull && !_waiting) {
             renewPanel();
-            _icon.setImage(SparkRes.getImageIcon(SparkRes.BUSY_IMAGE).getImage());
+            _icon.setImage(SparkRes.getImageIcon(SparkRes.Icons.BUSY_IMAGE).getImage());
 
             _conPanel.setVisible(true);
 
@@ -88,7 +88,7 @@ public class OTRConnectionPanel {
                         decI();
                     } else if (!_succesfull) {
                         _waiting = true;
-                        _icon.setImage(SparkRes.getImageIcon(SparkRes.SMALL_DELETE).getImage());
+                        _icon.setImage(SparkRes.getImageIcon(SparkRes.Icons.SMALL_DELETE).getImage());
                         _label.setText(OTRResources.getString("otr.failed.to.establish", _i));
                         _retry.setVisible(true);
 
@@ -123,7 +123,7 @@ public class OTRConnectionPanel {
             renewPanel();
             _succesfull = false;
             _label.setText(OTRResources.getString("otr.disconnected"));
-            _icon.setImage(SparkRes.getImageIcon(SparkRes.SMALL_STOP).getImage());
+            _icon.setImage(SparkRes.getImageIcon(SparkRes.Icons.SMALL_STOP).getImage());
             _conPanel.setVisible(true);
         }
     }
@@ -144,7 +144,7 @@ public class OTRConnectionPanel {
             _conPanel.setVisible(true);
             _succesfull = true;
             _waiting = false;
-            _icon.setImage(SparkRes.getImageIcon(SparkRes.SMALL_CHECK).getImage());
+            _icon.setImage(SparkRes.getImageIcon(SparkRes.Icons.SMALL_CHECK).getImage());
             _label.setText(OTRResources.getString("otr.successfull"));
         }
     }

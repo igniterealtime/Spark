@@ -77,9 +77,9 @@ public final class RosterTree extends JPanel {
             final String nodeUser = addressMap.get(node);
             if (user.startsWith(nodeUser)) {
                 if (!presence.isAvailable()) {
-                    node.setIcon(SparkRes.getImageIcon(SparkRes.CLEAR_BALL_ICON));
+                    node.setIcon(SparkRes.getImageIcon(SparkRes.Icon.CLEAR_BALL_ICON));
                 } else {
-                    node.setIcon(SparkRes.getImageIcon(SparkRes.GREEN_BALL));
+                    node.setIcon(SparkRes.getImageIcon(SparkRes.Icon.GREEN_BALL));
                 }
             }
         }

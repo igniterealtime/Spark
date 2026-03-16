@@ -22,8 +22,7 @@ import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
-import javax.swing.Icon;
-import javax.swing.JComponent;
+import javax.swing.*;
 
 /**
  * Essentially adds a new panel to the menu.
@@ -56,7 +55,7 @@ public class GroupChatPreference implements Preference {
 
     @Override
 	public Icon getIcon() {
-        return SparkRes.getImageIcon(SparkRes.JOIN_GROUPCHAT_IMAGE);
+        return SparkRes.getImageIcon(SparkRes.Icon.JOIN_GROUPCHAT_IMAGE);
     }
 
     @Override

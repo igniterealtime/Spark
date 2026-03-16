@@ -88,7 +88,7 @@ public class RecentCallsPanel extends JPanel {
             descriptionLabel.setForeground(Color.gray);
             descriptionLabel.setFont(new Font("Dialog", Font.PLAIN, 11));
 
-            final JLabel imageLabel = new JLabel(SparkRes.getImageIcon(SparkRes.SMALL_PIN_BLUE));
+            final JLabel imageLabel = new JLabel(SparkRes.getImageIcon(SparkRes.Icons.SMALL_PIN_BLUE));
             imageLabel.setHorizontalTextPosition(JLabel.LEFT);
             imageLabel.setHorizontalAlignment(JLabel.LEFT);
             add(imageLabel, new GridBagConstraints(0, 0, 1, 2, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0));

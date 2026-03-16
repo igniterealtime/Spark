@@ -62,7 +62,7 @@ public class IncomingCall implements JingleSessionListener, ChatRoomClosingListe
      * @param request the <code>JingleSessionRequest</code>
      */
     public IncomingCall(final JingleSessionRequest request) {
-        notificationUI = new GenericNotification(JingleResources.getString("label.establishing.call"), SparkRes.getImageIcon(SparkRes.BUSY_IMAGE));
+        notificationUI = new GenericNotification(JingleResources.getString("label.establishing.call"), SparkRes.getImageIcon(SparkRes.Icons.BUSY_IMAGE));
         // Accept the request
         try {
             session = request.accept();

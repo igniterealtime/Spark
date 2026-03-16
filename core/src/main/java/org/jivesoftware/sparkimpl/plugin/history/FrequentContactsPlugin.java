@@ -42,17 +42,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.swing.AbstractAction;
-import javax.swing.BorderFactory;
-import javax.swing.DefaultListModel;
-import javax.swing.Icon;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.KeyStroke;
-import javax.swing.ListCellRenderer;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 
 /**
  * Adds a simple feature to list your most "Popular" contacts.
@@ -187,7 +177,7 @@ public class FrequentContactsPlugin implements Plugin {
             if (contactItem != null) {
                 icon = contactItem.getIcon();
                 if (icon == null) {
-                    icon = SparkRes.getImageIcon(SparkRes.CLEAR_BALL_ICON);
+                    icon = SparkRes.getImageIcon(SparkRes.Icon.CLEAR_BALL_ICON);
                 }
 
                 JLabel label = new JLabel();

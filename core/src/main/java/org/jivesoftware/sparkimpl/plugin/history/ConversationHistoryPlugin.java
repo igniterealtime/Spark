@@ -17,7 +17,6 @@ package org.jivesoftware.sparkimpl.plugin.history;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.MessageBuilder;
 import org.jivesoftware.smack.xml.SmackXmlParser;
 import org.jivesoftware.smack.xml.XmlPullParser;
@@ -212,7 +211,7 @@ public class ConversationHistoryPlugin implements Plugin {
             if (contactItem != null) {
                 icon = contactItem.getIcon();
                 if (icon == null) {
-                    icon = SparkRes.getImageIcon(SparkRes.CLEAR_BALL_ICON);
+                    icon = SparkRes.getImageIcon(SparkRes.Icon.CLEAR_BALL_ICON);
                 }
 
                 JLabel label = new JLabel();

@@ -193,7 +193,7 @@ final class InvitationDialog extends JPanel {
         };
 
         removeAction.putValue(Action.NAME, Res.getString("menuitem.remove"));
-        removeAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.SMALL_DELETE));
+        removeAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.Icon.SMALL_DELETE));
 
         popup.add(removeAction);
         popup.show(invitedUserList, e.getX(), e.getY());
@@ -261,7 +261,7 @@ final class InvitationDialog extends JPanel {
         }
 
         // Create the title panel for this dialog
-        TitlePanel titlePanel = new TitlePanel(Res.getString("title.invite.to.conference"), Res.getString("message.invite.users.to.conference"), SparkRes.getImageIcon(SparkRes.BLANK_IMAGE), true);
+        TitlePanel titlePanel = new TitlePanel(Res.getString("title.invite.to.conference"), Res.getString("message.invite.users.to.conference"), SparkRes.getImageIcon(SparkRes.Icon.BLANK_IMAGE), true);
 
         // Construct main panel w/ layout.
         final JPanel mainPanel = new JPanel();

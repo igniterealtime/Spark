@@ -18,7 +18,6 @@ package org.jivesoftware.spark;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.smack.packet.ExtensionElement;
 import org.jivesoftware.smack.packet.StanzaBuilder;
 import org.jivesoftware.smack.packet.XmlElement;
 import org.jivesoftware.smack.roster.Roster;
@@ -29,8 +28,7 @@ import org.jxmpp.jid.BareJid;
 import org.jxmpp.jid.EntityFullJid;
 import org.jxmpp.jid.Jid;
 
-import javax.swing.Icon;
-
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -200,12 +198,12 @@ public class PresenceManager {
      */
     public static Icon getIconFromPresence(Presence presence) {
 	if (isInvisible(presence)) {
-            return SparkRes.getImageIcon(SparkRes.CLEAR_BALL_ICON);
+            return SparkRes.getImageIcon(SparkRes.Icon.CLEAR_BALL_ICON);
         }
 
         // Handle offline presence
         if (!presence.isAvailable()) {
-            return SparkRes.getImageIcon(SparkRes.CLEAR_BALL_ICON);
+            return SparkRes.getImageIcon(SparkRes.Icon.CLEAR_BALL_ICON);
         }
 
         Presence.Mode presenceMode = presence.getMode();
@@ -216,22 +214,22 @@ public class PresenceManager {
         Icon icon = null;
 
         if (presenceMode.equals(Presence.Mode.available)) {
-            icon = SparkRes.getImageIcon(SparkRes.GREEN_BALL);
+            icon = SparkRes.getImageIcon(SparkRes.Icon.GREEN_BALL);
         }
         else if (presenceMode.equals(Presence.Mode.chat)) {
-            icon = SparkRes.getImageIcon(SparkRes.FREE_TO_CHAT_IMAGE);
+            icon = SparkRes.getImageIcon(SparkRes.Icon.FREE_TO_CHAT_IMAGE);
         }
         else if (isOnPhone(presence)) {
-            icon = SparkRes.getImageIcon(SparkRes.ON_PHONE_IMAGE);
+            icon = SparkRes.getImageIcon(SparkRes.Icon.ON_PHONE_IMAGE);
         }
         else if (presenceMode.equals(Presence.Mode.away)) {
-            icon = SparkRes.getImageIcon(SparkRes.IM_AWAY);
+            icon = SparkRes.getImageIcon(SparkRes.Icon.IM_AWAY);
         }
         else if (presenceMode.equals(Presence.Mode.dnd)) {
-            icon = SparkRes.getImageIcon(SparkRes.IM_DND);
+            icon = SparkRes.getImageIcon(SparkRes.Icon.IM_DND);
         }
         else if (presenceMode.equals(Presence.Mode.xa)) {
-            icon = SparkRes.getImageIcon(SparkRes.IM_XA);
+            icon = SparkRes.getImageIcon(SparkRes.Icon.IM_XA);
         }
 
         // Check For ContactItem handlers

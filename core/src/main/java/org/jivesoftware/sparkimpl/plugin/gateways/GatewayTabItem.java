@@ -147,8 +147,7 @@ public class GatewayTabItem extends CollapsiblePane implements GatewayItem {
         try
         {
             SparkManager.getConnection().sendStanza(offlinePresence);
-            _statusIcon.setIcon(SparkRes
-                    .getImageIcon(SparkRes.YELLOW_BALL));
+            _statusIcon.setIcon(SparkRes.getImageIcon(SparkRes.Icon.YELLOW_BALL));
         }
         catch ( SmackException.NotConnectedException | InterruptedException e1 )
         {
@@ -163,8 +162,7 @@ public class GatewayTabItem extends CollapsiblePane implements GatewayItem {
         try
         {
             SparkManager.getConnection().sendStanza(onlinePresence);
-            _statusIcon.setIcon(SparkRes
-                    .getImageIcon(SparkRes.YELLOW_BALL));
+            _statusIcon.setIcon(SparkRes.getImageIcon(SparkRes.Icon.YELLOW_BALL));
         }
         catch ( SmackException.NotConnectedException | InterruptedException e1 )
         {
@@ -274,7 +272,7 @@ public class GatewayTabItem extends CollapsiblePane implements GatewayItem {
 	_signInOut.setEnabled(false);
 	_signInOut.setText(Res.getString("menuitem.sign.in"));
 	_autoJoinButton.setEnabled(false);
-	_statusIcon.setIcon(SparkRes.getImageIcon(SparkRes.BLUE_BALL));
+	_statusIcon.setIcon(SparkRes.getImageIcon(SparkRes.Icon.BLUE_BALL));
     }
 
     // Set GUI when user is registered but offline
@@ -287,12 +285,12 @@ public class GatewayTabItem extends CollapsiblePane implements GatewayItem {
 	_signInOut.setEnabled(true);
 	_signInOut.setText(Res.getString("menuitem.sign.in"));
 	_autoJoinButton.setEnabled(true);
-	_statusIcon.setIcon(SparkRes.getImageIcon(SparkRes.RED_BALL));
+	_statusIcon.setIcon(SparkRes.getImageIcon(SparkRes.Icon.RED_BALL));
     }
 
     // Set GUI when user is online with rigistered transport
     private void setOnline() {
-	_statusIcon.setIcon(SparkRes.getImageIcon(SparkRes.GREEN_BALL));
+	_statusIcon.setIcon(SparkRes.getImageIcon(SparkRes.Icon.GREEN_BALL));
 	EventQueue.invokeLater( () -> _autoJoin.setSelected(TransportUtils.autoJoinService(_transport
         .getXMPPServiceDomain())) );
 	
@@ -312,10 +310,10 @@ public class GatewayTabItem extends CollapsiblePane implements GatewayItem {
 	    _status.setText(Res.getString("offline"));
 	    if (!_transportRegistered) {
 
-		_statusIcon.setIcon(SparkRes.getImageIcon(SparkRes.BLUE_BALL));
+		_statusIcon.setIcon(SparkRes.getImageIcon(SparkRes.Icon.BLUE_BALL));
 		_signInOut.setText(Res.getString("menuitem.sign.in"));
 	    } else {
-		_statusIcon.setIcon(SparkRes.getImageIcon(SparkRes.RED_BALL));
+		_statusIcon.setIcon(SparkRes.getImageIcon(SparkRes.Icon.RED_BALL));
 		setOffline();
 	    }
 

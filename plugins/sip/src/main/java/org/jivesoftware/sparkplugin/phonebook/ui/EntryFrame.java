@@ -103,7 +103,7 @@ public class EntryFrame extends JFrame
 		this.add(pBtn);
 		
 		this.setResizable(false);
-		this.setIconImage(SparkRes.getImageIcon(SparkRes.ADDRESS_BOOK_16x16).getImage());
+		this.setIconImage(SparkRes.getImageIcon(SparkRes.Icons.ADDRESS_BOOK_16x16).getImage());
 		this.setSize(new Dimension(250,130));
 		if(typ == TYP_ADD) {
 			this.setTitle(PhoneRes.getIString("frame.add"));

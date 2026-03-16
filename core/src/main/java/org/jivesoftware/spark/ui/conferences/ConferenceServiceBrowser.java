@@ -102,7 +102,7 @@ public class ConferenceServiceBrowser {
 
         JPanel topPanel = new JPanel();
         topPanel.setLayout(new BorderLayout());
-        TitlePanel titlePanel = new TitlePanel(Res.getString("title.browse.conference.services"), Res.getString("message.find.conference.services"), SparkRes.getImageIcon(SparkRes.BLANK_IMAGE), true);
+        TitlePanel titlePanel = new TitlePanel(Res.getString("title.browse.conference.services"), Res.getString("message.find.conference.services"), SparkRes.getImageIcon(SparkRes.Icon.BLANK_IMAGE), true);
         topPanel.add(titlePanel, BorderLayout.NORTH);
         topPanel.add(pane, BorderLayout.CENTER);
 

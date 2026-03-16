@@ -45,8 +45,8 @@ public class MainThemePanel extends JPanel {
 	_colorpanel = new ColorPreferencePanel();
 	
 	JTabbedPane tabs = new JTabbedPane();
-	ImageIcon appe = new ImageIcon(SparkRes.getImageIcon(SparkRes.PALETTE_24x24_IMAGE).getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH));
-	ImageIcon color = new ImageIcon(SparkRes.getImageIcon(SparkRes.COLOR_ICON).getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH));
+	ImageIcon appe = new ImageIcon(SparkRes.getImageIcon(SparkRes.Icon.PALETTE_24x24_IMAGE).getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH));
+	ImageIcon color = new ImageIcon(SparkRes.getImageIcon(SparkRes.Icon.COLOR_ICON).getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH));
 	
 	tabs.addTab(Res.getString("title.appearance.preferences"),appe, _themepanel);	
 	if(!Default.getBoolean(Default.CHANGE_COLORS_DISABLED)){

@@ -104,32 +104,32 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatStateListener {
         ChatStateManager.getInstance(SparkManager.getConnection()).addChatStateListener(this);
 
         if (Spark.isLinux()) {
-            newMessageIcon = SparkRes.getImageIcon(SparkRes.MESSAGE_NEW_TRAY_LINUX);
-            typingIcon = SparkRes.getImageIcon(SparkRes.TYPING_TRAY_LINUX);
+            newMessageIcon = SparkRes.getImageIcon(SparkRes.Icon.MESSAGE_NEW_TRAY_LINUX);
+            typingIcon = SparkRes.getImageIcon(SparkRes.Icon.TYPING_TRAY_LINUX);
         } else {
-            newMessageIcon = SparkRes.getImageIcon(SparkRes.MESSAGE_NEW_TRAY);
-            typingIcon = SparkRes.getImageIcon(SparkRes.TYPING_TRAY);
+            newMessageIcon = SparkRes.getImageIcon(SparkRes.Icon.MESSAGE_NEW_TRAY);
+            typingIcon = SparkRes.getImageIcon(SparkRes.Icon.TYPING_TRAY);
         }
 
         availableIcon = Default.getImageIcon(Default.TRAY_IMAGE);
         if (Spark.isLinux()) {
             if (availableIcon == null) {
-                availableIcon = SparkRes.getImageIcon(SparkRes.TRAY_IMAGE_LINUX);
+                availableIcon = SparkRes.getImageIcon(SparkRes.Icon.TRAY_IMAGE_LINUX);
             }
-            awayIcon = SparkRes.getImageIcon(SparkRes.TRAY_AWAY_LINUX);
-            xawayIcon = SparkRes.getImageIcon(SparkRes.TRAY_XAWAY_LINUX);
-            dndIcon = SparkRes.getImageIcon(SparkRes.TRAY_DND_LINUX);
-            offlineIcon = SparkRes.getImageIcon(SparkRes.TRAY_OFFLINE_LINUX);
-            connectingIcon = SparkRes.getImageIcon(SparkRes.TRAY_CONNECTING_LINUX);
+            awayIcon = SparkRes.getImageIcon(SparkRes.Icon.TRAY_AWAY_LINUX);
+            xawayIcon = SparkRes.getImageIcon(SparkRes.Icon.TRAY_XAWAY_LINUX);
+            dndIcon = SparkRes.getImageIcon(SparkRes.Icon.TRAY_DND_LINUX);
+            offlineIcon = SparkRes.getImageIcon(SparkRes.Icon.TRAY_OFFLINE_LINUX);
+            connectingIcon = SparkRes.getImageIcon(SparkRes.Icon.TRAY_CONNECTING_LINUX);
         } else {
             if (availableIcon == null) {
-                availableIcon = SparkRes.getImageIcon(SparkRes.TRAY_IMAGE);
+                availableIcon = SparkRes.getImageIcon(SparkRes.Icon.TRAY_IMAGE);
             }
-            awayIcon = SparkRes.getImageIcon(SparkRes.TRAY_AWAY);
-            xawayIcon = SparkRes.getImageIcon(SparkRes.TRAY_XAWAY);
-            dndIcon = SparkRes.getImageIcon(SparkRes.TRAY_DND);
-            offlineIcon = SparkRes.getImageIcon(SparkRes.TRAY_OFFLINE);
-            connectingIcon = SparkRes.getImageIcon(SparkRes.TRAY_CONNECTING);
+            awayIcon = SparkRes.getImageIcon(SparkRes.Icon.TRAY_AWAY);
+            xawayIcon = SparkRes.getImageIcon(SparkRes.Icon.TRAY_XAWAY);
+            dndIcon = SparkRes.getImageIcon(SparkRes.Icon.TRAY_DND);
+            offlineIcon = SparkRes.getImageIcon(SparkRes.Icon.TRAY_OFFLINE);
+            connectingIcon = SparkRes.getImageIcon(SparkRes.Icon.TRAY_CONNECTING);
         }
 
         popupMenu.add(openMenu);

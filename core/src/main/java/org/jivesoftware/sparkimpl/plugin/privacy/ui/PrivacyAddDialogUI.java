@@ -90,20 +90,20 @@ public class PrivacyAddDialogUI extends JPanel {
         panel.setLayout(new GridBagLayout());
         panel.setBorder(BorderFactory.createTitledBorder(Res.getString("privacy.border.block")));
         _blockPIn = new JCheckBox(Res.getString("privacy.label.pin.desc"));
-        _blockPIn.setIcon(SparkRes.getImageIcon("PRIVACY_PIN_ALLOW"));
-        _blockPIn.setSelectedIcon(SparkRes.getImageIcon("PRIVACY_PIN_DENY"));
+        _blockPIn.setIcon(SparkRes.getImageIcon(SparkRes.Icon.PRIVACY_PIN_ALLOW));
+        _blockPIn.setSelectedIcon(SparkRes.getImageIcon(SparkRes.Icon.PRIVACY_PIN_DENY));
         _blockPIn.setRolloverEnabled(false);
         _blockPOout = new JCheckBox(Res.getString("privacy.label.pout.desc"));
-        _blockPOout.setIcon(SparkRes.getImageIcon("PRIVACY_POUT_ALLOW"));
-        _blockPOout.setSelectedIcon(SparkRes.getImageIcon("PRIVACY_POUT_DENY"));
+        _blockPOout.setIcon(SparkRes.getImageIcon(SparkRes.Icon.PRIVACY_POUT_ALLOW));
+        _blockPOout.setSelectedIcon(SparkRes.getImageIcon(SparkRes.Icon.PRIVACY_POUT_DENY));
         _blockPOout.setRolloverEnabled(false);
         _blockMsg = new JCheckBox(Res.getString("privacy.label.msg.desc"));
-        _blockMsg.setSelectedIcon(SparkRes.getImageIcon("PRIVACY_MSG_DENY"));
-        _blockMsg.setIcon(SparkRes.getImageIcon("PRIVACY_MSG_ALLOW"));
+        _blockMsg.setSelectedIcon(SparkRes.getImageIcon(SparkRes.Icon.PRIVACY_MSG_DENY));
+        _blockMsg.setIcon(SparkRes.getImageIcon(SparkRes.Icon.PRIVACY_MSG_ALLOW));
         _blockMsg.setRolloverEnabled(false);
         _blockIQ = new JCheckBox(Res.getString("privacy.label.iq.desc"));
-        _blockIQ.setSelectedIcon(SparkRes.getImageIcon("PRIVACY_QUERY_DENY"));
-        _blockIQ.setIcon(SparkRes.getImageIcon("PRIVACY_QUERY_ALLOW"));
+        _blockIQ.setSelectedIcon(SparkRes.getImageIcon(SparkRes.Icon.PRIVACY_QUERY_DENY));
+        _blockIQ.setIcon(SparkRes.getImageIcon(SparkRes.Icon.PRIVACY_QUERY_ALLOW));
         _blockIQ.setRolloverEnabled(false);
         panel.add(_blockPIn, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
         panel.add(_blockPOout, new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
@@ -169,7 +169,7 @@ public class PrivacyAddDialogUI extends JPanel {
         TitlePanel titlePanel;
 
         // Create the title panel for this dialog
-        titlePanel = new TitlePanel(Res.getString("privacy.title.add.picker"), Res.getString("privacy.pick.one.or.more"), SparkRes.getImageIcon(SparkRes.BLANK_IMAGE), true);
+        titlePanel = new TitlePanel(Res.getString("privacy.title.add.picker"), Res.getString("privacy.pick.one.or.more"), SparkRes.getImageIcon(SparkRes.Icon.BLANK_IMAGE), true);
 
         // Construct main panel w/ layout.
         final JPanel mainPanel = new JPanel();

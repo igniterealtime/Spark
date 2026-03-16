@@ -29,14 +29,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import javax.swing.BorderFactory;
-import javax.swing.Icon;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComponent;
-import javax.swing.JFileChooser;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
+import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.jivesoftware.Spark;
@@ -75,7 +68,7 @@ public class SoundPreference implements Preference {
 
     @Override
 	public Icon getIcon() {
-        return SparkRes.getImageIcon(SparkRes.SOUND_PREFERENCES_IMAGE);
+        return SparkRes.getImageIcon(SparkRes.Icon.SOUND_PREFERENCES_IMAGE);
     }
 
     @Override

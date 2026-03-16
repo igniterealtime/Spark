@@ -27,7 +27,6 @@ import org.jivesoftware.spark.component.MessageDialog;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.log.Log;
 import org.jxmpp.jid.Jid;
-import org.jxmpp.jid.impl.JidCreate;
 
 import javax.swing.*;
 
@@ -133,7 +132,7 @@ public class VersionViewer {
                 cardLayout.last(cards);
             });
 
-        MessageDialog.showComponent(Res.getString("title.version.and.time"), Res.getString("message.client.information", UserManager.unescapeJID(jid)), SparkRes.getImageIcon(SparkRes.PROFILE_IMAGE_24x24), cards, SparkManager.getMainWindow(), 400, 300, false);
+        MessageDialog.showComponent(Res.getString("title.version.and.time"), Res.getString("message.client.information", UserManager.unescapeJID(jid)), SparkRes.getImageIcon(SparkRes.Icon.PROFILE_IMAGE_24x24), cards, SparkManager.getMainWindow(), 400, 300, false);
     }
 
 }

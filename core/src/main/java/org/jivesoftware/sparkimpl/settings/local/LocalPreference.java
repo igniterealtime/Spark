@@ -20,8 +20,7 @@ import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.spark.preference.Preference;
 
-import javax.swing.Icon;
-import javax.swing.JComponent;
+import javax.swing.*;
 
 /**
  * Represents the Local Preference inside the Preference Manager.
@@ -55,7 +54,7 @@ public class LocalPreference implements Preference {
 
     @Override
 	public Icon getIcon() {
-        return SparkRes.getImageIcon(SparkRes.LOGIN_KEY_IMAGE);
+        return SparkRes.getImageIcon(SparkRes.Icon.LOGIN_KEY_IMAGE);
     }
 
     @Override

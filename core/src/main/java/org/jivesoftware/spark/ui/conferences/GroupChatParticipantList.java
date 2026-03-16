@@ -214,14 +214,14 @@ public class GroupChatParticipantList extends JPanel {
             && !roomInformation.containsFeature(MucFeature.NonAnonymous.getName())) {
             return;
         }
-        final ImageIcon inviteIcon = SparkRes.getImageIcon(SparkRes.USER1_BACK_16x16);
+        final ImageIcon inviteIcon = SparkRes.getImageIcon(SparkRes.Icon.USER1_BACK_16x16);
         addUser(inviteIcon, Resourcepart.fromOrThrowUnchecked(displayName));
         invitees.put(displayName, message);
     }
 
     protected ImageIcon getImageIcon(EntityFullJid participantJID) {
         Resourcepart displayName = participantJID.getResourcepart();
-        ImageIcon icon = SparkRes.getImageIcon(SparkRes.GREEN_BALL);
+        ImageIcon icon = SparkRes.getImageIcon(SparkRes.Icon.GREEN_BALL);
         icon.setDescription(displayName.toString());
         return icon;
     }
@@ -264,7 +264,7 @@ public class GroupChatParticipantList extends JPanel {
         } else {
             icon = PresenceManager.getIconFromPresence(presence);
             if (icon == null) {
-                icon = SparkRes.getImageIcon(SparkRes.GREEN_BALL);
+                icon = SparkRes.getImageIcon(SparkRes.Icon.GREEN_BALL);
             }
         }
 
@@ -294,25 +294,25 @@ public class GroupChatParticipantList extends JPanel {
     private Icon getIconForRole(MUCRole role, MUCAffiliation affiliation) {
         switch (affiliation) {
             case owner:
-                return SparkRes.getImageIcon(SparkRes.STAR_OWNER);
+                return SparkRes.getImageIcon(SparkRes.Icon.STAR_OWNER);
             case admin:
-                return SparkRes.getImageIcon(SparkRes.STAR_ADMIN);
+                return SparkRes.getImageIcon(SparkRes.Icon.STAR_ADMIN);
             case member:
                 if (role == MUCRole.moderator) {
-                    return SparkRes.getImageIcon(SparkRes.STAR_MODERATOR);
+                    return SparkRes.getImageIcon(SparkRes.Icon.STAR_MODERATOR);
                 } else {
-                    return SparkRes.getImageIcon(SparkRes.STAR_YELLOW_IMAGE);
+                    return SparkRes.getImageIcon(SparkRes.Icon.STAR_YELLOW_IMAGE);
                 }
             default:
                 switch (role) {
                     case participant:
-                        return SparkRes.getImageIcon(SparkRes.STAR_GREEN_IMAGE);
+                        return SparkRes.getImageIcon(SparkRes.Icon.STAR_GREEN_IMAGE);
                     case moderator:
-                        return SparkRes.getImageIcon(SparkRes.STAR_MODERATOR);
+                        return SparkRes.getImageIcon(SparkRes.Icon.STAR_MODERATOR);
                     case visitor:
-                        return SparkRes.getImageIcon(SparkRes.STAR_BLUE_IMAGE);
+                        return SparkRes.getImageIcon(SparkRes.Icon.STAR_BLUE_IMAGE);
                     default:
-                        return SparkRes.getImageIcon(SparkRes.STAR_GREY_IMAGE);
+                        return SparkRes.getImageIcon(SparkRes.Icon.STAR_GREY_IMAGE);
                 }
         }
     }
@@ -371,7 +371,7 @@ public class GroupChatParticipantList extends JPanel {
     }
 
     public Icon getTabIcon() {
-        return SparkRes.getImageIcon(SparkRes.SMALL_BUSINESS_MAN_VIEW);
+        return SparkRes.getImageIcon(SparkRes.Icon.SMALL_BUSINESS_MAN_VIEW);
     }
 
     public String getTabToolTip() {
@@ -575,7 +575,7 @@ public class GroupChatParticipantList extends JPanel {
             if (selectedMyself) {
                 Action changeNicknameAction = new ChangeNicknameAction();
                 changeNicknameAction.putValue(Action.NAME, Res.getString("menuitem.change.nickname"));
-                changeNicknameAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.TYPING_TRAY));
+                changeNicknameAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.Icon.TYPING_TRAY));
                 if (allowNicknameChange) {
                     popup.add(changeNicknameAction);
                 }
@@ -593,7 +593,7 @@ public class GroupChatParticipantList extends JPanel {
             };
 
             chatAction.putValue(Action.NAME, Res.getString("menuitem.start.a.chat"));
-            chatAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.SMALL_MESSAGE_IMAGE));
+            chatAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.Icon.SMALL_MESSAGE_IMAGE));
             if (!selectedMyself) {
                 popup.add(chatAction);
             }
@@ -608,7 +608,7 @@ public class GroupChatParticipantList extends JPanel {
                         icon = getImageIcon(groupJID);
                     } else {
                         groupChatRoom.addBlockedUser(groupJID);
-                        icon = SparkRes.getImageIcon(SparkRes.BRICKWALL_IMAGE);
+                        icon = SparkRes.getImageIcon(SparkRes.Icon.BRICKWALL_IMAGE);
                     }
 
                     JLabel label = new JLabel(user, icon, SwingConstants.CENTER);
@@ -617,7 +617,7 @@ public class GroupChatParticipantList extends JPanel {
             };
 
             blockAction.putValue(Action.NAME, Res.getString("menuitem.block.user"));
-            blockAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.BRICKWALL_IMAGE));
+            blockAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.Icon.BRICKWALL_IMAGE));
             if (!selectedMyself) {
                 if (groupChatRoom.isBlocked(groupJID)) {
                     blockAction.putValue(Action.NAME, Res.getString("menuitem.unblock.user"));
@@ -633,7 +633,7 @@ public class GroupChatParticipantList extends JPanel {
             };
 
             kickAction.putValue(Action.NAME, Res.getString("menuitem.kick.user"));
-            kickAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.SMALL_DELETE));
+            kickAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.Icon.SMALL_DELETE));
             if (iamModerator && !userIsAdmin && !selectedMyself) {
                 popup.add(kickAction);
             }
@@ -652,7 +652,7 @@ public class GroupChatParticipantList extends JPanel {
             };
 
             voiceAction.putValue(Action.NAME, Res.getString("menuitem.voice"));
-            voiceAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.MEGAPHONE_16x16));
+            voiceAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.Icon.MEGAPHONE_16x16));
             if (iamModerator && !userIsModerator && !selectedMyself) {
                 if (userManager.hasVoice(groupChatRoom, selectedUser)) {
                     voiceAction.putValue(Action.NAME, Res.getString("menuitem.revoke.voice"));
@@ -669,13 +669,13 @@ public class GroupChatParticipantList extends JPanel {
                 }
             };
             banAction.putValue(Action.NAME, Res.getString("menuitem.ban.user"));
-            banAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.RED_FLAG_16x16));
+            banAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.Icon.RED_FLAG_16x16));
             if (iamAdminOrOwner && !userIsModerator && !selectedMyself) {
                 popup.add(banAction);
             }
 
             JMenu affiliationMenu = new JMenu(Res.getString("menuitem.affiliation"));
-            affiliationMenu.setIcon(SparkRes.getImageIcon(SparkRes.MODERATOR_IMAGE));
+            affiliationMenu.setIcon(SparkRes.getImageIcon(SparkRes.Icon.MODERATOR_IMAGE));
 
             Action memberAction = new AbstractAction() {
                 @Override
@@ -688,7 +688,7 @@ public class GroupChatParticipantList extends JPanel {
                     users.sort(labelComp);
                 }
             };
-            memberAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.STAR_YELLOW_IMAGE));
+            memberAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.Icon.STAR_YELLOW_IMAGE));
             if (iamAdminOrOwner && !userIsMember) {
                 memberAction.putValue(Action.NAME, Res.getString("menuitem.grant.member"));
                 affiliationMenu.add(memberAction);
@@ -710,7 +710,7 @@ public class GroupChatParticipantList extends JPanel {
                 }
             };
 
-            moderatorAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.STAR_MODERATOR));
+            moderatorAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.Icon.STAR_MODERATOR));
 
             if (iamAdminOrOwner && !userIsModerator && !userIsAdmin && !userIsOwner) {
                 moderatorAction.putValue(Action.NAME, Res.getString("menuitem.grant.moderator"));
@@ -731,7 +731,7 @@ public class GroupChatParticipantList extends JPanel {
                     users.sort(labelComp);
                 }
             };
-            adminAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.STAR_ADMIN));
+            adminAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.Icon.STAR_ADMIN));
             if (iamAdminOrOwner && !userIsAdmin && !userIsOwner) {
                 adminAction.putValue(Action.NAME, Res.getString("menuitem.grant.admin"));
                 affiliationMenu.add(adminAction);
@@ -752,7 +752,7 @@ public class GroupChatParticipantList extends JPanel {
                     users.sort(labelComp);
                 }
             };
-            ownerAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.STAR_OWNER));
+            ownerAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.Icon.STAR_OWNER));
 
             if (iamOwner && !userIsOwner) {
                 ownerAction.putValue(Action.NAME, Res.getString("menuitem.grant.owner"));
@@ -785,7 +785,7 @@ public class GroupChatParticipantList extends JPanel {
                 }
 
                 for (Affiliate bannedUser : bannedUsers) {
-                    ImageIcon icon = SparkRes.getImageIcon(SparkRes.RED_BALL);
+                    ImageIcon icon = SparkRes.getImageIcon(SparkRes.Icon.RED_BALL);
                     JMenuItem bannedItem = new JMenuItem(bannedUser.getJid().toString(), icon);
                     unbanMenu.add(bannedItem);
                     bannedItem.addActionListener(unbanAction);
@@ -804,7 +804,7 @@ public class GroupChatParticipantList extends JPanel {
         };
 
         inviteAction.putValue(Action.NAME, Res.getString("menuitem.invite.users"));
-        inviteAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.CONFERENCE_IMAGE_16x16));
+        inviteAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.Icon.CONFERENCE_IMAGE_16x16));
 
         if (index != -1) {
             popup.addSeparator();
@@ -819,7 +819,7 @@ public class GroupChatParticipantList extends JPanel {
         };
 
         copyUriGroupChat.putValue(Action.NAME, Res.getString("button.copy.to.clipboard"));
-        copyUriGroupChat.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.COPY_16x16));
+        copyUriGroupChat.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.Icon.COPY_16x16));
         popup.add(copyUriGroupChat);
 
         popup.show(participantsList, evt.getX(), evt.getY());

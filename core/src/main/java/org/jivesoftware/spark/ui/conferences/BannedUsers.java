@@ -122,7 +122,7 @@ public class BannedUsers extends JPanel {
 
         while (bannedUsers != null && bannedUsers.hasNext()) {
             Affiliate bannedUser = bannedUsers.next();
-            ImageIcon icon = SparkRes.getImageIcon(SparkRes.STAR_RED_IMAGE);
+            ImageIcon icon = SparkRes.getImageIcon(SparkRes.Icon.STAR_RED_IMAGE);
             icon.setDescription(bannedUser.getJid().toString());
             listModel.addElement(icon);
         }

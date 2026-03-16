@@ -34,20 +34,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Vector;
 
-import javax.swing.BorderFactory;
-import javax.swing.Icon;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JTextField;
-import javax.swing.UIManager;
+import javax.swing.*;
 
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
@@ -127,7 +114,7 @@ public class RosterDialog implements ActionListener {
         ResourceUtils.resLabel(accountsLabel, publicBox, Res.getString("label.network"));
         
         _searchForName = new JButton();
-        _searchForName.setIcon(SparkRes.getImageIcon(SparkRes.TRANSFER_IMAGE_24x24));
+        _searchForName.setIcon(SparkRes.getImageIcon(SparkRes.Icon.TRANSFER_IMAGE_24x24));
 
 	_searchForName.addMouseListener(new MouseListener() {
 	    @Override

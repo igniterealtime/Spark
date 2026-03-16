@@ -70,7 +70,7 @@ public class JabberBrowser implements Plugin {
         ResourceUtils.resLabel(addressLabel, addressField, Res.getString("label.jabber.address") + ":");
 
         RolloverButton backButton = new RolloverButton();
-        backButton.setIcon(SparkRes.getImageIcon(SparkRes.LEFT_ARROW_IMAGE));
+        backButton.setIcon(SparkRes.getImageIcon(SparkRes.Icon.LEFT_ARROW_IMAGE));
         backButton.addActionListener(e -> {
             int selectedItem = addressField.getSelectedIndex();
             if (selectedItem > 0) {
@@ -105,7 +105,7 @@ public class JabberBrowser implements Plugin {
         mainPanel.add(pane, new GridBagConstraints(0, 1, 4, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
 
         JFrame frame = new JFrame();
-        frame.setIconImage(SparkRes.getImageIcon(SparkRes.FIND_IMAGE).getImage());
+        frame.setIconImage(SparkRes.getImageIcon(SparkRes.Icon.FIND_IMAGE).getImage());
 
         JDialog dialog = new JDialog(frame, Res.getString("title.jabber.browser"));
         dialog.getContentPane().setLayout(new BorderLayout());
@@ -187,7 +187,7 @@ public class JabberBrowser implements Plugin {
             setVerticalTextPosition(JLabel.BOTTOM);
             setHorizontalTextPosition(JLabel.CENTER);
             setText(item.getName() != null ? item.getName() : item.getEntityID().toString());
-            setIcon(SparkRes.getImageIcon(SparkRes.USER1_MESSAGE_24x24));
+            setIcon(SparkRes.getImageIcon(SparkRes.Icon.USER1_MESSAGE_24x24));
 
             addActionListener(e -> browseItem(item));
         }
@@ -227,7 +227,7 @@ public class JabberBrowser implements Plugin {
         if (actionsMenu == null) {
             return;
         }
-        JMenuItem menuShowXmppBrowser = new JMenuItem(Res.getString("title.jabber.browser"), SparkRes.getImageIcon(SparkRes.FIND_IMAGE));
+        JMenuItem menuShowXmppBrowser = new JMenuItem(Res.getString("title.jabber.browser"), SparkRes.getImageIcon(SparkRes.Icon.FIND_IMAGE));
         menuShowXmppBrowser.addActionListener(actionShowXmppBrowser);
         actionsMenu.add(menuShowXmppBrowser);
     }

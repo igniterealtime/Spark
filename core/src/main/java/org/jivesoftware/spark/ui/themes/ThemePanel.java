@@ -33,9 +33,7 @@ import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
-import java.lang.reflect.Method;
 import java.util.Objects;
-import java.util.Properties;
 
 /**
  * ThemePanel is used for the setting of TranscriptWindows and Emoticon packs.
@@ -361,7 +359,7 @@ public class ThemePanel extends JPanel {
         int i = emoticonManager.getActiveEmoticonSet().size();
         if (i == 0) {
             emoticonspanel = new EmoticonPanel(1);
-            JLabel label = new JLabel(SparkRes.getImageIcon(SparkRes.SMALL_DELETE));
+            JLabel label = new JLabel(SparkRes.getImageIcon(SparkRes.Icon.SMALL_DELETE));
             emoticonspanel.add(label);
         } else if (i < 25) {
             emoticonspanel = new EmoticonPanel(i);

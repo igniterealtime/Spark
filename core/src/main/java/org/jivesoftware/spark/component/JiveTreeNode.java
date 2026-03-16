@@ -17,7 +17,7 @@ package org.jivesoftware.spark.component;
 
 import org.jivesoftware.resource.SparkRes;
 
-import javax.swing.Icon;
+import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import java.awt.datatransfer.DataFlavor;
@@ -51,8 +51,8 @@ public class JiveTreeNode extends DefaultMutableTreeNode implements Transferable
     */
     public JiveTreeNode(TreeFolder folder) {
         super(folder.getDisplayName(), true);
-        closedImage = SparkRes.getImageIcon(SparkRes.FOLDER_CLOSED);
-        openImage = SparkRes.getImageIcon(SparkRes.FOLDER);
+        closedImage = SparkRes.getImageIcon(SparkRes.Icon.FOLDER_CLOSED);
+        openImage = SparkRes.getImageIcon(SparkRes.Icon.FOLDER);
         associatedObject = folder;
     }
 
@@ -65,8 +65,8 @@ public class JiveTreeNode extends DefaultMutableTreeNode implements Transferable
     public JiveTreeNode(String name, boolean allowsChildren) {
         super(name, allowsChildren);
         if (allowsChildren) {
-            closedImage = SparkRes.getImageIcon(SparkRes.FOLDER_CLOSED);
-            openImage = SparkRes.getImageIcon(SparkRes.FOLDER);
+            closedImage = SparkRes.getImageIcon(SparkRes.Icon.FOLDER_CLOSED);
+            openImage = SparkRes.getImageIcon(SparkRes.Icon.FOLDER);
         }
     }
 

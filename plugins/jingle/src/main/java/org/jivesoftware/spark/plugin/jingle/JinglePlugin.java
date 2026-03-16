@@ -219,7 +219,7 @@ public class JinglePlugin implements Plugin, Phone, ConnectionListener {
         };
 
         action.putValue(Action.NAME, "<html><b>" + JingleResources.getString("label.computer.to.computer") + "</b></html>");
-        action.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.COMPUTER_IMAGE_16x16));
+        action.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.Icons.COMPUTER_IMAGE_16x16));
         List<Action> actions = new ArrayList<>(1);
         actions.add(action);
         return actions;

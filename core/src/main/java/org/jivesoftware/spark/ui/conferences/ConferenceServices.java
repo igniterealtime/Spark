@@ -24,12 +24,9 @@ import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.packet.StanzaBuilder;
 import org.jivesoftware.smack.util.StringUtils;
-import org.jivesoftware.smackx.bookmarks.BookmarkManager;
 import org.jivesoftware.smackx.bookmarks.BookmarkedConference;
-import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.muc.InvitationListener;
 import org.jivesoftware.smackx.muc.MultiUserChat;
-import org.jivesoftware.smackx.muc.MultiUserChatConstants;
 import org.jivesoftware.smackx.muc.MultiUserChatManager;
 import org.jivesoftware.smackx.muc.packet.MUCUser;
 import org.jivesoftware.spark.ChatManager;
@@ -77,7 +74,7 @@ public class ConferenceServices implements InvitationListener {
 
         // Add Join Conference Button to ActionMenu
         final JMenu actionsMenu = SparkManager.getMainWindow().getMenuByName(Res.getString("menuitem.actions"));
-        JMenuItem actionMenuItem = new JMenuItem(Res.getString("message.join.conference.room"), SparkRes.getImageIcon(SparkRes.CONFERENCE_IMAGE_16x16));
+        JMenuItem actionMenuItem = new JMenuItem(Res.getString("message.join.conference.room"), SparkRes.getImageIcon(SparkRes.Icon.CONFERENCE_IMAGE_16x16));
         actionsMenu.add(actionMenuItem, 1);
         actionMenuItem.addActionListener(e -> {
             ConferenceRoomBrowser rooms = new ConferenceRoomBrowser(bookmarksUI, getDefaultServiceName());
@@ -153,7 +150,7 @@ public class ConferenceServices implements InvitationListener {
             final boolean useTab = pref.isShowConferenceTab();
             if (useTab) {
                 String title = Res.getString("tab.conferences");
-                ImageIcon icon = SparkRes.getImageIcon(SparkRes.CONFERENCE_IMAGE_16x16);
+                ImageIcon icon = SparkRes.getImageIcon(SparkRes.Icon.CONFERENCE_IMAGE_16x16);
                 workspace.getWorkspacePane().addTab(title, icon, bookmarksUI);
             }
         });
@@ -194,7 +191,7 @@ public class ConferenceServices implements InvitationListener {
         };
 
         inviteAllAction.putValue(Action.NAME, Res.getString("menuitem.invite.group.to.conference"));
-        inviteAllAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.CONFERENCE_IMAGE_16x16));
+        inviteAllAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.Icon.CONFERENCE_IMAGE_16x16));
         final Action conferenceAction = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
@@ -204,7 +201,7 @@ public class ConferenceServices implements InvitationListener {
         };
 
         conferenceAction.putValue(Action.NAME, Res.getString("menuitem.start.a.conference"));
-        conferenceAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.SMALL_WORKGROUP_QUEUE_IMAGE));
+        conferenceAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.Icon.SMALL_WORKGROUP_QUEUE_IMAGE));
 
 
         contactList.addContextMenuListener(new ContextMenuListener() {

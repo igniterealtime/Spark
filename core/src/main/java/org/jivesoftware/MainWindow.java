@@ -29,12 +29,10 @@ import org.jivesoftware.smack.packet.StanzaBuilder;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.ui.ChatFrame;
 import org.jivesoftware.spark.ui.RawPacketSender;
-import org.jivesoftware.spark.ui.TranscriptWindow;
 import org.jivesoftware.spark.util.*;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.alerts.InputTextAreaDialog;
-import org.jivesoftware.sparkimpl.plugin.filetransfer.transfer.Downloads;
 import org.jivesoftware.sparkimpl.plugin.layout.LayoutSettingsManager;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 import org.jivesoftware.sparkimpl.settings.JiveInfo;
@@ -68,7 +66,7 @@ public final class MainWindow extends ChatFrame implements ActionListener {
     private JMenuItem preferenceMenuItem;
     private JCheckBoxMenuItem alwaysOnTopItem;
 
-    private final JMenuItem menuAbout = new JMenuItem(SparkRes.getImageIcon(SparkRes.INFORMATION_IMAGE));
+    private final JMenuItem menuAbout = new JMenuItem(SparkRes.getImageIcon(SparkRes.Icon.INFORMATION_IMAGE));
     private final JMenuItem sparkforumItem = new JMenuItem();
 
     private final JMenuBar mainWindowBar = new JMenuBar();
@@ -256,7 +254,7 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         if (con.isConnected() && sendStatus) {
             final InputTextAreaDialog inputTextDialog = new InputTextAreaDialog();
             status = inputTextDialog.getInput(Res.getString("title.status.message"), Res.getString("message.current.status"),
-                SparkRes.getImageIcon(SparkRes.USER1_MESSAGE_24x24), this);
+                SparkRes.getImageIcon(SparkRes.Icon.USER1_MESSAGE_24x24), this);
         }
 
         if (status != null || !sendStatus)
@@ -427,7 +425,7 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         mainWindowBar.add(helpMenu);
 
 
-        preferenceMenuItem = new JMenuItem(SparkRes.getImageIcon(SparkRes.PREFERENCES_IMAGE));
+        preferenceMenuItem = new JMenuItem(SparkRes.getImageIcon(SparkRes.Icon.PREFERENCES_IMAGE));
         preferenceMenuItem.setText(Res.getString("title.spark.preferences"));
         preferenceMenuItem.addActionListener(this);
 
@@ -470,7 +468,7 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         	connectMenu.add(exitMenuItem);
         }
 
-        JMenuItem updateMenu= new JMenuItem("", SparkRes.getImageIcon(SparkRes.CHECK_UPDATE));
+        JMenuItem updateMenu= new JMenuItem("", SparkRes.getImageIcon(SparkRes.Icon.CHECK_UPDATE));
         ResourceUtils.resButton(updateMenu, Res.getString("menuitem.check.for.updates"));
         updateMenu.addActionListener( e -> checkForUpdates(true) );
 
@@ -515,7 +513,7 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         	viewHelpGuideAction.putValue(Action.NAME,
         			Res.getString("menuitem.user.guide"));
         	viewHelpGuideAction.putValue(Action.SMALL_ICON,
-        			SparkRes.getImageIcon(SparkRes.SMALL_QUESTION));
+        			SparkRes.getImageIcon(SparkRes.Icon.SMALL_QUESTION));
         	helpMenu.add(viewHelpGuideAction);
         }
 
@@ -587,7 +585,7 @@ public final class MainWindow extends ChatFrame implements ActionListener {
 
 	if(pref.isDebuggerEnabled())
 	{
-	    JMenuItem rawPackets = new JMenuItem(SparkRes.getImageIcon(SparkRes.TRAY_IMAGE));
+	    JMenuItem rawPackets = new JMenuItem(SparkRes.getImageIcon(SparkRes.Icon.TRAY_IMAGE));
 	    rawPackets.setText("Send Packets");
 	    rawPackets.addActionListener( e -> new RawPacketSender() );
 
@@ -821,7 +819,7 @@ public final class MainWindow extends ChatFrame implements ActionListener {
     private static void showAboutBox() {
     	UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
         JOptionPane.showMessageDialog(SparkManager.getMainWindow(), SparkManager.getMainWindow().getAboutBoxPane(),
-            Res.getString("title.about"), JOptionPane.INFORMATION_MESSAGE, SparkRes.getImageIcon(SparkRes.MAIN_IMAGE));
+            Res.getString("title.about"), JOptionPane.INFORMATION_MESSAGE, SparkRes.getImageIcon(SparkRes.Icon.MAIN_IMAGE));
     }
 
     /**
@@ -844,9 +842,9 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         pane.setText(errorLogs);
         
         final JButton copyButton = new JButton(Res.getString("button.copy.to.clipboard"));
-        copyButton.setIcon(SparkRes.getImageIcon(SparkRes.COPY_16x16));
+        copyButton.setIcon(SparkRes.getImageIcon(SparkRes.Icon.COPY_16x16));
         final JButton openFolder = new JButton(Res.getString("open.folder"));
-        openFolder.setIcon(SparkRes.getImageIcon(SparkRes.FOLDER));
+        openFolder.setIcon(SparkRes.getImageIcon(SparkRes.Icon.FOLDER));
 
         final JPanel panel = new JPanel();
         panel.add(openFolder, BorderLayout.LINE_START);

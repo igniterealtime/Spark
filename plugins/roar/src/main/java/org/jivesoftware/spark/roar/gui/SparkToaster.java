@@ -33,14 +33,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
 
-import javax.swing.Action;
-import javax.swing.BorderFactory;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
+import javax.swing.*;
 import javax.swing.border.Border;
 
 import org.jivesoftware.resource.Default;
@@ -632,7 +625,7 @@ public class SparkToaster {
 		    new Insets(5, 5, 5, 5), 0, 0));
 
 	    closeButton = new RolloverButton(
-		    SparkRes.getImageIcon(SparkRes.CLOSE_IMAGE));
+		    SparkRes.getImageIcon(SparkRes.Icon.CLOSE_IMAGE));
 	    if (showCloseIcon) {
 		add(closeButton, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0,
 			GridBagConstraints.EAST, GridBagConstraints.NONE,

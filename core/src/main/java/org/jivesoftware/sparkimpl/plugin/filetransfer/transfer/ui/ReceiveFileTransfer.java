@@ -34,19 +34,9 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
+import java.util.Timer;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.BorderFactory;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JFileChooser;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JProgressBar;
+import javax.swing.*;
 
 import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Res;
@@ -78,7 +68,6 @@ import org.jivesoftware.sparkimpl.settings.Sizes;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jxmpp.jid.BareJid;
 import org.jxmpp.jid.Jid;
-import org.jxmpp.stringprep.XmppStringprepException;
 
 public class ReceiveFileTransfer extends JPanel {
 
@@ -87,9 +76,9 @@ public class ReceiveFileTransfer extends JPanel {
     private final JLabel titleLabel = new JLabel();
     private final JLabel fileLabel = new JLabel();
 
-    private final TransferButton acceptButton = new TransferButton(Res.getString("accept"), SparkRes.getImageIcon(SparkRes.ACCEPT_INVITE_IMAGE));
-    private final TransferButton declineButton = new TransferButton(Res.getString("reject"), SparkRes.getImageIcon(SparkRes.REJECT_INVITE_IMAGE));
-    private final TransferButton pathButton = new TransferButton(Res.getString("message.file.transfer.direrror.setdir"), SparkRes.getImageIcon(SparkRes.SETTINGS_IMAGE_16x16));
+    private final TransferButton acceptButton = new TransferButton(Res.getString("accept"), SparkRes.getImageIcon(SparkRes.Icon.ACCEPT_INVITE_IMAGE));
+    private final TransferButton declineButton = new TransferButton(Res.getString("reject"), SparkRes.getImageIcon(SparkRes.Icon.REJECT_INVITE_IMAGE));
+    private final TransferButton pathButton = new TransferButton(Res.getString("message.file.transfer.direrror.setdir"), SparkRes.getImageIcon(SparkRes.Icon.SETTINGS_IMAGE_16x16));
     private final JProgressBar progressBar = new JProgressBar();
     private IncomingFileTransfer transfer;
     private final TransferButton cancelButton = new TransferButton();
@@ -206,7 +195,7 @@ public class ReceiveFileTransfer extends JPanel {
             // Delete temp file when program exits.
             file.delete();
         } catch (IOException e) {
-            imageLabel.setIcon(SparkRes.getImageIcon(SparkRes.DOCUMENT_INFO_32x32));
+            imageLabel.setIcon(SparkRes.getImageIcon(SparkRes.Icon.DOCUMENT_INFO_32x32));
             Log.error("An exception occurred while accepting a file transfer.", e);
         }
 
@@ -617,7 +606,7 @@ public class ReceiveFileTransfer extends JPanel {
                 imageLabel.setIcon(image);
             } catch (MalformedURLException e) {
                 Log.error("Could not locate image.", e);
-                imageLabel.setIcon(SparkRes.getImageIcon(SparkRes.DOCUMENT_INFO_32x32));
+                imageLabel.setIcon(SparkRes.getImageIcon(SparkRes.Icon.DOCUMENT_INFO_32x32));
             }
         }
 
@@ -708,7 +697,7 @@ public class ReceiveFileTransfer extends JPanel {
         cancelButton.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(73, 113, 196)));
         cancelButton.setForeground(new Color(73, 113, 196));
         cancelButton.setFont(new Font("Dialog", Font.BOLD, 11));
-        cancelButton.setIcon(SparkRes.getImageIcon(SparkRes.SMALL_DELETE));
+        cancelButton.setIcon(SparkRes.getImageIcon(SparkRes.Icon.SMALL_DELETE));
 
         cancelButton.addActionListener(e -> {
             cancelTransfer();

@@ -74,7 +74,7 @@ public class LoginSettingDialog implements PropertyChangeListener
         TitlePanel titlePanel;
 
         // Create the title panel for this dialog
-        titlePanel = new TitlePanel( Res.getString( "title.advanced.connection.preferences" ), "", SparkRes.getImageIcon( SparkRes.BLANK_24x24 ), true );
+        titlePanel = new TitlePanel(Res.getString("title.advanced.connection.preferences"), "", SparkRes.getImageIcon(SparkRes.Icon.BLANK_24x24), true);
         tabbedPane.addTab( Res.getString( "tab.general" ), generalPanel );
         tabbedPane.addTab( Res.getString( "tab.security" ), securityPanel );
         if ( !Default.getBoolean( Default.PROXY_DISABLED ) )

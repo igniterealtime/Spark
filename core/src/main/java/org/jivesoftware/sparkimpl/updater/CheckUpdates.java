@@ -170,9 +170,9 @@ public class CheckUpdates {
 
                 final JFrame frame = new JFrame(Res.getString("title.downloading.im.client"));
 
-                frame.setIconImage(SparkRes.getImageIcon(SparkRes.SMALL_MESSAGE_IMAGE).getImage());
+                frame.setIconImage(SparkRes.getImageIcon(SparkRes.Icon.SMALL_MESSAGE_IMAGE).getImage());
 
-                titlePanel = new TitlePanel(Res.getString("title.upgrading.client"), Res.getString("message.version", version.getVersion()), SparkRes.getImageIcon(SparkRes.SEND_FILE_24x24), true);
+                titlePanel = new TitlePanel(Res.getString("title.upgrading.client"), Res.getString("message.version", version.getVersion()), SparkRes.getImageIcon(SparkRes.Icon.SEND_FILE_24x24), true);
 
                 final Thread thread = new Thread( () -> {
                     try {

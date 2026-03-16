@@ -20,7 +20,6 @@ import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.HttpEntity;
-import org.apache.hc.core5.http.HttpHost;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -37,7 +36,6 @@ import org.jivesoftware.spark.component.VerticalFlowLayout;
 import org.jivesoftware.spark.plugin.Plugin;
 import org.jivesoftware.spark.plugin.PublicPlugin;
 import org.jivesoftware.spark.util.GraphicUtils;
-import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.URLFileSystem;
 import org.jivesoftware.spark.util.log.Log;
@@ -47,7 +45,6 @@ import org.jivesoftware.sparkimpl.settings.JiveInfo;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jivesoftware.sparkimpl.updater.AcceptAllCertsConnectionManager;
-import org.xml.sax.SAXException;
 
 import javax.swing.*;
 import java.awt.*;
@@ -189,7 +186,7 @@ public class PluginViewer extends JPanel implements Plugin
         };
 
         viewAction.putValue( Action.NAME, Res.getString( "menuitem.plugins" ) );
-        viewAction.putValue( Action.SMALL_ICON, SparkRes.getImageIcon( SparkRes.PLUGIN_IMAGE ) );
+        viewAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.Icon.PLUGIN_IMAGE));
         viewPluginsMenu.setAction( viewAction );
 
         // See if we should disable the "Plugins" menu item
@@ -384,7 +381,7 @@ public class PluginViewer extends JPanel implements Plugin
 
                 final JFrame frame = new JFrame( Res.getString( "message.downloading", plugin.getName() ) );
 
-                frame.setIconImage( SparkRes.getImageIcon( SparkRes.SMALL_MESSAGE_IMAGE ).getImage() );
+                frame.setIconImage(SparkRes.getImageIcon(SparkRes.Icon.SMALL_MESSAGE_IMAGE).getImage());
 
                 try
                 {

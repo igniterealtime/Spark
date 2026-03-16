@@ -45,12 +45,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.StringTokenizer;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JComponent;
-import javax.swing.JFileChooser;
-import javax.swing.JLabel;
-import javax.swing.JPopupMenu;
+import javax.swing.*;
 
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.spark.util.log.Log;
@@ -803,7 +798,7 @@ public final class GraphicUtils {
             Log.warning("unable to get icon", e);
         }
 
-	return SparkRes.getImageIcon(SparkRes.DOCUMENT_INFO_32x32);
+	return SparkRes.getImageIcon(SparkRes.Icon.DOCUMENT_INFO_32x32);
     }
 
     /**
@@ -815,7 +810,7 @@ public final class GraphicUtils {
      */
     public static BufferedImage getBufferedImage(File file) {
         // Why wasn't this using it's code that pulled from the file? Hrm.
-        ImageIcon icon = SparkRes.getImageIcon(SparkRes.DOCUMENT_INFO_32x32);
+        ImageIcon icon = SparkRes.getImageIcon(SparkRes.Icon.DOCUMENT_INFO_32x32);
 
         BufferedImage bi = null;
         if (icon != null) {

@@ -29,14 +29,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import javax.swing.BorderFactory;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JProgressBar;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
@@ -62,7 +55,6 @@ import org.jivesoftware.sparkimpl.settings.Sizes;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jxmpp.jid.BareJid;
 import org.jxmpp.jid.EntityFullJid;
-import org.jxmpp.stringprep.XmppStringprepException;
 
 public class SendFileTransfer extends JPanel {
 
@@ -100,8 +92,8 @@ public class SendFileTransfer extends JPanel {
 
         cancelButton.setText(Res.getString("cancel"));
         retryButton.setText(Res.getString("retry"));
-        cancelButton.setIcon(SparkRes.getImageIcon(SparkRes.SMALL_DELETE));
-        retryButton.setIcon(SparkRes.getImageIcon(SparkRes.REFRESH_IMAGE));
+        cancelButton.setIcon(SparkRes.getImageIcon(SparkRes.Icon.SMALL_DELETE));
+        retryButton.setIcon(SparkRes.getImageIcon(SparkRes.Icon.REFRESH_IMAGE));
 
         add(cancelButton, new GridBagConstraints(1, 4, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 0, 5), 0, 0));
         add(retryButton, new GridBagConstraints(1, 4, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 0, 5), 0, 0));
@@ -167,7 +159,7 @@ public class SendFileTransfer extends JPanel {
                 imageLabel.setIcon(image);
             } catch (MalformedURLException e) {
                 Log.error("Could not locate image.", e);
-                imageLabel.setIcon(SparkRes.getImageIcon(SparkRes.DOCUMENT_INFO_32x32));
+                imageLabel.setIcon(SparkRes.getImageIcon(SparkRes.Icon.DOCUMENT_INFO_32x32));
             }
         } else {
             File file = new File(transfer.getFilePath());

@@ -47,7 +47,7 @@ public class IncomingCall extends JPanel {
         callerNumberLabel.setFont(new Font("Dialog", Font.PLAIN, 12));
         callerNumberLabel.setHorizontalAlignment(JLabel.CENTER);
 
-        final JLabel phoneImage = new JLabel(SparkRes.getImageIcon(SparkRes.TELEPHONE_24x24));
+        final JLabel phoneImage = new JLabel(SparkRes.getImageIcon(SparkRes.Icons.TELEPHONE_24x24));
         phoneImage.setHorizontalAlignment(JLabel.CENTER);
         phoneImage.setVerticalTextPosition(JLabel.BOTTOM);
         phoneImage.setHorizontalTextPosition(JLabel.CENTER);
