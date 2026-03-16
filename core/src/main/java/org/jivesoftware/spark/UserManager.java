@@ -195,27 +195,6 @@ public class UserManager {
     }
 
     /**
-     * Checks to see if the user is either an owner or admin of a room.
-     *
-     * @param groupChatRoom the group chat room.
-     * @param nickname      the user's nickname.
-     * @return true if the user is either an owner or admin of the room.
-     */
-    public boolean isOwnerOrAdmin(GroupChatRoom groupChatRoom, Resourcepart nickname) {
-        return isOwnerOrAdmin( getOccupant(groupChatRoom, nickname) );
-    }
-
-    /**
-     * Checks to see if the user is either an owner or admin of the given room.
-     *
-     * @param occupant the <code>Occupant</code> to check.
-     * @return true if the user is either an owner or admin of the room.
-     */
-    public boolean isOwnerOrAdmin(Occupant occupant) {
-        return isOwner( occupant ) || isAdmin( occupant );
-    }
-
-    /**
      * Returns the occupant of the room identified by their nickname.
      *
      * @param groupChatRoom the GroupChatRoom.
@@ -267,20 +246,8 @@ public class UserManager {
         return true;
     }
 
-
     /**
-     * Returns a Collection of all <code>ChatUsers</code> in a ChatRoom.
-     *
-     * @param chatRoom the ChatRoom to inspect.
-     * @return the Collection of all ChatUsers.
-     * @see <code>ChatUser</code>
-     */
-    public Collection<String> getAllParticipantsInRoom(ChatRoom chatRoom) {
-        return new ArrayList<>();
-    }
-
-    /**
-     * Resolves display name from contact list or JID
+     * Resolves display name from a contact list or JID
      */
     public String getUserNicknameFromJID(BareJid jid) {
         ContactList contactList = SparkManager.getWorkspace().getContactList();
@@ -297,8 +264,7 @@ public class UserManager {
     }
 
     /**
-     * Escapes a complete JID by examing the Node itself and escaping
-     * when necessary.
+     * Escapes a complete JID by examining the Node itself and escaping when necessary.
      *
      * @param jid the users JID
      * @return the escaped JID.
@@ -308,12 +274,10 @@ public class UserManager {
             return null;
         }
 
-        final StringBuilder builder = new StringBuilder();
         String node = XmppStringUtils.parseLocalpart(jid);
         String restOfJID = jid.substring(node.length());
-        builder.append(XmppStringUtils.escapeLocalpart(node));
-        builder.append(restOfJID);
-        return builder.toString();
+        String builder = XmppStringUtils.escapeLocalpart(node) + restOfJID;
+        return builder;
     }
 
     public static String unescapeJID(CharSequence jid) {
@@ -332,15 +296,9 @@ public class UserManager {
             return null;
         }
 
-        final StringBuilder builder = new StringBuilder();
         Localpart node = jid.getLocalpartOrNull();
         Domainpart restOfJID = jid.getDomain();
-        if (node != null) {
-            builder.append(XmppStringUtils.unescapeLocalpart(node.toString()));
-            builder.append('@');
-        }
-        builder.append(restOfJID);
-        return builder.toString();
+        return node != null ? XmppStringUtils.unescapeLocalpart(node.toString()) + '@' + restOfJID : restOfJID.toString();
     }
 
     /**
