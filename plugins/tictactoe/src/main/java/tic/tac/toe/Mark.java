@@ -17,6 +17,8 @@ package tic.tac.toe;
 
 import javax.swing.ImageIcon;
 
+import static tic.tac.toe.TTTRes.*;
+
 /**
  * The Variations of Marks
  *
@@ -24,13 +26,13 @@ import javax.swing.ImageIcon;
  * @version 16.06.2011
  */
 public enum Mark {
-    BLANK(0, "empty.png", "empty.png"),
-    X(1, "x.png", "x.blue.png"),
-    O(2, "o.png", "o.blue.png");
+    BLANK(0, ICON_EMPTY, ICON_EMPTY),
+    X(1, ICON_X, ICON_X_BLUE),
+    O(2, ICON_O, ICON_O_BLUE);
 
     private final int value;
-    private final String icon;
-    private final String redicon;
+    private final ImageIcon icon;
+    private final ImageIcon redicon;
 
     public static Mark valueOf(int x) {
         switch (x) {
@@ -44,22 +46,18 @@ public enum Mark {
     }
 
     public ImageIcon getImage() {
-	ClassLoader cl = getClass().getClassLoader();
-	return new ImageIcon(cl.getResource(icon));
-
+        return icon;
     }
 
-    public ImageIcon getRedImage()
-    {
-	ClassLoader cl = getClass().getClassLoader();
-	return new ImageIcon(cl.getResource(redicon));
+    public ImageIcon getRedImage() {
+        return redicon;
     }
 
     public int getValue() {
-	return value;
+        return value;
     }
 
-    Mark(int value, String icon, String redicon) {
+    Mark(int value, ImageIcon icon, ImageIcon redicon) {
         this.value = value;
         this.icon = icon;
         this.redicon = redicon;

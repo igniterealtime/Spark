@@ -22,36 +22,44 @@ import java.util.ResourceBundle;
 import org.jivesoftware.resource.UTF8Control;
 import org.jivesoftware.spark.util.log.Log;
 
+import javax.swing.*;
+
 /**
  * Resource Bundle for TicTacToe
- * 
+ *
  * @author wolf.posdorfer
  * @version 16.06.2011
  */
 public class TTTRes {
+    private static ClassLoader cl = Mark.class.getClassLoader();
+    public static final ImageIcon ICON_EMPTY = getImageIcon("empty.png");
+    public static final ImageIcon ICON_X = getImageIcon("x.png");
+    public static final ImageIcon ICON_X_BLUE = getImageIcon("x.blue.png");
+    public static final ImageIcon ICON_O = getImageIcon("o.png");
+    public static final ImageIcon ICON_O_BLUE = getImageIcon("o.blue.png");
+    public static final ImageIcon ICON_BUTTON = getImageIcon("ttt.button.png");
+    public static final ImageIcon ICON_BOARD = getImageIcon("board.png");
 
-    private static final PropertyResourceBundle prb;
-
-    static {
-        prb = (PropertyResourceBundle) ResourceBundle.getBundle("i18n/tictactoe_i18n", new UTF8Control());
-    }
+    private static final PropertyResourceBundle prb = (PropertyResourceBundle) ResourceBundle.getBundle("i18n/tictactoe_i18n", new UTF8Control());
 
     public static String getString(String propertyName) {
-	try {
-	    return prb.getString(propertyName);
-	} catch (Exception e) {
-	    Log.error(e);
-	    return propertyName;
-	}
+        try {
+            return prb.getString(propertyName);
+        } catch (Exception e) {
+            Log.error(e);
+            return propertyName;
+        }
     }
 
     public static String getString(String propertyName, Object... obj) {
-	String str = prb.getString(propertyName);
-	if (str == null) {
-	    return propertyName;
-	}
-
-	return MessageFormat.format(str, obj);
+        String str = prb.getString(propertyName);
+        if (str == null) {
+            return propertyName;
+        }
+        return MessageFormat.format(str, obj);
     }
 
+    static ImageIcon getImageIcon(String icon) {
+        return new ImageIcon(cl.getResource(icon));
+    }
 }
