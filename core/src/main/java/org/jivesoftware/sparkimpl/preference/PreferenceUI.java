@@ -18,7 +18,9 @@ package org.jivesoftware.sparkimpl.preference;
 
 import org.jivesoftware.spark.preference.Preference;
 import org.jivesoftware.spark.util.GraphicUtils;
+import org.jivesoftware.spark.util.log.Log;
 
+import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 
@@ -30,11 +32,19 @@ public class PreferenceUI extends JLabel {
 
     public PreferenceUI(Preference preference) {
         this.preference = preference;
-        this.setIcon(preference.getIcon());
-        this.setText(preference.getListName());
-
-        // Set tooltip
-        this.setToolTipText(GraphicUtils.createToolTip(preference.getTooltip()));
+        String listName = "";
+        String toolTip = "";
+        Icon icon = null;
+        try {
+            listName = preference.getListName();
+            toolTip = GraphicUtils.createToolTip(preference.getTooltip());
+            icon = preference.getIcon();
+        } catch (Exception e) {
+            Log.error(e);
+        }
+        this.setText(listName);
+        this.setToolTipText(toolTip);
+        this.setIcon(icon);
     }
 
 
