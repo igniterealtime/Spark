@@ -25,12 +25,7 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import javax.swing.BorderFactory;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
+import javax.swing.*;
 
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
@@ -59,7 +54,7 @@ public class SparkPlugUI extends JPanel {
         JLabel versionLabel = new JLabel();
         JLabel descriptionLabel = new JLabel();
 
-	imageIcon.setIcon(SparkRes.getImageIcon(SparkRes.PLUGIN_IMAGE));
+	imageIcon.setIcon(SparkRes.getImageIcon(SparkRes.Icon.PLUGIN_IMAGE));
         
 
         add(imageIcon, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
@@ -82,8 +77,8 @@ public class SparkPlugUI extends JPanel {
 
 
         if (_plugin.getChangeLog()!=null && _plugin.getReadMeURL() != null) {
-            RolloverButton changeLogButton = new RolloverButton(SparkRes.getImageIcon(SparkRes.CHANGELOG_IMAGE));
-            RolloverButton readMeButton = new RolloverButton(SparkRes.getImageIcon(SparkRes.README_IMAGE));
+            RolloverButton changeLogButton = new RolloverButton(SparkRes.getImageIcon(SparkRes.Icon.CHANGELOG_IMAGE));
+            RolloverButton readMeButton = new RolloverButton(SparkRes.getImageIcon(SparkRes.Icon.README_IMAGE));
 
 
             changeLogButton.addActionListener( e -> {
@@ -125,10 +120,10 @@ public class SparkPlugUI extends JPanel {
     public void showOperationButton() {
         final PluginManager pluginManager = PluginManager.getInstance();
         if (!pluginManager.isInstalled(_plugin)) {
-            installButton.setIcon(SparkRes.getImageIcon(SparkRes.SMALL_ADD_IMAGE));
+            installButton.setIcon(SparkRes.getImageIcon(SparkRes.Icon.SMALL_ADD_IMAGE));
         }
         else {
-            installButton.setIcon(SparkRes.getImageIcon(SparkRes.SMALL_DELETE));
+            installButton.setIcon(SparkRes.getImageIcon(SparkRes.Icon.SMALL_DELETE));
         }
         installButton.setVisible(true);
     }

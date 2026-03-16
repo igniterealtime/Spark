@@ -59,7 +59,7 @@ public class ReconnectPanel extends JPanel implements ConnectionListener, Reconn
         pane.setEditorKit(new HTMLEditorKit());
         pane.setEditable(false);
 
-        _icon = new JLabel(SparkRes.getImageIcon(SparkRes.BUSY_IMAGE));
+        _icon = new JLabel(SparkRes.getImageIcon(SparkRes.Icon.BUSY_IMAGE));
         _button = new JButton(Res.getString("button.reconnect2"));
         _button.addMouseListener(new MouseAdapter() {
             @Override

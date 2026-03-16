@@ -15,10 +15,7 @@
  */
 package org.jivesoftware.sparkimpl.preference.chat;
 
-import javax.swing.Icon;
-import javax.swing.JComponent;
-import javax.swing.JOptionPane;
-import javax.swing.UIManager;
+import javax.swing.*;
 
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
@@ -63,7 +60,7 @@ public class ChatPreference implements Preference {
 
     @Override
 	public Icon getIcon() {
-        return SparkRes.getImageIcon(SparkRes.USER1_MESSAGE_24x24);
+        return SparkRes.getImageIcon(SparkRes.Icon.USER1_MESSAGE_24x24);
     }
 
     @Override

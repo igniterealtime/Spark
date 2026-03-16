@@ -26,11 +26,7 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.Sizes;
 import org.jxmpp.jid.BareJid;
 
-import javax.swing.BorderFactory;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
+import javax.swing.*;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -122,7 +118,7 @@ public class NotificationAlertUI extends JPanel {
 
         titleLabel.setText(title);
 
-        avatarLabel.setIcon(SparkRes.getImageIcon(SparkRes.DEFAULT_AVATAR_64x64_IMAGE));
+        avatarLabel.setIcon(SparkRes.getImageIcon(SparkRes.Icon.DEFAULT_AVATAR_64x64_IMAGE));
         avatarLabel.invalidate();
         avatarLabel.validate();
         avatarLabel.repaint();
@@ -228,7 +224,7 @@ public class NotificationAlertUI extends JPanel {
             }
         }
         else {
-            avatarLabel.setIcon(SparkRes.getImageIcon(SparkRes.DEFAULT_AVATAR_64x64_IMAGE));
+            avatarLabel.setIcon(SparkRes.getImageIcon(SparkRes.Icon.DEFAULT_AVATAR_64x64_IMAGE));
         }
 
         avatarLabel.invalidate();

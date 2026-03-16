@@ -62,7 +62,7 @@ public class TopRight implements RoarDisplayType {
 
         if (props.getShowingPopups() && (_amount < props.getMaximumPopups() || props.getMaximumPopups() == 0)) {
 
-            ImageIcon icon = SparkRes.getImageIcon(SparkRes.SPARK_IMAGE_32x32);
+            ImageIcon icon = SparkRes.getImageIcon(SparkRes.Icon.SPARK_IMAGE_32x32);
 
             String nickname = RoarPopupHelper.getNickname(room, message);
             RoarPanel.popupWindow(this, icon, nickname, message.getBody(), _lastusedXpos, _lastusedYpos,

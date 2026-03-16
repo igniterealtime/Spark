@@ -213,7 +213,7 @@ public class InvitationPane {
         }
 
         chatRoom.setTabTitle(title);
-        chatRoom.setTabIcon(SparkRes.getImageIcon(SparkRes.FASTPATH_IMAGE_16x16));
+        chatRoom.setTabIcon(SparkRes.getImageIcon(SparkRes.Icon.FASTPATH_IMAGE_16x16));
         chatRoom.getChatWindowPanel().add(transcriptAlert, new GridBagConstraints(0, 9, 1, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(1, 0, 1, 0), 0, 0));
 
         // set invisible

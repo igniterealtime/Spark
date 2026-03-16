@@ -145,7 +145,7 @@ public class UserSearchForm extends JPanel {
                servicesBox.setSelectedIndex(0);
            }
         
-        titlePanel = new TitlePanel("", "", SparkRes.getImageIcon(SparkRes.BLANK_IMAGE), true);
+        titlePanel = new TitlePanel("", "", SparkRes.getImageIcon(SparkRes.Icon.BLANK_IMAGE), true);
         add(titlePanel, new GridBagConstraints(0, 0, 3, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
 
         // Add Search Service ComboBox

@@ -70,16 +70,16 @@ public class RawPacketSender {
 
     public RawPacketSender() {
         _mainFrame = new JFrame("Send Raw Packets");
-        _mainFrame.setIconImage(SparkRes.getImageIcon(SparkRes.MAIN_IMAGE).getImage());
+        _mainFrame.setIconImage(SparkRes.getImageIcon(SparkRes.Icon.MAIN_IMAGE).getImage());
         _mainPanel = new JPanel();
         _mainPanel.setLayout(new GridLayout(2, 1));
         _textAreaLog = new JTextArea();
         _inputArea = new JTextArea();
         _inputArea.setToolTipText("Leave the stanza id attribute empty to generate a new id");
         _textScroller = new JScrollPane(_textAreaLog);
-        _btnSend = new JButton("Send", SparkRes.getImageIcon(SparkRes.SMALL_CHECK));
+        _btnSend = new JButton("Send", SparkRes.getImageIcon(SparkRes.Icon.SMALL_CHECK));
         _btnSend.addActionListener(e -> onBtnSendClick());
-        _btnClearLog = new JButton("Clear", SparkRes.getImageIcon(SparkRes.SMALL_DELETE));
+        _btnClearLog = new JButton("Clear", SparkRes.getImageIcon(SparkRes.Icon.SMALL_DELETE));
         _btnClearLog.addActionListener(e -> onBtnClearLogClick());
         _cbStanzas = new JComboBox<>(new String[] {
             "Presence",

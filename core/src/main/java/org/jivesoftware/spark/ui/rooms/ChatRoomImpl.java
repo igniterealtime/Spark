@@ -164,7 +164,7 @@ public class ChatRoomImpl extends ChatRoom {
 
         if (initUi) {
             // Create toolbar buttons.
-            infoButton = new ChatRoomButton("", SparkRes.getImageIcon(SparkRes.PROFILE_IMAGE_24x24));
+            infoButton = new ChatRoomButton("", SparkRes.getImageIcon(SparkRes.Icon.PROFILE_IMAGE_24x24));
             infoButton.setToolTipText(Res.getString("message.view.information.about.this.user"));
             // Create basic toolbar.
             addChatRoomButton(infoButton);
@@ -179,7 +179,7 @@ public class ChatRoomImpl extends ChatRoom {
         }
 
         // If the user is not in the roster, then allow user to add them.
-        addToRosterButton = new ChatRoomButton("", SparkRes.getImageIcon(SparkRes.ADD_IMAGE_24x24));
+        addToRosterButton = new ChatRoomButton("", SparkRes.getImageIcon(SparkRes.Icon.ADD_IMAGE_24x24));
         if (entry == null && !privateChat) {
             addToRosterButton.setToolTipText(Res.getString("message.add.this.user.to.your.roster"));
             if (!Default.getBoolean(Default.ADD_CONTACT_DISABLED) && Enterprise.containsFeature(Enterprise.ADD_CONTACTS_FEATURE)) addChatRoomButton(addToRosterButton);
@@ -689,12 +689,12 @@ public class ChatRoomImpl extends ChatRoom {
         if (typing) {
             String isTypingText = Res.getString("message.is.typing.a.message", participantNickname);
             getNotificationLabel().setText(isTypingText);
-            getNotificationLabel().setIcon(SparkRes.getImageIcon(SparkRes.SMALL_MESSAGE_EDIT_IMAGE));
+            getNotificationLabel().setIcon(SparkRes.getImageIcon(SparkRes.Icon.SMALL_MESSAGE_EDIT_IMAGE));
         }
         else {
             // Remove is typing text.
             getNotificationLabel().setText("");
-            getNotificationLabel().setIcon(SparkRes.getImageIcon(SparkRes.BLANK_IMAGE));
+            getNotificationLabel().setIcon(SparkRes.getImageIcon(SparkRes.Icon.BLANK_IMAGE));
         }
 
     }

@@ -19,7 +19,7 @@ import org.jivesoftware.resource.SparkRes;
 import org.jxmpp.jid.DomainBareJid;
 import org.jivesoftware.resource.Res;
 
-import javax.swing.Icon;
+import javax.swing.*;
 
 /**
  */
@@ -43,12 +43,12 @@ public class SimpleTransport implements Transport {
 
     @Override
 	public Icon getIcon() {
-        return SparkRes.getImageIcon(SparkRes.SIMPLE_TRANSPORT_ACTIVE_IMAGE);
+        return SparkRes.getImageIcon(SparkRes.Icon.SIMPLE_TRANSPORT_ACTIVE_IMAGE);
     }
 
     @Override
 	public Icon getInactiveIcon() {
-        return SparkRes.getImageIcon(SparkRes.SIMPLE_TRANSPORT_INACTIVE_IMAGE);
+        return SparkRes.getImageIcon(SparkRes.Icon.SIMPLE_TRANSPORT_INACTIVE_IMAGE);
     }
 
     @Override

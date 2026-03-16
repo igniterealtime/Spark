@@ -200,18 +200,18 @@ public class UserSearchResults extends JPanel {
 
         if (!Default.getBoolean(Default.ADD_CONTACT_DISABLED) && Enterprise.containsFeature(Enterprise.ADD_CONTACTS_FEATURE)) {
 	        final JMenuItem addAsContact = new JMenuItem(addContactAction);
-	        addContactAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.SMALL_ADD_IMAGE));
+	        addContactAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.Icon.SMALL_ADD_IMAGE));
 	        addContactAction.putValue(Action.NAME, Res.getString("menuitem.add.as.contact"));
 	        menu.add(addAsContact);
         }
 
         final JMenuItem chatMenu = new JMenuItem(chatAction);
-        chatAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.SMALL_MESSAGE_IMAGE));
+        chatAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.Icon.SMALL_MESSAGE_IMAGE));
         chatAction.putValue(Action.NAME, Res.getString("menuitem.chat"));
         menu.add(chatMenu);
 
         final JMenuItem viewProfileMenu = new JMenuItem(profileAction);
-        profileAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.SMALL_PROFILE_IMAGE));
+        profileAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.Icon.SMALL_PROFILE_IMAGE));
         profileAction.putValue(Action.NAME, Res.getString("menuitem.view.profile"));
         menu.add(viewProfileMenu);
 

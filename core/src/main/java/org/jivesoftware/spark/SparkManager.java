@@ -441,7 +441,7 @@ public final class SparkManager {
     public static ImageIcon getApplicationImage() {
         ImageIcon mainImage = Default.getImageIcon(Default.FRAME_IMAGE);
         if (mainImage == null) {
-            mainImage = SparkRes.getImageIcon(SparkRes.MAIN_IMAGE);
+            mainImage = SparkRes.getImageIcon(SparkRes.Icon.MAIN_IMAGE);
         }
         return mainImage;
     }

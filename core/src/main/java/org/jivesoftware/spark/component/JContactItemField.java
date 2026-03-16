@@ -299,7 +299,7 @@ public class JContactItemField extends JPanel {
             ContactItem contactItem = (ContactItem)value;
             setText(contactItem.getDisplayName());
             if (contactItem.getIcon() == null) {
-                setIcon(SparkRes.getImageIcon(SparkRes.CLEAR_BALL_ICON));
+                setIcon(SparkRes.getImageIcon(SparkRes.Icon.CLEAR_BALL_ICON));
             }
             else {
                 setIcon(contactItem.getIcon());

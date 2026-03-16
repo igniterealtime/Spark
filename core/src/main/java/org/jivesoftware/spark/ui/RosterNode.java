@@ -18,7 +18,7 @@ package org.jivesoftware.spark.ui;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.packet.Presence;
 
-import javax.swing.Icon;
+import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 /**
@@ -45,8 +45,8 @@ public class RosterNode extends DefaultMutableTreeNode {
 
         this.isGroup = isGroup;
         if (isGroup) {
-            openIcon = SparkRes.getImageIcon(SparkRes.MINUS_SIGN);
-            closedIcon = SparkRes.getImageIcon(SparkRes.PLUS_SIGN);
+            openIcon = SparkRes.getImageIcon(SparkRes.Icon.MINUS_SIGN);
+            closedIcon = SparkRes.getImageIcon(SparkRes.Icon.PLUS_SIGN);
         }
     }
 

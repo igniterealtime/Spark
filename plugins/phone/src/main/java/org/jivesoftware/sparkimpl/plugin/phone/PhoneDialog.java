@@ -29,7 +29,7 @@ public class PhoneDialog {
     public static JFrame invoke(JComponent comp, String title, String description, ImageIcon icon) {
         final JFrame frame = new JFrame();
 
-        frame.setIconImage(SparkRes.getImageIcon(SparkRes.TELEPHONE_24x24).getImage());
+        frame.setIconImage(SparkRes.getImageIcon(SparkRes.Icons.TELEPHONE_24x24).getImage());
         frame.setTitle(title);
 
         frame.getContentPane().setLayout(new BorderLayout());

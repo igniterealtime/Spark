@@ -700,7 +700,7 @@ public class HistoryTranscript extends SwingWorker {
 
         mainPanel.add(pane, BorderLayout.CENTER);
 
-        frame.setIconImage(SparkRes.getImageIcon(SparkRes.HISTORY_16x16)
+        frame.setIconImage(SparkRes.getImageIcon(SparkRes.Icon.HISTORY_16x16)
                 .getImage());
         frame.getContentPane().setLayout(new BorderLayout());
         frame.getContentPane().add(mainPanel, BorderLayout.CENTER);

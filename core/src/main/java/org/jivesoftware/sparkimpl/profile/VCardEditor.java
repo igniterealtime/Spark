@@ -48,7 +48,6 @@ import org.jivesoftware.spark.ui.VCardViewer;
 import org.jivesoftware.spark.ui.status.StatusBar;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.ModelUtil;
-import org.jivesoftware.spark.util.StringUtils;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.layout.LayoutSettingsManager;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
@@ -102,7 +101,7 @@ public class VCardEditor {
 
         ImageIcon icon = VCardManager.getAvatarIcon(vCard);
         if (icon == null) {
-            icon = SparkRes.getImageIcon(SparkRes.BLANK_24x24);
+            icon = SparkRes.getImageIcon(SparkRes.Icon.BLANK_24x24);
         }
 
         // Create the title panel for this dialog
@@ -218,7 +217,7 @@ public class VCardEditor {
 
         ImageIcon icon = VCardManager.getAvatarIcon(vCard);
         if (icon == null) {
-            icon = SparkRes.getImageIcon(SparkRes.BLANK_24x24);
+            icon = SparkRes.getImageIcon(SparkRes.Icon.BLANK_24x24);
         }
 
         // Create the title panel for this dialog
@@ -311,7 +310,7 @@ public class VCardEditor {
         // mainPanel.add(pane, new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0,
         // GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 5, 5, 5), 0, 0));
 
-        dlg.setIconImage(SparkRes.getImageIcon(SparkRes.PROFILE_IMAGE_16x16).getImage());
+        dlg.setIconImage(SparkRes.getImageIcon(SparkRes.Icon.PROFILE_IMAGE_16x16).getImage());
 
         dlg.pack();
         dlg.setSize(350, 250);

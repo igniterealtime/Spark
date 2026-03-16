@@ -73,7 +73,7 @@ public class PresenceChangePlugin implements Plugin {
         };
 
         listenAction.putValue(Action.NAME, Res.getString("menuitem.alert.when.online"));
-        listenAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.SMALL_ALARM_CLOCK));
+        listenAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.Icon.SMALL_ALARM_CLOCK));
 
         Action removeAction = new AbstractAction() {
             @Override
@@ -86,7 +86,7 @@ public class PresenceChangePlugin implements Plugin {
         };
 
         removeAction.putValue(Action.NAME, Res.getString("menuitem.remove.alert.when.online"));
-        removeAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.SMALL_DELETE));
+        removeAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.Icon.SMALL_DELETE));
         contactList.addContextMenuListener(new ContextMenuListener() {
             @Override
             public void poppingUp(Object object, JPopupMenu popup) {

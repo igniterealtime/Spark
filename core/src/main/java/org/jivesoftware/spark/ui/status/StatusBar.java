@@ -25,8 +25,6 @@ import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
@@ -35,27 +33,12 @@ import java.util.Collection;
 import java.util.List;
 import java.util.TimerTask;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.BorderFactory;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import javax.swing.border.Border;
-import javax.swing.event.MenuKeyEvent;
-import javax.swing.event.MenuKeyListener;
-import javax.swing.event.PopupMenuListener;
 
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
-import org.jivesoftware.smack.packet.ExtensionElement;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.packet.StanzaBuilder;
 import org.jivesoftware.smackx.vcardtemp.packet.VCard;
@@ -254,7 +237,7 @@ public class StatusBar extends JPanel implements VCardListener {
                         }
                     };
                     worker.start();
-                    lblStatus.setIcon(SparkRes.getImageIcon(SparkRes.PANE_DOWN_ARROW_IMAGE));
+                    lblStatus.setIcon(SparkRes.getImageIcon(SparkRes.Icon.PANE_DOWN_ARROW_IMAGE));
 
                 }
             };
@@ -343,13 +326,13 @@ public class StatusBar extends JPanel implements VCardListener {
         if (pmanager.isPrivacyActive() && pmanager.getPrivacyLists().size() > 0) {
 
             JMenu privMenu = new JMenu(Res.getString("privacy.status.menu.entry"));
-            privMenu.setIcon(SparkRes.getImageIcon("PRIVACY_ICON_SMALL"));
+            privMenu.setIcon(SparkRes.getImageIcon(SparkRes.Icon.PRIVACY_ICON_SMALL));
 
             for (SparkPrivacyList plist : pmanager.getPrivacyLists()) {
                 JMenuItem it = new JMenuItem(plist.getListName());
                 privMenu.add(it);
                 if (plist.isActive()) {
-                    it.setIcon(SparkRes.getImageIcon("PRIVACY_LIGHTNING"));
+                    it.setIcon(SparkRes.getImageIcon(SparkRes.Icon.PRIVACY_LIGHTNING));
                 } else {
                     it.setIcon(null);
                 }
@@ -359,7 +342,7 @@ public class StatusBar extends JPanel implements VCardListener {
 
             if (pmanager.hasActiveList()) {
                 JMenuItem remMenu = new JMenuItem(Res.getString("privacy.menuitem.deactivate.current.list", pmanager.getActiveList().getListName()),
-                        SparkRes.getImageIcon("PRIVACY_DEACTIVATE_LIST"));
+                        SparkRes.getImageIcon(SparkRes.Icon.PRIVACY_DEACTIVATE_LIST));
                 remMenu.addActionListener(e1 -> pmanager.declineActiveList());
                 privMenu.addSeparator();
                 privMenu.add(remMenu);
@@ -369,7 +352,7 @@ public class StatusBar extends JPanel implements VCardListener {
         }
 
         // Add change message
-        final JMenuItem changeStatusMenu = new JMenuItem(Res.getString("menuitem.set.status.message"), SparkRes.getImageIcon(SparkRes.BLANK_IMAGE));
+        final JMenuItem changeStatusMenu = new JMenuItem(Res.getString("menuitem.set.status.message"), SparkRes.getImageIcon(SparkRes.Icon.BLANK_IMAGE));
         popup.addSeparator();
 
         popup.add(changeStatusMenu);
@@ -389,7 +372,7 @@ public class StatusBar extends JPanel implements VCardListener {
 
         final JPanel panel = getStatusPanel();
         popup.show(panel, 0, panel.getHeight());
-        lblStatus.setIcon(SparkRes.getImageIcon(SparkRes.PANE_UP_ARROW_IMAGE));
+        lblStatus.setIcon(SparkRes.getImageIcon(SparkRes.Icon.PANE_UP_ARROW_IMAGE));
 
 
     }
@@ -572,7 +555,7 @@ public class StatusBar extends JPanel implements VCardListener {
 
             // See if we should disable ability to change presence status
             if (!Default.getBoolean(Default.DISABLE_PRESENCE_STATUS_CHANGE) && Enterprise.containsFeature(Enterprise.PRESENCE_STATUS_FEATURE)) {
-                statusLabel.setIcon(SparkRes.getImageIcon(SparkRes.PANE_DOWN_ARROW_IMAGE));
+                statusLabel.setIcon(SparkRes.getImageIcon(SparkRes.Icon.PANE_DOWN_ARROW_IMAGE));
             }
 
             statusLabel.setHorizontalTextPosition(JLabel.LEFT);

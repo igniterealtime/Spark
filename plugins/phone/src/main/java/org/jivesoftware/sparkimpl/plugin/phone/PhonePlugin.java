@@ -91,7 +91,7 @@ public class PhonePlugin implements Plugin {
     private void setupPhoneSystem() {
         // Add Dial Menu
         final JMenu viewMenu = SparkManager.getMainWindow().getMenuByName(Res.getString("menuitem.actions"));
-        JMenuItem dialNumberMenu = new JMenuItem(SparkRes.getImageIcon(SparkRes.ON_PHONE_IMAGE));
+        JMenuItem dialNumberMenu = new JMenuItem(SparkRes.getImageIcon(SparkRes.Icons.ON_PHONE_IMAGE));
         ResourceUtils.resButton(dialNumberMenu, Res.getString("button.dial.number"));
 
         // Add Listener
@@ -135,7 +135,7 @@ public class PhonePlugin implements Plugin {
             @Override
             public void chatRoomOpened(final ChatRoom room) {
                 if (room instanceof ChatRoomImpl) {
-                    final ChatRoomButton callButton = new ChatRoomButton("", SparkRes.getImageIcon(SparkRes.TELEPHONE_24x24));
+                    final ChatRoomButton callButton = new ChatRoomButton("", SparkRes.getImageIcon(SparkRes.Icons.TELEPHONE_24x24));
                     callButton.setToolTipText(Res.getString("tooltip.place.a.call"));
                     final ChatRoomImpl chatRoom = (ChatRoomImpl) room;
                     boolean phoneEnabled = false;
@@ -174,7 +174,7 @@ public class PhonePlugin implements Plugin {
                         };
 
                         callAction.putValue(Action.NAME, "Call");
-                        callAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.ON_PHONE_IMAGE));
+                        callAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.Icons.ON_PHONE_IMAGE));
                         popup.add(callAction);
                     }
                 }
@@ -213,7 +213,7 @@ public class PhonePlugin implements Plugin {
             SparkToaster toasterManager = new SparkToaster();
             toasterManager.setTitle("Incoming Phone Call");
             toasterManager.setDisplayTime(15000);
-            toasterManager.showToaster(SparkRes.getImageIcon(SparkRes.ON_PHONE_IMAGE));
+            toasterManager.showToaster(SparkRes.getImageIcon(SparkRes.Icons.ON_PHONE_IMAGE));
             toasterManager.setComponent(incomingCall);
         }
     }

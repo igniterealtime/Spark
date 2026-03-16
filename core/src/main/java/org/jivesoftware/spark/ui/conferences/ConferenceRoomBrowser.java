@@ -74,16 +74,16 @@ import static org.jivesoftware.smackx.muc.MucConfigFormManager.*;
 public class ConferenceRoomBrowser extends JPanel implements ActionListener, ComponentListener {
     private final RoomList roomsTable;
     private final RolloverButton createButton = new RolloverButton("",
-        SparkRes.getImageIcon(SparkRes.SMALL_USER1_NEW));
+        SparkRes.getImageIcon(SparkRes.Icon.SMALL_USER1_NEW));
     private final RolloverButton joinRoomButton = new RolloverButton("",
-        SparkRes.getImageIcon(SparkRes.DOOR_IMAGE));
+        SparkRes.getImageIcon(SparkRes.Icon.DOOR_IMAGE));
     private final RolloverButton refreshButton = new RolloverButton("",
-        SparkRes.getImageIcon(SparkRes.REFRESH_IMAGE));
+        SparkRes.getImageIcon(SparkRes.Icon.REFRESH_IMAGE));
     private final RolloverButton addRoomButton = new RolloverButton("",
-        SparkRes.getImageIcon(SparkRes.ADD_BOOKMARK_ICON));
+        SparkRes.getImageIcon(SparkRes.Icon.ADD_BOOKMARK_ICON));
 
     private final RolloverButton showHiddenButtons = new RolloverButton(
-        SparkRes.getImageIcon(SparkRes.PANE_UP_ARROW_IMAGE));
+        SparkRes.getImageIcon(SparkRes.Icon.PANE_UP_ARROW_IMAGE));
 
     private final JMenuItem joinRoomItem;
     private final JMenuItem addRoomItem;
@@ -127,10 +127,10 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener, Com
         createItem = new JMenuItem(Res.getString("menuitem.create.room"));
         refreshItem = new JMenuItem(Res.getString("menuitem.refresh"));
 
-        joinRoomItem.setIcon(SparkRes.getImageIcon(SparkRes.DOOR_IMAGE));
-        addRoomItem.setIcon(SparkRes.getImageIcon(SparkRes.ADD_BOOKMARK_ICON));
-        createItem.setIcon(SparkRes.getImageIcon(SparkRes.SMALL_USER1_NEW));
-        refreshItem.setIcon(SparkRes.getImageIcon(SparkRes.REFRESH_IMAGE));
+        joinRoomItem.setIcon(SparkRes.getImageIcon(SparkRes.Icon.DOOR_IMAGE));
+        addRoomItem.setIcon(SparkRes.getImageIcon(SparkRes.Icon.ADD_BOOKMARK_ICON));
+        createItem.setIcon(SparkRes.getImageIcon(SparkRes.Icon.SMALL_USER1_NEW));
+        refreshItem.setIcon(SparkRes.getImageIcon(SparkRes.Icon.REFRESH_IMAGE));
 
         popup.add(joinRoomItem);
         popup.add(addRoomItem);
@@ -249,7 +249,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener, Com
         JPopupMenu popupMenu = new JPopupMenu();
 
         JMenuItem itemRoomInfo = new JMenuItem(Res.getString("menuitem.view.room.info"));
-        itemRoomInfo.setIcon(SparkRes.getImageIcon(SparkRes.SMALL_DATA_FIND_IMAGE));
+        itemRoomInfo.setIcon(SparkRes.getImageIcon(SparkRes.Icon.SMALL_DATA_FIND_IMAGE));
         itemRoomInfo.addActionListener(e -> {
             RoomInfo roomInfo = selectedRoomInfo();
             if (roomInfo == null) {
@@ -261,7 +261,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener, Com
         popupMenu.add(itemRoomInfo);
 
         JMenuItem itemCopyUri = new JMenuItem(Res.getString("button.copy.to.clipboard"));
-        itemCopyUri.setIcon(SparkRes.getImageIcon(SparkRes.COPY_16x16));
+        itemCopyUri.setIcon(SparkRes.getImageIcon(SparkRes.Icon.COPY_16x16));
         itemCopyUri.addActionListener(e -> {
             RoomInfo roomInfo = selectedRoomInfo();
             if (roomInfo == null) {
@@ -308,10 +308,10 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener, Com
 
             @Override
             public void finished() {
-                refreshButton.setIcon(SparkRes.getImageIcon(SparkRes.BUSY_IMAGE));
+                refreshButton.setIcon(SparkRes.getImageIcon(SparkRes.Icon.BUSY_IMAGE));
                 refreshButton.validate();
                 refreshButton.repaint();
-                refreshItem.setIcon(SparkRes.getImageIcon(SparkRes.BUSY_IMAGE));
+                refreshItem.setIcon(SparkRes.getImageIcon(SparkRes.Icon.BUSY_IMAGE));
                 refreshItem.validate();
                 refreshItem.repaint();
             }
@@ -329,10 +329,10 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener, Com
 
             @Override
             public void finished() {
-                refreshButton.setIcon(SparkRes.getImageIcon(SparkRes.REFRESH_IMAGE));
+                refreshButton.setIcon(SparkRes.getImageIcon(SparkRes.Icon.REFRESH_IMAGE));
                 refreshButton.validate();
                 refreshButton.repaint();
-                refreshItem.setIcon(SparkRes.getImageIcon(SparkRes.REFRESH_IMAGE));
+                refreshItem.setIcon(SparkRes.getImageIcon(SparkRes.Icon.REFRESH_IMAGE));
                 refreshItem.validate();
                 refreshItem.repaint();
             }
@@ -427,7 +427,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener, Com
         String roomName = roomInfo.getName() != null ? roomInfo.getName() : roomInfo.getRoom().getLocalpart().toString();
         conferences.addOrRemoveNode(serviceName, isBookmarked, roomName, roomInfo.getRoom());
         int selectedRow = roomsTable.getSelectedRow();
-        ImageIcon bookmarkIcon = isBookmarked ? SparkRes.getImageIcon(SparkRes.BLANK_IMAGE) : SparkRes.getImageIcon(SparkRes.BOOKMARK_ICON);
+        ImageIcon bookmarkIcon = isBookmarked ? SparkRes.getImageIcon(SparkRes.Icon.BLANK_IMAGE) : SparkRes.getImageIcon(SparkRes.Icon.BOOKMARK_ICON);
         roomsTable.getTableModel().setValueAt(new JLabel(bookmarkIcon), selectedRow, 0);
         addBookmarkUI(!isBookmarked);
     }
@@ -477,7 +477,7 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener, Com
         TitlePanel titlePanel = new TitlePanel(
             Res.getString("title.create.or.bookmark.room"),
             Res.getString("message.add.favorite.room"),
-            SparkRes.getImageIcon(SparkRes.BLANK_IMAGE), true);
+            SparkRes.getImageIcon(SparkRes.Icon.BLANK_IMAGE), true);
 
         // Construct main panel w/ layout.
         final JPanel mainPanel = new JPanel();
@@ -648,12 +648,12 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener, Com
                 boolean isBookmark = false;
                 boolean isPassword = false;
 
-                ImageIcon bookmarkIcon = SparkRes.getImageIcon(SparkRes.BOOKMARK_ICON);
-                ImageIcon passwordIcon = SparkRes.getImageIcon(SparkRes.LOCK_16x16);
+                ImageIcon bookmarkIcon = SparkRes.getImageIcon(SparkRes.Icon.BOOKMARK_ICON);
+                ImageIcon passwordIcon = SparkRes.getImageIcon(SparkRes.Icon.LOCK_16x16);
 
                 if (isBookmarked(room.getRoom())) {
                     isBookmark = true;
-                    iconLabel.setIcon(SparkRes.getImageIcon(SparkRes.BOOKMARK_ICON));
+                    iconLabel.setIcon(SparkRes.getImageIcon(SparkRes.Icon.BOOKMARK_ICON));
                 }
                 if (room.isPasswordProtected() || room.isMembersOnly()) {
                     isPassword = true;
@@ -725,10 +725,10 @@ public class ConferenceRoomBrowser extends JPanel implements ActionListener, Com
     private void addBookmarkUI(boolean addBookmark) {
         if (!addBookmark) {
             addRoomButton.setText(Res.getString("button.remove.bookmark"));
-            addRoomButton.setIcon(SparkRes.getImageIcon(SparkRes.DELETE_BOOKMARK_ICON));
+            addRoomButton.setIcon(SparkRes.getImageIcon(SparkRes.Icon.DELETE_BOOKMARK_ICON));
         } else {
             ResourceUtils.resButton(addRoomButton, Res.getString("button.bookmark.room"));
-            addRoomButton.setIcon(SparkRes.getImageIcon(SparkRes.ADD_BOOKMARK_ICON));
+            addRoomButton.setIcon(SparkRes.getImageIcon(SparkRes.Icon.ADD_BOOKMARK_ICON));
         }
     }
 

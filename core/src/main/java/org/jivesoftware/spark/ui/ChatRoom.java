@@ -308,13 +308,13 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
                 pref.setChatWindowAlwaysOnTop(true);
                 _chatFrame.setWindowAlwaysOnTop(true);
                 _isAlwaysOnTopActive = true;
-                _alwaysOnTopItem.setIcon(SparkRes.getImageIcon("FRAME_ALWAYS_ON_TOP_ACTIVE"));
+                _alwaysOnTopItem.setIcon(SparkRes.getImageIcon(SparkRes.Icon.FRAME_ALWAYS_ON_TOP_ACTIVE));
 
             } else {
                 pref.setChatWindowAlwaysOnTop(false);
                 _chatFrame.setWindowAlwaysOnTop(false);
                 _isAlwaysOnTopActive = false;
-                _alwaysOnTopItem.setIcon(SparkRes.getImageIcon("FRAME_ALWAYS_ON_TOP_DEACTIVE"));
+                _alwaysOnTopItem.setIcon(SparkRes.getImageIcon(SparkRes.Icon.FRAME_ALWAYS_ON_TOP_DEACTIVE));
             }
         });
 
@@ -323,7 +323,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
         // Initially, set the right pane to null to keep it empty.
         getSplitPane().setRightComponent(null);
 
-        notificationLabel.setIcon(SparkRes.getImageIcon(SparkRes.BLANK_IMAGE));
+        notificationLabel.setIcon(SparkRes.getImageIcon(SparkRes.Icon.BLANK_IMAGE));
 
         getTranscriptWindow().addContextMenuListener(this);
 
@@ -555,7 +555,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
             Instant lastMessageDate = transcriptWindow.getLastUpdated();
             if (lastMessageDate != null) {
                 // Set new label date
-                notificationLabel.setIcon(SparkRes.getImageIcon(SparkRes.SMALL_ABOUT_IMAGE));
+                notificationLabel.setIcon(SparkRes.getImageIcon(SparkRes.Icon.SMALL_ABOUT_IMAGE));
                 notificationLabel.setText(Res.getString("message.last.message.received", SparkManager.DATE_SECOND_FORMATTER.format(Date.from(lastMessageDate))));
             }
         }
@@ -1171,7 +1171,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
             }
         };
         saveAction.putValue(Action.NAME, Res.getString("action.save"));
-        saveAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.SAVE_AS_16x16));
+        saveAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.Icon.SAVE_AS_16x16));
 
         popup.add(saveAction);
     }

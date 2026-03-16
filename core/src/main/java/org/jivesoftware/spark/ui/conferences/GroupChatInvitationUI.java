@@ -28,9 +28,7 @@ import org.jivesoftware.spark.util.SwingTimerTask;
 import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.spark.util.log.Log;
 import org.jxmpp.jid.EntityBareJid;
-import org.jxmpp.jid.impl.JidCreate;
 import org.jxmpp.jid.parts.Localpart;
-import org.jxmpp.stringprep.XmppStringprepException;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -79,17 +77,17 @@ public class GroupChatInvitationUI extends JPanel implements ActionListener {
         // Get users nickname, if there is one.
         String nickname = SparkManager.getUserManager().getUserNicknameFromJID(inviter);
 
-        JLabel iconLabel = new JLabel(SparkRes.getImageIcon(SparkRes.CONFERENCE_IMAGE_48x48));
+        JLabel iconLabel = new JLabel(SparkRes.getImageIcon(SparkRes.Icon.CONFERENCE_IMAGE_48x48));
 
         JTextPane titleLabel = new JTextPane();
         titleLabel.setOpaque(false);
         titleLabel.setEditable(false);
         titleLabel.setBackground(new Color(230, 239, 249));
 
-        acceptButton = new RolloverButton(Res.getString("button.accept").replace("&", ""), SparkRes.getImageIcon(SparkRes.ACCEPT_INVITE_IMAGE));
+        acceptButton = new RolloverButton(Res.getString("button.accept").replace("&", ""), SparkRes.getImageIcon(SparkRes.Icon.ACCEPT_INVITE_IMAGE));
         acceptButton.setForeground(new Color(63, 158, 61));
 
-        RolloverButton rejectButton = new RolloverButton(Res.getString("button.reject"), SparkRes.getImageIcon(SparkRes.REJECT_INVITE_IMAGE));
+        RolloverButton rejectButton = new RolloverButton(Res.getString("button.reject"), SparkRes.getImageIcon(SparkRes.Icon.REJECT_INVITE_IMAGE));
         rejectButton.setForeground(new Color(185, 33, 33));
 
         add(iconLabel, new GridBagConstraints(0, 0, 1, 2, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0));

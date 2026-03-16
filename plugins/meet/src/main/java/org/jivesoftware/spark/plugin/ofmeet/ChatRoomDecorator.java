@@ -40,7 +40,7 @@ public class ChatRoomDecorator
         try {
             byte[] imageByte = DatatypeConverter.parseBase64Binary(ICON_STRING);
             ImageIcon ofmeetIcon = new ImageIcon(imageByte);
-            ofmeetButton = new RolloverButton(SparkRes.getImageIcon("PADE_ICON"));
+            ofmeetButton = new RolloverButton(SparkRes.getImageIcon(SparkRes.PADE_ICON));
             ofmeetButton.setToolTipText(GraphicUtils.createToolTip(SparkMeetResource.getString("name")));
             final String roomId = room.getBareJid().getLocalpart().toString();
             final String sessionID = String.valueOf(System.currentTimeMillis());

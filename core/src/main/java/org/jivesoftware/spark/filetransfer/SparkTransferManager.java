@@ -43,7 +43,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -198,7 +197,7 @@ public class SparkTransferManager {
         prefManager.addPreference(new FileTransferPreference());
 
         final JMenu actionsMenu = SparkManager.getMainWindow().getMenuByName(Res.getString("menuitem.actions"));
-        JMenuItem downloadsMenu = new JMenuItem("", SparkRes.getImageIcon(SparkRes.DOWNLOAD_16x16));
+        JMenuItem downloadsMenu = new JMenuItem("", SparkRes.getImageIcon(SparkRes.Icon.DOWNLOAD_16x16));
         ResourceUtils.resButton(downloadsMenu, Res.getString("menuitem.view.downloads"));
         actionsMenu.addSeparator();
         actionsMenu.add(downloadsMenu);
@@ -213,7 +212,7 @@ public class SparkTransferManager {
 //        // Add View Downloads to Command Panel
 //        final JPanel commandPanel = SparkManager.getWorkspace().getCommandPanel();
 //
-//        RolloverButton viewDownloads = new RolloverButton(SparkRes.getImageIcon(SparkRes.DOWNLOAD_16x16));
+//        RolloverButton viewDownloads = new RolloverButton(SparkRes.getImageIcon(SparkRes.Icons.DOWNLOAD_16x16));
 //        viewDownloads.setToolTipText(Res.getString("menuitem.view.downloads"));
 //        commandPanel.add(viewDownloads);
 //        viewDownloads.addActionListener(new ActionListener() {

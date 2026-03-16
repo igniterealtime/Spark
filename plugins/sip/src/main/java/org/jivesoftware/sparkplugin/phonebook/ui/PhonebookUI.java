@@ -217,7 +217,7 @@ public class PhonebookUI extends JPanel
 		frame.add(this, BorderLayout.CENTER);
 		frame.setTitle(PhoneRes.getIString("frame.title"));
 		frame.setSize(new Dimension(400,300));
-		frame.setIconImage(SparkRes.getImageIcon(SparkRes.ADDRESS_BOOK_16x16).getImage());
+		frame.setIconImage(SparkRes.getImageIcon(SparkRes.Icons.ADDRESS_BOOK_16x16).getImage());
 	}
 	
 	/**

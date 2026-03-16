@@ -80,7 +80,7 @@ public final class MessageDialog
         {
             // Create the title panel for this dialog
             final String desc = description == null || description.trim().isEmpty() ? null : description.trim();
-            final TitlePanel titlePanel = new TitlePanel( Res.getString( "message.default.error" ), desc, SparkRes.getImageIcon( SparkRes.SMALL_DELETE ), true );
+            final TitlePanel titlePanel = new TitlePanel(Res.getString("message.default.error"), desc, SparkRes.getImageIcon(SparkRes.Icon.SMALL_DELETE), true);
 
             final JLabel titleLabel = new JLabel( Res.getString( "message.default.error" ) );
             titleLabel.setFont(new Font("dialog", Font.BOLD, 11 ) );

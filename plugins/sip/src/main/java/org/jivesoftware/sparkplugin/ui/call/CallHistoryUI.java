@@ -71,7 +71,7 @@ public class CallHistoryUI extends JPanel implements ActionListener, ListSelecti
         renderer = new CallHistoryRenderer();
 
         callHistoryFrame = new JFrame(PhoneRes.getIString("phone.callhistory"));
-        callHistoryFrame.setIconImage(SparkRes.getImageIcon(SparkRes.HISTORY_16x16).getImage());
+        callHistoryFrame.setIconImage(SparkRes.getImageIcon(SparkRes.Icons.HISTORY_16x16).getImage());
         callHistoryFrame.add(this);
         callHistoryFrame.pack();
         callHistoryFrame.setSize(300, 300);

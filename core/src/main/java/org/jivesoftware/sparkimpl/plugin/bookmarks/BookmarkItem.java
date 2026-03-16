@@ -69,7 +69,7 @@ public class BookmarkItem extends JPanel {
     }
 
     public void addURL(final BookmarkedURL bookmark) {
-        imageLabel.setIcon(SparkRes.getImageIcon(SparkRes.LINK_16x16));
+        imageLabel.setIcon(SparkRes.getImageIcon(SparkRes.Icon.LINK_16x16));
         nameLabel.setText(bookmark.getName());
         descriptionLabel.setText(bookmark.getURL());
 
@@ -89,7 +89,7 @@ public class BookmarkItem extends JPanel {
     }
 
     public void addConferenceRoom(final BookmarkedConference bookmark) {
-        imageLabel.setIcon(SparkRes.getImageIcon(SparkRes.CONFERENCE_IMAGE_16x16));
+        imageLabel.setIcon(SparkRes.getImageIcon(SparkRes.Icon.CONFERENCE_IMAGE_16x16));
         nameLabel.setText(bookmark.getName() != null && !bookmark.getName().isEmpty() ? bookmark.getName() : bookmark.getJid().getLocalpart().asUnescapedString());
         descriptionLabel.setText(bookmark.getJid().toString());
         action = new AbstractAction() {

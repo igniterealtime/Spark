@@ -22,8 +22,7 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
-import javax.swing.Icon;
-import javax.swing.JComponent;
+import javax.swing.*;
 
 /**
  */
@@ -42,7 +41,7 @@ public class ThemePreference implements Preference {
 
     @Override
 	public Icon getIcon() {
-        return SparkRes.getImageIcon(SparkRes.PALETTE_24x24_IMAGE);
+        return SparkRes.getImageIcon(SparkRes.Icon.PALETTE_24x24_IMAGE);
     }
 
     @Override

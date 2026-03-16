@@ -102,7 +102,7 @@ public class PrivacyPresenceHandler implements SparkPrivacyItemListener {
         Collection<ContactItem> items = SparkManager.getWorkspace().getContactList().getContactItemsByJID(jid);
         for (ContactItem contactItem : items) {
             if (contactItem != null) {
-                contactItem.setSpecialIcon(SparkRes.getImageIcon("PRIVACY_ICON_SMALL"));
+                contactItem.setSpecialIcon(SparkRes.getImageIcon(SparkRes.Icon.PRIVACY_ICON_SMALL));
             }
         }
     }

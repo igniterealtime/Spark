@@ -29,7 +29,7 @@ import org.jivesoftware.sparkimpl.plugin.emoticons.EmoticonManager;
 
 public class ButtonFactory {
 
-	private static final ButtonFactory instance = new ButtonFactory();
+    private static final ButtonFactory instance = new ButtonFactory();
 
 	protected ButtonFactory() {
 		// nothing
@@ -40,23 +40,23 @@ public class ButtonFactory {
 	}
 
 	public ChatRoomButton createChatTranscriptButton() {
-		return new ChatRoomButton(SparkRes.getImageIcon(SparkRes.HISTORY_24x24_IMAGE));
+		return new ChatRoomButton(SparkRes.getImageIcon(SparkRes.Icon.HISTORY_24x24_IMAGE));
 	}
 
 	public ChatRoomButton createSendFileButton() {
-		return new ChatRoomButton("", SparkRes.getImageIcon(SparkRes.SEND_FILE_24x24));
+		return new ChatRoomButton("", SparkRes.getImageIcon(SparkRes.Icon.SEND_FILE_24x24));
 	}
 
 	public ChatRoomButton createScreenshotButton() {
-		return new ChatRoomButton("", SparkRes.getImageIcon(SparkRes.PHOTO_IMAGE));
+		return new ChatRoomButton("", SparkRes.getImageIcon(SparkRes.Icon.PHOTO_IMAGE));
 	}
 
 	public ChatRoomButton createInviteConferenceButton() {
-		return new ChatRoomButton("", SparkRes.getImageIcon(SparkRes.CONFERENCE_IMAGE_24x24));
+		return new ChatRoomButton("", SparkRes.getImageIcon(SparkRes.Icon.CONFERENCE_IMAGE_24x24));
 	}
 
 	public RolloverButton createBuzzButton() {
-		return new RolloverButton(SparkRes.getImageIcon(SparkRes.BUZZ_IMAGE));
+		return new RolloverButton(SparkRes.getImageIcon(SparkRes.Icon.BUZZ_IMAGE));
 	}
 
     public RolloverButton createEmoticonButton() {
@@ -72,23 +72,23 @@ public class ButtonFactory {
     }
 
 	public JLabel createDivider() {
-		return new JLabel(SparkRes.getImageIcon("DIVIDER_IMAGE"));
+		return new JLabel(SparkRes.getImageIcon(SparkRes.Icon.DIVIDER_IMAGE));
 	}
 	
     public RolloverButton createSettingsButton() {
-        RolloverButton settings = new RolloverButton(SparkRes.getImageIcon(SparkRes.SETTINGS_IMAGE_16x16));
+        RolloverButton settings = new RolloverButton(SparkRes.getImageIcon(SparkRes.Icon.SETTINGS_IMAGE_16x16));
         settings.setToolTipText(Res.getString("title.configure.room"));
         return settings;
     }
 
     public RolloverButton createTemaButton() {
-        RolloverButton thema = new RolloverButton(SparkRes.getImageIcon(SparkRes.TYPING_TRAY));
+        RolloverButton thema = new RolloverButton(SparkRes.getImageIcon(SparkRes.Icon.TYPING_TRAY));
         thema.setToolTipText(Res.getString("menuitem.change.subject"));
         return thema;
     }
 
     public RolloverButton createRegisterButton() {
-        RolloverButton register = new RolloverButton(SparkRes.getImageIcon(SparkRes.PEOPLE_IMAGE));
+        RolloverButton register = new RolloverButton(SparkRes.getImageIcon(SparkRes.Icon.PEOPLE_IMAGE));
         register.setToolTipText(Res.getString("button.register").replace("&", ""));
         return register;
     }
@@ -96,9 +96,9 @@ public class ButtonFactory {
     public RolloverButton createAlwaysOnTop(boolean isAlwaysOnTopActive) {
         RolloverButton alwaysOnTopItem = new RolloverButton();
         if (isAlwaysOnTopActive) {
-            alwaysOnTopItem.setIcon(SparkRes.getImageIcon("FRAME_ALWAYS_ON_TOP_ACTIVE"));
+            alwaysOnTopItem.setIcon(SparkRes.getImageIcon(SparkRes.Icon.FRAME_ALWAYS_ON_TOP_ACTIVE));
         } else {
-            alwaysOnTopItem.setIcon(SparkRes.getImageIcon("FRAME_ALWAYS_ON_TOP_DEACTIVE"));
+            alwaysOnTopItem.setIcon(SparkRes.getImageIcon(SparkRes.Icon.FRAME_ALWAYS_ON_TOP_DEACTIVE));
         }
 
         alwaysOnTopItem.setToolTipText(Res.getString("menuitem.always.on.top"));

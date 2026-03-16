@@ -26,9 +26,7 @@ import org.jivesoftware.spark.ui.ContainerComponent;
 import org.jivesoftware.spark.util.ResourceUtils;
 import org.jivesoftware.spark.util.log.Log;
 import org.jxmpp.jid.EntityBareJid;
-import org.jxmpp.jid.impl.JidCreate;
 import org.jxmpp.jid.parts.Localpart;
-import org.jxmpp.stringprep.XmppStringprepException;
 
 import java.awt.Color;
 import java.awt.FlowLayout;
@@ -175,7 +173,7 @@ public class ConversationInvitation extends JPanel implements ContainerComponent
 
     @Override
     public ImageIcon getTabIcon() {
-        return SparkRes.getImageIcon(SparkRes.CONFERENCE_IMAGE_16x16);
+        return SparkRes.getImageIcon(SparkRes.Icon.CONFERENCE_IMAGE_16x16);
     }
 
     @Override

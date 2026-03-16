@@ -66,11 +66,11 @@ public class JingleTabHandler extends SparkTabHandler {
         boolean isTyping = SparkManager.getChatManager().containsTypingNotification(room);
         // Check if is typing.
         if (isTyping) {
-            tab.setIcon(SparkRes.getImageIcon(SparkRes.SMALL_MESSAGE_EDIT_IMAGE));
+            tab.setIcon(SparkRes.getImageIcon(SparkRes.Icons.SMALL_MESSAGE_EDIT_IMAGE));
         } else if (JingleRoomState.ringing == state) {
             tab.setIcon(JinglePhoneRes.getImageIcon("ANSWER_PHONE_IMAGE"));
         } else if (JingleRoomState.inJingleCall == state) {
-            tab.setIcon(SparkRes.getImageIcon(SparkRes.HEADSET_IMAGE));
+            tab.setIcon(SparkRes.getImageIcon(SparkRes.Icons.HEADSET_IMAGE));
         } else if (JingleRoomState.callWasEnded == state) {
             tab.setIcon(JinglePhoneRes.getImageIcon("HANG_UP_PHONE_16x16_IMAGE"));
         }

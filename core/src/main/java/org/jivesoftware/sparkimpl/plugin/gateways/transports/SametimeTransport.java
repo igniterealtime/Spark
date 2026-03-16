@@ -15,11 +15,11 @@
  */
 package org.jivesoftware.sparkimpl.plugin.gateways.transports;
 
-import javax.swing.Icon;
-
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jxmpp.jid.DomainBareJid;
+
+import javax.swing.*;
 
 public class SametimeTransport implements Transport {
     private DomainBareJid serviceName;
@@ -40,12 +40,12 @@ public class SametimeTransport implements Transport {
 
     @Override
 	public Icon getIcon() {
-        return SparkRes.getImageIcon(SparkRes.SAMETIME_TRANSPORT_ACTIVE_IMAGE);
+        return SparkRes.getImageIcon(SparkRes.Icon.SAMETIME_TRANSPORT_ACTIVE_IMAGE);
     }
 
     @Override
 	public Icon getInactiveIcon() {
-        return SparkRes.getImageIcon(SparkRes.SAMETIME_TRANSPORT_INACTIVE_IMAGE);
+        return SparkRes.getImageIcon(SparkRes.Icon.SAMETIME_TRANSPORT_INACTIVE_IMAGE);
     }
 
     @Override

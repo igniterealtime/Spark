@@ -492,7 +492,7 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener
     {
         popup.addSeparator();
 
-        popup.add( new AbstractAction( Res.getString( "action.print" ), SparkRes.getImageIcon( SparkRes.PRINTER_IMAGE_16x16 ) )
+        popup.add(new AbstractAction(Res.getString("action.print"), SparkRes.getImageIcon(SparkRes.Icon.PRINTER_IMAGE_16x16))
         {
             @Override
 			public void actionPerformed( ActionEvent actionEvent )
@@ -503,7 +503,7 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener
 
         if (!Default.getBoolean(Default.HIDE_HISTORY_SETTINGS) && Enterprise.containsFeature(Enterprise.HISTORY_SETTINGS_FEATURE)
         		&& !Default.getBoolean(Default.HISTORY_DISABLED) && Enterprise.containsFeature(Enterprise.HISTORY_TRANSCRIPTS_FEATURE)) {
-            popup.add( new AbstractAction( Res.getString( "action.clear" ), SparkRes.getImageIcon( SparkRes.ERASER_IMAGE ) )
+            popup.add(new AbstractAction(Res.getString("action.clear"), SparkRes.getImageIcon(SparkRes.Icon.ERASER_IMAGE))
             {
                 @Override
 				public void actionPerformed( ActionEvent actionEvent )

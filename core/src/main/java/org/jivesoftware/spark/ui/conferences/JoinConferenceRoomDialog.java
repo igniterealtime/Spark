@@ -76,7 +76,7 @@ final class JoinConferenceRoomDialog extends JPanel {
         roomNameDescription.setText(roomName);
 
         // Create the title panel for this dialog
-        TitlePanel titlePanel = new TitlePanel(Res.getString("title.join.conference.room"), Res.getString("message.specify.information.for.conference"), SparkRes.getImageIcon(SparkRes.BLANK_IMAGE), true);
+        TitlePanel titlePanel = new TitlePanel(Res.getString("title.join.conference.room"), Res.getString("message.specify.information.for.conference"), SparkRes.getImageIcon(SparkRes.Icon.BLANK_IMAGE), true);
 
         // Construct main panel w/ layout.
         final JPanel mainPanel = new JPanel();

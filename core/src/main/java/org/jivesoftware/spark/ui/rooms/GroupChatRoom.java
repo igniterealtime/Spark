@@ -85,7 +85,7 @@ public class GroupChatRoom extends ChatRoom {
     private final RolloverButton settings;
     /** compiled regexp by Nick and JID for {@link #getMessageBackground} */
     private Pattern myNicknameMatch;
-    private Icon tabIcon = SparkRes.getImageIcon(SparkRes.CONFERENCE_IMAGE_16x16);
+    private Icon tabIcon = SparkRes.getImageIcon(SparkRes.Icon.CONFERENCE_IMAGE_16x16);
     private String password = null;
     private String tabTitle;
     private boolean isActive = true;
@@ -135,7 +135,7 @@ public class GroupChatRoom extends ChatRoom {
                 };
 
                 inviteAction.putValue(Action.NAME, Res.getString("menuitem.invite.users"));
-                inviteAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.SMALL_MESSAGE_IMAGE));
+                inviteAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.Icon.SMALL_MESSAGE_IMAGE));
 
                 popup.add(inviteAction);
 
@@ -147,7 +147,7 @@ public class GroupChatRoom extends ChatRoom {
                 };
 
                 copyUriGroupChat.putValue(Action.NAME, Res.getString("button.copy.to.clipboard"));
-                copyUriGroupChat.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.COPY_16x16));
+                copyUriGroupChat.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.Icon.COPY_16x16));
                 popup.add(copyUriGroupChat);
 
                 Action configureAction = new AbstractAction() {
@@ -158,7 +158,7 @@ public class GroupChatRoom extends ChatRoom {
                 };
 
                 configureAction.putValue(Action.NAME, Res.getString("title.configure.room"));
-                configureAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.SETTINGS_IMAGE_16x16));
+                configureAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.Icon.SETTINGS_IMAGE_16x16));
                 if (SparkManager.getUserManager().isOwner((GroupChatRoom) getChatRoom(), getNickname())) {
                     popup.add(configureAction);
                 }
@@ -182,7 +182,7 @@ public class GroupChatRoom extends ChatRoom {
                 };
 
                 subjectChangeAction.putValue(Action.NAME, Res.getString("menuitem.change.subject"));
-                subjectChangeAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.SMALL_MESSAGE_EDIT_IMAGE));
+                subjectChangeAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.Icon.SMALL_MESSAGE_EDIT_IMAGE));
                 popup.add(subjectChangeAction);
 
                 // Define actions to modify/view room information
@@ -216,7 +216,7 @@ public class GroupChatRoom extends ChatRoom {
                 };
 
                 destroyRoomAction.putValue(Action.NAME, Res.getString("menuitem.destroy.room"));
-                destroyRoomAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.SMALL_DELETE));
+                destroyRoomAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.Icon.SMALL_DELETE));
                 if (SparkManager.getUserManager().isOwner((GroupChatRoom) getChatRoom(), getNickname())) {
                     popup.add(destroyRoomAction);
                 }

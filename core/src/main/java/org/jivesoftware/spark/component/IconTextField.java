@@ -17,22 +17,13 @@ package org.jivesoftware.spark.component;
 
 import org.jivesoftware.resource.SparkRes;
 
-import javax.swing.Icon;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.UIManager;
+import javax.swing.*;
 
 import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.util.HashSet;
-import java.util.Set;
-import javax.swing.BorderFactory;
 import javax.swing.plaf.basic.BasicTextFieldUI;
-import javax.swing.plaf.basic.BasicTextUI;
 
 /**
  * Creates a Firefox Search type box that allows for icons inside of a
@@ -60,7 +51,7 @@ public class IconTextField extends JPanel {
         //setBorder(new JTextField().getBorder());
         this.setBorder(BorderFactory.createLineBorder(Color.lightGray));
         imageComponent = new JLabel(icon);
-        downOption = new JLabel(SparkRes.getImageIcon(SparkRes.DOWN_OPTION_IMAGE));
+        downOption = new JLabel(SparkRes.getImageIcon(SparkRes.Icon.DOWN_OPTION_IMAGE));
 
         add(downOption, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
         add(imageComponent, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));

@@ -80,8 +80,8 @@ public class SparkTabbedPane extends JPanel {
         };
         pane.addChangeListener(changeListener);
 
-        closeInactiveButtonIcon = SparkRes.getImageIcon(SparkRes.CLOSE_WHITE_X_IMAGE);
-        closeActiveButtonIcon = SparkRes.getImageIcon(SparkRes.CLOSE_RED_X_IMAGE);
+        closeInactiveButtonIcon = SparkRes.getImageIcon(SparkRes.Icon.CLOSE_WHITE_X_IMAGE);
+        closeActiveButtonIcon = SparkRes.getImageIcon(SparkRes.Icon.CLOSE_RED_X_IMAGE);
 
     }
 
@@ -93,7 +93,7 @@ public class SparkTabbedPane extends JPanel {
         JToolBar tb = new JToolBar();
         tb.setFloatable(false);
         tb.setBorder(null);
-        JLabel lbl = new JLabel("[" + unreadCount + "] ", SparkRes.getImageIcon(SparkRes.NEW_MESSAGE), JLabel.TRAILING);
+        JLabel lbl = new JLabel("[" + unreadCount + "] ", SparkRes.getImageIcon(SparkRes.Icon.NEW_MESSAGE), JLabel.TRAILING);
 
         lbl.setForeground(Color.red);
         lbl.setVerticalAlignment(JLabel.CENTER);

@@ -55,7 +55,7 @@ public class FastpathTabHandler extends SparkTabHandler {
 
         // Check if is typing.
         if (isTyping) {
-            tab.setIcon(SparkRes.getImageIcon(SparkRes.SMALL_MESSAGE_EDIT_IMAGE));
+            tab.setIcon(SparkRes.getImageIcon(SparkRes.Icon.SMALL_MESSAGE_EDIT_IMAGE));
         }
         else {
             tab.setIcon(FastpathRes.getImageIcon(FastpathRes.FASTPATH_IMAGE_16x16));

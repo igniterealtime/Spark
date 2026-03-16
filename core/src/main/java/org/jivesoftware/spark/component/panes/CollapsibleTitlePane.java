@@ -19,7 +19,6 @@ import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.spark.util.ColorUtil;
 import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.log.Log;
-import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
 import java.awt.Color;
@@ -36,9 +35,7 @@ import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
 import java.util.StringTokenizer;
 
-import javax.swing.Icon;
-import javax.swing.JLabel;
-import javax.swing.UIManager;
+import javax.swing.*;
 
 /**
  * Internal implementation of the Title pane in the northern region of a CollapsiblePane.
@@ -151,19 +148,19 @@ public class CollapsibleTitlePane extends BaseCollapsibleTitlePane {
         if (!isSubPane()) {
 
             if (!collapsed) {
-                preIconLabel.setIcon(SparkRes.getImageIcon(SparkRes.PANE_DOWN_ARROW_IMAGE));
+                preIconLabel.setIcon(SparkRes.getImageIcon(SparkRes.Icon.PANE_DOWN_ARROW_IMAGE));
             }
             else {
-                preIconLabel.setIcon(SparkRes.getImageIcon(SparkRes.PANE_UP_ARROW_IMAGE));
+                preIconLabel.setIcon(SparkRes.getImageIcon(SparkRes.Icon.PANE_UP_ARROW_IMAGE));
             }
         }
         else {
             iconLabel.setIcon(null);
             if (collapsed) {
-                preIconLabel.setIcon(SparkRes.getImageIcon(SparkRes.PLUS_SIGN));
+                preIconLabel.setIcon(SparkRes.getImageIcon(SparkRes.Icon.PLUS_SIGN));
             }
             else {
-                preIconLabel.setIcon(SparkRes.getImageIcon(SparkRes.MINUS_SIGN));
+                preIconLabel.setIcon(SparkRes.getImageIcon(SparkRes.Icon.MINUS_SIGN));
             }
         }
     }

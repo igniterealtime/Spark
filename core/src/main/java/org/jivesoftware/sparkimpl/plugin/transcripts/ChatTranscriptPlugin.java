@@ -93,7 +93,7 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
         };
 
         viewHistoryAction.putValue(Action.NAME, Res.getString("menuitem.view.contact.history"));
-        viewHistoryAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.HISTORY_16x16));
+        viewHistoryAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.Icon.HISTORY_16x16));
 
         final Action showStatusMessageAction = new AbstractAction() {
             @Override

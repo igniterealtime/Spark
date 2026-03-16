@@ -78,7 +78,7 @@ public class ContactDetailsPanel extends JPanel implements ActionListener, Mouse
         add(jobTitleLabel, new GridBagConstraints(1, 3, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 2, 2), 0, 0));
 
         // Add Avatar Label
-        // avatarLabel = new JLabel(SparkRes.getImageIcon(SparkRes.DEFAULT_AVATAR_64x64_IMAGE));
+        // avatarLabel = new JLabel(SparkRes.getImageIcon(SparkRes.Icons.DEFAULT_AVATAR_64x64_IMAGE));
         // add(avatarLabel, new GridBagConstraints(2, 4, 1, 1, 0.0, 1.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0));
 
         viewProfileLabel = new LinkLabel(PhoneRes.getIString("phone.viewfullprofile"), "", Color.LIGHT_GRAY, Color.BLUE);

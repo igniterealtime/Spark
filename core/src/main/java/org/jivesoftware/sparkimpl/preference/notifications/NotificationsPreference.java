@@ -22,8 +22,7 @@ import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
-import javax.swing.Icon;
-import javax.swing.JComponent;
+import javax.swing.*;
 
 /**
  * Handles the preferences for notification behavior within the Spark IM Client.
@@ -56,7 +55,7 @@ public class NotificationsPreference implements Preference {
 
 	@Override
 	public Icon getIcon() {
-		return SparkRes.getImageIcon(SparkRes.NOTIFICATIONS);
+		return SparkRes.getImageIcon(SparkRes.Icon.NOTIFICATIONS);
 	}
 
 	@Override

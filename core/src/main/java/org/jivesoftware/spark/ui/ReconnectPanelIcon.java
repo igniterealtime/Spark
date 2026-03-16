@@ -47,7 +47,7 @@ public class ReconnectPanelIcon implements ConnectionListener {
 
 	_commandpanel = SparkManager.getWorkspace().getCommandPanel();
 
-	_icon = new JButton(SparkRes.getImageIcon(SparkRes.BUSY_IMAGE));
+	_icon = new JButton(SparkRes.getImageIcon(SparkRes.Icon.BUSY_IMAGE));
        _icon.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {

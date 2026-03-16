@@ -57,7 +57,7 @@ public class LanguagePlugin implements Plugin {
             languageMenuLabel += " (Language)";
         }
         JMenu languageMenu = new JMenu(languageMenuLabel);
-        languageMenu.setIcon(SparkRes.getImageIcon("LANGUAGE_ICON"));
+        languageMenu.setIcon(SparkRes.getImageIcon(SparkRes.Icon.LANGUAGE_ICON));
 
         addLanguage(ENGLISH, languageMenu);
         // If we have a translation file for this locale, we can support the language!

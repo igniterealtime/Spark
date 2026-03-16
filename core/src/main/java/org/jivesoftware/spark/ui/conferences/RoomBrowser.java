@@ -134,7 +134,7 @@ public class RoomBrowser extends JPanel {
 
             for (DiscoverItems.Item item : items.getItems()) {
                 Jid jid = item.getEntityID();
-                rootNode.add(new JiveTreeNode(jid.toString(), false, SparkRes.getImageIcon(SparkRes.SMALL_USER1_INFORMATION)));
+                rootNode.add(new JiveTreeNode(jid.toString(), false, SparkRes.getImageIcon(SparkRes.Icon.SMALL_USER1_INFORMATION)));
             }
             tree.expandRow(0);
         } catch (Exception e) {
@@ -142,7 +142,7 @@ public class RoomBrowser extends JPanel {
         }
 
         // Create the title panel for this dialog
-        TitlePanel titlePanel = new TitlePanel(Res.getString("title.view.room.information"), Res.getString("message.room.information.for", roomJID), SparkRes.getImageIcon(SparkRes.BLANK_IMAGE), true);
+        TitlePanel titlePanel = new TitlePanel(Res.getString("title.view.room.information"), Res.getString("message.room.information.for", roomJID), SparkRes.getImageIcon(SparkRes.Icon.BLANK_IMAGE), true);
 
         // Construct main panel w/ layout.
         final JPanel mainPanel = new JPanel();

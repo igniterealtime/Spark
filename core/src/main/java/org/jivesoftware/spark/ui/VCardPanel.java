@@ -29,13 +29,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import javax.swing.BorderFactory;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JWindow;
-import javax.swing.Timer;
+import javax.swing.*;
 
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smackx.vcardtemp.packet.VCard;
@@ -79,7 +73,7 @@ public class VCardPanel extends JPanel {
         buildAvatarHover();
 
         try {
-            Image aImage = SparkRes.getImageIcon(SparkRes.BLANK_24x24).getImage();
+            Image aImage = SparkRes.getImageIcon(SparkRes.Icon.BLANK_24x24).getImage();
             aImage = aImage.getScaledInstance(-1, 64, Image.SCALE_SMOOTH);
             ImageIcon ico = new ImageIcon(aImage);
 
@@ -113,7 +107,7 @@ public class VCardPanel extends JPanel {
             }
         }
         else {
-            icon = SparkRes.getImageIcon(SparkRes.DEFAULT_AVATAR_32x32_IMAGE);
+            icon = SparkRes.getImageIcon(SparkRes.Icon.DEFAULT_AVATAR_32x32_IMAGE);
         }
 
         if (icon != null && icon.getIconWidth() > 0) {
@@ -161,7 +155,7 @@ public class VCardPanel extends JPanel {
                 }
 
             } else {
-                icon = SparkRes.getImageIcon(SparkRes.DEFAULT_AVATAR_32x32_IMAGE);
+                icon = SparkRes.getImageIcon(SparkRes.Icon.DEFAULT_AVATAR_32x32_IMAGE);
             }
 
             label.setIcon(icon);

@@ -103,7 +103,7 @@ public class UserSearchService implements Searchable {
         }
 
         JFrame frame = new JFrame();
-        frame.setIconImage(SparkRes.getImageIcon(SparkRes.VIEW_IMAGE).getImage());
+        frame.setIconImage(SparkRes.getImageIcon(SparkRes.Icon.VIEW_IMAGE).getImage());
         final JDialog dialog = new JDialog(frame, Res.getString("title.person.search"), false);
         dialog.getContentPane().add(searchForm);
         dialog.pack();
@@ -188,7 +188,7 @@ public class UserSearchService implements Searchable {
 
     @Override
 	public Icon getIcon() {
-        return SparkRes.getImageIcon(SparkRes.SEARCH_USER_16x16);
+        return SparkRes.getImageIcon(SparkRes.Icon.SEARCH_USER_16x16);
     }
 
 

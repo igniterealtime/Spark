@@ -178,7 +178,7 @@ public class BookmarkPlugin implements Plugin {
                         };
 
                         urlAction.putValue(Action.NAME, link.getName());
-                        urlAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.LINK_16x16));
+                        urlAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.Icon.LINK_16x16));
                         bookmarkMenu.add(urlAction);
                     }
 
@@ -205,7 +205,7 @@ public class BookmarkPlugin implements Plugin {
                         };
 
                         conferenceAction.putValue(Action.NAME, conferences.getName() != null && !conferences.getName().isEmpty() ? conferences.getName() : conferences.getJid().getLocalpart().asUnescapedString());
-                        conferenceAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.CONFERENCE_IMAGE_16x16));
+                        conferenceAction.putValue(Action.SMALL_ICON, SparkRes.getImageIcon(SparkRes.Icon.CONFERENCE_IMAGE_16x16));
                         bookmarkMenu.add(conferenceAction);
                     }
                 }

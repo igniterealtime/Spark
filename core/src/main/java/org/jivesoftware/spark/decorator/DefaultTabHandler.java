@@ -28,10 +28,7 @@ import org.jxmpp.jid.EntityBareJid;
 import java.awt.Color;
 import java.awt.Component;
 
-import javax.swing.Icon;
-import javax.swing.JTabbedPane;
-import javax.swing.UIManager;
-import org.jivesoftware.spark.component.tabbedPane.SparkTabbedPane;
+import javax.swing.*;
 
 /**
  */
@@ -53,7 +50,7 @@ public class DefaultTabHandler extends SparkTabHandler {
 
             // Check if is typing.
             if (isTyping) {
-                tab.setIcon(SparkRes.getImageIcon(SparkRes.SMALL_MESSAGE_EDIT_IMAGE));
+                tab.setIcon(SparkRes.getImageIcon(SparkRes.Icon.SMALL_MESSAGE_EDIT_IMAGE));
             } else if (room instanceof ChatRoomImpl && !isStaleRoom) {
                 // User is not typing, therefore show default presence icon.
                 if (SparkManager.getConnection().isConnected()) {
@@ -62,7 +59,7 @@ public class DefaultTabHandler extends SparkTabHandler {
                     Icon icon = PresenceManager.getIconFromPresence(presence);
                     tab.setIcon(icon);
                 } else {
-                    tab.setIcon(SparkRes.getImageIcon(SparkRes.CLEAR_BALL_ICON));
+                    tab.setIcon(SparkRes.getImageIcon(SparkRes.Icon.CLEAR_BALL_ICON));
                 }
             }
 

@@ -66,7 +66,7 @@ public class SoftPhoneTabHandler extends SparkTabHandler {
 
         // Check if is typing.
         if (isTyping) {
-            tab.setIcon(SparkRes.getImageIcon(SparkRes.SMALL_MESSAGE_EDIT_IMAGE));
+            tab.setIcon(SparkRes.getImageIcon(SparkRes.Icons.SMALL_MESSAGE_EDIT_IMAGE));
         }
         else if (CallRoomState.inCall == state) {
             tab.setIcon(PhoneRes.getImageIcon("RECEIVER2_IMAGE"));
