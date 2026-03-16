@@ -13,7 +13,10 @@
     <version>0.3.0</version>
 
     <name>Online Meetings Plugin</name>
-    <description>Adds support for XEP-0483: HTTP Online Meetings to the Spark IM client.</description>
+    <description>Allows users to join audio and video conferences supported by XEP-0483: HTTP Online Meetings.
+        It provides a button from a Multi User Chat (MUC) room or chat window within the Spark client to open a browser window using the URL provided.
+        Instead of depending on the default browser, it uses Electron.
+    </description>
 
     <contributors>
         <contributor>
@@ -23,12 +26,4 @@
             </roles>
         </contributor>
     </contributors>
-
-    <dependencies>
-        <dependency>
-            <groupId>javax.xml.bind</groupId>
-            <artifactId>jaxb-api</artifactId>
-            <version>2.3.1</version>
-        </dependency>
-    </dependencies>
 </project>

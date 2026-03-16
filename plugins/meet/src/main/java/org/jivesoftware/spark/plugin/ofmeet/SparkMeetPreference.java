@@ -17,12 +17,9 @@ package org.jivesoftware.spark.plugin.ofmeet;
 
 import javax.swing.*;
 import java.awt.*;
-import javax.swing.border.*;
-import javax.xml.bind.DatatypeConverter;
 
 import org.jivesoftware.spark.component.VerticalFlowLayout;
 import org.jivesoftware.spark.preference.Preference;
-import org.jivesoftware.spark.util.ResourceUtils;
 
 public class SparkMeetPreference implements Preference {
 	public static final String NAMESPACE = "ofmeet";
@@ -57,8 +54,7 @@ public class SparkMeetPreference implements Preference {
 
 	@Override
 	public Icon getIcon() {
-		byte[] imageByte = DatatypeConverter.parseBase64Binary(ChatRoomDecorator.ICON_STRING);
-		return new ImageIcon(imageByte);		
+        return SparkMeetResource.PLUGIN_ICON;
 	}
 
 	@Override
