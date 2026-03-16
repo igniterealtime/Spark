@@ -22,10 +22,10 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.util.Iterator;
 import java.util.Objects;
 
 import javax.swing.DefaultListModel;
+import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -118,10 +118,17 @@ public class PreferencesPanel extends JPanel implements ListSelectionListener {
         flowPanel.removeAll();
 
         // Create the title panel for this dialog
-        TitlePanel titlePanel = new TitlePanel(pref.getTitle(),
-                pref.getTooltip(),
-                pref.getIcon(),
-                false);
+        String title = "";
+        String toolTip = "";
+        Icon icon = null;
+        try {
+            title = pref.getTitle();
+            toolTip = pref.getTooltip();
+            icon = pref.getIcon();
+        } catch (Exception e) {
+            Log.error(e);
+        }
+        TitlePanel titlePanel = new TitlePanel(title, toolTip, icon, false);
 
 
         flowPanel.add(comp, BorderLayout.CENTER);
