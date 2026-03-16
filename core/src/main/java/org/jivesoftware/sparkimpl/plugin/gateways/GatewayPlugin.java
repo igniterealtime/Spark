@@ -313,11 +313,6 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
     }
 
     @Override
-	public boolean handleDoubleClick(ContactItem item) {
-        return false;
-    }
-
-    @Override
 	public Icon getIcon(BareJid jid) {
         DomainBareJid domain = jid.asDomainBareJid();
         Transport transport = TransportUtils.getTransport(domain);
@@ -332,8 +327,4 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
         return null;
     }
 
-    @Override
-	public Icon getTabIcon(Presence presence) {
-        return null;
-    }
 }
