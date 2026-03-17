@@ -260,7 +260,7 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
 
     }
 
-    public void handleClick(String newUrl, ChatRoom room, String url, Message.Type type)
+    public void handleClick(String newUrl, ChatRoom room, String url)
     {
         if (electronThread != null)
         {
@@ -269,7 +269,7 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
             return;
         }
 
-        sendInvite(room, url, type);
+        sendInvite(room, url);
         openURL(newUrl);
     }
 
@@ -472,11 +472,8 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
         bos.close();
     }
 
-    private void sendInvite(ChatRoom room, String url, Message.Type type)
+    private void sendInvite(ChatRoom room, String url)
     {
-        MessageBuilder messageBuilder = StanzaBuilder.buildMessage()
-            .ofType(type)
-            .setBody(url);
-        room.sendMessage(messageBuilder);
+        room.sendMessage(url);
     }
 }

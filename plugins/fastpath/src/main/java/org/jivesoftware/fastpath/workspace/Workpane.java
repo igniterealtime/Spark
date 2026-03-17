@@ -260,9 +260,7 @@ public class Workpane {
         Properties props = FastpathPlugin.getLitWorkspace().getWorkgroupProperties();
         String initialResponse = props.getProperty(INITIAL_RESPONSE_PROPERTY);
         if (ModelUtil.hasLength(initialResponse)) {
-            MessageBuilder messageBuilder = StanzaBuilder.buildMessage()
-                .setBody(initialResponse);
-            room.sendMessage(messageBuilder);
+            room.sendMessage(initialResponse);
         }
     }
 

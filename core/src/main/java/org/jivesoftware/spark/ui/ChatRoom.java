@@ -500,7 +500,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
      *
      * @param text the text to send.
      */
-    protected abstract void sendMessage(String text);
+    public abstract void sendMessage(String text);
 
     /**
      * Sends the current message.

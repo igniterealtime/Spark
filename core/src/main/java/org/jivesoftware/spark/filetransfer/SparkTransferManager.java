@@ -466,17 +466,13 @@ public class SparkTransferManager {
                 ArrayList<File> list = waitMap.get(bareJID);
                 if (list != null) {
                     // Iterate through list and send.
-                    Iterator<File> iter = list.iterator();
                     ChatRoom room = null;
-                    while (iter.hasNext()) {
-                        File file = iter.next();
+                    for (File file : list) {
                         room = sendFile(file, bareJID);
                     }
 
                     if (room != null) {
-                        MessageBuilder messageBuilder = StanzaBuilder.buildMessage()
-                            .setBody(Res.getString("message.sent.offline.files"));
-                        room.sendMessage(messageBuilder);
+                        room.sendMessage(Res.getString("message.sent.offline.files"));
                     }
                 }
 
