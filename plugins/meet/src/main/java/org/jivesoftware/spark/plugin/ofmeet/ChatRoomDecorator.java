@@ -20,7 +20,6 @@ import org.jivesoftware.spark.component.RolloverButton;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.util.*;
 import org.jivesoftware.spark.util.log.*;
-import org.jivesoftware.smack.packet.*;
 
 public class ChatRoomDecorator
 {
@@ -37,14 +36,8 @@ public class ChatRoomDecorator
 
         ofmeetButton.addActionListener(event -> {
             String newUrl, newRoomId = roomId + "-" + sessionID;
-            if (room.getChatType() == Message.Type.groupchat)
-            {
-                newUrl = plugin.url + newRoomId;
-                plugin.handleClick(newUrl, room, newUrl, Message.Type.groupchat);
-            } else {
-                newUrl = plugin.url + newRoomId;
-                plugin.handleClick(newUrl, room, newUrl, Message.Type.chat);
-            }
+            newUrl = plugin.url + newRoomId;
+            plugin.handleClick(newUrl, room, newUrl);
         });
         room.getEditorBar().add(ofmeetButton);
     }
