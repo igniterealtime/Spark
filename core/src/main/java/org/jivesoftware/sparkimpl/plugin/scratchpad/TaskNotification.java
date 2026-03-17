@@ -20,21 +20,21 @@ import org.jivesoftware.spark.component.VerticalFlowLayout;
 import org.jivesoftware.spark.util.TaskEngine;
 import org.jivesoftware.sparkimpl.plugin.alerts.SparkToaster;
 
-import javax.swing.BorderFactory;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-
+import javax.swing.*;
 import java.awt.*;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.Instant;
+import java.time.format.DateTimeFormatter;
 import java.util.Iterator;
 import java.util.TimerTask;
 
+import static java.time.ZoneId.*;
+import static java.time.format.FormatStyle.SHORT;
+
 /**
+ * Notification about a Task that has a due date of today.
  */
 public class TaskNotification {
-    private final SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yy");
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDate(SHORT);
 
     private static final Color COLOR_TASK_NOTIFICATION_GRADIENT = new Color(198, 211, 247);
 
@@ -107,7 +107,8 @@ public class TaskNotification {
 								JLabel label = new JLabel(task.getTitle());
 								item.add(label, BorderLayout.CENTER);
 
-								JLabel dueItem = new JLabel(formatter.format(new Date(task.getDueDate())));
+                                String dueDateStr = formatter.format(Instant.ofEpochMilli(task.getDueDate()).atZone(systemDefault()));
+                                JLabel dueItem = new JLabel(dueDateStr);
 								item.add(dueItem, BorderLayout.EAST);
 								mainPanel.add(item);
 								hasItems = true;
