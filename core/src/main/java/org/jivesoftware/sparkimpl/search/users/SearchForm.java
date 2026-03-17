@@ -57,11 +57,7 @@ public class SearchForm extends JPanel {
 
     // TODO: Constructor should use DomainBareJid type instead of String.
     public SearchForm(String serviceString) {
-        try {
-            this.serviceName = JidCreate.domainBareFrom(serviceString);
-        } catch (XmppStringprepException e) {
-            throw new IllegalStateException(e);
-        }
+        this.serviceName = JidCreate.domainBareFromOrThrowUnchecked(serviceString);
 
         searchManager = UserSearchManager.getInstanceFor(SparkManager.getConnection());
         setLayout(new GridBagLayout());

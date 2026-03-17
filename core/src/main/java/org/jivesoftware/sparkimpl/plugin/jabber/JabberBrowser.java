@@ -117,12 +117,7 @@ public class JabberBrowser implements Plugin {
     }
 
     private void browse(String serviceNameString) {
-        Jid serviceName;
-        try {
-            serviceName = JidCreate.from(serviceNameString);
-        } catch (XmppStringprepException e) {
-            throw new IllegalStateException(e);
-        }
+        Jid serviceName = JidCreate.fromOrThrowUnchecked(serviceNameString);
 
         browsePanel.removeAll();
 
