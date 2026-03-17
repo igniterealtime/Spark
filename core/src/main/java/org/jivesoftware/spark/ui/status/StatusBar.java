@@ -67,8 +67,6 @@ import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 //TODO: I need to remove the presence logic from this class.
 public class StatusBar extends JPanel implements VCardListener {
 
-    private static final long serialVersionUID = -4322806442034868526L;
-
     private final List<StatusItem> statusList = new ArrayList<>();
 
     private final JLabel imageLabel = new JLabel();
@@ -81,6 +79,8 @@ public class StatusBar extends JPanel implements VCardListener {
     private final Runnable changePresenceRunnable;
 
     private Presence currentPresence;
+
+    private static final Color COLOR_STATUS_BACKGROUND = new Color(207, 207, 207);
 
     public StatusBar() {
         this(true);
@@ -583,7 +583,7 @@ public class StatusBar extends JPanel implements VCardListener {
                             return;
                         }
                         setCursor(GraphicUtils.HAND_CURSOR);
-                        setBackground(new Color(207, 207, 207));
+                        setBackground(COLOR_STATUS_BACKGROUND);
                         //setBorder(BorderFactory.createLineBorder(Color.lightGray, 1, true));
                     }
 

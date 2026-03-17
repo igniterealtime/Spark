@@ -65,8 +65,15 @@ import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.Sizes;
 
+import static java.awt.GridBagConstraints.BOTH;
+import static java.awt.GridBagConstraints.EAST;
+import static java.awt.GridBagConstraints.HORIZONTAL;
+import static java.awt.GridBagConstraints.NONE;
+import static java.awt.GridBagConstraints.NORTHWEST;
+import static java.awt.GridBagConstraints.WEST;
+
 /**
- * Class to show tosters in multiplatform
+ * Class to show toasters in multiplatform
  *
  * @author daniele piras
  */
@@ -82,10 +89,10 @@ public class SparkToaster {
      */
     public static final Cursor DEFAULT_CURSOR = new Cursor(Cursor.DEFAULT_CURSOR);
 
-    // Width of the toster
+    // Width of the toaster
     private int toasterWidth = 200;
 
-    // Height of the toster
+    // Height of the toaster
     private int toasterHeight = 150;
 
     // Step for the toaster
@@ -97,16 +104,16 @@ public class SparkToaster {
     // Show time
     private int displayTime = 3000;
 
-    // Current number of toaster...
+    // Current number of toasters...
     private int currentNumberOfToaster = 0;
 
     // Last opened toaster
     private int maxToaster = 0;
 
-    // Font used to display message
+    // Font used to display a message
     private Font font;
 
-    // Color for border
+    // Color for a border
     private Color borderColor;
 
     // Color for toaster
@@ -118,65 +125,39 @@ public class SparkToaster {
     // Set the margin
     int margin;
 
-    // Flag that indicate if use alwaysOnTop or not.
-    // method always on top start only SINCE JDK 5 !
-    private final boolean useAlwaysOnTop;
-
     private String title;
-
     private Border border;
 
-
     private Action customAction;
-
     private Window window;
-
     private final JPanel mainPanel = new JPanel();
-
     private TitleLabel titleLabel;
-
     private boolean hideable = true;
 
-    /**
-     * Constructor to initialized toaster component...
-     */
+    private static final Color COLOR_TOASTER_TITLE = new Color(87, 166, 211);
+    private static final Color COLOR_TOASTER_BORDER = new Color(245, 153, 15);
+    private static final Color COLOR_ME_SAYS = Color.MAGENTA;
+
     public SparkToaster() {
         // Set default font...
         font = new Font("Dialog", Font.PLAIN, 11);
 
         // Border color
-        borderColor = new Color(245, 153, 15);
+        borderColor = COLOR_TOASTER_BORDER;
         toasterColor = Color.WHITE;
         messageColor = Color.BLACK;
-        useAlwaysOnTop = true;
     }
 
-    /**
-     * Class that rappresent a single toaster
-     *
-     * @author daniele piras
-     */
     class SingleToaster extends javax.swing.JWindow {
-        private static final long serialVersionUID = 1L;
-
-        // Label to store Icon
-
         // Text area for the message
         private final JTextArea message = new JTextArea();
 
-        /**
-         * Simple costructor that initialized components...
-         */
         public SingleToaster() {
             initComponents();
         }
 
-        /**
-         * Function to initialized components
-         */
         private void initComponents() {
             message.setFont(getToasterMessageFont());
-
 
             mainPanel.setBackground(Color.white);
             message.setOpaque(false);
@@ -187,10 +168,10 @@ public class SparkToaster {
 
             message.setForeground(getMessageColor());
             titleLabel = new TitleLabel(getTitle(), true);
-            titleLabel.setForeground(new Color(87, 166, 211));
+            titleLabel.setForeground(COLOR_TOASTER_TITLE);
             titleLabel.setFont(new Font("Dialog", Font.BOLD, 13));
 
-            mainPanel.add(titleLabel, new GridBagConstraints(0, 0, 3, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
+            mainPanel.add(titleLabel, new GridBagConstraints(0, 0, 3, 1, 1.0, 0.0, NORTHWEST, HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
 
             titleLabel.getCloseButton().addActionListener( e -> {
                 setVisible(false);
@@ -274,7 +255,6 @@ public class SparkToaster {
          * @throws InterruptedException if animation is interrupted
          */
         protected void animateVertically(int posx, int fromY, int toY) throws InterruptedException {
-
             toaster.setLocation(posx, fromY);
             if (toY < fromY) {
                 for (int i = fromY; i > toY; i -= step) {
@@ -298,25 +278,17 @@ public class SparkToaster {
 		public void run() {
             try {
                 boolean animateFromBottom = true;
-                GraphicsEnvironment ge = GraphicsEnvironment
-                        .getLocalGraphicsEnvironment();
+                GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
                 Rectangle screenRect = ge.getMaximumWindowBounds();
-
                 int screenHeight = screenRect.height;
-
                 int startYPosition;
                 int stopYPosition;
-
                 if (screenRect.y > 0) {
                     animateFromBottom = false; // Animate from top!
                 }
-
-                int maxToasterInSceen = screenHeight / toasterHeight;
-
-
-                int posx = screenRect.width - toasterWidth - 1;
-
-                toaster.setLocation(posx, screenHeight);
+                int maxToasterInScreen = screenHeight / toasterHeight;
+                int posX = screenRect.width - toasterWidth - 1;
+                toaster.setLocation(posX, screenHeight);
                 try {
                	 EventQueue.invokeAndWait( () -> toaster.setVisible(true) );
                 }
@@ -324,15 +296,13 @@ public class SparkToaster {
                 {
                	 Log.error(e);
                 }
-                if (useAlwaysOnTop) {
-                    toaster.setAlwaysOnTop(true);
-                }
+                toaster.setAlwaysOnTop(true);
 
                 if (animateFromBottom) {
                     startYPosition = screenHeight;
                     stopYPosition = startYPosition - toasterHeight - 1;
                     if (currentNumberOfToaster > 0) {
-                        stopYPosition = stopYPosition - (maxToaster % maxToasterInSceen * toasterHeight);
+                        stopYPosition = stopYPosition - (maxToaster % maxToasterInScreen * toasterHeight);
                     }
                     else {
                         maxToaster = 0;
@@ -343,7 +313,7 @@ public class SparkToaster {
                     stopYPosition = screenRect.y;
 
                     if (currentNumberOfToaster > 0) {
-                        stopYPosition = stopYPosition + (maxToaster % maxToasterInSceen * toasterHeight);
+                        stopYPosition = stopYPosition + (maxToaster % maxToasterInScreen * toasterHeight);
                     }
                     else {
                         maxToaster = 0;
@@ -353,10 +323,9 @@ public class SparkToaster {
                 currentNumberOfToaster++;
                 maxToaster++;
 
-
-                animateVertically(posx, startYPosition, stopYPosition);
+                animateVertically(posX, startYPosition, stopYPosition);
                 Thread.sleep(displayTime);
-                animateVertically(posx, stopYPosition, startYPosition);
+                animateVertically(posX, stopYPosition, startYPosition);
 
                 currentNumberOfToaster--;
                 toaster.setVisible(false);
@@ -371,9 +340,6 @@ public class SparkToaster {
 
     /**
      * Show a toaster with the specified message and the associated icon.
-     *
-     * @param icon Icon to show in toaster popup.
-     * @param msg Message to show in toaster popup.
      */
     public void showToaster(Icon icon, String msg) {
         SingleToaster singleToaster = new SingleToaster();
@@ -381,15 +347,14 @@ public class SparkToaster {
         pane.setOpaque(false);
         pane.setBorder(BorderFactory.createEmptyBorder());
         pane.getViewport().setBackground(Color.white);
-        mainPanel.add(pane, new GridBagConstraints(1, 2, 3, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(2, 5, 2, 5), 0, 0));
-
+        mainPanel.add(pane, new GridBagConstraints(1, 2, 3, 1, 1.0, 1.0, WEST, BOTH, new Insets(2, 5, 2, 5), 0, 0));
 
         if (icon != null) {
             titleLabel.setIcon(icon);
         }
         if (ModelUtil.hasLength(msg) && msg.startsWith("/me ")) {
             msg = msg.replaceFirst("/me", getTitle());
-            singleToaster.message.setForeground(Color.MAGENTA);
+            singleToaster.message.setForeground(COLOR_ME_SAYS);
         }
         singleToaster.message.setText(msg);
         singleToaster.message.setCaretPosition(0);
@@ -405,7 +370,7 @@ public class SparkToaster {
      */
     public void showToaster(final String title, final Component comp) {
 			SingleToaster singleToaster = new SingleToaster();
-			mainPanel.add(comp, new GridBagConstraints(1, 2, 3, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(2, 0, 0, 0), 0, 0));
+			mainPanel.add(comp, new GridBagConstraints(1, 2, 3, 1, 1.0, 1.0, WEST, BOTH, new Insets(2, 0, 0, 0), 0, 0));
 			
 			titleLabel.setTitle(title);
 			singleToaster.animate();
@@ -617,7 +582,7 @@ public class SparkToaster {
     }
 
     public void setComponent(Component comp) {
-        mainPanel.add(comp, new GridBagConstraints(1, 2, 3, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(2, 5, 2, 5), 0, 0));
+        mainPanel.add(comp, new GridBagConstraints(1, 2, 3, 1, 1.0, 1.0, WEST, BOTH, new Insets(2, 5, 2, 5), 0, 0));
     }
 
     public void close() {
@@ -636,7 +601,6 @@ public class SparkToaster {
 
 
     static class TitleLabel extends JPanel {
-		private static final long serialVersionUID = -5163519932953987400L;
 		private final JLabel label;
         private final RolloverButton closeButton;
 
@@ -647,12 +611,12 @@ public class SparkToaster {
             label.setHorizontalTextPosition(JLabel.RIGHT);
             label.setHorizontalAlignment(JLabel.LEFT);
 
-            add(label, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
+            add(label, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, WEST, HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 
       		closeButton = new RolloverButton(SparkRes.getImageIcon(SparkRes.Icon.CLOSE_IMAGE));
       		
       		if (showCloseIcon) {
-      			add(closeButton, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+      			add(closeButton, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, EAST, NONE, new Insets(5, 5, 5, 5), 0, 0));
       		}
 
             setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.lightGray));
