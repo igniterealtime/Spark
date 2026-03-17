@@ -32,6 +32,7 @@ import java.util.logging.SimpleFormatter;
 public class Log {
 	private final java.util.logging.Logger ERROR_LOGGER;
 	private final Logger WARNING_LOGGER;
+    private static final boolean debugEnabled = System.getProperty("debug.mode") != null;
 
 	private volatile static Log singleton = null;
 
@@ -145,8 +146,8 @@ public class Log {
 	 * @param message the message to print out.
 	 */
 	public static void debug(String message) {
-		if (System.getProperty("debug.mode") != null) {
-			getInstance().ERROR_LOGGER.info(message);
+        if (debugEnabled) {
+            System.err.println(message);
 		}
 	}
 
