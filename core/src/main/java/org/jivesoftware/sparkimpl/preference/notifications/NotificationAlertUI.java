@@ -41,8 +41,10 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 
+import static java.awt.GridBagConstraints.*;
+import static java.awt.GridBagConstraints.BOTH;
+
 public class NotificationAlertUI extends JPanel {
-    private static final long serialVersionUID = 3359608942567718697L;
     private final JLabel avatarLabel = new JLabel();
     private final JLabel titleLabel = new JLabel();
     private final JLabel emailAddressLabel = new JLabel();
@@ -58,14 +60,16 @@ public class NotificationAlertUI extends JPanel {
     private static final int AVATAR_HEIGHT = Sizes.Avatar.NOTIFICATION;
     private static final int AVATAR_WIDTH = Sizes.Avatar.NOTIFICATION;
 
+    private static final Color COLOR_NOTIFICATION_TITLE = new Color(64, 103, 162);
+    private static final Color COLOR_INNER_BLOCK_BORDER = new Color(197, 213, 230);
+    private static final Color COLOR_LINK = new Color(49, 89, 151);
+    private static final Color COLOR_GRADIENT = new Color(233, 240, 247);
+
     public NotificationAlertUI(BareJid jid, boolean available, Presence presence) {
         setLayout(new GridBagLayout());
-
         this.available = available;
         this.jid = jid;
-
         vcard = SparkManager.getVCardManager().getVCardFromMemory(jid);
-
         final Icon presenceIcon = PresenceManager.getIconFromPresence(presence);
 
         topLabel.setIcon(presenceIcon);
@@ -73,7 +77,7 @@ public class NotificationAlertUI extends JPanel {
         topLabel.setFont(new Font("Dialog", Font.BOLD, 15));
         topLabel.setForeground(Color.DARK_GRAY);
 
-        // Add Calller Block
+        // Add Caller Block
         buildInnerBlock();
     }
 
@@ -84,20 +88,18 @@ public class NotificationAlertUI extends JPanel {
     private void buildInnerBlock() {
         final JPanel panel = new JPanel(new GridBagLayout());
         panel.setBackground(Color.white);
-        panel.setBorder(BorderFactory.createLineBorder(new Color(197, 213, 230), 1));
+        panel.setBorder(BorderFactory.createLineBorder(COLOR_INNER_BLOCK_BORDER, 1));
 
         titleLabel.setHorizontalTextPosition(JLabel.RIGHT);
-
         // Add Avatar
-        panel.add(avatarLabel, new GridBagConstraints(0, 0, 1, 3, 0.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(10, 15, 5, 0), 0, 0));
-
+        panel.add(avatarLabel, new GridBagConstraints(0, 0, 1, 3, 0.0, 1.0, NORTHWEST, NONE, new Insets(10, 15, 5, 0), 0, 0));
         // Add Avatar information
-        panel.add(titleLabel, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(10, 5, 0, 0), 0, 0));
-        panel.add(professionLabel, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 7, 0, 0), 0, 0));
-        panel.add(emailAddressLabel, new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 7, 0, 0), 0, 0));
+        panel.add(titleLabel, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, NORTHWEST, HORIZONTAL, new Insets(10, 5, 0, 0), 0, 0));
+        panel.add(professionLabel, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0, NORTHWEST, HORIZONTAL, new Insets(0, 7, 0, 0), 0, 0));
+        panel.add(emailAddressLabel, new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0, NORTHWEST, HORIZONTAL, new Insets(0, 7, 0, 0), 0, 0));
 
         // Set default settings
-        titleLabel.setForeground(new Color(64, 103, 162));
+        titleLabel.setForeground(COLOR_NOTIFICATION_TITLE);
         titleLabel.setFont(new Font("Dialog", Font.BOLD, 16));
 
 
@@ -109,7 +111,7 @@ public class NotificationAlertUI extends JPanel {
         }
 
         // Add to panel
-        add(panel, new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
+        add(panel, new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0, NORTHWEST, BOTH, new Insets(5, 5, 5, 5), 0, 0));
     }
 
 
@@ -146,14 +148,9 @@ public class NotificationAlertUI extends JPanel {
             titleLabel.setText(nickname);
         }
 
-        final StringBuilder builder = new StringBuilder();
-
         String username = titleLabel.getText();
-        builder.append(username);
-        builder.append(" is ");
-
-        builder.append(available ? "Online" : "Offline");
-        topLabel.setText(builder.toString());
+        String statusMessage = username + " is " + (available ? "Online" : "Offline");
+        topLabel.setText(statusMessage);
 
         String jobTitle = vcard.getField("TITLE");
         if (jobTitle != null) {
@@ -164,8 +161,7 @@ public class NotificationAlertUI extends JPanel {
         if (ModelUtil.hasLength(emailAddress)) {
             emailAddressLabel.setText(emailAddress);
 
-            final Color linkColor = new Color(49, 89, 151);
-            final String unselectedText = "<html><body><font color=" + GraphicUtils.toHTMLColor(linkColor) + "><u>" + emailAddress + "</u></font></body></html>";
+            final String unselectedText = "<html><body><font color=" + GraphicUtils.toHTMLColor(COLOR_LINK) + "><u>" + emailAddress + "</u></font></body></html>";
             final String hoverText = "<html><body><font color=red><u>" + emailAddress + "</u></font></body></html>";
             emailAddressLabel.addMouseListener(new MouseAdapter() {
                 @Override
@@ -191,36 +187,28 @@ public class NotificationAlertUI extends JPanel {
         if (avatarBytes != null) {
             try {
                 ImageIcon avatarIcon = new ImageIcon(avatarBytes);
-                                
-                                int w = avatarIcon.getIconWidth();
-                                int h = avatarIcon.getIconHeight();
-                                double ratio = (double)w / (double)h;
-                                if ( w > 120 || h > 120)
-                                {
-                                	if ( w > h)
-                		            {
-                                		w = 120;
-                		             	h = (int)(w/ratio);
-                		            }else
-                		            {
-                		             	h = 120;
-                		             	w = (int)(h*ratio);
-                		            }
-                                }
-                                
-                                BufferedImage resizedImg = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
-                                Graphics2D g2 = resizedImg.createGraphics();
-                                g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-                                g2.drawImage(avatarIcon.getImage(), 0, 0, w, h, null);
-                                g2.dispose();
-                                
-                                avatarIcon = new ImageIcon(resizedImg);
-                   
+                int w = avatarIcon.getIconWidth();
+                int h = avatarIcon.getIconHeight();
+                double ratio = (double) w / (double) h;
+                if (w > 120 || h > 120) {
+                    if (w > h) {
+                        w = 120;
+                        h = (int) (w / ratio);
+                    } else {
+                        h = 120;
+                        w = (int) (h * ratio);
+                    }
+                }
+
+                BufferedImage resizedImg = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
+                Graphics2D g2 = resizedImg.createGraphics();
+                g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+                g2.drawImage(avatarIcon.getImage(), 0, 0, w, h, null);
+                g2.dispose();
+
+                avatarIcon = new ImageIcon(resizedImg);
                 avatarLabel.setIcon(GraphicUtils.scale(avatarIcon, AVATAR_HEIGHT, AVATAR_WIDTH));
-            
-            }
-            catch (Exception e) {
-                // no issue
+            } catch (Exception ignored) {
             }
         }
         else {
@@ -241,7 +229,7 @@ public class NotificationAlertUI extends JPanel {
         BufferedImage cache = new BufferedImage(2, getHeight(), BufferedImage.TYPE_INT_RGB);
         Graphics2D g2d = cache.createGraphics();
 
-        GradientPaint paint = new GradientPaint(0, 0, new Color(233, 240, 247), 0, getHeight(), Color.white, true);
+        GradientPaint paint = new GradientPaint(0, 0, COLOR_GRADIENT, 0, getHeight(), Color.white, true);
 
         g2d.setPaint(paint);
         g2d.fillRect(0, 0, getWidth(), getHeight());

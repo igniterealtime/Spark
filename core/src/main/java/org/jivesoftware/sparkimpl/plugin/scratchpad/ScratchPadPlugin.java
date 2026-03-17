@@ -52,6 +52,8 @@ public class ScratchPadPlugin implements Plugin {
     private static JPanel mainPanel;
     private static JFrame frame;
 
+    private static final Color COLOR_GRADIENT = new Color(198, 211, 247);
+
     @Override
 	public void initialize() {
 
@@ -75,7 +77,7 @@ public class ScratchPadPlugin implements Plugin {
 
                 @Override
 				public void actionPerformed(ActionEvent evt) {
-                    // Retrieve notes and dispaly in editor.
+                    // Retrieve notes and display in editor.
                     retrieveNotes();
                 }
             });
@@ -87,7 +89,7 @@ public class ScratchPadPlugin implements Plugin {
 
                 @Override
 				public void actionPerformed(ActionEvent evt) {
-                    // Retrieve notes and dispaly in editor.
+                    // Retrieve notes and display in editor.
                     showTaskList();
                 }
             });
@@ -180,7 +182,7 @@ public class ScratchPadPlugin implements Plugin {
 	    @Override
 		public void paintComponent(Graphics g) {
                 Color startColor = Color.white;
-                Color endColor = new Color(198, 211, 247);
+                Color endColor = COLOR_GRADIENT;
 
                 Graphics2D g2 = (Graphics2D)g;
 
@@ -367,8 +369,7 @@ public class ScratchPadPlugin implements Plugin {
     	panel_events.removeAll();
     	taskList.clear();
     	
-        for (Object o : tasks.getTasks()) {
-            Task task = (Task) o;
+        for (Task task : tasks.getTasks()) {
             final TaskUI taskUI = new TaskUI(task);
             
             if ( !SHOW_ALL_TASKS ) {

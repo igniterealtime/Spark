@@ -56,8 +56,6 @@ import static org.apache.commons.lang3.StringUtils.trimToEmpty;
  */
 public class ContactItem extends JPanel {
 
-	private static final long serialVersionUID = 1514044406550293152L;
-
     public final static Comparator<ContactItem> CONTACT_ITEM_COMPARATOR = Comparator.comparing(ContactItem::getDisplayName, String.CASE_INSENSITIVE_ORDER);
 
 	private final JLabel imageLabel;
@@ -79,6 +77,8 @@ public class ContactItem extends JPanel {
     private final int fontSize;
     private final int iconSize;
     private final boolean avatarsShowing;
+
+    private static final Color COLOR_USER_ONLINE_NICKNAME = new Color(255, 128, 0);
 
 	public ContactItem(String alias, String nickname, BareJid fullyQualifiedJID) {
 		this(alias, nickname, fullyQualifiedJID, true);
@@ -579,7 +579,7 @@ public class ContactItem extends JPanel {
     public void showUserComingOnline() {
         // Change Font
         getNicknameLabel().setFont(new Font("Dialog", Font.BOLD, fontSize));
-        getNicknameLabel().setForeground(new Color(255, 128, 0));
+        getNicknameLabel().setForeground(COLOR_USER_ONLINE_NICKNAME);
     }
 
     /**

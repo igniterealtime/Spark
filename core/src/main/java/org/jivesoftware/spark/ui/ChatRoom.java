@@ -111,6 +111,8 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
     private final long pauseTimePeriod = 2000;
     private final long inactiveTimePeriod = 120000;
 
+    private static final Color COLOR_BOTTOM_PANEL_BORDER = new Color(197, 213, 230);
+
     /**
      * Initializes the base layout and base background color.
      */
@@ -255,7 +257,7 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
                 GridBagConstraints.HORIZONTAL, getEditorWrapperInsets(), 0, 0));
 
         // Set bottom panel border
-        bottomPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(197, 213, 230)));
+        bottomPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, COLOR_BOTTOM_PANEL_BORDER));
         verticalSplit.setOpaque(false);
 
         verticalSplit.setBottomComponent(bottomPanel);

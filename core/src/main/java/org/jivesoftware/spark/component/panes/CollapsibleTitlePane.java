@@ -51,27 +51,22 @@ public class CollapsibleTitlePane extends BaseCollapsibleTitlePane {
 
     private boolean collapsed;
 
-    private Color startColor;
-    private Color endColor;
-
-    private Color titleColor;
-
     private boolean subPane;
 
     private Image backgroundImage;
 
     private final int fontSize;
 
+    private static final Color COLOR_TITLE_PANE_TEXT = new Color(33, 93, 198);
+    private static final Color COLOR_TITLE_PANE_GRADIENT_START = new Color(238,242,253);
+    private static final Color COLOR_TITLE_PANE_GRADIENT_END = Color.white;
+
     public CollapsibleTitlePane() {
         setLayout(new GridBagLayout());
 
-        titleColor = new Color(33, 93, 198);
         fontSize = SettingsManager.getLocalPreferences().getContactListFontSize();
         Font titleFont = new Font("Dialog", Font.BOLD, fontSize);
 
-        // Initialize color
-        startColor = new Color(238,242,253);
-        endColor = Color.white;
         titleLabel = new JLabel();
         iconLabel = new JLabel();
 
@@ -88,7 +83,7 @@ public class CollapsibleTitlePane extends BaseCollapsibleTitlePane {
             titleLabel.setForeground(customTitleColor);
         }
         else {
-            titleLabel.setForeground(titleColor);
+            titleLabel.setForeground(COLOR_TITLE_PANE_TEXT);
         }
 
         titleLabel.setFont(titleFont);
@@ -113,17 +108,6 @@ public class CollapsibleTitlePane extends BaseCollapsibleTitlePane {
 //            startColor = getColor(start);
 //            endColor = getColor(end);
 //        }
-
-
-    }
-
-    public void setStartColor(Color color) {
-        // Initialize color
-        startColor = color;
-    }
-
-    public void setEndColor(Color color) {
-        endColor = color;
     }
 
     @Override
@@ -165,17 +149,6 @@ public class CollapsibleTitlePane extends BaseCollapsibleTitlePane {
         }
     }
 
-    public void setTitleColor(Color color) {
-        titleColor = color;
-
-        titleLabel.setForeground(color);
-    }
-
-    public Color getTitleColor() {
-        return titleColor;
-    }
-
-
     @Override
 	public void paintComponent(Graphics g) {
         if (backgroundImage != null) {
@@ -186,8 +159,8 @@ public class CollapsibleTitlePane extends BaseCollapsibleTitlePane {
             return;
         }
 
-        Color stopColor = endColor;
-        Color starterColor = startColor;
+        Color stopColor = COLOR_TITLE_PANE_GRADIENT_END;
+        Color starterColor = COLOR_TITLE_PANE_GRADIENT_START;
 
         Color customStartColor = (Color)UIManager.get("CollapsiblePane.startColor");
         Color customEndColor = (Color)UIManager.get("CollapsiblePane.endColor");

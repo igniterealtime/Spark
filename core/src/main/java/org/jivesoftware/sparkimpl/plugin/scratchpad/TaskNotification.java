@@ -36,6 +36,8 @@ import java.util.TimerTask;
 public class TaskNotification {
     private final SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yy");
 
+    private static final Color COLOR_TASK_NOTIFICATION_GRADIENT = new Color(198, 211, 247);
+
 
     public TaskNotification() {
         TimerTask task = new TimerTask() {
@@ -69,12 +71,10 @@ public class TaskNotification {
 					Iterator<Task> taskIter = tasksList.iterator();
 
 					final JPanel titlePanel = new JPanel(new BorderLayout()) {
-						private static final long serialVersionUID = -8871487137643685431L;
-
 						@Override
 						public void paintComponent(Graphics g) {
 							Color startColor = Color.white;
-							Color endColor = new Color(198, 211, 247);
+							Color endColor = COLOR_TASK_NOTIFICATION_GRADIENT;
 
 							Graphics2D g2 = (Graphics2D) g;
 
@@ -130,7 +130,6 @@ public class TaskNotification {
 			}
 			};
 			TaskEngine.getInstance().schedule(newTask, 500);
-
 		}
 
 }
