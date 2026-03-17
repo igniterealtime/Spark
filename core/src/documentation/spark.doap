@@ -226,7 +226,22 @@
             <xmpp:SupportedXep>
                 <xmpp:xep rdf:resource="https://xmpp.org/extensions/xep-0363.html"/>
                 <xmpp:status>complete</xmpp:status>
-                <xmpp:note>Http File Upload Plugin (fileupload) plugin</xmpp:note>
+                <xmpp:note>Http File Upload Plugin (fileupload)</xmpp:note>
+            </xmpp:SupportedXep>
+        </implements>
+        <implements>
+            <xmpp:SupportedXep>
+                <xmpp:xep rdf:resource="https://xmpp.org/extensions/xep-0364.html"/>
+                <xmpp:status>complete</xmpp:status>
+                <xmpp:note>Off the Record (OTR) Plugin</xmpp:note>
+            </xmpp:SupportedXep>
+        </implements>
+        <implements>
+            <xmpp:SupportedXep>
+                <xmpp:xep rdf:resource="https://xmpp.org/extensions/xep-0392.html"/>
+                <xmpp:status>partial</xmpp:status>
+                <xmpp:since>2.0</xmpp:since>
+                <xmpp:note>Only for MUC nicknames. Preferences / Group Chat / Names have random colors</xmpp:note>
             </xmpp:SupportedXep>
         </implements>
         <implements>
