@@ -278,12 +278,7 @@ public class BookmarksUI extends JPanel {
     }
 
     public void browseRooms(String serviceNameString) {
-        DomainBareJid serviceName;
-        try {
-            serviceName = JidCreate.domainBareFrom(serviceNameString);
-        } catch (XmppStringprepException e) {
-            throw new IllegalStateException(e);
-        }
+        DomainBareJid serviceName = JidCreate.domainBareFromOrThrowUnchecked(serviceNameString);
         browseRooms(serviceName);
     }
 

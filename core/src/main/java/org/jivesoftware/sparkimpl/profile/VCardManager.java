@@ -490,12 +490,7 @@ public class VCardManager {
 	 * @return the new network vCard or a vCard with an error 
 	 */
     public VCard reloadVCard(BareJid jidString) {
-        EntityBareJid jid;
-		try {
-			jid = JidCreate.entityBareFrom(jidString);
-		} catch (XmppStringprepException e) {
-			throw new IllegalStateException(e);
-		}
+        EntityBareJid jid = JidCreate.entityBareFromOrThrowUnchecked(jidString);
         VCard vcard = new VCard();
         try {
             vcard = org.jivesoftware.smackx.vcardtemp.VCardManager.getInstanceFor(SparkManager.getConnection()).loadVCard( jid );

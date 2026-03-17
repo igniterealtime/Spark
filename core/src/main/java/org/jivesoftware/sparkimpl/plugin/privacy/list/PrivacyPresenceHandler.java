@@ -75,12 +75,7 @@ public class PrivacyPresenceHandler implements SparkPrivacyItemListener {
 
     private void setIconsForItem(PrivacyItem item) throws SmackException.NotConnectedException {
         if (item.getType().equals(PrivacyItem.Type.jid)) {
-            Jid jid;
-            try {
-                jid = JidCreate.from(item.getValue());
-            } catch (XmppStringprepException e) {
-                throw new IllegalStateException(e);
-            }
+            Jid jid = JidCreate.fromOrThrowUnchecked(item.getValue());
             setBlockedIconToContact(jid);
             if (item.isFilterPresenceOut()) {
                 sendUnavailableTo(jid);
@@ -117,12 +112,7 @@ public class PrivacyPresenceHandler implements SparkPrivacyItemListener {
 
     private void removeIconsForItem(PrivacyItem item) throws SmackException.NotConnectedException {
         if (item.getType().equals(PrivacyItem.Type.jid)) {
-            Jid jid;
-            try {
-                jid = JidCreate.from(item.getValue());
-            } catch (XmppStringprepException e) {
-                throw new IllegalStateException(e);
-            }
+            Jid jid = JidCreate.fromOrThrowUnchecked(item.getValue());
             removeBlockedIconFromContact(jid);
             if (item.isFilterPresenceOut()) {
                 sendRealPresenceTo(jid);

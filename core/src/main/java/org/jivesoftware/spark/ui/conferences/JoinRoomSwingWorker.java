@@ -177,11 +177,7 @@ public class JoinRoomSwingWorker extends SwingWorker
                             if ( userInput != null )
                             {
                                 Log.debug( "Retry joining room '" + roomJID + "', using nickname: " + userInput );
-                                try {
-                                    this.nickname = Resourcepart.from((String) userInput);
-                                } catch (XmppStringprepException e) {
-                                    throw new IllegalStateException(e);
-                                }
+                                this.nickname = Resourcepart.fromOrThrowUnchecked((String) userInput);
                                 retryAttemptResult.set(construct());
                             }
                         });
