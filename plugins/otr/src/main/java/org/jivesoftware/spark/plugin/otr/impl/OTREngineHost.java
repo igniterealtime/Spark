@@ -89,7 +89,9 @@ public class OTREngineHost implements OtrEngineHost {
 
     @Override
     public void unverify(SessionID sessionID, String fingerprint) {
-        Log.warning("Session was not verified: " + sessionID + " fingerprint: " + fingerprint);
+        String msg = "Session was not verified: " + sessionID + " fingerprint: " + fingerprint;
+        Log.warning(msg);
+        _chatRoom.getTranscriptWindow().insertNotificationMessage(msg, Color.red);
     }
 
     @Override
@@ -104,7 +106,9 @@ public class OTREngineHost implements OtrEngineHost {
 
     @Override
     public void messageFromAnotherInstanceReceived(SessionID sessionID) {
-        Log.warning("Received message from another instances: " + sessionID);
+        String msg = "Received message from another instances: " + sessionID;
+        Log.warning(msg);
+        _chatRoom.getTranscriptWindow().insertNotificationMessage(msg, Color.red);
     }
 
     @Override
