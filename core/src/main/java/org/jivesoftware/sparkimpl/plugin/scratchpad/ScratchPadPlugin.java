@@ -105,14 +105,10 @@ public class ScratchPadPlugin implements Plugin {
             }
 
 
-            JMenuItem taskMenu = new JMenuItem(Res.getString("button.view.tasklist"),
-                    SparkRes.getImageIcon(SparkRes.Icon.DESKTOP_IMAGE));
-
-            JMenuItem notesMenu = new JMenuItem(Res.getString("button.view.notes"),
-                    SparkRes.getImageIcon(SparkRes.Icon.DOCUMENT_16x16));
-
+            JMenuItem taskMenu = new JMenuItem(Res.getString("button.view.tasklist"), SparkRes.getImageIcon(SparkRes.Icon.DESKTOP_IMAGE));
             taskMenu.addActionListener(e -> showTaskList());
 
+            JMenuItem notesMenu = new JMenuItem(Res.getString("button.view.notes"), SparkRes.getImageIcon(SparkRes.Icon.DOCUMENT_16x16));
             notesMenu.addActionListener(e -> retrieveNotes());
 
             // Add To toolbar
@@ -415,7 +411,7 @@ public class ScratchPadPlugin implements Plugin {
     private void showPrivateNotes(final PrivateNotes privateNotes) {
         String text = privateNotes.getNotes();
 
-        final JLabel titleLabel = new JLabel("Notepad");
+        final JLabel titleLabel = new JLabel(Res.getString("button.view.notes"));
         titleLabel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.LIGHT_GRAY));
         titleLabel.setFont(new Font("Dialog", Font.BOLD, 13));
         titleLabel.setHorizontalAlignment(JLabel.CENTER);
