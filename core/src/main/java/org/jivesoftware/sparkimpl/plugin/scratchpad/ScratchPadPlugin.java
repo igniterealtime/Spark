@@ -305,6 +305,7 @@ public class ScratchPadPlugin implements Plugin {
                     Task task = ui.getTask();
                     tasks.addTask(task);
                 }
+                taskList.clear();
 
                 Tasks.saveTasks(tasks);
             }
@@ -314,9 +315,8 @@ public class ScratchPadPlugin implements Plugin {
             @Override
 			public void keyReleased(KeyEvent e) {
                 if (e.getKeyChar() == KeyEvent.VK_ESCAPE) {
-                    frame.dispose();
-
                     saveAction.actionPerformed(null);
+                    frame.dispose();
                 }
             }
         });
@@ -484,6 +484,23 @@ public class ScratchPadPlugin implements Plugin {
     
     public static List<TaskUI> getTaskList() {
         return taskList;
+    }
+
+    /**
+     * Delete task
+     */
+    public static void deleteTask(Task deletedTask) {
+        List<TaskUI> taskList = getTaskList();
+        // save Tasks
+        Tasks tasks = new Tasks();
+        for (TaskUI ui : taskList) {
+            Task nTask = ui.getTask();
+            if (nTask != deletedTask) {
+                tasks.addTask(nTask);
+            }
+        }
+        // update GUI
+        updateTaskUI(tasks);
     }
 
 }
