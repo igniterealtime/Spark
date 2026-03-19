@@ -18,8 +18,6 @@ package org.jivesoftware.sparkimpl.plugin.scratchpad;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.font.TextAttribute;
@@ -35,6 +33,7 @@ import org.jdesktop.swingx.calendar.DateUtils;
 import org.jivesoftware.resource.SparkRes;
 
 /**
+ * Task item with a checkbox and date
  */
 public class TaskUI extends JPanel {
 
@@ -97,7 +96,7 @@ public class TaskUI extends JPanel {
         btn_del.addMouseListener(new MouseAdapter() {
             @Override
 			public void mouseClicked(MouseEvent arg0) {
-                    Tasks.deleteTask(task);
+                    ScratchPadPlugin.deleteTask(task);
             }
         });
     }

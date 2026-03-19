@@ -182,28 +182,4 @@ public class Tasks implements PrivateData {
         }
     }
 
-    /**
-     * Delete task
-     */
-    public static void deleteTask(Task deletedTask) {
-        List<TaskUI> taskList = ScratchPadPlugin.getTaskList();
-        // find and delete task in list
-        for (int i = 0; i < taskList.size(); i++) {
-            Task t = taskList.get(i).getTask();
-            if (t == deletedTask) {
-                taskList.remove(i);
-                break;
-            }
-        }
-
-        // save Tasks
-        Tasks tasks = new Tasks();
-        for (TaskUI ui : taskList) {
-            Task nTask = ui.getTask();
-            tasks.addTask(nTask);
-        }
-
-        // update GUI
-        ScratchPadPlugin.updateTaskUI(tasks);
-    }
 }
