@@ -15,8 +15,7 @@
  */
 package org.jivesoftware.sparkimpl.plugin.scratchpad;
 
-import org.jivesoftware.smack.SmackException;
-import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.util.XmlStringBuilder;
 import org.jivesoftware.smack.xml.XmlPullParser;
 import org.jivesoftware.smack.xml.XmlPullParserException;
 import org.jivesoftware.smackx.iqprivate.PrivateDataManager;
@@ -32,6 +31,8 @@ import java.io.IOException;
  * @author Derek DeMoro
  */
 public class PrivateNotes implements PrivateData {
+    public static final String ELEMENT = "scratchpad";
+    public static final String NAMESPACE = "scratchpad:notes";
 
     private String notes;
 
@@ -43,47 +44,26 @@ public class PrivateNotes implements PrivateData {
     }
 
     public void setNotes(String notes) {
-        if (notes != null) {
-            this.notes = notes.replaceAll("&", "&amp;");
-        } else {
-            this.notes = notes;
-        }
-    }
-
-    public void setMyNotes(String notes) {
         this.notes = notes;
     }
 
-    /**
-     * Returns the root element name.
-     */
     @Override
     public String getElementName() {
-        return "scratchpad";
+        return ELEMENT;
     }
 
-    /**
-     * Returns the root element XML namespace.
-     */
     @Override
     public String getNamespace() {
-        return "scratchpad:notes";
+        return NAMESPACE;
     }
 
-    /**
-     * Returns the XML representation of the PrivateData.
-     */
     @Override
-    public String toXML() {
-        StringBuilder buf = new StringBuilder();
-        buf.append("<scratchpad xmlns=\"scratchpad:notes\">");
-
-        if (getNotes() != null) {
-            buf.append("<text>").append(getNotes()).append("</text>");
-        }
-
-        buf.append("</scratchpad>");
-        return buf.toString();
+    public XmlStringBuilder toXML() {
+        XmlStringBuilder buf = new XmlStringBuilder();
+        buf.halfOpenElement(ELEMENT).xmlnsAttribute(NAMESPACE).rightAngleBracket();
+        buf.optElement("text", getNotes());
+        buf.closeElement(ELEMENT);
+        return buf;
     }
 
     /**
@@ -104,7 +84,7 @@ public class PrivateNotes implements PrivateData {
                 if (eventType == XmlPullParser.Event.START_ELEMENT && "text".equals(parser.getName())) {
                     notes.setNotes(parser.nextText());
                 } else if (eventType == XmlPullParser.Event.END_ELEMENT) {
-                    if ("scratchpad".equals(parser.getName())) {
+                    if (ELEMENT.equals(parser.getName())) {
                         done = true;
                     }
                 }
@@ -113,33 +93,28 @@ public class PrivateNotes implements PrivateData {
         }
     }
 
+    static {
+        PrivateDataManager.addPrivateDataProvider(ELEMENT, NAMESPACE, new PrivateNotes.Provider());
+    }
+
     public static void savePrivateNotes(PrivateNotes notes) {
         PrivateDataManager manager = SparkManager.getSessionManager().getPersonalDataManager();
-
-        PrivateDataManager.addPrivateDataProvider("scratchpad", "scratchpad:notes", new PrivateNotes.Provider());
         try {
             manager.setPrivateData(notes);
-        } catch (XMPPException | SmackException | InterruptedException e) {
+        } catch (Exception e) {
             Log.error(e);
+            throw new RuntimeException(e.getMessage());
         }
     }
 
     public static PrivateNotes getPrivateNotes() {
         PrivateDataManager manager = SparkManager.getSessionManager().getPersonalDataManager();
-        PrivateDataManager.addPrivateDataProvider("scratchpad", "scratchpad:notes", new PrivateNotes.Provider());
-
-        PrivateNotes notes = null;
         try {
-            notes = (PrivateNotes) manager.getPrivateData("scratchpad", "scratchpad:notes");
-        } catch (XMPPException | SmackException | InterruptedException e) {
+            PrivateData privateData = manager.getPrivateData(ELEMENT, NAMESPACE);
+            return privateData != null ? (PrivateNotes) privateData : new PrivateNotes();
+        } catch (Exception e) {
             Log.error(e);
+            throw new RuntimeException(e.getMessage());
         }
-
-        if (notes.getNotes() != null) {
-            String note = notes.getNotes().replaceAll("&amp;", "&");
-            notes.setMyNotes(note);
-        }
-
-        return notes;
     }
 }

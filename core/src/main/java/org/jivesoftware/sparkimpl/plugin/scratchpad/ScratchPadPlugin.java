@@ -56,7 +56,6 @@ public class ScratchPadPlugin implements Plugin {
 
     @Override
 	public void initialize() {
-
             TimerTask startTask = new TimerTask() {
                 @Override
                 public void run() {
@@ -94,17 +93,6 @@ public class ScratchPadPlugin implements Plugin {
                 }
             });
 
-            //TODO REMOVE
-            @SuppressWarnings("unused")
-            int index = -1;
-            JPanel commandPanel = SparkManager.getWorkspace().getCommandPanel();
-            for (int i = 0; i < commandPanel.getComponentCount(); i++) {
-                if (commandPanel.getComponent(i) instanceof JLabel) {
-                    break;
-                }
-            }
-
-
             JMenuItem taskMenu = new JMenuItem(Res.getString("button.view.tasklist"), SparkRes.getImageIcon(SparkRes.Icon.DESKTOP_IMAGE));
             taskMenu.addActionListener(e -> showTaskList());
 
@@ -123,7 +111,6 @@ public class ScratchPadPlugin implements Plugin {
 
             // Start notifications.
             new TaskNotification();
-
         }
 
 
@@ -133,8 +120,6 @@ public class ScratchPadPlugin implements Plugin {
         panel_events.removeAll();
         mainPanel.removeAll();
 
-        //final List<TaskUI> taskList = new ArrayList<TaskUI>();
-        //final JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new VerticalFlowLayout(VerticalFlowLayout.TOP, 0, 0, true, false));
         mainPanel.setBackground(Color.white);
 
@@ -285,6 +270,7 @@ public class ScratchPadPlugin implements Plugin {
         addButton.addActionListener(addAction);
 
         Tasks tasks = Tasks.getTaskList();
+        SHOW_ALL_TASKS = tasks.isShowAll();
         updateTaskUI(tasks);
 
         if (SHOW_ALL_TASKS) {
@@ -314,12 +300,13 @@ public class ScratchPadPlugin implements Plugin {
 		public void actionPerformed(ActionEvent actionEvent) {
                 // Save it.
                 Tasks tasks = new Tasks();
+                tasks.setShowAll(SHOW_ALL_TASKS);
                 for (TaskUI ui : taskList) {
                     Task task = ui.getTask();
                     tasks.addTask(task);
                 }
 
-                Tasks.saveTasks(tasks, SparkManager.getConnection());
+                Tasks.saveTasks(tasks);
             }
         };
 
@@ -499,60 +486,4 @@ public class ScratchPadPlugin implements Plugin {
         return taskList;
     }
 
-//    private class DragWindowAdapter extends MouseAdapter
-//            implements MouseMotionListener {
-//        private JFrame m_msgWnd;
-//        private int m_mousePrevX,
-//                m_mousePrevY;
-//        private int m_frameX,
-//                m_frameY;
-//
-//        public DragWindowAdapter(JFrame mw) {
-//            m_msgWnd = mw;
-//        }
-//
-//        public void mousePressed(MouseEvent e) {
-//            super.mousePressed(e);
-//            m_mousePrevX = e.getX();
-//            m_mousePrevY = e.getY();
-//            m_frameX = 0;
-//            m_frameY = 0;
-//        }
-//
-//        public void mouseDragged(MouseEvent e) {
-//            int X = e.getX();
-//            int Y = e.getY();
-//            int MsgX = m_msgWnd.getX();
-//            int MsgY = m_msgWnd.getY();
-//
-//            int moveX = X - m_mousePrevX;  // Negative if move left
-//            int moveY = Y - m_mousePrevY;  // Negative if move down
-//            if (moveX == 0 && moveY == 0) return;
-//            m_mousePrevX = X - moveX;
-//            m_mousePrevY = Y - moveY;
-//
-//            //System.out.println("mouseDragged x,y = (" + X + "," + Y +
-//            //        ") diff (" + moveX + "," + moveY +
-//            //        ") MsgX/MsgY = " + MsgX + "," + MsgY);
-//
-//            // mouseDragged caused by setLocation() on frame.
-//            if (m_frameX == MsgX && m_frameY == MsgY) {
-//                m_frameX = 0;
-//                m_frameY = 0;
-//                return;
-//            }
-//
-//            // '-' would cause wrong direction for movement.
-//            int newFrameX = MsgX + moveX;
-//            // '-' would cause wrong
-//            int newFrameY = MsgY + moveY;
-//
-//            m_frameX = newFrameX;
-//            m_frameY = newFrameY;
-//            m_msgWnd.setLocation(newFrameX, newFrameY);
-//        }
-//
-//        public void mouseMoved(MouseEvent e) {
-//        }
-//    }
 }

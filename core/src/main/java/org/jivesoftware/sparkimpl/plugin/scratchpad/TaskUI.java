@@ -20,8 +20,8 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.font.TextAttribute;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -36,9 +36,8 @@ import org.jivesoftware.resource.SparkRes;
 
 /**
  */
-public class TaskUI extends JPanel implements ActionListener {
+public class TaskUI extends JPanel {
 
-    private static final long serialVersionUID = -8443764502684168188L;
     private final Task task;
     private final JCheckBox box;
 
@@ -77,7 +76,6 @@ public class TaskUI extends JPanel implements ActionListener {
         }
 
         int diff = DateUtils.getDaysDiff(dueDate, new Date().getTime());
-
         if (diff > 0){
             dueLabel.setForeground(Color.red);
         }
@@ -86,30 +84,21 @@ public class TaskUI extends JPanel implements ActionListener {
 
         updateTitleFont();
 
-        box.addActionListener(this);
-        
-        btn_del.addMouseListener(new MouseListener() {
+        box.addActionListener(e -> {
+            task.setCompleted(isSelected());
+            updateTitleFont();
+            if (ScratchPadPlugin.SHOW_ALL_TASKS) {
+                setVisible(true);
+            }
+            else if (task.isCompleted()) {
+                setVisible(false);
+            }
+        });
+        btn_del.addMouseListener(new MouseAdapter() {
             @Override
 			public void mouseClicked(MouseEvent arg0) {
                     Tasks.deleteTask(task);
             }
-
-            @Override
-			public void mouseEntered(MouseEvent e) {
-                  
-            }
-            @Override
-			public void mouseExited(MouseEvent e) {
-                    
-            }
-            @Override
-			public void mousePressed(MouseEvent e) {
-                
-            }
-            @Override
-			public void mouseReleased(MouseEvent e) {
-                   
-            }        	
         });
     }
 
@@ -121,38 +110,16 @@ public class TaskUI extends JPanel implements ActionListener {
     public void updateTitleFont() {
         if (task.isCompleted()) {
             Font font = box.getFont();
-
-            
-	    Map attribs = font.getAttributes();
-
+            Map attribs = font.getAttributes();
             attribs.put(TextAttribute.STRIKETHROUGH, true);
-
             box.setFont(new Font(attribs));
             box.setSelected(true);
-        }
-        else {
+        } else {
             Font font = box.getFont();
-
-	    Map Attribs = font.getAttributes();
-
+            Map Attribs = font.getAttributes();
             Attribs.put(TextAttribute.STRIKETHROUGH, false);
-
             box.setFont(new Font(Attribs));
             box.setSelected(false);
-        }
-    }
-
-    @Override
-	public void actionPerformed(ActionEvent e) {
-        task.setCompleted(isSelected());
-
-        updateTitleFont();
-
-        if (ScratchPadPlugin.SHOW_ALL_TASKS) {
-            setVisible(true);
-        }
-        else if (task.isCompleted()) {
-            setVisible(false);
         }
     }
 
