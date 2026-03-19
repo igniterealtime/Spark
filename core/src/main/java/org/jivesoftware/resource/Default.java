@@ -135,6 +135,7 @@ public class Default {
     public static final String DISABLE_REMOVALS = "DISABLE_REMOVALS";
     public static final String DISABLE_RENAMES = "DISABLE_RENAMES";
     public static final String DISABLE_VIEW_NOTES = "DISABLE_VIEW_NOTES";
+    public static final String DISABLE_VIEW_NOTEPAD = "DISABLE_VIEW_NOTEPAD";
     public static final String DISABLE_VIEW_TASK_LIST = "DISABLE_VIEW_TASK_LIST";
     public static final String HELP_FORUM = "HELP_FORUM";
     public static final String HELP_FORUM_DISABLED = "HELP_FORUM_DISABLED";

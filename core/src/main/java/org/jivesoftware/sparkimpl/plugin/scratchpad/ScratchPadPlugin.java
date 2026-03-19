@@ -26,6 +26,7 @@ import org.jivesoftware.spark.plugin.Plugin;
 import org.jivesoftware.spark.ui.ContactList;
 import org.jivesoftware.spark.util.*;
 import org.jivesoftware.spark.util.SwingWorker;
+import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
 
 import javax.swing.*;
@@ -99,6 +100,9 @@ public class ScratchPadPlugin implements Plugin {
             JMenuItem notesMenu = new JMenuItem(Res.getString("button.view.notes"), SparkRes.getImageIcon(SparkRes.Icon.DOCUMENT_16x16));
             notesMenu.addActionListener(e -> retrieveNotes());
 
+            JMenuItem notepadMenu = new JMenuItem(Res.getString("button.view.notepad"), SparkRes.getImageIcon(SparkRes.Icon.NOTEBOOK_IMAGE));
+            notepadMenu.addActionListener(e -> retrieveNotepad());
+
             // Add To toolbar
             final JMenu actionsMenu = SparkManager.getMainWindow().getMenuByName(Res.getString("menuitem.actions"));
             actionsMenu.addSeparator();
@@ -108,6 +112,8 @@ public class ScratchPadPlugin implements Plugin {
 
             // See if we should disable the "View notes" option under "Actions"
             if (!Default.getBoolean(Default.DISABLE_VIEW_NOTES) && Enterprise.containsFeature(Enterprise.VIEW_NOTES_FEATURE)) actionsMenu.add(notesMenu);
+            // See if we should disable the "View notepad" option under "Actions"
+            if (!Default.getBoolean(Default.DISABLE_VIEW_NOTEPAD) && Enterprise.containsFeature(Enterprise.VIEW_NOTEPAD_FEATURE)) actionsMenu.add(notepadMenu);
 
             // Start notifications.
             new TaskNotification();
@@ -389,6 +395,28 @@ public class ScratchPadPlugin implements Plugin {
 			public void finished() {
                 final PrivateNotes privateNotes = (PrivateNotes)get();
                 showPrivateNotes(privateNotes);
+            }
+        };
+
+        notesWorker.start();
+    }
+
+    /**
+     * Retrieve private notes from server.
+     */
+    private void retrieveNotepad() {
+        // Retrieve private notes from server.
+        final SwingWorker notesWorker = new SwingWorker() {
+            @Override
+            public Object construct() {
+                return Notepad.getNotepad();
+            }
+
+            @Override
+            public void finished() {
+                final Notepad notepad = (Notepad) get();
+                Log.debug("Retrieved " + notepad.getNotes() + " notes.");
+                NotepadUI.showNotepad(notepad);
             }
         };
 

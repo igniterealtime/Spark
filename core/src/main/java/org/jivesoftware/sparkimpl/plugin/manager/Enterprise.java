@@ -65,6 +65,7 @@ public class Enterprise {
     public static final String SAVE_PASSWORD_FEATURE = "save-password";
     public static final String UPDATES_FEATURE = "updates";
     public static final String VIEW_NOTES_FEATURE = "view-notes";
+    public static final String VIEW_NOTEPAD_FEATURE = "view-notepad";
     public static final String VIEW_TASKS_FEATURE = "view-tasks";
     public static final String START_A_CHAT_FEATURE = "start-a-chat";
     public static final String HOSTNAME_AS_RESOURCE_FEATURE = "hostname-as-resource";
