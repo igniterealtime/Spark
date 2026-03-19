@@ -24,7 +24,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
-import java.util.Iterator;
 import java.util.TimerTask;
 
 import static java.time.ZoneId.*;
@@ -62,13 +61,13 @@ public class TaskNotification {
 					mainPanel.setLayout(new VerticalFlowLayout(VerticalFlowLayout.TOP, 0, 0, true, false));
 					mainPanel.setBackground(Color.white);
 
-					long now = System.currentTimeMillis();
-					Tasks tasks = Tasks.getTaskList();
-					if (tasks == null) {
-						return;
-					}
-					java.util.List<Task> tasksList = tasks.getTasks();
-					Iterator<Task> taskIter = tasksList.iterator();
+                    long now = System.currentTimeMillis();
+                    Tasks tasks;
+                    try {
+                        tasks = Tasks.getTaskList();
+                    } catch (Exception ignored) {
+                        return;
+                    }
 
 					final JPanel titlePanel = new JPanel(new BorderLayout()) {
 						@Override
@@ -93,8 +92,7 @@ public class TaskNotification {
 					mainPanel.add(titlePanel);
 
 					boolean hasItems = false;
-					while (taskIter.hasNext()) {
-						Task task = taskIter.next();
+                        for (Task task : tasks.getTasks()) {
 						if (task.isCompleted()) {
 							continue;
 						}
