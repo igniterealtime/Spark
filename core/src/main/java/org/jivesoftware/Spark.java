@@ -31,7 +31,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Locale;
+import java.util.Properties;
 
 import org.jivesoftware.gui.LoginUIPanel;
 
@@ -46,11 +48,13 @@ import static org.apache.commons.lang3.SystemUtils.*;
 public final class Spark {
     private static File USER_SPARK_HOME;
     public static String ARGUMENTS;
-    private static File RESOURCE_DIRECTORY;
     private static File BIN_DIRECTORY;
     private static File LOG_DIRECTORY;
     private static File PLUGIN_DIRECTORY;
+    private static File RESOURCE_DIRECTORY;
     private static File SECURITY_DIRECTORY;
+    private static File USER_DIRECTORY;
+    private static File XTRA_DIRECTORY;
 
 
     /**
@@ -63,6 +67,7 @@ public final class Spark {
     private static synchronized File initializeDirectory(File directoryHome, String directoryName) {
         File targetDir = new File(directoryHome, directoryName).getAbsoluteFile();
         if (!targetDir.exists()) {
+            //noinspection ResultOfMethodCallIgnored
             targetDir.mkdirs();
         }
         return targetDir;
@@ -76,33 +81,28 @@ public final class Spark {
      * Configures environment; starts application; invokes login
      */
     public void startup() {
-        // Sets user home based on environment or properties
-        if (System.getenv("APPDATA") != null && !System.getenv("APPDATA").isEmpty()) {
-            USER_SPARK_HOME = new File(System.getenv("APPDATA") + "/" + getUserConf());
-        } else {
-            USER_SPARK_HOME = new File(System.getProperties().getProperty("user.home") + "/" + getUserConf());
+        Properties sysProps = System.getProperties();
+        // On Windows get the Spark home folder from the %APPDATA% environment variable i.e. "%SystemDrive%\%Username%\LoggedInUser\AppData\Roaming\Spark"
+        String appDataFolder = System.getenv("APPDATA");
+        if (appDataFolder == null || appDataFolder.isEmpty()) {
+            appDataFolder = sysProps.getProperty("user.home");
         }
-
-        String current = System.getProperty("java.library.path");
-        String classPath = System.getProperty("java.class.path");
+        USER_SPARK_HOME = new File(appDataFolder, getUserConf());
 
         // Set UIManager properties for JTree
         System.setProperty("apple.laf.useScreenMenuBar", "true");
 
-        // Update Library Path
-        String javaLibraryPath = current + ";";
-
         SparkCompatibility.transferConfig(USER_SPARK_HOME);
 
-        RESOURCE_DIRECTORY = initializeDirectory("resources");
         BIN_DIRECTORY = initializeDirectory("bin");
         LOG_DIRECTORY = initializeDirectory("logs");
-        File USER_DIRECTORY = initializeDirectory("user");
         PLUGIN_DIRECTORY = initializeDirectory("plugins");
-        File XTRA_DIRECTORY = initializeDirectory("xtra");
+        RESOURCE_DIRECTORY = initializeDirectory("resources");
         SECURITY_DIRECTORY = initializeDirectory("security");
+        USER_DIRECTORY = initializeDirectory("user");
+        XTRA_DIRECTORY = initializeDirectory("xtra");
         // TODO implement copyEmoticonFiles();
-        final String workingDirectory = System.getProperty("appdir");
+        final String workingDirectory = sysProps.getProperty("appdir");
         if (workingDirectory == null) {
             System.out.println("Warning: no working directory set. This might cause updated data to be missed. Please set a system property 'appdir' to the location where Spark is installed to correct this.");
             // Terminate if required directories cannot be created
@@ -114,34 +114,21 @@ public final class Spark {
         } else {
             // This is the Spark.exe or Spark.dmg installed executable.
             File workingDir = new File(workingDirectory);
-            RESOURCE_DIRECTORY = initializeDirectory(workingDir, "resources");
             BIN_DIRECTORY = initializeDirectory(workingDir, "bin");
-            File emoticons = new File(XTRA_DIRECTORY, "emoticons").getAbsoluteFile();
-            if (!emoticons.exists()) {
-                File[] emoticonsFiles = emoticons.listFiles();
-                if (emoticonsFiles == null || emoticonsFiles.length == 0) {
-                    // Copy emoticon files from installation directory to the spark user home directory
-                    copyEmoticonFiles(workingDirectory);
-                }
-            }
+            PLUGIN_DIRECTORY = initializeDirectory(workingDir, "plugins");
+            RESOURCE_DIRECTORY = initializeDirectory(workingDir, "resources");
             SECURITY_DIRECTORY = initializeDirectory(workingDir, "security");
-            LOG_DIRECTORY = initializeDirectory("logs");
-            LOG_DIRECTORY = new File(USER_SPARK_HOME, "logs").getAbsoluteFile();
-            LOG_DIRECTORY.mkdirs();
-            try {
-                javaLibraryPath += RESOURCE_DIRECTORY.getCanonicalPath() + ";";
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            XTRA_DIRECTORY = initializeDirectory(workingDir, "xtra");
         }
 
         // Set the default language set by the user
         loadLanguage();
-
-        // Loads the LookandFeel
         LookAndFeelManager.loadPreferredLookAndFeel();
 
-        javaLibraryPath += classPath + ";" + RESOURCE_DIRECTORY.getAbsolutePath();
+        // Update Library Path
+        String current = sysProps.getProperty("java.library.path");
+        String classPath = sysProps.getProperty("java.class.path");
+        String javaLibraryPath = current + File.pathSeparatorChar + classPath + File.pathSeparatorChar + RESOURCE_DIRECTORY.getAbsolutePath();
 
         // Update System Properties
         System.setProperty("java.library.path", javaLibraryPath);
@@ -269,6 +256,13 @@ public final class Spark {
         return LOG_DIRECTORY;
     }
 
+    public static File getXtraDirectory() {
+        if (XTRA_DIRECTORY == null) {
+            XTRA_DIRECTORY = initializeDirectory("xtra");
+        }
+        return XTRA_DIRECTORY;
+    }
+
     /**
      * Keep track of the users configuration directory.
      *
@@ -293,15 +287,6 @@ public final class Spark {
      */
     public static File getSparkUserHome() {
         return USER_SPARK_HOME;
-    }
-
-    /**
-     * Return the base user home.
-     *
-     * @return the user home.
-     */
-    public static String getUserHome() {
-        return System.getProperties().getProperty("user.home");
     }
 
     public static boolean disableUpdatesOnCustom() {
@@ -342,23 +327,6 @@ public final class Spark {
         if (ModelUtil.hasLength(setLanguage)) {
             Locale userLocale = Locale.forLanguageTag(setLanguage.replace("_", "-"));
             Locale.setDefault(userLocale);
-        }
-    }
-
-    public void copyEmoticonFiles(String workdir) {
-        // Current Plugin directory
-        File newEmoticonDir = new File(Spark.getLogDirectory().getParentFile(), "xtra" + File.separator + "emoticons").getAbsoluteFile();
-        newEmoticonDir.mkdirs();
-
-        File EMOTICON_DIRECTORY = new File(workdir + File.separator + "xtra" + File.separator + "emoticons");
-        File[] emoticonsFiles = EMOTICON_DIRECTORY.listFiles();
-        if (emoticonsFiles != null) {
-            for (File file : emoticonsFiles) {
-                if (file.isFile()) {
-                    // Copy over
-                    File newFile = new File(newEmoticonDir, file.getName());
-                }
-            }
         }
     }
 }

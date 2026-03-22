@@ -518,24 +518,23 @@ public class LocalPreferences {
 	 * @return {@link String}
 	 */
     public String getDownloadDir() {
-
-        File downloadedDir = null;
+        File downloadedDir;
         if (Spark.isLinux() || Spark.isMac()) {
-            downloadedDir = new File(System.getProperty("user.home") + "/Downloads/");
+            downloadedDir = new File(System.getProperty("user.home"), "Downloads");
             if (!downloadedDir.exists()) {
                 downloadedDir.mkdir();
             }
             Log.debug("Absolute path for download directory: " + downloadedDir.getAbsolutePath());
         } else if (Spark.isWindows()) {
-            File docDir = new File(System.getProperty("user.home") + "\\Documents");
+            File docDir = new File(System.getProperty("user.home"), "Documents");
             if (docDir.canWrite()) {
-                downloadedDir = new File(docDir + "\\Downloads");
+                downloadedDir = new File(docDir, "Downloads");
                 if (!downloadedDir.exists()) {
                     downloadedDir.mkdir();
                 }
             } else {
                 // if for some Reason there is no "My Documents" Folder we should select the Desktop
-                downloadedDir = new File(System.getProperty("user.home") + "\\Desktop\\");
+                downloadedDir = new File(System.getProperty("user.home"), "Desktop");
             }
         } else {
             downloadedDir = new File(System.getProperty("user.home"));

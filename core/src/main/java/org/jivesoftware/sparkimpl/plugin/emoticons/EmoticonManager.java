@@ -65,7 +65,7 @@ public class EmoticonManager {
     /**
      * The root emoticon directory.
      */
-    public static File EMOTICON_DIRECTORY;
+    public File EMOTICON_DIRECTORY;
 
     private final LocalPreferences pref = SettingsManager.getLocalPreferences();
 
@@ -89,14 +89,12 @@ public class EmoticonManager {
      * Initialize the EmoticonManager
      */
     private EmoticonManager() {
-        EMOTICON_DIRECTORY = new File(Spark.getBinDirectory().getParent(),
-            "xtra/emoticons").getAbsoluteFile();
+        EMOTICON_DIRECTORY = new File(Spark.getXtraDirectory(), "emoticons").getAbsoluteFile();
 
         File[] files;
         files = EMOTICON_DIRECTORY.listFiles();
 
-        // If files in this directory, copy these files into the Spark User Home
-        // Directory
+        // Copy emoticon files from installation directory to the Spark User Home directory
         if (files != null) {
             // Copy over to allow for non-admins to extract.
             copyFiles();
@@ -114,18 +112,16 @@ public class EmoticonManager {
      */
     private void copyFiles() {
         // Current Plugin directory
-        File newEmoticonDir = new File(Spark.getLogDirectory().getParentFile(),
-            "xtra/emoticons").getAbsoluteFile();
-        newEmoticonDir.mkdirs();
-        deleteOldEmoticons(newEmoticonDir);
+        File profileEmoticonsFolder = new File(Spark.getSparkUserHome(), "xtra/emoticons").getAbsoluteFile();
+        profileEmoticonsFolder.mkdirs();
+        deleteOldEmoticons(profileEmoticonsFolder);
 
         File[] files = EMOTICON_DIRECTORY.listFiles();
         for (File file : files) {
             if (file.isFile()) {
                 try {
                     // Copy over
-                    File newFile = new File(newEmoticonDir, file.getName());
-
+                    File newFile = new File(profileEmoticonsFolder, file.getName());
                     // Check timestamps
                     long installerFile = file.lastModified();
                     long copiedFile = newFile.lastModified();
@@ -134,12 +130,11 @@ public class EmoticonManager {
                         int endIndex = file.getName().indexOf(".zip");
                         if (endIndex > 0) {
                             String unzipURL = file.getName().substring(0, endIndex);
-                            File unzipFile = new File(newEmoticonDir, unzipURL);
-
+                            File unzipFile = new File(profileEmoticonsFolder, unzipURL);
                             if (!unzipFile.exists() || !checkIfSameFile(file, newFile)) {
                                 // Copy over and expand :)
                                 URLFileSystem.copy(file.toURI().toURL(), newFile);
-                                expandNewPack(newFile, newEmoticonDir);
+                                expandNewPack(newFile, profileEmoticonsFolder);
                             }
                         }
                     }
@@ -148,7 +143,7 @@ public class EmoticonManager {
                 }
             }
         }
-        EMOTICON_DIRECTORY = newEmoticonDir;
+        EMOTICON_DIRECTORY = profileEmoticonsFolder;
     }
 
     private boolean checkIfSameFile(File oldZip, File newZip) {
@@ -512,15 +507,9 @@ public class EmoticonManager {
      * Deletes Emoticons in pathToSearch that have a different md5-hash than its correspondant in install\spark\xtra\emoticons
      */
     private void deleteOldEmoticons(File pathToSearch) {
-        final String installPath = Spark.getBinDirectory().getParentFile() + File.separator + "xtra" + File.separator +
-            "emoticons" + File.separator;
-        final File[] files = new File(installPath).listFiles();
-        final List<File> installerFiles;
-        if (files == null) {
-            installerFiles = List.of();
-        } else {
-            installerFiles = asList(files);
-        }
+        final File installPath = new File(Spark.getXtraDirectory(), "emoticons");
+        final File[] files = installPath.listFiles();
+        final List<File> installerFiles = files == null ? List.of() : asList(files);
 
         final File[] installedEmoticons = pathToSearch.listFiles(File::isDirectory);
         if (installedEmoticons == null) {

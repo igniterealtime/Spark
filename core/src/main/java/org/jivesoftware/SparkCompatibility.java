@@ -41,15 +41,7 @@ public class SparkCompatibility {
             return;
         }
         // Old Spark settings directory
-        final String OLD_USER_SPARK_HOME = System.getProperties().getProperty("user.home") + "/" + Spark.getUserConf();
-        final String OLD_USER_SPARK_HOME_MAC = System.getProperties().getProperty("user.home") + "/Spark";
-        File oldSparkHomeDir;
-        if (SystemUtils.IS_OS_MAC) {
-            oldSparkHomeDir = new File(OLD_USER_SPARK_HOME_MAC);
-        } else {
-            oldSparkHomeDir = new File(OLD_USER_SPARK_HOME);
-        }
-
+        File oldSparkHomeDir = new File(System.getProperty("user.home"), SystemUtils.IS_OS_MAC ? "/Spark" : Spark.getUserConf());
         if (oldSparkHomeDir.exists()) {
             // Absolute paths to a collection of files or directories to skip
             Collection<String> skipFiles = List.of(

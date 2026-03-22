@@ -72,8 +72,7 @@ public class PluginManager implements MainWindowListener
     /**
      * The root Plugins Directory.
      */
-    public static File PLUGINS_DIRECTORY = new File( Spark.getBinDirectory().getParent(), "plugins" ).getAbsoluteFile();
-    public static File PROFILE_PLUGINS_DIRECTORY = new File( Spark.getLogDirectory().getParentFile(), "plugins" ).getAbsoluteFile();
+    public static File PLUGINS_DIRECTORY = Spark.getPluginDirectory().getAbsoluteFile();
 
     private PluginClassLoader classLoader;
 
@@ -97,7 +96,7 @@ public class PluginManager implements MainWindowListener
     {
         try
         {
-            PLUGINS_DIRECTORY = new File( Spark.getBinDirectory().getParentFile(), "plugins" ).getCanonicalFile();
+            PLUGINS_DIRECTORY = Spark.getPluginDirectory().getCanonicalFile();
         }
         catch ( IOException e )
         {
@@ -123,10 +122,10 @@ public class PluginManager implements MainWindowListener
     private void movePlugins()
     {
         // Current Plugin directory
-        File newPlugins = PROFILE_PLUGINS_DIRECTORY;
-        newPlugins.mkdirs();
-        deleteOldPlugins( newPlugins );
-        deletePluginIfNotExistInInstallFolder( newPlugins );
+        File profilePluginsFolder = new File(Spark.getSparkUserHome(), "plugins").getAbsoluteFile();
+        profilePluginsFolder.mkdirs();
+        deleteOldPlugins(profilePluginsFolder);
+        deletePluginIfNotExistInInstallFolder(profilePluginsFolder);
 
         File[] files = PLUGINS_DIRECTORY.listFiles();
         if ( files != null )
@@ -134,12 +133,10 @@ public class PluginManager implements MainWindowListener
             for (File file : files) {
                 if (file.isFile()) {
                     // Copy over
-                    File newFile = new File(newPlugins, file.getName());
-
+                    File newFile = new File(profilePluginsFolder, file.getName());
                     if (newFile.lastModified() >= file.lastModified()) {
                         continue;
                     }
-
                     try {
                         URLFileSystem.copy(file.toURI().toURL(), newFile);
                     } catch (IOException e) {
@@ -149,7 +146,7 @@ public class PluginManager implements MainWindowListener
             }
         }
 
-        PLUGINS_DIRECTORY = newPlugins;
+        PLUGINS_DIRECTORY = profilePluginsFolder;
     }
 
     /**
@@ -157,17 +154,9 @@ public class PluginManager implements MainWindowListener
      */
     private void deleteOldPlugins( File pathToSearch )
     {
-        final String installPath = Spark.getBinDirectory().getParentFile() + File.separator + "plugins" + File.separator;
-        final File[] files = new File( installPath ).listFiles();
-        final List<File> installerFiles;
-        if ( files == null )
-        {
-            installerFiles = Collections.emptyList();
-        }
-        else
-        {
-            installerFiles = Arrays.asList( files );
-        }
+        File installPath = Spark.getPluginDirectory();
+        File[] files = installPath.listFiles();
+        List<File> installerFiles = files == null ? List.of() : Arrays.asList(files);
 
         final File[] installedPlugins = pathToSearch.listFiles( File::isDirectory );
         if ( installedPlugins == null )
@@ -186,7 +175,7 @@ public class PluginManager implements MainWindowListener
             {
                 try
                 {
-                    final File f = new File( installPath + jarFile.getName() );
+                    File f = new File(installPath, jarFile.getName());
                     // Compare old and new files by checksums
                     if ( installerFiles.contains( f ) )
                     {
@@ -213,7 +202,7 @@ public class PluginManager implements MainWindowListener
      */
     private void deletePluginIfNotExistInInstallFolder(File pathToSearch)
     {
-        final File[] files = new File( PLUGINS_DIRECTORY.toString() ).listFiles();
+        final File[] files = PLUGINS_DIRECTORY.listFiles();
         Set<String> installerFiles;
         if ( files == null )
         {
@@ -264,12 +253,14 @@ public class PluginManager implements MainWindowListener
         }
 
         updateClasspath();
-
         loadInternalPlugins();
-
         // Load extension plugins
         loadPublicPlugins();
+        loadDevPlugin();
+        loadPluginResources();
+    }
 
+    private void loadDevPlugin() {
         // For development purposes, load the plugin specified by -Dplugin=...
         String plugin = System.getProperty( "plugin" );
         if ( plugin != null )
@@ -282,8 +273,6 @@ public class PluginManager implements MainWindowListener
                 loadPublicPlugin( pluginXML.getParentFile() );
             }
         }
-
-        loadPluginResources();
     }
 
     private boolean hasDependencies( File pluginFile )
