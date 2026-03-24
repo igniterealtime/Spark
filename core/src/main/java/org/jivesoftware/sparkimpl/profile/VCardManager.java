@@ -267,14 +267,18 @@ public class VCardManager {
         contactsMenu.insert(viewProfileMenu, size > 0 ? size - 3 : 0);
         viewProfileMenu.addActionListener( e -> {
             String jidToView = JOptionPane.showInputDialog(SparkManager.getMainWindow(), Res.getString("message.enter.jabber.id") + ":", Res.getString("title.lookup.profile"), JOptionPane.QUESTION_MESSAGE);
-            if (ModelUtil.hasLength(jidToView) && jidToView.contains( "@" ) && ModelUtil.hasLength( XmppStringUtils.parseDomain(jidToView))) {
-                BareJid bareJid = JidCreate.bareFromOrThrowUnchecked(jidToView);
-                viewProfile(bareJid, SparkManager.getWorkspace());
+            if (!ModelUtil.hasLength(jidToView)) {
+                return;
             }
-            else if (ModelUtil.hasLength(jidToView)) {
+            BareJid bareJid;
+            try {
+                bareJid = JidCreate.entityBareFrom(jidToView);
+            } catch (XmppStringprepException ex){
                 UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
                 JOptionPane.showMessageDialog(SparkManager.getMainWindow(), Res.getString("message.invalid.jabber.id"), Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
+                return;
             }
+            viewProfile(bareJid, SparkManager.getWorkspace());
         } );
     }
 
