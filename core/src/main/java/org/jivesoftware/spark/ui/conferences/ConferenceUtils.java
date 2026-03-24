@@ -112,16 +112,6 @@ public class ConferenceUtils {
     /**
      * Invites users to an existing room.
      *
-     * @param chat The room to invite people into.
-     * @param jids a collection of the users to invite.
-     */
-    public static void inviteUsersToRoom(MultiUserChat chat, Collection<Jid> jids, boolean randomName ) {
-        inviteUsersToRoom(chat.getRoom(), jids, randomName );
-    }
-
-    /**
-     * Invites users to an existing room.
-     *
      * @param roomName    the name of the room.
      * @param jids        a collection of the users to invite.
      */

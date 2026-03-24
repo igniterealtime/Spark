@@ -130,7 +130,7 @@ public class GroupChatRoom extends ChatRoom {
                 Action inviteAction = new AbstractAction() {
                     @Override
                     public void actionPerformed(ActionEvent actionEvent) {
-                        ConferenceUtils.inviteUsersToRoom(chat, null, false);
+                        ConferenceUtils.inviteUsersToRoom(chat.getRoom(), null, false);
                     }
                 };
 

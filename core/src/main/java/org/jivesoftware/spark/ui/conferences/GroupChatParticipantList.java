@@ -799,7 +799,7 @@ public class GroupChatParticipantList extends JPanel {
         Action inviteAction = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                ConferenceUtils.inviteUsersToRoom(groupChatRoom.getMultiUserChat(), null, false);
+                ConferenceUtils.inviteUsersToRoom(groupChatRoom.getBareJid(), null, false);
             }
         };
 
