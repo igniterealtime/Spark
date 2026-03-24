@@ -32,7 +32,6 @@ import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
-import org.jxmpp.jid.DomainBareJid;
 import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.Jid;
 import org.jxmpp.jid.impl.JidCreate;
@@ -246,7 +245,7 @@ final class InvitationDialog extends JPanel {
         return null;
     }
 
-    public void inviteUsersToRoom(final DomainBareJid serviceName, List<BookmarkedConference> rooms, EntityBareJid adHocRoomName, Collection<Jid> jids) {
+    public void inviteUsersToRoom(List<BookmarkedConference> rooms, EntityBareJid adHocRoomName, Collection<Jid> jids) {
         fillRoomsUI(rooms, adHocRoomName);
         JFrame parent = SparkManager.getChatManager().getChatContainer().getChatFrame();
         if (parent == null || !parent.isVisible()) {
@@ -351,7 +350,7 @@ final class InvitationDialog extends JPanel {
                         public void finished() {
                             try {
                                 if (selectedBookmarkedConf == null) {
-                                    ConferenceUtils.createPrivateConference(serviceName, messageText, roomTitle, jidList);
+                                    ConferenceUtils.createPrivateConference(adHocRoomName.asDomainBareJid(), messageText, roomTitle, jidList);
                                 } else {
                                     ConferenceUtils.joinConferenceOnSeparateThread(
                                         selectedBookmarkedConf.getName(), selectedBookmarkedConf.getJid(),
