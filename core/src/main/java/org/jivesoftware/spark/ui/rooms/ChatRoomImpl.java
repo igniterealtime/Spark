@@ -258,11 +258,6 @@ public class ChatRoomImpl extends ChatRoom {
         MessageBuilder messageBuilder = StanzaBuilder.buildMessage()
             .setBody(text);
 
-        if (threadID == null) {
-            threadID = StringUtils.randomString(6);
-        }
-        messageBuilder.setThread(threadID);
-
         if ( privateChat )
         {
             // XEP-0045: 7.5 Sending a Private Message
@@ -294,6 +289,18 @@ public class ChatRoomImpl extends ChatRoom {
         messageBuilder.addExtension( new ChatStateExtension( ChatState.active ) );
         messageBuilder.to(participantJID);
         messageBuilder.from(SparkManager.getSessionManager().getJID());
+
+        // If the message has the Thread then use it, otherwise continue in existing or generate a new Thread
+        String msgThread = messageBuilder.getThread();
+        if (msgThread != null) {
+            threadID = msgThread;
+        } else {
+            if (threadID == null) {
+                threadID = StringUtils.randomString(6);
+            }
+            messageBuilder.setThread(threadID);
+        }
+
         Message message = messageBuilder.build();
 
         displaySendMessage( message );
