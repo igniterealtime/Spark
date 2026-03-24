@@ -38,7 +38,6 @@ import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jxmpp.jid.DomainBareJid;
 import org.jxmpp.jid.EntityBareJid;
-import org.jxmpp.jid.Jid;
 import org.jxmpp.jid.impl.JidCreate;
 import org.jxmpp.jid.parts.Localpart;
 import org.jxmpp.jid.parts.Resourcepart;
@@ -115,7 +114,7 @@ public class ConferenceUtils {
      * @param roomName    the name of the room.
      * @param jids        a collection of the users to invite.
      */
-    public static void inviteUsersToRoom(EntityBareJid roomName, Collection<Jid> jids, boolean randomName) {
+    public static void inviteUsersToRoom(EntityBareJid roomName, Collection<EntityBareJid> jids, boolean randomName) {
         boolean useTextField = pref.isUseAdHocRoom();
         List<BookmarkedConference> rooms = null;
         if (!useTextField) {

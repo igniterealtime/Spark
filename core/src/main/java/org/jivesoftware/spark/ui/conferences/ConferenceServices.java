@@ -236,12 +236,12 @@ public class ConferenceServices implements InvitationListener {
             return;
         }
         final ContactList contactList = SparkManager.getWorkspace().getContactList();
-        List<Jid> jids = new ArrayList<>(items.size());
+        List<EntityBareJid> jids = new ArrayList<>(items.size());
         for (ContactItem item : items) {
             ContactGroup contactGroup = contactList.getContactGroup(item.getGroupName());
             contactGroup.clearSelection();
             if (item.isAvailable()) {
-                jids.add(item.getJid());
+                jids.add(item.getJid().asEntityBareJidIfPossible());
             }
         }
         String userName = SparkManager.getSessionManager().getJID().getLocalpart().toString();

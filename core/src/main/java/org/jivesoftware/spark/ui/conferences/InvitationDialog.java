@@ -245,7 +245,7 @@ final class InvitationDialog extends JPanel {
         return null;
     }
 
-    public void inviteUsersToRoom(List<BookmarkedConference> rooms, EntityBareJid adHocRoomName, Collection<Jid> jids) {
+    public void inviteUsersToRoom(List<BookmarkedConference> rooms, EntityBareJid adHocRoomName, Collection<EntityBareJid> jids) {
         fillRoomsUI(rooms, adHocRoomName);
         JFrame parent = SparkManager.getChatManager().getChatContainer().getChatFrame();
         if (parent == null || !parent.isVisible()) {
