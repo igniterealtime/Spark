@@ -263,31 +263,19 @@ public class SparkTransferManager {
         EntityBareJid bareJID = requestor.asEntityBareJidOrThrow();
         String fileName = request.getFileName();
 
-
         ContactItem contactItem = contactList.getContactItemByJID(bareJID);
-
-        ChatRoom chatRoom;
-        if (contactItem != null) {
-            chatRoom = SparkManager.getChatManager().createChatRoom(bareJID, contactItem.getDisplayName(), contactItem.getDisplayName());
-        }
-        else {
-            chatRoom = SparkManager.getChatManager().createChatRoom(bareJID, bareJID, bareJID);
-        }
+        String chatName = contactItem != null ? contactItem.getDisplayName() : bareJID.asUnescapedString();
+        ChatRoom chatRoom = SparkManager.getChatManager().createChatRoom(bareJID, chatName, chatName);
 
         TranscriptWindow transcriptWindow = chatRoom.getTranscriptWindow();
         transcriptWindow.insertCustomText(Res.getString("message.file.transfer.chat.window"), true, false, Color.BLACK);        
 
         final ReceiveFileTransfer receivingMessageUI = new ReceiveFileTransfer(chatRoom);
         receivingMessageUI.acceptFileTransfer(request);
-
         chatRoom.addClosingListener(receivingMessageUI::cancelTransfer);
-        
         transcriptWindow.addComponent(receivingMessageUI);
-
         chatRoom.increaseUnreadMessageCount();
-
         chatRoom.scrollToBottom();
-        
         String fileTransMsg = contactItem.getDisplayName() + " " + Res.getString("message.file.transfer.short.message") + " " + fileName;
         SparkManager.getChatManager().getChatContainer().fireNotifyOnMessage(chatRoom, true, fileTransMsg, Res.getString("message.file.transfer.notification"));
     }
@@ -525,18 +513,12 @@ public class SparkTransferManager {
             if (list == null) {
                 list = new ArrayList<>();
             }
-
             list.add(file);
             waitMap.put(bareJid, list);
 
-            ChatRoom chatRoom;
             ContactItem contactItem = contactList.getContactItemByJID(jid);
-            if (contactItem != null) {
-                chatRoom = SparkManager.getChatManager().createChatRoom(bareJid, contactItem.getDisplayName(), contactItem.getDisplayName());
-            }
-            else {
-                chatRoom = SparkManager.getChatManager().createChatRoom(bareJid, jid, jid);
-            }
+            String chatName = contactItem != null ? contactItem.getDisplayName() : jid.asUnescapedString();
+            ChatRoom chatRoom = SparkManager.getChatManager().createChatRoom(bareJid, chatName, chatName);
 
             chatRoom.getTranscriptWindow().insertNotificationMessage("The user is offline. Will auto-send \"" + file.getName() + "\" when user comes back online.", ChatManager.ERROR_COLOR);
             return null;
@@ -545,20 +527,10 @@ public class SparkTransferManager {
         // Create the outgoing file transfer
         final OutgoingFileTransfer transfer = transferManager.createOutgoingFileTransfer(fullJID);
 
-
         ContactItem contactItem = contactList.getContactItemByJID(bareJid);
-
-        ChatRoom chatRoom;
-        if (contactItem != null) {
-            chatRoom = SparkManager.getChatManager().createChatRoom(bareJid, contactItem.getDisplayName(), contactItem.getDisplayName());
-        }
-        else {
-            chatRoom = SparkManager.getChatManager().createChatRoom(bareJid, bareJid.toString(), bareJid.toString());
-        }
-
-
+        String chatName = contactItem != null ? contactItem.getDisplayName() : bareJid.toString();
+        ChatRoom chatRoom = SparkManager.getChatManager().createChatRoom(bareJid, chatName, chatName);
         TranscriptWindow transcriptWindow = chatRoom.getTranscriptWindow();
-
         SendFileTransfer sendingUI = new SendFileTransfer(chatRoom);
         try {
             transfer.sendFile(file, "Sending file");
