@@ -23,7 +23,12 @@ import javax.swing.*;
 import javax.swing.text.*;
 import java.awt.*;
 import java.time.ZonedDateTime;
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.StringTokenizer;
+import java.util.function.Predicate;
+import java.util.regex.Pattern;
 
 import static javax.swing.text.StyleConstants.Foreground;
 import static org.jivesoftware.spark.ui.preview.ImagePreview.insertPicture;
@@ -42,7 +47,12 @@ import static org.jivesoftware.spark.ui.preview.NetworkAddressPreview.insertAddr
  */
 public class MessageEntry extends TimeStampedEntry
 {
-    public static final String DIRECTIVE_CHARS = "*_~`";
+    public static final String DIRECTIVE_CHARS = "*_~`#[";
+    private static final Predicate<String> CUSTOM_STYLE_NAME_MATCHER = Pattern.compile("_?[a-zA-Z]((-|_)?[a-zA-Z0-9]+)*").asMatchPredicate();
+    private static final SimpleAttributeSet DEFAULT_HIGHLIGHT_STYLE = new SimpleAttributeSet();
+    static {
+        StyleConstants.setBackground(DEFAULT_HIGHLIGHT_STYLE, Color.YELLOW);
+    }
     /**
      * Default background color (white/transparent)
      */
@@ -52,9 +62,55 @@ public class MessageEntry extends TimeStampedEntry
     protected final String message;
     protected final Color messageColor;
     protected final Color backgroundColor;
+    protected final Map<String, AttributeSet> customStyles;
 
     /**
      * Creates a new entry using the default background color (white/transparent).
+     *
+     * @param timestamp The timestamp of the entry (cannot be null).
+     * @param prefix The prefix of the message (typically, the name of the author of the message.
+     * @param prefixColor The color to be used for the timestamp and prefix text.
+     * @param message The message text itself.
+     * @param messageColor The color to be used for the message text.
+     */
+    public MessageEntry( ZonedDateTime timestamp, String prefix, Color prefixColor, String message, Color messageColor )
+    {
+        this( timestamp, false, prefix, prefixColor, message, messageColor, null );
+    }
+    
+    /**
+     * Creates a new entry using the default background color (white/transparent).
+     *
+     * @param timestamp The timestamp of the entry (cannot be null).
+     * @param isDelayed Set true if entry contain delayed delivery, historic timestamp.
+     * @param prefix The prefix of the message (typically, the name of the author of the message.
+     * @param prefixColor The color to be used for the timestamp and prefix text.
+     * @param message The message text itself.
+     * @param messageColor The color to be used for the message text.
+     */
+    public MessageEntry( ZonedDateTime timestamp, boolean isDelayed, String prefix, Color prefixColor, String message, Color messageColor )
+    {
+        this( timestamp, isDelayed, prefix, prefixColor, message, messageColor, null );
+    }
+
+    /**
+     * Creates a new entry using the default background color (white/transparent).
+     *
+     * @param timestamp The timestamp of the entry (cannot be null).
+     * @param prefix The prefix of the message (typically, the name of the author of the message.
+     * @param prefixColor The color to be used for the timestamp and prefix text.
+     * @param message The message text itself.
+     * @param messageColor The color to be used for the message text.
+     * @param backgroundColor The color to be used for the entire entry (prefix as well ass message text).
+     */
+    public MessageEntry( ZonedDateTime timestamp, String prefix, Color prefixColor, String message, Color messageColor, Color backgroundColor )
+    {
+        this( timestamp, false, prefix, prefixColor, message, messageColor,backgroundColor );
+
+    }
+    
+    /**
+     * Creates a new entry using a given background color (default is white/transparent).
      *
      * @param timestamp The timestamp of the entry (cannot be null).
      * @param isDelayed Set true if entry contain delayed delivery, historic timestamp.
@@ -66,12 +122,34 @@ public class MessageEntry extends TimeStampedEntry
      */
     public MessageEntry( ZonedDateTime timestamp, boolean isDelayed, String prefix, Color prefixColor, String message, Color messageColor, Color backgroundColor )
     {
+        this(timestamp, isDelayed, prefix, prefixColor, message, messageColor, backgroundColor, Map.of());
+    }
+
+    /**
+     * Creates a new entry using a given background color and optional custom styles to be applied like
+     *      * <a href="https://docs.asciidoctor.org/asciidoc/latest/text/custom-inline-styles/">Asciidoc Custom Inline Styles</a>:
+     *      * <p>{@code [.style-name]#my styled text#} will have the effect of applying the style corresponding to {@code style-name} in {@code customStyles} parameter, to the text between {@code #} characters.
+     *
+     * @param timestamp The timestamp of the entry (cannot be null).
+     * @param isDelayed Set true if entry contain delayed delivery, historic timestamp.
+     * @param prefix The prefix of the message (typically, the name of the author of the message.
+     * @param prefixColor The color to be used for the timestamp and prefix text.
+     * @param message The message text itself.
+     * @param messageColor The color to be used for the message text.
+     * @param customStyles custom styles to be applied to specific parts of the message in the same manner as Asciidoc custom inline styles.
+     */
+    public MessageEntry( ZonedDateTime timestamp, boolean isDelayed, String prefix, Color prefixColor, String message, Color messageColor, Color backgroundColor, Map<String, AttributeSet> customStyles )
+    {
         super( timestamp, isDelayed );
         this.prefix = prefix == null ? "" : prefix;
         this.prefixColor = prefixColor;
         this.message = message;
         this.messageColor = messageColor;
         this.backgroundColor = backgroundColor != null ? backgroundColor : COLOR_MSG_BG;
+        if(customStyles.keySet().stream().anyMatch(styleName -> !CUSTOM_STYLE_NAME_MATCHER.test(styleName))) {
+            throw new IllegalArgumentException("One of the input custom style names is invalid: " + customStyles.keySet());
+        }
+        this.customStyles = customStyles;
     }
 
     protected MutableAttributeSet getPrefixStyle()
@@ -147,11 +225,46 @@ public class MessageEntry extends TimeStampedEntry
                         char charAtFrom = line.charAt(from);
                         if (DIRECTIVE_CHARS.indexOf(charAtFrom) != -1) {
                             char directive = charAtFrom;
-                            to = line.indexOf(directive, from + 1); // directive closing
-                            if (to != -1 && !Character.isWhitespace(line.charAt(to - 1)) && (to - from) > 1) {
-                                String fragment = line.substring(from + 1, to++);
-                                insertFragment(chatArea, fragment, applyMessageStyle(directive, messageStyle));
-                                continue;
+                            /*
+                                If the matched directive char is [, check whether this is '[.style-name]#sometext#', where style-name is one of the names in customStyles, in which case apply that custom inline style (Asciidoc-like)
+                                 */
+                            final AttributeSet fragmentSpecificStyle;
+                            if(directive == '[') {
+                                if(line.charAt(from+1) == '.') {
+                                    // style-name is at least one character, therefore look for ] from 'from+3' position
+                                    final int closingSquareBracketIndex = line.indexOf(']', from + 3);
+                                    if (closingSquareBracketIndex != -1 && line.charAt(closingSquareBracketIndex + 1) == '#') {
+                                        final String appliedStyleName = line.substring(from + 2, closingSquareBracketIndex);
+                                        if (!customStyles.containsKey(appliedStyleName)) {
+                                            Log.error("The message text is using a custom inline style named '" + appliedStyleName + "' but no such style has been defined. Ignoring.");
+                                            fragmentSpecificStyle = null;
+                                        } else {
+                                            fragmentSpecificStyle = customStyles.get(appliedStyleName);
+                                            directive = '#';
+                                            from = closingSquareBracketIndex + 1;
+                                            Log.debug("Applying custom inline style '" + appliedStyleName + "' to the text between #");
+                                        }
+                                    } else {
+                                        fragmentSpecificStyle = null;
+                                    }
+                                } else {
+                                    fragmentSpecificStyle = null;
+                                }
+                            } else if(directive == '#') {
+                                /*
+                                    If the matched directive char is #, highlight (in yellow) the text between # (no custom inline style here, as it was already handled in previous case above).
+                                */
+                                fragmentSpecificStyle = DEFAULT_HIGHLIGHT_STYLE;
+                            } else {
+                                fragmentSpecificStyle = applyMessageStyle(directive, messageStyle);
+                            }
+                            if(fragmentSpecificStyle != null) {
+                                to = line.indexOf(directive, from + 1); // directive closing
+                                if (to != -1 && !Character.isWhitespace(line.charAt(to - 1)) && (to - from) > 1) {
+                                    String fragment = line.substring(from + 1, to++);
+                                    insertFragment(chatArea, fragment, applyMessageStyle(directive, messageStyle));
+                                    continue;
+                                }
                             }
                         }
 
@@ -182,7 +295,7 @@ public class MessageEntry extends TimeStampedEntry
         // chatArea.setCaretPosition( doc.getLength() );
     }
 
-    protected void insertFragment(ChatArea chatArea, String fragment, MutableAttributeSet style) throws BadLocationException {
+    protected void insertFragment(ChatArea chatArea, String fragment, AttributeSet style) throws BadLocationException {
         if (insertPicture(chatArea, fragment, style)) return;
         if (insertLink(chatArea.getDocument(), fragment, style)) return;
         if (insertAddress(chatArea.getDocument(), fragment, style)) return;
