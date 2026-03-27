@@ -1,11 +1,7 @@
 package org.jivesoftware.spark.ui.preview;
 
 import javax.swing.*;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Document;
-import javax.swing.text.MutableAttributeSet;
-import javax.swing.text.SimpleAttributeSet;
-import javax.swing.text.StyleConstants;
+import javax.swing.text.*;
 import java.awt.*;
 
 public class NetworkAddressPreview {
@@ -16,7 +12,7 @@ public class NetworkAddressPreview {
      * @param address - the address to insert( ex. \superpc\etc\file\ OR http://localhost/ )
      * @throws BadLocationException if the location is not available for insertion.
      */
-    public static Boolean insertAddress(Document doc, String address, MutableAttributeSet style)
+    public static Boolean insertAddress(Document doc, String address, AttributeSet style)
     {
         if (address.startsWith("\\\\") ||
             (address.indexOf("://") > 0 && address.indexOf(".") < 1)) {

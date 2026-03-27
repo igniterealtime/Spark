@@ -518,7 +518,7 @@ public class GroupChatRoom extends ChatRoom {
                 return;
             }
             if (ModelUtil.hasLength(message.getBody())) {
-                final Resourcepart from = message.getFrom().getResourceOrThrow();
+                final Resourcepart from = message.getFrom().getResourceOrEmpty();
                 if (inf != null) {
                     // This is part of the MUC history. No need to add it to the transcript again.
                     // Add to the UI component that shows the chat.
@@ -528,8 +528,8 @@ public class GroupChatRoom extends ChatRoom {
                     if (isBlocked(message.getFrom().asEntityFullJidIfPossible())) {
                         return;
                     }
-                    final boolean isFromRoom = !message.getFrom().hasNoResource();
-                    if (!isFromRoom && SparkManager.getUserManager().getOccupant(this, from) == null) {
+                    final boolean isFromRoomOccupant = message.getFrom().hasResource();
+                    if (isFromRoomOccupant && SparkManager.getUserManager().getOccupant(this, from) == null) {
                         return;
                     }
                     // Update transcript
