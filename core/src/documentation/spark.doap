@@ -163,8 +163,16 @@
         </implements>
         <implements>
             <xmpp:SupportedXep>
-                <xmpp:xep rdf:resource="https://xmpp.org/extensions/xep-0147.html"/>
+                <xmpp:xep rdf:resource='https://xmpp.org/extensions/xep-0138.html'/>
                 <xmpp:status>complete</xmpp:status>
+                <xmpp:note>Disabled by default, may reduce security due to CRIME attack https://blog.thijsalkema.de/blog/2014/08/07/https-attacks-and-xmpp-2-crime-and-breach/.</xmpp:note>
+            </xmpp:SupportedXep>
+        </implements>
+        <implements>
+            <xmpp:SupportedXep>
+                <xmpp:xep rdf:resource="https://xmpp.org/extensions/xep-0147.html"/>
+                <xmpp:status>partial</xmpp:status>
+                <xmpp:note>Supported: ?message, ?join, ?invite, ?subscribe, ?unsubscribe, ?roster, ?remove, ?register, ?vcard, ?command (only execute action, supports form param)</xmpp:note>
             </xmpp:SupportedXep>
         </implements>
         <implements>
@@ -224,6 +232,12 @@
         </implements>
         <implements>
             <xmpp:SupportedXep>
+                <xmpp:xep rdf:resource='https://xmpp.org/extensions/xep-0280.html'/>
+                <xmpp:status>complete</xmpp:status>
+            </xmpp:SupportedXep>
+        </implements>
+        <implements>
+            <xmpp:SupportedXep>
                 <xmpp:xep rdf:resource="https://xmpp.org/extensions/xep-0363.html"/>
                 <xmpp:status>complete</xmpp:status>
                 <xmpp:note>Http File Upload Plugin (fileupload)</xmpp:note>
@@ -234,6 +248,14 @@
                 <xmpp:xep rdf:resource="https://xmpp.org/extensions/xep-0364.html"/>
                 <xmpp:status>complete</xmpp:status>
                 <xmpp:note>Off the Record (OTR) Plugin</xmpp:note>
+                <xmpp:since>3.1.0</xmpp:since>
+            </xmpp:SupportedXep>
+        </implements>
+        <implements>
+            <xmpp:SupportedXep>
+                <xmpp:xep rdf:resource="https://xmpp.org/extensions/xep-0380.html"/>
+                <xmpp:status>complete</xmpp:status>
+                <xmpp:since>3.1.0</xmpp:since>
             </xmpp:SupportedXep>
         </implements>
         <implements>
