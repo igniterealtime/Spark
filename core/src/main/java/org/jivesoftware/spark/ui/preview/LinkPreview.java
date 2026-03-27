@@ -1,11 +1,7 @@
 package org.jivesoftware.spark.ui.preview;
 
 import javax.swing.*;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Document;
-import javax.swing.text.MutableAttributeSet;
-import javax.swing.text.SimpleAttributeSet;
-import javax.swing.text.StyleConstants;
+import javax.swing.text.*;
 import java.awt.*;
 
 public class LinkPreview {
@@ -16,7 +12,7 @@ public class LinkPreview {
      * @param link - the link to insert e.g., https://example.org/
      * @throws BadLocationException if the location is not available for insertion.
      */
-    public static boolean insertLink(Document doc, String link, MutableAttributeSet style)
+    public static boolean insertLink(Document doc, String link, AttributeSet style)
     {
         if ((link.startsWith("https://") || link.startsWith("http://") ||
             link.startsWith("ftp://") ||
@@ -31,7 +27,7 @@ public class LinkPreview {
         else { return false; }
     }
 
-    static void addLink(Document doc, String link, MutableAttributeSet style)  {
+    static void addLink(Document doc, String link, AttributeSet style)  {
         // Create a new style, based on the style used for generic text, for the link.
         final MutableAttributeSet linkStyle = new SimpleAttributeSet(style.copyAttributes());
         StyleConstants.setForeground(linkStyle, (Color) UIManager.get("Link.foreground"));

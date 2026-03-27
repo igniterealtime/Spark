@@ -6,11 +6,7 @@ import org.jivesoftware.spark.util.log.Log;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.MutableAttributeSet;
-import javax.swing.text.SimpleAttributeSet;
-import javax.swing.text.StyleConstants;
-import javax.swing.text.StyledDocument;
+import javax.swing.text.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.net.URI;
@@ -26,7 +22,7 @@ public class ImagePreview {
      * @param url - the link to the content to insert e.g., https://example.org/hello.gif
      * @throws BadLocationException if the location is not available for insertion.
      */
-    public static boolean insertPicture(ChatArea chatArea, String url, MutableAttributeSet messageStyle) {
+    public static boolean insertPicture(ChatArea chatArea, String url, AttributeSet messageStyle) {
         // TODO: instead of operating on message text content, operate on message stanza metadata.
         // TODO: do not download each time. Cache downloaded data.
         // TODO: make resized image clickable (open in unresized size).

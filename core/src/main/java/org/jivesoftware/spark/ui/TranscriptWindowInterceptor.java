@@ -17,6 +17,8 @@ package org.jivesoftware.spark.ui;
 
 import org.jivesoftware.smack.packet.Message;
 
+import java.util.Date;
+
 /**
  * Allows users to intercept messages before they are inserted into the TranscriptWindow.
  *
@@ -35,4 +37,18 @@ public interface TranscriptWindowInterceptor {
      */
     boolean isMessageIntercepted(TranscriptWindow window, String userid, Message message);
 
+    /**
+     * Is called before a historic text message by this user is inserted into the TranscriptWindow.
+     * History messages are typically messages that were added to a chat before the local user joined the chat.
+     *
+     * @param window  the TranscriptWindow.
+     * @param userid  the userid.
+     * @param message the message to be inserted.
+     * @param date    the timestamp of the message
+     * @return true if it should be handled by a custom interceptor.
+     */
+    default boolean isHistoryMessageIntercepted(TranscriptWindow window, String userid, Message message, Date date)
+    {
+        return false;
+    }
 }
