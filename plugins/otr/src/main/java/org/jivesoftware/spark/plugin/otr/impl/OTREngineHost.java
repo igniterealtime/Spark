@@ -1,18 +1,19 @@
 package org.jivesoftware.spark.plugin.otr.impl;
 
 import static net.java.otr4j.session.FragmenterInstructions.UNLIMITED;
+import static org.jivesoftware.smackx.eme.element.ExplicitMessageEncryptionElement.ExplicitMessageEncryptionProtocol.otrV0;
 
 import java.awt.*;
 import java.security.KeyPair;
-import java.util.List;
 
-import net.java.otr4j.crypto.OtrCryptoEngine;
 import net.java.otr4j.session.*;
-import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.StanzaBuilder;
-import org.jivesoftware.smack.util.StringUtils;
+import org.jivesoftware.smackx.carbons.packet.CarbonExtension;
+import org.jivesoftware.smackx.eme.element.ExplicitMessageEncryptionElement;
+import org.jivesoftware.smackx.hints.element.NoCopyHint;
+import org.jivesoftware.smackx.hints.element.NoPermanentStoreHint;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.plugin.otr.OTRManager;
 import org.jivesoftware.spark.plugin.otr.util.OTRResources;
@@ -23,7 +24,6 @@ import net.java.otr4j.OtrException;
 import net.java.otr4j.OtrPolicy;
 import org.jivesoftware.spark.util.log.Log;
 
-import javax.net.ssl.HandshakeCompletedEvent;
 import javax.swing.*;
 
 /**
@@ -128,13 +128,17 @@ public class OTREngineHost implements OtrEngineHost {
 
     @Override
     public void injectMessage(SessionID sessionID, String msg) {
-        String threadID = StringUtils.randomString(6);
+        String threadID = _chatRoom.getThreadID();
         Message injection = StanzaBuilder.buildMessage()
             .ofType(Message.Type.chat)
             .setThread(threadID)
             .setBody(msg)
             .to(_chatRoom.getParticipantJID())
             .from(SparkManager.getSessionManager().getJID())
+            .addExtension(new ExplicitMessageEncryptionElement(otrV0))
+            .addExtension(NoCopyHint.INSTANCE)
+            .addExtension(NoPermanentStoreHint.INSTANCE)
+            .addExtension(CarbonExtension.Private.INSTANCE)
             .build();
         try
         {

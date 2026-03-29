@@ -21,6 +21,7 @@ import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smackx.delay.packet.DelayInformation;
+import org.jivesoftware.smackx.eme.element.ExplicitMessageEncryptionElement;
 import org.jivesoftware.smackx.jiveproperties.packet.JivePropertiesExtension;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.SparkManager;
@@ -260,9 +261,15 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener
             isDelayed = false;
         }
 
-        String body = getMessageBodyByLang(message);
-        if (body == null) {
-            return;
+        String body;
+        ExplicitMessageEncryptionElement eme = message.getExtension(ExplicitMessageEncryptionElement.class);
+        if (eme != null) {
+            body = Res.getString("message.is_encrypted", eme.getEncryptionNamespace());
+        } else {
+            body = getMessageBodyByLang(message);
+            if (body == null) {
+                return;
+            }
         }
         add( new MessageEntry( sentDate, isDelayed, nicknameStr, foreground, body, (Color) UIManager.get( "Message.foreground" ), background ) );
     }

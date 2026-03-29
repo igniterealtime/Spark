@@ -80,7 +80,7 @@ public class OTRManager {
                 if (presence.isAvailable()) {
                     return false;
                 }
-                if (OTRProperties.getInstance().getOTRCloseOnDisc()) {
+                if (OTRProperties.getInstance().getOTRCloseOnDisconnect()) {
                     OTRSession otrSession = getOtrSession(item.getJid().toString());
                     if (otrSession != null) {
                         otrSession.stopSession();
@@ -104,9 +104,9 @@ public class OTRManager {
                     _keyManager = new OtrKeyManagerImpl(store);
                     // We should generate a local key if there is no available
                     EntityFullJid userJid = SparkManager.getConnection().getUser();
-                    String key = _keyManager.getLocalFingerprint(new SessionID(userJid.toString(), "none", "Scytale"));
+                    String key = _keyManager.getLocalFingerprint(new SessionID(userJid.toString(), "none", "prpl-jabber"));
                     if (key == null) {
-                        _keyManager.generateLocalKeyPair(new SessionID(userJid.toString(), "none", "Scytale"));
+                        _keyManager.generateLocalKeyPair(new SessionID(userJid.toString(), "none", "prpl-jabber"));
                     }
                 } catch (IOException e) {
                     Log.error(e);

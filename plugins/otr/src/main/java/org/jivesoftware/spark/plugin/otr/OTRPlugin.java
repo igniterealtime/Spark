@@ -21,6 +21,7 @@ public class OTRPlugin implements Plugin {
         // The following will add an Entry into the Spark Preferences Window
         Preference mypreference = new OTRPreferences();
         SparkManager.getPreferenceManager().addPreference(mypreference);
+        SparkManager.addFeature("urn:xmpp:otr:0"); // XEP-0380
     }
 
     @Override

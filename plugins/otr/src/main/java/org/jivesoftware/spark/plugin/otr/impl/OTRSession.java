@@ -13,7 +13,10 @@ import net.java.otr4j.session.SessionImpl;
 
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.MessageBuilder;
+import org.jivesoftware.smackx.carbons.packet.CarbonExtension;
 import org.jivesoftware.smackx.eme.element.ExplicitMessageEncryptionElement;
+import org.jivesoftware.smackx.hints.element.NoCopyHint;
+import org.jivesoftware.smackx.hints.element.NoPermanentStoreHint;
 import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.plugin.otr.OTRManager;
 import org.jivesoftware.spark.plugin.otr.ui.OTRConnectionPanel;
@@ -66,7 +69,7 @@ public class OTRSession {
         _chatRoom = chatroom;
         _remoteJID = remoteJID;
         OtrEngineHost _otrEngineHost = new OTREngineHost(OTR_POLICY, _chatRoom);
-        _mySessionID = new SessionID(myJID, _remoteJID, "Scytale");
+        _mySessionID = new SessionID(myJID, _remoteJID, "prpl-jabber");
 
         _mySession = new SessionImpl(_mySessionID, _otrEngineHost);
 
@@ -116,8 +119,10 @@ public class OTRSession {
                     String[] encodedMsg = _mySession.transformSending(msgBody);
                     String encodedMsgBody = encodedMsg.length == 1 ? encodedMsg[0] : String.join("", encodedMsg);
                     message.setBody(encodedMsgBody);
-                    ExplicitMessageEncryptionElement eme = new ExplicitMessageEncryptionElement(otrV0);
-                    message.addExtension(eme);
+                    message.addExtension(new ExplicitMessageEncryptionElement(otrV0));
+                    message.addExtension(NoCopyHint.INSTANCE);
+                    message.addExtension(NoPermanentStoreHint.INSTANCE);
+                    message.addExtension(CarbonExtension.Private.INSTANCE);
                 } catch (OtrException e) {
                     _chatRoom.getTranscriptWindow().insertNotificationMessage(OTRResources.getString("otr.failed.to.decode"), ChatManager.ERROR_COLOR);
                     Log.error("An exception occurred while trying to send a message: " + msgBody, e);
@@ -140,6 +145,8 @@ public class OTRSession {
                             if (decoded != null) {
                                 message.setBody(decoded);
                             }
+                            // clear the EME extension, since we decoded the message
+                            message.removeExtension(ExplicitMessageEncryptionElement.ELEMENT, ExplicitMessageEncryptionElement.NAMESPACE);
                         }
                     } catch (OtrException e) {
                         clearMsgBody(message);

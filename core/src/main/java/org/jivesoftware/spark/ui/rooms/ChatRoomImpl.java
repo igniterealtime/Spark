@@ -82,6 +82,10 @@ public class ChatRoomImpl extends ChatRoom {
 
     private boolean offlineSent;
 
+    /**
+     * Thread ID of the last message sent. This is used to group messages together.
+     * Use {@link #getThreadID()} to get the current thread ID. It will generate it if necessary.
+     */
     private String threadID;
 
     private long lastActivity;
@@ -295,10 +299,7 @@ public class ChatRoomImpl extends ChatRoom {
         if (msgThread != null) {
             threadID = msgThread;
         } else {
-            if (threadID == null) {
-                threadID = StringUtils.randomString(6);
-            }
-            messageBuilder.setThread(threadID);
+            messageBuilder.setThread(getThreadID());
         }
 
         Message message = messageBuilder.build();
@@ -427,6 +428,13 @@ public class ChatRoomImpl extends ChatRoom {
         return participantJID;
     }
 
+    public String getThreadID() {
+        if (threadID == null) {
+            threadID = StringUtils.randomString(6);
+        }
+        return threadID;
+    }
+
     /**
      * Process incoming packets.
      *
@@ -502,10 +510,6 @@ public class ChatRoomImpl extends ChatRoom {
                     if ( threadID == null )
                     {
                         threadID = message.getThread();
-                        if ( threadID == null )
-                        {
-                            threadID = StringUtils.randomString( 6 );
-                        }
                     }
 
                     final JivePropertiesExtension extension = message.getExtension(JivePropertiesExtension.class);
@@ -891,18 +895,13 @@ public class ChatRoomImpl extends ChatRoom {
             return;
         }
 
-        MessageBuilder messageBuilder = StanzaBuilder.buildMessage()
-            .ofType( Message.Type.chat );
-
-        if (threadID == null) {
-            threadID = StringUtils.randomString(6);
-        }
-        messageBuilder.setThread(threadID);
-        messageBuilder.addExtension( new ChatStateExtension( state ) );
-        messageBuilder.to(participantJID);
-        messageBuilder.from(SparkManager.getSessionManager().getJID());
-
-        Message message = messageBuilder.build();
+        Message message = StanzaBuilder.buildMessage()
+            .ofType(Message.Type.chat)
+            .setThread(getThreadID())
+            .addExtension(new ChatStateExtension(state))
+            .to(participantJID)
+            .from(SparkManager.getSessionManager().getJID())
+            .build();
         SparkManager.getConnection().sendStanza( message );
     }
 }

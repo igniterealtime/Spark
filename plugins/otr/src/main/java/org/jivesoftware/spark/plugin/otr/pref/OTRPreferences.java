@@ -55,7 +55,7 @@ public class OTRPreferences implements Preference {
     public void commit() {
         OTRProperties.getInstance().setIsOTREnabled(pref.isOTREnabled());
         OTRProperties.getInstance().setOTRCloseOnChatClose(pref.isCloseOnChatClose());
-        OTRProperties.getInstance().setOTRCloseOnDisc(pref.isCloseOnDisc());
+        OTRProperties.getInstance().setOTRCloseOnDisconnect(pref.isCloseOnDisc());
         OTRProperties.getInstance().save();
     }
 

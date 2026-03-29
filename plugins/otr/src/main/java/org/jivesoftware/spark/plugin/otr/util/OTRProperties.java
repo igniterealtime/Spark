@@ -59,11 +59,11 @@ public class OTRProperties {
         setBoolean("isOTREnabeld", enabled);
     }
 
-    public boolean getOTRCloseOnDisc() {
+    public boolean getOTRCloseOnDisconnect() {
         return getBoolean("OTRCloseOnDisc", true);
     }
 
-    public void setOTRCloseOnDisc(boolean enabled) {
+    public void setOTRCloseOnDisconnect(boolean enabled) {
         setBoolean("OTRCloseOnDisc", enabled);
     }
 
