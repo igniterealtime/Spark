@@ -37,22 +37,24 @@ import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.StanzaListener;
-import org.jivesoftware.smack.packet.StanzaBuilder;
-import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.filter.StanzaFilter;
 import org.jivesoftware.smack.filter.StanzaTypeFilter;
 import org.jivesoftware.smack.packet.Message;
-import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smack.packet.Stanza;
+import org.jivesoftware.smack.packet.StanzaBuilder;
+import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smackx.debugger.EnhancedDebuggerWindow;
 import org.jivesoftware.smackx.delay.packet.DelayInformation;
 import org.jivesoftware.smackx.jiveproperties.packet.JivePropertiesExtension;
 import org.jivesoftware.smackx.muc.packet.GroupChatInvitation;
 import org.jivesoftware.smackx.vcardtemp.packet.VCard;
+import org.jivesoftware.smackx.xevent.MessageEventManager;
 import org.jivesoftware.spark.component.tabbedPane.SparkTabbedPane;
 import org.jivesoftware.spark.filetransfer.SparkTransferManager;
 import org.jivesoftware.spark.search.SearchManager;
 import org.jivesoftware.spark.ui.ChatContainer;
+import org.jivesoftware.spark.ui.ChatFrame;
 import org.jivesoftware.spark.ui.ChatRoom;
 import org.jivesoftware.spark.ui.ChatRoomNotFoundException;
 import org.jivesoftware.spark.ui.CommandPanel;
@@ -396,9 +398,11 @@ public class Workspace extends JPanel implements StanzaListener {
             }
         }
         // Create the room if it does not exist.;
-        ChatRoom room = SparkManager.getChatManager().createChatRoom(bareJID, nickname, nickname);
-        if (!SparkManager.getChatManager().getChatContainer().getChatFrame().isVisible()) {
-            SparkManager.getChatManager().getChatContainer().getChatFrame().setVisible(true);
+        ChatManager chatManager = SparkManager.getChatManager();
+        ChatRoom room = chatManager.createChatRoom(bareJID, nickname, nickname);
+        ChatFrame chatFrame = chatManager.getChatContainer().getChatFrame();
+        if (!chatFrame.isVisible()) {
+            chatFrame.setVisible(true);
         }
         // Insert offline message
         room.getTranscriptWindow().insertMessage(nickname, message, ChatManager.FROM_COLOR);
@@ -406,8 +410,9 @@ public class Workspace extends JPanel implements StanzaListener {
         // Save the message to history immediately.
         SparkManager.getWorkspace().getTranscriptPlugin().persistChatRoom(room);
         // Send display and notified message back.
-        SparkManager.getMessageEventManager().sendDeliveredNotification(message.getFrom(), message.getStanzaId());
-        SparkManager.getMessageEventManager().sendDisplayedNotification(message.getFrom(), message.getStanzaId());
+        MessageEventManager messageEventManager = SparkManager.getMessageEventManager();
+        messageEventManager.sendDeliveredNotification(message.getFrom(), message.getStanzaId());
+        messageEventManager.sendDisplayedNotification(message.getFrom(), message.getStanzaId());
     }
 
     /**
