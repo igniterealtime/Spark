@@ -1,54 +1,34 @@
 <html>
 <head>
-    <title>Sparkplug Development Guide</title>
+    <title>Plugin Development Guide</title>
     <link href="style.css" rel="stylesheet" type="text/css">
 </head>
 
 <body>
-<div id="bannerbox">
-<table cellpadding="0" cellspacing="0" border="0" width="100%">
-    <tbody>
-        <tr>
-            <td width="99%" class="spring" title="Spark"></td>
-            <td width="1%"><a href="spark" title="Developing Sparkplugs"><img src="images/banner-spark.gif" border="0" alt="Spark" /></a></td>
-        </tr>
-      </table>
-</div>
-<br/>
-<h3>What Are Sparkplugs?</h3>
+<h1>What are Spark plugins?</h1>
 
-<p>Sparkplugs dynamically extend the features of the <a href="http://www.jivesoftware.org/spark">Spark</a> instant messaging client.
-Use Sparkplugs to customize Spark for your business or organization or to add an innovative twist to instant messaging. The
+<p>A plugin dynamically extends the features of the Spark instant messaging client.
+Use them to customize Spark for your business or organization or to add an innovative twist to instant messaging. The
 extensive plugin API allows for complete client flexibility but is still simple and (we hope!) fun to use.</p>
 
-<p>This guide provides a high level overview of the Sparkplug API and examples of several common client customizations. Or, jump
-directly into the <a href="api/index.html">Javadocs</a>.
+<p>This guide provides a high level overview of the Plugin API and examples of several common client customizations.
+Or, jump directly into the <a href="api/index.html">JavaDocs</a>.
 </p>
 
-<h3>How to build</h3>
 
-<a href="sparkplug_compile.html">Spark Plugin Compile Guide</a>
-
-<h3>Once I Build It, Then What?</h3>
-<p>After you've built your amazingly cool Sparkplug, it's easy to rollout to your users. Just have them drop it in the plugins directory of
-their Spark installation. If your Sparkplug is generally useful, we hope you'll share it with the whole Spark community! To make your Sparkplug 
-available via the <a href="http://www.jivesoftware.org/spark/sparkplugs">public repository</a> at jivesoftware.org, submit it to 
-<a href="mailto:plugins@jivesoftware.org">plugins@jivesoftware.org</a>.</p>
-
-
-<h3>Contents</h3>
+<h2>Contents</h2>
 
 This document contains the following information:
 <ul>
 <li><a href="#clientOverview">Overview of the Spark Client</a>
-<li><a href="#overview">Overview of the Sparkplug API</a>
-<li><a href="api/index.html">Sparkplug Javadocs</a>
+<li><a href="#overview">Overview of the Plugin API</a>
+<li><a href="api/index.html">Plugin JavaDocs</a>
 <li><a href="#plugins">Structure Of A Plugin</a></li>
 <li><a href="#gettingStarted">Getting started writing your first plugin</a></li>
 <li><a href="#examples">Spark Examples and How-To's. Many examples of the most commonly asked questions when developing with Spark.</a>
 </ul>
 
-<h3><a id="clientOverview">Overview of the Spark Client</a></h3>
+<h2><a id="clientOverview">Overview of the Spark Client</a></h2>
 <p>
 The Spark client is designed with the idea that most users find the different aspects of a chat client familiar and easy to use.
 All components you see below are either accessible from the Workspace or ChatRoom object and can be manipulated based on your
@@ -61,7 +41,7 @@ needs.
 
 
 
-<h3><a id="overview">Overview of the Spark API</a></h3>
+<h2><a id="overview">Overview of the Spark API</a></h2>
 
 The Spark API provides a framework for adding extensions on top of the protocol and/or UI of the Spark client. For example, you could write your own message filter or add a button to a chat room and send files using the File Transfer API. The Spark API has the following characteristics:
 <ul>
@@ -77,7 +57,7 @@ The Spark API provides a framework for adding extensions on top of the protocol 
 </ul>
 <li> Event Handlers -- Spark contains numerous listeners and handlers to allow more pluggability into the Spark client. Some of the more common listeners and handlers are:
 <ul>
-<li> <a href="api/org/jivesoftware/spark/ui/ChatRoomListener.html">ChatRoomListener</a> (and ChatRoomListenerAdapter) -- Allows the plugin to listen for chat rooms being opened, closed and activated. You would generally use this to customize individual chat rooms.
+<li> <a href="api/org/jivesoftware/spark/ui/ChatRoomListener.html">ChatRoomListener</a> -- Allows the plugin to listen for chat rooms being opened, closed and activated. You would generally use this to customize individual chat rooms.
 
 
 <li> <a href="api/org/jivesoftware/spark/ui/MessageListener.html">MessageListener</a> -- Allows for notification when a message has been received or sent.
@@ -98,7 +78,7 @@ The Spark API provides a framework for adding extensions on top of the protocol 
 </ul>
 </ul>
 
-<h3><a id="plugins">Structure of a Plugin</a></h3>
+<h2><a id="plugins">Structure of a Plugin</a></h2>
 
 <p>Plugins are shipped as compressed JAR (Java Archive) files. The files in a plugin archive are as follows:</p>
 
@@ -107,7 +87,6 @@ The Spark API provides a framework for adding extensions on top of the protocol 
 <pre>myplugin.jar!/
  |- plugin.xml     &lt;- Plugin definition file
  |- libs/          &lt;- Contains all the class archives needed to run this plugin.
-
 </pre>
 </fieldset>
 
@@ -136,7 +115,26 @@ file might look like the following:
 </pre>
 </fieldset>
 
-<h3>Installing your Plugin</h3>
+Use Maven and create <code>pom.xml</code> file that extends parent POM
+<code>org.igniterealtime.spark.plugins:plugin</code>.
+
+<pre class="xml">
+    &lt;parent&gt;
+        &lt;groupId>org.igniterealtime.spark.plugins&lt;/groupId&gt;
+        &lt;artifactId>plugin&lt;/artifactId&gt;
+        &lt;version>3.1.0-SNAPSHOT&lt;/version&gt;
+    &lt;/parent&gt;
+
+    &lt;artifactId>myplugin&lt;/artifactId&gt;
+    &lt;version>0.1.0&lt;/version&gt;
+
+    &lt;name>My Plugin&lt;/name&gt;
+</pre>
+
+Then execute Maven command <code>mvn package</code> to create <code>/target/myplugin.jar</code> file.
+
+
+<h2>Installing your Plugin</h2>
 
 <p>
 You only need to drop your newly created <tt>jar file</tt> into the plugins directory of your Spark client install.
@@ -146,8 +144,8 @@ You only need to drop your newly created <tt>jar file</tt> into the plugins dire
 <fieldset>
     <legend>Directory Structure</legend>
 <pre>Spark/
- |- plugins/     &lt;- Put your Sparkplug jar file here
- |- lib/       &lt;- The main classes and libraries needed to run Live Assistant
+ |- plugins/     &lt;- Put your plugin jar file here
+ |- lib/       &lt;- The main classes and libraries needed to run the Spark
  |- resources/ &lt;- Contains other supportive documents and libraries
  |- docs/ &lt;- Help Manuals and the JavaDoc to help you develop your own plugins.
 </pre>
@@ -155,19 +153,18 @@ You only need to drop your newly created <tt>jar file</tt> into the plugins dire
 
 
 <p>Your plugin class must implement the
-<tt><a href="api/org/jivesoftware/spark/plugin/plugin.html">Plugin</a></tt>
-
+<tt><a href="api/org/jivesoftware/spark/plugin/Plugin.html">Plugin</a></tt>
 interface from the <a href="api/index.html">Spark Client API</a>. The Plugin interface has
 methods for initializing and shutting down the plugin.
 </p>
 
-<h2><a id="gettingStarted">Getting Started Writing Sparkplugs</a></h2>
+<h2><a id="gettingStarted">Getting started writing a plugin</a></h2>
 <p>
-In order to build your own Sparkplugs, you will need the Spark source code, which can be acquired with svn from
-<b>http://svn.igniterealtime.org/svn/repos/spark/</b> </p>
-To build an example plugin follow <a href="sparkplug_compile.html">Spark Plugin Compile Guide</a>
+In order to build your own plugin, you will need the Spark source code, which can be acquired with Git from
+<a href="https://github.com/igniterealtime/Spark.git">https://github.com/igniterealtime/Spark.git</a>
+</p>
 
-<h3><a id="examples">Spark How-To's</a></h3>
+<h2><a id="examples">Spark How-To's</a></h2>
 
 <ul>
 <li><a href="#simplePlugin">How do I create a simple plugin?</a>
@@ -198,7 +195,7 @@ To build an example plugin follow <a href="sparkplug_compile.html">Spark Plugin 
 
     <legend>Simple Plugin</legend>
 <pre class="java">
-package org.jivesoftware.spark.examples;
+package org.jivesoftware.spark.plugin.example;
 
 import org.jivesoftware.spark.plugin.Plugin;
 
@@ -213,7 +210,6 @@ public class ExamplePlugin implements Plugin {
      */
     public void initialize() {
         System.out.println("Welcome To Spark");
-
     }
 
     /**
@@ -248,9 +244,9 @@ public class ExamplePlugin implements Plugin {
 <h3 id="addTab">How to add your own Tab to the Spark Workspace?</h3>
 
 <ol>
-  <li>Implement Plugin.
-  <li>Retrieve the Workspace which is the UI for Spark.
-  <li>Retrieve the WorkspacePane which is the Tabbed Pane used by Spark.
+  <li>Implement the <code>Plugin</code> interface.
+  <li>Retrieve the <code>Workspace</code> which is the UI for Spark.
+  <li>Retrieve the <code>WorkspacePane</code> which is the Tabbed Pane used by Spark.
   <li>Add your own tab.
 </ol>
 
@@ -259,25 +255,21 @@ public class ExamplePlugin implements Plugin {
     <legend>Add a Tab to Spark</legend>
 <pre class="java">
 public class ExamplePlugin implements Plugin {
-.
-.
-.
+    // ...
+
     /**
      * Adds a tab to Spark
      */
     private void addTabToSpark(){
          // Get Workspace UI from SparkManager
         Workspace workspace = SparkManager.getWorkspace();
-
         // Retrieve the Tabbed Pane from the WorkspaceUI.
         JTabbedPane tabbedPane = workspace.getWorkspacePane();
-
         // Add own Tab.
         tabbedPane.addTab("My Plugin", new JButton("Hello"));
     }
-.
-.
-.
+
+    // ...
 }
 </pre>
 </fieldset>
@@ -285,9 +277,9 @@ public class ExamplePlugin implements Plugin {
 <h3 id="addContactListContextListener">How do I add a context menu listener to the contact list?</h3>
 
 <ol>
-  <li>Implement Plugin.
-  <li>Retrieve the ContactList which is part of Spark's Workspace.
-  <li>Add ContactListListener.
+  <li>Implement <code>Plugin</code>.
+  <li>Retrieve the <code>ContactList</code> which is part of Spark's <code>Workspace</code>.
+  <li>Add a <code>ContactListListener</code>.
 </ol>
 
 <fieldset>
@@ -297,10 +289,8 @@ public class ExamplePlugin implements Plugin {
   private void addContactListListener(){
          // Get Workspace UI from SparkManager
         Workspace workspace = SparkManager.getWorkspace();
-
         // Retrieve the ContactList from the Workspace
         ContactList contactList = workspace.getContactList();
-
         // Create an action to add to the Context Menu
         final Action sayHelloAction = new AbstractAction() {
             public void actionPerformed(ActionEvent actionEvent) {
@@ -335,10 +325,10 @@ public class ExamplePlugin implements Plugin {
 <h3 id="addChatRoomContextListener">How do I add my own ContextMenu Listener to a ChatRoom</h3>
 
 <ol>
-  <li>Implement Plugin.
-  <li>Add a ChatRoomListener to the ChatManager.
-  <li>Get either the TranscriptWindow or ChatInputEditor from the ChatRoom.
-  <li>Add a ContactMenuListener to the ChatArea.
+  <li>Implement <code>Plugin</code>.
+  <li>Add a <code>ChatRoomListener</code> to the <code>ChatManager</code>.
+  <li>Get either the <code>TranscriptWindow</code> or <code>ChatInputEditor</code> from the <code>ChatRoom</code>.
+  <li>Add a <code>ContactMenuListener</code> to the <code>ChatArea</code>.
 </ol>
 
 <fieldset>
@@ -351,14 +341,14 @@ public class ExamplePlugin implements Plugin {
 
         final ContextMenuListener listener = new ContextMenuListener() {
             public void poppingUp(Object object, JPopupMenu popup) {
-                final TranscriptWindow chatWindow = (TranscriptWindow)object;
+                TranscriptWindow chatWindow = (TranscriptWindow)object;
                 Action clearAction = new AbstractAction() {
                     public void actionPerformed(ActionEvent actionEvent) {
                         try {
                             chatWindow.insert("My own text :)");
                         }
                         catch (BadLocationException e) {
-                            e.printStackTrace();
+                            Log.error(e);
                         }
                     }
                 };
@@ -377,8 +367,8 @@ public class ExamplePlugin implements Plugin {
         };
 
         // Add a ChatRoomListener to the ChatManager to allow for notifications
-        // when a room is being opened. Note: I will use a ChatRoomListenerAdapter for brevity.
-        chatManager.addChatRoomListener(new ChatRoomListenerAdapter() {
+        // when a room is being opened.
+        chatManager.addChatRoomListener(new ChatRoomListener() {
             public void chatRoomOpened(ChatRoom room) {
                 room.getTranscriptWindow().addContextMenuListener(listener);
             }
@@ -408,11 +398,9 @@ public class ExamplePlugin implements Plugin {
      */
     private void addMenuToSpark(){
         // Retrieve the MainWindow UI from Spark.
-        final MainWindow mainWindow = SparkManager.getMainWindow();
-
+        MainWindow mainWindow = SparkManager.getMainWindow();
         // Create new Menu
         JMenu myPluginMenu = new JMenu("My Plugin Menu");
-
         // Create Action to test Menu install.
         Action showMessage = new AbstractAction() {
             public void actionPerformed(ActionEvent actionEvent) {
@@ -452,11 +440,11 @@ public class ExamplePlugin implements Plugin {
         ChatManager chatManager = SparkManager.getChatManager();
 
         // Create a new ChatRoomButton.
-        final ChatRoomButton button = new ChatRoomButton("Push Me");
+        ChatRoomButton button = new ChatRoomButton("Push Me");
 
 
         // Add to a new ChatRoom when the ChatRoom opens.
-        chatManager.addChatRoomListener(new ChatRoomListenerAdapter() {
+        chatManager.addChatRoomListener(new ChatRoomListener() {
             public void chatRoomOpened(ChatRoom room) {
                 room.getToolBar().addChatRoomButton(button);
             }
@@ -492,8 +480,7 @@ public class ExamplePlugin implements Plugin {
 </pre>
 See the SearchMe code below.
 <pre class="java"> 
-    
-package org.jivesoftware.spark.examples;
+package org.jivesoftware.spark.plugin.example;
 
 import org.jivesoftware.spark.search.Searchable;
 import org.jivesoftware.spark.SparkManager;
@@ -568,7 +555,6 @@ public class SearchMe implements Searchable {
      * off to be handled by the next listener. If no one handles it, then Spark will handle it.
      */
     private void addTransferListener(){
-
         SparkTransferManager transferManager = SparkManager.getTransferManager();
 
         transferManager.addTransferListener(new TransferListener() {
@@ -633,11 +619,8 @@ public class SearchMe implements Searchable {
      * Controls the UI of a ContactItem.
      */
     private void handleUIAndEventsOfContactItem(){
-
         ContactList contactList = SparkManager.getWorkspace().getContactList();
-
         ContactItem item = contactList.getContactItemByJID("paul@jivesoftware.com/spark");
-
         ContactItemHandler handler = new ContactItemHandler() {
             /**
              * Called when this users presence changes. You are responsible for changing the
@@ -725,7 +708,6 @@ public class SearchMe implements Searchable {
         };
 
         chatManager.addMessageFilter(messageFilter);
-
         // Just remember to remove your filter if need be.
     }
 </pre>
@@ -748,18 +730,13 @@ public class SearchMe implements Searchable {
      * Creates a person to person Chat Room and makes it the active chat.
      */
     private void createPersonToPersonChatRoom(){
-        
         // Get the ChatManager from Sparkmanager
         ChatManager chatManager = SparkManager.getChatManager();
-        
         // Create the room.
         ChatRoom chatRoom = chatManager.createChatRoom("don@jivesoftware.com", "Don The Man", "The Chat Title");
-        
         // If you wish to make this the active chat room.
-        
         // Get the ChatContainer (This is the container for all Chat Rooms)
         ChatContainer chatContainer = chatManager.getChatContainer();
-        
         // Ask the ChatContainer to make this chat the active chat.
         chatContainer.activateChatRoom(chatRoom);
     }
@@ -783,29 +760,24 @@ public class SearchMe implements Searchable {
      * Creates a person to person Chat Room and makes it the active chat.
      */
     private void createConferenceRoom() {
-
         // Get the ChatManager from Sparkmanager
         ChatManager chatManager = SparkManager.getChatManager();
-
         Collection serviceNames = null;
-
         // Get the service name you wish to use.
         try {
-            final MultiUserChatManager multiUserChatManager = MultiUserChatManager.getInstanceFor( SparkManager.getConnection() );
+            MultiUserChatManager multiUserChatManager = MultiUserChatManager.getInstanceFor( SparkManager.getConnection() );
             serviceNames = multiUserChatManager.getServiceNames();
         }
         catch (Exception e) {
-            e.printStackTrace();
+            Log.error(e);
         }
 
         // Create the room.
         ChatRoom chatRoom = chatManager.createConferenceRoom("BusinessChat", (String)serviceNames.toArray()[0]);
 
         // If you wish to make this the active chat room.
-
         // Get the ChatContainer (This is the container for all Chat Rooms)
         ChatContainer chatContainer = chatManager.getChatContainer();
-
         // Ask the ChatContainer to make this chat the active chat.
         chatContainer.activateChatRoom(chatRoom);
     }
@@ -817,25 +789,19 @@ public class SearchMe implements Searchable {
 <h3 id="addPreferences">How can I add my own Preferences?</h3>
 
 <ol>
-  <li>Implement Plugin.
-  <li>Create a class that implements Preference.
-  <li>Create a UI to associate with the Preference.
-  <li>Register your new Preference with the PreferenceManager.
+  <li>Implement <code>Plugin</code>.
+  <li>Create a class that implements <code>Preference</code>.
+  <li>Create a UI to associate with the <code>Preference</code>.
+  <li>Register your new Preference with the <code>PreferenceManager</code>.
 </ol>
 
 <fieldset>
 
     <legend>Creating a Preference</legend>
 <ul>
-<li>Create a class that implements Preference. 
+<li>Create a class that implements <code>Preference</code>.
 <pre class="java">
-/**
- * Copyright (C) 1999-2005 Jive Software. All rights reserved.
- *
- * This software is the proprietary information of Jive Software.
- * Use is subject to license terms.
- */
-package org.jivesoftware.spark.examples.preferences;
+package org.jivesoftware.spark.plugin.example.preferences;
 
 import org.jivesoftware.spark.preference.Preference;
 import org.jivesoftware.resource.LaRes;
@@ -909,7 +875,7 @@ public class MyPreferences implements Preference {
 
 <li>Create a UI class that your Preference will use.
 <pre class="java">
-package org.jivesoftware.spark.examples.preferences;
+package org.jivesoftware.spark.plugin.example.preferences;
 
 import org.jivesoftware.spark.util.ResourceUtils;
 
@@ -933,16 +899,13 @@ public class MyPreferenceUI extends JPanel {
      */
     public MyPreferenceUI() {
         setLayout(new FlowLayout(FlowLayout.LEFT));
-
         buildUI();
     }
 
     private void buildUI() {
         showChatHistory = new JCheckBox();
-
         // Use Mnemonics for the CheckBox using ResourceUtils.
         ResourceUtils.resButton(showChatHistory, "&Show Chat History in Chat Window");
-
         // Add Button
         add(showChatHistory);
     }
@@ -963,16 +926,14 @@ public class MyPreferenceUI extends JPanel {
         return showChatHistory.isSelected();
     }
 
-
 }
-
 </pre>
-<li>Register Preference class with Preference Manager.
+<li>Register the <code>Preference</code> class with Preference Manager in your plugin's <code>initialize()</code> method.
 <pre class="java">
-  public void addPreference(){
-     PreferenceManager preferenceManager = SparkManager.getPreferenceManager();
-     preferenceManager.addPreference(new MyPreferences());
-  }
+    public void initialize() {
+        PreferenceManager preferenceManager = SparkManager.getPreferenceManager();
+        preferenceManager.addPreference(new MyPreferences());
+    }
 </pre>
 </ul>
 </fieldset>
@@ -985,15 +946,23 @@ public class MyPreferenceUI extends JPanel {
 
 <pre class="java">
     // Get the ChatContainer from the ChatManager.
-    
-     ChatContainer chatContainer = ChatManager.getChatContainer();
-     
-     // Get the room you wish to be notified.
-     ChatRoom chatRoom = chatContainer.getActiveChatRoom();
-     chatContainer.startFlashing(chatRoom);
+    ChatManager chatManager = SparkManager.getChatManager();
+    ChatContainer chatContainer = chatManager.getChatContainer();
+    // Get the room you wish to be notified.
+    ChatRoom chatRoom = chatContainer.getActiveChatRoom();
+    chatContainer.startFlashing(chatRoom);
 </pre>
 
 </fieldset>
+
+<h2>Once I Build It, Then What?</h2>
+<p>After you've built your amazingly cool plugin, it's easy to rollout to your users.
+Just have them drop it in the plugins directory of their Spark installation.
+If your plugin is generally useful, we hope you'll share it with the whole Spark community!
+To make your plugin
+available via the <a href="https://igniterealtime.org/updater/plugins.jsp">public repository</a>, submit it to
+<a href="https://discourse.igniterealtime.org/c/spark/spark-dev/13">on a forum</a>.
+</p>
 
 </body>
 </html>
