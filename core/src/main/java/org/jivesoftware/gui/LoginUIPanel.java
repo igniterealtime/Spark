@@ -135,8 +135,8 @@ import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jxmpp.jid.BareJid;
 import org.jxmpp.jid.DomainBareJid;
 import org.jxmpp.jid.impl.JidCreate;
+import org.jxmpp.jid.parts.Localpart;
 import org.jxmpp.jid.parts.Resourcepart;
-import org.jxmpp.stringprep.XmppStringprepException;
 import org.jxmpp.util.XmppStringUtils;
 import org.minidns.dnsname.DnsName;
 
@@ -148,14 +148,11 @@ import org.minidns.dnsname.DnsName;
 public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, FocusListener, CallbackHandler {
 
     private JFrame loginDialog;
-    private static final String BUTTON_PANEL = "buttonpanel"; // NOTRANS
-    private static final String PROGRESS_BAR = "progressbar"; // NOTRANS
-    private LocalPreferences localPref;
-    private ArrayList<String> _usernames = new ArrayList<>();
+    private final LocalPreferences localPref = SettingsManager.getLocalPreferences();
+    private final ArrayList<String> _usernames = new ArrayList<>();
     private String loginUsername;
     private String loginPassword;
     private String loginServer;
-    private static final long serialVersionUID = 2445523786538863459L;
 
     // Panel used to hold buttons
     private final CardLayout cardLayout = new CardLayout(0, 5);
@@ -171,12 +168,8 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
      */
     public LoginUIPanel() {
         initComponents();
-
-        localPref = SettingsManager.getLocalPreferences();
-
         //SPARK-2115 SPARK-2295 Allow account creation or password changes over an insecure (e.g. unencrypted) connections.
         AccountManager.sensitiveOperationOverInsecureConnectionDefault(true);
-
         init();
         // Check if upgraded needed.
         try {
@@ -290,19 +283,15 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
         String username = Spark.getArgumentValue("username");
         String password = Spark.getArgumentValue("password");
         String server = Spark.getArgumentValue("server");
-
         if (username != null) {
             tfUsername.setText(username);
         }
-
         if (password != null) {
             tfPassword.setText(password);
         }
-
         if (server != null) {
             tfDomain.setText(server);
         }
-
         if (username != null && server != null && password != null) {
             TaskEngine.getInstance().submit(this::login);
         }
@@ -334,7 +323,6 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
 
         int height = filler3.getPreferredSize().height;
         if (Default.getBoolean(Default.HIDE_SAVE_PASSWORD_AND_AUTO_LOGIN) || !localPref.getPswdAutologin()) {
-
             pnlCheckboxes.remove(cbAutoLogin);
             pnlCheckboxes.remove(cbSavePassword);
             height = height + 20;
@@ -375,7 +363,6 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
-
         pnlLeft = new javax.swing.JPanel();
         filler1 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 50), new java.awt.Dimension(250, 50), new java.awt.Dimension(32767, 50));
         lblLogo = new javax.swing.JLabel();
@@ -688,28 +675,25 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
 
     protected void afterLogin() {
         Log.debug("Performing post-login tasks");
-
         // The Event Dispatcher Thread should only be used for fast tasks. The tasks in this method potentially are not.
         if (SmackConfiguration.DEBUG && EventQueue.isDispatchThread()) {
             throw new IllegalStateException("Must NOT be called on the Event Dispatcher Thread (but was)");
         }
-
         // Make certain Enterprise features persist across future logins
         persistEnterprise();
-
         // Load plugins before Workspace initialization to avoid any UI delays during plugin rendering, but after
         // Enterprise initialization, which can pull in additional plugin configuration (eg: blacklist).
         PluginManager.getInstance().loadPlugins();
-
         // Initialize and write default values from "Advanced Connection Preferences" to disk
         initAdvancedDefaults();
-
         Log.debug("Finished post-login tasks");
     }
 
     protected XMPPTCPConnectionConfiguration retrieveConnectionConfiguration() {
+        ConnectionConfiguration.SecurityMode securityMode = localPref.getSecurityMode();
+        boolean useDirectTls = localPref.isDirectTls();
+        boolean hostAndPortConfigured = localPref.isHostAndPortConfigured();
         int port = localPref.getXmppPort();
-
         int checkForPort = loginServer.indexOf(":");
         if (checkForPort != -1) {
             if (checkForPort != loginServer.length() - 2) { // : at end of string, so no port
@@ -721,45 +705,8 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
             loginServer = loginServer.substring(0, checkForPort);
         }
 
-        ConnectionConfiguration.SecurityMode securityMode = localPref.getSecurityMode();
-        boolean useDirectTls = localPref.isDirectTls();
-        boolean hostPortConfigured = localPref.isHostAndPortConfigured();
-
-        ProxyInfo proxyInfo = null;
-        if (localPref.isProxyEnabled()) {
-            ProxyInfo.ProxyType pType = localPref.getProtocol().equals("SOCKS")
-                    ? ProxyInfo.ProxyType.SOCKS5 : ProxyInfo.ProxyType.HTTP;
-            String pHost = ModelUtil.hasLength(localPref.getHost())
-                    ? localPref.getHost() : null;
-            int pPort = ModelUtil.hasLength(localPref.getPort())
-                    ? Integer.parseInt(localPref.getPort()) : 0;
-            String pUser = ModelUtil.hasLength(localPref.getProxyUsername())
-                    ? localPref.getProxyUsername() : null;
-            String pPass = ModelUtil.hasLength(localPref.getProxyPassword())
-                    ? localPref.getProxyPassword() : null;
-
-            if (pHost != null && pPort != 0) {
-
-                if (pUser == null || pPass == null) {
-
-                    proxyInfo = new ProxyInfo(pType, pHost, pPort, null, null);
-                } else {
-
-                    proxyInfo = new ProxyInfo(pType, pHost, pPort, pUser, pPass);
-
-                }
-            } else {
-                Log.error("No proxy info found but proxy type is enabled!");
-            }
-        }
-
-        DomainBareJid xmppDomain;
-        try {
-            xmppDomain = JidCreate.domainBareFrom(loginServer);
-        } catch (XmppStringprepException e) {
-            throw new IllegalStateException(e);
-        }
-
+        ProxyInfo proxyInfo = getProxyInfo();
+        DomainBareJid xmppDomain = JidCreate.domainBareFromOrThrowUnchecked(loginServer);
         final XMPPTCPConnectionConfiguration.Builder builder = XMPPTCPConnectionConfiguration.builder()
                 .setUsernameAndPassword(loginUsername, loginPassword)
                 .setXmppDomain(xmppDomain)
@@ -767,24 +714,19 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
                 .setSendPresence(false)
                 .setCompressionEnabled(localPref.isCompressionEnabled())
                 .setSecurityMode(securityMode);
-
         if (localPref.isDebuggerEnabled()) {
             builder.enableDefaultDebugger();
         }
-
-        if (hostPortConfigured) {
+        if (hostAndPortConfigured) {
             builder.setHost(localPref.getXmppHost());
         }
-
-        if (localPref.isProxyEnabled()) {
+        if (proxyInfo != null) {
             builder.setProxyInfo(proxyInfo);
         }
-        configureConnectionTls(builder, securityMode, useDirectTls, hostPortConfigured, loginServer);
-
+        configureConnectionTls(builder, securityMode, useDirectTls, hostAndPortConfigured, loginServer);
         // SPARK-1747: Don't use the GSS-API SASL mechanism when SSO is disabled.
         SASLAuthentication.unregisterSASLMechanism(SASLGSSAPIMechanism.class.getName());
         SASLAuthentication.unregisterSASLMechanism(SASLGSSAPIv3CompatMechanism.class.getName());
-
         // Add the mechanism only when SSO is enabled (which allows us to register the correct one).
         if (localPref.isSSOEnabled()) {
             // SPARK-1740: Register a mechanism that's compatible with Smack 3, when requested.
@@ -810,6 +752,28 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
         return builder.build();
     }
 
+    private ProxyInfo getProxyInfo() {
+        if (!localPref.isProxyEnabled()) {
+            return null;
+        }
+        ProxyInfo.ProxyType pType = localPref.getProtocol().equals("SOCKS") ? ProxyInfo.ProxyType.SOCKS5 : ProxyInfo.ProxyType.HTTP;
+        String pHost = ModelUtil.hasLength(localPref.getHost()) ? localPref.getHost() : null;
+        int pPort = ModelUtil.hasLength(localPref.getPort()) ? Integer.parseInt(localPref.getPort()) : 0;
+        String pUser = ModelUtil.hasLength(localPref.getProxyUsername()) ? localPref.getProxyUsername() : null;
+        String pPass = ModelUtil.hasLength(localPref.getProxyPassword()) ? localPref.getProxyPassword() : null;
+        ProxyInfo proxyInfo = null;
+        if (pHost != null && pPort != 0) {
+            if (pUser == null || pPass == null) {
+                proxyInfo = new ProxyInfo(pType, pHost, pPort, null, null);
+            } else {
+                proxyInfo = new ProxyInfo(pType, pHost, pPort, pUser, pPass);
+            }
+        } else {
+            Log.error("No proxy info found but proxy type is enabled!");
+        }
+        return proxyInfo;
+    }
+
     private void configureConnectionTls(XMPPTCPConnectionConfiguration.Builder builder, ConnectionConfiguration.SecurityMode securityMode, boolean useDirectTls, boolean hostPortConfigured, String serverName) {
         if (securityMode != ConnectionConfiguration.SecurityMode.disabled) {
             if (localPref.isDisableHostnameVerification()) {
@@ -829,9 +793,9 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
                 }
             } else { // useDirectTls
                 if (!hostPortConfigured) {
-                    // SMACK 4.1.9 does not support XEP-0368, and does not apply a port change, if the host is not changed too.
+                    // SMACK does not support XEP-0368, and does not apply a port change, if the host is not changed too.
                     // Here, we force the host to be set (by doing a DNS lookup), and force the port to 5223 (which is the
-                    // default 'old-style' SSL port).
+                    // default Direct TLS port).
                     DnsName serverNameDnsName = DnsName.from(serverName);
                     List<InetAddress> resolvedAddresses = DNSUtil.getDNSResolver().lookupHostAddress(serverNameDnsName, null, DnssecMode.disabled);
                     if (resolvedAddresses.isEmpty()) {
@@ -842,7 +806,7 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
                 }
                 SparkSSLContextCreator.Options options = localPref.isAllowClientSideAuthentication() ? BOTH : ONLY_SERVER_SIDE;
                 builder.setSocketFactory(new SparkSSLSocketFactory(options));
-                // SMACK 4.1.9  does not recognize an 'old-style' SSL socket as being secure, which will cause a failure when
+                // SMACK does not recognize a Direct TLS socket as being secure, which will cause a failure when
                 // the 'required' Security Mode is defined. Here, we work around this by replacing that security mode with an
                 // 'if-possible' setting.
                 builder.setSecurityMode(ConnectionConfiguration.SecurityMode.ifpossible);
@@ -855,8 +819,6 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
      * Returns the username the user defined.
      *
      * Should be called only from the Event Dispatcher Thread.
-     *
-     * @return the username.
      */
     private String getUsername() {
         // Most Swing components are not thread safe, and _must_ be executed on the Event Dispatcher Thread.
@@ -870,8 +832,6 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
      * Returns the resulting bareJID from username and server
      *
      * Should be called only from the Event Dispatcher Thread.
-     *
-     * @return the bare JID that's being logged in with.
      */
     private String getBareJid() {
         // Most Swing components are not thread safe, and _must_ be executed on the Event Dispatcher Thread.
@@ -885,8 +845,6 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
      * Returns the password specified by the user.
      *
      * Should be called only from the Event Dispatcher Thread.
-     *
-     * @return the password.
      */
     private String getPassword() {
         // Most Swing components are not thread safe, and _must_ be executed on the Event Dispatcher Thread.
@@ -900,8 +858,6 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
      * Returns the server name specified by the user.
      *
      * Should be called only from the Event Dispatcher Thread.
-     *
-     * @return the server name.
      */
     private String getServerName() {
         // Most Swing components are not thread safe, and _must_ be executed on the Event Dispatcher Thread.
@@ -915,8 +871,6 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
      * Return whether user wants to login as invisible or not.
      *
      * Should be called only from the Event Dispatcher Thread.
-     *
-     * @return the true if user wants to login as invisible.
      */
     boolean isLoginAsInvisible() {
         // Most Swing components are not thread safe, and _must_ be executed on the Event Dispatcher Thread.
@@ -929,9 +883,7 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
     private JPopupMenu getPopup() {
         JPopupMenu popup = new JPopupMenu();
         for (final String key : _usernames) {
-
             JMenuItem menu = new JMenuItem(key);
-
             BareJid jid = JidCreate.bareFromOrNull(key);
             if (jid == null) {
                 continue;
@@ -941,7 +893,6 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
             menu.addActionListener(e -> {
                 tfUsername.setText(username);
                 tfDomain.setText(host);
-
                 try {
                     String passwordForUser = localPref.getPasswordForUser(getBareJid());
                     tfPassword.setText(passwordForUser);
@@ -949,7 +900,6 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
                 }
                 validateDialog();
             });
-
             popup.add(menu);
         }
         return popup;
@@ -957,8 +907,6 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
 
     /**
      * KeyListener implementation.
-     *
-     * @param e the KeyEvent to process.
      */
     @Override
     public void keyTyped(KeyEvent e) {
@@ -997,8 +945,6 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
 
     /**
      * Validates key input.
-     *
-     * @param e the keyEvent.
      */
     private void validate(KeyEvent e) {
         if (btnLogin.isEnabled() && e.getKeyChar() == KeyEvent.VK_ENTER) {
@@ -1162,11 +1108,7 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
             }
 
             String userName = localPref.getLastUsername();
-            if (ModelUtil.hasLength(userName)) {
-                tfUsername.setText(userName);
-            } else {
-                tfUsername.setText(princName);
-            }
+            tfUsername.setText(ModelUtil.hasLength(userName) ? userName : princName);
         } else {
             cbAutoLogin.setVisible(true);
             tfUsername.setVisible(true);
@@ -1203,7 +1145,6 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
             throw new IllegalStateException("Must NOT be called on the Event Dispatcher Thread (but was)");
         }
 
-        localPref = SettingsManager.getLocalPreferences();
         SmackConfiguration.setDefaultReplyTimeout(localPref.getTimeOut() * 1000);
 
         AtomicBoolean savePasswordAfterSuccessfulLogin = new AtomicBoolean(false);
@@ -1444,12 +1385,6 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
         try {
             final MainWindow mainWindow = MainWindow.getInstance();
 
-            /*
-             if (tray != null) {
-                 // Remove trayIcon
-                 tray.removeTrayIcon(trayIcon);
-             }
-             */
             // Creates the Spark  Workspace and add to MainWindow
             Workspace workspace = Workspace.getInstance();
 
@@ -1468,7 +1403,6 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
                 } else {
                     mainWindow.getSplitPane().setDividerLocation(240);
                 }
-
                 mainWindow.getContentPane().add(splitPane, BorderLayout.CENTER);
             } else {
                 mainWindow.getContentPane().add(workspace.getCardPanel(), BorderLayout.CENTER);
@@ -1534,20 +1468,16 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
                 System.setProperty("http.proxyPort", port);
                 System.setProperty("https.proxyHost", host);
                 System.setProperty("https.proxyPort", port);
-
                 if (ModelUtil.hasLength(username) && ModelUtil.hasLength(password)) {
                     System.setProperty("http.proxyUser", username);
                     System.setProperty("http.proxyPassword", password);
                 }
-
             }
         }
     }
 
     /**
      * Checks for historic Spark settings and upgrades the user.
-     *
-     * @throws Exception thrown if an error occurs.
      */
     private void checkForOldSettings() throws Exception {
         // Check for old settings.xml
@@ -1579,9 +1509,11 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
                 localPref.setSavePassword(Boolean.parseBoolean(savePassword));
 
                 String password = plugin.selectSingleNode("password").getText();
-                localPref.setPasswordForUser(username + "@" + server, password);
+                Localpart usernamePart = Localpart.formUnescapedOrNull(username);
+                DomainBareJid domainPart = JidCreate.domainBareFromOrNull(server);
+                BareJid bareJid = JidCreate.bareFrom(usernamePart, domainPart);
+                localPref.setPasswordForUser(bareJid.toString(), password);
             }
-
             // Delete settings File
             settingsXML.delete();
         }
@@ -1656,10 +1588,6 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
 
     protected void setLoginServer(String loginServer) {
         this.loginServer = loginServer;
-    }
-
-    protected ArrayList<String> getUsernames() {
-        return _usernames;
     }
 
     private void persistEnterprise() {

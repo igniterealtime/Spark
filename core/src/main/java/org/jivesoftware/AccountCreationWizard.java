@@ -22,6 +22,7 @@ import org.jivesoftware.smack.*;
 import org.jivesoftware.smack.ConnectionConfiguration.DnssecMode;
 import org.jivesoftware.smack.packet.StanzaError;
 import org.jivesoftware.smack.parsing.ExceptionLoggingCallback;
+import org.jivesoftware.smack.proxy.ProxyInfo;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
 import org.jivesoftware.smack.util.DNSUtil;
@@ -43,6 +44,7 @@ import org.jivesoftware.sparkimpl.certificates.SparkTrustManager;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jxmpp.jid.DomainBareJid;
+import org.jxmpp.jid.impl.JidCreate;
 import org.jxmpp.jid.parts.Localpart;
 import org.jxmpp.stringprep.XmppStringprepException;
 import org.jxmpp.util.XmppStringUtils;
@@ -71,6 +73,7 @@ import static org.jivesoftware.sparkimpl.certificates.SparkSSLContextCreator.Opt
  * Allows the creation of accounts on an XMPP server.
  */
 public class AccountCreationWizard extends JPanel {
+    private final LocalPreferences localPref = SettingsManager.getLocalPreferences();
     private final JComboBox<String> serverField = new JComboBox<>();
 
     private final JButton startRegistrationButton = new JButton();
@@ -469,35 +472,40 @@ public class AccountCreationWizard extends JPanel {
      */
     private XMPPConnection getConnection() throws SmackException, IOException, XMPPException
     {
-        final LocalPreferences localPreferences = SettingsManager.getLocalPreferences();
-        int port = localPreferences.getXmppPort();
-        String serverName = getServer();
-        int checkForPort = serverName.indexOf(":");
+        ConnectionConfiguration.SecurityMode securityMode = localPref.getSecurityMode();
+        boolean useDirectTls = localPref.isDirectTls();
+        boolean hostAndPortConfigured = localPref.isHostAndPortConfigured();
+        int port = localPref.getXmppPort();
+        String loginServer = getServer();
+        int checkForPort = loginServer.indexOf(":");
         if (checkForPort != -1) {
-            String portString = serverName.substring(checkForPort + 1);
-            if (ModelUtil.hasLength(portString)) {
+            if (checkForPort != loginServer.length() - 2) { // : at end of string, so no port
+                String portString = loginServer.substring(checkForPort + 1);
                 // Set new port.
                 port = Integer.parseInt(portString);
             }
+            // strip the port from loginServer hostname
+            loginServer = loginServer.substring(0, checkForPort);
         }
 
-        ConnectionConfiguration.SecurityMode securityMode = localPreferences.getSecurityMode();
-        boolean useDirectTls = localPreferences.isDirectTls();
-        boolean hostPortConfigured = localPreferences.isHostAndPortConfigured();
-
+        ProxyInfo proxyInfo = getProxyInfo();
+        DomainBareJid xmppDomain = JidCreate.domainBareFromOrThrowUnchecked(loginServer);
         final XMPPTCPConnectionConfiguration.Builder builder = XMPPTCPConnectionConfiguration.builder()
-                .setUsernameAndPassword( "username", "password" )
-                .setXmppDomain( serverName )
+                .setXmppDomain(xmppDomain)
                 .setPort( port )
-            .setHostAddress(InetAddress.getByName("127.0.0.1"))
-                .setCompressionEnabled( localPreferences.isCompressionEnabled() )
-                .setSecurityMode( securityMode );
+                .setCompressionEnabled(localPref.isCompressionEnabled())
+                .setSecurityMode(securityMode);
 
-        if ( hostPortConfigured )
-        {
-            builder.setHost( localPreferences.getXmppHost() );
+        if (localPref.isDebuggerEnabled()) {
+            builder.enableDefaultDebugger();
         }
-        configureConnectionTls(builder, securityMode, useDirectTls, hostPortConfigured, serverName);
+        if (hostAndPortConfigured) {
+            builder.setHost(localPref.getXmppHost());
+        }
+        if (proxyInfo != null) {
+            builder.setProxyInfo(proxyInfo);
+        }
+        configureConnectionTls(builder, securityMode, useDirectTls, hostAndPortConfigured, loginServer);
         final XMPPTCPConnectionConfiguration configuration = builder.build();
         final AbstractXMPPConnection connection = new XMPPTCPConnection( configuration );
         connection.setParsingExceptionCallback( new ExceptionLoggingCallback() );
@@ -510,11 +518,33 @@ public class AccountCreationWizard extends JPanel {
         return connection;
     }
 
+    private ProxyInfo getProxyInfo() {
+        if (!localPref.isProxyEnabled()) {
+            return null;
+        }
+        ProxyInfo.ProxyType pType = localPref.getProtocol().equals("SOCKS") ? ProxyInfo.ProxyType.SOCKS5 : ProxyInfo.ProxyType.HTTP;
+        String pHost = ModelUtil.hasLength(localPref.getHost()) ? localPref.getHost() : null;
+        int pPort = ModelUtil.hasLength(localPref.getPort()) ? Integer.parseInt(localPref.getPort()) : 0;
+        String pUser = ModelUtil.hasLength(localPref.getProxyUsername()) ? localPref.getProxyUsername() : null;
+        String pPass = ModelUtil.hasLength(localPref.getProxyPassword()) ? localPref.getProxyPassword() : null;
+        ProxyInfo proxyInfo = null;
+        if (pHost != null && pPort != 0) {
+            if (pUser == null || pPass == null) {
+                proxyInfo = new ProxyInfo(pType, pHost, pPort, null, null);
+            } else {
+                proxyInfo = new ProxyInfo(pType, pHost, pPort, pUser, pPass);
+            }
+        } else {
+            Log.error("No proxy info found but proxy type is enabled!");
+        }
+        return proxyInfo;
+    }
+
     private void configureConnectionTls(XMPPTCPConnectionConfiguration.Builder builder, ConnectionConfiguration.SecurityMode securityMode, boolean useDirectTls, boolean hostPortConfigured, String serverName) throws SmackException.SmackMessageException {
         if (securityMode != ConnectionConfiguration.SecurityMode.disabled) {
             if (!useDirectTls) {
-                // This use STARTTLS which starts initially plain connection to upgrade it to TLS, it use the same port as
-                // plain connections which is 5222.
+                // This use STARTTLS which starts initially plain connection to upgrade it to TLS.
+                // It will use the same port as plain connections which is 5222.
                 SparkSSLContextCreator.Options options = ONLY_SERVER_SIDE;
                 try {
                     SSLContext context = SparkSSLContextCreator.setUpContext(options);
@@ -526,9 +556,9 @@ public class AccountCreationWizard extends JPanel {
                 }
             } else { // useDirectTls
                 if (!hostPortConfigured) {
-                    // SMACK 4.1.9 does not support XEP-0368, and does not apply a port change, if the host is not changed too.
+                    // SMACK does not support XEP-0368, and does not apply a port change, if the host is not changed too.
                     // Here, we force the host to be set (by doing a DNS lookup), and force the port to 5223 (which is the
-                    // default 'old-style' SSL port).
+                    // default Direct TLS port).
                     DnsName serverNameDnsName = DnsName.from(serverName);
                     java.util.List<InetAddress> resolvedAddresses = DNSUtil.getDNSResolver().lookupHostAddress(serverNameDnsName, null, DnssecMode.disabled);
                     if (resolvedAddresses.isEmpty()) {
@@ -539,7 +569,7 @@ public class AccountCreationWizard extends JPanel {
                 }
                 SparkSSLContextCreator.Options options = ONLY_SERVER_SIDE;
                 builder.setSocketFactory( new SparkSSLSocketFactory(options) );
-                // SMACK 4.1.9  does not recognize an 'old-style' SSL socket as being secure, which will cause a failure when
+                // SMACK does not recognize a Direct TLS socket as being secure, which will cause a failure when
                 // the 'required' Security Mode is defined. Here, we work around this by replacing that security mode with an
                 // 'if-possible' setting.
                 builder.setSecurityMode( ConnectionConfiguration.SecurityMode.ifpossible );
