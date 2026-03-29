@@ -1,9 +1,16 @@
 package org.jivesoftware.spark.uri;
 
+import org.jivesoftware.Spark;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
+import org.jxmpp.jid.impl.JidCreate;
+import org.jxmpp.stringprep.XmppStringprepException;
 
+import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -14,6 +21,22 @@ import static org.junit.Assert.assertNull;
  * xmpp:open_chat@conference.igniterealtime.org?join;password=somesecret
  */
 public class UriManagerTest {
+    private File tempDir;
+
+    @Before
+    public void setUp() throws Exception {
+        tempDir = Files.createTempDirectory("spark-test").toFile();
+        System.getProperties().setProperty("user.home", tempDir.getAbsolutePath());
+        new Spark().startup();
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        if (tempDir != null) {
+            //noinspection ResultOfMethodCallIgnored
+            tempDir.delete();
+        }
+    }
 
     @Test
     public void testRetrieveParam() throws URISyntaxException {
@@ -45,23 +68,23 @@ public class UriManagerTest {
     }
 
     @Test
-    public void testRetrieveJID() throws URISyntaxException {
+    public void testRetrieveJID() throws URISyntaxException, XmppStringprepException {
         UriManager uriManager = new UriManager();
         // Case with a user and host
         URI testUri = uriManager.parseXmppUri("xmpp:user@domain.com");
-        assertEquals("user@domain.com", uriManager.retrieveJID(testUri).toString());
+        assertEquals(JidCreate.entityBareFrom( "user@domain.com"),  uriManager.retrieveJID(testUri));
 
         // Case with a user, host, and a resource
         testUri = uriManager.parseXmppUri("xmpp:user@domain.com/resource");
-        assertEquals("user@domain.com/resource", uriManager.retrieveJID(testUri).toString());
+        assertEquals(JidCreate.fullFrom( "user@domain.com/resource"), uriManager.retrieveJID(testUri));
 
         // Case with only a host
         testUri = uriManager.parseXmppUri("xmpp:domain.com");
-        assertNull(uriManager.retrieveJID(testUri));
+        assertEquals(JidCreate.domainBareFrom("domain.com"), uriManager.retrieveJID(testUri));
 
         // Case with a host and a resource
         testUri = uriManager.parseXmppUri("xmpp:domain.com/resource");
-        assertNull(uriManager.retrieveJID(testUri));
+        assertEquals(JidCreate.domainFullFrom("domain.com/resource"), uriManager.retrieveJID(testUri));
 
         // Case with a malformed URI
         testUri = uriManager.parseXmppUri("xmpp://@");
