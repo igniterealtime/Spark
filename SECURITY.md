@@ -2,12 +2,12 @@
 
 ## Supported Versions
 
-Use this section to tell people about which versions of your project are
-currently being supported with security updates.
+Currently supported versions with security updates.
 
 | Version | Supported          |
-| ------- | ------------------ |
-| 2.9.x   | :white_check_mark: |
+|---------| ------------------ |
+| 3.1.x   | :white_check_mark: |
+| 2.9.x   | :x:                |
 | 2.8.x   | :x:                |
 | 2.7.x   | :x:                |
 | 2.6.x   | :x:                |

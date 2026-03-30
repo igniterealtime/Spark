@@ -25,6 +25,7 @@ Resources
 - Community: https://discourse.igniterealtime.org/c/spark
 - Bug Tracker: https://igniterealtime.atlassian.net/browse/SPARK
 - Nightly Builds: https://www.igniterealtime.org/downloads/nightly_spark.jsp
+- XMPP compliance: https://xmpp.org/software/spark/
 
 Install
 -------
