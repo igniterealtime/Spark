@@ -18,8 +18,10 @@ package org.jivesoftware.sparkimpl.settings.local;
 
 import com.sun.jna.platform.win32.Advapi32Util;
 import com.sun.jna.platform.win32.WinReg;
+import org.jasypt.properties.EncryptableProperties;
 import org.jivesoftware.Spark;
 import org.jivesoftware.resource.SparkRes;
+import org.jivesoftware.spark.util.Encryptor;
 import org.jivesoftware.spark.util.log.Log;
 
 import java.io.File;
@@ -27,9 +29,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Properties;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -93,7 +92,7 @@ public class SettingsManager {
 
 
     private static LocalPreferences load() {
-        final Properties props = new Properties();
+        final EncryptableProperties props = new EncryptableProperties(Encryptor.AES256_INSTANCE);
         File settingsFile = getSettingsFile();
         if (settingsFile.exists()) {
             try {

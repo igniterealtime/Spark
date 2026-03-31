@@ -17,18 +17,14 @@
 package org.jivesoftware.sparkimpl.settings.local;
 
 import org.apache.commons.lang3.StringUtils;
+import org.jasypt.properties.EncryptableProperties;
+import org.jasypt.properties.PropertyValueEncryptionUtils;
 import org.jivesoftware.Spark;
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.spark.PluginRes;
 import org.jivesoftware.spark.SparkManager;
-import java.io.File;
-import java.util.*;
-import java.util.stream.Collectors;
-
-import javax.swing.UIManager;
-
 import org.jivesoftware.spark.util.Encryptor;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.Sizes;
@@ -36,19 +32,27 @@ import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.impl.JidCreate;
 import org.jxmpp.jid.parts.Resourcepart;
 
+import javax.swing.*;
+import java.io.File;
+import java.util.Date;
+import java.util.List;
+import java.util.Properties;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 /**
  * Represents the LocalPreference Model for this system.
  */
 public class LocalPreferences {
 
-    	private final Properties props;
+    private final EncryptableProperties props;
 
-	public LocalPreferences(Properties props) {
+	public LocalPreferences(EncryptableProperties props) {
 		this.props = props;
 	}
 
 	public LocalPreferences() {
-		this.props = new Properties();
+		this.props = new EncryptableProperties(Encryptor.AES256_INSTANCE);
 	}
 
 	public Properties getProperties() {
@@ -81,8 +85,9 @@ public class LocalPreferences {
 	 *            sets encrypted password for a room.
 	 */
     public void setGroupChatPassword(String roomName, String password) throws Exception {
-        String pw = Encryptor.encrypt(password);
-        props.setProperty(roomName, pw);
+        Encryptor.setMasterPassword(!hasStoredPasswords());
+        // property must start with "password." for hasStoredPasswords() to find it
+        props.setProperty("password.room."+roomName, PropertyValueEncryptionUtils.encrypt(password, Encryptor.AES256_INSTANCE));
 	}
 	
 	/**
@@ -92,9 +97,14 @@ public class LocalPreferences {
 	 */
 	public String getGroupChatPassword(String roomName)
 	{
-		if(props.getProperty(roomName)!= null)
-			return Encryptor.decrypt(props.getProperty(roomName));
-		return null;
+        // property must start with "password." for hasStoredPasswords() to find it
+        final String propName = "password.room."+roomName;
+        if(!props.containsKey(propName)) {
+            return null;
+        }
+
+        Encryptor.setMasterPassword(!hasStoredPasswords());
+		return props.getProperty(propName); // automatically decrypted by EncryptableProperties
 	}
 
 	/**
@@ -152,7 +162,14 @@ public class LocalPreferences {
 	 */
 	public String getPasswordForRoom(String room)
 	{
-		return props.getProperty(room,"");
+        // property must start with "password." for hasStoredPasswords() to find it
+        final String propName = "password.room."+room;
+        if(!props.containsKey(propName)) {
+            return null;
+        }
+
+        Encryptor.setMasterPassword(!hasStoredPasswords());
+        return props.getProperty("password.room."+room,"");
 	}
 
 	/**
@@ -162,11 +179,17 @@ public class LocalPreferences {
 	 */
 	public String getPasswordForUser(String barejid)
 	{
+        // property must start with "password." for hasStoredPasswords() to find it
+        final String propName = "password.user."+barejid;
+        if(!props.containsKey(propName)) {
+            return null;
+        }
+
+        Encryptor.setMasterPassword(!hasStoredPasswords());
 	    try {
-		String pw = "password"+Encryptor.encrypt(barejid);
-		return Encryptor.decrypt(props.getProperty(pw));
+		    return props.getProperty(propName);
 	    } catch(Exception e){
-		return null;
+		    return null;
 	    }
 	}
 
@@ -179,9 +202,9 @@ public class LocalPreferences {
 	 */
 	public void setPasswordForUser(String barejid, String password) throws Exception
 	{
-	    String user = "password"+Encryptor.encrypt(barejid);
-	    String pw = Encryptor.encrypt(password);
-	    props.setProperty(user, pw);
+        Encryptor.setMasterPassword(!hasStoredPasswords());
+        // property must start with "password." for hasStoredPasswords() to find it
+	    props.setProperty("password.user."+barejid, PropertyValueEncryptionUtils.encrypt(password, Encryptor.AES256_INSTANCE));
 	}
 
     /**
@@ -211,29 +234,8 @@ public class LocalPreferences {
      */
 	private Set<String> findPropertyNamesForStoredPasswords() {
         return props.stringPropertyNames().stream()
-            // The property name starts with 'password'.
-            .filter(name -> name.startsWith("password") && !name.equals("passwordSaved"))
-
-            // The value of the property is an encrypted value.
-            .filter( name -> {
-                try {
-                    final String value = props.getProperty(name);
-                    Encryptor.decrypt(value);
-                    return true;
-                } catch (Exception e) {
-                    return false;
-                }
-            })
-
-            // The remainder of the property name is an encrypted JID
-            .filter(name -> {
-                try {
-                    JidCreate.bareFrom(Encryptor.decryptOrThrow(name.substring("password".length())));
-                    return true;
-                } catch (Exception e) {
-                    return false;
-                }
-            })
+            // The property name starts with 'password.'.
+            .filter(name -> name.startsWith("password."))
             .collect(Collectors.toSet());
     }
 
@@ -588,11 +590,19 @@ public class LocalPreferences {
 	}
 
 	public String getProxyPassword() {
-		return props.getProperty("proxyPassword");
+        // property must start with "password." for hasStoredPasswords() to find it
+        if(!props.containsKey("password.proxy")) {
+            return null;
+        }
+
+        Encryptor.setMasterPassword(!hasStoredPasswords());
+		return props.getProperty("password.proxy");
 	}
 
 	public void setProxyPassword(String proxyPassword) {
-		props.setProperty("proxyPassword", proxyPassword);
+        Encryptor.setMasterPassword(!hasStoredPasswords());
+        // property must start with "password." for hasStoredPasswords() to find it
+		props.setProperty("password.proxy", PropertyValueEncryptionUtils.encrypt(proxyPassword, Encryptor.AES256_INSTANCE));
 	}
 
 	public String getProtocol() {
