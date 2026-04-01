@@ -17,7 +17,7 @@ Use `SparkRes` class for accessing localized strings and images.
 The project is written for Java 11 as a baseline.
 Most of the XMPP logic is handled by the Smack library.
 UI code is Swing-based and styled with FlatLaf. It uses some legacy SwingX components that should be avoided in new code.
-Do not refactor UI into a different framework.
+Do not refactor the UI into a different framework.
 
 ## Build and Configuration
 
@@ -27,9 +27,9 @@ Do not refactor UI into a different framework.
 
 ### Building and Test
 Spark is a multi-module Maven project. To build the entire project from the root:
-- Run a full build from repo root: `mvn clean package`
+- Run a full build from repo root: `mvn clean verify`
 - Run the main application from core: `cd core && mvn exec:java`
-- Build and package just core: `cd core && mvn clean package`
+- Build and package only the `core`: `cd core && mvn clean verify`
 - Run core tests: `cd core && mvn test`
 
 ## Testing
