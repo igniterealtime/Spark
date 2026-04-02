@@ -21,7 +21,7 @@ import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.AbstractXMPPConnection;
-import org.jivesoftware.smack.SmackConfiguration;
+import org.jivesoftware.smack.Smack;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.packet.Presence;
@@ -74,7 +74,6 @@ public final class MainWindow extends ChatFrame implements ActionListener {
     private boolean focused;
     private final JToolBar topToolbar = new JToolBar();
     private JSplitPane splitPane;
-    private JEditorPane aboutBoxPane;
     private static MainWindow singleton;
 
     /**
@@ -696,10 +695,10 @@ public final class MainWindow extends ChatFrame implements ActionListener {
     }
 
     /**
-     * Sets About Box Pane for Spark.
+     * Returns About Box Pane.
+     * @return JEditorPane About Box
      */
-    private void setAboutBoxPane() {
-
+    private JEditorPane getAboutBoxPane() {
         // Get values from default.properties file
         final String APPLICATION_INFO1 = Default.getString(Default.APPLICATION_INFO1);
         final String APPLICATION_INFO2 = Default.getString(Default.APPLICATION_INFO2);
@@ -715,46 +714,38 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         // Construct About Box text
         StringBuilder aboutBoxText = new StringBuilder();
         aboutBoxText.append(JiveInfo.getName()).append(" ").append(JiveInfo.getVersion());
-
         // Add APPLICATION_INFO1 if not empty
         if (!("".equals(APPLICATION_INFO1))) {
             aboutBoxText.append("<br/>").append(APPLICATION_INFO1);
         }
-
         // Add APPLICATION_INFO2 if not empty
-        if (!( "".equals(APPLICATION_INFO2))) {
+        if (!("".equals(APPLICATION_INFO2))) {
             aboutBoxText.append("<br/>").append(APPLICATION_INFO2);
         }
-
         // Add APPLICATION_INFO3 if not empty
         if (!("".equals(APPLICATION_INFO3))) {
             aboutBoxText.append("<br/>").append(APPLICATION_INFO3);
         }
-
         // Add APPLICATION_LICENSE_LINK if not empty
-        if (!( "".equals(APPLICATION_LICENSE_LINK))) {
+        if (!("".equals(APPLICATION_LICENSE_LINK))) {
             aboutBoxText.append("<br/><a href=\"").append(APPLICATION_LICENSE_LINK).append("\">")
                 .append(APPLICATION_LICENSE_LINK_TXT).append("</a>");
         }
-
         // Add APPLICATION_LINK if not empty
-        if (!( "".equals(APPLICATION_LINK))) {
+        if (!("".equals(APPLICATION_LINK))) {
             aboutBoxText.append("<br/><a href=\"").append(APPLICATION_LINK).append("\">")
                 .append(APPLICATION_LINK_TXT).append("</a>");
         }
-
         // Add APPLICATION_INFO4 if not empty
-        if (!( "".equals(APPLICATION_INFO4))) {
+        if (!("".equals(APPLICATION_INFO4))) {
             aboutBoxText.append("<br/>").append(APPLICATION_INFO4);
         }
-
-        aboutBoxText.append("<br/>Smack Version: ").append(SmackConfiguration.getVersion());
-
+        aboutBoxText.append("<br/>Smack Version: ").append(Smack.getVersion());
         if (DISPLAY_DEV_INFO) {
             // Add Java JRE Version if is empty
             if ("".equals(JAVA_VERSION)) {
                 aboutBoxText.append("<br/>JRE Version: ").append(System.getProperty("java.version"));
-                aboutBoxText.append(" ").append(System.getProperty("sun.arch.data.model")).append("-bit");
+                aboutBoxText.append(" ").append(System.getProperty("os.arch"));
             }
         }
 
@@ -763,54 +754,26 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         Font font = p.getFont();
 
         // create some css from the JPanel's font
-        String style = ( "font-family:" + font.getFamily() + ";" ) +
-                "font-weight:" + ( font.isBold() ? "bold" : "normal" ) + ";" +
-                "font-size:" + font.getSize() + "pt;";
+        String style = ("font-family:" + font.getFamily() + ";") +
+            "font-weight:" + (font.isBold() ? "bold" : "normal") + ";" +
+            "font-size:" + font.getSize() + "pt;";
 
         // assemble html
-        JEditorPane ep = new JEditorPane("text/html", ( "<html><body style=\"" + style + "\">" + aboutBoxText.toString() + "</body></html>" ) );
-
+        JEditorPane ep = new JEditorPane("text/html",
+            "<html><body style=\"" + style + "\">" + aboutBoxText + "</body></html>");
         // handle link events
-        ep.addHyperlinkListener( e -> {
-            // if a link is clicked, and it is the APPLICATION_LICENSE_LINK, then load that page
-            if (e.getEventType().equals(HyperlinkEvent.EventType.ACTIVATED)
-                    && e.getURL().toString().equalsIgnoreCase(Default.getString(Default.APPLICATION_LICENSE_LINK))) {
+        ep.addHyperlinkListener(e -> {
+            if (e.getEventType().equals(HyperlinkEvent.EventType.ACTIVATED)) {
                 try {
-
-                    BrowserLauncher.openURL(Default.getString(Default.APPLICATION_LICENSE_LINK));
-
-                } catch (Exception f) {
-                    Log.error("There was an error loading the URL", f);
-                }
-
-            // else if a link is clicked, and it is the APPLICATION_LINK, then load that page
-            } else if (e.getEventType().equals(HyperlinkEvent.EventType.ACTIVATED)
-                    && e.getURL().toString().equalsIgnoreCase(Default.getString(Default.APPLICATION_LINK))) {
-                try {
-
-                    BrowserLauncher.openURL(Default.getString(Default.APPLICATION_LINK));
-
+                    BrowserLauncher.openURL(e.getURL().toString());
                 } catch (Exception f) {
                     Log.error("There was an error loading the URL", f);
                 }
             }
-
-        } );
+        });
         ep.setEditable(false);
         ep.setBackground(p.getBackground());
-        this.aboutBoxPane = ep;
-
-    }
-
-    /**
-     * Returns About Box Pane.
-     * @return JEditorPane About Box
-     */
-    private JEditorPane getAboutBoxPane() {
-        if (null == this.aboutBoxPane) {
-            setAboutBoxPane();
-        }
-        return this.aboutBoxPane;
+        return ep;
     }
 
     /**
