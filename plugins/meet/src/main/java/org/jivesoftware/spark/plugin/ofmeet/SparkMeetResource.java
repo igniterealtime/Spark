@@ -1,6 +1,5 @@
 package org.jivesoftware.spark.plugin.ofmeet;
 
-import org.jivesoftware.resource.UTF8Control;
 import org.jivesoftware.spark.util.log.Log;
 
 import javax.swing.*;
@@ -9,7 +8,7 @@ import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 
 public class SparkMeetResource {
-    private static PropertyResourceBundle prb = (PropertyResourceBundle) ResourceBundle.getBundle("i18n/sparkmeet_i18n", new UTF8Control());
+    private static final PropertyResourceBundle prb = (PropertyResourceBundle) ResourceBundle.getBundle("i18n/sparkmeet_i18n");
 
     private static ClassLoader cl = SparkMeetResource.class.getClassLoader();
     static final ImageIcon PLUGIN_ICON = getImageIcon("images/pade.png");

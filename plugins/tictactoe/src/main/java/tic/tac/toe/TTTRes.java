@@ -19,7 +19,6 @@ import java.text.MessageFormat;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 
-import org.jivesoftware.resource.UTF8Control;
 import org.jivesoftware.spark.util.log.Log;
 
 import javax.swing.*;
@@ -40,7 +39,7 @@ public class TTTRes {
     public static final ImageIcon ICON_BUTTON = getImageIcon("ttt.button.png");
     public static final ImageIcon ICON_BOARD = getImageIcon("board.png");
 
-    private static final PropertyResourceBundle prb = (PropertyResourceBundle) ResourceBundle.getBundle("i18n/tictactoe_i18n", new UTF8Control());
+    private static final PropertyResourceBundle prb = (PropertyResourceBundle) ResourceBundle.getBundle("i18n/tictactoe_i18n");
 
     public static String getString(String propertyName) {
         try {

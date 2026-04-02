@@ -1,6 +1,5 @@
 package org.jivesoftware.spark.translator;
 
-import org.jivesoftware.resource.UTF8Control;
 import org.jivesoftware.spark.util.log.Log;
 
 import java.text.MessageFormat;
@@ -8,13 +7,9 @@ import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 
 public class TranslatorResource {
-    private static PropertyResourceBundle prb;
+    private static final PropertyResourceBundle prb = (PropertyResourceBundle) ResourceBundle.getBundle("i18n/translator_i18n");
 
     static ClassLoader cl = TranslatorResource.class.getClassLoader();
-
-    static {
-        prb = (PropertyResourceBundle) ResourceBundle.getBundle("i18n/translator_i18n", new UTF8Control());
-    }
 
     public static String getString(String propertyName) {
         try {

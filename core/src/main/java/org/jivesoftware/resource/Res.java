@@ -28,14 +28,10 @@ import java.util.ResourceBundle;
  * @author Derek DeMoro
  */
 public class Res {
-    private static final PropertyResourceBundle prb;
+    private static final PropertyResourceBundle prb = (PropertyResourceBundle)ResourceBundle.getBundle("i18n/spark_i18n");
 
     private Res() {
 
-    }
-
-    static {
-        prb = (PropertyResourceBundle)ResourceBundle.getBundle("i18n/spark_i18n", new UTF8Control());
     }
 
     public static String getString(String propertyName) {
