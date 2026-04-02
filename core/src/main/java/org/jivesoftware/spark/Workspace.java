@@ -148,14 +148,6 @@ public class Workspace extends JPanel implements StanzaListener {
 	                bookmarkPlugin.shutdown();
 	                broadcastPlugin.shutdown();
 	            }
-
-	            @Override
-				public void mainWindowActivated() {
-	            }
-
-	            @Override
-				public void mainWindowDeactivated() {
-	            }
 	        }
         );
 

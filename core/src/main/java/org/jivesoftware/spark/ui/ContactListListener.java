@@ -28,43 +28,46 @@ public interface ContactListListener {
      *
      * @param item the ContactItem added.
      */
-    void contactItemAdded(ContactItem item);
+    default void contactItemAdded(ContactItem item) {
+    }
 
     /**
      * Notified when a <code>ContactItem</code> has been removed from the ContactList.
      *
      * @param item the ContactItem removed.
      */
-    @SuppressWarnings("EmptyMethod")
-    void contactItemRemoved(ContactItem item);
+    default void contactItemRemoved(ContactItem item) {
+    }
 
     /**
      * Called when a <code>ContactGroup</code> has been added to the ContactList.
      *
      * @param group the ContactGroup.
      */
-    @SuppressWarnings("EmptyMethod")
-    void contactGroupAdded(ContactGroup group);
+    default void contactGroupAdded(ContactGroup group) {
+    }
 
     /**
      * Called when a <code>ContactGroup</code> has been removed from the ContactList.
      *
      * @param group the ContactGroup.
      */
-    @SuppressWarnings("EmptyMethod")
-    void contactGroupRemoved(ContactGroup group);
+    default void contactGroupRemoved(ContactGroup group) {
+    }
 
     /**
      * Called when a <code>ContactItem</code> has been clicked in the Contact List.
      *
      * @param item         the <code>ContactItem</code> double clicked.
      */
-    void contactItemClicked(ContactItem item);
+    default void contactItemClicked(ContactItem item) {
+    }
 
      /**
      * Called when a <code>ContactItem</code> has been double clicked in the Contact List.
      *
      * @param item         the <code>ContactItem</code> double clicked.
      */
-    void contactItemDoubleClicked(ContactItem item);
+     default void contactItemDoubleClicked(ContactItem item) {
+     }
 }

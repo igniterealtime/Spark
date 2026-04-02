@@ -235,16 +235,6 @@ public class ContactList extends JPanel implements ActionListener,
                 saveState();
                 SparkManager.getConnection().removeConnectionListener(instance);
             }
-
-            @Override
-            public void mainWindowActivated() {
-
-            }
-
-            @Override
-            public void mainWindowDeactivated() {
-
-            }
         });
 
         SparkManager.getConnection().addConnectionListener(this);

@@ -126,11 +126,6 @@ public class PrivacyPlugin implements Plugin {
                 }
 
                 @Override
-                public void poppingDown(JPopupMenu popup) {
-                    // ignore
-                }
-
-                @Override
                 public boolean handleDefaultAction(MouseEvent e) {
                     return false;
                 }

@@ -114,28 +114,9 @@ public class WorkgroupManager {
         // Always check for new contact item to see if it's a workgroup.
         final ContactList contactList = SparkManager.getWorkspace().getContactList();
         contactList.addContactListListener(new ContactListListener() {
+            @Override
             public void contactItemAdded(ContactItem item) {
                 handleContactItem(item);
-            }
-
-            public void contactItemRemoved(ContactItem item) {
-
-            }
-
-            public void contactGroupAdded(ContactGroup group) {
-
-            }
-
-            public void contactGroupRemoved(ContactGroup group) {
-
-            }
-
-
-            public void contactItemDoubleClicked(ContactItem item) {
-            }
-
-
-            public void contactItemClicked(ContactItem item) {
             }
         });
     }

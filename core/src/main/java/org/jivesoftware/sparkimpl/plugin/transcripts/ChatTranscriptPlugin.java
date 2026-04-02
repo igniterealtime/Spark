@@ -117,10 +117,6 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
             }
 
             @Override
-            public void poppingDown(JPopupMenu popup) {
-            }
-
-            @Override
             public boolean handleDefaultAction(MouseEvent e) {
                 return false;
             }
@@ -130,14 +126,6 @@ public class ChatTranscriptPlugin implements ChatRoomListener {
             @Override
             public void shutdown() {
                 persistConversations();
-            }
-
-            @Override
-            public void mainWindowActivated() {
-            }
-
-            @Override
-            public void mainWindowDeactivated() {
             }
         });
 

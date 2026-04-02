@@ -90,36 +90,13 @@ public final class OnlineAgents extends JPanel {
         contactGroup.getTitlePane().setVisible(false);
 
         contactGroup.addContactGroupListener(new ContactGroupListener() {
-            public void contactItemAdded(ContactItem item) {
-
-            }
-
-            public void contactItemRemoved(ContactItem item) {
-
-            }
-
+            @Override
             public void contactItemDoubleClicked(ContactItem item) {
                 Resourcepart resourcepart = Resourcepart.fromOrThrowUnchecked(item.getNickname());
                 // TODO: This is a good indicator that
                 // - nickname should be of type Resourcepart pretty sure
                 // - item.getJid() should possibly return an EntityBareJid
                 activateChat(item.getJid().asEntityBareJidOrThrow(), resourcepart);
-            }
-
-            public void contactItemClicked(ContactItem item) {
-
-            }
-
-            public void showPopup(MouseEvent e, ContactItem item) {
-
-            }
-
-            public void showPopup(MouseEvent e, Collection<ContactItem> items) {
-
-            }
-
-            public void contactGroupPopup(MouseEvent e, ContactGroup group) {
-
             }
         });
 

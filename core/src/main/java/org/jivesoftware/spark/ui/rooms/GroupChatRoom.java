@@ -224,10 +224,6 @@ public class GroupChatRoom extends ChatRoom {
             }
 
             @Override
-            public void poppingDown(JPopupMenu popup) {
-            }
-
-            @Override
             public boolean handleDefaultAction(MouseEvent e) {
                 return false;
             }

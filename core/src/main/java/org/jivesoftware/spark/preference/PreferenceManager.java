@@ -65,16 +65,6 @@ public class PreferenceManager {
 			public void shutdown() {
                 fireShutdown();
             }
-
-            @Override
-			public void mainWindowActivated() {
-
-            }
-
-            @Override
-			public void mainWindowDeactivated() {
-
-            }
         });
     }
 

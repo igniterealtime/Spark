@@ -45,13 +45,15 @@ public interface MainWindowListener {
      *
      * @see org.jivesoftware.MainWindow
      */
-    void mainWindowActivated();
+    default void mainWindowActivated() {
+    }
 
     /**
      * Invoked by the <code>MainWindow</code> when it has been minimized in the toolbar.
      *
      * @see org.jivesoftware.MainWindow
      */
-    void mainWindowDeactivated();
+    default void mainWindowDeactivated() {
+    }
 
 }

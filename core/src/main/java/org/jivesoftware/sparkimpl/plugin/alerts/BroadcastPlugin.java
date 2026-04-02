@@ -161,10 +161,6 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
             }
 
             @Override
-            public void poppingDown(JPopupMenu popup) {
-            }
-
-            @Override
             public boolean handleDefaultAction(MouseEvent e) {
                 return false;
             }

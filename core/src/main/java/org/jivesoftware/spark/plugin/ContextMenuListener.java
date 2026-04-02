@@ -38,7 +38,8 @@ public interface ContextMenuListener {
      *
      * @param popup the popup menu in the process of closing.
      */
-    void poppingDown(JPopupMenu popup);
+    default void poppingDown(JPopupMenu popup) {
+    }
 
     /**
      * Called when the user double clicks on an item that has a popup menu.

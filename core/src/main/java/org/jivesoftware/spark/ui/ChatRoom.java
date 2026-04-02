@@ -1179,11 +1179,6 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
     }
 
     @Override
-    public void poppingDown(JPopupMenu popup) {
-
-    }
-
-    @Override
     public boolean handleDefaultAction(MouseEvent e) {
         return false;
     }

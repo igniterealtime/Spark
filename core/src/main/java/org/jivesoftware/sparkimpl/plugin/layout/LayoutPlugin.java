@@ -50,16 +50,6 @@ public class LayoutPlugin implements Plugin
                 }
                 LayoutSettingsManager.saveLayoutSettings();
             }
-
-            @Override
-			public void mainWindowActivated()
-            {
-            }
-
-            @Override
-			public void mainWindowDeactivated()
-            {
-            }
         } );
     }
 

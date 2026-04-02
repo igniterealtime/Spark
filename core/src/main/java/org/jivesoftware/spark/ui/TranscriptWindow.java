@@ -578,11 +578,6 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener
     }
 
     @Override
-	public void poppingDown( JPopupMenu popup )
-    {
-    }
-
-    @Override
 	public boolean handleDefaultAction( MouseEvent e )
     {
         return false;

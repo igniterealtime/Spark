@@ -747,16 +747,6 @@ public class PluginManager implements MainWindowListener
         }
     }
 
-    @Override
-	public void mainWindowActivated()
-    {
-    }
-
-    @Override
-	public void mainWindowDeactivated()
-    {
-    }
-
     /**
      * Locates the best class loader based on context (see class description).
      *

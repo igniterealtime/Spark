@@ -33,28 +33,32 @@ public interface ContactGroupListener {
      *
      * @param item the ContactItem.
      */
-    void contactItemAdded(ContactItem item);
+    default void contactItemAdded(ContactItem item) {
+    }
 
     /**
      * Notifies the user that a <code>ContactItem</code> has been removed from a ContactGroup.
      *
      * @param item the ContactItem removed.
      */
-    void contactItemRemoved(ContactItem item);
+    default void contactItemRemoved(ContactItem item) {
+    }
 
     /**
      * Notifies the user that a ContactItem within the ContactGroup has been double-clicked.
      *
      * @param item the ContactItem double clicked.
      */
-    void contactItemDoubleClicked(ContactItem item);
+    default void contactItemDoubleClicked(ContactItem item) {
+    }
 
     /**
      * Notifies the user that a ContactItem within the ContactGroup has been clicked.
      *
      * @param item the ContactItem clicked.
      */
-    void contactItemClicked(ContactItem item);
+    default void contactItemClicked(ContactItem item) {
+    }
 
     /**
      * Notifies the user that a popup call has occured on the ContactGroup.
@@ -63,7 +67,9 @@ public interface ContactGroupListener {
      * @param item the ContactItem clicked within the ContactGroup.
      * @deprecated see {@link ContextMenuListener}
      */
-    void showPopup(MouseEvent e, ContactItem item);
+    @Deprecated
+    default void showPopup(MouseEvent e, ContactItem item) {
+    }
 
     /**
      * Notifies the user that a popup call has occured on the ContactGroup.
@@ -72,7 +78,9 @@ public interface ContactGroupListener {
      * @param items the ContactItems within the ContactGroup.
      * @deprecated see <code>ContextMenuListener</code>
      */
-    void showPopup(MouseEvent e, Collection<ContactItem> items);
+    @Deprecated
+    default void showPopup(MouseEvent e, Collection<ContactItem> items) {
+    }
 
     /**
      * Notifies the user that a Popup event has occured on the ContactGroup title
@@ -81,5 +89,6 @@ public interface ContactGroupListener {
      * @param e     the MouseEvent that triggered the event.
      * @param group the ContactGroup.
      */
-    void contactGroupPopup(MouseEvent e, ContactGroup group);
+    default void contactGroupPopup(MouseEvent e, ContactGroup group) {
+    }
 }
