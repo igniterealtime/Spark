@@ -165,24 +165,17 @@ public class CheckUpdates {
                 }
                 final HttpEntity entity = response.getEntity();
                 int contentLength = (int) entity.getContentLength();
-
                 bar = new JProgressBar(0, contentLength);
-
                 final JFrame frame = new JFrame(Res.getString("title.downloading.im.client"));
-
                 frame.setIconImage(SparkRes.getImageIcon(SparkRes.Icon.SMALL_MESSAGE_IMAGE).getImage());
-
                 titlePanel = new TitlePanel(Res.getString("title.upgrading.client"), Res.getString("message.version", version.getVersion()), SparkRes.getImageIcon(SparkRes.Icon.SEND_FILE_24x24), true);
-
                 final Thread thread = new Thread( () -> {
                     try {
                         InputStream stream = entity.getContent();
                         long size = entity.getContentLength();
                         ByteFormat formater = new ByteFormat();
                         sizeText = formater.format(size);
-                        titlePanel.setDescription(Res.getString("message.version", version.getVersion()) + " \n" + Res.getString("message.file.size", sizeText));
-
-
+                        titlePanel.setDescription(Res.getString("message.version", version.getVersion()) + "\n" + Res.getString("message.file.size", sizeText));
                         downloadedFile.getParentFile().mkdirs();
 
                         FileOutputStream out = new FileOutputStream(downloadedFile);
@@ -197,8 +190,6 @@ public class CheckUpdates {
                             out.close();
                             downloadedFile.delete();
                         }
-
-
                         UPDATING = false;
                         frame.dispose();
                     }
@@ -211,14 +202,12 @@ public class CheckUpdates {
                     }
                 } );
 
-
                 frame.getContentPane().setLayout(new GridBagLayout());
                 frame.getContentPane().add(titlePanel, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
                 frame.getContentPane().add(bar, new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 
                 JEditorPane pane = new JEditorPane();
                 boolean displayContentPane = version.getChangeLogURL() != null || version.getDisplayMessage() != null;
-
                 try {
                     pane.setEditable(false);
                     if (version.getChangeLogURL() != null) {
@@ -228,7 +217,6 @@ public class CheckUpdates {
                     else if (version.getDisplayMessage() != null) {
                         pane.setText(version.getDisplayMessage());
                     }
-
                     if (displayContentPane) {
                         frame.getContentPane().add(new JScrollPane(pane), new GridBagConstraints(0, 2, 1, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
                     }
@@ -252,19 +240,15 @@ public class CheckUpdates {
                     public void windowClosing(WindowEvent windowEvent) {
                         thread.interrupt();
                         cancel = true;
-
                         UPDATING = false;
-
                         if (!downloadComplete) {
                             UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
                             JOptionPane.showMessageDialog(SparkManager.getMainWindow(), Res.getString("message.updating.cancelled"), Res.getString("title.cancelled"), JOptionPane.ERROR_MESSAGE);
                         }
-
                     }
                 });
                 frame.setVisible(true);
                 thread.start();
-
 
                 timer.scheduleAtFixedRate(new TimerTask() {
                     int seconds = 1;
@@ -275,9 +259,11 @@ public class CheckUpdates {
                         long value = bar.getValue();
                         long average = value / seconds;
                         String text = formatter.format(average) + "/Sec";
-
                         String total = formatter.format(value);
-                        titlePanel.setDescription(Res.getString("message.version", version.getVersion()) + " \n" + Res.getString("message.file.size", sizeText) + "\n" + Res.getString("message.transfer.rate") + ": " + text + "\n" + Res.getString("message.total.downloaded") + ": " + total);
+                        titlePanel.setDescription(Res.getString("message.version", version.getVersion()) + "\n" +
+                            Res.getString("message.file.size", sizeText) + "\n" +
+                            Res.getString("message.transfer.rate") + ": " + text + "\n" +
+                            Res.getString("message.total.downloaded") + ": " + total);
                         seconds++;
                     }
                 }, 1000, 1000);
@@ -298,7 +284,6 @@ public class CheckUpdates {
      */
     private void copy(final InputStream in, final OutputStream out) {
         int read = 0;
-
         try {
             final byte[] buffer = new byte[4096];
             while (!cancel) {
@@ -325,15 +310,11 @@ public class CheckUpdates {
         if (UPDATING) {
             return;
         }
-
         UPDATING = true;
-
         if (isLocalBuildAvailable()) {
             return;
         }
-
         LocalPreferences localPreferences = SettingsManager.getLocalPreferences();
-
         //defaults to 7, 0=disabled
         int CheckForUpdates = localPreferences.getCheckForUpdates();
         if (CheckForUpdates == 0) {
@@ -353,12 +334,8 @@ public class CheckUpdates {
         calendar.add(Calendar.DATE, CheckForUpdates);
 
         final Date lastCheckedPlusAPeriod = calendar.getTime();
-
         boolean periodOrLonger = new Date().getTime() >= lastCheckedPlusAPeriod.getTime();
-
-
         if (periodOrLonger || explicit || sparkPluginInstalled) {
-            
             if (!explicit && !localPreferences.isBetaCheckingEnabled())
             {
                 return;
@@ -369,9 +346,7 @@ public class CheckUpdates {
             final SparkVersion serverVersion = newBuildAvailable();
             if (serverVersion == null) {
                 UPDATING = false;
-
                 UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
-                
                 if (explicit) {
                 	UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
                     JOptionPane.showMessageDialog(SparkManager.getMainWindow(), Res.getString("message.no.updates"), Res.getString("title.no.updates"), JOptionPane.INFORMATION_MESSAGE);
@@ -382,15 +357,12 @@ public class CheckUpdates {
             // Otherwise updates are available
             String downloadURL = serverVersion.getDownloadURL();
             String filename = downloadURL.substring(downloadURL.lastIndexOf("/") + 1);
-
             if (filename.indexOf('=') != -1) {
                 filename = filename.substring(filename.indexOf('=') + 1);
             }
-
-            // Set Download Directory 
+            // Set Download Directory
             final File downloadDir = new File(Spark.getSparkUserHome(), "updates");
             downloadDir.mkdirs();
-
             // Set file to download.
             final File fileToDownload = new File(downloadDir, filename);
             if (fileToDownload.exists()) {
@@ -429,17 +401,15 @@ public class CheckUpdates {
                                         BrowserLauncher.openURL(serverVersion.getDownloadURL());
                                     }
                                     else {
-                                        BrowserLauncher.openURL("http://www.igniterealtime.org/downloads/index.jsp#spark");
+                                        BrowserLauncher.openURL("https://igniterealtime.org/downloads/index.jsp#spark");
                                     }
                                 }
-
                                 catch (Exception e) {
                                     Log.error(e);
                                 }
                                 UPDATING = false;
                             }
                         }
-
                     };
                     worker.start();
                 }
@@ -453,7 +423,6 @@ public class CheckUpdates {
         else {
             UPDATING = false;
         }
-
     }
 
 
@@ -469,23 +438,18 @@ public class CheckUpdates {
         if (indexOne != -1) {
             firstVersion = firstVersion.substring(indexOne + 1);
         }
-
         int indexTwo = secondVersion.indexOf("_");
         if (indexTwo != -1) {
             secondVersion = secondVersion.substring(indexTwo + 1);
         }
-
         firstVersion = firstVersion.replaceAll(".online", "");
         secondVersion = secondVersion.replace(".online", "");
-
         boolean versionOneBetaOrAlpha = firstVersion.toLowerCase().contains("beta") || firstVersion.toLowerCase().contains("alpha");
         boolean versionTwoBetaOrAlpha = secondVersion.toLowerCase().contains("beta") || secondVersion.toLowerCase().contains("alpha");
-
         // Handle case where they are both betas / alphas
         if ((versionOneBetaOrAlpha && versionTwoBetaOrAlpha) || (!versionOneBetaOrAlpha && !versionTwoBetaOrAlpha)) {
             return firstVersion.compareTo(secondVersion) >= 1;
         }
-
         // Handle the case where version 1 is a beta or alpha
         if (versionOneBetaOrAlpha) {
             String versionOne = getVersion(firstVersion);
@@ -496,8 +460,6 @@ public class CheckUpdates {
             int result = firstVersion.compareTo(versionTwo);
             return result >= 0;
         }
-
-
         return firstVersion.compareTo(secondVersion) >= 1;
     }
 
@@ -523,8 +485,7 @@ public class CheckUpdates {
         request.setType(IQ.Type.get);
         request.setTo(JidCreate.fromOrThrowUnchecked("updater." + connection.getXMPPServiceDomain()));
         try {
-            IQ result = connection.sendIqRequestAndWaitForResponse(request);
-            SparkVersion response = (SparkVersion) result;
+            SparkVersion response = connection.sendIqRequestAndWaitForResponse(request);
             return response;
         } catch (XMPPException.XMPPErrorException e) {
             if (e.getStanzaError().getCondition() == StanzaError.Condition.service_unavailable) {
@@ -549,7 +510,6 @@ public class CheckUpdates {
         if (!con.isConnected()) {
             return false;
         }
-
         try {
             DiscoverItems items = SparkManager.getSessionManager().getDiscoveredItems();
             for (DiscoverItems.Item item : items.getItems() ) {
@@ -611,36 +571,35 @@ public class CheckUpdates {
         if (Spark.isWindows()) {
             File binDirectory = Spark.getBinDirectory();
             File[] files = binDirectory.listFiles();
-            if (files != null) {
-                for (File file : files) {
-                    String fileName = file.getName();
-                    if (fileName.endsWith(".exe")) {
-                        int index = fileName.indexOf("_");
-
-                        // Add version number
-                        String versionNumber = fileName.substring(index + 1);
-                        int indexOfPeriod = versionNumber.indexOf(".");
-
-                        versionNumber = versionNumber.substring(0, indexOfPeriod);
-                        versionNumber = versionNumber.replaceAll("_online", "");
-                        versionNumber = versionNumber.replaceAll("_", ".");
-
-                        boolean isGreater = versionNumber.compareTo(JiveInfo.getVersion()) >= 1;
-                        if (isGreater) {
-                            // Prompt
-                            promptForInstallation(file, Res.getString("title.new.client.available"), Res.getString("message.restart.spark.to.install"));
-                            return true;
-                        } else {
-                            file.delete();
-                        }
-
+            if (files == null) {
+                return false;
+            }
+            for (File file : files) {
+                String fileName = file.getName();
+                if (fileName.endsWith(".exe")) {
+                    if (isIsGreater(fileName)) {
+                        // Prompt
+                        promptForInstallation(file, Res.getString("title.new.client.available"), Res.getString("message.restart.spark.to.install"));
+                        return true;
+                    } else {
+                        file.delete();
                     }
                 }
             }
         }
-
         return false;
     }
 
+    private static boolean isIsGreater(String fileName) {
+        int index = fileName.indexOf('_');
+        // Add version number
+        String versionNumber = fileName.substring(index + 1);
+        int indexOfPeriod = versionNumber.indexOf('.');
+        versionNumber = versionNumber.substring(0, indexOfPeriod);
+        versionNumber = versionNumber.replace("_online", "");
+        versionNumber = versionNumber.replace("_", ".");
+        boolean isGreater = versionNumber.compareTo(JiveInfo.getVersion()) >= 1;
+        return isGreater;
+    }
 
 }
