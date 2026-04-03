@@ -131,8 +131,7 @@ public class Gateway extends IQ {
         registration.setUsername(username);
 
         XMPPConnection connection = SparkManager.getConnection();
-        IQ result = connection.sendIqRequestAndWaitForResponse(registration);
-        Gateway response = (Gateway) result;
+        Gateway response = connection.sendIqRequestAndWaitForResponse(registration);
         return response.getJid();
      }
 
