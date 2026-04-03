@@ -67,12 +67,17 @@ public class SettingsManager {
         if (localPreferences == null) {
             return;
         }
+        Properties props = localPreferences.getProperties();
+        if (props.isEmpty()) {
+            // happens in tests, just silently leave
+            return;
+        }
         Log.debug("Saving settings...");
-        final Properties props = localPreferences.getProperties();
         try {
             props.store(Files.newOutputStream(getSettingsFile().toPath()), "Spark Settings");
         } catch (Exception e) {
             Log.error("Error saving settings.", e);
+            return;
         }
         setUpAutostart(localPreferences.getStartOnStartup());
         Log.debug("Settings saved");
@@ -84,11 +89,7 @@ public class SettingsManager {
      * @return the settings file.
      */
     public static File getSettingsFile() {
-        File file = Spark.getSparkUserHome();
-        if (!file.exists()) {
-            file.mkdirs();
-        }
-        return new File(file, "spark.properties");
+        return new File(Spark.getSparkUserHome(), "spark.properties");
     }
 
 

@@ -1,16 +1,15 @@
 package org.jivesoftware.spark.uri;
 
 import org.jivesoftware.Spark;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.ClassRule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import org.jxmpp.jid.impl.JidCreate;
 import org.jxmpp.stringprep.XmppStringprepException;
 
-import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.file.Files;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -21,21 +20,13 @@ import static org.junit.Assert.assertNull;
  * xmpp:open_chat@conference.igniterealtime.org?join;password=somesecret
  */
 public class UriManagerTest {
-    private File tempDir;
+    @ClassRule
+    public static final TemporaryFolder tmpHomeFolder = new TemporaryFolder();
 
-    @Before
-    public void setUp() throws Exception {
-        tempDir = Files.createTempDirectory("spark-test").toFile();
-        System.getProperties().setProperty("user.home", tempDir.getAbsolutePath());
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        System.setProperty("user.home", tmpHomeFolder.getRoot().getAbsolutePath());
         new Spark().startup();
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        if (tempDir != null) {
-            //noinspection ResultOfMethodCallIgnored
-            tempDir.delete();
-        }
     }
 
     @Test
