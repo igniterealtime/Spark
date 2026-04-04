@@ -50,7 +50,7 @@ import javax.swing.*;
  */
 public class FrequentContactsPlugin implements Plugin {
 
-    private File transcriptDir;
+    private File transcriptDir = SparkManager.getTranscriptDir();
 
     private final DefaultListModel<JLabel> model = new DefaultListModel<>();
     private JList<JLabel> contacts;
@@ -60,8 +60,6 @@ public class FrequentContactsPlugin implements Plugin {
 
     @Override
 	public void initialize() {
-        transcriptDir = new File(SparkManager.getUserDirectory(), "transcripts");
-
         contacts = new JList<>(model);
         contacts.setCellRenderer(new InternalRenderer());
 
@@ -160,17 +158,9 @@ public class FrequentContactsPlugin implements Plugin {
      * Displays your favorite contacts.
      */
     private void showPopup() {
-        // Get Transcript Directory
-        if (!transcriptDir.exists()) {
-            return;
-        }
-
         jidMap.clear();
         model.clear();
-
-
         final ContactList contactList = SparkManager.getWorkspace().getContactList();
-
         for (final String user : getFavoriteContacts()) {
             ContactItem contactItem = contactList.getContactItemByJID(user);
             Icon icon;
@@ -207,11 +197,10 @@ public class FrequentContactsPlugin implements Plugin {
      * @return the collection of favorite people (jids)
      */
     private Collection<String> getFavoriteContacts() {
-        if (!transcriptDir.exists()) {
-            return Collections.emptyList();
-        }
-
         final File[] transcriptFiles = transcriptDir.listFiles( ( dir, name ) -> !name.contains("_current") && !name.equals("conversations.xml") );
+        if (transcriptFiles == null || transcriptFiles.length == 0) {
+            return List.of();
+        }
         final List<File> files = Arrays.asList(transcriptFiles);
 
         files.sort(sizeComparator);

@@ -51,7 +51,7 @@ import java.util.Map;
 public class ConversationHistoryPlugin implements Plugin {
 
     private final List<EntityBareJid> historyList = new ArrayList<>();
-    private File transcriptDir;
+    private File transcriptDir = SparkManager.getTranscriptDir();
     private File conFile;
 
     private final DefaultListModel<JLabel> model = new DefaultListModel<>();
@@ -62,7 +62,6 @@ public class ConversationHistoryPlugin implements Plugin {
 
     @Override
 	public void initialize() {
-        transcriptDir = new File(SparkManager.getUserDirectory(), "transcripts");
         conFile = new File(transcriptDir, "conversations.xml");
 
         contacts = new JList<>(model);
@@ -276,12 +275,6 @@ public class ConversationHistoryPlugin implements Plugin {
             builder.append("<user>").append(user.asUnescapedString()).append("</user>");
         }
         builder.append("</conversations>");
-
-        // Write out to file system.
-
-        if (!transcriptDir.exists()) {
-            transcriptDir.mkdirs();
-        }
 
         // Write out new File
         try {

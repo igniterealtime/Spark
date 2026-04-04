@@ -47,7 +47,6 @@ import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.Jid;
 import org.jxmpp.jid.impl.JidCreate;
 import org.jxmpp.stringprep.XmppStringprepException;
-import org.jxmpp.util.XmppStringUtils;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -86,11 +85,11 @@ public class VCardManager {
 
     private final VCardEditor editor;
 
-    private final File vcardStorageDirectory;
+    private final File vcardStorageDirectory = SparkManager.getVCardsDir();
 
     private final LinkedBlockingQueue<BareJid> queue = new LinkedBlockingQueue<>();
     
-    private final File contactsDir;
+    private final File contactsDir = SparkManager.getContactsDir();
 
     private final CopyOnWriteArrayList<VCardListener> listeners = new CopyOnWriteArrayList<>();
 
@@ -111,14 +110,6 @@ public class VCardManager {
         personalVCard = new VCard();
         personalVCardAvatar = null;
         personalVCardHash = null;
-
-        // Set VCard Storage
-        vcardStorageDirectory = new File(SparkManager.getUserDirectory(), "vcards");
-        vcardStorageDirectory.mkdirs();
-
-        // Set the current user directory.
-        contactsDir = new File(SparkManager.getUserDirectory(), "contacts");
-        contactsDir.mkdirs();
 
         initializeUI();
 

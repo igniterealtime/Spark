@@ -530,7 +530,7 @@ public class TranscriptWindow extends ChatArea implements ContextMenuListener
                         if ( ok == JOptionPane.YES_OPTION )
                         {
                             // This actions must be move into Transcript Plugin!
-                            File transcriptDir = new File( SparkManager.getUserDirectory(), "transcripts" );
+                            File transcriptDir = SparkManager.getTranscriptDir();
                             File transcriptFile = new File( transcriptDir, user + ".xml" );
                             transcriptFile.delete();
                             transcriptFile = new File( transcriptDir, user + "_current.xml" );

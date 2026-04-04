@@ -73,7 +73,7 @@ public class ContactItem extends JPanel {
     private boolean available;
     private Presence presence;
     private String hash = "";
-    private final File contactsDir;
+    private final File contactsDir = SparkManager.getContactsDir();
     private final int fontSize;
     private final int iconSize;
     private final boolean avatarsShowing;
@@ -104,8 +104,6 @@ public class ContactItem extends JPanel {
         presence = StanzaBuilder.buildPresence()
             .ofType(Presence.Type.unavailable)
             .build();
-
-        contactsDir = new File(SparkManager.getUserDirectory(), "contacts");
 
         this.alias = trimToEmpty(alias);
         this.nickname = trimToEmpty(nickname);
@@ -367,8 +365,6 @@ public class ContactItem extends JPanel {
      * @return true if the hash exists, otherwise false.
      */
     private boolean hashExists(String hash) {
-        contactsDir.mkdirs();
-
         final File imageFile = new File(contactsDir, hash);
         return imageFile.exists();
     }
@@ -380,8 +376,6 @@ public class ContactItem extends JPanel {
      * @throws MalformedURLException thrown if the address is invalid.
      */
     public URL getAvatarURL() throws MalformedURLException {
-        contactsDir.mkdirs();
-
         if (ModelUtil.hasLength(hash)) {
             final File imageFile = new File(contactsDir, hash);
             if (imageFile.exists()) {

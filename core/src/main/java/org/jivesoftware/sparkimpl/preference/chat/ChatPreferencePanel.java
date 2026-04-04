@@ -313,12 +313,10 @@ public class ChatPreferencePanel extends JPanel implements ActionListener {
         	UIManager.put("OptionPane.cancelButtonText", Res.getString("cancel"));
             int ok = JOptionPane.showConfirmDialog(this, Res.getString("message.delete.all.history"), Res.getString("title.confirmation"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
             if (ok == JOptionPane.YES_OPTION) {
-                File transcriptDir = new File(SparkManager.getUserDirectory(), "transcripts");
-                File[] files = transcriptDir.listFiles();
-
                 hidePrevChatHistory.setEnabled(false);
                 hidePrevChatHistory.setSelected(false);
-
+                File[] files = SparkManager.getTranscriptDir().listFiles();
+                files = files != null ? files : new File[0];
                 for (File transcriptFile : files) {
                     transcriptFile.delete();
                 }

@@ -392,12 +392,31 @@ public final class SparkManager {
     public static File getUserDirectory() {
         final String bareJID = sessionManager.getUserBareAddress().asUnescapedString();
         File userDirectory = new File(Spark.getSparkUserHome(), "/user/" + bareJID);
-        if (!userDirectory.exists()) {
-            userDirectory.mkdirs();
-        }
+        //noinspection ResultOfMethodCallIgnored
+        userDirectory.mkdirs();
         return userDirectory;
     }
 
+    public static File getContactsDir() {
+        File folder = new File(getUserDirectory(), "contacts");
+        //noinspection ResultOfMethodCallIgnored
+        folder.mkdirs();
+        return folder;
+    }
+
+    public static File getTranscriptDir() {
+        File folder = new File(getUserDirectory(), "transcripts");
+        //noinspection ResultOfMethodCallIgnored
+        folder.mkdirs();
+        return folder;
+    }
+
+    public static File getVCardsDir() {
+        File folder = new File(getUserDirectory(), "vcards");
+        //noinspection ResultOfMethodCallIgnored
+        folder.mkdirs();
+        return folder;
+    }
     /**
      * Return the component in focus at any particular instance.
      *

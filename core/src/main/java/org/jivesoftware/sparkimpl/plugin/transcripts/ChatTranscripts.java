@@ -219,7 +219,7 @@ public final class ChatTranscripts {
      * @return the settings file.
      */
     public static File getTranscriptFile(Jid jid) {
-        return new File(SparkManager.getUserDirectory(), "transcripts/" + jid.asUnescapedString() + ".xml");
+        return new File(SparkManager.getTranscriptDir(), jid.asUnescapedString() + ".xml");
     }
 
     /**
@@ -229,7 +229,7 @@ public final class ChatTranscripts {
      * @return the current transcript file.
      */
     public static File getCurrentHistoryFile(Jid jid) {
-        return new File(SparkManager.getUserDirectory(), "transcripts/" + jid.asUnescapedString() + "_current.xml");
+        return new File(SparkManager.getTranscriptDir(), jid.asUnescapedString() + "_current.xml");
     }
 
     private static HistoryMessage getHistoryMessage(XmlPullParser parser) throws Exception {
