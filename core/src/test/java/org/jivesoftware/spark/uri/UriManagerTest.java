@@ -26,7 +26,7 @@ public class UriManagerTest {
     @BeforeClass
     public static void setUpClass() throws Exception {
         System.setProperty("user.home", tmpHomeFolder.getRoot().getAbsolutePath());
-        new Spark().startup();
+        Spark.initializeFolders(System.getProperties());
     }
 
     @Test

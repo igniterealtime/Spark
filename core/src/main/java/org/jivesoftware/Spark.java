@@ -30,8 +30,6 @@ import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
 import java.util.Locale;
 import java.util.Properties;
 
@@ -77,23 +75,13 @@ public final class Spark {
         return initializeDirectory(USER_SPARK_HOME , directoryName);
     }
 
-    /**
-     * Configures environment; starts application; invokes login
-     */
-    public void startup() {
-        Properties sysProps = System.getProperties();
+    public static void initializeFolders(Properties sysProps) {
         // On Windows get the Spark home folder from the %APPDATA% environment variable i.e. "%SystemDrive%\%Username%\LoggedInUser\AppData\Roaming\Spark"
         String appDataFolder = System.getenv("APPDATA");
         if (appDataFolder == null || appDataFolder.isEmpty()) {
             appDataFolder = sysProps.getProperty("user.home");
         }
         USER_SPARK_HOME = new File(appDataFolder, getUserConf());
-
-        // Set UIManager properties for JTree
-        System.setProperty("apple.laf.useScreenMenuBar", "true");
-
-        SparkCompatibility.transferConfig(USER_SPARK_HOME);
-
         BIN_DIRECTORY = initializeDirectory("bin");
         LOG_DIRECTORY = initializeDirectory("logs");
         PLUGIN_DIRECTORY = initializeDirectory("plugins");
@@ -101,7 +89,7 @@ public final class Spark {
         SECURITY_DIRECTORY = initializeDirectory("security");
         USER_DIRECTORY = initializeDirectory("user");
         XTRA_DIRECTORY = initializeDirectory("xtra");
-        // TODO implement copyEmoticonFiles();
+        // Get installation folder e.g. /opt/Spark
         final String workingDirectory = sysProps.getProperty("appdir");
         if (workingDirectory == null) {
             System.out.println("Warning: no working directory set. This might cause updated data to be missed. Please set a system property 'appdir' to the location where Spark is installed to correct this.");
@@ -120,6 +108,15 @@ public final class Spark {
             SECURITY_DIRECTORY = initializeDirectory(workingDir, "security");
             XTRA_DIRECTORY = initializeDirectory(workingDir, "xtra");
         }
+    }
+
+    /**
+     * Configures environment; starts application; invokes login
+     */
+    public void startup() {
+        Properties sysProps = System.getProperties();
+        initializeFolders(sysProps);
+        SparkCompatibility.transferConfig(USER_SPARK_HOME);
 
         // Set the default language set by the user
         loadLanguage();
@@ -134,6 +131,8 @@ public final class Spark {
         System.setProperty("java.library.path", javaLibraryPath);
         System.setProperty("sun.java2d.noddraw", "true");
         System.setProperty("file.encoding", "UTF-8");
+        // macOS: Show main menu to the top of the window
+        System.setProperty("apple.laf.useScreenMenuBar", "true");
 
         // Start Application
         SwingUtilities.invokeLater(Spark::new);
