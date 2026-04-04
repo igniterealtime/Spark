@@ -1,4 +1,3 @@
-<!-- Google Plugin Structure -->
 <plugin>
     <name>${project.name}</name>
     <version>${project.version}</version>
