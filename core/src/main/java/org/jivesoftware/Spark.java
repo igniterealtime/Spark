@@ -134,8 +134,6 @@ public final class Spark {
         // macOS: Show main menu to the top of the window
         System.setProperty("apple.laf.useScreenMenuBar", "true");
 
-        // Start Application
-        SwingUtilities.invokeLater(Spark::new);
         installBaseUIProperties();
         if (Default.getBoolean(Default.CHANGE_COLORS_DISABLED)) {
             ColorSettingManager.restoreDefault();
