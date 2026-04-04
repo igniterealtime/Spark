@@ -90,6 +90,8 @@ import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.EntityFullJid;
 import org.jxmpp.jid.Jid;
 
+import static org.jivesoftware.spark.ChatManager.ERROR_COLOR;
+
 /**
  * Responsible for the handling of File Transfer within Spark. You would use the SparkManager
  * for sending of images, files, multiple files and adding your own transfer listeners for plugin work.
@@ -519,8 +521,7 @@ public class SparkTransferManager {
             ContactItem contactItem = contactList.getContactItemByJID(jid);
             String chatName = contactItem != null ? contactItem.getDisplayName() : jid.asUnescapedString();
             ChatRoom chatRoom = SparkManager.getChatManager().createChatRoom(bareJid, chatName, chatName);
-
-            chatRoom.getTranscriptWindow().insertNotificationMessage("The user is offline. Will auto-send \"" + file.getName() + "\" when user comes back online.", ChatManager.ERROR_COLOR);
+            chatRoom.getTranscriptWindow().insertNotificationMessage(Res.getString("message.user.offline.autosend", file.getName()), ERROR_COLOR);
             return null;
         }
 

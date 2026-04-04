@@ -156,7 +156,7 @@ public class GroupChatParticipantList extends JPanel {
             String displayName = userManager.getUserNicknameFromJID(jid1);
             userHasLeft(displayName);
             chatRoom.getTranscriptWindow().insertNotificationMessage(
-                displayName + " has rejected the invitation." + " " + reason,
+                Res.getString("message.invitation.rejected", displayName, reason),
                 NOTIFICATION_COLOR);
         });
 
@@ -207,9 +207,7 @@ public class GroupChatParticipantList extends JPanel {
         final UserManager userManager = SparkManager.getUserManager();
         String displayName = userManager.getUserNicknameFromJID(jid);
 
-        groupChatRoom.getTranscriptWindow().insertNotificationMessage(
-            displayName + " has been invited to join this room.",
-            NOTIFICATION_COLOR);
+        groupChatRoom.getTranscriptWindow().insertNotificationMessage(Res.getString("message.invitation.join", displayName), NOTIFICATION_COLOR);
         if (roomInformation != null
             && !roomInformation.containsFeature(MucFeature.NonAnonymous.getName())) {
             return;

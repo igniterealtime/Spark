@@ -67,6 +67,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import static org.jivesoftware.spark.ChatManager.NOTIFICATION_COLOR;
+
 /**
  * Invite To conference dialog
  */
@@ -379,7 +381,7 @@ final class InvitationDialog extends JPanel {
                         EntityBareJid jid = JidCreate.entityBareFromUnescaped(jidString);
                         chatRoom.getMultiUserChat().invite(jid, message != null ? message : Res.getString("message.please.join.in.conference"));
                         String nickname = SparkManager.getUserManager().getUserNicknameFromJID(jid);
-                        chatRoom.getTranscriptWindow().insertNotificationMessage("Invited " + nickname, ChatManager.NOTIFICATION_COLOR);
+                        chatRoom.getTranscriptWindow().insertNotificationMessage(Res.getString("message.invited", nickname), NOTIFICATION_COLOR);
                     } catch (SmackException.NotConnectedException | XmppStringprepException | InterruptedException e1) {
                         Log.warning("Unable to send stanza to " + jidString, e1);
                     }
