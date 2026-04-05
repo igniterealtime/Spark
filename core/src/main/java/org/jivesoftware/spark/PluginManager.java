@@ -15,6 +15,7 @@
  */
 package org.jivesoftware.spark;
 
+import org.apache.commons.lang3.SystemUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
@@ -321,9 +322,35 @@ public class PluginManager implements MainWindowListener
             Log.error("Not loading plugin " + pluginDir + ": no <plugin>");
             return null;
         }
-            PublicPlugin publicPlugin = new PublicPlugin();
-            try
-            {
+        PublicPlugin publicPlugin = new PublicPlugin();
+        try {
+            // Do operating system check.
+            if (!isOperatingSystemOK(plugin)) {
+                return null;
+            }
+            // Check for a minimum version of Spark
+            Node minSparkVersionNode = plugin.selectSingleNode("minSparkVersion");
+            if (minSparkVersionNode != null) {
+                String minVersion = minSparkVersionNode.getText().trim();
+                String buildNumber = JiveInfo.getVersion();
+                if (buildNumber.compareTo(minVersion) < 0) {
+                    Log.warning("Not loading plugin " + pluginDir + " as it is not supported by Spark version.");
+                    return null;
+                }
+            };
+            // Check for minimum Java version
+            Node nodeJavaVersion = plugin.selectSingleNode("java");
+            if (nodeJavaVersion != null) {
+                final String pluginMinVersion = nodeJavaVersion.getText().trim();
+                final int jv = StringUtils.getJavaMajorVersion(pluginMinVersion);
+                final int mv = StringUtils.getJavaMajorVersion(SystemUtils.JAVA_VERSION);
+                if (mv < jv) {
+                    Log.error("Unable to load plugin " + pluginDir + " due to old JavaVersion.\n" +
+                        "It Requires " + pluginMinVersion + " you have " + SystemUtils.JAVA_VERSION);
+                    return null;
+                }
+            };
+
                 Node nameNode = plugin.selectSingleNode("name");
                 Node clazzNode = plugin.selectSingleNode("class");
                 Node versionNode = plugin.selectSingleNode("version");
@@ -360,37 +387,6 @@ public class PluginManager implements MainWindowListener
                     return null;
                 }
 
-                // Check for a minimum version of Spark
-                try
-                {
-                    Node minSparkVersionNode = plugin.selectSingleNode("minSparkVersion");
-                    String minVersion = minSparkVersionNode != null ? minSparkVersionNode.getText().trim() : "";
-                    String buildNumber = JiveInfo.getVersion();
-                    if (buildNumber.compareTo(minVersion) < 0) {
-                        Log.warning( "Not loading plugin " + name + " as it is not supported by Spark version." );
-                        return null;
-                    }
-                }
-                catch ( Exception e )
-                {
-                    Log.error( "Unable to load plugin " + name + " due to missing <minSparkVersion>-Tag in plugin.xml." );
-                    return null;
-                }
-
-                // Check for minimum Java version
-                    Node nodeJavaVersion = plugin.selectSingleNode("java");
-                    final String pluginMinVersion = nodeJavaVersion != null ? nodeJavaVersion.getText().trim() : "";
-                    final int jv = !pluginMinVersion.isEmpty() ? StringUtils.getJavaMajorVersion(pluginMinVersion) : 11;
-                    final int mv = StringUtils.getJavaMajorVersion( System.getProperty( "java.version" ) );
-                    boolean ok = ( mv >= jv );
-                    if ( !ok )
-                    {
-                        Log.error( "Unable to load plugin " + name +" due to old JavaVersion.\n" +
-                                       "It Requires " + pluginMinVersion +
-                                       " you have " + System.getProperty( "java.version" ) );
-                        return null;
-                    }
-
                 // set dependencies
                 try
                 {
@@ -407,13 +403,6 @@ public class PluginManager implements MainWindowListener
                 catch ( Exception e )
                 {
                     Log.warning( "An exception occurred during the setting of dependencies while loading plugin " + name, e );
-                }
-
-                // Do operating system check.
-                boolean operatingSystemOK = isOperatingSystemOK( plugin );
-                if ( !operatingSystemOK )
-                {
-                    return null;
                 }
 
                 publicPlugin.setPluginClass( clazz );
@@ -1048,7 +1037,6 @@ public class PluginManager implements MainWindowListener
             if ( osElement != null )
             {
                 String operatingSystem = osElement.getText();
-                boolean ok = false;
                 final String currentOS = JiveInfo.getOS().toLowerCase();
                 // Iterate through comma-delimited string
                 StringTokenizer tkn = new StringTokenizer( operatingSystem, "," );
@@ -1057,22 +1045,17 @@ public class PluginManager implements MainWindowListener
                     String os = tkn.nextToken().toLowerCase();
                     if ( currentOS.contains( os ) || currentOS.equalsIgnoreCase( os ) )
                     {
-                        ok = true;
+                        return true;
                     }
                 }
-
-                if ( !ok )
-                {
-                    Log.debug( "Unable to load plugin " + plugin.selectSingleNode( "name" ).getText() + " due to invalid operating system. Required OS = " + operatingSystem );
-                    return false;
-                }
+                Log.warning( "Unable to load plugin " + plugin.selectSingleNode( "name" ).getText() + " due to invalid operating system. Required OS = " + operatingSystem );
+                return false;
             }
         }
         catch ( Exception e )
         {
             Log.error("An exception occurred while trying to determine operating system compatibility of plugin '" + plugin + "'", e);
         }
-
         return true;
     }
 }
