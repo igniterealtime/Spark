@@ -35,7 +35,6 @@ import org.jivesoftware.spark.component.MessageDialog;
 import org.jivesoftware.spark.component.VerticalFlowLayout;
 import org.jivesoftware.spark.plugin.Plugin;
 import org.jivesoftware.spark.plugin.PublicPlugin;
-import org.jivesoftware.spark.util.GraphicUtils;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.URLFileSystem;
 import org.jivesoftware.spark.util.log.Log;
@@ -76,7 +75,7 @@ public class PluginViewer extends JPanel implements Plugin
     public PluginViewer()
     {
         _prefs = SettingsManager.getLocalPreferences();
-        _deactivatedPlugins = _prefs.getDeactivatedPlugins();
+        _deactivatedPlugins = new ArrayList<>(_prefs.getDeactivatedPlugins());
 
         EventQueue.invokeLater( () ->
                                 {
@@ -213,9 +212,7 @@ public class PluginViewer extends JPanel implements Plugin
             // pluginJAR.delete();
             // mainpluginJar.delete();
 
-            List<String> deact = new ArrayList<>(_prefs.getDeactivatedPlugins());
-            deact.add( plugin.getName() );
-            _deactivatedPlugins = deact;
+            _deactivatedPlugins.add(plugin.getName());
             _prefs.setDeactivatedPlugins( _deactivatedPlugins );
 
             final SparkPlugUI ui = new SparkPlugUI( plugin );
@@ -366,14 +363,10 @@ public class PluginViewer extends JPanel implements Plugin
                 if (response.getCode() != 200) {
                     return null;
                 }
-
                 final HttpEntity entity = response.getEntity();
-
-
                 try
                 {
                     InputStream stream = entity.getContent();
-
                     URL url = new URL( plugin.getDownloadURL() );
                     String name1 = URLFileSystem.getFileName( url );
                     String directoryName = URLFileSystem.getName( url );
@@ -573,9 +566,7 @@ public class PluginViewer extends JPanel implements Plugin
         ui.getInstallButton().addActionListener(e -> {
             deactivatedPanel.remove(ui);
 
-            List<String> deact = new ArrayList<>(_deactivatedPlugins);
-            deact.remove(ui.getPlugin().getName());
-            _deactivatedPlugins = deact;
+            _deactivatedPlugins.remove(ui.getPlugin().getName());
             _prefs.setDeactivatedPlugins(_deactivatedPlugins);
 
             deactivatedPanel.repaint();
