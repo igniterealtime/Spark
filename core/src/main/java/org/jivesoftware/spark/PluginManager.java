@@ -51,6 +51,7 @@ import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.jivesoftware.sparkimpl.plugin.InternalPlugins.getInternalPlugins;
 
 /**
@@ -61,7 +62,7 @@ import static org.jivesoftware.sparkimpl.plugin.InternalPlugins.getInternalPlugi
 public class PluginManager implements MainWindowListener
 {
     public static final Map<String, String> INCOMPATIBLE_PLUGINS = Map.of(
-        normalizePluginName("OTR Plugin"), "0.4 Beta"
+//        normalizePluginName("OTR Plugin"), "0.4 Beta"
     );
 
     private final List<Plugin> plugins = new ArrayList<>();
@@ -76,7 +77,8 @@ public class PluginManager implements MainWindowListener
 
     private PluginClassLoader classLoader;
 
-    private final Collection<String> _blacklistPlugins;
+    private final Collection<String> blacklistPlugins = Default.getPluginBlacklist();
+    private final List<String> deactivatedPlugins = SettingsManager.getLocalPreferences().getDeactivatedPlugins();
 
     /**
      * Returns the singleton instance of PluginManager, creating it if necessary.
@@ -115,8 +117,6 @@ public class PluginManager implements MainWindowListener
             PLUGINS_DIRECTORY.mkdirs();
         }
         Log.debug("Loading plugins from: " + PLUGINS_DIRECTORY.getAbsolutePath());
-
-        _blacklistPlugins = Default.getPluginBlacklist();
     }
 
     private void movePlugins()
@@ -254,7 +254,6 @@ public class PluginManager implements MainWindowListener
 
         updateClasspath();
         loadInternalPlugins();
-        // Load extension plugins
         loadPublicPlugins();
         loadDevPlugin();
         loadPluginResources();
@@ -317,35 +316,41 @@ public class PluginManager implements MainWindowListener
             return null;
         }
 
-        List<? extends Node> plugins = pluginXML.selectNodes( "/plugin" );
-        for ( Node plugin : plugins )
-        {
+        Node plugin = pluginXML.selectSingleNode( "/plugin" );
+        if (plugin == null) {
+            Log.error("Not loading plugin " + pluginDir + ": no <plugin>");
+            return null;
+        }
             PublicPlugin publicPlugin = new PublicPlugin();
-
-            String clazz = null;
-            String name;
-            String minVersion;
-            String version;
-
             try
             {
-                name = plugin.selectSingleNode( "name" ) != null ? plugin.selectSingleNode( "name" ).getText().trim() : null;
-                clazz = plugin.selectSingleNode( "class" ) != null ? plugin.selectSingleNode( "class" ).getText().trim() : null;
-                version = plugin.selectSingleNode( "version" ) != null ? plugin.selectSingleNode( "version" ).getText().trim() : null;
-
+                Node nameNode = plugin.selectSingleNode("name");
+                Node clazzNode = plugin.selectSingleNode("class");
+                Node versionNode = plugin.selectSingleNode("version");
+                String name = nameNode != null ? nameNode.getText().trim() : null;
+                String clazz = clazzNode != null ? clazzNode.getText().trim() : null;
+                String version = versionNode != null ? versionNode.getText().trim() : null;
+                if (isEmpty(name) || isEmpty(clazz) || isEmpty(version)) {
+                    Log.error("Not loading plugin " + pluginDir + ": name, class or version are empty");
+                    return null;
+                }
                 try
                 {
                     String lower = normalizePluginName( name );
                     // Don't load the plugin if it's known to be incompatible with this version of Spark.
-                    if ( INCOMPATIBLE_PLUGINS.containsKey( lower ) && INCOMPATIBLE_PLUGINS.get( lower ).compareTo( version ) >= 0 ) {
+                    String incompatibleVersion = INCOMPATIBLE_PLUGINS.get(lower);
+                    if (incompatibleVersion != null && incompatibleVersion.compareTo(version) >= 0) {
                         Log.warning( "Not loading plugin " + name + " (version " + version + ") as it is incompatible with this version of Spark." );
                         return null;
                     }
                     // Don't load the plugin if it's on the Blacklist
-                    if ( _blacklistPlugins.contains( lower ) || _blacklistPlugins.contains( clazz )
-                        || SettingsManager.getLocalPreferences().getDeactivatedPlugins().contains( name ) )
-                    {
-                        Log.warning( "Not loading plugin " + name + " as it is blacklisted." );
+                    if (deactivatedPlugins.contains(name)) {
+                        Log.debug( "Not loading plugin " + name + " as it is deactivated." );
+                        return null;
+                    }
+                    // Don't load the plugin if it's on the Blacklist
+                    if (blacklistPlugins.contains(lower) || blacklistPlugins.contains(clazz)) {
+                        Log.debug( "Not loading plugin " + name + " as it is blacklisted." );
                         return null;
                     }
                 }
@@ -358,13 +363,10 @@ public class PluginManager implements MainWindowListener
                 // Check for a minimum version of Spark
                 try
                 {
-                    minVersion = plugin.selectSingleNode( "minSparkVersion" ) != null ? plugin.selectSingleNode( "minSparkVersion" ).getText().trim() : "";
-
+                    Node minSparkVersionNode = plugin.selectSingleNode("minSparkVersion");
+                    String minVersion = minSparkVersionNode != null ? minSparkVersionNode.getText().trim() : "";
                     String buildNumber = JiveInfo.getVersion();
-                    boolean ok = buildNumber.compareTo( minVersion ) >= 0;
-
-                    if ( !ok )
-                    {
+                    if (buildNumber.compareTo(minVersion) < 0) {
                         Log.warning( "Not loading plugin " + name + " as it is not supported by Spark version." );
                         return null;
                     }
@@ -376,15 +378,11 @@ public class PluginManager implements MainWindowListener
                 }
 
                 // Check for minimum Java version
-                try
-                {
                     Node nodeJavaVersion = plugin.selectSingleNode("java");
                     final String pluginMinVersion = nodeJavaVersion != null ? nodeJavaVersion.getText().trim() : "";
                     final int jv = !pluginMinVersion.isEmpty() ? StringUtils.getJavaMajorVersion(pluginMinVersion) : 11;
                     final int mv = StringUtils.getJavaMajorVersion( System.getProperty( "java.version" ) );
-
                     boolean ok = ( mv >= jv );
-
                     if ( !ok )
                     {
                         Log.error( "Unable to load plugin " + name +" due to old JavaVersion.\n" +
@@ -392,12 +390,6 @@ public class PluginManager implements MainWindowListener
                                        " you have " + System.getProperty( "java.version" ) );
                         return null;
                     }
-
-                }
-                catch ( NullPointerException e )
-                {
-                    Log.warning( "Plugin " + name + " has no <java>-Tag, consider getting a newer Version" );
-                }
 
                 // set dependencies
                 try
@@ -431,16 +423,20 @@ public class PluginManager implements MainWindowListener
                 {
                     publicPlugin.setVersion( version );
 
-                    String author = plugin.selectSingleNode( "author" ) != null ? plugin.selectSingleNode( "author" ).getText() : null;
+                    Node authorNode = plugin.selectSingleNode("author");
+                    String author = authorNode != null ? authorNode.getText().trim() : null;
                     publicPlugin.setAuthor( author );
 
-                    String email = plugin.selectSingleNode( "email" ) != null ? plugin.selectSingleNode( "email" ).getText() : null;
+                    Node emailNode = plugin.selectSingleNode("email");
+                    String email = emailNode != null ? emailNode.getText().trim() : null;
                     publicPlugin.setEmail( email );
 
-                    String description = plugin.selectSingleNode( "description" ) != null ? plugin.selectSingleNode( "description" ).getText() : null;
+                    Node descriptionNode = plugin.selectSingleNode("description");
+                    String description = descriptionNode != null ? descriptionNode.getText().trim() : null;
                     publicPlugin.setDescription( description );
 
-                    String homePage = plugin.selectSingleNode( "homePage" ) != null ? plugin.selectSingleNode( "homePage" ).getText() : null;
+                    Node homePageNode = plugin.selectSingleNode("homePage");
+                    String homePage = homePageNode != null ? homePageNode.getText().trim() : null;
                     publicPlugin.setHomePage( homePage );
                 }
                 catch ( Exception e )
@@ -466,9 +462,8 @@ public class PluginManager implements MainWindowListener
             }
             catch ( Exception ex )
             {
-                Log.error( "Unable to load plugin " + clazz + ".", ex );
+                Log.error( "Unable to load plugin " + pluginDir + ".", ex );
             }
-        }
         return null;
     }
 
