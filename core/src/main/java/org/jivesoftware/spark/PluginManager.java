@@ -849,33 +849,24 @@ public class PluginManager implements MainWindowListener
         }
     }
 
-    private void loadPlugin(File file) {
+    private Plugin loadPlugin(File pluginDir) {
         try {
-            Log.debug("Start loading plugin " + file.getAbsolutePath());
-            classLoader.addPlugin(file);
-            loadPublicPlugin(file);
+            Log.debug("Start loading plugin " + pluginDir.getAbsolutePath());
+            classLoader.addPlugin(pluginDir);
+            return loadPublicPlugin(pluginDir);
         } catch (Throwable e) {
             Log.error("Unable to load dirs", e);
+            return null;
         }
     }
 
     /**
      * Adds and installs a new plugin into Spark.
-     *
-     * @param plugin the plugin to install.
-     * @throws Exception thrown if there was a problem loading the plugin.
      */
-    public void addPlugin( PublicPlugin plugin ) throws Exception
-    {
+    public void addPlugin(PublicPlugin plugin) {
+        Log.debug("Loading plugin from " + plugin.getPluginDir());
         expandNewPlugins();
-
-        URL url = new URL( plugin.getDownloadURL() );
-        String name = URLFileSystem.getName( url );
-        File pluginDownload = new File( PluginManager.PLUGINS_DIRECTORY, name );
-
-        ( (PluginClassLoader) getParentClassLoader() ).addPlugin( pluginDownload );
-
-        Plugin pluginInstance = loadPublicPlugin(pluginDownload);
+        Plugin pluginInstance = loadPlugin(plugin.getPluginDir());
         if (pluginInstance == null) {
             return;
         }

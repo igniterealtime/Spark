@@ -373,12 +373,13 @@ public class PluginViewer extends JPanel implements Plugin
 
                     File pluginDownload = new File( PluginManager.PLUGINS_DIRECTORY, name1 );
                     File pluginDir = new File(PluginManager.PLUGINS_DIRECTORY, directoryName);
+                    plugin.setPluginDir(pluginDir);
 
                     FileOutputStream out = new FileOutputStream( pluginDownload );
                     copy( stream, out );
                     out.close();
 
-                    PluginManager.getInstance().addPlugin(pluginDir);
+                    PluginManager.getInstance().addPlugin(plugin);
 
                     // Remove SparkPlugUI
                     // Clear all selections
@@ -397,7 +398,6 @@ public class PluginViewer extends JPanel implements Plugin
 
                                 sparkPlug.showOperationButton();
                                 installedPanel.add( sparkPlug );
-                                sparkPlug.getPlugin().setPluginDir(pluginDir);
                                 installedPanel.invalidate();
                                 installedPanel.repaint();
                                 availablePanel.invalidate();
