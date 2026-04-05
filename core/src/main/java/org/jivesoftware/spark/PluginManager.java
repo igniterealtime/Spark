@@ -790,7 +790,7 @@ public class PluginManager implements MainWindowListener
     {
         // First, expand all plugins that have yet to be expanded.
         expandNewPlugins();
-        File[] files = PLUGINS_DIRECTORY.listFiles( ( dir, name ) -> dir.isDirectory() );
+        File[] files = PLUGINS_DIRECTORY.listFiles(File::isDirectory);
         // Do nothing if no jar or zip files were found
         if ( files == null )
         {
@@ -816,29 +816,22 @@ public class PluginManager implements MainWindowListener
                 }
             }
         }
-
-        try
-        {
-            for ( File file : nodependencies )
-            {
-                loadPlugin( classLoader, file );
-            }
-            for ( File file : dependencies )
-            {
-                loadPlugin( classLoader, file );
-            }
+        for (File file : nodependencies) {
+            loadPlugin(file);
         }
-        catch ( Throwable e )
-        {
-            Log.error( "Unable to load dirs", e );
+        for (File file : dependencies) {
+            loadPlugin(file);
         }
     }
 
-    private void loadPlugin( PluginClassLoader classLoader, File file ) throws MalformedURLException
-    {
-        Log.debug("Start loading plugin " + file.getAbsolutePath());
-        classLoader.addPlugin( file );
-        loadPublicPlugin( file );
+    private void loadPlugin(File file) {
+        try {
+            Log.debug("Start loading plugin " + file.getAbsolutePath());
+            classLoader.addPlugin(file);
+            loadPublicPlugin(file);
+        } catch (Throwable e) {
+            Log.error("Unable to load dirs", e);
+        }
     }
 
     /**
@@ -861,21 +854,18 @@ public class PluginManager implements MainWindowListener
         if (pluginInstance == null) {
             return;
         }
-
         try
         {
             EventQueue.invokeAndWait( () -> {
                 Log.debug( "Trying to initialize " + pluginInstance );
                 pluginInstance.initialize();
                 Log.debug( "Done initializing " + pluginInstance );
-
             } );
         }
         catch ( Exception e )
         {
             Log.error( e );
         }
-
     }
 
     /**

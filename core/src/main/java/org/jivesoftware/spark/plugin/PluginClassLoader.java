@@ -68,29 +68,18 @@ public class PluginClassLoader extends URLClassLoader {
      */
     public void addPlugin(File pluginDir) throws MalformedURLException {
         File libDir = new File(pluginDir, "lib");
-
-        File[] jars = libDir.listFiles( ( dir, name ) -> {
-            boolean accept = false;
-            String smallName = name.toLowerCase();
-            if (smallName.endsWith(".jar")) {
-                accept = true;
-            }
-            else if (smallName.endsWith(".zip")) {
-                accept = true;
-            }
-            return accept;
-        } );
-
+        File[] jars = libDir.listFiles((lib) -> {
+            if (!lib.isFile()) return false;
+            String smallName = lib.getName().toLowerCase();
+            return smallName.endsWith(".jar") || smallName.endsWith(".zip");
+        });
         // Do nothing if no jar or zip files were found
         if (jars == null) {
             return;
         }
-
         for (File jar : jars) {
-            if (jar.isFile()) {
-                final URL url = jar.toURI().toURL();
-                addURL(url);
-            }
+            URL url = jar.toURI().toURL();
+            addURL(url);
         }
     }
 
