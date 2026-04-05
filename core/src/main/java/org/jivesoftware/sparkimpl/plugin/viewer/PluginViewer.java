@@ -41,7 +41,6 @@ import org.jivesoftware.spark.util.URLFileSystem;
 import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.plugin.layout.LayoutSettingsManager;
 import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
-import org.jivesoftware.sparkimpl.settings.JiveInfo;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 import org.jivesoftware.sparkimpl.updater.AcceptAllCertsConnectionManager;
@@ -54,7 +53,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -335,17 +333,12 @@ public class PluginViewer extends JPanel implements Plugin
                     JOptionPane.showMessageDialog( availablePanel, Res.getString( "message.plugins.not.available" ), Res.getString( "title.error" ), JOptionPane.ERROR_MESSAGE );
                     return;
                 }
-                Iterator<PublicPlugin> plugs = pluginList.iterator();
                 availablePanel.removeAll();
-
-                while ( plugs.hasNext() )
-                {
-                    PublicPlugin plugin = plugs.next();
-                    if ( !pluginManager.isInstalled( plugin ) )
-                    {
-                        SparkPlugUI ui = new SparkPlugUI( plugin );
-                        availablePanel.add( ui );
-                        addSparkPlugUIListener( ui );
+                for (PublicPlugin plugin : pluginList) {
+                    if (!pluginManager.isInstalled(plugin)) {
+                        SparkPlugUI ui = new SparkPlugUI(plugin);
+                        availablePanel.add(ui);
+                        addSparkPlugUIListener(ui);
                     }
                 }
 
@@ -470,95 +463,13 @@ public class PluginViewer extends JPanel implements Plugin
             return Collections.emptyList();
         }
 
-        String sparkVersion = JiveInfo.getVersion();
         List<? extends Node> plugins = pluginXML.selectNodes( "/plugins/plugin" );
         for ( Node plugin1 : plugins )
         {
-            try
-            {
-                Element plugin = (Element) plugin1;
-
-                String name = plugin.selectSingleNode("name").getText();
-                String minSparkVersion = plugin.selectSingleNode( "minSparkVersion" ).getText();
-                if ( !isGreaterOrEqual( sparkVersion, minSparkVersion ) )
-                {
-                    Log.error( "Unable to load plugin " + name + " due to min version incompatibility." );
-                    continue;
-                }
-
-                String clazz = plugin.selectSingleNode("class").getText();
-                PublicPlugin publicPlugin = new PublicPlugin();
-                publicPlugin.setPluginClass( clazz );
-                publicPlugin.setName( name );
-
-                try
-                {
-                    String version = plugin.selectSingleNode( "version" ).getText();
-                    publicPlugin.setVersion( version );
-
-                    String author = plugin.selectSingleNode( "author" ).getText();
-                    publicPlugin.setAuthor( author );
-
-
-                    Node emailNode = plugin.selectSingleNode( "email" );
-                    if ( emailNode != null )
-                    {
-                        publicPlugin.setEmail( emailNode.getText() );
-                    }
-
-                    Node descriptionNode = plugin.selectSingleNode( "description" );
-                    if ( descriptionNode != null )
-                    {
-                        publicPlugin.setDescription( descriptionNode.getText() );
-                    }
-
-                    Node homePageNode = plugin.selectSingleNode( "homePage" );
-                    if ( homePageNode != null )
-                    {
-                        publicPlugin.setHomePage( homePageNode.getText() );
-                    }
-
-                    Node downloadNode = plugin.selectSingleNode( "downloadURL" );
-                    if ( downloadNode != null )
-                    {
-                        String downloadURL = downloadNode.getText();
-                        publicPlugin.setDownloadURL( downloadURL );
-                    }
-
-                    Node changeLogNode = plugin.selectSingleNode( "changeLog" );
-                    if ( changeLogNode != null )
-                    {
-                        publicPlugin.setChangeLogURL( changeLogNode.getText() );
-                    }
-
-                    Node readMeNode = plugin.selectSingleNode( "readme" );
-                    if ( readMeNode != null )
-                    {
-                        publicPlugin.setReadMeURL( readMeNode.getText() );
-                    }
-
-                    Node smallIcon = plugin.selectSingleNode( "smallIcon" );
-                    if ( smallIcon != null )
-                    {
-                        publicPlugin.setSmallIconAvailable( true );
-                    }
-
-                    Node largeIcon = plugin.selectSingleNode( "largeIcon" );
-                    if ( largeIcon != null )
-                    {
-                        publicPlugin.setLargeIconAvailable( true );
-                    }
-
-                }
-                catch ( Exception e )
-                {
-                    Log.error( "Error retrieving PluginInformation from xml.", e );
-                }
-                pluginList.add( publicPlugin );
-            }
-            catch ( Exception ex )
-            {
-                Log.error(ex);
+            Element plugin = (Element) plugin1;
+            PublicPlugin publicPlugin = PluginManager.getInstance().parsePluginXml(plugin);
+            if (publicPlugin != null) {
+                pluginList.add(publicPlugin);
             }
         }
         return pluginList;
@@ -710,18 +621,6 @@ public class PluginViewer extends JPanel implements Plugin
 	public void uninstall()
     {
         // Do nothing.
-    }
-
-    /**
-     * Returns true if the first version number is greater than the second.
-     *
-     * @param firstVersion the first version number.
-     * @param secondVersion the second version number.
-     * @return returns true if the first version is greater than the second.
-     */
-    public boolean isGreaterOrEqual( String firstVersion, String secondVersion )
-    {
-        return firstVersion.compareTo( secondVersion ) >= 0;
     }
 
     public boolean isLoaded()

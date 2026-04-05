@@ -302,8 +302,60 @@ public class PluginManager implements MainWindowListener
             Log.error("Not loading plugin " + pluginDir + ": no <plugin>");
             return null;
         }
-        PublicPlugin publicPlugin = new PublicPlugin();
+        PublicPlugin publicPlugin = parsePluginXml((Element) plugin);
+        if (publicPlugin == null) {
+            return null;
+        }
         try {
+            String lower = normalizePluginName(publicPlugin.getName());
+            // Don't load the plugin if it's known to be incompatible with this version of Spark.
+            String incompatibleVersion = INCOMPATIBLE_PLUGINS.get(lower);
+            if (incompatibleVersion != null && incompatibleVersion.compareTo(publicPlugin.getVersion()) >= 0) {
+                Log.warning("Not loading plugin " + publicPlugin.getName() + " (version " + publicPlugin.getVersion() + ") as it is incompatible with this version of Spark.");
+                return null;
+            }
+            // Don't load the plugin if it's on the Blacklist
+            if (deactivatedPlugins.contains(publicPlugin.getName())) {
+                Log.debug("Not loading plugin " + publicPlugin.getName() + " as it is deactivated.");
+                return null;
+            }
+            // Don't load the plugin if it's on the Blacklist
+            if (blacklistPlugins.contains(lower) || blacklistPlugins.contains(publicPlugin.getPluginClass())) {
+                Log.debug("Not loading plugin " + publicPlugin.getName() + " as it is blacklisted.");
+                return null;
+            }
+        } catch (Exception e) {
+            Log.warning("An exception occurred while checking the plugin blacklist for " + publicPlugin.getName(), e);
+            return null;
+        }
+
+        try {
+            Class<? extends Plugin> pluginType = getParentClassLoader().loadClass(publicPlugin.getPluginClass()).asSubclass(Plugin.class);
+            Plugin pluginInstance = pluginType.getDeclaredConstructor().newInstance();
+            Log.debug(publicPlugin.getName() + " has been loaded.");
+            publicPlugin.setPluginDir(pluginDir);
+            publicPlugins.add(publicPlugin);
+
+            registerPlugin(pluginInstance);
+            return pluginInstance;
+        } catch (Throwable e) {
+            Log.error("Unable to load plugin " + publicPlugin.getPluginClass() + ".", e);
+        }
+        return null;
+    }
+
+    /**
+     * Parse a single plugin node from plugin.xml.
+     * If the plugin's meta-info is invalid or the plugin is not compatible will return null.
+     */
+    public PublicPlugin parsePluginXml(Element plugin) {
+        try {
+            Node nameNode = plugin.selectSingleNode("name");
+            String name = nameNode != null ? nameNode.getText().trim() : null;
+            if (isEmpty(name)) {
+                Log.error("Not loading plugin: name is empty" + plugin);
+                return null;
+            }
             // Do operating system check.
             if (!isOperatingSystemOK(plugin)) {
                 return null;
@@ -314,7 +366,7 @@ public class PluginManager implements MainWindowListener
                 String minVersion = minSparkVersionNode.getText().trim();
                 String buildNumber = JiveInfo.getVersion();
                 if (buildNumber.compareTo(minVersion) < 0) {
-                    Log.warning("Not loading plugin " + pluginDir + " as it is not supported by Spark version.");
+                    Log.warning("Not loading plugin " + name + " as it is not supported by Spark version.");
                     return null;
                 }
             };
@@ -325,116 +377,94 @@ public class PluginManager implements MainWindowListener
                 final int jv = StringUtils.getJavaMajorVersion(pluginMinVersion);
                 final int mv = StringUtils.getJavaMajorVersion(SystemUtils.JAVA_VERSION);
                 if (mv < jv) {
-                    Log.error("Unable to load plugin " + pluginDir + " due to old JavaVersion.\n" +
+                    Log.error("Unable to load plugin " + name + " due to old JavaVersion.\n" +
                         "It Requires " + pluginMinVersion + " you have " + SystemUtils.JAVA_VERSION);
                     return null;
                 }
             };
 
-                Node nameNode = plugin.selectSingleNode("name");
-                Node clazzNode = plugin.selectSingleNode("class");
-                Node versionNode = plugin.selectSingleNode("version");
-                String name = nameNode != null ? nameNode.getText().trim() : null;
-                String clazz = clazzNode != null ? clazzNode.getText().trim() : null;
-                String version = versionNode != null ? versionNode.getText().trim() : null;
-                if (isEmpty(name) || isEmpty(clazz) || isEmpty(version)) {
-                    Log.error("Not loading plugin " + pluginDir + ": name, class or version are empty");
-                    return null;
-                }
-                try
-                {
-                    String lower = normalizePluginName( name );
-                    // Don't load the plugin if it's known to be incompatible with this version of Spark.
-                    String incompatibleVersion = INCOMPATIBLE_PLUGINS.get(lower);
-                    if (incompatibleVersion != null && incompatibleVersion.compareTo(version) >= 0) {
-                        Log.warning( "Not loading plugin " + name + " (version " + version + ") as it is incompatible with this version of Spark." );
-                        return null;
-                    }
-                    // Don't load the plugin if it's on the Blacklist
-                    if (deactivatedPlugins.contains(name)) {
-                        Log.debug( "Not loading plugin " + name + " as it is deactivated." );
-                        return null;
-                    }
-                    // Don't load the plugin if it's on the Blacklist
-                    if (blacklistPlugins.contains(lower) || blacklistPlugins.contains(clazz)) {
-                        Log.debug( "Not loading plugin " + name + " as it is blacklisted." );
-                        return null;
-                    }
-                }
-                catch ( Exception e )
-                {
-                    Log.warning( "An exception occurred while checking the plugin blacklist for " + name, e );
-                    return null;
-                }
-
-                // set dependencies
-                try
-                {
-                    List<? extends Node> dependencies = plugin.selectNodes( "depends/plugin" );
-                    for ( Node depend1 : dependencies )
-                    {
-                        Element depend = (Element) depend1;
-                        PluginDependency dependency = new PluginDependency();
-                        dependency.setVersion( depend.selectSingleNode( "version" ).getText() );
-                        dependency.setName( depend.selectSingleNode( "name" ).getText() );
-                        publicPlugin.addDependency( dependency );
-                    }
-                }
-                catch ( Exception e )
-                {
-                    Log.warning( "An exception occurred during the setting of dependencies while loading plugin " + name, e );
-                }
-
-                publicPlugin.setPluginClass( clazz );
-                publicPlugin.setName( name );
-
-                try
-                {
-                    publicPlugin.setVersion( version );
-
-                    Node authorNode = plugin.selectSingleNode("author");
-                    String author = authorNode != null ? authorNode.getText().trim() : null;
-                    publicPlugin.setAuthor( author );
-
-                    Node emailNode = plugin.selectSingleNode("email");
-                    String email = emailNode != null ? emailNode.getText().trim() : null;
-                    publicPlugin.setEmail( email );
-
-                    Node descriptionNode = plugin.selectSingleNode("description");
-                    String description = descriptionNode != null ? descriptionNode.getText().trim() : null;
-                    publicPlugin.setDescription( description );
-
-                    Node homePageNode = plugin.selectSingleNode("homePage");
-                    String homePage = homePageNode != null ? homePageNode.getText().trim() : null;
-                    publicPlugin.setHomePage( homePage );
-                }
-                catch ( Exception e )
-                {
-                    Log.debug( "An ignorable exception occurred while loading plugin " + name + ": " + e.getMessage() );
-                }
-
-                try
-                {
-                    Class<? extends Plugin> pluginType = getParentClassLoader().loadClass( clazz ).asSubclass(Plugin.class);
-                    Plugin pluginInstance = pluginType.getDeclaredConstructor().newInstance();
-                    Log.debug( name + " has been loaded." );
-                    publicPlugin.setPluginDir( pluginDir );
-                    publicPlugins.add( publicPlugin );
-
-                    registerPlugin(pluginInstance);
-                    return pluginInstance;
-                }
-                catch ( Throwable e )
-                {
-                    Log.error( "Unable to load plugin " + clazz + ".", e );
-                }
+            Node clazzNode = plugin.selectSingleNode("class");
+            Node versionNode = plugin.selectSingleNode("version");
+            String clazz = clazzNode != null ? clazzNode.getText().trim() : null;
+            String version = versionNode != null ? versionNode.getText().trim() : null;
+            if (isEmpty(clazz) || isEmpty(version)) {
+                Log.error("Not loading plugin: class or version are empty");
+                return null;
             }
-            catch ( Exception ex )
+
+            PublicPlugin publicPlugin = new PublicPlugin();
+            publicPlugin.setName(name);
+            publicPlugin.setPluginClass(clazz);
+            publicPlugin.setVersion(version);
+
+            // set dependencies
+            try
             {
-                Log.error( "Unable to load plugin " + pluginDir + ".", ex );
+                List<? extends Node> dependencies = plugin.selectNodes( "depends/plugin" );
+                dependencies = dependencies != null ? dependencies : List.of();
+                for ( Node depend1 : dependencies )
+                {
+                    Element depend = (Element) depend1;
+                    PluginDependency dependency = new PluginDependency();
+                    dependency.setVersion( depend.selectSingleNode( "version" ).getText() );
+                    dependency.setName( depend.selectSingleNode( "name" ).getText() );
+                    publicPlugin.addDependency( dependency );
+                }
             }
-        return null;
+            catch ( Exception e )
+            {
+                Log.warning( "An exception occurred during the setting of dependencies while loading plugin " + name, e );
+            }
+
+            Node authorNode = plugin.selectSingleNode("author");
+            String author = authorNode != null ? authorNode.getText().trim() : null;
+            publicPlugin.setAuthor( author );
+
+            Node emailNode = plugin.selectSingleNode("email");
+            String email = emailNode != null ? emailNode.getText().trim() : null;
+            publicPlugin.setEmail( email );
+
+            Node descriptionNode = plugin.selectSingleNode("description");
+            String description = descriptionNode != null ? descriptionNode.getText().trim() : null;
+            publicPlugin.setDescription( description );
+
+            Node homePageNode = plugin.selectSingleNode("homePage");
+            String homePage = homePageNode != null ? homePageNode.getText().trim() : null;
+            publicPlugin.setHomePage( homePage );
+
+            Node downloadNode = plugin.selectSingleNode("downloadURL");
+            if (downloadNode != null) {
+                String downloadURL = downloadNode.getText();
+                publicPlugin.setDownloadURL(downloadURL);
+            }
+
+            Node changeLogNode = plugin.selectSingleNode("changeLog");
+            if (changeLogNode != null) {
+                publicPlugin.setChangeLogURL(changeLogNode.getText());
+            }
+
+            Node readMeNode = plugin.selectSingleNode("readme");
+            if (readMeNode != null) {
+                publicPlugin.setReadMeURL(readMeNode.getText());
+            }
+
+            Node smallIcon = plugin.selectSingleNode("smallIcon");
+            if (smallIcon != null) {
+                publicPlugin.setSmallIconAvailable(true);
+            }
+
+            Node largeIcon = plugin.selectSingleNode("largeIcon");
+            if (largeIcon != null) {
+                publicPlugin.setLargeIconAvailable(true);
+            }
+
+            return publicPlugin;
+        } catch (Exception e) {
+            Log.error("Error retrieving PluginInformation from xml.", e);
+            return null;
+        }
     }
+
 
     /**
      * Loads an internal plugin.
