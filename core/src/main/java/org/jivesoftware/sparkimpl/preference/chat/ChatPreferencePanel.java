@@ -315,7 +315,7 @@ public class ChatPreferencePanel extends JPanel implements ActionListener {
             if (ok == JOptionPane.YES_OPTION) {
                 hidePrevChatHistory.setEnabled(false);
                 hidePrevChatHistory.setSelected(false);
-                File[] files = SparkManager.getTranscriptDir().listFiles();
+                File[] files = SparkManager.getTranscriptDir().listFiles(File::isFile);
                 files = files != null ? files : new File[0];
                 for (File transcriptFile : files) {
                     transcriptFile.delete();

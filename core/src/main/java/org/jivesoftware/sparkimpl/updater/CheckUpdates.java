@@ -570,7 +570,7 @@ public class CheckUpdates {
         // newer version of Spark, ask if they wish to install.
         if (Spark.isWindows()) {
             File binDirectory = Spark.getBinDirectory();
-            File[] files = binDirectory.listFiles();
+            File[] files = binDirectory.listFiles(File::isFile);
             if (files == null) {
                 return false;
             }

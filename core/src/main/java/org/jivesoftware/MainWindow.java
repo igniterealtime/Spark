@@ -45,6 +45,7 @@ import javax.swing.event.HyperlinkEvent;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.TimerTask;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -326,16 +327,14 @@ public final class MainWindow extends ChatFrame implements ActionListener {
 
         if (libDir != null) {
             libPath = libDir.getCanonicalPath();
-            files = libDir.list();
+            files = libDir.list((dir, name) -> name.endsWith(".jar"));
         }
-
+        if (files == null) {
+            return "";
+        }
         StringBuilder classpath = new StringBuilder();
-        if (files != null) {
-            for (String file : files) {
-                if (file.endsWith(".jar")) {
-                    classpath.append(libPath).append(File.separatorChar).append(file).append(File.pathSeparatorChar);
-                }
-            }
+        for (String file : files) {
+            classpath.append(libPath).append(File.separatorChar).append(file).append(File.pathSeparatorChar);
         }
         return classpath.toString();
     }

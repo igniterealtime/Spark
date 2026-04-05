@@ -113,11 +113,10 @@ public class PluginManager implements MainWindowListener
         deleteOldPlugins(profilePluginsFolder);
         deletePluginIfNotExistInInstallFolder(profilePluginsFolder);
 
-        File[] files = PLUGINS_DIRECTORY.listFiles();
+        File[] files = PLUGINS_DIRECTORY.listFiles(File::isFile);
         if ( files != null )
         {
             for (File file : files) {
-                if (file.isFile()) {
                     // Copy over
                     File newFile = new File(profilePluginsFolder, file.getName());
                     if (newFile.lastModified() >= file.lastModified()) {
@@ -129,7 +128,6 @@ public class PluginManager implements MainWindowListener
                         Log.error(e);
                     }
                 }
-            }
         }
 
         PLUGINS_DIRECTORY = profilePluginsFolder;
@@ -221,13 +219,11 @@ public class PluginManager implements MainWindowListener
     public void loadPlugins()
     {
         // Delete all old plugins
-        File[] oldFiles = PLUGINS_DIRECTORY.listFiles();
+        File[] oldFiles = PLUGINS_DIRECTORY.listFiles(File::isDirectory);
         if ( oldFiles != null )
         {
             for ( File file : oldFiles )
             {
-                if ( file.isDirectory() )
-                {
                     // Check to see if it has an associated .jar
                     File jarFile = new File( PLUGINS_DIRECTORY, file.getName() + ".jar" );
                     if ( !jarFile.exists() )
@@ -235,7 +231,6 @@ public class PluginManager implements MainWindowListener
                         uninstall( file );
                     }
                 }
-            }
         }
 
         updateClasspath();

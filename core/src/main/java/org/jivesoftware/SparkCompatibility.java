@@ -68,6 +68,7 @@ public class SparkCompatibility {
                 dest.mkdir();
             }
             String[] children = src.list();
+            children = children != null ? children : new String[]{};
             for (String child : children) {
                 // Skip any directories / files which may need to be skipped.
                 if (!skipFiles.contains((new File(dest, child).getAbsolutePath()))) {

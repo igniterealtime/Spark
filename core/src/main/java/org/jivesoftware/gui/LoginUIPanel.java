@@ -237,7 +237,7 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
         String serverProp = localPref.getServer();
 
         File file = new File(Spark.getSparkUserHome(), "/user/");
-        File[] userprofiles = file.listFiles();
+        File[] userprofiles = file.listFiles(File::isDirectory);
         userprofiles = userprofiles != null ? userprofiles : new File[]{};
         for (File f : userprofiles) {
             if (f.getName().contains("@")) {

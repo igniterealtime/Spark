@@ -116,9 +116,9 @@ public class EmoticonManager {
         profileEmoticonsFolder.mkdirs();
         deleteOldEmoticons(profileEmoticonsFolder);
 
-        File[] files = EMOTICON_DIRECTORY.listFiles();
+        File[] files = EMOTICON_DIRECTORY.listFiles(File::isFile);
+        files = files != null ? files : new File[]{};
         for (File file : files) {
-            if (file.isFile()) {
                 try {
                     // Copy over
                     File newFile = new File(profileEmoticonsFolder, file.getName());
@@ -141,7 +141,6 @@ public class EmoticonManager {
                 } catch (IOException e) {
                     Log.error(e);
                 }
-            }
         }
         EMOTICON_DIRECTORY = profileEmoticonsFolder;
     }
@@ -384,19 +383,17 @@ public class EmoticonManager {
      */
     public Collection<String> getEmoticonPacks() {
         final List<String> emoticonList = new ArrayList<>();
-        File[] dirs = EMOTICON_DIRECTORY.listFiles();
+        File[] dirs = EMOTICON_DIRECTORY.listFiles(File::isDirectory);
         // If no emoticons are available
         if (dirs == null) {
             return null;
         }
-
         for (File file : dirs) {
-            if (file.isDirectory()
-                && file.getName().toLowerCase().endsWith("adiumemoticonset")) {
+            if (file.getName().toLowerCase().endsWith("adiumemoticonset")) {
                 try {
                     String name = URLFileSystem.getName(file.toURI().toURL());
-                    name = name.replaceAll("adiumemoticonset", "");
-                    name = name.replaceAll("AdiumEmoticonset", "");
+                    name = name.replace("adiumemoticonset", "");
+                    name = name.replace("AdiumEmoticonset", "");
                     emoticonList.add(name);
                 } catch (MalformedURLException ignored) {
                 }

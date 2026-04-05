@@ -308,12 +308,12 @@ public class FastpathRes {
     }
 
     private static void checkImageDir() {
-        File[] files = new File("c:\\code\\liveassistant\\client\\resources\\images").listFiles();
-        final int no = files != null ? files.length : 0;
-        for (int i = 0; i < no; i++) {
-            File imageFile = files[i];
+        File[] files = new File("c:\\code\\liveassistant\\client\\resources\\images").listFiles(File::isFile);
+        if (files == null) {
+            return;
+        }
+        for (File imageFile : files) {
             String name = imageFile.getName();
-
             // Check to see if the name of the file exists
             boolean exists = false;
             Enumeration<String> enumeration = prb.getKeys();

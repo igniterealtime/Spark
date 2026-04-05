@@ -422,6 +422,9 @@ public class URLFileSystem {
 
         // Loop through the files and directories in the source directory and copy them
         File[] files = src.listFiles();
+        if (files == null) {
+            return;
+        }
         for (File file : files) {
             if (file.isFile()) {
                 copyFile(file, new File(dst, file.getName()));

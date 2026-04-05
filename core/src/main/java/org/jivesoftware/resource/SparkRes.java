@@ -432,13 +432,13 @@ public class SparkRes {
     }
 
     private static void checkImageDir() {
-        File[] files = new File("c:\\code\\liveassistant\\client\\resources\\images").listFiles();
-        final int no = files != null ? files.length : 0;
-        for (int i = 0; i < no; i++) {
+        File[] files = new File("c:\\code\\liveassistant\\client\\resources\\images").listFiles(File::isFile);
+        if (files == null) {
+            return;
+        }
+        for (File imageFile : files) {
             try {
-                File imageFile = files[i];
                 String name = imageFile.getName();
-
                 // Check to see if the name of the file exists
                 boolean exists = false;
                 Enumeration<String> enumeration = (Enumeration<String>) prb.propertyNames();
@@ -449,7 +449,6 @@ public class SparkRes {
                         exists = true;
                     }
                 }
-
                 if (!exists) {
                     Log.error(imageFile.getAbsolutePath() + " is not used.");
                 }
