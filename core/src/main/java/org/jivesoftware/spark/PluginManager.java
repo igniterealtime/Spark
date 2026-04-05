@@ -74,7 +74,7 @@ public class PluginManager implements MainWindowListener
     /**
      * The root Plugins Directory.
      */
-    public static File PLUGINS_DIRECTORY = Spark.getPluginDirectory().getAbsoluteFile();
+    public static File PLUGINS_DIRECTORY = Spark.getPluginDirectory();
 
     private PluginClassLoader classLoader;
 
@@ -97,27 +97,12 @@ public class PluginManager implements MainWindowListener
 
     private PluginManager()
     {
-        try
-        {
-            PLUGINS_DIRECTORY = Spark.getPluginDirectory().getCanonicalFile();
-        }
-        catch ( IOException e )
-        {
-            Log.error( e );
-        }
-
         // Do not use deployable plugins if not installed.
         if ( System.getProperty( "plugin" ) == null )
         {
             movePlugins();
         }
-
-        // Create the extension directory if one does not exist.
-        if ( !PLUGINS_DIRECTORY.exists() )
-        {
-            PLUGINS_DIRECTORY.mkdirs();
-        }
-        Log.debug("Loading plugins from: " + PLUGINS_DIRECTORY.getAbsolutePath());
+        Log.debug("Loading plugins from: " + PLUGINS_DIRECTORY);
     }
 
     private void movePlugins()

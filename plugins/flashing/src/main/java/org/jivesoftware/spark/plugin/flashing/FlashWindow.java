@@ -18,12 +18,14 @@ package org.jivesoftware.spark.plugin.flashing;
 import java.awt.FlowLayout;
 import java.awt.Window;
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
 
 import org.jivesoftware.spark.PluginManager;
+import org.jivesoftware.spark.util.log.Log;
 
 public class FlashWindow {
 	private final HashMap<Window, Thread> flashings = new HashMap<>();
@@ -35,20 +37,12 @@ public class FlashWindow {
 	if (is64bit) {
 	    arch = "64";
 	}
-	
-	try {
-	    System.load(PluginManager.PLUGINS_DIRECTORY + File.separator + "flashing" + File.separator + "native"
-		    + File.separator + "FlashWindow" + arch + ".dll");
-	} catch (UnsatisfiedLinkError e) {
-	    // So, we are on 64bit using 64bit java and you rather want a 32bit.dll ??
-	    if (e.getMessage().contains("Can't load AMD 64-bit .dll on a IA 32-bit platform")) {
-		System.load(PluginManager.PLUGINS_DIRECTORY + File.separator + "flashing" + File.separator + "native"
-			+ File.separator + "FlashWindow.dll" );
-	    } else {
-		e.printStackTrace();
-	    }
-	}
-		// System.load("C:\\PATH\FlashWindow"+s+".dll");
+        try {
+            System.load(PluginManager.PLUGINS_DIRECTORY.getCanonicalPath() +
+                File.separator + "flashing" + File.separator + "native" + File.separator + "FlashWindow" + arch + ".dll");
+        } catch (UnsatisfiedLinkError | IOException e) {
+            Log.error(e);
+        }
 	}
 
 	public native void flash(String name, boolean bool);
