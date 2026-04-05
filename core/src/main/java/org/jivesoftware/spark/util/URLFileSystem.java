@@ -178,48 +178,6 @@ public class URLFileSystem {
     }
 
     /**
-     * Tests whether the specified {@link URL} is valid. If the resource
-     * pointed by the {@link URL} exists the method returns <CODE>true</CODE>.
-     * If the resource does not exist, the method tests that all components
-     * of the path can be created.
-     *
-     * @return <CODE>true</CODE> if the {@link URL} is valid.
-     *
-     * @param url URL to check for validity.
-     */
-    public boolean isValid(URL url) {
-        if (exists(url)) {
-            return true;
-        }
-
-        return canCreate(url);
-    }
-
-    /**
-     * Returns <CODE>true</CODE> if the specified {@link URL} points to a
-     * resource that currently exists; returns <CODE>false</CODE>
-     * otherwise.<P>
-     * <p/>
-     * The default implementation simply returns <CODE>false</CODE>
-     * without doing anything.
-     *
-     * @param url URL to test for existance
-     * @return True if url exists
-     */
-    public static boolean exists(URL url) {
-        return url2File(url).exists();
-    }
-
-    public static boolean mkdirs(URL url) {
-        final File file = url2File(url);
-        if (!file.exists()) {
-            return file.mkdirs();
-        }
-        return true;
-    }
-
-
-    /**
      * Returns the name of the file contained by the {@link URL}, not
      * including any protocol, hostname authentication, directory path,
      * anchor, or query.  This simply returns the simple filename.  For
@@ -449,25 +407,6 @@ public class URLFileSystem {
             path = "/" + path;
         }
         return path;
-    }
-
-    public static File url2File(URL url) {
-        final String path = url.getPath();
-        return new File(path);
-    }
-
-    public static URL getParent(URL url) {
-        final File file = url2File(url);
-        final File parentFile = file.getParentFile();
-        if (parentFile != null && !file.equals(parentFile)) {
-            try {
-                return parentFile.toURI().toURL();
-            }
-            catch (Exception ex) {
-                return null;
-            }
-        }
-        return null;
     }
 
     /**
