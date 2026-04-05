@@ -330,7 +330,7 @@ public class PluginManager implements MainWindowListener
         }
 
         try {
-            Class<? extends Plugin> pluginType = getParentClassLoader().loadClass(publicPlugin.getPluginClass()).asSubclass(Plugin.class);
+            Class<? extends Plugin> pluginType = classLoader.loadClass(publicPlugin.getPluginClass()).asSubclass(Plugin.class);
             Plugin pluginInstance = pluginType.getDeclaredConstructor().newInstance();
             Log.debug(publicPlugin.getName() + " has been loaded.");
             publicPlugin.setPluginDir(pluginDir);
@@ -692,21 +692,25 @@ public class PluginManager implements MainWindowListener
             EventQueue.invokeLater( () -> {
                 for ( Plugin plugin : plugins )
                 {
-                    try
-                    {
-                        plugin.initialize();
-                        Log.debug("Initialized " + plugin.getClass().getSimpleName());
-                    }
-                    catch ( Throwable e )
-                    {
-                        Log.error( "An exception occurred while initializing plugin " + plugin.getClass().getSimpleName(), e );
-                    }
+                    initializePlugin(plugin);
                 }
             } );
         }
         catch ( Exception e )
         {
             Log.error( "An exception occurred while initializing plugins.", e );
+        }
+    }
+
+    private static void initializePlugin(Plugin plugin) {
+        try
+        {
+            plugin.initialize();
+            Log.debug("Initialized " + plugin.getClass().getSimpleName());
+        }
+        catch ( Throwable e )
+        {
+            Log.error( "An exception occurred while initializing plugin " + plugin.getClass().getSimpleName(), e );
         }
     }
 
@@ -870,18 +874,7 @@ public class PluginManager implements MainWindowListener
         if (pluginInstance == null) {
             return;
         }
-        try
-        {
-            EventQueue.invokeAndWait( () -> {
-                Log.debug( "Trying to initialize " + pluginInstance );
-                pluginInstance.initialize();
-                Log.debug( "Done initializing " + pluginInstance );
-            } );
-        }
-        catch ( Exception e )
-        {
-            Log.error( e );
-        }
+        EventQueue.invokeLater(() -> initializePlugin(pluginInstance));
     }
 
     /**
