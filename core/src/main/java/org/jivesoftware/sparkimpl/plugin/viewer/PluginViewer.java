@@ -368,14 +368,17 @@ public class PluginViewer extends JPanel implements Plugin
                 {
                     InputStream stream = entity.getContent();
                     URL url = new URL( plugin.getDownloadURL() );
-                    String name1 = URLFileSystem.getFileName( url );
-                    String directoryName = URLFileSystem.getName( url );
+                    String directoryName = URLFileSystem.getFileName(url).replaceFirst("-\\d+(\\.\\d+)*-spark-plugin\\.jar$", "");
+                    String name1 = directoryName + ".jar";
 
                     File pluginDownload = new File( PluginManager.PLUGINS_DIRECTORY, name1 );
+                    File pluginDir = new File(PluginManager.PLUGINS_DIRECTORY, directoryName);
 
                     FileOutputStream out = new FileOutputStream( pluginDownload );
                     copy( stream, out );
                     out.close();
+
+                    PluginManager.getInstance().addPlugin(pluginDir);
 
                     // Remove SparkPlugUI
                     // Clear all selections
@@ -392,11 +395,9 @@ public class PluginViewer extends JPanel implements Plugin
                                 _deactivatedPlugins.remove( sparkPlug.getPlugin().getName() );
                                 _prefs.setDeactivatedPlugins( _deactivatedPlugins );
 
-                                PluginManager.getInstance().addPlugin( sparkPlug.getPlugin() );
-
                                 sparkPlug.showOperationButton();
                                 installedPanel.add( sparkPlug );
-                                sparkPlug.getPlugin().setPluginDir( new File( PluginManager.PLUGINS_DIRECTORY, directoryName ) );
+                                sparkPlug.getPlugin().setPluginDir(pluginDir);
                                 installedPanel.invalidate();
                                 installedPanel.repaint();
                                 availablePanel.invalidate();
