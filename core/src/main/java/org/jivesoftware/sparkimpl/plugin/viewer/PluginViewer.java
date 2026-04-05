@@ -67,7 +67,6 @@ public class PluginViewer extends JPanel implements Plugin
     private JTabbedPane tabbedPane;
     private boolean loaded = false;
     private final String retrieveListURL = Default.getString( Default.PLUGIN_REPOSITORY );
-    private JProgressBar progressBar;
     private JPanel installedPanel;
     private JPanel availablePanel;
     private JPanel deactivatedPanel;
@@ -370,15 +369,9 @@ public class PluginViewer extends JPanel implements Plugin
 
                 final HttpEntity entity = response.getEntity();
 
-                progressBar = new JProgressBar( 0, (int) entity.getContentLength());
-
-                final JFrame frame = new JFrame( Res.getString( "message.downloading", plugin.getName() ) );
-
-                frame.setIconImage(SparkRes.getImageIcon(SparkRes.Icon.SMALL_MESSAGE_IMAGE).getImage());
 
                 try
                 {
-                    Thread.sleep( 2000 );
                     InputStream stream = entity.getContent();
 
                     URL url = new URL( plugin.getDownloadURL() );
@@ -390,8 +383,6 @@ public class PluginViewer extends JPanel implements Plugin
                     FileOutputStream out = new FileOutputStream( pluginDownload );
                     copy( stream, out );
                     out.close();
-
-                    frame.dispose();
 
                     // Remove SparkPlugUI
                     // Clear all selections
@@ -428,17 +419,6 @@ public class PluginViewer extends JPanel implements Plugin
                     // Nothing to do
                     Log.error(ex);
                 }
-
-                frame.getContentPane().setLayout( new GridBagLayout() );
-                frame.getContentPane().add( new JLabel( Res.getString( "message.downloading.spark.plug" ) ), new GridBagConstraints( 0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets( 5, 5, 5, 5 ), 0, 0 ) );
-                frame.getContentPane().add( progressBar, new GridBagConstraints( 0, 1, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets( 5, 5, 5, 5 ), 0, 0 ) );
-                frame.pack();
-                frame.setSize( 400, 100 );
-                GraphicUtils.centerWindowOnComponent( frame, this );
-
-
-                frame.setVisible( true );
-
                 return null;
             });
         } catch (Exception e) {
@@ -485,30 +465,17 @@ public class PluginViewer extends JPanel implements Plugin
      */
     private void copy( final InputStream in, final OutputStream out )
     {
-        int read = 0;
         while ( true )
         {
             try
             {
-                try
-                {
-                    Thread.sleep( 10 );
-                }
-                catch ( InterruptedException e )
-                {
-                    Log.error( e );
-                }
                 final byte[] buffer = new byte[ 4096 ];
-
                 int bytesRead = in.read( buffer );
                 if ( bytesRead < 0 )
                 {
                     break;
                 }
                 out.write( buffer, 0, bytesRead );
-                read += bytesRead;
-                final int readprogr = read;
-                EventQueue.invokeLater( () -> progressBar.setValue( readprogr ) );
             }
             catch ( IOException e )
             {
