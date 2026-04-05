@@ -388,7 +388,7 @@ public class PluginViewer extends JPanel implements Plugin
                         if ( comp instanceof SparkPlugUI )
                         {
                             SparkPlugUI sparkPlug = (SparkPlugUI) comp;
-                            if ( sparkPlug.getPlugin().getDownloadURL().equals( plugin.getDownloadURL() ) )
+                            if (sparkPlug.getPlugin().getName().equals(plugin.getName()))
                             {
                                 availablePanel.remove( sparkPlug );
 
