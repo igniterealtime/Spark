@@ -42,6 +42,7 @@ public class SparkPlugUI extends JPanel {
 	private static final long serialVersionUID = -4206533328807591854L;
 	private final PublicPlugin _plugin;
     private final JButton installButton = new JButton();
+    private final JButton deactivateButton = new JButton();
     private final JLabel imageIcon = new JLabel();
 
     public SparkPlugUI(PublicPlugin plugin) {
@@ -72,8 +73,11 @@ public class SparkPlugUI extends JPanel {
 	}
         descriptionLabel.setText(plugin.getDescription());
 
+        installButton.setIcon(SparkRes.getImageIcon(SparkRes.Icon.SMALL_ADD_IMAGE));
+        deactivateButton.setIcon(SparkRes.getImageIcon(SparkRes.Icon.SMALL_DELETE));
 
         add(installButton, new GridBagConstraints(4, 0, 1, 2, 1.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(0, 5, 5, 5), 0, 0));
+        add(deactivateButton, new GridBagConstraints(5, 0, 1, 2, 1.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(0, 5, 5, 5), 0, 0));
 
 
         if (_plugin.getChangeLog()!=null && _plugin.getReadMeURL() != null) {
@@ -115,17 +119,19 @@ public class SparkPlugUI extends JPanel {
         }
 
         installButton.setVisible(false);
+        deactivateButton.setVisible(false);
     }
 
     public void showOperationButton() {
         final PluginManager pluginManager = PluginManager.getInstance();
         if (!pluginManager.isInstalled(_plugin)) {
-            installButton.setIcon(SparkRes.getImageIcon(SparkRes.Icon.SMALL_ADD_IMAGE));
+            installButton.setVisible(true);
+            deactivateButton.setVisible(false);
         }
         else {
-            installButton.setIcon(SparkRes.getImageIcon(SparkRes.Icon.SMALL_DELETE));
+            installButton.setVisible(false);
+            deactivateButton.setVisible(true);
         }
-        installButton.setVisible(true);
     }
 
     public void setSelected(boolean isSelected) {
@@ -133,13 +139,13 @@ public class SparkPlugUI extends JPanel {
             setBackground(new Color(234, 230, 212));
             showOperationButton();
             setBorder(BorderFactory.createEtchedBorder());
-	    if (Default.getBoolean(Default.UNINSTALL_PLUGINS_DISABLED)) {
-		installButton.setVisible(false);
-	    }
-        }
-        else {
+            if (Default.getBoolean(Default.UNINSTALL_PLUGINS_DISABLED)) {
+                deactivateButton.setVisible(false);
+            }
+        } else {
             setBackground(Color.white);
             installButton.setVisible(false);
+            deactivateButton.setVisible(false);
             setBorder(null);
         }
     }
@@ -155,6 +161,10 @@ public class SparkPlugUI extends JPanel {
 
     public JButton getInstallButton() {
         return installButton;
+    }
+
+    public JButton getDeactivateButton() {
+        return deactivateButton;
     }
 
     public void useLocalIcon() {

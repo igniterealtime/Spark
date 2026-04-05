@@ -513,29 +513,30 @@ public class PluginViewer extends JPanel implements Plugin
                 final PluginManager pluginManager = PluginManager.getInstance();
                 ui.getInstallButton().addMouseListener( new MouseAdapter()
                 {
-
                     @Override
                     public void mouseClicked( MouseEvent e )
                     {
-
                         boolean isInstalled = pluginManager.isInstalled( ui.getPlugin() );
-                        if ( isInstalled )
-                        {
-                            boolean uninstalled = uninstall( ui.getPlugin() );
-                            if ( uninstalled )
-                            {
-                                installedPanel.remove( ui );
+                        if (!isInstalled) {
+                            downloadPlugin( ui.getPlugin() );
+                        }
+                    }
+                } );
+                ui.getDeactivateButton().addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        boolean isInstalled = pluginManager.isInstalled(ui.getPlugin());
+                        if (isInstalled) {
+                            boolean uninstalled = uninstall(ui.getPlugin());
+                            if (uninstalled) {
+                                installedPanel.remove(ui);
                                 installedPanel.invalidate();
                                 installedPanel.repaint();
                                 installedPanel.revalidate();
                             }
                         }
-                        else
-                        {
-                            downloadPlugin( ui.getPlugin() );
-                        }
                     }
-                } );
+                });
             }
         } );
     }
