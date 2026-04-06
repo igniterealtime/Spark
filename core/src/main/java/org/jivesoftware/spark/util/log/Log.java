@@ -29,17 +29,15 @@ import java.util.logging.SimpleFormatter;
  * error handling within the Agent application.
  */
 public class Log {
-	private static final Logger ERROR_LOGGER;
+	private static final Logger ERROR_LOGGER = Logger.getAnonymousLogger();
     private static final boolean debugEnabled = System.getProperty("debug.mode") != null;
 
     static {
-		ERROR_LOGGER = java.util.logging.Logger.getAnonymousLogger();
-		File ERROR_LOG_FILE = new File(Spark.getLogDirectory(), "errors.log");
+        File ERROR_LOG_FILE = new File(Spark.getLogDirectory(), "errors.log");
 		try {
 			// Create an appending file handler
-			boolean append = true;
-			FileHandler errorHandler = new FileHandler(
-					ERROR_LOG_FILE.getCanonicalPath(), 1000000, 10, append);
+            FileHandler errorHandler = new FileHandler(
+					ERROR_LOG_FILE.getCanonicalPath(), 1_000_000, 10, true);
 			errorHandler.setFormatter(new SimpleFormatter());
 			// Add to the desired logger
 			ERROR_LOGGER.addHandler(errorHandler);
