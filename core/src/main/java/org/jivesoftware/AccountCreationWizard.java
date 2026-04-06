@@ -93,7 +93,6 @@ public class AccountCreationWizard extends JPanel {
     private DataFormUI registrationForm;
 
     private boolean registered;
-    private XMPPConnection connection = null;
     private final JProgressBar progressBar;
 
     static class FormPanel extends JPanel {
@@ -232,9 +231,10 @@ public class AccountCreationWizard extends JPanel {
      */
     private void startRegistration() {
         final Component ui = this;
+        AbstractXMPPConnection connection;
         try {
             connection = getConnection();
-        } catch (SmackException | IOException | XMPPException e) {
+        } catch (Exception e) {
             String th = e.getCause() == null ? e.getMessage() : e.getCause().getMessage();
             JOptionPane.showMessageDialog(ui, Res.getString("message.connection.failed", getServer())
                 + "\n" + th, Res.getString("title.create.problem"), JOptionPane.ERROR_MESSAGE);
@@ -289,6 +289,8 @@ public class AccountCreationWizard extends JPanel {
                 condition = StanzaError.Condition.internal_server_error;
             }
             accountCreationFailed(condition);
+        } finally {
+            connection.disconnect();
         }
     }
 
@@ -351,16 +353,16 @@ public class AccountCreationWizard extends JPanel {
             StanzaError.Condition condition = null;
             String th;
 
-
             @Override
 			public Object construct() {
+                AbstractXMPPConnection connection;
                 try {
                     createAccountButton.setEnabled(false);
                     connection = getConnection();
                 }
-                catch (SmackException | IOException | XMPPException e) {
+                catch (Exception e) {
                     th = e.getCause() == null ? e.getMessage() : e.getCause().getMessage();
-                    return e;
+                    return "no_connection";
                 }
                 try {
                     Map<String, String> attrs = getRegistrationAttributes();
@@ -376,29 +378,36 @@ public class AccountCreationWizard extends JPanel {
                     if ( condition == null ) {
                         condition = StanzaError.Condition.internal_server_error;
                     }
+                    return "error_condition";
+                } catch (Exception e) {
+                    return "error";
+                } finally {
+                    connection.disconnect();
                 }
-                return null;
             }
 
             @Override
 			public void finished() {
                 progressBar.setVisible(false);
-                if (connection == null) {
-                    if (ui.isShowing()) {
-                        createAccountButton.setEnabled(true);
-                        UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
-                        JOptionPane.showMessageDialog(ui, Res.getString("message.connection.failed", server)
-                            + "\n" + th, Res.getString("title.create.problem"), JOptionPane.ERROR_MESSAGE);
-                        createAccountButton.setEnabled(true);
-                    }
-                    return;
-                }
-
-                if ("ok".equals(getValue())) {
-                    accountCreationSuccessful();
-                }
-                else {
-                    accountCreationFailed(condition);
+                String regRes = (String) getValue();
+                switch (regRes) {
+                    case "ok":
+                        accountCreationSuccessful();
+                        break;
+                    case "no_connection":
+                        if (ui.isShowing()) {
+                            createAccountButton.setEnabled(true);
+                            UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
+                            JOptionPane.showMessageDialog(ui, Res.getString("message.connection.failed", server)
+                                + "\n" + th, Res.getString("title.create.problem"), JOptionPane.ERROR_MESSAGE);
+                            createAccountButton.setEnabled(true);
+                        }
+                        break;
+                    case "error":
+                    case "error_condition":
+                    default:
+                        accountCreationFailed(condition);
+                        break;
                 }
             }
         };
@@ -434,7 +443,10 @@ public class AccountCreationWizard extends JPanel {
         } else if (condition == StanzaError.Condition.not_allowed || condition == StanzaError.Condition.forbidden || condition == StanzaError.Condition.service_unavailable) {
             message = Res.getString("message.create.account.not.allowed");
         } else {
-            message = Res.getString("message.create.account") + " " + condition;
+            message = Res.getString("message.create.account");
+            if (condition != null) {
+                message += " " + condition;
+            }
         }
         UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
         JOptionPane.showMessageDialog(this, message, Res.getString("title.create.problem"), JOptionPane.ERROR_MESSAGE);
@@ -472,7 +484,7 @@ public class AccountCreationWizard extends JPanel {
     /**
      * Creates an XMPPConnection based on the users settings.
      */
-    private XMPPConnection getConnection() throws SmackException, IOException, XMPPException
+    private AbstractXMPPConnection getConnection() throws SmackException, IOException, XMPPException
     {
         ConnectionConfiguration.SecurityMode securityMode = localPref.getSecurityMode();
         boolean useDirectTls = localPref.isDirectTls();
