@@ -427,12 +427,7 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
 
         tfUsername.setPreferredSize(new java.awt.Dimension(200, 30));
         tfUsername.addMouseListener(new MouseAdapter() {
-            public void mouseEntered(MouseEvent evt) {
-                tfUsernameMouseEntered(evt);
-            }
-            public void mouseExited(MouseEvent evt) {
-                tfUsernameMouseExited(evt);
-            }
+            @Override
             public void mousePressed(MouseEvent evt) {
                 tfUsernameMousePressed(evt);
             }
@@ -572,14 +567,6 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
             getPopup().show(tfUsername, evt.getX(), evt.getY());
         }
     }//GEN-LAST:event_tfUsernameMousePressed
-
-    private void tfUsernameMouseEntered(MouseEvent evt) {//GEN-FIRST:event_tfUsernameMouseEntered
-        // getPopup().show(tfUsername, evt.getX(), evt.getY());
-    }//GEN-LAST:event_tfUsernameMouseEntered
-
-    private void tfUsernameMouseExited(MouseEvent evt) {//GEN-FIRST:event_tfUsernameMouseExited
-        // getPopup().setVisible(false);
-    }//GEN-LAST:event_tfUsernameMouseExited
 
     private void btnResetActionPerformed(ActionEvent evt) {//GEN-FIRST:event_btnResetActionPerformed
         final String url = Default.getString(Default.PASSWORD_RESET_URL);
