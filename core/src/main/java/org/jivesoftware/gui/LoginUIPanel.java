@@ -70,7 +70,6 @@ import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JPasswordField;
 import javax.swing.JPopupMenu;
 import javax.swing.JSplitPane;
 import javax.swing.JTextField;
@@ -249,17 +248,17 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
         }
 
         if (userProp != null) {
-            tfUsername.setText(XmppStringUtils.unescapeLocalpart(userProp));
+            setUsername(userProp);
         }
         if (serverProp != null) {
-            tfDomain.setText(serverProp);
+            setServerName(serverProp);
         }
 
         // Check Settings
         if (localPref.isSavePassword()) {
             String encryptedPassword = localPref.getPasswordForUser(getBareJid());
             if (encryptedPassword != null) {
-                tfPassword.setText(encryptedPassword);
+                setPassword(encryptedPassword);
             }
             cbSavePassword.setSelected(true);
             btnLogin.setEnabled(true);
@@ -284,13 +283,13 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
         String password = Spark.getArgumentValue("password");
         String server = Spark.getArgumentValue("server");
         if (username != null) {
-            tfUsername.setText(username);
+            setUsername(username);
         }
         if (password != null) {
-            tfPassword.setText(password);
+            setPassword(password);
         }
         if (server != null) {
-            tfDomain.setText(server);
+            setServerName(server);
         }
         if (username != null && server != null && password != null) {
             TaskEngine.getInstance().submit(this::login);
@@ -298,7 +297,7 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
 
         final String lockedDownURL = Default.getString(Default.HOST_NAME);
         if (ModelUtil.hasLength(lockedDownURL)) {
-            tfDomain.setText(lockedDownURL);
+            setServerName(lockedDownURL);
         }
 
         //reset ui
@@ -525,7 +524,7 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
 
     private void btnCreateAccountActionPerformed(ActionEvent evt) {//GEN-FIRST:event_btnCreateAccountActionPerformed
         // pre-fill the user domain from the login page i.e. if it already tried to login
-        DomainBareJid xmppDomain = JidCreate.domainBareFromOrNull(tfDomain.getText().trim());
+        DomainBareJid xmppDomain = JidCreate.domainBareFromOrNull(getServerName());
         startAccountRegistrationWizard(xmppDomain);
     }//GEN-LAST:event_btnCreateAccountActionPerformed
 
@@ -534,9 +533,9 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
         createAccountPanel.setServer(xmppDomain);
         createAccountPanel.invoke(loginDialog);
         if (createAccountPanel.isRegistered()) {
-            tfUsername.setText(createAccountPanel.getUsernameWithoutEscape());
-            tfPassword.setText(createAccountPanel.getPassword());
-            tfDomain.setText(createAccountPanel.getServer());
+            setUsername(createAccountPanel.getUsernameWithoutEscape());
+            setPassword(createAccountPanel.getPassword());
+            setServerName(createAccountPanel.getServer());
             btnLogin.setEnabled(true);
             btnLoginActionPerformed(null);
         }
@@ -617,22 +616,6 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
     private javax.swing.JTextField tfUsername;
     // End of variables declaration//GEN-END:variables
 
-    public JTextField getUsernameField() {
-        return tfUsername;
-    }
-
-    public JPasswordField getPasswordField() {
-        return tfPassword;
-    }
-
-    public JButton getBtnLogin() {
-        return btnLogin;
-    }
-
-    public JCheckBox getCbAutoLogin() {
-        return cbAutoLogin;
-    }
-
     /**
      * Invokes the LoginDialog to be visible.
      */
@@ -662,8 +645,8 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
                     quitLogin();
                 }
             });
-            if (ModelUtil.hasLength(getUsernameField().getText())) {
-                getPasswordField().requestFocus();
+            if (ModelUtil.hasLength(getUsername())) {
+                tfPassword.requestFocus();
             }
 
             if (!localPref.isStartedHidden() || !localPref.isAutoLogin()) {
@@ -828,6 +811,11 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
         return XmppStringUtils.escapeLocalpart(tfUsername.getText().trim());
     }
 
+    private void setUsername(String username) {
+        tfUsername.setText(XmppStringUtils.unescapeLocalpart(username));
+    }
+
+
     /**
      * Returns the resulting bareJID from username and server
      *
@@ -838,7 +826,7 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
         if (SmackConfiguration.DEBUG && !EventQueue.isDispatchThread()) {
             throw new IllegalStateException("Must be called on the Event Dispatcher Thread (but was not)");
         }
-        return tfUsername.getText() + "@" + tfDomain.getText();
+        return getUsername() + "@" + getServerName();
     }
 
     /**
@@ -851,7 +839,11 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
         if (SmackConfiguration.DEBUG && !EventQueue.isDispatchThread()) {
             throw new IllegalStateException("Must be called on the Event Dispatcher Thread (but was not)");
         }
-        return new String(tfPassword.getPassword());
+        return new String(tfPassword.getPassword()).trim();
+    }
+
+    private void setPassword(String password) {
+        tfPassword.setText(password.trim());
     }
 
     /**
@@ -865,6 +857,10 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
             throw new IllegalStateException("Must be called on the Event Dispatcher Thread (but was not)");
         }
         return tfDomain.getText().trim();
+    }
+
+    private void setServerName(String xmppDomain) {
+        tfDomain.setText(xmppDomain.trim());
     }
 
     /**
@@ -891,11 +887,11 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
             final String username = jid.getLocalpartOrNull().toString();
             final String host = jid.getDomain().toString();
             menu.addActionListener(e -> {
-                tfUsername.setText(username);
-                tfDomain.setText(host);
+                setUsername(username);
+                setServerName(host);
                 try {
                     String passwordForUser = localPref.getPasswordForUser(getBareJid());
-                    tfPassword.setText(passwordForUser);
+                    setPassword(passwordForUser);
                 } catch (Exception ignored) {
                 }
                 validateDialog();
@@ -1108,7 +1104,7 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
             }
 
             String userName = localPref.getLastUsername();
-            tfUsername.setText(ModelUtil.hasLength(userName) ? userName : princName);
+            setUsername(ModelUtil.hasLength(userName) ? userName : princName);
         } else {
             cbAutoLogin.setVisible(true);
             tfUsername.setVisible(true);
