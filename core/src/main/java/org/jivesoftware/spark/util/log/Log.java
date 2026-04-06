@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
 /**
@@ -28,23 +29,10 @@ import java.util.logging.SimpleFormatter;
  * error handling within the Agent application.
  */
 public class Log {
-	private final java.util.logging.Logger ERROR_LOGGER;
+	private static final Logger ERROR_LOGGER;
     private static final boolean debugEnabled = System.getProperty("debug.mode") != null;
 
-	private volatile static Log singleton = null;
-
-	private static Log getInstance() {
-		if (singleton == null) {
-			synchronized (Log.class) {
-				if (singleton == null) {
-					singleton = new Log();
-				}
-			}
-		}
-		return singleton;
-	}
-
-	private Log() {
+    static {
 		ERROR_LOGGER = java.util.logging.Logger.getAnonymousLogger();
 		File ERROR_LOG_FILE = new File(Spark.getLogDirectory(), "errors.log");
 		try {
@@ -68,7 +56,7 @@ public class Log {
 	 * @param ex the exception being thrown.
 	 */
 	public static void error(String message, Throwable ex) {
-		getInstance().ERROR_LOGGER.log(Level.SEVERE, message, ex);
+        ERROR_LOGGER.log(Level.SEVERE, message, ex);
 	}
 
 	/**
@@ -77,7 +65,7 @@ public class Log {
 	 * @param ex the exception being thrown.
 	 */
 	public static void error(Throwable ex) {
-		getInstance().ERROR_LOGGER.log(Level.SEVERE, "", ex);
+        ERROR_LOGGER.log(Level.SEVERE, "", ex);
 	}
 
 	/**
@@ -87,11 +75,11 @@ public class Log {
 	 * @param ex the exception.
 	 */
 	public static void warning(String message, Throwable ex) {
-		getInstance().ERROR_LOGGER.log(Level.WARNING, message, ex);
+        ERROR_LOGGER.log(Level.WARNING, message, ex);
 	}
 
 	public static void warning(String message) {
-		getInstance().ERROR_LOGGER.log(Level.WARNING, message);
+        ERROR_LOGGER.log(Level.WARNING, message);
 	}
 
 	/**
@@ -100,7 +88,7 @@ public class Log {
 	 * @param message a message to append to log file.
 	 */
 	public static void error(String message) {
-		getInstance().ERROR_LOGGER.log(Level.SEVERE, message);
+        ERROR_LOGGER.log(Level.SEVERE, message);
 	}
 
 	/**
