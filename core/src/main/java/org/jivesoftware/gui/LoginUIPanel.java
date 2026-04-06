@@ -145,21 +145,13 @@ import org.minidns.dnsname.DnsName;
  * @author KeepToo
  */
 public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, FocusListener, CallbackHandler {
-
     private JFrame loginDialog;
     private final LocalPreferences localPref = SettingsManager.getLocalPreferences();
     private final ArrayList<String> _usernames = new ArrayList<>();
     private String loginUsername;
     private String loginPassword;
     private String loginServer;
-
-    // Panel used to hold buttons
-    private final CardLayout cardLayout = new CardLayout(0, 5);
-    final JPanel cardPanel = new JPanel(cardLayout);
-
-    final JPanel buttonPanel = new JPanel(new GridBagLayout());
     private AbstractXMPPConnection connection = null;
-
     private RolloverButton otherUsers = new RolloverButton(SparkRes.getImageIcon(SparkRes.Icon.PANE_DOWN_ARROW_IMAGE));
 
     /**
