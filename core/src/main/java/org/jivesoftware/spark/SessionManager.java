@@ -83,6 +83,7 @@ public final class SessionManager implements ConnectionListener {
         discoverItems();
 
         ProviderManager.addExtensionProvider(Features.ELEMENT_NAME, Features.NAMESPACE, new Features.Provider());
+        connection.addConnectionListener(this);
     }
 
     /**

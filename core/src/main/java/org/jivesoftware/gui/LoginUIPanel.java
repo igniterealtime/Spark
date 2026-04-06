@@ -145,7 +145,6 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
     private JFrame loginDialog;
     private final LocalPreferences localPref = SettingsManager.getLocalPreferences();
     private final ArrayList<String> _usernames = new ArrayList<>();
-    private AbstractXMPPConnection connection = null;
     private RolloverButton otherUsers = new RolloverButton(SparkRes.getImageIcon(SparkRes.Icon.PANE_DOWN_ARROW_IMAGE));
 
     /**
@@ -1125,7 +1124,7 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
             // TODO: SPARK-2140 - add support to Spark for stream management. Challenges expected around reconnection logic!
             XMPPTCPConnection.setUseStreamManagementDefault(false);
 
-            connection = new XMPPTCPConnection(retrieveConnectionConfiguration());
+            AbstractXMPPConnection connection = new XMPPTCPConnection(retrieveConnectionConfiguration());
             connection.setParsingExceptionCallback(new ExceptionLoggingCallback());
 
             connection.connect();
@@ -1166,6 +1165,8 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
             if (carbonManager.isSupportedByServer()) {
                 carbonManager.enableCarbons();
             }
+            // Initialize chat state notification mechanism in smack
+            ChatStateManager.getInstance(connection);
         } catch (Exception xee) {
             Log.error("Exception in Login:", xee);
 
@@ -1258,12 +1259,6 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
                 }
             });
         }
-
-        // Since the connection and workgroup are valid. Add a ConnectionListener
-        connection.addConnectionListener(SparkManager.getSessionManager());
-
-        // Initialize chat state notification mechanism in smack
-        ChatStateManager.getInstance(SparkManager.getConnection());
 
         // Persist information
         localPref.setLastUsername(getUsername());
