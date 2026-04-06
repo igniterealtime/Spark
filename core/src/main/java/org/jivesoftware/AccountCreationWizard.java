@@ -67,6 +67,7 @@ import static java.awt.GridBagConstraints.*;
 import static java.awt.GridBagConstraints.BOTH;
 import static java.awt.GridBagConstraints.EAST;
 import static java.awt.GridBagConstraints.NONE;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.jivesoftware.sparkimpl.certificates.SparkSSLContextCreator.Options.ONLY_SERVER_SIDE;
 
 /**
@@ -125,15 +126,7 @@ public class AccountCreationWizard extends JPanel {
     }
 
     public AccountCreationWizard() {
-        // Associate Mnemonics
         serverField.setEditable(true);
-        List<String> providers = XmppProviders.getXmppProvidersModel();
-        for (String provider : providers) {
-            serverField.addItem(provider);
-        }
-        // Randomly pre-select a provider
-        int randomProviderIdx = new Random().nextInt(providers.size());
-        serverField.setSelectedIndex(randomProviderIdx);
 
         ResourceUtils.resButton(startRegistrationButton, Res.getString("button.start.registration"));
         startRegistrationButton.addActionListener( actionEvent -> startRegistration() );
@@ -470,6 +463,7 @@ public class AccountCreationWizard extends JPanel {
      * @param parent the parent frame to use.
      */
     public void invoke(JFrame parent) {
+        SwingUtilities.invokeLater(this::pickRandomPublicXmppProvider);
         dialog = new JDialog(parent, Res.getString("title.create.new.account"), true);
 
         TitlePanel titlePanel = new TitlePanel(Res.getString("title.account.create.registration"), Res.getString("message.account.create"), null, true);
@@ -480,6 +474,20 @@ public class AccountCreationWizard extends JPanel {
         dialog.setSize(400, 580);
         dialog.setLocationRelativeTo(parent);
         dialog.setVisible(true);
+    }
+
+    private void pickRandomPublicXmppProvider() {
+        // skip this if a server was already set
+        if (!isEmpty(getServer())) {
+            return;
+        }
+        List<String> providers = XmppProviders.getXmppProvidersModel();
+        for (String provider : providers) {
+            serverField.addItem(provider);
+        }
+        // Randomly pre-select a provider
+        int randomProviderIdx = new Random().nextInt(providers.size());
+        serverField.setSelectedIndex(randomProviderIdx);
     }
 
     /**
