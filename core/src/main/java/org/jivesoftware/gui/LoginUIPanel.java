@@ -16,10 +16,8 @@
 package org.jivesoftware.gui;
 
 import java.awt.BorderLayout;
-import java.awt.CardLayout;
 import java.awt.Dimension;
 import java.awt.EventQueue;
-import java.awt.GridBagLayout;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.FocusEvent;
@@ -63,13 +61,10 @@ import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.login.Configuration;
 import javax.security.auth.login.LoginContext;
 import javax.security.auth.login.LoginException;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JSplitPane;
 import javax.swing.JTextField;
@@ -148,9 +143,6 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
     private JFrame loginDialog;
     private final LocalPreferences localPref = SettingsManager.getLocalPreferences();
     private final ArrayList<String> _usernames = new ArrayList<>();
-    private String loginUsername;
-    private String loginPassword;
-    private String loginServer;
     private AbstractXMPPConnection connection = null;
     private RolloverButton otherUsers = new RolloverButton(SparkRes.getImageIcon(SparkRes.Icon.PANE_DOWN_ARROW_IMAGE));
 
@@ -652,6 +644,9 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
     }
 
     protected XMPPTCPConnectionConfiguration retrieveConnectionConfiguration() {
+        String loginUsername = getUsername();
+        String loginServer = getServerName();
+        String loginPassword = getPassword();
         ConnectionConfiguration.SecurityMode securityMode = localPref.getSecurityMode();
         boolean useDirectTls = localPref.isDirectTls();
         boolean hostAndPortConfigured = localPref.isHostAndPortConfigured();
@@ -783,10 +778,6 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
      * Should be called only from the Event Dispatcher Thread.
      */
     private String getUsername() {
-        // Most Swing components are not thread safe, and _must_ be executed on the Event Dispatcher Thread.
-        if (SmackConfiguration.DEBUG && !EventQueue.isDispatchThread()) {
-            throw new IllegalStateException("Must be called on the Event Dispatcher Thread (but was not)");
-        }
         return XmppStringUtils.escapeLocalpart(tfUsername.getText().trim());
     }
 
@@ -801,10 +792,6 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
      * Should be called only from the Event Dispatcher Thread.
      */
     private String getBareJid() {
-        // Most Swing components are not thread safe, and _must_ be executed on the Event Dispatcher Thread.
-        if (SmackConfiguration.DEBUG && !EventQueue.isDispatchThread()) {
-            throw new IllegalStateException("Must be called on the Event Dispatcher Thread (but was not)");
-        }
         return getUsername() + "@" + getServerName();
     }
 
@@ -814,10 +801,6 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
      * Should be called only from the Event Dispatcher Thread.
      */
     private String getPassword() {
-        // Most Swing components are not thread safe, and _must_ be executed on the Event Dispatcher Thread.
-        if (SmackConfiguration.DEBUG && !EventQueue.isDispatchThread()) {
-            throw new IllegalStateException("Must be called on the Event Dispatcher Thread (but was not)");
-        }
         return new String(tfPassword.getPassword()).trim();
     }
 
@@ -831,10 +814,6 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
      * Should be called only from the Event Dispatcher Thread.
      */
     private String getServerName() {
-        // Most Swing components are not thread safe, and _must_ be executed on the Event Dispatcher Thread.
-        if (SmackConfiguration.DEBUG && !EventQueue.isDispatchThread()) {
-            throw new IllegalStateException("Must be called on the Event Dispatcher Thread (but was not)");
-        }
         return tfDomain.getText().trim();
     }
 
@@ -1129,10 +1108,6 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
                 setComponentsAvailable(false);
                 setProgressBarVisible(true);
 
-                setLoginUsername(getUsername());
-                setLoginPassword(getPassword());
-                setLoginServer(getServerName());
-
                 localPref.setLoginAsInvisible(cbLoginInvisible.isSelected());
                 localPref.setLoginAnonymously(cbAnonymous.isSelected());
                 savePasswordAfterSuccessfulLogin.set(cbSavePassword.isSelected());
@@ -1169,13 +1144,13 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
                 
                 localPref.setResource(resource);
                 Resourcepart resourcepart = Resourcepart.from(modifyWildcards(resource).trim());
-                connection.login(getLoginUsername(), getLoginPassword(), resourcepart);
+                connection.login(getUsername(), getPassword(), resourcepart);
             }
             Log.debug("Logged in!");
 
             final SessionManager sessionManager = SparkManager.getSessionManager();
             sessionManager.setServerAddress(connection.getXMPPServiceDomain());
-            sessionManager.initializeSession(connection, getLoginUsername(), getLoginPassword());
+            sessionManager.initializeSession(connection, getUsername(), getPassword());
             sessionManager.setJID(connection.getUser());
 
             final ReconnectionManager reconnectionManager = ReconnectionManager.getInstanceFor(connection);
@@ -1287,12 +1262,12 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
         ChatStateManager.getInstance(SparkManager.getConnection());
 
         // Persist information
-        localPref.setLastUsername(getLoginUsername());
+        localPref.setLastUsername(getUsername());
 
         // Check to see if the password should be saved or cleared from file.
         if (savePasswordAfterSuccessfulLogin.get()) {
             try {
-                localPref.setPasswordForUser(getBareJid(), getLoginPassword());
+                localPref.setPasswordForUser(getBareJid(), getPassword());
             } catch (Exception e) {
                 Log.error("Error storing encrypted password.", e);
             }
@@ -1306,7 +1281,7 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
 
         localPref.setSavePassword(savePasswordAfterSuccessfulLogin.get());
         localPref.setAutoLogin(autoLogin.get());
-        localPref.setServer(getLoginServer());
+        localPref.setServer(getServerName());
         afterLogin();
 
         EventQueue.invokeLater(()-> {
@@ -1328,7 +1303,7 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
         for (Callback callback : callbacks) {
             if (callback instanceof NameCallback) {
                 NameCallback ncb = (NameCallback) callback;
-                ncb.setName(getLoginUsername());
+                ncb.setName(getUsername());
             } else if (callback instanceof PasswordCallback) {
                 PasswordCallback pcb = (PasswordCallback) callback;
                 pcb.setPassword(getPassword().toCharArray());
@@ -1539,30 +1514,6 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
         } catch (NamingException e) {
             return "";
         }
-    }
-
-    protected String getLoginUsername() {
-        return loginUsername;
-    }
-
-    protected void setLoginUsername(String loginUsername) {
-        this.loginUsername = loginUsername;
-    }
-
-    protected String getLoginPassword() {
-        return loginPassword;
-    }
-
-    protected void setLoginPassword(String loginPassword) {
-        this.loginPassword = loginPassword;
-    }
-
-    protected String getLoginServer() {
-        return loginServer;
-    }
-
-    protected void setLoginServer(String loginServer) {
-        this.loginServer = loginServer;
     }
 
     private void persistEnterprise() {
