@@ -45,9 +45,6 @@ public class Log {
 	}
 
 	private Log() {
-		if (!Spark.getLogDirectory().exists()) {
-			Spark.getLogDirectory().mkdirs();
-		}
 		ERROR_LOGGER = java.util.logging.Logger.getAnonymousLogger();
 		File ERROR_LOG_FILE = new File(Spark.getLogDirectory(), "errors.log");
 		try {
