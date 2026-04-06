@@ -28,14 +28,12 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
-import static java.util.Arrays.asList;
-
 
 public class XmppProviders {
     /**
      * <a href="https://data.xmpp.net/providers/v2/providers-A.json">Providers A</a>
      */
-    private static final String[] providers = new String[]{
+    public static final List<String> PROVIDERS_A = List.of(
         "07f.de",
         "chalec.org",
         "chapril.org",
@@ -53,7 +51,8 @@ public class XmppProviders {
         "trashserver.net",
         "xmpp.earth",
         "yax.im",
-    };
+        "conversations.im"
+    );
 
     public static List<String> getXmppProvidersModel() {
         List<String> providersList = downloadProvidersList();
@@ -61,8 +60,7 @@ public class XmppProviders {
             return providersList;
         }
         // fallback to static list
-        providersList = asList(providers);
-        return providersList;
+        return PROVIDERS_A;
     }
 
     static List<String> downloadProvidersList() {

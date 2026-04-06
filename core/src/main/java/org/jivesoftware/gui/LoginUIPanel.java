@@ -75,6 +75,7 @@ import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
+import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
 import org.jivesoftware.AccountCreationWizard;
 import org.jivesoftware.MainWindow;
 import org.jivesoftware.Spark;
@@ -110,6 +111,7 @@ import org.jivesoftware.spark.ui.login.GSSAPIConfiguration;
 import org.jivesoftware.spark.ui.login.LoginSettingDialog;
 import org.jivesoftware.spark.util.*;
 
+import static org.jivesoftware.XmppProviders.PROVIDERS_A;
 import static org.jivesoftware.spark.util.StringUtils.modifyWildcards;
 import static org.jivesoftware.sparkimpl.certificates.SparkSSLContextCreator.Options.BOTH;
 import static org.jivesoftware.sparkimpl.certificates.SparkSSLContextCreator.Options.ONLY_SERVER_SIDE;
@@ -192,6 +194,8 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
         tfPassword.addFocusListener(this);
         tfUsername.addFocusListener(this);
         tfDomain.addFocusListener(this);
+        // autocomplete for popular XMPP domains
+        AutoCompleteDecorator.decorate(tfDomain, PROVIDERS_A, false);
 
         otherUsers.addMouseListener(new MouseAdapter() {
             @Override
