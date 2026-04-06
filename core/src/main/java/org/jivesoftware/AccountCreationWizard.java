@@ -367,6 +367,7 @@ public class AccountCreationWizard extends JPanel {
                     Localpart localpart = Localpart.from(getUsername());
                     final AccountManager accountManager = AccountManager.getInstance(connection);
                     accountManager.createAccount(localpart, getPassword(), attrs);
+                    return "ok";
                 }
                 catch (XMPPException | SmackException | InterruptedException | XmppStringprepException e) {
                     if ( e instanceof XMPPException.XMPPErrorException ) {
@@ -376,7 +377,7 @@ public class AccountCreationWizard extends JPanel {
                         condition = StanzaError.Condition.internal_server_error;
                     }
                 }
-                return "ok";
+                return null;
             }
 
             @Override
@@ -393,7 +394,7 @@ public class AccountCreationWizard extends JPanel {
                     return;
                 }
 
-                if (condition == null) {
+                if ("ok".equals(getValue())) {
                     accountCreationSuccessful();
                 }
                 else {
@@ -406,12 +407,13 @@ public class AccountCreationWizard extends JPanel {
     }
 
     private Map<String, String> getRegistrationAttributes() {
+        // return modifiable map
         if (registrationForm == null) {
-            return Map.of();
+            return new HashMap<>(2); // 2 for username and password
         }
         FillableForm filledForm = registrationForm.getFilledForm();
         List<FormField> fields = filledForm.getDataFormToSubmit().getFields();
-        Map<String, String> attrs = new HashMap<>(fields.size());
+        Map<String, String> attrs = new HashMap<>(2 + fields.size()); // + username and password
         for (FormField f : fields) {
             attrs.put(f.getFieldName(), f.getFirstValue());
         }
