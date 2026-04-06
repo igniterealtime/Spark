@@ -242,43 +242,44 @@ public class AccountCreationWizard extends JPanel {
         }
         try {
             final AccountManager accountManager = AccountManager.getInstance(connection);
-            if (accountManager.supportsAccountCreation()) {
-                formPanel.setVisible(true);
-                createAccountButton.setEnabled(true);
-                String instructions = null;
-                Icon captchaIcon = null;
-                Registration info = accountManager.getRegistrationInfo();
-                if (info != null) {
-                    // try to get the CAPTCHA image from <data>
-                    //  <data type="image/png" max-age="0" cid="sha1+HASH_HERE@bob.xmpp.org" xmlns="urn:xmpp:bob">BASE64_OF_PNG_HERE</data>
-                    BoBDataExtension captchaBob = info.getExtension(BoBDataExtension.class);
-                    if (captchaBob != null && captchaBob.getBobData().getType().startsWith("image/")) {
-                        byte[] imageData = captchaBob.getBobData().getContent();
-                        captchaIcon = new ImageIcon(imageData);
-                    }
-                    DataForm regFields = info.getExtension(DataForm.class);
-                    if (regFields != null) {
-                        registrationForm = getRegistrationForm(regFields, captchaIcon != null);
-                        instructions = String.join("\n", regFields.getInstructions());
-                    } else {
-                        instructions = info.getInstructions();
-                    }
-                }
-                if (registrationForm != null) {
-                    formPanelFields.add(registrationForm);
-                    formPanelFields.setVisible(true);
-                }
-                if (instructions != null) {
-                    instructionsLabel.setText(instructions);
-                    instructionsLabel.setVisible(true);
-                }
-                if (captchaIcon != null) {
-                    captcha.setIcon(captchaIcon);
-                    instructionsLabel.setVisible(true);
-                }
-            } else {
+            if (!accountManager.supportsAccountCreation()) {
                 String message = Res.getString("message.create.account.not.allowed");
                 JOptionPane.showMessageDialog(this, message, Res.getString("title.create.problem"), JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            formPanel.setVisible(true);
+            createAccountButton.setEnabled(true);
+            formPanel.usernameField.requestFocus();
+            String instructions = null;
+            Icon captchaIcon = null;
+            Registration info = accountManager.getRegistrationInfo();
+            if (info != null) {
+                // try to get the CAPTCHA image from <data>
+                //  <data type="image/png" max-age="0" cid="sha1+HASH_HERE@bob.xmpp.org" xmlns="urn:xmpp:bob">BASE64_OF_PNG_HERE</data>
+                BoBDataExtension captchaBob = info.getExtension(BoBDataExtension.class);
+                if (captchaBob != null && captchaBob.getBobData().getType().startsWith("image/")) {
+                    byte[] imageData = captchaBob.getBobData().getContent();
+                    captchaIcon = new ImageIcon(imageData);
+                }
+                DataForm regFields = info.getExtension(DataForm.class);
+                if (regFields != null) {
+                    registrationForm = getRegistrationForm(regFields, captchaIcon != null);
+                    instructions = String.join("\n", regFields.getInstructions());
+                } else {
+                    instructions = info.getInstructions();
+                }
+            }
+            if (registrationForm != null) {
+                formPanelFields.add(registrationForm);
+                formPanelFields.setVisible(true);
+            }
+            if (instructions != null) {
+                instructionsLabel.setText(instructions);
+                instructionsLabel.setVisible(true);
+            }
+            if (captchaIcon != null) {
+                captcha.setIcon(captchaIcon);
+                instructionsLabel.setVisible(true);
             }
         } catch (XMPPException | SmackException | InterruptedException e) {
             StanzaError.Condition condition = null;
