@@ -111,6 +111,7 @@ import org.jivesoftware.spark.ui.login.GSSAPIConfiguration;
 import org.jivesoftware.spark.ui.login.LoginSettingDialog;
 import org.jivesoftware.spark.util.*;
 
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.jivesoftware.XmppProviders.PROVIDERS_A;
 import static org.jivesoftware.spark.util.StringUtils.modifyWildcards;
 import static org.jivesoftware.sparkimpl.certificates.SparkSSLContextCreator.Options.BOTH;
@@ -282,9 +283,17 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
             TaskEngine.getInstance().submit(this::login);
         }
 
-        final String lockedDownURL = Default.getString(Default.HOST_NAME);
-        if (ModelUtil.hasLength(lockedDownURL)) {
-            setServerName(lockedDownURL);
+        if (isEmpty(getServerName())) {
+            String lockedDownURL = Default.getString(Default.HOST_NAME);
+            if (!isEmpty(lockedDownURL)) {
+                setServerName(lockedDownURL);
+            } else {
+                // Pick the computer's domain from Active Directory. XMPP domain may be there or on its subdomain.
+                String userDnsDomain = System.getenv("USERDNSDOMAIN");
+                if (!isEmpty(userDnsDomain)) {
+                    setServerName(userDnsDomain);
+                }
+            }
         }
 
         //reset ui
