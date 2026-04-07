@@ -141,22 +141,9 @@ public class SparkTransferManager {
 
         SparkManager.getConnection().addConnectionListener(new ConnectionListener() {
             @Override
-            public void connected( XMPPConnection xmppConnection )
-            {
-            }
-
-            @Override
             public void authenticated( XMPPConnection xmppConnection, boolean b )
             {
                 transferManager = FileTransferManager.getInstanceFor( SparkManager.getConnection() );
-            }
-
-            @Override
-			public void connectionClosed() {
-            }
-
-            @Override
-			public void connectionClosedOnError(Exception e) {
             }
         });
 

@@ -732,13 +732,6 @@ public class ChatRoomImpl extends ChatRoom {
         return presence;
     }
 
-
-    @Override
-    public void connected( XMPPConnection xmppConnection )
-    {
-
-    }
-
     @Override
     public void authenticated( XMPPConnection xmppConnection, boolean b )
     {
@@ -756,14 +749,11 @@ public class ChatRoomImpl extends ChatRoom {
     @Override
 	public void connectionClosedOnError(Exception ex) {
         handleDisconnect();
-
         String message = Res.getString("message.disconnected.error");
-
         if (ex instanceof XMPPException.StreamErrorException && ((XMPPException.StreamErrorException) ex).getStreamError().getCondition() == StreamError.Condition.conflict )
         {
             message = Res.getString("message.disconnected.conflict.error");
         }
-
         getTranscriptWindow().insertNotificationMessage(message, ChatManager.ERROR_COLOR);
     }
 

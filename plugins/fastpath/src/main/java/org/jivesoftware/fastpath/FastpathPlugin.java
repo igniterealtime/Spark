@@ -64,8 +64,8 @@ public class FastpathPlugin implements Plugin, ConnectionListener {
 
     private FastpathTabHandler fastpathTabHandler;
 
+    @Override
     public void initialize() {
-
         new WorkgroupInitializer().initialize();
 
         EventQueue.invokeLater(() -> {
@@ -78,13 +78,6 @@ public class FastpathPlugin implements Plugin, ConnectionListener {
             fastpathTabHandler = new FastpathTabHandler();
             mainPanel = new BackgroundPane();
         });
-   	 
-
-
-
-
-			
-			
         try {
             DiscoverItems items = SparkManager.getSessionManager().getDiscoveredItems();
             for (DiscoverItems.Item item : items.getItems() ) {
@@ -188,16 +181,17 @@ public class FastpathPlugin implements Plugin, ConnectionListener {
         loadServicesThread.start();
     }
 
+    @Override
     public void shutdown() {
-
     }
 
+    @Override
     public boolean canShutDown() {
         return true;
     }
 
+    @Override
     public void uninstall() {
-
     }
 
     public static Workgroup getWorkgroup() {
@@ -229,12 +223,6 @@ public class FastpathPlugin implements Plugin, ConnectionListener {
         return container;
     }
 
-
-    @Override
-    public void connected( XMPPConnection xmppConnection )
-    {
-
-    }
 
     @Override
     public void authenticated( XMPPConnection xmppConnection, boolean b )

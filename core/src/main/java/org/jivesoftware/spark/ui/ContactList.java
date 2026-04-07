@@ -2250,12 +2250,6 @@ public class ContactList extends JPanel implements ActionListener,
 
     }
 
-
-    @Override
-    public void connected(XMPPConnection xmppConnection) {
-
-    }
-
     @Override
     public void authenticated(XMPPConnection xmppConnection, boolean b) {
         clientReconnected();
@@ -2264,10 +2258,8 @@ public class ContactList extends JPanel implements ActionListener,
     @Override
     public void connectionClosed() {
         // No reason to reconnect.
-
         // Show MainWindow
         SparkManager.getMainWindow().setVisible(true);
-
         // Flash That Window.
         SparkManager.getNativeManager().flashWindowStopOnFocus(
             SparkManager.getMainWindow());

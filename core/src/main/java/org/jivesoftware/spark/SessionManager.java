@@ -153,12 +153,6 @@ public final class SessionManager implements ConnectionListener {
     }
 
     @Override
-    public void connected( XMPPConnection xmppConnection )
-    {
-
-    }
-
-    @Override
     public void authenticated( XMPPConnection xmppConnection, boolean b )
     {
         reconnectionSuccessful();

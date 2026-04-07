@@ -1200,14 +1200,6 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
     public abstract long getLastActivity();
 
     @Override
-    public void connectionClosed() {
-    }
-
-    @Override
-    public void connectionClosedOnError(Exception e) {
-    }
-
-    @Override
     public void updateStatus(boolean active) {
         _alwaysOnTopItem.setSelected(active);
     }
