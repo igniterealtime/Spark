@@ -295,6 +295,13 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
                 }
             }
         }
+        // Pre-populate username from OS user
+        if (isEmpty(getUsername())) {
+            String osUsername = System.getProperty("user.name");
+            if (!isEmpty(osUsername)) {
+                setUsername(osUsername);
+            }
+        }
 
         //reset ui
         tfDomain.putClientProperty("JTextField.placeholderText", Res.getString("hint.login.domain"));
