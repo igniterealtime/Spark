@@ -20,6 +20,7 @@ import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
+import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
@@ -312,7 +313,18 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
         if(_usernames.size() > 1){
             tfUsername.putClientProperty("JTextField.trailingComponent",otherUsers);
         }
-        
+        // When user leaves the username field check if this is a JID and extract the domain
+        tfUsername.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusLost(FocusEvent e) {
+                String jidOrLocalpart = tfUsername.getText(); // get unsecaped username field value
+                if (jidOrLocalpart.contains("@")) {
+                    String[] parts = jidOrLocalpart.split("@");
+                    setUsername(parts[0]);
+                    setServerName(parts[1]);
+                }
+            }
+        });
         setComponentsAvailable(true);
     }
 
