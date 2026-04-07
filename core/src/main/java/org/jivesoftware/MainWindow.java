@@ -476,8 +476,8 @@ public final class MainWindow extends ChatFrame implements ActionListener {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-                File logDir = new File(Spark.getLogDirectory(), "errors.log.0");
-                if (!logDir.exists()) {
+                File logFile = Log.getLogFilePath();
+                if (!logFile.exists()) {
                 	UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
                     JOptionPane.showMessageDialog(SparkManager.getMainWindow(), "No error logs found.", "Error Log", JOptionPane.INFORMATION_MESSAGE);
                 }
@@ -788,7 +788,7 @@ public final class MainWindow extends ChatFrame implements ActionListener {
      * Displays the Spark error log.
      */
     private void showErrorLog() {
-        final File logDir = new File(Spark.getLogDirectory(), "errors.log.0");
+        final File logDir = new File(Spark.getLogDirectory(), "errors.log");
 
         // Read file and show
         final String errorLogs = URLFileSystem.getContents(logDir);

@@ -33,11 +33,10 @@ public class Log {
     private static final boolean debugEnabled = System.getProperty("debug.mode") != null;
 
     static {
-        File ERROR_LOG_FILE = new File(Spark.getLogDirectory(), "errors.log");
+        File logFilePath = getLogFilePath();
 		try {
 			// Create an appending file handler
-            FileHandler errorHandler = new FileHandler(
-					ERROR_LOG_FILE.getCanonicalPath(), 1_000_000, 10, true);
+            FileHandler errorHandler = new FileHandler(logFilePath.getCanonicalPath(), 1_000_000, 1, true);
 			errorHandler.setFormatter(new SimpleFormatter());
 			// Add to the desired logger
 			ERROR_LOGGER.addHandler(errorHandler);
@@ -45,6 +44,10 @@ public class Log {
 			e.printStackTrace();
 		}
 	}
+
+    public static File getLogFilePath() {
+        return new File(Spark.getLogDirectory(), "errors.log");
+    }
 
 	/**
 	 * Logs all error messages to default error logger.
