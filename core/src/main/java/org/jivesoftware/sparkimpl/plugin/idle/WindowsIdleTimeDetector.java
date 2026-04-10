@@ -10,6 +10,7 @@ import java.util.List;
 /**
  * Utility method to retrieve the idle time on Windows and sample code to test it.
  * JNA shall be present in your classpath for this to work (and compile).
+ *
  * @author ochafik
  */
 class WindowsIdleTimeDetector implements IdleTimeDetector {
@@ -19,35 +20,39 @@ class WindowsIdleTimeDetector implements IdleTimeDetector {
 
         /**
          * Retrieves the number of milliseconds that have elapsed since the system was started.
-         * @see "http://msdn2.microsoft.com/en-us/library/ms724408.aspx"
+         *
          * @return number of milliseconds that have elapsed since the system was started.
+         * @see "http://msdn2.microsoft.com/en-us/library/ms724408.aspx"
          */
         int GetTickCount();
     }
 
-    /**
-     * Contains the time of the last input.
-     * @see "http://msdn.microsoft.com/library/default.asp?url=/library/en-us/winui/winui/windowsuserinterface/userinput/keyboardinput/keyboardinputreference/keyboardinputstructures/lastinputinfo.asp"
-     */
-    class LASTINPUTINFO extends Structure {
-        public int cbSize = 8;
-
-        /** Tick count of when the last input event was received. */
-        public int dwTime;
-
-        @SuppressWarnings("rawtypes")
-        @Override
-        protected List getFieldOrder() {
-            return Arrays.asList("cbSize", "dwTime");
-        }
-    }
-
     public interface User32 extends StdCallLibrary {
         User32 INSTANCE = Native.load("user32", User32.class);
+
+        /**
+         * Contains the time of the last input.
+         *
+         * @see "http://msdn.microsoft.com/library/default.asp?url=/library/en-us/winui/winui/windowsuserinterface/userinput/keyboardinput/keyboardinputreference/keyboardinputstructures/lastinputinfo.asp"
+         */
+        class LASTINPUTINFO extends Structure {
+            public int cbSize = 8;
+
+            /** Tick count of when the last input event was received. */
+            public int dwTime;
+
+            @SuppressWarnings("rawtypes")
+            @Override
+            protected List getFieldOrder() {
+                return Arrays.asList("cbSize", "dwTime");
+            }
+        }
+
         /**
          * Retrieves the time of the last input event.
-         * @see "http://msdn.microsoft.com/library/default.asp?url=/library/en-us/winui/winui/windowsuserinterface/userinput/keyboardinput/keyboardinputreference/keyboardinputfunctions/getlastinputinfo.asp"
+         *
          * @return time of the last input event, in milliseconds
+         * @see "http://msdn.microsoft.com/library/default.asp?url=/library/en-us/winui/winui/windowsuserinterface/userinput/keyboardinput/keyboardinputreference/keyboardinputfunctions/getlastinputinfo.asp"
          */
         boolean GetLastInputInfo(LASTINPUTINFO result);
     }
@@ -55,11 +60,12 @@ class WindowsIdleTimeDetector implements IdleTimeDetector {
     /**
      * Get the amount of milliseconds that have elapsed since the last input event
      * (mouse or keyboard)
+     *
      * @return idle time in milliseconds
      */
     @Override
-	public long getIdleTimeMillis() {
-        LASTINPUTINFO lastInputInfo = new LASTINPUTINFO();
+    public long getIdleTimeMillis() {
+        User32.LASTINPUTINFO lastInputInfo = new User32.LASTINPUTINFO();
         User32.INSTANCE.GetLastInputInfo(lastInputInfo);
         return Kernel32.INSTANCE.GetTickCount() - lastInputInfo.dwTime;
     }
