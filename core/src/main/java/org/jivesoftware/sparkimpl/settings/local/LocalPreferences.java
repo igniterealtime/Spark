@@ -378,6 +378,8 @@ public class LocalPreferences {
     public String getDownloadDir() {
         var propVal = getString("downloadDirectory");
         if (!isBlank(propVal)) {
+            //noinspection ResultOfMethodCallIgnored
+            new File(propVal).mkdir();
             return propVal;
         }
         File downloadedDir;
