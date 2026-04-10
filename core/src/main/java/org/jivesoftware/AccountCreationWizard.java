@@ -17,6 +17,7 @@
 
 package org.jivesoftware;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.smack.*;
 import org.jivesoftware.smack.ConnectionConfiguration.DnssecMode;
@@ -67,6 +68,7 @@ import static java.awt.GridBagConstraints.*;
 import static java.awt.GridBagConstraints.BOTH;
 import static java.awt.GridBagConstraints.EAST;
 import static java.awt.GridBagConstraints.NONE;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.jivesoftware.sparkimpl.certificates.SparkSSLContextCreator.Options.ONLY_SERVER_SIDE;
 
@@ -546,13 +548,13 @@ public class AccountCreationWizard extends JPanel {
             return null;
         }
         ProxyInfo.ProxyType pType = localPref.getProtocol().equals("SOCKS") ? ProxyInfo.ProxyType.SOCKS5 : ProxyInfo.ProxyType.HTTP;
-        String pHost = ModelUtil.hasLength(localPref.getHost()) ? localPref.getHost() : null;
-        int pPort = ModelUtil.hasLength(localPref.getPort()) ? Integer.parseInt(localPref.getPort()) : 0;
-        String pUser = ModelUtil.hasLength(localPref.getProxyUsername()) ? localPref.getProxyUsername() : null;
-        String pPass = ModelUtil.hasLength(localPref.getProxyPassword()) ? localPref.getProxyPassword() : null;
+        String pHost = localPref.getHost();
+        int pPort = localPref.getPort();
+        String pUser = localPref.getProxyUsername();
+        String pPass = localPref.getProxyPassword();
         ProxyInfo proxyInfo = null;
-        if (pHost != null && pPort != 0) {
-            if (pUser == null || pPass == null) {
+        if (!isBlank(pHost) && pPort != 0) {
+            if (isBlank(pUser) || isBlank(pPass)) {
                 proxyInfo = new ProxyInfo(pType, pHost, pPort, null, null);
             } else {
                 proxyInfo = new ProxyInfo(pType, pHost, pPort, pUser, pPass);

@@ -75,9 +75,8 @@ class ProxyLoginSettingsPanel extends JPanel
             hostField.setText( localPreferences.getHost() );
         }
 
-        if ( ModelUtil.hasLength( localPreferences.getPort() ) )
-        {
-            portField.setText( localPreferences.getPort() );
+        if (localPreferences.getPort() != 0) {
+            portField.setText(String.valueOf(localPreferences.getPort()));
         }
 
         if ( ModelUtil.hasLength( localPreferences.getProxyPassword() ) )
@@ -95,26 +94,25 @@ class ProxyLoginSettingsPanel extends JPanel
             protocolBox.setSelectedItem( localPreferences.getProtocol() );
         }
 
-        if ( Default.getString( Default.PROXY_PROTOCOL ).length() > 0 )
+        if (!Default.getString(Default.PROXY_PROTOCOL).isEmpty())
         {
             protocolBox.setSelectedItem( Default.getString( Default.PROXY_PROTOCOL ) );
             protocolBox.setEnabled( false );
             useProxyBox.setSelected( true );
             useProxyBox.setVisible( false );
         }
-        if ( Default.getString( Default.PROXY_HOST ).length() > 0 )
+        if (!Default.getString(Default.PROXY_HOST).isEmpty())
         {
             hostField.setText( Default.getString( Default.PROXY_HOST ) );
             hostField.setEnabled( false );
             useProxyBox.setSelected( true );
             useProxyBox.setVisible( false );
         }
-        if ( Default.getString( Default.PROXY_PORT ).length() > 0 )
+        if (!Default.getString(Default.PROXY_PORT).isEmpty())
         {
             portField.setText( Default.getString( Default.PROXY_PORT ) );
             portField.setEnabled( false );
         }
-
     }
 
     /**
@@ -157,12 +155,10 @@ class ProxyLoginSettingsPanel extends JPanel
 
     /**
      * Returns the port to use with this proxy.
-     *
-     * @return the port to use.
      */
-    public String getPort()
+    public int getPort()
     {
-        return portField.getText();
+        return !portField.getText().isBlank() ? Integer.parseInt(portField.getText().trim()) : 0;
     }
 
     /**
@@ -242,12 +238,11 @@ class ProxyLoginSettingsPanel extends JPanel
             localPreferences.setHost( getHost() );
         }
 
-        if ( ModelUtil.hasLength( getPort() ) )
-        {
-            localPreferences.setPort( getPort() );
+        if (getPort() != 0) {
+            localPreferences.setPort(getPort());
         }
 
-        if ( getUsername().equals( "" ) || getUsername() == null )
+        if (getUsername().isEmpty() || getUsername() == null )
         {
             localPreferences.setProxyUsername( "" );
         }
@@ -257,7 +252,7 @@ class ProxyLoginSettingsPanel extends JPanel
             localPreferences.setProxyUsername( getUsername() );
         }
 
-        if ( getPassword().equals( "" ) || getPassword() == null )
+        if (getPassword().isEmpty() || getPassword() == null )
         {
             localPreferences.setProxyPassword( "" );
         }
@@ -279,29 +274,25 @@ class ProxyLoginSettingsPanel extends JPanel
         else
         {
             String host = localPreferences.getHost();
-            String port = localPreferences.getPort();
+            int port = localPreferences.getPort();
             String protocol = localPreferences.getProtocol();
-
-            boolean isValid = ModelUtil.hasLength( host ) && ModelUtil.hasLength( port );
-
+            boolean isValid = ModelUtil.hasLength( host ) && port != 0;
             if ( isValid )
             {
                 if ( protocol.equals( "SOCKS" ) )
                 {
                     System.setProperty( "socksProxyHost", host );
-                    System.setProperty( "socksProxyPort", port );
+                    System.setProperty( "socksProxyPort", String.valueOf(port));
                 }
                 else
                 {
                     System.setProperty( "http.proxySet", "true" );
-
                     // Set https settings
                     System.setProperty( "https.proxyHost", host );
-                    System.setProperty( "https.proxyPort", port );
-
+                    System.setProperty( "https.proxyPort", String.valueOf(port));
                     // Set http settings
                     System.setProperty( "http.proxyHost", host );
-                    System.setProperty( "http.proxyPort", port );
+                    System.setProperty( "http.proxyPort", String.valueOf(port));
                 }
             }
             else

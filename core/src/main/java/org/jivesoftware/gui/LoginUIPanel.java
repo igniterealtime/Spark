@@ -112,6 +112,7 @@ import org.jivesoftware.spark.ui.login.GSSAPIConfiguration;
 import org.jivesoftware.spark.ui.login.LoginSettingDialog;
 import org.jivesoftware.spark.util.*;
 
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.jivesoftware.XmppProviders.PROVIDERS_A;
 import static org.jivesoftware.spark.util.StringUtils.modifyWildcards;
@@ -745,13 +746,13 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
             return null;
         }
         ProxyInfo.ProxyType pType = localPref.getProtocol().equals("SOCKS") ? ProxyInfo.ProxyType.SOCKS5 : ProxyInfo.ProxyType.HTTP;
-        String pHost = ModelUtil.hasLength(localPref.getHost()) ? localPref.getHost() : null;
-        int pPort = ModelUtil.hasLength(localPref.getPort()) ? Integer.parseInt(localPref.getPort()) : 0;
-        String pUser = ModelUtil.hasLength(localPref.getProxyUsername()) ? localPref.getProxyUsername() : null;
-        String pPass = ModelUtil.hasLength(localPref.getProxyPassword()) ? localPref.getProxyPassword() : null;
+        String pHost = localPref.getHost();
+        int pPort = localPref.getPort();
+        String pUser = localPref.getProxyUsername();
+        String pPass = localPref.getProxyPassword();
         ProxyInfo proxyInfo = null;
-        if (pHost != null && pPort != 0) {
-            if (pUser == null || pPass == null) {
+        if (!isBlank(pHost) && pPort != 0) {
+            if (isBlank(pUser) || isBlank(pPass)) {
                 proxyInfo = new ProxyInfo(pType, pHost, pPort, null, null);
             } else {
                 proxyInfo = new ProxyInfo(pType, pHost, pPort, pUser, pPass);
@@ -1427,7 +1428,7 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
         boolean proxyEnabled = localPref.isProxyEnabled();
         if (proxyEnabled) {
             String host = localPref.getHost();
-            String port = localPref.getPort();
+            String port = String.valueOf(localPref.getPort());
             String username = localPref.getProxyUsername();
             String password = localPref.getProxyPassword();
             String protocol = localPref.getProtocol();
@@ -1585,7 +1586,7 @@ public class LoginUIPanel extends javax.swing.JPanel implements KeyListener, Foc
         localPref.setXmppPort(localPref.getXmppPort());
 
         if(Default.getBoolean(Default.IDLE_LOCK) || !Enterprise.containsFeature(Enterprise.IDLE_FEATURE)) {
-            localPref.setIdleTime(Integer.parseInt(Default.getString(Default.IDLE_TIME)));
+            localPref.setIdleTime(Default.getInt(Default.IDLE_TIME));
             localPref.setIdleMessage(Res.getString("status.away"));
             localPref.setIdleOn(true);
         }

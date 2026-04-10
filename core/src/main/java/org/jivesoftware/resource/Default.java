@@ -186,6 +186,11 @@ public class Default {
         return prop != null && Boolean.parseBoolean(prop.trim());
     }
 
+    public static int getInt(String propertyName) {
+        String prop = getString(propertyName);
+        return Integer.parseInt(prop.trim());
+    }
+
     public static ImageIcon getImageIcon(String imageName) {
         // Check custom map
         Object o = customMap.get(imageName);

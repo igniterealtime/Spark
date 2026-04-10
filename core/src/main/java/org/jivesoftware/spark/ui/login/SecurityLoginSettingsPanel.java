@@ -138,9 +138,10 @@ public class SecurityLoginSettingsPanel extends JPanel
     }
 
     public void useDefault() {
-        modeRequiredRadio.setSelected(Default.getString(Default.SECURITY_MODE).equals("required"));
-        modeIfPossibleRadio.setSelected(Default.getString(Default.SECURITY_MODE).equals("ifpossible"));
-        modeDisabledRadio.setSelected(Default.getString(Default.SECURITY_MODE).equals("disabled"));
+        String secMode = Default.getString(Default.SECURITY_MODE);
+        modeRequiredRadio.setSelected(secMode.equals("required"));
+        modeIfPossibleRadio.setSelected(secMode.equals("ifpossible"));
+        modeDisabledRadio.setSelected(secMode.equals("disabled"));
         disableHostnameVerificationBox.setSelected(Default.getBoolean(Default.DISABLE_HOSTNAME_VERIFICATION));
         allowClientSideAuthentication.setSelected(Default.getBoolean(Default.ALLOW_CLIENT_SIDE_AUTH));
         useDirectTlsBox.setSelected(Default.getBoolean(Default.OLD_SSL_ENABLED));

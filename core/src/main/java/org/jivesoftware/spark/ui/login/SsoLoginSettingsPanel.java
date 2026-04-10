@@ -231,9 +231,10 @@ class SsoLoginSettingsPanel extends JPanel implements ActionListener
 
     public void useDefault(){
         useSSOBox.setSelected(Default.getBoolean(Default.USE_SSO));
-        methodFileRadio.setSelected(Default.getString(Default.SSO_METHOD).equals("file"));
-        methodDNSRadio.setSelected(Default.getString(Default.SSO_METHOD).equals("dns"));
-        methodManualRadio.setSelected(Default.getString(Default.SSO_METHOD).equals("manual"));
+        String ssoMethod = Default.getString(Default.SSO_METHOD);
+        methodFileRadio.setSelected(ssoMethod.equals("file"));
+        methodDNSRadio.setSelected(ssoMethod.equals("dns"));
+        methodManualRadio.setSelected(ssoMethod.equals("manual"));
         setFormEnabled(useSSOBox.isSelected());
         useSaslGssapiSmack3compatBox.setSelected(Default.getBoolean(Default.USE_SASL_GSS_API_SMACK_3_COMPATIBLE));
 
