@@ -95,6 +95,7 @@
         <dependency.smack.version>4.5.0-rc1</dependency.smack.version>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
+        <maven.compiler.release>11</maven.compiler.release>
     </properties>
 
     <build>
@@ -105,24 +106,6 @@
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>3.14.1</version>
                 </plugin>
-            <plugin>
-                <!--
-                    Java has trouble reading translations from UTF-8 files. To work around that,
-                    this plugin ensures that Java-compatible encoding is used.
-                    See https://stackoverflow.com/questions/4659929/how-to-use-utf-8-in-resource-properties-with-resourcebundle
-                  -->
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>native2ascii-maven-plugin</artifactId>
-                <version>1.0-beta-1</version>
-                <executions>
-                    <execution>
-                        <id>native2ascii</id>
-                        <goals>
-                            <goal>native2ascii</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
         </plugins>
       </pluginManagement>
     </build>
