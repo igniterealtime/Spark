@@ -68,54 +68,125 @@ public class MyNewTest {
 
 ## Code Style
 Use Java 11 language features.
-Avoid using `var` in new code unless it clearly improves readability.
 Prefer explicit types for public APIs and complex expressions.
 Preserve existing package structure under `org.jivesoftware.spark` because it is an API used by plugins.
 Plugin packages should be prefixed with `com.jivesoftware.spark.plugin` e.g. `package com.jivesoftware.spark.plugin.myplugin;`
 
 ### Code Formatting
-The project has legacy code formatted with tabs, use of `final` for local variables and parameters.
-Use modern code formatting conventions for new code and when changing an existing code reformat the method that is changed.
-Then gradually the code is easier to read and maintain.
-If after formatting there was more that 40% of the code changed, then it is worth reformatting the whole method,
-and commit it with commit message `ClassName.methodName: reformat`.
-After that, apply the new changes so in the commit history it would be easier to determine where it was reformat or refactoring and where it was functional changes.
+The project has a legacy code with obsolete code style and formatting (ident with tabs, boilerplate, big methods, useless comments, use of `final` for local variables and parameters).
+When changing an existing code reformat the method that is changed. Then gradually the code becomes easier to read and maintain.
+If after formatting there was more than 40% of the class changed, then it is worth reformatting the whole class.
+After that, commit the reformatting so in the commit history it would be easier to determine where it was reformat or refactoring and where it was functional changes.
+Commit it with commit message `ClassName.methodName: reformat` or `ClassName: refactor` .
+Use modern code formatting conventions but more AI-friendly.
 
 Follow these formatting rules:
-- **Indentation**: 4 spaces.
-- **Braces**: Opening and closing braces for classes and methods are usually placed on the same line.
-  ```java
-  public void myMethod() {
-      // ...
+- Indent: 4.
+- Brace style: same line.
+- Reduce vertical noise.
+- Blank lines: minimal. Don't put empty lines before a single line comment `//`.
+- Avoid wildcard imports.
+- Don't use `final` for local variables or parameters when they are effectively final. Remove the `final` when refactoring an existing code.
+- Use consistent naming patterns everywhere.
+  Example:
+  ```
+  find()
+  get()
+  load()
+  create()
+  update()
+  delete()
+  ```
+  Avoid mixing:
+  ```
+  fetch()
+  retrieve()
+  lookup()
+  obtain()
+  ```
+- Prefer composition over inheritance.
+- Prefer early returns over else blocks.
+- Flatten deep nesting.
+- Prefer shorter identifiers (but still semantic).
+- Add AI-friendly summary headers per file.
+- Use predictable architecture patterns.
+- Avoid using `var` in new code unless it clearly improves readability (long generics, see below).
+- Remove unnecessary generics verbosity. 
+  Bad:
+  ```
+  Map<String, List<UserDto>>
+  ```
+  Better (inside method):
+  ```
+  var users = new HashMap<String, List<UserDto>>();
+  ```
+- Remove redundant comments (prefer signal over narration). 
+  Bad:
+  ```
+  // This method returns the user by id
+  public User getUserById(String id)
+  ```
+  Good:
+  ```
+  public User findUser(String id)
+  ```
+  Don't use the `Optional` as a return type or a type of parameters: 
+  ```
+  public Optional<User> find(String id)
+  ```
+- Don't use `Optional`. If some library API returns it, then it should be converted immideatelly to a nullable vairable i.e. `var name = optionalName.orElse(null)`. 
+- Avoid using streams with a long chain, big logic (try-catch blocks), calling actions that may fail with an exception. Use them only for a basic transform and filtering by properties. 
+  Bad
+  ```
+  List<String> avatarUrls = contacts.stream()
+      .filter((contact)-> contact.isAvailable())
+      .map((contact)-> {
+          try {
+              return contact.getAvatarURL();
+          } catch (Exception e) {
+              throw new RuntimeException(e);
+          }
+      })
+      .map(url -> url.toString())
+      .collect(Collectors.toList());
+  ```
+  Better:
+  ```
+  List<String> avatarUrls = new ArrayList<>(contacts.size());
+  for (var contact : contacts) {
+      if (!contact.isAvailable()) {
+          continue;
+      }
+      URL url;
+      try {
+          url = contact.getAvatarURL();
+      } catch (Exception e) {
+          throw new RuntimeException(e);
+      }
+      avatarUrls.add(url.toString());
   }
   ```
-- **Naming**: Standard Java naming conventions (PascalCase for classes, camelCase for methods/variables).
-- **Final Variables**: don't use `final` for local variables or parameters when they are effectively final.
-
-#### JavaDocs
-Keep JavaDocs concise.
-If a method already has an obvious description, refine it and remove unnecessary `@param` and `@return` tags.
-
-Before:
-```java
-/**
- * Gets the {@link PreferenceManager} instance.
- *
- * @return the PreferenceManager instance.
- */
-public static PreferenceManager getPreferenceManager() {
-    return preferenceManager;
-}
-```
-After:
-```java
-/**
- * Get the {@link PreferenceManager} instance.
- */
-public static PreferenceManager getPreferenceManager() {
-    return preferenceManager;
-}
-```
+- Keep JavaDocs concise. If a method already has an obvious description, refine it and remove unnecessary `@param` and `@return` tags.
+  Before:
+  ```java
+  /**
+   * Gets the {@link PreferenceManager} instance.
+   *
+   * @return the PreferenceManager instance.
+   */
+  public static PreferenceManager getPreferenceManager() {
+      return preferenceManager;
+  }
+  ```
+  After:
+  ```java
+  /**
+   * Get the {@link PreferenceManager} instance.
+   */
+  public static PreferenceManager getPreferenceManager() {
+      return preferenceManager;
+  }
+  ```
 
 #### Use SparkManager when possible
 The `SparkManager` has many useful methods.
