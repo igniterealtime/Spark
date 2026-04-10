@@ -316,21 +316,6 @@ public final class GraphicUtils {
      * 
      * @param c
      *            the root of the component hierarchy to search
-     * @see #focusComponentOrChild
-     * @deprecated replaced by
-     *             {@link #getFocusableComponentOrChild(Component,boolean)}
-     * @return Component that was focused on.
-     */
-    public static Component getFocusableComponentOrChild(Component c) {
-	return getFocusableComponentOrChild(c, false);
-    }
-
-    /**
-     * Returns the first component in the tree of <code>c</code> that can accept
-     * the focus.
-     * 
-     * @param c
-     *            the root of the component hierarchy to search
      * @param deepest
      *            if <code>deepest</code> is true the method will return the
      *            first and deepest component that can accept the focus. For
@@ -378,41 +363,6 @@ public final class GraphicUtils {
 	}
 
 	return null;
-    }
-
-    /**
-     * Puts the focus on the first component in the tree of <code>c</code> that
-     * can accept the focus.
-     * 
-     * @see #getFocusableComponentOrChild
-     * @param c
-     *            Component to focus on.
-     * @return Component that was focused on.
-     */
-    public static Component focusComponentOrChild(Component c) {
-	return focusComponentOrChild(c, false);
-    }
-
-    /**
-     * Puts the focus on the first component in the tree of <code>c</code> that
-     * can accept the focus.
-     * 
-     * @param c
-     *            the root of the component hierarchy to search
-     * @param deepest
-     *            if <code>deepest</code> is true the method will focus the
-     *            first and deepest component that can accept the focus. For
-     *            example, if both a child and its parent are focusable and
-     *            <code>deepest</code> is true, the child is focused.
-     * @see #getFocusableComponentOrChild
-     * @return Component that was focused on.
-     */
-    public static Component focusComponentOrChild(Component c, boolean deepest) {
-	final Component focusable = getFocusableComponentOrChild(c, deepest);
-	if (focusable != null) {
-	    focusable.requestFocus();
-	}
-	return focusable;
     }
 
     /**
