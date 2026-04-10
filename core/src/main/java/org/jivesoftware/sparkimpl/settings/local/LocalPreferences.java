@@ -48,10 +48,6 @@ public class LocalPreferences {
         this.props = props;
     }
 
-    public LocalPreferences() {
-        this.props = new Properties();
-    }
-
     public Properties getProperties() {
         return props;
     }

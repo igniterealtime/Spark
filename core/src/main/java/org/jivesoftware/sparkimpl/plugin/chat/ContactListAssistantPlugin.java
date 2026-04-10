@@ -58,20 +58,17 @@ public class ContactListAssistantPlugin implements Plugin {
 
     private JMenu moveToMenu;
     private JMenu copyToMenu;
-    private LocalPreferences localPreferences;
+    private final LocalPreferences localPreferences = SettingsManager.getLocalPreferences();
     
     @Override
     public void initialize() {
-
         moveToMenu = new JMenu(Res.getString("menuitem.move.to"));
         copyToMenu = new JMenu(Res.getString("menuitem.copy.to"));
-        localPreferences = new LocalPreferences();
-        
         final ContactList contactList = SparkManager.getContactList();
         contactList.addContextMenuListener(new ContextMenuListener() {
             @Override
             public void poppingUp(Object object, final JPopupMenu popup) {
-                final Collection<ContactItem> contactItems = Collections.unmodifiableCollection(contactList.getSelectedUsers());
+                final Collection<ContactItem> contactItems = contactList.getSelectedUsers();
                 if (!contactItems.isEmpty()) {
                     final List<ContactGroup> contactGroups = contactList.getContactGroups();
                     contactGroups.sort(ContactList.GROUP_COMPARATOR);
@@ -176,14 +173,12 @@ public class ContactListAssistantPlugin implements Plugin {
     }
     
 	private boolean isContactItemInGroup(Collection<ContactItem> contactItems, ContactGroup group) {
-		boolean contactInGroup = false;
 		for (ContactItem ci : contactItems) {
 			if (group.getContactItemByJID(ci.getJid(), true) != null) {
-				contactInGroup = true;
-				break;
+				return true;
 			}
 		}
-		return contactInGroup;
+		return false;
 	}
 
     /**
