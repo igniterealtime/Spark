@@ -155,15 +155,15 @@ public class BroadcastDialog extends JPanel {
         add(alertMessageButton, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(2, 5, 2, 5), 0, 0));
         add(treePane, new GridBagConstraints(1, 0, 1, 3, 0.5, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(2, 5, 2, 5), 0, 0));
         add(OfflineUsers, new GridBagConstraints(1, 3, 1, 0, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(2, 5, 2, 5), 0, 0));
-        
+
         OfflineUsers.addActionListener( e -> hideOfflineUsers() );
-        
+
         normalMessageButton.setSelected(true);
         checkTree.expandTree();
 
         // get list of selected users
         java.util.Collection<ContactItem> selectedUsers = contactList.getSelectedUsers();
-        // if selected users is 1 or less, 
+        // if selected users is 1 or less,
         //    don't per-select in dialog window (see SPARK-1088)
         if (selectedUsers.size() > 1) {
             // Iterate through selected users.
@@ -391,27 +391,20 @@ Log.warning( "Unable to broadcast.", e1 );
     private  void addDataToFile(String data) throws IOException
     {
          DateFormat dateFormat = new SimpleDateFormat("yyyy-MM");
-         Date date = new Date();
-         String fileName="broadcast_history."+dateFormat.format(date)+".txt";
-         String filePath=Spark.getSparkUserHome()+File.separator+"user"+File.separator+SparkManager.getSessionManager().getUsername()+"@"+SparkManager.getSessionManager().getServerAddress()+File.separator+"transcripts";
-         File fileDirectory = new File(filePath);
-         if(!fileDirectory.exists()) 
-         {
-             fileDirectory.mkdir();
-         } 
-         String fileLocation=filePath+File.separator+fileName;
-	 
-         
-         File file = new File(fileLocation);
-         
-         if(!file.exists()) 
-         {
-             file.createNewFile();
-         }    
-              FileWriter fileWritter = new FileWriter(file.getPath(),true);
-    	      BufferedWriter out = new BufferedWriter(fileWritter);
-    	      out.write(data);
-    	      out.close();
-         
+        Date date = new Date();
+        String fileName = "broadcast_history." + dateFormat.format(date) + ".txt";
+        String filePath = Spark.getSparkUserHome() + File.separator + "user" + File.separator + SparkManager.getSessionManager().getUsername() + "@" + SparkManager.getSessionManager().getServerAddress() + File.separator + "transcripts";
+        File fileDirectory = new File(filePath);
+        //noinspection ResultOfMethodCallIgnored
+        fileDirectory.mkdir();
+        File file = new File(filePath, fileName);
+        if (!file.exists()) {
+            //noinspection ResultOfMethodCallIgnored
+            file.createNewFile();
+        }
+        FileWriter fileWriter = new FileWriter(file, true);
+        BufferedWriter out = new BufferedWriter(fileWriter);
+        out.write(data);
+        out.close();
     }
 }
