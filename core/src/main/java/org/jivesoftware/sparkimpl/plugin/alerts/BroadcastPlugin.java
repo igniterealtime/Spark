@@ -228,45 +228,16 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
         if (message.getError() != null) {
             return;
         }
-
-        final String body = message.getBody();
-        String subject = message.getSubject();
-
-        StringBuilder buf = new StringBuilder();
-        if (subject != null) {
-            buf.append(Res.getString("subject")).append(": ").append(subject);
-            buf.append("\n\n");
-        }
-        buf.append(body);
-
-        Jid from = message.getFrom();
-
-        final TranscriptWindow window = new TranscriptWindow();
-        window.insertNotificationMessage(buf.toString(), ChatManager.TO_COLOR);
-
-        JPanel p = new JPanel();
-        p.setLayout(new BorderLayout());
-        p.add(window, BorderLayout.CENTER);
-        p.setBorder(BorderFactory.createLineBorder(Color.lightGray));
-
-        // Count the number of linebreaks <br> and \n
-        String s = message.getBody();
-        s = s.replace("<br/>", "\n");
-        s = s.replace("<br>", "\n");
-        int linebreaks = countNumberOfOccurences(s, '\n');
-
+        String body = message.getBody();
         // If the message is blank, then it should not be displayed.
-        if (isBlank(s)) {
+        if (isBlank(body)) {
             return;
         }
-
-        // Currently Server Broadcasts don't contain Subjects, so this might be a MOTD message
-        boolean mightbeMOTD = message.getSubject() != null;
-
+        Jid from = message.getFrom();
         if (!from.hasLocalpart()) {
             // if there's no "@" it means the message came from the server
             if (Default.getBoolean(Default.BROADCAST_IN_CHAT_WINDOW)
-                || linebreaks > 20 || message.getBody().length() > 1000 || mightbeMOTD) {
+                || body.length() > 1000 || countNumberOfOccurences(body, '\n') > 20) {
                 // If the message has more than 20 linebreaks or is longer than 1000 characters
                 // we should broadcast in a normal chat window.
                 broadcastInChat(message);
@@ -424,14 +395,13 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
     private String linkCreator(String message) {
         message = message.replace("\n", "<br/>");
         String[] lines = message.split("\\s+");
-        StringBuilder html = new StringBuilder();
+        StringBuilder html = new StringBuilder(message.length() + 200);
         for (String line : lines) {
             if (line.startsWith("www")) {
-                line = "http://" + line;
+                line = "https://" + line;
             }
-            if (line.startsWith("http:") || line.startsWith("https:")) {
+            if (line.startsWith("https:") || line.startsWith("http:")) {
                 line = "<a href='" + line + "'>" + line + "</a>";
-                //  final JLabel label = new JLabel("<html><a href=\" " + strURL + "\"> click </a></html>");
             }
             html.append(" ").append(line);
         }
@@ -443,11 +413,9 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
      * Messages can contain html-tags
      */
     private void broadcastWithPanel(Message message) {
-
         String title = Res.getString("message.broadcast.from",
             Res.getString("administrator"));
         final JFrame alert = new JFrame(title);
-
         alert.setLayout(new GridBagLayout());
         alert.setIconImage(SparkRes.getImageIcon(SparkRes.Icon.MAIN_IMAGE).getImage());
         String mylink = linkCreator(message.getBody());
@@ -461,10 +429,19 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
                 alert.dispose();
             }
         });
+
+        String subject = message.getSubject();
+        StringBuilder buf = new StringBuilder();
+        if (subject != null) {
+            buf.append(Res.getString("subject")).append(": ").append(subject);
+            buf.append("<br/><br/>");
+        }
+        buf.append(mylink);
+
         final JEditorPane textPane = new JEditorPane();
         textPane.setEditable(false);
         textPane.setContentType("text/html");
-        textPane.setText(mylink);
+        textPane.setText(buf.toString());
 
         textPane.addHyperlinkListener(e -> {
             if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
