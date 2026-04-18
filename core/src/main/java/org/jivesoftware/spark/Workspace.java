@@ -276,7 +276,10 @@ public class Workspace extends JPanel implements StanzaListener {
         }, 2000);
 
         // Check URI Mappings
-        SparkManager.getUriManager().handleURIMapping(Spark.ARGUMENTS, true);
+        String uri = Spark.getArgumentValue("uri");
+        if (uri != null) {
+            SparkManager.getUriManager().handleURIMapping(uri, true);
+        }
     }
 
 
