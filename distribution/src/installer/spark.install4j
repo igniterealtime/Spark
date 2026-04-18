@@ -38,7 +38,7 @@
       <executable name="Spark" iconSet="true" iconFile="images/spark.ico" executableDir="." redirectStderr="false" executableMode="gui" singleInstance="true" serviceDescription="communicator" checkConsoleParameter="true">
         <versionInfo include="true" fileDescription="${compiler:sys.shortName}" legalCopyright="${compiler:sys.publisher}" internalName="${compiler:sys.shortName}" />
       </executable>
-      <java mainClass="org.jivesoftware.launcher.Startup" vmParameters="&quot;-Dappdir=${launcher:sys.launcherDirectory}&quot;" preferredVM="client">
+      <java mainClass="org.jivesoftware.Spark" vmParameters="&quot;-Dappdir=${launcher:sys.launcherDirectory}&quot;" preferredVM="client">
         <classPath>
           <scanDirectory location="lib" />
           <directory location="resources" failOnError="false" />

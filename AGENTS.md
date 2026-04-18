@@ -7,7 +7,7 @@ Root is a Maven multi-module project:
   - `emoticons` contains the smiles packs (zip artifacts).
   - `distribution` has the InstallJ installer/distribution packaging configuration.
 
-Main entry point is `org.jivesoftware.launcher.Startup` defined in `core/pom.xml` manifest.
+Main entry point is `org.jivesoftware.Spark` defined in `core/pom.xml` manifest.
 
 ### Internationalization
 New localized strings should be added to `src/main/resources/i18n/spark_i18n.properties`.
