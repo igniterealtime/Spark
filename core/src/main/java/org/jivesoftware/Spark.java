@@ -44,6 +44,7 @@ import static org.apache.commons.lang3.SystemUtils.*;
 
 
 /**
+ * The Spark Main Application.
  * In many cases, you will need to know the structure of the Spark installation, such as the directory structures, what
  * type of system Spark is running on, and also the arguments which were passed into Spark on startup. The <code>Spark</code>
  * class provides some simple static calls to retrieve this information.
@@ -58,14 +59,6 @@ public final class Spark {
     private static File SECURITY_DIRECTORY;
     private static File USER_DIRECTORY;
     private static File XTRA_DIRECTORY;
-
-
-    /**
-     * Private constructor that invokes the LoginDialog and
-     * the Spark Main Application.
-     */
-    public Spark() {
-    }
 
     private static synchronized File initializeDirectory(File directoryHome, String directoryName) {
         File targetDir = new File(directoryHome, directoryName).getAbsoluteFile();
@@ -118,7 +111,8 @@ public final class Spark {
     /**
      * Configures environment; starts application; invokes login
      */
-    public void startup() {
+    public static void main(String[] args) {
+        setArguments(args);
         Properties sysProps = System.getProperties();
         initializeFolders(sysProps);
         SparkCompatibility.transferConfig(USER_SPARK_HOME);
@@ -352,7 +346,7 @@ public final class Spark {
     /**
      * Loads the language set by the user. If no language is set, then the default implementation will be used.
      */
-    private void loadLanguage() {
+    private static void loadLanguage() {
         final LocalPreferences preferences = SettingsManager.getLocalPreferences();
         final String setLanguage = preferences.getLanguage();
         if (ModelUtil.hasLength(setLanguage)) {

@@ -16,7 +16,6 @@
 
 package org.jivesoftware;
 
-import org.jivesoftware.launcher.Startup;
 import org.jivesoftware.resource.Default;
 import org.jivesoftware.resource.Res;
 import org.jivesoftware.resource.SparkRes;
@@ -308,7 +307,7 @@ public final class MainWindow extends ChatFrame implements ActionListener {
     private File getLibDirectory() {
         File jarFile;
         try{
-            jarFile = new File(Startup.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+            jarFile = new File(Spark.class.getProtectionDomain().getCodeSource().getLocation().toURI());
         } catch(Exception e) {
             Log.error("Cannot get jar file containing the startup class", e);
             return null;
@@ -389,7 +388,7 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         String javaBin = System.getProperty("java.home") + File.separatorChar + "bin" + File.separatorChar + "java";
         try {
             String[] toExec = new String[] {
-                    javaBin, "-cp", getClasspath(), "org.jivesoftware.launcher.Startup"};
+                    javaBin, "-cp", getClasspath(), "org.jivesoftware.Spark"};
             Runtime.getRuntime().exec(toExec);
         } catch (Exception e) {
             Log.error("Error trying to restart application with java", e);

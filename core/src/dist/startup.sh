@@ -20,7 +20,7 @@ esac;
 
 echo "using classpath: ${classpath}";
 
-mainclass="org.jivesoftware.launcher.Startup";
+mainclass="org.jivesoftware.Spark";
 
 if [ "${1}" = "-debug" ]; then
   java -Ddebugger=true \

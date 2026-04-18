@@ -46,7 +46,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>org.jivesoftware.launcher.Startup</mainClass>
+                            <mainClass>org.jivesoftware.Spark</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
@@ -75,7 +75,7 @@
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>1.6.0</version>
                 <configuration>
-                    <mainClass>org.jivesoftware.launcher.Startup</mainClass>
+                    <mainClass>org.jivesoftware.Spark</mainClass>
                 </configuration>
             </plugin>
             <plugin>
