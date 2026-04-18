@@ -18,6 +18,8 @@ package org.jivesoftware;
 
 import org.jivesoftware.spark.SparkManager;
 
+import static org.apache.commons.lang3.StringUtils.substringAfterLast;
+
 /**
  * Uses the Windows registry to perform URI XMPP mappings.
  *
@@ -27,8 +29,13 @@ public class SparkStartupListener implements com.install4j.api.launcher.StartupN
 
 	@Override
 	public void startupPerformed(String args) {
-		if (args != null && !args.trim().isEmpty()) {
-			SparkManager.getUriManager().handleURIMapping(args, true);
+		if (args != null && !args.isBlank()) {
+            String[] arguments = args.split(" ");
+            Spark.setArguments(arguments);
+            String uri = Spark.getArgumentValue("uri");
+            if (uri != null) {
+                SparkManager.getUriManager().handleURIMapping(uri, true);
+            }
 		} else {
             SparkManager.getMainWindow().setVisible(true);
             SparkManager.getMainWindow().toFront();

@@ -24,17 +24,22 @@ import org.jivesoftware.spark.ui.themes.ColorSettings;
 import org.jivesoftware.spark.ui.themes.LookAndFeelManager;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.UIComponentRegistry;
+import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.LocalPreferences;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
+import java.net.URLDecoder;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Properties;
 
 import org.jivesoftware.gui.LoginUIPanel;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.commons.lang3.SystemUtils.*;
 
 
@@ -45,7 +50,7 @@ import static org.apache.commons.lang3.SystemUtils.*;
  */
 public final class Spark {
     private static File USER_SPARK_HOME;
-    public static String ARGUMENTS;
+    private static Map<String, String> ARGUMENTS;
     private static File BIN_DIRECTORY;
     private static File LOG_DIRECTORY;
     private static File PLUGIN_DIRECTORY;
@@ -179,26 +184,55 @@ public final class Spark {
      * @return the value of the argument. If no argument was found, null will be returned.
      */
     public static String getArgumentValue(String argumentName) {
-        if (ARGUMENTS == null) {
-            return null;
-        }
-        String arg = argumentName + "=";
-
-        int index = ARGUMENTS.indexOf(arg);
-        if (index == -1) {
-            return null;
-        }
-
-        String value = ARGUMENTS.substring(index + arg.length());
-        int index2 = value.indexOf("&");
-        if (index2 != -1) {
-            // Must be the last argument
-            value = value.substring(0, index2);
-        }
-        return value;
+        return ARGUMENTS != null ? ARGUMENTS.get(argumentName) : null;
     }
 
-    public void setArgument(String arguments) {
+    /**
+     * Command line arguments
+     */
+    public static void setArguments(String[] args) {
+        if (args.length == 0) {
+            return;
+        }
+        Map<String, String> arguments = new HashMap<>(args.length);
+        // check for old URL encoded style arguments e.g. username=juliet&server=capulet.lit&password=secret
+        if (args.length == 1 && !args[0].startsWith("xmpp:") && !args[0].startsWith("--")) {
+            // write to stderr because the log folder is not initialized yet
+            System.err.println("Use of deprecated URL encoded argument. Instead use --username=LOGIN --server=DOMAIN --password=PASSWORD");
+            String[] parts = args[0].split("&");
+            for (String pair : parts) {
+                int idx = pair.indexOf("=");
+                if (idx == -1) {
+                    continue;
+                }
+                String key = pair.substring(0, idx);
+                String value = pair.substring(idx + 1);
+                String val = URLDecoder.decode(value, UTF_8);
+                arguments.put(key, val);
+            }
+        } else {
+            // Convert agrs "--param1 --param2=val" to map[param1="", param2="val"]
+            for (String arg : args) {
+                if (arg.startsWith("--")) {
+                    String pair = arg.substring(2);
+                    int idx = pair.indexOf("=");
+                    String value = "";
+                    String key;
+                    if (idx == -1) {
+                        key = pair;
+                    } else {
+                        key = pair.substring(0, idx);
+                        value = pair.substring(idx + 1);
+                    }
+                    arguments.put(key, value);
+                }
+            }
+            // the last argument can be an XMPP URI
+            String lastArg = args[args.length - 1].trim();
+            if (lastArg.startsWith("xmpp:")) {
+                arguments.put("uri", lastArg);
+            }
+        }
         ARGUMENTS = arguments;
     }
 

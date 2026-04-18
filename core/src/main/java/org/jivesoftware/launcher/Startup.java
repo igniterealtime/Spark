@@ -66,9 +66,8 @@ public class Startup {
 
             // Handle arguments
             if (args.length > 0) {
-                String argument = args[0];
-                Method setArgument = sparkClass.getMethod("setArgument", String.class);
-                setArgument.invoke(instanceOfSpark, argument);
+                Method setArgument = sparkClass.getMethod("setArguments", String[].class);
+                setArgument.invoke(instanceOfSpark, (Object) args);
             }
 
             Method startupMethod = sparkClass.getMethod("startup");
