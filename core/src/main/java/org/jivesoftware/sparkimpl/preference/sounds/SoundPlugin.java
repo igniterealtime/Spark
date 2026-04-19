@@ -29,6 +29,7 @@ import org.jivesoftware.spark.ui.ChatRoomListener;
 import org.jivesoftware.spark.ui.MessageListener;
 import org.jivesoftware.spark.util.TaskEngine;
 import org.jxmpp.jid.BareJid;
+import org.jxmpp.jid.EntityBareJid;
 
 import static org.jivesoftware.spark.Event.*;
 
@@ -38,21 +39,52 @@ import static org.jivesoftware.spark.Event.*;
  *
  * @author Derek DeMoro
  */
-public class SoundPlugin implements Plugin, MessageListener, ChatRoomListener {
-    private SoundPreference soundPreference;
+public class SoundPlugin implements Plugin {
 
     @Override
 	public void initialize() {
-        soundPreference = new SoundPreference();
+        SoundPreference soundPreference = new SoundPreference();
         SparkManager.getPreferenceManager().addPreference(soundPreference);
+        // Load sound preferences.
+        TaskEngine.getInstance().submit(soundPreference::loadFromFile);
 
-        SparkManager.getChatManager().addChatRoomListener(this);
+        EntityBareJid myBareJid = SparkManager.getSessionManager().getUserBareAddress();
+        MessageListener messageListener = new MessageListener() {
+            @Override
+            public void messageReceived(ChatRoom room, Message message) {
+                // Do not play sounds on history updates.
+                if (message.hasExtension(DelayInformation.class)) {
+                    return;
+                }
+                // Ignore own messages
+                if (message.getFrom() == null || message.getFrom().asBareJid().equals(myBareJid)) {
+                    return;
+                }
+                SparkManager.getSoundManager().playClip(MSG_INCOMING);
+            }
+
+            @Override
+            public void messageSent(ChatRoom room, Message message) {
+                SparkManager.getSoundManager().playClip(MSG_OUTCOMING);
+            }
+        };
+        SparkManager.getChatManager().addChatRoomListener(new ChatRoomListener() {
+            @Override
+            public void chatRoomOpened(ChatRoom room) {
+                room.addMessageListener(messageListener);
+            }
+
+            @Override
+            public void chatRoomClosed(ChatRoom room) {
+                room.removeMessageListener(messageListener);
+            }
+        });
 
         SparkManager.getConnection().addAsyncStanzaListener( stanza -> {
             Presence presence = (Presence)stanza;
             BareJid presenceBareJid = presence.getFrom().asBareJid();
             // Ignore own presence updates
-            if (presenceBareJid.equals(SparkManager.getSessionManager().getUserBareAddress())) {
+            if (presenceBareJid.equals(myBareJid)) {
                 return;
             }
 
@@ -63,52 +95,20 @@ public class SoundPlugin implements Plugin, MessageListener, ChatRoomListener {
             }
         }, new StanzaTypeFilter(Presence.class));
 
-        // Load sound preferences.
-        final Runnable soundLoader = () -> soundPreference.loadFromFile();
-
-        TaskEngine.getInstance().submit(soundLoader);
         MultiUserChatManager mucManager = SparkManager.getMucManager();
         mucManager.addInvitationListener( ( xmppConnection, muc, inviter, reason, password, message, invitation ) -> {
             SparkManager.getSoundManager().playClip(INCOMING_INVITATION);
         } );
     }
 
-    @Override
-	public void messageReceived(ChatRoom room, Message message) {
-        // Do not play sounds on history updates.
-        if (message.hasExtension(DelayInformation.class)) {
-            return;
-        }
-        // Ignore own messages
-        if (message.getFrom() == null || message.getFrom().asBareJid().equals(SparkManager.getSessionManager().getUserBareAddress())) {
-            return;
-        }
-        SparkManager.getSoundManager().playClip(MSG_INCOMING);
-    }
-
-    @Override
-	public void messageSent(ChatRoom room, Message message) {
-        SparkManager.getSoundManager().playClip(MSG_OUTCOMING);
-    }
 
     @Override
 	public void shutdown() {
-
     }
 
     @Override
 	public boolean canShutDown() {
         return false;
-    }
-
-    @Override
-	public void chatRoomOpened(ChatRoom room) {
-        room.addMessageListener(this);
-    }
-
-    @Override
-	public void chatRoomClosed(ChatRoom room) {
-        room.removeMessageListener(this);
     }
 
     @Override
