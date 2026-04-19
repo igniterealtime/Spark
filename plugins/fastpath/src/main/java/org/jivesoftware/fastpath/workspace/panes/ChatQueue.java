@@ -51,9 +51,8 @@ import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
 
 public class ChatQueue extends JPanel {
-
-	private static final long serialVersionUID = 1L;
-	private final JLabel nameLabel = new JLabel();
+    public static final Color LINK_COLOR = new Color(69, 92, 137);
+    private final JLabel nameLabel = new JLabel();
     private final RolloverButton acceptButton;
     private final RolloverButton declineButton;
     private LinkLabel viewLabel;
@@ -112,8 +111,6 @@ public class ChatQueue extends JPanel {
         nameLabel.setText(FpRes.getString("message.incoming.chat.request", utils.getUsername()));
         nameLabel.setIcon(FastpathRes.getImageIcon(FastpathRes.FASTPATH_IMAGE_16x16));
 
-        Color linkColor = new Color(69, 92, 137);
-
         int count = 1;
         for ( final FormField field : form.getDataForm().getFields() ) {
             String variable = field.getFieldName();
@@ -137,7 +134,7 @@ public class ChatQueue extends JPanel {
         add(progressBar, new GridBagConstraints(0, count, 3, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(15, 5, 5, 5), 0, 0));
 
         count++;
-        viewLabel = new LinkLabel(FpRes.getString("message.view.more.information"), null, linkColor, Color.red);
+        viewLabel = new LinkLabel(FpRes.getString("message.view.more.information"), null, LINK_COLOR, Color.red);
         add(viewLabel, new GridBagConstraints(0, count, 1, 1, 0.0, 1.0, GridBagConstraints.SOUTH, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
         
         final JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
@@ -148,6 +145,7 @@ public class ChatQueue extends JPanel {
         add(buttonPanel, new GridBagConstraints(1, count, 2, 1, 1.0, 1.0, GridBagConstraints.SOUTH, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 
         viewLabel.addMouseListener(new MouseAdapter() {
+            @Override
             public void mouseClicked(MouseEvent e) {
                 showInformation();
             }
@@ -164,6 +162,7 @@ public class ChatQueue extends JPanel {
 
 
         SwingWorker worker = new SwingWorker() {
+            @Override
             public Object construct() {
                 while (true) {
                     Date now = new Date();

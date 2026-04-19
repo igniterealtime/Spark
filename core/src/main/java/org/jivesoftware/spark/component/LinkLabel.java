@@ -33,8 +33,6 @@ import org.jivesoftware.spark.util.log.Log;
  * @author Derek DeMoro
  */
 final public class LinkLabel extends JLabel implements MouseListener {
-
-	private static final long serialVersionUID = 454820993140807217L;
 	// cursors used in url-link related displays and default display
     private final Cursor DEFAULT_CURSOR = new Cursor(Cursor.DEFAULT_CURSOR);
     private final Cursor LINK_CURSOR = new Cursor(Cursor.HAND_CURSOR);

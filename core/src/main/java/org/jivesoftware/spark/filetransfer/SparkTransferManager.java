@@ -42,7 +42,6 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -62,9 +61,7 @@ import org.jivesoftware.smack.*;
 import org.jivesoftware.smack.filter.AndFilter;
 import org.jivesoftware.smack.filter.FromMatchesFilter;
 import org.jivesoftware.smack.filter.StanzaTypeFilter;
-import org.jivesoftware.smack.packet.MessageBuilder;
 import org.jivesoftware.smack.packet.Presence;
-import org.jivesoftware.smack.packet.StanzaBuilder;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.bytestreams.ibb.InBandBytestreamManager;
 import org.jivesoftware.smackx.filetransfer.FileTransferManager;
@@ -99,7 +96,6 @@ import static org.jivesoftware.spark.ChatManager.ERROR_COLOR;
  * @author Derek DeMoro
  */
 public class SparkTransferManager {
-
     private final CopyOnWriteArrayList<FileTransferListener> listeners = new CopyOnWriteArrayList<>();
     private File defaultDirectory;
 
@@ -111,16 +107,7 @@ public class SparkTransferManager {
     private BufferedImage bufferedImage;
     private ImageSelectionPanel selectionPanel;
     private Robot robot;
-    private InBandBytestreamManager ibbmanager;
 
-
-    /**
-     * Returns the singleton instance of <CODE>SparkTransferManager</CODE>,
-     * creating it if necessary.
-     * <p/>
-     *
-     * @return the singleton instance of <Code>SparkTransferManager</CODE>
-     */
     public static SparkTransferManager getInstance() {
         // Synchronize on LOCK to ensure that we don't end up creating
         // two singletons.
@@ -135,49 +122,43 @@ public class SparkTransferManager {
     }
 
     private SparkTransferManager() {
-    	
-    	// See if we should disable the option to transfer files and images
-    	if (Default.getBoolean(Default.DISABLE_FILE_TRANSFER) || !Enterprise.containsFeature(Enterprise.FILE_TRANSFER_FEATURE)) return;
-
+        // See if we should disable the option to transfer files and images
+        if (Default.getBoolean(Default.DISABLE_FILE_TRANSFER) || !Enterprise.containsFeature(Enterprise.FILE_TRANSFER_FEATURE))
+            return;
         SparkManager.getConnection().addConnectionListener(new ConnectionListener() {
             @Override
-            public void authenticated( XMPPConnection xmppConnection, boolean b )
-            {
-                transferManager = FileTransferManager.getInstanceFor( SparkManager.getConnection() );
+            public void authenticated(XMPPConnection xmppConnection, boolean b) {
+                transferManager = FileTransferManager.getInstanceFor(SparkManager.getConnection());
             }
         });
-
         final ContactList contactList = SparkManager.getWorkspace().getContactList();
-
         // Create the listener
-        transferManager = FileTransferManager.getInstanceFor( SparkManager.getConnection() );
-        transferManager.addFileTransferListener( request -> SwingUtilities.invokeLater( () -> handleTransferRequest(request, contactList) ) );
+        transferManager = FileTransferManager.getInstanceFor(SparkManager.getConnection());
+        transferManager.addFileTransferListener(request -> SwingUtilities.invokeLater(() -> handleTransferRequest(request, contactList)));
         //SPARK-1869
-        ibbmanager = InBandBytestreamManager.getByteStreamManager( SparkManager.getConnection());
-        ibbmanager.setDefaultBlockSize(61440);
+        InBandBytestreamManager ibbmanager = InBandBytestreamManager.getByteStreamManager(SparkManager.getConnection());
+        ibbmanager.setDefaultBlockSize(61_440);
         // Add Send File to Chat Room
         addSendFileButton();
 
-        contactList.addFileDropListener( ( files, component ) -> {
-            if (component instanceof ContactItem) {
-                ContactItem item = (ContactItem)component;
-
-                ChatRoom chatRoom = null;
-                for (File file : files) {
-                    chatRoom = sendFile(file, item.getJid());
-                }
-
-                if (chatRoom != null) {
-                    SparkManager.getChatManager().getChatContainer().activateChatRoom(chatRoom);
-                }
+        contactList.addFileDropListener((files, component) -> {
+            if (!(component instanceof ContactItem)) {
+                return;
             }
-        } );
+            ContactItem item = (ContactItem) component;
+            ChatRoom chatRoom = null;
+            for (File file : files) {
+                chatRoom = sendFile(file, item.getJid());
+            }
+            if (chatRoom != null) {
+                SparkManager.getChatManager().getChatContainer().activateChatRoom(chatRoom);
+            }
+        });
 
         try {
             robot = new Robot();
             selectionPanel = new ImageSelectionPanel();
-        }
-        catch (AWTException e) {
+        } catch (AWTException e) {
             Log.error(e);
         }
 
@@ -190,7 +171,7 @@ public class SparkTransferManager {
         ResourceUtils.resButton(downloadsMenu, Res.getString("menuitem.view.downloads"));
         actionsMenu.addSeparator();
         actionsMenu.add(downloadsMenu);
-        downloadsMenu.addActionListener( e -> launchFile(Downloads.getDownloadDirectory()) );
+        downloadsMenu.addActionListener(e -> launchFile(Downloads.getDownloadDirectory()));
 
         if (defaultDirectory == null) {
             defaultDirectory = new File(System.getProperty("user.home"));
@@ -213,27 +194,24 @@ public class SparkTransferManager {
 //				}
 //            }
 //        });
-       }
+    }
 
-    
+
     /**
      * Return correct URI for filePath. dont mind of local or remote path
-     * 
-     * @param filePath
-     * @return
      */
     private static URI getFileURI(String filePath) {
         URI uri = null;
         filePath = filePath.trim();
-        if (filePath.indexOf("http") == 0 || filePath.indexOf("\\") == 0) {
+        if (filePath.startsWith("https") || filePath.startsWith("http") || filePath.startsWith("\\")) {
             if (filePath.indexOf("\\") == 0)
                 filePath = "file:" + filePath;
             try {
-                filePath = filePath.replaceAll(" ", "%20");
+                filePath = filePath.replace(" ", "%20");
                 URL url = new URL(filePath);
                 uri = url.toURI();
             } catch (MalformedURLException | URISyntaxException ex) {
-                ex.printStackTrace();
+                Log.error(ex);
             }
         } else {
             File file = new File(filePath);
@@ -241,13 +219,12 @@ public class SparkTransferManager {
         }
         return uri;
     }
-    
+
     private void handleTransferRequest(FileTransferRequest request, ContactList contactList) {
         // Check if a listener handled this request
         if (fireTransferListeners(request)) {
             return;
         }
-
         Jid requestor = request.getRequestor();
         EntityBareJid bareJID = requestor.asEntityBareJidOrThrow();
         String fileName = request.getFileName();
@@ -257,7 +234,7 @@ public class SparkTransferManager {
         ChatRoom chatRoom = SparkManager.getChatManager().createChatRoom(bareJID, chatName, chatName);
 
         TranscriptWindow transcriptWindow = chatRoom.getTranscriptWindow();
-        transcriptWindow.insertCustomText(Res.getString("message.file.transfer.chat.window"), true, false, Color.BLACK);        
+        transcriptWindow.insertCustomText(Res.getString("message.file.transfer.chat.window"), true, false, Color.BLACK);
 
         final ReceiveFileTransfer receivingMessageUI = new ReceiveFileTransfer(chatRoom);
         receivingMessageUI.acceptFileTransfer(request);
@@ -269,35 +246,29 @@ public class SparkTransferManager {
         SparkManager.getChatManager().getChatContainer().fireNotifyOnMessage(chatRoom, true, fileTransMsg, Res.getString("message.file.transfer.notification"));
     }
 
-
     public void sendFileTo(ContactItem item) {
         FileDialog fileChooser = getFileChooser(SparkManager.getMainWindow(), Res.getString("title.select.file.to.send"));
-        if (defaultDirectory != null)
-        {
-            fileChooser.setDirectory( defaultDirectory.getAbsolutePath() );
+        if (defaultDirectory != null) {
+            fileChooser.setDirectory(defaultDirectory.getAbsolutePath());
         }
         fileChooser.setVisible(true);
-
         final File[] files = fileChooser.getFiles();
-        if ( files.length == 0) {
+        if (files.length == 0) {
             // no selection
             return;
         }
-
         File file = files[0]; // Single-file selection is used. Using the first array item is safe.
-
         if (file.exists()) {
             defaultDirectory = file.getParentFile();
-            sendFile( file, item.getJid() );
+            sendFile(file, item.getJid());
         }
-
     }
 
     private void addSendFileButton() {
         final ChatManager chatManager = SparkManager.getChatManager();
         chatManager.addChatRoomListener(new ChatRoomListener() {
             @Override
-			public void chatRoomOpened(final ChatRoom room) {
+            public void chatRoomOpened(final ChatRoom room) {
                 if (!(room instanceof ChatRoomImpl)) {
                     return;
                 }
@@ -309,49 +280,41 @@ public class SparkTransferManager {
 
     public void sendScreenshot(final ChatRoomButton button, final ChatRoom room) {
         button.setEnabled(false);
-
         final MainWindow mainWindow = SparkManager.getMainWindow();
         final ChatFrame chatFrame = SparkManager.getChatManager().getChatContainer().getChatFrame();
-
         final boolean mainWindowVisible = mainWindow.isVisible();
         final boolean chatFrameVisible = chatFrame.isVisible();
-
         if (mainWindowVisible) {
             mainWindow.setVisible(false);
         }
-
         if (chatFrameVisible) {
             chatFrame.setVisible(false);
         }
 
         final SwingWorker worker = new SwingWorker() {
             @Override
-			public Object construct() {
+            public Object construct() {
                 try {
                     Thread.sleep(1000);
                     Rectangle area = new Rectangle(Toolkit.getDefaultToolkit().getScreenSize());
                     return robot.createScreenCapture(area);
-                }
-                catch (Throwable e) {
+                } catch (Throwable e) {
                     Log.error(e);
-
                     if (mainWindowVisible) {
                         mainWindow.setVisible(true);
                     }
-
                     if (chatFrameVisible) {
                         chatFrame.setVisible(true);
                     }
-
                 }
                 return null;
             }
 
             @Override
-			public void finished() {
-                bufferedImage = (BufferedImage)get();
+            public void finished() {
+                bufferedImage = (BufferedImage) get();
                 if (bufferedImage == null) {
-                	UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
+                    UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
                     JOptionPane.showMessageDialog(null, Res.getString("title.error"), "Unable to process screenshot.", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
@@ -363,16 +326,13 @@ public class SparkTransferManager {
                 selectionPanel.validate();
                 selectionPanel.addMouseListener(new MouseAdapter() {
                     @Override
-					public void mouseReleased(MouseEvent e) {
+                    public void mouseReleased(MouseEvent e) {
                         Rectangle clip = selectionPanel.getClip();
                         BufferedImage newImage = null;
                         try {
-                            newImage = bufferedImage.getSubimage((int)clip.getX(), (int)clip.getY(), (int)clip.getWidth(), (int)clip.getHeight());
+                            newImage = bufferedImage.getSubimage((int) clip.getX(), (int) clip.getY(), (int) clip.getWidth(), (int) clip.getHeight());
+                        } catch (Exception ignored) {
                         }
-                        catch (Exception e1) {
-                            // Nothing to do
-                        }
-
                         if (newImage != null) {
                             sendImage(newImage, room);
                             bufferedImage = null;
@@ -385,33 +345,28 @@ public class SparkTransferManager {
                         if (mainWindowVisible) {
                             mainWindow.setVisible(true);
                         }
-
                         if (chatFrameVisible) {
                             chatFrame.setVisible(true);
                         }
-
                         selectionPanel.removeMouseListener(this);
                     }
                 });
 
                 frame.addKeyListener(new KeyAdapter() {
                     @Override
-					public void keyReleased(KeyEvent e) {
+                    public void keyReleased(KeyEvent e) {
                         if (e.getKeyChar() == KeyEvent.VK_ESCAPE) {
                             frame.dispose();
                             frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
                             if (mainWindowVisible) {
                                 mainWindow.setVisible(true);
                             }
-
                             if (chatFrameVisible) {
                                 chatFrame.setVisible(true);
                             }
                         }
                     }
                 });
-
-
                 frame.setSize(bufferedImage.getWidth(null), bufferedImage.getHeight());
                 frame.add(selectionPanel);
                 frame.setUndecorated(true);
@@ -420,13 +375,10 @@ public class SparkTransferManager {
                 GraphicsDevice gs = ge.getDefaultScreenDevice();
                 if (gs.isFullScreenSupported()) {
                     gs.setFullScreenWindow(frame);
-                }
-                else {
+                } else {
                     // Full-screen mode will be simulated
                     frame.setVisible(true);
                 }
-
-
                 button.setEnabled(true);
             }
         };
@@ -434,11 +386,10 @@ public class SparkTransferManager {
     }
 
     private void addPresenceListener() {
-        SparkManager.getConnection().addAsyncStanzaListener( stanza -> {
-            Presence presence = (Presence)stanza;
+        SparkManager.getConnection().addAsyncStanzaListener(stanza -> {
+            Presence presence = (Presence) stanza;
             if (presence.isAvailable()) {
-                BareJid bareJID = presence.getFrom().asBareJid();
-
+                EntityBareJid bareJID = presence.getFrom().asEntityBareJidIfPossible();
                 // Iterate through map.
                 ArrayList<File> list = waitMap.get(bareJID);
                 if (list != null) {
@@ -447,13 +398,10 @@ public class SparkTransferManager {
                     for (File file : list) {
                         room = sendFile(file, bareJID);
                     }
-
                     if (room != null) {
                         room.sendMessage(Res.getString("message.sent.offline.files"));
                     }
                 }
-
-
                 waitMap.remove(bareJID);
             }
         }, new StanzaTypeFilter(Presence.class));
@@ -467,38 +415,29 @@ public class SparkTransferManager {
      * @return the ChatRoom of the user.
      */
     public ChatRoom sendFile(File file, Jid jid) {
-	
-	long maxsize = Long.parseLong(Default.getString(Default.FILE_TRANSFER_MAXIMUM_SIZE));
-	long warningsize = Long.parseLong(Default.getString(Default.FILE_TRANSFER_WARNING_SIZE));
-	
+        long maxSize = Long.parseLong(Default.getString(Default.FILE_TRANSFER_MAXIMUM_SIZE));
+        long warningSize = Long.parseLong(Default.getString(Default.FILE_TRANSFER_WARNING_SIZE));
+        if (file.length() >= maxSize && maxSize != -1) {
+            String maxsizeString = TransferUtils.getAppropriateByteWithSuffix(maxSize);
+            String yoursizeString = TransferUtils.getAppropriateByteWithSuffix(file.length());
+            String output = Res.getString("message.file.transfer.file.too.big.error", maxsizeString, yoursizeString);
+            UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
+            JOptionPane.showMessageDialog(null, output, Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
+            return null;
+        }
 
-	if(file.length()>= maxsize && maxsize != -1)
-	{
-	    String maxsizeString = TransferUtils.getAppropriateByteWithSuffix(maxsize);
-	    String yoursizeString = TransferUtils.getAppropriateByteWithSuffix(file.length());
-	    String output = Res.getString("message.file.transfer.file.too.big.error", maxsizeString, yoursizeString);
-	    UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
-	    JOptionPane.showMessageDialog(null, output, Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
-	    return null;
-	}
-	
-	if(file.length() >= warningsize && warningsize != -1)
-	{
-	    int result = JOptionPane.showConfirmDialog(null, Res.getString("message.file.transfer.file.too.big.warning"), Res.getString("title.error"), JOptionPane.YES_NO_OPTION);
-	
-	    if(result != 0)
-	    {
-		return null;
-	    }
-	}
-	
+        if (file.length() >= warningSize && warningSize != -1) {
+            int result = JOptionPane.showConfirmDialog(null, Res.getString("message.file.transfer.file.too.big.warning"), Res.getString("title.error"), JOptionPane.YES_NO_OPTION);
+            if (result != 0) {
+                return null;
+            }
+        }
+
         final ContactList contactList = SparkManager.getWorkspace().getContactList();
         EntityFullJid fullJID = PresenceManager.getFullyQualifiedJID(jid.asBareJid());
         EntityBareJid bareJid = fullJID.asEntityBareJid();
-
-
         if (!PresenceManager.isOnline(bareJid)) {
-            ArrayList<File> list = waitMap.get(jid);
+            ArrayList<File> list = waitMap.get(bareJid);
             if (list == null) {
                 list = new ArrayList<>();
             }
@@ -522,37 +461,31 @@ public class SparkTransferManager {
         SendFileTransfer sendingUI = new SendFileTransfer(chatRoom);
         try {
             transfer.sendFile(file, "Sending file");
-        }
-        catch (SmackException e) {
+        } catch (SmackException e) {
             Log.error(e);
         }
 
         // Add listener to cancel transfer is sending file to user who just went offline.
         AndFilter presenceFilter = new AndFilter(new StanzaTypeFilter(Presence.class), FromMatchesFilter.createBare(bareJid));
         final StanzaListener packetListener = stanza -> {
-            Presence presence = (Presence)stanza;
+            Presence presence = (Presence) stanza;
             if (!presence.isAvailable()) {
-                if (transfer != null) {
-                    transfer.cancel();
-                }
+                transfer.cancel();
             }
         };
 
         // Add presence listener to check if user is offline and cancel sending.
         SparkManager.getConnection().addAsyncStanzaListener(packetListener, presenceFilter);
-
-        chatRoom.addClosingListener( () -> {
+        chatRoom.addClosingListener(() -> {
             SparkManager.getConnection().removeAsyncStanzaListener(packetListener);
-
             if (!transfer.isDone()) {
                 transfer.cancel();
             }
-        } );
+        });
 
         try {
             sendingUI.sendFile(transfer, transferManager, fullJID, contactItem.getDisplayName());
-        }
-        catch (NullPointerException e) {
+        } catch (NullPointerException e) {
             Log.error(e);
         }
 
@@ -570,6 +503,7 @@ public class SparkTransferManager {
      */
     public void sendImage(final BufferedImage image, final ChatRoom room) {
         File tmpDirectory = new File(Spark.getSparkUserHome(), "/tempImages");
+        //noinspection ResultOfMethodCallIgnored
         tmpDirectory.mkdirs();
 
         String imageName = "image_" + StringUtils.randomString(2) + ".png";
@@ -580,20 +514,19 @@ public class SparkTransferManager {
 
         SwingWorker writeImageThread = new SwingWorker() {
             @Override
-			public Object construct() {
+            public Object construct() {
                 try {
                     // Write out file in separate thread.
                     ImageIO.write(image, "png", imageFile);
-                }
-                catch (IOException e) {
+                } catch (IOException e) {
                     Log.error(e);
                 }
                 return true;
             }
 
             @Override
-			public void finished() {
-                ChatRoomImpl roomImpl = (ChatRoomImpl)room;
+            public void finished() {
+                ChatRoomImpl roomImpl = (ChatRoomImpl) room;
                 sendFile(imageFile, roomImpl.getParticipantJID());
                 SparkManager.getChatManager().getChatContainer().activateChatRoom(room);
                 room.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
@@ -604,18 +537,14 @@ public class SparkTransferManager {
 
     /**
      * Returns an image if one is found in the clipboard, otherwise null is returned.
-     *
-     * @return the image in the clipboard if found, otherwise null.
      */
     public static BufferedImage getClipboard() {
         Transferable t = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
-
         try {
             if (t != null && t.isDataFlavorSupported(DataFlavor.imageFlavor)) {
-                return (BufferedImage)t.getTransferData(DataFlavor.imageFlavor);
+                return (BufferedImage) t.getTransferData(DataFlavor.imageFlavor);
             }
-        }
-        catch (UnsupportedFlavorException | IOException e) {
+        } catch (UnsupportedFlavorException | IOException e) {
             // Nothing to do
         }
         return null;
@@ -625,8 +554,6 @@ public class SparkTransferManager {
      * Adds a new TransferListener to the SparkManager. FileTransferListeners can be used
      * to intercept incoming file transfers for own customizations. You may wish to not
      * allow certain file transfers, or have your own UI to handle incoming files.
-     *
-     * @param listener the listener
      */
     public void addTransferListener(FileTransferListener listener) {
         listeners.addIfAbsent(listener);
@@ -634,8 +561,6 @@ public class SparkTransferManager {
 
     /**
      * Removes the FileTransferListener.
-     *
-     * @param listener the listener
      */
     public void removeTransferListener(FileTransferListener listener) {
         listeners.remove(listener);
@@ -651,12 +576,9 @@ public class SparkTransferManager {
         return false;
     }
 
-    
     /**
      * Launches a file browser or opens a file with java Desktop.open() if is
      * supported
-     * 
-     * @param file
      */
     private void launchFile(File file) {
         if (!Desktop.isDesktopSupported())
@@ -665,29 +587,14 @@ public class SparkTransferManager {
         try {
             dt.open(file);
         } catch (IOException ex) {
-            launchFile(file.getPath());
+            try {
+                dt.browse(getFileURI(file.getPath()));
+            } catch (Exception exBrowse) {
+                Log.error(exBrowse);
+            }
         }
     }
 
-    /**
-     * Launches a file browser or opens a file with java Desktop.open() if is
-     * supported
-     * 
-     * @param filePath
-     */
-    private void launchFile(String filePath) {
-        if (filePath == null || filePath.trim().length() == 0)
-            return;
-        if (!Desktop.isDesktopSupported())
-            return;
-        Desktop dt = Desktop.getDesktop();
-        try {
-            dt.browse(getFileURI(filePath));
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
-    
     /**
      * Sets the current default directory to store files.
      *
@@ -696,11 +603,11 @@ public class SparkTransferManager {
     public void setDefaultDirectory(File directory) {
         if (directory == null) {
             defaultDirectory = null;
-        } else if (directory.isDirectory() ) {
+        } else if (directory.isDirectory()) {
             defaultDirectory = directory;
         } else {
             File parent = defaultDirectory.getParentFile();
-            if (parent != null && parent.isDirectory()) {
+            if (parent != null) {
                 defaultDirectory = parent;
             }
         }

@@ -60,10 +60,9 @@ public final class GraphicUtils {
 	    240);
     public static final Color TOOLTIP_COLOR = new java.awt.Color(166, 202, 240);
 
-    protected final static Component component = new Component() {
-	private static final long serialVersionUID = -7556405112141454291L;
+    private final static Component component = new Component() {
     };
-    protected final static MediaTracker tracker = new MediaTracker(component);
+    private final static MediaTracker tracker = new MediaTracker(component);
 
     private static final Map<String, Image> imageCache = new HashMap<>();
 
@@ -92,15 +91,12 @@ public final class GraphicUtils {
 	final Dimension screenSize = Toolkit.getDefaultToolkit()
 		.getScreenSize();
 	final Dimension size = window.getSize();
-
 	if (size.height > screenSize.height) {
 	    size.height = screenSize.height;
 	}
-
 	if (size.width > screenSize.width) {
 	    size.width = screenSize.width;
 	}
-
 	window.setLocation((screenSize.width - size.width) / 2,
 		(screenSize.height - size.height) / 2);
     }

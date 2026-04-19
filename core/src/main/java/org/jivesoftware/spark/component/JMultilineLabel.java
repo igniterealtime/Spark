@@ -30,7 +30,6 @@ import java.text.AttributedString;
 import java.util.Objects;
 
 public class JMultilineLabel extends JComponent {
-    private static final long serialVersionUID = 3061233171993075054L;
     private String text;
     private final Insets margin = new Insets(1, 1, 1, 1);
     private int maxWidth = Integer.MAX_VALUE;
@@ -101,7 +100,7 @@ public class JMultilineLabel extends JComponent {
         width -= insets.left + insets.right + margin.left + margin.right;
         float w = insets.left + insets.right + margin.left + margin.right;
         float x = insets.left + margin.left, y = insets.top + margin.top;
-        if (width > 0 && text != null && text.length() > 0) {
+        if (width > 0 && text != null && !text.isEmpty()) {
             AttributedString as = new AttributedString(getText());
             as.addAttribute(TextAttribute.FONT, getFont());
             AttributedCharacterIterator aci = as.getIterator();

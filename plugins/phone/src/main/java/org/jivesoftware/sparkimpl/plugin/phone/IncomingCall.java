@@ -31,7 +31,6 @@ import java.awt.Insets;
  * UI to display incoming call information
  */
 public class IncomingCall extends JPanel {
-    private static final long serialVersionUID = -5840942759253687771L;
     private final JLabel callerNameLabel;
     private final JLabel callerNumberLabel;
 

@@ -31,7 +31,7 @@ import java.util.Objects;
  * {@link GrowlMessageListener} implements the {@link GlobalMessageListener} and
  * creates Growl Notifications on Message received
  *
- * @author Wolf.Posdorfer
+ * @author Wolf Posdorfer
  */
 public class GrowlMessageListener implements GlobalMessageListener
 {
@@ -42,7 +42,8 @@ public class GrowlMessageListener implements GlobalMessageListener
         this.talker = Objects.requireNonNull(talker);
     }
 
-    public void messageReceived( final ChatRoom chatRoom, final Message message )
+    @Override
+    public void messageReceived(final ChatRoom chatRoom, final Message message )
     {
         SwingUtilities.invokeLater( () ->
                                     {
@@ -86,6 +87,7 @@ public class GrowlMessageListener implements GlobalMessageListener
 
     }
 
-    public void messageSent( ChatRoom room, Message message )
+    @Override
+    public void messageSent(ChatRoom room, Message message )
     {}
 }

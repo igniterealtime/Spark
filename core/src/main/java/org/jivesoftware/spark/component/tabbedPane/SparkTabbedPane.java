@@ -36,8 +36,6 @@ import java.util.Iterator;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class SparkTabbedPane extends JPanel {
-
-    private static final long serialVersionUID = -9007068462231539973L;
     private static final String NAME = "SparkTabbedPane";
     private final CopyOnWriteArrayList<SparkTabbedPaneListener> listeners = new CopyOnWriteArrayList<>();
     private final JTabbedPane pane;
@@ -102,9 +100,8 @@ public class SparkTabbedPane extends JPanel {
 
         if (show) {
             pane.putClientProperty("JTabbedPane.trailingComponent", tb);
-        } else if (unreadCount == 0 || show == false) {
+        } else if (unreadCount == 0) {
             pane.putClientProperty("JTabbedPane.trailingComponent", null);
-
         }
     }
 
@@ -372,8 +369,6 @@ public class SparkTabbedPane extends JPanel {
     }
 
     private class TabPanel extends JPanel {
-
-        private static final long serialVersionUID = -8249981130816404360L;
         private final BorderLayout layout = new BorderLayout(5, 5);
         private final Font defaultFontPlain = new Font("Dialog", Font.PLAIN, 11);
         private final Font defaultFontBold = new Font("Dialog", Font.BOLD, 11);
@@ -429,11 +424,8 @@ public class SparkTabbedPane extends JPanel {
                             public void finished() {
                                 close(sparktab);
                                 //reset counter
-                                if (SparkManager.getChatManager().getChatContainer().getTotalNumberOfUnreadMessages() == 0) {
-                                    showUnreadMessageIndicator(SparkManager.getChatManager().getChatContainer().getTabbedPane(), false, SparkManager.getChatManager().getChatContainer().getTotalNumberOfUnreadMessages());
-                                } else {
-                                    showUnreadMessageIndicator(SparkManager.getChatManager().getChatContainer().getTabbedPane(), true, SparkManager.getChatManager().getChatContainer().getTotalNumberOfUnreadMessages());
-                                }
+                                int totalNumberOfUnreadMessages = SparkManager.getChatManager().getChatContainer().getTotalNumberOfUnreadMessages();
+                                showUnreadMessageIndicator(SparkManager.getChatManager().getChatContainer().getTabbedPane(), totalNumberOfUnreadMessages > 0, totalNumberOfUnreadMessages);
                             }
                         };
                         closeTimerThread.start();

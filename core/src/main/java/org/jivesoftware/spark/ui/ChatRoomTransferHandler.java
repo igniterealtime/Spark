@@ -31,9 +31,7 @@ import org.jivesoftware.spark.util.log.Log;
  * Handler for drag and dropping of files unto a ChatWindow.
  */
 public class ChatRoomTransferHandler extends TransferHandler {
-	private static final long serialVersionUID = 6941570710627039031L;
 	private final ChatRoom chatRoom;
-
     private static final DataFlavor[] flavors = {DataFlavor.javaFileListFlavor, DataFlavor.stringFlavor};
 
     public ChatRoomTransferHandler(ChatRoom chatRoom) {
@@ -44,7 +42,6 @@ public class ChatRoomTransferHandler extends TransferHandler {
 	public int getSourceActions(JComponent c) {
         return TransferHandler.COPY_OR_MOVE;
     }
-
 
     @Override
 	public boolean canImport(JComponent comp, DataFlavor[] flavor) {
@@ -63,7 +60,6 @@ public class ChatRoomTransferHandler extends TransferHandler {
         if (comp instanceof TranscriptWindow) {
             return new TranscriptWindowTransferable((TranscriptWindow) comp);
         }
-
         return null;
     }
 
@@ -74,7 +70,6 @@ public class ChatRoomTransferHandler extends TransferHandler {
                 Object o = t.getTransferData(flavors[0]);
                 if (o instanceof Collection) {
                     Collection<File> files = (Collection<File>)o;
-
                     // Otherwise fire files dropped event.
                     chatRoom.fireFileDropListeners(files);
                     return true;

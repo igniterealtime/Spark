@@ -79,7 +79,7 @@ public final class MessageDialog
         EventQueue.invokeLater( () ->
         {
             // Create the title panel for this dialog
-            final String desc = description == null || description.trim().isEmpty() ? null : description.trim();
+            final String desc = description == null || description.isBlank() ? null : description.trim();
             final TitlePanel titlePanel = new TitlePanel(Res.getString("message.default.error"), desc, SparkRes.getImageIcon(SparkRes.Icon.SMALL_DELETE), true);
 
             final JLabel titleLabel = new JLabel( Res.getString( "message.default.error" ) );
@@ -103,7 +103,7 @@ public final class MessageDialog
             mainPanel.setLayout( new BorderLayout() );
 
             mainPanel.add( titleLabel, BorderLayout.NORTH );
-            if ( description != null && !description.trim().isEmpty() )
+            if (description != null && !description.isBlank())
             {
                 mainPanel.add( descriptionLabel, BorderLayout.CENTER );
             }
@@ -366,7 +366,7 @@ public final class MessageDialog
         //add the class name and any message passed to constructor
         final StringBuilder result = new StringBuilder( heading );
         result.append( aThrowable.toString() );
-        final String lineSeperator = System.getProperty( "line.separator" );
+        final String lineSeperator = System.lineSeparator();
         result.append( lineSeperator );
 
         //add each element of the stack trace

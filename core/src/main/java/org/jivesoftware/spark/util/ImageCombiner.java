@@ -32,7 +32,7 @@ import javax.swing.JComponent;
 /**
  * ImageCombiner
  * 
- * @author wolf.posdorfer
+ * @author Wolf Posdorfer
  */
 public class ImageCombiner {
     
@@ -63,7 +63,6 @@ public class ImageCombiner {
         try {
             ImageObserver comp = new JComponent()
             {
-                private static final long serialVersionUID = 1L;
             };
 
             int w = image1.getIconWidth() + image2.getIconWidth();

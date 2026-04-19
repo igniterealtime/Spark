@@ -52,7 +52,6 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.resource.Res;
 
 public class Notes extends JPanel {
-	private static final long serialVersionUID = -7789684145607565950L;
 	private JFrame notesFrame;
     private final JScrollPane scrollPane;
     private final JTextPane textPane;
@@ -69,14 +68,13 @@ public class Notes extends JPanel {
 
     public Notes(CharSequence sessionID, ChatRoom room) {
         setLayout(new BorderLayout());
-
         this.chatRoom = room;
-
         this.sessionID = sessionID.toString();
 
         textPane = new JTextPane();
         textPane.setText(FpRes.getString("message.click.to.add.notes"));
         textPane.addMouseListener(new MouseAdapter() {
+            @Override
             public void mouseClicked(MouseEvent e) {
                 if (!hasClickedInPane) {
                     textPane.setText("");
@@ -116,16 +114,19 @@ public class Notes extends JPanel {
         //add(titlePanel, BorderLayout.NORTH);
 
         textPane.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
             public void changedUpdate(DocumentEvent e) {
                 saveButton.setEnabled(true);
                 updated = true;
             }
 
+            @Override
             public void insertUpdate(DocumentEvent e) {
                 saveButton.setEnabled(true);
                 updated = true;
             }
 
+            @Override
             public void removeUpdate(DocumentEvent e) {
                 saveButton.setEnabled(true);
                 updated = true;
@@ -179,6 +180,7 @@ public class Notes extends JPanel {
             saveButton.setEnabled(false);
             statusLabel.setText(" "+ FpRes.getString("message.notes.updated"));
             SwingWorker worker = new SwingWorker() {
+                @Override
                 public Object construct() {
                     try {
                         Thread.sleep(3000);
@@ -189,6 +191,7 @@ public class Notes extends JPanel {
                     return true;
                 }
 
+                @Override
                 public void finished() {
                     statusLabel.setText("");
                 }
@@ -247,6 +250,7 @@ public class Notes extends JPanel {
         return string;
     }
 
+    @Override
     public Dimension getPreferredSize() {
         final Dimension size = super.getPreferredSize();
         size.width = 0;

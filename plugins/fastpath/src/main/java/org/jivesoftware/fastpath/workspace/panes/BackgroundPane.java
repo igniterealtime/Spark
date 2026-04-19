@@ -31,8 +31,6 @@ import javax.swing.JPanel;
  * to specify an image to use in the background of the panel.
  */
 public class BackgroundPane extends JPanel {
-
-	private static final long serialVersionUID = 1L;
 	private ImageIcon backgroundImage;
 
     /**
@@ -71,6 +69,7 @@ public class BackgroundPane extends JPanel {
         this.backgroundImage = image;
     }
 
+    @Override
     public void paintComponent(Graphics g) {
         Image backgroundImage = this.backgroundImage.getImage();
         double scaleX = getWidth() / (double)backgroundImage.getWidth(null);

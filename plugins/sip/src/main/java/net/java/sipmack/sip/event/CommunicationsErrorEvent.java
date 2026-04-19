@@ -18,8 +18,6 @@ package net.java.sipmack.sip.event;
 import java.util.EventObject;
 
 public class CommunicationsErrorEvent extends EventObject {
-	private static final long serialVersionUID = 2374012965831445563L;
-
 	public CommunicationsErrorEvent(Throwable source) {
         super(source);
     }

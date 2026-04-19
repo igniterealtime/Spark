@@ -31,12 +31,10 @@ import java.awt.event.MouseEvent;
  * Used for silent reconnecting<br>
  * Displays a little Icon at first position in commandpanel
  * 
- * @author wolf.posdorfer
+ * @author Wolf Posdorfer
  * 
  */
 public class ReconnectPanelIcon implements ConnectionListener {
-
-    private static final long serialVersionUID = 437696141257704105L;
     private final JButton _icon;
     private final JPanel _commandpanel;
 

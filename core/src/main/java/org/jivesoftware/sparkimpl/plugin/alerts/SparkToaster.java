@@ -15,24 +15,6 @@
  */
 package org.jivesoftware.sparkimpl.plugin.alerts;
 
-/**
- * SparkToaster is an improvement of Java Toaster which is a java utility class for your swing applications
- * that show an animate box coming from the bottom of your screen
- * with a notification message and/or an associated image
- * (like msn online/offline notifications).
- *
- * Toaster panel in windows system follow the taskbar; So if
- * the taskbar is into the bottom the panel coming from the bottom
- * and if the taskbar is on the top then the panel coming from the top.
- *
- * This is a simple example of utilization:
- *
- * import com.nitido.utils.toaster.*;
- * import javax.swing.*;
- *
- */
-
-
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
@@ -73,9 +55,18 @@ import static java.awt.GridBagConstraints.NORTHWEST;
 import static java.awt.GridBagConstraints.WEST;
 
 /**
- * Class to show toasters in multiplatform
+ * Class to show toasters in multiplatform.
+ * SparkToaster is an improvement of Java Toaster which is a java utility class for your swing applications
+ * that show an animate box coming from the bottom of your screen
+ * with a notification message and/or an associated image
+ * (like msn online/offline notifications).
+ *
+ * Toaster panel in windows system follow the taskbar; So if
+ * the taskbar is into the bottom the panel coming from the bottom
+ * and if the taskbar is on the top then the panel coming from the top.
  *
  * @author daniele piras
+ * @see <a href="https://sourceforge.net/projects/jtoaster/">JToaster</a>
  */
 public class SparkToaster {
 
@@ -183,11 +174,8 @@ public class SparkToaster {
             }
 
             message.setForeground(Color.BLACK);
-
             message.setOpaque(false);
-
             getContentPane().add(mainPanel);
-
 
             mainPanel.addMouseListener(new PaneMouseListener());
             message.addMouseListener(new PaneMouseListener());
@@ -212,7 +200,6 @@ public class SparkToaster {
                 if (customAction != null) {
                     customAction.actionPerformed(null);
                 }
-
                 if (hideable) {
                     setVisible(false);
                     dispose();
@@ -243,7 +230,6 @@ public class SparkToaster {
         public Animation(SingleToaster toaster) {
             this.toaster = toaster;
         }
-
 
         /**
          * Animate vertically the toaster. The toaster could be moved from bottom

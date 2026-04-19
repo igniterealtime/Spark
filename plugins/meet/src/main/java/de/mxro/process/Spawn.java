@@ -76,7 +76,7 @@ public class Spawn {
             throw new RuntimeException(e);
         }
 
-        if (exceptions.size() > 0) {
+        if (!exceptions.isEmpty()) {
             throw new RuntimeException(exceptions.get(0));
         }
 

@@ -5,7 +5,7 @@ import java.awt.Color;
 /**
  * PropertyBundle passed to implementing classes of RoarDisplayType
  * 
- * @author wolf.posdorfer
+ * @author Wolf Posdorfer
  */
 public class PropertyBundle {
 

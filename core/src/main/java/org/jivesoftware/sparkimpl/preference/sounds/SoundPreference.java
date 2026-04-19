@@ -49,7 +49,6 @@ import com.thoughtworks.xstream.XStream;
  * @author Derek DeMoro
  */
 public class SoundPreference implements Preference {
-
     private XStream xstream;
     private SoundPreferences preferences;
     private SoundPanel soundPanel;
@@ -57,9 +56,7 @@ public class SoundPreference implements Preference {
     public static final String NAMESPACE = "Sounds";
 
     public SoundPreference() {
-
     }
-
 
     @Override
 	public String getTitle() {
@@ -94,7 +91,6 @@ public class SoundPreference implements Preference {
 	    } catch (Exception e) {
 		e.printStackTrace();
 	    }
-            
         }
         return soundPanel;
     }
@@ -192,9 +188,7 @@ public class SoundPreference implements Preference {
         return null;
     }
 
-
     private static class SoundPanel extends JPanel {
-	private static final long serialVersionUID = 4332294589601051699L;
 	private final JCheckBox incomingMessageBox = new JCheckBox();
 	private final JTextField incomingMessageSound = new JTextField();
 	private final JButton incomingBrowseButton = new JButton("..");
@@ -252,16 +246,10 @@ public class SoundPreference implements Preference {
             add(chatRequestBrowseButton, new GridBagConstraints(1, 9, 1, 1, 0, 1, NORTHWEST, NONE, padding, 0, 0));
 
             incomingBrowseButton.addActionListener( e -> pickFile(Res.getString("title.choose.incoming.sound"), incomingMessageSound) );
-
-
             outgoingBrowseButton.addActionListener( e -> pickFile(Res.getString("title.choose.outgoing.sound"), outgoingMessageSound) );
-
             offlineBrowseButton.addActionListener( e -> pickFile(Res.getString("title.choose.offline.sound"), userOfflineField) );
-
             incomingInvitationBrowseButton.addActionListener( e -> pickFile(Res.getString("title.choose.incoming.sound"), incomingInvitationField) );
-
             chatRequestBrowseButton.addActionListener( e -> pickFile(Res.getString("title.choose.chat_request.sound"), chatRequestSound) );
-
         }
 
         public void setIncomingMessageSound(String path) {
@@ -287,7 +275,6 @@ public class SoundPreference implements Preference {
         public void playOfflineSound(boolean play) {
             userOfflineCheckbox.setSelected(play);
         }
-
 
         public String getIncomingSound() {
             return incomingMessageSound.getText();
@@ -370,9 +357,6 @@ public class SoundPreference implements Preference {
 
     private File getSoundSettingsFile() {
         File file = Spark.getSparkUserHome();
-        if (!file.exists()) {
-            file.mkdirs();
-        }
         return new File(file, "sound-settings.xml");
     }
 

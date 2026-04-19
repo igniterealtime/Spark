@@ -50,7 +50,6 @@ import static java.awt.GridBagConstraints.HORIZONTAL;
 import static java.awt.GridBagConstraints.NORTHWEST;
 
 public class IncomingCallUI extends JPanel {
-    private static final long serialVersionUID = -7758898282948774412L;
     private final JLabel avatarLabel = new JLabel();
     private final JLabel titleLabel = new JLabel();
     private final JLabel professionLabel = new JLabel();

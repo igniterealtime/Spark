@@ -40,13 +40,10 @@ import org.jivesoftware.spark.util.ColorPick;
 /**
  * Handles the Color Preferences in Spark
  * 
- * @author wolf.posdorfer
+ * @author Wolf Posdorfer
  * 
  */
 public class ColorPreferencePanel extends SparkTabbedPane {
-
-    private static final long serialVersionUID = -3594152276094474130L;
-
 	private JList<String> colorList;
     private ColorSettings _colorsettings;
 

@@ -33,7 +33,6 @@ import java.awt.datatransfer.UnsupportedFlavorException;
  */
 
 public class JiveTreeNode extends DefaultMutableTreeNode implements Transferable {
-    private static final long serialVersionUID = 7643497519304035084L;
     private Icon closedImage = null;
     private Icon openImage = null;
 

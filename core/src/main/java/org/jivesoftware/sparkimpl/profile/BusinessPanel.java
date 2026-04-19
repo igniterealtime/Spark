@@ -31,16 +31,12 @@ import org.jivesoftware.spark.component.focus.SpecifiedOrderFocusTraversalPolicy
 import org.jivesoftware.spark.util.ResourceUtils;
 
 public class BusinessPanel extends JPanel {
-
-	private static final long serialVersionUID = -6319059605447012843L;
-
     private final JTextField companyField = new JTextField();
     private final JTextField cityField = new JTextField();
     private final JTextField stateField = new JTextField();
     private final JTextField zipCodeField = new JTextField();
     private final JTextField countryField = new JTextField();
     private final JTextField streetField = new JTextField();
-
 
     private final JTextField jobTitleField = new JTextField();
     private final JTextField departmentField = new JTextField();

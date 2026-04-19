@@ -203,12 +203,12 @@ public class BroadcastPlugin extends SparkTabHandler implements Plugin, StanzaLi
                 // Shows alert if broadcast or normal/headline message
                 if ((broadcast || message.getType() == Type.normal
                     || message.getType() == Type.headline) && message.getBody() != null) {
-                    showAlert((Message) stanza);
+                    showAlert(message);
                 } else {
                     DomainBareJid host = SparkManager.getSessionManager().getServerAddress();
                     Jid from = stanza.getFrom();
                     if (host.equals(from)) {
-                        showAlert((Message) stanza);
+                        showAlert(message);
                     }
                 }
             } catch (Exception e) {

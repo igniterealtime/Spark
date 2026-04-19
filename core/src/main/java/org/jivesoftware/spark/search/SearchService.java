@@ -47,8 +47,6 @@ import java.util.Collection;
 import javax.swing.plaf.basic.BasicPanelUI;
 
 public class SearchService extends JPanel {
-
-    private static final long serialVersionUID = 6407801290193187867L;
     private final IconTextField findField;
     private Image backgroundImage;
     private boolean newSearch;
@@ -114,7 +112,6 @@ public class SearchService extends JPanel {
 
             @Override
             public void keyReleased(KeyEvent e) {
-
             }
         });
 
@@ -147,21 +144,16 @@ public class SearchService extends JPanel {
                 final JPopupMenu popup = new JPopupMenu();
                 for (final Searchable searchable : searchables) {
                     Action action = new AbstractAction() {
-                        private static final long serialVersionUID = 1289193809077193703L;
-
                         @Override
                         public void actionPerformed(ActionEvent e) {
                             setActiveSearchService(searchable);
                         }
                     };
-
                     action.putValue(Action.SMALL_ICON, searchable.getIcon());
                     action.putValue(Action.NAME, searchable.getName());
                     popup.add(action);
                 }
-
                 popup.show(findField, 0, findField.getHeight());
-
             }
         });
     }

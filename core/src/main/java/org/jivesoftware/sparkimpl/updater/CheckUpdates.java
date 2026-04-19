@@ -99,7 +99,7 @@ public class CheckUpdates {
 
 
     /**
-     * Returns true if there is a new build available for download.
+     * Returns a release version if there is a new build available for download.
      */
     public SparkVersion isNewBuildAvailableFromJivesoftware() {
         final String os;

@@ -172,8 +172,6 @@ public class PluginViewer extends JPanel implements Plugin
 
         Action viewAction = new AbstractAction()
         {
-            private static final long serialVersionUID = 6518407602062984752L;
-
             @Override
 			public void actionPerformed( ActionEvent e )
             {

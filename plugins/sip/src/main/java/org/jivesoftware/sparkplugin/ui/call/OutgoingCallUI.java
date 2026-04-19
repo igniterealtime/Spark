@@ -46,7 +46,6 @@ import org.jivesoftware.sparkplugin.callhistory.TelephoneUtils;
 import org.jivesoftware.sparkplugin.calllog.LogManager;
 
 public class OutgoingCallUI extends JPanel {
-	private static final long	serialVersionUID	= -7867727678072323534L;
 	private JLabel avatarLabel = new JLabel();
     private JLabel titleLabel = new JLabel();
     private JLabel professionLabel = new JLabel();
@@ -68,19 +67,14 @@ public class OutgoingCallUI extends JPanel {
         topLabel.setText(PhoneRes.getIString("phone.outgoingcall")+"...");
         topLabel.setForeground(Color.gray);
 
-
         final String phoneNumber = ic.getCall().getNumber();
-
         // Add Top Label
         add(topLabel, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
-
         // Add Calller Block
         buildCallerBlock(phoneNumber);
-
         // Add Buttons
         addButtons();
     }
-
 
     /**
      * Builds the part of the incoming call UI with the Callers information.
@@ -207,8 +201,6 @@ public class OutgoingCallUI extends JPanel {
                 Log.warning("Unable to generate image from avatar", e);
             }
         }
-
-
         invalidate();
         validate();
         repaint();
@@ -218,17 +210,13 @@ public class OutgoingCallUI extends JPanel {
         return rejectButton;
     }
 
-
     public void paintComponent(Graphics g) {
         BufferedImage cache = new BufferedImage(2, getHeight(), BufferedImage.TYPE_INT_RGB);
         Graphics2D g2d = cache.createGraphics();
-
         GradientPaint paint = new GradientPaint(0, 0, new Color(233, 240, 247), 0, getHeight(), Color.white, true);
-
         g2d.setPaint(paint);
         g2d.fillRect(0, 0, getWidth(), getHeight());
         g2d.dispose();
-
         g.drawImage(cache, 0, 0, getWidth(), getHeight(), null);
     }
 }

@@ -87,14 +87,10 @@ public class StatusBar extends JPanel implements VCardListener {
     }
 
     public StatusBar(boolean doLayout) {
-
         commandPanel = UIComponentRegistry.createCommandPanel();
-
         if (doLayout) {
             setLayout(new GridBagLayout());
-
             backgroundImage = Default.getImageIcon(Default.TOP_BOTTOM_BACKGROUND_IMAGE).getImage();
-
             ImageIcon brandedImage = Default.getImageIcon(Default.BRANDED_IMAGE);
             if (brandedImage != null && brandedImage.getIconWidth() > 1) {
                 final JLabel brandedLabel = new JLabel(brandedImage);
@@ -201,20 +197,13 @@ public class StatusBar extends JPanel implements VCardListener {
 
     public void showPopup(MouseEvent e, JLabel lblStatus) {
         final JPopupMenu popup = new JPopupMenu();
-
         List<CustomStatusItem> custom = CustomMessages.load();
-        if (custom == null) {
-            custom = new ArrayList<>();
-        }
-
         // Sort Custom Messages
         custom.sort((a, b) -> (a.getStatus().compareToIgnoreCase(b.getStatus())));
 
         // Build menu from StatusList
         for (final StatusItem statusItem : statusList) {
             final Action statusAction = new AbstractAction() {
-                private static final long serialVersionUID = -192865863435381702L;
-
                 @Override
                 public void actionPerformed(ActionEvent actionEvent) {
                     final String text = statusItem.getText();
@@ -238,7 +227,6 @@ public class StatusBar extends JPanel implements VCardListener {
                     };
                     worker.start();
                     lblStatus.setIcon(SparkRes.getImageIcon(SparkRes.Icon.PANE_DOWN_ARROW_IMAGE));
-
                 }
             };
 
@@ -247,11 +235,11 @@ public class StatusBar extends JPanel implements VCardListener {
 
             // Has Children
             boolean hasChildren = false;
-            for (Object aCustom : custom) {
-                final CustomStatusItem cItem = (CustomStatusItem) aCustom;
+            for (CustomStatusItem cItem : custom) {
                 String type = cItem.getType();
                 if (type.equals(statusItem.getText())) {
                     hasChildren = true;
+                    break;
                 }
             }
 
@@ -259,21 +247,15 @@ public class StatusBar extends JPanel implements VCardListener {
                 // Add as Menu Item
                 popup.add(statusAction);
             } else {
-
                 final JMenu mainStatusItem = new JMenu(statusAction);
-
                 popup.add(mainStatusItem);
-
                 // Add Custom Messages
-                for (Object aCustom : custom) {
-                    final CustomStatusItem customItem = (CustomStatusItem) aCustom;
+                for (CustomStatusItem customItem : custom) {
                     String type = customItem.getType();
                     final String customStatus = customItem.getStatus();
                     if (type.equals(statusItem.getText())) {
                         // Add Child Menu
                         Action action = new AbstractAction() {
-                            private static final long serialVersionUID = -1264239704492879742L;
-
                             @Override
                             public void actionPerformed(ActionEvent actionEvent) {
                                 final String text = mainStatusItem.getText();
@@ -323,11 +305,9 @@ public class StatusBar extends JPanel implements VCardListener {
 
         //SPARK-1521. Add privacy menu if Privacy Manager is active and have any visible lists
         final PrivacyManager pmanager = PrivacyManager.getInstance();
-        if (pmanager.isPrivacyActive() && pmanager.getPrivacyLists().size() > 0) {
-
+        if (pmanager.isPrivacyActive() && !pmanager.getPrivacyLists().isEmpty()) {
             JMenu privMenu = new JMenu(Res.getString("privacy.status.menu.entry"));
             privMenu.setIcon(SparkRes.getImageIcon(SparkRes.Icon.PRIVACY_ICON_SMALL));
-
             for (SparkPrivacyList plist : pmanager.getPrivacyLists()) {
                 JMenuItem it = new JMenuItem(plist.getListName());
                 privMenu.add(it);
@@ -359,8 +339,6 @@ public class StatusBar extends JPanel implements VCardListener {
         changeStatusMenu.addActionListener(e1 -> CustomMessages.addCustomMessage());
 
         Action editMessagesAction = new AbstractAction() {
-            private static final long serialVersionUID = 7148051050075679995L;
-
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 CustomMessages.editCustomMessages();
@@ -387,7 +365,6 @@ public class StatusBar extends JPanel implements VCardListener {
         if (presence.getMode() == null) {
             return;
         }
-
         if ((presence.getMode() == currentPresence.getMode()) && (presence.getType() == currentPresence.getType()) && (presence.getStatus().equals(currentPresence.getStatus()))) {
             if (presence.hasExtension(VCardUpdateExtension.class)) {
                 // Update VCard
@@ -425,13 +402,8 @@ public class StatusBar extends JPanel implements VCardListener {
 
     public Collection<CustomStatusItem> getCustomStatusList() {
         List<CustomStatusItem> custom = CustomMessages.load();
-        if (custom == null) {
-            custom = new ArrayList<>();
-        }
-
         // Sort Custom Messages
         custom.sort((a, b) -> (a.getStatus().compareToIgnoreCase(b.getStatus())));
-
         return custom;
     }
 
@@ -530,21 +502,16 @@ public class StatusBar extends JPanel implements VCardListener {
     }
 
     private class StatusPanel extends JPanel {
-
-        private static final long serialVersionUID = -5086334443225239032L;
         private final JLabel iconLabel;
         private final JLabel statusLabel;
 
         public StatusPanel() {
             super();
-
             //setOpaque(false);
-
             iconLabel = new JLabel();
             statusLabel = new JLabel();
 
             setLayout(new GridBagLayout());
-
             // Remove padding from icon label
             iconLabel.setIconTextGap(0);
 
@@ -552,12 +519,10 @@ public class StatusBar extends JPanel implements VCardListener {
             add(statusLabel, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 2, 0, 0), 0, 0));
 
             statusLabel.setFont(new Font(Font.DIALOG, Font.PLAIN, 11));
-
             // See if we should disable ability to change presence status
             if (!Default.getBoolean(Default.DISABLE_PRESENCE_STATUS_CHANGE) && Enterprise.containsFeature(Enterprise.PRESENCE_STATUS_FEATURE)) {
                 statusLabel.setIcon(SparkRes.getImageIcon(SparkRes.Icon.PANE_DOWN_ARROW_IMAGE));
             }
-
             statusLabel.setHorizontalTextPosition(JLabel.LEFT);
 
             //setOpaque(false);
@@ -602,10 +567,8 @@ public class StatusBar extends JPanel implements VCardListener {
                       setBackground(new Color(221,221,221));
                         //setBorder(BorderFactory.createLineBorder(Color.lightGray, 1, true));
                     }
-
                 });
             }
-
         }
 
         public void setStatus(String status) {

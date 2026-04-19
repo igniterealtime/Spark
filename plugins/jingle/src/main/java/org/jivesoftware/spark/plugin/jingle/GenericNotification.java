@@ -35,8 +35,6 @@ import static java.awt.GridBagConstraints.NORTHWEST;
  * UI for simple chat room notifications with Jingle.
  */
 public class GenericNotification extends JPanel {
-
-    private static final long serialVersionUID = -90291335105747619L;
     private final FileDragLabel imageLabel = new FileDragLabel();
     private final JLabel titleLabel = new JLabel();
 

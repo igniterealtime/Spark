@@ -25,7 +25,6 @@ import org.jivesoftware.spark.component.VerticalFlowLayout;
 import org.jivesoftware.spark.plugin.phone.resource.PhoneRes;
 
 public class SipCodecs extends JPanel {
-    private static final long serialVersionUID = 321651651106469534L;
     private static final String SEPERATOR = "\\^";
     private static final String SEP = "^";
 

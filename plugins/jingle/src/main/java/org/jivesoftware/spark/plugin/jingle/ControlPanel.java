@@ -26,9 +26,6 @@ import java.awt.GradientPaint;
 import java.awt.image.BufferedImage;
 
 public class ControlPanel extends JPanel {
-
-    private static final long serialVersionUID = -6406576262620829080L;
-
     public ControlPanel() {
         setBorder(BorderFactory.createLineBorder(new Color(197, 213, 230)));
     }

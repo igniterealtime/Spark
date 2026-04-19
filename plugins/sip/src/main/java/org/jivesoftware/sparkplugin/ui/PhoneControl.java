@@ -45,8 +45,6 @@ import org.jivesoftware.sparkplugin.ui.components.JavaMixer;
 /**
  */
 public class PhoneControl extends JPanel {
-
-	private static final long serialVersionUID = 5275596365479885608L;
 	private JLabel stateLabel = new JLabel(PhoneRes.getIString("phone.connected")+":");
     private JLabel callerIDLabel = new JLabel();
     private JLabel phoneNumberLabel = new JLabel();

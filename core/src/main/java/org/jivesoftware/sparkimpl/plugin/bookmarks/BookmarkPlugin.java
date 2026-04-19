@@ -48,12 +48,9 @@ import org.jivesoftware.spark.util.log.Log;
  * Allows for adding and removal of Bookmarks within Spark.
  */
 public class BookmarkPlugin implements Plugin {
-
     @Override
     public void initialize() {
-
         final SwingWorker bookmarkThreadWorker = new SwingWorker() {
-
             @Override
             public Object construct() {
                 return this;
@@ -75,16 +72,12 @@ public class BookmarkPlugin implements Plugin {
              */
             public void initialize() {
                 final JMenu bookmarkMenu = new JMenu(Res.getString("menuitem.bookmarks"));
-
                 createMenu(bookmarkMenu);
-                
                 if (bookmarkMenu.getMenuComponentCount() > 0) {
                     SparkManager.getMainWindow().getMenu().add(bookmarkMenu, 3);
                 }
-
                 BookmarksUI bookmarksUi = ConferenceServices.getBookmarkedConferences();
                 bookmarksUi.addBookmarksListener(new BookmarksListener() {
-
                         @Override
                         public void bookmarkAdded(String roomJID) {
                             rescan(bookmarkMenu);
@@ -98,7 +91,7 @@ public class BookmarkPlugin implements Plugin {
             }
 
             /**
-             * Rescaning our bookmarks and remaking menu items
+             * Rescanning our bookmarks and remaking menu items
              *
              * @param bookmarkMenu menu Jmenu
              */
@@ -107,14 +100,12 @@ public class BookmarkPlugin implements Plugin {
                 try {
                     setBookmarks(bookmarkMenu); // making new 
                     int onPanel = SparkManager.getMainWindow().getMenu().getComponentIndex(bookmarkMenu);
-
                     if (onPanel < 0) {
                         if (bookmarkMenu.getMenuComponentCount() > 0) {
                             int menuCount = SparkManager.getMainWindow().getMenu().getMenuCount();
                             SparkManager.getMainWindow().getMenu().add(bookmarkMenu, menuCount - 2);
                         }
                     }
-
                     if (onPanel >= 0) {
                         if (bookmarkMenu.getMenuComponentCount() <= 0) {
                             SparkManager.getMainWindow().getMenu().remove(bookmarkMenu);
@@ -130,8 +121,6 @@ public class BookmarkPlugin implements Plugin {
 
             /**
              * Updating statusbar and generating menu items
-             *
-             * @param bookmarkMenu menu Jmenu
              */
             public void createMenu(JMenu bookmarkMenu) {
                 try {
@@ -143,16 +132,11 @@ public class BookmarkPlugin implements Plugin {
 
             /**
              * loading menu items and setting bookmarks listeners
-             *
-             * @param bookmarkMenu menu Jmenu
-             * @throws InterruptedException 
              */
             public void setBookmarks(JMenu bookmarkMenu) throws XMPPException, SmackException, InterruptedException
             {
                 BookmarkManager manager = BookmarkManager.getBookmarkManager(SparkManager.getConnection());
-
                 if (manager != null) {
-
                     final List<BookmarkedConference> bookmarkedConferences = manager.getBookmarkedConferences()
                         .stream().sorted(Comparator.comparing(BookmarkedConference::getName, Comparator.nullsFirst(Comparator.naturalOrder())))
                         .collect(Collectors.toList());
@@ -162,11 +146,7 @@ public class BookmarkPlugin implements Plugin {
 
                     for (BookmarkedURL bookmarkedLink : bookmarkedLinks) {
                         final BookmarkedURL link = bookmarkedLink;
-
                         Action urlAction = new AbstractAction() {
-
-                            private static final long serialVersionUID = 4246574779205966917L;
-
                             @Override
                             public void actionPerformed(ActionEvent actionEvent) {
                                 try {
@@ -185,11 +165,7 @@ public class BookmarkPlugin implements Plugin {
                     bookmarkMenu.addSeparator();
                     for (BookmarkedConference bookmarkedConference : bookmarkedConferences) {
                         final BookmarkedConference conferences = bookmarkedConference;
-
                         Action conferenceAction = new AbstractAction() {
-
-                            private static final long serialVersionUID = 5964584172262968704L;
-
                             @Override
                             public void actionPerformed(ActionEvent actionEvent) {
                                 final TimerTask task = new SwingTimerTask() {
@@ -199,7 +175,6 @@ public class BookmarkPlugin implements Plugin {
                                         ConferenceUtils.joinConferenceOnSeparateThread(conferences.getName(), conferences.getJid(), conferences.getNickname(), conferences.getPassword());
                                     }
                                 };
-
                                 TaskEngine.getInstance().schedule(task, 10);
                             }
                         };
@@ -213,7 +188,6 @@ public class BookmarkPlugin implements Plugin {
         };
 
         bookmarkThreadWorker.start();
-
     }
 
     @Override

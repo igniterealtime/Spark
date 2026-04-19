@@ -37,6 +37,7 @@ public class FileTransferSettingsPlugin implements Plugin {
     /**
      * Called after Spark is loaded to initialize the new plugin.
      */
+    @Override
     public void initialize() {
         addTransferListener();
         prefManager = SparkManager.getPreferenceManager();
@@ -47,6 +48,7 @@ public class FileTransferSettingsPlugin implements Plugin {
      * Called when Spark is shutting down to allow for persistence of information
      * or releasing of resources.
      */
+    @Override
     public void shutdown() {
 
     }
@@ -54,6 +56,7 @@ public class FileTransferSettingsPlugin implements Plugin {
     /**
      * Called when the plugin is uninstalled with the Spark plugin manager.
      */
+    @Override
     public void uninstall() {
     }
 
@@ -62,6 +65,7 @@ public class FileTransferSettingsPlugin implements Plugin {
      *
      * @return true if Spark can shutdown on users request.
      */
+    @Override
     public boolean canShutDown() {
         return true;
     }
@@ -117,7 +121,7 @@ public class FileTransferSettingsPlugin implements Plugin {
                     request.reject();
 
                     String responseMessage = settings.getCannedRejectionMessage();
-                    if ( responseMessage != null && responseMessage.length() > 0 )
+                    if ( responseMessage != null && !responseMessage.isEmpty())
                     {
                         Message message = StanzaBuilder.buildMessage()
                             .setBody( responseMessage )

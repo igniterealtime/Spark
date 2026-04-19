@@ -31,12 +31,6 @@ import java.awt.event.MouseEvent;
  * @author Derek DeMoro
  */
 public class RolloverButton extends JButton {
-    private static final long serialVersionUID = 6351541211385798436L;
-
-
-    /**
-     * Create a new RolloverButton.
-     */
     public RolloverButton() {
         decorate();
     }
@@ -72,7 +66,6 @@ public class RolloverButton extends JButton {
         decorate();
     }
 
-
     /**
      * Decorates the button with the approriate UI configurations.
      */
@@ -88,7 +81,6 @@ public class RolloverButton extends JButton {
 			public void mouseEntered(MouseEvent e) {
                 if (isEnabled()) {
                     setBorderPainted(true);
-
                     // Handle background border on mac.
                     if (!Spark.isMac()) {
                         setContentAreaFilled(true);
@@ -102,8 +94,5 @@ public class RolloverButton extends JButton {
                 setContentAreaFilled(false);
             }
         });
-
     }
-
-
 }

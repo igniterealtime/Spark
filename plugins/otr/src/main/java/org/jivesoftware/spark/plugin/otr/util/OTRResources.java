@@ -15,7 +15,7 @@ import javax.swing.ImageIcon;
 public class OTRResources {
 
     private static final PropertyResourceBundle prb = (PropertyResourceBundle) ResourceBundle.getBundle("i18n/otrplugin_i18n");
-    private static ClassLoader cl = OTRResources.class.getClassLoader();
+    private static final ClassLoader cl = OTRResources.class.getClassLoader();
     public static final ImageIcon PLUGIN_ICON = getImageIcon("otr_pref.png");
     public static final ImageIcon ICON_OTR_ON = getImageIcon("otr_on.png");
     public static final ImageIcon ICON_OTR_OFF = getImageIcon("otr_off.png");

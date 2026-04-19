@@ -72,8 +72,6 @@ public class LanguagePlugin implements Plugin {
 
     private void addLanguage(Locale locale, JMenu languageMenu) {
         Action action = new AbstractAction() {
-            private static final long serialVersionUID = -7093236616888591766L;
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 final LocalPreferences preferences = SettingsManager.getLocalPreferences();

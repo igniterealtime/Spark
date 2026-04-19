@@ -30,16 +30,12 @@ import javax.swing.plaf.basic.BasicTextFieldUI;
  * textfield. This could be used to build out your own search objects.
  */
 public class IconTextField extends JPanel {
-
-    private static final long serialVersionUID = -7000758637988415370L;
     private final JTextField textField;
     private final JLabel imageComponent;
     private final JLabel downOption;
 
     /**
      * Creates a new IconTextField with Icon.
-     *
-     * @param icon the icon.
      */
     public IconTextField(Icon icon) {
         setLayout(new GridBagLayout());
@@ -66,8 +62,6 @@ public class IconTextField extends JPanel {
 
     /**
      * Sets the text of the textfield.
-     *
-     * @param text the text.
      */
     public void setText(String text) {
         textField.setText(text);
@@ -75,8 +69,6 @@ public class IconTextField extends JPanel {
 
     /**
      * Returns the text inside of the textfield.
-     *
-     * @return the text inside of the textfield.
      */
     public String getText() {
         return textField.getText();
@@ -84,8 +76,6 @@ public class IconTextField extends JPanel {
 
     /**
      * Sets the icon to use inside of the textfield.
-     *
-     * @param icon the icon.
      */
     public void setIcon(Icon icon) {
         imageComponent.setIcon(icon);
@@ -93,8 +83,6 @@ public class IconTextField extends JPanel {
 
     /**
      * Returns the current icon used in the textfield.
-     *
-     * @return the icon used in the textfield.
      */
     public Icon getIcon() {
         return imageComponent.getIcon();
@@ -102,8 +90,6 @@ public class IconTextField extends JPanel {
 
     /**
      * Returns the component that holds the icon.
-     *
-     * @return the component that is the container for the icon.
      */
     public JComponent getImageComponent() {
         return imageComponent;
@@ -111,8 +97,6 @@ public class IconTextField extends JPanel {
 
     /**
      * Returns the text component used.
-     *
-     * @return the text component used.
      */
     public JTextField getTextComponent() {
         return textField;

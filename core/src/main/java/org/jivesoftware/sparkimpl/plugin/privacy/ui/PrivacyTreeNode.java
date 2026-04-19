@@ -25,9 +25,6 @@ import org.jivesoftware.sparkimpl.plugin.privacy.list.SparkPrivacyList;
  * @author Bergunde Holger
  */
 public class PrivacyTreeNode extends DefaultMutableTreeNode {
-
-    
-    private static final long serialVersionUID = -8723928570664159522L;
     private boolean _isContactGroup = false;
     private PrivacyItem _item = null;
     private SparkPrivacyList _list = null;
@@ -53,9 +50,6 @@ public class PrivacyTreeNode extends DefaultMutableTreeNode {
     /**
      * Creates a Node with a String. Used for creating top node or nodes for a
      * better structured view, like Contact nodes or Group nodes
-     * 
-     * @param nodeName
-     *            the name of the node
      */
     public PrivacyTreeNode(String nodeName) {
 	super(nodeName);
@@ -65,7 +59,6 @@ public class PrivacyTreeNode extends DefaultMutableTreeNode {
     /**
      * Creates a Node with a reference to the PrivacyItem and changes the Name
      * to item's name
-     * 
      * @param item
      *            the privacyItem which should be displayed as a node
      */
@@ -75,8 +68,6 @@ public class PrivacyTreeNode extends DefaultMutableTreeNode {
 
     /**
      * Returns if this node has a reference to the currently active list
-     * 
-     * @return true if this list is the active list
      */
     public boolean isActiveList() {
 	return _isActive;
@@ -84,8 +75,6 @@ public class PrivacyTreeNode extends DefaultMutableTreeNode {
 
     /**
      * Returns if this node has a reference to the default list
-     * 
-     * @return true if this list is the default list
      */
     public boolean isDefaultList() {
 	return _isDefault;
@@ -93,7 +82,6 @@ public class PrivacyTreeNode extends DefaultMutableTreeNode {
 
     /**
      * Set the list as active list.
-     * 
      */
     public void setListAsActive() {
 	_isActive = true;
@@ -102,19 +90,14 @@ public class PrivacyTreeNode extends DefaultMutableTreeNode {
 
     /**
      * Set the list as default list
-     * 
      */
     public void setListAsDefault() {
 	_isDefault = true;
 	_pmanager.setListAsDefault(_list.getListName());
-	
-
     }
 
     /**
      * Check if the current node is the parent node for all contacts
-     * 
-     * @return true if this node represents the contact node
      */
     public boolean isContactGroup() {
 	return _isContactGroup;
@@ -122,8 +105,6 @@ public class PrivacyTreeNode extends DefaultMutableTreeNode {
 
     /**
      * Set this node as the contact node or not.
-     * 
-     * @param bool
      */
     public void setisContactGroup(boolean bool) {
 	this._isContactGroup = bool;
@@ -132,8 +113,6 @@ public class PrivacyTreeNode extends DefaultMutableTreeNode {
 
     /**
      * Check if the current node is the parent node for all groups
-     * 
-     * @return true if this node represents the group node
      */
     public boolean isGroupNode() {
 	return _isGroupGroup;
@@ -141,8 +120,6 @@ public class PrivacyTreeNode extends DefaultMutableTreeNode {
 
     /**
      * Set this node as the group node or not.
-     * 
-     * @param bool
      */
     public void setisGroupNode(boolean bool) {
 	this._isGroupGroup = bool;
@@ -151,8 +128,6 @@ public class PrivacyTreeNode extends DefaultMutableTreeNode {
 
     /**
      * Get the pricayList this node refers to
-     * 
-     * @return the privacylist if node represents a privayList, if not null
      */
     public SparkPrivacyList getPrivacyList() {
 	return _list;
@@ -160,8 +135,6 @@ public class PrivacyTreeNode extends DefaultMutableTreeNode {
 
     /**
      * Get the privacyItem this node refers to
-     * 
-     * @return the privacyitem if node represents a privacyItem, if not null
      */
     public PrivacyItem getPrivacyItem() {
 	return _item;
@@ -169,8 +142,6 @@ public class PrivacyTreeNode extends DefaultMutableTreeNode {
 
     /**
      * Check if this node represents a PrivacyList
-     * 
-     * @return true if node has reference to privacyList, if not null
      */
     public boolean isPrivacyList() {
 	return _list != null;
@@ -178,8 +149,6 @@ public class PrivacyTreeNode extends DefaultMutableTreeNode {
 
     /**
      * Check if this node represents a PrivacyItem
-     * 
-     * @return true if node has reference to PrivacyItem, if not null
      */
     public boolean isPrivacyItem() {
 	return _item != null;
@@ -188,8 +157,6 @@ public class PrivacyTreeNode extends DefaultMutableTreeNode {
     /**
      * Check if this node is for structured reasons without any reference to
      * privacyItem e.g. (like GroupNode, ContactNode)
-     * 
-     * @return true if is structured node, if not null
      */
     public boolean isStructureNode() {
 	return _isPlaceHolder;

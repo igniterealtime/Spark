@@ -27,7 +27,7 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 /**
  * GrowlTalker Class to send Messages to the GrowlInstance
  *
- * @author Wolf.Posdorfer
+ * @author Wolf Posdorfer
  * @author Guus der Kinderen, guus@gmail.com
  */
 public class GrowlTalker implements GntpListener

@@ -34,22 +34,14 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * The Window used to display the ChatRoom container.
  */
 public class ChatFrame extends JFrame implements WindowFocusListener {
-
-    private static final long serialVersionUID = -7789413067818105293L;
     private long inactiveTime;
     private boolean focused;
     private final JCheckBox alwaysOnTopItem;
     private final ChatFrame chatFrame = this;
     private final CopyOnWriteArrayList<ChatFrameToFrontListener> _windowToFrontListeners = new CopyOnWriteArrayList<>();
    
-    /**
-     * Creates default ChatFrame.
-     */
     public ChatFrame() {
     	this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-    	
-
-	
 	alwaysOnTopItem = new JCheckBox();
 	alwaysOnTopItem.setToolTipText(Res.getString("menuitem.always.on.top"));
         LocalPreferences pref = SettingsManager.getLocalPreferences();
@@ -71,10 +63,6 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
         	alwaysOnTopItem.setSelected(true);
         	chatFrame.setAlwaysOnTop(true);
         }
-        
-        
-        
-        
         setIconImage(SparkManager.getApplicationImage().getImage());
 
         getContentPane().setLayout(new BorderLayout());
@@ -122,7 +110,6 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
         // which cannot normally be used outside of the Window component because
         // of protected access.
         addWindowListener(new WindowAdapter() {
-
             /**
              * This event fires when the window has become active.
              *
@@ -173,22 +160,14 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
                 }
             }
         });
-         
-        
     }
-   	
 
-    
-    
     @Override
 	public void windowGainedFocus(WindowEvent e) {
         focused = true;
-
         if(this instanceof MainWindow){
             return;
         }
-
-        
         SparkManager.getChatManager().getChatContainer().focusChat();
     }
 
@@ -215,7 +194,6 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
         if (inactiveTime == 0) {
             return 0;
         }
-
         return System.currentTimeMillis() - inactiveTime;
     }
 
@@ -226,11 +204,9 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
         if (!isVisible()) {
             setVisible(true);
         }
-
         if (getState() == Frame.ICONIFIED) {
             setState(Frame.NORMAL);
         }
-
         toFront();
         requestFocus();
     }
@@ -243,10 +219,8 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
         d.startShake();
     }
 
-
     /**
      * set if the chatFrame should always stay on top
-     * @param active
      */
     public void setWindowAlwaysOnTop(boolean active) {
 	SettingsManager.getLocalPreferences().setChatWindowAlwaysOnTop(active);
@@ -272,7 +246,6 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
 
     /**
      * removes the Window to Front Listener for specified {@link ChatRoom}
-     * @param chatRoom
      */
     public void removeWindowToFrontListener(ChatRoom chatRoom) {
 	_windowToFrontListeners.remove(chatRoom);	
@@ -280,7 +253,6 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
 
     /**
      * Remove listeners from the "window-alway-on-top" information
-     * @param chatRoom
      */
     public void addWindowToFronListener(ChatRoom chatRoom) {
 	_windowToFrontListeners.addIfAbsent(chatRoom);

@@ -27,7 +27,7 @@ import org.jivesoftware.spark.preference.Preference;
  * Apple Preference<br>
  * Apple, the Apple logo, Mac, and Macintosh are trademarks of Apple Inc
  * 
- * @author wolf.posdorfer
+ * @author Wolf Posdorfer
  * 
  */
 public class ApplePreference implements Preference {

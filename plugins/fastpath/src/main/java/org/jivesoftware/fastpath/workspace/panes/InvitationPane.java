@@ -133,6 +133,7 @@ public class InvitationPane {
 
 
         infoButton.addMouseListener(new MouseAdapter() {
+            @Override
             public void mouseClicked(MouseEvent e) {
                 RoomInformation roomInformation = new RoomInformation();
                 if (metadata != null) {
@@ -146,6 +147,7 @@ public class InvitationPane {
 
         acceptButton.addActionListener(actionEvent -> {
             SwingWorker waiter = new SwingWorker() {
+                @Override
                 public Object construct() {
                     try {
                         Thread.sleep(50);
@@ -156,6 +158,7 @@ public class InvitationPane {
                     return true;
                 }
 
+                @Override
                 public void finished() {
                     String roomName = request.getUsername();
                     chatRoom.getSplitPane().getRightComponent().setVisible(true);
@@ -273,7 +276,7 @@ public class InvitationPane {
                     list.add(jid);
                 }
             }
-            if (list.size() > 0) {
+            if (!list.isEmpty()) {
                 try {
                     FillableForm form = muc.getConfigurationForm().getFillableForm();
                     List<String> jidStrings = new ArrayList<>(list.size());

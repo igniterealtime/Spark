@@ -29,8 +29,6 @@ import javax.swing.UnsupportedLookAndFeelException;
 
 //FIXME SPARK-2388 The LoboBrowser doesn't work anymore and should be replaced
 public class EmbeddedBrowserViewer extends BrowserViewer {
-
-    private static final long serialVersionUID = -8055149462713514766L;
     //    private final FramePanel browser;
 
     /**
@@ -53,6 +51,7 @@ public class EmbeddedBrowserViewer extends BrowserViewer {
     /**
      * Implementation of "Back"-button
      */
+    @Override
     public void goBack() {
 //        browser.back();
     }
@@ -60,6 +59,7 @@ public class EmbeddedBrowserViewer extends BrowserViewer {
     /**
      * Initialization of the BrowserViewer
      */
+    @Override
     public void initializeBrowser() {
         this.setLayout(new BorderLayout());
 //        this.add(browser, BorderLayout.CENTER);
@@ -68,6 +68,7 @@ public class EmbeddedBrowserViewer extends BrowserViewer {
     /**
      * Load the given URL
      */
+    @Override
     public void loadURL(String url) {
 //        try {
 //            browser.navigate(url);

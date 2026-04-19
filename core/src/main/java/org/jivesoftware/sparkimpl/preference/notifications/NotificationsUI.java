@@ -30,8 +30,6 @@ import java.awt.*;
  * @author Derek DeMoro
  */
 public class NotificationsUI extends JPanel {
-
-	private static final long serialVersionUID = -3372199803443605883L;
 	private final JCheckBox toasterBox;
     private final JCheckBox asteriskToasterBox;
     private final JCheckBox windowFocusBox;

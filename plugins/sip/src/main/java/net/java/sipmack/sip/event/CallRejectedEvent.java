@@ -22,8 +22,6 @@ import javax.sip.message.Message;
 import java.util.EventObject;
 
 public class CallRejectedEvent extends EventObject {
-
-	private static final long serialVersionUID = 5078823819392681774L;
 	private String reason = null;
 	private Call call = null;
 

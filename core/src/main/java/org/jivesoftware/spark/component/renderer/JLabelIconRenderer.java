@@ -33,8 +33,6 @@ import javax.swing.border.EmptyBorder;
  * @author Derek DeMoro
  */
 public class JLabelIconRenderer extends JLabel implements ListCellRenderer<Object> {
-
-    private static final long serialVersionUID = -694803906607554443L;
     private int mindex = -1;
 
     /**
@@ -58,6 +56,7 @@ public class JLabelIconRenderer extends JLabel implements ListCellRenderer<Objec
         this.setHorizontalTextPosition(JLabel.RIGHT);
 
         list.addMouseMotionListener(new MouseAdapter() {
+            @Override
             public void mouseMoved(MouseEvent me) {
                 Point p = new Point(me.getX(), me.getY());
                 int index = list.locationToIndex(p);

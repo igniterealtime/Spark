@@ -64,8 +64,6 @@ import org.jxmpp.jid.parts.Resourcepart;
  * AgentsTable is responsible for managing all agents in the owning workgroup.
  */
 public final class OnlineAgents extends JPanel {
-
-	private static final long serialVersionUID = 1L;
 	private AgentRoster agentRoster;
     private final ContactGroup contactGroup;
 
@@ -100,18 +98,17 @@ public final class OnlineAgents extends JPanel {
             }
         });
 
-
         final JScrollPane pane = new JScrollPane(contactGroup);
         pane.setBorder(BorderFactory.createEmptyBorder());
         add(pane, BorderLayout.CENTER);
-
         contactGroup.setCollapsed(false);
-
         getPane().addCollapsiblePaneListener(new CollapsiblePaneListener() {
+            @Override
             public void paneExpanded() {
                 init();
             }
 
+            @Override
             public void paneCollapsed() {
             }
         });
@@ -125,15 +122,13 @@ public final class OnlineAgents extends JPanel {
             return;
         }
         SwingWorker agentWorker = new SwingWorker() {
-            Collection<EntityBareJid> agentSet;
-
+            @Override
             public Object construct() {
                 // Initialize Agent Roster
                 try
                 {
                     agentRoster = FastpathPlugin.getAgentSession().getAgentRoster();
-                    agentSet = agentRoster.getAgents();
-                    return agentSet;
+                    return agentRoster.getAgents();
                 }
                 catch ( SmackException.NotConnectedException | InterruptedException e )
                 {
@@ -142,10 +137,14 @@ public final class OnlineAgents extends JPanel {
                 }
             }
 
+            @Override
             public void finished() {
-                final List<EntityBareJid> agentList = new ArrayList<>(agentSet);
+                Collection<EntityBareJid> agentSet = (Collection<EntityBareJid>) getValue();
+                if (agentSet == null) {
+                    return;
+                }
+                final List<EntityBareJid> agentList = new ArrayList<>();
                 Collections.sort(agentList);
-
                 for ( EntityBareJid agent : agentList )
                 {
                     String nickname = SparkManager.getUserManager().getUserNicknameFromJID( agent );
@@ -153,23 +152,18 @@ public final class OnlineAgents extends JPanel {
                     {
                         nickname = agent.toString();
                     }
-
                     ContactItem item = new ContactItem( nickname, nickname, agent )
                     {
-                        private static final long serialVersionUID = -8888899031363239813L;
-
+                        @Override
                         public String getToolTipText()
                         {
                             Presence agentPresence = agentRoster.getPresence( agent );
                             return buildTooltip( agentPresence );
                         }
                     };
-
                     Presence agentPresence = agentRoster.getPresence( agent );
                     item.setPresence( agentPresence );
                 }
-
-
                 agentRoster.addListener(new OnlineAgentListener());
             }
         };
@@ -227,7 +221,7 @@ public final class OnlineAgents extends JPanel {
             buf.append("<tr><td><br></td></tr>");
         }
 
-        if (list.size() == 0) {
+        if (list.isEmpty()) {
             buf.append(FpRes.getString("message.agent.is.not.in.chat"));
         }
 
@@ -249,6 +243,7 @@ public final class OnlineAgents extends JPanel {
             final ChatManager chatManager = SparkManager.getChatManager();
             ChatRoom chatRoom;
 
+            @Override
             public Object construct() {
                 try {
                     Thread.sleep(50);
@@ -268,6 +263,7 @@ public final class OnlineAgents extends JPanel {
                 return chatRoom;
             }
 
+            @Override
             public void finished() {
                 if (chatRoom == null) {
                     chatRoom = new ChatRoomImpl(userJID, nickname, nickname);
@@ -292,15 +288,12 @@ public final class OnlineAgents extends JPanel {
             Presence agentPresence = agentRoster.getPresence(agent);
             if (agentPresence.isAvailable()) {
                 ContactItem item = new ContactItem(nickname,nickname, agent) {
-					private static final long serialVersionUID = 8080304058990862045L;
-
-					public String getToolTipText() {
+					@Override
+                    public String getToolTipText() {
                         Presence agentPresence = agentRoster.getPresence(agent);
                         return buildTooltip(agentPresence);
                     }
                 };
-
-
                 item.setPresence(agentPresence);
                 contactGroup.addContactItem(item);
             }
@@ -317,7 +310,6 @@ public final class OnlineAgents extends JPanel {
         public void presenceChanged(Presence presence) {
             BareJid jid = presence.getFrom().asBareJid();
             ContactItem item = contactGroup.getContactItemByJID(jid);
-
             if (item != null) {
                 item.setPresence(presence);
                 if (presence.getType() == Presence.Type.unavailable) {
@@ -343,7 +335,6 @@ public final class OnlineAgents extends JPanel {
                     contactGroup.addContactItem(contactItem);
                 }
             }
-
             contactGroup.fireContactGroupUpdated();
         }
     }

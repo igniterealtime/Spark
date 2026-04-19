@@ -35,8 +35,6 @@ import javax.swing.AbstractAction;
 /**
  */
 public class DialButton extends JButton implements MouseListener {
-
-    private static final long serialVersionUID = 1025696002616464711L;
     private Icon normalIcon;
     private Icon hoverIcon;
     private Icon downIcon;
@@ -158,7 +156,6 @@ public class DialButton extends JButton implements MouseListener {
     public static void main(String args[]) {
         JFrame frame = new JFrame();
         Action action = new AbstractAction() {
-	    private static final long serialVersionUID = -6243205463327629493L;
 
 	    public void actionPerformed(ActionEvent e) {
             }

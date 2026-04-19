@@ -43,7 +43,6 @@ import javax.swing.*;
  * @author Derek DeMoro
  */
 public class CollapsibleTitlePane extends BaseCollapsibleTitlePane {
-	private static final long serialVersionUID = 2528585101535037612L;
 	private final JLabel titleLabel;
     private final JLabel iconLabel;
 

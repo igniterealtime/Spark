@@ -67,6 +67,7 @@ public class ApplePlugin implements Plugin, NativeHandler {
 
     private AppleProperties _props;
 
+    @Override
     @SuppressWarnings("deprecation")
     public void initialize() {
 
@@ -88,11 +89,13 @@ public class ApplePlugin implements Plugin, NativeHandler {
 	_application.addPreferencesMenuItem();
 	_application.addApplicationListener(new ApplicationAdapter() {
 
-	    public void handlePreferences(ApplicationEvent applicationEvent) {
+	    @Override
+        public void handlePreferences(ApplicationEvent applicationEvent) {
 		SparkManager.getPreferenceManager().showPreferences();
 	    }
 
-	    public void handleReOpenApplication(ApplicationEvent event) {
+	    @Override
+        public void handleReOpenApplication(ApplicationEvent event) {
 		MainWindow mainWindow = SparkManager.getMainWindow();
 		if (!mainWindow.isVisible()) {
 		    mainWindow.setState(Frame.NORMAL);
@@ -109,7 +112,8 @@ public class ApplePlugin implements Plugin, NativeHandler {
 		}
 	    }
 
-	    public void handleQuit(ApplicationEvent applicationEvent) {
+	    @Override
+        public void handleQuit(ApplicationEvent applicationEvent) {
 		SparkManager.getMainWindow().shutdown();
 	    }
 
@@ -117,74 +121,90 @@ public class ApplePlugin implements Plugin, NativeHandler {
 
     }
 
+    @Override
     public void shutdown() {
 	if (Spark.isMac()) {
 	    SparkManager.getNativeManager().removeNativeHandler(this);
 	}
     }
 
+    @Override
     public boolean canShutDown() {
 	return false;
     }
 
+    @Override
     public void uninstall() {
 	// No need, since this is internal
     }
 
+    @Override
     public void flashWindow(Window window) {
 	if (_props.getDockBounce())
 	    _applebounce.bounceDockIcon(_props.getRepeatBounce());
     }
 
+    @Override
     public void flashWindowStopWhenFocused(Window window) {
 
     }
 
+    @Override
     public void stopFlashing(Window window) {
 	_applebounce.resetDock();
     }
 
+    @Override
     public boolean handleNotification() {
 	return Spark.isMac();
     }
 
     private void handleIdle() {
 	SparkManager.getMainWindow().addComponentListener(new ComponentListener() {
-	    public void componentResized(ComponentEvent componentEvent) {
+	    @Override
+        public void componentResized(ComponentEvent componentEvent) {
 		setActivity();
 	    }
 
-	    public void componentMoved(ComponentEvent componentEvent) {
+	    @Override
+        public void componentMoved(ComponentEvent componentEvent) {
 		setActivity();
 	    }
 
-	    public void componentShown(ComponentEvent componentEvent) {
+	    @Override
+        public void componentShown(ComponentEvent componentEvent) {
 		setActivity();
 	    }
 
-	    public void componentHidden(ComponentEvent componentEvent) {
+	    @Override
+        public void componentHidden(ComponentEvent componentEvent) {
 		setActivity();
 	    }
 	});
 
 	SparkManager.getChatManager().addChatRoomListener(new ChatRoomListener() {
-	    public void chatRoomOpened(ChatRoom room) {
+	    @Override
+        public void chatRoomOpened(ChatRoom room) {
 		if (!addedFrameListener) {
 		    chatFrame = SparkManager.getChatManager().getChatContainer().getChatFrame();
 		    chatFrame.addComponentListener(new ComponentListener() {
-			public void componentResized(ComponentEvent componentEvent) {
+			@Override
+            public void componentResized(ComponentEvent componentEvent) {
 			    setActivity();
 			}
 
-			public void componentMoved(ComponentEvent componentEvent) {
+			@Override
+            public void componentMoved(ComponentEvent componentEvent) {
 			    setActivity();
 			}
 
-			public void componentShown(ComponentEvent componentEvent) {
+			@Override
+            public void componentShown(ComponentEvent componentEvent) {
 			    setActivity();
 			}
 
-			public void componentHidden(ComponentEvent componentEvent) {
+			@Override
+            public void componentHidden(ComponentEvent componentEvent) {
 			    setActivity();
 			}
 		    });
@@ -196,7 +216,8 @@ public class ApplePlugin implements Plugin, NativeHandler {
 		setActivity();
 	    }
 
-	    public void chatRoomClosed(ChatRoom room) {
+	    @Override
+        public void chatRoomClosed(ChatRoom room) {
 		setActivity();
 	    }
 	});
@@ -209,7 +230,8 @@ public class ApplePlugin implements Plugin, NativeHandler {
 
 	final Timer timer = new Timer();
 	timer.scheduleAtFixedRate(new TimerTask() {
-	    public void run() {
+	    @Override
+        public void run() {
 		sparkIsIdle();
 	    }
 	}, 10000, 10000);

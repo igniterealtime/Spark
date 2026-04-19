@@ -25,10 +25,12 @@ public class SpellcheckerPlugin implements Plugin {
     private SpellcheckChatRoomListener listener;
     private SpellcheckerPreference preference;
 
+    @Override
     public boolean canShutDown() {
 	return true;
     }
 
+    @Override
     public void initialize() {
 
 	try {
@@ -43,10 +45,12 @@ public class SpellcheckerPlugin implements Plugin {
 	}
     }
 
+    @Override
     public void shutdown() {
 
     }
 
+    @Override
     public void uninstall() {
 	SparkManager.getChatManager().removeChatRoomListener(listener);
     }

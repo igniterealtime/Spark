@@ -31,7 +31,7 @@ import org.jivesoftware.spark.util.log.Log;
 /**
  * Message Listener<br>
  * 
- * @author wolf.posdorfer
+ * @author Wolf Posdorfer
  * 
  */
 public class RoarMessageListener implements GlobalMessageListener {

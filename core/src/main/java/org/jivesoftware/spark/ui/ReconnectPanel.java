@@ -41,7 +41,6 @@ import org.jivesoftware.spark.util.ModelUtil;
  * @author Derek DeMoro
  */
 public class ReconnectPanel extends JPanel implements ConnectionListener, ReconnectionListener {
-	private static final long serialVersionUID = -7099075581561760774L;
 	private final JEditorPane pane;
     private final JLabel _icon;
 
@@ -74,13 +73,9 @@ public class ReconnectPanel extends JPanel implements ConnectionListener, Reconn
             }
         });
         layoutComponents();
-
         setBackground(Color.white);
-
         _icon.setText(Res.getString("button.reconnect2"));
-
         SparkManager.getConnection().addConnectionListener(this);
-
         ReconnectionManager.getInstanceFor(SparkManager.getConnection()).addReconnectionListener(this);
     }
 

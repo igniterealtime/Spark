@@ -36,13 +36,8 @@ import javax.swing.JWindow;
  * @author Derek DeMoro
  */
 public class SnapWindow extends JWindow implements ComponentListener, WindowListener, FocusListener, MouseMotionListener {
-
-	private static final long serialVersionUID = -3546188378308911117L;
-
 	private final JFrame parentFrame;
-
     private int preferredWidth = 300;
-
     private boolean isActive = false;
 
     public SnapWindow(final JFrame parentFrame) {

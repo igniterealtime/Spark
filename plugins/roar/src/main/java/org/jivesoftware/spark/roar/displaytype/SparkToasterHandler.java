@@ -17,51 +17,37 @@ import org.jivesoftware.spark.ui.ChatRoom;
 /**
  * Handles Popups looking like Toasts in lower right corner going upwards
  * 
- * @author wolf.posdorfer
- * 
+ * @author Wolf Posdorfer
  */
 public class SparkToasterHandler implements RoarDisplayType {
 
-    public SparkToasterHandler() {
-
-    }
-
     @Override
     public void messageReceived(ChatRoom room, Message message, PropertyBundle property) {
-
-
 	SparkToaster toaster = new SparkToaster();
 	toaster.setDisplayTime(property.duration);
 	toaster.setBorder(BorderFactory.createLineBorder(Color.lightGray, 1, true));
 	toaster.setTitle(room.getTabTitle());
-
 	toaster.setCustomAction(new AbstractAction() {
-	    private static final long serialVersionUID = 8327372636443172019L;
-
 	    @Override
 	    public void actionPerformed(ActionEvent e) {
 		ChatFrame chatFrame = SparkManager.getChatManager()
 			.getChatContainer().getChatFrame();
 		chatFrame.setState(Frame.NORMAL);
 		chatFrame.setVisible(true);
-
 	    }
 	});
 
 	toaster.showToaster(room.getTabIcon(), message.getBody());
-
     }
 
     @Override
     public void messageSent(ChatRoom room, Message message) {
 	// i dont care
-
     }
 
     @Override
     public void closingRoarPanel(int x, int y) {
 	// i dont care
-
     }
 
     @Override
@@ -69,10 +55,12 @@ public class SparkToasterHandler implements RoarDisplayType {
         return "SparkToaster";
     }
 
+    @Override
     public String getName() {
         return "SparkToaster";
     }
 
+    @Override
     public String getLocalizedName() {
         return "SparkToaster";
     }

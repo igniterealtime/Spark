@@ -31,7 +31,6 @@ import javax.swing.JScrollPane;
  * @author Derek DeMoro
  */
 public class CheckBoxList extends JPanel {
-    private static final long serialVersionUID = 4145933151755357313L;
     private final Map<JCheckBox, String> valueMap = new HashMap<>();
     private final JPanel internalPanel = new JPanel();
 

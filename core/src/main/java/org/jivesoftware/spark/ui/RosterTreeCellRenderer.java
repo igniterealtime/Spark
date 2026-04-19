@@ -29,7 +29,6 @@ import java.awt.Font;
 /**
  */
 public class RosterTreeCellRenderer extends DefaultTreeCellRenderer {
-	private static final long serialVersionUID = 4645070076041138834L;
 	private Object value;
     private boolean isExpanded;
 
@@ -42,11 +41,8 @@ public class RosterTreeCellRenderer extends DefaultTreeCellRenderer {
     @Override
 	public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
         this.value = value;
-
         final Component c = super.getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row, hasFocus);
-
         isExpanded = expanded;
-
         setIcon(getCustomIcon());
 
         // Root Nodes are always bold

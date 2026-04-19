@@ -48,8 +48,6 @@ import java.util.List;
 /**
  */
 public class CallHistoryUI extends JPanel implements ActionListener, ListSelectionListener {
-
-	private static final long	serialVersionUID	= -7282770946967440964L;
 	private SparkTabbedPane tabs;
     private final LogManager logManager;
 
@@ -244,7 +242,6 @@ public class CallHistoryUI extends JPanel implements ActionListener, ListSelecti
      * Represents a single entry into the phone history list.
      */
     public class CallEntry extends JPanel {
-	private static final long serialVersionUID = -5942381098669018012L;
 	private String number;
         private HistoryCall call;
         private String type;
@@ -380,9 +377,6 @@ public class CallHistoryUI extends JPanel implements ActionListener, ListSelecti
      */
     private static class CallHistoryRenderer extends JPanel implements ListCellRenderer {
 
-
-	private static final long serialVersionUID = 6992445460154181873L;
-
 	public Component getListCellRendererComponent(JList list,
                                                       Object value,
                                                       int index,
@@ -390,7 +384,6 @@ public class CallHistoryUI extends JPanel implements ActionListener, ListSelecti
                                                       boolean cellHasFocus) {
             CallEntry panel = (CallEntry)value;
             panel.setFocusable(false);
-
             if (isSelected) {
                 panel.setForeground((Color)UIManager.get("List.selectionForeground"));
                 panel.setBackground((Color)UIManager.get("List.selectionBackground"));
@@ -412,8 +405,6 @@ public class CallHistoryUI extends JPanel implements ActionListener, ListSelecti
             }
 
             list.setBackground((Color)UIManager.get("List.background"));
-
-
             return panel;
         }
     }

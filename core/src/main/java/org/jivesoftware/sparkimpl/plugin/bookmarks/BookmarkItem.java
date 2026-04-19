@@ -39,8 +39,6 @@ import org.jivesoftware.spark.util.log.Log;
 /**
  */
 public class BookmarkItem extends JPanel {
-
-	private static final long serialVersionUID = -3120765894005887305L;
 	private final JLabel imageLabel;
     private final JLabel nameLabel;
     private final JLabel descriptionLabel;
@@ -72,10 +70,7 @@ public class BookmarkItem extends JPanel {
         imageLabel.setIcon(SparkRes.getImageIcon(SparkRes.Icon.LINK_16x16));
         nameLabel.setText(bookmark.getName());
         descriptionLabel.setText(bookmark.getURL());
-
         action = new AbstractAction() {
-			private static final long serialVersionUID = 6986851628853679682L;
-
             @Override
 			public void actionPerformed(ActionEvent e) {
                 try {
@@ -93,8 +88,6 @@ public class BookmarkItem extends JPanel {
         nameLabel.setText(bookmark.getName() != null && !bookmark.getName().isEmpty() ? bookmark.getName() : bookmark.getJid().getLocalpart().asUnescapedString());
         descriptionLabel.setText(bookmark.getJid().toString());
         action = new AbstractAction() {
-			private static final long serialVersionUID = 4324785627112595384L;
-
             @Override
 			public void actionPerformed(ActionEvent e) {
                 SwingWorker worker = new SwingWorker() {

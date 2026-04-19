@@ -71,14 +71,14 @@ public class HistoryEntry {
 	 * @return true if there are any sub entries in it
 	 */
 	public boolean hasRecords() {
-		return entries != null && entries.size() > 0;
+		return entries != null && !entries.isEmpty();
 	}
 
 	/**
 	 * @return true if there are any messages in it
 	 */
 	public boolean isEmpty() {
-		return messages == null || messages.size() < 1;
+		return messages == null || messages.isEmpty();
 	}
 
 	public String getHistory() {

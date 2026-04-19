@@ -21,8 +21,6 @@ import javax.sip.message.Request;
 import java.util.EventObject;
 
 public class MessageEvent extends EventObject {
-	private static final long serialVersionUID = 5165120956285347269L;
-
 	public MessageEvent(Request source) {
         super(source);
     }

@@ -4,15 +4,8 @@ import javax.swing.tree.DefaultMutableTreeNode;
 
 /**
  * @author Vyacheslav Durin (nixspirit@gmail.com)
- * 
- *         Apr 15, 2013
- * @version 0.1
  */
 public class HistoryTreeNode extends DefaultMutableTreeNode {
-
-	/**  */
-	private static final long serialVersionUID = 9201268406146063915L;
-
 	private HistoryEntry historyEntry;
 
 	public HistoryTreeNode(String roomName) {
@@ -31,5 +24,4 @@ public class HistoryTreeNode extends DefaultMutableTreeNode {
 	public HistoryEntry getHistoryEntry() {
 		return historyEntry;
 	}
-
 }

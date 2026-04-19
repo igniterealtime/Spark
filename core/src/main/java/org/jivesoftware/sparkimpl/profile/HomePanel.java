@@ -31,15 +31,11 @@ import org.jivesoftware.spark.component.focus.SpecifiedOrderFocusTraversalPolicy
 import org.jivesoftware.spark.util.ResourceUtils;
 
 public class HomePanel extends JPanel {
-
-	private static final long serialVersionUID = -838061087276345124L;
-
     private final JTextField cityField = new JTextField();
     private final JTextField stateField = new JTextField();
     private final JTextField zipCodeField = new JTextField();
     private final JTextField countryField = new JTextField();
     private final JTextField streetField = new JTextField();
-
 
     private final JTextField phoneField = new JTextField();
     private final JTextField faxField = new JTextField();
@@ -49,7 +45,6 @@ public class HomePanel extends JPanel {
 
     public HomePanel() {
         this.setLayout(new GridBagLayout());
-
         // Setup Resources
         JLabel streetLabel = new JLabel();
         ResourceUtils.resLabel( streetLabel, streetField,  Res.getString("label.street.address") + ":");

@@ -55,7 +55,6 @@ import java.util.List;
  * This includes copying and moving of <code>ContactItem</code>.
  */
 public class ContactListAssistantPlugin implements Plugin {
-
     private JMenu moveToMenu;
     private JMenu copyToMenu;
     private final LocalPreferences localPreferences = SettingsManager.getLocalPreferences();
@@ -81,8 +80,6 @@ public class ContactListAssistantPlugin implements Plugin {
                         	continue;
                         }
                         final Action moveAction = new AbstractAction() {
-			    private static final long serialVersionUID = 6542011870221162331L;
-
 			    @Override
                             public void actionPerformed(ActionEvent actionEvent) {
                                 moveItems(contactItems, group.getGroupName());
@@ -90,8 +87,6 @@ public class ContactListAssistantPlugin implements Plugin {
                         };
 
                         final Action copyAction = new AbstractAction() {
-   			    private static final long serialVersionUID = 2232885525630977329L;
-
 			    @Override
                             public void actionPerformed(ActionEvent actionEvent) {
                                 copyItems(contactItems, group.getGroupName());

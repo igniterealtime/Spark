@@ -78,6 +78,7 @@ public class TicTacToePlugin implements Plugin {
         IQ.Type.get,
         IQRequestHandler.Mode.async)
     {
+        @Override
         public IQ handleIQRequest(IQ request) {
             showInvitationAlert((GameOfferPacket) request);
             return null;

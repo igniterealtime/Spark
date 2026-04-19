@@ -66,34 +66,23 @@ import java.awt.event.WindowEvent;
  * @author Derek DeMoro
  */
 public class SubscriptionDialog {
-
     private final RolloverButton acceptButton = new RolloverButton();
     private final RolloverButton viewInfoButton = new RolloverButton();
     private final RolloverButton denyButton = new RolloverButton();
     private final JPanel mainPanel;
-
     private final JCheckBox rosterBox = new JCheckBox();
-
     private final JTextField nicknameField = new JTextField();
-
     private final JComboBox<String> groupBox = new JComboBox<>();
-
     private final JLabel usernameLabelValue = new JLabel();
-
     private JFrame dialog;
-
     private BareJid jid;
-
 
     public SubscriptionDialog() {
         mainPanel = new JPanel();
-
         mainPanel.setLayout(new GridBagLayout());
-
         // Add Roster Addition
         final JPanel rosterPanel = new JPanel();
         rosterPanel.setLayout(new GridBagLayout());
-
         // Add ResourceUtils
         JLabel usernameLabel = new JLabel();
         ResourceUtils.resLabel( usernameLabel, nicknameField, Res.getString("label.username") + ":");
@@ -101,8 +90,6 @@ public class SubscriptionDialog {
         ResourceUtils.resLabel( nicknameLabel, nicknameField, Res.getString("label.nickname") + ":");
         JLabel groupLabel = new JLabel();
         ResourceUtils.resLabel( groupLabel, groupBox, Res.getString("label.group") + ":");
-
-
         rosterBox.setText(Res.getString("label.add.to.roster"));
         groupBox.setEditable(true);
 
@@ -113,13 +100,9 @@ public class SubscriptionDialog {
 
         rosterBox.setSelected(true);
 
-
         ComponentTitledBorder componentBorder = new ComponentTitledBorder(rosterBox, rosterPanel, BorderFactory.createEtchedBorder());
-
-
         rosterPanel.add( usernameLabel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         rosterPanel.add(usernameLabelValue, new GridBagConstraints(1, 1, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
-
 
         rosterPanel.add( nicknameLabel, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         rosterPanel.add(nicknameField, new GridBagConstraints(1, 2, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
@@ -127,11 +110,9 @@ public class SubscriptionDialog {
         rosterPanel.add( groupLabel, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         rosterPanel.add(groupBox, new GridBagConstraints(1, 3, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
         rosterPanel.add(new JLabel(), new GridBagConstraints(1, 4, 1, 1, 1.0, 1.0, GridBagConstraints.SOUTH, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
-
         // Add Roster Panel to mainPanel
         mainPanel.add(rosterPanel, new GridBagConstraints(2, 1, 5, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
         rosterPanel.setBorder(componentBorder);
-
         // Add Buttons
         ResourceUtils.resButton(acceptButton, Res.getString("button.accept"));
         ResourceUtils.resButton(viewInfoButton, Res.getString("button.profile"));
@@ -140,20 +121,16 @@ public class SubscriptionDialog {
         mainPanel.add(acceptButton, new GridBagConstraints(3, 2, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 5));
         mainPanel.add(viewInfoButton, new GridBagConstraints(4, 2, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 5));
         mainPanel.add(denyButton, new GridBagConstraints(5, 2, 1, 1, 0.0, 1.0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 5));
-
         // Set Group Box
         for (ContactGroup group : SparkManager.getWorkspace().getContactList().getContactGroups()) {
             if (!group.isOfflineGroup() && !"Unfiled".equalsIgnoreCase(group.getGroupName()) && !group.isSharedGroup()) {
                 groupBox.addItem(group.getGroupName());
             }
         }
-
         groupBox.setEditable(true);
-
         if (groupBox.getItemCount() == 0) {
             groupBox.addItem("Friends");
         }
-
         if (groupBox.getItemCount() > 0) {
             groupBox.setSelectedIndex(0);
         }
@@ -162,9 +139,7 @@ public class SubscriptionDialog {
     public void invoke(final BareJid jid) throws SmackException.NotConnectedException, InterruptedException
     {
         this.jid = jid;
-
         final Roster roster = SparkManager.getRoster();
-
         // If User is already in roster, do not show.
         RosterEntry entry = roster.getEntry(jid);
         if (entry != null && entry.getType() == RosterPacket.ItemType.to) {
@@ -242,8 +217,6 @@ public class SubscriptionDialog {
         viewInfoButton.addActionListener( e -> SparkManager.getVCardManager().viewProfile(jid, mainPanel) );
         
         dialog = new JFrame(Res.getString("title.subscription.request")){
-			private static final long serialVersionUID = 5713933518069623228L;
-
 			@Override
 			public Dimension getPreferredSize() {
                 final Dimension dim = super.getPreferredSize();
@@ -340,15 +313,12 @@ public class SubscriptionDialog {
      */
     public RosterEntry addEntry(BareJid jid, String nickname, String group) {
         String[] groups = {group};
-
         Roster roster = SparkManager.getRoster();
         RosterEntry userEntry = roster.getEntry(jid);
-
         boolean isSubscribed = true;
         if (userEntry != null) {
-            isSubscribed = userEntry.getGroups().size() == 0;
+            isSubscribed = userEntry.getGroups().isEmpty();
         }
-
         if (isSubscribed) {
             try {
                 roster.preApproveAndCreateEntry(jid, nickname, new String[]{group});
@@ -358,14 +328,11 @@ public class SubscriptionDialog {
             }
             return roster.getEntry(jid);
         }
-
-
         try {
             RosterGroup rosterGroup = roster.getGroup(group);
             if (rosterGroup == null) {
                 rosterGroup = roster.createGroup(group);
             }
-
             if (userEntry == null) {
                 roster.preApproveAndCreateEntry(jid, nickname, groups);
                 userEntry = roster.getEntry(jid);
@@ -374,7 +341,6 @@ public class SubscriptionDialog {
                 userEntry.setName(nickname);
                 rosterGroup.addEntry(userEntry);
             }
-
             userEntry = roster.getEntry(jid);
         }
         catch (XMPPException | SmackException | InterruptedException ex) {

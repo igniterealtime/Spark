@@ -16,8 +16,6 @@
 package net.java.sipmack.media;
 
 public class MediaException extends Exception {
-	private static final long serialVersionUID = 8803493468468690847L;
-
 	public MediaException(String message) {
         super(message);
     }

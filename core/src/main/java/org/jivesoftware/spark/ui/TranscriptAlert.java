@@ -29,7 +29,6 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 
 public class TranscriptAlert extends JPanel {
-	private static final long serialVersionUID = -4882289773265904417L;
 	private final JLabel imageLabel = new JLabel();
     private final JLabel titleLabel = new JLabel();
     private final RolloverButton yesButton = new RolloverButton();
@@ -80,6 +79,4 @@ public class TranscriptAlert extends JPanel {
     public void setIcon(Icon icon) {
         imageLabel.setIcon(icon);
     }
-
-
 }

@@ -55,9 +55,6 @@ import org.jxmpp.jid.impl.JidCreate;
  * Displays Fastpath transcripts.
  */
 public class ChatViewer extends JPanel {
-
-	private static final long serialVersionUID = 1L;
-
 	/**
      * Display a Fastpath transcript.
      *
@@ -164,7 +161,6 @@ public class ChatViewer extends JPanel {
         tabbedPane.addTab(FpRes.getString("tab.notes"), null, notesPanel);
 
         setBackground(Color.white);
-
 
         add(tabbedPane, new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
     }

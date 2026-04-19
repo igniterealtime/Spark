@@ -39,13 +39,8 @@ import java.util.Objects;
  * ThemePanel is used for the setting of TranscriptWindows and Emoticon packs.
  */
 public class ThemePanel extends JPanel {
-
-    private static final long serialVersionUID = 2943854311454590459L;
-
     private final JComboBox<String> messageStyleBox;
-
     private final JComboBox<String> emoticonBox;
-
     private final JButton addEmoticonButton;
 
     private final JTextField contactListFontField;
@@ -81,9 +76,6 @@ public class ThemePanel extends JPanel {
 
     private JPanel emoticonspanel;
 
-    /**
-     * Construct UI
-     */
     public ThemePanel() {
         setLayout(new GridBagLayout());
 
@@ -108,8 +100,7 @@ public class ThemePanel extends JPanel {
             _lookandfeelpreview.revalidate();
         });
 
-        _lookandfeelpreview.addActionListener(e
-                -> {
+        _lookandfeelpreview.addActionListener(e -> {
             SwingWorker worker = new SwingWorker() {
                 @Override
                 public Object construct() {
@@ -180,7 +171,6 @@ public class ThemePanel extends JPanel {
         emoticonscrollpane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
         emoticonBox = new JComboBox<>();
-
         emoticonCheckBox = new JCheckBox();
 
         JButton addThemeButton = new JButton();
@@ -203,18 +193,14 @@ public class ThemePanel extends JPanel {
         maxCurrentHistorySizeField = new JTextField();
         maxCurrentHistorySizeLabel = new JLabel();
 
-
         String[] r = {
             Res.getString("checkbox.reconnect.panel.big"),
             Res.getString("checkbox.reconnect.panel.small"),
             Res.getString("checkbox.reconnect.panel.icon")
         };
         _showReconnectBox = new JComboBox<>(r);
-
         _showReconnectBox.setSelectedIndex(pref.getReconnectPanelType());
-
-        _showReconnectBox.addActionListener(e
-                -> {
+        _showReconnectBox.addActionListener(e -> {
             if (_showReconnectBox.getSelectedIndex() != -1) {
                 setShowReconnectPanel(_showReconnectBox.getSelectedIndex());
             }
@@ -305,9 +291,7 @@ public class ThemePanel extends JPanel {
 
         final String activePack = pref.getEmoticonPack();
         emoticonBox.setSelectedItem(activePack);
-
-        emoticonBox.addActionListener(e
-                -> {
+        emoticonBox.addActionListener(e -> {
             emoticonManager.addEmoticonPack((String) emoticonBox.getSelectedItem());
             emoticonManager.setActivePack((String) emoticonBox.getSelectedItem());
             showSelectedEmoticon();
@@ -324,9 +308,7 @@ public class ThemePanel extends JPanel {
         _lookandfeel.setSelectedItem(name);
 
         showVCards.setSelected(pref.areVCardsVisible());
-
         showAvatarsBox.setSelected(pref.areAvatarsVisible());
-
         disableGrayingIdleContacts.setSelected(pref.isGrayingOutEnabled());
 
         String contactListIconSizeItem = String.valueOf(pref.getContactListIconSize());
@@ -341,7 +323,6 @@ public class ThemePanel extends JPanel {
             int chatRoomFontSize = pref.getChatRoomFontSize();
             int contactListFontSize = pref.getContactListFontSize();
             int maxCurrentHistorySize = pref.getMaxCurrentHistorySize();
-
             chatRoomFontField.setText(Integer.toString(chatRoomFontSize));
             contactListFontField.setText(Integer.toString(contactListFontSize));
             maxCurrentHistorySizeField.setText(Integer.toString(maxCurrentHistorySize));
@@ -380,8 +361,6 @@ public class ThemePanel extends JPanel {
 
     /**
      * Returns the name of the theme selected.
-     *
-     * @return the name of the selected theme.
      */
     public String getSelectedTheme() {
         return messageStyleBox.getItemAt(messageStyleBox.getSelectedIndex());
@@ -389,8 +368,6 @@ public class ThemePanel extends JPanel {
 
     /**
      * Returns the name of the selected emoticon pack.
-     *
-     * @return the name of the emoticon pack.
      */
     public String getSelectedEmoticonPack() {
         return (String) emoticonBox.getSelectedItem();
@@ -419,17 +396,13 @@ public class ThemePanel extends JPanel {
             }
         }
         fc.setDialogTitle("Add Emoticon Pack");
-
         fc.addChoosableFileFilter(new ZipFilter());
-
         int returnVal = fc.showOpenDialog(this);
-
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             File pack = fc.getSelectedFile();
             try {
                 EmoticonManager emoticonManager = EmoticonManager.getInstance();
                 String name = emoticonManager.installPack(pack);
-
                 if (name == null) {
                     UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
                     JOptionPane.showMessageDialog(this, "Not a valid emoticon pack.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -459,7 +432,6 @@ public class ThemePanel extends JPanel {
      * other files besides *.zip files.
      */
     private static class ZipFilter extends javax.swing.filechooser.FileFilter {
-
         @Override
         public boolean accept(File file) {
             String filename = file.getName();
@@ -505,8 +477,6 @@ public class ThemePanel extends JPanel {
 
     /**
      * Return 0,1,2
-     *
-     * @return
      */
     public int getReconnectPanelType() {
         return _showReconnectBox.getSelectedIndex();
@@ -514,8 +484,6 @@ public class ThemePanel extends JPanel {
 
     /**
      * set 0,1,2
-     *
-     * @param reconnect
      */
     public void setShowReconnectPanel(int reconnect) {
         _showReconnectBox.setSelectedIndex(reconnect);

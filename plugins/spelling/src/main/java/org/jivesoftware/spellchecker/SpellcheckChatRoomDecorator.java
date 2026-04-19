@@ -50,12 +50,14 @@ public class SpellcheckChatRoomDecorator implements ActionListener,
 	_room = room; 
 
 	SwingWorker worker = new SwingWorker() {
-	    public Object construct() {
+	    @Override
+        public Object construct() {
 
 		return true;
 	    }
 
-	    public void finished() {
+	    @Override
+        public void finished() {
 
 		final SpellcheckerPreference preference = (SpellcheckerPreference) SparkManager
 			.getPreferenceManager().getPreference(

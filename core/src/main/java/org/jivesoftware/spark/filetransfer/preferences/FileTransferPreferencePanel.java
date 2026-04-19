@@ -33,15 +33,12 @@ import java.io.File;
  * @author Derek DeMoro
  */
 public class FileTransferPreferencePanel extends JPanel {
-
-	private static final long serialVersionUID = -2404221882867691253L;
 	private final JTextField timeoutField;
     private final JTextField downloadDirectoryField;
     private final JCheckBox ibbOnly;
     private final JCheckBox autoAccept;
 
     private JFileChooser fc;
-
 
     public FileTransferPreferencePanel() {
         setLayout(new GridBagLayout());

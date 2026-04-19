@@ -43,7 +43,6 @@ import org.jivesoftware.sparkimpl.plugin.gateways.transports.TransportUtils;
 /**
  */
 public class GatewayButton extends JPanel implements GatewayItem {
-	private static final long serialVersionUID = -2692869826501622612L;
 	private final RolloverButton button = new RolloverButton();
     private final Transport transport;
     private boolean signedIn;
@@ -51,7 +50,6 @@ public class GatewayButton extends JPanel implements GatewayItem {
     public GatewayButton(final Transport transport) {
         setLayout(new GridBagLayout());
         setOpaque(false);
-
         this.transport = transport;
 
         final StatusBar statusBar = SparkManager.getWorkspace().getStatusBar();
@@ -106,8 +104,6 @@ public class GatewayButton extends JPanel implements GatewayItem {
 
     /**
      * Handles the display of a popup menu when a transport button is clicked.
-     *
-     * @param event the MouseEvent.
      */
     private void handlePopup(MouseEvent event) {
         final JPopupMenu popupMenu = new JPopupMenu();
@@ -212,7 +208,6 @@ public class GatewayButton extends JPanel implements GatewayItem {
         else {
             button.setIcon(transport.getIcon());
         }
-
         this.signedIn = signedIn;
     }
 
@@ -220,6 +215,4 @@ public class GatewayButton extends JPanel implements GatewayItem {
 	public boolean isLoggedIn() {
         return signedIn;
     }
-
-
 }

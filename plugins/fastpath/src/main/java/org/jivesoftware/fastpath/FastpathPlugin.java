@@ -87,8 +87,8 @@ public class FastpathPlugin implements Plugin, ConnectionListener {
                     final DomainBareJid workgroupService = JidCreate.domainBareFromOrThrowUnchecked("workgroup." + SparkManager.getSessionManager().getServerAddress());
                     final EntityFullJid jid = SparkManager.getSessionManager().getJID();
 
-
                     SwingWorker worker = new SwingWorker() {
+                        @Override
                         public Object construct() {
                             try {
                                 return Agent.getWorkgroups(workgroupService, jid, SparkManager.getConnection());
@@ -98,9 +98,10 @@ public class FastpathPlugin implements Plugin, ConnectionListener {
                             }
                         }
 
+                        @Override
                         public void finished() {
                             Collection<String> agents = (Collection<String>)get();
-                            if (agents.size() == 0) {
+                            if (agents.isEmpty()) {
                                 return;
                             }
                             showSelection(agents);
@@ -108,9 +109,7 @@ public class FastpathPlugin implements Plugin, ConnectionListener {
                     };
 
                     worker.start();
-
                 }
-
             }
         }
         catch (Exception e) {
@@ -121,7 +120,7 @@ public class FastpathPlugin implements Plugin, ConnectionListener {
     }
 
     private void showSelection(Collection<String> col) {
-        if (col.size() == 0) {
+        if (col.isEmpty()) {
             return;
         }
 
@@ -148,22 +147,19 @@ public class FastpathPlugin implements Plugin, ConnectionListener {
 
         container.getTopPanel().add(mainPanel, BorderLayout.CENTER);
 
-
         final Workspace workspace = SparkManager.getWorkspace();
         workspace.getWorkspacePane().addTab(FpRes.getString("tab.fastpath"), FastpathRes.getImageIcon(FastpathRes.FASTPATH_IMAGE_16x16), container);
 
         Action joinAction = new AbstractAction() {
-			private static final long serialVersionUID = 4476966137732930493L;
-
-			public void actionPerformed(ActionEvent actionEvent) {
+			@Override
+            public void actionPerformed(ActionEvent actionEvent) {
                 joinWorkgroup();
             }
         };
 
         Action leaveAction = new AbstractAction() {
-			private static final long serialVersionUID = -264964340889335732L;
-
-			public void actionPerformed(ActionEvent actionEvent) {
+			@Override
+            public void actionPerformed(ActionEvent actionEvent) {
                 leaveWorkgroup();
             }
         };
@@ -175,7 +171,7 @@ public class FastpathPlugin implements Plugin, ConnectionListener {
         logoutButton.addActionListener(leaveAction);
         joinButton.addActionListener(joinAction);
 
-        // Load services immeditaly.
+        // Load services immediately.
         Thread loadServicesThread = new Thread(() -> SparkManager.getChatManager().getDefaultConferenceService());
 
         loadServicesThread.start();
@@ -229,6 +225,7 @@ public class FastpathPlugin implements Plugin, ConnectionListener {
     {
         // Rejoin the workgroup after 15 seconds.
         final TimerTask rejoinTask = new SwingTimerTask() {
+            @Override
             public void doRun() {
                 if (wasConnected) {
                     joinWorkgroup();
@@ -239,10 +236,12 @@ public class FastpathPlugin implements Plugin, ConnectionListener {
         TaskEngine.getInstance().schedule(rejoinTask, 15000);
     }
 
+    @Override
     public void connectionClosed() {
         lostConnection();
     }
 
+    @Override
     public void connectionClosedOnError(Exception e) {
         lostConnection();
     }
@@ -262,6 +261,7 @@ public class FastpathPlugin implements Plugin, ConnectionListener {
         wasConnected = false;
         joinButton.setEnabled(false);
         SwingWorker worker = new SwingWorker() {
+            @Override
             public Object construct() {
                 try {
                     Thread.sleep(50);
@@ -272,6 +272,7 @@ public class FastpathPlugin implements Plugin, ConnectionListener {
                 return null;
             }
 
+            @Override
             public void finished() {
                 XMPPConnection con = SparkManager.getConnection();
                 String workgroupName = org.jivesoftware.spark.util.StringUtils.makeFirstWordCaptial((String)comboBox.getSelectedItem());

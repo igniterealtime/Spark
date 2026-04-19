@@ -26,7 +26,7 @@ import org.jivesoftware.Spark;
 /**
  * Apple Plugin Properties
  * 
- * @author wolf.posdorfer
+ * @author Wolf Posdorfer
  * 
  */
 public class AppleProperties {

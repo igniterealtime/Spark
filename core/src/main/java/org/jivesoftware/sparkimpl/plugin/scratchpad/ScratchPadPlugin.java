@@ -72,8 +72,6 @@ public class ScratchPadPlugin implements Plugin {
             contactList.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("control F6"), "viewNotes");
 
             contactList.getActionMap().put("viewNotes", new AbstractAction("viewNotes") {
-                private static final long serialVersionUID = -3258500919859584696L;
-
                 @Override
 				public void actionPerformed(ActionEvent evt) {
                     // Retrieve notes and display in editor.
@@ -84,8 +82,6 @@ public class ScratchPadPlugin implements Plugin {
             contactList.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("control F5"), "viewTasks");
 
             contactList.getActionMap().put("viewTasks", new AbstractAction("viewTasks") {
-                private static final long serialVersionUID = 8589614513097901484L;
-
                 @Override
 				public void actionPerformed(ActionEvent evt) {
                     // Retrieve notes and display in editor.
@@ -158,8 +154,6 @@ public class ScratchPadPlugin implements Plugin {
         mainPanel.setBackground(Color.white);
 
         final JPanel titlePanel = new JPanel(new BorderLayout()) {
-	    private static final long serialVersionUID = -8812868562658925280L;
-
 	    @Override
 		public void paintComponent(Graphics g) {
                 Color startColor = Color.white;
@@ -182,21 +176,16 @@ public class ScratchPadPlugin implements Plugin {
         mainPanel.add(titlePanel);
 
         Action showAllAction = new AbstractAction() {
-	    private static final long serialVersionUID = -7031122285194582204L;
-
 	    @Override
 		public void actionPerformed(ActionEvent e) {
                 for (TaskUI ui : taskList) {
                     ui.setVisible(true);
                 }
-
                 SHOW_ALL_TASKS = true;
             }
         };
 
         Action showActiveAction = new AbstractAction() {
-	    private static final long serialVersionUID = -7551153291479117311L;
-
 	    @Override
 		public void actionPerformed(ActionEvent e) {
                 for (TaskUI ui : taskList) {
@@ -204,14 +193,11 @@ public class ScratchPadPlugin implements Plugin {
                         ui.setVisible(false);
                     }
                 }
-
                 SHOW_ALL_TASKS = false;
             }
         };
 
         final Action addAction = new AbstractAction() {
-	    private static final long serialVersionUID = -5937301529216080813L;
-
 	    @Override
 		public void actionPerformed(ActionEvent e) {
                 String taskTitle = taskField.getText();
@@ -220,15 +206,12 @@ public class ScratchPadPlugin implements Plugin {
                 }
                 Task task = new Task();
                 task.setTitle(taskTitle);
-
                 // Set creation time.
                 final Date creationDate = new Date();
                 task.setCreatedDate(creationDate.getTime());
-
                 // Set due date.
                 String dueDate = dueDateField.getText();
                 if (ModelUtil.hasLength(dueDate)) {
-
                     try {
                         Date date = formatter.parse(dueDate);
                         task.setDueDate(date.getTime());
@@ -236,7 +219,6 @@ public class ScratchPadPlugin implements Plugin {
                     catch (ParseException e1) {
                         // Nothing to do
                     }
-
                 }
 
                 taskField.setText("");
@@ -285,7 +267,6 @@ public class ScratchPadPlugin implements Plugin {
         SimpleDateFormat formatter = new SimpleDateFormat(dateShortFormat);
         dueDateField.setText(formatter.format(new Date(tomorrow)));
 
-
         final JScrollPane pane = new JScrollPane(mainPanel);
 
         frame.getContentPane().setLayout(new BorderLayout());
@@ -294,8 +275,6 @@ public class ScratchPadPlugin implements Plugin {
         frame.setSize(400, 400);
 
         final Action saveAction = new AbstractAction() {
-	    private static final long serialVersionUID = -4287799161421970177L;
-
 	    @Override
 		public void actionPerformed(ActionEvent actionEvent) {
                 // Save it.
@@ -345,8 +324,6 @@ public class ScratchPadPlugin implements Plugin {
     
     /**
      * Updates the GUI of Tasks
-     * 
-     * @param tasks Tasks
      */
     public static void updateTaskUI(Tasks tasks) {
     	panel_events.removeAll();
@@ -354,11 +331,9 @@ public class ScratchPadPlugin implements Plugin {
     	
         for (Task task : tasks.getTasks()) {
             final TaskUI taskUI = new TaskUI(task);
-            
             if ( !SHOW_ALL_TASKS ) {
                 taskUI.setVisible(!taskUI.isSelected());
             }
-            
             panel_events.add(taskUI);
             taskList.add(taskUI);
         }
@@ -378,7 +353,6 @@ public class ScratchPadPlugin implements Plugin {
      * Retrieve private notes from server.
      */
     private void retrieveNotes() {
-        // Retrieve private notes from server.
         final SwingWorker notesWorker = new SwingWorker() {
             @Override
 			public Object construct() {
@@ -402,7 +376,6 @@ public class ScratchPadPlugin implements Plugin {
         titleLabel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.LIGHT_GRAY));
         titleLabel.setFont(new Font("Dialog", Font.BOLD, 13));
         titleLabel.setHorizontalAlignment(JLabel.CENTER);
-
 
         final JTextPane pane = new JTextPane();
         pane.setFont(new Font("Dialog", Font.PLAIN, 12));
@@ -452,14 +425,12 @@ public class ScratchPadPlugin implements Plugin {
         frame.pack();
         frame.setSize(400, 400);
 
-
         GraphicUtils.centerWindowOnComponent(frame, SparkManager.getMainWindow());
         frame.setVisible(true);
         pane.setCaretPosition(0);
 
         button.addActionListener( actionEvent -> {
             frame.dispose();
-
             // Save it.
             String text1 = pane.getText();
             privateNotes.setNotes( text1 );

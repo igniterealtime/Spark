@@ -22,8 +22,6 @@ import javax.sip.message.Response;
 import java.util.EventObject;
 
 public class UnknownMessageEvent extends EventObject {
-	private static final long serialVersionUID = 239781911809975348L;
-
 	public UnknownMessageEvent(Message source) {
         super(source);
     }

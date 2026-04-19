@@ -32,7 +32,6 @@ import javax.swing.BorderFactory;
 
 
 public class SearchItem extends JPanel {
-	private static final long serialVersionUID = -6319272932605736970L;
 	private final JLabel fullNameLabel = new JLabel();
     private final JLabel dateLabel = new JLabel();
     private final JLabel questionLabel = new JLabel();
@@ -68,6 +67,7 @@ public class SearchItem extends JPanel {
         questionLabel.setText(question);
     }
 
+    @Override
     public String getToolTipText(){
         return "<html><body>" + "<table width=200><tr><td>" + FpRes.getString("question")
             + ": " + questionLabel.getText() + "</td></tr></table></body></html>";
@@ -87,6 +87,7 @@ public class SearchItem extends JPanel {
      *
      * @return the preferred dimension
      */
+    @Override
     public Dimension getPreferredSize() {
         final Dimension size = super.getPreferredSize();
         size.width = 0;

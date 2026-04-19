@@ -44,8 +44,6 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
 
 public class PreferencesPanel extends JPanel implements ListSelectionListener {
-
-    private static final long serialVersionUID = 1520420979038154046L;
     /**
      * flowpanel is the right panel, where the plugin specific UI is displayed
      */

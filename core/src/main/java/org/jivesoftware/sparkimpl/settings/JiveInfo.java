@@ -22,27 +22,17 @@ import org.jivesoftware.resource.SparkRes;
 public class JiveInfo {
 
     private JiveInfo() {
-
     }
     
     public static String getName() {
         final String name = SparkRes.getString( "APP_NAME" );
-        if ( name != null && !name.trim().isEmpty() )
-        {
-            return name.trim();
-        }
-
-        return "Spark";
+        return name != null && !name.isBlank() ? name.trim() : "Spark";
     }
 
     public static String getVersion() {
         final String version = SparkRes.getString( "VERSION" );
-        if ( version!= null && !version.trim().isEmpty() )
-        {
-            return version.trim();
-        }
-
-        return "3.0.3"; // avoid null and return at least some current version
+        // avoid null and return at least some current version
+        return version != null && !version.isBlank() ? version.trim() : "3.1.0";
     }
 
     public static String getOS() {

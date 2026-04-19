@@ -81,10 +81,8 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
      */
     public ChatArea() {
         emoticonManager = EmoticonManager.getInstance();
-        
         Collection<String> emoticonPacks;
         emoticonPacks = emoticonManager.getEmoticonPacks();
-        
         if(emoticonPacks == null) {
         	emoticonsAvailable = false;
         }
@@ -108,8 +106,6 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
         getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ctrl x"), "cut");
 
         getActionMap().put("cut", new AbstractAction("cut") {
-			private static final long serialVersionUID = 9117190151545566922L;
-
 			@Override
 			public void actionPerformed(ActionEvent evt) {
                 cutAction();
@@ -119,19 +115,14 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
         getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ctrl c"), "copy");
 
         getActionMap().put("copy", new AbstractAction("copy") {
-			private static final long serialVersionUID = 4949716854440264528L;
-
 			@Override
 			public void actionPerformed(ActionEvent evt) {
                 SparkManager.setClipboard(getSelectedText());
             }
         });
-
         getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke("ctrl v"), "paste");
 
         getActionMap().put("paste", new AbstractAction("paste") {
-			private static final long serialVersionUID = -8767763580660683678L;
-
 			@Override
 			public void actionPerformed(ActionEvent evt) {
                 pasteAction();
@@ -146,7 +137,6 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
      * for instance HTMLDocument (setText("<HTML></HTML>")
      * We should keep the functionality - it is useful when we want to inject a different Document type
      * instead of StyleDocument 
-     * @param content
      */
     public void setInitialContent(String content) {
         super.setText(content);
@@ -155,7 +145,6 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
    
     /**
      * Removes the last appearance of word from the TextArea
-     * @param word
      */
     public void removeLastWord(String word)
     {
@@ -165,8 +154,6 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
     
     /**
      * Removes everything in between <b>begin</b> and <b>end</b>
-     * @param begin
-     * @param end
      */
     public void removeWordInBetween(int begin, int end){
 	select(begin, end);
@@ -187,11 +174,9 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
         try {
             final int pos = viewToModel(e.getPoint());
             final Element element = getStyledDocument().getCharacterElement(pos);
-
             if (element != null) {
                 final AttributeSet as = element.getAttributes();
                 final String url = (String) as.getAttribute("link");
-
                 if (url != null) {
                     try {
                         boolean handled = fireLinkInterceptors(e, url);
@@ -245,8 +230,6 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
         if (e.isPopupTrigger()) {
             handlePopup(e);
         }
-
-
     }
 
     @Override
@@ -282,11 +265,9 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
         try {
             final int pos = viewToModel(e.getPoint());
             final Element element = getStyledDocument().getCharacterElement(pos);
-
             if (element != null) {
                 final AttributeSet as = element.getAttributes();
                 final Object o = as.getAttribute("link");
-
                 if (o != null) {
                     setCursor(HAND_CURSOR);
                 }
@@ -321,8 +302,6 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
 
     /**
      * Adds a <code>ContextMenuListener</code> to ChatArea.
-     *
-     * @param listener the ContextMenuListener.
      */
     public void addContextMenuListener(ContextMenuListener listener) {
         contextMenuListeners.addIfAbsent(listener);
@@ -330,8 +309,6 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
 
     /**
      * Remove a <code>ContextMenuListener</code> to ChatArea.
-     *
-     * @param listener the ContextMenuListener.
      */
     public void removeContextMenuListener(ContextMenuListener listener) {
         contextMenuListeners.remove(listener);
@@ -377,10 +354,8 @@ public class ChatArea extends JTextPane implements MouseListener, MouseMotionLis
                 Log.error( "A LinkInterceptor (" + interceptor + ") threw an exception while processing link: '" + link + "', event: '" + event + "'.", e );
             }
         }
-
         return false;
     }
-
 
     @Override
 	public void actionPerformed(ActionEvent e) {

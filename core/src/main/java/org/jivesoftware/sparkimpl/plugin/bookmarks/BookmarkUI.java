@@ -33,10 +33,8 @@ import java.awt.event.MouseEvent;
 /**
  */
 public class BookmarkUI extends JPanel {
-	private static final long serialVersionUID = 2724141541874364121L;
 	private final DefaultListModel<BookmarkItem> model;
     private final JList<BookmarkItem> list;
-
 
     public BookmarkUI() {
         setLayout(new BorderLayout());
@@ -60,7 +58,6 @@ public class BookmarkUI extends JPanel {
             }
         });
 
-
         pane.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
@@ -83,12 +80,9 @@ public class BookmarkUI extends JPanel {
     public void addConference(BookmarkedConference conference) {
         BookmarkItem item = new BookmarkItem();
         item.addConferenceRoom(conference);
-
         model.addElement(item);
         if (conference.isAutoJoin()) {
             item.invokeAction();
         }
     }
-
-
 }

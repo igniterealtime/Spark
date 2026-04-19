@@ -28,7 +28,7 @@ import org.jivesoftware.spark.util.log.Log;
 /**
  * Awesome Preference
  * 
- * @author wolf.posdorfer
+ * @author Wolf Posdorfer
  *
  */
 public class RoarPreference implements Preference {

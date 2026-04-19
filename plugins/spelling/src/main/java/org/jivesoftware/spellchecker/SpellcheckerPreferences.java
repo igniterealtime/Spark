@@ -25,7 +25,7 @@ import java.util.Properties;
 import org.jivesoftware.Spark;
 
 public class SpellcheckerPreferences {
-    private Properties props;
+    private final Properties props;
     private File configFile;
 
     public SpellcheckerPreferences() {

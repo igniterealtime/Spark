@@ -45,7 +45,6 @@ import org.jivesoftware.spark.util.log.Log;
 import org.jxmpp.jid.EntityBareJid;
 
 public class UserHistory extends JPanel {
-	private static final long serialVersionUID = -1067239194964815379L;
 	private final DefaultListModel<UserHistoryItem> model = new DefaultListModel<>();
     private final JList<UserHistoryItem> list;
     private final EntityBareJid userID;
@@ -67,6 +66,7 @@ public class UserHistory extends JPanel {
         add(mainPanel, BorderLayout.CENTER);
 
         list.addMouseListener(new MouseAdapter() {
+            @Override
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2) {
                     UserHistoryItem historyItem = list.getSelectedValue();
@@ -79,10 +79,10 @@ public class UserHistory extends JPanel {
     }
 
     public void loadHistory() {
-
         SwingWorker transcriptThread = new SwingWorker() {
             final List<TranscriptSummary> transcriptList = new ArrayList<>();
 
+            @Override
             public Object construct() {
                 try {
                     Transcripts transcripts = FastpathPlugin.getAgentSession().getTranscripts(userID);
@@ -96,6 +96,7 @@ public class UserHistory extends JPanel {
                 return transcriptList;
             }
 
+            @Override
             public void finished() {
                 init(transcriptList);
             }
@@ -156,6 +157,7 @@ public class UserHistory extends JPanel {
      *
      * @return the preferred dimension
      */
+    @Override
     public Dimension getPreferredSize() {
         final Dimension size = super.getPreferredSize();
         size.width = 0;

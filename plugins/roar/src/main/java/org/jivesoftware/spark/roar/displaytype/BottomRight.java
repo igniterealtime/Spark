@@ -20,7 +20,7 @@ import org.jivesoftware.spark.ui.ChatRoom;
 /**
  * handles Popups in the lower right corner and stacking upwards
  * 
- * @author wolf.posdorfer
+ * @author Wolf Posdorfer
  * 
  */
 public class BottomRight implements RoarDisplayType {
@@ -51,8 +51,6 @@ public class BottomRight implements RoarDisplayType {
         _amount = 0;
 
         _customaction = new AbstractAction() {
-            private static final long serialVersionUID = -7237306342417462544L;
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 ChatFrame chatFrame = SparkManager.getChatManager().getChatContainer().getChatFrame();
@@ -67,20 +65,15 @@ public class BottomRight implements RoarDisplayType {
     @Override
     public void messageReceived(ChatRoom room, Message message, PropertyBundle property) {
         RoarProperties props = RoarProperties.getInstance();
-
         if (props.getShowingPopups() && (_amount < props.getMaximumPopups() || props.getMaximumPopups() == 0)) {
-
             ImageIcon icon = SparkRes.getImageIcon(SparkRes.Icon.SPARK_IMAGE_32x32);
-
             String nickname = RoarPopupHelper.getNickname(room, message);
             RoarPanel.popupWindow(this, icon, nickname, message.getBody(), _lastusedXpos, _lastusedYpos,
                     property.duration, property.backgroundColor, property.headerColor, property.textColor,
                     _customaction);
 
             ++_amount;
-
             _lastusedYpos -= (HEIGHT + 5);
-
             if (_lastusedYpos <= HEIGHT + 5) {
                 _lastusedXpos -= WIDTH + 5;
                 _lastusedYpos = _defaulty;
@@ -96,7 +89,6 @@ public class BottomRight implements RoarDisplayType {
 
     @Override
     public void closingRoarPanel(int x, int y) {
-
         if (_lastusedYpos < (y + 5 + TASKBAR)) {
             _lastusedYpos = y - 5;
         }

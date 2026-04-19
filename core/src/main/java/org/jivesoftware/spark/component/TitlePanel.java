@@ -34,8 +34,6 @@ import javax.swing.JPanel;
  * @author Derek DeMoro
  */
 public final class TitlePanel extends JPanel {
-
-    private static final long serialVersionUID = -967166058268240672L;
     private final JLabel titleLabel = new JLabel();
     private final JLabel descriptionLabel = new JLabel();
 
@@ -48,14 +46,11 @@ public final class TitlePanel extends JPanel {
      * @param showDescription true if the description should be shown.
      */
     public TitlePanel(String title, String description, Icon icon, boolean showDescription) {
-
         // Set the icon
         JLabel iconLabel = new JLabel();
         iconLabel.setIcon(icon);
-
         // Set the title
         setTitle(title);
-
         // Set the description
         setDescription(description);
         

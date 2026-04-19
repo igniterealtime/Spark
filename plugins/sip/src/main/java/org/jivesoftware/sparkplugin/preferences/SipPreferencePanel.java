@@ -38,43 +38,23 @@ import org.jivesoftware.spark.util.ResourceUtils;
  *         The <code>SipPreferencePanel</code> class created Spark Preferences Panel
  * @version 1.0, 28/09/2006
  */
-
 public class SipPreferencePanel extends JPanel {
-
-	private static final long	serialVersionUID	= 3514377990815313963L;
-
 	private JPanel generalPanel = new JPanel();
-
     private JPanel networkPanel = new JPanel();
-
     private JTextField userNameField = new JTextField();
-
     private JTextField authUserNameField = new JTextField();
-
     private JPasswordField passwordField = new JPasswordField();
-
     private JTextField serverField = new JTextField();
-
     private JCheckBox registerCheckBox = new JCheckBox();
-
     private JTextField stunServerField = new JTextField();
-
     private JTextField stunPortField = new JTextField();
-
     private JCheckBox useStun = new JCheckBox();
-
     private JLabel userNameLabel = new JLabel();
-
     private JLabel authUserNameLabel = new JLabel();
-
     private JLabel passwordLabel = new JLabel();
-
     private JLabel serverLabel = new JLabel();
-
     private JLabel stunServerLabel = new JLabel();
-
     private JLabel stunPortLabel = new JLabel();
-
 
     /**
      * Constructor invokes UI setup.

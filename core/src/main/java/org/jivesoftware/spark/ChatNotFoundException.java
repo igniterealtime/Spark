@@ -22,8 +22,6 @@ package org.jivesoftware.spark;
  * @author Derek DeMoro
  */
 public class ChatNotFoundException extends Exception {
-	private static final long serialVersionUID = -7495476589370015758L;
-
 	public ChatNotFoundException() {
         super();
     }
@@ -31,5 +29,4 @@ public class ChatNotFoundException extends Exception {
     public ChatNotFoundException(String msg) {
         super(msg);
     }
-
 }

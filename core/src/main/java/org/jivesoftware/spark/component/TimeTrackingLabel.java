@@ -26,7 +26,6 @@ import java.util.Date;
  * UI to show the time in a chat room.
  */
 public class TimeTrackingLabel extends JLabel {
-    private static final long serialVersionUID = 6640616146941699107L;
     private Date startTime;
     private final JComponent parentComponent;
 

@@ -174,8 +174,6 @@ public class MissedCalls implements ActionListener {
      * Represents a single entry into the phone history list.
      */
     private class MissedCall extends JPanel {
-
-		private static final long	serialVersionUID	= -6155295091292349158L;
 		private String number;
 
         public MissedCall(String title, Date time, String number) {
@@ -235,9 +233,6 @@ public class MissedCalls implements ActionListener {
      * Internal ListRenderer for MissedCallRenderer
      */
     private static class MissedCallRenderer extends JPanel implements ListCellRenderer {
-
-		private static final long	serialVersionUID	= -3128542669141396537L;
-
 		public Component getListCellRendererComponent(JList list,
                                                       Object value,
                                                       int index,
@@ -245,7 +240,6 @@ public class MissedCalls implements ActionListener {
                                                       boolean cellHasFocus) {
             MissedCall panel = (MissedCall)value;
             panel.setFocusable(false);
-
             if (isSelected) {
                 panel.setForeground((Color)UIManager.get("List.selectionForeground"));
                 panel.setBackground((Color)UIManager.get("List.selectionBackground"));
@@ -253,14 +247,10 @@ public class MissedCalls implements ActionListener {
             }
             else {
                 panel.setBackground(new Color(255, 224, 224));
-
                 panel.setForeground(list.getForeground());
                 panel.setBorder(BorderFactory.createLineBorder((Color)UIManager.get("List.background")));
             }
-
             list.setBackground((Color)UIManager.get("List.background"));
-
-
             return panel;
         }
     }

@@ -18,8 +18,6 @@ package net.java.sipmack.media.event;
 import java.util.EventObject;
 
 public class MediaEvent extends EventObject {
-
-	private static final long serialVersionUID = 2025524719587153767L;
 	private String user;
 
     public MediaEvent(Object source) {

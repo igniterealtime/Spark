@@ -31,7 +31,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class HistoryItem extends JPanel {
-	private static final long serialVersionUID = -3410684714855388210L;
 	private final JLabel fullNameLabel = new JLabel();
     private final JLabel emailLabel = new JLabel();
     private final JLabel dateLabel = new JLabel();
@@ -84,6 +83,7 @@ public class HistoryItem extends JPanel {
         conversationLabel.setText(duration);
     }
 
+    @Override
     public String getToolTipText() {
         return "<html><body>" + "<table width=200><tr><td>" + FpRes.getString("question") + ": "
             + questionLabel.getText() + "</td></tr></table></body></html>";
@@ -103,6 +103,7 @@ public class HistoryItem extends JPanel {
      *
      * @return the preferred dimension
      */
+    @Override
     public Dimension getPreferredSize() {
         final Dimension size = super.getPreferredSize();
         size.width = 0;

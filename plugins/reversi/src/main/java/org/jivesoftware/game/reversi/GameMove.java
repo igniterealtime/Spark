@@ -44,10 +44,12 @@ public class GameMove implements ExtensionElement {
     private int gameID;
     private int position;
 
+    @Override
     public String getElementName() {
         return ELEMENT_NAME;
     }
 
+    @Override
     public String getNamespace() {
         return NAMESPACE;
     }

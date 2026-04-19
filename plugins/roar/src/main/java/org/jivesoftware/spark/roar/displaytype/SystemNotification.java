@@ -8,7 +8,7 @@ import org.jivesoftware.spark.ui.ChatRoom;
 /**
  * Provides OS-based notifications
  * 
- * @author wolf.posdorfer
+ * @author Wolf Posdorfer
  */
 public class SystemNotification implements RoarDisplayType {
 
@@ -38,10 +38,12 @@ public class SystemNotification implements RoarDisplayType {
         return "SystemNotification";
     }
 
+    @Override
     public String getName() {
         return "SystemNotification";
     }
 
+    @Override
     public String getLocalizedName() {
         return RoarResources.getString("roar.display.system");
     }

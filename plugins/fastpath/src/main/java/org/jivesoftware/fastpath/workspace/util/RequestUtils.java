@@ -128,7 +128,7 @@ public class RequestUtils {
         Object o = getMetadata().get(key);
         if (o instanceof List) {
             final List<?> list = (List<?>) o;
-            if (list.size() > 0) {
+            if (!list.isEmpty()) {
                 return (String) list.get(0);
             }
         }

@@ -30,6 +30,7 @@ public class SpellcheckChatRoomListener implements ChatRoomListener {
     public SpellcheckChatRoomListener() {
     }
 
+    @Override
     public void chatRoomOpened(ChatRoom room) {
 	new SpellcheckChatRoomDecorator(room);
     }

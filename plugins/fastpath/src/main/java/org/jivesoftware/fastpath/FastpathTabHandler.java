@@ -32,6 +32,7 @@ import java.awt.Component;
 public class FastpathTabHandler extends SparkTabHandler {
 
 
+    @Override
     public boolean isTabHandled(SparkTab tab, Component component, boolean isSelectedTab, boolean chatFrameFocused) {
         if (component instanceof ChatRoom) {
             RoomState roomState = FastpathPlugin.getLitWorkspace().getRoomState((ChatRoom)component);

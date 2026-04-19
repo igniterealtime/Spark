@@ -36,14 +36,8 @@ import javax.swing.tree.TreePath;
 
 /**
  * @author Vyacheslav Durin (nixspirit@gmail.com)
- * 
- *         Apr 10, 2013
- * @version 0.1
  */
 public class HistoryWindow extends JFrame {
-
-	private static final long serialVersionUID = 2704122897798171413L;
-
 	private static final String CONTENT_TYPE = "text/html";
 	private static final String EMPTY = "";
 	private static final Dimension SIZE = new Dimension(700, 400);
@@ -238,15 +232,11 @@ public class HistoryWindow extends JFrame {
 	private static HistoryTreeNode buildHistoryTree(XMLHistoryFile file,
 			String roomName) {
 		HistoryTreeNode top = new HistoryTreeNode(roomName);
-
 		HistoryTreeNode day;
 		HistoryTreeNode item;
-
 		for (HistoryEntry entry : file.getHistoryEntries()) {
 			day = new HistoryTreeNode(entry.getName());
-
 			if (entry.hasRecords()) {
-
 				for (HistoryEntry child : entry.getEntries()) {
 					item = new HistoryTreeNode(child.getName());
 					item.setHistoryEntry(child);
@@ -264,7 +254,6 @@ public class HistoryWindow extends JFrame {
 
 	private ActionListener onFindBtnClick() {
 		return e -> {
-
             String searchText = findTextField.getText().trim();
             if (EMPTY.equals(searchText)) {
                 historyTree.setModel(historyOriginalModel);
@@ -273,13 +262,10 @@ public class HistoryWindow extends JFrame {
             }
 
             List<HistoryEntry> results = historyFile.search(findTextField.getText());
-
             HistoryTreeNode top = new HistoryTreeNode(searchText);
-
             for (HistoryEntry entry : results) {
                 top.add(new HistoryTreeNode(entry, entry.getName()));
             }
-
             historyTree.setModel(new DefaultTreeModel(top));
             selectVeryFirstLeaf();
         };
@@ -287,7 +273,6 @@ public class HistoryWindow extends JFrame {
 
 	private TreeSelectionListener onTreeSelected() {
 		return e -> {
-
             TreePath tp = e.getNewLeadSelectionPath();
             if (tp == null)
                 return;
@@ -316,8 +301,6 @@ public class HistoryWindow extends JFrame {
 		TreePath path = new TreePath(firstLeaf.getPath());
 		historyTree.setSelectionPath(path);
 	}
-
-	// ############ HELPERS ##########
 
 	private static JButton createJButton(String title) {
 		JButton btn = new JButton();

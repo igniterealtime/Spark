@@ -32,23 +32,17 @@ import org.jivesoftware.resource.SparkRes;
  * @author Bergunde Holger
  */
 public class PrivacyTreeCellRenderer extends DefaultTreeCellRenderer {
-
-    private static final long serialVersionUID = 5819051053144634773L;
-
     @Override
     public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus) {
         final Component c = super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
         JPanel myPanel = new JPanel();
         myPanel.setBackground(Color.white);
         PrivacyTreeNode node = (PrivacyTreeNode) value;
-
         myPanel.setLayout(new GridBagLayout());
-
         if (leaf && node.isPrivacyItem()) {
             if (sel) {
                 myPanel.setBackground(Color.LIGHT_GRAY);
             }
-
             Icon iq = node.getPrivacyItem().isFilterIQ() ? SparkRes.getImageIcon(SparkRes.Icon.PRIVACY_QUERY_DENY) : SparkRes.getImageIcon(SparkRes.Icon.PRIVACY_QUERY_ALLOW);
             Icon in = node.getPrivacyItem().isFilterPresenceIn() ? SparkRes.getImageIcon(SparkRes.Icon.PRIVACY_PIN_DENY) : SparkRes.getImageIcon(SparkRes.Icon.PRIVACY_PIN_ALLOW);
             Icon out = node.getPrivacyItem().isFilterPresenceOut() ? SparkRes.getImageIcon(SparkRes.Icon.PRIVACY_POUT_DENY) : SparkRes.getImageIcon(SparkRes.Icon.PRIVACY_POUT_ALLOW);
@@ -62,20 +56,14 @@ public class PrivacyTreeCellRenderer extends DefaultTreeCellRenderer {
             myPanel.add(new JLabel(out), new GridBagConstraints(3, 0, 1, 1, 0, 0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 
         } else {
-
             if (node.isRoot()) {
                 setIcon(SparkRes.getImageIcon(SparkRes.Icon.CLIPBOARD));
             }
-
             if (node.isGroupNode()) {
-
                 setIcon(SparkRes.getImageIcon(SparkRes.Icon.SMALL_CURRENT_AGENTS));
-
             } else if (node.isContactGroup()) {
                 setIcon(SparkRes.getImageIcon(SparkRes.Icon.AVAILABLE_USER));
-
             }
-
             if (node.isPrivacyList()) {
                 String listName = node.getPrivacyList().getListName();
 //                if (node.isActiveList()) {
@@ -86,11 +74,8 @@ public class PrivacyTreeCellRenderer extends DefaultTreeCellRenderer {
 //                }
                 setText(listName);
                 setIcon(SparkRes.getImageIcon(SparkRes.Icon.SMALL_ENTRY));
-
             }
-
             return c;
-
         }
         return myPanel;
     }

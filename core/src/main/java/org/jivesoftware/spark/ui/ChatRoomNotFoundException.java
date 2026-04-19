@@ -21,8 +21,6 @@ package org.jivesoftware.spark.ui;
  * @author Derek DeMoro
  */
 public class ChatRoomNotFoundException extends Exception {
-	private static final long serialVersionUID = 517234944941907783L;
-
 	public ChatRoomNotFoundException() {
         super();
     }

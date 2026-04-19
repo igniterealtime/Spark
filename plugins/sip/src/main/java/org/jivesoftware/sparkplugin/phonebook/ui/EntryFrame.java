@@ -21,7 +21,6 @@ import org.jivesoftware.sparkplugin.phonebook.BookManager;
 
 public class EntryFrame extends JFrame
 {
-	private static final long	serialVersionUID	= -8956851041216444903L;
 	private JTextField tfName, tfNumber;
 	private PhonebookUI parent;
 	private BookManager manager;

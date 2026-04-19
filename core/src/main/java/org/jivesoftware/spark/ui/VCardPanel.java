@@ -47,8 +47,6 @@ import org.jxmpp.jid.impl.JidCreate;
  * @author Derek DeMoro
  */
 public class VCardPanel extends JPanel {
-
-	private static final long serialVersionUID = -5810110243694315630L;
 	private final Cursor DEFAULT_CURSOR = new Cursor(Cursor.DEFAULT_CURSOR);
     private final Cursor LINK_CURSOR = new Cursor(Cursor.HAND_CURSOR);
 
@@ -128,12 +126,10 @@ public class VCardPanel extends JPanel {
 
             }
         });
-
     }
 
     private void showAvatarBig(boolean bool, VCard vcard) {
         if (bool && !_avatarHoverWindow.isVisible()) {
-
             _avatarHoverWindow.setLocation(avatarImage.getLocationOnScreen().x+2,avatarImage.getLocationOnScreen().y+2);
             _avatarHoverWindow.setVisible(true);
             ImageIcon icon = null;
@@ -163,16 +159,12 @@ public class VCardPanel extends JPanel {
             _avatarHoverWindow.invalidate();
             _avatarHoverWindow.validate();
             _avatarHoverWindow.repaint();
-
         } else {
-
             _avatarHoverWindow.setVisible(false);
         }
-
     }
 
     private void buildUI(final VCard vcard) {
-
         avatarImage.addMouseListener(new MouseAdapter() {
             @Override
 			public void mouseClicked(MouseEvent mouseEvent) {
@@ -181,9 +173,7 @@ public class VCardPanel extends JPanel {
                     SparkManager.getVCardManager().viewProfile(bareJid, avatarImage);
                 }
             }
-
             final Timer timer = new Timer(500, actionEvent -> showAvatarBig(true, vcard) );
-
             @Override
             public void mouseEntered(MouseEvent e) {
                 super.mouseEntered(e);
@@ -195,7 +185,6 @@ public class VCardPanel extends JPanel {
                 super.mouseExited(e);
                 timer.stop();
             }
-
         });
 
         String fullName = vcard.getField("FN");
@@ -218,7 +207,6 @@ public class VCardPanel extends JPanel {
         if (icon != null) {
             usernameLabel.setIcon(icon);
         }
-
 
         add(usernameLabel, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 0, 0), 0, 0));
 
@@ -257,7 +245,6 @@ public class VCardPanel extends JPanel {
             }
         });
 
-
         add(emailTime, new GridBagConstraints(1, 2, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 7, 5, 0), 0, 0));
     }
 
@@ -269,9 +256,5 @@ public class VCardPanel extends JPanel {
 		} catch (URISyntaxException e) {
 			Log.error("URI Wrong", e);
 		}
-
-
     }
-
-
 }

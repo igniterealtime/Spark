@@ -51,10 +51,8 @@ import java.util.TimerTask;
  * @author Derek DeMoro
  */
 public class NotificationPlugin implements Plugin, StanzaListener {
-
     private final Set<BareJid> onlineUsers = new HashSet<>();
     private LocalPreferences preferences;
-
 
     @Override
 	public void initialize() {
@@ -62,20 +60,17 @@ public class NotificationPlugin implements Plugin, StanzaListener {
         NotificationsPreference notifications = new NotificationsPreference();
         SparkManager.getPreferenceManager().addPreference(notifications);
         notifications.load();
-
         final TimerTask registerTask = new SwingTimerTask() {
             @Override
 			public void doRun() {
                 registerListener();
             }
         };
-
         TaskEngine.getInstance().schedule(registerTask, 5000);
     }
 
     private void registerListener() {
         preferences = SettingsManager.getLocalPreferences();
-
         // Iterate through all online users and add them to the list.
         ContactList contactList = SparkManager.getWorkspace().getContactList();
         for (ContactGroup contactGroup : contactList.getContactGroups()) {
@@ -86,11 +81,9 @@ public class NotificationPlugin implements Plugin, StanzaListener {
                 }
             }
         }
-
         // Add Presence Listener
         SparkManager.getConnection().addAsyncStanzaListener(this, new StanzaTypeFilter(Presence.class));
     }
-
 
     @Override
     public void processStanza(Stanza stanza) {
@@ -99,13 +92,11 @@ public class NotificationPlugin implements Plugin, StanzaListener {
         if (jid == null) {
             return;
         }
-
         // Make sure the user is in the contact list.
         ContactItem contactItem = SparkManager.getWorkspace().getContactList().getContactItemByJID(jid);
         if (contactItem == null) {
             return;
         }
-
         BareJid bareJid = jid.asBareJid();
         boolean isOnline = onlineUsers.contains(bareJid);
 
@@ -115,14 +106,12 @@ public class NotificationPlugin implements Plugin, StanzaListener {
                     notifyUserOnline(bareJid, presence);
                 }
             }
-
             onlineUsers.add(bareJid);
         }
         else {
             if (preferences.isOfflineNotificationsOn() && isOnline) {
                 notifyUserOffline(bareJid, presence);
             }
-
             onlineUsers.remove(bareJid);
         }
     }
@@ -155,16 +144,12 @@ public class NotificationPlugin implements Plugin, StanzaListener {
                 toaster.setBorder(BorderFactory.createLineBorder(Color.lightGray, 1, true));
                 toaster.setCustomAction(new ChatAction(jid));
                 NotificationAlertUI alertUI = new NotificationAlertUI(jid, true, presence);
-
                 toaster.setToasterHeight((int)alertUI.getPreferredSize().getHeight() + 40);
-
                 int width = (int)alertUI.getPreferredSize().getWidth() + 40;
                 if (width < 300) {
                     width = 300;
                 }
-
                 toaster.setToasterWidth(width);
-
                toaster.showToaster(alertUI.topLabel.getText(), alertUI);
                toaster.setTitleAlert(new Font("Dialog", Font.BOLD, 13), presence);
             } );
@@ -187,18 +172,13 @@ public class NotificationPlugin implements Plugin, StanzaListener {
                 toaster.setCustomAction(new ChatAction(jid));
                 toaster.setDisplayTime(preferences.getNotificationsDisplayTime());
                 toaster.setBorder(BorderFactory.createLineBorder(Color.lightGray, 1, true));
-
                 NotificationAlertUI alertUI = new NotificationAlertUI(jid, false, presence);
-
                 toaster.setToasterHeight((int)alertUI.getPreferredSize().getHeight() + 40);
-
                 int width = (int)alertUI.getPreferredSize().getWidth() + 40;
                 if (width < 300) {
                     width = 300;
                 }
-
                 toaster.setToasterWidth(width);
-
                 toaster.showToaster(alertUI.topLabel.getText(), alertUI);
                 toaster.setTitleAlert(new Font("Dialog", Font.BOLD, 13), presence);
             } );
@@ -210,9 +190,7 @@ public class NotificationPlugin implements Plugin, StanzaListener {
 
     private static class ChatAction extends AbstractAction {
 
-	private static final long serialVersionUID = 4752515615833181939L;
 	private final BareJid jid;
-
         public ChatAction(BareJid jid) {
             this.jid = jid;
         }
@@ -223,6 +201,4 @@ public class NotificationPlugin implements Plugin, StanzaListener {
             SparkManager.getChatManager().activateChat(jid, nickname);
         }
     }
-
-
 }

@@ -50,9 +50,6 @@ import java.util.Map;
  * @version 1.0, 03/12/14
  */
 public abstract class Table extends JXTable {
-   
-    private static final long serialVersionUID = -6511813002260596088L;
-
     private Table.JiveTableModel tableModel;
 
     /**
@@ -133,7 +130,6 @@ public abstract class Table extends JXTable {
         dim.height = 20;
         header.setPreferredSize(dim);
 
-
         getTableHeader().setReorderingAllowed(false);
         setGridColor(Color.white);
         setRowHeight(20);
@@ -157,7 +153,6 @@ public abstract class Table extends JXTable {
 
             @Override
 			public void keyTyped(KeyEvent e) {
-
             }
         });
     }
@@ -183,8 +178,6 @@ public abstract class Table extends JXTable {
 
     /**
      * Adds a list to the table model.
-     *
-     * @param list the list to add to the model.
      */
     public void add(List<Object> list) {
         for (Object aList : list) {
@@ -195,8 +188,6 @@ public abstract class Table extends JXTable {
 
     /**
      * Get the object array of a row.
-     *
-     * @return the object array of a row.
      */
     public Object[] getSelectedRowObject() {
         return getRowObject(getSelectedRow());
@@ -239,7 +230,6 @@ public abstract class Table extends JXTable {
      */
     public static class JiveTableModel extends DefaultTableModel {
 
-	private static final long serialVersionUID = 2256144012470569949L;
 	private final boolean isEditable;
 
         /**
@@ -272,8 +262,6 @@ public abstract class Table extends JXTable {
      * A swing renderer used to display labels within a table.
      */
     public static class JLabelRenderer extends JLabel implements TableCellRenderer {
-
-	private static final long serialVersionUID = 4433780600297455731L;
         private Border unselectedBorder;
         private Border selectedBorder;
         private final boolean isBordered;
@@ -331,8 +319,6 @@ public abstract class Table extends JXTable {
      */
     public static class TextAreaCellRenderer extends JTextArea implements TableCellRenderer {
 
-	private static final long serialVersionUID = -8533968851464831361L;
-
 	/**
          * Create new renderer with font.
          *
@@ -362,15 +348,10 @@ public abstract class Table extends JXTable {
      * A swing renderer used to display Buttons within a table.
      */
     public static class JButtonRenderer extends JButton implements TableCellRenderer {
-
-	private static final long serialVersionUID = 1268514163461994738L;
         private Border unselectedBorder;
         private Border selectedBorder;
         private final boolean isBordered = true;
 
-        /**
-         * Empty Constructor.
-         */
         public JButtonRenderer() {
         }
 
@@ -379,10 +360,8 @@ public abstract class Table extends JXTable {
 		public Component getTableCellRendererComponent(JTable table, Object color, boolean isSelected, boolean hasFocus, int row, int column) {
             final String text = ((JButton)color).getText();
             setText(text);
-
             final Icon icon = ((JButton)color).getIcon();
             setIcon(icon);
-
             if (isSelected) {
                 setForeground(table.getSelectionForeground());
                 setBackground(table.getSelectionBackground());
@@ -414,10 +393,7 @@ public abstract class Table extends JXTable {
 
     public static class ComboBoxRenderer extends JComboBox<String> implements TableCellRenderer {
 
-	private static final long serialVersionUID = -545496178928790522L;
-
 	public ComboBoxRenderer() {
-
         }
 
         public ComboBoxRenderer(String[] items) {
@@ -443,8 +419,6 @@ public abstract class Table extends JXTable {
     }
 
     public static class MyComboBoxEditor extends DefaultCellEditor {
-
-	private static final long serialVersionUID = 6097118754932234992L;
 
 	public MyComboBoxEditor(String[] items) {
             super(new JComboBox<>(items));

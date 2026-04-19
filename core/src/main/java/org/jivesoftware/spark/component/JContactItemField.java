@@ -48,8 +48,6 @@ import java.util.List;
  * @author Derek DeMoro
  */
 public class JContactItemField extends JPanel {
-
-    private static final long serialVersionUID = -8556694682789891531L;
     private final JTextField textField = new JTextField();
     private final DefaultListModel<ContactItem> model = new DefaultListModel<>();
     private final JList<ContactItem> list;
@@ -58,28 +56,21 @@ public class JContactItemField extends JPanel {
 
     public JContactItemField(List<ContactItem> items) {
         setLayout(new BorderLayout());
-        list = new JList<ContactItem>(model) {
-	    private static final long serialVersionUID = -9031169221430835595L;
-
-	    @Override
-		public String getToolTipText(MouseEvent e) {
+        list = new JList<>(model) {
+            @Override
+            public String getToolTipText(MouseEvent e) {
                 int row = locationToIndex(e.getPoint());
-                if (row >= 0)
-                {
+                if (row >= 0) {
                     final ContactItem item = getModel().getElementAt(row);
                     if (item != null) {
                         return item.getJid().toString();
-                }
+                    }
                 }
                 return null;
             }
         };
-
         this.items = items;
-
         add(textField, BorderLayout.CENTER);
-
-
         textField.addKeyListener(new KeyAdapter() {
             @Override
 			public void keyReleased(KeyEvent keyEvent) {
@@ -87,7 +78,6 @@ public class JContactItemField extends JPanel {
                 if (validateChar(ch)) {
                     showPopupMenu();
                 }
-
                 if (keyEvent.getKeyCode() == KeyEvent.VK_ENTER) {
                     int index = list.getSelectedIndex();
                     if (index >= 0) {
@@ -96,7 +86,6 @@ public class JContactItemField extends JPanel {
                         popup.setVisible(false);
                     }
                 }
-
                 if (keyEvent.getKeyCode() == KeyEvent.VK_ESCAPE) {
                     popup.setVisible(false);
                 }
@@ -108,7 +97,6 @@ public class JContactItemField extends JPanel {
                 if (isArrowKey(e)) {
                     list.dispatchEvent(e);
                 }
-
             }
         });
 
@@ -124,13 +112,9 @@ public class JContactItemField extends JPanel {
             }
         });
 
-
         popup = new JWindow();
-
-
         popup.getContentPane().add(new JScrollPane(list));
         popup.setAlwaysOnTop(true);
-
 
         list.setCellRenderer(new PopupRenderer());
         list.addMouseListener(new MouseAdapter() {
@@ -176,13 +160,13 @@ public class JContactItemField extends JPanel {
         }
 
 
-        if (validItems.size() > 0) {
+        if (!validItems.isEmpty()) {
             for (final ContactItem label : validItems) {
                 model.addElement(label);
             }
         }
 
-        if (validItems.size() != 0) {
+        if (!validItems.isEmpty()) {
             popup.pack();
             if(validItems.size()*16<=SparkManager.getContactList().getHeight()-SparkManager.getSearchManager().getSearchServiceUI().getHeight()-14){
             	popup.setSize(textField.getWidth(), validItems.size()*16+5);
@@ -197,7 +181,7 @@ public class JContactItemField extends JPanel {
         }
 
         // set initial selection
-        if (validItems.size() > 0) {
+        if (!validItems.isEmpty()) {
             list.setSelectedIndex(0);
         }
 
@@ -214,7 +198,6 @@ public class JContactItemField extends JPanel {
         if (!ModelUtil.hasLength(text)) {
             return false;
         }
-
         for (int i = 0; i < text.length(); i++) {
             char ch = text.charAt(i);
             if (!Character.isLetterOrDigit(ch) && ch != '@' && ch != '-' && ch != '_'
@@ -222,8 +205,6 @@ public class JContactItemField extends JPanel {
                 return false;
             }
         }
-
-
         return true;
     }
 
@@ -269,11 +250,6 @@ public class JContactItemField extends JPanel {
     }
 
     static class PopupRenderer extends JLabel implements ListCellRenderer<Object> {
-	private static final long serialVersionUID = 239608430590852355L;
-
-	/**
-         * Construct Default JLabelIconRenderer.
-         */
         public PopupRenderer() {
             setOpaque(true);
             this.setHorizontalTextPosition(JLabel.RIGHT);
@@ -294,8 +270,6 @@ public class JContactItemField extends JPanel {
                 setBackground(list.getBackground());
                 setForeground(list.getForeground());
             }
-
-
             ContactItem contactItem = (ContactItem)value;
             setText(contactItem.getDisplayName());
             if (contactItem.getIcon() == null) {
@@ -306,7 +280,6 @@ public class JContactItemField extends JPanel {
             }
             setFont(contactItem.getNicknameLabel().getFont());
             setForeground(contactItem.getForeground());
-
             return this;
         }
     }
@@ -323,6 +296,4 @@ public class JContactItemField extends JPanel {
     {	
 	list.setSelectedIndex(list.locationToIndex(mouseevent.getPoint()));
     }
-
-
 }

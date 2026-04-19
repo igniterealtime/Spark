@@ -28,8 +28,6 @@ import javax.swing.Icon;
 import javax.swing.JButton;
 
 public class RosterMemberCallButton extends JButton implements MouseListener {
-
-    private static final long serialVersionUID = 8056708231977922612L;
     private final Icon normalIcon;
     private final Icon hoverIcon;
     private final Icon downIcon;

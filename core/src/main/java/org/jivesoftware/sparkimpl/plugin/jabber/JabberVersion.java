@@ -57,12 +57,10 @@ public class JabberVersion implements Plugin {
             JiveInfo.getVersion(),
             JiveInfo.getOS()
         );
-
         // Create IQ Filter
         StanzaFilter packetFilter = new StanzaTypeFilter(IQ.class);
         SparkManager.getConnection().addAsyncStanzaListener( stanza -> {
             IQ iq = (IQ)stanza;
-
             try
             {
                 if (iq instanceof Time && iq.getType() == IQ.Type.get) {
@@ -91,15 +89,12 @@ public class JabberVersion implements Plugin {
                 if (!(component instanceof ContactItem)) {
                     return;
                 }
-
                 ContactItem contactItem = (ContactItem)component;
                 if(contactItem.getPresence() == null){
                     return;
                 }
 
                 Action versionRequest = new AbstractAction() {
-					private static final long serialVersionUID = -5619737417315441711L;
-
 					@Override
 					public void actionPerformed(ActionEvent e) {
                         viewClient();
@@ -116,17 +111,12 @@ public class JabberVersion implements Plugin {
             }
         });
 
-
         contactList.getActionMap().put("viewClient", new AbstractAction("viewClient") {
-			private static final long serialVersionUID = 8282301357403753561L;
-
 			@Override
 			public void actionPerformed(ActionEvent evt) {
                 viewClient();
             }
         });
-
-
     }
 
     private void viewClient() {
@@ -167,7 +157,6 @@ public class JabberVersion implements Plugin {
 
     @Override
 	public void shutdown() {
-
     }
 
     @Override
@@ -177,6 +166,5 @@ public class JabberVersion implements Plugin {
 
     @Override
 	public void uninstall() {
-        // Do nothing.
     }
 }

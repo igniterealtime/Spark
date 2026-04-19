@@ -27,7 +27,7 @@ import org.jivesoftware.spark.SparkManager;
 import com.apple.eawt.Application;
 
 /**
- * @author Wolf.Posdorfer
+ * @author Wolf Posdorfer
  */
 public class AppleDock implements ActionListener {
 

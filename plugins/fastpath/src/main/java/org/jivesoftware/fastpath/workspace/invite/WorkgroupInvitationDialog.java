@@ -215,7 +215,7 @@ public class WorkgroupInvitationDialog implements PropertyChangeListener {
             Log.error(e);
             workgroupAgents = Collections.EMPTY_LIST;
         }
-        if (workgroupAgents.size() > 0) {
+        if (!workgroupAgents.isEmpty()) {
             // Add workgroups to combobox
             for (String workgroup : workgroupAgents) {
                 String workgroupName = XmppStringUtils.parseLocalpart(workgroup);
@@ -311,6 +311,7 @@ public class WorkgroupInvitationDialog implements PropertyChangeListener {
     }
 
 
+    @Override
     public void propertyChange(PropertyChangeEvent e) {
         String value = (String)pane.getValue();
         if (FpRes.getString("cancel").equals(value)) {

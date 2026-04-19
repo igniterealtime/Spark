@@ -185,9 +185,8 @@ public class WorkgroupManager {
         formUI.setBackground(Color.white);
 
         final JPanel titlePane = new LiveTitlePane("Contact Workgroup", FastpathRes.getImageIcon(FastpathRes.FASTPATH_IMAGE_24x24)) {
-			private static final long serialVersionUID = -4484940286068835770L;
-
-			public Dimension getPreferredSize() {
+			@Override
+            public Dimension getPreferredSize() {
                 final Dimension size = super.getPreferredSize();
                 size.width = 400;
                 return size;
@@ -261,10 +260,7 @@ public class WorkgroupManager {
 
     private void enterQueue(EntityBareJid workgroupJID, FillableForm form) {
         Localpart workgroupName = workgroupJID.getLocalpart();
-
         final JDialog workgroupDialog = new JDialog(SparkManager.getMainWindow(), workgroupName + " Workgroup");
-
-
         final Workgroup workgroup = new Workgroup(workgroupJID, SparkManager.getConnection());
         try {
             workgroup.joinQueue(form);
@@ -274,9 +270,8 @@ public class WorkgroupManager {
         }
 
         final JPanel titlePane = new LiveTitlePane("Waiting in Queue", FastpathRes.getImageIcon(FastpathRes.FASTPATH_IMAGE_24x24)) {
-			private static final long serialVersionUID = -7370226759188539384L;
-
-			public Dimension getPreferredSize() {
+			@Override
+            public Dimension getPreferredSize() {
                 final Dimension size = super.getPreferredSize();
                 size.width = 400;
                 return size;
@@ -321,6 +316,7 @@ public class WorkgroupManager {
         workgroupDialog.setVisible(true);
 
         workgroupDialog.addWindowListener(new WindowAdapter() {
+            @Override
             public void windowClosing(WindowEvent e) {
                 if (workgroup.isInQueue()) {
                     try {
@@ -334,6 +330,7 @@ public class WorkgroupManager {
         });
 
         SwingWorker worker = new SwingWorker() {
+            @Override
             public Object construct() {
                 while (true) {
                     if (workgroup.isInQueue()) {
@@ -354,6 +351,7 @@ public class WorkgroupManager {
                 }
             }
 
+            @Override
             public void finished() {
                 workgroupDialog.setVisible(false);
 

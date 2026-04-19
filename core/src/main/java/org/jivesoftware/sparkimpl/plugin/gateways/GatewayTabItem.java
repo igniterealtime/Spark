@@ -34,13 +34,6 @@ import org.jivesoftware.sparkimpl.plugin.gateways.transports.Transport;
 import org.jivesoftware.sparkimpl.plugin.gateways.transports.TransportUtils;
 
 public class GatewayTabItem extends CollapsiblePane implements GatewayItem {
-
-    /**
-     */
-    private static final long serialVersionUID = 5589644402913737488L;
-    /**
-     */
-
     private boolean signedIn;
 
     private final Transport _transport;
@@ -132,14 +125,12 @@ public class GatewayTabItem extends CollapsiblePane implements GatewayItem {
     };
 
 	TaskEngine.getInstance().submit(registerThread);
-
     }
 
     private void createTransportMenu() {
 
 	_signInOut.addActionListener( e -> {
     if (signedIn) {
-
         final Presence offlinePresence = StanzaBuilder.buildPresence()
             .ofType(Presence.Type.unavailable)
             .build();
@@ -200,7 +191,6 @@ public class GatewayTabItem extends CollapsiblePane implements GatewayItem {
         UIManager.put("OptionPane.cancelButtonText", Res.getString("cancel"));
     if (TransportUtils.isRegistered(SparkManager.getConnection(),
         _transport)) {
-
         int confirm = JOptionPane.showConfirmDialog(SparkManager
             .getMainWindow(), Res.getString(
             "message.disable.transport", _transport.getName()),
@@ -225,17 +215,13 @@ public class GatewayTabItem extends CollapsiblePane implements GatewayItem {
         // Set user as offline while he fills in the login
         // information
         setOffline();
-
         ActionListener al = e1 -> {
             // If user canceled the register window, he is sill
             // not registrated
             setNotRegistered();
         };
-
         registrationDialog.addCancelActionListener(al);
-
     }
-
     } );
 	
 	_autoJoinButton.setText(Res.getString("menuitem.sign.in.at.login"));
@@ -254,13 +240,8 @@ public class GatewayTabItem extends CollapsiblePane implements GatewayItem {
 	_listPanel.add(_autoJoinButton, new GridBagConstraints(2, 1, 1, 1, 0.9, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 0, 0), 0, 0));
 	_listPanel.add(_registerButton, new GridBagConstraints(2, 2, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 0, 0), 0, 0));
 	
-
-	
-	
 	//_listPanel.add(_autoJoin);
 	//_listPanel.add(_registerButton);
-	
-
     }
 
     // Set GUI when user is not registered
@@ -304,7 +285,6 @@ public class GatewayTabItem extends CollapsiblePane implements GatewayItem {
     // Change gui if transport signed on or off
     @Override
 	public void signedIn(final boolean signedIn) {
-
 	if (!signedIn) {
 	    getTitlePane().setIcon(_transport.getInactiveIcon());
 	    _status.setText(Res.getString("offline"));
@@ -330,5 +310,4 @@ public class GatewayTabItem extends CollapsiblePane implements GatewayItem {
 	public boolean isLoggedIn() {
 	return signedIn;
     }
-
 }

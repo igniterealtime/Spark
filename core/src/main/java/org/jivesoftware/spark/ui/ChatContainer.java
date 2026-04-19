@@ -121,13 +121,11 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
 
             @Override
             public void allTabsRemoved() {
-
                 if (chatFrame != null) {
                     chatFrame.setTitle("");
                     chatFrame.setVisible(false);
                     chatFrame = null;
                 }
-
             }
 
             @Override

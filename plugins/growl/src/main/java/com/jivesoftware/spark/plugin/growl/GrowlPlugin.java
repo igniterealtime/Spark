@@ -23,13 +23,14 @@ import org.jivesoftware.spark.plugin.Plugin;
  * at http://growl.info
  *
  *
- * @author Wolf.Posdorfer
+ * @author Wolf Posdorfer
  */
 public class GrowlPlugin implements Plugin
 {
     private GrowlMessageListener growlListener;
     private GrowlTalker growlTalker;
 
+    @Override
     public synchronized void initialize()
     {
         growlTalker = new GrowlTalker();
@@ -38,17 +39,20 @@ public class GrowlPlugin implements Plugin
         SparkManager.getChatManager().addGlobalMessageListener( growlListener );
     }
 
+    @Override
     public synchronized void shutdown()
     {
         SparkManager.getChatManager().removeGlobalMessageListener( growlListener );
         growlTalker.destroy();
     }
 
+    @Override
     public boolean canShutDown()
     {
         return true;
     }
 
+    @Override
     public synchronized void uninstall()
     {
         shutdown();

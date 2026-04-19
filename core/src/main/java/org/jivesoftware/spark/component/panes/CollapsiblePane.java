@@ -32,11 +32,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  *
  * @author Derek DeMoro
  */
-/**
- */
 public class CollapsiblePane extends JPanel {
-
-	private static final long serialVersionUID = -6770924580102536726L;
 	private BaseCollapsibleTitlePane titlePane;
     private final JPanel mainPanel;
 

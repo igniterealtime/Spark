@@ -37,7 +37,6 @@ import org.jivesoftware.spark.component.WrappedLabel;
 import org.jivesoftware.spark.util.ModelUtil;
 
 public class UserHistoryItem extends JPanel {
-	private static final long serialVersionUID = -2251709231519173523L;
 	private final WrappedLabel agentsLabel = new WrappedLabel();
     private final JLabel startTimeLabel = new JLabel();
     private final JLabel durationLabel = new JLabel();
@@ -48,7 +47,6 @@ public class UserHistoryItem extends JPanel {
         setBackground(Color.white);
         setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.LIGHT_GRAY));
         setLayout(new GridBagLayout());
-
 
         final JLabel conLabel = new JLabel();
         conLabel.setText(FpRes.getString("duration") + ":");
@@ -88,8 +86,6 @@ public class UserHistoryItem extends JPanel {
         }
 
         agentsLabel.setText(buf.toString());
-
-
     }
 
 
@@ -107,6 +103,7 @@ public class UserHistoryItem extends JPanel {
      *
      * @return the preferred dimension
      */
+    @Override
     public Dimension getPreferredSize() {
         final Dimension size = super.getPreferredSize();
         size.width = 0;

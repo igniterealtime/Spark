@@ -73,7 +73,7 @@ public class ChatTranscript {
      * @return the messages that included search keywords.
      */
     public List<HistoryMessage> getMessage(String text) {
-        if (text == null || "".equals(text)) {
+        if (text == null || text.isEmpty()) {
             return messages;
         } else {
             List<HistoryMessage> searchResult = new ArrayList<>();

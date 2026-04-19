@@ -66,8 +66,6 @@ import org.jivesoftware.sparkplugin.ui.transfer.TransferManager;
  * @author Derek DeMoro
  */
 public class NonRosterPanel extends PhonePanel {
-
-	private static final long	serialVersionUID	= -1826003278845440442L;
 	private JLabel connectedLabel;
     private String phoneNumber;
 
@@ -143,9 +141,6 @@ public class NonRosterPanel extends PhonePanel {
     private JPanel buildMiddlePanel() {
         // Add Control Panel
         final JPanel mainPanel = new JPanel(new GridBagLayout()) {
-
-			private static final long	serialVersionUID	= 1571929852761037052L;
-
 				public Dimension getPreferredSize() {
                 final Dimension dim = super.getPreferredSize();
                 dim.height = 100;

@@ -313,7 +313,6 @@ public class JavaMixer {
     }
 
     public class MixerNode extends DefaultMutableTreeNode {
-        private static final long serialVersionUID = -987278469391244202L;
         private final Mixer mixer;
 
         public MixerNode(Mixer mixer) {
@@ -328,8 +327,6 @@ public class JavaMixer {
     }
 
     public class PortNode extends DefaultMutableTreeNode {
-
-        private static final long serialVersionUID = -7774055649714159518L;
         private final Line port;
 
         public PortNode(Line port) {
@@ -344,8 +341,6 @@ public class JavaMixer {
     }
 
     public class ControlNode extends DefaultMutableTreeNode {
-
-        private static final long serialVersionUID = 2014062750235264630L;
         private final Control control;
         private final Component component;
 
@@ -401,7 +396,6 @@ public class JavaMixer {
     }
 
     public class BooleanControlButtonModel extends DefaultButtonModel {
-        private static final long serialVersionUID = -4667054823378068382L;
         private final BooleanControl control;
 
         public BooleanControlButtonModel(BooleanControl control) {
@@ -421,7 +415,6 @@ public class JavaMixer {
     }
 
     public class FloatControlBoundedRangeModel extends DefaultBoundedRangeModel {
-        private static final long serialVersionUID = 4469386606588434901L;
         private final FloatControl control;
         private final float factor;
 

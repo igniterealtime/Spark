@@ -64,8 +64,6 @@ public class FrequentContactsPlugin implements Plugin {
         contacts.setCellRenderer(new InternalRenderer());
 
         window = new Window(SparkManager.getMainWindow());
-
-
         final JPanel mainPanel = new JPanel(new BorderLayout());
         final JLabel titleLabel = new JLabel(Res.getString("label.frequent.contacts"));
         titleLabel.setFont(new Font("Dialog", Font.BOLD, 11));
@@ -75,7 +73,6 @@ public class FrequentContactsPlugin implements Plugin {
         mainPanel.setBorder(BorderFactory.createLineBorder(Color.gray));
 
         window.add(mainPanel);
-
         // Add Listeners
 	contacts.addMouseListener(new MouseAdapter() {
 	    @Override
@@ -128,7 +125,6 @@ public class FrequentContactsPlugin implements Plugin {
         contacts.addFocusListener(new FocusListener() {
             @Override
 			public void focusGained(FocusEvent e) {
-
             }
 
             @Override
@@ -141,16 +137,12 @@ public class FrequentContactsPlugin implements Plugin {
         SparkManager.getMainWindow().getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_T, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()), "favoritePeople");
         SparkManager.getMainWindow().getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_T, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()), "favoritePeople");
         SparkManager.getMainWindow().getRootPane().getActionMap().put("favoritePeople", new AbstractAction("favoritePeople") {
-			private static final long serialVersionUID = 6836584242669218932L;
-
 			@Override
 			public void actionPerformed(ActionEvent e) {
                 // Show History Popup
                 showPopup();
             }
         });
-
-
     }
 
 
@@ -179,15 +171,11 @@ public class FrequentContactsPlugin implements Plugin {
             }
         }
 
-
         window.setSize(200, 200);
         GraphicUtils.centerWindowOnComponent(window, SparkManager.getMainWindow());
-
-
-        if (model.size() > 0) {
+        if (!model.isEmpty()) {
             contacts.setSelectedIndex(0);
         }
-
         window.setVisible(true);
     }
 
@@ -221,14 +209,11 @@ public class FrequentContactsPlugin implements Plugin {
 
             jidList.add(jid);
         }
-
         return jidList;
     }
 
-
     @Override
 	public void shutdown() {
-
     }
 
     @Override
@@ -244,11 +229,6 @@ public class FrequentContactsPlugin implements Plugin {
      * Internal handling of a JLabel Renderer.
      */
     public static class InternalRenderer extends JLabel implements ListCellRenderer<Object> {
-		private static final long serialVersionUID = -2925096995694392323L;
-
-		/**
-         * Construct Default Renderer.
-         */
         public InternalRenderer() {
             setOpaque(true);
         }

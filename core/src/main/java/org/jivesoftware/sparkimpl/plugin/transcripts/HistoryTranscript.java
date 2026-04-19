@@ -87,7 +87,6 @@ public class HistoryTranscript extends SwingWorker {
     private List<ChatTranscript> searchFilteredList = new ArrayList<>();
     private List<ChatTranscript> dateFilteredUnfilteredList = new ArrayList<>();
     private final AtomicBoolean isHistoryLoaded = new AtomicBoolean(false);
-    private final String SEPARATOR = System.getProperty("line.separator");
     private final DefaultHighlighter.DefaultHighlightPainter highlighter = new DefaultHighlighter.DefaultHighlightPainter(Color.YELLOW);
     private boolean focusFlag = false;
     private String searchQuery = Res.getString("message.search.for.history");
@@ -281,7 +280,7 @@ public class HistoryTranscript extends SwingWorker {
     private synchronized void display() {
         try {
             token.acquire();
-            if ((searchFilteredList.size() > 0) && (pageIndex <= searchFilteredList.size())) {
+            if ((!searchFilteredList.isEmpty()) && (pageIndex <= searchFilteredList.size())) {
                 builder.append("<html><body><table cellpadding=0 cellspacing=0>");
                 builder.append(buildString(searchFilteredList.get(pageIndex - 1).getMessages()));
             } else {
@@ -300,7 +299,7 @@ public class HistoryTranscript extends SwingWorker {
                 String text = searchQuery;
                 Document doc = window.getDocument();
                 String line;
-                if (text.length() > 0 && focusFlag) {
+                if (!text.isEmpty() && focusFlag) {
                     String str = doc.getText(1, doc.getLength());
                     BufferedReader buf = new BufferedReader(new StringReader(str));
                     int globalPos = 1;
@@ -326,7 +325,7 @@ public class HistoryTranscript extends SwingWorker {
             }
 
             builder.replace(0, builder.length(), "");
-            if (window.getText().length() > 0) {
+            if (!window.getText().isEmpty()) {
                 window.setCaretPosition(0);
             }
             pageCounter.setText(pageIndex + " / " + maxPages);
@@ -454,7 +453,7 @@ public class HistoryTranscript extends SwingWorker {
                         history.setList(sortedTranscript.getMessages());
 
                         // add the messages to the list
-                        if (history.getMessages().size() > 0) {
+                        if (!history.getMessages().isEmpty()) {
                             tmpList.add(history);
                         }
 
@@ -471,7 +470,7 @@ public class HistoryTranscript extends SwingWorker {
                 if (!handled) {
                     history = new ChatTranscript();
                     history.setList(sortedTranscript.getMessages());
-                    if (history.getMessages().size() > 0) {
+                    if (!history.getMessages().isEmpty()) {
                         tmpList.add(history);
                     }
                 }
@@ -501,7 +500,7 @@ public class HistoryTranscript extends SwingWorker {
             // if we searching for a string or not
             if (Res.getString("message.search.for.history").equals(
                     searchField.getText())
-                    || searchField.getText().equals("")) {
+                    || searchField.getText().isEmpty()) {
                 searchString = null;
             }
 
@@ -519,7 +518,7 @@ public class HistoryTranscript extends SwingWorker {
             try {
                 token.acquire();
                 searchFilteredList = tmpList;
-                pageIndex = (searchFilteredList.size() > 0) ? 1 : 0;
+                pageIndex = (!searchFilteredList.isEmpty()) ? 1 : 0;
                 maxPages = searchFilteredList.size();
                 token.release();
             } catch (InterruptedException e) {
@@ -534,7 +533,6 @@ public class HistoryTranscript extends SwingWorker {
      * Check if the given String represents a valid period
      *
      * @param p the period, that have to be checked
-     * @return true if valid, false if invalid
      */
     private int getPeriodIndex(String p) {
         int result = 0;
@@ -641,7 +639,7 @@ public class HistoryTranscript extends SwingWorker {
                                         }
                                         try {
                                             //if the view contains line break char return forced break
-                                            if (getDocument().getText(p0, p1 - p0).contains(SEPARATOR)) {
+                                            if (getDocument().getText(p0, p1 - p0).contains(System.lineSeparator())) {
                                                 return View.ForcedBreakWeight;
                                             }
                                         } catch (BadLocationException ex) {
@@ -659,7 +657,7 @@ public class HistoryTranscript extends SwingWorker {
                                         int p1 = getGlyphPainter().getBoundedPosition(this, p0, pos, len);
                                         try {
                                             //if the view contains line break char break the view
-                                            int index = getDocument().getText(p0, p1 - p0).indexOf(SEPARATOR);
+                                            int index = getDocument().getText(p0, p1 - p0).indexOf(System.lineSeparator());
                                             if (index >= 0) {
                                                 return createFragment(p0, p0 + index + 1);
                                             }

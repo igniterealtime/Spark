@@ -91,8 +91,6 @@ import org.jxmpp.jid.parts.Localpart;
  * <li>Retrieve the ContactList.
  */
 public class Workspace extends JPanel implements StanzaListener {
-
-	private static final long serialVersionUID = 7076407890063933765L;
 	private final SparkTabbedPane workspacePane;
     private final StatusBar statusBox;
 

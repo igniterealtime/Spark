@@ -68,6 +68,7 @@ public class SpellcheckerPreference implements Preference {
 	return preferences;
     }
 
+    @Override
     public void commit() {
 	preferences.setAutoSpellCheckerEnabled(dialog
 		.isAutoSpellCheckingEnabled());
@@ -79,43 +80,53 @@ public class SpellcheckerPreference implements Preference {
 	preferences.save();
     }
 
+    @Override
     public Object getData() {
 	return preferences;
     }
 
+    @Override
     public String getErrorMessage() {
 	return null;
     }
 
+    @Override
     public JComponent getGUI() {
 	return dialog;
     }
 
+    @Override
     public Icon getIcon() {
 	ClassLoader cl = getClass().getClassLoader();
 	return new ImageIcon(cl.getResource("text_ok.png"));
     }
 
+    @Override
     public String getListName() {
 	return SpellcheckerResource.getString("title.spellchecker");
     }
 
+    @Override
     public String getNamespace() {
 	return NAMESPACE;
     }
 
+    @Override
     public String getTitle() {
 	return SpellcheckerResource.getString("title.spellchecker");
     }
 
+    @Override
     public String getTooltip() {
 	return SpellcheckerResource.getString("title.spellchecker");
     }
 
+    @Override
     public boolean isDataValid() {
 	return true;
     }
 
+    @Override
     public void load() {
 	dialog.setAutoSpellCheckingEnabled(preferences
 		.isAutoSpellCheckerEnabled());
@@ -125,6 +136,7 @@ public class SpellcheckerPreference implements Preference {
 	dialog.setIgnoreUppercase(preferences.getIgnoreUppercase());
     }
 
+    @Override
     public void shutdown() {
 
     }

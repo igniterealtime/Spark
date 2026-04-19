@@ -51,7 +51,6 @@ import javax.swing.JTextField;
  * of an answer form to send back the the server.
  */
 public class WorkgroupDataForm extends JPanel {
-	private static final long serialVersionUID = -2368907321868842234L;
 	private final Map<String, JComponent> valueMap = new HashMap<>();
     private int row = 5;
     private final Form searchForm;
@@ -102,7 +101,7 @@ public class WorkgroupDataForm extends JPanel {
             }
             else if (type.equals(FormField.Type.text_single) || type.equals(FormField.Type.jid_single)) {
                 String v = "";
-                if (valueList.size() > 0) {
+                if (!valueList.isEmpty()) {
                     v = valueList.get(0).toString();
                 }
                 addField(label, new JTextField(v), variable);
@@ -127,7 +126,7 @@ public class WorkgroupDataForm extends JPanel {
                 for ( final FormField.Option option : listSingleFormField.getOptions() ) {
                     box.addItem(option);
                 }
-                if (valueList.size() > 0) {
+                if (!valueList.isEmpty()) {
                     String defaultValue = (String)valueList.get(0);
                     box.setSelectedItem(defaultValue);
                 }
@@ -167,7 +166,7 @@ public class WorkgroupDataForm extends JPanel {
                 while (tokenizer.hasMoreTokens()) {
                     list.add(tokenizer.nextToken());
                 }
-                if (list.size() > 0) {
+                if (!list.isEmpty()) {
                     answerForm.setAnswer(answer, list);
                 }
             }
@@ -183,20 +182,19 @@ public class WorkgroupDataForm extends JPanel {
 
                 List<String> list = new ArrayList<>();
                 list.add(value);
-                if (list.size() > 0) {
+                if (!list.isEmpty()) {
                     answerForm.setAnswer(answer, list);
                 }
             }
             else if (o instanceof CheckBoxList) {
                 List<? extends CharSequence> list = ((CheckBoxList) o).getSelectedValues();
-                if (list.size() > 0) {
+                if (!list.isEmpty()) {
                     answerForm.setAnswer(answer, list);
                 }
             }
         }
 
-        for (Object o : presetVariables.keySet()) {
-            String variable = (String) o;
+        for (String variable : presetVariables.keySet()) {
             String value = presetVariables.get(variable);
             answerForm.setAnswer(variable, value);
         }
@@ -226,6 +224,7 @@ public class WorkgroupDataForm extends JPanel {
         row++;
 
         comp.addKeyListener(new KeyAdapter() {
+            @Override
             public void keyPressed(KeyEvent e) {
                 if(e.getKeyChar() == KeyEvent.VK_ENTER){
                     if(listener != null){

@@ -28,14 +28,9 @@ import javax.swing.Icon;
 import javax.swing.JLabel;
 
 public class LiveTitlePane extends BackgroundPane {
-
-	private static final long serialVersionUID = 1L;
-
 	public LiveTitlePane(String title, Icon icon) {
         setLayout(new GridBagLayout());
         setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.LIGHT_GRAY));
-
-
         JLabel userImage = new JLabel(icon);
         userImage.setHorizontalAlignment(JLabel.LEFT);
         userImage.setText(title);

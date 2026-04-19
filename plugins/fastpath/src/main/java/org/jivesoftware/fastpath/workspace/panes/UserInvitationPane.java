@@ -166,6 +166,7 @@ public class UserInvitationPane {
         metadata = offer.getMetaData();
 
         infoButton.addMouseListener(new MouseAdapter() {
+            @Override
             public void mouseClicked(MouseEvent e) {
                 RoomInformation roomInformation = new RoomInformation();
                 if (metadata != null) {
@@ -177,6 +178,7 @@ public class UserInvitationPane {
 
         acceptButton.addActionListener(actionEvent -> {
             final TimerTask loadRoomTask = new SwingTimerTask() {
+                @Override
                 public void doRun() {
                     try
                     {
@@ -203,6 +205,7 @@ public class UserInvitationPane {
         progressBar.setValue(seconds);
 
         SwingWorker worker = new SwingWorker() {
+            @Override
             public Object construct() {
                 while (true) {
                     Date now = new Date();
@@ -308,7 +311,7 @@ public class UserInvitationPane {
                     list.add(jid);
                 }
             }
-            if (list.size() > 0) {
+            if (!list.isEmpty()) {
                 try {
                     FillableForm form = muc.getConfigurationForm().getFillableForm();
                     List<String> jidStrings = JidUtil.toStringList(list);

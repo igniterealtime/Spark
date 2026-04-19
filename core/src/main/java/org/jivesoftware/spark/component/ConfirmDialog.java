@@ -37,7 +37,6 @@ import java.awt.event.WindowEvent;
  * @author Derek DeMoro
  */
 public class ConfirmDialog extends BackgroundPanel {
-    private static final long serialVersionUID = -441250586899776207L;
     private final JLabel message;
     private final JLabel iconLabel;
     private final JButton yesButton;
@@ -69,10 +68,7 @@ public class ConfirmDialog extends BackgroundPanel {
             }
             dialog.dispose();
         } );
-
         noButton.addActionListener( actionEvent -> dialog.dispose() );
-
-
     }
 
     /**

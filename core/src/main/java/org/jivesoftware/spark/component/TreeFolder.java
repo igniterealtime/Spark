@@ -23,7 +23,6 @@ import java.util.Iterator;
 import java.util.Set;
 
 public class TreeFolder implements Serializable {
-    private static final long serialVersionUID = 2692119297116147123L;
     private final Set<TreeFolder> subFolders = new HashSet<>();
     private final Set<TreeItem> paletteItems = new HashSet<>();
     private String displayName;
@@ -65,41 +64,33 @@ public class TreeFolder implements Serializable {
         return paletteItems.iterator();
     }
 
-
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
     }
-
 
     public String getDisplayName() {
         return displayName;
     }
 
-
     public void setDescription(String description) {
         this.description = description;
     }
-
 
     public String getDescription() {
         return description;
     }
 
-
     public void setIcon(String icon) {
         this.icon = icon;
     }
-
 
     public String getIcon() {
         return icon;
     }
 
-
     public void setListener(ContextMenuListener listener) {
         this.listener = listener;
     }
-
 
     public ContextMenuListener getListener() {
         return listener;

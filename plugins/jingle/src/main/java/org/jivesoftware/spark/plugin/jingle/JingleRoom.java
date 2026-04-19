@@ -53,8 +53,6 @@ import org.jivesoftware.spark.util.log.Log;
  * @author Derek DeMoro
  */
 public class JingleRoom extends JPanel {
-
-    private static final long serialVersionUID = 2910998210426650565L;
     private static final String CONNECTED = "Connected";
     protected final Color greenColor = new Color(91, 175, 41);
     protected final Color orangeColor = new Color(229, 139, 11);

@@ -28,15 +28,10 @@ import java.awt.Component;
  * A swing renderer used to display labels within a table.
  */
 public class PluginRenderer extends JLabel implements TableCellRenderer {
-
-    private static final long serialVersionUID = -4013718080014723319L;
     private Border unselectedBorder;
     private Border selectedBorder;
     private final boolean isBordered = true;
 
-    /**
-     * PluginRenderer
-     */
     public PluginRenderer() {
         setOpaque(true);
     }
@@ -46,7 +41,6 @@ public class PluginRenderer extends JLabel implements TableCellRenderer {
 
         final Icon icon = SparkRes.getImageIcon(SparkRes.Icon.PLUGIN_IMAGE);
         setIcon(icon);
-
         if (isSelected) {
             setForeground(table.getSelectionForeground());
             setBackground(table.getSelectionBackground());

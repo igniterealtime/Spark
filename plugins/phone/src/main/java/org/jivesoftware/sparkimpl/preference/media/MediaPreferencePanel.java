@@ -43,7 +43,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.Vector;
 
 public class MediaPreferencePanel extends JPanel {
-    private static final long serialVersionUID = 8297469864676223072L;
 //    private Vector<CaptureDeviceInfo2> vectorAudioDevices;
     private Vector<CaptureDeviceInfo> vectorVideoDevices;
 //    private final Vector<AudioSystem> vectorAudioSystem = new Vector<>();

@@ -47,8 +47,6 @@ import java.util.Map;
  * @version 1.0, 03/12/14
  */
 public abstract class JiveSortableTable extends Table {
-    private static final long serialVersionUID = 1862216857622703383L;
-
     private Table.JiveTableModel tableModel;
 
     /**
@@ -185,14 +183,11 @@ public abstract class JiveSortableTable extends Table {
         if (selectedRow < 0) {
             return null;
         }
-
         int columnCount = getColumnCount();
-
         Object[] obj = new Object[columnCount];
         for (int j = 0; j < columnCount; j++) {
             obj[j] = tableModel.getValueAt(selectedRow, j);
         }
-
         return obj;
     }
 
@@ -211,7 +206,6 @@ public abstract class JiveSortableTable extends Table {
      * The internal Table Model.
      */
     public static class JiveTableModel extends DefaultTableModel {
-	private static final long serialVersionUID = -8112392992589859403L;
 	private final boolean isEditable;
 
         /**
@@ -244,7 +238,6 @@ public abstract class JiveSortableTable extends Table {
      * A swing renderer used to display labels within a table.
      */
     public static class JLabelRenderer extends JLabel implements TableCellRenderer {
-        private static final long serialVersionUID = 8670248883432881619L;
         private Border unselectedBorder;
         private Border selectedBorder;
         final boolean isBordered;
@@ -301,8 +294,6 @@ public abstract class JiveSortableTable extends Table {
      * A swing renderer to dispaly Textareas within a table.
      */
     public static class TextAreaCellRenderer extends JTextArea implements TableCellRenderer {
-        private static final long serialVersionUID = -1704445909682732833L;
-
 	/**
          * Create new renderer with font.
          *
@@ -332,14 +323,10 @@ public abstract class JiveSortableTable extends Table {
      * A swing renderer used to display Buttons within a table.
      */
     public static class JButtonRenderer extends JButton implements TableCellRenderer {
-        private static final long serialVersionUID = -1847536957519732935L;
         private Border unselectedBorder;
         private Border selectedBorder;
         final boolean isBordered = true;
 
-        /**
-         * Empty Constructor.
-         */
         public JButtonRenderer() {
         }
 
@@ -382,8 +369,6 @@ public abstract class JiveSortableTable extends Table {
     }
 
     public static class ComboBoxRenderer extends JComboBox<String> implements TableCellRenderer {
-	private static final long serialVersionUID = 5892858463680797611L;
-
 	public ComboBoxRenderer() {
 
         }
@@ -411,7 +396,6 @@ public abstract class JiveSortableTable extends Table {
     }
 
     public static class MyComboBoxEditor extends DefaultCellEditor {
-	private static final long serialVersionUID = 1003726653998005772L;
 
 	public MyComboBoxEditor(String[] items) {
             super(new JComboBox<>(items));

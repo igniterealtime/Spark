@@ -61,7 +61,6 @@ import java.io.IOException;
  * UserSearchForm is used to do explicit searching of users using the JEP 55 Search Service.
  */
 public class UserSearchForm extends JPanel {
-    private static final long	serialVersionUID	= -9192188543673595941L;
     private JComboBox<String> servicesBox;
     private final UserSearchManager searchManager;
 
@@ -84,33 +83,20 @@ public class UserSearchForm extends JPanel {
      */
     public UserSearchForm(Collection<DomainBareJid> searchServices) {
         setLayout(new GridBagLayout());
-
         cardPanel.setLayout(cardLayout);
-
         this.searchServices = searchServices;
-
         searchManager = UserSearchManager.getInstanceFor(SparkManager.getConnection());
-
         addSearchServices();
-
         showService(getSearchService());
     }
 
-    
-    
-    
-    
-    
     private void addSearchServices() {
         // Populate with Search Services
         servicesBox = new JComboBox<>();
-    
         for (CharSequence searchService : searchServices) {
             String service = searchService.toString();
             servicesBox.addItem(service);
         }
-
-        
         // Load the property file and add the search services that are read
         final Properties props = new Properties();
         String nextprop;
@@ -140,7 +126,6 @@ public class UserSearchForm extends JPanel {
                 
                } 
            }
-
            if (servicesBox.getItemCount() > 0) {
                servicesBox.setSelectedIndex(0);
            }

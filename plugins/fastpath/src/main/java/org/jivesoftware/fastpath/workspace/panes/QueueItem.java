@@ -31,8 +31,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class QueueItem extends JPanel {
-
-	private static final long serialVersionUID = 1L;
 	private final JLabel queueNameLabel = new JLabel();
     private final JLabel numberInQueueLabel = new JLabel();
     private final JLabel averageWaitTimeLabel = new JLabel();
@@ -112,6 +110,7 @@ public class QueueItem extends JPanel {
      *
      * @return the preferred dimension
      */
+    @Override
     public Dimension getPreferredSize() {
         final Dimension size = super.getPreferredSize();
         size.width = 0;

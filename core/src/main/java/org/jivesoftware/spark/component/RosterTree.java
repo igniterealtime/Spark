@@ -41,8 +41,6 @@ import java.util.Map;
 
 
 public final class RosterTree extends JPanel {
-
-    private static final long serialVersionUID = 7892174130061826144L;
     private final JiveTreeNode rootNode = new JiveTreeNode("Contact List");
     private final Tree rosterTree;
     private final Map<JiveTreeNode,String> addressMap = new HashMap<>();
@@ -72,8 +70,7 @@ public final class RosterTree extends JPanel {
     }
 
     private void changePresence(String user, Presence presence){
-        for (Object o : addressMap.keySet()) {
-            final JiveTreeNode node = (JiveTreeNode) o;
+        for (JiveTreeNode node : addressMap.keySet()) {
             final String nodeUser = addressMap.get(node);
             if (user.startsWith(nodeUser)) {
                 if (!presence.isAvailable()) {
@@ -87,31 +84,24 @@ public final class RosterTree extends JPanel {
 
     private void buildFromRoster() {
         final Roster roster = SparkManager.getRoster();
-
         roster.addRosterListener(new RosterListener() {
             @Override
 			public void entriesAdded(Collection<Jid> addresses) {
-
             }
 
             @Override
 			public void entriesUpdated(Collection<Jid> addresses) {
-
             }
 
             @Override
 			public void entriesDeleted(Collection<Jid> addresses) {
-
             }
 
             @Override
 			public void presenceChanged(Presence presence) {
                 //changePresence(presence.getFrom(), presence.getMode() == Presence.Mode.available);
-
             }
         });
-
-
 
         for (RosterGroup group : roster.getGroups()) {
             final JiveTreeNode groupNode = new JiveTreeNode(group.getName(), true);
@@ -147,8 +137,6 @@ public final class RosterTree extends JPanel {
 
     /**
      * Returns the Tree representation of the Roster Tree.
-     *
-     * @return the tree representation of the Roster Tree.
      */
     public Tree getRosterTree() {
         return rosterTree;
@@ -156,9 +144,6 @@ public final class RosterTree extends JPanel {
 
     /**
      * Returns the selected agent node userobject.
-     *
-     * @param node the JiveTreeNode.
-     * @return the selected agent nodes userobject.
      */
     public String getJID(JiveTreeNode node) {
         return addressMap.get(node);

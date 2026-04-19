@@ -30,22 +30,13 @@ import java.awt.event.MouseEvent;
  * Used for silent reconnecting <br>
  * Displays a reconnection dialog as a ContactGroup at the Top
  * 
- * @author wolf.posdorfer
- * 
+ * @author Wolf Posdorfer
  */
 public class ReconnectPanelSmall extends ContactGroup implements
 	ConnectionListener {
-
-    private static final long serialVersionUID = 437696141257704105L;
     private final JButton _reconnectionlabel = new JButton(
 	    Res.getString("message.reconnect.attempting"));
 
-
-    /**
-     * creates a new Panel
-     * 
-     * @param groupName
-     */
     public ReconnectPanelSmall(String groupName) {
 	super(groupName);
 	this.add(_reconnectionlabel);
@@ -68,21 +59,4 @@ public class ReconnectPanelSmall extends ContactGroup implements
 	String s = "<HTML><BODY>" + text + "</BODY></HTML>";
 	_reconnectionlabel.setText(s);
     }
-
-	@Override
-	public void connected( XMPPConnection xmppConnection ) {
-	}
-
-	@Override
-	public void authenticated( XMPPConnection xmppConnection, boolean b ) {
-	}
-
-	@Override
-    public void connectionClosed() {
-    }
-
-    @Override
-    public void connectionClosedOnError(Exception e) {
-    }
-
 }

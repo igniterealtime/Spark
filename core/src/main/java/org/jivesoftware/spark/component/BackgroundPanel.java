@@ -29,16 +29,11 @@ import java.awt.geom.AffineTransform;
  * to specify an image to use in the background of the panel.
  */
 public class BackgroundPanel extends JPanel {
-
-    private static final long serialVersionUID = 1655446485534962735L;
-
-
     /**
      * Creates a background panel using the default Spark background image.
      */
     public BackgroundPanel() {
     }
-
 
     @Override
 	public void paintComponent(Graphics g) {

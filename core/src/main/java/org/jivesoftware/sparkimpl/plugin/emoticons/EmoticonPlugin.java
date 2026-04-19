@@ -100,7 +100,7 @@ public class EmoticonPlugin implements Plugin, ChatRoomListener {
                                     popup.setVisible(false);
                                     final ChatInputEditor editor = room.getChatInputEditor();
                                     String currentText = editor.getText();
-                                    if (currentText.length() == 0 || currentText.endsWith(" ")) {
+                                    if (currentText.isEmpty() || currentText.endsWith(" ")) {
                                         room.getChatInputEditor().insertText(emoticon + " ");
                                     } else {
                                         room.getChatInputEditor()

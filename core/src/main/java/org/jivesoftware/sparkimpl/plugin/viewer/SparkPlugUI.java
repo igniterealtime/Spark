@@ -38,8 +38,6 @@ import org.jivesoftware.spark.util.URLFileSystem;
 import org.jivesoftware.spark.util.log.Log;
 
 public class SparkPlugUI extends JPanel {
-
-	private static final long serialVersionUID = -4206533328807591854L;
 	private final PublicPlugin _plugin;
     private final JButton installButton = new JButton();
     private final JButton deactivateButton = new JButton();
@@ -47,7 +45,6 @@ public class SparkPlugUI extends JPanel {
 
     public SparkPlugUI(PublicPlugin plugin) {
         _plugin = plugin;
-
         setLayout(new GridBagLayout());
         setBackground(Color.white);
 
@@ -56,8 +53,6 @@ public class SparkPlugUI extends JPanel {
         JLabel descriptionLabel = new JLabel();
 
 	imageIcon.setIcon(SparkRes.getImageIcon(SparkRes.Icon.PLUGIN_IMAGE));
-        
-
         add(imageIcon, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
 
         add(titleLabel, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 0), 0, 0));
@@ -79,12 +74,9 @@ public class SparkPlugUI extends JPanel {
         add(installButton, new GridBagConstraints(4, 0, 1, 2, 1.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(0, 5, 5, 5), 0, 0));
         add(deactivateButton, new GridBagConstraints(5, 0, 1, 2, 1.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(0, 5, 5, 5), 0, 0));
 
-
         if (_plugin.getChangeLog()!=null && _plugin.getReadMeURL() != null) {
             RolloverButton changeLogButton = new RolloverButton(SparkRes.getImageIcon(SparkRes.Icon.CHANGELOG_IMAGE));
             RolloverButton readMeButton = new RolloverButton(SparkRes.getImageIcon(SparkRes.Icon.README_IMAGE));
-
-
             changeLogButton.addActionListener( e -> {
                 try {
                 BrowserLauncher.openURL(_plugin.getChangeLog());
@@ -102,7 +94,6 @@ public class SparkPlugUI extends JPanel {
                     Log.error(e1);
                 }
             } );
-
 
             final JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
             buttonPanel.setOpaque(false);
@@ -154,7 +145,6 @@ public class SparkPlugUI extends JPanel {
         showOperationButton();
     }
 
-
     public PublicPlugin getPlugin() {
         return _plugin;
     }
@@ -187,7 +177,6 @@ public class SparkPlugUI extends JPanel {
 
     /**
      * Returns the Filename of provided Download URL
-     * @return
      */
     public String getFilename() {
         String filename = null;

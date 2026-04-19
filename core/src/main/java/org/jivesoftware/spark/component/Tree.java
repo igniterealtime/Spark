@@ -36,9 +36,6 @@ import java.util.Enumeration;
  * @see JiveTreeNode
  */
 public class Tree extends JTree implements TreeSelectionListener, MouseMotionListener {
-
-    private static final long serialVersionUID = 295484232488085142L;
-
     /**
      * Creates the Tree from a root node.
      *
@@ -58,10 +55,7 @@ public class Tree extends JTree implements TreeSelectionListener, MouseMotionLis
     @Override
 	public void valueChanged(TreeSelectionEvent e) {
         JiveTreeNode node = (JiveTreeNode)getLastSelectedPathComponent();
-
         if (node == null) return;
-
-
         if (node.isLeaf()) {
             setTransferHandler(new TransferHandler("text"));
         }
@@ -149,7 +143,6 @@ public class Tree extends JTree implements TreeSelectionListener, MouseMotionLis
                 }
             }
         }
-
         // No match at this branch
         return null;
     }

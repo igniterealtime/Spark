@@ -21,7 +21,7 @@ import org.jivesoftware.spark.plugin.Plugin;
 /**
  * The Main Class of the Roar Plugin
  * 
- * @author wolf.posdorfer
+ * @author Wolf Posdorfer
  *
  */
 public class Roar implements Plugin {

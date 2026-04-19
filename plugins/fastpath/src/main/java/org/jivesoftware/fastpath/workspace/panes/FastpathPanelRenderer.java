@@ -25,8 +25,6 @@ import java.awt.Component;
 import java.awt.Color;
 
 public class FastpathPanelRenderer extends JPanel implements ListCellRenderer<Object> {
-	private static final long serialVersionUID = 1964407022568150717L;
-
 	/**
      * Construct Default JPanelRenderer.
      */
@@ -34,6 +32,7 @@ public class FastpathPanelRenderer extends JPanel implements ListCellRenderer<Ob
         setOpaque(true);
     }
 
+    @Override
     public Component getListCellRendererComponent(JList list,
                                                   Object value,
                                                   int index,
@@ -41,7 +40,6 @@ public class FastpathPanelRenderer extends JPanel implements ListCellRenderer<Ob
                                                   boolean cellHasFocus) {
         JPanel panel = (JPanel)value;
         panel.setFocusable(false);
-
         if (isSelected) {
             panel.setForeground((Color)UIManager.get("List.selectionForeground"));
             panel.setBackground((Color)UIManager.get("List.selectionBackground"));
@@ -52,10 +50,7 @@ public class FastpathPanelRenderer extends JPanel implements ListCellRenderer<Ob
             panel.setForeground(list.getForeground());
             panel.setBorder(BorderFactory.createMatteBorder(0,0,1,0, Color.lightGray));
         }
-
         list.setBackground((Color)UIManager.get("List.background"));
-
-
         return panel;
     }
 }

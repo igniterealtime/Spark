@@ -72,11 +72,8 @@ import static org.jivesoftware.smackx.muc.MucConfigFormManager.MUC_ROOMCONFIG_RO
  * UI to show all chats occuring.
  */
 public final class AgentConversations extends JPanel implements ChangeListener {
-
-	private static final long serialVersionUID = 1L;
 	private final DefaultListModel<AgentConversation> model = new DefaultListModel<>();
     private JList<AgentConversation> list;
-
     private final Map<String, AgentConversation> sessionMap = new HashMap<>();
 
     /**
@@ -84,20 +81,24 @@ public final class AgentConversations extends JPanel implements ChangeListener {
      */
     public AgentConversations() {
         FastpathPlugin.getUI().getMainPanel().addSparkTabbedPaneListener(new SparkTabbedPaneListener() {
+            @Override
             public void tabRemoved(SparkTab tab, Component component, int index) {
             }
 
+            @Override
             public void tabAdded(SparkTab tab, Component component, int index) {
             }
 
+            @Override
             public void tabSelected(SparkTab tab, Component component, int index) {
                 stateChanged(null);
             }
 
+            @Override
             public void allTabsRemoved() {
             }
 
-
+            @Override
             public boolean canTabClose(SparkTab tab, Component component) {
                 return true;
             }
@@ -118,12 +119,14 @@ public final class AgentConversations extends JPanel implements ChangeListener {
         list.setCellRenderer(new FastpathPanelRenderer());
 
         list.addMouseListener(new MouseAdapter() {
+            @Override
             public void mousePressed(MouseEvent mouseEvent) {
                 int index = list.locationToIndex(mouseEvent.getPoint());
                 list.setSelectedIndex(index);
                 checkPopup(mouseEvent);
             }
 
+            @Override
             public void mouseReleased(MouseEvent mouseEvent) {
                 int index = list.locationToIndex(mouseEvent.getPoint());
                 list.setSelectedIndex(index);
@@ -150,6 +153,7 @@ public final class AgentConversations extends JPanel implements ChangeListener {
         }
     }
 
+    @Override
     public void stateChanged(ChangeEvent e) {
         if (FastpathPlugin.getUI().getMainPanel().getSelectedComponent() == this && list == null) {
             init();
@@ -158,6 +162,7 @@ public final class AgentConversations extends JPanel implements ChangeListener {
                 AgentRoster agentRoster;
                 Collection<EntityBareJid> agentSet;
 
+                @Override
                 public Object construct() {
                     try
                     {
@@ -171,6 +176,7 @@ public final class AgentConversations extends JPanel implements ChangeListener {
                     return agentSet;
                 }
 
+                @Override
                 public void finished() {
                     agentRoster.addListener(new AgentRosterListener() {
                         @Override
@@ -179,22 +185,18 @@ public final class AgentConversations extends JPanel implements ChangeListener {
 
                         @Override
                         public void agentRemoved(EntityBareJid jid) {
-
                         }
 
                         @Override
                         public void presenceChanged(Presence presence) {
                             EntityBareJid agentJID = presence.getFrom().asEntityBareJidOrThrow();
                             AgentStatus agentStatus = presence.getExtension(AgentStatus.class);
-
                             if (agentStatus != null) {
                                 List<AgentStatus.ChatInfo> list = agentStatus.getCurrentChats();
-
                                 removeOldChats(agentJID, list);
 
                                 // Add new ones.
-                                for (Object o : list) {
-                                    AgentStatus.ChatInfo chatInfo = (AgentStatus.ChatInfo) o;
+                                for (AgentStatus.ChatInfo chatInfo : list) {
                                     Date startDate = chatInfo.getDate();
                                     String username = chatInfo.getUserID();
 
@@ -272,19 +274,15 @@ public final class AgentConversations extends JPanel implements ChangeListener {
                 boolean isMonitor = FastpathPlugin.getAgentSession().hasMonitorPrivileges(SparkManager.getConnection());
                 if (isMonitor) {
                     JPopupMenu menu = new JPopupMenu();
-
                     final String sessionID = item.getSessionID();
-
-
                     Action joinAction = new AbstractAction() {
-						private static final long serialVersionUID = 8239167390330425891L;
-
-						public void actionPerformed(ActionEvent actionEvent) {
+						@Override
+                        public void actionPerformed(ActionEvent actionEvent) {
                             // Get Conference
                             try {
                                 final MultiUserChatManager multiUserChatManager = SparkManager.getMucManager();
                                 List<DomainBareJid> col = multiUserChatManager.getMucServiceDomains();
-                                if (col.size() == 0) {
+                                if (col.isEmpty()) {
                                     return;
                                 }
 
@@ -304,21 +302,18 @@ public final class AgentConversations extends JPanel implements ChangeListener {
                                     catch (XMPPException | SmackException e1) {
                                         return;
                                     }
-                                    Iterator<Affiliate> iter = owners.iterator();
 
                                     List<Jid> list = new ArrayList<>();
-                                    while (iter.hasNext()) {
-                                        Affiliate affilitate = iter.next();
+                                    for (Affiliate affilitate : owners) {
                                         Jid jid = affilitate.getJid();
                                         if (!jid.equals(SparkManager.getSessionManager().getUserBareAddress())) {
                                             list.add(jid);
                                         }
                                     }
-                                    if (list.size() > 0) {
+                                    if (!list.isEmpty()) {
                                         FillableForm form = muc.getConfigurationForm().getFillableForm();
                                         List<String> listStrings = JidUtil.toStringList(list);
                                         form.setAnswer(MUC_ROOMCONFIG_ROOMOWNERS, listStrings);
-
                                         // new DataFormDialog(groupChat, form);
                                         muc.sendConfigurationForm(form);
                                     }
@@ -334,27 +329,20 @@ public final class AgentConversations extends JPanel implements ChangeListener {
                     menu.add(joinAction);
 
                     Action monitorAction = new AbstractAction() {
-						private static final long serialVersionUID = -2072254190661466657L;
-
-						public void actionPerformed(ActionEvent actionEvent) {
-
+						@Override
+                        public void actionPerformed(ActionEvent actionEvent) {
                             // Make user an owner.
                             try {
                                 FastpathPlugin.getAgentSession().makeRoomOwner(SparkManager.getConnection(), sessionID);
-
                                 final MultiUserChatManager multiUserChatManager = SparkManager.getMucManager();
                                 List<DomainBareJid> col = multiUserChatManager.getMucServiceDomains();
                                 if (col.isEmpty()) {
                                     return;
                                 }
-
                                 DomainBareJid serviceName = col.iterator().next();
                                 EntityBareJid roomName = JidCreate.entityBareFrom(sessionID + "@" + serviceName);
-
                                 MultiUserChat muc = multiUserChatManager.getMultiUserChat( roomName);
-
                                 ConferenceUtils.enterRoomOnSameThread(roomName, roomName, null);
-
                             }
                             catch (XMPPException | SmackException | InterruptedException | XmppStringprepException e1) {
                                 Log.error(e1);

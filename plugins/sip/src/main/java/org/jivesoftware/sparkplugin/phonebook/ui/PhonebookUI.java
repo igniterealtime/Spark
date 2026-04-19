@@ -45,7 +45,6 @@ import org.jivesoftware.sparkplugin.phonebook.PhonebookManager;
 
 public class PhonebookUI extends JPanel
 {
-	private static final long	serialVersionUID	= -5477841619200563149L;
 	private JFrame frame = new JFrame();
 	private RolloverButton btnAdd;
    private RolloverButton btnDel;
@@ -73,7 +72,6 @@ public class PhonebookUI extends JPanel
 	private void init() {
 		this.removeAll();
 		model = new DefaultTableModel(){
-			private static final long	serialVersionUID	= -1231025049889503785L;
 			public boolean isCellEditable(int i, int j)
 			{
 				return false;

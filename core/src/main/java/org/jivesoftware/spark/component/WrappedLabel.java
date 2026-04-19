@@ -25,8 +25,6 @@ import java.awt.Dimension;
  * @author Derek DeMoro
  */
 public class WrappedLabel extends JTextArea {
-    private static final long serialVersionUID = 177528477205607705L;
-
     /**
      * Create a simple Wrappable label.
      */

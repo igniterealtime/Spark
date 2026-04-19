@@ -31,7 +31,6 @@ import javax.swing.JComponent;
  * 
  */
 public class ScrollPaneWatermark extends JViewport {
-    private static final long serialVersionUID = 316017203726925013L;
     private Image foregroundImage;
 
     public void setBackgroundImage(Image backgroundImage) {

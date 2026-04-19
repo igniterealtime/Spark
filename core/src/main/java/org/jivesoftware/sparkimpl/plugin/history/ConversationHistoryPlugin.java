@@ -149,8 +149,6 @@ public class ConversationHistoryPlugin implements Plugin {
         SparkManager.getMainWindow().getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_E, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()), "historyPeople");
 
         SparkManager.getMainWindow().getRootPane().getActionMap().put("historyPeople", new AbstractAction("historyPeople") {
-			private static final long serialVersionUID = 2465628887318732082L;
-
 			@Override
 			public void actionPerformed(ActionEvent e) {
                 // Show History Popup
@@ -227,7 +225,7 @@ public class ConversationHistoryPlugin implements Plugin {
         GraphicUtils.centerWindowOnComponent(window, SparkManager.getMainWindow());
 
 
-        if (model.size() > 0) {
+        if (!model.isEmpty()) {
             contacts.setSelectedIndex(0);
         }
 
@@ -299,11 +297,6 @@ public class ConversationHistoryPlugin implements Plugin {
      * Internal handling of a Jlabel Renderer.
      */
     public static class InternalRenderer extends JLabel implements ListCellRenderer<Object> {
-		private static final long serialVersionUID = 1812281106979897477L;
-
-		/**
-         * Construct Default Renderer.
-         */
         public InternalRenderer() {
             setOpaque(true);
         }
@@ -329,6 +322,4 @@ public class ConversationHistoryPlugin implements Plugin {
             return this;
         }
     }
-
-
 }

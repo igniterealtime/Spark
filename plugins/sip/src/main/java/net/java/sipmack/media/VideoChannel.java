@@ -101,8 +101,6 @@ public class VideoChannel {
     }
     public class VideoFrame extends JFrame
     {
-        private static final long serialVersionUID = -3359422087122668632L;
-
         private VideoMediaStream vms;
 
         public VideoFrame(String name,VideoMediaStream vms)

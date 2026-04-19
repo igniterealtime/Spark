@@ -111,7 +111,7 @@ public class LookAndFeelManager {
 
         if (!Default.getBoolean(Default.LOOK_AND_FEEL_DISABLED)) {
             result = preferences.getLookAndFeel();
-        } else if (Default.getString(whereToLook).length() > 0) {
+        } else if (!Default.getString(whereToLook).isEmpty()) {
             result = Default.getString(whereToLook);
         } else {
             result = UIManager.getSystemLookAndFeelClassName();

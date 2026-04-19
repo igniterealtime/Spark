@@ -725,7 +725,7 @@ public class StringUtils {
      * @return text broken up into an array of words.
      */
     public static String[] toLowerCaseWordArray(String text) {
-	if (text == null || text.length() == 0) {
+	if (text == null || text.isEmpty()) {
 	    return new String[0];
 	}
 
@@ -746,7 +746,7 @@ public class StringUtils {
 	    tmp = replace(tmp, ")", "");
 	    tmp = replace(tmp, "(", "");
 	    tmp = replace(tmp, "&", "");
-	    if (tmp.length() > 0) {
+	    if (!tmp.isEmpty()) {
 		wordList.add(tmp);
 	    }
 	}
@@ -975,7 +975,7 @@ public class StringUtils {
      */
     public static String chopAtWordsAround(String input, String[] wordList,
 	    int numChars) {
-	if (input == null || "".equals(input.trim()) || wordList == null
+	if (input == null || input.isBlank() || wordList == null
 		|| wordList.length == 0 || numChars == 0) {
 	    return "";
 	}
@@ -1281,7 +1281,7 @@ public class StringUtils {
 
         addr = addr.trim();
 
-        if (addr.length() == 0) {
+        if (addr.isEmpty()) {
             return false;
         }
         // basic address check
@@ -1806,7 +1806,7 @@ public class StringUtils {
      * @param resource
      *            String to modify
      * @return modified String
-     * @author wolf.posdorfer
+     * @author Wolf Posdorfer
      */
     public static String modifyWildcards(String resource) {
 	if(resource==null)

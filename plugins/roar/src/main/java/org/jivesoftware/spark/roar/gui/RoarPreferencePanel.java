@@ -47,13 +47,10 @@ import org.jivesoftware.spark.util.ColorPick;
 /**
  * Super Awesome Preference Panel
  * 
- * @author wolf.posdorfer
+ * @author Wolf Posdorfer
  * 
  */
 public class RoarPreferencePanel extends JPanel {
-
-    private static final long serialVersionUID = -5334936099931215962L;
-
     private final JTextField _duration;
     private final JTextField _amount;
     private final JCheckBox _enabledCheckbox;
@@ -70,15 +67,12 @@ public class RoarPreferencePanel extends JPanel {
     private final Insets INSETS = new Insets(5, 5, 5, 5);
     
     public RoarPreferencePanel() {
-
         _components = new HashMap<>();
         _colormap = new HashMap<>();
         for (ColorTypes e : ColorTypes.values()) {
             _colormap.put(e, Color.BLACK);
         }
-
         this.setLayout(new BorderLayout());
-
 
         _duration = new JTextField();
         _amount = new JTextField();
@@ -127,6 +121,7 @@ public class RoarPreferencePanel extends JPanel {
 
         add(makeGeneralSettingsPanel());
         _singleColorlist.addMouseListener(new MouseAdapter() {
+            @Override
             public void mouseClicked(MouseEvent e) {
                 colorListMouseClicked(e);
             }
@@ -184,7 +179,6 @@ public class RoarPreferencePanel extends JPanel {
 
         // row
         int rowcount = 0;
-
         singlePanel.add(new JLabel(RoarResources.getString("roar.duration")),
                 new GridBagConstraints(0, rowcount, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, INSETS, 0, 0));
         singlePanel.add(_duration,
@@ -408,7 +402,6 @@ public class RoarPreferencePanel extends JPanel {
         public String toString() {
             return string;
         }
-
     }
 
 }

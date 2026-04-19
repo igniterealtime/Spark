@@ -32,7 +32,6 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 
 public class DialPanel extends JPanel {
-    private static final long serialVersionUID = 2460254947711336776L;
     final JLabel iconLabel;
     final JPanel dialPanel = new JPanel();
     private final JButton dialButton;
@@ -43,8 +42,6 @@ public class DialPanel extends JPanel {
 
         JPanel imagePanel = new JPanel();
         imagePanel.setLayout(new BorderLayout());
-
-
         imagePanel.setBackground(Color.white);
 
         iconLabel = new JLabel(SparkRes.getImageIcon(SparkRes.Icons.TELEPHONE_24x24));
@@ -53,7 +50,6 @@ public class DialPanel extends JPanel {
         iconLabel.setHorizontalTextPosition(JLabel.CENTER);
         imagePanel.add(iconLabel, BorderLayout.CENTER);
         iconLabel.setFont(new Font("Dialog", Font.BOLD, 14));
-
 
         dialPanel.setLayout(new GridBagLayout());
 

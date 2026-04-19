@@ -20,8 +20,6 @@ import net.java.sipmack.sip.Call;
 import java.util.EventObject;
 
 public class CallStateEvent extends EventObject {
-
-	private static final long serialVersionUID = -9218156329743857188L;
 	private String oldStatus;
 
     public CallStateEvent(Call source) {

@@ -92,7 +92,6 @@ public class SparkMeetPreference implements Preference {
 	}
 	
     private static class MeetingPanel extends JPanel {
- 	private static final long serialVersionUID = -5992704440953686499L;
 	private final JTextArea txtMessage = new JTextArea();
     private JLabel url = new JLabel(SparkMeetResource.getString("preference.url"));
 

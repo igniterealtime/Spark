@@ -103,17 +103,11 @@ public class SparkToaster {
     private final boolean useAlwaysOnTop;
 
     private String title;
-
     private Border border;
-
     private Action customAction;
-
     private Window window;
-
     private final JPanel mainPanel = new JPanel();
-
     private TitleLabel titleLabel;
-
     private boolean hideable = true;
 
     /**
@@ -131,21 +125,15 @@ public class SparkToaster {
     }
 
     /**
-     * Class that rappresent a single toaster
+     * Class that represent a single toaster
      * 
      * @author daniele piras
      */
     class SingleToaster extends javax.swing.JWindow {
-	private static final long serialVersionUID = 1L;
-
-	// Label to store Icon
 
 	// Text area for the message
 	private final JTextArea message = new JTextArea();
 
-	/**
-	 * Simple costructor that initialized components...
-	 */
 	public SingleToaster() {
 	    initComponents();
 	}
@@ -184,9 +172,7 @@ public class SparkToaster {
 	    }
 
 	    message.setForeground(Color.BLACK);
-
 	    message.setOpaque(false);
-
 	    getContentPane().add(mainPanel);
 
 	    mainPanel.addMouseListener(new PaneMouseListener());
@@ -206,8 +192,8 @@ public class SparkToaster {
 	}
 
 	private class PaneMouseListener extends MouseAdapter {
-
-	    public void mouseClicked(MouseEvent e) {
+	    @Override
+        public void mouseClicked(MouseEvent e) {
 		if (customAction != null) {
 		    customAction.actionPerformed(null);
 		}
@@ -218,12 +204,14 @@ public class SparkToaster {
 		}
 	    }
 
-	    public void mouseEntered(MouseEvent e) {
+	    @Override
+        public void mouseEntered(MouseEvent e) {
 		message.setCursor(HAND_CURSOR);
 		setCursor(HAND_CURSOR);
 	    }
 
-	    public void mouseExited(MouseEvent e) {
+	    @Override
+        public void mouseExited(MouseEvent e) {
 		message.setCursor(DEFAULT_CURSOR);
 		setCursor(DEFAULT_CURSOR);
 	    }
@@ -244,18 +232,11 @@ public class SparkToaster {
 	 * Animate vertically the toaster. The toaster could be moved from
 	 * bottom to upper or to upper to bottom
 	 * 
-	 * @param posx
-	 *            X position for toaster.
-	 * @param fromY
-	 *            Y from position
-	 * @param toY
-	 *            Y to position
 	 * @throws InterruptedException
 	 *             if animation is interrupted
 	 */
 	protected void animateVertically(int posx, int fromY, int toY)
 		throws InterruptedException {
-
 	    toaster.setLocation(posx, fromY);
 	    if (toY < fromY) {
 		for (int i = fromY; i > toY; i -= step) {
@@ -274,26 +255,22 @@ public class SparkToaster {
 	    toaster.repaint();
 	}
 
-	public void run() {
+	@Override
+    public void run() {
 	    try {
 		boolean animateFromBottom = true;
 		GraphicsEnvironment ge = GraphicsEnvironment
 			.getLocalGraphicsEnvironment();
 		Rectangle screenRect = ge.getMaximumWindowBounds();
-
 		int screenHeight = screenRect.height;
-
 		int startYPosition;
 		int stopYPosition;
-
 		if (screenRect.y > 0) {
 		    animateFromBottom = false; // Animate from top!
 		}
 
 		int maxToasterInSceen = screenHeight / toasterHeight;
-
 		int posx = screenRect.width - toasterWidth - 1;
-
 		toaster.setLocation(posx, screenHeight);
 		try {
 		    EventQueue.invokeAndWait( () -> toaster.setVisible(true) );
@@ -316,7 +293,6 @@ public class SparkToaster {
 		} else {
 		    startYPosition = screenRect.y - toasterHeight;
 		    stopYPosition = screenRect.y;
-
 		    if (currentNumberOfToaster > 0) {
 			stopYPosition = stopYPosition
 				+ (maxToaster % maxToasterInSceen * toasterHeight);
@@ -416,154 +392,82 @@ public class SparkToaster {
 	showToaster(null, msg);
     }
 
-    /**
-     * @return Returns the font
-     */
     public Font getToasterMessageFont() {
 	return font;
     }
 
-    /**
-     * Set the font for the message
-     * 
-     * @param f
-     *            Font to set on toaster messages.
-     */
     public void setToasterMessageFont(Font f) {
 	font = f;
     }
 
-    /**
-     * @return Returns the borderColor.
-     */
     public Color getBorderColor() {
 	return borderColor;
     }
 
-    /**
-     * @param borderColor
-     *            The borderColor to set.
-     */
     public void setBorderColor(Color borderColor) {
 	this.borderColor = borderColor;
     }
 
-    /**
-     * @return Returns the displayTime.
-     */
     public int getDisplayTime() {
 	return displayTime;
     }
 
-    /**
-     * @param displayTime
-     *            The displayTime to set.
-     */
     public void setDisplayTime(int displayTime) {
 	this.displayTime = displayTime;
     }
 
-    /**
-     * @return Returns the margin.
-     */
     public int getMargin() {
 	return margin;
     }
 
-    /**
-     * @param margin
-     *            The margin to set.
-     */
     public void setMargin(int margin) {
 	this.margin = margin;
     }
 
-    /**
-     * @return Returns the messageColor.
-     */
     public Color getMessageColor() {
 	return messageColor;
     }
 
-    /**
-     * @param messageColor
-     *            The messageColor to set.
-     */
     public void setMessageColor(Color messageColor) {
 	this.messageColor = messageColor;
     }
 
-    /**
-     * @return Returns the step.
-     */
     public int getStep() {
 	return step;
     }
 
-    /**
-     * @param step
-     *            The step to set.
-     */
     public void setStep(int step) {
 	this.step = step;
     }
 
-    /**
-     * @return Returns the stepTime.
-     */
     public int getStepTime() {
 	return stepTime;
     }
 
-    /**
-     * @param stepTime
-     *            The stepTime to set.
-     */
     public void setStepTime(int stepTime) {
 	this.stepTime = stepTime;
     }
 
-    /**
-     * @return Returns the toasterColor.
-     */
     public Color getToasterColor() {
 	return toasterColor;
     }
 
-    /**
-     * @param toasterColor
-     *            The toasterColor to set.
-     */
     public void setToasterColor(Color toasterColor) {
 	this.toasterColor = toasterColor;
     }
 
-    /**
-     * @return Returns the toasterHeight.
-     */
     public int getToasterHeight() {
 	return toasterHeight;
     }
 
-    /**
-     * @param toasterHeight
-     *            The toasterHeight to set.
-     */
     public void setToasterHeight(int toasterHeight) {
 	this.toasterHeight = toasterHeight;
     }
 
-    /**
-     * @return Returns the toasterWidth.
-     */
     public int getToasterWidth() {
 	return toasterWidth;
     }
 
-    /**
-     * @param toasterWidth
-     *            The toasterWidth to set.
-     */
     public void setToasterWidth(int toasterWidth) {
 	this.toasterWidth = toasterWidth;
     }
@@ -609,7 +513,6 @@ public class SparkToaster {
     }
 
     static class TitleLabel extends JPanel {
-	private static final long serialVersionUID = -5163519932953987400L;
 	private final JLabel label;
 	private final RolloverButton closeButton;
 
@@ -657,7 +560,8 @@ public class SparkToaster {
 	    label.setText(title);
 	}
 
-	public void paintComponent(Graphics g) {
+	@Override
+    public void paintComponent(Graphics g) {
 	    final Image backgroundImage = Default.getImageIcon(
 		    Default.TOP_BOTTOM_BACKGROUND_IMAGE).getImage();
 	    double scaleX = getWidth()
@@ -673,6 +577,4 @@ public class SparkToaster {
     public void setHidable(boolean hideable) {
 	this.hideable = hideable;
     }
-
-
 }

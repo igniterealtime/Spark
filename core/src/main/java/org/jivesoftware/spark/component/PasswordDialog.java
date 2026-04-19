@@ -166,8 +166,6 @@ public final class PasswordDialog implements PropertyChangeListener {
      * Move to focus forward action.
      */
     public Action nextFocusAction = new AbstractAction(Res.getString("label.move.focus.forwards")) {
-        private static final long serialVersionUID = 6465350147231073505L;
-
         @Override
         public void actionPerformed(ActionEvent evt) {
             ((Component) evt.getSource()).transferFocus();
@@ -178,8 +176,6 @@ public final class PasswordDialog implements PropertyChangeListener {
      * Moves the focus backwards in the dialog.
      */
     public Action prevFocusAction = new AbstractAction(Res.getString("label.move.focus.backwards")) {
-        private static final long serialVersionUID = -91177056113094990L;
-
         @Override
         public void actionPerformed(ActionEvent evt) {
             ((Component) evt.getSource()).transferFocusBackward();

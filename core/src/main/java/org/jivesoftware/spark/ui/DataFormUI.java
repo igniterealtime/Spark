@@ -47,7 +47,6 @@ import static java.awt.GridBagConstraints.NONE;
  * of an answer form to send back the server.
  */
 public class DataFormUI extends JPanel {
-    private static final long serialVersionUID = -6313707846021436765L;
     private final Map<String, JComponent> valueMap = new HashMap<>();
     private final DataForm form;
     private int row = 5;

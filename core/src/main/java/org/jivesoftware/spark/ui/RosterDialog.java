@@ -311,8 +311,6 @@ public class RosterDialog implements ActionListener {
 
 
 	JPanel mainPanel = new JPanel() {
-	    private static final long serialVersionUID = -7489967438182277375L;
-
 	    @Override
 		public Dimension getPreferredSize() {
 		final Dimension size = super.getPreferredSize();
@@ -651,7 +649,6 @@ public class RosterDialog implements ActionListener {
     }
 
     static class AccountItem extends JPanel {
-		private static final long serialVersionUID = -7657731912529801653L;
 		private final Transport transport;
 
         public AccountItem(Icon icon, String name, Transport transport) {

@@ -53,22 +53,27 @@ import org.jxmpp.jid.util.JidUtil;
 
 public class ChatSearch implements Searchable {
 
+    @Override
     public Icon getIcon() {
         return FastpathRes.getImageIcon(FastpathRes.FASTPATH_IMAGE_16x16);
     }
 
+    @Override
     public String getName() {
         return FpRes.getString("title.chat.transcripts");
     }
 
+    @Override
     public String getDefaultText() {
         return FpRes.getString("message.find.previous.conversations");
     }
 
+    @Override
     public String getToolTip() {
         return getDefaultText();
     }
 
+    @Override
     public void search(String query) {
         final List<ChatSearchResult> results = new ArrayList<>();
         AgentSession agentSession = FastpathPlugin.getAgentSession();
@@ -100,7 +105,6 @@ public class ChatSearch implements Searchable {
             DefaultListModel<SearchItem> model = new DefaultListModel<>();
             final JList<SearchItem> list = new JList<>(model);
             list.setCellRenderer(new HistoryItemRenderer());
-
             for (ChatSearchResult result : results) {
                 String person = result.getUsername();
                 String question = result.getQuestion();
@@ -113,6 +117,7 @@ public class ChatSearch implements Searchable {
             }
 
             list.addMouseListener(new MouseAdapter() {
+                @Override
                 public void mouseClicked(MouseEvent e) {
                     if (e.getClickCount() == 2) {
                         SearchItem item = list.getSelectedValue();
@@ -143,10 +148,8 @@ public class ChatSearch implements Searchable {
                 }
             });
 
-
             JScrollPane scrollPane = new JScrollPane(list);
             scrollPane.getViewport().setBackground(Color.white);
-
 
             JFrame frame = new JFrame(FpRes.getString("title.search.results"));
             frame.setIconImage(SparkManager.getMainWindow().getIconImage());
@@ -154,9 +157,8 @@ public class ChatSearch implements Searchable {
             frame.getContentPane().add(scrollPane, BorderLayout.CENTER);
 
             final BackgroundPane titlePane = new BackgroundPane() {
-				private static final long serialVersionUID = -5603280927139789177L;
-
-				public Dimension getPreferredSize() {
+				@Override
+                public Dimension getPreferredSize() {
                     final Dimension size = super.getPreferredSize();
                     size.width = 0;
                     return size;

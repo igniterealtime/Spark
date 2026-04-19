@@ -38,8 +38,6 @@ import org.jivesoftware.smackx.workgroup.agent.WorkgroupQueue;
  * UI for displaying all queue information pertaining to a single workgroup.
  */
 public final class QueueActivity extends JPanel implements QueueUsersListener {
-
-	private static final long serialVersionUID = 1L;
 	private final DefaultListModel<QueueItem> model = new DefaultListModel<>();
     private JList<QueueItem> list;
 
@@ -70,7 +68,7 @@ public final class QueueActivity extends JPanel implements QueueUsersListener {
         this.add(scrollPane, BorderLayout.CENTER);
     }
 
-
+    @Override
     public void usersUpdated(WorkgroupQueue queue, Set users) {
         QueueItem item = queues.get(queue);
         if (item == null) {
@@ -79,7 +77,6 @@ public final class QueueActivity extends JPanel implements QueueUsersListener {
         else {
             item.setNumberOfUsersInQueue(users.size());
         }
-
         update(item);
     }
 
@@ -89,6 +86,7 @@ public final class QueueActivity extends JPanel implements QueueUsersListener {
         list.repaint();
     }
 
+    @Override
     public void oldestEntryUpdated(WorkgroupQueue queue, Date date) {
         QueueItem item = queues.get(queue);
         if (item != null) {
@@ -97,6 +95,7 @@ public final class QueueActivity extends JPanel implements QueueUsersListener {
         update(item);
     }
 
+    @Override
     public void averageWaitTimeUpdated(WorkgroupQueue queue, int waitTime) {
         QueueItem item = queues.get(queue);
         if (item == null) {
@@ -106,11 +105,10 @@ public final class QueueActivity extends JPanel implements QueueUsersListener {
         update(item);
     }
 
+    @Override
     public void statusUpdated(final WorkgroupQueue queue, WorkgroupQueue.Status status) {
-        
         EventQueue.invokeLater( () -> {
             String oldestEntry = queue.getOldestEntry() != null ? queue.getOldestEntry().toString() : "";
-
             QueueItem item = queues.get(queue);
             if (item != null) {
                 item.setNumberOfUsersInQueue(queue.getUserCount());

@@ -71,11 +71,9 @@ import org.jxmpp.jid.util.JidUtil;
 import static org.jivesoftware.smackx.muc.MucConfigFormManager.MUC_ROOMCONFIG_ROOMOWNERS;
 
 /**
- * UI to show all chats occuring.
+ * UI to show all chats occurring.
  */
 public final class CurrentActivity extends JPanel {
-
-	private static final long serialVersionUID = 1L;
 	private final DefaultListModel<ConversationItem> model = new DefaultListModel<>();
     private final JList<ConversationItem> list = new JList<>(model);
     private JFrame mainFrame;
@@ -91,12 +89,9 @@ public final class CurrentActivity extends JPanel {
 
     private void init() {
         this.setLayout(new BorderLayout());
-
-
         final BackgroundPane titlePane = new BackgroundPane() {
-			private static final long serialVersionUID = 3127229816651522537L;
-
-			public Dimension getPreferredSize() {
+			@Override
+            public Dimension getPreferredSize() {
                 final Dimension size = super.getPreferredSize();
                 size.width = 0;
                 return size;
@@ -105,7 +100,6 @@ public final class CurrentActivity extends JPanel {
 
         titlePane.setLayout(new GridBagLayout());
         titlePane.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.LIGHT_GRAY));
-
 
         JLabel userImage = new JLabel(FastpathRes.getImageIcon(FastpathRes.FASTPATH_IMAGE_24x24));
         userImage.setHorizontalAlignment(JLabel.LEFT);
@@ -117,21 +111,20 @@ public final class CurrentActivity extends JPanel {
         titlePane.add(new JLabel(FpRes.getString("title.number.of.active.conversations") +":"), new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         titlePane.add(activeConversations, new GridBagConstraints(1, 1, 1, 3, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
 
-
         this.add(titlePane, BorderLayout.NORTH);
-
         this.add(list, BorderLayout.CENTER);
-
         list.setCellRenderer(new HistoryItemRenderer());
 
         // Add current chats
         addCurrentChats();
 
         list.addMouseListener(new MouseAdapter() {
+            @Override
             public void mouseReleased(MouseEvent mouseEvent) {
                 checkPopup(mouseEvent);
             }
 
+            @Override
             public void mousePressed(MouseEvent mouseEvent) {
                 checkPopup(mouseEvent);
             }
@@ -143,6 +136,7 @@ public final class CurrentActivity extends JPanel {
             AgentRoster agentRoster;
             Collection<EntityBareJid> agentSet;
 
+            @Override
             public Object construct() {
                 try
                 {
@@ -156,6 +150,7 @@ public final class CurrentActivity extends JPanel {
                 return agentSet;
             }
 
+            @Override
             public void finished() {
                 agentRoster.addListener(new AgentRosterListener() {
                     @Override
@@ -222,17 +217,13 @@ public final class CurrentActivity extends JPanel {
                 boolean isMonitor = FastpathPlugin.getAgentSession().hasMonitorPrivileges(SparkManager.getConnection());
                 if (isMonitor) {
                     JPopupMenu menu = new JPopupMenu();
-
                     int location = list.locationToIndex(e.getPoint());
                     list.setSelectedIndex(location);
                     ConversationItem item = list.getSelectedValue();
                     final String sessionID = item.getSessionID();
-
-
                     Action joinAction = new AbstractAction() {
-						private static final long serialVersionUID = -3198414924157880065L;
-
-						public void actionPerformed(ActionEvent actionEvent) {
+						@Override
+                        public void actionPerformed(ActionEvent actionEvent) {
                             // Get Conference
                             try {
                                 final MultiUserChatManager multiUserChatManager = SparkManager.getMucManager();
@@ -240,14 +231,10 @@ public final class CurrentActivity extends JPanel {
                                 if (col.isEmpty()) {
                                     return;
                                 }
-
                                 DomainBareJid serviceName = col.iterator().next();
                                 EntityBareJid roomName = JidCreate.entityBareFromOrThrowUnchecked(sessionID + "@" + serviceName);
-
                                 MultiUserChat muc = multiUserChatManager.getMultiUserChat(roomName);
-
                                 ConferenceUtils.enterRoomOnSameThread(roomName, roomName, null);
-
                                 if (muc.isJoined()) {
                                     // Try and remove myself as an owner if I am one.
                                     Collection<Affiliate> owners;
@@ -257,22 +244,19 @@ public final class CurrentActivity extends JPanel {
                                     catch (XMPPException | SmackException e1) {
                                         return;
                                     }
-                                    Iterator<Affiliate> iter = owners.iterator();
 
                                     List<Jid> list = new ArrayList<>();
-                                    while (iter.hasNext()) {
-                                        Affiliate affiliate = iter.next();
+                                    for (Affiliate affiliate : owners) {
                                         Jid jid = affiliate.getJid();
                                         if (!jid.equals(SparkManager.getSessionManager().getUserBareAddress())) {
                                             list.add(jid);
                                         }
                                     }
-                                    if (list.size() > 0) {
+                                    if (!list.isEmpty()) {
                                         FillableForm form = muc.getConfigurationForm().getFillableForm();
                                         List<String> jidStrings = new ArrayList<>(list.size());
                                         JidUtil.toStrings(list, jidStrings);
                                         form.setAnswer(MUC_ROOMCONFIG_ROOMOWNERS, jidStrings);
-
                                         // new DataFormDialog(groupChat, form);
                                         muc.sendConfigurationForm(form);
                                     }
@@ -288,10 +272,8 @@ public final class CurrentActivity extends JPanel {
                     menu.add(joinAction);
 
                     Action monitorAction = new AbstractAction() {
-						private static final long serialVersionUID = 7292337790553806820L;
-
-						public void actionPerformed(ActionEvent actionEvent) {
-
+						@Override
+                        public void actionPerformed(ActionEvent actionEvent) {
                             // Make user an owner.
                             try {
                                 FastpathPlugin.getAgentSession().makeRoomOwner(SparkManager.getConnection(), sessionID);
@@ -300,12 +282,9 @@ public final class CurrentActivity extends JPanel {
                                 if (col.isEmpty()) {
                                     return;
                                 }
-
                                 DomainBareJid serviceName = col.iterator().next();
                                 EntityBareJid roomName = JidCreate.entityBareFromOrThrowUnchecked(sessionID + "@" + serviceName);
-
                                 MultiUserChat muc = mucManager.getMultiUserChat( roomName );
-
                                 ConferenceUtils.enterRoomOnSameThread(roomName, roomName, null);
                             }
                             catch (XMPPException | SmackException | InterruptedException e1) {

@@ -31,8 +31,7 @@ import org.jxmpp.jid.EntityFullJid;
  * @author Bergund Holger
  */
 public class OTRPrefPanel extends JPanel {
-
-    private OTRManager _manager;
+    private final OTRManager _manager;
     private JCheckBox _enableOTR;
     private JCheckBox _closeSessionOff;
     private JCheckBox _closeSessionOnWindowClose;
@@ -40,8 +39,8 @@ public class OTRPrefPanel extends JPanel {
     private JButton _renewPrivateKey;
     private OTRKeyTable _keytable;
     private JTextField _privateKey;
-    private OtrKeyManager _keyManager;
-    private OTRProperties _properties;
+    private final OtrKeyManager _keyManager;
+    private final OTRProperties _properties;
 
     public OTRPrefPanel() {
         _manager = OTRManager.getInstance();

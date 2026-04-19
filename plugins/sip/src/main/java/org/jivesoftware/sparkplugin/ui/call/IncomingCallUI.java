@@ -46,8 +46,6 @@ import org.jivesoftware.sparkplugin.callhistory.TelephoneUtils;
 
 
 public class IncomingCallUI extends JPanel {
-
-	private static final long	serialVersionUID	= -7451049865930942296L;
 	private JLabel avatarLabel = new JLabel();
     private JLabel titleLabel = new JLabel();
     private JLabel professionLabel = new JLabel();

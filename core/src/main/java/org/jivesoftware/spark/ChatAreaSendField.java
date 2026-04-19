@@ -35,7 +35,6 @@ import org.jivesoftware.spark.util.ResourceUtils;
  * could be used to build out your own search objects.
  */
 public class ChatAreaSendField extends JPanel {
-	private static final long serialVersionUID = 6226413259528399476L;
 	private final ChatInputEditor textField;
     private final JButton button;
 

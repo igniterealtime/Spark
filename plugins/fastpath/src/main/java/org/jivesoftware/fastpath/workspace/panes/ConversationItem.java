@@ -31,7 +31,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class ConversationItem extends JPanel {
-	private static final long serialVersionUID = 3596381734502962203L;
 	private final JLabel agentLabel = new JLabel();
     private final JLabel visitorLabel = new JLabel();
     private final JLabel emailLabel = new JLabel();
@@ -87,6 +86,7 @@ public class ConversationItem extends JPanel {
         setSessionID(sessionID);
     }
 
+    @Override
     public String getToolTipText() {
         return "<html><body>" + "<table width=200><tr><td>" + FpRes.getString("question")+ ": "
             + questionLabel.getText() + "</td></tr></table></body></html>";
@@ -106,6 +106,7 @@ public class ConversationItem extends JPanel {
      *
      * @return the preferred dimension
      */
+    @Override
     public Dimension getPreferredSize() {
         final Dimension size = super.getPreferredSize();
         size.width = 0;

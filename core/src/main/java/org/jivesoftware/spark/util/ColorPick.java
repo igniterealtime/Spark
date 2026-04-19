@@ -32,15 +32,12 @@ import org.jivesoftware.resource.Res;
 
 /**
  * A simple Colorpicker with sliders
- * @author wolf.posdorfer
+ * @author Wolf Posdorfer
  *
  */
 public class ColorPick extends JPanel implements ChangeListener {
-    
-    private static final long serialVersionUID = 2709297435120012839L;
     private final JSlider[] _sliderarray;
     private final JLabel _preview;
-
 
     /**
      * Creates a Colorpicker with initial values 0,0,0,0
@@ -128,7 +125,6 @@ public class ColorPick extends JPanel implements ChangeListener {
         
     /**
      * Returns the Color of the Current View
-     * @return
      */
     public Color getColor() {
 
@@ -139,7 +135,6 @@ public class ColorPick extends JPanel implements ChangeListener {
     
     /**
      * Sets the Color of this Colorpicker
-     * @param c
      */
     public void setColor(Color c) {
 	for (int i = 0; i < 3; i++) {

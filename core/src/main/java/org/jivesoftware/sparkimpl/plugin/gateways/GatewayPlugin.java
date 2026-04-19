@@ -56,13 +56,7 @@ import java.util.Map;
  * @author Derek DeMoro
  */
 public class GatewayPlugin implements Plugin, ContactItemHandler {
-
-    /**
-     * Defined Static Variable for Gateways. *
-     */
-    public static final String GATEWAY = "gateway";
     private boolean useTab;
-
     private final Map<Transport, GatewayItem> uiMap = new HashMap<>();
     private final JPanel transferTab = new JPanel();
 
@@ -96,17 +90,12 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
                 if (!transportExists) {
                     return;
                 } 
-                
-                
-                
-                if (TransportUtils.getTransports().size() > 0  && useTab) {
+                if (!TransportUtils.getTransports().isEmpty() && useTab) {
                    SparkManager.getWorkspace().getWorkspacePane().addTab(Res.getString("title.transports"), SparkRes.getImageIcon(SparkRes.Icon.TRANSPORT_ICON), transferTab);
                 }
-
                 for (final Transport transport : TransportUtils.getTransports()) {
                     addTransport(transport);
                 }
-
                 // Register presences.
                 registerPresenceListener();
             }
@@ -194,7 +183,6 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
 
     private void registerPresenceListener() {
         StanzaFilter orFilter = new OrFilter(new StanzaTypeFilter(Presence.class), new StanzaTypeFilter(Message.class));
-
         SparkManager.getConnection().addAsyncStanzaListener( stanza -> {
             if (stanza instanceof Presence) {
                 Presence presence = (Presence)stanza;
@@ -204,12 +192,8 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
                     if (presence.getType() == Presence.Type.unavailable) {
                         registered = false;
                     }
-
-
                     GatewayItem button = uiMap.get(transport);
-
                     button.signedIn(registered);
-
                     SwingWorker worker = new SwingWorker() {
 
             @Override
@@ -227,7 +211,6 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
                 DomainBareJid from = message.getFrom().asDomainBareJid();
                 boolean hasError = message.getType() == Message.Type.error;
                 String body = message.getBody();
-
                 if (from != null && hasError) {
                     Transport transport = TransportUtils.getTransport(from);
                     if (transport != null) {
@@ -288,7 +271,6 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
         } );
     }
 
-
     @Override
 	public boolean handlePresence(ContactItem item, Presence presence) {
         if (presence.isAvailable()) {
@@ -308,7 +290,6 @@ public class GatewayPlugin implements Plugin, ContactItemHandler {
                 return false;
             }
         }
-
         return false;
     }
 

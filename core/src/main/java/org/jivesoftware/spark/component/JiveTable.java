@@ -36,9 +36,7 @@ import java.util.List;
  * @version 1.0, 03/12/14
  */
 public class JiveTable extends JTable {
-    private static final long serialVersionUID = -7140811933957438525L;
     private final JiveTable.JiveTableModel tableModel;
-
 
     public JiveTable(String[] headers, Integer[] columnsToUseRenderer) {
         tableModel = new JiveTableModel(headers, 0, false);
@@ -52,7 +50,6 @@ public class JiveTable extends JTable {
         setSelectionForeground(java.awt.Color.white);
         setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         setRowSelectionAllowed(false);
-
     }
 
     @Override
@@ -93,7 +90,6 @@ public class JiveTable extends JTable {
     }
 
     public static class JiveTableModel extends DefaultTableModel {
- 	private static final long serialVersionUID = -2072664365332767844L;
 	private final boolean _isEditable;
 
         /**
@@ -119,7 +115,6 @@ public class JiveTable extends JTable {
     }
 
     static class JLabelRenderer extends JLabel implements TableCellRenderer {
-        private static final long serialVersionUID = 4387574944818048720L;
         private Border unselectedBorder = null;
         private Border selectedBorder = null;
         final boolean isBordered = true;
@@ -167,8 +162,6 @@ public class JiveTable extends JTable {
 
 
     static class JButtonRenderer extends JButton implements TableCellRenderer {
-
-        private static final long serialVersionUID = -5287214156125954342L;
         private Border unselectedBorder = null;
         private Border selectedBorder = null;
         private final boolean isBordered = true;

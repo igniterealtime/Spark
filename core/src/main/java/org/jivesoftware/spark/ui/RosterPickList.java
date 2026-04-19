@@ -39,22 +39,15 @@ import java.util.List;
  * The <code>RosterPickList</code> is used as a pick list of users within ones Roster.
  */
 public class RosterPickList extends JPanel {
-	private static final long serialVersionUID = -7725304880236329893L;
 	private final DefaultListModel<ContactItem> model = new DefaultListModel<>();
     private final JList<ContactItem> rosterList = new JList<>(model);
 
-    /**
-     * Creates a new instance of the RosterBrowser.
-     */
     public RosterPickList() {
         setLayout(new GridBagLayout());
-
         rosterList.setCellRenderer(new JContactItemRenderer());
-
         JLabel rosterLabel = new JLabel();
         this.add(rosterLabel, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
         this.add(new JScrollPane(rosterList), new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
-
         ResourceUtils.resLabel(rosterLabel, rosterList, Res.getString("label.available.users.in.roster"));
     }
 
@@ -66,7 +59,6 @@ public class RosterPickList extends JPanel {
      */
     public Collection<String> showRoster(JDialog parent) {
         final List<ContactItem> userList = new ArrayList<>();
-
         // Populate Invite Panel with Available users.
         final Roster roster = SparkManager.getRoster();
         for (RosterEntry entry : roster.getEntries()) {
@@ -85,13 +77,8 @@ public class RosterPickList extends JPanel {
             model.addElement(item);
         }
 
-        final JOptionPane pane;
-
-
-        TitlePanel titlePanel;
-
         // Create the title panel for this dialog
-        titlePanel = new TitlePanel(Res.getString("title.roster"), Res.getString("message.select.one.or.more"), SparkRes.getImageIcon(SparkRes.Icon.BLANK_IMAGE), true);
+        TitlePanel titlePanel = new TitlePanel(Res.getString("title.roster"), Res.getString("message.select.one.or.more"), SparkRes.getImageIcon(SparkRes.Icon.BLANK_IMAGE), true);
 
         // Construct main panel w/ layout.
         final JPanel mainPanel = new JPanel();
@@ -100,15 +87,11 @@ public class RosterPickList extends JPanel {
 
         // The user should only be able to close this dialog.
         Object[] options = {Res.getString("ok"), Res.getString("cancel")};
-        pane = new JOptionPane(this, JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION, null, options, options[0]);
-
+        final JOptionPane pane = new JOptionPane(this, JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION, null, options, options[0]);
         mainPanel.add(pane, BorderLayout.CENTER);
-
         final JOptionPane p = new JOptionPane();
-
         final JDialog dlg = p.createDialog(parent, Res.getString("title.roster"));
         dlg.setModal(true);
-
         dlg.pack();
         dlg.setSize(350, 450);
         dlg.setResizable(true);
@@ -135,7 +118,6 @@ public class RosterPickList extends JPanel {
         dlg.requestFocus();
 
         List<String> selectedContacts = new ArrayList<>();
-
         Object[] values = rosterList.getSelectedValuesList().toArray();
         for (Object value : values) {
             try {
@@ -147,5 +129,4 @@ public class RosterPickList extends JPanel {
         }
         return selectedContacts;
     }
-
 }

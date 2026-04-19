@@ -201,8 +201,6 @@ public class CustomMessages {
                 else if (selectedNode.getParent() == rootNode) {
                     JPopupMenu popup = new JPopupMenu();
                     Action addAction = new AbstractAction() {
-						private static final long serialVersionUID = 2187174931315380754L;
-
 						@Override
 						public void actionPerformed(ActionEvent actionEvent) {
                             CustomStatus status = new CustomStatus();
@@ -226,8 +224,6 @@ public class CustomMessages {
                 if (event.isPopupTrigger()) {
                     JPopupMenu popup = new JPopupMenu();
                     Action deleteAction = new AbstractAction() {
-						private static final long serialVersionUID = -4421868467918912876L;
-
 						@Override
 						public void actionPerformed(ActionEvent actionEvent) {
                             List<CustomStatusItem> list = new ArrayList<>();
@@ -248,10 +244,7 @@ public class CustomMessages {
                     deleteAction.putValue(Action.NAME, Res.getString("menuitem.delete"));
                     popup.add(deleteAction);
 
-
                     Action editAction = new AbstractAction() {
-						private static final long serialVersionUID = 39916149252596354L;
-
 						@Override
 						public void actionPerformed(ActionEvent actionEvent) {
                             List<CustomStatusItem> newItems = load();
@@ -259,7 +252,6 @@ public class CustomMessages {
                                 if (item.getType().equals(messageType) && item.getStatus().equals(messageStatus)) {
                                     CustomStatus customStatus = new CustomStatus();
                                     customStatus.showEditDialog(item);
-
                                     // Reload tree.
                                     reloadTree(rootNode, tree);
                                     break;
@@ -307,7 +299,6 @@ public class CustomMessages {
     }
 
     private static class CustomStatus extends JPanel {
-		private static final long serialVersionUID = 1117350001209641469L;
 		private final JLabel typeLabel = new JLabel();
         private final JComboBox<ImageIcon> typeBox = new JComboBox<>();
 
@@ -435,16 +426,14 @@ public class CustomMessages {
                     }
 
 
-                    Iterator<CustomStatusItem> customListIterator = list.iterator();
                     boolean exists = false;
-                    while (customListIterator.hasNext()) {
-                        CustomStatusItem customItem = customListIterator.next();
+                    for (CustomStatusItem customItem : list) {
                         String type1 = customItem.getType();
                         String status = customItem.getStatus();
                         int priority = customItem.getPriority();
-
-                        if ( type1.equals(getType()) && status.equals(getStatus()) && priority == getPriority()) {
+                        if (type1.equals(getType()) && status.equals(getStatus()) && priority == getPriority()) {
                             exists = true;
+                            break;
                         }
                     }
 
@@ -452,9 +441,7 @@ public class CustomMessages {
                         changeItem.setPriority(getPriority());
                         changeItem.setStatus(getStatus());
                         changeItem.setType(getType());
-
                     }
-
                     // Otherwise save.
                     if (!exists) {
                         save(list);
@@ -507,13 +494,11 @@ public class CustomMessages {
                     optionsDialog.setVisible(false);
                 }
                 else if (Res.getString("ok").equals(value)) {
-
                     if (!ModelUtil.hasLength(getStatus())) {
                         JOptionPane.showMessageDialog(optionsDialog, Res.getString("message.invalid.status"));
                         optionPane.setValue(JOptionPane.UNINITIALIZED_VALUE);
                         return;
                     }
-
 
                     if (!persistBox.isSelected()) {
                         // Change presence and quit.
@@ -583,6 +568,4 @@ public class CustomMessages {
             optionsDialog.requestFocus();
         }
     }
-
-
 }

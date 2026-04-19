@@ -48,7 +48,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
 public class SearchForm extends JPanel {
-    private static final long serialVersionUID = -6935368899659597477L;
     private UserSearchResults searchResults;
     private DataFormUI questionForm;
     private UserSearchManager searchManager;
@@ -58,12 +57,10 @@ public class SearchForm extends JPanel {
     // TODO: Constructor should use DomainBareJid type instead of String.
     public SearchForm(String serviceString) {
         this.serviceName = JidCreate.domainBareFromOrThrowUnchecked(serviceString);
-
         searchManager = UserSearchManager.getInstanceFor(SparkManager.getConnection());
         setLayout(new GridBagLayout());
 
         // Load searchForm
-
         try {
             searchForm = searchManager.getSearchForm(serviceName).getDataForm();
         }
@@ -93,8 +90,6 @@ public class SearchForm extends JPanel {
         getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(enterString), "enter");
 
         getActionMap().put("enter", new AbstractAction("enter") {
-	    private static final long serialVersionUID = -7308854327447291219L;
-
 	    @Override
 		public void actionPerformed(ActionEvent evt) {
                 performSearch();
@@ -151,9 +146,6 @@ public class SearchForm extends JPanel {
                 }
             }
         };
-
         worker.start();
-
-
     }
 }

@@ -26,13 +26,10 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * @author Derek DeMoro
  */
 public abstract class BrowserViewer extends JPanel {
-	private static final long serialVersionUID = -5389246902135069702L;
 	private final CopyOnWriteArrayList<BrowserListener> listeners = new CopyOnWriteArrayList<>();
 
     /**
      * Add a BrowserListener.
-     *
-     * @param listener the listener.
      */
     public void addBrowserListener(BrowserListener listener) {
         listeners.addIfAbsent(listener);
@@ -79,8 +76,6 @@ public abstract class BrowserViewer extends JPanel {
 
     /**
      * Should load the given url.
-     *
-     * @param url the url to load.
      */
     public abstract void loadURL(String url);
 

@@ -54,7 +54,6 @@ import java.util.Date;
  * @author Derek DeMoro
  */
 public class ContactInfoWindow extends JPanel {
-	private static final long serialVersionUID = 8409694344721276453L;
 	private final JLabel nicknameLabel = new JLabel();
     private final JTextArea statusLabel = new JTextArea();
     private final JLabel fullJIDLabel = new JLabel();
@@ -216,12 +215,10 @@ public class ContactInfoWindow extends JPanel {
         }
         if (status.equals(Res.getString("offline")) || contactItem.getPresence().isAway()) {
         	//If user is offline or away, try to see last activity
-
 	        try {
                 //If user is away (not offline), last activity request is sent to client
 				Jid client = status.equals(Res.getString("offline")) ? contactItem.getJid() : contactItem.getPresence().getFrom();
 	            LastActivity activity = LastActivityManager.getInstanceFor( SparkManager.getConnection() ).getLastActivity(client);
-	
 	            long idleTime = (activity.getIdleTime() * 1000);
 	
 	            if (idleTime > 0) {
@@ -333,22 +330,16 @@ public class ContactInfoWindow extends JPanel {
 
     public void mouseExited(MouseEvent e) {
         Point point = e.getPoint();
-
         Dimension dim = window.getSize();
-
         int x = (int)point.getX();
         int y = (int)point.getY();
-
         boolean close = false;
-
         if (x < 0 || x >= dim.getWidth()) {
             close = true;
         }
-
         if (y < 0 || y >= dim.getHeight()) {
             close = true;
         }
-
         if (close) {
             window.setVisible(false);
             contactItem = null;
@@ -368,7 +359,4 @@ public class ContactInfoWindow extends JPanel {
     protected static Object getLock() {
         return LOCK;
     }
-
-
-
 }

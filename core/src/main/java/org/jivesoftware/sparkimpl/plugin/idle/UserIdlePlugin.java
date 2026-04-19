@@ -33,7 +33,6 @@ import java.util.TimerTask;
  * Sets idle or online status based on activity
  */
 public class UserIdlePlugin extends TimerTask implements Plugin {
-
 	private final int CHECKTIME = 2;
 	private boolean hasChanged = false;
 	private static final LocalPreferences pref = SettingsManager.getLocalPreferences();
@@ -75,7 +74,6 @@ public class UserIdlePlugin extends TimerTask implements Plugin {
 		} else {
 			statustext = latestPresence.getStatus();
 		}
-
 		if (latestPresence.isAway()) {
 			Log.debug("UserIdlePlugin: Presence is already set to away");
 		} else {
@@ -90,9 +88,7 @@ public class UserIdlePlugin extends TimerTask implements Plugin {
 		}
 	}
 
-
 	private void setOnline() {
-
 		/* TODO commented out when PhonePlugin was not ported to Maven.
 		if (PhonePlugin.onPhonePresence != null) {
 			SparkManager.getSessionManager().changePresence(PhonePlugin.onPhonePresence);
@@ -124,8 +120,6 @@ public class UserIdlePlugin extends TimerTask implements Plugin {
 			SparkManager.getSessionManager().changePresence(latestPresence);
 			Log.debug("UserIdlePlugin: Setting presence using latestPresence");
 		/*}*/
-
-
 	}
 
     @Override
@@ -146,7 +140,7 @@ public class UserIdlePlugin extends TimerTask implements Plugin {
         } else {
             // Set idle/online status based on duration
             long idleDuration = idleTimeDetector.getIdleTimeMillis() / 1000;
-            if (!hasChanged && idleDuration > pref.getIdleTime() * 60) {
+            if (!hasChanged && idleDuration > pref.getIdleTime() * 60L) {
                 setIdle();
                 hasChanged = true;
             } else if (hasChanged && idleDuration < 10) {

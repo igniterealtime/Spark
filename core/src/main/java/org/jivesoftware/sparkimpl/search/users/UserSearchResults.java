@@ -58,8 +58,6 @@ import java.util.List;
  * UserSearchResults displays the UI for all users found using the JEP-055 search service.
  */
 public class UserSearchResults extends JPanel {
-
-    private static final long serialVersionUID = 4196389090818949068L;
     private UsersInfoTable resultsTable;
 
     /**
@@ -140,11 +138,8 @@ public class UserSearchResults extends JPanel {
         }
         // Get agent
         final int row = resultsTable.rowAtPoint(e.getPoint());
-
         final JPopupMenu menu = new JPopupMenu();
-
         Action addContactAction = new AbstractAction() {
-	    private static final long serialVersionUID = -6377937878941477145L;
 
 	    @Override
 		public void actionPerformed(ActionEvent e) {
@@ -178,8 +173,6 @@ public class UserSearchResults extends JPanel {
         };
 
         Action chatAction = new AbstractAction() {
-	    private static final long serialVersionUID = 5651812282020177800L;
-
 	    @Override
 		public void actionPerformed(ActionEvent e) {
                 openChatRoom(row);
@@ -187,8 +180,6 @@ public class UserSearchResults extends JPanel {
         };
 
         Action profileAction = new AbstractAction() {
-  	    private static final long serialVersionUID = -2014872840628217586L;
-
 	    @Override
 		public void actionPerformed(ActionEvent e) {
                 VCardManager vcardSupport = SparkManager.getVCardManager();
@@ -220,7 +211,6 @@ public class UserSearchResults extends JPanel {
     }
 
     private static final class UsersInfoTable extends Table {
-	private static final long serialVersionUID = -7097826349368800291L;
 
 	UsersInfoTable(String[] headers) {
             super(headers);

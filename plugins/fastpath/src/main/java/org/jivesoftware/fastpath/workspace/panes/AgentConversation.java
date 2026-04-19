@@ -33,8 +33,6 @@ import java.util.Date;
 import org.jxmpp.jid.EntityBareJid;
 
 public class AgentConversation extends JPanel {
-
-	private static final long serialVersionUID = 4723796422650155313L;
 	private final JLabel agentLabel = new JLabel();
     private final JLabel visitorLabel = new JLabel();
     private final JLabel emailLabel = new JLabel();
@@ -105,6 +103,7 @@ public class AgentConversation extends JPanel {
         this.agentJID = agentJID;
     }
 
+    @Override
     public String getToolTipText() {
         return "<html><body>" + "<table width=200><tr><td>" + FpRes.getString("question")
             + ": " + questionLabel.getText() + "</td></tr></table></body></html>";
@@ -124,6 +123,7 @@ public class AgentConversation extends JPanel {
      *
      * @return the preferred dimension
      */
+    @Override
     public Dimension getPreferredSize() {
         final Dimension size = super.getPreferredSize();
         size.width = 0;

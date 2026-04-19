@@ -49,8 +49,6 @@ import org.jxmpp.jid.BareJid;
  * @author Derek DeMoro
  */
 public class VCardViewer extends JPanel {
-
-	private static final long serialVersionUID = -5642099937626355102L;
 	private final Cursor DEFAULT_CURSOR = new Cursor(Cursor.DEFAULT_CURSOR);
     private final Cursor LINK_CURSOR = new Cursor(Cursor.HAND_CURSOR);
 

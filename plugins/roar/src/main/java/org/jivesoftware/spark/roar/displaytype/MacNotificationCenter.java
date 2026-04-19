@@ -14,7 +14,7 @@ import com.sun.jna.Native;
  * NSUserNotificationsBridge is based on
  * https://github.com/petesh/OSxNotificationCenter
  * 
- * @author wolf.posdorfer
+ * @author Wolf Posdorfer
  */
 public class MacNotificationCenter {
 

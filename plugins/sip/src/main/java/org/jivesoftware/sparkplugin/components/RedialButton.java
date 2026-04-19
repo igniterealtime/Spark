@@ -33,8 +33,6 @@ import java.awt.event.MouseListener;
 /**
  */
 public class RedialButton extends JButton implements MouseListener {
-
-    private static final long serialVersionUID = 6125240318370634545L;
     private Icon normalIcon;
     private Icon hoverIcon;
     private Icon downIcon;
@@ -42,7 +40,6 @@ public class RedialButton extends JButton implements MouseListener {
 
     public RedialButton() {
         super();
-
         normalIcon = PhoneRes.getImageIcon("REDIAL_BUTTON");
         hoverIcon = PhoneRes.getImageIcon("REDIAL_BUTTON_HOVER");
         downIcon = PhoneRes.getImageIcon("REDIAL_BUTTON_DOWN");
@@ -50,11 +47,8 @@ public class RedialButton extends JButton implements MouseListener {
 
         setIcon(normalIcon);
         decorate();
-
         addMouseListener(this);
-
         setForeground(new Color(158, 32, 10));
-
         setDisabledIcon(normalIcon);
     }
 
@@ -64,7 +58,6 @@ public class RedialButton extends JButton implements MouseListener {
     private void decorate() {
         setBorderPainted(false);
         setOpaque(true);
-
         setContentAreaFilled(false);
         setMargin(new Insets(0, 0, 0, 0));
     }

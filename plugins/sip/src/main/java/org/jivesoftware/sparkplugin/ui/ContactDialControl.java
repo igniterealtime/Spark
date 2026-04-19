@@ -68,8 +68,6 @@ import org.jivesoftware.sparkplugin.ui.call.CallManager;
 /**
  */
 public class ContactDialControl extends JPanel implements InterlocutorListener, Phone {
-	private static final long serialVersionUID = 8848248512306073866L;
-
 	private TelephoneTextField callField;
 
     private RolloverButton callButton;
@@ -295,7 +293,6 @@ public class ContactDialControl extends JPanel implements InterlocutorListener, 
      * Used as the action to place Calls.
      */
     private class CallAction extends AbstractAction {
-		private static final long serialVersionUID = -6558494299123278779L;
 		private String number;
 
         public CallAction(String label, String number, Icon icon) {

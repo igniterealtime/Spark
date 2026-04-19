@@ -31,9 +31,6 @@ import javax.swing.JPanel;
  * @author Derek DeMoro
  */
 public class ControlPanel extends JPanel {
-
-    private static final long serialVersionUID = -8596701082529183291L;
-
     public ControlPanel() {
         setBorder(BorderFactory.createLineBorder(new Color(197, 213, 230)));
     }

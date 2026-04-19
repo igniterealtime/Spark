@@ -20,8 +20,8 @@ import org.jivesoftware.spark.plugin.otr.util.OTRResources;
  * @author Bergunde Holger
  */
 public class OTRKeyTable extends JPanel {
-    private JTable _table;
-    private DefaultTableModel _tableModel;
+    private final JTable _table;
+    private final DefaultTableModel _tableModel;
 
     public OTRKeyTable() {
         final String[] header = { OTRResources.getString("otr.table.jid"), OTRResources.getString("otr.table.public.key"), OTRResources.getString("otr.key.verified") };

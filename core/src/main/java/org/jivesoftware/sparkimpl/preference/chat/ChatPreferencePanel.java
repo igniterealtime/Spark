@@ -46,8 +46,6 @@ import org.jivesoftware.sparkimpl.settings.local.SettingsManager;
  * The Preference UI used to handle changing of Chat Preferences.
  */
 public class ChatPreferencePanel extends JPanel implements ActionListener {
-
-	private static final long serialVersionUID = 8910938026549098719L;
 	private final JCheckBox showTimeBox = new JCheckBox();
     private final ButtonGroup timeFormat = new ButtonGroup();
     private final JRadioButton format12 = new JRadioButton("12:00 PM", false);
@@ -174,13 +172,10 @@ public class ChatPreferencePanel extends JPanel implements ActionListener {
         } );
         
         hideChatHistory.addActionListener(this);
-
     }
 
     /**
      * Set to true to have the ChatWindow show the timestamp of each message.
-     *
-     * @param showTime true to show timestamp of each message.
      */
     public void setShowTime(boolean showTime) {
         showTimeBox.setSelected(showTime);
@@ -188,8 +183,6 @@ public class ChatPreferencePanel extends JPanel implements ActionListener {
 
     /**
      * Returns true if the ChatWindow should show a timestamp of each message.
-     *
-     * @return true if the ChatWindow should show a timestamp of each message.
      */
     public boolean getShowTime() {
         return showTimeBox.isSelected();
@@ -216,8 +209,6 @@ public class ChatPreferencePanel extends JPanel implements ActionListener {
 
     /**
      * Returns the new password to use.
-     *
-     * @return the new password to use.
      */
     public String getPassword() {
         return new String(passwordField.getPassword());
@@ -225,8 +216,6 @@ public class ChatPreferencePanel extends JPanel implements ActionListener {
 
     /**
      * Returns the confirmation password used to compare to the first password.
-     *
-     * @return the confirmation password used to compare to the first password.
      */
     public String getConfirmationPassword() {
         return new String(confirmationPasswordField.getPassword());
@@ -325,5 +314,4 @@ public class ChatPreferencePanel extends JPanel implements ActionListener {
             hidePrevChatHistory.setEnabled(true);            
         }
     }
-
 }

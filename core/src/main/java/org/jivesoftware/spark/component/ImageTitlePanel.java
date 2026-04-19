@@ -36,7 +36,6 @@ import java.awt.geom.AffineTransform;
  * Fancy title panel that displays gradient colors, text and components.
  */
 public class ImageTitlePanel extends JPanel {
-    private static final long serialVersionUID = -4942953711496567252L;
     private final Image backgroundImage;
     private final JLabel titleLabel = new JLabel();
     private final JLabel iconLabel = new JLabel();
@@ -50,11 +49,8 @@ public class ImageTitlePanel extends JPanel {
      */
     public ImageTitlePanel(String title) {
         backgroundImage = Default.getImageIcon(Default.TOP_BOTTOM_BACKGROUND_IMAGE).getImage();
-
         init();
-
         titleLabel.setText(title);
-
         titleLabel.setFont(new Font("Dialog", Font.BOLD, 11));
     }
 
@@ -63,10 +59,7 @@ public class ImageTitlePanel extends JPanel {
      */
     public ImageTitlePanel() {
         backgroundImage = Default.getImageIcon(Default.TOP_BOTTOM_BACKGROUND_IMAGE).getImage();
-
         init();
-
-     
         titleLabel.setFont(new Font("Dialog", Font.BOLD, 11));
     }
 
@@ -85,8 +78,6 @@ public class ImageTitlePanel extends JPanel {
 
     /**
      * Set the description for the label.
-     *
-     * @param description the description for the label.
      */
     public void setDescription(String description) {
         descriptionLabel.setText(description);
@@ -95,8 +86,6 @@ public class ImageTitlePanel extends JPanel {
 
     /**
      * Set the font of the description label.
-     *
-     * @param font the font to use in the description label.
      */
     public void setDescriptionFont(Font font) {
         descriptionLabel.setFont(font);
@@ -104,8 +93,6 @@ public class ImageTitlePanel extends JPanel {
 
     /**
      * Returns the description label.
-     *
-     * @return the description label.
      */
     public JTextArea getDescriptionLabel() {
         return descriptionLabel;
@@ -113,8 +100,6 @@ public class ImageTitlePanel extends JPanel {
 
     /**
      * Sets the title to use in the label.
-     *
-     * @param title the title to use.
      */
     public void setTitle(String title) {
         titleLabel.setText(title);
@@ -122,8 +107,6 @@ public class ImageTitlePanel extends JPanel {
 
     /**
      * Returns the title label.
-     *
-     * @return the title label.
      */
     public JLabel getTitleLabel() {
         return titleLabel;
@@ -131,8 +114,6 @@ public class ImageTitlePanel extends JPanel {
 
     /**
      * Set the font of the title label.
-     *
-     * @param font the font to use for title label.
      */
     public void setTitleFont(Font font) {
         titleLabel.setFont(font);
@@ -140,8 +121,6 @@ public class ImageTitlePanel extends JPanel {
 
     /**
      * Specify a component to use on this label.
-     *
-     * @param component the component to use with this label.
      */
     public void setComponent(JComponent component) {
         add(new JLabel(),
@@ -154,8 +133,6 @@ public class ImageTitlePanel extends JPanel {
 
     /**
      * Specify the icon to use with this label.
-     *
-     * @param icon the icon to use with this label.
      */
     public void setIcon(ImageIcon icon) {
         add(new JLabel(),

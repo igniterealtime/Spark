@@ -33,7 +33,6 @@ import java.awt.image.BufferedImage;
  * Allows for selection of panel images.
  */
 public class ImageSelectionPanel extends JPanel {
-	private static final long serialVersionUID = -2832575315956252059L;
 	private BufferedImage image;
 	private Rectangle clip;
 
@@ -128,6 +127,4 @@ class Selector extends MouseInputAdapter {
         if (dragging)
             selectionPanel.setClipFrame(start, e.getPoint());
     }
-
-
 }

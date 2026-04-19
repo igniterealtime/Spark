@@ -36,7 +36,7 @@ import org.jivesoftware.spark.roar.displaytype.TopRight;
 /**
  * RoarProperties file stuff
  * 
- * @author wolf.posdorfer
+ * @author Wolf Posdorfer
  * 
  */
 public class RoarProperties {

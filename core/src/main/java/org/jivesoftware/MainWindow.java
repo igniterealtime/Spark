@@ -471,8 +471,6 @@ public final class MainWindow extends ChatFrame implements ActionListener {
 
         // Add Error Dialog Viewer
         final Action viewErrors = new AbstractAction() {
-			private static final long serialVersionUID = -420926784631340112L;
-
 			@Override
 			public void actionPerformed(ActionEvent e) {
                 File logFile = Log.getLogFilePath();
@@ -489,14 +487,10 @@ public final class MainWindow extends ChatFrame implements ActionListener {
         viewErrors.putValue(Action.NAME, Res.getString("menuitem.view.logs"));
 
         final Action viewHelpGuideAction = new AbstractAction() {
-
             	final String url = Default.getString(Default.HELP_USER_GUIDE);
-			private static final long serialVersionUID = 2680369963282231348L;
-
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
                 try {
-
                     BrowserLauncher.openURL(url);
                 }
                 catch (Exception e) {
@@ -504,7 +498,6 @@ public final class MainWindow extends ChatFrame implements ActionListener {
                 }
             }
         };
-
 
         if (!Default.getBoolean(Default.HELP_USER_GUIDE_DISABLED) && Enterprise.containsFeature(Enterprise.HELP_USERGUIDE_FEATURE)) {
         	viewHelpGuideAction.putValue(Action.NAME,
@@ -535,8 +528,6 @@ public final class MainWindow extends ChatFrame implements ActionListener {
 	}
         // Register shutdown with the exit menu.
 	exitMenuItem.addActionListener(new AbstractAction() {
-	    private static final long serialVersionUID = -2301236575241532698L;
-
 	    @Override
 		public void actionPerformed(ActionEvent e) {
 		shutdown();
@@ -544,8 +535,6 @@ public final class MainWindow extends ChatFrame implements ActionListener {
 	});
 
 	sparkforumItem.addActionListener(new AbstractAction() {
-	    private static final long serialVersionUID = -1423433460333010339L;
-
 	    final String url = Default.getString(Default.HELP_FORUM);
 
 		@Override
@@ -560,8 +549,6 @@ public final class MainWindow extends ChatFrame implements ActionListener {
 
         // Show About Box
 	menuAbout.addActionListener(new AbstractAction() {
-	    private static final long serialVersionUID = -7173666373051354502L;
-
 	    @Override
 		public void actionPerformed(ActionEvent e) {
 		showAboutBox();

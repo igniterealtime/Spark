@@ -46,8 +46,6 @@ import org.jivesoftware.sparkplugin.ui.TopLabel;
  * that is associated with this number, the jid will be returned and the VCard information will be displayed.
  */
 public class ContactDetailsPanel extends JPanel implements ActionListener, MouseListener {
-
-	private static final long serialVersionUID = 7323351117571880259L;
     private LinkLabel emailLabel;
     private JLabel contactNameLabel;
     private JLabel jobTitleLabel;

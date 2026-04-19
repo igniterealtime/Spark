@@ -26,7 +26,6 @@ import org.jivesoftware.spark.plugin.battleship.types.Ship;
  * Display panel with ship labels
  */
 public class Display extends JPanel {
-    private static final long serialVersionUID = 2343499579008942774L;
 
     private final JLabel[] _labels;
     private final JLabel _textLabel;

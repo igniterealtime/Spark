@@ -57,8 +57,6 @@ import org.jxmpp.jid.BareJid;
 import org.jxmpp.jid.EntityFullJid;
 
 public class SendFileTransfer extends JPanel {
-
-    private static final long serialVersionUID = -4403839897649365671L;
     private final FileDragLabel imageLabel = new FileDragLabel();
     private final JLabel titleLabel = new JLabel();
     private final JLabel fileLabel = new JLabel();
@@ -79,9 +77,7 @@ public class SendFileTransfer extends JPanel {
 
     public SendFileTransfer(ChatRoom chatRoom) {
         this.chatRoom = chatRoom;
-
         setLayout(new GridBagLayout());
-
         setBackground(new Color(250, 249, 242));
         add(imageLabel, new GridBagConstraints(0, 0, 1, 3, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
 
@@ -199,7 +195,6 @@ public class SendFileTransfer extends JPanel {
                         if (transfer.getBytesSent() > 0 && _startTime == 0) {
                             _startTime = System.currentTimeMillis();
                         }
-
                         long startTime = System.currentTimeMillis();
                         long startByte = transfer.getBytesSent();
                         Thread.sleep(500);
@@ -245,7 +240,6 @@ public class SendFileTransfer extends JPanel {
 
     private void makeClickable(final JLabel label) {
         label.setToolTipText(Res.getString("message.click.to.open"));
-
         label.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -255,7 +249,6 @@ public class SendFileTransfer extends JPanel {
             @Override
             public void mouseEntered(MouseEvent e) {
                 label.setCursor(new Cursor(Cursor.HAND_CURSOR));
-
             }
 
             @Override
@@ -356,8 +349,6 @@ public class SendFileTransfer extends JPanel {
     }
 
     private static class TransferButton extends JButton {
-        private static final long serialVersionUID = 8807434179541503654L;
-
         public TransferButton() {
             decorate();
         }
@@ -368,7 +359,6 @@ public class SendFileTransfer extends JPanel {
         private void decorate() {
             setBorderPainted(false);
             setOpaque(true);
-
             setContentAreaFilled(false);
             setMargin(new Insets(1, 1, 1, 1));
         }
@@ -376,7 +366,6 @@ public class SendFileTransfer extends JPanel {
 
     private boolean isImage(String fileName) {
         fileName = fileName.toLowerCase();
-
         String[] imageTypes = {"jpeg", "gif", "jpg", "png"};
         for (String imageType : imageTypes) {
             if (fileName.endsWith(imageType)) {
@@ -401,5 +390,4 @@ public class SendFileTransfer extends JPanel {
             transfer.cancel();
         }
     }
-
 }

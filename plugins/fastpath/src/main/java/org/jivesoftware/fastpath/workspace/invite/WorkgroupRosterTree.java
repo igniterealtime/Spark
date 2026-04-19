@@ -104,15 +104,19 @@ public final class WorkgroupRosterTree extends JPanel {
         Roster roster = SparkManager.getRoster();
 
         roster.addRosterListener(new RosterListener() {
+            @Override
             public void entriesAdded(Collection collection) {
             }
 
+            @Override
             public void entriesUpdated(Collection collection) {
             }
 
+            @Override
             public void entriesDeleted(Collection collection) {
             }
 
+            @Override
             public void presenceChanged(Presence presence) {
                 changePresence(presence.getFrom(), presence);
             }

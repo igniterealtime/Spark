@@ -31,15 +31,14 @@ import javax.swing.BorderFactory;
  * @author Derek DeMoro
  */
 public class HistoryItemRenderer extends JPanel implements ListCellRenderer<Object> {
-	private static final long serialVersionUID = 5290058516051285328L;
+    private static final Color COLOR_BACKGROUND = new Color(217, 232, 250);
+    private static final Color COLOR_BORDER = new Color(187, 195, 215);
 
-	/**
-     * Construct Default JPanelRenderer.
-     */
     public HistoryItemRenderer() {
         setOpaque(true);
     }
 
+    @Override
     public Component getListCellRendererComponent(JList list,
                                                   Object value,
                                                   int index,
@@ -47,11 +46,10 @@ public class HistoryItemRenderer extends JPanel implements ListCellRenderer<Obje
                                                   boolean cellHasFocus) {
         JPanel panel = (JPanel)value;
         panel.setFocusable(false);
-
         if (isSelected) {
             panel.setForeground(Color.black);
-            panel.setBackground(new Color(217, 232, 250));
-            panel.setBorder(BorderFactory.createLineBorder(new Color(187, 195, 215)));
+            panel.setBackground(COLOR_BACKGROUND);
+            panel.setBorder(BorderFactory.createLineBorder(COLOR_BORDER));
         }
         else {
             panel.setBackground(list.getBackground());

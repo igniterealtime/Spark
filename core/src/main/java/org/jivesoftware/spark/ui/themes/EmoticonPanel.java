@@ -25,12 +25,10 @@ import javax.swing.JPanel;
 /**
  * Class designed to hold emoticons
  * in a N x M GridbagPanel
- * @author wolf.posdorfer
+ * @author Wolf Posdorfer
  *
  */
 public class EmoticonPanel extends JPanel {
-
-    private static final long serialVersionUID = 4884193790861293275L;
     private int _spalte=0;
     private int _zeile=0;
     private final int _numberInRow;
@@ -73,6 +71,4 @@ public class EmoticonPanel extends JPanel {
     {
 	return _zeile;
     }
-
-
 }

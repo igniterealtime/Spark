@@ -29,9 +29,6 @@ import org.jivesoftware.spark.component.VerticalFlowLayout;
 import org.jivesoftware.spark.util.ResourceUtils;
 
 public class FlashingPreferenceDialog extends JPanel {
-
-	private static final long serialVersionUID = -5274539572483246530L;
-
 	private final JCheckBox flashingEnabled;
 	private final JComboBox<String> flashingType;
 	

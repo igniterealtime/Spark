@@ -39,7 +39,6 @@ import org.jivesoftware.spark.SparkManager;
  * in any chat room implementation.
  */
 public class ChatInputEditor extends ChatArea implements DocumentListener {
-	private static final long serialVersionUID = -3085035737908538581L;
 	private final UndoManager undoManager;
 	private final KeyStroke undoKeyStroke;
 	private final KeyStroke ctrlbackspaceKeyStroke;
@@ -50,11 +49,9 @@ public class ChatInputEditor extends ChatArea implements DocumentListener {
      */
     public ChatInputEditor() {
         undoManager = new UndoManager();
-
         this.setDragEnabled(true);
         this.getDocument().addUndoableEditListener(undoManager);
         Action undo = new AbstractAction() {
-			private static final long serialVersionUID = -8897769620508545403L;
 			@Override
 			public void actionPerformed(ActionEvent e) {
 		try {
@@ -66,7 +63,6 @@ public class ChatInputEditor extends ChatArea implements DocumentListener {
         };
         
         Action escape = new AbstractAction() {
-	    private static final long serialVersionUID = -2973535045376312313L;
 	    @Override
 	    public void actionPerformed(ActionEvent e) {
 		SparkManager.getChatManager().getChatContainer().closeActiveRoom();	
@@ -74,25 +70,18 @@ public class ChatInputEditor extends ChatArea implements DocumentListener {
 	};
         
 	Action ctrlbackspace = new AbstractAction() {
-	    private static final long serialVersionUID = -2973535045376312313L;
-
 	    @Override
 	    public void actionPerformed(ActionEvent e) {
-		
 		// We have Text selected, remove it
-		if (getSelectedText() != null && getSelectedText().length() > 0) {
+		if (getSelectedText() != null && !getSelectedText().isEmpty()) {
 		   ChatInputEditor.this.removeWordInBetween(getSelectionStart(),
 			    getSelectionEnd());
-
 		    // We are somewhere in betwee 0 and str.length
 		} else if (getCaretPosition() < getText().length()) {
-
 		    String preCaret = getText()
 			    .substring(0, getCaretPosition());
-
 		    int lastSpace = preCaret.lastIndexOf(" ") != -1 ? preCaret
 			    .lastIndexOf(" ") : 0;
-
 		    if (lastSpace != -1 && lastSpace!=0)
 		    {	
 			// Do we have anymore spaces before the current one?
@@ -103,13 +92,10 @@ public class ChatInputEditor extends ChatArea implements DocumentListener {
 		    }
 		    ChatInputEditor.this.removeWordInBetween(lastSpace,
 			    getCaretPosition());
-
             setCaretPosition(Math.min(lastSpace, getText().length()));
-
 		    // We are at the end and will remove until the next SPACE
 		} else if (getText().contains(" ")) {
 		    int untilhere = getText().lastIndexOf(" ");
-
 		    // Do we have anymore spaces before the last one?
 		    for (int i = untilhere; getText().charAt(i) == ' '; --i) {
 			untilhere--;
@@ -122,7 +108,6 @@ public class ChatInputEditor extends ChatArea implements DocumentListener {
 		}
 	    }
 	};
-
         undoKeyStroke = KeyStroke.getKeyStroke('z', InputEvent.CTRL_MASK);
         ctrlbackspaceKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, KeyEvent.CTRL_MASK);
         escapeKeyStroke = KeyStroke.getKeyStroke("ESCAPE");
@@ -182,11 +167,8 @@ public class ChatInputEditor extends ChatArea implements DocumentListener {
     public void showAsDisabled() {
         this.setEditable(false);
         this.setEnabled(false);
-
         clear();
-
         final Color disabledColor = (Color)UIManager.get("Button.disabled");
-
         this.setBackground(disabledColor);
     }
 
@@ -196,7 +178,6 @@ public class ChatInputEditor extends ChatArea implements DocumentListener {
     public void showEnabled() {
         this.setEditable(true);
         this.setEnabled(true);
-
         this.setBackground(Color.white);
     }
 

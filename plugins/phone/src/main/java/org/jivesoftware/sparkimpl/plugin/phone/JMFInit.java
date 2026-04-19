@@ -28,8 +28,6 @@ import java.awt.Frame;
 import java.util.Vector;
 
 public class JMFInit extends Frame implements Runnable {
-    private static final long serialVersionUID = 6591937615313371376L;
-
     public JMFInit(String[] args, boolean visible) {
         super("Initializing JMF...");
         Registry.set("secure.allowCaptureFromApplets", true);

@@ -34,9 +34,7 @@ import java.awt.Insets;
  * by directing them to the appropriate site.
  */
 public class HTMLViewer extends JPanel {
-    private static final long serialVersionUID = 4938398130343609958L;
     private final JEditorPane browser;
-
 
     /**
      * Creates a new CoBrowser object to be used with the specifid ChatRoom.
@@ -45,9 +43,7 @@ public class HTMLViewer extends JPanel {
         final JPanel mainPanel = new JPanel();
         browser = new JEditorPane();
         browser.setEditorKit(new HTMLEditorKit());
-
         setLayout(new GridBagLayout());
-
         this.add(mainPanel, new GridBagConstraints(0, 2, 1, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
     }
 
@@ -68,7 +64,7 @@ public class HTMLViewer extends JPanel {
     public void loadURL(String url) {
         try {
             if (url.startsWith("www")) {
-                url = "http://" + url;
+                url = "https://" + url;
             }
             browser.setPage(url);
         }

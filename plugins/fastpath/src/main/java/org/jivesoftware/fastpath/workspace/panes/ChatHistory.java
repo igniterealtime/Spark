@@ -52,8 +52,6 @@ import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.parts.Localpart;
 
 public class ChatHistory extends JPanel {
-
-	private static final long serialVersionUID = 1L;
 	private final DefaultListModel<HistoryItem> model = new DefaultListModel<>();
     private AgentSession agentSession;
     private final JList<HistoryItem> list;
@@ -62,15 +60,12 @@ public class ChatHistory extends JPanel {
 
     public ChatHistory() {
         list = new JList<>(model);
-
         list.setCellRenderer(new HistoryItemRenderer());
-
         final JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BorderLayout());
         mainPanel.setBackground(Color.white);
-
-
         final BackgroundPane titlePane = new BackgroundPane() {
+            @Override
             public Dimension getPreferredSize() {
                 final Dimension size = super.getPreferredSize();
                 size.width = 0;
@@ -80,7 +75,6 @@ public class ChatHistory extends JPanel {
 
         titlePane.setLayout(new GridBagLayout());
         titlePane.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.LIGHT_GRAY));
-
 
         JLabel userImage = new JLabel();
         userImage.setHorizontalAlignment(JLabel.LEFT);
@@ -97,6 +91,7 @@ public class ChatHistory extends JPanel {
         init();
 
         list.addMouseListener(new MouseAdapter() {
+            @Override
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2) {
                     HistoryItem historyItem = list.getSelectedValue();
@@ -109,8 +104,6 @@ public class ChatHistory extends JPanel {
     public void showDialog() {
         AgentSession agentSession = FastpathPlugin.getAgentSession();
         Localpart workgroupName = FastpathPlugin.getWorkgroup().getWorkgroupJID().getLocalpartOrThrow();
-
-
         if (mainFrame == null) {
             mainFrame = new JFrame(FpRes.getString("title.personal.chats"));
         }
@@ -133,11 +126,7 @@ public class ChatHistory extends JPanel {
 
     public void init() {
         model.removeAllElements();
-
-
         AgentChatHistory history = null;
-
-
         agentSession = FastpathPlugin.getAgentSession();
         EntityBareJid jid = SparkManager.getSessionManager().getUserBareAddress();
         try {
@@ -221,6 +210,7 @@ public class ChatHistory extends JPanel {
      *
      * @return the preferred dimension
      */
+    @Override
     public Dimension getPreferredSize() {
         final Dimension size = super.getPreferredSize();
         size.width = 0;

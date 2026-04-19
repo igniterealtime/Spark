@@ -60,8 +60,6 @@ import static org.jivesoftware.spark.plugin.jingle.Ringing.*;
  * Handles UI controls for outgoing jingle calls.
  */
 public class OutgoingCall extends JPanel implements JingleSessionListener, ChatRoomClosingListener {
-
-    private static final long serialVersionUID = 7051515951813136423L;
     private static final long WAIT_FOR_MEDIA_DELAY = 20000;
     private final FileDragLabel imageLabel = new FileDragLabel();
     private final JLabel titleLabel = new JLabel();
@@ -337,8 +335,6 @@ public class OutgoingCall extends JPanel implements JingleSessionListener, ChatR
     }
 
     private static class CallButton extends JButton {
-        private static final long serialVersionUID = 7083309769944609925L;
-
         public CallButton() {
             decorate();
         }

@@ -34,7 +34,6 @@ import java.util.Date;
  * UI showing icon and tracking time
  */
 public class OnPhone extends JPanel {
-    private static final long serialVersionUID = -7344123390643812061L;
     private final JLabel iconLabel;
     private final TimeTrackingLabel timeLabel;
 

@@ -32,56 +32,38 @@ import javax.swing.JPanel;
 
 import javax.swing.ScrollPaneConstants;
 
-
 public class EmoticonUI extends JPanel {
-	private static final long serialVersionUID = 2360054381356167669L;
 	private EmoticonPickListener listener;
 
 	public EmoticonUI() {
 		setBackground(Color.white);
-
 		final EmoticonManager manager = EmoticonManager.getInstance();
-
 		Collection<Emoticon> emoticons = manager.getActiveEmoticonSet();
-
 		if (emoticons != null) {
-
 			int no = emoticons.size();
-
                         // Emoticons per row
                         int cntInRow = 6;
-                        
                         // Count rows of Emoticons
 			int rows = no / cntInRow + ((no % cntInRow == 0) ? 0 : 1);
-
                         Container gridContainer = new Container();
                         GridLayout grid = new GridLayout(0, cntInRow);
                         JScrollPane scrollPane = new JScrollPane(gridContainer);
-                        
                  	scrollPane.getViewport().setBackground(Color.WHITE);
 			scrollPane.setBorder(BorderFactory.createEmptyBorder());
-                        
                         gridContainer.setLayout(grid);
-
                         // Show only vertical scrollbar if it needed
                         scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
                         scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-
                         int scrollBarWidth = scrollPane.getVerticalScrollBar().getPreferredSize().width;
-
                         // Add ScrollPane to Panel
                         add(scrollPane);
-
 //                      setIgnoreRepaint(true);
-
                         // Add Emoticons
 			for (Emoticon emoticon : emoticons) {
 				final String text = emoticon.getEquivalants().get(0);
 				String name = manager.getActiveEmoticonSetName();
-
 				final Emoticon smileEmoticon = manager.getEmoticon(name, text);
 				URL smileURL = manager.getEmoticonURL(smileEmoticon);
-
 				// Add Emoticon button
 				ImageIcon icon = new ImageIcon(smileURL);
 

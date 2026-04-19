@@ -27,8 +27,6 @@ import java.text.ParsePosition;
  * @author Bill Lynch
  */
 public class ByteFormat extends Format {
-	private static final long serialVersionUID = -8455746029128154466L;
-
 	public ByteFormat() {
     }
 

@@ -135,8 +135,6 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatStateListener {
         popupMenu.add(openMenu);
 
         openMenu.addActionListener(new AbstractAction() {
-            private static final long serialVersionUID = 1L;
-
             @Override
             public void actionPerformed(ActionEvent event) {
                 SparkManager.getMainWindow().setVisible(true);
@@ -148,8 +146,6 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatStateListener {
         popupMenu.add(minimizeMenu);
 
         minimizeMenu.addActionListener(new AbstractAction() {
-            private static final long serialVersionUID = 1L;
-
             @Override
             public void actionPerformed(ActionEvent event) {
                 SparkManager.getMainWindow().setVisible(false);
@@ -168,8 +164,6 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatStateListener {
             if (!Default.getBoolean(Default.DISABLE_EXIT) && Enterprise.containsFeature(Enterprise.LOGOUT_EXIT_FEATURE)) {
                 if (!Default.getBoolean(Default.HIDE_SAVE_PASSWORD_AND_AUTO_LOGIN) && pref.getPswdAutologin()) {
                     logoutMenu.addActionListener(new AbstractAction() {
-                        private static final long serialVersionUID = 1L;
-
                         @Override
                         public void actionPerformed(ActionEvent e) {
                             SparkManager.getMainWindow().logout(false);
@@ -182,8 +176,6 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatStateListener {
 
         // Exit Menu
         exitMenu.addActionListener(new AbstractAction() {
-            private static final long serialVersionUID = 1L;
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 SparkManager.getMainWindow().shutdown();
@@ -205,7 +197,6 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatStateListener {
             trayIcon = new TrayIcon(availableIcon.getImage(), JiveInfo.getName(), null);
             trayIcon.setImageAutoSize(true);
             trayIcon.addMouseListener(new TrayMouseListener());
-
             tray.add(trayIcon);
         } catch (Exception e) {
             Log.error("Unable to render tray icon", e);
@@ -216,8 +207,6 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatStateListener {
         StatusBar statusBar = SparkManager.getWorkspace().getStatusBar();
         for (StatusItem statusItem : statusBar.getStatusList()) {
             final AbstractAction action = new AbstractAction() {
-                private static final long serialVersionUID = 1L;
-
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     SparkManager.getSessionManager().changePresence(statusItem.getPresence());
@@ -255,8 +244,6 @@ public class SysTrayPlugin implements Plugin, NativeHandler, ChatStateListener {
                     String type = customItem.getType();
                     if (type.equals(statusItem.getText())) {
                         AbstractAction customAction = new AbstractAction() {
-                            private static final long serialVersionUID = 1L;
-
                             @Override
                             public void actionPerformed(ActionEvent e) {
                                 Presence oldPresence = statusItem.getPresence();

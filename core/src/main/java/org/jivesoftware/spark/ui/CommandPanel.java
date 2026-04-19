@@ -24,8 +24,6 @@ import org.jivesoftware.Spark;
 /**
  */
 public class CommandPanel extends JPanel {
-
-	private static final long serialVersionUID = -720715661649067658L;
 	//private final Image backgroundImage;
 
 	public CommandPanel() {
@@ -42,7 +40,6 @@ public class CommandPanel extends JPanel {
 		}
 
       setOpaque(false);
-      
        // backgroundImage = Default.getImageIcon(Default.TOP_BOTTOM_BACKGROUND_IMAGE).getImage();
 	}
      //   setBorder(BorderFactory.createMatteBorder(1, 1, 0, 1, new Color(197, 213, 230)));

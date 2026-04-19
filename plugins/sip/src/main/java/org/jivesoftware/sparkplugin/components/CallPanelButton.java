@@ -33,8 +33,6 @@ import java.awt.event.MouseListener;
 /**
  */
 public class CallPanelButton extends JButton implements MouseListener {
-
-    private static final long serialVersionUID = 3376625276352251288L;
     private Icon normalIcon;
     private Icon hoverIcon;
     private Icon downIcon;
@@ -45,20 +43,14 @@ public class CallPanelButton extends JButton implements MouseListener {
 
     public CallPanelButton(Image image, String text) {
         super();
-
         this.text = text;
-
         normalIcon = PhoneRes.getImageIcon("CALLPANEL_BIG_BUTTON");
         hoverIcon = PhoneRes.getImageIcon("CALLPANEL_BIG_BUTTON_HOVER");
         downIcon = PhoneRes.getImageIcon("CALLPANEL_BIG_BUTTON_DOWN");
         backgroundImage = image;
-
         setIcon(normalIcon);
-
         decorate();
-
         addMouseListener(this);
-
         setDisabledIcon(normalIcon);
     }
 
@@ -130,13 +122,10 @@ public class CallPanelButton extends JButton implements MouseListener {
         }
         g.setFont(new Font("Dialog", Font.PLAIN, 11));
 
-
         int stringWidth = g.getFontMetrics().stringWidth(text);
-
         x = (width - stringWidth) / 2;
         y = height - 12;
         g.drawString(text, x, y);
-
     }
 
     public void setEnabled(boolean enabled) {

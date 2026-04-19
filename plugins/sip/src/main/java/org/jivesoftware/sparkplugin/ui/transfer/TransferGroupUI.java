@@ -44,16 +44,10 @@ import java.util.List;
  * The UI that represents one group within the users Roster.
  */
 public class TransferGroupUI extends JPanel {
-
-    private static final long serialVersionUID = 1L;
-
     private List<TransferListener> listeners = new ArrayList<TransferListener>();
-
     private List<UserEntry> userEntries = new ArrayList<UserEntry>();
 
     private boolean containsNumbers;
-
-
 
     public TransferGroupUI(String groupName) {
         setLayout(new VerticalFlowLayout(VerticalFlowLayout.TOP, 0, 0, true, false));
@@ -78,9 +72,6 @@ public class TransferGroupUI extends JPanel {
      */
     private class UserEntry extends JPanel {
 
-        /**
-	 */
-	private static final long serialVersionUID = 1L;
 	private String name;
         private String workNumber;
         private String homeNumber;
@@ -93,7 +84,6 @@ public class TransferGroupUI extends JPanel {
 
             Icon icon = PresenceManager.getIconFromPresence(presence);
             String status = presence.getStatus() != null ? presence.getStatus() : "";
-
             if ("Online".equals(status) || Res.getString("available").equalsIgnoreCase(status)) {
                 status = "";
             }
@@ -102,9 +92,7 @@ public class TransferGroupUI extends JPanel {
             this.name = nickname;
 
             setOpaque(false);
-
             final JLabel contactLabel = new JLabel(nickname, icon, JLabel.LEFT);
-
 
             final JLabel descriptionLabel = new JLabel();
             descriptionLabel.setFont(new Font("Dialog", Font.PLAIN, 11));
@@ -124,8 +112,6 @@ public class TransferGroupUI extends JPanel {
             mobileNumber = vcard.getPhoneWork("CELL");
 
             final List<Action> actions = new ArrayList<Action>();
-
-
             if (ModelUtil.hasLength(homeNumber)) {
                 Action homeAction = new NumberAction("Home:", homeNumber, PhoneRes.getImageIcon("HOME_IMAGE"));
                 actions.add(homeAction);
@@ -190,7 +176,6 @@ public class TransferGroupUI extends JPanel {
      * Simple Action to handle selection of numbers.
      */
     private class NumberAction extends AbstractAction {
-	private static final long serialVersionUID = 1L;
 	private String number;
 
         public NumberAction(String label, String number, Icon icon) {

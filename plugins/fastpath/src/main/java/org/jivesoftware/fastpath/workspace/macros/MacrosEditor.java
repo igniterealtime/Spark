@@ -52,7 +52,6 @@ import org.jivesoftware.spark.util.log.Log;
 
 public class MacrosEditor extends JPanel {
 
-	private static final long serialVersionUID = 1L;
 	private final JLabel initialResponseLabel = new JLabel();
     private final JTextArea initialResponseField = new JTextArea();
     private final RolloverButton newButton = new RolloverButton(FastpathRes.getImageIcon(FastpathRes.SMALL_ADD_IMAGE));
@@ -65,7 +64,6 @@ public class MacrosEditor extends JPanel {
 
     public MacrosEditor() {
         table = new MacroTable();
-
         setLayout(new GridBagLayout());
 
         add(initialResponseLabel, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
@@ -126,11 +124,8 @@ public class MacrosEditor extends JPanel {
      */
     private static final class MacroTable extends Table {
 
-		private static final long serialVersionUID = 4777649199509083939L;
-
 		MacroTable() {
             super(new String[]{FpRes.getString("title.response.name"), FpRes.getString("title.response.text")});
-
             getColumnModel().setColumnMargin(0);
             setSelectionBackground(SELECTION_COLOR);
             setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -138,6 +133,7 @@ public class MacrosEditor extends JPanel {
         }
 
         // Handle image rendering correctly
+        @Override
         public TableCellRenderer getCellRenderer(int row, int column) {
             if (column == 10) {
                 return new JLabelRenderer(false);
@@ -150,7 +146,6 @@ public class MacrosEditor extends JPanel {
 
     private void save() {
         // Save Personal Macros
-
         MacroGroup macroGroup = new MacroGroup();
         int count = table.getRowCount();
         for (int i = 0; i < count; i++) {

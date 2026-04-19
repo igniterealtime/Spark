@@ -27,19 +27,15 @@ import org.jivesoftware.spark.util.UIComponentRegistry;
 
 /**
  * Holds the AppearanceTab and the ColorTab
- * @author wolf.posdorfer
+ * @author Wolf Posdorfer
  *
  */
 public class MainThemePanel extends JPanel {
-
-    private static final long serialVersionUID = 6014253744953992190L;
-    
     private final ThemePanel _themepanel;
     private final ColorPreferencePanel _colorpanel;
     
     public MainThemePanel()
     {
-
 	setLayout(new VerticalFlowLayout());
 	_themepanel = UIComponentRegistry.createThemePanel();
 	_colorpanel = new ColorPreferencePanel();
@@ -53,10 +49,8 @@ public class MainThemePanel extends JPanel {
 	    tabs.addTab(Res.getString("lookandfeel.color.label"),color,_colorpanel);
 	}
 	add(tabs);
-	
     }
-    
- 
+
     public ThemePanel getThemePanel()
     {
 	return _themepanel;
@@ -66,5 +60,4 @@ public class MainThemePanel extends JPanel {
     {
 	return _colorpanel;
     }
-
 }

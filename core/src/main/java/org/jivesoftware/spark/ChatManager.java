@@ -481,7 +481,7 @@ public class ChatManager {
             try {
                 final MultiUserChatManager multiUserChatManager = SparkManager.getMucManager();
                 List<DomainBareJid> col = multiUserChatManager.getMucServiceDomains();
-                if (col.size() > 0) {
+                if (!col.isEmpty()) {
                     conferenceService = col.iterator().next().toString();
                 }
             }

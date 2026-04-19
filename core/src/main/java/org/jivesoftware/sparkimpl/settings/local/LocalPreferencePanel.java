@@ -39,8 +39,6 @@ import org.jivesoftware.sparkimpl.plugin.manager.Enterprise;
  * UI for editing Local Preferences.
  */
 public class LocalPreferencePanel extends JPanel {
-    private static final long serialVersionUID = -1675058807882383560L;
-
 	private final JTextField _portField = new JTextField();
     private final JTextField _timeOutField = new JTextField();
 	private final JTextField _reconnectDelayField = new JTextField();
@@ -55,9 +53,6 @@ public class LocalPreferencePanel extends JPanel {
     private final JCheckBox _useSingleTrayClick = new JCheckBox();
     
 
-    /**
-     * Construct Local Preference UI.
-     */
     public LocalPreferencePanel() {
 	setLayout(new VerticalFlowLayout());
 
@@ -95,7 +90,6 @@ public class LocalPreferencePanel extends JPanel {
 				} catch (Exception e1) {
 					Log.debug("Unable to clear saved password..." + e1);
 				}
-
 			}
 		});
 	}
@@ -189,10 +183,7 @@ public class LocalPreferencePanel extends JPanel {
     }
 
     /**
-     * Sets the XMPP port to comminucate on.
-     * 
-     * @param port
-     *            the XMPP port to communicate on.
+     * Sets the XMPP port to communicate on.
      */
     public void setPort(String port) {
 	_portField.setText(port);
@@ -200,8 +191,6 @@ public class LocalPreferencePanel extends JPanel {
 
     /**
      * Return the XMPP Port to communicate on.
-     * 
-     * @return the XMPP Port to communicate on.
      */
     public String getPort() {
 	return _portField.getText();
@@ -209,9 +198,6 @@ public class LocalPreferencePanel extends JPanel {
 
     /**
      * Sets the XMPP Timeout(in seconds).
-     * 
-     * @param timeOut
-     *            the XMPP Timeout(in seconds).
      */
     public void setTimeOut(String timeOut) {
 	_timeOutField.setText(timeOut);
@@ -219,8 +205,6 @@ public class LocalPreferencePanel extends JPanel {
 
     /**
      * Return the XMPP Timeout variable.
-     * 
-     * @return the XMPP Timeout variable.
      */
     public String getTimeout() {
 	return _timeOutField.getText();
@@ -236,9 +220,6 @@ public class LocalPreferencePanel extends JPanel {
 
     /**
      * Sets Auto Login on and off.
-     * 
-     * @param auto
-     *            true if Auto Login is on.
      */
     public void setAutoLogin(boolean auto) {
 	_autoLoginBox.setSelected(auto);
@@ -246,8 +227,6 @@ public class LocalPreferencePanel extends JPanel {
 
     /**
      * Return true if Auto Login is on.
-     * 
-     * @return true if Auto Login is on.
      */
     public boolean getAutoLogin() {
 	return _autoLoginBox.isSelected();
@@ -255,9 +234,6 @@ public class LocalPreferencePanel extends JPanel {
 
     /**
      * Set true if the password should be encoded and saved.
-     * 
-     * @param save
-     *            true if the password should be encoded and saved.
      */
     public void setSavePassword(boolean save) {
 	_savePasswordBox.setSelected(save);
@@ -265,8 +241,6 @@ public class LocalPreferencePanel extends JPanel {
 
     /**
      * Return true if the password should be saved.
-     * 
-     * @return true if the password should be saved.
      */
     public boolean isSavePassword() {
 	return _savePasswordBox.isSelected();
@@ -274,8 +248,6 @@ public class LocalPreferencePanel extends JPanel {
 
     /**
      * Returns true if IDLE is on.
-     * 
-     * @return true if IDLE is on.
      */
     public boolean isIdleOn() {
 	return _idleBox.isSelected();
@@ -283,9 +255,6 @@ public class LocalPreferencePanel extends JPanel {
 
     /**
      * Sets the IDLE on or off.
-     * 
-     * @param on
-     *            true if IDLE should be on.
      */
     public void setIdleOn(boolean on) {
 	_idleBox.setSelected(on);
@@ -293,9 +262,6 @@ public class LocalPreferencePanel extends JPanel {
 
     /**
      * Sets the Idle Time in minutes.
-     * 
-     * @param time
-     *            the Idle time in minutes.
      */
     public void setIdleTime(int time) {
 	String idleTime = Integer.toString(time);
@@ -304,8 +270,6 @@ public class LocalPreferencePanel extends JPanel {
 
     /**
      * Return the time to IDLE.
-     * 
-     * @return the time to IDLE.
      */
     public String getIdleTime() {
 	return _idleField.getText();

@@ -29,8 +29,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class PreviousConversationPanel extends JPanel {
-
-    private static final long serialVersionUID = -8392478440078855765L;
     final JLabel previousLabel = new JLabel("Previous Conversations:");
     private final Color greenColor = new Color(91, 175, 41);
     private final JLabel currentCallLabel = new JLabel();

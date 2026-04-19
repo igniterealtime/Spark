@@ -46,12 +46,7 @@ import javax.swing.JScrollPane;
 
 public class RoomInformation extends JPanel {
 
-	private static final long serialVersionUID = 7298969616727251504L;
-
-
-	public RoomInformation() {
-
-    }
+    public static final Color LINK_COLOR = new Color(69, 92, 137);
 
     public void showAllInformation(Map<String, List<String>> map) {
         if (map == null) {
@@ -89,7 +84,6 @@ public class RoomInformation extends JPanel {
         }
 
         add(new JLabel(""), new GridBagConstraints(1, row, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
-
     }
 
     public void showFormInformation(Form form, final RequestUtils utils) {
@@ -116,10 +110,9 @@ public class RoomInformation extends JPanel {
             }
         }
 
-        final Color linkColor = new Color(69, 92, 137);
-
-        LinkLabel viewLabel = new LinkLabel(FpRes.getString("message.view.more.information"), null, linkColor, Color.red);
+        LinkLabel viewLabel = new LinkLabel(FpRes.getString("message.view.more.information"), null, LINK_COLOR, Color.red);
         viewLabel.addMouseListener(new MouseAdapter() {
+            @Override
             public void mouseClicked(MouseEvent e) {
                 RoomInformation roomInformation = new RoomInformation();
                 roomInformation.showAllInformation(utils.getMap());
@@ -128,7 +121,6 @@ public class RoomInformation extends JPanel {
         });
 
         add(viewLabel, new GridBagConstraints(0, count, 3, 1, 0.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(2, 5, 2, 5), 0, 0));
-
     }
 
 
@@ -136,8 +128,6 @@ public class RoomInformation extends JPanel {
         final JFrame frame = new JFrame(FpRes.getString("title.information"));
         frame.setIconImage(SparkManager.getMainWindow().getIconImage());
         frame.getContentPane().setLayout(new BorderLayout());
-
-
         frame.getContentPane().add(new JScrollPane(this), BorderLayout.CENTER);
         frame.pack();
         frame.setSize(400, 400);
@@ -145,7 +135,7 @@ public class RoomInformation extends JPanel {
         frame.setVisible(true);
     }
 
-
+    @Override
     public Dimension getPreferredSize() {
         final Dimension size = super.getPreferredSize();
         size.width = 0;

@@ -30,7 +30,6 @@ import javax.swing.JPanel;
 /**
  */
 public class TransportItem extends JPanel {
-	private static final long serialVersionUID = 6321253573105576262L;
 	private final JLabel iconLabel;
     private final JLabel titleLabel;
     private final JLabel descriptionLabel;
@@ -60,7 +59,6 @@ public class TransportItem extends JPanel {
         descriptionLabel.setHorizontalAlignment(JLabel.LEFT);
 
         activeLabel.setFont(new Font("Dialog", Font.PLAIN, 10));
-
         if (active) {
             activeLabel.setText(Res.getString("is.active"));
             activeLabel.setForeground(Color.green);
@@ -69,11 +67,8 @@ public class TransportItem extends JPanel {
             activeLabel.setText(Res.getString("not.registered"));
             activeLabel.setForeground(Color.GRAY);
         }
-
         this.transportAddress = address;
-
         this.transport = transport;
-
         // Build UI
         buildUI();
     }

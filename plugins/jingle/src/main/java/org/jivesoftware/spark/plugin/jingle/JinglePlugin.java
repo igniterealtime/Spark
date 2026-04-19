@@ -206,8 +206,6 @@ public class JinglePlugin implements Plugin, Phone, ConnectionListener {
         }
 
         Action action = new AbstractAction() {
-            private static final long serialVersionUID = 1467355627829748086L;
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {

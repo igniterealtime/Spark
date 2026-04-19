@@ -44,7 +44,6 @@ import static org.jivesoftware.spark.ui.ContactItem.CONTACT_ITEM_COMPARATOR;
  * Container representing a RosterGroup within the Contact List.
  */
 public class ContactGroup extends CollapsiblePane implements MouseListener {
-    private static final long serialVersionUID = 6578057848913010799L;
     private final List<ContactItem> contactItems = new ArrayList<>();
     private final List<ContactGroup> contactGroups = new ArrayList<>();
     private final CopyOnWriteArrayList<ContactGroupListener> listeners = new CopyOnWriteArrayList<>();
@@ -61,17 +60,11 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
     // Used to display no contacts in list.
     private final ContactItem noContacts = UIComponentRegistry.createContactItem(
         Res.getString("group.empty"), null, null);
-
     private final ListMotionListener motionListener = new ListMotionListener();
-
     private boolean canShowPopup;
-
     private boolean mouseDragged = false;
-
     private final LocalPreferences preferences;
-
     private ContactList contactList = Workspace.getInstance().getContactList();
-
     private DisplayWindowTask timerTask = null;
 
     /**
@@ -139,7 +132,6 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
         contactItemList.addKeyListener(new KeyListener() {
             @Override
             public void keyTyped(KeyEvent keyEvent) {
-
             }
 
             @Override
@@ -148,7 +140,6 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
                     ContactItem item = contactItemList.getSelectedValue();
                     fireContactItemDoubleClicked(item);
                 }
-
                 ContactList.activeKeyEvent = keyEvent;
             }
 
@@ -164,8 +155,6 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
 
         // Add Popup Window
         addPopupWindow();
-
-
     }
 
     /**
@@ -238,20 +227,15 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
         if (model.contains(offlineItem)) {
             return;
         }
-
         if (!preferences.isOfflineGroupVisible()) {
             offlineContacts.sort(CONTACT_ITEM_COMPARATOR);
             int index = offlineContacts.indexOf(offlineItem);
-
             int totalListSize = contactItems.size();
             int newPos = totalListSize + index;
-
             if (newPos > model.size()) {
                 newPos = model.size();
             }
-
             model.insertElementAt(offlineItem, newPos);
-
             if (model.contains(noContacts)) {
                 model.removeElement(noContacts);
             }
@@ -315,32 +299,23 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
         if (model.contains(noContacts)) {
             model.remove(0);
         }
-
         if (Res.getString("group.offline").equals(groupName)) {
             setOfflineGroupNameFont(item);
         }
-
         item.setGroupName(getGroupName());
         contactItems.add(item);
-
         List<ContactItem> tempItems = getContactItems();
         int index = tempItems.indexOf(item);
-
-
         Object[] objs = contactItemList.getSelectedValuesList().toArray();
-
         model.insertElementAt(item, index);
-
         int[] intList = new int[objs.length];
         for (int i = 0; i < objs.length; i++) {
             ContactItem contact = (ContactItem) objs[i];
             intList[i] = model.indexOf(contact);
         }
-
         if (intList.length > 0) {
             contactItemList.setSelectedIndices(intList);
         }
-
         fireContactItemAdded(item);
     }
 
@@ -393,8 +368,6 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
                 }
             }
         }
-
-
         contactGroups.remove(contactGroup);
     }
 
@@ -406,7 +379,6 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
                 panel.setBackground(color);
             }
         }
-
     }
 
     /**
@@ -421,7 +393,6 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
                 return group;
             }
         }
-
         return null;
     }
 
@@ -435,10 +406,8 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
         if (contactItems.isEmpty()) {
             removeContactGroup(this);
         }
-
         model.removeElement(item);
         updateTitle();
-
         fireContactItemRemoved(item);
     }
 
@@ -576,12 +545,10 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
     @Override
     public void mouseEntered(MouseEvent e) {
         int loc = contactItemList.locationToIndex(e.getPoint());
-
         Object o = model.getElementAt(loc);
         if (!(o instanceof ContactItem)) {
             return;
         }
-
         contactItemList.setCursor(GraphicUtils.HAND_CURSOR);
     }
 
@@ -593,7 +560,6 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
             if (loc == -1) {
                 return;
             }
-
             o = model.getElementAt(loc);
             if (!(o instanceof ContactItem)) {
                 UIComponentRegistry.getContactInfoWindow().dispose();
@@ -637,8 +603,6 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
                     fireContactItemClicked(contactItemList.getSelectedValue());
                 }
             }
-
-
             final Collection<ContactItem> selectedItems = SparkManager.getChatManager().getSelectedContactItems();
             if (selectedItems.size() > 1) {
                 firePopupEvent(e, selectedItems);
@@ -651,8 +615,6 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
 
     /**
      * Add a <code>ContactGroupListener</code>.
-     *
-     * @param listener the ContactGroupListener.
      */
     public void addContactGroupListener(ContactGroupListener listener) {
         listeners.addIfAbsent(listener);
@@ -660,8 +622,6 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
 
     /**
      * Removes a <code>ContactGroupListener</code>.
-     *
-     * @param listener the ContactGroupListener.
      */
     public void removeContactGroupListener(ContactGroupListener listener) {
         listeners.remove(listener);
@@ -1012,13 +972,11 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
     }
 
     private class ListMotionListener extends MouseMotionAdapter {
-
         @Override
         public void mouseMoved(MouseEvent e) {
             if (!canShowPopup) {
                 return;
             }
-
             if (e == null) {
                 return;
             }
@@ -1056,7 +1014,6 @@ public class ContactGroup extends CollapsiblePane implements MouseListener {
                 }
             };
             worker.start();
-
         }
     }
 

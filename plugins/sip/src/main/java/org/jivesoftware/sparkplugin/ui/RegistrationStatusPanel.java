@@ -40,7 +40,6 @@ import org.jivesoftware.sparkplugin.ui.components.RectangleButton;
  * Used for notifying users of registration and failure to register.
  */
 public class RegistrationStatusPanel extends BackgroundPanel implements ActionListener {
-	private static final long serialVersionUID = -7289401216186994399L;
 	private JLabel loadingLabel;
     private CloseButton closeButton;
     private RectangleButton retryButton;

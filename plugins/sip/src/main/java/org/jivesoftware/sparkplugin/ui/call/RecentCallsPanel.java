@@ -43,15 +43,11 @@ import org.jivesoftware.sparkplugin.calllog.LogManager;
  * @author Derek DeMoro
  */
 public class RecentCallsPanel extends JPanel {
-
-
-	private static final long	serialVersionUID	= 7759582394286918370L;
 	private DefaultListModel model = new DefaultListModel();
     private JList list = new JList(model);
 
     public RecentCallsPanel(InterlocutorUI ic) {
         setLayout(new GridBagLayout());
-
         setBackground(Color.white);
 
         add(new JScrollPane(list), new GridBagConstraints(0, 1, 3, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
@@ -67,21 +63,15 @@ public class RecentCallsPanel extends JPanel {
                 model.addElement(callEntry);
             }
         }
-
     }
-
 
     /**
      * Represents a single entry into the phone history list.
      */
     private class CallEntry extends JPanel {
-		private static final long	serialVersionUID	= 5650351009200951861L;
-
 		public CallEntry(String title, Date time) {
             setLayout(new GridBagLayout());
-
             final JLabel titleLabel = new JLabel(title);
-
             final SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy h:mm:ss a");
 
             final JLabel descriptionLabel = new JLabel(formatter.format(time));
@@ -95,7 +85,6 @@ public class RecentCallsPanel extends JPanel {
 
             add(titleLabel, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0));
             add(descriptionLabel, new GridBagConstraints(1, 1, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 2, 2, 2), 0, 0));
-
         }
     }
 }

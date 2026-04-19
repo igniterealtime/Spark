@@ -490,7 +490,7 @@ public class VCardManager {
         try {
             vcard = org.jivesoftware.smackx.vcardtemp.VCardManager.getInstanceFor(SparkManager.getConnection()).loadVCard( jid );
             vcard.setJabberId(jid.toString());
-            if (vcard.getNickName() != null && vcard.getNickName().length() > 0)
+            if (vcard.getNickName() != null && !vcard.getNickName().isEmpty())
             {
             	// update nickname.
             	ContactItem item = SparkManager.getWorkspace().getContactList().getContactItemByJID(jid.toString());

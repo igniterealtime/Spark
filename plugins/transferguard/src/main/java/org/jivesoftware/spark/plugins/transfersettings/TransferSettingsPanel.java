@@ -31,7 +31,6 @@ import java.util.Set;
  * UI for the file transfer preferences. It displays all the various preference settings for editing.
  */
 public class TransferSettingsPanel extends JPanel {
-    private static final long serialVersionUID = -2481011951921919518L;
     private final BlockedTypesPanel pnlTypes = new BlockedTypesPanel();
     private final BlockedPeoplePanel pnlPeople = new BlockedPeoplePanel();
     private final FileSizePanel pnlSize = new FileSizePanel();
@@ -70,9 +69,7 @@ public class TransferSettingsPanel extends JPanel {
     }
 
     private static class BlockedTypesPanel extends JPanel {
-	private static final long serialVersionUID = 6152402556852606706L;
 	private final JTextArea txtBlockedTypes = new JTextArea(2, 0);
-
         BlockedTypesPanel() {
             txtBlockedTypes.setBorder(UIManager.getLookAndFeelDefaults().getBorder("TextField.border"));
             
@@ -93,7 +90,6 @@ public class TransferSettingsPanel extends JPanel {
     }
 
     private static class BlockedPeoplePanel extends JPanel {
-	private static final long serialVersionUID = -1069560705582838620L;
 	private final JTextArea txtBlockedPeople = new JTextArea(2, 0);
 
         BlockedPeoplePanel() {
@@ -117,7 +113,6 @@ public class TransferSettingsPanel extends JPanel {
     }
 
     private static class FileSizePanel extends JPanel {
-	private static final long serialVersionUID = -8457074359832858639L;
 	private final JSpinner spinMaxSize = new JSpinner();
         private final JCheckBox chkMaxEnabled = new JCheckBox(TGuardRes.getString("guard.settings.limitcheck"));
 
@@ -160,7 +155,6 @@ public class TransferSettingsPanel extends JPanel {
     }
 
     private static class CannedResponsePanel extends JPanel {
- 	private static final long serialVersionUID = -5992704440953686488L;
 	private final JTextArea txtMessage = new JTextArea(2, 0);
 
         CannedResponsePanel() {

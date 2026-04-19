@@ -23,8 +23,6 @@ package net.java.sipmack.sip.security;
  * @version 1.0
  */
 public class SipSecurityException extends Exception {
-	private static final long serialVersionUID = 3158525577631441256L;
-
 	public SipSecurityException() {
 
         this("SipSecurityException");

@@ -29,7 +29,6 @@ import java.awt.Font;
  * @author Derek DeMoro
  */
 public class JiveTreeCellRenderer extends DefaultTreeCellRenderer {
-    private static final long serialVersionUID = -6115204089076392745L;
     private Object value;
     private boolean isExpanded;
 

@@ -70,8 +70,6 @@ import org.jxmpp.jid.BareJid;
 import org.jxmpp.jid.Jid;
 
 public class ReceiveFileTransfer extends JPanel {
-
-    private static final long serialVersionUID = -2974192409566650923L;
     private final FileDragLabel imageLabel = new FileDragLabel();
     private final JLabel titleLabel = new JLabel();
     private final JLabel fileLabel = new JLabel();
@@ -631,8 +629,6 @@ public class ReceiveFileTransfer extends JPanel {
     }
 
     private static class TransferButton extends JButton {
-        private static final long serialVersionUID = -9198495278243559064L;
-
         public TransferButton() {
             decorate();
         }
@@ -722,11 +718,8 @@ public class ReceiveFileTransfer extends JPanel {
     private void showPopup(MouseEvent e, final File downloadedFile) {
         if (e.isPopupTrigger()) {
             final JPopupMenu popup = new JPopupMenu();
-
             final ReceiveFileTransfer ui = this;
             Action saveAsAction = new AbstractAction() {
-                private static final long serialVersionUID = -3010501340128285438L;
-
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     final JFileChooser chooser = Downloads.getFileChooser();
@@ -737,7 +730,6 @@ public class ReceiveFileTransfer extends JPanel {
                         selectedFile = downloadedFile;
                     }
                     chooser.setSelectedFile(selectedFile);
-
                     int ok = chooser.showSaveDialog(ui);
                     if (ok == JFileChooser.APPROVE_OPTION) {
                         File file = chooser.getSelectedFile();

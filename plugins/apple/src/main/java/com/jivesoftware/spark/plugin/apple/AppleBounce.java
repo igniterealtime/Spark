@@ -23,7 +23,7 @@ import org.jivesoftware.spark.util.log.Log;
 /**
  * Utilities for dealing with the apple dock icon
  * 
- * @author Wolf.Posdorfer
+ * @author Wolf Posdorfer
  */
 public final class AppleBounce {
 

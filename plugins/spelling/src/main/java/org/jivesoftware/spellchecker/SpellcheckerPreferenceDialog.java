@@ -34,8 +34,6 @@ import org.jivesoftware.spark.util.ResourceUtils;
 
 public class SpellcheckerPreferenceDialog extends JPanel implements
 	ActionListener {
-    private static final long serialVersionUID = -1836601903928057855L;
-
     private JCheckBox spellcheckingEnabled;
     private JCheckBox autospellcheckingEnabled;
     private JComboBox<String> spellLanguages;
@@ -164,6 +162,7 @@ public class SpellcheckerPreferenceDialog extends JPanel implements
 	return autospellcheckingEnabled.isSelected();
     }
 
+    @Override
     public void actionPerformed(ActionEvent event) {
 	updateUI(spellcheckingEnabled.isSelected());
     }

@@ -38,8 +38,6 @@ import java.util.Vector;
  * @author Jive Software
  */
 public class AudioPreferenceDialog extends JPanel {
-
-    private static final long serialVersionUID = -7436724748439424479L;
     private JComboBox<String> audioBox = new JComboBox<String>();
     private JDialog dialog;
     private JButton closeButton;

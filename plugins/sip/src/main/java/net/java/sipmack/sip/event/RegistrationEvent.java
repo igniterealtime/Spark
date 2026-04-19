@@ -18,8 +18,6 @@ package net.java.sipmack.sip.event;
 import java.util.EventObject;
 
 public class RegistrationEvent extends EventObject {
-	private static final long serialVersionUID = 6759871915588020048L;
-
 	public enum Type {
         Normal, WrongPass, NotFound, Forbidden, WrongAuthUser, TimeOut
     };

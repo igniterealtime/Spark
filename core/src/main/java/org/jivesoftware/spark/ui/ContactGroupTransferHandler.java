@@ -40,23 +40,18 @@ import java.io.IOException;
 import java.util.Collection;
 
 public class ContactGroupTransferHandler extends TransferHandler {
-	private static final long serialVersionUID = -1229773343301542259L;
 	private static final DataFlavor[] flavors = {DataFlavor.imageFlavor, DataFlavor.javaFileListFlavor};
-
 
     @Override
 	public int getSourceActions(JComponent c) {
         return TransferHandler.MOVE;
     }
 
-
     @Override
 	public boolean canImport(JComponent comp, DataFlavor[] flavor) {
         if (!(comp instanceof JList)) {
             return false;
         }
-
-
         JList<?> list = (JList<?>)comp;
         ContactGroup group = getContactGroup(list);
         if(group == null){
@@ -65,7 +60,6 @@ public class ContactGroupTransferHandler extends TransferHandler {
         if ((group.isSharedGroup() && !flavor[0].equals(DataFlavor.javaFileListFlavor)) || group.isUnfiledGroup() || group.isOfflineGroup() || (!group.hasAvailableContacts() && flavor[0].equals(DataFlavor.javaFileListFlavor))) {
             return false;
         }
-
         for (DataFlavor dataFlavor : flavor) {
             for (DataFlavor value : flavors) {
                 if (dataFlavor.equals(value)) {
@@ -78,7 +72,6 @@ public class ContactGroupTransferHandler extends TransferHandler {
 
     @Override
 	public Transferable createTransferable(JComponent comp) {
-
         if (comp instanceof JList) {
             JList<?> list = (JList<?>) comp;
             ContactItem source = (ContactItem)list.getSelectedValue();
@@ -92,7 +85,6 @@ public class ContactGroupTransferHandler extends TransferHandler {
         if (comp instanceof JList) {
             JList<?> list = (JList<?>) comp;
             ContactGroup group = getContactGroup(list);
-
             if (t.isDataFlavorSupported(flavors[0])) {
                 try {
                     ContactItem item = (ContactItem)t.getTransferData(flavors[0]);
@@ -104,7 +96,6 @@ public class ContactGroupTransferHandler extends TransferHandler {
                             return false;
                         }
                     }
-
                     addContactItem(group, item);
                     return true;
                 }
@@ -120,7 +111,6 @@ public class ContactGroupTransferHandler extends TransferHandler {
                         if (source == null || source.getJid() == null) {
                             return false;
                         }
-
                         // Otherwise fire files dropped event.
                         SparkManager.getWorkspace().getContactList().fireFilesDropped(files, source);
                     }
@@ -134,9 +124,7 @@ public class ContactGroupTransferHandler extends TransferHandler {
     }
 
     public static class ContactItemTransferable implements Transferable {
-
         private final ContactItem item;
-
         public ContactItemTransferable(ContactItem item) {
             this.item = item;
         }
@@ -169,7 +157,6 @@ public class ContactGroupTransferHandler extends TransferHandler {
             if (group.getList() == list) {
                 return group;
             }
-
             ContactGroup subGroup = getSubContactGroup(group, list);
             if (subGroup != null) {
                 return subGroup;
@@ -183,14 +170,12 @@ public class ContactGroupTransferHandler extends TransferHandler {
             if (g.getList() == list) {
                 return g;
             }
-
             // Search subs
             ContactGroup g1 = getSubContactGroup(g, list);
             if (g1 != null) {
                 return g1;
             }
         }
-
         return null;
     }
 
@@ -222,9 +207,7 @@ public class ContactGroupTransferHandler extends TransferHandler {
 			public Object construct() {
                 Roster roster = SparkManager.getRoster();
                 RosterEntry entry = roster.getEntry(item.getJid().asBareJid());
-
                 RosterGroup groupFound = null;
-
                 for (RosterGroup group : roster.getGroups()) {
                     if (group.getName().equals(contactGroup.getGroupName())) {
                         try {
@@ -237,7 +220,6 @@ public class ContactGroupTransferHandler extends TransferHandler {
                         }
                     }
                 }
-
                 // This is a new group
                 if (groupFound == null) {
                     groupFound = roster.createGroup(contactGroup.getGroupName());
@@ -258,30 +240,24 @@ public class ContactGroupTransferHandler extends TransferHandler {
                     removeContactItem(oldGroup, item);
                 }
             }
-
         };
 
         worker.start();
     }
 
-
     public boolean removeContactItem(ContactGroup contactGroup, ContactItem item) {
         if (contactGroup.isSharedGroup()) {
             return false;
         }
-
         if (contactGroup.isUnfiledGroup()) {
             contactGroup.removeContactItem(item);
             contactGroup.fireContactGroupUpdated();
             return true;
         }
-
         // Remove entry from Roster Group
         Roster roster = SparkManager.getRoster();
         RosterEntry entry = roster.getEntry(item.getJid().asBareJid());
-
         RosterGroup rosterGroup = null;
-
         for (RosterGroup group : roster.getGroups()) {
             if (group.getName().equals(contactGroup.getGroupName())) {
                 try {
@@ -293,17 +269,14 @@ public class ContactGroupTransferHandler extends TransferHandler {
                 }
             }
         }
-
         if (rosterGroup == null) {
             return false;
         }
-
         if (!rosterGroup.contains(entry)) {
             contactGroup.removeContactItem(item);
             contactGroup.fireContactGroupUpdated(); //Updating group title
             return true;
         }
-
         return false;
     }
 }

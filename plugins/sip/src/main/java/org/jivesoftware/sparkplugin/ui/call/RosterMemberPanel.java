@@ -64,7 +64,6 @@ import org.jivesoftware.sparkplugin.ui.transfer.TransferManager;
  * @author Derek DeMoro
  */
 public class RosterMemberPanel extends PhonePanel {
-	private static final long	serialVersionUID	= -327742794852188962L;
 	private JLabel connectedLabel;
     private String phoneNumber;
     private JLabel phoneLabel;
@@ -97,24 +96,18 @@ public class RosterMemberPanel extends PhonePanel {
     public RosterMemberPanel() {
         setLayout(new GridBagLayout());
         setBorder(BorderFactory.createLineBorder(Color.lightGray));
-
         callManager = CallManager.getInstance();
-
         // Initilize mixer.
         softPhone = SoftPhoneManager.getInstance();
-
         // Build Top Layer
         final JPanel topPanel = buildTopPanel();
         add(topPanel, new GridBagConstraints(1, 5, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(2, 2, 2, 2), 0, 0));
-
         // Build Control Panel
         final JPanel controlPanel = buildControlPanel();
         add(controlPanel, new GridBagConstraints(1, 6, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(2, 2, 2, 2), 0, 0));
-
         // Add Previous Conversation
         historyPanel = new PreviousConversationPanel();
         add(historyPanel, new GridBagConstraints(1, 8, 1, 1, 0.0, 1.0, GridBagConstraints.SOUTH, GridBagConstraints.BOTH, new Insets(2, 2, 2, 2), 0, 100));
-
         // Setup default settings
         setupDefaults();
     }

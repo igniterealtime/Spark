@@ -34,7 +34,7 @@ import org.jivesoftware.spark.component.MessageDialog;
 /**
  * Class to Send Raw packets useful when debugging
  *
- * @author wolf.posdorfer
+ * @author Wolf Posdorfer
  */
 public class RawPacketSender {
 

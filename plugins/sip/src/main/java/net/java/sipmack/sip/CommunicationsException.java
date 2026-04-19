@@ -19,7 +19,6 @@ package net.java.sipmack.sip;
  * @author thiagoc
  */
 public class CommunicationsException extends Exception {
-	private static final long serialVersionUID = -4143243596000097474L;
     private boolean isFatal = false;
 
     public CommunicationsException() {

@@ -30,7 +30,6 @@ import java.awt.Insets;
  * @author Derek DeMoro
  */
 public class PartialLineBorder extends AbstractBorder {
-    private static final long serialVersionUID = -5125856347919451956L;
     private final Color color;
     private final int thickness;
 

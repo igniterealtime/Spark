@@ -40,7 +40,7 @@ import static org.jivesoftware.sparkimpl.settings.local.SettingsManager.getLocal
  * Answer Form Dialog.
  * Used for registration in the room.
  *
- * @author wolf.posdorfer
+ * @author Wolf Posdorfer
  */
 public class AnswerFormDialog {
     private final DataFormUI dataFormUI;

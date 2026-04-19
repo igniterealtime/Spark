@@ -44,9 +44,6 @@ import javax.swing.JPanel;
  * @author Derek DeMoro
  */
 public class RoundLabel extends JPanel {
-
-    private static final long serialVersionUID = 3033706476185642799L;
-
     public static float[] BLUR = {0.10f, 0.10f, 0.10f, 0.10f, 0.30f, 0.10f, 0.10f, 0.10f, 0.10f};
 
     private int inset = 0;

@@ -27,11 +27,6 @@ import javax.swing.JPanel;
 import org.jivesoftware.spark.component.VerticalFlowLayout;
 
 public class ApplePreferencePanel extends JPanel {
-
-    /**
-     */
-    private static final long serialVersionUID = 5817620627545918431L;
-
     private final JCheckBox _dockbadges;
     private final JCheckBox _dockbouncing;
     private final JCheckBox _repeatedbouncing;

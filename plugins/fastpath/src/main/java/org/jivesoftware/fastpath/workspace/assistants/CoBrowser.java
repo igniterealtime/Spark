@@ -68,7 +68,6 @@ import org.jivesoftware.spark.util.log.Log;
  * by directing them to the appropriate site.
  */
 public class CoBrowser extends JPanel implements ActionListener, BrowserListener {
-	private static final long serialVersionUID = 1115198448380589259L;
 	private boolean isShowing;
     private final ChatRoom chatRoom;
     private final JTextField pushField = new JTextField();
@@ -170,6 +169,7 @@ public class CoBrowser extends JPanel implements ActionListener, BrowserListener
         }
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == goButton) {
             showSpecifiedPage();
@@ -315,16 +315,19 @@ public class CoBrowser extends JPanel implements ActionListener, BrowserListener
         add(mainPanel, new GridBagConstraints(0, 2, 1, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
 
         urlField.addKeyListener(new KeyListener() {
+            @Override
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyChar() == KeyEvent.VK_ENTER) {
                     showSpecifiedPage();
                 }
             }
 
+            @Override
             public void keyReleased(KeyEvent e) {
 
             }
 
+            @Override
             public void keyTyped(KeyEvent e) {
 
             }
@@ -357,6 +360,7 @@ public class CoBrowser extends JPanel implements ActionListener, BrowserListener
      *
      * @return the preferred dimension
      */
+    @Override
     public Dimension getPreferredSize() {
         final Dimension size = super.getPreferredSize();
         size.width = 0;
@@ -364,6 +368,7 @@ public class CoBrowser extends JPanel implements ActionListener, BrowserListener
     }
 
 
+    @Override
     public void documentLoaded(String documentURL) {
         urlField.setText(documentURL);
         navigateUser(documentURL);

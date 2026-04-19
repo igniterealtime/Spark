@@ -41,10 +41,6 @@ import javax.swing.JPanel;
 /**
  */
 public class PreviousConversationPanel extends JPanel {
-
-
-	private static final long	serialVersionUID	= -3462528114523564888L;
-
 	private final Color greenColor = new Color(91, 175, 41);
 
     private final JLabel currentCallLabel = new JLabel();

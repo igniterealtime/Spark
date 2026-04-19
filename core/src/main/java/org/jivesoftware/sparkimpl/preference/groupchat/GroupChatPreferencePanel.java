@@ -32,8 +32,6 @@ import org.jivesoftware.spark.util.ResourceUtils;
  * The Preference UI used to handle changing of Chat Preferences.
  */
 public class GroupChatPreferencePanel extends JPanel {
-
-    private static final long serialVersionUID = -4216417602756915148L;
     private final JCheckBox highlightMyName 		= new JCheckBox();
     private final JCheckBox highlightMyText 		= new JCheckBox();
     private final JCheckBox highlightPopName		= new JCheckBox();
@@ -44,9 +42,7 @@ public class GroupChatPreferencePanel extends JPanel {
     private final JCheckBox inviteToBookmark = new JCheckBox();
 
     private final JPanel gCPanel = new JPanel();
-    /**
-     * Constructor invokes UI setup.
-     */
+
     public GroupChatPreferencePanel() {
         // Build the UI
         createUI();
@@ -78,7 +74,6 @@ public class GroupChatPreferencePanel extends JPanel {
         gCPanel.add(showroleicons	, new GridBagConstraints(0, 5, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         gCPanel.add(_autoAcceptInvites	, new GridBagConstraints(0, 6, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         gCPanel.add(inviteToBookmark  , new GridBagConstraints(0, 7, 2, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-
     }
 
     public void setMucHighNameEnabled(boolean mucNHigh) {
@@ -144,6 +139,4 @@ public class GroupChatPreferencePanel extends JPanel {
     public boolean isInviteToBookmark() {
         return inviteToBookmark.isSelected();
     }
-
-
 }

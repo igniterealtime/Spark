@@ -123,11 +123,8 @@ public final class InputDialog implements PropertyChangeListener {
                 }
             }
         });
-
         textArea.requestFocus();
         textArea.setWrapStyleWord(true);
-
-
         dialog.setVisible(true);
         return stringValue;
     }
@@ -136,7 +133,6 @@ public final class InputDialog implements PropertyChangeListener {
      * Move to focus forward action.
      */
     public Action nextFocusAction = new AbstractAction("Move Focus Forwards") {
-	private static final long serialVersionUID = 1L;
 
 	@Override
 	public void actionPerformed(ActionEvent evt) {
@@ -148,7 +144,6 @@ public final class InputDialog implements PropertyChangeListener {
      * Moves the focus backwards in the dialog.
      */
     public Action prevFocusAction = new AbstractAction("Move Focus Backwards") {
-	private static final long serialVersionUID = 1L;
 
 	@Override
 	public void actionPerformed(ActionEvent evt) {

@@ -125,6 +125,7 @@ public class RoarPanel {
 
         if (duration > 0) {
             TimerTask closeTimer = new TimerTask() {
+                @Override
                 public void run() {
                     closePanel(owner, window);
                 }
@@ -134,6 +135,7 @@ public class RoarPanel {
         }
 
         window.addMouseListener(new MouseAdapter() {
+            @Override
             public void mousePressed(MouseEvent e) {
                 action.actionPerformed(null);
                 closePanel(owner, window);

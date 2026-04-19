@@ -62,6 +62,7 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
     private XProcess electronThread = null;
     private JPanel inviteAlert;
 
+    @Override
     public void initialize()
     {
         ProviderManager.addIQProvider("query", QueryRequest.NAMESPACE, new QueryRequest.Provider());
@@ -164,6 +165,7 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
 		}			
 	}
 
+    @Override
     public void shutdown()
     {
         try
@@ -248,11 +250,13 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
 
     }
 
+    @Override
     public boolean canShutDown()
     {
         return true;
     }
 
+    @Override
     public void uninstall()
     {
 
@@ -279,10 +283,12 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
 
             electronThread = Spawn.startProcess(electronExePath + " --ignore-certificate-errors " + newUrl, new File(electronHomePath), new ProcessListener() {
 
+                @Override
                 public void onOutputLine(final String line) {
                     System.out.println(line);
                 }
 
+                @Override
                 public void onProcessQuit(int code) {
                     electronThread = null;
                 }
@@ -291,6 +297,7 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
                     System.out.println("process completed");
                 }
 
+                @Override
                 public void onErrorLine(final String line) {
 
                     if (!line.contains("Corrupt JPEG data"))
@@ -299,6 +306,7 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
                     }
                 }
 
+                @Override
                 public void onError(final Throwable t) {
                     Log.warning("Electron error", t);
                 }
@@ -308,6 +316,7 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
         }
     }
 
+    @Override
     public void chatRoomClosed(ChatRoom chatroom)
     {
         String roomId = chatroom.getBareJid().toString();
@@ -326,24 +335,28 @@ public class SparkMeetPlugin implements Plugin, ChatRoomListener, GlobalMessageL
         }
     }
 
+    @Override
     public void chatRoomActivated(ChatRoom chatroom)
     {
         String roomId = chatroom.getBareJid().toString();
         Log.debug("chatRoomActivated:  " + roomId);
     }
 
+    @Override
     public void userHasJoined(ChatRoom room, String s)
     {
         String roomId = room.getBareJid().toString();
         Log.debug("userHasJoined:  " + roomId + " " + s);
     }
 
+    @Override
     public void userHasLeft(ChatRoom room, String s)
     {
         String roomId = room.getBareJid().toString();
         Log.debug("userHasLeft:  " + roomId + " " + s);
     }
 
+    @Override
     public void chatRoomOpened(final ChatRoom room)
     {
         String roomId = room.getBareJid().toString();
