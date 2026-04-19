@@ -23,9 +23,6 @@ import javax.swing.Icon;
  * Button to use with ChatRooms to allow for conformity in the Chat Room look and feel.
  */
 public class ChatRoomButton extends RolloverButton {
-	/**
-     * Create a new ChatRoomButton.
-     */
     public ChatRoomButton() {
     }
 
@@ -55,11 +52,5 @@ public class ChatRoomButton extends RolloverButton {
      */
     public ChatRoomButton(String text) {
         super(text);
-
     }
-
-
-
-
-
 }
