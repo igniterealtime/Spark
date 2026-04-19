@@ -24,22 +24,22 @@ public class ContactItemTest {
         comp = ContactItem.CONTACT_ITEM_COMPARATOR.compare(o1, o2);
         assertEquals(0, comp);
 
-        o1 = new ContactItem(null, null, JidCreate.from("juliet@capulet.lit").asBareJid());
-        o2 = new ContactItem(null, null, JidCreate.from("romeo@montague.lit").asBareJid());
+        o1 = new ContactItem(null, null, JidCreate.from("juliet@capulet.lit").asEntityBareJidOrThrow());
+        o2 = new ContactItem(null, null, JidCreate.from("romeo@montague.lit").asEntityBareJidOrThrow());
         assertEquals("juliet@capulet.lit", o1.getDisplayName());
         assertEquals("romeo@montague.lit", o2.toString());
         comp = ContactItem.CONTACT_ITEM_COMPARATOR.compare(o1, o2);
         assertTrue(comp < 0);
 
-        o1 = new ContactItem(null, "a", JidCreate.from("juliet@capulet.lit").asBareJid());
-        o2 = new ContactItem(null, "b", JidCreate.from("romeo@montague.lit").asBareJid());
+        o1 = new ContactItem(null, "a", JidCreate.from("juliet@capulet.lit").asEntityBareJidOrThrow());
+        o2 = new ContactItem(null, "b", JidCreate.from("romeo@montague.lit").asEntityBareJidOrThrow());
         assertEquals("a", o1.getDisplayName());
         assertEquals("b", o2.toString());
         comp = ContactItem.CONTACT_ITEM_COMPARATOR.compare(o1, o2);
         assertTrue(comp < 0);
 
-        o1 = new ContactItem("Á", "a", JidCreate.from("juliet@capulet.lit").asBareJid());
-        o2 = new ContactItem("A", "b", JidCreate.from("romeo@montague.lit").asBareJid());
+        o1 = new ContactItem("Á", "a", JidCreate.from("juliet@capulet.lit").asEntityBareJidOrThrow());
+        o2 = new ContactItem("A", "b", JidCreate.from("romeo@montague.lit").asEntityBareJidOrThrow());
         assertEquals("Á", o1.getDisplayName());
         assertEquals("A", o2.toString());
         comp = ContactItem.CONTACT_ITEM_COMPARATOR.compare(o1, o2);

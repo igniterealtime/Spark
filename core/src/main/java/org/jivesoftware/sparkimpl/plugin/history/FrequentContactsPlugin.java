@@ -22,6 +22,8 @@ import org.jivesoftware.spark.plugin.Plugin;
 import org.jivesoftware.spark.ui.ContactItem;
 import org.jivesoftware.spark.ui.ContactList;
 import org.jivesoftware.spark.util.GraphicUtils;
+import org.jxmpp.jid.BareJid;
+import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.impl.JidCreate;
 
 import java.awt.*;
@@ -56,7 +58,7 @@ public class FrequentContactsPlugin implements Plugin {
     private JList<JLabel> contacts;
     private Window window;
 
-    private final Map<JLabel, String> jidMap = new HashMap<>();
+    private final Map<JLabel, EntityBareJid> jidMap = new HashMap<>();
 
     @Override
 	public void initialize() {
@@ -81,10 +83,8 @@ public class FrequentContactsPlugin implements Plugin {
 
 		    contacts.setSelectedIndex(contacts.locationToIndex(e
 			    .getPoint()));
-		    String user = jidMap.get( contacts
-			    .getSelectedValue() );
-		    ContactItem contact = SparkManager.getContactList()
-			    .getContactItemByJID(user);
+            EntityBareJid user = jidMap.get(contacts.getSelectedValue());
+		    ContactItem contact = SparkManager.getContactList().getContactItemByJID(user);
 		    SparkManager.getContactList().setSelectedUser(contact.getJid().asBareJid());
 		    SparkManager.getContactList().showPopup(contacts, e,
 			    contact);
@@ -92,14 +92,12 @@ public class FrequentContactsPlugin implements Plugin {
 
 		if (e.getClickCount() == 2) {
 		    final JLabel label = contacts.getSelectedValue();
-		    String user = jidMap.get(label);
-		    if (user != null) {
-			final String contactUsername = SparkManager
-				.getUserManager().getUserNicknameFromJID(JidCreate.bareFromOrThrowUnchecked(user));
-			SparkManager.getChatManager().activateChat(user,
-				contactUsername);
-			window.dispose();
-		    }
+            EntityBareJid user = jidMap.get(label);
+            if (user != null) {
+                String contactUsername = SparkManager.getUserManager().getUserNicknameFromJID(user);
+                SparkManager.getChatManager().activateChat(user, contactUsername);
+                window.dispose();
+            }
 		}
 	    }
 	});
@@ -109,9 +107,9 @@ public class FrequentContactsPlugin implements Plugin {
 			public void keyReleased(KeyEvent e) {
                 if (e.getKeyChar() == KeyEvent.VK_ENTER) {
                     final JLabel label = contacts.getSelectedValue();
-                    String user = jidMap.get(label);
+                    EntityBareJid user = jidMap.get(label);
                     if (user != null) {
-                        final String contactUsername = SparkManager.getUserManager().getUserNicknameFromJID(JidCreate.bareFromOrThrowUnchecked(user));
+                        final String contactUsername = SparkManager.getUserManager().getUserNicknameFromJID(user);
                         SparkManager.getChatManager().activateChat(user, contactUsername);
                         window.dispose();
                     }
@@ -145,7 +143,6 @@ public class FrequentContactsPlugin implements Plugin {
         });
     }
 
-
     /**
      * Displays your favorite contacts.
      */
@@ -153,7 +150,7 @@ public class FrequentContactsPlugin implements Plugin {
         jidMap.clear();
         model.clear();
         final ContactList contactList = SparkManager.getWorkspace().getContactList();
-        for (final String user : getFavoriteContacts()) {
+        for (EntityBareJid user : getFavoriteContacts()) {
             ContactItem contactItem = contactList.getContactItemByJID(user);
             Icon icon;
             if (contactItem != null) {
@@ -181,33 +178,25 @@ public class FrequentContactsPlugin implements Plugin {
 
     /**
      * Returns a collection of your most popular contacts based on previous conversations.
-     *
-     * @return the collection of favorite people (jids)
      */
-    private Collection<String> getFavoriteContacts() {
+    private List<EntityBareJid> getFavoriteContacts() {
         final File[] transcriptFiles = transcriptDir.listFiles( ( dir, name ) -> !name.contains("_current") && !name.equals("conversations.xml") );
         if (transcriptFiles == null || transcriptFiles.length == 0) {
             return List.of();
         }
-        final List<File> files = Arrays.asList(transcriptFiles);
-
-        files.sort(sizeComparator);
-
-        int size = files.size();
-        if (size > 10) {
-            size = 10;
-        }
-
-        final List<String> jidList = new ArrayList<>();
+        Arrays.sort(transcriptFiles, sizeComparator);
+        int size = Math.min(transcriptFiles.length, 10);
+        final List<EntityBareJid> jidList = new ArrayList<>(size);
         for (int i = 0; i < size; i++) {
-            File file = files.get(i);
+            File file = transcriptFiles[i];
             String jid;
-
             final String fileName = file.getName();
             final int dot = fileName.lastIndexOf('.');
             jid = dot > 0 ? fileName.substring(0, dot) : fileName;
-
-            jidList.add(jid);
+            EntityBareJid entityBareJid = JidCreate.entityBareFromOrNull(jid);
+            if (entityBareJid != null) {
+                jidList.add(entityBareJid);
+            }
         }
         return jidList;
     }

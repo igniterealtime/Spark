@@ -423,25 +423,30 @@ public final class GraphicUtils {
     }
 
     /**
-     * Makes all Compontens the same Size
-     * 
-     * @param comps
+     * Makes all components the same Size
      */
     public static void makeSameSize(Component... comps) {
-	if (comps.length == 0) {
-	    return;
-	}
-
-	int max = 0;
-	for (Component comp1 : comps) {
-	    int w = comp1.getPreferredSize().width;
-	    max = Math.max(w, max);
-	}
-
-	Dimension dim = new Dimension(max, comps[0].getPreferredSize().height);
-	for (Component comp : comps) {
-	    comp.setPreferredSize(dim);
-	}
+        if (comps.length == 0) {
+            return;
+        }
+        int maxW = 0;
+        int maxH = 0;
+        for (Component comp : comps) {
+            if (comp == null) {
+                continue;
+            }
+            int w = comp.getPreferredSize().width;
+            int h = comp.getPreferredSize().height;
+            maxW = Math.max(w, maxW);
+            maxH = Math.max(h, maxH);
+        }
+        Dimension dim = new Dimension(maxW, maxH);
+        for (Component comp : comps) {
+            if (comp == null) {
+                continue;
+            }
+            comp.setPreferredSize(dim);
+        }
     }
 
     /**

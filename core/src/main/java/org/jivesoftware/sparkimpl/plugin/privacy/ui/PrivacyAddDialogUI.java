@@ -138,7 +138,6 @@ public class PrivacyAddDialogUI extends JPanel {
         _userList.sort(CONTACT_ITEM_COMPARATOR);
         model.clear();
         for (ContactItem item : _userList) {
-
             model.addElement(item);
         }
     }
@@ -192,14 +191,8 @@ public class PrivacyAddDialogUI extends JPanel {
         dlg.requestFocus();
 
         List<PrivacyItem> selectedContacts = new ArrayList<>();
-
-
-
-        Object[] values = rosterList.getSelectedValuesList().toArray();
-        for (Object value : values) {
+        for (ContactItem item : rosterList.getSelectedValuesList()) {
             try {
-                ContactItem item = (ContactItem) value;
-
                 PrivacyItem.Type type = _showGroups ? PrivacyItem.Type.group : PrivacyItem.Type.jid;
                 PrivacyItem pitem = new PrivacyItem(type, item.getJid().toString(), false, 999);
                 pitem.setFilterIQ(_blockIQ.isSelected());
@@ -208,11 +201,10 @@ public class PrivacyAddDialogUI extends JPanel {
                 pitem.setFilterPresenceOut(_blockPOout.isSelected());
 
                 selectedContacts.add(pitem);
-            } catch (NullPointerException e) {
+            } catch (Exception e) {
                 Log.error(e);
             }
         }
-
         return selectedContacts;
     }
 

@@ -55,7 +55,7 @@ public class RosterPickList extends JPanel {
      * Displays a pick list of available users within their roster.
      *
      * @param parent the parent container.
-     * @return all items choosen in the pick list.
+     * @return all items chosen in the pick list.
      */
     public Collection<String> showRoster(JDialog parent) {
         final List<ContactItem> userList = new ArrayList<>();
@@ -117,15 +117,10 @@ public class RosterPickList extends JPanel {
         dlg.toFront();
         dlg.requestFocus();
 
-        List<String> selectedContacts = new ArrayList<>();
-        Object[] values = rosterList.getSelectedValuesList().toArray();
-        for (Object value : values) {
-            try {
-                ContactItem item = (ContactItem) value;
-                selectedContacts.add(item.getJid().toString());
-            } catch (NullPointerException e) {
-                Log.error(e);
-            }
+        List<ContactItem> values = rosterList.getSelectedValuesList();
+        List<String> selectedContacts = new ArrayList<>(values.size());
+        for (ContactItem item : values) {
+            selectedContacts.add(item.getJid().toString());
         }
         return selectedContacts;
     }

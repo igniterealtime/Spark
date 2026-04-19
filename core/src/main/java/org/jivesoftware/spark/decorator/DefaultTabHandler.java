@@ -17,6 +17,7 @@ package org.jivesoftware.spark.decorator;
 
 import org.jivesoftware.resource.SparkRes;
 import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.spark.ChatManager;
 import org.jivesoftware.spark.PresenceManager;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.tabbedPane.SparkTab;
@@ -40,8 +41,9 @@ public class DefaultTabHandler extends SparkTabHandler {
     public boolean isTabHandled(SparkTab tab, Component component, boolean isSelectedTab, boolean chatFrameFocused) {
         if (component instanceof ChatRoom) {
             ChatRoom room = (ChatRoom) component;
-            boolean isStaleRoom = SparkManager.getChatManager().isStaleRoom(room);
-            boolean isTyping = SparkManager.getChatManager().containsTypingNotification(room);
+            ChatManager chatManager = SparkManager.getChatManager();
+            boolean isStaleRoom = chatManager.isStaleRoom(room);
+            boolean isTyping = chatManager.containsTypingNotification(room);
             // Check if is typing.
             if (isTyping) {
                 tab.setIcon(SparkRes.getImageIcon(SparkRes.Icon.SMALL_MESSAGE_EDIT_IMAGE));
@@ -57,7 +59,7 @@ public class DefaultTabHandler extends SparkTabHandler {
                 }
             }
 
-            int totalNumberOfUnreadMessages = SparkManager.getChatManager().getChatContainer().getTotalNumberOfUnreadMessages();
+            int totalNumberOfUnreadMessages = chatManager.getChatContainer().getTotalNumberOfUnreadMessages();
             if (!chatFrameFocused || !isSelectedTab) {
                 // Handle unread message count.
                 int unreadMessageCount = room.getUnreadMessageCount();

@@ -374,9 +374,7 @@ final class InvitationDialog extends JPanel {
                 pane.setValue(JOptionPane.UNINITIALIZED_VALUE);
                 dlg.dispose();
 
-                Object[] values = invitedUserList.getSelectedValuesList().toArray();
-                for (Object o : values) {
-                    String jidString = (String) o;
+                for (String jidString : invitedUserList.getSelectedValuesList()) {
                     try {
                         EntityBareJid jid = JidCreate.entityBareFromUnescaped(jidString);
                         chatRoom.getMultiUserChat().invite(jid, message != null ? message : Res.getString("message.please.join.in.conference"));

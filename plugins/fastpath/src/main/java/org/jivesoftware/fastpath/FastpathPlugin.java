@@ -49,6 +49,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.TimerTask;
 
+import static java.awt.GridBagConstraints.CENTER;
+import static java.awt.GridBagConstraints.EAST;
+import static java.awt.GridBagConstraints.HORIZONTAL;
+import static java.awt.GridBagConstraints.NONE;
+import static java.awt.GridBagConstraints.WEST;
+
 public class FastpathPlugin implements Plugin, ConnectionListener {
     private static Workgroup wgroup;
     private static AgentSession agentSession;
@@ -67,7 +73,6 @@ public class FastpathPlugin implements Plugin, ConnectionListener {
     @Override
     public void initialize() {
         new WorkgroupInitializer().initialize();
-
         EventQueue.invokeLater(() -> {
             container = new FastpathContainer();
             workgroupLabel = new JLabel(FpRes.getString("workgroup"));
@@ -107,7 +112,6 @@ public class FastpathPlugin implements Plugin, ConnectionListener {
                             showSelection(agents);
                         }
                     };
-
                     worker.start();
                 }
             }
@@ -115,7 +119,6 @@ public class FastpathPlugin implements Plugin, ConnectionListener {
         catch (Exception e) {
             Log.error(e);
         }
-
         SparkManager.getConnection().addConnectionListener(this);
     }
 
@@ -123,15 +126,10 @@ public class FastpathPlugin implements Plugin, ConnectionListener {
         if (col.isEmpty()) {
             return;
         }
-
         mainPanel.setLayout(new GridBagLayout());
         mainPanel.setBorder(BorderFactory.createLineBorder(Color.lightGray, 1));
-
-
         workgroupLabel.setFont(new Font("Dialog", Font.BOLD, 11));
-
         logoutButton.setVisible(false);
-
         // Add workgroups to combobox
         for (String workgroup : col) {
             String componentAddress = XmppStringUtils.parseDomain(workgroup);
@@ -139,11 +137,12 @@ public class FastpathPlugin implements Plugin, ConnectionListener {
             comboBox.addItem(XmppStringUtils.parseLocalpart(workgroup));
         }
 
-        mainPanel.add(workgroupLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-        mainPanel.add(logoutButton, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        Insets insets = new Insets(5, 5, 5, 5);
+        mainPanel.add(workgroupLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, WEST, NONE, insets, 0, 0));
+        mainPanel.add(logoutButton, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, WEST, NONE, insets, 0, 0));
 
-        mainPanel.add(comboBox, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
-        mainPanel.add(joinButton, new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        mainPanel.add(comboBox, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, CENTER, HORIZONTAL, insets, 0, 0));
+        mainPanel.add(joinButton, new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0, EAST, NONE, insets, 0, 0));
 
         container.getTopPanel().add(mainPanel, BorderLayout.CENTER);
 
@@ -156,7 +155,6 @@ public class FastpathPlugin implements Plugin, ConnectionListener {
                 joinWorkgroup();
             }
         };
-
         Action leaveAction = new AbstractAction() {
 			@Override
             public void actionPerformed(ActionEvent actionEvent) {
@@ -170,10 +168,8 @@ public class FastpathPlugin implements Plugin, ConnectionListener {
 
         logoutButton.addActionListener(leaveAction);
         joinButton.addActionListener(joinAction);
-
         // Load services immediately.
         Thread loadServicesThread = new Thread(() -> SparkManager.getChatManager().getDefaultConferenceService());
-
         loadServicesThread.start();
     }
 
@@ -232,7 +228,6 @@ public class FastpathPlugin implements Plugin, ConnectionListener {
                 }
             }
         };
-
         TaskEngine.getInstance().schedule(rejoinTask, 15000);
     }
 
@@ -254,7 +249,6 @@ public class FastpathPlugin implements Plugin, ConnectionListener {
                 agentSession = null;
             }
         });
-
     }
 
     private void joinWorkgroup() {
@@ -321,16 +315,14 @@ public class FastpathPlugin implements Plugin, ConnectionListener {
                     wgroup = new Workgroup(workgroup, con);
                 }
                 catch (Exception e) {
-                    e.printStackTrace();
+                    Log.error(e);
                     joinButton.setEnabled(true);
                     return;
                 }
-
                 // Initialize Workspace
                 litWorkspace = new Workpane();
                 litWorkspace.listenForOffers();
                 joinButton.setEnabled(true);
-
                 // Register tab handler
                 SparkManager.getChatManager().addSparkTabHandler(fastpathTabHandler);
             }
@@ -343,7 +335,6 @@ public class FastpathPlugin implements Plugin, ConnectionListener {
         logoutButton.setVisible(false);
         joinButton.setVisible(true);
         comboBox.setVisible(true);
-
         comboBox.removeAllItems();
         // Log into workgroup
         DomainBareJid workgroupService = JidCreate.domainBareFromOrThrowUnchecked("workgroup." + SparkManager.getSessionManager().getServerAddress());
@@ -371,7 +362,6 @@ public class FastpathPlugin implements Plugin, ConnectionListener {
         }
         litWorkspace.unload();
         wgroup = null;
-
         // UnRegister tab handler
         SparkManager.getChatManager().removeSparkTabHandler(fastpathTabHandler);
     }
