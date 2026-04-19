@@ -1007,19 +1007,18 @@ public class ChatContainer extends SparkTabbedPane implements MessageListener, C
         if (isGroupChat) {
             // is a group chat, perform some functions
             String fromNickName = "";
-            Jid mucNickNameT;
             String finalRoomName = "";
             if (lastChatMessage != null) {
                 finalRoomName = chatRoom.getRoomTitle();
-                mucNickNameT = lastChatMessage.getFrom();
-                if (mucNickNameT == null) {
+                Jid lastChatMessageFrom = lastChatMessage.getFrom();
+                if (lastChatMessageFrom == null) {
                     fromNickName = finalRoomName;
                 } else {
-                    String[] mucNickName = mucNickNameT.toString().split("/");
-                    if (mucNickName.length < 2) { // We have no name after "/" in mucNickNameT (must be like: test@conference.jabber.kg/kos)
-                        fromNickName = finalRoomName; //Res.getString("label.message");
+                    if (lastChatMessageFrom.hasNoResource()) {
+                        // We have no name after "/" in JID (must be like: test@conference.jabber.kg/kos)
+                        fromNickName = finalRoomName;
                     } else {
-                        fromNickName = mucNickName[1];
+                        fromNickName = lastChatMessageFrom.getResourceOrEmpty().toString();
                     }
                 }
             }
