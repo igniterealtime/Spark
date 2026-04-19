@@ -58,7 +58,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * The ChatManager is responsible for the creation and removal of chat rooms, transcripts, transfers, and room invitations.
  */
 public class ChatManager {
-
     private static ChatManager singleton;
     private static final Object LOCK = new Object();
 
@@ -69,34 +68,17 @@ public class ChatManager {
     public static final Color ERROR_COLOR = (Color)UIManager.get("Error.foreground");
 
     private final CopyOnWriteArrayList<MessageFilter> messageFilters = new CopyOnWriteArrayList<>();
-
     private final CopyOnWriteArrayList<GlobalMessageListener> globalMessageListeners = new CopyOnWriteArrayList<>();
-
     private final CopyOnWriteArrayList<RoomInvitationListener> invitationListeners = new CopyOnWriteArrayList<>();
-
     private final CopyOnWriteArrayList<TranscriptWindowInterceptor> interceptors = new CopyOnWriteArrayList<>();
-
     private final CopyOnWriteArrayList<SparkTabHandler> sparkTabHandlers = new CopyOnWriteArrayList<>();
 
-
     private final ChatContainer chatContainer;
-
     private String conferenceService;
-
     private final CopyOnWriteArrayList<ContactItemHandler> contactItemHandlers = new CopyOnWriteArrayList<>();
-
     private final Set<ChatRoom> typingNotificationList = new HashSet<>();
-
     private final CopyOnWriteArrayList<ChatMessageHandler> chatMessageHandlers = new CopyOnWriteArrayList<>();
-    
-    /**
-     * The listener instance that we use to track chat states according to XEP-0085
-     */
-    private final SmackChatStateListener smackChatStateListener = new SmackChatStateListener();
 
-    /**
-     * Returns the singleton instance of <CODE>ChatManager</CODE>.
-     */
     public static ChatManager getInstance() {
         synchronized (LOCK) {
             if (null == singleton) {
@@ -108,32 +90,22 @@ public class ChatManager {
         return singleton;
     }
 
-
-    /**
-     * Create a new instance of ChatManager.
-     */
     private ChatManager() {
         chatContainer = UIComponentRegistry.createChatContainer();        
         // Add Default Chat Room Decorator
         addSparkTabHandler(new DefaultTabHandler());
         // Add a Message Handler
         ChatStateManager chatStateManager = ChatStateManager.getInstance(SparkManager.getConnection());
-        chatStateManager.addChatStateListener(smackChatStateListener);
+        chatStateManager.addChatStateListener(new SmackChatStateListener());
     }
-
 
     /**
      * Used to listen for rooms opening, closing or being activated (already opened, but tabbed to)
-     *
-     * @param listener the ChatRoomListener to add
      */
     public void addChatRoomListener(ChatRoomListener listener) {
         getChatContainer().addChatRoomListener(listener);
     }
 
-    /**
-     * Removes a listener
-     */
     public void removeChatRoomListener(ChatRoomListener listener) {
         getChatContainer().removeChatRoomListener(listener);
     }
@@ -206,8 +178,6 @@ public class ChatManager {
      * a new ChatRoom will be created.
      *
      * @param bareJid the jid of the user to chat with.
-     * @param bareJid
-     * @return the ChatRoom.
      */
     public ChatRoom getChatRoom(EntityBareJid bareJid) {
         EntityBareJid jid = bareJid.asEntityBareJidOrThrow();
@@ -230,7 +200,6 @@ public class ChatManager {
             }
             getChatContainer().addChatRoom(chatRoom);
         }
-
         return chatRoom;
     }
 
@@ -244,9 +213,7 @@ public class ChatManager {
     public ChatRoom createConferenceRoom(Localpart roomName, DomainBareJid serviceName) {
         EntityBareJid roomAddress = JidCreate.entityBareFrom(roomName, serviceName);
         final MultiUserChat chatRoom = SparkManager.getMucManager().getMultiUserChat( roomAddress);
-
         final GroupChatRoom room = UIComponentRegistry.createGroupChatRoom(chatRoom);
-
         try {
             LocalPreferences pref = SettingsManager.getLocalPreferences();
             Resourcepart nickname = pref.getNickname();
@@ -256,7 +223,6 @@ public class ChatManager {
             Log.error("Unable to send conference room chat configuration form.", e1);
             return null;
         }
-
         getChatContainer().addChatRoom(room);
         return room;
     }
@@ -264,13 +230,10 @@ public class ChatManager {
     /**
      * Activate a chat room with the selected user.
      *
-     * @param jidCs the jid of the user to chat with.
      * @param nicknameString the nickname of the user.
      */
-    public void activateChat(final CharSequence jidCs, final String nicknameString) {
+    public void activateChat(BareJid jid, final String nicknameString) {
         final Resourcepart nickname = Resourcepart.fromOrThrowUnchecked(nicknameString);
-        final EntityBareJid jid = JidCreate.entityBareFromUnescapedOrThrowUnchecked(jidCs);
-
         SwingWorker worker = new SwingWorker() {
             final ChatManager chatManager = SparkManager.getChatManager();
             ChatRoom chatRoom;
@@ -288,7 +251,7 @@ public class ChatManager {
                 try {
                     chatRoom = chatRooms.getChatRoom(jid);
                 }
-                catch (ChatRoomNotFoundException e) {
+                catch (ChatRoomNotFoundException ignored) {
                     // Do nothing
                 }
                 return chatRoom;
@@ -297,22 +260,22 @@ public class ChatManager {
             @Override
 			public void finished() {
                 if (chatRoom == null) {
-                    chatRoom = UIComponentRegistry.createChatRoom(jid, nickname, nickname);
-                    chatManager.getChatContainer().addChatRoom(chatRoom);
+                    if (jid instanceof EntityJid) {
+                        chatRoom = UIComponentRegistry.createChatRoom((EntityJid) jid, nickname, nickname);
+                        chatManager.getChatContainer().addChatRoom(chatRoom);
+                    } else {
+                        //TODO implement chat with a BareJid like just a DomainBareJid
+                        Log.warning("Unsupported bare jid " + jid);
+                    }
                 }
                 chatManager.getChatContainer().activateChatRoom(chatRoom);
             }
         };
-
         worker.start();
-
     }
 
     /**
      * Checks if a <code>ChatRoom</code> exists.
-     *
-     * @param jid the jid of the user.
-     * @return true if the ChatRoom exists.
      */
     public boolean chatRoomExists(String jid) {
         try {
@@ -326,8 +289,6 @@ public class ChatManager {
 
     /**
      * Adds a new <code>MessageFilter</code>.
-     *
-     * @param filter the MessageFilter.
      */
     public void addMessageFilter(MessageFilter filter) {
         messageFilters.addIfAbsent(filter);
@@ -349,8 +310,6 @@ public class ChatManager {
 
     /**
      * Removes a <code>GlobalMessageListener</code>.
-     *
-     * @param listener the listener.
      */
     public void removeGlobalMessageListener(GlobalMessageListener listener) {
         globalMessageListeners.remove(listener);
@@ -472,9 +431,7 @@ public class ChatManager {
     }
 
     /**
-     * Returns the default conference service. (ex. conference.jivesoftware.com)
-     *
-     * @return the default conference service to interact with MUC.
+     * Returns the default conference service to interact with MUC. (ex. conference.jivesoftware.com)
      */
     public String getDefaultConferenceService() {
         if (conferenceService == null) {
@@ -603,14 +560,11 @@ public class ChatManager {
                 Log.error( "A ContactItemHandler ('" + handler + "') threw an exception while processing an icon request for: '" + jid + "'.", e );
             }
         }
-
         return null;
     }
 
     /**
      * Returns the icon to use in the tab.
-     *
-     * @param presence the presence.
      */
     public Icon getTabIconForContactHandler( Presence presence )
     {
@@ -635,7 +589,6 @@ public class ChatManager {
     public void composingNotification(final Jid from) {
         SwingUtilities.invokeLater( () -> {
             final ContactList contactList = SparkManager.getWorkspace().getContactList();
-
             ChatRoom chatRoom;
             try {
                 chatRoom = getChatContainer().getChatRoom( from.asBareJid() );
@@ -646,7 +599,7 @@ public class ChatManager {
                     ((ChatRoomImpl)chatRoom).notifyChatStateChange(ChatState.composing);
                 }
             }
-            catch (ChatRoomNotFoundException e) {
+            catch (ChatRoomNotFoundException ignored) {
                 // Do nothing
             }
             contactList.setIconFor(from, SparkRes.getImageIcon(SparkRes.Icon.SMALL_MESSAGE_EDIT_IMAGE));
@@ -656,7 +609,6 @@ public class ChatManager {
     public void cancelledNotification(final Jid from, final ChatState state) {
         SwingUtilities.invokeLater( () -> {
             ContactList contactList = SparkManager.getWorkspace().getContactList();
-
             ChatRoom chatRoom;
             try {
                 chatRoom = getChatContainer().getChatRoom(from.asBareJid());
@@ -667,7 +619,7 @@ public class ChatManager {
                     ((ChatRoomImpl)chatRoom).notifyChatStateChange(state);
                 }
             }
-            catch (ChatRoomNotFoundException e) {
+            catch (ChatRoomNotFoundException ignored) {
                 // Do nothing
             }
             contactList.useDefaults(from);
@@ -685,8 +637,6 @@ public class ChatManager {
 
     /**
      * Removes a room from the typing notification list.
-     *
-     * @param chatRoom the room to remove.
      */
     public void removeTypingNotification(ChatRoom chatRoom) {
         typingNotificationList.remove(chatRoom);
@@ -694,8 +644,6 @@ public class ChatManager {
 
     /**
      * Returns true if the <code>ChatRoom</code> state is in typing mode.
-     *
-     * @param chatRoom the ChatRoom to check.
      */
     public boolean containsTypingNotification(ChatRoom chatRoom) {
         return typingNotificationList.contains(chatRoom);
@@ -704,8 +652,6 @@ public class ChatManager {
     /**
      * Returns true if the room is "stale". A stale room is a room that has
      * not been active for a specific amount of time.
-     *
-     * @param chatRoom the ChatRoom.
      */
     public boolean isStaleRoom(ChatRoom chatRoom) {
         // Check if the room is stale
@@ -714,8 +660,6 @@ public class ChatManager {
 
     /**
      * Adds a TranscriptWindowInterceptor.
-     *
-     * @param interceptor the interceptor.
      */
     public void addTranscriptWindowInterceptor(TranscriptWindowInterceptor interceptor) {
         interceptors.addIfAbsent(interceptor);
@@ -723,8 +667,6 @@ public class ChatManager {
 
     /**
      * Removes a TranscriptWindowInterceptor.
-     *
-     * @param interceptor the interceptor.
      */
     public void removeTranscriptWindowInterceptor(TranscriptWindowInterceptor interceptor) {
         interceptors.remove(interceptor);
@@ -740,8 +682,6 @@ public class ChatManager {
     /**
      * Adds a new <code>ContainerDecorator</code>. The ContainerDecorator will be added to the top of the stack and will therefore
      * take priority on notification calls. If all decorators return false, the <code>DefaultChatRoomDecorator</code> will be used.
-     *
-     * @param decorator the decorator to add.
      */
     public void addSparkTabHandler(SparkTabHandler decorator) {
         sparkTabHandlers.add(0, decorator);
@@ -749,8 +689,6 @@ public class ChatManager {
 
     /**
      * Removes a <code>ContainerDecorator</code>
-     *
-     * @param decorator the decorator to remove.
      */
     public void removeSparkTabHandler(SparkTabHandler decorator) {
         sparkTabHandlers.remove(decorator);
@@ -789,9 +727,7 @@ public class ChatManager {
     }
 
     /**
-     * Returns all selected users in the <code>ContactList</code>.
-     *
-     * @return all selected <code>ContactItem</code> in the ContactList.
+     * Returns all selected <code>ContactItem</code> users in the <code>ContactList</code>.
      */
     public Collection<ContactItem> getSelectedContactItems() {
         final ContactList contactList = SparkManager.getWorkspace().getContactList();
@@ -811,7 +747,7 @@ public class ChatManager {
     	@Override
         public void stateChanged(Chat chat, ChatState state, Message message) {
     	    Jid participant = chat.getXmppAddressOfChatPartner();
-            if (ChatState.composing.equals(state)) {
+            if (state == ChatState.composing) {
                 composingNotification(participant);
             } else {
             	cancelledNotification(participant, state);

@@ -49,9 +49,7 @@ import java.util.Map;
  * @author Derek DeMoro
  */
 public class ConversationHistoryPlugin implements Plugin {
-
     private final List<EntityBareJid> historyList = new ArrayList<>();
-    private File transcriptDir = SparkManager.getTranscriptDir();
     private File conFile;
 
     private final DefaultListModel<JLabel> model = new DefaultListModel<>();
@@ -62,13 +60,13 @@ public class ConversationHistoryPlugin implements Plugin {
 
     @Override
 	public void initialize() {
+        File transcriptDir = SparkManager.getTranscriptDir();
         conFile = new File(transcriptDir, "conversations.xml");
 
         contacts = new JList<>(model);
         contacts.setCellRenderer(new InternalRenderer());
 
         window = new Window(SparkManager.getMainWindow());
-
 
         final JPanel mainPanel = new JPanel(new BorderLayout());
         final JLabel titleLabel = new JLabel(Res.getString("label.recent.conversation"));
@@ -85,7 +83,6 @@ public class ConversationHistoryPlugin implements Plugin {
 	    @Override
 		public void mouseClicked(MouseEvent e) {
 		if (SwingUtilities.isRightMouseButton(e)) {
-
 		    contacts.setSelectedIndex(contacts.locationToIndex(e
 			    .getPoint()));
 		    EntityBareJid user = jidMap.get( contacts
@@ -132,7 +129,6 @@ public class ConversationHistoryPlugin implements Plugin {
         contacts.addFocusListener(new FocusListener() {
             @Override
 			public void focusGained(FocusEvent e) {
-
             }
 
             @Override
@@ -188,21 +184,16 @@ public class ConversationHistoryPlugin implements Plugin {
      * Displays the Previous Conversation Window.
      */
     private void showHistoryPopup() {
-        // Get Transcript Directory
-        if (!transcriptDir.exists()) {
+        if (!conFile.exists()) {
             return;
         }
 
         jidMap.clear();
         model.clear();
 
-
         final ContactList contactList = SparkManager.getWorkspace().getContactList();
-
         int limit = Math.min(historyList.size(), 10);
-
         for (final EntityBareJid user : historyList.subList(0, limit)) {
-
             ContactItem contactItem = contactList.getContactItemByJID(user);
             Icon icon;
             if (contactItem != null) {
@@ -219,19 +210,12 @@ public class ConversationHistoryPlugin implements Plugin {
                 jidMap.put(label, user);
             }
         }
-
-
         window.setSize(200, 200);
         GraphicUtils.centerWindowOnComponent(window, SparkManager.getMainWindow());
-
-
         if (!model.isEmpty()) {
             contacts.setSelectedIndex(0);
         }
-
         window.setVisible(true);
-
-
     }
 
     /**
@@ -276,7 +260,6 @@ public class ConversationHistoryPlugin implements Plugin {
 
         // Write out new File
         try {
-            File conFile = new File(transcriptDir, "conversations.xml");
             Files.write(conFile.toPath(), builder.toString().getBytes(StandardCharsets.UTF_8));
         }
         catch (IOException e) {

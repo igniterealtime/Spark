@@ -887,13 +887,14 @@ public abstract class ChatRoom extends BackgroundPanel implements ActionListener
             buttonPanel.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
             // Make all JButtons the same size
             Component[] comps = buttonPanel.getComponents();
-            final List<Component> buttons = new ArrayList<>();
-            for (Component component : comps) {
-                    if (component instanceof JButton) {
-                        buttons.add(component);
-                    }
+            final Component[] buttons = new Component[comps.length];
+            for (int i = 0; i < comps.length; i++) {
+                Component component = comps[i];
+                if (component instanceof JButton) {
+                    buttons[i] = component;
+                }
             }
-            GraphicUtils.makeSameSize(buttons.toArray(new Component[0]));
+            GraphicUtils.makeSameSize(buttons);
         }
 
         /**
