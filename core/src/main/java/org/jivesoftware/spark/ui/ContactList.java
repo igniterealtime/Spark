@@ -647,15 +647,13 @@ public class ContactList extends JPanel implements ActionListener,
     private synchronized void handleEntriesUpdated(final Collection<Jid> addresses) {
         SwingUtilities.invokeLater(() -> {
             Roster roster = SparkManager.getRoster();
-            final Iterator<Jid> jids = addresses.iterator();
-            while (jids.hasNext()) {
-                Jid jid = jids.next();
+            for (Jid jid : addresses) {
                 RosterEntry rosterEntry = roster.getEntry(jid.asBareJid());
                 if (rosterEntry != null) {
                     // Check for new Roster Groups and add them if they do not exist.
-                    boolean isUnfiled = true;
-                    for (RosterGroup group : rosterEntry.getGroups()) {
-                        isUnfiled = false;
+                    List<RosterGroup> rosterEntryGroups = rosterEntry.getGroups();
+                    boolean isUnfiled = rosterEntryGroups.isEmpty();
+                    for (RosterGroup group : rosterEntryGroups) {
                         // Handle if this is a new Entry in a new Group.
                         if (getContactGroup(group.getName()) == null) {
                             // Create a group.
@@ -707,33 +705,7 @@ public class ContactList extends JPanel implements ActionListener,
                         }
                     }
 
-                    // Now check to see if groups have been modified or removed. This is used
-                    // to check if Contact Groups have been renamed or removed.
-                    final Set<String> userGroupSet = new HashSet<>();
-                    jids = addresses.iterator();
-                    while (jids.hasNext()) {
-                        jid = jids.next();
-                        rosterEntry = roster.getEntry(jid.asBareJid());
-
-                        boolean unfiled = true;
-                        for (RosterGroup g : rosterEntry.getGroups()) {
-                            userGroupSet.add(g.getName());
-                            unfiled = false;
-                        }
-
-                        for (ContactGroup group : new ArrayList<>(groupList)) {
-                            ContactItem itemFound = group.getContactItemByJID(jid.asBareJid());
-                            if (itemFound != null && !unfiled && group != getUnfiledGroup() && group != offlineGroup) {
-                                if (!userGroupSet.contains(group.getGroupName())) {
-                                    if (group.getContactItems().isEmpty()) {
-                                        removeContactGroup(group);
-                                    } else {
-                                        group.removeContactItem(itemFound);
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    checkGroupModified(addresses, jid, roster);
 
                     if (!isUnfiled) {
                         return;
@@ -756,6 +728,33 @@ public class ContactList extends JPanel implements ActionListener,
                 }
             }
         });
+    }
+
+    /**
+     * Check to see if groups have been modified or removed.
+     * This is used to check if Contact Groups have been renamed or removed.
+     */
+    private void checkGroupModified(Collection<Jid> addresses, Jid jid, Roster roster) {
+        Set<String> userGroupSet = new HashSet<>();
+        for (Jid address : addresses) {
+            RosterEntry rosterEntry = roster.getEntry(address.asBareJid());
+            for (RosterGroup g : rosterEntry.getGroups()) {
+                userGroupSet.add(g.getName());
+            }
+            boolean unfiled = userGroupSet.isEmpty();
+            for (ContactGroup group : new ArrayList<>(groupList)) {
+                ContactItem itemFound = group.getContactItemByJID(jid.asBareJid());
+                if (itemFound != null && !unfiled && group != getUnfiledGroup() && group != offlineGroup) {
+                    if (!userGroupSet.contains(group.getGroupName())) {
+                        if (group.getContactItems().isEmpty()) {
+                            removeContactGroup(group);
+                        } else {
+                            group.removeContactItem(itemFound);
+                        }
+                    }
+                }
+            }
+        }
     }
 
     @Override
