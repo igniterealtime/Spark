@@ -115,6 +115,17 @@
                     <version>3.6.2</version>
                     <executions>
                         <execution>
+                            <id>enforce-dependency-convergence</id>
+                            <goals>
+                                <goal>enforce</goal>
+                            </goals>
+                            <configuration>
+                                <rules>
+                                    <dependencyConvergence/>
+                                </rules>
+                            </configuration>
+                        </execution>
+                        <execution>
                             <id>enforce-maven</id>
                             <goals>
                                 <goal>enforce</goal>
