@@ -31,7 +31,7 @@ public class GrowlPlugin implements Plugin
     private GrowlTalker growlTalker;
 
     @Override
-    public synchronized void initialize()
+    public void initialize()
     {
         growlTalker = new GrowlTalker();
         growlTalker.init();
@@ -40,10 +40,11 @@ public class GrowlPlugin implements Plugin
     }
 
     @Override
-    public synchronized void shutdown()
+    public void shutdown()
     {
         SparkManager.getChatManager().removeGlobalMessageListener( growlListener );
         growlTalker.destroy();
+        growlTalker  = null;
     }
 
     @Override
@@ -53,8 +54,7 @@ public class GrowlPlugin implements Plugin
     }
 
     @Override
-    public synchronized void uninstall()
+    public void uninstall()
     {
-        shutdown();
     }
 }
