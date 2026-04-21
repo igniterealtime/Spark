@@ -185,7 +185,6 @@ public class ContactList extends JPanel implements ActionListener,
         addContactGroup(offlineGroup);
 
         showHideMenu.setSelected(false);
-
         // Add KeyMappings
         SparkManager.getMainWindow().getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("control F"), "searchContacts");
         SparkManager.getMainWindow().getRootPane().getActionMap().put("searchContacts", new AbstractAction("searchContacts") {
@@ -194,7 +193,6 @@ public class ContactList extends JPanel implements ActionListener,
                 SparkManager.getUserManager().searchContacts("", SparkManager.getMainWindow());
             }
         });
-
         // Handle Command-F on Macs
         SparkManager.getMainWindow().getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_F, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()), "appleStrokeF");
         SparkManager.getMainWindow().getRootPane().getActionMap().put("appleStrokeF", new AbstractAction("appleStrokeF") {
@@ -203,13 +201,11 @@ public class ContactList extends JPanel implements ActionListener,
                 SparkManager.getUserManager().searchContacts("", SparkManager.getMainWindow());
             }
         });
-
         // Save state on shutdown.
         final ContactList instance = this;
         SparkManager.getMainWindow().addMainWindowListener(() -> {
                 SparkManager.getConnection().removeConnectionListener(instance);
         });
-
         SparkManager.getConnection().addConnectionListener(this);
         ReconnectionManager.getInstanceFor(SparkManager.getConnection()).addReconnectionListener(this);
         // Get a command panel and add View Online/Offline, Add Contact
@@ -290,7 +286,6 @@ public class ContactList extends JPanel implements ActionListener,
         RosterEntry entry = roster.getEntry(bareJID);
         boolean isPending = entry != null && (entry.getType() == RosterPacket.ItemType.none || entry.getType() == RosterPacket.ItemType.from)
             && entry.isSubscriptionPending();
-
         // If online, check to see if they are in the offline group.
         // If so, remove from an offline group and add to all groups they belong to.
         if (presence.getType() == Presence.Type.available && offlineGroup.getContactItemByJID(bareJID) != null || (presence.getFrom().toString().contains("workgroup."))) {
@@ -316,7 +311,7 @@ public class ContactList extends JPanel implements ActionListener,
      * @param bareJID  the bare jid of the user.
      */
     private void updateContactItemsPresence(Presence presence, RosterEntry entry, BareJid bareJID) {
-        for (ContactGroup group : groupList) {
+        for (ContactGroup group : new ArrayList<>(groupList)) {
             ContactItem item = group.getContactItemByJID(bareJID);
             if (item != null) {
                 if (group == offlineGroup) {
@@ -637,7 +632,6 @@ public class ContactList extends JPanel implements ActionListener,
                 removeContactItem(jid.asBareJid());
             }
         });
-
     }
 
     /**
@@ -809,7 +803,6 @@ public class ContactList extends JPanel implements ActionListener,
                 }
             }
         }
-
         return list;
     }
 
@@ -844,7 +837,6 @@ public class ContactList extends JPanel implements ActionListener,
         }
     }
 
-
     /**
      * Retrieve the ContactItem by their displayed name (either alias, nickname or username).
      *
@@ -863,8 +855,6 @@ public class ContactList extends JPanel implements ActionListener,
 
     /**
      * Adds a new ContactGroup to the ContactList.
-     *
-     * @param group the group to add.
      */
     private void addContactGroup(ContactGroup group) {
         groupList.add(group);
@@ -900,18 +890,18 @@ public class ContactList extends JPanel implements ActionListener,
             String group = tkn.nextToken();
             buf.append(group);
             if (tkn.hasMoreTokens()) {
-                buf.append("::");
+                buf.append(GROUP_DELIMITER);
             }
             String name = buf.toString();
-            if (name.endsWith("::")) {
-                name = name.substring(0, name.length() - 2);
+            if (name.endsWith(GROUP_DELIMITER)) {
+                name = name.substring(0, name.length() - GROUP_DELIMITER.length());
             }
             ContactGroup newContactGroup = getContactGroup(name);
             if (newContactGroup == null) {
                 newContactGroup = UIComponentRegistry.createContactGroup(group);
                 String realGroupName = buf.toString();
-                if (realGroupName.endsWith("::")) {
-                    realGroupName = realGroupName.substring(0, realGroupName.length() - 2);
+                if (realGroupName.endsWith(GROUP_DELIMITER)) {
+                    realGroupName = realGroupName.substring(0, realGroupName.length() - GROUP_DELIMITER.length());
                 }
                 newContactGroup.setGroupName(realGroupName);
             } else {
@@ -963,7 +953,6 @@ public class ContactList extends JPanel implements ActionListener,
         } catch (Exception e) {
             Log.error(e);
         }
-
         // Check if I should show groups with no users online
         if (null != getContactGroup(groupName) && !getContactGroup(groupName).hasAvailableContacts()) {
             showEmptyGroups(localPreferences.isEmptyGroupsShown());
@@ -996,7 +985,7 @@ public class ContactList extends JPanel implements ActionListener,
      */
     public ContactGroup getContactGroup(String groupName) {
         ContactGroup cGroup = null;
-        for (ContactGroup contactGroup : groupList) {
+        for (ContactGroup contactGroup : new ArrayList<>(groupList)) {
             if (contactGroup.getGroupName().equals(groupName)) {
                 cGroup = contactGroup;
                 break;
@@ -1018,7 +1007,7 @@ public class ContactList extends JPanel implements ActionListener,
      */
     public ContactGroup getParentGroup(String groupName) {
         // Check if there is even a parent group
-        if (!groupName.contains("::")) {
+        if (!groupName.contains(GROUP_DELIMITER)) {
             return null;
         }
         final ContactGroup group = getContactGroup(groupName);
@@ -1026,7 +1015,7 @@ public class ContactList extends JPanel implements ActionListener,
             return null;
         }
         // Otherwise, find the parent
-        int index = groupName.lastIndexOf("::");
+        int index = groupName.lastIndexOf(GROUP_DELIMITER);
         String parentGroupName = groupName.substring(0, index);
         return getContactGroup(parentGroupName);
     }
@@ -1117,9 +1106,8 @@ public class ContactList extends JPanel implements ActionListener,
                 RosterEntry entry = roster.getEntry(address);
                 try {
                     entry.setName(newAlias);
-
                     final BareJid user = address.asBareJid();
-                    for (ContactGroup cg : groupList) {
+                    for (ContactGroup cg : new ArrayList<>(groupList)) {
                         ContactItem ci = cg.getContactItemByJID(user);
                         if (ci != null) {
                             ci.setAlias(newAlias);
@@ -1131,7 +1119,6 @@ public class ContactList extends JPanel implements ActionListener,
             }
         }
     }
-
 
     /**
      * Removes a contact item from the group.
@@ -1248,7 +1235,6 @@ public class ContactList extends JPanel implements ActionListener,
             if (ok == JOptionPane.YES_OPTION) {
                 String groupName = group.getGroupName();
                 Roster roster = SparkManager.getRoster();
-
                 RosterGroup rosterGroup = roster.getGroup(groupName);
                 if (rosterGroup != null) {
                     for (RosterEntry entry : rosterGroup.getEntries()) {
@@ -1286,7 +1272,6 @@ public class ContactList extends JPanel implements ActionListener,
                     Log.warning("Unable to set new name '" + newName + "' for roster group" + groupName, ex);
                 }
             }
-
         });
         expand.addActionListener(e1 -> {
             Collection<ContactGroup> groups = getContactGroups();
@@ -1306,7 +1291,6 @@ public class ContactList extends JPanel implements ActionListener,
         popup.show(group, e.getX(), e.getY());
         activeGroup = group;
     }
-
 
     @Override
     public void showPopup(MouseEvent e, final ContactItem item) {
@@ -1423,7 +1407,6 @@ public class ContactList extends JPanel implements ActionListener,
                             client = client.substring(client.lastIndexOf("/"));
                         } else client = "/";
                     }
-
                     Jid jid = JidCreate.from(item.getJid().toString() + client);
                     LastActivity activity = LastActivityManager.getInstanceFor(SparkManager.getConnection()).getLastActivity(jid);
                     long idleTime = (activity.getIdleTime() * 1000);
@@ -1434,7 +1417,6 @@ public class ContactList extends JPanel implements ActionListener,
                     UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
                     JOptionPane.showMessageDialog(getGUI(), Res.getString("message.unable.to.retrieve.last.activity", item.getJid()), Res.getString("title.error"), JOptionPane.ERROR_MESSAGE);
                 }
-
             }
         };
 
@@ -1471,10 +1453,8 @@ public class ContactList extends JPanel implements ActionListener,
         } else if (entry != null && entry.getType() != RosterPacket.ItemType.both && entry.isSubscriptionPending()) {
             popup.add(subscribeAction);
         }
-
         // Fire Context Menu Listener
         fireContextMenuListenerPopup(popup, item);
-
         ContactGroup group = getContactGroup(item.getGroupName());
         if (component == null) {
             popup.show(group.getList(), e.getX(), e.getY());
@@ -1491,6 +1471,9 @@ public class ContactList extends JPanel implements ActionListener,
             group = getContactGroup(item.getGroupName());
             break;
         }
+        if (group == null) {
+            return;
+        }
         final JPopupMenu popup = new JPopupMenu();
         final JMenuItem sendMessagesMenu = new JMenuItem(Res.getString("menuitem.send.a.message"), SparkRes.getImageIcon(SparkRes.Icon.SMALL_MESSAGE_IMAGE));
         fireContextMenuListenerPopup(popup, items);
@@ -1498,11 +1481,7 @@ public class ContactList extends JPanel implements ActionListener,
         if (!Default.getBoolean(Default.DISABLE_BROADCAST_MENU_ITEM) && Enterprise.containsFeature(Enterprise.BROADCAST_FEATURE))
             popup.add(sendMessagesMenu);
         sendMessagesMenu.addActionListener(e1 -> sendMessages(items));
-        try {
-            popup.show(group.getList(), e.getX(), e.getY());
-        } catch (NullPointerException ee) {
-            // Nothing we can do here
-        }
+        popup.show(group.getList(), e.getX(), e.getY());
     }
 
     private void clearSelectionList(ContactItem selectedItem) {
@@ -1519,27 +1498,28 @@ public class ContactList extends JPanel implements ActionListener,
         }
     }
 
-
     private void sendMessages(Collection<ContactItem> items) {
         InputDialog dialog = new InputDialog();
         final String messageText = dialog.getInput(Res.getString("title.broadcast.message"), Res.getString("message.enter.broadcast.message"), SparkRes.getImageIcon(SparkRes.Icon.BLANK_IMAGE), SparkManager.getMainWindow());
         if (!ModelUtil.hasLength(messageText)) {
             return;
         }
-        StringBuilder buf = new StringBuilder();
-        final Map<String, Message> broadcastMessages = new HashMap<>();
+        String recepientNames = "";
+        Map<BareJid, Message> broadcastMessages = new HashMap<>(items.size());
         for (ContactItem item : items) {
-            MessageBuilder messageBuilder = StanzaBuilder.buildMessage();
-            final Map<String, Object> properties = new HashMap<>();
+            if (broadcastMessages.containsKey(item.getJid())) {
+                continue;
+            }
+            Map<String, Object> properties = new HashMap<>();
             properties.put("broadcast", true);
-            messageBuilder.addExtension(new JivePropertiesExtension(properties));
-            messageBuilder.setBody(messageText);
+            MessageBuilder messageBuilder = StanzaBuilder.buildMessage()
+                .addExtension(new JivePropertiesExtension(properties))
+                .setBody(messageText)
+                .to(item.getJid());
 
             Message message = messageBuilder.build();
-            message.setTo(item.getJid());
-            if (broadcastMessages.putIfAbsent(item.getJid().toString(), message) == null) {
-                buf.append(item.getDisplayName()).append('\n');
-            }
+            broadcastMessages.put(item.getJid(), message);
+            recepientNames += item.getDisplayName() + "\n";
         }
 
         for (Message message : broadcastMessages.values()) {
@@ -1550,7 +1530,7 @@ public class ContactList extends JPanel implements ActionListener,
             }
         }
         UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
-        JOptionPane.showMessageDialog(SparkManager.getMainWindow(), Res.getString("message.hasbeenbroadcast.to", buf.toString()), Res.getString("title.notification"), JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(SparkManager.getMainWindow(), Res.getString("message.hasbeenbroadcast.to", recepientNames), Res.getString("title.notification"), JOptionPane.INFORMATION_MESSAGE);
     }
 
     // For plugin use only
@@ -1695,7 +1675,6 @@ public class ContactList extends JPanel implements ActionListener,
         SparkManager.getConnection().addAsyncStanzaListener(subscribeListener, new StanzaTypeFilter(Presence.class));
     }
 
-
     @Override
     public void shutdown() {
     }
@@ -1824,7 +1803,6 @@ public class ContactList extends JPanel implements ActionListener,
         }
     }
 
-
     /**
      * Sorts ContactGroups
      */
@@ -1887,7 +1865,6 @@ public class ContactList extends JPanel implements ActionListener,
 
     /**
      * Selects the first user found with a specified jid
-     * @param jid, the Users JID
      */
     public void setSelectedUser(BareJid jid) {
         for (ContactGroup group : getContactGroups()) {
@@ -1909,7 +1886,6 @@ public class ContactList extends JPanel implements ActionListener,
         } catch (Exception e) {
             Log.error("checkGroup error: ", e);
         }
-
     }
 
     public void addFileDropListener(FileDropListener listener) {
@@ -1939,10 +1915,6 @@ public class ContactList extends JPanel implements ActionListener,
     public void contactItemRemoved(ContactItem item) {
         fireContactItemRemoved(item);
     }
-
-    /*
-        Adding ContactListListener support.
-    */
 
     public void addContactListListener(ContactListListener listener) {
         contactListListeners.addIfAbsent(listener);
@@ -2089,7 +2061,6 @@ public class ContactList extends JPanel implements ActionListener,
             default:
                 workspace.changeCardLayout(RETRY_PANEL);
         }
-
         removeAllUsers();
     }
 
@@ -2121,7 +2092,6 @@ public class ContactList extends JPanel implements ActionListener,
         catch (Exception e) {
             Log.error(e);
         }
-
         final Presence myPresence = SparkManager.getWorkspace().getStatusBar()
             .getPresence();
         SparkManager.getSessionManager().changePresence(myPresence);
@@ -2136,11 +2106,9 @@ public class ContactList extends JPanel implements ActionListener,
                 case conflict:
                     errorMessage = Res.getString("message.disconnected.conflict.error");
                     break;
-
                 case system_shutdown:
                     errorMessage = Res.getString("message.disconnected.shutdown");
                     break;
-
                 default:
                     errorMessage = Res.getString("message.general.error", xmppEx.getStreamError().getConditionText());
                     break;
@@ -2156,7 +2124,6 @@ public class ContactList extends JPanel implements ActionListener,
                 switchAllUserOffline(true);
                 _reconnectpanelsmall.setReconnectText(errorMessage);
                 break;
-
             case 2:
                 switchAllUserOfflineNoGroupEntry(true);
                 _reconnectpanelicon.setReconnectText(errorMessage);
