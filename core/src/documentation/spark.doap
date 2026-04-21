@@ -145,6 +145,13 @@
         </implements>
         <implements>
             <xmpp:SupportedXep>
+                <xmpp:xep rdf:resource="https://xmpp.org/extensions/xep-0083.html"/>
+                <xmpp:status>partial</xmpp:status>
+                <xmpp:note>The 'roster:delimiter' is ::</xmpp:note>
+            </xmpp:SupportedXep>
+        </implements>
+        <implements>
+            <xmpp:SupportedXep>
                 <xmpp:xep rdf:resource="https://xmpp.org/extensions/xep-0085.html"/>
                 <xmpp:status>complete</xmpp:status>
             </xmpp:SupportedXep>
@@ -262,7 +269,7 @@
             <xmpp:SupportedXep>
                 <xmpp:xep rdf:resource="https://xmpp.org/extensions/xep-0392.html"/>
                 <xmpp:status>partial</xmpp:status>
-                <xmpp:since>2.0</xmpp:since>
+                <xmpp:since>3.1.0</xmpp:since>
                 <xmpp:note>Only for MUC nicknames. Preferences / Group Chat / Names have random colors</xmpp:note>
             </xmpp:SupportedXep>
         </implements>
