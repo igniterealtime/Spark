@@ -58,6 +58,7 @@ import org.jivesoftware.smackx.workgroup.packet.AgentStatus;
 import org.jivesoftware.smackx.workgroup.packet.AgentStatus.ChatInfo;
 import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.ui.conferences.ConferenceUtils;
+import org.jivesoftware.spark.ui.rooms.GroupChatRoom;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
@@ -66,6 +67,7 @@ import org.jxmpp.jid.DomainBareJid;
 import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.Jid;
 import org.jxmpp.jid.impl.JidCreate;
+import org.jxmpp.jid.parts.Localpart;
 import org.jxmpp.jid.util.JidUtil;
 
 import static org.jivesoftware.smackx.muc.MucConfigFormManager.MUC_ROOMCONFIG_ROOMOWNERS;
@@ -231,10 +233,10 @@ public final class CurrentActivity extends JPanel {
                                 if (col.isEmpty()) {
                                     return;
                                 }
-                                DomainBareJid serviceName = col.iterator().next();
-                                EntityBareJid roomName = JidCreate.entityBareFromOrThrowUnchecked(sessionID + "@" + serviceName);
-                                MultiUserChat muc = multiUserChatManager.getMultiUserChat(roomName);
-                                ConferenceUtils.enterRoomOnSameThread(roomName, roomName, null);
+                                DomainBareJid serviceName = col.get(0);
+                                EntityBareJid roomName = JidCreate.entityBareFrom(Localpart.formUnescapedOrNull(sessionID), serviceName);
+                                GroupChatRoom groupChatRoom = ConferenceUtils.enterRoomOnSameThread(roomName, roomName, null);
+                                MultiUserChat muc = groupChatRoom.getMultiUserChat();
                                 if (muc.isJoined()) {
                                     // Try and remove myself as an owner if I am one.
                                     Collection<Affiliate> owners;
@@ -245,18 +247,18 @@ public final class CurrentActivity extends JPanel {
                                         return;
                                     }
 
+                                    EntityBareJid myBareJid = SparkManager.getSessionManager().getUserBareAddress();
                                     List<Jid> list = new ArrayList<>();
                                     for (Affiliate affiliate : owners) {
                                         Jid jid = affiliate.getJid();
-                                        if (!jid.equals(SparkManager.getSessionManager().getUserBareAddress())) {
+                                        if (!jid.equals(myBareJid)) {
                                             list.add(jid);
                                         }
                                     }
                                     if (!list.isEmpty()) {
                                         FillableForm form = muc.getConfigurationForm().getFillableForm();
-                                        List<String> jidStrings = new ArrayList<>(list.size());
-                                        JidUtil.toStrings(list, jidStrings);
-                                        form.setAnswer(MUC_ROOMCONFIG_ROOMOWNERS, jidStrings);
+                                        List<String> listStrings = JidUtil.toStringList(list);
+                                        form.setAnswer(MUC_ROOMCONFIG_ROOMOWNERS, listStrings);
                                         // new DataFormDialog(groupChat, form);
                                         muc.sendConfigurationForm(form);
                                     }
@@ -282,9 +284,8 @@ public final class CurrentActivity extends JPanel {
                                 if (col.isEmpty()) {
                                     return;
                                 }
-                                DomainBareJid serviceName = col.iterator().next();
-                                EntityBareJid roomName = JidCreate.entityBareFromOrThrowUnchecked(sessionID + "@" + serviceName);
-                                MultiUserChat muc = mucManager.getMultiUserChat( roomName );
+                                DomainBareJid serviceName = col.get(0);
+                                EntityBareJid roomName = JidCreate.entityBareFrom(Localpart.formUnescapedOrNull(sessionID), serviceName);
                                 ConferenceUtils.enterRoomOnSameThread(roomName, roomName, null);
                             }
                             catch (XMPPException | SmackException | InterruptedException e1) {

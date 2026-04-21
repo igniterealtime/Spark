@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -56,6 +55,7 @@ import org.jivesoftware.spark.SparkManager;
 import org.jivesoftware.spark.component.tabbedPane.SparkTab;
 import org.jivesoftware.spark.component.tabbedPane.SparkTabbedPaneListener;
 import org.jivesoftware.spark.ui.conferences.ConferenceUtils;
+import org.jivesoftware.spark.ui.rooms.GroupChatRoom;
 import org.jivesoftware.spark.util.ModelUtil;
 import org.jivesoftware.spark.util.SwingWorker;
 import org.jivesoftware.spark.util.log.Log;
@@ -63,8 +63,8 @@ import org.jxmpp.jid.DomainBareJid;
 import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.Jid;
 import org.jxmpp.jid.impl.JidCreate;
+import org.jxmpp.jid.parts.Localpart;
 import org.jxmpp.jid.util.JidUtil;
-import org.jxmpp.stringprep.XmppStringprepException;
 
 import static org.jivesoftware.smackx.muc.MucConfigFormManager.MUC_ROOMCONFIG_ROOMOWNERS;
 
@@ -285,14 +285,10 @@ public final class AgentConversations extends JPanel implements ChangeListener {
                                 if (col.isEmpty()) {
                                     return;
                                 }
-
                                 DomainBareJid serviceName = col.get(0);
-                                EntityBareJid roomName = JidCreate.entityBareFrom(sessionID + "@" + serviceName);
-
-                                MultiUserChat muc = multiUserChatManager.getMultiUserChat( roomName );
-
-                                ConferenceUtils.enterRoomOnSameThread(roomName, roomName, null);
-
+                                EntityBareJid roomName = JidCreate.entityBareFrom(Localpart.formUnescapedOrNull(sessionID), serviceName);
+                                GroupChatRoom groupChatRoom = ConferenceUtils.enterRoomOnSameThread(roomName, roomName, null);
+                                MultiUserChat muc = groupChatRoom.getMultiUserChat();
                                 if (muc.isJoined()) {
                                     // Try and remove myself as an owner if I am one.
                                     Collection<Affiliate> owners;
@@ -303,10 +299,11 @@ public final class AgentConversations extends JPanel implements ChangeListener {
                                         return;
                                     }
 
+                                    EntityBareJid myBareJid = SparkManager.getSessionManager().getUserBareAddress();
                                     List<Jid> list = new ArrayList<>();
-                                    for (Affiliate affilitate : owners) {
-                                        Jid jid = affilitate.getJid();
-                                        if (!jid.equals(SparkManager.getSessionManager().getUserBareAddress())) {
+                                    for (Affiliate affiliate : owners) {
+                                        Jid jid = affiliate.getJid();
+                                        if (!jid.equals(myBareJid)) {
                                             list.add(jid);
                                         }
                                     }
@@ -339,12 +336,11 @@ public final class AgentConversations extends JPanel implements ChangeListener {
                                 if (col.isEmpty()) {
                                     return;
                                 }
-                                DomainBareJid serviceName = col.iterator().next();
-                                EntityBareJid roomName = JidCreate.entityBareFrom(sessionID + "@" + serviceName);
-                                MultiUserChat muc = multiUserChatManager.getMultiUserChat( roomName);
+                                DomainBareJid serviceName = col.get(0);
+                                EntityBareJid roomName = JidCreate.entityBareFrom(Localpart.formUnescapedOrNull(sessionID), serviceName);
                                 ConferenceUtils.enterRoomOnSameThread(roomName, roomName, null);
                             }
-                            catch (XMPPException | SmackException | InterruptedException | XmppStringprepException e1) {
+                            catch (XMPPException | SmackException | InterruptedException e1) {
                                 Log.error(e1);
                             }
                         }
