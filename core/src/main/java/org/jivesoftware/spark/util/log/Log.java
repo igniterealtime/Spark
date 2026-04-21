@@ -18,85 +18,94 @@ package org.jivesoftware.spark.util.log;
 import org.jivesoftware.Spark;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.logging.FileHandler;
+import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
 /**
- * Creates and writes out messages to a a log file. This should be used for all
- * error handling within the Agent application.
+ * Creates and writes out messages to a log file.
+ * This should be used for all error handling within the application.
+ * By default, the logs are written to a file in SPARK_HOME/logs/errors.log.
+ * You see it by clicking on Main Menu / Help / View logs.
+ * If you run the Spark from the IDE then specify the VM option <code>-Ddebug.mode=true</code>.
+ * Then the logs are written to stout.
  */
 public class Log {
-	private static final Logger ERROR_LOGGER = Logger.getAnonymousLogger();
+	private static final Logger rootLogger = Logger.getLogger("");
     private static final boolean debugEnabled = System.getProperty("debug.mode") != null;
 
     static {
-        File logFilePath = getLogFilePath();
 		try {
-			// Create an appending file handler
-            FileHandler errorHandler = new FileHandler(logFilePath.getCanonicalPath(), 1_000_000, 1, true);
-			errorHandler.setFormatter(new SimpleFormatter());
-			// Add to the desired logger
-			ERROR_LOGGER.addHandler(errorHandler);
-		} catch (IOException e) {
-			e.printStackTrace();
+            rootLogger.setLevel(debugEnabled ? Level.ALL : Level.INFO);
+            // When debug is enabled, we want to log everything only to the log file
+            File logFilePath = getLogFilePath();
+            if (logFilePath != null) {
+                // Create an appending file handler
+                FileHandler fileHandler = new FileHandler(logFilePath.getCanonicalPath(), 1_000_000, 1, true);
+                fileHandler.setFormatter(new SimpleFormatter());
+                fileHandler.setLevel(Level.INFO); // log to a file only INFO messages
+                // Remove the console logger
+                Handler rootLoggerConsoleHandler = rootLogger.getHandlers()[0];
+                rootLogger.removeHandler(rootLoggerConsoleHandler);
+                rootLogger.addHandler(fileHandler);
+            }
+        } catch (Exception e) {
+            //noinspection CallToPrintStackTrace
+            e.printStackTrace();
 		}
 	}
 
     public static File getLogFilePath() {
-        return new File(Spark.getLogDirectory(), "errors.log");
+        return !debugEnabled ? new File(Spark.getLogDirectory(), "errors.log") : null;
     }
 
 	/**
-	 * Logs all error messages to default error logger.
+	 * Logs the error message to log.
 	 *
-	 * @param message
-	 *            a message to append to log file.
+	 * @param message a message to append to log.
 	 * @param ex the exception being thrown.
 	 */
 	public static void error(String message, Throwable ex) {
-        ERROR_LOGGER.log(Level.SEVERE, message, ex);
+        rootLogger.log(Level.SEVERE, message, ex);
 	}
 
 	/**
-	 * Logs all error messages to default error logger.
+     * Logs the error message to log.
 	 *
 	 * @param ex the exception being thrown.
 	 */
 	public static void error(Throwable ex) {
-        ERROR_LOGGER.log(Level.SEVERE, "", ex);
+        rootLogger.log(Level.SEVERE, "", ex);
 	}
 
 	/**
-	 * Log a warning message to the default logger.
+	 * Log the warning message to the log.
 	 *
 	 * @param message the message to log.
 	 * @param ex the exception.
 	 */
 	public static void warning(String message, Throwable ex) {
-        ERROR_LOGGER.log(Level.WARNING, message, ex);
+        rootLogger.log(Level.WARNING, message, ex);
 	}
 
 	public static void warning(String message) {
-        ERROR_LOGGER.log(Level.WARNING, message);
+        rootLogger.log(Level.WARNING, message);
 	}
 
 	/**
-	 * Logs all error messages to default error logger.
+	 * Logs the error message to log.
 	 *
-	 * @param message a message to append to log file.
+	 * @param message a message to log.
 	 */
 	public static void error(String message) {
-        ERROR_LOGGER.log(Level.SEVERE, message);
+        rootLogger.log(Level.SEVERE, message);
 	}
 
 	/**
-	 * Logs all messages to standard errout for debugging purposes. To use, pass
-	 * in the VM Parameters debug.mode=true.
-	 * <p/>
-	 * ex. (-Ddebug.mode=true)
+	 * Logs the debug message to standard error output.
+     * To use, pass in the VM options <code>-Ddebug.mode=true</code>.
 	 *
 	 * @param message the message to print out.
 	 */

@@ -474,13 +474,16 @@ public final class MainWindow extends ChatFrame implements ActionListener {
 			@Override
 			public void actionPerformed(ActionEvent e) {
                 File logFile = Log.getLogFilePath();
+                if (logFile == null) {
+                    JOptionPane.showMessageDialog(SparkManager.getMainWindow(), "See console for logs.", "Error Log", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
                 if (!logFile.exists()) {
-                	UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
+                    UIManager.put("OptionPane.okButtonText", Res.getString("ok"));
                     JOptionPane.showMessageDialog(SparkManager.getMainWindow(), "No error logs found.", "Error Log", JOptionPane.INFORMATION_MESSAGE);
+                    return;
                 }
-                else {
-                    showErrorLog();
-                }
+                showErrorLog();
             }
         };
 
