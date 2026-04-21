@@ -15,25 +15,25 @@
         Combined with the Openfire server, Spark is the easiest and best alternative to using un-secure public IM
         networks.
     </description>
-    <url>http://www.igniterealtime.org/projects/spark/</url>
+    <url>https://igniterealtime.org/projects/spark/</url>
     <inceptionYear>2006</inceptionYear>
 
     <organization>
         <name>Ignite Realtime</name>
-        <url>http://www.igniterealtime.org</url>
+        <url>https://igniterealtime.org</url>
     </organization>
 
     <licenses>
         <license>
             <name>Apache License, Version 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0</url>
+            <url>https://www.apache.org/licenses/LICENSE-2.0</url>
             <distribution>repo</distribution>
         </license>
     </licenses>
 
     <issueManagement>
         <system>jira</system>
-        <url>http://www.igniterealtime.org/issues/browse/SPARK</url>
+        <url>https://igniterealtime.atlassian.net/browse/SPARK</url>
     </issueManagement>
 
     <scm>
@@ -41,18 +41,6 @@
         <developerConnection>https://github.com/igniterealtime/Spark.git</developerConnection>
         <url>https://github.com/igniterealtime/Spark</url>
     </scm>
-
-    <contributors>
-        <contributor>
-            <name>Vacant</name>
-            <roles>
-                <role>Project Lead</role>
-            </roles>
-            <organization>Ignite Realtime</organization>
-            <organizationUrl>http://www.igniterealtime.org</organizationUrl>
-        </contributor>
-    </contributors>
-
     <developers>
         <developer>
             <name>Guus der Kinderen</name>
@@ -62,7 +50,7 @@
             <email>guus.der.kinderen@gmail.com</email>
             <timezone>+1</timezone>
             <organization>Ignite Realtime</organization>
-            <organizationUrl>http://www.igniterealtime.org</organizationUrl>
+            <organizationUrl>https://igniterealtime.org</organizationUrl>
         </developer>
     </developers>
 
