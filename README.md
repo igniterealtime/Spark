@@ -6,12 +6,13 @@ Spark
 
   - Group Chat
   - In-line Spell Checking
-  - Strong Message Encryption
+  - End-to-end (E2E) Message Encryption with OTR.
   - Tabbed Conversations
   - File Transfer
   - Screen Capture Sharing
+  - Message translations.
 
-Combined with the [Openfire] server, [Spark] is the easiest and best alternative to using un-secure public IM networks.
+Combined with the [Openfire] server, [Spark] is the easiest and best alternative to using unsecure public IM networks.
 
 [Spark] - an [Ignite Realtime] community project.
 
@@ -30,12 +31,9 @@ Resources
 Install
 -------
 
-Download last release from [GitHub releases page](https://github.com/igniterealtime/Spark/releases/latest)
-or [nightly build](https://igniterealtime.org/downloads/nightly_spark.jsp) with latest changes.
-For Windows, if you are not sure, if it's recommended to download the `spark_*-64bit.msi`.
-If you don't have Java JRE installed then download and install an `.msi` file the of the JRE 17 or newer from 
-[Zulu](https://www.azul.com/downloads/?os=windows&architecture=x86-64-bit&package=jre#zulu)
-or [Oracle](https://www.oracle.com/java/technologies/downloads/#jdk25-windows).
+Download the last release from the [GitHub releases page](https://github.com/igniterealtime/Spark/releases/latest)
+or [nightly build](https://igniterealtime.org/downloads/nightly_spark.jsp) with the latest changes.
+For Windows, if you are not sure, if it's recommended to download the ` spark_*-with-jre-amd64.exe` that has bundled JRE.
 
 Screenshots
 ---------
@@ -63,16 +61,19 @@ Run from sources
 ----------------
 
 ```bash
-$ git clone https://github.com/igniterealtime/Spark.git
-$ cd Spark/core
-$ mvn exec:java
+git clone https://github.com/igniterealtime/Spark.git
+mvn verify
+cd Spark/core
+mvn exec:java
 ```
 
-* Setup IDE with the source:
-    * [Intellij](https://download.igniterealtime.org/spark/docs/latest/documentation/ide-intellij-setup.html),
+To run from an IDE execute the Main class `org.jivesoftware.Spark` and specify VM option `-Ddebug.mode=true`.
+
+* Set up IDE with the source:
+    * [IntelliJ](https://download.igniterealtime.org/spark/docs/latest/documentation/ide-intellij-setup.html),
     * [Eclipse](https://download.igniterealtime.org/spark/docs/latest/documentation/ide-eclipse-setup.html),
     * [Visual Studio Code](https://download.igniterealtime.org/spark/docs/latest/documentation/ide-vscode-setup.html).
-* [Plugins development guide](https://download.igniterealtime.org/sparkplug_kit/docs/latest/sparkplug_dev_guide.html)
+* [Plugin development guide](https://download.igniterealtime.org/sparkplug_kit/docs/latest/sparkplug_dev_guide.html)
 * [Spark Development Forum](https://discourse.igniterealtime.org/c/spark/spark-dev)
 
 

@@ -98,17 +98,18 @@
         </p>
 
         <figure>
-            <a href="images/eclipse-maven-step-5.png"><img src="images/eclipse-maven-step-5.png" alt="Launch the 'Startup' class as a Java application."></a>
-            <a href="images/eclipse-maven-step-6.png"><img src="images/eclipse-maven-step-6.png" alt="The Spark login screen, after launching the 'Startup' class."></a>
+            <a href="images/eclipse-maven-step-5.png"><img src="images/eclipse-maven-step-5.png" alt="Launch the 'Spark' class as a Java application."></a>
+            <a href="images/eclipse-maven-step-6.png"><img src="images/eclipse-maven-step-6.png" alt="The Spark login screen, after launching the 'Spark' class."></a>
             <figcaption>Run Spark straight from the source code.</figcaption>
         </figure>
 
         <p>
             The 'spark-core' module contains a class named <code>org.jivesoftware.Spark</code>
             that can be used to start Spark. Find the class in the Eclipse Package Explorer, and open its context
-            menu (right-click on the file). In that menu, use the 'Run as Java Application' option. Eclipse wil start
+            menu (right-click on the file). In that menu, use the 'Run as Java Application' option. Eclipse will start
             to build Spark from the source code, after which Spark itself is started. If everything goes well, you will
             see the Spark login screen within a matter of seconds!
+            To see logs in the console you should specify VM option <code>-Ddebug.mode=true</code>.
         </p>
         <footer>
             <p>You can find more information on Spark at <a href="https://www.igniterealtime.org/projects/spark/">https://www.igniterealtime.org/projects/spark</a></p>
